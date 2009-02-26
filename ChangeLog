@@ -1,0 +1,6 @@
+
+
+1.0.0
+	Reports added to cf-report for compliance, setuid, file_changes etc.
+	Added csv format also
+	Automating topic map integration of policy, for the cmdb

@@ -1,0 +1,324 @@
+html{height: 100%;}
+
+body
+{ font-family: verdana, arial, sans-serif;
+  padding: 0px;
+  margin: 10px;
+  font-size: 11px;;
+  background: #eee;
+  color: #5A6370;
+}
+
+#wholebody
+{  
+width: 900px;
+background: #ddd;
+border: 1px;
+padding: 10px;
+}
+
+p
+{ margin: 0px;
+  padding: 0px 0px 6px 0px;
+  line-height: 1.7em;
+  font-size: 120%;
+}
+
+#menu
+{ 
+font-size: 110%;
+font-family: helvetica;
+font-weight: bold;
+}
+
+#man pre
+{  
+font-family: courier;
+font-size: 11px;
+}
+
+#logo
+{  
+width: 900px;
+background-color: #ddd ;
+padding: 10px;
+}
+
+#bundle
+{  
+margin-top: 20px;
+width: 900px;
+}
+
+h1
+{ 
+font-family: arial, sans-serif;
+letter-spacing: .1em;
+font-weight: normal;
+background-color: #eee;
+color: #00a;
+padding: 10px;
+font-size: 200%;
+}
+
+h2
+{ margin: 0px;
+  padding: 0px 0px 4px 0px;
+  font-size: 100%;
+}
+
+a
+{  
+color: #90f;
+text-decoration: none;
+}
+
+#url a
+{  
+color: #a00;
+text-decoration: none;
+}
+
+a:selected
+{  
+color: #a00;
+}
+
+a:hover{text-decoration: underline;}
+
+#url a:hover{text-decoration: underline;}
+
+
+
+blockquote
+{ background: #FFFFFF;
+  color: #5A6370;
+  border-color: #767676;
+}
+
+#intro
+{
+background-color: #eee; 
+width: 600px;
+border: 2px;
+color: #5A6370;
+padding: 10px;
+border-color: black;
+font-size: 100%;
+}
+
+#in
+{
+background: #ccc;
+float: right;
+}
+
+#block
+{  
+background-color: #eef; 
+border: 1px solid;
+width: 1000px;
+padding: 10px;
+}
+
+.args
+{  
+color: #a00;
+font-weight: bold;
+}
+
+.rval
+{  
+color: #00a;
+font-weight: normal;
+}
+
+.qstring
+{  
+color: #bbb;
+font-weight: normal;
+}
+
+
+
+.lval
+{  
+color: green;
+}
+
+.class
+{  
+color: #aaa;
+font-weight: bold;
+}
+
+.bodytype
+{  
+color: #00a;
+}
+
+.subtype
+{  
+color: darkred;
+font-size: 120%;
+}
+
+.bodyname
+{  
+color: #a00;
+font-weight: bold;
+}
+
+.rlist
+{  
+color: #999;
+font-weight: normal;
+}
+
+#nav
+{ 
+font-style: Helvetica;
+font-weight: bold;
+text-align: right;
+}
+
+#associations
+{  
+background-color: #eee; 
+border: 1px solid;
+width: 600px;
+padding: 10px;
+}
+
+#contextclasses table td
+{  
+border: 1px;
+}
+
+#occurrences
+{  
+background-color: #eee; 
+border: 1px solid;
+width: 600px;
+padding: 10px;
+}
+
+
+#others
+{  
+background-color: #eee; 
+border: 1px solid;
+width: 600px;
+padding: 10px;
+}
+
+#roles
+{  
+background-color: #eee; 
+margin-left: 20px;
+border: 1px solid;
+width: 460px;
+padding: 10px;
+}
+
+
+#thistype
+{  
+background-color: #eee; 
+border: 1px solid;
+width: 600px;
+padding: 10px;
+}
+
+
+blockquote
+{ 
+background: #FFFFFF;
+  color: #5A6370;
+  border-color: #767676;
+}
+
+
+#banner li
+{
+margin 0px;
+background-color: #ccc;
+  list-style-type: none;
+  list-style-image: none;
+float: left;
+width: 14em;
+}
+
+#banner li ul 
+{ 
+display:none;
+} 
+
+#banner li:hover ul
+{ 
+margin: 0px;
+padding: 0px 0px 0px 0px;
+ 
+display: block;
+width: 14em;
+position: absolute;
+border: 1px;
+background-color: #eee;
+  list-style-type: none;
+  list-style-image: none;
+
+}
+
+#banner ul li a
+{
+margin: 0px;
+padding: 0px 0px 0px 0px;
+  display: block;
+  width: 14em;
+  height: 24px;
+  padding: 4px 0 0;
+  text-align: left;
+  text-decoration: none;
+}
+
+#banner ul li a:hover
+{
+background: #FFFFFF url(/img/menu_hover_in.png);
+  color: #000;
+  background-color: #dfe;
+  text-decoration: none;
+  font-weight: bold;
+  color: #307070;
+  list-style-type: none;
+  list-style-image: none;
+
+}
+
+
+TH { background: #aabbFF;
+     font-family: Verdana, Arial, Helvetica, sans-serif;
+     color: darkblue;
+  font-size: 10pt;
+   }
+
+TD { color: #000000;
+     background: #fff;
+     font-family: Verdana, Arial, Helvetica, sans-serif;
+     font-size: 10pt;
+     padding: 5px;
+   }
+
+PRE { font-family: "Lucida Typewriter", "Courier", monotype;
+      font-style: normal;
+     font-size: 11pt;
+background-color: #eee;
+    }
+
+table.border
+{ 
+width: 900px;
+  border-color: #4e8b8c;
+  border-style: solid;
+  border-width: 1px;
+}
+

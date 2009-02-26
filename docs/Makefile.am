@@ -1,0 +1,62 @@
+# Info used in building the MAN files
+man_MANS =
+
+# Info used in building the Info files
+info_TEXINFOS = #cfnova.texinfo
+infofiles = $(info_TEXINFOS:.texinfo=.info)
+MAKEINFOHTML = $(MAKEINFO) --html --no-split
+
+# Info used in building and installing HTML files
+#htmlfiles = $(info_TEXINFOS:.texinfo=.html)
+
+htmldir = $(pkgdatadir)/html
+html_DATA = $(htmlfiles)
+
+# Info used in building and installing Postscript files
+pdffiles = $(info_TEXINFOS:.texinfo=.pdf)
+dvifiles = $(info_TEXINFOS:.texinfo=.dvi)
+
+docdir = $(pkgdatadir)/doc
+doc_DATA = $(psfiles) $(pdffiles)
+
+# Make sure these get distributed with everything else.
+
+EXTRA_DIST = #*.8 *.texinfo *.pdf
+
+SUFFIXES = html pdf dvi
+
+%.8 : ../src/%
+	../src/$< -M > `echo $<.8 | sed s/src/docs/`
+
+%.html : %.texinfo
+	${MAKEINFO} -I $(srcdir) --html --no-split $<
+
+%.dvi : %.texinfo
+	${TEXI2DVI} $<
+
+%.pdf : %.texinfo
+	${TEXI2PDF} $<
+
+#
+# Some basic clean ups
+#
+MOSTLYCLEANFILES = *~ *.orig
+
+#
+# Get everything removed down to where rebuilding requires:
+# "make; make install"
+# 
+CLEANFILES = $(htmlfiles) $(psfiles)
+
+#
+# Get everything removed down to where rebuilding requires:
+# "configure; make; make install"
+#
+DISTCLEANFILES = *.log *.aux *.mbs *.mb *.info*
+
+#
+# Get everything removed down to where rebuilding requires:
+# "aclocal; autoconf; autoheader; automake --add-missing"
+# "configure; make; make install"
+#
+MAINTAINERCLEANFILES = Makefile.in mdate-sh
