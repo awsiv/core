@@ -20,6 +20,7 @@ char *Nova_PromiseID(struct Promise *pp);
 void Nova_DependencyGraph(struct Topic *map);
 void Nova_PlotTopicDependencies(int topic,double **adj,char **names,int dim);
 void Nova_MapClassAssociations(FILE *fp, struct Promise *pp,char *promise_id);
+double NovaShiftAverage(double new,double old);
 
 /* monitoring.c */
 
@@ -27,6 +28,13 @@ void Nova_HistoryUpdate(char *key,struct Averages newvals);
 void Nova_UpdateShiftAverage(struct Averages *shift_value,struct Averages *newvals);
 void Nova_ResetShiftAverage(struct Averages *shift_value);
 double ShiftAverage(double new,double old);
+void Nova_VerifyMeasurement(struct Attributes a,struct Promise *pp);
+void Nova_LongHaul(char *day,char *month,char* lifecycle,char *shift);
+void NovaOpenNewLifeCycle(int age,FILE **fp);
+void NovaCloseLifeCycle(int age,FILE **fp);
+void NovaIncrementShift(char *day,char *month,char* lifecycle,char *shift);
+int NovaLifeCyclePassesGo(char *d,char *m,char *l,char *s,char *day,char *month,char* lifecycle,char *shift);
+int NovaGetNextDay(int day,char *month,int year);
 
 /* reporting.c */
 
@@ -34,8 +42,21 @@ void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *styleshee
 void Nova_SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 
+/* acl.c */
+
+void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
+
+/***************************************************************************/
+
 #define NOVA_USES "relies on promise from"
 #define NOVA_GIVES "makes promise to"
 #define NOVA_IMPACTS "has direct influence on"
 #define NOVA_ISIMPACTED "is directly influenced by"
 #define NOVA_HISTORYDB "history.db"
+
+struct month_days
+   {
+   char *m;
+   int d;
+   };
+    

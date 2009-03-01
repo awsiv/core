@@ -17,3 +17,6 @@
 
 /*****************************************************************************/
 
+void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp)
+{
+}

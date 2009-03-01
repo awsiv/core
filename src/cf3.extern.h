@@ -43,14 +43,17 @@ extern struct Rlist *AUTO_DEFINE_LIST;
 extern struct Rlist *SINGLE_COPY_CACHE;
 extern struct Rlist *ACCESSLIST;
 extern struct Topic *TOPIC_MAP;
-
+extern struct PromiseIdent *PROMISE_ID_LIST;
 
 extern struct Rlist *CF_STCK;
 extern int CF_STCKFRAME;
+extern int CFA_BACKGROUND;
+extern int CFA_BACKGROUND_LIMIT;
 
 extern int BOOTSTRAP;
 extern int XML;
-extern FILE *FREPORT;
+extern FILE *FREPORT_HTML;
+extern FILE *FREPORT_TXT;
 extern FILE *FKNOW;
 extern struct FnCallStatus FNCALL_STATUS;
 
@@ -75,12 +78,15 @@ extern struct Rlist *SERVERLIST;
 extern struct Item *PROCESSTABLE;
 extern struct Item *FSTABLIST;
 extern struct Rlist *MOUNTEDFSLIST;
+extern struct CfPackageManager *INSTALLED_PACKAGE_LISTS;
+extern struct CfPackageManager *PACKAGE_SCHEDULE;
 
 extern int CF_MOUNTALL;
 extern int CF_SAVEFSTAB;
 
 extern char *DAY_TEXT[];
 extern char *MONTH_TEXT[];
+extern char *SHIFT_TEXT[];
 
 /***********************************************************/
 /* SYNTAX MODULES                                          */
@@ -173,4 +179,9 @@ extern struct SubTypeSyntax CF_PROCESS_SUBTYPES[];
 extern struct BodySyntax CF_MATCHCLASS_BODY[];
 extern struct BodySyntax CF_PROCFILTER_BODY[];
 extern struct BodySyntax CF_PROCESS_BODIES[];
+#endif
+
+#ifndef CF3_MOD_PROCESS
+extern struct SubTypeSyntax CF_MEASUREMENT_SUBTYPES[];
+extern struct BodySyntax CF_MEASURE_BODIES[];
 #endif

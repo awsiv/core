@@ -74,6 +74,8 @@
 #define CF_MAX_NESTING 3
 #define CF_DONEPASSES  3
 
+#define CF_TIME_SIZE 32
+
 /*************************************************************************/
 /* Parsing and syntax tree structures                                    */
 /*************************************************************************/
@@ -143,6 +145,7 @@ enum cfdatatype
    cf_clist,
    cf_irange,
    cf_rrange,
+   cf_counter,
    cf_notype
    };
 
@@ -359,6 +362,7 @@ enum cfrecontrol
    cfre_stylesheet,
    cfre_htmlbanner,
    cfre_htmlfooter,
+   cfre_html_embed,
    cfre_notype
    };
 
@@ -831,6 +835,28 @@ enum action_policy
   cfa_no_ppolicy
   };
 
+
+enum cf_acl_method
+   {
+   cfacl_append,
+   cfacl_overwrite,
+   cfacl_nomethod
+   };
+
+enum cf_acl_type
+   {
+   cfacl_posix,
+   cfacl_ntfs,
+   cfacl_notype
+   };
+       
+enum cf_acl_inherit
+   {
+   cfacl_default,
+   cfacl_parent,
+   cfacl_noinherit
+   };
+
 /*************************************************************************/
 /* Runtime constraint structures                                         */
 /*************************************************************************/
@@ -1243,10 +1269,33 @@ struct Packages
 
 /*************************************************************************/
 
+struct Measurement
+   {
+   char *stream_type;
+   enum cfdatatype data_type;
+   char *history_type;
+   char *select_line_matching;
+   int select_line_number;
+   char *extraction_regex;
+   int slot;
+   };
+
+/*************************************************************************/
+
 struct CfTcpIp
    {
    char *ipv4_address;
    char *ipv4_netmask;
+   };
+
+/*************************************************************************/
+
+struct CfACL
+   {
+   enum cf_acl_method acl_method;
+   enum cf_acl_type acl_type;
+   enum cf_acl_inherit acl_directory_inherit;
+   struct Rlist *acl_entries;
    };
 
 /*************************************************************************/
@@ -1266,6 +1315,8 @@ struct Attributes
    struct EditDefaults edits;
    struct Packages packages;
    struct Context context;
+   struct Measurement measure;
+   struct CfACL acl;
    char *transformer;
    char *pathtype;
    char *repository;
