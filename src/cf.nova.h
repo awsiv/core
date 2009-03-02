@@ -24,6 +24,7 @@ double NovaShiftAverage(double new,double old);
 
 /* monitoring.c */
 
+void NovaInitMeasurements(void);
 void Nova_HistoryUpdate(char *key,struct Averages newvals);
 void Nova_UpdateShiftAverage(struct Averages *shift_value,struct Averages *newvals);
 void Nova_ResetShiftAverage(struct Averages *shift_value);
@@ -35,6 +36,9 @@ void NovaCloseLifeCycle(int age,FILE **fp);
 void NovaIncrementShift(char *day,char *month,char* lifecycle,char *shift);
 int NovaLifeCyclePassesGo(char *d,char *m,char *l,char *s,char *day,char *month,char* lifecycle,char *shift);
 int NovaGetNextDay(int day,char *month,int year);
+int NovaGetSlotHash(char *name);
+struct Item *NovaGetMeasurementStream(struct Attributes a,struct Promise *pp);
+struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp);
 
 /* reporting.c */
 

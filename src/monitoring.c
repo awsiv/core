@@ -15,6 +15,29 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+struct CfMeasurement
+   {
+   char *path;
+   struct Item *output;
+   };
+
+char *MEASUREMENTS[CF_DUNBAR_WORK];
+struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
+
+/*****************************************************************************/
+
+void NovaInitMeasurements()
+
+{ int i;
+
+for (i = 0; i < CF_DUNBAR_WORK; i++)
+   {
+   MEASUREMENTS[i] = NULL;
+   NOVA_DATA[i].path = NULL;
+   NOVA_DATA[i].output = NULL;
+   }
+}
+
 /*****************************************************************************/
 
 void Nova_HistoryUpdate(char *timekey,struct Averages newvals)
@@ -73,14 +96,30 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 void Nova_VerifyMeasurement(struct Attributes a,struct Promise *pp)
 
-{
+{ char *handle = (char *)GetConstraint("handle",pp->conlist,CF_SCALAR);
+  int slot,count = 0;
+  struct Item *stream;
+  FILE *fin;
+  
+if (!handle)
+   {
+   CfOut(cf_error,"","The promised measurement has no handle to register it by.");
+   return;
+   }
 
- if (strcmp(a.measure.stream_type,"file") == 0)
+/* First see if we can accommodate this measurement */
+
+if ((slot = NovaGetSlotHash(handle)) < 0)
    {
+   return;
    }
- else if (strcmp(a.measure.stream_type,"pipe") == 0)
-   {
-   }
+
+/* Now look for the promised values */
+
+stream = NovaGetMeasurementStream(a,pp);
+
+/* need to cache this output so we are not remeasuring */
+
 }
 
 /*****************************************************************************/
@@ -366,4 +405,179 @@ else
    {
    return 1;
    }
+}
+
+/*****************************************************************************/
+
+int NovaGetSlotHash(char *name)
+
+{ int i, slot = 0, count = 0;
+  static int hashtablesize = 29; /* must be prime <= CF_DUNBAR_WORK */
+
+for (i = 0; name[i] != '\0'; i++)
+   {
+   slot = (CF_MACROALPHABET * slot + name[i]) % hashtablesize;
+   }
+    
+for (i = 0; i < CF_DUNBAR_WORK; i++)
+   {
+   if (MEASUREMENTS[i] != NULL)
+      {
+      count++;
+      }
+   }
+
+if (MEASUREMENTS[slot] != NULL)
+   {
+   if (count >= CF_DUNBAR_WORK)
+      {
+      CfOut(cf_error,"","Measurement slots are all in use - it is not helpful to measure too much, you can't usefully follow this many variables");
+      return -1;
+      }
+   else if (strcmp(name,MEASUREMENTS[slot]) != 0)
+      {
+      CfOut(cf_error,"","Measurement slot is already in use");
+      return -1;
+      }
+   }
+
+return slot;
+}
+
+/*****************************************************************************/
+
+struct Item *NovaGetMeasurementStream(struct Attributes a,struct Promise *pp)
+    
+{ int i;
+
+for (i = 0; i < CF_DUNBAR_WORK; i++)
+   {
+   if (NOVA_DATA[i].path == NULL)
+      {
+      break;
+      }
+   
+   if (strcmp (NOVA_DATA[i].path,pp->promiser) == 0)
+      {
+      NOVA_DATA[i].output = NovaReSample(i,a,pp);
+      return NOVA_DATA[i].output;
+      }
+   }
+
+NOVA_DATA[i].path = strdup(pp->promiser);
+NOVA_DATA[i].output = NovaReSample(i,a,pp);
+return NOVA_DATA[i].output;
+}
+
+/*****************************************************************************/
+
+struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp)
+    
+{ struct CfLock thislock;
+  char line[CF_BUFSIZE],eventname[CF_BUFSIZE];
+  char comm[20], *sp;
+  struct timespec start;
+  int print, outsourced,count = 0;
+  mode_t maskval = 0;
+  FILE *fin;
+  int preview = false;
+
+if (!IsExecutable(GetArg0(pp->promiser)))
+   {
+   cfPS(cf_error,CF_FAIL,"",pp,a,"%s promises to be executable but isn't\n",pp->promiser);
+   return NULL;
+   }
+else
+   {
+   CfOut(cf_verbose,""," -> Promiser string contains a valid executable (%s) - ok\n",GetArg0(pp->promiser));
+   }
+
+thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,a,pp);
+
+if (thislock.lock == NULL)
+   {
+   /* If too soon or busy then use cache */
+   return NOVA_DATA[slot].output;
+   }
+else
+   {
+   DeleteItemList(NOVA_DATA[slot].output);
+   NOVA_DATA[slot].output = NULL;
+   
+   CfOut(cf_inform,""," -> Sampling \'%s\' ...(timeout=%d,owner=%d,group=%d)\n",pp->promiser,a.contain.timeout,a.contain.owner,a.contain.group);
+   
+   start = BeginMeasure();
+   
+   CommPrefix(pp->promiser,comm);
+   
+   if (a.contain.timeout != 0)
+      {
+      SetTimeOut(a.contain.timeout);
+      }
+   
+   CfOut(cf_verbose,""," -> (Setting umask to %o)\n",a.contain.umask);
+   maskval = umask(a.contain.umask);
+   
+   if (a.contain.umask == 0)
+      {
+      CfOut(cf_verbose,""," !! Programming %s running with umask 0! Use umask= to set\n",pp->promiser);
+      }
+   
+   if (strcmp(a.measure.stream_type,"file") == 0)
+      {
+      fin = fopen(pp->promiser,"r");
+      }
+   else
+      {
+      if (a.contain.useshell)
+         {
+         fin = cf_popen_shsetuid(pp->promiser,"r",a.contain.owner,a.contain.group,a.contain.chdir,a.contain.chroot);
+         }
+      else
+         {
+         fin = cf_popensetuid(pp->promiser,"r",a.contain.owner,a.contain.group,a.contain.chdir,a.contain.chroot);
+         }
+      }
+   
+   if (fin == NULL)
+      {
+      cfPS(cf_error,CF_FAIL,"cf_popen",pp,a,"Couldn't open pipe to command %s\n",pp->promiser);
+      YieldCurrentLock(thislock);
+      }
+   
+   while (!feof(fin))
+      {
+      if (ferror(fin))  /* abortable */
+         {
+         cfPS(cf_error,CF_TIMEX,"ferror",pp,a,"Sample stream %s\n",pp->promiser);
+         YieldCurrentLock(thislock);
+         return NOVA_DATA[slot].output;
+         }
+         
+      ReadLine(line,CF_BUFSIZE-1,fin);
+      AppendItemList(&(NOVA_DATA[slot].output),line);
+      CfOut(cf_inform,"","Sampling => %s",line);
+      
+      if (ferror(fin))  /* abortable */
+         {
+         cfPS(cf_error,CF_TIMEX,"ferror",pp,a,"Sample stream %s\n",pp->promiser);
+         YieldCurrentLock(thislock);
+         return NOVA_DATA[slot].output;
+         }      
+      }
+   
+   cf_pclose_def(fin,a,pp);
+   }
+
+if (a.contain.timeout != 0)
+   {
+   alarm(0);
+   signal(SIGALRM,SIG_DFL);
+   }
+
+cfPS(cf_inform,CF_CHG,"",pp,a," -> Completed execution of %s\n",pp->promiser);
+umask(maskval);
+YieldCurrentLock(thislock);
+snprintf(eventname,CF_BUFSIZE-1,"Sample(%s)",pp->promiser);
+EndMeasure(eventname,start);
 }
