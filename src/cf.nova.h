@@ -21,6 +21,8 @@ void Nova_DependencyGraph(struct Topic *map);
 void Nova_PlotTopicDependencies(int topic,double **adj,char **names,int dim);
 void Nova_MapClassAssociations(FILE *fp, struct Promise *pp,char *promise_id);
 double NovaShiftAverage(double new,double old);
+double NovaExtractValueFromStream(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp);
+void NovaLogSymbolicValue(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp);
 
 /* monitoring.c */
 
@@ -29,7 +31,7 @@ void Nova_HistoryUpdate(char *key,struct Averages newvals);
 void Nova_UpdateShiftAverage(struct Averages *shift_value,struct Averages *newvals);
 void Nova_ResetShiftAverage(struct Averages *shift_value);
 double ShiftAverage(double new,double old);
-void Nova_VerifyMeasurement(struct Attributes a,struct Promise *pp);
+void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp);
 void Nova_LongHaul(char *day,char *month,char* lifecycle,char *shift);
 void NovaOpenNewLifeCycle(int age,FILE **fp);
 void NovaCloseLifeCycle(int age,FILE **fp);

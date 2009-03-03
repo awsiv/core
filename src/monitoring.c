@@ -94,7 +94,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 /*****************************************************************************/
 
-void Nova_VerifyMeasurement(struct Attributes a,struct Promise *pp)
+void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
 
 { char *handle = (char *)GetConstraint("handle",pp->conlist,CF_SCALAR);
   int slot,count = 0;
@@ -107,19 +107,29 @@ if (!handle)
    return;
    }
 
-/* First see if we can accommodate this measurement */
-
-if ((slot = NovaGetSlotHash(handle)) < 0)
+switch (a.measure.data_type)
    {
-   return;
+   case cf_counter:
+   case cf_int:
+   case cf_real:
+
+       /* First see if we can accommodate this measurement */
+
+       if ((slot = NovaGetSlotHash(handle)) < 0)
+          {
+          return;
+          }
+       
+       stream = NovaGetMeasurementStream(a,pp);       
+       this[ob_spare+slot] = NovaExtractValueFromStream(handle,stream,a,pp);
+       break;
+
+   default:
+
+       stream = NovaGetMeasurementStream(a,pp);
+       NovaLogSymbolicValue(handle,stream,a,pp);
+       break;
    }
-
-/* Now look for the promised values */
-
-stream = NovaGetMeasurementStream(a,pp);
-
-/* need to cache this output so we are not remeasuring */
-
 }
 
 /*****************************************************************************/
@@ -472,14 +482,14 @@ return NOVA_DATA[i].output;
 /*****************************************************************************/
 
 struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp)
-    
+
 { struct CfLock thislock;
   char line[CF_BUFSIZE],eventname[CF_BUFSIZE];
   char comm[20], *sp;
   struct timespec start;
   int print, outsourced,count = 0;
   mode_t maskval = 0;
-  FILE *fin;
+  FILE *fin = NULL;
   int preview = false;
 
 if (!IsExecutable(GetArg0(pp->promiser)))
@@ -522,12 +532,14 @@ else
       {
       CfOut(cf_verbose,""," !! Programming %s running with umask 0! Use umask= to set\n",pp->promiser);
       }
+
+   /* Stream types */
    
    if (strcmp(a.measure.stream_type,"file") == 0)
       {
       fin = fopen(pp->promiser,"r");
       }
-   else
+   else if (strcmp(a.measure.stream_type,"pipe") == 0)
       {
       if (a.contain.useshell)
          {
@@ -538,11 +550,14 @@ else
          fin = cf_popensetuid(pp->promiser,"r",a.contain.owner,a.contain.group,a.contain.chdir,a.contain.chroot);
          }
       }
+
+   /* generic file stream */
    
    if (fin == NULL)
       {
       cfPS(cf_error,CF_FAIL,"cf_popen",pp,a,"Couldn't open pipe to command %s\n",pp->promiser);
       YieldCurrentLock(thislock);
+      return NOVA_DATA[slot].output;
       }
    
    while (!feof(fin))
@@ -580,4 +595,155 @@ umask(maskval);
 YieldCurrentLock(thislock);
 snprintf(eventname,CF_BUFSIZE-1,"Sample(%s)",pp->promiser);
 EndMeasure(eventname,start);
+
+return NOVA_DATA[slot].output;
+}
+
+/*****************************************************************************/
+
+double NovaExtractValueFromStream(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp)
+
+{ char *line,value[CF_MAXVARSIZE];
+  int count = 1, found = false,match_count = 0;
+  double real_val = 0;
+  struct Item *ip,*match = NULL;
+ 
+for (ip = stream; ip != NULL; ip = ip-> next)
+   {
+   if (count == a.measure.select_line_number)
+      {
+      found = true;
+      match = ip;
+      
+      if (a.measure.data_type == cf_counter)
+         {
+         match_count++;
+         }
+      }
+
+   if (FullTextMatch(a.measure.select_line_matching,ip->name))
+      {
+      found = true;
+      match = ip;
+      
+      if (a.measure.data_type == cf_counter)
+         {
+         match_count++;
+         }
+      }
+
+   count++;
+   }
+
+if (!found)
+   {
+   cfPS(cf_inform,CF_FAIL,"",pp,a,"Could not locate the line for promise \"%s\"",handle);
+   return 0.0;
+   }
+
+switch (a.measure.data_type)
+   {
+   case cf_counter:
+       
+       real_val = (double)match_count;
+       break;
+
+   case cf_int:
+       
+       if (match_count > 1)
+          {
+          CfOut(cf_inform,""," !! Warning: %d lines matched the line_selection \"%s\"- matching to last",match_count,a.measure.select_line_matching);
+          }
+       
+       strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
+       real_val = Str2Double(value);
+       break;
+       
+   case cf_real:
+
+       if (match_count > 1)
+          {
+          CfOut(cf_inform,""," !! Warning: %d lines matched the line_selection \"%s\"- matching to last",match_count,a.measure.select_line_matching);
+          }
+
+       strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
+       real_val = Str2Double(value);
+       break;
+   }
+
+if (real_val == CF_NODOUBLE)
+   {
+   cfPS(cf_inform,CF_FAIL,"",pp,a," !! Unable to extract a value from the matched line \"%\"",match->name);
+   PromiseRef(cf_inform,pp);
+   real_val == 0.0;
+   }
+
+return real_val;
+}
+
+/*****************************************************************************/
+
+void NovaLogSymbolicValue(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp)
+
+{ char *line,value[CF_MAXVARSIZE],sdate[CF_MAXVARSIZE],filename[CF_BUFSIZE];
+  int count = 1, found = false,match_count = 0;
+  struct Item *ip,*match = NULL;
+  time_t now = time(NULL);
+  FILE *fout;
+ 
+for (ip = stream; ip != NULL; ip = ip-> next)
+   {
+   if (count == a.measure.select_line_number)
+      {
+      found = true;
+      match = ip;
+      
+      if (a.measure.data_type == cf_counter)
+         {
+         match_count++;
+         }
+      }
+
+   if (FullTextMatch(a.measure.select_line_matching,ip->name))
+      {
+      found = true;
+      match = ip;
+      
+      if (a.measure.data_type == cf_counter)
+         {
+         match_count++;
+         }
+      }
+
+   count++;
+   }
+
+if (!found)
+   {
+   cfPS(cf_inform,CF_FAIL,"",pp,a,"Could not locate the line");
+   return;
+   }
+
+strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
+
+if (match_count > 1)
+   {
+   CfOut(cf_inform,""," !! Warning: %d lines matched the line_selection \"%s\"- matching to last",match_count,a.measure.select_line_matching);
+   }
+
+snprintf(filename,CF_BUFSIZE,"%s/state/%s_measure.log",CFWORKDIR,handle);
+
+if ((fout = fopen(filename,"a")) == NULL)
+   {
+   cfPS(cf_error,CF_FAIL,"",pp,a,"Unable to open the output log \"%s\"",filename);
+   PromiseRef(cf_error,pp);
+   return;
+   }
+
+strncpy(sdate,ctime(&now),CF_MAXVARSIZE-1);
+Chop(sdate);
+
+fprintf(fout,"%s,%s\n",sdate,value);
+
+fclose(fout);
 }
