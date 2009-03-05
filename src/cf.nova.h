@@ -6,6 +6,11 @@
 
 #define NOVA 1
 
+/* html.c */
+
+void NovaHtmlHeader(FILE *fp,char *title,char *css,char *webdriver,char *header);
+void NovaHtmlFooter(FILE *fp,char *footer);
+
 /* knowledge.c */
 
 void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version);
