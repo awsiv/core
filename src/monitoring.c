@@ -98,7 +98,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
 
 { char *handle = (char *)GetConstraint("handle",pp->conlist,CF_SCALAR);
-  static char *slots[CF_OBSERVABLES-ob_spare][CF_MAXVARSIZE];
+  static char slots[CF_OBSERVABLES-ob_spare][2][CF_MAXVARSIZE];
   char filename[CF_BUFSIZE];
   struct Item *stream;
   int i,slot,count = 0;
@@ -138,7 +138,7 @@ switch (a.measure.data_type)
           }
        else
           {
-          *slots[slot][1] = '\0';
+          snprintf(slots[slot][1],CF_MAXVARSIZE-1,"User defined measure");
           }
        
        stream = NovaGetMeasurementStream(a,pp);
@@ -173,22 +173,23 @@ if ((fout = fopen(filename,"w")) == NULL)
 
 for (i = 0; i < ob_spare; i++)
    {
-   fprintf(fout,"%s,%s",OBS[i][0],OBS[i][1]);
+   fprintf(fout,"%d,%s,%s\n",i,OBS[i][0],OBS[i][1]);
    }
 
 for (i = 0; i < CF_OBSERVABLES-ob_spare; i++)
    {
-   if (slots[i][0])
+   if (strlen(slots[i][0]) > 0)
       {
-      fprintf(fout,"%s,%s\n",slots[i][0],slots[i][1]);
+      fprintf(fout,"%d,%s,%s\n",i+ob_spare,slots[i][0],slots[i][1]);
       }
    else
       {
-      fprintf(fout,"unused,unusued\n");
+      fprintf(fout,"%d,unused,unusued\n",i+ob_spare);
       }
    }
 
 fclose(fout);
+chmod(filename,0600);
 }
 
 /*****************************************************************************/
