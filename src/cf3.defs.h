@@ -433,6 +433,7 @@ enum cfeditorder
 #define CF_MODERANGE   "[0-7augorwxst,+-]+"
 #define CF_CLASSRANGE  "[a-zA-Z0-9_!&|.()]+"
 #define CF_IDRANGE     "[a-zA-Z0-9_$.]+"
+#define CF_USERRANGE   "[a-zA-Z0-9_$.-]+"
 #define CF_FNCALLRANGE "[a-zA-Z0-9_().$@]+"
 #define CF_NAKEDLRANGE "@[(][a-zA-Z0-9]+[)]"
 #define CF_ANYSTRING   ".*"
@@ -811,6 +812,7 @@ enum representations
    cfk_db,
    cfk_literal,
    cfk_image,
+   cfk_portal,
    cfk_none
    };
 
@@ -955,7 +957,7 @@ struct Topic
    {
    char *topic_type;
    char *topic_name;
-   char *comment;
+   char *topic_comment;
    struct Occurrence *occurrences;
    struct TopicAssociation *associations;
    struct Topic *next;
@@ -1418,7 +1420,7 @@ struct Attributes
 enum cfdbtype
    {
    cfd_mysql,
-   cfd_postgress,
+   cfd_postgres,
    cfd_notype
    };
 

@@ -24,10 +24,13 @@ void Nova_BodyNode(FILE *fp,char *body,int calltype);
 char *Nova_PromiseID(struct Promise *pp);
 void Nova_DependencyGraph(struct Topic *map);
 void Nova_PlotTopicDependencies(int topic,double **adj,char **names,int dim);
-void Nova_MapClassAssociations(FILE *fp, struct Promise *pp,char *promise_id);
+void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promise_id);
 double NovaShiftAverage(double new,double old);
 double NovaExtractValueFromStream(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp);
 void NovaLogSymbolicValue(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp);
+void Nova_ShowBundleDependence(FILE *fp);
+void Nova_RegisterBundleDepedence(char *name,struct Promise *pp);
+char *NovaEscape(char *s);
 
 /* monitoring.c */
 
@@ -46,7 +49,13 @@ int NovaGetNextDay(int day,char *month,int year);
 int NovaGetSlotHash(char *name);
 struct Item *NovaGetMeasurementStream(struct Attributes a,struct Promise *pp);
 struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp);
+void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Promise *pp);
+void Nova_SetMeasurementPromises(struct Item **classlist);
 
+/* promises.c */
+
+void Nova_Version(void);
+    
 /* reporting.c */
 
 void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
@@ -61,8 +70,16 @@ void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
 
 #define NOVA_USES "relies on promise from"
 #define NOVA_GIVES "makes promise to"
+
+#define NOVA_ACTIVATED "is activated by context"
+#define NOVA_ACTIVATES "activates promise"
+
 #define NOVA_IMPACTS "has direct influence on"
 #define NOVA_ISIMPACTED "is directly influenced by"
+#define NOVA_BUNDLE_DATA "uses variables defined in"
+#define NOVA_BUNDLE_DATA_INV_B "promises variables used by bundle"
+#define NOVA_BUNDLE_DATA_INV_P "promises variables used by promise"
+
 #define NOVA_HISTORYDB "history.db"
 
 struct month_days

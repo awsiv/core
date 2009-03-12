@@ -78,7 +78,8 @@ struct Attributes GetClassContextAttributes(struct Promise *pp);
 struct Attributes GetTopicsAttributes(struct Promise *pp);
 struct Attributes GetOccurrenceAttributes(struct Promise *pp);
 struct Attributes GetPackageAttributes(struct Promise *pp);
-
+struct Attributes GetMeasurementAttributes(struct Promise *pp);
+    
 struct Packages GetPackageConstraints(struct Promise *pp);
 struct ExecContain GetExecContainConstraints(struct Promise *pp);
 struct Recursion GetRecursionConstraints(struct Promise *pp);
@@ -112,6 +113,8 @@ struct CfTcpIp GetTCPIPAttributes(struct Promise *pp);
 struct Report GetReportConstraints(struct Promise *pp);
 struct LineSelect GetInsertSelectConstraints(struct Promise *pp);
 struct LineSelect GetDeleteSelectConstraints(struct Promise *pp);
+struct Measurement GetMeasurementConstraint(struct Promise *pp);
+struct CfACL GetAclConstraints(struct Promise *pp);
 
 void ShowAttributes(struct Attributes a);
 
@@ -246,6 +249,9 @@ int Day2Number(char *datestring);
 enum action_policy Str2ActionPolicy(char *s);
 enum version_cmp Str2PackageSelect(char *s);
 enum package_actions Str2PackageAction(char *s);
+enum cf_acl_method Str2AclMethod(char *string);
+enum cf_acl_type Str2AclType(char *string);
+enum cf_acl_inherit Str2AclInherit(char *string);
 
 /* crypto.c */
 
@@ -260,7 +266,6 @@ void SavePublicKey (char *ipaddress, RSA *key);
 void DeletePublicKey (char *ipaddress);
 void GenerateRandomSessionKey (void);
 char *KeyPrint(RSA *key);
-    
 
 /* dtypes.c */
 
@@ -270,10 +275,13 @@ int IsProcessType(char *s);
 
 /* enterprise_stubs.c */
 
+void EnterpriseVersion(void);
+void InitMeasurements(void);
 void BundleNode(FILE *fp,char *bundle);
 void BodyNode(FILE *fp,char *bundle,int call);
 void TypeNode(FILE *fp,char *type);
 void PromiseNode(FILE *fp,struct Promise *pp,int type);
+void RegisterBundleDependence(char *absscope,struct Promise *pp);
 void MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version);
 void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version);
 void ShowTopicRepresentation(FILE *fp);
@@ -281,6 +289,12 @@ void Nova_ShowTopicRepresentation(FILE *fp);
 void NotePromiseConditionals(struct Promise *pp);
 void DependencyGraph(struct Topic *map);
 void HistoryUpdate(struct Averages newvals);
+void SummarizeCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
+void SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
+void SummarizeFileChanges(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
+void VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp);
+void LongHaul(void);
+void VerifyACL(char *file,struct Attributes a, struct Promise *pp);
 
 /* env_context.c */
 
@@ -368,8 +382,8 @@ int CheckID(char *id);
 void ExpandPromise(enum cfagenttype ag,char *scopeid,struct Promise *pp,void *fnptr);
 void ExpandPromiseAndDo(enum cfagenttype ag,char *scope,struct Promise *p,struct Rlist *scalarvars,struct Rlist *listvars,void (*fnptr)());
 struct Rval ExpandDanglers(char *scope,struct Rval rval,struct Promise *pp);
-void ScanRval(char *scope,struct Rlist **los,struct Rlist **lol,void *string,char type);
-void ScanScalar(char *scope,struct Rlist **los,struct Rlist **lol,char *string,int level);
+void ScanRval(char *scope,struct Rlist **los,struct Rlist **lol,void *string,char type,struct Promise *pp);
+void ScanScalar(char *scope,struct Rlist **los,struct Rlist **lol,char *string,int level,struct Promise *pp);
 
 int IsExpandable(char *str);
 int ExpandScalar(char *string,char buffer[CF_EXPANDSIZE]);
@@ -386,6 +400,7 @@ int Epimenides(char *var,char *rval,char rtype,int level);
 
 /* exec_tool.c */
 
+int IsExecutable(char *file);
 int ShellCommandReturnsZero(char *comm,int useshell);
 int GetExecOutput(char *command,char *buffer,int useshell);
 void ActAsDaemon(int preserve);
@@ -602,6 +617,7 @@ struct Bundle *GetBundle(char *name,char *agent);
 struct SubType *GetSubTypeForBundle(char *type,struct Bundle *bp);
 void CheckControlPromises(char *scope,char *agent,struct Constraint *controllist);
 void CheckVariablePromises(char *scope,struct Promise *varlist);
+void CheckCommonClassPromises(struct Promise *classlist);
 void CheckBundleParameters(char *scope,struct Rlist *args);
 void PromiseBanner(struct Promise *pp);
 void BannerBundle(struct Bundle *bp,struct Rlist *args);
@@ -697,7 +713,7 @@ void IncrementItemListCounter (struct Item *ptr, char *string);
 void SetItemListCounter (struct Item *ptr, char *string,int value);
 struct Item *SortItemListNames(struct Item *list);
 struct Item *SortItemListCounters(struct Item *list);
-
+char *ItemList2CSV(struct Item *list);
 
 /* iteration.c */
 
@@ -714,6 +730,7 @@ void EndMeasurePromise(struct timespec start,struct Promise *pp);
 void NotePerformance(char *eventname,time_t t,double value);
 void NoteClassUsage(void);
 void LastSaw(char *hostname,enum roles role);
+int OpenDB(char *filename,DB **dbp);
 int ReadDB(DB *dbp,char *name,void *ptr,int size);
 int WriteDB(DB *dbp,char *name,void *ptr,int size);
 void DeleteDB(DB *dbp,char *name);
@@ -754,7 +771,7 @@ void AddAllClasses(struct Rlist *list,int persist,enum statepolicy policy);
 void ExtractOperationLock(char *op);
 void PromiseLog(char *s);
 void FatalError(char *s);
-void AuditStatusMessage(char status);
+void AuditStatusMessage(FILE*fp,char status);
 
 /* manual.c */
 
@@ -808,7 +825,7 @@ void MountAll(void);
 void AddTopic(struct Topic **list,char *name,char *type);
 void AddCommentedTopic(struct Topic **list,char *name,char *comment,char *type);
 void AddTopicAssociation(struct TopicAssociation **list,char *fwd_name,char *bwd_name,struct Rlist *li,int verify);
-void AddOccurrence(struct Occurrence **list,char *topic_name,char *reference,struct Rlist *represents,enum representations rtype);
+void AddOccurrence(struct Occurrence **list,char *reference,struct Rlist *represents,enum representations rtype);
 int TopicExists(struct Topic *list,char *topic_name,char *topic_type);
 char *GetTopicType(struct Topic *list,char *topic_name);
 struct Topic *GetCanonizedTopic(struct Topic *list,char *topic_name);
@@ -1105,7 +1122,6 @@ void VerifyExecPromise(struct Promise *pp);
 int ExecSanityChecks(struct Attributes a,struct Promise *pp);
 void VerifyExec(struct Attributes a, struct Promise *pp);
 void PreviewProtocolLine(char *s,char *comm);
-int IsExecutable(char *file);
 
 /* verify_files.c */
 
@@ -1119,6 +1135,11 @@ int FileSanityChecks(char *path,struct Attributes a,struct Promise *pp);
 
 void VerifyInterface(struct Attributes a,struct Promise *pp);
 void VerifyInterfacesPromise(struct Promise *pp);
+
+/* verify_measurements.c */
+
+void VerifyMeasurementPromise(double *this,struct Promise *pp);
+int CheckMeasureSanity(struct Attributes a,struct Promise *pp);
 
 /* verify_methods.c */
 

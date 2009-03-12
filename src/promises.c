@@ -17,3 +17,8 @@
 
 /*****************************************************************************/
 
+void Nova_Version()
+
+{
+printf("Contains Nova extensions at version %s\n",VERSION);
+}

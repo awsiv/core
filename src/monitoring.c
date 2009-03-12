@@ -98,9 +98,12 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
 
 { char *handle = (char *)GetConstraint("handle",pp->conlist,CF_SCALAR);
-  int slot,count = 0;
+  static char *slots[CF_OBSERVABLES-ob_spare][CF_MAXVARSIZE];
+  char filename[CF_BUFSIZE];
   struct Item *stream;
-  FILE *fin;
+  int i,slot,count = 0;
+  double new_value;
+  FILE *fin,*fout;
   
 if (!handle)
    {
@@ -121,9 +124,21 @@ switch (a.measure.data_type)
        /* First see if we can accommodate this measurement */
 
        CfOut(cf_verbose,""," -> Promise \"%s\" is numerical in nature",handle);
+       
        if ((slot = NovaGetSlotHash(handle)) < 0)
           {
           return;
+          }
+
+       snprintf(slots[slot][0],CF_MAXVARSIZE-1,"%s",handle);
+
+       if (pp->ref)
+          {
+          snprintf(slots[slot][1],CF_MAXVARSIZE-1,"%s",pp->ref);
+          }
+       else
+          {
+          *slots[slot][1] = '\0';
           }
        
        stream = NovaGetMeasurementStream(a,pp);
@@ -132,9 +147,10 @@ switch (a.measure.data_type)
           {
           this[ob_spare+slot] = NovaExtractValueFromStream(handle,stream,a,pp);
           }
-       else
+       else /* static */
           {
-          // Store in a single valued without time.key
+          new_value = NovaExtractValueFromStream(handle,stream,a,pp);
+          NovaNamedEvent(handle,new_value,a,pp);
           }
        break;
 
@@ -145,6 +161,34 @@ switch (a.measure.data_type)
        NovaLogSymbolicValue(handle,stream,a,pp);
        break;
    }
+
+/* Dump the slot overview */
+
+snprintf(filename,CF_BUFSIZE-1,"%s/state/ts_key",CFWORKDIR);
+
+if ((fout = fopen(filename,"w")) == NULL)
+   {
+   return;
+   }
+
+for (i = 0; i < ob_spare; i++)
+   {
+   fprintf(fout,"%s,%s",OBS[i][0],OBS[i][1]);
+   }
+
+for (i = 0; i < CF_OBSERVABLES-ob_spare; i++)
+   {
+   if (slots[i][0])
+      {
+      fprintf(fout,"%s,%s\n",slots[i][0],slots[i][1]);
+      }
+   else
+      {
+      fprintf(fout,"unused,unusued\n");
+      }
+   }
+
+fclose(fout);
 }
 
 /*****************************************************************************/
@@ -257,12 +301,136 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 }
 
 /*****************************************************************************/
+
+void Nova_SetMeasurementPromises(struct Item **classlist)
+
+{ DB *dbp;
+  DBC *dbcp;
+  char dbname[CF_MAXVARSIZE],eventname[CF_MAXVARSIZE],assignment[CF_BUFSIZE];
+  struct Event entry;
+  DBT key,stored;
+  struct Scope *ptr;
+  struct Rlist *rp;
+  int i;
+  
+snprintf(dbname,CF_BUFSIZE-1,"%s/state/nova_measures.db",CFWORKDIR);
+          
+if (!OpenDB(dbname,&dbp))
+   {
+   return;
+   }
+
+if ((errno = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
+   {
+   dbp->err(dbp,errno,"DB->cursor");
+   return;
+   }
+
+/* Get the database values, if any */
+ 
+while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
+   {
+   strcpy(eventname,(char *)key.data);
+   
+   if (stored.data != NULL)
+      {
+      memcpy(&entry,stored.data,sizeof(entry));
+      }
+
+   snprintf(assignment,CF_BUFSIZE-1,"value_%s=%s",eventname,entry.Q.q);
+   AppendItem(classlist,assignment,NULL);
+   snprintf(assignment,CF_BUFSIZE-1,"average_%s=%s",eventname,entry.Q.expect);
+   AppendItem(classlist,assignment,NULL);
+   snprintf(assignment,CF_BUFSIZE-1,"var_%s=%s",eventname,entry.Q.var);
+   AppendItem(classlist,assignment,NULL);
+   }
+
+/* Get the directly discovered environment data from sys context 
+
+for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
+   {
+   if (strcmp(ptr->scope,"mon") != 0)
+      {
+      continue;
+      }
+   
+   if (ptr->hashtable)
+      {
+      for (i = 0; i < CF_HASHTABLESIZE; i++)
+         {
+         if (ptr->hashtable[i] != NULL)
+            {
+            switch (ptr->hashtable[i]->rtype)
+               {
+               case CF_SCALAR:
+
+                   snprintf(assignment,CF_BUFSIZE-1,"value_%s=%s",ptr->hashtable[i]->lval,ptr->hashtable[i]->rval);
+                   AppendItem(classlist,assignment,NULL);
+                   break;
+
+               case CF_LIST:
+
+                   snprintf(assignment,CF_BUFSIZE-1,"value_%s=",ptr->hashtable[i]->lval);
+                   
+                   for (rp = ptr->hashtable[i]->rval; rp != NULL; rp=rp->next)
+                      {
+                      strcat(assignment,rp->item);
+                      if (rp->next)
+                         {
+                         strcat(assignment,",");
+                         }
+                      }
+                   
+                   AppendItem(classlist,assignment,NULL);
+                   break;
+               default:
+                   break;
+               }
+            }
+         }      
+      }
+   }
+*/
+
+dbp->close(dbp,0);
+}
+
+/*****************************************************************************/
 /* Clock handling                                                            */
 /*****************************************************************************/
 
+/* MB: We want to solve the geometric series problem to simulate a perfect
+   average over a grain size for long history aggregation at zero cost
+
+  w = (1-w)^n for all n
+
+This has no actual solution but we can approximate numerically to w = 0.01,
+see this test to show that the distribution is flat
+
+main ()
+
+{ int i,j;
+  double w = 0.01,wp;
+
+for (i = 1; i < 20; i++)
+   {
+   printf("(");
+   wp = w;
+    
+   for (j = 1; j < i; j++)
+      {
+      printf("%f,",wp);
+      wp *= (1- w);
+      }
+   printf(")\n");
+   } 
+}
+  
+*/
+
 double NovaShiftAverage(double new,double old)
 
-{ double av, forgetrate = 0.2;
+{ double av, forgetrate = 0.01;
   double wnew,wold;
 
 wnew = forgetrate;
@@ -721,9 +889,9 @@ return real_val;
 
 void NovaLogSymbolicValue(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp)
 
-{ char value[CF_MAXVARSIZE],sdate[CF_MAXVARSIZE],filename[CF_BUFSIZE];
+{ char value[CF_BUFSIZE],sdate[CF_MAXVARSIZE],filename[CF_BUFSIZE],*v;
   int count = 1, found = false,match_count = 0;
-  struct Item *ip,*match = NULL;
+  struct Item *ip,*match = NULL,*matches = NULL;
   time_t now = time(NULL);
   FILE *fout;
   struct CfLock thislock;
@@ -739,7 +907,13 @@ for (ip = stream; ip != NULL; ip = ip-> next)
       {
       CfOut(cf_verbose,"","Found line %d by number...\n",count);
       found = true;
+      match_count = 1;
       match = ip;
+      
+      CfOut(cf_verbose,""," -> Now looking for a matching extractor \"%s\"",a.measure.extraction_regex);
+      CfOut(cf_inform,"","Extracted value \"%s\" for promise \"%s\"",value,handle);
+      strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
+      AppendItem(&matches,value,NULL);
       break;
       }
    
@@ -748,11 +922,12 @@ for (ip = stream; ip != NULL; ip = ip-> next)
       CfOut(cf_verbose,"","Found line %d by pattern...\n",count);
       found = true;
       match = ip;
-      
-      if (a.measure.data_type == cf_counter)
-         {
-         match_count++;
-         }
+      match_count++;
+
+      CfOut(cf_verbose,""," -> Now looking for a matching extractor \"%s\"",a.measure.extraction_regex);
+      CfOut(cf_inform,"","Extracted value \"%s\" for promise \"%s\"",value,handle);
+      strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
+      AppendItem(&matches,value,NULL);
       }
 
    count++;
@@ -764,31 +939,94 @@ if (!found)
    return;
    }
 
-CfOut(cf_verbose,""," -> Now looking for a matching extractor \"%s\"",a.measure.extraction_regex);
-
-strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
-
-CfOut(cf_inform,"","Extracted value \"%s\" for promise \"%s\"",value,handle);
-
 if (match_count > 1)
    {
    CfOut(cf_inform,""," !! Warning: %d lines matched the line_selection \"%s\"- matching to last",match_count,a.measure.select_line_matching);
    }
 
-snprintf(filename,CF_BUFSIZE,"%s/state/%s_measure.log",CFWORKDIR,handle);
-
-if ((fout = fopen(filename,"a")) == NULL)
+switch (a.measure.data_type)    
    {
-   cfPS(cf_error,CF_FAIL,"",pp,a,"Unable to open the output log \"%s\"",filename);
-   PromiseRef(cf_error,pp);
+   case cf_counter:
+       snprintf(value,CF_MAXVARSIZE,"%d",match_count);
+       break;
+       
+   case cf_slist:       
+       v = ItemList2CSV(matches);
+       snprintf(value,CF_BUFSIZE,"%s",v);
+       free(v);
+       break;
+   }
+
+if (strcmp(a.measure.history_type,"log") == 0)  // weekly,scalar,static,log
+   {
+   snprintf(filename,CF_BUFSIZE,"%s/state/%s_measure.log",CFWORKDIR,handle);
+
+   if ((fout = fopen(filename,"a")) == NULL)
+      {
+      cfPS(cf_error,CF_FAIL,"",pp,a,"Unable to open the output log \"%s\"",filename);
+      PromiseRef(cf_error,pp);
+      return;
+      }
+
+   strncpy(sdate,ctime(&now),CF_MAXVARSIZE-1);
+   Chop(sdate);
+   
+   fprintf(fout,"%s,%s\n",sdate,value);
+   CfOut(cf_verbose,"","Logging: %s,%s to %s\n",sdate,value,filename);
+   
+   fclose(fout);
+   }
+else // scalar or static
+   {
+   DB *dbp;
+   snprintf(filename,CF_BUFSIZE-1,"%s/state/nova_static.db",CFWORKDIR);
+   
+   if (!OpenDB(filename,&dbp))
+      {
+      return;
+      }
+   
+   WriteDB(dbp,handle,value,strlen(value)+1);
+   
+   dbp->close(dbp,0);
+   }
+}
+
+/*****************************************************************************/
+
+void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Promise *pp)
+
+{ char dbname[CF_BUFSIZE];
+  struct Event ev_new,ev_old;
+  time_t lastseen, now = time(NULL);
+  double delta2;
+  DB *dbp;
+   
+snprintf(dbname,CF_BUFSIZE-1,"%s/state/nova_measures.db",CFWORKDIR);
+          
+if (!OpenDB(dbname,&dbp))
+   {
    return;
    }
 
-strncpy(sdate,ctime(&now),CF_MAXVARSIZE-1);
-Chop(sdate);
+if (ReadDB(dbp,eventname,&ev_old,sizeof(ev_old)))
+   {
+   lastseen = now - ev_old.t;
+   ev_new.t = now;
+   ev_new.Q.q = value;
+   ev_new.Q.expect = GAverage(value,ev_old.Q.expect,FORGETRATE);
+   delta2 = (value - ev_new.Q.expect)*(value - ev_new.Q.expect);
+   ev_new.Q.var = GAverage(delta2,ev_old.Q.var,FORGETRATE);
+   }
+else
+   {
+   ev_new.t = now;
+   ev_new.Q.q = value;
+   ev_new.Q.expect = value;
+   ev_new.Q.var = 0.0;
+   }
 
-fprintf(fout,"%s,%s\n",sdate,value);
-CfOut(cf_verbose,"","Logging: %s,%s to %s\n",sdate,value,filename);
+WriteDB(dbp,eventname,&ev_new,sizeof(ev_new));
 
-fclose(fout);
+dbp->close(dbp,0);
 }

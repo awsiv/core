@@ -15,6 +15,9 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+struct Item *NOVA_BUNDLEDEPENDENCE = NULL;
+
+
 /*****************************************************************************/
 
 void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version)
@@ -37,10 +40,17 @@ fprintf(fp,"  \"%s\";\n",pp->classes);
 /* First the bundle container */
 
 fprintf(fp,"Promisers::\n\n");
-fprintf(fp,"  \"%s\"\n",pp->promiser);
+fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
 fprintf(fp,"      association => a(\"occurs in bundle\",\"Bundles::%s\",\"bundle contains promiser\");\n",pp->bundle);
-fprintf(fp,"  \"%s\"\n",pp->promiser);
-fprintf(fp,"      association => a(\"makes promises of type\",\"Promise_types::%s\",\"promises have been made by promiser\");\n",pp->agentsubtype);
+fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
+fprintf(fp,"      association => a(\"makes promise of type\",\"Promise_types::%s\",\"promises have been made by promisers\");\n",pp->agentsubtype);
+fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
+fprintf(fp,"      association => a(\"makes promises\",\"%s\",\"is a promise made by\");\n",promise_id);
+
+
+
+fprintf(fp,"Promise_types::\n");
+fprintf(fp,"  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype,"is employed in bundle",pp->bundle,"employs promises of type");
 
 /* Promisees as topics too */
 
@@ -72,18 +82,21 @@ switch (pp->petype)
 
 /* Now the constraint list */
 
-fprintf(fp,"Promise_Occurrences::\n\n");
+fprintf(fp,"Promises::\n\n");
 
-fprintf(fp,"\"%s\";\n",promise_id);
+fprintf(fp,"\"%s\"\n",promise_id);
 
-for (cp = pp->conlist; cp != NULL; cp=cp->next)
+if (pp->ref)
    {
-   if (strcmp(cp->lval,"comment") == 0)
-      {
-      fprintf(fp,"\"%s\"\n",promise_id);
-      fprintf(fp,"      association => a(\"has comment\",\"comment::%s\",\"explains\");\n",cp->rval);
-      }
+   fprintf(fp,"   comment => \"%s\";\n",pp->ref);
    }
+else
+   {
+   fprintf(fp,"   comment => \"(Uncommented promise of type <i>%s</i> made by: %.25s..)\";\n",pp->agentsubtype,pp->promiser);
+   }
+
+fprintf(fp,"\"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",promise_id,NOVA_ACTIVATED,pp->classes,NOVA_ACTIVATES);
+fprintf(fp,"\"%s\" association => a(\"is a promise of type\",\"%s\",\"has current exemplars\");\n",promise_id,pp->agentsubtype);
 
 for (rp = depends_on; rp != NULL; rp=rp->next)
    {
@@ -99,11 +112,21 @@ fprintf(fp,"\n occurrences:\n");
 fprintf(fp,"%s::\n",promise_id);
 
 PromiseNode(fp,pp,1);
+
+if (pp->ref)
+   {
+   fprintf(fp,"   comment => \"%s\",\n",pp->ref);
+   }
+else
+   {
+   fprintf(fp,"   comment => \"A promise of type %s made by: %s\",\n",pp->agentsubtype,pp->promiser);
+   }
+
 fprintf(fp,"   represents => { \"%s\", \"%s\" };\n\n",pp->classes,pp->agentsubtype);
 
 fprintf(fp,"%s::\n",CanonifyName(pp->classes));
 PromiseNode(fp,pp,1);
-fprintf(fp,"   represents => { \"promise\", \"%s\", \"%s\" };\n\n",pp->promiser,pp->agentsubtype);
+fprintf(fp,"   represents => { \"promise\", \"%s\", \"%s\" };\n\n",NovaEscape(pp->promiser),pp->agentsubtype);
 
 fprintf(fp,"%s::\n",pp->bundle);
 fprintf(fp,"\"promises.cf.html#bundle_%s\"\n",pp->bundle);
@@ -113,7 +136,7 @@ for (cp = pp->conlist; cp != NULL; cp=cp->next)
    {
    fprintf(fp,"%s::\n",cp->lval);
    PromiseNode(fp,pp,1);
-   fprintf(fp,"   represents => { \"Use in promise\", \"%s\" };\n\n",promise_id);
+   fprintf(fp,"   represents => { \"Used in promise\", \"%s\" };\n\n",promise_id);
 
    if (strcmp(cp->lval,"comment") == 0)
       {
@@ -130,7 +153,7 @@ for (cp = pp->conlist; cp != NULL; cp=cp->next)
 /*
   Now we should analyze the classes to look for dependents and dependencies */
 
-Nova_MapClassAssociations(fp,pp,promise_id);
+Nova_MapClassParameterAssociations(fp,pp,promise_id);
 }
 
 /*****************************************************************************/
@@ -142,20 +165,31 @@ fprintf(fp,"\ntopics:\n");
 
 fprintf(fp,"References::\n");
 fprintf(fp,"  \"Bundle Reference\";\n");
-fprintf(fp,"  \"Use in promise\";\n");
+fprintf(fp,"  \"Used in promise\";\n");
+fprintf(fp,"  \"has current exemplars\";\n");
+fprintf(fp,"  \"is a promise of type\";\n");
+fprintf(fp,"  \"occurs in bundle\";\n");
+fprintf(fp,"  \"bundle contains promiser\";\n");
+fprintf(fp,"  \"makes promise of type\";\n");
+fprintf(fp,"  \"promises have been made by promisers\";\n");
+fprintf(fp,"  \"makes promises\";\n");
+fprintf(fp,"  \"is a promise made by\";\n");
 
-fprintf(fp,"Categories::\n");
+fprintf(fp,"Policy::\n");
 fprintf(fp,"  \"Bundles\";\n");
 fprintf(fp,"  \"Bodies\";\n");
 fprintf(fp,"  \"Contexts\";\n");
 fprintf(fp,"  \"Promisees\";\n");
 fprintf(fp,"  \"Promisers\";\n");
-fprintf(fp,"  \"Promises\";\n");
-fprintf(fp,"  \"Promise Occurrences\";\n");
+fprintf(fp,"  \"Promises\" comment => \"Occurrences of promise topics or suggestions\";\n");
 fprintf(fp,"  \"Promise types\";\n");
 fprintf(fp,"  \"Body-lval types\";\n");
 fprintf(fp,"\"Comments\"\n");
 fprintf(fp,"      association => a(\"see instances of\",\"comment\",\"is one of a number of\");\n");
+
+fprintf(fp,"Bundles::\n");
+fprintf(fp,"\"sys\" comment => \"Cfengine's internal bundle of system specific values\";\n");
+Nova_ShowBundleDependence(fp);
 }
 
 /*****************************************************************************/
@@ -226,7 +260,7 @@ char *Nova_PromiseID(struct Promise *pp)
 { char static id[CF_MAXVARSIZE];
   char vbuff[CF_MAXVARSIZE];
   char *handle = GetConstraint("handle",pp->conlist,CF_SCALAR);
-  
+
 if (handle)
    {
    snprintf(id,CF_MAXVARSIZE,"%s",CanonifyName(handle));
@@ -246,7 +280,7 @@ return id;
 
 /*****************************************************************************/
 
-void Nova_MapClassAssociations(FILE *fp, struct Promise *pp,char *promise_id)
+void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promise_id)
 
 { struct Rlist *impacted = NULL, *potential, *rp;
   struct Bundle *bp;
@@ -315,13 +349,28 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
          for (rp = impacted; rp != NULL; rp=rp->next)
             {
             char *varclass = GetConstraint("ifvarclass",pp->conlist,CF_SCALAR);
+
             if (strstr(pp2->classes,rp->item) || (varclass && strstr(varclass,rp->item)))
                {
+               Debug("Found %s in %s+%s\n",rp->item,pp2->classes,varclass);
                // found a connection
-               fprintf(fp,"Promise_Occurrences::");
+               fprintf(fp,"topics:\n");
+               fprintf(fp,"Promises::");
                fprintf(fp,"  \"%s\"\n",promise_id);
                fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,rp->item,NOVA_ISIMPACTED);
+               fprintf(fp,"Promisers::");
+               fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
+               fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,rp->item,NOVA_ISIMPACTED);
                found = true;
+               }
+
+            /* Omit class "any" */
+            
+            if (strstr(pp2->classes,rp->item) && strcmp(rp->item,"any") != 0 && strcmp(pp->classes,"any") != 0)
+               {                           
+               fprintf(fp,"Contexts::");
+               fprintf(fp,"  \"%s\"\n",NovaEscape(pp->classes));
+               fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_ACTIVATED,rp->item,NOVA_ACTIVATES);
                }
             }
          }
@@ -335,4 +384,78 @@ if (!found)
    }
 
 DeleteRlist(impacted);
+}
+
+/*****************************************************************************/
+
+void Nova_RegisterBundleDepedence(char *name,struct Promise *pp)
+
+{ char assertion[CF_BUFSIZE];
+  char *handle;
+
+if (pp == NULL || pp->bundle == NULL)
+   {
+   return;
+   }
+
+if (strcmp(name,pp->bundle) == 0)
+   {
+   return;
+   }
+
+if (strcmp(name,"const") == 0)
+   {
+   return;
+   }
+  
+handle = (char *)GetConstraint("handle",pp->conlist,CF_SCALAR);
+
+/* Store everything first in a list because we don't have access to the
+   output channel here -- summarize at the end. */
+
+snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\")\n",name,NOVA_BUNDLE_DATA_INV_B,pp->bundle,NOVA_BUNDLE_DATA);
+
+PrependItemList(&NOVA_BUNDLEDEPENDENCE,assertion);
+
+snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\")\n",name,NOVA_BUNDLE_DATA_INV_P,handle,NOVA_BUNDLE_DATA);
+
+PrependItemList(&NOVA_BUNDLEDEPENDENCE,assertion);
+}
+
+/*****************************************************************************/
+
+void Nova_ShowBundleDependence(FILE *fp)
+
+{ struct Item *ip;
+
+for (ip = NOVA_BUNDLEDEPENDENCE; ip != NULL; ip =ip->next)
+   {
+   fprintf(fp,"%s",ip->name);
+   }
+}
+
+/*****************************************************************************/
+
+char *NovaEscape(char *s)
+    
+{ char *sp1,*sp2;
+  static char buffer[CF_EXPANDSIZE];
+  int count = 0;
+
+memset(buffer,0,CF_EXPANDSIZE);
+  
+for (sp1 = s,sp2 = buffer; *sp1 != '\0'; sp1++)
+   {
+   if (*sp1 == '\"')
+      {
+      *sp2++ = '\\';
+      *sp2++ = *sp1;
+      }
+   else
+      {
+      *sp2++ = *sp1;
+      }
+   }
+
+return buffer;
 }
