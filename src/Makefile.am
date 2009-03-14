@@ -14,6 +14,7 @@ libcfnova_la_LDFLAGS = -version-info 1:0:0 -no-undefined
 libcfnova_la_SOURCES =						\
 	cfnova.c						\
 	acl.c							\
+	sql.c							\
 	monitoring.c						\
 	promises.c						\
 	reporting.c						\

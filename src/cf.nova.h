@@ -6,6 +6,10 @@
 
 #define NOVA 1
 
+/* acl.c */
+
+void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
+
 /* html.c */
 
 void NovaHtmlHeader(FILE *fp,char *title,char *css,char *webdriver,char *header);
@@ -34,6 +38,7 @@ char *NovaEscape(char *s);
 
 /* monitoring.c */
 
+void Nova_GetClassName(int i,char *name);
 void NovaInitMeasurements(void);
 void Nova_HistoryUpdate(char *key,struct Averages newvals);
 void Nova_UpdateShiftAverage(struct Averages *shift_value,struct Averages *newvals);
@@ -62,9 +67,10 @@ void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *styleshee
 void Nova_SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 
-/* acl.c */
+/* sql.c */
 
-void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
+int Nova_VerifyDatabasePromise(CfdbConn *cfdb,enum cfdbtype dbtype,char *database,struct Attributes a,struct Promise *pp);
+int Nova_VerifyTablePromise(CfdbConn *cfdb,enum cfdbtype dbtype,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp);
 
 /***************************************************************************/
 

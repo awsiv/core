@@ -24,6 +24,7 @@ struct CfMeasurement
 int MONITOR_RESTARTED = true;
 char *MEASUREMENTS[CF_DUNBAR_WORK];
 struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
+static char SLOTS[CF_OBSERVABLES-ob_spare][2][CF_MAXVARSIZE];
 
 /*****************************************************************************/
 
@@ -36,6 +37,21 @@ for (i = 0; i < CF_DUNBAR_WORK; i++)
    MEASUREMENTS[i] = NULL;
    NOVA_DATA[i].path = NULL;
    NOVA_DATA[i].output = NULL;
+   }
+}
+
+/*****************************************************************************/
+
+void Nova_GetClassName(int i,char *name)
+
+{
+if (i < ob_spare)
+   {
+   strncpy(OBS[i][0],name,CF_MAXVARSIZE-1);
+   }
+else
+   {
+   strncpy(SLOTS[i-ob_spare][0],name,CF_MAXVARSIZE-1);
    }
 }
 
@@ -98,7 +114,6 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
 
 { char *handle = (char *)GetConstraint("handle",pp->conlist,CF_SCALAR);
-  static char slots[CF_OBSERVABLES-ob_spare][2][CF_MAXVARSIZE];
   char filename[CF_BUFSIZE];
   struct Item *stream;
   int i,slot,count = 0;
@@ -130,15 +145,15 @@ switch (a.measure.data_type)
           return;
           }
 
-       snprintf(slots[slot][0],CF_MAXVARSIZE-1,"%s",handle);
+       snprintf(SLOTS[slot][0],CF_MAXVARSIZE-1,"%s",handle);
 
        if (pp->ref)
           {
-          snprintf(slots[slot][1],CF_MAXVARSIZE-1,"%s",pp->ref);
+          snprintf(SLOTS[slot][1],CF_MAXVARSIZE-1,"%s",pp->ref);
           }
        else
           {
-          snprintf(slots[slot][1],CF_MAXVARSIZE-1,"User defined measure");
+          snprintf(SLOTS[slot][1],CF_MAXVARSIZE-1,"User defined measure");
           }
        
        stream = NovaGetMeasurementStream(a,pp);
@@ -178,13 +193,13 @@ for (i = 0; i < ob_spare; i++)
 
 for (i = 0; i < CF_OBSERVABLES-ob_spare; i++)
    {
-   if (strlen(slots[i][0]) > 0)
+   if (strlen(SLOTS[i][0]) > 0)
       {
-      fprintf(fout,"%d,%s,%s\n",i+ob_spare,slots[i][0],slots[i][1]);
+      fprintf(fout,"%d,%s,%s\n",i+ob_spare,SLOTS[i][0],SLOTS[i][1]);
       }
    else
       {
-      fprintf(fout,"%d,unused,unusued\n",i+ob_spare);
+      fprintf(fout,"%d,spare,unused\n",i+ob_spare);
       }
    }
 
