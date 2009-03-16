@@ -69,16 +69,23 @@ void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *styleshe
 
 /* sql.c */
 
-int Nova_VerifyDatabasePromise(CfdbConn *cfdb,enum cfdbtype dbtype,char *database,struct Attributes a,struct Promise *pp);
-int Nova_VerifyTablePromise(CfdbConn *cfdb,enum cfdbtype dbtype,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp);
+int Nova_ValidateSQLTableName(char *table_path,char *table);
+int Nova_VerifyTablePromise(CfdbConn *cfdb,char *table_path,struct Rlist *columns,struct Attributes a,struct Promise *pp);
+int Nova_ValidateSQLTableName(char *table_path,char *table);
+void Nova_QueryTable(char *s,char *table);
+int Nova_NewSQLColumns(char *table,struct Rlist *columns,char ***name_table,char ***type_table,int **size_table,int **done);
+void Nova_DeleteSQLColumns(char **name_table,char **type_table,int *size_table,int *done,int len);
+void Nova_CreateDBQuery(enum cfdbtype type,char *query);
+int Nova_CreateTable(CfdbConn *cfdb,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp);
+int NovaCheckSQLDataType(char *type,char *ref_type,struct Promise *pp);
 
 /***************************************************************************/
 
 #define NOVA_USES "relies on promise from"
 #define NOVA_GIVES "makes promise to"
 
-#define NOVA_ACTIVATED "is activated by context"
-#define NOVA_ACTIVATES "activates promise"
+#define NOVA_ACTIVATED "is activated by class context"
+#define NOVA_ACTIVATES "activates promises"
 
 #define NOVA_IMPACTS "has direct influence on"
 #define NOVA_ISIMPACTED "is directly influenced by"

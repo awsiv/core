@@ -16,179 +16,201 @@
 #include "cf.nova.h"
 
 /*****************************************************************************/
+/* Level                                                                     */
+/*****************************************************************************/
 
-int Nova_VerifyDatabasePromise(CfdbConn *cfdb,enum cfdbtype dbtype,char *database,struct Attributes a,struct Promise *pp)
+void Nova_CreateDBQuery(enum cfdbtype type,char *query)
 
-{ char query[CF_MAXVARSIZE],name[CF_MAXVARSIZE];
-  int found = false;
- 
-CfOut(cf_verbose,""," -> Verifying promised database");
-
-switch (dbtype)
+{ 
+switch (type)
    {
    case cfd_mysql:
        snprintf(query,CF_MAXVARSIZE-1,"show databases");
        break;
        
    case cfd_postgres:
-       snprintf(query,CF_MAXVARSIZE-1,"SELECT pg_database.datname as \"Database\", WHERE pg_database.datdba = pg_user.usesysid");       
+       /* This gibberish is the simplest thing I can find in postgres */
+
+       snprintf(query,CF_MAXVARSIZE-1,"SELECT pg_database.datname as \"Database\",\npg_user.usename as \"Owner\"FROM pg_database, pg_user\nWHERE pg_database.datdba = pg_user.usesysid\n");       
        break;
-   }
 
-CfNewQueryDB(cfdb,query);
-       
-if (cfdb->maxcolumns < 1)
-   {
-   CfOut(cf_error,""," !! The schema did not promise the expected number of fields - got %d expected >= %d\n",cfdb->maxcolumns,1);
-   return false;
-   }
-
-while(CfFetchRow(cfdb))
-   {
-   strncpy(name,CfFetchColumn(cfdb,0),CF_MAXVARSIZE-1);
-
-   if (strcmp(name,database) == 0)
-      {
-      found = true;
-      }
-   }
-
-if (found)
-   {
-   CfOut(cf_inform,""," -> Database \"%s\" exists on this connection",database);
-   return true;
-   }
-else
-   {
-   CfOut(cf_inform,""," !! Database \"%s\" does not seem to exist on this connection",database);
-   }
-
-/* Get a list of the columns in the table */
-
-if (a.transaction.action != cfa_warn && !DONTDO)
-   {
-   CfOut(cf_verbose,""," -> Attempting to create the database %s",database);
-   snprintf(query,CF_MAXVARSIZE-1,"create database %s",database); 
-   CfVoidQueryDB(cfdb,query);
-   return cfdb->result;
-   }
-else
-   {
-   CfOut(cf_error,""," !! Need to create the database %s but only a warning was promised\n",database);
-   return false;
+   default:
+       snprintf(query,CF_MAXVARSIZE,"NULL QUERY");
+       break;
    }
 }
 
 /*****************************************************************************/
 
-int Nova_VerifyTablePromise(CfdbConn *cfdb,enum cfdbtype dbtype,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp)
+int Nova_ValidateSQLTableName(char *table_path,char *table)
 
-{ char name[CF_MAXVARSIZE],type[CF_MAXVARSIZE],query[CF_MAXVARSIZE];
-  char **name_table,**type_table;
-  int i,count,size,no_of_cols,*size_table,*done;
-  struct Rlist *rp, *cols;
+{ char *sp;
+  int dot = false,back = false,fwd = false;
 
-CfOut(cf_verbose,""," -> Verifying promised table structure");
-  
-/* Get a list of the columns in the table */
+/* Valid separators . / or \ only */ 
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT column_name,data_type,character_maximum_length FROM information_schema.columns WHERE table_name ='%s'",table); 
-CfVoidQueryDB(cfdb,query);
-
-if (cfdb->maxcolumns != 3)
+if (sp = strchr(table_path,'/'))
    {
-   CfOut(cf_error,"","The schema did not promise the expected number of fields - got %d expected %d\n",cfdb->maxcolumns,3);
+   fwd = true;
+   *sp = '.';
+   }
+
+if (sp = strchr(table_path,'\\'))
+   {
+   back = true;
+   *sp = '.';
+   }
+
+if (sp = strchr(table_path,'.'))
+   {
+   dot = true;
+   sp++;
+   }
+
+/* Should contain a single separator */
+
+if (dot + back + fwd > true)
+   {
+   CfOut(cf_error,"","");
    return false;
    }
 
-/* Assume that the Rlist has been validated and consists of triplets */
+strncpy(table,sp,CF_MAXVARSIZE-1);
+return true;
+}
 
-count = 0;
-no_of_cols = RlistLen(columns);
+/*****************************************************************************/
 
-name_table = (char **)malloc(sizeof(char *)*no_of_cols);
-type_table = (char **)malloc(sizeof(char *)*no_of_cols);
-size_table = (int *)malloc(sizeof(int)*no_of_cols);
-done = (int *)malloc(sizeof(int)*no_of_cols);
+void Nova_QueryTable(char *s,char *table)
+
+{
+snprintf(s,CF_MAXVARSIZE-1,"SELECT column_name,data_type,character_maximum_length FROM information_schema.columns WHERE table_name ='%s'",table); 
+}
+
+/*****************************************************************************/
+
+int Nova_NewSQLColumns(char *table,struct Rlist *columns,char ***name_table,char ***type_table,int **size_table,int **done)
+
+{ int i,no_of_cols = RlistLen(columns);
+  struct Rlist *cols,*rp;
+ 
+*name_table = (char **)malloc(sizeof(char *)*(no_of_cols+1));
+*type_table = (char **)malloc(sizeof(char *)*(no_of_cols+1));
+*size_table = (int *)malloc(sizeof(int)*(no_of_cols+1));
+*done = (int *)malloc(sizeof(int)*(no_of_cols+1));
 
 for (i = 0,rp = columns; rp != NULL; rp = rp->next,i++)
    {
-   cols = SplitStringAsRList((char *)rp->item,',');
-   name_table[i] = (char *)rp->item;
-   type_table[i] = rp->next->item;
-   size_table[i] = Str2Int(rp->next->next->item);
-   done[i] = false;
-   DeleteRlist(cols);
-   }
+   (*done)[i] = 0;
    
-while(CfFetchRow(cfdb))
-   {
-   strncpy(name,CfFetchColumn(cfdb,0),CF_MAXVARSIZE-1);
-   strncpy(type,ToLowerStr(CfFetchColumn(cfdb,1)),CF_MAXVARSIZE-1);
-   size = Str2Int(CfFetchColumn(cfdb,2));
+   cols = SplitStringAsRList((char *)rp->item,',');
 
-   if (size == CF_NOINT)
+   if (!cols)
       {
-      cfPS(cf_error,CF_NOP,"",pp,a,"Integer size of datatype could not be determined - invalid promise.");
-      delete(name_table);
-      delete(type_table);
-      delete(size_table);
-      delete(done);
+      CfOut(cf_error,"","No columns promised for table \"%s\" - makes no sense",table);
       return false;
       }
-
-   for (i = 0; i < no_of_cols; i++)
+   
+   if (cols->item == NULL)
       {
-      if (done[i])
-         {
-         continue;
-         }
-      
-      if (strcmp(name,name_table[i]) == 0)
-         {
-         if (strcmp(type,type_table[i]) != 0)
-            {
-            cfPS(cf_error,CF_FAIL,"",pp,a,"Column %s in database %s has a non-matching type (%s != %s)",name,pp->promiser,type_table[i],type);           
-            }
-
-         if (size != size_table[i])
-            {
-            cfPS(cf_error,CF_FAIL,"",pp,a,"Column %s in database %s has a non-matching array size (%d != %d)",name,pp->promiser,size,size_table[i]);
-            }
-         
-         count++;
-         done[i] = true;
-         }
+      CfOut(cf_error,"","Malformed column promise for table \"%s\" - found not even a name",table);
+      free(*name_table);
+      free(*type_table);
+      free(*size_table);
+      free(*done);
+      return false;   
       }
 
-   if (a.transaction.action == cfa_warn)
+   (*name_table)[i] = strdup((char *)cols->item);
+   
+   if (cols->next == NULL)
       {
-      cfPS(cf_error,CF_FAIL,"",pp,a,"Column %s in database %s does not exist",name,pp->promiser);
+      CfOut(cf_error,"","Malformed column \"%s\" promised for table \"%s\" - missing a type",name_table[i],table);
+      free(*name_table);
+      free(*type_table);
+      free(*size_table);
+      free(*done);
+      return false;   
+      }
+   
+   (*type_table)[i] = strdup(cols->next->item);
+
+   if (columns->next->next == NULL)
+      {
+      (*size_table)[i] = 0;
       }
    else
       {
-      // Repair
-      if (!DONTDO)
-         {
-         }
-      }   
+      (*size_table)[i] = Str2Int(cols->next->next->item);
+      }
+   
+   DeleteRlist(cols);
    }
 
-if (count != no_of_cols)
+return true;
+}
+
+
+/*****************************************************************************/
+
+void Nova_DeleteSQLColumns(char **name_table,char **type_table,int *size_table,int *done,int len)
+
+{ int i;
+
+if (name_table == NULL || type_table == NULL || size_table == NULL)
    {
-   for (i = 0; i < no_of_cols; i++)
+   return;
+   }
+ 
+for (i = 0; i < len; i++)
+   {
+   if (name_table[i] != NULL)
       {
-      if (!DONTDO)
+      free(name_table[i]);
+      }
+   
+   if (type_table[i] != NULL)
+      {
+      free(type_table[i]);
+      }
+   }
+  
+free(name_table);
+free(type_table);
+free(size_table);
+free(done);
+}
+
+/*****************************************************************************/
+
+int NovaCheckSQLDataType(char *type,char *ref_type,struct Promise *pp)
+
+{ static char *aliases[3][2] =
+     {
+     "varchar","character@varying",
+     "varchar","character varying",
+     NULL,NULL
+     };
+
+ int i;
+
+for (i = 0; aliases[i][0] != NULL; i++)
+   {
+   if (strcmp(ref_type,aliases[i][0]) == 0 || strcmp(ref_type,aliases[i][1]) == 0 || strcmp(type,aliases[i][0]) == 0 || strcmp(type,aliases[i][1]) == 0)
+      {
+      if ((strcmp(type,ref_type) != 0) && (strcmp(aliases[i][0],ref_type) != 0))
          {
-         // Add column
+         CfOut(cf_verbose,""," !! Promised column in database %s has a non-matching type (%s != %s)",pp->promiser,ref_type,type);
+         }      
+      }
+   else
+      {
+      if (strcmp(type,ref_type) != 0)
+         {
+         CfOut(cf_verbose,""," !! Promised column in database %s has a non-matching type (%s != %s)",pp->promiser,ref_type,type);
          }
       }
    }
 
-CfDeleteQuery(cfdb);
-delete(name_table);
-delete(type_table);
-delete(size_table);
-delete(done);
 return true;
 }
