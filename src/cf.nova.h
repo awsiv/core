@@ -78,6 +78,7 @@ void Nova_DeleteSQLColumns(char **name_table,char **type_table,int *size_table,i
 void Nova_CreateDBQuery(enum cfdbtype type,char *query);
 int Nova_CreateTable(CfdbConn *cfdb,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp);
 int NovaCheckSQLDataType(char *type,char *ref_type,struct Promise *pp);
+int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 /***************************************************************************/
 

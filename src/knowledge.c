@@ -67,7 +67,7 @@ switch (pp->petype)
    case CF_LIST:
 
        fprintf(fp,"Promisees::\n\n");
-       for (rp = (struct Rlist *)pp->promiser; rp != NULL; rp=rp->next)
+       for (rp = (struct Rlist *)pp->promisee; rp != NULL; rp=rp->next)
           {
           fprintf(fp,"  \"%s\"\n",rp->item);
           fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,pp->promiser,NOVA_GIVES);          

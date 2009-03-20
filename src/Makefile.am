@@ -14,7 +14,9 @@ libcfnova_la_LDFLAGS = -version-info 1:0:0 -no-undefined
 libcfnova_la_SOURCES =						\
 	cfnova.c						\
 	acl.c							\
+	database.c						\
 	sql.c							\
+	registry.c						\
 	monitoring.c						\
 	promises.c						\
 	reporting.c						\
@@ -25,6 +27,7 @@ libcfnova_la_SOURCES =						\
 #
 # Pickup header files here so Automake knows about them
 #
+
 noinst_HEADERS =							\
 	cf.defs.h							\
 	cf.extern.h							\
@@ -40,18 +43,21 @@ include_HEADERS = cf.nova.h
 #
 # Some basic clean ups
 #
+
 MOSTLYCLEANFILES = *~ *.orig *.rej
 
 #
 # Get everything removed down to where rebuilding requires:
 # "make; make install"
 # 
+
 CLEANFILES = cf3lex.c cf3parse.c cf3parse.h
 
 #
 # Get everything removed down to where rebuilding requires:
 # "configure; make; make install"
 #
+
 DISTCLEANFILES = cflex.c cfparse.c cfparse.h
 
 #
@@ -59,4 +65,5 @@ DISTCLEANFILES = cflex.c cfparse.c cfparse.h
 # "aclocal; autoconf; autoheader; automake --add-missing"
 # "configure; make; make install"
 #
+
 MAINTAINERCLEANFILES = Makefile.in conf.h.in stamp-h.in
