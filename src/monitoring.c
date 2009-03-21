@@ -42,16 +42,63 @@ for (i = 0; i < CF_DUNBAR_WORK; i++)
 
 /*****************************************************************************/
 
+void Nova_LookupClassName(int n,char *name)
+
+{ FILE *fin;
+  char filename[CF_BUFSIZE];
+  int i;
+
+if (SLOTS[0][0][0] != 0)
+   {
+   Nova_GetClassName(n,name);
+   return;
+   }
+
+snprintf(filename,CF_BUFSIZE-1,"%s/state/ts_key",CFWORKDIR);
+
+if ((fin = fopen(filename,"r")) == NULL)
+   {
+   Nova_GetClassName(n,name);
+   return;
+   }
+
+for (i = 0; i < CF_OBSERVABLES; i++)
+   {
+   if (i < ob_spare)
+      {
+      fgets(filename,CF_BUFSIZE-1,fin);
+      }
+   else
+      {
+      fscanf(fin,"%*d,%[^,],%*[^\n]",SLOTS[i-ob_spare][0]);
+      }
+   }
+
+fclose(fin);
+Nova_GetClassName(n,name);
+return;
+}
+
+
+/*****************************************************************************/
+
 void Nova_GetClassName(int i,char *name)
 
 {
 if (i < ob_spare)
    {
-   strncpy(OBS[i][0],name,CF_MAXVARSIZE-1);
+   strncpy(name,OBS[i][0],CF_MAXVARSIZE-1);
    }
 else
    {
-   strncpy(SLOTS[i-ob_spare][0],name,CF_MAXVARSIZE-1);
+   if (strlen(SLOTS[i-ob_spare][0]) > 0)
+      {
+      strncpy(name,SLOTS[i-ob_spare][0],CF_MAXVARSIZE-1);
+      }
+   else
+      {
+      strncpy(name,OBS[i][0],CF_MAXVARSIZE-1);
+      }
    }
 }
 
@@ -412,16 +459,146 @@ dbp->close(dbp,0);
 }
 
 /*****************************************************************************/
+
+void Nova_LoadSlowlyVaryingObservations()
+
+{ DB *dbp;
+  DBC *dbcp;
+  DBT key,stored;
+  char name[CF_BUFSIZE];
+
+snprintf(name,CF_BUFSIZE-1,"%s/state/nova_static.db",CFWORKDIR);
+
+if (!OpenDB(name,&dbp))
+   {
+   return;
+   }
+
+/* Acquire a cursor for the database. */
+
+if ((errno = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
+   {
+   dbp->err(dbp, errno, "DB->cursor");
+   return;
+   }
+
+ /* Initialize the key/data return pair. */
+ 
+memset(&key, 0, sizeof(key));
+memset(&stored, 0, sizeof(stored));
+
+while (dbcp->c_get(dbcp, &key, &stored, DB_NEXT) == 0)
+   {
+   char buf[CF_MAXVARSIZE],lval[CF_MAXVARSIZE],rval[CF_BUFSIZE];
+   enum cfdatatype type;
+   struct Rlist *list = NULL;
+   
+   strncpy(buf,(char *)key.data,CF_MAXVARSIZE-1);
+
+   sscanf(buf,"%[^:]:%d",lval,&type);
+   
+   if (stored.data != NULL)
+      {
+      strncpy(rval,stored.data,CF_BUFSIZE-1);
+      }
+
+   switch (type)
+      {
+      case cf_str:
+      case cf_int:
+      case cf_real:
+          NewScalar("sys",lval,rval,type);
+          break;
+
+      case cf_slist:
+          list = SplitStringAsRList(rval,',');
+          NewList("sys",lval,list,cf_slist);
+          DeleteRlist(list);
+          break;
+
+      case cf_counter:
+          NewScalar("sys",lval,rval,cf_str);
+          break;
+      }
+   }
+
+dbp->close(dbp,0);
+}
+
+/*****************************************************************************/
+
+void Nova_DumpSlowlyVaryingObservations()
+
+{ DB *dbp;
+  DBC *dbcp;
+  DBT key,stored;
+  char name[CF_BUFSIZE];
+  FILE *fout;
+  
+snprintf(name,CF_BUFSIZE-1,"%s/state/nova_static.db",CFWORKDIR);
+
+if (!OpenDB(name,&dbp))
+   {
+   return;
+   }
+
+snprintf(name,CF_BUFSIZE-1,"%s/state/static_data",CFWORKDIR);
+
+if ((fout = fopen(name,"w")) == NULL)
+   {
+   CfOut(cf_error,"fopen","Unable to save discovery data in %s\n",name);
+   return;
+   }
+
+/* Acquire a cursor for the database. */
+
+if ((errno = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
+   {
+   dbp->err(dbp, errno, "DB->cursor");
+   return;
+   }
+
+ /* Initialize the key/data return pair. */
+ 
+memset(&key, 0, sizeof(key));
+memset(&stored, 0, sizeof(stored));
+
+while (dbcp->c_get(dbcp, &key, &stored, DB_NEXT) == 0)
+   {
+   char buf[CF_MAXVARSIZE],lval[CF_MAXVARSIZE],rval[CF_BUFSIZE];
+   enum cfdatatype type;
+   struct Rlist *list = NULL;
+   
+   strncpy(buf,(char *)key.data,CF_MAXVARSIZE-1);
+
+   sscanf(lval,"%s:%d",lval,&type);
+   
+   if (stored.data != NULL)
+      {
+      strncpy(rval,stored.data,CF_BUFSIZE-1);
+      }
+
+   fprintf(fout,"%s:%s\n",lval,rval);
+   }
+
+dbp->close(dbp,0);
+fclose(fout);
+}
+
+/*****************************************************************************/
 /* Clock handling                                                            */
 /*****************************************************************************/
 
-/* MB: We want to solve the geometric series problem to simulate a perfect
-   average over a grain size for long history aggregation at zero cost
+/* MB: We want to solve the geometric series problem to simulate an unbiased
+   average over a grain size for long history aggregation at zero cost, i.e.
+   we'd ideally like to have
 
   w = (1-w)^n for all n
 
-This has no actual solution but we can approximate numerically to w = 0.01,
-see this test to show that the distribution is flat
+  The true average is expensive to compute, so forget the brute force approach
+  because this gives a pretty good result. The eqn above has no actual solution
+  but we can approximate numerically to w = 0.01, see this test to show that
+  the distribution is flat:
 
 main ()
 
@@ -779,7 +956,7 @@ else
          return NOVA_DATA[slot].output;
          }
          
-      ReadLine(line,CF_BUFSIZE-1,fin);
+      CfReadLine(line,CF_BUFSIZE-1,fin);
       AppendItemList(&(NOVA_DATA[slot].output),line);
       CfOut(cf_inform,"","Sampling => %s",line);
       
@@ -971,6 +1148,9 @@ switch (a.measure.data_type)
        snprintf(value,CF_BUFSIZE,"%s",v);
        free(v);
        break;
+
+   default:
+       snprintf(value,CF_BUFSIZE,"%s",matches->name);
    }
 
 if (strcmp(a.measure.history_type,"log") == 0)  // weekly,scalar,static,log
@@ -995,14 +1175,18 @@ if (strcmp(a.measure.history_type,"log") == 0)  // weekly,scalar,static,log
 else // scalar or static
    {
    DB *dbp;
+   char id[CF_MAXVARSIZE];
+   
    snprintf(filename,CF_BUFSIZE-1,"%s/state/nova_static.db",CFWORKDIR);
    
    if (!OpenDB(filename,&dbp))
       {
       return;
       }
+
+   snprintf(id,CF_MAXVARSIZE-1,"%s:%d",handle,a.measure.data_type);
    
-   WriteDB(dbp,handle,value,strlen(value)+1);
+   WriteDB(dbp,id,value,strlen(value)+1);
    
    dbp->close(dbp,0);
    }

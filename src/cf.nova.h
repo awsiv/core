@@ -10,6 +10,10 @@
 
 void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
 
+/* database.c */
+
+int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
+
 /* html.c */
 
 void NovaHtmlHeader(FILE *fp,char *title,char *css,char *webdriver,char *header);
@@ -56,11 +60,17 @@ struct Item *NovaGetMeasurementStream(struct Attributes a,struct Promise *pp);
 struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp);
 void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Promise *pp);
 void Nova_SetMeasurementPromises(struct Item **classlist);
+void Nova_LoadSlowlyVaryingObservations(void);
+void Nova_DumpSlowlyVaryingObservations(void);
 
 /* promises.c */
 
 void Nova_Version(void);
-    
+
+/* registry.c */
+
+int Nova_ValidateRegistryPromiser(char *s,struct Attributes a,struct Promise *pp);
+
 /* reporting.c */
 
 void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
@@ -80,7 +90,6 @@ void Nova_DeleteSQLColumns(char **name_table,char **type_table,int *size_table,i
 void Nova_CreateDBQuery(enum cfdbtype type,char *query);
 int Nova_CreateTable(CfdbConn *cfdb,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp);
 int NovaCheckSQLDataType(char *type,char *ref_type,struct Promise *pp);
-int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 /***************************************************************************/
 

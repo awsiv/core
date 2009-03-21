@@ -79,6 +79,7 @@ struct Attributes GetTopicsAttributes(struct Promise *pp);
 struct Attributes GetOccurrenceAttributes(struct Promise *pp);
 struct Attributes GetPackageAttributes(struct Promise *pp);
 struct Attributes GetMeasurementAttributes(struct Promise *pp);
+struct Attributes GetDatabaseAttributes(struct Promise *pp);
     
 struct Packages GetPackageConstraints(struct Promise *pp);
 struct ExecContain GetExecContainConstraints(struct Promise *pp);
@@ -115,6 +116,7 @@ struct LineSelect GetInsertSelectConstraints(struct Promise *pp);
 struct LineSelect GetDeleteSelectConstraints(struct Promise *pp);
 struct Measurement GetMeasurementConstraint(struct Promise *pp);
 struct CfACL GetAclConstraints(struct Promise *pp);
+struct CfDatabase GetDatabaseConstraints(struct Promise *pp);
 
 void ShowAttributes(struct Attributes a);
 
@@ -219,6 +221,7 @@ struct PromiseIdent *PromiseIdExists(char *handle);
 
 /* conversion.c */
 
+enum cfdbtype Str2dbType(char *s);
 char *Rlist2String(struct Rlist *list,char *sep);
 int Signal2Int(char *s);
 enum cfreport String2ReportLevel(char *typestr);
@@ -300,6 +303,8 @@ void VerifyACL(char *file,struct Attributes a, struct Promise *pp);
 int CfVerifyTablePromise(CfdbConn *cfdb,char *name,struct Rlist *columns,struct Attributes a,struct Promise *pp);
 int VerifyDatabasePromise(CfdbConn *cfdb,char *database,struct Attributes a,struct Promise *pp);
 int VerifyTablePromise(CfdbConn *cfdb,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp);
+void ReportSoftware(struct CfPackageManager *list);
+void SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 
 /* env_context.c */
 
@@ -497,7 +502,7 @@ void cf_closedir(CFDIR *dirh);
 int CopyRegularFile(char *source,char *dest,struct stat sstat,struct stat dstat,struct Attributes attr, struct Promise *pp);
 void RegisterAHardLink(int i,char *value,struct Attributes attr, struct Promise *pp);
 void FileAutoDefine(char *destfile);
-int ReadLine(char *buff,int size,FILE *fp);
+int CfReadLine(char *buff,int size,FILE *fp);
 
 /* files_names.c */
 
@@ -1120,6 +1125,13 @@ int IsCf3VarString(char *str);
 int BooleanControl(char *scope,char *name);
 char *ExtractInnerCf3VarString(char *str,char *substr);
 char *ExtractOuterCf3VarString(char *str,char *substr);
+
+/* verify_databases.c */
+
+void VerifyDatabasePromises(struct Promise *pp);
+int CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
+void VerifySQLPromise(struct Attributes a,struct Promise *pp);
+void VerifyRegistryPromise(struct Attributes a,struct Promise *pp);
 
 /* verify_exec.c */
 
