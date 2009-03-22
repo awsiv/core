@@ -79,6 +79,13 @@ void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *styleshe
 void Nova_ReportSoftware(struct CfPackageManager *list);
 void Nova_SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 
+/* server.c */
+
+void  Nova_RegisterLiteralServerData(char *handle,struct Promise *pp);
+char *Nova_ReturnLiteralData(char *handle);
+char *Nova_GetRemoteScalar(char *handle,char *server,int encrypted);
+int Nova_ParseHostname(char *name,char *hostname);
+
 /* sql.c */
 
 int Nova_ValidateSQLTableName(char *table_path,char *table);

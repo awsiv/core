@@ -571,7 +571,7 @@ while (dbcp->c_get(dbcp, &key, &stored, DB_NEXT) == 0)
    
    strncpy(buf,(char *)key.data,CF_MAXVARSIZE-1);
 
-   sscanf(lval,"%s:%d",lval,&type);
+   sscanf(buf,"%s:%d",lval,&type);
    
    if (stored.data != NULL)
       {

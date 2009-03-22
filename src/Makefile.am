@@ -18,6 +18,7 @@ libcfnova_la_SOURCES =						\
 	sql.c							\
 	registry.c						\
 	monitoring.c						\
+	server.c						\
 	promises.c						\
 	reporting.c						\
 	html.c							\
