@@ -24,7 +24,7 @@ void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version)
 
 { struct Constraint *cp;
   char promise_id[CF_BUFSIZE];
-  struct Rlist *rp,*depends_on = GetListConstraint("builds_on",pp->conlist);
+  struct Rlist *rp,*depends_on = GetListConstraint("depends_on",pp->conlist);
   struct DefineClasses c = GetClassDefinitionConstraints(pp);
 
 strcpy(promise_id,Nova_PromiseID(pp));
