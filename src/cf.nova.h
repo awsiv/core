@@ -62,10 +62,13 @@ void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Prom
 void Nova_SetMeasurementPromises(struct Item **classlist);
 void Nova_LoadSlowlyVaryingObservations(void);
 void Nova_DumpSlowlyVaryingObservations(void);
+void Nova_LookupClassName(int n,char *name);
 
 /* promises.c */
 
 void Nova_Version(void);
+void Nova_NotePromiseCompliance(struct Promise *pp,double val);
+time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *t);
 
 /* registry.c */
 
@@ -113,6 +116,7 @@ int NovaCheckSQLDataType(char *type,char *ref_type,struct Promise *pp);
 #define NOVA_BUNDLE_DATA_INV_P "promises variables used by promise"
 
 #define NOVA_HISTORYDB "history.db"
+
 
 struct month_days
    {

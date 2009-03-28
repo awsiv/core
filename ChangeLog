@@ -3,4 +3,19 @@
 1.0.0
 	Reports added to cf-report for compliance, setuid, file_changes etc.
 	Added csv format also
-	Automating topic map integration of policy, for the cmdb
+	
+	Automating topic map integration of policy, with impact analysis
+	using promisee and builds_on promises.
+
+	Literal string lookup in server.
+
+	Database SQL and registry functions added. Verification and sanity
+	checking of SQL database table structure. Create and destroy
+	databases convergently.
+
+	Access control list support for Linux.
+
+	Powerful and lightweight promises for Customizable monitoring and
+	system discovery promises added to cf-monitord.
+	
+	Longterm memory for 3 year trend analysis.

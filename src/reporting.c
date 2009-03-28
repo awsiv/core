@@ -480,7 +480,7 @@ void Nova_ReportSoftware(struct CfPackageManager *list)
   char start[32];
   int i = 0;
 
-  snprintf(name,CF_BUFSIZE,"%s/state/software_packages.csv",CFWORKDIR);
+snprintf(name,CF_BUFSIZE,"%s/state/software_packages.csv",CFWORKDIR);
 
 if ((fout = fopen(name,"w")) == NULL)
    {
