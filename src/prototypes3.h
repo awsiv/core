@@ -293,6 +293,7 @@ void NotePromiseConditionals(struct Promise *pp);
 void DependencyGraph(struct Topic *map);
 void HistoryUpdate(struct Averages newvals);
 void GetClassName(int i,char *name);
+void LookUpClassName(int i,char *name);
 void SummarizeCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void SummarizeFileChanges(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
@@ -305,6 +306,13 @@ int VerifyDatabasePromise(CfdbConn *cfdb,char *database,struct Attributes a,stru
 int VerifyTablePromise(CfdbConn *cfdb,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp);
 void ReportSoftware(struct CfPackageManager *list);
 void SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
+void LoadSlowlyVaryingObservations(void);
+void RegisterLiteralServerData(char *handle,struct Promise *pp);
+char *ReturnLiteralData(char *handle);
+char *GetRemoteScalar(char *handle,char *server,int encrypted);
+char *PromiseID(struct Promise *pp);
+void NotePromiseCompliance(struct Promise *pp,double val);
+time_t GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *lastseen);
 
 /* env_context.c */
 
@@ -378,8 +386,9 @@ struct Rval FnCallRegLine(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallSplitString(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallHostInNetgroup(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallClassify(struct FnCall *fp,struct Rlist *finalargs);
+struct Rval FnCallRemoteScalar(struct FnCall *fp,struct Rlist *finalargs);
 
-void *ReadFile(char *filename,int maxsize);
+void *CfReadFile(char *filename,int maxsize);
 char *StripPatterns(char *file_buffer,char *pattern);
 void CloseStringHole(char *s,int start,int end);
 int BuildLineArray(char *array_lval,char *file_buffer,char *split,int maxent,enum cfdatatype type);
@@ -792,7 +801,7 @@ void TexinfoManual(char *mandir);
 int FullTextMatch (char *regptr,char *cmpptr);
 int FullTextCaseMatch (char *regexp,char *teststring);
 char *ExtractFirstReference(char *regexp,char *teststring);
-
+void CfRegFree(struct CfRegEx rex);
 int BlockTextMatch (char *regexp,char *teststring,int *s,int *e);
 int BlockTextCaseMatch(char *regexp,char *teststring,int *start,int *end);
 int IsRegexItemIn(struct Item *list,char *regex);
@@ -962,6 +971,7 @@ struct Rlist *KeyInRlist(struct Rlist *list,char *key);
 int RlistLen(struct Rlist *start);
 void PopStack(struct Rlist **liststart, void **item,size_t size);
 void PushStack(struct Rlist **liststart,void *item);
+int IsInListOfRegex(struct Rlist *list,char *str);
 
 void *CopyRvalItem(void *item, char type);
 void DeleteRvalItem(void *rval, char type);

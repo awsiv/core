@@ -51,6 +51,7 @@ strncpy(name,Nova_PromiseID(pp),CF_MAXVARSIZE);
 
 if (ReadDB(dbp,name,&e,sizeof(e)))
    {
+   lastseen = now - e.t;
    newe.t = now;
    newe.Q.q = vtrue;
    newe.Q.expect = GAverage(vtrue,e.Q.expect,0.5);
@@ -59,6 +60,7 @@ if (ReadDB(dbp,name,&e,sizeof(e)))
    }
 else
    {
+   lastseen = 0;
    newe.t = now;
    newe.Q.q = 0.5*vtrue;
    newe.Q.expect = 0.5*vtrue;  /* With no data it's 50/50 what we can say */
@@ -91,7 +93,7 @@ snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,"promise_compliance.db");
 
 if (!OpenDB(name,&dbp))
    {
-   return NULL;
+   return (time_t)0;
    }
 
 strncpy(name,Nova_PromiseID(pp),CF_MAXVARSIZE);
