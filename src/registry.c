@@ -131,83 +131,117 @@ YieldCurrentLock(thislock);
 }
 
 /*****************************************************************************/
-
-int Nova_OpenRegistryKey(char *key,HKEY *key_h,int create)
-    
-{ int ret;
-  char root_key[CF_MAXVARSIZE],sub_key[CF_MAXVARSIZE];
-  char *sp;
-  HKEY ms_key;
-
-  /* First remove the root key */
-  
-strncpy(root_key,key,CF_MAXVARSIZE-1);
-sp = strchr(root_key,'\\');
-strncpy(sub_key,sp+1,CF_MAXVARSIZE-1);
-*sp = '\0';
-
-ms_key = Str2HKey(root_key);
-
-if (create)  // create key if nonexistant
-   {
-   ret = RegCreateKeyEx(ms_key,sub_key,0,NULL,REG_OPTION_NON_VOLATILE,KEY_ALL_ACCESS,NULL,key_h,NULL);
-   }
-else
-   {
-   ret = RegOpenKeyEx(ms_key,sub_key,0,KEY_ALL_ACCESS,key_h);
-   }
-
-switch (ret)
-   {
-   case ERROR_SUCCESS:
-       return true;
-   default:
-       if (create)
-          {
-          CfOut(cf_error,"","Could not create/open registry key '%s' in '%s' - system error %d\n",sub_key,root_key,ret);
-          }
-       return false;
-   }
-}
-
+/* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_PrintAllValues(HKEY key_h)
+void Nova_RecursiveQueryKey(DB *dbp,HKEY *key_h,char *keyname,struct Attributes a,struct Promise *pp, int level) 
 
-{ int i, ret;
-  char value[CF_MAXVARSIZE] = "VALUE\0";
-  char data[CF_BUFSIZE] = "DATA\0";
-  unsigned long value_sz, data_sz;
+/*  key_h,                   // key handle 
+    classname,               // buffer for class name 
+    &cchClassName,           // size of class string 
+    NULL,                    // reserved 
+    &subkeys,                // number of subkeys 
+    &cbMaxSubKey,            // longest subkey size 
+    &cchMaxClass,            // longest class string 
+    &no_vals,                // number of values for this key 
+    &cchMaxValue,            // longest value name 
+    &cbMaxValueData,         // longest value data 
+    &cbSecurityDescriptor,   // security descriptor 
+    &ftLastWriteTime         // last write time 
+*/
 
-i = 0;
-ret = ERROR_SUCCESS;
-value_sz = CF_MAXVARSIZE;
-data_sz = CF_BUFSIZE;
+{ TCHAR    sub_key_name[MAX_KEY_LENGTH];  // buffer for subkey name
+  DWORD    key_len;                        // size of name string 
+  TCHAR    classname[MAX_PATH] = TEXT(""); // buffer for class name 
+  DWORD    cchClassName = MAX_PATH;       // size of class string 
+  DWORD    subkeys=0;                     // number of subkeys 
+  DWORD    cbMaxSubKey;                   // longest subkey size 
+  DWORD    cchMaxClass;                   // longest class string 
+  DWORD    val_num;                       // number of values for key 
+  DWORD    cchMaxValue;                   // longest value name 
+  DWORD    cbMaxValueData;                // longest value data 
+  DWORD    cbSecurityDescriptor;          // size of security descriptor 
+  FILETIME ftLastWriteTime;               // last write time 
+  TCHAR    value[CF_MAXVARSIZE]; 
+  DWORD    valsize = CF_MAXVARSIZE; 
+  TCHAR    data[CF_MAXVARSIZE]; 
+  DWORD    datasize = CF_MAXVARSIZE; 
+  DWORD    type;
+  int i,ret,changes = 0;
+  char root_key[CF_MAXVARSIZE],sub_key[CF_MAXVARSIZE];
+  char *sp;
+  HKEY sub_key_h;
+  char subkeyname[CF_BUFSIZE];
 
-while (ret == ERROR_SUCCESS)
+/* Stat the key/dir */
+
+if (RegQueryInfoKey(*key_h,classname,&cchClassName,NULL,&subkeys,&cbMaxSubKey,&cchMaxClass,&val_num,&cchMaxValue,&cbMaxValueData,&cbSecurityDescriptor,&ftLastWriteTime) != ERROR_SUCCESS)
    {
-   memset(value, '\0', CF_MAXVARSIZE);
-   memset(data, '\0', CF_BUFSIZE);
-   
-   // TODO: Note: Also possible to read the type of the data
-   ret = RegEnumValue(key_h, i, value, &value_sz, NULL, NULL, data, &data_sz);
-   printf("(%s, %s)\n", value, data);
-   
-   value_sz = CF_MAXVARSIZE;
-   data_sz = CF_BUFSIZE;
-   i++;
+   cfPS(cf_error,CF_FAIL,"",pp,a,"Couldn't stat data in registry %s",pp->promiser);
+   return;
    }
 
-  // the reason for stopping should be an exhausted list of values
+/* First check the values in this registry key */
 
-if (ret != ERROR_NO_MORE_ITEMS)
+if (val_num) 
    {
-   printf("Error: Could not enumerate values.\n");
-   printf("Code: %d.\n", ret);
-   return -1;
+   CfOut(cf_verbose,""," -> %d values found in key", val_num);
+   
+   for (i = 0; i < val_num; i++) 
+      {
+      value[0] = '\0'; 
+      data[0] = '\0'; 
+      datasize = CF_MAXVARSIZE;
+      valsize = CF_MAXVARSIZE; 
+      
+      if ((ret = RegEnumValue(*key_h,i,value,&valsize,NULL,&type,data,&datasize)) == ERROR_SUCCESS)
+         {
+         }
+      
+      if (strlen(value) > 0)
+         {
+         Nova_RegistryValueIntegrity(dbp,keyname,value,data,datasize,(int)type,a,pp);   
+         }
+      }
    }
 
-return 0;
+/* Now look for sub-keys/dirs */
+
+if (subkeys)
+   {
+   for (i = 0; i < subkeys; i++) 
+      { 
+      key_len = CF_MAXVARSIZE;
+      
+      if ((ret = RegEnumKeyEx(*key_h,i,sub_key_name,&key_len,NULL,NULL,NULL,NULL)) != ERROR_SUCCESS) 
+         {
+         cfPS(cf_error,CF_FAIL,"reg",pp,a," !! Could not enumerate the registry key in %s - error %d",pp->promiser,ret);
+         continue;
+         }
+      
+      if ((ret = RegOpenKeyEx(*key_h,sub_key_name,0,KEY_READ,&sub_key_h)) != ERROR_SUCCESS)
+         {
+         cfPS(cf_inform,CF_FAIL,"",pp,a," !! Could not open the key called \"%s\" - error %d",sub_key_name,ret);
+         continue;
+         }      
+      
+      snprintf(subkeyname,CF_BUFSIZE-1,"%s\\%s",keyname,sub_key_name);
+      CfOut(cf_verbose,""," -> Descending into registry subkey \"%s\"",subkeyname);
+
+      if (!Nova_RegistryKeyIntegrity(dbp,subkeyname,a,pp))
+         {
+         changes++;
+         }
+
+      Nova_RecursiveQueryKey(dbp,&sub_key_h,subkeyname,a,pp,level+1); 
+      RegCloseKey(sub_key_h);
+      }
+   }
+
+if (changes)
+   {
+   CfOut(cf_verbose,"","Promised verification of the registry recorded %d changes",changes);
+   }
 }
 
 /*****************************************************************************/
@@ -379,118 +413,6 @@ return HKEY_LOCAL_MACHINE;
 
 /*****************************************************************************/
 
-void Nova_RecursiveQueryKey(DB *dbp,HKEY *key_h,char *keyname,struct Attributes a,struct Promise *pp, int level) 
-
-/*  key_h,                   // key handle 
-    classname,               // buffer for class name 
-    &cchClassName,           // size of class string 
-    NULL,                    // reserved 
-    &subkeys,                // number of subkeys 
-    &cbMaxSubKey,            // longest subkey size 
-    &cchMaxClass,            // longest class string 
-    &no_vals,                // number of values for this key 
-    &cchMaxValue,            // longest value name 
-    &cbMaxValueData,         // longest value data 
-    &cbSecurityDescriptor,   // security descriptor 
-    &ftLastWriteTime         // last write time 
-*/
-
-{ TCHAR    sub_key_name[MAX_KEY_LENGTH];  // buffer for subkey name
-  DWORD    key_len;                        // size of name string 
-  TCHAR    classname[MAX_PATH] = TEXT(""); // buffer for class name 
-  DWORD    cchClassName = MAX_PATH;       // size of class string 
-  DWORD    subkeys=0;                     // number of subkeys 
-  DWORD    cbMaxSubKey;                   // longest subkey size 
-  DWORD    cchMaxClass;                   // longest class string 
-  DWORD    val_num;                       // number of values for key 
-  DWORD    cchMaxValue;                   // longest value name 
-  DWORD    cbMaxValueData;                // longest value data 
-  DWORD    cbSecurityDescriptor;          // size of security descriptor 
-  FILETIME ftLastWriteTime;               // last write time 
-  TCHAR    value[CF_MAXVARSIZE]; 
-  DWORD    valsize = CF_MAXVARSIZE; 
-  TCHAR    data[CF_MAXVARSIZE]; 
-  DWORD    datasize = CF_MAXVARSIZE; 
-  DWORD    type;
-  int i,ret,changes = 0;
-  char root_key[CF_MAXVARSIZE],sub_key[CF_MAXVARSIZE];
-  char *sp;
-  HKEY sub_key_h;
-  char subkeyname[CF_BUFSIZE];
-
-/* Stat the key/dir */
-
-if (RegQueryInfoKey(*key_h,classname,&cchClassName,NULL,&subkeys,&cbMaxSubKey,&cchMaxClass,&val_num,&cchMaxValue,&cbMaxValueData,&cbSecurityDescriptor,&ftLastWriteTime) != ERROR_SUCCESS)
-   {
-   cfPS(cf_error,CF_FAIL,"",pp,a,"Couldn't stat data in registry %s",pp->promiser);
-   return;
-   }
-
-/* First check the values in this registry key */
-
-if (val_num) 
-   {
-   CfOut(cf_verbose,""," -> %d values found in key", val_num);
-   
-   for (i = 0; i < val_num; i++) 
-      {
-      value[0] = '\0'; 
-      data[0] = '\0'; 
-      datasize = CF_MAXVARSIZE;
-      valsize = CF_MAXVARSIZE; 
-      
-      if ((ret = RegEnumValue(*key_h,i,value,&valsize,NULL,&type,data,&datasize)) == ERROR_SUCCESS)
-         {
-         }
-      
-      if (strlen(value) > 0)
-         {
-         Nova_RegistryValueIntegrity(dbp,keyname,value,data,datasize,(int)type,a,pp);   
-         }
-      }
-   }
-
-/* Now look for sub-keys/dirs */
-
-if (subkeys)
-   {
-   for (i = 0; i < subkeys; i++) 
-      { 
-      key_len = CF_MAXVARSIZE;
-      
-      if ((ret = RegEnumKeyEx(*key_h,i,sub_key_name,&key_len,NULL,NULL,NULL,NULL)) != ERROR_SUCCESS) 
-         {
-         cfPS(cf_error,CF_FAIL,"reg",pp,a," !! Could not enumerate the registry key in %s - error %d",pp->promiser,ret);
-         continue;
-         }
-      
-      if ((ret = RegOpenKeyEx(*key_h,sub_key_name,0,KEY_READ,&sub_key_h)) != ERROR_SUCCESS)
-         {
-         cfPS(cf_inform,CF_FAIL,"",pp,a," !! Could not open the key called \"%s\" - error %d",sub_key_name,ret);
-         continue;
-         }      
-      
-      snprintf(subkeyname,CF_BUFSIZE-1,"%s\\%s",keyname,sub_key_name);
-      CfOut(cf_verbose,""," -> Descending into registry subkey \"%s\"",subkeyname);
-
-      if (!Nova_RegistryKeyIntegrity(dbp,subkeyname,a,pp))
-         {
-         changes++;
-         }
-
-      Nova_RecursiveQueryKey(dbp,&sub_key_h,subkeyname,a,pp,level+1); 
-      RegCloseKey(sub_key_h);
-      }
-   }
-
-if (changes)
-   {
-   CfOut(cf_verbose,"","Promised verification of the registry recorded %d changes",changes);
-   }
-}
-
-/*****************************************************************************/
-
 void Nova_RecursiveRestoreKey(DB *dbp,char *keyname,struct Attributes a,struct Promise *pp) 
 
 { DBT key,value;
@@ -639,6 +561,46 @@ dbcp->c_close(dbcp);
 
 /*****************************************************************************/
 /* Level                                                                     */
+/*****************************************************************************/
+
+int Nova_OpenRegistryKey(char *key,HKEY *key_h,int create)
+    
+{ int ret;
+  char root_key[CF_MAXVARSIZE],sub_key[CF_MAXVARSIZE];
+  char *sp;
+  HKEY ms_key;
+
+  /* First remove the root key */
+  
+strncpy(root_key,key,CF_MAXVARSIZE-1);
+sp = strchr(root_key,'\\');
+strncpy(sub_key,sp+1,CF_MAXVARSIZE-1);
+*sp = '\0';
+
+ms_key = Str2HKey(root_key);
+
+if (create)  // create key if nonexistant
+   {
+   ret = RegCreateKeyEx(ms_key,sub_key,0,NULL,REG_OPTION_NON_VOLATILE,KEY_ALL_ACCESS,NULL,key_h,NULL);
+   }
+else
+   {
+   ret = RegOpenKeyEx(ms_key,sub_key,0,KEY_ALL_ACCESS,key_h);
+   }
+
+switch (ret)
+   {
+   case ERROR_SUCCESS:
+       return true;
+   default:
+       if (create)
+          {
+          CfOut(cf_error,"","Could not create/open registry key '%s' in '%s' - system error %d\n",sub_key,root_key,ret);
+          }
+       return false;
+   }
+}
+
 /*****************************************************************************/
 
 int Nova_RegistryKeyIntegrity(DB *dbp,char *key,struct Attributes a,struct Promise *pp)
@@ -810,3 +772,4 @@ else
 
 
 
+ 
