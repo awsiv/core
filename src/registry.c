@@ -53,7 +53,7 @@ void Nova_VerifyRegistryPromise(struct Attributes a,struct Promise *pp)
  
 { HKEY key_h;  // a registry key handle
   char name[CF_MAXVARSIZE];
-  int rr,rw;
+  int rr,rw,create = false;
   DB *dbp;
 
 *(pp->donep) = true;
@@ -90,7 +90,12 @@ else if (a.database.operation && strcmp(a.database.operation,"create") == 0)
       }
    }
 
-if (Nova_OpenRegistryKey(pp->promiser,&key_h,false))
+if (a.database.operation && strcmp(a.database.operation,"restore") == 0)
+   {
+   create = true;
+   }
+
+if (Nova_OpenRegistryKey(pp->promiser,&key_h,create))
    {
    CfOut(cf_verbose,""," -> Registry key \"%s\" opened...\n",pp->promiser);   
    
@@ -119,13 +124,14 @@ if (Nova_OpenRegistryKey(pp->promiser,&key_h,false))
       CfOut(cf_verbose,"","Recursive cache of registry from here...\n");
       Nova_RecursiveQueryKey(dbp,&key_h,pp->promiser,a,pp,0) ;
       }
+
+   dbp->close(dbp,0);
    }
 else
    {
    cfPS(cf_error,CF_FAIL,"Open",pp,a," !! Registry key \"%s\"failed to open\n",pp->promiser);
    }
 
-dbp->close(dbp,0);
 RegCloseKey(key_h);
 YieldCurrentLock(thislock);
 }

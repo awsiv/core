@@ -31,7 +31,7 @@ switch (type)
    case cfd_postgres:
        /* This gibberish is the simplest thing I can find in postgres */
 
-       snprintf(query,CF_MAXVARSIZE-1,"SELECT pg_database.datname as \"Database\",\npg_user.usename as \"Owner\"FROM pg_database, pg_user\nWHERE pg_database.datdba = pg_user.usesysid\n");       
+       snprintf(query,CF_MAXVARSIZE-1,"SELECT pg_database.datname FROM pg_database");       
        break;
 
    default:
@@ -81,7 +81,7 @@ return true;
 
 /*****************************************************************************/
 
-void Nova_QueryTable(char *s,char *table)
+void Nova_QueryTableColumns(char *s,char *table)
 
 {
 snprintf(s,CF_MAXVARSIZE-1,"SELECT column_name,data_type,character_maximum_length FROM information_schema.columns WHERE table_name ='%s'",table); 
@@ -215,3 +215,25 @@ for (i = 0; aliases[i][0] != NULL; i++)
 return true;
 }
 
+/*****************************************************************************/
+
+void Nova_ListTables(int type,char *query)
+
+{  
+switch (type)
+   {
+   case cfd_mysql:
+       snprintf(query,CF_MAXVARSIZE-1,"show tables");
+       break;
+       
+   case cfd_postgres:
+       /* This gibberish is the simplest thing I can find in postgres */
+
+       snprintf(query,CF_MAXVARSIZE-1,"SELECT c.relname as \"Name\" FROM pg_catalog.pg_class c JOIN pg_catalog.pg_roles r ON r.oid = c.relowner LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public'");       
+       break;
+
+   default:
+       snprintf(query,CF_MAXVARSIZE,"NULL QUERY");
+       break;
+   }
+}

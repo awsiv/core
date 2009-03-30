@@ -94,12 +94,15 @@ int Nova_ParseHostname(char *name,char *hostname);
 int Nova_ValidateSQLTableName(char *table_path,char *table);
 int Nova_VerifyTablePromise(CfdbConn *cfdb,char *table_path,struct Rlist *columns,struct Attributes a,struct Promise *pp);
 int Nova_ValidateSQLTableName(char *table_path,char *table);
-void Nova_QueryTable(char *s,char *table);
+void Nova_QueryTableColumns(char *s,char *table);
 int Nova_NewSQLColumns(char *table,struct Rlist *columns,char ***name_table,char ***type_table,int **size_table,int **done);
 void Nova_DeleteSQLColumns(char **name_table,char **type_table,int *size_table,int *done,int len);
 void Nova_CreateDBQuery(enum cfdbtype type,char *query);
-int Nova_CreateTable(CfdbConn *cfdb,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp);
+int Nova_CreateTableColumns(CfdbConn *cfdb,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp);
 int NovaCheckSQLDataType(char *type,char *ref_type,struct Promise *pp);
+int Nova_TableExists(CfdbConn *cfdb,char *name);
+struct Rlist *Nova_GetSQLTables(CfdbConn *cfdb);
+void Nova_ListTables(int type,char *query);
 
 /***************************************************************************/
 
