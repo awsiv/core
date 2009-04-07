@@ -6,6 +6,10 @@
 
 #define NOVA 1
 
+# ifdef HAVE_LDAP_H
+#  include <ldap.h>
+# endif
+
 /* acl.c */
 
 void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
@@ -39,6 +43,17 @@ void NovaLogSymbolicValue(char *handle,struct Item *stream,struct Attributes a,s
 void Nova_ShowBundleDependence(FILE *fp);
 void Nova_RegisterBundleDepedence(char *name,struct Promise *pp);
 char *NovaEscape(char *s);
+
+/* ldap.c */
+
+#ifdef HAVE_LDAP_H
+void *Nova_LDAPValue(char *uri,char *basedn,char *filter,char *name,char *scope,char *sec);
+void *Nova_LDAPList(char *uri,char *dn,char *filter,char *name,char *scope,char *sec);
+void *Nova_LDAPArray(char *array,char *uri,char *dn,char *filter,char *scope,char *sec);
+void *Nova_RegLDAP(char *uri,char *dn,char *filter,char *name,char *scope,char *regex,char *sec);
+LDAP *NovaQueryLDAP(char *uri,char *sec);
+int NovaStr2Scope(char *scope);
+#endif
 
 /* monitoring.c */
 

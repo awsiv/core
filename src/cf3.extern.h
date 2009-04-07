@@ -67,6 +67,7 @@ extern char HASHDB[CF_BUFSIZE];
 extern int FSTAB_EDITS;
 
 extern int CFA_MAXTHREADS;
+extern char *THIS_BUNDLE;
 extern char THIS_AGENT[CF_MAXVARSIZE];
 extern enum cfagenttype THIS_AGENT_TYPE;
 extern short INSTALL_SKIP;
@@ -134,6 +135,12 @@ extern struct BodySyntax CF_STORAGE_BODIES[];
 extern struct SubTypeSyntax CF_STORAGE_SUBTYPES[];
 extern struct BodySyntax CF_MOUNT_BODY[];
 extern struct BodySyntax CF_CHECKVOL_BODY[];
+#endif
+
+#ifndef CF3_MOD_DATABASES
+extern struct BodySyntax CF_DATABASES_BODIES[];
+extern struct SubTypeSyntax CF_DATABASES_SUBTYPES[];
+extern struct BodySyntax CF_SQLSERVER_BODY[];
 #endif
 
 #ifndef CF3_MOD_KNOWLEGDE

@@ -16,6 +16,7 @@ libcfnova_la_SOURCES =						\
 	acl.c							\
 	database.c						\
 	sql.c							\
+	ldap.c							\
 	registry.c						\
 	monitoring.c						\
 	server.c						\
