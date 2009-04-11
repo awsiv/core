@@ -20,6 +20,130 @@ struct Item *NOVA_BUNDLEDEPENDENCE = NULL;
 
 /*****************************************************************************/
 
+void Nova_SyntaxCompletion(char *s)
+
+{ int i,j,k,l,m;
+  struct SubTypeSyntax *ss;
+  struct BodySyntax *bs,*bs2;
+  char output[CF_BUFSIZE];
+  
+if (strncmp(s,"function",strlen("function")) == 0)
+   {
+   Nova_ListFunctions();
+   return;
+   }
+
+if (strncmp(s,"bundle",strlen("bundle")) == 0 || strncmp(s,"agent",strlen("agent")) == 0)
+   {
+   Nova_ListAgents();
+   return;
+   }
+
+if (strncmp(s,"promise",strlen("promise")) == 0)
+   {
+   Nova_ListPromiseTypes();
+   return;
+   }
+
+/* Else search for the specific word in the syntax tree */
+
+for  (i = 0; i < CF3_MODULES; i++)
+   {
+   if ((ss = CF_ALL_SUBTYPES[i]) == NULL)
+      {
+      continue;
+      }
+
+   /* ss[j] is an array of promise types */
+   
+   for (j = 0; ss[j].btype != NULL; j++)
+      {
+      bs = (struct BodySyntax *)ss[j].bs;
+
+      if (s && strcmp(s,ss[j].subtype) == 0)
+         {
+         printf("Promise type %s has possible contraints:\n\n",ss[j].subtype);
+         
+         for (k = 0; bs[k].lval !=  NULL; k++)
+            {
+            printf("   %s\n",bs[k].lval);
+            }
+         
+         return;
+         }
+
+      for (k = 0; bs[k].lval !=  NULL; k++)
+         {
+         if (s && strcmp(s,bs[k].lval) == 0)
+            {
+            printf("Constraint %s (of promise type %s) has possible values:\n\n",bs[k].lval,ss[j].subtype);
+
+            switch (bs[k].dtype)
+               {
+               case cf_body:
+                   printf("   %s  ~ defined in a separate body, with elements\n\n",bs[k].lval,bs[k].range);
+                   bs2 = (struct BodySyntax *)bs[k].range;
+                   
+                   for (l = 0; bs2[l].lval !=  NULL; l++)
+                      {
+                      printf("     %s",bs2[l].lval);
+                      for (m = 0; m + strlen(bs2[l].lval) < 22; m++)
+                         {
+                         putchar(' ');
+                         }
+                      
+                      printf("~ (%s)\n",bs2[l].range);
+                      }
+                   
+                   break;
+               default:
+                   printf("   %s  ~ (%s)\n",bs[k].lval,bs[k].range);
+                   break;
+               }
+
+            printf("\nDescription: %s\n",bs2[k].description);
+            return;
+            }
+
+         /* Could be in a sub-body */
+         
+         if (bs[k].dtype == cf_body)
+            {
+            bs2 = (struct BodySyntax *)bs[k].range;
+            
+            for (l = 0; bs2[l].lval !=  NULL; l++)
+               {
+               if (strcmp(s,bs2[l].lval) == 0)
+                  {
+                  printf("Body constraint %s is part of %s (in promise type %s) and has possible values:\n\n",bs2[l].lval,bs[k].lval,ss[j].subtype);
+                  
+                  printf("     %s",bs2[l].lval);
+                  for (m = 0; m + strlen(bs2[l].lval) < 22; m++)
+                     {
+                     putchar(' ');
+                     }
+                  
+                  printf("~ (%s)\n",bs2[l].range);
+                  printf("\nDescription: %s\n",bs2[l].description);
+                  return;
+                  }
+               }
+            }      
+         }
+      }
+   }
+
+/* If nothing found */
+
+printf("Try one of the following:\n\n");
+printf("   function\n");
+printf("   promise type\n");
+printf("   bundle type\n");
+printf("   <syntax element>\n");
+}
+
+/*****************************************************************************/
+
 void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version)
 
 { struct Constraint *cp;
@@ -253,6 +377,80 @@ else
 
 /*****************************************************************************/
 /* Level                                                                     */
+/*****************************************************************************/
+
+void Nova_ListAgents()
+
+{ int i;
+
+printf("Agent types are used as bundle types and control-body types:\n\n");
+ 
+for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
+    {
+    printf("   %s\n",CF_ALL_BODIES[i].btype);
+    }
+}
+
+/*****************************************************************************/
+
+void Nova_ListFunctions()
+
+{ int i,j;
+
+printf("In-built functions:\n\n");
+ 
+for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
+    {
+    switch (CF_FNCALL_TYPES[i].dtype)
+       {
+       case cf_str:
+           printf("   (string)  ");
+           break;
+       case cf_int:
+           printf("   (integer) ");
+           break;
+       case cf_class:
+           printf("   (class)   ");
+           break;
+       case cf_slist:
+           printf("   (slist)   ");
+           break;
+       case cf_ilist:
+           printf("   (ilist)   ");
+           break;
+       case cf_rlist:
+           printf("   (rlist)   ");
+           break;
+       case cf_rrange:
+       case cf_irange:
+           printf("   (range)   ");
+           break;
+
+       }
+    
+    printf("   %s",CF_FNCALL_TYPES[i].name);
+    for (j = 0; strlen(CF_FNCALL_TYPES[i].name)+j < 18; j++)
+       {
+       putchar(' ');
+       }
+    printf(" %s\n",CF_FNCALL_TYPES[i].description);
+    }
+}
+
+/*****************************************************************************/
+
+void Nova_ListPromiseTypes()
+
+{ int i;
+
+printf("Promise types:\n\n");
+ 
+for (i = 0; CF_COMMON_SUBTYPES[i].subtype != NULL; i++)
+    {
+    printf("   %s  (%s)\n",CF_COMMON_SUBTYPES[i].subtype,CF_COMMON_SUBTYPES[i].btype);
+    }
+}
+
 /*****************************************************************************/
 
 char *Nova_PromiseID(struct Promise *pp)

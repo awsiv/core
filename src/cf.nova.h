@@ -25,6 +25,11 @@ void NovaHtmlFooter(FILE *fp,char *footer);
 
 /* knowledge.c */
 
+void Nova_SyntaxCompletion(char *s);
+void Nova_ListAgents(void);
+void Nova_ListFunctions(void);
+void Nova_ListPromiseTypes(void);
+
 void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version);
 void Nova_ShowTopicRepresentation(FILE *fp);
 void Nova_BundleReference(FILE *fp,char *bundle);

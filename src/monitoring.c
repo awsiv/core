@@ -631,6 +631,11 @@ wold = (1.0-forgetrate);
 
 av = (wnew*new + wold*old)/(wnew+wold); 
 
+if (av < 0)
+   {
+   av = 0;
+   }
+  
 return av;
 }
 
