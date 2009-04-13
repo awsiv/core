@@ -16,19 +16,19 @@
 
 /*****************************************************************************/
 
-int CheckPosixLinuxACL(char *file_path, struct CfACL acl)
+int Nova_CheckPosixLinuxACL(char *file_path, struct CfACL acl)
 
 {
 #ifdef HAVE_LIBACL
-SetACLDefaults(&acl);
+Nova_SetACLDefaults(&acl);
 
-if (!CheckPosixLinuxAccessACEs(acl.acl_entries,acl.acl_method,file_path))
+if (!Nova_CheckPosixLinuxAccessACEs(acl.acl_entries,acl.acl_method,file_path))
    {
    CfOut(cf_error,"","Failed checking access permissions in acl for %s",file_path);
    return false;
    }
 
-if (!CheckPosixLinuxInheritACEs(acl.acl_inherit_entries,acl.acl_method,acl.acl_directory_inherit,file_path))
+if (!Nova_CheckPosixLinuxInheritACEs(acl.acl_inherit_entries,acl.acl_method,acl.acl_directory_inherit,file_path))
    {
    CfOut(cf_error,"","Failed checking default permissions in acl for %s",file_path);
    return false;
@@ -44,15 +44,15 @@ return true;
 
 #ifdef HAVE_LIBACL
 
-int CheckPosixLinuxAccessACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path)
+int Nova_CheckPosixLinuxAccessACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path)
 
 {
-return CheckPosixLinuxACEs(aces, method,file_path,ACL_TYPE_ACCESS);
+return Nova_CheckPosixLinuxACEs(aces, method,file_path,ACL_TYPE_ACCESS);
 }
 
 /************************************************************************************/
 
-int CheckPosixLinuxInheritACEs(struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path) 
+int Nova_CheckPosixLinuxInheritACEs(struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path) 
 
 { int result;
   
@@ -60,17 +60,17 @@ switch(directory_inherit)
    {
    case cfacl_specify:  // default ALC is specified in config
        
-       result = CheckPosixLinuxACEs(aces, method, file_path, ACL_TYPE_DEFAULT);
+       result = Nova_CheckPosixLinuxACEs(aces, method, file_path, ACL_TYPE_DEFAULT);
        break;
        
    case cfacl_parent: // default ACL should be the same as access ACL
        
-       result = CheckDefaultEqualsAccessACL(file_path);
+       result = Nova_CheckDefaultEqualsAccessACL(file_path);
        break;
        
    case cfacl_none:  // default ALC should be empty
        
-       result = CheckDefaultClearACL(file_path);
+       result = Nova_CheckDefaultClearACL(file_path);
        break;
       
    default:  // unknown inheritance policy
@@ -84,7 +84,7 @@ return result;
 
 /************************************************************************************/
 
-int CheckPosixLinuxACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type)
+int Nova_CheckPosixLinuxACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type)
 
 /*
    Takes as input Cfengine-syntax ACEs and a path to a file.
@@ -162,7 +162,7 @@ for (rp = aces; rp != NULL; rp=rp->next)
    {
    cf_ace = (char *)rp->item;
    
-   if (!ParseEntityPosixLinux(&cf_ace, ace_parsed, &has_mask))
+   if (!Nova_ParseEntityPosixLinux(&cf_ace, ace_parsed, &has_mask))
       {
       CfOut(cf_error,"","Error parsing entity in 'cf_ace'.");
       acl_free((void*)acl_existing);
@@ -173,7 +173,7 @@ for (rp = aces; rp != NULL; rp=rp->next)
    
    // check if an ACE with this entity-type and id already exist in the Posix Linux ACL
 
-   ace_current = FindACE(acl_new, ace_parsed);
+   ace_current = Nova_FindACE(acl_new, ace_parsed);
    
    // create new entry in ACL if it did not exist
 
@@ -222,7 +222,7 @@ for (rp = aces; rp != NULL; rp=rp->next)
       return false;   
       }
    
-   if (!ParseModePosixLinux(cf_ace, perms))
+   if (!Nova_ParseModePosixLinux(cf_ace, perms))
       {
       CfOut(cf_error,"","Error parsing mode-string in 'cf_ace'");
       acl_free((void*)acl_existing);
@@ -235,7 +235,7 @@ for (rp = aces; rp != NULL; rp=rp->next)
    // not check what follows next
    }
 
-if ((retv = ACLEquals(acl_existing, acl_new)) == -1)
+if ((retv = Nova_ACLEquals(acl_existing, acl_new)) == -1)
    {
    CfOut(cf_error,"","Error while comparing existing and new ACL, unable to repair.");
    acl_free((void*)acl_existing);
@@ -276,13 +276,14 @@ return true;
 }
 
 /************************************************************************************/
-/**
- * Checks if the default ACL of the given file is the same as the
- * access ACL. If not, the default ACL is set in this way.
- * Returns 0 on success and -1 on failure.
- */
 
-int CheckDefaultEqualsAccessACL(char *file_path)
+int Nova_CheckDefaultEqualsAccessACL(char *file_path)
+
+/*
+  Checks if the default ACL of the given file is the same as the
+  access ACL. If not, the default ACL is set in this way.
+  Returns 0 on success and -1 on failure.
+ */
 
 { acl_t acl_access;
   acl_t acl_default;
@@ -308,7 +309,7 @@ if (acl_default == NULL)
    return false;
    }
 
-equals = ACLEquals(acl_access,acl_default);
+equals = Nova_ACLEquals(acl_access,acl_default);
 
 switch (equals)
    {
@@ -345,12 +346,11 @@ return result;
 
 /************************************************************************************/
 
-/**
- * Checks if the default ACL is empty. If not, it is cleared.
- * Returns 0 on success and -1 on failure.
- */
+int Nova_CheckDefaultClearACL(char *file_path)
 
-int CheckDefaultClearACL(char *file_path)
+/*
+  Checks if the default ACL is empty. If not, it is cleared.
+*/
 
 { acl_t acl_existing;
   acl_t acl_empty;
@@ -360,7 +360,6 @@ int CheckDefaultClearACL(char *file_path)
 
 acl_existing = NULL;
 acl_empty = NULL;
-result = -1;
 
 if ((acl_existing = acl_get_file(file_path, ACL_TYPE_DEFAULT)) == NULL)
    {
@@ -411,7 +410,7 @@ return result;
 
 /************************************************************************************/
 
-acl_entry_t FindACE(acl_t acl, acl_entry_t ace_find)
+acl_entry_t Nova_FindACE(acl_t acl, acl_entry_t ace_find)
 
 /*
   Walks through the acl given as the first parameter, looking for an
@@ -510,7 +509,7 @@ return NULL;
 
 /************************************************************************************/
 
-int ACLEquals(acl_t first, acl_t second)
+int Nova_ACLEquals(acl_t first, acl_t second)
 
 /*
   Checks if the two ACLs contain equal ACEs and equally many.
@@ -527,13 +526,13 @@ int ACLEquals(acl_t first, acl_t second)
   int more_aces;
   int retv_perms;
 
-if ((first_cnt = ACECount(first)) == -1)
+if ((first_cnt = Nova_ACECount(first)) == -1)
    {
    CfOut(cf_verbose,"","Couldn't count ACEs");
    return -1;
    }
 
-if ((second_cnt = ACECount(second)) == -1)
+if ((second_cnt = Nova_ACECount(second)) == -1)
    {
    CfOut(cf_verbose,"","Couldn't count ACEs");
    return -1;
@@ -563,7 +562,7 @@ while(more_aces)
    {
    /* no ace in second match entity-type and id of first */
    
-   if ((ace_second = FindACE(second, ace_first)) == NULL)
+   if ((ace_second = Nova_FindACE(second, ace_first)) == NULL)
       {
       return 1;
       }
@@ -582,7 +581,7 @@ while(more_aces)
       return -1;
       }
    
-   retv_perms = PermsetEquals(perms_first, perms_second);
+   retv_perms = Nova_PermsetEquals(perms_first, perms_second);
    
    if (retv_perms == -1)
       {
@@ -603,7 +602,7 @@ return 0;
 /* Level                                                                            */
 /************************************************************************************/
 
-int ACECount(acl_t acl)
+int Nova_ACECount(acl_t acl)
 
 { int more_aces;
   int count;
@@ -629,23 +628,23 @@ return count;
 
 /************************************************************************************/
 
-int PermsetEquals(acl_permset_t first, acl_permset_t second)
+int Nova_PermsetEquals(acl_permset_t first, acl_permset_t second)
 
-{ acl_perm_t PERMS_AVAIL[3] = {ACL_READ, ACL_WRITE, ACL_EXECUTE};
+{ acl_perm_t perms_avail[3] = {ACL_READ,ACL_WRITE,ACL_EXECUTE};
   int first_set;
   int second_set;
   int i;
 
 for (i = 0; i < 3; i++)
    {
-   first_set = acl_get_perm(first, PERMS_AVAIL[i]);
+   first_set = acl_get_perm(first,perms_avail[i]);
    
    if (first_set == -1)
       {
       return -1;
       }
    
-   second_set = acl_get_perm(second, PERMS_AVAIL[i]);
+   second_set = acl_get_perm(second,perms_avail[i]);
    
    if (second_set == -1)
       {
@@ -663,7 +662,7 @@ return 0;
 
 /************************************************************************************/
 
-int ParseEntityPosixLinux(char **str, acl_entry_t ace, int *is_mask)
+int Nova_ParseEntityPosixLinux(char **str, acl_entry_t ace, int *is_mask)
 
 /*
    Takes a ':' or null-terminated string "entity-type:id", and
@@ -810,7 +809,7 @@ return result;
 
 /************************************************************************************/
 
-int ParseModePosixLinux(char *mode, acl_permset_t perms)
+int Nova_ParseModePosixLinux(char *mode, acl_permset_t perms)
 
 /*
   Takes a Cfengine-syntax mode string and existing Posix

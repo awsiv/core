@@ -51,23 +51,23 @@
 /* acl.c */
 
 void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
-void SetACLDefaults(struct CfACL *acl);
-int CheckACLSyntax(struct CfACL acl,struct Promise *pp);
-int CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support,struct Promise *pp);
-int CheckModeSyntax(char **mode_p, char *valid_nperms, char *valid_ops,struct Promise *pp);
-int CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp);
-int CheckPosixLinuxACL(char *file_path, struct CfACL acl);
-int CheckPosixLinuxAccessACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path);
-int CheckPosixLinuxInheritACEs(struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path);
-int CheckPosixLinuxACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type);
-int CheckDefaultEqualsAccessACL(char *file_path);
-int CheckDefaultClearACL(char *file_path);
-int ParseEntityPosixLinux(char **str, acl_entry_t ace, int *is_mask);
-int ParseModePosixLinux(char *mode, acl_permset_t old_perms);
-acl_entry_t FindACE(acl_t acl, acl_entry_t ace_find);
-int ACLEquals(acl_t first, acl_t second);
-int ACECount(acl_t acl);
-int PermsetEquals(acl_permset_t first, acl_permset_t second);
+void Nova_SetACLDefaults(struct CfACL *acl);
+int Nova_CheckACLSyntax(struct CfACL acl,struct Promise *pp);
+int Nova_CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support,struct Promise *pp);
+int Nova_CheckModeSyntax(char **mode_p, char *valid_nperms, char *valid_ops,struct Promise *pp);
+int Nova_CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp);
+int Nova_CheckPosixLinuxACL(char *file_path, struct CfACL acl);
+int Nova_CheckPosixLinuxAccessACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path);
+int Nova_CheckPosixLinuxInheritACEs(struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path);
+int Nova_CheckPosixLinuxACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type);
+int Nova_CheckDefaultEqualsAccessACL(char *file_path);
+int Nova_CheckDefaultClearACL(char *file_path);
+int Nova_ParseEntityPosixLinux(char **str, acl_entry_t ace, int *is_mask);
+int Nova_ParseModePosixLinux(char *mode, acl_permset_t old_perms);
+acl_entry_t Nova_FindACE(acl_t acl, acl_entry_t ace_find);
+int Nova_ACLEquals(acl_t first, acl_t second);
+int Nova_ACECount(acl_t acl);
+int Nova_PermsetEquals(acl_permset_t first, acl_permset_t second);
 
 /* database.c */
 
@@ -83,6 +83,7 @@ void NovaHtmlFooter(FILE *fp,char *footer);
 void Nova_SyntaxCompletion(char *s);
 void Nova_ListAgents(void);
 void Nova_ListFunctions(void);
+void Nova_ListFunction(struct FnCallType f);
 void Nova_ListPromiseTypes(void);
 
 void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version);

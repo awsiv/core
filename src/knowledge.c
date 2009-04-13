@@ -24,7 +24,7 @@ void Nova_SyntaxCompletion(char *s)
 
 { int i,j,k,l,m;
   struct SubTypeSyntax *ss;
-  struct BodySyntax *bs,*bs2;
+  struct BodySyntax *bs,*bs2 = NULL;
   char output[CF_BUFSIZE];
   
 if (strncmp(s,"function",strlen("function")) == 0)
@@ -103,13 +103,14 @@ for  (i = 0; i < CF3_MODULES; i++)
                       printf("~ (%s)\n",bs2[l].range);
                       }
                    
+                   printf("\nDescription: %s\n",bs2[k].description);
                    break;
+                   
                default:
                    printf("   %s  ~ (%s)\n",bs[k].lval,bs[k].range);
                    break;
                }
 
-            printf("\nDescription: %s\n",bs2[k].description);
             return;
             }
 
@@ -140,6 +141,17 @@ for  (i = 0; i < CF3_MODULES; i++)
          }
       }
    }
+
+/* Check functions */
+
+for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
+    {
+    if (strcmp(s,CF_FNCALL_TYPES[i].name) == 0)
+       {
+       Nova_ListFunction(CF_FNCALL_TYPES[i]);
+       return;
+       }
+    }
 
 /* If nothing found */
 
@@ -409,40 +421,51 @@ printf("In-built functions:\n\n");
  
 for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
     {
-    switch (CF_FNCALL_TYPES[i].dtype)
-       {
-       case cf_str:
-           printf("   (string)  ");
-           break;
-       case cf_int:
-           printf("   (integer) ");
-           break;
-       case cf_class:
-           printf("   (class)   ");
-           break;
-       case cf_slist:
-           printf("   (slist)   ");
-           break;
-       case cf_ilist:
-           printf("   (ilist)   ");
-           break;
-       case cf_rlist:
-           printf("   (rlist)   ");
-           break;
-       case cf_rrange:
-       case cf_irange:
-           printf("   (range)   ");
-           break;
-
-       }
-    
-    printf("   %s",CF_FNCALL_TYPES[i].name);
-    for (j = 0; strlen(CF_FNCALL_TYPES[i].name)+j < 18; j++)
-       {
-       putchar(' ');
-       }
-    printf(" %s\n",CF_FNCALL_TYPES[i].description);
+    Nova_ListFunction(CF_FNCALL_TYPES[i]);
     }
+}
+
+/*****************************************************************************/
+
+void Nova_ListFunction(struct FnCallType f)
+
+{ int j;
+ 
+switch (f.dtype)
+   {
+   case cf_str:
+       printf("   (string)  ");
+       break;
+   case cf_int:
+       printf("   (integer) ");
+       break;
+   case cf_class:
+       printf("   (class)   ");
+       break;
+   case cf_slist:
+       printf("   (slist)   ");
+       break;
+   case cf_ilist:
+       printf("   (ilist)   ");
+       break;
+   case cf_rlist:
+       printf("   (rlist)   ");
+       break;
+   case cf_rrange:
+   case cf_irange:
+       printf("   (range)   ");
+       break;
+       
+   }
+
+printf("   %s",f.name);
+
+for (j = 0; strlen(f.name)+j < 18; j++)
+   {
+   putchar(' ');
+   }
+
+printf(" %s\n",f.description);
 }
 
 /*****************************************************************************/

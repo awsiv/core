@@ -20,7 +20,7 @@
 void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp)
 
 {
-if (!CheckACLSyntax(a.acl,pp))
+if (!Nova_CheckACLSyntax(a.acl,pp))
    {
    cfPS(cf_error,CF_INTERPT,"",pp,a," !! Syntax error in access control list for %s",file);
    PromiseRef(cf_error,pp);
@@ -33,7 +33,7 @@ switch(a.acl.acl_type)
        switch (VSYSTEMHARDCLASS)
           {
           case linuxx:
-              CheckPosixLinuxACL(file,a.acl);
+              Nova_CheckPosixLinuxACL(file,a.acl);
               break;
 
           default:
@@ -56,7 +56,7 @@ switch(a.acl.acl_type)
 /* Level                                                                     */
 /*****************************************************************************/
 
-int CheckACLSyntax(struct CfACL acl,struct Promise *pp)
+int Nova_CheckACLSyntax(struct CfACL acl,struct Promise *pp)
 
 { int i;
   int valid = true;
@@ -66,7 +66,7 @@ int CheckACLSyntax(struct CfACL acl,struct Promise *pp)
   struct Rlist *rp;    
 
 // set unset fields to defautls
-SetACLDefaults(&acl);
+Nova_SetACLDefaults(&acl);
 
 // find valid values for op
 switch(acl.acl_method)
@@ -105,7 +105,7 @@ switch(acl.acl_type)
 
 for (rp = acl.acl_entries; rp != NULL; rp=rp->next)
    {
-   valid = CheckACESyntax(rp->item,valid_ops,valid_nperms,deny_support,pp);
+   valid = Nova_CheckACESyntax(rp->item,valid_ops,valid_nperms,deny_support,pp);
    
    if (!valid)  // wrong syntax in this ace
       {
@@ -117,7 +117,7 @@ for (rp = acl.acl_entries; rp != NULL; rp=rp->next)
 
 for (rp = acl.acl_inherit_entries; rp != NULL; rp=rp->next)
    {
-   valid = CheckACESyntax(rp->item,valid_ops,valid_nperms,deny_support,pp);
+   valid = Nova_CheckACESyntax(rp->item,valid_ops,valid_nperms,deny_support,pp);
    
    if (!valid)  // wrong syntax in this ace
       {
@@ -136,7 +136,7 @@ return valid;
  * Set unset fields with documented defaults, to these defaults.
  **/
 
-void SetACLDefaults(struct CfACL *acl)
+void Nova_SetACLDefaults(struct CfACL *acl)
 
 {
 // default: acl_method => overwrite
@@ -156,7 +156,7 @@ if(acl->acl_directory_inherit == cfacl_noinherit)
 
 /*****************************************************************************/
 
-int CheckACESyntax(char *ace,char *valid_ops,char *valid_nperms,int deny_support,struct Promise *pp)
+int Nova_CheckACESyntax(char *ace,char *valid_ops,char *valid_nperms,int deny_support,struct Promise *pp)
 
 { char *str;
   int chkid;
@@ -218,7 +218,7 @@ if (chkid)  // look for following "id:" TODO: Accept only alphanumeric?
 
 // check the mode-string (also skips to next field)
 
-valid_mode = CheckModeSyntax(&str, valid_ops, valid_nperms,pp);
+valid_mode = Nova_CheckModeSyntax(&str, valid_ops, valid_nperms,pp);
 
 if (valid_mode)
    {
@@ -235,7 +235,7 @@ if (*str == '\0')  // mode was the last field
 str++;
 
 // last field; must be a perm_type field
-valid_permt = CheckPermTypeSyntax(str,deny_support,pp);
+valid_permt = Nova_CheckPermTypeSyntax(str,deny_support,pp);
 
 if (valid_permt != 0)
    {
@@ -248,7 +248,7 @@ return true;
 
 /*****************************************************************************/
 
-int CheckModeSyntax(char **mode_p, char *valid_ops, char *valid_nperms,struct Promise *pp)
+int Nova_CheckModeSyntax(char **mode_p, char *valid_ops, char *valid_nperms,struct Promise *pp)
 
 /*
   Checks the syntax of a ':' or NULL terminated mode string.
@@ -329,7 +329,7 @@ return valid;
 
 /*****************************************************************************/
 
-int CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp)
+int Nova_CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp)
 
 /*
   Checks if the given string corresponds to the perm_type syntax.
