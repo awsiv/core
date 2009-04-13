@@ -148,6 +148,9 @@ dnl  AC_CHECK_HEADERS(pgsql/libpq-fe.h)
 dnl  AC_CHECK_HEADERS(libpq-fe.h)
 dnl fi
 
+AC_CHECK_HEADERS(ldap.h)
+AC_CHECK_LIB(ldap,ldap_get_values_len)
+
 dnl ######################################################################
 dnl Checks for header files.
 dnl ######################################################################
@@ -365,6 +368,8 @@ case "$target_os" in
    linux*)
 	AC_DEFINE(LINUX)
 dnl	AC_CHECK_LIB(nss_nis, yp_get_default_domain)
+        AC_CHECK_LIB(acl,main)
+        AC_CHECK_HEADERS(acl.h sys/acl.h acl/libacl.h)
         ;;
    freebsd*|dragonfly*)
 	AC_DEFINE(FREEBSD)

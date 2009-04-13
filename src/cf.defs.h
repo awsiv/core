@@ -331,7 +331,7 @@ typedef int clockid_t;
 #define CF_METHODEXEC 0
 #define CF_METHODREPLY  1
 #define CF_EXEC_IFELAPSED 5
-#define CF_EXEC_EXPIREAFTER 10
+#define CF_EXEC_EXPIREAFTER 30
 
 /* Need this to to avoid conflict with solaris 2.6 and db.h */
 
@@ -615,6 +615,8 @@ enum PROTOS
    cfd_sget,
    cfd_version,
    cfd_sopendir,
+   cfd_var,
+   cfd_svar,
    cfd_bad
    };
 
@@ -1060,34 +1062,6 @@ enum matchtypes
     NOTliteralSomewhere,
     NOTregexComplete
     };
-
-
-/*******************************************************************/
-
-struct CFACL
-   {
-   char * acl_alias;
-   enum   cffstype type;
-   char   method;            /* a = append, o = overwrite */
-   char   nt_acltype;
-   struct CFACE *aces;
-   struct CFACL *next;
-   };
-
-/*******************************************************************/
-
-struct CFACE
-   {
-#ifdef NT
-   char *access;     /* allowed / denied */
-   long int NTMode;  /* NT's access mask */
-#endif
-   char *mode;        /* permission flags*/
-   char *name;        /* id name */
-   char *acltype;     /* user / group / other */
-   char *classes;
-   struct CFACE *next;
-   };
 
 /*******************************************************************/
 

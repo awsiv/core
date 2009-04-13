@@ -1,0 +1,1611 @@
+\input texinfo-altfont
+\input texinfo-logo
+\input texinfo
+@selectaltfont{cmbright}
+@setlogo{CfengineLogo}
+@c *********************************************************************
+@c
+@c  This is an AUTO_GENERATED TEXINFO file. Do not submit patches against it.
+@c  Refer to the the component .texinfo files instead when patching docs.
+@c
+@c ***********************************************************************
+@c %** start of header
+@setfilename cfnova.info
+@settitle Cfengine Nova
+@setchapternewpage odd
+@c %** end of header
+@titlepage
+@title Cfengine Nova
+@subtitle Enterprise cfengine
+@subtitle for version 1.0.0
+@author cfengine.com
+@c @smallbook
+@fonttextsize 10
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 2009 Cfengine AS
+@end titlepage
+@c *************************** File begins here ************************
+@ifinfo
+@dircategory Cfengine Training
+@direntry
+* cfengine Reference:
+                        Cfengine is a language based framework
+                        designed for configuring and maintaining
+                        Unix-like operating systems attached
+                        to a TCP/IP network.
+@end direntry
+@end ifinfo
+@ifnottex
+@node Top, Introduction to Nova, (dir), (dir)
+@top Cfengine-AutoReference
+@end ifnottex
+@ifhtml
+@html
+<a href="#Contents"><h1>COMPLETE TABLE OF CONTENTS</h1></a>
+<h2>Summary of contents</h2>
+@end html
+@end ifhtml
+@c *****************************************************
+@c * CHAPTER 
+@c *****************************************************
+@menu
+* Introduction to Nova::        
+* Knowledge extensions::        
+* Associations::                
+* Procedure for generating a local knowledge map::  
+* Monitoring extensions::       
+* Database and registry support::  
+* File Access Control Lists::   
+* Report extensions::           
+* Server extensions::           
+@end menu
+
+@node Introduction to Nova, Knowledge extensions, Top, Top
+@chapter Introduction to Nova
+
+Cfengine version Nova is the entry level enterprise version of
+Cfengine.
+
+Cfengine Enterprise editions are commerically licensed versions of
+Cfengine 3 with build-time library extensions. They are directed at
+organizations and scenarios where the need for complex, supported
+management processes arises. They provide extended functionality and
+time-saving process simplifications to the automation of datacentres.
+
+Cfengine enterprise features are designed to both extend and simplify
+the use of Cfengine in enterprise scenarios, ultimately providing a
+single framework for self-healing, hands-free automation with
+integrated knowledge management. Each extension has been carefully
+designed to meet a specific need, replacing cumbersome and insecure
+technologies currently available in datacentre products.
+
+Cfengine Enterprise Editions are not monolithic purchases, but
+subscription pathways to a process of continuous improvement.  When
+you subscribe to an enterprise level cfengine, you take part in its
+extended development, at the forefront of technological development.
+
+Cfengine will ultimately be available at three Enterprise levels;
+Nova, Constellation and Galaxy.  Users may upgrade to any enterprise
+level at any time without affecting an existing installation. Each
+enterprise level adds new capabilities appropriate for an increased
+level of scale and sophistication.
+
+Each edition may be described as a Commerical Open Source product.
+Users have full access to the source code and are free to modify it
+without warranty. Changes may be used within the organization or
+shared with other license-holders. Changes may also be contributed
+back for use by other license holders in future releases.
+
+
+
+@*
+
+@node
+@section Productivity enhancements
+
+Command lookup on command line
+
+
+@smallexample
+
+atlas$ ./cf-know -S link_from
+Constraint link_from (of promise type files) has possible values:
+
+   link_from  ~ defined in a separate body, with elements
+
+     source                ~ ()
+     link_type             ~ (symlink,hardlink,relative,absolute,none)
+     copy_patterns         ~ ()
+     when_no_source        ~ (force,delete,nop)
+     link_children         ~ (true,false,yes,no,on,off)
+     when_linking_children ~ (override_file,if_no_such_file)
+
+Description: A set of patterns that should be copied ansd synchronized instead of linked
+
+@end smallexample
+
+@smallexample
+
+atlas$ ./cf-know -S acl_type
+Body constraint acl_type is part of acl (in promise type files) and has possible values:
+
+     acl_type              ~ (posix,ntfs)
+
+Description: Access control list type for the affected file system
+
+@end smallexample
+
+Start your own knowledge base
+
+
+@c *****************************************************
+@c * CHAPTER 
+@c *****************************************************
+@node Knowledge extensions, , Introduction to Nova, Top
+@chapter Knowledge extensions
+
+Automatic knowledge management. SQL generation.
+
+
+
+Setting up and verifying the web interface.
+
+
+
+The syntax tree.
+
+When executing the agents with the @samp{-r} option, cfagent generates
+three reports from the compilation.
+
+@file{promise_knowledge.cf}
+
+@verbatim
+bundle knowledge CfengineSiteConfiguration
+{
+}
+@end verbatim
+
+
+
+
+
+@node Associations, , Knowledge extensions, Top
+@chapter Associations
+
+@verbatim
+
+  #
+  # This is another kind of association 
+  #
+
+  "enemies" slist => { "big bad wolf", "his own tail" };
+
+  "whos_afraid_of[$(enemies)]" 
+
+     slist => { "little ole me", "little red riding hood", "three little pigs" };
+
+@end verbatim
+
+@c ******************************************************************************
+
+@node Procedure for generating a local knowledge map, Monitoring extensions, Associations, Top
+@chapter Procedure for generating a local knowledge map
+
+
+This section assumes that you are using at least the Nova enterprise
+edition of cfengine.
+
+@itemize
+@item First set up a directory under version control for the knowledge map.
+You will be maintaining this in part by hand, usually as a team.
+
+@item Create a file called something like @file{overview.cf}, which looks like this:
+
+@verbatim
+
+############################################################################
+#
+# Knowledge base / ontology
+#
+############################################################################
+
+body common control
+   {
+   bundlesequence  => {
+                      "tm",
+                      "CfengineSiteConfiguration"
+                      };
+
+  inputs          => {
+                     "promise_knowledge.cf" # generated by cf-promises
+                     };
+
+   version => "1.0";
+   }
+
+############################################################################
+
+body knowledge control
+
+{
+# We expect to run this in the version controlled area, but
+# the graphs we generate need to be uploaded to the webserver
+
+build_directory => ".";
+graph_directory => "/tmp/cf-graphs";
+
+sql_database => "cf_config_map"; # Give the database a name
+sql_owner => "cfnova";           # database login
+sql_passwd => "cfnova";          #     ''
+sql_type => "mysql";             # Databsae type
+
+query_output => "html";
+query_engine => "tm.php";        # Driver file
+
+html_banner => "<ul><li><a href=\"tm.php\">Back to start</a></li></ul>";
+}
+
+############################################################################
+# The Map
+############################################################################
+
+bundle knowledge tm
+
+{
+topics:
+
+ # Put these here as short cuts from the front page
+
+   "Start"   comment => "My IT Organization Knowledge Map",
+         association => a("has main chapters","Categories","are the main chapters of");
+
+ Start::
+
+   "Categories";
+
+
+}
+
+###################################################
+# Bodies
+###################################################
+
+body association a(f,name,b)
+
+{
+forward_relationship => "$(f)";
+backward_relationship => "$(b)";
+associates => { $(name) };
+}
+
+###################################################
+
+body association A(f,name_list,b)
+
+{
+forward_relationship => "$(f)";
+backward_relationship => "$(b)";
+associates => { @(name_list) };
+}
+
+@end verbatim
+
+@item Create a web driver, e.g. using php. This should simply
+call cfengine in a loop.
+
+@verbatim
+<?
+
+# Make sure we fix PHP's handling of $ and ( which will break the data
+
+
+$arg1 = $_GET['next'];
+$regex = $_POST['regex'];
+/*$arg1 = ($arg1) ? preg_replace('/\$/','/\\\$',escapeshellarg($arg1)) : "";
+$regex = ($regex) ? preg_replace('/\$/','\\\$',escapeshellarg($regex)) : "";*/
+
+$arg1 = ($arg1) ? escapeshellarg($arg1) : "";
+$regex = ($regex) ? escapeshellarg($regex) : "";
+
+$cfknow = "/usr/local/sbin/cf-know";
+$file = "/path/to/portal/overview.cf";
+
+
+echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">";
+if ($arg1)
+   {
+   echo $arg1;
+   if($arg1 == "'cf-ontology'")
+      {
+      include "/iu/eternity/cfsite/app/documents/cf-manuals/cf-ontology.html";
+      }
+   else
+      {
+      system("$cfknow -t $arg1  -f $file");
+      }
+   }
+else if (strlen($regex) > 0)
+   {
+   system("$cfknow -r $regex -f $file");
+   }
+else
+   {
+   system("$cfknow -t Start -f $file");
+   }
+
+?>
+@end verbatim
+
+@item On completing an updated configuration is to
+@verbatim
+
+cf-promises -r
+
+@end verbatim
+
+This generates the files @file{promise_knowledge.cf},
+@file{promises.cf.html} and @file{promise_output_common.html} that are
+used by cf-know in creating the policy overview.
+
+These should be included in the local topic map directory.
+
+@item 
+
+cf-know -f ./
+
+@end itemize
+
+
+
+
+
+@menu
+* Understanding dependencies::  
+@end menu
+
+@node Understanding dependencies,  , Procedure for generating a local knowledge map, Procedure for generating a local knowledge map
+@section Understanding dependencies
+
+Code dependencies
+
+
+When you use a method to set a variable, use relies_on or promisee to mark out
+promises that will use its value. This will allow you do you an impact analysis.
+
+@itemize
+@item When a bundle is passed a parameter by another
+@item In method calls, a passed variable value is considered a causal influence.
+@item When a variable is used in a shell command
+@item When a variabel is set by a functin call that retrieves from a database/file
+@end itemize
+
+
+
+@c *****************************************************
+@c * CHAPTER 
+@c *****************************************************
+@node Monitoring extensions, Database and registry support, Procedure for generating a local knowledge map, Top
+@chapter Monitoring extensions
+
+
+
+The extensions here form the basis of data collection and discovery probes for
+the CMDB solution in Cfengine Constellation. With these probes you effectively
+have a sophisticated, distributed CMDB.
+
+
+3 year cycle trend history
+
+How much space does it all use?
+
+@verbatim
+
+Applies at version: Nova 1.0.0
+Topics: Measurement
+Occurrence type: example
+
+#######################################################
+#
+# Test file:
+#
+# First line
+# Blonk blonk bnklkygsuilnm
+#
+#######################################################
+
+body common control
+{
+bundlesequence => { "watch" };
+}
+
+#######################################################
+
+body monitor control
+{
+forgetrate => "0.7";
+histograms => "true";
+}
+
+#######################################################
+
+bundle monitor watch
+
+{
+measurements:
+
+  # Test 1 - extract string matching
+
+  "/home/mark/tmp/testmeasure"
+
+      handle => "blonk_watch",
+      stream_type => "file",
+      data_type => "string",
+      history_type => "weekly",
+      units => "blonks",
+      match_value => find_blonks,
+      action => sample_min("10");
+
+
+  # Test 2 - follow a special process over time
+  # using cfengine's process cache to avoid resampling
+
+   "/var/cfengine/state/cf_rootprocs"
+
+      handle => "monitor_self_watch",
+      stream_type => "file",
+      data_type => "int",
+      history_type => "none",
+      units => "kB",
+      match_value => proc_value(".*cf-monitord.*","root\s+[0-9.]+\s+[0-9.]+\s+[0-9.]+\s+[0-9.]+\s+([0-9]+).*");
+
+
+  # Test 3, discover disk device information
+
+  "/bin/df"
+
+      handle => "free_memory_watch",
+      stream_type => "pipe",
+      data_type => "slist",
+      history_type => "static",
+      units => "device",
+      match_value => file_systems;
+      # Update this as often as possible
+
+}
+
+##########################################################
+
+body action sample_min(x)
+{
+ifelapsed => "$(x)";
+expireafter => "$(x)";
+}
+
+##########################################################
+
+body match_value find_blonks
+{
+select_line_number => "2";
+extraction_regex => "Blonk blonk ([blonk]+).*";
+}
+
+##########################################################
+
+body match_value free_memory # not willy!
+{
+select_line_matching => "MemFree:.*";
+extraction_regex => "MemFree:\s+([0-9]+).*";
+}
+
+##########################################################
+
+body match_value proc_value(x,y)
+{
+select_line_matching => "$(x)";
+extraction_regex => "$(y)";
+}
+
+##########################################################
+
+body match_value file_system
+{
+select_line_matching => "/.*";
+extraction_regex => "(.*)";
+}
+
+
+@end verbatim
+
+
+@c *****************************************************
+@c * CHAPTER 
+@c *****************************************************
+@node Database and registry support, File Access Control Lists, Monitoring extensions, Top
+@chapter Database and registry support
+
+
+Cfengine is not a tool for interacting with complex database
+transactions. Client applications are far better suited to this
+task. Rather cfengine provides a number of ways of managing databases,
+creating and verifying structure and correcting discrepancies.
+
+It is questionable how much power cfengine should give to users to
+interact with databases -- powerful features can lead to big mistakes,
+so cfengine tries to err on the side of caution. Cfengine is a tool
+whose strength lies distributed management of computers.  Databases
+are usually centralized entities that have single point of management
+interfaces, so a large monolithic database is more easily managed with
+other tools. However, cfengine can still monitor changes and
+discrepancies, and it can manage smaller embedded databases that are
+distributed in nature, whether they are SQL, registry or future types.
+
+So creating 100 new databsaes for test purposes is a task for
+cfengine, but editing an important production database is not a task
+that we recommend using cfengine for.  There are three kinds of
+database supported by Nova:
+
+@table @emph
+
+@item LDAP - The Lightweight Directory Access Protocol
+A hierarchical network database primarily for reading simple schema.
+
+@item SQL - Structured Query Language
+A number of relational databases (currently supported: MySQL, Postgres)
+for reading and writing complex data.
+
+@item Registry - Microsoft Registry
+An embedded database for interfacing with system values in Microsodt Windows.
+
+@end table
+In addition, cfengine uses a  variety of embedded databases
+for its own internals.
+
+
+@node Creating databases
+@section Creating databases
+
+Although the Structured Query Langauge (SQL) is a standard, database servers
+diverge wildly in their approaches to interaction. Cfengine currently supports
+two open source database implementations: MySQL and PostgreSQL and these two
+could not be more different.
+
+Although it would be desirable to perform operations like create and
+destroy databases from within cfengine, these operations can be
+difficult to set up due to security design of the database
+servers. This is where cfengine's idea of @i{voluntary cooperation}
+helps us to understand why. The database service (even running on
+localhost) is an independent entity that we must interact with through
+its service portal. It promises nothing apriori, so we must arrange
+for the necessary promises to be kept sp that the database will
+respond to cfengine's manipulations. In other words, we have to grant
+access.
+
+@node
+@subsection Creating a database by command
+
+@verbatim
+
+body common control
+{
+bundlesequence => { "databases" };
+}
+
+bundle agent databases
+
+{
+# Create database first
+
+commands:
+
+  "/usr/bin/createdb cf_topic_maps",
+
+        contain => as_user("postgres");
+
+# Create a table in the new database
+
+databases:
+
+  "cf_topic_maps/topics"
+
+    database_operation => "create",
+    database_type => "sql",
+    database_columns => { 
+                        "topic_name,varchar,256",
+                        "topic_comment,varchar,1024",
+                        "topic_id,varchar,256",
+                        "topic_type,varchar,256",
+                        "topic_extra,varchar,26" 
+                        },
+
+    database_server => myserver;
+
+
+
+}
+
+################################################
+
+body database_server myserver
+{
+db_server_owner => "postgres";
+db_server_password => "";
+db_server_host => "localhost";
+db_server_type => "postgres";
+}
+
+#
+
+body contain as_user(x)
+{
+exec_owner => "$(x)";
+}
+
+@end verbatim
+
+@node
+@subsection Creating a database directly
+
+
+Both MySQL and PostgreSQL provide default databases of the same name
+to connect to as an anchor point, allowing further databases to
+be created thereafter.
+
+@verbatim
+
+body common control
+{
+bundlesequence => { "databases" };
+}
+
+bundle agent databases
+
+{
+databases:
+
+  "cf_topic_maps/topics"
+
+    database_operation => "create",
+    database_type => "sql",
+    database_columns => { 
+                        "topic_name,varchar,256",
+                        "topic_comment,varchar,1024",
+                        "topic_id,varchar,256",
+                        "topic_type,varchar,256",
+                        "topic_extra,varchar,26" 
+                        },
+
+    # change this to postgres/mysql as appropriate
+
+    database_server => myserver("mysql" );
+
+}
+
+################################################
+
+body database_server myserver(x)
+{
+db_server_owner => "$(x)";
+db_server_password => "";
+db_server_host => "localhost";
+db_server_type => "$(mysql)";
+db_server_connection_db => "$(x)";
+}
+
+body contain as_user(x)
+{
+exec_owner => "$(x)";
+}
+@end verbatim
+
+
+
+@menu
+* Database promises::           
+@end menu
+
+@node Database promises,  , Database and registry support, Database and registry support
+@section Database promises
+
+
+@verbatim
+
+databases:
+
+"cf_topic_map"
+
+   db_exist => "create/drop";
+
+"cf_topic_map.table"
+
+   db_create => "true";
+   db_columns => { "name,type,size" , "" },
+   db_type    => "sql",
+   db_server  => body("postgres","root","passwd");
+
+"cf_topic_map.table.topic_name"
+
+   db_setvalue => body(),
+   db_type     => "sql",
+   db_server   => body("postgres","root","passwd");
+
+"hkey/key2/key3"
+
+  db_create => "true",
+
+   db_setvalue => "24";
+
+@end verbatim
+
+
+
+
+
+
+@c ==============================================================
+@section LDAP
+
+@verbatim
+
+#
+
+body common control
+{
+bundlesequence => { "ldap" };
+}
+
+###################################################################################################
+#  NOTE!! relying on LDAP or other network data without validation is EXTREMELY dangerous. 
+#         You could destroy a system by assuming that the service will respond with a 
+#         sensible result. Cfengine does not recommend reliance on network services in configuration.
+###################################################################################################
+
+bundle agent ldap
+{
+vars:
+
+   # Get the first matching value for "uid"
+
+  "value" string => ldapvalue("ldap://eternity.iu.hio.no","dc=cfengine,dc=com","(sn=User)","uid","subtree","none");
+
+   # Geta all matching values for "uid" 
+
+  "list" slist =>  ldaplist("ldap://eternity.iu.hio.no","dc=cfengine,dc=com","(sn=User)","uid","subtree","none");
+
+classes:
+
+   "gotdata" expression => ldaparray("myarray","ldap://eternity.iu.hio.no","dc=cfengine,dc=com","(sn=User)","subtree","none");
+
+   "found" expression => regldap("ldap://eternity.iu.hio.no","dc=cfengine,dc=com","(sn=User)","uid","subtree","jon.*","none");
+
+reports:
+
+ linux::
+
+   "LDAP VALUE $(value) found";
+   "LDAP LIST VALUE $(list)";
+
+ gotdata::
+
+   "found data $(ldap.myarray[uid])";
+
+  found::
+
+    "Matched regex";
+
+}
+
+@end verbatim
+
+
+
+
+
+@c *****************************************************
+@c * CHAPTER 
+@c *****************************************************
+@node File Access Control Lists, Report extensions, Database and registry support, Top
+@chapter File Access Control Lists
+
+
+
+
+
+
+
+@c TODO: Fix " to `` and ''
+@c TODO: Go from varn:varv to varn => varv
+
+@section Introduction
+Access Control Lists allow for a more fine-grained access control on
+file system objects than........
+@c TODO: FINISH INTRO
+
+@c TODO: Move?
+As a practical note, recall that when adding a user to
+a group, this will not have any effect until the next time the user
+logs in on many operating systems.
+
+As Cfengine is cross-platform and needs to support ACLs with
+different APIs, the ACL syntax is more abstract than many of the file
+system ACLs. The more generic syntax ensures that the ACLs that are
+normally needed are portable. However, in order not to limit
+flexibility, Cfengine also allows to specify platform-dependent 
+additions to the ACLs. Of course, these ACLs will only work as
+expected on the given platform. The Cfengine ACL syntax is similar to
+the POSIX ACL syntax, which is supported by BSD, Linux, HP-UX and
+Solaris.
+
+
+@subsection Concepts
+
+There are many different implementations of ACLs. For example, the
+POSIX draft standard, NTFS and NFSv4 are different and incompatible
+ACL implementations.
+
+As Cfengine cross-platform, these differences should, for the most
+usual cases, be transparent to the user. However, some distinctions
+are impossible to make transparent.
+
+We will explore the different concepts of ACL implementations that are
+critical to understanding how permissions are defined and enforced in the
+different file systems. As a running example, we will consider NTFS
+v. 5 ACLs and Linux POSIX ACLs, because the distinction between these
+ACL implementations is strong.
+
+
+@subsection Entity types
+
+All ACL implementations have three basic entity types: user, group and
+all. User and group are simply users and groups of the system, where
+a group may contain multiple users. all is all users of the system,
+this type is called "other" in POSIX and "Everyone" in NTFS.
+
+
+@subsection Owners
+
+All file system objects have an owner, which by default is the entity
+that created the object. The owner
+can always be a user. However, in some file systems, groups can also
+be owners (e.g. the "Administrators" group in NTFS). In some ACL
+APIs, like POSIX, permissions can be set for the owner, i.e. the owner
+has an independent ACL entry.
+
+
+@subsection Changing owner
+
+It is generally not possible for user A to set user B as the
+owner of a file system object, even if A owns the object. The
+superuser ("root" in POSIX, "Administrator" in NTFS) can however
+always set itself as the owner of an object. In POSIX, the superuser
+may in fact set any user as the owner, but it NTFS it can only take
+ownership.
+
+
+@subsection Permissions
+
+An entity can be given a set of permissions on a file system object
+(e.g. read and write). The data structure holding the permissions for
+one entity is called an "Access Control Entry". As many users and
+groups may have sets of permissions on a given object, multiple 
+Access Control Entries are combined to an Access Control List, which
+is associated with the object.
+
+The set of available permissions differ with ACL implementations. For
+example, the "Take Ownership" permission in NTFS has no equivalent in
+POSIX. However, for the most common situations, it is possible to get
+equivalent security properties by mapping a set of permissions in one
+file system to another set in a second file system.
+
+There are however different rules for the access to the contents of a
+directory with no access. In POSIX, no subobjects of a directory with
+no access can be accessed. However, in NTFS, subobjects that the entity
+has access rights to can be accessed, regardless of whether the entity
+has access rights to the containing directory.
+
+
+@subsection Deny permissions
+
+If no permissions are given to a particular entity, the entity
+will be denied any access to the object. But in some file systems,
+like NTFS, it is also possible to explicitly deny permissions to
+entities. Thus, two types of permissions exist in these systems: allow
+and deny.
+
+It is generally good practice to design the ACLs to specify who is
+allowed to do some operations, in contrary to who is not allowed to do
+some operations, if possible. The reason for this is that describing
+who is not allowed to do things tend to lead to more complex
+rules and could therefore more easily lead to misconfigurations and
+security holes. A good rule is to only define that users should not be
+able to access a resource in the follwoing two scenarios:
+
+\begin{itemize}
+\item Denying access to a subset of a group which is allowed access
+\item Denying a specific permission when a user or a group has full access
+\end{itemize}
+
+If you think about it, this is the same principle that applies to
+firewall configuration: it is easier to whitelist, specify who should
+have access, than to blacklist, specify who should not have access. In
+addition, since Cfengine is designed to be cross-platform and some ACL
+permissions are not available on all platforms, we should strive to
+keep the ALCs as simple as possible. This helps us avoid surprises
+when the ACLs are enforced by different platforms.
+
+
+@subsection Changing permissions
+
+Generally, only the owner may change permissions on a file system
+object. However, superusers can also indirectly change permissions by
+taking ownership first. In POSIX, superusers can change permissions
+without taking ownership. In NTFS, either ownership or a special
+permission is needed to change permissions.
+
+
+@subsection Effective permissions
+
+Unfortunately, even though two file systems support all the
+permissions listed in an ACL, the ACL may be interpreted
+differently. For a given entity and object with ACL, there are two
+conceptually different ways to interpret which permissions the entity
+obtains: ACE precedence and culumative ACL.
+
+@c TODO: create figure of example?
+@c TODO: remove quotes for entities?
+For example, let "alice" be a user of the group "staff". There is an
+ACL on the file "schedule", giving alice write permission, and the
+group "staff" read permission. We will consider two ways to determine
+the effective permissions of "alice" to "schedule".
+
+@c TODO: change precise -> specific -> ? (precedence)
+Firstly, by taking the most precise match in the ACL, alice will be
+granted write permission only. This is because an ACE descibing alice
+is more precise than an ACE describing a group alice is member
+of. However, note that some ACEs may have the same precedence, like
+two ACEs describing permissions for groups alice is member of. Then,
+culumative matching will be done on these ACEs (explained next). This
+is how POSIX does it.
+
+Secondly, we can take the culumative permissions, which yields
+a user permissions from all the ACE entries with his user name, groups
+he is member of or the ACE entry specifying all users. In this case,
+alice would get read and write on "schedule". NTFS computes the
+effective permissions in this way.
+
+
+@subsection Inheritance
+
+ @c TODO: Correct to inherit to someone ?
+
+Directories have ACLs associated with them, but they also have the
+ability to inherit an ACL to subobjects created within them. POSIX
+calls the former ACL type "access ACL" and the latter "default ACL",
+and we will use the same terminology.
+
+In some file systems, like NTFS, objects can only inherit the access
+ACL of the parent directory (or nothing). There are also differences
+in what is inherited by default. In POSIX, the default ACL is usually
+unset, which results in no ACL inheritance, while NTFS always inherits
+the access ACL to subobjects.
+
+@c TODO: Culumative vs. most precise match
+@c  Implementing culumative on POSIX:
+@c   if user has explicit entry - set to the union of all groups
+@c   else ? (should culumate the other groups)
+@c   but must have extra entry for user corresponding to culumative user
+@c   (the permissions set on that user specifically)
+@c   => may need one ACE per user of all the groups !
+@c  Implementing most precise on NTFS:
+@c   if user appears in ACL, set deny on those not marked as allow
+@c   else select one of the groups to be representative, such as in Linux
+
+@c TODO: Create tool to output effective permissions if ACL is applied ?
+
+@section Cfengine 3 Generic ACL Syntax
+
+The Cfengine 3 ACL syntax is divided into two main parts, a generic
+and a file system specific. The generic syntax can be used on
+\textit{any} file system for which Cfengine supports ACLs, while the
+file system specific syntax gives access to all the permissions
+available under the specified file system.
+
+An ACL can contain both generic and file-system specific
+syntax. However, if the ACL is enforced on a file system different
+from that which the file system specific syntax is defined for, the
+file system specific syntax will be ignored. Thus, only the generic
+syntax is portable. However, there might be cases where the generic
+syntax of an ACL is interpreted differently on different file
+systems. The places where this might occur will be explicitly marked
+as such. Next, we will discuss the generic syntax. Following sections
+are devoted to describing the file system specific syntax for each file
+system that Cfengine supports ACLs for.
+
+Note that even though the same ACL is set on two systems with
+different ACL types, it may be enforced differently because the ACE
+matching algorithms differ. For instance, as discussed earlier, NTFS
+uses culumative matching, while POSIX uses precedence
+matching. Cfengine cannot alter the matching algorithms, and
+simulating one or the other by changing ACL definitions is not
+possible in all cases, and would probably lead to confusion. Thus, if
+an ACL is to be used on two systems with different ACL types, the user
+is encrouraged to check that any differences in matching algorithms do
+not lead to misconfiguarions.
+
+@verbatim
+body acl acl-alias:
+{
+acl_method => "overwrite"/"append";
+acl_type => "posix";
+acl_directory_inherit => "parent"/"specify"/"none";
+aces => {"user:uid:mode[:perm_type]", ..., 
+         "group:gid:mode[:perm_type]", ..., "all:mode[:perm_type]"};
+inherit_aces => {"user:uid:mode[:perm_type]", ..., 
+                 "group:gid:mode[:perm_type]", ..., "all:mode[:perm_type]"};
+}
+@end verbatim 
+
+
+@c TODO: Corrolate specify and inherit_aces names to show they stick together
+@itemize
+@item @code{acl-alias} is the name of the defined ACL. It can be any
+  identifier containing alphanumeric characters and underscores. We
+  will use this name when referring to the ACL.
+
+@item @code{acl_method} (optional) can be set to either @code{overwrite} or
+  @code{append}, and defaults to @code{overwrite}. If set to
+  @code{overwrite}, the defined ACL will replace the currently set
+  ACL. All required fields must then be set in the defined ACL
+  (e.g. @code{all} in POSIX). Setting it to @code{append} only adds or
+  modifies the ACEs that are defined.
+
+@item @code{acl_type} (optional) specifies the ACL type. This only
+  needs to be specified if ACL implementation specific syntax is used
+  in the ACL (e.g. ACL specific permissins). If the ACL is enforced on
+  a different ACL implementation than the one stated, the ACL
+  implementation specific syntax is ignored.
+
+@item @code{acl_directory_inherit} (optional) specifies if the ACL should be
+  inherited to newly created subobjects. Only valid if the ACL is set
+  on a directory. @code{parent} is the default and indicates that the
+  ACL should be inherited to all subobjects. If set to @code{none},
+  the ACL will not be inherited, but the file system specifies a
+  default ACL, which varies with the file system. If set to
+  @code{specify}, @code{inherit_aces} defines the inherited ACL.
+  This is only valid for ACL types where the inherited ACL is allowed
+  to be specified independently.
+
+@item @code{aces} is a list of access control entries. It is parsed
+  from left to right, and multiple entries with the same entity-type
+  and id is allowed. This is neccessary to specify permissions with
+  different @code{perm_type} in the same ACE.
+
+@item @code{inherit_aces} (optional) is a list of access control
+  entries that are set on child objects. It is also parsed from left
+  to right and allows multiple entries with same entity-type and
+  id. Only valid if @code{acl_directory_inherit} is set to
+  @code{specify}.
+
+@item @code{user} indicates that the line applies to a user specified
+  by the user identitfier @code{uid}. @code{mode} is the permission
+  mode string.
+
+@item @code{group} indicates that the line applies to a group specified
+  by the group identitfier @code{gid}. @code{mode} is the permission
+  mode string.
+
+@item @code{all} indicates that the line applies to every
+  user. @code{mode} is the permission mode string.
+
+@item @code{uid} is a valid user identifier for the system and
+  cannot be empty. However, @code{uid} can be set to * as a synonym
+  for the entity that owns the file system object (e.g. user:*:r).
+
+@item @code{gid} is a valid group identifier for the system and
+  cannot be empty. However, in some acl types, @code{gid} can be set
+  to * to indicate a special group (e.g. in POSIX this refers to the
+  file group).
+
+@item @code{mode} is one or more strings
+  @code{op}$|$@code{perms}$|$(@code{nperms}); a concatenation of @code{op},
+  @code{perms} and optionally (@code{nperms}), see below, separated
+  with commas (e.g. +rx,-w(s)). @code{mode} is parsed from left to
+  right. 
+@c TODO: include support for @code{fullaccess}, @code{noaccess},
+@c and @code{remove}
+
+@item @code{op} specifies the operation on any existing permissions,
+  if the defined ACE already exists. @code{op} can be =, empty, + or
+  -. = or empty sets the permissions to the ACE as stated, + adds and
+  - removes the permissions from any existing ACE.
+  @c TODO: what to do if + or - is used when ACE does not exist?
+
+@item @code{nperms} (optional) specifies file system specific
+  (native) permissions. Only valid if @code{acl_type} is
+  defined. @code{nperms} will only be enforced if the file object is
+  stored on a file system supporting the acl type set in
+  @code{acl_type} (e.g. @code{nperms} will be ignored if
+  @code{acl_type:}@code{ntfs} and the object is stored on a file system
+  not supporting ntfs ACLs). Valid values for @code{nperms} varies with
+  different ACL types, and is defined in subsequent sections.
+
+@item @code{perm_type} (optional) can be set to either @code{allow} or
+  @code{deny}, and defaults to @code{allow}. @code{deny} is only valid
+  if @code{acl_type} is set to an ACL type that support deny
+  permissions. A @code{deny} ACE will only be enforced if the file
+  object is stored on a file system supporting the acl type set in
+  @code{acl_type}.
+@end itemize
+
+@code{gperms} (generic permissions) is a concatenation of zero or more
+of the characters shown in the table below. If left empty,
+none of the permissions are set.
+@c TODO: Should be allowed to set no permissions (empty perms?)
+
+
+@multitable @columnfractions .05 .2 .35 .4
+@headitem Flag @tab Description @tab Semantics on file @tab Semantics on directory
+
+@item @code{r} @tab Read @tab Read data, permissions, attributes @tab Read
+directory contents, permissions, attributes
+@item @code{w} @tab Write @tab Write data @tab Create, delete, rename subobjects
+@item @code{x} @tab Execute @tab Execute file @tab Access subobjects
+@end multitable
+
+
+Note that the @code{r} permission is not neccessary to read an object's
+permissions and attributes in all file systems (e.g. in POSIX, having
+@code{x} on its containing directory is sufficient).
+
+
+\subsection{Generic syntax examples}
+@c TODO: Create example
+
+@c  Permissions (perms):
+@c  r		= Description: 
+@c  		  POSIX : {r}
+@c  		  NTFS : {List Folder/Read Data, Read
+@c  		       Attributes, Read Extended Attributes, Read Permissions} 
+@c  w		= Description: Write
+@c  		  POSIX : {w}
+@c  		  NTFS : {Create Files/Write Data, Create
+@c  		  Folders/Append Data, Delete Subfolders and Files}
+@c  x		= Description: Execute file / set as working directory
+@c  		  POSIX : {x}
+@c  		  NTFS : {Traverse Folder/Execute File}
+@c  TODO: Must not be able to access subobjects w/o x in NTFS!
+
+
+
+@c  TODO: inlcude support for the following as mode
+@c  Keywords:
+@c  remove		= setting mode = remove removes any existing
+@c  		  ACE with the given user or group. Only valid if
+@c                    @code{method}:@code{overwrite}.
+
+@c  fullaccess	= setting mode = fullaccess grants every permission
+@c                    supported by the file system to the given entity
+@c                    (user, group, all). The owner of the object and
+@c                    properties like suid, sgid and 
+@c  		  sticky are left unchanged.
+
+@c  noaccess	= setting mode = noaccess denies every permission for
+@c                    the entity (user, group, all). The entity is left
+@c                    with no access rights to the object. Note that the
+@c                    entity might nonetheless be able to change the
+@c                    permissions (e.g. by being the owner of the object
+@c                    or a superuser).
+                  
+
+
+
+@c TODO: Define user, group, mask and other to u, g, m, o instead / also?
+@c TODO: Examples: ACLs, console output, screenshots
+
+
+
+@c ================================================================
+
+
+@section Supported ACL types
+
+@subsection POSIX
+
+@b{Generic syntax mapping}
+
+@b{Entity types}
+All entity types in the generic syntax are mapped to the corresponding
+entity types with the same name in POSIX, except @code{all} which
+corresponds to @code{other} in POSIX.
+
+@b{Permissions}
+
+As shown in Table~\ref{tl:posix-perms-map}, @code{perms} is mapped
+straigthforward from generic to POSIX permission flags.
+
+@multitable @columnfractions .3 .3
+@item Generic flag  @tab POSIX flag
+@item @code{r} @tab @code{r}
+@item @code{w} @tab @code{w}
+@item @code{x} @tab @code{x}
+@end multitable
+
+Generic to POSIX permission mapping.
+
+
+@b{Inheritance}
+POSIX supports @code{acl_directory_inherit:}@code{specify}. The
+@code{inherit_aces} list is then set as the default ACL in POSIX (see
+acl(5)).
+
+If @code{acl_directory_inherit:}@code{parent} is set, Cfengine copies the access ACL
+to the default ACL. Thus, newly created objects get the same access
+ACL as the containing directory.
+
+@code{acl_directory_inherit:}@code{none} corresponds to no POSIX
+default ACL. This results in that newly created objects get ACEs for
+owning user, group and other. The permissions are set in accordance
+with the mode parameter to the creating function and the umask
+(usually results in 644 for files and 755 for directories).
+
+@c TODO: Support acl_method:append for inherit_aces as well (e.g. me)?
+
+@subsection POSIX-specific ACL syntax
+
+@b{Native permissions}
+The valid values for @code{nperms} in POSIX are @code{r},@code{w}, and
+@code{x}. These are in fact the same as the generic permissions, so
+specifying them as generic or native gives the same effect.
+
+@b{File owner and group}
+A user-ACE with uid set to * indicates file object owner. A group-ACE
+with gid set to * indicates file group.
+
+@b{mask}
+mask can be defined as a normal ACE, as mask:mode. mask specifies the
+maximum permissions that are granted to named users (not owning user),
+file group and named groups. mask is optinal, and will be computed as
+explained in acl_calc_mask(3) if left unspecified.
+
+@b{Required ACEs}
+
+POSIX requires existance of an ACE for the file owner,
+(@code{user:*:mode}), the file group (@code{group:*:mode}), other
+(@code{all:mode}) and mask (@code{mask:mode}). As mentioned, Cfengine
+automatically creates a mask-ACE, if missing. However, if
+@code{method:}@code{overwrite}, the user must ensure that the rest of
+the required entries are defined.
+@c TODO: This is not good for cross-platform. (i.e. generic syntax
+@c only)
+
+
+@c TODO: Include all syntax: generic + POSIX-extra
+
+
+
+---THE FOLLOWING IS UNFINISHED--\\\\
+
+ACL Entry Format
+----------------
+[d[efault]:] [u[ser]:]uid [:perms] - Permissions of a named user. Permissions of the file owner if uid is empty.
+[d[efault]:] g[roup]:gid [:perms] - Permissions of a named group. Permissions of the owning group if gid is empty.
+[d[efault]:] m[ask][:] [:perms] - Effective rights mask
+[d[efault]:] o[ther][:] [:perms] - Permissions of others.
+
+@c TODO: support sticky, suid, sgid?
+@c TODO: Describe mask (special for posix)
+@c TODO: Describe owner:mode, file group
+@c TODO: specified inheritance
+@c TODO: Describe ACCESS CHECK ALGORITHM from acl(5)
+
+perms in {r,w,x,X} (X = x if (dir || x for any other user) else no x)
+
+Octal definitions are supported.
+
+TODO: default (inheritance), user class, mask
+TODO: owning group any different from any other group?
+TODO:
+Directory: Need execute to access subobject (including its
+permissions) and set to working directory. Need read to list directory
+contents, but only names. Need wx to create, delete and rename
+subobjects.
+Setuid, setgid and sticky?
+
+TODO: Which ACE is selected if two member groups are in the ACL ?
+
+References: setfacl(1)
+	    \url{http://en.wikipedia.org/wiki/File_system_permissions}
+
+
+\subsection{Solaris (new format)}
+A document from Sept. 2008 describes a new Solaris ACL format. The old
+ACL format is primarily based on POSIX, while the new one is more like NT.
+
+New ACL Entry Format
+--------------------
+%owner@ |group@ |everyone@:access-permissions/...[:inheritance-flags]:deny | allow
+%user|group:name:access-permissions/...[:inheritance-flags]:deny | allow
+
+
+References: \url{http://docs.sun.com/app/docs/doc/819-5461/gbcaq?a=view}
+
+
+@subsection NTFS
+
+@c TODO: simulate owner entry (precedence compared to user?)
+@c remove kw, can remove all
+NTFS version 5, which was introduced with Windows 2000, supports
+thirteen so-called special file permissions, if we do not consider the
+"Synchronize" permission.  The synchronize permission is used to
+synchronize access to a file handle in a multi-threaded application,
+and is therefore not directly relevant to security. The thirteen
+relevant permissions are as follows.
+
+@itemize
+@item Traverse Folder/Execute File
+@item List Folder/Read Data
+@item Read Attributes
+@item Read Extended Attributes
+@item Create Files/Write Data
+@item Create Folders/Append Data
+@item Write Attributes
+@item Write Extended Attributes
+@item Delete Subfolders And Files
+@item Delete
+@item Read Permissions
+@item Change Permissions
+@item Take Ownership
+@end itemize
+
+More detail on the semantics of these permissions is available in the
+references. These thirteen special permissions are grouped to create 
+five sets of permissions: Read, Read \& Execute, Write, Modify and Full
+Control. In addition we have the List Folder Contents set, which is
+equivalent to the Read \& Execute set but is only available to and
+inherited by directories. The Full Control set is unsurprisingly all
+the thirteen special permissions. The special permissions are grouped
+as follows.
+
+TODO: Insert table from \url{http://support.microsoft.com/kb/308419} w/o
+LFC, and correct order (Read, R\&E, Write, Modify, FC).
+
+Cfengine maps the r permission to the Read set, the w permission to
+the Write set and the x permission to the Traverse Folder / Execute
+File special permission. This has the effect that rx is mapped to the
+Read \& Execute set. Be aware that an rwx permission on NTFS is more
+restrictive than in POSIX ACLs. This is because NTFS does not allow
+deletion of objects within a directory without a Delete Subfolders and
+Files permission on the directory (or a Delete permission on the
+object itself), while in POSIX ACLs, rwx on the directory is
+sufficient to delete any file or directory within it (except when the
+Sticky-bit is set on the directory). To cover the additional
+permissions available on NTFS, Cfengine allows the following
+permissions on NTFS file systems.
+
+Additional permissions:
+@table @samp
+@item d
+		 Delete
+		  {Delete}
+@item D
+		 Delete sub-objects
+		  {Delete Subfolders and Files}
+@item p
+	 Change permissions
+		  {Change Permissions}
+@item o
+		Take ownership
+		  {Take Ownership}
+@end table
+
+We can see that Cfengine maps rwxd to the Modify set in NTFS. For
+a file, rwx is equivalent in POSIX and NTFS semantics. For a directory,
+rwx in POSIX semantics is equivalent to rwxD in NTFS semantics. In
+POSIX ACLs, there is no explicit delete permission, but the write and
+sticky permissions on the containing directory determines if a user
+has privileges to delete. In POSIX, the owner and root can change
+permissions, while usually only the root may change the ownership, so
+there is no direct equivalent to the Change Permission and Take
+Ownership in POSIX.
+
+TODO: Insert table with special permissions and permission sets and what
+Cfengine maps to (include rwxdDpo)
+
+Note that the entity type "Everyone" in NTFS corresponds to "other"
+in Cfengine. 
+
+TODO: Describe permission inheritance.
+       A directory's access permissions are always
+       inherited to its sub-objects in NTFS - inheritance must be
+       explicitly removed on the sub-objects.
+
+In addition, NTFS supports deny permissions. This can for instance be
+used to denying a user a particular permission that a group membership
+grants him. It is important to note that the persedence of allow and
+deny permissions is as follows:
+
+@itemize
+@item Explicit Deny
+@item Explicit Allow
+@item Inherited Deny
+@item Inherited Allow
+@end itemize
+
+An important point here is that even though a user is denied access in
+a parent directory and this permission is inherited, but one of the
+groups he is member of is explicitly allowed access to a file in that
+directory, he is actually allowed to access the file.
+
+NOTES:
+
+The default owner is normally an individual—the user who is currently
+logged on. The only exceptions occur when the user is a member of
+either the Administrators group or the Domain Admins group 
+
+Owners of NTFS objects can allow another user to take ownership by
+giving that user Take Ownership permission. owners can give other
+users permission to Change Permissions (WRITE_DAC). In addition,
+members of the Administrator group can take ownership
+never possible to give ownership of an object to another USER. But
+members of Administrative group can give ownership to that group
+
+Change permissions can be done by owner, by default creator of fs
+object, and special permissions to allow by others (ntfs).
+
+
+References: \url{http://support.microsoft.com/kb/308419}
+	    \url{http://www.microsoft.com/technet/prodtechnol/windows2000serv/reskit/distrib/dsce_ctl_gstb.mspx}
+
+
+
+@c *****************************************************
+@c * CHAPTER 
+@c *****************************************************
+@node Report extensions, Server extensions, File Access Control Lists, Top
+@chapter Report extensions
+
+Automatic promise labelling and knowledge output promise_knowledge.cf
+
+
+Compliance reports
+File change report
+Setuid log report
+Software package summary and patch level
+
+@c *****************************************************
+@c * CHAPTER 
+@c *****************************************************
+@node Server extensions,  , Report extensions, Top
+@chapter Server extensions
+
+
+
+Identity management
+----------------------
+
+Local - remove / purge user from a machine, disable but not remove (no
+purge data)
+
+Add an admin user on several machines
+
+Usually not documented well ..
+
+Check that there are no accounts of unknown names
+
+Change passwords at regular times
+
+Check for users that have a working shell
+
+Synchronize passwords with LDAP
+
+--
+
+Password expiry is automatic
+
+
+
+@verbatim
+########################################################
+#
+# Remote value from server connection to cfServer
+#
+########################################################
+
+ #
+ # run this as follows:
+ #
+ # cf-serverd -f runtest_1.cf [-d2]
+ # cf-agent   -f runtest_2.cf
+ #
+ # Notice that the same file configures all parts of cfengine
+
+########################################################
+
+body common control
+
+{
+bundlesequence  => { "testbundle"  };
+
+version => "1.2.3";
+}
+
+########################################################
+
+bundle agent testbundle
+
+{
+vars:
+
+ "remote" string => remotescalar("test_scalar","127.0.0.1","yes");
+
+reports:
+
+  linux::
+
+    "Receive value $(remote)";
+}
+
+#########################################################
+# Server config
+#########################################################
+
+body server control 
+
+{
+allowconnects         => { "127.0.0.1" , "::1" };
+allowallconnects      => { "127.0.0.1" , "::1" };
+trustkeysfrom         => { "127.0.0.1" , "::1" };
+allowusers            => { "mark" };
+}
+
+#########################################################
+
+bundle server access_rules()
+
+{
+vars:
+
+  "localvar" string => "literal string";
+
+access:
+
+  "This is a $(localvar) for remote access"
+ 
+        handle  => "test_scalar",
+  resource_type => "literal",
+        admit   => { "127.0.0.1" };
+}
+
+@end verbatim
+
+
+@c =========================================================================
+@c @node Index,  , Cfengine Methods, Top
+@c @unnumbered Concept Index
+@c @printindex cp
+@c =========================================================================
+@ifhtml
+@html
+<a name="Contents">
+@end html
+@end ifhtml
+@contents
+@c  The file is structured like a programming language. Each chapter
+@c  starts with a chapter comment.
+@c
+@c  Menus list the subsections so that an online info-reader can parse
+@c  the file hierarchically.
+@ifhtml
+@html
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-2576171-2");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+@end html
+@end ifhtml
+@bye

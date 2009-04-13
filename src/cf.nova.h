@@ -10,9 +10,64 @@
 #  include <ldap.h>
 # endif
 
+#ifdef HAVE_ACL_H
+# include <acl.h>
+#endif
+
+#ifdef HAVE_SYS_ACL_H
+# include <sys/acl.h>
+#endif
+
+#ifdef HAVE_ACL_LIBACL_H
+# include <acl/libacl.h>
+#endif
+
+/* Valid ACL syntax values, from documentation */
+
+// Valid generic permissions
+#define CF_VALID_GPERMS "rwx"
+
+// Valid native permission characters
+#define CF_VALID_NPERMS_POSIX "rwx"
+
+// Valid operations (first char of mode)
+#define CF_VALID_OPS_METHOD_OVERWRITE "="  // op can only be empty or equal when method => overwrite
+#define CF_VALID_OPS_METHOD_APPEND "=+-"
+
+// Native perms separators in mode
+#define CF_NATIVE_PERMS_SEP_START '('
+#define CF_NATIVE_PERMS_SEP_END ')'
+
+// Cfengine standard model permissions (non-overlapping bitmasks)
+#define CF_PERM_CF_NONE 0x0
+#define CF_PERM_CF_EXECUTE 0x1
+#define CF_PERM_CF_WRITE 0x2
+#define CF_PERM_CF_READ 0x4
+
+/************************************************************************************/
+/* Prototypes                                                                       */
+/************************************************************************************/
+
 /* acl.c */
 
 void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
+void SetACLDefaults(struct CfACL *acl);
+int CheckACLSyntax(struct CfACL acl,struct Promise *pp);
+int CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support,struct Promise *pp);
+int CheckModeSyntax(char **mode_p, char *valid_nperms, char *valid_ops,struct Promise *pp);
+int CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp);
+int CheckPosixLinuxACL(char *file_path, struct CfACL acl);
+int CheckPosixLinuxAccessACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path);
+int CheckPosixLinuxInheritACEs(struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path);
+int CheckPosixLinuxACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type);
+int CheckDefaultEqualsAccessACL(char *file_path);
+int CheckDefaultClearACL(char *file_path);
+int ParseEntityPosixLinux(char **str, acl_entry_t ace, int *is_mask);
+int ParseModePosixLinux(char *mode, acl_permset_t old_perms);
+acl_entry_t FindACE(acl_t acl, acl_entry_t ace_find);
+int ACLEquals(acl_t first, acl_t second);
+int ACECount(acl_t acl);
+int PermsetEquals(acl_permset_t first, acl_permset_t second);
 
 /* database.c */
 

@@ -39,7 +39,7 @@ if (strncmp(s,"bundle",strlen("bundle")) == 0 || strncmp(s,"agent",strlen("agent
    return;
    }
 
-if (strncmp(s,"promise",strlen("promise")) == 0)
+if (strcmp(s,"promise") == 0)
    {
    Nova_ListPromiseTypes();
    return;
@@ -68,8 +68,16 @@ for  (i = 0; i < CF3_MODULES; i++)
             {
             printf("   %s\n",bs[k].lval);
             }
-         
-         return;
+
+         if (strcmp(s,"classes") == 0)
+            {
+            /* non-unique */
+            continue;
+            }
+         else
+            {
+            return;
+            }
          }
 
       for (k = 0; bs[k].lval !=  NULL; k++)
@@ -167,7 +175,7 @@ fprintf(fp,"Promisers::\n\n");
 fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
 fprintf(fp,"      association => a(\"occurs in bundle\",\"Bundles::%s\",\"bundle contains promiser\");\n",pp->bundle);
 fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
-fprintf(fp,"      association => a(\"makes promise of type\",\"Promise_types::%s\",\"promises have been made by promisers\");\n",pp->agentsubtype);
+fprintf(fp,"      association => a(\"makes promise of type\",\"Promise_types::%s\",\"promises have been made by\");\n",pp->agentsubtype);
 fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
 fprintf(fp,"      association => a(\"makes promises\",\"%s\",\"is a promise made by\");\n",promise_id);
 
@@ -183,7 +191,7 @@ switch (pp->petype)
    case CF_SCALAR:
        fprintf(fp,"Promisees::\n\n");
        fprintf(fp,"  \"%s\"\n",pp->promisee);
-       fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,pp->promiser,NOVA_GIVES);
+       fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);
        fprintf(fp,"  \"%s\"\n",pp->promisee);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
        break;
@@ -194,7 +202,7 @@ switch (pp->petype)
        for (rp = (struct Rlist *)pp->promisee; rp != NULL; rp=rp->next)
           {
           fprintf(fp,"  \"%s\"\n",rp->item);
-          fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,pp->promiser,NOVA_GIVES);          
+          fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);          
           fprintf(fp,"  \"%s\"\n",rp->item);
           fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
           }
@@ -212,11 +220,11 @@ fprintf(fp,"\"%s\"\n",promise_id);
 
 if (pp->ref)
    {
-   fprintf(fp,"   comment => \"%s\";\n",pp->ref);
+   fprintf(fp,"   comment => \"%s\";\n",NovaEscape(pp->ref));
    }
 else
    {
-   fprintf(fp,"   comment => \"(Uncommented promise of type <i>%s</i> made by: %.25s..)\";\n",pp->agentsubtype,pp->promiser);
+   fprintf(fp,"   comment => \"(Uncommented promise of type <i>%s</i> made by: %.25s..)\";\n",pp->agentsubtype,NovaEscape(pp->promiser));
    }
 
 fprintf(fp,"\"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",promise_id,NOVA_ACTIVATED,pp->classes,NOVA_ACTIVATES);
@@ -239,11 +247,11 @@ PromiseNode(fp,pp,1);
 
 if (pp->ref)
    {
-   fprintf(fp,"   comment => \"%s\",\n",pp->ref);
+   fprintf(fp,"   comment => \"%s\",\n",NovaEscape(pp->ref));
    }
 else
    {
-   fprintf(fp,"   comment => \"A promise of type %s made by: %s\",\n",pp->agentsubtype,pp->promiser);
+   fprintf(fp,"   comment => \"A promise of type %s made by: %s\",\n",pp->agentsubtype,NovaEscape(pp->promiser));
    }
 
 fprintf(fp,"   represents => { \"%s\", \"%s\" };\n\n",pp->classes,pp->agentsubtype);

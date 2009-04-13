@@ -344,6 +344,7 @@ enum cfkcontrol
    cfk_sql_owner,
    cfk_sql_passwd,
    cfk_sql_server,
+   cfk_sql_connect_db,
    cfk_query_output,
    cfk_query_engine,
    cfk_stylesheet,
@@ -850,6 +851,7 @@ enum action_policy
   cfa_no_ppolicy
   };
 
+/************************************************************************************/
 
 enum cf_acl_method
    {
@@ -867,9 +869,19 @@ enum cf_acl_type
        
 enum cf_acl_inherit
    {
-   cfacl_default,
+   cfacl_specify,
    cfacl_parent,
-   cfacl_noinherit
+   cfacl_none,
+   cfacl_noinherit,
+   };
+
+struct CfACL
+   {
+   enum cf_acl_method acl_method;
+   enum cf_acl_type acl_type;
+   enum cf_acl_inherit acl_directory_inherit;
+   struct Rlist *acl_entries;
+   struct Rlist *acl_inherit_entries;
    };
 
 /*************************************************************************/
@@ -1124,8 +1136,7 @@ struct FileSelect
    {
    struct Rlist *name;
    struct Rlist *path;
-   mode_t plus;
-   mode_t minus;
+   struct Rlist *perms;      
    struct Rlist *owners;
    struct Rlist *groups;
    u_long plus_flags;     /* for *BSD chflags */
@@ -1387,21 +1398,12 @@ struct CfTcpIp
 
 /*************************************************************************/
 
-struct CfACL
-   {
-   enum cf_acl_method acl_method;
-   enum cf_acl_type acl_type;
-   enum cf_acl_inherit acl_directory_inherit;
-   struct Rlist *acl_entries;
-   };
-
-/*************************************************************************/
-
 struct CfDatabase
    {
    char *db_server_owner;
    char *db_server_password;
    char *db_server_host;
+   char *db_connect_db;
    enum cfdbtype  db_server_type;
    char *server;
    char *type;

@@ -313,6 +313,7 @@ char *GetRemoteScalar(char *handle,char *server,int encrypted);
 char *PromiseID(struct Promise *pp);
 void NotePromiseCompliance(struct Promise *pp,double val);
 time_t GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *lastseen);
+void SyntaxComplete(char *s);
 
 void *CfLDAPValue(char *uri,char *dn,char *filter,char *name,char *scope,char *sec);
 void *CfLDAPList(char *uri,char *dn,char *filter,char *name,char *scope,char *sec);
@@ -324,6 +325,8 @@ void *CfRegLDAP(char *uri,char *dn,char *filter,char *name,char *scope,char *reg
 int Abort(void);
 void KeepClassContextPromise(struct Promise *pp);
 int ContextSanityCheck(struct Attributes a);
+void PushPrivateClassContext(void);
+void PopPrivateClassContext(void);
 void DeletePrivateClassContext(void);
 void DeleteEntireHeap(void);
 void NewPersistentContext(char *name,unsigned int ttl_minutes,enum statepolicy policy);
@@ -423,6 +426,7 @@ struct Rval EvaluateFinalRval(char *scopeid,void *rval,char rtype,int forcelist,
 int IsNakedVar(char *str,char vtype);
 void GetNaked(char *s1, char *s2);
 void ConvergeVarHashPromise(char *scope,struct Promise *pp,int checkdup);
+void ConvergePromiseValues(struct Promise *pp);
 int Epimenides(char *var,char *rval,char rtype,int level);
 
 /* exec_tool.c */
@@ -594,7 +598,7 @@ int SelectLeaf(char *path,struct stat *sb,struct Attributes attr,struct Promise 
 int SelectTypeMatch(struct stat *lstatptr,struct Rlist *crit);
 int SelectOwnerMatch(struct stat *lstatptr,struct Rlist *crit);
 int SelectGroupMatch(struct stat *lstatptr,struct Rlist *crit);
-int SelectModeMatch(struct stat *lstatptr,mode_t plus,mode_t minus);
+int SelectModeMatch(struct stat *lstatptr,struct Rlist *ls);
 int SelectTimeMatch(time_t stattime,time_t fromtime,time_t totime);
 int SelectNameRegexMatch(char *filename,char *crit);
 int SelectPathRegexMatch(char *filename,char *crit);
@@ -963,7 +967,7 @@ void ShowControlBodies(void);
 void ShowBundleTypes(void);
 void ShowPromiseTypesFor(char *s);
 void ShowBodyParts(struct BodySyntax *bs);
-void ShowRange(char *);
+void ShowRange(char *s,enum cfdatatype type);
 void ShowBuiltinFunctions(void);
 void ShowBody(struct Body *body,int ident);
 void DebugBanner(char *s);
@@ -1144,6 +1148,7 @@ int IsCf3VarString(char *str);
 int BooleanControl(char *scope,char *name);
 char *ExtractInnerCf3VarString(char *str,char *substr);
 char *ExtractOuterCf3VarString(char *str,char *substr);
+int UnresolvedVariables(struct CfAssoc *ap,char rtype);
 
 /* verify_databases.c */
 
