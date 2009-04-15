@@ -17,7 +17,28 @@
 
 struct Item *NOVA_BUNDLEDEPENDENCE = NULL;
 
+static char *CF_VALUETYPES[18][3] =
+ {
+ "hup,int,trap,kill,pipe,cont,abrt,stop,quit,term,child,usr1,usr2,bus,segv","system signals","a unix signal name",
+ "true,false,yes,no,on,off","boolean","a positive or a negative",
+ "symlink,hardlink,relative,absolute,none","link type","a support link type",
+ "0,2147483648","a time range","a value from zero to a maximum system time -- but you should use time functions to convert this",
+ "0,99999999999","a positive integer","a number between zero and the maximum value",
+ "-99999999999,9999999999","integer","a number between the minus and positive maximum values",
+ "-9.99999E100,9.99999E100","real number","a number between the minus and positive maximum values",
+ "^.$","a single character","one symbol",
+ "[0-7augorwxst,+-]+","posix file mode or permission","something that you would give as an argument to chmod",
+ "[a-zA-Z0-9_!&|.()]+","a cfengine class expression","an alphanumeric string with option underscores and logical operators",
+ "[a-zA-Z0-9_$.]+","a cfengine identifier","an alphanumeric string with option underscores",
+ "[a-zA-Z0-9_$.-]+","a user/group id","an alphanumeric string with option underscores and hyphens",
+ "[cC]:\\\\.*|/.*","a file path","a system file path suitable for the target system",
+ "LOG_USER,LOG_DAEMON,LOG_LOCAL0,LOG_LOCAL1,LOG_LOCAL2,LOG_LOCAL3,LOG_LOCAL4,LOG_LOCAL5,LOG_LOCAL6,LOG_LOCAL7","a syslog level","a syslog constant",
+ "","An arbitrary string","unspecified characters",
+ ".*","An arbitrary string","unspecified characters",
+ NULL,NULL,NULL
+ };
 
+    
 /*****************************************************************************/
 
 void Nova_SyntaxCompletion(char *s)
@@ -84,7 +105,7 @@ for  (i = 0; i < CF3_MODULES; i++)
          {
          if (s && strcmp(s,bs[k].lval) == 0)
             {
-            printf("Constraint %s (of promise type %s) has possible values:\n\n",bs[k].lval,ss[j].subtype);
+            printf("constraint %s (of promise type %s) has possible values:\n\n",bs[k].lval,ss[j].subtype);
 
             switch (bs[k].dtype)
                {
@@ -124,7 +145,7 @@ for  (i = 0; i < CF3_MODULES; i++)
                {
                if (strcmp(s,bs2[l].lval) == 0)
                   {
-                  printf("Body constraint %s is part of %s (in promise type %s) and has possible values:\n\n",bs2[l].lval,bs[k].lval,ss[j].subtype);
+                  printf("body constraint %s is part of %s (in promise type %s) and has possible values:\n\n",bs2[l].lval,bs[k].lval,ss[j].subtype);
                   
                   printf("     %s",bs2[l].lval);
                   for (m = 0; m + strlen(bs2[l].lval) < 22; m++)
@@ -175,25 +196,25 @@ strcpy(promise_id,Nova_PromiseID(pp));
 
 fprintf(fp,"\ntopics:\n\n");
 
-fprintf(fp,"Bundles::\n");
+fprintf(fp,"bundles::\n");
 fprintf(fp,"  \"%s\";\n",pp->bundle);
 
-fprintf(fp,"Contexts::\n");
+fprintf(fp,"contexts::\n");
 fprintf(fp,"  \"%s\";\n",pp->classes);
 
 /* First the bundle container */
 
-fprintf(fp,"Promisers::\n\n");
+fprintf(fp,"promisers::\n\n");
 fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
-fprintf(fp,"      association => a(\"occurs in bundle\",\"Bundles::%s\",\"bundle contains promiser\");\n",pp->bundle);
+fprintf(fp,"      association => a(\"occurs in bundle\",\"bundles::%s\",\"bundle contains promiser\");\n",pp->bundle);
 fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
-fprintf(fp,"      association => a(\"makes promise of type\",\"Promise_types::%s\",\"promises have been made by\");\n",pp->agentsubtype);
+fprintf(fp,"      association => a(\"makes promise of type\",\"promise_types::%s\",\"promises have been made by\");\n",pp->agentsubtype);
 fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
 fprintf(fp,"      association => a(\"makes promises\",\"%s\",\"is a promise made by\");\n",promise_id);
 
 
 
-fprintf(fp,"Promise_types::\n");
+fprintf(fp,"promise_types::\n");
 fprintf(fp,"  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype,"is employed in bundle",pp->bundle,"employs promises of type");
 
 /* Promisees as topics too */
@@ -201,7 +222,7 @@ fprintf(fp,"  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype
 switch (pp->petype)
    {
    case CF_SCALAR:
-       fprintf(fp,"Promisees::\n\n");
+       fprintf(fp,"promisees::\n\n");
        fprintf(fp,"  \"%s\"\n",pp->promisee);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);
        fprintf(fp,"  \"%s\"\n",pp->promisee);
@@ -210,7 +231,7 @@ switch (pp->petype)
 
    case CF_LIST:
 
-       fprintf(fp,"Promisees::\n\n");
+       fprintf(fp,"promisees::\n\n");
        for (rp = (struct Rlist *)pp->promisee; rp != NULL; rp=rp->next)
           {
           fprintf(fp,"  \"%s\"\n",rp->item);
@@ -226,7 +247,7 @@ switch (pp->petype)
 
 /* Now the constraint list */
 
-fprintf(fp,"Promises::\n\n");
+fprintf(fp,"promises::\n\n");
 
 fprintf(fp,"\"%s\"\n",promise_id);
 
@@ -274,13 +295,13 @@ fprintf(fp,"   represents => { \"promise\", \"%s\", \"%s\" };\n\n",NovaEscape(pp
 
 fprintf(fp,"%s::\n",pp->bundle);
 fprintf(fp,"\"promises.cf.html#bundle_%s\"\n",pp->bundle);
-fprintf(fp,"   represents => { \"Bundle Reference\" };\n\n");
+fprintf(fp,"   represents => { \"bundle reference\" };\n\n");
 
 for (cp = pp->conlist; cp != NULL; cp=cp->next)
    {
    fprintf(fp,"%s::\n",cp->lval);
    PromiseNode(fp,pp,1);
-   fprintf(fp,"   represents => { \"Used in promise\", \"%s\" };\n\n",promise_id);
+   fprintf(fp,"   represents => { \"used in promise\", \"%s\" };\n\n",promise_id);
 
    if (strcmp(cp->lval,"comment") == 0)
       {
@@ -304,36 +325,134 @@ Nova_MapClassParameterAssociations(fp,pp,promise_id);
 
 void Nova_ShowTopicRepresentation(FILE *fp)
     
-{
+{ int i,j,k,l,m;
+  struct SubTypeSyntax *ss;
+  struct BodySyntax *bs,*bs2;
+
 fprintf(fp,"\ntopics:\n");
 
-fprintf(fp,"References::\n");
-fprintf(fp,"  \"Bundle Reference\";\n");
-fprintf(fp,"  \"Used in promise\";\n");
+fprintf(fp,"references::\n");
+fprintf(fp,"  \"bundle reference\";\n");
+fprintf(fp,"  \"used in promise\";\n");
 fprintf(fp,"  \"has current exemplars\";\n");
 fprintf(fp,"  \"is a promise of type\";\n");
 fprintf(fp,"  \"occurs in bundle\";\n");
 fprintf(fp,"  \"bundle contains promiser\";\n");
 fprintf(fp,"  \"makes promise of type\";\n");
-fprintf(fp,"  \"promises have been made by promisers\";\n");
+fprintf(fp,"  \"promises have been made by\";\n");
 fprintf(fp,"  \"makes promises\";\n");
 fprintf(fp,"  \"is a promise made by\";\n");
 
-fprintf(fp,"Policy::\n");
-fprintf(fp,"  \"Bundles\";\n");
-fprintf(fp,"  \"Bodies\";\n");
-fprintf(fp,"  \"Contexts\";\n");
-fprintf(fp,"  \"Promisees\";\n");
-fprintf(fp,"  \"Promisers\";\n");
-fprintf(fp,"  \"Promises\" comment => \"Occurrences of promise topics or suggestions\";\n");
-fprintf(fp,"  \"Promise types\";\n");
-fprintf(fp,"  \"Body-lval types\";\n");
-fprintf(fp,"\"Comments\"\n");
+fprintf(fp,"system_policy::\n");
+fprintf(fp,"  \"bundles\";\n");
+fprintf(fp,"  \"bodies\";\n");
+fprintf(fp,"  \"contexts\";\n");
+fprintf(fp,"  \"promisees\";\n");
+fprintf(fp,"  \"promisers\";\n");
+fprintf(fp,"  \"promises\" comment => \"occurrences of promise topics or suggestions\";\n");
+fprintf(fp,"  \"promise types\";\n");
+fprintf(fp,"  \"body constraints\";\n");
+fprintf(fp,"\"comments\"\n");
 fprintf(fp,"      association => a(\"see instances of\",\"comment\",\"is one of a number of\");\n");
+fprintf(fp,"\"functions\" comment => \"In built functions that may be used to set variables or classes\";");
 
-fprintf(fp,"Bundles::\n");
-fprintf(fp,"\"sys\" comment => \"Cfengine's internal bundle of system specific values\";\n");
+fprintf(fp," \"values\"  comment => \"Formal rvalues in constraint assignments and their legal ranges\";\n");
+fprintf(fp,"values::\n\n");
+
+for (i = 0; CF_VALUETYPES[i][0] != NULL; i++)
+   {
+   fprintf(fp,"\"%s\"   comment =>\"Should match the generic pattern %s, i.e. %s\";\n",CF_VALUETYPES[i][1],NovaEscape(CF_VALUETYPES[i][0]),CF_VALUETYPES[i][2]);
+   }
+
+fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[1][1],CF_DATATYPES[cf_int]);
+fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[3][1],CF_DATATYPES[cf_int]);
+fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[4][1],CF_DATATYPES[cf_int]);
+fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[5][1],CF_DATATYPES[cf_int]);
+fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[6][1],CF_DATATYPES[cf_real]);
+fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[9][1],CF_DATATYPES[cf_class]);
+fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[10][1],CF_DATATYPES[cf_str]);
+fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[11][1],CF_DATATYPES[cf_str]);
+fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[12][1],CF_DATATYPES[cf_str]);
+fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[13][1],CF_DATATYPES[cf_str]);
+fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[14][1],CF_DATATYPES[cf_str]);
+fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[15][1],CF_DATATYPES[cf_str]);
+
+
+fprintf(fp,"bundles::\n");
+fprintf(fp,"\"sys\" comment => \"cfengine's internal bundle of system specific values\";\n");
 Nova_ShowBundleDependence(fp);
+
+for (i = 0; i < CF3_MODULES; i++)
+   {
+   if ((ss = CF_ALL_SUBTYPES[i]) == NULL)
+      {
+      continue;
+      }
+
+   for (j = 0; ss[j].btype != NULL; j++)
+      {
+      if (ss[j].bs != NULL) /* In a bundle */
+         {
+         bs = ss[j].bs;
+
+         for (l = 0; bs[l].lval != NULL; l++)
+            {
+            fprintf(fp,"promise_types::\n");
+            fprintf(fp,"   \"%s\";\n",ss[j].subtype);
+            
+            fprintf(fp,"body_constraints::\n");
+            fprintf(fp,"   \"%s\"\n",bs[l].lval);
+            fprintf(fp,"   comment => \"%s\",\n",NovaEscape(bs[l].description));
+            fprintf(fp,"   association => a(\"is a possible body constraint for\",\"promise_types::%s\",\"can have body constraints\");\n",ss[j].subtype);
+            
+            if (bs[l].dtype == cf_body)
+               {
+               bs2 = (struct BodySyntax *)(bs[l].range);
+               
+               if (bs2 == NULL || bs2 == (void *)CF_BUNDLE)
+                  {
+                  continue;
+                  }
+               
+               for (k = 0; bs2[k].lval != NULL; k++)
+                  {
+                  fprintf(fp,"   \"%s\"\n",bs2[k].lval);
+                  fprintf(fp,"   comment => \"%s\",\n",NovaEscape(bs2[k].description));
+                  fprintf(fp,"   association => a(\"is a possible sub-body constraint for\",\"%s\",\"may have sub-body constraints\");\n",bs[l].lval);
+                  
+                  NovaShowValues(fp,bs2[k]);
+                  }
+               }
+            else
+               {
+               NovaShowValues(fp,bs[l]);
+               }
+            }
+         }
+      }
+   }
+
+for (i = 0; CF_COMMON_BODIES[i].lval != NULL; i++)
+   {
+   fprintf(fp,"   \"%s\";\n",CF_COMMON_BODIES[i].lval);
+   }
+
+
+for (i = 0; CF_COMMON_EDITBODIES[i].lval != NULL; i++)
+   {
+   fprintf(fp,"   \"%s\";\n",CF_COMMON_EDITBODIES[i].lval);
+   }
+
+fprintf(fp,"functions::\n\n");
+
+for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
+   {
+   char *type;
+   
+   fprintf(fp," \"%s\" ",CF_FNCALL_TYPES[i].name);
+   fprintf(fp,"    comment => \"%s\",\n",CF_FNCALL_TYPES[i].description);
+   fprintf(fp,"    association => a(\"returns data-type\",\"%s\",\"is returned by function\");\n",CF_DATATYPES[CF_FNCALL_TYPES[i].dtype]);
+   }
 }
 
 /*****************************************************************************/
@@ -474,7 +593,7 @@ void Nova_ListPromiseTypes()
 
 { int i;
 
-printf("Promise types:\n\n");
+printf("promise types:\n\n");
  
 for (i = 0; CF_COMMON_SUBTYPES[i].subtype != NULL; i++)
     {
@@ -584,10 +703,10 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
                Debug("Found %s in %s+%s\n",rp->item,pp2->classes,varclass);
                // found a connection
                fprintf(fp,"topics:\n");
-               fprintf(fp,"Promises::");
+               fprintf(fp,"promises::");
                fprintf(fp,"  \"%s\"\n",promise_id);
                fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,rp->item,NOVA_ISIMPACTED);
-               fprintf(fp,"Promisers::");
+               fprintf(fp,"promisers::");
                fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
                fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,rp->item,NOVA_ISIMPACTED);
                found = true;
@@ -597,7 +716,7 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
             
             if (strstr(pp2->classes,rp->item) && strcmp(rp->item,"any") != 0 && strcmp(pp->classes,"any") != 0)
                {                           
-               fprintf(fp,"Contexts::");
+               fprintf(fp,"contexts::");
                fprintf(fp,"  \"%s\"\n",NovaEscape(pp->classes));
                fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_ACTIVATED,rp->item,NOVA_ACTIVATES);
                }
@@ -672,7 +791,12 @@ char *NovaEscape(char *s)
   int count = 0;
 
 memset(buffer,0,CF_EXPANDSIZE);
-  
+
+if (strlen(s) == 0)
+   {
+   return s;
+   }
+
 for (sp1 = s,sp2 = buffer; *sp1 != '\0'; sp1++)
    {
    if (*sp1 == '\"')
@@ -687,4 +811,47 @@ for (sp1 = s,sp2 = buffer; *sp1 != '\0'; sp1++)
    }
 
 return buffer;
+}
+
+/*****************************************************************************/
+
+void NovaShowValues(FILE *fp,struct BodySyntax bs)
+
+{ int i;
+  char *range =  NULL;
+
+for (i = 0; CF_VALUETYPES[i][0] != NULL; i++)
+   {
+   if (strcmp(CF_VALUETYPES[i][0],bs.lval) == 0)
+      {
+      range = CF_VALUETYPES[i][1];
+      break;
+      }
+   }
+
+if (CF_VALUETYPES[i][0] == NULL)
+   {
+   range = CF_DATATYPES[bs.dtype];
+   }
+
+fprintf(fp,"body_constraints::\n");
+fprintf(fp,"   \"%s\" association => a(\"is a body constraint of type\",\"%s\",\"has possible body constraints\"),\n",bs.lval,range);
+fprintf(fp,"          comment => \"%s\";\n",NovaEscape(bs.description));
+
+switch(bs.dtype)
+   {
+   case cf_slist:
+   case cf_ilist:
+   case cf_rlist:
+
+       fprintf(fp,"   \"%s\" association => a(\"is a list of type\",\"%s\",\"is used in\");\n",bs.lval,range);
+
+   }
+
+if (CF_VALUETYPES[i][0] != NULL)
+   {
+   fprintf(fp,"values::\n\n");
+   fprintf(fp," \"%s\" comment => \"Represent type %s and should match %s\",\n",range,CF_DATATYPES[bs.dtype],NovaEscape(CF_VALUETYPES[i][0]));
+   fprintf(fp,"    association => a(\"are used in constraint parameters\",\"%s\",\"takes value\");\n",bs.lval);
+   }
 }

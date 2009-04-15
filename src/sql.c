@@ -42,7 +42,7 @@ switch (type)
 
 /*****************************************************************************/
 
-int Nova_ValidateSQLTableName(char *table_path,char *table)
+int Nova_ValidateSQLTableName(char *table_path,char *db,char *table)
 
 { char *sp;
   int dot = false,back = false,fwd = false;
@@ -75,16 +75,18 @@ if (dot + back + fwd > true)
    return false;
    }
 
+memset(db,0,CF_MAXVARSIZE);
+strncpy(db,table_path,sp-table_path-1);
 strncpy(table,sp,CF_MAXVARSIZE-1);
 return true;
 }
 
 /*****************************************************************************/
 
-void Nova_QueryTableColumns(char *s,char *table)
+void Nova_QueryTableColumns(char *s,char *db,char *table)
 
 {
-snprintf(s,CF_MAXVARSIZE-1,"SELECT column_name,data_type,character_maximum_length FROM information_schema.columns WHERE table_name ='%s'",table); 
+snprintf(s,CF_MAXVARSIZE-1,"SELECT column_name,data_type,character_maximum_length FROM information_schema.columns WHERE table_name ='%s' AND table_schema = '%s'",table,db); 
 }
 
 /*****************************************************************************/

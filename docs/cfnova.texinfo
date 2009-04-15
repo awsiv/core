@@ -104,7 +104,9 @@ back for use by other license holders in future releases.
 @node
 @section Productivity enhancements
 
-Command lookup on command line
+
+@node
+@subsection Command lookup on command line
 
 
 @smallexample
@@ -136,7 +138,26 @@ Description: Access control list type for the affected file system
 
 @end smallexample
 
+
+
+@node
+@subsection Knowledge map creation
+
 Start your own knowledge base
+
+
+
+
+
+
+@node
+@section Security Enhancements
+
+
+MS registry functions
+
+Access Control List management
+
 
 
 @c *****************************************************
@@ -808,13 +829,46 @@ reports:
 @chapter File Access Control Lists
 
 
+Example file:
 
+@verbatim
 
+#
+# test_acl.cf
+#
 
+body common control
+{
+bundlesequence => { "acls" };
+}
 
+#########################################
 
-@c TODO: Fix " to `` and ''
-@c TODO: Go from varn:varv to varn => varv
+bundle agent acls
+
+{
+files:
+
+  "/media/flash/acl/test_dir"
+
+    acl => template;
+}
+
+#########################################
+
+body acl template
+
+{
+acl_method => "overwrite";
+acl_type => "posix";
+acl_directory_inherit => "parent";
+aces => { "user:*:r(wwx),-r:allow", "group:*:+rw:allow", "mask:x:allow", "all:r"};
+}
+
+@end verbatim
+
+./cf-promises -f ./test_acl.cf
+./cf_agent -f  test_acl.cf
 
 @section Introduction
 Access Control Lists allow for a more fine-grained access control on

@@ -56,6 +56,8 @@ int Nova_CheckACLSyntax(struct CfACL acl,struct Promise *pp);
 int Nova_CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support,struct Promise *pp);
 int Nova_CheckModeSyntax(char **mode_p, char *valid_nperms, char *valid_ops,struct Promise *pp);
 int Nova_CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp);
+
+#ifdef HAVE_LIBACL
 int Nova_CheckPosixLinuxACL(char *file_path, struct CfACL acl);
 int Nova_CheckPosixLinuxAccessACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path);
 int Nova_CheckPosixLinuxInheritACEs(struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path);
@@ -68,6 +70,7 @@ acl_entry_t Nova_FindACE(acl_t acl, acl_entry_t ace_find);
 int Nova_ACLEquals(acl_t first, acl_t second);
 int Nova_ACECount(acl_t acl);
 int Nova_PermsetEquals(acl_permset_t first, acl_permset_t second);
+#endif
 
 /* database.c */
 
@@ -104,6 +107,7 @@ void NovaLogSymbolicValue(char *handle,struct Item *stream,struct Attributes a,s
 void Nova_ShowBundleDependence(FILE *fp);
 void Nova_RegisterBundleDepedence(char *name,struct Promise *pp);
 char *NovaEscape(char *s);
+void NovaShowValues(FILE *fp,struct BodySyntax bs);
 
 /* ldap.c */
 
@@ -167,10 +171,10 @@ int Nova_ParseHostname(char *name,char *hostname);
 
 /* sql.c */
 
-int Nova_ValidateSQLTableName(char *table_path,char *table);
+int Nova_ValidateSQLTableName(char *table_path,char *db,char *table);
 int Nova_VerifyTablePromise(CfdbConn *cfdb,char *table_path,struct Rlist *columns,struct Attributes a,struct Promise *pp);
-int Nova_ValidateSQLTableName(char *table_path,char *table);
-void Nova_QueryTableColumns(char *s,char *table);
+int Nova_ValidateSQLTableName(char *table_path,char *db,char *table);
+void Nova_QueryTableColumns(char *s,char *db,char *table);
 int Nova_NewSQLColumns(char *table,struct Rlist *columns,char ***name_table,char ***type_table,int **size_table,int **done);
 void Nova_DeleteSQLColumns(char **name_table,char **type_table,int *size_table,int *done,int len);
 void Nova_CreateDBQuery(enum cfdbtype type,char *query);
