@@ -47,7 +47,7 @@ void Nova_SyntaxCompletion(char *s)
   struct SubTypeSyntax *ss;
   struct BodySyntax *bs,*bs2 = NULL;
   char output[CF_BUFSIZE];
-  
+
 if (strncmp(s,"function",strlen("function")) == 0)
    {
    Nova_ListFunctions();
@@ -106,11 +106,14 @@ for  (i = 0; i < CF3_MODULES; i++)
          if (s && strcmp(s,bs[k].lval) == 0)
             {
             printf("constraint %s (of promise type %s) has possible values:\n\n",bs[k].lval,ss[j].subtype);
-
+            
             switch (bs[k].dtype)
                {
+               case cf_bundle:
+                   printf("   %s  ~ defines a separate bundle of promises\n\n",bs[k].lval);
+                   break;
                case cf_body:
-                   printf("   %s  ~ defined in a separate body, with elements\n\n",bs[k].lval,bs[k].range);
+                   printf("   %s  ~ defined in a separate body, with elements\n\n",bs[k].lval);
                    bs2 = (struct BodySyntax *)bs[k].range;
                    
                    for (l = 0; bs2[l].lval !=  NULL; l++)
@@ -124,11 +127,12 @@ for  (i = 0; i < CF3_MODULES; i++)
                       printf("~ (%s)\n",bs2[l].range);
                       }
                    
-                   printf("\nDescription: %s\n",bs2[k].description);
+                   printf("\nDescription: %s\n",bs2[l].description);
                    break;
                    
                default:
                    printf("   %s  ~ (%s)\n",bs[k].lval,bs[k].range);
+                   printf("\nDescription: %s\n",bs[k].description);
                    break;
                }
 

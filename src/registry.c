@@ -55,11 +55,10 @@ void Nova_VerifyRegistryPromise(struct Attributes a,struct Promise *pp)
   char name[CF_MAXVARSIZE];
   int rr,rw,create = false;
   DB *dbp;
-
-*(pp->donep) = true;
-
   struct CfLock thislock;
   char lockname[CF_BUFSIZE];
+
+*(pp->donep) = true;
 
 snprintf(lockname,CF_BUFSIZE-1,"db-%s",pp->promiser);
  
@@ -70,8 +69,9 @@ if (thislock.lock == NULL)
    return;
    }
 
-if (a.database.operation && strcmp(a.database.operation,"drop") == 0)
+if (a.database.operation && (strcmp(a.database.operation,"drop") == 0 || strcmp(a.database.operation,"delete") == 0))
    {
+   Nova_DeleteRegistryKey(a,pp);
    YieldCurrentLock(thislock);
    return;
    }
@@ -248,6 +248,76 @@ if (changes)
    {
    CfOut(cf_verbose,"","Promised verification of the registry recorded %d changes",changes);
    }
+}
+
+/*****************************************************************************/
+
+void Nova_DeleteRegistryKey(struct Attributes a,struct Promise *pp)
+    
+{ int ret;
+  HKEY key_h;
+  char root_key[CF_MAXVARSIZE],sub_key[CF_MAXVARSIZE];
+  char *sp;
+  HKEY ms_key;
+  struct Rlist *rp;
+
+strncpy(root_key,pp->promiser,CF_MAXVARSIZE-1);
+sp = strchr(root_key,'\\');
+strncpy(sub_key,sp+1,CF_MAXVARSIZE-1);
+*sp = '\0';
+
+ms_key = Str2HKey(root_key);
+
+if (a.database.columns)
+   {
+   ret = RegOpenKeyEx(ms_key,sub_key,0,KEY_ALL_ACCESS,&key_h);
+
+   switch (ret)
+      {
+      case ERROR_SUCCESS:
+          break;
+      default:
+          CfOut(cf_error,""," !! Unable to open key %s",pp->promiser);
+          return;
+      }
+
+   CfOut(cf_verbose,""," -> Registry key \"%s\" opened...\n",pp->promiser);
+
+   for (rp = a.database.columns; rp != NULL; rp = rp->next)
+      {
+      char *sp = strchr(rp->item,',');
+      *sp = '\0';
+
+      ret = RegDeleteValue(key_h,rp->item);
+      
+      switch (ret)
+         {
+         case ERROR_SUCCESS:
+             cfPS(cf_inform,CF_CHG,"",pp,a," -> Registry value \"%s\" in %s deleted...\n",rp->item,pp->promiser);
+             break;
+         default:
+             CfOut(cf_error,""," !! Unable to delete key value with name \"%s\" - code %d",rp->item,ret);
+             break;
+         }
+      }
+   
+   return;
+   }
+else
+   {
+   ret = RegDeleteKey(ms_key,sub_key);
+
+   switch (ret)
+      {
+      case ERROR_SUCCESS:
+          cfPS(cf_inform,CF_CHG,"",pp,a," -> Registry key \"%s\" deleted\n",pp->promiser);
+          return;
+      default:
+          CfOut(cf_error,""," !! Unable to delete key \"%s\" - perhaps it has subkeys",pp->promiser);
+          return;
+      }
+   }
+
 }
 
 /*****************************************************************************/

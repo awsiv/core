@@ -48,7 +48,7 @@ if (a.database.type && strcmp(a.database.type,"ms_registry") == 0)
          CfOut(cf_inform,"","No columns were promised deleted in the MS registry database");
          }
 
-      if (a.database.rows == NULL)
+      if (a.database.rows != NULL)
          {
          CfOut(cf_error,"","Rows cannot be deleted in the MS registry database, only entire columns");
          }
@@ -67,7 +67,24 @@ if (a.database.type && strcmp(a.database.type,"ms_registry") == 0)
 
       if (commas != 2)
          {
-         CfOut(cf_error,"","Registry column format should be NAME,REG_SZ,VALUE, not \"%s\"",rp->item);
+         CfOut(cf_error,"","Registry row format should be NAME,REG_SZ,VALUE, not \"%s\"",rp->item);
+         retval = false;
+         }
+      }
+
+   for (rp = a.database.columns; rp != NULL; rp=rp->next)
+      {
+      for (sp = rp->item; *sp != '\0'; sp++)
+         {
+         if (*sp == ',')
+            {
+            commas++;
+            }         
+         }
+
+      if (commas > 0)
+         {
+         CfOut(cf_error,"","MS registry column format should be NAME only in deletion");
          retval = false;
          }
       }
@@ -139,8 +156,6 @@ if (a.database.operation && (strcmp(a.database.operation,"delete") == 0 || strcm
       }
    }
 
-// check row format
-// check col format
 return retval;
 }
 

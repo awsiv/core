@@ -108,7 +108,7 @@ snprintf(name,CF_BUFSIZE-1,"%s/promise.log",CFWORKDIR);
  
 if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"fopen","Cannot open the source log");
+   CfOut(cf_error,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -244,7 +244,7 @@ snprintf(name,CF_BUFSIZE,"%s/cfagent.%s.log",CFWORKDIR,VSYSNAME.nodename);
  
 if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"fopen","Cannot open the source log");
+   CfOut(cf_error,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -359,7 +359,7 @@ snprintf(name,CF_BUFSIZE-1,"%s/state/file_hash_event_history",CFWORKDIR);
  
 if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"fopen","Cannot open the source log");
+   CfOut(cf_error,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -399,11 +399,11 @@ if ((fout = fopen(name,"w")) == NULL)
 
 if (html && !embed)
    {
-   snprintf(name,CF_BUFSIZE,"Known setuid programs on %s",VFQNAME);
+   snprintf(name,CF_BUFSIZE,"File hash-change events recorded on %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
-   fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Time discovered",NRH[cfx_date][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Time of change event",NRH[cfx_date][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Filename",NRH[cfx_filename][cfe]);
    fprintf(fout,"%s",NRH[cfx_entry][cfe]);
    }
@@ -513,7 +513,7 @@ snprintf(name,CF_BUFSIZE-1,"%s/state/software_packages.csv",CFWORKDIR);
  
 if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"fopen","Cannot open the source log");
+   CfOut(cf_error,"fopen","Cannot open the source log %s",name);
    return;
    }
 

@@ -20,7 +20,17 @@
 void Nova_Version()
 
 {
-printf("Contains Nova extensions at version %s\n",VERSION);
+printf("contains Nova extensions at version %s\n",VERSION);
+}
+
+/*****************************************************************************/
+
+char *Nova_StrVersion()
+
+{ static char buf[64];
+
+snprintf(buf,63,"Contains Nova extensions at version %s\n",VERSION);
+return buf;
 }
 
 /***************************************************************/

@@ -147,6 +147,7 @@ void Nova_LookupClassName(int n,char *name);
 /* promises.c */
 
 void Nova_Version(void);
+char * Nova_StrVersion(void);
 void Nova_NotePromiseCompliance(struct Promise *pp,double val);
 time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *t);
 
