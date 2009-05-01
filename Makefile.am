@@ -1,9 +1,10 @@
 
-SUBDIRS = src pub docs
+SUBDIRS = src pub docs knowledge
 
 EXTRA_DIST = acconfig.h COPYING ChangeLog LICENSE README
 
 docdir = $(pkgdatadir)
+
 doc_DATA = ChangeLog README
 
 #

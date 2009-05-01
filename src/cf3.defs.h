@@ -252,6 +252,7 @@ enum cfacontrol
    cfa_ifelapsed,
    cfa_inform,
    cfa_lastseen,
+   cfa_intermittency,
    cfa_max_children,
    cfa_mountfilesystems,
    cfa_nonalphanumfiles,
@@ -330,6 +331,7 @@ enum cfscontrol
    cfs_auditing,
    cfs_bindtointerface,
    cfs_serverfacility,
+   cfs_portnumber,
    cfs_notype,
    };
 
@@ -435,6 +437,7 @@ enum cfeditorder
 #define CF_CLASSRANGE  "[a-zA-Z0-9_!&|.()]+"
 #define CF_IDRANGE     "[a-zA-Z0-9_$.]+"
 #define CF_USERRANGE   "[a-zA-Z0-9_$.-]+"
+#define CF_FNCALLRANGE "[a-zA-Z0-9_().$@]+"
 #define CF_NAKEDLRANGE "@[(][a-zA-Z0-9]+[)]"
 #define CF_ANYSTRING   ".*"
 #define CF_PATHRANGE   "[cC]:\\\\.*|/.*"
@@ -670,7 +673,6 @@ struct FnCall
 struct Scope                         /* $(bundlevar) $(scope.name) */
    {
    char *scope;                                 /* Name of scope */
-   char *classes;                               /* Private context classes */
    struct CfAssoc *hashtable[CF_HASHTABLESIZE]; /* Variable heap  */
    struct Scope *next;
    };
@@ -861,6 +863,7 @@ enum cf_acl_method
 
 enum cf_acl_type
    {
+   cfacl_generic,
    cfacl_posix,
    cfacl_ntfs,
    cfacl_notype
@@ -1065,6 +1068,7 @@ struct CfPackageManager
    enum package_actions action;
    enum action_policy policy;
    struct CfPackageItem *pack_list;
+   struct CfPackageItem *update_list;
    struct CfPackageManager *next;
    };
 
@@ -1341,6 +1345,7 @@ struct Report
    double intermittency;
    char *friend_pattern;
    char *filename;
+   char *to_file;
    int numlines;
    struct Rlist *showstate;
    };
@@ -1357,6 +1362,7 @@ struct Packages
    enum action_policy package_changes;
    struct Rlist *package_file_repositories;
    char *package_list_command;
+   char *package_update_list_command;
    char *package_list_version_regex;
    char *package_list_name_regex;
    char *package_list_arch_regex;

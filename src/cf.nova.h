@@ -56,6 +56,7 @@ int Nova_CheckACLSyntax(struct CfACL acl,struct Promise *pp);
 int Nova_CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support,struct Promise *pp);
 int Nova_CheckModeSyntax(char **mode_p, char *valid_nperms, char *valid_ops,struct Promise *pp);
 int Nova_CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp);
+int Nova_CheckDirectoryInherit(struct CfACL *acl, struct Promise *pp);
 
 #ifdef HAVE_LIBACL
 int Nova_CheckPosixLinuxACL(char *file_path, struct CfACL acl);
@@ -162,6 +163,7 @@ void Nova_SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,ch
 void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_ReportSoftware(struct CfPackageManager *list);
 void Nova_SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
+void Nova_SummarizeUpdates(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 
 /* server.c */
 

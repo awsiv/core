@@ -13,15 +13,15 @@ htmldir = $(pkgdatadir)/html
 html_DATA = $(htmlfiles)
 
 # Info used in building and installing Postscript files
-pdffiles = $(info_TEXINFOS:.texinfo=.pdf)
-dvifiles = $(info_TEXINFOS:.texinfo=.dvi)
+
+pdffiles = cfnova.pdf cf3-Reference.pdf
 
 docdir = $(pkgdatadir)/doc
 doc_DATA = $(psfiles) $(pdffiles)
 
 # Make sure these get distributed with everything else.
 
-EXTRA_DIST = #*.8 *.texinfo *.pdf
+EXTRA_DIST = 
 
 SUFFIXES = html pdf dvi
 

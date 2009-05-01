@@ -56,10 +56,9 @@ switch(a.acl.acl_type)
 /* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_CheckACLSyntax(struct CfACL acl,struct Promise *pp)
+int Nova_CheckACLSyntax(struct CfACL acl, struct Promise *pp)
 
-{ int i;
-  int valid = true;
+{ int valid = true;
   int deny_support;
   char *valid_ops = NULL;
   char *valid_nperms = NULL;
@@ -69,6 +68,7 @@ int Nova_CheckACLSyntax(struct CfACL acl,struct Promise *pp)
 Nova_SetACLDefaults(&acl);
 
 // find valid values for op
+
 switch(acl.acl_method)
    {
    case cfacl_overwrite:
@@ -84,10 +84,13 @@ switch(acl.acl_method)
        break;
    }
 
-// TODO: check for ACL field conflicts (e.g. missing extra ACE when inherit = specify
-
 switch(acl.acl_type)
    {
+   case cfacl_generic:  // generic ACL type: cannot include native or deny-type permissions
+       valid_nperms = "";
+       deny_support = false;       
+       break;
+
    case cfacl_posix:
        valid_nperms = CF_VALID_NPERMS_POSIX;
        deny_support = false;  // posix does not support deny-type permissions
@@ -97,10 +100,17 @@ switch(acl.acl_type)
        //valid_nperms = CF_VALID_NPERMS_NTFS;
        // deny_support = true;
        break;
-       
-   default:  // generic ACL type: cannot include native or deny-type permissions
-       valid_nperms = "";
-       deny_support = false;
+
+   default:
+     // never executed: should be set to a default value by now
+     break;
+   }
+
+// check that acl_directory_inherit is set to a valid value
+
+if (!Nova_CheckDirectoryInherit(&acl, pp))
+   {
+   return false;
    }
 
 for (rp = acl.acl_entries; rp != NULL; rp=rp->next)
@@ -145,12 +155,54 @@ if (acl->acl_method == cfacl_nomethod)
    {
    acl->acl_method = cfacl_overwrite;
    }
+ 
+// default: acl_type => generic
+
+if (acl->acl_type == cfacl_notype)
+   {
+   acl->acl_type = cfacl_generic;
+   }
+ 
 
 // default: acl_directory_inherit => parent
 
 if(acl->acl_directory_inherit == cfacl_noinherit)
    {
    acl->acl_directory_inherit = cfacl_parent;
+   }
+}
+
+/*****************************************************************************/
+
+int Nova_CheckDirectoryInherit(struct CfACL *acl, struct Promise *pp)
+
+/*
+  Checks that acl_directory_inherit is set to a valid value for this acl type.
+  Returns true if so, or false otherwise.
+*/
+
+{int i;
+ enum cf_acl_type acltypes_specify[] = { cfacl_posix };
+
+// acl_directory_inherit => specify is not supported by all ACL APIs
+ 
+if (acl->acl_directory_inherit == cfacl_specify)
+   {
+   for(i = 0; i < sizeof(acltypes_specify) / sizeof(enum cf_acl_type); i++)
+      {
+      if (acl->acl_type == acltypes_specify[i])
+         {
+         return true;
+         }
+      }
+   
+   CfOut(cf_error,"","This ACL type does not support acl_directory_inherit => specify.");
+   PromiseRef(cf_error,pp);
+   return false;
+   }
+else  // the other values than "specify" are supported by all acl types
+   {
+   return true;
    }
 }
 
