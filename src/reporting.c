@@ -1,7 +1,7 @@
 
 /*
 
- This file is (C) Cfengine AS. See LICENSE for details.
+ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 */
 
@@ -229,6 +229,199 @@ if (XML)
 
 fclose(fout);
 DeleteItemList(file);
+}
+
+/*****************************************************************************/
+
+void Nova_SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+
+{ FILE *fin,*fout;
+  char name[CF_BUFSIZE];
+  char start[32],end[32];
+  char version[CF_MAXVARSIZE];
+  int i = 0;
+  DB *dbp;
+  DBC *dbcp;
+  DBT key,stored;
+  struct Event entry,e,newe;
+  double lsea = CF_WEEK * 52; /* expire after a year */
+
+/* Open the db */
+  
+snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,"promise_compliance.db");
+
+if (!OpenDB(name,&dbp))
+   {
+   return;
+   }
+
+if (html)
+   {
+   snprintf(name,CF_BUFSIZE,"promise_compliance.html");
+   }
+else if (xml)
+   {
+   snprintf(name,CF_BUFSIZE,"promise_compliance.xml");
+   }
+else if (csv)
+   {
+   snprintf(name,CF_BUFSIZE,"promise_compliance.csv");
+   }
+else
+   {
+   snprintf(name,CF_BUFSIZE,"promise_compliance.txt");
+   }
+
+if ((fout = fopen(name,"w")) == NULL)
+   {
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
+   dbp->close(dbp,0);
+   return;
+   }
+
+if (html && !embed)
+   {
+   snprintf(name,CF_BUFSIZE,"Promise compliance history on %s",VFQNAME);
+   NovaHtmlHeader(fout,name,stylesheet,web,head);
+   fprintf(fout,"<table class=border cellpadding=5>\n");
+   fprintf(fout,"%s",NRH[cfx_entry][cfb]);
+   fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Last checked",NRH[cfx_date][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_event][cfb],"Promise handle/file reference",NRH[cfx_event][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_q][cfb],"Status",NRH[cfx_q][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_av][cfb],"Average",NRH[cfx_av][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_dev][cfb],"Margin",NRH[cfx_dev][cfe]);
+   fprintf(fout,"%s",NRH[cfx_entry][cfe]);
+   }
+else if (XML)
+   {
+   fprintf(fout,"<?xml version=\"1.0\"?>\n<output>\n");
+   }
+
+/* Acquire a cursor for the database. */
+
+if ((errno = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
+   {
+   dbp->err(dbp,errno,"DB->cursor");
+   dbp->close(dbp,0);
+   return;
+   }
+
+/* Initialize the key/data return pair. */
+ 
+memset(&key, 0, sizeof(key));
+memset(&stored, 0, sizeof(stored));
+
+while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
+   {
+   double measure,av,var;
+   time_t then,lastseen,now = time(NULL);
+   char tbuf[CF_BUFSIZE],eventname[CF_BUFSIZE];
+
+   strcpy(eventname,(char *)key.data);
+
+   if (stored.data != NULL)
+      {
+      memcpy(&entry,stored.data,sizeof(entry));
+      
+      then    = entry.t;
+      measure = entry.Q.q;
+      av = entry.Q.expect;
+      var = entry.Q.var;
+      lastseen = now - then;
+            
+      snprintf(tbuf,CF_BUFSIZE-1,"%s",ctime(&then));
+
+      tbuf[strlen(tbuf)-9] = '\0';                     /* Chop off second and year */
+
+      if (lastseen > lsea)
+         {
+         Debug("Promise usage record %s expired\n",eventname);
+         DeleteDB(dbp,eventname);   
+         }
+      else
+         {
+         if (xml)
+            {
+            fprintf(fout,"%s",NRX[cfx_entry][cfb]);
+            fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],tbuf,NRX[cfx_date][cfe]);
+            fprintf(fout,"%s %s %s",NRX[cfx_event][cfb],eventname,NRX[cfx_event][cfe]);
+
+            if (measure = 1.0)
+               {
+               fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"compliant",NRX[cfx_q][cfe]);
+               }
+            else if (measure = 0.5)
+               {
+               fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"repaired",NRX[cfx_q][cfe]);
+               }
+            else if (measure = 0.0)
+               {
+               fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"non-compliant",NRX[cfx_q][cfe]);
+               }
+            
+            fprintf(fout,"%s %.1lf %s",NRX[cfx_av][cfb],av*100.0,NRX[cfx_av][cfe]);
+            fprintf(fout,"%s %.1lf %s",NRX[cfx_dev][cfb],sqrt(var)*100.0,NRX[cfx_dev][cfe]);
+
+            fprintf(fout,"%s",NRX[cfx_entry][cfe]);
+            }
+         else if (html)
+            {
+            fprintf(fout,"%s",NRH[cfx_entry][cfb]);
+            fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],tbuf,NRH[cfx_date][cfe]);
+            fprintf(fout,"%s %s %s",NRH[cfx_event][cfb],eventname,NRH[cfx_event][cfe]);
+
+            if (measure = 1.0)
+               {
+               fprintf(fout,"%s %s %s",NRH[cfx_q][cfb],"compliant",NRH[cfx_q][cfe]);
+               }
+            else if (measure = 0.5)
+               {
+               fprintf(fout,"%s %s %s",NRH[cfx_q][cfb],"repaired",NRH[cfx_q][cfe]);
+               }
+            else if (measure = 0.0)
+               {
+               fprintf(fout,"%s %s %s",NRH[cfx_q][cfb],"non-compliant",NRH[cfx_q][cfe]);
+               }
+            
+            fprintf(fout,"%s %.1lf %s",NRH[cfx_av][cfb],av*100.0,NRH[cfx_av][cfe]);
+            fprintf(fout,"%s %.1lf %s",NRH[cfx_dev][cfb],sqrt(var)*100.0,NRH[cfx_dev][cfe]);
+
+            fprintf(fout,"%s",NRH[cfx_entry][cfe]);
+            }
+         else
+            {
+            if (measure = 1.0)
+               {
+               fprintf(fout,"%s,%s,compliant,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
+               }
+            else if (measure = 0.5)
+               {
+               fprintf(fout,"%s,%s,repaired,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
+               }
+            else if (measure = 0.0)
+               {
+               fprintf(fout,"%s,%,non-compliant,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
+               }
+
+            }
+         }
+      }
+   }
+
+dbp->close(dbp,0);
+
+if (html && !embed)
+   {
+   fprintf(fout,"</table>");
+   NovaHtmlFooter(fout,foot);
+   }
+
+if (XML)
+   {
+   fprintf(fout,"</output>\n");
+   }
+
+fclose(fout);
 }
 
 /*****************************************************************************/
@@ -554,7 +747,10 @@ while (!feof(fin))
    {
    line[0] = '\0';
    fgets(line,CF_BUFSIZE-1,fin);
-   PrependItem(&file,line,NULL);
+   if (!IsItemIn(file,line))
+      {
+      PrependItem(&file,line,NULL);
+      }
    }
 
 fclose(fin);
@@ -676,7 +872,10 @@ while (!feof(fin))
    {
    line[0] = '\0';
    fgets(line,CF_BUFSIZE-1,fin);
-   PrependItem(&file,line,NULL);
+   if (!IsItemIn(file,line))
+      {
+      PrependItem(&file,line,NULL);
+      }
    }
 
 fclose(fin);
@@ -689,7 +888,7 @@ if ((fout = fopen(name,"w")) == NULL)
 
 if (html && !embed)
    {
-   snprintf(name,CF_BUFSIZE,"Software updates available for %s",VFQNAME);
+   snprintf(name,CF_BUFSIZE,"Software updates available and outstanding for %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);

@@ -56,7 +56,7 @@ a.copy.servers = SplitStringAsRList(peer,'*');
 
 memset(recvbuffer,0,CF_BUFSIZE);
 
-CfOut(cf_verbose,""," -> * Hailing %s : %u for remote variable \"%s\"\n",peer,(unsigned int)a.copy.portnumber,handle);
+CfOut(cf_verbose,""," -> * Hailing %s:%u for remote variable \"%s\"\n",peer,(unsigned int)a.copy.portnumber,handle);
 
 conn = NewServerConnection(a,pp);
 
@@ -112,6 +112,53 @@ ServerDisconnection(conn);
 DeleteRlist(a.copy.servers);
 DeletePromise(pp);
 return recvbuffer;
+}
+
+/********************************************************************/
+
+void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer)
+
+{ char key[CF_BUFSIZE],name[CF_BUFSIZE];
+  DB *dbp;
+  
+snprintf(key,CF_BUFSIZE-1,"%s_%s",caller,handle);
+snprintf(name,CF_BUFSIZE-1,"%s/nova_cache.db",CFWORKDIR); 
+
+CfOut(cf_verbose,""," -> Caching value \"%s\" for fault tolerance",buffer);
+
+if (!OpenDB(name,&dbp))
+   {
+   return;
+   }
+
+WriteDB(dbp,key,buffer,strlen(buffer)+1);
+dbp->close(dbp,0);
+}
+
+/********************************************************************/
+
+int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer)
+
+{ char key[CF_BUFSIZE],name[CF_BUFSIZE];
+  DB *dbp;
+
+snprintf(key,CF_BUFSIZE-1,"%s_%s",caller,handle);
+snprintf(name,CF_BUFSIZE-1,"%s/nova_cache.db",CFWORKDIR);
+
+CfOut(cf_verbose,"","Checking cache %s for last available value",name);
+
+memset(buffer,0,CF_BUFSIZE);
+
+if (!OpenDB(name,&dbp))
+   {
+   return false;
+   }
+
+ReadDB(dbp,key,buffer,CF_BUFSIZE-1);
+
+dbp->close(dbp,0);
+
+return strlen(buffer);
 }
 
 /********************************************************************/

@@ -1,7 +1,7 @@
 
 /*
 
- This file is (C) Cfengine AS. See LICENSE for details.
+ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 */
 
@@ -14,6 +14,40 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
+/*****************************************************************************/
+
+int Nova_EnterpriseExpiry(char *day,char *month,char *year)
+
+/* This function is a convenience to commerical clients during testing */
+    
+{ struct stat sb;
+  char name[CF_MAXVARSIZE];
+  FILE *fp;
+  
+snprintf(name,CF_MAXVARSIZE,"%s/NEE",CFWORKDIR);
+  
+if (stat(name,&sb) == -1)
+   {
+   Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s = %d\n",VYEAR,year,VMONTH,month,VDAY,day,strcmp(VDAY,day));
+   
+   if ((strcmp(VYEAR,year) >= 0) && (strcmp(VMONTH,month) >= 0) && (strcmp(VDAY,day) > 0))
+      {
+      if (fp = fopen(name,"w"))
+         {
+         fprintf(fp,"enable\n");
+         fclose(fp);
+         }
+      return true;
+      }
+   
+   return false;
+   }
+else
+   {
+   return true;
+   }
+}
 
 /*****************************************************************************/
 
@@ -41,7 +75,6 @@ void Nova_NotePromiseCompliance(struct Promise *pp,double val)
   DBC *dbcp;
   char name[CF_BUFSIZE];
   struct Event e,newe;
-  double lsea = CF_WEEK * 52; /* expire after a year */
   time_t now = time(NULL);
   double lastseen,delta2;
   double vtrue = 1.0;      /* end with a rough probability */
@@ -77,15 +110,7 @@ else
    newe.Q.var = 0.000;
    }
 
-if (lastseen > lsea)
-   {
-   Debug("Promise record %s expired\n",name);
-   DeleteDB(dbp,name);   
-   }
-else
-   {
-   WriteDB(dbp,name,&newe,sizeof(newe));
-   }
+WriteDB(dbp,name,&newe,sizeof(newe));
 
 dbp->close(dbp,0);
 }
@@ -98,6 +123,7 @@ time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *averag
   DBC *dbcp;
   char name[CF_MAXVARSIZE];
   struct Event e;
+  double lsea = CF_WEEK * 52; /* expire after a year */
   
 snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,"promise_compliance.db");
 
@@ -121,6 +147,12 @@ else
    *value = 0;
    *average = 0;
    *var = 0;
+   }
+
+if (*lastseen > lsea)
+   {
+   Debug("Promise record %s expired\n",name);
+   DeleteDB(dbp,name);
    }
 
 dbp->close(dbp,0);

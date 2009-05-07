@@ -151,6 +151,7 @@ void Nova_Version(void);
 char * Nova_StrVersion(void);
 void Nova_NotePromiseCompliance(struct Promise *pp,double val);
 time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *t);
+int Nova_EnterpriseExpiry(char *day,char *month,char *year);
 
 /* registry.c */
 
@@ -158,6 +159,7 @@ int Nova_ValidateRegistryPromiser(char *s,struct Attributes a,struct Promise *pp
 
 /* reporting.c */
 
+void Nova_SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
@@ -171,6 +173,8 @@ void  Nova_RegisterLiteralServerData(char *handle,struct Promise *pp);
 char *Nova_ReturnLiteralData(char *handle);
 char *Nova_GetRemoteScalar(char *handle,char *server,int encrypted);
 int Nova_ParseHostname(char *name,char *hostname);
+int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer);
+void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer);
 
 /* sql.c */
 
