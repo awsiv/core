@@ -36,7 +36,7 @@ void Nova_VerifyRegistryPromise(struct Attributes a,struct Promise *pp);
 int Nova_OpenRegistryKey(char *key, HKEY *key_h, int create);
 int Nova_PrintAllValues(HKEY key_h);
 int Nova_VerifyRegistryValueAssocs(HKEY key_h,struct Attributes a,struct Promise *pp);
-int Nova_GetRegistryValue(HKEY key_h, char *value, void *data_p, unsigned long data_sz);
+int Nova_GetRegistryValue(HKEY key_h, char *value, void *data_p, unsigned long *data_sz);
 enum reg_data_type Str2RegDtype(char *datatype);
 void Nova_RecursiveQueryKey(DB *dbp,HKEY *key_h,char *name,struct Attributes a,struct Promise *pp, int level);
 int Nova_RegistryKeyIntegrity(DB *dbp,char *key,struct Attributes a,struct Promise *pp);
@@ -46,6 +46,9 @@ int Nova_WritePseudoRegistry(DB *dbp,char *dbkey,void *existing_value,int size);
 enum reg_data_type Str2RegDtype(char *datatype);
 HKEY Str2HKey(char *root_key);
 void Nova_RecursiveRestoreKey(DB *dbp,char *keyname,struct Attributes a,struct Promise *pp);
+int Nova_CopyRegistryValue(char *key,char *value,char *buffer);
+void Nova_DeleteRegistryKey(struct Attributes a,struct Promise *pp);
+
 
 /*****************************************************************************/
 
@@ -134,6 +137,39 @@ else
 
 RegCloseKey(key_h);
 YieldCurrentLock(thislock);
+}
+
+/*****************************************************************************/
+
+int Nova_CopyRegistryValue(char *key,char *value,char *buffer)
+
+{ unsigned long reg_data_sz = CF_BUFSIZE;
+  void *reg_data_p = calloc(1,CF_BUFSIZE);
+  enum reg_data_type reg_dtype;
+  int len;
+  HKEY key_h;
+
+buffer[0] = '\0';
+
+if (Nova_OpenRegistryKey(key,&key_h,false))
+   {
+   if (Nova_GetRegistryValue(key_h,value,reg_data_p,&reg_data_sz))
+      {
+      if (reg_data_sz > CF_BUFSIZE-1)
+         {
+         CfOut(cf_error,"","Registry value too large to be sensibly maniupulated");
+         return false;
+         }
+      else
+         {
+         memcpy(buffer,reg_data_p,reg_data_sz);
+         }
+      
+      return true;      
+      }
+   }
+
+return false;
 }
 
 /*****************************************************************************/
@@ -339,7 +375,7 @@ for (rp = a.database.rows; rp != NULL; rp=rp->next)
    value = assign->next->next->item;
    reg_dtype = Str2RegDtype(datatype);
    
-   if (Nova_GetRegistryValue(key_h,name,reg_data_p,reg_data_sz))
+   if (Nova_GetRegistryValue(key_h,name,reg_data_p,&reg_data_sz))
       {
       if (memcmp(reg_data_p,value,strlen(value)) == 0)
          {
@@ -388,11 +424,11 @@ return 0;
 
 /*****************************************************************************/
 
-int Nova_GetRegistryValue(HKEY key_h, char *value, void *data_p, unsigned long data_sz)
+int Nova_GetRegistryValue(HKEY key_h, char *value, void *data_p, unsigned long *data_sz)
 
 { int ret;
 
-ret = RegQueryValueEx(key_h, value, NULL, NULL, data_p, &data_sz);
+ret = RegQueryValueEx(key_h,value,NULL,NULL,data_p,data_sz);
 
 if (ret == ERROR_SUCCESS)
    {
@@ -580,7 +616,7 @@ while (dbcp->c_get(dbcp,&key,&value,DB_NEXT) == 0)
       
       if (!Nova_OpenRegistryKey(dbkey,&skey_h,true))
          {
-         printf("Couldn't open the key\n");
+         CfOut(cf_error,"","Couldn't open the key %s\n",dbkey);
          continue;
          }
       

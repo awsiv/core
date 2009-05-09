@@ -156,6 +156,8 @@ int Nova_EnterpriseExpiry(char *day,char *month,char *year);
 /* registry.c */
 
 int Nova_ValidateRegistryPromiser(char *s,struct Attributes a,struct Promise *pp);
+int Nova_CopyRegistryValue(char *key,char *value,char *buffer);
+
 
 /* reporting.c */
 
