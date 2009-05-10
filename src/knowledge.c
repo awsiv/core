@@ -760,8 +760,6 @@ if (strcmp(name,"const") == 0)
    return;
    }
   
-handle = (char *)GetConstraint("handle",pp->conlist,CF_SCALAR);
-
 /* Store everything first in a list because we don't have access to the
    output channel here -- summarize at the end. */
 
@@ -769,9 +767,12 @@ snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\
 
 PrependItemList(&NOVA_BUNDLEDEPENDENCE,assertion);
 
-snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\")\n",name,NOVA_BUNDLE_DATA_INV_P,handle,NOVA_BUNDLE_DATA);
+if (handle = (char *)GetConstraint("handle",pp->conlist,CF_SCALAR))
+   {
+   snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\")\n",name,NOVA_BUNDLE_DATA_INV_P,handle,NOVA_BUNDLE_DATA);
 
-PrependItemList(&NOVA_BUNDLEDEPENDENCE,assertion);
+   PrependItemList(&NOVA_BUNDLEDEPENDENCE,assertion);
+   }
 }
 
 /*****************************************************************************/
