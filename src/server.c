@@ -14,7 +14,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-void  Nova_RegisterLiteralServerData(char *handle,struct Promise *pp)
+void Nova_RegisterLiteralServerData(char *handle,struct Promise *pp)
 
 {
 NewScalar("remote_access",handle,pp->promiser,cf_str);
@@ -72,7 +72,7 @@ if (conn == NULL)
 if (encrypted)
    {
    snprintf(in,CF_BUFSIZE,"VAR %s",handle);   
-   cipherlen = EncryptString(in,out,conn->session_key,strlen(in)+1);
+   cipherlen = EncryptString(in,out,conn->session_key,cf_strlen(in)+1);
    snprintf(sendbuffer,CF_BUFSIZE,"SVAR %d",cipherlen);
    memcpy(sendbuffer+CF_PROTO_OFFSET,out,cipherlen);
    tosend = cipherlen + CF_PROTO_OFFSET;
@@ -80,7 +80,7 @@ if (encrypted)
 else
    {
    snprintf(sendbuffer,CF_BUFSIZE,"VAR %s",handle);
-   tosend = strlen(sendbuffer);
+   tosend = cf_strlen(sendbuffer);
    } 
  
 if (SendTransaction(conn->sd,sendbuffer,tosend,CF_DONE) == -1)
@@ -131,7 +131,7 @@ if (!OpenDB(name,&dbp))
    return;
    }
 
-WriteDB(dbp,key,buffer,strlen(buffer)+1);
+WriteDB(dbp,key,buffer,cf_strlen(buffer)+1);
 dbp->close(dbp,0);
 }
 
@@ -158,7 +158,7 @@ ReadDB(dbp,key,buffer,CF_BUFSIZE-1);
 
 dbp->close(dbp,0);
 
-return strlen(buffer);
+return cf_strlen(buffer);
 }
 
 /********************************************************************/
@@ -169,13 +169,13 @@ int Nova_ParseHostname(char *name,char *hostname)
 
 { int port = (int)ntohs(SHORT_CFENGINEPORT);
 
-if (strchr(name,':'))
+if (cf_strchr(name,':'))
    {
    sscanf(name,"%250[^:]:%d",hostname,&port);
    }
 else
    {
-   strncpy(hostname,name,CF_MAXVARSIZE);
+   cf_strncpy(hostname,name,CF_MAXVARSIZE);
    }
 
 return(port);

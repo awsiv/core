@@ -56,7 +56,7 @@ if (SLOTS[0][0][0] != 0)
 
 snprintf(filename,CF_BUFSIZE-1,"%s/state/ts_key",CFWORKDIR);
 
-if ((fin = fopen(filename,"r")) == NULL)
+if ((fin = cf_fopen(filename,"r")) == NULL)
    {
    Nova_GetClassName(n,name);
    return;
@@ -74,7 +74,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       }
    }
 
-fclose(fin);
+cf_fclose(fin);
 Nova_GetClassName(n,name);
 return;
 }
@@ -205,7 +205,7 @@ switch (a.measure.data_type)
        
        stream = NovaGetMeasurementStream(a,pp);
        
-       if (strcmp(a.measure.history_type,"weekly") == 0)
+       if (cf_strcmp(a.measure.history_type,"weekly") == 0)
           {
           this[ob_spare+slot] = NovaExtractValueFromStream(handle,stream,a,pp);
           }
@@ -228,7 +228,7 @@ switch (a.measure.data_type)
 
 snprintf(filename,CF_BUFSIZE-1,"%s/state/ts_key",CFWORKDIR);
 
-if ((fout = fopen(filename,"w")) == NULL)
+if ((fout = cf_fopen(filename,"w")) == NULL)
    {
    return;
    }
@@ -250,7 +250,7 @@ for (i = 0; i < CF_OBSERVABLES-ob_spare; i++)
       }
    }
 
-fclose(fout);
+cf_fclose(fout);
 chmod(filename,0600);
 }
 
@@ -341,9 +341,9 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    {
    sprintf(filename,"%s_%d.yr",OBS[i][0],age);
    
-   if ((fp[i] = fopen(filename,"w")) == NULL)
+   if ((fp[i] = cf_fopen(filename,"w")) == NULL)
       {
-      perror("fopen");
+      CfOut(cf_error,"cf_fopen","Could not open %s\n",filename);
       exit(1);
       }
    }
@@ -359,7 +359,7 @@ Debug("CLOSE YEAR %d\n",age);
  
 for (i = 0; i < CF_OBSERVABLES; i++)
    {
-   fclose(fp[i]);
+   cf_fclose(fp[i]);
    } 
 }
 
@@ -412,7 +412,7 @@ while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
 
 for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
    {
-   if (strcmp(ptr->scope,"mon") != 0)
+   if (cf_strcmp(ptr->scope,"mon") != 0)
       {
       continue;
       }
@@ -544,9 +544,9 @@ if (!OpenDB(name,&dbp))
 
 snprintf(name,CF_BUFSIZE-1,"%s/state/static_data",CFWORKDIR);
 
-if ((fout = fopen(name,"w")) == NULL)
+if ((fout = cf_fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"fopen","Unable to save discovery data in %s\n",name);
+   CfOut(cf_error,"cf_fopen","Unable to save discovery data in %s\n",name);
    return;
    }
 
@@ -582,7 +582,7 @@ while (dbcp->c_get(dbcp, &key, &stored, DB_NEXT) == 0)
    }
 
 dbp->close(dbp,0);
-fclose(fout);
+cf_fclose(fout);
 }
 
 /*****************************************************************************/
@@ -674,7 +674,7 @@ if (lc == -1)
 
 for (i = 0; true; i = (i+1)%4)
    {
-   if (strcmp(SHIFT_TEXT[i],shift) == 0)
+   if (cf_strcmp(SHIFT_TEXT[i],shift) == 0)
       {
       new = (i+1)%4;
       
@@ -702,7 +702,7 @@ if (next_day > nday)
 
 for (i = 0; true; i = (i+1)%12)
    {
-   if (strncmp(MONTH_TEXT[i],month,strlen(month)) == 0)
+   if (cf_strncmp(MONTH_TEXT[i],month,strlen(month)) == 0)
       {
       new = (i+1)%12;
 
@@ -727,17 +727,17 @@ snprintf(lifecycle,CF_TIME_SIZE-1,"Lcycle_%d",(lc+1)%3);
 int NovaLifeCyclePassesGo(char *d,char *m,char *l,char *s,char *day,char *month,char* lifecycle,char *shift)
 
 { 
-if (strcmp(d,day) != 0)
+if (cf_strcmp(d,day) != 0)
    {
    return false;
    }
 
-if (strcmp(m,month) != 0)
+if (cf_strcmp(m,month) != 0)
    {
    return false;
    }
 
-if (strcmp(s,shift) != 0)
+if (cf_strcmp(s,shift) != 0)
    {
    return false;
    }
@@ -771,7 +771,7 @@ int NovaGetNextDay(int day,char *month,int year)
 
 for (this_month = 0; this_month < 12; this_month++)
    {
-   if (strncmp(md[this_month].m,month,strlen(month)) == 0)
+   if (cf_strncmp(md[this_month].m,month,strlen(month)) == 0)
       {
       ndays = md[this_month].d;
       break;
@@ -783,7 +783,7 @@ if (ndays == 0)
    FatalError("Nova - unrecognizable month");
    }
 
-if ((strcmp(md[this_month].m,"February") == 0) && (year % 4 == 0))
+if ((cf_strcmp(md[this_month].m,"February") == 0) && (year % 4 == 0))
    {
    ndays++; /* leap years */
    }
@@ -825,7 +825,7 @@ if (MEASUREMENTS[slot] != NULL)
       CfOut(cf_error,"","Measurement slots are all in use - it is not helpful to measure too much, you can't usefully follow this many variables");
       return -1;
       }
-   else if (strcmp(name,MEASUREMENTS[slot]) != 0)
+   else if (cf_strcmp(name,MEASUREMENTS[slot]) != 0)
       {
       CfOut(cf_error,"","Measurement slot is already in use");
       return -1;
@@ -850,7 +850,7 @@ for (i = 0; i < CF_DUNBAR_WORK; i++)
       break;
       }
    
-   if (strcmp (NOVA_DATA[i].path,pp->promiser) == 0)
+   if (cf_strcmp (NOVA_DATA[i].path,pp->promiser) == 0)
       {
       NOVA_DATA[i].output = NovaReSample(i,a,pp);
       return NOVA_DATA[i].output;
@@ -873,7 +873,7 @@ struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp)
   FILE *fin = NULL;
   mode_t maskval = 0;
 
-if (strcmp(a.measure.stream_type,"pipe") == 0)
+if (cf_strcmp(a.measure.stream_type,"pipe") == 0)
    {
    if (!IsExecutable(GetArg0(pp->promiser)))
       {
@@ -911,11 +911,11 @@ else
    
    /* Stream types */
    
-   if (strcmp(a.measure.stream_type,"file") == 0)
+   if (cf_strcmp(a.measure.stream_type,"file") == 0)
       {
-      fin = fopen(pp->promiser,"r");
+      fin = cf_fopen(pp->promiser,"r");
       }
-   else if (strcmp(a.measure.stream_type,"pipe") == 0)
+   else if (cf_strcmp(a.measure.stream_type,"pipe") == 0)
       {
       CfOut(cf_verbose,""," -> (Setting umask to %o)\n",a.contain.umask);
       maskval = umask(a.contain.umask);
@@ -1158,11 +1158,11 @@ switch (a.measure.data_type)
        snprintf(value,CF_BUFSIZE,"%s",matches->name);
    }
 
-if (strcmp(a.measure.history_type,"log") == 0)  // weekly,scalar,static,log
+if (cf_strcmp(a.measure.history_type,"log") == 0)  // weekly,scalar,static,log
    {
    snprintf(filename,CF_BUFSIZE,"%s/state/%s_measure.log",CFWORKDIR,handle);
 
-   if ((fout = fopen(filename,"a")) == NULL)
+   if ((fout = cf_fopen(filename,"a")) == NULL)
       {
       cfPS(cf_error,CF_FAIL,"",pp,a,"Unable to open the output log \"%s\"",filename);
       PromiseRef(cf_error,pp);
@@ -1175,7 +1175,7 @@ if (strcmp(a.measure.history_type,"log") == 0)  // weekly,scalar,static,log
    fprintf(fout,"%s,%s\n",sdate,value);
    CfOut(cf_verbose,"","Logging: %s,%s to %s\n",sdate,value,filename);
    
-   fclose(fout);
+   cf_fclose(fout);
    }
 else // scalar or static
    {

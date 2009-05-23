@@ -23,12 +23,12 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp)
   int retval = true,commas = 0;
   char *sp;
  
-if (a.database.type && strcmp(a.database.type,"ms_registry") == 0)
+if (a.database.type && cf_strcmp(a.database.type,"ms_registry") == 0)
    {
 #ifdef NT
    Nova_ValidateRegistryPromiser(pp->promiser,a,pp);
 #endif
-   if (a.database.operation && strcmp(a.database.operation,"create") == 0)
+   if (a.database.operation && cf_strcmp(a.database.operation,"create") == 0)
       {
       if (a.database.rows == NULL)
          {
@@ -41,7 +41,7 @@ if (a.database.type && strcmp(a.database.type,"ms_registry") == 0)
          }
       }
 
-   if (a.database.operation && (strcmp(a.database.operation,"delete") == 0 || strcmp(a.database.operation,"drop") == 0))
+   if (a.database.operation && (cf_strcmp(a.database.operation,"delete") == 0 || cf_strcmp(a.database.operation,"drop") == 0))
       {
       if (a.database.columns == NULL)
          {
@@ -89,7 +89,7 @@ if (a.database.type && strcmp(a.database.type,"ms_registry") == 0)
          }
       }
    }
-else if (a.database.type && strcmp(a.database.type,"sql") == 0)
+else if (a.database.type && cf_strcmp(a.database.type,"sql") == 0)
    {
    if (strchr(pp->promiser,'.') == NULL && strchr(pp->promiser,'/') == NULL && strchr(pp->promiser,'\\') == NULL)
       {
@@ -143,11 +143,11 @@ else if (a.database.type && strcmp(a.database.type,"sql") == 0)
 
    }
 
-if (a.database.operation && strcmp(a.database.operation,"create") == 0)
+if (a.database.operation && cf_strcmp(a.database.operation,"create") == 0)
    {
    }
 
-if (a.database.operation && (strcmp(a.database.operation,"delete") == 0 || strcmp(a.database.operation,"drop") == 0))
+if (a.database.operation && (cf_strcmp(a.database.operation,"delete") == 0 || cf_strcmp(a.database.operation,"drop") == 0))
    {
    if (pp->ref == NULL)
       {

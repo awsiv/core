@@ -220,6 +220,7 @@ enum cfgcontrol
    cfg_lastseenexpireafter,
    cfg_output_prefix,
    cfg_domain,
+   cfg_require_comments,
    cfg_noagent
    };
     
@@ -427,7 +428,7 @@ enum cfeditorder
 #define CF_SIGNALRANGE "hup,int,trap,kill,pipe,cont,abrt,stop,quit,term,child,usr1,usr2,bus,segv"
 #define CF_BOOL      "true,false,yes,no,on,off"
 #define CF_LINKRANGE "symlink,hardlink,relative,absolute,none"
-#define CF_TIMERANGE "0,2147483648"
+#define CF_TIMERANGE "0,2147483647"
 #define CF_VALRANGE  "0,99999999999"
 #define CF_INTRANGE  "-99999999999,9999999999"
 #define CF_REALRANGE "-9.99999E100,9.99999E100"
@@ -491,6 +492,7 @@ enum fncalltype
    cfn_getuid,
    cfn_groupexists,
    cfn_hash,
+   cfn_hashmatch,
    cfn_hostrange,
    cfn_hostinnetgroup,
    cfn_iprange,
@@ -502,11 +504,15 @@ enum fncalltype
    cfn_isnewerthan,
    cfn_isplain,
    cfn_isvariable,
+   cfn_lastnode,
    cfn_ldaparray,
    cfn_ldaplist,
    cfn_ldapvalue,
    cfn_now,
    cfn_date,
+   cfn_peers,
+   cfn_peerleader,
+   cfn_peerleaders,
    cfn_randomint,
    cfn_readfile,
    cfn_readintarray,
@@ -518,6 +524,7 @@ enum fncalltype
    cfn_readtcp,
    cfn_regarray,
    cfn_regcmp,
+   cfn_registryvalue,
    cfn_regline,
    cfn_reglist,
    cfn_regldap,
@@ -525,6 +532,7 @@ enum fncalltype
    cfn_returnszero,
    cfn_rrange,
    cfn_selectservers,
+   cfn_splayclass,
    cfn_splitstring,
    cfn_strcmp,
    cfn_usemodule,
@@ -707,6 +715,13 @@ struct FnCallStatus  /* from builtin functions */
 /* Return value signalling                                         */
 /*******************************************************************/
 
+enum cfinterval
+   {
+   cfa_hourly,
+   cfa_daily,
+   cfa_nointerval
+   };
+
 enum cfdatetemplate
    {
    cfa_year,
@@ -767,6 +782,7 @@ enum cfhashes
    cf_sha1,
    cf_sha,
    cf_besthash,
+   cf_crypt,
    cf_nohash
    };
 
@@ -947,6 +963,9 @@ struct TransactionContext
    int expireafter;
    int background;
    char *log_string;
+   char *log_kept;
+   char *log_repaired;
+   char *log_failed;
    char *measure_id;
    int  audit;
    enum cfreport report_level;
@@ -1510,6 +1529,8 @@ struct Attributes
    struct Rlist *associates;
    struct Rlist *represents;
    char *rep_type;
+   char *path_root;
+   char *web_root;
    };
 
 #include "prototypes3.h"

@@ -28,15 +28,14 @@ fprintf(fp,"<html>"
         "    </title>"
         "    <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"screen\" />"
         "  </head>"
-        "  <body>",title,css);
+        "  <body>\n",title,css);
 
-if (strlen(header) > 0)
+if (cf_strlen(header) > 0)
    {
    fprintf(fp,"%s\n",header);
    }
 
-
-fprintf(fp,"<h1>%s</h1>",title);
+fprintf(fp,"<h1>%s</h1>\n",title);
 }
 
 /*****************************************************************************/

@@ -686,7 +686,7 @@ ids = NULL;
 
 // Posix language: tag type, qualifier, permissions
 
-if (strncmp(*str, "user:", 5) == 0)
+if (cf_strncmp(*str, "user:", 5) == 0)
    {
    *str += 5;
    
@@ -707,7 +707,7 @@ if (strncmp(*str, "user:", 5) == 0)
    
    // file object owner
    
-   if (strncmp(ids,"*",2) == 0)
+   if (cf_strncmp(ids,"*",2) == 0)
       {
       etype = ACL_USER_OBJ;
       id = 0;
@@ -727,7 +727,7 @@ if (strncmp(*str, "user:", 5) == 0)
       id = pwd->pw_uid;
       }
    }
-else if(strncmp(*str, "group:", 6) == 0)
+else if(cf_strncmp(*str, "group:", 6) == 0)
    {
    *str += 6;
    
@@ -747,7 +747,7 @@ else if(strncmp(*str, "group:", 6) == 0)
    *str += idsz;
    
    // file group
-   if (strncmp(ids, "*", 2) == 0)
+   if (cf_strncmp(ids, "*", 2) == 0)
       {
       etype = ACL_GROUP_OBJ;
       id = 0;  // TODO: Correct file group id ??
@@ -768,12 +768,12 @@ else if(strncmp(*str, "group:", 6) == 0)
       }
    
    }
-else if(strncmp(*str, "all:", 4) == 0)
+else if (cf_strncmp(*str, "all:", 4) == 0)
    {
    *str += 3;
    etype = ACL_OTHER;
    }
-else if(strncmp(*str, "mask:", 5) == 0)
+else if (cf_strncmp(*str, "mask:", 5) == 0)
    {
    *str += 4;
    etype = ACL_MASK;

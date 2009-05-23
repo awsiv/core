@@ -48,19 +48,19 @@ void Nova_SyntaxCompletion(char *s)
   struct BodySyntax *bs,*bs2 = NULL;
   char output[CF_BUFSIZE];
 
-if (strncmp(s,"function",strlen("function")) == 0)
+if (cf_strncmp(s,"function",strlen("function")) == 0)
    {
    Nova_ListFunctions();
    return;
    }
 
-if (strncmp(s,"bundle",strlen("bundle")) == 0 || strncmp(s,"agent",strlen("agent")) == 0)
+if (cf_strncmp(s,"bundle",strlen("bundle")) == 0 || cf_strncmp(s,"agent",strlen("agent")) == 0)
    {
    Nova_ListAgents();
    return;
    }
 
-if (strcmp(s,"promise") == 0)
+if (cf_strcmp(s,"promise") == 0)
    {
    Nova_ListPromiseTypes();
    return;
@@ -81,7 +81,7 @@ for  (i = 0; i < CF3_MODULES; i++)
       {
       bs = (struct BodySyntax *)ss[j].bs;
 
-      if (s && strcmp(s,ss[j].subtype) == 0)
+      if (s && cf_strcmp(s,ss[j].subtype) == 0)
          {
          printf("Promise type %s has possible contraints:\n\n",ss[j].subtype);
          
@@ -90,7 +90,7 @@ for  (i = 0; i < CF3_MODULES; i++)
             printf("   %s\n",bs[k].lval);
             }
 
-         if (strcmp(s,"classes") == 0)
+         if (cf_strcmp(s,"classes") == 0)
             {
             /* non-unique */
             continue;
@@ -103,7 +103,7 @@ for  (i = 0; i < CF3_MODULES; i++)
 
       for (k = 0; bs[k].lval !=  NULL; k++)
          {
-         if (s && strcmp(s,bs[k].lval) == 0)
+         if (s && cf_strcmp(s,bs[k].lval) == 0)
             {
             printf("constraint %s (of promise type %s) has possible values:\n\n",bs[k].lval,ss[j].subtype);
             
@@ -147,7 +147,7 @@ for  (i = 0; i < CF3_MODULES; i++)
             
             for (l = 0; bs2[l].lval !=  NULL; l++)
                {
-               if (strcmp(s,bs2[l].lval) == 0)
+               if (cf_strcmp(s,bs2[l].lval) == 0)
                   {
                   printf("body constraint %s is part of %s (in promise type %s) and has possible values:\n\n",bs2[l].lval,bs[k].lval,ss[j].subtype);
                   
@@ -171,7 +171,7 @@ for  (i = 0; i < CF3_MODULES; i++)
 
 for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
     {
-    if (strcmp(s,CF_FNCALL_TYPES[i].name) == 0)
+    if (cf_strcmp(s,CF_FNCALL_TYPES[i].name) == 0)
        {
        Nova_ListFunction(CF_FNCALL_TYPES[i]);
        return;
@@ -307,7 +307,7 @@ for (cp = pp->conlist; cp != NULL; cp=cp->next)
    PromiseNode(fp,pp,1);
    fprintf(fp,"   represents => { \"used in promise\", \"%s\" };\n\n",promise_id);
 
-   if (strcmp(cp->lval,"comment") == 0)
+   if (cf_strcmp(cp->lval,"comment") == 0)
       {
       fprintf(fp,"\"%s\"\n",cp->rval);
       fprintf(fp,"   representation => \"literal\",\n\n");
@@ -346,6 +346,25 @@ fprintf(fp,"  \"makes promise of type\";\n");
 fprintf(fp,"  \"promises have been made by\";\n");
 fprintf(fp,"  \"makes promises\";\n");
 fprintf(fp,"  \"is a promise made by\";\n");
+
+// If no better solution in constellation, then do this...
+
+fprintf(fp,"system_reports::\n");
+fprintf(fp,"  \"audit report\";\n");
+fprintf(fp,"  \"performance report\";\n");
+fprintf(fp,"  \"all_locks report\";\n");
+fprintf(fp,"  \"active_locks report\";\n");
+fprintf(fp,"  \"hashes report\";\n");
+fprintf(fp,"  \"classes report\";\n");
+fprintf(fp,"  \"last_seen report\";\n");
+fprintf(fp,"  \"monitor_now report\";\n");
+fprintf(fp,"  \"monitor_history report\";\n");
+fprintf(fp,"  \"monitor_summary report\";\n");
+fprintf(fp,"  \"compliance report\";\n");
+fprintf(fp,"  \"setuid report\";\n");
+fprintf(fp,"  \"file_changes report\";\n");
+fprintf(fp,"  \"installed_software report\";\n");
+fprintf(fp,"  \"software_updates report\";\n");
 
 fprintf(fp,"system_policy::\n");
 fprintf(fp,"  \"bundles\";\n");
@@ -718,7 +737,7 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
 
             /* Omit class "any" */
             
-            if (strstr(pp2->classes,rp->item) && strcmp(rp->item,"any") != 0 && strcmp(pp->classes,"any") != 0)
+            if (strstr(pp2->classes,rp->item) && cf_strcmp(rp->item,"any") != 0 && cf_strcmp(pp->classes,"any") != 0)
                {                           
                fprintf(fp,"contexts::");
                fprintf(fp,"  \"%s\"\n",NovaEscape(pp->classes));
@@ -750,12 +769,12 @@ if (pp == NULL || pp->bundle == NULL)
    return;
    }
 
-if (strcmp(name,pp->bundle) == 0)
+if (cf_strcmp(name,pp->bundle) == 0)
    {
    return;
    }
 
-if (strcmp(name,"const") == 0)
+if (cf_strcmp(name,"const") == 0)
    {
    return;
    }
@@ -827,7 +846,7 @@ void NovaShowValues(FILE *fp,struct BodySyntax bs)
 
 for (i = 0; CF_VALUETYPES[i][0] != NULL; i++)
    {
-   if (strcmp(CF_VALUETYPES[i][0],bs.lval) == 0)
+   if (cf_strcmp(CF_VALUETYPES[i][0],bs.lval) == 0)
       {
       range = CF_VALUETYPES[i][1];
       break;

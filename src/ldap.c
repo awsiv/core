@@ -74,7 +74,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                 {                
                 for (i = 0; vals[i] != NULL; i++)
                    {
-                   if (strcmp(a,name) == 0)
+                   if (cf_strcmp(a,name) == 0)
                       {
                       CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]);
                       return_value = strdup((char *)vals[i]->bv_val);
@@ -239,7 +239,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                 {                
                 for (i = 0; vals[i] != NULL; i++)
                    {
-                   if (strcmp(a,name) == 0)
+                   if (cf_strcmp(a,name) == 0)
                       {
                       CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]);
                       AppendRScalar(&return_value,(char *)vals[i]->bv_val,CF_SCALAR);
@@ -390,7 +390,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                 {                
                 for (i = 0; vals[i] != NULL; i++)
                    {
-                   if (strcmp(a,"objectClass") != 0) // This is non-unique
+                   if (cf_strcmp(a,"objectClass") != 0) // This is non-unique
                       {
                       snprintf(name,CF_MAXVARSIZE-1,"%s[%s]",array,a);
                       NewScalar(THIS_BUNDLE,name,(char *)vals[i]->bv_val,cf_str);
@@ -559,7 +559,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                 {                
                 for (i = 0; vals[i]->bv_val != NULL; i++)
                    {
-                   if (strcmp(a,name) == 0 && FullTextMatch(regex,(char *)vals[i]->bv_val))
+                   if (cf_strcmp(a,name) == 0 && FullTextMatch(regex,(char *)vals[i]->bv_val))
                       {
                       CfOut(cf_verbose,""," -> Located regex matching LDAP value %s => %s\n", a,(char *)vals[i]->bv_val);
                       return_value = strdup("any");
@@ -702,11 +702,11 @@ if ((ret = ldap_set_option(ld,LDAP_OPT_PROTOCOL_VERSION,&version)) != LDAP_SUCCE
 
 /* Bind to the server anonymously. */
 
-if (strcmp(sec,"ssl") == 0)
+if (cf_strcmp(sec,"ssl") == 0)
    {
    //ret = ldap_ssl_bind_s(ld,NULL,LDAP_SASL_SIMPLE,NULL,NULL,NULL,NULL);
    }
-else if (strcmp(sec,"sasl") == 0)
+else if (cf_strcmp(sec,"sasl") == 0)
    {
    //ret = ldap_sasl_bind_s(ld,NULL,LDAP_SASL_SIMPLE,NULL,NULL,NULL,NULL);
    }
@@ -730,17 +730,17 @@ return ld;
 int NovaStr2Scope(char *scope)
 
 {
-if (strcmp(scope,"subtree") == 0)
+if (cf_strcmp(scope,"subtree") == 0)
    {
    return LDAP_SCOPE_SUBTREE;
    }
 
-if (strcmp(scope,"base") == 0)
+if (cf_strcmp(scope,"base") == 0)
    {
    return LDAP_SCOPE_BASE;
    }
 
-if (strcmp(scope,"onelevel") == 0)
+if (cf_strcmp(scope,"onelevel") == 0)
    {
    return LDAP_SCOPE_ONELEVEL;
    }

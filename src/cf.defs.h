@@ -365,7 +365,6 @@ typedef int clockid_t;
 #define CF_AVDB_FILE      "cf_observations.db"
 #define CF_OLDAVDB_FILE   "cf_learning.db"
 #define CF_STATEDB_FILE   "cf_state.db"
-#define CF_OLDLASTDB_FILE "cf_lastseen.db"
 #define CF_LASTDB_FILE    "cf_LastSeen.db"
 #define CF_AUDITDB_FILE   "cf_Audit.db"
 
@@ -403,6 +402,7 @@ typedef int clockid_t;
 #define CF_SHA_LEN 20
 #define CF_SHA1_LEN 20
 #define CF_BEST_LEN 0
+#define CF_CRYPT_LEN 64
 #define CF_SHA224_LEN 28
 #define CF_SHA256_LEN 32
 #define CF_SHA384_LEN 48

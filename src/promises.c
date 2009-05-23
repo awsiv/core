@@ -29,17 +29,18 @@ snprintf(name,CF_MAXVARSIZE,"%s/NEE",CFWORKDIR);
   
 if (stat(name,&sb) == -1)
    {
-   Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s = %d\n",VYEAR,year,VMONTH,month,VDAY,day,strcmp(VDAY,day));
+   Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s = %d\n",VYEAR,year,VMONTH,month,VDAY,day,cf_strcmp(VDAY,day));
    
-   if ((strcmp(VYEAR,year) >= 0) && (strcmp(VMONTH,month) >= 0) && (strcmp(VDAY,day) > 0))
+   if ((cf_strcmp(VYEAR,year) >= 0) && (cf_strcmp(VMONTH,month) >= 0) && (cf_strcmp(VDAY,day) > 0))
       {
-      if (fp = fopen(name,"w"))
+      if (fp = cf_fopen(name,"w"))
          {
          fprintf(fp,"enable\n");
-         fclose(fp);
+         cf_fclose(fp);
          }
       return true;
       }
+
    
    return false;
    }
@@ -90,7 +91,7 @@ if (!OpenDB(name,&dbp))
 
 /* First record the classes that are in use */
 
-strncpy(name,Nova_PromiseID(pp),CF_MAXVARSIZE);
+cf_strncpy(name,Nova_PromiseID(pp),CF_MAXVARSIZE);
 
 if (ReadDB(dbp,name,&e,sizeof(e)))
    {
@@ -132,7 +133,7 @@ if (!OpenDB(name,&dbp))
    return (time_t)0;
    }
 
-strncpy(name,Nova_PromiseID(pp),CF_MAXVARSIZE);
+cf_strncpy(name,Nova_PromiseID(pp),CF_MAXVARSIZE);
 
 if (ReadDB(dbp,name,&e,sizeof(e)))
    {

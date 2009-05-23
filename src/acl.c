@@ -220,17 +220,17 @@ chkid = false;
 
 // first element must be "user", "group" or "all"
 
-if (strncmp(str, "user:", 5) == 0)
+if (cf_strncmp(str, "user:", 5) == 0)
    {
    str += 5;
    chkid = true;
    }
-else if(strncmp(str, "group:", 6) == 0)
+else if (cf_strncmp(str, "group:", 6) == 0)
    {
    str += 6;
    chkid = true;
    }  
-else if(strncmp(str, "all:", 4) == 0)
+else if (cf_strncmp(str, "all:", 4) == 0)
    {
    str += 4;
    chkid = false;
@@ -393,11 +393,11 @@ int Nova_CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp)
 
 valid = false;
 
-if (strcmp(permt,"allow") == 0)
+if (cf_strcmp(permt,"allow") == 0)
    {
    valid = true;
    }
-else if(strcmp(permt,"deny") == 0)
+else if(cf_strcmp(permt,"deny") == 0)
    {
    if (deny_support)
       {
