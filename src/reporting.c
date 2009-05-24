@@ -90,6 +90,102 @@ char *NRH[][2] =
     NULL,NULL
    };
 
+char *NUMBER_TXT[] =
+   {
+   "zero",
+   "one",
+   "two",
+   "three",
+   "four",
+   "five",
+   "six",
+   "seven",
+   "eight",
+   "nine",
+   "ten",
+   "eleven",
+   "twelve",
+   "thirteen",
+   "fourteen",
+   "fifteen",
+   "sixteen",
+   NULL
+   };
+
+/*****************************************************************************/
+
+void Nova_CSV2XML(struct Rlist *list)
+    
+{ struct Rlist *rp,*rline,*rl;
+  int i;
+ 
+for (rp = list; rp != NULL; rp = rp->next)
+    {
+    FILE *fin,*fout;
+    char *sp,name[CF_MAXVARSIZE],line[CF_BUFSIZE];
+    
+    if ((fin = fopen(rp->item,"r")) == NULL)
+       {
+       CfOut(cf_inform,"fopen","Cannot open CSV file %s",rp->item);
+       continue;
+       }
+
+    strncpy(name,rp->item,CF_MAXVARSIZE-1);
+    
+    for (sp = name; *sp != '.' && *sp != '\0'; sp++)
+       {
+       }
+
+    *sp = '\0';
+
+    strcat(name,".xml");
+    
+    if ((fout = fopen(name,"w")) == NULL)
+       {
+       CfOut(cf_inform,"fopen","Cannot open XML file %s",rp->item);
+       continue;
+       }
+
+    CfOut(cf_verbose,"","Converting %s to %s\n",rp->item,name);
+    
+    fprintf(fout,"<?xml version=\"1.0\"?>\n<output>\n");
+
+    while (!feof(fin))
+       {
+       line[0] = '\0';
+       fgets(line,CF_BUFSIZE-1,fin);
+       rline = SplitStringAsRList(line,',');
+
+       fprintf(fout," <line>\n");
+
+       i = 1;
+       
+       for (rl = rline; rl != NULL; rl = rl->next)
+          {
+          if (NUMBER_TXT[i])
+             {
+             fprintf(fout,"   <%s>%s</%s>\n",NUMBER_TXT[i],rl->item,NUMBER_TXT[i]);
+             i++;
+             }
+          else
+             {
+             CfOut(cf_error,"","Too many fields in csv file %s\n",rp->item);
+             break;
+             }
+          }
+       
+       fprintf(fout," </line>\n");
+       
+       DeleteRlist(rline);
+       }
+
+    fprintf(fout,"</output>\n");
+       
+    fclose(fin);
+    fclose(fout);
+    }
+}
+
 /*****************************************************************************/
 
 void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
@@ -690,8 +786,21 @@ for (mp = list; mp != NULL; mp = mp->next)
    }
 
 cf_fclose(fout);
+}
 
-snprintf(name,CF_BUFSIZE,"%s/state/software_updates.csv",CFWORKDIR);
+/*****************************************************************************/
+
+void Nova_ReportPatches(struct CfPackageManager *list)
+
+{ FILE *fout;
+  struct CfPackageManager *mp = NULL;
+  struct CfPackageItem *pi;
+  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  struct Item *ip,*file = NULL;
+  char start[32];
+  int i = 0;
+
+snprintf(name,CF_BUFSIZE,"%s/state/software_patch_status.csv",CFWORKDIR);
 
 if ((fout = cf_fopen(name,"w")) == NULL)
    {
@@ -701,7 +810,25 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 
 for (mp = list; mp != NULL; mp = mp->next)
    {
-   for (pi = mp->update_list; pi != NULL; pi=pi->next)
+   for (pi = mp->patch_list; pi != NULL; pi=pi->next)
+      {
+      fprintf(fout,"%s,%s,%s,%s\n",pi->name,pi->version,pi->arch,ReadLastNode(GetArg0(mp->manager)));
+      }
+   }
+
+cf_fclose(fout);
+
+snprintf(name,CF_BUFSIZE,"%s/state/software_patches_avail.csv",CFWORKDIR);
+
+if ((fout = cf_fopen(name,"w")) == NULL)
+   {
+   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   return;
+   }
+
+for (mp = list; mp != NULL; mp = mp->next)
+   {
+   for (pi = mp->patch_avail; pi != NULL; pi=pi->next)
       {
       fprintf(fout,"%s,%s,%s,%s\n",pi->name,pi->version,pi->arch,ReadLastNode(GetArg0(mp->manager)));
       }
@@ -845,7 +972,9 @@ void Nova_SummarizeUpdates(int xml,int html,int csv,int embed,char *stylesheet,c
   struct Item *ip,*file = NULL;
   int i = 0;
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/software_updates.csv",CFWORKDIR);
+CfOut(cf_verbose,"","Creating available patch report...\n");
+  
+snprintf(name,CF_BUFSIZE-1,"%s/state/software_patches_avail.csv",CFWORKDIR);
  
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -855,15 +984,15 @@ if ((fin = cf_fopen(name,"r")) == NULL)
 
 if (html)
    {
-   snprintf(name,CF_BUFSIZE,"software_updates.html");
+   snprintf(name,CF_BUFSIZE,"software_patches_avail.html");
    }
 else if (xml)
    {
-   snprintf(name,CF_BUFSIZE,"software_updates.xml");
+   snprintf(name,CF_BUFSIZE,"software_patches_avail.xml");
    }
 else
    {
-   snprintf(name,CF_BUFSIZE,"software_updates.csv");
+   snprintf(name,CF_BUFSIZE,"software_patches_avail.csv");
    }
  
 /* Max 2016 entries - at least a week */
@@ -889,6 +1018,127 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Software updates available and outstanding for %s",VFQNAME);
+   NovaHtmlHeader(fout,name,stylesheet,web,head);
+   fprintf(fout,"<table class=border cellpadding=5>\n");
+   fprintf(fout,"%s",NRH[cfx_entry][cfb]);
+   fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Package",NRH[cfx_filename][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_version][cfb],"Version",NRH[cfx_version][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],"Architecture",NRH[cfx_ref][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_event][cfb],"Manager",NRH[cfx_event][cfe]);
+   fprintf(fout,"%s",NRH[cfx_entry][cfe]);
+   }
+else if (XML)
+   {
+   fprintf(fout,"<?xml version=\"1.0\"?>\n<output>\n");
+   }
+
+for (ip = file; ip != NULL; ip = ip->next)
+   {
+   memset(name,0,CF_MAXVARSIZE);
+   memset(version,0,CF_MAXVARSIZE);
+   memset(arch,0,CF_MAXVARSIZE);
+   memset(mgr,0,CF_MAXVARSIZE);
+
+   if (cf_strlen(ip->name) == 0)
+      {
+      continue;
+      }
+   
+   sscanf(ip->name,"%250[^,],%250[^,],%250[^,],%250[^\n]",name,version,arch,mgr);
+   
+   if (xml)
+      {
+      fprintf(fout,"%s",NRX[cfx_entry][cfb]);
+      fprintf(fout,"%s %s %s",NRX[cfx_filename][cfb],name,NRX[cfx_filename][cfe]);
+      fprintf(fout,"%s %s %s",NRX[cfx_version][cfb],version,NRX[cfx_version][cfe]);
+      fprintf(fout,"%s %s %s",NRX[cfx_ref][cfb],arch,NRX[cfx_ref][cfe]);
+      fprintf(fout,"%s %s %s",NRX[cfx_event][cfb],mgr,NRX[cfx_event][cfe]);
+      fprintf(fout,"%s",NRX[cfx_entry][cfe]);
+      }
+   else if (html)
+      {
+      fprintf(fout,"%s",NRH[cfx_entry][cfb]);
+      fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],name,NRH[cfx_filename][cfe]);
+      fprintf(fout,"%s %s %s",NRH[cfx_version][cfb],version,NRH[cfx_version][cfe]);
+      fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],arch,NRH[cfx_ref][cfe]);
+      fprintf(fout,"%s %s %s",NRH[cfx_event][cfb],mgr,NRH[cfx_event][cfe]);
+      fprintf(fout,"%s",NRH[cfx_entry][cfe]);
+      }
+   else
+      {
+      fprintf(fout,"%s",ip->name);
+      }
+   
+   if (++i > 12*24*7)
+      {
+      break;
+      }   
+   }
+
+if (html && !embed)
+   {
+   fprintf(fout,"</table>");
+   NovaHtmlFooter(fout,foot);
+   }
+
+if (XML)
+   {
+   fprintf(fout,"</output>\n");
+   }
+
+cf_fclose(fout);
+DeleteItemList(file);
+file = NULL;
+
+/* Now show installed patch level */
+
+CfOut(cf_verbose,"","Creating patch status report...\n");
+  
+snprintf(name,CF_BUFSIZE-1,"%s/state/software_patch_status.csv",CFWORKDIR);
+ 
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_error,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   return;
+   }
+
+if (html)
+   {
+   snprintf(name,CF_BUFSIZE,"software_patch_status.html");
+   }
+else if (xml)
+   {
+   snprintf(name,CF_BUFSIZE,"software_patch_status.xml");
+   }
+else
+   {
+   snprintf(name,CF_BUFSIZE,"software_patch_status.csv");
+   }
+ 
+/* Max 2016 entries - at least a week */
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+
+   if (!IsItemIn(file,line))
+      {
+      PrependItem(&file,line,NULL);
+      }
+   }
+
+cf_fclose(fin);
+
+if ((fout = cf_fopen(name,"w")) == NULL)
+   {
+   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   return;
+   }
+
+if (html && !embed)
+   {
+   snprintf(name,CF_BUFSIZE,"Software patched installed on %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);

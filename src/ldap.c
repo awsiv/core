@@ -557,7 +557,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
 
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
                 {                
-                for (i = 0; vals[i]->bv_val != NULL; i++)
+                for (i = 0; vals[i] != NULL; i++)
                    {
                    if (cf_strcmp(a,name) == 0 && FullTextMatch(regex,(char *)vals[i]->bv_val))
                       {
