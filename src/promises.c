@@ -29,9 +29,18 @@ snprintf(name,CF_MAXVARSIZE,"%s/NEE",CFWORKDIR);
   
 if (stat(name,&sb) == -1)
    {
-   Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s = %d\n",VYEAR,year,VMONTH,month,VDAY,day,cf_strcmp(VDAY,day));
+   int m_now,m_expire,d_now,d_expire;
    
-   if ((cf_strcmp(VYEAR,year) >= 0) && (cf_strcmp(VMONTH,month) >= 0) && (cf_strcmp(VDAY,day) > 0))
+   m_now = Month2Int(VMONTH);
+   d_now = Str2Int(VDAY);
+
+   m_expire = Month2Int(month);
+   d_expire = Str2Int(day);
+
+   Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s = %d\n",VYEAR,year,VMONTH,month,VDAY,day,cf_strcmp(VDAY,day));
+   Debug("Y. %s > %s\nM. %d > %d\nD: %d > %d = %d\n",VYEAR,year,m_now,m_expire,d_now,d_expire,cf_strcmp(VDAY,day));
+
+   if ((cf_strcmp(VYEAR,year) >= 0) && (m_now >= m_expire) && (d_now > d_expire))
       {
       if (fp = cf_fopen(name,"w"))
          {
@@ -41,6 +50,7 @@ if (stat(name,&sb) == -1)
       return true;
       }
 
+   
    
    return false;
    }

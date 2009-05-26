@@ -394,7 +394,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                       {
                       snprintf(name,CF_MAXVARSIZE-1,"%s[%s]",array,a);
                       NewScalar(THIS_BUNDLE,name,(char *)vals[i]->bv_val,cf_str);
-                      CfOut(cf_verbose,""," -> Setting %s => %s\n",name,(char *)vals[i]->bv_val);
+                      CfOut(cf_verbose,""," -> Setting %s => %s, in context %s/%s\n",name,(char *)vals[i]->bv_val,THIS_BUNDLE,CONTEXTID);
                       return_value = strdup("any");
 
                       if (return_value)
