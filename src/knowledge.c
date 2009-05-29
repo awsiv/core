@@ -351,21 +351,51 @@ fprintf(fp,"  \"is a promise made by\";\n");
 
 fprintf(fp,"system_reports::\n");
 fprintf(fp,"  \"audit report\";\n");
-fprintf(fp,"  \"performance report\";\n");
 fprintf(fp,"  \"all_locks report\";\n");
 fprintf(fp,"  \"active_locks report\";\n");
-fprintf(fp,"  \"hashes report\";\n");
 fprintf(fp,"  \"classes report\";\n");
+fprintf(fp,"  \"compliance report\";\n");
+fprintf(fp,"  \"file_changes report\";\n");
+fprintf(fp,"  \"hashes report\";\n");
+fprintf(fp,"  \"installed software report\";\n");
 fprintf(fp,"  \"lastseen report\";\n");
 fprintf(fp,"  \"monitor now report\";\n");
 fprintf(fp,"  \"monitor history report\";\n");
 fprintf(fp,"  \"monitor summary report\";\n");
-fprintf(fp,"  \"compliance report\";\n");
+fprintf(fp,"  \"performance report\";\n");
 fprintf(fp,"  \"setuid report\";\n");
-fprintf(fp,"  \"file_changes report\";\n");
-fprintf(fp,"  \"installed software report\";\n");
 fprintf(fp,"  \"software patches report\";\n");
+fprintf(fp,"  \"variables report\";\n");
 
+fprintf(fp,"  # New assocs\n");
+
+fprintf(fp,"  \"classes report\"\n");
+fprintf(fp,"    association => a(\"is generated with\",\"promise_types::classes\",\"reported in\");\n");
+fprintf(fp,"  \"lastseen report\"\n");
+fprintf(fp,"   association => a(\"is affected by\",\"body_constraints::copy_from\",\"reported in\");\n");
+fprintf(fp,"  \"lastseen report\"\n");
+fprintf(fp,"   association => a(\"is affected by\",\"promise_types::access\",\"reported in\");\n");
+
+fprintf(fp,"  \"compliance report\"\n");
+fprintf(fp,"    association => a(\"is based on\",\"promises\",\"reported in\");\n");
+fprintf(fp,"  \"performance report\"\n");
+fprintf(fp,"    association => a(\"is based on\",\"promises\",\"reported in\");\n");
+fprintf(fp,"  \"setuid report\"\n");
+fprintf(fp,"    association => a(\"is generated with\",\"promise_types::files\",\"reported in\");\n");
+fprintf(fp,"  \"hashes report\"\n");
+fprintf(fp,"    association => a(\"is generated with\",\"promise_types::files\",\"reported in\");\n");
+fprintf(fp,"  \"hashes report\"\n");
+fprintf(fp,"    association => a(\"is generated with\",\"body_constraints::changes\",\"reported in\");\n");
+fprintf(fp,"  \"file_changes report\"\n");
+fprintf(fp,"    association => a(\"is generated with\",\"promise_types::files\",\"reported in\");\n");
+fprintf(fp,"  \"file_changes report\"\n");
+fprintf(fp,"    association => a(\"is generated with\",\"body_constraints::changes\",\"reported in\");\n");
+fprintf(fp,"  \"installed software report\"\n");
+fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages\",\"reported in\");\n");
+fprintf(fp,"  \"software patches report\"\n");
+fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages\",\"reported in\");\n");
+
+        
 fprintf(fp,"system_policy::\n");
 fprintf(fp,"  \"bundles\";\n");
 fprintf(fp,"  \"bodies\";\n");
