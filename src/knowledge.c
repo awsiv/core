@@ -496,6 +496,20 @@ for (i = 0; CF_COMMON_EDITBODIES[i].lval != NULL; i++)
    fprintf(fp,"   \"%s\";\n",CF_COMMON_EDITBODIES[i].lval);
    }
 
+fprintf(fp,"miscellaneous_concepts::\n");
+
+fprintf(fp,"  \"data types\";\n");
+
+fprintf(fp,"data_types::\n");
+
+
+for (i = 0; CF_VARBODY[i].lval != NULL; i++)
+   {
+   fprintf(fp,"  \"%s\" comment => \"%s matching %s\";\n",CF_VARBODY[i].lval,CF_VARBODY[i].description,CF_VARBODY[i].range);
+   }
+
+fprintf(fp,"  \"class\" comment => \"A boolean returned by certain functions in classes promises\";\n");
+
 fprintf(fp,"functions::\n\n");
 
 for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
@@ -506,6 +520,7 @@ for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
    fprintf(fp,"    comment => \"%s\",\n",CF_FNCALL_TYPES[i].description);
    fprintf(fp,"    association => a(\"returns data-type\",\"%s\",\"is returned by function\");\n",CF_DATATYPES[CF_FNCALL_TYPES[i].dtype]);
    }
+
 }
 
 /*****************************************************************************/
@@ -876,14 +891,19 @@ void NovaShowValues(FILE *fp,struct BodySyntax bs)
 
 for (i = 0; CF_VALUETYPES[i][0] != NULL; i++)
    {
-   if (cf_strcmp(CF_VALUETYPES[i][0],bs.lval) == 0)
+   if (bs.dtype == cf_bundle || bs.dtype == cf_body)
+      {
+      continue;
+      }
+   
+   if (cf_strcmp(CF_VALUETYPES[i][0],bs.range) == 0)
       {
       range = CF_VALUETYPES[i][1];
       break;
       }
    }
 
-if (CF_VALUETYPES[i][0] == NULL)
+if (range == NULL)
    {
    range = CF_DATATYPES[bs.dtype];
    }
