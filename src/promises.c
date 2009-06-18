@@ -15,6 +15,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+char POLICY_SERVER[CF_BUFSIZE];
+
 /*****************************************************************************/
 
 int Nova_EnterpriseExpiry(char *day,char *month,char *year)
@@ -44,13 +46,11 @@ if (stat(name,&sb) == -1)
       {
       if (fp = cf_fopen(name,"w"))
          {
-         fprintf(fp,"enable\n");
+         fprintf(fp,"enable expiry %s %s %s\n",day,month,year);
          cf_fclose(fp);
          }
       return true;
       }
-
-   
    
    return false;
    }
@@ -65,7 +65,7 @@ else
 void Nova_Version()
 
 {
-printf("contains Nova extensions at version %s\n",VERSION);
+ printf("Contains Nova extensions at version %s (C) Cfengine AS 2009-%s\n",VERSION,VYEAR);
 }
 
 /*****************************************************************************/
@@ -168,4 +168,260 @@ if (*lastseen > lsea)
 
 dbp->close(dbp,0);
 return *lastseen;
+}
+
+/***************************************************************/
+
+void Nova_CheckAutoBootstrap()
+
+{ struct stat sb;
+  char name[CF_BUFSIZE];
+  FILE *pp;
+  int repaired = false;
+
+printf("\nCfengine enterprise level bootstrap mode\n");
+printf("--------------------------------------------------------\n");
+Version("cfengine");
+  
+snprintf(name,CF_BUFSIZE-1,"%s/inputs/failsafe.cf",CFWORKDIR);
+
+if (stat(name,&sb) == -1)
+   {
+   Nova_CreateFailSafe(name);
+   repaired = true;
+   }
+
+snprintf(name,CF_BUFSIZE-1,"%s/masterfiles/promises.cf",CFWORKDIR);
+
+if (stat(name,&sb) == -1)
+   {
+   CfOut(cf_error,""," -> This host has not been installed to run as a policy server");
+   }
+else
+   {
+   CfOut(cf_error,""," -> A master policy is located on this host in %s/mastefiles",CFWORKDIR);
+   }
+
+if (strlen(POLICY_SERVER) > 0)
+   {
+   CfOut(cf_error,""," -> Assuming the policy distribution point at: %s:/var/cfengine/masterfiles\n",POLICY_SERVER);
+   }
+else
+   {
+   if (repaired)
+      {
+      CfOut(cf_error,""," -> No policy distribution host was set - use --policy-server to set one\n",POLICY_SERVER);      }
+   else
+      {
+      CfOut(cf_error,""," -> No policy distribution host was discovered - assuming it is defined in the existing failsafe\n");
+      }
+   }
+
+snprintf(name,CF_BUFSIZE-1,"%s/inputs/promises.cf",CFWORKDIR);
+
+if (stat(name,&sb) == -1)
+   {
+   CfOut(cf_error,""," -> No previous policy has been cached on this host");
+   }
+else
+   {
+   CfOut(cf_error,""," -> An existing policy was cached on this host in %s/inputs",CFWORKDIR);
+   }
+
+CfOut(cf_error,""," -> Level 2 self-diagnostic available as cf-promises --diagnostic");
+CfOut(cf_error,""," -> Accepting default policy trajectory for this host");
+CfOut(cf_error,""," -> Attemping to start promised services.");
+}
+
+/********************************************************************/
+
+void Nova_SetPolicyServer(char *name)
+
+{ char file[CF_BUFSIZE];
+  FILE *fout,*fin;
+
+snprintf(file,CF_BUFSIZE-1,"%s/policy_server.dat",CFWORKDIR);
+
+if (strlen(name) > 0)
+   {  
+   strncpy(POLICY_SERVER,name,CF_BUFSIZE-1);
+   
+   if ((fout = fopen(file,"w")) == NULL)
+      {
+      CfOut(cf_error,"fopen","Unable to write policy server file! (%s)",file);
+      return;
+      }
+   
+   fprintf(fout,"%s",name);
+   fclose(fout);
+   CfOut(cf_error,""," -> Setting the policy distribution point at: %s:/var/cfengine/masterfiles\n",POLICY_SERVER);
+   }
+else
+   {
+   if ((fin = fopen(file,"r")) == NULL)
+      {
+      }
+   else
+      {
+      fscanf(fin,"%s",name);
+      fclose(fin);
+      }
+   }
+}
+
+/********************************************************************/
+
+void Nova_CreateFailSafe(char *name)
+
+{ FILE *fout;
+ 
+if ((fout = fopen(name,"w")) == NULL)
+   {
+   CfOut(cf_error,"fopen","Unable to write failsafe file! (%s)",name);
+   }
+
+fprintf(fout,
+        "body common control\n"
+        "{\n"
+        "bundlesequence => { \"update\" };\n"
+        "}\n"
+
+
+        
+        "bundle agent update\n"
+        "{\n"
+        "vars:\n"
+        
+        " \"master_location\" string => \"$(sys.workdir)/masterfiles\";\n"
+        
+        " \"policy_server\"   string => readfile(\"$(sys.workdir)/policy_server.dat\",40),\n"
+        "                      comment => \"IP address to locate your policy host.\";\n"
+        
+        "classes:\n"
+        
+        "  \"policy_host\" or => { \n"
+        "                        classmatch(canonify(\"ipv4_$(policy_server)\")),\n"
+        "                        classmatch(canonify(\"$(policy_server)\"))\n"
+        "                        },\n"
+        
+        "                   comment => \"Define the ip identity of the policy source host\";\n"
+        
+        "  \"have_ppkeys\" expression => fileexists(\"$(sys.workdir)/ppkeys/localhost.pub\");\n"
+        
+        "  \"gotfile\" expression => fileexists(\"$(sys.workdir)/policy_server.dat\");\n"
+        
+        "commands:\n"
+        
+        " !have_ppkeys::\n"
+        
+        "   \"/usr/local/sbin/cf-key\";\n"
+        
+        "files:\n"
+        
+        "  \"/var/cfengine/inputs\" \n"
+        
+        "    handle => \"update_policy\",\n"
+        "    perms => u_p(\"600\"),\n"
+        "    copy_from => u_scp(\"$(master_location)\"),\n"
+        "    depth_search => u_recurse(\"inf\"),\n"
+        "    action => immediate;\n"
+        
+        "  \"/var/cfengine/bin\" \n"
+        
+        "    perms => u_p(\"700\"),\n"
+        "    copy_from => u_scp(\"/usr/local/sbin\"),\n"
+        "    depth_search => u_recurse(\"inf\"),\n"
+        "    action => immediate;\n"
+
+        "processes:\n"
+
+        "any::\n"
+        
+        "\"cf-execd\" restart_class => \"start_exec\";\n"
+        
+        "policy_host::\n"
+        
+        "\"cf-serverd\" restart_class => \"start_server\";\n"
+        
+        "commands:\n"
+        
+        "start_exec::\n"
+        "\"$(sys.workdir)/bin/cf-execd\",\n"
+        "action => logme(\"executor\"),\n"
+        "classes => outcome(\"executor\");\n"
+        
+        "start_server::\n"
+        "\"$(sys.workdir)/bin/cf-serverd\",\n"
+        "action => logme(\"server\"),\n"
+        "classes => outcome(\"server\");\n"
+        
+        "reports:\n"
+        
+        "  bootstrap_mode.policy_host::\n"
+        
+        "      \"I am the policy host - i.e. with ipv4 address $(policy_server)\";\n"
+
+        "  server_failed::"
+        "      \" !! Failed to start the server\";\n"
+        "  executor_failed::"
+        "      \" !! Failed to start the scheduler cf-execd - please consult an engineer\";\n"
+        
+        "}\n"
+
+        "############################################\n"
+
+        "body action logme(x)\n"
+        "{\n"
+        "log_repaired => \"stdout\";\n"
+        "log_string => \" -> Attempted to start the $(x)\";\n"
+        "}\n"
+
+        "############################################\n"
+
+        "body classes outcome(x)\n"
+        "{\n"
+        "repair_failed => {\"$(x)_failed\"};\n"
+        "}\n"
+
+        "############################################\n"
+        
+        "body perms u_p(p)\n"
+        
+        "{\n"
+        "mode  => \"$(p)\";\n"
+        "}\n"
+        
+        "#############################################\n"
+        
+        "body copy_from u_scp(from)\n"
+        
+        "{\n"
+        "source      => \"$(from)\";\n"
+        "compare     => \"digest\";\n"
+        "trustkey    => \"true\";\n"
+        
+        "!policy_host.gotfile::\n"
+        
+        "servers => { \"$(policy_server)\" };\n"
+        "}\n"
+        
+        "############################################\n"
+        
+        "body action immediate\n"
+        "{\n"
+        "ifelapsed => \"1\";\n"
+        "}\n"
+        
+        "############################################\n"
+        
+        "body depth_search u_recurse(d)\n"
+        
+        "{\n"
+        "depth => \"$(d)\";\n"
+        "}\n"
+        );
+
+CfOut(cf_error,""," -> No failsafe present, attempting a temporary workaround\n");
+
+fclose(fout);
 }

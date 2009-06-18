@@ -397,17 +397,17 @@ fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages
 
         
 fprintf(fp,"system_policy::\n");
-fprintf(fp,"  \"bundles\";\n");
-fprintf(fp,"  \"bodies\";\n");
-fprintf(fp,"  \"contexts\";\n");
-fprintf(fp,"  \"promisees\";\n");
-fprintf(fp,"  \"promisers\";\n");
-fprintf(fp,"  \"promises\" comment => \"occurrences of promise topics or suggestions\";\n");
-fprintf(fp,"  \"promise types\";\n");
-fprintf(fp,"  \"body constraints\";\n");
+fprintf(fp,"  \"bundles\" comment => \"A modular collection of promises of different types\";\n");
+fprintf(fp,"  \"bodies\" comment => \"A modular collection of body constraints for re-use\";\n");
+fprintf(fp,"  \"contexts\" comment => \"Class expressions that say where or when a promise applies\";\n");
+fprintf(fp,"  \"promisees\" comment => \"Recipients of a promise, i.e. promise handles, or persons\";\n");
+fprintf(fp,"  \"promisers\" comment => \"The objects affected by a promise\";\n");
+fprintf(fp,"  \"promises\" comment => \"Complete occurrences of promiser + promisee + promise-body\";\n");
+fprintf(fp,"  \"promise types\" comment => \"The types of promise that cfengine can keep\";\n");
+fprintf(fp,"  \"body constraints\" comment => \"The attributes that cfengine enables you to promise about the promiser\";\n");
 fprintf(fp,"\"comments\"\n");
 fprintf(fp,"      association => a(\"see instances of\",\"comment\",\"is one of a number of\");\n");
-fprintf(fp,"\"functions\" comment => \"In built functions that may be used to set variables or classes\";");
+fprintf(fp,"\"functions\" comment => \"In-built functions that may be used to set variables or classes\";");
 
 fprintf(fp," \"values\"  comment => \"Formal rvalues in constraint assignments and their legal ranges\";\n");
 fprintf(fp,"values::\n\n");
@@ -861,6 +861,11 @@ char *NovaEscape(char *s)
 
 memset(buffer,0,CF_EXPANDSIZE);
 
+if (s == NULL)
+   {
+   return buffer;
+   }
+  
 if (strlen(s) == 0)
    {
    return s;

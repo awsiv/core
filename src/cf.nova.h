@@ -152,6 +152,9 @@ char * Nova_StrVersion(void);
 void Nova_NotePromiseCompliance(struct Promise *pp,double val);
 time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *t);
 int Nova_EnterpriseExpiry(char *day,char *month,char *year);
+void Nova_CheckAutoBootstrap(void);
+void Nova_SetPolicyServer(char *name);
+void Nova_CreateFailSafe(char *name);
 
 /* registry.c */
 
@@ -181,6 +184,7 @@ char *Nova_GetRemoteScalar(char *handle,char *server,int encrypted);
 int Nova_ParseHostname(char *name,char *hostname);
 int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer);
 void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer);
+void Nova_StartTwin(int argc,char **argv);
 
 /* sql.c */
 

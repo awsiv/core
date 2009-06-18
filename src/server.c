@@ -162,6 +162,45 @@ return cf_strlen(buffer);
 }
 
 /********************************************************************/
+
+void Nova_StartTwin(int argc,char **argv)
+
+{
+ /* AcquireLock
+// stat binary for mtime
+
+if (fork() != 0)
+   {
+   CfOut(cf_inform,"","cfExec twin starting %.24s\n",ctime(&now));
+   exit(0);
+   }
+
+
+//Writepid twin file?
+
+// do  nothing here that could crash. We assume this process doesn't die
+
+while (true)
+   {
+   sleep(1);
+   // stat file and record
+
+   // if file is older than sched interval, YieldLock, restart(popen) cfexecd and exit
+   // Can't see a pulse from cf-execd
+   // clean up lock first?
+
+   // if binary mtime is newer yieldlock, execv(cfexecd,arg) and exit
+
+   // if input files are changed (like cfservd) die and restart cf-execd, and die
+   }
+
+//never get here exit(0);
+
+// If all this fails, we can still restart by running cf-runagent
+*/
+}
+
+/********************************************************************/
 /* Level                                                            */
 /********************************************************************/
 
