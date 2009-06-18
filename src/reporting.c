@@ -333,8 +333,6 @@ void Nova_SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char 
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE];
-  char start[32],end[32];
-  char version[CF_MAXVARSIZE];
   int i = 0;
   DB *dbp;
   DBC *dbcp;

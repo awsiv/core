@@ -65,7 +65,7 @@ else
 void Nova_Version()
 
 {
- printf("Contains Nova extensions at version %s (C) Cfengine AS 2009-%s\n",VERSION,VYEAR);
+printf("This core uses commercial Nova extensions at version %s (C) Cfengine AS 2009-%s\n",VERSION,VYEAR);
 }
 
 /*****************************************************************************/
@@ -136,7 +136,7 @@ time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *averag
   struct Event e;
   double lsea = CF_WEEK * 52; /* expire after a year */
   
-snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,"promise_compliance.db");
+snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,"promise_compliance.db");
 
 if (!OpenDB(name,&dbp))
    {
@@ -177,44 +177,26 @@ void Nova_CheckAutoBootstrap()
 { struct stat sb;
   char name[CF_BUFSIZE];
   FILE *pp;
-  int repaired = false;
+  int repaired = false, have_policy = false;
 
-printf("\nCfengine enterprise level bootstrap mode\n");
-printf("--------------------------------------------------------\n");
+printf("\n ** Initiated the cfengine enterprise diagnostic bootstrap probe\n");
+printf(" ** This is a Nova automation extension - self-healing installer\n\n");
+
 Version("cfengine");
-  
+printf("\n");
+
+printf(" -> This host is: %s\n",VSYSNAME.nodename);
+printf(" -> Operating System Type is %s\n",VSYSNAME.sysname);
+printf(" -> Operating System Release is %s\n",VSYSNAME.release);
+printf(" -> Architecture = %s\n",VSYSNAME.machine);
+printf(" -> Internal soft-class is %s\n",CLASSTEXT[VSYSTEMHARDCLASS]);
+
 snprintf(name,CF_BUFSIZE-1,"%s/inputs/failsafe.cf",CFWORKDIR);
 
 if (stat(name,&sb) == -1)
    {
    Nova_CreateFailSafe(name);
    repaired = true;
-   }
-
-snprintf(name,CF_BUFSIZE-1,"%s/masterfiles/promises.cf",CFWORKDIR);
-
-if (stat(name,&sb) == -1)
-   {
-   CfOut(cf_error,""," -> This host has not been installed to run as a policy server");
-   }
-else
-   {
-   CfOut(cf_error,""," -> A master policy is located on this host in %s/mastefiles",CFWORKDIR);
-   }
-
-if (strlen(POLICY_SERVER) > 0)
-   {
-   CfOut(cf_error,""," -> Assuming the policy distribution point at: %s:/var/cfengine/masterfiles\n",POLICY_SERVER);
-   }
-else
-   {
-   if (repaired)
-      {
-      CfOut(cf_error,""," -> No policy distribution host was set - use --policy-server to set one\n",POLICY_SERVER);      }
-   else
-      {
-      CfOut(cf_error,""," -> No policy distribution host was discovered - assuming it is defined in the existing failsafe\n");
-      }
    }
 
 snprintf(name,CF_BUFSIZE-1,"%s/inputs/promises.cf",CFWORKDIR);
@@ -226,11 +208,27 @@ if (stat(name,&sb) == -1)
 else
    {
    CfOut(cf_error,""," -> An existing policy was cached on this host in %s/inputs",CFWORKDIR);
+   have_policy = true;
    }
 
-CfOut(cf_error,""," -> Level 2 self-diagnostic available as cf-promises --diagnostic");
-CfOut(cf_error,""," -> Accepting default policy trajectory for this host");
-CfOut(cf_error,""," -> Attemping to start promised services.");
+if (strlen(POLICY_SERVER) > 0)
+   {
+   CfOut(cf_error,""," -> Assuming the policy distribution point at: %s:WORKDIR/masterfiles\n",POLICY_SERVER);
+   }
+else
+   {
+   if (have_policy)
+      {
+      CfOut(cf_error,""," -> No policy distribution host was discovered - it might be contained in the existing policy\n");
+      }
+   else if (repaired)
+      {
+      CfOut(cf_error,""," -> No policy distribution host was defined - use --policy-server to set one\n",POLICY_SERVER);
+      }
+   }
+
+printf(" -> Policy trajectory accepted\n");
+printf(" -> Attemping to initiate promised autonomous services\n\n");
 }
 
 /********************************************************************/
@@ -254,7 +252,6 @@ if (strlen(name) > 0)
    
    fprintf(fout,"%s",name);
    fclose(fout);
-   CfOut(cf_error,""," -> Setting the policy distribution point at: %s:/var/cfengine/masterfiles\n",POLICY_SERVER);
    }
 else
    {
@@ -318,15 +315,16 @@ fprintf(fout,
         
         "files:\n"
         
-        "  \"/var/cfengine/inputs\" \n"
+        "  \"$(sys.workdir)/inputs\" \n"
         
         "    handle => \"update_policy\",\n"
         "    perms => u_p(\"600\"),\n"
         "    copy_from => u_scp(\"$(master_location)\"),\n"
         "    depth_search => u_recurse(\"inf\"),\n"
-        "    action => immediate;\n"
+        "    action => immediate,\n"
+        "    classes => success(\"config\");\n"
         
-        "  \"/var/cfengine/bin\" \n"
+        "  \"$(sys.workdir)/bin\" \n"
         
         "    perms => u_p(\"700\"),\n"
         "    copy_from => u_scp(\"/usr/local/sbin\"),\n"
@@ -335,11 +333,11 @@ fprintf(fout,
 
         "processes:\n"
 
-        "any::\n"
+        "config::\n"
         
         "\"cf-execd\" restart_class => \"start_exec\";\n"
         
-        "policy_host::\n"
+        "config.policy_host::\n"
         
         "\"cf-serverd\" restart_class => \"start_server\";\n"
         
@@ -347,40 +345,42 @@ fprintf(fout,
         
         "start_exec::\n"
         "\"$(sys.workdir)/bin/cf-execd\",\n"
-        "action => logme(\"executor\"),\n"
         "classes => outcome(\"executor\");\n"
         
         "start_server::\n"
         "\"$(sys.workdir)/bin/cf-serverd\",\n"
-        "action => logme(\"server\"),\n"
         "classes => outcome(\"server\");\n"
         
         "reports:\n"
         
         "  bootstrap_mode.policy_host::\n"
         
-        "      \"I am the policy host - i.e. with ipv4 address $(policy_server)\";\n"
+        "      \"This host assumes the role of policy distribution host\";\n"
 
-        "  server_failed::"
-        "      \" !! Failed to start the server\";\n"
-        "  executor_failed::"
-        "      \" !! Failed to start the scheduler cf-execd - please consult an engineer\";\n"
+        "  bootstrap_mode.!policy_host::\n"
         
-        "}\n"
+        "      \"This autonomous node assumes the role of voluntary client\";\n"
 
-        "############################################\n"
-
-        "body action logme(x)\n"
-        "{\n"
-        "log_repaired => \"stdout\";\n"
-        "log_string => \" -> Attempted to start the $(x)\";\n"
+        
+        "  server_ok::"
+        "      \" -> Started the server - system ready to serve\";\n"
+        "  executor_ok::"
+        "      \" -> Started the scheduler - system functional\";\n"
+        
         "}\n"
 
         "############################################\n"
 
         "body classes outcome(x)\n"
         "{\n"
-        "repair_failed => {\"$(x)_failed\"};\n"
+        "promise_repaired => {\"$(x)_ok\"};\n"
+        "}\n"
+
+        "############################################\n"
+
+        "body classes success(x)\n"
+        "{\n"
+        "promise_repaired => {\"$(x)\"};\n"
         "}\n"
 
         "############################################\n"
@@ -421,7 +421,7 @@ fprintf(fout,
         "}\n"
         );
 
-CfOut(cf_error,""," -> No failsafe present, attempting a temporary workaround\n");
+CfOut(cf_error,""," -> No policy failsafe discovered, assume temporary bootstrap vector\n");
 
 fclose(fout);
 }
