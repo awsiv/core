@@ -173,6 +173,7 @@ AC_CHECK_HEADERS(dustat.h)
 AC_CHECK_HEADERS(regex.h rxposix.h)
 AC_CHECK_HEADERS(sys/systeminfo.h)
 AC_CHECK_HEADERS(sys/acl.h)
+AC_CHECK_HEADERS(zone.h)
 
 AC_HEADER_STDC
 AC_HEADER_TIME
@@ -211,6 +212,7 @@ AC_CHECK_FUNCS(uname gethostname realpath regcomp chflags)
 AC_CHECK_FUNCS(strstr strsep putenv drand48 srand48 getaddrinfo)
 AC_CHECK_FUNCS(bcopy mkfifo statfs statvfs door)
 AC_CHECK_FUNCS(sysinfo setsid strdup strrchr strerror snprintf sysconf)
+AC_CHECK_FUNCS(getzoneid,getzonenamebyid)
 
 dnl ######################################################################
 dnl Check for sa_len in struct sockaddr

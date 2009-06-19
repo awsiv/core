@@ -145,6 +145,10 @@ void Nova_LoadSlowlyVaryingObservations(void);
 void Nova_DumpSlowlyVaryingObservations(void);
 void Nova_LookupClassName(int n,char *name);
 
+/* processes.c */
+
+char *Nova_GetProcessOptions(void);
+
 /* promises.c */
 
 void Nova_Version(void);

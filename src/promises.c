@@ -15,6 +15,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#ifdef HAVE_ZONE_H
+# include <zone.h>
+#endif
+
 char POLICY_SERVER[CF_BUFSIZE];
 
 /*****************************************************************************/
@@ -58,6 +62,25 @@ else
    {
    return true;
    }
+}
+
+/*****************************************************************************/
+
+void NovaEnterpriseVersion()
+
+{ char vbuff[CF_BUFSIZE];
+#ifdef HAVE_GETZONEID
+ zoneid_t zid;
+ char zone[ZONENAME_MAX];
+ 
+zid = getzoneid();
+getzonenamebyid(zid,zone,ZONENAME_MAX);
+CfOut(cf_verbose,""," -> Cfengine seems to be running inside a solaris zone of name \"%s\"",zone);
+
+NewScalar("sys","zone",zone,cf_str);
+snprintf(vbuff,CF_BUFSIZE-1,"zone_%s",zone);
+NewClass(vbuff);
+#endif
 }
 
 /*****************************************************************************/

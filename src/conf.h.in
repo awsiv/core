@@ -141,6 +141,9 @@
 /* Define to 1 if you have the `getnetgrent' function. */
 #undef HAVE_GETNETGRENT
 
+/* Define to 1 if you have the `getzoneid' function. */
+#undef HAVE_GETZONEID
+
 /* Define to 1 if you have the <graphviz/gvc.h> header file. */
 #undef HAVE_GRAPHVIZ_GVC_H
 
@@ -343,6 +346,9 @@
 
 /* Define to 1 if you have the `waitpid' function. */
 #undef HAVE_WAITPID
+
+/* Define to 1 if you have the <zone.h> header file. */
+#undef HAVE_ZONE_H
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */

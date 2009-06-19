@@ -22,6 +22,7 @@ libcfnova_la_SOURCES =						\
 	monitoring.c						\
 	server.c						\
 	promises.c						\
+	processes.c						\
 	reporting.c						\
 	html.c							\
 	knowledge.c
