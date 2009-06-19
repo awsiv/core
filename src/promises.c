@@ -66,7 +66,7 @@ else
 
 /*****************************************************************************/
 
-void NovaEnterpriseVersion()
+void NovaEnterpriseContext()
 
 { char vbuff[CF_BUFSIZE];
 #ifdef HAVE_GETZONEID
