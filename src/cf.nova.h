@@ -31,7 +31,7 @@
 #define CF_VALID_NPERMS_POSIX "rwx"
 
 // Valid operations (first char of mode)
-#define CF_VALID_OPS_METHOD_OVERWRITE "="  // op can only be empty or equal when method => overwrite
+#define CF_VALID_OPS_METHOD_OVERWRITE "=+-"  // op can only be empty or equal when method => overwrite
 #define CF_VALID_OPS_METHOD_APPEND "=+-"
 
 // Native perms separators in mode
@@ -51,20 +51,20 @@
 /* acl.c */
 
 void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
-void Nova_SetACLDefaults(struct CfACL *acl);
-int Nova_CheckACLSyntax(struct CfACL acl,struct Promise *pp);
-int Nova_CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support,struct Promise *pp);
+void Nova_SetACLDefaults(char *path, struct CfACL *acl);
+int Nova_CheckACLSyntax(char *file,struct CfACL acl,struct Promise *pp);
+int Nova_CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support, int mask_support,struct Promise *pp);
 int Nova_CheckModeSyntax(char **mode_p, char *valid_nperms, char *valid_ops,struct Promise *pp);
 int Nova_CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp);
-int Nova_CheckDirectoryInherit(struct CfACL *acl, struct Promise *pp);
+int Nova_CheckDirectoryInherit(char *path, struct CfACL *acl, struct Promise *pp);
 
 #ifdef HAVE_LIBACL
-int Nova_CheckPosixLinuxACL(char *file_path, struct CfACL acl);
-int Nova_CheckPosixLinuxAccessACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path);
-int Nova_CheckPosixLinuxInheritACEs(struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path);
-int Nova_CheckPosixLinuxACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type);
-int Nova_CheckDefaultEqualsAccessACL(char *file_path);
-int Nova_CheckDefaultClearACL(char *file_path);
+int Nova_CheckPosixLinuxACL(char *file_path, struct CfACL acl, struct Attributes a, struct Promise *pp);
+int Nova_CheckPosixLinuxAccessACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, struct Attributes a, struct Promise *pp);
+int Nova_CheckPosixLinuxInheritACEs(struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path, struct Attributes a, struct Promise *pp);
+int Nova_CheckPosixLinuxACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type, struct Attributes a, struct Promise *pp);
+int Nova_CheckDefaultEqualsAccessACL(char *file_path, struct Attributes a, struct Promise *pp);
+int Nova_CheckDefaultClearACL(char *file_path, struct Attributes a, struct Promise *pp);
 int Nova_ParseEntityPosixLinux(char **str, acl_entry_t ace, int *is_mask);
 int Nova_ParseModePosixLinux(char *mode, acl_permset_t old_perms);
 acl_entry_t Nova_FindACE(acl_t acl, acl_entry_t ace_find);
