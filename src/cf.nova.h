@@ -159,6 +159,7 @@ int Nova_EnterpriseExpiry(char *day,char *month,char *year);
 void Nova_CheckAutoBootstrap(void);
 void Nova_SetPolicyServer(char *name);
 void Nova_CreateFailSafe(char *name);
+void Nova_SetDocRoot(char *name);
 
 /* registry.c */
 

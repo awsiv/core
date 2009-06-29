@@ -214,6 +214,16 @@ printf(" -> Operating System Release is %s\n",VSYSNAME.release);
 printf(" -> Architecture = %s\n",VSYSNAME.machine);
 printf(" -> Internal soft-class is %s\n",CLASSTEXT[VSYSTEMHARDCLASS]);
 
+if (IsDefinedClass("redhat"))
+   {
+   Nova_SetDocRoot("/var/www/html");
+   }
+
+if (IsDefinedClass("SuSE"))
+   {
+   Nova_SetDocRoot("/srv/www/htdocs");
+   }
+
 snprintf(name,CF_BUFSIZE-1,"%s/inputs/failsafe.cf",CFWORKDIR);
 
 if (stat(name,&sb) == -1)
@@ -448,3 +458,42 @@ CfOut(cf_error,""," -> No policy failsafe discovered, assume temporary bootstrap
 
 fclose(fout);
 }
+
+
+/********************************************************************/
+/* Level                                                            */
+/********************************************************************/
+
+void Nova_SetDocRoot(char *name)
+
+{ char file[CF_BUFSIZE];
+  FILE *fout,*fin;
+
+snprintf(file,CF_BUFSIZE-1,"%s/document_root.dat",CFWORKDIR);
+
+if (strlen(name) > 0)
+   {  
+   if ((fout = fopen(file,"w")) == NULL)
+      {
+      CfOut(cf_error,"fopen","Unable to write document root file! (%s)",file);
+      return;
+      }
+   
+   fprintf(fout,"%s",name);
+   fclose(fout);
+   }
+else
+   {
+   if ((fin = fopen(file,"r")) == NULL)
+      {
+      }
+   else
+      {
+      fscanf(fin,"%s",name);
+      fclose(fin);
+      }
+   }
+
+CfOut(cf_error,""," -> Assuming document root for potential knowledge base to %s",name);
+}
+
