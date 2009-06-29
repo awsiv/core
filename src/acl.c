@@ -44,7 +44,7 @@ switch(a.acl.acl_type)
               break;
 
           default:
-              CfOut(cf_inform,"","ACLs are not yet supported on this system.");
+              CfOut(cf_inform,"","!! ACLs are not yet supported on this system.");
               break;
            }
        break;
@@ -57,17 +57,17 @@ switch(a.acl.acl_type)
               break;
 
           default:
-              CfOut(cf_inform,"","Posix ACLs not supported on this system");
+              CfOut(cf_inform,"","!! Posix ACLs not supported on this system");
               break;
            }
        break;
 
    case cfacl_ntfs:
-       CfOut(cf_inform,"","NTFS ACLs not yet implemented");
+       CfOut(cf_inform,"","!! NTFS ACLs not yet implemented");
        break;
 
    default:
-       CfOut(cf_error,"","Unknown ACL type - software error");
+       CfOut(cf_error,"","!! Unknown ACL type - software error");
        break;
    }
 }

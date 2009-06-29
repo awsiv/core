@@ -78,7 +78,7 @@ switch(directory_inherit)
        break;
 
    default:  // unknown inheritance policy
-       CfOut(cf_error,"","Unknown inheritenace policy - shouldn't happen");
+       CfOut(cf_error,"","!! Unknown inheritance policy - shouldn't happen");
        result = false;
        break;
    }
@@ -171,7 +171,7 @@ for (rp = aces; rp != NULL; rp=rp->next)
 
    if (!Nova_ParseEntityPosixLinux(&cf_ace, ace_parsed, &has_mask))
       {
-      CfOut(cf_error,"","Error parsing entity in 'cf_ace'.");
+      CfOut(cf_error,"","!! Error parsing entity in 'cf_ace'.");
       acl_free((void*)acl_existing);
       acl_free((void*)acl_tmp);
       acl_free((void*)acl_new);
@@ -211,7 +211,7 @@ for (rp = aces; rp != NULL; rp=rp->next)
 
    if (*cf_ace != ':')
       {
-      CfOut(cf_error,"","No separator before mode-string in 'cf_ace'");
+      CfOut(cf_error,"","!! No separator before mode-string in 'cf_ace'");
       acl_free((void*)acl_existing);
       acl_free((void*)acl_tmp);
       acl_free((void*)acl_new);
@@ -222,7 +222,7 @@ for (rp = aces; rp != NULL; rp=rp->next)
 
    if (acl_get_permset(ace_current, &perms) != 0)
       {
-      CfOut(cf_error,"","Error obtaining permset for 'cf_ace'.");
+      CfOut(cf_error,"","!! Error obtaining permset for 'cf_ace'.");
       acl_free((void*)acl_existing);
       acl_free((void*)acl_tmp);
       acl_free((void*)acl_new);
@@ -231,7 +231,7 @@ for (rp = aces; rp != NULL; rp=rp->next)
 
    if (!Nova_ParseModePosixLinux(cf_ace, perms))
       {
-      CfOut(cf_error,"","Error parsing mode-string in 'cf_ace'");
+      CfOut(cf_error,"","!! Error parsing mode-string in 'cf_ace'");
       acl_free((void*)acl_existing);
       acl_free((void*)acl_tmp);
       acl_free((void*)acl_new);
@@ -247,7 +247,7 @@ for (rp = aces; rp != NULL; rp=rp->next)
    {
    if (acl_calc_mask(&acl_new) != 0)
    {
-   CfOut(cf_error,"","Error calculating new acl mask");
+   CfOut(cf_error,"","!! Error calculating new acl mask");
    acl_free((void*)acl_existing);
    acl_free((void*)acl_tmp);
    acl_free((void*)acl_new);
@@ -258,7 +258,7 @@ for (rp = aces; rp != NULL; rp=rp->next)
 
 if ((retv = Nova_ACLEquals(acl_existing, acl_new)) == -1)
    {
-   CfOut(cf_error,"","Error while comparing existing and new ACL, unable to repair.");
+   CfOut(cf_error,"","!! Error while comparing existing and new ACL, unable to repair.");
    acl_free((void*)acl_existing);
    acl_free((void*)acl_tmp);
    acl_free((void*)acl_new);
@@ -269,18 +269,18 @@ if (retv == 1)  // existing and new acl differ, update existing
    {
    if ((retv = acl_set_file(file_path, acl_type, acl_new)) != 0)
       {
-      CfOut(cf_error,"","Error setting new %s ACL on file '%s'", acl_type_str, file_path);
+      CfOut(cf_error,"","!! Error setting new %s ACL on file '%s' (are required ACEs present?)", acl_type_str, file_path);
       acl_free((void*)acl_existing);
       acl_free((void*)acl_tmp);
       acl_free((void*)acl_new);
       return false;
       }
 
-   cfPS(cf_inform,CF_CHG,"",pp,a,"%s ACL on \"%s\" successfully changed.", acl_type_str, file_path);
+   cfPS(cf_inform,CF_CHG,"",pp,a,"-> %s ACL on \"%s\" successfully changed.", acl_type_str, file_path);
    }
 else
   {
-  cfPS(cf_inform,CF_NOP,"",pp,a,"%s ACL on \"%s\" needs no modification.", acl_type_str, file_path);
+  cfPS(cf_inform,CF_NOP,"",pp,a,"-> %s ACL on \"%s\" needs no modification.", acl_type_str, file_path);
   }
 
 acl_free((void*)acl_existing);
@@ -328,7 +328,7 @@ equals = Nova_ACLEquals(acl_access,acl_default);
 switch (equals)
    {
    case 0:  // they equal, as desired
-       cfPS(cf_inform,CF_NOP,"",pp,a,"Default ACL on \"%s\" needs no modification.", file_path);
+       cfPS(cf_inform,CF_NOP,"",pp,a,"-> Default ACL on \"%s\" needs no modification.", file_path);
        result = true;
        break;
 
@@ -336,14 +336,14 @@ switch (equals)
 
        if ((acl_set_file(file_path, ACL_TYPE_DEFAULT, acl_access)) != 0)
           {
-          CfOut(cf_error,"","Could not set default ACL to access");
+          CfOut(cf_error,"","!! Could not set default ACL to access");
           acl_free(acl_access);
           acl_free(acl_default);
           return false;
           }
        else
           {
-          cfPS(cf_inform,CF_CHG,"",pp,a,"Default ACL on \"%s\" successfully copied from access ACL.", file_path);
+          cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully copied from access ACL.", file_path);
           result = true;
           }
 
@@ -351,7 +351,7 @@ switch (equals)
 
    default:
        result = false;
-       CfOut(cf_verbose,"","Unable to compare access and default ACEs");
+       CfOut(cf_verbose,"","!! Unable to compare access and default ACEs");
    }
 
 acl_free(acl_access);
@@ -392,7 +392,7 @@ switch (retv)
        break;
 
    case 0:  // no entries, as desired
-       cfPS(cf_inform,CF_NOP,"",pp,a,"Default ACL on \"%s\" needs no modification.", file_path);
+       cfPS(cf_inform,CF_NOP,"",pp,a,"-> Default ACL on \"%s\" needs no modification.", file_path);
        result = true;
        break;
 
@@ -411,7 +411,7 @@ switch (retv)
           result = false;
           break;
           }
-       cfPS(cf_inform,CF_CHG,"",pp,a,"Default ACL on \"%s\" successfully cleared.", file_path);
+       cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully cleared.", file_path);
        result = true;
        break;
 
