@@ -494,6 +494,6 @@ else
       }
    }
 
-CfOut(cf_error,""," -> Assuming document root for potential knowledge base to %s",name);
+CfOut(cf_error,""," -> Assuming document root for a knowledge base in %s",name);
 }
 

@@ -165,39 +165,76 @@ return cf_strlen(buffer);
 
 void Nova_StartTwin(int argc,char **argv)
 
-{
- /* AcquireLock
-// stat binary for mtime
+{ FILE *fp;
+  char name[CF_BUFSIZE];
+  time_t last,now = time(NULL);
+  struct stat sb;
+  int pulse_delay = 0;
 
+  return;
+  
 if (fork() != 0)
    {
-   CfOut(cf_inform,"","cfExec twin starting %.24s\n",ctime(&now));
-   exit(0);
+   CfOut(cf_inform,"","cf-execd binary pulsar starting %.24s\n",ctime(&now));
+   return;
    }
 
+//brojen
 
-//Writepid twin file?
+snprintf(name,CF_BUFSIZE-1,"%s/pulsar",CFWORKDIR);
 
-// do  nothing here that could crash. We assume this process doesn't die
+sb.st_mtime = 0;
 
 while (true)
    {
-   sleep(1);
-   // stat file and record
+   sleep(2);
+   now = time(NULL);
 
-   // if file is older than sched interval, YieldLock, restart(popen) cfexecd and exit
-   // Can't see a pulse from cf-execd
-   // clean up lock first?
+   if (stat(name,&sb) == -1 && !pulse_delay)
+      {
+      CfOut(cf_verbose,""," !! No pulse from twin...waiting ");
+      pulse_delay++;
+      continue;
+      }
 
-   // if binary mtime is newer yieldlock, execv(cfexecd,arg) and exit
+   pulse_delay = 0;
+   
+   if (sb.st_mtime >= now - 7200)
+      {
+      CfOut(cf_verbose,""," -> Pulsar returned, continuing...");
+      continue;
+      }
+   
+   // should really clean up lock?
+   CfOut(cf_inform,""," !! No sign of twin, so assuming its role");
+   
+   if (execv(argv[0],argv) == -1)
+      {
+      CfOut(cf_error,"execv","Couldn't restart cfengine %s",argv[0]);
+      }      
+   }
+}
 
-   // if input files are changed (like cfservd) die and restart cf-execd, and die
+/********************************************************************/
+
+void Nova_SignalTwin()
+
+{ FILE *fp;
+  char name[CF_BUFSIZE];
+
+snprintf(name,CF_BUFSIZE-1,"%s/pulsar",CFWORKDIR);
+  
+if ((fp = fopen(name,"w")) == NULL)
+   {
+   CfOut(cf_error,"fopen","cf-execd: Cannot write to the work directory %s",CFWORKDIR);
+   return;
    }
 
-//never get here exit(0);
+fprintf(fp,"duh-dum,duh-dum...\n");
 
-// If all this fails, we can still restart by running cf-runagent
-*/
+fclose(fp);
+
+CfOut(cf_verbose,""," -> Pulse...");
 }
 
 /********************************************************************/
