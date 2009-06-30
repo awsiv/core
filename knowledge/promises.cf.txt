@@ -1,0 +1,1395 @@
+***********************************************************
+ Promises 
+***********************************************************
+Bundle update in the context of agent
+
+   ARGS:
+
+   {
+   TYPE: vars
+
+      vars promise by 'master_location' (implicit) if context is any
+
+             string => /home/mark/cfengine-inputs       if body context any
+            Promise (version not specified) belongs to bundle 'update' (type agent) in file '/var/cfengine/inputs/update.cf' near line 7
+
+
+   TYPE: files
+
+      files promise by '/var/cfengine/inputs' (implicit) if context is any
+
+              perms => u_p body for type perms
+               arg p
+
+               {
+               mode => $(p) if sub-body context any
+               }
+          copy_from => u_scp body for type copy_from
+               arg from
+               arg server
+
+               {
+               source => $(from) if sub-body context any
+               compare => digest if sub-body context any
+               copy_backup => false if sub-body context any
+               verify => true if sub-body context any
+               }
+         depth_search => u_recurse body for type depth_search
+               arg d
+
+               {
+               depth => $(d) if sub-body context any
+               }
+            classes => u_define body for type classes
+               arg a
+
+               {
+               promise_repaired =>  {'$(a)'} if sub-body context any
+               }
+             action => u_immediate body for type action(no parameters)
+               {
+               ifelapsed => 1 if sub-body context any
+               }
+       if body context any
+            Promise (version not specified) belongs to bundle 'update' (type agent) in file '/var/cfengine/inputs/update.cf' near line 13
+
+
+      files promise by '/var/cfengine/bin' (implicit) if context is any
+
+              perms => u_p body for type perms
+               arg p
+
+               {
+               mode => $(p) if sub-body context any
+               }
+          copy_from => u_scp body for type copy_from
+               arg from
+               arg server
+
+               {
+               source => $(from) if sub-body context any
+               compare => digest if sub-body context any
+               copy_backup => false if sub-body context any
+               verify => true if sub-body context any
+               }
+         depth_search => u_recurse body for type depth_search
+               arg d
+
+               {
+               depth => $(d) if sub-body context any
+               }
+            classes => u_define body for type classes
+               arg a
+
+               {
+               promise_repaired =>  {'$(a)'} if sub-body context any
+               }
+             action => u_immediate body for type action(no parameters)
+               {
+               ifelapsed => 1 if sub-body context any
+               }
+       if body context any
+            Promise (version not specified) belongs to bundle 'update' (type agent) in file '/var/cfengine/inputs/update.cf' near line 21
+
+
+   TYPE: processes
+
+      processes promise by 'cf-serverd' (implicit) if context is any
+
+         restart_class => start_server       if body context any
+            Promise (version not specified) belongs to bundle 'update' (type agent) in file '/var/cfengine/inputs/update.cf' near line 29
+
+
+      processes promise by 'cf-monitord' (implicit) if context is any
+
+         restart_class => start_monitor       if body context any
+            Promise (version not specified) belongs to bundle 'update' (type agent) in file '/var/cfengine/inputs/update.cf' near line 30
+
+
+      processes promise by 'cf-execd' (implicit) if context is any
+
+         restart_class => start_exec       if body context any
+            Promise (version not specified) belongs to bundle 'update' (type agent) in file '/var/cfengine/inputs/update.cf' near line 31
+
+
+   TYPE: commands
+
+      commands promise by '/var/cfengine/bin/cf-serverd' (implicit) if context is reload.start_server
+
+            Promise (version not specified) belongs to bundle 'update' (type agent) in file '/var/cfengine/inputs/update.cf' near line 37
+
+
+      commands promise by '/var/cfengine/bin/cf-monitord' (implicit) if context is reload.start_monitor
+
+            Promise (version not specified) belongs to bundle 'update' (type agent) in file '/var/cfengine/inputs/update.cf' near line 41
+
+
+      commands promise by '/var/cfengine/bin/cf-execd' (implicit) if context is reload.start_exec
+
+            Promise (version not specified) belongs to bundle 'update' (type agent) in file '/var/cfengine/inputs/update.cf' near line 45
+
+
+   }
+
+
+Bundle g in the context of common
+
+   ARGS:
+
+   {
+   TYPE: vars
+
+      vars promise by 'crontab' (implicit) if context is SuSE
+
+             string => /var/spool/cron/tabs/root       if body context any
+            Promise (version not specified) belongs to bundle 'g' (type common) in file '/var/cfengine/inputs/site.cf' near line 13
+
+
+      vars promise by 'crontab' (implicit) if context is !SuSE
+
+             string => /var/spool/cron/crontabs/root       if body context any
+            Promise (version not specified) belongs to bundle 'g' (type common) in file '/var/cfengine/inputs/site.cf' near line 17
+
+
+   }
+
+
+Bundle cfengine in the context of agent
+
+   ARGS:
+
+   {
+   TYPE: classes
+
+      classes promise by 'integrate_cfengine2' (implicit) if context is any
+
+                and =>  {'fileexists($(sys.workdir)/inputs/cfagent.conf,)','fileexists($(sys.workdir)/bin/cfagent,)'}       if body context any
+            Promise (version not specified) belongs to bundle 'cfengine' (type agent) in file '/var/cfengine/inputs/site.cf' near line 33
+
+
+   TYPE: vars
+
+      vars promise by 'cf2bits' (implicit) if context is any
+
+              slist =>  {'cfenvd','cfservd','cfexecd'}       if body context any
+            Promise (version not specified) belongs to bundle 'cfengine' (type agent) in file '/var/cfengine/inputs/site.cf' near line 40
+
+
+   TYPE: commands
+
+      commands promise by '$(sys.workdir)/bin/cfagent' (implicit) if context is integrate_cfengine2
+
+             action => longjob body for type action(no parameters)
+               {
+               ifelapsed => 480 if sub-body context any
+               expireafter => 960 if sub-body context any
+               background => true if sub-body context any
+               }
+       if body context any
+            Promise (version not specified) belongs to bundle 'cfengine' (type agent) in file '/var/cfengine/inputs/site.cf' near line 48
+
+
+   TYPE: files
+
+      files promise by '$(sys.workdir)/inputs/.*' (implicit) if context is any
+
+            comment => Check if there are still promises about cfengine 2 that need removing       if body context any
+          edit_line => DeleteLinesMatching(.*$(cf2bits).*,)         file_select => OldCf2Files body for type file_select(no parameters)
+               {
+               leaf_name =>  {'promises.cf','site.cf','library.cf','failsafe.cf','.*.txt','.*.html','.*~','#.*'} if sub-body context any
+               file_result => !leaf_name if sub-body context any
+               }
+       if body context any
+             action => WarnOnly body for type action(no parameters)
+               {
+               action_policy => warn if sub-body context any
+               ifelapsed => 60 if sub-body context any
+               }
+       if body context any
+            Promise (version not specified) belongs to bundle 'cfengine' (type agent) in file '/var/cfengine/inputs/site.cf' near line 58
+
+
+      files promise by '$(g.crontab)' (implicit) if context is any
+
+          edit_line => upgrade_cfexecd       if body context any
+            Promise (version not specified) belongs to bundle 'cfengine' (type agent) in file '/var/cfengine/inputs/site.cf' near line 66
+
+
+      files promise by '/dev/sr0' (implicit) if context is any
+
+            comment => This is inaccessible in new suse after cd opened/closed       if body context any
+              perms => setowner body for type perms
+               arg user
+
+               {
+               owners =>  {'$(user)'} if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'cfengine' (type agent) in file '/var/cfengine/inputs/site.cf' near line 70
+
+
+   TYPE: processes
+
+      processes promise by 'cron' (implicit) if context is exec_fix
+
+            signals =>  {'hup'}       if body context any
+            Promise (version not specified) belongs to bundle 'cfengine' (type agent) in file '/var/cfengine/inputs/site.cf' near line 77
+
+
+   }
+
+
+Bundle main in the context of agent
+
+   ARGS:
+
+   {
+   TYPE: vars
+
+      vars promise by 'component' (implicit) if context is any
+
+              slist =>  {'cf-monitord','cf-serverd'}       if body context any
+            Promise (version not specified) belongs to bundle 'main' (type agent) in file '/var/cfengine/inputs/site.cf' near line 90
+
+
+   TYPE: reports
+
+      reports promise by 'Laptop wakes up' (implicit) if context is !up_and_running
+
+            classes => heartbeat body for type classes
+               arg name
+
+               {
+               promise_repaired =>  {'$(name)'} if sub-body context any
+               persist_time => 8 if sub-body context any
+               timer_policy => reset if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'main' (type agent) in file '/var/cfengine/inputs/site.cf' near line 98
+
+
+   TYPE: files
+
+      files promise by '$(sys.resolv)' (implicit) if context is any
+
+             create => true       if body context any
+          edit_line => resolver       if body context any
+         edit_defaults => def body for type edit_defaults(no parameters)
+               {
+               empty_file_before_editing => false if sub-body context any
+               edit_backup => false if sub-body context any
+               max_file_size => 100000 if sub-body context any
+               }
+       if body context any
+            Promise (version not specified) belongs to bundle 'main' (type agent) in file '/var/cfengine/inputs/site.cf' near line 106
+
+
+   TYPE: processes
+
+      processes promise by 'cfenvd' (implicit) if context is any
+
+            signals =>  {'term'}       if body context any
+            Promise (version not specified) belongs to bundle 'main' (type agent) in file '/var/cfengine/inputs/site.cf' near line 120
+
+
+      processes promise by '$(component)' (implicit) if context is any
+
+         restart_class => canonify(start_$(component),)            Promise (version not specified) belongs to bundle 'main' (type agent) in file '/var/cfengine/inputs/site.cf' near line 131
+
+
+   TYPE: commands
+
+      commands promise by '$(sys.workdir)/bin/$(component)' (implicit) if context is any
+
+         ifvarclass => canonify(start_$(component),)            Promise (version not specified) belongs to bundle 'main' (type agent) in file '/var/cfengine/inputs/site.cf' near line 139
+
+
+      commands promise by '/usr/bin/zypper -non-interactive patch' (implicit) if context is any
+
+             action => if_elapsed body for type action
+               arg x
+
+               {
+               ifelapsed => $(x) if sub-body context any
+               expireafter => $(x) if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'main' (type agent) in file '/var/cfengine/inputs/site.cf' near line 141
+
+
+      commands promise by '/usr/bin/updatedb --prunepaths=/windows' (implicit) if context is Hr12
+
+            comment => Update the locate database       if body context any
+             action => longjob body for type action(no parameters)
+               {
+               ifelapsed => 480 if sub-body context any
+               expireafter => 960 if sub-body context any
+               background => true if sub-body context any
+               }
+       if body context any
+            Promise (version not specified) belongs to bundle 'main' (type agent) in file '/var/cfengine/inputs/site.cf' near line 148
+
+
+   TYPE: packages
+
+      packages promise by 'no match' (implicit) if context is any
+
+            comment => Install patches       if body context any
+         package_policy => patch       if body context any
+         package_method => zypper body for type package_method(no parameters)
+               {
+               package_changes => bulk if sub-body context any
+               package_list_command => /usr/bin/zypper packages if sub-body context any
+               package_patch_list_command => /usr/bin/zypper patches if sub-body context any
+               package_installed_regex => i.* if sub-body context any
+               package_list_name_regex => [^|]+\|[^|]+\|\s+([^\s]+).* if sub-body context any
+               package_list_version_regex => [^|]+\|[^|]+\|[^|]+\|\s+([^\s]+).* if sub-body context any
+               package_list_arch_regex => [^|]+\|[^|]+\|[^|]+\|[^|]+\|\s+([^\s]+).* if sub-body context any
+               package_patch_installed_regex => .*Installed.*|.*Not Applicable.* if sub-body context any
+               package_patch_name_regex => [^|]+\|\s+([^\s]+).* if sub-body context any
+               package_patch_version_regex => [^|]+\|[^|]+\|\s+([^\s]+).* if sub-body context any
+               package_name_convention => $(name) if sub-body context any
+               package_add_command => /usr/bin/zypper -non-interactive install if sub-body context any
+               package_delete_command => /usr/bin/zypper -non-interactive remove --force-resolution if sub-body context any
+               package_update_command => /usr/bin/zypper -non-interactive update if sub-body context any
+               package_patch_command => /usr/bin/zypper -non-interactive patch$ if sub-body context any
+               }
+       if body context any
+            Promise (version not specified) belongs to bundle 'main' (type agent) in file '/var/cfengine/inputs/site.cf' near line 157
+
+
+   }
+
+
+Bundle garbage_collection in the context of agent
+
+   ARGS:
+
+   {
+   TYPE: files
+
+      files promise by '$(sys.workdir)/outputs' (implicit) if context is any
+
+             delete => tidy body for type delete(no parameters)
+               {
+               dirlinks => delete if sub-body context any
+               rmdirs => true if sub-body context any
+               }
+       if body context any
+         file_select => days_old body for type file_select
+               arg days
+
+               {
+               mtime => irange(ago(1,0,0,0,0,0,)ago(0,0,$(days),0,0,0,)) if sub-body context any
+               file_result => mtime if sub-body context any
+               }
+         depth_search => recurse body for type depth_search
+               arg d
+
+               {
+               depth => $(d) if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'garbage_collection' (type agent) in file '/var/cfengine/inputs/site.cf' near line 174
+
+
+      files promise by '/etc/resolv.conf\..*' (implicit) if context is any
+
+             delete => tidy body for type delete(no parameters)
+               {
+               dirlinks => delete if sub-body context any
+               rmdirs => true if sub-body context any
+               }
+       if body context any
+         file_select => days_old body for type file_select
+               arg days
+
+               {
+               mtime => irange(ago(1,0,0,0,0,0,)ago(0,0,$(days),0,0,0,)) if sub-body context any
+               file_result => mtime if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'garbage_collection' (type agent) in file '/var/cfengine/inputs/site.cf' near line 180
+
+
+   }
+
+
+Bundle watch in the context of monitor
+
+   ARGS:
+
+   {
+   TYPE: measurements
+
+      measurements promise by '/var/cfengine/state/cf_rootprocs' (implicit) if context is atlas
+
+             handle => monitor_self_watch       if body context any
+         stream_type => file       if body context any
+          data_type => int       if body context any
+         history_type => scalar       if body context any
+              units => kB       if body context any
+         match_value => proc_value body for type match_value
+               arg x
+               arg y
+
+               {
+               select_line_matching => $(x) if sub-body context any
+               extraction_regex => $(y) if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'watch' (type monitor) in file '/var/cfengine/inputs/site.cf' near line 231
+
+
+      measurements promise by '/proc/meminfo' (implicit) if context is linux
+
+             handle => free_memory_watch       if body context any
+         stream_type => file       if body context any
+          data_type => int       if body context any
+         history_type => weekly       if body context any
+              units => kB       if body context any
+         match_value => free_memory body for type match_value(no parameters)
+               {
+               select_line_matching => MemFree:.* if sub-body context any
+               extraction_regex => MemFree:\s+([0-9]+).* if sub-body context any
+               }
+       if body context any
+            Promise (version not specified) belongs to bundle 'watch' (type monitor) in file '/var/cfengine/inputs/site.cf' near line 244
+
+
+      measurements promise by '/bin/df' (implicit) if context is linux
+
+             handle => free_disk_watch       if body context any
+         stream_type => pipe       if body context any
+          data_type => slist       if body context any
+         history_type => static       if body context any
+              units => device       if body context any
+         match_value => file_systems body for type match_value(no parameters)
+               {
+               select_line_matching => /.* if sub-body context any
+               extraction_regex => ([^\s]+).* if sub-body context any
+               }
+       if body context any
+             action => sample_min body for type action
+               arg x
+               arg y
+
+               {
+               ifelapsed => $(x) if sub-body context any
+               expireafter => $(y) if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'watch' (type monitor) in file '/var/cfengine/inputs/site.cf' near line 257
+
+
+   }
+
+
+Bundle anomalies in the context of agent
+
+   ARGS:
+
+   {
+   TYPE: vars
+
+      vars promise by 'sysdir' (implicit) if context is any
+
+             string => /tmp       if body context any
+            Promise (version not specified) belongs to bundle 'anomalies' (type agent) in file '/var/cfengine/inputs/site.cf' near line 274
+
+
+      vars promise by 'files' (implicit) if context is any
+
+              slist =>  {'passwd','shadow'}       if body context any
+            Promise (version not specified) belongs to bundle 'anomalies' (type agent) in file '/var/cfengine/inputs/site.cf' near line 275
+
+
+   TYPE: classes
+
+      classes promise by 'no_$(files)' (implicit) if context is any
+
+                not => fileexists($(sysdir)/$(files),)            Promise (version not specified) belongs to bundle 'anomalies' (type agent) in file '/var/cfengine/inputs/site.cf' near line 279
+
+
+   TYPE: files
+
+      files promise by '/var/cfengine/inputs/$(files)' (implicit) if context is any
+
+          copy_from => emergency_save body for type copy_from
+               arg from
+
+               {
+               source => $(from) if sub-body context any
+               preserve => true if sub-body context any
+               copy_backup => true if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'anomalies' (type agent) in file '/var/cfengine/inputs/site.cf' near line 287
+
+
+      files promise by '/tmp/$(files)' (implicit) if context is any
+
+          copy_from => emergency_save body for type copy_from
+               arg from
+
+               {
+               source => $(from) if sub-body context any
+               preserve => true if sub-body context any
+               copy_backup => true if sub-body context any
+               }
+         ifvarclass => no_$(files)       if body context any
+            Promise (version not specified) belongs to bundle 'anomalies' (type agent) in file '/var/cfengine/inputs/site.cf' near line 293
+
+
+   TYPE: reports
+
+      reports promise by 'RootProc anomaly high 2 dev on $(mon.host) at $(mon.env_time) 
+    measured value $(mon.value_rootprocs) av $(mon.average_rootprocs) pm $(mon.stddev_rootprocs)' (implicit) if context is rootprocs_high_dev2
+
+          showstate =>  {'rootprocs'}       if body context any
+            Promise (version not specified) belongs to bundle 'anomalies' (type agent) in file '/var/cfengine/inputs/site.cf' near line 303
+
+
+      reports promise by 'HIGH ENTROPY Incoming www anomaly high anomaly dev!! on $(mon.host) at $(mon.env_time) 
+    - measured value $(mon.value_www_in) av $(mon.average_www_in) pm $(mon.stddev_www_in)' (implicit) if context is entropy_www_in_high&anomaly_hosts.www_in_high_anomaly
+
+          showstate =>  {'incoming.www'}       if body context any
+            Promise (version not specified) belongs to bundle 'anomalies' (type agent) in file '/var/cfengine/inputs/site.cf' near line 310
+
+
+      reports promise by 'LOW ENTROPY Incoming www anomaly high anomaly dev!! on $(mon.host) at $(mon.env_time)
+     - measured value $(svalue_www_in) av $(average_www_in) pm $(stddev_www_in)' (implicit) if context is entropy_www_in_low.anomaly_hosts.www_in_high_anomaly
+
+          showstate =>  {'incoming.www'}       if body context any
+            Promise (version not specified) belongs to bundle 'anomalies' (type agent) in file '/var/cfengine/inputs/site.cf' near line 317
+
+
+      reports promise by 'Anomalous number of new TCP connections on $(mon.host) at $(mon.env_time) 
+    - measured value $(mon.value_tcpsyn_in) av $(mon.average_tcpsyn_in) pm $(mon.stddev_tcpsyn_in)' (implicit) if context is entropy_tcpsyn_in_low.anomaly_hosts.tcpsyn_in_high_dev2
+
+          showstate =>  {'incoming.tcpsyn'}       if body context any
+            Promise (version not specified) belongs to bundle 'anomalies' (type agent) in file '/var/cfengine/inputs/site.cf' near line 324
+
+
+      reports promise by 'Anomalous (3dev) incoming DNS packets on $(mon.host) at $(mon.env_time) 
+    - measured value $(mon.value_dns_in) av $(average_dns_in) pm $(mon.stddev_dns_in)' (implicit) if context is entropy_dns_in_low.anomaly_hosts.dns_in_high_anomaly
+
+          showstate =>  {'incoming.dns'}       if body context any
+            Promise (version not specified) belongs to bundle 'anomalies' (type agent) in file '/var/cfengine/inputs/site.cf' near line 331
+
+
+      reports promise by 'Anomalous (2dev) incoming (non-DNS) UDP traffic on $(mon.host) at $(mon.env_time) 
+    - measured value $(mon.value_udp_in) av $(mon.average_udp_in) pm $(mon.stddev_udp_in)' (implicit) if context is entropy_dns_in_low.anomaly_hosts.udp_in_high_dev2
+
+          showstate =>  {'incoming.udp'}       if body context any
+            Promise (version not specified) belongs to bundle 'anomalies' (type agent) in file '/var/cfengine/inputs/site.cf' near line 338
+
+
+      reports promise by 'Anomalous low entropy (3dev) incoming ICMP traffic on $(mon.host) at $(mon.env_time) 
+    - measured value $(mon.value_icmp_in) av $(mon.average_icmp_in) pm $(mon.stddev_icmp_in)' (implicit) if context is anomaly_hosts.icmp_in_high_anomaly.!entropy_icmp_in_high
+
+          showstate =>  {'incoming.icmp'}       if body context any
+            Promise (version not specified) belongs to bundle 'anomalies' (type agent) in file '/var/cfengine/inputs/site.cf' near line 345
+
+
+   }
+
+
+Bundle access_rules in the context of server
+
+   ARGS:
+
+   {
+   TYPE: access
+
+      access promise by '/home/mark/LapTop' (implicit) if context is any
+
+              admit =>  {'127.0.0.1'}       if body context any
+            Promise (version not specified) belongs to bundle 'access_rules' (type server) in file '/var/cfengine/inputs/site.cf' near line 358
+
+
+      access promise by '/home/mark/.cfagent/bin/cf-agent' (implicit) if context is any
+
+              admit =>  {'127.0.0.1'}       if body context any
+            Promise (version not specified) belongs to bundle 'access_rules' (type server) in file '/var/cfengine/inputs/site.cf' near line 362
+
+
+   TYPE: roles
+
+      roles promise by '.*' (implicit) if context is any
+
+          authorize =>  {'mark'}       if body context any
+            Promise (version not specified) belongs to bundle 'access_rules' (type server) in file '/var/cfengine/inputs/site.cf' near line 366
+
+
+   }
+
+
+Bundle resolver in the context of edit_line
+
+   ARGS:
+
+   {
+   TYPE: vars
+
+      vars promise by 'search' (implicit) if context is any
+
+              slist =>  {'search iu.hio.no','cfengine.com'}       if body context any
+            Promise (version not specified) belongs to bundle 'resolver' (type edit_line) in file '/var/cfengine/inputs/library.cf' near line 105
+
+
+   TYPE: field_edits
+
+      field_edits promise by 'NETCONFIG_DNS_STATIC_SEARCHLIST.*' (implicit) if context is any
+
+         edit_field => quotedvar body for type edit_field
+               arg newval
+               arg method
+
+               {
+               field_separator => " if sub-body context any
+               select_field => 2 if sub-body context any
+               value_separator =>   if sub-body context any
+               field_value => $(newval) if sub-body context any
+               field_operation => $(method) if sub-body context any
+               extend_fields => false if sub-body context any
+               allow_blank_fields => true if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'resolver' (type edit_line) in file '/var/cfengine/inputs/library.cf' near line 113
+
+
+   }
+
+
+Bundle DeleteLinesMatching in the context of edit_line
+
+   ARGS:
+
+   scalar arg regex
+
+   {
+   TYPE: delete_lines
+
+      delete_lines promise by '$(regex)' (implicit) if context is any
+
+             action => WarnOnly body for type action(no parameters)
+               {
+               action_policy => warn if sub-body context any
+               ifelapsed => 60 if sub-body context any
+               }
+       if body context any
+            Promise (version not specified) belongs to bundle 'DeleteLinesMatching' (type edit_line) in file '/var/cfengine/inputs/library.cf' near line 165
+
+
+   }
+
+
+Bundle upgrade_cfexecd in the context of edit_line
+
+   ARGS:
+
+   {
+   TYPE: classes
+
+      classes promise by 'exec_fix' (implicit) if context is any
+
+                not => regline(.*cf-execd.*,$(edit.filename),)            Promise (version not specified) belongs to bundle 'upgrade_cfexecd' (type edit_line) in file '/var/cfengine/inputs/library.cf' near line 184
+
+
+   TYPE: insert_lines
+
+      insert_lines promise by '0,5,10,15,20,25,30,35,40,45,50,55 * * * * /var/cfengine/bin/cf-execd -F' (implicit) if context is exec_fix
+
+            Promise (version not specified) belongs to bundle 'upgrade_cfexecd' (type edit_line) in file '/var/cfengine/inputs/library.cf' near line 190
+
+
+   TYPE: replace_patterns
+
+      replace_patterns promise by 'cfexecd' (implicit) if context is any
+
+         replace_with => With body for type replace_with
+               arg x
+
+               {
+               replace_value => $(x) if sub-body context any
+               occurrences => all if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'upgrade_cfexecd' (type edit_line) in file '/var/cfengine/inputs/library.cf' near line 194
+
+
+   TYPE: reports
+
+      reports promise by 'Added a 5 minute schedule to crontabs' (implicit) if context is exec_fix
+
+            Promise (version not specified) belongs to bundle 'upgrade_cfexecd' (type edit_line) in file '/var/cfengine/inputs/library.cf' near line 200
+
+
+   }
+
+
+Bundle laptop in the context of agent
+
+   ARGS:
+
+   {
+   TYPE: vars
+
+      vars promise by 'mount_point' (implicit) if context is any
+
+             string => /media/disk-1       if body context any
+            Promise (version not specified) belongs to bundle 'laptop' (type agent) in file '/var/cfengine/inputs/laptop.cf' near line 6
+
+
+   TYPE: classes
+
+      classes promise by 'usb_backup_device_loaded' (implicit) if context is SuSE
+
+         expression => isdir($(mount_point)/CfengineBackupDevice,)            Promise (version not specified) belongs to bundle 'laptop' (type agent) in file '/var/cfengine/inputs/laptop.cf' near line 14
+
+
+   TYPE: files
+
+      files promise by '$(mount_point)/CfengineBackupDevice' (implicit) if context is usb_backup_device_loaded
+
+          copy_from => cp body for type copy_from
+               arg from
+
+               {
+               source => $(from) if sub-body context any
+               copy_backup => false if sub-body context any
+               }
+         depth_search => recurse body for type depth_search
+               arg d
+
+               {
+               depth => $(d) if sub-body context any
+               }
+         file_select => exclude_files body for type file_select(no parameters)
+               {
+               leaf_name =>  {'.*\.o','core','.*.zip','.*.tar.gz','.*.tgz'} if sub-body context any
+               file_result => !leaf_name if sub-body context any
+               }
+       if body context any
+             action => longjob body for type action(no parameters)
+               {
+               ifelapsed => 480 if sub-body context any
+               expireafter => 960 if sub-body context any
+               background => true if sub-body context any
+               }
+       if body context any
+            Promise (version not specified) belongs to bundle 'laptop' (type agent) in file '/var/cfengine/inputs/laptop.cf' near line 22
+
+
+      files promise by '/home/backup' (implicit) if context is !usb_backup_device_loaded
+
+          copy_from => cp body for type copy_from
+               arg from
+
+               {
+               source => $(from) if sub-body context any
+               copy_backup => false if sub-body context any
+               }
+         depth_search => recurse body for type depth_search
+               arg d
+
+               {
+               depth => $(d) if sub-body context any
+               }
+         file_select => exclude_files body for type file_select(no parameters)
+               {
+               leaf_name =>  {'.*\.o','core','.*.zip','.*.tar.gz','.*.tgz'} if sub-body context any
+               file_result => !leaf_name if sub-body context any
+               }
+       if body context any
+             action => longjob body for type action(no parameters)
+               {
+               ifelapsed => 480 if sub-body context any
+               expireafter => 960 if sub-body context any
+               background => true if sub-body context any
+               }
+       if body context any
+            Promise (version not specified) belongs to bundle 'laptop' (type agent) in file '/var/cfengine/inputs/laptop.cf' near line 31
+
+
+   }
+
+
+Bundle web_server in the context of agent
+
+   ARGS:
+
+   scalar arg state
+
+   {
+   TYPE: vars
+
+      vars promise by 'document_root' (implicit) if context is any
+
+             string => /       if body context any
+            Promise (version not specified) belongs to bundle 'web_server' (type agent) in file '/var/cfengine/inputs/webserver.cf' near line 11
+
+
+      vars promise by 'site_http_conf' (implicit) if context is any
+
+             string => /home/mark/cfengine-inputs/httpd.conf       if body context any
+            Promise (version not specified) belongs to bundle 'web_server' (type agent) in file '/var/cfengine/inputs/webserver.cf' near line 17
+
+
+      vars promise by 'match_package' (implicit) if context is any
+
+              slist =>  {'apache2','apache2-mod_php5','apache2-prefork','php5'}       if body context any
+            Promise (version not specified) belongs to bundle 'web_server' (type agent) in file '/var/cfengine/inputs/webserver.cf' near line 23
+
+
+   TYPE: processes
+
+      processes promise by 'apache2' (implicit) if context is web_ok.on
+
+         restart_class => start_apache       if body context any
+            Promise (version not specified) belongs to bundle 'web_server' (type agent) in file '/var/cfengine/inputs/webserver.cf' near line 38
+
+
+      processes promise by 'apache2' (implicit) if context is off
+
+         process_stop => /etc/init.d/apache2 stop       if body context any
+            Promise (version not specified) belongs to bundle 'web_server' (type agent) in file '/var/cfengine/inputs/webserver.cf' near line 44
+
+
+   TYPE: commands
+
+      commands promise by '/etc/init.d/apache2 restart' (implicit) if context is start_apache
+
+            Promise (version not specified) belongs to bundle 'web_server' (type agent) in file '/var/cfengine/inputs/webserver.cf' near line 53
+
+
+   TYPE: packages
+
+      packages promise by '$(match_package)' (implicit) if context is any
+
+         package_policy => add       if body context any
+         package_method => zypper body for type package_method(no parameters)
+               {
+               package_changes => bulk if sub-body context any
+               package_list_command => /usr/bin/zypper packages if sub-body context any
+               package_patch_list_command => /usr/bin/zypper patches if sub-body context any
+               package_installed_regex => i.* if sub-body context any
+               package_list_name_regex => [^|]+\|[^|]+\|\s+([^\s]+).* if sub-body context any
+               package_list_version_regex => [^|]+\|[^|]+\|[^|]+\|\s+([^\s]+).* if sub-body context any
+               package_list_arch_regex => [^|]+\|[^|]+\|[^|]+\|[^|]+\|\s+([^\s]+).* if sub-body context any
+               package_patch_installed_regex => .*Installed.*|.*Not Applicable.* if sub-body context any
+               package_patch_name_regex => [^|]+\|\s+([^\s]+).* if sub-body context any
+               package_patch_version_regex => [^|]+\|[^|]+\|\s+([^\s]+).* if sub-body context any
+               package_name_convention => $(name) if sub-body context any
+               package_add_command => /usr/bin/zypper -non-interactive install if sub-body context any
+               package_delete_command => /usr/bin/zypper -non-interactive remove --force-resolution if sub-body context any
+               package_update_command => /usr/bin/zypper -non-interactive update if sub-body context any
+               package_patch_command => /usr/bin/zypper -non-interactive patch$ if sub-body context any
+               }
+       if body context any
+            classes => ok body for type classes
+               arg s
+
+               {
+               promise_kept =>  {'$(s)'} if sub-body context any
+               promise_repaired =>  {'$(s)'} if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'web_server' (type agent) in file '/var/cfengine/inputs/webserver.cf' near line 62
+
+
+   TYPE: files
+
+      files promise by '/etc/sysconfig/apache2' (implicit) if context is software_ok
+
+          edit_line => fixapache       if body context any
+            classes => ok body for type classes
+               arg s
+
+               {
+               promise_kept =>  {'$(s)'} if sub-body context any
+               promise_repaired =>  {'$(s)'} if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'web_server' (type agent) in file '/var/cfengine/inputs/webserver.cf' near line 74
+
+
+   TYPE: reports
+
+      reports promise by 'The web server software could not be installed' (implicit) if context is !software_ok.on
+
+            Promise (version not specified) belongs to bundle 'web_server' (type agent) in file '/var/cfengine/inputs/webserver.cf' near line 83
+
+
+   TYPE: classes
+
+      classes promise by 'on' (implicit) if context is any
+
+         expression => strcmp($(state),on,)            Promise (version not specified) belongs to bundle 'web_server' (type agent) in file '/var/cfengine/inputs/webserver.cf' near line 89
+
+
+      classes promise by 'off' (implicit) if context is any
+
+         expression => strcmp($(state),off,)            Promise (version not specified) belongs to bundle 'web_server' (type agent) in file '/var/cfengine/inputs/webserver.cf' near line 90
+
+
+   }
+
+
+Bundle fixapache in the context of edit_line
+
+   ARGS:
+
+   {
+   TYPE: vars
+
+      vars promise by 'add_modules' (implicit) if context is any
+
+              slist =>  {'php5'}       if body context any
+            Promise (version not specified) belongs to bundle 'fixapache' (type edit_line) in file '/var/cfengine/inputs/webserver.cf' near line 102
+
+
+      vars promise by 'del_modules' (implicit) if context is any
+
+              slist =>  {'php3','php4','jk','ssl'}       if body context any
+            Promise (version not specified) belongs to bundle 'fixapache' (type edit_line) in file '/var/cfengine/inputs/webserver.cf' near line 106
+
+
+   TYPE: insert_lines
+
+      insert_lines promise by 'APACHE_CONF_INCLUDE_FILES="$(web_server.site_http_conf)"' (implicit) if context is any
+
+            Promise (version not specified) belongs to bundle 'fixapache' (type edit_line) in file '/var/cfengine/inputs/webserver.cf' near line 115
+
+
+   TYPE: field_edits
+
+      field_edits promise by 'APACHE_MODULES=.*' (implicit) if context is any
+
+         edit_field => quotedvar body for type edit_field
+               arg newval
+               arg method
+
+               {
+               field_separator => " if sub-body context any
+               select_field => 2 if sub-body context any
+               value_separator =>   if sub-body context any
+               field_value => $(newval) if sub-body context any
+               field_operation => $(method) if sub-body context any
+               extend_fields => false if sub-body context any
+               allow_blank_fields => true if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'fixapache' (type edit_line) in file '/var/cfengine/inputs/webserver.cf' near line 128
+
+
+      field_edits promise by 'APACHE_MODULES=.*' (implicit) if context is any
+
+         edit_field => quotedvar body for type edit_field
+               arg newval
+               arg method
+
+               {
+               field_separator => " if sub-body context any
+               select_field => 2 if sub-body context any
+               value_separator =>   if sub-body context any
+               field_value => $(newval) if sub-body context any
+               field_operation => $(method) if sub-body context any
+               extend_fields => false if sub-body context any
+               allow_blank_fields => true if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'fixapache' (type edit_line) in file '/var/cfengine/inputs/webserver.cf' near line 135
+
+
+   }
+
+
+Bundle setup_knowledge in the context of agent
+
+   ARGS:
+
+   {
+   TYPE: vars
+
+      vars promise by 'doc_root' (implicit) if context is any
+
+             string => /srv/www/htdocs/cfknowledgebase       if body context any
+            Promise (version not specified) belongs to bundle 'setup_knowledge' (type agent) in file '/var/cfengine/inputs/knowledge.cf' near line 12
+
+
+   TYPE: classes
+
+      classes promise by 'web_server' (implicit) if context is any
+
+         expression => any       if body context any
+            Promise (version not specified) belongs to bundle 'setup_knowledge' (type agent) in file '/var/cfengine/inputs/knowledge.cf' near line 18
+
+
+   TYPE: files
+
+      files promise by '$(doc_root)' (implicit) if context is any
+
+            comment => Make sure knowledge files are accessible to webserver       if body context any
+              perms => p body for type perms
+               arg user
+               arg mode
+
+               {
+               owners =>  {'$(user)'} if sub-body context any
+               mode => $(mode) if sub-body context any
+               }
+         depth_search => recurse body for type depth_search
+               arg d
+
+               {
+               depth => $(d) if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'setup_knowledge' (type agent) in file '/var/cfengine/inputs/knowledge.cf' near line 24
+
+
+   TYPE: commands
+
+      commands promise by '/usr/local/sbin/cf-promises -r' (implicit) if context is any
+
+            comment => Generate config reports       if body context any
+            contain => in_dir body for type contain
+               arg s
+
+               {
+               chdir => $(s) if sub-body context any
+               }
+            Promise (version not specified) belongs to bundle 'setup_knowledge' (type agent) in file '/var/cfengine/inputs/knowledge.cf' near line 34
+
+
+      commands promise by '/usr/local/sbin/cf-know -f $(doc_root)/enterprise.cf -g' (implicit) if context is web_server
+
+            comment => Generate knowledge associative graphs       if body context any
+            Promise (version not specified) belongs to bundle 'setup_knowledge' (type agent) in file '/var/cfengine/inputs/knowledge.cf' near line 41
+
+
+   }
+
+
+
+
+All Bodies
+
+control body for type common(no parameters)
+   {
+   bundlesequence =>  {'update','garbage_collection','main','laptop','anomalies','cfengine','web_server(off,)'} if sub-body context any
+   inputs =>  {'update.cf','site.cf','library.cf','laptop.cf','webserver.cf','knowledge.cf'} if sub-body context any
+   domain => cfengine.com if sub-body context any
+   }
+
+control body for type agent(no parameters)
+   {
+   ifelapsed => 6 if sub-body context any
+   expireafter => 15 if sub-body context any
+   }
+
+control body for type monitor(no parameters)
+   {
+   forgetrate => 0.7 if sub-body context any
+   histograms => true if sub-body context any
+   }
+
+control body for type executor(no parameters)
+   {
+   splaytime => 1 if sub-body context any
+   mailto => mark@iu.hio.no if sub-body context any
+   smtpserver => localhost if sub-body context any
+   mailmaxlines => 30 if sub-body context any
+   schedule =>  {'Min00'} if sub-body context any
+   exec_command => $(sys.workdir)/bin/cf-agent -f failsafe.cf && $(sys.workdir)/bin/cf-agent if sub-body context any
+   }
+
+control body for type reporter(no parameters)
+   {
+   reports =>  {'performance','last_seen','installed_software','compliance','file_changes','setuid','software_patches','classes','variables'} if sub-body context any
+   csv2xml =>  {'patches.csv'} if sub-body context any
+   build_directory => $(sys.workdir)/reports if sub-body context any
+   report_output => html if sub-body context any
+   }
+
+control body for type runagent(no parameters)
+   {
+   hosts =>  {'127.0.0.1'} if sub-body context any
+   }
+
+control body for type server(no parameters)
+   {
+   allowconnects =>  {'127.0.0.1','::1'} if sub-body context any
+   allowallconnects =>  {'127.0.0.1','::1'} if sub-body context any
+   trustkeysfrom =>  {'127.0.0.1','::1'} if sub-body context any
+   cfruncommand => $(sys.workdir)/bin/cf-agent -f failsafe.cf && $(sys.workdir)/bin/cf-agent if sub-body context any
+   allowusers =>  {'mark','root'} if sub-body context any
+   }
+
+u_p body for type perms
+   arg p
+
+   {
+   mode => $(p) if sub-body context any
+   }
+
+cf3_files body for type file_select(no parameters)
+   {
+   leaf_name =>  {'cf-.*'} if sub-body context any
+   file_result => leaf_name if sub-body context any
+   }
+
+u_scp body for type copy_from
+   arg from
+   arg server
+
+   {
+   source => $(from) if sub-body context any
+   compare => digest if sub-body context any
+   copy_backup => false if sub-body context any
+   verify => true if sub-body context any
+   }
+
+u_immediate body for type action(no parameters)
+   {
+   ifelapsed => 1 if sub-body context any
+   }
+
+u_define body for type classes
+   arg a
+
+   {
+   promise_repaired =>  {'$(a)'} if sub-body context any
+   }
+
+u_recurse body for type depth_search
+   arg d
+
+   {
+   depth => $(d) if sub-body context any
+   }
+
+OldCf2Files body for type file_select(no parameters)
+   {
+   leaf_name =>  {'promises.cf','site.cf','library.cf','failsafe.cf','.*.txt','.*.html','.*~','#.*'} if sub-body context any
+   file_result => !leaf_name if sub-body context any
+   }
+
+measure body for type action(no parameters)
+   {
+   measurement_class => Detect Changes in /usr if sub-body context any
+   ifelapsed => 240 if sub-body context any
+   expireafter => 241 if sub-body context any
+   }
+
+p body for type perms
+   arg user
+   arg mode
+
+   {
+   owners =>  {'$(user)'} if sub-body context any
+   mode => $(mode) if sub-body context any
+   }
+
+setowner body for type perms
+   arg user
+
+   {
+   owners =>  {'$(user)'} if sub-body context any
+   }
+
+recurse body for type depth_search
+   arg d
+
+   {
+   depth => $(d) if sub-body context any
+   }
+
+tidy body for type delete(no parameters)
+   {
+   dirlinks => delete if sub-body context any
+   rmdirs => true if sub-body context any
+   }
+
+days_old body for type file_select
+   arg days
+
+   {
+   mtime => irange(ago(1,0,0,0,0,0,)ago(0,0,$(days),0,0,0,)) if sub-body context any
+   file_result => mtime if sub-body context any
+   }
+
+exclude_files body for type file_select(no parameters)
+   {
+   leaf_name =>  {'.*\.o','core','.*.zip','.*.tar.gz','.*.tgz'} if sub-body context any
+   file_result => !leaf_name if sub-body context any
+   }
+
+lay_trip_wire body for type changes(no parameters)
+   {
+   hash => best if sub-body context any
+   report_changes => content if sub-body context any
+   update_hashes => yes if sub-body context any
+   }
+
+longjob body for type action(no parameters)
+   {
+   ifelapsed => 480 if sub-body context any
+   expireafter => 960 if sub-body context any
+   background => true if sub-body context any
+   }
+
+if_elapsed body for type action
+   arg x
+
+   {
+   ifelapsed => $(x) if sub-body context any
+   expireafter => $(x) if sub-body context any
+   }
+
+def body for type edit_defaults(no parameters)
+   {
+   empty_file_before_editing => false if sub-body context any
+   edit_backup => false if sub-body context any
+   max_file_size => 100000 if sub-body context any
+   }
+
+quotedvar body for type edit_field
+   arg newval
+   arg method
+
+   {
+   field_separator => " if sub-body context any
+   select_field => 2 if sub-body context any
+   value_separator =>   if sub-body context any
+   field_value => $(newval) if sub-body context any
+   field_operation => $(method) if sub-body context any
+   extend_fields => false if sub-body context any
+   allow_blank_fields => true if sub-body context any
+   }
+
+start body for type location(no parameters)
+   {
+   before_after => before if sub-body context any
+   }
+
+end body for type location(no parameters)
+   {
+   before_after => after if sub-body context any
+   }
+
+WarnOnly body for type action(no parameters)
+   {
+   action_policy => warn if sub-body context any
+   ifelapsed => 60 if sub-body context any
+   }
+
+With body for type replace_with
+   arg x
+
+   {
+   replace_value => $(x) if sub-body context any
+   occurrences => all if sub-body context any
+   }
+
+emergency_save body for type copy_from
+   arg from
+
+   {
+   source => $(from) if sub-body context any
+   preserve => true if sub-body context any
+   copy_backup => true if sub-body context any
+   }
+
+scp body for type copy_from
+   arg from
+   arg server
+
+   {
+   source => $(from) if sub-body context any
+   compare => digest if sub-body context any
+   encrypt => true if sub-body context any
+   verify => true if sub-body context any
+   }
+
+cp body for type copy_from
+   arg from
+
+   {
+   source => $(from) if sub-body context any
+   copy_backup => false if sub-body context any
+   }
+
+heartbeat body for type classes
+   arg name
+
+   {
+   promise_repaired =>  {'$(name)'} if sub-body context any
+   persist_time => 8 if sub-body context any
+   timer_policy => reset if sub-body context any
+   }
+
+sample_min body for type action
+   arg x
+   arg y
+
+   {
+   ifelapsed => $(x) if sub-body context any
+   expireafter => $(y) if sub-body context any
+   }
+
+find_blonks body for type match_value(no parameters)
+   {
+   select_line_number => 2 if sub-body context any
+   extraction_regex => Blonk blonk ([blonk]+).* if sub-body context any
+   }
+
+free_memory body for type match_value(no parameters)
+   {
+   select_line_matching => MemFree:.* if sub-body context any
+   extraction_regex => MemFree:\s+([0-9]+).* if sub-body context any
+   }
+
+file_systems body for type match_value(no parameters)
+   {
+   select_line_matching => /.* if sub-body context any
+   extraction_regex => ([^\s]+).* if sub-body context any
+   }
+
+proc_value body for type match_value
+   arg x
+   arg y
+
+   {
+   select_line_matching => $(x) if sub-body context any
+   extraction_regex => $(y) if sub-body context any
+   }
+
+zypper body for type package_method(no parameters)
+   {
+   package_changes => bulk if sub-body context any
+   package_list_command => /usr/bin/zypper packages if sub-body context any
+   package_patch_list_command => /usr/bin/zypper patches if sub-body context any
+   package_installed_regex => i.* if sub-body context any
+   package_list_name_regex => [^|]+\|[^|]+\|\s+([^\s]+).* if sub-body context any
+   package_list_version_regex => [^|]+\|[^|]+\|[^|]+\|\s+([^\s]+).* if sub-body context any
+   package_list_arch_regex => [^|]+\|[^|]+\|[^|]+\|[^|]+\|\s+([^\s]+).* if sub-body context any
+   package_patch_installed_regex => .*Installed.*|.*Not Applicable.* if sub-body context any
+   package_patch_name_regex => [^|]+\|\s+([^\s]+).* if sub-body context any
+   package_patch_version_regex => [^|]+\|[^|]+\|\s+([^\s]+).* if sub-body context any
+   package_name_convention => $(name) if sub-body context any
+   package_add_command => /usr/bin/zypper -non-interactive install if sub-body context any
+   package_delete_command => /usr/bin/zypper -non-interactive remove --force-resolution if sub-body context any
+   package_update_command => /usr/bin/zypper -non-interactive update if sub-body context any
+   package_patch_command => /usr/bin/zypper -non-interactive patch$ if sub-body context any
+   }
+
+ok body for type classes
+   arg s
+
+   {
+   promise_kept =>  {'$(s)'} if sub-body context any
+   promise_repaired =>  {'$(s)'} if sub-body context any
+   }
+
+repaired body for type classes
+   arg s
+
+   {
+   promise_repaired =>  {'$(s)'} if sub-body context any
+   }
+
+in_dir body for type contain
+   arg s
+
+   {
+   chdir => $(s) if sub-body context any
+   }
+

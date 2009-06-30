@@ -1,0 +1,286 @@
+html{height: 100%;}
+
+body
+{ font-family: arial, sans-serif;
+  padding: 0px;
+  margin: 10px;
+  font-size: 11px;;
+  color: #116622;
+  background: #ddd url(nova-back.png) right top repeat;
+}
+
+#wholebody
+{  
+width: 1000px;
+border: 1px;
+padding: 10px;
+}
+
+p
+{ margin: 0px;
+  padding: 0px 0px 6px 0px;
+  line-height: 1.7em;
+  font-size: 120%;
+}
+
+#menu
+{ 
+font-size: 110%;
+font-family: helvetica;
+
+}
+
+#man pre
+{  
+font-family: courier;
+font-size: 11px;
+}
+
+#logo
+{  
+width: 600px;
+background-color: #efe ;
+padding: 10px;
+}
+
+h1
+{ 
+font-family: arial, sans-serif;
+letter-spacing: .1em;
+font-weight: normal;
+background-color: #fff;
+color: #df9500;
+padding: 10px;
+}
+
+h2
+{ margin: 0px;
+  padding: 0px 0px 4px 0px;
+  font-size: 100%;
+}
+
+a
+{  
+color: #df9500;
+text-decoration: none;
+}
+
+#url a
+{  
+color: #d00;
+text-decoration: none;
+}
+
+a:selected
+{  
+color: #a00;
+}
+
+a:hover{text-decoration: underline;}
+
+#url a:hover{text-decoration: underline;}
+
+
+
+blockquote
+{ background: #FFFFFF;
+  color: #11aa22;
+  border-color: #767676;
+}
+
+#intro
+{
+background-color: #fff; 
+width: 600px;
+border: 2px;
+color: #11aa22;
+padding: 10px;
+border-color: black;
+font-size: 100%;
+}
+
+#in
+{
+background: #ccc;
+float: right;
+}
+
+#associations
+{  
+background-color: #fff; 
+border: 1px solid;
+width: 600px;
+padding: 10px;
+}
+
+#ontology
+{  
+background-color: #fff; 
+border: 1px solid;
+width: 100%;
+padding: 10px;
+}
+
+
+#occurrences
+{  
+background-color: #eee; 
+border: 1px solid;
+width: 600px;
+padding: 10px;
+}
+
+
+#others
+{  
+background-color: #fff; 
+border: 1px solid;
+width: 600px;
+padding: 10px;
+}
+
+#roles
+{  
+background-color: #fff; 
+margin-left: 20px;
+border: 1px solid;
+width: 460px;
+padding: 10px;
+}
+
+
+#thistype
+{  
+background-color: #efe; 
+border: 1px solid;
+width: 600px;
+padding: 10px;
+}
+
+
+blockquote
+{ 
+background: #FFFFFF;
+  color: #11aa22;
+  border-color: #767676;
+}
+
+
+#banner li
+{
+margin 0px;
+background-color: #ccc;
+  list-style-type: none;
+  list-style-image: none;
+float: left;
+width: 14em;
+}
+
+#banner li ul 
+{ 
+display:none;
+} 
+
+#banner li:hover ul
+{ 
+margin: 0px;
+padding: 0px 0px 0px 0px;
+ 
+display: block;
+width: 14em;
+position: absolute;
+border: 1px;
+background-color: #efe;
+  list-style-type: none;
+  list-style-image: none;
+
+}
+
+#banner ul li a
+{
+margin: 0px;
+padding: 0px 0px 0px 0px;
+  display: block;
+  width: 14em;
+  height: 24px;
+  padding: 4px 0 0;
+  text-align: left;
+  text-decoration: none;
+}
+
+#banner ul li a:hover
+{
+background: #FFFFFF url(/img/menu_hover_in.png);
+  color: #000;
+  background-color: #dfe;
+  text-decoration: none;
+  color: #307070;
+  list-style-type: none;
+  list-style-image: none;
+
+}
+
+
+#banner ul li a.selected, #navigation ul li a.selected:hover
+{
+  color: #fff;
+}
+
+#banner ul li a.selected:hover
+{
+color: #000;
+}
+
+#image
+{ 
+width: 400px;
+float: right; 
+}
+
+#image img
+{  
+width: 350px;
+float: right;
+border: solid 0px;
+margin: 10px;
+}
+
+#top
+{
+margin: 10px;
+background: #908c76 url(Knowledgebackground.png);
+}
+
+#top li
+{ 
+width: 150;
+}
+
+#search
+{ float: right; 
+  padding: 18px 15px 0px 0px;
+}
+
+
+/* footer */
+#footer
+{ width: 95%;
+  height: 42px;
+  padding: 26px 21px 0px 19px;
+  text-align: center; 
+  border-top: 2px solid #F2F2F0;
+  background: #BDB9B2 url(../img/menu.png) repeat;
+  color: #444;
+}
+
+#footer a
+{ background: transparent;
+  color: #FFF;
+}
+
+#footer a:hover
+{
+margin: 10px;
+ background: transparent;
+  color: #555;
+}

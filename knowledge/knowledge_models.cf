@@ -1,0 +1,393 @@
+############################################################################
+#
+# Knowledge base / ontology
+#
+############################################################################
+
+bundle knowledge promise_topics
+
+{
+topics:
+
+Research::
+
+  "models of system administration";
+  "models of knowledge";
+  "models of organization";
+
+models_of_system_administration::
+
+  "promise theory"     association => a("is implemented in","cfengine","is the reference implementation of");
+  "convergent operators";
+  "computer immunology" association => A("$(tm.impr[f])","@(bv)","$(tm.impr[b])");
+  "autonomics"          association => A("$(tm.impr[f])","@(bv)","$(tm.impr[b])");
+  "self-healing"        association => A("$(tm.impr[f])","@(bv)","$(tm.impr[b])");
+
+models_of_knowledge::
+
+  "topic maps";
+
+models_of_organization::
+
+   "homogeneous system";
+   "heterogeneous system";
+   "peer to peer network";
+   "hierarchical structure"  association => a("$(tm.same[f])","object orientation","$(tm.same[f])");
+   "service orientation"     association => a("$(tm.same[f])","peer to peer network","$(tm.same[f])");
+   "aspect paradigm"         association => a("$(tm.same[f])","aspect orientation","$(tm.same[f])");
+   "object paradigm"         association => a("$(tm.same[f])","object orientation","$(tm.same[f])");
+   "cascading"               association => a("$(tm.same[f])","hierarchical structure","$(tm.same[f])");
+   "overlapping sets";
+
+convergent_operators::
+
+   "idempotence";
+   "convergence";
+
+promise_theory::
+
+  "agents";
+  "intentions";
+  "bundles"           association => a("are collections of","promises","combine to form");
+  "promise proposals" association => a("are a basis for","promises","may be based on");
+
+  "promises"          association => a("reveal","intentions","are revealed in the form of");
+  "promises"          association => a("can be made about","topics","can be the subject of");
+  "promises"          association => a("are a form of","communicated information","includes");
+
+  "conditional promises" association => a("are completed by","promise of necessary conditions","complete");
+
+  "announcements"     association => a("are a form of","communicated information","includes");
+
+  "promiser"          association => a("makes a","promise","is made by a");
+  "promisee"          association => a("is the recipient of","promise","is made to a");
+
+  "promise-type"      association => a("describes the nature (or quality) of a","promise","is qualified by its");
+  "promise-type"      association => a("has instances","@(all_actions)","is an instance of");
+
+  "promise body"      association => a("has attribute","body-type","is an attribute of");
+  "promise body"      association => a("has attribute","body-constraint","is an attribute of");
+  "body-type"         association => a("describes the subject (nature or quality) of a","body-constraint","is qualified by its");
+  "body-constraint"   association => a("describes the extent (or quantity) of a","promise","is quantified by its");
+
+  "topic-types";
+  "topics"            association => a("can talk about","promises","can be represented as");
+  "topics"            association => a("can be combined into","stories","can be broken down into");
+  "topics"            association => a("can be classified into disjoint","topic types","are disjoint classes of");
+
+  "facts"             association => a("can be the subject of","intentions","can talk about");
+  "behaviours"        association => a("can be the subject of","intentions","can talk about");
+  "actions"           association => a("can be the subject of","intentions","can talk about");
+
+  "conceptual relationships";
+  "causative relationships";
+  "location relationships";
+  "structural relationships";
+  "associations"      association => a("represent","conceptual relationships","can be represented as");
+  "associations"      association => a("represent","location relationships","can be represented as");
+  "associations"      association => a("represent","causative relationships","can be represented as");
+  "associations"      association => a("represent","structural relationships","can be represented as");
+
+  "type-instances"  association => a("is another term for","topics","may be described as");
+  "topic-instances" association => a("are realizations of","topics","are discussed in");
+  "topic-instances" association => a("are simply called","occurrences","might be called");
+  "occurrence-types"  association => a("are also called","topic map sub-types","might be called");
+  "occurrences"       association => a("are classified into disjoint","occurrence types","are disjoint classes of");
+  "intentions";
+
+  "subjects"          association => a("are represented as","topics","are knowledge-map instances of"),
+                      comment => "Any thing that can be discussed";
+
+  "associations"      association => a("form networks of","topics","are inter-related through");
+
+  "communicated information";
+
+  "services"          association => a("are formed by associating","promises","combine into");
+
+  "stories"           association => a("are formed by associating","topics","can be combined into");
+  "stories"           association => a("can talk about","workflows","can be the subject of");
+  "workflows"         association => a("are formed by associating","actions","combine into");
+
+  "dependencies"      association => a("result in","conditional promises","require the use of");
+
+  "versions"          association => a("label variations in","occurrences","vary according to");
+
+  "roles"             association => a("are recurring patterns of","promises","define");
+  "roles"             association => a("are identified in","agents","play different");
+
+  "voluntary cooperation";
+
+ body_constraint::
+
+   "rvalue";
+   "lvalue";
+
+ topic_maps::
+
+   "the tao" comment => "topics, associations and occurrences";
+   "linear topic map notation";
+
+
+  ################################################################
+
+
+occurrences:
+
+  voluntary_cooperation::
+
+     "Describes the approach to modelling in which one does not assume absolute power to control, but rather assumes best effort of the system parts. A promise is an expression of voluntary cooperation - the opposite of an obligation."
+            represents => { "definitions" },
+            representation => "literal";
+
+  agents::
+     "Describes any system components that can give or receive promises, either physical or abstract; e.g. files, processes, topics, etc."
+            represents => { "definitions" },
+            representation => "literal";
+  lvalue::
+     "Refers to the left hand side of an assignment \"lvalue => rvalue\""
+            represents => { "definitions" },
+            representation => "literal";
+
+     "/inside/manuals/cf3-reference#Types-in-cfengine-3"
+            represents => { "Cfengine reference" };
+
+  rvalue::
+     "Refers to the right hand side of an assignment \"lvalue => rvalue\""
+            represents => { "definitions" },
+            representation => "literal";
+
+     "/inside/manuals/cf3-reference#Types-in-cfengine-3"
+            represents => { "Cfengine reference" };
+
+  structural_relationships:: 
+ 
+     "img/clusters.png"
+            represents => { "image" },
+            representation => "image";
+
+  intentions::
+
+     "Ideas that might lead to courses of action and some time past, present or future."
+            represents => { "definitions" },
+            representation => "literal";
+
+  bundles::
+     "Collections of promises are called bundles."
+            represents => { "definitions" },
+            representation => "literal";
+
+     "A container for grouping related promises"
+            represents => { "definitions" },
+            representation => "literal";
+
+  promise_body::
+
+     "Attribute of a promise, like a template for parameterizing compound promise attributes"
+            represents => { "definitions" },
+            representation => "literal";
+
+
+  promise_proposals::
+
+     "Before a promise has been accepted and made it can be written down as a proposal. A contract contains many promise proposals, for instance."
+            represents => { "definitions" },
+            representation => "literal";
+
+  promises::
+
+     "When an agent's intention becomes public knowledge we call it a promise."
+            represents => { "definitions" },
+            representation => "literal";
+
+  conditional_promises::
+
+     "A promise that is made subject to a pre-condition is not a true promise unless the condition can also be promised. Condition promises are often used to express dependencies."
+            represents => { "definitions" },
+            representation => "literal";
+
+  announcements::
+
+     "The act of making public some information is called an announcement."
+            represents => { "definitions" },
+            representation => "literal";
+
+  promiser:: 
+
+     "The agent or entity that makes a promise is called the promiser."
+            represents => { "definitions" },
+            representation => "literal";
+
+  promisee::      
+
+     "The recipient of a promise is called the promisee."
+            represents => { "definitions" },
+            representation => "literal";
+
+  promise_body::
+
+     "The body of a promise contains the details that describe its substance. This generally has the name of some variable and a constraint on the values that the promiser promises it will have."
+            represents => { "definitions" },
+            representation => "literal";
+
+  body_type::  
+
+     "The subject of a promise is limited to a system of non-overlapping, or disjoint types, e.g. in cfengine files, processes, knowledge, etc"
+            represents => { "definitions" },
+            representation => "literal";
+
+  body_constraint::
+
+     "A description of the range of values that an agent promises to restrict its behaviour to."
+            represents => { "definitions" },
+            representation => "literal";
+
+  topic_types::
+
+     "Topics (in topic maps) are classified into non-overlapping or disjoint types."
+            represents => { "definitions" },
+            representation => "literal";
+  topics::   
+
+     "Topics are the way we represent abstract subjects in a topic map. A topic is implemented as a database entry."
+            represents => { "definitions" },
+            representation => "literal";
+
+  subjects::
+
+     "A subject is an abstract concept -- it is any thing that can be talked about or discussed."
+            represents => { "definitions" },
+            representation => "literal";
+
+  facts::        
+
+     "Irrefutable pieces of information that can be observed."
+            represents => { "definitions" },
+            representation => "literal";
+
+  behaviours::      
+
+     "Characteristics of a system that can be observed."
+            represents => { "definitions" },
+            representation => "literal";
+
+  actions::    
+
+     "Changes instigated by a system leading to observable effects."
+            represents => { "definitions" },
+            representation => "literal";
+
+  associations::
+
+     "Trains of thought that link one topic with another."
+            represents => { "definitions" },
+            representation => "literal";
+
+  conceptual_relationships::
+
+     "Ideas that are related in documentable fashion."
+            represents => { "definitions" },
+            representation => "literal";
+
+  causative_relationships::
+
+     "When one topic impacts on another, we can say there is a cause-effect relationship."
+            represents => { "definitions" },
+            representation => "literal";
+
+  location_relationships::
+
+     "Spatial relationships, like up,down,left,right"
+            represents => { "definitions" },
+            representation => "literal";
+
+  structural_relationships::
+
+     "When a part of something is contained within another part, or is a piece of a whole then we can call this a structural relationship"
+            represents => { "definitions" },
+            representation => "literal";
+
+  type_instances::
+
+     "Occurrences of a type of object. In a topic map, topics are type occurrences. In a policy, promises are type occurrences."
+            represents => { "definitions" },
+            representation => "literal";
+
+  topic_instances::
+
+     "Topic instances are called occurrences in topic map parlance."
+            represents => { "definitions" },
+            representation => "literal";
+
+  occurrence_types::
+
+     "Occurrences are classified by the topics that refer to them. When a topic claims that an occurrence represents it somehow it uses a representation label (also called a subtype in topic map parlance). These partition occurrences into overlapping sets since an occurrence could represent several topics."
+            represents => { "definitions" },
+            representation => "literal";
+
+  occurrences::
+
+     "An information resource that represents a topic. Typically a document, database entry, image or other medium."
+            represents => { "definitions" },
+            representation => "literal";
+
+  communicated_information::
+
+     "Any information that is transmitted falls into this category. It is a container class for more specific messages, e.g. promises."
+            represents => { "definitions" },
+            representation => "literal";
+
+  services::
+
+     "An abstraction for actions or processes that are associated with a specific set of promises. Services are economically motivated black-boxes for promises."
+            represents => { "definitions" },
+            representation => "literal";
+
+
+  stories::       
+
+     "A sequence of topics that relates a start and an end point through a topic map. Different
+aths through a topic map can relate different stories. An entire story promises to have some intention."
+            represents => { "definitions" },
+            representation => "literal";
+
+  workflows::
+
+     "A representation or story about actions or services. "
+            represents => { "definitions" },
+            representation => "literal";
+
+
+  dependencies::     
+
+     "Promises or promisees that provide the pre-requisites for conditional promises may be called dependencies of the conditional promise."
+            represents => { "definitions" },
+            representation => "literal";
+
+
+  versions::
+
+     "An indentity string that distinguishes altered states of an agent or occurrence of a topic."
+            represents => { "definitions" },
+            representation => "literal";
+
+   promises::
+
+       "Assertions about the desired properties of a system"
+            represents => { "definitions" },
+            representation => "literal";
+
+   promise_type::
+
+       "The type of cfengine rules are called promise types"
+            represents => { "definitions" },
+            representation => "literal";
+
+   promise_theory::
+
+       "A model for representing systems of interacting parts, such as computer networks. Orginally described by Mark Burgess to describe cfengine as no other models were suitable."
+            represents => { "definitions" },
+            representation => "literal";
+
+
+}
+
