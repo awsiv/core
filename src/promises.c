@@ -200,10 +200,10 @@ void Nova_CheckAutoBootstrap()
 { struct stat sb;
   char name[CF_BUFSIZE];
   FILE *pp;
-  int repaired = false, have_policy = false;
+  int repaired = false, have_policy = false, am_appliance = false;
 
 printf("\n ** Initiated the cfengine enterprise diagnostic bootstrap probe\n");
-printf(" ** This is a Nova automation extension - self-healing installer\n\n");
+printf(" ** This is a Nova automation extension (self-healing installer)\n\n");
 
 Version("cfengine");
 printf("\n");
@@ -252,7 +252,7 @@ else
    {
    if (have_policy)
       {
-      CfOut(cf_error,""," -> No policy distribution host was discovered - it might be contained in the existing policy\n");
+      CfOut(cf_error,""," -> No policy distribution host was discovered - it might be contained in the existing policy, otherwise this will function autonomously\n");
       }
    else if (repaired)
       {
@@ -261,7 +261,27 @@ else
    }
 
 printf(" -> Policy trajectory accepted\n");
-printf(" -> Attemping to initiate promised autonomous services\n\n");
+printf(" -> Attempting to initiate promised autonomous services\n\n");
+
+
+am_appliance = IsDefinedClass(CanonifyName(POLICY_SERVER));
+snprintf(name,CF_MAXVARSIZE,"ipv4_%s",CanonifyName(POLICY_SERVER));
+am_appliance |= IsDefinedClass(name);
+
+if (strlen(POLICY_SERVER) == 0)
+   {
+   am_appliance = false;
+   }
+
+if (am_appliance)
+   {
+   printf(" ** This host recognizes itself as a Cfengine Appliance, with policy distribution and knowledge base.\n");
+   printf(" -> The system is now converging. Full initialisation of self-knowledge could take up to 15 minutes\n\n");
+   }
+else
+   {
+   printf(" -> System converging on trajectory\n");
+   }
 }
 
 /********************************************************************/
