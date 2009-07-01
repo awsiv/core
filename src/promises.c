@@ -276,7 +276,7 @@ if (strlen(POLICY_SERVER) == 0)
 if (am_appliance)
    {
    printf(" ** This host recognizes itself as a Cfengine Appliance, with policy distribution and knowledge base.\n");
-   printf(" -> The system is now converging. Full initialisation of self-knowledge could take up to 15 minutes\n\n");
+   printf(" -> The system is now converging. Full initialisation of self-analysis could take up to 30 minutes\n\n");
    }
 else
    {

@@ -189,7 +189,8 @@ char *Nova_GetRemoteScalar(char *handle,char *server,int encrypted);
 int Nova_ParseHostname(char *name,char *hostname);
 int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer);
 void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer);
-void Nova_StartTwin(int argc,char **argv);
+pid_t Nova_StartTwin(int argc,char **argv);
+void Nova_SignalTwin(void);
 
 /* sql.c */
 

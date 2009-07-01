@@ -163,31 +163,45 @@ return cf_strlen(buffer);
 
 /********************************************************************/
 
-void Nova_StartTwin(int argc,char **argv)
+pid_t Nova_StartTwin(int argc,char **argv)
 
 { FILE *fp;
   char name[CF_BUFSIZE];
   time_t last,now = time(NULL);
   struct stat sb;
   int pulse_delay = 0;
-
-  return;
+  struct Promise *pp = NewPromise("exec_twin","the executor twin"); 
+  struct Attributes dummyattr;
+  struct CfLock thislock;
+  pid_t pid;
   
-if (fork() != 0)
+memset(&dummyattr,0,sizeof(dummyattr));
+dummyattr.transaction.ifelapsed = 0;
+dummyattr.transaction.expireafter = 0;
+
+thislock = AcquireLock(pp->promiser,VUQNAME,now,dummyattr,pp);
+
+if (thislock.lock == NULL)
    {
-   CfOut(cf_inform,"","cf-execd binary pulsar starting %.24s\n",ctime(&now));
-   return;
+   return 0;
    }
 
-//brojen
+DeletePromise(pp);
+
+if ((pid = fork()) != 0)
+   {
+   CfOut(cf_inform,"","cf-execd binary pulsar starting %.24s\n",ctime(&now));
+   return pid;
+   }
 
 snprintf(name,CF_BUFSIZE-1,"%s/pulsar",CFWORKDIR);
 
 sb.st_mtime = 0;
+CfOut(cf_verbose,""," ** Twin in orbit... ");
 
 while (true)
    {
-   sleep(2);
+   sleep(90);
    now = time(NULL);
 
    if (stat(name,&sb) == -1 && !pulse_delay)
@@ -199,20 +213,22 @@ while (true)
 
    pulse_delay = 0;
    
-   if (sb.st_mtime >= now - 7200)
+   if (sb.st_mtime >= now - 120)
       {
       CfOut(cf_verbose,""," -> Pulsar returned, continuing...");
       continue;
       }
    
-   // should really clean up lock?
    CfOut(cf_inform,""," !! No sign of twin, so assuming its role");
+   YieldCurrentLock(thislock);
    
    if (execv(argv[0],argv) == -1)
       {
       CfOut(cf_error,"execv","Couldn't restart cfengine %s",argv[0]);
       }      
    }
+
+return 0;
 }
 
 /********************************************************************/
