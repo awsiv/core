@@ -30,38 +30,28 @@ int Nova_EnterpriseExpiry(char *day,char *month,char *year)
 { struct stat sb;
   char name[CF_MAXVARSIZE];
   FILE *fp;
-  
-snprintf(name,CF_MAXVARSIZE,"%s/NEE",CFWORKDIR);
-  
-if (stat(name,&sb) == -1)
-   {
-   int m_now,m_expire,d_now,d_expire;
+  int m_now,m_expire,d_now,d_expire;
    
-   m_now = Month2Int(VMONTH);
-   d_now = Str2Int(VDAY);
+m_now = Month2Int(VMONTH);
+d_now = Str2Int(VDAY);
 
-   m_expire = Month2Int(month);
-   d_expire = Str2Int(day);
+m_expire = Month2Int(month);
+d_expire = Str2Int(day);
 
-   Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s = %d\n",VYEAR,year,VMONTH,month,VDAY,day,cf_strcmp(VDAY,day));
-   Debug("Y. %s > %s\nM. %d > %d\nD: %d > %d = %d\n",VYEAR,year,m_now,m_expire,d_now,d_expire,cf_strcmp(VDAY,day));
+Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s = %d\n",VYEAR,year,VMONTH,month,VDAY,day,cf_strcmp(VDAY,day));
+Debug("Y. %s > %s\nM. %d > %d\nD: %d > %d = %d\n",VYEAR,year,m_now,m_expire,d_now,d_expire,cf_strcmp(VDAY,day));
 
-   if ((cf_strcmp(VYEAR,year) >= 0) && (m_now >= m_expire) && (d_now > d_expire))
+if ((cf_strcmp(VYEAR,year) >= 0) && (m_now >= m_expire) && (d_now > d_expire))
+   {
+   if (fp = cf_fopen(name,"w"))
       {
-      if (fp = cf_fopen(name,"w"))
-         {
-         fprintf(fp,"enable expiry %s %s %s\n",day,month,year);
-         cf_fclose(fp);
-         }
-      return true;
+      fprintf(fp,"enable expiry %s %s %s\n",day,month,year);
+      cf_fclose(fp);
       }
-   
-   return false;
-   }
-else
-   {
    return true;
    }
+
+return false;
 }
 
 /*****************************************************************************/

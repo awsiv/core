@@ -194,6 +194,8 @@ if ((pid = fork()) != 0)
    return pid;
    }
 
+//ActAsDaemon(0);
+
 snprintf(name,CF_BUFSIZE-1,"%s/pulsar",CFWORKDIR);
 
 sb.st_mtime = 0;
@@ -201,7 +203,8 @@ CfOut(cf_verbose,""," ** Twin in orbit... ");
 
 while (true)
    {
-   sleep(90);
+   Nova_SignalOther();
+   sleep(66);
    now = time(NULL);
 
    if (stat(name,&sb) == -1 && !pulse_delay)
@@ -227,8 +230,6 @@ while (true)
       CfOut(cf_error,"execv","Couldn't restart cfengine %s",argv[0]);
       }      
    }
-
-return 0;
 }
 
 /********************************************************************/
@@ -251,6 +252,55 @@ fprintf(fp,"duh-dum,duh-dum...\n");
 fclose(fp);
 
 CfOut(cf_verbose,""," -> Pulse...");
+}
+
+/********************************************************************/
+
+void Nova_SignalOther()
+
+{ FILE *fp;
+  char name[CF_BUFSIZE];
+
+snprintf(name,CF_BUFSIZE-1,"%s/other",CFWORKDIR);
+  
+if ((fp = fopen(name,"w")) == NULL)
+   {
+   CfOut(cf_error,"fopen","cf-execd: Cannot write to the work directory %s",CFWORKDIR);
+   return;
+   }
+
+fprintf(fp,"duh-dum,duh-dum...\n");
+
+fclose(fp);
+
+CfOut(cf_verbose,""," -> Pulse echo...");
+}
+
+/********************************************************************/
+
+void Nova_ReviveOther(int argc,char **argv)
+
+{ time_t now = time(NULL);
+  char name[CF_BUFSIZE];
+  struct stat sb;
+  
+snprintf(name,CF_BUFSIZE-1,"%s/other",CFWORKDIR);
+ 
+if (stat(name,&sb) == -1)
+   {
+   CfOut(cf_verbose,""," !! No pulse echo from twin...");
+   }
+else if (sb.st_mtime >= now - 60)
+   {
+   CfOut(cf_verbose,""," -> Pulse echo returned, continuing...");
+   return;
+   }
+else
+   {
+   CfOut(cf_verbose,""," !! The pulse echo was lost .. assuming the twin has died");
+   }
+
+Nova_StartTwin(argc,argv);
 }
 
 /********************************************************************/

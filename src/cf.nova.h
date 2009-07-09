@@ -191,6 +191,8 @@ int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer);
 void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer);
 pid_t Nova_StartTwin(int argc,char **argv);
 void Nova_SignalTwin(void);
+void Nova_SignalOther(void);
+void Nova_ReviveOther(int argc,char **argv);
 
 /* sql.c */
 
