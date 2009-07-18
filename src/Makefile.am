@@ -25,7 +25,13 @@ libcfnova_la_SOURCES =						\
 	processes.c						\
 	reporting.c						\
 	html.c							\
-	knowledge.c
+	knowledge.c						\
+	graphs.c						\
+	histogram.c						\
+	timeseries.c						\
+	magnify.c						\
+	coordinates.c						\
+	cfcore.c
 
 
 #

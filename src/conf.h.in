@@ -156,6 +156,9 @@
 /* Define to 1 if you have the `acl' library (-lacl). */
 #undef HAVE_LIBACL
 
+/* Define to 1 if you have the `gd' library (-lgd). */
+#undef HAVE_LIBGD
+
 /* Define to 1 if you have the `ldap' library (-lldap). */
 #undef HAVE_LIBLDAP
 

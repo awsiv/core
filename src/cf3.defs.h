@@ -52,7 +52,7 @@
 /* Fundamental (meta) types                                              */
 /*************************************************************************/
 
-#define CF3COPYRIGHT "(C) Cfengine AS 2008"
+#define CF3COPYRIGHT "(C) Cfengine AS 2008-"
 
 #define CF_SCALAR 's'
 #define CF_LIST   'l'
@@ -72,7 +72,7 @@
 #define CF_INBUNDLE 2
 
 #define CF_MAX_NESTING 3
-#define CF_DONEPASSES  3
+#define CF_DONEPASSES  4
 
 #define CF_TIME_SIZE 32
 
@@ -364,6 +364,7 @@ enum cfkcontrol
 
 enum cfrecontrol
    {
+   cfre_aggregation_point,
    cfre_autoscale,
    cfre_builddir,
    cfre_csv,

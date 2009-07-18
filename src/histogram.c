@@ -1,0 +1,316 @@
+
+/*
+
+ This file is (C) Cfengine AS. See LICENSE for details.
+
+*/
+
+#include "cf3.defs.h"
+#include "cf3.extern.h"
+#include "cf.nova.h"
+
+/*****************************************************************************/
+/*                                                                           */
+/* File: histogram.c                                                         */
+/*                                                                           */
+/*****************************************************************************/
+
+extern int LIGHTRED,YELLOW,WHITE,BLACK,GREEN,BLUE,LIGHTGREY;
+extern int GREYS[CF_SHADES];
+extern int BLUES[CF_SHADES];
+
+/*****************************************************************************/
+
+void Nova_ViewHisto(struct CfDataView *cfv,char *filename, char *title,enum observables obs)
+    
+{ int i,y,hint;
+  double frac;
+  FILE *fout;
+  struct stat s1,s2;
+  char newfile[CF_BUFSIZE];
+  char oldfile[CF_BUFSIZE];
+  struct Item *spectrum;
+
+  /* Initialization */
+
+snprintf(newfile,CF_BUFSIZE,"%s_hist.png",filename);
+snprintf(oldfile,CF_BUFSIZE,"%s.distr",filename);
+
+if ((stat(oldfile,&s1) != -1) && (stat(newfile,&s2) != -1))
+   {
+   if (s2.st_mtime > s1.st_mtime)
+      {
+      /* no changes */
+      return;
+      }
+   }
+
+cfv->title = title;
+cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
+Nova_MakePalette(cfv);
+
+for (y = 0; y < cfv->height+2*cfv->margin; y++)
+   {
+   hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
+   gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
+   }
+
+/* Done initialization */
+
+Nova_ReadHistogram(cfv,oldfile);
+spectrum = Nova_AnalyseHistogram(cfv,filename,obs);
+Nova_PlotHistogram(cfv,BLUES,spectrum);
+Nova_Title(cfv,BLUE);
+Nova_DrawHistoAxes(cfv,BLACK);
+    
+if ((fout = fopen(newfile, "wb")) == NULL)
+   {
+   CfOut(cf_error,"fopen","Cannot write %s file\n",newfile);
+   return;
+   }
+
+gdImagePng(cfv->im, fout);
+fclose(fout);
+gdImageDestroy(cfv->im);
+DeleteItemList(spectrum);
+}
+
+/**********************************************************************/
+
+void Nova_ReadHistogram(struct CfDataView *cfv, char *name)
+
+{ double rx,ry,rs,sx = 0;
+  FILE *fp;
+
+cfv->max = 0;
+cfv->min = 99999;
+cfv->error_scale = 0;      
+
+if ((fp = fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_verbose,"","Can't open histogram %s\n",name);
+   return;
+   }
+
+for (sx = 0; sx < CF_GRAINS; sx++)
+   {
+   rx = ry = 0;
+   fscanf(fp,"%lf %lf",&rx,&ry);
+
+   if (ry > cfv->max)
+      {
+      cfv->max = ry;
+      }
+
+   if (ry < cfv->min)
+      {
+      cfv->min = ry;
+      }
+
+   cfv->data_E[(int)sx] = ry;
+   }
+
+fclose(fp);
+
+}
+
+/**********************************************************************/
+
+void Nova_DrawHistoAxes(struct CfDataView *cfv,int col)
+
+{ int origin_x = cfv->margin;
+  int origin_y = cfv->height+cfv->margin;
+  int max_x = cfv->margin+cfv->width;
+  int max_y = cfv->margin;
+  int sigma;
+  int x,y;
+  int ticksize = cfv->height/50;
+  static char *grains[CF_GRAINS/4] = {"-2 sig","-sig","AV","+sig","+2 sig"};
+  
+gdImageLine(cfv->im, origin_x, origin_y, max_x, origin_y, col);
+gdImageLine(cfv->im, origin_x, origin_y, origin_x, max_y, col);
+
+/* from -2 to +2 sigma  */
+
+for (sigma = 0; sigma < 5; sigma++)
+   {
+   x = origin_x + (CF_GRAINS/4) * sigma * (int)((double)cfv->width/(double)CF_GRAINS+0.5);
+
+   gdImageLine(cfv->im, x, origin_y-ticksize, x, origin_y+ticksize, col);
+   
+   gdImageString(cfv->im, gdFontGetLarge(),x,origin_y+2*ticksize,grains[sigma],col);
+   }
+}
+
+/*******************************************************************/
+
+void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum)
+
+{
+ int origin_x = cfv->margin;
+ int origin_y = cfv->height+cfv->margin;
+ int max_x = cfv->margin+cfv->width;
+ int max_y = cfv->margin;
+ int i,x,y,dev;
+ double range;
+ double rx,ry,rs,sx = 0,s;
+ double scale_x = ((double)cfv->width /(double)CF_GRAINS);
+ double scale_y;
+ double low,high;
+ double xfill;
+ int col = 0;
+ int lightred = gdImageColorAllocate(cfv->im, 255, 150, 150);
+ struct Item *ip;
+
+if (cfv->max == 0)
+   {
+   return;
+   }
+
+range = (cfv->max - cfv->min + cfv->error_scale);
+scale_y = (double) cfv->height / range;
+
+gdImageSetThickness(cfv->im,1);
+
+// First plot average
+
+for (sx = 0; sx < CF_GRAINS; sx++)
+   {
+   x = origin_x + (sx * scale_x);
+   y = origin_y  - (int)((cfv->data_E[(int)sx]-cfv->min + cfv->error_scale) * scale_y);
+   s = cfv->bars[(int)sx] * scale_y;
+   
+   low = y-s;
+   high = (y+s > origin_y)? origin_y : y+s;
+   
+   //dev = 50 - abs(25 + ((double)50/(double)CF_GRAINS)*(sx-CF_GRAINS));
+
+   dev = sx * (double)CF_SHADES/(double)CF_GRAINS;
+   xfill = x;
+   
+   for (col = 0; col < CF_SHADES; col++)
+      {
+      xfill += (double)cfv->width/(double)CF_GRAINS/((double)CF_SHADES);
+      gdImageLine(cfv->im,xfill,origin_y,xfill,y,blues[col]);
+      }
+
+   //gdImageFilledRectangle(cfv->im,x,origin_y,x+1,y,lightred);
+   }
+
+for (ip = spectrum; ip != NULL; ip=ip->next)
+   {
+   sx = ip->counter;
+   x = origin_x + (sx * scale_x);
+   y = origin_y  - (int)((cfv->data_E[(int)sx]-cfv->min + cfv->error_scale) * scale_y);
+   s = cfv->bars[(int)sx] * scale_y;
+   
+   low = y-s;
+   high = (y+s > origin_y)? origin_y : y+s;
+   
+   dev = sx * (double)CF_SHADES/(double)CF_GRAINS;
+   xfill = x;
+   
+   for (col = 0; col < CF_SHADES; col++)
+      {
+      xfill += (double)cfv->width/(double)CF_GRAINS/((double)CF_SHADES);
+      gdImageLine(cfv->im,xfill,origin_y,xfill,y,GREEN);
+      }
+   }
+
+gdImageSetThickness(cfv->im,4);
+gdImageLine(cfv->im,origin_x+32*scale_x,origin_y,origin_x+cfv->width/2,-1500,lightred);
+}
+
+/*******************************************************************/
+
+struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *name,enum observables obs)
+
+{ double sx, q, delta, sum = 0, sigma2;
+  int new_gradient = 0, past_gradient = 0, max = 0;
+  int redshift = 0, blueshift = 0;
+  int above_noise = false;
+  char fname[CF_BUFSIZE],img[CF_BUFSIZE],output[CF_BUFSIZE];
+  double sensitivity_factor = 1.2;
+  struct Item *maxima = NULL;
+  FILE *fp;
+
+  /* First find the variance sigma2 */
+
+snprintf(fname,CF_BUFSIZE,"%s_hist.html",name);
+  
+if ((fp = fopen(fname,"w")) == 0)
+   {
+   CfOut(cf_verbose,"","Can't open histogram analysis file %s\n",fname);
+   return NULL;   
+   }
+
+NovaHtmlHeader(fp,"spectral analysis",STYLESHEET,WEBDRIVER,BANNER);
+
+CfOut(cf_verbose,"","Looking for maxima in %s\n",name);
+
+snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
+
+fprintf(fp,"<div id=\"graph\">\n");
+fprintf(fp,"<img src=\"%s\">\n",img);
+fprintf(fp,"</div>\n");
+
+fprintf(fp,"<div id=\"histoanalysis\">\n");
+
+for (sx = 1; sx < CF_GRAINS; sx++)
+   {
+   q = cfv->data_E[(int)sx];
+   delta = cfv->data_E[(int)sx] - cfv->data_E[(int)(sx-1)];
+   sum += delta*delta;
+   }
+
+sigma2 = sum / (double)CF_GRAINS;
+
+for (sx = 1; sx < CF_GRAINS; sx++)
+   {
+   q = cfv->data_E[(int)sx];
+   delta = cfv->data_E[(int)sx] - cfv->data_E[(int)(sx-1)];
+
+   above_noise = (delta*delta > sigma2) * sensitivity_factor;
+   
+   if (above_noise)
+      {
+      new_gradient = delta;
+
+      if (new_gradient < 0 && past_gradient >= 0)
+         {
+         max++;
+
+         fprintf(fp,"Spectral number %d peak found at %.2f/%0.2f (mid = %.2f)\n",max,sx-1,(double)CF_GRAINS,(double)CF_GRAINS/2.0);
+
+         snprintf(output,CF_BUFSIZE-1,"key-%f",sx);
+         AppendItem(&maxima,output,NULL);
+         SetItemListCounter(maxima,output,sx-1);
+
+         if (sx < ((double)CF_GRAINS)/2.0 - 1.0)
+            {
+            redshift++;
+            fprintf(fp,"<p>Red-shifted, i.e. shows retardation process</p>\n");
+            }
+         else if (sx > ((double)CF_GRAINS)/2.0 + 1.0)
+            {
+            blueshift++;
+            fprintf(fp,"<p>Blue-shifted, i.e. shows acceleration process</p>\n");
+            }
+
+         }
+      }
+
+   past_gradient = new_gradient;
+   }
+
+
+fprintf(fp,"<p>Spectrum seems to be %d-modal (within the margins of uncertainty)</p>\n",max);
+
+
+fprintf(fp,"</div>\n");
+
+NovaHtmlFooter(fp,FOOTER);
+fclose(fp);
+return maxima;
+}
+

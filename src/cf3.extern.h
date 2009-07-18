@@ -29,6 +29,13 @@
 /* See variables in cf3globals.c and syntax.c */
 
 extern struct PromiseParser P;
+extern int REQUIRE_COMMENTS;
+extern char POLICY_SERVER[CF_BUFSIZE];
+
+extern char WEBDRIVER[CF_MAXVARSIZE];
+extern char BANNER[2*CF_BUFSIZE];
+extern char FOOTER[CF_BUFSIZE];
+extern char STYLESHEET[CF_BUFSIZE];
 
 extern struct Bundle *BUNDLES;
 extern struct Body *BODIES;
@@ -44,6 +51,7 @@ extern struct Rlist *SINGLE_COPY_CACHE;
 extern struct Rlist *ACCESSLIST;
 extern struct Topic *TOPIC_MAP;
 extern struct PromiseIdent *PROMISE_ID_LIST;
+extern struct Item *DONELIST;
 
 extern double FORGETRATE;
 
@@ -53,6 +61,7 @@ extern int CFA_BACKGROUND;
 extern int CFA_BACKGROUND_LIMIT;
 extern int AM_BACKGROUND_PROCESS;
 
+extern int LOOKUP;
 extern int BOOTSTRAP;
 extern int XML;
 extern FILE *FREPORT_HTML;
@@ -70,13 +79,14 @@ extern int CFA_MAXTHREADS;
 extern char *THIS_BUNDLE;
 extern char THIS_AGENT[CF_MAXVARSIZE];
 extern enum cfagenttype THIS_AGENT_TYPE;
-extern short INSTALL_SKIP;
-extern short SHOWREPORTS;
+extern int INSTALL_SKIP;
+extern int SHOWREPORTS;
 extern int FACILITY;
 extern time_t PROMISETIME;
 extern int ABORTBUNDLE;
 extern struct Item *ABORTBUNDLEHEAP;
 extern int LASTSEENEXPIREAFTER;
+extern int LASTSEEN;
 extern char *DEFAULT_COPYTYPE;
 extern struct Rlist *SERVERLIST;
 extern struct Item *PROCESSTABLE;
@@ -91,6 +101,14 @@ extern int CF_SAVEFSTAB;
 extern char *DAY_TEXT[];
 extern char *MONTH_TEXT[];
 extern char *SHIFT_TEXT[];
+
+extern char FILE_SEPARATOR;
+extern char FILE_SEPARATOR_STR[2];
+
+extern time_t DATESTAMPS[CF_OBSERVABLES];
+extern char AGGREGATION[CF_BUFSIZE];
+extern char *UNITS[CF_OBSERVABLES];
+
 
 /***********************************************************/
 /* SYNTAX MODULES                                          */

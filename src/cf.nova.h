@@ -22,6 +22,48 @@
 # include <acl/libacl.h>
 #endif
 
+#include <gd.h>
+#include <gdfontl.h>
+#include <gdfontg.h>
+
+#undef PACKAGE
+#undef AUTOCONF_HOSTNAME
+
+#define CF_SHADES 50
+#define CF_TIMESERIESDATA 168
+#define CF_MAGDATA 48
+#define CF_MAGMARGIN 0
+
+
+struct CfDataView
+   {
+   gdImagePtr im;
+   int width;
+   int height;
+   int margin;
+   int max_x;  // Window dimensions
+   int max_y;
+   int origin_x;
+   int origin_y;
+   double scale_x;
+   double scale_y;
+   double max;
+   double min;
+   int over;
+   int under;
+   int over_dev1;
+   int over_dev2;
+   int under_dev1;
+   int under_dev2;
+   double data_E[CF_TIMESERIESDATA];
+   double data_q[CF_TIMESERIESDATA];
+   double bars[CF_TIMESERIESDATA];
+   double error_scale;
+   double range;
+   int margins;
+   char *title;
+   };
+
 /* Valid ACL syntax values, from documentation */
 
 // Valid generic permissions
@@ -73,9 +115,39 @@ int Nova_ACECount(acl_t acl);
 int Nova_PermsetEquals(acl_permset_t first, acl_permset_t second);
 #endif
 
+
+/* cfcore.c */
+
+void Nova_ShowAllGraphs(FILE *fp,char *s,struct Item *el);
+void Nova_ShowGraph(FILE *fp, int i,time_t last,enum observables obs);
+void Nova_MainPage(char *s,struct Item *el);
+void Nova_OtherPages(char *s,struct Item *el);
+
+/* coordinates.c */
+
+int Nova_ViewPortY(struct CfDataView *cfv,double y,double offset);
+int Nova_ViewPortX(struct CfDataView *cfv,double x);
+
 /* database.c */
 
 int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
+
+/* graphs.c */
+
+void Nova_Title(struct CfDataView *cfv,int col);
+void Nova_BuildGraphs(struct CfDataView *cfv);
+void Nova_MakePalette(struct CfDataView *cfv);
+double Nova_GetNowPosition(time_t now);
+void Nova_IncludeFile(FILE *fout,char *name);
+void Nova_NavBar(FILE *fout);
+
+/* histogram.c */
+
+void Nova_ReadHistogram(struct CfDataView *cfv, char *filename);
+void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
+void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum);
+void Nova_ViewHisto(struct CfDataView *cfv,char *filename, char *title,enum observables obs);
+struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *name,enum observables obs);
 
 /* html.c */
 
@@ -209,6 +281,22 @@ int Nova_TableExists(CfdbConn *cfdb,char *name);
 struct Rlist *Nova_GetSQLTables(CfdbConn *cfdb);
 void Nova_ListTables(int type,char *query);
 
+/* timeseries.c */
+
+int Nova_ReadTimeSeries(struct CfDataView *cfv, char *filename);
+void Nova_DrawQAxes(struct CfDataView *cfv,int col);
+void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3);
+int Nova_ViewWeek(struct CfDataView *cfv,char *filename, char *title,enum observables obs);
+void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs);
+
+/* magnify.c */
+
+void Nova_ReadMagTimeSeries(struct CfDataView *cfv, char *filename);
+void Nova_DrawMagQAxes(struct CfDataView *cfv,int col);
+void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3);
+void Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs);
+void Nova_AnalyseMag(struct CfDataView *cfv,char *name,enum observables obs);
+
 /***************************************************************************/
 
 #define NOVA_USES "relies on promise from"
@@ -225,10 +313,11 @@ void Nova_ListTables(int type,char *query);
 
 #define NOVA_HISTORYDB "history.db"
 
-
 struct month_days
    {
    char *m;
    int d;
    };
-    
+
+
+

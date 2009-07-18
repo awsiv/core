@@ -746,7 +746,7 @@ if (impacted == NULL)
    return;
    }
 
-CfOut(cf_verbose,"","Looking for control dependencies for promise \"%s\"\n",promise_id);
+CfOut(cf_verbose,""," ?? Look for promise dependencies for \"%s\"\n",promise_id);
   
 /* So now we have the list of classes to scan for and we must undertake this
  expensive search */
