@@ -79,10 +79,12 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
       printf("Could not write to directory %s\n",ip->name);
       continue;
       }
+
+   Nova_UnPackNerveBundle();
    
    for (i = 0; i < CF_OBSERVABLES; i++)
       {
-      LookUpAggregateClassName(i,name,ip->name);
+      Nova_LookupAggregateClassName(i,name);
 
       if (strcmp(name,"spare") == 0)
          {

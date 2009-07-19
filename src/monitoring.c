@@ -143,7 +143,7 @@ return;
 
 /*****************************************************************************/
 
-void Nova_LookupAggregateClassName(int n,char *name,char *hostname)
+void Nova_LookupAggregateClassName(int n,char *name)
 
 { FILE *fin;
   char filename[CF_BUFSIZE];
@@ -155,7 +155,7 @@ if (SLOTS[0][0][0] != 0)
    return;
    }
 
-snprintf(filename,CF_BUFSIZE-1,"%s/%s/ts_key",AGGREGATION,hostname);
+snprintf(filename,CF_BUFSIZE-1,"ts_key");
 
 if ((fin = cf_fopen(filename,"r")) == NULL)
    {

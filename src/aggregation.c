@@ -9,7 +9,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-
 /*****************************************************************************/
 /*                                                                           */
 /* File: aggregation.c                                                       */
@@ -23,6 +22,10 @@ void Nova_Aggregate()
 { struct CfDataView cfv;
   struct stat sb;
 
+Banner("Constructing Nova mag bundles");
+  
+Nova_MagProbe();
+  
 if (strlen(AGGREGATION) == 0)
    {
    return;
@@ -37,6 +40,8 @@ if (!S_ISDIR(sb.st_mode))
    {
    return;
    }
+
+Banner("Nova rendering host reports");
 
 Nova_BuildGraphs(&cfv); 
 }
@@ -54,20 +59,7 @@ if (stat(filename,&sb) != -1)
    {
    if (S_ISDIR(sb.st_mode))
       {
-      Nova_PackNervBundle();
-      }
-   }
-
-if (strlen(AGGREGATION) == 0)
-   {
-   return;
-   }
-
-if (stat(AGGREGATION,&sb) != -1)
-   {
-   if (S_ISDIR(sb.st_mode))
-      {
-      Nova_UnPackNervBundle();
+      Nova_PackNerveBundle();
       }
    }
 }
@@ -109,28 +101,29 @@ void Nova_PackNerveBundle()
 
 /* First the slowly changing (adiabatic variables) */
   
-snprintf(filename,CF_BUFSIZE-1,"%s/mean_field.nov",CFWORKDIR);
+snprintf(filename,CF_BUFSIZE-1,"%s/reports/mean_field.nov",CFWORKDIR);
 
 if ((fout = fopen(filename,"w")) == NULL)
    {
-   CfOut(cf_error,"fopen"," !! Cannot open nerve bundle");
+   CfOut(cf_error,"fopen"," !! Cannot write nerve bundle %s");
    return;
    }
 
 for (i = 0; slow[i] != NULL; i++)
    {
-   snprintf(filename,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,slow[i]);
+   snprintf(filename,CF_BUFSIZE-1,"%s/reports/%s",CFWORKDIR,slow[i]);
 
-   if ((fin = fopen(filename,"w")) == NULL)
+   if ((fin = fopen(filename,"r")) == NULL)
       {
-      CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle");
+      CfOut(cf_verbose,"fopen"," !! Cannot read nerve fibre %s",filename);
       continue;
       }
 
-   fprintf(fout,"%%CFENGINE: %s\n",slow[i]);
+   fprintf(fout,"!!CFENGINE: %s\n",slow[i]);
    
    while (!feof(fin))
       {
+      buffer[0] = '\0';
       fgets(buffer,CF_BUFSIZE-1,fin);
 
       if (feof(fin))
@@ -138,7 +131,10 @@ for (i = 0; slow[i] != NULL; i++)
          break;
          }
       
-      fwrite(buffer,strlen(buffer),1,fout);
+      if (strlen(buffer) > 0)
+         {
+         fwrite(buffer,strlen(buffer),1,fout);
+         }
       }
    
    fclose(fin);   
@@ -148,22 +144,26 @@ for (i = 0; slow[i] != NULL; i++)
 
 snprintf(filename,CF_BUFSIZE-1,"%s/state/ts_key",CFWORKDIR);
 
-if ((fin = fopen(filename,"w")) != NULL)
+if ((fin = fopen(filename,"r")) != NULL)
    {
    CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle");
 
-   fprintf(fout,"%%CFENGINE: ts_key\n");
+   fprintf(fout,"!!CFENGINE: ts_key\n");
    
    while (!feof(fin))
       {
+      buffer[0] = '\0';
       fgets(buffer,CF_BUFSIZE-1,fin);
       
       if (feof(fin))
          {
          break;
          }
-      
-      fwrite(buffer,strlen(buffer),1,fout);
+
+      if (strlen(buffer) > 0)
+         {
+         fwrite(buffer,strlen(buffer),1,fout);
+         }
       }
    
    fclose(fin);   
@@ -184,7 +184,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    Nova_WriteSignalData(fout,filename);
    snprintf(filename,CF_BUFSIZE-1,"%s.q",name);
    Nova_WriteSignalData(fout,filename);
-   snprintf(filename,CF_BUFSIZE-1,"%s.hist",name);
+   snprintf(filename,CF_BUFSIZE-1,"%s.distr",name);
    Nova_WriteSignalData(fout,filename);
    snprintf(filename,CF_BUFSIZE-1,"%s_0.yr",name);
    Nova_WriteSignalData(fout,filename);
@@ -198,7 +198,7 @@ fclose(fout);
 
 /* First the fluctuating (variables) */
 
-snprintf(filename,CF_BUFSIZE-1,"%s/fluctuations.nov",CFWORKDIR);
+snprintf(filename,CF_BUFSIZE-1,"%s/reports/fluctuations.nov",CFWORKDIR);
 
 if ((fout = fopen(filename,"w")) == NULL)
    {
@@ -208,26 +208,30 @@ if ((fout = fopen(filename,"w")) == NULL)
 
 for (i = 0; fast[i] != NULL; i++)
    {
-   snprintf(filename,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,fast[i]);
+   snprintf(filename,CF_BUFSIZE-1,"%s/reports/%s",CFWORKDIR,fast[i]);
 
-   if ((fin = fopen(filename,"w")) == NULL)
+   if ((fin = fopen(filename,"r")) == NULL)
       {
       CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle");
       continue;
       }
 
-   fprintf(fout,"%%CFENGINE: %s\n",fast[i]);
+   fprintf(fout,"!!CFENGINE: %s\n",fast[i]);
    
    while (!feof(fin))
       {
+      buffer[0] = '\0';
       fgets(buffer,CF_BUFSIZE-1,fin);
 
       if (feof(fin))
          {
          break;
          }
-      
-      fwrite(buffer,strlen(buffer),1,fout);
+
+      if (strlen(buffer) > 0)
+         {
+         fwrite(buffer,strlen(buffer),1,fout);
+         }
       }
    
    fclose(fin);   
@@ -251,39 +255,35 @@ fclose(fout);
 
 /*****************************************************************************/
 
-void Nova_UnPackNerveBundle(char *hostname)
+void Nova_UnPackNerveBundle()
     
 { FILE *fin = NULL,*fout = NULL;
   int i;
   struct stat sb1,sb2;
   char filename[CF_BUFSIZE],buffer[CF_BUFSIZE];
 
-snprintf(filename,CF_BUFSIZE-1,"%s/%s/fluctuations.nov",AGGREGATION,hostname);
-
-if (stat(filename,&sb1) == -1)
+if (stat("fluctuations.nov",&sb1) == -1)
    {
    return;
    }
 
-snprintf(filename,CF_BUFSIZE-1,"%s/%s/rootprocs.mag",AGGREGATION,hostname);
+CfOut(cf_verbose,"","Found a fluctuation update\n");
 
-if (stat(filename,&sb2) == -1)
+if (stat("rootprocs.mag",&sb2) == -1)
    {
    }
 else
    {
    if (sb2.st_mtime > sb1.st_mtime)
       {
-      CfOut(cf_verbose,""," -> No mag updates for %s",hostname);
+      CfOut(cf_verbose,""," -> No mag updates");
       return;
       }
    }
 
-snprintf(filename,CF_BUFSIZE-1,"%s/%s/fluctuations.nov",AGGREGATION,hostname);
-  
-if ((fin = fopen(filename,"r")) == NULL)
+if ((fin = fopen("fluctuations.nov","r")) == NULL)
    {
-   CfOut(cf_error,"fopen"," !! Cannot open nerve bundle %s",filename);
+   CfOut(cf_error,"fopen"," !! Cannot open nerve bundle fluctuations.nov");
    return;
    }
 
@@ -297,22 +297,24 @@ while (!feof(fin))
       }
 
    filename[0] = '\0';
-   sscanf(buffer,"%%CFENGINE: %s\n",filename);
+   sscanf(buffer,"!!CFENGINE: %s\n",filename);
 
    if (strlen(filename) > 0)
       {
+      CfOut(cf_verbose,""," -> Located %s",filename);
+
       if (fout)
          {
          fclose(fout);
          }
-
-      snprintf(buffer,CF_BUFSIZE-1,"%s/%s",AGGREGATION,filename);
       
-      if ((fout = fopen(buffer,"w")) == NULL)
+      if ((fout = fopen(filename,"w")) == NULL)
          {
-         CfOut(cf_error,"fopen"," !! Cannot open mag fibre %s",buffer);
+         CfOut(cf_error,"fopen"," !! Cannot open mag fibre %s",filename);
          return;
-         }      
+         }
+      
+      continue;
       }
 
    fwrite(buffer,strlen(buffer),1,fout);
@@ -323,36 +325,33 @@ if (fout)
    fclose(fout);
    }
 
-fclose(fin);   
+fout = NULL;
+fclose(fin);
 
 /* Now the adiabatic variation, if updated */
 
-snprintf(filename,CF_BUFSIZE-1,"%s/%s/mean_field.nov",AGGREGATION,hostname);
-
-if (stat(filename,&sb1) == -1)
+if (stat("mean_field.nov",&sb1) == -1)
    {
    return;
    }
 
-snprintf(filename,CF_BUFSIZE-1,"%s/%s/rootprocs.q",AGGREGATION,hostname);
+CfOut(cf_verbose,"","Found a mean_state update\n");
 
-if (stat(filename,&sb2) == -1)
+if (stat("rootprocs.q",&sb2) == -1)
    {
    }
 else
    {
    if (sb2.st_mtime > sb1.st_mtime)
       {
-      CfOut(cf_verbose,""," -> No basal updates for %s",hostname);
+      CfOut(cf_verbose,""," -> No basal updates");
       return;
       }
    }
 
-snprintf(filename,CF_BUFSIZE-1,"%s/%s/mean_field.nov",AGGREGATION,hostname);
-  
-if ((fin = fopen(filename,"r")) == NULL)
+if ((fin = fopen("mean_field.nov","r")) == NULL)
    {
-   CfOut(cf_error,"fopen"," !! Cannot open mean bundle %s",filename);
+   CfOut(cf_error,"fopen"," !! Cannot open mean bundle mean_field.nov");
    return;
    }
 
@@ -366,7 +365,9 @@ while (!feof(fin))
       }
 
    filename[0] = '\0';
-   sscanf(buffer,"%%CFENGINE: %s\n",filename);
+   sscanf(buffer,"!!CFENGINE: %s\n",filename);
+
+   CfOut(cf_verbose,""," -> Located %s",filename);
 
    if (strlen(filename) > 0)
       {
@@ -375,13 +376,13 @@ while (!feof(fin))
          fclose(fout);
          }
 
-      snprintf(buffer,CF_BUFSIZE-1,"%s/%s",AGGREGATION,filename);
-      
-      if ((fout = fopen(buffer,"w")) == NULL)
+      if ((fout = fopen(filename,"w")) == NULL)
          {
-         CfOut(cf_error,"fopen"," !! Cannot open nerve fibre %s",buffer);
+         CfOut(cf_error,"fopen"," !! Cannot open nerve fibre %s",filename);
          return;
-         }      
+         }
+
+      continue;
       }
 
    fwrite(buffer,strlen(buffer),1,fout);
@@ -403,14 +404,12 @@ void Nova_WriteSignalData(FILE *fout,char *name)
 
 { double x,y;
   double count = 0, non_zero = 0;
-  char buffer[CF_BUFSIZE],filename[CF_BUFSIZE];
+  char buffer[CF_BUFSIZE];
   FILE *fin;
   
-snprintf(filename,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,name);
-  
-if ((fin = fopen(filename,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"fopen"," !! Cannot open nerve bundle %s",filename);
+   CfOut(cf_error,"fopen"," !! Cannot open nerve bundle %s",name);
    return;
    }
 
@@ -435,11 +434,11 @@ if (non_zero/count < 0.1)
    return;
    }
 
-fprintf(fout,"%%CFENGINE: %s\n",filename);
+fprintf(fout,"!!CFENGINE: %s\n",name);
    
-if ((fin = fopen(filename,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"fopen"," !! Cannot open nerve bundle %s",filename);
+   CfOut(cf_error,"fopen"," !! Cannot open nerve bundle %s",name);
    return;
    }
 

@@ -121,8 +121,8 @@ void Nova_Aggregate(void);
 void Nova_WriteSignalData(FILE *fout,char *filename);
 void Nova_MagProbe(void);
 void Nova_PackNerveBundle(void);
-void Nova_UnPackNerveBundle(char *host);
-void Nova_LookupAggregateClassName(int n,char *name,char *hostname);
+void Nova_UnPackNerveBundle(void);
+void Nova_LookupAggregateClassName(int n,char *name);
 
 /* cfcore.c */
 
