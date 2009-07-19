@@ -117,6 +117,7 @@ int Nova_PermsetEquals(acl_permset_t first, acl_permset_t second);
 
 /* aggregation.c */
 
+void Nova_Aggregate(void);
 void Nova_WriteSignalData(FILE *fout,char *filename);
 void Nova_MagProbe(void);
 void Nova_PackNerveBundle(void);

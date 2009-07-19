@@ -18,6 +18,31 @@
 /*                                                                           */
 /*****************************************************************************/
 
+void Nova_Aggregate()
+
+{ struct CfDataView cfv;
+  struct stat sb;
+
+if (strlen(AGGREGATION) == 0)
+   {
+   return;
+   }
+
+if (stat(AGGREGATION,&sb) == -1)
+   {
+   return;
+   }
+
+if (!S_ISDIR(sb.st_mode))
+   {
+   return;
+   }
+
+Nova_BuildGraphs(&cfv); 
+}
+
+/*****************************************************************************/
+
 void Nova_MagProbe()
 
 { char filename[CF_BUFSIZE],buffer[CF_BUFSIZE];
@@ -31,6 +56,11 @@ if (stat(filename,&sb) != -1)
       {
       Nova_PackNervBundle();
       }
+   }
+
+if (strlen(AGGREGATION) == 0)
+   {
+   return;
    }
 
 if (stat(AGGREGATION,&sb) != -1)
