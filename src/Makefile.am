@@ -20,6 +20,7 @@ libcfnova_la_SOURCES =						\
 	ldap.c							\
 	registry.c						\
 	monitoring.c						\
+	aggregation.c						\
 	server.c						\
 	promises.c						\
 	processes.c						\

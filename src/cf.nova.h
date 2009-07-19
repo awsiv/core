@@ -115,6 +115,13 @@ int Nova_ACECount(acl_t acl);
 int Nova_PermsetEquals(acl_permset_t first, acl_permset_t second);
 #endif
 
+/* aggregation.c */
+
+void Nova_WriteSignalData(FILE *fout,char *filename);
+void Nova_MagProbe(void);
+void Nova_PackNerveBundle(void);
+void Nova_UnPackNerveBundle(char *host);
+void Nova_LookupAggregateClassName(int n,char *name,char *hostname);
 
 /* cfcore.c */
 
@@ -134,6 +141,8 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 /* graphs.c */
 
+void Nova_BuildMeters(struct CfDataView *cfv,char *hostname);
+void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired,char *s);
 void Nova_Title(struct CfDataView *cfv,int col);
 void Nova_BuildGraphs(struct CfDataView *cfv);
 void Nova_MakePalette(struct CfDataView *cfv);

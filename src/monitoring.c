@@ -141,6 +141,44 @@ Nova_GetClassName(n,name);
 return;
 }
 
+/*****************************************************************************/
+
+void Nova_LookupAggregateClassName(int n,char *name,char *hostname)
+
+{ FILE *fin;
+  char filename[CF_BUFSIZE];
+  int i;
+
+if (SLOTS[0][0][0] != 0)
+   {
+   Nova_GetClassName(n,name);
+   return;
+   }
+
+snprintf(filename,CF_BUFSIZE-1,"%s/%s/ts_key",AGGREGATION,hostname);
+
+if ((fin = cf_fopen(filename,"r")) == NULL)
+   {
+   Nova_GetClassName(n,name);
+   return;
+   }
+
+for (i = 0; i < CF_OBSERVABLES; i++)
+   {
+   if (i < ob_spare)
+      {
+      fgets(filename,CF_BUFSIZE-1,fin);
+      }
+   else
+      {
+      fscanf(fin,"%*d,%[^,],%*[^\n]",SLOTS[i-ob_spare][0]);
+      }
+   }
+
+cf_fclose(fin);
+Nova_GetClassName(n,name);
+return;
+}
 
 /*****************************************************************************/
 
