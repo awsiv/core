@@ -26,12 +26,13 @@ void Nova_BuildGraphs(struct CfDataView *cfv)
 { DIR *dirh;
   struct dirent *dirp;
   int i, count = 0;
-  char name[CF_BUFSIZE],index[16];
+  char name[CF_BUFSIZE],description[CF_BUFSIZE],index[16];
   FILE *fout;
   struct stat sb;
   struct Item *serverlist = NULL,*ip;
   struct Item *eliminate = NULL;
-
+  struct CfDataView cfv_small;
+    
 cfv->height = 300;
 cfv->width = 700; //(7*24*2)*2; // halfhour
 cfv->margin = 50;
@@ -70,7 +71,12 @@ for (dirp = readdir(dirh); dirp != NULL; dirp = readdir(dirh))
 
 closedir(dirh);
 
-/* Create host pages first */
+/* Create portal */
+
+Nova_CreateHostPortal(serverlist);
+Nova_BuildMainMeter(&cfv_small,serverlist);
+
+/* Create host pages */
 
 for (ip = serverlist; ip != NULL; ip=ip->next)
    {
@@ -84,27 +90,28 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
    
    for (i = 0; i < CF_OBSERVABLES; i++)
       {
-      Nova_LookupAggregateClassName(i,name);
+      Nova_LookupAggregateClassName(i,name,description);
 
       if (strcmp(name,"spare") == 0)
          {
          continue;
          }
 
-      if (!Nova_ViewWeek(cfv,OBS[i][0],OBS[i][1],i))
+      CfOut(cf_verbose,""," -> Detected %s/%s\n",name,description);
+
+      if (!Nova_ViewWeek(cfv,name,description,i))
          {
          snprintf(index,15,"%d",i);
          PrependItem(&eliminate,index,NULL);
-         continue;
          }
 
       CfOut(cf_verbose,"","Processing host source %s / %s",ip->name,OBS[i][0]);
 
-      Nova_ViewLatest(cfv,OBS[i][0],OBS[i][1],i);
-      Nova_ViewHisto(cfv,OBS[i][0],OBS[i][1],i);
+      Nova_ViewLatest(cfv,name,description,i);
+      Nova_ViewHisto(cfv,name,description,i);
       }
 
-   Nova_BuildMeters(cfv,ip->name);
+   Nova_BuildMeters(&cfv_small,ip->name);
    Nova_MainPage(ip->name,eliminate);
    Nova_OtherPages(ip->name,eliminate);
    DeleteItemList(eliminate);
@@ -232,11 +239,14 @@ fclose(fin);
 
 /*****************************************************************************/
 
-void Nova_BuildMeters(struct CfDataView *cfv,char *hostname)
+void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list)
 
 { FILE *fout;
   char filename[CF_BUFSIZE];
- 
+  int i,kept[8],repaired[8];
+  static char *names[8] = { "zzz", "Week", "Day", "Hour", "Seen", "UpTm", "Soft", "Summ" };
+
+  
 cfv->height = 70;
 cfv->width = 500; //(7*24*2)*2; // halfhour
 cfv->margin = 5;
@@ -247,17 +257,14 @@ Nova_MakePalette(cfv);
 
 gdImageRectangle(cfv->im,5,5,505,75,ORANGE);
 
-// Bar 1
+Nova_GetAllLevels(kept,repaired,list,names);
 
-Nova_BarMeter(cfv,1,20,50,"Week");
-Nova_BarMeter(cfv,2,30,0,"Day");
-Nova_BarMeter(cfv,3,100,0,"Hour");
-Nova_BarMeter(cfv,4,100,0,"UpTm");
-Nova_BarMeter(cfv,5,100,0,"Soft");
-Nova_BarMeter(cfv,6,100,0,"Seen");
-Nova_BarMeter(cfv,7,100,0,"Summ");
+for (i = 1; i < 8; i++)
+   {
+   Nova_BarMeter(cfv,i,kept[i],repaired[i],names[i]);
+   }
 
-snprintf(filename,CF_BUFSIZE,"%s/%s/meters.png",AGGREGATION,hostname);
+snprintf(filename,CF_BUFSIZE,"meters.png");
 
 if ((fout = fopen(filename, "wb")) == NULL)
    {
@@ -276,6 +283,87 @@ gdImageDestroy(cfv->im);
 
 /*****************************************************************************/
 
+void Nova_BuildMeters(struct CfDataView *cfv,char *hostname)
+
+{ FILE *fout;
+  char filename[CF_BUFSIZE];
+  int kept,repaired;
+  
+cfv->height = 70;
+cfv->width = 500; //(7*24*2)*2; // halfhour
+cfv->margin = 5;
+
+cfv->title = "System state";
+cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
+Nova_MakePalette(cfv);
+
+gdImageRectangle(cfv->im,5,5,505,75,ORANGE);
+
+// Bar 1
+
+Nova_GetLevel("Week",&kept,&repaired);
+Nova_BarMeter(cfv,1,kept,repaired,"Week");
+Nova_GetLevel("Day",&kept,&repaired);
+Nova_BarMeter(cfv,2,kept,repaired,"Day");
+Nova_GetLevel("Hour",&kept,&repaired);
+Nova_BarMeter(cfv,3,kept,repaired,"Hour");
+Nova_GetLevel("Seen",&kept,&repaired);
+Nova_BarMeter(cfv,4,kept,repaired,"Seen");
+Nova_GetLevel("UpTm",&kept,&repaired);
+Nova_BarMeter(cfv,5,kept,repaired,"UpTm");
+Nova_GetLevel("Soft",&kept,&repaired);
+Nova_BarMeter(cfv,6,kept,repaired,"Soft");
+Nova_GetLevel("Summ",&kept,&repaired);
+Nova_BarMeter(cfv,7,kept,repaired,"Summ");
+
+snprintf(filename,CF_BUFSIZE,"meters.png");
+
+if ((fout = fopen(filename, "wb")) == NULL)
+   {
+   return;
+   }
+else
+   {
+   CfOut(cf_verbose,""," -> Making %s\n",filename);
+   }
+    
+gdImagePng(cfv->im, fout);
+fclose(fout);
+
+gdImageDestroy(cfv->im);
+}
+
+/*****************************************************************************/
+
+void Nova_CreateHostPortal(struct Item *list)
+
+{ FILE *fout;
+  char filename[CF_BUFSIZE];
+  struct Item *ip;
+  
+snprintf(filename,CF_BUFSIZE,"host_portal.html");
+
+if ((fout = fopen(filename, "w")) == NULL)
+   {
+   return;
+   }
+
+NovaHtmlHeader(fout,"Host Directory",STYLESHEET,WEBDRIVER,BANNER);
+
+fprintf(fout,"<table>\n");
+
+for (ip = list; ip != NULL; ip=ip->next)
+   {
+   fprintf(fout,"<tr><td>%s</td><td><a href=\"%s/mainpage.html\"><img src=\"%s/meters.png\"></a></td></tr>",ip->name,ip->name,ip->name);
+   }
+
+fprintf(fout,"</table>\n");
+NovaHtmlFooter(fout,FOOTER);
+fclose(fout);
+}
+
+/*****************************************************************************/
+
 void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired,char *s)
 
 { int n = number;
@@ -283,6 +371,7 @@ void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired
   int width = 40,offset = 27;
   int colour,x,y;
   double count;
+  char ss[CF_MAXVARSIZE];
 
 count = 0;
   
@@ -309,6 +398,92 @@ for (y = 68; y > 10; y -= 3)
    count++;
    }
 
+snprintf(ss,CF_MAXVARSIZE-1,"%.1lf",kept);
+
 gdImageString(cfv->im,gdFontGetLarge(),n*offset+m*width+5,40,s,BLACK);
+gdImageString(cfv->im,gdFontGetLarge(),n*offset+m*width+5,55,ss,WHITE);
 }
 
+/*****************************************************************************/
+
+void Nova_GetLevel(char *id,int *kept,int *repaired)
+
+{ FILE *fin;
+  char buf[CF_BUFSIZE];
+  double a = 0, b= 0;
+  
+*kept = 0;
+*repaired = 0;
+  
+if ((fin = fopen("comp_key","r")) == NULL)
+   {
+   return;
+   }
+
+while(!feof(fin))
+   {
+   fgets(buf,CF_BUFSIZE-1,fin);
+
+   if (strncmp(buf,id,strlen(id)) == 0)
+      {
+      sscanf(buf,"%*s %lf %lf",&a,&b);
+      *kept = (int)(a+0.5);
+      *repaired = (int)(b+0.5);
+      }
+   }
+
+fclose(fin);
+}
+
+/*****************************************************************************/
+
+void Nova_GetAllLevels(int *kept,int *repaired,struct Item *list,char **names)
+
+{ FILE *fin;
+  char buf[CF_BUFSIZE];
+  double a = 0, b=0,count = 0,aa[8],bb[8];
+  struct Item *ip;
+  int i;
+
+for (i = 0; i < 8; i++)
+   {
+   aa[i] = 0;
+   bb[i] = 0;
+   }
+  
+for (ip = list; ip != NULL; ip=ip->next)
+   {
+   count++;
+
+   snprintf(buf,CF_BUFSIZE-1,"%s/comp_key",ip->name);
+   
+   if ((fin = fopen(buf,"r")) == NULL)
+      {
+      return;
+      }
+   
+   while(!feof(fin))
+      {
+      fgets(buf,CF_BUFSIZE-1,fin);
+
+      sscanf(buf,"%*s %lf %lf",&a,&b);
+      
+      for (i = 0; i < 8; i++)
+         {
+         if (strncmp(buf,names[i],strlen(names[i])) == 0)
+            {
+            aa[i] += a;
+            bb[i] += b;
+            }            
+         }
+      }
+   
+   fclose(fin);
+   }
+
+for (i = 0; i < 8; i++)
+   {
+   kept[i] = (int)(aa[i]/count+0.5);
+   repaired[i] = (int)(bb[i]/count+0.5);
+   }
+}

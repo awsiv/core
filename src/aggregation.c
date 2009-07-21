@@ -43,7 +43,7 @@ if (!S_ISDIR(sb.st_mode))
 
 Banner("Nova rendering host reports");
 
-Nova_BuildGraphs(&cfv); 
+Nova_BuildGraphs(&cfv);
 }
 
 /*****************************************************************************/
@@ -99,45 +99,58 @@ void Nova_PackNerveBundle()
    // OBS.mag   
    };
 
+  struct Promise *pp = NewPromise("pack_slow","Weekly view update"); 
+  struct Attributes dummyattr;
+  struct CfLock thislock;
+  
 /* First the slowly changing (adiabatic variables) */
   
 snprintf(filename,CF_BUFSIZE-1,"%s/reports/mean_field.nov",CFWORKDIR);
 
 if ((fout = fopen(filename,"w")) == NULL)
    {
-   CfOut(cf_error,"fopen"," !! Cannot write nerve bundle %s");
+   CfOut(cf_verbose,"fopen"," !! Cannot write nerve bundle %s");
    return;
    }
 
-for (i = 0; slow[i] != NULL; i++)
+memset(&dummyattr,0,sizeof(dummyattr));
+dummyattr.transaction.ifelapsed = 240;
+dummyattr.transaction.expireafter = CF_EXEC_EXPIREAFTER;
+
+thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,dummyattr,pp);
+
+if (thislock.lock != NULL)
    {
-   snprintf(filename,CF_BUFSIZE-1,"%s/reports/%s",CFWORKDIR,slow[i]);
-
-   if ((fin = fopen(filename,"r")) == NULL)
+   for (i = 0; slow[i] != NULL; i++)
       {
-      CfOut(cf_verbose,"fopen"," !! Cannot read nerve fibre %s",filename);
-      continue;
-      }
-
-   fprintf(fout,"!!CFENGINE: %s\n",slow[i]);
-   
-   while (!feof(fin))
-      {
-      buffer[0] = '\0';
-      fgets(buffer,CF_BUFSIZE-1,fin);
-
-      if (feof(fin))
+      snprintf(filename,CF_BUFSIZE-1,"%s/reports/%s",CFWORKDIR,slow[i]);
+      
+      if ((fin = fopen(filename,"r")) == NULL)
          {
+         CfOut(cf_verbose,"fopen"," !! Cannot read nerve fibre %s",filename);
+         continue;
+         }
+
+      fprintf(fout,"!!CFENGINE: %s\n",slow[i]);
+      
+      while (!feof(fin))
+         {
+         buffer[0] = '\0';
+         fgets(buffer,CF_BUFSIZE-1,fin);
+         
+         if (feof(fin))
+            {
          break;
+            }
+         
+         if (strlen(buffer) > 0)
+            {
+            fwrite(buffer,strlen(buffer),1,fout);
+            }
          }
       
-      if (strlen(buffer) > 0)
-         {
-         fwrite(buffer,strlen(buffer),1,fout);
-         }
+      fclose(fin);   
       }
-   
-   fclose(fin);   
    }
 
 /* Now semantic key */
@@ -202,7 +215,7 @@ snprintf(filename,CF_BUFSIZE-1,"%s/reports/fluctuations.nov",CFWORKDIR);
 
 if ((fout = fopen(filename,"w")) == NULL)
    {
-   CfOut(cf_error,"fopen"," !! Cannot open nerve bundle");
+   CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle");
    return;
    }
 
@@ -250,6 +263,37 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    Nova_WriteSignalData(fout,filename);
    }
 
+
+/* Now stats */
+
+snprintf(filename,CF_BUFSIZE-1,"%s/reports/comp_key",CFWORKDIR);
+
+if ((fin = fopen(filename,"r")) != NULL)
+   {
+   CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle");
+
+   fprintf(fout,"!!CFENGINE: comp_key\n");
+   
+   while (!feof(fin))
+      {
+      buffer[0] = '\0';
+      fgets(buffer,CF_BUFSIZE-1,fin);
+      
+      if (feof(fin))
+         {
+         break;
+         }
+
+      if (strlen(buffer) > 0)
+         {
+         fwrite(buffer,strlen(buffer),1,fout);
+         }
+      }
+   
+   fclose(fin);   
+   }
+
+
 fclose(fout);
 }
 
@@ -283,7 +327,7 @@ else
 
 if ((fin = fopen("fluctuations.nov","r")) == NULL)
    {
-   CfOut(cf_error,"fopen"," !! Cannot open nerve bundle fluctuations.nov");
+   CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle fluctuations.nov");
    return;
    }
 
@@ -310,7 +354,7 @@ while (!feof(fin))
       
       if ((fout = fopen(filename,"w")) == NULL)
          {
-         CfOut(cf_error,"fopen"," !! Cannot open mag fibre %s",filename);
+         CfOut(cf_verbose,"fopen"," !! Cannot open mag fibre %s",filename);
          return;
          }
       
@@ -351,7 +395,7 @@ else
 
 if ((fin = fopen("mean_field.nov","r")) == NULL)
    {
-   CfOut(cf_error,"fopen"," !! Cannot open mean bundle mean_field.nov");
+   CfOut(cf_verbose,"fopen"," !! Cannot open mean bundle mean_field.nov");
    return;
    }
 
@@ -378,7 +422,7 @@ while (!feof(fin))
 
       if ((fout = fopen(filename,"w")) == NULL)
          {
-         CfOut(cf_error,"fopen"," !! Cannot open nerve fibre %s",filename);
+         CfOut(cf_verbose,"fopen"," !! Cannot open nerve fibre %s",filename);
          return;
          }
 
@@ -409,7 +453,7 @@ void Nova_WriteSignalData(FILE *fout,char *name)
   
 if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"fopen"," !! Cannot open nerve bundle %s",name);
+   CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle %s",name);
    return;
    }
 
@@ -438,7 +482,7 @@ fprintf(fout,"!!CFENGINE: %s\n",name);
    
 if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"fopen"," !! Cannot open nerve bundle %s",name);
+   CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle %s",name);
    return;
    }
 

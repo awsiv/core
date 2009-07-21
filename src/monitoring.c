@@ -104,7 +104,7 @@ UNITS[ob_spare] = NULL;
 
 /*****************************************************************************/
 
-void Nova_LookupClassName(int n,char *name)
+void Nova_LookupClassName(int n,char *name,char *desc)
 
 { FILE *fin;
   char filename[CF_BUFSIZE];
@@ -112,7 +112,7 @@ void Nova_LookupClassName(int n,char *name)
 
 if (SLOTS[0][0][0] != 0)
    {
-   Nova_GetClassName(n,name);
+   Nova_GetClassName(n,name,desc);
    return;
    }
 
@@ -120,7 +120,7 @@ snprintf(filename,CF_BUFSIZE-1,"%s/state/ts_key",CFWORKDIR);
 
 if ((fin = cf_fopen(filename,"r")) == NULL)
    {
-   Nova_GetClassName(n,name);
+   Nova_GetClassName(n,name,desc);
    return;
    }
 
@@ -132,18 +132,18 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       }
    else
       {
-      fscanf(fin,"%*d,%[^,],%*[^\n]",SLOTS[i-ob_spare][0]);
+      fscanf(fin,"%*d,%[^,],%[^\n]",SLOTS[i-ob_spare][0],SLOTS[i-ob_spare][1]);
       }
    }
 
 cf_fclose(fin);
-Nova_GetClassName(n,name);
+Nova_GetClassName(n,name,desc);
 return;
 }
 
 /*****************************************************************************/
 
-void Nova_LookupAggregateClassName(int n,char *name)
+void Nova_LookupAggregateClassName(int n,char *name,char *desc)
 
 { FILE *fin;
   char filename[CF_BUFSIZE];
@@ -151,7 +151,7 @@ void Nova_LookupAggregateClassName(int n,char *name)
 
 if (SLOTS[0][0][0] != 0)
    {
-   Nova_GetClassName(n,name);
+   Nova_GetClassName(n,name,desc);
    return;
    }
 
@@ -159,7 +159,7 @@ snprintf(filename,CF_BUFSIZE-1,"ts_key");
 
 if ((fin = cf_fopen(filename,"r")) == NULL)
    {
-   Nova_GetClassName(n,name);
+   Nova_GetClassName(n,name,desc);
    return;
    }
 
@@ -171,33 +171,38 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       }
    else
       {
-      fscanf(fin,"%*d,%[^,],%*[^\n]",SLOTS[i-ob_spare][0]);
+      fscanf(fin,"%*d,%[^,],%[^\n]",SLOTS[i-ob_spare][0],SLOTS[i-ob_spare][1]);
+
+      printf("READ %s,%s\n",SLOTS[i-ob_spare][0],SLOTS[i-ob_spare][1]);
       }
    }
 
 cf_fclose(fin);
-Nova_GetClassName(n,name);
+Nova_GetClassName(n,name,desc);
 return;
 }
 
 /*****************************************************************************/
 
-void Nova_GetClassName(int i,char *name)
+void Nova_GetClassName(int i,char *name,char *desc)
 
 {
 if (i < ob_spare)
    {
    strncpy(name,OBS[i][0],CF_MAXVARSIZE-1);
+   strncpy(desc,OBS[i][1],CF_MAXVARSIZE-1);
    }
 else
    {
    if (strlen(SLOTS[i-ob_spare][0]) > 0)
       {
       strncpy(name,SLOTS[i-ob_spare][0],CF_MAXVARSIZE-1);
+      strncpy(desc,SLOTS[i-ob_spare][1],CF_MAXVARSIZE-1);
       }
    else
       {
       strncpy(name,OBS[i][0],CF_MAXVARSIZE-1);
+      strncpy(desc,OBS[i][1],CF_MAXVARSIZE-1);
       }
    }
 }
@@ -308,11 +313,13 @@ switch (a.measure.data_type)
        if (cf_strcmp(a.measure.history_type,"weekly") == 0)
           {
           this[ob_spare+slot] = NovaExtractValueFromStream(handle,stream,a,pp);
+          CfOut(cf_verbose,""," -> Setting Nova slot %d=%s to %lf\n",ob_spare+slot,handle,this[ob_spare+slot]);
           }
        else /* static */
           {
           new_value = NovaExtractValueFromStream(handle,stream,a,pp);
           NovaNamedEvent(handle,new_value,a,pp);
+          CfOut(cf_verbose,""," -> Setting Nova slot %d=%s to %lf\n",ob_spare+slot,handle,this[ob_spare+slot]);
           }
        break;
 

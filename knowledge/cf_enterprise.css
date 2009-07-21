@@ -284,3 +284,109 @@ margin: 10px;
  background: transparent;
   color: #555;
 }
+
+/* ------------------------------------------------*/
+
+#graph img
+{ 
+
+}
+
+#histoanalysis
+{
+}
+
+#weekanalysis table
+{ 
+}
+
+#maganalysis
+{  
+
+}
+
+/* ------------------------------------------------*/
+
+#primary
+{  
+left: 3px;
+top: 6px;
+width: 650px;
+height:400px;
+}
+
+#primary ul
+{
+padding: 15px;
+list-style-type: none;
+list-style-image: none;
+border: none;
+}
+
+#primary td
+{
+padding: 5px;
+font-weight: bold;
+}
+
+#primary td:hover
+{ 
+font-weight: bold;
+background-color: #fff;
+}
+
+#primary th
+{
+padding: 10px;
+font-weight: bold;
+
+}
+
+#primary th a
+{
+color: #0a5;
+font-size: 80%;
+padding: 10px;
+font-weight: bold;
+}
+
+
+#primary th:hover
+{ 
+font-weight: bold;
+background-color: #df9500;
+}
+
+#primary table
+{
+top-margin: 170px;
+width: 100%;
+}
+
+#showvars TH { background: #aabbFF;
+     font-family: Verdana, Arial, Helvetica, sans-serif;
+     color: darkblue;
+  font-size: 10pt;
+   }
+
+#showvars TD { color: #000000;
+     background: #fff;
+     font-family: Verdana, Arial, Helvetica, sans-serif;
+     font-size: 10pt;
+     padding: 5px;
+   }
+
+#showvars PRE { font-family: "Lucida Typewriter", "Courier", monotype;
+      font-style: normal;
+     font-size: 11pt;
+background-color: #eee;
+    }
+
+table.border
+{ 
+width: 900px;
+  border-color: #4e8b8c;
+  border-style: solid;
+  border-width: 1px;
+}
+

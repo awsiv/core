@@ -9,7 +9,7 @@ topics:
 
  # This is example knowledge -- add your own
 
- Services::
+ services::
 
   "Cfengine" comment => "Cfengine automation";
   "WWW"      comment => "Web service";
@@ -22,12 +22,33 @@ topics:
 
   "Service Level Agreements";
 
- Persons::
 
- Hosts::
 
 occurrences:
- 
+
+ cfengine_knowledge_base::
+
+   "/reports/meters.png"
+
+            represents => { "status summary" },
+            representation => "image";
+
+
+ machine_resources::
+
+   "/reports/meters.png"
+
+            represents => { "status summary" },
+            representation => "image";
+
+   "reports/hosts_portal.html"
+
+            represents => { "portal" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+    
+
  outputs::
 
    "reports/(.*)/preview"
@@ -52,7 +73,6 @@ occurrences:
             web_root => "";
 
  performance_report::
-
 
    "Describes the real time it has taken on average to complete or keep promises"
 
@@ -155,7 +175,21 @@ occurrences:
 
  compliance_report::
 
-   "Show the status of each policy promise, along with average compliance. Useful for quick auditing."
+   "Show the status of alls promise, along with average compliance. Useful for quick auditing."
+
+            represents => { "description" },
+            representation => "literal";
+
+   "reports/(.*)/compliance.html"
+
+            represents => { "on $(match.1)" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+
+ promise_report::
+
+   "Show the status of named policy promises, along with average compliance. Useful for quick auditing."
 
             represents => { "description" },
             representation => "literal";
@@ -166,6 +200,7 @@ occurrences:
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
             web_root => "";
+
 
  setuid_report::
 
@@ -231,5 +266,50 @@ occurrences:
             web_root => "";
 
 
+monitor_now_report::
+
+   "reports/(.*)/mainpage.html"
+
+            represents => { "available on $(match.1)" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+
+
+monitor_history_report::
+
+   "reports/(.*)/mainpage.html"
+
+            represents => { "available on $(match.1)" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+
+monitor_summary_report::
+
+   "reports/host_portal.html"
+
+            represents => { "index portal" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+
+cfengine_knowledge_base::
+
+   "reports/host_portal.html"
+
+            represents => { "monitor portal" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+
+Hosts::
+
+   "reports/(.*)/mainpage.html"
+
+            represents => { "$(match.1)" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
 
 }

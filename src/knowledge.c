@@ -363,6 +363,7 @@ fprintf(fp,"  \"monitor now report\";\n");
 fprintf(fp,"  \"monitor history report\";\n");
 fprintf(fp,"  \"monitor summary report\";\n");
 fprintf(fp,"  \"performance report\";\n");
+fprintf(fp,"  \"promise report\";\n");
 fprintf(fp,"  \"setuid report\";\n");
 fprintf(fp,"  \"software patches report\";\n");
 fprintf(fp,"  \"variables report\";\n");
@@ -378,6 +379,9 @@ fprintf(fp,"   association => a(\"is affected by\",\"promise_types::access\",\"r
 
 fprintf(fp,"  \"compliance report\"\n");
 fprintf(fp,"    association => a(\"is based on\",\"promises\",\"reported in\");\n");
+fprintf(fp,"  \"compliance report\"\n");
+fprintf(fp,"    association => a(\"see also\",\"promise report\",\"see also\");\n");
+
 fprintf(fp,"  \"performance report\"\n");
 fprintf(fp,"    association => a(\"is based on\",\"promises\",\"reported in\");\n");
 fprintf(fp,"  \"setuid report\"\n");

@@ -198,7 +198,11 @@ void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *styleshee
   char start[32],end[32];
   char version[CF_MAXVARSIZE];
   int kept,repaired,notrepaired;
-  int i = 0;
+  int i = 0,today = false;
+  double av_day_kept = 0, av_day_repaired = 0;
+  double av_week_kept = 0, av_week_repaired = 0;
+  double av_hour_kept = 0, av_hour_repaired = 0;
+    
 
 snprintf(name,CF_BUFSIZE-1,"%s/promise.log",CFWORKDIR);
  
@@ -274,7 +278,22 @@ for (ip = file; ip != NULL; ip = ip->next)
       }
    
    sscanf(ip->name,"%31[^-]->%31[^O]Outcome of version %250[^:]: Promises observed to be kept %d%*[^0-9]%d%*[^0-9]%d",start,end,version,&kept,&repaired,&notrepaired);
-   
+
+   if (i < 12*24)
+      {
+      av_day_kept = GAverage((double)kept,av_day_kept,0.5);
+      av_day_repaired = GAverage((double)repaired,av_day_repaired,0.5);
+      }
+
+   if (i < 12*2)
+      {
+      av_hour_kept = GAverage((double)kept,av_hour_kept,0.5);
+      av_hour_repaired = GAverage((double)repaired,av_hour_repaired,0.5);      
+      }
+
+   av_week_kept = GAverage((double)kept,av_week_kept,0.1);
+   av_week_repaired = GAverage((double)repaired,av_week_repaired,0.1);
+
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
@@ -325,6 +344,20 @@ if (XML)
 
 cf_fclose(fout);
 DeleteItemList(file);
+
+snprintf(name,CF_BUFSIZE-1,"%s/reports/comp_key",CFWORKDIR);
+
+if ((fout = cf_fopen(name,"w")) == NULL)
+   {
+   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   return;
+   }
+
+fprintf(fout,"Week: %.4lf %.4lf\n",av_week_kept,av_week_repaired);
+fprintf(fout,"Day: %.4lf %.4lf\n",av_day_kept,av_day_repaired);
+fprintf(fout,"Hour: %.4lf %.4lf\n",av_hour_kept,av_hour_repaired);
+
+fclose(fout);
 }
 
 /*****************************************************************************/

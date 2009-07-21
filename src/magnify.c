@@ -23,7 +23,7 @@ extern char *UNITS[];
 
 /*****************************************************************************/
 
-void Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs)
+int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs)
     
 { int i,y,hint;
   FILE *fout;
@@ -42,10 +42,8 @@ if ((stat(oldfile,&s1) != -1) && (stat(newfile,&s2) != -1))
       {
       /* no changes */
       DATESTAMPS[obs] = s2.st_mtime;
-      return;
+      return false;
       }
-
-   DATESTAMPS[obs] = s1.st_mtime;
    }
  
 cfv->title = title;
@@ -67,8 +65,8 @@ Nova_Title(cfv,BLUE);
 
 if ((fout = fopen(newfile, "wb")) == NULL)
    {
-   CfOut(cf_error,"fopen","Cannot write %s file\n",newfile);
-   return;
+   CfOut(cf_verbose,"fopen","Cannot write %s file\n",newfile);
+   return false;
    }
 else
    {
@@ -80,6 +78,10 @@ fclose(fout);
 gdImageDestroy(cfv->im);
 
 Nova_AnalyseMag(cfv,filename,obs);
+
+stat(newfile,&s2);
+DATESTAMPS[obs] = s2.st_mtime;
+return true;
 }
 
 /**********************************************************************/
@@ -97,7 +99,6 @@ cfv->error_scale = 0;
   
 if ((fp = fopen(name,"r")) == NULL)
    {
-   printf("Can't open magnification %s\n",name);
    return;
    }
 
@@ -276,7 +277,7 @@ snprintf(fname,CF_BUFSIZE,"%s_mag.html",name);
   
 if ((fp = fopen(fname,"w")) == 0)
    {
-   CfOut(cf_error,"","Can't open magnification analysis file %s\n",fname);
+   CfOut(cf_verbose,"","Can't open magnification analysis file %s\n",fname);
    return;   
    }
 

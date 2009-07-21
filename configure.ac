@@ -14,7 +14,7 @@ dnl
 dnl The version in the next line is the only one to set
 dnl
 
-AM_INIT_AUTOMAKE(cfnova,1.0.3)   dnl remember to set version
+AM_INIT_AUTOMAKE(cfnova,1.0.4)   dnl remember to set version
 
 AM_CONFIG_HEADER(src/conf.h)
 
@@ -185,7 +185,8 @@ dnl Checks for graph support
 dnl ######################################################################
 
 AC_CHECK_HEADERS(graphviz/gvc.h)
-dnl AC_CHECK_LIB(gvc,main)
+AC_CHECK_LIB(gd,main)
+AC_CHECK_HEADERS(gd.h)
 
 dnl ######################################################################
 dnl Checks for data types

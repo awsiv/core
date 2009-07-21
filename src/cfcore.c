@@ -17,15 +17,10 @@
 /*                                                                           */
 /*****************************************************************************/
 
-
-/*****************************************************************************/
-
 void Nova_MainPage(char *host,struct Item *eliminate)
     
 { FILE *fout;
 
-mkdir("html",0755);
-    
 if ((fout = fopen("mainpage.html","w")) == NULL)
    {
    return;
@@ -44,12 +39,15 @@ void Nova_OtherPages(char *host,struct Item *eliminate)
     
 { FILE *fout;
   char name[CF_BUFSIZE],exist[CF_BUFSIZE];
-  int i;
+  char id[CF_BUFSIZE],desc[CF_BUFSIZE];
   struct stat s1,s2;
+  int i;
 
 for (i = 0; i < CF_OBSERVABLES; i++)
    {
-   if (strcmp(OBS[i][0],"spare") == 0)
+   Nova_LookupAggregateClassName(i,id,desc);
+
+   if (strcmp(id,"spare") == 0)
       {
       continue;
       }
@@ -61,8 +59,8 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       continue;
       }
 
-   snprintf(name,CF_BUFSIZE,"%s.html",OBS[i][0]);
-   snprintf(exist,CF_BUFSIZE,"%s.mag",OBS[i][0]);
+   snprintf(name,CF_BUFSIZE,"%s.html",id);
+   snprintf(exist,CF_BUFSIZE,"%s.mag",id);
 
    if (stat(name,&s1) != -1 && stat(exist,&s2) != -1)
       {
@@ -96,16 +94,19 @@ void Nova_ShowAllGraphs(FILE *fp,char *host,struct Item *eliminate)
   char mag[CF_BUFSIZE];
   char week[CF_BUFSIZE];
   char datestr[CF_MAXVARSIZE];
-
+  char name[CF_BUFSIZE],description[CF_BUFSIZE];
+  
 fprintf(fp,"<table border=1>");
  
 for (i = 0; i < CF_OBSERVABLES; i++)
     {
-    if (strcmp(OBS[i][0],"spare") == 0)
+    Nova_LookupAggregateClassName(i,name,description);
+
+    if (strcmp(name,"spare") == 0)
        {
-       break;
+       continue;
        }
-    
+
     snprintf(hist,15,"%d",i);
     
     if (IsItemIn(eliminate,hist))
@@ -118,21 +119,21 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
     fprintf(fp,"<tr>");
 
-    snprintf(img,CF_BUFSIZE,"%s",OBS[i][1]);
-    snprintf(url,CF_BUFSIZE,"%s.html",OBS[i][0]);
-    snprintf(hist,CF_BUFSIZE,"%s_hist.html",OBS[i][0]);
-    snprintf(mag,CF_BUFSIZE,"%s_mag.html",OBS[i][0]);
-    snprintf(week,CF_BUFSIZE,"%s_week.html",OBS[i][0]);
+    snprintf(img,CF_BUFSIZE,"%s",description);
+    snprintf(url,CF_BUFSIZE,"%s.html",name);
+    snprintf(hist,CF_BUFSIZE,"%s_hist.html",name);
+    snprintf(mag,CF_BUFSIZE,"%s_mag.html",name);
+    snprintf(week,CF_BUFSIZE,"%s_week.html",name);
     
     fprintf(fp,"<th nowrap><font color=\"#888888\">%s</font><br><br><a href=\"%s\">%s</a><br><small>Latest data<br>%s</small></th>\n",host,url,img,datestr);
 
-    snprintf(img,CF_BUFSIZE,"%s_mag.png",OBS[i][0]);
+    snprintf(img,CF_BUFSIZE,"%s_mag.png",name);
     fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",mag,img);
 
-    snprintf(img,CF_BUFSIZE,"%s_weekly.png",OBS[i][0]);
+    snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
     fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",week,img);
 
-    snprintf(img,CF_BUFSIZE,"%s_hist.png",OBS[i][0]);
+    snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
     fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",hist,img);
 
     fprintf(fp,"</tr>");
@@ -146,16 +147,19 @@ fprintf(fp,"</table>");
 void Nova_ShowGraph(FILE *fout,int i,time_t date,enum observables obs)
 
 { char name1[CF_BUFSIZE],name2[CF_BUFSIZE],img[CF_BUFSIZE],datestr[CF_BUFSIZE];
+  char name[CF_BUFSIZE],description[CF_BUFSIZE];
   double x1,y1,z1,x2,y2,z2;
   FILE *fp1,*fp2;
 
-snprintf(name1,CF_BUFSIZE-1,"%s.mag",OBS[i][0]);
-snprintf(img,CF_BUFSIZE-1,"%s_mag.png",OBS[i][0]);
+Nova_LookupAggregateClassName(i,name,description);
+  
+snprintf(name1,CF_BUFSIZE-1,"%s.mag",name);
+snprintf(img,CF_BUFSIZE-1,"%s_mag.png",description);
 
 snprintf(datestr,CF_MAXVARSIZE,"%s",ctime(&date));
 Chop(datestr);
 
-fprintf(fout,"<h1>%s</h1>\n",OBS[i][1]);
+fprintf(fout,"<h1>%s</h1>\n",description);
 fprintf(fout,"<h2>Last 4 hours</h2>\n");
 
 fprintf(fout,"<h4>Latest info observed %s</h4>\n",datestr);
@@ -170,7 +174,6 @@ fprintf(fout,"<tr><th bgcolor=#eeeeee>Time</th>\n<th bgcolor=#eeeeee>q</th>\n<th
    
 if ((fp1 = fopen(name1,"r")) == NULL)
    {
-   printf("ops show1 %s name1\n",name1);
    return;
    }
 
@@ -188,9 +191,9 @@ fclose(fp1);
 
 fprintf(fout,"<h2>Past and previous weeks</h2>\n");
 
-snprintf(name1,CF_BUFSIZE-1,"%s.E-sigma",OBS[i][0]);
-snprintf(name2,CF_BUFSIZE-1,"%s.q",OBS[i][0]);
-snprintf(img,CF_BUFSIZE-1,"%s_weekly.png",OBS[i][0]);
+snprintf(name1,CF_BUFSIZE-1,"%s.E-sigma",name);
+snprintf(name2,CF_BUFSIZE-1,"%s.q",name);
+snprintf(img,CF_BUFSIZE-1,"%s_weekly.png",name);
 
 fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\"></a></p>\n",img,img);
 fprintf(fout,"<p><table border=1>\n");
@@ -199,13 +202,11 @@ fprintf(fout,"<tr><th bgcolor=#eeeeee>Time</th>\n<th bgcolor=#eeeeee>q</th>\n<th
    
 if ((fp1 = fopen(name1,"r")) == NULL)
    {
-   printf("ops show1a %s name1\n",name1);
    return;
    }
 
 if ((fp2 = fopen(name2,"r")) == NULL)
    {
-   printf("ops show2 %s name2\n",name2);
    return;
    }
 

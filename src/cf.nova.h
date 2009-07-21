@@ -122,7 +122,7 @@ void Nova_WriteSignalData(FILE *fout,char *filename);
 void Nova_MagProbe(void);
 void Nova_PackNerveBundle(void);
 void Nova_UnPackNerveBundle(void);
-void Nova_LookupAggregateClassName(int n,char *name);
+void Nova_LookupAggregateClassName(int n,char *name, char *desc);
 
 /* cfcore.c */
 
@@ -150,6 +150,10 @@ void Nova_MakePalette(struct CfDataView *cfv);
 double Nova_GetNowPosition(time_t now);
 void Nova_IncludeFile(FILE *fout,char *name);
 void Nova_NavBar(FILE *fout);
+void Nova_GetLevel(char *id,int *kept,int *repaired);
+void Nova_CreateHostPortal(struct Item *list);
+void Nova_GetAllLevels(int *kept,int *repaired,struct Item *list,char **names);
+void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list);
 
 /* histogram.c */
 
@@ -203,9 +207,17 @@ LDAP *NovaQueryLDAP(char *uri,char *sec);
 int NovaStr2Scope(char *scope);
 #endif
 
+/* magnify.c */
+
+int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs);
+void Nova_ReadMagTimeSeries(struct CfDataView *cfv, char *filename);
+void Nova_DrawMagQAxes(struct CfDataView *cfv,int col);
+void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3);
+void Nova_AnalyseMag(struct CfDataView *cfv,char *name,enum observables obs);
+
 /* monitoring.c */
 
-void Nova_GetClassName(int i,char *name);
+void Nova_GetClassName(int i,char *name,char *desc);
 void NovaInitMeasurements(void);
 void Nova_HistoryUpdate(char *key,struct Averages newvals);
 void Nova_UpdateShiftAverage(struct Averages *shift_value,struct Averages *newvals);
@@ -225,7 +237,7 @@ void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Prom
 void Nova_SetMeasurementPromises(struct Item **classlist);
 void Nova_LoadSlowlyVaryingObservations(void);
 void Nova_DumpSlowlyVaryingObservations(void);
-void Nova_LookupClassName(int n,char *name);
+void Nova_LookupClassName(int n,char *name, char *desc);
 
 /* processes.c */
 
@@ -299,13 +311,6 @@ void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3);
 int Nova_ViewWeek(struct CfDataView *cfv,char *filename, char *title,enum observables obs);
 void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs);
 
-/* magnify.c */
-
-void Nova_ReadMagTimeSeries(struct CfDataView *cfv, char *filename);
-void Nova_DrawMagQAxes(struct CfDataView *cfv,int col);
-void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3);
-void Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs);
-void Nova_AnalyseMag(struct CfDataView *cfv,char *name,enum observables obs);
 
 /***************************************************************************/
 

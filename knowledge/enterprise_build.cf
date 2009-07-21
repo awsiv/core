@@ -45,8 +45,11 @@ topics:
   "system policy"   comment => "Local policy description with comments and dependencies";
   "system reports"  comment => "Reports from around the system";
   "copernicus"      comment => "Cfengine's online support knowledge base";
-  "ontology";
- 
+  "ontology"        comment => "Main index";
+
+  "machine resources" comment => "Portals to access to monitored host data",
+                 association => a("are composed from","hosts","form the bulk of"); 
+
 occurrences:
 
  copernicus::

@@ -21,14 +21,15 @@ void NovaHtmlHeader(FILE *fp,char *title,char *css,char *webdriver,char *header)
 
 {
 fprintf(fp,"<html>"
-        "  <head>"
-        "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />"
-        "    <title>"
-        "      %s"
-        "    </title>"
-        "    <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"screen\" />"
-        "  </head>"
-        "  <body>\n",title,css);
+        "  <head>\n"
+        "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />\n"
+        "    <META HTTP-EQUIV=\"refresh\" CONTENT=\"300\">\n"
+        "    <title>\n"
+        "      %s\n"
+        "    </title>\n"
+        "    <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"screen\" />\n"
+        "  </head>\n"
+        "  <body>\n\n",title,css);
 
 if (cf_strlen(header) > 0)
    {
