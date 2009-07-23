@@ -21,6 +21,8 @@ extern int BLUES[CF_SHADES];
 extern time_t DATESTAMPS[CF_OBSERVABLES];
 extern char *UNITS[];
 
+#ifdef HAVE_LIBGD
+
 /*****************************************************************************/
 
 int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs)
@@ -58,7 +60,14 @@ for (y = 0; y < cfv->height+2*cfv->margin; y++)
 
 /* Done initialization */
 
-Nova_ReadMagTimeSeries(cfv,oldfile);
+CfOut(cf_verbose,""," -> Looking for %s",oldfile);
+
+if (!Nova_ReadMagTimeSeries(cfv,oldfile))
+   {
+   CfOut(cf_verbose,"","Aborting %s\n",oldfile);
+   return false;
+   }
+
 Nova_DrawMagQAxes(cfv,BLACK);
 Nova_PlotMagQFile(cfv,LIGHTRED,GREEN,YELLOW);
 Nova_Title(cfv,BLUE);
@@ -88,10 +97,11 @@ return true;
 /* Magdata                                                            */
 /**********************************************************************/
 
-void Nova_ReadMagTimeSeries(struct CfDataView *cfv, char *name)
+int Nova_ReadMagTimeSeries(struct CfDataView *cfv, char *name)
 
 { double range,rx,ry,rq,rs,sx = 0;
   FILE *fp;
+  char buffer[CF_BUFSIZE];
 
 cfv->max = 0;
 cfv->min = 99999;
@@ -99,13 +109,22 @@ cfv->error_scale = 0;
   
 if ((fp = fopen(name,"r")) == NULL)
    {
-   return;
+   CfOut(cf_verbose,"","Cannot read mag data %s\n",name);
+   return false;
    }
 
 for (sx = 0; sx < CF_MAGDATA; sx++)
    {
    rx = rs = ry = 0;
-   fscanf(fp,"%lf %lf %lf %lf",&rx,&ry,&rs,&rq);
+
+   memset(buffer,0,CF_BUFSIZE);
+      
+   if (!fgets(buffer,CF_BUFSIZE,fp))
+      { 
+      return false;
+      }
+
+   sscanf(buffer,"%lf %lf %lf %lf",&rx,&ry,&rs,&rq);
 
    if (rq > cfv->max)
       {
@@ -159,6 +178,7 @@ cfv->scale_x = (double)cfv->width / (double)CF_MAGDATA;
 cfv->scale_y = ((double) cfv->height) / cfv->range;
 
 fclose(fp);
+return true;
 }
 
 /**********************************************************************/
@@ -307,3 +327,5 @@ fprintf(fp,"</div>\n");
 NovaHtmlFooter(fp,FOOTER);
 fclose(fp);
 }
+
+#endif

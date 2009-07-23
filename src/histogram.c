@@ -21,6 +21,8 @@ extern int BLUES[CF_SHADES];
 
 /*****************************************************************************/
 
+#ifdef HAVE_LIBGD
+
 void Nova_ViewHisto(struct CfDataView *cfv,char *filename, char *title,enum observables obs)
     
 { int i,y,hint;
@@ -57,7 +59,13 @@ for (y = 0; y < cfv->height+2*cfv->margin; y++)
 
 /* Done initialization */
 
-Nova_ReadHistogram(cfv,oldfile);
+CfOut(cf_verbose,""," -> Looking for histogram %s",oldfile);
+
+if (!Nova_ReadHistogram(cfv,oldfile))
+   {
+   return;
+   }
+
 spectrum = Nova_AnalyseHistogram(cfv,filename,obs);
 Nova_PlotHistogram(cfv,BLUES,spectrum);
 Nova_Title(cfv,BLUE);
@@ -77,10 +85,11 @@ DeleteItemList(spectrum);
 
 /**********************************************************************/
 
-void Nova_ReadHistogram(struct CfDataView *cfv, char *name)
+int Nova_ReadHistogram(struct CfDataView *cfv, char *name)
 
 { double rx,ry,rs,sx = 0;
   FILE *fp;
+  char buffer[CF_BUFSIZE];
 
 cfv->max = 0;
 cfv->min = 99999;
@@ -89,13 +98,21 @@ cfv->error_scale = 0;
 if ((fp = fopen(name,"r")) == NULL)
    {
    CfOut(cf_verbose,"","Can't open histogram %s\n",name);
-   return;
+   return false;
    }
 
 for (sx = 0; sx < CF_GRAINS; sx++)
    {
    rx = ry = 0;
-   fscanf(fp,"%lf %lf",&rx,&ry);
+
+   memset(buffer,0,CF_BUFSIZE);
+   
+   if (!fgets(buffer,CF_BUFSIZE,fp))
+      {
+      return false;
+      }
+   
+   sscanf(buffer,"%lf %lf",&rx,&ry);
 
    if (ry > cfv->max)
       {
@@ -111,7 +128,7 @@ for (sx = 0; sx < CF_GRAINS; sx++)
    }
 
 fclose(fp);
-
+return true;
 }
 
 /**********************************************************************/
@@ -314,3 +331,4 @@ fclose(fp);
 return maxima;
 }
 
+#endif

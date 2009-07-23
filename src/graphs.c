@@ -21,6 +21,8 @@ int BLUES[CF_SHADES];
 
 /*****************************************************************************/
 
+#ifdef HAVE_LIBGD
+
 void Nova_BuildGraphs(struct CfDataView *cfv)
 
 { DIR *dirh;
@@ -73,10 +75,13 @@ closedir(dirh);
 
 /* Create portal */
 
+Banner("Create Host Portal");
 Nova_CreateHostPortal(serverlist);
 Nova_BuildMainMeter(&cfv_small,serverlist);
 
 /* Create host pages */
+
+Banner("Unpack host data");
 
 for (ip = serverlist; ip != NULL; ip=ip->next)
    {
@@ -105,10 +110,12 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
          PrependItem(&eliminate,index,NULL);
          }
 
-      CfOut(cf_verbose,"","Processing host source %s / %s",ip->name,OBS[i][0]);
+      CfOut(cf_verbose,""," -> Processing host source %s / %s",ip->name,name);
 
       Nova_ViewLatest(cfv,name,description,i);
       Nova_ViewHisto(cfv,name,description,i);
+
+      CfOut(cf_verbose,""," ->Done with %s / %s",ip->name,name);
       }
 
    Nova_BuildMeters(&cfv_small,ip->name);
@@ -124,7 +131,7 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
 
 void Nova_Title(struct CfDataView *cfv,int col)
 
-{  
+{
 gdImageString(cfv->im,
               gdFontGetGiant(),
               cfv->im->sx / 2 - (strlen(cfv->title) * gdFontGetGiant()->w / 2),
@@ -453,15 +460,15 @@ for (i = 0; i < 8; i++)
   
 for (ip = list; ip != NULL; ip=ip->next)
    {
+   snprintf(buf,CF_BUFSIZE-1,"%s/comp_key",ip->name);
+
    count++;
 
-   snprintf(buf,CF_BUFSIZE-1,"%s/comp_key",ip->name);
-   
    if ((fin = fopen(buf,"r")) == NULL)
       {
-      return;
+      continue;
       }
-   
+
    while(!feof(fin))
       {
       fgets(buf,CF_BUFSIZE-1,fin);
@@ -487,3 +494,5 @@ for (i = 0; i < 8; i++)
    repaired[i] = (int)(bb[i]/count+0.5);
    }
 }
+
+#endif

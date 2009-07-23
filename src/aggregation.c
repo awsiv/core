@@ -28,11 +28,13 @@ Nova_MagProbe();
   
 if (strlen(AGGREGATION) == 0)
    {
+   CfOut(cf_inform,""," -> No aggregation point on this host");
    return;
    }
 
 if (stat(AGGREGATION,&sb) == -1)
    {
+   CfOut(cf_inform,"stat"," !! Could not read the data at the aggregation point %s",AGGREGATION);
    return;
    }
 
@@ -41,9 +43,10 @@ if (!S_ISDIR(sb.st_mode))
    return;
    }
 
+#ifdef HAVE_LIBGD
 Banner("Nova rendering host reports");
-
 Nova_BuildGraphs(&cfv);
+#endif
 }
 
 /*****************************************************************************/
@@ -345,8 +348,6 @@ while (!feof(fin))
 
    if (strlen(filename) > 0)
       {
-      CfOut(cf_verbose,""," -> Located %s",filename);
-
       if (fout)
          {
          fclose(fout);
@@ -410,8 +411,6 @@ while (!feof(fin))
 
    filename[0] = '\0';
    sscanf(buffer,"!!CFENGINE: %s\n",filename);
-
-   CfOut(cf_verbose,""," -> Located %s",filename);
 
    if (strlen(filename) > 0)
       {

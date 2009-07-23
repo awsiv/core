@@ -22,9 +22,11 @@
 # include <acl/libacl.h>
 #endif
 
+#ifdef HAVE_GD_H
 #include <gd.h>
 #include <gdfontl.h>
 #include <gdfontg.h>
+#endif
 
 #undef PACKAGE
 #undef AUTOCONF_HOSTNAME
@@ -37,7 +39,9 @@
 
 struct CfDataView
    {
+#ifdef HAVE_GD_H      
    gdImagePtr im;
+#endif
    int width;
    int height;
    int margin;
@@ -157,7 +161,7 @@ void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list);
 
 /* histogram.c */
 
-void Nova_ReadHistogram(struct CfDataView *cfv, char *filename);
+int Nova_ReadHistogram(struct CfDataView *cfv, char *filename);
 void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
 void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum);
 void Nova_ViewHisto(struct CfDataView *cfv,char *filename, char *title,enum observables obs);
@@ -210,7 +214,7 @@ int NovaStr2Scope(char *scope);
 /* magnify.c */
 
 int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs);
-void Nova_ReadMagTimeSeries(struct CfDataView *cfv, char *filename);
+int Nova_ReadMagTimeSeries(struct CfDataView *cfv, char *filename);
 void Nova_DrawMagQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3);
 void Nova_AnalyseMag(struct CfDataView *cfv,char *name,enum observables obs);

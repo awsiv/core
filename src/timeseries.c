@@ -22,6 +22,8 @@ extern char *UNITS[];
 
 /*****************************************************************************/
 
+#ifdef HAVE_LIBGD
+
 int Nova_ViewWeek(struct CfDataView *cfv,char *filename, char *title,enum observables obs)
     
 { int i,y,hint;
@@ -103,7 +105,7 @@ int Nova_ReadTimeSeries(struct CfDataView *cfv, char *filename)
 
 { double rx,ry,rs,sx = 0;
   FILE *fp;
-  char name[CF_BUFSIZE];
+  char name[CF_BUFSIZE],buffer[CF_BUFSIZE];
   int have_data = false;
 
 strcpy(name,filename);
@@ -130,7 +132,15 @@ CfOut(cf_verbose,""," -> Studying time-series %s\n",name);
 for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
    {
    rx = ry = rs = 0;
-   fscanf(fp,"%lf %lf %lf",&rx,&ry,&rs);
+
+   memset(buffer,0,CF_BUFSIZE);
+      
+   if (!fgets(buffer,CF_BUFSIZE,fp))
+      {
+      return false;
+      }
+   
+   sscanf(buffer,"%lf %lf %lf",&rx,&ry,&rs);
 
    if (ry > cfv->max)
       {
@@ -168,7 +178,14 @@ CfOut(cf_verbose,""," -> Studying time-series %s\n",name);
 
 for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
    {
-   fscanf(fp,"%lf %lf %lf",&rx,&ry,&rs);
+   memset(buffer,0,CF_BUFSIZE);
+   
+   if (!fgets(buffer,CF_BUFSIZE,fp))
+      {
+      return false;
+      }
+
+   sscanf(buffer,"%lf %lf %lf",&rx,&ry,&rs);
 
    if (ry > cfv->max)
       {
@@ -422,3 +439,5 @@ fprintf(fp,"</div>\n");
 NovaHtmlFooter(fp,FOOTER);
 fclose(fp); 
 }
+
+#endif

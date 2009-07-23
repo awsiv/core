@@ -292,26 +292,27 @@ switch (a.measure.data_type)
 
        CfOut(cf_verbose,""," -> Promise \"%s\" is numerical in nature",handle);
        
-       if ((slot = NovaGetSlotHash(handle)) < 0)
-          {
-          return;
-          }
-
-       snprintf(SLOTS[slot][0],CF_MAXVARSIZE-1,"%s",handle);
-
-       if (pp->ref)
-          {
-          snprintf(SLOTS[slot][1],CF_MAXVARSIZE-1,"%s",pp->ref);
-          }
-       else
-          {
-          snprintf(SLOTS[slot][1],CF_MAXVARSIZE-1,"User defined measure");
-          }
        
        stream = NovaGetMeasurementStream(a,pp);
        
        if (cf_strcmp(a.measure.history_type,"weekly") == 0)
-          {
+          {                 
+          if ((slot = NovaGetSlotHash(handle)) < 0)
+             {
+             return;
+             }
+          
+          snprintf(SLOTS[slot][0],CF_MAXVARSIZE-1,"%s",handle);
+          
+          if (pp->ref)
+             {
+             snprintf(SLOTS[slot][1],CF_MAXVARSIZE-1,"%s",pp->ref);
+             }
+          else
+             {
+             snprintf(SLOTS[slot][1],CF_MAXVARSIZE-1,"User defined measure");
+             }
+          
           this[ob_spare+slot] = NovaExtractValueFromStream(handle,stream,a,pp);
           CfOut(cf_verbose,""," -> Setting Nova slot %d=%s to %lf\n",ob_spare+slot,handle,this[ob_spare+slot]);
           }
@@ -319,7 +320,6 @@ switch (a.measure.data_type)
           {
           new_value = NovaExtractValueFromStream(handle,stream,a,pp);
           NovaNamedEvent(handle,new_value,a,pp);
-          CfOut(cf_verbose,""," -> Setting Nova slot %d=%s to %lf\n",ob_spare+slot,handle,this[ob_spare+slot]);
           }
        break;
 
@@ -482,7 +482,7 @@ void Nova_SetMeasurementPromises(struct Item **classlist)
   struct Scope *ptr;
   struct Rlist *rp;
   int i;
-  
+
 snprintf(dbname,CF_BUFSIZE-1,"%s/state/nova_measures.db",CFWORKDIR);
           
 if (!OpenDB(dbname,&dbp))
@@ -496,24 +496,31 @@ if ((errno = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
    return;
    }
 
+memset(&key, 0, sizeof(key));
+memset(&stored, 0, sizeof(stored));
+
 /* Get the database values, if any */
  
 while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
    {
-   strcpy(eventname,(char *)key.data);
-   
    if (stored.data != NULL)
       {
+      strcpy(eventname,(char *)key.data);
       memcpy(&entry,stored.data,sizeof(entry));
-      }
 
-   snprintf(assignment,CF_BUFSIZE-1,"value_%s=%s",eventname,entry.Q.q);
-   AppendItem(classlist,assignment,NULL);
-   snprintf(assignment,CF_BUFSIZE-1,"average_%s=%s",eventname,entry.Q.expect);
-   AppendItem(classlist,assignment,NULL);
-   snprintf(assignment,CF_BUFSIZE-1,"var_%s=%s",eventname,entry.Q.var);
-   AppendItem(classlist,assignment,NULL);
+      CfOut(cf_verbose,""," -> Setting measurement event %s\n",eventname);
+
+      snprintf(assignment,CF_BUFSIZE-1,"value_%s=%.2lf",eventname,entry.Q.q);
+      AppendItem(classlist,assignment,NULL);
+      snprintf(assignment,CF_BUFSIZE-1,"av_%s=%.2lf",eventname,entry.Q.expect);
+      AppendItem(classlist,assignment,NULL);
+      snprintf(assignment,CF_BUFSIZE-1,"dev_%s=%.2lf",eventname,sqrt(entry.Q.var));
+      AppendItem(classlist,assignment,NULL);
+      }
    }
+
+
+dbp->close(dbp,0);
 
 /* Get the directly discovered environment data from sys context 
 
@@ -561,8 +568,6 @@ for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
       }
    }
 */
-
-dbp->close(dbp,0);
 }
 
 /*****************************************************************************/
@@ -607,25 +612,25 @@ while (dbcp->c_get(dbcp, &key, &stored, DB_NEXT) == 0)
    if (stored.data != NULL)
       {
       strncpy(rval,stored.data,CF_BUFSIZE-1);
-      }
-
-   switch (type)
-      {
-      case cf_str:
-      case cf_int:
-      case cf_real:
-          NewScalar("sys",lval,rval,type);
-          break;
-
-      case cf_slist:
-          list = SplitStringAsRList(rval,',');
-          NewList("sys",lval,list,cf_slist);
-          DeleteRlist(list);
-          break;
-
-      case cf_counter:
-          NewScalar("sys",lval,rval,cf_str);
-          break;
+      
+      switch (type)
+         {
+         case cf_str:
+         case cf_int:
+         case cf_real:
+             NewScalar("mon",lval,rval,type);
+             break;
+             
+         case cf_slist:
+             list = SplitStringAsRList(rval,',');
+             NewList("mon",lval,list,cf_slist);
+             DeleteRlist(list);
+             break;
+             
+         case cf_counter:
+             NewScalar("mon",lval,rval,cf_str);
+             break;
+         }
       }
    }
 
@@ -683,9 +688,8 @@ while (dbcp->c_get(dbcp, &key, &stored, DB_NEXT) == 0)
    if (stored.data != NULL)
       {
       strncpy(rval,stored.data,CF_BUFSIZE-1);
+      fprintf(fout,"%s:%s\n",lval,rval);
       }
-
-   fprintf(fout,"%s:%s\n",lval,rval);
    }
 
 dbp->close(dbp,0);
@@ -1338,6 +1342,7 @@ else
    ev_new.Q.var = 0.0;
    }
 
+CfOut(cf_verbose,""," -> Wrote scalar named event %s = (%.2lf,%.2lf,%.2lf) -- no time-series slot needed",eventname,ev_new.Q.q,ev_new.Q.expect,sqrt(ev_new.Q.var));
 WriteDB(dbp,eventname,&ev_new,sizeof(ev_new));
 
 dbp->close(dbp,0);
