@@ -3,12 +3,12 @@
 /*********************/
 
 [Service_Level_Agreements: Contracts_and_Agreements = "Service Level Agreements"]
-[DB: Services = "Relational database service (DB)"]
-[LDAP: Services = "Directory Service (LDAP)"]
-[NFS: Services = "Network File System (storage) (NFS)"]
-[DNS: Services = "Domain Name Service (DNS)"]
-[WWW: Services = "Web service (WWW)"]
-[Cfengine: Services = "Cfengine automation (Cfengine)"]
+[DB: services = "Relational database service (DB)"]
+[LDAP: services = "Directory Service (LDAP)"]
+[NFS: services = "Network File System (storage) (NFS)"]
+[DNS: services = "Domain Name Service (DNS)"]
+[WWW: services = "Web service (WWW)"]
+[Cfengine: services = "Cfengine automation (Cfengine)"]
 [promise_knowledge_cf_41: promises = "Generate knowledge associative graphs (promise_knowledge_cf_41)"]
 
 [is_a_promise_of_type = "is a promise of type" 
@@ -1012,7 +1012,11 @@
 [models_of_organization: Research = "models of organization"]
 [models_of_knowledge: Research = "models of knowledge"]
 [models_of_system_administration: Research = "models of system administration"]
-[ontology: cfengine_knowledge_base = "ontology"]
+[machine_resources: cfengine_knowledge_base = "Portals to access to monitored host data (machine resources)"]
+
+[are_composed_from = "are composed from" 
+ = "form the bulk of" / unknown_association_counterpart]
+[ontology: cfengine_knowledge_base = "Main index (ontology)"]
 [copernicus: cfengine_knowledge_base = "Cfengine's online support knowledge base (copernicus)"]
 [system_reports: cfengine_knowledge_base = "Reports from around the system (system reports)"]
 [system_policy: cfengine_knowledge_base = "Local policy description with comments and dependencies (system policy)"]
@@ -2356,6 +2360,7 @@ __tm_impr_f__( self_healing : models_of_system_administration, __bv_ : any)
 __tm_impr_f__( autonomics : models_of_system_administration, __bv_ : any)
 __tm_impr_f__( computer_immunology : models_of_system_administration, __bv_ : any)
 is_implemented_in( promise_theory : models_of_system_administration, cfengine : bundles)
+are_composed_from( machine_resources : cfengine_knowledge_base, hosts : any)
 
 /*********************/
 /* Occurrences       */
@@ -6952,7 +6957,15 @@ is_implemented_in( promise_theory : models_of_system_administration, cfengine : 
 
  /* occurrences of variables_report */
 
+{variables_report,on_192_168_1_100, "/reports/192.168.1.100/variables.html"}
+
+ /* occurrences of variables_report */
+
 {variables_report,description, [[Shows the values of variables used on each host. Some discovered, some defined.]]}
+
+ /* occurrences of software_patches_report */
+
+{software_patches_report,status_192_168_1_100, "/reports/192.168.1.100/software_patch_status.html"}
 
  /* occurrences of software_patches_report */
 
@@ -6960,15 +6973,43 @@ is_implemented_in( promise_theory : models_of_system_administration, cfengine : 
 
  /* occurrences of setuid_report */
 
+{setuid_report,on_192_168_1_100, "/reports/192.168.1.100/setuid.html"}
+
+ /* occurrences of setuid_report */
+
 {setuid_report,description, [[List the discovered setuid/setgid root programs on the system (Unix only)]]}
+
+ /* occurrences of performance_report */
+
+{performance_report,on_192_168_1_100, "/reports/192.168.1.100/performance.html"}
 
  /* occurrences of performance_report */
 
 {performance_report,description, [[Describes the real time it has taken on average to complete or keep promises]]}
 
+ /* occurrences of monitor_summary_report */
+
+{monitor_summary_report,index_portal, "/reports/host_portal.html"}
+
+ /* occurrences of monitor_history_report */
+
+{monitor_history_report,available_on_192_168_1_100, "/reports/192.168.1.100/mainpage.html"}
+
+ /* occurrences of monitor_now_report */
+
+{monitor_now_report,available_on_192_168_1_100, "/reports/192.168.1.100/mainpage.html"}
+
+ /* occurrences of lastseen_report */
+
+{lastseen_report,on_192_168_1_100, "/reports/192.168.1.100/lastseen.html"}
+
  /* occurrences of lastseen_report */
 
 {lastseen_report,description, [[When was the last time the current host contacted or was contacted by another? (+) indicates contacted, (-) indictaes was contacted by.]]}
+
+ /* occurrences of installed_software_report */
+
+{installed_software_report,on_192_168_1_100, "/reports/192.168.1.100/software_packages.html"}
 
  /* occurrences of installed_software_report */
 
@@ -6980,11 +7021,23 @@ is_implemented_in( promise_theory : models_of_system_administration, cfengine : 
 
  /* occurrences of file_changes_report */
 
+{file_changes_report,on_192_168_1_100, "/reports/192.168.1.100/file_changes.html"}
+
+ /* occurrences of file_changes_report */
+
 {file_changes_report,description, [[A log of changes to files promised under change monitoring]]}
 
  /* occurrences of compliance_report */
 
-{compliance_report,description, [[Show the status of each policy promise, along with average compliance. Useful for quick auditing.]]}
+{compliance_report,on_192_168_1_100, "/reports/192.168.1.100/compliance.html"}
+
+ /* occurrences of compliance_report */
+
+{compliance_report,description, [[Show the status of alls promise, along with average compliance. Useful for quick auditing.]]}
+
+ /* occurrences of classes_report */
+
+{classes_report,on_192_168_1_100, "/reports/192.168.1.100/classes.html"}
 
  /* occurrences of classes_report */
 
@@ -7187,6 +7240,18 @@ aths through a topic map can relate different stories. An entire story promises 
 
 {promise_theory,definitions, [[A model for representing systems of interacting parts, such as computer networks. Orginally described by Mark Burgess to describe cfengine as no other models were suitable.]]}
 
+ /* occurrences of machine_resources */
+
+{machine_resources,status_summary,"Image at /reports/meters.png"}
+
+ /* occurrences of machine_resources */
+
+{machine_resources,Explanation, [[Portals to access to monitored host data]]}
+
+ /* occurrences of ontology */
+
+{ontology,Explanation, [[Main index]]}
+
  /* occurrences of copernicus */
 
 {copernicus,Support_knowledge, "https://cfengine.com/copernicus/"}
@@ -7209,7 +7274,11 @@ aths through a topic map can relate different stories. An entire story promises 
 
  /* occurrences of cfengine_knowledge_base */
 
-{cfengine_knowledge_base,Origin,"Image at /img/cfknowledge.png"}
+{cfengine_knowledge_base,monitor_portal, "/reports/host_portal.html"}
+
+ /* occurrences of cfengine_knowledge_base */
+
+{cfengine_knowledge_base,status_summary,"Image at /reports/meters.png"}
 
  /* occurrences of cfengine_knowledge_base */
 

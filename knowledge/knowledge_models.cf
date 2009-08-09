@@ -19,9 +19,10 @@ models_of_system_administration::
 
   "promise theory"     association => a("is implemented in","cfengine","is the reference implementation of");
   "convergent operators";
-  "computer immunology" association => A("$(tm.impr[f])","@(bv)","$(tm.impr[b])");
-  "autonomics"          association => A("$(tm.impr[f])","@(bv)","$(tm.impr[b])");
-  "self-healing"        association => A("$(tm.impr[f])","@(bv)","$(tm.impr[b])");
+  "computer immunology" association => A("enhances","@(bv)","is enhanced by");
+  "autonomics"          association => A("enhances","@(bv)","is enhanced by");
+  "self-healing"        association => A("enhances","@(bv)","is enhanced by");
+
 
 models_of_knowledge::
 
@@ -32,11 +33,11 @@ models_of_organization::
    "homogeneous system";
    "heterogeneous system";
    "peer to peer network";
-   "hierarchical structure"  association => a("$(tm.same[f])","object orientation","$(tm.same[f])");
-   "service orientation"     association => a("$(tm.same[f])","peer to peer network","$(tm.same[f])");
-   "aspect paradigm"         association => a("$(tm.same[f])","aspect orientation","$(tm.same[f])");
-   "object paradigm"         association => a("$(tm.same[f])","object orientation","$(tm.same[f])");
-   "cascading"               association => a("$(tm.same[f])","hierarchical structure","$(tm.same[f])");
+   "hierarchical structure"  association => a("is the same as","object orientation","is the same as");
+   "service orientation"     association => a("is the same as","peer to peer network","is the same as");
+   "aspect paradigm"         association => a("is the same as","aspect orientation","is the same as");
+   "object paradigm"         association => a("is the same as","object orientation","is the same as");
+   "cascading"               association => a("is the same as","hierarchical structure","is the same as");
    "overlapping sets";
 
 convergent_operators::

@@ -984,7 +984,7 @@ struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp)
   FILE *fin = NULL;
   mode_t maskval = 0;
 
-if (cf_strcmp(a.measure.stream_type,"pipe") == 0)
+if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
    {
    if (!IsExecutable(GetArg0(pp->promiser)))
       {

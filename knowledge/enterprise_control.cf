@@ -20,7 +20,7 @@ sql_connection_db => "mysql";
 query_output => "html";
 query_engine => "index.php";
 
-style_sheet => "cf_enterprise.css";
+style_sheet => "/knowledge/cf_enterprise.css";
 
 html_banner => "<div id=\"top\">      <div id=\"search\">
         <form method=\"post\" action=\"$(query_engine)\">

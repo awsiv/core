@@ -47,8 +47,12 @@ topics:
   "copernicus"      comment => "Cfengine's online support knowledge base";
   "ontology"        comment => "Main index";
 
-  "machine resources" comment => "Portals to access to monitored host data",
-                 association => a("are composed from","hosts","form the bulk of"); 
+  "machine resources" comment => "Portals to access to monitored host data";
+
+machine_resources::
+
+   "hosts" comment => "A general term for computers that run applications of any kind",
+       association => a("form the bulk of","machine resources","are composed from"); 
 
 occurrences:
 

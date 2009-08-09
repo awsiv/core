@@ -28,18 +28,19 @@ occurrences:
 
  cfengine_knowledge_base::
 
-   "/reports/meters.png"
+   "reports/meters.png"
 
-            represents => { "status summary" },
-            representation => "image";
-
+            represents => { "status summary", "/knowledge/reports/host_portal.html" },
+            representation => "image",
+            web_root => "/reports/knowledge/host_portal.html";
 
  machine_resources::
 
-   "/reports/meters.png"
+   "reports/meters.png"
 
-            represents => { "status summary" },
-            representation => "image";
+            represents => { "status summary", "/knowledge/reports/host_portal.html" },
+            representation => "image",
+            web_root => "/reports/knowledge/host_portal.html";
 
    "reports/hosts_portal.html"
 
@@ -84,7 +85,7 @@ occurrences:
             represents => { "on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
  all_locks_report::
 
@@ -98,7 +99,7 @@ occurrences:
             represents => { "on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
  active_locks_report::
 
@@ -112,7 +113,7 @@ occurrences:
             represents => { "on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
  hashes_report::
 
@@ -126,7 +127,7 @@ occurrences:
             represents => { "on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
  classes_report::
 
@@ -140,7 +141,7 @@ occurrences:
             represents => { "on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
  variables_report::
 
@@ -154,7 +155,7 @@ occurrences:
             represents => { "on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
 
 
@@ -171,7 +172,7 @@ occurrences:
             represents => { "on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
  compliance_report::
 
@@ -185,7 +186,7 @@ occurrences:
             represents => { "on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
  promise_report::
 
@@ -199,7 +200,7 @@ occurrences:
             represents => { "on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
 
  setuid_report::
@@ -214,7 +215,7 @@ occurrences:
             represents => { "on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
  file_changes_report::
 
@@ -228,7 +229,7 @@ occurrences:
             represents => { "on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
  installed_software_report::
 
@@ -242,7 +243,7 @@ occurrences:
             represents => { "on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
  software_patches_report::
 
@@ -256,14 +257,14 @@ occurrences:
             represents => { "status $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
    "reports/(.*)/software_patch_avail.html"
 
             represents => { "available on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
 
 monitor_now_report::
@@ -273,7 +274,7 @@ monitor_now_report::
             represents => { "available on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
 
 monitor_history_report::
@@ -283,7 +284,7 @@ monitor_history_report::
             represents => { "available on $(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
 monitor_summary_report::
 
@@ -292,7 +293,7 @@ monitor_summary_report::
             represents => { "index portal" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
 cfengine_knowledge_base::
 
@@ -301,15 +302,15 @@ cfengine_knowledge_base::
             represents => { "monitor portal" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
-Hosts::
+hosts::
 
    "reports/(.*)/mainpage.html"
 
             represents => { "$(match.1)" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
+            web_root => "/knowledge";
 
 }
