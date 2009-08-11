@@ -41,18 +41,20 @@ snprintf(fileroot,CF_BUFSIZE,"%s",filename);
 
 if ((stat(oldfile,&s1) == -1))
    {
+   CfOut(cf_verbose,""," -> No q series data for %s - abort",filename);
    return false;
    }
 
 if ((stat(newfile,&s2) == -1))
    {
+   CfOut(cf_verbose,""," -> No existing graph for %s",filename);
    }
 else
    {
    if (s2.st_mtime > s1.st_mtime)
       {
       /* no changes */
-      Debug("There are no changes in %s\n",filename);
+      CfOut(cf_verbose,""," -> No graphs up to date for %s",filename);
       return true;
       }
    }

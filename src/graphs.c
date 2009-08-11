@@ -81,8 +81,6 @@ Nova_BuildMainMeter(&cfv_small,serverlist);
 
 /* Create host pages */
 
-Banner("Unpack host data");
-
 for (ip = serverlist; ip != NULL; ip=ip->next)
    {
    if (chdir(ip->name) == -1)
@@ -92,6 +90,8 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
       }
 
    Nova_UnPackNerveBundle();
+
+   Banner(" -> Rendering reports");
    
    for (i = 0; i < CF_OBSERVABLES; i++)
       {
@@ -102,20 +102,26 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
          continue;
          }
 
+      if (i > ob_spare)
+         {
+         snprintf(description,CF_BUFSIZE-1,"measurement %s",name);
+         }
+      
       CfOut(cf_verbose,""," -> Detected %s/%s\n",name,description);
 
-      if (!Nova_ViewWeek(cfv,name,description,i))
+      if (!Nova_ViewLatest(cfv,name,description,i))
          {
          snprintf(index,15,"%d",i);
          PrependItem(&eliminate,index,NULL);
+         CfOut(cf_verbose,""," !! Eliminating %s/%s due to lack of data\n",name,description);
          }
 
       CfOut(cf_verbose,""," -> Processing host source %s / %s",ip->name,name);
 
-      Nova_ViewLatest(cfv,name,description,i);
+      Nova_ViewWeek(cfv,name,description,i);
       Nova_ViewHisto(cfv,name,description,i);
 
-      CfOut(cf_verbose,""," ->Done with %s / %s",ip->name,name);
+      CfOut(cf_verbose,""," -> Done with %s / %s",ip->name,name);
       }
 
    Nova_BuildMeters(&cfv_small,ip->name);

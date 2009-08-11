@@ -88,6 +88,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 void Nova_ShowAllGraphs(FILE *fp,char *host,struct Item *eliminate)
 
 { int i;
+  struct stat sb;
   char img[CF_BUFSIZE];
   char url[CF_BUFSIZE];
   char hist[CF_BUFSIZE];
@@ -108,10 +109,38 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        }
 
     snprintf(hist,15,"%d",i);
+
+    /* Check is data stream has stopped for this service */
     
     if (IsItemIn(eliminate,hist))
        {
+       snprintf(img,CF_BUFSIZE,"%s",description);
+       snprintf(url,CF_BUFSIZE,"%s.html",name);
+       snprintf(hist,CF_BUFSIZE,"%s_hist.html",name);
+       snprintf(mag,CF_BUFSIZE,"%s_mag.html",name);
+       snprintf(week,CF_BUFSIZE,"%s_weekly.png",name);
+
+       if (stat(week,&sb) != -1)
+          {          
+          fprintf(fp,"<tr>");
+          fprintf(fp,"<th nowrap><font color=\"#f00\">%s</font><br><br><a href=\"%s\">%s</a><br><small>Latest data<br>%s</small></th>\n",host,url,img,datestr);
+          
+          fprintf(fp,"<td bgcolor=red><center>Data steam terminated</center></a></td>\n");
+          fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",week,week);
+          fprintf(fp,"<td bgcolor=red><a href=\"%s\"></td>\n");
+          
+          fprintf(fp,"</tr>");
+          }
+
        continue;
+       }
+
+
+    /* Check current data stream */
+    
+    if (i > ob_spare)
+       {
+       snprintf(description,CF_BUFSIZE-1,"measurement %s",name);
        }
 
     snprintf(datestr,CF_MAXVARSIZE,"%s",ctime(&DATESTAMPS[i]));
@@ -128,14 +157,39 @@ for (i = 0; i < CF_OBSERVABLES; i++)
     fprintf(fp,"<th nowrap><font color=\"#888888\">%s</font><br><br><a href=\"%s\">%s</a><br><small>Latest data<br>%s</small></th>\n",host,url,img,datestr);
 
     snprintf(img,CF_BUFSIZE,"%s_mag.png",name);
-    fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",mag,img);
+
+    if (stat(img,&sb) != -1)
+       {
+       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",mag,img);
+       }
+    else
+       {
+       fprintf(fp,"<td><center>Data stream terminated</center></td>\n");
+       }
 
     snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
-    fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",week,img);
+
+    if (stat(img,&sb) != -1)
+       {
+       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",week,img);
+       }
+    else
+       {
+       fprintf(fp,"<td><center>Data stream terminated</center></td>\n");
+       }
 
     snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
-    fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",hist,img);
 
+    if (stat(img,&sb) != -1)
+       {
+       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",hist,img);
+       }
+    else
+       {
+       fprintf(fp,"<td><center>Terminated</center></td>\n");
+       }
+
+    
     fprintf(fp,"</tr>");
     }
 
@@ -154,7 +208,7 @@ void Nova_ShowGraph(FILE *fout,int i,time_t date,enum observables obs)
 Nova_LookupAggregateClassName(i,name,description);
   
 snprintf(name1,CF_BUFSIZE-1,"%s.mag",name);
-snprintf(img,CF_BUFSIZE-1,"%s_mag.png",description);
+snprintf(img,CF_BUFSIZE-1,"%s_mag.png",name);
 
 snprintf(datestr,CF_MAXVARSIZE,"%s",ctime(&date));
 Chop(datestr);
@@ -164,7 +218,9 @@ fprintf(fout,"<h2>Last 4 hours</h2>\n");
 
 fprintf(fout,"<h4>Latest info observed %s</h4>\n",datestr);
 
-fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\"></a></p>\n",img,img);
+fprintf(fout,"<div id=\"occurrences\">\n");
+
+fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\" width=\"500\"></a></p>\n",img,img);
 fprintf(fout,"<p><table border=1>\n");
 
 
@@ -195,7 +251,7 @@ snprintf(name1,CF_BUFSIZE-1,"%s.E-sigma",name);
 snprintf(name2,CF_BUFSIZE-1,"%s.q",name);
 snprintf(img,CF_BUFSIZE-1,"%s_weekly.png",name);
 
-fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\"></a></p>\n",img,img);
+fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\" width=\"500\"></a></p>\n",img,img);
 fprintf(fout,"<p><table border=1>\n");
 
 fprintf(fout,"<tr><th bgcolor=#eeeeee>Time</th>\n<th bgcolor=#eeeeee>q</th>\n<th bgcolor=#eeeeee>E(q)</th>\n<th bgcolor=#eeeeee>delta q</tdh></tr>\n");
@@ -219,6 +275,7 @@ while (!feof(fp1))
    }
 
 fprintf(fout,"</table></p>\n");
+fprintf(fout,"</div>\n");
 fclose(fp1);
 fclose(fp2);
 }

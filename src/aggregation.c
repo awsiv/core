@@ -134,6 +134,7 @@ if (thislock.lock != NULL)
          continue;
          }
 
+      CfOut(cf_verbose,""," << Packing %s",slow[i]);
       fprintf(fout,"!!CFENGINE: %s\n",slow[i]);
       
       while (!feof(fin))
@@ -305,73 +306,81 @@ fclose(fout);
 void Nova_UnPackNerveBundle()
     
 { FILE *fin = NULL,*fout = NULL;
-  int i;
+ int i,fluctuations = false;
   struct stat sb1,sb2;
   char filename[CF_BUFSIZE],buffer[CF_BUFSIZE];
 
+Banner("Unpack bundles");
+  
 if (stat("fluctuations.nov",&sb1) == -1)
    {
    return;
    }
 
-CfOut(cf_verbose,"","Found a fluctuation update\n");
+CfOut(cf_verbose,""," -> Found a fluctuation update\n");
 
 if (stat("rootprocs.mag",&sb2) == -1)
    {
+   fluctuations = true;
    }
 else
    {
-   if (sb2.st_mtime > sb1.st_mtime)
+   fluctuations = (sb2.st_mtime < sb1.st_mtime);
+   }
+
+if (fluctuations)
+   {
+   CfOut(cf_inform,""," --------------------------");
+   CfOut(cf_inform,""," -> Unpacking fluctuations.");
+   CfOut(cf_inform,""," --------------------------");
+   
+   if ((fin = fopen("fluctuations.nov","r")) == NULL)
       {
-      CfOut(cf_verbose,""," -> No mag updates");
+      CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle fluctuations.nov");
       return;
       }
-   }
-
-if ((fin = fopen("fluctuations.nov","r")) == NULL)
-   {
-   CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle fluctuations.nov");
-   return;
-   }
-
-while (!feof(fin))
-   {
-   fgets(buffer,CF_BUFSIZE-1,fin);
+   
+   while (!feof(fin))
+      {
+      fgets(buffer,CF_BUFSIZE-1,fin);
       
-   if (feof(fin))
-      {
-      break;
-      }
-
-   filename[0] = '\0';
-   sscanf(buffer,"!!CFENGINE: %s\n",filename);
-
-   if (strlen(filename) > 0)
-      {
-      if (fout)
+      if (feof(fin))
          {
-         fclose(fout);
+         break;
          }
       
-      if ((fout = fopen(filename,"w")) == NULL)
+      filename[0] = '\0';
+      sscanf(buffer,"!!CFENGINE: %s\n",filename);
+      
+      if (strlen(filename) > 0)
          {
-         CfOut(cf_verbose,"fopen"," !! Cannot open mag fibre %s",filename);
-         return;
+         if (fout)
+            {
+            fclose(fout);
+            }
+         
+         if ((fout = fopen(filename,"w")) == NULL)
+            {
+            CfOut(cf_verbose,"fopen"," !! Cannot open mag fibre %s",filename);
+            return;
+            }
+
+         CfOut(cf_verbose,""," >> Unpacking %s",filename);
+         
+         continue;
          }
       
-      continue;
+      fwrite(buffer,strlen(buffer),1,fout);
       }
-
-   fwrite(buffer,strlen(buffer),1,fout);
+   
+   if (fout)
+      {
+      fclose(fout);
+      }
+   
+   fout = NULL;
+   fclose(fin);      
    }
-
-if (fout)
-   {
-   fclose(fout);
-   }
-
-fout = NULL;
-fclose(fin);
 
 /* Now the adiabatic variation, if updated */
 
@@ -380,25 +389,31 @@ if (stat("mean_field.nov",&sb1) == -1)
    return;
    }
 
-CfOut(cf_verbose,"","Found a mean_state update\n");
+CfOut(cf_verbose,""," -> Found a new mean field state\n");
 
-if (stat("rootprocs.q",&sb2) == -1)
+if (stat("rootprocs.E-sigma",&sb2) == -1)
    {
    }
 else
    {
    if (sb2.st_mtime > sb1.st_mtime)
       {
-      CfOut(cf_verbose,""," -> No basal updates");
+      CfOut(cf_verbose,""," -> No changes to the mean field");
       return;
       }
    }
+
+CfOut(cf_inform,""," --------------------------");
+CfOut(cf_inform,""," -> Unpacking mean field.");
+CfOut(cf_inform,""," --------------------------");
 
 if ((fin = fopen("mean_field.nov","r")) == NULL)
    {
    CfOut(cf_verbose,"fopen"," !! Cannot open mean bundle mean_field.nov");
    return;
    }
+
+CfOut(cf_inform,""," -> Unpacking mean field.");
 
 while (!feof(fin))
    {
@@ -411,13 +426,15 @@ while (!feof(fin))
 
    filename[0] = '\0';
    sscanf(buffer,"!!CFENGINE: %s\n",filename);
-
+   
    if (strlen(filename) > 0)
       {
       if (fout)
          {
          fclose(fout);
          }
+
+      CfOut(cf_verbose,""," >> Unpacking %s",filename);
 
       if ((fout = fopen(filename,"w")) == NULL)
          {
@@ -472,16 +489,18 @@ fclose(fin);
 
 /* don't bother updating anything that is less than 10% developed */
 
-if (non_zero/count < 0.1)
+if (non_zero/count < 0.01)
    {
+   CfOut(cf_verbose,""," !! Too few data, dropping %s",name);
    return;
    }
 
+CfOut(cf_verbose,""," << Packing %s",name);
 fprintf(fout,"!!CFENGINE: %s\n",name);
    
 if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle %s",name);
+   CfOut(cf_verbose,"fopen"," !! Cannot open input %s",name);
    return;
    }
 
