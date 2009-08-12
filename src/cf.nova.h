@@ -158,14 +158,15 @@ void Nova_GetLevel(char *id,int *kept,int *repaired);
 void Nova_CreateHostPortal(struct Item *list);
 void Nova_GetAllLevels(int *kept,int *repaired,struct Item *list,char **names);
 void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list);
+void Nova_GraphLegend(FILE *fp);
 
 /* histogram.c */
 
 int Nova_ReadHistogram(struct CfDataView *cfv, char *filename);
 void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
 void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum);
-void Nova_ViewHisto(struct CfDataView *cfv,char *filename, char *title,enum observables obs);
-struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *name,enum observables obs);
+void Nova_ViewHisto(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *hist);
+struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *name,enum observables obs,char *host);
 
 /* html.c */
 
@@ -213,11 +214,11 @@ int NovaStr2Scope(char *scope);
 
 /* magnify.c */
 
-int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs);
+int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *host);
 int Nova_ReadMagTimeSeries(struct CfDataView *cfv, char *filename);
 void Nova_DrawMagQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3);
-void Nova_AnalyseMag(struct CfDataView *cfv,char *name,enum observables obs);
+void Nova_AnalyseMag(struct CfDataView *cfv,char *name,enum observables obs,char *host);
 
 /* monitoring.c */
 
@@ -258,6 +259,7 @@ void Nova_CheckAutoBootstrap(void);
 void Nova_SetPolicyServer(char *name);
 void Nova_CreateFailSafe(char *name);
 void Nova_SetDocRoot(char *name);
+void Nova_EnterpriseContext(void);
 
 /* registry.c */
 
@@ -312,8 +314,8 @@ void Nova_ListTables(int type,char *query);
 int Nova_ReadTimeSeries(struct CfDataView *cfv, char *filename);
 void Nova_DrawQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3);
-int Nova_ViewWeek(struct CfDataView *cfv,char *filename, char *title,enum observables obs);
-void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs);
+int Nova_ViewWeek(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *week);
+void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs,char *host);
 
 
 /***************************************************************************/

@@ -24,7 +24,7 @@ extern char *UNITS[];
 
 #ifdef HAVE_LIBGD
 
-int Nova_ViewWeek(struct CfDataView *cfv,char *filename, char *title,enum observables obs)
+int Nova_ViewWeek(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *host)
     
 { int i,y,hint;
   FILE *fout;
@@ -97,7 +97,7 @@ gdImagePng(cfv->im, fout);
 fclose(fout);
 gdImageDestroy(cfv->im);
 
-Nova_AnalyseWeek(cfv,filename,obs);
+Nova_AnalyseWeek(cfv,filename,obs,host);
 return true;
 }
 
@@ -389,7 +389,7 @@ gdImageArc(cfv->im,x,y,20,20,0,360,RED);
 
 /***********************************************************/
 
-void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs)
+void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs,char *host)
 
 { char fname[CF_BUFSIZE],img[CF_BUFSIZE];
   FILE *fp;
@@ -405,13 +405,18 @@ if ((fp = fopen(fname,"w")) == 0)
    return;   
    }
 
-NovaHtmlHeader(fp,"Weekly overview",STYLESHEET,WEBDRIVER,BANNER);
+NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
+fprintf(fp,"<h1>Weekly trends</h1>\n");
+
+fprintf(fp,"<div id=\"occurrences\">\n");
 
 snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
 
 fprintf(fp,"<div id=\"graph\">\n");
-fprintf(fp,"<img src=\"%s\">\n",img);
+fprintf(fp,"<img src=\"%s\" width=\"590\">\n",img);
 fprintf(fp,"</div>\n");
+
+Nova_GraphLegend(fp);
 
 fprintf(fp,"<div id=\"weekanalysis\">\n");
 
@@ -436,7 +441,7 @@ fprintf(fp,"<tr><td>Percentage 2 deviations under average/normal</td><td>%lf</td
 
 fprintf(fp,"</table>\n");
 
-fprintf(fp,"</div>\n");
+fprintf(fp,"</div></div>\n");
 
 NovaHtmlFooter(fp,FOOTER);
 fclose(fp); 

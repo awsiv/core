@@ -110,6 +110,9 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
     snprintf(hist,15,"%d",i);
 
+    snprintf(datestr,CF_MAXVARSIZE,"%s",ctime(&DATESTAMPS[i]));
+    Chop(datestr);
+
     /* Check is data stream has stopped for this service */
     
     if (IsItemIn(eliminate,hist))
@@ -142,9 +145,6 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        {
        snprintf(description,CF_BUFSIZE-1,"measurement %s",name);
        }
-
-    snprintf(datestr,CF_MAXVARSIZE,"%s",ctime(&DATESTAMPS[i]));
-    Chop(datestr);
 
     fprintf(fp,"<tr>");
 
@@ -186,9 +186,8 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        }
     else
        {
-       fprintf(fp,"<td><center>Terminated</center></td>\n");
+       fprintf(fp,"<td><center>Insufficient data</center></td>\n");
        }
-
     
     fprintf(fp,"</tr>");
     }

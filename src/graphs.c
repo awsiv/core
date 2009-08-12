@@ -109,7 +109,7 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
       
       CfOut(cf_verbose,""," -> Detected %s/%s\n",name,description);
 
-      if (!Nova_ViewLatest(cfv,name,description,i))
+      if (!Nova_ViewLatest(cfv,name,description,i,ip->name))
          {
          snprintf(index,15,"%d",i);
          PrependItem(&eliminate,index,NULL);
@@ -118,8 +118,8 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
 
       CfOut(cf_verbose,""," -> Processing host source %s / %s",ip->name,name);
 
-      Nova_ViewWeek(cfv,name,description,i);
-      Nova_ViewHisto(cfv,name,description,i);
+      Nova_ViewWeek(cfv,name,description,i,ip->name);
+      Nova_ViewHisto(cfv,name,description,i,ip->name);
 
       CfOut(cf_verbose,""," -> Done with %s / %s",ip->name,name);
       }
@@ -179,6 +179,20 @@ YELLOW   = gdImageColorAllocate(cfv->im, 200, 255, 0);
 LIGHTRED = gdImageColorAllocate(cfv->im, 255, 150, 150);
 RED      = gdImageColorAllocate(cfv->im, 255, 0, 0);
 ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
+}
+
+/*****************************************************************************/
+
+void Nova_GraphLegend(FILE *fout)
+{
+fprintf(fout,"<div id=\"legend\">"
+        "<table>"
+        "<tr>"
+        "<td bgcolor = #00c800>Average (mean)</td>"
+        "<td bgcolor = ff9696>Average deviation above mean</td>"
+        "<td bgcolor = c8ff00>Last measured</td>"
+        "</tr>"
+        "</table>");
 }
 
 /*****************************************************************************/
@@ -257,7 +271,7 @@ void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list)
 { FILE *fout;
   char filename[CF_BUFSIZE];
   int i,kept[8],repaired[8];
-  static char *names[8] = { "zzz", "Week", "Day", "Hour", "Seen", "UpTm", "Soft", "Summ" };
+  static char *names[8] = { "zzz", "Week", "Day", "Hour", "Seen", "Patch", "Soft", "Summ" };
 
   
 cfv->height = 70;
@@ -322,8 +336,8 @@ Nova_GetLevel("Hour",&kept,&repaired);
 Nova_BarMeter(cfv,3,kept,repaired,"Hour");
 Nova_GetLevel("Seen",&kept,&repaired);
 Nova_BarMeter(cfv,4,kept,repaired,"Seen");
-Nova_GetLevel("UpTm",&kept,&repaired);
-Nova_BarMeter(cfv,5,kept,repaired,"UpTm");
+Nova_GetLevel("Patch",&kept,&repaired);
+Nova_BarMeter(cfv,5,kept,repaired,"Ptch");
 Nova_GetLevel("Soft",&kept,&repaired);
 Nova_BarMeter(cfv,6,kept,repaired,"Soft");
 Nova_GetLevel("Summ",&kept,&repaired);
@@ -446,7 +460,7 @@ while(!feof(fin))
    }
 
 fclose(fin);
-}
+ }
 
 /*****************************************************************************/
 

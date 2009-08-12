@@ -100,6 +100,11 @@ UNITS[ob_cpu2] = "percent";
 UNITS[ob_cpu3] = "percent";
 UNITS[ob_spare] = NULL;
 
+for (i = ob_spare; i < CF_OBSERVABLES; i++)
+   {
+   UNITS[i] = NULL;
+   }
+
 }
 
 /*****************************************************************************/

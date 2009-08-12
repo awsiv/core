@@ -25,7 +25,7 @@ extern char *UNITS[];
 
 /*****************************************************************************/
 
-int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs)
+int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *host)
     
 { int i,y,hint;
   FILE *fout;
@@ -44,7 +44,7 @@ if ((stat(oldfile,&s1) != -1) && (stat(newfile,&s2) != -1))
       {
       /* no changes */
       DATESTAMPS[obs] = s2.st_mtime;
-      return false;
+      return true;
       }
    }
  
@@ -75,7 +75,7 @@ Nova_Title(cfv,BLUE);
 if ((fout = fopen(newfile, "wb")) == NULL)
    {
    CfOut(cf_verbose,"fopen","Cannot write %s file\n",newfile);
-   return false;
+   return true;
    }
 else
    {
@@ -86,7 +86,7 @@ gdImagePng(cfv->im, fout);
 fclose(fout);
 gdImageDestroy(cfv->im);
 
-Nova_AnalyseMag(cfv,filename,obs);
+Nova_AnalyseMag(cfv,filename,obs,host);
 
 stat(newfile,&s2);
 DATESTAMPS[obs] = s2.st_mtime;
@@ -286,7 +286,7 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
 
 /***********************************************************/
 
-void Nova_AnalyseMag(struct CfDataView *cfv,char *name,enum observables obs)
+void Nova_AnalyseMag(struct CfDataView *cfv,char *name,enum observables obs,char *host)
 
 { char fname[CF_BUFSIZE],img[CF_BUFSIZE];
   FILE *fp;
@@ -301,13 +301,18 @@ if ((fp = fopen(fname,"w")) == 0)
    return;   
    }
 
-NovaHtmlHeader(fp,"Last four hours",STYLESHEET,WEBDRIVER,BANNER);
+NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
+
+fprintf(fp,"<h1>Zoom: Last four hours</h1>\n");
+fprintf(fp,"<div id=\"occurrences\">\n");
 
 snprintf(img,CF_BUFSIZE,"%s_mag.png",name);
 
 fprintf(fp,"<div id=\"graph\">\n");
-fprintf(fp,"<img src=\"%s\">\n",img);
+fprintf(fp,"<img src=\"%s\" width=\"590\">\n",img);
 fprintf(fp,"</div>\n");
+
+Nova_GraphLegend(fp);
 
 fprintf(fp,"<div id=\"maganalysis\">\n");
 
@@ -322,7 +327,7 @@ fprintf(fp,"<tr><td>Minimum value </td><td>%lf</td><td>%s</td></tr>\n",cfv->min,
 fprintf(fp,"<tr><td>Average variability </td><td>+/- %lf</td><td>%s</td></tr>\n",cfv->error_scale,UNITS[obs]);
 fprintf(fp,"</table>\n");
 
-fprintf(fp,"</div>\n");
+fprintf(fp,"</div></div>\n");
 
 NovaHtmlFooter(fp,FOOTER);
 fclose(fp);

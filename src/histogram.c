@@ -23,7 +23,7 @@ extern int BLUES[CF_SHADES];
 
 #ifdef HAVE_LIBGD
 
-void Nova_ViewHisto(struct CfDataView *cfv,char *filename, char *title,enum observables obs)
+void Nova_ViewHisto(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *host)
     
 { int i,y,hint;
   double frac;
@@ -66,7 +66,7 @@ if (!Nova_ReadHistogram(cfv,oldfile))
    return;
    }
 
-spectrum = Nova_AnalyseHistogram(cfv,filename,obs);
+spectrum = Nova_AnalyseHistogram(cfv,filename,obs,host);
 Nova_PlotHistogram(cfv,BLUES,spectrum);
 Nova_Title(cfv,BLUE);
 Nova_DrawHistoAxes(cfv,BLACK);
@@ -240,7 +240,7 @@ gdImageLine(cfv->im,origin_x+32*scale_x,origin_y,origin_x+cfv->width/2,-1500,lig
 
 /*******************************************************************/
 
-struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *name,enum observables obs)
+struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *name,enum observables obs,char *host)
 
 { double sx, q, delta, sum = 0, sigma2;
   int new_gradient = 0, past_gradient = 0, max = 0;
@@ -262,13 +262,14 @@ if ((fp = fopen(fname,"w")) == 0)
    }
 
 NovaHtmlHeader(fp,"spectral analysis",STYLESHEET,WEBDRIVER,BANNER);
+fprintf(fp,"<div id=\"occurrences\">\n");
 
 CfOut(cf_verbose,"","Looking for maxima in %s\n",name);
 
 snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
 
 fprintf(fp,"<div id=\"graph\">\n");
-fprintf(fp,"<img src=\"%s\">\n",img);
+fprintf(fp,"<img src=\"%s\" width=\"590\">\n",img);
 fprintf(fp,"</div>\n");
 
 fprintf(fp,"<div id=\"histoanalysis\">\n");
@@ -324,7 +325,7 @@ for (sx = 1; sx < CF_GRAINS; sx++)
 fprintf(fp,"<p>Spectrum seems to be %d-modal (within the margins of uncertainty)</p>\n",max);
 
 
-fprintf(fp,"</div>\n");
+fprintf(fp,"</div></div>\n");
 
 NovaHtmlFooter(fp,FOOTER);
 fclose(fp);

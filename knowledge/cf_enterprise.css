@@ -289,20 +289,32 @@ margin: 10px;
 
 #graph img
 { 
-
+padding: 5px;
+background-color: grey;
 }
 
 #histoanalysis
 {
+padding: 10px;
+background-color: #eee;
 }
 
 #weekanalysis table
-{ 
+{
+padding: 5px;
+background-color: #eee;
+}
+
+#weekanalysis tr td
+{
+padding: 5px;
+background-color: #eee;
 }
 
 #maganalysis
 {  
-
+padding: 5px;
+background-color: #eee;
 }
 
 /* ------------------------------------------------*/
@@ -325,6 +337,7 @@ border: none;
 
 #primary td
 {
+font-size: 12px;
 padding: 5px;
 font-weight: bold;
 }
@@ -339,7 +352,6 @@ background-color: #fff;
 {
 padding: 10px;
 font-weight: bold;
-
 }
 
 #primary th a

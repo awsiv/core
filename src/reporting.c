@@ -834,7 +834,8 @@ void Nova_ReportPatches(struct CfPackageManager *list)
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
   char start[32];
-  int i = 0;
+  int i = 0,count = 0;
+  double kept,repaired;
 
 snprintf(name,CF_BUFSIZE,"%s/state/software_patch_status.csv",CFWORKDIR);
 
@@ -866,6 +867,7 @@ for (mp = list; mp != NULL; mp = mp->next)
    {
    for (pi = mp->patch_avail; pi != NULL; pi=pi->next)
       {
+      count++;
       fprintf(fout,"%s,%s,%s,%s\n",pi->name,pi->version,pi->arch,ReadLastNode(GetArg0(mp->manager)));
       }
    }
