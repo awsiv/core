@@ -228,7 +228,6 @@ enum cfgcontrol
 
 enum cfacontrol
    {
-   cfa_maxconnections,
    cfa_abortclasses,
    cfa_abortbundleclasses,
    cfa_addclasses,
@@ -255,6 +254,7 @@ enum cfacontrol
    cfa_lastseen,
    cfa_intermittency,
    cfa_max_children,
+   cfa_maxconnections,
    cfa_mountfilesystems,
    cfa_nonalphanumfiles,
    cfa_repchar,
@@ -437,7 +437,7 @@ enum cfeditorder
 #define CF_CHARRANGE "^.$"
 
 #define CF_MODERANGE   "[0-7augorwxst,+-]+"
-#define CF_CLASSRANGE  "[a-zA-Z0-9_!&$|.()]+"
+#define CF_CLASSRANGE  "[a-zA-Z0-9_!&@@$|.()]+"
 #define CF_IDRANGE     "[a-zA-Z0-9_$.]+"
 #define CF_USERRANGE   "[a-zA-Z0-9_$.-]+"
 #define CF_FNCALLRANGE "[a-zA-Z0-9_().$@]+"
@@ -1544,6 +1544,18 @@ struct Attributes
    char *path_root;
    char *web_root;
    };
+
+enum cf_meter
+{
+meter_compliance_week,
+meter_compliance_day,
+meter_compliance_hour,
+meter_patch_day,
+meter_soft_day,
+meter_comms_hour,
+meter_anomalies_day,
+meter_endmark
+};
 
 #include "prototypes3.h"
 

@@ -303,7 +303,7 @@ if ((fp = fopen(fname,"w")) == 0)
 
 NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
 
-fprintf(fp,"<h1>Zoom: Last four hours</h1>\n");
+fprintf(fp,"<h1>Zoom: %s Last four hours</h1>\n",name);
 fprintf(fp,"<div id=\"occurrences\">\n");
 
 snprintf(img,CF_BUFSIZE,"%s_mag.png",name);

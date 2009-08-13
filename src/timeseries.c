@@ -178,6 +178,9 @@ if ((fp = fopen(name,"r")) == NULL)
 
 CfOut(cf_verbose,""," -> Studying time-series %s\n",name);
 
+Q_MEAN = 0;
+Q_SIGMA = 0;
+
 for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
    {
    memset(buffer,0,CF_BUFSIZE);
@@ -236,6 +239,16 @@ for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
    if (ry > 0)
       {
       have_data = true;
+      }
+
+   if (cfv->data_E[(int)sx] != 0)
+      {
+      Q_MEAN = GAverage(Q_MEAN,cfv->data_E[(int)sx],0.5);
+      }
+   
+   if (cfv->bars[(int)sx])
+      {
+      Q_SIGMA = GAverage(Q_SIGMA,cfv->bars[(int)sx],0.5);
       }
    }
 
@@ -406,7 +419,7 @@ if ((fp = fopen(fname,"w")) == 0)
    }
 
 NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
-fprintf(fp,"<h1>Weekly trends</h1>\n");
+fprintf(fp,"<h1>Weekly trends on %s</h1>\n",name);
 
 fprintf(fp,"<div id=\"occurrences\">\n");
 
@@ -423,6 +436,9 @@ fprintf(fp,"<div id=\"weekanalysis\">\n");
 fprintf(fp,"<table>\n");
 fprintf(fp,"<tr><td>Maximum value </td><td>%lf</td><td>%s</td></tr>\n",cfv->max,UNITS[obs]);
 fprintf(fp,"<tr><td>Minimum value </td><td>%lf</td><td>%s</td></tr>\n",cfv->min,UNITS[obs]);
+
+Q_MAX = cfv->max;
+Q_MIN = cfv->min;
 
 x = 100*(double)cfv->over/(double)CF_TIMESERIESDATA;
 fprintf(fp,"<tr><td>Percentage over average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);

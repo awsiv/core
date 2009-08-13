@@ -271,7 +271,7 @@ void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list)
 { FILE *fout;
   char filename[CF_BUFSIZE];
   int i,kept[8],repaired[8];
-  static char *names[8] = { "zzz", "Week", "Day", "Hour", "Seen", "Patch", "Soft", "Summ" };
+  static char *names[8] = { "zzz", "Week", "Day", "Hour", "Patch", "Soft", "Comms","Anom" };
 
   
 cfv->height = 70;
@@ -334,14 +334,14 @@ Nova_GetLevel("Day",&kept,&repaired);
 Nova_BarMeter(cfv,2,kept,repaired,"Day");
 Nova_GetLevel("Hour",&kept,&repaired);
 Nova_BarMeter(cfv,3,kept,repaired,"Hour");
-Nova_GetLevel("Seen",&kept,&repaired);
-Nova_BarMeter(cfv,4,kept,repaired,"Seen");
 Nova_GetLevel("Patch",&kept,&repaired);
-Nova_BarMeter(cfv,5,kept,repaired,"Ptch");
+Nova_BarMeter(cfv,4,kept,repaired,"Ptch");
 Nova_GetLevel("Soft",&kept,&repaired);
-Nova_BarMeter(cfv,6,kept,repaired,"Soft");
-Nova_GetLevel("Summ",&kept,&repaired);
-Nova_BarMeter(cfv,7,kept,repaired,"Summ");
+Nova_BarMeter(cfv,5,kept,repaired,"Soft");
+Nova_GetLevel("Comms",&kept,&repaired);
+Nova_BarMeter(cfv,6,kept,repaired,"Comm");
+Nova_GetLevel("Anom",&kept,&repaired);
+Nova_BarMeter(cfv,7,kept,repaired,"Anom");
 
 snprintf(filename,CF_BUFSIZE,"meters.png");
 
@@ -491,6 +491,9 @@ for (ip = list; ip != NULL; ip=ip->next)
 
    while(!feof(fin))
       {
+      a = 0;
+      b = 0;
+      buf[0] = '\0';
       fgets(buf,CF_BUFSIZE-1,fin);
 
       sscanf(buf,"%*s %lf %lf",&a,&b);

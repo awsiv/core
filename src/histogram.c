@@ -261,10 +261,12 @@ if ((fp = fopen(fname,"w")) == 0)
    return NULL;   
    }
 
-NovaHtmlHeader(fp,"spectral analysis",STYLESHEET,WEBDRIVER,BANNER);
+NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
+fprintf(fp,"<h1>Spectral analysis of %s</h1>",name);
+
 fprintf(fp,"<div id=\"occurrences\">\n");
 
-CfOut(cf_verbose,"","Looking for maxima in %s\n",name);
+CfOut(cf_verbose,""," -> Looking for maxima in %s\n",name);
 
 snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
 
@@ -283,6 +285,13 @@ for (sx = 1; sx < CF_GRAINS; sx++)
 
 sigma2 = sum / (double)CF_GRAINS;
 
+fprintf(fp,"<p> Maximum observed %s = %.2lf\n",name,Q_MAX);
+fprintf(fp,"<p> Minimum observed %s = %.2lf\n",name,Q_MIN);
+fprintf(fp,"<p> Approximate mean value over time = %.2lf\n",Q_MEAN);
+fprintf(fp,"<p> Approximate standard deviation time = %.2lf\n",Q_SIGMA);
+
+fprintf(fp,"<ol>\n");
+
 for (sx = 1; sx < CF_GRAINS; sx++)
    {
    q = cfv->data_E[(int)sx];
@@ -298,7 +307,7 @@ for (sx = 1; sx < CF_GRAINS; sx++)
          {
          max++;
 
-         fprintf(fp,"Spectral number %d peak found at %.2f/%0.2f (mid = %.2f)\n",max,sx-1,(double)CF_GRAINS,(double)CF_GRAINS/2.0);
+         fprintf(fp,"<p>Spectral mode %d, with  peak found at %.0lf/%.0lf grains (conversion &asymp; %.2lf &plusmn; %.2lf)\n",max,sx-1,(double)CF_GRAINS,Q_MEAN,Q_SIGMA);
 
          snprintf(output,CF_BUFSIZE-1,"key-%f",sx);
          AppendItem(&maxima,output,NULL);
@@ -307,20 +316,33 @@ for (sx = 1; sx < CF_GRAINS; sx++)
          if (sx < ((double)CF_GRAINS)/2.0 - 1.0)
             {
             redshift++;
-            fprintf(fp,"<p>Red-shifted, i.e. shows retardation process</p>\n");
+            fprintf(fp,"<ul><li>Red-shifted, i.e. shows retardation process</li></ul>\n");
+            fprintf(fp,"<div id = \"explain\"><table><tr><td><h4>What does this mean?</h4>"
+                    "<p>If the distribution is skewed, it has a long ramp, indicating"
+                    "a possible resource ceiling, a well-utilized system."
+                    "Or there could be outliers of low value, because data are incomplete."
+                    "Finally, it can indicate that this resource process is declining."
+                    "</td></tr></table></div>\n");
             }
          else if (sx > ((double)CF_GRAINS)/2.0 + 1.0)
             {
             blueshift++;
-            fprintf(fp,"<p>Blue-shifted, i.e. shows acceleration process</p>\n");
+            fprintf(fp,"<ul><li>Blue-shifted, i.e. shows acceleration process</li></ul>\n");
+            fprintf(fp,"<div id = \"explain\"><table><tr><td><h4>What does this mean?</h4>"
+                    "<p>If the distribution is skewed, it has a long tail, indicating"
+                    "plenty of resources, or an under-used system."
+                    "Or there could be outliers of low value, because data are incomplete."
+                    "Finally, it can indicate that this resource process is declining."
+                    "</td></tr></table></div>\n");
             }
 
          }
       }
-
+   
    past_gradient = new_gradient;
    }
 
+fprintf(fp,"</ol>\n");      
 
 fprintf(fp,"<p>Spectrum seems to be %d-modal (within the margins of uncertainty)</p>\n",max);
 

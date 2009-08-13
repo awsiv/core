@@ -347,6 +347,23 @@ if (XML)
 cf_fclose(fout);
 DeleteItemList(file);
 
+METER_KEPT[meter_compliance_week] = av_week_kept;
+METER_REPAIRED[meter_compliance_week] = av_week_repaired;
+METER_KEPT[meter_compliance_day] = av_day_kept;
+METER_REPAIRED[meter_compliance_day] = av_day_repaired;
+METER_KEPT[meter_compliance_hour] = av_week_kept;
+METER_REPAIRED[meter_compliance_hour] = av_hour_repaired;
+}
+
+/*****************************************************************************/
+
+void Nova_GrandSummary()
+
+{ char name[CF_BUFSIZE];
+  FILE *fout;
+
+SummarizeComms();
+  
 snprintf(name,CF_BUFSIZE-1,"%s/reports/comp_key",CFWORKDIR);
 
 if ((fout = cf_fopen(name,"w")) == NULL)
@@ -355,9 +372,13 @@ if ((fout = cf_fopen(name,"w")) == NULL)
    return;
    }
 
-fprintf(fout,"Week: %.4lf %.4lf\n",av_week_kept,av_week_repaired);
-fprintf(fout,"Day: %.4lf %.4lf\n",av_day_kept,av_day_repaired);
-fprintf(fout,"Hour: %.4lf %.4lf\n",av_hour_kept,av_hour_repaired);
+fprintf(fout,"Week: %.4lf %.4lf\n",METER_KEPT[meter_compliance_week],METER_REPAIRED[meter_compliance_week]);
+fprintf(fout,"Day: %.4lf %.4lf\n",METER_KEPT[meter_compliance_day],METER_REPAIRED[meter_compliance_day]);
+fprintf(fout,"Hour: %.4lf %.4lf\n",METER_KEPT[meter_compliance_hour],METER_REPAIRED[meter_compliance_hour]);
+fprintf(fout,"Patch: %.4lf %.4lf\n",METER_KEPT[meter_patch_day],METER_REPAIRED[meter_patch_day]);
+fprintf(fout,"Soft: %.4lf %.4lf\n",METER_KEPT[meter_soft_day],METER_REPAIRED[meter_soft_day]);
+fprintf(fout,"Comms: %.4lf %.4lf\n",METER_KEPT[meter_comms_hour],METER_REPAIRED[meter_comms_hour]);
+fprintf(fout,"Anom: %.4lf %.4lf\n",METER_KEPT[meter_anomalies_day],METER_REPAIRED[meter_anomalies_day]);
 
 fclose(fout);
 }
@@ -835,7 +856,6 @@ void Nova_ReportPatches(struct CfPackageManager *list)
   struct Item *ip,*file = NULL;
   char start[32];
   int i = 0,count = 0;
-  double kept,repaired;
 
 snprintf(name,CF_BUFSIZE,"%s/state/software_patch_status.csv",CFWORKDIR);
 
@@ -874,7 +894,6 @@ for (mp = list; mp != NULL; mp = mp->next)
 
 cf_fclose(fout);
 }
-
 
 /*****************************************************************************/
 
@@ -1000,6 +1019,9 @@ if (XML)
 
 cf_fclose(fout);
 DeleteItemList(file);
+
+METER_REPAIRED[meter_soft_day] = 0;
+METER_KEPT[meter_soft_day] = 0;
 }
 
 /*****************************************************************************/
@@ -1009,7 +1031,7 @@ void Nova_SummarizeUpdates(int xml,int html,int csv,int embed,char *stylesheet,c
 { FILE *fin,*fout;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
-  int i = 0;
+  int i = 0, count = 0;
 
 CfOut(cf_verbose,"","Creating available patch report...\n");
   
@@ -1108,11 +1130,13 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       fprintf(fout,"%s",ip->name);
       }
+
+   count++;
    
    if (++i > 12*24*7)
       {
       break;
-      }   
+      }
    }
 
 if (html && !embed)
@@ -1250,6 +1274,18 @@ if (XML)
 
 cf_fclose(fout);
 DeleteItemList(file);
+
+if (count > 1)
+   {
+   METER_KEPT[meter_patch_day] = 0;
+   METER_REPAIRED[meter_patch_day] = 0;
+   }
+else
+   {
+   METER_KEPT[meter_patch_day] = 100.0;
+   METER_REPAIRED[meter_patch_day] = 0;
+   }
+
 }
 
 /*****************************************************************************/
@@ -1338,4 +1374,85 @@ if (html && !embed)
    }
 
 cf_fclose(fout);
+}
+
+/*****************************************************************************/
+
+void SummarizeComms()
+
+/* Go through the database of recent connections and check for
+   Long Time No See ...*/
+
+{ DBT key,value;
+  DB *dbp;
+  DBC *dbcp;
+  int ret,criterion,overdue;
+  DB_ENV *dbenv = NULL;
+  struct QPoint entry;
+  double kept = 1,not_kept = 0,repaired = 0,var,average;
+  char name[CF_BUFSIZE];
+  time_t now = time(NULL),then;
+
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
+
+if (!OpenDB(name,&dbp))
+   {
+   return;
+   }
+
+/* Acquire a cursor for the database. */
+
+if ((ret = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
+   {
+   CfOut(cf_error,"","Error reading from last-seen database");
+   dbp->err(dbp, ret, "DB->cursor");
+   return;
+   }
+
+ /* Walk through the database and print out the key/data pairs. */
+
+memset(&key, 0, sizeof(key));
+memset(&value, 0, sizeof(value));
+
+while (dbcp->c_get(dbcp, &key, &value, DB_NEXT) == 0)
+   {
+   memset(&entry, 0, sizeof(entry)); 
+
+   if (value.data != NULL)
+      {
+      memcpy(&entry,value.data,sizeof(entry));
+      then = (time_t)entry.q;
+      average = (double)entry.expect;
+      var = (double)entry.var;
+      }
+   else
+      {
+      continue;
+      }
+
+   criterion = (now - then > (int)(average+2.0*sqrt(var)+0.5));
+   overdue = now - then - (int)(average);
+
+   if (criterion)
+      {
+      not_kept++;
+      }
+   else if (overdue)
+      {
+      repaired++;
+      }
+   else
+      {
+      kept++;
+      }
+   
+   memset(&value,0,sizeof(value));
+   memset(&key,0,sizeof(key)); 
+   }
+ 
+dbcp->c_close(dbcp);
+dbp->close(dbp,0);
+
+METER_KEPT[meter_comms_hour] = 100.0*kept/(kept+repaired+not_kept);
+METER_REPAIRED[meter_comms_hour] = 100.0*repaired/(kept+repaired+not_kept);
 }

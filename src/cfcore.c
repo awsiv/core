@@ -87,7 +87,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 void Nova_ShowAllGraphs(FILE *fp,char *host,struct Item *eliminate)
 
-{ int i;
+{ int i,terminated;
   struct stat sb;
   char img[CF_BUFSIZE];
   char url[CF_BUFSIZE];
@@ -117,27 +117,8 @@ for (i = 0; i < CF_OBSERVABLES; i++)
     
     if (IsItemIn(eliminate,hist))
        {
-       snprintf(img,CF_BUFSIZE,"%s",description);
-       snprintf(url,CF_BUFSIZE,"%s.html",name);
-       snprintf(hist,CF_BUFSIZE,"%s_hist.html",name);
-       snprintf(mag,CF_BUFSIZE,"%s_mag.html",name);
-       snprintf(week,CF_BUFSIZE,"%s_weekly.png",name);
-
-       if (stat(week,&sb) != -1)
-          {          
-          fprintf(fp,"<tr>");
-          fprintf(fp,"<th nowrap><font color=\"#f00\">%s</font><br><br><a href=\"%s\">%s</a><br><small>Latest data<br>%s</small></th>\n",host,url,img,datestr);
-          
-          fprintf(fp,"<td bgcolor=red><center>Data steam terminated</center></a></td>\n");
-          fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",week,week);
-          fprintf(fp,"<td bgcolor=red><a href=\"%s\"></td>\n");
-          
-          fprintf(fp,"</tr>");
-          }
-
        continue;
        }
-
 
     /* Check current data stream */
     
@@ -153,40 +134,65 @@ for (i = 0; i < CF_OBSERVABLES; i++)
     snprintf(hist,CF_BUFSIZE,"%s_hist.html",name);
     snprintf(mag,CF_BUFSIZE,"%s_mag.html",name);
     snprintf(week,CF_BUFSIZE,"%s_week.html",name);
+
+    if (stat(url,&sb) == -1)
+       {
+       continue;
+       }    
     
     fprintf(fp,"<th nowrap><font color=\"#888888\">%s</font><br><br><a href=\"%s\">%s</a><br><small>Latest data<br>%s</small></th>\n",host,url,img,datestr);
 
+    terminated = false;
+    
     snprintf(img,CF_BUFSIZE,"%s_mag.png",name);
 
-    if (stat(img,&sb) != -1)
+    if (stat(img,&sb) == -1)
        {
+       terminated = true;
+       }
+
+    snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
+        
+    if (stat(img,&sb) == -1)
+       {
+       terminated = true;
+       }
+
+    snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
+        
+    if (stat(img,&sb) == -1)
+       {
+       terminated = true;
+       }
+    
+    if (!terminated)
+       {
+       snprintf(img,CF_BUFSIZE,"%s_mag.png",name);
        fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",mag,img);
        }
     else
        {
-       fprintf(fp,"<td><center>Data stream terminated</center></td>\n");
+       fprintf(fp,"<td bgcolor=red><center>Data stream terminated</center></td>\n");
        }
 
-    snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
-
-    if (stat(img,&sb) != -1)
+    if (!terminated)
        {
+       snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
        fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",week,img);
        }
     else
        {
-       fprintf(fp,"<td><center>Data stream terminated</center></td>\n");
+       fprintf(fp,"<td bgcolor=red><center>Data stream terminated</center></td>\n");
        }
 
-    snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
-
-    if (stat(img,&sb) != -1)
+    if (!terminated)
        {
+       snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
        fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",hist,img);
        }
     else
        {
-       fprintf(fp,"<td><center>Insufficient data</center></td>\n");
+       fprintf(fp,"<td bgcolor=red><center>Insufficient data</center></td>\n");
        }
     
     fprintf(fp,"</tr>");

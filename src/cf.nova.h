@@ -280,6 +280,8 @@ void Nova_SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,
 void Nova_SummarizeUpdates(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_NoteVarUsage(void);
+void Nova_GrandSummary(void);
+void SummarizeComms(void);
 
 /* server.c */
 
