@@ -579,9 +579,8 @@ else
    {
    fprintf(fp,"<a name=\"%s\"></a>\n",id);
    fprintf(fp,"<div id=\"nav\">\n");
-   fprintf(fp,"<a href=\"promises.cf.html#bundle_%s\">[BUNDLE]</a>&nbsp;\n",pp->bundle);
-   fprintf(fp,"<a href=\"promises.cf.html#%s\">[TEMPLATE]</a>\n",id);
-   fprintf(fp,"<a href=\"promise_output_common.html#%s\">[RESULT]</a>\n",id);
+   fprintf(fp,"<a href=\"promises.cf.html#bundle_%s\">[PARENT BUNDLE]</a>&nbsp;\n",pp->bundle);
+   fprintf(fp,"<a href=\"reports/host_portal.html\">[MACHINES]</a>\n",id);
    fprintf(fp,"</div>\n");
    }
 }

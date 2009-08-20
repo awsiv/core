@@ -13,8 +13,9 @@
 /*                                                                           */
 /* File: cfcore.c                                                            */
 /*                                                                           */
-/* Created: Sun Oct 14 20:38:36 2007                                         */
-/*                                                                           */
+/*****************************************************************************/
+
+
 /*****************************************************************************/
 
 void Nova_MainPage(char *host,struct Item *eliminate)
@@ -87,7 +88,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 void Nova_ShowAllGraphs(FILE *fp,char *host,struct Item *eliminate)
 
-{ int i,terminated;
+{ int i,terminated1,terminated2,terminated3;
   struct stat sb;
   char img[CF_BUFSIZE];
   char url[CF_BUFSIZE];
@@ -142,30 +143,30 @@ for (i = 0; i < CF_OBSERVABLES; i++)
     
     fprintf(fp,"<th nowrap><font color=\"#888888\">%s</font><br><br><a href=\"%s\">%s</a><br><small>Latest data<br>%s</small></th>\n",host,url,img,datestr);
 
-    terminated = false;
+    terminated1 = terminated2 = terminated3  = false;
     
     snprintf(img,CF_BUFSIZE,"%s_mag.png",name);
 
     if (stat(img,&sb) == -1)
        {
-       terminated = true;
+       terminated1 = true;
        }
 
     snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
         
     if (stat(img,&sb) == -1)
        {
-       terminated = true;
+       terminated2 = true;
        }
 
     snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
         
     if (stat(img,&sb) == -1)
        {
-       terminated = true;
+       terminated3 = true;
        }
     
-    if (!terminated)
+    if (!terminated1)
        {
        snprintf(img,CF_BUFSIZE,"%s_mag.png",name);
        fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",mag,img);
@@ -175,7 +176,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        fprintf(fp,"<td bgcolor=red><center>Data stream terminated</center></td>\n");
        }
 
-    if (!terminated)
+    if (!terminated2)
        {
        snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
        fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",week,img);
@@ -185,7 +186,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        fprintf(fp,"<td bgcolor=red><center>Data stream terminated</center></td>\n");
        }
 
-    if (!terminated)
+    if (!terminated3)
        {
        snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
        fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",hist,img);

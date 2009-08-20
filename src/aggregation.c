@@ -81,15 +81,14 @@ void Nova_PackNerveBundle()
    "hashes.html",
    "audit.html",
    "monitor_summary.html",
-   "promises.cf.html",
    "setuid.html",
    "file_changes.html",
    "compliance.html",
    "software_packages.html",
    "software_patches_avail.html",
    "software_patch_status.html",
+   "promise_output_common.html",
    NULL
-   // OBS.E-sigma,OBS.distr,OBS.yr
    };
 
   static char *fast[] =
@@ -98,8 +97,6 @@ void Nova_PackNerveBundle()
    "lastseen.html",
    "promise_compliance.html",
    NULL
-   //"../ts_key",
-   // OBS.mag   
    };
 
   struct Promise *pp = NewPromise("pack_slow","Weekly view update"); 

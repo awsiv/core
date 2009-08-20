@@ -75,6 +75,64 @@ NewClass(vbuff);
 
 /*****************************************************************************/
 
+void Nova_PreSanitizePromise(struct Promise *pp)
+
+{ struct Attributes a;
+
+
+if (strcmp("processes",pp->agentsubtype) == 0)
+   {
+
+   return;
+   }
+
+if (strcmp("storage",pp->agentsubtype) == 0)
+   {
+
+   return;
+   }
+
+if (strcmp("packages",pp->agentsubtype) == 0)
+   {
+
+   return;
+   }
+
+if (strcmp("files",pp->agentsubtype) == 0)
+   {
+   a = GetFilesAttributes(pp);   
+   FileSanityChecks(pp->promiser,a,pp);
+   return;
+   }
+  
+if (strcmp("commands",pp->agentsubtype) == 0)
+   {
+
+   return;
+   }
+
+if (strcmp("databases",pp->agentsubtype) == 0)
+   {
+
+   return;
+   }
+
+if (strcmp("methods",pp->agentsubtype) == 0)
+   {
+
+   return;
+   }
+
+if (strcmp("reports",pp->agentsubtype) == 0)
+   {
+   VerifyReportPromise(pp);
+   return;
+   }
+}
+
+
+/*****************************************************************************/
+
 void Nova_Version()
 
 {
@@ -272,6 +330,9 @@ else
    {
    printf(" -> System converging on trajectory\n");
    }
+
+printf("WARNING- this is a commercially licensed version of Cfengine. It is ILLEGAL\n");
+printf("         to install this only systems for which no license has been purchased.\n");
 }
 
 /********************************************************************/

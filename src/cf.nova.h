@@ -37,6 +37,8 @@
 #define CF_MAGMARGIN 0
 
 
+/*****************************************************************************/
+
 struct CfDataView
    {
 #ifdef HAVE_GD_H      
@@ -67,6 +69,18 @@ struct CfDataView
    int margins;
    char *title;
    };
+
+struct CfGraphNode
+   {
+   int colour;
+   char name[CF_SMALLBUF];
+   double potential;      
+   double x,y;
+   double radius;
+   int orbit; /* For non-central nodes - who is the star? */
+   };
+
+/*****************************************************************************/
 
 /* Valid ACL syntax values, from documentation */
 
@@ -260,6 +274,7 @@ void Nova_SetPolicyServer(char *name);
 void Nova_CreateFailSafe(char *name);
 void Nova_SetDocRoot(char *name);
 void Nova_EnterpriseContext(void);
+void Nova_PreSanitizePromise(struct Promise *pp);
 
 /* registry.c */
 

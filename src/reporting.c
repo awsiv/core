@@ -1386,7 +1386,7 @@ void SummarizeComms()
 { DBT key,value;
   DB *dbp;
   DBC *dbcp;
-  int ret,criterion,overdue;
+  int ret;
   DB_ENV *dbenv = NULL;
   struct QPoint entry;
   double kept = 1,not_kept = 0,repaired = 0,var,average;
@@ -1430,14 +1430,11 @@ while (dbcp->c_get(dbcp, &key, &value, DB_NEXT) == 0)
       continue;
       }
 
-   criterion = (now - then > (int)(average+2.0*sqrt(var)+0.5));
-   overdue = now - then - (int)(average);
-
-   if (criterion)
+   if (now - then > (int)(average+2.0*sqrt(var)+0.5))
       {
       not_kept++;
       }
-   else if (overdue)
+   else if (now - then > (int)(average))
       {
       repaired++;
       }

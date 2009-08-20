@@ -188,7 +188,7 @@ void Nova_GraphLegend(FILE *fout)
 fprintf(fout,"<div id=\"legend\">"
         "<table>"
         "<tr>"
-        "<td bgcolor = #00c800>Average (mean)</td>"
+        "<td bgcolor = #00c800>Average deviation below mean</td>"
         "<td bgcolor = ff9696>Average deviation above mean</td>"
         "<td bgcolor = c8ff00>Last measured</td>"
         "</tr>"
@@ -365,8 +365,10 @@ gdImageDestroy(cfv->im);
 void Nova_CreateHostPortal(struct Item *list)
 
 { FILE *fout;
-  char filename[CF_BUFSIZE];
+ char filename[CF_BUFSIZE],col[CF_BUFSIZE];
   struct Item *ip;
+  struct stat sb;
+  time_t now = time(NULL);
   
 snprintf(filename,CF_BUFSIZE,"host_portal.html");
 
@@ -377,14 +379,35 @@ if ((fout = fopen(filename, "w")) == NULL)
 
 NovaHtmlHeader(fout,"Host Directory",STYLESHEET,WEBDRIVER,BANNER);
 
-fprintf(fout,"<table>\n");
+fprintf(fout,"<div id=\"directory\"><table>\n");
 
 for (ip = list; ip != NULL; ip=ip->next)
    {
-   fprintf(fout,"<tr><td>%s</td><td><a href=\"%s/mainpage.html\"><img src=\"%s/meters.png\"></a></td></tr>",ip->name,ip->name,ip->name);
+   snprintf(filename,"%s/meters.png",ip->name);
+   if (stat(filename,&sb) != -1)
+      {
+      if (now > sb.st_mtime + 3600)
+         {
+         strcpy(col,"red");
+         }
+      else if (now > sb.st_mtime + 1800)
+         {
+         strcpy(col,"yellow");
+         }
+      else
+         {
+         strcpy(col,"green");
+         }
+      
+      fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\"><table><tr><td width=\"80\">&nbsp;</div></center></td></tr></table></td><td width=\"200\"><center>Last updated at<br>%s</center></td><td><a href=\"%s/mainpage.html\"><img src=\"%s/meters.png\"></a></td><td><a href=\"%s/promise_output_common.html\">Promises</a></td></tr>",ip->name,col,ctime(&(sb.st_mtime)),ip->name,ip->name,ip->name);
+      }
+   else
+      {
+      fprintf(fout,"<tr><td>%s</td><td><center>No current data</center></td></tr>",ip->name,ip->name,ip->name);
+      }
    }
 
-fprintf(fout,"</table>\n");
+fprintf(fout,"</table></div>\n");
 NovaHtmlFooter(fout,FOOTER);
 fclose(fout);
 }

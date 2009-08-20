@@ -175,6 +175,12 @@ pid_t Nova_StartTwin(int argc,char **argv)
   struct CfLock thislock;
   pid_t pid;
   
+
+if (VSYSTEMHARDCLASS == cfnt)
+   {
+   return 0;
+   }
+
 memset(&dummyattr,0,sizeof(dummyattr));
 dummyattr.transaction.ifelapsed = 0;
 dummyattr.transaction.expireafter = 0;

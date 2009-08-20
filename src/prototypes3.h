@@ -182,7 +182,8 @@ int FailedProtoReply(char *buf);
 
 /* chflags.c */
 
-int ParseFlagString (char *flagstring, u_long *plusmask, u_long *minusmask);
+int ParseFlagString (struct Rlist *flags, u_long *plusmask, u_long *minusmask);
+u_long ConvertBSDBits(char *s);
 
 /* communication.c */
 
@@ -303,6 +304,7 @@ void RegisterBundleDependence(char *absscope,struct Promise *pp);
 void MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version);
 void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version);
 void ShowTopicRepresentation(FILE *fp);
+void PreSanitizePromise(struct Promise *pp);
 void Nova_ShowTopicRepresentation(FILE *fp);
 void NotePromiseConditionals(struct Promise *pp);
 void DependencyGraph(struct Topic *map);
@@ -645,6 +647,7 @@ int SelectExecRegexMatch(char *filename,char *crit,char *prog);
 int SelectIsSymLinkTo(char *filename,struct Rlist *crit);
 int SelectExecProgram(char *filename,char *crit);
 int SelectSizeMatch(size_t size,size_t min,size_t max);
+int SelectBSDMatch(struct stat *lstatptr,struct Rlist *bsdflags,struct Promise *pp);
 
 /* fncall.c */
 
