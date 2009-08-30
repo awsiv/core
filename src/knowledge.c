@@ -579,8 +579,8 @@ else
    {
    fprintf(fp,"<a name=\"%s\"></a>\n",id);
    fprintf(fp,"<div id=\"nav\">\n");
-   fprintf(fp,"<a href=\"promises.cf.html#bundle_%s\">[PARENT BUNDLE]</a>&nbsp;\n",pp->bundle);
-   fprintf(fp,"<a href=\"reports/host_portal.html\">[MACHINES]</a>\n",id);
+   fprintf(fp,"<a href=\"%s/promises.cf.html#bundle_%s\">[PARENT BUNDLE]</a>&nbsp;\n",WEBDRIVER,pp->bundle);
+   fprintf(fp,"<a href=\"%s/reports/host_portal.html\">[MACHINES]</a>\n",WEBDRIVER,id);
    fprintf(fp,"</div>\n");
    }
 }
@@ -749,7 +749,7 @@ if (impacted == NULL)
    return;
    }
 
-CfOut(cf_verbose,""," ?? Look for promise dependencies for \"%s\"\n",promise_id);
+CfOut(cf_verbose,""," ?? Analysing promise dependencies for \"%s\"\n",promise_id);
   
 /* So now we have the list of classes to scan for and we must undertake this
  expensive search */

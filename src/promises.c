@@ -79,22 +79,20 @@ void Nova_PreSanitizePromise(struct Promise *pp)
 
 { struct Attributes a;
 
+ /* Attempt run-time-like analysis here before execution if possible */
 
 if (strcmp("processes",pp->agentsubtype) == 0)
    {
-
    return;
    }
 
 if (strcmp("storage",pp->agentsubtype) == 0)
    {
-
    return;
    }
 
 if (strcmp("packages",pp->agentsubtype) == 0)
    {
-
    return;
    }
 
@@ -107,25 +105,21 @@ if (strcmp("files",pp->agentsubtype) == 0)
   
 if (strcmp("commands",pp->agentsubtype) == 0)
    {
-
    return;
    }
 
 if (strcmp("databases",pp->agentsubtype) == 0)
    {
-
    return;
    }
 
 if (strcmp("methods",pp->agentsubtype) == 0)
    {
-
    return;
    }
 
 if (strcmp("reports",pp->agentsubtype) == 0)
    {
-   VerifyReportPromise(pp);
    return;
    }
 }

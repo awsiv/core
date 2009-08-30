@@ -300,6 +300,9 @@ void SummarizeComms(void);
 
 /* server.c */
 
+const EVP_CIPHER *Nova_CfengineCipher(char type);
+char Nova_CfEnterpriseOptions(void);
+int Nova_CfSessionKeySize(char c);
 void  Nova_RegisterLiteralServerData(char *handle,struct Promise *pp);
 char *Nova_ReturnLiteralData(char *handle);
 char *Nova_GetRemoteScalar(char *handle,char *server,int encrypted);

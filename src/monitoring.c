@@ -1130,23 +1130,31 @@ for (ip = stream; ip != NULL; ip = ip-> next)
    if (count == a.measure.select_line_number)
       {
       found = true;
-      match = ip;
-      
-      if (a.measure.data_type == cf_counter)
-         {
-         match_count++;
-         }
+      match = ip;      
+      match_count++;
       }
 
    if (FullTextMatch(a.measure.select_line_matching,ip->name))
       {
       found = true;
-      match = ip;
-      
-      if (a.measure.data_type == cf_counter)
+      match = ip;      
+      match_count++;
+
+      switch (a.measure.data_type)
          {
-         match_count++;
+         case cf_int:
+             
+             strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
+             real_val += Str2Double(value);
+             break;
+             
+         case cf_real:
+             
+             strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
+             real_val += Str2Double(value);
+             break;
          }
+      
       }
 
    count++;
@@ -1169,22 +1177,27 @@ switch (a.measure.data_type)
        
        if (match_count > 1)
           {
-          CfOut(cf_inform,""," !! Warning: %d lines matched the line_selection \"%s\"- matching to last",match_count,a.measure.select_line_matching);
+          CfOut(cf_inform,""," !! Warning: %d lines matched the line_selection \"%s\"- making best average",match_count,a.measure.select_line_matching);
           }
-       
-       strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
-       real_val = Str2Double(value);
+
+       if (match_count > 0)
+          {
+          real_val /= match_count;
+          }
        break;
        
    case cf_real:
 
        if (match_count > 1)
           {
-          CfOut(cf_inform,""," !! Warning: %d lines matched the line_selection \"%s\"- matching to last",match_count,a.measure.select_line_matching);
+          CfOut(cf_inform,""," !! Warning: %d lines matched the line_selection \"%s\"- making best average",match_count,a.measure.select_line_matching);
           }
 
-       strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
-       real_val = Str2Double(value);
+       if (match_count > 0)
+          {
+          real_val /= match_count;
+          }
+
        break;
    }
 

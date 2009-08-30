@@ -22,6 +22,54 @@ NewScalar("remote_access",handle,pp->promiser,cf_str);
 
 /*****************************************************************************/
 
+char Nova_CfEnterpriseOptions()
+{
+ printf("SELECTING NOVA FIPS\n");
+return 'N';
+}
+
+/*****************************************************************************/
+
+int Nova_CfSessionKeySize(char c)
+{
+switch (c)
+   {
+   case 'c':
+       /* This part should only occur on the server side */
+       CfOut(cf_verbose,""," -> Community level client connection");
+       CfOut(cf_log,""," !! Community level client connection to enterprise server");
+       CfOut(cf_log,""," !! Note that full enterprise functionality requires all hosts to run at enterprise level");
+       return CF_BLOWFISHSIZE;
+       
+   case 'N':
+       CfOut(cf_verbose,""," -> Selecting FIPS compliant encryption option");
+       return CF_FIPS_SIZE;
+
+   default:
+       CfOut(cf_error,""," !! Illegal client protocol connection type");
+       CfOut(cf_log,""," !! Illegal client connection to enterprise server");       
+       return CF_BLOWFISHSIZE;
+   }
+}
+
+/*****************************************************************************/
+
+const EVP_CIPHER *Nova_CfengineCipher(char type)
+
+{
+switch(type)
+   {
+   case 'N':
+       printf("FIPS\n");
+       return EVP_aes_256_cbc();
+   default:
+       printf("BLOW\n");
+       return EVP_bf_cbc();
+   }
+}
+
+/*****************************************************************************/
+
 char *Nova_ReturnLiteralData(char *handle)
 
 { char rtype,*retval;
@@ -72,7 +120,7 @@ if (conn == NULL)
 if (encrypted)
    {
    snprintf(in,CF_BUFSIZE,"VAR %s",handle);   
-   cipherlen = EncryptString(in,out,conn->session_key,cf_strlen(in)+1);
+   cipherlen = EncryptString('N',in,out,conn->session_key,cf_strlen(in)+1);
    snprintf(sendbuffer,CF_BUFSIZE,"SVAR %d",cipherlen);
    memcpy(sendbuffer+CF_PROTO_OFFSET,out,cipherlen);
    tosend = cipherlen + CF_PROTO_OFFSET;
@@ -105,7 +153,7 @@ if ((n = ReceiveTransaction(conn->sd,recvbuffer,NULL)) == -1)
 if (encrypted)
    {
    memcpy(in,recvbuffer,n);
-   plainlen = DecryptString(in,recvbuffer,conn->session_key,n);
+   plainlen = DecryptString('N',in,recvbuffer,conn->session_key,n);
    }
 
 ServerDisconnection(conn);

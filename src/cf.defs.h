@@ -292,6 +292,7 @@ typedef int clockid_t;
 #define CF_ALLCLASSSIZE (4*CF_BUFSIZE)
 #define CF_BUFFERMARGIN 32
 #define CF_BLOWFISHSIZE 16
+#define CF_FIPS_SIZE 32
 #define CF_SMALLBUF 128
 #define CF_MAXVARSIZE 1024
 #define CF_NONCELEN (CF_BUFSIZE/16)
@@ -464,7 +465,6 @@ typedef int clockid_t;
 #define CFGRACEPERIOD 4.0     /* training period in units of counters (weeks,iterations)*/
 #define cf_noise_threshold 6  /* number that does not warrent large anomaly status */
 #define big_number 100000
-#define CF_PERSISTENCE 15
 #define LDT_BUFSIZE 10
 #define CF_GRAINS   64
 #define ATTR     11
@@ -1169,7 +1169,7 @@ struct Checksum_Value
 #endif
 
 /********************************************************************/
-/* *BSD chflags stuff - Andreas.Klussmann@infosys.heitec.net        */
+/* *BSD chflags stuff -                                             */
 /********************************************************************/
 
 # if !defined UF_NODUMP

@@ -383,7 +383,7 @@ fprintf(fout,"<div id=\"directory\"><table>\n");
 
 for (ip = list; ip != NULL; ip=ip->next)
    {
-   snprintf(filename,"%s/meters.png",ip->name);
+   snprintf(filename,CF_BUFSIZE-1,"%s/meters.png",ip->name);
    if (stat(filename,&sb) != -1)
       {
       if (now > sb.st_mtime + 3600)

@@ -75,6 +75,7 @@
 #define CF_DONEPASSES  4
 
 #define CF_TIME_SIZE 32
+#define CF_FIPS_SIZE 32
 
 /*************************************************************************/
 /** Design criteria                                                      */
@@ -238,6 +239,7 @@ enum cfacontrol
    cfa_bindtointerface,
    cfa_hashupdates,
    cfa_childlibpath,
+   cfa_checksum_alert_time,
    cfa_defaultcopytype,
    cfa_dryrun,
    cfa_editbinaryfilesize,
@@ -872,6 +874,16 @@ enum action_policy
   cfa_no_ppolicy
   };
 
+enum cf_thread_mutex
+  {
+  cft_system,
+  cft_count,
+  cft_getaddr,
+  cft_lock,
+  cft_output,
+  cft_no_tpolicy
+  };
+
 /************************************************************************************/
 
 enum cf_acl_method
@@ -1123,6 +1135,7 @@ struct FileCopy
    enum cfbackupoptions backup;
    int stealth;
    int preserve;
+   int collapse;
    int check_root;
    int type_check;
    int force_update;
