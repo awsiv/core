@@ -335,11 +335,14 @@ list-style-image: none;
 border: none;
 }
 
+
 #primary td
 {
 font-size: 12px;
-padding: 5px;
+padding: 10px;
 font-weight: bold;
+
+
 }
 
 #primary td:hover
@@ -391,6 +394,10 @@ font-size: 8px;
 font-weight: normal;
 }
 
+#directory td
+{
+background-color: lightblue;
+}
 
 #showvars TH { background: #aabbFF;
      font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -411,9 +418,25 @@ font-weight: normal;
 background-color: #eee;
     }
 
+#signalred td
+{  
+background-color: red;
+}
+
+#signalyellow td
+{  
+background-color: yellow;
+}
+
+#signalgreen td
+{  
+background-color: green;
+}
+
 table.border
 { 
-width: 900px;
+width: 1000px;
+background-color: white;
   border-color: #4e8b8c;
   border-style: solid;
   border-width: 1px;

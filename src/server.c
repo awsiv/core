@@ -60,10 +60,8 @@ const EVP_CIPHER *Nova_CfengineCipher(char type)
 switch(type)
    {
    case 'N':
-       printf("FIPS\n");
        return EVP_aes_256_cbc();
    default:
-       printf("BLOW\n");
        return EVP_bf_cbc();
    }
 }

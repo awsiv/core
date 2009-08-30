@@ -95,6 +95,9 @@
 #undef AUTOCONF_HOSTNAME
 #undef AUTOCONF_SYSNAME
 
+/* Define if old Berkeley API */
+#undef CF_OLD_DB
+
 /* Define to 1 if you have the <acl.h> header file. */
 #undef HAVE_ACL_H
 
@@ -158,6 +161,9 @@
 
 /* Define to 1 if you have the `acl' library (-lacl). */
 #undef HAVE_LIBACL
+
+/* Define to 1 if you have the `db' library (-ldb). */
+#undef HAVE_LIBDB
 
 /* Define to 1 if you have the `gd' library (-lgd). */
 #undef HAVE_LIBGD
@@ -387,6 +393,9 @@
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
+
+/* Define if BerkeleyDB is available. */
+#undef USE_BERKELEY_DB
 
 /* Define if PCRE is available. */
 #undef USE_PCRE
