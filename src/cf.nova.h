@@ -35,7 +35,7 @@
 #define CF_TIMESERIESDATA 168
 #define CF_MAGDATA 48
 #define CF_MAGMARGIN 0
-
+#define CF_TRIBE_SIZE 30
 
 /*****************************************************************************/
 
@@ -72,13 +72,22 @@ struct CfDataView
 
 struct CfGraphNode
    {
+   int real_id;
+   int tribe_id;
    int colour;
-   char name[CF_SMALLBUF];
+   char shortname[CF_SMALLBUF];
+   char *fullname;
    double potential;      
    double x,y;
    double radius;
-   int orbit; /* For non-central nodes - who is the star? */
+   double angle;
+   int orbit_parent; /* For non-central nodes - who is the star? */
+   int distance_from_centre;
+   int horizon; // distance to the edge
    };
+
+#define CF_MIN_RADIUS    15.0
+#define CF_RADIUS_SCALE  40.0
 
 /*****************************************************************************/
 
@@ -148,11 +157,36 @@ void Nova_ShowAllGraphs(FILE *fp,char *s,struct Item *el);
 void Nova_ShowGraph(FILE *fp, int i,time_t last,enum observables obs);
 void Nova_MainPage(char *s,struct Item *el);
 void Nova_OtherPages(char *s,struct Item *el);
+void Nova_PlotTopicCosmos(int topic,double **adj,char **names,int dim,char *view);
+int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double **tribe_adj,char **n,int topic,double **full_adj,int dim_full,int *tertiary_boundary);
+int Nova_AlreadyInTribe(int node, int *tribe_id);
+void Nova_InitVertex(struct CfGraphNode *v,int i);
+int Nova_NewVertex(struct CfGraphNode *tribe,int i,char *name,int distance,int real);
+void Nova_EigenvectorCentrality(double **A,double *v,int dim);
+void Nova_MatrixOperation(double **A,double *v,int dim);
 
 /* coordinates.c */
 
 int Nova_ViewPortY(struct CfDataView *cfv,double y,double offset);
 int Nova_ViewPortX(struct CfDataView *cfv,double x);
+
+/* copernicus.c */
+
+void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node, double **tribe_adj,int tribe_size, double *tribe_evc,char **n,int topic,double **full_adj,int dim_full,int tertiary_boundary);
+void Nova_IlluminateTribe(int *tribe_id,struct CfGraphNode *tribe_node, double **tribe_adj,int tribe_size, double *tribe_evc,char **n,int topic,double **full_adj,int dim_full,int tertiary_boundary);
+int Nova_GetMaxEvcNode(double *evc,int tribe_size);
+int Nova_GetAdjacent(int i,double **adj,int size, struct CfGraphNode *tribe, struct CfGraphNode *neighbours);
+int Nova_SplayAdjacent(int i,double **adj,int tribe_size,struct CfGraphNode *tribe,int *trail,struct CfGraphNode *neighbours);
+int Nova_GetEvcTops(double **adj,int size, double *evc, int *tops);
+int Nova_X(struct CfDataView cfv,double x);
+int Nova_Y(struct CfDataView cfv,double y);
+int Nova_TribeUnion(int *array1,struct CfGraphNode *array2, int size1, int size2);
+void Nova_ClearTrail(int *array);
+void Nova_AnchorTrail(int *array,int node);
+int Nova_InTrail(int *trail,int node);
+void Nova_Line(struct CfDataView cfv,double x1,double y1,double x2,double y2,int colour);
+void Nova_Disc(struct CfDataView cfv,double x1,double y1,double radius,int colour);
+void Nova_Print(struct CfDataView cfv,double x,double y,char *s,int colour);
 
 /* database.c */
 

@@ -28,6 +28,7 @@ libcfnova_la_SOURCES =						\
 	html.c							\
 	knowledge.c						\
 	graphs.c						\
+	copernicus.c						\
 	histogram.c						\
 	timeseries.c						\
 	magnify.c						\

@@ -53,7 +53,7 @@ extern struct Topic *TOPIC_MAP;
 extern struct PromiseIdent *PROMISE_ID_LIST;
 extern struct Item *DONELIST;
 extern struct Rlist *CBUNDLESEQUENCE;
-
+extern struct Item *ROTATED;
 extern double FORGETRATE;
 
 extern struct Rlist *CF_STCK;
@@ -61,7 +61,7 @@ extern int CF_STCKFRAME;
 extern int CFA_BACKGROUND;
 extern int CFA_BACKGROUND_LIMIT;
 extern int AM_BACKGROUND_PROCESS;
-
+extern int CF_PERSISTENCE;
 extern int LOOKUP;
 extern int BOOTSTRAP;
 extern int XML;
@@ -75,6 +75,8 @@ extern char *CF_DATATYPES[];
 extern char *CF_AGENTTYPES[];
 extern char HASHDB[CF_BUFSIZE];
 extern int FSTAB_EDITS;
+extern char GRAPHDIR[CF_BUFSIZE];
+
 
 extern int CFA_MAXTHREADS;
 extern char *THIS_BUNDLE;
