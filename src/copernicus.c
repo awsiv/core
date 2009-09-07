@@ -16,9 +16,12 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,SKY;
+extern int LIGHTRED,YELLOW,ORANGE,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,SKY;
 extern int GREYS[CF_SHADES];
 extern int BLUES[CF_SHADES];
+extern int YELLOWS[CF_SHADES];
+extern int GREENS[CF_SHADES];
+extern int REDS[CF_SHADES];
 
 /*****************************************************************************/
 
@@ -60,7 +63,14 @@ Nova_ClearTrail(trail);
 
 for (i = 0; i < tribe_size; i++)
    {
-   tribe_node[i].radius = CF_MIN_RADIUS + CF_RADIUS_SCALE*tribe_evc[i];
+   if (i == topic)
+      {
+      tribe_node[i].radius = 1.5*CF_MIN_RADIUS + CF_RADIUS_SCALE*tribe_evc[i];
+      }
+   else
+      {
+      tribe_node[i].radius = CF_MIN_RADIUS + CF_RADIUS_SCALE*tribe_evc[i];
+      }
    }
 
 /* Centre on most imporant topic */
@@ -70,7 +80,7 @@ Nova_AnchorTrail(trail,centre);
 cfv.height = 750;
 cfv.width = 1000;
 cfv.im = gdImageCreate(cfv.width,cfv.height);
-Nova_MakePalette(&cfv);
+Nova_MakeCosmosPalette(&cfv);
 
 /* Rendering */
 
@@ -81,18 +91,10 @@ for (y = 0; y < cfv.height; y++)
 
 tribe_node[centre].x = 0;
 tribe_node[centre].y = 0;
-tribe_node[centre].colour = WHITE;
 tribe_node[centre].distance_from_centre = 0;
 neighbours1[centre].angle = 0;
 
-orbital_r1 = tribe_node[centre].radius + 3 * CF_MIN_RADIUS;
-orbital_r2 = tribe_node[centre].radius + 7 * CF_MIN_RADIUS;
-orbital_r3 = 3.5 *CF_MIN_RADIUS;
-orbital_r4 = 5 *CF_MIN_RADIUS;
-orbital_r5 = 3 *CF_MIN_RADIUS;
-
 // First orbit
-
 size1 = Nova_SplayAdjacent(centre,tribe_adj,tribe_size,tribe_node,trail,neighbours1);
 
 theta0 = 0.64; // this should be close to the adjacent tops
@@ -101,7 +103,13 @@ dtheta0 = 2 * pi / (double)size1;
 for (i = 0; i < size1; i++)
    {
    int n = Nova_GetAdjacent(neighbours1[i].tribe_id,tribe_adj,tribe_size,tribe_node,neighbours2);
-   
+
+   orbital_r1 = tribe_node[centre].radius + 1.5 * neighbours1[i].radius;
+   orbital_r2 = tribe_node[centre].radius + 4.0 * neighbours1[i].radius;
+
+   orbital_r1 += 0.2 * orbital_r1 * Nova_SignPerturbation(i);
+   orbital_r2 += 0.2 * orbital_r2 * Nova_SignPerturbation(i);
+         
    if (n > 1)
       {
       x = orbital_r2 * cos(theta0);
@@ -115,26 +123,29 @@ for (i = 0; i < size1; i++)
       
    neighbours1[i].x = x;
    neighbours1[i].y = y;
-   neighbours1[i].colour = BLUES[i];
    neighbours1[i].distance_from_centre = 1;
    neighbours1[i].angle = theta0;
 
+   Nova_Line(cfv,0,0,x,y,LIGHTGREY);
+
    if (neighbours1[i].real_id == topic)
       {
-      neighbours1[i].colour = GREEN;
+      Nova_HotBall(cfv,x,y,neighbours1[i].radius,YELLOWS);
       }
-
-   Nova_Line(cfv,0,0,x,y,LIGHTGREY);
-   Nova_Disc(cfv,x,y,neighbours1[i].radius,neighbours1[i].colour);
-   Nova_Print(cfv,x,y,neighbours1[i].shortname,RED);
+   else
+      {
+      Nova_ColdBall(cfv,x,y,neighbours1[i].radius,GREENS);
+      }
+   
+   Nova_Print(cfv,x,y,neighbours1[i].shortname,BLACK);
    
    theta0 += dtheta0;
    }
 
 // Centre-piece
 
-Nova_Disc(cfv,0,0,tribe_node[centre].radius,tribe_node[centre].colour);
-Nova_Print(cfv,0,0,tribe_node[centre].shortname,RED);
+Nova_HotBall(cfv,0,0,tribe_node[centre].radius,YELLOWS);
+Nova_Print(cfv,0,0,tribe_node[centre].shortname,BLACK);
 
 // Secondary orbits
 
@@ -150,7 +161,12 @@ for (i = 0; i < size1; i++)
    for (j = 0; j < size2; j++)
       {
       size3 = Nova_SplayAdjacent(neighbours2[j].tribe_id,tribe_adj,tribe_size,tribe_node,trail,neighbours3);
-         
+      orbital_r3 = 2.5 * neighbours2[j].radius;
+      orbital_r4 = 3.5 * neighbours2[j].radius;
+      
+      orbital_r3 += 0.2 * orbital_r3 * Nova_SignPerturbation(j);
+      orbital_r4 += 0.2 * orbital_r4 * Nova_SignPerturbation(j);
+      
       if (size3 > 1)
          {
          x = neighbours1[i].x + orbital_r4 * cos(theta1);
@@ -164,14 +180,8 @@ for (i = 0; i < size1; i++)
 
       neighbours2[j].x = x;
       neighbours2[j].y = y;
-      neighbours2[j].colour = GREYS[j];
       neighbours2[j].distance_from_centre = 2;
       neighbours2[j].angle = theta1;
-
-      if (neighbours2[j].real_id == topic)
-         {
-         neighbours2[j].colour = GREEN;
-         }
 
       Nova_Line(cfv,neighbours1[i].x,neighbours1[i].y,x,y,LIGHTGREY);
 
@@ -182,31 +192,45 @@ for (i = 0; i < size1; i++)
       
       for (k = 0; k < size3; k++)
          {
+         orbital_r5 = 2.0 * CF_MIN_RADIUS;
+         orbital_r5 += 0.2 * orbital_r5 * Nova_SignPerturbation(k);
+             
          x = neighbours2[j].x + orbital_r5 * cos(theta2);
          y = neighbours2[j].y + orbital_r5 * sin(theta2);      
          
          neighbours3[k].x = x;
          neighbours3[k].y = y;
-         neighbours3[k].colour = GREYS[k];
          neighbours3[k].distance_from_centre = 3;
          neighbours3[k].angle = theta2;
 
+         Nova_Line(cfv,neighbours2[j].x,neighbours2[j].y,x,y,LIGHTGREY);         
+
          if (neighbours3[k].real_id == topic)
             {
-            neighbours3[k].colour = GREEN;
+            Nova_HotBall(cfv,x,y,neighbours3[k].radius,YELLOWS);
             }
-
-         Nova_Line(cfv,neighbours2[j].x,neighbours2[j].y,x,y,LIGHTGREY);         
-         Nova_Disc(cfv,x,y,neighbours3[k].radius,neighbours3[k].colour);
-         Nova_Print(cfv,x,y,neighbours3[k].shortname,RED);
+         else
+            {
+            Nova_ColdBall(cfv,x,y,neighbours3[k].radius,GREYS);
+            }
+         
+         Nova_Print(cfv,x,y,neighbours3[k].shortname,BLACK);
 
          theta2 += dtheta2;
          }      
 
       // Render 2ndary after
+
+      if (neighbours2[j].real_id == topic)
+         {
+         Nova_HotBall(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].radius,YELLOWS);
+         }
+      else
+         {
+         Nova_ColdBall(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].radius,REDS);
+         }
       
-      Nova_Disc(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].radius,neighbours2[j].colour);
-      Nova_Print(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].shortname,RED);
+      Nova_Print(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].shortname,BLACK);
       
       theta1 += dtheta1;
       }
@@ -265,6 +289,7 @@ Debug("\nUNORDER ");
 
 for (j = 0; j < tribe_size; j++)
    {
+   Nova_InitVertex(neighbours,j);
    s2[j] = -1;
    n2[j] = -1;
    n[j] = -1;
@@ -465,7 +490,9 @@ int Nova_GetEvcTops(double **adj,int tribe_size,double *evc, int *tops)
 { int i,j,istop,counter = 0;
   int localmax[CF_TRIBE_SIZE];
   double max;
- 
+
+/* Find the local maxima on the EVC surface */
+  
 for (i = 0; i < tribe_size; i++)
    {
    localmax[i] = true;
@@ -496,6 +523,21 @@ return counter;
 }
 
 /*****************************************************************************/
+
+double Nova_SignPerturbation(int i)
+
+{ int j;
+  double x = -1.0;
+
+for (j = 0; j < i; j++)
+   {
+   x *= -1.0;
+   }
+
+return x;
+}
+
+/*****************************************************************************/
 /* Coords                                                                    */
 /*****************************************************************************/
 
@@ -518,6 +560,7 @@ return (cfv.height/2) - (int)y;
 void Nova_Line(struct CfDataView cfv,double x1,double y1,double x2,double y2,int colour)
 
 {
+//gdImageSetThickness(cfv.im,2);
 gdImageLine(cfv.im,Nova_X(cfv,x1),Nova_Y(cfv,y1),Nova_X(cfv,x2),Nova_Y(cfv,y2),colour);
 }
 
@@ -527,6 +570,34 @@ void Nova_Disc(struct CfDataView cfv,double x,double y,double radius,int colour)
 
 {
 gdImageFilledArc(cfv.im,Nova_X(cfv,x),Nova_Y(cfv,y),radius,radius,0,360,colour,gdArc);
+}
+
+/*****************************************************************************/
+
+void Nova_HotBall(struct CfDataView cfv,double x,double y,double radius,int *shade)
+
+{ int dr = 0;
+  int col;
+
+for (dr = 0; dr <= radius; dr += radius/(double)CF_SHADES)
+   {
+   col = (int)(dr/radius * (double)(CF_SHADES-1));
+   gdImageArc(cfv.im,Nova_X(cfv,x),Nova_Y(cfv,y),dr,dr,0,360,shade[col]);
+   }
+}
+
+/*****************************************************************************/
+
+void Nova_ColdBall(struct CfDataView cfv,double x,double y,double radius,int *shade)
+
+{ int dr = 0;
+  int col;
+
+for (dr = 0; dr <= radius; dr += radius/(double)CF_SHADES)
+   {
+   col = (int)(dr/radius * (double)(CF_SHADES-1));
+   gdImageArc(cfv.im,Nova_X(cfv,x),Nova_Y(cfv,y),radius-dr,radius-dr,0,360,shade[col]);
+   }
 }
 
 /*****************************************************************************/

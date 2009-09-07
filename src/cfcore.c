@@ -366,6 +366,7 @@ int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double **tribe_
 for (i = 0; i < CF_TRIBE_SIZE; i++)
    {
    Nova_InitVertex(tribe_nodes,i);
+   tribe_id[i] = -1;
    
    for (j = 0; j < CF_TRIBE_SIZE; j++)
       {
@@ -574,7 +575,6 @@ void Nova_InitVertex(struct CfGraphNode *tribe,int i)
 { const int parent = 1;
   
 tribe[i].real_id = 0;
-tribe[i].colour = 0;
 memset(tribe[i].shortname,0,CF_SMALLBUF);
 tribe[i].fullname =  NULL;
 tribe[i].potential = 0.0;      
@@ -612,7 +612,6 @@ if (node > 5)
    }
 
 tribe[node].real_id = real; 
-tribe[node].colour;
 strncpy(tribe[node].shortname,sshort,CF_SMALLBUF-1);
 tribe[node].fullname = name;
 tribe[node].potential = 0.0;      

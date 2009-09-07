@@ -31,7 +31,7 @@
 #undef PACKAGE
 #undef AUTOCONF_HOSTNAME
 
-#define CF_SHADES 50
+#define CF_SHADES 25
 #define CF_TIMESERIESDATA 168
 #define CF_MAGDATA 48
 #define CF_MAGMARGIN 0
@@ -74,7 +74,6 @@ struct CfGraphNode
    {
    int real_id;
    int tribe_id;
-   int colour;
    char shortname[CF_SMALLBUF];
    char *fullname;
    double potential;      
@@ -86,7 +85,7 @@ struct CfGraphNode
    int horizon; // distance to the edge
    };
 
-#define CF_MIN_RADIUS    15.0
+#define CF_MIN_RADIUS    30.0
 #define CF_RADIUS_SCALE  40.0
 
 /*****************************************************************************/
@@ -187,6 +186,9 @@ int Nova_InTrail(int *trail,int node);
 void Nova_Line(struct CfDataView cfv,double x1,double y1,double x2,double y2,int colour);
 void Nova_Disc(struct CfDataView cfv,double x1,double y1,double radius,int colour);
 void Nova_Print(struct CfDataView cfv,double x,double y,char *s,int colour);
+double Nova_SignPerturbation(int i);
+void Nova_ColdBall(struct CfDataView cfv,double x,double y,double radius,int *shade);
+void Nova_HotBall(struct CfDataView cfv,double x,double y,double radius,int *shade);
 
 /* database.c */
 
@@ -199,6 +201,7 @@ void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired
 void Nova_Title(struct CfDataView *cfv,int col);
 void Nova_BuildGraphs(struct CfDataView *cfv);
 void Nova_MakePalette(struct CfDataView *cfv);
+void Nova_MakeCosmosPalette(struct CfDataView *cfv);
 double Nova_GetNowPosition(time_t now);
 void Nova_IncludeFile(FILE *fout,char *name);
 void Nova_NavBar(FILE *fout);
