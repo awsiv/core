@@ -20,8 +20,8 @@ extern int LIGHTRED,YELLOW,ORANGE,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,SKY;
 extern int GREYS[CF_SHADES];
 extern int BLUES[CF_SHADES];
 extern int YELLOWS[CF_SHADES];
-extern int GREENS[CF_SHADES];
-extern int REDS[CF_SHADES];
+extern int PINKS[CF_SHADES];
+extern int BROWNS[CF_SHADES];
 
 /*****************************************************************************/
 
@@ -131,13 +131,13 @@ for (i = 0; i < size1; i++)
    if (neighbours1[i].real_id == topic)
       {
       Nova_HotBall(cfv,x,y,neighbours1[i].radius,YELLOWS);
+      Nova_Print(cfv,x,y,neighbours1[i].shortname,RED);
       }
    else
       {
-      Nova_ColdBall(cfv,x,y,neighbours1[i].radius,GREENS);
+      Nova_HotBall(cfv,x,y,neighbours1[i].radius,PINKS);
+      Nova_Print(cfv,x,y,neighbours1[i].shortname,BLACK);
       }
-   
-   Nova_Print(cfv,x,y,neighbours1[i].shortname,BLACK);
    
    theta0 += dtheta0;
    }
@@ -208,14 +208,14 @@ for (i = 0; i < size1; i++)
          if (neighbours3[k].real_id == topic)
             {
             Nova_HotBall(cfv,x,y,neighbours3[k].radius,YELLOWS);
+            Nova_Print(cfv,x,y,neighbours3[k].shortname,RED);         
             }
          else
             {
             Nova_ColdBall(cfv,x,y,neighbours3[k].radius,GREYS);
+            Nova_Print(cfv,x,y,neighbours3[k].shortname,BLACK);
             }
          
-         Nova_Print(cfv,x,y,neighbours3[k].shortname,BLACK);
-
          theta2 += dtheta2;
          }      
 
@@ -224,13 +224,13 @@ for (i = 0; i < size1; i++)
       if (neighbours2[j].real_id == topic)
          {
          Nova_HotBall(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].radius,YELLOWS);
+         Nova_Print(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].shortname,RED);
          }
       else
          {
-         Nova_ColdBall(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].radius,REDS);
+         Nova_HotBall(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].radius,BROWNS);
+         Nova_Print(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].shortname,BLACK);     
          }
-      
-      Nova_Print(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].shortname,BLACK);
       
       theta1 += dtheta1;
       }

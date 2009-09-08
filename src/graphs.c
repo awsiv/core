@@ -20,8 +20,8 @@ int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,ORANGE,SKY;
 int GREYS[CF_SHADES];
 int BLUES[CF_SHADES];
 int YELLOWS[CF_SHADES];
-int GREENS[CF_SHADES];
-int REDS[CF_SHADES];
+int PINKS[CF_SHADES];
+int BROWNS[CF_SHADES];
 
 /*****************************************************************************/
 
@@ -191,16 +191,11 @@ SKY      = gdImageColorAllocate(cfv->im, 0,0,80);
 void Nova_MakeCosmosPalette(struct CfDataView *cfv)
 
 { int i,hint,r,g,b;
-  int startgrey = 120,startblue = 150, startgreen = 80;
+  int startgrey = 160,startblue = 150, startgreen = 80;
   int rs,gs,bs,re,ge,be,dr,dg,db;
   
 BLACK = gdImageColorAllocate(cfv->im, 0, 0, 0);
 
-for (i = 0; i < CF_SHADES; i++)
-   {
-   hint = startgrey + (int)((255.0-(double)startgrey)/(double)CF_SHADES * (double)i);
-   GREYS[i] = gdImageColorAllocate(cfv->im,hint,hint,hint);
-   }
 
 for (i = 0; i < CF_SHADES; i++)
    {
@@ -213,14 +208,14 @@ for (i = 0; i < CF_SHADES; i++)
    BLUES[i] = gdImageColorAllocate(cfv->im,r,g,b);
    }
 
-// Reds From 205,170,125, 255,210,165,
+// Browns From 205,170,125, 165,130,85
 
 rs = 205;
-re = 255;
+re = 175;
 gs = 170;
-ge = 210;
+ge = 140;
 bs = 125;
-be = 165;
+be = 95;
 
 dr = (int)((double)(re-rs)/(double)CF_SHADES);
 dg = (int)((double)(ge-gs)/(double)CF_SHADES);
@@ -231,7 +226,7 @@ for (i = 0; i < CF_SHADES; i++)
    r = rs + i * dr;
    g = gs + i * dg;
    b = bs + i * db;
-   REDS[i] = gdImageColorAllocate(cfv->im,r,g,b);
+   BROWNS[i] = gdImageColorAllocate(cfv->im,r,g,b);
    }
 
 // Yell 255,255,142 to 255,255,255
@@ -255,14 +250,14 @@ for (i = 0; i < CF_SHADES; i++)
    YELLOWS[i] = gdImageColorAllocate(cfv->im,r,g,b);
    }
 
-// greens 238,213,183, 255,240,210
+// pinks 238,213,183, 198,173,143
 
 rs = 238;
-re = 255;
+re = 198;
 gs = 213;
-ge = 240;
+ge = 173;
 bs = 183;
-be = 210;
+be = 143;
 
 dr = (int)((double)(re-rs)/(double)CF_SHADES);
 dg = (int)((double)(ge-gs)/(double)CF_SHADES);
@@ -273,8 +268,30 @@ for (i = 0; i < CF_SHADES; i++)
    r = rs + i * dr;
    g = gs + i * dg;
    b = bs + i * db;
-   GREENS[i] = gdImageColorAllocate(cfv->im,r,g,b);
+   PINKS[i] = gdImageColorAllocate(cfv->im,r,g,b);
    }
+
+// "Greys" 205,170,125
+
+rs = 238;
+re = 205;
+gs = 213;
+ge = 203;
+bs = 183;
+be = 125;
+
+dr = (int)((double)(re-rs)/(double)CF_SHADES);
+dg = (int)((double)(ge-gs)/(double)CF_SHADES);
+db = (int)((double)(be-bs)/(double)CF_SHADES);
+
+for (i = 0; i < CF_SHADES; i++)
+   {
+   r = rs + i * dr;
+   g = gs + i * dg;
+   b = bs + i * db;
+   GREYS[i] = gdImageColorAllocate(cfv->im,r,g,b);
+   }
+
 
 WHITE    = gdImageColorAllocate(cfv->im, 255, 255, 255);
 LIGHTGREY= gdImageColorAllocate(cfv->im, 220, 220, 220);
