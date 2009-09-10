@@ -86,7 +86,8 @@ struct CfGraphNode
    };
 
 #define CF_MIN_RADIUS    30.0
-#define CF_RADIUS_SCALE  40.0
+#define CF_RADIUS_SCALE  35.0
+#define CF_NODEVISIBLE   12
 
 /*****************************************************************************/
 
@@ -189,6 +190,10 @@ void Nova_Print(struct CfDataView cfv,double x,double y,char *s,int colour);
 double Nova_SignPerturbation(int i);
 void Nova_ColdBall(struct CfDataView cfv,double x,double y,double radius,int *shade);
 void Nova_HotBall(struct CfDataView cfv,double x,double y,double radius,int *shade);
+void Nova_AlignmentCorrection(double *x,double *y,double cx,double cy);
+void Nova_MapHorizon(double x,double y,double *min_x,double *min_y,double *max_x,double *max_y);
+double Nova_Contain(struct CfDataView cfv,double radius,double min_x,double max_x,double min_y,double max_y);
+void Nova_MapBall(FILE *fp,struct CfDataView cfv,struct CfGraphNode n);
 
 /* database.c */
 

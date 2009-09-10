@@ -46,18 +46,19 @@ void Nova_IlluminateTribe(int *tribe_id,struct CfGraphNode *tribe_node,double **
 void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,double **tribe_adj,int tribe_size,double *tribe_evc,char **n,int topic,double **full_adj,int dim_full,int tertiary_boundary)
 
 { struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE],neighbours3[CF_TRIBE_SIZE];
-  int centre = Nova_GetMaxEvcNode(tribe_evc,tribe_size);
+  char s[CF_MAXVARSIZE],pngfile[CF_MAXVARSIZE],mapfile[CF_MAXVARSIZE];
   int tribe_tops[CF_TRIBE_SIZE], num_tops,size1,size2,size3,i,j,k;
   double x,y,theta0,dtheta0,theta1,dtheta1,theta2,dtheta2,pi = 3.1416;
   double orbital_r1,orbital_r2,orbital_r3,orbital_r4,orbital_r5;
+  double max_x = 0,max_y = 0, min_x = 0, min_y = 0;;
   int trail[CF_TRIBE_SIZE];
   struct CfDataView cfv;
-  char s[CF_MAXVARSIZE];
-  FILE *fout;
+  FILE *fout,*fmap;
+  int centre = Nova_GetMaxEvcNode(tribe_evc,tribe_size);
 
 /* Initialize the tribe*/
   
-num_tops = Nova_GetEvcTops(tribe_adj,tribe_size,tribe_evc,tribe_tops);
+//num_tops = Nova_GetEvcTops(tribe_adj,tribe_size,tribe_evc,tribe_tops);
 
 Nova_ClearTrail(trail);
 
@@ -65,7 +66,8 @@ for (i = 0; i < tribe_size; i++)
    {
    if (i == topic)
       {
-      tribe_node[i].radius = 1.5*CF_MIN_RADIUS + CF_RADIUS_SCALE*tribe_evc[i];
+      // The topic might not be central, so inflate its importance a little
+      tribe_node[i].radius = 1.5 * CF_MIN_RADIUS + CF_RADIUS_SCALE*tribe_evc[i];
       }
    else
       {
@@ -79,6 +81,8 @@ Nova_AnchorTrail(trail,centre);
 
 cfv.height = 750;
 cfv.width = 1000;
+cfv.origin_x = 500;
+cfv.origin_y = 375;
 cfv.im = gdImageCreate(cfv.width,cfv.height);
 Nova_MakeCosmosPalette(&cfv);
 
@@ -94,18 +98,43 @@ tribe_node[centre].y = 0;
 tribe_node[centre].distance_from_centre = 0;
 neighbours1[centre].angle = 0;
 
+
+// Write the image map
+
+strncpy(pngfile,ReadLastNode(filename),CF_MAXVARSIZE-1);
+strncpy(mapfile,filename,CF_MAXVARSIZE-1);
+strcpy(strstr(mapfile,".png"),".html");
+
+if ((fmap = fopen(mapfile, "w")) == NULL)
+   {
+   CfOut(cf_verbose,"fopen","Cannot write %s file\n",filename);
+   return;
+   }
+else
+   {
+   CfOut(cf_verbose,""," -> Making map %s\n",filename);
+   }
+
+NovaHtmlHeader(fmap,tribe_node[0].fullname,STYLESHEET,WEBDRIVER,BANNER);
+
+fprintf(fmap,"<img src=\"%s\" USEMAP=\"#knowledge_system\" alt=\"%s image pending\">\n",pngfile,tribe_node[0].fullname);
+fprintf(fmap,"<map name=\"knowledge_system\">\n");
+
+/* Pre-compute relative positions for scaling */
+
 // First orbit
+
 size1 = Nova_SplayAdjacent(centre,tribe_adj,tribe_size,tribe_node,trail,neighbours1);
 
-theta0 = 0.64; // this should be close to the adjacent tops
+theta0 = 0.64; 
 dtheta0 = 2 * pi / (double)size1;
 
 for (i = 0; i < size1; i++)
    {
    int n = Nova_GetAdjacent(neighbours1[i].tribe_id,tribe_adj,tribe_size,tribe_node,neighbours2);
 
-   orbital_r1 = tribe_node[centre].radius + 1.5 * neighbours1[i].radius;
-   orbital_r2 = tribe_node[centre].radius + 4.0 * neighbours1[i].radius;
+   orbital_r1 = Nova_Contain(cfv,tribe_node[centre].radius + 1.5 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
+   orbital_r2 = Nova_Contain(cfv,tribe_node[centre].radius + 4.0 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
 
    orbital_r1 += 0.2 * orbital_r1 * Nova_SignPerturbation(i);
    orbital_r2 += 0.2 * orbital_r2 * Nova_SignPerturbation(i);
@@ -120,32 +149,15 @@ for (i = 0; i < size1; i++)
       x = orbital_r1 * cos(theta0);
       y = orbital_r1 * sin(theta0);
       }
-      
+
    neighbours1[i].x = x;
    neighbours1[i].y = y;
    neighbours1[i].distance_from_centre = 1;
    neighbours1[i].angle = theta0;
-
-   Nova_Line(cfv,0,0,x,y,LIGHTGREY);
-
-   if (neighbours1[i].real_id == topic)
-      {
-      Nova_HotBall(cfv,x,y,neighbours1[i].radius,YELLOWS);
-      Nova_Print(cfv,x,y,neighbours1[i].shortname,RED);
-      }
-   else
-      {
-      Nova_HotBall(cfv,x,y,neighbours1[i].radius,PINKS);
-      Nova_Print(cfv,x,y,neighbours1[i].shortname,BLACK);
-      }
-   
+   Nova_MapHorizon(x,y,&min_x,&min_y,&max_x,&max_y);
+      
    theta0 += dtheta0;
    }
-
-// Centre-piece
-
-Nova_HotBall(cfv,0,0,tribe_node[centre].radius,YELLOWS);
-Nova_Print(cfv,0,0,tribe_node[centre].shortname,BLACK);
 
 // Secondary orbits
 
@@ -154,19 +166,97 @@ Nova_TribeUnion(trail,neighbours1,tribe_size,size1);
 for (i = 0; i < size1; i++)
    {
    size2 = Nova_SplayAdjacent(neighbours1[i].tribe_id,tribe_adj,tribe_size,tribe_node,trail,neighbours2);
-   
+
    dtheta1 = 2 * pi / (double)(size2 + 1);
    theta1 = neighbours1[i].angle - pi + dtheta1;   
    
    for (j = 0; j < size2; j++)
       {
       size3 = Nova_SplayAdjacent(neighbours2[j].tribe_id,tribe_adj,tribe_size,tribe_node,trail,neighbours3);
+
+      orbital_r3 = Nova_Contain(cfv,2.5 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
+      orbital_r4 = Nova_Contain(cfv,3.0 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
+      
+      orbital_r3 += 0.2 * orbital_r3 * Nova_SignPerturbation(j);
+      orbital_r4 += 0.2 * orbital_r4 * Nova_SignPerturbation(j);
+
+      if (size3 > 1)
+         {
+         x = neighbours1[i].x + orbital_r4 * cos(theta1);
+         y = neighbours1[i].y + orbital_r4 * sin(theta1);      
+         }
+      else
+         {
+         x = neighbours1[i].x + orbital_r3 * cos(theta1);
+         y = neighbours1[i].y + orbital_r3 * sin(theta1);               
+         }
+
+      Nova_AlignmentCorrection(&x,&y,neighbours1[i].x,neighbours1[i].y);
+      Nova_MapHorizon(x,y,&min_x,&min_y,&max_x,&max_y);
+
+      neighbours2[j].x = x;
+      neighbours2[j].y = y;
+      neighbours2[j].distance_from_centre = 2;
+      neighbours2[j].angle = theta1;
+
+      // Tertiary orbits
+      
+      dtheta2 = 2 * pi / (double)(size3 + 1);
+      theta2 = neighbours2[j].angle - pi + dtheta2;   
+      
+      for (k = 0; k < size3; k++)
+         {
+         orbital_r5 = Nova_Contain(cfv,2.0 * CF_MIN_RADIUS,min_x,min_y,max_x,max_y);
+         orbital_r5 += Nova_Contain(cfv,0.2 * orbital_r5 * Nova_SignPerturbation(k),min_x,min_y,max_x,max_y);
+             
+         x = neighbours2[j].x + orbital_r5 * cos(theta2);
+         y = neighbours2[j].y + orbital_r5 * sin(theta2);      
+
+         Nova_AlignmentCorrection(&x,&y,neighbours2[j].x,neighbours2[j].y);
+         Nova_MapHorizon(x,y,&min_x,&min_y,&max_x,&max_y);
+      
+         neighbours3[k].x = x;
+         neighbours3[k].y = y;
+         neighbours3[k].distance_from_centre = 3;
+         neighbours3[k].angle = theta2;
+         
+         theta2 += dtheta2;
+         }      
+
+      theta1 += dtheta1;
+      }
+
+   Nova_TribeUnion(trail,neighbours2,tribe_size,size2);
+   }
+
+/* Now plot everything after corrections for centre of mass */
+
+cfv.origin_x -= (max_x+min_x)/2;
+cfv.origin_y += (max_y+min_y)/2;
+
+// Centre-piece
+
+Nova_ClearTrail(trail);
+Nova_TribeUnion(trail,neighbours1,tribe_size,size1);
+
+for (i = 0; i < size1; i++)
+   {
+   size2 = Nova_SplayAdjacent(neighbours1[i].tribe_id,tribe_adj,tribe_size,tribe_node,trail,neighbours2);
+      
+   dtheta1 = 2 * pi / (double)(size2 + 1);
+   theta1 = neighbours1[i].angle - pi + dtheta1;   
+   Nova_Line(cfv,0,0,neighbours1[i].x,neighbours1[i].y,LIGHTGREY);
+
+   for (j = 0; j < size2; j++)
+      {
+      size3 = Nova_SplayAdjacent(neighbours2[j].tribe_id,tribe_adj,tribe_size,tribe_node,trail,neighbours3);
+      
       orbital_r3 = 2.5 * neighbours2[j].radius;
       orbital_r4 = 3.5 * neighbours2[j].radius;
       
       orbital_r3 += 0.2 * orbital_r3 * Nova_SignPerturbation(j);
       orbital_r4 += 0.2 * orbital_r4 * Nova_SignPerturbation(j);
-      
+
       if (size3 > 1)
          {
          x = neighbours1[i].x + orbital_r4 * cos(theta1);
@@ -183,44 +273,48 @@ for (i = 0; i < size1; i++)
       neighbours2[j].distance_from_centre = 2;
       neighbours2[j].angle = theta1;
 
-      Nova_Line(cfv,neighbours1[i].x,neighbours1[i].y,x,y,LIGHTGREY);
+      Nova_Line(cfv,neighbours1[i].x,neighbours1[i].y,neighbours2[j].x,neighbours2[j].y,LIGHTGREY);
 
-      // Tertiary orbits
-      
       dtheta2 = 2 * pi / (double)(size3 + 1);
       theta2 = neighbours2[j].angle - pi + dtheta2;   
-      
+
       for (k = 0; k < size3; k++)
-         {
+         {      
          orbital_r5 = 2.0 * CF_MIN_RADIUS;
          orbital_r5 += 0.2 * orbital_r5 * Nova_SignPerturbation(k);
              
          x = neighbours2[j].x + orbital_r5 * cos(theta2);
          y = neighbours2[j].y + orbital_r5 * sin(theta2);      
-         
+
+         Nova_AlignmentCorrection(&x,&y,neighbours2[j].x,neighbours2[j].y);
+         Nova_MapHorizon(x,y,&min_x,&min_y,&max_x,&max_y);
+      
          neighbours3[k].x = x;
          neighbours3[k].y = y;
          neighbours3[k].distance_from_centre = 3;
          neighbours3[k].angle = theta2;
+         
+         theta2 += dtheta2;
 
-         Nova_Line(cfv,neighbours2[j].x,neighbours2[j].y,x,y,LIGHTGREY);         
+         Nova_Line(cfv,neighbours2[j].x,neighbours2[j].y,neighbours3[k].x,neighbours3[k].y,LIGHTGREY);         
+         Nova_MapBall(fmap,cfv,neighbours3[k]);
 
          if (neighbours3[k].real_id == topic)
             {
-            Nova_HotBall(cfv,x,y,neighbours3[k].radius,YELLOWS);
-            Nova_Print(cfv,x,y,neighbours3[k].shortname,RED);         
+            Nova_HotBall(cfv,neighbours3[k].x,neighbours3[k].y,neighbours3[k].radius,YELLOWS);
+            Nova_Print(cfv,neighbours3[k].x,neighbours3[k].y,neighbours3[k].shortname,RED);         
             }
          else
             {
-            Nova_ColdBall(cfv,x,y,neighbours3[k].radius,GREYS);
-            Nova_Print(cfv,x,y,neighbours3[k].shortname,BLACK);
+            Nova_HotBall(cfv,neighbours3[k].x,neighbours3[k].y,neighbours3[k].radius,GREYS);
+            Nova_Print(cfv,neighbours3[k].x,neighbours3[k].y,neighbours3[k].shortname,BLACK);
             }
-         
-         theta2 += dtheta2;
          }      
 
       // Render 2ndary after
 
+      Nova_MapBall(fmap,cfv,neighbours2[j]);
+                  
       if (neighbours2[j].real_id == topic)
          {
          Nova_HotBall(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].radius,YELLOWS);
@@ -231,13 +325,43 @@ for (i = 0; i < size1; i++)
          Nova_HotBall(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].radius,BROWNS);
          Nova_Print(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].shortname,BLACK);     
          }
-      
+
       theta1 += dtheta1;
+      }
+
+   Nova_MapBall(fmap,cfv,neighbours1[i]);
+   
+   if (neighbours1[i].real_id == topic)
+      {
+      Nova_HotBall(cfv,neighbours1[i].x,neighbours1[i].y,neighbours1[i].radius,YELLOWS);
+      Nova_Print(cfv,neighbours1[i].x,neighbours1[i].y,neighbours1[i].shortname,RED);
+      }
+   else
+      {
+      Nova_HotBall(cfv,neighbours1[i].x,neighbours1[i].y,neighbours1[i].radius,PINKS);
+      Nova_Print(cfv,neighbours1[i].x,neighbours1[i].y,neighbours1[i].shortname,BLACK);
       }
 
    Nova_TribeUnion(trail,neighbours2,tribe_size,size2);
    }
 
+Nova_MapBall(fmap,cfv,tribe_node[0]);
+
+if (size1 == 0)
+   {   
+   Nova_HotBall(cfv,0,0,tribe_node[centre].radius*8,GREYS);
+   Nova_HotBall(cfv,0,0,tribe_node[centre].radius*5,BROWNS);
+   Nova_HotBall(cfv,0,0,tribe_node[centre].radius*3,YELLOWS);
+   }
+else
+   {
+   Nova_HotBall(cfv,0,0,tribe_node[centre].radius,YELLOWS);
+   }
+
+Nova_Print(cfv,0,0,tribe_node[centre].shortname,BLACK);
+
+      
+// Write the png file
 
 if ((fout = fopen(filename, "wb")) == NULL)
    {
@@ -252,6 +376,12 @@ else
 gdImagePng(cfv.im, fout);
 fclose(fout);
 gdImageDestroy(cfv.im);
+
+// Close image map
+
+fprintf(fmap,"</map>\n");
+NovaHtmlFooter(fmap,"");
+fclose(fmap);
 }
 
 /*****************************************************************************/
@@ -283,9 +413,7 @@ int Nova_SplayAdjacent(int i,double **adj,int tribe_size,struct CfGraphNode *tri
   int n[CF_TRIBE_SIZE],n1[CF_TRIBE_SIZE],n2[CF_TRIBE_SIZE];
   struct CfGraphNode neighboursd[CF_TRIBE_SIZE];
 
-/* Distribute arm weights evenly over the interval */
-
-Debug("\nUNORDER ");
+/* Distribute arm weights evenly over the interval - like pseudo PCA */
 
 for (j = 0; j < tribe_size; j++)
    {
@@ -313,22 +441,12 @@ for (j = 0; j < tribe_size; j++)
          min = f[counter];
          }
 
-      Debug(" %d",f[counter]);
-
       // n records the correct j for tribe[j]       
       n[counter++] = j;
 
       Debug(" ...... c=%d, @%d n=%s\n",counter-1,j,tribe[j].shortname);
-
-      if (counter > tribe_size)
-         {
-         Debug("COUNTER out 0f control %s",counter);
-         exit(1);
-         }
       }
    }
-
-Debug("\ncounter = %d\n",counter);
 
 if (counter == 0)
    {
@@ -361,8 +479,6 @@ if (m != counter)
    }
 
 k = counter / 2;
-
-Debug("BETWEEN %d\n",counter);
 
 for (j = 0; j < counter; j++)
    {
@@ -538,13 +654,39 @@ return x;
 }
 
 /*****************************************************************************/
+
+void Nova_MapHorizon(double x,double y,double *min_x,double *min_y,double *max_x,double *max_y)
+
+{
+if (x < *min_x)
+   {
+   *min_x = x;
+   }
+
+if (x > *max_x)
+   {
+   *max_x = x;
+   }
+
+if (y < *min_y)
+   {
+   *min_y = y;
+   }
+
+if (y > *max_y)
+   {
+   *max_y = y;
+   }
+}
+
+/*****************************************************************************/
 /* Coords                                                                    */
 /*****************************************************************************/
 
 int Nova_X(struct CfDataView cfv,double x)
 
 {
-return (cfv.width/2) + (int)x;
+return cfv.origin_x + (int)x;
 }
 
 /*****************************************************************************/
@@ -552,7 +694,7 @@ return (cfv.width/2) + (int)x;
 int Nova_Y(struct CfDataView cfv,double y)
 
 {
-return (cfv.height/2) - (int)y;
+return cfv.origin_y - (int)y;
 }
 
 /*****************************************************************************/
@@ -602,14 +744,24 @@ for (dr = 0; dr <= radius; dr += radius/(double)CF_SHADES)
 
 /*****************************************************************************/
 
+void Nova_MapBall(FILE *fp,struct CfDataView cfv,struct CfGraphNode n)
+
+{
+fprintf(fp,"<area shape = \"circle\" coords=\"%d,%d,%d\" href=\"%s?next=%s\" alt=\"topic\" title=\"%s\">\n",
+        (int)Nova_X(cfv,n.x),(int)Nova_Y(cfv,n.y),(int)n.radius,WEBDRIVER,n.fullname,n.fullname);
+
+}
+
+/*****************************************************************************/
+
 void Nova_Print(struct CfDataView cfv,double x,double y,char *s,int colour)
     
 { char ps[CF_MAXVARSIZE];
 
-if (strlen(s) > 10)
+if (strlen(s) > CF_NODEVISIBLE)
    {
-   strncpy(ps,s,10);
-   snprintf(ps+10,4,"..");
+   strncpy(ps,s,CF_NODEVISIBLE);
+   snprintf(ps+CF_NODEVISIBLE,4,"..");
    }
 else
    {
@@ -617,4 +769,64 @@ else
    }
 
 gdImageString(cfv.im,gdFontGetLarge(),Nova_X(cfv,x)-strlen(ps)*gdFontGetLarge()->w/2,Nova_Y(cfv,y)-10,ps,colour);
+}
+
+/*****************************************************************************/
+
+void Nova_AlignmentCorrection(double *x,double *y,double cx,double cy)
+
+{ int i;
+
+/* If strings are too close, move them apart*/
+ 
+if (fabs(cy-*y) < 20)     
+   {
+   if (cx < *x && *x -cx < CF_NODEVISIBLE * gdFontGetLarge()->w) // Text height is about 10
+      {
+      *x = cx + (CF_NODEVISIBLE+2) * gdFontGetLarge()->w;
+      return;
+      }
+
+   if (cx > *x && cx-*x < CF_NODEVISIBLE * gdFontGetLarge()->w) 
+      {
+      *x = cx - (CF_NODEVISIBLE+2) * gdFontGetLarge()->w;
+      return;
+      }
+   }
+}
+
+/*****************************************************************************/
+
+double Nova_Contain(struct CfDataView cfv,double radius,double min_x,double max_x,double min_y,double max_y)
+
+{ int escape_vel = false;
+     
+if (max_x > cfv.width - cfv.origin_x)
+   {
+   escape_vel = true;
+   }
+
+if (min_x < cfv.width - cfv.origin_x)
+   {
+   escape_vel = true;
+   }
+
+if (max_y > cfv.height - cfv.origin_y)
+   {
+   escape_vel = true;
+   }
+
+if (min_y < cfv.height - cfv.origin_y)
+   {
+   escape_vel = true;
+   }
+
+if (escape_vel && radius > cfv.width/3)
+   {
+   return cfv.width/3; // Heuristics
+   }
+else
+   {
+   return radius;
+   }
 }

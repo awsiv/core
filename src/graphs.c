@@ -210,9 +210,9 @@ for (i = 0; i < CF_SHADES; i++)
 
 // Browns From 205,170,125, 165,130,85
 
-rs = 205;
-re = 175;
-gs = 170;
+rs = 210;
+re = 180;
+gs = 175;
 ge = 140;
 bs = 125;
 be = 95;
@@ -233,10 +233,10 @@ for (i = 0; i < CF_SHADES; i++)
 
 rs = 255;
 re = 255;
-gs = 255;
+gs = 205;
 ge = 255;
-bs = 162;
-be = 255;
+bs = 92;
+be = 200;
 
 dr = (int)((double)(re-rs)/(double)CF_SHADES);
 dg = (int)((double)(ge-gs)/(double)CF_SHADES);
@@ -253,11 +253,11 @@ for (i = 0; i < CF_SHADES; i++)
 // pinks 238,213,183, 198,173,143
 
 rs = 238;
-re = 198;
+re = 193;
 gs = 213;
-ge = 173;
+ge = 168;
 bs = 183;
-be = 143;
+be = 138;
 
 dr = (int)((double)(re-rs)/(double)CF_SHADES);
 dg = (int)((double)(ge-gs)/(double)CF_SHADES);
@@ -274,11 +274,11 @@ for (i = 0; i < CF_SHADES; i++)
 // "Greys" 205,170,125
 
 rs = 238;
-re = 205;
+re = 100;
 gs = 213;
-ge = 203;
+ge = 100;
 bs = 183;
-be = 125;
+be = 100;
 
 dr = (int)((double)(re-rs)/(double)CF_SHADES);
 dg = (int)((double)(ge-gs)/(double)CF_SHADES);
@@ -301,7 +301,7 @@ YELLOW   = gdImageColorAllocate(cfv->im, 200, 255, 0);
 LIGHTRED = gdImageColorAllocate(cfv->im, 255, 150, 150);
 RED      = gdImageColorAllocate(cfv->im, 255, 0, 0);
 ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
-SKY      = gdImageColorAllocate(cfv->im, 190,190,200);
+SKY      = gdImageColorAllocate(cfv->im, 170,170,170);
 }
 
 /*****************************************************************************/
