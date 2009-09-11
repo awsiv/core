@@ -102,6 +102,7 @@ NM = /usr/bin/nm -B
 NMEDIT = 
 OBJDUMP = objdump
 OBJEXT = o
+OPENSSL_LIB_CPPFLAGS = -I/usr/include
 OTOOL = 
 OTOOL64 = 
 PACKAGE = cfnova

@@ -238,6 +238,98 @@ fi
 AC_SUBST(BERKELEY_DB_CFLAGS)
 
 
+###
+### Search for openssl
+###
+
+
+AC_ARG_WITH(openssl,
+    [  --with-openssl[=PATH] directory where OpenSSL exists],
+    OPENSSL_LIB_DIR=$with_openssl,
+    OPENSSL_LIB_DIR=default)
+AC_MSG_CHECKING(for OpenSSL location)
+if test x"$OPENSSL_LIB_DIR" = xno ; then
+    AC_MSG_RESULT(no)
+    AC_MSG_ERROR(This release of cfengine requires OpenSSL 0.9.7 or later)
+else
+    if test x"$OPENSSL_LIB_DIR" = xdefault ; then
+        for d in $prefix /opt/ssl /usr/local/ssl /usr/local /usr; do
+            if test -f "$d/include/openssl/opensslv.h"; then
+                OPENSSL_LIB_LDFLAGS="-L$d/lib${libsuff}"
+                OPENSSL_LIB_CPPFLAGS="-I$d/include"
+                OPENSSL_LIB_LIB="-lcrypto"
+                AC_MSG_RESULT($d)
+                break
+            fi
+        done
+
+        if test x"$OPENSSL_LIB_LIB" = x ; then
+            AC_MSG_ERROR(Cannot find OpenSSL)
+        fi
+    elif test -f "$OPENSSL_LIB_DIR/include/openssl/ssl.h";then
+        case "$target_os" in
+        solaris*)
+            #If we are staticlly linking the SSL files, we do not want a
+            #-R flag.  If .so's are present, assume we are dynamic linking
+            if test -n "`ls $OPENSSL_LIB_DIR/lib/*.so 2>/dev/null`"
+            then
+                OPENSSL_LIB_LDFLAGS="-L$OPENSSL_LIB_DIR/lib -R$OPENSSL_LIB_DIR/lib"
+            else
+                OPENSSL_LIB_LDFLAGS="-L$OPENSSL_LIB_DIR/lib"
+            fi;;
+        *)         OPENSSL_LIB_LDFLAGS="-L$OPENSSL_LIB_DIR/lib";;
+        esac
+  
+        OPENSSL_LIB_CPPFLAGS="-I$OPENSSL_LIB_DIR/include"
+        OPENSSL_LIB_LIB="-lcrypto"
+        AC_MSG_RESULT($OPENSSL_LIB_DIR)
+    else
+        AC_MSG_ERROR(Cannot find OpenSSL)
+    fi
+    AC_DEFINE(USE_OPENSSL_LIB, 1, [Define if OpenSSL is available.])
+
+    OPENSSL_SAVE_LDFLAGS=$LDFLAGS
+    OPENSSL_SAVE_CPPFLAGS=$CPPFLAGS
+    OPENSSL_SAVE_LIBS=$LIBS
+
+    LDFLAGS="$LDFLAGS $OPENSSL_LIB_LDFLAGS"
+    CPPFLAGS="$CPPFLAGS $OPENSSL_LIB_CPPFLAGS"
+    LIBS="$LIBS $OPENSSL_LIB_LIB"
+
+    AC_MSG_CHECKING(OpenSSL Version)
+
+    AC_TRY_RUN(
+       [
+#include <openssl/opensslv.h>
+int main(void)
+{
+    if (OPENSSL_VERSION_NUMBER < 0x0090602fL)
+        exit(1);
+    exit(0);
+}
+       ],
+       [AC_MSG_RESULT(OK)],
+       [AC_MSG_ERROR(This release of cfengine requires openssl 0.9.7 or later)]
+    )
+
+    dnl ######################################################################
+    dnl Checks for OpenSSL crypto lib
+    dnl ######################################################################
+
+    AC_CHECK_LIB(crypto,main)
+
+
+    LDFLAGS=$OPENSSL_SAVE_LDFLAGS
+    CPPFLAGS=$OPENSSL_SAVE_CPPFLAGS
+    LIBS=$OPENSSL_SAVE_LIBS
+
+fi
+
+AC_SUBST(OPENSSL_LIB_CPPFLAGS)
+
+#
+# Others
+#
 
 
 dnl AC_CHECK_LIB(m,main)
