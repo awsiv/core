@@ -36,7 +36,7 @@ extern pthread_mutex_t MUTEX_SYSCALL;
 extern pthread_mutex_t MUTEX_LOCK;
 extern pthread_attr_t PTHREADDEFAULTS;
 extern pthread_mutex_t MUTEX_COUNT;
-extern pthread_mutex_t MUTEX_HOSTNAME;
+extern pthread_mutex_t MUTEX_OUTPUT;
 extern pthread_mutex_t MUTEX_GETADDR;
 # endif
 
@@ -206,7 +206,6 @@ extern char ELSECLASSBUFFER[CF_BUFSIZE];
 extern char FAILOVERBUFFER[CF_BUFSIZE];
 extern char *LINKFROM;
 extern char *LINKTO;
-extern char *ERROR;
 extern char *MOUNTFROM;
 extern char *MOUNTONTO;
 extern char *MOUNTOPTS;
@@ -445,7 +444,6 @@ extern int FORCENETCOPY;
 extern int SILENT;
 extern int EDITVERBOSE;
 extern char IMAGEBACKUP;
-extern int ROTATE;
 extern int   TIDYSIZE;
 extern int USEENVIRON;
 extern int PROMATCHES;
