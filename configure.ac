@@ -416,6 +416,9 @@ dnl fi
 AC_CHECK_HEADERS(ldap.h)
 AC_CHECK_LIB(ldap,ldap_get_values_len)
 
+AC_CHECK_HEADERS(pcre.h)
+AC_CHECK_HEADERS(pcre/pcre.h)
+
 dnl ######################################################################
 dnl Checks for header files.
 dnl ######################################################################
