@@ -186,6 +186,16 @@
 /* Define to 1 if you have the `thread' library (-lthread). */
 #undef HAVE_LIBTHREAD
 
+/* Define to 1 if you have the `mysqlclient' library (-lmysqlclient). */
+#undef HAVE_LIBMYSQLCLIENT
+
+/* Define to 1 if you have the <mysql/mysql.h> header file. */
+#undef HAVE_MYSQL_MYSQL_H
+
+/* Define to 1 if you have the <libpq-fe.h> header file. */
+#undef HAVE_LIBPQ_FE_H
+
+
 /* Define to 1 if you have the <malloc.h> header file. */
 #undef HAVE_MALLOC_H
 
@@ -399,6 +409,9 @@
 
 /* Define if PCRE is available. */
 #undef USE_PCRE
+
+/* Define to 1 if you have the `pcre' library (-lpcre). */
+#undef HAVE_LIBPCRE
 
 /* Version number of package */
 #undef VERSION
