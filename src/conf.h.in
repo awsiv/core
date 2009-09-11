@@ -196,6 +196,12 @@
 #undef HAVE_LIBPQ_FE_H
 
 
+/* Define to 1 if you have the <pcre.h> header file. */
+#undef HAVE_PCRE_H
+
+/* Define to 1 if you have the <pcre/pcre.h> header file. */
+#undef HAVE_PCRE_PCRE_H
+
 /* Define to 1 if you have the <malloc.h> header file. */
 #undef HAVE_MALLOC_H
 
