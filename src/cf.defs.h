@@ -267,14 +267,12 @@ extern int errno;
 #endif
 #endif
 
-#ifdef HAVE_PCRE
+#ifdef HAVE_PCRE_H
 # include <pcreposix.h>
 #elif HAVE_RXPOSIX_H
 # include <rxposix.h>
 #elif  HAVE_REGEX_H
 # include <regex.h>
-#else
-# include "../pub/gnuregex.h"
 #endif
 
 #ifndef HAVE_SNPRINTF
