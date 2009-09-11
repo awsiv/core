@@ -24,7 +24,6 @@ NewScalar("remote_access",handle,pp->promiser,cf_str);
 
 char Nova_CfEnterpriseOptions()
 {
- printf("SELECTING NOVA FIPS\n");
 return 'N';
 }
 

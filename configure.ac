@@ -14,7 +14,7 @@ dnl
 dnl The version in the next line is the only one to set
 dnl
 
-AM_INIT_AUTOMAKE(cfnova,1.0.7)   dnl remember to set version
+AM_INIT_AUTOMAKE(cfnova,1.0.8)   dnl remember to set version
 
 AM_CONFIG_HEADER(src/conf.h)
 
@@ -347,6 +347,7 @@ AC_CHECK_HEADERS(regex.h rxposix.h)
 AC_CHECK_HEADERS(sys/systeminfo.h)
 AC_CHECK_HEADERS(sys/acl.h)
 AC_CHECK_HEADERS(zone.h)
+AC_CHECK_HEADERS(winsock2.h)
 
 AC_HEADER_STDC
 AC_HEADER_TIME
@@ -439,8 +440,6 @@ if test "$ac_cv_lib_pthread_main" = "yes"; then
 	AC_CHECK_HEADERS(pthread.h)
 	AC_CHECK_HEADERS(sched.h)
 fi
-
-
 
 AC_CHECK_FUNC(lchown, AC_DEFINE(HAVE_LCHOWN))
 
@@ -601,6 +600,12 @@ dnl	AC_CHECK_LIB(nss_nis, yp_get_default_domain)
 
    cygwin*)
         AC_DEFINE(NT)
+        ;;
+
+   mingw*)
+        AC_DEFINE(MINGW)
+        AC_DEFINE(NT)
+        LIBS="$LIBS -lws2_32 -lpsapi"
         ;;
 
    sco*)

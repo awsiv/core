@@ -192,7 +192,7 @@ void Nova_ColdBall(struct CfDataView cfv,double x,double y,double radius,int *sh
 void Nova_HotBall(struct CfDataView cfv,double x,double y,double radius,int *shade);
 void Nova_AlignmentCorrection(double *x,double *y,double cx,double cy);
 void Nova_MapHorizon(double x,double y,double *min_x,double *min_y,double *max_x,double *max_y);
-double Nova_Contain(struct CfDataView cfv,double radius,double min_x,double max_x,double min_y,double max_y);
+double Nova_Orbit(struct CfDataView cfv,double radius,double min_x,double max_x,double min_y,double max_y);
 void Nova_MapBall(FILE *fp,struct CfDataView cfv,struct CfGraphNode n);
 
 /* database.c */

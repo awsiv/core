@@ -296,7 +296,7 @@ void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char 
   double **tribe_adj;
   struct stat sb;
 
-CfOut(cf_verbose,""," -> Cosmos for %s\n",names[topic]);
+CfOut(cf_verbose,""," -> Create Cosmos for %s\n",names[topic]);
 
 if (view)
    {
@@ -319,7 +319,7 @@ else
 
 if (stat(filename,&sb) != -1)
    {
-   CfOut(cf_inform,"","Graph %s already exists, delete to refresh\n",filename);
+   CfOut(cf_inform,"","Graph \"%s\" already exists, delete to refresh\n",filename);
    return;
    }
 

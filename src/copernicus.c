@@ -133,8 +133,8 @@ for (i = 0; i < size1; i++)
    {
    int n = Nova_GetAdjacent(neighbours1[i].tribe_id,tribe_adj,tribe_size,tribe_node,neighbours2);
 
-   orbital_r1 = Nova_Contain(cfv,tribe_node[centre].radius + 1.5 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
-   orbital_r2 = Nova_Contain(cfv,tribe_node[centre].radius + 4.0 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
+   orbital_r1 = Nova_Orbit(cfv,tribe_node[centre].radius + 1.5 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
+   orbital_r2 = Nova_Orbit(cfv,tribe_node[centre].radius + 4.0 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
 
    orbital_r1 += 0.2 * orbital_r1 * Nova_SignPerturbation(i);
    orbital_r2 += 0.2 * orbital_r2 * Nova_SignPerturbation(i);
@@ -169,13 +169,13 @@ for (i = 0; i < size1; i++)
 
    dtheta1 = 2 * pi / (double)(size2 + 1);
    theta1 = neighbours1[i].angle - pi + dtheta1;   
-   
+
    for (j = 0; j < size2; j++)
       {
       size3 = Nova_SplayAdjacent(neighbours2[j].tribe_id,tribe_adj,tribe_size,tribe_node,trail,neighbours3);
 
-      orbital_r3 = Nova_Contain(cfv,2.5 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
-      orbital_r4 = Nova_Contain(cfv,3.0 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
+      orbital_r3 = Nova_Orbit(cfv,2.5 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
+      orbital_r4 = Nova_Orbit(cfv,3.0 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
       
       orbital_r3 += 0.2 * orbital_r3 * Nova_SignPerturbation(j);
       orbital_r4 += 0.2 * orbital_r4 * Nova_SignPerturbation(j);
@@ -206,8 +206,8 @@ for (i = 0; i < size1; i++)
       
       for (k = 0; k < size3; k++)
          {
-         orbital_r5 = Nova_Contain(cfv,2.0 * CF_MIN_RADIUS,min_x,min_y,max_x,max_y);
-         orbital_r5 += Nova_Contain(cfv,0.2 * orbital_r5 * Nova_SignPerturbation(k),min_x,min_y,max_x,max_y);
+         orbital_r5 = Nova_Orbit(cfv,2.0 * CF_MIN_RADIUS,min_x,min_y,max_x,max_y);
+         orbital_r5 += 0.2 * orbital_r5 * Nova_SignPerturbation(k);
              
          x = neighbours2[j].x + orbital_r5 * cos(theta2);
          y = neighbours2[j].y + orbital_r5 * sin(theta2);      
@@ -237,6 +237,7 @@ cfv.origin_y += (max_y+min_y)/2;
 // Centre-piece
 
 Nova_ClearTrail(trail);
+Nova_AnchorTrail(trail,centre);
 Nova_TribeUnion(trail,neighbours1,tribe_size,size1);
 
 for (i = 0; i < size1; i++)
@@ -245,14 +246,14 @@ for (i = 0; i < size1; i++)
       
    dtheta1 = 2 * pi / (double)(size2 + 1);
    theta1 = neighbours1[i].angle - pi + dtheta1;   
-   Nova_Line(cfv,0,0,neighbours1[i].x,neighbours1[i].y,LIGHTGREY);
+   Nova_Line(cfv,0,0,neighbours1[i].x,neighbours1[i].y,LIGHTRED);
 
    for (j = 0; j < size2; j++)
       {
       size3 = Nova_SplayAdjacent(neighbours2[j].tribe_id,tribe_adj,tribe_size,tribe_node,trail,neighbours3);
       
-      orbital_r3 = 2.5 * neighbours2[j].radius;
-      orbital_r4 = 3.5 * neighbours2[j].radius;
+      orbital_r3 = Nova_Orbit(cfv,2.5 * neighbours2[j].radius,min_x,min_y,max_x,max_y);;
+      orbital_r4 = Nova_Orbit(cfv,3.5 * neighbours2[j].radius,min_x,min_y,max_x,max_y);;
       
       orbital_r3 += 0.2 * orbital_r3 * Nova_SignPerturbation(j);
       orbital_r4 += 0.2 * orbital_r4 * Nova_SignPerturbation(j);
@@ -273,14 +274,14 @@ for (i = 0; i < size1; i++)
       neighbours2[j].distance_from_centre = 2;
       neighbours2[j].angle = theta1;
 
-      Nova_Line(cfv,neighbours1[i].x,neighbours1[i].y,neighbours2[j].x,neighbours2[j].y,LIGHTGREY);
+      Nova_Line(cfv,neighbours1[i].x,neighbours1[i].y,neighbours2[j].x,neighbours2[j].y,LIGHTRED);
 
       dtheta2 = 2 * pi / (double)(size3 + 1);
       theta2 = neighbours2[j].angle - pi + dtheta2;   
 
       for (k = 0; k < size3; k++)
          {      
-         orbital_r5 = 2.0 * CF_MIN_RADIUS;
+         orbital_r5 = Nova_Orbit(cfv,2.0 * CF_MIN_RADIUS,min_x,min_y,max_x,max_y);
          orbital_r5 += 0.2 * orbital_r5 * Nova_SignPerturbation(k);
              
          x = neighbours2[j].x + orbital_r5 * cos(theta2);
@@ -296,7 +297,7 @@ for (i = 0; i < size1; i++)
          
          theta2 += dtheta2;
 
-         Nova_Line(cfv,neighbours2[j].x,neighbours2[j].y,neighbours3[k].x,neighbours3[k].y,LIGHTGREY);         
+         Nova_Line(cfv,neighbours2[j].x,neighbours2[j].y,neighbours3[k].x,neighbours3[k].y,LIGHTRED);         
          Nova_MapBall(fmap,cfv,neighbours3[k]);
 
          if (neighbours3[k].real_id == topic)
@@ -345,7 +346,7 @@ for (i = 0; i < size1; i++)
    Nova_TribeUnion(trail,neighbours2,tribe_size,size2);
    }
 
-Nova_MapBall(fmap,cfv,tribe_node[0]);
+Nova_MapBall(fmap,cfv,tribe_node[centre]);
 
 if (size1 == 0)
    {   
@@ -359,7 +360,6 @@ else
    }
 
 Nova_Print(cfv,0,0,tribe_node[centre].shortname,BLACK);
-
       
 // Write the png file
 
@@ -388,7 +388,7 @@ fclose(fmap);
 
 int Nova_GetMaxEvcNode(double *evc,int tribe_size)
 
-{ int i, imax = -1;
+{ int i, imax = 0;
   double max = 0;
 
 for (i = 0; i < tribe_size; i++)
@@ -415,6 +415,11 @@ int Nova_SplayAdjacent(int i,double **adj,int tribe_size,struct CfGraphNode *tri
 
 /* Distribute arm weights evenly over the interval - like pseudo PCA */
 
+if (i < 0)
+   {
+   return 0;
+   }
+  
 for (j = 0; j < tribe_size; j++)
    {
    Nova_InitVertex(neighbours,j);
@@ -511,6 +516,11 @@ return counter;
 int Nova_GetAdjacent(int i,double **adj,int tribe_size,struct CfGraphNode *tribe, struct CfGraphNode *neighbours)
 
 { int j,counter = 0;
+
+if (i < 0)
+   {
+   return 0;
+   }
  
 for (j = 0; j < tribe_size; j++)
    {
@@ -797,9 +807,9 @@ if (fabs(cy-*y) < 20)
 
 /*****************************************************************************/
 
-double Nova_Contain(struct CfDataView cfv,double radius,double min_x,double max_x,double min_y,double max_y)
+double Nova_Orbit(struct CfDataView cfv,double radius,double min_x,double max_x,double min_y,double max_y)
 
-{ int escape_vel = false;
+{ int escape_vel = false, collapsar = false;
      
 if (max_x > cfv.width - cfv.origin_x)
    {
@@ -821,9 +831,22 @@ if (min_y < cfv.height - cfv.origin_y)
    escape_vel = true;
    }
 
+if (max_x - min_x <= cfv.width && max_y - min_y <= cfv.height)
+   {
+   collapsar = true;
+   }
+
 if (escape_vel && radius > cfv.width/3)
    {
    return cfv.width/3; // Heuristics
+   }
+
+
+// Make sure major_r > 2 * minor_r/tan theta to have space   
+
+if (collapsar)
+   {
+   return radius * 1.8;
    }
 else
    {

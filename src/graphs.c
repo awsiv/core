@@ -299,9 +299,9 @@ GREEN    = gdImageColorAllocate(cfv->im, 0, 200, 0);
 BLUE     = gdImageColorAllocate(cfv->im, 50, 100, 100);
 YELLOW   = gdImageColorAllocate(cfv->im, 200, 255, 0);
 LIGHTRED = gdImageColorAllocate(cfv->im, 255, 150, 150);
-RED      = gdImageColorAllocate(cfv->im, 255, 0, 0);
+RED      = gdImageColorAllocate(cfv->im, 200, 0, 0);
 ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
-SKY      = gdImageColorAllocate(cfv->im, 170,170,170);
+SKY      = gdImageColorAllocate(cfv->im, 230,230,230);
 }
 
 /*****************************************************************************/

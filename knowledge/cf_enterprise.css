@@ -38,7 +38,7 @@ font-size: 11px;
 
 #logo
 {  
-width: 600px;
+width: 650px;
 background-color: #efe ;
 padding: 10px;
 }
@@ -91,8 +91,8 @@ blockquote
 #intro
 {
 background-color: #fff; 
-width: 600px;
-border: 2px;
+width: 650px;
+/* border: 2px;*/
 color: #11aa22;
 padding: 10px;
 border-color: black;
@@ -107,16 +107,16 @@ float: right;
 
 #associations
 {  
-background-color: #fff; 
-border: 1px solid;
-width: 600px;
+background-color: #eee; 
+/*border: 1px solid;*/
+width: 650px;
 padding: 10px;
 }
 
 #ontology
 {  
 background-color: #fff; 
-border: 1px solid;
+/*border: 1px solid;*/
 width: 100%;
 padding: 10px;
 }
@@ -124,18 +124,18 @@ padding: 10px;
 
 #occurrences
 {  
-background-color: #eee; 
-border: 1px solid;
-width: 600px;
+background-color: #fff; 
+/*border: 1px solid;*/
+width: 650px;
 padding: 10px;
 }
 
 
 #others
 {  
-background-color: #fff; 
-border: 1px solid;
-width: 600px;
+background-color: #eee; 
+/*border: 1px solid;*/
+width: 650px;
 padding: 10px;
 }
 
@@ -151,9 +151,9 @@ padding: 10px;
 
 #thistype
 {  
-background-color: #efe; 
-border: 1px solid;
-width: 600px;
+background-color: #eee; 
+/*border: 1px solid;*/
+width: 650px;
 padding: 10px;
 }
 
