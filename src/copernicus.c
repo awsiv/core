@@ -234,6 +234,9 @@ for (i = 0; i < size1; i++)
 cfv.origin_x -= (max_x+min_x)/2;
 cfv.origin_y += (max_y+min_y)/2;
 
+cfv.scale_x = (max_x-min_x > 0) ? max_x-min_x : cfv.width/2;
+cfv.scale_y = (max_y-min_y > 0) ? max_y-min_y : cfv.width/2;
+
 // Centre-piece
 
 Nova_ClearTrail(trail);
@@ -288,7 +291,6 @@ for (i = 0; i < size1; i++)
          y = neighbours2[j].y + orbital_r5 * sin(theta2);      
 
          Nova_AlignmentCorrection(&x,&y,neighbours2[j].x,neighbours2[j].y);
-         Nova_MapHorizon(x,y,&min_x,&min_y,&max_x,&max_y);
       
          neighbours3[k].x = x;
          neighbours3[k].y = y;
@@ -303,7 +305,7 @@ for (i = 0; i < size1; i++)
          if (neighbours3[k].real_id == topic)
             {
             Nova_HotBall(cfv,neighbours3[k].x,neighbours3[k].y,neighbours3[k].radius,YELLOWS);
-            Nova_Print(cfv,neighbours3[k].x,neighbours3[k].y,neighbours3[k].shortname,RED);         
+            Nova_BigPrint(cfv,neighbours3[k].x,neighbours3[k].y,neighbours3[k].shortname,RED);         
             }
          else
             {
@@ -319,7 +321,7 @@ for (i = 0; i < size1; i++)
       if (neighbours2[j].real_id == topic)
          {
          Nova_HotBall(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].radius,YELLOWS);
-         Nova_Print(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].shortname,RED);
+         Nova_BigPrint(cfv,neighbours2[j].x,neighbours2[j].y,neighbours2[j].shortname,RED);
          }
       else
          {
@@ -335,7 +337,7 @@ for (i = 0; i < size1; i++)
    if (neighbours1[i].real_id == topic)
       {
       Nova_HotBall(cfv,neighbours1[i].x,neighbours1[i].y,neighbours1[i].radius,YELLOWS);
-      Nova_Print(cfv,neighbours1[i].x,neighbours1[i].y,neighbours1[i].shortname,RED);
+      Nova_BigPrint(cfv,neighbours1[i].x,neighbours1[i].y,neighbours1[i].shortname,RED);
       }
    else
       {
@@ -359,8 +361,15 @@ else
    Nova_HotBall(cfv,0,0,tribe_node[centre].radius,YELLOWS);
    }
 
-Nova_Print(cfv,0,0,tribe_node[centre].shortname,BLACK);
-      
+if (tribe_node[centre].real_id == topic)
+   {
+   Nova_BigPrint(cfv,0,0,tribe_node[centre].shortname,RED);
+   }
+else
+   {
+   Nova_Print(cfv,0,0,tribe_node[centre].shortname,BLACK);
+   }
+
 // Write the png file
 
 if ((fout = fopen(filename, "wb")) == NULL)
@@ -670,22 +679,22 @@ void Nova_MapHorizon(double x,double y,double *min_x,double *min_y,double *max_x
 {
 if (x < *min_x)
    {
-   *min_x = x;
+   *min_x = x - CF_MIN_RADIUS;
    }
 
 if (x > *max_x)
    {
-   *max_x = x;
+   *max_x = x + CF_MIN_RADIUS;
    }
 
 if (y < *min_y)
    {
-   *min_y = y;
+   *min_y = y - CF_MIN_RADIUS;
    }
 
 if (y > *max_y)
    {
-   *max_y = y;
+   *max_y = y + CF_MIN_RADIUS;
    }
 }
 
@@ -696,7 +705,9 @@ if (y > *max_y)
 int Nova_X(struct CfDataView cfv,double x)
 
 {
-return cfv.origin_x + (int)x;
+/* Factor of 1.3 to allow for margin and disc radius */
+ 
+return cfv.origin_x + (int)(x /(1.3 * cfv.scale_x) * (double)cfv.width);
 }
 
 /*****************************************************************************/
@@ -704,7 +715,9 @@ return cfv.origin_x + (int)x;
 int Nova_Y(struct CfDataView cfv,double y)
 
 {
-return cfv.origin_y - (int)y;
+/* Factor of 1.3 to allow for margin and disc radius */
+
+return cfv.origin_y - (int)(y/(1.3*cfv.scale_y) *(double)cfv.height);
 }
 
 /*****************************************************************************/
@@ -712,7 +725,7 @@ return cfv.origin_y - (int)y;
 void Nova_Line(struct CfDataView cfv,double x1,double y1,double x2,double y2,int colour)
 
 {
-//gdImageSetThickness(cfv.im,2);
+/* gdImageSetThickness(cfv.im,2); */
 gdImageLine(cfv.im,Nova_X(cfv,x1),Nova_Y(cfv,y1),Nova_X(cfv,x2),Nova_Y(cfv,y2),colour);
 }
 
@@ -783,6 +796,17 @@ gdImageString(cfv.im,gdFontGetLarge(),Nova_X(cfv,x)-strlen(ps)*gdFontGetLarge()-
 
 /*****************************************************************************/
 
+void Nova_BigPrint(struct CfDataView cfv,double x,double y,char *s,int colour)
+    
+{ char ps[CF_MAXVARSIZE];
+
+snprintf(ps,CF_MAXVARSIZE,"%s",s);
+
+gdImageString(cfv.im,gdFontGetGiant(),Nova_X(cfv,x)-strlen(ps)*gdFontGetLarge()->w/2,Nova_Y(cfv,y)-10,ps,colour);
+}
+
+/*****************************************************************************/
+
 void Nova_AlignmentCorrection(double *x,double *y,double cx,double cy)
 
 { int i;
@@ -838,15 +862,14 @@ if (max_x - min_x <= cfv.width && max_y - min_y <= cfv.height)
 
 if (escape_vel && radius > cfv.width/3)
    {
-   return cfv.width/3; // Heuristics
+   return radius * 0.75; // Heuristics
    }
-
 
 // Make sure major_r > 2 * minor_r/tan theta to have space   
 
 if (collapsar)
    {
-   return radius * 1.8;
+   return radius * 1.5;
    }
 else
    {

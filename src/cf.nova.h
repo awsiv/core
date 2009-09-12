@@ -187,6 +187,7 @@ int Nova_InTrail(int *trail,int node);
 void Nova_Line(struct CfDataView cfv,double x1,double y1,double x2,double y2,int colour);
 void Nova_Disc(struct CfDataView cfv,double x1,double y1,double radius,int colour);
 void Nova_Print(struct CfDataView cfv,double x,double y,char *s,int colour);
+void Nova_BigPrint(struct CfDataView cfv,double x,double y,char *s,int colour);
 double Nova_SignPerturbation(int i);
 void Nova_ColdBall(struct CfDataView cfv,double x,double y,double radius,int *shade);
 void Nova_HotBall(struct CfDataView cfv,double x,double y,double radius,int *shade);

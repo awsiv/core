@@ -41,7 +41,7 @@ else if (strlen($regex) > 0)
    }
 else
    {
-   system("$cfknow -t \"cfengine knowledge base\" -f $file");
+   system("$cfknow -t \"mission status\" -f $file");
    }
 
 ?>

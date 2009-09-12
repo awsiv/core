@@ -22,7 +22,42 @@ models_of_system_administration::
   "computer immunology" association => A("enhances","@(bv)","is enhanced by");
   "autonomics"          association => A("enhances","@(bv)","is enhanced by");
   "self-healing"        association => A("enhances","@(bv)","is enhanced by");
+  "BDMA"                association => a("is inspired by","ITIL","describes model"),
+                        comment => "Build, Deploy, Manage and Audit. A model for the system life-cycle.";
 
+
+
+BDMA::
+
+  #
+
+ "build"  comment => "Also called \"provisioning\" systems, i.e. the process of specifying and assembling the resources to fulfill a set of system promises. Traditionally servers were built as a \"golden image\" for cloning. Under cfengine, the build phase of the server lifecycle involves planning policy for the desired-state. Installation may also be considered a part of the build process.";
+
+  "build" association => a("bare metal installation with","PXE","can be used as part of");
+  "build" association => a("consists of","system policy","can be used as part of");
+  "build" association => a("consists of","system services","are a key ingredient for");
+  "build" association => a("consists of","promises","are a key ingredient for");    
+
+  #
+
+  "deploy" comment => "Traditionally servers were deployed by pushing out a cloned image. Under cfengine the deployment of policy just means publishing a new version of policy on a policy server.";
+
+  "deploy" association => a("makes use of","bundles::update","can be used as part of");    
+  "deploy" association => a("makes use of","packages","can be used as part of");    
+
+  #
+
+ "manage" comment => "Traditionally servers needed to be managed by responding to incidents. Under cfengine indicdents are repaired automatically and management is chiefly about observing and diving the success of the current system policy.";
+
+  "manage" association => a("consists of","monitoring","can be used as part of");    
+  "manage" association => a("consists of","system outputs","can be used as part of");    
+  "manage" association => a("consists of","repair","is an aspect of");    
+
+  #
+
+ "audit" comment => "Traditionally servers needed to be audited to determine their actual state. Under cfengine, auditing simply means generating summary reports about recent compliance or repair operations.";
+
+  "audit" association => a("consists of","system reports","are an aspect of");    
 
 models_of_knowledge::
 
@@ -103,11 +138,14 @@ promise_theory::
 
   "communicated information";
 
-  "services"          association => a("are formed by associating","promises","combine into");
+  "services"          association => a("are formed by combining","promises","combine into");
+  "services"          association => a("has subcategory","application services","are instances of");
+  "services"          association => a("has subcategory","network services","are instances of");
 
-  "stories"           association => a("are formed by associating","topics","can be combined into");
+
+  "stories"           association => a("are formed by combining","topics","can be combined into");
   "stories"           association => a("can talk about","workflows","can be the subject of");
-  "workflows"         association => a("are formed by associating","actions","combine into");
+  "workflows"         association => a("are formed by combining","actions","combine into");
 
   "dependencies"      association => a("result in","conditional promises","require the use of");
 
@@ -339,7 +377,7 @@ occurrences:
 
   services::
 
-     "An abstraction for actions or processes that are associated with a specific set of promises. Services are economically motivated black-boxes for promises."
+     "An abstraction for actions or processes that keep a specific set of promises. Services are black-boxes. Services generall fall into several classes: human services such as help-desk services, application services, network services, etc."
             represents => { "definitions" },
             representation => "literal";
 
