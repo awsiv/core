@@ -278,7 +278,7 @@ occurrences:
             path_root => "$(enterprise_start.doc_root)",
             web_root => "";
 
- installed_patches::
+ installed_patches_report::
 
    "For systems with a separate patch model, this shows OS software patches. There are two reports (for current status and patches that are available but not already applied)"
 
@@ -292,7 +292,7 @@ occurrences:
             path_root => "$(enterprise_start.doc_root)",
             web_root => "";
 
- available_patches::
+ available_patches_report::
 
    "reports/(.*)/software_patches_avail.html"
 

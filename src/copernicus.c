@@ -115,7 +115,15 @@ else
    CfOut(cf_verbose,""," -> Making map %s\n",filename);
    }
 
-NovaHtmlHeader(fmap,tribe_node[0].fullname,STYLESHEET,WEBDRIVER,BANNER);
+if (VIEWS)
+   {
+   NovaHtmlHeader(fmap,tribe_node[0].fullname,STYLESHEET,WEBDRIVER,BANNER);
+   }
+else
+   {
+   /* Only copernicus gets a new blank sheet */
+   NovaHtmlHeader(fmap,tribe_node[0].fullname,STYLESHEET,WEBDRIVER,"");
+   }
 
 fprintf(fmap,"<img src=\"%s\" USEMAP=\"#knowledge_system\" alt=\"%s image pending\">\n",pngfile,tribe_node[0].fullname);
 fprintf(fmap,"<map name=\"knowledge_system\">\n");
