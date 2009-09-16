@@ -404,7 +404,7 @@ cfv->margin = 5;
 cfv->title = "System state";
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
 Nova_MakePalette(cfv);
-
+gdImageFilledRectangle(cfv->im,0,0,510,80,LIGHTGREY);
 gdImageRectangle(cfv->im,5,5,505,75,ORANGE);
 
 Nova_GetAllLevels(kept,repaired,list,names);
@@ -446,7 +446,6 @@ cfv->margin = 5;
 cfv->title = "System state";
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
 Nova_MakePalette(cfv);
-
 gdImageRectangle(cfv->im,5,5,505,75,ORANGE);
 
 // Bar 1

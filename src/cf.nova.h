@@ -88,6 +88,7 @@ struct CfGraphNode
 #define CF_MIN_RADIUS    30.0
 #define CF_RADIUS_SCALE  35.0
 #define CF_NODEVISIBLE   12
+#define CF_CONTAINMENT_FACTOR 1.3
 
 /*****************************************************************************/
 
@@ -178,6 +179,7 @@ int Nova_GetMaxEvcNode(double *evc,int tribe_size);
 int Nova_GetAdjacent(int i,double **adj,int size, struct CfGraphNode *tribe, struct CfGraphNode *neighbours);
 int Nova_SplayAdjacent(int i,double **adj,int tribe_size,struct CfGraphNode *tribe,int *trail,struct CfGraphNode *neighbours);
 int Nova_GetEvcTops(double **adj,int size, double *evc, int *tops);
+void Nova_CentreScale(struct CfDataView *cfv,double min_x,double max_x,double min_y,double max_y);
 int Nova_X(struct CfDataView cfv,double x);
 int Nova_Y(struct CfDataView cfv,double y);
 int Nova_TribeUnion(int *array1,struct CfGraphNode *array2, int size1, int size2);

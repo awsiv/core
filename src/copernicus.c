@@ -239,11 +239,7 @@ for (i = 0; i < size1; i++)
 
 /* Now plot everything after corrections for centre of mass */
 
-cfv.origin_x -= (max_x+min_x)/2;
-cfv.origin_y += (max_y+min_y)/2;
-
-cfv.scale_x = (max_x-min_x > 0) ? max_x-min_x : cfv.width/2;
-cfv.scale_y = (max_y-min_y > 0) ? max_y-min_y : cfv.width/2;
+Nova_CentreScale(&cfv,min_x,max_x,min_y,max_y);
 
 // Centre-piece
 
@@ -687,22 +683,22 @@ void Nova_MapHorizon(double x,double y,double *min_x,double *min_y,double *max_x
 {
 if (x < *min_x)
    {
-   *min_x = x - CF_MIN_RADIUS;
+   *min_x = x - 2*CF_MIN_RADIUS;
    }
 
 if (x > *max_x)
    {
-   *max_x = x + CF_MIN_RADIUS;
+   *max_x = x + 2*CF_MIN_RADIUS;
    }
 
 if (y < *min_y)
    {
-   *min_y = y - CF_MIN_RADIUS;
+   *min_y = y - 2*CF_MIN_RADIUS;
    }
 
 if (y > *max_y)
    {
-   *max_y = y + CF_MIN_RADIUS;
+   *max_y = y + 2*CF_MIN_RADIUS;
    }
 }
 
@@ -710,12 +706,29 @@ if (y > *max_y)
 /* Coords                                                                    */
 /*****************************************************************************/
 
+void Nova_CentreScale(struct CfDataView *cfv,double min_x,double max_x,double min_y,double max_y)
+
+{ double av_x = (max_x+min_x)/2;
+  double av_y = (max_y+min_y)/2;
+     
+cfv->scale_x = (max_x-min_x > 0) ? max_x-min_x : (double)cfv->width/2;
+cfv->scale_y = (max_y-min_y > 0) ? max_y-min_y : (double)cfv->height/2;
+
+// - because correction
+cfv->origin_x = cfv->width/2 - av_x /(CF_CONTAINMENT_FACTOR * cfv->scale_x) * (double)cfv->width;
+
+// + because reversal of y
+cfv->origin_y = cfv->height/2 + av_y /(CF_CONTAINMENT_FACTOR * cfv->scale_x) * (double)cfv->width;
+}
+
+/*****************************************************************************/
+
 int Nova_X(struct CfDataView cfv,double x)
 
 {
 /* Factor of 1.3 to allow for margin and disc radius */
  
-return cfv.origin_x + (int)(x /(1.3 * cfv.scale_x) * (double)cfv.width);
+return cfv.origin_x + (int)(x /(CF_CONTAINMENT_FACTOR * cfv.scale_x) * (double)cfv.width);
 }
 
 /*****************************************************************************/
@@ -725,7 +738,7 @@ int Nova_Y(struct CfDataView cfv,double y)
 {
 /* Factor of 1.3 to allow for margin and disc radius */
 
-return cfv.origin_y - (int)(y/(1.3*cfv.scale_y) *(double)cfv.height);
+return cfv.origin_y - (int)(y/(CF_CONTAINMENT_FACTOR * cfv.scale_y) *(double)cfv.height);
 }
 
 /*****************************************************************************/
@@ -877,7 +890,7 @@ if (escape_vel && radius > cfv.width/3)
 
 if (collapsar)
    {
-   return radius * 1.5;
+   return radius * 1.8;
    }
 else
    {
