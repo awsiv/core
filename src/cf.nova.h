@@ -382,6 +382,30 @@ void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3);
 int Nova_ViewWeek(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *week);
 void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs,char *host);
 
+#ifdef MINGW
+/* win_api.c */
+
+void NovaWin_OpenNetwork();
+
+/* win_file.c */
+
+void NovaWin_CreateEmptyFile(char *name);
+int NovaWin_IsExecutable(char *file);
+int NovaWin_mkdir(const char *path, mode_t mode);
+int NovaWin_rename(const char *oldpath, const char *newpath);
+int NovaWin_chmod(const char *path, mode_t mode);
+int FileExists(const char *fileName);
+
+/* win_proc.c */
+
+int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp);
+int NovaWin_GracefulTerminate(pid_t pid);
+
+/* win_ps.c */
+
+int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts);
+#endif  /* MINGW */
+
 
 /***************************************************************************/
 

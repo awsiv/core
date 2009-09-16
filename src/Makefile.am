@@ -33,7 +33,11 @@ libcfnova_la_SOURCES =						\
 	timeseries.c						\
 	magnify.c						\
 	coordinates.c						\
-	cfcore.c
+	cfcore.c                                                \
+	win_api.c						\
+	win_file.c						\
+	win_proc.c						\
+	win_ps.c
 
 
 #
