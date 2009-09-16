@@ -12,12 +12,11 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef MINGW
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-
+#ifdef MINGW
 /* ------ BEGIN TEMP DEFINES ------ */
 
 typedef unsigned long uid_t;
@@ -45,14 +44,14 @@ void nw_unimpl(char *fname)
 
 gid_t getgid(void)
 {
-  mgw_exper("getgid", "always returns 0 (assumes process is run by group root)");
+  nw_exper("getgid", "always returns 0 (assumes process is run by group root)");
   return 0;
 }
 
 
 uid_t getuid(void)
 {
-  mgw_exper("getuid", "always returns 0 (assumes process is run by root/Administrator)");
+  nw_exper("getuid", "always returns 0 (assumes process is run by root/Administrator)");
   return 0;
 }
 
@@ -61,7 +60,7 @@ unsigned int sleep(unsigned int seconds)
 {
   // Note: Use SleepEx() if it should be alertable when waiting for IO
   // return values differ when signaled
-  mgw_exper("sleep", "signals are ignored when sleeping");
+  nw_exper("sleep", "signals are ignored when sleeping");
   Sleep((seconds)*1000);
 
   // on windows, the sleep seconds have always elapsed when we return (i.e. no signals are received)
@@ -74,7 +73,7 @@ unsigned int sleep(unsigned int seconds)
  * Returns 0 on success, and -1 on failure. */
 int chown(const char *path, uid_t owner, gid_t group)
 {
-  mgw_exper("chown", "needs testing");
+  nw_exper("chown", "needs testing");
 
   PSID sidAdmins = NULL;
   SID_IDENTIFIER_AUTHORITY SIDAuthNT = {SECURITY_NT_AUTHORITY};
@@ -117,21 +116,21 @@ int chown(const char *path, uid_t owner, gid_t group)
 
 long int random(void)
 {
-  mgw_exper("random", "using rand() from CRT");
+  nw_exper("random", "using rand() from CRT");
   return rand();
 }
 
 
 void srandom(unsigned int seed)
 {
-  mgw_exper("srandom", "using srand() from CRT");
+  nw_exper("srandom", "using srand() from CRT");
   srand(seed);
 }
 
 
 void setlinebuf(FILE *stream)
 {
-  mgw_exper("setlinebuf", "using NT setvbuf()");
+  nw_exper("setlinebuf", "using NT setvbuf()");
 
   setvbuf(stream, (char *)NULL, _IOLBF, 0);
 }

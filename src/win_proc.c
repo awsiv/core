@@ -12,10 +12,12 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef MINGW
+
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
+#ifdef MINGW
 
 // TODO: Implement ?
 int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp)

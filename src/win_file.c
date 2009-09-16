@@ -12,11 +12,11 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef MINGW
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#ifdef MINGW
 
 // FIXME: Should we unlink first? See UNIX version..
 void NovaWin_CreateEmptyFile(char *name)
@@ -34,7 +34,7 @@ close(tempfd);
 // FIXME: Implement
 int NovaWin_IsExecutable(char *file)
 {
-mgw_exper("IsExecutable", "saying every file is executable");
+nw_exper("IsExecutable", "saying every file is executable");
 
 return FileExists(file);
 }
@@ -56,7 +56,7 @@ int NovaWin_mkdir(const char *path, mode_t mode)
  * We fix this by removing the file first if it exists */
 int NovaWin_rename(const char *oldpath, const char *newpath)
 {
-  mgw_exper("NovaWin_rename", "using unlink() before rename()");
+  nw_exper("NovaWin_rename", "using unlink() before rename()");
 
   unlink(newpath);
 
@@ -67,10 +67,10 @@ int NovaWin_rename(const char *oldpath, const char *newpath)
 /* returns 0 on success, -1 on error */
 int NovaWin_chmod(const char *path, mode_t mode)
 {
-  mgw_unimpl("chmod");
+  nw_unimpl("chmod");
   return 0;  // FIXME: Hack for now.
 
-  //mgw_exper("NovaWin_chmod", "only supporting a subset of mode-strings for NT");
+  //nw_exper("NovaWin_chmod", "only supporting a subset of mode-strings for NT");
   
 
   unsigned char owner = (mode >> 6) & 07;

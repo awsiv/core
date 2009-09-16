@@ -14,10 +14,11 @@
 
 /* this file implements the equivalent of "ps auxw" for windows */
 
-#ifdef MINGW
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
+#ifdef MINGW
 
 /* defines */
 #define MAXCMDSTR 512  // too big: we read across boundries, giving failure
