@@ -569,6 +569,8 @@ int CfReadLine(char *buff,int size,FILE *fp);
 
 /* files_names.c */
 
+int DeEscapeQuotedString(char *in, char *out);
+void DeEscapeFilename(char *in,char *out);
 int IsDir(char *path);
 int EmptyString(char *s);
 int ExpandOverflow(char *str1,char *str2);
@@ -823,7 +825,6 @@ double GAverage(double anew,double aold,double p);
 
 /* install.c */
 
-int DeEscapeString(char *from,char *to);
 int RelevantBundle(char *agent,char *blocktype);
 struct Bundle *AppendBundle(struct Bundle **start,char *name, char *type, struct Rlist *args);
 struct Body *AppendBody(struct Body **start,char *name, char *type, struct Rlist *args);
@@ -935,6 +936,9 @@ char *cf_strcpy(char *s1,char *s2);
 char *MapName(char *s);
 int UseUnixStandard(char *s);
 int cf_closesocket(int sd);
+int cf_mkdir(const char *path, mode_t mode);
+int cf_chmod(const char *path, mode_t mode);
+int cf_rename(const char *oldpath, const char *newpath);
 
 #ifndef HAVE_GETNETGRENT
 int setnetgrent (const char *netgroup);
@@ -1196,6 +1200,16 @@ void SetReferenceTime(int setclasses);
 void SetStartTime(int setclasses);
 void AddTimeClass(char *str);
 
+/* unix.c */
+
+#ifndef MINGW  // TODO: Define UNIX instead ?
+int Unix_GracefulTerminate(pid_t pid);
+int Unix_ShellCommandReturnsZero(char *comm,int useshell);
+int Unix_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp);
+int Unix_LoadProcessTable(struct Item **procdata,char *psopts);
+void Unix_CreateEmptyFile(char *name);
+int Unix_IsExecutable(char *file);
+#endif  /* NOT MINGW */
 
 /* vars.c */
 
@@ -1280,6 +1294,7 @@ void SchedulePackageOp(char *name,char *version,char *arch,int installed,int mat
 int ExecPackageCommand(char *command,int verify,struct Attributes a,struct Promise *pp);
 int PackageInItemList(struct CfPackageItem *list,char *name,char *version,char *arch);
 int PrependPatchItem(struct CfPackageItem **list,char *item,struct CfPackageItem *chklist,struct Attributes a,struct Promise *pp);
+int PrependMultiLinePackageItem(struct CfPackageItem **list,char *item,int reset,struct Attributes a,struct Promise *pp);
 
 /* verify_processes.c */
 

@@ -87,7 +87,7 @@ struct CfGraphNode
 
 #define CF_MIN_RADIUS    30.0
 #define CF_RADIUS_SCALE  35.0
-#define CF_NODEVISIBLE   12
+#define CF_NODEVISIBLE   14
 #define CF_CONTAINMENT_FACTOR 1.3
 
 /*****************************************************************************/

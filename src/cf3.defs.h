@@ -359,6 +359,7 @@ enum cfkcontrol
    cfk_graph_dir,
    cfk_genman,
    cfk_mandir,
+   cfk_views,
    cfk_notype
    };
 
@@ -1421,6 +1422,9 @@ struct Packages
    char *package_verify_command;
    char *package_noverify_regex;
    char *package_name_convention;
+
+   char *package_multiline_start;
+      
    int package_noverify_returncode;
    };
 
