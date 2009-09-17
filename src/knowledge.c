@@ -20,7 +20,7 @@ struct Item *NOVA_BUNDLEDEPENDENCE = NULL;
 static char *CF_VALUETYPES[18][3] =
  {
  "hup,int,trap,kill,pipe,cont,abrt,stop,quit,term,child,usr1,usr2,bus,segv","system signals","a unix signal name",
- "true,false,yes,no,on,off","boolean","a positive or a negative"
+ "true,false,yes,no,on,off","boolean","a positive or a negative",
  "symlink,hardlink,relative,absolute,none","link type","a support link type",
  "0,2147483648","a time range","a value from zero to a maximum system time -- but you should use time functions to convert this",
  "0,99999999999","a positive integer","a number between zero and the maximum value",
@@ -33,8 +33,8 @@ static char *CF_VALUETYPES[18][3] =
  "[a-zA-Z0-9_$.-]+","a user/group id","an alphanumeric string with option underscores and hyphens",
  "[cC]:\\\\.*|/.*","a file path","a system file path suitable for the target system",
  "LOG_USER,LOG_DAEMON,LOG_LOCAL0,LOG_LOCAL1,LOG_LOCAL2,LOG_LOCAL3,LOG_LOCAL4,LOG_LOCAL5,LOG_LOCAL6,LOG_LOCAL7","a syslog level","a syslog constant",
- "","An arbitrary string","unspecified characters",
- ".*","An arbitrary string","unspecified characters",
+ "","an arbitrary string","unspecified characters",
+ ".*","an arbitrary string","unspecified characters",
  NULL,NULL,NULL
  };
 
@@ -414,11 +414,15 @@ fprintf(fp,"      association => a(\"see instances of\",\"comment\",\"is one of 
 fprintf(fp,"\"functions\" comment => \"In-built functions that may be used to set variables or classes\";");
 
 fprintf(fp," \"values\"  comment => \"Formal rvalues in constraint assignments and their legal ranges\";\n");
+
 fprintf(fp,"values::\n\n");
 
 for (i = 0; CF_VALUETYPES[i][0] != NULL; i++)
    {
-   fprintf(fp,"\"%s\"   comment =>\"Should match the generic pattern %s, i.e. %s\";\n",CF_VALUETYPES[i][1],NovaEscape(CF_VALUETYPES[i][0]),CF_VALUETYPES[i][2]);
+   fprintf(fp,"\"%s\"   comment =>\"Should match the generic pattern %s, i.e. %s\";\n",
+           CF_VALUETYPES[i][1],
+           NovaEscape(CF_VALUETYPES[i][0]),
+           CF_VALUETYPES[i][2]);
    }
 
 fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[1][1],CF_DATATYPES[cf_int]);

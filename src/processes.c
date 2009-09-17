@@ -31,7 +31,7 @@ char *Nova_GetProcessOptions()
 zid = getzoneid();
 getzonenamebyid(zid,zone,ZONENAME_MAX);
 
-if (Strcmp(zone,"global") == 0)
+if (cf_strcmp(zone,"global") == 0)
    {
    return "-f -z global";
    }
