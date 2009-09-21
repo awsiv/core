@@ -311,7 +311,7 @@ char *Nova_GetProcessOptions(void);
 
 void Nova_Version(void);
 char * Nova_StrVersion(void);
-void Nova_NotePromiseCompliance(struct Promise *pp,double val);
+void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status);
 time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *t);
 int Nova_EnterpriseExpiry(char *day,char *month,char *year);
 void Nova_CheckAutoBootstrap(void);
@@ -429,5 +429,6 @@ struct month_days
    int d;
    };
 
-
+#define CF_REPAIR_LOG    "nova_repair.log"
+#define CF_NOTKEPT_LOG   "nova_notkept.log"
 

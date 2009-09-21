@@ -124,7 +124,6 @@ if (strcmp("reports",pp->agentsubtype) == 0)
    }
 }
 
-
 /*****************************************************************************/
 
 void Nova_Version()
@@ -145,17 +144,28 @@ return buf;
 
 /***************************************************************/
 
-void Nova_NotePromiseCompliance(struct Promise *pp,double val)
+void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status)
 
 { DB *dbp;
   DBC *dbcp;
-  char name[CF_BUFSIZE];
+  FILE *fp;
+  char name[CF_BUFSIZE],date[CF_MAXVARSIZE],id[CF_MAXVARSIZE];
+  static char previous[CF_BUFSIZE];
   struct Event e,newe;
   time_t now = time(NULL);
   double lastseen,delta2;
   double vtrue = 1.0;      /* end with a rough probability */
 
 Debug("Note Promise Compliance\n");
+
+cf_strncpy(id,Nova_PromiseID(pp),CF_MAXVARSIZE);
+
+if (strcmp(previous,id) == 0)
+   {
+   return;
+   }
+
+cf_strncpy(previous,Nova_PromiseID(pp),CF_MAXVARSIZE);
 
 snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,"promise_compliance.db");
 
@@ -166,9 +176,7 @@ if (!OpenDB(name,&dbp))
 
 /* First record the classes that are in use */
 
-cf_strncpy(name,Nova_PromiseID(pp),CF_MAXVARSIZE);
-
-if (ReadDB(dbp,name,&e,sizeof(e)))
+if (ReadDB(dbp,id,&e,sizeof(e)))
    {
    lastseen = now - e.t;
    newe.t = now;
@@ -186,9 +194,45 @@ else
    newe.Q.var = 0.000;
    }
 
-WriteDB(dbp,name,&newe,sizeof(newe));
+WriteDB(dbp,id,&newe,sizeof(newe));
 
 dbp->close(dbp,0);
+
+/* Now keep the next log */
+
+switch (status)
+   {
+   case cfn_repaired:
+       snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);       
+       break;
+
+   case cfn_notkept:
+       snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_NOTKEPT_LOG);
+       break;
+
+   default:
+       return;
+   }
+
+if ((fp = fopen(name,"a")) == NULL)
+   {
+   CfOut(cf_error,"fopen"," !! Could not open \"%s\"",name);
+   return;
+   }
+
+snprintf(date,CF_MAXVARSIZE-1,"%s",ctime(&now));
+Chop(date);
+
+if (pp->ref)
+   {
+   fprintf(fp,"%s,%s,%s,%s,%s,%d\n",date,pp->bundle,id,pp->ref,pp->audit->filename,pp->lineno);
+   }
+else
+   {
+   fprintf(fp,"%s,%s,%s,%s,%s,%d\n",date,pp->bundle,id,"no comment",pp->audit->filename,pp->lineno);
+   }
+
+fclose(fp);
 }
 
 /***************************************************************/

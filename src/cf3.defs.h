@@ -442,7 +442,7 @@ enum cfeditorder
 #define CF_MODERANGE   "[0-7augorwxst,+-]+"
 #define CF_BSDFLAGRANGE "[+-]*[(arch|archived|nodump|opaque|sappnd|sappend|schg|schange|simmutable|sunlnk|sunlink|uappnd|uappend|uchg|uchange|uimmutable|uunlnk|uunlink)]+"
 #define CF_CLASSRANGE  "[a-zA-Z0-9_!&@@$|.()]+"
-#define CF_IDRANGE     "[a-zA-Z0-9_$.]+"
+#define CF_IDRANGE     "[a-zA-Z0-9_$().]+"
 #define CF_USERRANGE   "[a-zA-Z0-9_$.-]+"
 #define CF_FNCALLRANGE "[a-zA-Z0-9_().$@]+"
 #define CF_NAKEDLRANGE "@[(][a-zA-Z0-9]+[)]"
@@ -491,9 +491,12 @@ enum fncalltype
    cfn_changedbefore,
    cfn_classify,
    cfn_classmatch,
+   cfn_countlinesmatching,
+   cfn_diskfree,
    cfn_execresult,
    cfn_fileexists,
    cfn_filesexist,
+   cfn_getfields,
    cfn_getindices,
    cfn_getgid,
    cfn_getuid,
@@ -883,6 +886,12 @@ enum cf_thread_mutex
   cft_lock,
   cft_output,
   cft_no_tpolicy
+  };
+
+enum cf_status
+  {
+  cfn_repaired,
+  cfn_notkept
   };
 
 /************************************************************************************/

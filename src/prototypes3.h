@@ -334,7 +334,7 @@ void RegisterLiteralServerData(char *handle,struct Promise *pp);
 char *ReturnLiteralData(char *handle);
 char *GetRemoteScalar(char *handle,char *server,int encrypted);
 char *PromiseID(struct Promise *pp);
-void NotePromiseCompliance(struct Promise *pp,double val);
+void NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status);
 time_t GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *lastseen);
 void SyntaxCompletion(char *s);
 int GetRegistryValue(char *key,char *value,char *buffer);
@@ -407,6 +407,8 @@ struct Rval FnCallRegCmp(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallRegList(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallRegArray(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallGetIndices(struct FnCall *fp,struct Rlist *finalargs);
+struct Rval FnCallGetFields(struct FnCall *fp,struct Rlist *finalargs);
+struct Rval FnCallCountLinesMatching(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallGreaterThan(struct FnCall *fp,struct Rlist *finalargs,char c);
 struct Rval FnCallUserExists(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs);
@@ -439,6 +441,7 @@ struct Rval FnCallPeerLeaders(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallRegistryValue(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallLastNode(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallFileSexist(struct FnCall *fp,struct Rlist *finalargs);
+struct Rval FnCallDiskFree(struct FnCall *fp,struct Rlist *finalargs);
 
 void *CfReadFile(char *filename,int maxsize);
 char *StripPatterns(char *file_buffer,char *pattern);
@@ -513,10 +516,10 @@ int SelectLine(char *line,struct Attributes a,struct Promise *pp);
 
 /* files_links.c */
 
-int VerifyLink(char *destination,char *source,struct Attributes attr,struct Promise *pp);
-int VerifyAbsoluteLink(char *destination,char *source,struct Attributes attr,struct Promise *pp);
-int VerifyRelativeLink(char *destination,char *source,struct Attributes attr,struct Promise *pp);
-int VerifyHardLink(char *destination,char *source,struct Attributes attr,struct Promise *pp);
+char VerifyLink(char *destination,char *source,struct Attributes attr,struct Promise *pp);
+char VerifyAbsoluteLink(char *destination,char *source,struct Attributes attr,struct Promise *pp);
+char VerifyRelativeLink(char *destination,char *source,struct Attributes attr,struct Promise *pp);
+char VerifyHardLink(char *destination,char *source,struct Attributes attr,struct Promise *pp);
 int KillGhostLink(char *name,struct Attributes attr,struct Promise *pp);
 int MakeLink (char *from,char *to,struct Attributes attr,struct Promise *pp);
 int MakeHardLink (char *from,char *to,struct Attributes attr,struct Promise *pp);
@@ -784,6 +787,7 @@ int FuzzySetMatch (char *s1, char *s2);
 int FuzzyMatchParse (char *item);
 int FuzzyHostMatch (char *arg0, char *arg1,char *basename);
 int FuzzyHostParse (char *arg1,char *arg2);
+void IdempPrependItem(struct Item **liststart,char *itemstring,char *classes);
 void PrependItem  (struct Item **liststart, char *itemstring, char *classes);
 void AppendItem  (struct Item **liststart, char *itemstring, char *classes);
 void DeleteItemList (struct Item *item);
