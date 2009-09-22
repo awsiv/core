@@ -400,6 +400,8 @@ int FileExists(const char *fileName);
 
 int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp);
 int NovaWin_GracefulTerminate(pid_t pid);
+int NovaWin_ShellCommandReturnsZero(char *comm, int useshell);
+int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, STARTUPINFO *si, HANDLE *procHandle);
 
 /* win_ps.c */
 
