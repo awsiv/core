@@ -720,7 +720,7 @@ cfv->scale_y = (max_y-min_y > 0) ? max_y-min_y : (double)cfv->height/2;
 cfv->origin_x = cfv->width/2 - av_x /(CF_CONTAINMENT_FACTOR * cfv->scale_x) * (double)cfv->width;
 
 // + because reversal of y
-cfv->origin_y = cfv->height/2 + av_y /(CF_CONTAINMENT_FACTOR * cfv->scale_y) * (double)cfv->width;
+cfv->origin_y = cfv->height/2 + av_y /(CF_CONTAINMENT_FACTOR * cfv->scale_y) * (double)cfv->height;
 }
 
 /*****************************************************************************/
