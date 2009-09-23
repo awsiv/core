@@ -218,6 +218,7 @@ void Nova_CreateHostPortal(struct Item *list);
 void Nova_GetAllLevels(int *kept,int *repaired,struct Item *list,char **names);
 void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list);
 void Nova_GraphLegend(FILE *fp);
+void Nova_GraphMagLegend(FILE *fp);
 
 /* histogram.c */
 

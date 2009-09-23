@@ -306,7 +306,7 @@ SKY      = gdImageColorAllocate(cfv->im, 230,230,230);
 
 /*****************************************************************************/
 
-void Nova_GraphLegend(FILE *fout)
+void Nova_GraphMagLegend(FILE *fout)
 {
 fprintf(fout,"<div id=\"legend\">"
         "<table>"
@@ -314,6 +314,20 @@ fprintf(fout,"<div id=\"legend\">"
         "<td bgcolor = #00c800>Average deviation below mean</td>"
         "<td bgcolor = ff9696>Average deviation above mean</td>"
         "<td bgcolor = c8ff00>Last measured</td>"
+        "</tr>"
+        "</table>");
+}
+
+/*****************************************************************************/
+
+void Nova_GraphLegend(FILE *fout)
+{
+fprintf(fout,"<div id=\"legend\">"
+        "<table>"
+        "<tr>"
+        "<td bgcolor = #00c800>Average deviation about mean</td>"
+        "<td bgcolor = ff9696>Local mean</td>"
+        "<td bgcolor = c8ff00>Last measured value</td>"
         "</tr>"
         "</table>");
 }

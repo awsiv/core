@@ -217,13 +217,14 @@ snprintf(datestr,CF_MAXVARSIZE,"%s",ctime(&date));
 Chop(datestr);
 
 fprintf(fout,"<h1>%s</h1>\n",description);
+
+fprintf(fout,"<div id=\"legend\">\n");
+
 fprintf(fout,"<h2>Last 4 hours</h2>\n");
 
 fprintf(fout,"<h4>Latest info observed %s</h4>\n",datestr);
 
-fprintf(fout,"<div id=\"occurrences\">\n");
-
-fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\" width=\"500\"></a></p>\n",img,img);
+fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\" width=\"590\"></a></p>\n",img,img);
 fprintf(fout,"<p><table border=1>\n");
 
 
@@ -254,7 +255,7 @@ snprintf(name1,CF_BUFSIZE-1,"%s.E-sigma",name);
 snprintf(name2,CF_BUFSIZE-1,"%s.q",name);
 snprintf(img,CF_BUFSIZE-1,"%s_weekly.png",name);
 
-fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\" width=\"500\"></a></p>\n",img,img);
+fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\" width=\"590\"></a></p>\n",img,img);
 fprintf(fout,"<p><table border=1>\n");
 
 fprintf(fout,"<tr><th bgcolor=#eeeeee>Time</th>\n<th bgcolor=#eeeeee>q</th>\n<th bgcolor=#eeeeee>E(q)</th>\n<th bgcolor=#eeeeee>delta q</tdh></tr>\n");

@@ -270,7 +270,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
 
-{ char *handle = (char *)GetConstraint("handle",pp->conlist,CF_SCALAR);
+{ char *handle = (char *)GetConstraint("handle",pp,CF_SCALAR);
   char filename[CF_BUFSIZE];
   struct Item *stream;
   int i,slot,count = 0;

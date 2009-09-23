@@ -193,7 +193,7 @@ void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version)
 
 { struct Constraint *cp;
   char promise_id[CF_BUFSIZE];
-  struct Rlist *rp,*depends_on = GetListConstraint("depends_on",pp->conlist);
+  struct Rlist *rp,*depends_on = GetListConstraint("depends_on",pp);
   struct DefineClasses c = GetClassDefinitionConstraints(pp);
 
 strcpy(promise_id,Nova_PromiseID(pp));
@@ -219,7 +219,7 @@ fprintf(fp,"      association => a(\"makes promises\",\"%s\",\"is a promise made
 
 
 fprintf(fp,"promise_types::\n");
-fprintf(fp,"  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype,"is employed in bundle",pp->bundle,"employs promises of type");
+fprintf(fp,"  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype,"is promised in bundle",pp->bundle,"is a bundle with promises of type");
 
 /* Promisees as topics too */
 
@@ -682,7 +682,7 @@ char *Nova_PromiseID(struct Promise *pp)
 
 { char static id[CF_MAXVARSIZE];
   char vbuff[CF_MAXVARSIZE];
-  char *handle = GetConstraint("handle",pp->conlist,CF_SCALAR);
+  char *handle = GetConstraint("handle",pp,CF_SCALAR);
 
 if (handle)
    {
@@ -713,35 +713,35 @@ void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promi
   
 /* For activated classes we can assume that no one will */
 
-potential = GetListConstraint("promise_kept",pp->conlist);
+potential = GetListConstraint("promise_kept",pp);
 
 for (rp = potential; rp !=  NULL; rp=rp->next)
    {
    IdempPrependRScalar(&impacted,rp->item,CF_SCALAR);
    }
 
-potential = GetListConstraint("promise_repaired",pp->conlist);
+potential = GetListConstraint("promise_repaired",pp);
 
 for (rp = potential; rp !=  NULL; rp=rp->next)
    {
    IdempPrependRScalar(&impacted,rp->item,CF_SCALAR);
    }
 
-potential = GetListConstraint("repair_failed",pp->conlist);
+potential = GetListConstraint("repair_failed",pp);
 
 for (rp = potential; rp !=  NULL; rp=rp->next)
    {
    IdempPrependRScalar(&impacted,rp->item,CF_SCALAR);
    }
 
-potential = GetListConstraint("repair_denied",pp->conlist);
+potential = GetListConstraint("repair_denied",pp);
 
 for (rp = potential; rp !=  NULL; rp=rp->next)
    {
    IdempPrependRScalar(&impacted,rp->item,CF_SCALAR);
    }
 
-potential = GetListConstraint("promise_timeout",pp->conlist);
+potential = GetListConstraint("promise_timeout",pp);
 
 for (rp = potential; rp !=  NULL; rp=rp->next)
    {
@@ -771,7 +771,7 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
          
          for (rp = impacted; rp != NULL; rp=rp->next)
             {
-            char *varclass = GetConstraint("ifvarclass",pp->conlist,CF_SCALAR);
+            char *varclass = GetConstraint("ifvarclass",pp,CF_SCALAR);
 
             if (strstr(pp2->classes,rp->item) || (varclass && strstr(varclass,rp->item)))
                {
@@ -838,7 +838,7 @@ snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\
 
 PrependItemList(&NOVA_BUNDLEDEPENDENCE,assertion);
 
-if (handle = (char *)GetConstraint("handle",pp->conlist,CF_SCALAR))
+if (handle = (char *)GetConstraint("handle",pp,CF_SCALAR))
    {
    snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\")\n",name,NOVA_BUNDLE_DATA_INV_P,handle,NOVA_BUNDLE_DATA);
 

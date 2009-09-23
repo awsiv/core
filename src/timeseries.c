@@ -421,15 +421,15 @@ if ((fp = fopen(fname,"w")) == 0)
 NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
 fprintf(fp,"<h1>Weekly trends on %s</h1>\n",name);
 
-fprintf(fp,"<div id=\"occurrences\">\n");
+Nova_GraphLegend(fp);
 
 snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
 
 fprintf(fp,"<div id=\"graph\">\n");
-fprintf(fp,"<img src=\"%s\" width=\"590\">\n",img);
+fprintf(fp,"<a href=\"%s\"><img src=\"%s\" width=\"590\"></a>\n",img,img);
 fprintf(fp,"</div>\n");
 
-Nova_GraphLegend(fp);
+
 
 fprintf(fp,"<div id=\"weekanalysis\">\n");
 

@@ -891,7 +891,8 @@ enum cf_thread_mutex
 enum cf_status
   {
   cfn_repaired,
-  cfn_notkept
+  cfn_notkept,
+  cfn_nop
   };
 
 /************************************************************************************/

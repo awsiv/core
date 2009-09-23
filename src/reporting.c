@@ -250,7 +250,7 @@ if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Policy compliance summary on %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
-   fprintf(fout,"<div id=\"primary\">\n");
+   fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
    fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Start check",NRH[cfx_date][cfe]);
@@ -433,7 +433,7 @@ if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Promise compliance history on %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
-   fprintf(fout,"<div id=\"primary\">\n");
+   fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
    fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Last checked",NRH[cfx_date][cfe]);
@@ -630,7 +630,7 @@ if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Known setuid programs on %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
-   fprintf(fout,"<div id=\"primary\">\n");
+   fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
    fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Filename",NRH[cfx_filename][cfe]);
@@ -746,7 +746,7 @@ if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"File hash-change events recorded on %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
-   fprintf(fout,"<div id=\"primary\">\n");
+   fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
    fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Time of change event",NRH[cfx_date][cfe]);
@@ -949,7 +949,7 @@ if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Software versions installed %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
-   fprintf(fout,"<div id=\"primary\">\n");
+   fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
    fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Package",NRH[cfx_filename][cfe]);
@@ -1080,7 +1080,7 @@ if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Software updates available and outstanding for %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
-   fprintf(fout,"<div id=\"primary\">\n");
+   fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
    fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Package",NRH[cfx_filename][cfe]);
@@ -1204,7 +1204,7 @@ if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Software patched installed on %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
-   fprintf(fout,"<div id=\"primary\">\n");
+   fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
    fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Package",NRH[cfx_filename][cfe]);
@@ -1355,7 +1355,7 @@ if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Main variables instantiated on %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
-   fprintf(fout,"<div id=\"primary\">\n");
+   fprintf(fout,"<div id=\"reporttext\">\n");
    }
 
 while (!feof(fin))
