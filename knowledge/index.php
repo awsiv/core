@@ -24,7 +24,7 @@ echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://w
 
 if ($arg1)
    {
-   if ($arg1 == "'cfengine_knowledge_base::ontology'")
+   if ($arg1 == "'system_knowledge::ontology'")
       {
       echo "<div id=\"ontology\">";
       include "ontology.html";

@@ -15,16 +15,6 @@ Research::
   "models of knowledge";
   "models of organization";
 
-models_of_system_administration::
-
-  "promise theory"     association => a("is implemented in","cfengine","is the reference implementation of");
-  "convergent operators";
-  "computer immunology" association => A("enhances","@(bv)","is enhanced by");
-  "autonomics"          association => A("enhances","@(bv)","is enhanced by");
-  "self-healing"        association => A("enhances","@(bv)","is enhanced by");
-  "BDMA"                association => a("is inspired by","ITIL","describes model"),
-                        comment => "Build, Deploy, Manage and Audit. A model for the system life-cycle.";
-
 
 
 BDMA::
@@ -59,6 +49,17 @@ BDMA::
 
   "audit" association => a("consists of","system reports","are an aspect of");    
 
+
+models_of_system_administration::
+
+  "promise theory"     association => a("is implemented in","cfengine","is the reference implementation of");
+
+  "convergent operators" association => a("implement","convergence","is implemented by");
+  "computer immunology" association => A("improves","@(bv)","is improved by");
+  "autonomics"          association => A("improves","@(bv)","is improved by");
+  "self-healing"        association => A("improves","@(bv)","is improved by"),
+                            comment => "System exhibiting automated repair and maintenance";
+
 models_of_knowledge::
 
   "topic maps";
@@ -68,23 +69,28 @@ models_of_organization::
    "homogeneous system";
    "heterogeneous system";
    "peer to peer network";
-   "hierarchical structure"  association => a("is the same as","object orientation","is the same as");
-   "service orientation"     association => a("is the same as","peer to peer network","is the same as");
-   "aspect paradigm"         association => a("is the same as","aspect orientation","is the same as");
-   "object paradigm"         association => a("is the same as","object orientation","is the same as");
-   "cascading"               association => a("is the same as","hierarchical structure","is the same as");
+   "hierarchical structure"  association => a("$(tm.same[f])","object orientation","$(tm.same[f])");
+   "service orientation"     association => a("$(tm.same[f])","peer to peer network","$(tm.same[f])");
+   "aspect paradigm"         association => a("$(tm.same[f])","aspect orientation","$(tm.same[f])");
+   "object paradigm"         association => a("$(tm.same[f])","object orientation","$(tm.same[f])");
+   "cascading"               association => a("$(tm.same[f])","hierarchical structure","$(tm.same[f])");
    "overlapping sets";
 
 convergent_operators::
 
-   "idempotence";
-   "convergence";
+   "idempotence"      comment => "Idempotence is a mathematical property of operations or changes. Formally and operator is idempotent if applying it twice is the same as applying it once. This is not the same as convergence, because the result need not be anchored to anything. e.g. <pre>touch myfile</pre> is idempotent but it is not a fixed point because its effect depends on which directory the operation is performed in. <pre>touch /tmp/myfile</pre> is convergent.";
+
+   "convergence"      comment => "The idea that we always move closer to the desired state of a system on every promise verification. Once the desired state has been reached, the state hsa converged and no further changes take place. Normally convergence to the desired state happens in a single repair, unless there are dependencies that cannot be resolved. Convergence is a stronger constraint on system behaviour than idempotence.",
+                      association => a("$(tm.same[f])","Convergence","$(tm.same[f])");
 
 promise_theory::
 
   "agents";
   "intentions";
   "bundles"           association => a("are collections of","promises","combine to form");
+
+   "policy"           comment => "A declared set of intentions describing how systems should behave",
+                      association => a("is a collection of","promises","combine into");
   "promise proposals" association => a("are a basis for","promises","may be based on");
 
   "promises"          association => a("reveal","intentions","are revealed in the form of");
@@ -132,20 +138,17 @@ promise_theory::
   "intentions";
 
   "subjects"          association => a("are represented as","topics","are knowledge-map instances of"),
-                      comment => "Any thing that can be discussed";
+                      comment => "An abstraction for any things that can be discussed";
 
   "associations"      association => a("form networks of","topics","are inter-related through");
 
   "communicated information";
 
-  "services"          association => a("are formed by combining","promises","combine into");
-  "services"          association => a("has subcategory","application services","are instances of");
-  "services"          association => a("has subcategory","network services","are instances of");
+  "services"          association => a("are formed by associating","promises","combine into");
 
-
-  "stories"           association => a("are formed by combining","topics","can be combined into");
+  "stories"           association => a("are formed by associating","topics","can be combined into");
   "stories"           association => a("can talk about","workflows","can be the subject of");
-  "workflows"         association => a("are formed by combining","actions","combine into");
+  "workflows"         association => a("are formed by associating","actions","combine into");
 
   "dependencies"      association => a("result in","conditional promises","require the use of");
 
@@ -377,7 +380,7 @@ occurrences:
 
   services::
 
-     "An abstraction for actions or processes that keep a specific set of promises. Services are black-boxes. Services generall fall into several classes: human services such as help-desk services, application services, network services, etc."
+     "An abstraction for actions or processes that are associated with a specific set of promises. Services are economically motivated black-boxes for promises."
             represents => { "definitions" },
             representation => "literal";
 
@@ -426,6 +429,64 @@ aths through a topic map can relate different stories. An entire story promises 
        "A model for representing systems of interacting parts, such as computer networks. Orginally described by Mark Burgess to describe cfengine as no other models were suitable."
             represents => { "definitions" },
             representation => "literal";
+
+
+
+#########################################################
+
+occurrences:
+
+convergence::
+
+   "https://cfengine.com/img/outside/convergence.png"
+     represents => { "image" },
+     representation => "image";
+
+   "https://cfengine.com/cftimes/stories/cm/4"
+     represents => { "popular" };
+
+   "https://cfengine.com/cftimes/stories/icackeynote"
+            represents => { "keynote speech" };
+
+computer_immunology::
+
+   "https://cfengine.com/cftimes/stories/sick",
+            represents => { "popular science" };
+ promises::
+
+   "https://cfengine.com/cftimes/stories/icackeynote"
+            represents => { "keynote speech" };
+
+
+ convergent_operators::
+
+   "http://research.iu.hio.no/papers/immunity.pdf",
+            represents => { "paper" };
+
+   "http://research.iu.hio.no/papers/MACE-v2.pdf",
+            represents => { "paper" };
+
+   "https://cfengine.com/cftimes/stories/cm"
+            represents => { "popular science" };
+
+ configuration_management::
+
+   "http://research.iu.hio.no/papers/alvamark.pdf",
+            represents => { "paper" };
+
+ anomaly_detection::
+
+   "http://research.iu.hio.no/anomalypapers.php",
+            represents => { "paper" };
+
+
+ promises::
+
+   "http://research.iu.hio.no/papers/origin2.pdf",
+            represents => { "paper" };
+
+   "https://cfengine.com/cftimes/stories/icackeynote"
+            represents => { "keynote speech" };
 
 
 }
