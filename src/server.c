@@ -67,32 +67,42 @@ switch(type)
 
 /*****************************************************************************/
 
-char *Nova_ReturnLiteralData(char *handle)
+int Nova_ReturnLiteralData(char *handle,char *recv)
 
-{ char rtype,*retval;
+{ char rtype;
+  void *retval;
 
 if (GetVariable("remote_access",handle,(void *)&retval,&rtype) != cf_notype)
    {
-   return retval;
+   if (rtype == CF_SCALAR)
+      {     
+      strncpy(recv,retval,CF_BUFSIZE-1);
+      return true;
+      }
+   else
+      {
+      return false;
+      }
    }
 else
    {
-   return "";
+   return false;
    }
 }
 
 /*****************************************************************************/
 
-char *Nova_GetRemoteScalar(char *handle,char *server,int encrypted)
+char *Nova_GetRemoteScalar(char *handle,char *server,int encrypted,char *recvbuffer)
 
 { char in[CF_BUFSIZE],out[CF_BUFSIZE],sendbuffer[CF_BUFSIZE];
- int cipherlen,tosend,n,plainlen;
+  int cipherlen,tosend,n,plainlen;
   struct cfagent_connection *conn;
   struct Attributes a;
   struct Promise *pp = NewPromise("remotescalar","handle");
-  static char recvbuffer[CF_BUFSIZE];
   char peer[CF_MAXVARSIZE];
-
+  struct Rlist *rp;
+  struct ServerItem *svp;
+ 
 a.copy.portnumber = (short)Nova_ParseHostname(server,peer);
 a.copy.trustkey = false;
 a.copy.encrypt = encrypted;
@@ -147,13 +157,37 @@ if ((n = ReceiveTransaction(conn->sd,recvbuffer,NULL)) == -1)
    return "BAD:";
    }
 
-if (encrypted)
+if (strncmp(recvbuffer,"BAD:",4) == 0)
+   {
+   return "BAD:";
+   }
+else if (encrypted)
    {
    memcpy(in,recvbuffer,n);
    plainlen = DecryptString('N',in,recvbuffer,conn->session_key,n);
    }
 
-ServerDisconnection(conn);
+for (rp = SERVERLIST; rp != NULL; rp = rp->next)
+   {
+   svp = (struct ServerItem *)rp->item;
+
+   if (svp == NULL)
+      {
+      continue;
+      }
+   
+   ServerDisconnection(svp->conn);
+   
+   if (svp->server)
+      {
+      free(svp->server);
+      }
+   
+   rp->item = NULL;
+   }
+
+DeleteRlist(SERVERLIST);
+
 DeleteRlist(a.copy.servers);
 DeletePromise(pp);
 return recvbuffer;

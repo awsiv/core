@@ -185,7 +185,7 @@ for (i = 0; i < size1; i++)
       size3 = Nova_SplayAdjacent(neighbours2[j].tribe_id,tribe_adj,tribe_size,tribe_node,trail,neighbours3);
 
       orbital_r3 = Nova_Orbit(cfv,2.5 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
-      orbital_r4 = Nova_Orbit(cfv,3.0 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
+      orbital_r4 = Nova_Orbit(cfv,3.5 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
       
       orbital_r3 += 0.2 * orbital_r3 * Nova_SignPerturbation(j);
       orbital_r4 += 0.2 * orbital_r4 * Nova_SignPerturbation(j);
