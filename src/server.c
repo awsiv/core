@@ -161,7 +161,8 @@ if (strncmp(recvbuffer,"BAD:",4) == 0)
    {
    return "BAD:";
    }
-else if (encrypted)
+
+if (encrypted)
    {
    memcpy(in,recvbuffer,n);
    plainlen = DecryptString('N',in,recvbuffer,conn->session_key,n);

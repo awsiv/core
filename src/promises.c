@@ -310,6 +310,11 @@ if (IsDefinedClass("SuSE"))
    Nova_SetDocRoot("/srv/www/htdocs");
    }
 
+if (IsDefinedClass("debian"))
+   {
+   Nova_SetDocRoot("/var/www");
+   }
+
 snprintf(name,CF_BUFSIZE-1,"%s/inputs/failsafe.cf",CFWORKDIR);
 
 if (stat(name,&sb) == -1)
