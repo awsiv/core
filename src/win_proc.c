@@ -65,7 +65,7 @@ int NovaWin_ShellCommandReturnsZero(char *comm, int useshell)
   
   mgw_exper("ShellCommandReturnsZero", "needs testing");
   
-  if(!NovaWin_RunCmd(comm, useshell, false, NULL, &procHandle))
+  if(!NovaWin_RunCmd(comm, useshell, false, NULL, NULL, &procHandle))
     {
       CfOut(cf_error,"RunCmd","Command %s failed",comm);
       exit(1);
@@ -95,7 +95,7 @@ int NovaWin_ShellCommandReturnsZero(char *comm, int useshell)
  * CloseHandle(). The first parameter in comm is the executable, and it must be quoted if 
  * it contains spaces (e.g. ""C:\Program Files\Cfengine\bin\cf-promises.exe" -f file.cf").
  * Returns true on success, false otherwise. */
-int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, STARTUPINFO *si, HANDLE *procHandle)
+int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir, STARTUPINFO *si, HANDLE *procHandle)
 {
   STARTUPINFO emptySi;
   PROCESS_INFORMATION pi;
@@ -136,7 +136,7 @@ int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, STARTUPINFO *si
 
   memset(&pi, 0, sizeof(pi));
   
-  if(!CreateProcess(binary, binaryParams, NULL, NULL, inheritHandles, 0, NULL, NULL, si, &pi))
+  if(!CreateProcess(binary, binaryParams, NULL, NULL, inheritHandles, 0, NULL, startDir, si, &pi))
     {
       CfOut(cf_error,"CreateProcess","Failed to start process");
       return false;

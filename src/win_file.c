@@ -34,9 +34,9 @@ close(tempfd);
 // FIXME: Implement
 int NovaWin_IsExecutable(char *file)
 {
-nw_exper("IsExecutable", "saying every file is executable");
+nw_exper("NovaWin_IsExecutable", "saying every file is executable");
 
-return FileExists(file);
+return NovaWin_FileExists(file);
 }
 
 
@@ -93,7 +93,7 @@ int NovaWin_chmod(const char *path, mode_t mode)
 
 
 /* Return true if file 'fileName' exists */
-int FileExists(const char *fileName)
+int NovaWin_FileExists(const char *fileName)
 {
     DWORD fileAttr;
 

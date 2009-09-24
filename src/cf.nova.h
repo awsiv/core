@@ -395,14 +395,14 @@ int NovaWin_IsExecutable(char *file);
 int NovaWin_mkdir(const char *path, mode_t mode);
 int NovaWin_rename(const char *oldpath, const char *newpath);
 int NovaWin_chmod(const char *path, mode_t mode);
-int FileExists(const char *fileName);
+int NovaWin_FileExists(const char *fileName);
 
 /* win_proc.c */
 
 int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp);
 int NovaWin_GracefulTerminate(pid_t pid);
 int NovaWin_ShellCommandReturnsZero(char *comm, int useshell);
-int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, STARTUPINFO *si, HANDLE *procHandle);
+int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir, STARTUPINFO *si, HANDLE *procHandle);
 
 /* win_ps.c */
 
