@@ -480,6 +480,21 @@ margin-bottom: 20px;
 }
 
 
+
+#ok
+{ 
+padding: 1px;
+color: #090;; 
+}
+
+#warning
+{  
+background-color: white;
+color: #f00;
+}
+
+
+
 .lval
 {  
 color:  #119922;

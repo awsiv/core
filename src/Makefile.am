@@ -18,6 +18,7 @@ libcfnova_la_SOURCES =						\
 	database.c						\
 	sql.c							\
 	ldap.c							\
+	license.c						\
 	registry.c						\
 	monitoring.c						\
 	aggregation.c						\

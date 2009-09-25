@@ -222,6 +222,7 @@ enum cfgcontrol
    cfg_output_prefix,
    cfg_domain,
    cfg_require_comments,
+   cfg_licenses,
    cfg_noagent
    };
     

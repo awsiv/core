@@ -408,7 +408,7 @@ void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list)
 { FILE *fout;
   char filename[CF_BUFSIZE];
   int i,kept[8],repaired[8];
-  static char *names[8] = { "zzz", "Week", "Day", "Hour", "Patch", "Soft", "Comms","Anom" };
+  static char *names[8] = { "zzz", "Week", "Day", "Hour", "Patch", "Lics", "Comms","Anom" };
 
   
 cfv->height = 70;
@@ -472,8 +472,8 @@ Nova_GetLevel("Hour",&kept,&repaired);
 Nova_BarMeter(cfv,3,kept,repaired,"Hour");
 Nova_GetLevel("Patch",&kept,&repaired);
 Nova_BarMeter(cfv,4,kept,repaired,"Ptch");
-Nova_GetLevel("Soft",&kept,&repaired);
-Nova_BarMeter(cfv,5,kept,repaired,"Soft");
+Nova_GetLevel("Lics",&kept,&repaired);
+Nova_BarMeter(cfv,5,kept,repaired,"Lics");
 Nova_GetLevel("Comms",&kept,&repaired);
 Nova_BarMeter(cfv,6,kept,repaired,"Comm");
 Nova_GetLevel("Anom",&kept,&repaired);
@@ -501,10 +501,12 @@ gdImageDestroy(cfv->im);
 void Nova_CreateHostPortal(struct Item *list)
 
 { FILE *fout;
- char filename[CF_BUFSIZE],col[CF_BUFSIZE];
+  char filename[CF_BUFSIZE],col[CF_BUFSIZE];
   struct Item *ip;
   struct stat sb;
   time_t now = time(NULL);
+  char *retval,rettype;
+  int count = 0, licenses = 1;
   
 snprintf(filename,CF_BUFSIZE,"host_portal.html");
 
@@ -514,6 +516,26 @@ if ((fout = fopen(filename, "w")) == NULL)
    }
 
 NovaHtmlHeader(fout,"Host Directory",STYLESHEET,WEBDRIVER,BANNER);
+
+if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
+   {   
+   licenses = Str2Int(retval);
+   CfOut(cf_inform,""," ** %s paid licenses have been asserted (this is a promise by you)",licenses);
+   }
+
+for (ip = list; ip != NULL; ip=ip->next)
+   {
+   count++;
+   }
+
+if (count > licenses)
+   {   
+   fprintf(fout,"<div id=\"warning\"><h4>WARNING! You have promised that %d licenses have been paid for, but %d/%d hosts seem active</h4></div>",licenses,count,licenses);
+   }
+else
+   {
+   fprintf(fout,"<div id=\"ok\"><h4>You have %d/%d hosts with active licenses</h4></div>",licenses,count,licenses);
+   }
 
 fprintf(fout,"<div id=\"directory\"><table>\n");
 
@@ -600,7 +622,13 @@ void Nova_GetLevel(char *id,int *kept,int *repaired)
   
 *kept = 0;
 *repaired = 0;
-  
+
+if (strcmp(id,"Lics") == 0)
+   {
+   *kept = 100;
+   *repaired = 0;
+   }
+
 if ((fin = fopen("comp_key","r")) == NULL)
    {
    return;
@@ -619,7 +647,7 @@ while(!feof(fin))
    }
 
 fclose(fin);
- }
+}
 
 /*****************************************************************************/
 
@@ -629,14 +657,26 @@ void Nova_GetAllLevels(int *kept,int *repaired,struct Item *list,char **names)
   char buf[CF_BUFSIZE];
   double a = 0, b=0,count = 0,aa[8],bb[8];
   struct Item *ip;
-  int i;
+  char *retval,rettype;
+  int i,licenses = 1;
 
 for (i = 0; i < 8; i++)
    {
    aa[i] = 0;
    bb[i] = 0;
    }
-  
+
+if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
+   {   
+   licenses = Str2Int(retval);
+   CfOut(cf_inform,""," ** %s paid licenses have been asserted (this is a promise by you)",licenses);
+   }
+
+if (licenses == 0)
+   {
+   licenses = 1;
+   }
+
 for (ip = list; ip != NULL; ip=ip->next)
    {
    snprintf(buf,CF_BUFSIZE-1,"%s/comp_key",ip->name);
@@ -656,7 +696,7 @@ for (ip = list; ip != NULL; ip=ip->next)
       fgets(buf,CF_BUFSIZE-1,fin);
 
       sscanf(buf,"%*s %lf %lf",&a,&b);
-      
+
       for (i = 0; i < 8; i++)
          {
          if (strncmp(buf,names[i],strlen(names[i])) == 0)
@@ -672,8 +712,25 @@ for (ip = list; ip != NULL; ip=ip->next)
 
 for (i = 0; i < 8; i++)
    {
-   kept[i] = (int)(aa[i]/count+0.5);
-   repaired[i] = (int)(bb[i]/count+0.5);
+   /* Special exception for counting the licenses */
+   if (strcmp(names[i],"Lics") == 0)
+      {
+      if (count > licenses)
+         {
+         kept[i] = licenses/count * 100.0;
+         repaired[i] = 0;
+         }
+      else
+         {
+         kept[i] = count/licenses * 100.0;
+         repaired[i] = (licenses-count)/licenses * 100.0;         
+         }
+      }
+   else
+      {
+      kept[i] = (int)(aa[i]/count+0.5);
+      repaired[i] = (int)(bb[i]/count+0.5);
+      }
    }
 }
 
