@@ -325,8 +325,8 @@ void Nova_GraphLegend(FILE *fout)
 fprintf(fout,"<div id=\"legend\">"
         "<table>"
         "<tr>"
-        "<td bgcolor = #00c800>Average deviation about mean</td>"
-        "<td bgcolor = ff9696>Local mean</td>"
+        "<td bgcolor = #00c800>Local mean</td>"
+        "<td bgcolor = ff9696>Average deviation about mean</td>"
         "<td bgcolor = c8ff00>Last measured value</td>"
         "</tr>"
         "</table>");
@@ -439,7 +439,7 @@ else
    CfOut(cf_verbose,""," -> Making %s\n",filename);
    }
     
-gdImagePng(cfv->im, fout);
+gdImagePng(cfv->im,fout);
 fclose(fout);
 
 gdImageDestroy(cfv->im);
@@ -520,7 +520,7 @@ NovaHtmlHeader(fout,"Host Directory",STYLESHEET,WEBDRIVER,BANNER);
 if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
    {   
    licenses = Str2Int(retval);
-   CfOut(cf_inform,""," ** %s paid licenses have been asserted (this is a promise by you)",licenses);
+   CfOut(cf_inform,""," -> %d paid licenses have been asserted (this is a promise by you)",licenses);
    }
 
 for (ip = list; ip != NULL; ip=ip->next)
@@ -534,7 +534,7 @@ if (count > licenses)
    }
 else
    {
-   fprintf(fout,"<div id=\"ok\"><h4>You have %d/%d hosts with active licenses</h4></div>",licenses,count,licenses);
+   fprintf(fout,"<div id=\"ok\"><h4>You have %d/%d hosts with active licenses</h4></div>",count,licenses);
    }
 
 fprintf(fout,"<div id=\"directory\"><table>\n");
@@ -542,6 +542,7 @@ fprintf(fout,"<div id=\"directory\"><table>\n");
 for (ip = list; ip != NULL; ip=ip->next)
    {
    snprintf(filename,CF_BUFSIZE-1,"%s/meters.png",ip->name);
+
    if (stat(filename,&sb) != -1)
       {
       if (now > sb.st_mtime + 3600)
@@ -561,7 +562,7 @@ for (ip = list; ip != NULL; ip=ip->next)
       }
    else
       {
-      fprintf(fout,"<tr><td>%s</td><td><center>No current data</center></td></tr>",ip->name,ip->name,ip->name);
+      fprintf(fout,"<tr><td>%s</td><td><center>No current data</center></td></tr>",ip->name);
       }
    }
 
@@ -669,7 +670,7 @@ for (i = 0; i < 8; i++)
 if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
    {   
    licenses = Str2Int(retval);
-   CfOut(cf_inform,""," ** %s paid licenses have been asserted (this is a promise by you)",licenses);
+   CfOut(cf_inform,""," -> %d paid licenses have been asserted (this is a promise by you)",licenses);
    }
 
 if (licenses == 0)

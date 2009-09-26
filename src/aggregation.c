@@ -459,7 +459,7 @@ fclose(fin);
 
 void Nova_WriteSignalData(FILE *fout,char *name)
 
-{ double x,y;
+{ double x = 0,y = 0;
   double count = 0, non_zero = 0;
   char buffer[CF_BUFSIZE];
   FILE *fin;
