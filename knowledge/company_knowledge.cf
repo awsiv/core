@@ -1,0 +1,12 @@
+
+bundle knowledge company_knowledge
+{
+occurrences:
+
+ work_shifts::
+
+    "http://www.example.com/shifts_and_rotas.ods"
+
+       represents => { "Spreadsheet" };
+
+}

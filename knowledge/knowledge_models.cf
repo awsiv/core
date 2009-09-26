@@ -4,24 +4,499 @@
 #
 ############################################################################
 
-bundle knowledge promise_topics
+bundle knowledge knowledge_models
 
 {
+vars:
+
+  #
+  # Association bank
+  #
+
+  "impl[f]" string => "implements";
+  "impl[b]" string => "may be implemented by";
+
+  "impr[f]" string => "improves";
+  "impr[b]" string => "is improved by";
+
+  "eg[f]" string => "exemplifies";
+  "eg[b]" string => "has example";
+
+  "inst[f]" string => "is an instance of";
+  "inst[b]" string => "has instances";
+
+  "add[f]" string => "feature added in";
+  "add[b]" string => "added feature";
+
+  "attr[f]" string => "is an attribute of";
+  "attr[b]" string => "has attribute";
+
+  "cause[f]" string => "possibly caused by";
+  "cause[b]" string => "can cause";
+
+  "chg[f]" string => "changes";
+  "chg[b]" string => "is changed by";
+
+  "use[f]" string => "may be used for";
+  "use[b]" string => "makes use of";
+
+  "it[f]" string => "can be iterated action";
+  "it[b]" string => "has iterators";
+
+  "wrote[f]" string => "is the author of";
+  "wrote[b]" string => "was written by";
+
+  "edited[f]" string => "edited";
+  "edited[b]" string => "was edited by";
+
+  "about[f]" string => "deals with concept of";
+  "about[b]" string => "concept explained in";
+
+  "same[f]" string => "is related to";
+  "same[b]" string => "is related to";
+
+  "part[f]" string => "is a component of";
+  "part[b]" string => "has component";
+
+  "comp[f]" string => "is an element of";
+  "comp[b]" string => "consists of";
+
+  "version[f]" string => "is a version of";
+  "version[b]" string => "has version";
+
+  "prom[f]" string => "is a promise type in";
+  "prom[b]" string => "has promise types";
+
+  "better[f]" string => "is replaced by";
+  "better[b]" string => "replaces";
+
+  "var[fb]" string => "is a variant of";
+
+  "man[f]" string => "is managed by";
+  "man[b]" string => "is used to manage";
+
+  "linux_distros" slist => { "suse", "ubuntu", "fedora", "redhat", "debian", "slackware", "gentoo" };
+
+  "bv" slist => { 
+                "reliability", 
+                "availability", 
+                "budget", 
+                "normal operational behaviour", 
+                "unusual operational behaviour", 
+                "crises and fire fighting" 
+                };
+  
+  "sox" slist => { "identity management", "change management" };
+
+  "selfstar" slist => { "computer immunology", "autonomics", "self-healing" };
+
+
+  # Specific versions we need to mention explicitly
+
+  "cfversions" slist => { "2.2.x", "3.0.x", "nova" };
+
+
 topics:
 
-Research::
+ # This is example knowledge -- add your own
+
+ service_catalogue::
+
+  "installation"         comment => "Installing computers from bare metal";
+  "boot services"        comment => "Boot services are a way of booting a computer directly from the network";
+  "application services" comment => "Software running on servers";
+  "network services"     comment => "Network connectivity and availability";
+  "monitoring"           comment => "Pseudo-real-time status information about system components",
+                     association => a("contributes to","mission status","draws on data from");
+
+ application_services::
+
+  "mail"               comment => "Electronic mail service, as made famous by the Unix operating system.";
+  "configuration"      comment => "Cfengine desired-state automation and self-repair service";
+  "web"                comment => "The WWW web service";
+  "directory services" comment => "Directory services are look-up services, typically with identity or host information.";
+  "storage"            comment => "Remotely accessible disk volumes.";
+  "database"           comment => "Relational database services";
+  "login"              comment => "The ability to log onto systems with a username and password";
+
+ network_services::
+
+  "routing"      comment => "Router and switch configuration";
+  "connectivity" comment => "Cables and hardware";
+
+ boot_services::
+
+  "PXE"   comment => "A composite network service based on the PXE protocol, allows systems to boot directly from the network.";
+  "BOOTP" comment => "A simple broadcast protocol for booting a system directly from the network, e.g. for installation purposes.";
+
+ directory_services::
+
+  "DNS"      comment => "Domain Name Service for translating Internet addresses into hostnames and vice versa.";
+  "LDAP"     comment => "A well-known directory service. MS Active Directory purports to support this standard.";
+  "NIS"      comment => "Sun's Network Information Service (previously called Yellow Pages).";
+  "DHCP"     comment => "An IP configuration service.";
+
+ database::
+
+  "mysql";
+  "postgres";
+  "oracle";
+
+ storage::
+
+  "NFS"      comment => "Network File System (storage)";
+  "samba"    comment => "The Unix service for integrating with MS Windows";
+
+
+ ########################################################################
+
+ faults::
+
+  "segmentation fault"       association => a("$(tm.cause[f])","Bad memory reference","$(tm.cause[f])");
+  "remote connection problem";
+  "web server not running";
+  "print server not running";
+  "bad memory reference";
+  "allowConnectionsFrom not set";
+  "allowMultipleConnectionsFrom not set";
+  "trustKeysFrom not set";
+  "access to file not granted";
+
+ ########################################################################
+
+ compliance::
+
+
+   "ITIL" comment => "Stands for Information Technology Infrastructure Library. ITIL is a set of self-proclaimed best-practises originally developed by the British government. It contains a set of common sense rules. Cfengine can be used as a tool for organizations looking to becoming ITIL-compliant. By translating many of your best practises into policy rules, you can have Cfengine ensure parts of ITIL-compliance.";
+
+
+   "ISO/IEC 20000"   comment => "A standards document based on a subset of ITIL",
+                     association => a("standardizes a part of","ITIL","expands on standard");
+
+   "eTOM"  comment => "The Extended Telecom Operations Map";
+
+   "SOX"      comment => "The Sarbanes-Oxley Act",
+              association => A("involves",@(sox),"is a principal component of");
+
+   "EUROSOX"  comment => "The 8th EU data directive",
+              association => A("involves",@(sox),"is a principal component of");
+
+   "SAS-70"  comment => "Stands for Statement of Auditing Standards no. 70. SAS-70 is an auditing standard. SAS 70 defines the professional standards used by a service auditor to assess the internal controls of a service organization and issue a service auditor’s report. Cfengine can be used to ensure SAS-70 compliance in the same way you can achieve other standardization compliance.",
+
+      association => a("is a framework for implementing","SOX","falls within the bounds of");
+
+   "SOX"  
+
+      comment => "Stands for Sarbanes-Oxley Act is a United States federal law in response to a number of major corporate and accounting scandals including those affecting Enron, Tyco International, Adelphia, Peregrine Systems and WorldCom. The intention behind the law is to ensure financial reporting. This law calls for standardization of datacenters under this law and the need to show compliance. Cfengine can be used as a tool for ensuring specific parts of the compliance.",
+
+      association => a("corresponds to","EUROSOX","corresponds to");
+   
+   "CMDB" comment => "Configuration Management Database. A form of extended inventort system, championed by ITIL.";
+
+   "auditing" comment => "A process to verify that the datacenter operate according to the guidelines and legislations. A rapid growth in datacenter size and complexity, combined with government regulations, have called for a drastic increase in audits.  Cfengine comes with reporting and logging capabilties that make auditing straightforward.";
+
+
+ ########################################################################
+
+
+ management_terminology::
+
+   "BDIM"  comment => "Business Driven IT Management";
+   "road map";
+   "adoption of cfengine";
+   "authoring";
+   "departments";
+   "teamwork";
+   "teams";
+   "version Control";
+   "gold server";
+   "CM"       association => a("is the ITIL name for","Configuration Management","in ITIL is called");
+   "budget"   association => a("is an aspect of","BDIM","in ITIL is called");
+
+   "FCAPS";
+   "business process";
+   "operations";
+
+   "SLA" comment => "Service Level Agreement",
+               association => a("is an example of","Agreement","has exemplar");
+
+   "contract"  association => a("is a bilateral bundle of","promise suggestions","can be combined into a");
+
+   "agreement";
+   "enterprise";
+
+   "baseline" comment => "Definition of what your system looks like or what it must look like. Many traditional vendors in the industry require a baseline to be able to roll out their system and get it running. In Cfengine, there is no need for a special baseline. Cfengine focuses on the opposite – the end state.";
+
+    "CI" comment => "Configuration Items. Computer related items that can be configured. Items typically are servers, routers, switches, applications and storage devices. Cfengine can discover different types of CIs automatically, trace dependencies and make them available in reports through an online knowledge portal.",
+
+     association => a("is an object for","configuration management","is about the management of");
+
+   "pre-screening" comment => "The ability to foresee consequences of change. If you make a change one place, what’s the impact of the rest of the datacenter? Cfengine includes a dry-run mode which simulates the consequences of a change.";
+
+   "provisioning" comment => "The ability to install and adopt new services, applications, OS and servers, e.g. using PXE-boot Cfengine can turn any server into anything kind of server with any kind of service running on it. Cfengine can easily deploy a service or new application throughout the datacenter, regardless of the number of servers.";
+
+
+ ########################################################################
+
+  environment::
+
+   "hard classes";
+   "soft classes";
+   "persistent classes";
+   
+   "monitoring" comment => "Ability to monitor the current state of your datacenter. Cfengine can sample and trace behaviour. Unlike many other monitoring solutions, Cfengine scales easily to thousands of machines. Cfengine monitors your datacenter intelligently, using historic data to decide whether a behaviour should call for action or not.",
+
+     association => a("detects","environment","is detected by");
+
+
+
+ ########################################################################
+
+  security::
+
+   "access control" association => a("$(impl[f])","Role based access control","$(impl[b])"); 
+
+   "authentication";
+   "permission";
+   "privacy";
+   "encryption";
+   "public private keys";
+   "private keys";
+   "publickeys";
+   "DMZ";
+   "trust in cfengine";
+   "firewalls";
+   "trusted third party";
+   "key exchange";
+   "digests";
+   "digest";
+   "hashes";
+   "hash";
+   "checksums";
+   "role based access control";
+
+   "friend status";
+   "instrumentation";
+   "lastseen";
+
+   "tamperproof system";
+
+ technical_concepts::
+
+   "automation";
+   "symptoms";
+   "resources";
+   "redundancy";
+   "rollback"  comment => "Refers to the fictitious ability to perform an undo operation in change management";
+   "$(bv)";
+   "software";
+   "faults"                          comment => "Error messages and conditions";
+   "intermittency"        comment => "The entropy of availability of a service";
+   "entropy"              comment => "A measure of the variation in an observation";
+   "files"                comment => "Notable or special files and types";
+   "research"             comment => "Cfengine research";
+   "distributed system";
+   "modules";
+   "template";
+
+   "variables"      association => a("$(same[f])","Special variables","$(same[f])");
+   "variables"  association => a("are promised by","vars","are promises about");
+   "arrays"     association => a("are a special case of","variables","see also");
+
+   "variables"      association => a("$(tm.impl[b])","setting variables with functions","$(tm.impl[f])");
+
+
+   "functions"; 
+   "lists"          association => a("explained in","List variable substitution and expansion","comments on");
+
+   "global variables" association => a("explained in","List variable substitution and expansion","comments on");
+
+   "versions";
+   "data types";
+
+   "rollback"          comment => "A widely misunderstood idea from change management that describes the reversal of managed changes to a system. Rollback is a property of transaction based data processing, a model that cannot apply to dynamical objects like computers.";
+
+
+ ########################################################################
+
+ "cfengine components";
+
+  cfengine_components::
+
+   "cfagent"    association => a("$(part[f])","cfengine 2","$(part[b])");
+   "cfservd"    association => a("$(part[f])","cfengine 2","$(part[b])");
+   "cfexecd"    association => a("$(part[f])","cfengine 2","$(part[b])");
+   "cfenvd"     association => a("$(part[f])","cfengine 2","$(part[b])");
+   "cfrun"      association => a("$(part[f])","cfengine 2","$(part[b])");
+   "cfshow"     association => a("$(part[f])","cfengine 2","$(part[b])");
+   "cfenvgraph" association => a("$(part[f])","cfengine 2","$(part[b])");
+   "cfd"        association => a("$(part[f])","cfengine 1","$(part[b])");
+
+   "cfagent"    association => a("$(var[fb])","cf-agent","$(var[fb])");
+   "cfservd"    association => a("$(var[fb])","cf-serverd","$(var[fb])");
+   "cfexecd"    association => a("$(var[fb])","cf-execd","$(var[fb])");
+   "cfenvd"     association => a("$(var[fb])","cf-monitord","$(var[fb])");
+   "cfrun"      association => a("$(var[fb])","cf-runagent","$(var[fb])");
+   "cfshow"     association => a("$(var[fb])","cf-report","$(var[fb])");
+   "cfenvgraph" association => a("$(var[fb])","cf-report","$(var[fb])");
+   "cfd"        association => a("$(var[fb])","cfservd","$(var[fb])");
+   "cfd"        association => a("$(var[fb])","cf-serverd","$(var[fb])");
+
+
+
+   "cf-promises" association => a("$(part[f])","cfengine 3","$(part[b])");
+   "cf-agent"    association => a("$(part[f])","cfengine 3","$(part[b])");
+   "cf-serverd"  association => a("$(part[f])","cfengine 3","$(part[b])");
+   "cf-execd"    association => a("$(part[f])","cfengine 3","$(part[b])");
+   "cf-monitord" association => a("$(part[f])","cfengine 3","$(part[b])");
+   "cf-runagent" association => a("$(part[f])","cfengine 3","$(part[b])");
+   "cf-know"     association => a("$(part[f])","cfengine 3","$(part[b])");
+   "cf-report"   association => a("$(part[f])","cfengine 3","$(part[b])");
+
+   "cfengine 1" association => a("$(version[f])","cfengine","$(version[b])");
+   "cfengine 2" association => a("$(version[f])","cfengine","$(version[b])");
+   "cfengine 3" association => a("$(version[f])","cfengine","$(version[b])");
+   "cfengine nova" association => a("$(version[f])","cfengine 3","$(version[b])");
+   "cfengine nova" association => a("$(version[f])","enterprise level cfengine","$(version[b])");
+
+   "cfengine $(cfversions)" comment => "cfengine version",
+                            association => a("$(version[f])","cfengine","$(version[b])");
+
+   "enterprise level cfengine";
+
+ ########################################################################
+
+  cfengine_3::
+
+    "string";
+    "slist"        association => a("is a list of","string","has list type");
+    "int";
+    "ilist"        association => a("is a list of","int","has list type");
+    "real";
+    "rlist"        association => a("is a list of","real","has list type");
+
+    "$(cf3_actions)" association => a("$(prom[f])","cfengine 3","$(prom[b])");
+    "$(nova_actions)" association => a("$(prom[f])","cfengine nova","$(prom[b])");
+
+  cfengine_2::
+
+    "$(cf2_actions)" association => a("$(prom[f])","cfengine 2","$(prom[b])");
+
+    "cfengine 2 control settings" comment => "Parameters that affect the behaviour of the agent rather than affect the system configuration.";
+
+
+ ########################################################################
+
+  operating_systems:: 
+
+   "linux";
+   "gnu/linux"  association => a("$(same[f])","linux","$(same[b])");
+   "solaris"    association => a("is a current name for","sunos","is recently called");
+   "sunos";
+   "macos X";
+   "aix";
+   "ultrix";
+   "irix";
+   "freebsd";
+   "openbsd";
+   "netbsd";
+   "crayos";
+   "distro"                 association => a("is a packaging of","linux","is packaged as a");
+   "windows";
+   "darwin"   association => a("see also","macos X","see also");
+
+   "$(linux_distros)"
+
+       association => a("is distro of","linux","has distro"),
+       comment => "Linux distro $(linux_distros)";
+
+
+ ########################################################################
+
+  Contact_Information::
+
+   "email address";
+   "home page";
+   "website";
+   "phone number office";
+   "phone number mobile";
+
+
+
+ research::
 
   "models of system administration";
   "models of knowledge";
   "models of organization";
 
+ monitoring::
+
+   "anomaly detection";
 
 
-BDMA::
+
+
+ #
+ #
+
+ management_issues::
+
+   "business value"                 association => A("$(impr[b])","@(selfstar)","$(impr[f])");
+   "maintenance paradigms"          comment => "Approaches to keeping systems in an operational state";
+   "team work"                      comment => "Focused group in a flat organization for efficient communication and decision-making";
+   "compliance"                     association => a("is documented by","manual::Reporting","documents");
+
+   "capacity planning"              comment => "Sometimes called dimensioning or service provisioning. Determining whether sufficient resources will be available to deliver planned services";
+
+   "storage management"             comment => "Disk volumes, primary, redundant and secondary storage (backup)";
+
+   "identity management"            comment => "Managing user credentials";
+
+   "knowledge management"            association => a("$(impl[b])","cf-know","$(impl[f])");
+
+   "management terminology";
+
+   "compliance"                      comment => "Frameworks for standardizing and regulating systems";
+
+
+   "incident management"             comment => "Repairing policy violations",
+                                 association => a("see also","manual::Incident Management vs Maintenance","see also");
+
+
+   "identity management"             comment => "Managing user accounts",
+                                 association => a("$(impl[b])","manual::Changing a password","$(impl[f])");
+
+
+   "release management"              comment => "The process of preparing for major changes to policy or enterprise activity.";
+
+
+   "application management"          comment => "Deploying and patching applications, inclding the ability to configure specific applications, like Apache-servers, Microsoft Exchange, etc.";
+
+   "reporting"                       comment => "Extracting information in human readable form";
+
+
+
+   "change management" comment => "The ability to trace, log and manipulate change in files. Whenever a change occurs in a file, this probably affects some other parts of the system. The ability to track, log and potentially restore changes are important for many purposes.",
+
+       association => a("$(impl[b])","procedures::change detection scans","$(impl[f])");
+
+   "configuration management" comment => "The ability to configure a Datacenter through configuration settings. This is the core of Cfengine. Cfengine comes with many advanced tools to ease the configuration of Datacenters and have it self-repair according the settings you define. See also Configuration Items (CIs), Change Management.";
+
+
+   "system discovery" comment => "The ability to detect new items (see CIs) in a datacenter. Cfengine recognizes new items on the fly and you can have them reported automatically. No need for data mining or guesses.";
+
+   "inventory" comment => "List of items within a datacenter, e.g. servers, applications, services. Expressed in terms of a static database that is being updated every now on then, depending on how often you scan the network. Cfengine holds accurate inventory lists and reports can easily be created on the fly. Cfengine dosen’t hold any static database that requires frequent scan (that takes a lot of resources) to describe the inventory.";
+
+
+
+   #
+
+
+ BDMA::
 
   #
 
- "build"  comment => "Also called \"provisioning\" systems, i.e. the process of specifying and assembling the resources to fulfill a set of system promises. Traditionally servers were built as a \"golden image\" for cloning. Under cfengine, the build phase of the server lifecycle involves planning policy for the desired-state. Installation may also be considered a part of the build process.";
+  "build"  comment => "Also called \"provisioning\" systems, i.e. the process of specifying and assembling the resources to fulfill a set of system promises. Traditionally servers were built as a \"golden image\" for cloning. Under cfengine, the build phase of the server lifecycle involves planning policy for the desired-state. Installation may also be considered a part of the build process.";
 
   "build" association => a("bare metal installation with","PXE","can be used as part of");
   "build" association => a("consists of","system policy","can be used as part of");
@@ -62,7 +537,8 @@ models_of_system_administration::
 
 models_of_knowledge::
 
-  "topic maps";
+  "topic maps"          comment => "ISO standard electronic index with semantic annotations";
+  "pattern matching"    comment => "Classifying items by the patterns they form";
 
 models_of_organization::
 
@@ -78,7 +554,7 @@ models_of_organization::
 
 convergent_operators::
 
-   "idempotence"      comment => "Idempotence is a mathematical property of operations or changes. Formally and operator is idempotent if applying it twice is the same as applying it once. This is not the same as convergence, because the result need not be anchored to anything. e.g. <pre>touch myfile</pre> is idempotent but it is not a fixed point because its effect depends on which directory the operation is performed in. <pre>touch /tmp/myfile</pre> is convergent.";
+   "idempotence"      comment => "Idempotence is a mathematical property of operations or changes. An operator is idempotent if applying it twice is the same as applying it once. This is not the same as convergence, because the result need not be anchored to anything. e.g. <pre>touch myfile</pre> is idempotent but it is not a fixed point because its effect depends on which directory the operation is performed in. <pre>touch /tmp/myfile</pre> is convergent.";
 
    "convergence"      comment => "The idea that we always move closer to the desired state of a system on every promise verification. Once the desired state has been reached, the state hsa converged and no further changes take place. Normally convergence to the desired state happens in a single repair, unless there are dependencies that cannot be resolved. Convergence is a stronger constraint on system behaviour than idempotence.",
                       association => a("$(tm.same[f])","Convergence","$(tm.same[f])");
@@ -174,6 +650,176 @@ promise_theory::
 
 
 occurrences:
+
+
+
+
+ eTOM::
+
+   "http://en.wikipedia.org/wiki/ETOM"
+            represents => { "definitions" };
+
+   "The Enhanced Telecom Operations Map"
+            represents => { "definitions" },
+            representation => "literal";
+
+
+  ITIL::
+
+   "http://en.wikipedia.org/wiki/ITIL"
+            represents => { "definitions" };
+
+   "http://www.itil-officialsite.com"
+            represents => { "official website" };
+
+  topic_maps::
+
+    "http://www.ontopia.com"
+
+        represents => { "introduction" },
+        representation => "url",
+        comment => "Ontopia - the home of topic maps";
+
+  linear_topic_map_notation::
+
+      "http://www.ontopia.net/download/ltm.html"
+
+        represents => { "description" },
+        representation => "url";
+
+  topic_maps::
+
+      "http://www.ontopia.net/topicmaps/materials/tao.html"
+
+        represents => { "tutorial" },
+        representation => "url";
+
+  suse::
+
+     "http://www.opensuse.org"
+
+            represents => { "official website" },
+            representation => "url",
+            # url is default?
+            comment => "Main website";
+
+  lvalue::
+
+     "A variable identifier, i.e. the left hand side of an '=' association. The promiser in a variable promise."
+            represents => { "definitions" },
+            representation => "literal";
+
+  rvalue::
+
+     "A variable value, i.e. the right hand side of an '=' association. The value promised in a variable promise."
+            represents => { "definitions" },
+            representation => "literal";
+
+   management_issues::
+
+       "Aspects of IT management typically covered by ITIL"
+            represents => { "definitions" },
+            representation => "literal";
+
+   distributed_system::
+
+       "Any computer system consisting of more than one host"
+            represents => { "definitions" },
+            representation => "literal";
+
+   homogeneous_system::
+
+       "Any computer system that is composed of only one type of operating system"
+            represents => { "definitions" },
+            representation => "literal";
+
+   heterogeneous_system::
+
+       "Any computer system that is composed of multiple operating system types"
+            represents => { "definitions" },
+            representation => "literal";
+
+   pattern_matching::
+
+       "Approaches to identifying and modelling objects"
+            represents => { "definitions" },
+            representation => "literal";
+
+   operating_systems::
+
+       "The software installed on a computer that provides its basic software infrastructure"
+            represents => { "definitions" },
+            representation => "literal";
+
+
+   autonomics::
+       "IBM's name for the idea of self-healing and self-regulating systems"
+            represents => { "definitions" },
+            representation => "literal";
+
+
+
+   computer_immunology::
+
+       "An idea developed by Mark Burgess of Oslo University College in 1998 for self-healing systems. Related ideas were proposed by Stephanie Forrest's group at the University of New Mexico."
+            represents => { "definitions" },
+            representation => "literal";
+
+   functions::
+
+     "/inside/manuals/cf2-Reference#Variable-expansion-and-contexts"
+          represents => { "variables" };
+
+     "/inside/manuals/cf2-Reference#Setting-classes-with-special-functions"
+          represents => { "classes" };
+
+     "/inside/manuals/cf3-reference#Special-functions"
+          represents => { "cf3" };
+
+
+  hard_classes::
+
+   "/inside/manuals/cf3-reference#Hard-classes"
+          represents => { "manual" };
+
+   "A classification of the basic environment that is immutable, e.g. about the system hardware"
+          represents => { "definitions" },
+            representation => "literal";
+
+  soft_classes::
+
+   "A classification of the dynamic environment that can change depending on context, e.g. about the system hardware"
+          represents => { "definitions" },
+            representation => "literal";
+
+  role_based_access_control::
+
+     "/inside/manuals/cf3-reference#roles-in-server-promises"
+          represents => { "cf3" };
+
+
+  enterprise_level_cfengine::
+
+   "Cfengine Enterprise editions are commercially licensed versions of Cfengine 3 with build-time library extensions. They are directed at organizations and scenarios where the need for complex, supported management processes arises. They provide extended functionality and time-saving process simplifications to the automation of datacentres."
+
+          represents => { "definitions" },
+            representation => "literal";
+
+
+
+ security::
+
+  "https://cfengine.com/inside/security"
+
+          represents => { "advisories" };
+
+
+ ITIL::
+
+  "http://www.itframeworks.org/wiki/Information_Technology_Infrastructure_Library"
+
+          represents => { "free wiki" };
+
 
   voluntary_cooperation::
 
