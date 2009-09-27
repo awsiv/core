@@ -138,13 +138,20 @@ topics:
 
  database::
 
-  "mysql";
-  "postgres";
-  "oracle";
+  "mysql"    comment => "Open source SQL database engine optimized for web",
+             association => a("is managed by","promise_types::database","may be used to manage");
+
+  "postgres" comment => "Open source relational SQL database engine for transaction processing",
+             association => a("is managed by","promise_types::database","may be used to manage");
+
+  "oracle"   comment => "Commercial relational SQL database";
 
  storage::
 
-  "NFS"      comment => "Network File System (storage)";
+  "NFS"      comment => "Network File System (storage)",
+             association => a("is managed by","promise_types::storage","may be used to manage");
+
+
   "samba"    comment => "The Unix service for integrating with MS Windows";
 
 
@@ -152,7 +159,7 @@ topics:
 
  faults::
 
-  "segmentation fault"       association => a("$(tm.cause[f])","Bad memory reference","$(tm.cause[f])");
+  "segmentation fault"       association => a("$(cause[f])","Bad memory reference","$(cause[f])");
   "remote connection problem";
   "web server not running";
   "print server not running";
@@ -303,7 +310,7 @@ topics:
    "variables"  association => a("are promised by","vars","are promises about");
    "arrays"     association => a("are a special case of","variables","see also");
 
-   "variables"      association => a("$(tm.impl[b])","setting variables with functions","$(tm.impl[f])");
+   "variables"      association => a("$(impl[b])","setting variables with functions","$(impl[f])");
 
 
    "functions"; 
@@ -527,6 +534,7 @@ topics:
 
 models_of_system_administration::
 
+  "BDMA"               comment => "Build, Deploy, Manage, Audit, system lifecycle";
   "promise theory"     association => a("is implemented in","cfengine","is the reference implementation of");
 
   "convergent operators" association => a("implement","convergence","is implemented by");
@@ -545,11 +553,11 @@ models_of_organization::
    "homogeneous system";
    "heterogeneous system";
    "peer to peer network";
-   "hierarchical structure"  association => a("$(tm.same[f])","object orientation","$(tm.same[f])");
-   "service orientation"     association => a("$(tm.same[f])","peer to peer network","$(tm.same[f])");
-   "aspect paradigm"         association => a("$(tm.same[f])","aspect orientation","$(tm.same[f])");
-   "object paradigm"         association => a("$(tm.same[f])","object orientation","$(tm.same[f])");
-   "cascading"               association => a("$(tm.same[f])","hierarchical structure","$(tm.same[f])");
+   "hierarchical structure"  association => a("$(same[f])","object orientation","$(same[f])");
+   "service orientation"     association => a("$(same[f])","peer to peer network","$(same[f])");
+   "aspect paradigm"         association => a("$(same[f])","aspect orientation","$(same[f])");
+   "object paradigm"         association => a("$(same[f])","object orientation","$(same[f])");
+   "cascading"               association => a("$(same[f])","hierarchical structure","$(same[f])");
    "overlapping sets";
 
 convergent_operators::
@@ -557,7 +565,7 @@ convergent_operators::
    "idempotence"      comment => "Idempotence is a mathematical property of operations or changes. An operator is idempotent if applying it twice is the same as applying it once. This is not the same as convergence, because the result need not be anchored to anything. e.g. <pre>touch myfile</pre> is idempotent but it is not a fixed point because its effect depends on which directory the operation is performed in. <pre>touch /tmp/myfile</pre> is convergent.";
 
    "convergence"      comment => "The idea that we always move closer to the desired state of a system on every promise verification. Once the desired state has been reached, the state hsa converged and no further changes take place. Normally convergence to the desired state happens in a single repair, unless there are dependencies that cannot be resolved. Convergence is a stronger constraint on system behaviour than idempotence.",
-                      association => a("$(tm.same[f])","Convergence","$(tm.same[f])");
+                      association => a("$(same[f])","Convergence","$(same[f])");
 
 promise_theory::
 

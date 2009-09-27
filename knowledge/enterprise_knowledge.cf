@@ -135,7 +135,7 @@ topics:
        association => a("see policy-defined events in","system outputs","are an aspect of"); 
 
    "operator view"
-       association => a("sees the catalogue of","procedures","are an aspect of"); 
+       association => a("finds documentation in","copernicus","provides documentation for"); 
 
    #
 
@@ -150,20 +150,32 @@ topics:
    ##########
 
 
+ architect_view::
+
+  "mission statement"       comment => "Business objectives";
+  "quality assurance"       comment => "Procedures for review";
+
+ security_view::
+
+   "security policy"           comment => "Local risk assessment summary";
+   "security routines and procedures"   comment => "Non-automated, human workbook";
+
  manager_view::
 
-   "request for change"              comment => "The initial proposal for an intended change of system policy. Often shortened to RFC. ITIL uses RFC to initiate change management processes.";
+   "request for change"              comment => "(RFC) The initial proposal for an intended change of system policy.";
 
    "request for change"       association => a("are a basis for","change management","uses");
    "request for change"       association => a("is an example of","intention","might be");
 
-   "software licenses" comment => "Documentation of terms of agreement, and renewal status";
+   "software licenses" comment => "Terms of agreements, and renewal status";
 
    "service level agreements" comment => "Promises made to clients about services";
 
    "work shifts"              comment => "Staff rotas";
 
    "current projects"         comment => "Team projects and service";
+
+   "suppliers"                comment => "Contact information and web pages";
 
  mission_status::
 

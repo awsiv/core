@@ -528,13 +528,13 @@ for (ip = list; ip != NULL; ip=ip->next)
    count++;
    }
 
-if (count > licenses)
+if (count > LICENSES)
    {   
-   fprintf(fout,"<div id=\"warning\"><h4>WARNING! You have promised that %d licenses have been paid for, but %d/%d hosts seem active</h4></div>",licenses,count,licenses);
+   fprintf(fout,"<div id=\"warning\"><h4>You have promised that %d licenses have been paid for, but %d licenses have been granted by Cfengine, expiring %s <br>%d host(s) seem to be enrolled</h4></div>",licenses,LICENSES,EXPIRY,count);
    }
 else
    {
-   fprintf(fout,"<div id=\"ok\"><h4>You have %d/%d hosts with active licenses</h4></div>",count,licenses);
+   fprintf(fout,"<div id=\"ok\"><h4>%d hosts are known, sharing %d granted licenses that expire on %s, and you promise that you have paid for %d</h4></div>",count,LICENSES,EXPIRY,licenses);
    }
 
 fprintf(fout,"<div id=\"directory\"><table>\n");

@@ -481,13 +481,17 @@ margin-bottom: 20px;
 
 
 #ok
-{ 
-padding: 1px;
+{
+width: 780px;
+background-color: white;
+padding: 0px;
 color: #090;; 
 }
 
 #warning
 {  
+width: 780px;
+padding: 0px;
 background-color: white;
 color: #f00;
 }

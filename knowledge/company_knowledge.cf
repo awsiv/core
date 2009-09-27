@@ -3,10 +3,24 @@ bundle knowledge company_knowledge
 {
 occurrences:
 
+ # Fill in company references here
+
  work_shifts::
 
     "http://www.example.com/shifts_and_rotas.ods"
-
        represents => { "Spreadsheet" };
+
+
+ current_projects::
+
+    "http://www.example.com/scope_of_work.html"
+       represents => { "SOW" };
+
+
+ software_licenses::
+
+    "This cfengine software license expires <b>$(sys.expires)</b>"
+   representation => "literal",
+       represents => { "Cfengine Nova" };
 
 }
