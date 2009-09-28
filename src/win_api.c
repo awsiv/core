@@ -154,4 +154,24 @@ else
   }
 }
 
+/* TODO: move the functions below to other files ? */
+
+/* Get user name of owner of this process */
+int NovaWin_GetCurrentUserName(char *userName, int userNameLen)
+{
+  DWORD userNameMax = (DWORD)userNameLen;
+  
+  if(!GetUserName(userName, &userNameMax))
+    {
+      CfOut(cf_error,"GetUserName","Could not get user name of current process, using \"UNKNOWN\"");
+
+      strncpy(userName, "UNKNOWN", userNameLen);
+      userName[userNameLen - 1] = '\0';
+      return false;
+    }
+  
+  return true;
+}
+
+
 #endif  /* MINGW */
