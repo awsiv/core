@@ -126,6 +126,12 @@ topics:
        association => a("recent compliance at","promise report","is a resource for"); 
 
    "operator view"
+       association => a("recent compliance at","promises repaired report","is a resource for"); 
+ 
+   "operator view"
+       association => a("recent compliance at","promises not kept report","is a resource for"); 
+
+   "operator view"
        association => a("see promise cost in","performance report","is a resource for"); 
 
    "operator view"
@@ -333,12 +339,40 @@ occurrences:
 
  compliance_report::
 
-   "Show the status of alls promise, along with average compliance. Useful for quick auditing."
+   "Show the status of all promises, along with average compliance. Useful for quick auditing."
 
             represents => { "description" },
             representation => "literal";
 
    "reports/(.*)/compliance.html"
+
+            represents => { "on $(match.1)" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+
+ promises_repaired_report::
+
+   "Show the log of recently repaired promises. For debugging"
+
+            represents => { "description" },
+            representation => "literal";
+
+   "reports/(.*)/promise_repair.html"
+
+            represents => { "on $(match.1)" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+
+ promises_not_kept_report::
+
+   "Show the log of recently failed or unkept promises. For debugging"
+
+            represents => { "description" },
+            representation => "literal";
+
+   "reports/(.*)/promise_notkept.html"
 
             represents => { "on $(match.1)" },
             representation => "file",

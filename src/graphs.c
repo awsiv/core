@@ -452,6 +452,8 @@ void Nova_BuildMeters(struct CfDataView *cfv,char *hostname)
 { FILE *fout;
   char filename[CF_BUFSIZE];
   int kept,repaired;
+  struct stat sb;
+  struct utimbuf t;
   
 cfv->height = 70;
 cfv->width = 500; //(7*24*2)*2; // halfhour
@@ -492,6 +494,17 @@ else
     
 gdImagePng(cfv->im, fout);
 fclose(fout);
+
+#ifdef HAVE_UTIME_H
+
+if (stat("comp_key",&sb) != -1)
+   {   
+   t.actime = sb.st_ctime;
+   t.modtime = sb.st_mtime;
+   utime("meters.png",&t);
+   }
+
+#endif
 
 gdImageDestroy(cfv->im);
 }
