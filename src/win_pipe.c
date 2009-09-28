@@ -16,8 +16,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-// FIXME: LOCK PIPES-array
-
 #ifdef MINGW
 
 struct CfWinPipe{  // links pipe descriptors to process handles
@@ -261,14 +259,16 @@ static int InitializePipes(HANDLE *childInWrite, HANDLE *childInRead, HANDLE *ch
 }
 
 
-// FIXME: Locking
 /* Saves the link between a pipe and process handle.
  * Returns true on succes, false otherwise. */
 static int SaveDescriptorPair(FILE *pipe, HANDLE procHandle)
 {
   int i;
 
-  // LOCK PIPES
+  if (!ThreadLock(cft_count))
+    {
+      return false;
+    }
 
   // find first free slot
   i = 0;
@@ -277,7 +277,7 @@ static int SaveDescriptorPair(FILE *pipe, HANDLE procHandle)
       i++;
       if(i == MAX_PIPES)
 	{
-	  // UNLOCK PIPES
+	  ThreadUnlock(cft_count);
 	  CfOut(cf_error,"","Too many open pipes");
 	  return false;
 	}
@@ -286,7 +286,7 @@ static int SaveDescriptorPair(FILE *pipe, HANDLE procHandle)
   PIPES[i].pipe = pipe;
   PIPES[i].procHandle = procHandle;
 
-  // UNLOCK PIPES
+  ThreadUnlock(cft_count);
   return true;
 }
 
@@ -299,10 +299,14 @@ static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle)
 {
   int i;
 
-  // LOCK PIPES
+  if (!ThreadLock(cft_count))
+    {
+      return false;
+    }
+
   if(PIPES == NULL)
     {
-      // UNLOCK PIPES
+      ThreadUnlock(cft_count);
       CfOut(cf_error,"","No pipe descriptors are saved");
       return false;
     }
@@ -313,7 +317,7 @@ static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle)
       i++;
       if(i == MAX_PIPES)
 	{
-	  // UNLOCK PIPES
+	  ThreadUnlock(cft_count);
 	  CfOut(cf_error,"","Pipe descriptor was not found");
 	  return false;
 	}
@@ -325,7 +329,7 @@ static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle)
   PIPES[i].pipe = NULL;
   PIPES[i].procHandle = NULL;
 
-  // UNLOCK PIPES
+  ThreadUnlock(cft_count);
   return true;
 }
 
