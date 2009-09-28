@@ -96,6 +96,8 @@ void Nova_PackNerveBundle()
    "variables.html",
    "lastseen.html",
    "promise_compliance.html",
+   "promise_repair.html",
+   "promise_notkept.html",
    NULL
    };
 

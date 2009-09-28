@@ -814,6 +814,285 @@ cf_fclose(fout);
 DeleteItemList(file);
 }
 
+
+/*****************************************************************************/
+
+void Nova_SummarizePromiseRepaired(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+
+{ FILE *fin,*fout;
+  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  char date[CF_MAXVARSIZE],handle[CF_MAXVARSIZE],bundle[CF_MAXVARSIZE],ref[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],lineno[CF_MAXVARSIZE];
+  struct Item *ip,*file = NULL;
+  char start[32];
+  int i = 0;
+
+  snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
+ 
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_error,"cf_fopen","Cannot open the source log %s",name);
+   return;
+   }
+
+if (html)
+   {
+   snprintf(name,CF_BUFSIZE,"promise_repair.html");
+   }
+else if (xml)
+   {
+   snprintf(name,CF_BUFSIZE,"promise_repair.xml");
+   }
+else if (csv)
+   {
+   snprintf(name,CF_BUFSIZE,"promise_repair.csv");
+   }
+else
+   {
+   snprintf(name,CF_BUFSIZE,"promise_repair.txt");
+   }
+ 
+/* Max 2016 entries - at least a week */
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+   PrependItem(&file,line,NULL);
+   }
+
+cf_fclose(fin);
+
+if ((fout = cf_fopen(name,"w")) == NULL)
+   {
+   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   return;
+   }
+
+if (html && !embed)
+   {
+   snprintf(name,CF_BUFSIZE,"Promises repaired on %s",VFQNAME);
+   NovaHtmlHeader(fout,name,stylesheet,web,head);
+   fprintf(fout,"<div id=\"reporttext\">\n");
+   fprintf(fout,"<table class=border cellpadding=5>\n");
+   fprintf(fout,"%s",NRH[cfx_entry][cfb]);
+   fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Time",NRH[cfx_date][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],"Bundle",NRH[cfx_bundle][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_event][cfb],"Handle",NRH[cfx_event][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],"Comment",NRH[cfx_ref][cfe]);      
+   fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Filename",NRH[cfx_end][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],"Line no.",NRH[cfx_index][cfe]);
+   fprintf(fout,"%s",NRH[cfx_entry][cfe]);
+   }
+else if (XML)
+   {
+   fprintf(fout,"<?xml version=\"1.0\"?>\n<output>\n");
+   }
+
+for (ip = file; ip != NULL; ip = ip->next)
+   {
+   memset(start,0,32);
+   memset(name,0,255);
+
+   if (cf_strlen(ip->name) == 0)
+      {
+      continue;
+      }
+
+   date[0] = '\0';
+   
+   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%512[^,],%128[^,],%8s",date,bundle,handle,ref,filename,lineno);
+   
+   if (xml)
+      {
+      fprintf(fout,"%s",NRX[cfx_entry][cfb]);
+      fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],date,NRX[cfx_date][cfe]);
+      fprintf(fout,"%s %s %s",NRX[cfx_bundle][cfb],bundle,NRX[cfx_bundle][cfe]);
+      fprintf(fout,"%s %s %s",NRX[cfx_event][cfb],handle,NRX[cfx_event][cfe]);
+      fprintf(fout,"%s %s %s",NRX[cfx_ref][cfb],ref,NRX[cfx_ref][cfe]);      
+      fprintf(fout,"%s %s %s",NRX[cfx_filename][cfb],filename,NRX[cfx_end][cfe]);
+      fprintf(fout,"%s %s %s",NRX[cfx_index][cfb],lineno,NRX[cfx_index][cfe]);
+      fprintf(fout,"%s",NRX[cfx_entry][cfe]);
+      }
+   else if (html)
+      {
+      fprintf(fout,"%s",NRH[cfx_entry][cfb]);
+      fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],date,NRH[cfx_date][cfe]);
+      fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],bundle,NRH[cfx_bundle][cfe]);
+      fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s %s",NRH[cfx_event][cfb],handle,handle,NRH[cfx_event][cfe]);
+      fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],ref,NRH[cfx_ref][cfe]);      
+      fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],filename,NRH[cfx_end][cfe]);
+      fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],lineno,NRH[cfx_index][cfe]);
+      fprintf(fout,"%s",NRH[cfx_entry][cfe]);
+      }
+   else if (csv)
+      {
+      fprintf(fout,"%s",ip->name);
+      }
+   else
+      {
+      fprintf(fout,"%s",ip->name);
+      }
+   
+   if (++i > 12*24*7)
+      {
+      break;
+      }   
+   }
+
+if (html && !embed)
+   {
+   fprintf(fout,"</table></div>");
+   NovaHtmlFooter(fout,foot);
+   }
+
+if (XML)
+   {
+   fprintf(fout,"</output>\n");
+   }
+
+cf_fclose(fout);
+DeleteItemList(file);
+}
+
+/*****************************************************************************/
+
+void Nova_SummarizePromiseNotKept(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+
+{ FILE *fin,*fout;
+  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  char date[CF_MAXVARSIZE],handle[CF_MAXVARSIZE],bundle[CF_MAXVARSIZE],ref[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],lineno[CF_MAXVARSIZE];
+  struct Item *ip,*file = NULL;
+  char start[32];
+  int i = 0;
+
+  snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_NOTKEPT_LOG);
+ 
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_error,"cf_fopen","Cannot open the source log %s",name);
+   return;
+   }
+
+if (html)
+   {
+   snprintf(name,CF_BUFSIZE,"promise_notkept.html");
+   }
+else if (xml)
+   {
+   snprintf(name,CF_BUFSIZE,"promise_notkept.xml");
+   }
+else if (csv)
+   {
+   snprintf(name,CF_BUFSIZE,"promise_notkept.csv");
+   }
+else
+   {
+   snprintf(name,CF_BUFSIZE,"promise_notkept.txt");
+   }
+ 
+/* Max 2016 entries - at least a week */
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+   PrependItem(&file,line,NULL);
+   }
+
+cf_fclose(fin);
+
+if ((fout = cf_fopen(name,"w")) == NULL)
+   {
+   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   return;
+   }
+
+if (html && !embed)
+   {
+   snprintf(name,CF_BUFSIZE,"Promises not kept on %s",VFQNAME);
+   NovaHtmlHeader(fout,name,stylesheet,web,head);
+   fprintf(fout,"<div id=\"reporttext\">\n");
+   fprintf(fout,"<table class=border cellpadding=5>\n");
+   fprintf(fout,"%s",NRH[cfx_entry][cfb]);
+   fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Time",NRH[cfx_date][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],"Bundle",NRH[cfx_bundle][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_event][cfb],"Handle",NRH[cfx_event][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],"Comment",NRH[cfx_ref][cfe]);      
+   fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Filename",NRH[cfx_end][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],"Line no.",NRH[cfx_index][cfe]);
+   fprintf(fout,"%s",NRH[cfx_entry][cfe]);
+   }
+else if (XML)
+   {
+   fprintf(fout,"<?xml version=\"1.0\"?>\n<output>\n");
+   }
+
+for (ip = file; ip != NULL; ip = ip->next)
+   {
+   memset(start,0,32);
+   memset(name,0,255);
+
+   if (cf_strlen(ip->name) == 0)
+      {
+      continue;
+      }
+
+   date[0] = '\0';
+   
+   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%512[^,],%128[^,],%8s",date,bundle,handle,ref,filename,lineno);
+   
+   if (xml)
+      {
+      fprintf(fout,"%s",NRX[cfx_entry][cfb]);
+      fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],date,NRX[cfx_date][cfe]);
+      fprintf(fout,"%s %s %s",NRX[cfx_bundle][cfb],bundle,NRX[cfx_bundle][cfe]);
+      fprintf(fout,"%s %s %s",NRX[cfx_event][cfb],handle,NRX[cfx_event][cfe]);
+      fprintf(fout,"%s %s %s",NRX[cfx_ref][cfb],ref,NRX[cfx_ref][cfe]);      
+      fprintf(fout,"%s %s %s",NRX[cfx_filename][cfb],filename,NRX[cfx_end][cfe]);
+      fprintf(fout,"%s %s %s",NRX[cfx_index][cfb],lineno,NRX[cfx_index][cfe]);
+      fprintf(fout,"%s",NRX[cfx_entry][cfe]);
+      }
+   else if (html)
+      {
+      fprintf(fout,"%s",NRH[cfx_entry][cfb]);
+      fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],date,NRH[cfx_date][cfe]);
+      fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],bundle,NRH[cfx_bundle][cfe]);
+      fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRH[cfx_event][cfb],handle,handle,NRH[cfx_event][cfe]);
+      fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],ref,NRH[cfx_ref][cfe]);      
+      fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],filename,NRH[cfx_end][cfe]);
+      fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],lineno,NRH[cfx_index][cfe]);
+      fprintf(fout,"%s",NRH[cfx_entry][cfe]);
+      }
+   else if (csv)
+      {
+      fprintf(fout,"%s",ip->name);
+      }
+   else
+      {
+      fprintf(fout,"%s",ip->name);
+      }
+   
+   if (++i > 12*24*7)
+      {
+      break;
+      }   
+   }
+
+if (html && !embed)
+   {
+   fprintf(fout,"</table></div>");
+   NovaHtmlFooter(fout,foot);
+   }
+
+if (XML)
+   {
+   fprintf(fout,"</output>\n");
+   }
+
+cf_fclose(fout);
+DeleteItemList(file);
+}
+
 /*****************************************************************************/
 
 void Nova_ReportSoftware(struct CfPackageManager *list)
