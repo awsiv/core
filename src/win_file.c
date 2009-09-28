@@ -31,6 +31,37 @@ close(tempfd);
 }
 
 
+FILE *NovaWin_FileHandleToStream(HANDLE fHandle, char *mode)
+{
+  int crtHandle;
+  int flags;
+
+  if(strncmp(mode, "r", 2) == 0)
+    {
+      flags = _O_RDONLY;
+    }
+  else if(strncmp(mode, "w", 2) == 0)
+    {
+      flags = _O_APPEND;
+    }
+  else
+    {
+      CfOut(cf_error,"NovaWin_FileHandleToStream","Mode is not 'r' or 'w', but '%s'", mode);
+      return NULL;
+    }
+  
+  crtHandle = _open_osfhandle((long)fHandle, flags);
+  
+  if(crtHandle == -1)
+    {
+      CfOut(cf_error,"_open_osfhandle","Could not convert file handle");
+      return NULL;
+    }
+
+  return _fdopen(crtHandle, mode);
+}
+
+
 // FIXME: Implement
 int NovaWin_IsExecutable(char *file)
 {

@@ -391,11 +391,21 @@ void NovaWin_OpenNetwork();
 /* win_file.c */
 
 void NovaWin_CreateEmptyFile(char *name);
+FILE *NovaWin_FileHandleToStream(HANDLE fHandle, char *mode);
 int NovaWin_IsExecutable(char *file);
 int NovaWin_mkdir(const char *path, mode_t mode);
 int NovaWin_rename(const char *oldpath, const char *newpath);
 int NovaWin_chmod(const char *path, mode_t mode);
 int NovaWin_FileExists(const char *fileName);
+
+/* win_pipe.c */
+
+FILE *NovaWin_cf_popen(char *command,char *type);
+FILE *NovaWin_cf_popen_sh(char *command,char *type);
+FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv);
+FILE *NovaWin_cf_popen_shsetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv);
+int NovaWin_cf_pclose(FILE *pp);
+int NovaWin_cf_pclose_def(FILE *pfp, struct Attributes a, struct Promise *pp);
 
 /* win_proc.c */
 

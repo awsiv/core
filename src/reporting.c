@@ -1300,6 +1300,7 @@ if (MINUSF) /* Only do this for the default policy */
    }
  
 snprintf(name,CF_BUFSIZE-1,"%s/state/vars.out",CFWORKDIR);
+MapName(name);
  
 if ((FREPORT_HTML = fopen(name,"w")) == NULL)
    {
@@ -1307,9 +1308,9 @@ if ((FREPORT_HTML = fopen(name,"w")) == NULL)
    return;
    }
 
-if ((FREPORT_TXT = fopen("/dev/null","w")) == NULL)
+if ((FREPORT_TXT = fopen(NULLFILE,"w")) == NULL)
    {
-   CfOut(cf_error,"fopen","Cannot write to %s",name);
+   CfOut(cf_error,"fopen","Cannot write to NULL-file");
    fclose(FREPORT_HTML);
    return;
    }
@@ -1329,6 +1330,7 @@ void Nova_SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
 
 snprintf(name,CF_BUFSIZE-1,"%s/state/vars.out",CFWORKDIR);
+MapName(name);
  
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
