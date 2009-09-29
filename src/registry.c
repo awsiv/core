@@ -61,6 +61,12 @@ void Nova_VerifyRegistryPromise(struct Attributes a,struct Promise *pp)
   struct CfLock thislock;
   char lockname[CF_BUFSIZE];
 
+if (LICENSES == 0)
+   {
+   CfOut(cf_error,""," !! The license has expired");
+   return;
+   }
+
 *(pp->donep) = true;
 
 snprintf(lockname,CF_BUFSIZE-1,"db-%s",pp->promiser);

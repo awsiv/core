@@ -48,6 +48,11 @@ void Nova_SyntaxCompletion(char *s)
   struct BodySyntax *bs,*bs2 = NULL;
   char output[CF_BUFSIZE];
 
+if (LICENSES == 0)
+   {
+   return;
+   }
+  
 if (cf_strncmp(s,"function",strlen("function")) == 0)
    {
    Nova_ListFunctions();
@@ -196,6 +201,11 @@ void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version)
   struct Rlist *rp,*depends_on = GetListConstraint("depends_on",pp);
   struct DefineClasses c = GetClassDefinitionConstraints(pp);
 
+if (LICENSES == 0)
+   {
+   return;
+   }
+  
 strcpy(promise_id,Nova_PromiseID(pp));
 
 fprintf(fp,"\ntopics:\n\n");
@@ -333,6 +343,11 @@ void Nova_ShowTopicRepresentation(FILE *fp)
   struct SubTypeSyntax *ss;
   struct BodySyntax *bs,*bs2;
 
+if (LICENSES == 0)
+   {
+   return;
+   }
+  
 fprintf(fp,"\ntopics:\n");
 
 fprintf(fp,"references::\n");
@@ -538,6 +553,11 @@ for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
 void Nova_BundleNode(FILE *fp,char *bundle)
 
 {
+if (LICENSES == 0)
+   {
+   return;
+   }
+
 fprintf(fp,"<a name=\"bundle_%s\"></a>",bundle);
 }
 
@@ -566,6 +586,11 @@ void Nova_BodyNode(FILE *fp,char *body,int calltype)
 void Nova_TypeNode(FILE *fp,char *type)
 
 {
+if (LICENSES == 0)
+   {
+   return;
+   }
+
 fprintf(fp,"<a name=\"type_%s\"></a>\n",CanonifyName(type));
 }
 
@@ -685,6 +710,11 @@ char *Nova_PromiseID(struct Promise *pp)
 { char static id[CF_MAXVARSIZE];
   char vbuff[CF_MAXVARSIZE];
   char *handle = GetConstraint("handle",pp,CF_SCALAR);
+
+if (LICENSES == 0)
+   {
+   return "expired";
+   }
 
 if (handle)
    {

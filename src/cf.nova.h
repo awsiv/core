@@ -272,6 +272,11 @@ LDAP *NovaQueryLDAP(char *uri,char *sec);
 int NovaStr2Scope(char *scope);
 #endif
 
+/* license.c */
+
+void Nova_HashKey(char *buffer,unsigned char digest[EVP_MAX_MD_SIZE+1]);
+int Nova_EnterpriseExpiry(char *day,char *month,char *year);
+
 /* magnify.c */
 
 int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *host);
@@ -314,7 +319,6 @@ void Nova_Version(void);
 char * Nova_StrVersion(void);
 void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status);
 time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *t);
-int Nova_EnterpriseExpiry(char *day,char *month,char *year);
 void Nova_CheckAutoBootstrap(void);
 void Nova_SetPolicyServer(char *name);
 void Nova_CreateFailSafe(char *name);

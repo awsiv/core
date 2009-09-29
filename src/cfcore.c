@@ -19,6 +19,11 @@ void Nova_MainPage(char *host,struct Item *eliminate)
     
 { FILE *fout;
 
+if (LICENSES == 0)
+   {
+   return;
+   }
+ 
 if ((fout = fopen("mainpage.html","w")) == NULL)
    {
    return;
@@ -41,6 +46,11 @@ void Nova_OtherPages(char *host,struct Item *eliminate)
   struct stat s1,s2;
   int i;
 
+if (LICENSES == 0)
+   {
+   return;
+   }
+  
 for (i = 0; i < CF_OBSERVABLES; i++)
    {
    Nova_LookupAggregateClassName(i,id,desc);
@@ -296,6 +306,11 @@ void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char 
   double tribe_evc[CF_TRIBE_SIZE];
   double **tribe_adj;
   struct stat sb;
+
+if (LICENSES == 0)
+   {
+   return;
+   }
 
 CfOut(cf_verbose,""," -> Create Cosmos for %s\n",names[topic]);
 

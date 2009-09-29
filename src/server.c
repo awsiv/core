@@ -24,13 +24,26 @@ NewScalar("remote_access",handle,pp->promiser,cf_str);
 
 char Nova_CfEnterpriseOptions()
 {
-return 'N';
+if (LICENSES)
+   {
+   return 'N';
+   }
+else
+   {
+   return 'c';
+   }
 }
 
 /*****************************************************************************/
 
 int Nova_CfSessionKeySize(char c)
+
 {
+if (LICENSES == 0)
+   {
+   return CF_BLOWFISHSIZE;
+   }
+ 
 switch (c)
    {
    case 'c':
@@ -56,6 +69,11 @@ switch (c)
 const EVP_CIPHER *Nova_CfengineCipher(char type)
 
 {
+if (LICENSES <= 0)
+   {
+   return EVP_bf_cbc();
+   }
+
 switch(type)
    {
    case 'N':
@@ -71,6 +89,11 @@ int Nova_ReturnLiteralData(char *handle,char *recv)
 
 { char rtype;
   void *retval;
+
+if (LICENSES <= 0)
+   {
+   return false;
+   }
 
 if (GetVariable("remote_access",handle,(void *)&retval,&rtype) != cf_notype)
    {
@@ -110,6 +133,12 @@ a.copy.force_ipv4 = false;
 a.copy.servers = SplitStringAsRList(peer,'*');
 
 memset(recvbuffer,0,CF_BUFSIZE);
+
+if (LICENSES == 0)
+   {
+   CfOut(cf_verbose,""," !! The license has expired on this feature");
+   return "BAD:";
+   }
 
 CfOut(cf_verbose,""," -> * Hailing %s:%u for remote variable \"%s\"\n",peer,(unsigned int)a.copy.portnumber,handle);
 
@@ -256,6 +285,11 @@ pid_t Nova_StartTwin(int argc,char **argv)
   pid_t pid;
   
 
+if (LICENSES == 0)
+   {
+   return 0;
+   }
+  
 if (VSYSTEMHARDCLASS == cfnt)
    {
    return 0;

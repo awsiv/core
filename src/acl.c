@@ -20,6 +20,11 @@
 void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp)
 
 {
+if (LICENSES == 0)
+   {
+   return;
+   }
+
 if (!Nova_CheckACLSyntax(file, a.acl,pp))
    {
    cfPS(cf_error,CF_INTERPT,"",pp,a," !! Syntax error in access control list for %s",file);

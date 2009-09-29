@@ -221,6 +221,12 @@ void Nova_HistoryUpdate(char *timekey,struct Averages newvals)
   DB *dbp;
   char filename[CF_BUFSIZE];
 
+
+if (LICENSES == 0)
+   {
+   return;
+   }
+  
 snprintf(filename,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_HISTORYDB);
   
 if (!OpenDB(filename,&dbp))
@@ -378,6 +384,12 @@ void Nova_LongHaul(char *day,char *month,char* lifecycle,char *shift)
   time_t now;
   FILE *fp[CF_OBSERVABLES];
   DB *dbp;
+
+
+if (LICENSES == 0)
+   {
+   return;
+   }
 
 snprintf(filename,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_HISTORYDB);
 
@@ -652,6 +664,12 @@ void Nova_DumpSlowlyVaryingObservations()
   char name[CF_BUFSIZE];
   FILE *fout;
   
+
+if (LICENSES == 0)
+   {
+   return;
+   }
+
 snprintf(name,CF_BUFSIZE-1,"%s/state/nova_static.db",CFWORKDIR);
 
 if (!OpenDB(name,&dbp))
