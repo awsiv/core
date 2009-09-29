@@ -31,6 +31,13 @@ void *Nova_LDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL,*return_value = NULL;
   int scope = NovaStr2Scope(scopes);
   
+
+if (LICENSES == 0)
+   {
+   CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
+   return NULL;
+   }
+
 if ((ld = NovaQueryLDAP(uri,sec)) == NULL)
    {
    return NULL;
@@ -197,6 +204,12 @@ void *Nova_LDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,
   int scope = NovaStr2Scope(scopes);
   struct Rlist *return_value = NULL;
   
+if (LICENSES == 0)
+   {
+   CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
+   return NULL;
+   }
+
 if ((ld = NovaQueryLDAP(uri,sec)) == NULL)
    {
    return NULL;
@@ -351,6 +364,12 @@ void *Nova_LDAPArray(char *array,char *uri,char *basedn,char *filter,char *scope
   int scope = NovaStr2Scope(scopes);
   char name[CF_MAXVARSIZE],*return_value = NULL;
   
+if (LICENSES == 0)
+   {
+   CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
+   return NULL;
+   }
+
 if ((ld = NovaQueryLDAP(uri,sec)) == NULL)
    {
    return NULL;
@@ -522,6 +541,12 @@ void *Nova_RegLDAP(char *uri,char *basedn,char *filter,char *name,char *scopes,c
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL,*return_value = NULL;
   int scope = NovaStr2Scope(scopes);
   
+if (LICENSES == 0)
+   {
+   CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
+   return NULL;
+   }
+
 if ((ld = NovaQueryLDAP(uri,sec)) == NULL)
    {
    return NULL;
@@ -684,6 +709,12 @@ LDAP *NovaQueryLDAP(char *uri,char *sec)
   int ret,version;
 
 /* Get a handle to an LDAP connection. */
+
+if (LICENSES == 0)
+   {
+   CfOut(cf_error,""," !! The commercial license has expired, this function is not available");   
+   return NULL;
+   }
 
 if ((ret = ldap_initialize(&ld,uri)) != LDAP_SUCCESS)
    {

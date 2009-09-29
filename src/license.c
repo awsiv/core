@@ -40,7 +40,7 @@ strcpy(u_year,year);
   
 // if license file exists, set the date from that, else use the source coded one
 
-snprintf(name,CF_MAXVARSIZE-1,"%s/license.dat",CFWORKDIR);
+snprintf(name,CF_MAXVARSIZE-1,"%s%clicense.dat",CFWORKDIR,FILE_SEPARATOR);
 
 if ((fp = fopen(name,"r")) != NULL)
    {
@@ -63,8 +63,8 @@ if ((fp = fopen(name,"r")) != NULL)
       }
    else
       {
-      CfOut(cf_error,"","Failed to verify license file. Please do not tamper with the authorization.\n");
-      LICENSES = 0;
+      CfOut(cf_verbose,"","Failed to verify license file for this host, using fall-back\n");
+      LICENSES = 1;
       return true;
       }
    }
@@ -87,8 +87,9 @@ snprintf(EXPIRY,31,"%s %s %s",u_day,u_month,u_year);
 
 if ((cf_strcmp(VYEAR,u_year) >= 0) && (m_now >= m_expire) && (d_now > d_expire))
    {
-   CfOut(cf_verbose,""," !! %d licenses expired on %s %s %s - today %s %s %s",LICENSES,u_day,u_month,u_year,VDAY,VMONTH,VYEAR);
-   return true;
+   CfOut(cf_verbose,""," !! %d licenses expired on %s %s %s -- reverting to Community Edition",LICENSES,u_day,u_month,u_year,VDAY,VMONTH,VYEAR);
+   
+   return false; // return true if we want to stop everything
    }
 else
    {

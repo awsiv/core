@@ -27,6 +27,11 @@ char *Nova_GetProcessOptions()
 #ifdef HAVE_GETZONEID
  zoneid_t zid;
  char zone[ZONENAME_MAX];
+
+if (LICENSES == 0)
+   {
+   return VPSOPTS[VSYSTEMHARDCLASS];
+   }
  
 zid = getzoneid();
 getzonenamebyid(zid,zone,ZONENAME_MAX);
