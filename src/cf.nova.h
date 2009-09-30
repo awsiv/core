@@ -392,7 +392,9 @@ void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs,cha
 #ifdef MINGW
 /* win_api.c */
 
-void NovaWin_OpenNetwork();
+void NovaWin_OpenNetwork(void);
+int NovaWin_GetCurrentUserName(char *userName, int userNameLen);
+char *NovaWin_GetErrorStr(void);
 
 /* win_file.c */
 

@@ -137,7 +137,7 @@ void setlinebuf(FILE *stream)
 
 
 /* Start up Winsock */
-void NovaWin_OpenNetwork()
+void NovaWin_OpenNetwork(void)
 { 
 struct WSAData wsaData;
 int nCode;
@@ -173,5 +173,19 @@ int NovaWin_GetCurrentUserName(char *userName, int userNameLen)
   return true;
 }
 
+
+char *NovaWin_GetErrorStr(void)
+{
+  static char errbuf[CF_BUFSIZE];
+  int len;
+
+  FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, errbuf, CF_BUFSIZE, NULL);
+
+  // remove CRLF from end
+  len = strlen(errbuf);
+  errbuf[len-2] = errbuf[len-1] = '\0';
+  
+  return errbuf;
+}
 
 #endif  /* MINGW */
