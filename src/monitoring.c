@@ -1045,11 +1045,11 @@ else
    
    /* Stream types */
    
-   if (cf_strcmp(a.measure.stream_type,"file") == 0)
+   if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"file") == 0)
       {
       fin = cf_fopen(pp->promiser,"r");
       }
-   else if (cf_strcmp(a.measure.stream_type,"pipe") == 0)
+   else if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
       {
       CfOut(cf_verbose,""," -> (Setting umask to %o)\n",a.contain.umask);
       maskval = umask(a.contain.umask);
@@ -1074,6 +1074,7 @@ else
    if (fin == NULL)
       {
       cfPS(cf_error,CF_FAIL,"cf_popen",pp,a,"Couldn't open pipe to command %s\n",pp->promiser);
+
       if (!MONITOR_RESTARTED)
          {
          YieldCurrentLock(thislock);
@@ -1088,10 +1089,12 @@ else
       if (ferror(fin))  /* abortable */
          {
          cfPS(cf_error,CF_TIMEX,"ferror",pp,a,"Sample stream %s\n",pp->promiser);
+
          if (!MONITOR_RESTARTED)
             {
             YieldCurrentLock(thislock);
             }
+
          return NOVA_DATA[slot].output;
          }
          
@@ -1152,25 +1155,28 @@ for (ip = stream; ip != NULL; ip = ip-> next)
       match_count++;
       }
 
-   if (FullTextMatch(a.measure.select_line_matching,ip->name))
+   if (a.measure.select_line_matching && FullTextMatch(a.measure.select_line_matching,ip->name))
       {
       found = true;
       match = ip;      
       match_count++;
 
-      switch (a.measure.data_type)
+      if (a.measure.extraction_regex)
          {
-         case cf_int:
-             
-             strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
-             real_val += Str2Double(value);
-             break;
-             
-         case cf_real:
-             
-             strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
-             real_val += Str2Double(value);
-             break;
+         switch (a.measure.data_type)
+            {
+            case cf_int:
+                
+                strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
+                real_val += Str2Double(value);
+                break;
+                
+            case cf_real:
+                
+                strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
+                real_val += Str2Double(value);
+                break;
+            }
          }
       
       }
@@ -1254,11 +1260,14 @@ for (ip = stream; ip != NULL; ip = ip-> next)
       found = true;
       match_count = 1;
       match = ip;
-      
-      CfOut(cf_verbose,""," -> Now looking for a matching extractor \"%s\"",a.measure.extraction_regex);
-      CfOut(cf_inform,"","Extracted value \"%s\" for promise \"%s\"",value,handle);
-      strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
-      AppendItem(&matches,value,NULL);
+
+      if (a.measure.extraction_regex)
+         {
+         CfOut(cf_verbose,""," -> Now looking for a matching extractor \"%s\"",a.measure.extraction_regex);
+         CfOut(cf_inform,"","Extracted value \"%s\" for promise \"%s\"",value,handle);
+         strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
+         AppendItem(&matches,value,NULL);
+         }
       break;
       }
    
@@ -1269,10 +1278,13 @@ for (ip = stream; ip != NULL; ip = ip-> next)
       match = ip;
       match_count++;
 
-      CfOut(cf_verbose,""," -> Now looking for a matching extractor \"%s\"",a.measure.extraction_regex);
-      CfOut(cf_inform,"","Extracted value \"%s\" for promise \"%s\"",value,handle);
-      strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
-      AppendItem(&matches,value,NULL);
+      if (a.measure.extraction_regex)
+         {
+         CfOut(cf_verbose,""," -> Now looking for a matching extractor \"%s\"",a.measure.extraction_regex);
+         CfOut(cf_inform,"","Extracted value \"%s\" for promise \"%s\"",value,handle);
+         strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
+         AppendItem(&matches,value,NULL);
+         }
       }
 
    count++;
@@ -1305,7 +1317,7 @@ switch (a.measure.data_type)
        snprintf(value,CF_BUFSIZE,"%s",matches->name);
    }
 
-if (cf_strcmp(a.measure.history_type,"log") == 0)  // weekly,scalar,static,log
+if (a.measure.history_type && cf_strcmp(a.measure.history_type,"log") == 0)  // weekly,scalar,static,log
    {
    snprintf(filename,CF_BUFSIZE,"%s/state/%s_measure.log",CFWORKDIR,handle);
 

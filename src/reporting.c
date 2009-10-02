@@ -195,7 +195,7 @@ void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *styleshee
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
-  char start[32],end[32];
+  char start[32],end[32],*sp;
   char version[CF_MAXVARSIZE];
   int kept,repaired,notrepaired;
   int i = 0,today = false;
@@ -277,8 +277,17 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       continue;
       }
+
+   // Complex parsing/extraction
    
-   sscanf(ip->name,"%31[^-]->%31[^O]Outcome of version %250[^:]: Promises observed to be kept %d%*[^0-9]%d%*[^0-9]%d",start,end,version,&kept,&repaired,&notrepaired);
+   sscanf(ip->name,"%31[^-]",start);
+   sscanf(strstr(ip->name,"Outcome of version")+strlen("Outcome of version"),"%31[^:]",version);
+   sscanf(strstr(ip->name,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&kept,&repaired,&notrepaired);    
+   sscanf(strstr(ip->name,"->")+2,"%31[^-]",end);
+   sp = strstr(end,": Out");
+   *sp = '\0';
+
+// replaces  sscanf(ip->name,"%31[^-]->%31[^O]Outcome of version %250[^:]: Promises observed to be kept %d%*[^0-9]%d%*[^0-9]%d",start,end,version,&kept,&repaired,&notrepaired);
 
    if (i < 12*24)
       {
@@ -900,7 +909,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    date[0] = '\0';
    
-   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%512[^,],%128[^,],%8s",date,bundle,handle,ref,filename,lineno);
+   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%512[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
    
    if (xml)
       {
@@ -1039,7 +1048,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    date[0] = '\0';
    
-   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%512[^,],%128[^,],%8s",date,bundle,handle,ref,filename,lineno);
+   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%512[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
    
    if (xml)
       {
