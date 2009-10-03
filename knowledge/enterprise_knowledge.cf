@@ -120,6 +120,9 @@ topics:
        association => a("displays operational state in","host portal","is a resource for"); 
 
    "operator view"
+       association => a("displays operational goals in","system policy","is a resource for"); 
+
+   "operator view"
        association => a("displays communications summary in","lastseen report","is a resource for"); 
 
    "operator view"

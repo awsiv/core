@@ -284,8 +284,10 @@ for (ip = file; ip != NULL; ip = ip->next)
    sscanf(strstr(ip->name,"Outcome of version")+strlen("Outcome of version"),"%31[^:]",version);
    sscanf(strstr(ip->name,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&kept,&repaired,&notrepaired);    
    sscanf(strstr(ip->name,"->")+2,"%31[^-]",end);
-   sp = strstr(end,": Out");
-   *sp = '\0';
+   if (sp = strstr(end,": Out"))
+      {
+      *sp = '\0';
+      }
 
 // replaces  sscanf(ip->name,"%31[^-]->%31[^O]Outcome of version %250[^:]: Promises observed to be kept %d%*[^0-9]%d%*[^0-9]%d",start,end,version,&kept,&repaired,&notrepaired);
 

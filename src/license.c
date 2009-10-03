@@ -63,7 +63,7 @@ if ((fp = fopen(name,"r")) != NULL)
       }
    else
       {
-      CfOut(cf_verbose,"","Failed to verify license file for this host, using fall-back\n");
+      CfOut(cf_verbose,"","Failed to verify license file for this host\n");
       LICENSES = 1;
       return true;
       }
@@ -87,7 +87,7 @@ snprintf(EXPIRY,31,"%s %s %s",u_day,u_month,u_year);
 
 if ((cf_strcmp(VYEAR,u_year) >= 0) && (m_now >= m_expire) && (d_now > d_expire))
    {
-   CfOut(cf_verbose,""," !! %d licenses expired on %s %s %s -- reverting to Community Edition",LICENSES,u_day,u_month,u_year,VDAY,VMONTH,VYEAR);
+   CfOut(cf_error,""," !! %d licenses expired on %s %s %s -- reverting to Community Edition",LICENSES,u_day,u_month,u_year,VDAY,VMONTH,VYEAR);
    
    return false; // return true if we want to stop everything
    }
