@@ -255,8 +255,9 @@ margin-bottom: 10px;
 
 #top
 {
+height: 53px;
 margin: 5px;
-background: #908c76 url(Knowledgebackground.png);
+background: red url(KnowledgeBack.png);
 }
 
 #top li
@@ -264,12 +265,22 @@ background: #908c76 url(Knowledgebackground.png);
 width: 150;
 }
 
+
+
 #search
 { 
 float: right; 
- padding: 18px 15px 0px 0px;
+padding: 18px 15px 0px 0px;
 }
 
+
+#top h2
+{  
+padding: 15px;
+color: #fdd164;
+font-size: 160%;
+font-weight: normal;
+}
 
 /* footer */
 #footer
@@ -348,6 +359,11 @@ height:400px;
 
 #reporttext
 { 
+width: 100%;
+}
+
+#reporttext table td
+{  
 width: 100%;
 }
 
@@ -458,12 +474,12 @@ background-color: green;
 
 table.border
 { 
-width: 1000px;
+width: 100%;
 background-color: white;
 color: #555;
-  border-color: #4e8b8c;
-  border-style: solid;
-  border-width: 1px;
+border-color: #4e8b8c;
+border-style: solid;
+border-width: 1px;
 }
 
 

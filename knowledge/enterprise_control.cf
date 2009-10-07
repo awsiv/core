@@ -27,7 +27,7 @@ html_banner => "<div id=\"top\">      <div id=\"search\">
           <p><input class=\"searchfield\" type=\"text\" name=\"regex\" /></p>
         </form>
       </div>
-<a href=\"$(query_engine)\"><img src=\"/KnowledgeBanner.png\" border=0></a></div>";
+<a href=\"$(query_engine)\"><h2>CFENGINE NOVA Knowledge Map</h2></a></div>";
 
 html_footer => "<div id=\"footer\">Copyright &copy; Cfengine AS</div>";
 
