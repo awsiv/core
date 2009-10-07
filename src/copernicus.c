@@ -144,7 +144,7 @@ for (i = 0; i < size1; i++)
    int n = Nova_GetAdjacent(neighbours1[i].tribe_id,tribe_adj,tribe_size,tribe_node,neighbours2);
 
    orbital_r1 = Nova_Orbit(cfv,tribe_node[centre].radius + 1.5 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
-   orbital_r2 = Nova_Orbit(cfv,tribe_node[centre].radius + 4.0 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
+   orbital_r2 = Nova_Orbit(cfv,tribe_node[centre].radius + 4.5 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
 
    orbital_r1 += 0.2 * orbital_r1 * Nova_SignPerturbation(i);
    orbital_r2 += 0.2 * orbital_r2 * Nova_SignPerturbation(i);
@@ -185,7 +185,7 @@ for (i = 0; i < size1; i++)
       size3 = Nova_SplayAdjacent(neighbours2[j].tribe_id,tribe_adj,tribe_size,tribe_node,trail,neighbours3);
 
       orbital_r3 = Nova_Orbit(cfv,2.5 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
-      orbital_r4 = Nova_Orbit(cfv,3.5 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
+      orbital_r4 = Nova_Orbit(cfv,3.8 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
       
       orbital_r3 += 0.2 * orbital_r3 * Nova_SignPerturbation(j);
       orbital_r4 += 0.2 * orbital_r4 * Nova_SignPerturbation(j);
