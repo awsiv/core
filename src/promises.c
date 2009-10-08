@@ -190,11 +190,11 @@ if ((fp = fopen(name,"a")) == NULL)
 snprintf(date,CF_MAXVARSIZE-1,"%s",ctime(&now));
 Chop(date);
 
-if (pp->ref)
+if (pp->ref && pp->audit)
    {
    fprintf(fp,"%s,%s,%s,%s,%s,%d\n",date,pp->bundle,id,pp->ref,pp->audit->filename,pp->lineno);
    }
-else
+else if (pp->audit)
    {
    fprintf(fp,"%s,%s,%s,%s,%s,%d\n",date,pp->bundle,id,"no comment",pp->audit->filename,pp->lineno);
    }
