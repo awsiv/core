@@ -12,7 +12,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-/* this file implements the equivalent of "ps auxw" for windows */
+/* Implementation of the equivalent of "ps auxw" for windows */
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
@@ -88,7 +88,7 @@ int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts)
 
   if (!EnumProcesses(pids, sizeof(pids), &pidLength))
     {
-      CfOut(cf_error,"EnumProcesses","Could enumerate processes");
+      CfOut(cf_error,"EnumProcesses","!! Could enumerate processes");
       return false;
     }
 
@@ -101,7 +101,7 @@ int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts)
   memInfo.dwLength = sizeof(MEMORYSTATUSEX);
   if(!GlobalMemoryStatusEx(&memInfo))
     {
-      CfOut(cf_error,"GlobalMemoryStatusEx","Could not obtain memory information");
+      CfOut(cf_error,"GlobalMemoryStatusEx","!! Could not obtain memory information");
       memInfo.ullTotalPhys = 1;
     }
 
@@ -188,7 +188,7 @@ static char *GetProcessInfo(DWORD pid, ULARGE_INTEGER lastTimeStamp, DWORDLONG t
   
   if(procHandle == NULL) 
     {
-      CfOut(cf_error,"OpenProcess","Error opening process handle for pid=%lu", pid);
+      CfOut(cf_error,"OpenProcess","!! Error opening process handle for pid=%lu", pid);
       return NULL;
     }
 
@@ -275,7 +275,7 @@ static BOOL GetProcessCmdLine(HANDLE procHandle, char *cmdLineStr, int cmdLineSz
 
   if(ntdll == NULL)
     {
-      CfOut(cf_error,"LoadLibrary","Error loading ntdll library");
+      CfOut(cf_error,"LoadLibrary","!! Error loading ntdll library");
       return false;
     }
 
@@ -283,7 +283,7 @@ static BOOL GetProcessCmdLine(HANDLE procHandle, char *cmdLineStr, int cmdLineSz
 
   if(ntqip == NULL)
     {
-      CfOut(cf_error,"GetProcAddress","Could not get pounter to NtQueryInformationProcess()");
+      CfOut(cf_error,"GetProcAddress","!! Could not get pointer to NtQueryInformationProcess()");
       return false;
     }
   
@@ -295,14 +295,14 @@ static BOOL GetProcessCmdLine(HANDLE procHandle, char *cmdLineStr, int cmdLineSz
   // read PEB structure
   if(!ReadProcessMemory(procHandle, (LPVOID) procInfo.PebBaseAddress, (LPVOID) &envBlock, sizeof(PEB), NULL))
     {
-      CfOut(cf_error,"ReadProcessMemory","Could not read process environment block");
+      CfOut(cf_error,"ReadProcessMemory","!! Could not read process environment block");
       return false;
     }
 
   // read PROCESS_PARAMETERS
   if(!ReadProcessMemory(procHandle, (LPVOID) envBlock.ProcessParameters, (LPVOID) &procParams, sizeof(RTL_USER_PROCESS_PARAMETERS), NULL))
     {
-      CfOut(cf_error,"ReadProcessMemory","Could not read process parameters");
+      CfOut(cf_error,"ReadProcessMemory","!! Could not read process parameters");
       return false;
     }
 
@@ -310,7 +310,7 @@ static BOOL GetProcessCmdLine(HANDLE procHandle, char *cmdLineStr, int cmdLineSz
   wmemset(cmdLineWstr, '\0', cmdLineSz);
   if(!ReadProcessMemory(procHandle, (LPVOID) procParams.CommandLine.Buffer, (LPVOID) cmdLineWstr, sizeof(cmdLineWstr), &read))
     {
-      CfOut(cf_error,"ReadProcessMemory","Could not read process command line");
+      CfOut(cf_error,"ReadProcessMemory","!! Could not read process command line");
       return false;
     }
 
@@ -327,7 +327,7 @@ static void GetProcessTime(HANDLE procHandle, char *timeCreateStr, ULARGE_INTEGE
 
   if(!GetProcessTimes(procHandle, &timeCreate, &timeExit, &timeKernel, &timeUser))
     {
-      CfOut(cf_error,"GetProcessTimes","Could not obtain process times");
+      CfOut(cf_error,"GetProcessTimes","!! Could not obtain process times");
       return;
     }
 
@@ -408,7 +408,7 @@ static void GetMemoryInfo(HANDLE procHandle, char *memSzStr, DWORDLONG totalPhys
   if(!GetProcessMemoryInfo(procHandle, &memInfo, sizeof(memInfo)))
     {
       *memSzStr = '\0';
-      CfOut(cf_error,"GetProcessMemoryInfo","Could not obtain process memory information");
+      CfOut(cf_error,"GetProcessMemoryInfo","!! Could not obtain process memory information");
       return;
     }
 
@@ -419,7 +419,7 @@ static void GetMemoryInfo(HANDLE procHandle, char *memSzStr, DWORDLONG totalPhys
 
   if(ntdll == NULL)
     {
-      CfOut(cf_error,"LoadLibrary","Could not load ntdll library");
+      CfOut(cf_error,"LoadLibrary","!! Could not load ntdll library");
       return;
     }
 
@@ -427,7 +427,7 @@ static void GetMemoryInfo(HANDLE procHandle, char *memSzStr, DWORDLONG totalPhys
 
   if(ntqip == NULL)
     {
-      CfOut(cf_error,"GetProcAddress","Could not get pointer to NtQueryInformationProcess()");
+      CfOut(cf_error,"GetProcAddress","!! Could not get pointer to NtQueryInformationProcess()");
       return;
     }
 
@@ -457,14 +457,14 @@ static void GetProcessCpuTime(DWORD pid, ULARGE_INTEGER *timeCpuInt)
   
   if(procHandle == NULL) 
     {
-      CfOut(cf_error,"OpenProcess","Could not open process handle for pid %lu", pid);
+      CfOut(cf_error,"OpenProcess","!! Could not open process handle for pid %lu", pid);
       timeCpuInt->QuadPart = 0;
       return;
     }
 
   if(!GetProcessTimes(procHandle, &timeCreate, &timeExit, &timeKernel, &timeUser))
     {
-      CfOut(cf_error,"GetProcessTimes","Could not get process times");
+      CfOut(cf_error,"GetProcessTimes","!! Could not get process times");
       timeCpuInt->QuadPart = 0;
       return;
     }
@@ -508,7 +508,7 @@ static void GetProcessUserName(HANDLE hProcess, int incDomain, char *nameStr, in
 
       if (pSecDescr == NULL)
 	{
-	  CfOut(cf_error,"HeapAlloc","Could not allocate memory for security descriptor");
+	  CfOut(cf_error,"HeapAlloc","!! Could not allocate memory for security descriptor");
 	  return;
 	}
 
@@ -551,17 +551,17 @@ static void GetProcessUserName(HANDLE hProcess, int incDomain, char *nameStr, in
 	    }
 	  else
 	    {
-	      CfOut(cf_error,"GetSecurityDescriptorOwner","Could not get owner security descriptor");
+	      CfOut(cf_error,"GetSecurityDescriptorOwner","!! Could not get owner security descriptor");
 	    }
 	}
       else
 	{
-	  CfOut(cf_error,"GetKernelObjectSecurity","Could not get kernel security information for process");
+	  CfOut(cf_error,"GetKernelObjectSecurity","!! Could not get kernel security information for process");
 	}
     }
   else
     {
-      CfOut(cf_error,"GetKernelObjectSecurity","Could not get kernel security information for process");
+      CfOut(cf_error,"GetKernelObjectSecurity","!! Could not get kernel security information for process");
     }
 
 

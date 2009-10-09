@@ -15,6 +15,7 @@ libcfnova_la_SOURCES =						\
 	cfnova.c						\
 	acl.c							\
 	acl_linux.c						\
+	acl_nt.c                                                \
 	database.c						\
 	sql.c							\
 	ldap.c							\
@@ -39,7 +40,8 @@ libcfnova_la_SOURCES =						\
 	win_file.c						\
 	win_pipe.c						\
 	win_proc.c						\
-	win_ps.c
+	win_ps.c                                                \
+	win_user.c
 
 
 #

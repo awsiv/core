@@ -41,7 +41,7 @@ int NovaWin_GracefulTerminate(pid_t pid)
 
   if(procHandle == NULL)
     {
-      CfOut(cf_error,"OpenProcess","Could not get process handle");
+      CfOut(cf_error,"OpenProcess","!! Could not get process handle");
       return false;
     }
 
@@ -49,7 +49,7 @@ int NovaWin_GracefulTerminate(pid_t pid)
 
   if(!CloseHandle(procHandle))
     {
-      CfOut(cf_error,"CloseHandle","Could not close process handle");
+      CfOut(cf_error,"CloseHandle","!! Could not close process handle");
     }
 
   return (res != 0);
@@ -67,19 +67,19 @@ int NovaWin_ShellCommandReturnsZero(char *comm, int useshell)
   
   if(!NovaWin_RunCmd(comm, useshell, false, NULL, NULL, &procHandle))
     {
-      CfOut(cf_error,"RunCmd","Command %s failed",comm);
+      CfOut(cf_error,"RunCmd","!! Command \"%s\" failed",comm);
       exit(1);
     }
   
   if(WaitForSingleObject(procHandle, INFINITE) == WAIT_FAILED)
     {
-      CfOut(cf_error,"WaitForSingleObject","Error waiting for process to finish");
+      CfOut(cf_error,"WaitForSingleObject","!! Error waiting for process to finish");
       exit(1);
     }
   
   if(!GetExitCodeProcess(procHandle, &exitcode))
     {
-      CfOut(cf_error,"GetExitCodeProcess","Error getting exit code");
+      CfOut(cf_error,"GetExitCodeProcess","!! Error getting exit code");
       exit(1);
     }
   
@@ -108,7 +108,7 @@ int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir,
     {
       if(sizeof("/c \"") + strlen(comm) + 1 >= sizeof(buf))
 	{
-	  CfOut(cf_error,"","Buffer to small to hold command-string");
+	  CfOut(cf_error,"","!! Buffer to small to hold command-string");
 	  return false;
 	}
       
@@ -138,7 +138,7 @@ int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir,
   
   if(!CreateProcess(binary, binaryParams, NULL, NULL, inheritHandles, 0, NULL, startDir, si, &pi))
     {
-      CfOut(cf_error,"CreateProcess","Failed to start process");
+      CfOut(cf_error,"CreateProcess","!! Failed to start process");
       return false;
     }
 

@@ -84,7 +84,7 @@ int chown(const char *path, uid_t owner, gid_t group)
       // change owner to the "BUILTIN\Administrators" group
       if (!AllocateAndInitializeSid(&SIDAuthNT, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &sidAdmins))
 	{
-	  CfOut(cf_error,"AllocateAndInitializeSid","Could not allocate sid");
+	  CfOut(cf_error,"AllocateAndInitializeSid","!! Could not allocate sid");
 	  return -1;
 	}
   
@@ -92,14 +92,14 @@ int chown(const char *path, uid_t owner, gid_t group)
 
       if(retv != ERROR_SUCCESS)
 	{
-	  CfOut(cf_error,"SetNamedSecurityInfo","Could not change owner to BUILTIN\\Administrators");
+	  CfOut(cf_error,"SetNamedSecurityInfo","!! Could not change owner to BUILTIN\\Administrators");
 	  FreeSid(sidAdmins);
 	  return -1;
 	}
 
       if(FreeSid(sidAdmins))
 	{
-	  CfOut(cf_error,"FreeSid","Could not free sid");
+	  CfOut(cf_error,"FreeSid","!! Could not free sid");
 	}
       
       Debug("Owner of %s is set to BUILTIN\\Administrators\n", path);
@@ -108,7 +108,7 @@ int chown(const char *path, uid_t owner, gid_t group)
     }
   else
     {
-      CfOut(cf_error,"chown","Owner and group are not both 0: such numerical user or group ids makes no sense on NT");
+      CfOut(cf_error,"chown","!! Owner and group are not both 0: such numerical user or group ids makes no sense on NT");
       return -1;
     }
 }
@@ -146,7 +146,7 @@ nCode = WSAStartup(MAKEWORD(2, 2), &wsaData);
 
 if (nCode != 0)
   {
-  CfOut(cf_error,"","Winsock could not be initialized: WSAStartup() returned error code %d.\n", nCode);
+  CfOut(cf_error,"","!! Winsock could not be initialized: WSAStartup() returned error code %d.\n", nCode);
   }
 else
   {
@@ -163,7 +163,7 @@ int NovaWin_GetCurrentUserName(char *userName, int userNameLen)
   
   if(!GetUserName(userName, &userNameMax))
     {
-      CfOut(cf_error,"GetUserName","Could not get user name of current process, using \"UNKNOWN\"");
+      CfOut(cf_error,"GetUserName","!! Could not get user name of current process, using \"UNKNOWN\"");
 
       strncpy(userName, "UNKNOWN", userNameLen);
       userName[userNameLen - 1] = '\0';

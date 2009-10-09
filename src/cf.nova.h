@@ -98,21 +98,23 @@ struct CfGraphNode
 #define CF_VALID_GPERMS "rwx"
 
 // Valid native permission characters
+#define CF_VALID_NPERMS_NT "drtxTwabBpcoD"
 #define CF_VALID_NPERMS_POSIX "rwx"
 
 // Valid operations (first char of mode)
-#define CF_VALID_OPS_METHOD_OVERWRITE "=+-"  // op can only be empty or equal when method => overwrite
+#define CF_VALID_OPS_METHOD_OVERWRITE "=+-"
 #define CF_VALID_OPS_METHOD_APPEND "=+-"
 
 // Native perms separators in mode
 #define CF_NATIVE_PERMS_SEP_START '('
 #define CF_NATIVE_PERMS_SEP_END ')'
 
-// Cfengine standard model permissions (non-overlapping bitmasks)
-#define CF_PERM_CF_NONE 0x0
-#define CF_PERM_CF_EXECUTE 0x1
-#define CF_PERM_CF_WRITE 0x2
-#define CF_PERM_CF_READ 0x4
+#ifdef MINGW
+#define CF_GENERIC_READ_NT (FILE_READ_DATA | FILE_READ_ATTRIBUTES | FILE_READ_EA | READ_CONTROL)
+#define CF_GENERIC_WRITE_NT (FILE_WRITE_DATA | FILE_APPEND_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA)
+#define CF_GENERIC_EXECUTE_NT (FILE_EXECUTE)
+#define CF_MINIMUM_PERMS_NT (SYNCHRONIZE)  // access is always denied if synchronize is not set
+#endif /* MINGW */
 
 /************************************************************************************/
 /* Prototypes                                                                       */
@@ -128,6 +130,8 @@ int Nova_CheckModeSyntax(char **mode_p, char *valid_nperms, char *valid_ops,stru
 int Nova_CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp);
 int Nova_CheckDirectoryInherit(char *path, struct CfACL *acl, struct Promise *pp);
 
+/* acl_linux.c */
+
 #ifdef HAVE_LIBACL
 int Nova_CheckPosixLinuxACL(char *file_path, struct CfACL acl, struct Attributes a, struct Promise *pp);
 int Nova_CheckPosixLinuxAccessACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, struct Attributes a, struct Promise *pp);
@@ -142,6 +146,27 @@ int Nova_ACLEquals(acl_t first, acl_t second);
 int Nova_ACECount(acl_t acl);
 int Nova_PermsetEquals(acl_permset_t first, acl_permset_t second);
 #endif
+
+/* acl_nt.c */
+
+#ifdef MINGW
+int Nova_CheckNtACL(char *file_path, struct CfACL acl, struct Attributes a, struct Promise *pp);
+int Nova_CheckNtACEs(char *file_path, struct Rlist *aces, inherit_t inherit, enum cf_acl_method method, struct Attributes a, struct Promise *pp);
+int Nova_CheckNtInheritACEs(char *file_path, struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, struct Attributes a, struct Promise *pp);
+int Nova_CheckNtDefaultClearACL(char *file_path, struct Attributes a, struct Promise *pp);
+int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, struct Attributes a, struct Promise *pp);
+void Nova_RemoveEasByInheritance(EXPLICIT_ACCESS *eas, int *eaCount, inherit_t inherit);
+void Nova_RemoveEmptyEas(EXPLICIT_ACCESS *eas, int *eaCount);
+int Nova_ACLEquals(int *aclsEqual, EXPLICIT_ACCESS *firstEas, int eaCount, ACL *acl);
+int Nova_AclToExplicitAccess(EXPLICIT_ACCESS *eas, int eaCount, ACL *acl);
+int Nova_ParseAcl(char *file_path, struct Rlist *aces, EXPLICIT_ACCESS *eas, int *eaCount, inherit_t inherit);
+int Nova_SetEas(char *file_path, EXPLICIT_ACCESS *eas, int eaCount);
+EXPLICIT_ACCESS *Nova_FindAceNt(EXPLICIT_ACCESS *eas, EXPLICIT_ACCESS *endEa, SID *findSid, ACCESS_MODE findPermt, inherit_t findInherit);
+void Nova_FreeSids(EXPLICIT_ACCESS *eas, int num);
+int Nova_EntityToSid(char **acePtr, SID *sid, DWORD sidSz);
+int Nova_ParseModeNt(char **modePtr, ACCESS_MASK *perms);
+ACCESS_MODE Nova_ParsePermTypeNt(char *ace);
+#endif  /* MINGW */
 
 /* aggregation.c */
 
@@ -405,6 +430,7 @@ int NovaWin_mkdir(const char *path, mode_t mode);
 int NovaWin_rename(const char *oldpath, const char *newpath);
 int NovaWin_chmod(const char *path, mode_t mode);
 int NovaWin_FileExists(const char *fileName);
+int NovaWin_IsDir(char *fileName);
 
 /* win_pipe.c */
 
@@ -425,6 +451,15 @@ int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir,
 /* win_ps.c */
 
 int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts);
+
+/* win_user.c */
+
+int NovaWin_UserNameToSid(char *userName, SID *sid, DWORD sidSz);
+int NovaWin_GroupNameToSid(char *groupName, SID *sid, DWORD sidSz);
+int NovaWin_SidToString(SID *sid, char *stringSid, int stringSz);
+int NovaWin_StringToSid(char *stringSid, SID *sid, int sidSz);
+
+
 #endif  /* MINGW */
 
 

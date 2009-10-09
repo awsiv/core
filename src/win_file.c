@@ -24,7 +24,7 @@ void NovaWin_CreateEmptyFile(char *name)
 
 if((tempfd = fopen(name, "w")) == -1)
    {
-   CfOut(cf_error,"fopen","Couldn't open a file %s\n",name);  
+   CfOut(cf_error,"fopen","!! Couldn't open a file %s\n",name);  
    }
 
 close(tempfd);
@@ -46,7 +46,7 @@ FILE *NovaWin_FileHandleToStream(HANDLE fHandle, char *mode)
     }
   else
     {
-      CfOut(cf_error,"NovaWin_FileHandleToStream","Mode is not 'r' or 'w', but '%s'", mode);
+      CfOut(cf_error,"NovaWin_FileHandleToStream","!! Mode is not 'r' or 'w', but '%s'", mode);
       return NULL;
     }
   
@@ -54,7 +54,7 @@ FILE *NovaWin_FileHandleToStream(HANDLE fHandle, char *mode)
   
   if(crtHandle == -1)
     {
-      CfOut(cf_error,"_open_osfhandle","Could not convert file handle");
+      CfOut(cf_error,"_open_osfhandle","!! Could not convert file handle");
       return NULL;
     }
 
@@ -117,7 +117,7 @@ int NovaWin_chmod(const char *path, mode_t mode)
     }
   else
     {
-      CfOut(cf_error,"NovaWin_chmod","The mode-string '%o' on '%s' is not supported in NT", mode, path);
+      CfOut(cf_error,"NovaWin_chmod","!! The mode-string '%o' on '%s' is not supported in NT", mode, path);
       return -1;
     }
 }
@@ -129,14 +129,38 @@ int NovaWin_FileExists(const char *fileName)
     DWORD fileAttr;
 
     fileAttr = GetFileAttributes(fileName);
-    if (0xFFFFFFFF == fileAttr)
+    
+    if (fileAttr == INVALID_FILE_ATTRIBUTES)
       {
-	CfOut(cf_verbose,"","The file '%s' does not exist\n",fileName);
+	CfOut(cf_verbose,"","The file \"%s\" does not exist\n", fileName);
         return false;
       }
 
     return true;
 }
+
+
+/* Return true if 'fileName' is a directory */
+int NovaWin_IsDir(char *fileName)
+{
+  DWORD fileAttr;
+  
+  fileAttr = GetFileAttributes(fileName);
+  
+  if(fileAttr == INVALID_FILE_ATTRIBUTES)
+    {
+      CfOut(cf_error,"","!! No file object exsists in path \"%s\"", fileName);
+      return false;
+    }
+  
+  if(fileAttr & FILE_ATTRIBUTE_DIRECTORY)
+    {
+      return true;
+    }
+  
+  return false;
+}
+
 
 
 #endif  /* MINGW */
