@@ -23,4 +23,23 @@ occurrences:
    representation => "literal",
        represents => { "Cfengine Nova" };
 
+
+
+  faults::
+
+     "https://cfengine.com/otrs/index.pl?Action=AgentTicketSearch&Subaction=Search&CustomerID=17&StateType=Open"
+
+  represents => { "open support tickets" };
+
+    "https://cfengine.com/otrs/index.pl?Action=AgentTicketZoom&TicketID=47&ArticleID=1422&ZoomExpand=0#1422"
+
+  represents => { "segmentation" };
+
+
+ segmentation_fault::
+
+    "https://cfengine.com/otrs/index.pl?Action=AgentTicketZoom&TicketID=47&ArticleID=1422&ZoomExpand=0#1422"
+
+  represents => { "cfengine solution" };
+
 }

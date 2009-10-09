@@ -120,6 +120,9 @@ topics:
        association => a("displays operational state in","host portal","is a resource for"); 
 
    "operator view"
+       association => a("has open tickets under","faults","is a resource for"); 
+
+   "operator view"
        association => a("displays operational goals in","system policy","is a resource for"); 
 
    "operator view"
@@ -174,7 +177,8 @@ topics:
    "request for change"              comment => "(RFC) The initial proposal for an intended change of system policy.";
 
    "request for change"       association => a("are a basis for","change management","uses");
-   "request for change"       association => a("is an example of","intention","might be");
+   "request for change"       association => a("might be an example of","intentions","might be a");
+   "request for change"       association => a("might be an example of","promise proposals","might be a");       
 
    "software licenses" comment => "Terms of agreements, and renewal status";
 
@@ -417,6 +421,15 @@ occurrences:
 
             represents => { "description" },
             representation => "literal";
+
+   "reports/(.*)/file_changes.html"
+
+            represents => { "on $(match.1)" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+
+ change_management::
 
    "reports/(.*)/file_changes.html"
 

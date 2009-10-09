@@ -51,8 +51,8 @@ void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,
   char s[CF_MAXVARSIZE],pngfile[CF_MAXVARSIZE],mapfile[CF_MAXVARSIZE];
   int tribe_tops[CF_TRIBE_SIZE], num_tops,size1,size2,size3,i,j,k;
   double x,y,theta0,dtheta0,theta1,dtheta1,theta2,dtheta2,pi = 3.1416;
-  double orbital_r1,orbital_r2,orbital_r3,orbital_r4,orbital_r5;
-  double max_x = 0,max_y = 0, min_x = 0, min_y = 0;;
+  double orbital_r1,orbital_r2,orbital_r3,orbital_r4,orbital_r5,corona;
+  double max_x = 0,max_y = 0, min_x = 0, min_y = 0;
   int trail[CF_TRIBE_SIZE];
   struct CfDataView cfv;
   FILE *fout,*fmap;
@@ -139,12 +139,14 @@ size1 = Nova_SplayAdjacent(centre,tribe_adj,tribe_size,tribe_node,trail,neighbou
 theta0 = 0.64; 
 dtheta0 = 2 * pi / (double)size1;
 
+corona = CF_MIN_RADIUS + CF_RADIUS_SCALE;
+
 for (i = 0; i < size1; i++)
    {
    int n = Nova_GetAdjacent(neighbours1[i].tribe_id,tribe_adj,tribe_size,tribe_node,neighbours2);
 
-   orbital_r1 = Nova_Orbit(cfv,tribe_node[centre].radius + 1.5 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
-   orbital_r2 = Nova_Orbit(cfv,tribe_node[centre].radius + 4.5 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
+   orbital_r1 = Nova_Orbit(cfv,corona + 1.5 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
+   orbital_r2 = Nova_Orbit(cfv,corona + 4.5 * neighbours1[i].radius,min_x,min_y,max_x,max_y);
 
    orbital_r1 += 0.2 * orbital_r1 * Nova_SignPerturbation(i);
    orbital_r2 += 0.2 * orbital_r2 * Nova_SignPerturbation(i);
@@ -184,8 +186,8 @@ for (i = 0; i < size1; i++)
       {
       size3 = Nova_SplayAdjacent(neighbours2[j].tribe_id,tribe_adj,tribe_size,tribe_node,trail,neighbours3);
 
-      orbital_r3 = Nova_Orbit(cfv,2.5 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
-      orbital_r4 = Nova_Orbit(cfv,3.8 * neighbours2[j].radius,min_x,min_y,max_x,max_y);
+      orbital_r3 = Nova_Orbit(cfv,CF_MIN_RADIUS + neighbours2[j].radius,min_x,min_y,max_x,max_y);
+      orbital_r4 = Nova_Orbit(cfv,CF_MIN_RADIUS + neighbours2[j].radius,min_x,min_y,max_x,max_y);
       
       orbital_r3 += 0.2 * orbital_r3 * Nova_SignPerturbation(j);
       orbital_r4 += 0.2 * orbital_r4 * Nova_SignPerturbation(j);
@@ -685,22 +687,22 @@ void Nova_MapHorizon(double x,double y,double *min_x,double *min_y,double *max_x
 {
 if (x < *min_x)
    {
-   *min_x = x - 2*CF_MIN_RADIUS;
+   *min_x = x - 3*CF_MIN_RADIUS;
    }
 
 if (x > *max_x)
    {
-   *max_x = x + 2*CF_MIN_RADIUS;
+   *max_x = x + 3*CF_MIN_RADIUS;
    }
 
 if (y < *min_y)
    {
-   *min_y = y - 2*CF_MIN_RADIUS;
+   *min_y = y - 3*CF_MIN_RADIUS;
    }
 
 if (y > *max_y)
    {
-   *max_y = y + 2*CF_MIN_RADIUS;
+   *max_y = y + 3*CF_MIN_RADIUS;
    }
 }
 
@@ -836,7 +838,7 @@ void Nova_AlignmentCorrection(double *x,double *y,double cx,double cy)
 
 /* If strings are too close, move them apart*/
  
-if (fabs(cy-*y) < 20)     
+if (fabs(cy-*y) < 30)     
    {
    if (cx < *x && *x -cx < CF_NODEVISIBLE * gdFontGetLarge()->w) // Text height is about 10
       {

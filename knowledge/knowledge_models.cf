@@ -96,6 +96,59 @@ vars:
   "cfversions" slist => { "2.2.x", "3.0.x", "nova" };
 
 
+
+  #
+  # Some related topics form a promise "group by association"
+  #
+
+  "linux_distros" slist => { "suse", "ubuntu", "fedora", "redhat", "debian", "slackware", "gentoo" };
+
+  "cf2_actions"   slist => {
+                           "acl",
+                           "alerts",
+                           "binservers",
+                           "broadcast",
+                           "copy",
+                           "defaultroute",
+                           "disks",
+                           "directories",
+                           "disable",
+                           "editfiles",
+                           "files",
+                           "filters",
+                           "groups",
+                           "homeservers",
+                           "ignore",
+                           "import",
+                           "interfaces",
+                           "links",
+                           "mailserver",
+                           "methods",
+                           "miscmounts",
+                           "mountables",
+                           "processes",
+                           "packages",
+                           "rename",
+                           "required",
+                           "resolve",
+                           "scli",
+                           "shellcommands",
+                           "strategies",
+                           "tidy",
+                           "unmount" 
+                           };
+
+  "cf3_actions"   slist => { "vars", "files", "processes", "commands", "storage", "reports", "topics", "occurrences" };
+
+  "nova_actions"  slist => { "databases", "measurements" };
+
+  "all_actions"   slist => { @(cf3_actions), @(cf2_actions), @(nova_actions) };
+
+  "nova_features"  slist => { "ldap integration", "sql integration", "windows registry editing", "impact analysis",
+                              "access control list management", "serving literal data", "syntax lookup" };
+
+
+
 topics:
 
  # This is example knowledge -- add your own
@@ -159,7 +212,7 @@ topics:
 
  faults::
 
-  "segmentation fault"       association => a("$(cause[f])","Bad memory reference","$(cause[f])");
+  "segmentation fault"       association => a("$(cause[f])","bad memory reference","$(cause[f])");
   "remote connection problem";
   "web server not running";
   "print server not running";
@@ -188,7 +241,7 @@ topics:
    "EUROSOX"  comment => "The 8th EU data directive",
               association => A("involves",@(sox),"is a principal component of");
 
-   "SAS-70"  comment => "Stands for Statement of Auditing Standards no. 70. SAS-70 is an auditing standard. SAS 70 defines the professional standards used by a service auditor to assess the internal controls of a service organization and issue a service auditor’s report. Cfengine can be used to ensure SAS-70 compliance in the same way you can achieve other standardization compliance.",
+   "SAS-70"  comment => "Stands for Statement of Auditing Standards no. 70. SAS-70 is an auditing standard. SAS 70 defines the professional standards used by a service auditor to assess the internal controls of a service organization and issue a service auditor's report. Cfengine can be used to ensure SAS-70 compliance in the same way you can achieve other standardization compliance.",
 
       association => a("is a framework for implementing","SOX","falls within the bounds of");
 
@@ -486,6 +539,10 @@ topics:
    "change management" comment => "The ability to trace, log and manipulate change in files. Whenever a change occurs in a file, this probably affects some other parts of the system. The ability to track, log and potentially restore changes are important for many purposes.",
 
        association => a("$(impl[b])","procedures::change detection scans","$(impl[f])");
+
+   "change management"        
+
+       association => a("$(impl[b])","body_constraints::changes","$(impl[f])");
 
    "configuration management" comment => "The ability to configure a Datacenter through configuration settings. This is the core of Cfengine. Cfengine comes with many advanced tools to ease the configuration of Datacenters and have it self-repair according the settings you define. See also Configuration Items (CIs), Change Management.";
 
