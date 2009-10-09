@@ -218,8 +218,7 @@ for (i = 0; i < size1; i++)
       
       for (k = 0; k < size3; k++)
          {
-         orbital_r5 = Nova_Orbit(cfv,2.0 * CF_MIN_RADIUS,min_x,min_y,max_x,max_y);
-         orbital_r5 += 0.2 * orbital_r5 * Nova_SignPerturbation(k);
+         orbital_r5 = 2.0 * CF_MIN_RADIUS + 0.3 * CF_MIN_RADIUS * Nova_SignPerturbation(k);
              
          x = neighbours2[j].x + orbital_r5 * cos(theta2);
          y = neighbours2[j].y + orbital_r5 * sin(theta2);      
@@ -687,22 +686,22 @@ void Nova_MapHorizon(double x,double y,double *min_x,double *min_y,double *max_x
 {
 if (x < *min_x)
    {
-   *min_x = x - 3*CF_MIN_RADIUS;
+   *min_x = x - 3.5*CF_MIN_RADIUS;
    }
 
 if (x > *max_x)
    {
-   *max_x = x + 3*CF_MIN_RADIUS;
+   *max_x = x + 3.5*CF_MIN_RADIUS;
    }
 
 if (y < *min_y)
    {
-   *min_y = y - 3*CF_MIN_RADIUS;
+   *min_y = y - 3.5*CF_MIN_RADIUS;
    }
 
 if (y > *max_y)
    {
-   *max_y = y + 3*CF_MIN_RADIUS;
+   *max_y = y + 3.5*CF_MIN_RADIUS;
    }
 }
 
@@ -837,20 +836,26 @@ void Nova_AlignmentCorrection(double *x,double *y,double cx,double cy)
 { int i;
 
 /* If strings are too close, move them apart*/
- 
-if (fabs(cy-*y) < 30)     
+
+if ((cy < *y) && (fabs(*y -cy) < 2*gdFontGetLarge()->h))
    {
-   if (cx < *x && *x -cx < CF_NODEVISIBLE * gdFontGetLarge()->w) // Text height is about 10
+   if ((cx < *x) && ((*x -cx) < CF_NODEVISIBLE * gdFontGetLarge()->w)) // Text height is about 10
       {
       *x = cx + (CF_NODEVISIBLE+2) * gdFontGetLarge()->w;
-      return;
       }
-
-   if (cx > *x && cx-*x < CF_NODEVISIBLE * gdFontGetLarge()->w) 
+   else if ((cx > *x) && ((cx-*x) < CF_NODEVISIBLE * gdFontGetLarge()->w)) 
       {
       *x = cx - (CF_NODEVISIBLE+2) * gdFontGetLarge()->w;
-      return;
       }
+   }
+
+if ((cy < *y) && ((*y -cy) < 2*gdFontGetLarge()->h)) // Text height is about 10
+   {
+   *y = cy + gdFontGetLarge()->h;
+   }
+else if ((cy > *y) && ((cy-*y) < 2*gdFontGetLarge()->h)) 
+   {
+   *y = cy - gdFontGetLarge()->h;
    }
 }
 
