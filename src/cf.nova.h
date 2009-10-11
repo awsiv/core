@@ -206,6 +206,7 @@ int Nova_SplayAdjacent(int i,double **adj,int tribe_size,struct CfGraphNode *tri
 void Nova_CopyNeighbours2(struct CfGraphNode *from,int tribe_size,struct CfGraphNode to[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int index1);
 void Nova_CopyNeighbours3(struct CfGraphNode *from,int tribe_size,struct CfGraphNode to[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE],int index1,int index2);
 int Nova_GetEvcTops(double **adj,int size, double *evc, int *tops);
+void Nova_Annealing(struct CfGraphNode neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size1,int size2[CF_TRIBE_SIZE],int size3[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size);
 void Nova_CentreScale(struct CfDataView *cfv,double min_x,double max_x,double min_y,double max_y);
 int Nova_X(struct CfDataView cfv,double x);
 int Nova_Y(struct CfDataView cfv,double y);

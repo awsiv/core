@@ -201,10 +201,18 @@ for (i = 0; i < size1; i++)
 
       lagrange = neighbours1[i].radius + neighbours2[i][j].radius;   
          
-      orbital_r3 = Nova_Orbit(cfv,2.0 * lagrange,min_x,min_y,max_x,max_y);
+      orbital_r3 = Nova_Orbit(cfv,2.5 * lagrange,min_x,min_y,max_x,max_y);
       orbital_r4 = Nova_Orbit(cfv,4.0 * lagrange,min_x,min_y,max_x,max_y);
       
-      if (size3[i][j] > 2)
+      if (size3[i][j] > 5)
+         {
+         orbital_r4 *= 2.0;
+         orbital_r4 += 0.2 * orbital_r4;
+
+         x = neighbours1[i].x + orbital_r4 * cos(theta1);
+         y = neighbours1[i].y + orbital_r4 * sin(theta1);
+         }
+      else if (size3[i][j] > 2)
          {
          orbital_r4 += 0.2 * orbital_r4;
 
@@ -235,13 +243,21 @@ for (i = 0; i < size1; i++)
       for (k = 0; k < size3[i][j]; k++)
          {
          lagrange = neighbours2[i][j].radius + neighbours3[i][j][k].radius;
-               
-         orbital_r5 = 2.0 * lagrange + CF_MIN_RADIUS * Nova_SignPerturbation(k);
-             
+
+         orbital_r5 = Nova_Orbit(cfv,2.0 * lagrange,min_x,min_y,max_x,max_y);
+         
+         if (size3[i][j] > 5)
+            {
+            orbital_r5 *= 2.0;
+            }
+         
+         orbital_r5 += 0.2 * orbital_r5 * Nova_SignPerturbation(j);
+                  
          x = neighbours2[i][j].x + orbital_r5 * cos(theta2);
          y = neighbours2[i][j].y + orbital_r5 * sin(theta2);      
 
          Nova_AlignmentCorrection(&x,&y,neighbours2[i][j].x,neighbours2[i][j].y);
+
          Nova_MapHorizon(x,y,&min_x,&min_y,&max_x,&max_y);
       
          neighbours3[i][j][k].x = x;
@@ -257,6 +273,11 @@ for (i = 0; i < size1; i++)
 
    Nova_TribeUnion(trail,tmp2,tribe_size,size2[i]);
    }
+
+
+/* Do some annealing */
+
+//Nova_Annealing(neighbours3,size1,size2,size3,tribe_size);
 
 /* Now plot everything after corrections for centre of mass */
 
@@ -853,51 +874,16 @@ else if ((cy > *y) && ((cy-*y) < CF_MIN_RADIUS))
 
 double Nova_Orbit(struct CfDataView cfv,double radius,double min_x,double max_x,double min_y,double max_y)
 
-{ int escape_vel = false, collapsar = false;
-     
+{ double min_orbit = gdFontGetLarge()->w * CF_NODEVISIBLE / (CF_CONTAINMENT_FACTOR * cfv.scale_x) * (double)cfv.width;
 
-return radius;
-/*
-if (max_x > cfv.width - cfv.origin_x)
+if (radius < min_orbit)
    {
-   escape_vel = true;
-   }
-
-if (min_x < cfv.width - cfv.origin_x)
-   {
-   escape_vel = true;
-   }
-
-if (max_y > cfv.height - cfv.origin_y)
-   {
-   escape_vel = true;
-   }
-
-if (min_y < cfv.height - cfv.origin_y)
-   {
-   escape_vel = true;
-   }
-
-if (max_x - min_x <= cfv.width && max_y - min_y <= cfv.height)
-   {
-   collapsar = true;
-   }
-
-if (escape_vel && radius > cfv.width/3)
-   {
-   return radius * 0.75; // Heuristics
-   }
-
-// Make sure major_r > 2 * minor_r/tan theta to have space   
-
-if (collapsar)
-   {
-   return radius * 1.8;
+   return min_orbit;
    }
 else
    {
    return radius;
-   } */
+   }
 }
 
 #endif
