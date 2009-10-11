@@ -596,7 +596,7 @@ tribe[i].fullname =  NULL;
 tribe[i].potential = 0.0;      
 tribe[i].x = 0.0;
 tribe[i].y = 0.0;
-tribe[i].radius = 0.0;
+tribe[i].radius = CF_MIN_RADIUS;
 tribe[i].orbit_parent = parent;
 tribe[i].distance_from_centre = 0;
 }
