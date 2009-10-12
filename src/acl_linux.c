@@ -205,6 +205,26 @@ for (rp = aces; rp != NULL; rp=rp->next)
          acl_free((void*)acl_new);
          return false;
          }
+		 
+	   // clear ace_current's permissions to avoid ace_parsed from last 
+	   // loop iteration to be taken into account when applying mode below
+	   if((acl_get_permset(ace_current, &perms) != 0))
+	     {  
+         CfOut(cf_error,"acl_get_permset","!! Error obtaining permset for 'ace_current'");
+         acl_free((void*)acl_existing);
+         acl_free((void*)acl_tmp);
+         acl_free((void*)acl_new);
+         return false;		   
+		 }
+	   
+	   if(acl_clear_perms(perms) != 0)
+	     {
+         CfOut(cf_error,"acl_clear_perms","!! Error clearing permset for 'ace_current'");
+         acl_free((void*)acl_existing);
+         acl_free((void*)acl_tmp);
+         acl_free((void*)acl_new);
+         return false;		   	   
+	     }
       }
 
    // mode string should be prefixed with an entry seperator
@@ -222,7 +242,7 @@ for (rp = aces; rp != NULL; rp=rp->next)
 
    if (acl_get_permset(ace_current, &perms) != 0)
       {
-      CfOut(cf_error,"","!! Error obtaining permset for 'cf_ace'.");
+      CfOut(cf_error,"","!! Error obtaining permset for 'cf_ace'");
       acl_free((void*)acl_existing);
       acl_free((void*)acl_tmp);
       acl_free((void*)acl_new);
@@ -351,7 +371,7 @@ switch (equals)
 
    default:
        result = false;
-       CfOut(cf_verbose,"","!! Unable to compare access and default ACEs");
+       CfOut(cf_error,"","!! Unable to compare access and default ACEs");
    }
 
 acl_free(acl_access);
@@ -498,7 +518,7 @@ while (more_aces)
 
       if (id_curr == NULL)
          {
-         CfOut(cf_error,"acl_get_qualifier","Couldn'r extract qualifier");
+         CfOut(cf_error,"acl_get_qualifier","!! Couldn't extract qualifier");
          return NULL;
          }
 
@@ -840,7 +860,7 @@ int Nova_ParseModePosixLinux(char *mode, acl_permset_t perms)
   Takes a Cfengine-syntax mode string and existing Posix
   Linux-formatted permissions on the file system object as
   arguments. The mode-string will be applied on the permissions.
-  Returns 0 on success, 1 othervise.
+  Returns true on success, false otherwise.
 */
 
 { int retv;
@@ -957,8 +977,8 @@ while (more_entries)
                 break;
 
             default:
-                CfOut(cf_error,"","No linux support for generic permission flag '%c'",*mode);
-                return -1;
+                CfOut(cf_error,"","!! No linux support for native permission flag '%c'",*mode);
+                return false;
             }
 
          if (op == add)

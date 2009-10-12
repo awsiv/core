@@ -314,7 +314,7 @@ else
    return false;
    }
 
-if (chkid)  // look for following "id:" TODO: Accept only alphanumeric?
+if (chkid)  // look for following "id:"
    {
    if(*str == ':')
       {
@@ -334,8 +334,8 @@ if (chkid)  // look for following "id:" TODO: Accept only alphanumeric?
          }
       else if(*str == '\0')
          {
-         // TODO: Error: Log: nothing following id string
-         return -1;
+		 CfOut(cf_error,"","Nothing following id string in ACE '%s'", ace);
+         return false;
          }
       }
    }
