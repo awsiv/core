@@ -141,12 +141,20 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
 
 void Nova_Title(struct CfDataView *cfv,int col)
 
-{
+{ char datestr[CF_MAXVARSIZE];
+  char title[CF_MAXVARSIZE];
+  time_t now = time(NULL);
+
+strcpy(datestr,ctime(&now));  
+Chop(datestr);
+
+snprintf(title,CF_MAXVARSIZE-1,"%s @ %s",cfv->title,datestr);
+    
 gdImageString(cfv->im,
               gdFontGetGiant(),
-              cfv->im->sx / 2 - (strlen(cfv->title) * gdFontGetGiant()->w / 2),
+              cfv->im->sx / 2 - (strlen(title) * gdFontGetGiant()->w / 2),
               cfv->margin/2,
-              cfv->title,col);
+              title,col);
 }
 
 /*****************************************************************************/

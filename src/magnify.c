@@ -189,7 +189,7 @@ void Nova_DrawMagQAxes(struct CfDataView *cfv,int col)
   double q,dq;
   time_t now;
   int ticksize = cfv->height/50;
-  static char *hours[4] = { "one","two","three","four"};
+  static char *hours[4] = { "t-4 hrs","t-3 hrs","t-2 hrs","t-1 hrs"};
 
 gdImageLine(cfv->im, cfv->origin_x, cfv->origin_y, cfv->max_x, cfv->origin_y, col);
 gdImageLine(cfv->im, cfv->origin_x, cfv->origin_y, cfv->origin_x, cfv->max_y, col);

@@ -159,7 +159,7 @@ for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
    cfv->data_E[(int)sx] = ry;
    cfv->bars[(int)sx] = rs;
 
-   if (ry > 0.1)
+   if (ry > 0)
       {
       have_data = true;
       }
