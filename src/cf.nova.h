@@ -98,7 +98,7 @@ struct CfGraphNode
 #define CF_VALID_GPERMS "rwx"
 
 // Valid native permission characters
-#define CF_VALID_NPERMS_NT "drtxTwabBpcoD"
+#define CF_VALID_NPERMS_NTFS "drtxTwabBpcoD"
 #define CF_VALID_NPERMS_POSIX "rwx"
 
 // Valid operations (first char of mode)

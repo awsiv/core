@@ -38,6 +38,9 @@ if(IsDir(file_path))
     return false;
     }
    }
+#else /* NOT HAVE_LIBACL */
+cfPS(cf_error,CF_FAIL,"",pp,a,"!! Posix ACLs are not supported on this Linux system - install the Posix acl library");
+PromiseRef(cf_error,pp);
 #endif
 
 return true;

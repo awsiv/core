@@ -38,7 +38,7 @@ int NovaWin_UserNameToSid(char *userName, SID *sid, DWORD sidSz)
       return false;
     }
 
-  if(accType == SidTypeGroup)
+  if(accType == SidTypeGroup)  // TODO: Better test ?
     {
       CfOut(cf_error,"","SID type is expected to be user, but is group");
       return false;
@@ -65,7 +65,7 @@ int NovaWin_GroupNameToSid(char *groupName, SID *sid, DWORD sidSz)
       return false;
     }
 
-  if(accType == SidTypeUser)
+  if(accType == SidTypeUser)  // TODO: Better test ?
     {
       CfOut(cf_error,"","SID type is expected to be group, but is user");
       return false;

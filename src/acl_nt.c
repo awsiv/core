@@ -127,7 +127,7 @@ int Nova_CheckNtACEs(char *file_path, struct Rlist *aces, inherit_t inherit, enu
 
 
   // convert existing aces to another format (EXPLICIT_ACCESS)
-  if(!AclToExplicitAccess(eas, eaCount, existingAcl))
+  if(!Nova_AclToExplicitAccess(eas, eaCount, existingAcl))
     {
       CfOut(cf_error,"","!! Could not convert ACL to EXPLICIT_ACCESS structures");
       free(eas);
@@ -138,26 +138,26 @@ int Nova_CheckNtACEs(char *file_path, struct Rlist *aces, inherit_t inherit, enu
  // if we are overwriting, remove all aces of the inheritance type we are overwriting
   if(method == cfacl_overwrite)
     {
-      RemoveEasByInheritance(eas, &eaCount, inherit);
+      Nova_RemoveEasByInheritance(eas, &eaCount, inherit);
     }
 
-  if(!ParseAcl(file_path, aces, eas, &eaCount, inherit))
+  if(!Nova_ParseAcl(file_path, aces, eas, &eaCount, inherit))
     {
       CfOut(cf_error,"","!! Could not parse ACL");
-      FreeSids(eas, eaCount);
+      Nova_FreeSids(eas, eaCount);
       free(eas);
       LocalFree(existingSecDesc);
       return false;
     }
 
   // remove aces with empty permissions
-  RemoveEmptyEas(eas, &eaCount);
+  Nova_RemoveEmptyEas(eas, &eaCount);
 
   // check if the ACL has been modified (compare existing and new)
-  if(!ACLEquals(&aclsEqual, eas, eaCount, existingAcl))
+  if(!Nova_ACLEquals(&aclsEqual, eas, eaCount, existingAcl))
     {
       CfOut(cf_error,"","!! Failed while comparing new and existing ACL");
-      FreeSids(eas, eaCount);
+      Nova_FreeSids(eas, eaCount);
       free(eas);
       LocalFree(existingSecDesc);
       return false;
@@ -165,14 +165,14 @@ int Nova_CheckNtACEs(char *file_path, struct Rlist *aces, inherit_t inherit, enu
 
   if(aclsEqual)
     {
-      cfPS(cf_inform,CF_NOP,"",pp,a,"-> %s ACL on \"%s\" needs no modification (was already the same as access ACL).", aclTypeStr, file_path);
+      cfPS(cf_inform,CF_NOP,"",pp,a,"-> %s ACL on \"%s\" needs no modification.", aclTypeStr, file_path);
     }
   else
     {
-      if(!SetEas(file_path, eas, eaCount))
+      if(!Nova_SetEas(file_path, eas, eaCount))
 	{
 	  CfOut(cf_error,"","!! Could not set the ACL");
-	  FreeSids(eas, eaCount);
+	  Nova_FreeSids(eas, eaCount);
 	  free(eas);
 	  LocalFree(existingSecDesc);
 	  return false;
@@ -181,7 +181,7 @@ int Nova_CheckNtACEs(char *file_path, struct Rlist *aces, inherit_t inherit, enu
       cfPS(cf_inform,CF_CHG,"",pp,a,"-> %s ACL on \"%s\" successfully changed.", aclTypeStr, file_path);
     }
 
-  FreeSids(eas, eaCount);
+  Nova_FreeSids(eas, eaCount);
   free(eas);
   LocalFree(existingSecDesc);
 
@@ -229,7 +229,7 @@ int Nova_CheckNtDefaultClearACL(char *file_path, struct Attributes a, struct Pro
 
 
   // convert existing aces to another format (EXPLICIT_ACCESS)
-  if(!AclToExplicitAccess(eas, eaCount, existingAcl))
+  if(!Nova_AclToExplicitAccess(eas, eaCount, existingAcl))
     {
       CfOut(cf_error,"","!! Could not convert ACL to EXPLICIT_ACCESS structures");
       free(eas);
@@ -238,13 +238,13 @@ int Nova_CheckNtDefaultClearACL(char *file_path, struct Attributes a, struct Pro
     }
 
   // remove all default aces
-  RemoveEasByInheritance(eas, &eaCount, INHERIT_DEFAULT_ONLY);
+  Nova_RemoveEasByInheritance(eas, &eaCount, INHERIT_DEFAULT_ONLY);
   
   // check if the ACL has been modified (compare existing and new)
-  if(!ACLEquals(&aclsEqual, eas, eaCount, existingAcl))
+  if(!Nova_ACLEquals(&aclsEqual, eas, eaCount, existingAcl))
     {
       CfOut(cf_error,"","!! Failed while comparing new and existing ACL");
-      FreeSids(eas, eaCount);
+      Nova_FreeSids(eas, eaCount);
       free(eas);
       LocalFree(existingSecDesc);
       return false;
@@ -256,10 +256,10 @@ int Nova_CheckNtDefaultClearACL(char *file_path, struct Attributes a, struct Pro
     }
   else
     {
-      if(!SetEas(file_path, eas, eaCount))
+      if(!Nova_SetEas(file_path, eas, eaCount))
 	{
 	  CfOut(cf_error,"","!! Could not set the ACL");
-	  FreeSids(eas, eaCount);
+	  Nova_FreeSids(eas, eaCount);
 	  free(eas);
 	  LocalFree(existingSecDesc);
 	  return false;
@@ -268,7 +268,7 @@ int Nova_CheckNtDefaultClearACL(char *file_path, struct Attributes a, struct Pro
       cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully cleared.", file_path);
     }
 
-  FreeSids(eas, eaCount);
+  Nova_FreeSids(eas, eaCount);
   free(eas);
   LocalFree(existingSecDesc);
 
@@ -319,7 +319,7 @@ int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, struct Attributes a, str
 
 
   // convert existing aces to another format (EXPLICIT_ACCESS)
-  if(!AclToExplicitAccess(eas, eaCount, existingAcl))
+  if(!Nova_AclToExplicitAccess(eas, eaCount, existingAcl))
     {
       CfOut(cf_error,"","!! Could not convert ACL to EXPLICIT_ACCESS structures");
       free(eas);
@@ -340,7 +340,7 @@ int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, struct Attributes a, str
       if(eas[i].grfInheritance & INHERIT_ONLY_ACE)  // default-only ACE: remove it
 	{
 	  // free this entry's SID and move last entry to its place
-	  FreeSids(&eas[i], 1);
+	  Nova_FreeSids(&eas[i], 1);
 	  
 	  memset(&eas[i], 0, sizeof(EXPLICIT_ACCESS));
 	  memmove(&eas[i], &eas[eaCount - 1], sizeof(EXPLICIT_ACCESS));
@@ -354,14 +354,14 @@ int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, struct Attributes a, str
 
   if(!modified)
     {
-      cfPS(cf_inform,CF_NOP,"",pp,a,"-> Default ACL on \"%s\" needs no modification.", file_path);
+      cfPS(cf_inform,CF_NOP,"",pp,a,"-> Default ACL on \"%s\" needs no modification (was already the same as access ACL).", file_path);
     }
   else
     {
-      if(!SetEas(file_path, eas, eaCount))
+      if(!Nova_SetEas(file_path, eas, eaCount))
 	{
 	  CfOut(cf_error,"","!! Could not set the ACL");
-	  FreeSids(eas, eaCount);
+	  Nova_FreeSids(eas, eaCount);
 	  free(eas);
 	  LocalFree(existingSecDesc);
 	  return false;
@@ -371,7 +371,7 @@ int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, struct Attributes a, str
     }
 
 
-  FreeSids(eas, eaCount);
+  Nova_FreeSids(eas, eaCount);
   free(eas);
   LocalFree(existingSecDesc);
   
@@ -395,7 +395,7 @@ void Nova_RemoveEasByInheritance(EXPLICIT_ACCESS *eas, int *eaCount, inherit_t i
 	      if((eas[i].grfInheritance & ~INHERITED_ACE) == 0)  // ace applies ONLY to access, remove it
 		{
 		  // free this entry's SID and move last entry to its place
-		  FreeSids(&eas[i], 1);
+		  Nova_FreeSids(&eas[i], 1);
 	      
 		  memset(&eas[i], 0, sizeof(EXPLICIT_ACCESS));
 		  memmove(&eas[i], &eas[*eaCount - 1], sizeof(EXPLICIT_ACCESS));
@@ -422,7 +422,7 @@ void Nova_RemoveEasByInheritance(EXPLICIT_ACCESS *eas, int *eaCount, inherit_t i
 	      if((eas[i].grfInheritance & INHERIT_ONLY_ACE) != 0)  // ace applies only to default, remove it
 		{
 		  // free this entry's SID and move last entry to its place
-		  FreeSids(&eas[i], 1);
+		  Nova_FreeSids(&eas[i], 1);
 	      
 		  memset(&eas[i], 0, sizeof(EXPLICIT_ACCESS));
 		  memmove(&eas[i], &eas[*eaCount - 1], sizeof(EXPLICIT_ACCESS));
@@ -452,7 +452,7 @@ void Nova_RemoveEmptyEas(EXPLICIT_ACCESS *eas, int *eaCount)
       if(!(eas[i].grfAccessPermissions & (~CF_MINIMUM_PERMS_NT)))
 	{
 	  // free this entry's SID and move last entry to its place
-	  FreeSids(&eas[i], 1);
+	  Nova_FreeSids(&eas[i], 1);
 
 	  memset(&eas[i], 0, sizeof(EXPLICIT_ACCESS));
 	  memmove(&eas[i], &eas[*eaCount - 1], sizeof(EXPLICIT_ACCESS));
@@ -496,7 +496,7 @@ int Nova_ACLEquals(int *aclsEqual, EXPLICIT_ACCESS *firstEas, int eaCount, ACL *
 
   // convert the alc into a EA-struct
   
-  if(!AclToExplicitAccess(secondEas, eaCount, acl))
+  if(!Nova_AclToExplicitAccess(secondEas, eaCount, acl))
     {
       CfOut(cf_error,"","!! Could not convert ACL to EXPLICIT_ACCESS structures");
       return false;
@@ -509,7 +509,7 @@ int Nova_ACLEquals(int *aclsEqual, EXPLICIT_ACCESS *firstEas, int eaCount, ACL *
 	{
 	  if(j == eaCount)  // ace not found
 	    {
-	      FreeSids(secondEas, eaCount);
+	      Nova_FreeSids(secondEas, eaCount);
 	      *aclsEqual = false;
 	      return true;
 	    }
@@ -527,7 +527,7 @@ int Nova_ACLEquals(int *aclsEqual, EXPLICIT_ACCESS *firstEas, int eaCount, ACL *
     }
 
 
-  FreeSids(secondEas, eaCount);
+  Nova_FreeSids(secondEas, eaCount);
   
   *aclsEqual = true;
   return true;
@@ -545,7 +545,7 @@ int Nova_AclToExplicitAccess(EXPLICIT_ACCESS *eas, int eaCount, ACL *acl)
       if(!GetAce(acl, i, (void **)&currAce))
 	{
 	  CfOut(cf_error,"GetAce","!! Could not get ACE");
-	  FreeSids(eas, i);
+	  Nova_FreeSids(eas, i);
 	  return false;
 	}
       
@@ -576,14 +576,14 @@ int Nova_AclToExplicitAccess(EXPLICIT_ACCESS *eas, int eaCount, ACL *acl)
 	  
       if(sidAlloc == NULL)
       {
-        FreeSids(eas, i);
+        Nova_FreeSids(eas, i);
 	FatalError("Memory allocation in Nova_AclToExplicitAccess()");
         return false;
       }
 
       memcpy(sidAlloc, &(currAce->SidStart), GetLengthSid((SID *)&(currAce->SidStart)));
       
-      eas[i].Trustee.ptstrName = (void *)sidAlloc;  // freed in FreeSids()
+      eas[i].Trustee.ptstrName = (void *)sidAlloc;  // freed in Nova_FreeSids()
     }
 
   return true;
@@ -619,19 +619,19 @@ int Nova_ParseAcl(char *file_path, struct Rlist *aces, EXPLICIT_ACCESS *eas, int
       splitOldEa = NULL;
 
       // parse "entity-type:id" into SID
-      if(!EntityToSid(&currAce, sid, sizeof(sidBuf)))
+      if(!Nova_EntityToSid(&currAce, sid, sizeof(sidBuf)))
 	{
 	  CfOut(cf_error,"","!! Could not obtain the security identifier corresponding to the entity in \"%s\"", (char *)rp->item);
-	  FreeSids(firstUsedEa, numNewEas);
+	  Nova_FreeSids(firstUsedEa, numNewEas);
 	  return false;
 	}
 
       // check if this sid and perm-type is present in any existing aces
-      currEa = FindAceNt(eas, nextFreeEa, sid, ParsePermTypeNt((char *)rp->item), inherit);  // TODO: Pointer from integer ?
+      currEa = Nova_FindAceNt(eas, nextFreeEa, sid, Nova_ParsePermTypeNt((char *)rp->item), inherit);  // TODO: Pointer from integer ?
       if(currEa == NULL)
 	{
 	  // check if an ace which applies both to default and access exists, and split it into two if so
-	  currEa = FindAceNt(eas, nextFreeEa, sid, ParsePermTypeNt((char *)rp->item), INHERIT_ACCESS_AND_DEFAULT);  // TODO: Pointer from integer ?
+	  currEa = Nova_FindAceNt(eas, nextFreeEa, sid, Nova_ParsePermTypeNt((char *)rp->item), INHERIT_ACCESS_AND_DEFAULT);  // TODO: Pointer from integer ?
 	  if(currEa != NULL)
 	    {
 	      // we leave the existing ace unmodified for now, but may dedicate it fully to one
@@ -657,13 +657,13 @@ int Nova_ParseAcl(char *file_path, struct Rlist *aces, EXPLICIT_ACCESS *eas, int
 	  
 	  if(sidAlloc == NULL)
 	    {
-	      FreeSids(firstUsedEa, numNewEas);
+	      Nova_FreeSids(firstUsedEa, numNewEas);
 	      FatalError("Memory allocation in Nova_ParseAcl()");
 	      return false;
 	    }
 
 	  memcpy(sidAlloc, sid, GetLengthSid(sid));
-	  currEa->Trustee.ptstrName = (void *)sidAlloc;  // freed in FreeSids()
+	  currEa->Trustee.ptstrName = (void *)sidAlloc;  // freed in Nova_FreeSids()
 	  
 	  if(inherit == INHERIT_ACCESS_ONLY)
 	    {
@@ -683,10 +683,10 @@ int Nova_ParseAcl(char *file_path, struct Rlist *aces, EXPLICIT_ACCESS *eas, int
       currAce++;
 
       // apply mode-string on permission bits
-      if(!ParseModeNt(&currAce, &(currEa->grfAccessPermissions)))
+      if(!Nova_ParseModeNt(&currAce, &(currEa->grfAccessPermissions)))
 	{
 	  CfOut(cf_error,"","!! Could not parse mode-string in ace \"%s\"", (char *)rp->item);
-	  FreeSids(firstUsedEa, numNewEas);
+	  Nova_FreeSids(firstUsedEa, numNewEas);
 	  return false;
 	}
 
@@ -698,12 +698,12 @@ int Nova_ParseAcl(char *file_path, struct Rlist *aces, EXPLICIT_ACCESS *eas, int
 	  break;
 
 	case ':':
-	  currEa->grfAccessMode = ParsePermTypeNt((char *)rp->item);
+	  currEa->grfAccessMode = Nova_ParsePermTypeNt((char *)rp->item);
 	  break;
 
 	default:
 	  CfOut(cf_error,"","!! Element following mode-string in ace \"%s\" is not ':' or NULL-terminator", (char *)rp->item);
-	  FreeSids(firstUsedEa, numNewEas);
+	  Nova_FreeSids(firstUsedEa, numNewEas);
 	  return false;
 	}
 
@@ -715,7 +715,7 @@ int Nova_ParseAcl(char *file_path, struct Rlist *aces, EXPLICIT_ACCESS *eas, int
 	  if(currEa->grfAccessPermissions == splitOldEa->grfAccessPermissions)
 	    {
 	      // remove new ace, and set existing to apply to both access and default
-	      FreeSids(currEa, 1);
+	      Nova_FreeSids(currEa, 1);
 	      nextFreeEa--;
 	      numNewEas--;
 
@@ -857,7 +857,7 @@ int Nova_EntityToSid(char **acePtr, SID *sid, DWORD sidSz)
 	  *acePtr += 1;
 	}
 
-      if(!UserNameToSid(nameBuf, sid, sidSz))
+      if(!NovaWin_UserNameToSid(nameBuf, sid, sidSz))
 	{
 	  return false;
 	}
@@ -873,7 +873,7 @@ int Nova_EntityToSid(char **acePtr, SID *sid, DWORD sidSz)
 	  *acePtr += 1;
 	}
 
-      if(!GroupNameToSid(nameBuf, sid, sidSz))
+      if(!NovaWin_GroupNameToSid(nameBuf, sid, sidSz))
 	{
 	  return false;
 	}
@@ -884,7 +884,7 @@ int Nova_EntityToSid(char **acePtr, SID *sid, DWORD sidSz)
       *acePtr += 3;
       
       // "S-1-1-0" is (always) the "Everyone" group
-      if(!StringToSid("S-1-1-0", sid, sidSz))
+      if(!NovaWin_StringToSid("S-1-1-0", sid, sidSz))
 	{
 	  CfOut(cf_error,"","!! Could not find the security identifier of group \"Everyone\" (assumed to be \"S-1-1-0\") - shouldn't happen");
 	  return false;
@@ -988,7 +988,7 @@ int Nova_ParseModeNt(char **modePtr, ACCESS_MASK *perms)
 	{
 	  mode++;
 
-	  while(IsIn(*mode,CF_VALID_NPERMS_NT))
+	  while(IsIn(*mode,CF_VALID_NPERMS_NTFS))
 	    {
 	      switch(*mode)
 		{

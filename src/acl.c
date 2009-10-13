@@ -27,7 +27,7 @@ if (LICENSES == 0)
 
 if (!Nova_CheckACLSyntax(file, a.acl,pp))
    {
-   cfPS(cf_error,CF_INTERPT,"",pp,a," !! Syntax error in access control list for %s",file);
+   cfPS(cf_error,CF_INTERPT,"",pp,a," !! Syntax error in access control list for \"%s\"",file);
    PromiseRef(cf_error,pp);
    return;
    }
@@ -39,14 +39,16 @@ switch(a.acl.acl_type)
      // fallthrough: acl_type defaults to generic
 
    case cfacl_generic:
+
        switch (VSYSTEMHARDCLASS)
           {
           case linuxx:
-              if(!Nova_CheckPosixLinuxACL(file,a.acl,a,pp))
-              {
-		// TODO: Do something more here ? (cfPS()/PromiseRef() alreay called), otherwise, remove if, do same below
-              }
+	      Nova_CheckPosixLinuxACL(file,a.acl,a,pp);
               break;
+
+	  case mingw:
+	      Nova_CheckNtACL(file,a.acl,a,pp);
+	      break;
 
           default:
               CfOut(cf_inform,"","!! ACLs are not yet supported on this system.");
@@ -55,6 +57,7 @@ switch(a.acl.acl_type)
        break;
 
    case cfacl_posix:
+
        switch (VSYSTEMHARDCLASS)
           {
           case linuxx:
@@ -62,13 +65,23 @@ switch(a.acl.acl_type)
               break;
 
           default:
-              CfOut(cf_inform,"","!! Posix ACLs not supported on this system");
+              CfOut(cf_inform,"","!! Posix ACLs are not supported on this system");
               break;
            }
        break;
 
    case cfacl_ntfs:
-       CfOut(cf_inform,"","!! NTFS ACLs not yet implemented");
+
+       switch (VSYSTEMHARDCLASS)
+          {
+	  case mingw:
+	      Nova_CheckNtACL(file,a.acl,a,pp);
+	      break;
+
+          default:
+              CfOut(cf_inform,"","!! NTFS ACLs are not supported on this system");
+              break;
+           }
        break;
 
    default:
@@ -125,9 +138,9 @@ switch(acl.acl_type)
        break;
 
    case cfacl_ntfs:
-       //valid_nperms = CF_VALID_NPERMS_NTFS;
-       // deny_support = true;
-     // mask_support = false;
+       valid_nperms = CF_VALID_NPERMS_NTFS;
+       deny_support = true;
+       mask_support = false;
        break;
 
    default:
