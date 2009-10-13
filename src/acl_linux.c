@@ -62,7 +62,12 @@ int Nova_CheckPosixLinuxInheritACEs(struct Rlist *aces, enum cf_acl_method metho
 
 switch(directory_inherit)
    {
-   case cfacl_specify:  // default ALC is specified in config
+   case cfacl_nochange:  // no change always succeeds
+
+       result = true;
+       break;
+
+   case cfacl_specify:  // default ALC is specified in promise
 
        result = Nova_CheckPosixLinuxACEs(aces, method, file_path, ACL_TYPE_DEFAULT,a,pp);
        break;
@@ -72,7 +77,7 @@ switch(directory_inherit)
        result = Nova_CheckDefaultEqualsAccessACL(file_path, a, pp);
        break;
 
-   case cfacl_none:  // default ALC should be empty
+   case cfacl_clear:  // default ALC should be empty
 
        result = Nova_CheckDefaultClearACL(file_path, a, pp);
        break;

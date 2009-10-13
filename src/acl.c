@@ -197,7 +197,7 @@ if (acl->acl_type == cfacl_notype)
 
 if(acl->acl_directory_inherit == cfacl_noinherit && IsDir(path))
    {
-   acl->acl_directory_inherit = cfacl_parent;
+   acl->acl_directory_inherit = cfacl_nochange;
    }
 }
 
@@ -210,9 +210,7 @@ int Nova_CheckDirectoryInherit(char *path, struct CfACL *acl, struct Promise *pp
   Returns true if so, or false otherwise.
 */
 
-{int i;
-  enum cf_acl_type acltypes_specify[] = { cfacl_posix };  // ACL types supporting specify
-  int valid = false;
+{int valid = false;
 
 
   switch(acl->acl_directory_inherit)
@@ -222,27 +220,12 @@ int Nova_CheckDirectoryInherit(char *path, struct CfACL *acl, struct Promise *pp
 
       break;
 
- case cfacl_specify:
-   // acl_directory_inherit => specify is not supported by all ACL types
-   for(i = 0; i < sizeof(acltypes_specify) / sizeof(enum cf_acl_type); i++)
-      {
-      if (acl->acl_type == acltypes_specify[i])
-         {
-         valid = true;
-         }
-      }
-
-   if(!valid)
-     {
-     CfOut(cf_error,"","This ACL type does not support acl_directory_inherit => specify.");
-     PromiseRef(cf_error,pp);
-     break;
-     }
+  case cfacl_specify:  // NOTE: we assume all acls support specify
 
    // fallthrough
  case cfacl_parent:
-   // fallthrough
 
+   // fallthrough
  default:
 
     if(IsDir(path))
