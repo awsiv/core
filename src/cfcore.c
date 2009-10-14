@@ -147,6 +147,14 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        {
        continue;
        }    
+
+    snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
+    
+    if (stat(img,&sb) == -1)
+       {
+       terminated2 = true;
+       continue;
+       }
     
     fprintf(fp,"<th nowrap><font color=\"#888888\">%s</font><br><br><a href=\"%s\">%s</a><br><small>Latest data<br>%s</small></th>\n",host,url,img,datestr);
 
@@ -157,13 +165,6 @@ for (i = 0; i < CF_OBSERVABLES; i++)
     if (stat(img,&sb) == -1)
        {
        terminated1 = true;
-       }
-
-    snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
-        
-    if (stat(img,&sb) == -1)
-       {
-       terminated2 = true;
        }
 
     snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
@@ -190,7 +191,8 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        }
     else
        {
-       fprintf(fp,"<td bgcolor=red><center>Data stream terminated</center></td>\n");
+       continue;
+       //fprintf(fp,"<td bgcolor=red><center>Data stream terminated</center></td>\n");
        }
 
     if (!terminated3)

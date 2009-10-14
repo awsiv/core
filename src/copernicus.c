@@ -886,4 +886,17 @@ else
    }
 }
 
+#else
+
+void Nova_IlluminateTribe(int *tribe_id,struct CfGraphNode *tribe_node,double **tribe_adj,int tribe_size,double *tribe_evc,char **n,int topic,double **full_adj,int dim_full,int tertiary_boundary)
+
+{
+}
+
+
+void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,double **tribe_adj,int tribe_size,double *tribe_evc,char **n,int topic,double **full_adj,int dim_full,int tertiary_boundary)
+{
+}
+    
+
 #endif
