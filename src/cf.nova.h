@@ -29,7 +29,7 @@
 #endif
 
 #undef PACKAGE
-#undef AUTOCONF_HOSTNAME
+// #undef AUTOCONF_HOSTNAME TODO: Does removal cause troble ?
 
 #define CF_SHADES 25
 #define CF_TIMESERIESDATA 168
@@ -41,7 +41,7 @@
 
 struct CfDataView
    {
-#ifdef HAVE_GD_H      
+#ifdef HAVE_GD_H
    gdImagePtr im;
 #endif
    int width;
@@ -76,7 +76,7 @@ struct CfGraphNode
    int tribe_id;
    char shortname[CF_SMALLBUF];
    char *fullname;
-   double potential;      
+   double potential;
    double x,y;
    double radius;
    double angle;
@@ -132,8 +132,8 @@ int Nova_CheckDirectoryInherit(char *path, struct CfACL *acl, struct Promise *pp
 
 /* acl_linux.c */
 
-#ifdef HAVE_LIBACL
 int Nova_CheckPosixLinuxACL(char *file_path, struct CfACL acl, struct Attributes a, struct Promise *pp);
+#ifdef HAVE_LIBACL
 int Nova_CheckPosixLinuxAccessACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, struct Attributes a, struct Promise *pp);
 int Nova_CheckPosixLinuxInheritACEs(struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path, struct Attributes a, struct Promise *pp);
 int Nova_CheckPosixLinuxACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type, struct Attributes a, struct Promise *pp);
@@ -149,8 +149,8 @@ int Nova_PermsetEquals(acl_permset_t first, acl_permset_t second);
 
 /* acl_nt.c */
 
-#ifdef MINGW
 int Nova_CheckNtACL(char *file_path, struct CfACL acl, struct Attributes a, struct Promise *pp);
+#ifdef MINGW
 int Nova_CheckNtACEs(char *file_path, struct Rlist *aces, inherit_t inherit, enum cf_acl_method method, struct Attributes a, struct Promise *pp);
 int Nova_CheckNtInheritACEs(char *file_path, struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, struct Attributes a, struct Promise *pp);
 int Nova_CheckNtDefaultClearACL(char *file_path, struct Attributes a, struct Promise *pp);
