@@ -92,6 +92,16 @@ struct CfGraphNode
 
 /*****************************************************************************/
 
+struct CfFileLine
+   {
+   char  *text;
+   int    counter;
+   struct CfFileLine *next;
+   struct CfFileLine *prev;
+   };
+
+/*****************************************************************************/
+
 /* Valid ACL syntax values, from documentation */
 
 // Valid generic permissions
@@ -340,6 +350,15 @@ void Nova_LookupClassName(int n,char *name, char *desc);
 /* processes.c */
 
 char *Nova_GetProcessOptions(void);
+void Nova_LogFileChange(char *file,struct Attributes a,struct Promise *pp);
+void Nova_DoFileDiff(char *file,char *destination,struct stat sb,struct stat dsb,struct Attributes a,struct Promise *pp);
+int Nova_GetFirstChangePosition(char *file,char *destination);
+int Nova_FileIsBinary(char *name,int size,int maxsize);
+void Nova_ReportFileChange(FILE *fp,char *file,char *destination,int maxsize);
+int Nova_LoadFileHunks(char *file,char *destination,struct CfFileLine **list1,struct CfFileLine **list2,int *l1,int *l2,int maxsize);
+struct CfFileLine *AppendFileLine(struct CfFileLine **liststart,char *item,int pos);
+void DeleteAllFileLines(struct CfFileLine *item);
+void DeleteFileLine(struct CfFileLine  **liststart,struct CfFileLine *item);
 
 /* promises.c */
 
