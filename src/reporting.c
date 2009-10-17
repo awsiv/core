@@ -87,6 +87,7 @@ char *NRH[][2] =
     "<td>","</td>\n",
     "<td>","</td>\n",
     "<td>","</td>\n",
+    "<td>","</td>\n",
     NULL,NULL
    };
 
@@ -706,9 +707,10 @@ DeleteItemList(file);
 void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
 { FILE *fin,*fout;
-  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  char name[CF_BUFSIZE],line[CF_BUFSIZE],datestr[CF_MAXVARSIZE],size[CF_MAXVARSIZE];
+  char no[CF_SMALLBUF],change[CF_BUFSIZE],reformat[CF_BUFSIZE],output[CF_BUFSIZE],aggregate[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
-  char start[32];
+  char pm,start[32];
   int i = 0;
 
 snprintf(name,CF_BUFSIZE-1,"%s/state/file_hash_event_history",CFWORKDIR);
@@ -823,8 +825,191 @@ if (XML)
 
 cf_fclose(fout);
 DeleteItemList(file);
-}
 
+
+/* Detail log */
+
+file = NULL;
+
+snprintf(name,CF_BUFSIZE-1,"%s/cfdiff.log",CFWORKDIR);
+ 
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_error,"cf_fopen","Cannot open the source log %s",name);
+   return;
+   }
+ 
+/* Max 2016 entries - at least a week */
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+
+   if (strncmp(line,"CHANGE",strlen("CHANGE")) != 0)
+      {
+      continue;
+      }
+
+   sscanf(line,"CHANGE %[^\n]",name);
+   fgets(line,CF_BUFSIZE-1,fin);
+   sscanf(line,"%128[^;];%[^\n]",datestr,size);
+   
+   memset(aggregate,0,CF_BUFSIZE);
+
+   while (!feof(fin))
+      {
+      line[0] = '\0';
+      fgets(line,CF_BUFSIZE-1,fin);
+
+      if (strncmp(line,"END",strlen("END")) == 0)
+         {
+         break;
+         }
+
+      no[0] = '\0';
+      change[0] = '\0';
+      sscanf(line,"%c,%[^,],%1024[^\n]",&pm,no,change);
+
+      if (xml)
+         {
+         snprintf(reformat,CF_BUFSIZE-1,"<pm>%c</pm><line>%s</line> <event>%s</event>\n",pm,no,change);
+
+         if (!JoinSuffix(aggregate,reformat))
+            {
+            }
+         }
+      else if (html)
+         {
+         snprintf(reformat,CF_BUFSIZE-1,"<span id=\"pm\">%c</span><span id=\"line\">%s</span><span id=\"change\">%s</span><br>",pm,no,change);
+
+         if (!JoinSuffix(aggregate,reformat))
+            {
+            }
+         }
+      else
+         {
+         snprintf(reformat,CF_BUFSIZE-1,"   %s\n",line);
+         if (!JoinSuffix(aggregate,reformat))
+            {
+            }         
+         }     
+      }
+
+   if (xml)
+      {
+      snprintf(output,CF_BUFSIZE-1,
+               "%s"
+               "%s %s %s"
+               "%s %s %s"
+               "%s %s %s"
+               "%s",               
+               NRX[cfx_entry][cfb],
+               NRX[cfx_date][cfb],datestr,NRX[cfx_date][cfe],
+               NRX[cfx_filename][cfb],name,NRX[cfx_end][cfe],
+               NRX[cfx_event][cfb],aggregate,NRX[cfx_event][cfe],
+               NRX[cfx_entry][cfe]);
+      }
+   else if (html)
+      {
+      snprintf(output,CF_BUFSIZE-1,
+               "%s"
+               "%s %s %s"
+               "%s %s %s"
+               "%s %s %s"
+               "%s",               
+               NRH[cfx_entry][cfb],
+               NRH[cfx_date][cfb],datestr,NRH[cfx_date][cfe],
+               NRH[cfx_filename][cfb],name,NRH[cfx_end][cfe],
+               NRH[cfx_event][cfb],aggregate,NRH[cfx_event][cfe],
+               NRH[cfx_entry][cfe]);
+      
+      }
+   else
+      {
+      snprintf(output,CF_BUFSIZE-1,"%s %s %s",datestr,name,aggregate);
+      }
+   
+   PrependItem(&file,output,NULL);
+   }
+
+cf_fclose(fin);
+
+if (html)
+   {
+   snprintf(name,CF_BUFSIZE,"file_diffs.html");
+   }
+else if (xml)
+   {
+   snprintf(name,CF_BUFSIZE,"file_diffs.xml");
+   }
+else if (csv)
+   {
+   snprintf(name,CF_BUFSIZE,"file_diffs.csv");
+   }
+else
+   {
+   snprintf(name,CF_BUFSIZE,"file_diffs.txt");
+   }
+
+if ((fout = cf_fopen(name,"w")) == NULL)
+   {
+   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   return;
+   }
+
+if (html && !embed)
+   {
+   snprintf(name,CF_BUFSIZE,"File difference events recorded on %s",VFQNAME);
+   NovaHtmlHeader(fout,name,stylesheet,web,head);
+   fprintf(fout,"<div id=\"reporttext\">\n");
+   fprintf(fout,"<table class=border cellpadding=5>\n");
+   fprintf(fout,"%s",NRH[cfx_entry][cfb]);
+   fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Time of change event",NRH[cfx_date][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Filename",NRH[cfx_filename][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_event][cfb],"Delta",NRH[cfx_event][cfe]);
+   fprintf(fout,"%s",NRH[cfx_entry][cfe]);
+   }
+else if (XML)
+   {
+   fprintf(fout,"<?xml version=\"1.0\"?>\n<output>\n");
+   }
+
+for (ip = file; ip != NULL; ip = ip->next)
+   {
+   memset(start,0,32);
+   memset(name,0,255);
+
+   if (cf_strlen(ip->name) == 0)
+      {
+      continue;
+      }
+
+  
+   fprintf(fout,"%s",ip->name);
+      
+   
+   if (++i > 12*24*7)
+      {
+      break;
+      }   
+   }
+
+if (html && !embed)
+   {
+   fprintf(fout,"</table></div>");
+   NovaHtmlFooter(fout,foot);
+   }
+
+if (XML)
+   {
+   fprintf(fout,"</output>\n");
+   }
+
+cf_fclose(fout);
+DeleteItemList(file);
+
+}
 
 /*****************************************************************************/
 

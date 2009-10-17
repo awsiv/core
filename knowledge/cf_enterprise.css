@@ -352,7 +352,7 @@ background-color: white;
 {  
 left: 3px;
 top: 6px;
-width: 60%;
+width: 100%;
 height:400px;
 }
 
@@ -361,9 +361,9 @@ height:400px;
 width: 100%;
 }
 
-#reporttext table td
+#reporttext table
 {  
-width: 100%;
+width: 100%
 }
 
 #primary ul
@@ -380,8 +380,6 @@ border: none;
 font-size: 12px;
 padding: 10px;
 font-weight: bold;
-
-
 }
 
 #primary td:hover
@@ -548,3 +546,21 @@ color: #00a;
 font-weight: bold;
 }
 
+#change
+{
+width: 80%;  
+font-family: courier;
+color: blue;
+}
+
+#line
+{
+font-family: courier;
+color: red;
+}
+
+
+#pm
+{  
+font-family: courier;
+}

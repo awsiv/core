@@ -175,12 +175,13 @@ if ((fout = fopen(logname,"a")) == NULL)
    CfOut(cf_error,"fopen"," !! Unable to open change log %s\n",logname);
    }
 
+fprintf(fout,"CHANGE %s\n",file);
+
 if (sb.st_size != dsb.st_size)
    {
    pos = Nova_GetFirstChangePosition(file,destination);
 
-   fprintf(fout,"BEGIN CHANGE %s\n",file);
-   fprintf(fout,"%s:File \"%s\" changed size from %d to %d, first difference at byte position %d/%d of old\n",datestr,file,sb.st_size,dsb.st_size,pos,dsb.st_size);
+   fprintf(fout,"%s;File changed size from %d to %d, first difference at byte position %d/%d of old\n",datestr,sb.st_size,dsb.st_size,pos,dsb.st_size);
    }
  
 if (Nova_FileIsBinary(file,sb.st_size,maxsize)||Nova_FileIsBinary(destination,dsb.st_size,maxsize))
@@ -191,6 +192,8 @@ else
    {
    Nova_ReportFileChange(fout,file,destination,maxsize);
    }
+
+fprintf(fout,"END\n");
 
 fclose(fout);
 }

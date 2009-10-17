@@ -83,6 +83,7 @@ void Nova_PackNerveBundle()
    "monitor_summary.html",
    "setuid.html",
    "file_changes.html",
+   "file_diffs.html",
    "compliance.html",
    "software_packages.html",
    "software_patches_avail.html",
