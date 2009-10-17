@@ -600,7 +600,7 @@ snprintf(name,CF_BUFSIZE,"%s/cfagent.%s.log",CFWORKDIR,VSYSNAME.nodename);
  
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -717,7 +717,7 @@ snprintf(name,CF_BUFSIZE-1,"%s/state/file_hash_event_history",CFWORKDIR);
  
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -835,7 +835,7 @@ snprintf(name,CF_BUFSIZE-1,"%s/cfdiff.log",CFWORKDIR);
  
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
    return;
    }
  
@@ -1026,7 +1026,7 @@ void Nova_SummarizePromiseRepaired(int xml,int html,int csv,int embed,char *styl
  
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -1165,7 +1165,7 @@ void Nova_SummarizePromiseNotKept(int xml,int html,int csv,int embed,char *style
  
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -1383,7 +1383,7 @@ snprintf(name,CF_BUFSIZE-1,"%s/state/software_packages.csv",CFWORKDIR);
  
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
    return;
    }
 
@@ -1514,7 +1514,7 @@ snprintf(name,CF_BUFSIZE-1,"%s/state/software_patches_avail.csv",CFWORKDIR);
  
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
    return;
    }
 
@@ -1637,7 +1637,7 @@ snprintf(name,CF_BUFSIZE-1,"%s/state/software_patch_status.csv",CFWORKDIR);
  
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
    return;
    }
 
@@ -1809,7 +1809,7 @@ MapName(name);
  
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot variable notes %s (try again later)",name);
+   CfOut(cf_inform,"cf_fopen","Cannot variable notes %s (try again later)",name);
    return;
    }
 
