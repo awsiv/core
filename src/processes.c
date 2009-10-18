@@ -108,7 +108,7 @@ if (stat(file,&sb) == -1)
 
 /* Check if the file already exists, if so do a diff */
 
-if (change && stat(destination,&dsb) != -1)
+if (a.change.report_diffs && change && (stat(destination,&dsb) != -1))
    {
    Nova_DoFileDiff(file,destination,sb,dsb);
    }
@@ -169,12 +169,9 @@ if ((fout = fopen(logname,"a")) == NULL)
 
 fprintf(fout,"CHANGE %s\n",file);
 
-if (sb.st_size != dsb.st_size)
-   {
-   pos = Nova_GetFirstChangePosition(file,destination);
+pos = Nova_GetFirstChangePosition(file,destination);
 
-   fprintf(fout,"%s;File changed size from %d to %d, first difference at byte position %d/%d of old\n",datestr,sb.st_size,dsb.st_size,pos,dsb.st_size);
-   }
+fprintf(fout,"%s;File changed size from %d to %d, first difference at byte position %d/%d of old\n",datestr,sb.st_size,dsb.st_size,pos,dsb.st_size);
  
 if (Nova_FileIsBinary(file,sb.st_size,maxsize)||Nova_FileIsBinary(destination,dsb.st_size,maxsize))
    {
@@ -203,6 +200,7 @@ int Nova_GetFirstChangePosition(char *file,char *destination)
 if ((fin1 = fopen(file,"r")) == NULL)
    {
    CfOut(cf_error,"fopen"," !! Unable to read the changed file %s",file);
+   return 0;
    }
 
 if ((fin2 = fopen(destination,"r")) == NULL)
@@ -219,6 +217,11 @@ while (true)
    pos++;
 
    if (word1 != word2)
+      {
+      break;
+      }
+
+   if (feof(fin1) || feof(fin2))
       {
       break;
       }

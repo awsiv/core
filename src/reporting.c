@@ -851,12 +851,20 @@ while (!feof(fin))
       continue;
       }
 
+   name[0] = '\0';
    sscanf(line,"CHANGE %[^\n]",name);
+
    fgets(line,CF_BUFSIZE-1,fin);
    sscanf(line,"%128[^;];%[^\n]",datestr,size);
-   
-   memset(aggregate,0,CF_BUFSIZE);
 
+   if (strncmp(datestr,"END",strlen("END")) == 0)
+      {
+      continue;
+      }
+
+   memset(aggregate,0,CF_BUFSIZE);
+   output[0] = '\0';
+         
    while (!feof(fin))
       {
       line[0] = '\0';
@@ -903,7 +911,7 @@ while (!feof(fin))
                "%s %s %s"
                "%s %s %s"
                "%s %s %s"
-               "%s",               
+               "%s\n",               
                NRX[cfx_entry][cfb],
                NRX[cfx_date][cfb],datestr,NRX[cfx_date][cfe],
                NRX[cfx_filename][cfb],name,NRX[cfx_end][cfe],
@@ -917,7 +925,7 @@ while (!feof(fin))
                "%s %s %s"
                "%s %s %s"
                "%s %s %s"
-               "%s",               
+               "%s\n",               
                NRH[cfx_entry][cfb],
                NRH[cfx_date][cfb],datestr,NRH[cfx_date][cfe],
                NRH[cfx_filename][cfb],name,NRH[cfx_end][cfe],
@@ -929,8 +937,12 @@ while (!feof(fin))
       {
       snprintf(output,CF_BUFSIZE-1,"%s %s %s",datestr,name,aggregate);
       }
-   
-   PrependItem(&file,output,NULL);
+
+   if (strlen(aggregate) > 0)
+      {
+      PrependItem(&file,output,NULL);
+      aggregate[0] = '\0';
+      }
    }
 
 cf_fclose(fin);
@@ -975,24 +987,9 @@ else if (XML)
    fprintf(fout,"<?xml version=\"1.0\"?>\n<output>\n");
    }
 
-for (ip = file; ip != NULL; ip = ip->next)
+for (i = 0,ip = file; ip != NULL; ip = ip->next)
    {
-   memset(start,0,32);
-   memset(name,0,255);
-
-   if (cf_strlen(ip->name) == 0)
-      {
-      continue;
-      }
-
-  
    fprintf(fout,"%s",ip->name);
-      
-   
-   if (++i > 12*24*7)
-      {
-      break;
-      }   
    }
 
 if (html && !embed)
@@ -1008,7 +1005,6 @@ if (XML)
 
 cf_fclose(fout);
 DeleteItemList(file);
-
 }
 
 /*****************************************************************************/
