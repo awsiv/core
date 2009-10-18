@@ -14,14 +14,14 @@ html_DATA = $(htmlfiles)
 
 # Info used in building and installing Postscript files
 
-pdffiles = cfnova.pdf cf3-Reference.pdf
+pdffiles = 
 
 docdir = $(pkgdatadir)/doc
 doc_DATA = $(psfiles) $(pdffiles)
 
 # Make sure these get distributed with everything else.
 
-EXTRA_DIST = 
+EXTRA_DIST = # cfnova.pdf cf3-Reference.pdf
 
 SUFFIXES = html pdf dvi
 

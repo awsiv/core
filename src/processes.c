@@ -49,15 +49,12 @@ return VPSOPTS[VSYSTEMHARDCLASS];
 
 /*****************************************************************************/
 
-void Nova_LogFileChange(char *file,struct Attributes a,struct Promise *pp)
+void Nova_LogFileChange(char *file,int change,struct Attributes a,struct Promise *pp)
 
 { char destination[CF_BUFSIZE];
-  char localrepository[CF_BUFSIZE]; 
-  char node[CF_BUFSIZE];
   struct stat sb, dsb;
   char *sp;
-  short imagecopy;
-
+  
 CfOut(cf_verbose,""," -> Updating the difference engine with \"%s\"",file);
   
 if (a.havedepthsearch)
@@ -80,19 +77,14 @@ else
    {
    if (a.repository != NULL)
       {
-      strncpy(localrepository,a.repository,CF_BUFSIZE);
+      strncpy(destination,a.repository,CF_BUFSIZE-2);
       }
    else if (VREPOSITORY != NULL)
       {
-      strncpy(localrepository,VREPOSITORY,CF_BUFSIZE);
+      strncpy(destination,VREPOSITORY,CF_BUFSIZE-2);
       }
    
-   strcpy(node,CanonifyName(file));
-   
-   destination[0] = '\0';
-   strncpy(destination,localrepository,CF_BUFSIZE-2);
-   
-   if (!JoinPath(destination,node))
+   if (!JoinPath(destination,CanonifyName(file)))
       {
       CfOut(cf_error,"","Buffer overflow for long filename\n");
       return;
@@ -116,9 +108,9 @@ if (stat(file,&sb) == -1)
 
 /* Check if the file already exists, if so do a diff */
 
-if (stat(destination,&dsb) != -1)
+if (change && stat(destination,&dsb) != -1)
    {
-   Nova_DoFileDiff(file,destination,sb,dsb,a,pp);
+   Nova_DoFileDiff(file,destination,sb,dsb);
    }
 
 /* Copy the current version to repository for versioning,
@@ -129,8 +121,8 @@ a.copy.backup = cfa_backup;
 a.copy.stealth = false;
 a.copy.verify = false;
 a.copy.preserve = false;
-
-CheckForFileHoles(&sb,a,pp);
+  
+CheckForFileHoles(&sb,pp);
 
 if (CopyRegularFile(file,destination,sb,dsb,a,pp))
    {
@@ -149,7 +141,7 @@ else
 /* Level                                                                     */
 /*****************************************************************************/
 
-void Nova_DoFileDiff(char *file,char *destination,struct stat sb,struct stat dsb,struct Attributes a,struct Promise *pp)
+void Nova_DoFileDiff(char *file,char *destination,struct stat sb,struct stat dsb)
 
 { int pos;
   time_t now = time(NULL);
@@ -165,7 +157,7 @@ void Nova_DoFileDiff(char *file,char *destination,struct stat sb,struct stat dsb
 
 CfOut(cf_verbose,""," -> Nova Analysis of changes on file %s\n",file);
   
-strcpy(datestr,ctime(&now));  
+strncpy(datestr,ctime(&now),CF_MAXVARSIZE-1);  
 Chop(datestr);
 
 snprintf(logname,CF_BUFSIZE-1,"%s%c%s",CFWORKDIR,FILE_SEPARATOR,"cfdiff.log");
@@ -246,6 +238,11 @@ int Nova_FileIsBinary(char *name,int size,int maxsize)
   int hasbinary = false, hasnewline = 1;
  
 file_buffer = (char *)CfReadFile(name,maxsize);
+
+if (file_buffer == NULL)
+   {
+   return true;
+   }
 
 for (sp = file_buffer; *sp != '\0' && sp < sp+maxsize; sp++)
    {

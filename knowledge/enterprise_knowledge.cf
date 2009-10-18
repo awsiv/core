@@ -429,6 +429,22 @@ occurrences:
             path_root => "$(enterprise_start.doc_root)",
             web_root => "";
 
+
+ file_diffs_report::
+
+   "A log of diffs of files promised under change monitoring"
+
+            represents => { "description" },
+            representation => "literal";
+
+   "reports/(.*)/file_diffs.html"
+
+            represents => { "on $(match.1)" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+
+
  change_management::
 
    "reports/(.*)/file_changes.html"

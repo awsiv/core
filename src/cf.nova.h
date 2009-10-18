@@ -350,8 +350,8 @@ void Nova_LookupClassName(int n,char *name, char *desc);
 /* processes.c */
 
 char *Nova_GetProcessOptions(void);
-void Nova_LogFileChange(char *file,struct Attributes a,struct Promise *pp);
-void Nova_DoFileDiff(char *file,char *destination,struct stat sb,struct stat dsb,struct Attributes a,struct Promise *pp);
+void Nova_LogFileChange(char *file,int change,struct Attributes a,struct Promise *pp);
+void Nova_DoFileDiff(char *file,char *destination,struct stat sb,struct stat dsb);
 int Nova_GetFirstChangePosition(char *file,char *destination);
 int Nova_FileIsBinary(char *name,int size,int maxsize);
 void Nova_ReportFileChange(FILE *fp,char *file,char *destination,int maxsize);
