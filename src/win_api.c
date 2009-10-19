@@ -75,40 +75,23 @@ int chown(const char *path, uid_t owner, gid_t group)
 {
   nw_exper("chown", "needs testing");
 
-  PSID sidAdmins = NULL;
-  SID_IDENTIFIER_AUTHORITY SIDAuthNT = {SECURITY_NT_AUTHORITY};
-  int retv;
-
   if(owner == 0 && group == 0)
     {
-      // change owner to the "BUILTIN\Administrators" group
-      if (!AllocateAndInitializeSid(&SIDAuthNT, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &sidAdmins))
+      // change owner to the owner of the current process
+      
+      if(!NovaWin_TakeFileOwnership(path))
 	{
-	  CfOut(cf_error,"AllocateAndInitializeSid","!! Could not allocate sid");
+	  CfOut(cf_error,"","!! Could not change owner of \"%s\" to owner of current process", path);
 	  return -1;
-	}
-  
-      retv = SetNamedSecurityInfo(path, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, sidAdmins, NULL, NULL, NULL);
-
-      if(retv != ERROR_SUCCESS)
-	{
-	  CfOut(cf_error,"SetNamedSecurityInfo","!! Could not change owner to BUILTIN\\Administrators");
-	  FreeSid(sidAdmins);
-	  return -1;
-	}
-
-      if(FreeSid(sidAdmins))
-	{
-	  CfOut(cf_error,"FreeSid","!! Could not free sid");
 	}
       
-      Debug("Owner of %s is set to BUILTIN\\Administrators\n", path);
+      Debug("Owner of \"%s\" is set to the owner of the current process", path);
 
       return 0;
     }
   else
     {
-      CfOut(cf_error,"chown","!! Owner and group are not both 0: such numerical user or group ids makes no sense on NT");
+      CfOut(cf_error,"","!! Owner and group are not both 0: such numerical user or group ids makes no sense on NT");
       return -1;
     }
 }

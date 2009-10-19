@@ -148,4 +148,111 @@ int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir,
   return true;
 }
 
+/*****************************************************************************/
+
+/* Gets the owner of the current process and places it into sid, 
+ * which has size sidSz. */
+int NovaWin_GetCurrentProcessOwner(SID *sid, int sidSz)
+{
+  HANDLE currProcToken;
+  TOKEN_USER *userToken = NULL;
+  DWORD reqBufSz;
+  int ownerSidSz;
+
+  if(!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &currProcToken))
+    {
+      CfOut(cf_error,"OpenProcessToken","!! Could not get access token of current process");
+      return false;
+    }
+
+  // get required buffer size first
+  if(!GetTokenInformation(currProcToken, TokenUser, userToken, 0, &reqBufSz))
+    {
+      if(GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+	{
+	  CfOut(cf_error,"GetTokenInformation","!! Could not get owner information on current process");
+	  CloseHandle(currProcToken);
+	  return false;
+	}
+    }
+  else  // the call should fail according to doc
+    {
+      CfOut(cf_error,"","!! Could not get required buffer size");
+      CloseHandle(currProcToken);
+      return false;
+    }
+
+
+  // allocate enough buffer bytes and do real call
+  if(!(userToken = calloc(1, reqBufSz)))
+    {
+      CloseHandle(currProcToken);	  
+      FatalError("Memory allocation in NovaWin_GetCurrentProcessOwner()");
+      return false;
+    }
+
+  if(!GetTokenInformation(currProcToken, TokenUser, userToken, reqBufSz, &reqBufSz))
+    {
+      CfOut(cf_error,"GetTokenInformation","!! Could not get owner information on current process");
+      free(userToken);
+      CloseHandle(currProcToken);
+      return false;
+    }
+
+  ownerSidSz = GetLengthSid(userToken->User.Sid);
+  
+  if(ownerSidSz > sidSz)
+    {
+      CfOut(cf_error,"","!! Sid buffer too small");
+      free(userToken);
+      CloseHandle(currProcToken);
+      return false;
+    }
+  
+  memcpy(sid, userToken->User.Sid, ownerSidSz);
+
+  free(userToken);
+  CloseHandle(currProcToken);
+
+  return true;
+}
+
+/*****************************************************************************/
+
+int NovaWin_SetTokenPrivilege(HANDLE token, char *privilegeName, int enablePriv) 
+{
+	TOKEN_PRIVILEGES tp;
+	LUID luid;
+
+	if ( !LookupPrivilegeValue(NULL, privilegeName,	&luid ))
+	{
+		CfOut(cf_error,"LookupPrivilegeValue","!! Could not get priviligege");
+		return false; 
+	}
+
+	tp.PrivilegeCount = 1;
+	tp.Privileges[0].Luid = luid;
+
+	if (enablePriv)
+		tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+	else
+		tp.Privileges[0].Attributes = 0;
+
+
+	if (!AdjustTokenPrivileges(token, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), NULL, NULL))
+	{ 
+		  CfOut(cf_error,"AdjustTokenPrivileges","!! Could not set privilege");
+		  return false; 
+	} 
+
+	if(GetLastError() == ERROR_NOT_ALL_ASSIGNED)
+	{
+		  CfOut(cf_error,"AdjustTokenPrivileges","!! The token does not have the desired privilege");
+		  return false;
+	} 
+
+	return true;
+}
+
+
 #endif /* MINGW */

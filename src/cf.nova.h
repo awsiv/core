@@ -453,6 +453,9 @@ int NovaWin_rename(const char *oldpath, const char *newpath);
 int NovaWin_chmod(const char *path, mode_t mode);
 int NovaWin_FileExists(const char *fileName);
 int NovaWin_IsDir(char *fileName);
+int NovaWin_VerifyOwner(char *file,struct Promise *pp,struct Attributes attr);
+int NovaWin_TakeFileOwnership(char *path);
+int NovaWin_SetFileOwnership(char *path, SID *sid);
 
 /* win_pipe.c */
 
@@ -469,6 +472,8 @@ int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise
 int NovaWin_GracefulTerminate(pid_t pid);
 int NovaWin_ShellCommandReturnsZero(char *comm, int useshell);
 int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir, STARTUPINFO *si, HANDLE *procHandle);
+int NovaWin_GetCurrentProcessOwner(SID *sid, int sidSz);
+int NovaWin_SetTokenPrivilege(HANDLE token, char *privilegeName, int enablePriv);
 
 /* win_ps.c */
 

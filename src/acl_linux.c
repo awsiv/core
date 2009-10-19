@@ -295,16 +295,36 @@ if ((retv = Nova_ACLEquals(acl_existing, acl_new)) == -1)
 
 if (retv == 1)  // existing and new acl differ, update existing
    {
-   if ((retv = acl_set_file(file_path, acl_type, acl_new)) != 0)
-      {
-      CfOut(cf_error,"","!! Error setting new %s ACL on file '%s' (are required ACEs present?)", acl_type_str, file_path);
-      acl_free((void*)acl_existing);
-      acl_free((void*)acl_tmp);
-      acl_free((void*)acl_new);
-      return false;
-      }
 
-   cfPS(cf_inform,CF_CHG,"",pp,a,"-> %s ACL on \"%s\" successfully changed.", acl_type_str, file_path);
+     switch (a.transaction.action)
+       {
+       case cfa_warn:
+          
+	 cfPS(cf_error,CF_WARN,"",pp,a," !! %s ACL on file '%s' needs to be updated", acl_type_str, file_path);
+	 break;
+          
+       case cfa_fix:
+          
+	 if(!DONTDO)
+	   {
+	     if ((retv = acl_set_file(file_path, acl_type, acl_new)) != 0)
+	       {
+		 CfOut(cf_error,"","!! Error setting new %s ACL on file '%s' (are required ACEs present?)", acl_type_str, file_path);
+		 acl_free((void*)acl_existing);
+		 acl_free((void*)acl_tmp);
+		 acl_free((void*)acl_new);
+		 return false;
+	       }
+	   }
+
+	 cfPS(cf_inform,CF_CHG,"",pp,a,"-> %s ACL on \"%s\" successfully changed.", acl_type_str, file_path);	
+
+	 break;
+          
+       default:
+	 FatalError("Cfengine: internal error: illegal file action\n");
+       }
+
    }
 else
   {
@@ -362,18 +382,34 @@ switch (equals)
 
    case 1:  // set access ACL as default ACL
 
-       if ((acl_set_file(file_path, ACL_TYPE_DEFAULT, acl_access)) != 0)
-          {
-          CfOut(cf_error,"","!! Could not set default ACL to access");
-          acl_free(acl_access);
-          acl_free(acl_default);
-          return false;
-          }
-       else
-          {
-          cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully copied from access ACL.", file_path);
-          result = true;
-          }
+     switch (a.transaction.action)
+       {
+       case cfa_warn:
+          
+	 cfPS(cf_error,CF_WARN,"",pp,a," !! Default ACL on \"%s\" needs to be copied from access ACL.", file_path);
+	 break;
+          
+       case cfa_fix:
+
+	 if(!DONTDO)
+	   {
+	     if ((acl_set_file(file_path, ACL_TYPE_DEFAULT, acl_access)) != 0)
+	       {
+		 CfOut(cf_error,"","!! Could not set default ACL to access");
+		 acl_free(acl_access);
+		 acl_free(acl_default);
+		 return false;
+	       }
+	   }
+
+	 cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully copied from access ACL.", file_path);
+	 result = true;          
+          
+	 break;
+          
+       default:
+	 FatalError("Cfengine: internal error: illegal file action\n");
+       }
 
        break;
 
@@ -433,18 +469,38 @@ switch (retv)
           break;
           }
 
-       if (acl_set_file(file_path, ACL_TYPE_DEFAULT, acl_empty) != 0)
-          {
-          CfOut(cf_error,"","Could not reset ACL for %s",file_path);
-          result = false;
-          break;
-          }
-       cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully cleared.", file_path);
-       result = true;
+       switch (a.transaction.action)
+	 {
+	 case cfa_warn:
+          
+	   cfPS(cf_error,CF_WARN,"",pp,a," !! Default ACL on \"%s\" needs to be cleared", file_path);
+	   break;
+          
+	 case cfa_fix:
+
+	   if(!DONTDO)
+	     {
+	       if (acl_set_file(file_path, ACL_TYPE_DEFAULT, acl_empty) != 0)
+		 {
+		   CfOut(cf_error,"","Could not reset ACL for %s",file_path);
+		   result = false;
+		   break;
+		 }
+	     }
+
+	   cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully cleared", file_path);
+	   result = true;
+          
+	   break;
+          
+	 default:
+	   FatalError("Cfengine: internal error: illegal file action\n");
+	 }
+
        break;
 
    default:
-       result = false;
+     result = false;
    }
 
 acl_free(acl_empty);

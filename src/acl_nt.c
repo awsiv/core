@@ -129,7 +129,7 @@ int Nova_CheckNtACEs(char *file_path, struct Rlist *aces, inherit_t inherit, enu
   if(eas == NULL)
     {
       LocalFree(existingSecDesc);
-       FatalError("Memory allocation in Nova_CheckNtACEs()");
+      FatalError("Memory allocation in Nova_CheckNtACEs()");
       return false;
     }
 
@@ -175,18 +175,36 @@ int Nova_CheckNtACEs(char *file_path, struct Rlist *aces, inherit_t inherit, enu
     {
       cfPS(cf_inform,CF_NOP,"",pp,a,"-> %s ACL on \"%s\" needs no modification.", aclTypeStr, file_path);
     }
-  else
+  else  // ACL needs to be changed
     {
-      if(!Nova_SetEas(file_path, eas, eaCount))
-        {
-          CfOut(cf_error,"","!! Could not set the ACL");
-          Nova_FreeSids(eas, eaCount);
-          free(eas);
-          LocalFree(existingSecDesc);
-          return false;
-        }
 
-      cfPS(cf_inform,CF_CHG,"",pp,a,"-> %s ACL on \"%s\" successfully changed.", aclTypeStr, file_path);
+      switch (a.transaction.action)
+	{
+	case cfa_warn:
+          
+	  cfPS(cf_error,CF_WARN,"",pp,a," !! %s ACL on \"%s\" needs to be changed", aclTypeStr, file_path);
+          break;
+          
+	case cfa_fix:
+          
+          if (!DONTDO)
+	    {
+	      if(!Nova_SetEas(file_path, eas, eaCount))
+		{
+		  CfOut(cf_error,"","!! Could not set the ACL");
+		  Nova_FreeSids(eas, eaCount);
+		  free(eas);
+		  LocalFree(existingSecDesc);
+		  return false;
+		}
+	    }
+	  cfPS(cf_inform,CF_CHG,"",pp,a,"-> %s ACL on \"%s\" successfully changed", aclTypeStr, file_path);
+          break;
+          
+	default:
+          FatalError("cfengine: internal error: illegal file action\n");
+	}
+
     }
 
   Nova_FreeSids(eas, eaCount);
@@ -264,16 +282,35 @@ int Nova_CheckNtDefaultClearACL(char *file_path, struct Attributes a, struct Pro
     }
   else
     {
-      if(!Nova_SetEas(file_path, eas, eaCount))
-        {
-          CfOut(cf_error,"","!! Could not set the ACL");
-          Nova_FreeSids(eas, eaCount);
-          free(eas);
-          LocalFree(existingSecDesc);
-          return false;
-        }
 
-      cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully cleared.", file_path);
+      switch (a.transaction.action)
+	{
+	case cfa_warn:
+          
+	  cfPS(cf_error,CF_WARN,"",pp,a," !! Default ACL on \"%s\" needs to be cleared.", file_path);
+          break;
+          
+	case cfa_fix:
+          
+          if (!DONTDO)
+	    {
+	      if(!Nova_SetEas(file_path, eas, eaCount))
+		{
+		  CfOut(cf_error,"","!! Could not set the ACL");
+		  Nova_FreeSids(eas, eaCount);
+		  free(eas);
+		  LocalFree(existingSecDesc);
+		  return false;
+		}
+	    }
+
+	  cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully cleared.", file_path);
+          break;
+          
+	default:
+          FatalError("cfengine: internal error: illegal file action\n");
+	}
+
     }
 
   Nova_FreeSids(eas, eaCount);
@@ -366,16 +403,34 @@ int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, struct Attributes a, str
     }
   else
     {
-      if(!Nova_SetEas(file_path, eas, eaCount))
-        {
-          CfOut(cf_error,"","!! Could not set the ACL");
-          Nova_FreeSids(eas, eaCount);
-          free(eas);
-          LocalFree(existingSecDesc);
-          return false;
-        }
 
-      cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully copied from access ACL.", file_path);
+      switch (a.transaction.action)
+	{
+	case cfa_warn:
+          
+	  cfPS(cf_error,CF_WARN,"",pp,a," !! Default ACL on \"%s\" needs to be copied from access ACL.", file_path);
+          break;
+          
+	case cfa_fix:
+          
+          if (!DONTDO)
+	    {
+	      if(!Nova_SetEas(file_path, eas, eaCount))
+		{
+		  CfOut(cf_error,"","!! Could not set the ACL");
+		  Nova_FreeSids(eas, eaCount);
+		  free(eas);
+		  LocalFree(existingSecDesc);
+		  return false;
+		}
+	    }
+	  cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully copied from access ACL.", file_path);          
+          break;
+          
+	default:
+          FatalError("cfengine: internal error: illegal file action\n");
+	}
+
     }
 
 
