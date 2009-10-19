@@ -409,6 +409,7 @@ switch (equals)
           
        default:
 	 FatalError("Cfengine: internal error: illegal file action\n");
+	 result = false;
        }
 
        break;
@@ -495,6 +496,7 @@ switch (retv)
           
 	 default:
 	   FatalError("Cfengine: internal error: illegal file action\n");
+	   result = false;
 	 }
 
        break;
