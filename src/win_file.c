@@ -183,6 +183,11 @@ int NovaWin_VerifyOwner(char *file,struct Promise *pp,struct Attributes attr)
   int sidMatch = false;
   DWORD getRes;
 
+  if(attr.perms.owners == NULL || !IsValidSid(attr.perms.owners->sid))  // no owner set
+    {
+      return true;
+    }
+
   getRes = GetNamedSecurityInfo(file, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, (PSID*)&ownerSid, NULL, NULL, NULL, &secDesc);
 
   if(getRes != ERROR_SUCCESS)
