@@ -60,6 +60,7 @@ CfOut(cf_verbose,""," -> Updating the difference engine with \"%s\"",file);
 if (a.havedepthsearch)
    {
    CfOut(cf_error,""," ! you may not use change detail logging on depth searches");
+   PromiseRef(cf_error,pp);
    return;
    }
   
@@ -108,7 +109,7 @@ if (stat(file,&sb) == -1)
 
 /* Check if the file already exists, if so do a diff */
 
-if (a.change.report_diffs && change && (stat(destination,&dsb) != -1))
+if (change && (stat(destination,&dsb) != -1))
    {
    Nova_DoFileDiff(file,destination,sb,dsb);
    }

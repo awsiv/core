@@ -34,7 +34,9 @@
 #define CF_SHADES 25
 #define CF_TIMESERIESDATA 168
 #define CF_MAGDATA 48
+#define CF_LHISTORYDATA 1464
 #define CF_MAGMARGIN 0
+#define CF_LHISTORYMARGIN 0
 #define CF_TRIBE_SIZE 30
 
 /*****************************************************************************/
@@ -61,9 +63,9 @@ struct CfDataView
    int over_dev2;
    int under_dev1;
    int under_dev2;
-   double data_E[CF_TIMESERIESDATA];
-   double data_q[CF_TIMESERIESDATA];
-   double bars[CF_TIMESERIESDATA];
+   double data_E[CF_LHISTORYDATA];
+   double data_q[CF_LHISTORYDATA];
+   double bars[CF_LHISTORYDATA];
    double error_scale;
    double range;
    int margins;
@@ -435,6 +437,15 @@ void Nova_DrawQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3);
 int Nova_ViewWeek(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *week);
 void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs,char *host);
+
+/* trends.c */
+
+int Nova_ViewLongHistory(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *host);
+int Nova_ReadLongHistory(struct CfDataView *cfv, char *name);
+void Nova_DrawLongHAxes(struct CfDataView *cfv,int col);
+void Nova_PlotLongHFile(struct CfDataView *cfv,int col1,int col2,int col3);
+void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *name,enum observables obs,char *host);
+
 
 #ifdef MINGW
 /* win_api.c */

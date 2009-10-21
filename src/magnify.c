@@ -274,7 +274,7 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
          }
 
       /* Error bars */
-      gdImageSetThickness(cfv->im,3);
+      gdImageSetThickness(cfv->im,2);
       gdImageLine(cfv->im,x,under,x,av,col1);
       gdImageLine(cfv->im,x,av,x,over,col2);
       }

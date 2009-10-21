@@ -124,6 +124,7 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
 
       Nova_ViewWeek(cfv,name,description,i,ip->name);
       Nova_ViewHisto(cfv,name,description,i,ip->name);
+      Nova_ViewLongHistory(cfv,name,description,i,ip->name);
 
       CfOut(cf_verbose,""," -> Done with %s / %s",ip->name,name);
       }

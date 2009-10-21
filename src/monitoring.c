@@ -221,7 +221,6 @@ void Nova_HistoryUpdate(char *timekey,struct Averages newvals)
   DB *dbp;
   char filename[CF_BUFSIZE];
 
-
 if (LICENSES == 0)
    {
    return;
@@ -385,7 +384,6 @@ void Nova_LongHaul(char *day,char *month,char* lifecycle,char *shift)
   FILE *fp[CF_OBSERVABLES];
   DB *dbp;
 
-
 if (LICENSES == 0)
    {
    return;
@@ -400,22 +398,24 @@ if (!OpenDB(filename,&dbp))
 
 snprintf(timekey_now,CF_MAXVARSIZE-1,"%s_%.3s_%s_%s",day,month,lifecycle,shift);
 
-/* Now we want 3 symmetrical graphs of the past 3 years */
+/* Now we graphs of the past 3 years, in order from 2 years ago */
 
 ago = 2;
+
 NovaOpenNewLifeCycle(ago,fp);
 strncpy(l,lifecycle,31);
 
 this_lifecycle = Str2Int(l+strlen("Lcycle_"));
-
-this = (this_lifecycle + ago) %3;
+this = (this_lifecycle + 2 - ago) %3;
 snprintf(l,CF_TIME_SIZE-1,"Lcycle_%d",this);
-
+         
 strncpy(s,shift,31);
 strncpy(d,day,31);
 strncpy(m,month,31);
 
-while (true)
+NovaIncrementShift(d,m,l,s);
+
+while(true)
    {
    snprintf(timekey,CF_MAXVARSIZE-1,"%s_%s_%s_%s",d,m,l,s);
 
@@ -423,11 +423,18 @@ while (true)
       {
       for (i = 0; i < CF_OBSERVABLES;i++)
          {
-         fprintf(fp[i],"%d %f %f %f\n",count,value.Q[i].expect, sqrt(value.Q[i].var),value.Q[i].q);
+         fprintf(fp[i],"%d %lf %lf %lf\n",count,value.Q[i].expect, sqrt(value.Q[i].var),value.Q[i].q);
          }
-
-      count++;
       }
+   else
+      {
+      for (i = 0; i < CF_OBSERVABLES;i++)
+         {
+         fprintf(fp[i],"%d %lf %lf %lf\n",count,0,0,0);
+         }
+      }
+   
+   count++;
    
    NovaIncrementShift(d,m,l,s);
 
@@ -436,7 +443,7 @@ while (true)
    if (NovaLifeCyclePassesGo(d,m,l,s,day,month,lifecycle,shift))
       {
       NovaCloseLifeCycle(ago,fp);
-
+      
       if (ago--)
          {
          count = 0;

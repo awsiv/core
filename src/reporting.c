@@ -708,10 +708,10 @@ void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *styleshe
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE],datestr[CF_MAXVARSIZE],size[CF_MAXVARSIZE];
-  char no[CF_SMALLBUF],change[CF_BUFSIZE],reformat[CF_BUFSIZE],output[CF_BUFSIZE],aggregate[CF_BUFSIZE];
+  char no[CF_SMALLBUF],change[CF_BUFSIZE],reformat[CF_BUFSIZE],output[2*CF_BUFSIZE],aggregate[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
   char pm,start[32];
-  int i = 0;
+  int i = 0,truncate;
 
 snprintf(name,CF_BUFSIZE-1,"%s/state/file_hash_event_history",CFWORKDIR);
  
@@ -863,8 +863,11 @@ while (!feof(fin))
       }
 
    memset(aggregate,0,CF_BUFSIZE);
+   snprintf(aggregate,CF_BUFSIZE-1,"%s<br>",aggregate);
    output[0] = '\0';
-         
+
+   truncate = false;
+   
    while (!feof(fin))
       {
       line[0] = '\0';
@@ -879,29 +882,34 @@ while (!feof(fin))
       change[0] = '\0';
       sscanf(line,"%c,%[^,],%1024[^\n]",&pm,no,change);
 
-      if (xml)
+      if (!truncate)
          {
-         snprintf(reformat,CF_BUFSIZE-1,"<pm>%c</pm><line>%s</line> <event>%s</event>\n",pm,no,change);
-
-         if (!JoinSuffix(aggregate,reformat))
+         if (xml)
             {
+            snprintf(reformat,CF_BUFSIZE-1,"<pm>%c</pm><line>%s</line> <event>%s</event>\n",pm,no,change);
+            
+            if (!JoinSuffix(aggregate,reformat))
+               {
+               truncate = true;
+               }
             }
-         }
-      else if (html)
-         {
-         snprintf(reformat,CF_BUFSIZE-1,"<span id=\"pm\">%c</span><span id=\"line\">%s</span><span id=\"change\">%s</span><br>",pm,no,change);
-
-         if (!JoinSuffix(aggregate,reformat))
+         else if (html)
             {
+            snprintf(reformat,CF_BUFSIZE-1,"<span id=\"pm\">%c</span><span id=\"line\">%s</span><span id=\"change\">%s</span><br>",pm,no,change);
+            
+            if (!JoinSuffix(aggregate,reformat))
+               {
+               truncate = true;
+               }
             }
-         }
-      else
-         {
-         snprintf(reformat,CF_BUFSIZE-1,"   %s\n",line);
-         if (!JoinSuffix(aggregate,reformat))
+         else
             {
-            }         
-         }     
+            snprintf(reformat,CF_BUFSIZE-1,"   %s\n",line);
+            if (!JoinSuffix(aggregate,reformat))
+               {
+               }         
+            }     
+         }
       }
 
    if (xml)
@@ -920,18 +928,34 @@ while (!feof(fin))
       }
    else if (html)
       {
-      snprintf(output,CF_BUFSIZE-1,
-               "%s"
-               "%s %s %s"
-               "%s %s %s"
-               "%s %s %s"
-               "%s\n",               
-               NRH[cfx_entry][cfb],
-               NRH[cfx_date][cfb],datestr,NRH[cfx_date][cfe],
-               NRH[cfx_filename][cfb],name,NRH[cfx_end][cfe],
-               NRH[cfx_event][cfb],aggregate,NRH[cfx_event][cfe],
-               NRH[cfx_entry][cfe]);
-      
+      if (truncate)
+         {
+         snprintf(output,CF_BUFSIZE-1,
+                  "%s"
+                  "%s %s %s"
+                  "%s %s %s"
+                  "%s %s <br>Truncated, full record at %s:%s/cfdiff.log %s"
+                  "%s\n",               
+                  NRH[cfx_entry][cfb],
+                  NRH[cfx_date][cfb],datestr,NRH[cfx_date][cfe],
+                  NRH[cfx_filename][cfb],name,NRH[cfx_end][cfe],
+                  NRH[cfx_event][cfb],aggregate,VFQNAME,CFWORKDIR,NRH[cfx_event][cfe],
+                  NRH[cfx_entry][cfe]);
+         }
+      else
+         {
+         snprintf(output,CF_BUFSIZE-1,
+                  "%s"
+                  "%s %s %s"
+                  "%s %s %s"
+                  "%s %s %s"
+                  "%s\n",               
+                  NRH[cfx_entry][cfb],
+                  NRH[cfx_date][cfb],datestr,NRH[cfx_date][cfe],
+                  NRH[cfx_filename][cfb],name,NRH[cfx_end][cfe],
+                  NRH[cfx_event][cfb],aggregate,NRH[cfx_event][cfe],
+                  NRH[cfx_entry][cfe]);
+         }
       }
    else
       {

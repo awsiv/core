@@ -32,6 +32,7 @@ libcfnova_la_SOURCES =						\
 	graphs.c						\
 	copernicus.c						\
 	histogram.c						\
+	trends.c							\
 	timeseries.c						\
 	magnify.c						\
 	coordinates.c						\

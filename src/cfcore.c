@@ -156,7 +156,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        continue;
        }
     
-    fprintf(fp,"<th nowrap><font color=\"#888888\">%s</font><br><br><a href=\"%s\">%s</a><br><small>Latest data<br>%s</small></th>\n",host,url,img,datestr);
+    fprintf(fp,"<th nowrap><font color=\"#888888\">%s</font><br><br><a href=\"%s\">%s</a><br><small>Latest data<br>%s</small></th>\n",host,url,name,datestr);
 
     terminated1 = terminated2 = terminated3  = false;
     
@@ -231,6 +231,10 @@ Chop(datestr);
 fprintf(fout,"<h1>%s</h1>\n",description);
 
 fprintf(fout,"<div id=\"legend\">\n");
+
+fprintf(fout,"<h4>Last 3 years</h4>\n");
+
+fprintf(fout,"<p><a href=\"%s_yr.html\">Long history</a> provides a rough trend over the past 3 years\n",name);
 
 fprintf(fout,"<h2>Last 4 hours</h2>\n");
 
