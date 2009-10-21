@@ -320,4 +320,96 @@ int NovaWin_SetFileOwnership(char *path, SID *sid)
   return true;
 }
 
+/*****************************************************************************/
+
+void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp)
+
+{
+Debug("NovaWin_VerifyFileAttributes()\n");
+
+if (VerifyOwner(file,pp,attr,dstat))
+   {
+   /* nop */
+   }
+
+if(NovaWin_FileExists(file) && !NovaWin_IsDir(file))
+   {
+   VerifyFileIntegrity(file,attr,pp);
+   }
+
+if (attr.havechange)
+   {
+   VerifyFileChanges(file,dstat,attr,pp);
+   }
+
+if (attr.acl.acl_entries)
+   { 
+   VerifyACL(file,attr,pp); 
+   }
+
+if (attr.touch)
+   {
+   if (utime(file,NULL) == -1)
+      {
+      cfPS(cf_inform,CF_DENIED,"utime",pp,attr," !! Touching file %s failed",file);
+      }
+   else
+      {
+      cfPS(cf_inform,CF_CHG,"",pp,attr," -> Touching file %s",file);
+      }
+   }
+
+Debug("NovaWin_VerifyFileAttributes(Done)\n"); 
+}
+
+/*****************************************************************************/
+
+void NovaWin_VerifyCopiedFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp)
+
+{
+  SECURITY_DESCRIPTOR *secDesc = NULL;
+  char savedOwner[CF_MAXSIDSIZE];
+  SID *ownerSid;
+  DWORD getRes;
+  int noOwnerChange = false;
+
+  Debug("NovaWin_VerifyCopiedFileAttributes(%s)\n",file); 
+
+  if(!IsValidSid((attr.perms.owners)->uid))  // invalid sid indicates no owner change
+    {
+      noOwnerChange = true;
+    }
+
+  if(noOwnerChange)  // set current file owner as first element to avoid owner change
+    {
+      memcpy(savedOwner, (attr.perms.owners)->sid, CF_MAXSIDSIZE);
+    
+      getRes = GetNamedSecurityInfo(file, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, (PSID*)&ownerSid, NULL, NULL, NULL, &secDesc);
+
+      if(getRes != ERROR_SUCCESS)
+	{
+	  CfOut(cf_error,"GetNamedSecurityInfo","!! Could not retreive existing owner of \"%s\"", file);
+	  return;
+	}
+
+      if(!CopySid(CF_MAXSIDSIZE, (attr.perms.owners)->sid, ownerSid))
+	{
+	  CfOut(cf_error,"CopySid","!! Could not copy sid");
+	  LocalFree(secDesc);
+	  return;
+	}
+
+      LocalFree(secDesc);
+    }
+
+  VerifyFileAttributes(file,dstat,attr,pp);
+
+  // reset the owner if we modified it
+  if(noOwnerChange)
+    {
+      memset((attr.perms.owners)->sid, 0, CF_MAXSIDSIZE);
+    }
+}
+
+
 #endif  /* MINGW */

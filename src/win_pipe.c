@@ -48,16 +48,23 @@ FILE *NovaWin_cf_popen_sh(char *command,char *type)
 
 FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv)
 {
-  // we can only run in the current user environment (assumed to be root)
-  if((uid == -1 || uid == 0) && (gid == -1 || gid == 0) && chrootv == NULL)
+  // NT unsupported: uid, gid, chrootv
+  if(uid != CF_UNDEFINED)
     {
-      return OpenProcessPipe(command, false, chdirv, type);      
+      CfOut(cf_verbose, "", "NovaWin_cf_popensetuid: uid is ignored on NT");
     }
-  else
+    
+  if(gid != CF_UNDEFINED)
     {
-      CfOut(cf_error,"","!! Starting process with uid=%d, gid=%d, chrootv=%s is unsupported on NT.", uid, gid, chrootv);
-      return NULL;
+      CfOut(cf_verbose, "", "NovaWin_cf_popensetuid: gid is ignored on NT");
     }
+  
+  if(chrootv != NULL)
+    {
+      CfOut(cf_verbose, "", "NovaWin_cf_popensetuid: chrootv is ignored on NT");
+    }
+
+  return OpenProcessPipe(command, false, chdirv, type);      
 }
 
 

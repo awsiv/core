@@ -456,6 +456,8 @@ int NovaWin_IsDir(char *fileName);
 int NovaWin_VerifyOwner(char *file,struct Promise *pp,struct Attributes attr);
 int NovaWin_TakeFileOwnership(char *path);
 int NovaWin_SetFileOwnership(char *path, SID *sid);
+void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp);
+void NovaWin_VerifyCopiedFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp);
 
 /* win_pipe.c */
 
