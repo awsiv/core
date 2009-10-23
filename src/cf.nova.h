@@ -467,6 +467,7 @@ int NovaWin_IsDir(char *fileName);
 int NovaWin_VerifyOwner(char *file,struct Promise *pp,struct Attributes attr);
 int NovaWin_TakeFileOwnership(char *path);
 int NovaWin_SetFileOwnership(char *path, SID *sid);
+int NovaWin_GetOwnerName(char *path, char *owner, int ownerSz);
 void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp);
 void NovaWin_VerifyCopiedFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp);
 
@@ -496,6 +497,7 @@ int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts);
 
 int NovaWin_UserNameToSid(char *userName, SID *sid, DWORD sidSz);
 int NovaWin_GroupNameToSid(char *groupName, SID *sid, DWORD sidSz);
+int NovaWin_SidToName(SID* sid, char *name, int nameSz);
 int NovaWin_SidToString(SID *sid, char *stringSid, int stringSz);
 int NovaWin_StringToSid(char *stringSid, SID *sid, int sidSz);
 

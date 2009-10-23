@@ -79,7 +79,7 @@ int chown(const char *path, uid_t owner, gid_t group)
     {
       // change owner to the owner of the current process
       
-      if(!NovaWin_TakeFileOwnership(path))
+      if(!NovaWin_TakeFileOwnership((char *)path))
 	{
 	  CfOut(cf_error,"","!! Could not change owner of \"%s\" to owner of current process", path);
 	  return -1;

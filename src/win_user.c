@@ -75,6 +75,26 @@ int NovaWin_GroupNameToSid(char *groupName, SID *sid, DWORD sidSz)
 }
 
 
+/* Converts a sid to a user/group name, and writes it to 'name'
+ * of size 'nameSz' */
+int NovaWin_SidToName(SID* sid, char *name, int nameSz)
+{
+  SID_NAME_USE sidNameUse;
+  char domName[CF_BUFSIZE];
+  DWORD reqNameSz = (DWORD)nameSz;
+  DWORD reqDomSz = (DWORD)sizeof(domName);
+  
+
+  if(!LookupAccountSid(NULL, sid, name, &reqNameSz, domName, &reqDomSz, &sidNameUse))
+    {
+      CfOut(cf_error,"LookupAccountSid","!! Could not find name corresponding to sid");
+      return false;      
+    }
+
+  return true;
+}
+
+
 /* Converts a SID to a string representation. The string must be preallocated. */
 int NovaWin_SidToString(SID *sid, char *stringSid, int stringSz)
 {

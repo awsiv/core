@@ -327,6 +327,37 @@ int NovaWin_SetFileOwnership(char *path, SID *sid)
 
 /*****************************************************************************/
 
+/* Gets the name of the entity owning file object in 'path', and writes it to 'owner' */
+int NovaWin_GetOwnerName(char *path, char *owner, int ownerSz)
+{
+  SECURITY_DESCRIPTOR *secDesc;
+  SID *ownerSid;
+  DWORD getRes;
+
+  memset(owner, 0, ownerSz);
+
+  getRes = GetNamedSecurityInfo(path, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, (PSID*)&ownerSid, NULL, NULL, NULL, &secDesc);
+
+  if(getRes != ERROR_SUCCESS)
+    {
+      CfOut(cf_error,"GetNamedSecurityInfo","!! Could not retreive existing owner of \"%s\"", path);
+      return false;
+    }
+  
+  if(!NovaWin_SidToName(ownerSid, owner, ownerSz))
+    {
+      CfOut(cf_error,"","!! Could not get owner name of \"%s\"", path);
+      LocalFree(secDesc);
+      return false;
+    }
+
+  LocalFree(secDesc);
+
+  return true;
+}
+
+/*****************************************************************************/
+
 void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp)
 
 {
