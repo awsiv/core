@@ -920,7 +920,7 @@ int Nova_EntityToSid(char **acePtr, SID *sid, DWORD sidSz)
           *acePtr += 1;
         }
 
-      if(!NovaWin_UserNameToSid(nameBuf, sid, sidSz))
+      if(!NovaWin_UserNameToSid(nameBuf, sid, sidSz, true))
         {
           return false;
         }
@@ -936,7 +936,7 @@ int Nova_EntityToSid(char **acePtr, SID *sid, DWORD sidSz)
           *acePtr += 1;
         }
 
-      if(!NovaWin_GroupNameToSid(nameBuf, sid, sidSz))
+      if(!NovaWin_GroupNameToSid(nameBuf, sid, sidSz, true))
         {
           return false;
         }

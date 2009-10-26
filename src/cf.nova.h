@@ -495,12 +495,15 @@ int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts);
 
 /* win_user.c */
 
-int NovaWin_UserNameToSid(char *userName, SID *sid, DWORD sidSz);
-int NovaWin_GroupNameToSid(char *groupName, SID *sid, DWORD sidSz);
+int NovaWin_UserNameToSid(char *userName, SID *sid, DWORD sidSz, int shouldExist);
+int NovaWin_GroupNameToSid(char *groupName, SID *sid, DWORD sidSz, int shouldExist);
+int NovaWin_NameToSid(char *name, SID *sid, DWORD sidSz);
 int NovaWin_SidToName(SID* sid, char *name, int nameSz);
 int NovaWin_SidToString(SID *sid, char *stringSid, int stringSz);
 int NovaWin_StringToSid(char *stringSid, SID *sid, int sidSz);
-
+struct UidList *NovaWin_Rlist2SidList(struct Rlist *uidnames, struct Promise *pp);
+struct Rval NovaWin_FnCallUserExists(struct FnCall *fp,struct Rlist *finalargs);
+struct Rval NovaWin_FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs);
 
 #endif  /* MINGW */
 
