@@ -117,25 +117,27 @@ if (change && (stat(destination,&dsb) != -1))
 /* Copy the current version to repository for versioning,
    keep a backup for forensics or binary change inspection */
 
-a.copy.servers = NULL;
-a.copy.backup = cfa_backup;
-a.copy.stealth = false;
-a.copy.verify = false;
-a.copy.preserve = false;
-  
-CheckForFileHoles(&sb,pp);
-
-if (CopyRegularFile(file,destination,sb,dsb,a,pp))
+if (change || stat(destination,&dsb) == -1)
    {
-   CfOut(cf_verbose,""," -> Cached change-file %s to repository location %s\n",file,destination);
-   return;
+   a.copy.servers = NULL;
+   a.copy.backup = cfa_backup;
+   a.copy.stealth = false;
+   a.copy.verify = false;
+   a.copy.preserve = false;
+   
+   CheckForFileHoles(&sb,pp);
+   
+   if (CopyRegularFile(file,destination,sb,dsb,a,pp))
+      {
+      CfOut(cf_verbose,""," -> Cached change-file %s to repository location %s\n",file,destination);
+      return;
+      }
+   else
+      {
+      CfOut(cf_verbose,""," -> Cached change-file %s to repository location %s\n",file,destination);
+      return;
+      }
    }
-else
-   {
-   CfOut(cf_verbose,""," -> Cached change-file %s to repository location %s\n",file,destination);
-   return;
-   }
-
 }
 
 /*****************************************************************************/

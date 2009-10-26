@@ -177,8 +177,6 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    else
       {
       fscanf(fin,"%*d,%[^,],%[^\n]",SLOTS[i-ob_spare][0],SLOTS[i-ob_spare][1]);
-
-      printf("READ %s,%s\n",SLOTS[i-ob_spare][0],SLOTS[i-ob_spare][1]);
       }
    }
 
@@ -423,14 +421,31 @@ while(true)
       {
       for (i = 0; i < CF_OBSERVABLES;i++)
          {
-         fprintf(fp[i],"%d %lf %lf %lf\n",count,value.Q[i].expect, sqrt(value.Q[i].var),value.Q[i].q);
+         /* Check for out of bounds data */
+         
+         if (value.Q[i].q < 0 && value.Q[i].q > CF_BIGNUMBER)
+            {
+            value.Q[i].q = 0;
+            }
+
+         if (value.Q[i].var < 0 && value.Q[i].var > CF_BIGNUMBER)
+            {
+            value.Q[i].var = value.Q[i].q;
+            }
+
+         if (value.Q[i].expect < 0 && value.Q[i].expect > CF_BIGNUMBER)
+            {
+            value.Q[i].expect = value.Q[i].q;
+            }
+         
+         fprintf(fp[i],"%d %.2lf %.2lf %.2lf\n",count,value.Q[i].expect,sqrt(value.Q[i].var),value.Q[i].q);
          }
       }
    else
       {
       for (i = 0; i < CF_OBSERVABLES;i++)
          {
-         fprintf(fp[i],"%d %lf %lf %lf\n",count,0,0,0);
+         fprintf(fp[i],"%d %.2lf %.2lf %.2lf\n",count,0,0,0);
          }
       }
    

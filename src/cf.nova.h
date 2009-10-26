@@ -520,6 +520,7 @@ int NovaWin_StringToSid(char *stringSid, SID *sid, int sidSz);
 #define NOVA_BUNDLE_DATA_INV_P "promises variables used by promise"
 
 #define NOVA_HISTORYDB "history.db"
+#define CF_BIGNUMBER 999999
 
 struct month_days
    {

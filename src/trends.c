@@ -114,6 +114,20 @@ for (yr = 2; yr >= 0; yr--)
    cfv->scale_x = (double)cfv->width / (double)CF_LHISTORYDATA;
    cfv->scale_y = ((double) cfv->height) / cfv->range;
 
+   if (cfv->max > 99999 || isinf(cfv->max) || isnan(cfv->max))
+      {
+      CfOut(cf_inform,""," !! Number overflow/error in %s",oldfile);
+      cfv->max = 10000;
+      continue;
+      }
+
+   if (cfv->range > 99999 || isinf(cfv->range) || isnan(cfv->range))
+      {
+      CfOut(cf_inform,""," !! Number overflow/error in %s",oldfile);      
+      cfv->max = 10000;
+      continue;
+      }
+
    Nova_DrawLongHAxes(cfv,BLACK);
    Nova_PlotLongHFile(cfv,LIGHTRED,GREEN,YELLOW);
    Nova_Title(cfv,BLUE);
@@ -352,7 +366,7 @@ if ((fp = fopen(fname,"w")) == 0)
 
 NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
 
-fprintf(fp,"<h1>Lifecycle history: %s</h1>\n",name);
+fprintf(fp,"<h1>Lifecycle history: %s (beta)</h1>\n",name);
 
 Nova_GraphLegend(fp);
 
@@ -373,8 +387,8 @@ fprintf(fp,"</div>\n");
 fprintf(fp,"<div id=\"longhistory\">\n");
 
 fprintf(fp,"<table>\n");
-fprintf(fp,"<tr><td>Maximum value </td><td>%lf</td><td>%s</td></tr>\n",cfv->max,UNITS[obs]);
-fprintf(fp,"<tr><td>Minimum value </td><td>%lf</td><td>%s</td></tr>\n",cfv->min,UNITS[obs]);
+fprintf(fp,"<tr><td>Maximum value </td><td>%.2lf</td><td>%s</td></tr>\n",cfv->max,UNITS[obs]);
+fprintf(fp,"<tr><td>Minimum value </td><td>%.2lf</td><td>%s</td></tr>\n",cfv->min,UNITS[obs]);
 fprintf(fp,"<tr><td>Average variability </td><td>+/- %lf</td><td>%s</td></tr>\n",cfv->error_scale,UNITS[obs]);
 fprintf(fp,"</table>\n");
 
