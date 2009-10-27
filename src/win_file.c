@@ -97,8 +97,6 @@ int NovaWin_mkdir(const char *path, mode_t mode)
  * We fix this by removing the file first if it exists */
 int NovaWin_rename(const char *oldpath, const char *newpath)
 {
-  nw_exper("NovaWin_rename", "using unlink() before rename()");
-
   unlink(newpath);
 
   return rename(oldpath, newpath);
