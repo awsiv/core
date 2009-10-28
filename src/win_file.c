@@ -405,5 +405,39 @@ void NovaWin_VerifyCopiedFileAttributes(char *file,struct stat *dstat,struct Att
   NovaWin_VerifyFileAttributes(file,dstat,attr,pp);
 }
 
+/*****************************************************************************/
+
+/* Returns the amount of free space, in kilobytes (if type type is
+ * avail) or percent, on the device where file resides, or CF_INFINITY
+ * on error. 
+ * NOTE: Total length returned may be dependent on which account we
+ * are calling from if disk quotas are being used - may be fixed with
+ * CreateFile() + DeviceIoControl(IOCTL_DISK_GET_LENGTH_INFO).
+ * TODO: Increase returned datatype range for supporting > 2 TB (-> 64 bit)? */
+int NovaWin_GetDiskUsage(char *file,enum cfsizes type)
+{
+  ULARGE_INTEGER bytesLenCaller, bytesFree, kbLenCaller, kbFree;
+  
+  
+  if(!GetDiskFreeSpaceEx(file, NULL, &bytesLenCaller, &bytesFree))
+    {
+      printf("Error getting free disk space");
+      CfOut(cf_error, "GetDiskFreeSpaceEx", "Could not get disk space status for \"%s\"", file);
+      return CF_INFINITY;
+    }
+  
+  kbLenCaller.QuadPart = bytesLenCaller.QuadPart / 1000;
+  kbFree.QuadPart = bytesFree.QuadPart / 1000;
+  
+if (type == cfabs)
+   {
+     return (int)kbFree.QuadPart;
+   }
+else
+   {
+     return ((double)kbFree.QuadPart / (double)kbLenCaller.QuadPart) * 100;
+   }
+}
+
 
 #endif  /* MINGW */

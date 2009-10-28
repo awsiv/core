@@ -19,11 +19,64 @@
 
 #ifdef MINGW
 
-// TODO: Implement ?
+// TODO: Implement ? - we only support one signal: SIGKILL (9)
+/* Returns true if SIGKILL was one of the signals, false otherwise */
 int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp)
 {
-CfOut(cf_verbose,"","Signals are not yet supported on NT.\n");
-return 0;
+  int kill = false;
+  int signal;
+  struct Item *ip;
+  struct Rlist *rp;
+  pid_t pid;
+
+if (siglist == NULL)
+   {
+   return 0;
+   }
+
+if (a.signals == NULL)
+   {
+   CfOut(cf_inform,""," -> No signals to send for %s\n",pp->promiser);
+   return 0;
+   }
+
+for (ip = siglist; ip != NULL; ip=ip->next)
+   {
+   pid = ip->counter;
+   
+   for (rp = a.signals; rp != NULL; rp=rp->next)
+      {
+      signal = Signal2Int(rp->item);
+
+      if(signal != SIGKILL)
+	{
+	  CfOut(cf_verbose, "", "The only supported signal on windows is 'kill'");
+	  continue;
+	}
+      
+      kill = true;
+      
+      if (!DONTDO)
+         {         
+	   if(!NovaWin_GracefulTerminate(pid))
+            {
+            cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Couldn't terminate process with pid %d\n", pid);
+            continue;
+            }
+         else
+            {
+            cfPS(cf_inform,CF_CHG,"",pp,a," -> Terminated process with pid %d\n", pid);
+            break;
+            }
+         }
+      else
+         {
+	   CfOut(cf_error,""," -> Need to terminate process with pid %d", pid);
+         }
+      }
+   }
+
+return kill;
 }
 
 
@@ -31,8 +84,6 @@ return 0;
  * TODO: Try to send quit-message to process before terminating it ? */
 int NovaWin_GracefulTerminate(pid_t pid)
 {
-  nw_exper("GracefulTerminate", "needs testing");
-
   int res;
   HANDLE procHandle;
 
