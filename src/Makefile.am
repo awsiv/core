@@ -39,6 +39,7 @@ libcfnova_la_SOURCES =						\
 	cfcore.c                                                \
 	win_api.c						\
 	win_file.c						\
+	win_log.c                       \
 	win_pipe.c						\
 	win_proc.c						\
 	win_ps.c                                                \

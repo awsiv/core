@@ -104,6 +104,14 @@ struct CfFileLine
 
 /*****************************************************************************/
 
+#ifdef MINGW
+
+#include "cf.events.h"  // defines events for logging on windows
+
+#endif
+
+/*****************************************************************************/
+
 /* Valid ACL syntax values, from documentation */
 
 // Valid generic permissions
@@ -471,6 +479,13 @@ int NovaWin_GetOwnerName(char *path, char *owner, int ownerSz);
 void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp);
 void NovaWin_VerifyCopiedFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp);
 int NovaWin_GetDiskUsage(char *file,enum cfsizes type);
+
+/* win_log.c */
+
+void NovaWin_OpenLog(void);
+void NovaWin_CloseLog(void);
+void NovaWin_MakeLog(struct Item *mess,enum cfreport level);
+void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char status, struct Item *mess);
 
 /* win_pipe.c */
 
