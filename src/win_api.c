@@ -41,32 +41,41 @@ void nw_unimpl(char *fname)
 
 /* ------ END TEMP DEFINES ------ */
 
-
-gid_t getgid(void)
-{
-  nw_exper("getgid", "always returns 0 (assumes process is run by group root)");
-  return 0;
-}
-
-
+// always returns 0 (assumes process is run by root/Administrator)
 uid_t getuid(void)
 {
-  nw_exper("getuid", "always returns 0 (assumes process is run by root/Administrator)");
   return 0;
 }
 
+/*****************************************************************************/
+
+// always returns 0 (assumes process is run by group root)
+gid_t getgid(void)
+{
+  return 0;
+}
+
+/*****************************************************************************/
+
+// there are no symbolic links on NT, so stat and lstat are equivalent
+int lstat(const char *file_name, struct stat *buf)
+{
+  return stat(file_name, buf);
+}
+
+/*****************************************************************************/
 
 unsigned int sleep(unsigned int seconds)
 {
-  // Note: Use SleepEx() if it should be alertable when waiting for IO
+  // TODO: Note: Use SleepEx() if it should be alertable when waiting for IO
   // return values differ when signaled
-  nw_exper("sleep", "signals are ignored when sleeping");
   Sleep((seconds)*1000);
 
   // on windows, the sleep seconds have always elapsed when we return (i.e. no signals are received)
   return 0;
 }
 
+/*****************************************************************************/
 
 /* Change owner of file pointed to by path. If owner and group id are 0,
  * the owner is set to the "BUILTIN\Administrators" group. Otherwise, the function fails.
@@ -96,31 +105,38 @@ int chown(const char *path, uid_t owner, gid_t group)
     }
 }
 
+/*****************************************************************************/
 
 long int random(void)
 {
-  nw_exper("random", "using rand() from CRT");
   return rand();
 }
 
+/*****************************************************************************/
 
 void srandom(unsigned int seed)
 {
-  nw_exper("srandom", "using srand() from CRT");
   srand(seed);
 }
 
+/*****************************************************************************/
 
 void setlinebuf(FILE *stream)
 {
-  nw_exper("setlinebuf", "using NT setvbuf()");
-
   setvbuf(stream, (char *)NULL, _IOLBF, 0);
 }
 
+/*****************************************************************************/
+
+int NovaWin_stat(const char *path, struct stat *buf)
+{
+  //FIXME
+}
+
+/*****************************************************************************/
 
 /* Start up Winsock */
-void NovaWin_OpenNetwork(void)
+void NovaWin_OpenNetwork()
 { 
 struct WSAData wsaData;
 int nCode;
@@ -137,25 +153,23 @@ else
   }
 }
 
-/* TODO: move the functions below to other files ? */
+/*****************************************************************************/
 
-/* Get user name of owner of this process */
-int NovaWin_GetCurrentUserName(char *userName, int userNameLen)
+void NovaWin_CloseNetwork()
 {
-  DWORD userNameMax = (DWORD)userNameLen;
-  
-  if(!GetUserName(userName, &userNameMax))
+  if(!WSACleanup())
     {
-      CfOut(cf_error,"GetUserName","!! Could not get user name of current process, using \"UNKNOWN\"");
-
-      strncpy(userName, "UNKNOWN", userNameLen);
-      userName[userNameLen - 1] = '\0';
-      return false;
+      CfOut(cf_error, "WSACleanup", "!! Could not close network");
     }
-  
-  return true;
+  else
+    {
+      CfOut(cf_verbose,"","Windows sockets successfully deinitialized.\n"); 
+    }
 }
 
+/*****************************************************************************/
+
+/* TODO: move the functions below to other files ? */
 
 char *NovaWin_GetErrorStr(void)
 {

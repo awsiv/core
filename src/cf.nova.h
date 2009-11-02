@@ -106,6 +106,9 @@ struct CfFileLine
 
 #ifdef MINGW
 
+#define EVENTSOURCE_NAME "Cfengine Nova"  // appears in e.g. Event Viewer
+#define EVENTSOURCE_HKLM_REGPATH "SYSTEM\\CurrentControlSet\\services\\eventlog\\Application\\" EVENTSOURCE_NAME
+#define EVENT_COUNT 8  // mapped to "TypesSupported" registry log entry
 #include "cf.events.h"  // defines events for logging on windows
 
 #endif
@@ -458,8 +461,15 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *name,enum observables 
 #ifdef MINGW
 /* win_api.c */
 
+uid_t getuid(void);
+gid_t getgid(void);
+int chown(const char *path, uid_t owner, gid_t group);
+long int random(void);
+void srandom(unsigned int seed);
+void setlinebuf(FILE *stream);
+int NovaWin_stat(const char *path, struct stat *buf);
 void NovaWin_OpenNetwork(void);
-int NovaWin_GetCurrentUserName(char *userName, int userNameLen);
+void NovaWin_CloseNetwork(void);
 char *NovaWin_GetErrorStr(void);
 
 /* win_file.c */
@@ -483,6 +493,7 @@ int NovaWin_GetDiskUsage(char *file,enum cfsizes type);
 /* win_log.c */
 
 void NovaWin_OpenLog(void);
+int NovaWin_CheckRegistryLogKey(void);
 void NovaWin_CloseLog(void);
 void NovaWin_MakeLog(struct Item *mess,enum cfreport level);
 void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char status, struct Item *mess);
@@ -503,6 +514,7 @@ int NovaWin_GracefulTerminate(pid_t pid);
 int NovaWin_ShellCommandReturnsZero(char *comm, int useshell);
 int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir, STARTUPINFO *si, HANDLE *procHandle);
 int NovaWin_GetCurrentProcessOwner(SID *sid, int sidSz);
+int NovaWin_GetCurrentUserName(char *userName, int userNameLen);
 int NovaWin_SetTokenPrivilege(HANDLE token, char *privilegeName, int enablePriv);
 
 /* win_ps.c */

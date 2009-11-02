@@ -1,3 +1,11 @@
+// cf.events.mc: Definition of logging events for windows.
+// This file is used to generate cf.events.h and cf.events.dll as follows:
+// mc cf.events.mc
+// rc cf.events.rc
+// link -dll -noentry cf.events.res
+// mc and rc are available from windows sdk, link from visual studio.
+// NOTE: Registry entry "TypesSupported" needs to be changed if the
+// number of messages below are changed - see EVENT_COUNT in cf.nova.h.
 // MessageId: EV's "Event" column
 // Severity: Informational / Warning / Error
 //
@@ -41,7 +49,7 @@
 //
 // MessageText:
 //
-// A promise by %1 to %2 was already kept. Details follow.
+// A promise by %1 to %2 was already kept. Details follow.%r%r
 // %3
 //
 #define EVMSG_PROMISE_KEPT               0x40000064L
@@ -51,7 +59,7 @@
 //
 // MessageText:
 //
-// A promise by %1 to %2 has been repaired. Details follow.
+// A promise by %1 to %2 has been repaired. Details follow.%r%r
 // %3
 //
 #define EVMSG_PROMISE_REPAIRED           0x40000065L
@@ -62,7 +70,7 @@
 // MessageText:
 //
 // A promise by %1 to %2 was not kept and has not been repaired due to
-// policy reasons (dry-run or action_policy set to warn). Details follow.
+// policy reasons (dry-run or action_policy set to warn). Details follow.%r%r
 // %3
 //
 #define EVMSG_PROMISE_NOT_REPAIRED_POLICY 0xC0000066L
@@ -72,7 +80,7 @@
 //
 // MessageText:
 //
-// A promise by %1 to %2 was not kept and has not been repaired. Details follow.
+// A promise by %1 to %2 was not kept and has not been repaired. Details follow.%r%r
 // %3
 //
 #define EVMSG_PROMISE_NOT_REPAIRED       0xC0000067L
@@ -87,13 +95,22 @@
 #define EVMSG_DEFAULT_INFO               0x40000068L
 
 //
+// MessageId: EVMSG_DEFAULT_VERBOSE
+//
+// MessageText:
+//
+// %1
+//
+#define EVMSG_DEFAULT_VERBOSE            0x40000069L
+
+//
 // MessageId: EVMSG_DEFAULT_WARN
 //
 // MessageText:
 //
 // %1
 //
-#define EVMSG_DEFAULT_WARN               0x80000069L
+#define EVMSG_DEFAULT_WARN               0x8000006AL
 
 //
 // MessageId: EVMSG_DEFAULT_ERROR
@@ -102,5 +119,5 @@
 //
 // %1
 //
-#define EVMSG_DEFAULT_ERROR              0xC000006AL
+#define EVMSG_DEFAULT_ERROR              0xC000006BL
 
