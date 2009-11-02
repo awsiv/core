@@ -813,7 +813,7 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
 
             if (strstr(pp2->classes,rp->item) || (varclass && strstr(varclass,rp->item)))
                {
-               Debug("Found %s in %s+%s\n",rp->item,pp2->classes,varclass);
+	       //Debug("Found %s in %s+%s\n",rp->item,pp2->classes,varclass);  // FIXME: SEGFAULT with -d3 on Solaris
                // found a connection
                fprintf(fp,"topics:\n");
                fprintf(fp,"promises::");
