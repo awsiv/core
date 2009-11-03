@@ -41,10 +41,9 @@ if (cf_strcmp(zone,"global") == 0)
    {
    return "-f -z global";
    }
-
-#else
-return VPSOPTS[VSYSTEMHARDCLASS];
 #endif
+
+return VPSOPTS[VSYSTEMHARDCLASS];
 }
 
 /*****************************************************************************/
