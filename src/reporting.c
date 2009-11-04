@@ -1824,7 +1824,7 @@ void Nova_SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet
 { FILE *fin,*fout;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
 
-snprintf(name,sizeof(name)-1,"%s/state/vars.out",CFWORKDIR);
+snprintf(name,sizeof(name),"%s/state/vars.out",CFWORKDIR);
 MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
@@ -1835,7 +1835,7 @@ if ((fin = cf_fopen(name,"r")) == NULL)
 
 if (html)
    {
-   snprintf(name,CF_BUFSIZE,"variables.html");
+     snprintf(name,sizeof(name),"variables.html");
    }
 else
    {
@@ -1850,7 +1850,7 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 
 if (html && !embed)
    {
-   snprintf(name,CF_BUFSIZE,"Main variables instantiated on %s",VFQNAME);
+   snprintf(name,sizeof(name),"Main variables instantiated on %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    }
