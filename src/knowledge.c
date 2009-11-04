@@ -813,8 +813,7 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
 
             if (strstr(pp2->classes,rp->item) || (varclass && strstr(varclass,rp->item)))
                {
-               char varclassPrint = varclass ? varclass : "(null)";
-	       Debug("Found %s in %s+%s\n",rp->item,pp2->classes,varclassPrint);
+	       //Debug("Found %s in %s+%s\n",rp->item,pp2->classes,varclassPrint); //FIXME: Segfault on Solaris (Nullpointers?)
                // found a connection
                fprintf(fp,"topics:\n");
                fprintf(fp,"promises::");
