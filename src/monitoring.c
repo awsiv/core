@@ -223,9 +223,9 @@ if (LICENSES == 0)
    {
    return;
    }
-  
+
 snprintf(filename,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_HISTORYDB);
-  
+
 if (!OpenDB(filename,&dbp))
    {
    return;
@@ -248,11 +248,11 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    {
    double delta2;
 
-   shift_value->Q[i].q = newvals->Q[i].q;       
+   shift_value->Q[i].q = newvals->Q[i].q;
    shift_value->Q[i].expect = NovaShiftAverage(newvals->Q[i].q,shift_value->Q[i].expect);
    delta2 = (newvals->Q[i].q - shift_value->Q[i].expect)*(newvals->Q[i].q - shift_value->Q[i].expect);
    shift_value->Q[i].var = NovaShiftAverage(delta2,shift_value->Q[i].var);
-   } 
+   }
 }
 
 /*****************************************************************************/
@@ -279,7 +279,7 @@ void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
   int i,slot,count = 0;
   double new_value;
   FILE *fin,*fout;
-  
+
 if (!handle)
    {
    CfOut(cf_error,""," !! The promised measurement has no handle to register it by.");
@@ -299,19 +299,19 @@ switch (a.measure.data_type)
        /* First see if we can accommodate this measurement */
 
        CfOut(cf_verbose,""," -> Promise \"%s\" is numerical in nature",handle);
-       
-       
+
+
        stream = NovaGetMeasurementStream(a,pp);
-       
+
        if (cf_strcmp(a.measure.history_type,"weekly") == 0)
-          {                 
+          {
           if ((slot = NovaGetSlotHash(handle)) < 0)
              {
              return;
              }
-          
+
           snprintf(SLOTS[slot][0],CF_MAXVARSIZE-1,"%s",handle);
-          
+
           if (pp->ref)
              {
              snprintf(SLOTS[slot][1],CF_MAXVARSIZE-1,"%s",pp->ref);
@@ -320,7 +320,7 @@ switch (a.measure.data_type)
              {
              snprintf(SLOTS[slot][1],CF_MAXVARSIZE-1,"User defined measure");
              }
-          
+
           this[ob_spare+slot] = NovaExtractValueFromStream(handle,stream,a,pp);
           CfOut(cf_verbose,""," -> Setting Nova slot %d=%s to %lf\n",ob_spare+slot,handle,this[ob_spare+slot]);
           }
@@ -372,7 +372,7 @@ chmod(filename,0600);
 /*****************************************************************************/
 
 void Nova_LongHaul(char *day,char *month,char* lifecycle,char *shift)
-    
+
 { int its,i,j,k, count = 0,err,this_lifecycle,ago, this;
   char timekey[CF_MAXVARSIZE],timekey_now[CF_MAXVARSIZE];
   char d[CF_TIME_SIZE],m[CF_TIME_SIZE],l[CF_TIME_SIZE],s[CF_TIME_SIZE];
@@ -406,7 +406,7 @@ strncpy(l,lifecycle,31);
 this_lifecycle = Str2Int(l+strlen("Lcycle_"));
 this = (this_lifecycle + 2 - ago) %3;
 snprintf(l,CF_TIME_SIZE-1,"Lcycle_%d",this);
-         
+
 strncpy(s,shift,31);
 strncpy(d,day,31);
 strncpy(m,month,31);
@@ -422,7 +422,7 @@ while(true)
       for (i = 0; i < CF_OBSERVABLES;i++)
          {
          /* Check for out of bounds data */
-         
+
          if (value.Q[i].q < 0 && value.Q[i].q > CF_BIGNUMBER)
             {
             value.Q[i].q = 0;
@@ -437,7 +437,7 @@ while(true)
             {
             value.Q[i].expect = value.Q[i].q;
             }
-         
+
          fprintf(fp[i],"%d %.2lf %.2lf %.2lf\n",count,value.Q[i].expect,sqrt(value.Q[i].var),value.Q[i].q);
          }
       }
@@ -448,17 +448,17 @@ while(true)
          fprintf(fp[i],"%d %.2lf %.2lf %.2lf\n",count,0,0,0);
          }
       }
-   
+
    count++;
-   
+
    NovaIncrementShift(d,m,l,s);
 
    Debug("TIMEKEY (%s)\n",timekey);
-      
+
    if (NovaLifeCyclePassesGo(d,m,l,s,day,month,lifecycle,shift))
       {
       NovaCloseLifeCycle(ago,fp);
-      
+
       if (ago--)
          {
          count = 0;
@@ -467,7 +467,7 @@ while(true)
       else
          {
          break;
-         }          
+         }
       }
    }
 
@@ -477,16 +477,16 @@ dbp->close(dbp,0);
 /*****************************************************************************/
 
 void NovaOpenNewLifeCycle(int age,FILE **fp)
-    
+
 { int i;
-  char filename[CF_MAXVARSIZE]; 
+  char filename[CF_MAXVARSIZE];
 
 Debug("OPEN YEAR %d\n",age);
- 
+
 for (i = 0; i < CF_OBSERVABLES; i++)
    {
    sprintf(filename,"%s_%d.yr",OBS[i][0],age);
-   
+
    if ((fp[i] = cf_fopen(filename,"w")) == NULL)
       {
       CfOut(cf_error,"cf_fopen","Could not open %s\n",filename);
@@ -498,15 +498,15 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 /*****************************************************************************/
 
 void NovaCloseLifeCycle(int age,FILE **fp)
-    
+
 { int i;
 
 Debug("CLOSE YEAR %d\n",age);
- 
+
 for (i = 0; i < CF_OBSERVABLES; i++)
    {
    cf_fclose(fp[i]);
-   } 
+   }
 }
 
 /*****************************************************************************/
@@ -522,8 +522,9 @@ void Nova_SetMeasurementPromises(struct Item **classlist)
   struct Rlist *rp;
   int i;
 
-snprintf(dbname,CF_BUFSIZE-1,"%s/state/nova_measures.db",CFWORKDIR);
-          
+snprintf(dbname,sizeof(dbname)-1,"%s/state/nova_measures.db",CFWORKDIR);
+MapName(dbname);
+
 if (!OpenDB(dbname,&dbp))
    {
    return;
@@ -539,7 +540,7 @@ memset(&key, 0, sizeof(key));
 memset(&stored, 0, sizeof(stored));
 
 /* Get the database values, if any */
- 
+
 while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
    {
    if (stored.data != NULL)
@@ -561,7 +562,7 @@ while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
 
 dbp->close(dbp,0);
 
-/* Get the directly discovered environment data from sys context 
+/* Get the directly discovered environment data from sys context
 
 for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
    {
@@ -569,7 +570,7 @@ for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
       {
       continue;
       }
-   
+
    if (ptr->hashtable)
       {
       for (i = 0; i < CF_HASHTABLESIZE; i++)
@@ -587,7 +588,7 @@ for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
                case CF_LIST:
 
                    snprintf(assignment,CF_BUFSIZE-1,"value_%s=",ptr->hashtable[i]->lval);
-                   
+
                    for (rp = ptr->hashtable[i]->rval; rp != NULL; rp=rp->next)
                       {
                       strcat(assignment,rp->item);
@@ -596,14 +597,14 @@ for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
                          strcat(assignment,",");
                          }
                       }
-                   
+
                    AppendItem(classlist,assignment,NULL);
                    break;
                default:
                    break;
                }
             }
-         }      
+         }
       }
    }
 */
@@ -634,7 +635,7 @@ if ((errno = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
    }
 
  /* Initialize the key/data return pair. */
- 
+
 memset(&key, 0, sizeof(key));
 memset(&stored, 0, sizeof(stored));
 
@@ -643,15 +644,15 @@ while (dbcp->c_get(dbcp, &key, &stored, DB_NEXT) == 0)
    char buf[CF_MAXVARSIZE],lval[CF_MAXVARSIZE],rval[CF_BUFSIZE];
    enum cfdatatype type;
    struct Rlist *list = NULL;
-   
+
    strncpy(buf,(char *)key.data,CF_MAXVARSIZE-1);
 
    sscanf(buf,"%[^:]:%d",lval,&type);
-   
+
    if (stored.data != NULL)
       {
       strncpy(rval,stored.data,CF_BUFSIZE-1);
-      
+
       switch (type)
          {
          case cf_str:
@@ -659,13 +660,13 @@ while (dbcp->c_get(dbcp, &key, &stored, DB_NEXT) == 0)
          case cf_real:
              NewScalar("mon",lval,rval,type);
              break;
-             
+
          case cf_slist:
              list = SplitStringAsRList(rval,',');
              NewList("mon",lval,list,cf_slist);
              DeleteRlist(list);
              break;
-             
+
          case cf_counter:
              NewScalar("mon",lval,rval,cf_str);
              break;
@@ -685,7 +686,7 @@ void Nova_DumpSlowlyVaryingObservations()
   DBT key,stored;
   char name[CF_BUFSIZE];
   FILE *fout;
-  
+
 
 if (LICENSES == 0)
    {
@@ -716,7 +717,7 @@ if ((errno = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
    }
 
  /* Initialize the key/data return pair. */
- 
+
 memset(&key, 0, sizeof(key));
 memset(&stored, 0, sizeof(stored));
 
@@ -725,11 +726,11 @@ while (dbcp->c_get(dbcp, &key, &stored, DB_NEXT) == 0)
    char buf[CF_MAXVARSIZE],lval[CF_MAXVARSIZE],rval[CF_BUFSIZE];
    enum cfdatatype type;
    struct Rlist *list = NULL;
-   
+
    strncpy(buf,(char *)key.data,CF_MAXVARSIZE-1);
 
    sscanf(buf,"%s:%d",lval,&type);
-   
+
    if (stored.data != NULL)
       {
       strncpy(rval,stored.data,CF_BUFSIZE-1);
@@ -765,16 +766,16 @@ for (i = 1; i < 20; i++)
    {
    printf("(");
    wp = w;
-    
+
    for (j = 1; j < i; j++)
       {
       printf("%f,",wp);
       wp *= (1- w);
       }
    printf(")\n");
-   } 
+   }
 }
-  
+
 */
 
 double NovaShiftAverage(double new,double old)
@@ -785,13 +786,13 @@ double NovaShiftAverage(double new,double old)
 wnew = forgetrate;
 wold = (1.0-forgetrate);
 
-av = (wnew*new + wold*old)/(wnew+wold); 
+av = (wnew*new + wold*old)/(wnew+wold);
 
 if (av < 0)
    {
    av = 0;
    }
-  
+
 return av;
 }
 
@@ -833,7 +834,7 @@ for (i = 0; true; i = (i+1)%4)
    if (cf_strcmp(SHIFT_TEXT[i],shift) == 0)
       {
       new = (i+1)%4;
-      
+
       strncpy(shift,SHIFT_TEXT[new],CF_TIME_SIZE-1);
 
       if (new >= i)
@@ -850,7 +851,7 @@ for (i = 0; true; i = (i+1)%4)
 next_day = NovaGetNextDay(nday,month,nyear);
 
 snprintf(day,CF_TIME_SIZE-1,"%d",next_day);
-      
+
 if (next_day > nday)
    {
    return;
@@ -863,7 +864,7 @@ for (i = 0; true; i = (i+1)%12)
       new = (i+1)%12;
 
       snprintf(month,CF_TIME_SIZE,"%.3s",MONTH_TEXT[new]);
-      
+
       if (new >= i)
          {
          return;
@@ -882,7 +883,7 @@ snprintf(lifecycle,CF_TIME_SIZE-1,"Lcycle_%d",(lc+1)%3);
 
 int NovaLifeCyclePassesGo(char *d,char *m,char *l,char *s,char *day,char *month,char* lifecycle,char *shift)
 
-{ 
+{
 if (cf_strcmp(d,day) != 0)
    {
    return false;
@@ -922,7 +923,7 @@ int NovaGetNextDay(int day,char *month,int year)
      "November",30,
      "December",31
      };
- 
+
  int ndays = 0,this_month;
 
 for (this_month = 0; this_month < 12; this_month++)
@@ -965,7 +966,7 @@ for (i = 0; name[i] != '\0'; i++)
    {
    slot = (CF_MACROALPHABET * slot + name[i]) % hashtablesize;
    }
-    
+
 for (i = 0; i < CF_DUNBAR_WORK; i++)
    {
    if (MEASUREMENTS[i] != NULL)
@@ -996,7 +997,7 @@ return slot;
 /*****************************************************************************/
 
 struct Item *NovaGetMeasurementStream(struct Attributes a,struct Promise *pp)
-    
+
 { int i;
 
 for (i = 0; i < CF_DUNBAR_WORK; i++)
@@ -1005,7 +1006,7 @@ for (i = 0; i < CF_DUNBAR_WORK; i++)
       {
       break;
       }
-   
+
    if (cf_strcmp (NOVA_DATA[i].path,pp->promiser) == 0)
       {
       NOVA_DATA[i].output = NovaReSample(i,a,pp);
@@ -1043,7 +1044,7 @@ if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
    }
 
 thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,a,pp);
-   
+
 if (!MONITOR_RESTARTED && thislock.lock == NULL)
    {
    /* If too soon or busy then use cache */
@@ -1053,20 +1054,20 @@ else
    {
    DeleteItemList(NOVA_DATA[slot].output);
    NOVA_DATA[slot].output = NULL;
-   
+
    CfOut(cf_inform,""," -> Sampling \'%s\' ...(timeout=%d,owner=%d,group=%d)\n",pp->promiser,a.contain.timeout,a.contain.owner,a.contain.group);
-   
+
    start = BeginMeasure();
-   
+
    CommPrefix(pp->promiser,comm);
-   
+
    if (a.contain.timeout != 0)
       {
       SetTimeOut(a.contain.timeout);
       }
-   
+
    /* Stream types */
-   
+
    if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"file") == 0)
       {
       fin = cf_fopen(pp->promiser,"r");
@@ -1075,7 +1076,7 @@ else
       {
       CfOut(cf_verbose,""," -> (Setting umask to %o)\n",a.contain.umask);
       maskval = umask(a.contain.umask);
-      
+
       if (a.contain.umask == 0)
          {
          CfOut(cf_verbose,""," !! Programming %s running with umask 0! Use umask= to set\n",pp->promiser);
@@ -1092,7 +1093,7 @@ else
       }
 
    /* generic file stream */
-   
+
    if (fin == NULL)
       {
       cfPS(cf_error,CF_FAIL,"cf_popen",pp,a,"Couldn't open pipe to command %s\n",pp->promiser);
@@ -1105,7 +1106,7 @@ else
       MONITOR_RESTARTED = false;
       return NOVA_DATA[slot].output;
       }
-   
+
    while (!feof(fin))
       {
       if (ferror(fin))  /* abortable */
@@ -1119,11 +1120,11 @@ else
 
          return NOVA_DATA[slot].output;
          }
-         
+
       CfReadLine(line,CF_BUFSIZE-1,fin);
       AppendItemList(&(NOVA_DATA[slot].output),line);
       CfOut(cf_inform,"","Sampling => %s",line);
-      
+
       if (ferror(fin))  /* abortable */
          {
          cfPS(cf_error,CF_TIMEX,"ferror",pp,a,"Sample stream %s\n",pp->promiser);
@@ -1132,9 +1133,9 @@ else
             YieldCurrentLock(thislock);
             }
          return NOVA_DATA[slot].output;
-         }      
+         }
       }
-   
+
    cf_pclose_def(fin,a,pp);
    }
 
@@ -1167,20 +1168,20 @@ double NovaExtractValueFromStream(char *handle,struct Item *stream,struct Attrib
   int count = 1, found = false,match_count = 0;
   double real_val = 0;
   struct Item *ip,*match = NULL;
- 
+
 for (ip = stream; ip != NULL; ip = ip-> next)
    {
    if (count == a.measure.select_line_number)
       {
       found = true;
-      match = ip;      
+      match = ip;
       match_count++;
       }
 
    if (a.measure.select_line_matching && FullTextMatch(a.measure.select_line_matching,ip->name))
       {
       found = true;
-      match = ip;      
+      match = ip;
       match_count++;
 
       if (a.measure.extraction_regex)
@@ -1188,19 +1189,19 @@ for (ip = stream; ip != NULL; ip = ip-> next)
          switch (a.measure.data_type)
             {
             case cf_int:
-                
+
                 strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
                 real_val += Str2Double(value);
                 break;
-                
+
             case cf_real:
-                
+
                 strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
                 real_val += Str2Double(value);
                 break;
             }
          }
-      
+
       }
 
    count++;
@@ -1215,12 +1216,12 @@ if (!found)
 switch (a.measure.data_type)
    {
    case cf_counter:
-       
+
        real_val = (double)match_count;
        break;
 
    case cf_int:
-       
+
        if (match_count > 1)
           {
           CfOut(cf_inform,""," !! Warning: %d lines matched the line_selection \"%s\"- making best average",match_count,a.measure.select_line_matching);
@@ -1231,7 +1232,7 @@ switch (a.measure.data_type)
           real_val /= match_count;
           }
        break;
-       
+
    case cf_real:
 
        if (match_count > 1)
@@ -1275,7 +1276,7 @@ CfOut(cf_verbose,""," -> Locate and log symbolic sample ...");
 for (ip = stream; ip != NULL; ip = ip-> next)
    {
    CfOut(cf_verbose,"","Passing line %d...\n",count);
-   
+
    if (count == a.measure.select_line_number)
       {
       CfOut(cf_verbose,"","Found line %d by number...\n",count);
@@ -1292,7 +1293,7 @@ for (ip = stream; ip != NULL; ip = ip-> next)
          }
       break;
       }
-   
+
    if (a.measure.select_line_matching && FullTextMatch(a.measure.select_line_matching,ip->name))
       {
       CfOut(cf_verbose,"","Found line %d by pattern...\n",count);
@@ -1323,13 +1324,13 @@ if (match_count > 1)
    CfOut(cf_inform,""," !! Warning: %d lines matched the line_selection \"%s\"- matching to last",match_count,a.measure.select_line_matching);
    }
 
-switch (a.measure.data_type)    
+switch (a.measure.data_type)
    {
    case cf_counter:
        snprintf(value,CF_MAXVARSIZE,"%d",match_count);
        break;
-       
-   case cf_slist:       
+
+   case cf_slist:
        v = ItemList2CSV(matches);
        snprintf(value,CF_BUFSIZE,"%s",v);
        free(v);
@@ -1352,28 +1353,28 @@ if (a.measure.history_type && cf_strcmp(a.measure.history_type,"log") == 0)  // 
 
    strncpy(sdate,ctime(&now),CF_MAXVARSIZE-1);
    Chop(sdate);
-   
+
    fprintf(fout,"%s,%s\n",sdate,value);
    CfOut(cf_verbose,"","Logging: %s,%s to %s\n",sdate,value,filename);
-   
+
    cf_fclose(fout);
    }
 else // scalar or static
    {
    DB *dbp;
    char id[CF_MAXVARSIZE];
-   
+
    snprintf(filename,CF_BUFSIZE-1,"%s/state/nova_static.db",CFWORKDIR);
-   
+
    if (!OpenDB(filename,&dbp))
       {
       return;
       }
 
    snprintf(id,CF_MAXVARSIZE-1,"%s:%d",handle,a.measure.data_type);
-   
+
    WriteDB(dbp,id,value,strlen(value)+1);
-   
+
    dbp->close(dbp,0);
    }
 }
@@ -1387,9 +1388,9 @@ void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Prom
   time_t lastseen, now = time(NULL);
   double delta2;
   DB *dbp;
-   
+
 snprintf(dbname,CF_BUFSIZE-1,"%s/state/nova_measures.db",CFWORKDIR);
-          
+
 if (!OpenDB(dbname,&dbp))
    {
    return;

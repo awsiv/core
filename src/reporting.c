@@ -116,15 +116,15 @@ char *NUMBER_TXT[] =
 /*****************************************************************************/
 
 void Nova_CSV2XML(struct Rlist *list)
-    
+
 { struct Rlist *rp,*rline,*rl;
   int i;
- 
+
 for (rp = list; rp != NULL; rp = rp->next)
     {
     FILE *fin,*fout;
     char *sp,name[CF_MAXVARSIZE],line[CF_BUFSIZE];
-    
+
     if ((fin = fopen(rp->item,"r")) == NULL)
        {
        CfOut(cf_inform,"fopen","Cannot open CSV file %s",rp->item);
@@ -132,7 +132,7 @@ for (rp = list; rp != NULL; rp = rp->next)
        }
 
     strncpy(name,rp->item,CF_MAXVARSIZE-1);
-    
+
     for (sp = name; *sp != '.' && *sp != '\0'; sp++)
        {
        }
@@ -140,7 +140,7 @@ for (rp = list; rp != NULL; rp = rp->next)
     *sp = '\0';
 
     strcat(name,".xml");
-    
+
     if ((fout = fopen(name,"w")) == NULL)
        {
        CfOut(cf_inform,"fopen","Cannot open XML file %s",rp->item);
@@ -148,7 +148,7 @@ for (rp = list; rp != NULL; rp = rp->next)
        }
 
     CfOut(cf_verbose,"","Converting %s to %s\n",rp->item,name);
-    
+
     fprintf(fout,"<?xml version=\"1.0\"?>\n<output>\n");
 
     while (!feof(fin))
@@ -160,7 +160,7 @@ for (rp = list; rp != NULL; rp = rp->next)
        fprintf(fout," <line>\n");
 
        i = 1;
-       
+
        for (rl = rline; rl != NULL; rl = rl->next)
           {
           if (NUMBER_TXT[i])
@@ -174,14 +174,14 @@ for (rp = list; rp != NULL; rp = rp->next)
              break;
              }
           }
-       
+
        fprintf(fout," </line>\n");
-       
+
        DeleteRlist(rline);
        }
 
     fprintf(fout,"</output>\n");
-       
+
     fclose(fin);
     fclose(fout);
     }
@@ -203,10 +203,10 @@ void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *styleshee
   double av_day_kept = 0, av_day_repaired = 0;
   double av_week_kept = 0, av_week_repaired = 0;
   double av_hour_kept = 0, av_hour_repaired = 0;
-    
+
 
 snprintf(name,CF_BUFSIZE-1,"%s/promise.log",CFWORKDIR);
- 
+
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
    CfOut(cf_error,"cf_fopen","Cannot open the source log %s",name);
@@ -229,7 +229,7 @@ else
    {
    snprintf(name,CF_BUFSIZE,"compliance.txt");
    }
- 
+
 /* Max 2016 entries - at least a week */
 
 while (!feof(fin))
@@ -280,10 +280,10 @@ for (ip = file; ip != NULL; ip = ip->next)
       }
 
    // Complex parsing/extraction
-   
+
    sscanf(ip->name,"%31[^-]",start);
    sscanf(strstr(ip->name,"Outcome of version")+strlen("Outcome of version"),"%31[^:]",version);
-   sscanf(strstr(ip->name,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&kept,&repaired,&notrepaired);    
+   sscanf(strstr(ip->name,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&kept,&repaired,&notrepaired);
    sscanf(strstr(ip->name,"->")+2,"%31[^-]",end);
    if (sp = strstr(end,": Out"))
       {
@@ -301,7 +301,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    if (i < 12*2)
       {
       av_hour_kept = GAverage((double)kept,av_hour_kept,0.5);
-      av_hour_repaired = GAverage((double)repaired,av_hour_repaired,0.5);      
+      av_hour_repaired = GAverage((double)repaired,av_hour_repaired,0.5);
       }
 
    av_week_kept = GAverage((double)kept,av_week_kept,0.1);
@@ -337,11 +337,11 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       fprintf(fout,"%s",ip->name);
       }
-   
+
    if (++i > 12*24*7)
       {
       break;
-      }   
+      }
    }
 
 if (html && !embed)
@@ -375,7 +375,7 @@ void Nova_GrandSummary()
   FILE *fout;
 
 SummarizeComms();
-  
+
 snprintf(name,CF_BUFSIZE-1,"%s/reports/comp_key",CFWORKDIR);
 
 if ((fout = cf_fopen(name,"w")) == NULL)
@@ -409,7 +409,7 @@ void Nova_SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char 
   double lsea = CF_WEEK * 52; /* expire after a year */
 
 /* Open the db */
-  
+
 snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,"promise_compliance.db");
 
 if (!OpenDB(name,&dbp))
@@ -470,7 +470,7 @@ if ((errno = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
    }
 
 /* Initialize the key/data return pair. */
- 
+
 memset(&key, 0, sizeof(key));
 memset(&stored, 0, sizeof(stored));
 
@@ -485,13 +485,13 @@ while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
    if (stored.data != NULL)
       {
       memcpy(&entry,stored.data,sizeof(entry));
-      
+
       then    = entry.t;
       measure = entry.Q.q;
       av = entry.Q.expect;
       var = entry.Q.var;
       lastseen = now - then;
-            
+
       snprintf(tbuf,CF_BUFSIZE-1,"%s",ctime(&then));
 
       tbuf[cf_strlen(tbuf)-9] = '\0';                     /* Chop off second and year */
@@ -499,7 +499,7 @@ while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
       if (lastseen > lsea)
          {
          Debug("Promise usage record %s expired\n",eventname);
-         DeleteDB(dbp,eventname);   
+         DeleteDB(dbp,eventname);
          }
       else
          {
@@ -521,7 +521,7 @@ while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
                {
                fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"non-compliant",NRX[cfx_q][cfe]);
                }
-            
+
             fprintf(fout,"%s %.1lf %s",NRX[cfx_av][cfb],av*100.0,NRX[cfx_av][cfe]);
             fprintf(fout,"%s %.1lf %s",NRX[cfx_dev][cfb],sqrt(var)*100.0,NRX[cfx_dev][cfe]);
 
@@ -545,7 +545,7 @@ while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
                {
                fprintf(fout,"%s %s %s",NRH[cfx_q][cfb],"non-compliant",NRH[cfx_q][cfe]);
                }
-            
+
             fprintf(fout,"%s %.1lf %s",NRH[cfx_av][cfb],av*100.0,NRH[cfx_av][cfe]);
             fprintf(fout,"%s %.1lf %s",NRH[cfx_dev][cfb],sqrt(var)*100.0,NRH[cfx_dev][cfe]);
 
@@ -597,7 +597,7 @@ void Nova_SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,ch
   char start[32];
 
 snprintf(name,CF_BUFSIZE,"%s/cfagent.%s.log",CFWORKDIR,VSYSNAME.nodename);
- 
+
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
    CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
@@ -620,7 +620,7 @@ else
    {
    snprintf(name,CF_BUFSIZE,"setuid.txt");
    }
- 
+
 /* Max 2016 entries - at least a week */
 
 while (!feof(fin))
@@ -664,7 +664,7 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       continue;
       }
-   
+
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
@@ -714,7 +714,7 @@ void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *styleshe
   int i = 0,truncate;
 
 snprintf(name,CF_BUFSIZE-1,"%s/state/file_hash_event_history",CFWORKDIR);
- 
+
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
    CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
@@ -737,7 +737,7 @@ else
    {
    snprintf(name,CF_BUFSIZE,"file_changes.txt");
    }
- 
+
 /* Max 2016 entries - at least a week */
 
 while (!feof(fin))
@@ -780,9 +780,9 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       continue;
       }
-   
+
    sscanf(ip->name,"%31[^,],%250[^\n]",start,name);
-   
+
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
@@ -805,11 +805,11 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       fprintf(fout,"%s",ip->name);
       }
-   
+
    if (++i > 12*24*7)
       {
       break;
-      }   
+      }
    }
 
 if (html && !embed)
@@ -832,13 +832,13 @@ DeleteItemList(file);
 file = NULL;
 
 snprintf(name,CF_BUFSIZE-1,"%s/cfdiff.log",CFWORKDIR);
- 
+
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
    CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
    return;
    }
- 
+
 /* Max 2016 entries - at least a week */
 
 while (!feof(fin))
@@ -867,7 +867,7 @@ while (!feof(fin))
    output[0] = '\0';
 
    truncate = false;
-   
+
    while (!feof(fin))
       {
       line[0] = '\0';
@@ -887,7 +887,7 @@ while (!feof(fin))
          if (xml)
             {
             snprintf(reformat,CF_BUFSIZE-1,"<pm>%c</pm><line>%s</line> <event>%s</event>\n",pm,no,change);
-            
+
             if (!JoinSuffix(aggregate,reformat))
                {
                truncate = true;
@@ -896,7 +896,7 @@ while (!feof(fin))
          else if (html)
             {
             snprintf(reformat,CF_BUFSIZE-1,"<span id=\"pm\">%c</span><span id=\"line\">%s</span><span id=\"change\">%s</span><br>",pm,no,change);
-            
+
             if (!JoinSuffix(aggregate,reformat))
                {
                truncate = true;
@@ -907,8 +907,8 @@ while (!feof(fin))
             snprintf(reformat,CF_BUFSIZE-1,"   %s\n",line);
             if (!JoinSuffix(aggregate,reformat))
                {
-               }         
-            }     
+               }
+            }
          }
       }
 
@@ -919,7 +919,7 @@ while (!feof(fin))
                "%s %s %s"
                "%s %s %s"
                "%s %s %s"
-               "%s\n",               
+               "%s\n",
                NRX[cfx_entry][cfb],
                NRX[cfx_date][cfb],datestr,NRX[cfx_date][cfe],
                NRX[cfx_filename][cfb],name,NRX[cfx_end][cfe],
@@ -935,7 +935,7 @@ while (!feof(fin))
                   "%s %s %s"
                   "%s %s %s"
                   "%s %s <br>Truncated, full record at %s:%s/cfdiff.log %s"
-                  "%s\n",               
+                  "%s\n",
                   NRH[cfx_entry][cfb],
                   NRH[cfx_date][cfb],datestr,NRH[cfx_date][cfe],
                   NRH[cfx_filename][cfb],name,NRH[cfx_end][cfe],
@@ -949,7 +949,7 @@ while (!feof(fin))
                   "%s %s %s"
                   "%s %s %s"
                   "%s %s %s"
-                  "%s\n",               
+                  "%s\n",
                   NRH[cfx_entry][cfb],
                   NRH[cfx_date][cfb],datestr,NRH[cfx_date][cfe],
                   NRH[cfx_filename][cfb],name,NRH[cfx_end][cfe],
@@ -1043,7 +1043,7 @@ void Nova_SummarizePromiseRepaired(int xml,int html,int csv,int embed,char *styl
   int i = 0;
 
   snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
- 
+
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
    CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
@@ -1066,7 +1066,7 @@ else
    {
    snprintf(name,CF_BUFSIZE,"promise_repair.txt");
    }
- 
+
 /* Max 2016 entries - at least a week */
 
 while (!feof(fin))
@@ -1094,7 +1094,7 @@ if (html && !embed)
    fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Time",NRH[cfx_date][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],"Bundle",NRH[cfx_bundle][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_event][cfb],"Handle",NRH[cfx_event][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],"Comment",NRH[cfx_ref][cfe]);      
+   fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],"Comment",NRH[cfx_ref][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Filename",NRH[cfx_end][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],"Line no.",NRH[cfx_index][cfe]);
    fprintf(fout,"%s",NRH[cfx_entry][cfe]);
@@ -1115,16 +1115,16 @@ for (ip = file; ip != NULL; ip = ip->next)
       }
 
    date[0] = '\0';
-   
+
    sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%512[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
-   
+
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
       fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],date,NRX[cfx_date][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_bundle][cfb],bundle,NRX[cfx_bundle][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_event][cfb],handle,NRX[cfx_event][cfe]);
-      fprintf(fout,"%s %s %s",NRX[cfx_ref][cfb],ref,NRX[cfx_ref][cfe]);      
+      fprintf(fout,"%s %s %s",NRX[cfx_ref][cfb],ref,NRX[cfx_ref][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_filename][cfb],filename,NRX[cfx_end][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_index][cfb],lineno,NRX[cfx_index][cfe]);
       fprintf(fout,"%s",NRX[cfx_entry][cfe]);
@@ -1135,7 +1135,7 @@ for (ip = file; ip != NULL; ip = ip->next)
       fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],date,NRH[cfx_date][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],bundle,NRH[cfx_bundle][cfe]);
       fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s %s",NRH[cfx_event][cfb],handle,handle,NRH[cfx_event][cfe]);
-      fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],ref,NRH[cfx_ref][cfe]);      
+      fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],ref,NRH[cfx_ref][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],filename,NRH[cfx_end][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],lineno,NRH[cfx_index][cfe]);
       fprintf(fout,"%s",NRH[cfx_entry][cfe]);
@@ -1148,11 +1148,11 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       fprintf(fout,"%s",ip->name);
       }
-   
+
    if (++i > 12*24*7)
       {
       break;
-      }   
+      }
    }
 
 if (html && !embed)
@@ -1182,7 +1182,7 @@ void Nova_SummarizePromiseNotKept(int xml,int html,int csv,int embed,char *style
   int i = 0;
 
   snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_NOTKEPT_LOG);
- 
+
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
    CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
@@ -1205,7 +1205,7 @@ else
    {
    snprintf(name,CF_BUFSIZE,"promise_notkept.txt");
    }
- 
+
 /* Max 2016 entries - at least a week */
 
 while (!feof(fin))
@@ -1233,7 +1233,7 @@ if (html && !embed)
    fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Time",NRH[cfx_date][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],"Bundle",NRH[cfx_bundle][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_event][cfb],"Handle",NRH[cfx_event][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],"Comment",NRH[cfx_ref][cfe]);      
+   fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],"Comment",NRH[cfx_ref][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Filename",NRH[cfx_end][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],"Line no.",NRH[cfx_index][cfe]);
    fprintf(fout,"%s",NRH[cfx_entry][cfe]);
@@ -1254,16 +1254,16 @@ for (ip = file; ip != NULL; ip = ip->next)
       }
 
    date[0] = '\0';
-   
+
    sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%512[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
-   
+
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
       fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],date,NRX[cfx_date][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_bundle][cfb],bundle,NRX[cfx_bundle][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_event][cfb],handle,NRX[cfx_event][cfe]);
-      fprintf(fout,"%s %s %s",NRX[cfx_ref][cfb],ref,NRX[cfx_ref][cfe]);      
+      fprintf(fout,"%s %s %s",NRX[cfx_ref][cfb],ref,NRX[cfx_ref][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_filename][cfb],filename,NRX[cfx_end][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_index][cfb],lineno,NRX[cfx_index][cfe]);
       fprintf(fout,"%s",NRX[cfx_entry][cfe]);
@@ -1274,7 +1274,7 @@ for (ip = file; ip != NULL; ip = ip->next)
       fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],date,NRH[cfx_date][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],bundle,NRH[cfx_bundle][cfe]);
       fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRH[cfx_event][cfb],handle,handle,NRH[cfx_event][cfe]);
-      fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],ref,NRH[cfx_ref][cfe]);      
+      fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],ref,NRH[cfx_ref][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],filename,NRH[cfx_end][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],lineno,NRH[cfx_index][cfe]);
       fprintf(fout,"%s",NRH[cfx_entry][cfe]);
@@ -1287,11 +1287,11 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       fprintf(fout,"%s",ip->name);
       }
-   
+
    if (++i > 12*24*7)
       {
       break;
-      }   
+      }
    }
 
 if (html && !embed)
@@ -1400,7 +1400,7 @@ void Nova_SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,
   int i = 0;
 
 snprintf(name,CF_BUFSIZE-1,"%s/state/software_packages.csv",CFWORKDIR);
- 
+
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
    CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
@@ -1419,7 +1419,7 @@ else
    {
    snprintf(name,CF_BUFSIZE,"software_packages.csv");
    }
- 
+
 /* Max 2016 entries - at least a week */
 
 while (!feof(fin))
@@ -1469,9 +1469,9 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       continue;
       }
-   
+
    sscanf(ip->name,"%250[^,],%250[^,],%250[^,],%250[^\n]",name,version,arch,mgr);
-   
+
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
@@ -1494,11 +1494,11 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       fprintf(fout,"%s",ip->name);
       }
-   
+
    if (++i > 12*24*7)
       {
       break;
-      }   
+      }
    }
 
 if (html && !embed)
@@ -1529,9 +1529,9 @@ void Nova_SummarizeUpdates(int xml,int html,int csv,int embed,char *stylesheet,c
   int i = 0, count = 0;
 
 CfOut(cf_verbose,"","Creating available patch report...\n");
-  
+
 snprintf(name,CF_BUFSIZE-1,"%s/state/software_patches_avail.csv",CFWORKDIR);
- 
+
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
    CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
@@ -1550,7 +1550,7 @@ else
    {
    snprintf(name,CF_BUFSIZE,"software_patches_avail.csv");
    }
- 
+
 /* Max 2016 entries - at least a week */
 
 while (!feof(fin))
@@ -1600,9 +1600,9 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       continue;
       }
-   
+
    sscanf(ip->name,"%250[^,],%250[^,],%250[^,],%250[^\n]",name,version,arch,mgr);
-   
+
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
@@ -1627,7 +1627,7 @@ for (ip = file; ip != NULL; ip = ip->next)
       }
 
    count++;
-   
+
    if (++i > 12*24*7)
       {
       break;
@@ -1652,9 +1652,9 @@ file = NULL;
 /* Now show installed patch level */
 
 CfOut(cf_verbose,"","Creating patch status report...\n");
-  
+
 snprintf(name,CF_BUFSIZE-1,"%s/state/software_patch_status.csv",CFWORKDIR);
- 
+
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
    CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
@@ -1673,7 +1673,7 @@ else
    {
    snprintf(name,CF_BUFSIZE,"software_patch_status.csv");
    }
- 
+
 /* Max 2016 entries - at least a week */
 
 while (!feof(fin))
@@ -1724,9 +1724,9 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       continue;
       }
-   
+
    sscanf(ip->name,"%250[^,],%250[^,],%250[^,],%250[^\n]",name,version,arch,mgr);
-   
+
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
@@ -1749,11 +1749,11 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       fprintf(fout,"%s",ip->name);
       }
-   
+
    if (++i > 12*24*7)
       {
       break;
-      }   
+      }
    }
 
 if (html && !embed)
@@ -1793,10 +1793,10 @@ if (MINUSF) /* Only do this for the default policy */
    {
    return;
    }
- 
+
 snprintf(name,CF_BUFSIZE-1,"%s/state/vars.out",CFWORKDIR);
 MapName(name);
- 
+
 if ((FREPORT_HTML = fopen(name,"w")) == NULL)
    {
    CfOut(cf_error,"fopen","Cannot write to %s",name);
@@ -1824,9 +1824,9 @@ void Nova_SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet
 { FILE *fin,*fout;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/vars.out",CFWORKDIR);
+snprintf(name,sizeof(name)-1,"%s/state/vars.out",CFWORKDIR);
 MapName(name);
- 
+
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
    CfOut(cf_inform,"cf_fopen","Cannot variable notes %s (try again later)",name);
@@ -1913,7 +1913,7 @@ memset(&value, 0, sizeof(value));
 
 while (dbcp->c_get(dbcp, &key, &value, DB_NEXT) == 0)
    {
-   memset(&entry, 0, sizeof(entry)); 
+   memset(&entry, 0, sizeof(entry));
 
    if (value.data != NULL)
       {
@@ -1939,11 +1939,11 @@ while (dbcp->c_get(dbcp, &key, &value, DB_NEXT) == 0)
       {
       kept++;
       }
-   
+
    memset(&value,0,sizeof(value));
-   memset(&key,0,sizeof(key)); 
+   memset(&key,0,sizeof(key));
    }
- 
+
 dbcp->c_close(dbcp);
 dbp->close(dbp,0);
 
