@@ -351,7 +351,7 @@ int Nova_CheckDefaultEqualsAccessACL(char *file_path, struct Attributes a, struc
   acl_t acl_default;
   int equals;
   int retv;
-  int result;
+  int result = false;
 
 acl_access = NULL;
 acl_default = NULL;
@@ -436,7 +436,7 @@ int Nova_CheckDefaultClearACL(char *file_path, struct Attributes a, struct Promi
   acl_t acl_empty;
   acl_entry_t ace_dummy;
   int retv;
-  int result;
+  int result = false;
 
 acl_existing = NULL;
 acl_empty = NULL;
