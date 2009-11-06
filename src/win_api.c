@@ -24,21 +24,6 @@ typedef unsigned long gid_t;
 typedef unsigned short mode_t;
 typedef int	pid_t;
 
-void nw_exper(char *fname, char *msg);
-void nw_unimpl(char *fname);
-
-void nw_exper(char *fname, char *msg)
-{
-  //printf("MINGW: WARNING: Function '%s' is experimental: %s.\n", fname, msg);
-  printf("%s(exp)\n", fname);  
-}
-
-void nw_unimpl(char *fname)
-{
-  //printf("MINGW: ERROR: Function '%s' is not implemented.\n", fname);
-  printf("%s(uni)\n", fname);
-}
-
 /* ------ END TEMP DEFINES ------ */
 
 // always returns 0 (assumes process is run by root/Administrator)
@@ -60,7 +45,7 @@ gid_t getgid(void)
 // there are no symbolic links on NT, so stat and lstat are equivalent
 int lstat(const char *file_name, struct stat *buf)
 {
-  return stat(file_name, buf);
+  return cfstat(file_name, buf);
 }
 
 /*****************************************************************************/
@@ -82,8 +67,6 @@ unsigned int sleep(unsigned int seconds)
  * Returns 0 on success, and -1 on failure. */
 int chown(const char *path, uid_t owner, gid_t group)
 {
-  nw_exper("chown", "needs testing");
-
   if(owner == 0 && group == 0)
     {
       // change owner to the owner of the current process
@@ -104,6 +87,23 @@ int chown(const char *path, uid_t owner, gid_t group)
       return -1;
     }
 }
+
+/*****************************************************************************/
+
+/* TODO: Implement ? */
+int NovaWin_chmod(const char *path, mode_t mode)
+{
+  if(NovaWin_FileExists(path))
+    {
+      return 0;
+    }
+  else
+    {
+      CfOut(cf_error, "NovaWin_chmod", "File \"%s\" not found");
+      return -1;
+    }
+}
+
 
 /*****************************************************************************/
 
@@ -128,9 +128,40 @@ void setlinebuf(FILE *stream)
 
 /*****************************************************************************/
 
-int NovaWin_stat(const char *path, struct stat *buf)
+int NovaWin_stat(const char *path, struct stat *statBuf)
+/* Implementation of stat() which gives better times and correct nlinks */
 {
-  //FIXME
+  WIN32_FILE_ATTRIBUTE_DATA attr;
+  int numHardLinks;
+  int statRes;
+  
+  statRes = stat(path, statBuf);
+
+  if(statRes != 0)
+    {
+      return statRes;
+    }
+
+  if(!NovaWin_GetNumHardlinks((char *)path, &numHardLinks))
+    {
+      CfOut(cf_error, "", "Could not get number of hard links");
+      return -1;
+    }
+  
+  // correct times 
+  if(!GetFileAttributesEx(path, GetFileExInfoStandard, &attr))
+    {
+      CfOut(cf_error, "GetFileAttributesEx", "Could not get file attributes");      
+      return -1;
+    }
+  
+  statBuf->st_nlink = (short)numHardLinks;
+  statBuf->st_atime = NovaWin_FileTimeToTimet(&(attr.ftLastAccessTime));
+  statBuf->st_mtime = NovaWin_FileTimeToTimet(&(attr.ftLastWriteTime));
+  statBuf->st_ctime = NovaWin_FileTimeToTimet(&(attr.ftCreationTime)); // set to creation time  
+  
+  return 0;
+  
 }
 
 /*****************************************************************************/
@@ -184,5 +215,20 @@ char *NovaWin_GetErrorStr(void)
   
   return errbuf;
 }
+
+/*****************************************************************************/
+
+time_t NovaWin_FileTimeToTimet(FILETIME *ft)
+{
+  LARGE_INTEGER li;
+  
+  li.LowPart = ft->dwLowDateTime;
+  li.HighPart = ft->dwHighDateTime;
+
+  li.QuadPart = ( li.QuadPart - 0x19DB1DED53E8000 ) / 10000000;
+
+  return (time_t)(li.QuadPart);
+}
+
 
 #endif  /* MINGW */

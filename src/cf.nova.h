@@ -463,7 +463,10 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *name,enum observables 
 
 uid_t getuid(void);
 gid_t getgid(void);
+int lstat(const char *file_name, struct stat *buf);
+unsigned int sleep(unsigned int seconds);
 int chown(const char *path, uid_t owner, gid_t group);
+int NovaWin_chmod(const char *path, mode_t mode);
 long int random(void);
 void srandom(unsigned int seed);
 void setlinebuf(FILE *stream);
@@ -471,6 +474,7 @@ int NovaWin_stat(const char *path, struct stat *buf);
 void NovaWin_OpenNetwork(void);
 void NovaWin_CloseNetwork(void);
 char *NovaWin_GetErrorStr(void);
+time_t NovaWin_FileTimeToTimet(FILETIME *ft);
 
 /* win_file.c */
 
@@ -479,7 +483,6 @@ FILE *NovaWin_FileHandleToStream(HANDLE fHandle, char *mode);
 int NovaWin_IsExecutable(char *file);
 int NovaWin_mkdir(const char *path, mode_t mode);
 int NovaWin_rename(const char *oldpath, const char *newpath);
-int NovaWin_chmod(const char *path, mode_t mode);
 int NovaWin_FileExists(const char *fileName);
 int NovaWin_IsDir(char *fileName);
 int NovaWin_VerifyOwner(char *file,struct Promise *pp,struct Attributes attr);
@@ -489,6 +492,7 @@ int NovaWin_GetOwnerName(char *path, char *owner, int ownerSz);
 void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp);
 void NovaWin_VerifyCopiedFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp);
 int NovaWin_GetDiskUsage(char *file,enum cfsizes type);
+int NovaWin_GetNumHardlinks(char *path, int *numHardLinks);
 
 /* win_log.c */
 

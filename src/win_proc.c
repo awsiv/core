@@ -114,8 +114,6 @@ int NovaWin_ShellCommandReturnsZero(char *comm, int useshell)
   HANDLE procHandle;
   DWORD exitcode;
   
-  mgw_exper("ShellCommandReturnsZero", "needs testing");
-  
   if(!NovaWin_RunCmd(comm, useshell, false, NULL, NULL, &procHandle))
     {
       CfOut(cf_error,"RunCmd","!! Command \"%s\" failed",comm);

@@ -72,19 +72,15 @@ FILE *NovaWin_FileHandleToStream(HANDLE fHandle, char *mode)
 }
 
 
-// FIXME: Implement
+// TODO: Implement chek for executable bit?
 int NovaWin_IsExecutable(char *file)
 {
-nw_exper("NovaWin_IsExecutable", "saying every file is executable");
-
-return NovaWin_FileExists(file);
+  return NovaWin_FileExists(file);
 }
 
 
 int NovaWin_mkdir(const char *path, mode_t mode)
 {
-  nw_exper("NovaWin_mkdir", "mode is ignored");
-    
   // no mode on windows, use windows mkdir - return value seems compatible
 
   return _mkdir(path);
@@ -103,32 +99,6 @@ int NovaWin_rename(const char *oldpath, const char *newpath)
 }
 
 
-/* returns 0 on success, -1 on error */
-int NovaWin_chmod(const char *path, mode_t mode)
-{
-  nw_unimpl("chmod");
-  return 0;  // FIXME: Hack for now.
-
-  //nw_exper("NovaWin_chmod", "only supporting a subset of mode-strings for NT");
-  
-
-  unsigned char owner = (mode >> 6) & 07;
-  mode_t other = mode & 077;
-
-  // only support a couple of mode-strings
-  if((owner == 00 || owner == 04 || owner == 05 || owner == 06 || owner == 07) &&
-     (other == 000 || other == 044 || other == 055 || other == 066 || other == 077) &&
-     (!(mode & 07000)))
-    {
-      // TODO: FIXME: Implement using ACLs
-      return -1;
-    }
-  else
-    {
-      CfOut(cf_error,"NovaWin_chmod","!! The mode-string '%o' on '%s' is not supported in NT", mode, path);
-      return -1;
-    }
-}
 
 
 /* Return true if file 'fileName' exists */
@@ -438,6 +408,41 @@ else
      return ((double)kbFree.QuadPart / (double)kbLenCaller.QuadPart) * 100;
    }
 }
+
+/*****************************************************************************/
+
+int NovaWin_GetNumHardlinks(char *path, int *numHardLinks)
+{
+  HANDLE fp;
+  BY_HANDLE_FILE_INFORMATION finfo;
+
+  if(IsDir(path))
+    {
+      *numHardLinks = 1;
+      return true;
+    }
+
+  fp = CreateFile(path, GENERIC_READ, 0, NULL, OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+    
+  if(fp == INVALID_HANDLE_VALUE)
+    {
+      CfOut(cf_error, "CreateFile", "Could not open file \"%s\"", path);
+      return false;
+    }
+  
+  if(!GetFileInformationByHandle(fp, &finfo))
+    {
+      CfOut(cf_error, "GetFileInformationByHandle", "Could not get information on file \"%s\"", path);
+      return false;
+    }
+
+  *numHardLinks = finfo.nNumberOfLinks;
+
+  CloseHandle(fp);
+
+  return true;
+}
+
 
 
 #endif  /* MINGW */
