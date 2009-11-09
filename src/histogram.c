@@ -38,7 +38,7 @@ void Nova_ViewHisto(struct CfDataView *cfv,char *filename, char *title,enum obse
 snprintf(newfile,CF_BUFSIZE,"%s_hist.png",filename);
 snprintf(oldfile,CF_BUFSIZE,"%s.distr",filename);
 
-if ((stat(oldfile,&s1) != -1) && (stat(newfile,&s2) != -1))
+if ((cfstat(oldfile,&s1) != -1) && (cfstat(newfile,&s2) != -1))
    {
    if (s2.st_mtime > s1.st_mtime)
       {

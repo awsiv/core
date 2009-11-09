@@ -70,7 +70,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    snprintf(name,CF_BUFSIZE,"%s.html",id);
    snprintf(exist,CF_BUFSIZE,"%s.mag",id);
 
-   if (stat(name,&s1) != -1 && stat(exist,&s2) != -1)
+   if (cfstat(name,&s1) != -1 && cfstat(exist,&s2) != -1)
       {
       if (s1.st_mtime > s2.st_mtime)
          {
@@ -143,14 +143,14 @@ for (i = 0; i < CF_OBSERVABLES; i++)
     snprintf(mag,CF_BUFSIZE,"%s_mag.html",name);
     snprintf(week,CF_BUFSIZE,"%s_week.html",name);
 
-    if (stat(url,&sb) == -1)
+    if (cfstat(url,&sb) == -1)
        {
        continue;
        }    
 
     snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
     
-    if (stat(img,&sb) == -1)
+    if (cfstat(img,&sb) == -1)
        {
        terminated2 = true;
        continue;
@@ -162,14 +162,14 @@ for (i = 0; i < CF_OBSERVABLES; i++)
     
     snprintf(img,CF_BUFSIZE,"%s_mag.png",name);
 
-    if (stat(img,&sb) == -1)
+    if (cfstat(img,&sb) == -1)
        {
        terminated1 = true;
        }
 
     snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
         
-    if (stat(img,&sb) == -1)
+    if (cfstat(img,&sb) == -1)
        {
        terminated3 = true;
        }
@@ -339,7 +339,7 @@ else
    strcpy(filename,filenode);
    }
 
-if (stat(filename,&sb) != -1)
+if (cfstat(filename,&sb) != -1)
    {
    CfOut(cf_inform,"","Graph \"%s\" already exists, delete to refresh\n",filename);
    return;

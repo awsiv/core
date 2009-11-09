@@ -32,7 +32,7 @@ if (strlen(AGGREGATION) == 0)
    return;
    }
 
-if (stat(AGGREGATION,&sb) == -1)
+if (cfstat(AGGREGATION,&sb) == -1)
    {
    CfOut(cf_inform,"stat"," !! Could not read the data at the aggregation point %s",AGGREGATION);
    return;
@@ -58,7 +58,7 @@ void Nova_MagProbe()
 
 snprintf(filename,CF_BUFSIZE-1,"%s/reports",CFWORKDIR);
   
-if (stat(filename,&sb) != -1)
+if (cfstat(filename,&sb) != -1)
    {
    if (S_ISDIR(sb.st_mode))
       {
@@ -312,14 +312,14 @@ void Nova_UnPackNerveBundle()
 
 Banner("Unpack bundles");
   
-if (stat("fluctuations.nov",&sb1) == -1)
+if (cfstat("fluctuations.nov",&sb1) == -1)
    {
    return;
    }
 
 CfOut(cf_verbose,""," -> Found a fluctuation update\n");
 
-if (stat("rootprocs.mag",&sb2) == -1)
+if (cfstat("rootprocs.mag",&sb2) == -1)
    {
    fluctuations = true;
    }
@@ -384,14 +384,14 @@ if (fluctuations)
 
 /* Now the adiabatic variation, if updated */
 
-if (stat("mean_field.nov",&sb1) == -1)
+if (cfstat("mean_field.nov",&sb1) == -1)
    {
    return;
    }
 
 CfOut(cf_verbose,""," -> Found a new mean field state\n");
 
-if (stat("rootprocs.E-sigma",&sb2) == -1)
+if (cfstat("rootprocs.E-sigma",&sb2) == -1)
    {
    }
 else

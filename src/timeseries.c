@@ -39,13 +39,13 @@ snprintf(newfile,CF_BUFSIZE,"%s_weekly.png",filename);
 snprintf(oldfile,CF_BUFSIZE,"%s.q",filename);
 snprintf(fileroot,CF_BUFSIZE,"%s",filename);
 
-if ((stat(oldfile,&s1) == -1))
+if ((cfstat(oldfile,&s1) == -1))
    {
    CfOut(cf_verbose,""," -> No q series data for %s - abort",filename);
    return false;
    }
 
-if ((stat(newfile,&s2) == -1))
+if ((cfstat(newfile,&s2) == -1))
    {
    CfOut(cf_verbose,""," -> No existing graph for %s",filename);
    }

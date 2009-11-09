@@ -327,7 +327,7 @@ while (true)
    sleep(66);
    now = time(NULL);
 
-   if (stat(name,&sb) == -1 && !pulse_delay)
+   if (cfstat(name,&sb) == -1 && !pulse_delay)
       {
       CfOut(cf_verbose,""," !! No pulse from twin...waiting ");
       pulse_delay++;
@@ -406,7 +406,7 @@ void Nova_ReviveOther(int argc,char **argv)
   
 snprintf(name,CF_BUFSIZE-1,"%s/other",CFWORKDIR);
  
-if (stat(name,&sb) == -1)
+if (cfstat(name,&sb) == -1)
    {
    CfOut(cf_verbose,""," !! No pulse echo from twin...");
    }

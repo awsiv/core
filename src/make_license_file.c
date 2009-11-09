@@ -41,7 +41,7 @@ int main()
 printf("Enter the filename of the client\'s public key: ");
 scanf("%s",filename);
 
-if (stat(filename,&sb) == -1)
+if (cfstat(filename,&sb) == -1)
    {
    printf("Public key file %s not found\n",filename);
    exit(1);

@@ -101,14 +101,14 @@ if (!MakeParentDirectory(destination,a.move_obstructions))
    {
    }
 
-if (stat(file,&sb) == -1)
+if (cfstat(file,&sb) == -1)
    {
    return;
    }
 
 /* Check if the file already exists, if so do a diff */
 
-if (change && (stat(destination,&dsb) != -1))
+if (change && (cfstat(destination,&dsb) != -1))
    {
    Nova_DoFileDiff(file,destination,sb,dsb);
    }
@@ -116,7 +116,7 @@ if (change && (stat(destination,&dsb) != -1))
 /* Copy the current version to repository for versioning,
    keep a backup for forensics or binary change inspection */
 
-if (change || stat(destination,&dsb) == -1)
+if (change || cfstat(destination,&dsb) == -1)
    {
    a.copy.servers = NULL;
    a.copy.backup = cfa_backup;

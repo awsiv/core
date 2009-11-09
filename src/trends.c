@@ -44,7 +44,7 @@ for (yr = 2; yr >= 0; yr--)
    {  
    snprintf(oldfile,CF_BUFSIZE,"%s_%d.yr",filename,yr);
 
-   if (stat(oldfile,&s1) == -1)
+   if (cfstat(oldfile,&s1) == -1)
       {
       continue;
       }
@@ -78,7 +78,7 @@ for (yr = 2; yr >= 0; yr--)
    snprintf(oldfile,CF_BUFSIZE,"%s_%d.yr",filename,yr);
    snprintf(newfile,CF_BUFSIZE,"%s_%d.yr.png",filename,yr);
 
-   if (stat(oldfile,&s1) == -1)
+   if (cfstat(oldfile,&s1) == -1)
       {
       continue;
       }
@@ -376,7 +376,7 @@ for (yr = 2; yr >= 0; yr--)
    {
    snprintf(img,CF_BUFSIZE,"%s_%d.yr.png",name,yr);
 
-   if (stat(img,&sb) != -1)
+   if (cfstat(img,&sb) != -1)
       {
       fprintf(fp,"<a href=\"%s\"><img src=\"%s\" width=\"200\"></a>\n",img,img);
       }

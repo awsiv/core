@@ -56,7 +56,7 @@ if ((dirh = opendir(AGGREGATION)) == NULL)
 
 for (dirp = readdir(dirh); dirp != NULL; dirp = readdir(dirh))
    {
-   if (stat(dirp->d_name,&sb) == -1)
+   if (cfstat(dirp->d_name,&sb) == -1)
       {
       CfOut(cf_error,"stat"," !! %s is unreadable",dirp->d_name);
       continue;
@@ -506,7 +506,7 @@ fclose(fout);
 
 #ifdef HAVE_UTIME_H
 
-if (stat("comp_key",&sb) != -1)
+if (cfstat("comp_key",&sb) != -1)
    {   
    t.actime = sb.st_ctime;
    t.modtime = sb.st_mtime;
@@ -565,7 +565,7 @@ for (ip = list; ip != NULL; ip=ip->next)
    {
    snprintf(filename,CF_BUFSIZE-1,"%s/meters.png",ip->name);
 
-   if (stat(filename,&sb) != -1)
+   if (cfstat(filename,&sb) != -1)
       {
       if (now > sb.st_mtime + 3600)
          {

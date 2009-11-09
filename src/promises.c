@@ -284,7 +284,7 @@ if (IsDefinedClass("debian"))
 
 snprintf(name,CF_BUFSIZE-1,"%s/inputs/failsafe.cf",CFWORKDIR);
 
-if (stat(name,&sb) == -1)
+if (cfstat(name,&sb) == -1)
    {
    Nova_CreateFailSafe(name);
    repaired = true;
@@ -292,7 +292,7 @@ if (stat(name,&sb) == -1)
 
 snprintf(name,CF_BUFSIZE-1,"%s/inputs/promises.cf",CFWORKDIR);
 
-if (stat(name,&sb) == -1)
+if (cfstat(name,&sb) == -1)
    {
    CfOut(cf_error,""," -> No previous policy has been cached on this host");
    }

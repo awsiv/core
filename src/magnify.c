@@ -38,7 +38,7 @@ int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum obse
 snprintf(newfile,CF_BUFSIZE,"%s_mag.png",filename);
 snprintf(oldfile,CF_BUFSIZE,"%s.mag",filename);
 
-if ((stat(oldfile,&s1) != -1) && (stat(newfile,&s2) != -1))
+if ((cfstat(oldfile,&s1) != -1) && (cfstat(newfile,&s2) != -1))
    {
    if (s2.st_mtime > s1.st_mtime)
       {
@@ -88,7 +88,7 @@ gdImageDestroy(cfv->im);
 
 Nova_AnalyseMag(cfv,filename,obs,host);
 
-stat(newfile,&s2);
+cfstat(newfile,&s2);
 DATESTAMPS[obs] = s2.st_mtime;
 return true;
 }
