@@ -273,7 +273,12 @@ return cf_strlen(buffer);
 /********************************************************************/
 
 pid_t Nova_StartTwin(int argc,char **argv)
-
+#ifdef MINGW
+{
+CfOut(cf_verbose, "", "Twin exec daemons are not supported on Windows - running as single process.");
+return 0;
+}
+#else  /* NOT MINGW */
 { FILE *fp;
   char name[CF_BUFSIZE];
   time_t last,now = time(NULL);
@@ -290,11 +295,6 @@ if (LICENSES == 0)
    return 0;
    }
   
-if (VSYSTEMHARDCLASS == cfnt)
-   {
-   return 0;
-   }
-
 memset(&dummyattr,0,sizeof(dummyattr));
 dummyattr.transaction.ifelapsed = 0;
 dummyattr.transaction.expireafter = 0;
@@ -351,6 +351,7 @@ while (true)
       }      
    }
 }
+#endif  /* NOT MINGW */
 
 /********************************************************************/
 
