@@ -422,7 +422,7 @@ int NovaWin_GetNumHardlinks(char *path, int *numHardLinks)
       return true;
     }
 
-  fp = CreateFile(path, GENERIC_READ, 0, NULL, OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+  fp = CreateFile(path, 0, 0, NULL, OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
     
   if(fp == INVALID_HANDLE_VALUE)
     {
