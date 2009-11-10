@@ -28,7 +28,7 @@ struct CfWinPipe PIPES[MAX_PIPES];
 
 
 /* static prototypes */
-static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *type);
+static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *type, int background);
 static int InitializePipes(HANDLE *childInWrite, HANDLE *childInRead, HANDLE *childOutWrite, HANDLE *childOutRead);
 static int SaveDescriptorPair(FILE *pipe, HANDLE procHandle);
 static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle);
@@ -36,17 +36,17 @@ static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle);
 
 FILE *NovaWin_cf_popen(char *command,char *type)
 {
-  return OpenProcessPipe(command, false, NULL, type);
+  return OpenProcessPipe(command, false, NULL, type, false);
 }
 
 
 FILE *NovaWin_cf_popen_sh(char *command,char *type)
 {
-  return OpenProcessPipe(command, true, NULL, type);
+  return OpenProcessPipe(command, true, NULL, type, false);
 }
 
 
-FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv)
+FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv, int background)
 {
   // NT unsupported: uid, gid, chrootv
   if(uid != CF_UNDEFINED)
@@ -64,16 +64,16 @@ FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *
       CfOut(cf_verbose, "", "NovaWin_cf_popensetuid: chrootv is ignored on NT");
     }
 
-  return OpenProcessPipe(command, false, chdirv, type);      
+  return OpenProcessPipe(command, false, chdirv, type, background); 
 }
 
 
-FILE *NovaWin_cf_popen_shsetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv)
+FILE *NovaWin_cf_popen_shsetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv, int background)
 {
   // we can only run in the current user environment (assumed to be root)
   if((uid == -1 || uid == 0) && (gid == -1 || gid == 0) && chrootv == NULL)
     {
-      return OpenProcessPipe(command, true, chdirv, type);      
+      return OpenProcessPipe(command, true, chdirv, type, background);
     }
   else
     {
@@ -116,7 +116,8 @@ int NovaWin_cf_pclose_def(FILE *pfp, struct Attributes a, struct Promise *pp)
   if(!GetExitCodeProcess(procHandle, &exitCode))
     {
       CfOut(cf_error,"GetExitCodeProcess","!! Error getting exit code");
-      exit(1);
+      cfPS(cf_error,CF_FAIL,"",pp,a," !! Could not get exit code of process\n",pp->promiser);
+      return -1;
     }
 
   if(!CloseHandle(procHandle))
@@ -145,7 +146,7 @@ int NovaWin_cf_pclose_def(FILE *pfp, struct Attributes a, struct Promise *pp)
  * of the process. If type is "w", we do not wait for the process to
  * finish, but return a pipe to the process' STDIN.
 **/
-static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *type)
+static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *type, int background)
 {
   HANDLE childOutWrite; // child's stdout & stderr writes to this
   HANDLE childOutRead;  // .. and appears here for parent to read
@@ -185,16 +186,26 @@ static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *typ
   // wait for process to exit if we are reading from the pipe
   if(*type == 'r')
     {
-      if(WaitForSingleObject(childProcess, INFINITE) == WAIT_FAILED)
+      if(background)
 	{
-	  CfOut(cf_error,"WaitForSingleObject","!! Error waiting for process to finish");
-	  exit(1);
+	  CloseHandle(childInRead);
+	  CloseHandle(childOutWrite);
+	  CloseHandle(childInWrite);
+	  CloseHandle(childOutRead);
 	}
-      
-      CloseHandle(childInRead);
-      CloseHandle(childOutWrite);
-      CloseHandle(childInWrite);
-      retPipe = childOutRead;
+      else
+	{
+	  if(WaitForSingleObject(childProcess, INFINITE) == WAIT_FAILED)
+	    {
+	      CfOut(cf_error,"WaitForSingleObject","!! Error waiting for process to finish");
+	      return NULL;
+	    }
+	  
+	  CloseHandle(childInRead);
+	  CloseHandle(childOutWrite);
+	  CloseHandle(childInWrite);
+	  retPipe = childOutRead;
+	}
     }
   else  // *type == 'w'
     {
@@ -204,12 +215,19 @@ static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *typ
       retPipe = childInWrite;
     }
 
-  streamPipe = NovaWin_FileHandleToStream(retPipe, type);
-   
-  if(streamPipe == NULL)
+  if(background)
     {
-      CfOut(cf_error,"","!! Error converting file handle");
-      return NULL;
+      streamPipe = CreateEmptyStream();
+    }
+  else
+    {
+      streamPipe = NovaWin_FileHandleToStream(retPipe, type);
+   
+      if(streamPipe == NULL)
+	{
+	  CfOut(cf_error,"","!! Error converting file handle");
+	  return NULL;
+	}
     }
 
   if(!SaveDescriptorPair(streamPipe, childProcess))

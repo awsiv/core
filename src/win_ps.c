@@ -23,7 +23,7 @@
 /* defines */
 #define MAXCMDSTR 512  // too big: we read across boundries, giving failure
                        // too small: we truncate the command line string
-#define TIMESTAMP_WAIT 1500  // msecs between checking two process timestamps (for % CPU usage)
+#define TIMESTAMP_WAIT 500  // msecs between checking two process timestamps (for % CPU usage)
 
 
 /* structs TODO: Get from headers ? */

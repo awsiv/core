@@ -1084,11 +1084,11 @@ else
 
       if (a.contain.useshell)
          {
-         fin = cf_popen_shsetuid(pp->promiser,"r",a.contain.owner,a.contain.group,a.contain.chdir,a.contain.chroot);
+         fin = cf_popen_shsetuid(pp->promiser,"r",a.contain.owner,a.contain.group,a.contain.chdir,a.contain.chroot,false);
          }
       else
          {
-         fin = cf_popensetuid(pp->promiser,"r",a.contain.owner,a.contain.group,a.contain.chdir,a.contain.chroot);
+	 fin = cf_popensetuid(pp->promiser,"r",a.contain.owner,a.contain.group,a.contain.chdir,a.contain.chroot,false);
          }
       }
 

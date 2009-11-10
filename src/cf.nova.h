@@ -506,8 +506,8 @@ void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char
 
 FILE *NovaWin_cf_popen(char *command,char *type);
 FILE *NovaWin_cf_popen_sh(char *command,char *type);
-FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv);
-FILE *NovaWin_cf_popen_shsetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv);
+FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv,int background);
+FILE *NovaWin_cf_popen_shsetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv,int background);
 int NovaWin_cf_pclose(FILE *pp);
 int NovaWin_cf_pclose_def(FILE *pfp, struct Attributes a, struct Promise *pp);
 
