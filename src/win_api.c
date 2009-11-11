@@ -104,6 +104,13 @@ int NovaWin_chmod(const char *path, mode_t mode)
     }
 }
 
+/*****************************************************************************/
+
+/* TODO: Implement ? Used only one place in Cf3. */
+int fchmod(int fildes, mode_t mode)
+{
+  return 0;
+}
 
 /*****************************************************************************/
 

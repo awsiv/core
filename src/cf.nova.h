@@ -467,6 +467,7 @@ int lstat(const char *file_name, struct stat *buf);
 unsigned int sleep(unsigned int seconds);
 int chown(const char *path, uid_t owner, gid_t group);
 int NovaWin_chmod(const char *path, mode_t mode);
+int fchmod(int fildes, mode_t mode);
 long int random(void);
 void srandom(unsigned int seed);
 void setlinebuf(FILE *stream);

@@ -153,7 +153,7 @@ static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *typ
   HANDLE childInWrite;  // parent writes to this  
   HANDLE childInRead;   // .. and it appears here - child's stdin
   HANDLE childProcess;  // process handle of child
-  HANDLE retPipe;
+  HANDLE retPipe = NULL;
   STARTUPINFO si;
   FILE *streamPipe;
   
