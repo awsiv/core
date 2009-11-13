@@ -76,6 +76,16 @@
 #define EVMSG_PROMISE_NOT_REPAIRED_POLICY 0xC0000066L
 
 //
+// MessageId: EVMSG_REPORT
+//
+// MessageText:
+//
+// A report promise follows.%r%r
+// %1
+//
+#define EVMSG_REPORT                     0x40000067L
+
+//
 // MessageId: EVMSG_PROMISE_NOT_REPAIRED
 //
 // MessageText:
@@ -83,7 +93,7 @@
 // A promise by %1 to %2 was not kept and has not been repaired. Details follow.%r%r
 // %3
 //
-#define EVMSG_PROMISE_NOT_REPAIRED       0xC0000067L
+#define EVMSG_PROMISE_NOT_REPAIRED       0xC0000068L
 
 //
 // MessageId: EVMSG_DEFAULT_INFO
@@ -92,7 +102,7 @@
 //
 // %1
 //
-#define EVMSG_DEFAULT_INFO               0x40000068L
+#define EVMSG_DEFAULT_INFO               0x40000069L
 
 //
 // MessageId: EVMSG_DEFAULT_VERBOSE
@@ -101,7 +111,7 @@
 //
 // %1
 //
-#define EVMSG_DEFAULT_VERBOSE            0x40000069L
+#define EVMSG_DEFAULT_VERBOSE            0x4000006AL
 
 //
 // MessageId: EVMSG_DEFAULT_WARN
@@ -110,7 +120,7 @@
 //
 // %1
 //
-#define EVMSG_DEFAULT_WARN               0x8000006AL
+#define EVMSG_DEFAULT_WARN               0x8000006BL
 
 //
 // MessageId: EVMSG_DEFAULT_ERROR
@@ -119,5 +129,5 @@
 //
 // %1
 //
-#define EVMSG_DEFAULT_ERROR              0xC000006BL
+#define EVMSG_DEFAULT_ERROR              0xC000006CL
 

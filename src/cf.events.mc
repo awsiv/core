@@ -38,7 +38,16 @@ policy reasons (dry-run or action_policy set to warn). Details follow.%r%r
 %3
 .
 
-MessageId    = 103          
+MessageId    = 103       
+Severity     = Informational
+Facility     = Application
+SymbolicName = EVMSG_REPORT
+Language     = English
+A report promise follows.%r%r
+%1
+.
+
+MessageId    = 104          
 Severity     = Error
 Facility     = Application
 SymbolicName = EVMSG_PROMISE_NOT_REPAIRED
@@ -47,7 +56,7 @@ A promise by %1 to %2 was not kept and has not been repaired. Details follow.%r%
 %3
 .
 
-MessageId    = 104
+MessageId    = 105
 Severity     = Informational
 Facility     = Application
 SymbolicName = EVMSG_DEFAULT_INFO
@@ -55,7 +64,7 @@ Language     = English
 %1
 .
 
-MessageId    = 105
+MessageId    = 106
 Severity     = Informational
 Facility     = Application
 SymbolicName = EVMSG_DEFAULT_VERBOSE
@@ -63,7 +72,7 @@ Language     = English
 %1
 .
 
-MessageId    = 106
+MessageId    = 107
 Severity     = Warning
 Facility     = Application
 SymbolicName = EVMSG_DEFAULT_WARN
@@ -71,7 +80,7 @@ Language     = English
 %1
 .
 
-MessageId    = 107
+MessageId    = 108
 Severity     = Error
 Facility     = Application
 SymbolicName = EVMSG_DEFAULT_ERROR
