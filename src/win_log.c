@@ -131,6 +131,11 @@ int NovaWin_CheckRegistryLogKey()
   snprintf(logDllPath, sizeof(logDllPath), "%s/bin/cf.events.dll", CFWORKDIR);
   MapName(logDllPath);
 
+  if(!NovaWin_FileExists(logDllPath))
+    {
+      CfOut(cf_error, "", "!! Event-logging dll could not be found in \"%s\"", logDllPath);
+    }
+
   categoryCount = 0;
   eventCount = EVENT_COUNT;
 
@@ -186,7 +191,16 @@ void NovaWin_CloseLog(void)
 {
   if(logHandle != NULL)
     {
-      DeregisterEventSource(logHandle);
+      if(!DeregisterEventSource(logHandle))
+	{
+	  CfOut(cf_error, "DeregisterEventSource", "Could not close windows log\n");
+	}
+      else
+	{
+	  Debug("Windows log successfully closed.\n");
+	}
+      
+      logHandle = NULL;
     }
 }
 

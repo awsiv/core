@@ -22,7 +22,6 @@
 typedef unsigned long uid_t;
 typedef unsigned long gid_t;
 typedef unsigned short mode_t;
-typedef int	pid_t;
 
 /* ------ END TEMP DEFINES ------ */
 
@@ -181,13 +180,13 @@ int nCode;
 
 nCode = WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-if (nCode != 0)
+if (nCode == 0)
   {
-  CfOut(cf_error,"","!! Winsock could not be initialized: WSAStartup() returned error code %d.\n", nCode);
+  CfOut(cf_verbose,"","Windows sockets successfully initialized.\n"); 
   }
 else
   {
-  CfOut(cf_verbose,"","Windows sockets successfully initialized.\n"); 
+  CfOut(cf_error,"","!! Winsock could not be initialized: WSAStartup() returned error code %d.\n", nCode);
   }
 }
 
@@ -195,13 +194,17 @@ else
 
 void NovaWin_CloseNetwork()
 {
-  if(!WSACleanup())
+  int res;
+
+  res = WSACleanup();
+
+  if(res == 0)
     {
-      CfOut(cf_error, "WSACleanup", "!! Could not close network");
+      Debug("Windows sockets successfully deinitialized.\n");
     }
   else
     {
-      CfOut(cf_verbose,"","Windows sockets successfully deinitialized.\n"); 
+      CfOut(cf_error, "WSACleanup", "!! Could not close network (res=%d,sock-errcode=%d)", res, WSAGetLastError());
     }
 }
 
