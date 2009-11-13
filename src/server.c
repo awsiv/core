@@ -324,7 +324,7 @@ CfOut(cf_verbose,""," ** Twin in orbit... ");
 while (true)
    {
    Nova_SignalOther();
-   sleep(66);
+   sleep(CFPULSETIME);
    now = time(NULL);
 
    if (cfstat(name,&sb) == -1 && !pulse_delay)
@@ -336,8 +336,9 @@ while (true)
 
    pulse_delay = 0;
    
-   if (sb.st_mtime >= now - 120)
+   if (sb.st_mtime >= now - CFPULSETIME*2)
       {
+   printf("REVIVETWIN %d = %d\n",sb.st_mtime,now);
       CfOut(cf_verbose,""," -> Pulsar returned, continuing...");
       continue;
       }
@@ -411,8 +412,9 @@ if (cfstat(name,&sb) == -1)
    {
    CfOut(cf_verbose,""," !! No pulse echo from twin...");
    }
-else if (sb.st_mtime >= now - 60)
+else if (sb.st_mtime >= now - CFPULSETIME*2)
    {
+   printf("REVIVEOTHER %d = %d\n",sb.st_mtime,now);
    CfOut(cf_verbose,""," -> Pulse echo returned, continuing...");
    return;
    }

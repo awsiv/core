@@ -77,6 +77,8 @@
 #define CF_TIME_SIZE 32
 #define CF_FIPS_SIZE 32
 
+#define CFPULSETIME 60
+
 /*************************************************************************/
 /** Design criteria                                                      */
 /*************************************************************************/
@@ -754,6 +756,7 @@ enum cfcomparison
    cfa_checksum,
    cfa_hash,
    cfa_binary,
+   cfa_exists,
    cfa_nocomparison
    };
 
