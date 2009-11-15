@@ -531,7 +531,7 @@ while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
             {
             fprintf(fout,"%s",NRH[cfx_entry][cfb]);
             fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],tbuf,NRH[cfx_date][cfe]);
-            fprintf(fout,"%s %s %s",NRH[cfx_event][cfb],eventname,NRH[cfx_event][cfe]);
+            fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRH[cfx_event][cfb],eventname,eventname,NRH[cfx_event][cfe]);
 
             if (measure = 1.0)
                {
