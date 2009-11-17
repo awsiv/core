@@ -32,14 +32,15 @@ libcfnova_la_SOURCES =						\
 	graphs.c						\
 	copernicus.c						\
 	histogram.c						\
-	trends.c							\
+	trends.c						\
 	timeseries.c						\
 	magnify.c						\
 	coordinates.c						\
 	cfcore.c                                                \
 	win_api.c						\
 	win_file.c						\
-	win_log.c                       \
+	win_log.c                                               \
+	win_net.c 						\
 	win_pipe.c						\
 	win_proc.c						\
 	win_ps.c                                                \

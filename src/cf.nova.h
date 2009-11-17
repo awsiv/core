@@ -504,6 +504,10 @@ void NovaWin_CloseLog(void);
 void NovaWin_MakeLog(struct Item *mess,enum cfreport level);
 void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char status, struct Item *mess);
 
+/* win_net.c */
+
+void NovaWin_GetInterfaceInfo3(void);
+
 /* win_pipe.c */
 
 FILE *NovaWin_cf_popen(char *command,char *type);
