@@ -240,5 +240,235 @@ time_t NovaWin_FileTimeToTimet(FILETIME *ft)
   return (time_t)(li.QuadPart);
 }
 
+/*****************************************************************************/
+
+int NovaWin_uname(struct utsname *buf)
+/* Sample result:
+ * --------------
+ * sysname: WINDOWS_NT-5.1.2600 Workstation
+ * nodename: ecs-laptop
+ * release: Service Pack 3.0
+ * version: Windows XP
+ * machine: i686
+*/
+{
+  OSVERSIONINFOEX osInfo;
+  SYSTEM_INFO sysInfo;
+  int intelArchNum;
+  char hostName[MAXHOSTNAMELEN];
+  char ip[MAXIP4CHARLEN];
+  char *osType;
+
+  GetSystemInfo(&sysInfo);
+
+  // os version info
+  memset(&osInfo, 0, sizeof(osInfo));
+
+  osInfo.dwOSVersionInfoSize = sizeof(osInfo);
+  
+  if(!GetVersionEx((OSVERSIONINFO *)&osInfo))
+    {
+      CfOut(cf_error, "GetVersionEx", "!! Could not get os version info");
+      return -1;
+    }
+
+  switch(osInfo.wProductType)
+    {
+    case VER_NT_WORKSTATION:
+      osType = "workstation";
+      break;
+
+    case VER_NT_DOMAIN_CONTROLLER:
+      osType = "domain controller";
+      break;
+
+    case VER_NT_SERVER:
+      osType = "server";
+      break;
+
+    default:
+      osType = "unknown-ostype";
+      break;
+    }
+
+  snprintf(buf->sysname, _SYS_NMLN, "WINDOWS_NT-%lu.%lu.%lu %s", osInfo.dwMajorVersion, osInfo.dwMinorVersion, osInfo.dwBuildNumber, osType);
+
+  // hostname
+  if(!GetMyHostInfo(hostName, ip))
+    {
+      CfOut(cf_error, "", "!! Could not get hostname");
+      return -1;
+    }
+
+  snprintf(buf->nodename, _SYS_NMLN, "%s", hostName);
+
+  // release - set to service pack number
+
+  snprintf(buf->release, _SYS_NMLN, "Service Pack %d.%d", osInfo.wServicePackMajor, osInfo.wServicePackMinor);
+
+  // version - set to human friendly string representing OS version
+  // TODO: Update on new OS releases
+  switch(osInfo.dwMajorVersion)  // the joy of 10 products for every release...
+    {                            // see http://msdn.microsoft.com/en-us/library/ms724833(VS.85).aspx
+    case 6:
+
+      switch(osInfo.dwMinorVersion)
+	{
+	case 1:
+
+	  if(osInfo.wProductType == VER_NT_WORKSTATION)
+	    {
+	      snprintf(buf->version, _SYS_NMLN, "Windows 7");
+	    }
+	  else
+	    {
+	      snprintf(buf->version, _SYS_NMLN, "Windows Server 2008 R2");
+	    }
+
+	  break;
+
+	case 0:
+
+	  if(osInfo.wProductType == VER_NT_WORKSTATION)
+	    {
+	      snprintf(buf->version, _SYS_NMLN, "Windows Vista");
+	    }
+	  else
+	    {
+	      snprintf(buf->version, _SYS_NMLN, "Windows Server 2008");
+	    }
+	  
+	  break;
+
+	default:
+	  snprintf(buf->version, _SYS_NMLN, "unknown-osrelease");
+	  break;
+	}
+
+      break;
+
+    case 5:
+
+      switch(osInfo.dwMinorVersion)
+	{
+	case 2:
+
+	  if(osInfo.wProductType == VER_NT_WORKSTATION)
+	    {
+	      if(sysInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+		{
+		  snprintf(buf->version, _SYS_NMLN, "Windows XP Professional x64 Edition");
+		}
+	      else
+		{
+		  snprintf(buf->version, _SYS_NMLN, "unknown-osrelease");
+		}
+	    }
+	  else  // server
+	    {
+	      if(GetSystemMetrics(SM_SERVERR2) != 0)
+		{
+		  snprintf(buf->version, _SYS_NMLN, "Windows Server 2003 R2");
+		}
+	      else if(osInfo.wSuiteMask == VER_SUITE_WH_SERVER)
+		{
+		  snprintf(buf->version, _SYS_NMLN, "Windows Home Server");
+		}
+	      else
+		{
+		  snprintf(buf->version, _SYS_NMLN, "Windows Server 2003");
+		}
+	    }
+
+	  break;
+
+	case 1:
+
+	  snprintf(buf->version, _SYS_NMLN, "Windows XP");
+
+	  break;
+
+	case 0:
+	  
+	  snprintf(buf->version, _SYS_NMLN, "Windows 2000");
+	  
+	  break;
+
+	default:
+	  snprintf(buf->version, _SYS_NMLN, "unknown-osrelease");
+	  break;
+	}
+
+      break;
+
+    default:
+      snprintf(buf->version, _SYS_NMLN, "unknown-osrelease");
+      break;
+    }
+  
+
+  // architecture
+
+  switch(sysInfo.wProcessorArchitecture)
+    {
+    case PROCESSOR_ARCHITECTURE_AMD64:
+
+      snprintf(buf->machine, _SYS_NMLN, "x86_64");
+
+      break;
+
+    case PROCESSOR_ARCHITECTURE_IA64:
+
+      snprintf(buf->machine, _SYS_NMLN, "ia64");
+
+      break;
+
+    case PROCESSOR_ARCHITECTURE_INTEL:
+
+      if(sysInfo.wProcessorLevel <= 3)
+	{
+	  intelArchNum = 3;
+	}
+      else if(sysInfo.wProcessorLevel >= 6)
+	{
+	  intelArchNum = 6;
+	}
+      else
+	{
+	  intelArchNum = sysInfo.wProcessorLevel;  // 4 or 5 (-86)
+	}
+
+      snprintf(buf->machine, _SYS_NMLN, "i%d86", intelArchNum);
+
+      break;
+
+    case PROCESSOR_ARCHITECTURE_MIPS:  // mobile platforms following
+      
+      snprintf(buf->machine, _SYS_NMLN, "mips r%d000", sysInfo.wProcessorLevel);
+      
+      break;
+
+    case PROCESSOR_ARCHITECTURE_SHX:
+
+      snprintf(buf->machine, _SYS_NMLN, "sh%u", sysInfo.wProcessorLevel);
+
+      break;
+
+    case PROCESSOR_ARCHITECTURE_ARM:
+
+      snprintf(buf->machine, _SYS_NMLN, "arm%u", sysInfo.wProcessorLevel);
+
+      break;
+
+    default:
+
+      snprintf(buf->machine, _SYS_NMLN, "unknown");
+
+      break;
+    }
+  
+  return 0;
+}
+
 
 #endif  /* MINGW */
