@@ -38,17 +38,15 @@ int Nova_PrintAllValues(HKEY key_h);
 int Nova_VerifyRegistryValueAssocs(HKEY key_h,struct Attributes a,struct Promise *pp);
 int Nova_GetRegistryValue(HKEY key_h, char *value, void *data_p, unsigned long *data_sz);
 enum reg_data_type Str2RegDtype(char *datatype);
-void Nova_RecursiveQueryKey(DB *dbp,HKEY *key_h,char *name,struct Attributes a,struct Promise *pp, int level);
-int Nova_RegistryKeyIntegrity(DB *dbp,char *key,struct Attributes a,struct Promise *pp);
-void Nova_RegistryValueIntegrity(DB *dbp,char *key,char *value,char *data,int size,int type,struct Attributes a,struct Promise *pp);
-int Nova_ReadCmpPseudoRegistry(DB *dbp,char *dbkey,void *ptr,int size,int *cmp);
-int Nova_WritePseudoRegistry(DB *dbp,char *dbkey,void *existing_value,int size);
+void Nova_RecursiveQueryKey(CF_DB *dbp,HKEY *key_h,char *name,struct Attributes a,struct Promise *pp, int level);
+int Nova_RegistryKeyIntegrity(CF_DB *dbp,char *key,struct Attributes a,struct Promise *pp);
+void Nova_RegistryValueIntegrity(CF_DB *dbp,char *key,char *value,char *data,int size,int type,struct Attributes a,struct Promise *pp);
+int Nova_ReadCmpPseudoRegistry(CF_DB *dbp,char *dbkey,void *ptr,int size,int *cmp);
 enum reg_data_type Str2RegDtype(char *datatype);
 HKEY Str2HKey(char *root_key);
-void Nova_RecursiveRestoreKey(DB *dbp,char *keyname,struct Attributes a,struct Promise *pp);
+void Nova_RecursiveRestoreKey(CF_DB *dbp,char *keyname,struct Attributes a,struct Promise *pp);
 int Nova_CopyRegistryValue(char *key,char *value,char *buffer);
 void Nova_DeleteRegistryKey(struct Attributes a,struct Promise *pp);
-
 
 /*****************************************************************************/
 
@@ -57,7 +55,7 @@ void Nova_VerifyRegistryPromise(struct Attributes a,struct Promise *pp)
 { HKEY key_h;  // a registry key handle
   char name[CF_MAXVARSIZE];
   int rr,rw,create = false;
-  DB *dbp;
+  CF_DB*dbp;
   struct CfLock thislock;
   char lockname[CF_BUFSIZE];
 
@@ -134,7 +132,7 @@ if (Nova_OpenRegistryKey(pp->promiser,&key_h,create))
       Nova_RecursiveQueryKey(dbp,&key_h,pp->promiser,a,pp,0) ;
       }
 
-   dbp->close(dbp,0);
+   CloseDB(dbp);
    }
 else
    {
@@ -182,7 +180,7 @@ return false;
 /* Level                                                                     */
 /*****************************************************************************/
 
-void Nova_RecursiveQueryKey(DB *dbp,HKEY *key_h,char *keyname,struct Attributes a,struct Promise *pp, int level) 
+void Nova_RecursiveQueryKey(CF_DB*dbp,HKEY *key_h,char *keyname,struct Attributes a,struct Promise *pp, int level) 
 
 /*  key_h,                   // key handle 
     classname,               // buffer for class name 
@@ -531,43 +529,40 @@ return HKEY_LOCAL_MACHINE;
 
 /*****************************************************************************/
 
-void Nova_RecursiveRestoreKey(DB *dbp,char *keyname,struct Attributes a,struct Promise *pp) 
+void Nova_RecursiveRestoreKey(CF_DB *dbp,char *keyname,struct Attributes a,struct Promise *pp) 
 
-{ DBT key,value;
-  DBC *dbcp;
+{ CF_DBC *dbcp;
   int ret,is_a_key = false,is_a_value = false;
+  char *key;
+  void *value;
+  int ksize,vsize;
 
 /* Acquire a cursor for the database. */
 
-if ((ret = dbp->cursor(dbp,NULL,&dbcp,0)) != 0)
+if (!NewDBCursor(dbp,&dbcp))
    {
-   cfPS(cf_error,CF_FAIL,"",pp,a,"Error reading from checksum database");
-   dbp->err(dbp,ret,"DB->cursor");
+   CfOut(cf_inform,""," !! Unable to scan registry cache db");
    return;
    }
 
  /* Walk through the database and print out the key/data pairs. */
 
-memset(&key,0,sizeof(key));
-memset(&value,0,sizeof(value));
-
-while (dbcp->c_get(dbcp,&key,&value,DB_NEXT) == 0)
+while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    {
-   char *name = (char *)key.data;
    is_a_key = false;
    is_a_value = false;
 
-   if (IsInListOfRegex(a.database.exclude,name))
+   if (IsInListOfRegex(a.database.exclude,key))
       {
       continue;
       }
 
-   if (cf_strncmp(name,keyname,strlen(keyname)) != 0)
+   if (cf_strncmp(key,keyname,strlen(keyname)) != 0)
       {
       continue;
       }
 
-   if (cf_strchr(name,':'))
+   if (cf_strchr(key,':'))
       {
       is_a_value = true;
       }
@@ -586,15 +581,16 @@ while (dbcp->c_get(dbcp,&key,&value,DB_NEXT) == 0)
          {
          if (!DONTDO && a.transaction.action != cfa_warn)
             {
-            cfPS(cf_error,CF_CHG,"",pp,a," !! Repairing registry key %s",name);
-            if (!Nova_OpenRegistryKey(name,&skey_h,true))
+            cfPS(cf_error,CF_CHG,"",pp,a," !! Repairing registry key %s",key);
+
+            if (!Nova_OpenRegistryKey(key,&skey_h,true))
                {
                cfPS(cf_error,CF_FAIL,"",pp,a," !! Registry key could not be created.\n");
                }
             }
          else
             {
-            cfPS(cf_error,CF_NOP,"",pp,a," !! Registry key \"%s\" missing, but only a warning was promised.",name);
+            cfPS(cf_error,CF_NOP,"",pp,a," !! Registry key \"%s\" missing, but only a warning was promised.",key);
             }
          }
       else
@@ -636,19 +632,19 @@ while (dbcp->c_get(dbcp,&key,&value,DB_NEXT) == 0)
          {
          if (!DONTDO && a.transaction.action != cfa_warn)
             {
-            cfPS(cf_error,CF_CHG,"",pp,a," !! Repairing registry value as (%s,%s)",dbvalue,value.data);
-            ret = RegSetValueEx(skey_h,dbvalue,0,dbtype,value.data,value.size);
+            cfPS(cf_error,CF_CHG,"",pp,a," !! Repairing registry value as (%s,%s)",dbvalue,value);
+            ret = RegSetValueEx(skey_h,dbvalue,0,dbtype,value,vsize);
             }
          else
             {
             cfPS(cf_error,CF_NOP,"",pp,a," !! Registry value incorrect, but only a warning was promised.");
-            cfPS(cf_inform,CF_NOP,"",pp,a," -> (%s,%s) incorrect for %s",dbvalue,value.data,pp->promiser);
+            cfPS(cf_inform,CF_NOP,"",pp,a," -> (%s,%s) incorrect for %s",dbvalue,value,pp->promiser);
             }
          
          continue;
          }  
       
-      if (memcmp(reg_data,value.data,value.size) == 0)
+      if (memcmp(reg_data,value,vsize) == 0)
          {
          cfPS(cf_inform,CF_NOP,"",pp,a," -> verified value (%s,%s) correct",dbvalue,reg_data);
          continue;         
@@ -657,24 +653,21 @@ while (dbcp->c_get(dbcp,&key,&value,DB_NEXT) == 0)
          {
          if (!DONTDO && a.transaction.action != cfa_warn)
             {
-            cfPS(cf_error,CF_CHG,"",pp,a," !! Repairing registry value as (%s,%s)",dbvalue,value.data);
-            ret = RegSetValueEx(skey_h,dbvalue,0,dbtype,value.data,value.size);
+            cfPS(cf_error,CF_CHG,"",pp,a," !! Repairing registry value as (%s,%s)",dbvalue,value);
+            ret = RegSetValueEx(skey_h,dbvalue,0,dbtype,value,vsize);
             }
          else
             {
             cfPS(cf_error,CF_NOP,"",pp,a," !! Registry value incorrect, but only a warning was promised.");
-            cfPS(cf_inform,CF_NOP,"",pp,a," -> (%s,%s) incorrect for %s",dbvalue,value.data,pp->promiser);
+            cfPS(cf_inform,CF_NOP,"",pp,a," -> (%s,%s) incorrect for %s",dbvalue,value,pp->promiser);
             }
          }
       
       RegCloseKey(skey_h);
       }
-   
-   memset(&key,0,sizeof(key));
-   memset(&value,0,sizeof(value));
    }
 
-dbcp->c_close(dbcp);
+DeleteDBCursor(dbp,dbcp);
 }
 
 /*****************************************************************************/
@@ -721,7 +714,7 @@ switch (ret)
 
 /*****************************************************************************/
 
-int Nova_RegistryKeyIntegrity(DB *dbp,char *key,struct Attributes a,struct Promise *pp)
+int Nova_RegistryKeyIntegrity(CF_DB *dbp,char *key,struct Attributes a,struct Promise *pp)
 
 { char dbkey[CF_BUFSIZE];
   int size = 0, dummy;
@@ -737,7 +730,7 @@ else
 
    if (a.database.operation && (cf_strcmp(a.database.operation,"cache") == 0))
       {
-      Nova_WritePseudoRegistry(dbp,key,"",1);
+      WriteDB(dbp,key,"",1);
       }
    return false;
    }
@@ -745,7 +738,7 @@ else
 
 /*****************************************************************************/
 
-void Nova_RegistryValueIntegrity(DB *dbp,char *key,char *value,char *data,int size,int type,struct Attributes a,struct Promise *pp)
+void Nova_RegistryValueIntegrity(CF_DB *dbp,char *key,char *value,char *data,int size,int type,struct Attributes a,struct Promise *pp)
 
 { char dbkey[CF_BUFSIZE];
   int cmp_ok;
@@ -774,7 +767,7 @@ if (Nova_ReadCmpPseudoRegistry(dbp,dbkey,data,size,&cmp_ok))
       {
       if (a.database.operation && (cf_strcmp(a.database.operation,"cache") == 0))
          {
-         Nova_WritePseudoRegistry(dbp,dbkey,data,size);
+         WriteDB(dbp,dbkey,data,size);
          }
       
       cfPS(cf_error,CF_CHG,"",pp,a," !! Registry value \"%s\" found in key \"%s\" changed",value,key);
@@ -785,7 +778,7 @@ else
    if (a.database.operation && (cf_strcmp(a.database.operation,"cache") == 0))
       {
       cfPS(cf_error,CF_CHG,"",pp,a," !! New registry value \"%s\" found in \"key\" %s",value,key);
-      Nova_WritePseudoRegistry(dbp,dbkey,data,size);
+      WriteDB(dbp,dbkey,data,size);
       }
    }
 }
@@ -794,14 +787,12 @@ else
 /* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_ReadCmpPseudoRegistry(DB *dbp,char *dbkey,void *ptr,int size,int *cmp)
+int Nova_ReadCmpPseudoRegistry(CF_DB *dbp,char *dbkey,void *ptr,int size,int *cmp)
 
-{ DBT *key,value;
-  
-key = NewDBKey(dbkey);
-memset(&value,0,sizeof(DBT));
-
-if ((errno = dbp->get(dbp,NULL,key,&value,0)) == 0)
+{ void *value;
+  int vsize;
+ 
+if (RevealDB(dbp,dbkey,&value,&vsize))
    {
    if (ptr == NULL)
       {
@@ -809,20 +800,20 @@ if ((errno = dbp->get(dbp,NULL,key,&value,0)) == 0)
          {
          *cmp = true;
          }
-      DeleteDBKey(key);
+
       return true;
       }
 
-   if (value.size != size)
+   if (vsize != size)
       {
       if (cmp)
          {
          *cmp = false;
          }
       }
-   else if (value.data)
+   else if (value)
       {
-      if (memcmp(ptr,value.data,size) == 0)
+      if (memcmp(ptr,value,size) == 0)
          {
          if (cmp)
             {
@@ -843,11 +834,10 @@ if ((errno = dbp->get(dbp,NULL,key,&value,0)) == 0)
          {
          *cmp = true;
          }
-      DeleteDBKey(key);
+
       return false;
       }
    
-   DeleteDBKey(key);
    return true;
    }
 else
@@ -856,35 +846,11 @@ else
       {
       *cmp = true;
       }
-   Debug("Database read failed: %s",db_strerror(errno));
-   DeleteDBKey(key);
+
    return false;
    }
 }
 
-/*****************************************************************************/
-
-int Nova_WritePseudoRegistry(DB *dbp,char *dbkey,void *existing_value,int size)
-
-{ DBT *key,*value;
- 
-key = NewDBKey(dbkey); 
-value = NewDBValue(existing_value,size);
-
-if ((errno = dbp->put(dbp,NULL,key,value,0)) != 0)
-   {
-   Debug("Database write failed: %s",db_strerror(errno));
-   DeleteDBKey(key);
-   DeleteDBValue(value);
-   return false;
-   }
-else
-   {
-   DeleteDBKey(key);
-   DeleteDBValue(value);
-   return true;
-   }
-}
 
 #endif
 

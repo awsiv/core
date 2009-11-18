@@ -113,8 +113,7 @@ return buf;
 
 void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status)
 
-{ DB *dbp;
-  DBC *dbcp;
+{ CF_DB *dbp;
   FILE *fp;
   char name[CF_BUFSIZE],date[CF_MAXVARSIZE],id[CF_MAXVARSIZE];
   static char previous[CF_BUFSIZE];
@@ -163,7 +162,7 @@ else
 
 WriteDB(dbp,id,&newe,sizeof(newe));
 
-dbp->close(dbp,0);
+CloseDB(dbp);
 
 /* Now keep the next log */
 
@@ -206,8 +205,7 @@ fclose(fp);
 
 time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *lastseen)
 
-{ DB *dbp;
-  DBC *dbcp;
+{ CF_DB *dbp;
   char name[CF_MAXVARSIZE];
   struct Event e;
   double lsea = CF_WEEK * 52; /* expire after a year */
@@ -242,7 +240,7 @@ if (*lastseen > lsea)
    DeleteDB(dbp,name);
    }
 
-dbp->close(dbp,0);
+CloseDB(dbp);
 return *lastseen;
 }
 

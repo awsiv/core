@@ -401,10 +401,11 @@ void Nova_SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char 
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE];
-  int i = 0;
-  DB *dbp;
-  DBC *dbcp;
-  DBT key,stored;
+  int i = 0,ksize,vsize;
+  CF_DB *dbp;
+  CF_DBC *dbcp;
+  char *key;
+  void *stored;
   struct Event entry,e,newe;
   double lsea = CF_WEEK * 52; /* expire after a year */
 
@@ -462,29 +463,25 @@ else if (XML)
 
 /* Acquire a cursor for the database. */
 
-if ((errno = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
+if (!NewDBCursor(dbp,&dbcp))
    {
-   dbp->err(dbp,errno,"DB->cursor");
-   dbp->close(dbp,0);
+   CfOut(cf_inform,""," !! Unable to scan class db");
    return;
    }
 
 /* Initialize the key/data return pair. */
 
-memset(&key, 0, sizeof(key));
-memset(&stored, 0, sizeof(stored));
-
-while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
+while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
    {
    double measure,av,var;
    time_t then,lastseen,now = time(NULL);
    char tbuf[CF_BUFSIZE],eventname[CF_BUFSIZE];
 
-   cf_strcpy(eventname,(char *)key.data);
+   cf_strcpy(eventname,(char *)key);
 
-   if (stored.data != NULL)
+   if (stored != NULL)
       {
-      memcpy(&entry,stored.data,sizeof(entry));
+      memcpy(&entry,stored,sizeof(entry));
 
       then    = entry.t;
       measure = entry.Q.q;
@@ -571,7 +568,8 @@ while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
       }
    }
 
-dbp->close(dbp,0);
+DeleteDBCursor(dbp,dbcp);
+CloseDB(dbp);
 
 if (html && !embed)
    {
@@ -1835,7 +1833,7 @@ if ((fin = cf_fopen(name,"r")) == NULL)
 
 if (html)
    {
-     snprintf(name,sizeof(name),"variables.html");
+   snprintf(name,sizeof(name),"variables.html");
    }
 else
    {
@@ -1880,14 +1878,13 @@ void SummarizeComms()
 /* Go through the database of recent connections and check for
    Long Time No See ...*/
 
-{ DBT key,value;
-  DB *dbp;
-  DBC *dbcp;
-  int ret;
-  DB_ENV *dbenv = NULL;
+{ CF_DB *dbp;
+  CF_DBC *dbcp;
+  int ret,ksize,vsize;
   struct QPoint entry;
   double kept = 1,not_kept = 0,repaired = 0,var,average;
-  char name[CF_BUFSIZE];
+  char name[CF_BUFSIZE], *key;
+  void *value;
   time_t now = time(NULL),then;
 
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
@@ -1899,25 +1896,19 @@ if (!OpenDB(name,&dbp))
 
 /* Acquire a cursor for the database. */
 
-if ((ret = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
+if (!NewDBCursor(dbp,&dbcp))
    {
-   CfOut(cf_error,"","Error reading from last-seen database");
-   dbp->err(dbp, ret, "DB->cursor");
+   CfOut(cf_inform,""," !! Unable to scan class db");
    return;
    }
 
- /* Walk through the database and print out the key/data pairs. */
-
-memset(&key, 0, sizeof(key));
-memset(&value, 0, sizeof(value));
-
-while (dbcp->c_get(dbcp, &key, &value, DB_NEXT) == 0)
+while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    {
    memset(&entry, 0, sizeof(entry));
 
-   if (value.data != NULL)
+   if (value != NULL)
       {
-      memcpy(&entry,value.data,sizeof(entry));
+      memcpy(&entry,value,sizeof(entry));
       then = (time_t)entry.q;
       average = (double)entry.expect;
       var = (double)entry.var;
@@ -1944,8 +1935,8 @@ while (dbcp->c_get(dbcp, &key, &value, DB_NEXT) == 0)
    memset(&key,0,sizeof(key));
    }
 
-dbcp->c_close(dbcp);
-dbp->close(dbp,0);
+DeleteDBCursor(dbp,dbcp);
+CloseDB(dbp);
 
 METER_KEPT[meter_comms_hour] = 100.0*kept/(kept+repaired+not_kept);
 METER_REPAIRED[meter_comms_hour] = 100.0*repaired/(kept+repaired+not_kept);

@@ -228,7 +228,7 @@ return recvbuffer;
 void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer)
 
 { char key[CF_BUFSIZE],name[CF_BUFSIZE];
-  DB *dbp;
+  CF_DB *dbp;
   
 snprintf(key,CF_BUFSIZE-1,"%s_%s",caller,handle);
 snprintf(name,CF_BUFSIZE-1,"%s/nova_cache.db",CFWORKDIR); 
@@ -241,7 +241,7 @@ if (!OpenDB(name,&dbp))
    }
 
 WriteDB(dbp,key,buffer,cf_strlen(buffer)+1);
-dbp->close(dbp,0);
+CloseDB(dbp);
 }
 
 /********************************************************************/
@@ -249,7 +249,7 @@ dbp->close(dbp,0);
 int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer)
 
 { char key[CF_BUFSIZE],name[CF_BUFSIZE];
-  DB *dbp;
+  CF_DB *dbp;
 
 snprintf(key,CF_BUFSIZE-1,"%s_%s",caller,handle);
 snprintf(name,CF_BUFSIZE-1,"%s/nova_cache.db",CFWORKDIR);
@@ -264,9 +264,7 @@ if (!OpenDB(name,&dbp))
    }
 
 ReadDB(dbp,key,buffer,CF_BUFSIZE-1);
-
-dbp->close(dbp,0);
-
+CloseDB(dbp);
 return cf_strlen(buffer);
 }
 

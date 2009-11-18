@@ -215,8 +215,7 @@ else
 void Nova_HistoryUpdate(char *timekey,struct Averages newvals)
 
 { int err_no;
-  DBT key,value;
-  DB *dbp;
+  CF_DB *dbp;
   char filename[CF_BUFSIZE];
 
 if (LICENSES == 0)
@@ -235,7 +234,7 @@ CfOut(cf_error,"","Storing %s values\n",timekey);
 
 WriteDB(dbp,timekey,&newvals,sizeof(newvals));
 
-dbp->close(dbp,0);
+CloseDB(dbp);
 }
 
 /*****************************************************************************/
@@ -380,7 +379,7 @@ void Nova_LongHaul(char *day,char *month,char* lifecycle,char *shift)
   struct Averages value;
   time_t now;
   FILE *fp[CF_OBSERVABLES];
-  DB *dbp;
+  CF_DB *dbp;
 
 if (LICENSES == 0)
    {
@@ -471,7 +470,7 @@ while(true)
       }
    }
 
-dbp->close(dbp,0);
+CloseDB(dbp);
 }
 
 /*****************************************************************************/
@@ -513,14 +512,15 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 void Nova_SetMeasurementPromises(struct Item **classlist)
 
-{ DB *dbp;
-  DBC *dbcp;
+{ CF_DB *dbp;
+  CF_DBC *dbcp;
   char dbname[CF_MAXVARSIZE],eventname[CF_MAXVARSIZE],assignment[CF_BUFSIZE];
   struct Event entry;
-  DBT key,stored;
   struct Scope *ptr;
   struct Rlist *rp;
-  int i;
+  char *key;
+  void *stored;
+  int i,ksize,vsize;
 
 snprintf(dbname,sizeof(dbname)-1,"%s/state/nova_measures.db",CFWORKDIR);
 MapName(dbname);
@@ -530,23 +530,20 @@ if (!OpenDB(dbname,&dbp))
    return;
    }
 
-if ((errno = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
+if (!NewDBCursor(dbp,&dbcp))
    {
-   dbp->err(dbp,errno,"DB->cursor");
+   CfOut(cf_inform,""," !! Unable to scan class db");
    return;
    }
 
-memset(&key, 0, sizeof(key));
-memset(&stored, 0, sizeof(stored));
+memset(&entry, 0, sizeof(entry)); 
 
-/* Get the database values, if any */
-
-while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
+while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
    {
-   if (stored.data != NULL)
+   if (stored != NULL)
       {
-      strcpy(eventname,(char *)key.data);
-      memcpy(&entry,stored.data,sizeof(entry));
+      strcpy(eventname,(char *)key);
+      memcpy(&entry,stored,sizeof(entry));
 
       CfOut(cf_verbose,""," -> Setting measurement event %s\n",eventname);
 
@@ -560,7 +557,7 @@ while (dbcp->c_get(dbcp,&key,&stored,DB_NEXT) == 0)
    }
 
 
-dbp->close(dbp,0);
+CloseDB(dbp);
 
 /* Get the directly discovered environment data from sys context
 
@@ -614,9 +611,11 @@ for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
 
 void Nova_LoadSlowlyVaryingObservations()
 
-{ DB *dbp;
-  DBC *dbcp;
-  DBT key,stored;
+{ CF_DB *dbp;
+  CF_DBC *dbcp;
+  char *key;
+  void *stored;
+  int ksize,vsize;
   char name[CF_BUFSIZE];
 
 snprintf(name,CF_BUFSIZE-1,"%s/state/nova_static.db",CFWORKDIR);
@@ -628,30 +627,25 @@ if (!OpenDB(name,&dbp))
 
 /* Acquire a cursor for the database. */
 
-if ((errno = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
+if (!NewDBCursor(dbp,&dbcp))
    {
-   dbp->err(dbp, errno, "DB->cursor");
+   CfOut(cf_inform,""," !! Unable to scan class db");
    return;
    }
 
- /* Initialize the key/data return pair. */
-
-memset(&key, 0, sizeof(key));
-memset(&stored, 0, sizeof(stored));
-
-while (dbcp->c_get(dbcp, &key, &stored, DB_NEXT) == 0)
+while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
    {
    char buf[CF_MAXVARSIZE],lval[CF_MAXVARSIZE],rval[CF_BUFSIZE];
    enum cfdatatype type;
    struct Rlist *list = NULL;
 
-   strncpy(buf,(char *)key.data,CF_MAXVARSIZE-1);
+   strncpy(buf,key,CF_MAXVARSIZE-1);
 
    sscanf(buf,"%[^:]:%d",lval,&type);
 
-   if (stored.data != NULL)
+   if (stored != NULL)
       {
-      strncpy(rval,stored.data,CF_BUFSIZE-1);
+      strncpy(rval,stored,CF_BUFSIZE-1);
 
       switch (type)
          {
@@ -674,19 +668,20 @@ while (dbcp->c_get(dbcp, &key, &stored, DB_NEXT) == 0)
       }
    }
 
-dbp->close(dbp,0);
+CloseDB(dbp);
 }
 
 /*****************************************************************************/
 
 void Nova_DumpSlowlyVaryingObservations()
 
-{ DB *dbp;
-  DBC *dbcp;
-  DBT key,stored;
+{ CF_DB *dbp;
+  CF_DBC *dbcp;
   char name[CF_BUFSIZE];
   FILE *fout;
-
+  char *key;
+  void *stored;
+  int ksize,vsize;
 
 if (LICENSES == 0)
    {
@@ -710,35 +705,30 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 
 /* Acquire a cursor for the database. */
 
-if ((errno = dbp->cursor(dbp, NULL, &dbcp, 0)) != 0)
+if (!NewDBCursor(dbp,&dbcp))
    {
-   dbp->err(dbp, errno, "DB->cursor");
+   CfOut(cf_inform,""," !! Unable to scan class db");
    return;
    }
 
- /* Initialize the key/data return pair. */
-
-memset(&key, 0, sizeof(key));
-memset(&stored, 0, sizeof(stored));
-
-while (dbcp->c_get(dbcp, &key, &stored, DB_NEXT) == 0)
+while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
    {
    char buf[CF_MAXVARSIZE],lval[CF_MAXVARSIZE],rval[CF_BUFSIZE];
    enum cfdatatype type;
    struct Rlist *list = NULL;
 
-   strncpy(buf,(char *)key.data,CF_MAXVARSIZE-1);
+   strncpy(buf,key,CF_MAXVARSIZE-1);
 
    sscanf(buf,"%s:%d",lval,&type);
 
-   if (stored.data != NULL)
+   if (stored != NULL)
       {
-      strncpy(rval,stored.data,CF_BUFSIZE-1);
+      strncpy(rval,stored,CF_BUFSIZE-1);
       fprintf(fout,"%s:%s\n",lval,rval);
       }
    }
 
-dbp->close(dbp,0);
+CloseDB(dbp);
 cf_fclose(fout);
 }
 
@@ -1361,7 +1351,7 @@ if (a.measure.history_type && cf_strcmp(a.measure.history_type,"log") == 0)  // 
    }
 else // scalar or static
    {
-   DB *dbp;
+   CF_DB *dbp;
    char id[CF_MAXVARSIZE];
 
    snprintf(filename,CF_BUFSIZE-1,"%s/state/nova_static.db",CFWORKDIR);
@@ -1375,7 +1365,7 @@ else // scalar or static
 
    WriteDB(dbp,id,value,strlen(value)+1);
 
-   dbp->close(dbp,0);
+   CloseDB(dbp);
    }
 }
 
@@ -1387,7 +1377,7 @@ void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Prom
   struct Event ev_new,ev_old;
   time_t lastseen, now = time(NULL);
   double delta2;
-  DB *dbp;
+  CF_DB *dbp;
 
 snprintf(dbname,CF_BUFSIZE-1,"%s/state/nova_measures.db",CFWORKDIR);
 
@@ -1416,5 +1406,5 @@ else
 CfOut(cf_verbose,""," -> Wrote scalar named event %s = (%.2lf,%.2lf,%.2lf) -- no time-series slot needed",eventname,ev_new.Q.q,ev_new.Q.expect,sqrt(ev_new.Q.var));
 WriteDB(dbp,eventname,&ev_new,sizeof(ev_new));
 
-dbp->close(dbp,0);
+CloseDB(dbp);
 }
