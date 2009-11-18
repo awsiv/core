@@ -79,6 +79,7 @@ for (ip = siglist; ip != NULL; ip=ip->next)
 return kill;
 }
 
+/*****************************************************************************/
 
 /* Terminates the process identified by pid.
  * TODO: Try to send quit-message to process before terminating it ? */
@@ -106,6 +107,27 @@ int NovaWin_GracefulTerminate(pid_t pid)
   return (res != 0);
 }
 
+/*****************************************************************************/
+
+int NovaWin_IsProcessRunning(pid_t pid)
+{
+  DWORD ret;
+  HANDLE procHandle;
+
+  procHandle = OpenProcess(SYNCHRONIZE, FALSE, pid);
+    
+  if(procHandle == NULL)
+    {
+      return false;
+    }
+
+  ret = WaitForSingleObject(procHandle, 0);
+  CloseHandle(procHandle);
+
+  return (ret == WAIT_TIMEOUT);
+}
+
+/*****************************************************************************/
 
 /* returns true if execution of 'cmd' returns zero
  * (waits for completion)  */
@@ -137,6 +159,7 @@ int NovaWin_ShellCommandReturnsZero(char *comm, int useshell)
   return (exitcode == 0);
 }
 
+/*****************************************************************************/
 
 /* Runs the command comm, in a shell if useshell is true. The new process inherit handles if
  * inheritHandles is true. If si is not NULL, these parameters are used to create the process.

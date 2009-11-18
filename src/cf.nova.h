@@ -521,6 +521,7 @@ int NovaWin_cf_pclose_def(FILE *pfp, struct Attributes a, struct Promise *pp);
 
 int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp);
 int NovaWin_GracefulTerminate(pid_t pid);
+int NovaWin_IsProcessRunning(pid_t pid);
 int NovaWin_ShellCommandReturnsZero(char *comm, int useshell);
 int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir, STARTUPINFO *si, HANDLE *procHandle);
 int NovaWin_GetCurrentProcessOwner(SID *sid, int sidSz);
