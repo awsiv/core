@@ -430,7 +430,7 @@ fprintf(fout,
 "\n"
 "  windows::\n"
 "  \"$(sys.workdir)\\inputs\" \n"
-"    handle => \"update_policy\",\n"
+"    handle => \"windows_update_policy\",\n"
 "    copy_from => u_scp(\"/var/cfengine/masterfiles\"),\n"
 "    depth_search => u_recurse(\"inf\"),\n"
 "    action => immediate,\n"
