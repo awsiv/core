@@ -390,147 +390,113 @@ if ((fout = fopen(name,"w")) == NULL)
    }
 
 fprintf(fout,
-        "body common control\n"
-        "{\n"
-        "bundlesequence => { \"update\" };\n"
-        "}\n"
-
-
-        
-        "bundle agent update\n"
-        "{\n"
-        "vars:\n"
-        
-        " \"master_location\" string => \"$(sys.workdir)/masterfiles\";\n"
-        
-        " \"policy_server\"   string => readfile(\"$(sys.workdir)/policy_server.dat\",40),\n"
-        "                      comment => \"IP address to locate your policy host.\";\n"
-        
-        "classes:\n"
-        
-        "  \"policy_host\" or => { \n"
-        "                        classmatch(canonify(\"ipv4_$(policy_server)\")),\n"
-        "                        classmatch(canonify(\"$(policy_server)\"))\n"
-        "                        },\n"
-        
-        "                   comment => \"Define the ip identity of the policy source host\";\n"
-        
-        "  \"have_ppkeys\" expression => fileexists(\"$(sys.workdir)/ppkeys/localhost.pub\");\n"
-        
-        "  \"gotfile\" expression => fileexists(\"$(sys.workdir)/policy_server.dat\");\n"
-        
-        "commands:\n"
-        
-        " !have_ppkeys::\n"
-        
-        "   \"/usr/local/sbin/cf-key\";\n"
-        
-        "files:\n"
-        
-        "  \"$(sys.workdir)/inputs\" \n"
-        
-        "    handle => \"update_policy\",\n"
-        "    perms => u_p(\"600\"),\n"
-        "    copy_from => u_scp(\"$(master_location)\"),\n"
-        "    depth_search => u_recurse(\"inf\"),\n"
-        "    action => immediate,\n"
-        "    classes => success(\"config\");\n"
-        
-        "  \"$(sys.workdir)/bin\" \n"
-        
-        "    perms => u_p(\"700\"),\n"
-        "    copy_from => u_scp(\"/usr/local/sbin\"),\n"
-        "    depth_search => u_recurse(\"inf\"),\n"
-        "    action => immediate;\n"
-
-        "processes:\n"
-
-        "config::\n"
-        
-        "\"cf-execd\" restart_class => \"start_exec\";\n"
-        
-        "config.policy_host::\n"
-        
-        "\"cf-serverd\" restart_class => \"start_server\";\n"
-        
-        "commands:\n"
-        
-        "start_exec::\n"
-        "\"$(sys.workdir)/bin/cf-execd\",\n"
-        "classes => outcome(\"executor\");\n"
-        
-        "start_server::\n"
-        "\"$(sys.workdir)/bin/cf-serverd\",\n"
-        "classes => outcome(\"server\");\n"
-        
-        "reports:\n"
-        
-        "  bootstrap_mode.policy_host::\n"
-        
-        "      \"This host assumes the role of policy distribution host\";\n"
-
-        "  bootstrap_mode.!policy_host::\n"
-        
-        "      \"This autonomous node assumes the role of voluntary client\";\n"
-
-        
-        "  server_ok::"
-        "      \" -> Started the server - system ready to serve\";\n"
-        "  executor_ok::"
-        "      \" -> Started the scheduler - system functional\";\n"
-        
-        "}\n"
-
-        "############################################\n"
-
-        "body classes outcome(x)\n"
-        "{\n"
-        "promise_repaired => {\"$(x)_ok\"};\n"
-        "}\n"
-
-        "############################################\n"
-
-        "body classes success(x)\n"
-        "{\n"
-        "promise_repaired => {\"$(x)\"};\n"
-        "}\n"
-
-        "############################################\n"
-        
-        "body perms u_p(p)\n"
-        
-        "{\n"
-        "mode  => \"$(p)\";\n"
-        "}\n"
-        
-        "#############################################\n"
-        
-        "body copy_from u_scp(from)\n"
-        
-        "{\n"
-        "source      => \"$(from)\";\n"
-        "compare     => \"digest\";\n"
-        "trustkey    => \"true\";\n"
-        
-        "!policy_host.gotfile::\n"
-        
-        "servers => { \"$(policy_server)\" };\n"
-        "}\n"
-        
-        "############################################\n"
-        
-        "body action immediate\n"
-        "{\n"
-        "ifelapsed => \"1\";\n"
-        "}\n"
-        
-        "############################################\n"
-        
-        "body depth_search u_recurse(d)\n"
-        
-        "{\n"
-        "depth => \"$(d)\";\n"
-        "}\n"
+"body common control\n"
+"{\n"
+"bundlesequence => { \"update\" };\n"
+"}\n"
+"bundle agent update\n"
+"{\n"
+"vars:\n"
+" \"master_location\" string => \"$(sys.workdir)/masterfiles\";\n"
+" \"policy_server\"   string => readfile(\"$(sys.workdir)/policy_server.dat\",40),\n"
+"                      comment => \"IP address to locate your policy host.\";\n"
+"classes:\n"
+"  \"policy_host\" or => { \n"
+"                        classmatch(canonify(\"ipv4_$(policy_server)\")),\n"
+"                        classmatch(canonify(\"$(policy_server)\"))\n"
+"                        },\n"
+"                   comment => \"Define the ip identity of the policy source host\";\n"
+"  \"have_ppkeys\" expression => fileexists(\"$(sys.workdir)/ppkeys/localhost.pub\");\n"
+"  \"gotfile\" expression => fileexists(\"$(sys.workdir)/policy_server.dat\");\n"
+"commands:\n"
+" !have_ppkeys.!windows::\n"
+"   \"$(sys.workdir)/bin/cf-key\";\n"
+" !have_ppkeys.windows::\n"
+"   \"\\\"$(sys.workdir)\\bin\\cf-key\\\"\";\n"
+"files:\n"
+" !windows::\n"
+"  \"$(sys.workdir)/inputs\" \n"
+"    handle => \"update_policy\",\n"
+"    perms => u_p(\"600\"),\n"
+"    copy_from => u_scp(\"$(master_location)\"),\n"
+"    depth_search => u_recurse(\"inf\"),\n"
+"    action => immediate,\n"
+"    classes => success(\"config\");\n"
+"  \"$(sys.workdir)/bin\" \n"
+"    perms => u_p(\"700\"),\n"
+"    copy_from => u_scp(\"/usr/local/sbin\"),\n"
+"    depth_search => u_recurse(\"inf\"),\n"
+"    action => immediate;\n"
+"\n"
+"  windows::\n"
+"  \"$(sys.workdir)\\inputs\" \n"
+"    handle => \"update_policy\",\n"
+"    copy_from => u_scp(\"/var/cfengine/masterfiles\"),\n"
+"    depth_search => u_recurse(\"inf\"),\n"
+"    action => immediate,\n"
+"    classes => success(\"config\");\n"
+"\n"
+"processes:\n"
+"config::\n"
+"\"cf-execd\" restart_class => \"start_exec\";\n"
+"config.policy_host::\n"
+"\"cf-serverd\" restart_class => \"start_server\";\n"
+"commands:\n"
+"start_exec.!windows::\n"
+"\"$(sys.workdir)/bin/cf-execd\",\n"
+"classes => outcome(\"executor\");\n"
+"start_server.!windows::\n"
+"\"$(sys.workdir)/bin/cf-serverd\",\n"
+"classes => outcome(\"server\");\n"
+"start_exec.windows::\n"
+"\"\\\"$(sys.workdir)\\bin\\cf-execd\\\" -K\",\n"
+"classes => outcome(\"executor\");\n"
+"start_server.windows::\n"
+"\"\\\"$(sys.workdir)\\bin\\cf-serverd\\\"\",\n"
+"classes => outcome(\"server\");\n"
+"reports:\n"
+"  bootstrap_mode.policy_host::\n"
+"      \"This host assumes the role of policy distribution host\";\n"
+"  bootstrap_mode.!policy_host::\n"
+"      \"This autonomous node assumes the role of voluntary client\";\n"
+"  server_ok::      \" -> Started the server - system ready to serve\";\n"
+"  executor_ok::      \" -> Started the scheduler - system functional\";\n"
+"}\n"
+"############################################\n"
+"body classes outcome(x)\n"
+"{\n"
+"promise_repaired => {\"$(x)_ok\"};\n"
+"}\n"
+"############################################\n"
+"body classes success(x)\n"
+"{\n"
+"promise_repaired => {\"$(x)\"};\n"
+"}\n"
+"############################################\n"
+"body perms u_p(p)\n"
+"{\n"
+"mode  => \"$(p)\";\n"
+"}\n"
+"#############################################\n"
+"body copy_from u_scp(from)\n"
+"{\n"
+"source      => \"$(from)\";\n"
+"compare     => \"digest\";\n"
+"trustkey    => \"true\";\n"
+"!policy_host.gotfile::\n"
+"servers => { \"$(policy_server)\" };\n"
+"}\n"
+"############################################\n"
+"body action immediate\n"
+"{\n"
+"ifelapsed => \"1\";\n"
+"}\n"
+"############################################\n"
+"body depth_search u_recurse(d)\n"
+"{\n"
+"depth => \"$(d)\";\n"
+"}\n"
+"\n"
         );
 
 CfOut(cf_error,""," -> No policy failsafe discovered, assume temporary bootstrap vector\n");

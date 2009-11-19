@@ -577,7 +577,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       {
       HKEY skey_h;
 
-      if (!Nova_OpenRegistryKey(name,&skey_h,false))
+      if (!Nova_OpenRegistryKey(key,&skey_h,false))
          {
          if (!DONTDO && a.transaction.action != cfa_warn)
             {
@@ -610,7 +610,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       int  dbtype = REG_SZ,regtype = REG_SZ;
       unsigned long data_size = CF_BUFSIZE;
       
-      sscanf(name,"%255[^:]:%255[^:]:%u",dbkey,dbvalue,&dbtype);
+      sscanf(key,"%255[^:]:%255[^:]:%u",dbkey,dbvalue,&dbtype);
       
       Debug("CACHED: %s\nVAL: %s\n",dbkey,dbvalue);
       
