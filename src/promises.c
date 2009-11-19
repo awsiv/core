@@ -29,7 +29,7 @@ void Nova_EnterpriseContext()
 #ifdef HAVE_GETZONEID
  zoneid_t zid;
  char zone[ZONENAME_MAX];
- 
+
 zid = getzoneid();
 getzonenamebyid(zid,zone,ZONENAME_MAX);
 CfOut(cf_verbose,""," -> Cfengine seems to be running inside a solaris zone of name \"%s\"",zone);
@@ -65,11 +65,11 @@ if (strcmp("packages",pp->agentsubtype) == 0)
 
 if (strcmp("files",pp->agentsubtype) == 0)
    {
-   a = GetFilesAttributes(pp);   
+   a = GetFilesAttributes(pp);
    FileSanityChecks(pp->promiser,a,pp);
    return;
    }
-  
+
 if (strcmp("commands",pp->agentsubtype) == 0)
    {
    return;
@@ -169,7 +169,7 @@ CloseDB(dbp);
 switch (status)
    {
    case cfn_repaired:
-       snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);       
+       snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
        break;
 
    case cfn_notkept:
@@ -209,7 +209,7 @@ time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *averag
   char name[CF_MAXVARSIZE];
   struct Event e;
   double lsea = CF_WEEK * 52; /* expire after a year */
-  
+
 snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,"promise_compliance.db");
 
 if (!OpenDB(name,&dbp))
@@ -353,15 +353,15 @@ void Nova_SetPolicyServer(char *name)
 snprintf(file,CF_BUFSIZE-1,"%s/policy_server.dat",CFWORKDIR);
 
 if (strlen(name) > 0)
-   {  
+   {
    strncpy(POLICY_SERVER,name,CF_BUFSIZE-1);
-   
+
    if ((fout = fopen(file,"w")) == NULL)
       {
       CfOut(cf_error,"fopen","Unable to write policy server file! (%s)",file);
       return;
       }
-   
+
    fprintf(fout,"%s",name);
    fclose(fout);
    }
@@ -383,7 +383,7 @@ else
 void Nova_CreateFailSafe(char *name)
 
 { FILE *fout;
- 
+
 if ((fout = fopen(name,"w")) == NULL)
    {
    CfOut(cf_error,"fopen","Unable to write failsafe file! (%s)",name);
@@ -449,10 +449,10 @@ fprintf(fout,
 "\"$(sys.workdir)/bin/cf-serverd\",\n"
 "classes => outcome(\"server\");\n"
 "start_exec.windows::\n"
-"\"\\\"$(sys.workdir)\\bin\\cf-execd\\\" -K\",\n"
+"\"\\\"$(sys.workdir)\\bin\\cf-execd.exe\\\" -K\",\n"
 "classes => outcome(\"executor\");\n"
 "start_server.windows::\n"
-"\"\\\"$(sys.workdir)\\bin\\cf-serverd\\\"\",\n"
+"\"\\\"$(sys.workdir)\\bin\\cf-serverd.exe\\\"\",\n"
 "classes => outcome(\"server\");\n"
 "reports:\n"
 "  bootstrap_mode.policy_host::\n"
@@ -517,13 +517,13 @@ void Nova_SetDocRoot(char *name)
 snprintf(file,CF_BUFSIZE-1,"%s/document_root.dat",CFWORKDIR);
 
 if (strlen(name) > 0)
-   {  
+   {
    if ((fout = fopen(file,"w")) == NULL)
       {
       CfOut(cf_error,"fopen","Unable to write document root file! (%s)",file);
       return;
       }
-   
+
    fprintf(fout,"%s",name);
    fclose(fout);
    }
