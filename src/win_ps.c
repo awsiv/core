@@ -178,9 +178,9 @@ static char *GetProcessInfo(DWORD pid, ULARGE_INTEGER lastTimeStamp, DWORDLONG t
   char userName[CF_BUFSIZE];
 
   
-  if(pid == 0)
+  if(pid == 0 || pid == 4)
     {
-      Debug("Skipped information query from idle process (pid=0)");
+      Debug("Skipped process info query from special process (pid=%d)", pid);
       return NULL;
     }
   
@@ -445,10 +445,10 @@ static void GetProcessCpuTime(DWORD pid, ULARGE_INTEGER *timeCpuInt)
   FILETIME timeCreate, timeExit, timeKernel, timeUser;
   ULARGE_INTEGER tmp1, tmp2;
   
-  // skip "idle process"
-  if(pid == 0)
+  // skip "idle process" and nt kernel process
+  if(pid == 0 || pid == 4)
     {
-      Debug("Skipped cpu time query from idle process (pid=0)");
+      Debug("Skipped cpu time query from special process (pid=%d)", pid);
       timeCpuInt->QuadPart = 0;
       return;
     }
