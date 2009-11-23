@@ -369,7 +369,7 @@ typedef int clockid_t;
 /*  DBM                                                            */
 /*******************************************************************/
 
-#define QDB  // FIXME: Set in autoconf
+#define BDB  // FIXME: Set in autoconf
 
 #ifdef BDB  // FIXME
 
