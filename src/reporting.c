@@ -438,7 +438,7 @@ else
 if ((fout = cf_fopen(name,"w")) == NULL)
    {
    CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
-   dbp->close(dbp,0);
+   CloseDB(dbp);
    return;
    }
 
