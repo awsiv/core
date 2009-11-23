@@ -111,6 +111,8 @@ struct CfFileLine
 #define EVENT_COUNT 9  // mapped to "TypesSupported" registry log entry
 #include "cf.events.h"  // defines events for logging on windows
 
+#define WINSERVICE_NAME "CfengineNova"
+
 #endif
 
 /*****************************************************************************/
@@ -531,6 +533,10 @@ int NovaWin_SetTokenPrivilege(HANDLE token, char *privilegeName, int enablePriv)
 /* win_ps.c */
 
 int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts);
+
+/* win_service_exec.c */
+
+void NovaWin_StartExecService(int argc,char *argv[]);
 
 /* win_user.c */
 
