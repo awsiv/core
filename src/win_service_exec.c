@@ -12,7 +12,14 @@
 /*                                                                           */
 /*****************************************************************************/
 
-/* Functions to run the cf-execd as a windows service. */
+/* Functions to run the cf-execd as a windows service. 
+ * It can for example be registered in windows as follows:
+ * sc create CfengineNova binpath= "c:\Program Files\Cfengine\bin\cf-execd.exe"
+ * sc config CfengineNova DisplayName= "Cfengine Nova Executor"
+ * sc description CfengineNova "The executor daemon is a scheduler and wrapper for execution of cf-agent. It collects the output of the agent and can email it to a specified address. It can splay the start time of executions across the network and work as a class-based clock for scheduling."
+ * sc config CfengineNova start= auto
+ * sc start CfengineNova
+*/
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
@@ -67,7 +74,7 @@ void NovaWin_ServiceMain(int argc,char *argv[])
   serviceStatus.dwCurrentState = SERVICE_RUNNING; 
   SetServiceStatus(statusHandle, &serviceStatus);
 
-  CfOut(cf_log, "", "%s service is started", WINSERVICE_NAME);
+  CfOut(cf_log, "", "Started service %s", WINSERVICE_NAME);
 
   // worker function (loop)
   StartServer(argc,argv);
@@ -82,7 +89,7 @@ void NovaWin_ControlHandler(DWORD request)
     { 
     case SERVICE_CONTROL_STOP: 
     case SERVICE_CONTROL_SHUTDOWN: 
-      CfOut(cf_log, "", "%s service received stop request (%lu), so terminating...", WINSERVICE_NAME, request);
+      CfOut(cf_log, "", "Terminating service %s: received stop request (%lu)", WINSERVICE_NAME, request);
 
       SelfTerminatePrelude();
 
@@ -99,4 +106,4 @@ void NovaWin_ControlHandler(DWORD request)
   
 } 
 
-#endif
+#endif  /* MINGW */
