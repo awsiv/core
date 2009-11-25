@@ -17,7 +17,6 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
-#include <tlhelp32.h>
 
 #ifdef MINGW
 
@@ -52,7 +51,7 @@ int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts)
   char buf[CF_BUFSIZE];
   char *psLine;
   int i;
-  
+
   // need debug priviliges to open some special processes, like crss.exe, alg.exe, svchost.exe
   if(!EnableDebugPriv())
     {
@@ -90,11 +89,11 @@ int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts)
   for(i = 0; i < CF_BUFSIZE; i++)
     {
       GetProcessCpuTime(pe32.th32ProcessID, &cpuTimeStamps[i]);
-      
+
       if(!Process32Next(processSnap, &pe32))
-	{
-	  break;
-	}
+        {
+          break;
+        }
     }
 
   if(i == CF_BUFSIZE)
@@ -115,24 +114,24 @@ int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts)
   for(i = 0; i < CF_BUFSIZE; i++)
     {
       psLine = GetProcessInfo(pe32.th32ProcessID, pe32.szExeFile, cpuTimeStamps[i], memInfo.ullTotalPhys);
-      
+
       if(psLine)
-	{
-	  AppendItem(procdata,psLine,"");
-	}
+        {
+          AppendItem(procdata,psLine,"");
+        }
 
       if(!Process32Next(processSnap, &pe32))
-	{
-	  break;
-	}
+        {
+          break;
+        }
     }
 
   CloseHandle(processSnap);
 
   // save process list output to files, include header
-  snprintf(buf, sizeof(buf), "%-20s %5s %s %s %8s %8s %-3s %s %5s %s", 
-	  "USER", "PID", "%CPU", "%MEM", "VSZ", "RSS", "TTY", "START", "TIME", "COMMAND"); 
-  
+  snprintf(buf, sizeof(buf), "%-20s %5s %s %s %8s %8s %-3s %s %5s %s",
+          "USER", "PID", "%CPU", "%MEM", "VSZ", "RSS", "TTY", "START", "TIME", "COMMAND");
+
   PrependItem(procdata, buf, NULL);
 
   snprintf(buf,CF_MAXVARSIZE,"%s%cstate%ccf_procs",CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR);
@@ -158,7 +157,7 @@ int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts)
   snprintf(buf,CF_MAXVARSIZE,"%s%cstate%ccf_rootprocs",CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR);
   RawSaveItemList(systemprocs,buf);
   DeleteItemList(systemprocs);
-  
+
   snprintf(buf,CF_MAXVARSIZE,"%s%cstate%ccf_otherprocs",CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR);
   RawSaveItemList(otherprocs,buf);
   DeleteItemList(otherprocs);
@@ -179,15 +178,15 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
   float cpuUsagePercent;
   char userName[CF_BUFSIZE];
 
-  
+
   if(pid == 0 || pid == 4)
     {
       Debug("Skipped process info query from special process (pid=%d)", pid);
       return NULL;
     }
-  
+
   procHandle = OpenProcess(PROCESS_QUERY_INFORMATION | STANDARD_RIGHTS_READ, FALSE, pid);
-  
+
   if(procHandle == NULL)
     {
       CfOut(cf_error,"OpenProcess","!! Error opening process handle for pid=%lu", pid);
@@ -197,7 +196,7 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
   GetProcessTime(procHandle, timeCreateStr, &newTimeStamp, timeCpuStr);
 
   GetProcessUserName(procHandle, false, userName, sizeof(userName));
-  
+
   GetMemoryInfo(procHandle, memSzStr, totalPhysMemB);
 
   // process name and parameters - not obtainable for "System" process
@@ -212,7 +211,7 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
       //GetProcessCmdLine(procHandle, cmdLineStr, sizeof(cmdLineStr));
       snprintf(cmdLineStr, sizeof(cmdLineStr), "%s", execName);  // use only execuable image name for now
     }
-  
+
   CloseHandle(procHandle);
 
   // calulcate % CPU usage
@@ -228,7 +227,7 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
     {
       cpuUsagePercent = 0;
     }
-  
+
   snprintf(psLine, sizeof(psLine), "%-20.20s %5lu %4.1f %s %s %s %s %s", userName, pid, cpuUsagePercent, memSzStr, "?  ", timeCreateStr, timeCpuStr, cmdLineStr);
 
   return psLine;
@@ -236,33 +235,33 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
 
 /*****************************************************************************/
 
-static int EnableDebugPriv(void) 
+static int EnableDebugPriv(void)
 {
-	HANDLE hToken = NULL;
-	LUID sedebugnameValue;
-	TOKEN_PRIVILEGES tkp;
+        HANDLE hToken = NULL;
+        LUID sedebugnameValue;
+        TOKEN_PRIVILEGES tkp;
 
-	if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken)) {
-		return false;
-	}
+        if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken)) {
+                return false;
+        }
 
-	if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &sedebugnameValue)) {
-		CloseHandle(hToken);
-		return false;
-	}
+        if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &sedebugnameValue)) {
+                CloseHandle(hToken);
+                return false;
+        }
 
-	tkp.PrivilegeCount = 1;
-	tkp.Privileges[0].Luid = sedebugnameValue;
-	tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+        tkp.PrivilegeCount = 1;
+        tkp.Privileges[0].Luid = sedebugnameValue;
+        tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
-	if ((AdjustTokenPrivileges(hToken, FALSE, &tkp, 0, NULL, NULL) != ERROR_SUCCESS) && (GetLastError() != ERROR_SUCCESS)) {
-		CloseHandle(hToken);
-		return false;
-	}
+        if ((AdjustTokenPrivileges(hToken, FALSE, &tkp, 0, NULL, NULL) != ERROR_SUCCESS) && (GetLastError() != ERROR_SUCCESS)) {
+                CloseHandle(hToken);
+                return false;
+        }
 
-	CloseHandle(hToken);
+        CloseHandle(hToken);
 
-	return true;
+        return true;
 }
 
 /*****************************************************************************/
@@ -271,14 +270,14 @@ static int EnableDebugPriv(void)
 /* static int GetProcessCmdLine(HANDLE procHandle, char *cmdLineStr, int cmdLineSz) */
 /* { */
 /*   DWORD cmdLineSzWritten = (DWORD)cmdLineSz; */
-  
+
 /*   if(!QueryFullProcessImageName(procHandle, 0, cmdLineStr, &cmdLineSzWritten)) */
 /*     { */
 /*       CfOut(cf_error, "QueryFullProcessImageName", "Could not get process image name"); */
 /*       snprintf(cmdLineStr, cmdLineSz, "???"); */
 /*       return false; */
 /*     } */
-  
+
 /*   return true; */
 /* } */
 
@@ -308,7 +307,7 @@ static void GetProcessTime(HANDLE procHandle, char *timeCreateStr, ULARGE_INTEGE
 static void FormatCreationTime(FILETIME *timeCreate, char *timeCreateStr)
 {
   SYSTEMTIME timeCreateUTC, timeCreateLocal, timeCurrent;
-  
+
   // convert creation time to local time
   FileTimeToSystemTime(timeCreate, &timeCreateUTC);
 
@@ -320,14 +319,14 @@ static void FormatCreationTime(FILETIME *timeCreate, char *timeCreateStr)
   if(timeCreateLocal.wYear == timeCurrent.wYear)
     {
       if(timeCreateLocal.wMonth == timeCurrent.wMonth &&
-	 timeCreateLocal.wDay == timeCurrent.wDay) // today, print time as hh:mm
-	{
-	  sprintf(timeCreateStr, "%02d:%02d", timeCreateLocal.wHour, timeCreateLocal.wMinute);
-	}
+         timeCreateLocal.wDay == timeCurrent.wDay) // today, print time as hh:mm
+        {
+          sprintf(timeCreateStr, "%02d:%02d", timeCreateLocal.wHour, timeCreateLocal.wMinute);
+        }
       else  // not today, but same year, print as MmmDD
-	{
-	  sprintf(timeCreateStr, "%.3s%02d", MONTH_TEXT[timeCreateLocal.wMonth - 1], timeCreateLocal.wDay);
-	}
+        {
+          sprintf(timeCreateStr, "%.3s%02d", MONTH_TEXT[timeCreateLocal.wMonth - 1], timeCreateLocal.wDay);
+        }
 
     }
   else  // not this year, print as YYYY
@@ -347,10 +346,10 @@ static void FormatCpuTime(FILETIME *timeKernel, FILETIME *timeUser, ULARGE_INTEG
   ULARGE_INTEGER tmp1, tmp2;
 
   tmp1.HighPart = timeKernel->dwHighDateTime;
-  tmp1.LowPart = timeKernel->dwLowDateTime; 
+  tmp1.LowPart = timeKernel->dwLowDateTime;
 
   tmp2.HighPart = timeUser->dwHighDateTime;
-  tmp2.LowPart = timeUser->dwLowDateTime; 
+  tmp2.LowPart = timeUser->dwLowDateTime;
 
   tmp1.QuadPart += tmp2.QuadPart;
 
@@ -358,7 +357,7 @@ static void FormatCpuTime(FILETIME *timeKernel, FILETIME *timeUser, ULARGE_INTEG
 
   timeCpuTotal.dwHighDateTime = tmp1.HighPart;
   timeCpuTotal.dwLowDateTime = tmp1.LowPart;
-  
+
   FileTimeToSystemTime(&timeCpuTotal, &timeCpuFormat);
 
   sprintf(timeCpuStr, "%02d:%02d", timeCpuFormat.wHour, timeCpuFormat.wMinute);
@@ -412,7 +411,7 @@ static void GetProcessCpuTime(DWORD pid, ULARGE_INTEGER *timeCpuInt)
   HANDLE procHandle;
   FILETIME timeCreate, timeExit, timeKernel, timeUser;
   ULARGE_INTEGER tmp1, tmp2;
-  
+
   // skip "idle process" and nt kernel process
   if(pid == 0 || pid == 4)
     {
@@ -420,10 +419,10 @@ static void GetProcessCpuTime(DWORD pid, ULARGE_INTEGER *timeCpuInt)
       timeCpuInt->QuadPart = 0;
       return;
     }
-  
+
   procHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
-  
-  if(procHandle == NULL) 
+
+  if(procHandle == NULL)
     {
       CfOut(cf_error,"OpenProcess","!! Could not open process handle for pid %lu", pid);
       timeCpuInt->QuadPart = 0;
@@ -438,10 +437,10 @@ static void GetProcessCpuTime(DWORD pid, ULARGE_INTEGER *timeCpuInt)
     }
 
   tmp1.HighPart = timeKernel.dwHighDateTime;
-  tmp1.LowPart = timeKernel.dwLowDateTime; 
+  tmp1.LowPart = timeKernel.dwLowDateTime;
 
   tmp2.HighPart = timeUser.dwHighDateTime;
-  tmp2.LowPart = timeUser.dwLowDateTime; 
+  tmp2.LowPart = timeUser.dwLowDateTime;
 
   tmp1.QuadPart += tmp2.QuadPart;
 
@@ -451,47 +450,47 @@ static void GetProcessCpuTime(DWORD pid, ULARGE_INTEGER *timeCpuInt)
 /*****************************************************************************/
 
 void GetProcessUserName(HANDLE procHandle, int incDomain, char *nameStr, int nameStrSz)
-{ 
-  char userName[CF_BUFSIZE], domainName[CF_BUFSIZE], tokenBuf[CF_BUFSIZE]; 
-  HANDLE token; 
-  SID_NAME_USE accType; 
-  DWORD minLen; 
-  DWORD unLen = sizeof(userName); 
-  DWORD dnLen = sizeof(domainName); 
+{
+  char userName[CF_BUFSIZE], domainName[CF_BUFSIZE], tokenBuf[CF_BUFSIZE];
+  HANDLE token;
+  SID_NAME_USE accType;
+  DWORD minLen;
+  DWORD unLen = sizeof(userName);
+  DWORD dnLen = sizeof(domainName);
   TOKEN_USER *userToken = (TOKEN_USER *)tokenBuf;
 
   memset(nameStr, 0, nameStrSz);
   strcpy(nameStr, "???");  // in case of error
 
   if(!OpenProcessToken(procHandle, TOKEN_QUERY, &token))
-    { 
+    {
       // NOTE: we often get "access denied" when we're not running as a service
       Debug("Could not get process user information (often happens when we're not a service) - OpenProcessToken() failed with code %lu\n", GetLastError());
       return;
-    } 
+    }
 
-  // get token SID 
-  if(!GetTokenInformation(token, TokenUser, userToken, sizeof(tokenBuf), &minLen)) 
-    { 
+  // get token SID
+  if(!GetTokenInformation(token, TokenUser, userToken, sizeof(tokenBuf), &minLen))
+    {
       CfOut(cf_error, "GetTokenInformation", "!! Could not get process token information");
-      CloseHandle(token); 
-      return; 
-    } 
-
-  // get SID account and domain name 
-  if(!LookupAccountSid(0, userToken->User.Sid, userName, &unLen, domainName, &dnLen, &accType)) 
-    { 
-      CfOut(cf_error, "LookupAccountSid", "!! Could not look up account name");
-      CloseHandle(token); 
+      CloseHandle(token);
       return;
-    }  
+    }
+
+  // get SID account and domain name
+  if(!LookupAccountSid(0, userToken->User.Sid, userName, &unLen, domainName, &dnLen, &accType))
+    {
+      CfOut(cf_error, "LookupAccountSid", "!! Could not look up account name");
+      CloseHandle(token);
+      return;
+    }
 
   // copy names to argument buffer
 
-  if(incDomain && dnLen) 
+  if(incDomain && dnLen)
     {
       snprintf(nameStr, nameStrSz, "%s\\\\%s", domainName, userName);
-    } 
+    }
   else
     {
       snprintf(nameStr, nameStrSz, "%s", userName);
