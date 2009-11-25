@@ -107,7 +107,7 @@ struct CfFileLine
 #ifdef MINGW
 
 #define EVENTSOURCE_NAME "Cfengine Nova"  // appears in e.g. Event Viewer
-#define EVENTSOURCE_HKLM_REGPATH "SYSTEM\\CurrentControlSet\\Services\\Eventlog\\Application\\" EVENTSOURCE_NAME
+#define EVENTSOURCE_HKLM_REGPATH "SYSTEM\\CurrentControlSet\\Services\\Eventlog\\System\\" EVENTSOURCE_NAME
 #define EVENT_COUNT 9  // mapped to "TypesSupported" registry log entry
 #include "cf.events.h"  // defines events for logging on windows
 
