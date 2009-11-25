@@ -450,7 +450,6 @@ static void GetProcessCpuTime(DWORD pid, ULARGE_INTEGER *timeCpuInt)
 
 /*****************************************************************************/
 
-// NOTE: OpenProcessToken fails on some processes if we're not running as a service
 void GetProcessUserName(HANDLE procHandle, int incDomain, char *nameStr, int nameStrSz)
 { 
   char userName[CF_BUFSIZE], domainName[CF_BUFSIZE], tokenBuf[CF_BUFSIZE]; 

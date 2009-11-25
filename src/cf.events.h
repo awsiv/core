@@ -76,16 +76,6 @@
 #define EVMSG_PROMISE_NOT_REPAIRED_POLICY 0xC0000066L
 
 //
-// MessageId: EVMSG_REPORT
-//
-// MessageText:
-//
-// A report promise follows.%r%r
-// %1
-//
-#define EVMSG_REPORT                     0x40000067L
-
-//
 // MessageId: EVMSG_PROMISE_NOT_REPAIRED
 //
 // MessageText:
@@ -93,7 +83,17 @@
 // A promise by %1 to %2 was not kept and has not been repaired. Details follow.%r%r
 // %3
 //
-#define EVMSG_PROMISE_NOT_REPAIRED       0xC0000068L
+#define EVMSG_PROMISE_NOT_REPAIRED       0xC0000067L
+
+//
+// MessageId: EVMSG_REPORT
+//
+// MessageText:
+//
+// A report promise follows.%r%r
+// %1
+//
+#define EVMSG_REPORT                     0x40000068L
 
 //
 // MessageId: EVMSG_DEFAULT_INFO
