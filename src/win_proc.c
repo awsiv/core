@@ -172,9 +172,9 @@ int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir,
   STARTUPINFO emptySi;
   PROCESS_INFORMATION pi;
   char buf[CF_BUFSIZE];
+  char cmdPath[CF_BUFSIZE];
   char *binary;
   char *binaryParams;
-
 
   if(useshell)
     {
@@ -188,7 +188,15 @@ int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir,
       strcat(buf, comm);
       strcat(buf, "\"");
 
-      binary = CMD_PATH;
+      if(!NovaWin_GetSysDir(cmdPath, sizeof(cmdPath) - sizeof("\\cmd.exe")))
+	{
+	  CfOut(cf_error, "", "!! Could not get system directory and thus not cmd.exe directory");
+	  return false;
+	}
+
+      strcat(cmdPath, "\\cmd.exe");
+
+      binary = cmdPath;
       binaryParams = buf;
     }
   else
