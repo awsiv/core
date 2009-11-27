@@ -45,6 +45,7 @@ libcfnova_la_SOURCES =						\
 	win_proc.c						\
 	win_ps.c                                                \
 	win_service_exec.c                                      \
+	win_sysinfo.c                                           \
 	win_user.c
 
 

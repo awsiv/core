@@ -538,6 +538,13 @@ int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts);
 
 void NovaWin_StartExecService(int argc,char *argv[]);
 
+/* win_sysinfo.c */
+
+int NovaWin_GetWinDir(char *winDir, int winDirSz);
+int NovaWin_GetSysDir(char *sysDir, int sysDirSz);
+int NovaWin_GetProgDir(char *progDir, int progDirSz);
+int NovaWin_GetEnv(char *varName, char *varContents, int varContentsSz);
+
 /* win_user.c */
 
 int NovaWin_UserNameToSid(char *userName, SID *sid, DWORD sidSz, int shouldExist);
