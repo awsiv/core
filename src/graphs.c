@@ -62,6 +62,11 @@ for (dirp = readdir(dirh); dirp != NULL; dirp = readdir(dirh))
       continue;
       }
 
+   if (strcmp(dirp->d_name,"localhost") == 0)
+      {
+      continue;
+      }
+
    if (strcmp(dirp->d_name,".") == 0 || strcmp(dirp->d_name,"..") == 0)
       {
       continue;
@@ -92,7 +97,7 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
       printf("Could not write to directory %s\n",ip->name);
       continue;
       }
-
+   
    Nova_UnPackNerveBundle();
 
    Banner(" -> Rendering reports");
@@ -537,7 +542,7 @@ if ((fout = fopen(filename, "w")) == NULL)
    return;
    }
 
-NovaHtmlHeader(fout,"Host Directory",STYLESHEET,WEBDRIVER,BANNER);
+NovaHtmlHeader(fout,"Top 20 Hosts",STYLESHEET,WEBDRIVER,BANNER);
 
 if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
    {   
@@ -548,7 +553,10 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&ret
 for (ip = list; ip != NULL; ip=ip->next)
    {
    count++;
+   Nova_CountHostIssues(ip);
    }
+
+list = SortItemListCounters(list);
 
 if (count > LICENSES)
    {   
@@ -561,8 +569,13 @@ else
 
 fprintf(fout,"<div id=\"directory\"><table>\n");
 
-for (ip = list; ip != NULL; ip=ip->next)
+for (count = 0,ip = list; ip != NULL; ip=ip->next)
    {
+   if (count++ > 20)
+      {
+      break;
+      }
+   
    snprintf(filename,CF_BUFSIZE-1,"%s/meters.png",ip->name);
 
    if (cfstat(filename,&sb) != -1)
@@ -755,6 +768,107 @@ for (i = 0; i < 8; i++)
       repaired[i] = (int)(bb[i]/count+0.5);
       }
    }
+}
+
+/*****************************************************************************/
+
+void Nova_GetLevels(int *kept,int *repaired,char *hostname,char **names)
+
+{ FILE *fin;
+  char buf[CF_BUFSIZE];
+  double a = 0, b = 0,count = 1.0,aa[8],bb[8];
+  struct Item *ip;
+  char *retval,rettype;
+  int i,licenses = 1;
+
+for (i = 0; i < 8; i++)
+   {
+   aa[i] = 0;
+   bb[i] = 0;
+   }
+
+if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
+   {   
+   licenses = Str2Int(retval);
+   CfOut(cf_inform,""," -> %d paid licenses have been asserted (this is a promise by you)",licenses);
+   }
+
+if (licenses == 0)
+   {
+   licenses = 1;
+   }
+
+snprintf(buf,CF_BUFSIZE-1,"%s/comp_key",hostname);
+
+if ((fin = fopen(buf,"r")) == NULL)
+   {
+   return;
+   }
+
+while(!feof(fin))
+   {
+   a = 0;
+   b = 0;
+   buf[0] = '\0';
+   fgets(buf,CF_BUFSIZE-1,fin);
+   
+   sscanf(buf,"%*s %lf %lf",&a,&b);
+   
+   for (i = 0; i < 8; i++)
+      {
+      if (strncmp(buf,names[i],strlen(names[i])) == 0)
+         {
+         aa[i] += a;
+         bb[i] += b;
+         }            
+      }
+   }
+
+fclose(fin);
+
+for (i = 0; i < 8; i++)
+   {
+   /* Special exception for counting the licenses */
+   if (strcmp(names[i],"Lics") == 0)
+      {
+      if (count > licenses)
+         {
+         kept[i] = licenses/count * 100.0;
+         repaired[i] = 0;
+         }
+      else
+         {
+         kept[i] = count/licenses * 100.0;
+         repaired[i] = (licenses-count)/licenses * 100.0;         
+         }
+      }
+   else
+      {
+      kept[i] = (int)(aa[i]/count+0.5);
+      repaired[i] = (int)(bb[i]/count+0.5);
+      }
+   }
+}
+
+/*****************************************************************************/
+/* Level                                                                     */
+/*****************************************************************************/
+
+void Nova_CountHostIssues(struct Item *item)
+
+{ int i,kept[8],repaired[8], issues = 0;
+  static char *names[8] = { "zzz", "Week", "Day", "Hour", "Patch", "Lics", "Comms","Anom" };
+ 
+Nova_GetLevels(kept,repaired,item->name,names);
+
+// kept + repaired + * = 100
+
+for (i = 1; i < 8; i++)
+   {
+   issues += (100 - kept[i] - repaired[i]);
+   }
+
+item->counter = issues;
 }
 
 #endif
