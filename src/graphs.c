@@ -85,23 +85,26 @@ closedir(dirh);
 /* Create portal */
 
 Banner("Create Host Portal");
-Nova_CreateHostPortal(serverlist);
+serverlist = Nova_CreateHostPortal(serverlist);
 Nova_BuildMainMeter(&cfv_small,serverlist);
 
 /* Create host pages */
 
 for (ip = serverlist; ip != NULL; ip=ip->next)
    {
+   char hostn[CF_MAXVARSIZE];
+   
    if (chdir(ip->name) == -1)
       {
       printf("Could not write to directory %s\n",ip->name);
       continue;
       }
    
+   snprintf(hostn,CF_MAXVARSIZE-1," -> Rendering reports for %s",ip->name);
+   Banner(hostn);
+
    Nova_UnPackNerveBundle();
 
-   Banner(" -> Rendering reports");
-   
    for (i = 0; i < CF_OBSERVABLES; i++)
       {
       Nova_LookupAggregateClassName(i,name,description);
@@ -525,21 +528,21 @@ gdImageDestroy(cfv->im);
 
 /*****************************************************************************/
 
-void Nova_CreateHostPortal(struct Item *list)
+struct Item *Nova_CreateHostPortal(struct Item *list)
 
-{ FILE *fout;
+{ FILE *fout,*fall;
   char filename[CF_BUFSIZE],col[CF_BUFSIZE];
   struct Item *ip;
   struct stat sb;
   time_t now = time(NULL);
   char *retval,rettype;
-  int count = 0, licenses = 1;
+  int state,count = 0, licenses = 1;
   
 snprintf(filename,CF_BUFSIZE,"host_portal.html");
 
 if ((fout = fopen(filename, "w")) == NULL)
    {
-   return;
+   return list;
    }
 
 NovaHtmlHeader(fout,"Top 20 Hosts",STYLESHEET,WEBDRIVER,BANNER);
@@ -553,7 +556,26 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&ret
 for (ip = list; ip != NULL; ip=ip->next)
    {
    count++;
+   ip->counter = 0;
    Nova_CountHostIssues(ip);
+
+   snprintf(filename,CF_BUFSIZE-1,"%s/meters.png",ip->name);
+
+   if (cfstat(filename,&sb) != -1)
+      {
+      if (now > sb.st_mtime + 3600 || ip->counter > CF_RED_THRESHOLD)
+         {
+         ip->counter = CF_RED_THRESHOLD + 1;
+         }
+      else if (now > sb.st_mtime + 1800 || ip->counter > CF_AMBER_THRESHOLD)
+         {
+         ip->counter = CF_AMBER_THRESHOLD + 1;
+         }
+      }
+   else
+      {
+      ip->counter = CF_RED_THRESHOLD + 1;
+      }
    }
 
 list = SortItemListCounters(list);
@@ -576,34 +598,101 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
       break;
       }
    
-   snprintf(filename,CF_BUFSIZE-1,"%s/meters.png",ip->name);
-
-   if (cfstat(filename,&sb) != -1)
+   if (ip->counter > CF_RED_THRESHOLD)
       {
-      if (now > sb.st_mtime + 3600)
-         {
-         strcpy(col,"red");
-         }
-      else if (now > sb.st_mtime + 1800)
-         {
-         strcpy(col,"yellow");
-         }
-      else
-         {
-         strcpy(col,"green");
-         }
-      
-      fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\"><table><tr><td width=\"80\">&nbsp;</div></center></td></tr></table></td><td width=\"200\"><center>Last updated at<br>%s</center></td><td><a href=\"%s/mainpage.html\"><img src=\"%s/meters.png\"></a></td><td><a href=\"%s/promise_output_common.html\">Promises</a></td></tr>",ip->name,col,ctime(&(sb.st_mtime)),ip->name,ip->name,ip->name);
+      ip->counter = CF_RED_THRESHOLD + 1;
+      strcpy(col,"red");
+      }
+   else if (ip->counter > CF_AMBER_THRESHOLD)
+      {
+      ip->counter = CF_AMBER_THRESHOLD + 1;
+      strcpy(col,"yellow");
       }
    else
       {
-      fprintf(fout,"<tr><td>%s</td><td><center>No current data</center></td></tr>",ip->name);
+      strcpy(col,"green");
       }
+   
+   fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\"><table><tr><td width=\"80\">%d&nbsp;</div></center></td></tr></table></td><td width=\"200\"><center>Last updated at<br>%s</center></td><td><a href=\"%s/mainpage.html\"><img src=\"%s/meters.png\"></a></td><td><a href=\"%s/promise_output_common.html\">Promises</a></td></tr>",ip->name,col,ip->counter,ctime(&(sb.st_mtime)),ip->name,ip->name,ip->name);
    }
 
 fprintf(fout,"</table></div>\n");
 NovaHtmlFooter(fout,FOOTER);
+
 fclose(fout);
+
+/* All hosts page */
+
+snprintf(filename,CF_BUFSIZE,"allhosts.html");
+
+if ((fall = fopen(filename, "w")) == NULL)
+   {
+   fclose(fout);
+   return list;
+   }
+
+NovaHtmlHeader(fall,"Host portal",STYLESHEET,WEBDRIVER,BANNER);
+
+for (count = 0,ip = list; ip != NULL; ip=ip->next)
+   {
+   snprintf(filename,CF_BUFSIZE-1,"%s/meters.png",ip->name);
+
+   if (cfstat(filename,&sb) != -1)
+      {
+      if (now > sb.st_mtime + 3600 || ip->counter > CF_RED_THRESHOLD)
+         {
+         ip->counter = 0;
+         strcpy(col,"red");
+         }
+      else if (now > sb.st_mtime + 1800 || ip->counter > CF_AMBER_THRESHOLD)
+         {
+         ip->counter = 1;
+         strcpy(col,"yellow");
+         }
+      else
+         {
+         ip->counter = 2;
+         strcpy(col,"green");
+         }
+      }
+   else
+      {
+      ip->counter = 0;
+      }
+   }
+
+fprintf(fall,"<div id=\"allhosts\">\n<table>\n");
+
+for (state = 0; state < 3; state++)
+   {
+   fprintf(fall,"<tr><td>\n");
+   
+   for (count = 0,ip = list; ip != NULL; ip=ip->next)
+      {
+      if (ip->counter == state)
+         {
+         switch (state)
+            {
+            case 0:
+                fprintf(fall,"<span id=\"signalred\">%s</span> ",ip->name);
+                break;
+            case 1:
+                fprintf(fall,"<span id=\"signalyellow\">%s</span> ",ip->name);
+                break;
+            case 2:
+                fprintf(fall,"<span id=\"signalgreen\">%s</span> ",ip->name);
+                break;
+            }
+         }
+      }
+   
+   fprintf(fall,"</td></tr>\n");
+   }
+
+fprintf(fall,"</table></div>\n");
+NovaHtmlFooter(fall,FOOTER);
+fclose(fall);
+return list;
 }
 
 /*****************************************************************************/
@@ -861,11 +950,15 @@ void Nova_CountHostIssues(struct Item *item)
  
 Nova_GetLevels(kept,repaired,item->name,names);
 
-// kept + repaired + * = 100
+issues += (100.0 - kept[3] - repaired[3]);
+issues += (100.0 - kept[6] - repaired[6]);
+issues += (100.0 - kept[7] - repaired[7]);
 
-for (i = 1; i < 8; i++)
+// By this reckoning, red > 100, yellow > 50 green < 50
+
+if (issues < 0)
    {
-   issues += (100 - kept[i] - repaired[i]);
+   issues = 0;
    }
 
 item->counter = issues;

@@ -267,7 +267,7 @@ double Nova_GetNowPosition(time_t now);
 void Nova_IncludeFile(FILE *fout,char *name);
 void Nova_NavBar(FILE *fout);
 void Nova_GetLevel(char *id,int *kept,int *repaired);
-void Nova_CreateHostPortal(struct Item *list);
+struct Item *Nova_CreateHostPortal(struct Item *list);
 void Nova_GetAllLevels(int *kept,int *repaired,struct Item *list,char **names);
 void Nova_GetLevels(int *kept,int *repaired,char *hostname,char **names);
 void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list);
@@ -578,6 +578,9 @@ struct Rval NovaWin_FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs)
 
 #define NOVA_HISTORYDB "history.db"
 #define CF_BIGNUMBER 999999
+
+#define CF_RED_THRESHOLD 100
+#define CF_AMBER_THRESHOLD 50
 
 struct month_days
    {

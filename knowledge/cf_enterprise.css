@@ -475,6 +475,33 @@ background-color: yellow;
 background-color: green;
 }
 
+#allhosts td
+{ 
+background-color: white;
+}
+
+#signalred
+{
+color: red;
+padding: 10px;
+line-height: 110%;
+}
+
+#signalyellow
+{  
+color: yellow;
+padding: 10px;
+line-height: 110%;
+}
+
+#signalgreen
+{  
+color: green;
+padding: 10px;
+line-height: 110%;
+}
+
+
 table.border
 { 
 width: 100%;
