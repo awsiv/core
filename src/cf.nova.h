@@ -580,7 +580,7 @@ struct Rval NovaWin_FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs)
 #define NOVA_MEASUREDB "nova_measures"
 #define NOVA_STATICDB  "nova_static"
 #define NOVA_COMPLIANCE "promise_compliance"
-#define NOVA_REGISTY "mswin"
+#define NOVA_REGISTRY "mswin"
 #define NOVA_CACHE "nova_cache"
 
 #define CF_BIGNUMBER 999999
