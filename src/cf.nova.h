@@ -576,12 +576,12 @@ struct Rval NovaWin_FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs)
 #define NOVA_BUNDLE_DATA_INV_B "promises variables used by bundle"
 #define NOVA_BUNDLE_DATA_INV_P "promises variables used by promise"
 
-#define NOVA_HISTORYDB "history.db"
-#define NOVA_MEASUREDB "nova_measures.db"
-#define NOVA_STATICDB  "nova_static.db"
-#define NOVA_COMPLIANCE "promise_compliance.db"
-#define NOVA_REGISTY "mswin.db"
-#define NOVA_CACHE "nova_cache.db"
+#define NOVA_HISTORYDB "history"
+#define NOVA_MEASUREDB "nova_measures"
+#define NOVA_STATICDB  "nova_static"
+#define NOVA_COMPLIANCE "promise_compliance"
+#define NOVA_REGISTY "mswin"
+#define NOVA_CACHE "nova_cache"
 
 #define CF_BIGNUMBER 999999
 
