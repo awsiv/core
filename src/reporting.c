@@ -411,7 +411,7 @@ void Nova_SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char 
 
 /* Open the db */
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,"promise_compliance.db");
+snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_COMPLIANCE);
 
 if (!OpenDB(name,&dbp))
    {

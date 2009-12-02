@@ -231,7 +231,7 @@ void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer)
   CF_DB *dbp;
   
 snprintf(key,CF_BUFSIZE-1,"%s_%s",caller,handle);
-snprintf(name,CF_BUFSIZE-1,"%s/nova_cache.db",CFWORKDIR); 
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,NOVA_CACHE); 
 
 CfOut(cf_verbose,""," -> Caching value \"%s\" for fault tolerance",buffer);
 
@@ -252,7 +252,7 @@ int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer)
   CF_DB *dbp;
 
 snprintf(key,CF_BUFSIZE-1,"%s_%s",caller,handle);
-snprintf(name,CF_BUFSIZE-1,"%s/nova_cache.db",CFWORKDIR);
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,NOVA_CACHE);
 
 CfOut(cf_verbose,"","Checking cache %s for last available value",name);
 

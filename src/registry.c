@@ -106,7 +106,7 @@ if (Nova_OpenRegistryKey(pp->promiser,&key_h,create))
    {
    CfOut(cf_verbose,""," -> Registry key \"%s\" opened...\n",pp->promiser);   
    
-   snprintf(name,CF_MAXVARSIZE-1,"%s/mswin.db",CFWORKDIR);
+   snprintf(name,CF_MAXVARSIZE-1,"%s/%s",CFWORKDIR,NOVA_REGISTRY);
    
    if (!OpenDB(name,&dbp))
       {

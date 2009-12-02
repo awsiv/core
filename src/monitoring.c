@@ -522,7 +522,7 @@ void Nova_SetMeasurementPromises(struct Item **classlist)
   void *stored;
   int i,ksize,vsize;
 
-snprintf(dbname,sizeof(dbname)-1,"%s/state/nova_measures.db",CFWORKDIR);
+snprintf(dbname,sizeof(dbname)-1,"%s/state/%s",CFWORKDIR,NOVA_MEASUREDB);
 MapName(dbname);
 
 if (!OpenDB(dbname,&dbp))
@@ -618,7 +618,7 @@ void Nova_LoadSlowlyVaryingObservations()
   int ksize,vsize;
   char name[CF_BUFSIZE];
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/nova_static.db",CFWORKDIR);
+snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_STATICDB);
 
 if (!OpenDB(name,&dbp))
    {
@@ -688,7 +688,7 @@ if (LICENSES == 0)
    return;
    }
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/nova_static.db",CFWORKDIR);
+snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_STATICDB);
 
 if (!OpenDB(name,&dbp))
    {
@@ -1354,7 +1354,7 @@ else // scalar or static
    CF_DB *dbp;
    char id[CF_MAXVARSIZE];
 
-   snprintf(filename,CF_BUFSIZE-1,"%s/state/nova_static.db",CFWORKDIR);
+   snprintf(filename,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_STATICDB);
 
    if (!OpenDB(filename,&dbp))
       {
@@ -1379,7 +1379,7 @@ void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Prom
   double delta2;
   CF_DB *dbp;
 
-snprintf(dbname,CF_BUFSIZE-1,"%s/state/nova_measures.db",CFWORKDIR);
+  snprintf(dbname,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_MEASUREDB);
 
 if (!OpenDB(dbname,&dbp))
    {
