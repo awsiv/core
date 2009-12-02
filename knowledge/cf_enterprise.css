@@ -480,21 +480,21 @@ background-color: green;
 background-color: white;
 }
 
-#signalred
+#signalred a
 {
 color: red;
 padding: 10px;
 line-height: 110%;
 }
 
-#signalyellow
+#signalyellow a
 {  
 color: yellow;
 padding: 10px;
 line-height: 110%;
 }
 
-#signalgreen
+#signalgreen a
 {  
 color: green;
 padding: 10px;

@@ -401,13 +401,14 @@ void Nova_SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char 
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE];
+  double lsea = CF_WEEK * 52; /* expire after a year */
+  struct Event entry,e,newe;
+  struct Item *ip,*htmlreport = NULL;
   int i = 0,ksize,vsize;
   CF_DB *dbp;
   CF_DBC *dbcp;
   char *key;
   void *stored;
-  struct Event entry,e,newe;
-  double lsea = CF_WEEK * 52; /* expire after a year */
 
 /* Open the db */
 
@@ -504,7 +505,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
             {
             fprintf(fout,"%s",NRX[cfx_entry][cfb]);
             fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],tbuf,NRX[cfx_date][cfe]);
-            fprintf(fout,"%s %s %s",NRX[cfx_event][cfb],eventname,NRX[cfx_event][cfe]);
+            fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRX[cfx_event][cfb],eventname,eventname,NRX[cfx_event][cfe]);
 
             if (measure = 1.0)
                {
@@ -526,27 +527,32 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
             }
          else if (html)
             {
-            fprintf(fout,"%s",NRH[cfx_entry][cfb]);
-            fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],tbuf,NRH[cfx_date][cfe]);
-            fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRH[cfx_event][cfb],eventname,eventname,NRH[cfx_event][cfe]);
+            char b1[CF_MAXVARSIZE],b2[CF_MAXVARSIZE],b3[CF_MAXVARSIZE],b4[CF_MAXVARSIZE],b5[CF_MAXVARSIZE],b6[CF_MAXVARSIZE];
+            char vbuff[CF_BUFSIZE];
+            
+            snprintf(b1,CF_MAXVARSIZE-1,"%s %s %s %s",NRH[cfx_entry][cfb],NRH[cfx_date][cfb],tbuf,NRH[cfx_date][cfe]);
+            snprintf(b2,CF_MAXVARSIZE-1,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRH[cfx_event][cfb],eventname,eventname,NRH[cfx_event][cfe]);
 
             if (measure = 1.0)
                {
-               fprintf(fout,"%s %s %s",NRH[cfx_q][cfb],"compliant",NRH[cfx_q][cfe]);
+               snprintf(b3,CF_MAXVARSIZE-1,"%s %s %s",NRH[cfx_q][cfb],"compliant",NRH[cfx_q][cfe]);
                }
             else if (measure = 0.5)
                {
-               fprintf(fout,"%s %s %s",NRH[cfx_q][cfb],"repaired",NRH[cfx_q][cfe]);
+               snprintf(b3,CF_MAXVARSIZE-1,"%s %s %s",NRH[cfx_q][cfb],"repaired",NRH[cfx_q][cfe]);
                }
             else if (measure = 0.0)
                {
-               fprintf(fout,"%s %s %s",NRH[cfx_q][cfb],"non-compliant",NRH[cfx_q][cfe]);
+               snprintf(b3,CF_MAXVARSIZE-1,"%s %s %s",NRH[cfx_q][cfb],"non-compliant",NRH[cfx_q][cfe]);
                }
 
-            fprintf(fout,"%s %.1lf %s",NRH[cfx_av][cfb],av*100.0,NRH[cfx_av][cfe]);
-            fprintf(fout,"%s %.1lf %s",NRH[cfx_dev][cfb],sqrt(var)*100.0,NRH[cfx_dev][cfe]);
+            snprintf(b4,CF_MAXVARSIZE-1,"%s %.1lf %s",NRH[cfx_av][cfb],av*100.0,NRH[cfx_av][cfe]);
+            snprintf(b5,CF_MAXVARSIZE-1,"%s %.1lf %s",NRH[cfx_dev][cfb],sqrt(var)*100.0,NRH[cfx_dev][cfe]);
+            snprintf(b6,CF_MAXVARSIZE-1,"%s",NRH[cfx_entry][cfe]);
+            snprintf(vbuff,CF_BUFSIZE-1,"%s %s %s %s %s %s",b1,b2,b3,b4,b5,b6);
 
-            fprintf(fout,"%s",NRH[cfx_entry][cfe]);
+            PrependItem(&htmlreport,vbuff,NULL);
+            htmlreport->time = then;
             }
          else
             {
@@ -573,8 +579,16 @@ CloseDB(dbp);
 
 if (html && !embed)
    {
+   htmlreport = SortItemListTimes(htmlreport);
+
+   for (ip = htmlreport; ip != NULL; ip=ip->next)
+      {
+      fprintf(fout,"%s",ip->name);
+      }
+   
    fprintf(fout,"</table></div>");
    NovaHtmlFooter(fout,foot);
+   DeleteItemList(htmlreport);
    }
 
 if (XML)
@@ -1132,7 +1146,7 @@ for (ip = file; ip != NULL; ip = ip->next)
       fprintf(fout,"%s",NRH[cfx_entry][cfb]);
       fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],date,NRH[cfx_date][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],bundle,NRH[cfx_bundle][cfe]);
-      fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s %s",NRH[cfx_event][cfb],handle,handle,NRH[cfx_event][cfe]);
+      fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRH[cfx_event][cfb],handle,handle,NRH[cfx_event][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],ref,NRH[cfx_ref][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],filename,NRH[cfx_end][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],lineno,NRH[cfx_index][cfe]);

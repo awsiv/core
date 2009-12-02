@@ -226,9 +226,13 @@ occurrences:
 
    "/reports/meters.png"
 
-            represents => { "site summary", "/reports/host_portal.html" },
+            represents => { "network host status", "/reports/host_portal.html" },
             representation => "image";
 
+   "/allhosts.png"
+
+            represents => { "see all managed hosts", "/reports/allhosts.html" },
+            representation => "image";
 
  host_portal::
 
@@ -236,7 +240,7 @@ occurrences:
 
             represents => { "portal" },
             representation => "url";
-    
+
 
  system_trends::
 
@@ -500,6 +504,11 @@ monitor_summary_report::
             path_root => "$(enterprise_start.doc_root)",
             web_root => "";
 
+   "reports/allhosts.html"
+
+            represents => { "portal" },
+            representation => "url";
+    
 hosts::
 
    "reports/(.*)/mainpage.html"

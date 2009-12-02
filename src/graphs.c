@@ -545,7 +545,7 @@ if ((fout = fopen(filename, "w")) == NULL)
    return list;
    }
 
-NovaHtmlHeader(fout,"Top 20 Hosts",STYLESHEET,WEBDRIVER,BANNER);
+NovaHtmlHeader(fout,"20 Weakest Host Symptoms",STYLESHEET,WEBDRIVER,BANNER);
 
 if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
    {   
@@ -631,7 +631,7 @@ if ((fall = fopen(filename, "w")) == NULL)
    return list;
    }
 
-NovaHtmlHeader(fall,"Host portal",STYLESHEET,WEBDRIVER,BANNER);
+NovaHtmlHeader(fall,"Status all managed hosts",STYLESHEET,WEBDRIVER,BANNER);
 
 for (count = 0,ip = list; ip != NULL; ip=ip->next)
    {
@@ -674,13 +674,13 @@ for (state = 0; state < 3; state++)
          switch (state)
             {
             case 0:
-                fprintf(fall,"<span id=\"signalred\">%s</span> ",ip->name);
+                fprintf(fall,"<span id=\"signalred\"><a href=\"%s/mainpage.html\">%s</a></span> ",ip->name,ip->name);
                 break;
             case 1:
-                fprintf(fall,"<span id=\"signalyellow\">%s</span> ",ip->name);
+                fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s/mainpage.html\">%s</a></span> ",ip->name,ip->name);
                 break;
             case 2:
-                fprintf(fall,"<span id=\"signalgreen\">%s</span> ",ip->name);
+                fprintf(fall,"<span id=\"signalgreen\"><a href=\"%s/mainpage.html\">%s</a></span> ",ip->name,ip->name);
                 break;
             }
          }

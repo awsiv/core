@@ -336,7 +336,7 @@ while (true)
    
    if (sb.st_mtime >= now - CFPULSETIME*2)
       {
-   printf("REVIVETWIN %d = %d\n",sb.st_mtime,now);
+      Debug("REVIVETWIN %d = %d\n",sb.st_mtime,now);
       CfOut(cf_verbose,""," -> Pulsar returned, continuing...");
       continue;
       }
@@ -412,7 +412,7 @@ if (cfstat(name,&sb) == -1)
    }
 else if (sb.st_mtime >= now - CFPULSETIME*2)
    {
-   printf("REVIVEOTHER %d = %d\n",sb.st_mtime,now);
+   Debug("REVIVEOTHER %d = %d\n",sb.st_mtime,now);
    CfOut(cf_verbose,""," -> Pulse echo returned, continuing...");
    return;
    }
