@@ -56,6 +56,7 @@ void NovaWin_MakeLog(struct Item *mess, enum cfreport level)
       break;
           
     case cf_verbose:
+    case cf_cmdout:
       eventType = EVENTLOG_INFORMATION_TYPE;
       eventId = EVMSG_DEFAULT_VERBOSE;
       break;
