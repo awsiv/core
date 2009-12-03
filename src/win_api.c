@@ -150,14 +150,14 @@ int NovaWin_stat(const char *path, struct stat *statBuf)
 
   if(!NovaWin_GetNumHardlinks((char *)path, &numHardLinks))
     {
-      CfOut(cf_error, "", "Could not get number of hard links");
-      return -1;
+        CfOut(cf_error, "", "!! Could not get number of hard links");
+        return -1;
     }
   
   // correct times 
   if(!GetFileAttributesEx(path, GetFileExInfoStandard, &attr))
     {
-      CfOut(cf_error, "GetFileAttributesEx", "Could not get file attributes");      
+      CfOut(cf_error, "GetFileAttributesEx", "!! Could not get file attributes");
       return -1;
     }
   

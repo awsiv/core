@@ -426,13 +426,15 @@ int NovaWin_GetNumHardlinks(char *path, int *numHardLinks)
     
   if(fp == INVALID_HANDLE_VALUE)
     {
-      CfOut(cf_error, "CreateFile", "Could not open file \"%s\"", path);
+      CfOut(cf_error, "CreateFile", "!! Could not open file \"%s\"", path);
+      CloseHandle(fp);
       return false;
     }
   
   if(!GetFileInformationByHandle(fp, &finfo))
     {
-      CfOut(cf_error, "GetFileInformationByHandle", "Could not get information on file \"%s\"", path);
+      CfOut(cf_error, "GetFileInformationByHandle", "!! Could not get information on file \"%s\"", path);
+      CloseHandle(fp);
       return false;
     }
 
