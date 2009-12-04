@@ -414,6 +414,10 @@ void Nova_NoteVarUsage(void);
 void Nova_GrandSummary(void);
 void SummarizeComms(void);
 
+/* services.c */
+
+void Nova_VerifyServices(struct Attributes a,struct Promise *pp);
+
 /* server.c */
 
 const EVP_CIPHER *Nova_CfengineCipher(char type);
