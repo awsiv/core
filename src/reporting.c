@@ -793,7 +793,7 @@ for (ip = file; ip != NULL; ip = ip->next)
       continue;
       }
 
-   sscanf(ip->name,"%31[^,],%250[^\n]",start,name);
+   sscanf(ip->name,"%31[^,],%1023[^\n]",start,name);
 
    if (xml)
       {
@@ -1267,7 +1267,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    date[0] = '\0';
 
-   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%512[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
+   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%1023[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
 
    if (xml)
       {
