@@ -48,11 +48,12 @@ void Nova_SyntaxCompletion(char *s)
   struct BodySyntax *bs,*bs2 = NULL;
   char output[CF_BUFSIZE];
 
-if (LICENSES == 0)
+if (EnterpriseExpiry(LIC_DAY,LIC_MONTH,LIC_YEAR))
    {
-   return;
+   CfOut(cf_error,"","Cfengine - autonomous configuration engine. This enterprise license has expired.\n");
+   exit(1);
    }
-  
+
 if (cf_strncmp(s,"function",strlen("function")) == 0)
    {
    Nova_ListFunctions();
