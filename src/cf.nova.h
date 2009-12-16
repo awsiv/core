@@ -420,9 +420,18 @@ void Nova_VerifyServices(struct Attributes a,struct Promise *pp);
 
 /* services_win.c */
 
-void Nova_VerifyServicesWin(struct Attributes a,struct Promise *pp);
+void NovaWin_VerifyServices(struct Attributes a,struct Promise *pp);
 #ifdef MINGW
-
+int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp);
+int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp);
+int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp);
+int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp);
+int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int *allDepsRunning);
+int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps);
+int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState, int *changeRes);
+int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState);
+int NovaWin_ServiceStateWait(SC_HANDLE srvHandle, DWORD state);
+QUERY_SERVICE_CONFIG *NovaWin_AllocServiceConfig(SC_HANDLE srvHandle);
 #endif  /* MINGW */
 
 /* server.c */

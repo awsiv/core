@@ -19,18 +19,29 @@
 void Nova_VerifyServices(struct Attributes a,struct Promise *pp)
 
 {
+ struct CfLock thislock;
+ 
  if (LICENSES == 0)
     {
     return;
     }
- 
- 
+
+ thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,a,pp);
+
+ if (thislock.lock == NULL)
+    {
+    return;
+    }
+
+ PromiseBanner(pp);
+
+
  if(strcmp(a.service.service_type, "windows") == 0)
     {
     switch(VSYSTEMHARDCLASS)
        {
        case mingw:
-           Nova_VerifyServicesWin(a, pp);
+           NovaWin_VerifyServices(a, pp);
            break;
 
        default:
@@ -43,5 +54,5 @@ void Nova_VerifyServices(struct Attributes a,struct Promise *pp)
     CfOut(cf_inform,"","!! Service management is not yet supported on this system.");
     }
 
-
+ YieldCurrentLock(thislock);
 }
