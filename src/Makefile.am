@@ -27,6 +27,7 @@ libcfnova_la_SOURCES =						\
 	promises.c						\
 	processes.c						\
 	services.c						\
+	services_win.c						\
 	reporting.c						\
 	html.c							\
 	knowledge.c						\

@@ -951,6 +951,7 @@ typedef enum
   INHERIT_ACCESS_AND_DEFAULT
   }inherit_t;
 
+
 /*************************************************************************/
 /* Runtime constraint structures                                         */
 /*************************************************************************/
@@ -1501,14 +1502,22 @@ struct CfDatabase
     
 /*************************************************************************/
 
+enum cf_srv_policy
+   {
+   cfsrv_start,
+   cfsrv_stop,
+   cfsrv_disable,
+   cfsrv_nostatus
+   };
+
 struct CfServices
    {
    struct Rlist *service_depend;
    char *service_type;
    char *service_args;
-   char *service_policy;
+   enum cf_srv_policy service_policy;
    char *service_start_policy;
-   char *service_dependence_chain;
+   char *service_depend_chain;
    };
 
 /*************************************************************************/

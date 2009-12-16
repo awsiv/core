@@ -418,6 +418,13 @@ void SummarizeComms(void);
 
 void Nova_VerifyServices(struct Attributes a,struct Promise *pp);
 
+/* services_win.c */
+
+void Nova_VerifyServicesWin(struct Attributes a,struct Promise *pp);
+#ifdef MINGW
+
+#endif  /* MINGW */
+
 /* server.c */
 
 const EVP_CIPHER *Nova_CfengineCipher(char type);

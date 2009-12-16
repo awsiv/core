@@ -19,6 +19,29 @@
 void Nova_VerifyServices(struct Attributes a,struct Promise *pp)
 
 {
+ if (LICENSES == 0)
+    {
+    return;
+    }
+ 
+ 
+ if(strcmp(a.service.service_type, "windows") == 0)
+    {
+    switch(VSYSTEMHARDCLASS)
+       {
+       case mingw:
+           Nova_VerifyServicesWin(a, pp);
+           break;
 
-// if (a.service.service_type ....)
+       default:
+           CfOut(cf_inform,"","!! Windows services are not supported on this system");
+           break;
+       }
+    }
+ else
+    {
+    CfOut(cf_inform,"","!! Service management is not yet supported on this system.");
+    }
+
+
 }
