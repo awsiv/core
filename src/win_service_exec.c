@@ -14,11 +14,11 @@
 
 /* Functions to run the cf-execd as a windows service. 
  * It can for example be registered in windows as follows:
- * sc create CfengineNova binpath= "c:\Program Files\Cfengine\bin\cf-execd.exe"
- * sc config CfengineNova DisplayName= "Cfengine Nova Executor"
- * sc description CfengineNova "The executor daemon is a scheduler and wrapper for execution of cf-agent. It collects the output of the agent and can email it to a specified address. It can splay the start time of executions across the network and work as a class-based clock for scheduling."
- * sc config CfengineNova start= auto
- * sc start CfengineNova
+ * sc create CfengineNovaExec binpath= "c:\Program Files\Cfengine\bin\cf-execd.exe"
+ * sc config CfengineNovaExec DisplayName= "Cfengine Nova Executor"
+ * sc description CfengineNovaExec "The executor daemon is a scheduler and wrapper for execution of cf-agent. It collects the output of the agent and can email it to a specified address. It can splay the start time of executions across the network and work as a class-based clock for scheduling."
+ * sc config CfengineNovaExec start= auto
+ * sc start CfengineNovaExec
 */
 
 #include "cf3.defs.h"
@@ -35,7 +35,7 @@ void NovaWin_ServiceMain(int argc,char *argv[]);
 void NovaWin_ControlHandler(DWORD request);
 
 
-void NovaWin_StartExecService(int argc,char *argv[])
+void NovaWin_StartExecService(void)
 {
   SERVICE_TABLE_ENTRY serviceTable[2];
   serviceTable[0].lpServiceName = WINSERVICE_NAME;

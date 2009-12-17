@@ -111,7 +111,7 @@ struct CfFileLine
 #define EVENT_COUNT 9  // mapped to "TypesSupported" registry log entry
 #include "cf.events.h"  // defines events for logging on windows
 
-#define WINSERVICE_NAME "CfengineNova"
+#define WINSERVICE_NAME "CfengineNovaExec"
 
 #endif
 
@@ -422,16 +422,17 @@ void Nova_VerifyServices(struct Attributes a,struct Promise *pp);
 
 void NovaWin_VerifyServices(struct Attributes a,struct Promise *pp);
 #ifdef MINGW
-int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp);
-int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp);
-int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp);
-int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp);
+int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *argStr,int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp, int setCfPs);
+int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int argc, char **argv, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp, int setCfPs);
+int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp, int setCfPs);
+int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp, int setCfPs);
 int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int *allDepsRunning);
 int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps);
 int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState, int *changeRes);
 int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState);
 int NovaWin_ServiceStateWait(SC_HANDLE srvHandle, DWORD state);
 QUERY_SERVICE_CONFIG *NovaWin_AllocServiceConfig(SC_HANDLE srvHandle);
+void NovaWin_AllocSplitServiceArgs(char *argStr, int *argcp, char ***argvp);
 #endif  /* MINGW */
 
 /* server.c */
@@ -558,7 +559,7 @@ int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts);
 
 /* win_service_exec.c */
 
-void NovaWin_StartExecService(int argc,char *argv[]);
+void NovaWin_StartExecService(void);
 
 /* win_sysinfo.c */
 

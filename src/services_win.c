@@ -44,57 +44,29 @@ void NovaWin_VerifyServices(struct Attributes a,struct Promise *pp)
     }
 
  
- // dependencies must be running while service is running - i.e. started first, and stopped last
+ // dependencies must be running while service is running - i.e. started first, but are never stopped implicitly
 
- switch(a.service.service_policy)
+ if(a.service.service_policy == cfsrv_start)
     {
-    case cfsrv_start:
+    for(dep = a.service.service_depend; dep != NULL; dep = dep->next)
+       {
+       if(!NovaWin_CheckServiceStatus((char *)dep->item, a.service.service_policy, NULL, onlyCheckDeps, true, a, pp, false))
+          {
+          cfPS(cf_error,CF_FAIL,"",pp,a," !! Failed checking status of dependency \"%s\" of service \"%s\"", (char *)dep->item, srvName);
+          PromiseRef(cf_error,pp);
+          return;
+          }
+       }
+    }
         
-        for(dep = a.service.service_depend; dep != NULL; dep = dep->next)
-           {
-           if(!NovaWin_CheckServiceStatus((char *)dep->item, a.service.service_policy, onlyCheckDeps, true, a, pp))
-              {
-              cfPS(cf_error,CF_FAIL,"",pp,a," !! Failed checking status of dependency \"%s\" of service \"%s\"", (char *)dep->item, srvName);
-              PromiseRef(cf_error,pp);
-              return;
-              }
-           }
-        
-        if(!NovaWin_CheckServiceStatus(srvName, a.service.service_policy, onlyCheckDeps, false, a, pp))
-           {
-           cfPS(cf_error,CF_FAIL,"",pp,a," !! Failed checking status of service \"%s\"", srvName);
-           PromiseRef(cf_error,pp);
-           return;
-           }
-     
-        break;
-
-    case cfsrv_stop:
-    case cfsrv_disable:
-
-        if(!NovaWin_CheckServiceStatus(srvName, a.service.service_policy, onlyCheckDeps, false, a, pp))
-           {
-           cfPS(cf_error,CF_FAIL,"",pp,a," !! Failed checking status of service \"%s\"", srvName);
-           PromiseRef(cf_error,pp);
-           return;
-           }
-
-        for(dep = a.service.service_depend; dep != NULL; dep = dep->next)
-           {
-           if(!NovaWin_CheckServiceStatus((char *)dep->item, a.service.service_policy, onlyCheckDeps, true, a, pp))
-              {
-              cfPS(cf_error,CF_FAIL,"",pp,a," !! Failed checking status of dependency \"%s\" of service \"%s\"", (char *)dep->item, srvName);
-              PromiseRef(cf_error,pp);
-              return;
-              }
-           }
-
-        break;
-
-    default:
-        FatalError("Software error: Unknown service policy in Nova_VerifyServicesWin()");
+ if(!NovaWin_CheckServiceStatus(srvName, a.service.service_policy, a.service.service_args, onlyCheckDeps, false, a, pp, true))
+    {
+    cfPS(cf_error,CF_FAIL,"",pp,a," !! Failed checking status of service \"%s\"", srvName);
+    PromiseRef(cf_error,pp);
+    return;
     }
 
+ 
 #else  /* NOT MINGW */
  cfPS(cf_error,CF_FAIL,"",pp,a,"!! Windows services are only supported on Windows");
  PromiseRef(cf_error,pp);
@@ -110,11 +82,16 @@ void NovaWin_VerifyServices(struct Attributes a,struct Promise *pp)
 #define STATUSWAIT_MAXSLEEP 10  // maximum number of times to call Sleep() during waiting
 
 
-int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp)
+int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *argStr,int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp, int setCfPs)
+/* cfPS() is never called on failure (i.e. when functions return false), and parameter setCfPs indicates wether cfPS is called on success.  */
 {
  SC_HANDLE managerHandle;
  SC_HANDLE srvHandle;
  int result = false;
+ char **argv = NULL;
+ int argc = 0;
+ DWORD startTime = SERVICE_DEMAND_START;
+ int startTimeRes = 0;
 
  Debug("NovaWin_CheckServiceStatus(%s, %d, %d, %d)\n", srvName, policy, onlyCheckDeps, isDependency);
  
@@ -139,7 +116,13 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, int onl
     {
     case cfsrv_start:
 
-        result = NovaWin_CheckServiceStart(managerHandle, srvHandle, onlyCheckDeps, isDependency, a, pp);
+        // split argument string, if used
+        if(argStr)
+           {
+           NovaWin_AllocSplitServiceArgs(argStr, &argc, &argv);
+           }
+
+        result = NovaWin_CheckServiceStart(managerHandle, srvHandle, argc, argv, onlyCheckDeps, isDependency, a, pp, setCfPs);
 
         if(!result)
            {
@@ -150,7 +133,7 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, int onl
 
     case cfsrv_stop:
 
-        result = NovaWin_CheckServiceStop(managerHandle, srvHandle, onlyCheckDeps, isDependency, a, pp);
+        result = NovaWin_CheckServiceStop(managerHandle, srvHandle, onlyCheckDeps, isDependency, a, pp, setCfPs);
 
         if(!result)
            {
@@ -161,7 +144,7 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, int onl
 
     case cfsrv_disable:
 
-        result = NovaWin_CheckServiceDisable(managerHandle, srvHandle, onlyCheckDeps, isDependency, a, pp);
+        result = NovaWin_CheckServiceDisable(managerHandle, srvHandle, onlyCheckDeps, isDependency, a, pp, setCfPs);
         
         if(!result)
            {
@@ -175,15 +158,86 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, int onl
         FatalError("Unknown service type in NovaWin_CheckServiceStatus())\n");
     }
 
+
+ // check dispatch time
+
+ if(result && !isDependency)
+    {
+    if(a.service.service_start_policy)
+       {
+       if(strcmp(a.service.service_start_policy, "always") == 0)
+          {
+          startTime = SERVICE_DEMAND_START;
+          }
+       else if(strcmp(a.service.service_start_policy, "boot_time") == 0)
+          {
+          startTime = SERVICE_AUTO_START;
+          }
+       else
+          {
+          FatalError("Unknown service_start_policy in NovaWin_CheckServiceStatus()");
+          }
+
+
+       if(!NovaWin_SetServiceStartTime(srvHandle, startTime, true, startTime, &startTimeRes))
+          {
+          CfOut(cf_error,"","!! Could not check start time status of service");
+          result = false;;
+          }
+
+       if(result)
+          {
+          switch(startTimeRes)
+             {
+             case 0:  // already correct
+
+                 cfPS(cf_inform,CF_NOP,"",pp,a,"-> Start time policy of service is already correct");
+                 break;
+              
+             case 1:  // not correct
+              
+                 if(a.transaction.action == cfa_warn)
+                    {
+                    cfPS(cf_error,CF_WARN,"",pp,a," !! The service start time policy needs change");
+                    break;
+                    }
+              
+                 if(!DONTDO)
+                    {
+                    if(!NovaWin_SetServiceStartTime(srvHandle, startTime, false, 0, &startTimeRes))
+                       {
+                       CfOut(cf_error,"","!! Could not change start time of service to \"%s\"", a.service.service_start_policy);
+                       result = false;
+                       break;
+                       }
+                    }
+              
+                 cfPS(cf_inform,CF_CHG,"",pp,a,"-> Successfully updated start time policy of service");
+                 break;
+              
+             default:
+              
+                 FatalError("Wrong start time result in NovaWin_CheckServiceStatus()");
+             }
+          }
+       }
+       
+    }
+
  CloseServiceHandle(srvHandle); 
  CloseServiceHandle(managerHandle);
+
+ if(argv)
+    {
+    free(argv);
+    }
 
  return result;
 }
 
 /*****************************************************************************/
 
-int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp)
+int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int argc, char **argv, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp, int setCfPs)
 /* Checks that a given service is in started state, or starts it if not. If onlyCheckDeps
  * is true, we don't start the service if there are other not running services depending on it.
  * If onlyCheckDeps is false, all dependent services are started too.
@@ -192,7 +246,7 @@ int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int 
  SERVICE_STATUS_PROCESS srvStatus;
  DWORD bytesNeeded;
  int allDepsRunning;
- 
+
  // check current run state
  if(!QueryServiceStatusEx(srvHandle, SC_STATUS_PROCESS_INFO, (BYTE *)&srvStatus, sizeof(srvStatus), &bytesNeeded))
     {
@@ -205,7 +259,7 @@ int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int 
  switch(srvStatus.dwCurrentState)
     {
     case SERVICE_RUNNING:  // service already running, we don't start it again
-        if(!isDependency)
+        if(setCfPs)
            {
            cfPS(cf_inform,CF_NOP,"",pp,a,"-> Service is already running");
            }
@@ -223,7 +277,7 @@ int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int 
         else
            {
            Debug("Service started running after waiting from pending continue or start state (state=%lu)\n", srvStatus.dwCurrentState);
-           if(!isDependency)
+           if(setCfPs)
               {
               cfPS(cf_inform,CF_NOP,"",pp,a,"-> Service is already running");
               }
@@ -280,7 +334,7 @@ int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int 
        }
     }
 
- if(a.transaction.action == cfa_warn)
+ if(setCfPs && a.transaction.action == cfa_warn)
     {
     cfPS(cf_error,CF_WARN,"",pp,a," !! The service needs to be started");
     return true;
@@ -297,7 +351,7 @@ int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int 
  
     // next, we start the service and check that it is running
 
-    if(!StartService(srvHandle, 0, NULL))
+    if(!StartService(srvHandle, argc, (LPCSTR *)argv))
        {
        CfOut(cf_error,"StartService","!! Could not start service");
        return false;
@@ -310,7 +364,7 @@ int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int 
        }
     }
 
- if(!isDependency)
+ if(setCfPs)
     {
     cfPS(cf_inform,CF_CHG,"",pp,a,"-> Successfully started service");
     }
@@ -320,13 +374,14 @@ int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int 
 
 /*****************************************************************************/
 
-int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp)
+int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp, int setCfPs)
 /* Checks that a given service is in stopped state, or stops it if not. If onlyCheckDeps
  * is true, we don't stop the service if there are other running services depending on it.
  * If onlyCheckDeps is false, all dependent services are stopped too.
  * Returns true on success, false otherwise. */
 {
  SERVICE_STATUS_PROCESS srvStatus;
+ int disableStatus;
  DWORD bytesNeeded;
  
  // check current run state
@@ -340,12 +395,46 @@ int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int o
 
  switch(srvStatus.dwCurrentState)
     {
-    case SERVICE_STOPPED:
-        if(!isDependency)
+    case SERVICE_STOP_PENDING:
+
+        if(!NovaWin_ServiceStateWait(srvHandle, SERVICE_STOPPED))
            {
-           cfPS(cf_inform,CF_NOP,"",pp,a,"-> Service is already stopped");
+           CfOut(cf_error,"","!! Service did not stop while waiting (timeout reached)");
+           return false;
+           }
+        else
+           {
+           Debug("Service went to stop state while waiting in pending stop\n");
+
+           // fallthrough
+           }
+    
+    case SERVICE_STOPPED:  // already stopped, but might need un-disabling it
+
+        if(isDependency && onlyCheckDeps)
+           {
+           return true;
+           }
+        
+        if(!NovaWin_SetServiceStartTime(srvHandle, SERVICE_DEMAND_START, true, SERVICE_DISABLED , &disableStatus))
+           {
+           CfOut(cf_error,"","!! Could not check enable-status of service in stop (but it was stopped)");
+           return false;
+           }
+
+        if(setCfPs)
+           {
+           if(disableStatus == 0 || disableStatus == 1)
+              {
+              cfPS(cf_inform,CF_NOP,"",pp,a,"-> Service is already stopped");
+              }
+           else
+              {
+              cfPS(cf_inform,CF_CHG,"",pp,a,"-> Enabled service, but kept it stopped");
+              }
            }
         return true;
+        
         break;
 
     case SERVICE_CONTINUE_PENDING:
@@ -375,25 +464,6 @@ int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int o
            }
         break;
 
-    case SERVICE_STOP_PENDING:
-
-        if(!NovaWin_ServiceStateWait(srvHandle, SERVICE_STOPPED))
-           {
-           CfOut(cf_error,"","!! Service did not stop while waiting (timeout reached)");
-           return false;
-           }
-        else
-           {
-           Debug("Service went to stop state while waiting in pending stop\n");
-           
-           if(!isDependency)
-              {
-              cfPS(cf_inform,CF_NOP,"",pp,a,"-> Service is already stopped");
-              }
-           return true;
-           }
-        break;
-
     default:
 
         FatalError("Unknown service status in NovaWin_CheckServiceStop()\n");
@@ -405,7 +475,7 @@ int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int o
     return false;
     }
 
- if(a.transaction.action == cfa_warn)
+ if(setCfPs && a.transaction.action == cfa_warn)
     {
     cfPS(cf_error,CF_WARN,"",pp,a," !! The service needs to be stopped");
     return true;
@@ -435,7 +505,7 @@ int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int o
        }
     }
 
- if(!isDependency)
+ if(setCfPs)
     {
     cfPS(cf_inform,CF_CHG,"",pp,a,"-> Successfully stopped service");
     }
@@ -445,7 +515,7 @@ int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int o
 
 /*****************************************************************************/
 
-int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp)
+int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp, int setCfPs)
 /* Checks that a given service is in stopped state and is disabled, or stops and disables it
  * if not. Stopped means not running, and disabled means it can't be started again directly.
  * If onlyCheckDeps is true, we don't do anything if there are other running services
@@ -455,7 +525,7 @@ int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, in
  int disableRes;
  
  // first make sure the service is stopped, then disable it
- if(!NovaWin_CheckServiceStop(managerHandle, srvHandle, onlyCheckDeps, isDependency, a, pp))
+ if(!NovaWin_CheckServiceStop(managerHandle, srvHandle, onlyCheckDeps, isDependency, a, pp, false))
     {
     CfOut(cf_error,"","!! Could not disable service because of failure when stopping it");
     return false;
@@ -476,15 +546,22 @@ int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, in
  switch(disableRes)
     {
     case 0:  // already disabled
-        cfPS(cf_inform,CF_NOP,"",pp,a,"-> Service was already disabled");
+        if(setCfPs)
+           {
+           cfPS(cf_inform,CF_NOP,"",pp,a,"-> Service is already disabled");
+           }
         break;
         
     case 1:  // not disabled, not changed (yet)
         
         if(a.transaction.action == cfa_warn)
            {
-           cfPS(cf_error,CF_WARN,"",pp,a," !! The service needs to be disabled");
-           return true;
+           if(setCfPs)
+              {
+              cfPS(cf_error,CF_WARN,"",pp,a," !! The service needs to be disabled");
+              }
+
+           break;
            }
 
         if(!DONTDO)
@@ -496,7 +573,10 @@ int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, in
               }
            }
 
-        cfPS(cf_inform,CF_CHG,"",pp,a,"-> Successfully disabled service");
+        if(setCfPs)
+           {
+           cfPS(cf_inform,CF_CHG,"",pp,a,"-> Successfully disabled service");
+           }
         
         break;
 
@@ -906,5 +986,32 @@ int NovaWin_ServiceStateWait(SC_HANDLE srvHandle, DWORD state)
  return false;
 }
 
+/*****************************************************************************/
+
+void NovaWin_AllocSplitServiceArgs(char *argStr, int *argcp, char ***argvp)
+{
+ static char arg[CF_MAXSHELLARGS][CF_BUFSIZE];
+ char **argv = NULL;
+ int argc = 0;
+ int i;
+
+ argc = ArgSplitCommand(argStr,arg);
+ argv = (char **) malloc((argc+1)*sizeof(char *));
+
+ if(argv == NULL)
+    {
+    FatalError("Memory allocation in NovaWin_AllocSplitServiceArgs()");
+    }
+ 
+ for (i = 0; i < argc; i++)
+    {
+    argv[i] = arg[i];
+    }
+   
+ argv[i] = (char *) NULL;
+
+ *argvp = argv;
+ *argcp = argc;
+}
 
 #endif  /* MINGW */
