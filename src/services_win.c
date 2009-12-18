@@ -163,13 +163,13 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *a
 
  if(result && !isDependency)
     {
-    if(a.service.service_start_policy)
+    if(a.service.service_autostart_policy)
        {
-       if(strcmp(a.service.service_start_policy, "always") == 0)
+       if(strcmp(a.service.service_autostart_policy, "none") == 0)
           {
           startTime = SERVICE_DEMAND_START;
           }
-       else if(strcmp(a.service.service_start_policy, "boot_time") == 0)
+       else if(strcmp(a.service.service_autostart_policy, "boot_time") == 0)
           {
           startTime = SERVICE_AUTO_START;
           }
@@ -181,7 +181,7 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *a
 
        if(!NovaWin_SetServiceStartTime(srvHandle, startTime, true, startTime, &startTimeRes))
           {
-          CfOut(cf_error,"","!! Could not check start time status of service");
+          CfOut(cf_error,"","!! Could not check autostart status of service");
           result = false;;
           }
 
@@ -191,14 +191,14 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *a
              {
              case 0:  // already correct
 
-                 cfPS(cf_inform,CF_NOP,"",pp,a,"-> Start time policy of service is already correct");
+                 cfPS(cf_inform,CF_NOP,"",pp,a,"-> Autostart policy of service is already correct");
                  break;
               
              case 1:  // not correct
               
                  if(a.transaction.action == cfa_warn)
                     {
-                    cfPS(cf_error,CF_WARN,"",pp,a," !! The service start time policy needs change");
+                    cfPS(cf_error,CF_WARN,"",pp,a," !! The service autostart policy needs change");
                     break;
                     }
               
@@ -206,18 +206,18 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *a
                     {
                     if(!NovaWin_SetServiceStartTime(srvHandle, startTime, false, 0, &startTimeRes))
                        {
-                       CfOut(cf_error,"","!! Could not change start time of service to \"%s\"", a.service.service_start_policy);
+                       CfOut(cf_error,"","!! Could not change autostart of service to \"%s\"", a.service.service_autostart_policy);
                        result = false;
                        break;
                        }
                     }
               
-                 cfPS(cf_inform,CF_CHG,"",pp,a,"-> Successfully updated start time policy of service");
+                 cfPS(cf_inform,CF_CHG,"",pp,a,"-> Successfully updated autostart policy of service");
                  break;
               
              default:
               
-                 FatalError("Wrong start time result in NovaWin_CheckServiceStatus()");
+                 FatalError("Wrong autostart result in NovaWin_CheckServiceStatus()");
              }
           }
        }
