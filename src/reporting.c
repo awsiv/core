@@ -769,13 +769,13 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 
 if (html && !embed)
    {
-   snprintf(name,CF_BUFSIZE,"File hash-change events recorded on %s",VFQNAME);
+   snprintf(name,CF_BUFSIZE,"File change events recorded on %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
-   fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Time of change event",NRH[cfx_date][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Filename",NRH[cfx_filename][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Change detected",NRH[cfx_date][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"File change",NRH[cfx_filename][cfe]);
    fprintf(fout,"%s",NRH[cfx_entry][cfe]);
    }
 else if (XML)

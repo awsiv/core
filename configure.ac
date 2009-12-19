@@ -14,7 +14,7 @@ dnl
 dnl The version in the next line is the only one to set
 dnl
 
-AM_INIT_AUTOMAKE(cfnova,1.0.11)   dnl remember to set version
+AM_INIT_AUTOMAKE(cfnova,1.0.12)   dnl remember to set version
 
 AM_CONFIG_HEADER(src/conf.h)
 
@@ -67,21 +67,43 @@ dnl ######################################################################
 dnl Checks for libraries.
 dnl ######################################################################
 
+dnl 
+dnl Choose a database
+dnl
+
+AC_ARG_WITH(tokyocabinet,
+	AS_HELP_STRING(--with-tokyocabinet, [support database functions]),with_tokyo=yes,
+	with_tokyo=no)
+
+if test "x$with_tokyo" = xyes; then
+   AC_MSG_CHECKING(for TokyoCabinet)
+   WITH_TOKYO=1
+else
+   WITH_TOKYO=0
+fi
+
+if test $WITH_TOKYO = 1; then
+  AC_CHECK_LIB(tokyocabinet,main)
+  AC_CHECK_HEADERS(tcutil.h)
+  AC_CHECK_HEADERS(tchdb.h)
+  AC_DEFINE(TCDB, 1, [Define if Tokyo Cabinet is available.])
+else
+
 dnl
 dnl  Look for Berkeley DB.
 dnl 
 
-AC_ARG_WITH(berkeleydb,
+  AC_ARG_WITH(berkeleydb,
     [  --with-berkeleydb[=PATH] directory where BerkeleyDB exists],
     BERKELEY_DB_DIR=$with_berkeleydb,
     BERKELEY_DB_DIR=default)
 
-AC_MSG_CHECKING(for BerkeleyDB location in $BERKELEY_DB_DIR)
+  AC_MSG_CHECKING(for BerkeleyDB location in $BERKELEY_DB_DIR)
 
-if test "x$BERKELEY_DB_DIR" = "xno" ; then
+  if test "x$BERKELEY_DB_DIR" = "xno" ; then
     AC_MSG_RESULT( )
     AC_MSG_ERROR(This release of cfengine requires a version of BerkeleyDB 4.4 or later)
-else
+  else
     if test "x$BERKELEY_DB_DIR" = "xdefault" ; then
         for v in BerkeleyDB.4.2 BerkeleyDB.4.3 BerkeleyDB.4.4 BerkeleyDB.4.5 BerkeleyDB.4.6 BerkeleyDB.4.7; do
             for d in $prefix /opt /usr/local /usr; do
@@ -234,8 +256,14 @@ int main(void)
     LIBS=$BERKELEY_DB_SAVE_LIBS
 
 fi
-
+AC_SUBST(BERKELEY_DB_LDFLAGS)
 AC_SUBST(BERKELEY_DB_CFLAGS)
+AC_SUBST(BERKELEY_DB_LIB)
+
+fi
+
+dnl END check database
+
 
 
 ###
@@ -453,7 +481,6 @@ dnl ######################################################################
 dnl Checks for graph support
 dnl ######################################################################
 
-AC_CHECK_HEADERS(graphviz/gvc.h)
 AC_CHECK_LIB(gd,main)
 AC_CHECK_HEADERS(gd.h)
 
