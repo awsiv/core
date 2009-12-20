@@ -536,7 +536,7 @@ struct Item *Nova_CreateHostPortal(struct Item *list)
   struct stat sb;
   time_t now = time(NULL);
   char *retval,rettype;
-  int state,count = 0, licenses = 1;
+  int state,count = 0, licenses = 1,ccount[3];
   
 snprintf(filename,CF_BUFSIZE,"host_portal.html");
 
@@ -633,6 +633,10 @@ if ((fall = fopen(filename, "w")) == NULL)
 
 NovaHtmlHeader(fall,"Status all managed hosts",STYLESHEET,WEBDRIVER,BANNER);
 
+ccount[0] = 0;
+ccount[1] = 0;
+ccount[2] = 0;
+
 for (ip = list; ip != NULL; ip=ip->next)
    {
    snprintf(filename,CF_BUFSIZE-1,"%s/meters.png",ip->name);
@@ -642,16 +646,19 @@ for (ip = list; ip != NULL; ip=ip->next)
       if (now > sb.st_mtime + 3600 || ip->counter > CF_RED_THRESHOLD)
          {
          ip->counter = 0;
+         ccount[0]++;
          strcpy(col,"red");
          }
       else if (now > sb.st_mtime + 1800 || ip->counter > CF_AMBER_THRESHOLD)
          {
          ip->counter = 1;
+         ccount[1]++;
          strcpy(col,"yellow");
          }
       else
          {
          ip->counter = 2;
+         ccount[2]++;
          strcpy(col,"green");
          }
       }
@@ -668,8 +675,22 @@ fprintf(fall,"<tr><td>Currently aware of %d licensed hosts</td></tr>\n",count);
 for (state = 0; state < 3; state++)
    {
    fprintf(fall,"<tr><td>\n");
-   
-   for (count = 0,ip = list; ip != NULL; ip=ip->next)
+
+   if (ccount[0] == 0)
+      {
+      fprintf(fall,"<span id=\"signalred\"><a href=\"host_portal.html\">(none)</a></span> ");
+      ccount[0]++;
+      continue;
+      }
+
+   if (ccount[1] == 0)
+      {
+      ccount[1]++;
+      fprintf(fall,"<span id=\"signalyellow\"><a href=\"host_portal.html\">(none)</a></span> ");
+      continue;
+      }
+
+   for (ip = list; ip != NULL; ip=ip->next)
       {
       if (ip->counter == state)
          {
