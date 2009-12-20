@@ -633,7 +633,7 @@ if ((fall = fopen(filename, "w")) == NULL)
 
 NovaHtmlHeader(fall,"Status all managed hosts",STYLESHEET,WEBDRIVER,BANNER);
 
-for (count = 0,ip = list; ip != NULL; ip=ip->next)
+for (ip = list; ip != NULL; ip=ip->next)
    {
    snprintf(filename,CF_BUFSIZE-1,"%s/meters.png",ip->name);
 
@@ -662,6 +662,8 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
    }
 
 fprintf(fall,"<div id=\"allhosts\">\n<table>\n");
+
+fprintf(fall,"<tr><td>Currently aware of %d licensed hosts</td></tr>\n",count);
 
 for (state = 0; state < 3; state++)
    {

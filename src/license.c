@@ -51,14 +51,14 @@ if ((fp = fopen(name,"r")) != NULL)
 
 if (strlen(policy_server) == 0)
    {
-   CfOut(cf_error,""," !! This host has not been bootstrapped, so a license cannot be verified");
+   CfOut(cf_inform,""," !! This host has not been bootstrapped as uid \"%s\", so a license cannot be verified",getuid());
    LICENSES = 0;
    return false;
    }
 
 // if license file exists, set the date from that, else use the source coded one
 
-snprintf(name,CF_MAXVARSIZE-1,"%s%cmasterfiles%clicense.dat",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
+snprintf(name,CF_MAXVARSIZE-1,"%s%cinputs%clicense.dat",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
 
 if ((fp = fopen(name,"r")) != NULL)
    {
