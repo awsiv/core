@@ -22,12 +22,12 @@ int Nova_EnterpriseExpiry(char *day,char *month,char *year)
 /* This function is a convenience to commerical clients during testing */
     
 { struct stat sb;
- char name[CF_MAXVARSIZE],hash[CF_MAXVARSIZE];
-  FILE *fp;
+  char name[CF_MAXVARSIZE],hash[CF_MAXVARSIZE],serverkey[CF_MAXVARSIZE],policy_server[CF_MAXVARSIZE];
   int m_now,m_expire,d_now,d_expire,number = 1;
   char f_day[16],f_month[16],f_year[16];
   char u_day[16],u_month[16],u_year[16];
   unsigned char digest[EVP_MAX_MD_SIZE+1];
+  FILE *fp;
 
 if (THIS_AGENT_TYPE == cf_keygen)
    {
@@ -37,10 +37,28 @@ if (THIS_AGENT_TYPE == cf_keygen)
 strcpy(u_day,day);
 strcpy(u_month,month);
 strcpy(u_year,year);
-  
+policy_server[0] = '\0';
+
+// Verify first whether this host has been bootstrapped
+
+snprintf(name,CF_MAXVARSIZE-1,"%s%cpolicy_server.dat",CFWORKDIR,FILE_SEPARATOR);
+
+if ((fp = fopen(name,"r")) != NULL)
+   {
+   fscanf(fp,"%s",policy_server);
+   fclose(fp);
+   }
+
+if (strlen(policy_server) == 0)
+   {
+   CfOut(cf_error,""," !! This host has not been bootstrapped, so a license cannot be verified");
+   LICENSES = 0;
+   return false;
+   }
+
 // if license file exists, set the date from that, else use the source coded one
 
-snprintf(name,CF_MAXVARSIZE-1,"%s%clicense.dat",CFWORKDIR,FILE_SEPARATOR);
+snprintf(name,CF_MAXVARSIZE-1,"%s%cmasterfiles%clicense.dat",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
 
 if ((fp = fopen(name,"r")) != NULL)
    {
@@ -49,17 +67,26 @@ if ((fp = fopen(name,"r")) != NULL)
    fclose(fp);
    
    // This is the simple password hash to obfuscate license fixing
+   // Nothing top security here - this is a helper file to track licenses
 
    snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s",f_month,number,f_day,f_year);
-   Nova_HashKey(name,digest);
+   snprintf(serverkey,CF_MAXVARSIZE,"%s%c/ppkeys%c%s-%s.pub",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,"root",policy_server);
 
-   if (strcmp(HashPrint(cf_md5,digest),hash) == 0)
+   if (Nova_HashKey(CFPUBKEYFILE,name,digest,hash))
       {
       strcpy(u_day,f_day);
       strcpy(u_month,f_month);
       strcpy(u_year,f_year);
       LICENSES = number;
-      CfOut(cf_verbose,""," -> Verified license file %s",hash);
+      CfOut(cf_verbose,""," -> Verified license file %s - this is a policy server",hash);
+      }
+   else if (Nova_HashKey(serverkey,name,digest,hash))
+      {
+      strcpy(u_day,f_day);
+      strcpy(u_month,f_month);
+      strcpy(u_year,f_year);
+      LICENSES = number;
+      CfOut(cf_verbose,""," -> Verified license file %s - as a client of %s",hash,policy_server);
       }
    else
       {
@@ -100,7 +127,7 @@ else
 
 /*****************************************************************************/
 
-void Nova_HashKey(char *buffer,unsigned char digest[EVP_MAX_MD_SIZE+1])
+int Nova_HashKey(char *filename,char *buffer,unsigned char digest[EVP_MAX_MD_SIZE+1],char *hash)
 
 { EVP_MD_CTX context;
   const EVP_MD *md = NULL;
@@ -114,16 +141,15 @@ md = EVP_get_digestbyname("md5");
 if (md == NULL)
    {
    CfOut(cf_error,""," !! Unable to compute a valid hash");
-   return;
+   return false;
    }
 
 EVP_DigestInit(&context,md);     
 EVP_DigestUpdate(&context,(unsigned char*)buffer,strlen(buffer));
 
-if ((fp = fopen(CFPUBKEYFILE,"r")) == NULL)
+if ((fp = fopen(filename,"r")) == NULL)
    {
-   CfOut(cf_error,"","No public key file could be read\n");
-   exit(1);
+   return false;
    }
 
 fbuf[0] = '\0';
@@ -131,12 +157,22 @@ fbuf[0] = '\0';
 while (!feof(fp))
    {
    fgets(fbuf,CF_BUFSIZE,fp);
+   EVP_DigestUpdate(&context,(unsigned char*)fbuf,strlen(fbuf));
    }
 
 fclose(fp);
 
-EVP_DigestUpdate(&context,(unsigned char*)fbuf,strlen(fbuf));
 EVP_DigestFinal(&context,digest,&md_len);
+
+// Compare this to the assertions
+
+if (strcmp(HashPrint(cf_md5,digest),hash) == 0)
+   {   
+   return true;
+   }
+
+CfOut(cf_verbose,""," Key file %s was not authorized as policy server\n",filename);
+return false;
 }
 
 

@@ -329,7 +329,7 @@ int NovaStr2Scope(char *scope);
 
 /* license.c */
 
-void Nova_HashKey(char *buffer,unsigned char digest[EVP_MAX_MD_SIZE+1]);
+int Nova_HashKey(char *filename,char *buffer,unsigned char digest[EVP_MAX_MD_SIZE+1],char *hash);
 int Nova_EnterpriseExpiry(char *day,char *month,char *year);
 
 /* magnify.c */

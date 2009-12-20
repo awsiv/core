@@ -41,7 +41,7 @@ int main()
 printf("Enter the filename of the client\'s public key: ");
 scanf("%s",filename);
 
-if (cfstat(filename,&sb) == -1)
+if (stat(filename,&sb) == -1)
    {
    printf("Public key file %s not found\n",filename);
    exit(1);
@@ -56,6 +56,7 @@ if (atoi(f_day) > 31)
    printf("Day must be < 31\n");
    exit(1);
    }
+
 printf("Enter month (e.g. July): ");
 scanf("%s",f_month);
 printf("Enter year (e.g. 2023): ");
@@ -79,7 +80,7 @@ if ((fp = fopen(name,"w")) != NULL)
    
    fprintf(fp,"%2s %x %2s %4s %s",f_day,number,f_month,f_year,ThisHashPrint(digest));
    fclose(fp);
-   printf("\nWrote license.dat - install this in WORKDIR at client\n");
+   printf("\nWrote license.dat - install this in WORKDIR/masterfiles on the policy server\n");
    }
 }
 
@@ -118,10 +119,10 @@ fbuf[0] = '\0';
 while (!feof(fp))
    {
    fgets(fbuf,2048,fp);
+   EVP_DigestUpdate(&context,(unsigned char*)fbuf,strlen(fbuf));
    }
 fclose(fp);
     
-EVP_DigestUpdate(&context,(unsigned char*)fbuf,strlen(fbuf));
 EVP_DigestFinal(&context,digest,&md_len);
 }
 

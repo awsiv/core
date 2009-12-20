@@ -60,6 +60,11 @@ void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,
   FILE *fout,*fmap;
   int centre = Nova_GetMaxEvcNode(tribe_evc,tribe_size);
 
+if (LICENSES == 0)
+   {
+   return;
+   }
+
 /* Initialize the tribe*/
   
 //num_tops = Nova_GetEvcTops(tribe_adj,tribe_size,tribe_evc,tribe_tops);
