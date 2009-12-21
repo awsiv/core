@@ -412,7 +412,7 @@ font-weight: bold;
 #primary th:hover
 { 
 font-weight: bold;
-background-color: #df9500;
+background-color: #efb590;
 }
 
 #primary table
@@ -438,7 +438,7 @@ font-weight: normal;
 
 #directory td
 {
-background-color: lightblue;
+background-color: #eeeeee;
 }
 
 #showvars TH { background: #aabbFF;
