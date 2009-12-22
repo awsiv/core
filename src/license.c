@@ -51,7 +51,7 @@ if ((fp = fopen(name,"r")) != NULL)
 
 if (strlen(policy_server) == 0)
    {
-   CfOut(cf_inform,""," !! This host has not been bootstrapped as uid \"%s\", so a license cannot be verified",getuid());
+   CfOut(cf_inform,""," !! This host has not been bootstrapped as uid \"%d\", so a license cannot be verified",getuid());
    LICENSES = 0;
    return false;
    }
@@ -100,7 +100,7 @@ else
    CfOut(cf_inform,""," !! No commercial license file found - falling back on internal expiry\n");
    LICENSES = 1;
    }
-  
+
 m_now = Month2Int(VMONTH);
 d_now = Str2Int(VDAY);
 
@@ -115,7 +115,7 @@ snprintf(EXPIRY,31,"%s %s %s",u_day,u_month,u_year);
 if ((cf_strcmp(VYEAR,u_year) >= 0) && (m_now >= m_expire) && (d_now > d_expire))
    {
    CfOut(cf_error,""," !! %d licenses expired on %s %s %s -- reverting to Community Edition",LICENSES,u_day,u_month,u_year,VDAY,VMONTH,VYEAR);
-   
+   LICENSES = 0;
    return false; // return true if we want to stop everything
    }
 else
@@ -175,4 +175,104 @@ CfOut(cf_verbose,""," Key file %s was not authorized as policy server\n",filenam
 return false;
 }
 
+/*****************************************************************************/
 
+void Nova_CheckLicensePromise()
+
+{ int licenses = 0;
+  char *retval,rettype;
+
+if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
+   {   
+   licenses = Str2Int(retval);
+   CfOut(cf_verbose,""," -> %d paid licenses have been purchased (this is a promise by you)",licenses);
+   }
+
+if (licenses == 0)
+   {
+   CfOut(cf_error,""," !! Your configuration promises no host_licenses_paid in common control");
+   CfOut(cf_error,""," !! By doing this, you confirm the terms of contract already legally binding");
+   }
+else if (licenses > LICENSES && THIS_AGENT_TYPE != cf_know)
+   {
+   CfOut(cf_error,""," !! You have promised that %d licenses have been paid for, but Cfengine has only promised to honour %d in the agreement. ",licenses,LICENSES);
+   CfOut(cf_error,""," !! You could be in violation of contract.");
+   }
+else if (licenses < LICENSES)
+   {
+   CfOut(cf_inform,""," -> According to you only %d licenses have been paid for. Cfengine has promised to honour %d in the agreement.",licenses,LICENSES);
+   }
+}
+
+/*****************************************************************************/
+
+void Nova_LogLicenseStatus(int counted,int agreed,char *expiry,int promised)
+
+{ CF_DB *dbp;
+  CF_DBC *dbcp;
+  char rettype,datestr[CF_MAXVARSIZE],data[CF_MAXVARSIZE],name[CF_MAXVARSIZE];
+  void *retval;
+  time_t now = time(NULL);
+  int licenses = 0,count = 0;
+  struct Promise *pp = NewPromise("track_license","License tracker");
+  struct Attributes dummyattr;
+  struct CfLock thislock;
+  struct QPoint entry;
+  int ksize,vsize;
+  void *value;
+  char *key;
+
+dummyattr.transaction.ifelapsed = 10080; // 1 week
+dummyattr.transaction.expireafter = 10080; // 1 week
+
+thislock = AcquireLock("license_track",VUQNAME,CFSTARTTIME,dummyattr,pp);
+
+if (thislock.lock == NULL)
+   {
+   return;
+   }
+
+if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
+   {   
+   licenses = Str2Int(retval);
+   }
+
+snprintf(name,CF_MAXVARSIZE-1,"%s%c%s",CFWORKDIR,FILE_SEPARATOR,CF_LASTDB_FILE);
+
+if (OpenDB(name,&dbp))
+   {
+   memset(&entry,0,sizeof(entry)); 
+      
+   if (NewDBCursor(dbp,&dbcp))
+      {
+      while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
+         {
+         if (value == NULL)
+            {
+            continue;
+            }
+         
+         count++;
+         }
+
+      DeleteDBCursor(dbp,dbcp);
+      }
+   CloseDB(dbp);
+   }
+  
+snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_LICENSE);
+
+if (!OpenDB(name,&dbp))
+   {
+   return;
+   }
+
+snprintf(datestr,CF_MAXVARSIZE-1,"%s",ctime(&now));
+snprintf(data,CF_MAXVARSIZE-1,"%d,%d,%d,%s",counted,agreed,promised,expiry);
+
+WriteDB(dbp,datestr,data,sizeof(data));
+
+CloseDB(dbp);
+DeletePromise(pp);
+YieldCurrentLock(thislock);
+}

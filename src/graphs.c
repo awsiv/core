@@ -583,6 +583,7 @@ list = SortItemListCounters(list);
 if (count > LICENSES)
    {   
    fprintf(fout,"<div id=\"warning\"><h4>You have promised that %d licenses have been paid for, but %d licenses have been granted by Cfengine, expiring %s <br>%d host(s) seem to be enrolled</h4></div>",licenses,LICENSES,EXPIRY,count);
+   CfOut(cf_log,""," !! You have exceeded the number of paid licenses. You are in breach of your license agreement.");
    }
 else
    {
