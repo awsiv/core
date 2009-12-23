@@ -112,6 +112,8 @@ Debug("Y. %s > %s\nM. %d > %d\nD: %d > %d = %d\n",VYEAR,year,m_now,m_expire,d_no
 
 snprintf(EXPIRY,31,"%s %s %s",u_day,u_month,u_year);
 
+Nova_LogLicenseStatus();
+
 if ((cf_strcmp(VYEAR,u_year) >= 0) && (m_now >= m_expire) && (d_now > d_expire))
    {
    CfOut(cf_error,""," !! %d licenses expired on %s %s %s -- reverting to Community Edition",LICENSES,u_day,u_month,u_year,VDAY,VMONTH,VYEAR);
@@ -206,7 +208,7 @@ else if (licenses < LICENSES)
 
 /*****************************************************************************/
 
-void Nova_LogLicenseStatus(int counted,int agreed,char *expiry,int promised)
+void Nova_LogLicenseStatus()
 
 { CF_DB *dbp;
   CF_DBC *dbcp;
@@ -268,8 +270,9 @@ if (!OpenDB(name,&dbp))
    }
 
 snprintf(datestr,CF_MAXVARSIZE-1,"%s",ctime(&now));
-snprintf(data,CF_MAXVARSIZE-1,"%d,%d,%d,%s",counted,agreed,promised,expiry);
+snprintf(data,CF_MAXVARSIZE-1,"%d,%d,%d,%s",count,LICENSES,licenses,EXPIRY);
 
+Chop(datestr);
 WriteDB(dbp,datestr,data,sizeof(data));
 
 CloseDB(dbp);
