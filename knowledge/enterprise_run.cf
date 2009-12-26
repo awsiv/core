@@ -15,7 +15,8 @@ inputs         => {
                   "enterprise_control.cf"
                   };
 
-version => "1.0"; # This is the visible version
+version => "1.0";           
+host_licenses_paid => "1";
 }
 
 bundle knowledge dummy

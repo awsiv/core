@@ -677,14 +677,14 @@ for (state = 0; state < 3; state++)
    {
    fprintf(fall,"<tr><td>\n");
 
-   if (ccount[0] == 0)
+   if (state == 0 && ccount[0] == 0)
       {
       fprintf(fall,"<span id=\"signalred\"><a href=\"host_portal.html\">(none)</a></span> ");
       ccount[0]++;
       continue;
       }
 
-   if (ccount[1] == 0)
+   if (state == 1 && ccount[1] == 0)
       {
       ccount[1]++;
       fprintf(fall,"<span id=\"signalyellow\"><a href=\"host_portal.html\">(none)</a></span> ");
