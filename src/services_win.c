@@ -29,7 +29,7 @@ void NovaWin_VerifyServices(struct Attributes a,struct Promise *pp)
     onlyCheckDeps = false;
     }
  else if((strcmp(a.service.service_depend_chain, "stop_child_services") == 0) &&
-         (a.service.service_policy == cfsrv_stop) || (a.service.service_policy == cfsrv_disable))
+         ((a.service.service_policy == cfsrv_stop) || (a.service.service_policy == cfsrv_disable)))
     {
     onlyCheckDeps = false;
     }
@@ -133,7 +133,7 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *a
 
     case cfsrv_stop:
 
-        result = NovaWin_CheckServiceStop(managerHandle, srvHandle, onlyCheckDeps, isDependency, a, pp, setCfPs);
+        result = NovaWin_CheckServiceStop(managerHandle, srvHandle, onlyCheckDeps, isDependency, true, a, pp, setCfPs);
 
         if(!result)
            {
@@ -161,7 +161,7 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *a
 
  // check dispatch time
 
- if(result && !isDependency)
+ if(result && (policy == cfsrv_start) && !isDependency)
     {
     if(a.service.service_autostart_policy)
        {
@@ -374,7 +374,7 @@ int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int 
 
 /*****************************************************************************/
 
-int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp, int setCfPs)
+int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, int unDisable, struct Attributes a,struct Promise *pp, int setCfPs)
 /* Checks that a given service is in stopped state, or stops it if not. If onlyCheckDeps
  * is true, we don't stop the service if there are other running services depending on it.
  * If onlyCheckDeps is false, all dependent services are stopped too.
@@ -411,7 +411,7 @@ int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int o
     
     case SERVICE_STOPPED:  // already stopped, but might need un-disabling it
 
-        if(isDependency && onlyCheckDeps)
+        if((isDependency && onlyCheckDeps) || !unDisable)
            {
            return true;
            }
@@ -525,7 +525,7 @@ int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, in
  int disableRes;
  
  // first make sure the service is stopped, then disable it
- if(!NovaWin_CheckServiceStop(managerHandle, srvHandle, onlyCheckDeps, isDependency, a, pp, false))
+ if(!NovaWin_CheckServiceStop(managerHandle, srvHandle, onlyCheckDeps, isDependency, false, a, pp, false))
     {
     CfOut(cf_error,"","!! Could not disable service because of failure when stopping it");
     return false;
