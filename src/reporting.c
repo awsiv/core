@@ -1542,7 +1542,7 @@ void Nova_SummarizeUpdates(int xml,int html,int csv,int embed,char *stylesheet,c
 
 CfOut(cf_verbose,"","Creating available patch report...\n");
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/software_patches_avail.csv",CFWORKDIR);
+snprintf(name,CF_MAXVARSIZE-1,"%s/state/software_patches_avail.csv",CFWORKDIR);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1552,15 +1552,15 @@ if ((fin = cf_fopen(name,"r")) == NULL)
 
 if (html)
    {
-   snprintf(name,CF_BUFSIZE,"software_patches_avail.html");
+   snprintf(name,CF_MAXVARSIZE,"software_patches_avail.html");
    }
 else if (xml)
    {
-   snprintf(name,CF_BUFSIZE,"software_patches_avail.xml");
+   snprintf(name,CF_MAXVARSIZE,"software_patches_avail.xml");
    }
 else
    {
-   snprintf(name,CF_BUFSIZE,"software_patches_avail.csv");
+   snprintf(name,CF_MAXVARSIZE,"software_patches_avail.csv");
    }
 
 /* Max 2016 entries - at least a week */
