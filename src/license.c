@@ -262,7 +262,7 @@ if (OpenDB(name,&dbp))
    CloseDB(dbp);
    }
   
-snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_LICENSE);
+snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_LICENSE);
 
 if (!OpenDB(name,&dbp))
    {
