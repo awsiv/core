@@ -559,7 +559,7 @@ for (ip = list; ip != NULL; ip=ip->next)
    ip->counter = 0;
    Nova_CountHostIssues(ip);
 
-   snprintf(filename,CF_BUFSIZE-1,"%s/meters.png",ip->name);
+   snprintf(filename,CF_BUFSIZE-1,"%s/fluctuations.nov",ip->name);
 
    if (cfstat(filename,&sb) != -1)
       {

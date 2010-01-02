@@ -1411,7 +1411,7 @@ void Nova_SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,
   struct Item *ip,*file = NULL;
   int i = 0;
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/software_packages.csv",CFWORKDIR);
+snprintf(name,CF_MAXVARSIZE-1,"%s/state/software_packages.csv",CFWORKDIR);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
