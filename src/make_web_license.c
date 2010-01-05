@@ -7,6 +7,7 @@
 /*****************************************************************************/
 
 #include <stdio.h>
+#include <time.h>
 #include <string.h>
 #include <openssl/evp.h>
 #include <sys/stat.h>
@@ -16,59 +17,98 @@
 
 // gcc -o make_license_file make_license_file.c -lcrypto
 
-
+char *MONTH_TEXT[12] =
+   {
+   "January",
+   "February",
+   "March",
+   "April",
+   "May",
+   "June",
+   "July",
+   "August",
+   "September",
+   "October",
+   "November",
+   "December"
+   };
 
 /*******************************************************************/
 
 char *ThisHashPrint(unsigned char digest[EVP_MAX_MD_SIZE+1]);
 void ThisHashString(char *fna,char *buffer,int len,unsigned char digest[EVP_MAX_MD_SIZE+1]);
+int Month2Int(char *string);
 
+/*******************************************************************/
 
+int main(int argc,char **argv)
 
-int main()
-
-{ char name[CF_MAXVARSIZE],hash[CF_MAXVARSIZE],filename[2048];
+{ char name[CF_MAXVARSIZE],hash[CF_MAXVARSIZE],filename[2048],mydate[CF_MAXVARSIZE];
   FILE *fp;
   struct stat sb;
+  int r_day,r_year,imonth;
+  char r_month[8];
   int m_now,m_expire,d_now,d_expire;
   char f_day[8],f_month[8],f_year[8];
   int number = 1;
   char u_day[8],u_month[8],u_year[8];
   unsigned char digest[EVP_MAX_MD_SIZE+1];
+  time_t now = time(NULL);
 
-printf("Enter the filename of the client\'s public key: ");
-scanf("%s",filename);
+if (argc != 3)
+   {
+   printf("Illegal arguments %d\n",argc);
+   return;
+   }
 
+strcpy(filename,argv[1]);
+
+
+snprintf(mydate,CF_MAXVARSIZE,"%s",ctime(&now));
+
+sscanf(mydate,"%*s %s %d %*s %d",r_month,&r_day,&r_year);
+
+strcpy(r_month,"December");
+r_day = 30;
+r_year=2011;
+
+printf("Today's date is the %d of %s in %d<br>\n",r_day,r_month,r_year);
+
+imonth = (Month2Int(r_month) + 1) % 12;
+
+if (r_day > 28)
+   {
+   snprintf(f_day,7,"28");
+   }
+else
+   {
+   snprintf(f_day,7,"%d",r_day);
+   }
+
+strcpy(f_month,MONTH_TEXT[imonth]);
+
+if (imonth == 1)
+   {
+   snprintf(f_year,7,"%d",r_year+1);
+   }
+else
+   {
+   snprintf(f_year,7,"%d",r_year);
+   }
+
+printf("Expiry date set to %s of %s %s<br>\n",f_day,f_month,f_year);
+
+number = 5;
+
+printf("\nNumber of licenses granted: %d<br>\n",number);
+  
 if (stat(filename,&sb) == -1)
    {
-   printf("Public key file %s not found\n",filename);
+   printf("Public key file %s not found<br>\n",filename);
    exit(1);
    }
 
-printf("Enter license expiry date:\n");
-printf("Enter day (e.g. 28): ");
-scanf("%s",f_day);
-
-if (atoi(f_day) > 31)
-   {
-   printf("Day must be < 31\n");
-   exit(1);
-   }
-
-printf("Enter month (e.g. July): ");
-scanf("%s",f_month);
-printf("Enter year (e.g. 2023): ");
-scanf("%s",f_year);
-
-printf("Enter number of licenses: ");
-scanf("%d",&number);
-
-printf("\nDate confirmed as: %s %s %s\n",f_day,f_month,f_year);
-printf("\nNumber of licenses granted: %d\n",number);
-  
-// if license file exists, set the date from that, else write one for 30 days?
-
-snprintf(name,CF_MAXVARSIZE-1,"license.dat");
+snprintf(name,CF_MAXVARSIZE-1,argv[2]);
 
 if ((fp = fopen(name,"w")) != NULL)
    {
@@ -78,7 +118,7 @@ if ((fp = fopen(name,"w")) != NULL)
    
    fprintf(fp,"%2s %x %2s %4s %s",f_day,number,f_month,f_year,ThisHashPrint(digest));
    fclose(fp);
-   printf("\nWrote license.dat - install this in WORKDIR/masterfiles on the policy server\n");
+   printf("\nWrote %s - install this in WORKDIR/masterfiles on the policy server\n",name);
    }
 }
 
@@ -140,4 +180,27 @@ for (i = 0; i < CF_MD5_LEN; i++)
 
 return buffer; 
 }    
+
+/*********************************************************************/
+
+int Month2Int(char *string)
+
+{ int i;
+
+if (string == NULL)
+   {
+   return -1;
+   }
+ 
+for (i = 0; i < 12; i++)
+   {
+   if (strncmp(MONTH_TEXT[i],string,strlen(string))==0)
+      {
+      return i;
+      break;
+      }
+   }
+
+return -1;
+}
 
