@@ -68,10 +68,6 @@ snprintf(mydate,CF_MAXVARSIZE,"%s",ctime(&now));
 
 sscanf(mydate,"%*s %s %d %*s %d",r_month,&r_day,&r_year);
 
-strcpy(r_month,"December");
-r_day = 30;
-r_year=2011;
-
 printf("Today's date is the %d of %s in %d<br>\n",r_day,r_month,r_year);
 
 imonth = (Month2Int(r_month) + 1) % 12;
