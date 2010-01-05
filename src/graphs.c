@@ -613,6 +613,13 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
       {
       strcpy(col,"green");
       }
+
+   snprintf(filename,CF_BUFSIZE-1,"%s/fluctuations.nov",ip->name);
+
+   if (cfstat(filename,&sb) == -1)
+      {
+      continue;
+      }
    
    fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\"><table><tr><td width=\"80\">&nbsp;</div></center></td></tr></table></td><td width=\"200\"><center>Last updated at<br>%s</center></td><td><a href=\"%s/mainpage.html\"><img src=\"%s/meters.png\"></a></td><td><a href=\"%s/promise_output_common.html\">Promises</a></td></tr>",ip->name,col,ctime(&(sb.st_mtime)),ip->name,ip->name,ip->name);
    }
