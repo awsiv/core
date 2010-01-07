@@ -388,8 +388,8 @@ typedef struct
    }
 CF_TCDBC;
 
-# define CF_DB CF_TCDB
 # define CF_DBC CF_TCDBC
+# define CF_DB CF_TCDB
 
 #elif defined(QDB)
 
@@ -409,8 +409,8 @@ typedef struct
    }
 CF_QDBC;
 
-# define CF_DB CF_QDB
 # define CF_DBC CF_QDBC
+# define CF_DB CF_QDB
 # 
 #else
 
@@ -423,8 +423,8 @@ CF_QDBC;
 # endif
 
 # include <db.h>
-# define CF_DB DB
 # define CF_DBC DBC
+# define CF_DB DB
 # define BDB 1
 #endif
 

@@ -72,8 +72,9 @@ dnl Choose a database
 dnl
 
 AC_ARG_WITH(tokyocabinet,
-	AS_HELP_STRING(--with-tokyocabinet, [support database functions]),with_tokyo=yes,
+	AS_HELP_STRING(--with-tokyocabinet, [support database functions tokyo]),with_tokyo=yes,
 	with_tokyo=no)
+
 
 if test "x$with_tokyo" = xyes; then
    AC_MSG_CHECKING(for TokyoCabinet)
@@ -82,16 +83,39 @@ else
    WITH_TOKYO=0
 fi
 
+dnl else qdbm?
+
+AC_ARG_WITH(qdbm,
+	AS_HELP_STRING(--with-qdbm, [support database functions qdbm]),with_qdbm=yes,
+	with_qdbm=no)
+
+if test "x$with_qdbm" = xyes; then
+   AC_MSG_CHECKING(for QDBM)
+   WITH_QDBM=1
+else
+   WITH_QDBM=0
+fi
+
+
+
 if test $WITH_TOKYO = 1; then
   AC_CHECK_LIB(tokyocabinet,main)
   AC_CHECK_HEADERS(tcutil.h)
   AC_CHECK_HEADERS(tchdb.h)
   AC_DEFINE(TCDB, 1, [Define if Tokyo Cabinet is available.])
-else
+fi
+
+if test $WITH_QDBM = 1; then
+  AC_CHECK_LIB(qdbm,main)
+  AC_CHECK_HEADERS(depot.h)
+  AC_DEFINE(QDB, 1, [Define if QDBM is available.])
+fi
 
 dnl
 dnl  Look for Berkeley DB.
 dnl 
+
+if test $WITH_QDBM = 0 -a $WITH_TOKYO = 0; then
 
   AC_ARG_WITH(berkeleydb,
     [  --with-berkeleydb[=PATH] directory where BerkeleyDB exists],

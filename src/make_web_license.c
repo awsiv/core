@@ -47,11 +47,11 @@ int main(int argc,char **argv)
   FILE *fp;
   struct stat sb;
   int r_day,r_year,imonth;
-  char r_month[8];
+  char r_month[18];
   int m_now,m_expire,d_now,d_expire;
-  char f_day[8],f_month[8],f_year[8];
+  char f_day[18],f_month[18],f_year[18];
   int number = 1;
-  char u_day[8],u_month[8],u_year[8];
+  char u_day[18],u_month[18],u_year[18];
   unsigned char digest[EVP_MAX_MD_SIZE+1];
   time_t now = time(NULL);
 
@@ -83,7 +83,7 @@ else
 
 strcpy(f_month,MONTH_TEXT[imonth]);
 
-if (imonth == 1)
+if (imonth == 0)
    {
    snprintf(f_year,7,"%d",r_year+1);
    }
@@ -92,7 +92,7 @@ else
    snprintf(f_year,7,"%d",r_year);
    }
 
-printf("Expiry date set to %s of %s %s<br>\n",f_day,f_month,f_year);
+printf("Expiry date set to (%s) of %s %s<br>\n",f_day,f_month,f_year);
 
 number = 5;
 
