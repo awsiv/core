@@ -547,7 +547,7 @@ dnl ######################################################################
 dnl On NT, check for struct PROCESS_MEMORY_COUNTERS_EX
 dnl ######################################################################
 
-AC_CHECK_MEMBER([struct _PROCESS_MEMORY_COUNTERS_EX.PrivateUsage],
+AC_CHECK_MEMBER([PROCESS_MEMORY_COUNTERS_EX.PrivateUsage],
                 [AC_DEFINE(HAVE_PROCESS_MEMORY_COUNTERS_EX, 1, 
                 [Has NT extended process memory structure])], [], [
 #include <windows.h> 
