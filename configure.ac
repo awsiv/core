@@ -542,6 +542,17 @@ dnl ######################################################################
 AC_CHECK_MEMBERS([struct sockaddr.sa_len], , , [
 #include <sys/types.h>
 #include <sys/socket.h>])
+
+dnl ######################################################################
+dnl On NT, check for struct PROCESS_MEMORY_COUNTERS_EX
+dnl ######################################################################
+
+AC_CHECK_MEMBER([struct _PROCESS_MEMORY_COUNTERS_EX.PrivateUsage],
+                [AC_DEFINE(HAVE_PROCESS_MEMORY_COUNTERS_EX, 1, 
+                [Has NT extended process memory structure])], [], [
+#include <windows.h> 
+#include <psapi.h>
+])
    
 dnl #######################################################################
 dnl Newer BSD systems don't have a compatible rtentry - use ortentry
@@ -749,7 +760,7 @@ dnl	AC_CHECK_LIB(nss_nis, yp_get_default_domain)
         ;;
 
    mingw*)
-        AC_DEFINE(MINGW)
+        AC_DEFINE(MINGW, 1, [Native NT build.])
         AC_DEFINE(NT)
         LIBS="$LIBS -lws2_32 -lpsapi"
         ;;

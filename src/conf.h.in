@@ -75,11 +75,7 @@
 #undef HAVE_SYS_ACL_H
 #undef NOTBROKEN
 #undef NT
-#undef MINGW
 #undef DARWIN
-#undef TCDB
-#undef QDB
-#undef BDB
 
 /* SVR4 header stuff */
 
@@ -116,6 +112,9 @@
 
 /* Define to 1 if the system has the type `clockid_t'. */
 #undef HAVE_CLOCKID_T
+
+/* Define to 1 if you have the <depot.h> header file. */
+#undef HAVE_DEPOT_H
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
@@ -154,9 +153,6 @@
 /* Define to 1 if you have the `getzoneid' function. */
 #undef HAVE_GETZONEID
 
-/* Define to 1 if you have the <graphviz/gvc.h> header file. */
-#undef HAVE_GRAPHVIZ_GVC_H
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -165,6 +161,9 @@
 
 /* Define to 1 if you have the `acl' library (-lacl). */
 #undef HAVE_LIBACL
+
+/* Define to 1 if you have the `crypto' library (-lcrypto). */
+#undef HAVE_LIBCRYPTO
 
 /* Define to 1 if you have the `db' library (-ldb). */
 #undef HAVE_LIBDB
@@ -184,27 +183,17 @@
 /* Define to 1 if you have the `PW' library (-lPW). */
 #undef HAVE_LIBPW
 
+/* Define to 1 if you have the `qdbm' library (-lqdbm). */
+#undef HAVE_LIBQDBM
+
 /* Define to 1 if you have the `socket' library (-lsocket). */
 #undef HAVE_LIBSOCKET
 
 /* Define to 1 if you have the `thread' library (-lthread). */
 #undef HAVE_LIBTHREAD
 
-/* Define to 1 if you have the `mysqlclient' library (-lmysqlclient). */
-#undef HAVE_LIBMYSQLCLIENT
-
-/* Define to 1 if you have the <mysql/mysql.h> header file. */
-#undef HAVE_MYSQL_MYSQL_H
-
-/* Define to 1 if you have the <libpq-fe.h> header file. */
-#undef HAVE_LIBPQ_FE_H
-
-
-/* Define to 1 if you have the <pcre.h> header file. */
-#undef HAVE_PCRE_H
-
-/* Define to 1 if you have the <pcre/pcre.h> header file. */
-#undef HAVE_PCRE_PCRE_H
+/* Define to 1 if you have the `tokyocabinet' library (-ltokyocabinet). */
+#undef HAVE_LIBTOKYOCABINET
 
 /* Define to 1 if you have the <malloc.h> header file. */
 #undef HAVE_MALLOC_H
@@ -217,6 +206,15 @@
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
+
+/* Define to 1 if you have the <pcre.h> header file. */
+#undef HAVE_PCRE_H
+
+/* Define to 1 if you have the <pcre/pcre.h> header file. */
+#undef HAVE_PCRE_PCRE_H
+
+/* Has NT extended process memory structure */
+#undef HAVE_PROCESS_MEMORY_COUNTERS_EX
 
 /* Define if you have POSIX threads libraries and header files. */
 #undef HAVE_PTHREAD
@@ -358,6 +356,12 @@
 /* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
 #undef HAVE_SYS_WAIT_H
 
+/* Define to 1 if you have the <tchdb.h> header file. */
+#undef HAVE_TCHDB_H
+
+/* Define to 1 if you have the <tcutil.h> header file. */
+#undef HAVE_TCUTIL_H
+
 /* Define to 1 if you have the <thread.h> header file. */
 #undef HAVE_THREAD_H
 
@@ -379,12 +383,18 @@
 /* Define to 1 if you have the `waitpid' function. */
 #undef HAVE_WAITPID
 
+/* Define to 1 if you have the <winsock2.h> header file. */
+#undef HAVE_WINSOCK2_H
+
 /* Define to 1 if you have the <zone.h> header file. */
 #undef HAVE_ZONE_H
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #undef LT_OBJDIR
+
+/* Native NT build. */
+#undef MINGW
 
 /* Name of package */
 #undef PACKAGE
@@ -408,8 +418,14 @@
    your system. */
 #undef PTHREAD_CREATE_JOINABLE
 
+/* Define if QDBM is available. */
+#undef QDB
+
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Define if Tokyo Cabinet is available. */
+#undef TCDB
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
@@ -417,11 +433,11 @@
 /* Define if BerkeleyDB is available. */
 #undef USE_BERKELEY_DB
 
+/* Define if OpenSSL is available. */
+#undef USE_OPENSSL_LIB
+
 /* Define if PCRE is available. */
 #undef USE_PCRE
-
-/* Define to 1 if you have the `pcre' library (-lpcre). */
-#undef HAVE_LIBPCRE
 
 /* Version number of package */
 #undef VERSION
