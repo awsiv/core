@@ -25,7 +25,7 @@
 #define TIMESTAMP_WAIT 500  // msecs between checking two process timestamps (for % CPU usage)
 
 
-#ifndef PROCESS_MEMORY_COUNTERS_EX
+#ifndef HAVE_PROCESS_MEMORY_COUNTERS_EX
 
 typedef struct _PROCESS_MEMORY_COUNTERS_EX {
    DWORD cb;
@@ -42,7 +42,7 @@ typedef struct _PROCESS_MEMORY_COUNTERS_EX {
 } PROCESS_MEMORY_COUNTERS_EX;
 typedef PROCESS_MEMORY_COUNTERS_EX *PPROCESS_MEMORY_COUNTERS_EX;
 
-#endif  /* NOT DEFINED PROCESS_MEMORY_COUNTERS_EX */
+#endif  /* NOT HAVE_PROCESS_MEMORY_COUNTERS_EX */
 
 
 /* static prototypes */
