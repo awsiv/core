@@ -32,18 +32,18 @@
 
 #include "conf.h"
 
-#include <stdio.h>
-#include <math.h>
-
-#ifndef _GETOPT_H
-#include "../pub/getopt.h"
-#endif
-
 #ifdef NT
 #  define MAX_FILENAME 227
 #  define WINVER 0x501
 #else
 #  define MAX_FILENAME 254
+#endif
+
+#include <stdio.h>
+#include <math.h>
+
+#ifndef _GETOPT_H
+#include "../pub/getopt.h"
 #endif
 
 #ifdef HAVE_STDLIB_H
@@ -388,8 +388,8 @@ typedef struct
    }
 CF_TCDBC;
 
-# define CF_DBC CF_TCDBC
 # define CF_DB CF_TCDB
+# define CF_DBC CF_TCDBC
 
 #elif defined(QDB)
 
@@ -409,9 +409,10 @@ typedef struct
    }
 CF_QDBC;
 
-# define CF_DBC CF_QDBC
 # define CF_DB CF_QDB
-# 
+# define CF_DBC CF_QDBC
+
+
 #else
 
 # ifdef SOLARIS
@@ -423,8 +424,8 @@ CF_QDBC;
 # endif
 
 # include <db.h>
-# define CF_DBC DBC
 # define CF_DB DB
+# define CF_DBC DBC
 # define BDB 1
 #endif
 
