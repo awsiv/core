@@ -24,8 +24,26 @@
 #define MAXCMDSTR 512  // max length of process commmand line (e.g. "c:\program.exe --param")
 #define TIMESTAMP_WAIT 500  // msecs between checking two process timestamps (for % CPU usage)
 
-// define pointer to NtQueryInformationProcess function
-typedef NTSTATUS (WINAPI *NTQIP)(HANDLE, PROCESSINFOCLASS, PVOID, ULONG, PULONG);
+
+#ifndef PROCESS_MEMORY_COUNTERS_EX
+
+typedef struct _PROCESS_MEMORY_COUNTERS_EX {
+   DWORD cb;
+   DWORD PageFaultCount;
+   SIZE_T PeakWorkingSetSize;
+   SIZE_T WorkingSetSize;
+   SIZE_T QuotaPeakPagedPoolUsage;
+   SIZE_T QuotaPagedPoolUsage;
+   SIZE_T QuotaPeakNonPagedPoolUsage;
+   SIZE_T QuotaNonPagedPoolUsage;
+   SIZE_T PagefileUsage;
+   SIZE_T PeakPagefileUsage;
+   SIZE_T PrivateUsage;
+} PROCESS_MEMORY_COUNTERS_EX;
+typedef PROCESS_MEMORY_COUNTERS_EX *PPROCESS_MEMORY_COUNTERS_EX;
+
+#endif  /* NOT DEFINED PROCESS_MEMORY_COUNTERS_EX */
+
 
 /* static prototypes */
 static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeStamp, DWORDLONG totalPhysMemB);
@@ -129,8 +147,8 @@ int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts)
   CloseHandle(processSnap);
 
   // save process list output to files, include header
-  snprintf(buf, sizeof(buf), "%-20s %5s %s %s %8s %8s %-3s %s %5s %s",
-          "USER", "PID", "%CPU", "%MEM", "VSZ", "RSS", "TTY", "START", "TIME", "COMMAND");
+  snprintf(buf, sizeof(buf), "%-20s %5s %s %s %8s %8s %-3s %s %s %5s %s",
+           "USER", "PID", "%CPU", "%MEM", "VSZ", "RSS", "TTY", "STAT", "START", "TIME", "COMMAND");
 
   PrependItem(procdata, buf, NULL);
 
@@ -228,7 +246,8 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
       cpuUsagePercent = 0;
     }
 
-  snprintf(psLine, sizeof(psLine), "%-20.20s %5lu %4.1f %s %s %s %s %s", userName, pid, cpuUsagePercent, memSzStr, "?  ", timeCreateStr, timeCpuStr, cmdLineStr);
+  snprintf(psLine, sizeof(psLine), "%-20.20s %5lu %4.1f %s %s %s %s %s %s",
+           userName, pid, cpuUsagePercent, memSzStr, "?  ", "?   ", timeCreateStr, timeCpuStr, cmdLineStr);
 
   return psLine;
 }
@@ -367,8 +386,7 @@ static void FormatCpuTime(FILETIME *timeKernel, FILETIME *timeUser, ULARGE_INTEG
 
 static void GetMemoryInfo(HANDLE procHandle, char *memSzStr, DWORDLONG totalPhysMemB)
 {
-  PROCESS_MEMORY_COUNTERS memInfo;
-  VM_COUNTERS vmemInfo;
+  PROCESS_MEMORY_COUNTERS_EX memInfo;
 
   // get physical memory info
   if(!GetProcessMemoryInfo(procHandle, &memInfo, sizeof(memInfo)))
@@ -378,30 +396,9 @@ static void GetMemoryInfo(HANDLE procHandle, char *memSzStr, DWORDLONG totalPhys
       return;
     }
 
-  // get virtual memory info; the process' address space size
+  // virtual memory info: the process' "private bytes" (Commit Size in Win2008 Task Manager, VM Size in XP)
 
-  // load ntdll.dll and get function pointer
-  HMODULE ntdll = LoadLibrary("ntdll.dll");
-
-  if(ntdll == NULL)
-    {
-      CfOut(cf_error,"LoadLibrary","!! Could not load ntdll library");
-      return;
-    }
-
-  NTQIP ntqip = (NTQIP) GetProcAddress(ntdll, "NtQueryInformationProcess");
-
-  if(ntqip == NULL)
-    {
-      CfOut(cf_error,"GetProcAddress","!! Could not get pointer to NtQueryInformationProcess()");
-      return;
-    }
-
-  ntqip(procHandle, ProcessVmCounters, (LPVOID) &vmemInfo, sizeof(vmemInfo), NULL);
-
-  FreeLibrary(ntdll);
-
-  sprintf(memSzStr, "%4.1f %8lu %8lu", (memInfo.WorkingSetSize * 100.0) / totalPhysMemB, vmemInfo.VirtualSize / 1024, memInfo.WorkingSetSize / 1024);
+  sprintf(memSzStr, "%4.1f %8lu %8lu", (memInfo.WorkingSetSize * 100.0) / totalPhysMemB, memInfo.PrivateUsage / 1024, memInfo.WorkingSetSize / 1024);
 }
 
 /*****************************************************************************/
