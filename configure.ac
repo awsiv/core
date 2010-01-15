@@ -99,14 +99,14 @@ fi
 
 
 if test $WITH_TOKYO = 1; then
-  AC_CHECK_LIB(tokyocabinet,main)
+  AC_CHECK_LIB(tokyocabinet,main, [], [AC_MSG_ERROR(Cannot find Tokyo Cabinet)])
   AC_CHECK_HEADERS(tcutil.h)
   AC_CHECK_HEADERS(tchdb.h)
   AC_DEFINE(TCDB, 1, [Define if Tokyo Cabinet is available.])
 fi
 
 if test $WITH_QDBM = 1; then
-  AC_CHECK_LIB(qdbm,main)
+  AC_CHECK_LIB(qdbm,main, [], [AC_MSG_ERROR(Cannot find Quick Database Manager)])
   AC_CHECK_HEADERS(depot.h)
   AC_DEFINE(QDB, 1, [Define if QDBM is available.])
 fi
@@ -445,13 +445,13 @@ AC_ARG_WITH(pcre,
     ]
 )
 
+AC_CHECK_LIB(pcre, main, [], [AC_MSG_ERROR(Cannot find PCRE)])
 
 dnl ######################################################################
 dnl Checks for regular expressions
 dnl GNU regex lib if you have regcomp in libc you should NOT have this lib too
 dnl ######################################################################
 
-dnl AC_CHECK_LIB(pcre, main)
 dnl AC_CHECK_LIB(rx, main) deprecated
 dnl AC_CHECK_LIB(rt, main)
 
