@@ -217,7 +217,10 @@ char *NovaWin_GetErrorStr(void)
   static char errbuf[CF_BUFSIZE];
   int len;
 
-  FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, errbuf, CF_BUFSIZE, NULL);
+  memset(errbuf, 0, sizeof(errbuf));
+
+  FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
+                MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), errbuf, CF_BUFSIZE, NULL);
 
   // remove CRLF from end
   len = strlen(errbuf);
