@@ -389,7 +389,7 @@ static void GetMemoryInfo(HANDLE procHandle, char *memSzStr, DWORDLONG totalPhys
   PROCESS_MEMORY_COUNTERS_EX memInfo;
 
   // get physical memory info
-  if(!GetProcessMemoryInfo(procHandle, &memInfo, sizeof(memInfo)))
+  if(!GetProcessMemoryInfo(procHandle, (PROCESS_MEMORY_COUNTERS *)&memInfo, sizeof(memInfo)))
     {
       *memSzStr = '\0';
       CfOut(cf_error,"GetProcessMemoryInfo","!! Could not obtain process memory information");
