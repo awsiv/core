@@ -23,6 +23,12 @@
 /* Returns true if SIGKILL was one of the signals, false otherwise */
 int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp)
 {
+ 
+ if(LICENSES == 0)
+    {
+    return NULL;
+    }
+ 
   int kill = false;
   int signal;
   struct Item *ip;

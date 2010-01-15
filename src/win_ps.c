@@ -70,6 +70,11 @@ int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts)
   char *psLine;
   int i;
 
+  if(LICENSES == 0)
+     {
+     return false;
+     }
+
   // need debug priviliges to open some special processes, like crss.exe, alg.exe, svchost.exe
   if(!EnableDebugPriv())
     {

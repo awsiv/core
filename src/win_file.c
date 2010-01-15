@@ -151,6 +151,11 @@ int NovaWin_VerifyOwner(char *file,struct Promise *pp,struct Attributes attr)
   int sidMatch = false;
   DWORD getRes;
 
+  if(LICENSES == 0)
+     {
+     return false;
+     }
+
   if(attr.perms.owners == NULL || !IsValidSid(attr.perms.owners->sid))  // no owner set
     {
       return true;
@@ -256,7 +261,7 @@ int NovaWin_SetFileOwnership(char *path, SID *sid)
 {
   HANDLE currProcToken;
   DWORD setRes;
-    
+
   if(!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &currProcToken))
     {
       CfOut(cf_error,"OpenProcessToken","!! Could not get access token of current process");
@@ -331,6 +336,11 @@ void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attribute
 {
 Debug("NovaWin_VerifyFileAttributes()\n");
 
+if(LICENSES == 0)
+   {
+   return;
+   }
+
 if (VerifyOwner(file,pp,attr,dstat))
    {
    /* nop */
@@ -387,7 +397,11 @@ void NovaWin_VerifyCopiedFileAttributes(char *file,struct stat *dstat,struct Att
 int NovaWin_GetDiskUsage(char *file,enum cfsizes type)
 {
   ULARGE_INTEGER bytesLenCaller, bytesFree, kbLenCaller, kbFree;
-  
+
+  if(LICENSES == 0)
+     {
+     return 0;
+     }
   
   if(!GetDiskFreeSpaceEx(file, NULL, &bytesLenCaller, &bytesFree))
     {

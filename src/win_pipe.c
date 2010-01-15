@@ -36,18 +36,35 @@ static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle);
 
 FILE *NovaWin_cf_popen(char *command,char *type)
 {
+ if(LICENSES == 0)
+    {
+    return NULL;
+    }
+
   return OpenProcessPipe(command, false, NULL, type, false);
 }
 
 
 FILE *NovaWin_cf_popen_sh(char *command,char *type)
 {
+
+ if(LICENSES == 0)
+    {
+    return NULL;
+    }
+ 
   return OpenProcessPipe(command, true, NULL, type, false);
 }
 
 
 FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv, int background)
 {
+
+ if(LICENSES == 0)
+    {
+    return NULL;
+    }
+
   // NT unsupported: uid, gid, chrootv
   if(uid != CF_UNDEFINED)
     {
@@ -70,6 +87,12 @@ FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *
 
 FILE *NovaWin_cf_popen_shsetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv, int background)
 {
+ 
+ if(LICENSES == 0)
+    {
+    return NULL;
+    }
+ 
   // we can only run in the current user environment (assumed to be root)
   if((uid == -1 || uid == 0) && (gid == -1 || gid == 0) && chrootv == NULL)
     {

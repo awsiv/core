@@ -42,6 +42,11 @@ void NovaWin_GetInterfaceInfo3()
  char *ifType;
  int tup, j;
 
+ if(LICENSES == 0)
+    {
+    return;
+    }
+
  outBufLen = WORKING_BUFFER_SIZE;
  
  do
