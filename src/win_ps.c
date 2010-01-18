@@ -217,7 +217,46 @@ int NovaWin_GetProcessSnapshot(struct Item **procdata)
 
 int NovaWin_GatherProcessUsers(struct Item **userList, int *userListSz, int *numRootProcs, int *numOtherProcs)
 {
+ struct Item *procdata = NULL;
+ struct Item *currItem;
+ char user[CF_MAXVARSIZE];
+
+ if(LICENSES == 0)
+    {
+    return false;
+    }
  
+ if(!NovaWin_GetProcessSnapshot(&procdata))
+    {
+    CfOut(cf_error, "", "!! Could not get process snapshot");
+    return false;
+    }
+
+ // skip header
+ for(currItem = procdata->next; currItem != NULL; currItem = currItem->next)
+    {
+    sscanf(currItem->name,"%s",user);
+
+    if (!IsItemIn(*userList,user))
+       {
+       PrependItem(userList,user,NULL);
+       (*userListSz)++;
+       }
+
+    if (strcmp(user,"SYSTEM") == 0)
+       {
+       (*numRootProcs)++;
+       }
+    else
+       {
+       (*numOtherProcs)++;
+       }
+    }
+
+ CfOut(cf_verbose, "", "Distinct process users=%d, num SYSTEM processes=%d, num non-SYSTEM processes=%d",
+       *userListSz, *numRootProcs, *numOtherProcs);
+
+ DeleteItemList(procdata);
  
  return true;
 }
