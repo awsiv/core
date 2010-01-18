@@ -557,7 +557,9 @@ int NovaWin_SetTokenPrivilege(HANDLE token, char *privilegeName, int enablePriv)
 
 /* win_ps.c */
 
-int NovaWin_LoadProcessTable(struct Item **procdata,char *psopts);
+int NovaWin_LoadProcessTable(struct Item **procdata);
+int NovaWin_GetProcessSnapshot(struct Item **procdata);
+int NovaWin_GatherProcessUsers(struct Item **userList, int *userListSz, int *numRootProcs, int *numOtherProcs);
 
 /* win_service_exec.c */
 
