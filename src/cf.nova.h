@@ -37,7 +37,7 @@
 #define CF_LHISTORYDATA 1464
 #define CF_MAGMARGIN 0
 #define CF_LHISTORYMARGIN 0
-#define CF_TRIBE_SIZE 30
+#define CF_TRIBE_SIZE 25
 
 /*****************************************************************************/
 
@@ -89,7 +89,7 @@ struct CfGraphNode
 
 #define CF_MIN_RADIUS    30.0
 #define CF_RADIUS_SCALE  25.0
-#define CF_NODEVISIBLE   14
+#define CF_NODEVISIBLE   18
 #define CF_CONTAINMENT_FACTOR 1.15
 
 /*****************************************************************************/
@@ -231,7 +231,6 @@ int Nova_SplayAdjacent(int i,double **adj,int tribe_size,struct CfGraphNode *tri
 void Nova_CopyNeighbours2(struct CfGraphNode *from,int tribe_size,struct CfGraphNode to[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int index1);
 void Nova_CopyNeighbours3(struct CfGraphNode *from,int tribe_size,struct CfGraphNode to[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE],int index1,int index2);
 int Nova_GetEvcTops(double **adj,int size, double *evc, int *tops);
-void Nova_Annealing(struct CfGraphNode neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size1,int size2[CF_TRIBE_SIZE],int size3[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size);
 void Nova_CentreScale(struct CfDataView *cfv,double min_x,double max_x,double min_y,double max_y);
 int Nova_X(struct CfDataView cfv,double x);
 int Nova_Y(struct CfDataView cfv,double y);
@@ -247,9 +246,11 @@ double Nova_SignPerturbation(int i);
 void Nova_ColdBall(struct CfDataView cfv,double x,double y,double radius,int *shade);
 void Nova_HotBall(struct CfDataView cfv,double x,double y,double radius,int *shade);
 void Nova_AlignmentCorrection(double *x,double *y,double cx,double cy);
-void Nova_MapHorizon(double x,double y,double *min_x,double *min_y,double *max_x,double *max_y);
+void Nova_MapHorizon(struct CfDataView cfv,double x,double y,double *min_x,double *min_y,double *max_x,double *max_y);
 double Nova_Orbit(struct CfDataView cfv,double radius,double min_x,double max_x,double min_y,double max_y);
 void Nova_MapBall(FILE *fp,struct CfDataView cfv,struct CfGraphNode n);
+void Nova_Annealing(struct CfGraphNode neighbours1[CF_TRIBE_SIZE],struct CfGraphNode neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],struct CfGraphNode neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size1,int size2[CF_TRIBE_SIZE],int size3[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size);
+int Overlap(double x1,double y1,double x2,double y2);
 
 /* database.c */
 

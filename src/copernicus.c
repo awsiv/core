@@ -66,7 +66,12 @@ if (LICENSES == 0)
    }
 
 /* Initialize the tribe*/
-  
+
+if (tribe_size < 2)
+   {
+   return;
+   }
+
 //num_tops = Nova_GetEvcTops(tribe_adj,tribe_size,tribe_evc,tribe_tops);
 
 Nova_ClearTrail(trail);
@@ -88,10 +93,12 @@ for (i = 0; i < tribe_size; i++)
 
 Nova_AnchorTrail(trail,centre);
 
-cfv.height = 750;
+cfv.height = 650;
 cfv.width = 1000;
 cfv.origin_x = 500;
 cfv.origin_y = 375;
+cfv.scale_x = (double)cfv.width/2;
+cfv.scale_y = (double)cfv.height/4;
 cfv.im = gdImageCreate(cfv.width,cfv.height);
 Nova_MakeCosmosPalette(&cfv);
 
@@ -106,7 +113,6 @@ tribe_node[centre].x = 0;
 tribe_node[centre].y = 0;
 tribe_node[centre].distance_from_centre = 0;
 neighbours1[centre].angle = 0;
-
 
 // Write the image map
 
@@ -162,7 +168,7 @@ for (i = 0; i < size1; i++)
 
    orbital_r1 += 0.2 * orbital_r1 * Nova_SignPerturbation(i);
    orbital_r2 += 0.2 * orbital_r2 * Nova_SignPerturbation(i);
-         
+   
    if (n > 2)
       {
       x = orbital_r2 * cos(theta0);
@@ -178,8 +184,7 @@ for (i = 0; i < size1; i++)
    neighbours1[i].y = y;
    neighbours1[i].distance_from_centre = 1;
    neighbours1[i].angle = theta0;
-   Nova_MapHorizon(x,y,&min_x,&min_y,&max_x,&max_y);
-   
+   Nova_MapHorizon(cfv,x,y,&min_x,&min_y,&max_x,&max_y);
    theta0 += dtheta0;
    }
 
@@ -233,7 +238,7 @@ for (i = 0; i < size1; i++)
          }
 
       Nova_AlignmentCorrection(&x,&y,neighbours1[i].x,neighbours1[i].y);
-      Nova_MapHorizon(x,y,&min_x,&min_y,&max_x,&max_y);
+      Nova_MapHorizon(cfv,x,y,&min_x,&min_y,&max_x,&max_y);
 
       neighbours2[i][j].x = x;
       neighbours2[i][j].y = y;
@@ -262,8 +267,7 @@ for (i = 0; i < size1; i++)
          y = neighbours2[i][j].y + orbital_r5 * sin(theta2);      
 
          Nova_AlignmentCorrection(&x,&y,neighbours2[i][j].x,neighbours2[i][j].y);
-
-         Nova_MapHorizon(x,y,&min_x,&min_y,&max_x,&max_y);
+         Nova_MapHorizon(cfv,x,y,&min_x,&min_y,&max_x,&max_y);
       
          neighbours3[i][j][k].x = x;
          neighbours3[i][j][k].y = y;
@@ -279,10 +283,9 @@ for (i = 0; i < size1; i++)
    Nova_TribeUnion(trail,tmp2,tribe_size,size2[i]);
    }
 
-
 /* Do some annealing */
 
-//Nova_Annealing(neighbours3,size1,size2,size3,tribe_size);
+//Nova_Annealing(neighbours1,neighbours2,neighbours3,size1,size2,size3,tribe_size);
 
 /* Now plot everything after corrections for centre of mass */
 
@@ -697,7 +700,7 @@ return x;
 
 /*****************************************************************************/
 
-void Nova_MapHorizon(double x,double y,double *min_x,double *min_y,double *max_x,double *max_y)
+void Nova_MapHorizon(struct CfDataView cfv,double x,double y,double *min_x,double *min_y,double *max_x,double *max_y)
 
 {
 if (x < *min_x)
@@ -718,6 +721,42 @@ if (y < *min_y)
 if (y > *max_y)
    {
    *max_y = y + 3.5*CF_MIN_RADIUS;
+   }
+}
+
+/*****************************************************************************/
+/* Level                                                                     */
+/*****************************************************************************/
+
+void Nova_Annealing(struct CfGraphNode neighbours1[CF_TRIBE_SIZE],struct CfGraphNode neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],struct CfGraphNode neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size1,int size2[CF_TRIBE_SIZE],int size3[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size)
+
+{ int i1,j1,k1,i2,j2,k2;
+
+for (i1 = 0; i1 < size1; i1++)
+   {
+   for (j1 = 0; j1 < size2[i1]; j1++)
+      {
+      for (k1 = 0; k1 < size3[i1][j1]; k1++)
+         {
+         for (i2 = 0; i2 < size1; i2++)
+            {
+            for (j2 = 0; j2 < size2[i2]; j2++)
+               {
+               for (k2 = 0; k2 < size3[i2][j2]; k2++)
+                  {
+                  if (k1 != k2)
+                     {
+                     Nova_AlignmentCorrection(&(neighbours3[i1][j1][k1].x),&(neighbours3[i1][j1][k1].y),neighbours3[i2][j2][k2].x,neighbours3[i2][j2][k2].y);
+
+                     Nova_AlignmentCorrection(&(neighbours3[i2][j2][k2].x),&(neighbours3[i2][j2][k2].y),neighbours2[i1][j1].x,neighbours2[i1][j1].y);
+
+                     Nova_AlignmentCorrection(&(neighbours3[i2][j2][k2].x),&(neighbours3[i2][j2][k2].y),neighbours1[i1].x,neighbours1[i1].y);
+                     }
+                  }
+               }
+            }
+         }
+      }
    }
 }
 
@@ -794,7 +833,7 @@ for (dr = 0; dr <= radius; dr += radius/(double)CF_SHADES)
 /*****************************************************************************/
 
 void Nova_ColdBall(struct CfDataView cfv,double x,double y,double radius,int *shade)
-
+ 
 { int dr = 0;
   int col;
 
@@ -819,7 +858,11 @@ fprintf(fp,"<area shape = \"circle\" coords=\"%d,%d,%d\" href=\"%s?next=%s\" alt
 
 void Nova_Print(struct CfDataView cfv,double x,double y,char *s,int colour)
     
-{ char ps[CF_MAXVARSIZE];
+{ char *err,ps[CF_MAXVARSIZE];
+  int x1,y1,x2,y2,margin = 1,padding=2,tab=3;
+  static char *font = "verdana";
+  int brect[8];
+  double size = 10.0;
 
 if (strlen(s) > CF_NODEVISIBLE)
    {
@@ -831,55 +874,156 @@ else
    snprintf(ps,CF_MAXVARSIZE,"%s",s);
    }
 
-gdImageString(cfv.im,gdFontGetLarge(),Nova_X(cfv,x)-strlen(ps)*gdFontGetLarge()->w/2,Nova_Y(cfv,y)-10,ps,colour);
+/* brect
+   0	lower left corner, X position
+   1	lower left corner, Y position
+   2	lower right corner, X position
+   3	lower right corner, Y position
+   4	upper right corner, X position
+   5	upper right corner, Y position
+   6	upper left corner, X position
+   7	upper left corner, Y position
+*/
+
+err = gdImageStringFT(NULL,&brect[0],0,font,size,0.,0,0,ps);
+
+if (err)
+   {
+   printf("Rendering failure %s\n",err);
+   }
+
+// Top left = x2,y2
+// Top right = x1,y2
+// Bottom right = x1,y1
+
+x1 = Nova_X(cfv,x) + (brect[2]-brect[6])/2 + padding;
+y1 = Nova_Y(cfv,y) + (brect[3]-brect[7])/2 + padding;
+x2 = x1 - (brect[2]-brect[6]) - padding;
+y2 = y1 - (brect[3]-brect[7]) - padding;
+
+// Plus y is now downward
+
+gdImageSetThickness(cfv.im,tab);
+gdImageLine(cfv.im,x1+tab,y2+tab,x1+tab,y1+tab,LIGHTGREY);
+gdImageLine(cfv.im,x2+tab,y1+tab,x1+tab,y1+tab,LIGHTGREY);
+gdImageSetThickness(cfv.im,1);
+gdImageRectangle(cfv.im,x1+margin,y1+margin,x2-margin,y2-margin,LIGHTGREY);
+gdImageFilledRectangle(cfv.im,x1,y1,x2,y2,WHITE);
+gdImageStringFT(cfv.im,&brect[0],BLACK,font,size,0.0,x2+margin+padding,y1-margin-padding,ps);
 }
 
 /*****************************************************************************/
 
 void Nova_BigPrint(struct CfDataView cfv,double x,double y,char *s,int colour)
     
-{ char ps[CF_MAXVARSIZE];
+{ char *err,ps[CF_MAXVARSIZE];
+  int x1,y1,x2,y2,margin = 1,padding=4,tab=3;
+  static char *font = "verdana";
+  int brect[8];
+  double size = 12.0;
 
-snprintf(ps,CF_MAXVARSIZE,"%s",s);
+if (strlen(s) > CF_NODEVISIBLE)
+   {
+   strncpy(ps,s,CF_NODEVISIBLE);
+   snprintf(ps+CF_NODEVISIBLE,4,"..");
+   }
+else
+   {
+   snprintf(ps,CF_MAXVARSIZE,"%s",s);
+   }
 
-gdImageString(cfv.im,gdFontGetGiant(),Nova_X(cfv,x)-strlen(ps)*gdFontGetLarge()->w/2,Nova_Y(cfv,y)-10,ps,colour);
+/* brect
+   0	lower left corner, X position
+   1	lower left corner, Y position
+   2	lower right corner, X position
+   3	lower right corner, Y position
+   4	upper right corner, X position
+   5	upper right corner, Y position
+   6	upper left corner, X position
+   7	upper left corner, Y position
+*/
+
+err = gdImageStringFT(NULL,&brect[0],0,font,size,0.,0,0,ps);
+
+if (err)
+   {
+   printf("Rendering failure %s\n",err);
+   }
+
+// Top left = x2,y2
+// Top right = x1,y2
+// Bottom right = x1,y1
+
+x1 = Nova_X(cfv,x) + (brect[2]-brect[6])/2 + padding;
+y1 = Nova_Y(cfv,y) + (brect[3]-brect[7])/2 + padding;
+x2 = x1 - (brect[2]-brect[6]) - padding;
+y2 = y1 - (brect[3]-brect[7]) - padding;
+
+// Plus y is now downward
+
+gdImageSetThickness(cfv.im,tab);
+gdImageLine(cfv.im,x1+tab,y2+tab,x1+tab,y1+tab,LIGHTGREY);
+gdImageLine(cfv.im,x2+tab,y1+tab,x1+tab,y1+tab,LIGHTGREY);
+gdImageSetThickness(cfv.im,1);
+gdImageRectangle(cfv.im,x1+margin,y1+margin,x2-margin,y2-margin,LIGHTGREY);
+gdImageFilledRectangle(cfv.im,x1,y1,x2,y2,BLACK);
+gdImageStringFT(cfv.im,&brect[0],WHITE,font,size,0.0,x2+padding,y1-padding,ps);
 }
 
 /*****************************************************************************/
 
 void Nova_AlignmentCorrection(double *x,double *y,double cx,double cy)
 
-{ int i;
+{
 
  /* If nodes are too close, move them apart */
- 
-if ((cy < *y) && (fabs(*y -cy) < 3*CF_MIN_RADIUS))
+
+if (!Overlap(*x,*y,cx,cy))
    {
-   if ((cx < *x) && ((*x -cx) < CF_NODEVISIBLE * gdFontGetLarge()->w)) // Text height is about 10
-      {
-      *x = cx += 1.5*CF_MIN_RADIUS;
-      }
-   else if ((cx > *x) && ((cx-*x) < CF_NODEVISIBLE * gdFontGetLarge()->w)) 
-      {
-      *x = cx -= 1.5*CF_MIN_RADIUS;
-      }
+   return;
    }
 
-if ((cy < *y) && ((*y -cy) < 3*CF_MIN_RADIUS)) // Text height is about 10
+if (*x > cx)
    {
-   *y = cy += CF_MIN_RADIUS;
+   *x += 1.5*CF_MIN_RADIUS;
    }
-else if ((cy > *y) && ((cy-*y) < CF_MIN_RADIUS)) 
+else
    {
-   *y = cy -= CF_MIN_RADIUS;
+   *x -= 1.5*CF_MIN_RADIUS;
+   }
+
+if (*y > cy)
+   {
+   *y = cy + CF_MIN_RADIUS;
+   }
+else
+   {
+   *y = cy - CF_MIN_RADIUS;
    }
 }
  
 /*****************************************************************************/
 
+int Overlap(double x1,double y1,double x2,double y2)
+
+{ double scale_x = gdFontGetLarge()->w * CF_NODEVISIBLE;
+ double scale_y = 2*gdFontGetLarge()->h;
+ 
+if (fabs(x1-x2) < scale_x && fabs(y1-y2) < scale_y)
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
+}
+
+/*****************************************************************************/
+
 double Nova_Orbit(struct CfDataView cfv,double radius,double min_x,double max_x,double min_y,double max_y)
 
-{ double min_orbit = gdFontGetLarge()->w * CF_NODEVISIBLE / (CF_CONTAINMENT_FACTOR * cfv.scale_x) * (double)cfv.width;
+{ double min_orbit = (double)(gdFontGetLarge()->w) * (double)CF_NODEVISIBLE / (CF_CONTAINMENT_FACTOR * cfv.scale_x) * (double)cfv.width;
 
 if (radius < min_orbit)
    {
@@ -891,6 +1035,8 @@ else
    }
 }
 
+/*****************************************************************************/
+
 #else
 
 void Nova_IlluminateTribe(int *tribe_id,struct CfGraphNode *tribe_node,double **tribe_adj,int tribe_size,double *tribe_evc,char **n,int topic,double **full_adj,int dim_full,int tertiary_boundary)
@@ -898,10 +1044,10 @@ void Nova_IlluminateTribe(int *tribe_id,struct CfGraphNode *tribe_node,double **
 {
 }
 
+/*****************************************************************************/
 
 void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,double **tribe_adj,int tribe_size,double *tribe_evc,char **n,int topic,double **full_adj,int dim_full,int tertiary_boundary)
 {
 }
     
-
 #endif

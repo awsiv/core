@@ -213,7 +213,6 @@ void Nova_MakeCosmosPalette(struct CfDataView *cfv)
   
 BLACK = gdImageColorAllocate(cfv->im, 0, 0, 0);
 
-
 for (i = 0; i < CF_SHADES; i++)
    {
    r = (int)((255.0)/(double)CF_SHADES * (double)i);
@@ -227,12 +226,12 @@ for (i = 0; i < CF_SHADES; i++)
 
 // Browns From 205,170,125, 165,130,85
 
-rs = 210;
-re = 180;
-gs = 175;
-ge = 140;
-bs = 125;
-be = 95;
+rs = 245;
+re = 210;
+gs = 245;
+ge = 210;
+bs = 245;
+be = 210;
 
 dr = (int)((double)(re-rs)/(double)CF_SHADES);
 dg = (int)((double)(ge-gs)/(double)CF_SHADES);
@@ -250,9 +249,9 @@ for (i = 0; i < CF_SHADES; i++)
 
 rs = 255;
 re = 255;
-gs = 205;
+gs = 215;
 ge = 255;
-bs = 92;
+bs = 102;
 be = 200;
 
 dr = (int)((double)(re-rs)/(double)CF_SHADES);
@@ -269,11 +268,11 @@ for (i = 0; i < CF_SHADES; i++)
 
 // pinks 238,213,183, 198,173,143
 
-rs = 238;
+rs = 248;
 re = 193;
-gs = 213;
+gs = 229;
 ge = 168;
-bs = 183;
+bs = 203;
 be = 138;
 
 dr = (int)((double)(re-rs)/(double)CF_SHADES);
@@ -291,11 +290,11 @@ for (i = 0; i < CF_SHADES; i++)
 // "Greys" 205,170,125
 
 rs = 238;
-re = 100;
+re = 220;
 gs = 213;
-ge = 100;
+ge = 220;
 bs = 183;
-be = 100;
+be = 220;
 
 dr = (int)((double)(re-rs)/(double)CF_SHADES);
 dg = (int)((double)(ge-gs)/(double)CF_SHADES);
@@ -318,7 +317,7 @@ YELLOW   = gdImageColorAllocate(cfv->im, 200, 255, 0);
 LIGHTRED = gdImageColorAllocate(cfv->im, 255, 150, 150);
 RED      = gdImageColorAllocate(cfv->im, 200, 0, 0);
 ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
-SKY      = gdImageColorAllocate(cfv->im, 230,230,230);
+SKY      = gdImageColorAllocate(cfv->im, 240,240,240);
 }
 
 /*****************************************************************************/

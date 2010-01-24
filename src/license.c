@@ -198,8 +198,8 @@ if (licenses == 0)
    }
 else if (licenses > LICENSES && THIS_AGENT_TYPE != cf_know)
    {
-   CfOut(cf_error,""," !! You have promised that %d licenses have been paid for, but Cfengine has only promised to honour %d in the agreement. ",licenses,LICENSES);
-   CfOut(cf_error,""," !! You could be in violation of contract.");
+   CfOut(cf_inform,""," !! You have promised that %d licenses have been paid for, but Cfengine has only promised to honour %d in the agreement. ",licenses,LICENSES);
+   CfOut(cf_inform,""," !! You could be in violation of contract.");
    }
 else if (licenses < LICENSES)
    {
