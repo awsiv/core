@@ -21,7 +21,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #define WORKING_BUFFER_SIZE 15000
 #define MAX_ALLOCTRIES 3
 
-void NovaWin_GetInterfaceInfo3()
+void NovaWin_GetInterfaceInfo()
 /**
  * Creates classes from a host's IP addresses, e.g.  192_168_2_1,
  * ipv4_192_168_2_1, ipv4_192_168_2, ipv4_192_168, ipv4_192 for all
@@ -41,11 +41,6 @@ void NovaWin_GetInterfaceInfo3()
  int firstIface = true;
  char *ifType;
  int tup, j;
-
- if(LICENSES == 0)
-    {
-    return;
-    }
 
  outBufLen = WORKING_BUFFER_SIZE;
  

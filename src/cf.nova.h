@@ -534,7 +534,7 @@ void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char
 
 /* win_net.c */
 
-void NovaWin_GetInterfaceInfo3(void);
+void NovaWin_GetInterfaceInfo(void);
 
 /* win_pipe.c */
 
