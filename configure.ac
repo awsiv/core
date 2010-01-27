@@ -466,8 +466,15 @@ dnl  AC_CHECK_HEADERS(pgsql/libpq-fe.h)
 dnl  AC_CHECK_HEADERS(libpq-fe.h)
 dnl fi
 
-AC_CHECK_HEADERS(ldap.h)
-AC_CHECK_LIB(ldap,ldap_get_values_len)
+
+AC_ARG_WITH(ldap,
+	AS_HELP_STRING(--without-ldap, [support some graphic functions]),with_ldap=no,
+	with_ldap=yes)
+
+if test "x$with_ldap" != xno; then
+   AC_CHECK_HEADERS(ldap.h)
+   AC_CHECK_LIB(ldap,ldap_get_values_len)
+fi
 
 AC_CHECK_HEADERS(pcre.h)
 AC_CHECK_HEADERS(pcre/pcre.h)
