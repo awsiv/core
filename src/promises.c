@@ -449,7 +449,7 @@ fprintf(fout,
 "\"$(sys.workdir)/bin/cf-serverd\",\n"
 "classes => outcome(\"server\");\n"
 "start_exec.windows::\n"
-"\"\\\"$(sys.winsysdir)\\sc.exe\\\" start CfengineNova\",\n"
+"\"\\\"$(sys.winsysdir)\\sc.exe\\\" start CfengineNovaExec\",\n"
 "classes => outcome(\"executor\");\n"
 "start_server.windows::\n"
 "\"\\\"$(sys.workdir)\\bin\\cf-serverd.exe\\\"\",\n"
