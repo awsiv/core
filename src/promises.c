@@ -412,7 +412,7 @@ fprintf(fout,
 " !have_ppkeys.!windows::\n"
 "   \"$(sys.workdir)/bin/cf-key\";\n"
 " !have_ppkeys.windows::\n"
-"   \"\\\"$(sys.workdir)\\bin\\cf-key\\\"\";\n"
+"   \"\\\"$(sys.workdir)\\bin\\cf-key.exe\\\"\";\n"
 "files:\n"
 " !windows::\n"
 "  \"$(sys.workdir)/inputs\" \n"
