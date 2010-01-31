@@ -445,7 +445,7 @@ char Nova_CfEnterpriseOptions(void);
 int Nova_CfSessionKeySize(char c);
 void  Nova_RegisterLiteralServerData(char *handle,struct Promise *pp);
 int Nova_ReturnLiteralData(char *handle,char *retval);
-char *Nova_GetRemoteScalar(char *handle,char *server,int encrypted,char *rcv);
+char *Nova_GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,char *rcv);
 int Nova_ParseHostname(char *name,char *hostname);
 int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer);
 void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer);

@@ -275,6 +275,7 @@ enum cfacontrol
    cfa_skipidentify,
    cfa_suspiciousnames,
    cfa_syslog,
+   cfa_track_value,
    cfa_timezone,
    cfa_timeout,
    cfa_verbose,
@@ -515,8 +516,9 @@ enum fncalltype
    cfn_groupexists,
    cfn_hash,
    cfn_hashmatch,
-   cfn_hostrange,
    cfn_hostinnetgroup,
+   cfn_hostrange,
+   cfn_hostsseen,
    cfn_iprange,
    cfn_irange,
    cfn_isdir,
@@ -526,9 +528,8 @@ enum fncalltype
    cfn_isnewerthan,
    cfn_isplain,
    cfn_isvariable,
-   cfn_lastnode,
-   cfn_hostsseen,
    cfn_join,
+   cfn_lastnode,
    cfn_ldaparray,
    cfn_ldaplist,
    cfn_ldapvalue,
@@ -553,6 +554,7 @@ enum fncalltype
    cfn_reglist,
    cfn_regldap,
    cfn_remotescalar,
+   cfn_remoteclassesmatching,
    cfn_returnszero,
    cfn_rrange,
    cfn_selectservers,
@@ -1018,6 +1020,9 @@ struct TransactionContext
    char *log_repaired;
    char *log_failed;
    char *measure_id;
+   double value_kept;
+   double value_notkept;
+   double value_repaired;
    int  audit;
    enum cfreport report_level;
    enum cfreport log_level;
@@ -1189,6 +1194,14 @@ struct ServerItem
    char *server;
    struct cfagent_connection *conn;
    int busy;
+   };
+
+/*************************************************************************/
+
+struct CfState
+   {
+   unsigned int expires;
+   enum statepolicy policy;
    };
 
 /*************************************************************************/

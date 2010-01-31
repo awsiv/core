@@ -115,7 +115,7 @@ else
 
 /*****************************************************************************/
 
-char *Nova_GetRemoteScalar(char *handle,char *server,int encrypted,char *recvbuffer)
+char *Nova_GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,char *recvbuffer)
 
 { char in[CF_BUFSIZE],out[CF_BUFSIZE],sendbuffer[CF_BUFSIZE];
   int cipherlen,tosend,n,plainlen;
@@ -140,7 +140,7 @@ if (LICENSES == 0)
    return "BAD:";
    }
 
-CfOut(cf_verbose,""," -> * Hailing %s:%u for remote variable \"%s\"\n",peer,(unsigned int)a.copy.portnumber,handle);
+CfOut(cf_verbose,""," -> * Hailing %s:%u for remote handle \"%s\"\n",peer,(unsigned int)a.copy.portnumber,handle);
 
 conn = NewServerConnection(a,pp);
 
@@ -155,15 +155,15 @@ if (conn == NULL)
 
 if (encrypted)
    {
-   snprintf(in,CF_BUFSIZE,"VAR %s",handle);   
+   snprintf(in,CF_BUFSIZE,"%s %s",proto,handle);   
    cipherlen = EncryptString('N',in,out,conn->session_key,cf_strlen(in)+1);
-   snprintf(sendbuffer,CF_BUFSIZE,"SVAR %d",cipherlen);
+   snprintf(sendbuffer,CF_BUFSIZE,"S%s %d",proto,cipherlen);
    memcpy(sendbuffer+CF_PROTO_OFFSET,out,cipherlen);
    tosend = cipherlen + CF_PROTO_OFFSET;
    }
 else
    {
-   snprintf(sendbuffer,CF_BUFSIZE,"VAR %s",handle);
+   snprintf(sendbuffer,CF_BUFSIZE,"%s %s",proto,handle);
    tosend = cf_strlen(sendbuffer);
    } 
  
