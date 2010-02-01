@@ -1421,15 +1421,15 @@ if ((fin = cf_fopen(name,"r")) == NULL)
 
 if (html)
    {
-   snprintf(name,CF_BUFSIZE,"software_packages.html");
+   snprintf(name,sizeof(name),"software_packages.html");
    }
 else if (xml)
    {
-   snprintf(name,CF_BUFSIZE,"software_packages.xml");
+   snprintf(name,sizeof(name),"software_packages.xml");
    }
 else
    {
-   snprintf(name,CF_BUFSIZE,"software_packages.csv");
+   snprintf(name,sizeof(name),"software_packages.csv");
    }
 
 /* Max 2016 entries - at least a week */
@@ -1454,7 +1454,7 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 
 if (html && !embed)
    {
-   snprintf(name,CF_BUFSIZE,"Software versions installed %s",VFQNAME);
+   snprintf(name,sizeof(name),"Software versions installed %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
@@ -1585,7 +1585,7 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 
 if (html && !embed)
    {
-   snprintf(name,CF_BUFSIZE,"Software updates available and outstanding for %s",VFQNAME);
+   snprintf(name,sizeof(name),"Software updates available and outstanding for %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
@@ -1665,7 +1665,7 @@ file = NULL;
 
 CfOut(cf_verbose,"","Creating patch status report...\n");
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/software_patch_status.csv",CFWORKDIR);
+ snprintf(name,sizeof(name),"%s/state/software_patch_status.csv",CFWORKDIR);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1675,15 +1675,15 @@ if ((fin = cf_fopen(name,"r")) == NULL)
 
 if (html)
    {
-   snprintf(name,CF_BUFSIZE,"software_patch_status.html");
+     snprintf(name,sizeof(name),"software_patch_status.html");
    }
 else if (xml)
    {
-   snprintf(name,CF_BUFSIZE,"software_patch_status.xml");
+   snprintf(name,sizeof(name),"software_patch_status.xml");
    }
 else
    {
-   snprintf(name,CF_BUFSIZE,"software_patch_status.csv");
+   snprintf(name,sizeof(name),"software_patch_status.csv");
    }
 
 /* Max 2016 entries - at least a week */
@@ -1709,7 +1709,7 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 
 if (html && !embed)
    {
-   snprintf(name,CF_BUFSIZE,"Software patched installed on %s",VFQNAME);
+   snprintf(name,sizeof(name),"Software patched installed on %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
