@@ -20,11 +20,23 @@ void Nova_VerifyServices(struct Attributes a,struct Promise *pp)
 
 {
  struct CfLock thislock;
- 
+
+ // allow to start Cfengine windows executor without license
+#ifdef MINGW
+
+ if ((LICENSES == 0) && (strcmp(WINSERVICE_NAME, pp->promiser) != 0))
+   {
+   return;
+   }
+
+#else
+
  if (LICENSES == 0)
-    {
-    return;
-    }
+   {
+   return;
+   }
+
+#endif
 
  thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,a,pp);
 
