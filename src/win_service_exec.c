@@ -17,7 +17,7 @@
  * sc create CfengineNovaExec binpath= "c:\Program Files\Cfengine\bin\cf-execd.exe"
  * sc config CfengineNovaExec DisplayName= "Cfengine Nova Executor"
  * sc description CfengineNovaExec "The executor daemon is a scheduler and wrapper for execution of cf-agent. It collects the output of the agent and can email it to a specified address. It can splay the start time of executions across the network and work as a class-based clock for scheduling."
- * sc config CfengineNovaExec start= auto
+ * sc config CfengineNovaExec start= demand
  * sc start CfengineNovaExec
 */
 
