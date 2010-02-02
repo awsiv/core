@@ -60,10 +60,12 @@ FILE *NovaWin_cf_popen_sh(char *command,char *type)
 FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv, int background)
 {
 
- if(LICENSES == 0)
+  // no licenses present yet when bootstrapping
+  if((LICENSES == 0) && !IsDefinedClass("bootstrap_mode"))
     {
-    return NULL;
+    return false;
     }
+
 
   // NT unsupported: uid, gid, chrootv
   if(uid != CF_UNDEFINED)
@@ -87,10 +89,11 @@ FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *
 
 FILE *NovaWin_cf_popen_shsetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv, int background)
 {
- 
- if(LICENSES == 0)
+
+  // no licenses present yet when bootstrapping
+  if((LICENSES == 0) && !IsDefinedClass("bootstrap_mode"))
     {
-    return NULL;
+    return false;
     }
  
   // we can only run in the current user environment (assumed to be root)
