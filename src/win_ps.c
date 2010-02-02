@@ -67,7 +67,8 @@ int NovaWin_LoadProcessTable(struct Item **procdata)
  struct Item *otherprocs = NULL;
  char buf[CF_BUFSIZE];
 
- if(LICENSES == 0)
+ // no licenses present yet when bootstrapping
+ if((LICENSES == 0) && !IsDefinedClass("bootstrap_mode"))
     {
     return false;
     }
@@ -122,7 +123,8 @@ int NovaWin_GetProcessSnapshot(struct Item **procdata)
  char *psLine;
  int i;
 
- if(LICENSES == 0)
+ // no licenses present yet when bootstrapping
+ if((LICENSES == 0) && !IsDefinedClass("bootstrap_mode"))
     {
     return false;
     }
