@@ -133,14 +133,14 @@ void NovaWin_GetInterfaceInfo()
           if(firstIface)
              {
              NewScalar("sys", "interface", CanonifyName(ifNameBuf), cf_str);
-             NewScalar("sys", ifType, CanonifyName(addrBuf), cf_str);
+             NewScalar("sys", ifType, addrBuf, cf_str);
              firstIface = false;
              }
 
 
-          // e.g. sys.ipv4[Local_Area_Connection] = 192_168_2_5
+          // e.g. sys.ipv4[Local_Area_Connection] = 192.168.2.5
           snprintf(buf, sizeof(buf), "%s[%s]", ifType, CanonifyName(ifNameBuf));
-          NewScalar("sys", buf, CanonifyName(addrBuf), cf_str);
+          NewScalar("sys", buf, addrBuf, cf_str);
 
           // class e.g. ipv4_192_168_2_5
           snprintf(buf, sizeof(buf), "%s_%s", ifType, addrBuf);
@@ -160,7 +160,7 @@ void NovaWin_GetInterfaceInfo()
                    snprintf(buf, sizeof(buf), "ipv4_%s", bufVal);
                    NewClass(CanonifyName(buf));
                                             
-                   snprintf(buf, sizeof(buf), "ipv4_%d[%s]", tup, CanonifyName(ifNameBuf));
+                   snprintf(buf, sizeof(buf), "ipv4_%d[%s]", tup, bufVal);
                    NewScalar("sys", buf, CanonifyName(bufVal), cf_str);
 
                    tup--;
