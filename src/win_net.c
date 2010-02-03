@@ -38,7 +38,9 @@ void NovaWin_GetInterfaceInfo()
  char buf[CF_SMALLBUF];
  char bufVal[CF_SMALLBUF];
  char ifNameBuf[CF_SMALLBUF];
- int firstIface = true;
+ int firstIfaceIp4 = true;
+ int firstIfaceIp6 = true;
+ int stored_ipv4, stored_ipv6;
  char *ifType;
  int tup, j;
 
@@ -99,27 +101,21 @@ void NovaWin_GetInterfaceInfo()
     // we only care about ethernet interfaces that are up
     if(pCurrAddresses->IfType == IF_TYPE_ETHERNET_CSMACD &&
        pCurrAddresses->OperStatus == IfOperStatusUp)
-       {          
+      {
           
-       // NOTE: May be both ipv4 and ipv6 interface, handle this ?
+       stored_ipv4 = false;
+       stored_ipv6 = false;
           
        pUnicast = pCurrAddresses->FirstUnicastAddress;
        if (pUnicast == NULL)
           {
           Debug("No unicast address found for the current interface - skipping\n");
           }
-       else  // contains a unicast address
+
+       // get at most one unicast address for each ipv4 and ipv6
+       for(;(pUnicast != NULL) && !(stored_ipv4 && stored_ipv6); pUnicast = pUnicast->Next)
           {
           
-          if(pCurrAddresses->Ipv6IfIndex == 0)  // ipv4 interface
-             {
-             ifType = "ipv4";
-             }
-          else // ipv6 interface
-             {
-             ifType = "ipv6";
-             }
-
           memset(ifNameBuf, 0, sizeof(ifNameBuf));
           wcstombs(ifNameBuf, pCurrAddresses->FriendlyName, sizeof(ifNameBuf) - 1);
 
@@ -129,13 +125,48 @@ void NovaWin_GetInterfaceInfo()
              CfOut(cf_error, "getnameinfo", "!! Could not convert ip address to string");
              break;
              }
-          
-          if(firstIface)
+
+	  // keep only one address of each type (ipv4/ipv6)
+	  if(IsIPV4Address(addrBuf))
+	    {
+	    if(stored_ipv4)
+	      {
+   	      continue;
+	      }
+
+            ifType = "ipv4";
+	    stored_ipv4 = true;
+	    }
+	  else
+	    {
+	    if(stored_ipv6)
+	      {
+   	      continue;
+	      }
+
+            ifType = "ipv6";
+	    stored_ipv6 = true;
+	    }
+
+	  
+	  // set the interface name and ipv4 & ipv6 address of first
+	  // interface only
+          if(firstIfaceIp4 && firstIfaceIp6)
              {
              NewScalar("sys", "interface", CanonifyName(ifNameBuf), cf_str);
-             NewScalar("sys", ifType, addrBuf, cf_str);
-             firstIface = false;
              }
+
+	  if((strcmp(ifType, "ipv4") == 0) && firstIfaceIp4)
+	    {
+	    NewScalar("sys", "ipv4", addrBuf, cf_str);
+            firstIfaceIp4 = false;
+	    }
+
+	  if((strcmp(ifType, "ipv6") == 0) && firstIfaceIp6)
+	    {
+	    NewScalar("sys", "ipv6", addrBuf, cf_str);
+            firstIfaceIp6 = false;
+	    }
 
 
           // e.g. sys.ipv4[Local_Area_Connection] = 192.168.2.5
@@ -149,27 +180,29 @@ void NovaWin_GetInterfaceInfo()
           // add address part-clasess and vars, if ipv4
           if(strcmp(ifType, "ipv4") == 0)
              {
-             tup = 3;
-                
-             for(j = strlen(addrBuf); j > 0; j--)
-                {
-                if(addrBuf[j] == '.')
-                   {
-                   snprintf(bufVal, j + 1, "%s", addrBuf);
-                      
-                   snprintf(buf, sizeof(buf), "ipv4_%s", bufVal);
-                   NewClass(CanonifyName(buf));
-                                            
-                   snprintf(buf, sizeof(buf), "ipv4_%d[%s]", tup, bufVal);
-                   NewScalar("sys", buf, CanonifyName(bufVal), cf_str);
+             tup = 1;
 
-                   tup--;
-                   }
-                }
+	     for(j = 0; addrBuf[j] != '\0'; j++)
+	       {
+		 if(addrBuf[j] == '.')
+		   {
+		   strcpy(bufVal, addrBuf);
+		   bufVal[j] = '\0';
+
+		   snprintf(buf, sizeof(buf), "ipv4_%s", bufVal);
+                   NewClass(CanonifyName(buf));
+		   
+                   snprintf(buf, sizeof(buf), "ipv4_%d[%s]", tup, CanonifyName(ifNameBuf));
+                   NewScalar("sys", buf, bufVal, cf_str);
+
+		   tup++;
+		   }
+	       }
+                
              }
           }
-          
-       }
+       
+        }
 
     pCurrAddresses = pCurrAddresses->Next;
     }

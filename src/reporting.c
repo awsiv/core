@@ -1841,7 +1841,7 @@ MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot variable notes %s (try again later)",name);
+   CfOut(cf_inform,"cf_fopen","Cannot open variable notes %s (try again later)",name);
    return;
    }
 
