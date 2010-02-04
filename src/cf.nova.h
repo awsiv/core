@@ -602,13 +602,13 @@ struct Rval NovaWin_FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs)
 #define NOVA_BUNDLE_DATA_INV_B "promises variables used by bundle"
 #define NOVA_BUNDLE_DATA_INV_P "promises variables used by promise"
 
-#define NOVA_HISTORYDB "history"
-#define NOVA_MEASUREDB "nova_measures"
-#define NOVA_STATICDB  "nova_static"
-#define NOVA_COMPLIANCE "promise_compliance"
-#define NOVA_REGISTRY "mswin"
-#define NOVA_CACHE "nova_cache"
-#define NOVA_LICENSE "nova_track"
+#define NOVA_HISTORYDB "history" "." DB_FEXT
+#define NOVA_MEASUREDB "nova_measures" "." DB_FEXT
+#define NOVA_STATICDB  "nova_static" "." DB_FEXT
+#define NOVA_COMPLIANCE "promise_compliance" "." DB_FEXT
+#define NOVA_REGISTRY "mswin" "." DB_FEXT
+#define NOVA_CACHE "nova_cache" "." DB_FEXT
+#define NOVA_LICENSE "nova_track" "." DB_FEXT
 
 #define CF_BIGNUMBER 999999
 

@@ -156,7 +156,11 @@ if (conn == NULL)
 if (encrypted)
    {
    snprintf(in,CF_BUFSIZE,"%s %s",proto,handle);   
-   cipherlen = EncryptString('N',in,out,conn->session_key,cf_strlen(in)+1);
+   if ((cipherlen = EncryptString('N',in,out,conn->session_key,cf_strlen(in)+1)) < 0)
+      {
+      CfOut(cf_error,""," !! Encryption failed for \"%s\"",in);
+      return recvbuffer;
+      }
    snprintf(sendbuffer,CF_BUFSIZE,"S%s %d",proto,cipherlen);
    memcpy(sendbuffer+CF_PROTO_OFFSET,out,cipherlen);
    tosend = cipherlen + CF_PROTO_OFFSET;
@@ -194,7 +198,9 @@ if (strncmp(recvbuffer,"BAD:",4) == 0)
 if (encrypted)
    {
    memcpy(in,recvbuffer,n);
-   plainlen = DecryptString('N',in,recvbuffer,conn->session_key,n);
+   if ((plainlen = DecryptString('N',in,recvbuffer,conn->session_key,n)) < 0)
+      {
+      }
    }
 
 for (rp = SERVERLIST; rp != NULL; rp = rp->next)
