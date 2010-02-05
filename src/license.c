@@ -273,7 +273,7 @@ if (!OpenDB(name,&dbp))
    return;
    }
 
-snprintf(datestr,CF_MAXVARSIZE-1,"%s",ctime(&now));
+snprintf(datestr,CF_MAXVARSIZE-1,"%s",cf_ctime(&now));
 snprintf(data,CF_MAXVARSIZE-1,"%d,%d,%d,%s",count,LICENSES,licenses,EXPIRY);
 
 Chop(datestr);

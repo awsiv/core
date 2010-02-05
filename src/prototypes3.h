@@ -1043,6 +1043,7 @@ char *cf_strchr(char *s, int c);
 char *cf_strcpy(char *s1,char *s2);
 char *MapName(char *s);
 int UseUnixStandard(char *s);
+char *cf_ctime(const time_t *timep);
 int cf_closesocket(int sd);
 int cf_mkdir(const char *path, mode_t mode);
 int cf_chmod(const char *path, mode_t mode);
@@ -1437,6 +1438,7 @@ int PatchMatch(char *n,char *v,char *a,struct Attributes attr,struct Promise *pp
 int ComparePackages(char *n,char *v,char *a,struct CfPackageItem *pi,enum version_cmp cmp);
 void ParsePackageVersion(char *version,struct Rlist *num,struct Rlist *sep);
 void SchedulePackageOp(char *name,char *version,char *arch,int installed,int matched,int novers,struct Attributes a,struct Promise *pp);
+char *PrefixLocalRepository(struct Rlist *repositories,char *package);
 int ExecPackageCommand(char *command,int verify,struct Attributes a,struct Promise *pp);
 int PackageInItemList(struct CfPackageItem *list,char *name,char *version,char *arch);
 int PrependPatchItem(struct CfPackageItem **list,char *item,struct CfPackageItem *chklist,struct Attributes a,struct Promise *pp);

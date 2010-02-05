@@ -154,7 +154,7 @@ void Nova_Title(struct CfDataView *cfv,int col)
   char title[CF_MAXVARSIZE];
   time_t now = time(NULL);
 
-strcpy(datestr,ctime(&now));  
+strcpy(datestr,cf_ctime(&now));  
 Chop(datestr);
 
 snprintf(title,CF_MAXVARSIZE-1,"%s @ %s",cfv->title,datestr);
@@ -366,7 +366,7 @@ double Nova_GetNowPosition(time_t now)
       "Sun"
       };
   
-sprintf(str,"%s",ctime(&now));
+sprintf(str,"%s",cf_ctime(&now));
 
 sscanf(str,"%s %*s %*s %s %*s",buf1,buf4,buf);
 
@@ -620,7 +620,7 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
       continue;
       }
    
-   fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\"><table><tr><td width=\"80\">&nbsp;</div></center></td></tr></table></td><td width=\"200\"><center>Last updated at<br>%s</center></td><td><a href=\"%s/mainpage.html\"><img src=\"%s/meters.png\"></a></td><td><a href=\"%s/promise_output_common.html\">Promises</a></td></tr>",ip->name,col,ctime(&(sb.st_mtime)),ip->name,ip->name,ip->name);
+   fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\"><table><tr><td width=\"80\">&nbsp;</div></center></td></tr></table></td><td width=\"200\"><center>Last updated at<br>%s</center></td><td><a href=\"%s/mainpage.html\"><img src=\"%s/meters.png\"></a></td><td><a href=\"%s/promise_output_common.html\">Promises</a></td></tr>",ip->name,col,cf_ctime(&(sb.st_mtime)),ip->name,ip->name,ip->name);
    }
 
 fprintf(fout,"</table></div>\n");

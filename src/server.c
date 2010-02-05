@@ -314,7 +314,7 @@ DeletePromise(pp);
 
 if ((pid = fork()) != 0)
    {
-   CfOut(cf_inform,"","cf-execd binary pulsar starting %.24s\n",ctime(&now));
+   CfOut(cf_inform,"","cf-execd binary pulsar starting %.24s\n",cf_ctime(&now));
    return pid;
    }
 

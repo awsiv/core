@@ -159,7 +159,7 @@ void Nova_DoFileDiff(char *file,char *destination,struct stat sb,struct stat dsb
 
 CfOut(cf_verbose,""," -> Nova Analysis of changes on file %s\n",file);
   
-strncpy(datestr,ctime(&now),CF_MAXVARSIZE-1);  
+strncpy(datestr,cf_ctime(&now),CF_MAXVARSIZE-1);  
 Chop(datestr);
 
 snprintf(logname,CF_BUFSIZE-1,"%s%c%s",CFWORKDIR,FILE_SEPARATOR,"cfdiff.log");

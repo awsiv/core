@@ -186,7 +186,7 @@ if ((fp = fopen(name,"a")) == NULL)
    return;
    }
 
-snprintf(date,CF_MAXVARSIZE-1,"%s",ctime(&now));
+snprintf(date,CF_MAXVARSIZE-1,"%s",cf_ctime(&now));
 Chop(date);
 
 if (pp->ref && pp->audit)

@@ -1341,7 +1341,7 @@ if (a.measure.history_type && cf_strcmp(a.measure.history_type,"log") == 0)  // 
       return;
       }
 
-   strncpy(sdate,ctime(&now),CF_MAXVARSIZE-1);
+   strncpy(sdate,cf_ctime(&now),CF_MAXVARSIZE-1);
    Chop(sdate);
 
    fprintf(fout,"%s,%s\n",sdate,value);

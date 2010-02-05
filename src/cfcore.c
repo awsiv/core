@@ -118,7 +118,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
     snprintf(hist,15,"%d",i);
 
-    snprintf(datestr,CF_MAXVARSIZE,"%s",ctime(&DATESTAMPS[i]));
+    snprintf(datestr,CF_MAXVARSIZE,"%s",cf_ctime(&DATESTAMPS[i]));
     Chop(datestr);
 
     /* Check is data stream has stopped for this service */
@@ -225,7 +225,7 @@ Nova_LookupAggregateClassName(i,name,description);
 snprintf(name1,CF_BUFSIZE-1,"%s.mag",name);
 snprintf(img,CF_BUFSIZE-1,"%s_mag.png",name);
 
-snprintf(datestr,CF_MAXVARSIZE,"%s",ctime(&date));
+snprintf(datestr,CF_MAXVARSIZE,"%s",cf_ctime(&date));
 Chop(datestr);
 
 fprintf(fout,"<h1>%s</h1>\n",description);
