@@ -119,6 +119,7 @@ struct PromiseParser
    char *lval;
    void *rval;
    char rtype;
+   int isbody;
 
    char *promiser;
    void *promisee;
@@ -549,6 +550,7 @@ enum fncalltype
    cfn_readtcp,
    cfn_regarray,
    cfn_regcmp,
+   cfn_regextract,
    cfn_registryvalue,
    cfn_regline,
    cfn_reglist,
@@ -656,6 +658,7 @@ struct Constraint
    char type;     /* scalar, list, or function */
    char *classes; /* only used within bodies */
    int lineno;
+   int isbody;
    struct Audit *audit;
    struct Constraint *next;
    };
@@ -1457,6 +1460,9 @@ struct Packages
    char *package_patch_name_regex;
    char *package_patch_arch_regex;
    char *package_patch_installed_regex;
+      
+   char *package_list_update_command;
+   int package_list_update_ifelapsed;
 
    char *package_version_regex;
    char *package_name_regex;
@@ -1487,6 +1493,7 @@ struct Measurement
    int select_line_number;
    char *extraction_regex;
    char *units;
+   int growing;
    };
 
 /*************************************************************************/

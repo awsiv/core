@@ -1069,11 +1069,14 @@ else
       
       fin = cf_fopen(pp->promiser,"r");
 
-      filepos = Nova_RestoreFilePosition(pp->promiser);
-
-      if (sb.st_size > filepos)
+      if (a.measure.growing)
          {
-         fseek(fin,filepos,SEEK_SET);
+         filepos = Nova_RestoreFilePosition(pp->promiser);
+         
+         if (sb.st_size > filepos)
+            {
+            fseek(fin,filepos,SEEK_SET);
+            }
          }
       }
    else if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
@@ -1457,6 +1460,21 @@ CloseDB(dbp);
 /*****************************************************************************/
 
 long Nova_RestoreFilePosition(char *filename)
-{
+
+{ char name[CF_BUFSIZE];
+  CF_DB *dbp;
+  long fileptr;
+ 
+snprintf(name,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_STATICDB);
+
+if (!OpenDB(filename,&dbp))
+   {
+   return;
+   }
+
+ReadDB(dbp,filename,&fileptr,sizeof(long));
+
+CloseDB(dbp);
+return fileptr;
 }
 
