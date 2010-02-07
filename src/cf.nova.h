@@ -366,6 +366,8 @@ void Nova_SetMeasurementPromises(struct Item **classlist);
 void Nova_LoadSlowlyVaryingObservations(void);
 void Nova_DumpSlowlyVaryingObservations(void);
 void Nova_LookupClassName(int n,char *name, char *desc);
+void Nova_SaveFilePosition(char *filename,long fileptr);
+long Nova_RestoreFilePosition(char *filename);
 
 /* processes.c */
 

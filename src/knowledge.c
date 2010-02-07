@@ -720,7 +720,7 @@ char *Nova_PromiseID(struct Promise *pp)
 
 if (LICENSES == 0)
    {
-   return "expired";
+   return "license_expired";
    }
 
 if (handle)
@@ -839,7 +839,7 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
       }
    }
 
-if (!found)
+if (!found && THIS_AGENT_TYPE == cf_common)
    {
    CfOut(cf_inform,"","Classes activated by the outcomes of promise ref \"%s\" did not occur in any promise proposal, so they are nullpotent",promise_id);
    PromiseRef(cf_inform,pp);

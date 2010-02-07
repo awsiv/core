@@ -104,7 +104,6 @@ for (i = ob_spare; i < CF_OBSERVABLES; i++)
    {
    UNITS[i] = NULL;
    }
-
 }
 
 /*****************************************************************************/
@@ -121,7 +120,7 @@ if (SLOTS[0][0][0] != 0)
    return;
    }
 
-snprintf(filename,CF_BUFSIZE-1,"%s/state/ts_key",CFWORKDIR);
+snprintf(filename,CF_BUFSIZE-1,"%s%cstate%cts_key",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
 
 if ((fin = cf_fopen(filename,"r")) == NULL)
    {
@@ -223,7 +222,7 @@ if (LICENSES == 0)
    return;
    }
 
-snprintf(filename,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_HISTORYDB);
+snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_HISTORYDB);
 
 if (!OpenDB(filename,&dbp))
    {
@@ -340,7 +339,7 @@ switch (a.measure.data_type)
 
 /* Dump the slot overview */
 
-snprintf(filename,CF_BUFSIZE-1,"%s/state/ts_key",CFWORKDIR);
+snprintf(filename,CF_BUFSIZE-1,"%s%cstate%cts_key",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
 
 if ((fout = cf_fopen(filename,"w")) == NULL)
    {
@@ -386,7 +385,7 @@ if (LICENSES == 0)
    return;
    }
 
-snprintf(filename,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_HISTORYDB);
+snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_HISTORYDB);
 
 if (!OpenDB(filename,&dbp))
    {
@@ -522,7 +521,7 @@ void Nova_SetMeasurementPromises(struct Item **classlist)
   void *stored;
   int i,ksize,vsize;
 
-snprintf(dbname,sizeof(dbname)-1,"%s/state/%s",CFWORKDIR,NOVA_MEASUREDB);
+snprintf(dbname,sizeof(dbname)-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_MEASUREDB);
 MapName(dbname);
 
 if (!OpenDB(dbname,&dbp))
@@ -618,7 +617,7 @@ void Nova_LoadSlowlyVaryingObservations()
   int ksize,vsize;
   char name[CF_BUFSIZE];
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_STATICDB);
+snprintf(name,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_STATICDB);
 
 if (!OpenDB(name,&dbp))
    {
@@ -688,14 +687,14 @@ if (LICENSES == 0)
    return;
    }
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_STATICDB);
+snprintf(name,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_STATICDB);
 
 if (!OpenDB(name,&dbp))
    {
    return;
    }
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/static_data",CFWORKDIR);
+snprintf(name,CF_BUFSIZE-1,"%s%cstate%cstatic_data",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
 
 if ((fout = cf_fopen(name,"w")) == NULL)
    {
@@ -1060,7 +1059,22 @@ else
 
    if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"file") == 0)
       {
+      long filepos = 0;
+      struct stat sb;
+
+      if (stat(pp->promiser,&sb) == -1)
+         {
+         return NULL;
+         }
+      
       fin = cf_fopen(pp->promiser,"r");
+
+      filepos = Nova_RestoreFilePosition(pp->promiser);
+
+      if (sb.st_size > filepos)
+         {
+         fseek(fin,filepos,SEEK_SET);
+         }
       }
    else if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
       {
@@ -1125,8 +1139,17 @@ else
          return NOVA_DATA[slot].output;
          }
       }
-
-   cf_pclose_def(fin,a,pp);
+   
+   if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"file") == 0)
+      {
+      long fileptr = ftell(fin);
+      fclose(fin);
+      Nova_SaveFilePosition(pp->promiser,fileptr);
+      }
+   else if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
+      {
+      cf_pclose_def(fin,a,pp);
+      }
    }
 
 if (a.contain.timeout != 0)
@@ -1332,7 +1355,7 @@ switch (a.measure.data_type)
 
 if (a.measure.history_type && cf_strcmp(a.measure.history_type,"log") == 0)  // weekly,scalar,static,log
    {
-   snprintf(filename,CF_BUFSIZE,"%s/state/%s_measure.log",CFWORKDIR,handle);
+   snprintf(filename,CF_BUFSIZE,"%s%cstate%c%s_measure.log",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,handle);
 
    if ((fout = cf_fopen(filename,"a")) == NULL)
       {
@@ -1354,7 +1377,7 @@ else // scalar or static
    CF_DB *dbp;
    char id[CF_MAXVARSIZE];
 
-   snprintf(filename,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_STATICDB);
+   snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_STATICDB);
 
    if (!OpenDB(filename,&dbp))
       {
@@ -1379,7 +1402,7 @@ void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Prom
   double delta2;
   CF_DB *dbp;
 
-  snprintf(dbname,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_MEASUREDB);
+  snprintf(dbname,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_MEASUREDB);
 
 if (!OpenDB(dbname,&dbp))
    {
@@ -1408,3 +1431,32 @@ WriteDB(dbp,eventname,&ev_new,sizeof(ev_new));
 
 CloseDB(dbp);
 }
+
+/*****************************************************************************/
+/* Level                                                                     */
+/*****************************************************************************/
+
+void Nova_SaveFilePosition(char *filename,long fileptr)
+
+{ char name[CF_BUFSIZE];
+  CF_DB *dbp;
+ 
+snprintf(name,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_STATICDB);
+
+if (!OpenDB(filename,&dbp))
+   {
+   return;
+   }
+
+WriteDB(dbp,filename,&fileptr,sizeof(long));
+
+CloseDB(dbp);
+
+}
+
+/*****************************************************************************/
+
+long Nova_RestoreFilePosition(char *filename)
+{
+}
+
