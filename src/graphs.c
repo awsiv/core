@@ -62,11 +62,6 @@ for (dirp = readdir(dirh); dirp != NULL; dirp = readdir(dirh))
       continue;
       }
 
-   if (strcmp(dirp->d_name,"localhost") == 0)
-      {
-      continue;
-      }
-
    if (strcmp(dirp->d_name,".") == 0 || strcmp(dirp->d_name,"..") == 0)
       {
       continue;
