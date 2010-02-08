@@ -229,7 +229,7 @@ if (!OpenDB(filename,&dbp))
    return;
    }
 
-CfOut(cf_error,"","Storing %s values\n",timekey);
+CfOut(cf_verbose,"","Storing %s values\n",timekey);
 
 WriteDB(dbp,timekey,&newvals,sizeof(newvals));
 
@@ -978,7 +978,7 @@ if (MEASUREMENTS[slot] != NULL)
       }
    }
 
-CfOut(cf_error,""," -> Using slot spare+%d for %s\n",slot,name);
+CfOut(cf_verbose,""," -> Using slot spare+%d for %s\n",slot,name);
 
 return slot;
 }
