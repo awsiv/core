@@ -332,6 +332,7 @@ int NovaStr2Scope(char *scope);
 
 int Nova_HashKey(char *filename,char *buffer,unsigned char digest[EVP_MAX_MD_SIZE+1],char *hash);
 int Nova_EnterpriseExpiry(char *day,char *month,char *year);
+int Nova_EnterpriseModuleExpiry(char *day,char *month,char *year);
 void Nova_CheckLicensePromise(void);
 void Nova_LogLicenseStatus(void);
 

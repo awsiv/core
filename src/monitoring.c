@@ -1027,6 +1027,12 @@ struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp)
   mode_t maskval = 0;
   struct Attributes at;
 
+if (LICENSES == 0)
+   {
+   CfOut(cf_verbose,""," !! No valid commercial license");
+   return NULL;
+   }
+  
 if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
    {
    if (!IsExecutable(GetArg0(pp->promiser)))
@@ -1314,7 +1320,13 @@ if (stream == NULL)
    CfOut(cf_verbose,""," -> No stream to measure");
    return;
    }
-  
+
+if (LICENSES == 0)
+   {
+   CfOut(cf_verbose,""," !! No valid commercial license");
+   return;
+   }
+
 CfOut(cf_verbose,""," -> Locate and log sample ...");
 
 for (ip = stream; ip != NULL; ip = ip->next)

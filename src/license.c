@@ -17,6 +17,13 @@
 
 /*****************************************************************************/
 
+int Nova_EnterpriseModuleExpiry(char *day,char *month,char *year)
+{
+ return false;
+}
+
+/*****************************************************************************/
+
 int Nova_EnterpriseExpiry(char *day,char *month,char *year)
 
 /* This function is a convenience to commerical clients during testing */
