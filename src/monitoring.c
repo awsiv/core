@@ -273,7 +273,7 @@ void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
 
 { char *handle = (char *)GetConstraint("handle",pp,CF_SCALAR);
   char filename[CF_BUFSIZE];
-  struct Item *stream;
+  struct Item *stream = NULL;
   int i,slot,count = 0;
   double new_value;
   FILE *fin,*fout;
@@ -298,7 +298,6 @@ switch (a.measure.data_type)
 
        CfOut(cf_verbose,""," -> Promise \"%s\" is numerical in nature",handle);
 
-
        stream = NovaGetMeasurementStream(a,pp);
 
        if (cf_strcmp(a.measure.history_type,"weekly") == 0)
@@ -322,8 +321,14 @@ switch (a.measure.data_type)
           this[ob_spare+slot] = NovaExtractValueFromStream(handle,stream,a,pp);
           CfOut(cf_verbose,""," -> Setting Nova slot %d=%s to %lf\n",ob_spare+slot,handle,this[ob_spare+slot]);
           }
+       else if (cf_strcmp(a.measure.history_type,"log") == 0)
+          {
+          CfOut(cf_verbose,""," -> Promise to log a numerical value");
+          NovaLogSymbolicValue(handle,stream,a,pp);
+          }
        else /* static */
           {
+          CfOut(cf_verbose,""," -> Promise to store a static numerical value");
           new_value = NovaExtractValueFromStream(handle,stream,a,pp);
           NovaNamedEvent(handle,new_value,a,pp);
           }
@@ -336,6 +341,8 @@ switch (a.measure.data_type)
        NovaLogSymbolicValue(handle,stream,a,pp);
        break;
    }
+
+// stream gets de-allocated in ReSample
 
 /* Dump the slot overview */
 
@@ -1018,6 +1025,7 @@ struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp)
   struct timespec start;
   FILE *fin = NULL;
   mode_t maskval = 0;
+  struct Attributes at;
 
 if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
    {
@@ -1032,11 +1040,35 @@ if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
       }
    }
 
-thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,a,pp);
-
-if (!MONITOR_RESTARTED && thislock.lock == NULL)
+if (MONITOR_RESTARTED)
    {
-   /* If too soon or busy then use cache */
+   // Force a measurement if restarted
+   at = a;
+   a.transaction.ifelapsed = 0;
+   }
+else
+   {
+   at = a;
+   }
+
+CFSTARTTIME = time(NULL);
+
+thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,at,pp);
+
+if (thislock.lock == NULL)
+   {
+   if (cf_strcmp(a.measure.history_type,"log") == 0)
+      {
+      DeleteItemList(NOVA_DATA[slot].output);
+      NOVA_DATA[slot].output = NULL;
+      }
+   else
+      {
+      /* If static or time-series, and too soon or busy then use a cached value
+         to avoid artificial gaps in the history */
+      }
+
+   MONITOR_RESTARTED = false;
    return NOVA_DATA[slot].output;
    }
 else
@@ -1062,8 +1094,14 @@ else
       long filepos = 0;
       struct stat sb;
 
-      if (stat(pp->promiser,&sb) == -1)
+      CfOut(cf_verbose,""," -> Stream \"%s\" is a plain file\n",pp->promiser);
+
+      if (cfstat(pp->promiser,&sb) == -1)
          {
+         CfOut(cf_inform,"stat"," !! Unable to find stream %s\n",pp->promiser);
+         YieldCurrentLock(thislock);         
+         MONITOR_RESTARTED = false;
+         
          return NULL;
          }
       
@@ -1073,7 +1111,7 @@ else
          {
          filepos = Nova_RestoreFilePosition(pp->promiser);
          
-         if (sb.st_size > filepos)
+         if (sb.st_size >= filepos)
             {
             fseek(fin,filepos,SEEK_SET);
             }
@@ -1081,7 +1119,7 @@ else
       }
    else if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
       {
-      CfOut(cf_verbose,""," -> (Setting umask to %o)\n",a.contain.umask);
+      CfOut(cf_verbose,""," -> (Setting pipe umask to %o)\n",a.contain.umask);
       maskval = umask(a.contain.umask);
 
       if (a.contain.umask == 0)
@@ -1104,12 +1142,7 @@ else
    if (fin == NULL)
       {
       cfPS(cf_error,CF_FAIL,"cf_popen",pp,a,"Couldn't open pipe to command %s\n",pp->promiser);
-
-      if (!MONITOR_RESTARTED)
-         {
-         YieldCurrentLock(thislock);
-         }
-
+      YieldCurrentLock(thislock);
       MONITOR_RESTARTED = false;
       return NOVA_DATA[slot].output;
       }
@@ -1119,12 +1152,7 @@ else
       if (ferror(fin))  /* abortable */
          {
          cfPS(cf_error,CF_TIMEX,"ferror",pp,a,"Sample stream %s\n",pp->promiser);
-
-         if (!MONITOR_RESTARTED)
-            {
-            YieldCurrentLock(thislock);
-            }
-
+         YieldCurrentLock(thislock);
          return NOVA_DATA[slot].output;
          }
 
@@ -1135,10 +1163,7 @@ else
       if (ferror(fin))  /* abortable */
          {
          cfPS(cf_error,CF_TIMEX,"ferror",pp,a,"Sample stream %s\n",pp->promiser);
-         if (!MONITOR_RESTARTED)
-            {
-            YieldCurrentLock(thislock);
-            }
+         YieldCurrentLock(thislock);
          return NOVA_DATA[slot].output;
          }
       }
@@ -1163,12 +1188,7 @@ if (a.contain.timeout != 0)
 
 cfPS(cf_inform,CF_CHG,"",pp,a," -> Collected sample of %s\n",pp->promiser);
 umask(maskval);
-
-if (!MONITOR_RESTARTED)
-   {
-   YieldCurrentLock(thislock);
-   }
-
+YieldCurrentLock(thislock);
 MONITOR_RESTARTED = false;
 
 snprintf(eventname,CF_BUFSIZE-1,"Sample(%s)",pp->promiser);
@@ -1185,6 +1205,7 @@ double NovaExtractValueFromStream(char *handle,struct Item *stream,struct Attrib
   double real_val = 0;
   struct Item *ip,*match = NULL;
 
+  
 for (ip = stream; ip != NULL; ip = ip-> next)
    {
    if (count == a.measure.select_line_number)
@@ -1196,6 +1217,7 @@ for (ip = stream; ip != NULL; ip = ip-> next)
 
    if (a.measure.select_line_matching && FullTextMatch(a.measure.select_line_matching,ip->name))
       {
+      CfOut(cf_verbose,""," ?? Look for %s regex %s\n",handle,a.measure.select_line_matching);
       found = true;
       match = ip;
       match_count++;
@@ -1287,12 +1309,21 @@ void NovaLogSymbolicValue(char *handle,struct Item *stream,struct Attributes a,s
   struct CfLock thislock;
   struct timespec start;
 
-CfOut(cf_verbose,""," -> Locate and log symbolic sample ...");
-
-for (ip = stream; ip != NULL; ip = ip-> next)
+if (stream == NULL)
    {
-   CfOut(cf_verbose,"","Passing line %d...\n",count);
+   CfOut(cf_verbose,""," -> No stream to measure");
+   return;
+   }
+  
+CfOut(cf_verbose,""," -> Locate and log sample ...");
 
+for (ip = stream; ip != NULL; ip = ip->next)
+   {
+   if (ip->name == NULL)
+      {
+      continue;
+      }
+   
    if (count == a.measure.select_line_number)
       {
       CfOut(cf_verbose,"","Found line %d by number...\n",count);
@@ -1331,7 +1362,7 @@ for (ip = stream; ip != NULL; ip = ip-> next)
 
 if (!found)
    {
-   cfPS(cf_inform,CF_FAIL,"",pp,a,"Could not locate the line containing symbolic string for promiser \"%s\"",pp->promiser);
+   cfPS(cf_inform,CF_FAIL,"",pp,a,"Promiser \"%s\" found no matching line",pp->promiser);
    return;
    }
 
@@ -1343,6 +1374,7 @@ if (match_count > 1)
 switch (a.measure.data_type)
    {
    case cf_counter:
+       CfOut(cf_verbose,""," -> Counted %d for %s\n",match_count,handle);
        snprintf(value,CF_MAXVARSIZE,"%d",match_count);
        break;
 
@@ -1356,7 +1388,7 @@ switch (a.measure.data_type)
        snprintf(value,CF_BUFSIZE,"%s",matches->name);
    }
 
-if (a.measure.history_type && cf_strcmp(a.measure.history_type,"log") == 0)  // weekly,scalar,static,log
+if (a.measure.history_type && cf_strcmp(a.measure.history_type,"log") == 0)
    {
    snprintf(filename,CF_BUFSIZE,"%s%cstate%c%s_measure.log",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,handle);
 
@@ -1370,7 +1402,7 @@ if (a.measure.history_type && cf_strcmp(a.measure.history_type,"log") == 0)  // 
    strncpy(sdate,cf_ctime(&now),CF_MAXVARSIZE-1);
    Chop(sdate);
 
-   fprintf(fout,"%s,%s\n",sdate,value);
+   fprintf(fout,"%s,%ld,%s\n",sdate,(long)now,value);
    CfOut(cf_verbose,"","Logging: %s,%s to %s\n",sdate,value,filename);
 
    cf_fclose(fout);
@@ -1388,9 +1420,7 @@ else // scalar or static
       }
 
    snprintf(id,CF_MAXVARSIZE-1,"%s:%d",handle,a.measure.data_type);
-
    WriteDB(dbp,id,value,strlen(value)+1);
-
    CloseDB(dbp);
    }
 }
@@ -1405,7 +1435,7 @@ void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Prom
   double delta2;
   CF_DB *dbp;
 
-  snprintf(dbname,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_MEASUREDB);
+snprintf(dbname,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_MEASUREDB);
 
 if (!OpenDB(dbname,&dbp))
    {
@@ -1439,41 +1469,40 @@ CloseDB(dbp);
 /* Level                                                                     */
 /*****************************************************************************/
 
-void Nova_SaveFilePosition(char *filename,long fileptr)
+void Nova_SaveFilePosition(char *name,long fileptr)
 
-{ char name[CF_BUFSIZE];
+{ char filename[CF_BUFSIZE];
   CF_DB *dbp;
  
-snprintf(name,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_STATICDB);
+snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_STATICDB);
 
 if (!OpenDB(filename,&dbp))
    {
    return;
    }
 
+CfOut(cf_verbose,"","Saving state for %s at %ld\n",filename,fileptr);
 WriteDB(dbp,filename,&fileptr,sizeof(long));
-
 CloseDB(dbp);
-
 }
 
 /*****************************************************************************/
 
-long Nova_RestoreFilePosition(char *filename)
+long Nova_RestoreFilePosition(char *name)
 
-{ char name[CF_BUFSIZE];
+{ char filename[CF_BUFSIZE];
   CF_DB *dbp;
   long fileptr;
  
-snprintf(name,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_STATICDB);
+snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_STATICDB);
 
 if (!OpenDB(filename,&dbp))
    {
-   return;
+   return 0L;
    }
 
 ReadDB(dbp,filename,&fileptr,sizeof(long));
-
+CfOut(cf_verbose,"","Resuming state for %s at %ld\n",filename,fileptr);
 CloseDB(dbp);
 return fileptr;
 }
