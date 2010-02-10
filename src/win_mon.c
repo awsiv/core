@@ -26,13 +26,13 @@ ULARGE_INTEGER ticksWorkLast = {0};
 ULARGE_INTEGER ticksTotalLast = {0};
 
 
-void NovaWin_GatherCPUData(double CF_THIS[CF_OBSERVABLES]);
+void NovaWin_GatherCPUData(double *CF_THIS)
 {
   ULARGE_INTEGER ticksWork;
   ULARGE_INTEGER ticksTotal;
   double util;
 
-  if(!GetCpuTicks(&ticksWork, &ticksTotal))
+  if(!NovaWin_GetCpuTicks(&ticksWork, &ticksTotal))
     {
       CfOut(cf_verbose, "", "Skipping this CPU measure due to lack of data");
       return;
