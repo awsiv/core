@@ -42,6 +42,7 @@ libcfnova_la_SOURCES =						\
 	win_api.c						\
 	win_file.c						\
 	win_log.c                                               \
+	win_mon.c                                               \
 	win_net.c 						\
 	win_pipe.c						\
 	win_proc.c						\

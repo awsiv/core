@@ -535,6 +535,11 @@ void NovaWin_CloseLog(void);
 void NovaWin_MakeLog(struct Item *mess,enum cfreport level);
 void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char status, struct Item *mess);
 
+/* win_mon.c */
+
+void NovaWin_GatherCPUData(double CF_THIS[CF_OBSERVABLES]);
+int NovaWin_GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal)
+
 /* win_net.c */
 
 void NovaWin_GetInterfaceInfo(void);
