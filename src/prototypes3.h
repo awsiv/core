@@ -213,7 +213,7 @@ char *CompressedArrayValue (struct CompressedArray *start, int key);
 
 /* constraints.c */
 
-struct Constraint *AppendConstraint(struct Constraint **conlist,char *lval, void *rval, char type,char *classes);
+struct Constraint *AppendConstraint(struct Constraint **conlist,char *lval, void *rval, char type,char *classes,int body);
 void DeleteConstraintList(struct Constraint *conlist);
 void *GetConstraint(char *lval,struct Promise *list,char type);
 int GetBooleanConstraint(char *lval,struct Promise *list);
@@ -235,6 +235,7 @@ struct PromiseIdent *PromiseIdExists(char *handle);
 
 long Months2Seconds(int m);
 enum cfinterval Str2Interval(char *s);
+int SyslogPriority2int(char *s);
 enum cfdbtype Str2dbType(char *s);
 char *Rlist2String(struct Rlist *list,char *sep);
 int Signal2Int(char *s);
@@ -406,6 +407,7 @@ void VerifyACL(char *file,struct Attributes a, struct Promise *pp);
 int CheckACLSyntax(char *file,struct CfACL acl,struct Promise *pp);
 int CfVerifyTablePromise(CfdbConn *cfdb,char *name,struct Rlist *columns,struct Attributes a,struct Promise *pp);
 void LogFileChange(char *file,int change,struct Attributes a,struct Promise *pp);
+void RemoteSyslog(struct Attributes a,struct Promise *pp);
 int VerifyDatabasePromise(CfdbConn *cfdb,char *database,struct Attributes a,struct Promise *pp);
 int VerifyTablePromise(CfdbConn *cfdb,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp);
 void ReportSoftware(struct CfPackageManager *list);
@@ -491,7 +493,9 @@ struct Rval FnCallIPRange(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallHostRange(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallIsVariable(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallStrCmp(struct FnCall *fp,struct Rlist *finalargs);
+struct Rval FnCallTranslatePath(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallRegCmp(struct FnCall *fp,struct Rlist *finalargs);
+struct Rval FnCallRegExtract(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallRegList(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallRegArray(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval FnCallGetIndices(struct FnCall *fp,struct Rlist *finalargs);

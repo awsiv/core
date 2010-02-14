@@ -60,6 +60,7 @@ extern struct Item *ROTATED;
 extern double FORGETRATE;
 
 extern struct Rlist *CF_STCK;
+extern int EDIT_MODEL;
 extern int CF_STCKFRAME;
 extern int CFA_BACKGROUND;
 extern int CFA_BACKGROUND_LIMIT;
@@ -88,6 +89,8 @@ extern enum cfagenttype THIS_AGENT_TYPE;
 extern int INSTALL_SKIP;
 extern int SHOWREPORTS;
 extern int FACILITY;
+extern char SYSLOGHOST[CF_MAXVARSIZE];
+extern unsigned short SYSLOGPORT;
 extern time_t PROMISETIME;
 extern int ABORTBUNDLE;
 extern struct Item *ABORTBUNDLEHEAP;
@@ -114,6 +117,10 @@ extern char FILE_SEPARATOR_STR[2];
 extern time_t DATESTAMPS[CF_OBSERVABLES];
 extern char AGGREGATION[CF_BUFSIZE];
 extern char *UNITS[CF_OBSERVABLES];
+
+extern double VAL_KEPT;
+extern double VAL_REPAIRED;
+extern double VAL_NOTKEPT;
 
 extern double METER_KEPT[meter_endmark];
 extern double METER_REPAIRED[meter_endmark];

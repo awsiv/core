@@ -13,6 +13,7 @@ libcfnova_la_LDFLAGS = -version-info 1:0:0 -no-undefined
 
 libcfnova_la_SOURCES =						\
 	cfnova.c						\
+	logging.c						\
 	acl.c							\
 	acl_linux.c						\
 	acl_nt.c                                                \

@@ -336,6 +336,10 @@ int Nova_EnterpriseModuleExpiry(char *day,char *month,char *year);
 void Nova_CheckLicensePromise(void);
 void Nova_LogLicenseStatus(void);
 
+/* logging.c */
+
+void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp);
+
 /* magnify.c */
 
 int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *host);

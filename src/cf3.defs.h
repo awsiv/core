@@ -231,6 +231,8 @@ enum cfgcontrol
    cfg_domain,
    cfg_require_comments,
    cfg_licenses,
+   cfg_syslog_host,
+   cfg_syslog_port,
    cfg_noagent
    };
     
@@ -456,10 +458,12 @@ enum cfeditorder
 #define CF_CLASSRANGE  "[a-zA-Z0-9_!&@@$|.()]+"
 #define CF_IDRANGE     "[a-zA-Z0-9_$()\\[\\].]+"
 #define CF_USERRANGE   "[a-zA-Z0-9_$.-]+"
+#define CF_IPRANGE     "[a-zA-Z0-9_$.:-]+"
 #define CF_FNCALLRANGE "[a-zA-Z0-9_().$@]+"
 #define CF_NAKEDLRANGE "@[(][a-zA-Z0-9]+[)]"
 #define CF_ANYSTRING   ".*"
 #define CF_PATHRANGE   "(\042?[a-zA-Z]:\\\\.*)|(/.*)"  // win: can start with e.g. c:\... or "c:\...  |  unix
+#define CF_LOGRANGE    "stdout|udp_syslog|(\042?[a-zA-Z]:\\\\.*)|(/.*)"
 
 #define CF_FACILITY "LOG_USER,LOG_DAEMON,LOG_LOCAL0,LOG_LOCAL1,LOG_LOCAL2,LOG_LOCAL3,LOG_LOCAL4,LOG_LOCAL5,LOG_LOCAL6,LOG_LOCAL7"
 
@@ -563,6 +567,7 @@ enum fncalltype
    cfn_splayclass,
    cfn_splitstring,
    cfn_strcmp,
+   cfn_translatepath,
    cfn_usemodule,
    cfn_userexists,
    cfn_unknown,
@@ -1022,6 +1027,7 @@ struct TransactionContext
    char *log_kept;
    char *log_repaired;
    char *log_failed;
+   int log_priority;
    char *measure_id;
    double value_kept;
    double value_notkept;

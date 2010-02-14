@@ -860,7 +860,11 @@ void Nova_Print(struct CfDataView cfv,double x,double y,char *s,int colour)
     
 { char *err,ps[CF_MAXVARSIZE];
   int x1,y1,x2,y2,margin = 1,padding=2,tab=3;
-  static char *font = "verdana";
+  static char *font1 = "DejaVuSans";
+  static char *font2 = "Vera";
+  static char *font3 = "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf";
+  char *font = font1;
+
   int brect[8];
   double size = 10.0;
 
@@ -885,7 +889,30 @@ else
    7	upper left corner, Y position
 */
 
-err = gdImageStringFT(NULL,&brect[0],0,font,size,0.,0,0,ps);
+err = gdImageStringFT(NULL,&brect[0],0,font1,size,0.,0,0,ps);
+
+if (err)
+   {
+   err = gdImageStringFT(NULL,&brect[0],0,font2,size,0.,0,0,ps);
+
+   if (err)
+      {
+      err = gdImageStringFT(NULL,&brect[0],0,font3,size,0.,0,0,ps);
+      
+      if (err)
+         {
+         font = font3;      
+         }
+      else
+         {
+         font = font2;
+         }      
+      }
+   }
+else
+   {
+   font = font1;
+   }
 
 if (err)
    {
@@ -918,10 +945,10 @@ void Nova_BigPrint(struct CfDataView cfv,double x,double y,char *s,int colour)
     
 { char *err,ps[CF_MAXVARSIZE];
   int x1,y1,x2,y2,margin = 1,padding=4,tab=3;
-  static char *font1 = "verdana";
-  static char *font2 = "Helvetica";
-  static char *font3 = "FreeSans";
-  char *font;
+  static char *font1 = "DejaVuSans";
+  static char *font2 = "Vera";
+  static char *font3 = "DejaVuSans";
+  char *font = font1;
   int brect[8];
   double size = 12.0;
 
