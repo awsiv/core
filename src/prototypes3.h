@@ -235,7 +235,7 @@ struct PromiseIdent *PromiseIdExists(char *handle);
 
 long Months2Seconds(int m);
 enum cfinterval Str2Interval(char *s);
-int SyslogPriority2int(char *s);
+int SyslogPriority2Int(char *s);
 enum cfdbtype Str2dbType(char *s);
 char *Rlist2String(struct Rlist *list,char *sep);
 int Signal2Int(char *s);
