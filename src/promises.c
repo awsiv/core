@@ -395,7 +395,7 @@ fprintf(fout,
 "body common control\n"
 "{\n"
 "bundlesequence => { \"update\" };\n"
-"host_licenses_paid => \"1\";\n";
+"host_licenses_paid => \"1\";\n"
 "}\n"
 "bundle agent update\n"
 "{\n"
