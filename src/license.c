@@ -58,7 +58,11 @@ if ((fp = fopen(name,"r")) != NULL)
 
 if (strlen(policy_server) == 0)
    {
-   CfOut(cf_inform,""," !! This host has not been bootstrapped as uid \"%d\", so a license cannot be verified",getuid());
+   if(!IsDefinedClass("bootstrap_mode"))
+     {
+     CfOut(cf_inform,""," !! This host has not been bootstrapped, so a license cannot be verified (file \"%s\" is empty)", name);
+     }
+
    LICENSES = 0;
    return false;
    }
