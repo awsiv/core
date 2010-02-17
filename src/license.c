@@ -274,6 +274,7 @@ if (OpenDB(name,&dbp))
    }
   
 snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_LICENSE);
+MapName(name);
 
 if (!OpenDB(name,&dbp))
    {
