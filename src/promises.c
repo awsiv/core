@@ -134,6 +134,7 @@ if (strcmp(previous,id) == 0)
 cf_strncpy(previous,Nova_PromiseID(pp),CF_MAXVARSIZE);
 
 snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_COMPLIANCE);
+MapName(name);
 
 if (!OpenDB(name,&dbp))
    {
@@ -211,6 +212,7 @@ time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *averag
   double lsea = CF_WEEK * 52; /* expire after a year */
 
 snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_COMPLIANCE);
+MapName(name);
 
 if (!OpenDB(name,&dbp))
    {
