@@ -24,7 +24,7 @@
 int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp)
 {
  
- if(LICENSES == 0)
+ if(!Nova_LicenseCheck())
     {
     return NULL;
     }

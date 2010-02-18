@@ -30,11 +30,6 @@ void NovaWin_MakeLog(struct Item *mess, enum cfreport level)
  char *strMsg;
  char *insertStrings[1] = {NULL};
 
- if(LICENSES == 0)
-    {
-    return;
-    }
-
  if(logHandle == NULL)  // OpenLog not called or failed
     {
     return;
@@ -230,7 +225,7 @@ void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char
  struct Rlist *rp;
  int peebCopied = 0;
 
- if(LICENSES == 0)
+ if(!BOOTSTRAP && !Nova_LicenseCheck())
     {
     return;
     }
