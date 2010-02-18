@@ -442,10 +442,10 @@ fprintf(fout,
 "    action => immediate,\n"
 "    classes => success(\"config\");\n\n"
 
-"     \"$(sys.workdir)\\bin-twin\"\n"
+"     \"$(sys.workdir)\\bin-twin\\.\"\n"
 "         comment => \"Make sure we maintain a clone of the binaries for updating\",\n"
-"       copy_from => u_cp(\"$(sys.workdir)\bin\"),\n"
-"    depth_search => u_recurse(\"inf\"),\n"
+"       copy_from => u_cp(\"$(sys.workdir)\\bin\\.\"),\n"
+"    depth_search => u_recurse(\"1\"),\n"
 "          action => u_immediate;\n"
 
 "\n"
