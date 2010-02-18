@@ -151,7 +151,7 @@ int NovaWin_VerifyOwner(char *file,struct Promise *pp,struct Attributes attr)
   int sidMatch = false;
   DWORD getRes;
 
-  if(!Nova_LicenseCheck())
+  if(!Nova_CheckLicense())
      {
      return false;
      }
@@ -336,7 +336,7 @@ void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attribute
 {
 Debug("NovaWin_VerifyFileAttributes()\n");
 
-if(!Nova_LicenseCheck())
+if(!Nova_CheckLicense())
    {
    return;
    }
@@ -398,7 +398,7 @@ int NovaWin_GetDiskUsage(char *file,enum cfsizes type)
 {
   ULARGE_INTEGER bytesLenCaller, bytesFree, kbLenCaller, kbFree;
 
-  if(!Nova_LicenseCheck())
+  if(!Nova_CheckLicense())
      {
      return 0;
      }

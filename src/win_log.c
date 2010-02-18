@@ -225,7 +225,7 @@ void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char
  struct Rlist *rp;
  int peebCopied = 0;
 
- if(!BOOTSTRAP && !Nova_LicenseCheck())
+ if(!BOOTSTRAP && !Nova_CheckLicense())
     {
     return;
     }
