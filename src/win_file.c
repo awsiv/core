@@ -151,7 +151,7 @@ int NovaWin_VerifyOwner(char *file,struct Promise *pp,struct Attributes attr)
   int sidMatch = false;
   DWORD getRes;
 
-  if(!Nova_CheckLicense())
+  if(!BOOTSTRAP && !Nova_CheckLicense())
      {
      return false;
      }
