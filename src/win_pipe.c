@@ -61,7 +61,7 @@ FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *
 {
 
   // no licenses present yet when bootstrapping
-  if(!Nova_CheckLicense() && !BOOTSTRAP)
+  if(!BOOTSTRAP && !Nova_CheckLicense())
     {
     return false;
     }
@@ -91,7 +91,7 @@ FILE *NovaWin_cf_popen_shsetuid(char *command,char *type,uid_t uid,gid_t gid,cha
 {
 
   // no licenses present yet when bootstrapping
-  if(!Nova_CheckLicense() && !BOOTSTRAP)
+  if(!BOOTSTRAP && !Nova_CheckLicense())
     {
     return false;
     }

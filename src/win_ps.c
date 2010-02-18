@@ -68,7 +68,7 @@ int NovaWin_LoadProcessTable(struct Item **procdata)
  char buf[CF_BUFSIZE];
 
  // no licenses present yet when bootstrapping
- if(!Nova_CheckLicense() && !BOOTSTRAP)
+ if(!BOOTSTRAP && !Nova_CheckLicense())
     {
     return false;
     }
@@ -124,7 +124,7 @@ int NovaWin_GetProcessSnapshot(struct Item **procdata)
  int i;
 
  // no licenses present yet when bootstrapping
- if(!Nova_CheckLicense() && !BOOTSTRAP)
+ if(!BOOTSTRAP && !Nova_CheckLicense())
     {
     return false;
     }
