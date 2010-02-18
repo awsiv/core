@@ -58,7 +58,7 @@ if ((fp = fopen(name,"r")) != NULL)
 
 if (strlen(policy_server) == 0)
    {
-   if(!IsDefinedClass("bootstrap_mode"))
+   if(!BOOTSTRAP)
      {
      CfOut(cf_inform,""," !! This host has not been bootstrapped, so a license cannot be verified (file \"%s\" is empty)", name);
      }
@@ -204,7 +204,7 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&ret
 
 if (licenses == 0)
    {
-   if (getuid() == 0 || THIS_AGENT_TYPE != cf_know)
+   if (!BOOTSTRAP && (getuid() == 0 || THIS_AGENT_TYPE != cf_know))
       {
       CfOut(cf_error,""," !! Your configuration promises no host_licenses_paid in common control");
       CfOut(cf_error,""," !! By doing this, you confirm the terms of contract already legally binding");
@@ -294,4 +294,17 @@ WriteDB(dbp,datestr,data,sizeof(data));
 CloseDB(dbp);
 DeletePromise(pp);
 YieldCurrentLock(thislock);
+}
+
+/*****************************************************************************/
+
+int Nova_CheckLicense(void)
+{
+  if(LICENSES == 0)
+    {
+    CfOut(cf_error, "", "!! Invalid license limits functionality");
+    return false;
+    }
+
+  return true;
 }

@@ -68,7 +68,7 @@ int NovaWin_LoadProcessTable(struct Item **procdata)
  char buf[CF_BUFSIZE];
 
  // no licenses present yet when bootstrapping
- if((LICENSES == 0) && !IsDefinedClass("bootstrap_mode"))
+ if(!Nova_CheckLicense() && !BOOTSTRAP)
     {
     return false;
     }
@@ -124,7 +124,7 @@ int NovaWin_GetProcessSnapshot(struct Item **procdata)
  int i;
 
  // no licenses present yet when bootstrapping
- if((LICENSES == 0) && !IsDefinedClass("bootstrap_mode"))
+ if(!Nova_CheckLicense() && !BOOTSTRAP)
     {
     return false;
     }
@@ -223,7 +223,7 @@ int NovaWin_GatherProcessUsers(struct Item **userList, int *userListSz, int *num
  struct Item *currItem;
  char user[CF_MAXVARSIZE];
 
- if(LICENSES == 0)
+ if(Nova_CheckLicense())
     {
     return false;
     }
