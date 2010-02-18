@@ -44,7 +44,7 @@ void NovaWin_GetInterfaceInfo()
  char *ifType;
  int tup, j;
 
- if(!Nova_CheckLicense())
+ if(!BOOTSTRAP && !Nova_CheckLicense())
     {
     return;
     }

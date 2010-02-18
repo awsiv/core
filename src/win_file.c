@@ -336,7 +336,7 @@ void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attribute
 {
 Debug("NovaWin_VerifyFileAttributes()\n");
 
-if(!Nova_CheckLicense())
+if(!BOOSTRAP && !Nova_CheckLicense())
    {
    return;
    }
