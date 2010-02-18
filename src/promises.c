@@ -450,7 +450,7 @@ fprintf(fout,
 
 "\n"
 "processes:\n"
-"config::\n"
+"config.!windows::\n"
 "\"cf-execd\" restart_class => \"start_exec\";\n"
 "config.policy_host::\n"
 "\"cf-serverd\" restart_class => \"start_server\";\n"
