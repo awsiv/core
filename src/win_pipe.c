@@ -355,13 +355,6 @@ static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle)
       return false;
     }
 
-  if(PIPES == NULL)
-    {
-      ThreadUnlock(cft_count);
-      CfOut(cf_error,"","!! No pipe descriptors are saved");
-      return false;
-    }
-
   i = 0;
   while(PIPES[i].pipe != pipe)
     {
