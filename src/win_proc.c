@@ -24,9 +24,9 @@
 int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp)
 {
  
- if(!BOOTSTRAP && !Nova_CheckLicense())
+ if(!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_DoAllSignals"))
     {
-    return NULL;
+    return 0;
     }
  
   int kill = false;

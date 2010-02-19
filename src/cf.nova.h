@@ -335,7 +335,7 @@ int Nova_EnterpriseExpiry(char *day,char *month,char *year);
 int Nova_EnterpriseModuleExpiry(char *day,char *month,char *year);
 void Nova_CheckLicensePromise(void);
 void Nova_LogLicenseStatus(void);
-int Nova_CheckLicense(void);
+int Nova_CheckLicenseWin(char *pos);
 
 /* logging.c */
 

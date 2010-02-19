@@ -36,7 +36,7 @@ static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle);
 
 FILE *NovaWin_cf_popen(char *command,char *type)
 {
- if(!Nova_CheckLicense())
+ if(!Nova_CheckLicenseWin("NovaWin_cf_popen"))
     {
     return NULL;
     }
@@ -48,7 +48,7 @@ FILE *NovaWin_cf_popen(char *command,char *type)
 FILE *NovaWin_cf_popen_sh(char *command,char *type)
 {
 
-  if(!Nova_CheckLicense())
+  if(!Nova_CheckLicenseWin("NovaWin_cf_popen_sh"))
     {
     return NULL;
     }
@@ -61,7 +61,7 @@ FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *
 {
 
   // no licenses present yet when bootstrapping
-  if(!BOOTSTRAP && !Nova_CheckLicense())
+  if(!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_cf_popensetuid"))
     {
     return false;
     }
@@ -91,7 +91,7 @@ FILE *NovaWin_cf_popen_shsetuid(char *command,char *type,uid_t uid,gid_t gid,cha
 {
 
   // no licenses present yet when bootstrapping
-  if(!BOOTSTRAP && !Nova_CheckLicense())
+  if(!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_cf_popen_shsetuid"))
     {
     return false;
     }

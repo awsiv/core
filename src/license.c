@@ -298,12 +298,11 @@ YieldCurrentLock(thislock);
 
 /*****************************************************************************/
 
-int Nova_CheckLicense(void)
+int Nova_CheckLicenseWin(char *pos)
 {
   if(LICENSES == 0)
     {
-    CfOut(cf_error, "", "!! Invalid license limits functionality");
-    return false;
+    CfOut(cf_error, "", "!! Invalid Enterprise license limits functionality (%s requires a license)", pos);
     }
 
   return true;
