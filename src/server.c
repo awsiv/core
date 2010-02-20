@@ -14,6 +14,22 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+/*****************************************************************************/
+
+void Nova_TranslatePath(char *new,char *old)
+{
+if (strncmp(old,"/var/cfengine",strlen("/var/cfengine")))
+   {
+   snprintf(new,CF_BUFSIZE-1,"%s%s",CFWORKDIR,old+strlen("/var/cfengine"));
+   }
+else
+   {
+   strncpy(new,old,CF_BUFSIZE-1);
+   }
+}
+
+/*****************************************************************************/
+
 void Nova_RegisterLiteralServerData(char *handle,struct Promise *pp)
 
 {
