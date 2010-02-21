@@ -194,10 +194,14 @@ void Nova_DrawMagQAxes(struct CfDataView *cfv,int col)
 gdImageLine(cfv->im, cfv->origin_x, cfv->origin_y, cfv->max_x, cfv->origin_y, col);
 gdImageLine(cfv->im, cfv->origin_x, cfv->origin_y, cfv->origin_x, cfv->max_y, col);
 
+gdImageLine(cfv->im, cfv->max_x, cfv->max_y, cfv->origin_x, cfv->max_y, col);
+gdImageLine(cfv->im, cfv->max_x, cfv->origin_y, cfv->max_x, cfv->max_y, col);
+
 for (hour = 0; hour < 4; hour++)
    {
    x = cfv->origin_x + hour * cfv->width/4;
-   gdImageLine(cfv->im, x, cfv->origin_y-ticksize, x, cfv->origin_y+ticksize, col);
+
+   gdImageLine(cfv->im, x, cfv->origin_y-ticksize, x, cfv->max_y, col);
    gdImageString(cfv->im, gdFontGetLarge(),x,cfv->origin_y+2*ticksize,hours[hour],col);
    }
 
@@ -214,7 +218,6 @@ if (dq < 0.001)
    y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
 
    gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y, col);
-
    snprintf(qstr,15,"%.1f",q);
    gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
    }

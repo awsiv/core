@@ -166,7 +166,7 @@ gdImageString(cfv->im,
 void Nova_MakePalette(struct CfDataView *cfv)
 
 { int i,hint,r,g,b;
-  int startgrey = 120,startblue = 150, startgreen = 80;
+  int startgrey = 220,startblue = 150, startgreen = 80;
 
 BLACK = gdImageColorAllocate(cfv->im, 0, 0, 0);
 

@@ -304,8 +304,8 @@ void Nova_DrawQAxes(struct CfDataView *cfv,int col)
   int origin_y = cfv->height+cfv->margin;
   int max_x = cfv->margin+cfv->width;
   int max_y = cfv->margin;
-  int day;
-  int x,y;
+  int day,x,y;
+  double q,dq;
   int ticksize = cfv->height/50;
   static char *days[7] = {"Mon","Tue","Wed","Thu","Fri","Sat","Sun"};
   
@@ -319,6 +319,40 @@ for (day = 0; day < 7; day++)
    gdImageLine(cfv->im, x, origin_y-ticksize, x, origin_y+ticksize, col);   
    gdImageString(cfv->im, gdFontGetLarge(),x,origin_y+2*ticksize,days[day],col);
    }
+
+
+// Make 5 gradations
+
+dq = cfv->range/5.0;
+
+if (dq < 0.001)
+   {
+   char qstr[16];
+
+   q = cfv->max;
+   x = Nova_ViewPortX(cfv,0);
+   y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
+
+   gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y, col);
+
+   snprintf(qstr,15,"%.1f",q);
+   gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
+   }
+else
+   {
+   for (q = cfv->min; q <= cfv->min+cfv->range; q += dq)
+      {
+      char qstr[16];
+
+      x = Nova_ViewPortX(cfv,0);
+      y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
+      
+      gdImageLine(cfv->im, x-2*ticksize, y, x+2*ticksize, y, col);
+      snprintf(qstr,15,"%.1f",q);
+      gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
+      }
+   }
+
 }
 
 

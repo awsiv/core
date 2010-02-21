@@ -1956,3 +1956,111 @@ CloseDB(dbp);
 METER_KEPT[meter_comms_hour] = 100.0*kept/(kept+repaired+not_kept);
 METER_REPAIRED[meter_comms_hour] = 100.0*repaired/(kept+repaired+not_kept);
 }
+
+/*****************************************************************************/
+
+void Nova_SummarizeLicense(char *stylesheet,char *header,char *footer,char *webdriver)
+
+{ CF_DB *dbp;
+  CF_DBC *dbcp;
+  int ksize,vsize;
+  void *value;
+  char *key;
+  int min = 9999999,max = -1,count,lic1,lic2;
+  char name[CF_BUFSIZE];
+  long ltime;
+  time_t now,dt,then,sum_t = 0,ex_t = 0,lic_t = 0;
+  double average,granted;
+  FILE *fout;
+  
+CfOut(cf_verbose,""," -> Writing license summary");
+
+snprintf(name,CF_MAXVARSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_LICENSE);
+MapName(name);
+
+then = time(NULL);
+
+if (OpenDB(name,&dbp))
+   {
+   if (NewDBCursor(dbp,&dbcp))
+      {
+      while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
+         {
+         if (value == NULL)
+            {
+            continue;
+            }
+
+         count = lic1 = lic2 = 0;
+         ltime = 0L;
+         
+         sscanf(value,"%d,%d,%d,%ld",&count,&lic1,&lic2,&ltime);
+
+         now = (time_t)ltime;
+         
+         if (count > max)
+            {
+            max = count;
+            }
+
+         if (count < min)
+            {
+            min = count;
+            }
+
+         dt = now - then;
+
+         if (dt > 0)
+            {
+            ex_t += dt*count;
+            lic_t += dt*lic1;
+            sum_t += dt;
+            }
+
+         if (then > 0)
+            {
+            then = now;
+            }
+         else
+            {
+            then = time(NULL);
+            }
+         }
+
+      DeleteDBCursor(dbp,dbcp);
+      }
+   CloseDB(dbp);
+   }
+
+if ((fout = fopen("license_report.html","w")) == NULL)
+   {
+   CfOut(cf_error,"fopen"," !! Unable to write license report");
+   return;
+   }
+
+snprintf(name,sizeof(name),"Mean observable license usage");
+NovaHtmlHeader(fout,name,stylesheet,webdriver,header);
+fprintf(fout,"<div id=\"reporttext\"><table class=\"border\">\n");
+
+if (sum_t > 0)
+   {
+   average = (double)ex_t/(double)sum_t;
+   granted = (double)lic_t/(double)sum_t;
+   fprintf(fout,"<tr><td>Minimum observed level</td><td> &ge; %d</td><tr>\n",min);
+   fprintf(fout,"<tr><td>Maximum observed level</td><td> &ge; %d hosts</td><tr>\n",max);
+   fprintf(fout,"<tr><td>Mean actual usage</td><td> &ge; %lf</td></tr>\n",average);
+   fprintf(fout,"<tr><td>Mean expected usage</td><td> &le; %lf</td><tr>\n",granted);
+   fprintf(fout,"<tr><td>Mean utilization</td><td> &le; %lf</td><tr>\n",average/granted*100.0);
+   }
+else
+   {
+   fprintf(fout,"<tr><td>Minimum observed level</td><td> &ge; %d</td><tr>\n",min);
+   fprintf(fout,"<tr><td>Maximum observed level</td><td> &ge; %d hosts</td><tr>\n",max);
+   fprintf(fout,"<tr><td>Mean usage</td><td> unknown</td><tr>\n");
+   }
+
+fprintf(fout,"</table></div>\n");
+NovaHtmlFooter(fout,footer);
+
+fclose(fout);
+}

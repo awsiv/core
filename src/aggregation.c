@@ -17,7 +17,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-void Nova_Aggregate()
+void Nova_Aggregate(char *stylesheet,char *banner,char *footer,char *webdriver)
 
 { struct CfDataView cfv;
   struct stat sb;
@@ -43,12 +43,19 @@ if (!S_ISDIR(sb.st_mode))
    return;
    }
 
+CfOut(cf_verbose,""," -> Entering the core in %s\n",AGGREGATION);
+chdir(AGGREGATION);
+
+Nova_SummarizeLicense(stylesheet,banner,footer,webdriver);
+
 #ifdef HAVE_LIBGD
 Banner("Nova rendering host reports");
 Nova_BuildGraphs(&cfv);
 #endif
 }
 
+/*****************************************************************************/
+/* Level                                                                     */
 /*****************************************************************************/
 
 void Nova_MagProbe()

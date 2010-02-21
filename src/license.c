@@ -19,7 +19,7 @@
 
 int Nova_EnterpriseModuleExpiry(char *day,char *month,char *year)
 {
- return false;
+return false;
 }
 
 /*****************************************************************************/
@@ -235,12 +235,13 @@ void Nova_LogLicenseStatus()
   struct Attributes dummyattr;
   struct CfLock thislock;
   struct QPoint entry;
+  struct Rlist *counter = NULL;
   int ksize,vsize;
   void *value;
   char *key;
 
 dummyattr.transaction.ifelapsed = 10080; // 1 week
-dummyattr.transaction.expireafter = 10080; // 1 week
+dummyattr.transaction.expireafter = 10180; // 1 week
 
 thislock = AcquireLock("license_track",VUQNAME,CFSTARTTIME,dummyattr,pp);
 
@@ -268,25 +269,37 @@ if (OpenDB(name,&dbp))
             {
             continue;
             }
-         
-         count++;
+
+         IdempPrependRScalar(&counter,key+1,CF_SCALAR);
          }
 
       DeleteDBCursor(dbp,dbcp);
       }
    CloseDB(dbp);
    }
-  
-snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_LICENSE);
+
+count = RlistLen(counter);
+DeleteRlist(counter);
+
+if (count == 0)
+   {
+   count = 1;
+   }
+
+CfOut(cf_verbose,""," -> Detected current number of used licenses at approximately %d/%d\n",count,LICENSES);
+
+snprintf(name,CF_MAXVARSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_LICENSE);
 MapName(name);
 
 if (!OpenDB(name,&dbp))
    {
+   DeletePromise(pp);
+   YieldCurrentLock(thislock);
    return;
    }
 
 snprintf(datestr,CF_MAXVARSIZE-1,"%s",cf_ctime(&now));
-snprintf(data,CF_MAXVARSIZE-1,"%d,%d,%d,%s",count,LICENSES,licenses,EXPIRY);
+snprintf(data,CF_MAXVARSIZE-1,"%d,%d,%d,%ld",count,LICENSES,licenses,(long)now);
 
 Chop(datestr);
 WriteDB(dbp,datestr,data,sizeof(data));

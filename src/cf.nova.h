@@ -195,7 +195,7 @@ ACCESS_MODE Nova_ParsePermTypeNt(char *ace);
 
 /* aggregation.c */
 
-void Nova_Aggregate(void);
+void Nova_Aggregate(char *stylesheet,char *banner,char *footer,char *webdriver);
 void Nova_WriteSignalData(FILE *fout,char *filename);
 void Nova_MagProbe(void);
 void Nova_PackNerveBundle(void);
@@ -424,6 +424,7 @@ void Nova_SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet
 void Nova_NoteVarUsage(void);
 void Nova_GrandSummary(void);
 void SummarizeComms(void);
+void Nova_SummarizeLicense(char *stylesheet,char *banner,char *footer,char *webdriver);
 
 /* services.c */
 
