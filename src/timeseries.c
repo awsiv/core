@@ -167,6 +167,11 @@ for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
 
 fclose(fp);
 
+if (cfv->max > CF_MAX_LIMIT)
+   {
+   cfv->max = CF_MAX_LIMIT;
+   }
+
 strcpy(name,filename);
 strcat(name,".q");
   
@@ -260,6 +265,11 @@ cfv->origin_y = cfv->height+cfv->margin;
 cfv->max_x = cfv->margin+cfv->width;
 cfv->max_y = cfv->margin;
 
+if (cfv->error_scale > CF_MAX_ERROR_LIMIT)
+   {
+   cfv->error_scale = CF_MAX_ERROR_LIMIT;
+   }
+
 if (cfv->max == cfv->min)
    {
    if (cfv->error_scale > 0)
@@ -333,7 +343,7 @@ if (dq < 0.001)
    x = Nova_ViewPortX(cfv,0);
    y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
 
-   gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y, col);
+   gdImageLine(cfv->im, x-2*ticksize, y, x+2*ticksize, y, col);
 
    snprintf(qstr,15,"%.1f",q);
    gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);

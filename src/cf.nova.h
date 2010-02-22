@@ -38,6 +38,8 @@
 #define CF_MAGMARGIN 0
 #define CF_LHISTORYMARGIN 0
 #define CF_TRIBE_SIZE 25
+#define CF_MAX_ERROR_LIMIT 50
+#define CF_MAX_LIMIT 999999
 
 /*****************************************************************************/
 

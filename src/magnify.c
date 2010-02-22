@@ -143,6 +143,16 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
    cfv->bars[(int)sx] = rs;
    }
 
+if (cfv->max > CF_MAX_LIMIT)
+   {
+   cfv->max = CF_MAX_LIMIT;
+   }
+
+if (cfv->error_scale > CF_MAX_ERROR_LIMIT)
+   {
+   cfv->error_scale = CF_MAX_ERROR_LIMIT;
+   }
+
 cfv->origin_x = cfv->margin;
 cfv->origin_y = cfv->height+cfv->margin;
 

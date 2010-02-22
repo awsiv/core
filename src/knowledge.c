@@ -374,6 +374,7 @@ fprintf(fp,"  \"file_diffs report\" comment => \"Latest observed differences to 
 fprintf(fp,"  \"hashes report\" comment => \"File hash values measured (change detection)\";\n");
 fprintf(fp,"  \"installed software report\" comment => \"Software already installed on system\";\n");
 fprintf(fp,"  \"lastseen report\" comment => \"Time and frequency of communications with peers\";\n");
+fprintf(fp,"  \"license report\" comment => \"License utilization statistics\";\n");
 fprintf(fp,"  \"monitor summary report\" comment => \"Pseudo-real-time measurement\";\n");
 fprintf(fp,"  \"performance report\" comment => \"Time cost of verifying system promises\";\n");
 fprintf(fp,"  \"promise report\" comment => \"Per-promise average compliance report\";\n");
