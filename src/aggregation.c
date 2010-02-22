@@ -96,6 +96,7 @@ void Nova_PackNerveBundle()
    "software_patches_avail.html",
    "software_patch_status.html",
    "promise_output_common.html",
+   "value_report.html",
    NULL
    };
 

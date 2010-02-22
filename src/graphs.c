@@ -975,9 +975,9 @@ void Nova_CountHostIssues(struct Item *item)
  
 Nova_GetLevels(kept,repaired,item->name,names);
 
-issues += (100.0 - kept[3] - repaired[3]);
-issues += (100.0 - kept[6] - repaired[6]);
-issues += (100.0 - kept[7] - repaired[7]);
+issues += (100 - kept[3] - repaired[3]);
+issues += (100 - kept[6] - repaired[6]);
+issues += (100 - kept[7] - repaired[7]);
 
 // By this reckoning, red > 100, yellow > 50 green < 50
 
@@ -987,6 +987,7 @@ if (issues < 0)
    }
 
 item->counter = issues;
+item->time = 100 - kept[2] + repaired[2];
 }
 
 #endif

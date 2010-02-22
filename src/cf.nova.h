@@ -402,6 +402,7 @@ void Nova_CreateFailSafe(char *name);
 void Nova_SetDocRoot(char *name);
 void Nova_EnterpriseContext(void);
 void Nova_PreSanitizePromise(struct Promise *pp);
+void Nova_TrackValue(char *date,double kept,double repaired, double notkept);
 
 /* registry.c */
 
@@ -423,6 +424,7 @@ void Nova_ReportPatches(struct CfPackageManager *list);
 void Nova_SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_SummarizeUpdates(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
+void Nova_SummarizeValue(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_NoteVarUsage(void);
 void Nova_GrandSummary(void);
 void SummarizeComms(void);
@@ -626,6 +628,7 @@ struct Rval NovaWin_FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs)
 #define NOVA_REGISTRY "mswin" "." DB_FEXT
 #define NOVA_CACHE "nova_cache" "." DB_FEXT
 #define NOVA_LICENSE "nova_track" "." DB_FEXT
+#define NOVA_VALUE "nova_value" "." DB_FEXT
 
 #define CF_BIGNUMBER 999999
 
@@ -636,6 +639,13 @@ struct month_days
    {
    char *m;
    int d;
+   };
+
+struct promise_value
+   {
+   double kept;
+   double repaired;
+   double notkept;
    };
 
 #define CF_REPAIR_LOG    "nova_repair.log"

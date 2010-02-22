@@ -381,6 +381,7 @@ fprintf(fp,"  \"promise report\" comment => \"Per-promise average compliance rep
 fprintf(fp,"  \"promises repaired report\" comment => \"Promises that were recently repaired\";\n");
 fprintf(fp,"  \"promises not kept report\" comment => \"Promises that were recently unkept\";\n");
 fprintf(fp,"  \"setuid report\" comment => \"Known setuid programs found on system\";\n");
+fprintf(fp,"  \"value report\" comment => \"Value estimate / ROI of cfengine configuration\";\n");
 fprintf(fp,"  \"variables report\" comment => \"Current variable values expanded on different hosts\";\n");
 fprintf(fp,"  \"installed patches report\"  comment => \"Patches not yet installed, but published by vendor\";\n");
 fprintf(fp,"  \"available patches report\"  comment => \"Patches already installed on system\";\n");

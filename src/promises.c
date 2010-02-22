@@ -248,6 +248,46 @@ return *lastseen;
 
 /***************************************************************/
 
+void Nova_TrackValue(char *date,double kept,double repaired, double notkept)
+
+{ char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],key[CF_SMALLBUF],name[CF_BUFSIZE];
+  CF_DB *dbp;
+  struct promise_value value,new_value;
+
+// Strip out the date resolution so we keep only each day of the year
+  
+sscanf(date,"%*s %s %s %*s %s",month,day,year);
+snprintf(key,CF_SMALLBUF-1,"%s %s %s",day,month,year);
+
+snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_VALUE);
+MapName(name);
+
+if (!OpenDB(name,&dbp))
+   {
+   return;
+   }
+
+if (ReadDB(dbp,key,&value,sizeof(struct promise_value)))
+   {
+   new_value.kept = value.kept + kept;
+   new_value.repaired = value.repaired + repaired;
+   new_value.notkept = value.notkept + notkept;
+   }
+else
+   {
+   new_value.kept = kept;
+   new_value.repaired = repaired;
+   new_value.notkept = notkept;
+   }
+
+CfOut(cf_verbose,""," -> recording value (%.4lf,%.4lf,%.4lf)",kept,repaired,notkept);
+WriteDB(dbp,key,&new_value,sizeof(struct promise_value));
+
+CloseDB(dbp);
+}
+
+/***************************************************************/
+
 void Nova_CheckAutoBootstrap()
 
 { struct stat sb;

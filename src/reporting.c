@@ -1959,6 +1959,76 @@ METER_REPAIRED[meter_comms_hour] = 100.0*repaired/(kept+repaired+not_kept);
 
 /*****************************************************************************/
 
+void Nova_SummarizeValue(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+
+{ char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],name[CF_BUFSIZE];
+  CF_DB *dbp;
+  CF_DBC *dbcp;
+  int ksize,vsize;
+  void *value;
+  char *key;
+  FILE *fout;
+  time_t now = time(NULL);
+  struct promise_value pt;
+  struct Item *ip,*data = NULL;
+
+// Strip out the date resolution so we keep only each day of the year
+  
+snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_VALUE);
+MapName(name);
+
+if (!OpenDB(name,&dbp))
+   {
+   return;
+   }
+
+if (NewDBCursor(dbp,&dbcp))
+   {
+   while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
+      {
+      if (value == NULL)
+         {
+         continue;
+         }
+
+      memcpy(&pt,value,sizeof(pt));
+      snprintf(name,CF_BUFSIZE,"<td>%.4lf</td><td>%.4lf</td><td>%.4lf</td>",pt.kept,pt.repaired,pt.notkept);
+      AppendItem(&data,key,name);
+      }
+   }
+
+CloseDB(dbp);
+
+if ((fout = fopen("value_report.html","w")) == NULL)
+   {
+   CfOut(cf_error,"fopen"," !! Unable to write value report");
+   return;
+   }
+
+snprintf(name,sizeof(name),"Value return from Cfengine on %s",VFQNAME);
+NovaHtmlHeader(fout,name,stylesheet,web,head);
+fprintf(fout,"<div id=\"reporttext\">");
+fprintf(fout,"<p>Last measured on %s",ctime(&now));
+fprintf(fout,"<table class=\"border\">\n");
+
+fprintf(fout,"<tr><th>Day</th><th>Promises Kept</th><th>Repairs</th><th>Not kept</th></tr>\n");
+
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   fprintf(fout,"<tr><td>%s</td>%s</tr>\n",ip->name,ip->classes);
+   }
+
+fprintf(fout,"</table></div>\n");
+NovaHtmlFooter(fout,foot);
+
+fclose(fout);
+
+    
+DeleteItemList(data);
+}
+
+/*****************************************************************************/
+
 void Nova_SummarizeLicense(char *stylesheet,char *header,char *footer,char *webdriver)
 
 { CF_DB *dbp;
@@ -1966,7 +2036,7 @@ void Nova_SummarizeLicense(char *stylesheet,char *header,char *footer,char *webd
   int ksize,vsize;
   void *value;
   char *key;
-  int min = 9999999,max = -1,count,lic1,lic2;
+  int min = 9999999,max = -1,count,lic1,lic2,i = 0;
   char name[CF_BUFSIZE];
   long ltime;
   time_t now,dt,then,sum_t = 0,ex_t = 0,lic_t = 0;
@@ -1996,6 +2066,7 @@ if (OpenDB(name,&dbp))
          
          sscanf(value,"%d,%d,%d,%ld",&count,&lic1,&lic2,&ltime);
 
+         i++;
          now = (time_t)ltime;
          
          if (count > max)
@@ -2038,9 +2109,12 @@ if ((fout = fopen("license_report.html","w")) == NULL)
    return;
    }
 
+now = time(NULL);
 snprintf(name,sizeof(name),"Mean observable license usage");
 NovaHtmlHeader(fout,name,stylesheet,webdriver,header);
-fprintf(fout,"<div id=\"reporttext\"><table class=\"border\">\n");
+fprintf(fout,"<div id=\"reporttext\">");
+fprintf(fout,"<p>Last measured on %s based on %d samples",ctime(&now),i);
+fprintf(fout,"<table class=\"border\">\n");
 
 if (sum_t > 0)
    {

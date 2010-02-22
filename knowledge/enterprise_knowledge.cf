@@ -180,7 +180,8 @@ topics:
    "request for change"       association => a("might be an example of","intentions","might be a");
    "request for change"       association => a("might be an example of","promise proposals","might be a");       
 
-   "software licenses" comment => "Terms of agreements, and renewal status";
+   "software licenses" comment => "Terms of agreements, and renewal status",
+                              association => a("are reported in","license report","reports on");       
 
    "service level agreements" comment => "Promises made to clients about services";
 
@@ -468,6 +469,31 @@ occurrences:
    "reports/(.*)/software_packages.html"
 
             represents => { "on $(match.1)" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+
+ value_report::
+
+   "reports/(.*)/value_report.html"
+
+            represents => { "on $(match.1)" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+
+ software_licenses::
+
+   "reports/license_report.html"
+            represents => { "site usage" },
+            representation => "file",
+            path_root => "$(enterprise_start.doc_root)",
+            web_root => "";
+ 
+ license_report::
+
+   "reports/license_report.html"
+            represents => { "site usage" },
             representation => "file",
             path_root => "$(enterprise_start.doc_root)",
             web_root => "";
