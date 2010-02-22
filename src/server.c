@@ -18,7 +18,7 @@
 
 void Nova_TranslatePath(char *new,char *old)
 {
-if (strncmp(old,"/var/cfengine",strlen("/var/cfengine")))
+if (strncmp(old,"/var/cfengine",strlen("/var/cfengine")) == 0)
    {
    snprintf(new,CF_BUFSIZE-1,"%s%s",CFWORKDIR,old+strlen("/var/cfengine"));
    }
