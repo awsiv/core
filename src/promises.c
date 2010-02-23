@@ -593,10 +593,11 @@ void Nova_SetDocRoot(char *name)
 
 { char file[CF_BUFSIZE];
   FILE *fout,*fin;
+  struct stat sb;
 
 snprintf(file,CF_BUFSIZE-1,"%s/document_root.dat",CFWORKDIR);
 
-if (strlen(name) > 0)
+if (stat(file,&sb) == -1 && strlen(name) > 0)
    {
    if ((fout = fopen(file,"w")) == NULL)
       {
