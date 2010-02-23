@@ -1,4 +1,19 @@
+1.1.0
+	Regular expressions in file paths supported on Windows by using
+	forward slash as path separator.
 
+	CPU utilization report on Windows.
+
+	Users logged in report on Windows.
+
+	On the Windows cf-serverd, requests for /var/cfengine are
+	translated to $(sys.workdir)\Cfengine, and path separators are
+	automatically adjusted ("/" becomes "\"). This yields support for
+	more platform-independent promises and allows for automatic
+	copying of reports from Windows clients to the policy server.
+
+	Scale on graphs in the Knowledge Map, and different background
+	color gives more readability.
 
 1.0.0
 	Reports added to cf-report for compliance, setuid, file_changes etc.
