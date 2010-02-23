@@ -112,6 +112,7 @@ FILE *NovaWin_cf_popen_shsetuid(char *command,char *type,uid_t uid,gid_t gid,cha
 int NovaWin_cf_pclose(FILE *pp)
 {
   HANDLE procHandle;
+  int closeRes;
   
   if(!PopDescriptorPair(pp, &procHandle))
     {
@@ -123,8 +124,15 @@ int NovaWin_cf_pclose(FILE *pp)
     {
       CfOut(cf_error,"CloseHandle","!! Could not close process handle");
     }
+  
+  closeRes = fclose(pp);
+  
+  if(closeRes != 0)
+    {
+    CfOut(cf_error, "fclose", "!! Could not close pipe stream");
+    }
 
-  return _close((long)pp);
+  return closeRes;
 }
 
 
@@ -151,7 +159,10 @@ int NovaWin_cf_pclose_def(FILE *pfp, struct Attributes a, struct Promise *pp)
       CfOut(cf_error, "CloseHandle", "!! Could not close process handle");
     }
 
-  _close((long)pfp);
+  if(fclose(pfp) != 0)
+    {
+    CfOut(cf_error, "fclose", "!! Could not close pipe stream (in def)");
+    }
 
   if(exitCode == 0)
     {
