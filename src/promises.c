@@ -334,27 +334,27 @@ snprintf(name,CF_BUFSIZE-1,"%s/inputs/promises.cf",CFWORKDIR);
 
 if (cfstat(name,&sb) == -1)
    {
-   CfOut(cf_error,""," -> No previous policy has been cached on this host");
+   CfOut(cf_cmdout,""," -> No previous policy has been cached on this host");
    }
 else
    {
-   CfOut(cf_error,""," -> An existing policy was cached on this host in %s/inputs",CFWORKDIR);
+   CfOut(cf_cmdout,""," -> An existing policy was cached on this host in %s/inputs",CFWORKDIR);
    have_policy = true;
    }
 
 if (strlen(POLICY_SERVER) > 0)
    {
-   CfOut(cf_error,""," -> Assuming the policy distribution point at: %s:WORKDIR/masterfiles\n",POLICY_SERVER);
+   CfOut(cf_cmdout,""," -> Assuming the policy distribution point at: %s:WORKDIR/masterfiles\n",POLICY_SERVER);
    }
 else
    {
    if (have_policy)
       {
-      CfOut(cf_error,""," -> No policy distribution host was discovered - it might be contained in the existing policy, otherwise this will function autonomously\n");
+      CfOut(cf_cmdout,""," -> No policy distribution host was discovered - it might be contained in the existing policy, otherwise this will function autonomously\n");
       }
    else if (repaired)
       {
-      CfOut(cf_error,""," -> No policy distribution host was defined - use --policy-server to set one\n",POLICY_SERVER);
+      CfOut(cf_cmdout,""," -> No policy distribution host was defined - use --policy-server to set one\n",POLICY_SERVER);
       }
    }
 
@@ -580,7 +580,7 @@ fprintf(fout,
 "\n"
         );
 
-CfOut(cf_error,""," -> No policy failsafe discovered, assume temporary bootstrap vector\n");
+CfOut(cf_cmdout,""," -> No policy failsafe discovered, assume temporary bootstrap vector\n");
 
 fclose(fout);
 }
@@ -620,6 +620,6 @@ else
       }
    }
 
-CfOut(cf_error,""," -> Assuming document root for a knowledge base in %s",name);
+CfOut(cf_cmdout,""," -> Assuming document root for a knowledge base in %s",name);
 }
 

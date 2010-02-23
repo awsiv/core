@@ -223,7 +223,7 @@ int NovaWin_GatherProcessUsers(struct Item **userList, int *userListSz, int *num
  struct Item *currItem;
  char user[CF_MAXVARSIZE];
 
- if(Nova_CheckLicenseWin("NovaWin_GatherProcessUsers"))
+ if(!Nova_CheckLicenseWin("NovaWin_GatherProcessUsers"))
     {
     return false;
     }
