@@ -20,6 +20,8 @@
 
 #ifdef MINGW
 
+#include "win_disphelper.h"
+
 DISPATCH_OBJ(wmiSvc);
 
 
