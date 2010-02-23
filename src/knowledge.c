@@ -736,7 +736,7 @@ else if (pp->audit)
    }
 else
    {
-   snprintf(id,CF_MAXVARSIZE,"Anonymous_promise");
+   snprintf(id,CF_MAXVARSIZE,"unlabelled_promise");
    }
 
 return id;

@@ -2124,7 +2124,7 @@ if (sum_t > 0)
    fprintf(fout,"<tr><td>Maximum observed level</td><td> &ge; %d hosts</td><tr>\n",max);
    fprintf(fout,"<tr><td>Mean actual usage</td><td> &ge; %lf</td></tr>\n",average);
    fprintf(fout,"<tr><td>Mean expected usage</td><td> &le; %lf</td><tr>\n",granted);
-   fprintf(fout,"<tr><td>Mean utilization</td><td> &le; %lf</td><tr>\n",average/granted*100.0);
+   fprintf(fout,"<tr><td>Mean utilization</td><td> &le; %lf %%</td><tr>\n",average/granted*100.0);
    }
 else
    {
