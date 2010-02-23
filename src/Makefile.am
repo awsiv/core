@@ -41,6 +41,7 @@ libcfnova_la_SOURCES =						\
 	coordinates.c						\
 	cfcore.c                                                \
 	win_api.c						\
+        win_disphelper.c                                        \
 	win_file.c						\
 	win_log.c                                               \
 	win_mon.c                                               \
@@ -50,7 +51,8 @@ libcfnova_la_SOURCES =						\
 	win_ps.c                                                \
 	win_service_exec.c                                      \
 	win_sysinfo.c                                           \
-	win_user.c
+	win_user.c                                              \
+        win_wmi.c
 
 
 #

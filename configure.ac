@@ -782,7 +782,7 @@ dnl	AC_CHECK_LIB(nss_nis, yp_get_default_domain)
    mingw*)
         AC_DEFINE(MINGW, 1, [Native NT build.])
         AC_DEFINE(NT)
-        LIBS="$LIBS -liphlpapi -lws2_32 -lpsapi"
+        LIBS="$LIBS -liphlpapi -lws2_32 -lpsapi -lole32 -loleaut32 -luuid"
         ;;
 
    sco*)

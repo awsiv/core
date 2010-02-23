@@ -604,6 +604,11 @@ struct UidList *NovaWin_Rlist2SidList(struct Rlist *uidnames, struct Promise *pp
 struct Rval NovaWin_FnCallUserExists(struct FnCall *fp,struct Rlist *finalargs);
 struct Rval NovaWin_FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs);
 
+/* win_wmi.c */
+
+int NovaWin_WmiInitialize(void);
+int NovaWin_WmiDeInitialize(void);
+
 #endif  /* MINGW */
 
 
