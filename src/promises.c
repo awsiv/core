@@ -493,20 +493,19 @@ fprintf(fout,
 "config.!windows::\n"
 "\"cf-execd\" restart_class => \"start_exec\";\n"
 "config.policy_host::\n"
-"\"cf-serverd\" restart_class => \"start_server\";\n"
+"\"cf-serverd\" restart_class => \"start_server\";\n\n"
+
 "commands:\n"
 "start_exec.!windows::\n"
 "\"$(sys.cf_execd)\","
 "classes => outcome(\"executor\");\n"
-
 "start_server::\n"
 "\"$(sys.cf_serverd)\"\n"
 "action => ifwin_bg,\n"
-"classes => outcome(\"server\");\n"
-
+"classes => outcome(\"server\");\n\n"
 
 "services:\n"
-"windows::\n"
+"config.windows::\n"
 "\"CfengineNovaExec\"\n"
 "   service_policy => \"start\",\n"
 "   service_method => bootstart,\n"
