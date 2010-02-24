@@ -295,6 +295,10 @@ int NovaWin_uname(struct utsname *buf)
     }
 
  snprintf(buf->sysname, _SYS_NMLN, "WINDOWS_NT-%lu.%lu.%lu %s", osInfo.dwMajorVersion, osInfo.dwMinorVersion, osInfo.dwBuildNumber, osType);
+ 
+ WINVER_MAJOR = osInfo.dwMajorVersion;
+ WINVER_MINOR = osInfo.dwMinorVersion;
+ WINVER_BUILD = osInfo.dwBuildNumber;
 
  // hostname
  if(!GetMyHostInfo(hostName, ip))
