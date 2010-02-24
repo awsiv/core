@@ -1471,7 +1471,7 @@ else
    ev_new.Q.var = 0.0;
    }
 
-CfOut(cf_verbose,""," -> Wrote scalar named event %s = (%.2lf,%.2lf,%.2lf) -- no time-series slot needed",eventname,ev_new.Q.q,ev_new.Q.expect,sqrt(ev_new.Q.var));
+CfOut(cf_verbose,""," -> Wrote scalar named event \"%s\" = (%.2lf,%.2lf,%.2lf)",eventname,ev_new.Q.q,ev_new.Q.expect,sqrt(ev_new.Q.var));
 WriteDB(dbp,eventname,&ev_new,sizeof(ev_new));
 
 CloseDB(dbp);
