@@ -28,23 +28,21 @@ DISPATCH_OBJ(wmiSvc);
 
 
 
-int NovaWin_GetInstalledPkgs(struct CfPackageItem *pkgList, struct Attributes a, struct Promise *pp)
+int NovaWin_GetInstalledPkgs(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp)
 {
-  if(!NovaWin_CheckWmiInitialized("NovaWin_GetInstalledPkgs"))
-    {
-      return false;
-    }
+if (!NovaWin_CheckWmiInitialized("NovaWin_GetInstalledPkgs"))
+   {
+   return false;
+   }
 
-
-  if(WINVER_MAJOR < 6) // 2003/XP or earlier versions
-    {
-      return NovaWin_WmiGetInstalledPkgsOld(pkgList, a, pp);
-    }
-  else
-    {
-      return NovaWin_WmiGetInstalledPkgsNew(pkgList, a, pp);
-    }
-
+if (WINVER_MAJOR < 6) // 2003/XP or earlier versions
+   {
+   return NovaWin_WmiGetInstalledPkgsOld(pkgList, a, pp);
+   }
+else
+   {
+   return NovaWin_WmiGetInstalledPkgsNew(pkgList, a, pp);
+   }
 }
 
 
@@ -52,48 +50,55 @@ int NovaWin_GetInstalledPkgs(struct CfPackageItem *pkgList, struct Attributes a,
 /*                             WMI FUNCTIONS                                 */
 /*****************************************************************************/
 
-int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem *pkgList, struct Attributes a, struct Promise *pp)
-{
-  char *pkgName = NULL;
+int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp)
 
-  DISPATCH_OBJ(colSoftware);
+{ char *pkgName = NULL;
 
-  if(!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
-    {
-      CfOut(cf_error, "dhGetValue", "!! Could not execute query \"%s\"", "SELECT PackageName FROM Win32_Product");
+DISPATCH_OBJ(colSoftware);
+
+if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
+   {
+   CfOut(cf_error, "dhGetValue", "!! Could not execute query \"%s\"", "SELECT PackageName FROM Win32_Product");
+   
+   SAFE_RELEASE(colSoftware);
+   return false;
+   }
+
+
+FOR_EACH(softwareItem, colSoftware, NULL)
+   {
+   dhGetValue(L"%s", &pkgName, softwareItem, L".PackageName");
+   
+   
+   if(pkgName == NULL)
+      {
+      CfOut(cf_error, "", "!! Empty package name for installed package");
+      }
+   else
+      {
+
+// a.packages.package_name_regex
+      // a.packages.package_version_regex
+
+//  strncpy(version,ExtractFirstReference(a.packages.package_version_regex,package),CF_MAXVARSIZE-1);
+ 
       
-      SAFE_RELEASE(colSoftware);
-      return false;
-    }
-
-
-  FOR_EACH(softwareItem, colSoftware, NULL)
-    {
-      dhGetValue(L"%s", &pkgName, softwareItem, L".PackageName");
-	    
-
-      if(pkgName == NULL)
-	{
-	  CfOut(cf_error, "", "!! Empty package name for installed package");
-	}
-      else
-	{
-	  if(!PrependPackageItem(&pkgList, pkgName, "9.9.9", VSYSNAME.machine, a, pp))
-	    {
-	      CfOut(cf_error, "", "!! Could not prepend package name to list");
-	    }
-	  
-	  dhFreeString(pkgName);
-	  pkgName = NULL;
-	}
+      if (!PrependPackageItem(pkgList, pkgName, "9.9.9", VSYSNAME.machine, a, pp))
+         {
+         CfOut(cf_error, "", "!! Could not prepend package name to list");
+         }
       
+      dhFreeString(pkgName);
+      pkgName = NULL;
+      }
+   
+   
+   } NEXT(softwareItem);
 
-    } NEXT(softwareItem);
-  
 
-  SAFE_RELEASE(colSoftware);
-  
-  return true;
+SAFE_RELEASE(colSoftware);
+
+return true;
 }
 
 /*****************************************************************************/
