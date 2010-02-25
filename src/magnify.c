@@ -54,8 +54,9 @@ Nova_MakePalette(cfv);
 
 for (y = 0; y < cfv->height+2*cfv->margin; y++)
    {
-   hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
-   gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
+   //hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
+   //gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
+   gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,LIGHTGREY);
    }
 
 /* Done initialization */
@@ -68,7 +69,6 @@ if (!Nova_ReadMagTimeSeries(cfv,oldfile))
    return false;
    }
 
-Nova_DrawMagQAxes(cfv,BLACK);
 Nova_PlotMagQFile(cfv,LIGHTRED,GREEN,YELLOW);
 Nova_Title(cfv,BLUE);
 
@@ -131,17 +131,29 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
       cfv->max = rq;
       }
 
+   if (rs > cfv->max)
+      {
+      cfv->max = rs;
+      }
+
    cfv->error_scale = (cfv->error_scale+rs)/2;
 
    if (rq < cfv->min)
       {
       cfv->min = rq;
       }
+   
+   if (rs < cfv->min)
+      {
+      cfv->min = rs;
+      }
 
    cfv->data_E[(int)sx] = ry;
    cfv->data_q[(int)sx] = rq;
    cfv->bars[(int)sx] = rs;
    }
+
+cfv->max++;
 
 if (cfv->max > CF_MAX_LIMIT)
    {
@@ -191,62 +203,6 @@ fclose(fp);
 return true;
 }
 
-/**********************************************************************/
-
-void Nova_DrawMagQAxes(struct CfDataView *cfv,int col)
-
-{ int hour,x,y;
-  double q,dq;
-  time_t now;
-  int ticksize = cfv->height/50;
-  static char *hours[4] = { "t-4 hrs","t-3 hrs","t-2 hrs","t-1 hrs"};
-
-gdImageLine(cfv->im, cfv->origin_x, cfv->origin_y, cfv->max_x, cfv->origin_y, col);
-gdImageLine(cfv->im, cfv->origin_x, cfv->origin_y, cfv->origin_x, cfv->max_y, col);
-
-gdImageLine(cfv->im, cfv->max_x, cfv->max_y, cfv->origin_x, cfv->max_y, col);
-gdImageLine(cfv->im, cfv->max_x, cfv->origin_y, cfv->max_x, cfv->max_y, col);
-
-for (hour = 0; hour < 4; hour++)
-   {
-   x = cfv->origin_x + hour * cfv->width/4;
-
-   gdImageLine(cfv->im, x, cfv->origin_y-ticksize, x, cfv->max_y, col);
-   gdImageString(cfv->im, gdFontGetLarge(),x,cfv->origin_y+2*ticksize,hours[hour],col);
-   }
-
-// Make 5 gradations
-
-dq = cfv->range/5.0;
-
-if (dq < 0.001)
-   {
-   char qstr[16];
-
-   q = cfv->max;
-   x = Nova_ViewPortX(cfv,0);
-   y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
-
-   gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y, col);
-   snprintf(qstr,15,"%.1f",q);
-   gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
-   }
-else
-   {
-   for (q = cfv->min; q <= cfv->min+cfv->range; q += dq)
-      {
-      char qstr[16];
-
-      x = Nova_ViewPortX(cfv,0);
-      y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
-      
-      gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y, col);
-      snprintf(qstr,15,"%.1f",q);
-      gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
-      }
-   }
-}
-
 /*******************************************************************/
 
 void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3)
@@ -268,14 +224,55 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
       }
    else
       {
+      int width = cfv->max_x / CF_MAGDATA;
+
       low = a-s;
-      high = (a+s > cfv->origin_y)? cfv->origin_y : a+s;
+      high = a+s;
 
       av = Nova_ViewPortY(cfv,a,CF_MAGMARGIN);
-      over = Nova_ViewPortY(cfv,low,CF_MAGMARGIN);
-      under = Nova_ViewPortY(cfv,high,CF_MAGMARGIN);
+      over = Nova_ViewPortY(cfv,high,CF_MAGMARGIN);
+      under = Nova_ViewPortY(cfv,low,CF_MAGMARGIN);
+
+      /* Error bars - note upside down y */
+
+      if (under > cfv->origin_y)
+         {
+         under = cfv->origin_y;
+         }
+
+      if (over < cfv->max_y)
+         {
+         over = cfv->max_y;   
+         }
       
-      if (y < (a-s) || ly < (a-s)) /* Mark above 1 dev, note upside down coords +/-  */
+      gdImageSetThickness(cfv->im,width);
+      gdImageLine(cfv->im,x,over,x,av,col1);
+      gdImageLine(cfv->im,x,av,x,under,col2);
+      }
+   
+   lx = x;
+   ly = y;
+   }
+
+Nova_DrawMagQAxes(cfv,BLACK);
+
+lx = 0;
+ly = 0;
+
+for (sx = 0; sx < CF_MAGDATA; sx++)
+   {
+   x = Nova_ViewPortX(cfv,sx);
+   y = Nova_ViewPortY(cfv,cfv->data_q[(int)sx],CF_MAGMARGIN);
+   a = cfv->data_E[(int)sx];
+   s = cfv->bars[(int)sx];
+
+   if (lx == 0 && ly == 0)
+      {
+      gdImageSetPixel(cfv->im,x,y,col1);
+      }
+   else
+      {
+      if (y > over || ly > over)
          {
          gdImageSetThickness(cfv->im,4);
          gdImageLine(cfv->im,lx,ly,x,y,RED);
@@ -285,11 +282,6 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
          gdImageSetThickness(cfv->im,3);
          gdImageLine(cfv->im,lx,ly,x,y,col3);
          }
-
-      /* Error bars */
-      gdImageSetThickness(cfv->im,2);
-      gdImageLine(cfv->im,x,under,x,av,col1);
-      gdImageLine(cfv->im,x,av,x,over,col2);
       }
    
    lx = x;
@@ -344,5 +336,64 @@ fprintf(fp,"</div></div>\n");
 NovaHtmlFooter(fp,FOOTER);
 fclose(fp);
 }
+
+/**********************************************************************/
+
+void Nova_DrawMagQAxes(struct CfDataView *cfv,int col)
+
+{ int hour,x,y;
+  double q,dq;
+  time_t now;
+  int ticksize = cfv->height/50;
+  static char *hours[4] = { "t-4 hrs","t-3 hrs","t-2 hrs","t-1 hrs"};
+
+gdImageSetThickness(cfv->im,1);
+        
+gdImageLine(cfv->im, cfv->origin_x, cfv->origin_y, cfv->max_x, cfv->origin_y, col);
+gdImageLine(cfv->im, cfv->origin_x, cfv->origin_y, cfv->origin_x, cfv->max_y, col);
+
+gdImageLine(cfv->im, cfv->max_x, cfv->max_y, cfv->origin_x, cfv->max_y, col);
+gdImageLine(cfv->im, cfv->max_x, cfv->origin_y, cfv->max_x, cfv->max_y, col);
+
+for (hour = 0; hour < 4; hour++)
+   {
+   x = cfv->origin_x + hour * cfv->width/4;
+
+   gdImageLine(cfv->im, x, cfv->origin_y-ticksize, x, cfv->max_y, col);
+   gdImageString(cfv->im, gdFontGetLarge(),x,cfv->origin_y+2*ticksize,hours[hour],col);
+   }
+
+// Make 5 gradations
+
+dq = cfv->range/5.0;
+
+if (dq < 0.001)
+   {
+   char qstr[16];
+
+   q = cfv->max;
+   x = Nova_ViewPortX(cfv,0);
+   y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
+
+   gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y, col);
+   snprintf(qstr,15,"%.1f",q);
+   gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
+   }
+else
+   {
+   for (q = cfv->min; q <= cfv->min+cfv->range; q += dq)
+      {
+      char qstr[16];
+
+      x = Nova_ViewPortX(cfv,0);
+      y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
+      
+      gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y, col);
+      snprintf(qstr,15,"%.1f",q);
+      gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
+      }
+   }
+}
+
 
 #endif

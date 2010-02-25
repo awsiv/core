@@ -53,8 +53,9 @@ Nova_MakePalette(cfv);
 
 for (y = 0; y < cfv->height+2*cfv->margin; y++)
    {
-   hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
-   gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
+   //hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
+   //gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
+   gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,LIGHTGREY);
    }
 
 /* Done initialization */
@@ -235,7 +236,7 @@ for (ip = spectrum; ip != NULL; ip=ip->next)
    }
 
 gdImageSetThickness(cfv->im,4);
-gdImageLine(cfv->im,origin_x+32*scale_x,origin_y,origin_x+cfv->width/2,-1500,lightred);
+gdImageLine(cfv->im,origin_x+32*scale_x,origin_y,origin_x+cfv->width/2,cfv->max_y,lightred);
 }
 
 /*******************************************************************/

@@ -30,3 +30,21 @@ return cfv->origin_x + (x * cfv->scale_x);
 }
 
 
+/******************************************************************/
+
+int Nova_ViewScaleX(struct CfDataView *cfv,double x)
+
+{
+return (x * cfv->scale_x);
+}
+
+
+/******************************************************************/
+
+int Nova_ViewScaleY(struct CfDataView *cfv,double y)
+
+{
+return (y * cfv->scale_y);
+}
+
+

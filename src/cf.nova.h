@@ -222,6 +222,8 @@ void Nova_MatrixOperation(double **A,double *v,int dim);
 
 int Nova_ViewPortY(struct CfDataView *cfv,double y,double offset);
 int Nova_ViewPortX(struct CfDataView *cfv,double x);
+int Nova_ViewScaleX(struct CfDataView *cfv,double x);
+int Nova_ViewScaleY(struct CfDataView *cfv,double y);
 
 /* copernicus.c */
 

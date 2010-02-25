@@ -15,7 +15,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY;
+extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,ORANGE;
 extern int GREYS[CF_SHADES];
 extern int BLUES[CF_SHADES];
 extern char *UNITS[];
@@ -67,8 +67,9 @@ Nova_MakePalette(cfv);
 
 for (y = 0; y < cfv->height+2*cfv->margin; y++)
    {
-   hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
-   gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
+   //hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
+   //gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
+   gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,LIGHTGREY);
    }
 
 /* Done initialization */
@@ -378,7 +379,6 @@ void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3)
   double rx,ry,rs,sx = 0,s;
   double low,high;
   time_t now = time(NULL);
- 
 
 // First plot average
 
@@ -395,14 +395,17 @@ for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
       }
    else
       {
-      low = y-s;
+      low = (y-s < max_y)? max_y : y-s;
       high = (y+s > origin_y)? origin_y : y+s;
 
-      gdImageSetThickness(cfv->im,3);
-      gdImageLine(cfv->im,lx,ly,x,y,col2);
-      
       gdImageSetThickness(cfv->im,1);
-      gdImageLine(cfv->im,x,low,x,high,col1);
+      gdImageLine(cfv->im,lx,ly,x,y,col2);
+
+      // Error bars
+
+      gdImageSetThickness(cfv->im,1);
+      gdImageLine(cfv->im,x,low,x,y,col1);
+      gdImageLine(cfv->im,x,y,x,high,col2);
       }
    
    lx = x;
@@ -424,8 +427,8 @@ for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
       }
    else
       {
-      gdImageSetThickness(cfv->im,1);
-      gdImageLine(cfv->im,lx,ly,x,y,col3);
+      gdImageSetThickness(cfv->im,3);
+      gdImageLine(cfv->im,lx,ly,x,y,ORANGE);
       }
    
    lx = x;

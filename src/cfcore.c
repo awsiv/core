@@ -156,7 +156,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        continue;
        }
     
-    fprintf(fp,"<th nowrap><font color=\"#888888\">%s</font><br><br><a href=\"%s\">%s</a><br><small>Latest data<br>%s</small></th>\n",host,url,name,datestr);
+    fprintf(fp,"<th nowrap><div id=\"ip\">%s</div><br><br><a href=\"%s\">%s</a><br><br><small>Latest data<br>%s</small></th>\n",host,url,name,datestr);
 
     terminated1 = terminated2 = terminated3  = false;
     
