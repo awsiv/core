@@ -27,7 +27,7 @@
 /* static prototypes */
 static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp);
 static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp);
-
+static int Nova_PrependPackageItem(struct CfPackageItem **list,char *name,char *version,char *arch,struct Attributes a,struct Promise *pp);
 
 DISPATCH_OBJ(wmiSvc);
 
@@ -36,16 +36,12 @@ int NovaWin_GetInstalledPkgs(struct CfPackageItem **pkgList, struct Attributes a
 {
   int res;
   
-  if(!NovaWin_WmiInitialize())
+  if(!NovaWin_WmiInitialize())  // deinitialized before agents exit
     {
-      CfOut(cf_error, "", "!! Could not initialize WMI");
+      CfOut(cf_error, "", "!! Could not initialize WMI to get installed packages");
       return false;
     }
   
-  if (!NovaWin_CheckWmiInitialized("NovaWin_GetInstalledPkgs"))
-    {
-      return false;
-    }
   
 if (WINVER_MAJOR < 6) // 2003/XP or earlier versions
    {
@@ -54,11 +50,6 @@ if (WINVER_MAJOR < 6) // 2003/XP or earlier versions
 else
    {
      res = NovaWin_WmiGetInstalledPkgsNew(pkgList, a, pp);
-   }
-
- if(!NovaWin_WmiDeInitialize())
-   {
-     CfOut(cf_error, "", "!! Could not deinitialize WMI");
    }
 
  return res;
@@ -103,7 +94,7 @@ if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
           
         Debug("pkgname=\"%s\", pkgver=\"%s\"\n", name, version);
       
-      if (!PrependPackageItem(pkgList, name, version, VSYSNAME.machine, a, pp))
+      if (!Nova_PrependPackageItem(pkgList, name, version, VSYSNAME.machine, a, pp))
          {
          CfOut(cf_error, "", "!! Could not prepend package name to list");
          }
@@ -166,7 +157,7 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
           
           Debug("pkgname=\"%s\", pkgver=\"%s\"\n", caption, version);
 
-	  if(!PrependPackageItem(pkgList, caption, version, VSYSNAME.machine, a, pp))
+	  if(!Nova_PrependPackageItem(pkgList, caption, version, VSYSNAME.machine, a, pp))
 	    {
 	      CfOut(cf_error, "", "!! Could not prepend package name to list");
 	    }
@@ -208,24 +199,19 @@ void NovaWin_PrintWmiError(char *str)
 
 /*****************************************************************************/
 
-int NovaWin_CheckWmiInitialized(char *caller)
-{
-  if(wmiSvc == NULL)
-    {
-      CfOut(cf_error, "", "!! WMI used unitialized in \"%s\"", caller);
-      return false;
-    }
-  
-  return true;
-}
-
-/*****************************************************************************/
-
 int NovaWin_WmiInitialize(void)
 /*
- * Initialize WMI for this thread
+ * Initialize WMI for this thread, safe to call when already initialized.
  */
 {
+  Debug("NovaWin_WmiInitialize()\n");
+
+  if(wmiSvc != NULL)
+    {
+      Debug("WMI already initialized\n");
+      return true;
+    }
+
   if(FAILED(dhInitialize(TRUE)))
     {
       CfOut(cf_error, "dhInitialize", "!! Could not initialize disphelper");
@@ -250,11 +236,58 @@ int NovaWin_WmiInitialize(void)
 /*****************************************************************************/
 
 int NovaWin_WmiDeInitialize(void)
+/* Safe to call even when not initialized */
 {
-  SAFE_RELEASE(wmiSvc);
-  dhUninitialize(TRUE);
-	
+  Debug("NovaWin_WmiDeInitialize()\n");
+
+  if(wmiSvc != NULL)
+    {
+      SAFE_RELEASE(wmiSvc);
+      dhUninitialize(TRUE);
+    }
+
+  wmiSvc = NULL;
+
   return true;
 }
 
 #endif  /* MINGW */
+
+/*****************************************************************************/
+
+/* Copy from Cf3 verify_packages.c due to linker issues */
+
+static int Nova_PrependPackageItem(struct CfPackageItem **list,char *name,char *version,char *arch,struct Attributes a,struct Promise *pp)
+
+{ struct CfPackageItem *pi;
+
+if (strlen(name) == 0 || strlen(version) == 0 || strlen(arch) == 0)
+   {
+   return false;
+   }
+
+if ((pi = (struct CfPackageItem *)malloc(sizeof(struct CfPackageItem))) == NULL)
+   {
+   CfOut(cf_error,"malloc","Can't allocate new package\n");
+   return false;
+   }
+
+if (list)
+   {
+   pi->next = *list;
+   }
+else
+   {
+   pi->next = NULL;
+   }
+
+pi->name = strdup(name);
+pi->version = strdup(version);
+pi->arch = strdup(arch);
+*list = pi;
+
+/* Finally we need these for later schedule exec, once this iteration context has gone */
+
+pi->pp = DeRefCopyPromise("this",pp);
+return true;
+}

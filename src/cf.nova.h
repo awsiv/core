@@ -608,7 +608,6 @@ struct Rval NovaWin_FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs)
 
 int NovaWin_GetInstalledPkgs(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp);
 void NovaWin_PrintWmiError(char *str);
-int NovaWin_CheckWmiInitialized(char *caller);
 int NovaWin_WmiInitialize(void);
 int NovaWin_WmiDeInitialize(void);
 
