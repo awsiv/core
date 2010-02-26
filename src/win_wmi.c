@@ -64,10 +64,33 @@ static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, struct
 
 { char *pkgName = NULL;
   char name[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
+  char *nameRegex, *versionRegex;
 
-DISPATCH_OBJ(colSoftware);
+  DISPATCH_OBJ(colSoftware);
 
- Debug("NovaWin_WmiGetInstalledPkgsNew\n");
+ Debug("NovaWin_WmiGetInstalledPkgsNew()\n");
+
+
+ // default to user-defined name and version regex
+ if(a.packages.package_name_regex != NULL)
+   {
+   nameRegex = a.packages.package_name_regex;
+   }
+ else
+   {
+   nameRegex = "([^-]+).*";
+   }
+
+
+ if(a.packages.package_version_regex != NULL)
+   {
+   versionRegex = a.packages.package_version_regex;
+   }
+ else
+   {
+   versionRegex = "[^-]+-([^-]+).*";
+   }
+
 
 if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
    {
@@ -89,10 +112,12 @@ if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
       }
    else
       {
-	snprintf(name, sizeof(name), "%s", ExtractFirstReference(a.packages.package_name_regex, pkgName));
-        snprintf(version, sizeof(version), "%s", ExtractFirstReference(a.packages.package_version_regex, pkgName));
+	Debug("pkgname=\"%s\"", pkgName);
+	
+	snprintf(name, sizeof(name), "%s", ExtractFirstReference(nameRegex, pkgName));
+        snprintf(version, sizeof(version), "%s", ExtractFirstReference(versionRegex, pkgName));
           
-        Debug("pkgname=\"%s\", pkgver=\"%s\"\n", name, version);
+        Debug("regex_pkgname=\"%s\", regex_pkgver=\"%s\"\n", name, version);
       
       if (!Nova_PrependPackageItem(pkgList, name, version, VSYSNAME.machine, a, pp))
          {
@@ -126,7 +151,7 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
 
   DISPATCH_OBJ(colSoftware);
 
-  Debug("NovaWin_WmiGetInstalledPkgsOld\n");
+  Debug("NovaWin_WmiGetInstalledPkgsOld()\n");
 
   if(!RUN_QUERY(colSoftware, "SELECT Caption, Version FROM Win32_Product"))
     {
