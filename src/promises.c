@@ -615,7 +615,8 @@ else
       }
    else
       {
-      fscanf(fin,"%s",name);
+      name[0] = 0;
+      fscanf(fin,"%255s",name);
       fclose(fin);
       }
    }

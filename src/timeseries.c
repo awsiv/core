@@ -266,9 +266,9 @@ cfv->origin_y = cfv->height+cfv->margin;
 cfv->max_x = cfv->margin+cfv->width;
 cfv->max_y = cfv->margin;
 
-if (cfv->error_scale > CF_MAX_ERROR_LIMIT)
+if (cfv->error_scale > cfv->max - cfv->min)
    {
-   cfv->error_scale = CF_MAX_ERROR_LIMIT;
+   cfv->error_scale = cfv->max - cfv->min;
    }
 
 if (cfv->max == cfv->min)
@@ -377,7 +377,7 @@ void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3)
   int max_y = cfv->margin;
   int i,x,y,lx = 0,ly = 0;
   double rx,ry,rs,sx = 0,s;
-  double low,high;
+  double low,high,av;
   time_t now = time(NULL);
 
 // First plot average
@@ -397,15 +397,24 @@ for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
       {
       low = (y-s < max_y)? max_y : y-s;
       high = (y+s > origin_y)? origin_y : y+s;
-
+      av = (y < max_y)? max_y : y;
+      
       gdImageSetThickness(cfv->im,1);
       gdImageLine(cfv->im,lx,ly,x,y,col2);
 
       // Error bars
 
       gdImageSetThickness(cfv->im,1);
-      gdImageLine(cfv->im,x,low,x,y,col1);
-      gdImageLine(cfv->im,x,y,x,high,col2);
+
+      if (av > origin_y)
+         {
+         gdImageLine(cfv->im,x,low,x,av,col1);      
+         }
+      else
+         {
+         gdImageLine(cfv->im,x,low,x,av,col1);      
+         gdImageLine(cfv->im,x,av,x,high,col2);
+         }
       }
    
    lx = x;

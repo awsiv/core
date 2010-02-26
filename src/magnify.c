@@ -100,6 +100,7 @@ return true;
 int Nova_ReadMagTimeSeries(struct CfDataView *cfv, char *name)
 
 { double range,rx,ry,rq,rs,sx = 0;
+  double ly = 1,lq = 1,ls = 1;
   FILE *fp;
   char buffer[CF_BUFSIZE];
 
@@ -126,14 +127,24 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
 
    sscanf(buffer,"%lf %lf %lf %lf",&rx,&ry,&rs,&rq);
 
+   if (ry / ly > 1000)
+      {
+      ry = ly;
+      }
+
+   if (rs / ls > 1000)
+      {
+      rs = ls;
+      }
+
+   if (rq / lq > 100000)
+      {
+      rq = lq;
+      }
+
    if (rq > cfv->max)
       {
       cfv->max = rq;
-      }
-
-   if (rs > cfv->max)
-      {
-      cfv->max = rs;
       }
 
    cfv->error_scale = (cfv->error_scale+rs)/2;
@@ -143,14 +154,9 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
       cfv->min = rq;
       }
    
-   if (rs < cfv->min)
-      {
-      cfv->min = rs;
-      }
-
-   cfv->data_E[(int)sx] = ry;
-   cfv->data_q[(int)sx] = rq;
-   cfv->bars[(int)sx] = rs;
+   ly = cfv->data_E[(int)sx] = ry;
+   lq = cfv->data_q[(int)sx] = rq;
+   ls = cfv->bars[(int)sx] = rs;
    }
 
 cfv->max++;
@@ -160,9 +166,9 @@ if (cfv->max > CF_MAX_LIMIT)
    cfv->max = CF_MAX_LIMIT;
    }
 
-if (cfv->error_scale > CF_MAX_ERROR_LIMIT)
+if (cfv->error_scale > cfv->max - cfv->min)
    {
-   cfv->error_scale = CF_MAX_ERROR_LIMIT;
+   cfv->error_scale = cfv->max - cfv->min;
    }
 
 cfv->origin_x = cfv->margin;
@@ -272,7 +278,7 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
       }
    else
       {
-      if (y > over || ly > over)
+      if (cfv->data_q[(int)sx] > cfv->data_E[(int)sx] + cfv->bars[(int)sx])
          {
          gdImageSetThickness(cfv->im,4);
          gdImageLine(cfv->im,lx,ly,x,y,RED);
