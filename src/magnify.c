@@ -15,7 +15,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY;
+extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,ORANGE;
 extern int GREYS[CF_SHADES];
 extern int BLUES[CF_SHADES];
 extern time_t DATESTAMPS[CF_OBSERVABLES];
@@ -69,7 +69,7 @@ if (!Nova_ReadMagTimeSeries(cfv,oldfile))
    return false;
    }
 
-Nova_PlotMagQFile(cfv,LIGHTRED,GREEN,YELLOW);
+Nova_PlotMagQFile(cfv,LIGHTRED,GREEN,ORANGE);
 Nova_Title(cfv,BLUE);
 
 if ((fout = fopen(newfile, "wb")) == NULL)
@@ -147,11 +147,21 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
       cfv->max = rq;
       }
 
+   if (ry > cfv->max)
+      {
+      cfv->max = ry;
+      }
+
    cfv->error_scale = (cfv->error_scale+rs)/2;
 
    if (rq < cfv->min)
       {
       cfv->min = rq;
+      }
+
+   if (ry < cfv->min)
+      {
+      cfv->min = ry;
       }
    
    ly = cfv->data_E[(int)sx] = ry;
@@ -160,6 +170,7 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
    }
 
 cfv->max++;
+cfv->min--;
 
 if (cfv->max > CF_MAX_LIMIT)
    {
@@ -177,18 +188,15 @@ cfv->origin_y = cfv->height+cfv->margin;
 cfv->max_x = cfv->margin+cfv->width;
 cfv->max_y = cfv->margin;
 
-if (cfv->max == cfv->min)
+if (cfv->error_scale > 0)
    {
-   if (cfv->error_scale > 0)
-      {
-      cfv->max += cfv->error_scale/2.0;
-      cfv->min -= cfv->error_scale/2.0;
-      }
-   else
-      {
-      cfv->max += 1;
-      cfv->min -= 1;
-      }
+   cfv->max += cfv->error_scale/2.0;
+   cfv->min -= cfv->error_scale/2.0;
+   }
+else
+   {
+   cfv->max += 1;
+   cfv->min -= 1;
    }
 
 cfv->range = (cfv->max - cfv->min + cfv->error_scale);
@@ -216,7 +224,10 @@ void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3)
 { int i,x,y,lx = 0,ly = 0,now,under,over,av;
   double range,sx;
   double low,high,a,s;
- 
+
+lx = 0;
+ly = 0;
+
 for (sx = 0; sx < CF_MAGDATA; sx++)
    {
    x = Nova_ViewPortX(cfv,sx);
@@ -230,7 +241,7 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
       }
    else
       {
-      int width = cfv->max_x / CF_MAGDATA;
+      int width = cfv->max_x / CF_MAGDATA / 3;
 
       low = a-s;
       high = a+s;
@@ -250,6 +261,13 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
          {
          over = cfv->max_y;   
          }
+
+      // Average line
+      
+      gdImageSetThickness(cfv->im,1);
+      gdImageLine(cfv->im,lx,ly,x,av,col2);
+
+      // Error bars
       
       gdImageSetThickness(cfv->im,width);
       gdImageLine(cfv->im,x,over,x,av,col1);
@@ -257,7 +275,7 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
       }
    
    lx = x;
-   ly = y;
+   ly = av;
    }
 
 Nova_DrawMagQAxes(cfv,BLACK);
@@ -285,7 +303,7 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
          }
       else
          {
-         gdImageSetThickness(cfv->im,3);
+         gdImageSetThickness(cfv->im,4);
          gdImageLine(cfv->im,lx,ly,x,y,col3);
          }
       }
