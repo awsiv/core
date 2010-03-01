@@ -145,13 +145,12 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
  * the Caption (fiendly name) of the packages and canonifies those.
  * On Windows Server 2003, "Windows Installer Provider" may need
  * to be installed (Add/Remove Windows Components). */
-{
-  char *caption = NULL;
+{ char *caption = NULL;
   char *version = NULL;
 
   DISPATCH_OBJ(colSoftware);
 
-  Debug("NovaWin_WmiGetInstalledPkgsOld()\n");
+ Debug("NovaWin_WmiGetInstalledPkgsOld()\n");
 
   if(!RUN_QUERY(colSoftware, "SELECT Caption, Version FROM Win32_Product"))
     {
@@ -161,26 +160,27 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
       return false;
     }
 
-
   FOR_EACH(softwareItem, colSoftware, NULL)
     {
       dhGetValue(L"%s", &caption, softwareItem, L".Caption");
       dhGetValue(L"%s", &version, softwareItem, L".Version");
 	    
 
-      if(caption == NULL)
+      if(caption == NULL || strlen(caption) == 0)
 	{
 	  CfOut(cf_error, "", "!! Empty package caption for installed package");
 	}
-      else if(version == NULL)
+      else if(version == NULL || strlen(version) == 0)
 	{
-	  CfOut(cf_error, "", "!! Empty package caption for installed package");
+	  CfOut(cf_verbose, "", "!! Empty package version for installed package \"%s\"", caption);
 	}
       else
 	{
+
+	  Debug("pkgname=\"%s\", pkgver=\"%s\"\n", caption, version);
+
           snprintf(caption, sizeof(caption), "%s", CanonifyName(caption));
           
-          Debug("pkgname=\"%s\", pkgver=\"%s\"\n", caption, version);
 
 	  if(!Nova_PrependPackageItem(pkgList, caption, version, VSYSNAME.machine, a, pp))
 	    {
@@ -203,11 +203,11 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
 
 
     } NEXT(softwareItem);
-  
 
-  SAFE_RELEASE(colSoftware);
-  
-  return false;
+
+SAFE_RELEASE(colSoftware);
+
+return true;
 }
 
 /****************************************************************************/
