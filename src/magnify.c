@@ -221,7 +221,7 @@ return true;
 
 void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3)
 
-{ int i,x,y,lx = 0,ly = 0,now,under,over,av;
+{ int i,x,y,lx = 0,ly = 0,now,under,over,av = 0;
   double range,sx;
   double low,high,a,s;
 
