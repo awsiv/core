@@ -597,7 +597,7 @@ void Nova_SetDocRoot(char *name)
 
 snprintf(file,CF_BUFSIZE-1,"%s/document_root.dat",CFWORKDIR);
 
-if (stat(file,&sb) == -1 && strlen(name) > 0)
+if (cfstat(file,&sb) == -1 && strlen(name) > 0)
    {
    if ((fout = fopen(file,"w")) == NULL)
       {
@@ -607,6 +607,7 @@ if (stat(file,&sb) == -1 && strlen(name) > 0)
 
    fprintf(fout,"%s",name);
    fclose(fout);
+   CfOut(cf_cmdout,""," -> Setting document root for a knowledge base to %s",name);
    }
 else
    {
@@ -614,13 +615,12 @@ else
       {
       }
    else
-      {
-      name[0] = 0;
-      fscanf(fin,"%255s",name);
+      {      
+      file[0] = 0;
+      fscanf(fin,"%255s",file);
       fclose(fin);
+      CfOut(cf_cmdout,""," -> Assuming document root for a knowledge base in %s",file);
       }
    }
-
-CfOut(cf_cmdout,""," -> Assuming document root for a knowledge base in %s",name);
 }
 

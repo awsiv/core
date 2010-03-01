@@ -615,7 +615,7 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
       continue;
       }
    
-   fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\"><table><tr><td width=\"80\">&nbsp;</div></center></td></tr></table></td><td width=\"200\"><center>Last updated at<br>%s</center></td><td><a href=\"%s/mainpage.html\"><img src=\"%s/meters.png\"></a></td><td><a href=\"%s/promise_output_common.html\">Promises</a></td></tr>",ip->name,col,cf_ctime(&(sb.st_mtime)),ip->name,ip->name,ip->name);
+   fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\"><table><tr><td width=\"80\">&nbsp;</div></center></td></tr></table></td><td width=\"200\"><center>Last updated at<br>%s</center></td><td><a href=\"%s/mainpage.html\"><img src=\"%s/meters.png\"></a></td><td><span id=\"rbuttons\"><a href=\"%s/promise_output_common.html\">Promises</a><br><a href=\"%s/classes.html\">Classes</a></span></td></tr>",ip->name,col,cf_ctime(&(sb.st_mtime)),ip->name,ip->name,ip->name,ip->name);
    }
 
 fprintf(fout,"</table></div>\n");
