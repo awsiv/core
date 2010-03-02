@@ -44,7 +44,7 @@ void NovaWin_GetInterfaceInfo()
  char *ifType;
  int tup, j;
 
- if(!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_GetInterfaceInfo"))
+ if(!BOOTSTRAP && (THIS_AGENT_TYPE != cf_agent)  && !Nova_CheckLicenseWin("NovaWin_GetInterfaceInfo"))
     {
     return;
     }
