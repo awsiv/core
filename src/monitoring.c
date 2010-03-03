@@ -674,6 +674,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
       }
    }
 
+DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
 }
 
@@ -734,6 +735,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
       }
    }
 
+DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
 cf_fclose(fout);
 }

@@ -247,6 +247,7 @@ thislock = AcquireLock("license_track",VUQNAME,CFSTARTTIME,dummyattr,pp);
 
 if (thislock.lock == NULL)
    {
+   DeletePromise(pp);
    return;
    }
 
@@ -275,6 +276,7 @@ if (OpenDB(name,&dbp))
 
       DeleteDBCursor(dbp,dbcp);
       }
+
    CloseDB(dbp);
    }
 
@@ -305,18 +307,19 @@ Chop(datestr);
 WriteDB(dbp,datestr,data,sizeof(data));
 
 CloseDB(dbp);
-DeletePromise(pp);
 YieldCurrentLock(thislock);
+DeletePromise(pp);
 }
 
 /*****************************************************************************/
 
 int Nova_CheckLicenseWin(char *pos)
-{
-  if(LICENSES == 0)
-    {
-    CfOut(cf_error, "", "!! Invalid Enterprise license limits functionality (%s requires a license, agent %d)", pos, THIS_AGENT_TYPE);
-    }
 
-  return true;
+{
+if (LICENSES == 0)
+   {
+   CfOut(cf_error, "", " !! Invalid Enterprise license limits functionality (%s requires a license, agent %d)", pos, THIS_AGENT_TYPE);
+   }
+
+return true;
 }
