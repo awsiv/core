@@ -323,6 +323,7 @@ thislock = AcquireLock(pp->promiser,VUQNAME,now,dummyattr,pp);
 
 if (thislock.lock == NULL)
    {
+   DeletePromise(pp);
    return 0;
    }
 
