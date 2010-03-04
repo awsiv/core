@@ -78,7 +78,7 @@ static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, struct
    }
  else
    {
-   nameRegex = "([^-]+).*";
+   nameRegex = "^(\\S+)-(\\d+\\.?)+";
    }
 
 
@@ -88,7 +88,7 @@ static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, struct
    }
  else
    {
-   versionRegex = "[^-]+-([^-]+).*";
+   versionRegex = "^\\S+-((\\d+\\.?)+)";
    }
 
 
@@ -147,6 +147,7 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
  * to be installed (Add/Remove Windows Components). */
 { char *caption = NULL;
   char *version = NULL;
+  char *sp;
 
   DISPATCH_OBJ(colSoftware);
 
@@ -179,8 +180,18 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
 
 	  Debug("pkgname=\"%s\", pkgver=\"%s\"\n", caption, version);
 
-          snprintf(caption, sizeof(caption), "%s", CanonifyName(caption));
-          
+	  for(sp = caption; *sp != '\0'; sp++)
+	    {
+	      if(*sp == ' ')
+		{
+		  *sp = '-';
+		}
+	      else
+		{
+		  *sp = tolower(*sp);
+		}
+	    }
+
 
 	  if(!Nova_PrependPackageItem(pkgList, caption, version, VSYSNAME.machine, a, pp))
 	    {
