@@ -3,7 +3,6 @@
 	forward slash as path separator.
 
 	CPU utilization report on Windows.
-
 	Users logged in report on Windows.
 
 	On the Windows cf-serverd, requests for /var/cfengine are
@@ -14,6 +13,8 @@
 
 	Scale on graphs in the Knowledge Map, and different background
 	color gives more readability.
+
+	Special functions added for accessing remote classes for distributed cooperation.
 
 1.0.0
 	Reports added to cf-report for compliance, setuid, file_changes etc.

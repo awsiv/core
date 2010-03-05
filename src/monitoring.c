@@ -624,6 +624,11 @@ void Nova_LoadSlowlyVaryingObservations()
   int ksize,vsize;
   char name[CF_BUFSIZE];
 
+if (THIS_AGENT_TYPE == cf_executor)
+   {
+   return;
+   }
+  
 snprintf(name,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_STATICDB);
 
 if (!OpenDB(name,&dbp))

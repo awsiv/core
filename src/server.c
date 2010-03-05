@@ -312,6 +312,7 @@ return 0;
 
 if (LICENSES == 0)
    {
+   DeletePromise(pp);
    return 0;
    }
   
