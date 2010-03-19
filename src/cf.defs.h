@@ -1,5 +1,5 @@
 /* cfengine for GNU
-
+ 
         Copyright (C) 1995
         Free Software Foundation, Inc.
 
