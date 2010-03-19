@@ -930,13 +930,20 @@ y2 = y1 - (brect[3]-brect[7]) - padding;
 
 // Plus y is now downward
 
-gdImageSetThickness(cfv.im,tab);
-gdImageLine(cfv.im,x1+tab,y2+tab,x1+tab,y1+tab,LIGHTGREY);
-gdImageLine(cfv.im,x2+tab,y1+tab,x1+tab,y1+tab,LIGHTGREY);
-gdImageSetThickness(cfv.im,1);
-gdImageRectangle(cfv.im,x1+margin,y1+margin,x2-margin,y2-margin,LIGHTGREY);
-gdImageFilledRectangle(cfv.im,x1,y1,x2,y2,WHITE);
-gdImageStringFT(cfv.im,&brect[0],BLACK,font,size,0.0,x2+margin+padding,y1-margin-padding,ps);
+if (Nova_InRange(cfv,x1,y1) && Nova_InRange(cfv,x2,y2))
+   {
+   gdImageSetThickness(cfv.im,tab);
+   gdImageLine(cfv.im,x1+tab,y2+tab,x1+tab,y1+tab,LIGHTGREY);
+   gdImageLine(cfv.im,x2+tab,y1+tab,x1+tab,y1+tab,LIGHTGREY);
+   gdImageSetThickness(cfv.im,1);
+   gdImageRectangle(cfv.im,x1+margin,y1+margin,x2-margin,y2-margin,LIGHTGREY);
+   gdImageFilledRectangle(cfv.im,x1,y1,x2,y2,WHITE);
+   gdImageStringFT(cfv.im,&brect[0],BLACK,font,size,0.0,x2+margin+padding,y1-margin-padding,ps);
+   }
+else
+   {
+   CfOut(cf_error,""," -> Numerical Overflow at position (%d,%d)-(%d,%d) while mapping \"%s\"",x1,y1,x2,y2,s);
+   }
 }
 
 /*****************************************************************************/
@@ -1009,13 +1016,20 @@ y2 = y1 - (brect[3]-brect[7]) - padding;
 
 // Plus y is now downward
 
-gdImageSetThickness(cfv.im,tab);
-gdImageLine(cfv.im,x1+tab,y2+tab,x1+tab,y1+tab,LIGHTGREY);
-gdImageLine(cfv.im,x2+tab,y1+tab,x1+tab,y1+tab,LIGHTGREY);
-gdImageSetThickness(cfv.im,1);
-gdImageRectangle(cfv.im,x1+margin,y1+margin,x2-margin,y2-margin,LIGHTGREY);
-gdImageFilledRectangle(cfv.im,x1,y1,x2,y2,BLACK);
-gdImageStringFT(cfv.im,&brect[0],WHITE,font,size,0.0,x2+padding,y1-padding,ps);
+if (Nova_InRange(cfv,x1,y1) && Nova_InRange(cfv,x2,y2))
+   {
+   gdImageSetThickness(cfv.im,tab);
+   gdImageLine(cfv.im,x1+tab,y2+tab,x1+tab,y1+tab,LIGHTGREY);
+   gdImageLine(cfv.im,x2+tab,y1+tab,x1+tab,y1+tab,LIGHTGREY);
+   gdImageSetThickness(cfv.im,1);
+   gdImageRectangle(cfv.im,x1+margin,y1+margin,x2-margin,y2-margin,LIGHTGREY);
+   gdImageFilledRectangle(cfv.im,x1,y1,x2,y2,BLACK);
+   gdImageStringFT(cfv.im,&brect[0],WHITE,font,size,0.0,x2+padding,y1-padding,ps);
+   }
+else
+   {
+   CfOut(cf_error,""," -> Numerical Overflow at position (%d,%d)-(%d,%d) while mapping \"%s\"",x1,y1,x2,y2,s);
+   }
 }
 
 /*****************************************************************************/
@@ -1081,6 +1095,24 @@ else
    {
    return radius;
    }
+}
+
+/*****************************************************************************/
+
+int Nova_InRange(struct CfDataView cfv,int x,int y)
+    
+{
+if (x < 0 || x > cfv.width)
+   {
+   return false;
+   }
+
+if (y < 0 || y > cfv.height)
+   {
+   return false;
+   }
+
+return true;
 }
 
 /*****************************************************************************/

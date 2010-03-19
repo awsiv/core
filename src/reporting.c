@@ -1052,10 +1052,9 @@ void Nova_SummarizePromiseRepaired(int xml,int html,int csv,int embed,char *styl
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
   char date[CF_MAXVARSIZE],handle[CF_MAXVARSIZE],bundle[CF_MAXVARSIZE],ref[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],lineno[CF_MAXVARSIZE];
   struct Item *ip,*file = NULL;
-  char start[32];
   int i = 0;
 
-  snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1119,7 +1118,6 @@ else if (XML)
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
-   memset(start,0,32);
    memset(name,0,255);
 
    if (cf_strlen(ip->name) == 0)
@@ -1194,7 +1192,7 @@ void Nova_SummarizePromiseNotKept(int xml,int html,int csv,int embed,char *style
   char start[32];
   int i = 0;
 
-  snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_NOTKEPT_LOG);
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_NOTKEPT_LOG);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {

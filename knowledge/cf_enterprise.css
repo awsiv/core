@@ -111,6 +111,17 @@ border-color: black;
 font-size: 100%;
 }
 
+#disambig
+{
+background-color: #fff; 
+width: 100%;
+/* border: 2px;*/
+color: #11aa22;
+padding: 5px;
+border-color: black;
+font-size: 100%;
+}
+
 #in
 {
 background: #ccc;

@@ -255,6 +255,7 @@ double Nova_Orbit(struct CfDataView cfv,double radius,double min_x,double max_x,
 void Nova_MapBall(FILE *fp,struct CfDataView cfv,struct CfGraphNode n);
 void Nova_Annealing(struct CfGraphNode neighbours1[CF_TRIBE_SIZE],struct CfGraphNode neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],struct CfGraphNode neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size1,int size2[CF_TRIBE_SIZE],int size3[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size);
 int Overlap(double x1,double y1,double x2,double y2);
+int Nova_InRange(struct CfDataView cfv,int x,int y);
 
 /* database.c */
 
