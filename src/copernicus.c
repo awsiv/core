@@ -923,6 +923,8 @@ if (err)
 // Top right = x1,y2
 // Bottom right = x1,y1
 
+Nova_BoundaryCheck(&cfv,&x1,&y1,&x2,&y2);
+
 x1 = Nova_X(cfv,x) + (brect[2]-brect[6])/2 + padding;
 y1 = Nova_Y(cfv,y) + (brect[3]-brect[7])/2 + padding;
 x2 = x1 - (brect[2]-brect[6]) - padding;
@@ -1009,6 +1011,8 @@ else
 // Top right = x1,y2
 // Bottom right = x1,y1
 
+Nova_BoundaryCheck(&cfv,&x1,&y1,&x2,&y2);
+
 x1 = Nova_X(cfv,x) + (brect[2]-brect[6])/2 + padding;
 y1 = Nova_Y(cfv,y) + (brect[3]-brect[7])/2 + padding;
 x2 = x1 - (brect[2]-brect[6]) - padding;
@@ -1036,9 +1040,7 @@ else
 
 void Nova_AlignmentCorrection(double *x,double *y,double cx,double cy)
 
-{
-
- /* If nodes are too close, move them apart */
+{ /* If nodes are too close, move them apart */
 
 if (!Overlap(*x,*y,cx,cy))
    {
@@ -1116,6 +1118,41 @@ return true;
 }
 
 /*****************************************************************************/
+
+void Nova_BoundaryCheck(struct CfDataView *cfv,int *x1,int *y1,int *x2, int *y2)
+
+{ int delta_x,delta_y;
+ 
+// Top left = x2,y2
+// Top right = x1,y2
+// Bottom right = x1,y1
+
+if (*x1 > cfv->width)
+   {
+   delta_x = *x1 - cfv->width;
+   *x1 -= delta_x;
+   *x2 -= delta_x;
+   }
+
+if (*x2 < 0)
+   {
+   *x1 -= *x2;
+   *x2 -= *x2;   
+   }
+
+if (*y1 > cfv->height)
+   {
+   delta_y = *y1 - cfv->width;
+   *y1 -= delta_y;
+   *y2 -= delta_y;
+   }
+
+if (*y2 < 0)
+   {
+   *y1 -= *y2;
+   *y2 -= *y2;
+   }
+}
 
 #else
 
