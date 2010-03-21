@@ -923,12 +923,12 @@ if (err)
 // Top right = x1,y2
 // Bottom right = x1,y1
 
-Nova_BoundaryCheck(&cfv,&x1,&y1,&x2,&y2);
-
 x1 = Nova_X(cfv,x) + (brect[2]-brect[6])/2 + padding;
 y1 = Nova_Y(cfv,y) + (brect[3]-brect[7])/2 + padding;
 x2 = x1 - (brect[2]-brect[6]) - padding;
 y2 = y1 - (brect[3]-brect[7]) - padding;
+
+Nova_BoundaryCheck(&cfv,&x1,&y1,&x2,&y2);
 
 // Plus y is now downward
 
@@ -1011,12 +1011,12 @@ else
 // Top right = x1,y2
 // Bottom right = x1,y1
 
-Nova_BoundaryCheck(&cfv,&x1,&y1,&x2,&y2);
-
 x1 = Nova_X(cfv,x) + (brect[2]-brect[6])/2 + padding;
 y1 = Nova_Y(cfv,y) + (brect[3]-brect[7])/2 + padding;
 x2 = x1 - (brect[2]-brect[6]) - padding;
 y2 = y1 - (brect[3]-brect[7]) - padding;
+
+Nova_BoundaryCheck(&cfv,&x1,&y1,&x2,&y2);
 
 // Plus y is now downward
 
