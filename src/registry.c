@@ -65,8 +65,6 @@ if (LICENSES == 0)
    return;
    }
 
-*(pp->donep) = true;
-
 snprintf(lockname,CF_BUFSIZE-1,"db-%s",pp->promiser);
  
 thislock = AcquireLock(lockname,VUQNAME,CFSTARTTIME,a,pp);
@@ -389,7 +387,7 @@ for (rp = a.database.rows; rp != NULL; rp=rp->next)
          }
       else
          {
-         cfPS(cf_inform,CF_FAIL,"",pp,a," -> value (%s,%s) incorrect for %s",name,value,pp->promiser);
+         CfOut(cf_inform,"", " -> value (%s,%s) incorrect for %s",name,value,pp->promiser);
          }
       }
    
@@ -399,7 +397,7 @@ for (rp = a.database.rows; rp != NULL; rp=rp->next)
           
           if (!DONTDO && a.transaction.action != cfa_warn)
              {
-             cfPS(cf_error,CF_CHG,"",pp,a," !! Repairing registry value as (%s,%s)",name,value);
+             cfPS(cf_inform,CF_CHG,"",pp,a," -> Repairing registry value as (%s,%s)",name,value);
              ret = RegSetValueEx(key_h,name,0,REG_SZ,value,strlen(value)+1);
              }
           else
