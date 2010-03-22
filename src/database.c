@@ -57,15 +57,8 @@ if (a.database.type && cf_strcmp(a.database.type,"ms_registry") == 0)
    for (rp = a.database.rows; rp != NULL; rp=rp->next)
       {
       commas = 0;
-      for (sp = rp->item; *sp != '\0'; sp++)
-         {
-         if (*sp == ',')
-            {
-            commas++;
-            }         
-         }
 
-      if (commas != 2)
+      if (CountChar(rp->item,',') != 2)
          {
          CfOut(cf_error,"","Registry row format should be NAME,REG_SZ,VALUE, not \"%s\"",rp->item);
          retval = false;
@@ -74,15 +67,7 @@ if (a.database.type && cf_strcmp(a.database.type,"ms_registry") == 0)
 
    for (rp = a.database.columns; rp != NULL; rp=rp->next)
       {
-      for (sp = rp->item; *sp != '\0'; sp++)
-         {
-         if (*sp == ',')
-            {
-            commas++;
-            }         
-         }
-
-      if (commas > 0)
+      if (CountChar(rp->item,',') > 0)
          {
          CfOut(cf_error,"","MS registry column format should be NAME only in deletion");
          retval = false;
@@ -126,14 +111,8 @@ else if (a.database.type && cf_strcmp(a.database.type,"sql") == 0)
 
    for (rp = a.database.columns; rp != NULL; rp=rp->next)
       {
-      for (sp = rp->item; *sp != '\0'; sp++)
-         {
-         if (*sp == ',')
-            {
-            commas++;
-            }         
-         }
-
+      commas = CountChar(rp->item,',');
+      
       if (commas > 2 && commas < 1)
          {
          CfOut(cf_error,"","SQL Column format should be NAME,TYPE[,SIZE]");
