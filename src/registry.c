@@ -380,7 +380,9 @@ for (rp = a.database.rows; rp != NULL; rp=rp->next)
    
    if (Nova_GetRegistryValue(key_h,name,reg_data_p,&reg_data_sz))
       {
-      if (memcmp(reg_data_p,value,strlen(value)) == 0)
+      int dsize = (reg_data_sz - strlen(value) > 0) ? reg_data_sz : strlen(value);
+         
+      if (memcmp(reg_data_p,value,dsize)
          {
          cfPS(cf_inform,CF_NOP,"",pp,a," -> verified value (%s,%s) correct for %s",name,value,pp->promiser);
          continue;         
