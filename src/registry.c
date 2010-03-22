@@ -135,7 +135,7 @@ if (Nova_OpenRegistryKey(pp->promiser,&key_h,create))
    }
 else
    {
-   cfPS(cf_error,CF_FAIL,"Open",pp,a," !! Registry key \"%s\"failed to open\n",pp->promiser);
+   cfPS(cf_error,CF_FAIL,"",pp,a," !! Registry key \"%s\" failed to open\n",pp->promiser);
    }
 
 RegCloseKey(key_h);
@@ -369,6 +369,7 @@ int Nova_VerifyRegistryValueAssocs(HKEY key_h,struct Attributes a,struct Promise
   unsigned long reg_data_sz = CF_BUFSIZE;
   void *reg_data_p = calloc(1,CF_BUFSIZE);
   enum reg_data_type reg_dtype;
+  int regCmpSize;
  
 for (rp = a.database.rows; rp != NULL; rp=rp->next)
    {
@@ -380,9 +381,16 @@ for (rp = a.database.rows; rp != NULL; rp=rp->next)
    
    if (Nova_GetRegistryValue(key_h,name,reg_data_p,&reg_data_sz))
       {
-      int dsize = (reg_data_sz - strlen(value) > 0) ? reg_data_sz : strlen(value);
-         
-      if (memcmp(reg_data_p,value,dsize)
+
+      regCmpSize = (reg_data_sz > strlen(value)) ? reg_data_sz : strlen(value);
+      
+      if(regCmpSize > CF_BUFSIZE)
+	{
+	cfPS(cf_error,CF_NOP,"",pp,a," !! Buffer too small to hold registry value");
+	continue;
+	}
+
+      if (memcmp(reg_data_p,value,regCmpSize) == 0)
          {
          cfPS(cf_inform,CF_NOP,"",pp,a," -> verified value (%s,%s) correct for %s",name,value,pp->promiser);
          continue;         
