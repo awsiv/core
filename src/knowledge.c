@@ -720,6 +720,11 @@ char *Nova_PromiseID(struct Promise *pp)
   char vbuff[CF_MAXVARSIZE];
   char *handle = GetConstraint("handle",pp,CF_SCALAR);
 
+if (pp == NULL)
+   {
+   return NULL;
+   }
+  
 if (LICENSES == 0)
    {
    return "license_expired";

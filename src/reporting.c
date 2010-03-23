@@ -497,7 +497,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
 
       if (lastseen > lsea)
          {
-         Debug("Promise usage record %s expired\n",eventname);
+         Verbose("Promise usage record %s expired\n",eventname);
          DeleteDB(dbp,eventname);
          }
       else
@@ -508,15 +508,15 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
             fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],tbuf,NRX[cfx_date][cfe]);
             fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRX[cfx_event][cfb],eventname,eventname,NRX[cfx_event][cfe]);
 
-            if (measure = 1.0)
+            if (measure == 1.0)
                {
                fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"compliant",NRX[cfx_q][cfe]);
                }
-            else if (measure = 0.5)
+            else if (measure == 0.5)
                {
                fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"repaired",NRX[cfx_q][cfe]);
                }
-            else if (measure = 0.0)
+            else if (measure == 0.0)
                {
                fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"non-compliant",NRX[cfx_q][cfe]);
                }
@@ -534,15 +534,15 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
             snprintf(b1,CF_MAXVARSIZE-1,"%s %s %s %s",NRH[cfx_entry][cfb],NRH[cfx_date][cfb],tbuf,NRH[cfx_date][cfe]);
             snprintf(b2,CF_MAXVARSIZE-1,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRH[cfx_event][cfb],eventname,eventname,NRH[cfx_event][cfe]);
 
-            if (measure = 1.0)
+            if (measure == 1.0)
                {
                snprintf(b3,CF_MAXVARSIZE-1,"%s %s %s",NRH[cfx_q][cfb],"compliant",NRH[cfx_q][cfe]);
                }
-            else if (measure = 0.5)
+            else if (measure == 0.5)
                {
                snprintf(b3,CF_MAXVARSIZE-1,"%s %s %s",NRH[cfx_q][cfb],"repaired",NRH[cfx_q][cfe]);
                }
-            else if (measure = 0.0)
+            else if (measure == 0.0)
                {
                snprintf(b3,CF_MAXVARSIZE-1,"%s %s %s",NRH[cfx_q][cfb],"non-compliant",NRH[cfx_q][cfe]);
                }
@@ -557,15 +557,15 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
             }
          else
             {
-            if (measure = 1.0)
+            if (measure == 1.0)
                {
                fprintf(fout,"%s,%s,compliant,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
                }
-            else if (measure = 0.5)
+            else if (measure == 0.5)
                {
                fprintf(fout,"%s,%s,repaired,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
                }
-            else if (measure = 0.0)
+            else if (measure == 0.0)
                {
                fprintf(fout,"%s,%,non-compliant,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
                }
