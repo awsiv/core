@@ -497,7 +497,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
 
       if (lastseen > lsea)
          {
-         Verbose("Promise usage record %s expired\n",eventname);
+         Debug("Promise usage record %s expired\n",eventname);
          DeleteDB(dbp,eventname);
          }
       else
