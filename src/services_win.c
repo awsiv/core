@@ -13,7 +13,7 @@
 // services that can't be opened (Windows Server 2008 - separate for each OS?)
 char *PROTECTED_SERVICES[] = { "Schedule", "SamSs", "RpcSs", 
                                "PlugPlay", "gpsvc", "DcomLaunch", 
-                               "WdiServiceHost" };
+                               "WdiServiceHost", NULL };
 
 
 void NovaWin_VerifyServices(struct Attributes a,struct Promise *pp)
@@ -907,6 +907,12 @@ int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHandle, DW
     
     if(depHandle == NULL)
        {
+       if(IsStrIn(depName, PROTECTED_SERVICES))
+         {
+         CfOut(cf_inform, "", "Service \"%s\" is protected, assuming start time is correct", depName);
+	 continue;
+         }
+
        CfOut(cf_error,"","!! Could not open handle to service \"%s\" in order to enable service dependency", depName);
        free(srvConfig);
        return false;
