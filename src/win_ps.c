@@ -289,7 +289,7 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
 
  if(procHandle == NULL)
     {
-    CfOut(cf_error,"OpenProcess","!! Error opening process handle for pid=%lu", pid);
+    Debug("!! OpenProcess: Error opening process handle for pid=%lu\n", pid);
     return NULL;
     }
 
@@ -503,7 +503,7 @@ static void GetProcessCpuTime(DWORD pid, ULARGE_INTEGER *timeCpuInt)
 
  if(procHandle == NULL)
     {
-    CfOut(cf_error,"OpenProcess","!! Could not open process handle for pid %lu", pid);
+    Debug("!! OpenProcess: Could not open process handle for pid %lu\n", pid);
     timeCpuInt->QuadPart = 0;
     return;
     }
