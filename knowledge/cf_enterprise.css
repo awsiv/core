@@ -401,6 +401,13 @@ padding: 5px;
 width: 100%
 }
 
+#reporttext a
+{  
+color: #f5dd70;
+}
+
+
+
 #primary ul
 {
 padding: 15px;

@@ -481,96 +481,93 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
 
    cf_strcpy(eventname,(char *)key);
 
-   if (stored != NULL)
+   memcpy(&entry,stored,sizeof(entry));
+
+   then    = entry.t;
+   measure = entry.Q.q;
+   av = entry.Q.expect;
+   var = entry.Q.var;
+   lastseen = now - then;
+
+   snprintf(tbuf,CF_BUFSIZE-1,"%s",cf_ctime(&then));
+   
+//      tbuf[cf_strlen(tbuf)-9] = '\0';                     /* Chop off second and year */
+   
+   if (then > 0 && lastseen > lsea)
       {
-      memcpy(&entry,stored,sizeof(entry));
-
-      then    = entry.t;
-      measure = entry.Q.q;
-      av = entry.Q.expect;
-      var = entry.Q.var;
-      lastseen = now - then;
-
-      snprintf(tbuf,CF_BUFSIZE-1,"%s",cf_ctime(&then));
-
-      tbuf[cf_strlen(tbuf)-9] = '\0';                     /* Chop off second and year */
-
-      if (lastseen > lsea)
+      CfOut(cf_verbose,""," -> Promise usage record \"%s\" expired, removing...\n",eventname);
+      DeleteDB(dbp,eventname);
+      }
+   else
+      {
+      if (xml)
          {
-         Debug("Promise usage record %s expired\n",eventname);
-         DeleteDB(dbp,eventname);
+         fprintf(fout,"%s",NRX[cfx_entry][cfb]);
+         fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],tbuf,NRX[cfx_date][cfe]);
+         fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRX[cfx_event][cfb],eventname,eventname,NRX[cfx_event][cfe]);
+         
+         if (measure == 1.0)
+            {
+            fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"compliant",NRX[cfx_q][cfe]);
+            }
+         else if (measure == 0.5)
+            {
+            fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"repaired",NRX[cfx_q][cfe]);
+            }
+         else if (measure == 0.0)
+            {
+            fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"non-compliant",NRX[cfx_q][cfe]);
+            }
+         
+         fprintf(fout,"%s %.1lf %s",NRX[cfx_av][cfb],av*100.0,NRX[cfx_av][cfe]);
+         fprintf(fout,"%s %.1lf %s",NRX[cfx_dev][cfb],sqrt(var)*100.0,NRX[cfx_dev][cfe]);
+         
+         fprintf(fout,"%s",NRX[cfx_entry][cfe]);
+         }
+      else if (html)
+         {
+         char b1[CF_MAXVARSIZE],b2[CF_MAXVARSIZE],b3[CF_MAXVARSIZE],b4[CF_MAXVARSIZE],b5[CF_MAXVARSIZE],b6[CF_MAXVARSIZE];
+         char vbuff[CF_BUFSIZE];
+         
+         snprintf(b1,CF_MAXVARSIZE-1,"%s %s %s %s",NRH[cfx_entry][cfb],NRH[cfx_date][cfb],tbuf,NRH[cfx_date][cfe]);
+         snprintf(b2,CF_MAXVARSIZE-1,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRH[cfx_event][cfb],eventname,eventname,NRH[cfx_event][cfe]);
+         
+         if (measure == 1.0)
+            {
+            snprintf(b3,CF_MAXVARSIZE-1,"%s %s %s",NRH[cfx_q][cfb],"compliant",NRH[cfx_q][cfe]);
+            }
+         else if (measure == 0.5)
+            {
+            snprintf(b3,CF_MAXVARSIZE-1,"%s %s %s",NRH[cfx_q][cfb],"repaired",NRH[cfx_q][cfe]);
+            }
+         else if (measure == 0.0)
+            {
+            snprintf(b3,CF_MAXVARSIZE-1,"%s %s %s",NRH[cfx_q][cfb],"non-compliant",NRH[cfx_q][cfe]);
+            }
+         
+         snprintf(b4,CF_MAXVARSIZE-1,"%s %.1lf %s",NRH[cfx_av][cfb],av*100.0,NRH[cfx_av][cfe]);
+         snprintf(b5,CF_MAXVARSIZE-1,"%s %.1lf %s",NRH[cfx_dev][cfb],sqrt(var)*100.0,NRH[cfx_dev][cfe]);
+         snprintf(b6,CF_MAXVARSIZE-1,"%s",NRH[cfx_entry][cfe]);
+         snprintf(vbuff,CF_BUFSIZE-1,"%s %s %s %s %s %s",b1,b2,b3,b4,b5,b6);
+         
+         PrependItem(&htmlreport,vbuff,NULL);
+         htmlreport->time = then;
          }
       else
          {
-         if (xml)
+         if (measure == 1.0)
             {
-            fprintf(fout,"%s",NRX[cfx_entry][cfb]);
-            fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],tbuf,NRX[cfx_date][cfe]);
-            fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRX[cfx_event][cfb],eventname,eventname,NRX[cfx_event][cfe]);
-
-            if (measure == 1.0)
-               {
-               fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"compliant",NRX[cfx_q][cfe]);
-               }
-            else if (measure == 0.5)
-               {
-               fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"repaired",NRX[cfx_q][cfe]);
-               }
-            else if (measure == 0.0)
-               {
-               fprintf(fout,"%s %s %s",NRX[cfx_q][cfb],"non-compliant",NRX[cfx_q][cfe]);
-               }
-
-            fprintf(fout,"%s %.1lf %s",NRX[cfx_av][cfb],av*100.0,NRX[cfx_av][cfe]);
-            fprintf(fout,"%s %.1lf %s",NRX[cfx_dev][cfb],sqrt(var)*100.0,NRX[cfx_dev][cfe]);
-
-            fprintf(fout,"%s",NRX[cfx_entry][cfe]);
+            fprintf(fout,"%s,%s,compliant,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
             }
-         else if (html)
+         else if (measure == 0.5)
             {
-            char b1[CF_MAXVARSIZE],b2[CF_MAXVARSIZE],b3[CF_MAXVARSIZE],b4[CF_MAXVARSIZE],b5[CF_MAXVARSIZE],b6[CF_MAXVARSIZE];
-            char vbuff[CF_BUFSIZE];
-            
-            snprintf(b1,CF_MAXVARSIZE-1,"%s %s %s %s",NRH[cfx_entry][cfb],NRH[cfx_date][cfb],tbuf,NRH[cfx_date][cfe]);
-            snprintf(b2,CF_MAXVARSIZE-1,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRH[cfx_event][cfb],eventname,eventname,NRH[cfx_event][cfe]);
-
-            if (measure == 1.0)
-               {
-               snprintf(b3,CF_MAXVARSIZE-1,"%s %s %s",NRH[cfx_q][cfb],"compliant",NRH[cfx_q][cfe]);
-               }
-            else if (measure == 0.5)
-               {
-               snprintf(b3,CF_MAXVARSIZE-1,"%s %s %s",NRH[cfx_q][cfb],"repaired",NRH[cfx_q][cfe]);
-               }
-            else if (measure == 0.0)
-               {
-               snprintf(b3,CF_MAXVARSIZE-1,"%s %s %s",NRH[cfx_q][cfb],"non-compliant",NRH[cfx_q][cfe]);
-               }
-
-            snprintf(b4,CF_MAXVARSIZE-1,"%s %.1lf %s",NRH[cfx_av][cfb],av*100.0,NRH[cfx_av][cfe]);
-            snprintf(b5,CF_MAXVARSIZE-1,"%s %.1lf %s",NRH[cfx_dev][cfb],sqrt(var)*100.0,NRH[cfx_dev][cfe]);
-            snprintf(b6,CF_MAXVARSIZE-1,"%s",NRH[cfx_entry][cfe]);
-            snprintf(vbuff,CF_BUFSIZE-1,"%s %s %s %s %s %s",b1,b2,b3,b4,b5,b6);
-
-            PrependItem(&htmlreport,vbuff,NULL);
-            htmlreport->time = then;
+            fprintf(fout,"%s,%s,repaired,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
             }
-         else
+         else if (measure == 0.0)
             {
-            if (measure == 1.0)
-               {
-               fprintf(fout,"%s,%s,compliant,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
-               }
-            else if (measure == 0.5)
-               {
-               fprintf(fout,"%s,%s,repaired,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
-               }
-            else if (measure == 0.0)
-               {
-               fprintf(fout,"%s,%,non-compliant,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
-               }
-
+            fprintf(fout,"%s,%,non-compliant,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
             }
+         
          }
       }
    }

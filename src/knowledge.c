@@ -720,11 +720,6 @@ char *Nova_PromiseID(struct Promise *pp)
   char vbuff[CF_MAXVARSIZE];
   char *handle = GetConstraint("handle",pp,CF_SCALAR);
 
-if (pp == NULL)
-   {
-   return NULL;
-   }
-  
 if (LICENSES == 0)
    {
    return "license_expired";
@@ -734,7 +729,7 @@ if (handle)
    {
    snprintf(id,CF_MAXVARSIZE,"%s",CanonifyName(handle));
    }
-else if (pp->audit)
+else if (pp && pp->audit)
    {
    snprintf(vbuff,CF_MAXVARSIZE,"%s",ReadLastNode(pp->audit->filename));
    snprintf(id,CF_MAXVARSIZE,"promise_%s_%d",CanonifyName(vbuff),pp->lineno);

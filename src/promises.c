@@ -162,7 +162,6 @@ else
    }
 
 WriteDB(dbp,id,&newe,sizeof(newe));
-
 CloseDB(dbp);
 
 /* Now keep the next log */
@@ -210,6 +209,7 @@ time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *averag
   char name[CF_MAXVARSIZE];
   struct Event e;
   double lsea = CF_WEEK * 52; /* expire after a year */
+  time_t now = time(NULL);
 
 snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_COMPLIANCE);
 MapName(name);
@@ -236,9 +236,9 @@ else
    *var = 0;
    }
 
-if (*lastseen > lsea)
+if (*lastseen > 0 && (now - *lastseen) > lsea)
    {
-   Debug("Promise record %s expired\n",name);
+   CfOut(cf_verbose,"","Promise record \"%s\" expired ... removing\n",name);
    DeleteDB(dbp,name);
    }
 
