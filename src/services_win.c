@@ -10,6 +10,11 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+// services that can't be opened (Windows Server 2008 - separate for each OS?)
+char *PROTECTED_SERVICES[] = { "Schedule", "SamSs", "RpcSs", 
+                               "PlugPlay", "gpsvc", "DcomLaunch", 
+                               "WdiServiceHost" };
+
 
 void NovaWin_VerifyServices(struct Attributes a,struct Promise *pp)
 {
@@ -614,11 +619,18 @@ int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int
  for(depName = srvConfig->lpDependencies; depName != NULL && *depName != '\0'; depName += (strlen(depName) + 1))
     {
     Debug("Checking if dependecy \"%s\" is running or paused\n", depName);
-    
+        
     depHandle = OpenService(managerHandle, depName, SERVICE_ALL_ACCESS);
     
     if(depHandle == NULL)
        {
+
+       if(IsStrIn(depName, PROTECTED_SERVICES))
+         {
+         CfOut(cf_inform, "", "Service \"%s\" is protected, assuming it is running", depName);
+	 continue;
+         }
+
        CfOut(cf_error,"OpenService","!! Could not open handle to service \"%s\" in order to check if dependency is running", depName);
        free(srvConfig);
        return false;
