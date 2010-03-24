@@ -289,7 +289,7 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
 
  if(procHandle == NULL)
     {
-    Debug("!! OpenProcess: Error opening process handle for pid=%lu\n", pid);
+    CfOut(cf_verbose, "OpenProcess", "Error opening process handle for pid=%lu\n", pid);
     return NULL;
     }
 
@@ -503,7 +503,7 @@ static void GetProcessCpuTime(DWORD pid, ULARGE_INTEGER *timeCpuInt)
 
  if(procHandle == NULL)
     {
-    Debug("!! OpenProcess: Could not open process handle for pid %lu\n", pid);
+    CfOut(cf_verbose, "OpenProcess", "!! Could not open process handle for pid %lu\n", pid);
     timeCpuInt->QuadPart = 0;
     return;
     }
@@ -544,7 +544,7 @@ void GetProcessUserName(HANDLE procHandle, int incDomain, char *nameStr, int nam
  if(!OpenProcessToken(procHandle, TOKEN_QUERY, &token))
     {
     // NOTE: we often get "access denied" when we're not running as a service
-    Debug("Could not get process user information (often happens when we're not a service) - OpenProcessToken() failed with code %lu\n", GetLastError());
+    CfOut(cf_verbose, "OpenProcessToken", "!! Could not get process user information (often happens when we're not a service)");
     return;
     }
 

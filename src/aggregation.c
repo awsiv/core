@@ -224,6 +224,7 @@ fclose(fout);
 /* First the fluctuating (variables) */
 
 snprintf(filename,CF_BUFSIZE-1,"%s/reports/fluctuations.nov",CFWORKDIR);
+MapName(filename);
 
 if ((fout = fopen(filename,"w")) == NULL)
    {
@@ -234,10 +235,11 @@ if ((fout = fopen(filename,"w")) == NULL)
 for (i = 0; fast[i] != NULL; i++)
    {
    snprintf(filename,CF_BUFSIZE-1,"%s/reports/%s",CFWORKDIR,fast[i]);
+   MapName(filename);
 
    if ((fin = fopen(filename,"r")) == NULL)
       {
-      CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle");
+      CfOut(cf_verbose,"fopen"," !! Cannot open nerve bundle \"%s\"", filename);
       continue;
       }
 
