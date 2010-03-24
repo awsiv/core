@@ -417,6 +417,7 @@ MapName(name);
 
 if (!OpenDB(name,&dbp))
    {
+   CfOut(cf_verbose, "", "!! Could not open database \"%s\"", name);
    return;
    }
 
