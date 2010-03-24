@@ -491,8 +491,6 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
 
    snprintf(tbuf,CF_BUFSIZE-1,"%s",cf_ctime(&then));
    
-//      tbuf[cf_strlen(tbuf)-9] = '\0';                     /* Chop off second and year */
-   
    if (then > 0 && lastseen > lsea)
       {
       CfOut(cf_verbose,""," -> Promise usage record \"%s\" expired, removing...\n",eventname);
