@@ -875,13 +875,13 @@ if (cf_strcmp(name,"const") == 0)
 /* Store everything first in a list because we don't have access to the
    output channel here -- summarize at the end. */
 
-snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\")\n",name,NOVA_BUNDLE_DATA_INV_B,pp->bundle,NOVA_BUNDLE_DATA);
+snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",name,NOVA_BUNDLE_DATA_INV_B,pp->bundle,NOVA_BUNDLE_DATA);
 
 PrependItemList(&NOVA_BUNDLEDEPENDENCE,assertion);
 
 if (handle = (char *)GetConstraint("handle",pp,CF_SCALAR))
    {
-   snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\")\n",name,NOVA_BUNDLE_DATA_INV_P,handle,NOVA_BUNDLE_DATA);
+   snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",name,NOVA_BUNDLE_DATA_INV_P,handle,NOVA_BUNDLE_DATA);
 
    PrependItemList(&NOVA_BUNDLEDEPENDENCE,assertion);
    }
