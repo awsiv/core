@@ -1,3 +1,8 @@
+1.1.2 
+        Encryption problems fixed in Community Edition.
+
+        Built with Cfengine Community Edition 3.0.4p3.
+
 1.1.0
 	Regular expressions in file paths supported on Windows by using
 	forward slash as path separator.
