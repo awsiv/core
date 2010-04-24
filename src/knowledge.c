@@ -179,7 +179,7 @@ for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
     {
     if (cf_strcmp(s,CF_FNCALL_TYPES[i].name) == 0)
        {
-       Nova_ListFunction(CF_FNCALL_TYPES[i]);
+       Nova_ListFunction(CF_FNCALL_TYPES[i],true);
        return;
        }
     }
@@ -651,15 +651,16 @@ printf("In-built functions:\n\n");
  
 for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
     {
-    Nova_ListFunction(CF_FNCALL_TYPES[i]);
+    Nova_ListFunction(CF_FNCALL_TYPES[i],false);
     }
 }
 
 /*****************************************************************************/
 
-void Nova_ListFunction(struct FnCallType f)
+void Nova_ListFunction(struct FnCallType f,int full)
 
 { int j;
+  struct FnCallArg *args = f.args;
  
 switch (f.dtype)
    {
@@ -696,6 +697,15 @@ for (j = 0; strlen(f.name)+j < 18; j++)
    }
 
 printf(" %s\n",f.description);
+
+if (full)
+   {
+   printf("\n");
+   for (j = 0; args[j].pattern != NULL; j++)
+      {
+      printf("       arg %d : %s, in the range %s\n",j,args[j].description,args[j].pattern);
+      }
+   }
 }
 
 /*****************************************************************************/

@@ -300,7 +300,7 @@ void NovaHtmlFooter(FILE *fp,char *footer);
 void Nova_SyntaxCompletion(char *s);
 void Nova_ListAgents(void);
 void Nova_ListFunctions(void);
-void Nova_ListFunction(struct FnCallType f);
+void Nova_ListFunction(struct FnCallType f,int full);
 void Nova_ListPromiseTypes(void);
 
 void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version);

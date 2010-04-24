@@ -57,7 +57,7 @@ void AgentDiagnostic(void);
 
 int MapBodyArgs(char *scopeid,struct Rlist *give,struct Rlist *take);
 struct Rlist *NewExpArgs(struct FnCall *fp, struct Promise *pp);
-void ArgTemplate(struct FnCall *fp,char **argtemplate, enum cfdatatype *argtypes,struct Rlist *finalargs);
+void ArgTemplate(struct FnCall *fp,struct FnCallArg *argtemplate,struct Rlist *finalargs);
 void DeleteExpArgs(struct Rlist *args);
 
 /* assoc.c */
@@ -1264,6 +1264,7 @@ void TestExpandVariables(void);
 void TestSearchFilePromiser(void);
 void TestRegularExpressions(void);
 void TestAgentPromises(void);
+void TestFunctionIntegrity(void);
 
 /* server_transform.c */
 
