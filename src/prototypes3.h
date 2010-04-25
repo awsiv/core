@@ -979,6 +979,16 @@ void AuditStatusMessage(FILE*fp,char status);
 /* manual.c */
 
 void TexinfoManual(char *mandir);
+void TexinfoHeader(FILE *fout);
+void TexinfoFooter(FILE *fout);
+void TexinfoPromiseTypesFor(FILE *fout,struct SubTypeSyntax *st);
+void TexinfoBodyParts(FILE *fout,struct BodySyntax *bs,char *context);
+void TexinfoVariables(FILE *fout,char *scope);
+void TexinfoShowRange(FILE *fout,char *s,enum cfdatatype type);
+void TexinfoSubBodyParts(FILE *fout,struct BodySyntax *bs);
+void IncludeManualFile(FILE *fout,char *file);
+void TexinfoSpecialFunction(FILE *fout,struct FnCallType fn);
+void PrintPattern(FILE *fout,char *pattern);
 
 /* matching.c */
 
@@ -998,6 +1008,11 @@ int RegExMatchSubString(struct CfRegEx rx,char *teststring,int *s,int *e);
 int RegExMatchFullString(struct CfRegEx rex,char *teststring);
 char *FirstBackReference(struct CfRegEx rex,char *regex,char *teststring);
 void EscapeSpecialChars(char *str, char *strEsc, int strEscSz, char *noEsc);
+
+/* mod_defaults.c */
+
+char *GetControlDefault(char *bodypart);
+char *GetBodyDefault(char *bodypart);
 
 /* modes.c */
 
@@ -1265,6 +1280,7 @@ void TestSearchFilePromiser(void);
 void TestRegularExpressions(void);
 void TestAgentPromises(void);
 void TestFunctionIntegrity(void);
+void SDIntegerDefault(char *ref,int cmp);
 
 /* server_transform.c */
 
