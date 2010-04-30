@@ -875,6 +875,7 @@ void CfHtmlFooter(FILE *fp,char *footer);
 
 /* item-lib.c */
 
+struct Item *ReturnItemIn(struct Item *list,char *item);
 struct Item *EndOfList(struct Item *start);
 int IsItemInRegion(char *item,struct Item *begin,struct Item *end,struct Attributes a,struct Promise *pp);
 void AppendItemList(struct Item **liststart,char *itemstring);
@@ -1186,6 +1187,7 @@ void PromiseRef(enum cfreport level,struct Promise *pp);
 struct Promise *NewPromise(char *typename,char *promiser);
 void HashPromise(char *salt,struct Promise *pp,unsigned char digest[EVP_MAX_MD_SIZE+1],enum cfhashes type);
 void DebugPromise(struct Promise *pp);
+void DereferenceComment(struct Promise *pp);
 
 /* recursion.c */
 
