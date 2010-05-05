@@ -101,6 +101,14 @@ printf("This core uses commercial Nova extensions at version %s Copyright (C) Cf
 
 /*****************************************************************************/
 
+char *Nova_GetVersion()
+
+{
+return VERSION;
+}
+
+/*****************************************************************************/
+
 char *Nova_StrVersion()
 
 { static char buf[64];

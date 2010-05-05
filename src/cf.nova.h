@@ -397,6 +397,7 @@ void DeleteFileLine(struct CfFileLine  **liststart,struct CfFileLine *item);
 /* promises.c */
 
 void Nova_Version(void);
+char *Nova_GetVersion(void);
 char * Nova_StrVersion(void);
 void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status);
 time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *t);
