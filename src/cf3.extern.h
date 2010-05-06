@@ -43,6 +43,8 @@ extern char STYLESHEET[CF_BUFSIZE];
 extern int CF_NODES;
 extern int CF_EDGES;
 
+extern struct Item *EDIT_ANCHORS;
+
 extern struct Bundle *BUNDLES;
 extern struct Body *BODIES;
 extern struct Scope *VSCOPE;
@@ -156,6 +158,9 @@ extern struct BodySyntax CF_COMMON_BODIES[];
 
 extern struct SubTypeSyntax *CF_ALL_SUBTYPES[];
 extern struct SubTypeSyntax CF_ALL_BODIES[];
+#endif
+
+#ifndef CF3_MOD_FUNCTIONS
 extern struct FnCallType CF_FNCALL_TYPES[];
 #endif
 
