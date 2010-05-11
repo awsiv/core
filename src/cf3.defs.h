@@ -259,6 +259,7 @@ enum cfacontrol
    cfa_editfilesize,
    cfa_environment,
    cfa_exclamation,
+   cfa_execresult_newlines,
    cfa_expireafter,
    cfa_fsinglecopy,
    cfa_fautodefine,
