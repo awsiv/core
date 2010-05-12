@@ -528,7 +528,7 @@ void Nova_SetMeasurementPromises(struct Item **classlist)
   void *stored;
   int i,ksize,vsize;
 
-snprintf(dbname,sizeof(dbname)-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_MEASUREDB);
+snprintf(dbname,CF_MAXVARSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_MEASUREDB);
 MapName(dbname);
 
 if (!OpenDB(dbname,&dbp))
@@ -553,8 +553,19 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
 
       CfOut(cf_verbose,""," -> Setting measurement event %s\n",eventname);
 
-      snprintf(assignment,CF_BUFSIZE-1,"value_%s=%.2lf",eventname,entry.Q.q);
+      // a.measure.data_type is not longer known here, so look for zero decimals
+
+      if ((int)(entry.Q.q * 10) % 10 == 0)
+         {
+         snprintf(assignment,CF_BUFSIZE-1,"value_%s=%.0lf",eventname,entry.Q.q);
+         }
+      else
+         {
+         snprintf(assignment,CF_BUFSIZE-1,"value_%s=%.2lf",eventname,entry.Q.q);
+         }
+      
       AppendItem(classlist,assignment,NULL);
+
       snprintf(assignment,CF_BUFSIZE-1,"av_%s=%.2lf",eventname,entry.Q.expect);
       AppendItem(classlist,assignment,NULL);
       snprintf(assignment,CF_BUFSIZE-1,"dev_%s=%.2lf",eventname,sqrt(entry.Q.var));
@@ -562,55 +573,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
       }
    }
 
-
 CloseDB(dbp);
-
-/* Get the directly discovered environment data from sys context
-
-for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
-   {
-   if (cf_strcmp(ptr->scope,"mon") != 0)
-      {
-      continue;
-      }
-
-   if (ptr->hashtable)
-      {
-      for (i = 0; i < CF_HASHTABLESIZE; i++)
-         {
-         if (ptr->hashtable[i] != NULL)
-            {
-            switch (ptr->hashtable[i]->rtype)
-               {
-               case CF_SCALAR:
-
-                   snprintf(assignment,CF_BUFSIZE-1,"value_%s=%s",ptr->hashtable[i]->lval,ptr->hashtable[i]->rval);
-                   AppendItem(classlist,assignment,NULL);
-                   break;
-
-               case CF_LIST:
-
-                   snprintf(assignment,CF_BUFSIZE-1,"value_%s=",ptr->hashtable[i]->lval);
-
-                   for (rp = ptr->hashtable[i]->rval; rp != NULL; rp=rp->next)
-                      {
-                      strcat(assignment,rp->item);
-                      if (rp->next)
-                         {
-                         strcat(assignment,",");
-                         }
-                      }
-
-                   AppendItem(classlist,assignment,NULL);
-                   break;
-               default:
-                   break;
-               }
-            }
-         }
-      }
-   }
-*/
 }
 
 /*****************************************************************************/
