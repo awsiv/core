@@ -99,7 +99,7 @@
 #define CF_DEFINECLASSES "classes"
 #define CF_TRANSACTION   "action"
 
-#define CF3_MODULES 13 /* This value needs to be incremented when adding modules */
+#define CF3_MODULES 15 /* This value needs to be incremented when adding modules */
 
 /*************************************************************************/
 
@@ -259,7 +259,6 @@ enum cfacontrol
    cfa_editfilesize,
    cfa_environment,
    cfa_exclamation,
-   cfa_execresult_newlines,
    cfa_expireafter,
    cfa_fsinglecopy,
    cfa_fautodefine,
@@ -1588,11 +1587,20 @@ struct CfServices
 
 /*************************************************************************/
 
+struct Outputs
+   {
+   char *level;
+   char *promiser_type;
+   };
+
+/*************************************************************************/
+
  /* This is huge, but the simplification of logic is huge too
     so we leave it to the compiler to optimize */
 
 struct Attributes
    {
+   struct Outputs output;
    struct FileSelect select;
    struct FilePerms perms;
    struct FileCopy copy;

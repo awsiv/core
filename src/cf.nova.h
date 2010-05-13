@@ -381,6 +381,13 @@ void Nova_LookupClassName(int n,char *name, char *desc);
 void Nova_SaveFilePosition(char *filename,long fileptr);
 long Nova_RestoreFilePosition(char *filename);
 
+/* outputs.c */
+
+void Nova_VerifyOutputsPromise(struct Promise *pp);
+void Nova_SetPromiseOutputs(struct Promise *pp);
+void Nova_SetBundleOutputs(char *name);
+void Nova_ResetBundleOutputs(char *name);
+
 /* processes.c */
 
 char *Nova_GetProcessOptions(void);
