@@ -14,7 +14,7 @@ dnl
 dnl The version in the next line is the only one to set
 dnl
 
-AM_INIT_AUTOMAKE(cfnova,1.1.2)   dnl remember to set version
+AM_INIT_AUTOMAKE(cfnova,1.1.3)   dnl remember to set version
 
 AM_CONFIG_HEADER(src/conf.h)
 
@@ -24,7 +24,7 @@ AM_CONFIG_HEADER(src/conf.h)
 # Don't add if cross-compiling (setting host), to avoid using native libs.
 #
 if test "x$host" = "x"; then
-  for x in /usr/lib64 /usr/local/gnu/lib /usr/local/gnulib /opt/dce/lib /sw/lib
+  for x in /usr/lib64 /usr/local/lib /usr/local/gnulib /opt/dce/lib /sw/lib
   do
     if test -d "$x"; then
       y=`expr " $LDFLAGS " : ".* -L$x "`
@@ -40,7 +40,7 @@ fi
 # Don't add if cross-compiling (setting host), to avoid using native libs.
 # 
 if test "x$host" = "x"; then
-  for x in /usr/local/gnu/include /opt/dce/include /sw/include
+  for x in /usr/local/include /opt/dce/include /sw/include
   do
     if test -d "$x"; then
       y=`expr " $CPPFLAGS " : ".* -I$x "`
@@ -389,6 +389,21 @@ AC_SUBST(OPENSSL_LIB_CPPFLAGS)
 #
 # Others
 #
+
+AC_ARG_WITH(libvirt,
+	AS_HELP_STRING(--with-libvirt, [support virtual machine management]),with_virt=yes,
+	with_virt=no)
+
+if test "x$with_virt" = xyes; then
+   AC_MSG_CHECKING(for libvirt)
+   WITH_VIRT=1
+else
+   WITH_VIRT=0
+fi
+
+if test $WITH_VIRT = 1; then
+  AC_CHECK_LIB(virt,main, [], [AC_MSG_ERROR(Cannot find libvirt)])
+fi
 
 
 dnl AC_CHECK_LIB(m,main)
