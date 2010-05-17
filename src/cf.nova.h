@@ -262,6 +262,12 @@ void Nova_BoundaryCheck(struct CfDataView *cfv,int *x1,int *y1,int *x2, int *y2)
 
 int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
+/* environments.c */
+
+int Nova_EnvironmentsSanityChecks(struct Attributes a,struct Promise *pp);
+void Nova_VerifyEnvironments(struct Attributes a,struct Promise *pp);
+void Nova_VerifyEnvironmentsPromise(struct Promise *pp);
+
 /* graphs.c */
 
 void Nova_BuildMeters(struct CfDataView *cfv,char *hostname);
