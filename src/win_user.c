@@ -255,25 +255,14 @@ struct UidList *NovaWin_Rlist2SidList(struct Rlist *uidnames, struct Promise *pp
 
 struct Rval NovaWin_FnCallUserExists(struct FnCall *fp,struct Rlist *finalargs)
 
-{ static char *argtemplate[] =
-     {
-     CF_ANYSTRING,
-     NULL
-     };
-  static enum cfdatatype argtypes[] =
-      {
-      cf_str,
-      cf_notype
-      };
-  
-  struct Rlist *rp;
+{ struct Rlist *rp;
   struct Rval rval;
   char userSid[CF_MAXSIDSIZE];
   char buffer[CF_BUFSIZE];
   char *arg = finalargs->item;
  
 buffer[0] = '\0';  
-ArgTemplate(fp,argtemplate,argtypes,finalargs); /* Arg validation */
+ArgTemplate(fp,CF_FNCALL_TYPES[cfn_userexists].args,finalargs);
 
 /* begin fn specific content */
 
@@ -299,17 +288,7 @@ return rval;
 
 struct Rval NovaWin_FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs)
 
-{ static char *argtemplate[] =
-     {
-     CF_ANYSTRING,
-     NULL
-     };
-  static enum cfdatatype argtypes[] =
-      {
-      cf_str,
-      cf_notype
-      };
-  
+{ 
   struct Rlist *rp;
   struct Rval rval;
   char groupSid[CF_MAXSIDSIZE];
@@ -317,7 +296,7 @@ struct Rval NovaWin_FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs)
   char *arg = finalargs->item;
  
 buffer[0] = '\0';  
-ArgTemplate(fp,argtemplate,argtypes,finalargs); /* Arg validation */
+ArgTemplate(fp,CF_FNCALL_TYPES[cfn_groupexists].args,finalargs);
 
 /* begin fn specific content */
 
