@@ -117,6 +117,7 @@ if (Nova_OpenRegistryKey(pp->promiser,&key_h,create))
       {
       Nova_RecursiveRestoreKey(dbp,pp->promiser,a,pp) ;
       YieldCurrentLock(thislock);
+      CloseDB(dbp);
       return;
       }
    
