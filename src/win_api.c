@@ -258,7 +258,7 @@ int NovaWin_uname(struct utsname *buf)
  OSVERSIONINFOEX osInfo;
  SYSTEM_INFO sysInfo;
  int intelArchNum;
- char hostName[MAXHOSTNAMELEN];
+ char hostName[MAXHOSTNAMELEN] = {0};
  char ip[MAXIP4CHARLEN];
  char *osType;
 
@@ -300,14 +300,6 @@ int NovaWin_uname(struct utsname *buf)
  WINVER_MINOR = osInfo.dwMinorVersion;
  WINVER_BUILD = osInfo.dwBuildNumber;
 
- // hostname
- if(!GetMyHostInfo(hostName, ip))
-    {
-    CfOut(cf_error, "", "!! Could not get hostname");
-    return -1;
-    }
-
- snprintf(buf->nodename, _SYS_NMLN, "%s", hostName);
 
  // release - set to service pack number
 
@@ -472,6 +464,17 @@ int NovaWin_uname(struct utsname *buf)
         snprintf(buf->machine, _SYS_NMLN, "unknown");
 
         break;
+    }
+
+ // hostname
+ if(!GetMyHostInfo(hostName, ip))
+    {
+    CfOut(cf_error, "", "!! Could not get this host's hostname");
+    snprintf(buf->nodename, _SYS_NMLN, "%s", "UNKNOWN_HOSTNAME");
+    }
+  else
+    {
+    snprintf(buf->nodename, _SYS_NMLN, "%s", hostName);
     }
   
  return 0;
