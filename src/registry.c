@@ -325,9 +325,6 @@ if (a.database.columns)
 
    for (rp = a.database.columns; rp != NULL; rp = rp->next)
       {
-      char *sp = strchr(rp->item,',');
-      *sp = '\0';
-
       ret = RegDeleteValue(key_h,rp->item);
       
       switch (ret)
