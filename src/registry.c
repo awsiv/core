@@ -786,7 +786,7 @@ else
    {
    if (a.database.operation && (cf_strcmp(a.database.operation,"cache") == 0))
       {
-      cfPS(cf_error,CF_CHG,"",pp,a," !! New registry value \"%s\" found in \"key\" %s",value,key);
+      cfPS(cf_error,CF_CHG,"",pp,a," !! New registry value \"%s\" found in key \"%s\"",value,key);
       WriteDB(dbp,dbkey,data,size);
       }
    }
