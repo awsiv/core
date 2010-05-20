@@ -17,6 +17,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#ifdef HAVE_LIBVIRT
+extern virConnectPtr CFVC;
+#endif
+
 /*****************************************************************************/
 
 void Nova_VerifyEnvironmentsPromise(struct Promise *pp)
@@ -40,10 +44,15 @@ if (Nova_EnvironmentsSanityChecks(a,pp))
 int Nova_EnvironmentsSanityChecks(struct Attributes a,struct Promise *pp)
 
 {
- if (a.env.specfile)
-    {
-    }
- 
+if (a.env.specfile)
+   {
+   if (a.env.cpus || a.env.memory || a.env.disk)
+      {
+      CfOut(cf_error,""," !! Conflicting promise of both a spec-file and cpu/memory/disk resources");
+      return false;
+      }
+   }
+
 return true;
 }
 
@@ -56,22 +65,22 @@ void Nova_VerifyEnvironments(struct Attributes a,struct Promise *pp)
 switch (Str2Hypervisors(a.env.type))
    {
    case cfv_virt_xen:
-       snprintf(hyper_uri,CF_MAXVARSIZE-1,"%s:///",a.env.type);
+       snprintf(hyper_uri,CF_MAXVARSIZE-1,"xen:///");
        break;
        
    case cfv_virt_kvm:
-       snprintf(hyper_uri,CF_MAXVARSIZE-1,"qemu:///session",a.env.type);
+       snprintf(hyper_uri,CF_MAXVARSIZE-1,"qemu:///session");
 
    case cfv_virt_esx:
-       snprintf(hyper_uri,CF_MAXVARSIZE-1,"%esx://127.0.0.1",a.env.type);
+       snprintf(hyper_uri,CF_MAXVARSIZE-1,"esx://127.0.0.1");
        break;
 
    case cfv_virt_test:
-       snprintf(hyper_uri,CF_MAXVARSIZE-1,"%s:///default",a.env.type);
+       snprintf(hyper_uri,CF_MAXVARSIZE-1,"test:///default");
        break;
 
    case cfv_zone:
-       snprintf(hyper_uri,CF_MAXVARSIZE-1,"solaris_zone",a.env.type);
+       snprintf(hyper_uri,CF_MAXVARSIZE-1,"solaris_zone");
        break;
 
    default:
@@ -120,7 +129,6 @@ switch (VSYSTEMHARDCLASS)
        CfOut(cf_verbose,""," -> Unable to resolve an environment supervisor/monitor for this platform, aborting");
        break;
    }
-
 }
 
 /*****************************************************************************/
@@ -129,21 +137,33 @@ switch (VSYSTEMHARDCLASS)
 
 void Nova_VerifyVirtDomain(char *uri,struct Attributes a,struct Promise *pp)
 
-{ virConnectPtr vc;
-
+{ static char *this_hypervisor = "uninitialized_start_value";
+ 
 /* set up the library error handler */
 //virSetErrorFunc(NULL, virshErrorHandler);
 
 /* set up the signals handlers to catch disconnections */
 //vshSetupSignals();
-  
-if (vc = virConnectOpenAuth(uri,virConnectAuthPtrDefault,0))
+
+if (CFVC == NULL)
    {
-   CfOut(cf_error,""," !! Failed to connect to virtualization monitor \"%s\"",uri);
+   if (CFVC = virConnectOpenAuth(uri,virConnectAuthPtrDefault,0))
+      {
+      CfOut(cf_error,""," !! Failed to connect to virtualization monitor \"%s\"",uri);
+      return;
+      }
+
+   strcpy(this_hypervisor,a.env.type);
+   }
+else
+   {
+   if (strcmp(a.env.type,this_hypervisor) != 0)
+      {
+      CfOut(cf_error,""," !! Conflicting environment type \"%s\" promised -- this seems to be a \"%s\" environment",a.env.type,this_hypervisor);
+      return;
+      }
    }
 
-// Also 
-    
 /* Discovery *********************************************
 
 // Hypervisor type
@@ -169,25 +189,23 @@ virDomainReboot();
 switch(a.env.state)
    {
    case cfvs_create:
-       Nova_CreateVirtDom(vc,uri,a,pp);
+       Nova_CreateVirtDom(CFVC,uri,a,pp);
        break;
    case cfvs_delete:
-       Nova_DeleteVirt(vc,uri,a,pp);
+       Nova_DeleteVirt(CFVC,uri,a,pp);
        break;
    case cfvs_running:
-       Nova_RunningVirt(vc,uri,a,pp);
+       Nova_RunningVirt(CFVC,uri,a,pp);
        break;
    case cfvs_suspended:
-       Nova_SuspendedVirt(vc,uri,a,pp);
+       Nova_SuspendedVirt(CFVC,uri,a,pp);
        break;
    case cfvs_down:
-       Nova_DownVirt(vc,uri,a,pp);
+       Nova_DownVirt(CFVC,uri,a,pp);
        break;
    default:
        break;
    }
-
-virConnectClose(vc);
 }  
 
 /*****************************************************************************/
