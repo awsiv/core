@@ -28,6 +28,10 @@
 #include <gdfontg.h>
 #endif
 
+#ifdef HAVE_LIBVIRT
+# include <libvirt/libvirt.h>
+#endif
+
 #undef PACKAGE
 // #undef AUTOCONF_HOSTNAME TODO: Does removal cause troble ?
 
@@ -267,6 +271,14 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 int Nova_EnvironmentsSanityChecks(struct Attributes a,struct Promise *pp);
 void Nova_VerifyEnvironments(struct Attributes a,struct Promise *pp);
 void Nova_VerifyEnvironmentsPromise(struct Promise *pp);
+int Nova_CreateVirtDom(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
+int Nova_DeleteVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
+int Nova_DeleteVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
+int Nova_RunningVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
+int Nova_SuspendedVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
+int Nova_DownVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
+void Nova_VerifyVirtDomain(char *uri,struct Attributes a,struct Promise *pp);
+int VerifyZone(struct Attributes a,struct Promise *pp);
 
 /* graphs.c */
 
