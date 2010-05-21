@@ -21,19 +21,33 @@
 extern virConnectPtr CFVC;
 #endif
 
+#define CF_MAX_CONCURRENT_ENVIRONMENTS 256
+
+int CF_RUNNING[CF_MAX_CONCURRENT_ENVIRONMENTS];
+char *CF_SUSPENDED[CF_MAX_CONCURRENT_ENVIRONMENTS];
+
 /*****************************************************************************/
 
 void Nova_VerifyEnvironmentsPromise(struct Promise *pp)
 
 { struct Attributes a;
+  struct CfLock thislock;
 
 #ifdef HAVE_LIBVIRT
 a = GetEnvironmentsAttributes(pp);
 
 if (Nova_EnvironmentsSanityChecks(a,pp))
    {
+   thislock = AcquireLock("virtual",VUQNAME,CFSTARTTIME,a,pp);
+   
+   if (thislock.lock == NULL)
+      {
+      return;
+      }
    Nova_VerifyEnvironments(a,pp);
    }
+
+YieldCurrentLock(thislock);
 #endif
 }
 
@@ -137,7 +151,9 @@ switch (VSYSTEMHARDCLASS)
 
 void Nova_VerifyVirtDomain(char *uri,struct Attributes a,struct Promise *pp)
 
-{ static char *this_hypervisor = "uninitialized_start_value";
+{ int num,i;
+  virDomainPtr dom;
+  const char *name;
  
 /* set up the library error handler */
 //virSetErrorFunc(NULL, virshErrorHandler);
@@ -147,19 +163,19 @@ void Nova_VerifyVirtDomain(char *uri,struct Attributes a,struct Promise *pp)
 
 if (CFVC == NULL)
    {
-   if (CFVC = virConnectOpenAuth(uri,virConnectAuthPtrDefault,0))
+   if ((CFVC = virConnectOpenAuth(uri,virConnectAuthPtrDefault,0)) == NULL)
       {
       CfOut(cf_error,""," !! Failed to connect to virtualization monitor \"%s\"",uri);
       return;
       }
 
-   strcpy(this_hypervisor,a.env.type);
+   strncpy(WEBDRIVER,a.env.type,CF_MAXVARSIZE);
    }
 else
    {
-   if (strcmp(a.env.type,this_hypervisor) != 0)
+   if (strcmp(a.env.type,WEBDRIVER) != 0)
       {
-      CfOut(cf_error,""," !! Conflicting environment type \"%s\" promised -- this seems to be a \"%s\" environment",a.env.type,this_hypervisor);
+      CfOut(cf_error,""," !! Conflicting environment type \"%s\" promised -- this seems to be a \"%s\" environment",a.env.type,WEBDRIVER);
       return;
       }
    }
@@ -186,6 +202,17 @@ bool virDomainIsActive();
 virDomainReboot();
 ***********************************************************/
 
+for (i = 0; i < CF_MAX_CONCURRENT_ENVIRONMENTS; i++)
+   {
+   CF_RUNNING[i] = -1;
+   CF_SUSPENDED[i] = NULL;
+   }
+
+num = virConnectListDomains(CFVC,CF_RUNNING,CF_MAX_CONCURRENT_ENVIRONMENTS);
+CfOut(cf_verbose,""," -> Found %d running virtual domain environments on this host",num);
+num = virConnectListDefinedDomains(CFVC,CF_SUSPENDED,CF_MAX_CONCURRENT_ENVIRONMENTS);
+CfOut(cf_verbose,""," -> Found %d dormant virtual domain environments on this host",num);
+
 switch(a.env.state)
    {
    case cfvs_create:
@@ -204,6 +231,7 @@ switch(a.env.state)
        Nova_DownVirt(CFVC,uri,a,pp);
        break;
    default:
+       CfOut(cf_inform,""," !! No state specified for this environment");
        break;
    }
 }  
@@ -221,26 +249,84 @@ return true;
 
 int Nova_CreateVirtDom(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp)
 
-{ char *xml_file;
+{ int alloc_file = false;
+  char *xml_file;
+  const char *name;
+  char defaultxml[CF_MAXVARSIZE];
   virDomainPtr dom;
+  int i;
 
-if (virFileReadAll(a.env.specfile,CF_BUFSIZE,&xml_file) < 0)
+snprintf(defaultxml,CF_MAXVARSIZE-1,
+         "<domain type='test'>"
+         "  <name>%s</name>"
+         "  <memory>8388608</memory>"
+         "  <currentMemory>2097152</currentMemory>"
+         "  <vcpu>2</vcpu>"
+         "  <os>"
+         "    <type>hvm</type>"
+         "  </os>"
+         "</domain>",pp->promiser
+         );
+         
+for (i = 0; CF_RUNNING[i] > 0; i++)
    {
-   return false;
+   dom = virDomainLookupByID(CFVC,CF_RUNNING[i]);
+   name = virDomainGetName(dom);
+
+   if (strcmp(name,pp->promiser))
+      {
+      cfPS(cf_verbose,CF_NOP,"",pp,a," -> Found a running environment called \"%s\" - promise kept\n",name);
+      return true;
+      }
+   }
+
+for (i = 0; CF_SUSPENDED[i] != NULL; i++)
+   {
+   if (strcmp(CF_SUSPENDED[i],pp->promiser))
+      {
+      CfOut(cf_inform,""," -> Found an existing, but suspended, environment id = %d, called \"%s\"\n",CF_SUSPENDED[i],CF_SUSPENDED[i]);
+      //cfPS(cf_inform,CF_CHG,"",pp,a," -> Found a suspended environment id = %d, called \"%s\"\n",CF_SUSPENDED[i],name);
+      }
+   }
+
+
+if (a.env.specfile)
+   {
+   if (virFileReadAll(a.env.specfile,CF_BUFSIZE,&xml_file) < 0)
+      {
+      cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Unable to read environment specfile \"%s\"\n",a.env.specfile);
+      return false;
+      }
+
+   alloc_file = true;
+   }
+else
+   {
+   if (Str2Hypervisors(a.env.type) != cfv_virt_test)
+      {
+      // set cpus etc
+      }
    }
 
 // virDomainDefineXML();
 
-dom = virDomainCreateXML(vc,xml_file,0);
-
-free(xml_file);
-
-if (dom != NULL)
+if (dom = virDomainCreateXML(vc,xml_file,0))
    {
    // DO SOMETHING
    //virDomainGetName(dom), from);
-     
+
+   printf("CREATED A VM......");
+   
    virDomainFree(dom);
+   }
+else
+   {
+   printf("FAILED TO CREAT A VM......");
+   }
+
+if (alloc_file)
+   {
+   free(xml_file);
    }
 
 return true;
