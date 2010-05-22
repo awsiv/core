@@ -279,6 +279,9 @@ int Nova_SuspendedVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Pro
 int Nova_DownVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
 void Nova_VerifyVirtDomain(char *uri,struct Attributes a,struct Promise *pp);
 int VerifyZone(struct Attributes a,struct Promise *pp);
+void Nova_EnvironmentErrorHandler(void);
+void Nova_ShowRunList(virConnectPtr vc);
+void Nova_ShowDormant(virConnectPtr vc);
 
 /* graphs.c */
 

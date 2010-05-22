@@ -156,7 +156,7 @@ void Nova_VerifyVirtDomain(char *uri,struct Attributes a,struct Promise *pp)
   const char *name;
  
 /* set up the library error handler */
-//virSetErrorFunc(NULL, virshErrorHandler);
+//virSetErrorFunc(NULL,Nova_EnvironmentErrorHandler);
 
 /* set up the signals handlers to catch disconnections */
 //vshSetupSignals();
@@ -180,28 +180,6 @@ else
       }
    }
 
-/* Discovery *********************************************
-
-// Hypervisor type
-
-virConnectGetType();
-virConnectGetMaxVcpus();
-
-// Get INactive
-
-virConnectListDefinedNetworks(vconn);
-virConnectListDefinedInterfaces();
-virConnectListDefinedDomains();
-
-// Get ACTIVE
-virConnectListNetworks();
-virConnectListDomains();
-virConnectListInterfaces();
-
-bool virDomainIsActive();
-virDomainReboot();
-***********************************************************/
-
 for (i = 0; i < CF_MAX_CONCURRENT_ENVIRONMENTS; i++)
    {
    CF_RUNNING[i] = -1;
@@ -210,8 +188,10 @@ for (i = 0; i < CF_MAX_CONCURRENT_ENVIRONMENTS; i++)
 
 num = virConnectListDomains(CFVC,CF_RUNNING,CF_MAX_CONCURRENT_ENVIRONMENTS);
 CfOut(cf_verbose,""," -> Found %d running virtual domain environments on this host",num);
+Nova_ShowRunList(CFVC);
 num = virConnectListDefinedDomains(CFVC,CF_SUSPENDED,CF_MAX_CONCURRENT_ENVIRONMENTS);
 CfOut(cf_verbose,""," -> Found %d dormant virtual domain environments on this host",num);
+Nova_ShowDormant(CFVC);
 
 switch(a.env.state)
    {
@@ -273,22 +253,22 @@ for (i = 0; CF_RUNNING[i] > 0; i++)
    dom = virDomainLookupByID(CFVC,CF_RUNNING[i]);
    name = virDomainGetName(dom);
 
-   if (strcmp(name,pp->promiser))
+   if (strcmp(name,pp->promiser) == 0)
       {
       cfPS(cf_verbose,CF_NOP,"",pp,a," -> Found a running environment called \"%s\" - promise kept\n",name);
       return true;
       }
+   
+   virDomainFree(dom);
    }
 
 for (i = 0; CF_SUSPENDED[i] != NULL; i++)
    {
-   if (strcmp(CF_SUSPENDED[i],pp->promiser))
+   if (strcmp(CF_SUSPENDED[i],pp->promiser) == 0)
       {
       CfOut(cf_inform,""," -> Found an existing, but suspended, environment id = %d, called \"%s\"\n",CF_SUSPENDED[i],CF_SUSPENDED[i]);
-      //cfPS(cf_inform,CF_CHG,"",pp,a," -> Found a suspended environment id = %d, called \"%s\"\n",CF_SUSPENDED[i],name);
       }
    }
-
 
 if (a.env.specfile)
    {
@@ -302,26 +282,21 @@ if (a.env.specfile)
    }
 else
    {
+   xml_file = defaultxml;
    if (Str2Hypervisors(a.env.type) != cfv_virt_test)
       {
       // set cpus etc
       }
    }
 
-// virDomainDefineXML();
-
 if (dom = virDomainCreateXML(vc,xml_file,0))
    {
-   // DO SOMETHING
-   //virDomainGetName(dom), from);
-
-   printf("CREATED A VM......");
-   
+   cfPS(cf_verbose,CF_CHG,"",pp,a," -> Created a virtual domain \"%s\"\n",pp->promiser);   
    virDomainFree(dom);
    }
 else
    {
-   printf("FAILED TO CREAT A VM......");
+   cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Failed to create a virtual domain \"%s\"\n",pp->promiser);   
    }
 
 if (alloc_file)
@@ -337,13 +312,30 @@ return true;
 int Nova_DeleteVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp)
 
 { virDomainPtr dom;
+  int ret = true;
 
-//dom = virDomainLookupByName(conn,localname);
-//dom = virDomainLookupByID(conn,int id);
-// virDomainDestroy();
-// virDomainUndefine();
+dom = virDomainLookupByName(vc,pp->promiser);
 
-return true;
+if (dom)
+   {
+   if (virDomainDestroy(dom) == -1)
+      {
+      cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Failed to delete virtual domain \"%s\"\n",pp->promiser);   
+      ret = false;
+      }
+   else
+      {
+      cfPS(cf_verbose,CF_CHG,"",pp,a," -> Deleted virtual domain \"%s\"\n",pp->promiser);   
+      }
+
+   virDomainFree(dom);
+   }
+else
+   {
+   cfPS(cf_verbose,CF_NOP,"",pp,a," -> No such virtual domain called \"%s\" - promise kept\n",pp->promiser);
+   }
+
+return ret;
 }
 
 /*****************************************************************************/
@@ -351,34 +343,82 @@ return true;
 int Nova_RunningVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp)
 
 { virDomainPtr dom;
+  virDomainInfo info;
  
-/*
-struct virDomainInfo
-{
-unsigned char	state	: the running state, one of virDomainState
-unsigned long	maxMem	: the maximum memory in KBytes allowed
-unsigned long	memory	: the memory in KBytes used by the domain
-unsigned short	nrVirtCpu	: the number of virtual CPUs for the domain
-unsigned long long	cpuTime	: the CPU time used in nanoseconds
-}
+dom = virDomainLookupByName(vc,pp->promiser);
 
-enum virDomainState
-{
-VIR_DOMAIN_NOSTATE	= 	0	: no state
-VIR_DOMAIN_RUNNING	= 	1	: the domain is running
-VIR_DOMAIN_BLOCKED	= 	2	: the domain is blocked on resource
-VIR_DOMAIN_PAUSED	= 	3	: the domain is paused by user
-VIR_DOMAIN_SHUTDOWN	= 	4	: the domain is being shut down
-VIR_DOMAIN_SHUTOFF	= 	5	: the domain is shut off
-VIR_DOMAIN_CRASHED	= 	6	: the domain is crashed
+if (dom)
+   {
+   if (virDomainGetInfo(dom,&info) == -1)
+      {
+      cfPS(cf_inform,CF_FAIL,"",pp,a," !! Unable to probe virtual domain \"%s\"",pp->promiser);
+      virDomainFree(dom);
+      return false;
+      }
 
-}
-*/
+   switch (info.state)
+      {
+      case VIR_DOMAIN_RUNNING:
+          cfPS(cf_verbose,CF_NOP,"",pp,a," -> Virtual domain \"%s\" running - promise kept\n",pp->promiser);
+          break;
 
-//int virDomainGetInfo(virDomainPtr domain, virDomainInfoPtr info)
-// virConnectOpenReadOnly();
-// virDomainResume(); // if only suspended
-// virDomainCreate(); // if not started
+      case VIR_DOMAIN_BLOCKED:
+          cfPS(cf_verbose,CF_NOP,"",pp,a," -> Virtual domain \"%s\" running but waiting for a resource - promise kept as far as possible\n",pp->promiser);
+          break;
+          
+      case VIR_DOMAIN_SHUTDOWN:
+          cfPS(cf_verbose,CF_INTERPT,"",pp,a," -> Virtual domain \"%s\" is shutting down\n",pp->promiser);
+          CfOut(cf_verbose,""," -> It is currently impossible to know whether it will reboot or not - deferring promise check until it has completed its shutdown");          
+          break;
+          
+      case VIR_DOMAIN_PAUSED:
+          
+          if (virDomainResume(dom) == -1)
+             {
+             cfPS(cf_verbose,CF_INTERPT,"",pp,a," -> Virtual domain \"%s\" failed to resume after suspension\n",pp->promiser);
+             virDomainFree(dom);
+             return false;
+             }
+
+          cfPS(cf_verbose,CF_CHG,"",pp,a," -> Virtual domain \"%s\" was suspended, resuming\n",pp->promiser);
+          break;
+          
+      case VIR_DOMAIN_SHUTOFF:
+          
+          if (virDomainCreate(dom) == -1)
+             {
+             cfPS(cf_verbose,CF_INTERPT,"",pp,a," -> Virtual domain \"%s\" failed to resume after halting\n",pp->promiser);
+             virDomainFree(dom);
+             return false;
+             }
+
+          cfPS(cf_verbose,CF_CHG,"",pp,a," -> Virtual domain \"%s\" was inactive, booting...\n",pp->promiser);
+          break;
+          
+      case VIR_DOMAIN_CRASHED:
+
+          if (virDomainReboot(dom,0) == -1)
+             {
+             cfPS(cf_verbose,CF_INTERPT,"",pp,a," -> Virtual domain \"%s\" has crashed and rebooting failed\n",pp->promiser);
+             virDomainFree(dom);
+             return false;
+             }
+
+          cfPS(cf_verbose,CF_CHG,"",pp,a," -> Virtual domain \"%s\" has crashed, rebooting...\n",pp->promiser);
+          break;
+          
+      default:
+          CfOut(cf_verbose,""," !! Virtual domain \"%s\" is reported as having no state, whatever that means",pp->promiser);
+          break;
+      }
+
+   virDomainFree(dom);
+   }
+else
+   {
+   CfOut(cf_verbose,""," -> Virtual domain \"%s\" cannot be located, attempting to recreate",pp->promiser);
+   Nova_CreateVirtDom(vc,uri,a,pp);
+   }
 
 return true;
 }
@@ -388,7 +428,71 @@ return true;
 int Nova_SuspendedVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp)
 
 { virDomainPtr dom;
-// virSuspendDomain();
+  virDomainInfo info;
+
+dom = virDomainLookupByName(vc,pp->promiser);
+
+if (dom)
+   {
+   if (virDomainGetInfo(dom,&info) == -1)
+      {
+      cfPS(cf_inform,CF_FAIL,"",pp,a," !! Unable to probe virtual domain \"%s\"",pp->promiser);
+      virDomainFree(dom);
+      return false;
+      }
+
+   switch (info.state)
+      {
+      case VIR_DOMAIN_BLOCKED:
+      case VIR_DOMAIN_RUNNING:
+          if (virDomainSuspend(dom) == -1)
+             {
+             cfPS(cf_verbose,CF_INTERPT,"",pp,a," -> Virtual domain \"%s\" failed to suspend!\n",pp->promiser);
+             virDomainFree(dom);
+             return false;
+             }
+
+          cfPS(cf_verbose,CF_CHG,"",pp,a," -> Virtual domain \"%s\" running, suspending\n",pp->promiser);
+          break;
+
+      case VIR_DOMAIN_SHUTDOWN:
+          cfPS(cf_verbose,CF_INTERPT,"",pp,a," -> Virtual domain \"%s\" is shutting down\n",pp->promiser);
+          CfOut(cf_verbose,""," -> It is currently impossible to know whether it will reboot or not - deferring promise check until it has completed its shutdown");          
+          break;
+          
+      case VIR_DOMAIN_PAUSED:
+          
+          cfPS(cf_verbose,CF_NOP,"",pp,a," -> Virtual domain \"%s\" is suspended - promise kept\n",pp->promiser);
+          break;
+          
+      case VIR_DOMAIN_SHUTOFF:
+
+          cfPS(cf_verbose,CF_NOP,"",pp,a," -> Virtual domain \"%s\" is down - promise kept\n",pp->promiser);
+          break;
+          
+      case VIR_DOMAIN_CRASHED:
+
+          if (virDomainSuspend(dom) == -1)
+             {
+             cfPS(cf_verbose,CF_INTERPT,"",pp,a," -> Virtual domain \"%s\" is crashed has failed to suspend!\n",pp->promiser);
+             virDomainFree(dom);
+             return false;
+             }
+          
+          cfPS(cf_verbose,CF_CHG,"",pp,a," -> Virtual domain \"%s\" is in a crashed state, suspending\n",pp->promiser);
+          break;
+          
+      default:
+          CfOut(cf_verbose,""," !! Virtual domain \"%s\" is reported as having no state, whatever that means",pp->promiser);
+          break;
+      }
+
+   virDomainFree(dom);
+   }
+else
+   {
+   cfPS(cf_verbose,CF_NOP,"",pp,a," -> Virtual domain \"%s\" cannot be found - take promise as kept\n",pp->promiser);
+   }
 
 return true;
 }
@@ -398,9 +502,104 @@ return true;
 int Nova_DownVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp)
 
 { virDomainPtr dom;
-// virDomainShutdown();
+  virDomainInfo info;
+
+dom = virDomainLookupByName(vc,pp->promiser);
+
+if (dom)
+   {
+   if (virDomainGetInfo(dom,&info) == -1)
+      {
+      cfPS(cf_inform,CF_FAIL,"",pp,a," !! Unable to probe virtual domain \"%s\"",pp->promiser);
+      virDomainFree(dom);
+      return false;
+      }
+
+   switch (info.state)
+      {
+      case VIR_DOMAIN_BLOCKED:
+      case VIR_DOMAIN_RUNNING:
+          if (virDomainShutdown(dom) == -1)
+             {
+             cfPS(cf_verbose,CF_INTERPT,"",pp,a," -> Virtual domain \"%s\" failed to shutdown!\n",pp->promiser);
+             virDomainFree(dom);
+             return false;
+             }
+
+          cfPS(cf_verbose,CF_CHG,"",pp,a," -> Virtual domain \"%s\" running, terminating\n",pp->promiser);
+          break;
+          
+      case VIR_DOMAIN_SHUTOFF:
+      case VIR_DOMAIN_SHUTDOWN:
+          cfPS(cf_verbose,CF_NOP,"",pp,a," -> Virtual domain \"%s\" is down - promise kept\n",pp->promiser);
+          break;
+          
+      case VIR_DOMAIN_PAUSED:          
+          cfPS(cf_verbose,CF_INTERPT,"",pp,a," -> Virtual domain \"%s\" is suspended - ignoring promise\n",pp->promiser);
+          break;
+          
+      case VIR_DOMAIN_CRASHED:
+
+          if (virDomainSuspend(dom) == -1)
+             {
+             cfPS(cf_verbose,CF_INTERPT,"",pp,a," -> Virtual domain \"%s\" is crashed and failed to shutdown\n",pp->promiser);
+             virDomainFree(dom);
+             return false;
+             }
+          
+          cfPS(cf_verbose,CF_CHG,"",pp,a," -> Virtual domain \"%s\" is in a crashed state, terminating\n",pp->promiser);
+          break;
+          
+      default:
+          CfOut(cf_verbose,""," !! Virtual domain \"%s\" is reported as having no state, whatever that means",pp->promiser);
+          break;
+      }
+
+   virDomainFree(dom);
+   }
+else
+   {
+   cfPS(cf_verbose,CF_NOP,"",pp,a," -> Virtual domain \"%s\" cannot be found - take promise as kept\n",pp->promiser);
+   }
+
 return true;
 }
 
+/*****************************************************************************/
+/* Level                                                                     */
+/*****************************************************************************/
 
+void Nova_EnvironmentErrorHandler()
+{
+}
+
+/*****************************************************************************/
+
+void Nova_ShowRunList(virConnectPtr vc)
+
+{ int i;
+  virDomainPtr dom;
+  const char *name;
+  
+for (i = 0; CF_RUNNING[i] > 0; i++)
+   {
+   dom = virDomainLookupByID(CFVC,CF_RUNNING[i]);
+   name = virDomainGetName(dom);
+   CfOut(cf_verbose,""," ---> Found a running virtual domain called \"%s\"\n",name);
+   virDomainFree(dom);
+   }
+}
+
+/*****************************************************************************/
+
+void Nova_ShowDormant(virConnectPtr vc)
+
+{ int i;
+  virDomainPtr dom;
+ 
+for (i = 0; CF_SUSPENDED[i] != NULL; i++)
+   {
+   CfOut(cf_verbose,""," ---> Found a suspended, environment id = %d, called \"%s\"\n",CF_SUSPENDED[i],CF_SUSPENDED[i]);
+   }
+}
 #endif
