@@ -44,6 +44,9 @@ if (Nova_EnvironmentsSanityChecks(a,pp))
       {
       return;
       }
+
+   CF_NODES++;
+
    Nova_VerifyEnvironments(a,pp);
    }
 
@@ -65,6 +68,12 @@ if (a.env.specfile)
       CfOut(cf_error,""," !! Conflicting promise of both a spec-file and cpu/memory/disk resources");
       return false;
       }
+   }
+
+if (a.env.host == NULL)
+   {
+   CfOut(cf_error,""," !! No environment_host defined for environment promise");
+   return false;
    }
 
 return true;
@@ -102,6 +111,20 @@ switch (Str2Hypervisors(a.env.type))
    }
 
 CfOut(cf_verbose,""," -> Selecting environment type \"%s\" -> \"%s\"",a.env.type,hyper_uri);
+
+if (strcmp(a.env.host,VFQNAME) != 0 || strcmp(a.env.host,VUQNAME) != 0)
+   {
+   switch (a.env.state)
+      {
+      case cfvs_create:
+      case cfvs_running:
+          CfOut(cf_verbose,""," -> This is not the promised host for the environment, so setting its intended state to \"down\"");
+          a.env.state = cfvs_down;
+          break;
+      default:
+          CfOut(cf_verbose,""," -> This is not the promised host for the environment, but it does not promise a run state, so take promise as valid");
+      }
+   }
 
 switch (VSYSTEMHARDCLASS)
    {
@@ -156,7 +179,7 @@ void Nova_VerifyVirtDomain(char *uri,struct Attributes a,struct Promise *pp)
   const char *name;
  
 /* set up the library error handler */
-//virSetErrorFunc(NULL,Nova_EnvironmentErrorHandler);
+virSetErrorFunc(NULL,Nova_EnvironmentErrorHandler);
 
 /* set up the signals handlers to catch disconnections */
 //vshSetupSignals();
@@ -283,15 +306,68 @@ if (a.env.specfile)
 else
    {
    xml_file = defaultxml;
-   if (Str2Hypervisors(a.env.type) != cfv_virt_test)
-      {
-      // set cpus etc
-      }
    }
 
 if (dom = virDomainCreateXML(vc,xml_file,0))
    {
    cfPS(cf_verbose,CF_CHG,"",pp,a," -> Created a virtual domain \"%s\"\n",pp->promiser);   
+
+   if (a.env.cpus != CF_NOINT)
+      {
+      int maxcpus;
+      
+      if ((maxcpus = virConnectGetMaxVcpus(vc,virConnectGetType(vc))) == -1)
+         {
+         CfOut(cf_verbose,""," !! Can't determine the available CPU resources");
+         }
+      else
+         {
+         if (a.env.cpus > maxcpus)
+            {
+            CfOut(cf_inform,""," !! The promise to allocate %d CPUs in domain \"%s\" cannot be kept - only %d exist on the host",a.env.cpus,pp->promiser,maxcpus);
+            }
+         else if (virDomainSetVcpus(dom,(unsigned int)a.env.cpus) == -1)
+            {
+            CfOut(cf_inform,""," -> Unable to adjust CPU count to %d",a.env.cpus);
+            }
+         else
+            {
+            CfOut(cf_inform,""," -> Verified that environment CPU count is now %d",a.env.cpus);
+            }
+         }
+      }
+   
+   if (a.env.memory != CF_NOINT)
+      {
+      unsigned long maxmem;
+
+      if ((maxmem = virDomainGetMaxMemory(dom)) == -1)
+         {
+         CfOut(cf_verbose,""," !! Can't determine the available CPU resources");
+         }
+      else
+         {
+         if (virDomainSetMaxMemory(dom,(unsigned long)a.env.memory) == -1)
+            {
+            CfOut(cf_inform,""," !!! Unable to set the memory limit to %d",a.env.memory);
+            }
+         else
+            {
+            CfOut(cf_inform,""," -> Setting the memory limit to %ld",a.env.memory);
+            }
+         
+         if (virDomainSetMemory(dom,(unsigned long)a.env.memory) == -1)
+            {
+            CfOut(cf_inform,""," !!! Unable to set the current memory to %ld",a.env.memory);
+            }
+         }
+      }
+   
+   if (a.env.disk != CF_NOINT)
+      {
+      CfOut(cf_verbose,""," -> Info: env_disk parameter is not currently supported on this platform");
+      }
+
    virDomainFree(dom);
    }
 else
@@ -412,6 +488,40 @@ if (dom)
           break;
       }
 
+   if (a.env.cpus > 0)
+      {
+      if (virDomainSetVcpus(dom,a.env.cpus) == -1)
+         {
+         CfOut(cf_inform,""," !!! Unable to set the number of cpus to %d",a.env.cpus);
+         }
+      else
+         {
+         CfOut(cf_inform,""," -> Setting the number of virtual cpus to %d",a.env.cpus);
+         }
+      }
+   
+   if (a.env.memory != CF_NOINT)
+      {
+      if (virDomainSetMaxMemory(dom,(unsigned long)a.env.memory) == -1)
+         {
+         CfOut(cf_inform,""," !!! Unable to set the memory limit to %d",a.env.memory);
+         }
+      else
+         {
+         CfOut(cf_inform,""," -> Setting the memory limit to %ld",a.env.memory);
+         }
+
+      if (virDomainSetMemory(dom,(unsigned long)a.env.memory) == -1)
+         {
+         CfOut(cf_inform,""," !!! Unable to set the current memory to %ld",a.env.memory);
+         }
+      }
+   
+   if (a.env.disk != CF_NOINT)
+      {
+      CfOut(cf_verbose,""," -> Info: env_disk parameter is not currently supported on this platform");
+      }
+   
    virDomainFree(dom);
    }
 else
