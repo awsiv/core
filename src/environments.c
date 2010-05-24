@@ -18,7 +18,7 @@
 #include "cf.nova.h"
 
 #ifdef HAVE_LIBVIRT
-extern virConnectPtr CFVC;
+extern virConnectPtr CFVC[];
 #endif
 
 #define CF_MAX_CONCURRENT_ENVIRONMENTS 256
@@ -47,6 +47,7 @@ if (Nova_EnvironmentsSanityChecks(a,pp))
 
    CF_NODES++;
 
+   PromiseBanner(pp);
    Nova_VerifyEnvironments(a,pp);
    }
 
@@ -60,7 +61,7 @@ YieldCurrentLock(thislock);
 
 int Nova_EnvironmentsSanityChecks(struct Attributes a,struct Promise *pp)
 
-{
+{ 
 if (a.env.specfile)
    {
    if (a.env.cpus || a.env.memory || a.env.disk)
@@ -73,7 +74,24 @@ if (a.env.specfile)
 if (a.env.host == NULL)
    {
    CfOut(cf_error,""," !! No environment_host defined for environment promise");
+   PromiseRef(cf_error,pp);
    return false;
+   }
+
+switch (Str2Hypervisors(a.env.type))
+   {
+   case cfv_virt_xen_net:
+   case cfv_virt_kvm_net:
+   case cfv_virt_esx_net:
+   case cfv_virt_test_net:
+          if (a.env.cpus || a.env.memory || a.env.disk || a.env.name || a.env.addresses)
+             {
+             CfOut(cf_error,""," !! Network environment promises computational resources");
+             PromiseRef(cf_error,pp);
+             }
+       break;
+   default:
+       break;
    }
 
 return true;
@@ -84,29 +102,40 @@ return true;
 void Nova_VerifyEnvironments(struct Attributes a,struct Promise *pp)
 
 { char hyper_uri[CF_MAXVARSIZE];
-
+  enum cfhypervisors envtype;
+ 
 switch (Str2Hypervisors(a.env.type))
    {
    case cfv_virt_xen:
+   case cfv_virt_xen_net:
        snprintf(hyper_uri,CF_MAXVARSIZE-1,"xen:///");
+       envtype = cfv_virt_xen;
        break;
        
    case cfv_virt_kvm:
+   case cfv_virt_kvm_net:
        snprintf(hyper_uri,CF_MAXVARSIZE-1,"qemu:///session");
 
    case cfv_virt_esx:
+   case cfv_virt_esx_net:
        snprintf(hyper_uri,CF_MAXVARSIZE-1,"esx://127.0.0.1");
+       envtype = cfv_virt_kvm;
        break;
 
    case cfv_virt_test:
+   case cfv_virt_test_net:
        snprintf(hyper_uri,CF_MAXVARSIZE-1,"test:///default");
+       envtype = cfv_virt_test;
        break;
 
    case cfv_zone:
        snprintf(hyper_uri,CF_MAXVARSIZE-1,"solaris_zone");
+       envtype = cfv_zone;
        break;
 
    default:
+       CfOut(cf_error,""," !! Environment type \"%s\" not currently supported",a.env.type);
+           return;
        break;
    }
 
@@ -126,6 +155,8 @@ if (strcmp(a.env.host,VFQNAME) != 0 || strcmp(a.env.host,VUQNAME) != 0)
       }
    }
 
+virInitialize();
+
 switch (VSYSTEMHARDCLASS)
    {
    case linuxx:
@@ -136,9 +167,13 @@ switch (VSYSTEMHARDCLASS)
           case cfv_virt_kvm:
           case cfv_virt_esx:
           case cfv_virt_test:
-              Nova_VerifyVirtDomain(hyper_uri,a,pp);
+              Nova_VerifyVirtDomain(hyper_uri,envtype,a,pp);
               break;
-          case cfv_virt_network:
+          case cfv_virt_xen_net:
+          case cfv_virt_kvm_net:
+          case cfv_virt_esx_net:
+          case cfv_virt_test_net:
+              Nova_VerifyVirtNetwork(hyper_uri,envtype,a,pp);
               break;
           case cfv_ec2:
               break;       
@@ -172,7 +207,7 @@ switch (VSYSTEMHARDCLASS)
 /* Level                                                                     */
 /*****************************************************************************/
 
-void Nova_VerifyVirtDomain(char *uri,struct Attributes a,struct Promise *pp)
+void Nova_VerifyVirtDomain(char *uri,enum cfhypervisors envtype,struct Attributes a,struct Promise *pp)
 
 { int num,i;
   virDomainPtr dom;
@@ -184,21 +219,11 @@ virSetErrorFunc(NULL,Nova_EnvironmentErrorHandler);
 /* set up the signals handlers to catch disconnections */
 //vshSetupSignals();
 
-if (CFVC == NULL)
+if (CFVC[envtype] == NULL)
    {
-   if ((CFVC = virConnectOpenAuth(uri,virConnectAuthPtrDefault,0)) == NULL)
+   if ((CFVC[envtype] = virConnectOpenAuth(uri,virConnectAuthPtrDefault,0)) == NULL)
       {
       CfOut(cf_error,""," !! Failed to connect to virtualization monitor \"%s\"",uri);
-      return;
-      }
-
-   strncpy(WEBDRIVER,a.env.type,CF_MAXVARSIZE);
-   }
-else
-   {
-   if (strcmp(a.env.type,WEBDRIVER) != 0)
-      {
-      CfOut(cf_error,""," !! Conflicting environment type \"%s\" promised -- this seems to be a \"%s\" environment",a.env.type,WEBDRIVER);
       return;
       }
    }
@@ -209,32 +234,80 @@ for (i = 0; i < CF_MAX_CONCURRENT_ENVIRONMENTS; i++)
    CF_SUSPENDED[i] = NULL;
    }
 
-num = virConnectListDomains(CFVC,CF_RUNNING,CF_MAX_CONCURRENT_ENVIRONMENTS);
+num = virConnectListDomains(CFVC[envtype],CF_RUNNING,CF_MAX_CONCURRENT_ENVIRONMENTS);
 CfOut(cf_verbose,""," -> Found %d running virtual domain environments on this host",num);
-Nova_ShowRunList(CFVC);
-num = virConnectListDefinedDomains(CFVC,CF_SUSPENDED,CF_MAX_CONCURRENT_ENVIRONMENTS);
+Nova_ShowRunList(CFVC[envtype]);
+num = virConnectListDefinedDomains(CFVC[envtype],CF_SUSPENDED,CF_MAX_CONCURRENT_ENVIRONMENTS);
 CfOut(cf_verbose,""," -> Found %d dormant virtual domain environments on this host",num);
-Nova_ShowDormant(CFVC);
+Nova_ShowDormant(CFVC[envtype]);
 
 switch(a.env.state)
    {
    case cfvs_create:
-       Nova_CreateVirtDom(CFVC,uri,a,pp);
+       Nova_CreateVirtDom(CFVC[envtype],uri,a,pp);
        break;
    case cfvs_delete:
-       Nova_DeleteVirt(CFVC,uri,a,pp);
+       Nova_DeleteVirt(CFVC[envtype],uri,a,pp);
        break;
    case cfvs_running:
-       Nova_RunningVirt(CFVC,uri,a,pp);
+       Nova_RunningVirt(CFVC[envtype],uri,a,pp);
        break;
    case cfvs_suspended:
-       Nova_SuspendedVirt(CFVC,uri,a,pp);
+       Nova_SuspendedVirt(CFVC[envtype],uri,a,pp);
        break;
    case cfvs_down:
-       Nova_DownVirt(CFVC,uri,a,pp);
+       Nova_DownVirt(CFVC[envtype],uri,a,pp);
        break;
    default:
        CfOut(cf_inform,""," !! No state specified for this environment");
+       break;
+   }
+}  
+
+/*****************************************************************************/
+
+void Nova_VerifyVirtNetwork(char *uri,enum cfhypervisors envtype,struct Attributes a,struct Promise *pp)
+
+{ int num,i;
+  const char *name;
+  char *networks[CF_MAX_CONCURRENT_ENVIRONMENTS];
+  
+/* set up the library error handler */
+//virSetErrorFunc(NULL,Nova_EnvironmentErrorHandler);
+
+/* set up the signals handlers to catch disconnections */
+//vshSetupSignals();
+
+if (CFVC[envtype] == NULL)
+   {
+   if ((CFVC[envtype] = virConnectOpenAuth(uri,virConnectAuthPtrDefault,0)) == NULL)
+      {
+      CfOut(cf_error,""," !! Failed to connect to virtualization monitor \"%s\"",uri);
+      return;
+      }
+   }
+
+for (i = 0; i < CF_MAX_CONCURRENT_ENVIRONMENTS; i++)
+   {
+   networks[i] = NULL;
+   }
+
+num = virConnectListNetworks(CFVC[envtype],networks,CF_MAX_CONCURRENT_ENVIRONMENTS);
+
+CfOut(cf_verbose,""," -> Detected %d active networks",num);
+
+switch(a.env.state)
+   {
+   case cfvs_create:
+       Nova_CreateVirtNetwork(CFVC[envtype],networks,a,pp); 
+       break;
+       
+   case cfvs_delete:
+       Nova_DeleteVirtNetwork(CFVC[envtype],networks,a,pp);        
+       break;
+       
+   default:
+       CfOut(cf_inform,""," !! No recogized state specified for this network environment");
        break;
    }
 }  
@@ -273,7 +346,7 @@ snprintf(defaultxml,CF_MAXVARSIZE-1,
          
 for (i = 0; CF_RUNNING[i] > 0; i++)
    {
-   dom = virDomainLookupByID(CFVC,CF_RUNNING[i]);
+   dom = virDomainLookupByID(vc,CF_RUNNING[i]);
    name = virDomainGetName(dom);
 
    if (strcmp(name,pp->promiser) == 0)
@@ -676,6 +749,108 @@ return true;
 }
 
 /*****************************************************************************/
+
+int Nova_CreateVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,struct Promise *pp)
+
+{ virNetworkPtr network;
+  char *xml_file;
+  char defaultxml[CF_MAXVARSIZE];
+  int i, found = false, alloc_file = false;
+  
+snprintf(defaultxml,CF_MAXVARSIZE-1,
+         "<network>"
+         "<name>%s</name>"
+         "<bridge name=\"virbr0\" />"
+         "<forward mode=\"nat\"/>"
+         "<ip address=\"192.168.122.1\" netmask=\"255.255.255.0\">"
+         "<dhcp>"
+         "<range start=\"192.168.122.2\" end=\"192.168.122.254\" />"
+         "</dhcp>"
+         "</ip>"
+         "</network>",pp->promiser         
+         );
+
+for (i = 0; i < CF_MAX_CONCURRENT_ENVIRONMENTS; i++)
+   {
+   CfOut(cf_verbose,""," -> Discovered a running network \"%s\"",networks[i]);
+
+   if (strcmp(networks[i],pp->promiser) == 0)
+      {
+      found = true;
+      }
+   }
+
+if (found)
+   {
+   cfPS(cf_verbose,CF_NOP,"",pp,a," -> Network \"%s\" exists - promise kept\n",pp->promiser);
+   return true;
+   }
+
+if (a.env.specfile)
+   {
+   if (virFileReadAll(a.env.specfile,CF_BUFSIZE,&xml_file) < 0)
+      {
+      cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Unable to read environment specfile \"%s\"\n",a.env.specfile);
+      return false;
+      }
+   
+   alloc_file = true;
+   }
+else
+   {
+   xml_file = defaultxml;
+   }
+
+if ((network = virNetworkCreateXML(vc,xml_file)) == NULL)
+   {
+   cfPS(cf_error,CF_FAIL,"",pp,a," !! Unable to create network \"%s\"\n",pp->promiser);
+   return false;
+   }
+else
+   {
+   cfPS(cf_error,CF_CHG,"",pp,a," -> Created network \"%s\" - promise repaired\n",pp->promiser);
+   }
+
+if (alloc_file)
+   {
+   free(xml_file);
+   }
+ 
+virNetworkFree(network);
+return true;
+}
+
+/*****************************************************************************/
+
+int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,struct Promise *pp)
+
+{ virNetworkPtr network;
+  char *xml_file;
+  int ret = true;
+  
+if ((network = virNetworkLookupByName(vc,pp->promiser)) == NULL)
+   {
+   cfPS(cf_error,CF_NOP,"",pp,a," -> Couldn't find a network called \"%s\" - promise assumed kept\n",pp->promiser);
+   return true;
+   }
+
+if (virNetworkDestroy(network) == 0)
+   {
+   cfPS(cf_error,CF_CHG,"",pp,a," -> Deleted network \"%s\" - promise repaired\n",pp->promiser);
+   }
+else
+   {
+   cfPS(cf_error,CF_FAIL,"",pp,a," !! Network deletion of \"%s\" failed\n",pp->promiser);
+   ret = false;
+   }
+
+virNetworkFree(network);
+return ret;
+}
+
+
+
+/*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
 
@@ -709,7 +884,20 @@ void Nova_ShowDormant(virConnectPtr vc)
  
 for (i = 0; CF_SUSPENDED[i] != NULL; i++)
    {
-   CfOut(cf_verbose,""," ---> Found a suspended, environment id = %d, called \"%s\"\n",CF_SUSPENDED[i],CF_SUSPENDED[i]);
+   CfOut(cf_verbose,""," ---> Found a suspended, domain environment called \"%s\"\n",CF_SUSPENDED[i]);
+   }
+}
+
+/*****************************************************************************/
+
+void Nova_ShowNetworks(virConnectPtr vc,char **networks)
+
+{ int i;
+  virDomainPtr dom;
+ 
+for (i = 0; networks[i] != NULL; i++)
+   {
+   CfOut(cf_verbose,""," ---> Found a virt-network environment called \"%s\"\n",networks[i]);
    }
 }
 #endif
