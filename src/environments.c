@@ -64,7 +64,7 @@ int Nova_EnvironmentsSanityChecks(struct Attributes a,struct Promise *pp)
 { 
 if (a.env.specfile)
    {
-   if (a.env.cpus || a.env.memory || a.env.disk)
+   if (a.env.cpus != CF_NOINT|| a.env.memory != CF_NOINT|| a.env.disk != CF_NOINT)
       {
       CfOut(cf_error,""," !! Conflicting promise of both a spec-file and cpu/memory/disk resources");
       return false;
@@ -84,9 +84,9 @@ switch (Str2Hypervisors(a.env.type))
    case cfv_virt_kvm_net:
    case cfv_virt_esx_net:
    case cfv_virt_test_net:
-          if (a.env.cpus || a.env.memory || a.env.disk || a.env.name || a.env.addresses)
+          if (a.env.cpus != CF_NOINT || a.env.memory  != CF_NOINT || a.env.disk  != CF_NOINT || a.env.name || a.env.addresses)
              {
-             CfOut(cf_error,""," !! Network environment promises computational resources");
+             CfOut(cf_error,""," !! Network environment promises computational resources (%d,%d,%d,%d,%d)",a.env.cpus,a.env.memory,a.env.disk,a.env.name,a.env.addresses);
              PromiseRef(cf_error,pp);
              }
        break;
@@ -349,7 +349,7 @@ for (i = 0; CF_RUNNING[i] > 0; i++)
    dom = virDomainLookupByID(vc,CF_RUNNING[i]);
    name = virDomainGetName(dom);
 
-   if (strcmp(name,pp->promiser) == 0)
+   if (name && strcmp(name,pp->promiser) == 0)
       {
       cfPS(cf_verbose,CF_NOP,"",pp,a," -> Found a running environment called \"%s\" - promise kept\n",name);
       return true;
@@ -770,7 +770,7 @@ snprintf(defaultxml,CF_MAXVARSIZE-1,
          "</network>",pp->promiser         
          );
 
-for (i = 0; i < CF_MAX_CONCURRENT_ENVIRONMENTS; i++)
+for (i = 0; networks[i] != NULL; i++)
    {
    CfOut(cf_verbose,""," -> Discovered a running network \"%s\"",networks[i]);
 
@@ -868,9 +868,11 @@ void Nova_ShowRunList(virConnectPtr vc)
   
 for (i = 0; CF_RUNNING[i] > 0; i++)
    {
-   dom = virDomainLookupByID(CFVC,CF_RUNNING[i]);
-   name = virDomainGetName(dom);
-   CfOut(cf_verbose,""," ---> Found a running virtual domain called \"%s\"\n",name);
+   dom = virDomainLookupByID(vc,CF_RUNNING[i]);
+   if (name = virDomainGetName(dom))
+      {
+      CfOut(cf_verbose,""," ---> Found a running virtual domain called \"%s\"\n",name);
+      }
    virDomainFree(dom);
    }
 }
