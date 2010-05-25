@@ -1,0 +1,28 @@
+############################################################################
+#
+# Knowledge base / ontology
+#
+############################################################################
+
+body common control
+   
+{
+bundlesequence  => { 
+                   "dummy"
+                   };
+
+inputs         => {
+                  "enterprise_control_mobile.cf"
+                  };
+
+version => "1.0"; # This is the visible version
+host_licenses_paid => "1";
+}
+
+bundle knowledge dummy
+{
+topics:
+
+ "nothing";
+}
+

@@ -22,7 +22,7 @@ $cfknow = "/usr/local/sbin/cf-know";
 
 # Set this to your local knowledge base
 $reports = "/var/cfengine/reports";
-$file = "/srv/www/htdocs/enterprise_run.cf";
+$file = "/srv/www/htdocs/enterprise_run_mobile.cf";
 
 echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">";
 

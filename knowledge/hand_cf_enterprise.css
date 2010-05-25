@@ -76,6 +76,7 @@ font-size: 100%;
 {  
 color: #d00;
 text-decoration: none;
+font-size: 120%;
 }
 
 a:selected
@@ -98,12 +99,17 @@ blockquote
 #intro
 {
 background-color: #fff; 
-width: 60%;
+width: 100%;
 /* border: 2px;*/
 color: #11aa22;
 padding: 5px;
 border-color: black;
-font-size: 100%;
+font-size: 280%;
+}
+
+#disambig
+{  
+font-size: 280%;
 }
 
 #in
@@ -116,8 +122,9 @@ float: right;
 {  
 background-color: #eee; 
 /*border: 1px solid;*/
-width: 60%;
+width: 100%;
 padding: 5px;
+font-size: 280%;
 }
 
 #ontology
@@ -133,8 +140,9 @@ padding: 5px;
 {  
 background-color: #fff; 
 /*border: 1px solid;*/
-width: 60%;
+width: 100%;
 padding: 5px;
+font-size: 280%;
 }
 
 
@@ -142,8 +150,9 @@ padding: 5px;
 {  
 background-color: #eee; 
 /*border: 1px solid;*/
-width: 60%;
+width: 100%;
 padding: 5px;
+font-size: 280%;
 }
 
 #roles
@@ -160,8 +169,10 @@ padding: 5px;
 {  
 background-color: #eee; 
 /*border: 1px solid;*/
-width: 60%;
+width: 100%;
 padding: 5px;
+font-size: 280%;
+
 }
 
 
@@ -240,8 +251,7 @@ color: #000;
 
 #image
 { 
-width: 35%;
-float: right; 
+width: 100%;
 }
 
 #image img
@@ -345,6 +355,17 @@ background-color: #eee;
 padding: 5px;
 background-color: #eee;
 }
+
+#comment
+{  
+display: none;
+}
+
+#subcomment
+{  
+display: none;
+}
+
 
 /* ------------------------------------------------*/
 
