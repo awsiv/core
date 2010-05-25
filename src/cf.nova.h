@@ -273,6 +273,7 @@ void Nova_VerifyEnvironments(struct Attributes a,struct Promise *pp);
 void Nova_VerifyEnvironmentsPromise(struct Promise *pp);
 void Nova_VerifyVirtDomain(char *uri,enum cfhypervisors envtype,struct Attributes a,struct Promise *pp);
 void Nova_VerifyVirtNetwork(char *uri,enum cfhypervisors envtype,struct Attributes a,struct Promise *pp);
+#ifdef HAVE_LIBVIRT
 int Nova_CreateVirtDom(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
 int Nova_DeleteVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
 int Nova_DeleteVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
@@ -286,6 +287,7 @@ void Nova_ShowDormant(virConnectPtr vc);
 void Nova_ShowNetworks(virConnectPtr vc,char **networks);
 int Nova_CreateVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,struct Promise *pp);
 int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,struct Promise *pp);
+#endif
 
 /* graphs.c */
 

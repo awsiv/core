@@ -118,7 +118,7 @@ neighbours1[centre].angle = 0;
 
 strncpy(pngfile,ReadLastNode(filename),CF_MAXVARSIZE-1);
 strncpy(mapfile,filename,CF_MAXVARSIZE-1);
-strcpy(strstr(mapfile,".png"),".html");
+strcpy(strstr(mapfile,".png"),".map");
 
 if ((fmap = fopen(mapfile, "w")) == NULL)
    {
@@ -130,17 +130,7 @@ else
    CfOut(cf_verbose,""," -> Making map %s\n",filename);
    }
 
-if (VIEWS)
-   {
-   NovaHtmlHeader(fmap,tribe_node[0].fullname,STYLESHEET,WEBDRIVER,BANNER);
-   }
-else
-   {
-   /* Only copernicus gets a new blank sheet */
-   NovaHtmlHeader(fmap,tribe_node[0].fullname,STYLESHEET,WEBDRIVER,"");
-   }
-
-fprintf(fmap,"<img src=\"%s\" USEMAP=\"#knowledge_system\" alt=\"%s image pending\">\n",pngfile,tribe_node[0].fullname);
+fprintf(fmap,"<img src=\"graphs/%s\" USEMAP=\"#knowledge_system\" alt=\"%s image pending\">\n",pngfile,tribe_node[0].fullname);
 fprintf(fmap,"<map name=\"knowledge_system\">\n");
 
 /* Pre-compute relative positions for scaling */
@@ -391,7 +381,6 @@ gdImageDestroy(cfv.im);
 // Close image map
 
 fprintf(fmap,"</map>\n");
-NovaHtmlFooter(fmap,"");
 fclose(fmap);
 }
 
@@ -849,8 +838,8 @@ for (dr = 0; dr <= radius; dr += radius/(double)CF_SHADES)
 void Nova_MapBall(FILE *fp,struct CfDataView cfv,struct CfGraphNode n)
 
 {
-fprintf(fp,"<area shape = \"circle\" coords=\"%d,%d,%d\" href=\"%s?next=%s\" alt=\"topic\" title=\"%s\">\n",
-        (int)Nova_X(cfv,n.x),(int)Nova_Y(cfv,n.y),(int)n.radius,WEBDRIVER,n.fullname,n.fullname);
+fprintf(fp,"<area shape = \"circle\" coords=\"%d,%d,%d\" href=\"%%s?next=%s\" alt=\"topic\" title=\"%s\">\n",
+        (int)Nova_X(cfv,n.x),(int)Nova_Y(cfv,n.y),(int)n.radius,n.fullname,n.fullname);
 
 }
 
