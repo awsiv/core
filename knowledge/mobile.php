@@ -47,6 +47,10 @@ else if (strlen($map1) > 0)
    {
    system("$cfknow -K $map1 -f $file");
    }
+else if (strlen($map2) > 0)
+   {
+   system("$cfknow -K $map2 -f $file");
+   }
 else
    {
    system("$cfknow -t \"mission status\" -f $file");
