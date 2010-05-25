@@ -84,14 +84,19 @@ void Nova_SetPromiseOutputs(struct Promise *pp)
 { char *handle = GetConstraint("handle",pp,CF_SCALAR);
   char *setting = GetConstraint("report_level",pp,CF_SCALAR);
   enum cfreport report_level = String2ReportLevel(setting);
-  struct Item *ip;
   int verbose = false,inform = false;
+  struct Item *ip;
   
 if (handle)
    {
    ip = ReturnItemIn(NOVA_HANDLE_OUTPUTS,handle);
 
-   if (ip == NULL || strcmp(ip->classes,"verbose") == 0)
+   if (ip == NULL)
+      {
+      return;
+      }
+   
+   if (ip && strcmp(ip->classes,"verbose") == 0)
       {
       verbose = true;
       }
@@ -148,8 +153,6 @@ for (ip = NOVA_BUNDLE_OUTPUTS; ip != NULL; ip=ip->next)
    {
    if (strcmp(ip->name,name) == 0)
       {
-      printf("%s Begin trace output on bundle %s\n",VPREFIX,name);
-      
       SAVE_VERBOSE = VERBOSE;
       SAVE_INFORM = INFORM;
 
@@ -161,6 +164,8 @@ for (ip = NOVA_BUNDLE_OUTPUTS; ip != NULL; ip=ip->next)
          {
          VERBOSE = true;
          }
+
+      CfOut(cf_inform,"","%s Begin trace output on bundle %s\n",VPREFIX,name);
       }
    }
 }
@@ -171,11 +176,18 @@ void Nova_ResetBundleOutputs(char *name)
 
 { struct Item *ip;
 
-VERBOSE = SAVE_VERBOSE;
-INFORM = SAVE_INFORM;
-
-if (VERBOSE > SAVE_VERBOSE)
+for (ip = NOVA_BUNDLE_OUTPUTS; ip != NULL; ip=ip->next)
    {
-   printf("%s End trace output on bundle %s\n",VPREFIX,name);
+   if (strcmp(ip->name,name) == 0)
+      {      
+      VERBOSE = SAVE_VERBOSE;
+      INFORM = SAVE_INFORM;
+      
+      if (VERBOSE > SAVE_VERBOSE)
+         {
+         printf("%s End trace output on bundle %s\n",VPREFIX,name);
+         }
+      }
    }
 }
+
