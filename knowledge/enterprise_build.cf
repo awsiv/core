@@ -27,6 +27,7 @@ inputs         => {
                   "company_knowledge.cf"
                   };
 
+host_licenses_paid => "1";
 version => "1.0";
 }
 
