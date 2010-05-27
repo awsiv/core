@@ -150,8 +150,8 @@ int NovaWin_stat(const char *path, struct stat *statBuf)
 
  if(!NovaWin_GetNumHardlinks((char *)path, &numHardLinks))
     {
-    CfOut(cf_error, "", "!! Could not get number of hard links");
-    return -1;
+    CfOut(cf_verbose, "", "!! Could not get number of hard links for \"%s\", assuming 1", path);
+    numHardLinks = 1;
     }
   
  // correct times 
