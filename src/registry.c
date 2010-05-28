@@ -332,6 +332,9 @@ if (a.database.columns)
          case ERROR_SUCCESS:
              cfPS(cf_inform,CF_CHG,"",pp,a," -> Registry value \"%s\" in %s deleted...\n",rp->item,pp->promiser);
              break;
+         case ERROR_FILE_NOT_FOUND:
+	     cfPS(cf_inform,CF_NOP,"",pp,a,"-> Registry value \"%s\" in \"%s\" already gone", rp->item, pp->promiser);
+             break;
          default:
              CfOut(cf_error,""," !! Unable to delete key value with name \"%s\" - code %d",rp->item,ret);
              break;
@@ -349,6 +352,10 @@ else
       case ERROR_SUCCESS:
           cfPS(cf_inform,CF_CHG,"",pp,a," -> Registry key \"%s\" deleted\n",pp->promiser);
           return;
+      case ERROR_FILE_NOT_FOUND:
+      case ERROR_PATH_NOT_FOUND:
+	cfPS(cf_inform,CF_NOP,"",pp,a,"-> Registry key \"%s\" already gone", pp->promiser);
+	  return;
       default:
           CfOut(cf_error,""," !! Unable to delete key \"%s\" - perhaps it has subkeys",pp->promiser);
           return;
