@@ -313,7 +313,6 @@ return 0;
   struct CfLock thislock;
   pid_t pid;
   
-
 if (LICENSES == 0)
    {
    DeletePromise(pp);
@@ -326,21 +325,18 @@ dummyattr.transaction.expireafter = 0;
 
 thislock = AcquireLock(pp->promiser,VUQNAME,now,dummyattr,pp);
 
+DeletePromise(pp);
+
 if (thislock.lock == NULL)
    {
-   DeletePromise(pp);
    return 0;
    }
-
-DeletePromise(pp);
 
 if ((pid = fork()) != 0)
    {
    CfOut(cf_inform,"","cf-execd binary pulsar starting %.24s\n",cf_ctime(&now));
    return pid;
    }
-
-//ActAsDaemon(0);
 
 snprintf(name,CF_BUFSIZE-1,"%s/pulsar",CFWORKDIR);
 
