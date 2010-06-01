@@ -31,13 +31,14 @@ void Nova_BuildGraphs(struct CfDataView *cfv)
 
 { DIR *dirh;
   struct dirent *dirp;
-  int i, count = 0;
+  int i, count = 0, compliance;
   char name[CF_BUFSIZE],description[CF_BUFSIZE],index[16];
-  FILE *fout;
-  struct stat sb;
   struct Item *serverlist = NULL,*ip;
   struct Item *eliminate = NULL;
   struct CfDataView cfv_small;
+  struct Item *unique = NULL;
+  struct stat sb;
+  FILE *fout;
     
 cfv->height = 300;
 cfv->width = 700; //(7*24*2)*2; // halfhour
@@ -132,13 +133,44 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
       CfOut(cf_verbose,""," -> Done with %s / %s",ip->name,name);
       }
 
-   Nova_BuildMeters(&cfv_small,ip->name);
+   compliance = Nova_BuildMeters(&cfv_small,ip->name);
+   ip->counter = compliance;
+   
    Nova_MainPage(ip->name,eliminate);
    Nova_OtherPages(ip->name,eliminate);
    DeleteItemList(eliminate);
    eliminate = NULL;
    chdir("..");
    }
+
+// Create a simple list of status for 3rd party export/integration
+
+snprintf(name,CF_BUFSIZE,"summary.z");
+
+if (fout = fopen(name,"w"))
+   {
+   for (ip = serverlist; ip != NULL; ip=ip->next)
+      {
+      if (!IsItemIn(unique,ip->name))
+         {
+         PrependItem(&unique,ip->name,NULL);
+         
+         if (strcmp(ip->name,"localhost") == 0)
+            {
+            }
+         else
+            {
+            fprintf(fout,"%s,%d\n",Hostname2IPString(ip->name),ip->counter);
+            }
+         }
+         
+      }
+
+   fclose(fout);
+   }
+
+DeleteItemList(unique);
+DeleteItemList(serverlist);
 }
 
 /*****************************************************************************/
@@ -458,11 +490,11 @@ gdImageDestroy(cfv->im);
 
 /*****************************************************************************/
 
-void Nova_BuildMeters(struct CfDataView *cfv,char *hostname)
+int Nova_BuildMeters(struct CfDataView *cfv,char *hostname)
 
 { FILE *fout;
   char filename[CF_BUFSIZE];
-  int kept,repaired;
+  int kept,repaired,returnval = 0;
   struct stat sb;
   struct utimbuf t;
   
@@ -483,6 +515,9 @@ Nova_GetLevel("Day",&kept,&repaired);
 Nova_BarMeter(cfv,2,kept,repaired,"Day");
 Nova_GetLevel("Hour",&kept,&repaired);
 Nova_BarMeter(cfv,3,kept,repaired,"Hour");
+
+returnval = kept+repaired;
+
 Nova_GetLevel("Patch",&kept,&repaired);
 Nova_BarMeter(cfv,4,kept,repaired,"Ptch");
 Nova_GetLevel("Lics",&kept,&repaired);
@@ -496,7 +531,7 @@ snprintf(filename,CF_BUFSIZE,"meters.png");
 
 if ((fout = fopen(filename, "wb")) == NULL)
    {
-   return;
+   return returnval;
    }
 else
    {
@@ -518,6 +553,7 @@ if (cfstat("comp_key",&sb) != -1)
 #endif
 
 gdImageDestroy(cfv->im);
+return returnval;
 }
 
 /*****************************************************************************/
@@ -526,6 +562,7 @@ struct Item *Nova_CreateHostPortal(struct Item *list)
 
 { FILE *fout,*fall;
   char filename[CF_BUFSIZE],col[CF_BUFSIZE];
+  char url1[CF_MAXVARSIZE],url2[CF_MAXVARSIZE],url3[CF_MAXVARSIZE];
   struct Item *ip;
   struct stat sb;
   time_t now = time(NULL);
@@ -614,8 +651,24 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
       {
       continue;
       }
+
+   snprintf(url1,CF_MAXVARSIZE-1,"reports/%s/mainpage.html",ip->name);
+   snprintf(url2,CF_MAXVARSIZE-1,"reports/%s/promise_output_common.html",ip->name);
+   snprintf(url3,CF_MAXVARSIZE-1,"reports/%s/classes.html",ip->name);
    
-   fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\"><table><tr><td width=\"80\">&nbsp;</div></center></td></tr></table></td><td width=\"200\"><center>Last updated at<br>%s</center></td><td><a href=\"%s/mainpage.html\"><img src=\"%s/meters.png\"></a></td><td><span id=\"rbuttons\"><a href=\"%s/promise_output_common.html\">Promises</a><br><a href=\"%s/classes.html\">Classes</a></span></td></tr>",ip->name,col,cf_ctime(&(sb.st_mtime)),ip->name,ip->name,ip->name,ip->name);
+   fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\">"
+           "<table><tr><td width=\"80\">&nbsp;</div></center></td></tr></table></td>"
+           "<td width=\"200\"><center>Last updated at<br>%s</center></td>"
+           "<td><a href=\"%s\"><img src=\"reports/%s/meters.png\"></a></td>"
+           "<td><span id=\"rbuttons\"><a href=\"%s\">Promises</a>"
+           "<br><a href=\"%s\">Classes</a></span></td></tr>",
+           ip->name,
+           col,
+           cf_ctime(&(sb.st_mtime)),
+           URLControl(url1),
+           ip->name,
+           URLControl(url2),
+           URLControl(url3));
    }
 
 fprintf(fout,"</table></div>\n");
@@ -632,6 +685,8 @@ if ((fall = fopen(filename, "w")) == NULL)
    fclose(fout);
    return list;
    }
+
+// Split here?
 
 NovaHtmlHeader(fall,"Status all managed hosts",STYLESHEET,WEBDRIVER,BANNER);
 
@@ -680,7 +735,7 @@ for (state = 0; state < 3; state++)
 
    if (state == 0 && ccount[0] == 0)
       {
-      fprintf(fall,"<span id=\"signalred\"><a href=\"host_portal.html\">(none)</a></span> ");
+      fprintf(fall,"<span id=\"signalred\"><a href=\"%s\">(none)</a></span> ",URLControl("reports/host_portal.html"));
       ccount[0]++;
       continue;
       }
@@ -688,7 +743,7 @@ for (state = 0; state < 3; state++)
    if (state == 1 && ccount[1] == 0)
       {
       ccount[1]++;
-      fprintf(fall,"<span id=\"signalyellow\"><a href=\"host_portal.html\">(none)</a></span> ");
+      fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s\">(none)</a></span> ",URLControl("reports/host_portal.html"));
       continue;
       }
 
@@ -696,16 +751,18 @@ for (state = 0; state < 3; state++)
       {
       if (ip->counter == state)
          {
+         snprintf(url1,CF_MAXVARSIZE-1,"reports/%s/mainpage.html",ip->name);
+         
          switch (state)
             {
             case 0:
-                fprintf(fall,"<span id=\"signalred\"><a href=\"%s/mainpage.html\">%s</a></span> ",ip->name,ip->name);
+                fprintf(fall,"<span id=\"signalred\"><a href=\"%s\">%s</a></span> ",URLControl(url1),ip->name);
                 break;
             case 1:
-                fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s/mainpage.html\">%s</a></span> ",ip->name,ip->name);
+                fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s\">%s</a></span> ",URLControl(url1),ip->name);
                 break;
             case 2:
-                fprintf(fall,"<span id=\"signalgreen\"><a href=\"%s/mainpage.html\">%s</a></span> ",ip->name,ip->name);
+                fprintf(fall,"<span id=\"signalgreen\"><a href=\"%s\">%s</a></span> ",URLControl(url1),ip->name);
                 break;
             }
          }

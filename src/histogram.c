@@ -263,13 +263,13 @@ if ((fp = fopen(fname,"w")) == 0)
    }
 
 NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
-fprintf(fp,"<h1>Spectral analysis of %s</h1>",name);
+fprintf(fp,"<h3>Spectral analysis of %s</h3>",name);
 
 fprintf(fp,"<div id=\"legend\">\n");
 
 CfOut(cf_verbose,""," -> Looking for maxima in %s\n",name);
 
-snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
+snprintf(img,CF_BUFSIZE,"reports/%s/%s_hist.png",host,name);
 
 fprintf(fp,"<div id=\"graph\">\n");
 fprintf(fp,"<a href=\"%s\"><img src=\"%s\" width=\"590\"></a>\n",img,img);

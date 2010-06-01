@@ -332,11 +332,11 @@ if ((fp = fopen(fname,"w")) == 0)
 
 NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
 
-fprintf(fp,"<h1>Zoom: %s Last four hours</h1>\n",name);
+fprintf(fp,"<h3>Zoom: %s Last four hours</h3>\n",name);
 
 Nova_GraphMagLegend(fp);
 
-snprintf(img,CF_BUFSIZE,"%s_mag.png",name);
+snprintf(img,CF_BUFSIZE,"reports/%s/%s_mag.png",host,name);
 
 fprintf(fp,"<div id=\"graph\">\n");
 fprintf(fp,"<a href=\"%s\"><img src=\"%s\" width=\"590\"></a>\n",img,img);

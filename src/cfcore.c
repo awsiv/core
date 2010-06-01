@@ -15,6 +15,48 @@
 /*                                                                           */
 /*****************************************************************************/
 
+void Nova_SpecialQuote(char *name,char *type)
+
+{ char filename[CF_BUFSIZE],rootpath[CF_BUFSIZE];
+  FILE *fin,*fout = stdout;
+
+snprintf(filename,CF_BUFSIZE-1,"/var/cfengine/document_root.dat");
+
+if ((fin = fopen(filename,"r")) == NULL)
+   {
+   fprintf(fout,"<h1>Unable to open the map %s</h1>",filename);
+   return;
+   }
+
+rootpath[0] = '\0';
+fscanf(fin,"%s",rootpath);
+fclose(fin);
+
+snprintf(filename,CF_BUFSIZE,"%s/%s",rootpath,name);
+
+if ((fin = fopen(filename,"r")) == NULL)
+   {
+   fprintf(fout,"Unable to open the map fragment %s",filename);
+   }
+else
+   {
+   char line[CF_BUFSIZE],buffer[CF_BUFSIZE];
+
+   while (!feof(fin))
+      {
+      line[0] = '\0';
+      fgets(line,CF_BUFSIZE,fin);
+
+      snprintf(buffer,CF_BUFSIZE-1,line,"/index.php");
+      fprintf(fout,"%s",buffer);
+      }
+   
+   fclose(fin);
+   }
+}
+
+/*****************************************************************************/
+
 void Nova_MainPage(char *host,struct Item *eliminate)
     
 { FILE *fout;
@@ -84,7 +126,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       }
 
    NovaHtmlHeader(fout,host,STYLESHEET,WEBDRIVER,BANNER);
-   Nova_ShowGraph(fout,i,s2.st_mtime,(enum observables)i);
+   Nova_ShowGraph(fout,host,i,s2.st_mtime,(enum observables)i);
    NovaHtmlFooter(fout,FOOTER);
 
    fclose(fout);
@@ -148,6 +190,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        continue;
        }    
 
+    snprintf(url,CF_BUFSIZE,"reports/%s/%s.html",host,name);
     snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
     
     if (cfstat(img,&sb) == -1)
@@ -156,7 +199,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        continue;
        }
     
-    fprintf(fp,"<th nowrap><div id=\"ip\">%s</div><br><br><a href=\"%s\">%s</a><br><br><small>Latest data<br>%s</small></th>\n",host,url,name,datestr);
+    fprintf(fp,"<th nowrap><div id=\"ip\">%s</div><br><br><a href=\"%s\">%s</a><br><br><small>Latest data<br>%s</small></th>\n",host,URLControl(url),name,datestr);
 
     terminated1 = terminated2 = terminated3  = false;
     
@@ -176,8 +219,9 @@ for (i = 0; i < CF_OBSERVABLES; i++)
     
     if (!terminated1)
        {
-       snprintf(img,CF_BUFSIZE,"%s_mag.png",name);
-       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",mag,img);
+       snprintf(mag,CF_BUFSIZE,"reports/%s/%s_mag.html",host,name);
+       snprintf(img,CF_BUFSIZE,"reports/%s/%s_mag.png",host,name);
+       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=\"300\"></a></td>\n",URLControl(mag),img);
        }
     else
        {
@@ -186,8 +230,9 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
     if (!terminated2)
        {
-       snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
-       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",week,img);
+       snprintf(week,CF_BUFSIZE,"reports/%s/%s_week.html",host,name);
+       snprintf(img,CF_BUFSIZE,"reports/%s/%s_weekly.png",host,name);
+       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",URLControl(week),img);
        }
     else
        {
@@ -197,8 +242,9 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
     if (!terminated3)
        {
-       snprintf(img,CF_BUFSIZE,"%s_hist.png",name);
-       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",hist,img);
+       snprintf(hist,CF_BUFSIZE,"reports/%s/%s_hist.html",host,name);
+       snprintf(img,CF_BUFSIZE,"reports/%s/%s_hist.png",host,name);
+       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",URLControl(hist),img);
        }
     else
        {
@@ -213,7 +259,7 @@ fprintf(fp,"</table>");
 
 /*****************************************************************************/
 
-void Nova_ShowGraph(FILE *fout,int i,time_t date,enum observables obs)
+void Nova_ShowGraph(FILE *fout,char *host,int i,time_t date,enum observables obs)
 
 { char name1[CF_BUFSIZE],name2[CF_BUFSIZE],img[CF_BUFSIZE],datestr[CF_BUFSIZE];
   char name[CF_BUFSIZE],description[CF_BUFSIZE];
@@ -223,18 +269,19 @@ void Nova_ShowGraph(FILE *fout,int i,time_t date,enum observables obs)
 Nova_LookupAggregateClassName(i,name,description);
   
 snprintf(name1,CF_BUFSIZE-1,"%s.mag",name);
-snprintf(img,CF_BUFSIZE-1,"%s_mag.png",name);
+snprintf(img,CF_BUFSIZE-1,"reports/%s/%s_mag.png",host,name);
 
 snprintf(datestr,CF_MAXVARSIZE,"%s",cf_ctime(&date));
 Chop(datestr);
 
-fprintf(fout,"<h1>%s</h1>\n",description);
+fprintf(fout,"<h4>%s</h4>\n",description);
 
 fprintf(fout,"<div id=\"legend\">\n");
 
 fprintf(fout,"<h4>Last 3 years</h4>\n");
 
-fprintf(fout,"<p><a href=\"%s_yr.html\">Long history</a> provides a rough trend over the past 3 years\n",name);
+snprintf(name2,CF_MAXVARSIZE-1,"reports/%s/%s_yr.html",host,name);
+fprintf(fout,"<p><a href=\"%s\">Long history</a> provides a rough trend over the past 3 years\n",URLControl(name2));
 
 fprintf(fout,"<h2>Last 4 hours</h2>\n");
 
@@ -269,7 +316,7 @@ fprintf(fout,"<h2>Past and previous weeks</h2>\n");
 
 snprintf(name1,CF_BUFSIZE-1,"%s.E-sigma",name);
 snprintf(name2,CF_BUFSIZE-1,"%s.q",name);
-snprintf(img,CF_BUFSIZE-1,"%s_weekly.png",name);
+snprintf(img,CF_BUFSIZE-1,"reports/%s/%s_weekly.png",host,name);
 
 fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\" width=\"590\"></a></p>\n",img,img);
 fprintf(fout,"<p><table border=1>\n");

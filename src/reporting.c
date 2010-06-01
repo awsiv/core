@@ -698,7 +698,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
 if (html && !embed)
    {
-   fprintf(fout,"</table></div>");
+   fprintf(fout,"</table></div>\n");
    NovaHtmlFooter(fout,foot);
    }
 

@@ -211,7 +211,7 @@ void Nova_LookupAggregateClassName(int n,char *name, char *desc);
 /* cfcore.c */
 
 void Nova_ShowAllGraphs(FILE *fp,char *s,struct Item *el);
-void Nova_ShowGraph(FILE *fp, int i,time_t last,enum observables obs);
+void Nova_ShowGraph(FILE *fp,char *host,int i,time_t last,enum observables obs);
 void Nova_MainPage(char *s,struct Item *el);
 void Nova_OtherPages(char *s,struct Item *el);
 void Nova_PlotTopicCosmos(int topic,double **adj,char **names,int dim,char *view);
@@ -221,6 +221,7 @@ void Nova_InitVertex(struct CfGraphNode *v,int i);
 int Nova_NewVertex(struct CfGraphNode *tribe,int i,char *name,int distance,int real);
 void Nova_EigenvectorCentrality(double **A,double *v,int dim);
 void Nova_MatrixOperation(double **A,double *v,int dim);
+void Nova_SpecialQuote(char *name,char *type);
 
 /* coordinates.c */
 
@@ -291,7 +292,7 @@ int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,
 
 /* graphs.c */
 
-void Nova_BuildMeters(struct CfDataView *cfv,char *hostname);
+int Nova_BuildMeters(struct CfDataView *cfv,char *hostname);
 void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired,char *s);
 void Nova_Title(struct CfDataView *cfv,int col);
 void Nova_BuildGraphs(struct CfDataView *cfv);
