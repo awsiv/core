@@ -227,17 +227,17 @@ occurrences:
 
    "/reports/meters.png"
 
-            represents => { "network host status", "/reports/host_portal.html" },
+            represents => { "network host status", "reports/host_portal.html" },
             representation => "image";
 
    "/allhosts.png"
 
-            represents => { "see all managed hosts", "/reports/allhosts.html" },
+            represents => { "see all managed hosts", "reports/allhosts.html" },
             representation => "image";
 
  host_portal::
 
-   "/reports/host_portal.html"
+   "reports/host_portal.html"
 
             represents => { "portal" },
             representation => "url";
@@ -306,7 +306,7 @@ occurrences:
 
  classes_report::
 
-   "Shows non-hard classes defined on the current host. This provides something like CMDB information but at level that can say something about the dynamics of the system. Probabilities that classes have been defined are based on actual observation."
+   "Shows classes defined on the current host. This provides something like CMDB information but at level that can say something about the dynamics of the system. Probabilities that classes have been defined are based on actual observation."
 
             represents => { "description" },
             representation => "literal";
@@ -546,7 +546,7 @@ hosts::
 
  monitoring::
 
-   "/reports/host_portal.html"
+   "reports/host_portal.html"
 
             represents => { "portal" },
             representation => "url";

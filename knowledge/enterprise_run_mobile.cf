@@ -19,6 +19,11 @@ version => "1.0"; # This is the visible version
 host_licenses_paid => "1";
 }
 
+body knowledge control
+{
+query_engine => "/mobile.php";
+}
+
 bundle knowledge dummy
 {
 topics:

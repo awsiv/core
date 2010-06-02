@@ -656,19 +656,16 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
    snprintf(url2,CF_MAXVARSIZE-1,"reports/%s/promise_output_common.html",ip->name);
    snprintf(url3,CF_MAXVARSIZE-1,"reports/%s/classes.html",ip->name);
    
-   fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\">"
-           "<table><tr><td width=\"80\">&nbsp;</div></center></td></tr></table></td>"
-           "<td width=\"200\"><center>Last updated at<br>%s</center></td>"
-           "<td><a href=\"%s\"><img src=\"reports/%s/meters.png\"></a></td>"
-           "<td><span id=\"rbuttons\"><a href=\"%s\">Promises</a>"
-           "<br><a href=\"%s\">Classes</a></span></td></tr>",
+   fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\">\n"
+           "<table><tr><td width=\"80\">&nbsp;</div></center></td></tr></table></td>\n"
+           "<td width=\"200\"><center>Last updated at<br>%s</center></td>\n",
            ip->name,
            col,
-           cf_ctime(&(sb.st_mtime)),
-           URLControl(url1),
-           ip->name,
-           URLControl(url2),
-           URLControl(url3));
+           cf_ctime(&(sb.st_mtime)));
+           
+   fprintf(fout,"<td><a href=\"%s\"><img src=\"reports/%s/meters.png\"></a></td>\n",URLControl("%s",url1),ip->name);
+   fprintf(fout,"<td><span id=\"rbuttons\"><a href=\"%s\">Promises</a>\n",URLControl("%s",url2));
+   fprintf(fout,"<br><a href=\"%s\">Classes</a></span></td></tr>\n",URLControl("%s",url3));
    }
 
 fprintf(fout,"</table></div>\n");
@@ -735,7 +732,7 @@ for (state = 0; state < 3; state++)
 
    if (state == 0 && ccount[0] == 0)
       {
-      fprintf(fall,"<span id=\"signalred\"><a href=\"%s\">(none)</a></span> ",URLControl("reports/host_portal.html"));
+      fprintf(fall,"<span id=\"signalred\"><a href=\"%s\">(none)</a></span> ",URLControl("%s","reports/host_portal.html"));
       ccount[0]++;
       continue;
       }
@@ -743,7 +740,7 @@ for (state = 0; state < 3; state++)
    if (state == 1 && ccount[1] == 0)
       {
       ccount[1]++;
-      fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s\">(none)</a></span> ",URLControl("reports/host_portal.html"));
+      fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s\">(none)</a></span> ",URLControl("%s","reports/host_portal.html"));
       continue;
       }
 
@@ -756,13 +753,13 @@ for (state = 0; state < 3; state++)
          switch (state)
             {
             case 0:
-                fprintf(fall,"<span id=\"signalred\"><a href=\"%s\">%s</a></span> ",URLControl(url1),ip->name);
+                fprintf(fall,"<span id=\"signalred\"><a href=\"%s\">%s</a></span> ",URLControl("%s",url1),ip->name);
                 break;
             case 1:
-                fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s\">%s</a></span> ",URLControl(url1),ip->name);
+                fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s\">%s</a></span> ",URLControl("%s",url1),ip->name);
                 break;
             case 2:
-                fprintf(fall,"<span id=\"signalgreen\"><a href=\"%s\">%s</a></span> ",URLControl(url1),ip->name);
+                fprintf(fall,"<span id=\"signalgreen\"><a href=\"%s\">%s</a></span> ",URLControl("%s",url1),ip->name);
                 break;
             }
          }

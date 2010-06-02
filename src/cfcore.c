@@ -47,7 +47,7 @@ else
       line[0] = '\0';
       fgets(line,CF_BUFSIZE,fin);
 
-      snprintf(buffer,CF_BUFSIZE-1,line,"/index.php");
+      snprintf(buffer,CF_BUFSIZE-1,line,WEBDRIVER);
       fprintf(fout,"%s",buffer);
       }
    
@@ -190,7 +190,6 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        continue;
        }    
 
-    snprintf(url,CF_BUFSIZE,"reports/%s/%s.html",host,name);
     snprintf(img,CF_BUFSIZE,"%s_weekly.png",name);
     
     if (cfstat(img,&sb) == -1)
@@ -198,8 +197,9 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        terminated2 = true;
        continue;
        }
-    
-    fprintf(fp,"<th nowrap><div id=\"ip\">%s</div><br><br><a href=\"%s\">%s</a><br><br><small>Latest data<br>%s</small></th>\n",host,URLControl(url),name,datestr);
+
+    snprintf(url,CF_BUFSIZE,"reports/%s/%s.html",host,name);
+    fprintf(fp,"<th nowrap><div id=\"ip\">%s</div><br><br><a href=\"%s\">%s</a><br><br><small>Latest data<br>%s</small></th>\n",host,URLControl("%s",url),name,datestr);
 
     terminated1 = terminated2 = terminated3  = false;
     
@@ -221,7 +221,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        {
        snprintf(mag,CF_BUFSIZE,"reports/%s/%s_mag.html",host,name);
        snprintf(img,CF_BUFSIZE,"reports/%s/%s_mag.png",host,name);
-       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=\"300\"></a></td>\n",URLControl(mag),img);
+       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=\"300\"></a></td>\n",URLControl("%s",mag),img);
        }
     else
        {
@@ -232,7 +232,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        {
        snprintf(week,CF_BUFSIZE,"reports/%s/%s_week.html",host,name);
        snprintf(img,CF_BUFSIZE,"reports/%s/%s_weekly.png",host,name);
-       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",URLControl(week),img);
+       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",URLControl("%s",week),img);
        }
     else
        {
@@ -244,7 +244,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
        {
        snprintf(hist,CF_BUFSIZE,"reports/%s/%s_hist.html",host,name);
        snprintf(img,CF_BUFSIZE,"reports/%s/%s_hist.png",host,name);
-       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",URLControl(hist),img);
+       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",URLControl("%s",hist),img);
        }
     else
        {
@@ -281,7 +281,7 @@ fprintf(fout,"<div id=\"legend\">\n");
 fprintf(fout,"<h4>Last 3 years</h4>\n");
 
 snprintf(name2,CF_MAXVARSIZE-1,"reports/%s/%s_yr.html",host,name);
-fprintf(fout,"<p><a href=\"%s\">Long history</a> provides a rough trend over the past 3 years\n",URLControl(name2));
+fprintf(fout,"<p><a href=\"%s\">Long history</a> provides a rough trend over the past 3 years\n",URLControl("%s",name2));
 
 fprintf(fout,"<h2>Last 4 hours</h2>\n");
 

@@ -9,11 +9,13 @@ $arg1 = $_GET['next'];
 $regex = $_POST['regex'];
 $map1 = $_GET['map1'];
 $map2 = $_GET['map2'];
+$quote = $_GET['quote'];
 
 $arg1 = ($arg1) ? escapeshellarg($arg1) : "";
 $regex = ($regex) ? escapeshellarg($regex) : "";
 $map1 = ($map1) ? escapeshellarg($map1) : "";
 $map2 = ($map2) ? escapeshellarg($map2) : "";
+$quote = ($quote) ? escapeshellarg($quote) : "";
 
 $ip = $_SERVER['REMOTE_HOST'];
 $date = date('l jS \of F Y h:i:s A');
@@ -46,6 +48,14 @@ else if (strlen($regex) > 0)
 else if (strlen($map1) > 0)
    {
    system("$cfknow -K $map1 -f $file");
+   }
+else if (strlen($map2) > 0)
+   {
+   system("$cfknow -k $map1 -f $file");
+   }
+else if (strlen($quote) > 0)
+   {
+   system("$cfknow -q $quote -f $file");
    }
 else
    {
