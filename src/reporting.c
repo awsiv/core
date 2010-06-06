@@ -503,7 +503,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
          {
          fprintf(fout,"%s",NRX[cfx_entry][cfb]);
          fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],tbuf,NRX[cfx_date][cfe]);
-         fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRX[cfx_event][cfb],eventname,eventname,NRX[cfx_event][cfe]);
+         fprintf(fout,"%s <a href=\"promises.cf.html#%s\">%s</a> %s",NRX[cfx_event][cfb],eventname,eventname,NRX[cfx_event][cfe]);
          
          if (measure == 1.0)
             {
@@ -529,7 +529,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
          char vbuff[CF_BUFSIZE];
          
          snprintf(b1,CF_MAXVARSIZE-1,"%s %s %s %s",NRH[cfx_entry][cfb],NRH[cfx_date][cfb],tbuf,NRH[cfx_date][cfe]);
-         snprintf(b2,CF_MAXVARSIZE-1,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRH[cfx_event][cfb],eventname,eventname,NRH[cfx_event][cfe]);
+         snprintf(b2,CF_MAXVARSIZE-1,"%s <a href=\"promises.cf.html#%s\">%s</a> %s",NRH[cfx_event][cfb],eventname,eventname,NRH[cfx_event][cfe]);
          
          if (measure == 1.0)
             {
@@ -1141,7 +1141,7 @@ for (ip = file; ip != NULL; ip = ip->next)
       fprintf(fout,"%s",NRH[cfx_entry][cfb]);
       fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],date,NRH[cfx_date][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],bundle,NRH[cfx_bundle][cfe]);
-      fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRH[cfx_event][cfb],handle,handle,NRH[cfx_event][cfe]);
+      fprintf(fout,"%s <a href=\"promises.cf.html#%s\">%s</a> %s",NRH[cfx_event][cfb],handle,handle,NRH[cfx_event][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],ref,NRH[cfx_ref][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],filename,NRH[cfx_end][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],lineno,NRH[cfx_index][cfe]);
@@ -1280,7 +1280,7 @@ for (ip = file; ip != NULL; ip = ip->next)
       fprintf(fout,"%s",NRH[cfx_entry][cfb]);
       fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],date,NRH[cfx_date][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],bundle,NRH[cfx_bundle][cfe]);
-      fprintf(fout,"%s <a href=\"promise_output_common.html#%s\">%s</a> %s",NRH[cfx_event][cfb],handle,handle,NRH[cfx_event][cfe]);
+      fprintf(fout,"%s <a href=\"promises.cf.html#%s\">%s</a> %s",NRH[cfx_event][cfb],handle,handle,NRH[cfx_event][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],ref,NRH[cfx_ref][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],filename,NRH[cfx_end][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],lineno,NRH[cfx_index][cfe]);
@@ -1510,7 +1510,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
 if (html && !embed)
    {
-   fprintf(fout,"</table></div>");
+   fprintf(fout,"</table></div>\n");
    NovaHtmlFooter(fout,foot);
    }
 
@@ -1643,7 +1643,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
 if (html && !embed)
    {
-   fprintf(fout,"</table></div>");
+   fprintf(fout,"</table></div>\n");
    NovaHtmlFooter(fout,foot);
    }
 
@@ -1670,7 +1670,7 @@ if ((fin = cf_fopen(name,"r")) == NULL)
 
 if (html)
    {
-     snprintf(name,sizeof(name),"software_patch_status.html");
+   snprintf(name,sizeof(name),"software_patch_status.html");
    }
 else if (xml)
    {
@@ -1704,7 +1704,7 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 
 if (html && !embed)
    {
-   snprintf(name,sizeof(name),"Software patched installed on %s",VFQNAME);
+   snprintf(name,sizeof(name),"Software patches installed on %s",VFQNAME);
    NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
@@ -1765,7 +1765,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
 if (html && !embed)
    {
-   fprintf(fout,"</table></div>");
+   fprintf(fout,"</table></div>\n");
    NovaHtmlFooter(fout,foot);
    }
 

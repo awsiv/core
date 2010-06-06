@@ -151,11 +151,11 @@ if (fout = fopen(name,"w"))
    {
    for (ip = serverlist; ip != NULL; ip=ip->next)
       {
-      if (!IsItemIn(unique,ip->name))
+      if (!IsItemIn(unique,Hostname2IPString(ip->name)))
          {
-         PrependItem(&unique,ip->name,NULL);
+         PrependItem(&unique,Hostname2IPString(ip->name),NULL);
          
-         if (strcmp(ip->name,"localhost") == 0)
+         if (strcmp(ip->name,"localhost") == 0 || strcmp(ip->name,"127.0.0.1") == 0)
             {
             }
          else

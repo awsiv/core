@@ -204,7 +204,7 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&ret
 
 if (licenses == 0)
    {
-   if (!BOOTSTRAP && (getuid() == 0 || THIS_AGENT_TYPE != cf_know))
+   if (!BOOTSTRAP && getuid() == 0 && THIS_AGENT_TYPE != cf_know)
       {
       CfOut(cf_error,""," !! Your configuration promises no host_licenses_paid in common control");
       CfOut(cf_error,""," !! By doing this, you confirm the terms of contract already legally binding");

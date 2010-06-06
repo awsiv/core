@@ -40,6 +40,8 @@ if (strlen(footer) > 0)
    }
 
 //fprintf(fp,"</body></html>\n");
+
+fprintf(fp,"\n");
 }
 
 /* end */
