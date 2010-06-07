@@ -41,8 +41,14 @@ int NovaWin_GetInstalledPkgs(struct CfPackageItem **pkgList, struct Attributes a
       CfOut(cf_error, "", "!! Could not initialize WMI to get installed packages");
       return false;
     }
-  
-  
+
+
+  // NOTE: Win2008+ supports querying msi-name directly,
+  // but sw is not always installed from msi-package.
+
+  res = NovaWin_WmiGetInstalledPkgsOld(pkgList, a, pp);
+
+  /*
 if (WINVER_MAJOR < 6) // 2003/XP or earlier versions
    {
      res = NovaWin_WmiGetInstalledPkgsOld(pkgList, a, pp);
@@ -51,6 +57,7 @@ else
    {
      res = NovaWin_WmiGetInstalledPkgsNew(pkgList, a, pp);
    }
+  */
 
  return res;
 }
