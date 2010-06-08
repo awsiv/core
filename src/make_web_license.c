@@ -112,7 +112,7 @@ if ((fp = fopen(name,"w")) != NULL)
 
    ThisHashString(filename,name,strlen(name),digest);
    
-   fprintf(fp,"%2s %x %2s %4s %s",f_day,number,f_month,f_year,ThisHashPrint(digest));
+   fprintf(fp,"%2s %x %2s %4s %s %s",f_day,number,f_month,f_year,ThisHashPrint(digest),company);
    fclose(fp);
    printf("\nWrote %s - install this in WORKDIR/masterfiles on the policy server\n",name);
    }

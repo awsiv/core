@@ -10,13 +10,11 @@
 #include <string.h>
 #include <openssl/evp.h>
 #include <sys/stat.h>
-#define CF_MD5_LEN 16
 
+#define CF_MD5_LEN 16
 #define CF_MAXVARSIZE 1024
 
 // gcc -o make_license_file make_license_file.c -lcrypto
-
-
 
 /*******************************************************************/
 
@@ -78,7 +76,7 @@ if ((fp = fopen(name,"w")) != NULL)
 
    ThisHashString(filename,name,strlen(name),digest);
    
-   fprintf(fp,"%2s %x %2s %4s %s",f_day,number,f_month,f_year,ThisHashPrint(digest));
+   fprintf(fp,"%2s %x %2s %4s %s %s",f_day,number,f_month,f_year,ThisHashPrint(digest),company);
    fclose(fp);
    printf("\nWrote license.dat - install this in WORKDIR/masterfiles on the policy server\n");
    }
