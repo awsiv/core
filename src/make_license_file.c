@@ -23,11 +23,10 @@
 char *ThisHashPrint(unsigned char digest[EVP_MAX_MD_SIZE+1]);
 void ThisHashString(char *fna,char *buffer,int len,unsigned char digest[EVP_MAX_MD_SIZE+1]);
 
-
-
 int main()
 
 { char name[CF_MAXVARSIZE],hash[CF_MAXVARSIZE],filename[2048];
+  char company[2048];
   FILE *fp;
   struct stat sb;
   int m_now,m_expire,d_now,d_expire;
@@ -63,6 +62,9 @@ scanf("%s",f_year);
 printf("Enter number of licenses: ");
 scanf("%d",&number);
 
+printf("Enter unique company string: ");
+scanf("%s",company);
+
 printf("\nDate confirmed as: %s %s %s\n",f_day,f_month,f_year);
 printf("\nNumber of licenses granted: %d\n",number);
   
@@ -72,7 +74,7 @@ snprintf(name,CF_MAXVARSIZE-1,"license.dat");
 
 if ((fp = fopen(name,"w")) != NULL)
    {
-   snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s",f_month,number,f_day,f_year);
+   snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s %s",f_month,number,f_day,f_year,company);
 
    ThisHashString(filename,name,strlen(name),digest);
    

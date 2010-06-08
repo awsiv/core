@@ -108,7 +108,7 @@ snprintf(name,CF_MAXVARSIZE-1,argv[2]);
 
 if ((fp = fopen(name,"w")) != NULL)
    {
-   snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s",f_month,number,f_day,f_year);
+   snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s Temporary Pilot Trial License",f_month,number,f_day,f_year);
 
    ThisHashString(filename,name,strlen(name),digest);
    

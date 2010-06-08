@@ -30,6 +30,7 @@ int Nova_EnterpriseExpiry(char *day,char *month,char *year)
     
 { struct stat sb;
   char name[CF_MAXVARSIZE],hash[CF_MAXVARSIZE],serverkey[CF_MAXVARSIZE],policy_server[CF_MAXVARSIZE];
+  char company[CF_BUFSIZE];
   int m_now,m_expire,d_now,d_expire,number = 1;
   char f_day[16],f_month[16],f_year[16];
   char u_day[16],u_month[16],u_year[16];
@@ -45,6 +46,7 @@ strcpy(u_day,day);
 strcpy(u_month,month);
 strcpy(u_year,year);
 policy_server[0] = '\0';
+company[0] = '\0';
 
 // Verify first whether this host has been bootstrapped
 
@@ -74,13 +76,13 @@ snprintf(name,CF_MAXVARSIZE-1,"%s%cinputs%clicense.dat",CFWORKDIR,FILE_SEPARATOR
 if ((fp = fopen(name,"r")) != NULL)
    {
    CfOut(cf_verbose,""," -> Reading license expiry from %s",name);
-   fscanf(fp,"%15s %x %15s %15s %100s",f_day,&number,f_month,f_year,hash);
+   fscanf(fp,"%15s %x %15s %15s %100s %[^\n]",f_day,&number,f_month,f_year,hash,company);
    fclose(fp);
    
    // This is the simple password hash to obfuscate license fixing
    // Nothing top security here - this is a helper file to track licenses
 
-   snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s",f_month,number,f_day,f_year);
+   snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s %s",f_month,number,f_day,f_year,company);
    snprintf(serverkey,CF_MAXVARSIZE,"%s%c/ppkeys%c%s-%s.pub",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,"root",policy_server);
 
    if (Nova_HashKey(CFPUBKEYFILE,name,digest,hash))
@@ -89,7 +91,7 @@ if ((fp = fopen(name,"r")) != NULL)
       strcpy(u_month,f_month);
       strcpy(u_year,f_year);
       LICENSES = number;
-      CfOut(cf_verbose,""," -> Verified license file %s - this is a policy server",hash);
+      CfOut(cf_verbose,""," -> Verified license file %s - this is a policy server (%s)",hash,company);
       }
    else if (Nova_HashKey(serverkey,name,digest,hash))
       {
@@ -97,7 +99,7 @@ if ((fp = fopen(name,"r")) != NULL)
       strcpy(u_month,f_month);
       strcpy(u_year,f_year);
       LICENSES = number;
-      CfOut(cf_verbose,""," -> Verified license file %s - as a client of %s",hash,policy_server);
+      CfOut(cf_verbose,""," -> Verified license file %s - as a client of %s (%s)",hash,policy_server,company);
       }
    else
       {
