@@ -584,7 +584,7 @@ void NovaWin_OpenLog(void);
 int NovaWin_CheckRegistryLogKey(void);
 void NovaWin_CloseLog(void);
 void NovaWin_MakeLog(struct Item *mess,enum cfreport level);
-void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char status, struct Item *mess);
+void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, struct Item *mess);
 
 /* win_mon.c */
 

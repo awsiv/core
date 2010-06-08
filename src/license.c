@@ -320,7 +320,7 @@ int Nova_CheckLicenseWin(char *pos)
 {
 if (LICENSES == 0)
    {
-   CfOut(cf_error, "", " !! Invalid Enterprise license limits functionality (%s requires a license, agent %d)", pos, THIS_AGENT_TYPE);
+   CfOut(cf_error, "", " !! Invalid Enterprise license limits functionality (%s requires a license, agent %s)", pos, THIS_AGENT);
    }
 
 return true;

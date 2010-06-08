@@ -28,7 +28,7 @@ void NovaWin_MakeLog(struct Item *mess, enum cfreport level)
  WORD eventType;
  DWORD eventId;
  char *strMsg;
- char *insertStrings[1] = {NULL};
+ char *insertStrings[4] = {0};
 
  if(logHandle == NULL)  // OpenLog not called or failed
     {
@@ -72,11 +72,21 @@ void NovaWin_MakeLog(struct Item *mess, enum cfreport level)
         break;
     }
 
+ // don't include prefix if it is the default
+ if(strcmp(VPREFIX, GetConsolePrefix()) == 0)
+   {
+     insertStrings[0] = "";
+   }
+ else
+   {
+     insertStrings[0] = VPREFIX;
+   }
 
  strMsg = Item2String(mess);
- insertStrings[0] = strMsg;
+ insertStrings[1] = strMsg;
+ insertStrings[2] = THIS_AGENT;
 
- ReportEvent(logHandle, eventType, 0, eventId, NULL, 1, 0, (LPCSTR *)insertStrings, NULL);
+ ReportEvent(logHandle, eventType, 0, eventId, NULL, 3, 0, (LPCSTR *)insertStrings, NULL);
   
  free(strMsg);
 
@@ -215,10 +225,10 @@ void NovaWin_CloseLog(void)
 
 /* Logs promise result. CfOut() should not be called here due to risk of 
  * infinite recursion. */
-void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char status, struct Item *mess)
+void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, struct Item *mess)
 {
  char *strMsg, *strPromisee;
- char *insertStrings[3] = {NULL, NULL, NULL};
+ char *insertStrings[6] = {0};
  char peeBuf[CF_BUFSIZE];
  WORD eventType;
  DWORD eventId;
@@ -235,10 +245,53 @@ void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char
     return;
     }
 
+ switch(status)
+    {
+    case CF_NOP:  // promise kept
+    case CF_UNKNOWN:
+        eventType = EVENTLOG_INFORMATION_TYPE;
+        eventId = EVMSG_PROMISE_KEPT;
+
+	if(log_level != cf_verbose)
+	  {
+	  return;
+	  }
+        break;
+
+    case CF_CHG:  // promise repaired
+    case CF_REGULAR:
+        eventType = EVENTLOG_INFORMATION_TYPE;
+        eventId = EVMSG_PROMISE_REPAIRED;
+
+	if(log_level != cf_verbose)
+	  {
+	  return;
+	  }
+        break;
+
+    case CF_WARN:  // promise not kept, but not repaired due to policy (e.g. dry-run)
+        eventType = EVENTLOG_ERROR_TYPE;
+        eventId = EVMSG_PROMISE_NOT_REPAIRED_POLICY;
+        break;
+
+    case CF_FAIL:  // promise not repaired
+    case CF_TIMEX:
+    case CF_DENIED:
+    case CF_INTERPT:
+        eventType = EVENTLOG_ERROR_TYPE;
+        eventId = EVMSG_PROMISE_NOT_REPAIRED;
+        break;
+
+    default:  // unknown status
+        return;
+    }
+
+
  if (!ThreadLock(cft_output))
     {
     return;
     }
+
 
  // make the promisee into a string
  switch(peeType)
@@ -278,43 +331,22 @@ void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char
 
  strMsg = Item2String(mess);
 
- insertStrings[0] = promiser;
- insertStrings[1] = strPromisee;
- insertStrings[2] = strMsg;
-  
- switch(status)
-    {
-    case CF_NOP:  // promise kept
-    case CF_UNKNOWN:
-        eventType = EVENTLOG_INFORMATION_TYPE;
-        eventId = EVMSG_PROMISE_KEPT;
-        break;
+  // don't include prefix if it is the default
+ if(strcmp(VPREFIX, GetConsolePrefix()) == 0)
+   {
+     insertStrings[0] = "";
+   }
+ else
+   {
+     insertStrings[0] = VPREFIX;
+   }
 
-    case CF_CHG:  // promise repaired
-    case CF_REGULAR:
-        eventType = EVENTLOG_INFORMATION_TYPE;
-        eventId = EVMSG_PROMISE_REPAIRED;
-        break;
+ insertStrings[1] = promiser;
+ insertStrings[2] = strPromisee;
+ insertStrings[3] = strMsg;
+ insertStrings[4] = THIS_AGENT;
 
-    case CF_WARN:  // promise not kept, but not repaired due to policy (e.g. dry-run)
-        eventType = EVENTLOG_ERROR_TYPE;
-        eventId = EVMSG_PROMISE_NOT_REPAIRED_POLICY;
-        break;
-
-    case CF_FAIL:  // promise not repaired
-    case CF_TIMEX:
-    case CF_DENIED:
-    case CF_INTERPT:
-        eventType = EVENTLOG_ERROR_TYPE;
-        eventId = EVMSG_PROMISE_NOT_REPAIRED;
-        break;
-
-    default:  // unknown status
-        free(strMsg);
-        return;
-    }
-
- ReportEvent(logHandle, eventType, 0, eventId, NULL, 3, 0, (LPCSTR *)insertStrings, NULL);
+ ReportEvent(logHandle, eventType, 0, eventId, NULL, 5, 0, (LPCSTR *)insertStrings, NULL);
 
  free(strMsg);
   

@@ -1,7 +1,15 @@
-1.1.2 
-        Encryption problems fixed in Community Edition.
+1.2.0
+	Windows Event Logs include output_prefix if set, and which component 
+	reported the event. The verbosity of event logs have been reduced
+	by not including promise kept and repaired events, this can now be
+	tuned with action.log_level.
+	
+	Built with Cfengine Community Edition X.Y.Z.  --FIXME
 
-        Built with Cfengine Community Edition 3.0.4p3.
+1.1.2 
+	Encryption problems fixed in Community Edition.
+
+	Built with Cfengine Community Edition 3.0.4p3.
 
 1.1.0
 	Regular expressions in file paths supported on Windows by using
