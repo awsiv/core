@@ -129,12 +129,12 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
       Nova_ViewWeek(cfv,name,description,i,ip->name);
       Nova_ViewHisto(cfv,name,description,i,ip->name);
       Nova_ViewLongHistory(cfv,name,description,i,ip->name);
-
       CfOut(cf_verbose,""," -> Done with %s / %s",ip->name,name);
       }
 
    compliance = Nova_BuildMeters(&cfv_small,ip->name);
    ip->counter = compliance;
+   ip->classes = Nova_GetHostClass(ip->name);
    
    Nova_MainPage(ip->name,eliminate);
    Nova_OtherPages(ip->name,eliminate);
@@ -160,7 +160,7 @@ if (fout = fopen(name,"w"))
             }
          else
             {
-            fprintf(fout,"%s,%d\n",Hostname2IPString(ip->name),ip->counter);
+            fprintf(fout,"%s,/Server/%s,%d\n",Hostname2IPString(ip->name),Titleize(ip->classes),ip->counter);
             }
          }
          
@@ -1042,6 +1042,61 @@ if (issues < 0)
 
 item->counter = issues;
 item->time = 100 - kept[2] + repaired[2];
+}
+
+/*****************************************************************************/
+
+char *Nova_GetHostClass(char *host)
+
+{ FILE *fin,*fout;
+  char class[CF_SMALLBUF];
+  char *sp,line[CF_BUFSIZE];
+
+class[0] = '\0';
+
+if ((fin = fopen("hardclass.txt","r")) != NULL)
+   {
+   fscanf(fin,"%s",class);
+   fclose(fin);
+   
+   if (strlen(class) > 0)
+      {
+      return strdup(class);
+      }
+   }
+
+// See if it's been cached
+
+if ((fin = fopen("variables.html","r")) == NULL)
+   {
+   return strdup("any");
+   }
+
+while (!feof(fin))
+   {
+   fgets(line,CF_BUFSIZE,fin);
+   
+   if (sp = strstr(line,"class</td><td> "))
+      {
+      sscanf(sp+strlen("class</td><td> "),"%[^<]",class);
+      break;
+      }
+   }
+
+fclose(fin);
+
+if (strlen(class) > 0)
+   {
+   if ((fout = fopen("hardclass.txt","w")) == 0)
+      {
+      return strdup("any");
+      }
+
+   fprintf(fout,"%s",class);
+   fclose(fout);
+   }
+
+return strdup("any");
 }
 
 #endif

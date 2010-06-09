@@ -227,12 +227,12 @@ occurrences:
 
    "/reports/meters.png"
 
-            represents => { "network host status", "reports/host_portal.html" },
+            represents => { "network host status", "/reports/host_portal.html" },
             representation => "image";
 
    "/allhosts.png"
 
-            represents => { "see all managed hosts", "reports/allhosts.html" },
+            represents => { "see all managed hosts", "/reports/allhosts.html" },
             representation => "image";
 
  host_portal::

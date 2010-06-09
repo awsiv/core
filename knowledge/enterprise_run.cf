@@ -20,10 +20,10 @@ host_licenses_paid => "1";
 }
 
 
-body knowledge control
-{
-query_engine => "/index.php";
-}
+#body knowledge control
+#{
+#query_engine => "/index.php";
+#}
 
 
 bundle knowledge dummy

@@ -292,6 +292,7 @@ int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,
 
 /* graphs.c */
 
+char *Nova_GetHostClass(char *s);
 int Nova_BuildMeters(struct CfDataView *cfv,char *hostname);
 void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired,char *s);
 void Nova_Title(struct CfDataView *cfv,int col);

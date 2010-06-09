@@ -82,7 +82,15 @@ if ((fp = fopen(name,"r")) != NULL)
    // This is the simple password hash to obfuscate license fixing
    // Nothing top security here - this is a helper file to track licenses
 
-   snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s %s",f_month,number,f_day,f_year,company);
+   if (strlen(company) > 0)
+      {
+      snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s %s",f_month,number,f_day,f_year,company);
+      }
+   else
+      {
+      snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s",f_month,number,f_day,f_year);
+      }
+   
    snprintf(serverkey,CF_MAXVARSIZE,"%s%c/ppkeys%c%s-%s.pub",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,"root",policy_server);
 
    if (Nova_HashKey(CFPUBKEYFILE,name,digest,hash))
