@@ -220,12 +220,16 @@ for (i = 0; i < CF_SHADES; i++)
    }
 
 WHITE    = gdImageColorAllocate(cfv->im, 255, 255, 255);
-LIGHTGREY= gdImageColorAllocate(cfv->im, 239, 234, 204);
-GREEN    = gdImageColorAllocate(cfv->im, 108, 177, 80);
+
 BLUE     = gdImageColorAllocate(cfv->im, 50, 100, 100);
-YELLOW   = gdImageColorAllocate(cfv->im, 242, 202, 119);
 LIGHTRED = gdImageColorAllocate(cfv->im, 189, 58, 43);
-RED      = gdImageColorAllocate(cfv->im, 255, 0, 0);
+
+RED      = gdImageColorAllocate(cfv->im, 208, 45, 72);
+YELLOW   = gdImageColorAllocate(cfv->im, 161, 158, 88);
+GREEN    = gdImageColorAllocate(cfv->im, 82, 127, 73);
+
+LIGHTGREY= gdImageColorAllocate(cfv->im, 75, 75, 66); // Background
+
 ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
 SKY      = gdImageColorAllocate(cfv->im, 0,0,80);
 }
@@ -461,8 +465,12 @@ cfv->margin = 5;
 cfv->title = "System state";
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
 Nova_MakePalette(cfv);
+
+// Draw the box
+
 gdImageFilledRectangle(cfv->im,0,0,510,80,LIGHTGREY);
-gdImageRectangle(cfv->im,5,5,505,75,ORANGE);
+gdImageSetThickness(cfv->im,2);
+gdImageRectangle(cfv->im,0,9,510,80,BLACK);
 
 Nova_GetAllLevels(kept,repaired,list,names);
 
@@ -505,7 +513,8 @@ cfv->margin = 5;
 cfv->title = "System state";
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
 Nova_MakePalette(cfv);
-gdImageRectangle(cfv->im,5,5,505,75,ORANGE);
+
+gdImageRectangle(cfv->im,0,0,510,80,BLACK);
 
 // Bar 1
 
@@ -787,16 +796,17 @@ void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired
 
 { int n = number;
   int m = number - 1;
-  int width = 40,offset = 27;
+  int width = 40,offset = 0;
   int colour,x,y;
+  int thickness = 1;
   double count;
   char ss[CF_MAXVARSIZE];
 
 count = 0;
   
-for (y = 68; y > 10; y -= 3)
+for (y = 68; y > 10; y -= thickness)
    {
-   gdImageSetThickness(cfv->im,2);
+   gdImageSetThickness(cfv->im,thickness);
 
    // 20 bars in the given height
    
@@ -819,8 +829,8 @@ for (y = 68; y > 10; y -= 3)
 
 snprintf(ss,CF_MAXVARSIZE-1,"%.1lf",kept);
 
-gdImageString(cfv->im,gdFontGetLarge(),n*offset+m*width+5,40,s,BLACK);
-gdImageString(cfv->im,gdFontGetLarge(),n*offset+m*width+5,55,ss,WHITE);
+Nova_Font(cfv->im,n*offset+m*width+5,40,s,WHITE);
+Nova_Font(cfv->im,n*offset+m*width+5,55,ss,WHITE);
 }
 
 /*****************************************************************************/
@@ -1105,5 +1115,61 @@ if (strlen(class) > 0)
 
 return strdup("any");
 }
+
+/*****************************************************************************/
+
+void Nova_Font(struct CfDataView cfv,double x,double y,char *s,int colour)
+
+{ char *err,ps[CF_MAXVARSIZE];
+  int x1,y1,x2,y2,margin = 1,padding=2,tab=3;
+  static char *font1 = "DejaVuSans";
+  char *font = font1;
+  int brect[8];
+  double size = 10.0;
+
+snprintf(ps,CF_MAXVARSIZE,"%s",s);
+
+
+/* brect
+   0	lower left corner, X position
+   1	lower left corner, Y position
+   2	lower right corner, X position
+   3	lower right corner, Y position
+   4	upper right corner, X position
+   5	upper right corner, Y position
+   6	upper left corner, X position
+   7	upper left corner, Y position
+*/
+
+err = gdImageStringFT(NULL,&brect[0],0,font1,size,0.,0,0,ps);
+
+if (err)
+   {
+   printf("Rendering failure %s\n",err);
+   }
+
+// Top left = x2,y2
+// Top right = x1,y2
+// Bottom right = x1,y1
+
+x1 = Nova_X(cfv,x) + (brect[2]-brect[6])/2 + padding;
+y1 = Nova_Y(cfv,y) + (brect[3]-brect[7])/2 + padding;
+x2 = x1 - (brect[2]-brect[6]) - padding;
+y2 = y1 - (brect[3]-brect[7]) - padding;
+
+Nova_BoundaryCheck(&cfv,&x1,&y1,&x2,&y2);
+
+// Plus y is now downward
+
+if (Nova_InRange(cfv,x1,y1) && Nova_InRange(cfv,x2,y2))
+   {
+   gdImageStringFT(cfv.im,&brect[0],BLACK,font,size,0.0,x2+margin+padding,y1-margin-padding,ps);
+   }
+else
+   {
+   CfOut(cf_error,""," -> Numerical Overflow at position (%d,%d)-(%d,%d) while mapping \"%s\"",x1,y1,x2,y2,s);
+   }
+}
+
 
 #endif

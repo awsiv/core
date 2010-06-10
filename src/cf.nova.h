@@ -310,6 +310,7 @@ void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list);
 void Nova_GraphLegend(FILE *fp);
 void Nova_GraphMagLegend(FILE *fp);
 void Nova_CountHostIssues(struct Item *list);
+void Nova_Font(struct CfDataView cfv,double x,double y,char *s,int colour);
 
 /* histogram.c */
 

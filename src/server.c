@@ -154,7 +154,8 @@ memset(recvbuffer,0,CF_BUFSIZE);
 if (LICENSES == 0)
    {
    CfOut(cf_verbose,""," !! The license has expired on this feature");
-   return "BAD:";
+   snprint(recvbuffer,CF_BUFSIZE-1,"BAD:");
+   return recvbuffer;
    }
 
 CfOut(cf_verbose,""," -> * Hailing %s:%u for remote handle \"%s\"\n",peer,(unsigned int)a.copy.portnumber,handle);
@@ -167,7 +168,8 @@ if (conn == NULL)
    ServerDisconnection(conn);
    DeleteRlist(a.copy.servers);
    DeletePromise(pp);
-   return "BAD:";
+   snprint(recvbuffer,CF_BUFSIZE-1,"BAD:");
+   return recvbuffer;
    }
 
 if (encrypted)
@@ -196,7 +198,8 @@ if (SendTransaction(conn->sd,sendbuffer,tosend,CF_DONE) == -1)
    ServerDisconnection(conn);
    DeleteRlist(a.copy.servers);
    DeletePromise(pp);
-   return "BAD:";
+   snprint(recvbuffer,CF_BUFSIZE-1,"BAD:");
+   return recvbuffer;
    }
 
 if ((n = ReceiveTransaction(conn->sd,recvbuffer,NULL)) == -1)
@@ -206,12 +209,14 @@ if ((n = ReceiveTransaction(conn->sd,recvbuffer,NULL)) == -1)
    ServerDisconnection(conn);
    DeleteRlist(a.copy.servers);
    DeletePromise(pp);
-   return "BAD:";
+   snprint(recvbuffer,CF_BUFSIZE-1,"BAD:");
+   return recvbuffer;
    }
 
 if (strncmp(recvbuffer,"BAD:",4) == 0)
    {
-   return "BAD:";
+   snprint(recvbuffer,CF_BUFSIZE-1,"BAD:");
+   return recvbuffer;
    }
 
 if (encrypted)
