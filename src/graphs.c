@@ -23,6 +23,10 @@ int YELLOWS[CF_SHADES];
 int PINKS[CF_SHADES];
 int BROWNS[CF_SHADES];
 
+#define CF_METER_HEIGHT 80
+#define CF_METER_WIDTH  500
+#define CF_METER_MARGIN 5
+
 /*****************************************************************************/
 
 #ifdef HAVE_LIBGD
@@ -200,38 +204,16 @@ void Nova_MakePalette(struct CfDataView *cfv)
 { int i,hint,r,g,b;
   int startgrey = 220,startblue = 150, startgreen = 40;
 
-BLACK = gdImageColorAllocate(cfv->im, 0, 0, 0);
-
-for (i = 0; i < CF_SHADES; i++)
-   {
-   hint = startgrey + (int)((255.0-(double)startgrey)/(double)CF_SHADES * (double)i);
-   GREYS[i] = gdImageColorAllocate(cfv->im,hint,hint,hint);
-   }
-
-for (i = 0; i < CF_SHADES; i++)
-   {
-   r = (int)((100.0)/(double)CF_SHADES * (double)i);
-   
-   g = startgreen +
-       (int)( (100.0-(double)startgreen)/((double)CF_SHADES*1.5) * (double)i*1.5);
-
-   b = startblue + (int)((255.0-(double)startblue)/(double)CF_SHADES * (double)i);
-   BLUES[i] = gdImageColorAllocate(cfv->im,r,g,b);
-   }
-
+BLACK = gdImageColorAllocate(cfv->im, 48, 48, 42);
 WHITE    = gdImageColorAllocate(cfv->im, 255, 255, 255);
-
 BLUE     = gdImageColorAllocate(cfv->im, 50, 100, 100);
 LIGHTRED = gdImageColorAllocate(cfv->im, 189, 58, 43);
 
 RED      = gdImageColorAllocate(cfv->im, 208, 45, 72);
-YELLOW   = gdImageColorAllocate(cfv->im, 161, 158, 88);
-GREEN    = gdImageColorAllocate(cfv->im, 82, 127, 73);
+YELLOW   = gdImageColorAllocate(cfv->im, 242, 238, 134);
+GREEN    = gdImageColorAllocate(cfv->im, 115, 177, 103);
 
 LIGHTGREY= gdImageColorAllocate(cfv->im, 75, 75, 66); // Background
-
-ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
-SKY      = gdImageColorAllocate(cfv->im, 0,0,80);
 }
 
 /*****************************************************************************/
@@ -455,22 +437,20 @@ void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list)
 { FILE *fout;
   char filename[CF_BUFSIZE];
   int i,kept[8],repaired[8];
-  static char *names[8] = { "zzz", "Week", "Day", "Hour", "Patch", "Lics", "Comms","Anom" };
+  static char *names[8] = { "zzz", "Week", "Day", "Hour", "Patch", "Lics", "Coms","Anom" };
 
-  
-cfv->height = 70;
-cfv->width = 500; //(7*24*2)*2; // halfhour
-cfv->margin = 5;
-
+cfv->height = CF_METER_HEIGHT;
+cfv->width = CF_METER_WIDTH;
+cfv->margin = CF_METER_MARGIN;
 cfv->title = "System state";
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
 Nova_MakePalette(cfv);
 
 // Draw the box
 
-gdImageFilledRectangle(cfv->im,0,0,510,80,LIGHTGREY);
+gdImageFilledRectangle(cfv->im,0,0,cfv->width+2*cfv->margin,cfv->height+2*cfv->margin,LIGHTGREY);
 gdImageSetThickness(cfv->im,2);
-gdImageRectangle(cfv->im,0,9,510,80,BLACK);
+gdImageRectangle(cfv->im,0,0,cfv->width+2*cfv->margin,cfv->height+2*cfv->margin,BLACK);
 
 Nova_GetAllLevels(kept,repaired,list,names);
 
@@ -492,7 +472,6 @@ else
     
 gdImagePng(cfv->im,fout);
 fclose(fout);
-
 gdImageDestroy(cfv->im);
 }
 
@@ -506,15 +485,16 @@ int Nova_BuildMeters(struct CfDataView *cfv,char *hostname)
   struct stat sb;
   struct utimbuf t;
   
-cfv->height = 70;
-cfv->width = 500; //(7*24*2)*2; // halfhour
-cfv->margin = 5;
-
+cfv->height = CF_METER_HEIGHT;
+cfv->width = CF_METER_WIDTH;
+cfv->margin = CF_METER_MARGIN;
 cfv->title = "System state";
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
 Nova_MakePalette(cfv);
 
-gdImageRectangle(cfv->im,0,0,510,80,BLACK);
+gdImageSetThickness(cfv->im,2);
+gdImageFilledRectangle(cfv->im,0,0,cfv->width+2*cfv->margin,cfv->height+2*cfv->margin,LIGHTGREY);
+gdImageRectangle(cfv->im,0,0,cfv->width+2*cfv->margin,cfv->height+2*cfv->margin,BLACK);
 
 // Bar 1
 
@@ -532,7 +512,7 @@ Nova_BarMeter(cfv,4,kept,repaired,"Ptch");
 Nova_GetLevel("Lics",&kept,&repaired);
 Nova_BarMeter(cfv,5,kept,repaired,"Lics");
 Nova_GetLevel("Comms",&kept,&repaired);
-Nova_BarMeter(cfv,6,kept,repaired,"Comm");
+Nova_BarMeter(cfv,6,kept,repaired,"Coms");
 Nova_GetLevel("Anom",&kept,&repaired);
 Nova_BarMeter(cfv,7,kept,repaired,"Anom");
 
@@ -796,15 +776,16 @@ void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired
 
 { int n = number;
   int m = number - 1;
-  int width = 40,offset = 0;
+  int v_offset = 35,bar_height = CF_METER_HEIGHT-v_offset;
+  int width = 35,h_offset = 15;
+  int thickness = bar_height/20;
   int colour,x,y;
-  int thickness = 1;
   double count;
   char ss[CF_MAXVARSIZE];
 
 count = 0;
   
-for (y = 68; y > 10; y -= thickness)
+for (y = v_offset+bar_height; y > v_offset; y -= thickness)
    {
    gdImageSetThickness(cfv->im,thickness);
 
@@ -823,14 +804,14 @@ for (y = 68; y > 10; y -= thickness)
       colour = RED;
       }
 
-   gdImageLine(cfv->im,n*offset+m*width,y,n*offset+n*width,y,colour);
+   gdImageLine(cfv->im,n*h_offset+m*width,y,n*h_offset+n*width,y,colour);
    count++;
    }
 
 snprintf(ss,CF_MAXVARSIZE-1,"%.1lf",kept);
 
-Nova_Font(cfv->im,n*offset+m*width+5,40,s,WHITE);
-Nova_Font(cfv->im,n*offset+m*width+5,55,ss,WHITE);
+Nova_Font(cfv,n*h_offset+m*width+5,15,s,WHITE);
+Nova_Font(cfv,n*h_offset+m*width+5,27,ss,WHITE);
 }
 
 /*****************************************************************************/
@@ -1042,7 +1023,7 @@ for (i = 0; i < 8; i++)
 void Nova_CountHostIssues(struct Item *item)
 
 { int i,kept[8],repaired[8], issues = 0;
-  static char *names[8] = { "zzz", "Week", "Day", "Hour", "Patch", "Lics", "Comms","Anom" };
+  static char *names[8] = { "zzz", "Week", "Day", "Hour", "Patch", "Lics", "Coms","Anom" };
  
 Nova_GetLevels(kept,repaired,item->name,names);
 
@@ -1118,14 +1099,14 @@ return strdup("any");
 
 /*****************************************************************************/
 
-void Nova_Font(struct CfDataView cfv,double x,double y,char *s,int colour)
+void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour)
 
 { char *err,ps[CF_MAXVARSIZE];
   int x1,y1,x2,y2,margin = 1,padding=2,tab=3;
   static char *font1 = "DejaVuSans";
   char *font = font1;
   int brect[8];
-  double size = 10.0;
+  double size = 8.0;
 
 snprintf(ps,CF_MAXVARSIZE,"%s",s);
 
@@ -1141,34 +1122,16 @@ snprintf(ps,CF_MAXVARSIZE,"%s",s);
    7	upper left corner, Y position
 */
 
-err = gdImageStringFT(NULL,&brect[0],0,font1,size,0.,0,0,ps);
+err = gdImageStringFT(NULL,&brect[0],colour,font1,size,0.,0,0,ps);
 
 if (err)
    {
    printf("Rendering failure %s\n",err);
    }
 
-// Top left = x2,y2
-// Top right = x1,y2
-// Bottom right = x1,y1
-
-x1 = Nova_X(cfv,x) + (brect[2]-brect[6])/2 + padding;
-y1 = Nova_Y(cfv,y) + (brect[3]-brect[7])/2 + padding;
-x2 = x1 - (brect[2]-brect[6]) - padding;
-y2 = y1 - (brect[3]-brect[7]) - padding;
-
-Nova_BoundaryCheck(&cfv,&x1,&y1,&x2,&y2);
-
 // Plus y is now downward
 
-if (Nova_InRange(cfv,x1,y1) && Nova_InRange(cfv,x2,y2))
-   {
-   gdImageStringFT(cfv.im,&brect[0],BLACK,font,size,0.0,x2+margin+padding,y1-margin-padding,ps);
-   }
-else
-   {
-   CfOut(cf_error,""," -> Numerical Overflow at position (%d,%d)-(%d,%d) while mapping \"%s\"",x1,y1,x2,y2,s);
-   }
+gdImageStringFT(cfv->im,&brect[0],colour,font,size,0.0,x,y,ps);
 }
 
 
