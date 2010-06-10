@@ -154,7 +154,7 @@ memset(recvbuffer,0,CF_BUFSIZE);
 if (LICENSES == 0)
    {
    CfOut(cf_verbose,""," !! The license has expired on this feature");
-   snprint(recvbuffer,CF_BUFSIZE-1,"BAD:");
+   snprintf(recvbuffer,CF_BUFSIZE-1,"BAD:");
    return recvbuffer;
    }
 
@@ -168,7 +168,7 @@ if (conn == NULL)
    ServerDisconnection(conn);
    DeleteRlist(a.copy.servers);
    DeletePromise(pp);
-   snprint(recvbuffer,CF_BUFSIZE-1,"BAD:");
+   snprintf(recvbuffer,CF_BUFSIZE-1,"BAD:");
    return recvbuffer;
    }
 
@@ -198,7 +198,7 @@ if (SendTransaction(conn->sd,sendbuffer,tosend,CF_DONE) == -1)
    ServerDisconnection(conn);
    DeleteRlist(a.copy.servers);
    DeletePromise(pp);
-   snprint(recvbuffer,CF_BUFSIZE-1,"BAD:");
+   snprintf(recvbuffer,CF_BUFSIZE-1,"BAD:");
    return recvbuffer;
    }
 
@@ -209,13 +209,13 @@ if ((n = ReceiveTransaction(conn->sd,recvbuffer,NULL)) == -1)
    ServerDisconnection(conn);
    DeleteRlist(a.copy.servers);
    DeletePromise(pp);
-   snprint(recvbuffer,CF_BUFSIZE-1,"BAD:");
+   snprintf(recvbuffer,CF_BUFSIZE-1,"BAD:");
    return recvbuffer;
    }
 
 if (strncmp(recvbuffer,"BAD:",4) == 0)
    {
-   snprint(recvbuffer,CF_BUFSIZE-1,"BAD:");
+   snprintf(recvbuffer,CF_BUFSIZE-1,"BAD:");
    return recvbuffer;
    }
 
