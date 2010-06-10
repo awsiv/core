@@ -132,6 +132,7 @@ Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s = %d\n",VYEAR,year,VMONTH,month,VDAY,d
 Debug("Y. %s > %s\nM. %d > %d\nD: %d > %d = %d\n",VYEAR,year,m_now,m_expire,d_now,d_expire,cf_strcmp(VDAY,day));
 
 snprintf(EXPIRY,31,"%s %s %s",u_day,u_month,u_year);
+strcpy(LICENSE_COMPANY,company);
 
 Nova_LogLicenseStatus();
 

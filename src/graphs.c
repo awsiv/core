@@ -618,7 +618,14 @@ if (count > LICENSES)
    }
 else
    {
-   fprintf(fout,"<div id=\"ok\"><h4>%d hosts are known, sharing %d granted licenses that expire on %s, and you promise that you have paid for %d</h4></div>",count,LICENSES,EXPIRY,licenses);
+   if (strlen(LICENSE_COMPANY) > 0)
+      {
+      fprintf(fout,"<div id=\"ok\"><h4>%s<br>%d hosts are known, sharing %d granted licenses that expire on %s, and you promise that you have paid for %d</h4></div>",LICENSE_COMPANY,count,LICENSES,EXPIRY,licenses);
+      }
+   else
+      {
+      fprintf(fout,"<div id=\"ok\"><h4>%d hosts are known, sharing %d granted licenses that expire on %s, and you promise that you have paid for %d</h4></div>",count,LICENSES,EXPIRY,licenses);
+      }
    }
 
 fprintf(fout,"<div id=\"directory\"><table>\n");
