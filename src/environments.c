@@ -455,12 +455,14 @@ else
           
    if (cfstat(xml_file,&sb) == -1)
       {
-      cfPS(cf_verbose,CF_FAIL,vp->message,pp,a," !! Failed to create a virtual domain \"%s\" - no input file \"%s\"\n",pp->promiser,xml_file);
+      cfPS(cf_verbose,CF_FAIL,vp->message,pp,a," !! Failed to create a virtual domain \"%s\" - no input file \"%s\"\n",pp->promiser,a.env.specfile);
       }
    else
       {
-      cfPS(cf_verbose,CF_FAIL,vp->message,pp,a," !! Failed to create a virtual domain \"%s\" - check file \"%s\" for errors\n",pp->promiser,xml_file);
+      cfPS(cf_verbose,CF_FAIL,vp->message,pp,a," !! Failed to create a virtual domain \"%s\" - check file \"%s\" for errors\n",pp->promiser,a.env.specfile);
       }
+
+   CfOut(cf_verbose,"","Quoted spec file: %s",xml_file);
    }
 
 if (alloc_file)
@@ -823,7 +825,7 @@ if ((network = virNetworkCreateXML(vc,xml_file)) == NULL)
    }
 else
    {
-   cfPS(cf_error,CF_CHG,"",pp,a," -> Created network \"%s\" - promise repaired\n",pp->promiser);
+   cfPS(cf_inform,CF_CHG,"",pp,a," -> Created network \"%s\" - promise repaired\n",pp->promiser);
    }
 
 if (alloc_file)
@@ -845,13 +847,13 @@ int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,
   
 if ((network = virNetworkLookupByName(vc,pp->promiser)) == NULL)
    {
-   cfPS(cf_error,CF_NOP,"",pp,a," -> Couldn't find a network called \"%s\" - promise assumed kept\n",pp->promiser);
+   cfPS(cf_verbose,CF_NOP,"",pp,a," -> Couldn't find a network called \"%s\" - promise assumed kept\n",pp->promiser);
    return true;
    }
 
 if (virNetworkDestroy(network) == 0)
    {
-   cfPS(cf_error,CF_CHG,"",pp,a," -> Deleted network \"%s\" - promise repaired\n",pp->promiser);
+   cfPS(cf_inform,CF_CHG,"",pp,a," -> Deleted network \"%s\" - promise repaired\n",pp->promiser);
    }
 else
    {
