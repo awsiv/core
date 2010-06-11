@@ -14,6 +14,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+struct Rlist *SERVER_KEYRING =  NULL;
+
 /*****************************************************************************/
 
 void Nova_TranslatePath(char *new,char *old)
@@ -451,6 +453,102 @@ else
    }
 
 Nova_StartTwin(argc,argv);
+}
+
+/********************************************************************/
+
+RSA *Nova_SelectKeyRing(char *name)
+
+{ struct Rlist *rp;
+  struct CfKeyBinding *kp;
+ 
+for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
+   {
+   kp = (struct CfKeyBinding *) rp->item;
+
+   if (strcmp(kp->name,name) == 0)
+      {
+      return &(kp->key);
+      }
+   }
+
+return NULL;
+}
+
+/********************************************************************/
+
+void Nova_IdempAddToKeyRing(char *name,RSA *key)
+
+{ struct Rlist *rp;
+  struct CfKeyBinding *kp;
+ 
+for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
+   {
+   kp = (struct CfKeyBinding *) rp->item;
+
+   if (strcmp(kp->name,name) == 0)
+      {
+      return;
+      }
+   }
+
+rp = PrependRlist(&SERVER_KEYRING,"nothing",CF_SCALAR);
+
+ThreadLock(cft_system);
+kp = (struct CfKeyBinding *)malloc((sizeof(struct CfKeyBinding)));
+free(rp->item);
+rp->item = kp;
+
+if (kp == NULL)
+   {
+   ThreadUnlock(cft_system);
+   return;
+   }
+
+if ((kp->name = strdup(name)) == NULL)
+   {
+   free(kp);
+   ThreadUnlock(cft_system);
+   return;
+   }
+
+ThreadUnlock(cft_system);
+
+memcpy(&(kp->key),key,sizeof(RSA));
+kp->timestamp = time(NULL);
+}
+
+/********************************************************************/
+
+void Nova_PurgeKeyRing()
+
+{ struct Rlist *rp,*rpp = NULL;
+ struct CfKeyBinding *kp;
+  time_t now = time(NULL);
+  
+for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
+   {
+   kp = (struct CfKeyBinding *) rp->item;
+
+   if (now > kp->timestamp + 24*3600)
+      {
+      if (rpp == NULL)
+         {
+         SERVER_KEYRING = rp->next;
+         }
+      else
+         {
+         rpp->next = rp->next;
+         }
+
+      ThreadLock(cft_system);
+      free(kp);
+      free(rp);
+      ThreadUnlock(cft_system);
+      }
+
+   rpp = rp;
+   }
 }
 
 /********************************************************************/

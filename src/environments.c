@@ -378,6 +378,7 @@ if (a.env.specfile)
    }
 else
    {
+   CfOut(cf_verbose,"","No spec file is promised, so reverting to default settings");
    xml_file = defaultxml;
    }
 

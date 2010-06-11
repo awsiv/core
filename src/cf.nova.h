@@ -509,6 +509,9 @@ void Nova_SignalTwin(void);
 void Nova_SignalOther(void);
 void Nova_ReviveOther(int argc,char **argv);
 void Nova_TranslatePath(char *one,char *two);
+RSA *Nova_SelectKeyRing(char *name);
+void Nova_IdempAddToKeyRing(char *name,RSA *key);
+void Nova_PurgeKeyRing(void);
 
 /* sql.c */
 

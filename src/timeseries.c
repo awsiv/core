@@ -15,9 +15,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,ORANGE;
-extern int GREYS[CF_SHADES];
-extern int BLUES[CF_SHADES];
+extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,BACKGR,ORANGE;
 extern char *UNITS[];
 
 /*****************************************************************************/
@@ -69,7 +67,7 @@ for (y = 0; y < cfv->height+2*cfv->margin; y++)
    {
    //hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
    //gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
-   gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,LIGHTGREY);
+   gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,BACKGR);
    }
 
 /* Done initialization */

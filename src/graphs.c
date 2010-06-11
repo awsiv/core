@@ -15,7 +15,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,ORANGE,SKY;
+int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,BACKGR,ORANGE,SKY;
 
 int GREYS[CF_SHADES];
 int BLUES[CF_SHADES];
@@ -209,11 +209,25 @@ WHITE    = gdImageColorAllocate(cfv->im, 255, 255, 255);
 BLUE     = gdImageColorAllocate(cfv->im, 50, 100, 100);
 LIGHTRED = gdImageColorAllocate(cfv->im, 189, 58, 43);
 
+for (i = 0; i < CF_SHADES; i++)
+   {
+   r = (int)((100.0)/(double)CF_SHADES * (double)i);
+
+   g = startgreen +
+       (int)( (100.0-(double)startgreen)/((double)CF_SHADES*1.5) * (double)i*1.5);
+
+   b = startblue + (int)((255.0-(double)startblue)/(double)CF_SHADES * (double)i);
+   BLUES[i] = gdImageColorAllocate(cfv->im,r,g,b);
+   }
+
+
 RED      = gdImageColorAllocate(cfv->im, 208, 45, 72);
 YELLOW   = gdImageColorAllocate(cfv->im, 242, 238, 134);
 GREEN    = gdImageColorAllocate(cfv->im, 115, 177, 103);
 
-LIGHTGREY= gdImageColorAllocate(cfv->im, 75, 75, 66); // Background
+ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
+LIGHTGREY= gdImageColorAllocate(cfv->im, 75, 75, 66);
+BACKGR= gdImageColorAllocate(cfv->im,239, 234, 204); // Background
 }
 
 /*****************************************************************************/
@@ -330,7 +344,6 @@ YELLOW   = gdImageColorAllocate(cfv->im, 200, 255, 0);
 LIGHTRED = gdImageColorAllocate(cfv->im, 255, 150, 150);
 RED      = gdImageColorAllocate(cfv->im, 200, 0, 0);
 ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
-SKY      = gdImageColorAllocate(cfv->im, 239,234,204);
 }
 
 /*****************************************************************************/
