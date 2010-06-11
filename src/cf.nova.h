@@ -30,6 +30,7 @@
 
 #ifdef HAVE_LIBVIRT
 # include <libvirt/libvirt.h>
+# include <libvirt/virterror.h>
 #endif
 
 #undef PACKAGE

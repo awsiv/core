@@ -141,13 +141,13 @@ switch (Str2Hypervisors(a.env.type))
 
 CfOut(cf_verbose,""," -> Selecting environment type \"%s\" -> \"%s\"",a.env.type,hyper_uri);
 
-if (strcmp(a.env.host,VFQNAME) != 0 || strcmp(a.env.host,VUQNAME) != 0)
+if (strcmp(a.env.host,VFQNAME) != 0 && strcmp(a.env.host,VUQNAME) != 0)
    {
    switch (a.env.state)
       {
       case cfvs_create:
       case cfvs_running:
-          CfOut(cf_verbose,""," -> This is not the promised host for the environment, so setting its intended state to \"down\"");
+          CfOut(cf_verbose,""," -> This host (\"%s\") is not the promised host for the environment (\"%s\"), so setting its intended state to \"down\"",VFQNAME,a.env.host);
           a.env.state = cfvs_down;
           break;
       default:
@@ -214,7 +214,7 @@ void Nova_VerifyVirtDomain(char *uri,enum cfhypervisors envtype,struct Attribute
   const char *name;
  
 /* set up the library error handler */
-virSetErrorFunc(NULL,Nova_EnvironmentErrorHandler);
+virSetErrorFunc(NULL,(void *)Nova_EnvironmentErrorHandler);
 
 /* set up the signals handlers to catch disconnections */
 //vshSetupSignals();
@@ -235,7 +235,7 @@ for (i = 0; i < CF_MAX_CONCURRENT_ENVIRONMENTS; i++)
    }
 
 num = virConnectListDomains(CFVC[envtype],CF_RUNNING,CF_MAX_CONCURRENT_ENVIRONMENTS);
-CfOut(cf_verbose,""," -> Found %d running virtual domain environments on this host",num);
+CfOut(cf_verbose,""," -> Found %d running virtual domain environments on this host (including enclosure)",num);
 Nova_ShowRunList(CFVC[envtype]);
 num = virConnectListDefinedDomains(CFVC[envtype],CF_SUSPENDED,CF_MAX_CONCURRENT_ENVIRONMENTS);
 CfOut(cf_verbose,""," -> Found %d dormant virtual domain environments on this host",num);
@@ -344,18 +344,21 @@ snprintf(defaultxml,CF_MAXVARSIZE-1,
          "</domain>",pp->promiser
          );
          
-for (i = 0; CF_RUNNING[i] > 0; i++)
+for (i = 0; i < CF_MAX_CONCURRENT_ENVIRONMENTS; i++)
    {
-   dom = virDomainLookupByID(vc,CF_RUNNING[i]);
-   name = virDomainGetName(dom);
-
-   if (name && strcmp(name,pp->promiser) == 0)
+   if (CF_RUNNING[i] > 0)
       {
-      cfPS(cf_verbose,CF_NOP,"",pp,a," -> Found a running environment called \"%s\" - promise kept\n",name);
-      return true;
+      dom = virDomainLookupByID(vc,CF_RUNNING[i]);
+      name = virDomainGetName(dom);
+      
+      if (name && strcmp(name,pp->promiser) == 0)
+         {
+         cfPS(cf_verbose,CF_NOP,"",pp,a," -> Found a running environment called \"%s\" - promise kept\n",name);
+         return true;
+         }
+      
+      virDomainFree(dom);
       }
-   
-   virDomainFree(dom);
    }
 
 for (i = 0; CF_SUSPENDED[i] != NULL; i++)
@@ -446,7 +449,18 @@ if (dom = virDomainCreateXML(vc,xml_file,0))
    }
 else
    {
-   cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Failed to create a virtual domain \"%s\"\n",pp->promiser);   
+   virErrorPtr vp;
+   struct stat sb;
+   vp = GetLastError();
+          
+   if (cfstat(xml_file,&sb) == -1)
+      {
+      cfPS(cf_verbose,CF_FAIL,vp->message,pp,a," !! Failed to create a virtual domain \"%s\" - no input file \"%s\"\n",pp->promiser,xml_file);
+      }
+   else
+      {
+      cfPS(cf_verbose,CF_FAIL,vp->message,pp,a," !! Failed to create a virtual domain \"%s\" - check file \"%s\" for errors\n",pp->promiser,xml_file);
+      }
    }
 
 if (alloc_file)
@@ -857,6 +871,7 @@ return ret;
 
 void Nova_EnvironmentErrorHandler()
 {
+
 }
 
 /*****************************************************************************/
@@ -867,14 +882,22 @@ void Nova_ShowRunList(virConnectPtr vc)
   virDomainPtr dom;
   const char *name;
   
-for (i = 0; CF_RUNNING[i] > 0; i++)
+for (i = 0; i < CF_MAX_CONCURRENT_ENVIRONMENTS; i++)
    {
-   dom = virDomainLookupByID(vc,CF_RUNNING[i]);
-   if (name = virDomainGetName(dom))
+   if (CF_RUNNING[i] > 0)
       {
-      CfOut(cf_verbose,""," ---> Found a running virtual domain called \"%s\"\n",name);
+      if (dom = virDomainLookupByID(vc,CF_RUNNING[i]))
+         {
+         CfOut(cf_verbose,""," -> Found a running virtual domain with id %d\n",CF_RUNNING[i]);
+         }
+      
+      if (name = virDomainGetName(dom))
+         {
+         CfOut(cf_verbose,""," ---> Found a running virtual domain called \"%s\"\n",name);
+         }
+      
+      virDomainFree(dom);
       }
-   virDomainFree(dom);
    }
 }
 
