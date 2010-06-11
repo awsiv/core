@@ -451,7 +451,7 @@ else
    {
    virErrorPtr vp;
    struct stat sb;
-   vp = GetLastError();
+   vp = virGetLastError();
           
    if (cfstat(xml_file,&sb) == -1)
       {
