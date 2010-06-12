@@ -371,7 +371,7 @@ for (i = 0; CF_SUSPENDED[i] != NULL; i++)
 
 if (a.env.specfile)
    {
-   if (AbsFilePath(a.env.specfile))
+   if (IsAbsPath(a.env.specfile))
       {
       if (virFileReadAll(a.env.specfile,CF_BUFSIZE,&xml_file) < 0)
          {

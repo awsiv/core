@@ -134,6 +134,21 @@ else
 
 /*****************************************************************************/
 
+int Nova_ReturnQueryData(char *menu,char *recv)
+
+{ char rtype;
+  void *retval;
+
+if (LICENSES <= 0)
+   {
+   return false;
+   }
+
+// Fetch by menu
+}
+
+/*****************************************************************************/
+
 char *Nova_GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,char *recvbuffer)
 
 { char in[CF_BUFSIZE],out[CF_BUFSIZE],sendbuffer[CF_BUFSIZE];
@@ -256,7 +271,7 @@ DeletePromise(pp);
 return recvbuffer;
 }
 
-/********************************************************************/
+/********************************************************************/    
 
 void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer)
 
