@@ -14,7 +14,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-struct Rlist *SERVER_KEYRING =  NULL;
+struct Rlist *SERVER_KEYRING = NULL;
 
 /*****************************************************************************/
 
@@ -461,6 +461,9 @@ RSA *Nova_SelectKeyRing(char *name)
 
 { struct Rlist *rp;
   struct CfKeyBinding *kp;
+  RSA *newkey;
+  
+CfOut(cf_verbose,""," -> Looking for key for %s in cache",name);
  
 for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
    {
@@ -468,7 +471,11 @@ for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
 
    if (strcmp(kp->name,name) == 0)
       {
-      return &(kp->key);
+      CfOut(cf_verbose,""," -> Retrieving key for %s from cache",name);
+      ThreadLock(cft_system);
+      RSA_up_ref(kp->key);
+      ThreadUnlock(cft_system);
+      return kp->key;
       }
    }
 
@@ -481,7 +488,7 @@ void Nova_IdempAddToKeyRing(char *name,RSA *key)
 
 { struct Rlist *rp;
   struct CfKeyBinding *kp;
- 
+  
 for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
    {
    kp = (struct CfKeyBinding *) rp->item;
@@ -492,18 +499,22 @@ for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
       }
    }
 
+CfOut(cf_verbose,""," -> Caching key for %s",name);
+
 rp = PrependRlist(&SERVER_KEYRING,"nothing",CF_SCALAR);
 
 ThreadLock(cft_system);
+
 kp = (struct CfKeyBinding *)malloc((sizeof(struct CfKeyBinding)));
-free(rp->item);
-rp->item = kp;
 
 if (kp == NULL)
    {
    ThreadUnlock(cft_system);
    return;
    }
+
+free(rp->item);
+rp->item = kp;
 
 if ((kp->name = strdup(name)) == NULL)
    {
@@ -512,9 +523,10 @@ if ((kp->name = strdup(name)) == NULL)
    return;
    }
 
-ThreadUnlock(cft_system);
+RSA_up_ref(key);
+kp->key = key;
 
-memcpy(&(kp->key),key,sizeof(RSA));
+ThreadUnlock(cft_system);
 kp->timestamp = time(NULL);
 }
 
@@ -523,14 +535,25 @@ kp->timestamp = time(NULL);
 void Nova_PurgeKeyRing()
 
 { struct Rlist *rp,*rpp = NULL;
- struct CfKeyBinding *kp;
+  struct CfKeyBinding *kp;
   time_t now = time(NULL);
+  static time_t then;
   
+if (now < then + 3600 && then > 0)
+   {
+   // Rate limiter
+   return;
+   }
+
+then = now;
+
 for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
    {
    kp = (struct CfKeyBinding *) rp->item;
 
-   if (now > kp->timestamp + 24*3600)
+   CfOut(cf_verbose,""," -> Holding key for %s",kp->name);
+   
+   if (now > kp->timestamp + KEYTTL*3600)
       {
       if (rpp == NULL)
          {
@@ -542,6 +565,8 @@ for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
          }
 
       ThreadLock(cft_system);
+      RSA_free(kp->key);
+      free(kp->name);
       free(kp);
       free(rp);
       ThreadUnlock(cft_system);
