@@ -371,12 +371,19 @@ for (i = 0; CF_SUSPENDED[i] != NULL; i++)
 
 if (a.env.specfile)
    {
-   if (virFileReadAll(a.env.specfile,CF_BUFSIZE,&xml_file) < 0)
+   if (AbsFilePath(a.env.specfile))
       {
-      cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Unable to read environment specfile \"%s\"\n",a.env.specfile);
-      return false;
+      if (virFileReadAll(a.env.specfile,CF_BUFSIZE,&xml_file) < 0)
+         {
+         cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Unable to read environment specfile \"%s\"\n",a.env.specfile);
+         return false;
+         }
       }
-
+   else
+      {
+      xml_file = strdup(a.env.specfile);
+      }
+   
    alloc_file = true;
    }
 else
