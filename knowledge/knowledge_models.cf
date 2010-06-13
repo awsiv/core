@@ -227,7 +227,7 @@ topics:
  compliance::
 
 
-   "ITIL" comment => "Stands for Information Technology Infrastructure Library. ITIL is a set of self-proclaimed best-practises originally developed by the British government. It contains a set of common sense rules. Cfengine can be used as a tool for organizations looking to becoming ITIL-compliant. By translating many of your best practises into policy rules, you can have Cfengine ensure parts of ITIL-compliance.";
+   "ITIL" comment => "Stands for Information Technology Infrastructure Library. ITIL is a set of self-proclaimed best-practises originally developed by the British government. It can be viewed as mainly common-sense rules. Cfengine can be used as a component in becoming ITIL-compliant. By translating many of your best practises into policy rules, you can have Cfengine ensure parts of ITIL-compliance.";
 
 
    "ISO/IEC 20000"   comment => "A standards document based on a subset of ITIL",
@@ -295,7 +295,6 @@ topics:
 
    "provisioning" comment => "The ability to install and adopt new services, applications, OS and servers, e.g. using PXE-boot Cfengine can turn any server into anything kind of server with any kind of service running on it. Cfengine can easily deploy a service or new application throughout the datacenter, regardless of the number of servers.";
 
-
  ########################################################################
 
   environment::
@@ -339,7 +338,7 @@ topics:
    "instrumentation";
    "lastseen";
 
-   "tamperproof system";
+   "tamperproof system" association => a("$(impl[f])","body changes detect_all_change","$(impl[b])"); 
 
  technical_concepts::
 
@@ -347,10 +346,10 @@ topics:
    "symptoms";
    "resources";
    "redundancy";
-   "rollback"  comment => "Refers to the fictitious ability to perform an undo operation in change management";
+   "rollback"  comment => "Refers to the belief that one can reverse errors by imitating transaction control in computer management.";
    "$(bv)";
    "software";
-   "faults"                          comment => "Error messages and conditions";
+   "faults"               comment => "Error messages and conditions";
    "intermittency"        comment => "The entropy of availability of a service";
    "entropy"              comment => "A measure of the variation in an observation";
    "files"                comment => "Notable or special files and types";
@@ -359,7 +358,7 @@ topics:
    "modules";
    "template";
 
-   "variables"      association => a("$(same[f])","Special variables","$(same[f])");
+   "variables"  association => a("$(same[f])","Special variables","$(same[f])");
    "variables"  association => a("are promised by","vars","are promises about");
    "arrays"     association => a("are a special case of","variables","see also");
 
@@ -373,8 +372,6 @@ topics:
 
    "versions";
    "data types";
-
-   "rollback"          comment => "A widely misunderstood idea from change management that describes the reversal of managed changes to a system. Rollback is a property of transaction based data processing, a model that cannot apply to dynamical objects like computers.";
 
 
  ########################################################################
@@ -502,6 +499,10 @@ topics:
  management_issues::
 
    "business value"                 association => A("$(impr[b])","@(selfstar)","$(impr[f])");
+   "business value"                 association => A("$(impl[b])","value_kept","$(impl[f])");
+   "business value"                 association => A("$(impl[b])","value_notkept","$(impl[f])");
+   "business value"                 association => A("$(impl[b])","value_repaired","$(impl[f])");
+
    "maintenance paradigms"          comment => "Approaches to keeping systems in an operational state";
    "team work"                      comment => "Focused group in a flat organization for efficient communication and decision-making";
    "compliance"                     association => a("is documented by","manual::Reporting","documents");
@@ -530,7 +531,10 @@ topics:
    "release management"              comment => "The process of preparing for major changes to policy or enterprise activity.";
 
 
-   "application management"          comment => "Deploying and patching applications, inclding the ability to configure specific applications, like Apache-servers, Microsoft Exchange, etc.";
+   "application management"          comment => "Deploying and patching applications, inclding the ability to configure specific applications, like Apache-servers, Microsoft Exchange, etc.",
+                                 association => a("$(same[f])","Application Management","$(same[f])");
+
+   "Application management"          comment => "Deploying and patching applications, inclding the ability to configure specific applications, like Apache-servers, Microsoft Exchange, etc.";
 
    "reporting"                       comment => "Extracting information in human readable form";
 
@@ -551,7 +555,8 @@ topics:
 
    "inventory" comment => "List of items within a datacenter, e.g. servers, applications, services. Expressed in terms of a static database that is being updated every now on then, depending on how often you scan the network. Cfengine holds accurate inventory lists and reports can easily be created on the fly. Cfengine dosen’t hold any static database that requires frequent scan (that takes a lot of resources) to describe the inventory.";
 
-
+   "orchestration" comment => "Making the parts of a distributed system work together with a minimum of interation",
+               association => a("$(impl[b])","distributed scheduling","$(impl[f])");
 
    #
 
@@ -607,10 +612,14 @@ models_of_knowledge::
 
 models_of_organization::
 
-   "homogeneous system";
-   "heterogeneous system";
+   "Hierarchies"             comment => "Ranked, authoritative organizational tree structures";
+   "homogeneous system"      comment => "Systems in which all components are uniform";
+   "heterogeneous system"    comment => "Systems in which components are non-uniform";
    "peer to peer network";
+   "object orientation"      association => a("$(same[f])","object paradigm","$(same[f])");
    "hierarchical structure"  association => a("$(same[f])","object orientation","$(same[f])");
+   "hierarchical structure"  association => a("$(same[f])","object paradigm","$(same[f])");
+   "hierarchical structure"  association => a("$(same[f])","Hierarchies","$(same[f])");
    "service orientation"     association => a("$(same[f])","peer to peer network","$(same[f])");
    "aspect paradigm"         association => a("$(same[f])","aspect orientation","$(same[f])");
    "object paradigm"         association => a("$(same[f])","object orientation","$(same[f])");
@@ -716,6 +725,10 @@ promise_theory::
 
 occurrences:
 
+ orchestration::
+
+         "/inside/manuals/st-orchestrate.html"
+      represents => { "introduction" };
 
 
 
@@ -1198,6 +1211,20 @@ computer_immunology::
 
    "https://cfengine.com/cftimes/stories/icackeynote"
             represents => { "keynote speech" };
+
+ business_value::
+
+  "http://www.cfengine.org/cftimes/articles/0000000027.html"
+            represents => { "cftimes article" };
+
+  "http://www.iu.hio.no/~mark/blog_busval.html"
+            represents => { "Mark Burgess blog" };
+
+ rollback::
+
+     "/inside/manuals/st-iterate.html",
+      represents => { "definitions", "Example" };
+
 
 
 }

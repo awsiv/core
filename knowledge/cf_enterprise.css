@@ -1,7 +1,7 @@
 html{height: 100%;}
 
 body
-{ font-family: arial, sans-serif;
+{ font-family: DejaVuSans,Vera,sans-serif;
   padding: 0px;
   margin: 10px;
   font-size: 11px;;
@@ -26,7 +26,7 @@ p
 #menu
 { 
 font-size: 110%;
-font-family: helvetica;
+font-family: DejaVuSans,Vera;
 
 }
 
@@ -45,17 +45,16 @@ padding: 10px;
 
 h1
 { 
-font-family: arial, sans-serif;
-letter-spacing: .1em;
+font-family: DejaVuSans,Vera;
 font-weight: normal;
-background-color: #fff;
-color: #df9500;
+background-color: #30302a;
+color: #73b167;
 padding: 10px;
 }
 
 a
 {  
-color: #df9500;
+color: #07c;
 text-decoration: none;
 }
 
@@ -63,6 +62,13 @@ h2
 {
 padding: 0px 10px 4px 10px;
 font-size: 120%;
+}
+
+h3
+{
+padding: 0px 10px 4px 10px;
+font-size: 120%;
+background-color: #fff;
 }
 
 
@@ -89,7 +95,7 @@ a:hover{text-decoration: underline;}
 
 #ip
 { 
-font-family: Verdana, Ariel, DejaVuSans, sans-serif;
+font-family: DejaVuSans,Vera;
 font-size: 80%;
 color: #efeacc;
 }
@@ -130,7 +136,7 @@ float: right;
 
 #associations
 {  
-background-color: #efeacc; 
+background-color: white; 
 /*border: 1px solid;*/
 width: 60%;
 padding: 5px;
@@ -138,7 +144,7 @@ padding: 5px;
 
 #ontology
 {  
-background-color: #efeacc; 
+background-color: #fff; 
 /*border: 1px solid;*/
 width: 100%;
 padding: 5px;
@@ -148,7 +154,7 @@ padding: 5px;
 #occurrences
 {  
 background-color: #fff; 
-/*border: 1px solid;*/
+color: #30302a;
 width: 60%;
 padding: 5px;
 }
@@ -156,7 +162,7 @@ padding: 5px;
 
 #others
 {  
-background-color: #efeacc; 
+background-color: #fff; 
 /*border: 1px solid;*/
 width: 60%;
 padding: 5px;
@@ -189,70 +195,25 @@ background: #FFFFFF;
 }
 
 
-#banner li
+#banner li a
 {
-margin 0px;
-background-color: #ccc;
-  list-style-type: none;
-  list-style-image: none;
+padding: 5px;
+color: black;
+background-color: #fff;
 float: left;
 width: 14em;
+border: 1px;
 }
 
-#banner li ul 
+#banner ul
 { 
-display:none;
+//  list-style-type: none;
+//  list-style-image: none;
+//display:none;
+border: 1px;
+background-color: #fff;
 } 
 
-#banner li:hover ul
-{ 
-margin: 0px;
-padding: 0px 0px 0px 0px;
- 
-display: block;
-width: 14em;
-position: absolute;
-border: 1px;
-background-color: #efe;
-  list-style-type: none;
-  list-style-image: none;
-
-}
-
-#banner ul li a
-{
-margin: 0px;
-padding: 0px 0px 0px 0px;
-  display: block;
-  width: 14em;
-  height: 24px;
-  padding: 4px 0 0;
-  text-align: left;
-  text-decoration: none;
-}
-
-#banner ul li a:hover
-{
-background: #FFFFFF url(/img/menu_hover_in.png);
-  color: #4b4b42;
-  background-color: #dfe;
-  text-decoration: none;
-  color: #307070;
-  list-style-type: none;
-  list-style-image: none;
-
-}
-
-
-#banner ul li a.selected, #navigation ul li a.selected:hover
-{
-  color: #fff;
-}
-
-#banner ul li a.selected:hover
-{
-color: #4b4b42;
-}
 
 #image
 { 
@@ -269,10 +230,15 @@ margin-left: 10px;
 margin-bottom: 10px;
 }
 
+#embedded_image a img
+{  
+border: solid 0px;
+}
+
 #top
 {
 margin: 5px;
-background: red url(KnowledgeBack.png);
+background: #30302a url(KnowledgeBack.png);
 }
 
 #top li
@@ -284,6 +250,7 @@ width: 150;
 
 #search
 { 
+color: #fff;
 float: right; 
 padding: 18px 15px 0px 0px;
 }
@@ -292,7 +259,7 @@ padding: 18px 15px 0px 0px;
 #top h2
 {  
 padding: 15px;
-color: #fdd164;
+color: white;
 font-size: 160%;
 font-weight: normal;
 }
@@ -300,13 +267,13 @@ font-weight: normal;
 /* footer */
 #footer
 { 
-width: 95%;
-height: 42px;
-padding: 26px 21px 0px 19px;
+width: 100%;
+height: 22px;
+padding: 10px;
 text-align: center; 
 border-top: 2px solid #F2F2F0;
-background: #BDB9B2 url(../img/menu.png) repeat;
-color: #444;
+background: #30302a;
+color: white;
 margin-top: 10px;
 }
 
@@ -385,7 +352,7 @@ height:400px;
 }
 
 
-#primary h3
+#primary h2
 {
 padding: 0px 10px 4px 10px;
 font-size: 120%;
@@ -504,22 +471,22 @@ margin-bottom: 2px;
 }*/
 
 #showvars TH { background: #aabbFF;
-     font-family: Verdana, Arial, Helvetica, sans-serif;
+     font-family: DejaVuSans,Vera;
      color: darkblue;
   font-size: 8pt;
    }
 
 #showvars TD { color: #000000;
      background: #fff;
-     font-family: Verdana, Arial, Helvetica, sans-serif;
+     font-family: DejaVuSans,Vera;
   font-size: 8pt;
      padding: 5px;
    }
 
 #showvars PRE { font-family: "Lucida Typewriter", "Courier", monotype;
       font-style: normal;
-     font-size: 8pt;
-background-color: #eee;
+      font-size: 8pt;
+      background-color: #eee;
     }
 
 #signalred td
@@ -590,7 +557,7 @@ margin-bottom: 20px;
 
 #ok
 {
-width: 780px;
+width: 100%;
 background-color: white;
 padding: 0px;
 color: #090;; 
@@ -663,21 +630,21 @@ font-family: courier;
 
 #below
 {  
-font-family: Verdana, Ariel, DejaVuSans, sans-serif;
+font-family: DejaVuSans,Vera;
 background-color: #6cb150;
 padding: 5px;
 }
 
 #above
 {  
-font-family: Verdana, Ariel, DejaVuSans, sans-serif;
+font-family: DejaVuSans, sans-serif;
 background-color: bd3a2b;#bd3a2b;
 padding: 5px;
 }
 
 #last
 {  
-font-family: Verdana, Ariel, DejaVuSans, sans-serif;
+font-family: DejaVuSans, sans-serif;
 background-color: #f2ca77;
 padding: 5px;
 }

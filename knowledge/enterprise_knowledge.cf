@@ -26,7 +26,7 @@ topics:
 
  machine_resources::
 
-   "hosts" comment => "A general term for computers that run applications of any kind",
+   "hosts" comment => "A general term for computers that run applications or virtual guests",
        association => a("form the bulk of","machine resources","are composed from"); 
 
 
@@ -306,7 +306,7 @@ occurrences:
 
  classes_report::
 
-   "Shows classes defined on the current host. This provides something like CMDB information but at level that can say something about the dynamics of the system. Probabilities that classes have been defined are based on actual observation."
+   "Shows classes defined on the current host. This provides discovered information and dynamic properties of the system. Probabilities that classes have been defined are based on actual observation."
 
             represents => { "description" },
             representation => "literal";
