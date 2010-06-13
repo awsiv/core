@@ -303,7 +303,7 @@ topics:
    "soft classes";
    "persistent classes";
    
-   "monitoring" comment => "Ability to monitor the current state of your datacenter. Cfengine can sample and trace behaviour. Unlike many other monitoring solutions, Cfengine scales easily to thousands of machines. Cfengine monitors your datacenter intelligently, using historic data to decide whether a behaviour should call for action or not.",
+   "monitoring" comment => "Ability to monitor the current state of your datacenter. Cfengine can sample and trace behaviour, monitoring your datacenter intelligently, using historic data to decide whether a behaviour should call for action or not.",
 
      association => a("detects","environment","is detected by");
 
