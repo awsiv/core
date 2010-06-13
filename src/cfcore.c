@@ -19,6 +19,8 @@ void Nova_SpecialQuote(char *name,char *type)
 
 { char filename[CF_BUFSIZE],rootpath[CF_BUFSIZE];
   FILE *fin,*fout = stdout;
+  struct Item *ip,*file = NULL;
+  int have_title = false;
 
 snprintf(filename,CF_BUFSIZE-1,"/var/cfengine/document_root.dat");
 
@@ -52,11 +54,28 @@ else
          continue;
          }
 
+      if (strstr(line,"<h1>"))
+         {
+         have_title = true;
+         }
+      
       snprintf(buffer,CF_BUFSIZE-1,line,WEBDRIVER);
-      fprintf(fout,"%s",buffer);
+      AppendItem(&file,buffer,NULL);
       }
    
    fclose(fin);
+
+   if (!have_title)
+      {
+      CfHtmlTitle(fout,name);
+      }
+
+   for (ip = file; ip != NULL; ip=ip->next)
+      {      
+      fprintf(fout,"%s",ip->name);
+      }
+   
+   DeleteItemList(file);
    }
 }
 
