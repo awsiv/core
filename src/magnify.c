@@ -328,8 +328,6 @@ if ((fp = fopen(fname,"w")) == 0)
    return;   
    }
 
-NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
-
 fprintf(fp,"<h3>Zoom: %s Last four hours</h3>\n",name);
 
 Nova_GraphMagLegend(fp);
@@ -354,8 +352,6 @@ fprintf(fp,"<tr><td>Average variability </td><td>+/- %lf</td><td>%s</td></tr>\n"
 fprintf(fp,"</table>\n");
 
 fprintf(fp,"</div></div>\n");
-
-NovaHtmlFooter(fp,FOOTER);
 fclose(fp);
 }
 

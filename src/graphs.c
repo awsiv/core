@@ -578,7 +578,7 @@ if ((fout = fopen(filename, "w")) == NULL)
    return list;
    }
 
-NovaHtmlHeader(fout,"20 Weakest Host Symptoms",STYLESHEET,WEBDRIVER,BANNER);
+CfHtmlTitle(fout,"20 Weakest Host Symptoms");
 
 if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
    {   
@@ -678,8 +678,6 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
    }
 
 fprintf(fout,"</table></div>\n");
-NovaHtmlFooter(fout,FOOTER);
-
 fclose(fout);
 
 /* All hosts page */
@@ -694,7 +692,7 @@ if ((fall = fopen(filename, "w")) == NULL)
 
 // Split here?
 
-NovaHtmlHeader(fall,"Status all managed hosts",STYLESHEET,WEBDRIVER,BANNER);
+CfHtmlTitle(fall,"Status all managed hosts");
 
 ccount[0] = 0;
 ccount[1] = 0;
@@ -778,7 +776,6 @@ for (state = 0; state < 3; state++)
    }
 
 fprintf(fall,"</table></div>\n");
-NovaHtmlFooter(fall,FOOTER);
 fclose(fall);
 return list;
 }

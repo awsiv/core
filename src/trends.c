@@ -364,8 +364,6 @@ if ((fp = fopen(fname,"w")) == 0)
    return;   
    }
 
-NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
-
 fprintf(fp,"<h3>Lifecycle history: %s (beta)</h3>\n",name);
 
 Nova_GraphLegend(fp);
@@ -393,8 +391,6 @@ fprintf(fp,"<tr><td>Average variability </td><td>+/- %lf</td><td>%s</td></tr>\n"
 fprintf(fp,"</table>\n");
 
 fprintf(fp,"</div></div>\n");
-
-NovaHtmlFooter(fp,FOOTER);
 fclose(fp);
 }
 

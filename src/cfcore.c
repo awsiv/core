@@ -71,9 +71,7 @@ if ((fout = fopen("mainpage.html","w")) == NULL)
    return;
    }
 
-NovaHtmlHeader(fout,host,STYLESHEET,WEBDRIVER,BANNER);
 Nova_ShowAllGraphs(fout,host,eliminate);
-NovaHtmlFooter(fout,FOOTER);
 
 fclose(fout);
 }
@@ -125,10 +123,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       return;
       }
 
-   NovaHtmlHeader(fout,host,STYLESHEET,WEBDRIVER,BANNER);
    Nova_ShowGraph(fout,host,i,s2.st_mtime,(enum observables)i);
-   NovaHtmlFooter(fout,FOOTER);
-
    fclose(fout);
    }
 }

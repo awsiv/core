@@ -250,7 +250,6 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Policy compliance summary on %s",VFQNAME);
-   NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
@@ -348,7 +347,6 @@ if (html && !embed)
    {
    fprintf(fout,"</table>");
    fprintf(fout,"</div>");
-   NovaHtmlFooter(fout,foot);
    }
 
 if (XML)
@@ -448,7 +446,6 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Promise compliance history on %s",VFQNAME);
-   NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
@@ -584,7 +581,6 @@ if (html && !embed)
       }
    
    fprintf(fout,"</table></div>");
-   NovaHtmlFooter(fout,foot);
    DeleteItemList(htmlreport);
    }
 
@@ -650,7 +646,6 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Known setuid programs on %s",VFQNAME);
-   NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
@@ -699,7 +694,6 @@ for (ip = file; ip != NULL; ip = ip->next)
 if (html && !embed)
    {
    fprintf(fout,"</table></div>\n");
-   NovaHtmlFooter(fout,foot);
    }
 
 if (XML)
@@ -767,7 +761,6 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"File change events recorded on %s",VFQNAME);
-   NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
@@ -824,7 +817,6 @@ for (ip = file; ip != NULL; ip = ip->next)
 if (html && !embed)
    {
    fprintf(fout,"</table></div>");
-   NovaHtmlFooter(fout,foot);
    }
 
 if (XML)
@@ -1006,7 +998,6 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"File difference events recorded on %s",VFQNAME);
-   NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
@@ -1028,7 +1019,6 @@ for (i = 0,ip = file; ip != NULL; ip = ip->next)
 if (html && !embed)
    {
    fprintf(fout,"</table></div>");
-   NovaHtmlFooter(fout,foot);
    }
 
 if (XML)
@@ -1095,7 +1085,6 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Promises repaired on %s",VFQNAME);
-   NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
@@ -1165,7 +1154,6 @@ for (ip = file; ip != NULL; ip = ip->next)
 if (html && !embed)
    {
    fprintf(fout,"</table></div>");
-   NovaHtmlFooter(fout,foot);
    }
 
 if (XML)
@@ -1233,7 +1221,6 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 if (html && !embed)
    {
    snprintf(name,CF_BUFSIZE,"Promises not kept on %s",VFQNAME);
-   NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
@@ -1304,7 +1291,6 @@ for (ip = file; ip != NULL; ip = ip->next)
 if (html && !embed)
    {
    fprintf(fout,"</table></div>");
-   NovaHtmlFooter(fout,foot);
    }
 
 if (XML)
@@ -1450,7 +1436,6 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 if (html && !embed)
    {
    snprintf(name,sizeof(name),"Software versions installed %s",VFQNAME);
-   NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
@@ -1511,7 +1496,6 @@ for (ip = file; ip != NULL; ip = ip->next)
 if (html && !embed)
    {
    fprintf(fout,"</table></div>\n");
-   NovaHtmlFooter(fout,foot);
    }
 
 if (XML)
@@ -1581,7 +1565,6 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 if (html && !embed)
    {
    snprintf(name,sizeof(name),"Software updates available and outstanding for %s",VFQNAME);
-   NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
@@ -1644,7 +1627,6 @@ for (ip = file; ip != NULL; ip = ip->next)
 if (html && !embed)
    {
    fprintf(fout,"</table></div>\n");
-   NovaHtmlFooter(fout,foot);
    }
 
 if (XML)
@@ -1705,7 +1687,6 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 if (html && !embed)
    {
    snprintf(name,sizeof(name),"Software patches installed on %s",VFQNAME);
-   NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
@@ -1766,7 +1747,6 @@ for (ip = file; ip != NULL; ip = ip->next)
 if (html && !embed)
    {
    fprintf(fout,"</table></div>\n");
-   NovaHtmlFooter(fout,foot);
    }
 
 if (XML)
@@ -1858,7 +1838,6 @@ if ((fout = cf_fopen(name,"w")) == NULL)
 if (html && !embed)
    {
    snprintf(name,sizeof(name),"Main variables instantiated on %s",VFQNAME);
-   NovaHtmlHeader(fout,name,stylesheet,web,head);
    fprintf(fout,"<div id=\"reporttext\">\n");
    }
 
@@ -1874,7 +1853,6 @@ cf_fclose(fin);
 if (html && !embed)
    {
    fprintf(fout,"</div>\n");
-   NovaHtmlFooter(fout,foot);
    }
 
 cf_fclose(fout);
@@ -2000,7 +1978,6 @@ if ((fout = fopen("value_report.html","w")) == NULL)
    }
 
 snprintf(name,sizeof(name),"Value return from Cfengine on %s",VFQNAME);
-NovaHtmlHeader(fout,name,stylesheet,web,head);
 fprintf(fout,"<div id=\"reporttext\">");
 fprintf(fout,"<p>Last measured on %s",ctime(&now));
 fprintf(fout,"<table class=\"border\">\n");
@@ -2013,10 +1990,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    }
 
 fprintf(fout,"</table></div>\n");
-NovaHtmlFooter(fout,foot);
-
 fclose(fout);
-
     
 DeleteItemList(data);
 }
@@ -2105,7 +2079,6 @@ if ((fout = fopen("license_report.html","w")) == NULL)
 
 now = time(NULL);
 snprintf(name,sizeof(name),"Mean observable license usage");
-NovaHtmlHeader(fout,name,stylesheet,webdriver,header);
 fprintf(fout,"<div id=\"reporttext\">");
 fprintf(fout,"<p>Last measured on %s based on %d samples",ctime(&now),i);
 fprintf(fout,"<table class=\"border\">\n");
@@ -2128,7 +2101,5 @@ else
    }
 
 fprintf(fout,"</table></div>\n");
-NovaHtmlFooter(fout,footer);
-
 fclose(fout);
 }

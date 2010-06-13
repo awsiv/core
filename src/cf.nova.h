@@ -323,8 +323,6 @@ struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *name,enum observ
 
 /* html.c */
 
-void NovaHtmlHeader(FILE *fp,char *title,char *css,char *webdriver,char *header);
-void NovaHtmlFooter(FILE *fp,char *footer);
 
 /* knowledge.c */
 

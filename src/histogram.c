@@ -261,7 +261,6 @@ if ((fp = fopen(fname,"w")) == 0)
    return NULL;   
    }
 
-NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
 fprintf(fp,"<h3>Spectral analysis of %s</h3>",name);
 
 fprintf(fp,"<div id=\"legend\">\n");
@@ -348,8 +347,6 @@ fprintf(fp,"<p>Spectrum seems to be %d-modal (within the margins of uncertainty)
 
 
 fprintf(fp,"</div></div>\n");
-
-NovaHtmlFooter(fp,FOOTER);
 fclose(fp);
 return maxima;
 }

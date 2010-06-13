@@ -472,7 +472,6 @@ if ((fp = fopen(fname,"w")) == 0)
    return;   
    }
 
-NovaHtmlHeader(fp,host,STYLESHEET,WEBDRIVER,BANNER);
 fprintf(fp,"<h3>Weekly trends on %s</h3>\n",name);
 
 Nova_GraphLegend(fp);
@@ -510,10 +509,7 @@ x = 100*(double)cfv->under_dev2/(double)CF_TIMESERIESDATA;
 fprintf(fp,"<tr><td>Percentage 2 deviations under average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
 
 fprintf(fp,"</table>\n");
-
 fprintf(fp,"</div></div>\n");
-
-NovaHtmlFooter(fp,FOOTER);
 fclose(fp); 
 }
 
