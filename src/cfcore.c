@@ -47,6 +47,11 @@ else
       line[0] = '\0';
       fgets(line,CF_BUFSIZE,fin);
 
+      if (IsHtmlHeader(line))
+         {
+         continue;
+         }
+
       snprintf(buffer,CF_BUFSIZE-1,line,WEBDRIVER);
       fprintf(fout,"%s",buffer);
       }

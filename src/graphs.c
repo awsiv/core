@@ -344,6 +344,7 @@ YELLOW   = gdImageColorAllocate(cfv->im, 200, 255, 0);
 LIGHTRED = gdImageColorAllocate(cfv->im, 255, 150, 150);
 RED      = gdImageColorAllocate(cfv->im, 200, 0, 0);
 ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
+SKY      = gdImageColorAllocate(cfv->im, 255,255,255);
 }
 
 /*****************************************************************************/
@@ -739,7 +740,7 @@ for (state = 0; state < 3; state++)
 
    if (state == 0 && ccount[0] == 0)
       {
-      fprintf(fall,"<span id=\"signalred\"><a href=\"%s\">(none)</a></span> ",URLControl("%s","reports/host_portal.html"));
+      fprintf(fall,"<span id=\"signalred\"><a href=\"%s\">(none)</a></span> \n",URLControl("%s","reports/host_portal.html"));
       ccount[0]++;
       continue;
       }
@@ -747,7 +748,7 @@ for (state = 0; state < 3; state++)
    if (state == 1 && ccount[1] == 0)
       {
       ccount[1]++;
-      fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s\">(none)</a></span> ",URLControl("%s","reports/host_portal.html"));
+      fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s\">(none)</a></span> \n",URLControl("%s","reports/host_portal.html"));
       continue;
       }
 
@@ -760,13 +761,13 @@ for (state = 0; state < 3; state++)
          switch (state)
             {
             case 0:
-                fprintf(fall,"<span id=\"signalred\"><a href=\"%s\">%s</a></span> ",URLControl("%s",url1),ip->name);
+                fprintf(fall,"<span id=\"signalred\"><a href=\"%s\">%s</a></span> \n",URLControl("%s",url1),ip->name);
                 break;
             case 1:
-                fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s\">%s</a></span> ",URLControl("%s",url1),ip->name);
+                fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s\">%s</a></span> \n",URLControl("%s",url1),ip->name);
                 break;
             case 2:
-                fprintf(fall,"<span id=\"signalgreen\"><a href=\"%s\">%s</a></span> ",URLControl("%s",url1),ip->name);
+                fprintf(fall,"<span id=\"signalgreen\"><a href=\"%s\">%s</a></span> \n",URLControl("%s",url1),ip->name);
                 break;
             }
          }
