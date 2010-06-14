@@ -141,7 +141,7 @@ switch (Str2Hypervisors(a.env.type))
 
 CfOut(cf_verbose,""," -> Selecting environment type \"%s\" -> \"%s\"",a.env.type,hyper_uri);
 
-if (strcmp(a.env.host,VFQNAME) != 0 && strcmp(a.env.host,VUQNAME) != 0)
+if (!IsDefinedClass(a.env.host))
    {
    switch (a.env.state)
       {

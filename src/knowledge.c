@@ -272,7 +272,7 @@ if (pp->ref)
    }
 else
    {
-   fprintf(fp,"   comment => \"(Uncommented promise of type <i>%s</i> made by: %.25s..)\";\n",pp->agentsubtype,NovaEscape(pp->promiser));
+   fprintf(fp,"   comment => \"(Uncommented <i>%s</i> promise by: %.25s..)\";\n",pp->agentsubtype,NovaEscape(pp->promiser));
    }
 
 fprintf(fp,"\"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",promise_id,NOVA_ACTIVATED,pp->classes,NOVA_ACTIVATES);

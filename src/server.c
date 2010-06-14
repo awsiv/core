@@ -554,7 +554,7 @@ void Nova_PurgeKeyRing()
   time_t now = time(NULL);
   static time_t then;
   
-if (now < then + 3600 && then > 0)
+if (now < then + 3600 && then > 0 && then <= now + 3600)
    {
    // Rate limiter
    return;
