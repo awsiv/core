@@ -230,7 +230,7 @@ occurrences:
             represents => { "network host status", "/reports/host_portal.html" },
             representation => "image";
 
-   "/allhosts.png"
+   "/managed_hosts.png"
 
             represents => { "see all managed hosts", "/reports/allhosts.html" },
             representation => "image";
