@@ -571,6 +571,7 @@ struct Item *Nova_CreateHostPortal(struct Item *list)
   time_t now = time(NULL);
   char *retval,rettype;
   int state,count = 0, licenses = 1,ccount[3];
+  int format_width = 8;
   
 snprintf(filename,CF_BUFSIZE,"host_portal.html");
 
@@ -597,18 +598,28 @@ for (ip = list; ip != NULL; ip=ip->next)
 
    if (cfstat(filename,&sb) != -1)
       {
+      ip->time = sb.st_mtime;
+      
       if (now > sb.st_mtime + 3600 || ip->counter > CF_RED_THRESHOLD)
          {
          ip->counter = CF_RED_THRESHOLD + 1;
+         ip->classes = strdup("No update in past hour");
          }
       else if (now > sb.st_mtime + 1800 || ip->counter > CF_AMBER_THRESHOLD)
          {
          ip->counter = CF_AMBER_THRESHOLD + 1;
+         ip->classes = strdup("No update for 30 mins");
+         }
+      else
+         {
+         ip->classes = strdup("ok");
          }
       }
    else
       {
+      ip->time = 0; 
       ip->counter = CF_RED_THRESHOLD + 1;
+      ip->classes = strdup("No data found");
       }
    }
 
@@ -631,7 +642,7 @@ else
       }
    }
 
-fprintf(fout,"<div id=\"directory\"><table>\n");
+fprintf(fout,"\n<div id=\"directory\">\n<table>\n");
 
 for (count = 0,ip = list; ip != NULL; ip=ip->next)
    {
@@ -666,12 +677,12 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
    snprintf(url2,CF_MAXVARSIZE-1,"reports/%s/promise_output_common.html",ip->name);
    snprintf(url3,CF_MAXVARSIZE-1,"reports/%s/classes.html",ip->name);
    
-   fprintf(fout,"<tr><td>%s<br><center><div id=\"signal%s\">\n"
-           "<table><tr><td width=\"80\">&nbsp;</div></center></td></tr></table></td>\n"
-           "<td width=\"200\"><center>Last updated at<br>%s</center></td>\n",
-           ip->name,
+   fprintf(fout,"<tr><td><img src=\"%s.png\"><div id=\"signal%s\"><p>%s<p>%s</div></td><td><center><p>Last updated at<p>%s</center></td>\n",
            col,
-           cf_ctime(&(sb.st_mtime)));
+           col,
+           ip->name,
+           ip->classes,
+           cf_ctime(&(ip->time)));
            
    fprintf(fout,"<td><a href=\"%s\"><img src=\"reports/%s/meters.png\"></a></td>\n",URLControl("%s",url1),ip->name);
    fprintf(fout,"<td><span id=\"rbuttons\"><a href=\"%s\">Promises</a>\n",URLControl("%s",url2));
@@ -732,15 +743,17 @@ for (ip = list; ip != NULL; ip=ip->next)
 
 fprintf(fall,"<div id=\"allhosts\">\n<table>\n");
 
-fprintf(fall,"<tr><td>Currently aware of %d licensed hosts</td></tr>\n",count);
+fprintf(fall,"<tr><td colspan=\"6\">Currently aware of %d licensed hosts</td></tr>\n",count);
+
+count = 0;
 
 for (state = 0; state < 3; state++)
    {
-   fprintf(fall,"<tr><td>\n");
+   fprintf(fall,"<tr>\n");
 
    if (state == 0 && ccount[0] == 0)
       {
-      fprintf(fall,"<span id=\"signalred\"><a href=\"%s\">(none)</a></span> \n",URLControl("%s","reports/host_portal.html"));
+      fprintf(fall,"<td><span id=\"signalred\"><a href=\"%s\">(none)</a></span></td> \n",URLControl("%s","reports/host_portal.html"));
       ccount[0]++;
       continue;
       }
@@ -748,7 +761,7 @@ for (state = 0; state < 3; state++)
    if (state == 1 && ccount[1] == 0)
       {
       ccount[1]++;
-      fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s\">(none)</a></span> \n",URLControl("%s","reports/host_portal.html"));
+      fprintf(fall,"<td colspan=\"6\"><span id=\"signalyellow\"><a href=\"%s\">(none)</a></span></td> \n",URLControl("%s","reports/host_portal.html"));
       continue;
       }
 
@@ -761,19 +774,27 @@ for (state = 0; state < 3; state++)
          switch (state)
             {
             case 0:
-                fprintf(fall,"<span id=\"signalred\"><a href=\"%s\">%s</a></span> \n",URLControl("%s",url1),ip->name);
+                fprintf(fall,"<td><span id=\"signalred\"><img src=\"red.png\"></span> <p>%s</p> <a href=\"%s\">Check</a></td> \n",ip->name,URLControl("%s",url1));
+                count++;
                 break;
             case 1:
-                fprintf(fall,"<span id=\"signalyellow\"><a href=\"%s\">%s</a></span> \n",URLControl("%s",url1),ip->name);
+                fprintf(fall,"<td><span id=\"signalyellow\"><img src=\"yellow.png\"></span> <p>%s</p> <a href=\"%s\">Check</a></td> \n",ip->name,URLControl("%s",url1));
+                count++;
                 break;
             case 2:
-                fprintf(fall,"<span id=\"signalgreen\"><a href=\"%s\">%s</a></span> \n",URLControl("%s",url1),ip->name);
+                fprintf(fall,"<td><span id=\"smallgreen\"><img src=\"green.png\"></span> <p>%s</p> <a href=\"%s\">Check</a></td> \n",ip->name,URLControl("%s",url1));
+                count++;
                 break;
             }
+
+         if (count == 6)
+            {
+            fprintf(fall,"</tr><tr>\n");
+            }         
          }
       }
    
-   fprintf(fall,"</td></tr>\n");
+   fprintf(fall,"</tr>\n");
    }
 
 fprintf(fall,"</table></div>\n");

@@ -256,9 +256,9 @@ if (html && !embed)
    fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Start check",NRH[cfx_date][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_end][cfb],"End check",NRH[cfx_end][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_version][cfb],"Policy version",NRH[cfx_version][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_kept][cfb],"% scheduled promises kept",NRH[cfx_kept][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_repaired][cfb],"% scheduled promises repaired",NRH[cfx_repaired][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_notrepaired][cfb],"% scheduled promises ignored",NRH[cfx_notrepaired][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_kept][cfb],"%% scheduled promises kept",NRH[cfx_kept][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_repaired][cfb],"%% scheduled promises repaired",NRH[cfx_repaired][cfe]);
+   fprintf(fout,"%s %s %s",NRH[cfx_notrepaired][cfb],"%% scheduled promises ignored",NRH[cfx_notrepaired][cfe]);
    fprintf(fout,"%s",NRH[cfx_entry][cfe]);
    }
 else if (XML)

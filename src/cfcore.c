@@ -166,7 +166,7 @@ void Nova_ShowAllGraphs(FILE *fp,char *host,struct Item *eliminate)
   char datestr[CF_MAXVARSIZE];
   char name[CF_BUFSIZE],description[CF_BUFSIZE];
   
-fprintf(fp,"<table border=1>");
+fprintf(fp,"<table>");
  
 for (i = 0; i < CF_OBSERVABLES; i++)
     {
@@ -307,10 +307,10 @@ fprintf(fout,"<h2>Last 4 hours</h2>\n");
 fprintf(fout,"<h4>Latest info observed %s</h4>\n",datestr);
 
 fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\" width=\"590\"></a></p>\n",img,img);
-fprintf(fout,"<p><table border=1>\n");
+fprintf(fout,"<p><table>\n");
 
 
-fprintf(fout,"<p><table border=1>\n");
+fprintf(fout,"<p><table>\n");
 
 fprintf(fout,"<tr><th bgcolor=#eeeeee>Time</th>\n<th bgcolor=#eeeeee>q</th>\n<th bgcolor=#eeeeee>E(q)</th>\n<th bgcolor=#eeeeee>delta q</tdh></tr>\n");
    
@@ -338,7 +338,7 @@ snprintf(name2,CF_BUFSIZE-1,"%s.q",name);
 snprintf(img,CF_BUFSIZE-1,"reports/%s/%s_weekly.png",host,name);
 
 fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\" width=\"590\"></a></p>\n",img,img);
-fprintf(fout,"<p><table border=1>\n");
+fprintf(fout,"<p><table>\n");
 
 fprintf(fout,"<tr><th bgcolor=#eeeeee>Time</th>\n<th bgcolor=#eeeeee>q</th>\n<th bgcolor=#eeeeee>E(q)</th>\n<th bgcolor=#eeeeee>delta q</tdh></tr>\n");
    
