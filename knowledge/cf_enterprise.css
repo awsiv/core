@@ -43,6 +43,11 @@ background-color: #efe ;
 padding: 10px;
 }
 
+table
+{  
+border: none;
+}
+
 h1
 { 
 font-family: DejaVuSans,Vera;
@@ -92,13 +97,6 @@ color: #a00;
 a:hover{text-decoration: underline;}
 
 #url a:hover{text-decoration: underline;}
-
-#ip
-{ 
-font-family: DejaVuSans,Vera;
-font-size: 80%;
-color: #efeacc;
-}
 
 blockquote
 { background: #FFFFFF;
@@ -390,6 +388,13 @@ color: #f5dd70;
 
 
 
+#primary table
+{
+background-color: white;
+width: 100%;
+}
+
+
 #primary ul
 {
 padding: 15px;
@@ -403,43 +408,19 @@ border: none;
 {
 font-size: 12px;
 padding: 10px;
-font-weight: bold;
-color: #efeacc;
-background-color: #9d9777;
-}
-
-#primary td:hover
-{ 
-font-weight: bold;
-background-color: #4b4b42;
+background-color: #f0f0eb;
+color: #4c4c43;
+border: solid 1px;
+border-color: #cecec7;
 }
 
 #primary th
 {
 padding: 10px;
-font-weight: bold;
-color: #efeacc;
-background-color: #9d9777;
-}
-
-#primary th a
-{
-color: #fff;
-font-size: 100%;
-padding: 10px;
-font-weight: bold;
-}
-
-
-#primary th:hover
-{ 
-font-weight: bold;
-background-color: #4b4b42;
-}
-
-#primary table
-{
-width: 100%;
+background-color: #f0f0eb;
+color: #4c4c43;
+border: solid 1px;
+border-color: #cecec7;
 }
 
 #explain table
@@ -458,10 +439,6 @@ font-size: 8px;
 font-weight: normal;
 }
 
-#directory td
-{
-background-color: #9d9777;
-}
 
 /*#rbuttons a
 {  
@@ -489,19 +466,43 @@ margin-bottom: 2px;
       background-color: #eee;
     }
 
+#signalred table
+{  
+background-color: #d02d48;
+padding: 0px;
+border: 0px;
+}
+
 #signalred td
 {  
-background-color: red;
+color: #4c4c43;
+background-color: #d02d48;
+border: none;
+}
+
+#signalyellow table
+{  
+background-color:  #f2ee86;
+padding: 0px;
+border: 0px;
 }
 
 #signalyellow td
 {  
-background-color: yellow;
+color: #4c4c43;
+background-color: #f2ee86;
+}
+
+#signalgreen table
+{  
+color: #4c4c43;
+background-color: #73b167;
 }
 
 #signalgreen td
 {  
-background-color: green;
+color: #4c4c43;
+background-color: #73b167;
 }
 
 #allhosts td
@@ -528,17 +529,6 @@ line-height: 110%;
 color: green;
 padding: 10px;
 line-height: 110%;
-}
-
-
-table.border
-{ 
-width: 100%;
-background-color: white;
-color: #555;
-border-color: #4e8b8c;
-border-style: solid;
-border-width: 1px;
 }
 
 
