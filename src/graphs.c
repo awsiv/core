@@ -596,7 +596,7 @@ for (ip = list; ip != NULL; ip=ip->next)
    
    if (!Nova_CountHostIssues(ip))
       {
-      continue;
+      //continue;
       }
 
    snprintf(filename,CF_BUFSIZE-1,"%s/fluctuations.nov",ip->name);
@@ -623,7 +623,7 @@ for (ip = list; ip != NULL; ip=ip->next)
          ip->counter = CF_AMBER_THRESHOLD + 1;
          ip->classes = strdup("Problem for 30 mins");
          }
-      else if (ip->counter > 0)
+      else
          {
          ip->classes = strdup("ok");
          }
@@ -632,7 +632,7 @@ for (ip = list; ip != NULL; ip=ip->next)
       {
       ip->time = 0; 
       ip->counter = CF_RED_THRESHOLD + 1;
-      ip->classes = strdup("No data found");
+      ip->classes = strdup("No data found!");
       }
    }
 
@@ -678,10 +678,6 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
       {
       strcpy(col,"green");
       }
-   else
-      {
-      continue;
-      }
 
    snprintf(filename,CF_BUFSIZE-1,"%s/fluctuations.nov",ip->name);
 
@@ -694,7 +690,7 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
    snprintf(url2,CF_MAXVARSIZE-1,"reports/%s/promise_output_common.html",ip->name);
    snprintf(url3,CF_MAXVARSIZE-1,"reports/%s/classes.html",ip->name);
    
-   fprintf(fout,"<tr><td><img src=\"%s.png\"><br><div id=\"signal%s\"><p>%s<p>%s</div></td><td><center><p>Last updated at<p>%s</center></td>\n",
+   fprintf(fout,"<tr><td><img src=\"%s.png\"></td><td><div id=\"signal%s\"><center><p>%s<p>%s</center></div></td><td><center><p>Last updated at<p>%s</center></td>\n",
            col,
            col,
            ip->name,
@@ -747,10 +743,6 @@ for (ip = list; ip != NULL; ip=ip->next)
          {
          ip->counter = 2;
          ccount[2]++;
-         }
-      else
-         {
-         continue;
          }
       }
    else
