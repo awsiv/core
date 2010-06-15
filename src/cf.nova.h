@@ -310,7 +310,7 @@ void Nova_GetLevels(int *kept,int *repaired,char *hostname,char **names);
 void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list);
 void Nova_GraphLegend(FILE *fp);
 void Nova_GraphMagLegend(FILE *fp);
-void Nova_CountHostIssues(struct Item *list);
+int Nova_CountHostIssues(struct Item *list);
 void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour);
 
 /* histogram.c */
@@ -527,6 +527,17 @@ int NovaCheckSQLDataType(char *type,char *ref_type,struct Promise *pp);
 int Nova_TableExists(CfdbConn *cfdb,char *name);
 struct Rlist *Nova_GetSQLTables(CfdbConn *cfdb);
 void Nova_ListTables(int type,char *query);
+
+/* syntax.c */
+
+void Nova_SyntaxTree2JavaScript(void);
+void Nova_ShowBundleTypes(void);
+void Nova_ShowControlBodies(void);
+void Nova_ShowPromiseTypesFor(char *s);
+void Nova_ShowBodyParts(struct BodySyntax *bs);
+void Nova_ShowRange(char *s,enum cfdatatype type);
+void Nova_ShowBuiltinFunctions(void);
+void Nova_Indent(int i);
 
 /* timeseries.c */
 

@@ -407,7 +407,7 @@ border: none;
 #primary td
 {
 font-size: 12px;
-padding: 10px;
+padding: 5px;
 background-color: #f0f0eb;
 color: #4c4c43;
 border: solid 1px;
@@ -440,12 +440,10 @@ font-weight: normal;
 }
 
 
-/*#rbuttons a
+#rbuttons a
 {  
-background-color: black;
-padding: 2px;
-margin-bottom: 2px;
-}*/
+padding: 10px;
+}
 
 #showvars TH { background: #aabbFF;
      font-family: DejaVuSans,Vera;
@@ -473,11 +471,29 @@ padding: 0px;
 border: 0px;
 }
 
+
 #signalred td
 {  
 color: #4c4c43;
 background-color: #d02d48;
 border: none;
+}
+
+#allhosts p
+{  
+font-size: 50%;
+}
+
+#allhosts img
+{  
+float: left;
+padding: 10px;
+}
+
+#allhosts table
+{  
+table-layout: fixed;
+width: 100%;
 }
 
 #signalyellow table
@@ -543,7 +559,17 @@ padding: 10px;
 margin-bottom: 20px;
 }
 
+#directory img
+{  
+float: left;
+margin-left: 20px;
+}
 
+#directory td
+{  
+font-size: 60%;
+padding: 0px;
+}
 
 #ok
 {

@@ -34,6 +34,7 @@ libcfnova_la_SOURCES =						\
 	reporting.c						\
 	html.c							\
 	knowledge.c						\
+	syntax.c						\
 	graphs.c						\
 	copernicus.c						\
 	histogram.c						\
@@ -55,7 +56,6 @@ libcfnova_la_SOURCES =						\
 	win_sysinfo.c                                           \
 	win_user.c                                              \
         win_wmi.c
-
 
 #
 # Pickup header files here so Automake knows about them

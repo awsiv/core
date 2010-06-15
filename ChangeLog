@@ -6,6 +6,9 @@
 	
 	Built with Cfengine Community Edition X.Y.Z.  --FIXME
 
+	Take out network communications from total state calculation,
+	as it gets counted twice.
+	
 1.1.2 
 	Encryption problems fixed in Community Edition.
 

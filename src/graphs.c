@@ -227,7 +227,8 @@ GREEN    = gdImageColorAllocate(cfv->im, 115, 177, 103);
 
 ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
 LIGHTGREY= gdImageColorAllocate(cfv->im, 75, 75, 66);
-BACKGR= gdImageColorAllocate(cfv->im,239, 234, 204); // Background
+//BACKGR   = gdImageColorAllocate(cfv->im,239, 234, 204); // Background
+BACKGR   = gdImageColorAllocate(cfv->im,255, 255, 255); // Background
 }
 
 /*****************************************************************************/
@@ -591,8 +592,12 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&ret
 for (ip = list; ip != NULL; ip=ip->next)
    {
    count++;
-   ip->counter = 0;
-   Nova_CountHostIssues(ip);
+   ip->counter = -1;
+   
+   if (!Nova_CountHostIssues(ip))
+      {
+      continue;
+      }
 
    snprintf(filename,CF_BUFSIZE-1,"%s/fluctuations.nov",ip->name);
 
@@ -603,14 +608,22 @@ for (ip = list; ip != NULL; ip=ip->next)
       if (now > sb.st_mtime + 3600 || ip->counter > CF_RED_THRESHOLD)
          {
          ip->counter = CF_RED_THRESHOLD + 1;
-         ip->classes = strdup("No update in past hour");
+
+         if (ip->counter > CF_RED_THRESHOLD)
+            {
+            ip->classes = strdup("Compliance issues");
+            }
+         else
+            {
+            ip->classes = strdup("Problems for past hour");
+            }
          }
       else if (now > sb.st_mtime + 1800 || ip->counter > CF_AMBER_THRESHOLD)
          {
          ip->counter = CF_AMBER_THRESHOLD + 1;
-         ip->classes = strdup("No update for 30 mins");
+         ip->classes = strdup("Problem for 30 mins");
          }
-      else
+      else if (ip->counter > 0)
          {
          ip->classes = strdup("ok");
          }
@@ -661,9 +674,13 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
       ip->counter = CF_AMBER_THRESHOLD + 1;
       strcpy(col,"yellow");
       }
-   else
+   else if (ip->counter > 0)
       {
       strcpy(col,"green");
+      }
+   else
+      {
+      continue;
       }
 
    snprintf(filename,CF_BUFSIZE-1,"%s/fluctuations.nov",ip->name);
@@ -677,7 +694,7 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
    snprintf(url2,CF_MAXVARSIZE-1,"reports/%s/promise_output_common.html",ip->name);
    snprintf(url3,CF_MAXVARSIZE-1,"reports/%s/classes.html",ip->name);
    
-   fprintf(fout,"<tr><td><img src=\"%s.png\"><div id=\"signal%s\"><p>%s<p>%s</div></td><td><center><p>Last updated at<p>%s</center></td>\n",
+   fprintf(fout,"<tr><td><img src=\"%s.png\"><br><div id=\"signal%s\"><p>%s<p>%s</div></td><td><center><p>Last updated at<p>%s</center></td>\n",
            col,
            col,
            ip->name,
@@ -685,8 +702,8 @@ for (count = 0,ip = list; ip != NULL; ip=ip->next)
            cf_ctime(&(ip->time)));
            
    fprintf(fout,"<td><a href=\"%s\"><img src=\"reports/%s/meters.png\"></a></td>\n",URLControl("%s",url1),ip->name);
-   fprintf(fout,"<td><span id=\"rbuttons\"><a href=\"%s\">Promises</a>\n",URLControl("%s",url2));
-   fprintf(fout,"<br><a href=\"%s\">Classes</a></span></td></tr>\n",URLControl("%s",url3));
+   fprintf(fout,"<td><p><span id=\"rbuttons\"><a href=\"%s\">Promises</a>\n",URLControl("%s",url2));
+   fprintf(fout,"<p><a href=\"%s\">Classes</a></span></td></tr>\n",URLControl("%s",url3));
    }
 
 fprintf(fout,"</table></div>\n");
@@ -720,23 +737,25 @@ for (ip = list; ip != NULL; ip=ip->next)
          {
          ip->counter = 0;
          ccount[0]++;
-         strcpy(col,"red");
          }
       else if (now > sb.st_mtime + 1800 || ip->counter > CF_AMBER_THRESHOLD)
          {
          ip->counter = 1;
          ccount[1]++;
-         strcpy(col,"yellow");
          }
-      else
+      else if (ip->counter > 0)
          {
          ip->counter = 2;
          ccount[2]++;
-         strcpy(col,"green");
+         }
+      else
+         {
+         continue;
          }
       }
    else
       {
+      strcpy(col,"red");
       ip->counter = 0;
       }
    }
@@ -981,8 +1000,8 @@ void Nova_GetLevels(int *kept,int *repaired,char *hostname,char **names)
 
 for (i = 0; i < 8; i++)
    {
-   aa[i] = 0;
-   bb[i] = 0;
+   aa[i] = 0.0;
+   bb[i] = 0.0;
    }
 
 if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
@@ -1005,8 +1024,8 @@ if ((fin = fopen(buf,"r")) == NULL)
 
 while(!feof(fin))
    {
-   a = 0;
-   b = 0;
+   a = 0.0;
+   b = 0.0;
    buf[0] = '\0';
    fgets(buf,CF_BUFSIZE-1,fin);
    
@@ -1052,26 +1071,32 @@ for (i = 0; i < 8; i++)
 /* Level                                                                     */
 /*****************************************************************************/
 
-void Nova_CountHostIssues(struct Item *item)
+int Nova_CountHostIssues(struct Item *item)
 
 { int i,kept[8],repaired[8], issues = 0;
   static char *names[8] = { "zzz", "Week", "Day", "Hour", "Patch", "Lics", "Coms","Anom" };
  
 Nova_GetLevels(kept,repaired,item->name,names);
 
+// Compliance and anomalies
+
 issues += (100 - kept[3] - repaired[3]);
-issues += (100 - kept[6] - repaired[6]);
 issues += (100 - kept[7] - repaired[7]);
 
 // By this reckoning, red > 100, yellow > 50 green < 50
 
+if (issues > 200)
+   {
+   return false;
+   }
+
 if (issues < 0)
    {
-   issues = 0;
+   return false;
    }
 
 item->counter = issues;
-item->time = 100 - kept[2] + repaired[2];
+return true;
 }
 
 /*****************************************************************************/
