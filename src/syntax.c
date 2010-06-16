@@ -12,14 +12,14 @@
 
 void Nova_SyntaxTree2JavaScript()
 {
-Nova_ShowControlBodies();
+//Nova_ShowControlBodies();
 
 Nova_ShowBundleTypes();
 
-printf("var cf3_functions = \n");
-printf("   {\n");
-Nova_ShowBuiltinFunctions();
-printf("   };\n\n");
+//printf("var cf3_functions = \n");
+//printf("   {\n");
+//Nova_ShowBuiltinFunctions();
+//printf("   };\n\n");
 }
 
 /*******************************************************************/
@@ -29,6 +29,7 @@ printf("   };\n\n");
 void Nova_ShowBundleTypes()
 
 { int i;
+  struct SubTypeSyntax *st;
 
 for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
    {
@@ -37,6 +38,29 @@ for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
    Nova_ShowPromiseTypesFor(CF_ALL_BODIES[i].btype);
    printf("   };\n\n");
    }
+
+printf("var edit_line_bundle_syntax = \n");
+printf("   {\n");
+
+Nova_ShowPromiseTypesFor("*");
+
+st = CF_FILES_SUBTYPES;
+
+for (i = 0; st[i].btype != NULL; i++)
+   {
+   if (strcmp("edit_line",st[i].btype) == 0)
+      {
+      Nova_Indent(3);
+      printf("\"%s\":\n",st[i].subtype);
+      Nova_Indent(6);
+      printf("{\n");
+      Nova_ShowBodyParts(st[i].bs,6);
+      Nova_Indent(6);
+      printf("},\n");
+      }
+   }
+
+printf("   };\n");
 }
 
 /*******************************************************************/
@@ -49,7 +73,7 @@ for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
    {
    printf("var %s_control_syntax = \n",CF_ALL_BODIES[i].btype);
    printf("   {\n");
-   Nova_ShowBodyParts(CF_ALL_BODIES[i].bs);
+   Nova_ShowBodyParts(CF_ALL_BODIES[i].bs,6);
    printf("   };\n\n");
    }
 }
@@ -70,13 +94,13 @@ for (i = 0; i < CF3_MODULES; i++)
       {
       if (strcmp(s,st[j].btype) == 0 || strcmp("*",st[j].btype) == 0)
          {
+         Nova_Indent(3);
+         printf("\"%s\":\n",st[j].subtype);
          Nova_Indent(6);
-         printf("%s:\n",st[j].subtype);
-         Nova_Indent(9);
          printf("{\n");
-         Nova_ShowBodyParts(st[j].bs);
-         Nova_Indent(9);
-         printf("};\n");
+         Nova_ShowBodyParts(st[j].bs,6);
+         Nova_Indent(6);
+         printf("},\n");
          }
       }
    }
@@ -84,7 +108,7 @@ for (i = 0; i < CF3_MODULES; i++)
 
 /*******************************************************************/
 
-void Nova_ShowBodyParts(struct BodySyntax *bs)
+void Nova_ShowBodyParts(struct BodySyntax *bs,int indent)
 
 { int i;
 
@@ -93,7 +117,7 @@ if (bs == NULL)
    return;
    }
 
-Nova_Indent(9);
+Nova_Indent(indent);
 printf("attributes: \"");
 
 for (i = 0; bs[i].lval != NULL; i++)
@@ -105,38 +129,36 @@ printf("\";\n\n");
 
 for (i = 0; bs[i].lval != NULL; i++)
    {
-   Nova_Indent(9);
+   Nova_Indent(indent);
 
    if (bs[i].range == (void *)CF_BUNDLE)
       {
-      printf("%s : (fn-like bundle-reference)\n",bs[i].lval);
-      Nova_Indent(9);
-      printf("type : \"bundle\";\n");
+      printf("\"%s\" : \"fn-like bundle-reference, defined in edit_line_bundle_syntax\",\n",bs[i].lval);
       }
    else if (bs[i].dtype == cf_body)
       {
-      printf("%s : \n",bs[i].lval);
-      Nova_Indent(12);
+      printf("\"%s\" : \n",bs[i].lval);
+      Nova_Indent(indent+3);
       printf("{\n");
-      Nova_Indent(12);
-      Nova_ShowBodyParts((struct BodySyntax *)bs[i].range);
-      Nova_Indent(12);
-      printf("};\n\n");
+      Nova_Indent(indent+3);
+      Nova_ShowBodyParts((struct BodySyntax *)bs[i].range,indent+3);
+      Nova_Indent(indent+3);
+      printf("},\n\n");
       }
    else
       {
-      printf("%s : \n",bs[i].lval);
-      Nova_Indent(12);
+      printf("\"%s\" : \n",bs[i].lval);
+      Nova_Indent(indent+3);
       printf("{\n");
-      Nova_Indent(12);
-      printf("datatype: \"%s\"\n",CF_DATATYPES[bs[i].dtype]);
-      Nova_Indent(12);
-      printf("range: ");
+      Nova_Indent(indent+3);
+      printf("datatype: \"%s\",\n",CF_DATATYPES[bs[i].dtype]);
+      Nova_Indent(indent+3);
+      printf("pcre_range: ");
       Nova_ShowRange((char *)bs[i].range,bs[i].dtype);
-      Nova_Indent(12);
-      printf("description : \"%s\"\n",bs[i].description);
-      Nova_Indent(12);
-      printf("};\n");
+      Nova_Indent(indent+3);
+      printf("description : \"%s\",\n",bs[i].description);
+      Nova_Indent(indent+3);
+      printf("},\n");
       }
    }
 }
@@ -149,11 +171,11 @@ void Nova_ShowRange(char *s,enum cfdatatype type)
  
 if (strlen(s) == 0)
    {
-   printf("\".*\";\n");
+   printf("\".*\",\n");
    return;
    }
 
-printf("\"%s\";\n",s);
+printf("\"%s\",\n",s);
 }
 
 /*******************************************************************/
@@ -180,13 +202,12 @@ for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
    Nova_Indent(6);
    printf("{\n");
    Nova_Indent(6);
-   printf("args: %d;\n",CF_FNCALL_TYPES[i].numargs);
+   printf("args: %d,\n",CF_FNCALL_TYPES[i].numargs);
    Nova_Indent(6);
-   printf("description: %s\n",CF_FNCALL_TYPES[i].description);
+   printf("description: \"%s\"\n",CF_FNCALL_TYPES[i].description);
    Nova_Indent(6);
-   printf("};\n");
+   printf("},\n");
    }
-
 }
 
 /*******************************************************************/

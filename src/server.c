@@ -144,7 +144,40 @@ if (LICENSES <= 0)
    return false;
    }
 
-// Fetch by menu
+/* Fetch by menu
+  static char *slow[] =
+   {
+   "performance.html",
+   "classes.html",
+   "hashes.html",
+   "monitor_summary.html",
+   "setuid.html",
+   "file_changes.html",
+   "file_diffs.html",
+   "compliance.html",
+   "software_packages.html",
+   "software_patches_avail.html",
+   "software_patch_status.html",
+   "promise_output_common.html",
+   "value_report.html",
+   "variables.html",
+   "lastseen.html",
+   "promise_compliance.html",
+   "promise_repair.html",
+   "promise_notkept.html",
+   NULL
+   };
+
+Queries:
+
+show me compliance of all hosts with package X
+show me version of libc on all hosts with anomalies n past hour
+show me hosts with no patch
+show me compliance of all hosts in class X
+show me the hosts on which promise X took more than 4 minutes to complete
+*/  
+
+return 0;
 }
 
 /*****************************************************************************/

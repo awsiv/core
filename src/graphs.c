@@ -739,7 +739,7 @@ for (ip = list; ip != NULL; ip=ip->next)
          ip->counter = 1;
          ccount[1]++;
          }
-      else if (ip->counter > 0)
+      else
          {
          ip->counter = 2;
          ccount[2]++;

@@ -534,7 +534,7 @@ void Nova_SyntaxTree2JavaScript(void);
 void Nova_ShowBundleTypes(void);
 void Nova_ShowControlBodies(void);
 void Nova_ShowPromiseTypesFor(char *s);
-void Nova_ShowBodyParts(struct BodySyntax *bs);
+void Nova_ShowBodyParts(struct BodySyntax *bs,int i);
 void Nova_ShowRange(char *s,enum cfdatatype type);
 void Nova_ShowBuiltinFunctions(void);
 void Nova_Indent(int i);
