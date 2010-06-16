@@ -46,6 +46,13 @@
 #define CF_MAX_ERROR_LIMIT 50
 #define CF_MAX_LIMIT 999999
 
+enum cfd_menu
+   {
+   cfd_menu_delta,
+   cfd_menu_full,
+   cfd_menu_error
+   };
+
 /*****************************************************************************/
 
 struct CfDataView
@@ -267,6 +274,26 @@ void Nova_BoundaryCheck(struct CfDataView *cfv,int *x1,int *y1,int *x2, int *y2)
 /* database.c */
 
 int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
+
+/* datapackaging.c */
+
+void Nova_PackPerformance(time_t date,enum cfd_menu type);
+void Nova_PackClasses(time_t date,enum cfd_menu type);
+void Nova_PackSetuid(time_t date,enum cfd_menu type);
+void Nova_PackFileChanges(time_t date,enum cfd_menu type);
+void Nova_PackDiffs(time_t date,enum cfd_menu type);
+void Nova_PackMonitor(time_t date,enum cfd_menu type);
+void Nova_PackCompliance(time_t date,enum cfd_menu type);
+void Nova_PackSoftware(time_t date,enum cfd_menu type);
+void Nova_PackAvailPatches(time_t date,enum cfd_menu type);
+void Nova_PackPatchStatus(time_t date,enum cfd_menu type);
+void Nova_Pack_promise_output_common(time_t date,enum cfd_menu type);
+void Nova_PackValueReport(time_t date,enum cfd_menu type);
+void Nova_PackVariables(time_t date,enum cfd_menu type);
+void Nova_PackLastSeen(time_t date,enum cfd_menu type);
+void Nova_PackTotalCompliance(time_t date,enum cfd_menu type);
+void Nova_PackRepairLog(time_t date,enum cfd_menu type);
+void Nova_PackNotKeptLog(time_t date,enum cfd_menu type);
 
 /* environments.c */
 

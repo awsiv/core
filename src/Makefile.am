@@ -25,6 +25,7 @@ libcfnova_la_SOURCES =						\
 	monitoring.c						\
 	aggregation.c						\
 	server.c						\
+	datapackaging.c						\
 	outputs.c						\
 	promises.c						\
 	processes.c						\

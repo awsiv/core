@@ -138,36 +138,35 @@ int Nova_ReturnQueryData(char *menu,char *recv)
 
 { char rtype;
   void *retval;
+  time_t date;
+  enum cfd_menu type;
 
 if (LICENSES <= 0)
    {
    return false;
    }
 
-/* Fetch by menu
-  static char *slow[] =
-   {
-   "performance.html",
-   "classes.html",
-   "hashes.html",
-   "monitor_summary.html",
-   "setuid.html",
-   "file_changes.html",
-   "file_diffs.html",
-   "compliance.html",
-   "software_packages.html",
-   "software_patches_avail.html",
-   "software_patch_status.html",
-   "promise_output_common.html",
-   "value_report.html",
-   "variables.html",
-   "lastseen.html",
-   "promise_compliance.html",
-   "promise_repair.html",
-   "promise_notkept.html",
-   NULL
-   };
+// Get date from which to send and menu TYPE
 
+Nova_PackPerformance(date,type);
+Nova_PackClasses(date,type);
+Nova_PackSetuid(date,type);
+Nova_PackFileChanges(date,type);
+Nova_PackDiffs(date,type);
+Nova_PackMonitor(date,type);
+Nova_PackCompliance(date,type);
+Nova_PackSoftware(date,type);
+Nova_PackAvailPatches(date,type);
+Nova_PackPatchStatus(date,type);
+Nova_Pack_promise_output_common(date,type);
+Nova_PackValueReport(date,type);
+Nova_PackVariables(date,type);
+Nova_PackLastSeen(date,type);
+Nova_PackTotalCompliance(date,type);
+Nova_PackRepairLog(date,type);
+Nova_PackNotKeptLog(date,type);
+
+/*
 Queries:
 
 show me compliance of all hosts with package X
