@@ -23,7 +23,6 @@ int QueryForKnowledgeMap(char *menu,time_t since)
   struct cfagent_connection *conn;// = pp->conn;
 
 snprintf(cfchangedstr,255,"%s%s",CF_CHANGEDSTR1,CF_CHANGEDSTR2);
-  
 
 workbuf[0] = '\0';
 EVP_CIPHER_CTX_init(&ctx);  
