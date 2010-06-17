@@ -19,7 +19,8 @@ int QueryForKnowledgeMap(char *menu,time_t since)
   unsigned char iv[32] = {1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
   long n_read_total = 0;  
   EVP_CIPHER_CTX ctx;
-  struct cfagent_connection *conn = pp->conn;
+  int plainlen,finlen,more;
+  struct cfagent_connection *conn;// = pp->conn;
 
 snprintf(cfchangedstr,255,"%s%s",CF_CHANGEDSTR1,CF_CHANGEDSTR2);
   
@@ -29,7 +30,7 @@ EVP_CIPHER_CTX_init(&ctx);
 
 snprintf(in,CF_BUFSIZE-CF_PROTO_OFFSET,"QUERY %s %ld",menu,(long)since);
 cipherlen = EncryptString(conn->encryption_type,in,out,conn->session_key,strlen(in)+1);
-snprintf(workbuf,CF_BUFSIZE,"SQUERY %4d %4d",cipherlen,blocksize);
+snprintf(workbuf,CF_BUFSIZE,"SQUERY %4d",cipherlen);
 memcpy(workbuf+CF_PROTO_OFFSET,out,cipherlen);
 tosend=cipherlen+CF_PROTO_OFFSET;   
 
@@ -60,7 +61,6 @@ while (more)
    if (!EVP_DecryptUpdate(&ctx,workbuf,&plainlen,buf,cipherlen))
       {
       Debug("Decryption failed\n");
-      close(dd);
       free(buf);
       return false;
       }
@@ -68,7 +68,6 @@ while (more)
    if (!EVP_DecryptFinal(&ctx,workbuf+plainlen,&finlen))
       {
       Debug("Final decrypt failed\n");
-      close(dd);
       free(buf);
       return false;
       }

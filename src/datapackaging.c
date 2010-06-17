@@ -20,7 +20,7 @@ void Nova_PackPerformance(time_t date,enum cfd_menu type)
   FILE *fout;
   double now = (double)time(NULL),average = 0, var = 0;
   double ticksperminute = 60.0;
-  char name[CF_BUFSIZE],eventname[CF_BUFSIZE];
+  char name[CF_BUFSIZE],eventname[CF_BUFSIZE],buffer[CF_BUFSIZE];
   struct Event entry;
   int ret,ksize,vsize;
 
