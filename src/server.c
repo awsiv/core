@@ -134,12 +134,15 @@ else
 
 /*****************************************************************************/
 
-int Nova_ReturnQueryData(char *menu,char *recv)
+int Nova_ReturnQueryData(struct cfd_connection *conn,char *menu,char *recv)
 
-{ char rtype;
+{ char rsignal;
   void *retval;
   time_t date;
+  char buffer[CF_MAXVARSIZE],out[CF_BUFSIZE];
   enum cfd_menu type;
+  struct Item *ip,*reply = NULL;
+  int cipherlen = 0;
 
 if (LICENSES <= 0)
    {
@@ -148,23 +151,23 @@ if (LICENSES <= 0)
 
 // Get date from which to send and menu TYPE
 
-Nova_PackPerformance(date,type);
-Nova_PackClasses(date,type);
-Nova_PackSetuid(date,type);
-Nova_PackFileChanges(date,type);
-Nova_PackDiffs(date,type);
-Nova_PackMonitor(date,type);
-Nova_PackCompliance(date,type);
-Nova_PackSoftware(date,type);
-Nova_PackAvailPatches(date,type);
-Nova_PackPatchStatus(date,type);
-Nova_Pack_promise_output_common(date,type);
-Nova_PackValueReport(date,type);
-Nova_PackVariables(date,type);
-Nova_PackLastSeen(date,type);
-Nova_PackTotalCompliance(date,type);
-Nova_PackRepairLog(date,type);
-Nova_PackNotKeptLog(date,type);
+Nova_PackPerformance(&reply,date,type);
+Nova_PackClasses(&reply,date,type);
+Nova_PackSetuid(&reply,date,type);
+Nova_PackFileChanges(&reply,date,type);
+Nova_PackDiffs(&reply,date,type);
+Nova_PackMonitor(&reply,date,type);
+Nova_PackCompliance(&reply,date,type);
+Nova_PackSoftware(&reply,date,type);
+Nova_PackAvailPatches(&reply,date,type);
+Nova_PackPatchStatus(&reply,date,type);
+Nova_Pack_promise_output_common(&reply,date,type);
+Nova_PackValueReport(&reply,date,type);
+Nova_PackVariables(&reply,date,type);
+Nova_PackLastSeen(&reply,date,type);
+Nova_PackTotalCompliance(&reply,date,type);
+Nova_PackRepairLog(&reply,date,type);
+Nova_PackNotKeptLog(&reply,date,type);
 
 /*
 Queries:
@@ -176,6 +179,32 @@ show me compliance of all hosts in class X
 show me the hosts on which promise X took more than 4 minutes to complete
 */  
 
+snprintf(buffer,CF_MAXVARSIZE,"RECVD: %s",menu);
+AppendItem(&reply,buffer,NULL);
+
+for (ip = reply; ip != NULL; ip=ip->next)
+   {
+   printf("Want to send: %s\n",ip->name);
+   cipherlen = EncryptString(conn->encryption_type,ip->name,out,conn->session_key,strlen(ip->name)+1);
+   
+   if (SendTransaction(conn->sd_reply,out,cipherlen,CF_MORE) == -1)
+      {
+      CfOut(cf_error,"send","Failed send");
+      return false;
+      }
+   }
+
+printf("End mark\n");
+
+cipherlen = EncryptString(conn->encryption_type,"QUERY complete",out,conn->session_key,strlen("QUERY complete"));
+
+if (SendTransaction(conn->sd_reply,out,cipherlen,CF_DONE) == -1)
+   {
+   CfOut(cf_error,"send","Failed send");
+   return false;
+   }
+
+DeleteItemList(reply);
 return 0;
 }
 

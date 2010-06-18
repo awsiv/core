@@ -12,15 +12,14 @@
 
 /*********************************************************************/
 
-int QueryForKnowledgeMap(char *menu,time_t since)
+int Nova_QueryForKnowledgeMap( struct cfagent_connection *conn,char *menu,time_t since)
 
 { int done = false,tosend,cipherlen=0,value;
   char *buf,in[CF_BUFSIZE],out[CF_BUFSIZE],workbuf[CF_BUFSIZE],cfchangedstr[265];
   unsigned char iv[32] = {1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
   long n_read_total = 0;  
   EVP_CIPHER_CTX ctx;
-  int plainlen,finlen,more;
-  struct cfagent_connection *conn;// = pp->conn;
+  int plainlen,finlen,more = true;
 
 snprintf(cfchangedstr,255,"%s%s",CF_CHANGEDSTR1,CF_CHANGEDSTR2);
 
@@ -37,7 +36,7 @@ tosend=cipherlen+CF_PROTO_OFFSET;
 
 if (SendTransaction(conn->sd,workbuf,tosend,CF_DONE) == -1)
    {
-   //cfPS(cf_error,CF_INTERPT,"",pp,attr,"Couldn't send data");
+   CfOut(cf_error,"send","Couldn't send data");
    return false;
    }
 
@@ -47,32 +46,17 @@ n_read_total = 0;
 
 while (more)
    {
-   if ((cipherlen = ReceiveTransaction(conn->sd,buf,&more)) == -1)
+   out[0] = '\0';
+
+   if ((cipherlen = ReceiveTransaction(conn->sd,in,&more)) == -1)
       {
       free(buf);
       return false;
       }
 
-   // Fill buf
-   
-   EVP_DecryptInit(&ctx,CfengineCipher(CfEnterpriseOptions()),conn->session_key,iv);
+   plainlen = DecryptString(conn->encryption_type,in,out,conn->session_key,cipherlen);
 
-   if (!EVP_DecryptUpdate(&ctx,workbuf,&plainlen,buf,cipherlen))
-      {
-      Debug("Decryption failed\n");
-      free(buf);
-      return false;
-      }
-
-   if (!EVP_DecryptFinal(&ctx,workbuf+plainlen,&finlen))
-      {
-      Debug("Final decrypt failed\n");
-      free(buf);
-      return false;
-      }
-
-   printf("QUERY GOT: %s\n",workbuf);
-   // print or store workbuf in DB with driver
+   printf("QUERY GOT: \"%s\", now store it!\n",out);
    }
 
 free(buf);

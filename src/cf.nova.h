@@ -159,6 +159,10 @@ struct CfFileLine
 /* Prototypes                                                                       */
 /************************************************************************************/
 
+#ifndef HAVE_SERV_H
+#include "cf3.server.h"
+#endif
+   
 /* acl.c */
 
 void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
@@ -231,6 +235,10 @@ void Nova_EigenvectorCentrality(double **A,double *v,int dim);
 void Nova_MatrixOperation(double **A,double *v,int dim);
 void Nova_SpecialQuote(char *name,char *type);
 
+/* client_code.c */
+
+int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t since);
+
 /* coordinates.c */
 
 int Nova_ViewPortY(struct CfDataView *cfv,double y,double offset);
@@ -277,23 +285,23 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 /* datapackaging.c */
 
-void Nova_PackPerformance(time_t date,enum cfd_menu type);
-void Nova_PackClasses(time_t date,enum cfd_menu type);
-void Nova_PackSetuid(time_t date,enum cfd_menu type);
-void Nova_PackFileChanges(time_t date,enum cfd_menu type);
-void Nova_PackDiffs(time_t date,enum cfd_menu type);
-void Nova_PackMonitor(time_t date,enum cfd_menu type);
-void Nova_PackCompliance(time_t date,enum cfd_menu type);
-void Nova_PackSoftware(time_t date,enum cfd_menu type);
-void Nova_PackAvailPatches(time_t date,enum cfd_menu type);
-void Nova_PackPatchStatus(time_t date,enum cfd_menu type);
-void Nova_Pack_promise_output_common(time_t date,enum cfd_menu type);
-void Nova_PackValueReport(time_t date,enum cfd_menu type);
-void Nova_PackVariables(time_t date,enum cfd_menu type);
-void Nova_PackLastSeen(time_t date,enum cfd_menu type);
-void Nova_PackTotalCompliance(time_t date,enum cfd_menu type);
-void Nova_PackRepairLog(time_t date,enum cfd_menu type);
-void Nova_PackNotKeptLog(time_t date,enum cfd_menu type);
+void Nova_PackPerformance(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackClasses(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackSetuid(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackFileChanges(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackDiffs(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackMonitor(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackCompliance(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackSoftware(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackAvailPatches(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackPatchStatus(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_Pack_promise_output_common(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackValueReport(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackVariables(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackLastSeen(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackTotalCompliance(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackRepairLog(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackNotKeptLog(struct Item **reply,time_t date,enum cfd_menu type);
 
 /* environments.c */
 
@@ -498,6 +506,28 @@ void Nova_GrandSummary(void);
 void SummarizeComms(void);
 void Nova_SummarizeLicense(char *stylesheet,char *banner,char *footer,char *webdriver);
 
+
+/* server.c */
+
+const EVP_CIPHER *Nova_CfengineCipher(char type);
+char Nova_CfEnterpriseOptions(void);
+int Nova_CfSessionKeySize(char c);
+void  Nova_RegisterLiteralServerData(char *handle,struct Promise *pp);
+int Nova_ReturnLiteralData(char *handle,char *retval);
+int Nova_ReturnQueryData(struct cfd_connection *conn,char *menu,char *recv);
+char *Nova_GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,char *rcv);
+int Nova_ParseHostname(char *name,char *hostname);
+int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer);
+void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer);
+pid_t Nova_StartTwin(int argc,char **argv);
+void Nova_SignalTwin(void);
+void Nova_SignalOther(void);
+void Nova_ReviveOther(int argc,char **argv);
+void Nova_TranslatePath(char *one,char *two);
+RSA *Nova_SelectKeyRing(char *name);
+void Nova_IdempAddToKeyRing(char *name,RSA *key);
+void Nova_PurgeKeyRing(void);
+
 /* services.c */
 
 void Nova_VerifyServices(struct Attributes a,struct Promise *pp);
@@ -518,27 +548,6 @@ int NovaWin_ServiceStateWait(SC_HANDLE srvHandle, DWORD state);
 QUERY_SERVICE_CONFIG *NovaWin_AllocServiceConfig(SC_HANDLE srvHandle);
 void NovaWin_AllocSplitServiceArgs(char *argStr, int *argcp, char ***argvp);
 #endif  /* MINGW */
-
-/* server.c */
-
-const EVP_CIPHER *Nova_CfengineCipher(char type);
-char Nova_CfEnterpriseOptions(void);
-int Nova_CfSessionKeySize(char c);
-void  Nova_RegisterLiteralServerData(char *handle,struct Promise *pp);
-int Nova_ReturnLiteralData(char *handle,char *retval);
-int Nova_ReturnQueryData(char *menu,char *recv);
-char *Nova_GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,char *rcv);
-int Nova_ParseHostname(char *name,char *hostname);
-int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer);
-void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer);
-pid_t Nova_StartTwin(int argc,char **argv);
-void Nova_SignalTwin(void);
-void Nova_SignalOther(void);
-void Nova_ReviveOther(int argc,char **argv);
-void Nova_TranslatePath(char *one,char *two);
-RSA *Nova_SelectKeyRing(char *name);
-void Nova_IdempAddToKeyRing(char *name,RSA *key);
-void Nova_PurgeKeyRing(void);
 
 /* sql.c */
 

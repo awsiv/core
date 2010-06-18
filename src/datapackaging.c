@@ -11,7 +11,7 @@
 #include "cf.nova.h";
 
 
-void Nova_PackPerformance(time_t date,enum cfd_menu type)
+void Nova_PackPerformance(struct Item **reply,time_t date,enum cfd_menu type)
 
 { CF_DB *dbp;
   CF_DBC *dbcp;
@@ -28,6 +28,7 @@ snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_PERFORMANCE);
 
 if (!OpenDB(name,&dbp))
    {
+   CfOut(cf_inform,""," !! Unable to open performance database %s",name);
    return;
    }
 
@@ -88,9 +89,15 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
          }
 
       // Format: time_t entry.t; char * "name"; double q; double E(q); double sigma
-      snprintf(buffer,CF_MAXVARSIZE-1,"%s;%7.4lf;%7.4lf,%7.4lf",entry.t,eventname,measure,average,sqrt(var)/ticksperminute);
 
-      // ADD TO LIST?
+      if (strlen(eventname) == 0 || strlen(eventname) > CF_MAXVARSIZE/2)
+         {
+         CfOut(cf_inform,""," !! Corrupt entry in database");
+         continue;
+         }
+      
+      snprintf(buffer,CF_MAXVARSIZE-1,"%ld;%s;%7.4lf;%7.4lf",entry.t,eventname,measure,average,sqrt(var)/ticksperminute);
+      AppendItem(reply,buffer,NULL);
       }
    else
       {
@@ -98,111 +105,109 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       }
    }
 
-// Send data
-
 DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
 }
 
 /*****************************************************************************/
 
-void Nova_PackClasses(time_t date,enum cfd_menu type)
+void Nova_PackClasses(struct Item **reply,time_t date,enum cfd_menu type)
 {
 }
 
 /*****************************************************************************/
 
-void Nova_PackSetuid(time_t date,enum cfd_menu type)
+void Nova_PackSetuid(struct Item **reply,time_t date,enum cfd_menu type)
 {
 }
 
 /*****************************************************************************/
 
-void Nova_PackFileChanges(time_t date,enum cfd_menu type)
+void Nova_PackFileChanges(struct Item **reply,time_t date,enum cfd_menu type)
 {
 }
 
 /*****************************************************************************/
 
-void Nova_PackDiffs(time_t date,enum cfd_menu type)
-
-{
-}
-
-/*****************************************************************************/
-
-void Nova_PackMonitor(time_t date,enum cfd_menu type)
-{
-}
-
-/*****************************************************************************/
-
-void Nova_PackCompliance(time_t date,enum cfd_menu type)
+void Nova_PackDiffs(struct Item **reply,time_t date,enum cfd_menu type)
 
 {
 }
 
 /*****************************************************************************/
 
-void Nova_PackSoftware(time_t date,enum cfd_menu type)
+void Nova_PackMonitor(struct Item **reply,time_t date,enum cfd_menu type)
+{
+}
+
+/*****************************************************************************/
+
+void Nova_PackCompliance(struct Item **reply,time_t date,enum cfd_menu type)
 
 {
 }
 
 /*****************************************************************************/
 
-void Nova_PackAvailPatches(time_t date,enum cfd_menu type)
-{
-}
-
-/*****************************************************************************/
-
-void Nova_PackPatchStatus(time_t date,enum cfd_menu type)
-{
-}
-
-/*****************************************************************************/
-
-void Nova_Pack_promise_output_common(time_t date,enum cfd_menu type)
-{
-}
-
-/*****************************************************************************/
-
-void Nova_PackValueReport(time_t date,enum cfd_menu type)
+void Nova_PackSoftware(struct Item **reply,time_t date,enum cfd_menu type)
 
 {
 }
 
 /*****************************************************************************/
 
-void Nova_PackVariables(time_t date,enum cfd_menu type)
+void Nova_PackAvailPatches(struct Item **reply,time_t date,enum cfd_menu type)
 {
 }
 
 /*****************************************************************************/
 
-void Nova_PackLastSeen(time_t date,enum cfd_menu type)
+void Nova_PackPatchStatus(struct Item **reply,time_t date,enum cfd_menu type)
+{
+}
+
+/*****************************************************************************/
+
+void Nova_Pack_promise_output_common(struct Item **reply,time_t date,enum cfd_menu type)
+{
+}
+
+/*****************************************************************************/
+
+void Nova_PackValueReport(struct Item **reply,time_t date,enum cfd_menu type)
 
 {
 }
 
 /*****************************************************************************/
 
-void Nova_PackTotalCompliance(time_t date,enum cfd_menu type)
+void Nova_PackVariables(struct Item **reply,time_t date,enum cfd_menu type)
+{
+}
+
+/*****************************************************************************/
+
+void Nova_PackLastSeen(struct Item **reply,time_t date,enum cfd_menu type)
 
 {
 }
 
 /*****************************************************************************/
 
-void Nova_PackRepairLog(time_t date,enum cfd_menu type)
+void Nova_PackTotalCompliance(struct Item **reply,time_t date,enum cfd_menu type)
+
 {
 }
 
 /*****************************************************************************/
 
-void Nova_PackNotKeptLog(time_t date,enum cfd_menu type)
+void Nova_PackRepairLog(struct Item **reply,time_t date,enum cfd_menu type)
+{
+}
+
+/*****************************************************************************/
+
+void Nova_PackNotKeptLog(struct Item **reply,time_t date,enum cfd_menu type)
 
 {
 }
