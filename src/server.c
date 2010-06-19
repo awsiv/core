@@ -19,6 +19,7 @@ struct Rlist *SERVER_KEYRING = NULL;
 /*****************************************************************************/
 
 void Nova_TranslatePath(char *new,char *old)
+
 {
 if (strncmp(old,"/var/cfengine",strlen("/var/cfengine")) == 0)
    {
@@ -41,6 +42,7 @@ NewScalar("remote_access",handle,pp->promiser,cf_str);
 /*****************************************************************************/
 
 char Nova_CfEnterpriseOptions()
+
 {
 if (LICENSES)
    {
@@ -134,57 +136,84 @@ else
 
 /*****************************************************************************/
 
-int Nova_ReturnQueryData(struct cfd_connection *conn,char *menu,char *recv)
+int Nova_ReturnQueryData(struct cfd_connection *conn,char *menu,char *sendbuffer)
 
 { char rsignal;
   void *retval;
   time_t date;
-  char buffer[CF_MAXVARSIZE],out[CF_BUFSIZE];
+  char buffer[CF_MAXVARSIZE],out[CF_BUFSIZE],menu_name[CF_MAXVARSIZE];
+  char tbuf[CF_SMALLBUF];
   enum cfd_menu type;
   struct Item *ip,*reply = NULL;
   int cipherlen = 0;
+  time_t from = 0, time0 = 0, time1 = 0, time2 = 0,delta1;
 
 if (LICENSES <= 0)
    {
    return false;
    }
 
-// Get date from which to send and menu TYPE
+// Promise: Get time0 fom stream, find time1 and compute transfer delta
 
-Nova_PackPerformance(&reply,date,type);
-Nova_PackClasses(&reply,date,type);
-Nova_PackSetuid(&reply,date,type);
-Nova_PackFileChanges(&reply,date,type);
-Nova_PackDiffs(&reply,date,type);
-Nova_PackMonitor(&reply,date,type);
-Nova_PackCompliance(&reply,date,type);
-Nova_PackSoftware(&reply,date,type);
-Nova_PackAvailPatches(&reply,date,type);
-Nova_PackPatchStatus(&reply,date,type);
-Nova_Pack_promise_output_common(&reply,date,type);
-Nova_PackValueReport(&reply,date,type);
-Nova_PackVariables(&reply,date,type);
-Nova_PackLastSeen(&reply,date,type);
-Nova_PackTotalCompliance(&reply,date,type);
-Nova_PackRepairLog(&reply,date,type);
-Nova_PackNotKeptLog(&reply,date,type);
+sscanf(menu,"%255s %ld %ld",menu_name,&from,&time0);
+time1 = time(NULL);
+delta1 = time1 - time0;
 
-/*
-Queries:
+if (delta1 >= 30)
+   {
+   CfOut(cf_verbose,""," !! Poor clock synchronization between peers");
+   }
 
-show me compliance of all hosts with package X
-show me version of libc on all hosts with anomalies n past hour
-show me hosts with no patch
-show me compliance of all hosts in class X
-show me the hosts on which promise X took more than 4 minutes to complete
-*/  
+// Promise: use valid menu request
 
-snprintf(buffer,CF_MAXVARSIZE,"RECVD: %s",menu);
-AppendItem(&reply,buffer,NULL);
+strcpy(tbuf,ctime(&time1));
+Chop(tbuf);
+CfOut(cf_verbose,""," -> Menu request \"%s\" at %s, clock error %d",menu_name,tbuf,delta1);
+strcpy(tbuf,ctime(&from));
+Chop(tbuf);
+CfOut(cf_verbose,""," -> Menu request starting from %s",tbuf);
+
+if ((type = String2Menu(menu_name)) == cfd_menu_error)
+   {
+   CfOut(cf_verbose,""," -> Unknown menu type \"%s\"",menu_name);
+   return false;
+   }
+
+// Promise: use menu data and start-time
+
+Nova_PackPerformance(&reply,CFR_PERF,from,type);
+Nova_PackClasses(&reply,CFR_CLASS,from,type);
+Nova_PackSetuid(&reply,CFR_SETUID,from,type);
+Nova_PackFileChanges(&reply,CFR_FCHANGE,from,type);
+Nova_PackDiffs(&reply,CFR_FDIFF,from,type);
+Nova_PackMonitorWeek(&reply,CFR_MONITOR_WEEK,from,type);
+Nova_PackMonitorMag(&reply,CFR_MONITOR_MAG,from,type);
+Nova_PackMonitorHist(&reply,CFR_MONITOR_HIST,from,type);
+Nova_PackMonitorYear(&reply,CFR_MONITOR_YEAR,from,type);
+Nova_PackCompliance(&reply,CFR_PCOMPLIANCE,from,type);
+Nova_PackTotalCompliance(&reply,CFR_TCOMPLIANCE,from,type);
+Nova_PackSoftware(&reply,CFR_SOFTWARE,from,type);
+Nova_PackAvailPatches(&reply,CFR_AVAILPATCH,from,type);
+Nova_PackPatchStatus(&reply,CFR_PATCHSTATUS,from,type);
+Nova_Pack_promise_output_common(&reply,CFR_PROMISEOUT,from,type);
+Nova_PackValueReport(&reply,CFR_VALUE,from,type);
+Nova_PackVariables(&reply,CFR_VARS,from,type);
+Nova_PackLastSeen(&reply,CFR_LASTSEEN,from,type);
+Nova_PackRepairLog(&reply,CFR_REPAIRLOG,from,type);
+Nova_PackNotKeptLog(&reply,CFR_NOTKEPTLOG,from,type);
+
+// Promise: get time2 and return for delta
+// Promise: return size as a service
+
+time2 = time(NULL);
+CfOut(cf_verbose,""," -> Assembled reply at %s",ctime(&time2));
+
+snprintf(buffer,CF_MAXVARSIZE,"CFR: %ld %ld %ld",delta1,time2,ItemListSize(reply));
+PrependItem(&reply,buffer,NULL);
 
 for (ip = reply; ip != NULL; ip=ip->next)
    {
-   printf("Want to send: %s\n",ip->name);
+   printf("SEND: %s\n",ip->name);
    cipherlen = EncryptString(conn->encryption_type,ip->name,out,conn->session_key,strlen(ip->name)+1);
    
    if (SendTransaction(conn->sd_reply,out,cipherlen,CF_MORE) == -1)
@@ -193,8 +222,6 @@ for (ip = reply; ip != NULL; ip=ip->next)
       return false;
       }
    }
-
-printf("End mark\n");
 
 cipherlen = EncryptString(conn->encryption_type,"QUERY complete",out,conn->session_key,strlen("QUERY complete"));
 
@@ -205,7 +232,7 @@ if (SendTransaction(conn->sd_reply,out,cipherlen,CF_DONE) == -1)
    }
 
 DeleteItemList(reply);
-return 0;
+return true;
 }
 
 /*****************************************************************************/
@@ -654,6 +681,24 @@ for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
 
 /********************************************************************/
 /* Level                                                            */
+/********************************************************************/
+
+enum cfd_menu String2Menu(char *s)
+
+{ static char *menus[] = { "delta", "full", NULL };
+  int i;
+ 
+for (i = 0; menus[i] != NULL; i++)
+   {
+   if (strcmp(s,menus[i]) == 0)
+      {
+      return i;
+      }
+   }
+
+return cfd_menu_error;
+}
+
 /********************************************************************/
 
 int Nova_ParseHostname(char *name,char *hostname)

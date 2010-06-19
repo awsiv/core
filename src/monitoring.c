@@ -1133,7 +1133,7 @@ else
          }
 
       CfReadLine(line,CF_BUFSIZE-1,fin);
-      AppendItemList(&(NOVA_DATA[slot].output),line);
+      AppendItem(&(NOVA_DATA[slot].output),line,NULL);
       CfOut(cf_inform,"","Sampling => %s",line);
 
       if (ferror(fin))  /* abortable */

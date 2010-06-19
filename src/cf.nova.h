@@ -238,6 +238,10 @@ void Nova_SpecialQuote(char *name,char *type);
 /* client_code.c */
 
 int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t since);
+int Nova_StoreIncomingReports(char *reply,struct Item **reports,int current_report);
+void NewReportBook(struct Item **reports);
+void DeleteReportBook(struct Item **reports);
+void UnpackReportBook(struct Item **reports);
 
 /* coordinates.c */
 
@@ -285,23 +289,49 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 /* datapackaging.c */
 
-void Nova_PackPerformance(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackClasses(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackSetuid(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackFileChanges(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackDiffs(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackMonitor(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackCompliance(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackSoftware(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackAvailPatches(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackPatchStatus(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_Pack_promise_output_common(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackValueReport(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackVariables(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackLastSeen(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackTotalCompliance(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackRepairLog(struct Item **reply,time_t date,enum cfd_menu type);
-void Nova_PackNotKeptLog(struct Item **reply,time_t date,enum cfd_menu type);
+void Nova_PackPerformance(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackClasses(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackSetuid(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackFileChanges(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackDiffs(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackMonitorWeek(struct Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_PackMonitorMag(struct Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_PackMonitorHist(struct Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_PackMonitorYear(struct Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_PackCompliance(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackSoftware(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackAvailPatches(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackPatchStatus(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_Pack_promise_output_common(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackValueReport(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackVariables(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackLastSeen(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackRepairLog(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+
+/* dataunpack.c */
+
+void Nova_UnPackPerformance(struct Item *data);
+void Nova_UnPackClasses(struct Item *data);
+void Nova_UnPackSetuid(struct Item *data);
+void Nova_UnPackFileChanges(struct Item *data);
+void Nova_UnPackDiffs(struct Item *data);
+void Nova_UnPackMonitorWeek(struct Item *data);
+void Nova_UnPackMonitorMag(struct Item *data);
+void Nova_UnPackMonitorHist(struct Item *data);
+void Nova_UnPackMonitorYear(struct Item *data);
+void Nova_UnPackCompliance(struct Item *data);
+void Nova_UnPackSoftware(struct Item *data);
+void Nova_UnPackAvailPatches(struct Item *data);
+void Nova_UnPackPatchStatus(struct Item *data);
+void Nova_UnPack_promise_output_common(struct Item *data);
+void Nova_UnPackValueReport(struct Item *data);
+void Nova_UnPackVariables(struct Item *data);
+void Nova_UnPackLastSeen(struct Item *data);
+void Nova_UnPackTotalCompliance(struct Item *data);
+void Nova_UnPackRepairLog(struct Item *data);
+void Nova_UnPackNotKeptLog(struct Item *data);
 
 /* environments.c */
 
@@ -517,6 +547,8 @@ int Nova_ReturnLiteralData(char *handle,char *retval);
 int Nova_ReturnQueryData(struct cfd_connection *conn,char *menu,char *recv);
 char *Nova_GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,char *rcv);
 int Nova_ParseHostname(char *name,char *hostname);
+enum cfd_menu String2Menu(char *s);
+
 int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer);
 void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer);
 pid_t Nova_StartTwin(int argc,char **argv);
@@ -750,3 +782,25 @@ struct promise_value
 #define CF_REPAIR_LOG    "nova_repair.log"
 #define CF_NOTKEPT_LOG   "nova_notkept.log"
 
+/* Protocol codebook for reports */
+
+#define CFR_PERF "PRF"
+#define CFR_CLASS "CLS"
+#define CFR_SETUID "SUI"
+#define CFR_FCHANGE "CHG"
+#define CFR_FDIFF "DIF"
+#define CFR_MONITOR_WEEK "MNW"
+#define CFR_MONITOR_MAG "MNM"
+#define CFR_MONITOR_HIST "MNH"
+#define CFR_MONITOR_YEAR "MNY"
+#define CFR_PCOMPLIANCE "PCP"
+#define CFR_TCOMPLIANCE "TCP"
+#define CFR_SOFTWARE "SOF"
+#define CFR_AVAILPATCH "AVL"
+#define CFR_PATCHSTATUS "PST"
+#define CFR_PROMISEOUT "POT"
+#define CFR_VALUE "VAL"
+#define CFR_VARS "VAR"
+#define CFR_LASTSEEN "SEN"
+#define CFR_REPAIRLOG "PRL"
+#define CFR_NOTKEPTLOG "NKL"
