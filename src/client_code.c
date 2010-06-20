@@ -49,6 +49,7 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    Nova_UnPackMonitorHist,
    Nova_UnPackMonitorYear,
    Nova_UnPackCompliance,
+   Nova_UnPackTotalCompliance,
    Nova_UnPackSoftware,
    Nova_UnPackAvailPatches,
    Nova_UnPackPatchStatus,
@@ -56,7 +57,6 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    Nova_UnPackValueReport,
    Nova_UnPackVariables,
    Nova_UnPackLastSeen,
-   Nova_UnPackTotalCompliance,
    Nova_UnPackRepairLog,
    Nova_UnPackNotKeptLog,
    };

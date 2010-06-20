@@ -8,7 +8,15 @@
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
-#include "cf.nova.h";
+#include "cf.nova.h"
+
+struct CEnt /* For sorting */
+   {
+   char name[256];
+   time_t date;
+   double q;
+   double d;
+   };
 
 /*****************************************************************************/
 
@@ -74,7 +82,6 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       
       if (then < from)
          {
-         printf("Skipping time %s",ctime(&then));
          continue;
          }
           
@@ -114,7 +121,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
          AppendItem(reply,header,NULL);
          }
       
-      snprintf(buffer,CF_MAXVARSIZE-1,"%ld;%s;%7.4lf;%7.4lf",entry.t,eventname,measure,average,sqrt(var)/ticksperminute);
+      snprintf(buffer,CF_MAXVARSIZE-1,"%ld,%s,%7.4lf,%7.4lf\n",entry.t,eventname,measure,average,sqrt(var)/ticksperminute);
       AppendItem(reply,buffer,NULL);
       }
    else
@@ -130,38 +137,569 @@ CloseDB(dbp);
 /*****************************************************************************/
 
 void Nova_PackClasses(struct Item **reply,char *header,time_t from,enum cfd_menu type)
-{
+
+{ CF_DB *dbp;
+  CF_DBC *dbcp;
+  char *key;
+  void *value;
+  struct Item *ip;
+  double now = (double)time(NULL),average = 0, var = 0;
+  char name[CF_BUFSIZE],eventname[CF_BUFSIZE],buffer[CF_MAXVARSIZE];
+  struct Event entry;
+  struct CEnt array[1024];
+  int ret,i,ksize,vsize,first = true;
+
+CfOut(cf_verbose,""," -> Packing class data");
+  
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_CLASSUSAGE);
+MapName(name);
+
+if (!OpenDB(name,&dbp))
+   {
+   return;
+   }
+
+if (!NewDBCursor(dbp,&dbcp))
+   {
+   CfOut(cf_inform,""," !! Unable to scan class db");
+   return;
+   }
+
+/* Initialize the key/data return pair. */
+
+memset(&entry, 0, sizeof(entry));
+
+ /* Walk through the database and print out the key/data pairs. */
+
+for (i = 0; i < 1024; i++)
+   {
+   *(array[i].name) = '\0';
+   array[i].q = -1;
+   }
+
+i = 0;
+
+while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
+   {
+   double measure;
+   time_t then;
+
+   memcpy(&then,value,sizeof(then));
+   strncpy(eventname,(char *)key,CF_BUFSIZE-1);
+
+   if (value != NULL)
+      {
+      memcpy(&entry,value,sizeof(entry));
+
+      then    = entry.t;
+      measure = entry.Q.q;
+      average = entry.Q.expect;
+      var     = entry.Q.var;
+
+      if (PURGE == 'y')
+         {
+         if (now - then > CF_WEEK*52)
+            {
+            DeleteDB(dbp,key);
+            }
+
+         CfOut(cf_error,""," -> Deleting expired entry for %s\n",eventname);
+         continue;
+         }
+
+      if (i++ < 1024)
+         {
+         array[i].date = then;
+         strncpy(array[i].name,eventname,254);
+         array[i].q = average;
+         array[i].d = var;
+         }
+      else
+         {
+         break;
+         }
+      }
+   }
+
+// Now check the current heap
+
+for (ip = VHEAP; ip != NULL; ip=ip->next)
+   {
+   if (strncmp(ip->name,"Min",3) == 0 || strncmp(ip->name,"Hr",2) == 0 || strncmp(ip->name,"Q",1) == 0
+       || strncmp(ip->name,"Yr",2) == 0 || strncmp(ip->name,"Day",1) == 0 || strncmp(ip->name,"Morning",1) == 0
+       || strncmp(ip->name,"Afternoon",1) == 0 || strncmp(ip->name,"Evening",1) == 0 || strncmp(ip->name,"Night",1) == 0)
+      {
+      continue;
+      }
+   }
+
+for (i = 0; i < 1024; i++)
+   {
+   if (array[i].q <= 0.00001)
+      {
+      continue;
+      }
+
+   if (IsItemIn(VHEAP,array[i].name))
+      {
+      array[i].date = now;
+      }
+
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+
+   snprintf(buffer,CF_MAXVARSIZE-1,"%s,%ld,%7.4lf,%7.4lf\n",array[i].name,array[i].date,array[i].q,sqrt(array[i].d));
+   AppendItem(reply,buffer,NULL);
+   }
+
+DeleteDBCursor(dbp,dbcp);
+CloseDB(dbp);
 }
 
 /*****************************************************************************/
 
 void Nova_PackSetuid(struct Item **reply,char *header,time_t from,enum cfd_menu type)
-{
+
+{ FILE *fin,*fout;
+  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  struct Item *ip,*file = NULL;
+  char start[32];
+  int first = true;
+
+CfOut(cf_verbose,""," -> Packing setuid data");
+
+snprintf(name,CF_BUFSIZE,"%s/cfagent.%s.log",CFWORKDIR,VSYSNAME.nodename);
+
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   return;
+   }
+
+/* Max 2016 entries - at least a week */
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+   PrependItem(&file,line,NULL);
+   }
+
+cf_fclose(fin);
+
+file = SortItemListNames(file);
+
+for (ip = file; ip != NULL; ip = ip->next)
+   {
+   memset(start,0,32);
+   memset(name,0,255);
+
+   if (cf_strlen(ip->name) == 0)
+      {
+      continue;
+      }
+
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+
+   /* Promise: Keep a small time-key enabling further compression by delta elimination */
+
+   AppendItem(reply,ip->name,NULL);
+   }
+
+DeleteItemList(file);
 }
 
 /*****************************************************************************/
 
 void Nova_PackFileChanges(struct Item **reply,char *header,time_t from,enum cfd_menu type)
-{
+
+{ FILE *fin;
+  char name[CF_BUFSIZE],line[CF_BUFSIZE],datestr[CF_MAXVARSIZE],size[CF_MAXVARSIZE];
+  char no[CF_SMALLBUF],change[CF_BUFSIZE],reformat[CF_BUFSIZE],output[2*CF_BUFSIZE],aggregate[CF_BUFSIZE];
+  char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],ref[CF_SMALLBUF],key[CF_SMALLBUF];
+  struct Item *ip,*file = NULL;
+  char pm,start[32];
+  int i = 0,truncate,first = true;
+
+CfOut(cf_verbose,""," -> Packing file change data");
+snprintf(name,CF_BUFSIZE-1,"%s/state/file_hash_event_history",CFWORKDIR);
+
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   return;
+   }
+
+/* Max 2016 entries - at least a week */
+snprintf(name,CF_SMALLBUF,"%s",ctime(&from));
+sscanf(name,"%*s %s %s %*s %s",month,day,year);
+snprintf(ref,CF_SMALLBUF-1,"%s %s %s",day,month,year);
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+
+   sscanf(line,"%*s %s %s %*s %s",month,day,year);
+   snprintf(key,CF_SMALLBUF-1,"%s %s %s",day,month,year);
+   
+   if (!Nova_CoarseLaterThan(key,ref))
+      {
+      continue;
+      }
+
+   PrependItem(&file,line,NULL);
+   }
+
+cf_fclose(fin);
+
+/* Need to promise data from a given time? The events time+change are
+   unique so they can be hashed the server to avoid repeated entries
+   if the receiver for some reason attemped to collect multiple times.
+   We can't avoid sending the same data twice without trying to keep track
+   of everything sent to each client, but the receiver can eliminate
+   duplicates -- so we only need approximate lazy pruning. */
+
+for (ip = file; ip != NULL; ip = ip->next)
+   {
+   memset(start,0,32);
+   memset(name,0,255);
+
+   if (cf_strlen(ip->name) == 0)
+      {
+      continue;
+      }
+
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+   
+   AppendItem(reply,ip->name,NULL);
+
+   if (++i > 12*24*7)
+      {
+      break;
+      }
+   }
+
+DeleteItemList(file);
 }
 
 /*****************************************************************************/
 
 void Nova_PackDiffs(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{
+{ FILE *fin;
+  char name[CF_BUFSIZE],line[CF_BUFSIZE],datestr[CF_MAXVARSIZE],size[CF_MAXVARSIZE];
+  char no[CF_SMALLBUF],change[CF_BUFSIZE],reformat[CF_BUFSIZE],output[2*CF_BUFSIZE],aggregate[CF_BUFSIZE];
+  char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],ref[CF_SMALLBUF],key[CF_SMALLBUF];
+  struct Item *ip,*file = NULL;
+  char pm,start[32];
+  int i = 0,truncate,first = true;
+
+CfOut(cf_verbose,""," -> Packing diff data");
+ 
+snprintf(name,CF_BUFSIZE-1,"%s/cfdiff.log",CFWORKDIR);
+
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   return;
+   }
+
+/* Max 2016 entries - at least a week */
+snprintf(name,CF_SMALLBUF,"%s",ctime(&from));
+sscanf(name,"%*s %s %s %*s %s",month,day,year);
+snprintf(ref,CF_SMALLBUF-1,"%s %s %s",day,month,year);
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+
+   if (strncmp(line,"CHANGE",strlen("CHANGE")) != 0)
+      {
+      continue;
+      }
+
+   name[0] = '\0';
+   sscanf(line,"CHANGE %[^\n]",name);
+
+   fgets(line,CF_BUFSIZE-1,fin);
+   sscanf(line,"%128[^;];%[^\n]",datestr,size);
+
+   if (strncmp(datestr,"END",strlen("END")) == 0)
+      {
+      continue;
+      }
+
+   memset(aggregate,0,CF_BUFSIZE);
+   snprintf(aggregate,CF_BUFSIZE-1,"%s<br>",aggregate);
+   output[0] = '\0';
+
+   truncate = false;
+
+   while (!feof(fin))
+      {
+      line[0] = '\0';
+      fgets(line,CF_BUFSIZE-1,fin);
+
+      if (strncmp(line,"END",strlen("END")) == 0)
+         {
+         break;
+         }
+
+      no[0] = '\0';
+      change[0] = '\0';
+      sscanf(line,"%c,%[^,],%1024[^\n]",&pm,no,change);
+
+      if (!truncate)
+         {
+         snprintf(reformat,CF_BUFSIZE-1,"   %s\n",line);
+         if (!JoinSuffix(aggregate,reformat))
+            {
+            }
+         }
+      }
+   
+   snprintf(output,CF_BUFSIZE-1,"%s %s %s",datestr,name,aggregate);
+
+   sscanf(datestr,"%*s %s %s %*s %s",month,day,year);
+   snprintf(key,CF_SMALLBUF-1,"%s %s %s",day,month,year);
+   
+   if (!Nova_CoarseLaterThan(key,ref))
+      {
+      continue;
+      }
+
+   if (strlen(aggregate) > 0)
+      {
+      PrependItem(&file,output,NULL);
+      aggregate[0] = '\0';
+      }
+   }
+
+cf_fclose(fin);
+
+for (i = 0,ip = file; ip != NULL; ip = ip->next)
+   {
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+   
+   AppendItem(reply,ip->name,NULL);
+   }
+
+DeleteItemList(file);
 }
 
 /*****************************************************************************/
 
 void Nova_PackMonitorWeek(struct Item **reply,char *header,time_t from,enum cfd_menu type)
-{
+
+{ int its,i,j,k, count = 0,err,first = true;
+  double kept = 0, not_kept = 0, repaired = 0;
+  struct stat statbuf;
+  struct Averages entry,det;
+  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
+  time_t now;
+  CF_DB *dbp;
+
+CfOut(cf_verbose,""," -> Monitor week data");
+  
+snprintf(filename,CF_MAXVARSIZE,"%s/state/%s",CFWORKDIR,CF_AVDB_FILE);
+MapName(filename);
+  
+if (!OpenDB(filename,&dbp))
+   {
+   CfOut(cf_verbose,"","Couldn't open average database %s\n",filename);
+   return;
+   }
+
+its = 12; // 1 hour coarse graining resolution
+
+now = CF_MONDAY_MORNING;
+
+while (now < CF_MONDAY_MORNING + CF_WEEK)
+   {
+   memset(&entry,0,sizeof(entry));
+
+   for (j = 0; j < its; j++)
+      {
+      strcpy(timekey,GenTimeKey(now));
+
+      if (ReadDB(dbp,timekey,&det,sizeof(struct Averages)))
+         {
+         for (i = 0; i < CF_OBSERVABLES; i++)
+            {
+            entry.Q[i].expect += det.Q[i].expect/(double)its;
+            entry.Q[i].var += det.Q[i].var/(double)its;
+            entry.Q[i].q += det.Q[i].q/(double)its;
+            }
+         }
+
+      now += CF_MEASURE_INTERVAL;
+      count++;
+      }
+
+   for (i = 0; i < CF_OBSERVABLES; i++)
+      {
+      if (entry.Q[i].q > entry.Q[i].expect + 2.0*sqrt(entry.Q[i].var))
+         {
+         not_kept++;
+         continue;
+         }
+
+      if (entry.Q[i].q > entry.Q[i].expect + sqrt(entry.Q[i].var))
+         {
+         repaired++;
+         continue;
+         }
+
+      if (entry.Q[i].q < entry.Q[i].expect - 2.0*sqrt(entry.Q[i].var))
+         {
+         not_kept++;
+         continue;
+         }
+
+      if (entry.Q[i].q < entry.Q[i].expect - sqrt(entry.Q[i].var))
+         {
+         repaired++;
+         continue;
+         }
+
+      kept++;
+      }
+
+   /* Promise: only print header if we intend to transmit some data */
+   
+   if (first && (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0))
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+
+   /* Promise: Keep a small time-key enabling further compression by delta elimination */
+
+   snprintf(buffer,CF_BUFSIZE,"T: %s\n",timekey);
+   AppendItem(reply,buffer,NULL);
+   
+   for (i = 0; i < CF_OBSERVABLES; i++)
+      {
+      if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
+         {
+         /* Promise: Keep the integer observable label so that we can eliminate zero entries */
+         
+         snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].expect, sqrt(entry.Q[i].var),entry.Q[i].q);
+         AppendItem(reply,buffer,NULL);
+         }
+      }
+   }
+
+// Promise: need to reproduce this for the monitoring, possibly on the far side
+
+METER_KEPT[meter_anomalies_day] = 100.0*kept/(kept+repaired+not_kept);
+METER_REPAIRED[meter_anomalies_day] = 100.0*repaired/(kept+repaired+not_kept);
+
+CloseDB(dbp);
 }
 
 /*****************************************************************************/
 
 void Nova_PackMonitorMag(struct Item **reply,char *header,time_t from,enum cfd_menu type)
-{
+
+{ int its,i,j,k, count = 0,err,ok[CF_OBSERVABLES],first = true;
+  struct Averages entry,det;
+  time_t now,here_and_now;
+  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
+  CF_DB *dbp;
+
+CfOut(cf_verbose,""," -> Packing monitor magnified data");
+  
+snprintf(filename,CF_MAXVARSIZE,"%s/state/%s",CFWORKDIR,CF_AVDB_FILE);
+MapName(filename);
+  
+if (!OpenDB(filename,&dbp))
+   {
+   CfOut(cf_verbose,"","Couldn't open average database %s\n",filename);
+   return;
+   }
+
+its = 1; // Maximum resolution
+
+now = time(NULL);
+here_and_now = now - (time_t)(4 * CF_TICKS_PER_HOUR);
+
+// if from > here_and_now just send the delta
+
+while (here_and_now < now)
+   {
+   memset(&entry,0,sizeof(entry));
+
+   if (from > here_and_now)
+      {
+      continue;
+      }
+   
+   for (j = 0; j < its; j++)
+      {
+      strcpy(timekey,GenTimeKey(here_and_now));
+
+      if (ReadDB(dbp,timekey,&det,sizeof(struct Averages)))
+         {
+         for (i = 0; i < CF_OBSERVABLES; i++)
+            {
+            entry.Q[i].expect += det.Q[i].expect/(double)its;
+            entry.Q[i].var += det.Q[i].var/(double)its;
+            entry.Q[i].q += det.Q[i].q/(double)its;
+            }
+         }
+      else
+         {
+         CfOut(cf_verbose,""," !! Read failed for ");
+         }
+
+      here_and_now += CF_MEASURE_INTERVAL;
+      count++;
+      }
+
+   /* Promise: only print header if we intend to transmit some data */
+   
+   if (first && (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0))
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+
+   /* Promise: Keep a small time-key enabling further compression by delta elimination */
+
+   snprintf(buffer,CF_BUFSIZE,"T: %ld\n",here_and_now);
+   AppendItem(reply,buffer,NULL);
+   
+   for (i = 0; i < CF_OBSERVABLES; i++)
+      {
+      if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
+         {
+         /* Promise: Keep the integer observable label so that we can eliminate zero entries */
+         
+         snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].expect, sqrt(entry.Q[i].var),entry.Q[i].q);
+         AppendItem(reply,buffer,NULL);
+         }
+      }
+   }
+
+CloseDB(dbp);
 }
 
 /*****************************************************************************/
@@ -252,7 +790,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       {
       LookUpClassName(i,name);
       
-      snprintf(buffer,CF_BUFSIZE,"%d,%s:",i,name);
+      snprintf(buffer,CF_BUFSIZE,"%d:",i);
       
       for (k = 0; k < CF_GRAINS; k++)
          {      
@@ -268,14 +806,192 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 /*****************************************************************************/
 
 void Nova_PackMonitorYear(struct Item **reply,char *header,time_t from,enum cfd_menu type)
-{
+
+{ int its,i,j,k, count = 0,err,this_lifecycle,ago, this,first = true;
+ char timekey[CF_MAXVARSIZE],timekey_now[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
+  char d[CF_TIME_SIZE],m[CF_TIME_SIZE],l[CF_TIME_SIZE],s[CF_TIME_SIZE];
+  char filename[CF_BUFSIZE];
+  struct Averages value;
+  time_t now;
+  FILE *fp[CF_OBSERVABLES];
+  CF_DB *dbp;
+  char *day = VDAY,*month=VMONTH,*lifecycle=VLIFECYCLE,*shift=VSHIFT;
+    
+CfOut(cf_verbose,""," -> Packing monitor trend data");
+
+snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_HISTORYDB);
+MapName(filename);
+
+if (!OpenDB(filename,&dbp))
+   {
+   return;
+   }
+
+snprintf(timekey_now,CF_MAXVARSIZE-1,"%s_%.3s_%s_%s",day,month,lifecycle,shift);
+
+/* Now we graphs of the past 3 years, in order from 2 years ago to now */
+
+ago = 2;
+
+//NovaOpenNewLifeCycle(ago,fp);
+strncpy(l,lifecycle,31);
+
+this_lifecycle = Str2Int(l+strlen("Lcycle_"));
+this = (this_lifecycle + 2 - ago) %3;
+snprintf(l,CF_TIME_SIZE-1,"Lcycle_%d",this);
+
+strncpy(s,shift,31);
+strncpy(d,day,31);
+strncpy(m,month,31);
+
+NovaIncrementShift(d,m,l,s);
+
+while(true)
+   {
+   snprintf(timekey,CF_MAXVARSIZE-1,"%s_%s_%s_%s",d,m,l,s);
+
+   if (ReadDB(dbp,timekey,&value,sizeof(struct Averages)))
+      {
+      for (i = 0; i < CF_OBSERVABLES;i++)
+         {
+         /* Check for out of bounds data */
+
+         if (value.Q[i].q < 0 && value.Q[i].q > CF_BIGNUMBER)
+            {
+            value.Q[i].q = 0;
+            }
+
+         if (value.Q[i].var < 0 && value.Q[i].var > CF_BIGNUMBER)
+            {
+            value.Q[i].var = value.Q[i].q;
+            }
+
+         if (value.Q[i].expect < 0 && value.Q[i].expect > CF_BIGNUMBER)
+            {
+            value.Q[i].expect = value.Q[i].q;
+            }
+
+         if (first && value.Q[i].q > 0 && value.Q[i].expect > 0 && value.Q[i].var > 0)
+            {
+            first = false;
+            AppendItem(reply,header,NULL);
+            }
+
+         if (value.Q[i].q > 0 && value.Q[i].expect > 0 && value.Q[i].var > 0)
+            {
+            snprintf(buffer,CF_BUFSIZE-1,"%d %s %.2lf %.2lf %.2lf\n",i,timekey,value.Q[i].q,value.Q[i].expect,sqrt(value.Q[i].var));
+            AppendItem(reply,buffer,NULL);
+            }
+         }
+      }
+
+   count++;
+
+   NovaIncrementShift(d,m,l,s);
+
+   if (NovaLifeCyclePassesGo(d,m,l,s,day,month,lifecycle,shift))
+      {
+      if (ago--)
+         {
+         count = 0;
+         }
+      else
+         {
+         break;
+         }
+      }
+   }
+
+CloseDB(dbp);
 }
 
 /*****************************************************************************/
 
 void Nova_PackCompliance(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{
+{ FILE *fin,*fout;
+  char name[CF_BUFSIZE];
+  double lsea = CF_WEEK * 52; /* expire after a year */
+  struct Event entry,e,newe;
+  int i = 0,ksize,vsize,first = true;
+  CF_DB *dbp;
+  CF_DBC *dbcp;
+  char *key;
+  void *stored;
+ 
+CfOut(cf_verbose,""," -> Packing sum compliance data");
+
+/* Open the db */
+
+snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_COMPLIANCE);
+MapName(name);
+
+if (!OpenDB(name,&dbp))
+   {
+   CfOut(cf_verbose, "", "!! Could not open database \"%s\"", name);
+   return;
+   }
+
+/* Acquire a cursor for the database. */
+
+if (!NewDBCursor(dbp,&dbcp))
+   {
+   CfOut(cf_inform,""," !! Unable to scan class db");
+   return;
+   }
+
+/* Initialize the key/data return pair. */
+
+while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
+   {
+   double measure,av,var;
+   time_t then,lastseen,now = time(NULL);
+   char tbuf[CF_BUFSIZE],eventname[CF_BUFSIZE];
+
+   cf_strcpy(eventname,(char *)key);
+
+   memcpy(&entry,stored,sizeof(entry));
+
+   then    = entry.t;
+   measure = entry.Q.q;
+   av = entry.Q.expect;
+   var = entry.Q.var;
+   lastseen = now - then;
+
+   snprintf(tbuf,CF_BUFSIZE-1,"%s",cf_ctime(&then));
+   
+   if (then > 0 && lastseen > lsea)
+      {
+      CfOut(cf_verbose,""," -> Promise usage record \"%s\" expired, removing...\n",eventname);
+      DeleteDB(dbp,eventname);
+      }
+   else
+      {
+      if (measure == 1.0)
+         {
+         snprintf(name,CF_BUFSIZE-1,"%ld,%s,compliant,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
+         }
+      else if (measure == 0.5)
+         {
+         snprintf(name,CF_BUFSIZE-1,"%ld,%s,repaired,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
+         }
+      else if (measure == 0.0)
+         {
+         snprintf(name,CF_BUFSIZE-1,"%ld,%,non-compliant,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
+         }
+
+      if (first)
+         {
+         first = false;
+         AppendItem(reply,header,NULL);
+         }
+
+      AppendItem(reply,name,NULL);
+      }
+   }
+
+DeleteDBCursor(dbp,dbcp);
+CloseDB(dbp);
 }
 
 /*****************************************************************************/
@@ -283,64 +999,602 @@ void Nova_PackCompliance(struct Item **reply,char *header,time_t from,enum cfd_m
 void Nova_PackSoftware(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 {
+ CfOut(cf_verbose,""," -> Packing software data");
 }
 
 /*****************************************************************************/
 
 void Nova_PackAvailPatches(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+
 {
+CfOut(cf_verbose,""," -> Packing patch availability data");
 }
 
 /*****************************************************************************/
 
 void Nova_PackPatchStatus(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+
 {
+CfOut(cf_verbose,""," -> Packing patch installed data");
 }
 
 /*****************************************************************************/
 
 void Nova_Pack_promise_output_common(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+
 {
+CfOut(cf_verbose,""," -> Packing promise data (deprecated)");
+// Do we still want this?
 }
 
 /*****************************************************************************/
 
 void Nova_PackValueReport(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{
+{ char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],name[CF_BUFSIZE];
+  CF_DB *dbp;
+  CF_DBC *dbcp;
+  int ksize,vsize,first = true;
+  void *value;
+  char *key;
+  FILE *fout;
+  time_t now = time(NULL);
+  struct promise_value pt;
+  struct Item *ip,*data = NULL;
+  char ref[CF_SMALLBUF];
+
+// Strip out the date resolution so we keep only each day of the year
+
+CfOut(cf_verbose,""," -> Packing value data");
+  
+snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_VALUE);
+MapName(name);
+
+if (!OpenDB(name,&dbp))
+   {
+   return;
+   }
+
+snprintf(name,CF_SMALLBUF,"%s",ctime(&from));
+sscanf(name,"%*s %s %s %*s %s",month,day,year);
+snprintf(ref,CF_SMALLBUF-1,"%s %s %s",day,month,year);
+
+if (NewDBCursor(dbp,&dbcp))
+   {
+   while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
+      {
+      if (value == NULL)
+         {
+         continue;
+         }
+
+      if (!Nova_CoarseLaterThan(key,ref))
+         {
+         continue;
+         }
+
+      memcpy(&pt,value,sizeof(pt));
+      snprintf(name,CF_BUFSIZE,"%s,%.4lf,%.4lf,%.4lf\n",key,pt.kept,pt.repaired,pt.notkept);
+
+      if (first)
+         {
+         first = false;
+         AppendItem(reply,header,NULL);
+         }
+
+      AppendItem(reply,name,NULL);
+      }
+   }
+
+CloseDB(dbp);
+DeleteItemList(data);
 }
 
 /*****************************************************************************/
 
 void Nova_PackVariables(struct Item **reply,char *header,time_t from,enum cfd_menu type)
-{
+
+{ char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  FILE *fin;
+  int first = true;
+
+CfOut(cf_verbose,""," -> Packing variable data");
+  
+snprintf(name,CF_BUFSIZE-1,"%s/state/vars.out",CFWORKDIR);
+MapName(name);
+
+if ((fin = fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_verbose,""," -> No variable data yet");
+   return;
+   }
+
+while (!feof(fin))
+   {
+   char lval[CF_MAXVARSIZE],type[CF_MAXVARSIZE],rval[CF_MAXVARSIZE];
+
+   lval[0] = '\0';
+   rval[0] = '\0';
+   type[0] = '\0';   
+   line[0] = '\0';
+   
+   fgets(line,CF_BUFSIZE-1,fin);
+
+   if (strncmp(line,"Scope",strlen("Scope")) == 0)
+      {
+      // Skip the constant variables
+      
+      if (strncmp(line,"Scope const",strlen("Scope const")) == 0)
+         {
+         while (!feof(fin))
+            {
+            line[0] = '\0';
+            fgets(line,CF_BUFSIZE-1,fin);
+            
+            if (strncmp(line,"Scope",strlen("Scope")) == 0)
+               {
+               }
+            }
+
+         if (feof(fin))
+            {
+            break;
+            }
+         }
+      }
+   else if (strncmp(line,"<tr><td>",strlen("<tr><td>")) == 0)
+      {
+      sscanf(line,"<tr><td>%*[^<]</td><th>%32[^<]</th><td>%*[^<]</td><td>%512[^<]</td><td>%1023[^<]</td></tr>",type,lval,rval);
+      }
+   else
+      {
+      continue;
+      }
+
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+
+   if (strlen(lval) > 0)
+      {
+      snprintf(name,CF_BUFSIZE,"%s,%s,%s\n",type,lval,rval);
+      AppendItem(reply,name,NULL);
+      }
+   else
+      {
+      AppendItem(reply,line,NULL);
+      }
+   }
+
+fclose(fin);
 }
 
 /*****************************************************************************/
 
 void Nova_PackLastSeen(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{
+{ CF_DB *dbp;
+  CF_DBC *dbcp;
+  char *key;
+  void *value;
+  FILE *fout;
+  time_t tid = time(NULL);
+  double now = (double)tid,average = 0, var = 0;
+  double ticksperhr = (double)CF_TICKS_PER_HOUR;
+  char name[CF_BUFSIZE],hostname[CF_BUFSIZE],buffer[CF_BUFSIZE];
+  struct QPoint entry;
+  int ret,ksize,vsize,first = true;
+
+CfOut(cf_verbose,""," -> Packing last-seen data");
+  
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
+MapName(name);
+
+if (!OpenDB(name,&dbp))
+   {
+   return;
+   }
+
+/* Acquire a cursor for the database. */
+
+if (!NewDBCursor(dbp,&dbcp))
+   {
+   CfOut(cf_inform,""," !! Unable to scan last-seen database");
+   return;
+   }
+
+ /* Initialize the key/data return pair. */
+
+memset(&entry, 0, sizeof(entry));
+
+ /* Walk through the database and print out the key/data pairs. */
+
+while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
+   {
+   double then;
+   time_t fthen;
+   char tbuf[CF_BUFSIZE],addr[CF_BUFSIZE];
+
+   memcpy(&then,value,sizeof(then));
+   strncpy(hostname,(char *)key,ksize);
+
+   if (value != NULL)
+      {
+      memcpy(&entry,value,sizeof(entry));
+
+      then = entry.q;
+      average = (double)entry.expect;
+      var = (double)entry.var;
+      }
+   else
+      {
+      continue;
+      }
+
+   if (now - then > (double)LASTSEENEXPIREAFTER)
+      {
+      DeleteDB(dbp,key);
+      CfOut(cf_inform,""," -> Deleting expired entry for %s\n",hostname);
+      continue;
+      }
+
+   fthen = (time_t)then;                            /* format date */
+
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+
+   snprintf(buffer,CF_BUFSIZE-1,"%c %25s %15s %ld %.2lf %.2lf %.2lf\n",
+           *hostname,
+           IPString2Hostname(hostname+1),
+           addr,
+           (long)fthen,
+           ((double)(now-then))/ticksperhr,
+           average/ticksperhr,
+           sqrt(var)/ticksperhr);
+
+   AppendItem(reply,buffer,NULL);
+   }
+
+DeleteDBCursor(dbp,dbcp);
+CloseDB(dbp);
 }
 
 /*****************************************************************************/
 
 void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{
+{ FILE *fin,*fout;
+  char name[CF_BUFSIZE],line[CF_BUFSIZE],buffer[CF_BUFSIZE];
+  struct Item *ip,*file = NULL;
+  char start[32],end[32],*sp;
+  char version[CF_MAXVARSIZE];
+  int kept,repaired,notrepaired;
+  int i = 0,today = false,first = true;
+  double av_day_kept = 0, av_day_repaired = 0;
+  double av_week_kept = 0, av_week_repaired = 0;
+  double av_hour_kept = 0, av_hour_repaired = 0;
+  char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],key[CF_SMALLBUF],ref[CF_SMALLBUF];
+  
+CfOut(cf_verbose,""," -> Packing total compliance data");
+snprintf(name,CF_BUFSIZE-1,"%s/promise.log",CFWORKDIR);
+
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_error,"cf_fopen","Cannot open the source log %s",name);
+   return;
+   }
+
+/* Max 2016 entries - at least a week */
+
+snprintf(ref,CF_SMALLBUF,"%s",ctime(&from));
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+
+   if (!Nova_CoarseLaterThan(line,ref))
+      {
+      continue;
+      }
+
+   PrependItem(&file,line,NULL);
+   }
+
+cf_fclose(fin);
+
+for (ip = file; ip != NULL; ip = ip->next)
+   {
+   kept = repaired = notrepaired = 0;
+   memset(start,0,32);
+   memset(end,0,32);
+   memset(version,0,255);
+
+   if (cf_strlen(ip->name) == 0)
+      {
+      continue;
+      }
+
+   // Complex parsing/extraction
+
+   sscanf(ip->name,"%31[^-]",start);
+   sscanf(strstr(ip->name,"Outcome of version")+strlen("Outcome of version"),"%31[^:]",version);
+   sscanf(strstr(ip->name,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&kept,&repaired,&notrepaired);
+   sscanf(strstr(ip->name,"->")+2,"%31[^-]",end);
+
+   if (sp = strstr(end,": Out"))
+      {
+      *sp = '\0';
+      }
+
+   if (i < 12*24)
+      {
+      av_day_kept = GAverage((double)kept,av_day_kept,0.5);
+      av_day_repaired = GAverage((double)repaired,av_day_repaired,0.5);
+      }
+
+   if (i < 12*2)
+      {
+      av_hour_kept = GAverage((double)kept,av_hour_kept,0.5);
+      av_hour_repaired = GAverage((double)repaired,av_hour_repaired,0.5);
+      }
+
+   av_week_kept = GAverage((double)kept,av_week_kept,0.1);
+   av_week_repaired = GAverage((double)repaired,av_week_repaired,0.1);
+
+   snprintf(buffer,CF_BUFSIZE-1,"%s,%s,%s,%d,%d,%d\n",start,end,version,kept,repaired,notrepaired);
+   
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+   
+   AppendItem(reply,buffer,NULL);
+   
+   if (++i > 12*24*7)
+      {
+      break;
+      }
+   }
+
+DeleteItemList(file);
+
+METER_KEPT[meter_compliance_week] = av_week_kept;
+METER_REPAIRED[meter_compliance_week] = av_week_repaired;
+METER_KEPT[meter_compliance_day] = av_day_kept;
+METER_REPAIRED[meter_compliance_day] = av_day_repaired;
+METER_KEPT[meter_compliance_hour] = av_week_kept;
+METER_REPAIRED[meter_compliance_hour] = av_hour_repaired;
 }
 
 /*****************************************************************************/
 
 void Nova_PackRepairLog(struct Item **reply,char *header,time_t from,enum cfd_menu type)
-{
+
+{ FILE *fin,*fout;
+  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  char date[CF_MAXVARSIZE],handle[CF_MAXVARSIZE],bundle[CF_MAXVARSIZE],ref[CF_MAXVARSIZE];
+  char filename[CF_MAXVARSIZE],lineno[CF_MAXVARSIZE];
+  struct Item *ip,*file = NULL;
+  int i = 0,first = true;
+  char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF];
+  
+CfOut(cf_verbose,""," -> Packing repair data");
+
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
+
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   return;
+   }
+
+/* Max 2016 entries - at least a week */
+
+snprintf(ref,CF_SMALLBUF,"%s",ctime(&from));
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+
+   if (!Nova_LaterThan(line,ref))
+      {
+      continue;
+      }
+
+   PrependItem(&file,line,NULL);
+   }
+
+cf_fclose(fin);
+
+for (ip = file; ip != NULL; ip = ip->next)
+   {
+   if (cf_strlen(ip->name) == 0)
+      {
+      continue;
+      }
+
+   date[0] = '\0';
+
+   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%512[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
+
+   snprintf(name,CF_BUFSIZE-1,"%s,%s\n",date,handle);
+
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+   
+   AppendItem(reply,name,NULL);
+
+   if (++i > 12*24*7)
+      {
+      break;
+      }
+   }
+
+DeleteItemList(file);
 }
 
 /*****************************************************************************/
 
 void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{
+{ FILE *fin,*fout;
+  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  char date[CF_MAXVARSIZE],handle[CF_MAXVARSIZE],bundle[CF_MAXVARSIZE];
+  char ref[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],lineno[CF_MAXVARSIZE];
+  struct Item *ip,*file = NULL;
+  int i = 0,first = true;
+  char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF];
+
+CfOut(cf_verbose,""," -> Packing promise not-kept data");
+  
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_NOTKEPT_LOG);
+
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   return;
+   }
+
+
+/* Max 2016 entries - at least a week */
+
+snprintf(ref,CF_SMALLBUF,"%s",ctime(&from));
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+
+   if (!Nova_LaterThan(line,ref))
+      {
+      continue;
+      }
+
+   PrependItem(&file,line,NULL);
+   }
+
+cf_fclose(fin);
+
+for (ip = file; ip != NULL; ip = ip->next)
+   {
+   if (cf_strlen(ip->name) == 0)
+      {
+      continue;
+      }
+
+   date[0] = '\0';
+
+   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%1023[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
+
+   snprintf(name,CF_BUFSIZE-1,"%s,%s\n",date,handle);
+
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+   
+   AppendItem(reply,name,NULL);
+
+   if (++i > 12*24*7)
+      {
+      break;
+      }
+   }
+
+DeleteItemList(file);
 }
 
+/*****************************************************************************/
+/* Level                                                                     */
+/*****************************************************************************/
 
+int Nova_CoarseLaterThan(char *bigger,char *smaller)
+
+{ char month_small[CF_SMALLBUF];
+  char month_big[CF_SMALLBUF];
+  int m_small,day_small,year_small,m_big,year_big,day_big;
+
+sscanf(smaller,"%d %s %d",&day_small,month_small,&year_small);
+sscanf(bigger,"%d %s %d",&day_big,month_big,&year_big);
+
+if (year_big < year_small)
+   {
+   return false;
+   }
+
+m_small = Month2Int(month_small);
+m_big = Month2Int(month_big);
+
+if (m_big < m_small)
+   {
+   return false;
+   }
+
+if (day_big < day_small && m_big == m_small && year_big == year_small)
+   {
+   return false;
+   }
+
+return true;
+}
+
+/*****************************************************************************/
+
+int Nova_LaterThan(char *bigger,char *smaller)
+
+{ char month_small[CF_SMALLBUF];
+  char month_big[CF_SMALLBUF];
+  int m_small,day_small,year_small,m_big,year_big,day_big;
+  int min_small,min_big,hour_small,hour_big;
+
+// Format: Fri Mar 27 15:45:52 2009
+
+month_small[0] = '\0';
+month_big[0] = '\0';
+  
+sscanf(smaller,"%*s %s %d %d:%d:%*d %d",month_small,&day_small,&hour_small,&min_small,&year_small);
+sscanf(bigger,"%*s %s %d %d:%d:%*d %d",month_big,&day_big,&hour_big,&min_big,&year_big);
+
+if (year_big < year_small)
+   {
+   return false;
+   }
+
+m_small = Month2Int(month_small);
+m_big = Month2Int(month_big);
+
+if (m_big < m_small)
+   {
+   return false;
+   }
+
+if (day_big < day_small && m_big == m_small && year_big == year_small)
+   {
+   return false;
+   }
+
+if (hour_big < hour_small && day_big == day_small && m_big == m_small && year_big == year_small)
+   {
+   return false;
+   }
+
+if (min_big < min_small && hour_big == hour_small && day_big == day_small
+    && m_big == m_small && year_big == year_small)
+   {
+   return false;
+   }
+
+return true;
+}

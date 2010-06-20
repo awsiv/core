@@ -309,6 +309,8 @@ void Nova_PackLastSeen(struct Item **reply,char *header,time_t date,enum cfd_men
 void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackRepairLog(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+int Nova_CoarseLaterThan(char *key,char *from);
+int Nova_LaterThan(char *bigger,char *smaller);
 
 /* dataunpack.c */
 

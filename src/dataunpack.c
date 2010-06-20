@@ -20,7 +20,7 @@ CfOut(cf_verbose,""," -> Performance data ...................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("PERF: %s\n",ip->name);
+   printf("PERF: %s",ip->name);
    }
 }
 
@@ -34,7 +34,7 @@ CfOut(cf_verbose,""," -> Class data .................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("CLASS: %s\n",ip->name);
+   printf("CLASS: %s",ip->name);
    }
 
 }
@@ -49,7 +49,7 @@ CfOut(cf_verbose,""," -> setuid data ......................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("SETUID: %s",ip->name);
    }
 
 }
@@ -64,7 +64,7 @@ CfOut(cf_verbose,""," -> File change data....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("FILECHANGE: %s",ip->name);
    }
 
 }
@@ -79,7 +79,7 @@ CfOut(cf_verbose,""," -> File diff data...................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("DIFF: %s",ip->name);
    }
 
 }
@@ -94,9 +94,8 @@ CfOut(cf_verbose,""," -> Monitor weekly data.....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("WEEK: %s",ip->name);
    }
-
 }
 
 /*****************************************************************************/
@@ -109,7 +108,7 @@ CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("MAG: %s",ip->name);
    }
 
 }
@@ -138,7 +137,7 @@ CfOut(cf_verbose,""," -> Monitor year data.....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("YEAR: %s",ip->name);
    }
 
 }
@@ -153,7 +152,7 @@ CfOut(cf_verbose,""," -> Promise Compliance data..............");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("COMPLIANE: %s",ip->name);
    }
 
 }
@@ -168,7 +167,7 @@ CfOut(cf_verbose,""," -> Installed software data...............");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("SOFT: %s",ip->name);
    }
 
 }
@@ -183,7 +182,7 @@ CfOut(cf_verbose,""," -> Available patch data...................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("AVAIL_PATCH: %s",ip->name);
    }
 
 }
@@ -198,7 +197,7 @@ CfOut(cf_verbose,""," -> Patch status data.......................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("PATCHSTATUS: %s",ip->name);
    }
 
 }
@@ -213,7 +212,7 @@ CfOut(cf_verbose,""," -> Expanded private promise data.............");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("POLICY: %s",ip->name);
    }
 
 }
@@ -228,7 +227,7 @@ CfOut(cf_verbose,""," -> Value data..............................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("VALUE: %s",ip->name);
    }
 
 }
@@ -243,7 +242,7 @@ CfOut(cf_verbose,""," -> Variable data...........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("VARS: %s",ip->name);
    }
 
 }
@@ -258,7 +257,7 @@ CfOut(cf_verbose,""," -> Last-seen data..........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("LASTSEEN: %s",ip->name);
    }
 
 }
@@ -273,7 +272,7 @@ CfOut(cf_verbose,""," -> Total Compliance data......................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("TOTCOMPLIANCE: %s",ip->name);
    }
 
 }
@@ -288,7 +287,7 @@ CfOut(cf_verbose,""," -> Repair log data........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("REPAIR: %s",ip->name);
    }
 
 }
@@ -303,7 +302,7 @@ CfOut(cf_verbose,""," -> Not kept data...........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("GOT: %s\n",ip->name);
+   printf("NOTKEPT: %s",ip->name);
    }
 
 }

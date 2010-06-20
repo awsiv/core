@@ -213,7 +213,6 @@ PrependItem(&reply,buffer,NULL);
 
 for (ip = reply; ip != NULL; ip=ip->next)
    {
-   printf("SEND: %s\n",ip->name);
    cipherlen = EncryptString(conn->encryption_type,ip->name,out,conn->session_key,strlen(ip->name)+1);
    
    if (SendTransaction(conn->sd_reply,out,cipherlen,CF_MORE) == -1)
