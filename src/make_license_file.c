@@ -61,7 +61,7 @@ printf("Enter number of licenses: ");
 scanf("%d",&number);
 
 printf("Enter unique company string: ");
-scanf("%s",company);
+scanf("%[^\n]",company);
 
 printf("\nDate confirmed as: %s %s %s\n",f_day,f_month,f_year);
 printf("\nNumber of licenses granted: %d\n",number);
