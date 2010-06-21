@@ -22,23 +22,11 @@ void Nova_SpecialQuote(char *name,char *type)
   struct Item *ip,*file = NULL;
   int have_title = false;
 
-snprintf(filename,CF_BUFSIZE-1,"/var/cfengine/document_root.dat");
+snprintf(filename,CF_BUFSIZE,"%s/%s",DOCROOT,name);
 
 if ((fin = fopen(filename,"r")) == NULL)
    {
-   fprintf(fout,"<h1>Unable to open the map %s</h1>",filename);
-   return;
-   }
-
-rootpath[0] = '\0';
-fscanf(fin,"%s",rootpath);
-fclose(fin);
-
-snprintf(filename,CF_BUFSIZE,"%s/%s",rootpath,name);
-
-if ((fin = fopen(filename,"r")) == NULL)
-   {
-   fprintf(fout,"Unable to open the map fragment %s",filename);
+   fprintf(fout,"Nova Unable to open the local file fragment %s",filename);
    }
 else
    {
