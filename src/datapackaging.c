@@ -665,10 +665,6 @@ while (here_and_now < now)
             entry.Q[i].q += det.Q[i].q/(double)its;
             }
          }
-      else
-         {
-         CfOut(cf_verbose,""," !! Read failed for ");
-         }
 
       here_and_now += CF_MEASURE_INTERVAL;
       count++;
@@ -998,24 +994,203 @@ CloseDB(dbp);
 
 void Nova_PackSoftware(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{
- CfOut(cf_verbose,""," -> Packing software data");
+{ FILE *fin,*fout;
+  char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
+  char buffer[CF_BUFSIZE];
+  struct Item *ip,*file = NULL;
+  int i = 0,first = true;
+
+CfOut(cf_verbose,""," -> Packing software data");
+   
+snprintf(name,CF_MAXVARSIZE-1,"%s/reports/software_packages.csv",CFWORKDIR);
+
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   return;
+   }
+
+/* Max 2016 entries - at least a week */
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+   if (!IsItemIn(file,line))
+      {
+      PrependItem(&file,line,NULL);
+      }
+   }
+
+cf_fclose(fin);
+
+for (ip = file; ip != NULL; ip = ip->next)
+   {
+   memset(name,0,CF_MAXVARSIZE);
+   memset(version,0,CF_MAXVARSIZE);
+   memset(arch,0,CF_MAXVARSIZE);
+   memset(mgr,0,CF_MAXVARSIZE);
+
+   if (cf_strlen(ip->name) == 0)
+      {
+      continue;
+      }
+
+   sscanf(ip->name,"%250[^,],%250[^,],%250[^,],%250[^\n]",name,version,arch,mgr);
+
+   snprintf(buffer,CF_BUFSIZE-1,"%s,%s,%s\n",name,version,Nova_ShortArch(arch));
+
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+   
+   AppendItem(reply,buffer,NULL);
+   }
+
+DeleteItemList(file);
+
+METER_REPAIRED[meter_soft_day] = 0;
+METER_KEPT[meter_soft_day] = 0;
 }
 
 /*****************************************************************************/
 
 void Nova_PackAvailPatches(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{
-CfOut(cf_verbose,""," -> Packing patch availability data");
+{ int i = 0, first = true;
+  FILE *fin;
+  char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE];
+  char buffer[CF_BUFSIZE],line[CF_BUFSIZE];
+  struct Item *ip,*file = NULL;
+
+CfOut(cf_verbose,""," -> Packing available patch report...\n");
+
+snprintf(name,CF_MAXVARSIZE-1,"%s/reports/software_patches_avail.csv",CFWORKDIR);
+
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   return;
+   }
+
+/* Max 2016 entries - at least a week */
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+   if (!IsItemIn(file,line))
+      {
+      PrependItem(&file,line,NULL);
+      }
+   }
+
+cf_fclose(fin);
+
+for (ip = file; ip != NULL; ip = ip->next)
+   {
+   memset(name,0,CF_MAXVARSIZE);
+   memset(version,0,CF_MAXVARSIZE);
+   memset(arch,0,CF_MAXVARSIZE);
+   memset(mgr,0,CF_MAXVARSIZE);
+
+   if (cf_strlen(ip->name) == 0)
+      {
+      continue;
+      }
+
+   sscanf(ip->name,"%250[^,],%250[^,],%250[^,],%250[^\n]",name,version,arch,mgr);
+
+   snprintf(buffer,CF_BUFSIZE-1,"%s,%s,%s\n",name,version,Nova_ShortArch(arch));
+
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+   
+   AppendItem(reply,buffer,NULL);
+   }
+
+DeleteItemList(file);
 }
 
 /*****************************************************************************/
 
 void Nova_PackPatchStatus(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{
+{ int i = 0,first = true,count = 0;
+  FILE *fin;
+  char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE];
+  char buffer[CF_BUFSIZE],line[CF_BUFSIZE];
+  struct Item *ip,*file = NULL;
+
 CfOut(cf_verbose,""," -> Packing patch installed data");
+ 
+snprintf(name,sizeof(name),"%s/reports/software_patch_status.csv",CFWORKDIR);
+
+if ((fin = cf_fopen(name,"r")) == NULL)
+   {
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   return;
+   }
+
+/* Max 2016 entries - at least a week */
+
+while (!feof(fin))
+   {
+   line[0] = '\0';
+   fgets(line,CF_BUFSIZE-1,fin);
+
+   if (!IsItemIn(file,line))
+      {
+      PrependItem(&file,line,NULL);
+      }
+   }
+
+cf_fclose(fin);
+
+
+for (ip = file; ip != NULL; ip = ip->next)
+   {
+   memset(name,0,CF_MAXVARSIZE);
+   memset(version,0,CF_MAXVARSIZE);
+   memset(arch,0,CF_MAXVARSIZE);
+   memset(mgr,0,CF_MAXVARSIZE);
+
+   if (cf_strlen(ip->name) == 0)
+      {
+      continue;
+      }
+
+   sscanf(ip->name,"%250[^,],%250[^,],%250[^,],%250[^\n]",name,version,arch,mgr);
+
+   snprintf(buffer,CF_BUFSIZE-1,"%s,%s,%s\n",name,version,Nova_ShortArch(arch));
+
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+   
+   AppendItem(reply,buffer,NULL);
+   count++;
+   }
+
+DeleteItemList(file);
+
+if (count > 1)
+   {
+   METER_KEPT[meter_patch_day] = 0;
+   METER_REPAIRED[meter_patch_day] = 0;
+   }
+else
+   {
+   METER_KEPT[meter_patch_day] = 100.0;
+   METER_REPAIRED[meter_patch_day] = 0;
+   }
 }
 
 /*****************************************************************************/
@@ -1597,4 +1772,47 @@ if (min_big < min_small && hour_big == hour_small && day_big == day_small
    }
 
 return true;
+}
+
+/*****************************************************************************/
+
+char *Nova_ShortArch(char *arch)
+    
+{
+if (strcmp(arch,"i386") == 0)
+   {
+   return "3";
+   }
+
+if (strcmp(arch,"i486") == 0)
+   {
+   return "4";
+   }
+
+if (strcmp(arch,"i586") == 0)
+   {
+   return "5";
+   }
+
+if (strcmp(arch,"i686") == 0)
+   {
+   return "6";
+   }
+
+if (strcmp(arch,"noarch") == 0)
+   {
+   return "";
+   }
+
+if (strcmp(arch,"x86_64") == 0)
+   {
+   return "x";
+   }
+
+if (strcmp(arch,"default") == 0)
+   {
+   return "d";
+   }
+
+return arch;
 }
