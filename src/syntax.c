@@ -41,10 +41,17 @@ for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
    printf("  %s:\n", CF_ALL_BODIES[i].btype);
    printf("   {\n");
    Nova_ShowPromiseTypesFor(CF_ALL_BODIES[i].btype);
-   printf("   },\n");
+
+   if(CF_ALL_BODIES[i+1].btype != NULL)
+     {
+       printf("   },\n");
+     }
    }
 
-printf("  edit_line:\n   {\n");
+printf("   }\n};\n\n");
+
+
+printf("var edit_line_bundle_syntax = {\n");
 
 Nova_ShowPromiseTypesFor("*");
 printf(",\n");
@@ -71,7 +78,8 @@ for (i = 0; st[i].btype != NULL; i++)
       }
    }
 
-printf("}\n  }\n};\n");
+printf("}\n};\n");
+
 }
 
 /*******************************************************************/
@@ -163,7 +171,7 @@ for (i = 0; bs[i].lval != NULL; i++)
 
    if (bs[i].range == (void *)CF_BUNDLE)
       {
-	printf("\"%s\" : \"fn-like bundle-reference, defined in edit_line_bundle_syntax\"",bs[i].lval);
+	printf("\"%s\" : \"edit_line_bundle_syntax\"",bs[i].lval);
 
 	if(strcmp(bs[i].lval, "usebundle")) // no comma in "methods"
 	  {
