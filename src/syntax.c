@@ -81,7 +81,7 @@ void Nova_ShowControlBodies()
 { int i;
   int closeBrack = false;
 
-  printf("var body_control_sytax = {\n");
+  printf("var body_control_syntax = {\n");
 
 for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
    {
