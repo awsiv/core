@@ -86,7 +86,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
          }
           
       snprintf(tbuf,CF_BUFSIZE-1,"%s",cf_ctime(&then));
-      tbuf[strlen(tbuf)-9] = '\0';                     /* Chop off second and year */
+      tbuf[strlen(tbuf)-9] = '\0';                     /* Chop off second and year*/
 
       if (PURGE == 'y')
          {
@@ -121,7 +121,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
          AppendItem(reply,header,NULL);
          }
       
-      snprintf(buffer,CF_MAXVARSIZE-1,"%ld,%s,%7.4lf,%7.4lf\n",entry.t,eventname,measure,average,sqrt(var)/ticksperminute);
+      snprintf(buffer,CF_MAXVARSIZE-1,"%ld,%7.4lf,%7.4lf,%s\n",entry.t,measure,average,sqrt(var)/ticksperminute,eventname);
       AppendItem(reply,buffer,NULL);
       }
    else
@@ -355,7 +355,7 @@ while (!feof(fin))
       continue;
       }
 
-   PrependItem(&file,line,NULL);
+   PrependItem(&file,key,NULL);
    }
 
 cf_fclose(fin);
@@ -443,7 +443,7 @@ while (!feof(fin))
       }
 
    memset(aggregate,0,CF_BUFSIZE);
-   snprintf(aggregate,CF_BUFSIZE-1,"%s<br>",aggregate);
+   snprintf(aggregate,CF_BUFSIZE-1,"%s\n",aggregate);
    output[0] = '\0';
 
    truncate = false;
@@ -464,14 +464,14 @@ while (!feof(fin))
 
       if (!truncate)
          {
-         snprintf(reformat,CF_BUFSIZE-1,"   %s\n",line);
+         snprintf(reformat,CF_BUFSIZE-1,"%s\n",line);
          if (!JoinSuffix(aggregate,reformat))
             {
             }
          }
       }
    
-   snprintf(output,CF_BUFSIZE-1,"%s %s %s",datestr,name,aggregate);
+   snprintf(output,CF_BUFSIZE-1,"%s|%s|%s",datestr,name,aggregate);
 
    sscanf(datestr,"%*s %s %s %*s %s",month,day,year);
    snprintf(key,CF_SMALLBUF-1,"%s %s %s",day,month,year);
@@ -601,7 +601,7 @@ while (now < CF_MONDAY_MORNING + CF_WEEK)
          {
          /* Promise: Keep the integer observable label so that we can eliminate zero entries */
          
-         snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].expect, sqrt(entry.Q[i].var),entry.Q[i].q);
+         snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
          AppendItem(reply,buffer,NULL);
          }
       }
@@ -689,7 +689,7 @@ while (here_and_now < now)
          {
          /* Promise: Keep the integer observable label so that we can eliminate zero entries */
          
-         snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].expect, sqrt(entry.Q[i].var),entry.Q[i].q);
+         snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
          AppendItem(reply,buffer,NULL);
          }
       }
@@ -804,15 +804,16 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 void Nova_PackMonitorYear(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { int its,i,j,k, count = 0,err,this_lifecycle,ago, this,first = true;
- char timekey[CF_MAXVARSIZE],timekey_now[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
-  char d[CF_TIME_SIZE],m[CF_TIME_SIZE],l[CF_TIME_SIZE],s[CF_TIME_SIZE];
+  char timekey[CF_MAXVARSIZE],timekey_now[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
+  char d[CF_TIME_SIZE],m[CF_TIME_SIZE],l[CF_TIME_SIZE],s[CF_TIME_SIZE],om[CF_TIME_SIZE];
+  char *day = VDAY,*month=VMONTH,*lifecycle=VLIFECYCLE,*shift=VSHIFT;
   char filename[CF_BUFSIZE];
+  double num = 0,qav = 0,varav = 0,eav = 0;
+  FILE *fp[CF_OBSERVABLES];
   struct Averages value;
   time_t now;
-  FILE *fp[CF_OBSERVABLES];
   CF_DB *dbp;
-  char *day = VDAY,*month=VMONTH,*lifecycle=VLIFECYCLE,*shift=VSHIFT;
-    
+     
 CfOut(cf_verbose,""," -> Packing monitor trend data");
 
 snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_HISTORYDB);
@@ -839,6 +840,7 @@ snprintf(l,CF_TIME_SIZE-1,"Lcycle_%d",this);
 strncpy(s,shift,31);
 strncpy(d,day,31);
 strncpy(m,month,31);
+strncpy(om,month,31);
 
 NovaIncrementShift(d,m,l,s);
 
@@ -873,11 +875,30 @@ while(true)
             AppendItem(reply,header,NULL);
             }
 
-         if (value.Q[i].q > 0 && value.Q[i].expect > 0 && value.Q[i].var > 0)
+         if (strcmp(m,om) != 0)
             {
-            snprintf(buffer,CF_BUFSIZE-1,"%d %s %.2lf %.2lf %.2lf\n",i,timekey,value.Q[i].q,value.Q[i].expect,sqrt(value.Q[i].var));
+            num++;
+            
+            snprintf(buffer,CF_BUFSIZE,"T: %s\n",timekey);
             AppendItem(reply,buffer,NULL);
+                        
+            qav /= num;
+            eav /= num;
+            varav /= num;
+
+            if (value.Q[i].q > 0 && value.Q[i].expect > 0 && value.Q[i].var > 0)
+               {
+               snprintf(buffer,CF_BUFSIZE-1,"%d %.2lf %.2lf %.2lf\n",i,qav,eav,sqrt(varav));
+               AppendItem(reply,buffer,NULL);
+               strcpy(om,m);
+               }
             }
+         else
+            {
+            qav += value.Q[i].q;
+            eav += value.Q[i].expect;
+            varav += value.Q[i].var;
+            }         
          }
       }
 
@@ -965,15 +986,18 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
       {
       if (measure == 1.0)
          {
-         snprintf(name,CF_BUFSIZE-1,"%ld,%s,compliant,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
+         // Compliant
+         snprintf(name,CF_BUFSIZE-1,"%ld,%s,c,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
          }
       else if (measure == 0.5)
          {
-         snprintf(name,CF_BUFSIZE-1,"%ld,%s,repaired,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
+         // Repaired
+         snprintf(name,CF_BUFSIZE-1,"%ld,%s,r,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
          }
       else if (measure == 0.0)
          {
-         snprintf(name,CF_BUFSIZE-1,"%ld,%,non-compliant,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
+         // Non-compliant
+         snprintf(name,CF_BUFSIZE-1,"%ld,%,n,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
          }
 
       if (first)
@@ -1319,7 +1343,7 @@ while (!feof(fin))
       }
    else if (strncmp(line,"<tr><td>",strlen("<tr><td>")) == 0)
       {
-      sscanf(line,"<tr><td>%*[^<]</td><th>%32[^<]</th><td>%*[^<]</td><td>%512[^<]</td><td>%1023[^<]</td></tr>",type,lval,rval);
+      sscanf(line,"<tr><td>%*[^< ]</td><th>%32[^< ]</th><td>%*[^< ]</td><td>%512[^< ]</td><td>%1023[^< ]</td></tr>",type,lval,rval);
       }
    else
       {

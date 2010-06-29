@@ -15,12 +15,17 @@
 void Nova_UnPackPerformance(struct Item *data)
 
 { struct Item *ip;
+  time_t t;
+  char eventname[CF_MAXVARSIZE];
+  double measure = 0,average = 0,dev = 0;
 
 CfOut(cf_verbose,""," -> Performance data ...................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("PERF: %s",ip->name);
+   sscanf(ip->name,"%ld,%lf,%lf,%255s\n",&t,&measure,&average,&dev,eventname);
+
+   printf("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s",eventname,measure,average,dev,ctime(&t));
    }
 }
 
@@ -29,14 +34,17 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackClasses(struct Item *data)
 
 { struct Item *ip;
+  char name[CF_MAXVARSIZE];
+  time_t t;
+  double q = 0, dev = 0;
 
 CfOut(cf_verbose,""," -> Class data .................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("CLASS: %s",ip->name);
+   sscanf(ip->name,"%[^,],%ld,%7.4lf,%7.4lf\n",name,&t,&q,&dev);
+   printf("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s",name,q,dev,ctime(&t));
    }
-
 }
 
 /*****************************************************************************/
@@ -49,7 +57,7 @@ CfOut(cf_verbose,""," -> setuid data ......................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("SETUID: %s",ip->name);
+   printf("Set-uid program: %s",ip->name);
    }
 
 }
@@ -59,14 +67,15 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackFileChanges(struct Item *data)
 
 { struct Item *ip;
+  char name[CF_MAXVARSIZE],date[CF_MAXVARSIZE];
 
 CfOut(cf_verbose,""," -> File change data....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("FILECHANGE: %s",ip->name);
+   sscanf(ip->name,"%255[^,],%255[^\n]",name,date);
+   printf("File-change event: in %s at %s",name,date);
    }
-
 }
 
 /*****************************************************************************/
@@ -74,12 +83,15 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackDiffs(struct Item *data)
 
 { struct Item *ip;
+  char name[CF_MAXVARSIZE],t[CF_MAXVARSIZE],change[CF_BUFSIZE];
 
 CfOut(cf_verbose,""," -> File diff data...................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("DIFF: %s",ip->name);
+   sscanf(ip->name,"%[^|]|%[^|],%[^\0]",name,&t,&change);
+
+   printf("Change-diff: in file %s at %s begin %s \nend\n",name,t,change);
    }
 
 }
@@ -89,12 +101,26 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorWeek(struct Item *data)
 
 { struct Item *ip;
+  int observable;
+  double q,e,dev;
+  char t[CF_TIME_SIZE];
 
 CfOut(cf_verbose,""," -> Monitor weekly data.....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("WEEK: %s",ip->name);
+   if (strncmp(ip->name,"T: ", 3) == 0)
+      {
+      memset(t,0,CF_TIME_SIZE);
+      sscanf(ip->name+3,"%31[^\n]",t);
+      continue;
+      }
+   
+   q = e = dev = 0;
+   
+   sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
+
+   printf("Week-obs %d @ %s: %.2lf,%.2lf,%.2lf\n",observable,t,q,e,dev);
    }
 }
 
@@ -103,14 +129,26 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorMag(struct Item *data)
 
 { struct Item *ip;
+  time_t t = 0;
+  int observable;
+  double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("MAG: %s",ip->name);
-   }
+   if (strncmp(ip->name,"T: ", 3) == 0)
+      {
+      sscanf(ip->name+3,"%ld",&t);
+      continue;
+      }
+   
+   q = e = dev = 0;
+   
+   sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
 
+   printf("Mag-obs %d: %.2lf,%.2lf,%.2lf measured at %s",observable,q,e,dev,ctime(&t));
+   }
 }
 
 /*****************************************************************************/
