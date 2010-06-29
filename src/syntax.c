@@ -44,7 +44,7 @@ st = CF_FILES_SUBTYPES;
 
 for (i = 0; st[i].btype != NULL; i++)
    {
-   if (strcmp("edit_line",st[i].btype) == 0)
+   if (strcmp("edit_line",st[i].btype) == 0 || strcmp("*",st[i].btype) == 0)
       {
 	if(closeBrack)
 	  {
@@ -225,7 +225,6 @@ for (i = 0; bs[i].lval != NULL; i++)
 void Nova_ShowRange(char *s,enum cfdatatype type)
 
 { char *sp;
-  char sBuf[CF_MAXVARSIZE];
  
 if (strlen(s) == 0)
    {
@@ -233,11 +232,46 @@ if (strlen(s) == 0)
    return;
    }
 
- snprintf(sBuf, sizeof(sBuf), "%s", s);
- EscapeChar(sBuf, sizeof(sBuf), '"');
-
-printf("\"%s\"\n",sBuf);
+if (type == cf_opts || type == cf_olist)
+   {
+   printf("\"",s);
+   for (sp = s; *sp != '\0'; sp++)
+      {
+      if (*sp == ',')
+         {
+         printf("|");
+         }
+      else
+         {
+         printf("%c",*sp);
+         }
+      }
+   
+   printf("\"\n");
+   }
+else
+   {
+   printf("\"",s);
+   for (sp = s; *sp != '\0'; sp++)
+      {
+      if (*sp == '\"')
+         {
+         printf("\\\"");
+         }
+      else if (*sp == '\'')
+         {
+         printf("\\\'");
+         }
+      else
+         {
+         printf("%c",*sp);
+         }
+      }
+   
+   printf("\"\n");
+   }
 }
+
 
 /*******************************************************************/
 
