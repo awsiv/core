@@ -12,11 +12,12 @@
 
 void Nova_SyntaxTree2JavaScript()
 {
-  Nova_ShowControlBodies();
+
+  Nova_ShowBundleTypes();
 
   printf("\n\n");
 
-  Nova_ShowBundleTypes();
+  Nova_ShowControlBodies();
 
 //printf("var cf3_functions = \n");
 //printf("   {\n");
@@ -33,23 +34,6 @@ void Nova_ShowBundleTypes()
 { int i;
   struct SubTypeSyntax *st;
   int closeBrack = false;
-
-  printf("var bundle_syntax = {\n");
-
-for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
-   {
-   printf("  %s:\n", CF_ALL_BODIES[i].btype);
-   printf("   {\n");
-   Nova_ShowPromiseTypesFor(CF_ALL_BODIES[i].btype);
-
-   if(CF_ALL_BODIES[i+1].btype != NULL)
-     {
-       printf("   },\n");
-     }
-   }
-
-printf("   }\n};\n\n");
-
 
 printf("var edit_line_bundle_syntax = {\n");
 
@@ -78,7 +62,24 @@ for (i = 0; st[i].btype != NULL; i++)
       }
    }
 
-printf("}\n};\n");
+printf("}\n};\n\n\n");
+
+
+  printf("var bundle_syntax = {\n");
+
+for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
+   {
+   printf("  %s:\n", CF_ALL_BODIES[i].btype);
+   printf("   {\n");
+   Nova_ShowPromiseTypesFor(CF_ALL_BODIES[i].btype);
+
+   if(CF_ALL_BODIES[i+1].btype != NULL)
+     {
+       printf("   },\n");
+     }
+   }
+
+printf("   }\n};\n");
 
 }
 
@@ -106,7 +107,7 @@ for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
    closeBrack = true;
    }
 
- printf("   }\n};\n");
+ printf("   }\n};\n\n");
 }
 
 
@@ -171,7 +172,7 @@ for (i = 0; bs[i].lval != NULL; i++)
 
    if (bs[i].range == (void *)CF_BUNDLE)
       {
-	printf("\"%s\" : \"edit_line_bundle_syntax\"",bs[i].lval);
+	printf("\"%s\" : edit_line_bundle_syntax",bs[i].lval);
 
 	if(strcmp(bs[i].lval, "usebundle")) // no comma in "methods"
 	  {
