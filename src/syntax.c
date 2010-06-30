@@ -44,18 +44,26 @@ st = CF_FILES_SUBTYPES;
 
 for (i = 0; st[i].btype != NULL; i++)
    {
-   if (strcmp("edit_line",st[i].btype) == 0 || strcmp("*",st[i].btype) == 0)
+   if (strcmp("edit_line",st[i].btype) == 0)
       {
 	if(closeBrack)
 	  {
 	    printf("},\n");
 	  }
-
+	
+	
 
       Nova_Indent(3);
       printf("\"%s\":\n",st[i].subtype);
       Nova_Indent(6);
       printf("{\n");
+
+      //if(strcmp(st[i].subtype, "*") == 0)
+      //	{
+      //	  Nova_ShowBodyParts(CF_COMMON_BODIES,6);
+      //	  printf(",");
+      //	}
+
       Nova_ShowBodyParts(st[i].bs,6);
       Nova_Indent(6);
       closeBrack = true;
@@ -261,6 +269,10 @@ else
       else if (*sp == '\'')
          {
          printf("\\\'");
+         }
+      else if (*sp == '\\')
+         {
+         printf("\\\\");
          }
       else
          {
