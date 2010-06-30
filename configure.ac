@@ -24,7 +24,7 @@ AM_CONFIG_HEADER(src/conf.h)
 # Don't add if cross-compiling (setting host), to avoid using native libs.
 #
 if test "x$host" = "x"; then
-  for x in /usr/lib64 /usr/local/lib /usr/local/gnulib /opt/dce/lib /sw/lib
+  for x in /usr/lib64 /usr/local/gnu/lib /usr/local/gnulib /opt/dce/lib /sw/lib /usr/pkg/lib /usr/X11R7/lib
   do
     if test -d "$x"; then
       y=`expr " $LDFLAGS " : ".* -L$x "`
@@ -40,7 +40,7 @@ fi
 # Don't add if cross-compiling (setting host), to avoid using native libs.
 # 
 if test "x$host" = "x"; then
-  for x in /usr/local/include /opt/dce/include /sw/include
+  for x in /usr/local/include /usr/local/gnu/include /opt/dce/include /sw/include /usr/pkg/include /usr/X11R7/include
   do
     if test -d "$x"; then
       y=`expr " $CPPFLAGS " : ".* -I$x "`
@@ -136,7 +136,7 @@ if test $WITH_QDBM = 0 -a $WITH_TOKYO = 0; then
   else
     if test "x$BERKELEY_DB_DIR" = "xdefault" ; then
         for v in BerkeleyDB.4.2 BerkeleyDB.4.3 BerkeleyDB.4.4 BerkeleyDB.4.5 BerkeleyDB.4.6 BerkeleyDB.4.7; do
-            for d in $prefix /opt /usr/local /usr; do
+            for d in $prefix /opt /usr/local /usr/pkg /usr; do
                 test -d "$d/$v" && BERKELEY_DB_DIR="$d/$v"
             done
         done
