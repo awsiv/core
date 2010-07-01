@@ -115,7 +115,7 @@ switch (Str2Hypervisors(a.env.type))
    case cfv_virt_kvm:
    case cfv_virt_kvm_net:
        snprintf(hyper_uri,CF_MAXVARSIZE-1,"qemu:///session");
-
+       break;
    case cfv_virt_esx:
    case cfv_virt_esx_net:
        snprintf(hyper_uri,CF_MAXVARSIZE-1,"esx://127.0.0.1");
