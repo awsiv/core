@@ -33,12 +33,11 @@ void Nova_ShowBundleTypes()
 
 { int i;
   struct SubTypeSyntax *st;
+  struct SubTypeSyntax *commonEditLine = NULL;
   int closeBrack = false;
 
 printf("var edit_line_bundle_syntax = {\n");
 
-Nova_ShowPromiseTypesFor("*");
-printf(",\n");
 
 st = CF_FILES_SUBTYPES;
 
@@ -51,7 +50,12 @@ for (i = 0; st[i].btype != NULL; i++)
 	    printf("},\n");
 	  }
 	
-	
+	// merge the "*" subtype with the common one
+	if(strcmp(st[i].subtype, "*") == 0)
+	  {
+	    commonEditLine = &st[i];
+	    continue;
+	  }
 
       Nova_Indent(3);
       printf("\"%s\":\n",st[i].subtype);
@@ -70,7 +74,13 @@ for (i = 0; st[i].btype != NULL; i++)
       }
    }
 
-printf("}\n};\n\n\n");
+printf("},\n");
+Nova_ShowPromiseTypesFor("*", commonEditLine);
+
+
+
+
+printf("};\n\n\n");
 
 
   printf("var bundle_syntax = {\n");
@@ -84,7 +94,7 @@ for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
    {
    printf("  %s:\n", CF_ALL_BODIES[i].btype);
    printf("   {\n");
-   Nova_ShowPromiseTypesFor(CF_ALL_BODIES[i].btype);
+   Nova_ShowPromiseTypesFor(CF_ALL_BODIES[i].btype, NULL);
 
    if(CF_ALL_BODIES[i+1].btype != NULL)
      {
@@ -126,7 +136,7 @@ for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
 
 /*******************************************************************/
 
-void Nova_ShowPromiseTypesFor(char *s)
+void Nova_ShowPromiseTypesFor(char *s, struct SubTypeSyntax *commonMerge)
 
 { int i,j;
   struct SubTypeSyntax *st;
@@ -151,6 +161,14 @@ for (i = 0; i < CF3_MODULES; i++)
          printf("{\n");
          Nova_ShowBodyParts(st[j].bs,6);
          Nova_Indent(6);
+	 
+	 if((commonMerge != NULL) && strcmp("*",st[j].subtype) == 0)
+	   {
+	     printf(",\n");
+	     Nova_ShowBodyParts(commonMerge->bs,6);
+	     Nova_Indent(6);
+	   }
+
 
 	 closeBrack = true;
          }
