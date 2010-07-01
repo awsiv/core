@@ -74,6 +74,11 @@ printf("}\n};\n\n\n");
 
 
   printf("var bundle_syntax = {\n");
+  
+  // first make a reference to the edit_line bundle syntax (seperate var)
+
+  printf("  edit_line: edit_line_bundle_syntax,\n");
+ 
 
 for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
    {
@@ -165,6 +170,7 @@ if (bs == NULL)
    {
    return;
    }
+
 
 for (i = 0; bs[i].lval != NULL; i++)
    {
