@@ -42,6 +42,7 @@ CfOut(cf_verbose,""," -> Class data .................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
+   // Extract records
    sscanf(ip->name,"%[^,],%ld,%7.4lf,%7.4lf\n",name,&t,&q,&dev);
    printf("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s",name,q,dev,ctime(&t));
    }
@@ -57,6 +58,7 @@ CfOut(cf_verbose,""," -> setuid data ......................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
+   // Extract records
    printf("Set-uid program: %s",ip->name);
    }
 
@@ -73,6 +75,7 @@ CfOut(cf_verbose,""," -> File change data....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
+   // Extract records
    sscanf(ip->name,"%255[^,],%255[^\n]",name,date);
    printf("File-change event: in %s at %s",name,date);
    }
@@ -89,11 +92,10 @@ CfOut(cf_verbose,""," -> File diff data...................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
+   // Extract records
    sscanf(ip->name,"%[^|]|%[^|],%[^\0]",name,&t,&change);
-
    printf("Change-diff: in file %s at %s begin %s \nend\n",name,t,change);
    }
-
 }
 
 /*****************************************************************************/
@@ -109,17 +111,19 @@ CfOut(cf_verbose,""," -> Monitor weekly data.....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
+   // Extract time stamp
+   
    if (strncmp(ip->name,"T: ", 3) == 0)
       {
       memset(t,0,CF_TIME_SIZE);
       sscanf(ip->name+3,"%31[^\n]",t);
       continue;
       }
+
+   // Extract records
    
    q = e = dev = 0;
-   
    sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
-
    printf("Week-obs %d @ %s: %.2lf,%.2lf,%.2lf\n",observable,t,q,e,dev);
    }
 }
@@ -137,16 +141,16 @@ CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
+   // Extract time stamp
    if (strncmp(ip->name,"T: ", 3) == 0)
       {
       sscanf(ip->name+3,"%ld",&t);
       continue;
       }
-   
-   q = e = dev = 0;
-   
-   sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
 
+   // Extract records
+   q = e = dev = 0;
+   sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
    printf("Mag-obs %d: %.2lf,%.2lf,%.2lf measured at %s",observable,q,e,dev,ctime(&t));
    }
 }
@@ -162,6 +166,18 @@ CfOut(cf_verbose,""," -> Monitor histogram data.....................");
 for (ip = data; ip != NULL; ip=ip->next)
    {
    printf("HISTO: %s\n",ip->name);
+
+// FIX ME HERE.....   sscanf(ip->name,"%d:",i);
+
+/*   sp += 3; etc
+   
+   for (k = 0; k < CF_GRAINS; k++)
+      {      
+      snprintf(val,CF_SMALLBUF,"%d ",weekly[i][k]);
+      strcat(buffer,val);
+      }
+*/ 
+
    }
 }
 

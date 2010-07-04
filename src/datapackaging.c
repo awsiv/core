@@ -784,8 +784,6 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    {
    if (ok[i])
       {
-      LookUpClassName(i,name);
-      
       snprintf(buffer,CF_BUFSIZE,"%d:",i);
       
       for (k = 0; k < CF_GRAINS; k++)
