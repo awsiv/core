@@ -102,7 +102,7 @@ return true;
 void Nova_VerifyEnvironments(struct Attributes a,struct Promise *pp)
 
 { char hyper_uri[CF_MAXVARSIZE];
-  enum cfhypervisors envtype;
+  enum cfhypervisors envtype = cfv_none;
  
 switch (Str2Hypervisors(a.env.type))
    {

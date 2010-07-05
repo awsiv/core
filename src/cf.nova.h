@@ -782,8 +782,8 @@ struct promise_value
    double notkept;
    };
 
-#define CF_REPAIR_LOG    "nova_repair.log"
-#define CF_NOTKEPT_LOG   "nova_notkept.log"
+#define CF_REPAIR_LOG    "cf_repair.log"
+#define CF_NOTKEPT_LOG   "cf_notkept.log"
 
 /* Protocol codebook for reports */
 

@@ -203,10 +203,15 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
             DeleteDB(dbp,key);
             }
 
-         CfOut(cf_error,""," -> Deleting expired entry for %s\n",eventname);
+         CfOut(cf_inform,""," -> Deleting expired entry for %s\n",eventname);
          continue;
          }
 
+      if (then < from)
+         {
+         continue;
+         }
+          
       if (i++ < 1024)
          {
          array[i].date = then;
@@ -865,6 +870,14 @@ while(true)
          {
          showtime = true;
          
+         // Only print header if there are data and we have not already done it
+
+         if (first)
+            {
+            first = false;
+            AppendItem(reply,header,NULL);
+            }
+
          if (nodate)
             {
             snprintf(buffer,CF_BUFSIZE,"T: %s\n",timekey);
@@ -879,14 +892,6 @@ while(true)
 
       for (i = 0; i < CF_OBSERVABLES;i++)
          {
-         // Only print header if there are data and we have not already done it
-
-         if (first && value.Q[i].q > 0 && value.Q[i].expect > 0 && value.Q[i].var > 0)
-            {
-            first = false;
-            AppendItem(reply,header,NULL);
-            }
-
          /* Check for out of bounds data */
          
          if (value.Q[i].q < 0 && value.Q[i].q > CF_BIGNUMBER)
@@ -1017,9 +1022,6 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
       }
    else
       {
-   printf("GOPT: %ld,%s,M=%.0lf,%.1lf,%.1lf\n",then,eventname,measure,av*100.0,sqrt(var)*100.0);
-            
-
       if (measure == 1.0)
          {
          // Compliant
@@ -1044,7 +1046,6 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
 
       if (strlen(name) > 0)
          {
-         printf("SEND : %s\n",name);
          AppendItem(reply,name,NULL);
          }
       }
@@ -1510,10 +1511,10 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       AppendItem(reply,header,NULL);
       }
 
-   snprintf(buffer,CF_BUFSIZE-1,"%c %25s %15s %ld %.2lf %.2lf %.2lf\n",
+   snprintf(buffer,CF_BUFSIZE-1,"%c %s %s %ld %.2lf %.2lf %.2lf\n",
            *hostname,
            IPString2Hostname(hostname+1),
-           addr,
+           hostname+1,
            (long)fthen,
            ((double)(now-then))/ticksperhr,
            average/ticksperhr,
@@ -1547,7 +1548,7 @@ snprintf(name,CF_BUFSIZE-1,"%s/promise.log",CFWORKDIR);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -1609,7 +1610,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    av_week_kept = GAverage((double)kept,av_week_kept,0.1);
    av_week_repaired = GAverage((double)repaired,av_week_repaired,0.1);
 
-   snprintf(buffer,CF_BUFSIZE-1,"%s,%s,%s,%d,%d,%d\n",start,end,version,kept,repaired,notrepaired);
+   snprintf(buffer,CF_BUFSIZE-1,"%s,%s,%d,%d,%d\n",start,version,kept,repaired,notrepaired);
    
    if (first)
       {
@@ -1645,6 +1646,7 @@ void Nova_PackRepairLog(struct Item **reply,char *header,time_t from,enum cfd_me
   char filename[CF_MAXVARSIZE],lineno[CF_MAXVARSIZE];
   struct Item *ip,*file = NULL;
   int i = 0,first = true;
+  time_t then;
   char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF];
   
 CfOut(cf_verbose,""," -> Packing repair data");
@@ -1666,7 +1668,9 @@ while (!feof(fin))
    line[0] = '\0';
    fgets(line,CF_BUFSIZE-1,fin);
 
-   if (!Nova_LaterThan(line,ref))
+   scanf(line,"%ld",&then);
+   
+   if (then < from)
       {
       continue;
       }
@@ -1716,6 +1720,7 @@ void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t from,enum cfd_m
   char ref[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],lineno[CF_MAXVARSIZE];
   struct Item *ip,*file = NULL;
   int i = 0,first = true;
+  time_t then;
   char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF];
 
 CfOut(cf_verbose,""," -> Packing promise not-kept data");
@@ -1738,7 +1743,9 @@ while (!feof(fin))
    line[0] = '\0';
    fgets(line,CF_BUFSIZE-1,fin);
 
-   if (!Nova_LaterThan(line,ref))
+   scanf(line,"%ld",&then);
+   
+   if (then < from)
       {
       continue;
       }
@@ -1757,17 +1764,13 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    date[0] = '\0';
 
-   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%1023[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
-
-   snprintf(name,CF_BUFSIZE-1,"%s,%s\n",date,handle);
-
    if (first)
       {
       first = false;
       AppendItem(reply,header,NULL);
       }
    
-   AppendItem(reply,name,NULL);
+   AppendItem(reply,line,NULL);
 
    if (++i > 12*24*7)
       {

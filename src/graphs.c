@@ -581,7 +581,8 @@ if ((fout = fopen(filename, "w")) == NULL)
    return list;
    }
 
-CfHtmlTitle(fout,"20 Weakest Host Symptoms");
+//CfHtmlTitle(fout,"20 Weakest Host Symptoms");
+CfHtmlTitle(fout,"20 Least compliant hosts");
 
 if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
    {   

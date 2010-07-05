@@ -77,7 +77,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
    sscanf(ip->name,"%255[^,],%255[^\n]",name,date);
-   printf("File-change event: in %s at %s",name,date);
+   printf("File-change event: in %s at %s\n",name,date);
    }
 }
 
@@ -263,14 +263,18 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackSoftware(struct Item *data)
 
 { struct Item *ip;
+ char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch;
 
 CfOut(cf_verbose,""," -> Installed software data...............");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("SOFT: %s",ip->name);
-   }
+   sscanf(ip->name,"%250[^,],%250[^,],%c",name,version,&arch);
 
+   // architcure coding, see Nova_ShortArch
+   
+   printf("Installed software: %s version (%s on %c)\n",name,version,arch);
+   }
 }
 
 /*****************************************************************************/
@@ -278,14 +282,18 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackAvailPatches(struct Item *data)
 
 { struct Item *ip;
+  char arch, name[CF_MAXVARSIZE],version[CF_MAXVARSIZE];
 
 CfOut(cf_verbose,""," -> Available patch data...................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("AVAIL_PATCH: %s",ip->name);
-   }
+   sscanf(ip->name,"%250[^,],%250[^,],%c",name,version,&arch);
 
+   // architcure coding, see Nova_ShortArch
+   
+   printf("Patch available: %s version (%s on %c)\n",name,version,arch);
+   }
 }
 
 /*****************************************************************************/
@@ -293,14 +301,18 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackPatchStatus(struct Item *data)
 
 { struct Item *ip;
-
+  char arch, name[CF_MAXVARSIZE],version[CF_MAXVARSIZE];
+  
 CfOut(cf_verbose,""," -> Patch status data.......................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("PATCHSTATUS: %s",ip->name);
-   }
+   sscanf(ip->name,"%250[^,],%250[^,],%c",name,version,&arch);
 
+   // architcure coding, see Nova_ShortArch
+   
+   printf("Patch applied: %s version (%s on %c)\n",name,version,arch);
+   }
 }
 
 /*****************************************************************************/
@@ -308,7 +320,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPack_promise_output_common(struct Item *data)
 
 { struct Item *ip;
-
+  
 CfOut(cf_verbose,""," -> Expanded private promise data.............");
 
 for (ip = data; ip != NULL; ip=ip->next)
@@ -323,14 +335,17 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackValueReport(struct Item *data)
 
 { struct Item *ip;
+  char then[CF_SMALLBUF];
+  double kept,notkept,repaired;
 
 CfOut(cf_verbose,""," -> Value data..............................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("VALUE: %s",ip->name);
-   }
+   sscanf(ip->name,"%[^,],%lf,%lf,%lf\n",then,&kept,&repaired,&notkept);
 
+   printf("Business value: (%.0lf,%.0lf,%.0lf) from %s\n",kept,repaired,notkept,then);
+   }
 }
 
 /*****************************************************************************/
@@ -338,12 +353,15 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackVariables(struct Item *data)
 
 { struct Item *ip;
+  char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE];
 
 CfOut(cf_verbose,""," -> Variable data...........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("VARS: %s",ip->name);
+   sscanf(ip->name,"%4[^,],%255[^,],%2040[^\n]",type,name,value);
+   
+   printf("var: (%s) %s=%s\n",type,name,value);
    }
 
 }
@@ -353,12 +371,27 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackLastSeen(struct Item *data)
 
 { struct Item *ip;
-
+  char inout, asserted[CF_MAXVARSIZE],dns[CF_MAXVARSIZE];
+  double ago,average,dev;
+  long fthen;
+  time_t then;
+ 
 CfOut(cf_verbose,""," -> Last-seen data..........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("LASTSEEN: %s",ip->name);
+   sscanf(ip->name,"%c %25s %15s %ld %lf %lf %lf\n",
+          &inout,
+          asserted,
+          dns,
+          &fthen,
+          &ago,
+          &average,
+          &dev);
+
+   then = (time_t)fthen;
+   
+   printf("Saw: %c%s seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s",inout,asserted,ago,average,dev,ctime(&fthen));
    }
 
 }
@@ -368,12 +401,16 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackTotalCompliance(struct Item *data)
 
 { struct Item *ip;
-
+  char then[CF_SMALLBUF],version[CF_SMALLBUF];
+  int kept,repaired,notrepaired;
+ 
 CfOut(cf_verbose,""," -> Total Compliance data......................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("TOTCOMPLIANCE: %s",ip->name);
+   sscanf(ip->name,"%63[^,],%127[^,],%d,%d,%d\n",then,version,&kept,&repaired,&notrepaired);
+
+   printf("Tcompliance: (%d,%d,%d) for version %s at %s\n",kept,repaired,notrepaired,version,then);
    }
 
 }
@@ -383,12 +420,16 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackRepairLog(struct Item *data)
 
 { struct Item *ip;
-
+  char handle[CF_SMALLBUF];
+  time_t then;
+  
 CfOut(cf_verbose,""," -> Repair log data........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("REPAIR: %s",ip->name);
+   sscanf(ip->name,"%ld,%127s",&then,handle);
+
+   printf("Repair: of promise \"%s\" at %s",handle,ctime(&then));
    }
 
 }
@@ -398,12 +439,16 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackNotKeptLog(struct Item *data)
 
 { struct Item *ip;
-
+  char handle[CF_SMALLBUF];
+  time_t then;
+  
 CfOut(cf_verbose,""," -> Not kept data...........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("NOTKEPT: %s",ip->name);
+   sscanf(ip->name,"%ld,%127s",&then,handle);
+
+   printf("Failure of promise \"%s\" at %s",handle,ctime(&then));
    }
 
 }
