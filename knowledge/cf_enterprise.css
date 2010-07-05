@@ -1,7 +1,7 @@
 html{height: 100%;}
 
 body
-{ font-family: DejaVuSans,Vera,sans-serif;
+{ font-family: DejaVuSans,Vera,Arial,sans-serif;
   padding: 0px;
   margin: 10px;
   font-size: 11px;;
@@ -26,8 +26,7 @@ p
 #menu
 { 
 font-size: 110%;
-font-family: DejaVuSans,Vera;
-
+font-family: DejaVuSans,Vera,Arial,sans-serif;
 }
 
 #man pre
@@ -50,7 +49,7 @@ border: none;
 
 h1
 { 
-font-family: DejaVuSans,Vera;
+font-family: DejaVuSans,Vera,Aria,sans-serifl;
 font-weight: normal;
 background-color: #30302a;
 color: #73b167;
@@ -448,14 +447,14 @@ padding: 10px;
 }
 
 #showvars TH { background: #aabbFF;
-     font-family: DejaVuSans,Vera;
+     font-family: DejaVuSans,Vera,Arial,sans-serif;
      color: darkblue;
   font-size: 8pt;
    }
 
 #showvars TD { color: #000000;
      background: #fff;
-     font-family: DejaVuSans,Vera;
+     font-family: DejaVuSans,Vera,Arial;
   font-size: 8pt;
      padding: 5px;
    }
@@ -648,21 +647,21 @@ font-family: courier;
 
 #below
 {  
-font-family: DejaVuSans,Vera;
+font-family: DejaVuSans,Vera,Arial,sans-serif;
 background-color: #6cb150;
 padding: 5px;
 }
 
 #above
 {  
-font-family: DejaVuSans, sans-serif;
+font-family: DejaVuSans,Vera,Arial,sans-serif;
 background-color: bd3a2b;#bd3a2b;
 padding: 5px;
 }
 
 #last
 {  
-font-family: DejaVuSans, sans-serif;
+font-family: DejaVuSans,Arial,sans-serif;
 background-color: #f2ca77;
 padding: 5px;
 }

@@ -121,7 +121,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
          AppendItem(reply,header,NULL);
          }
       
-      snprintf(buffer,CF_MAXVARSIZE-1,"%ld,%7.4lf,%7.4lf,%s\n",entry.t,measure,average,sqrt(var)/ticksperminute,eventname);
+      snprintf(buffer,CF_MAXVARSIZE-1,"%ld,%7.4lf,%7.4lf,%7.4lf,%s\n",entry.t,measure,average,sqrt(var)/ticksperminute,eventname);
       AppendItem(reply,buffer,NULL);
       }
    else
@@ -776,6 +776,11 @@ for (j = 0; j < CF_OBSERVABLES; j++)
             {
             ok[j] = true;
             }
+         
+         if (weekly[j][k] < 0)
+            {
+            weekly[j][k] = 0;
+            }
          }
       }
    }
@@ -788,10 +793,10 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       
       for (k = 0; k < CF_GRAINS; k++)
          {      
-         snprintf(val,CF_SMALLBUF,"%d ",weekly[i][k]);
+         snprintf(val,CF_SMALLBUF,"%d:",weekly[i][k]);
          strcat(buffer,val);
          }
-      
+
       AppendItem(reply,buffer,NULL);
       }
    }
@@ -801,18 +806,17 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 void Nova_PackMonitorYear(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int its,i,j,k, count = 0,err,this_lifecycle,ago, this,first = true;
+{ int its,i,j,k, count = 0,err,this_lifecycle,ago, this,first = true,nodate,showtime;
   char timekey[CF_MAXVARSIZE],timekey_now[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
   char d[CF_TIME_SIZE],m[CF_TIME_SIZE],l[CF_TIME_SIZE],s[CF_TIME_SIZE],om[CF_TIME_SIZE];
   char *day = VDAY,*month=VMONTH,*lifecycle=VLIFECYCLE,*shift=VSHIFT;
+  double num[CF_OBSERVABLES],qav[CF_OBSERVABLES],varav[CF_OBSERVABLES],eav[CF_OBSERVABLES];
   char filename[CF_BUFSIZE];
-  double num = 0,qav = 0,varav = 0,eav = 0;
-  FILE *fp[CF_OBSERVABLES];
   struct Averages value;
   time_t now;
   CF_DB *dbp;
      
-CfOut(cf_verbose,""," -> Packing monitor trend data");
+CfOut(cf_verbose,""," -> Packing and compressing monitor 3 year data");
 
 snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_HISTORYDB);
 MapName(filename);
@@ -842,30 +846,40 @@ strncpy(om,month,31);
 
 NovaIncrementShift(d,m,l,s);
 
+for (i = 0; i < CF_OBSERVABLES;i++)
+   {
+   num[i] = 0;
+   qav[i] = 0;
+   eav[i] = 0;
+   varav[i] = 0;
+   }
+
 while(true)
    {
    snprintf(timekey,CF_MAXVARSIZE-1,"%s_%s_%s_%s",d,m,l,s);
-
+   nodate = true;
+   
    if (ReadDB(dbp,timekey,&value,sizeof(struct Averages)))
       {
+      if (strcmp(m,om) != 0)
+         {
+         showtime = true;
+         
+         if (nodate)
+            {
+            snprintf(buffer,CF_BUFSIZE,"T: %s\n",timekey);
+            AppendItem(reply,buffer,NULL);
+            nodate = false;
+            }  
+         }
+      else
+         {
+         showtime = false;
+         }
+
       for (i = 0; i < CF_OBSERVABLES;i++)
          {
-         /* Check for out of bounds data */
-
-         if (value.Q[i].q < 0 && value.Q[i].q > CF_BIGNUMBER)
-            {
-            value.Q[i].q = 0;
-            }
-
-         if (value.Q[i].var < 0 && value.Q[i].var > CF_BIGNUMBER)
-            {
-            value.Q[i].var = value.Q[i].q;
-            }
-
-         if (value.Q[i].expect < 0 && value.Q[i].expect > CF_BIGNUMBER)
-            {
-            value.Q[i].expect = value.Q[i].q;
-            }
+         // Only print header if there are data and we have not already done it
 
          if (first && value.Q[i].q > 0 && value.Q[i].expect > 0 && value.Q[i].var > 0)
             {
@@ -873,29 +887,52 @@ while(true)
             AppendItem(reply,header,NULL);
             }
 
-         if (strcmp(m,om) != 0)
+         /* Check for out of bounds data */
+         
+         if (value.Q[i].q < 0 && value.Q[i].q > CF_BIGNUMBER)
             {
-            num++;
-            
-            snprintf(buffer,CF_BUFSIZE,"T: %s\n",timekey);
-            AppendItem(reply,buffer,NULL);
-                        
-            qav /= num;
-            eav /= num;
-            varav /= num;
+            value.Q[i].q = 0;
+            }
+         
+         if (value.Q[i].var < 0 && value.Q[i].var > CF_BIGNUMBER)
+            {
+            value.Q[i].var = value.Q[i].q;
+            }
+         
+         if (value.Q[i].expect < 0 && value.Q[i].expect > CF_BIGNUMBER)
+            {
+            value.Q[i].expect = value.Q[i].q;
+            }
+         
+         if (showtime)
+            {
+            num[i]++;
+            qav[i] += value.Q[i].q;
+            eav[i] += value.Q[i].expect;
+            varav[i] += value.Q[i].var;
 
+            qav[i] /= num[i];
+            eav[i] /= num[i];
+            varav[i] /= num[i];
+            
             if (value.Q[i].q > 0 && value.Q[i].expect > 0 && value.Q[i].var > 0)
                {
-               snprintf(buffer,CF_BUFSIZE-1,"%d %.2lf %.2lf %.2lf\n",i,qav,eav,sqrt(varav));
+               snprintf(buffer,CF_BUFSIZE-1,"%d %.2lf %.2lf %.2lf\n",i,qav[i],eav[i],sqrt(varav[i]));
                AppendItem(reply,buffer,NULL);
                strcpy(om,m);
                }
+
+            qav[i] = 0;
+            eav[i] = 0;
+            varav[i] = 0;
+            num[i] = 0;
             }
          else
             {
-            qav += value.Q[i].q;
-            eav += value.Q[i].expect;
-            varav += value.Q[i].var;
+            qav[i] += value.Q[i].q;
+            eav[i] += value.Q[i].expect;
+            varav[i] += value.Q[i].var;
+            num[i]++;
             }         
          }
       }
@@ -963,8 +1000,8 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
    time_t then,lastseen,now = time(NULL);
    char tbuf[CF_BUFSIZE],eventname[CF_BUFSIZE];
 
+   name[0] = '\0';
    cf_strcpy(eventname,(char *)key);
-
    memcpy(&entry,stored,sizeof(entry));
 
    then    = entry.t;
@@ -973,8 +1010,6 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
    var = entry.Q.var;
    lastseen = now - then;
 
-   snprintf(tbuf,CF_BUFSIZE-1,"%s",cf_ctime(&then));
-   
    if (then > 0 && lastseen > lsea)
       {
       CfOut(cf_verbose,""," -> Promise usage record \"%s\" expired, removing...\n",eventname);
@@ -982,6 +1017,9 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
       }
    else
       {
+   printf("GOPT: %ld,%s,M=%.0lf,%.1lf,%.1lf\n",then,eventname,measure,av*100.0,sqrt(var)*100.0);
+            
+
       if (measure == 1.0)
          {
          // Compliant
@@ -998,13 +1036,17 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
          snprintf(name,CF_BUFSIZE-1,"%ld,%,n,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
          }
 
-      if (first)
+      if (first && strlen(name) > 0)
          {
          first = false;
          AppendItem(reply,header,NULL);
          }
 
-      AppendItem(reply,name,NULL);
+      if (strlen(name) > 0)
+         {
+         printf("SEND : %s\n",name);
+         AppendItem(reply,name,NULL);
+         }
       }
    }
 
@@ -1341,7 +1383,7 @@ while (!feof(fin))
       }
    else if (strncmp(line,"<tr><td>",strlen("<tr><td>")) == 0)
       {
-      sscanf(line,"<tr><td>%*[^< ]</td><th>%32[^< ]</th><td>%*[^< ]</td><td>%512[^< ]</td><td>%1023[^< ]</td></tr>",type,lval,rval);
+      sscanf(line,"<tr><td>%*[^<]</td><th>%[^<]</th><td>%*[^<]</td><td>%512[^<]</td><td>%1023[^<]</td></tr>",type,lval,rval);
       }
    else
       {
@@ -1356,12 +1398,35 @@ while (!feof(fin))
 
    if (strlen(lval) > 0)
       {
-      snprintf(name,CF_BUFSIZE,"%s,%s,%s\n",type,lval,rval);
+      if (strstr(type,"string"))
+         {
+         snprintf(name,CF_BUFSIZE,"s,%s,%s\n",lval,rval);
+         }
+      else if (strstr(type,"slist"))
+         {
+         snprintf(name,CF_BUFSIZE,"sl,%s,%s\n",lval,rval);
+         }
+      else if (strstr(type,"int"))
+         {
+         snprintf(name,CF_BUFSIZE,"i,%s,%s\n",lval,rval);
+         }
+      else if (strstr(type,"ilist"))
+         {
+         snprintf(name,CF_BUFSIZE,"il,%s,%s\n",lval,rval);
+         }
+      else if (strstr(type,"real"))
+         {
+         snprintf(name,CF_BUFSIZE,"r,%s,%s\n",lval,rval);
+         }
+      else if (strstr(type,"rlist"))
+         {
+         snprintf(name,CF_BUFSIZE,"rl,%s,%s\n",lval,rval);
+         }
+      else
+         {
+         snprintf(name,CF_BUFSIZE,"%s,%s,%s\n",type,lval,rval);
+         }
       AppendItem(reply,name,NULL);
-      }
-   else
-      {
-      AppendItem(reply,line,NULL);
       }
    }
 

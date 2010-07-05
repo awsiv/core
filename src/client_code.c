@@ -150,6 +150,12 @@ while (more)
    }
 
 EVP_CIPHER_CTX_cleanup(&ctx);
+
+if (reports == NULL)
+   {
+   return false;
+   }
+
 UnpackReportBook(reports);
 DeleteReportBook(reports);
 return true;
@@ -205,7 +211,6 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
    if (reports[i] != NULL)
       {
       void (*fnptr)() = CF_CODEBOOK_HANDLER[i];
-
       (*fnptr)(reports[i]);
       }
    }

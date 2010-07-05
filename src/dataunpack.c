@@ -23,8 +23,8 @@ CfOut(cf_verbose,""," -> Performance data ...................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%ld,%lf,%lf,%255s\n",&t,&measure,&average,&dev,eventname);
-
+   eventname[0] = '\0';
+   sscanf(ip->name,"%ld,%lf,%lf,%lf,%255s\n",&t,&measure,&average,&dev,eventname);
    printf("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s",eventname,measure,average,dev,ctime(&t));
    }
 }
@@ -160,24 +160,44 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorHist(struct Item *data)
 
 { struct Item *ip;
-
+  int weekly[CF_OBSERVABLES][CF_GRAINS];
+  int i = 0,j,k;
+  char *sp;
+ 
 CfOut(cf_verbose,""," -> Monitor histogram data.....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("HISTO: %s\n",ip->name);
-
-// FIX ME HERE.....   sscanf(ip->name,"%d:",i);
-
-/*   sp += 3; etc
+   sp = ip->name;
    
-   for (k = 0; k < CF_GRAINS; k++)
-      {      
-      snprintf(val,CF_SMALLBUF,"%d ",weekly[i][k]);
-      strcat(buffer,val);
+   sscanf(ip->name,"%d",&i);
+   
+   while (*(++sp) != ':')
+      {
       }
-*/ 
 
+   sp++;
+   
+   printf(" - Observable %d: ",i);
+       
+   for (k = 0; k < CF_GRAINS; k++)
+      {
+      sscanf(sp,"%d",&(weekly[i][k]));
+      
+      while (*(++sp) != ':')
+         {
+         }
+
+      if (weekly[i][k] < 0)
+         {
+         weekly[i][k] = 1;
+         }
+
+      sp++;
+      printf("%d,",weekly[i][k]);
+      }
+   
+   printf("\n");
    }
 }
 
@@ -186,14 +206,26 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorYear(struct Item *data)
 
 { struct Item *ip;
+  char timekey[CF_SMALLBUF];
+  int observable;
+  double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor year data.....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("YEAR: %s",ip->name);
-   }
+   // Extract time stamp
+   if (strncmp(ip->name,"T: ", 3) == 0)
+      {
+      sscanf(ip->name+3,"%s",timekey);
+      continue;
+      }
 
+   // Extract records
+   q = e = dev = 0;
+   sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
+   printf("Year-obs %d: %.2lf,%.2lf,%.2lf measured at %s\n",observable,q,e,dev,timekey);
+   }
 }
 
 /*****************************************************************************/
@@ -201,14 +233,29 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackCompliance(struct Item *data)
 
 { struct Item *ip;
+ time_t then;
+ double av,dev;
+ char type,eventname[CF_MAXVARSIZE];
 
 CfOut(cf_verbose,""," -> Promise Compliance data..............");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("COMPLIANE: %s",ip->name);
-   }
+   sscanf(ip->name,"%ld,%255s,%c,%lf,%lf\n",&then,eventname,&type,&av,&dev);
 
+   switch (type)
+      {
+      case 'c':
+          printf("Promise \"%s\" was compliant, av %.2lf +/- %.2lf at %s",eventname,av,dev,ctime(&then));
+          break;
+      case 'r':
+          printf("Promise \"%s\" was repaired, av %.2lf +/- %.2lf at %s",eventname,av,dev,ctime(&then));
+          break;
+      case 'n':
+          printf("Promise \"%s\" was non-compliant, av %.2lf +/- %.2lf at %s",eventname,av,dev,ctime(&then));
+          break;
+      }
+   }
 }
 
 /*****************************************************************************/
