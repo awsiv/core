@@ -1,0 +1,69 @@
+Attached are five files:
+ cf.js: Provides the autocomplete functionality, the editor resizing,
+and change-tracking functionality. Should be loaded into the outer
+document using a script tag
+ parsecf.js: Provides the parser. Should be passed in the parserfile
+option when initializing CodeMirror.
+ cfsyntax.js: This is the current version of the 'syntax' file that
+can later be updated to provide support for new constructs. This one
+was created by Eystein. The idea is that some kind of server-side
+script will generate this in production. Also should be passed through
+the parserfile option.
+ cfcolors.css Provides color definitions for the various syntax elements.
+ resize.png Resize picture.
+
+You'll need to use a version of CodeMirror no older than last week
+(which, right now, means the development snapshot at [1], since no
+official releases have been done this week), and initialize it (using
+either CodeMirror.fromTextArea or new CodeMirror, see the manual) with
+an options argument containing at least these settings:
+
+{
+    parserfile: ["cfsyntax.js", "parsecf.js"],
+    stylesheet: "css/cfcolors.css", // you may have to adjust the path
+    path: "js/", // again, may need adjustment
+    lineNumbers: true,
+    styleNumbers: styleLineNum,
+    initCallback: function(e){initComplete(e); initResize(e); initChangeTracker(e);},
+    onChange: contentChanged,
+    continuousScanning: 500
+  }
+
+In the html head, the following should be included
+
+    <style type="text/css">
+      .completions {
+        border: 1px solid black;
+        z-index: 10;
+        overflow: hidden;
+      }
+      .completions select {
+        outline: none;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        background-color: white;
+        font-family: monospace;
+        font-size: 80%;
+      }
+      .CodeMirror-wrapping {
+        border-top: 1px solid #911;
+        border-bottom: 1px solid #911;
+        padding: 3px;
+      }
+      .CodeMirror-line-numbers {
+        margin: 0;
+        padding: 0;
+        padding-top: 3px;
+        margin-right: .4em;
+        width: 2.2em;
+        color: #aaa;
+        text-align: right;
+        padding-right: .3em;
+        font-size: 10pt;
+        font-family: monospace;
+      }
+    </style>
+
+
+[1]: marijn.haverbeke.nl/codemirror/codemirror-latest.zip
