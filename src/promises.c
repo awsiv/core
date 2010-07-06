@@ -194,10 +194,7 @@ if ((fp = fopen(name,"a")) == NULL)
    return;
    }
 
-snprintf(date,CF_MAXVARSIZE-1,"%s",cf_ctime(&now));
-Chop(date);
-
-fprintf(fp,"%ld,%s\n",(long)date,id);
+fprintf(fp,"%ld,%s\n",(long)now,id);
 
 fclose(fp);
 }

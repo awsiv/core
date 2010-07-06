@@ -342,7 +342,7 @@ if ((fin = cf_fopen(name,"r")) == NULL)
    }
 
 /* Max 2016 entries - at least a week */
-snprintf(name,CF_SMALLBUF,"%s",ctime(&from));
+snprintf(name,CF_SMALLBUF,"%s",cf_ctime(&from));
 sscanf(name,"%*s %s %s %*s %s",month,day,year);
 snprintf(ref,CF_SMALLBUF-1,"%s %s %s",day,month,year);
 
@@ -421,7 +421,7 @@ if ((fin = cf_fopen(name,"r")) == NULL)
    }
 
 /* Max 2016 entries - at least a week */
-snprintf(name,CF_SMALLBUF,"%s",ctime(&from));
+snprintf(name,CF_SMALLBUF,"%s",cf_ctime(&from));
 sscanf(name,"%*s %s %s %*s %s",month,day,year);
 snprintf(ref,CF_SMALLBUF-1,"%s %s %s",day,month,year);
 
@@ -1295,7 +1295,7 @@ if (!OpenDB(name,&dbp))
    return;
    }
 
-snprintf(name,CF_SMALLBUF,"%s",ctime(&from));
+snprintf(name,CF_SMALLBUF,"%s",cf_ctime(&from));
 sscanf(name,"%*s %s %s %*s %s",month,day,year);
 snprintf(ref,CF_SMALLBUF-1,"%s %s %s",day,month,year);
 
@@ -1553,14 +1553,14 @@ if ((fin = cf_fopen(name,"r")) == NULL)
 
 /* Max 2016 entries - at least a week */
 
-snprintf(ref,CF_SMALLBUF,"%s",ctime(&from));
+snprintf(ref,CF_SMALLBUF,"%s",cf_ctime(&from));
 
 while (!feof(fin))
    {
    line[0] = '\0';
    fgets(line,CF_BUFSIZE-1,fin);
 
-   if (!Nova_CoarseLaterThan(line,ref))
+   if (!Nova_LaterThan(line,ref))
       {
       continue;
       }
@@ -1641,12 +1641,9 @@ void Nova_PackRepairLog(struct Item **reply,char *header,time_t from,enum cfd_me
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
-  char date[CF_MAXVARSIZE],handle[CF_MAXVARSIZE],bundle[CF_MAXVARSIZE],ref[CF_MAXVARSIZE];
-  char filename[CF_MAXVARSIZE],lineno[CF_MAXVARSIZE];
   struct Item *ip,*file = NULL;
   int i = 0,first = true;
-  time_t then;
-  char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF];
+  long then;
   
 CfOut(cf_verbose,""," -> Packing repair data");
 
@@ -1660,16 +1657,14 @@ if ((fin = cf_fopen(name,"r")) == NULL)
 
 /* Max 2016 entries - at least a week */
 
-snprintf(ref,CF_SMALLBUF,"%s",ctime(&from));
-
 while (!feof(fin))
    {
    line[0] = '\0';
    fgets(line,CF_BUFSIZE-1,fin);
 
-   scanf(line,"%ld",&then);
+   sscanf(line,"%ld",&then);
    
-   if (then < from)
+   if ((time_t)then < from)
       {
       continue;
       }
@@ -1686,19 +1681,13 @@ for (ip = file; ip != NULL; ip = ip->next)
       continue;
       }
 
-   date[0] = '\0';
-
-   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%512[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
-
-   snprintf(name,CF_BUFSIZE-1,"%s,%s\n",date,handle);
-
    if (first)
       {
       first = false;
       AppendItem(reply,header,NULL);
       }
    
-   AppendItem(reply,name,NULL);
+   AppendItem(reply,ip->name,NULL);
 
    if (++i > 12*24*7)
       {
@@ -1714,12 +1703,10 @@ DeleteItemList(file);
 void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin,*fout;
-  char name[CF_BUFSIZE],line[CF_BUFSIZE];
-  char date[CF_MAXVARSIZE],handle[CF_MAXVARSIZE],bundle[CF_MAXVARSIZE];
-  char ref[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],lineno[CF_MAXVARSIZE];
+  char name[CF_BUFSIZE],line[CF_BUFSIZE],handle[CF_MAXVARSIZE];
   struct Item *ip,*file = NULL;
   int i = 0,first = true;
-  time_t then;
+  long then;
   char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF];
 
 CfOut(cf_verbose,""," -> Packing promise not-kept data");
@@ -1732,19 +1719,16 @@ if ((fin = cf_fopen(name,"r")) == NULL)
    return;
    }
 
-
 /* Max 2016 entries - at least a week */
-
-snprintf(ref,CF_SMALLBUF,"%s",ctime(&from));
 
 while (!feof(fin))
    {
    line[0] = '\0';
    fgets(line,CF_BUFSIZE-1,fin);
-
-   scanf(line,"%ld",&then);
    
-   if (then < from)
+   sscanf(line,"%ld",&then);
+   
+   if ((time_t)then < from)
       {
       continue;
       }
@@ -1761,15 +1745,13 @@ for (ip = file; ip != NULL; ip = ip->next)
       continue;
       }
 
-   date[0] = '\0';
-
    if (first)
       {
       first = false;
       AppendItem(reply,header,NULL);
       }
-   
-   AppendItem(reply,line,NULL);
+
+   AppendItem(reply,ip->name,NULL);
 
    if (++i > 12*24*7)
       {
@@ -1790,20 +1772,47 @@ CfOut(cf_verbose,""," -> Packing meter");
 
 AppendItem(reply,header,NULL);
 
-snprintf(line,CF_BUFSIZE-1,"W: %.4lf %.4lf\n",METER_KEPT[meter_compliance_week],METER_REPAIRED[meter_compliance_week]);
-AppendItem(reply,line,NULL);
-snprintf(line,CF_BUFSIZE-1,"D: %.4lf %.4lf\n",METER_KEPT[meter_compliance_day],METER_REPAIRED[meter_compliance_day]);
-AppendItem(reply,line,NULL);
-snprintf(line,CF_BUFSIZE-1,"H: %.4lf %.4lf\n",METER_KEPT[meter_compliance_hour],METER_REPAIRED[meter_compliance_hour]);
-AppendItem(reply,line,NULL);
-snprintf(line,CF_BUFSIZE-1,"P: %.4lf %.4lf\n",METER_KEPT[meter_patch_day],METER_REPAIRED[meter_patch_day]);
-AppendItem(reply,line,NULL);
-snprintf(line,CF_BUFSIZE-1,"S: %.4lf %.4lf\n",METER_KEPT[meter_soft_day],METER_REPAIRED[meter_soft_day]);
-AppendItem(reply,line,NULL);
-snprintf(line,CF_BUFSIZE-1,"C: %.4lf %.4lf\n",METER_KEPT[meter_comms_hour],METER_REPAIRED[meter_comms_hour]);
-AppendItem(reply,line,NULL);
-snprintf(line,CF_BUFSIZE-1,"A: %.4lf %.4lf\n",METER_KEPT[meter_anomalies_day],METER_REPAIRED[meter_anomalies_day]);
-AppendItem(reply,line,NULL);
+if (METER_KEPT[meter_compliance_week] > 0 || METER_REPAIRED[meter_compliance_week] > 0)
+   {
+   snprintf(line,CF_BUFSIZE-1,"W: %.4lf %.4lf\n",METER_KEPT[meter_compliance_week],METER_REPAIRED[meter_compliance_week]);
+   AppendItem(reply,line,NULL);
+   }
+
+if (METER_KEPT[meter_compliance_day] > 0 || METER_REPAIRED[meter_compliance_day] > 0)
+   {
+   snprintf(line,CF_BUFSIZE-1,"D: %.4lf %.4lf\n",METER_KEPT[meter_compliance_day],METER_REPAIRED[meter_compliance_day]);
+   AppendItem(reply,line,NULL);
+   }
+
+if (METER_KEPT[meter_compliance_hour] > 0 && METER_REPAIRED[meter_compliance_hour] > 0)
+   {
+   snprintf(line,CF_BUFSIZE-1,"H: %.4lf %.4lf\n",METER_KEPT[meter_compliance_hour],METER_REPAIRED[meter_compliance_hour]);
+   AppendItem(reply,line,NULL);
+   }
+
+if (METER_KEPT[meter_patch_day] > 0 || METER_REPAIRED[meter_patch_day] > 0)
+   {
+   snprintf(line,CF_BUFSIZE-1,"P: %.4lf %.4lf\n",METER_KEPT[meter_patch_day],METER_REPAIRED[meter_patch_day]);
+   AppendItem(reply,line,NULL);
+   }
+
+if (METER_KEPT[meter_soft_day] > 0 || METER_REPAIRED[meter_soft_day] > 0)
+   {
+   snprintf(line,CF_BUFSIZE-1,"S: %.4lf %.4lf\n",METER_KEPT[meter_soft_day],METER_REPAIRED[meter_soft_day]);
+   AppendItem(reply,line,NULL);
+   }
+
+if (METER_KEPT[meter_comms_hour] > 0 || METER_REPAIRED[meter_comms_hour] > 0)
+   {
+   snprintf(line,CF_BUFSIZE-1,"C: %.4lf %.4lf\n",METER_KEPT[meter_comms_hour],METER_REPAIRED[meter_comms_hour]);
+   AppendItem(reply,line,NULL);
+   }
+
+if (METER_KEPT[meter_anomalies_day] > 0 || METER_REPAIRED[meter_anomalies_day] > 0)
+   {
+   snprintf(line,CF_BUFSIZE-1,"A: %.4lf %.4lf\n",METER_KEPT[meter_anomalies_day],METER_REPAIRED[meter_anomalies_day]);
+   AppendItem(reply,line,NULL);
+   }
 }
 
 /*****************************************************************************/

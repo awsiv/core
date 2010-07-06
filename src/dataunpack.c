@@ -25,7 +25,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    eventname[0] = '\0';
    sscanf(ip->name,"%ld,%lf,%lf,%lf,%255s\n",&t,&measure,&average,&dev,eventname);
-   printf("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s",eventname,measure,average,dev,ctime(&t));
+   printf("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s",eventname,measure,average,dev,cf_ctime(&t));
    }
 }
 
@@ -44,7 +44,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
    sscanf(ip->name,"%[^,],%ld,%7.4lf,%7.4lf\n",name,&t,&q,&dev);
-   printf("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s",name,q,dev,ctime(&t));
+   printf("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s",name,q,dev,cf_ctime(&t));
    }
 }
 
@@ -151,7 +151,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    // Extract records
    q = e = dev = 0;
    sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
-   printf("Mag-obs %d: %.2lf,%.2lf,%.2lf measured at %s",observable,q,e,dev,ctime(&t));
+   printf("Mag-obs %d: %.2lf,%.2lf,%.2lf measured at %s",observable,q,e,dev,cf_ctime(&t));
    }
 }
 
@@ -246,13 +246,13 @@ for (ip = data; ip != NULL; ip=ip->next)
    switch (type)
       {
       case 'c':
-          printf("Promise \"%s\" was compliant, av %.2lf +/- %.2lf at %s",eventname,av,dev,ctime(&then));
+          printf("Promise \"%s\" was compliant, av %.2lf +/- %.2lf at %s",eventname,av,dev,cf_ctime(&then));
           break;
       case 'r':
-          printf("Promise \"%s\" was repaired, av %.2lf +/- %.2lf at %s",eventname,av,dev,ctime(&then));
+          printf("Promise \"%s\" was repaired, av %.2lf +/- %.2lf at %s",eventname,av,dev,cf_ctime(&then));
           break;
       case 'n':
-          printf("Promise \"%s\" was non-compliant, av %.2lf +/- %.2lf at %s",eventname,av,dev,ctime(&then));
+          printf("Promise \"%s\" was non-compliant, av %.2lf +/- %.2lf at %s",eventname,av,dev,cf_ctime(&then));
           break;
       }
    }
@@ -391,7 +391,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    then = (time_t)fthen;
    
-   printf("Saw: %c%s seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s",inout,asserted,ago,average,dev,ctime(&fthen));
+   printf("Saw: %c%s seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s",inout,asserted,ago,average,dev,cf_ctime(&fthen));
    }
 
 }
@@ -420,18 +420,19 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackRepairLog(struct Item *data)
 
 { struct Item *ip;
-  char handle[CF_SMALLBUF];
-  time_t then;
+  char handle[CF_MAXVARSIZE];
+  long then;
+  time_t tthen;
   
 CfOut(cf_verbose,""," -> Repair log data........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%ld,%127s",&then,handle);
+   sscanf(ip->name,"%ld,%127[^\n]",&then,handle);
+   tthen = (time_t)then;
 
-   printf("Repair: of promise \"%s\" at %s",handle,ctime(&then));
+   printf("Repair: of promise \"%s\" at %s",handle,cf_ctime(&tthen));
    }
-
 }
 
 /*****************************************************************************/
@@ -439,16 +440,17 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackNotKeptLog(struct Item *data)
 
 { struct Item *ip;
-  char handle[CF_SMALLBUF];
-  time_t then;
+  char handle[CF_MAXVARSIZE];
+  time_t tthen;
+  long then;
   
 CfOut(cf_verbose,""," -> Not kept data...........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%ld,%127s",&then,handle);
-
-   printf("Failure of promise \"%s\" at %s",handle,ctime(&then));
+   sscanf(ip->name,"%ld,%127[^\n]",&then,handle);
+   tthen = (time_t)then;
+   printf("Failure: of promise \"%s\" at %s",handle,cf_ctime(&tthen));
    }
 
 }
@@ -492,8 +494,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    then = (time_t)fthen;
    
-   printf("Saw: %s seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s",bundle,ago,average,dev,ctime(&fthen));
+   printf("Bundle: %s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s",bundle,ago,average,dev,cf_ctime(&fthen));
    }
+
 }
 
 
