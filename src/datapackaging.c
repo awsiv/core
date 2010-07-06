@@ -707,13 +707,12 @@ CloseDB(dbp);
 
 void Nova_PackMonitorHist(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int i,j,k;
-  int position,day;
-  int weekly[CF_OBSERVABLES][CF_GRAINS],ok[CF_OBSERVABLES];
+{ int i,j,k,day;
+  int ok[CF_OBSERVABLES];
   char filename[CF_BUFSIZE],name[CF_MAXVARSIZE];
-  unsigned int histogram[CF_OBSERVABLES][7][CF_GRAINS];
-  unsigned int smoothhistogram[CF_OBSERVABLES][7][CF_GRAINS];
   char buffer[CF_BUFSIZE],val[CF_SMALLBUF];
+  double weekly[CF_OBSERVABLES][CF_GRAINS],position;
+  double histogram[CF_OBSERVABLES][7][CF_GRAINS],smoothhistogram[CF_OBSERVABLES][7][CF_GRAINS];
   FILE *fp;
 
 CfOut(cf_verbose,""," -> Packing histograms");
@@ -745,7 +744,7 @@ for (position = 0; position < CF_GRAINS; position++)
       {
       for (day = 0; day < 7; day++)
          {
-         fscanf(fp,"%d ",&(histogram[i][day][position]));
+         fscanf(fp,"%lf ",&(histogram[i][day][position]));
          }
 
       weekly[i][position] = 0;
@@ -760,7 +759,7 @@ for (k = 1; k < CF_GRAINS-1; k++)
       {
       for (i = 0; i < 7; i++)
          {
-         smoothhistogram[j][i][k] = ((double)(histogram[j][i][k-1] + histogram[j][i][k] + histogram[j][i][k+1]))/3.0;
+         smoothhistogram[j][i][k] = (histogram[j][i][k-1] + histogram[j][i][k] + histogram[j][i][k+1])/3.0;
          }
       }
    }
@@ -775,14 +774,14 @@ for (j = 0; j < CF_OBSERVABLES; j++)
       {
       for (i = 0; i < 7; i++)
          {
-         weekly[j][k] += (int)(smoothhistogram[j][i][k]+0.5);
+         weekly[j][k] += (smoothhistogram[j][i][k]+0.5);
 
          if (weekly[j][k] > 0)
             {
             ok[j] = true;
             }
          
-         if (weekly[j][k] < 0)
+         if (weekly[j][k] < 0 || weekly[j][k] > CF_BIGNUMBER)
             {
             weekly[j][k] = 0;
             }
@@ -798,7 +797,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       
       for (k = 0; k < CF_GRAINS; k++)
          {      
-         snprintf(val,CF_SMALLBUF,"%d:",weekly[i][k]);
+         snprintf(val,CF_SMALLBUF,"%.0lf:",weekly[i][k]);
          strcat(buffer,val);
          }
 
@@ -894,17 +893,17 @@ while(true)
          {
          /* Check for out of bounds data */
          
-         if (value.Q[i].q < 0 && value.Q[i].q > CF_BIGNUMBER)
+         if (value.Q[i].q < 0 || value.Q[i].q > CF_BIGNUMBER)
             {
             value.Q[i].q = 0;
             }
          
-         if (value.Q[i].var < 0 && value.Q[i].var > CF_BIGNUMBER)
+         if (value.Q[i].var < 0 || value.Q[i].var > CF_BIGNUMBER)
             {
             value.Q[i].var = value.Q[i].q;
             }
          
-         if (value.Q[i].expect < 0 && value.Q[i].expect > CF_BIGNUMBER)
+         if (value.Q[i].expect < 0 || value.Q[i].expect > CF_BIGNUMBER)
             {
             value.Q[i].expect = value.Q[i].q;
             }
