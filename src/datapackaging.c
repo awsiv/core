@@ -707,11 +707,11 @@ CloseDB(dbp);
 
 void Nova_PackMonitorHist(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int i,j,k,day;
+{ int i,j,k,day,position;
   int ok[CF_OBSERVABLES];
   char filename[CF_BUFSIZE],name[CF_MAXVARSIZE];
   char buffer[CF_BUFSIZE],val[CF_SMALLBUF];
-  double weekly[CF_OBSERVABLES][CF_GRAINS],position;
+  double weekly[CF_OBSERVABLES][CF_GRAINS];
   double histogram[CF_OBSERVABLES][7][CF_GRAINS],smoothhistogram[CF_OBSERVABLES][7][CF_GRAINS];
   FILE *fp;
 

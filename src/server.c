@@ -181,6 +181,14 @@ if ((type = String2Menu(menu_name)) == cfd_menu_error)
 
 // Promise: use menu data and start-time
 
+switch (type)
+   {
+   case cfd_menu_delta:
+       break;
+   case cfd_menu_full:
+       break;
+   }
+
 Nova_PackPerformance(&reply,CFR_PERF,from,type);
 Nova_PackClasses(&reply,CFR_CLASS,from,type);
 Nova_PackSetuid(&reply,CFR_SETUID,from,type);
