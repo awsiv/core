@@ -184,31 +184,42 @@ if ((type = String2Menu(menu_name)) == cfd_menu_error)
 switch (type)
    {
    case cfd_menu_delta:
+       Nova_PackPerformance(&reply,CFR_PERF,from,type);
+       Nova_PackClasses(&reply,CFR_CLASS,from,type);
+       Nova_PackFileChanges(&reply,CFR_FCHANGE,from,type);
+       Nova_PackDiffs(&reply,CFR_FDIFF,from,type);
+       Nova_PackMonitorMag(&reply,CFR_MONITOR_MAG,from,type);
+       Nova_PackCompliance(&reply,CFR_PCOMPLIANCE,from,type);
+       Nova_PackTotalCompliance(&reply,CFR_TCOMPLIANCE,from,type);
+       Nova_PackLastSeen(&reply,CFR_LASTSEEN,from,type);
+       Nova_PackRepairLog(&reply,CFR_REPAIRLOG,from,type);
+       Nova_PackNotKeptLog(&reply,CFR_NOTKEPTLOG,from,type);
        break;
+       
    case cfd_menu_full:
+
+       Nova_PackPerformance(&reply,CFR_PERF,from,type);
+       Nova_PackClasses(&reply,CFR_CLASS,from,type);
+       Nova_PackSetuid(&reply,CFR_SETUID,from,type);
+       Nova_PackFileChanges(&reply,CFR_FCHANGE,from,type);
+       Nova_PackDiffs(&reply,CFR_FDIFF,from,type);
+       Nova_PackMonitorWeek(&reply,CFR_MONITOR_WEEK,from,type);
+       Nova_PackMonitorMag(&reply,CFR_MONITOR_MAG,from,type);
+       Nova_PackMonitorHist(&reply,CFR_MONITOR_HIST,from,type);
+       Nova_PackMonitorYear(&reply,CFR_MONITOR_YEAR,from,type);
+       Nova_PackCompliance(&reply,CFR_PCOMPLIANCE,from,type);
+       Nova_PackTotalCompliance(&reply,CFR_TCOMPLIANCE,from,type);
+       Nova_PackSoftware(&reply,CFR_SOFTWARE,from,type);
+       Nova_PackAvailPatches(&reply,CFR_AVAILPATCH,from,type);
+       Nova_PackPatchStatus(&reply,CFR_PATCHSTATUS,from,type);
+       Nova_Pack_promise_output_common(&reply,CFR_PROMISEOUT,from,type);
+       Nova_PackValueReport(&reply,CFR_VALUE,from,type);
+       Nova_PackVariables(&reply,CFR_VARS,from,type);
+       Nova_PackLastSeen(&reply,CFR_LASTSEEN,from,type);
+       Nova_PackRepairLog(&reply,CFR_REPAIRLOG,from,type);
+       Nova_PackNotKeptLog(&reply,CFR_NOTKEPTLOG,from,type);
        break;
    }
-
-Nova_PackPerformance(&reply,CFR_PERF,from,type);
-Nova_PackClasses(&reply,CFR_CLASS,from,type);
-Nova_PackSetuid(&reply,CFR_SETUID,from,type);
-Nova_PackFileChanges(&reply,CFR_FCHANGE,from,type);
-Nova_PackDiffs(&reply,CFR_FDIFF,from,type);
-Nova_PackMonitorWeek(&reply,CFR_MONITOR_WEEK,from,type);
-Nova_PackMonitorMag(&reply,CFR_MONITOR_MAG,from,type);
-Nova_PackMonitorHist(&reply,CFR_MONITOR_HIST,from,type);
-Nova_PackMonitorYear(&reply,CFR_MONITOR_YEAR,from,type);
-Nova_PackCompliance(&reply,CFR_PCOMPLIANCE,from,type);
-Nova_PackTotalCompliance(&reply,CFR_TCOMPLIANCE,from,type);
-Nova_PackSoftware(&reply,CFR_SOFTWARE,from,type);
-Nova_PackAvailPatches(&reply,CFR_AVAILPATCH,from,type);
-Nova_PackPatchStatus(&reply,CFR_PATCHSTATUS,from,type);
-Nova_Pack_promise_output_common(&reply,CFR_PROMISEOUT,from,type);
-Nova_PackValueReport(&reply,CFR_VALUE,from,type);
-Nova_PackVariables(&reply,CFR_VARS,from,type);
-Nova_PackLastSeen(&reply,CFR_LASTSEEN,from,type);
-Nova_PackRepairLog(&reply,CFR_REPAIRLOG,from,type);
-Nova_PackNotKeptLog(&reply,CFR_NOTKEPTLOG,from,type);
 
 // Promise: get time2 and return for delta
 // Promise: return size as a service

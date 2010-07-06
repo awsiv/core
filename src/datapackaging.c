@@ -862,6 +862,8 @@ while(true)
    {
    snprintf(timekey,CF_MAXVARSIZE-1,"%s_%s_%s_%s",d,m,l,s);
    nodate = true;
+
+   // Do we want to try to limit the times here?
    
    if (ReadDB(dbp,timekey,&value,sizeof(struct Averages)))
       {
