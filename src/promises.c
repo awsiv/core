@@ -287,7 +287,58 @@ WriteDB(dbp,key,&new_value,sizeof(struct promise_value));
 CloseDB(dbp);
 }
 
-/***************************************************************/
+/*****************************************************************************/
+
+void Nova_LastSawBundle(char *name)
+
+{ char filename[CF_BUFSIZE];
+  int lsea = LASTSEENEXPIREAFTER;
+  double lastseen,delta2;
+  struct QPoint q,newq;
+  time_t now = time(NULL);
+  CF_DB *dbp;
+ 
+snprintf(filename,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,NOVA_BUNDLE_LOG);
+MapName(filename);
+
+if (!OpenDB(filename,&dbp))
+   {
+   return;
+   }
+
+if (ReadDB(dbp,name,&q,sizeof(q)))
+   {
+   lastseen = (double)now - q.q;
+   newq.q = (double)now;                   /* Last seen is now-then */
+   newq.expect = GAverage(lastseen,q.expect,0.3);
+   delta2 = (lastseen - q.expect)*(lastseen - q.expect);
+   newq.var = GAverage(delta2,q.var,0.3);
+   }
+else
+   {
+   lastseen = 0.0;
+   newq.q = (double)now;
+   newq.expect = 0.0;
+   newq.var = 0.0;
+   }
+
+if (lastseen > (double)lsea)
+   {
+   CfOut(cf_verbose,""," -> Bundle %s expired\n",name);
+   DeleteDB(dbp,name);
+   }
+else
+   {
+   CfOut(cf_verbose,""," -> Bundle \"%s\" promise kept at %s\n",name,ctime(&now));
+   WriteDB(dbp,name,&newq,sizeof(newq));
+   }
+
+CloseDB(dbp);
+}
+
+/*****************************************************************************/
+/* Bootstrap                                                                 */
+/*****************************************************************************/
 
 void Nova_CheckAutoBootstrap()
 

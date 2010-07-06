@@ -26,7 +26,6 @@ void Nova_PackPerformance(struct Item **reply,char *header,time_t from,enum cfd_
   CF_DBC *dbcp;
   char *key;
   void *value;
-  FILE *fout;
   double now = (double)time(NULL),average = 0, var = 0;
   double ticksperminute = 60.0;
   char name[CF_BUFSIZE],eventname[CF_BUFSIZE],buffer[CF_BUFSIZE];
@@ -1443,7 +1442,6 @@ void Nova_PackLastSeen(struct Item **reply,char *header,time_t from,enum cfd_men
   CF_DBC *dbcp;
   char *key;
   void *value;
-  FILE *fout;
   time_t tid = time(NULL);
   double now = (double)tid,average = 0, var = 0;
   double ticksperhr = (double)CF_TICKS_PER_HOUR;
@@ -1777,6 +1775,127 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       break;
       }
+   }
+
+DeleteItemList(file);
+}
+
+/*****************************************************************************/
+
+void Nova_PackMeter(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+
+{ char line[CF_BUFSIZE];
+
+CfOut(cf_verbose,""," -> Packing meter");
+
+AppendItem(reply,header,NULL);
+
+snprintf(line,CF_BUFSIZE-1,"W: %.4lf %.4lf\n",METER_KEPT[meter_compliance_week],METER_REPAIRED[meter_compliance_week]);
+AppendItem(reply,line,NULL);
+snprintf(line,CF_BUFSIZE-1,"D: %.4lf %.4lf\n",METER_KEPT[meter_compliance_day],METER_REPAIRED[meter_compliance_day]);
+AppendItem(reply,line,NULL);
+snprintf(line,CF_BUFSIZE-1,"H: %.4lf %.4lf\n",METER_KEPT[meter_compliance_hour],METER_REPAIRED[meter_compliance_hour]);
+AppendItem(reply,line,NULL);
+snprintf(line,CF_BUFSIZE-1,"P: %.4lf %.4lf\n",METER_KEPT[meter_patch_day],METER_REPAIRED[meter_patch_day]);
+AppendItem(reply,line,NULL);
+snprintf(line,CF_BUFSIZE-1,"S: %.4lf %.4lf\n",METER_KEPT[meter_soft_day],METER_REPAIRED[meter_soft_day]);
+AppendItem(reply,line,NULL);
+snprintf(line,CF_BUFSIZE-1,"C: %.4lf %.4lf\n",METER_KEPT[meter_comms_hour],METER_REPAIRED[meter_comms_hour]);
+AppendItem(reply,line,NULL);
+snprintf(line,CF_BUFSIZE-1,"A: %.4lf %.4lf\n",METER_KEPT[meter_anomalies_day],METER_REPAIRED[meter_anomalies_day]);
+AppendItem(reply,line,NULL);
+}
+
+/*****************************************************************************/
+
+void Nova_PackBundles(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+
+{ FILE *fin,*fout;
+  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  char bundle[CF_MAXVARSIZE];
+  struct Item *ip,*file = NULL;
+  int first = true,ksize,vsize;
+  time_t tid = time(NULL);
+  double now = (double)tid,average = 0, var = 0;
+  double ticksperhr = (double)CF_TICKS_PER_HOUR;
+  time_t then;
+  CF_DB *dbp;
+  CF_DBC *dbcp;
+  char *key;
+  void *value;
+  struct QPoint entry;
+ 
+CfOut(cf_verbose,""," -> Packing bundle log");
+  
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,NOVA_BUNDLE_LOG);
+MapName(name);
+
+AppendItem(reply,header,NULL);
+
+if (!OpenDB(name,&dbp))
+   {
+   return;
+   }
+
+/* Acquire a cursor for the database. */
+
+if (!NewDBCursor(dbp,&dbcp))
+   {
+   CfOut(cf_inform,""," !! Unable to scan last-seen database");
+   return;
+   }
+
+ /* Initialize the key/data return pair. */
+
+memset(&entry, 0, sizeof(entry));
+
+ /* Walk through the database and print out the key/data pairs. */
+
+while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
+   {
+   double then;
+   time_t fthen;
+   char tbuf[CF_BUFSIZE],addr[CF_BUFSIZE];
+
+   memcpy(&then,value,sizeof(then));
+   strncpy(bundle,(char *)key,ksize);
+
+   if (value != NULL)
+      {
+      memcpy(&entry,value,sizeof(entry));
+
+      then = entry.q;
+      average = (double)entry.expect;
+      var = (double)entry.var;
+      }
+   else
+      {
+      continue;
+      }
+
+   if (now - then > (double)LASTSEENEXPIREAFTER)
+      {
+      DeleteDB(dbp,key);
+      CfOut(cf_inform,""," -> Deleting expired entry for %s\n",bundle);
+      continue;
+      }
+
+   fthen = (time_t)then;                            /* format date */
+
+   if (first)
+      {
+      first = false;
+      AppendItem(reply,header,NULL);
+      }
+
+   snprintf(line,CF_BUFSIZE-1,"%s %ld %.2lf %.2lf %.2lf\n",
+           bundle,
+           (long)fthen,
+           ((double)(now-then))/ticksperhr,
+           average/ticksperhr,
+            sqrt(var)/ticksperhr);
+
+   AppendItem(reply,line,NULL);
    }
 
 DeleteItemList(file);

@@ -309,6 +309,8 @@ void Nova_PackLastSeen(struct Item **reply,char *header,time_t date,enum cfd_men
 void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackRepairLog(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackMeter(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackBundles(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 int Nova_CoarseLaterThan(char *key,char *from);
 int Nova_LaterThan(char *bigger,char *smaller);
 char *Nova_ShortArch(char *arch);
@@ -335,6 +337,9 @@ void Nova_UnPackLastSeen(struct Item *data);
 void Nova_UnPackTotalCompliance(struct Item *data);
 void Nova_UnPackRepairLog(struct Item *data);
 void Nova_UnPackNotKeptLog(struct Item *data);
+void Nova_UnPackMeter(struct Item *data);
+void Nova_UnPackBundles(struct Item *data);
+
 
 /* environments.c */
 
@@ -763,6 +768,7 @@ int NovaWin_WmiDeInitialize(void);
 #define NOVA_CACHE "nova_cache" "." DB_FEXT
 #define NOVA_LICENSE "nova_track" "." DB_FEXT
 #define NOVA_VALUE "nova_value" "." DB_FEXT
+#define NOVA_BUNDLE_LOG "bundles" "." DB_FEXT
 
 #define CF_BIGNUMBER 999999
 
@@ -807,3 +813,5 @@ struct promise_value
 #define CFR_LASTSEEN "SEN"
 #define CFR_REPAIRLOG "PRL"
 #define CFR_NOTKEPTLOG "NKL"
+#define CFR_METER "MET"
+#define CFR_BUNDLES "BUN"

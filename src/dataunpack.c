@@ -453,4 +453,49 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 }
 
+/*****************************************************************************/
+
+void Nova_UnPackMeter(struct Item *data)
+
+{ struct Item *ip;
+  char handle[CF_SMALLBUF];
+  time_t then;
+  
+CfOut(cf_verbose,""," -> Meter data...........................");
+
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   printf("Meter: %s\n",ip->name);
+   }
+}
+
+/*****************************************************************************/
+
+void Nova_UnPackBundles(struct Item *data)
+
+{ struct Item *ip;
+  char bundle[CF_SMALLBUF];
+  double ago,average,dev;
+  long fthen;
+  time_t then;
+  
+CfOut(cf_verbose,""," -> Bundle data...........................");
+
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   sscanf(ip->name,"%25s %ld %lf %lf %lf\n",
+          bundle,
+          &fthen,
+          &ago,
+          &average,
+          &dev);
+
+   then = (time_t)fthen;
+   
+   printf("Saw: %s seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s",bundle,ago,average,dev,ctime(&fthen));
+   }
+}
+
+
+
 

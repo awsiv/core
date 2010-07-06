@@ -10,7 +10,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#define cf_codebook_size 21
+#define cf_codebook_size 23
 
 char *CF_CODEBOOK[cf_codebook_size] =
    {
@@ -34,6 +34,8 @@ char *CF_CODEBOOK[cf_codebook_size] =
    CFR_LASTSEEN,
    CFR_REPAIRLOG,
    CFR_NOTKEPTLOG,
+   CFR_METER,
+   CFR_BUNDLES,
    NULL
    };
 
@@ -59,6 +61,8 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    Nova_UnPackLastSeen,
    Nova_UnPackRepairLog,
    Nova_UnPackNotKeptLog,
+   Nova_UnPackMeter,
+   Nova_UnPackBundles
    };
 
 /*********************************************************************/

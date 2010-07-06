@@ -194,6 +194,8 @@ switch (type)
        Nova_PackLastSeen(&reply,CFR_LASTSEEN,from,type);
        Nova_PackRepairLog(&reply,CFR_REPAIRLOG,from,type);
        Nova_PackNotKeptLog(&reply,CFR_NOTKEPTLOG,from,type);
+       Nova_PackMeter(&reply,CFR_METER,from,type);
+       Nova_PackBundles(&reply,CFR_BUNDLES,from,type);
        break;
        
    case cfd_menu_full:
@@ -218,6 +220,8 @@ switch (type)
        Nova_PackLastSeen(&reply,CFR_LASTSEEN,from,type);
        Nova_PackRepairLog(&reply,CFR_REPAIRLOG,from,type);
        Nova_PackNotKeptLog(&reply,CFR_NOTKEPTLOG,from,type);
+       Nova_PackMeter(&reply,CFR_METER,from,type);
+       Nova_PackBundles(&reply,CFR_BUNDLES,from,type);
        break;
    }
 
