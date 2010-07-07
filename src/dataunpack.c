@@ -103,7 +103,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorWeek(struct Item *data)
 
 { struct Item *ip;
-  int observable;
+  int observable,slot;
   double q,e,dev;
   char t[CF_TIME_SIZE];
 
@@ -116,7 +116,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    if (strncmp(ip->name,"T: ", 3) == 0)
       {
       memset(t,0,CF_TIME_SIZE);
-      sscanf(ip->name+3,"%31[^\n]",t);
+      sscanf(ip->name+3,"%31[^,],%d",t,&slot);
       continue;
       }
 
@@ -124,7 +124,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    
    q = e = dev = 0;
    sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
-   printf("Week-obs %d @ %s: %.2lf,%.2lf,%.2lf\n",observable,t,q,e,dev);
+   printf("Week-obs %d in slot %d: %.2lf,%.2lf,%.2lf\n",observable,slot,q,e,dev);
    }
 }
 
@@ -133,8 +133,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorMag(struct Item *data)
 
 { struct Item *ip;
-  time_t t = 0;
-  int observable;
+ int observable,slot;
   double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
@@ -144,14 +143,14 @@ for (ip = data; ip != NULL; ip=ip->next)
    // Extract time stamp
    if (strncmp(ip->name,"T: ", 3) == 0)
       {
-      sscanf(ip->name+3,"%ld",&t);
+      sscanf(ip->name+3,"%d",&slot);
       continue;
       }
 
    // Extract records
    q = e = dev = 0;
-   sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
-   printf("Mag-obs %d: %.2lf,%.2lf,%.2lf measured at %s",observable,q,e,dev,cf_ctime(&t));
+   sscanf(ip->name,"%d %lf %lf %lf",&observable,&q,&e,&dev);
+   printf("Mag-obs %d: %.2lf,%.2lf,%.2lf measured for slot %d\n",observable,q,e,dev,slot);
    }
 }
 

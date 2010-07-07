@@ -32,7 +32,6 @@ void Nova_PackPerformance(struct Item **reply,char *header,time_t from,enum cfd_
   struct Event entry;
   int ret,ksize,vsize,first = true;
 
-
 CfOut(cf_verbose,""," -> Packing performance data");
   
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_PERFORMANCE);
@@ -512,7 +511,7 @@ DeleteItemList(file);
 
 void Nova_PackMonitorWeek(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int its,i,j,k, count = 0,err,first = true;
+{ int its,i,j,k, count = 0,err,first = true,slot = 0;
   double kept = 0, not_kept = 0, repaired = 0;
   struct stat statbuf;
   struct Averages entry,det;
@@ -554,6 +553,7 @@ while (now < CF_MONDAY_MORNING + CF_WEEK)
          }
 
       now += CF_MEASURE_INTERVAL;
+      slot++;
       count++;
       }
 
@@ -596,7 +596,7 @@ while (now < CF_MONDAY_MORNING + CF_WEEK)
 
    /* Promise: Keep a small time-key enabling further compression by delta elimination */
 
-   snprintf(buffer,CF_BUFSIZE,"T: %s\n",timekey);
+   snprintf(buffer,CF_BUFSIZE,"T: %s,%d\n",timekey,slot);
    AppendItem(reply,buffer,NULL);
    
    for (i = 0; i < CF_OBSERVABLES; i++)
@@ -623,7 +623,7 @@ CloseDB(dbp);
 
 void Nova_PackMonitorMag(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int its,i,j,k, count = 0,err,ok[CF_OBSERVABLES],first = true;
+{ int its,i,j,k,err,ok[CF_OBSERVABLES],first = true,slot;
   struct Averages entry,det;
   time_t now,here_and_now;
   char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
@@ -640,10 +640,11 @@ if (!OpenDB(filename,&dbp))
    return;
    }
 
-its = 1; // Maximum resolution
-
 now = time(NULL);
 here_and_now = now - (time_t)(4 * CF_TICKS_PER_HOUR);
+
+strcpy(timekey,GenTimeKey(here_and_now));
+slot = GetTimeSlot(here_and_now);
 
 // if from > here_and_now just send the delta
 
@@ -651,29 +652,25 @@ while (here_and_now < now)
    {
    memset(&entry,0,sizeof(entry));
 
+   strcpy(timekey,GenTimeKey(here_and_now));
+   here_and_now += CF_MEASURE_INTERVAL;
+   slot++;
+
    if (from > here_and_now)
       {
       continue;
       }
    
-   for (j = 0; j < its; j++)
+   if (ReadDB(dbp,timekey,&det,sizeof(struct Averages)))
       {
-      strcpy(timekey,GenTimeKey(here_and_now));
-
-      if (ReadDB(dbp,timekey,&det,sizeof(struct Averages)))
+      for (i = 0; i < CF_OBSERVABLES; i++)
          {
-         for (i = 0; i < CF_OBSERVABLES; i++)
-            {
-            entry.Q[i].expect += det.Q[i].expect/(double)its;
-            entry.Q[i].var += det.Q[i].var/(double)its;
-            entry.Q[i].q += det.Q[i].q/(double)its;
-            }
+         entry.Q[i].expect += det.Q[i].expect;
+         entry.Q[i].var += det.Q[i].var;
+         entry.Q[i].q += det.Q[i].q;
          }
-
-      here_and_now += CF_MEASURE_INTERVAL;
-      count++;
       }
-
+   
    /* Promise: only print header if we intend to transmit some data */
    
    if (first && (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0))
@@ -684,15 +681,14 @@ while (here_and_now < now)
 
    /* Promise: Keep a small time-key enabling further compression by delta elimination */
 
-   snprintf(buffer,CF_BUFSIZE,"T: %ld\n",here_and_now);
+   snprintf(buffer,CF_BUFSIZE,"T: %d\n",slot);
    AppendItem(reply,buffer,NULL);
    
    for (i = 0; i < CF_OBSERVABLES; i++)
       {
       if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
          {
-         /* Promise: Keep the integer observable label so that we can eliminate zero entries */
-         
+         /* Promise: Keep the integer observable label so that we can eliminate zero entries */      
          snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
          AppendItem(reply,buffer,NULL);
          }
