@@ -14,7 +14,6 @@
 
 #ifdef HAVE_LIBMONGOC
 
-
 int Nova_DBOpen(mongo_connection *conn, char *host, int port)
 {
   mongo_connection_options connOpts;
@@ -106,6 +105,78 @@ void Nova_DBSaveSoftware(mongo_connection *conn, char *keyHash, struct Item *dat
   
 }
 
+/*****************************************************************************/
+
+void Nova_DBQueryHosts(mongo_connection *conn, bson *query, struct Item **result)
+/* Takes a query document and returns a set of public key hashes
+ * of hosts that matches the query. */
+{
+  mongo_cursor *cursor;
+  bson_iterator it;
+  bson_buffer bb;
+  bson field;  // field description
+  
+
+  // only return specific fields (key hash for now)
+
+  bson_buffer_init(&bb);
+  bson_append_int(&bb, "keyHash", 1);
+  bson_from_buffer(&field, &bb);
+  
+
+  cursor = mongo_find(conn, MONGO_DATABASE, query, &field, 0, 0, 0);
+
+  while(mongo_cursor_next(cursor))  // loops over documents
+    {
+      
+      bson_iterator_init(&it, cursor->current.data);
+
+      if(!Nova_MongoKeyPosition(&it, "keyHash", bson_string))
+	{
+	  CfOut(cf_error, "", "!! Could not find keyHash element in DB report document");
+	  continue;
+	}
+      
+      Debug("Found DB key \"%s\"\n", bson_iterator_string(&it));
+
+      AppendItem(result, bson_iterator_string(&it), NULL);
+      
+    }
+  
+  
+  bson_destroy(&field);
+  mongo_cursor_destroy(cursor);
+
+}
+
+/*****************************************************************************/
+
+int Nova_MongoKeyPosition(bson_iterator *it, char *keyName, bson_type valType)
+/* Positions the iterator at the given string key name.
+ * Returns true if found, false otherwise */
+{
+  while(bson_iterator_next(it))
+    {
+      if(strcmp(bson_iterator_key(it), keyName) != 0)
+	{
+	  Debug("Report DB key=\"%s\", looking for \"%s\"\n", bson_iterator_key(it), keyName);
+	  continue;
+	}
+
+      if((valType != -1) &&
+	 bson_iterator_type(it) != valType)
+	{
+	  CfOut(cf_error, "", "!! Key \"%s\" value in report DB is of wrong type (looking for type=%d, found type=%d)", 
+		keyName, valType, bson_iterator_type(it));
+	  return false;
+	}
+      
+      return true;
+    }
+  
+  return false;
+
+}
 
 
 #endif  /* HAVE_MONGOC */

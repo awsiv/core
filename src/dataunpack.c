@@ -279,6 +279,10 @@ CfOut(cf_verbose,""," -> Installed software data...............");
 
  Nova_DBSaveSoftware(&conn, "abcdefghijklmnopqrstuwxyz123", data);
 
+ bson b;
+
+ Nova_DBQueryHosts(&conn, bson_empty(&b), NULL);
+
  if(!Nova_DBClose(&conn))
    {
      CfOut(cf_error, "", "!! Could not close connection to report database");
