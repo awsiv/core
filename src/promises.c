@@ -194,6 +194,8 @@ if ((fp = fopen(name,"a")) == NULL)
    return;
    }
 
+// fprintf(fp,"%31[^,],%31[^,],%31[^,],%1023[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
+
 fprintf(fp,"%ld,%s\n",(long)now,id);
 
 fclose(fp);

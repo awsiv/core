@@ -1036,7 +1036,9 @@ void Nova_SummarizePromiseRepaired(int xml,int html,int csv,int embed,char *styl
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
-  char date[CF_MAXVARSIZE],handle[CF_MAXVARSIZE],bundle[CF_MAXVARSIZE],ref[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],lineno[CF_MAXVARSIZE];
+  char handle[CF_MAXVARSIZE];
+  time_t date;
+  long then;
   struct Item *ip,*file = NULL;
   int i = 0;
 
@@ -1089,11 +1091,7 @@ if (html && !embed)
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
    fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Time",NRH[cfx_date][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],"Bundle",NRH[cfx_bundle][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_event][cfb],"Handle",NRH[cfx_event][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],"Comment",NRH[cfx_ref][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Filename",NRH[cfx_end][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],"Line no.",NRH[cfx_index][cfe]);
    fprintf(fout,"%s",NRH[cfx_entry][cfe]);
    }
 else if (XML)
@@ -1110,30 +1108,21 @@ for (ip = file; ip != NULL; ip = ip->next)
       continue;
       }
 
-   date[0] = '\0';
-
-   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%512[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
+   sscanf(ip->name,"%ld,%512[^,]",&then,handle);
+   date = (time_t)then;
 
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
       fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],date,NRX[cfx_date][cfe]);
-      fprintf(fout,"%s %s %s",NRX[cfx_bundle][cfb],bundle,NRX[cfx_bundle][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_event][cfb],handle,NRX[cfx_event][cfe]);
-      fprintf(fout,"%s %s %s",NRX[cfx_ref][cfb],ref,NRX[cfx_ref][cfe]);
-      fprintf(fout,"%s %s %s",NRX[cfx_filename][cfb],filename,NRX[cfx_end][cfe]);
-      fprintf(fout,"%s %s %s",NRX[cfx_index][cfb],lineno,NRX[cfx_index][cfe]);
       fprintf(fout,"%s",NRX[cfx_entry][cfe]);
       }
    else if (html)
       {
       fprintf(fout,"%s",NRH[cfx_entry][cfb]);
-      fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],date,NRH[cfx_date][cfe]);
-      fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],bundle,NRH[cfx_bundle][cfe]);
+      fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],cf_ctime(&date),NRH[cfx_date][cfe]);
       fprintf(fout,"%s <a href=\"promises.cf.html#%s\">%s</a> %s",NRH[cfx_event][cfb],handle,handle,NRH[cfx_event][cfe]);
-      fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],ref,NRH[cfx_ref][cfe]);
-      fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],filename,NRH[cfx_end][cfe]);
-      fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],lineno,NRH[cfx_index][cfe]);
       fprintf(fout,"%s",NRH[cfx_entry][cfe]);
       }
    else if (csv)
@@ -1171,7 +1160,9 @@ void Nova_SummarizePromiseNotKept(int xml,int html,int csv,int embed,char *style
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
-  char date[CF_MAXVARSIZE],handle[CF_MAXVARSIZE],bundle[CF_MAXVARSIZE],ref[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],lineno[CF_MAXVARSIZE];
+  char handle[CF_MAXVARSIZE];
+  time_t date;
+  long then;
   struct Item *ip,*file = NULL;
   char start[32];
   int i = 0;
@@ -1225,11 +1216,7 @@ if (html && !embed)
    fprintf(fout,"<table class=border cellpadding=5>\n");
    fprintf(fout,"%s",NRH[cfx_entry][cfb]);
    fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],"Time",NRH[cfx_date][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],"Bundle",NRH[cfx_bundle][cfe]);
    fprintf(fout,"%s %s %s",NRH[cfx_event][cfb],"Handle",NRH[cfx_event][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],"Comment",NRH[cfx_ref][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],"Filename",NRH[cfx_end][cfe]);
-   fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],"Line no.",NRH[cfx_index][cfe]);
    fprintf(fout,"%s",NRH[cfx_entry][cfe]);
    }
 else if (XML)
@@ -1247,30 +1234,21 @@ for (ip = file; ip != NULL; ip = ip->next)
       continue;
       }
 
-   date[0] = '\0';
-
-   sscanf(ip->name,"%31[^,],%31[^,],%31[^,],%1023[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
-
+   sscanf(ip->name,"%ld,%512[^,]",&then,handle);
+   date = (time_t)then;
+   
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
       fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],date,NRX[cfx_date][cfe]);
-      fprintf(fout,"%s %s %s",NRX[cfx_bundle][cfb],bundle,NRX[cfx_bundle][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_event][cfb],handle,NRX[cfx_event][cfe]);
-      fprintf(fout,"%s %s %s",NRX[cfx_ref][cfb],ref,NRX[cfx_ref][cfe]);
-      fprintf(fout,"%s %s %s",NRX[cfx_filename][cfb],filename,NRX[cfx_end][cfe]);
-      fprintf(fout,"%s %s %s",NRX[cfx_index][cfb],lineno,NRX[cfx_index][cfe]);
       fprintf(fout,"%s",NRX[cfx_entry][cfe]);
       }
    else if (html)
       {
       fprintf(fout,"%s",NRH[cfx_entry][cfb]);
-      fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],date,NRH[cfx_date][cfe]);
-      fprintf(fout,"%s %s %s",NRH[cfx_bundle][cfb],bundle,NRH[cfx_bundle][cfe]);
+      fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],cf_ctime(&date),NRH[cfx_date][cfe]);
       fprintf(fout,"%s <a href=\"promises.cf.html#%s\">%s</a> %s",NRH[cfx_event][cfb],handle,handle,NRH[cfx_event][cfe]);
-      fprintf(fout,"%s %s %s",NRH[cfx_ref][cfb],ref,NRH[cfx_ref][cfe]);
-      fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],filename,NRH[cfx_end][cfe]);
-      fprintf(fout,"%s %s %s",NRH[cfx_index][cfb],lineno,NRH[cfx_index][cfe]);
       fprintf(fout,"%s",NRH[cfx_entry][cfe]);
       }
    else if (csv)
