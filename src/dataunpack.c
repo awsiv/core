@@ -266,6 +266,27 @@ void Nova_UnPackSoftware(struct Item *data)
 
 CfOut(cf_verbose,""," -> Installed software data...............");
 
+
+#ifdef HAVE_LIBMONGOC
+
+ CF_DBCONN conn;
+
+ if(!Nova_DBOpen(&conn, "127.0.0.1", 27017))
+   {
+     CfOut(cf_error, "", "!! Could not open connection to report database");
+     return;
+   }
+
+ Nova_DBSaveSoftware(&conn, "abcdefghijklmnopqrstuwxyz123", data);
+
+ if(!Nova_DBClose(&conn))
+   {
+     CfOut(cf_error, "", "!! Could not close connection to report database");
+   }
+
+#endif
+
+
 for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%250[^,],%250[^,],%c",name,version,&arch);
@@ -274,6 +295,8 @@ for (ip = data; ip != NULL; ip=ip->next)
    
    printf("Installed software: %s version (%s on %c)\n",name,version,arch);
    }
+
+   
 }
 
 /*****************************************************************************/

@@ -18,6 +18,7 @@ libcfnova_la_SOURCES =						\
 	acl_linux.c						\
 	acl_nt.c                                                \
 	database.c						\
+	db_mongo.c                                              \
 	sql.c							\
 	ldap.c							\
 	license.c						\

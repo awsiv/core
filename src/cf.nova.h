@@ -33,6 +33,16 @@
 # include <libvirt/virterror.h>
 #endif
 
+#ifdef HAVE_LIBMONGOC
+# define MONGO_HAVE_STDINT
+# define CF_DBCONN mongo_connection
+# define MONGO_DATABASE "cfreport.hosts"
+# include <mongo.h>
+#else
+# define CF_DBCONN char
+#endif
+
+
 #undef PACKAGE
 // #undef AUTOCONF_HOSTNAME TODO: Does removal cause troble ?
 
@@ -286,6 +296,16 @@ void Nova_BoundaryCheck(struct CfDataView *cfv,int *x1,int *y1,int *x2, int *y2)
 /* database.c */
 
 int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
+
+/* db_mongo.c */
+
+#ifdef HAVE_LIBMONGOC
+int Nova_DBOpen(mongo_connection *conn, char *host, int port);
+int Nova_DBClose(mongo_connection *conn);
+void Nova_DBInitialize();
+void Nova_DBSaveSoftware(mongo_connection *conn, char *keyHash, struct Item *data);
+#endif  /* HAVE_LIBMONGOC */
+
 
 /* datapackaging.c */
 
