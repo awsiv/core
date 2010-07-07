@@ -810,7 +810,7 @@ void Nova_PackMonitorYear(struct Item **reply,char *header,time_t from,enum cfd_
   char d[CF_TIME_SIZE],m[CF_TIME_SIZE],l[CF_TIME_SIZE],s[CF_TIME_SIZE],om[CF_TIME_SIZE];
   char *day = VDAY,*month=VMONTH,*lifecycle=VLIFECYCLE,*shift=VSHIFT;
   double num[CF_OBSERVABLES],qav[CF_OBSERVABLES],varav[CF_OBSERVABLES],eav[CF_OBSERVABLES];
-  char filename[CF_BUFSIZE];
+  char filename[CF_BUFSIZE],coarse_cycle[CF_SMALLBUF];
   struct Averages value;
   time_t now;
   CF_DB *dbp;
@@ -856,90 +856,92 @@ for (i = 0; i < CF_OBSERVABLES;i++)
 while(true)
    {
    snprintf(timekey,CF_MAXVARSIZE-1,"%s_%s_%s_%s",d,m,l,s);
+   snprintf(coarse_cycle,CF_SMALLBUF,"%s_%s",m,l);
    nodate = true;
-
-   // Do we want to try to limit the times here?
    
-   if (ReadDB(dbp,timekey,&value,sizeof(struct Averages)))
+   if (Nova_LifeCycleLater(coarse_cycle,from))
       {
-      if (strcmp(m,om) != 0)
+      if (ReadDB(dbp,timekey,&value,sizeof(struct Averages)))
          {
-         showtime = true;
-         
-         // Only print header if there are data and we have not already done it
-
-         if (first)
+         if (strcmp(m,om) != 0)
             {
-            first = false;
-            AppendItem(reply,header,NULL);
-            }
-
-         if (nodate)
-            {
-            snprintf(buffer,CF_BUFSIZE,"T: %s\n",timekey);
-            AppendItem(reply,buffer,NULL);
-            nodate = false;
-            }  
-         }
-      else
-         {
-         showtime = false;
-         }
-
-      for (i = 0; i < CF_OBSERVABLES;i++)
-         {
-         /* Check for out of bounds data */
-         
-         if (value.Q[i].q < 0 || value.Q[i].q > CF_BIGNUMBER)
-            {
-            value.Q[i].q = 0;
-            }
-         
-         if (value.Q[i].var < 0 || value.Q[i].var > CF_BIGNUMBER)
-            {
-            value.Q[i].var = value.Q[i].q;
-            }
-         
-         if (value.Q[i].expect < 0 || value.Q[i].expect > CF_BIGNUMBER)
-            {
-            value.Q[i].expect = value.Q[i].q;
-            }
-         
-         if (showtime)
-            {
-            num[i]++;
-            qav[i] += value.Q[i].q;
-            eav[i] += value.Q[i].expect;
-            varav[i] += value.Q[i].var;
-
-            qav[i] /= num[i];
-            eav[i] /= num[i];
-            varav[i] /= num[i];
+            showtime = true;
             
-            if (value.Q[i].q > 0 && value.Q[i].expect > 0 && value.Q[i].var > 0)
+            // Only print header if there are data and we have not already done it
+            
+            if (first)
                {
-               snprintf(buffer,CF_BUFSIZE-1,"%d %.2lf %.2lf %.2lf\n",i,qav[i],eav[i],sqrt(varav[i]));
-               AppendItem(reply,buffer,NULL);
-               strcpy(om,m);
+               first = false;
+               AppendItem(reply,header,NULL);
                }
-
-            qav[i] = 0;
-            eav[i] = 0;
-            varav[i] = 0;
-            num[i] = 0;
+            
+            if (nodate)
+               {
+               snprintf(buffer,CF_BUFSIZE,"T: %s\n",coarse_cycle);
+               AppendItem(reply,buffer,NULL);
+               nodate = false;
+               }  
             }
          else
             {
-            qav[i] += value.Q[i].q;
-            eav[i] += value.Q[i].expect;
-            varav[i] += value.Q[i].var;
-            num[i]++;
-            }         
+            showtime = false;
+            }
+         
+         for (i = 0; i < CF_OBSERVABLES;i++)
+            {
+            /* Check for out of bounds data */
+            
+            if (value.Q[i].q < 0 || value.Q[i].q > CF_BIGNUMBER)
+               {
+               value.Q[i].q = 0;
+               }
+            
+            if (value.Q[i].var < 0 || value.Q[i].var > CF_BIGNUMBER)
+               {
+               value.Q[i].var = value.Q[i].q;
+               }
+            
+            if (value.Q[i].expect < 0 || value.Q[i].expect > CF_BIGNUMBER)
+               {
+               value.Q[i].expect = value.Q[i].q;
+               }
+            
+            if (showtime)
+               {
+               num[i]++;
+               qav[i] += value.Q[i].q;
+               eav[i] += value.Q[i].expect;
+               varav[i] += value.Q[i].var;
+               
+               qav[i] /= num[i];
+               eav[i] /= num[i];
+               varav[i] /= num[i];
+               
+               if (value.Q[i].q > 0 && value.Q[i].expect > 0 && value.Q[i].var > 0)
+                  {
+                  snprintf(buffer,CF_BUFSIZE-1,"%d %.2lf %.2lf %.2lf\n",i,qav[i],eav[i],sqrt(varav[i]));
+                  AppendItem(reply,buffer,NULL);
+                  strcpy(om,m);
+                  }
+               
+               qav[i] = 0;
+               eav[i] = 0;
+               varav[i] = 0;
+               num[i] = 0;
+               }
+            else
+               {
+               qav[i] += value.Q[i].q;
+               eav[i] += value.Q[i].expect;
+               varav[i] += value.Q[i].var;
+               num[i]++;
+               }         
+            }
          }
+      
+      count++;
       }
-
-   count++;
-
+   
    NovaIncrementShift(d,m,l,s);
 
    if (NovaLifeCyclePassesGo(d,m,l,s,day,month,lifecycle,shift))
@@ -1987,6 +1989,34 @@ if (min_big < min_small && hour_big == hour_small && day_big == day_small
    }
 
 return true;
+}
+
+/*****************************************************************************/
+
+int Nova_LifeCycleLater(char *coarse_cycle,time_t from)
+
+{ char now[CF_MAXVARSIZE],nm[CF_MAXVARSIZE],om[CF_MAXVARSIZE];
+  int year,nlc,olc,o_m,n_m;
+
+/* Because cycles are endless, this will work up to a year */
+
+  
+snprintf(now,CF_MAXVARSIZE-1,"%s",cf_ctime(&from));
+
+sscanf(now,"%*s %s %*s %*s %d",nm,&year);
+nlc = year % 3;
+
+sscanf(coarse_cycle,"%[^_]_%*[^_]_%d",om,&olc);
+
+o_m = Month2Int(om);
+n_m = Month2Int(nm);
+
+if ((nlc == olc) && (n_m <= o_m))
+   {
+   return true;
+   }
+
+return false;
 }
 
 /*****************************************************************************/

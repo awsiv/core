@@ -1115,8 +1115,8 @@ struct cfagent_connection
    unsigned char *session_key;
    char encryption_type;
    short error;
+   char *hash_pubkey;
    };
-
 
 /*******************************************************************/
 
