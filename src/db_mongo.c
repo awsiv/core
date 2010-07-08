@@ -107,9 +107,13 @@ void Nova_DBSaveSoftware(mongo_connection *conn, char *keyHash, struct Item *dat
 
 /*****************************************************************************/
 
-void Nova_DBQueryHosts(mongo_connection *conn, bson *query, struct Item **result)
+void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result)
 /* Takes a query document and returns a set of public key hashes
- * of hosts that matches the query. */
+ * of hosts that matches the query. Use bson_empty(&b) as query to
+ * match all hosts.
+ * TODO: Generalise to take a list of wanted key values instead of
+ * one. */
+
 {
   mongo_cursor *cursor;
   bson_iterator it;
@@ -120,7 +124,7 @@ void Nova_DBQueryHosts(mongo_connection *conn, bson *query, struct Item **result
   // only return specific fields (key hash for now)
 
   bson_buffer_init(&bb);
-  bson_append_int(&bb, "keyHash", 1);
+  bson_append_int(&bb, resKeyVal, 1);
   bson_from_buffer(&field, &bb);
   
 
@@ -131,9 +135,9 @@ void Nova_DBQueryHosts(mongo_connection *conn, bson *query, struct Item **result
       
       bson_iterator_init(&it, cursor->current.data);
 
-      if(!Nova_MongoKeyPosition(&it, "keyHash", bson_string))
+      if(!Nova_MongoKeyPosition(&it, resKeyVal, bson_string))
 	{
-	  CfOut(cf_error, "", "!! Could not find keyHash element in DB report document");
+	  CfOut(cf_error, "", "!! Could not find \"%s\" element in DB report document", resKeyVal);
 	  continue;
 	}
       
@@ -147,6 +151,59 @@ void Nova_DBQueryHosts(mongo_connection *conn, bson *query, struct Item **result
   bson_destroy(&field);
   mongo_cursor_destroy(cursor);
 
+}
+
+void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result)
+/**
+ * Returns a set of hosts having the given software (name,ver,arch).
+ * ver and arch may be NULL, in which case they are not considered,
+ * otherwise an AND search is done (e.g. name AND ver AND arch).
+ */
+{
+  bson_buffer bb;
+  bson query;
+  bson_buffer *sub1, *sub2;
+
+  // return resKeyVal of documents matching this query
+  bson_buffer_init(&bb);
+
+  sub1 = bson_append_start_object(&bb, "sw");
+  sub2 = bson_append_start_object(&bb, "$elemMatch");
+  
+  if(regex)
+    {
+      bson_append_regex(sub2, "n" , name, "");
+      if(ver)
+	{
+	  bson_append_regex(sub2, "v" , ver, "");
+	}
+      if(arch)
+	{
+	  bson_append_regex(sub2, "a" , arch, "");
+	}
+    }
+  else
+    {
+      bson_append_string(sub2, "n" , name);
+      if(ver)
+	{
+	  bson_append_string(sub2, "v" , ver);
+	}
+      if(arch)
+	{
+	  bson_append_string(sub2, "a" , arch);
+	}
+    }
+  
+  bson_append_finish_object(sub2);
+  bson_append_finish_object(sub1);
+
+  bson_from_buffer(&query, &bb);
+
+  Nova_DBQueryHosts(conn, &query, resKeyVal, result);
+
+  bson_destroy(&query);  
+  
 }
 
 /*****************************************************************************/
