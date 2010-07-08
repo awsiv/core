@@ -665,3 +665,25 @@ font-family: DejaVuSans,Arial,sans-serif;
 background-color: #f2ca77;
 padding: 5px;
 }
+
+#subject
+{
+font-size: 130%;
+color: #9e9e97;
+ }
+
+#category
+{
+font-size: 110%;
+color: #4c4c43;
+text-decoration: none;
+}
+
+
+
+
+
+
+
+
+
