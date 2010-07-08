@@ -12,7 +12,7 @@
 
 /*****************************************************************************/
 
-void Nova_UnPackPerformance(struct Item *data)
+void Nova_UnPackPerformance(char *id, struct Item *data)
 
 { struct Item *ip;
   time_t t;
@@ -31,7 +31,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackClasses(struct Item *data)
+void Nova_UnPackClasses(char *id, struct Item *data)
 
 { struct Item *ip;
   char name[CF_MAXVARSIZE];
@@ -50,7 +50,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackSetuid(struct Item *data)
+void Nova_UnPackSetuid(char *id, struct Item *data)
 
 { struct Item *ip;
 
@@ -66,7 +66,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackFileChanges(struct Item *data)
+void Nova_UnPackFileChanges(char *id, struct Item *data)
 
 { struct Item *ip;
   char name[CF_MAXVARSIZE],date[CF_MAXVARSIZE];
@@ -83,7 +83,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackDiffs(struct Item *data)
+void Nova_UnPackDiffs(char *id, struct Item *data)
 
 { struct Item *ip;
   char name[CF_MAXVARSIZE],t[CF_MAXVARSIZE],change[CF_BUFSIZE];
@@ -100,7 +100,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorWeek(struct Item *data)
+void Nova_UnPackMonitorWeek(char *id, struct Item *data)
 
 { struct Item *ip;
   int observable,slot;
@@ -130,7 +130,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorMag(struct Item *data)
+void Nova_UnPackMonitorMag(char *id, struct Item *data)
 
 { struct Item *ip;
  int observable,slot;
@@ -156,7 +156,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorHist(struct Item *data)
+void Nova_UnPackMonitorHist(char *id, struct Item *data)
 
 { struct Item *ip;
   int weekly[CF_OBSERVABLES][CF_GRAINS];
@@ -202,7 +202,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorYear(struct Item *data)
+void Nova_UnPackMonitorYear(char *id, struct Item *data)
 
 { struct Item *ip;
   char timekey[CF_SMALLBUF];
@@ -229,7 +229,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackCompliance(struct Item *data)
+void Nova_UnPackCompliance(char *id, struct Item *data)
 
 { struct Item *ip;
  time_t then;
@@ -259,7 +259,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackSoftware(struct Item *data)
+void Nova_UnPackSoftware(char *id, struct Item *data)
 
 { struct Item *ip;
  char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch;
@@ -269,21 +269,21 @@ CfOut(cf_verbose,""," -> Installed software data...............");
 
 #ifdef HAVE_LIBMONGOC
 
- CF_DBCONN conn;
+ CF_DBCONN dbconn;
 
- if(!Nova_DBOpen(&conn, "127.0.0.1", 27017))
+ if(!Nova_DBOpen(&dbconn, "127.0.0.1", 27017))
    {
      CfOut(cf_error, "", "!! Could not open connection to report database");
      return;
    }
 
- Nova_DBSaveSoftware(&conn, "abcdefghijklmnopqrstuwxyz123", data);
+ Nova_DBSaveSoftware(&dbconn, "abcdefghijklmnopqrstuwxyz123", data);
 
  bson b;
 
- Nova_DBQueryHosts(&conn, bson_empty(&b), NULL);
+ Nova_DBQueryHosts(&dbconn, bson_empty(&b), NULL);
 
- if(!Nova_DBClose(&conn))
+ if(!Nova_DBClose(&dbconn))
    {
      CfOut(cf_error, "", "!! Could not close connection to report database");
    }
@@ -305,7 +305,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackAvailPatches(struct Item *data)
+void Nova_UnPackAvailPatches(char *id, struct Item *data)
 
 { struct Item *ip;
   char arch, name[CF_MAXVARSIZE],version[CF_MAXVARSIZE];
@@ -324,7 +324,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackPatchStatus(struct Item *data)
+void Nova_UnPackPatchStatus(char *id, struct Item *data)
 
 { struct Item *ip;
   char arch, name[CF_MAXVARSIZE],version[CF_MAXVARSIZE];
@@ -343,7 +343,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPack_promise_output_common(struct Item *data)
+void Nova_UnPack_promise_output_common(char *id, struct Item *data)
 
 { struct Item *ip;
   
@@ -358,7 +358,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackValueReport(struct Item *data)
+void Nova_UnPackValueReport(char *id, struct Item *data)
 
 { struct Item *ip;
   char then[CF_SMALLBUF];
@@ -376,7 +376,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackVariables(struct Item *data)
+void Nova_UnPackVariables(char *id, struct Item *data)
 
 { struct Item *ip;
   char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE];
@@ -394,7 +394,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackLastSeen(struct Item *data)
+void Nova_UnPackLastSeen(char *id, struct Item *data)
 
 { struct Item *ip;
   char inout, asserted[CF_MAXVARSIZE],dns[CF_MAXVARSIZE];
@@ -424,7 +424,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackTotalCompliance(struct Item *data)
+void Nova_UnPackTotalCompliance(char *id, struct Item *data)
 
 { struct Item *ip;
   char then[CF_SMALLBUF],version[CF_SMALLBUF];
@@ -443,7 +443,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackRepairLog(struct Item *data)
+void Nova_UnPackRepairLog(char *id, struct Item *data)
 
 { struct Item *ip;
   char handle[CF_MAXVARSIZE];
@@ -463,7 +463,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackNotKeptLog(struct Item *data)
+void Nova_UnPackNotKeptLog(char *id, struct Item *data)
 
 { struct Item *ip;
   char handle[CF_MAXVARSIZE];
@@ -483,7 +483,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMeter(struct Item *data)
+void Nova_UnPackMeter(char *id, struct Item *data)
 
 { struct Item *ip;
   char handle[CF_SMALLBUF];
@@ -499,7 +499,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackBundles(struct Item *data)
+void Nova_UnPackBundles(char *id, struct Item *data)
 
 { struct Item *ip;
   char bundle[CF_SMALLBUF];

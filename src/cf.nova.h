@@ -251,7 +251,7 @@ int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t 
 int Nova_StoreIncomingReports(char *reply,struct Item **reports,int current_report);
 void NewReportBook(struct Item **reports);
 void DeleteReportBook(struct Item **reports);
-void UnpackReportBook(struct Item **reports);
+void UnpackReportBook(char *id, struct Item **reports);
 
 /* coordinates.c */
 
@@ -339,28 +339,28 @@ int Nova_LifeCycleBefore(char *coarse_cycle,time_t from);
 
 /* dataunpack.c */
 
-void Nova_UnPackPerformance(struct Item *data);
-void Nova_UnPackClasses(struct Item *data);
-void Nova_UnPackSetuid(struct Item *data);
-void Nova_UnPackFileChanges(struct Item *data);
-void Nova_UnPackDiffs(struct Item *data);
-void Nova_UnPackMonitorWeek(struct Item *data);
-void Nova_UnPackMonitorMag(struct Item *data);
-void Nova_UnPackMonitorHist(struct Item *data);
-void Nova_UnPackMonitorYear(struct Item *data);
-void Nova_UnPackCompliance(struct Item *data);
-void Nova_UnPackSoftware(struct Item *data);
-void Nova_UnPackAvailPatches(struct Item *data);
-void Nova_UnPackPatchStatus(struct Item *data);
-void Nova_UnPack_promise_output_common(struct Item *data);
-void Nova_UnPackValueReport(struct Item *data);
-void Nova_UnPackVariables(struct Item *data);
-void Nova_UnPackLastSeen(struct Item *data);
-void Nova_UnPackTotalCompliance(struct Item *data);
-void Nova_UnPackRepairLog(struct Item *data);
-void Nova_UnPackNotKeptLog(struct Item *data);
-void Nova_UnPackMeter(struct Item *data);
-void Nova_UnPackBundles(struct Item *data);
+void Nova_UnPackPerformance(char *id, struct Item *data);
+void Nova_UnPackClasses(char *id, struct Item *data);
+void Nova_UnPackSetuid(char *id, struct Item *data);
+void Nova_UnPackFileChanges(char *id, struct Item *data);
+void Nova_UnPackDiffs(char *id, struct Item *data);
+void Nova_UnPackMonitorWeek(char *id, struct Item *data);
+void Nova_UnPackMonitorMag(char *id, struct Item *data);
+void Nova_UnPackMonitorHist(char *id, struct Item *data);
+void Nova_UnPackMonitorYear(char *id, struct Item *data);
+void Nova_UnPackCompliance(char *id, struct Item *data);
+void Nova_UnPackSoftware(char *id, struct Item *data);
+void Nova_UnPackAvailPatches(char *id, struct Item *data);
+void Nova_UnPackPatchStatus(char *id, struct Item *data);
+void Nova_UnPack_promise_output_common(char *id, struct Item *data);
+void Nova_UnPackValueReport(char *id, struct Item *data);
+void Nova_UnPackVariables(char *id, struct Item *data);
+void Nova_UnPackLastSeen(char *id, struct Item *data);
+void Nova_UnPackTotalCompliance(char *id, struct Item *data);
+void Nova_UnPackRepairLog(char *id, struct Item *data);
+void Nova_UnPackNotKeptLog(char *id, struct Item *data);
+void Nova_UnPackMeter(char *id, struct Item *data);
+void Nova_UnPackBundles(char *id, struct Item *data);
 
 
 /* environments.c */

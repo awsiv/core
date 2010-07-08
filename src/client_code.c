@@ -163,7 +163,7 @@ if (reports == NULL)
    return false;
    }
 
-UnpackReportBook(reports);
+UnpackReportBook(HashPrint(cf_md5,conn->digest),reports);
 DeleteReportBook(reports);
 return true;
 }
@@ -209,16 +209,17 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 /*********************************************************************/
 
-void UnpackReportBook(struct Item **reports)
+void UnpackReportBook(char *id, struct Item **reports)
 
 { int i;
+
 
 for (i = 0; CF_CODEBOOK[i] != NULL; i++)
    {
    if (reports[i] != NULL)
       {
       void (*fnptr)() = CF_CODEBOOK_HANDLER[i];
-      (*fnptr)(reports[i]);
+      (*fnptr)(id,reports[i]);
       }
    }
 }
