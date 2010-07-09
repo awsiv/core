@@ -111,6 +111,8 @@ void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, struct Item *dat
 
 CfOut(cf_verbose,""," -> Monitor weekly data.....................");
 
+ Nova_DBSaveMonitorData(dbconn, id, mon_rep_week, data);
+
 for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract time stamp
@@ -128,6 +130,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
    printf("Week-obs %d in slot %d: %.2lf,%.2lf,%.2lf\n",observable,slot,q,e,dev);
    }
+
 }
 
 /*****************************************************************************/
@@ -139,6 +142,10 @@ void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data
   double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
+
+//Nova_DBSaveMonitorData(dbconn, id, mon_rep_mag, data);
+
+
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -213,6 +220,8 @@ void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *dat
 
 CfOut(cf_verbose,""," -> Monitor year data.....................");
 
+ Nova_DBSaveMonitorData(dbconn, id, mon_rep_yr, data);
+
 for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract time stamp
@@ -227,6 +236,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
    printf("Year-obs %d: %.2lf,%.2lf,%.2lf measured at %s\n",observable,q,e,dev,timekey);
    }
+
 }
 
 /*****************************************************************************/

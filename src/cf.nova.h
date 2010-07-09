@@ -304,6 +304,7 @@ int Nova_DBOpen(mongo_connection *conn, char *host, int port);
 int Nova_DBClose(mongo_connection *conn);
 void Nova_DBInitialize();
 void Nova_DBSaveSoftware(mongo_connection *conn, char *keyHash, struct Item *data);
+void Nova_DBSaveMonitorData(mongo_connection *conn, char *keyHash, enum monitord_rep rep_type, struct Item *data);
 void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result);
 void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result);
 int Nova_MongoKeyPosition(bson_iterator *it, char *keyName, bson_type valType);

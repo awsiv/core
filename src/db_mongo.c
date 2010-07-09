@@ -109,6 +109,102 @@ void Nova_DBSaveSoftware(mongo_connection *conn, char *keyHash, struct Item *dat
 
 /*****************************************************************************/
 
+void Nova_DBSaveMonitorData(mongo_connection *conn, char *keyHash, enum monitord_rep rep_type, struct Item *data)
+{
+  bson_buffer bb;
+  bson cond;  // host description
+  char varNameIndex[64];
+  bson_buffer *setObj;
+  bson setOp;
+  int i, arrIndex;
+  struct Item *ip;
+  int observable,slot;
+  double q,e,dev;
+  char *repPrefix;
+  char t[CF_TIME_SIZE];
+  char timekey[CF_SMALLBUF];
+
+
+  switch(rep_type)
+    {
+    case mon_rep_mag:
+      repPrefix = "mag";
+      break;
+    case mon_rep_week:
+      repPrefix = "week";
+      break;
+    case mon_rep_yr:
+      repPrefix = "yr";
+      break;
+    default:
+      CfOut(cf_error, "", "!! Unknown monitord report type (%d)", rep_type);
+      FatalError("Software Error");
+    }
+
+
+  // find right host
+  bson_buffer_init(&bb);
+  bson_append_string(&bb, "keyHash", keyHash);
+  bson_from_buffer(&cond, &bb);
+
+  bson_buffer_init(&bb);
+
+  
+  
+  setObj = bson_append_start_object(&bb, "$set");
+  
+
+  for (ip = data; ip != NULL; ip=ip->next)
+   {
+     
+     // extract timestamp
+   if (strncmp(ip->name,"T: ", 3) == 0)
+      {
+	switch(rep_type)
+	  {
+	  case mon_rep_mag:
+	    sscanf(ip->name+3,"%d",&slot);
+	    break;
+	  case mon_rep_week:
+	    memset(t,0,CF_TIME_SIZE);
+	    sscanf(ip->name+3,"%31[^,],%d",t,&slot);
+	    break;
+	  case mon_rep_yr:
+	    memset(t,0,CF_TIME_SIZE);
+	    sscanf(ip->name+3,"%31[^,],%d",t,&slot);
+	    break;
+	    
+
+	  }
+      continue;
+      }
+
+   // Extract records
+   q = e = dev = 0;
+   sscanf(ip->name,"%d %lf %lf %lf",&observable,&q,&e,&dev);
+
+   snprintf(varNameIndex, sizeof(varNameIndex), "%s%d.%d",repPrefix, observable, slot*3);
+   bson_append_double(setObj, varNameIndex, q);
+   snprintf(varNameIndex, sizeof(varNameIndex), "%s%d.%d",repPrefix, observable, slot*3 + 1);
+   bson_append_double(setObj, varNameIndex, e);
+   snprintf(varNameIndex, sizeof(varNameIndex), "%s%d.%d",repPrefix, observable, slot*3 + 2);
+   bson_append_double(setObj, varNameIndex, dev);
+
+   }
+  
+
+  
+  bson_append_finish_object(setObj);
+  bson_from_buffer(&setOp,&bb);
+
+  mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+  
+  bson_destroy(&setOp);
+  bson_destroy(&cond);
+}
+
+/*****************************************************************************/
+
 void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result)
 /* Takes a query document and returns a set of public key hashes
  * of hosts that matches the query. Use bson_empty(&b) as query to
