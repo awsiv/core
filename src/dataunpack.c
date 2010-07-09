@@ -12,8 +12,6 @@
 
 /*****************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
-
 void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
@@ -41,6 +39,10 @@ void Nova_UnPackClasses(mongo_connection *dbconn, char *id, struct Item *data)
   double q = 0, dev = 0;
 
 CfOut(cf_verbose,""," -> Class data .................");
+
+#ifdef HAVE_LIBMONGOC
+ Nova_DBSaveClasses(dbconn, id, data);
+#endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -111,7 +113,9 @@ void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, struct Item *dat
 
 CfOut(cf_verbose,""," -> Monitor weekly data.....................");
 
+#ifdef HAVE_LIBMONGOC
  Nova_DBSaveMonitorData(dbconn, id, mon_rep_week, data);
+#endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -143,9 +147,9 @@ void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data
 
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 
-//Nova_DBSaveMonitorData(dbconn, id, mon_rep_mag, data);
-
-
+#ifdef HAVE_LIBMONGOC
+Nova_DBSaveMonitorData(dbconn, id, mon_rep_mag, data);
+#endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -173,6 +177,10 @@ void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, struct Item *dat
   char *sp;
  
 CfOut(cf_verbose,""," -> Monitor histogram data.....................");
+
+#ifdef HAVE_LIBMONGOC
+ Nova_DBSaveMonitorHistograms(dbconn, id, data);
+#endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -220,7 +228,7 @@ void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *dat
 
 CfOut(cf_verbose,""," -> Monitor year data.....................");
 
- Nova_DBSaveMonitorData(dbconn, id, mon_rep_yr, data);
+//Nova_DBSaveMonitorData(dbconn, id, mon_rep_yr, data);
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -278,8 +286,9 @@ void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, struct Item *data)
 
 CfOut(cf_verbose,""," -> Installed software data...............");
 
+#ifdef HAVE_LIBMONGOC
  Nova_DBSaveSoftware(dbconn, id, data);
-
+#endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -373,6 +382,8 @@ void Nova_UnPackVariables(mongo_connection *dbconn, char *id, struct Item *data)
 
 CfOut(cf_verbose,""," -> Variable data...........................");
 
+//Nova_DBSaveVariables(dbconn, id, data);
+
 for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%4[^,],%255[^,],%2040[^\n]",type,name,value);
@@ -421,6 +432,10 @@ void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, struct Item 
   int kept,repaired,notrepaired;
  
 CfOut(cf_verbose,""," -> Total Compliance data......................");
+
+#ifdef HAVE_LIBMONGOC
+ Nova_DBSaveTotalCompliance(dbconn, id, data);
+#endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -515,6 +530,4 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 }
 
-
-#endif  /* HAVE_LIBMONGOC */
 

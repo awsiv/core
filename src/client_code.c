@@ -42,17 +42,17 @@ char *CF_CODEBOOK[cf_codebook_size] =
 void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    {
    Nova_UnPackPerformance,
-   Nova_UnPackClasses,
+   Nova_UnPackClasses,      // DBOK (nopurge)
    Nova_UnPackSetuid,
    Nova_UnPackFileChanges,
    Nova_UnPackDiffs,
-   Nova_UnPackMonitorWeek,
-   Nova_UnPackMonitorMag,
-   Nova_UnPackMonitorHist,
+   Nova_UnPackMonitorWeek,  // DBOK
+   Nova_UnPackMonitorMag,   // DBOK
+   Nova_UnPackMonitorHist,  // DBOK
    Nova_UnPackMonitorYear,
    Nova_UnPackCompliance,
-   Nova_UnPackTotalCompliance,
-   Nova_UnPackSoftware,
+   Nova_UnPackTotalCompliance, // DBOK (append)
+   Nova_UnPackSoftware,     // DBOK - QUERYOK
    Nova_UnPackAvailPatches,
    Nova_UnPackPatchStatus,
    Nova_UnPack_promise_output_common,
@@ -210,17 +210,17 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 /*********************************************************************/
 
 void UnpackReportBook(char *id, struct Item **reports)
-#ifdef HAVE_LIBMONGOC
 { int i;
 
   mongo_connection dbconn;
 
+#ifdef HAVE_LIBMONGOC
  if(!Nova_DBOpen(&dbconn, "127.0.0.1", 27017))
    {
      CfOut(cf_error, "", "!! Could not open connection to report database");
      return;
    }
-
+#endif
 
 for (i = 0; CF_CODEBOOK[i] != NULL; i++)
    {
@@ -231,18 +231,13 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
       }
    }
 
+#ifdef HAVE_LIBMONGOC
  if(!Nova_DBClose(&dbconn))
    {
      CfOut(cf_error, "", "!! Could not close connection to report database");
    }
-
-}
-#else  /* NOT HAVE_LIBMONGOC */
-{
-  CfOut(cf_error, "", "!! Cannot save report data: missing database client library");
-}
 #endif
-
+}
 /*********************************************************************/
 
 void DeleteReportBook(struct Item **reports)

@@ -9,6 +9,8 @@
 /*****************************************************************************/
 
 // TODO: Fix regex queries, ensure index on keyHash and sw.n
+// TODO: Purge old classes (only adding for now) - TTL "LASTSEENEXPIRE" in cfengine code
+
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
@@ -50,7 +52,7 @@ int Nova_DBClose(mongo_connection *conn)
 
 void Nova_DBInitialize()
 {
-  //  make sure monitord arrays exists
+  //  make sure indeces on keyHash and sw.n exist and monitord arrays exist
 }
 
 /*****************************************************************************/
@@ -120,7 +122,7 @@ void Nova_DBSaveMonitorData(mongo_connection *conn, char *keyHash, enum monitord
   struct Item *ip;
   int observable,slot;
   double q,e,dev;
-  char *repPrefix;
+  char *repPrefix = {0};
   char t[CF_TIME_SIZE];
   char timekey[CF_SMALLBUF];
 
@@ -202,6 +204,219 @@ void Nova_DBSaveMonitorData(mongo_connection *conn, char *keyHash, enum monitord
   bson_destroy(&setOp);
   bson_destroy(&cond);
 }
+
+/*****************************************************************************/
+
+void Nova_DBSaveMonitorHistograms(mongo_connection *conn, char *keyHash, struct Item *data)
+{
+  bson_buffer bb;
+  bson_buffer *setObj;
+  bson_buffer *arr;
+  bson cond;  // host description
+  bson setOp;
+  char arrName[64], kStr[32];
+  struct Item *ip;
+  int i,k, currHist;
+  char *sp;
+
+
+  // find right host
+  bson_buffer_init(&bb);
+  bson_append_string(&bb, "keyHash", keyHash);
+  bson_from_buffer(&cond, &bb);
+  
+  bson_buffer_init(&bb);
+
+  setObj = bson_append_start_object(&bb, "$set");
+
+  
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   sp = ip->name;
+   
+   sscanf(ip->name,"%d",&i);
+   
+   while (*(++sp) != ':')
+      {
+      }
+
+   sp++;
+
+   snprintf(arrName, sizeof(arrName), "hist%d", i);
+   arr = bson_append_start_array(setObj , arrName);
+   
+   for (k = 0; k < CF_GRAINS; k++)
+      {
+      sscanf(sp,"%d",&currHist);
+      
+      while (*(++sp) != ':')
+         {
+         }
+
+      if (currHist < 0)
+         {
+         currHist = 1;
+         }
+
+      sp++;
+      snprintf(kStr, sizeof(kStr), "%d", k);
+      bson_append_int(arr, kStr, currHist);
+      }
+
+   bson_append_finish_object(arr);
+   }
+
+
+ bson_append_finish_object(setObj);
+
+ bson_from_buffer(&setOp,&bb);
+ mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+ 
+ bson_destroy(&setOp);
+ bson_destroy(&cond);
+}
+
+/*****************************************************************************/
+
+void Nova_DBSaveClasses(mongo_connection *conn, char *keyHash, struct Item *data)
+/**
+ *  Replacing existing class entry, but not deleting "old" entries (purging)
+ */
+{
+  bson_buffer bb;
+  bson_buffer *setObj, *clObj;
+  bson cond;  // host description
+  bson setOp;
+  struct Item *ip;
+  char name[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
+  time_t t;
+  double q = 0, dev = 0;
+  
+  // find right host
+  bson_buffer_init(&bb);
+  bson_append_string(&bb, "keyHash", keyHash);
+  bson_from_buffer(&cond, &bb);
+
+
+  bson_buffer_init(&bb);
+
+  setObj = bson_append_start_object(&bb, "$set");
+ 
+  for (ip = data; ip != NULL; ip=ip->next)
+    {
+      sscanf(ip->name,"%[^,],%ld,%7.4lf,%7.4lf\n",name,&t,&q,&dev);
+
+      snprintf(varName, sizeof(varName), "cl.%s", name);
+
+      clObj = bson_append_start_object(setObj , varName);
+      bson_append_double(clObj, "p", q);
+      bson_append_double(clObj, "d", dev);
+      bson_append_int(clObj, "t", t);
+      bson_append_finish_object(clObj);
+    }
+
+
+  bson_append_finish_object(setObj);
+
+
+  bson_from_buffer(&setOp,&bb);
+  mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+
+  bson_destroy(&setOp);
+  bson_destroy(&cond);
+}
+
+/*****************************************************************************/
+
+void Nova_DBSaveVariables(mongo_connection *conn, char *keyHash, struct Item *data)
+{
+  bson_buffer bb;
+  bson_buffer *setObj;
+  bson cond;  // host description
+  bson setOp;
+  struct Item *ip;
+
+  
+  // find right host
+  bson_buffer_init(&bb);
+  bson_append_string(&bb, "keyHash", keyHash);
+  bson_from_buffer(&cond, &bb);
+
+  bson_buffer_init(&bb);
+
+  setObj = bson_append_start_object(&bb, "$set");
+
+  
+  for (ip = data; ip != NULL; ip=ip->next)
+   {
+     //sscanf(ip->name,"%4[^,],%255[^,],%2040[^\n]",type,name,value);
+   
+   //printf("var: (%s) %s=%s\n",type,name,value);
+   }
+
+  bson_append_finish_object(setObj);
+
+  bson_from_buffer(&setOp,&bb);
+  mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+
+  bson_destroy(&setOp);
+  bson_destroy(&cond);  
+}
+
+/*****************************************************************************/
+
+void Nova_DBSaveTotalCompliance(mongo_connection *conn, char *keyHash, struct Item *data)
+{
+  bson_buffer bb;
+  bson_buffer *pushObj;
+  bson cond;  // host description
+  bson setOp;
+  struct Item *ip;
+  bson_buffer *arr;
+  char iStr[32];
+  char then[CF_SMALLBUF],version[CF_SMALLBUF];
+  int kept,repaired,notrepaired;
+  bson_buffer *sub;
+  int i;
+
+  
+  // find right host
+  bson_buffer_init(&bb);
+  bson_append_string(&bb, "keyHash", keyHash);
+  bson_from_buffer(&cond, &bb);
+
+  bson_buffer_init(&bb);
+
+  pushObj = bson_append_start_object(&bb, "$pushAll");
+
+  arr = bson_append_start_array(pushObj , "tComp");  
+
+  for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+   {
+     snprintf(iStr, sizeof(iStr), "%d", i);
+
+     sscanf(ip->name,"%63[^,], %127[^,],%d,%d,%d\n",then,version,&kept,&repaired,&notrepaired);
+
+     //printf("Tcompliance: (%d,%d,%d) for version %s at %s\n",kept,repaired,notrepaired,version,then);
+     sub = bson_append_start_object(arr, iStr);
+     bson_append_string(sub , "t" , then);
+     bson_append_string(sub , "v" , version);
+     bson_append_int(sub, "k", kept);
+     bson_append_int(sub, "r", repaired);
+     bson_append_int(sub, "n", notrepaired);
+     bson_append_finish_object(sub);
+   }
+
+  bson_append_finish_object(arr);
+  bson_append_finish_object(pushObj);
+
+  bson_from_buffer(&setOp,&bb);
+  mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+
+  bson_destroy(&setOp);
+  bson_destroy(&cond);  
+}
+
 
 /*****************************************************************************/
 
