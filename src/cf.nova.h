@@ -341,28 +341,30 @@ int Nova_LifeCycleBefore(char *coarse_cycle,time_t from);
 
 /* dataunpack.c */
 
-void Nova_UnPackPerformance(char *id, struct Item *data);
-void Nova_UnPackClasses(char *id, struct Item *data);
-void Nova_UnPackSetuid(char *id, struct Item *data);
-void Nova_UnPackFileChanges(char *id, struct Item *data);
-void Nova_UnPackDiffs(char *id, struct Item *data);
-void Nova_UnPackMonitorWeek(char *id, struct Item *data);
-void Nova_UnPackMonitorMag(char *id, struct Item *data);
-void Nova_UnPackMonitorHist(char *id, struct Item *data);
-void Nova_UnPackMonitorYear(char *id, struct Item *data);
-void Nova_UnPackCompliance(char *id, struct Item *data);
-void Nova_UnPackSoftware(char *id, struct Item *data);
-void Nova_UnPackAvailPatches(char *id, struct Item *data);
-void Nova_UnPackPatchStatus(char *id, struct Item *data);
-void Nova_UnPack_promise_output_common(char *id, struct Item *data);
-void Nova_UnPackValueReport(char *id, struct Item *data);
-void Nova_UnPackVariables(char *id, struct Item *data);
-void Nova_UnPackLastSeen(char *id, struct Item *data);
-void Nova_UnPackTotalCompliance(char *id, struct Item *data);
-void Nova_UnPackRepairLog(char *id, struct Item *data);
-void Nova_UnPackNotKeptLog(char *id, struct Item *data);
-void Nova_UnPackMeter(char *id, struct Item *data);
-void Nova_UnPackBundles(char *id, struct Item *data);
+#ifdef HAVE_LIBMONGOC
+void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackClasses(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackFileChanges(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackDiffs(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackPatchStatus(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPack_promise_output_common(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackValueReport(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackVariables(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackMeter(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackBundles(mongo_connection *dbconn, char *id, struct Item *data);
+#endif /* HAVE_LIBMONGOC */
 
 
 /* environments.c */

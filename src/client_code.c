@@ -76,7 +76,7 @@ int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t 
   EVP_CIPHER_CTX ctx;
   int plainlen,more = true,header = true,current_report = -1;
   time_t now = time(NULL),time2 = 0,delta1 = 0,delta2 = 0;
-  struct Item *reports[cf_codebook_size];
+  struct Item *reports[cf_codebook_size] = {0};
 
 NewReportBook(reports);
   
@@ -210,8 +210,16 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 /*********************************************************************/
 
 void UnpackReportBook(char *id, struct Item **reports)
-
+#ifdef HAVE_LIBMONGOC
 { int i;
+
+  mongo_connection dbconn;
+
+ if(!Nova_DBOpen(&dbconn, "127.0.0.1", 27017))
+   {
+     CfOut(cf_error, "", "!! Could not open connection to report database");
+     return;
+   }
 
 
 for (i = 0; CF_CODEBOOK[i] != NULL; i++)
@@ -219,10 +227,21 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
    if (reports[i] != NULL)
       {
       void (*fnptr)() = CF_CODEBOOK_HANDLER[i];
-      (*fnptr)(id,reports[i]);
+      (*fnptr)(&dbconn, id, reports[i]);
       }
    }
+
+ if(!Nova_DBClose(&dbconn))
+   {
+     CfOut(cf_error, "", "!! Could not close connection to report database");
+   }
+
 }
+#else  /* NOT HAVE_LIBMONGOC */
+{
+  CfOut(cf_error, "", "!! Cannot save report data: missing database client library");
+}
+#endif
 
 /*********************************************************************/
 

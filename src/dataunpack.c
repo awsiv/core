@@ -12,7 +12,9 @@
 
 /*****************************************************************************/
 
-void Nova_UnPackPerformance(char *id, struct Item *data)
+#ifdef HAVE_LIBMONGOC
+
+void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   time_t t;
@@ -31,7 +33,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackClasses(char *id, struct Item *data)
+void Nova_UnPackClasses(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char name[CF_MAXVARSIZE];
@@ -50,7 +52,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackSetuid(char *id, struct Item *data)
+void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
 
@@ -66,7 +68,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackFileChanges(char *id, struct Item *data)
+void Nova_UnPackFileChanges(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char name[CF_MAXVARSIZE],date[CF_MAXVARSIZE];
@@ -83,7 +85,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackDiffs(char *id, struct Item *data)
+void Nova_UnPackDiffs(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char name[CF_MAXVARSIZE],t[CF_MAXVARSIZE],change[CF_BUFSIZE];
@@ -100,7 +102,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorWeek(char *id, struct Item *data)
+void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   int observable,slot;
@@ -130,7 +132,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorMag(char *id, struct Item *data)
+void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
  int observable,slot;
@@ -156,7 +158,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorHist(char *id, struct Item *data)
+void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   int weekly[CF_OBSERVABLES][CF_GRAINS];
@@ -202,7 +204,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorYear(char *id, struct Item *data)
+void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char timekey[CF_SMALLBUF];
@@ -229,7 +231,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackCompliance(char *id, struct Item *data)
+void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
  time_t then;
@@ -259,32 +261,14 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackSoftware(char *id, struct Item *data)
+void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
  char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch;
 
 CfOut(cf_verbose,""," -> Installed software data...............");
 
-
-#ifdef HAVE_LIBMONGOC
-
- CF_DBCONN dbconn;
-
- if(!Nova_DBOpen(&dbconn, "127.0.0.1", 27017))
-   {
-     CfOut(cf_error, "", "!! Could not open connection to report database");
-     return;
-   }
-
- Nova_DBSaveSoftware(&dbconn, "abcdefghijklmnopqrstuwxyz123", data);
-
- if(!Nova_DBClose(&dbconn))
-   {
-     CfOut(cf_error, "", "!! Could not close connection to report database");
-   }
-
-#endif
+ Nova_DBSaveSoftware(dbconn, id, data);
 
 
 for (ip = data; ip != NULL; ip=ip->next)
@@ -301,7 +285,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackAvailPatches(char *id, struct Item *data)
+void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char arch, name[CF_MAXVARSIZE],version[CF_MAXVARSIZE];
@@ -320,7 +304,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackPatchStatus(char *id, struct Item *data)
+void Nova_UnPackPatchStatus(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char arch, name[CF_MAXVARSIZE],version[CF_MAXVARSIZE];
@@ -339,7 +323,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPack_promise_output_common(char *id, struct Item *data)
+void Nova_UnPack_promise_output_common(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   
@@ -354,7 +338,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackValueReport(char *id, struct Item *data)
+void Nova_UnPackValueReport(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char then[CF_SMALLBUF];
@@ -372,7 +356,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackVariables(char *id, struct Item *data)
+void Nova_UnPackVariables(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE];
@@ -390,7 +374,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackLastSeen(char *id, struct Item *data)
+void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char inout, asserted[CF_MAXVARSIZE],dns[CF_MAXVARSIZE];
@@ -420,7 +404,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackTotalCompliance(char *id, struct Item *data)
+void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char then[CF_SMALLBUF],version[CF_SMALLBUF];
@@ -439,7 +423,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackRepairLog(char *id, struct Item *data)
+void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char handle[CF_MAXVARSIZE];
@@ -459,7 +443,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackNotKeptLog(char *id, struct Item *data)
+void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char handle[CF_MAXVARSIZE];
@@ -479,7 +463,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMeter(char *id, struct Item *data)
+void Nova_UnPackMeter(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char handle[CF_SMALLBUF];
@@ -495,7 +479,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackBundles(char *id, struct Item *data)
+void Nova_UnPackBundles(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char bundle[CF_SMALLBUF];
@@ -522,5 +506,5 @@ for (ip = data; ip != NULL; ip=ip->next)
 }
 
 
-
+#endif  /* HAVE_LIBMONGOC */
 

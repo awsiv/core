@@ -8,6 +8,8 @@
 /*                                                                           */
 /*****************************************************************************/
 
+// TODO: Fix regex queries, ensure index on keyHash and sw.n
+
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
@@ -155,6 +157,8 @@ void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, str
 
 void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result)
 /**
+ * !! FIXME: REGEX NOT WORKING
+ *
  * Returns a set of hosts having the given software (name,ver,arch).
  * ver and arch may be NULL, in which case they are not considered,
  * otherwise an AND search is done (e.g. name AND ver AND arch).
