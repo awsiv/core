@@ -222,8 +222,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  char timekey[CF_SMALLBUF];
-  int observable;
+ int observable,slot = 0;
   double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor year data.....................");
@@ -235,14 +234,14 @@ for (ip = data; ip != NULL; ip=ip->next)
    // Extract time stamp
    if (strncmp(ip->name,"T: ", 3) == 0)
       {
-      sscanf(ip->name+3,"%s",timekey);
+      sscanf(ip->name+3,"%d",&slot); // 3*12
       continue;
       }
 
    // Extract records
    q = e = dev = 0;
    sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
-   printf("Year-obs %d: %.2lf,%.2lf,%.2lf measured at %s\n",observable,q,e,dev,timekey);
+   printf("Year-obs %d: %.2lf,%.2lf,%.2lf measured at slot %d\n",observable,q,e,dev,slot);
    }
 
 }

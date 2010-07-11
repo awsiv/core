@@ -805,7 +805,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 void Nova_PackMonitorYear(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int its,i,j,k, count = 0,err,this_lifecycle,ago, this,first = true,nodate,showtime;
+{ int its,i,j,k, count = 0,err,this_lifecycle,ago, this,first = true,nodate,showtime,slot;
   char timekey[CF_MAXVARSIZE],timekey_now[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
   char d[CF_TIME_SIZE],m[CF_TIME_SIZE],l[CF_TIME_SIZE],s[CF_TIME_SIZE],om[CF_TIME_SIZE];
   char *day = VDAY,*month=VMONTH,*lifecycle=VLIFECYCLE,*shift=VSHIFT;
@@ -859,7 +859,7 @@ while(true)
    snprintf(coarse_cycle,CF_SMALLBUF,"%s_%s",m,l);
    nodate = true;
    
-   if (Nova_LifeCycleLater(coarse_cycle,from))
+   if (slot = Nova_LifeCycleLater(coarse_cycle,from))
       {
       if (ReadDB(dbp,timekey,&value,sizeof(struct Averages)))
          {
@@ -877,7 +877,7 @@ while(true)
             
             if (nodate)
                {
-               snprintf(buffer,CF_BUFSIZE,"T: %s\n",coarse_cycle);
+               snprintf(buffer,CF_BUFSIZE,"T: %d\n",slot);
                AppendItem(reply,buffer,NULL);
                nodate = false;
                }  
@@ -2003,7 +2003,6 @@ int Nova_LifeCycleLater(char *coarse_cycle,time_t from)
   int year,nlc,olc,o_m,n_m;
 
 /* Because cycles are endless, this will work up to a year */
-
   
 snprintf(now,CF_MAXVARSIZE-1,"%s",cf_ctime(&from));
 
@@ -2017,7 +2016,7 @@ n_m = Month2Int(nm);
 
 if ((nlc == olc) && (n_m <= o_m))
    {
-   return true;
+   return o_m + 12*olc; // hash slot for this month/year
    }
 
 return false;
