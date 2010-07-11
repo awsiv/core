@@ -24,7 +24,7 @@ CfOut(cf_verbose,""," -> Performance data ...................");
 for (ip = data; ip != NULL; ip=ip->next)
    {
    eventname[0] = '\0';
-   sscanf(ip->name,"%ld,%lf,%lf,%lf,%255s\n",&t,&measure,&average,&dev,eventname);
+   sscanf(ip->name,"%ld,%lf,%lf,%lf,%255[^\n]\n",&t,&measure,&average,&dev,eventname);
    printf("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s",eventname,measure,average,dev,cf_ctime(&t));
    }
 }
@@ -378,7 +378,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackVariables(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE];
+ char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],scope[CF_MAXVARSIZE];
 
 CfOut(cf_verbose,""," -> Variable data...........................");
 
@@ -386,6 +386,13 @@ CfOut(cf_verbose,""," -> Variable data...........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
+   if (strncmp(ip->name,"S: ", 3) == 0)
+      {
+      scope[0] = '\0';
+      sscanf(ip->name+3,"%254[^\n]",scope);
+      continue;
+      }
+
    sscanf(ip->name,"%4[^,],%255[^,],%2040[^\n]",type,name,value);
    
    printf("var: (%s) %s=%s\n",type,name,value);

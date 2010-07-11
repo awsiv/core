@@ -1378,6 +1378,10 @@ while (!feof(fin))
             {
             break;
             }
+
+         snprintf(name,CF_BUSFIZE-1,"S: %s",line+strlen("scope "));
+         AppendItem(reply,name,NULL);
+         continue;               
          }
       }
    else if (strncmp(line,"<tr><td>",strlen("<tr><td>")) == 0)
