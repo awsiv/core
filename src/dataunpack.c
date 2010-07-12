@@ -41,7 +41,10 @@ void Nova_UnPackClasses(mongo_connection *dbconn, char *id, struct Item *data)
 CfOut(cf_verbose,""," -> Class data .................");
 
 #ifdef HAVE_LIBMONGOC
- Nova_DBSaveClasses(dbconn, id, data);
+ if(dbconn)
+   {
+     Nova_DBSaveClasses(dbconn, id, data);
+   }
 #endif
 
 for (ip = data; ip != NULL; ip=ip->next)
@@ -114,7 +117,10 @@ void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, struct Item *dat
 CfOut(cf_verbose,""," -> Monitor weekly data.....................");
 
 #ifdef HAVE_LIBMONGOC
- Nova_DBSaveMonitorData(dbconn, id, mon_rep_week, data);
+ if(dbconn)
+   {
+     Nova_DBSaveMonitorData(dbconn, id, mon_rep_week, data);
+   }
 #endif
 
 for (ip = data; ip != NULL; ip=ip->next)
@@ -148,7 +154,10 @@ void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 
 #ifdef HAVE_LIBMONGOC
-Nova_DBSaveMonitorData(dbconn, id, mon_rep_mag, data);
+ if(dbconn)
+   {
+     Nova_DBSaveMonitorData(dbconn, id, mon_rep_mag, data);
+   }
 #endif
 
 for (ip = data; ip != NULL; ip=ip->next)
@@ -179,7 +188,10 @@ void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, struct Item *dat
 CfOut(cf_verbose,""," -> Monitor histogram data.....................");
 
 #ifdef HAVE_LIBMONGOC
- Nova_DBSaveMonitorHistograms(dbconn, id, data);
+ if(dbconn)
+   {
+     Nova_DBSaveMonitorHistograms(dbconn, id, data);
+   }
 #endif
 
 for (ip = data; ip != NULL; ip=ip->next)
@@ -286,7 +298,10 @@ void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, struct Item *data)
 CfOut(cf_verbose,""," -> Installed software data...............");
 
 #ifdef HAVE_LIBMONGOC
- Nova_DBSaveSoftware(dbconn, id, data);
+ if(dbconn)
+   {
+     Nova_DBSaveSoftware(dbconn, id, data);
+   }
 #endif
 
 for (ip = data; ip != NULL; ip=ip->next)
@@ -440,7 +455,10 @@ void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, struct Item 
 CfOut(cf_verbose,""," -> Total Compliance data......................");
 
 #ifdef HAVE_LIBMONGOC
- Nova_DBSaveTotalCompliance(dbconn, id, data);
+ if(dbconn)
+   {
+     Nova_DBSaveTotalCompliance(dbconn, id, data);
+   }
 #endif
 
 for (ip = data; ip != NULL; ip=ip->next)
