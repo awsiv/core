@@ -1379,7 +1379,7 @@ while (!feof(fin))
             break;
             }
 
-         snprintf(name,CF_BUSFIZE-1,"S: %s",line+strlen("scope "));
+         snprintf(name,CF_BUFSIZE-1,"S: %s",line+strlen("scope "));
          AppendItem(reply,name,NULL);
          continue;               
          }

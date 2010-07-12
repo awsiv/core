@@ -298,6 +298,7 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 /* db_mongo.c */
 
+#ifdef HAVE_LIBMONGOC
 int Nova_DBOpen(mongo_connection *conn, char *host, int port);
 int Nova_DBClose(mongo_connection *conn);
 void Nova_DBInitialize();
@@ -310,6 +311,7 @@ void Nova_DBSaveTotalCompliance(mongo_connection *conn, char *keyHash, struct It
 void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result);
 void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result);
 int Nova_MongoKeyPosition(bson_iterator *it, char *keyName, bson_type valType);
+#endif /* HAVE_LIBMONGOC */
 
 /* datapackaging.c */
 
@@ -342,7 +344,6 @@ int Nova_LifeCycleBefore(char *coarse_cycle,time_t from);
 
 /* dataunpack.c */
 
-#ifdef HAVE_LIBMONGOC
 void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackClasses(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, struct Item *data);
@@ -365,7 +366,6 @@ void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, struct Item *data)
 void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackMeter(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackBundles(mongo_connection *dbconn, char *id, struct Item *data);
-#endif /* HAVE_LIBMONGOC */
 
 
 /* environments.c */
