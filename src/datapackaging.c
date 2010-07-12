@@ -1332,7 +1332,7 @@ DeleteItemList(data);
 
 void Nova_PackVariables(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ char name[CF_BUFSIZE],line[CF_BUFSIZE];
+{ char name[CF_BUFSIZE],line[CF_BUFSIZE],scope[CF_MAXVARSIZE];
   FILE *fin;
   int first = true;
 
@@ -1378,11 +1378,12 @@ while (!feof(fin))
             {
             break;
             }
-
-         snprintf(name,CF_BUFSIZE-1,"S: %s",line+strlen("scope "));
-         AppendItem(reply,name,NULL);
-         continue;               
          }
+
+      sscanf(line+strlen("scope "),"%254[^:]",scope);
+      snprintf(name,CF_BUFSIZE-1,"S: %s",scope);
+      AppendItem(reply,name,NULL);
+      continue;                              
       }
    else if (strncmp(line,"<tr><td>",strlen("<tr><td>")) == 0)
       {
@@ -1424,6 +1425,10 @@ while (!feof(fin))
       else if (strstr(type,"rlist"))
          {
          snprintf(name,CF_BUFSIZE,"rl,%s,%s\n",lval,rval);
+         }
+      else if (strstr(type,"(menu option)"))
+         {
+         snprintf(name,CF_BUFSIZE,"m,%s,%s\n",lval,rval);
          }
       else
          {

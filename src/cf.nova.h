@@ -340,7 +340,7 @@ void Nova_PackBundles(struct Item **reply,char *header,time_t date,enum cfd_menu
 int Nova_CoarseLaterThan(char *key,char *from);
 int Nova_LaterThan(char *bigger,char *smaller);
 char *Nova_ShortArch(char *arch);
-int Nova_LifeCycleBefore(char *coarse_cycle,time_t from);
+int Nova_LifeCycleLater(char *coarse_cycle,time_t from);
 
 /* dataunpack.c */
 

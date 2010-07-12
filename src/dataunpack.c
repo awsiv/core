@@ -404,6 +404,7 @@ for (ip = data; ip != NULL; ip=ip->next)
       {
       scope[0] = '\0';
       sscanf(ip->name+3,"%254[^\n]",scope);
+      printf("SCOPE: %s\n",scope);
       continue;
       }
 
