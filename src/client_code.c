@@ -191,6 +191,7 @@ if (current_report < 0)
    return -1;
    }
 
+printf("STORE[%s] = %s",CF_CODEBOOK[current_report],reply);
 AppendItem(&(reports[current_report]),reply,NULL);
 return current_report;
 }
@@ -210,17 +211,16 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 /*********************************************************************/
 
 void UnpackReportBook(char *id, struct Item **reports)
-{ int i;
 
+{ int i;
   mongo_connection dbconn = {0};
   mongo_connection *dbconnp = &dbconn;
 
-
 #ifdef HAVE_LIBMONGOC
- if(!Nova_DBOpen(&dbconn, "127.0.0.1", 27017))
+if (!Nova_DBOpen(&dbconn, "127.0.0.1", 27017))
    {
-     CfOut(cf_error, "", "!! Could not open connection to report database");
-     dbconnp = NULL;
+   CfOut(cf_error, "", "!! Could not open connection to report database");
+   dbconnp = NULL;
    }
 #endif
 
@@ -229,18 +229,16 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
    if (reports[i] != NULL)
       {
       void (*fnptr)() = CF_CODEBOOK_HANDLER[i];
-      (*fnptr)(dbconnp, id, reports[i]);
+      (*fnptr)(dbconnp,id,reports[i]);
       }
    }
 
-
 #ifdef HAVE_LIBMONGOC
- if(dbconnp && !Nova_DBClose(&dbconn))
+if (dbconnp && !Nova_DBClose(&dbconn))
    {
-     CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_error, "", "!! Could not close connection to report database");
    }
 #endif
-
 
 }
 /*********************************************************************/

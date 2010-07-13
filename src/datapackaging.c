@@ -1361,7 +1361,7 @@ while (!feof(fin))
    if (strncmp(line,"Scope",strlen("Scope")) == 0)
       {
       // Skip the constant variables
-      
+
       if (strncmp(line,"Scope const",strlen("Scope const")) == 0)
          {
          while (!feof(fin))
@@ -1378,6 +1378,12 @@ while (!feof(fin))
             {
             break;
             }
+         }
+      
+      if (first)
+         {
+         first = false;
+         AppendItem(reply,header,NULL);
          }
 
       sscanf(line+strlen("scope "),"%254[^:]",scope);
