@@ -396,7 +396,12 @@ void Nova_UnPackVariables(mongo_connection *dbconn, char *id, struct Item *data)
 
 CfOut(cf_verbose,""," -> Variable data...........................");
 
-//Nova_DBSaveVariables(dbconn, id, data);
+#ifdef HAVE_LIBMONGOC
+ if(dbconn)
+   {
+     Nova_DBSaveVariables(dbconn, id, data);
+   }
+#endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -408,9 +413,9 @@ for (ip = data; ip != NULL; ip=ip->next)
       continue;
       }
 
-   sscanf(ip->name,"%4[^,],%255[^,],%2040[^\n]",type,name,value);
+   sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,name,value);
    
-   printf("var: (%s) %s=%s\n",type,name,value);
+   printf("var: (%s) \"%s\"=\"%s\"\n",type,name,value);
    }
 
 }

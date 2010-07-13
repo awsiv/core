@@ -10,7 +10,7 @@
 
 // TODO: Fix regex queries, ensure index on kH and sw.n
 // TODO: Purge old classes (only adding for now) - TTL "LASTSEENEXPIRE" in cfengine code
-
+// TODO: Report update errors!
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
@@ -349,11 +349,12 @@ void Nova_DBSaveClasses(mongo_connection *conn, char *kH, struct Item *data)
 void Nova_DBSaveVariables(mongo_connection *conn, char *kH, struct Item *data)
 {
   bson_buffer bb;
-  bson_buffer *setObj;
+  bson_buffer *setObj, *varObj;
   bson cond;  // host description
   bson setOp;
   struct Item *ip;
-
+  char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],
+    scope[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
   
   // find right host
   bson_buffer_init(&bb);
@@ -367,10 +368,34 @@ void Nova_DBSaveVariables(mongo_connection *conn, char *kH, struct Item *data)
   
   for (ip = data; ip != NULL; ip=ip->next)
    {
-     //sscanf(ip->name,"%4[^,],%255[^,],%2040[^\n]",type,name,value);
+     if (strncmp(ip->name,"S: ", 3) == 0)
+       {
+	 scope[0] = '\0';
+	 sscanf(ip->name+3,"%254[^\n]",scope);
+	 continue;
+       }
+
+     sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,name,value);
+
+     snprintf(varName, sizeof(varName), "var.%s.%s.t", scope, name);
+     printf(".....VARNAME:\"%s\"\n", varName);
+     bson_append_string(setObj, varName, type);
+
+     snprintf(varName, sizeof(varName), "var.%s.%s.v", scope, name);
+     //printf(".....VARNAMEVAL:\"%s\"=\"%s\"\n", varName, value);
+     bson_append_string(setObj, varName, value);
+
+
+     //varObj = bson_append_start_object(setObj, varName);
+     //bson_append_string(varObj, "t", type);
+     //bson_append_string(varObj, "v", value);
+     //bson_append_finish_object(varObj);
    
-   //printf("var: (%s) %s=%s\n",type,name,value);
+     //printf("var: (%s) %s=%s\n",type,name,value);
    }
+
+  //bson_append_string(setObj, "var.sys.host.t", "s");
+  //bson_append_string(setObj, "var.sys.host.v", "knut");
 
   bson_append_finish_object(setObj);
 
