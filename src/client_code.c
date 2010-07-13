@@ -191,7 +191,6 @@ if (current_report < 0)
    return -1;
    }
 
-printf("STORE[%s] = %s",CF_CODEBOOK[current_report],reply);
 AppendItem(&(reports[current_report]),reply,NULL);
 return current_report;
 }
