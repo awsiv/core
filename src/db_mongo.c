@@ -324,7 +324,6 @@ void Nova_DBSaveClasses(mongo_connection *conn, char *kH, struct Item *data)
   keyArrField = bson_append_start_object(keyAdd , "clk");
   keyArr = bson_append_start_array(keyAdd , "$each");
 
-  //bson_append_string(keyArr, "0", name);
   for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
     {
       sscanf(ip->name,"%[^,],%ld,%7.4lf,%7.4lf\n",name,&t,&q,&dev);
@@ -349,10 +348,12 @@ void Nova_DBSaveClasses(mongo_connection *conn, char *kH, struct Item *data)
 void Nova_DBSaveVariables(mongo_connection *conn, char *kH, struct Item *data)
 {
   bson_buffer bb;
-  bson_buffer *setObj, *varObj;
+  bson_buffer *setObj, *varObj, *keyArr, *keyAdd, *keyArrField;
   bson cond;  // host description
   bson setOp;
   struct Item *ip;
+  int i;
+  char iStr[32];
   char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],
     scope[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
   
@@ -378,26 +379,42 @@ void Nova_DBSaveVariables(mongo_connection *conn, char *kH, struct Item *data)
      sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,name,value);
 
      snprintf(varName, sizeof(varName), "var.%s.%s.t", scope, name);
-     printf(".....VARNAME:\"%s\"\n", varName);
      bson_append_string(setObj, varName, type);
 
      snprintf(varName, sizeof(varName), "var.%s.%s.v", scope, name);
-     //printf(".....VARNAMEVAL:\"%s\"=\"%s\"\n", varName, value);
      bson_append_string(setObj, varName, value);
-
-
-     //varObj = bson_append_start_object(setObj, varName);
-     //bson_append_string(varObj, "t", type);
-     //bson_append_string(varObj, "v", value);
-     //bson_append_finish_object(varObj);
-   
-     //printf("var: (%s) %s=%s\n",type,name,value);
    }
 
-  //bson_append_string(setObj, "var.sys.host.t", "s");
-  //bson_append_string(setObj, "var.sys.host.v", "knut");
-
   bson_append_finish_object(setObj);
+
+
+  // append scope.varname to key array
+  keyAdd = bson_append_start_object(&bb , "$addToSet");
+  keyArrField = bson_append_start_object(keyAdd , "vark");
+  keyArr = bson_append_start_array(keyAdd , "$each");
+
+  for (ip = data, i = 0; ip != NULL; ip=ip->next)
+    {
+      if (strncmp(ip->name,"S: ", 3) == 0)
+	{
+	  scope[0] = '\0';
+	  sscanf(ip->name+3,"%254[^\n]",scope);
+	  continue;
+	}
+
+      sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,name,value);
+
+      snprintf(iStr, sizeof(iStr), "%d", i);
+      snprintf(varName, sizeof(varName), "%s.%s", scope, name);
+
+      bson_append_string(keyArr, iStr, varName);
+      i++;
+    }
+
+  bson_append_finish_object(keyArr);
+  bson_append_finish_object(keyArrField);
+  bson_append_finish_object(keyAdd);
+  
 
   bson_from_buffer(&setOp,&bb);
   mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
