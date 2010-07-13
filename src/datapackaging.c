@@ -1436,6 +1436,10 @@ while (!feof(fin))
          {
          snprintf(name,CF_BUFSIZE,"m,%s,%s\n",lval,rval);
          }
+      else if (strstr(type,"(option list)"))
+         {
+         snprintf(name,CF_BUFSIZE,"ml,%s,%s\n",lval,rval);
+         }
       else
          {
          snprintf(name,CF_BUFSIZE,"%s,%s,%s\n",type,lval,rval);
