@@ -842,3 +842,26 @@ struct promise_value
 #define CFR_NOTKEPTLOG "NKL"
 #define CFR_METER "MET"
 #define CFR_BUNDLES "BUN"
+
+/* Keynames */
+
+#define cfr_keyhash    "kH"
+#define cfr_mag        "mg"
+#define cfr_week       "wk"
+#define cfr_yr         "yr"
+#define cfr_histo      "hs"
+#define cfr_software   "sw"
+#define cfr_class_keys "ck"
+#define cfr_total_compliance "tc"
+#define cfr_time       "t"
+#define cfr_version    "v"
+#define cfr_kept       "k"
+#define cfr_repaired   "r"
+#define cfr_notkept    "nk"
+#define cfr_vars       "vr"
+#define cfr_type       "ty"
+#define cfr_value      "va"
+#define cfr_var_keys   "vk"
+#define cfr_promises   "p"
+
+
