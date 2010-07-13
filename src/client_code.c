@@ -43,14 +43,14 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    {
    Nova_UnPackPerformance,
    Nova_UnPackClasses,      // DBOK (nopurge)
-   Nova_UnPackSetuid,
-   Nova_UnPackFileChanges,
-   Nova_UnPackDiffs,
+   Nova_UnPackSetuid,//nodata
+   Nova_UnPackFileChanges,//nodata
+   Nova_UnPackDiffs,//nodata
    Nova_UnPackMonitorWeek,  // DBOK
    Nova_UnPackMonitorMag,   // DBOK
    Nova_UnPackMonitorHist,  // DBOK
-   Nova_UnPackMonitorYear,
-   Nova_UnPackCompliance,
+   Nova_UnPackMonitorYear, //nodata
+   Nova_UnPackCompliance,  //nodata
    Nova_UnPackTotalCompliance, // DBOK (append)
    Nova_UnPackSoftware,     // DBOK - QUERYOK
    Nova_UnPackAvailPatches,
