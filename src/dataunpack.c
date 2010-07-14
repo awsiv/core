@@ -425,7 +425,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  char inout, asserted[CF_MAXVARSIZE],dns[CF_MAXVARSIZE];
+ char inout, asserted[CF_MAXVARSIZE],dns[CF_MAXVARSIZE],hash[CF_MAXVARSIZE];
   double ago,average,dev;
   long fthen;
   time_t then;
@@ -434,8 +434,9 @@ CfOut(cf_verbose,""," -> Last-seen data..........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%c %25s %15s %ld %lf %lf %lf\n",
+   sscanf(ip->name,"%c %128s %25s %15s %ld %lf %lf %lf\n",
           &inout,
+          hash,
           asserted,
           dns,
           &fthen,
@@ -445,7 +446,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    then = (time_t)fthen;
    
-   printf("Saw: %c%s seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s",inout,asserted,ago,average,dev,cf_ctime(&fthen));
+   printf("Saw: %c%s (alias %s/%s) seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s",inout,hash,asserted,dns,ago,average,dev,cf_ctime(&fthen));
    }
 
 }

@@ -512,7 +512,7 @@ DeleteItemList(file);
 void Nova_PackMonitorWeek(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { int its,i,j,k, count = 0,err,first = true,slot = 0;
-  double kept = 0, not_kept = 0, repaired = 0;
+ double kept = 0, not_kept = 0, repaired = 0, nonzero;
   struct stat statbuf;
   struct Averages entry,det;
   char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
@@ -559,27 +559,33 @@ while (now < CF_MONDAY_MORNING + CF_WEEK)
 
    for (i = 0; i < CF_OBSERVABLES; i++)
       {
+      nonzero = 0;
+      
       if (entry.Q[i].q > entry.Q[i].expect + 2.0*sqrt(entry.Q[i].var))
          {
          not_kept++;
+         nonzero++;
          continue;
          }
 
       if (entry.Q[i].q > entry.Q[i].expect + sqrt(entry.Q[i].var))
          {
          repaired++;
+         nonzero++;
          continue;
          }
 
       if (entry.Q[i].q < entry.Q[i].expect - 2.0*sqrt(entry.Q[i].var))
          {
          not_kept++;
+         nonzero++;
          continue;
          }
 
       if (entry.Q[i].q < entry.Q[i].expect - sqrt(entry.Q[i].var))
          {
          repaired++;
+         nonzero++;
          continue;
          }
 
@@ -588,7 +594,7 @@ while (now < CF_MONDAY_MORNING + CF_WEEK)
 
    /* Promise: only print header if we intend to transmit some data */
    
-   if (first && (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0))
+   if (first && nonzero != 0)
       {
       first = false;
       AppendItem(reply,header,NULL);
@@ -626,6 +632,7 @@ void Nova_PackMonitorMag(struct Item **reply,char *header,time_t from,enum cfd_m
 { int its,i,j,k,err,ok[CF_OBSERVABLES],first = true,slot;
   struct Averages entry,det;
   time_t now,here_and_now;
+  double nonzero;
   char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
   CF_DB *dbp;
 
@@ -650,6 +657,7 @@ slot = GetTimeSlot(here_and_now);
 
 while (here_and_now < now)
    {
+   nonzero = 0;   
    memset(&entry,0,sizeof(entry));
 
    strcpy(timekey,GenTimeKey(here_and_now));
@@ -668,12 +676,15 @@ while (here_and_now < now)
          entry.Q[i].expect += det.Q[i].expect;
          entry.Q[i].var += det.Q[i].var;
          entry.Q[i].q += det.Q[i].q;
+         nonzero += entry.Q[i].expect;
+         nonzero += entry.Q[i].var;
+         nonzero += entry.Q[i].q;
          }
       }
    
    /* Promise: only print header if we intend to transmit some data */
    
-   if (first && (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0))
+   if (first && nonzero != 0)
       {
       first = false;
       AppendItem(reply,header,NULL);
@@ -1463,7 +1474,7 @@ void Nova_PackLastSeen(struct Item **reply,char *header,time_t from,enum cfd_men
   double now = (double)tid,average = 0, var = 0;
   double ticksperhr = (double)CF_TICKS_PER_HOUR;
   char name[CF_BUFSIZE],hostname[CF_BUFSIZE],buffer[CF_BUFSIZE];
-  struct QPoint entry;
+  struct CfKeyHostSeen entry;
   int ret,ksize,vsize,first = true;
 
 CfOut(cf_verbose,""," -> Packing last-seen data");
@@ -1503,9 +1514,10 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       {
       memcpy(&entry,value,sizeof(entry));
 
-      then = entry.q;
-      average = (double)entry.expect;
-      var = (double)entry.var;
+      then = entry.Q.q;
+      average = (double)entry.Q.expect;
+      var = (double)entry.Q.var;
+      strncpy(addr,entry.address,CF_MAXVARSIZE);
       }
    else
       {
@@ -1527,10 +1539,11 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       AppendItem(reply,header,NULL);
       }
 
-   snprintf(buffer,CF_BUFSIZE-1,"%c %s %s %ld %.2lf %.2lf %.2lf\n",
+   snprintf(buffer,CF_BUFSIZE-1,"%c %s %s %s %ld %.2lf %.2lf %.2lf\n",
            *hostname,
-           IPString2Hostname(hostname+1),
            hostname+1,
+           IPString2Hostname(addr),
+           addr,
            (long)fthen,
            ((double)(now-then))/ticksperhr,
            average/ticksperhr,
