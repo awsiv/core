@@ -851,6 +851,7 @@ struct promise_value
 #define cfr_yr         "yr"
 #define cfr_histo      "hs"
 #define cfr_software   "sw"
+#define cfr_class      "cl"
 #define cfr_class_keys "ck"
 #define cfr_total_compliance "tc"
 #define cfr_time       "t"
@@ -859,9 +860,9 @@ struct promise_value
 #define cfr_repaired   "r"
 #define cfr_notkept    "nk"
 #define cfr_vars       "vr"
+#define cfr_var_keys   "vk"
 #define cfr_type       "ty"
 #define cfr_value      "va"
-#define cfr_var_keys   "vk"
 #define cfr_promises   "p"
 
 

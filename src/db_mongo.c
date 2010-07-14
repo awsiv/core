@@ -8,7 +8,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-// TODO: Fix regex queries, ensure index on kH and sw.n
+// TODO: Fix regex queries, ensure index on cfr_keyhash and sw.n
 // TODO: Purge old classes (only adding for now) - TTL "LASTSEENEXPIRE" in cfengine code
 // TODO: Report update errors!
 
@@ -52,7 +52,7 @@ int Nova_DBClose(mongo_connection *conn)
 
 void Nova_DBInitialize()
 {
-  //  make sure indeces on kH and sw.n exist and monitord arrays exist
+  //  make sure indeces on cfr_keyhash and sw.n exist and monitord arrays exist
 }
 
 /*****************************************************************************/
@@ -73,14 +73,14 @@ void Nova_DBSaveSoftware(mongo_connection *conn, char *kH, struct Item *data)
 
   // find right host
   bson_buffer_init(&bb);
-  bson_append_string(&bb, "kH", kH);
+  bson_append_string(&bb, cfr_keyhash, kH);
   bson_from_buffer(&cond, &bb);
 
 
   bson_buffer_init(&bb);
 
   setObj = bson_append_start_object(&bb, "$set");
-  arr = bson_append_start_array(setObj , "sw");
+  arr = bson_append_start_array(setObj , cfr_software);
   
   for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
     {
@@ -130,13 +130,13 @@ void Nova_DBSaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep 
   switch(rep_type)
     {
     case mon_rep_mag:
-      repPrefix = "mag";
+      repPrefix = cfr_mag;
       break;
     case mon_rep_week:
-      repPrefix = "week";
+      repPrefix = cfr_week;
       break;
     case mon_rep_yr:
-      repPrefix = "yr";
+      repPrefix = cfr_yr;
       break;
     default:
       CfOut(cf_error, "", "!! Unknown monitord report type (%d)", rep_type);
@@ -146,7 +146,7 @@ void Nova_DBSaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep 
 
   // find right host
   bson_buffer_init(&bb);
-  bson_append_string(&bb, "kH", kH);
+  bson_append_string(&bb, cfr_keyhash, kH);
   bson_from_buffer(&cond, &bb);
 
   bson_buffer_init(&bb);
@@ -220,7 +220,7 @@ void Nova_DBSaveMonitorHistograms(mongo_connection *conn, char *kH, struct Item 
 
   // find right host
   bson_buffer_init(&bb);
-  bson_append_string(&bb, "kH", kH);
+  bson_append_string(&bb, cfr_keyhash, kH);
   bson_from_buffer(&cond, &bb);
   
   bson_buffer_init(&bb);
@@ -240,7 +240,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    sp++;
 
-   snprintf(arrName, sizeof(arrName), "hist%d", i);
+   snprintf(arrName, sizeof(arrName), "%s%d", cfr_histo, i);
    arr = bson_append_start_array(setObj , arrName);
    
    for (k = 0; k < CF_GRAINS; k++)
@@ -294,7 +294,7 @@ void Nova_DBSaveClasses(mongo_connection *conn, char *kH, struct Item *data)
   
   // find right host
   bson_buffer_init(&bb);
-  bson_append_string(&bb, "kH", kH);
+  bson_append_string(&bb, cfr_keyhash, kH);
   bson_from_buffer(&cond, &bb);
 
   bson_buffer_init(&bb);
@@ -306,12 +306,12 @@ void Nova_DBSaveClasses(mongo_connection *conn, char *kH, struct Item *data)
     {
       sscanf(ip->name,"%[^,],%ld,%7.4lf,%7.4lf\n",name,&t,&q,&dev);
 
-      snprintf(varName, sizeof(varName), "cl.%s", name);
+      snprintf(varName, sizeof(varName), "%s.%s", cfr_class, name);
 
       clObj = bson_append_start_object(setObj , varName);
       bson_append_double(clObj, "p", q);
       bson_append_double(clObj, "d", dev);
-      bson_append_int(clObj, "t", t);
+      bson_append_int(clObj, cfr_time, t);
       bson_append_finish_object(clObj);
     }
 
@@ -321,7 +321,7 @@ void Nova_DBSaveClasses(mongo_connection *conn, char *kH, struct Item *data)
   // insert keys into key array
 
   keyAdd = bson_append_start_object(&bb , "$addToSet");
-  keyArrField = bson_append_start_object(keyAdd , "clk");
+  keyArrField = bson_append_start_object(keyAdd , cfr_class_keys);
   keyArr = bson_append_start_array(keyAdd , "$each");
 
   for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
@@ -359,7 +359,7 @@ void Nova_DBSaveVariables(mongo_connection *conn, char *kH, struct Item *data)
   
   // find right host
   bson_buffer_init(&bb);
-  bson_append_string(&bb, "kH", kH);
+  bson_append_string(&bb, cfr_keyhash, kH);
   bson_from_buffer(&cond, &bb);
 
   bson_buffer_init(&bb);
@@ -378,10 +378,10 @@ void Nova_DBSaveVariables(mongo_connection *conn, char *kH, struct Item *data)
 
      sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,name,value);
 
-     snprintf(varName, sizeof(varName), "var.%s.%s.t", scope, name);
+     snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, name, cfr_type);
      bson_append_string(setObj, varName, type);
 
-     snprintf(varName, sizeof(varName), "var.%s.%s.v", scope, name);
+     snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, name, cfr_value);
      bson_append_string(setObj, varName, value);
    }
 
@@ -390,7 +390,7 @@ void Nova_DBSaveVariables(mongo_connection *conn, char *kH, struct Item *data)
 
   // append scope.varname to key array
   keyAdd = bson_append_start_object(&bb , "$addToSet");
-  keyArrField = bson_append_start_object(keyAdd , "vark");
+  keyArrField = bson_append_start_object(keyAdd , cfr_var_keys);
   keyArr = bson_append_start_array(keyAdd , "$each");
 
   for (ip = data, i = 0; ip != NULL; ip=ip->next)
@@ -442,14 +442,14 @@ void Nova_DBSaveTotalCompliance(mongo_connection *conn, char *kH, struct Item *d
   
   // find right host
   bson_buffer_init(&bb);
-  bson_append_string(&bb, "kH", kH);
+  bson_append_string(&bb, cfr_keyhash, kH);
   bson_from_buffer(&cond, &bb);
 
   bson_buffer_init(&bb);
 
   pushObj = bson_append_start_object(&bb, "$pushAll");
 
-  arr = bson_append_start_array(pushObj , "tComp");
+  arr = bson_append_start_array(pushObj , cfr_total_compliance);
 
   for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    {
@@ -457,13 +457,12 @@ void Nova_DBSaveTotalCompliance(mongo_connection *conn, char *kH, struct Item *d
 
      sscanf(ip->name,"%63[^,], %127[^,],%d,%d,%d\n",then,version,&kept,&repaired,&notrepaired);
 
-     //printf("Tcompliance: (%d,%d,%d) for version %s at %s\n",kept,repaired,notrepaired,version,then);
      sub = bson_append_start_object(arr, iStr);
-     bson_append_string(sub , "t" , then);
-     bson_append_string(sub , "v" , version);
-     bson_append_int(sub, "k", kept);
-     bson_append_int(sub, "r", repaired);
-     bson_append_int(sub, "n", notrepaired);
+     bson_append_string(sub , cfr_time, then);
+     bson_append_string(sub , cfr_version, version);
+     bson_append_int(sub, cfr_kept, kept);
+     bson_append_int(sub, cfr_repaired, repaired);
+     bson_append_int(sub, cfr_notkept, notrepaired);
      bson_append_finish_object(sub);
    }
 
@@ -542,7 +541,7 @@ void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *a
   // return resKeyVal of documents matching this query
   bson_buffer_init(&bb);
 
-  sub1 = bson_append_start_object(&bb, "sw");
+  sub1 = bson_append_start_object(&bb, cfr_software);
   sub2 = bson_append_start_object(&bb, "$elemMatch");
   
   if(regex)
