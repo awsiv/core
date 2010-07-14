@@ -58,7 +58,7 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    Nova_UnPack_promise_output_common,  // nodata
    Nova_UnPackValueReport,  // nodata
    Nova_UnPackVariables,    // DBOK
-   Nova_UnPackLastSeen,     // rewrite lastSeen DB first
+   Nova_UnPackLastSeen,     // DBOK
    Nova_UnPackRepairLog,    // DBOK (append - querySort?)
    Nova_UnPackNotKeptLog,   // DBOK (append - querySort?)
    Nova_UnPackMeter,

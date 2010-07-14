@@ -545,6 +545,121 @@ void Nova_DBSavePromiseLog(mongo_connection *conn, char *kH, enum promiselog_rep
 
 /*****************************************************************************/
 
+void Nova_DBSaveLastSeen(mongo_connection *conn, char *kH, struct Item *data)
+{
+  bson_buffer bb;
+  bson_buffer *setObj, *sub;
+  bson cond;  // host description
+  bson setOp;
+  struct Item *ip;
+  char inout, ipaddr[CF_MAXVARSIZE],dns[CF_MAXVARSIZE],hash[CF_MAXVARSIZE],
+    varName[CF_MAXVARSIZE];
+  double ago,average,dev;
+  long fthen;
+  time_t then;
+
+  
+  // find right host
+  bson_buffer_init(&bb);
+  bson_append_string(&bb, cfr_keyhash, kH);
+  bson_from_buffer(&cond, &bb);
+
+  bson_buffer_init(&bb);
+
+  setObj = bson_append_start_object(&bb, "$set");
+
+  
+  for (ip = data; ip != NULL; ip=ip->next)
+    {
+      sscanf(ip->name,"%c %128s %25s %15s %ld %lf %lf %lf\n",
+	     &inout,
+	     hash,
+	     dns,
+	     ipaddr,
+	     &fthen,
+	     &ago,
+	     &average,
+	     &dev);
+     
+      then = (time_t)fthen;
+     
+      snprintf(varName, sizeof(varName), "%s.%c%s", cfr_lastseen, inout, hash);
+
+      sub = bson_append_start_object(setObj, varName);
+      bson_append_string(sub, cfr_dnsname, dns);
+      bson_append_string(sub, cfr_ipaddr, ipaddr);
+      bson_append_double(sub, cfr_hrsago, ago);
+      bson_append_double(sub, cfr_hrsavg, average);
+      bson_append_double(sub, cfr_hrsdev, dev);
+      bson_append_finish_object(sub);
+    }
+
+  bson_append_finish_object(setObj);
+
+
+  bson_from_buffer(&setOp,&bb);
+  mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+
+  bson_destroy(&setOp);
+  bson_destroy(&cond);  
+}
+
+/*****************************************************************************/
+
+void Nova_DBSaveMeter(mongo_connection *conn, char *kH, struct Item *data)
+{
+  bson_buffer bb;
+  bson_buffer *setObj;
+  bson_buffer *sub;
+  bson cond;  // host description
+  bson setOp;
+  int i;
+  bson_buffer *arr;
+  struct Item *ip;
+  char packNumStr[CF_MAXVARSIZE];
+  char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch, archStr[CF_MAXVARSIZE];
+
+
+  // find right host
+  bson_buffer_init(&bb);
+  bson_append_string(&bb, cfr_keyhash, kH);
+  bson_from_buffer(&cond, &bb);
+
+
+  bson_buffer_init(&bb);
+
+  setObj = bson_append_start_object(&bb, "$set");
+  arr = bson_append_start_array(setObj , cfr_software);
+  
+  for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+    {
+      sscanf(ip->name,"%250[^,],%250[^,],%c",name,version,&arch);
+
+      snprintf(packNumStr, sizeof(packNumStr), "%d", i);
+      snprintf(archStr, sizeof(archStr), "%c", arch);
+
+      sub = bson_append_start_object(arr , packNumStr);
+      bson_append_string(sub , "n" , name);
+      bson_append_string(sub , "v" , version);
+      bson_append_string(sub , "a" , archStr);
+      bson_append_finish_object(sub);
+
+    }
+
+  bson_append_finish_object(arr);
+  bson_append_finish_object(setObj);
+
+
+  bson_from_buffer(&setOp,&bb);
+  mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+
+  bson_destroy(&setOp);
+  bson_destroy(&cond);
+  
+}
+
+/*****************************************************************************/
+
 void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result)
 /* Takes a query document and returns a set of public key hashes
  * of hosts that matches the query. Use bson_empty(&b) as query to

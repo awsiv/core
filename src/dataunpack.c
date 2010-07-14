@@ -435,6 +435,14 @@ void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, struct Item *data)
  
 CfOut(cf_verbose,""," -> Last-seen data..........................");
 
+#ifdef HAVE_LIBMONGOC
+ if(dbconn)
+   {
+     Nova_DBSaveLastSeen(dbconn, id, data);
+   }
+#endif
+
+
 for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%c %128s %25s %15s %ld %lf %lf %lf\n",
@@ -548,6 +556,13 @@ void Nova_UnPackMeter(mongo_connection *dbconn, char *id, struct Item *data)
   double kept,repaired;
   
 CfOut(cf_verbose,""," -> Meter data...........................");
+
+#ifdef HAVE_LIBMONGOC
+ if(dbconn)
+   {
+     //Nova_DBSaveMeter(dbconn, id, data);
+   }
+#endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
