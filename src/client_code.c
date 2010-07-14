@@ -43,24 +43,24 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    {
    Nova_UnPackPerformance,
    Nova_UnPackClasses,      // DBOK (nopurge)
-   Nova_UnPackSetuid,//nodata
-   Nova_UnPackFileChanges,//nodata
-   Nova_UnPackDiffs,//nodata
+   Nova_UnPackSetuid,       //nodata
+   Nova_UnPackFileChanges,  //nodata
+   Nova_UnPackDiffs,        //nodata
    Nova_UnPackMonitorWeek,  // DBOK
    Nova_UnPackMonitorMag,   // DBOK
    Nova_UnPackMonitorHist,  // DBOK
-   Nova_UnPackMonitorYear, //nodata
-   Nova_UnPackCompliance,  //nodata
-   Nova_UnPackTotalCompliance, // DBOK: FIXME: Unix time as key
+   Nova_UnPackMonitorYear,  //nodata
+   Nova_UnPackCompliance,   //nodata
+   Nova_UnPackTotalCompliance, // DBOK (append - querySort?)
    Nova_UnPackSoftware,     // DBOK - QUERYOK
    Nova_UnPackAvailPatches, // nodata
    Nova_UnPackPatchStatus,  // nodata
    Nova_UnPack_promise_output_common,  // nodata
    Nova_UnPackValueReport,  // nodata
-   Nova_UnPackVariables,   // DBOK
-   Nova_UnPackLastSeen,   // rewrite lastSeen DB first
-   Nova_UnPackRepairLog,  
-   Nova_UnPackNotKeptLog,
+   Nova_UnPackVariables,    // DBOK
+   Nova_UnPackLastSeen,     // rewrite lastSeen DB first
+   Nova_UnPackRepairLog,    // DBOK (append - querySort?)
+   Nova_UnPackNotKeptLog,   // DBOK (append - querySort?)
    Nova_UnPackMeter,
    Nova_UnPackBundles
    };

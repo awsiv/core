@@ -476,6 +476,72 @@ void Nova_DBSaveTotalCompliance(mongo_connection *conn, char *kH, struct Item *d
   bson_destroy(&cond);  
 }
 
+/*****************************************************************************/
+
+void Nova_DBSavePromiseLog(mongo_connection *conn, char *kH, enum promiselog_rep rep_type, struct Item *data)
+{
+  bson_buffer bb;
+  bson_buffer *pushObj;
+  bson_buffer *arr, *sub;
+  bson cond;  // host description
+  bson setOp;
+  char handle[CF_MAXVARSIZE];
+  long then;
+  time_t tthen;
+  struct Item *ip;
+  int i;
+  char iStr[32];
+  char *repName = {0};
+
+
+  // find right host
+  bson_buffer_init(&bb);
+  bson_append_string(&bb, cfr_keyhash, kH);
+  bson_from_buffer(&cond, &bb);
+  
+  bson_buffer_init(&bb);
+
+  switch(rep_type)
+    {
+    case plog_repaired:
+      repName = cfr_repairlog;
+      break;
+    case plog_notkept:
+      repName = cfr_notkeptlog;
+      break;
+    default:
+      CfOut(cf_error, "", "!! Unknown promise log report type (%d)", rep_type);
+      FatalError("Software Error");
+    }
+  
+
+  pushObj = bson_append_start_object(&bb, "$pushAll");
+  arr = bson_append_start_array(pushObj, repName);
+
+
+  for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+   {
+     snprintf(iStr, sizeof(iStr), "%d", i);
+
+     sscanf(ip->name,"%ld,%127[^\n]",&then,handle);
+     tthen = (time_t)then;
+
+
+     sub = bson_append_start_object(arr, iStr);
+     bson_append_string(sub, cfr_promisehandle, handle);
+     bson_append_int(sub, cfr_time, then);
+     bson_append_finish_object(sub);
+   }
+
+  bson_append_finish_object(arr);
+  bson_append_finish_object(pushObj);
+
+  bson_from_buffer(&setOp,&bb);
+  mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+ 
+  bson_destroy(&setOp);
+  bson_destroy(&cond);
+}
 
 /*****************************************************************************/
 

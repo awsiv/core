@@ -494,6 +494,13 @@ void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, struct Item *data)
   
 CfOut(cf_verbose,""," -> Repair log data........................");
 
+#ifdef HAVE_LIBMONGOC
+ if(dbconn)
+   {
+     Nova_DBSavePromiseLog(dbconn, id, plog_repaired, data);
+   }
+#endif
+
 for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%ld,%127[^\n]",&then,handle);
@@ -513,6 +520,13 @@ void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, struct Item *data
   long then;
   
 CfOut(cf_verbose,""," -> Not kept data...........................");
+
+#ifdef HAVE_LIBMONGOC
+ if(dbconn)
+   {
+     Nova_DBSavePromiseLog(dbconn, id, plog_notkept, data);
+   }
+#endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {

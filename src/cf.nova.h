@@ -308,6 +308,7 @@ void Nova_DBSaveMonitorHistograms(mongo_connection *conn, char *kH, struct Item 
 void Nova_DBSaveClasses(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBSaveVariables(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBSaveTotalCompliance(mongo_connection *conn, char *kH, struct Item *data);
+void Nova_DBSavePromiseLog(mongo_connection *conn, char *kH, enum promiselog_rep rep_type, struct Item *data);
 void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result);
 void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result);
 int Nova_MongoKeyPosition(bson_iterator *it, char *keyName, bson_type valType);
@@ -859,11 +860,14 @@ struct promise_value
 #define cfr_version    "v"
 #define cfr_kept       "k"
 #define cfr_repaired   "r"
-#define cfr_notkept    "nk"
+#define cfr_notkept    "N"
 #define cfr_vars       "vr"
 #define cfr_var_keys   "vk"
-#define cfr_type       "ty"
-#define cfr_value      "va"
+#define cfr_type       "T"
+#define cfr_value      "V"
+#define cfr_repairlog  "rl"
+#define cfr_notkeptlog "nl"
+#define cfr_promisehandle "h"
 #define cfr_promises   "p"
 
 
