@@ -544,12 +544,39 @@ void Nova_UnPackMeter(mongo_connection *dbconn, char *id, struct Item *data)
 { struct Item *ip;
   char handle[CF_SMALLBUF];
   time_t then;
+  char type;
+  double kept,repaired;
   
 CfOut(cf_verbose,""," -> Meter data...........................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("Meter: %s\n",ip->name);
+   sscanf(ip->name,"%c: %lf %lf",&type,&kept,&repaired);
+
+   switch (type)
+      {
+      case 'W':
+          printf("Meter week compliance: %lf, %lf\n",kept,repaired);
+          break;
+      case 'D':
+          printf("Meter daily compliance: %lf, %lf\n",kept,repaired);
+          break;
+      case 'H':
+          printf("Meter hourly compliance: %lf, %lf\n",kept,repaired);
+          break;
+      case 'P':
+          printf("Meter performance: %lf, %lf\n",kept,repaired);
+          break;
+      case 'S':
+          printf("Meter licenses: %lf, %lf\n",kept,repaired);
+          break;
+      case 'C':
+          printf("Meter comms: %lf, %lf\n",kept,repaired);
+          break;          
+      case 'A':
+          printf("Meter anomalies: %lf, %lf\n",kept,repaired);
+          break;
+      }
    }
 }
 
