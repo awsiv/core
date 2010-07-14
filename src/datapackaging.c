@@ -330,9 +330,10 @@ void Nova_PackFileChanges(struct Item **reply,char *header,time_t from,enum cfd_
   struct Item *ip,*file = NULL;
   char pm,start[32];
   int i = 0,truncate,first = true;
+  time_t then;
 
 CfOut(cf_verbose,""," -> Packing file change data");
-snprintf(name,CF_BUFSIZE-1,"%s/state/file_hash_event_history",CFWORKDIR);
+snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,CF_FILECHANGE);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -350,10 +351,9 @@ while (!feof(fin))
    line[0] = '\0';
    fgets(line,CF_BUFSIZE-1,fin);
 
-   sscanf(line,"%*s %s %s %*s %s",month,day,year);
-   snprintf(key,CF_SMALLBUF-1,"%s %s %s",day,month,year);
+   sscanf(line,"%ld",&then);
    
-   if (!Nova_CoarseLaterThan(key,ref))
+   if ((time_t)then < from)
       {
       continue;
       }
@@ -594,7 +594,7 @@ while (now < CF_MONDAY_MORNING + CF_WEEK)
 
    /* Promise: only print header if we intend to transmit some data */
    
-   if (first && nonzero != 0)
+   if (first)
       {
       first = false;
       AppendItem(reply,header,NULL);
@@ -1563,7 +1563,8 @@ void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t from,enum 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE],buffer[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
-  char start[32],end[32],*sp;
+  char *sp;
+  time_t start,end;
   char version[CF_MAXVARSIZE];
   int kept,repaired,notrepaired;
   int i = 0,today = false,first = true;
@@ -1573,7 +1574,7 @@ void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t from,enum 
   char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],key[CF_SMALLBUF],ref[CF_SMALLBUF];
   
 CfOut(cf_verbose,""," -> Packing total compliance data");
-snprintf(name,CF_BUFSIZE-1,"%s/promise.log",CFWORKDIR);
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_PROMISE_LOG);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1603,8 +1604,6 @@ cf_fclose(fin);
 for (ip = file; ip != NULL; ip = ip->next)
    {
    kept = repaired = notrepaired = 0;
-   memset(start,0,32);
-   memset(end,0,32);
    memset(version,0,255);
 
    if (cf_strlen(ip->name) == 0)
@@ -1614,15 +1613,9 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    // Complex parsing/extraction
 
-   sscanf(ip->name,"%31[^-]",start);
+   sscanf(ip->name,"%ld,%ld",&start,&end);
    sscanf(strstr(ip->name,"Outcome of version")+strlen("Outcome of version"),"%31[^:]",version);
    sscanf(strstr(ip->name,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&kept,&repaired,&notrepaired);
-   sscanf(strstr(ip->name,"->")+2,"%31[^-]",end);
-
-   if (sp = strstr(end,": Out"))
-      {
-      *sp = '\0';
-      }
 
    if (i < 12*24)
       {
@@ -1639,7 +1632,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    av_week_kept = GAverage((double)kept,av_week_kept,0.1);
    av_week_repaired = GAverage((double)repaired,av_week_repaired,0.1);
 
-   snprintf(buffer,CF_BUFSIZE-1,"%s,%s,%d,%d,%d\n",start,version,kept,repaired,notrepaired);
+   snprintf(buffer,CF_BUFSIZE-1,"%ld,%s,%d,%d,%d\n",start,version,kept,repaired,notrepaired);
    
    if (first)
       {

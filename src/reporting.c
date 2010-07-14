@@ -205,7 +205,7 @@ void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *styleshee
   double av_hour_kept = 0, av_hour_repaired = 0;
 
 
-snprintf(name,CF_BUFSIZE-1,"%s/promise.log",CFWORKDIR);
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_PROMISE_LOG);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -268,6 +268,8 @@ else if (XML)
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
+   long startt,endt;
+   time_t st,et;
    kept = repaired = notrepaired = 0;
    memset(start,0,32);
    memset(end,0,32);
@@ -280,14 +282,14 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    // Complex parsing/extraction
 
-   sscanf(ip->name,"%31[^-]",start);
+   sscanf(ip->name,"%ld,%ld",&startt,&endt);
+   st = (time_t)startt;
+   et = (time_t)endt;
+   snprintf(start,31,"%s",ctime(&st));
+   snprintf(end,31,"%s",ctime(&et));
+   
    sscanf(strstr(ip->name,"Outcome of version")+strlen("Outcome of version"),"%31[^:]",version);
    sscanf(strstr(ip->name,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&kept,&repaired,&notrepaired);
-   sscanf(strstr(ip->name,"->")+2,"%31[^-]",end);
-   if (sp = strstr(end,": Out"))
-      {
-      *sp = '\0';
-      }
 
 // replaces  sscanf(ip->name,"%31[^-]->%31[^O]Outcome of version %250[^:]: Promises observed to be kept %d%*[^0-9]%d%*[^0-9]%d",start,end,version,&kept,&repaired,&notrepaired);
 
@@ -713,10 +715,12 @@ void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *styleshe
   char name[CF_BUFSIZE],line[CF_BUFSIZE],datestr[CF_MAXVARSIZE],size[CF_MAXVARSIZE];
   char no[CF_SMALLBUF],change[CF_BUFSIZE],reformat[CF_BUFSIZE],output[2*CF_BUFSIZE],aggregate[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
-  char pm,start[32];
+  char pm;
+  long start;
+  time_t now;
   int i = 0,truncate;
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/file_hash_event_history",CFWORKDIR);
+  snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,CF_FILECHANGE);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -775,7 +779,6 @@ else if (XML)
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
-   memset(start,0,32);
    memset(name,0,255);
 
    if (cf_strlen(ip->name) == 0)
@@ -783,25 +786,28 @@ for (ip = file; ip != NULL; ip = ip->next)
       continue;
       }
 
-   sscanf(ip->name,"%31[^,],%1023[^\n]",start,name);
-
+   sscanf(ip->name,"%ld,%1023[^\n]",&start,name);
+   now = (time_t)start;
+   snprintf(datestr,CF_MAXVARSIZE-1,"%s",ctime(&now));
+   Chop(datestr);
+   
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
-      fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],start,NRX[cfx_date][cfe]);
+      fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],datestr,NRX[cfx_date][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_filename][cfb],name,NRX[cfx_end][cfe]);
       fprintf(fout,"%s",NRX[cfx_entry][cfe]);
       }
    else if (html)
       {
       fprintf(fout,"%s",NRH[cfx_entry][cfb]);
-      fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],start,NRH[cfx_date][cfe]);
+      fprintf(fout,"%s %s %s",NRH[cfx_date][cfb],datestr,NRH[cfx_date][cfe]);
       fprintf(fout,"%s %s %s",NRH[cfx_filename][cfb],name,NRH[cfx_end][cfe]);
       fprintf(fout,"%s",NRH[cfx_entry][cfe]);
       }
    else if (csv)
       {
-      fprintf(fout,"%s,%s",start,name);
+      fprintf(fout,"%s,%s",datestr,name);
       }
    else
       {

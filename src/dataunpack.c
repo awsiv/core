@@ -41,9 +41,9 @@ void Nova_UnPackClasses(mongo_connection *dbconn, char *id, struct Item *data)
 CfOut(cf_verbose,""," -> Class data .................");
 
 #ifdef HAVE_LIBMONGOC
- if(dbconn)
+if(dbconn)
    {
-     Nova_DBSaveClasses(dbconn, id, data);
+   Nova_DBSaveClasses(dbconn, id, data);
    }
 #endif
 
@@ -76,15 +76,18 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackFileChanges(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  char name[CF_MAXVARSIZE],date[CF_MAXVARSIZE];
+  char name[CF_MAXVARSIZE];
+  long date;
+  time_t then;
 
 CfOut(cf_verbose,""," -> File change data....................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
-   sscanf(ip->name,"%255[^,],%255[^\n]",name,date);
-   printf("File-change event: in %s at %s\n",name,date);
+   sscanf(ip->name,"%ld,%255[^\n]",&date,name);
+   then = (time_t)date;
+   printf("File-change event: in %s at %ld\n",name,then);
    }
 }
 
@@ -456,9 +459,11 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  char then[CF_SMALLBUF],version[CF_SMALLBUF];
+  char version[CF_SMALLBUF];
   int kept,repaired,notrepaired;
- 
+  long date;
+  time_t then;
+  
 CfOut(cf_verbose,""," -> Total Compliance data......................");
 
 #ifdef HAVE_LIBMONGOC
@@ -470,9 +475,10 @@ CfOut(cf_verbose,""," -> Total Compliance data......................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%63[^,],%127[^,],%d,%d,%d\n",then,version,&kept,&repaired,&notrepaired);
-
-   printf("Tcompliance: (%d,%d,%d) for version %s at %s\n",kept,repaired,notrepaired,version,then);
+   sscanf(ip->name,"%ld,%127[^,],%d,%d,%d\n",&date,version,&kept,&repaired,&notrepaired);
+   then = (time_t)date;
+   
+   printf("Tcompliance: (%d,%d,%d) for version %s at %ld\n",kept,repaired,notrepaired,version,then);
    }
 
 }

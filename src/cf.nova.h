@@ -544,6 +544,7 @@ void Nova_SetDocRoot(char *name);
 void Nova_EnterpriseContext(void);
 void Nova_PreSanitizePromise(struct Promise *pp);
 void Nova_TrackValue(char *date,double kept,double repaired, double notkept);
+void Nova_LastSawBundle(char *name);
 
 /* registry.c */
 
