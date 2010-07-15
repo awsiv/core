@@ -119,7 +119,7 @@ CfOut(cf_verbose,""," -> File diff data...................");
 for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
-   sscanf(ip->name,"%[^|]|%[^|],%[^\0]",name,&t,&change);
+   sscanf(ip->name,"%[^|]|%[^|],%[^\0]",name,t,change);
    printf("Change-diff: in file %s at %s begin %s \nend\n",name,t,change);
    }
 }
@@ -284,14 +284,14 @@ void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, struct Item *data
 { struct Item *ip;
  time_t then;
  double av,dev;
- char type,eventname[CF_MAXVARSIZE];
+ char type = 'X',eventname[CF_MAXVARSIZE];
 
 CfOut(cf_verbose,""," -> Promise Compliance data..............");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%ld,%255s,%c,%lf,%lf\n",&then,eventname,&type,&av,&dev);
-
+   sscanf(ip->name,"%ld,%255[^,],%c,%lf,%lf\n",&then,eventname,&type,&av,&dev);
+   
    switch (type)
       {
       case 'c':
