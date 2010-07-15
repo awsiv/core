@@ -21,6 +21,14 @@ void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, struct Item *dat
 
 CfOut(cf_verbose,""," -> Performance data ...................");
 
+#ifdef HAVE_LIBMONGOC
+if(dbconn)
+   {
+   Nova_DBSavePerformance(dbconn, id, data);
+   }
+#endif
+
+
 for (ip = data; ip != NULL; ip=ip->next)
    {
    eventname[0] = '\0';
@@ -62,6 +70,14 @@ void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, struct Item *data)
 { struct Item *ip;
 
 CfOut(cf_verbose,""," -> setuid data ......................");
+
+#ifdef HAVE_LIBMONGOC
+if(dbconn)
+   {
+   Nova_DBSaveSetUid(dbconn, id, data);
+   }
+#endif
+
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -560,7 +576,7 @@ CfOut(cf_verbose,""," -> Meter data...........................");
 #ifdef HAVE_LIBMONGOC
  if(dbconn)
    {
-     //Nova_DBSaveMeter(dbconn, id, data);
+     Nova_DBSaveMeter(dbconn, id, data);
    }
 #endif
 

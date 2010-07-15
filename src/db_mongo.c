@@ -613,11 +613,11 @@ void Nova_DBSaveMeter(mongo_connection *conn, char *kH, struct Item *data)
   bson_buffer *sub;
   bson cond;  // host description
   bson setOp;
-  int i;
-  bson_buffer *arr;
   struct Item *ip;
-  char packNumStr[CF_MAXVARSIZE];
-  char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch, archStr[CF_MAXVARSIZE];
+  char varName[CF_MAXVARSIZE];
+  char type;
+  double kept,repaired;
+
 
 
   // find right host
@@ -629,24 +629,21 @@ void Nova_DBSaveMeter(mongo_connection *conn, char *kH, struct Item *data)
   bson_buffer_init(&bb);
 
   setObj = bson_append_start_object(&bb, "$set");
-  arr = bson_append_start_array(setObj , cfr_software);
   
-  for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+  for (ip = data; ip != NULL; ip=ip->next)
     {
-      sscanf(ip->name,"%250[^,],%250[^,],%c",name,version,&arch);
+      sscanf(ip->name,"%c: %lf %lf",&type,&kept,&repaired);
 
-      snprintf(packNumStr, sizeof(packNumStr), "%d", i);
-      snprintf(archStr, sizeof(archStr), "%c", arch);
+      snprintf(varName, sizeof(varName), "%s.%c", cfr_meter, type);
 
-      sub = bson_append_start_object(arr , packNumStr);
-      bson_append_string(sub , "n" , name);
-      bson_append_string(sub , "v" , version);
-      bson_append_string(sub , "a" , archStr);
+
+      sub = bson_append_start_object(setObj , varName);
+      bson_append_double(sub, cfr_meterkept, kept);
+      bson_append_double(sub, cfr_meterrepaired , repaired);
       bson_append_finish_object(sub);
 
     }
 
-  bson_append_finish_object(arr);
   bson_append_finish_object(setObj);
 
 
@@ -657,6 +654,105 @@ void Nova_DBSaveMeter(mongo_connection *conn, char *kH, struct Item *data)
   bson_destroy(&cond);
   
 }
+
+/*****************************************************************************/
+
+void Nova_DBSavePerformance(mongo_connection *conn, char *kH, struct Item *data)
+{
+  bson_buffer bb;
+  bson_buffer *setObj;
+  bson_buffer *sub;
+  bson cond;  // host description
+  bson setOp;
+  struct Item *ip;
+  char varName[CF_MAXVARSIZE];
+  time_t t;
+  char eventname[CF_MAXVARSIZE];
+  double measure = 0,average = 0,dev = 0;
+
+
+
+  // find right host
+  bson_buffer_init(&bb);
+  bson_append_string(&bb, cfr_keyhash, kH);
+  bson_from_buffer(&cond, &bb);
+
+
+  bson_buffer_init(&bb);
+
+  setObj = bson_append_start_object(&bb, "$set");
+  
+  for (ip = data; ip != NULL; ip=ip->next)
+    {
+      eventname[0] = '\0';
+      sscanf(ip->name,"%ld,%lf,%lf,%lf,%255[^\n]\n",&t,&measure,&average,&dev,eventname);
+
+      snprintf(varName, sizeof(varName), "%s.%s", cfr_performance, eventname);
+
+      sub = bson_append_start_object(setObj , varName);
+      bson_append_double(sub, cfr_obslast, measure);
+      bson_append_double(sub, cfr_obsavg, average);
+      bson_append_double(sub, cfr_obsdev, dev);
+      bson_append_int(sub, cfr_time, t);
+      bson_append_finish_object(sub);
+    }
+
+  bson_append_finish_object(setObj);
+
+
+  bson_from_buffer(&setOp,&bb);
+  mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+
+  bson_destroy(&setOp);
+  bson_destroy(&cond);
+  
+}
+
+/*****************************************************************************/
+
+void Nova_DBSaveSetUid(mongo_connection *conn, char *kH, struct Item *data)
+{
+  bson_buffer bb;
+  bson_buffer *keyArr, *keyAdd, *keyArrField;
+  bson cond;  // host description
+  bson setOp;
+  struct Item *ip;
+  char progName[CF_MAXVARSIZE];
+  char iStr[32];
+  int i;
+  
+  // find right host
+  bson_buffer_init(&bb);
+  bson_append_string(&bb, cfr_keyhash, kH);
+  bson_from_buffer(&cond, &bb);
+
+  bson_buffer_init(&bb);
+
+
+  // insert keys into key array
+
+  keyAdd = bson_append_start_object(&bb , "$addToSet");
+  keyArrField = bson_append_start_object(keyAdd , cfr_setuid);
+  keyArr = bson_append_start_array(keyAdd , "$each");
+
+  for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+    {
+      sscanf(ip->name,"%255[^\n]",progName);
+      snprintf(iStr, sizeof(iStr), "%d", i);
+      bson_append_string(keyArr, iStr, progName);
+    }
+
+  bson_append_finish_object(keyArr);
+  bson_append_finish_object(keyArrField);
+  bson_append_finish_object(keyAdd);
+
+  bson_from_buffer(&setOp,&bb);
+  mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+
+  bson_destroy(&setOp);
+  bson_destroy(&cond);
+}
+
 
 /*****************************************************************************/
 

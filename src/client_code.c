@@ -41,9 +41,9 @@ char *CF_CODEBOOK[cf_codebook_size] =
 
 void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    {
-   Nova_UnPackPerformance,
+   Nova_UnPackPerformance,  // DBOK
    Nova_UnPackClasses,      // DBOK (nopurge)
-   Nova_UnPackSetuid,       //nodata
+   Nova_UnPackSetuid,       // DBOK (nopurge)
    Nova_UnPackFileChanges,  //nodata
    Nova_UnPackDiffs,        //nodata
    Nova_UnPackMonitorWeek,  // DBOK
@@ -52,7 +52,7 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    Nova_UnPackMonitorYear,  //nodata
    Nova_UnPackCompliance,   //nodata
    Nova_UnPackTotalCompliance, // DBOK (append - querySort?)
-   Nova_UnPackSoftware,     // DBOK - QUERYOK
+   Nova_UnPackSoftware,     // DBOK + QUERYOK
    Nova_UnPackAvailPatches, // nodata
    Nova_UnPackPatchStatus,  // nodata
    Nova_UnPack_promise_output_common,  // nodata
@@ -61,7 +61,7 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    Nova_UnPackLastSeen,     // DBOK
    Nova_UnPackRepairLog,    // DBOK (append - querySort?)
    Nova_UnPackNotKeptLog,   // DBOK (append - querySort?)
-   Nova_UnPackMeter,
+   Nova_UnPackMeter,        // DBOK
    Nova_UnPackBundles
    };
 
