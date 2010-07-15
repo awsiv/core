@@ -287,6 +287,11 @@ for (ip = file; ip != NULL; ip = ip->next)
    et = (time_t)endt;
    snprintf(start,31,"%s",ctime(&st));
    snprintf(end,31,"%s",ctime(&et));
+
+   if (!strstr(ip->name,"Outcome of version"))
+      {
+      continue;
+      }
    
    sscanf(strstr(ip->name,"Outcome of version")+strlen("Outcome of version"),"%31[^:]",version);
    sscanf(strstr(ip->name,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&kept,&repaired,&notrepaired);
