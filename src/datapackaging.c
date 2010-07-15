@@ -1931,6 +1931,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    }
 
 DeleteItemList(file);
+CloseDB(dbp);
 }
 
 /*****************************************************************************/
