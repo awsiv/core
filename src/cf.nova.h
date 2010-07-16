@@ -43,7 +43,6 @@
 
 
 #undef PACKAGE
-// #undef AUTOCONF_HOSTNAME TODO: Does removal cause troble ?
 
 #define CF_SHADES 25
 #define CF_TIMESERIESDATA 168
@@ -296,7 +295,16 @@ void Nova_BoundaryCheck(struct CfDataView *cfv,int *x1,int *y1,int *x2, int *y2)
 
 int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
-/* db_mongo.c */
+/* db_query.c */
+
+#ifdef HAVE_LIBMONGOC
+void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result);
+void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result);
+int Nova_MongoKeyPosition(bson_iterator *it, char *keyName, bson_type valType);
+int Nova_DBIteratorNext(bson_iterator *it, bson_type valType);
+#endif /* HAVE_LIBMONGOC */
+
+/* db_save.c */
 
 #ifdef HAVE_LIBMONGOC
 int Nova_DBOpen(mongo_connection *conn, char *host, int port);
@@ -314,10 +322,7 @@ void Nova_DBSaveMeter(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBSavePerformance(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBSaveSetUid(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBSavePromiseCompliance(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result);
-void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result);
-int Nova_MongoKeyPosition(bson_iterator *it, char *keyName, bson_type valType);
-#endif /* HAVE_LIBMONGOC */
+#endif
 
 /* datapackaging.c */
 
@@ -889,6 +894,121 @@ struct promise_value
 #define cfr_setuid     "su"
 #define cfr_promisecompl "pc"
 #define cfr_promisestatus "s"
-#define cfr_promises   "p"
 
+
+
+
+/* Report DB API Structs */
+
+
+struct HubHost
+{
+  char *keyHash;
+  char *ipAddr;
+  char *hostName;
+};
+
+struct HubSoftware
+{
+  struct HubHost host;
+  
+  char *name;
+  char *ver;
+  char arch;
+};
+
+struct HubClass
+{
+  struct HubHost host;
+  
+  double prob;
+  double dev;
+  time_t t;
+};
+
+
+struct HubTotalCompliance
+{
+  struct HubHost host;
+  
+  time_t t;
+  char *version;
+  int kept;
+  int repaired;
+  int notkept;
+};
+
+
+struct HubVariable
+{
+  struct HubHost host;
+
+  char *type;
+  char *scope;
+  char *value;
+};
+
+
+// promise repaired or failed
+struct HubPromiseLog
+{
+  struct HubHost host;
+  
+  char *handle;
+  time_t t;
+};
+
+
+struct HubLastSeen
+{
+  struct HubHost host;
+  
+  char *keyHash;
+  char inout;  // '+' or '-'
+  char *dnsName;
+  char *ipAddr;
+  double hrsAgo;
+  double hrsAvg;
+  double hrsDev;
+  time_t t;
+};
+
+struct HubMeter
+{
+  struct HubHost host;
+  
+  char meterType;  // 'W', 'D', etc.
+  double kept;
+  double repaired;
+};
+
+
+struct HubPerformance
+{
+  struct HubHost host;
+  
+  char *eventName;
+  double q;
+  double e;
+  double d;
+  time_t t;
+};
+  
+struct HubSetUid
+{
+  struct HubHost host;
+  
+  char *path;
+};
+
+
+struct HubPromiseCompliance
+{
+  struct HubHost host;
+
+  char status; // 'r' / 'k' / 'n'
+  double e;
+  double d;
+  time_t t;
+};
 
