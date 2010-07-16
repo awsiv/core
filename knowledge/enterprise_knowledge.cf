@@ -141,7 +141,7 @@ topics:
        association => a("see promise cost in","performance report","is a resource for"); 
 
    "operator view"
-       association => a("see software state","installed software report","is a resource for"); 
+       association => a("see software state","software installed report","is a resource for"); 
 
    "operator view"
        association => a("see policy-defined events in","system outputs","are an aspect of"); 
@@ -155,7 +155,7 @@ topics:
        association => a("contains a current summary of","setuid report","is a resource for"); 
 
    "security view"
-       association => a("contains a current summary of","software patches report","is a resource for"); 
+       association => a("contains a current summary of","patches installed report","is a resource for"); 
 
    ##########
    # Aspects
@@ -459,7 +459,7 @@ occurrences:
             path_root => "$(enterprise_start.doc_root)",
             web_root => "";
 
- installed_software_report::
+ software_installed_report::
 
    "OS software packages installed and their version information."
 
@@ -498,7 +498,7 @@ occurrences:
             path_root => "$(enterprise_start.doc_root)",
             web_root => "";
 
- installed_patches_report::
+ patches_installed_report::
 
    "For systems with a separate patch model, this shows OS software patches. There are two reports (for current status and patches that are available but not already applied)"
 
@@ -512,7 +512,7 @@ occurrences:
             path_root => "$(enterprise_start.doc_root)",
             web_root => "";
 
- available_patches_report::
+ patches_available_report::
 
    "reports/(.*)/software_patches_avail.html"
 

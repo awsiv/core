@@ -402,6 +402,10 @@ else
 fi
 
 if test $WITH_MONGO = 1; then
+  AC_CHECK_HEADERS(mongo.h)
+  AC_CHECK_HEADERS(mongo_except.h)
+  AC_CHECK_HEADERS(bson.h)
+  AC_CHECK_HEADERS(platform_hacks.h)
   AC_CHECK_LIB(mongoc,main, [], [AC_MSG_ERROR(Cannot find libmongoc)])
 fi
 
