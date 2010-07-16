@@ -284,9 +284,17 @@ void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, struct Item *data
 { struct Item *ip;
  time_t then;
  double av,dev;
- char type = 'X',eventname[CF_MAXVARSIZE];
+ char type,eventname[CF_MAXVARSIZE];
 
 CfOut(cf_verbose,""," -> Promise Compliance data..............");
+
+#ifdef HAVE_LIBMONGOC
+ if(dbconn)
+   {
+     Nova_DBSavePromiseCompliance(dbconn, id, data);
+   }
+#endif
+
 
 for (ip = data; ip != NULL; ip=ip->next)
    {

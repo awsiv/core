@@ -1255,6 +1255,7 @@ void Banner(char *s);
 
 /* rlist.c */
 
+struct Rlist *ParseShownRlist(char *string);
 int IsStringIn(struct Rlist *list,char *s);
 int IsRegexIn(struct Rlist *list,char *s);
 struct Rlist *KeyInRlist(struct Rlist *list,char *key);
@@ -1462,6 +1463,7 @@ char *ExtractOuterCf3VarString(char *str,char *substr);
 int UnresolvedVariables(struct CfAssoc *ap,char rtype);
 int UnresolvedArgs(struct Rlist *args);
 int IsQualifiedVariable(char *var);
+int IsCfList(char *type);
 
 /* verify_databases.c */
 

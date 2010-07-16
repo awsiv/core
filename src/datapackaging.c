@@ -72,8 +72,8 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       memcpy(&entry,value,sizeof(entry));
 
       then    = entry.t;
-      measure = entry.Q.q/ticksperminute;;
-      average = entry.Q.expect/ticksperminute;;
+      measure = entry.Q.q/ticksperminute;
+      average = entry.Q.expect/ticksperminute;
       var     = entry.Q.var;
 
       // Promise: reply with data only after the "from" time

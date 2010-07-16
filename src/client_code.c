@@ -50,7 +50,7 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    Nova_UnPackMonitorMag,   // DBOK
    Nova_UnPackMonitorHist,  // DBOK
    Nova_UnPackMonitorYear,  // nodata
-   Nova_UnPackCompliance,   //        LOG
+   Nova_UnPackCompliance,   // DBOK
    Nova_UnPackTotalCompliance, // DBOK (append) LOG BUG?
    Nova_UnPackSoftware,     // DBOK + QUERYOK
    Nova_UnPackAvailPatches, // nodata

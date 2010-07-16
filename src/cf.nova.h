@@ -313,6 +313,7 @@ void Nova_DBSaveLastSeen(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBSaveMeter(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBSavePerformance(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBSaveSetUid(mongo_connection *conn, char *kH, struct Item *data);
+void Nova_DBSavePromiseCompliance(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result);
 void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result);
 int Nova_MongoKeyPosition(bson_iterator *it, char *keyName, bson_type valType);
@@ -886,6 +887,8 @@ struct promise_value
 #define cfr_obsavg     "e"
 #define cfr_obsdev     "d"
 #define cfr_setuid     "su"
+#define cfr_promisecompl "pc"
+#define cfr_promisestatus "s"
 #define cfr_promises   "p"
 
 

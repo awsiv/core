@@ -348,12 +348,13 @@ void Nova_DBSaveClasses(mongo_connection *conn, char *kH, struct Item *data)
 void Nova_DBSaveVariables(mongo_connection *conn, char *kH, struct Item *data)
 {
   bson_buffer bb;
-  bson_buffer *setObj, *varObj, *keyArr, *keyAdd, *keyArrField;
+  bson_buffer *setObj, *varObj, *keyArr, *keyAdd, *keyArrField, *arr;
   bson cond;  // host description
   bson setOp;
   struct Item *ip;
   int i;
   char iStr[32];
+  struct Rlist *rp,*list;
   char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],
     scope[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
   
@@ -382,7 +383,29 @@ void Nova_DBSaveVariables(mongo_connection *conn, char *kH, struct Item *data)
      bson_append_string(setObj, varName, type);
 
      snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, name, cfr_value);
-     bson_append_string(setObj, varName, value);
+     
+     // parse lists into an array
+     if(IsCfList(type))
+       {
+	 arr = bson_append_start_array(setObj, varName);
+
+
+	 list = ParseShownRlist(value);
+	 
+	 for (rp = list, i = 0; rp != NULL; rp=rp->next, i++)
+	   {
+	     snprintf(iStr, sizeof(iStr), "%d", i);
+	     bson_append_string(arr, iStr, rp->item);
+	   } 
+	 
+	 DeleteRlist(list);
+	 
+	 bson_append_finish_object(arr);
+       }
+     else
+       {
+	 bson_append_string(setObj, varName, value);
+       }
    }
 
   bson_append_finish_object(setObj);
@@ -753,14 +776,66 @@ void Nova_DBSaveSetUid(mongo_connection *conn, char *kH, struct Item *data)
   bson_destroy(&cond);
 }
 
+/*****************************************************************************/
+
+void Nova_DBSavePromiseCompliance(mongo_connection *conn, char *kH, struct Item *data)
+{
+  bson_buffer bb;
+  bson_buffer *setObj;
+  bson_buffer *sub;
+  bson cond;  // host description
+  bson setOp;
+  struct Item *ip;
+  char varName[CF_MAXVARSIZE];
+  char handle[CF_MAXVARSIZE];
+  char status, statusStr[16];
+  time_t then;
+  double av,dev;
+
+
+  // find right host
+  bson_buffer_init(&bb);
+  bson_append_string(&bb, cfr_keyhash, kH);
+  bson_from_buffer(&cond, &bb);
+
+
+  bson_buffer_init(&bb);
+
+  setObj = bson_append_start_object(&bb, "$set");
+  
+  for (ip = data; ip != NULL; ip=ip->next)
+    {
+      sscanf(ip->name,"%ld,%255[^,],%c,%lf,%lf\n",&then,handle,&status,&av,&dev);
+
+      snprintf(varName, sizeof(varName), "%s.%s", cfr_promisecompl, handle);
+      snprintf(statusStr, sizeof(statusStr), "%c", status);
+
+      sub = bson_append_start_object(setObj , varName);
+      bson_append_string(sub, cfr_promisestatus, statusStr);
+      bson_append_double(sub, cfr_obsavg, av);
+      bson_append_double(sub, cfr_obsdev, dev);
+      bson_append_double(sub, cfr_time, then);
+      bson_append_finish_object(sub);
+    }
+
+  bson_append_finish_object(setObj);
+
+
+  bson_from_buffer(&setOp,&bb);
+  mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+
+  bson_destroy(&setOp);
+  bson_destroy(&cond);
+  
+}
 
 /*****************************************************************************/
 
 void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result)
-/* Takes a query document and returns a set of public key hashes
- * of hosts that matches the query. Use bson_empty(&b) as query to
+/* Takes a query document and returns one field (resKeyVal) from
+ * each host that matches the query. Use bson_empty(&b) as query to
  * match all hosts.
- * TODO: Generalise to take a list of wanted key values instead of
+ * TODO: Generalise to take a list of wanted field values instead of
  * one. */
 
 {
@@ -801,6 +876,8 @@ void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, str
   mongo_cursor_destroy(cursor);
 
 }
+
+/*****************************************************************************/
 
 void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result)
 /**
