@@ -417,11 +417,11 @@ fprintf(fp,"    association => a(\"is generated with\",\"promise_types::files\",
 fprintf(fp,"  \"file_diffs report\"\n");
 fprintf(fp,"    association => a(\"is generated with\",\"body_constraints::changes\",\"reported in\");\n");
 
-fprintf(fp,"  \"installed software report\"\n");
+fprintf(fp,"  \"software installed report\"\n");
 fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages\",\"reported in\");\n");
-fprintf(fp,"  \"installed patches report\"\n");
+fprintf(fp,"  \"patches installed report\"\n");
 fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages\",\"reported in\");\n");
-fprintf(fp,"  \"available patches report\"\n");
+fprintf(fp,"  \"patches available report\"\n");
 fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages\",\"reported in\");\n");
 
         

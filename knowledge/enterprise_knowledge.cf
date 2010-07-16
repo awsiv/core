@@ -235,6 +235,10 @@ occurrences:
             represents => { "see all managed hosts", "/reports/allhosts.html" },
             representation => "image";
 
+   "/which.php"
+            represents => { "Simple search for hosts with property" };
+
+
  host_portal::
 
    "reports/host_portal.html"
