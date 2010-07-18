@@ -265,20 +265,6 @@ occurrences:
             path_root => "$(enterprise_start.doc_root)",
             web_root => "";
 
- micro_audit_report::
-
-   "Detailed reports with every transaction made by cfengine - very storage consuming"
-
-            represents => { "description" },
-            representation => "literal";
- 
-   "reports/(.*)/audit.html"
-
-            represents => { "on $(match.1)" },
-            representation => "file",
-            path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
-
  performance_report::
 
    "Describes the real time it has taken on average to complete or keep promises"
