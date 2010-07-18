@@ -1,3 +1,10 @@
+
+/*
+
+ This file is (C) Cfengine AS. See COSL LICENSE for details.
+
+*/
+
 /*****************************************************************************/
 /*                                                                           */
 /* File: datapackaging.c                                                     */
@@ -402,16 +409,19 @@ DeleteItemList(file);
 void Nova_PackDiffs(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
-  char name[CF_BUFSIZE],line[CF_BUFSIZE],datestr[CF_MAXVARSIZE],size[CF_MAXVARSIZE];
+  char name[CF_BUFSIZE],line[CF_BUFSIZE],size[CF_MAXVARSIZE];
   char no[CF_SMALLBUF],change[CF_BUFSIZE],reformat[CF_BUFSIZE],output[2*CF_BUFSIZE],aggregate[CF_BUFSIZE];
   char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],ref[CF_SMALLBUF],key[CF_SMALLBUF];
   struct Item *ip,*file = NULL;
   char pm,start[32];
   int i = 0,truncate,first = true;
+  time_t then;
+  long lthen;
 
 CfOut(cf_verbose,""," -> Packing diff data");
  
-snprintf(name,CF_BUFSIZE-1,"%s/cfdiff.log",CFWORKDIR);
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,NOVA_DIFF_LOG);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -420,9 +430,6 @@ if ((fin = cf_fopen(name,"r")) == NULL)
    }
 
 /* Max 2016 entries - at least a week */
-snprintf(name,CF_SMALLBUF,"%s",cf_ctime(&from));
-sscanf(name,"%*s %s %s %*s %s",month,day,year);
-snprintf(ref,CF_SMALLBUF-1,"%s %s %s",day,month,year);
 
 while (!feof(fin))
    {
@@ -438,9 +445,11 @@ while (!feof(fin))
    sscanf(line,"CHANGE %[^\n]",name);
 
    fgets(line,CF_BUFSIZE-1,fin);
-   sscanf(line,"%128[^;];%[^\n]",datestr,size);
+   sscanf(line,"%ld;%[^\n]",&lthen,size);
 
-   if (strncmp(datestr,"END",strlen("END")) == 0)
+   then = (time_t)lthen;
+   
+   if (strncmp(line,"END",strlen("END")) == 0)
       {
       continue;
       }
@@ -468,18 +477,16 @@ while (!feof(fin))
       if (!truncate)
          {
          snprintf(reformat,CF_BUFSIZE-1,"%s\n",line);
+
          if (!JoinSuffix(aggregate,reformat))
             {
             }
          }
       }
    
-   snprintf(output,CF_BUFSIZE-1,"%s|%s|%s",datestr,name,aggregate);
+   snprintf(output,CF_BUFSIZE-1,"%ld|%s|%s",then,name,aggregate);
 
-   sscanf(datestr,"%*s %s %s %*s %s",month,day,year);
-   snprintf(key,CF_SMALLBUF-1,"%s %s %s",day,month,year);
-   
-   if (!Nova_CoarseLaterThan(key,ref))
+   if (from > then)
       {
       continue;
       }

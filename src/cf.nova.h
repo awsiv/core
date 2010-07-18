@@ -302,6 +302,7 @@ void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, str
 void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result);
 int Nova_MongoKeyPosition(bson_iterator *it, char *keyName, bson_type valType);
 int Nova_DBIteratorNext(bson_iterator *it, bson_type valType);
+struct Rlist *Nova_DBReadAllSoftware(mongo_connection *conn, bson *query);
 #endif /* HAVE_LIBMONGOC */
 
 /* db_save.c */
@@ -808,6 +809,7 @@ int NovaWin_WmiDeInitialize(void);
 #define NOVA_LICENSE "nova_track" "." DB_FEXT
 #define NOVA_VALUE "nova_value" "." DB_FEXT
 #define NOVA_BUNDLE_LOG "bundles" "." DB_FEXT
+#define NOVA_DIFF_LOG "nova_diff.log"
 
 #define CF_BIGNUMBER 999999
 
@@ -868,6 +870,8 @@ struct promise_value
 #define cfr_total_compliance "tc"
 #define cfr_time       "t"
 #define cfr_version    "v"
+#define cfr_name       "n"
+#define cfr_arch       "a"
 #define cfr_kept       "k"
 #define cfr_repaired   "r"
 #define cfr_notkept    "N"
@@ -888,127 +892,108 @@ struct promise_value
 #define cfr_meterkept  "K"
 #define cfr_meterrepaired "R"
 #define cfr_performance "pf"
-#define cfr_obslast    "q"
-#define cfr_obsavg     "e"
-#define cfr_obsdev     "d"
+#define cfr_obs_q       "q"
+#define cfr_obs_E       "e"
+#define cfr_obs_sigma   "d"
 #define cfr_setuid     "su"
 #define cfr_promisecompl "pc"
 #define cfr_promisestatus "s"
 
-
-
-
-/* Report DB API Structs */
-
+/*****************************************************************************/
+/* Report DB API Structs                                                     */
+/*****************************************************************************/
 
 struct HubHost
-{
-  char *keyHash;
-  char *ipAddr;
-  char *hostName;
-};
+   {
+   char *keyHash;
+   char *ipAddr;
+   char *hostName;
+   };
 
 struct HubSoftware
-{
-  struct HubHost host;
-  
-  char *name;
-  char *ver;
-  char arch;
-};
+   {
+   struct HubHost host;
+   char *name;
+   char *ver;
+   char arch;
+   };
 
 struct HubClass
-{
-  struct HubHost host;
-  
-  double prob;
-  double dev;
-  time_t t;
-};
-
+   {
+   struct HubHost host;
+   double prob;
+   double dev;
+   time_t t;
+   };
 
 struct HubTotalCompliance
-{
-  struct HubHost host;
-  
-  time_t t;
-  char *version;
-  int kept;
-  int repaired;
-  int notkept;
-};
-
+   {
+   struct HubHost host;
+   time_t t;
+   char *version;
+   int kept;
+   int repaired;
+   int notkept;
+   };
 
 struct HubVariable
-{
-  struct HubHost host;
+   {
+   struct HubHost host;
+   char *type;
+   char *scope;
+   char *value;
+   };
 
-  char *type;
-  char *scope;
-  char *value;
-};
-
-
-// promise repaired or failed
-struct HubPromiseLog
-{
-  struct HubHost host;
-  
-  char *handle;
-  time_t t;
-};
-
+struct HubPromiseLog // promise repaired or failed
+   {
+   struct HubHost host;
+   char *handle;
+   time_t t;
+   };
 
 struct HubLastSeen
-{
-  struct HubHost host;
-  
-  char *keyHash;
-  char inout;  // '+' or '-'
-  char *dnsName;
-  char *ipAddr;
-  double hrsAgo;
-  double hrsAvg;
-  double hrsDev;
-  time_t t;
-};
+   {
+   struct HubHost host;
+   char *keyHash;
+   char inout;  // '+' or '-'
+   char *dnsName;
+   char *ipAddr;
+   double hrsAgo;
+   double hrsAvg;
+   double hrsDev;
+   time_t t;
+   };
 
 struct HubMeter
-{
-  struct HubHost host;
-  
-  char meterType;  // 'W', 'D', etc.
-  double kept;
-  double repaired;
-};
-
+   {
+   struct HubHost host;
+   char meterType;  // 'W', 'D', etc.
+   double kept;
+   double repaired;
+   };
 
 struct HubPerformance
-{
-  struct HubHost host;
-  
-  char *eventName;
-  double q;
-  double e;
-  double d;
-  time_t t;
-};
+   {
+   struct HubHost host;
+   char *eventName;
+   double q;
+   double e;
+   double d;
+   time_t t;
+   };
   
 struct HubSetUid
-{
-  struct HubHost host;
-  
-  char *path;
-};
-
+   {
+   struct HubHost host;
+   char *path;
+   };
 
 struct HubPromiseCompliance
-{
-  struct HubHost host;
-
-  char status; // 'r' / 'k' / 'n'
-  double e;
-  double d;
-  time_t t;
-};
+   {
+   struct HubHost host;
+   char status; // 'r' / 'k' / 'n'
+   double e;
+   double d;
+   time_t t;
+   };
 

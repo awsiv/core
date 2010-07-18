@@ -843,7 +843,8 @@ DeleteItemList(file);
 
 file = NULL;
 
-snprintf(name,CF_BUFSIZE-1,"%s/cfdiff.log",CFWORKDIR);
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,NOVA_DIFF_LOG);
+Mapname(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -2094,3 +2095,4 @@ else
 fprintf(fout,"</table></div>\n");
 fclose(fout);
 }
+

@@ -1,3 +1,10 @@
+
+/*
+
+ This file is (C) Cfengine AS. See COSL LICENSE for details.
+
+*/
+
 /*****************************************************************************/
 /*                                                                           */
 /* File: dataunpack.c                                                        */
@@ -22,12 +29,11 @@ void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, struct Item *dat
 CfOut(cf_verbose,""," -> Performance data ...................");
 
 #ifdef HAVE_LIBMONGOC
-if(dbconn)
+if (dbconn)
    {
    Nova_DBSavePerformance(dbconn, id, data);
    }
 #endif
-
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -49,7 +55,7 @@ void Nova_UnPackClasses(mongo_connection *dbconn, char *id, struct Item *data)
 CfOut(cf_verbose,""," -> Class data .................");
 
 #ifdef HAVE_LIBMONGOC
-if(dbconn)
+if (dbconn)
    {
    Nova_DBSaveClasses(dbconn, id, data);
    }
@@ -72,19 +78,17 @@ void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, struct Item *data)
 CfOut(cf_verbose,""," -> setuid data ......................");
 
 #ifdef HAVE_LIBMONGOC
-if(dbconn)
+if (dbconn)
    {
    Nova_DBSaveSetUid(dbconn, id, data);
    }
 #endif
-
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
    printf("Set-uid program: %s",ip->name);
    }
-
 }
 
 /*****************************************************************************/
@@ -103,7 +107,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    // Extract records
    sscanf(ip->name,"%ld,%255[^\n]",&date,name);
    then = (time_t)date;
-   printf("File-change event: in %s at %ld\n",name,then);
+   printf("File-change event: in \"%s\" at %ld\n",name,then);
    }
 }
 
@@ -119,7 +123,7 @@ CfOut(cf_verbose,""," -> File diff data...................");
 for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
-   sscanf(ip->name,"%[^|]|%[^|],%[^\0]",name,t,change);
+   sscanf(ip->name,"%[^|]|%255[^|],%2047[^\n]",name,t,change);
    printf("Change-diff: in file %s at %s begin %s \nend\n",name,t,change);
    }
 }
@@ -136,9 +140,9 @@ void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, struct Item *dat
 CfOut(cf_verbose,""," -> Monitor weekly data.....................");
 
 #ifdef HAVE_LIBMONGOC
- if(dbconn)
+if (dbconn)
    {
-     Nova_DBSaveMonitorData(dbconn, id, mon_rep_week, data);
+   Nova_DBSaveMonitorData(dbconn, id, mon_rep_week, data);
    }
 #endif
 
@@ -173,9 +177,9 @@ void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 
 #ifdef HAVE_LIBMONGOC
- if(dbconn)
+if (dbconn)
    {
-     Nova_DBSaveMonitorData(dbconn, id, mon_rep_mag, data);
+   Nova_DBSaveMonitorData(dbconn, id, mon_rep_mag, data);
    }
 #endif
 
@@ -207,9 +211,9 @@ void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, struct Item *dat
 CfOut(cf_verbose,""," -> Monitor histogram data.....................");
 
 #ifdef HAVE_LIBMONGOC
- if(dbconn)
+if (dbconn)
    {
-     Nova_DBSaveMonitorHistograms(dbconn, id, data);
+   Nova_DBSaveMonitorHistograms(dbconn, id, data);
    }
 #endif
 
@@ -282,19 +286,18 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
- time_t then;
- double av,dev;
- char type,eventname[CF_MAXVARSIZE];
+  time_t then;
+  double av,dev;
+  char type,eventname[CF_MAXVARSIZE];
 
 CfOut(cf_verbose,""," -> Promise Compliance data..............");
 
 #ifdef HAVE_LIBMONGOC
- if(dbconn)
+if (dbconn)
    {
-     Nova_DBSavePromiseCompliance(dbconn, id, data);
+   Nova_DBSavePromiseCompliance(dbconn, id, data);
    }
 #endif
-
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -320,14 +323,14 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
- char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch;
+  char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch;
 
 CfOut(cf_verbose,""," -> Installed software data...............");
 
 #ifdef HAVE_LIBMONGOC
- if(dbconn)
+if (dbconn)
    {
-     Nova_DBSaveSoftware(dbconn, id, data);
+   Nova_DBSaveSoftware(dbconn, id, data);
    }
 #endif
 
@@ -338,9 +341,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    // architcure coding, see Nova_ShortArch
    
    printf("Installed software: %s version (%s on %c)\n",name,version,arch);
-   }
-
-   
+   } 
 }
 
 /*****************************************************************************/
@@ -393,7 +394,6 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    printf("POLICY: %s",ip->name);
    }
-
 }
 
 /*****************************************************************************/
@@ -419,14 +419,14 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackVariables(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
- char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],scope[CF_MAXVARSIZE];
+  char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],scope[CF_MAXVARSIZE];
 
 CfOut(cf_verbose,""," -> Variable data...........................");
 
 #ifdef HAVE_LIBMONGOC
- if(dbconn)
+if (dbconn)
    {
-     Nova_DBSaveVariables(dbconn, id, data);
+   Nova_DBSaveVariables(dbconn, id, data);
    }
 #endif
 

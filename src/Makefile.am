@@ -37,6 +37,7 @@ libcfnova_la_SOURCES =						\
 	services_win.c						\
 	environments.c						\
 	reporting.c						\
+	request.c						\
 	html.c							\
 	knowledge.c						\
 	syntax.c						\

@@ -162,7 +162,8 @@ CfOut(cf_verbose,""," -> Nova Analysis of changes on file %s\n",file);
 strncpy(datestr,cf_ctime(&now),CF_MAXVARSIZE-1);  
 Chop(datestr);
 
-snprintf(logname,CF_BUFSIZE-1,"%s%c%s",CFWORKDIR,FILE_SEPARATOR,"cfdiff.log");
+snprintf(logname,CF_BUFSIZE-1,"%s%c%s",CFWORKDIR,FILE_SEPARATOR,NOVA_DIFF_LOG);
+MapName(logname);
 
 if ((fout = fopen(logname,"a")) == NULL)
    {
@@ -173,7 +174,7 @@ fprintf(fout,"CHANGE %s\n",file);
 
 pos = Nova_GetFirstChangePosition(file,destination);
 
-fprintf(fout,"%s;File changed size from %d to %d, first difference at byte position %d/%d of old\n",datestr,sb.st_size,dsb.st_size,pos,dsb.st_size);
+fprintf(fout,"%ld;File changed size from %d to %d, first difference at byte position %d/%d of old\n",(long)now,sb.st_size,dsb.st_size,pos,dsb.st_size);
  
 if (Nova_FileIsBinary(file,sb.st_size,maxsize)||Nova_FileIsBinary(destination,dsb.st_size,maxsize))
    {
