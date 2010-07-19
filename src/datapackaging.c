@@ -337,6 +337,7 @@ void Nova_PackFileChanges(struct Item **reply,char *header,time_t from,enum cfd_
   struct Item *ip,*file = NULL;
   char pm,start[32];
   int i = 0,truncate,first = true;
+  long lthen;
   time_t then;
 
 CfOut(cf_verbose,""," -> Packing file change data");
@@ -348,34 +349,23 @@ if ((fin = cf_fopen(name,"r")) == NULL)
    return;
    }
 
-/* Max 2016 entries - at least a week */
-snprintf(name,CF_SMALLBUF,"%s",cf_ctime(&from));
-sscanf(name,"%*s %s %s %*s %s",month,day,year);
-snprintf(ref,CF_SMALLBUF-1,"%s %s %s",day,month,year);
-
 while (!feof(fin))
    {
    line[0] = '\0';
    fgets(line,CF_BUFSIZE-1,fin);
 
-   sscanf(line,"%ld",&then);
+   sscanf(line,"%ld",&lthen);
+   then = (time_t)lthen;
    
-   if ((time_t)then < from)
+   if (then < from)
       {
       continue;
       }
 
-   PrependItem(&file,key,NULL);
+   PrependItem(&file,line,NULL);
    }
 
 cf_fclose(fin);
-
-/* Need to promise data from a given time? The events time+change are
-   unique so they can be hashed the server to avoid repeated entries
-   if the receiver for some reason attemped to collect multiple times.
-   We can't avoid sending the same data twice without trying to keep track
-   of everything sent to each client, but the receiver can eliminate
-   duplicates -- so we only need approximate lazy pruning. */
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
@@ -392,7 +382,8 @@ for (ip = file; ip != NULL; ip = ip->next)
       first = false;
       AppendItem(reply,header,NULL);
       }
-   
+
+   printf("SENGIN %s\n",ip->name);
    AppendItem(reply,ip->name,NULL);
 
    if (++i > 12*24*7)

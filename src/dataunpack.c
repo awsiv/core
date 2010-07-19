@@ -102,6 +102,13 @@ void Nova_UnPackFileChanges(mongo_connection *dbconn, char *id, struct Item *dat
 
 CfOut(cf_verbose,""," -> File change data....................");
 
+#ifdef HAVE_LIBMONGOC
+if (dbconn)
+   {
+   Nova_DBSaveSetUid(dbconn, id, data);
+   }
+#endif
+
 for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
