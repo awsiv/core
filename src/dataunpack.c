@@ -117,14 +117,25 @@ void Nova_UnPackDiffs(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   char name[CF_MAXVARSIZE],t[CF_MAXVARSIZE],change[CF_BUFSIZE];
-
+  char *sp;
+  
 CfOut(cf_verbose,""," -> File diff data...................");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
-   sscanf(ip->name,"%[^|]|%255[^|],%2047[^\n]",name,t,change);
-   printf("Change-diff: in file %s at %s begin %s \nend\n",name,t,change);
+   change[0] = '\0';
+   sscanf(ip->name,"%[^|]|%255[^|]|%2047[^\n]",name,t,change);
+
+   for (sp = change; *sp != '\0'; sp++)
+      {
+      if (*sp == CF_N_CODE)
+         {
+         *sp = '\n';
+         }
+      }
+   
+   printf("Change-diff: in file %s at %s \nbegin\n%s\nend\n",name,t,change);
    }
 }
 

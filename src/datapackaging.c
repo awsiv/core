@@ -455,7 +455,6 @@ while (!feof(fin))
       }
 
    memset(aggregate,0,CF_BUFSIZE);
-   snprintf(aggregate,CF_BUFSIZE-1,"%s\n",aggregate);
    output[0] = '\0';
 
    truncate = false;
@@ -476,15 +475,16 @@ while (!feof(fin))
 
       if (!truncate)
          {
-         snprintf(reformat,CF_BUFSIZE-1,"%s\n",line);
+         Chop(line);
+         snprintf(reformat,CF_BUFSIZE-1,"%c,%s,%s%c",pm,no,change,CF_N_CODE);
 
-         if (!JoinSuffix(aggregate,reformat))
+         if (!Join(aggregate,reformat))
             {
             }
          }
       }
    
-   snprintf(output,CF_BUFSIZE-1,"%ld|%s|%s",then,name,aggregate);
+   snprintf(output,CF_BUFSIZE-1,"%ld|%s|%s\n",then,name,aggregate);
 
    if (from > then)
       {

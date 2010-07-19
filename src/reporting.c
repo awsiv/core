@@ -844,7 +844,7 @@ DeleteItemList(file);
 file = NULL;
 
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,NOVA_DIFF_LOG);
-Mapname(name);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
