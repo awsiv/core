@@ -105,7 +105,7 @@ CfOut(cf_verbose,""," -> File change data....................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveSetUid(dbconn, id, data);
+   Nova_DBSaveFileChanges(dbconn, id, data);
    }
 #endif
 
@@ -123,16 +123,24 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackDiffs(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  char name[CF_MAXVARSIZE],t[CF_MAXVARSIZE],change[CF_BUFSIZE];
+  char name[CF_MAXVARSIZE],change[CF_BUFSIZE];
+  long t;
   char *sp;
   
 CfOut(cf_verbose,""," -> File diff data...................");
+
+#ifdef HAVE_LIBMONGOC
+if (dbconn)
+   {
+   Nova_DBSaveFileDiffs(dbconn, id, data);
+   }
+#endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
    change[0] = '\0';
-   sscanf(ip->name,"%[^|]|%255[^|]|%2047[^\n]",name,t,change);
+   sscanf(ip->name,"%ld|%255[^|]|%2047[^\n]",&t,name,change);
 
    for (sp = change; *sp != '\0'; sp++)
       {
@@ -142,7 +150,7 @@ for (ip = data; ip != NULL; ip=ip->next)
          }
       }
    
-   printf("Change-diff: in file %s at %s \nbegin\n%s\nend\n",name,t,change);
+   printf("Change-diff: in file %s at %ld \nbegin\n%s\nend\n",name,t,change);
    }
 }
 
@@ -280,7 +288,12 @@ void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *dat
 
 CfOut(cf_verbose,""," -> Monitor year data.....................");
 
-//Nova_DBSaveMonitorData(dbconn, id, mon_rep_yr, data);
+#ifdef HAVE_LIBMONGOC
+if (dbconn)
+   {
+   Nova_DBSaveMonitorData(dbconn, id, mon_rep_yr, data);
+   }
+#endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -296,7 +309,6 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
    printf("Year-obs %d: %.2lf,%.2lf,%.2lf measured at slot %d\n",observable,q,e,dev,slot);
    }
-
 }
 
 /*****************************************************************************/
@@ -348,7 +360,7 @@ CfOut(cf_verbose,""," -> Installed software data...............");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveSoftware(dbconn, id, data);
+   Nova_DBSaveSoftware(dbconn,sw_rep_installed,id,data);
    }
 #endif
 
@@ -371,6 +383,13 @@ void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, struct Item *da
 
 CfOut(cf_verbose,""," -> Available patch data...................");
 
+#ifdef HAVE_LIBMONGOC
+if (dbconn)
+   {
+   Nova_DBSaveSoftware(dbconn,sw_rep_patch_avail,id,data);
+   }
+#endif
+
 for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%250[^,],%250[^,],%c",name,version,&arch);
@@ -388,7 +407,14 @@ void Nova_UnPackPatchStatus(mongo_connection *dbconn, char *id, struct Item *dat
 { struct Item *ip;
   char arch, name[CF_MAXVARSIZE],version[CF_MAXVARSIZE];
   
-CfOut(cf_verbose,""," -> Patch status data.......................");
+CfOut(cf_verbose,""," -> Patches installed data.......................");
+
+#ifdef HAVE_LIBMONGOC
+if (dbconn)
+   {
+   Nova_DBSaveSoftware(dbconn,sw_rep_patch_installed,id,data);
+   }
+#endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -419,16 +445,23 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackValueReport(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  char then[CF_SMALLBUF];
   double kept,notkept,repaired;
+  char date[CF_SMALLBUF];
 
 CfOut(cf_verbose,""," -> Value data..............................");
 
+#ifdef HAVE_LIBMONGOC
+if (dbconn)
+   {
+   Nova_DBSaveValue(dbconn,id,data);
+   }
+#endif
+
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%[^,],%lf,%lf,%lf\n",then,&kept,&repaired,&notkept);
+   sscanf(ip->name,"%[^,],%lf,%lf,%lf\n",date,&kept,&repaired,&notkept);
 
-   printf("Business value: (%.0lf,%.0lf,%.0lf) from %s\n",kept,repaired,notkept,then);
+   printf("Business value: (%.0lf,%.0lf,%.0lf) from %s\n",kept,repaired,notkept,date);
    }
 }
 
@@ -478,12 +511,11 @@ void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, struct Item *data)
 CfOut(cf_verbose,""," -> Last-seen data..........................");
 
 #ifdef HAVE_LIBMONGOC
- if(dbconn)
+if (dbconn)
    {
-     Nova_DBSaveLastSeen(dbconn, id, data);
+   Nova_DBSaveLastSeen(dbconn, id, data);
    }
 #endif
-
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -517,9 +549,9 @@ void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, struct Item 
 CfOut(cf_verbose,""," -> Total Compliance data......................");
 
 #ifdef HAVE_LIBMONGOC
- if(dbconn)
+if (dbconn)
    {
-     Nova_DBSaveTotalCompliance(dbconn, id, data);
+   Nova_DBSaveTotalCompliance(dbconn, id, data);
    }
 #endif
 
@@ -545,9 +577,9 @@ void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, struct Item *data)
 CfOut(cf_verbose,""," -> Repair log data........................");
 
 #ifdef HAVE_LIBMONGOC
- if(dbconn)
+if (dbconn)
    {
-     Nova_DBSavePromiseLog(dbconn, id, plog_repaired, data);
+   Nova_DBSavePromiseLog(dbconn, id, plog_repaired, data);
    }
 #endif
 
@@ -572,9 +604,9 @@ void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, struct Item *data
 CfOut(cf_verbose,""," -> Not kept data...........................");
 
 #ifdef HAVE_LIBMONGOC
- if(dbconn)
+if (dbconn)
    {
-     Nova_DBSavePromiseLog(dbconn, id, plog_notkept, data);
+   Nova_DBSavePromiseLog(dbconn, id, plog_notkept, data);
    }
 #endif
 
@@ -600,9 +632,9 @@ void Nova_UnPackMeter(mongo_connection *dbconn, char *id, struct Item *data)
 CfOut(cf_verbose,""," -> Meter data...........................");
 
 #ifdef HAVE_LIBMONGOC
- if(dbconn)
+if (dbconn)
    {
-     Nova_DBSaveMeter(dbconn, id, data);
+   Nova_DBSaveMeter(dbconn, id, data);
    }
 #endif
 
@@ -649,6 +681,13 @@ void Nova_UnPackBundles(mongo_connection *dbconn, char *id, struct Item *data)
   
 CfOut(cf_verbose,""," -> Bundle data...........................");
 
+#ifdef HAVE_LIBMONGOC
+if (dbconn)
+   {
+   Nova_DBSaveBundles(dbconn,id,data);
+   }
+#endif
+
 for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%25s %ld %lf %lf %lf\n",
@@ -659,6 +698,7 @@ for (ip = data; ip != NULL; ip=ip->next)
           &dev);
 
    then = (time_t)fthen;
+
    
    printf("Bundle: %s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s",bundle,ago,average,dev,cf_ctime(&fthen));
    }

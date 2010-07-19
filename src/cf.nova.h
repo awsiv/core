@@ -312,7 +312,7 @@ struct Rlist *Nova_DBReadAllSoftware(mongo_connection *conn, bson *query);
 int Nova_DBOpen(mongo_connection *conn, char *host, int port);
 int Nova_DBClose(mongo_connection *conn);
 void Nova_DBInitialize();
-void Nova_DBSaveSoftware(mongo_connection *conn, char *kH, struct Item *data);
+void Nova_DBSaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, struct Item *data);
 void Nova_DBSaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep rep_type, struct Item *data);
 void Nova_DBSaveMonitorHistograms(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBSaveClasses(mongo_connection *conn, char *kH, struct Item *data);
@@ -324,6 +324,11 @@ void Nova_DBSaveMeter(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBSavePerformance(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBSaveSetUid(mongo_connection *conn, char *kH, struct Item *data);
 void Nova_DBSavePromiseCompliance(mongo_connection *conn, char *kH, struct Item *data);
+void Nova_DBSaveFileChanges(mongo_connection *conn, char *kH, struct Item *data);
+void Nova_DBSaveFileDiffs(mongo_connection *conn, char *kH, struct Item *data);
+void Nova_DBSaveBundles(mongo_connection *conn, char *kH, struct Item *data);
+void Nova_DBSaveValue(mongo_connection *conn, char *kH, struct Item *data);
+
 #endif
 
 /* datapackaging.c */
@@ -860,45 +865,53 @@ struct promise_value
 
 /* Keynames */
 
-#define cfr_keyhash    "kH"
-#define cfr_mag        "mg"
-#define cfr_week       "wk"
-#define cfr_yr         "yr"
-#define cfr_histo      "hs"
-#define cfr_software   "sw"
-#define cfr_class      "cl"
-#define cfr_class_keys "ck"
+#define cfr_keyhash      "kH"
+#define cfr_mag          "mg"
+#define cfr_week         "wk"
+#define cfr_yr           "yr"
+#define cfr_histo        "hs"
+#define cfr_software     "sw"
+#define cfr_patch_avail  "pa"
+#define cfr_patch_installed "pi"
+#define cfr_class        "cl"
+#define cfr_class_keys   "ck"
 #define cfr_total_compliance "tc"
-#define cfr_time       "t"
-#define cfr_version    "v"
-#define cfr_name       "n"
-#define cfr_arch       "a"
-#define cfr_kept       "k"
-#define cfr_repaired   "r"
-#define cfr_notkept    "N"
-#define cfr_vars       "vr"
-#define cfr_var_keys   "vk"
-#define cfr_type       "T"
-#define cfr_value      "V"
-#define cfr_repairlog  "rl"
-#define cfr_notkeptlog "nl"
+#define cfr_time          "t"
+#define cfr_version       "v"
+#define cfr_name          "n"
+#define cfr_arch          "a"
+#define cfr_kept          "k"
+#define cfr_repaired      "r"
+#define cfr_notkept       "N"
+#define cfr_vars          "vr"
+#define cfr_var_keys      "vk"
+#define cfr_type          "T"
+#define cfr_rval          "V"
+#define cfr_repairlog     "rl"
+#define cfr_notkeptlog    "nl"
 #define cfr_promisehandle "h"
-#define cfr_lastseen   "ls"
-#define cfr_dnsname    "D"
-#define cfr_ipaddr     "i"
-#define cfr_hrsago     "a"
-#define cfr_hrsavg     "v"
-#define cfr_hrsdev     "d"
-#define cfr_meter      "me"
-#define cfr_meterkept  "K"
+#define cfr_lastseen      "ls"
+#define cfr_dnsname       "D"
+#define cfr_ipaddr        "i"
+#define cfr_hrsago        "a"
+#define cfr_hrsavg        "v"
+#define cfr_hrsdev        "d"
+#define cfr_meter         "me"
+#define cfr_meterkept     "K"
 #define cfr_meterrepaired "R"
-#define cfr_performance "pf"
-#define cfr_obs_q       "q"
-#define cfr_obs_E       "e"
-#define cfr_obs_sigma   "d"
-#define cfr_setuid     "su"
-#define cfr_promisecompl "pc"
+#define cfr_performance   "pf"
+#define cfr_obs_q         "q"
+#define cfr_obs_E         "e"
+#define cfr_obs_sigma     "d"
+#define cfr_setuid        "su"
+#define cfr_promisecompl  "pc"
 #define cfr_promisestatus "s"
+#define cfr_filechanges   "fc"
+#define cfr_filediffs     "fd"
+#define cfr_diff          "FD"
+#define cfr_bundles       "B"
+#define cfr_day           "t" // Substitute for time in value report
+#define cfr_valuereport   "VR"
 
 /*****************************************************************************/
 /* Report DB API Structs                                                     */

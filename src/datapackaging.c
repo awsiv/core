@@ -383,7 +383,6 @@ for (ip = file; ip != NULL; ip = ip->next)
       AppendItem(reply,header,NULL);
       }
 
-   printf("SENGIN %s\n",ip->name);
    AppendItem(reply,ip->name,NULL);
 
    if (++i > 12*24*7)

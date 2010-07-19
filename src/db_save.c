@@ -60,7 +60,7 @@ void Nova_DBInitialize()
 
 /*****************************************************************************/
 
-void Nova_DBSaveSoftware(mongo_connection *conn, char *kH, struct Item *data)
+void Nova_DBSaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -82,11 +82,27 @@ bson_from_buffer(&cond, &bb);
 bson_buffer_init(&bb);
 
 setObj = bson_append_start_object(&bb, "$set");
-arr = bson_append_start_array(setObj , cfr_software);
+
+switch (sw)
+   {
+   case sw_rep_installed:       
+       arr = bson_append_start_array(setObj,cfr_software);
+       break;
+   case sw_rep_patch_installed:       
+       arr = bson_append_start_array(setObj,cfr_patch_installed);
+       break;
+   case sw_rep_patch_avail:       
+       arr = bson_append_start_array(setObj,cfr_patch_avail);
+       break;
+
+   default:
+       arr = bson_append_start_array(setObj,cfr_software);
+       break;
+   }
 
 /* Read and insert data */
 
-for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+for (ip = data, i = 0; ip != NULL; ip = ip->next, i++)
    {
    sscanf(ip->name,"%250[^,],%250[^,],%c",name,version,&arch);
    snprintf(packNumStr,sizeof(packNumStr),"%d",i);
@@ -346,7 +362,7 @@ void Nova_DBSaveVariables(mongo_connection *conn, char *kH, struct Item *data)
   int i;
   char iStr[32];
   struct Rlist *rp,*list;
-  char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],
+  char type[CF_SMALLBUF],lval[CF_MAXVARSIZE],rval[CF_BUFSIZE],
       scope[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
   
 // find right host
@@ -367,19 +383,19 @@ for (ip = data; ip != NULL; ip=ip->next)
       continue;
       }
    
-   sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,name,value);
+   sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,lval,rval);
    
-   snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, name, cfr_type);
+   snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars,scope,lval,cfr_type);
    bson_append_string(setObj, varName, type);
    
-   snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, name, cfr_value);
+   snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars,scope,lval,cfr_rval);
    
    // parse lists into an array
-   if(IsCfList(type))
+   if (IsCfList(type))
       {
       arr = bson_append_start_array(setObj, varName);
   
-      list = ParseShownRlist(value);
+      list = ParseShownRlist(rval);
       
       for (rp = list, i = 0; rp != NULL; rp=rp->next, i++)
          {
@@ -393,7 +409,7 @@ for (ip = data; ip != NULL; ip=ip->next)
       }
    else
       {
-      bson_append_string(setObj, varName, value);
+      bson_append_string(setObj, varName,rval);
       }
    }
 
@@ -413,10 +429,10 @@ for (ip = data, i = 0; ip != NULL; ip=ip->next)
       continue;
       }
    
-   sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,name,value);
+   sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,lval,rval);
    
    snprintf(iStr, sizeof(iStr), "%d", i);
-   snprintf(varName, sizeof(varName), "%s.%s", scope, name);
+   snprintf(varName, sizeof(varName), "%s.%s", scope,lval);
    
    bson_append_string(keyArr, iStr, varName);
    i++;
@@ -788,6 +804,227 @@ mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
 bson_destroy(&setOp);
 bson_destroy(&cond);
 }
+
+/*****************************************************************************/
+
+void Nova_DBSaveFileChanges(mongo_connection *conn, char *kH, struct Item *data)
+
+{ bson_buffer bb;
+  bson_buffer *pushObj;
+  bson cond;  // host description
+  bson setOp;
+  struct Item *ip;
+  bson_buffer *arr;
+  char iStr[32];
+  char name[CF_SMALLBUF];
+  bson_buffer *sub;
+  time_t then;
+  long date;
+  int i;
+  
+// find right host
+bson_buffer_init(&bb);
+bson_append_string(&bb, cfr_keyhash, kH);
+bson_from_buffer(&cond, &bb);
+
+bson_buffer_init(&bb);
+
+pushObj = bson_append_start_object(&bb, "$pushAll");
+
+arr = bson_append_start_array(pushObj , cfr_filechanges);
+
+for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+   {
+   snprintf(iStr, sizeof(iStr), "%d", i);
+   
+   sscanf(ip->name,"%ld,%255[^\n]",&date,name);
+   then = (time_t)date;
+   
+   sub = bson_append_start_object(arr,iStr);
+   bson_append_int(sub,cfr_time,then);
+   bson_append_string(sub,cfr_name,name);
+   bson_append_finish_object(sub);
+   }
+
+bson_append_finish_object(arr);
+bson_append_finish_object(pushObj);
+
+bson_from_buffer(&setOp,&bb);
+mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+
+bson_destroy(&setOp);
+bson_destroy(&cond);  
+}
+
+/*****************************************************************************/
+
+void Nova_DBSaveFileDiffs(mongo_connection *conn, char *kH, struct Item *data)
+
+{ bson_buffer bb;
+  bson_buffer *pushObj;
+  bson cond;  // host description
+  bson setOp;
+  struct Item *ip;
+  bson_buffer *arr;
+  char iStr[32];
+  char name[CF_MAXVARSIZE],change[CF_BUFSIZE];
+  bson_buffer *sub;
+  time_t then;
+  int i;
+  long t;
+  char *sp;
+
+// find right host
+bson_buffer_init(&bb);
+bson_append_string(&bb, cfr_keyhash, kH);
+bson_from_buffer(&cond, &bb);
+
+bson_buffer_init(&bb);
+
+pushObj = bson_append_start_object(&bb, "$pushAll");
+
+arr = bson_append_start_array(pushObj , cfr_filediffs);
+
+for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+   {
+   snprintf(iStr, sizeof(iStr), "%d", i);
+   
+   change[0] = '\0';
+   sscanf(ip->name,"%ld|%255[^|]|%2047[^\n]",&t,name,change);
+
+   for (sp = change; *sp != '\0'; sp++)
+      {
+      if (*sp == CF_N_CODE)
+         {
+         *sp = '\n';
+         }
+      }
+
+   then = (time_t)t;
+   sub = bson_append_start_object(arr,iStr);
+   bson_append_int(sub,cfr_time,then);
+   bson_append_string(sub,cfr_name,name);
+   bson_append_string(sub,cfr_diff,name);
+   bson_append_finish_object(sub);
+   }
+
+bson_append_finish_object(arr);
+bson_append_finish_object(pushObj);
+
+bson_from_buffer(&setOp,&bb);
+mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+
+bson_destroy(&setOp);
+bson_destroy(&cond);  
+}
+
+/*****************************************************************************/
+
+void Nova_DBSaveBundles(mongo_connection *conn, char *kH, struct Item *data)
+
+{ bson_buffer bb;
+  bson_buffer *setObj, *sub;
+  bson cond;  // host description
+  bson setOp;
+  struct Item *ip;
+  char bundle[CF_MAXVARSIZE];
+  char hash[CF_MAXVARSIZE],varName[CF_MAXVARSIZE];
+  double ago,average,dev;
+  long fthen;
+  time_t then;
+ 
+// find right host
+bson_buffer_init(&bb);
+bson_append_string(&bb, cfr_keyhash, kH);
+bson_from_buffer(&cond, &bb);
+
+bson_buffer_init(&bb);
+
+setObj = bson_append_start_object(&bb, "$set");
+
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   sscanf(ip->name,"%25s %ld %lf %lf %lf\n",
+          bundle,
+          &fthen,
+          &ago,
+          &average,
+          &dev);
+
+   then = (time_t)fthen;
+   
+   snprintf(varName, sizeof(varName),"%s.%s",cfr_bundles,bundle);
+   
+   sub = bson_append_start_object(setObj, varName);
+   bson_append_string(sub,cfr_name,bundle);
+   bson_append_double(sub, cfr_hrsago, ago);
+   bson_append_double(sub, cfr_hrsavg, average);
+   bson_append_double(sub, cfr_hrsdev, dev);
+   bson_append_finish_object(sub);
+   }
+
+bson_append_finish_object(setObj);
+
+bson_from_buffer(&setOp,&bb);
+mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+
+bson_destroy(&setOp);
+bson_destroy(&cond);  
+}
+
+/*****************************************************************************/
+
+void Nova_DBSaveValue(mongo_connection *conn, char *kH, struct Item *data)
+
+{ bson_buffer bb;
+  bson_buffer *pushObj;
+  bson cond;  // host description
+  bson setOp;
+  struct Item *ip;
+  bson_buffer *arr;
+  char iStr[32];
+  char name[CF_SMALLBUF],datestr[CF_SMALLBUF];
+  double kept,notkept,repaired;
+  bson_buffer *sub;
+  int i;
+  
+// find right host
+bson_buffer_init(&bb);
+bson_append_string(&bb, cfr_keyhash, kH);
+bson_from_buffer(&cond, &bb);
+
+bson_buffer_init(&bb);
+
+pushObj = bson_append_start_object(&bb,"$pushAll");
+
+arr = bson_append_start_array(pushObj,cfr_valuereport);
+
+for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+   {
+   snprintf(iStr, sizeof(iStr), "%d",i);   
+   sub = bson_append_start_object(arr,iStr);
+
+
+   sscanf(ip->name,"%[^,],%lf,%lf,%lf\n",datestr,&kept,&repaired,&notkept);
+
+   bson_append_string(sub,cfr_day,datestr);
+   bson_append_double(sub,cfr_kept,kept);
+   bson_append_double(sub,cfr_repaired,repaired);
+   bson_append_double(sub,cfr_notkept,notkept);
+
+   bson_append_finish_object(sub);
+   }
+
+bson_append_finish_object(arr);
+bson_append_finish_object(pushObj);
+
+bson_from_buffer(&setOp,&bb);
+mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+
+bson_destroy(&setOp);
+bson_destroy(&cond);  
+}
+
 
 #endif  /* HAVE_MONGOC */
 
