@@ -19,8 +19,169 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+void Nova_CfQueryCFDB(char *query)
+{
+#ifdef HAVE_LIBMONGOC
+ mongo_connection dbconn;
+ char query_lval[CF_MAXVARSIZE];
+ bson b;
+
+if (!Nova_DBOpen(&dbconn, "127.0.0.1", 27017))
+   {
+   CfOut(cf_error, "", "!! Could not open connection to report database");
+   }
+
+// Nova_DBReadAllSoftware(&dbconn, bson_empty(&b));
+// Nova_DBListEverything(&dbconn);
+// Nova_DBListAllHosts(&dbconn);
+
+snprintf(query_lval,CF_MAXVARSIZE-1,"%s.%s",cfr_software,cfr_name);
+
+Nova_DBListAllHostsWith(&dbconn,query_lval,"samba-client");
+ 
+if (!Nova_DBClose(&dbconn))
+   {
+   CfOut(cf_error, "", "!! Could not close connection to report database");
+   } 
+#endif
+}
+
+/*****************************************************************************/
+
 #ifdef HAVE_LIBMONGOC
 
+void Nova_DBListEverything(mongo_connection *conn)
+
+{ mongo_cursor *cursor;
+  bson_iterator it;
+  bson_buffer bb,b;
+  bson field;  // field description
+  bson *query;
+
+query = bson_empty(&b);
+ 
+cursor = mongo_find(conn,MONGO_DATABASE,query,0,0,0,0);
+
+while(mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it, cursor->current.data);
+
+   while(bson_iterator_next(&it))
+      {
+      Nova_PrintDBKey(&it,1);   
+      }
+   }
+
+bson_destroy(&field);
+
+mongo_cursor_destroy(cursor);
+}
+
+/***************************************************************************************/
+
+void Nova_DBListAllHosts(mongo_connection *conn)
+
+{ mongo_cursor *cursor;
+  bson_iterator it;
+  bson_buffer bb;
+  bson field;  // field description
+  bson *query,b;
+
+// only return specific field - the key hash
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash, 1);
+bson_from_buffer(&field, &bb);
+
+query = bson_empty(&b);
+ 
+cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
+
+while(mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it, cursor->current.data);
+
+   while (bson_iterator_next(&it))
+      {
+      if (bson_iterator_type(&it) == bson_string && strcmp(bson_iterator_key(&it),cfr_keyhash) == 0)
+         {         
+         printf("Host %s matches\n",bson_iterator_string(&it));         
+         }
+      }
+   }
+
+bson_destroy(&field);
+
+mongo_cursor_destroy(cursor);
+}
+
+/***************************************************************************************/
+
+void Nova_DBListAllHostsWith(mongo_connection *conn,char *lval,char *rval)
+
+{ mongo_cursor *cursor;
+  bson_iterator it,it2,it3;
+  bson_buffer bb;
+  bson field;  // field description
+  bson *query,b;
+
+// only return specific field - the key hash
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_software,1);
+bson_append_int(&bb,lval,1);
+bson_from_buffer(&field, &bb);
+
+query = bson_empty(&b);
+cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
+
+printf("Looking for %s = %s\n",lval,rval);
+
+//depth = Nova_GetDBKeyDepth(lval);
+
+while(mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it, cursor->current.data);
+
+   while (bson_iterator_next(&it))
+      {
+      if (strcmp(bson_iterator_key(&it),cfr_software) == 0)
+         {         
+         printf("LVAL %s matches\n",bson_iterator_key(&it));         
+
+         bson_iterator_init(&it2, bson_iterator_value(&it));
+         
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+            
+            while (bson_iterator_next(&it3))
+               {
+               if (bson_iterator_type(&it3) == bson_string && Nova_LastKeyMatch(lval,bson_iterator_key(&it3)))
+                  {
+                  if (strcmp(bson_iterator_string(&it3),rval) == 0)
+                     {
+                     printf(" - Found %s = %s matches %s\n",bson_iterator_key(&it3),bson_iterator_string(&it3),rval);
+                     }
+                  }
+               }
+            }
+         }
+
+      if (bson_iterator_type(&it) == bson_string && strcmp(bson_iterator_key(&it),cfr_keyhash) == 0)
+         {         
+         printf("Host %s matches\n",bson_iterator_string(&it));         
+         }
+      }
+   }
+
+bson_destroy(&field);
+
+mongo_cursor_destroy(cursor);
+}
+
+/***************************************************************************************/
 
 void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result)
 
@@ -54,7 +215,7 @@ while(mongo_cursor_next(cursor))  // loops over documents
    
    Debug("Found DB key \"%s\"\n", bson_iterator_string(&it));
    
-   AppendItem(result,(char *)bson_iterator_string(&it), NULL);
+   //AppendItem(result,(char *)bson_iterator_string(&it), NULL);
    }
 
 bson_destroy(&field);
@@ -85,27 +246,30 @@ sub2 = bson_append_start_object(&bb, "$elemMatch");
 
 if (regex)
    {
-   bson_append_regex(sub2, "n" , name, "");
+   bson_append_regex(sub2,cfr_name, name, "");
+
    if (ver)
       {
-      bson_append_regex(sub2, "v" , ver, "");
+      bson_append_regex(sub2,cfr_version, ver, "");
       }
+
    if (arch)
       {
-      bson_append_regex(sub2, "a" , arch, "");
+      bson_append_regex(sub2,cfr_arch, arch, "");
       }
    }
 else
    {
-   bson_append_string(sub2, "n" , name);
+   bson_append_string(sub2,cfr_name, name);
 
    if (ver)
       {
-      bson_append_string(sub2, "v" , ver);
+      bson_append_string(sub2,cfr_version, ver);
       }
+
    if (arch)
       {
-      bson_append_string(sub2, "a" , arch);
+      bson_append_string(sub2,cfr_arch, arch);
       }
    }
 
@@ -113,7 +277,9 @@ bson_append_finish_object(sub2);
 bson_append_finish_object(sub1);
 
 bson_from_buffer(&query, &bb);
+
 Nova_DBQueryHosts(conn, &query, resKeyVal, result);
+
 bson_destroy(&query);  
 }
 
@@ -133,8 +299,7 @@ while (bson_iterator_next(it))
       continue;
       }
    
-   if ((valType != -1) &&
-       bson_iterator_type(it) != valType)
+   if ((valType != -1) && bson_iterator_type(it) != valType)
       {
       CfOut(cf_error, "", "!! Key \"%s\" value in report DB is of wrong type (looking for type=%d, found type=%d)", 
             keyName, valType, bson_iterator_type(it));
@@ -163,9 +328,10 @@ struct Rlist *Nova_DBReadAllSoftware(mongo_connection *conn, bson *query)
   bson field;  // field description
   struct Rlist *list = NULL;
   
-// only return software-field
+// Set flag "1" to only return software-field
+
 bson_buffer_init(&bb);
-bson_append_int(&bb, cfr_software, 1);
+bson_append_int(&bb,cfr_software,1);
 bson_from_buffer(&field, &bb);
 
 cursor = mongo_find(conn, MONGO_DATABASE, query, &field, 0, 0, 0);
@@ -176,7 +342,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    
    // _id-element may come first
 
-   if (!Nova_MongoKeyPosition(&it, cfr_software, bson_array))  
+   if (!Nova_MongoKeyPosition(&it,cfr_software,bson_array))  
       {
       CfOut(cf_error, "", "!! Could not find \"%s\" element in DB report document", cfr_software);
       continue;
@@ -187,22 +353,23 @@ while (mongo_cursor_next(cursor))  // loops over documents
    while (Nova_DBIteratorNext(&subIt, bson_object))  // loops over software packages
       {
       bson_iterator_init(&currPack, bson_iterator_value(&subIt));
-         
-      printf("PACKAGE: ");
+
+      printf("PACKAGE on %s: ",bson_iterator_key(&it));
+
       while(Nova_DBIteratorNext(&currPack, bson_string)) // loops over package objects (n,v,a)
          {
          // allocate new and put in struct HubSoftware
-         if (strcmp(bson_iterator_key(&currPack), "n") == 0)
+         if (strcmp(bson_iterator_key(&currPack),cfr_name) == 0)
             {
             printf("n:%s", bson_iterator_string(&currPack));
             }
-         else if (strcmp(bson_iterator_key(&currPack), "v") == 0)
+         else if (strcmp(bson_iterator_key(&currPack),cfr_version) == 0)
             {
             printf("v:%s", bson_iterator_string(&currPack));
             }
-         else if (strcmp(bson_iterator_key(&currPack), "a") == 0)
+         else if (strcmp(bson_iterator_key(&currPack),cfr_arch) == 0)
             {
-            printf("a:%s", bson_iterator_string(&currPack));
+            printf("a:%s",(char *)Nova_LongArch(bson_iterator_string(&currPack)));
             }
          else
             {
@@ -229,8 +396,7 @@ if (bson_iterator_next(it))
    {
    if (bson_iterator_type(it) != valType)
       {
-      CfOut(cf_error, "", "!! DB value of unexpected type (was=%d,expected=%d)", 
-            bson_iterator_type(it), valType);
+      CfOut(cf_error, "", "!! DB value of unexpected type (was=%d,expected=%d)",bson_iterator_type(it), valType);
       return false;
       }
    
@@ -240,6 +406,91 @@ if (bson_iterator_next(it))
 return false;
 }
 
+/*****************************************************************************/
+
+int Nova_LastKeyMatch(char *lval_path,char *last)
+
+{ char *sp;
+
+if (lval_path == NULL || last == NULL)
+   {
+   return false;
+   }
+
+for (sp = lval_path+strlen(lval_path); sp > lval_path && *sp != '.'; sp--)
+   {
+   }
+
+if (*sp == '.')
+   {
+   if (strcmp(sp+1,last) == 0)
+      {
+      return true;
+      }
+   }
+else
+   {
+   if (strcmp(sp,last) == 0)
+      {
+      return true;
+      }
+
+   }
+
+return false;
+}
+
+/*****************************************************************************/
+
+void Nova_PrintDBKey(bson_iterator *it, int depth)
+
+{ bson_iterator subIt;
+  char hex_oid[25];
+  int i;
+
+for (i = 0; i < depth; i++)
+   {
+   printf("\t");
+   }
+
+printf("key: %s - ", bson_iterator_key(it));
+
+switch(bson_iterator_type(it))
+   {
+   case bson_double:
+       printf("(double) %f\n", bson_iterator_double(it));
+       break;
+   case bson_int:
+       printf("(int) %d\n", bson_iterator_int(it));
+       break;
+   case bson_string:
+       printf("(string) \"%s\"\n", bson_iterator_string(it));
+       break;
+   case bson_oid:
+       bson_oid_to_string(bson_iterator_oid(it), hex_oid);
+       printf("(oid) \"%s\"\n", hex_oid);
+       break;
+
+   case bson_object:
+   case bson_array:
+       printf("(subobject/array):\n");
+       bson_iterator_init(&subIt, bson_iterator_value(it));
+       
+       while(bson_iterator_next(&subIt))
+          {
+          Nova_PrintDBKey(&subIt, depth + 1);
+          }
+       
+       break;
+       //  case bson_array:
+       //    printf("(array) [...]\n");
+    //    break;
+   default:
+    printf("(type %d)\n", bson_iterator_type(it));
+    break;
+   }
+}
+ 
 #endif  /* HAVE LIB_MONGOC */
 
 

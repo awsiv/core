@@ -60,7 +60,7 @@ void Nova_DBInitialize()
 
 /*****************************************************************************/
 
-void Nova_DBSaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, struct Item *data)
+void Nova_DBSaveSoftware(mongo_connection *conn,enum software_rep sw, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -76,7 +76,7 @@ void Nova_DBSaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, 
 // find right host
 
 bson_buffer_init(&bb);
-bson_append_string(&bb, cfr_keyhash, kH);
+bson_append_string(&bb, cfr_keyhash,keyhash);
 bson_from_buffer(&cond, &bb);
 
 bson_buffer_init(&bb);

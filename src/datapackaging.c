@@ -1073,7 +1073,7 @@ void Nova_PackSoftware(struct Item **reply,char *header,time_t from,enum cfd_men
 
 CfOut(cf_verbose,""," -> Packing software data");
    
-snprintf(name,CF_MAXVARSIZE-1,"%s/reports/software_packages.csv",CFWORKDIR);
+snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_SOFTWARE_INSTALLED);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1138,7 +1138,7 @@ void Nova_PackAvailPatches(struct Item **reply,char *header,time_t from,enum cfd
 
 CfOut(cf_verbose,""," -> Packing available patch report...\n");
 
-snprintf(name,CF_MAXVARSIZE-1,"%s/reports/software_patches_avail.csv",CFWORKDIR);
+snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_PATCHES_AVAIL);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1200,7 +1200,7 @@ void Nova_PackPatchStatus(struct Item **reply,char *header,time_t from,enum cfd_
 
 CfOut(cf_verbose,""," -> Packing patch installed data");
  
-snprintf(name,sizeof(name),"%s/reports/software_patch_status.csv",CFWORKDIR);
+snprintf(name,sizeof(name),"%s/state/%s",CFWORKDIR,NOVA_PATCHES_INSTALLED);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {

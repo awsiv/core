@@ -298,12 +298,21 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 /* db_query.c */
 
+void Nova_CfQueryCFDB(char *query);
 #ifdef HAVE_LIBMONGOC
 void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result);
 void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result);
 int Nova_MongoKeyPosition(bson_iterator *it, char *keyName, bson_type valType);
 int Nova_DBIteratorNext(bson_iterator *it, bson_type valType);
 struct Rlist *Nova_DBReadAllSoftware(mongo_connection *conn, bson *query);
+void Nova_PrintDBKey(bson_iterator *it, int depth);
+void Nova_CfQueryCFDB(char *query);
+void Nova_DBListEverything(mongo_connection *conn);
+void Nova_DBListAllHosts(mongo_connection *conn);
+void Nova_DBListAllHostsWith(mongo_connection *conn,char *lval,char *rval);
+int Nova_LastKeyMatch(char *lval_path,char *last);
+
+
 #endif /* HAVE_LIBMONGOC */
 
 /* db_save.c */
@@ -384,7 +393,7 @@ void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, struct Item *data)
 void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackMeter(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackBundles(mongo_connection *dbconn, char *id, struct Item *data);
-
+char *Nova_LongArch(char *arch);
 
 /* environments.c */
 
@@ -814,8 +823,12 @@ int NovaWin_WmiDeInitialize(void);
 #define NOVA_CACHE "nova_cache" "." DB_FEXT
 #define NOVA_LICENSE "nova_track" "." DB_FEXT
 #define NOVA_VALUE "nova_value" "." DB_FEXT
+
 #define NOVA_BUNDLE_LOG "bundles" "." DB_FEXT
 #define NOVA_DIFF_LOG "nova_diff.log"
+#define NOVA_PATCHES_INSTALLED "software_patch_status.csv"
+#define NOVA_PATCHES_AVAIL "software_patches_avail.csv"
+#define NOVA_SOFTWARE_INSTALLED "software_packages.csv"
 
 #define CF_BIGNUMBER 999999
 

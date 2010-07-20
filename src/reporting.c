@@ -1304,7 +1304,7 @@ void Nova_ReportSoftware(struct CfPackageManager *list)
   char start[32];
   int i = 0;
 
-snprintf(name,CF_BUFSIZE,"%s/reports/software_packages.csv",CFWORKDIR);
+snprintf(name,CF_BUFSIZE,"%s/reports/%s",CFWORKDIR,NOVA_SOFTWARE_INSTALLED);
 
 if ((fout = cf_fopen(name,"w")) == NULL)
    {
@@ -1335,7 +1335,7 @@ void Nova_ReportPatches(struct CfPackageManager *list)
   char start[32];
   int i = 0,count = 0;
 
-snprintf(name,CF_BUFSIZE,"%s/reports/software_patch_status.csv",CFWORKDIR);
+snprintf(name,CF_BUFSIZE,"%s/reports/%s",CFWORKDIR,NOVA_PATCHES_INSTALLED);
 
 if ((fout = cf_fopen(name,"w")) == NULL)
    {
@@ -1353,7 +1353,7 @@ for (mp = list; mp != NULL; mp = mp->next)
 
 cf_fclose(fout);
 
-snprintf(name,CF_BUFSIZE,"%s/reports/software_patches_avail.csv",CFWORKDIR);
+snprintf(name,CF_BUFSIZE,"%s/reports/%s",CFWORKDIR,NOVA_PATCHES_AVAIL);
 
 if ((fout = cf_fopen(name,"w")) == NULL)
    {
@@ -1382,7 +1382,7 @@ void Nova_SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,
   struct Item *ip,*file = NULL;
   int i = 0;
 
-snprintf(name,CF_MAXVARSIZE-1,"%s/reports/software_packages.csv",CFWORKDIR);
+  snprintf(name,CF_MAXVARSIZE-1,"%s/reports/%s",CFWORKDIR,NOVA_SOFTWARE_INSTALLED);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1511,7 +1511,7 @@ void Nova_SummarizeUpdates(int xml,int html,int csv,int embed,char *stylesheet,c
 
 CfOut(cf_verbose,"","Creating available patch report...\n");
 
-snprintf(name,CF_MAXVARSIZE-1,"%s/reports/software_patches_avail.csv",CFWORKDIR);
+snprintf(name,CF_MAXVARSIZE-1,"%s/reports/%s",CFWORKDIR,NOVA_PATCHES_AVAIL);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1632,7 +1632,7 @@ file = NULL;
 
 CfOut(cf_verbose,"","Creating patch status report...\n");
 
- snprintf(name,sizeof(name),"%s/reports/software_patch_status.csv",CFWORKDIR);
+snprintf(name,sizeof(name),"%s/reports/%s",CFWORKDIR,NOVA_PATCHES_INSTALLED);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
