@@ -31,7 +31,7 @@ CfOut(cf_verbose,""," -> Performance data ...................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSavePerformance(dbconn, id, data);
+   CFDB_SavePerformance(dbconn, id, data);
    }
 #endif
 
@@ -39,7 +39,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    eventname[0] = '\0';
    sscanf(ip->name,"%ld,%lf,%lf,%lf,%255[^\n]\n",&t,&measure,&average,&dev,eventname);
-   printf("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s",eventname,measure,average,dev,cf_ctime(&t));
+   Debug("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s",eventname,measure,average,dev,cf_ctime(&t));
    }
 }
 
@@ -57,7 +57,7 @@ CfOut(cf_verbose,""," -> Class data .................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveClasses(dbconn, id, data);
+   CFDB_SaveClasses(dbconn, id, data);
    }
 #endif
 
@@ -65,7 +65,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
    sscanf(ip->name,"%[^,],%ld,%7.4lf,%7.4lf\n",name,&t,&q,&dev);
-   printf("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s",name,q,dev,cf_ctime(&t));
+   Debug("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s",name,q,dev,cf_ctime(&t));
    }
 }
 
@@ -80,14 +80,14 @@ CfOut(cf_verbose,""," -> setuid data ......................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveSetUid(dbconn, id, data);
+   CFDB_SaveSetUid(dbconn, id, data);
    }
 #endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
-   printf("Set-uid program: %s",ip->name);
+   Debug("Set-uid program: %s",ip->name);
    }
 }
 
@@ -105,7 +105,7 @@ CfOut(cf_verbose,""," -> File change data....................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveFileChanges(dbconn, id, data);
+   CFDB_SaveFileChanges(dbconn, id, data);
    }
 #endif
 
@@ -114,7 +114,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    // Extract records
    sscanf(ip->name,"%ld,%255[^\n]",&date,name);
    then = (time_t)date;
-   printf("File-change event: in \"%s\" at %ld\n",name,then);
+   Debug("File-change event: in \"%s\" at %ld\n",name,then);
    }
 }
 
@@ -132,7 +132,7 @@ CfOut(cf_verbose,""," -> File diff data...................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveFileDiffs(dbconn, id, data);
+   CFDB_SaveFileDiffs(dbconn, id, data);
    }
 #endif
 
@@ -150,7 +150,7 @@ for (ip = data; ip != NULL; ip=ip->next)
          }
       }
    
-   printf("Change-diff: in file %s at %ld \nbegin\n%s\nend\n",name,t,change);
+   Debug("Change-diff: in file %s at %ld \nbegin\n%s\nend\n",name,t,change);
    }
 }
 
@@ -168,7 +168,7 @@ CfOut(cf_verbose,""," -> Monitor weekly data.....................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveMonitorData(dbconn, id, mon_rep_week, data);
+   CFDB_SaveMonitorData(dbconn, id, mon_rep_week, data);
    }
 #endif
 
@@ -187,7 +187,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    
    q = e = dev = 0;
    sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
-   printf("Week-obs %d in slot %d: %.2lf,%.2lf,%.2lf\n",observable,slot,q,e,dev);
+   Debug("Week-obs %d in slot %d: %.2lf,%.2lf,%.2lf\n",observable,slot,q,e,dev);
    }
 
 }
@@ -205,7 +205,7 @@ CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveMonitorData(dbconn, id, mon_rep_mag, data);
+   CFDB_SaveMonitorData(dbconn, id, mon_rep_mag, data);
    }
 #endif
 
@@ -221,7 +221,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    // Extract records
    q = e = dev = 0;
    sscanf(ip->name,"%d %lf %lf %lf",&observable,&q,&e,&dev);
-   printf("Mag-obs %d: %.2lf,%.2lf,%.2lf measured for slot %d\n",observable,q,e,dev,slot);
+   Debug("Mag-obs %d: %.2lf,%.2lf,%.2lf measured for slot %d\n",observable,q,e,dev,slot);
    }
 }
 
@@ -239,7 +239,7 @@ CfOut(cf_verbose,""," -> Monitor histogram data.....................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveMonitorHistograms(dbconn, id, data);
+   CFDB_SaveMonitorHistograms(dbconn, id, data);
    }
 #endif
 
@@ -255,7 +255,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    sp++;
    
-   printf(" - Observable %d: ",i);
+   Debug(" - Observable %d: ",i);
        
    for (k = 0; k < CF_GRAINS; k++)
       {
@@ -271,10 +271,10 @@ for (ip = data; ip != NULL; ip=ip->next)
          }
 
       sp++;
-      printf("%d,",weekly[i][k]);
+      Debug("%d,",weekly[i][k]);
       }
    
-   printf("\n");
+   Debug("\n");
    }
 }
 
@@ -291,7 +291,7 @@ CfOut(cf_verbose,""," -> Monitor year data.....................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveMonitorData(dbconn, id, mon_rep_yr, data);
+   CFDB_SaveMonitorData(dbconn, id, mon_rep_yr, data);
    }
 #endif
 
@@ -307,7 +307,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    // Extract records
    q = e = dev = 0;
    sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
-   printf("Year-obs %d: %.2lf,%.2lf,%.2lf measured at slot %d\n",observable,q,e,dev,slot);
+   Debug("Year-obs %d: %.2lf,%.2lf,%.2lf measured at slot %d\n",observable,q,e,dev,slot);
    }
 }
 
@@ -325,7 +325,7 @@ CfOut(cf_verbose,""," -> Promise Compliance data..............");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSavePromiseCompliance(dbconn, id, data);
+   CFDB_SavePromiseCompliance(dbconn, id, data);
    }
 #endif
 
@@ -336,13 +336,13 @@ for (ip = data; ip != NULL; ip=ip->next)
    switch (type)
       {
       case 'c':
-          printf("Promise \"%s\" was compliant, av %.2lf +/- %.2lf at %s",eventname,av,dev,cf_ctime(&then));
+          Debug("Promise \"%s\" was compliant, av %.2lf +/- %.2lf at %s",eventname,av,dev,cf_ctime(&then));
           break;
       case 'r':
-          printf("Promise \"%s\" was repaired, av %.2lf +/- %.2lf at %s",eventname,av,dev,cf_ctime(&then));
+          Debug("Promise \"%s\" was repaired, av %.2lf +/- %.2lf at %s",eventname,av,dev,cf_ctime(&then));
           break;
       case 'n':
-          printf("Promise \"%s\" was non-compliant, av %.2lf +/- %.2lf at %s",eventname,av,dev,cf_ctime(&then));
+          Debug("Promise \"%s\" was non-compliant, av %.2lf +/- %.2lf at %s",eventname,av,dev,cf_ctime(&then));
           break;
       }
    }
@@ -360,7 +360,7 @@ CfOut(cf_verbose,""," -> Installed software data...............");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveSoftware(dbconn,sw_rep_installed,id,data);
+   CFDB_SaveSoftware(dbconn,sw_rep_installed,id,data);
    }
 #endif
 
@@ -370,7 +370,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    // architcure coding, see Nova_ShortArch
    
-   printf("Installed software: %s version (%s on %c)\n",name,version,arch);
+   Debug("Installed software: %s version (%s on %c)\n",name,version,arch);
    } 
 }
 
@@ -386,7 +386,7 @@ CfOut(cf_verbose,""," -> Available patch data...................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveSoftware(dbconn,sw_rep_patch_avail,id,data);
+   CFDB_SaveSoftware(dbconn,sw_rep_patch_avail,id,data);
    }
 #endif
 
@@ -396,7 +396,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    // architcure coding, see Nova_ShortArch
    
-   printf("Patch available: %s version (%s on %c)\n",name,version,arch);
+   Debug("Patch available: %s version (%s on %c)\n",name,version,arch);
    }
 }
 
@@ -412,7 +412,7 @@ CfOut(cf_verbose,""," -> Patches installed data.......................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveSoftware(dbconn,sw_rep_patch_installed,id,data);
+   CFDB_SaveSoftware(dbconn,sw_rep_patch_installed,id,data);
    }
 #endif
 
@@ -422,7 +422,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    // architcure coding, see Nova_ShortArch
    
-   printf("Patch applied: %s version (%s on %c)\n",name,version,arch);
+   Debug("Patch applied: %s version (%s on %c)\n",name,version,arch);
    }
 }
 
@@ -436,7 +436,7 @@ CfOut(cf_verbose,""," -> Expanded private promise data.............");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   printf("POLICY: %s",ip->name);
+   Debug("POLICY: %s",ip->name);
    }
 }
 
@@ -453,7 +453,7 @@ CfOut(cf_verbose,""," -> Value data..............................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveValue(dbconn,id,data);
+   CFDB_SaveValue(dbconn,id,data);
    }
 #endif
 
@@ -461,7 +461,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%[^,],%lf,%lf,%lf\n",date,&kept,&repaired,&notkept);
 
-   printf("Business value: (%.0lf,%.0lf,%.0lf) from %s\n",kept,repaired,notkept,date);
+   Debug("Business value: (%.0lf,%.0lf,%.0lf) from %s\n",kept,repaired,notkept,date);
    }
 }
 
@@ -477,7 +477,7 @@ CfOut(cf_verbose,""," -> Variable data...........................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveVariables(dbconn, id, data);
+   CFDB_SaveVariables(dbconn, id, data);
    }
 #endif
 
@@ -487,13 +487,13 @@ for (ip = data; ip != NULL; ip=ip->next)
       {
       scope[0] = '\0';
       sscanf(ip->name+3,"%254[^\n]",scope);
-      printf("SCOPE: %s\n",scope);
+      Debug("SCOPE: %s\n",scope);
       continue;
       }
 
    sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,name,value);
    
-   printf("var: (%s) \"%s\"=\"%s\"\n",type,name,value);
+   Debug("var: (%s) \"%s\"=\"%s\"\n",type,name,value);
    }
 
 }
@@ -513,7 +513,7 @@ CfOut(cf_verbose,""," -> Last-seen data..........................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveLastSeen(dbconn, id, data);
+   CFDB_SaveLastSeen(dbconn, id, data);
    }
 #endif
 
@@ -531,7 +531,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    then = (time_t)fthen;
    
-   printf("Saw: %c%s (alias %s/%s) seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s",inout,hash,asserted,dns,ago,average,dev,cf_ctime(&fthen));
+   Debug("Saw: %c%s (alias %s/%s) seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s",inout,hash,asserted,dns,ago,average,dev,cf_ctime(&fthen));
    }
 
 }
@@ -551,7 +551,7 @@ CfOut(cf_verbose,""," -> Total Compliance data......................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveTotalCompliance(dbconn, id, data);
+   CFDB_SaveTotalCompliance(dbconn, id, data);
    }
 #endif
 
@@ -560,7 +560,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%ld,%127[^,],%d,%d,%d\n",&date,version,&kept,&repaired,&notrepaired);
    then = (time_t)date;
    
-   printf("Tcompliance: (%d,%d,%d) for version %s at %ld\n",kept,repaired,notrepaired,version,then);
+   Debug("Tcompliance: (%d,%d,%d) for version %s at %ld\n",kept,repaired,notrepaired,version,then);
    }
 
 }
@@ -579,7 +579,7 @@ CfOut(cf_verbose,""," -> Repair log data........................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSavePromiseLog(dbconn, id, plog_repaired, data);
+   CFDB_SavePromiseLog(dbconn, id, plog_repaired, data);
    }
 #endif
 
@@ -588,7 +588,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%ld,%127[^\n]",&then,handle);
    tthen = (time_t)then;
 
-   printf("Repair: of promise \"%s\" at %s",handle,cf_ctime(&tthen));
+   Debug("Repair: of promise \"%s\" at %s",handle,cf_ctime(&tthen));
    }
 }
 
@@ -606,7 +606,7 @@ CfOut(cf_verbose,""," -> Not kept data...........................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSavePromiseLog(dbconn, id, plog_notkept, data);
+   CFDB_SavePromiseLog(dbconn, id, plog_notkept, data);
    }
 #endif
 
@@ -614,7 +614,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%ld,%127[^\n]",&then,handle);
    tthen = (time_t)then;
-   printf("Failure: of promise \"%s\" at %s",handle,cf_ctime(&tthen));
+   Debug("Failure: of promise \"%s\" at %s",handle,cf_ctime(&tthen));
    }
 
 }
@@ -634,7 +634,7 @@ CfOut(cf_verbose,""," -> Meter data...........................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveMeter(dbconn, id, data);
+   CFDB_SaveMeter(dbconn, id, data);
    }
 #endif
 
@@ -645,25 +645,25 @@ for (ip = data; ip != NULL; ip=ip->next)
    switch (type)
       {
       case 'W':
-          printf("Meter week compliance: %lf, %lf\n",kept,repaired);
+          Debug("Meter week compliance: %lf, %lf\n",kept,repaired);
           break;
       case 'D':
-          printf("Meter daily compliance: %lf, %lf\n",kept,repaired);
+          Debug("Meter daily compliance: %lf, %lf\n",kept,repaired);
           break;
       case 'H':
-          printf("Meter hourly compliance: %lf, %lf\n",kept,repaired);
+          Debug("Meter hourly compliance: %lf, %lf\n",kept,repaired);
           break;
       case 'P':
-          printf("Meter performance: %lf, %lf\n",kept,repaired);
+          Debug("Meter performance: %lf, %lf\n",kept,repaired);
           break;
       case 'S':
-          printf("Meter licenses: %lf, %lf\n",kept,repaired);
+          Debug("Meter licenses: %lf, %lf\n",kept,repaired);
           break;
       case 'C':
-          printf("Meter comms: %lf, %lf\n",kept,repaired);
+          Debug("Meter comms: %lf, %lf\n",kept,repaired);
           break;          
       case 'A':
-          printf("Meter anomalies: %lf, %lf\n",kept,repaired);
+          Debug("Meter anomalies: %lf, %lf\n",kept,repaired);
           break;
       }
    }
@@ -684,7 +684,7 @@ CfOut(cf_verbose,""," -> Bundle data...........................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   Nova_DBSaveBundles(dbconn,id,data);
+   CFDB_SaveBundles(dbconn,id,data);
    }
 #endif
 
@@ -698,11 +698,8 @@ for (ip = data; ip != NULL; ip=ip->next)
           &dev);
 
    then = (time_t)fthen;
-
-   
-   printf("Bundle: %s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s",bundle,ago,average,dev,cf_ctime(&fthen));
+   Debug("Bundle: %s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s",bundle,ago,average,dev,cf_ctime(&fthen));
    }
-
 }
 
 /*****************************************************************************/

@@ -17,22 +17,27 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-/*****************************************************************************/
+void Nova_CfQueryCFDB(char *query)
+{
+#ifdef HAVE_LIBMONGOC
+ mongo_connection dbconn;
+ char query_lval[CF_MAXVARSIZE];
+ bson b;
 
-void Nova_ReportDB()
-
-{ mongo_connection dbconn;
-  bson b;
-
-if (!Nova_DBOpen(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
    CfOut(cf_error, "", "!! Could not open connection to report database");
    }
 
-Nova_DBReadAllSoftware(&dbconn, bson_empty(&b));
+// CFDB_ReadAllSoftware(&dbconn, bson_empty(&b));
+// CFDB_ListEverything(&dbconn);
+// CFDB_ListAllHosts(&dbconn);
 
-if (!Nova_DBClose(&dbconn))
+CFDB_ListAllHostsWithArrayElement(&dbconn,cfr_software,cfr_name,"samba-client");
+
+if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_error, "", "!! Could not close connection to report database");
    } 
+#endif
 }

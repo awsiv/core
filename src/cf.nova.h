@@ -298,44 +298,40 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 /* db_query.c */
 
-void Nova_CfQueryCFDB(char *query);
 #ifdef HAVE_LIBMONGOC
-void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result);
-void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result);
-int Nova_MongoKeyPosition(bson_iterator *it, char *keyName, bson_type valType);
-int Nova_DBIteratorNext(bson_iterator *it, bson_type valType);
-struct Rlist *Nova_DBReadAllSoftware(mongo_connection *conn, bson *query);
-void Nova_PrintDBKey(bson_iterator *it, int depth);
-void Nova_CfQueryCFDB(char *query);
-void Nova_DBListEverything(mongo_connection *conn);
-void Nova_DBListAllHosts(mongo_connection *conn);
-void Nova_DBListAllHostsWithArrayElement(mongo_connection *conn,char *type,char *lval,char *rval);
-
-
+void CFDB_QueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result);
+void CFDB_QuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result);
+int CFDB_KeyPosition(bson_iterator *it, char *keyName, bson_type valType);
+int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
+struct Rlist *CFDB_ReadAllSoftware(mongo_connection *conn, bson *query);
+void PrintCFDBKey(bson_iterator *it, int depth);
+void CFDB_ListEverything(mongo_connection *conn);
+void CFDB_ListAllHosts(mongo_connection *conn);
+void CFDB_ListAllHostsWithArrayElement(mongo_connection *conn,char *type,char *lval,char *rval);
 #endif /* HAVE_LIBMONGOC */
 
 /* db_save.c */
 
 #ifdef HAVE_LIBMONGOC
-int Nova_DBOpen(mongo_connection *conn, char *host, int port);
-int Nova_DBClose(mongo_connection *conn);
-void Nova_DBInitialize();
-void Nova_DBSaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, struct Item *data);
-void Nova_DBSaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep rep_type, struct Item *data);
-void Nova_DBSaveMonitorHistograms(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBSaveClasses(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBSaveVariables(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBSaveTotalCompliance(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBSavePromiseLog(mongo_connection *conn, char *kH, enum promiselog_rep rep_type, struct Item *data);
-void Nova_DBSaveLastSeen(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBSaveMeter(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBSavePerformance(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBSaveSetUid(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBSavePromiseCompliance(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBSaveFileChanges(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBSaveFileDiffs(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBSaveBundles(mongo_connection *conn, char *kH, struct Item *data);
-void Nova_DBSaveValue(mongo_connection *conn, char *kH, struct Item *data);
+int CFDB_Open(mongo_connection *conn, char *host, int port);
+int CFDB_Close(mongo_connection *conn);
+void CFDB_Initialize(void);
+void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, struct Item *data);
+void CFDB_SaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep rep_type, struct Item *data);
+void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveClasses(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveVariables(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveTotalCompliance(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SavePromiseLog(mongo_connection *conn, char *kH, enum promiselog_rep rep_type, struct Item *data);
+void CFDB_SaveLastSeen(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveMeter(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SavePerformance(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveSetUid(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SavePromiseCompliance(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveFileChanges(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveFileDiffs(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveBundles(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveValue(mongo_connection *conn, char *kH, struct Item *data);
 
 #endif
 
@@ -598,6 +594,9 @@ void Nova_GrandSummary(void);
 void SummarizeComms(void);
 void Nova_SummarizeLicense(char *stylesheet,char *banner,char *footer,char *webdriver);
 
+/* request.c */
+
+void Nova_CfQueryCFDB(char *query);
 
 /* server.c */
 

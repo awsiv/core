@@ -23,42 +23,17 @@
 /* Level                                                                     */
 /*****************************************************************************/
 
-void Nova_CfQueryCFDB(char *query)
-{
-#ifdef HAVE_LIBMONGOC
- mongo_connection dbconn;
- char query_lval[CF_MAXVARSIZE];
- bson b;
-
-if (!Nova_DBOpen(&dbconn, "127.0.0.1", 27017))
-   {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
-   }
-
-// Nova_DBReadAllSoftware(&dbconn, bson_empty(&b));
-// Nova_DBListEverything(&dbconn);
-//Nova_DBListAllHosts(&dbconn);
-
-Nova_DBListAllHostsWithArrayElement(&dbconn,cfr_software,cfr_name,"samba-client");
-
-if (!Nova_DBClose(&dbconn))
-   {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
-   } 
-#endif
-}
-
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
 
-void Nova_DBListEverything(mongo_connection *conn)
+void CFDB_ListEverything(mongo_connection *conn)
 
 { mongo_cursor *cursor;
   bson_iterator it;
-  bson_buffer bb,b;
+  bson_buffer bb;
   bson field;  // field description
-  bson *query;
+  bson b,*query;
 
 query = bson_empty(&b);
  
@@ -70,7 +45,7 @@ while(mongo_cursor_next(cursor))  // loops over documents
 
    while(bson_iterator_next(&it))
       {
-      Nova_PrintDBKey(&it,1);   
+      PrintCFDBKey(&it,1);   
       }
    }
 
@@ -81,7 +56,7 @@ mongo_cursor_destroy(cursor);
 
 /***************************************************************************************/
 
-void Nova_DBListAllHosts(mongo_connection *conn)
+void CFDB_ListAllHosts(mongo_connection *conn)
 
 { mongo_cursor *cursor;
   bson_iterator it;
@@ -112,7 +87,7 @@ mongo_cursor_destroy(cursor);
 
 /***************************************************************************************/
 
-void Nova_DBListAllHostsWithArrayElement(mongo_connection *conn,char *type,char *lval,char *rval)
+void CFDB_ListAllHostsWithArrayElement(mongo_connection *conn,char *type,char *lval,char *rval)
 
 { mongo_cursor *cursor;
   bson_iterator it,it2,it3;
@@ -211,7 +186,7 @@ mongo_cursor_destroy(cursor);
 
 /***************************************************************************************/
 
-void Nova_DBQueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result)
+void CFDB_QueryHosts(mongo_connection *conn, bson *query, char *resKeyVal, struct Item **result)
 
 /* Takes a query document and returns one field (resKeyVal) from
  * each host that matches the query. Use bson_empty(&b) as query to
@@ -235,7 +210,7 @@ while(mongo_cursor_next(cursor))  // loops over documents
    {
    bson_iterator_init(&it, cursor->current.data);
    
-   if (!Nova_MongoKeyPosition(&it, resKeyVal, bson_string))
+   if (!CFDB_KeyPosition(&it, resKeyVal, bson_string))
       {
       CfOut(cf_error, "", "!! Could not find \"%s\" element in DB report document", resKeyVal);
       continue;
@@ -252,7 +227,7 @@ mongo_cursor_destroy(cursor);
 
 /*****************************************************************************/
 
-void Nova_DBQuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result)
+void CFDB_QuerySoftware(mongo_connection *conn, char *name, char *ver, char *arch, int regex, char *resKeyVal, struct Item **result)
 
 /**
  * !! FIXME: REGEX NOT WORKING
@@ -306,14 +281,14 @@ bson_append_finish_object(sub1);
 
 bson_from_buffer(&query, &bb);
 
-Nova_DBQueryHosts(conn, &query, resKeyVal, result);
+CFDB_QueryHosts(conn, &query, resKeyVal, result);
 
 bson_destroy(&query);  
 }
 
 /*****************************************************************************/
 
-int Nova_MongoKeyPosition(bson_iterator *it, char *keyName, bson_type valType)
+int CFDB_KeyPosition(bson_iterator *it, char *keyName, bson_type valType)
 
 /* Positions the iterator at the given string key name.
  * Returns true if found, false otherwise */
@@ -329,7 +304,7 @@ while (bson_iterator_next(it))
    
    if ((valType != -1) && bson_iterator_type(it) != valType)
       {
-      CfOut(cf_error, "", "!! Key \"%s\" value in report DB is of wrong type (looking for type=%d, found type=%d)", 
+      CfOut(cf_error, "", "!! Key \"%s\" value in report CFDB is of wrong type (looking for type=%d, found type=%d)", 
             keyName, valType, bson_iterator_type(it));
       return false;
       }
@@ -342,7 +317,7 @@ return false;
 
 /*****************************************************************************/
 
-struct Rlist *Nova_DBReadAllSoftware(mongo_connection *conn, bson *query)
+struct Rlist *CFDB_ReadAllSoftware(mongo_connection *conn, bson *query)
 
 /*
  * Returns all software packages in all matching hosts.
@@ -370,21 +345,21 @@ while (mongo_cursor_next(cursor))  // loops over documents
    
    // _id-element may come first
 
-   if (!Nova_MongoKeyPosition(&it,cfr_software,bson_array))  
+   if (!CFDB_KeyPosition(&it,cfr_software,bson_array))  
       {
-      CfOut(cf_error, "", "!! Could not find \"%s\" element in DB report document", cfr_software);
+      CfOut(cf_error, "", "!! Could not find \"%s\" element in CFDB report document", cfr_software);
       continue;
       }
 
    bson_iterator_init(&subIt, bson_iterator_value(&it));
       
-   while (Nova_DBIteratorNext(&subIt, bson_object))  // loops over software packages
+   while (CFDB_IteratorNext(&subIt, bson_object))  // loops over software packages
       {
       bson_iterator_init(&currPack, bson_iterator_value(&subIt));
 
       printf("PACKAGE on %s: ",bson_iterator_key(&it));
 
-      while(Nova_DBIteratorNext(&currPack, bson_string)) // loops over package objects (n,v,a)
+      while(CFDB_IteratorNext(&currPack, bson_string)) // loops over package objects (n,v,a)
          {
          // allocate new and put in struct HubSoftware
          if (strcmp(bson_iterator_key(&currPack),cfr_name) == 0)
@@ -397,7 +372,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             }
          else if (strcmp(bson_iterator_key(&currPack),cfr_arch) == 0)
             {
-            printf("a:%s",(char *)Nova_LongArch(bson_iterator_string(&currPack)));
+            printf("a:%s",Nova_LongArch(bson_iterator_string(&currPack)));
             }
          else
             {
@@ -417,14 +392,14 @@ return list;
 
 /*****************************************************************************/
 
-int Nova_DBIteratorNext(bson_iterator *it, bson_type valType)
+int CFDB_IteratorNext(bson_iterator *it, bson_type valType)
 
 {
 if (bson_iterator_next(it))
    {
    if (bson_iterator_type(it) != valType)
       {
-      CfOut(cf_error, "", "!! DB value of unexpected type (was=%d,expected=%d)",bson_iterator_type(it), valType);
+      CfOut(cf_error, "", "!! CFDB value of unexpected type (was=%d,expected=%d)",bson_iterator_type(it), valType);
       return false;
       }
    
@@ -436,7 +411,7 @@ return false;
 
 /*****************************************************************************/
 
-void Nova_PrintDBKey(bson_iterator *it, int depth)
+void PrintCFDBKey(bson_iterator *it, int depth)
 
 { bson_iterator subIt;
   char hex_oid[25];
@@ -472,7 +447,7 @@ switch(bson_iterator_type(it))
        
        while(bson_iterator_next(&subIt))
           {
-          Nova_PrintDBKey(&subIt, depth + 1);
+          PrintCFDBKey(&subIt, depth + 1);
           }
        
        break;

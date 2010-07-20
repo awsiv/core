@@ -20,7 +20,7 @@
 
 /*****************************************************************************/
 
-int Nova_DBOpen(mongo_connection *conn, char *host, int port)
+int CFDB_Open(mongo_connection *conn, char *host, int port)
 
 { mongo_connection_options connOpts;
 
@@ -38,7 +38,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova_DBClose(mongo_connection *conn)
+int CFDB_Close(mongo_connection *conn)
 
 {
 if (mongo_destroy(conn) != 0)
@@ -52,7 +52,7 @@ return true;
 
 /*****************************************************************************/
 
-void Nova_DBInitialize()
+void CFDB_Initialize()
     
 {
  //  make sure indices on cfr_keyhash and sw.n exist and monitord arrays exist
@@ -60,7 +60,7 @@ void Nova_DBInitialize()
 
 /*****************************************************************************/
 
-void Nova_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr)
+void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr)
 
 { bson_buffer bb;
   bson_buffer *setObj, *clObj, *keyArr, *keyAdd, *keyArrField;
@@ -104,7 +104,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveSoftware(mongo_connection *conn,enum software_rep sw, char *keyhash, struct Item *data)
+void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -172,7 +172,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveMonitorData(mongo_connection *conn, char *keyhash, enum monitord_rep rep_type, struct Item *data)
+void CFDB_SaveMonitorData(mongo_connection *conn, char *keyhash, enum monitord_rep rep_type, struct Item *data)
 
 { bson_buffer bb;
   bson cond;  // host description
@@ -259,7 +259,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveMonitorHistograms(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -327,7 +327,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveClasses(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, struct Item *data)
 
 /**
  *  Replacing existing class entry, but not deleting "old" entries (purging)
@@ -396,7 +396,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveVariables(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveVariables(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj, *varObj, *keyArr, *keyAdd, *keyArrField, *arr;
@@ -495,7 +495,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveTotalCompliance(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveTotalCompliance(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *pushObj;
@@ -547,7 +547,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_rep rep_type, struct Item *data)
+void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_rep rep_type, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *pushObj;
@@ -609,7 +609,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveLastSeen(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveLastSeen(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj, *sub;
@@ -667,7 +667,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveMeter(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveMeter(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -710,7 +710,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSavePerformance(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SavePerformance(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -758,7 +758,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveSetUid(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveSetUid(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *keyArr, *keyAdd, *keyArrField;
@@ -802,7 +802,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSavePromiseCompliance(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SavePromiseCompliance(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -851,7 +851,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveFileChanges(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveFileChanges(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *pushObj;
@@ -902,7 +902,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveFileDiffs(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveFileDiffs(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *pushObj;
@@ -964,7 +964,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveBundles(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveBundles(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj, *sub;
@@ -1018,7 +1018,7 @@ bson_destroy(&cond);
 
 /*****************************************************************************/
 
-void Nova_DBSaveValue(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveValue(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *pushObj;
