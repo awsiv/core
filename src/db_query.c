@@ -19,6 +19,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+/*****************************************************************************/
+/* Level                                                                     */
+/*****************************************************************************/
+
 void Nova_CfQueryCFDB(char *query)
 {
 #ifdef HAVE_LIBMONGOC
@@ -33,12 +37,10 @@ if (!Nova_DBOpen(&dbconn, "127.0.0.1", 27017))
 
 // Nova_DBReadAllSoftware(&dbconn, bson_empty(&b));
 // Nova_DBListEverything(&dbconn);
-// Nova_DBListAllHosts(&dbconn);
+//Nova_DBListAllHosts(&dbconn);
 
-snprintf(query_lval,CF_MAXVARSIZE-1,"%s.%s",cfr_software,cfr_name);
+Nova_DBListAllHostsWithArrayElement(&dbconn,cfr_software,cfr_name,"samba-client");
 
-Nova_DBListAllHostsWith(&dbconn,query_lval,"samba-client");
- 
 if (!Nova_DBClose(&dbconn))
    {
    CfOut(cf_error, "", "!! Could not close connection to report database");
@@ -83,15 +85,8 @@ void Nova_DBListAllHosts(mongo_connection *conn)
 
 { mongo_cursor *cursor;
   bson_iterator it;
-  bson_buffer bb;
   bson field;  // field description
   bson *query,b;
-
-// only return specific field - the key hash
-
-bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_keyhash, 1);
-bson_from_buffer(&field, &bb);
 
 query = bson_empty(&b);
  
@@ -117,61 +112,94 @@ mongo_cursor_destroy(cursor);
 
 /***************************************************************************************/
 
-void Nova_DBListAllHostsWith(mongo_connection *conn,char *lval,char *rval)
+void Nova_DBListAllHostsWithArrayElement(mongo_connection *conn,char *type,char *lval,char *rval)
 
 { mongo_cursor *cursor;
   bson_iterator it,it2,it3;
   bson_buffer bb;
   bson field;  // field description
   bson *query,b;
-
+  int found_type,found_lval;
+  char host[CF_MAXVARSIZE],ipaddr[CF_BUFSIZE];
+  
 // only return specific field - the key hash
 
 bson_buffer_init(&bb);
 bson_append_int(&bb,cfr_keyhash,1);
-bson_append_int(&bb,cfr_software,1);
-bson_append_int(&bb,lval,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,type,1);
 bson_from_buffer(&field, &bb);
 
+// Search document
+
 query = bson_empty(&b);
+
 cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
 
-printf("Looking for %s = %s\n",lval,rval);
-
-//depth = Nova_GetDBKeyDepth(lval);
+printf("Looking for %s = %s.?.%s\n",type,lval,rval);
 
 while(mongo_cursor_next(cursor))  // loops over documents
    {
    bson_iterator_init(&it, cursor->current.data);
 
+   found_type = false;
+   
    while (bson_iterator_next(&it))
       {
-      if (strcmp(bson_iterator_key(&it),cfr_software) == 0)
-         {         
-         printf("LVAL %s matches\n",bson_iterator_key(&it));         
+      found_lval = false;
 
+      // Make a note of the key
+      
+      if (strcmp(bson_iterator_key(&it),cfr_keyhash) == 0)
+         {
+         strcpy(host,bson_iterator_string(&it));
+         }
+
+      // Now get the IP addresses
+      
+      if (strcmp(bson_iterator_key(&it),cfr_ip_array) == 0)
+         {         
          bson_iterator_init(&it2, bson_iterator_value(&it));
+         ipaddr[0] = '\0';
          
          while (bson_iterator_next(&it2))
             {
+            Join(ipaddr,(char *)bson_iterator_string(&it2));
+            }
+         }
+
+      // Get the lval type we want - don't know the depth
+
+      if (strcmp(bson_iterator_key(&it),type) == 0)
+         {
+         found_type = true;
+         
+         bson_iterator_init(&it2, bson_iterator_value(&it));
+         
+         while (!found_lval && bson_iterator_next(&it2))
+            {
             bson_iterator_init(&it3, bson_iterator_value(&it2));
+
+            // Try level 3
             
             while (bson_iterator_next(&it3))
                {
-               if (bson_iterator_type(&it3) == bson_string && Nova_LastKeyMatch(lval,bson_iterator_key(&it3)))
+               if (bson_iterator_type(&it3) == bson_string && strcmp(lval,bson_iterator_key(&it3)) == 0)
                   {
                   if (strcmp(bson_iterator_string(&it3),rval) == 0)
                      {
-                     printf(" - Found %s = %s matches %s\n",bson_iterator_key(&it3),bson_iterator_string(&it3),rval);
+                     found_lval = true;
+                     break;
                      }
                   }
                }
             }
          }
 
-      if (bson_iterator_type(&it) == bson_string && strcmp(bson_iterator_key(&it),cfr_keyhash) == 0)
+      if (found_lval)
          {         
-         printf("Host %s matches\n",bson_iterator_string(&it));         
+         printf("Host \"%s\" (seen at %s) matches search for \"%s\" = \"%s\"\n",host,ipaddr,lval,rval);
+         break;
          }
       }
    }
@@ -401,40 +429,6 @@ if (bson_iterator_next(it))
       }
    
    return true;
-   }
-
-return false;
-}
-
-/*****************************************************************************/
-
-int Nova_LastKeyMatch(char *lval_path,char *last)
-
-{ char *sp;
-
-if (lval_path == NULL || last == NULL)
-   {
-   return false;
-   }
-
-for (sp = lval_path+strlen(lval_path); sp > lval_path && *sp != '.'; sp--)
-   {
-   }
-
-if (*sp == '.')
-   {
-   if (strcmp(sp+1,last) == 0)
-      {
-      return true;
-      }
-   }
-else
-   {
-   if (strcmp(sp,last) == 0)
-      {
-      return true;
-      }
-
    }
 
 return false;

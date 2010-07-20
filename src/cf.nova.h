@@ -250,7 +250,7 @@ int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t 
 int Nova_StoreIncomingReports(char *reply,struct Item **reports,int current_report);
 void NewReportBook(struct Item **reports);
 void DeleteReportBook(struct Item **reports);
-void UnpackReportBook(char *id, struct Item **reports);
+void UnpackReportBook(char *id,char *ipaddr,struct Item **reports);
 
 /* coordinates.c */
 
@@ -309,8 +309,7 @@ void Nova_PrintDBKey(bson_iterator *it, int depth);
 void Nova_CfQueryCFDB(char *query);
 void Nova_DBListEverything(mongo_connection *conn);
 void Nova_DBListAllHosts(mongo_connection *conn);
-void Nova_DBListAllHostsWith(mongo_connection *conn,char *lval,char *rval);
-int Nova_LastKeyMatch(char *lval_path,char *last);
+void Nova_DBListAllHostsWithArrayElement(mongo_connection *conn,char *type,char *lval,char *rval);
 
 
 #endif /* HAVE_LIBMONGOC */
@@ -823,6 +822,7 @@ int NovaWin_WmiDeInitialize(void);
 #define NOVA_CACHE "nova_cache" "." DB_FEXT
 #define NOVA_LICENSE "nova_track" "." DB_FEXT
 #define NOVA_VALUE "nova_value" "." DB_FEXT
+#define NOVA_NETWORK "nova_network" "." DB_FEXT
 
 #define NOVA_BUNDLE_LOG "bundles" "." DB_FEXT
 #define NOVA_DIFF_LOG "nova_diff.log"
@@ -879,6 +879,7 @@ struct promise_value
 /* Keynames */
 
 #define cfr_keyhash      "kH"
+#define cfr_ip_array     "IP"
 #define cfr_mag          "mg"
 #define cfr_week         "wk"
 #define cfr_yr           "yr"

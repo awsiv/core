@@ -70,13 +70,16 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
 int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t since)
 
 { int done = false,tosend,cipherlen=0,value;
-  char in[CF_BUFSIZE],out[CF_BUFSIZE],workbuf[CF_BUFSIZE],cfchangedstr[265];
+ char in[CF_BUFSIZE],out[CF_BUFSIZE],workbuf[CF_BUFSIZE],cfchangedstr[265],name[CF_BUFSIZE],id[CF_MAXVARSIZE];
   unsigned char iv[32] = {1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
   long n_read_total = 0,length = 0;
   EVP_CIPHER_CTX ctx;
   int plainlen,more = true,header = true,current_report = -1;
-  time_t now = time(NULL),time2 = 0,delta1 = 0,delta2 = 0;
+  time_t now = time(NULL),time2 = 0,delta1 = 0,delta2 = 0,lastseen;
   struct Item *reports[cf_codebook_size] = {0};
+  struct Event e,newe;
+  double datarate,delta;
+  CF_DB *dbp;
 
 NewReportBook(reports);
   
@@ -142,12 +145,67 @@ while (more)
 
       if (delta2 > 0)
          {
-         CfOut(cf_verbose,""," -> Data rate of %lf",(double)length/(double)delta2);
+         datarate = (double)length/(double)delta2;
+         CfOut(cf_verbose,""," -> Data rate of %lf",datarate);
          }
       else
          {
+         delta2 = 0;
+         datarate = 0;
          CfOut(cf_verbose,""," -> Data rate was unmeasurable (instantaneous)");
          }
+
+      // Promise to record data rate per host-digest and per IP
+      
+      snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_NETWORK);
+      
+      if (OpenDB(name,&dbp))
+         {
+         snprintf(id,CF_MAXVARSIZE-1,"%s",conn->digest);
+         
+         if (ReadDB(dbp,id,&e,sizeof(e)))
+            {
+            lastseen = now - e.t;
+            newe.t = now;
+            newe.Q.q = datarate;
+            newe.Q.expect = GAverage(datarate,e.Q.expect,0.5);
+            delta = (datarate - e.Q.expect)*(datarate - e.Q.expect);
+            newe.Q.var = GAverage(delta,e.Q.var,0.5);
+            }
+         else
+            {
+            lastseen = 0;
+            newe.t = now;
+            newe.Q.q = 0;
+            newe.Q.expect = 0;
+            newe.Q.var = 0;
+            }
+         
+         WriteDB(dbp,id,&newe,sizeof(newe));
+
+         snprintf(id,CF_MAXVARSIZE-1,"%s",conn->remoteip);
+         
+         if (ReadDB(dbp,id,&e,sizeof(e)))
+            {
+            lastseen = now - e.t;
+            newe.t = now;
+            newe.Q.q = datarate;
+            newe.Q.expect = GAverage(datarate,e.Q.expect,0.5);
+            delta = (datarate - e.Q.expect)*(datarate - e.Q.expect);
+            newe.Q.var = GAverage(delta,e.Q.var,0.5);
+            }
+         else
+            {
+            lastseen = 0;
+            newe.t = now;
+            newe.Q.q = 0;
+            newe.Q.expect = 0;
+            newe.Q.var = 0;
+            }
+         
+         WriteDB(dbp,id,&newe,sizeof(newe));
+         CloseDB(dbp);
+         }      
       }
    else
       {
@@ -163,7 +221,7 @@ if (reports == NULL)
    return false;
    }
 
-UnpackReportBook(HashPrint(cf_md5,conn->digest),reports);
+UnpackReportBook(HashPrint(cf_md5,conn->digest),conn->remoteip,reports);
 DeleteReportBook(reports);
 return true;
 }
@@ -209,7 +267,7 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 /*********************************************************************/
 
-void UnpackReportBook(char *id, struct Item **reports)
+void UnpackReportBook(char *id,char *ipaddr,struct Item **reports)
 
 { int i;
   mongo_connection dbconn = {0};
@@ -233,6 +291,8 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
    }
 
 #ifdef HAVE_LIBMONGOC
+Nova_SaveHostID(&dbconn,id,ipaddr);
+
 if (dbconnp && !Nova_DBClose(&dbconn))
    {
    CfOut(cf_error, "", "!! Could not close connection to report database");
