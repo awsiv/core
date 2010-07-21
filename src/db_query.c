@@ -54,18 +54,7 @@ mongo_cursor_destroy(cursor);
 
 struct Rlist *CFDB_QuerySoftware(mongo_connection *conn,char *lname,char *lver,char *larch,int regex)
 
-/**
- * !! FIXME: REGEX NOT WORKING
- *
- * Returns a set of hosts having the given software (name,ver,arch).
- * ver and arch may be NULL, in which case they are not considered,
- * otherwise an AND search is done (e.g. name AND ver AND arch).
-
-   probably need to add // i.e. /regex/  
-
-*/
-
-{ bson_buffer bb,*sub1,*sub2;
+{ bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
@@ -76,49 +65,7 @@ struct Rlist *CFDB_QuerySoftware(mongo_connection *conn,char *lname,char *lver,c
   
 /* BEGIN query document */
 
-bson_buffer_init(&bb);
-
-sub1 = bson_append_start_object(&bb,cfr_software);
-bson_append_finish_object(sub1);
-
-sub2 = bson_append_start_object(&bb,"$elemMatch");   
-if (regex)
-   {
-   if (lname)
-      {
-      bson_append_regex(sub2,cfr_name,lname,"");
-      }
-   
-   if (lver)
-      {
-      bson_append_regex(sub2,cfr_version,lver,"");
-      }
-   
-   if (larch)
-      {
-      bson_append_regex(sub2,cfr_arch,larch,"");
-      }
-   }
-else
-   {
-   if (lname)
-      {
-      bson_append_string(sub2,cfr_name,lname);
-      }
-   
-   if (lver)
-      {
-      bson_append_string(sub2,cfr_version,lver);
-      }
-   
-   if (larch)
-      {
-      bson_append_string(sub2,cfr_arch,larch);
-      }
-   }
-
-bson_append_finish_object(sub2);
-bson_from_buffer(&query,&bb);
+  // Can't understand the bson API for nested objects this, so work around..
   
 /* BEGIN RESULT DOCUMENT */
 
@@ -134,8 +81,8 @@ bson_from_buffer(&field, &bb);
 hostnames[0] = '\0';
 addresses[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
-//cursor = mongo_find(conn,MONGO_DATABASE,bson_empty(&b),&field,0,0,0);
+//cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,bson_empty(&b),&field,0,0,0);
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -183,14 +130,54 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
             if (strlen(rname) > 0)
                {
-               AppendRlistAlien(&list,NewHubSoftware(rname,rversion,rarch));
+               int match_name = true, match_version = true, match_arch = true;
+               
+               if (regex)
+                  {
+                  if (lname && !FullTextMatch(lname,rname))
+                     {
+                     match_name = false;
+                     }
+
+                  if (lver && !FullTextMatch(lver,rversion))
+                     {
+                     match_version = false;
+                     }
+
+                  if (larch && !FullTextMatch(larch,rarch))
+                     {
+                     match_arch = false;
+                     }
+                  }
+               else
+                  {
+                  if (lname && (strcmp(lname,rname) != 0))
+                     {
+                     match_name = false;
+                     }
+                  
+                  if (lver && (strcmp(lver,rversion) != 0))
+                     {
+                     match_version = false;
+                     }
+                  
+                  if (larch && (strcmp(larch,rarch) != 0))
+                     {
+                     match_arch = false;
+                     }                  
+                  }
+
+               if (match_name && match_version && match_arch)
+                  {
+                  AppendRlistAlien(&list,NewHubSoftware(rname,rversion,rarch));
+                  }
                }               
             }
          }   
       }
 
    hh = NewHubHost(keyhash,addresses,hostnames);
-   printf("FOUND ON %s,%s,%s\n",keyhash,addresses,hostnames);
+   Debug("FOUND ON %s,%s,%s\n",keyhash,addresses,hostnames);
    }
 
 bson_destroy(&field);
