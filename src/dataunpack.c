@@ -579,7 +579,7 @@ CfOut(cf_verbose,""," -> Repair log data........................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   CFDB_SavePromiseLog(dbconn, id, plog_repaired, data);
+   CFDB_SavePromiseLog(dbconn,id,plog_repaired,data);
    }
 #endif
 
@@ -707,6 +707,11 @@ for (ip = data; ip != NULL; ip=ip->next)
 char *Nova_LongArch(char *arch)
     
 {
+if (arch == NULL)
+   {
+   return "*";
+   }
+ 
 if (strcmp(arch,"3") == 0)
    {
    return "i386";

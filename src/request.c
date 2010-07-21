@@ -17,27 +17,44 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-void Nova_CfQueryCFDB(char *query)
+void Nova_CfQueryCFDB(char *querystr)
 {
 #ifdef HAVE_LIBMONGOC
  mongo_connection dbconn;
- char query_lval[CF_MAXVARSIZE];
- bson b;
-
+ bson query,b;
+ bson_buffer bb;
+ struct Rlist *rp,*list;
+ struct HubSoftware *hs;
+ 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
    CfOut(cf_error, "", "!! Could not open connection to report database");
    }
 
-// CFDB_ReadAllSoftware(&dbconn, bson_empty(&b));
-// CFDB_ListEverything(&dbconn);
-// CFDB_ListAllHosts(&dbconn);
+// bson_buffer_init(&bb);
+// bson_append_string(&bb,cfr_keyhash,"MD5=b6755ae1cd085528535daed2f27a531c");
+// bson_from_buffer(&query,&bb);
+// CFDB_ReadAllSoftware(&dbconn,&query);
 
-CFDB_ListAllHostsWithArrayElement(&dbconn,cfr_software,cfr_name,"samba-client");
+list = CFDB_QuerySoftware(&dbconn,"zypper",NULL,NULL,false);
+
+for (rp = list; rp != NULL; rp=rp->next)
+   {
+   hs = (struct HubSoftware *)rp->item;
+   printf("N: %s\n",hs->name);
+   printf("V: %s\n",hs->version);
+   printf("A: %s\n",Nova_LongArch(hs->arch));
+   }
+
+DeleteRlist(list);
+
+//CFDB_ListEverything(&dbconn);
 
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_error, "", "!! Could not close connection to report database");
    } 
+
 #endif
 }
+

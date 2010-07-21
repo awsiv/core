@@ -63,8 +63,8 @@ void CFDB_Initialize()
 void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr)
 
 { bson_buffer bb;
-  bson_buffer *setObj, *clObj, *keyArr, *keyAdd, *keyArrField;
-  bson cond;  // host description
+  bson_buffer *setObj,*clObj,*keyArr,*keyAdd,*keyArrField;
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   char name[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
@@ -73,21 +73,20 @@ void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr)
   char iStr[32];
   int i;
   
-// find right host
-bson_buffer_init(&bb);
-bson_append_string(&bb, cfr_keyhash,keyhash);
-bson_from_buffer(&cond, &bb);
+// locate right host key
 
 bson_buffer_init(&bb);
+bson_append_string(&bb,cfr_keyhash,keyhash);
+bson_from_buffer(&host_key,&bb);
 
 // insert keys into numbered key array
 
+bson_buffer_init(&bb);
 keyAdd = bson_append_start_object(&bb,"$addToSet");
 keyArrField = bson_append_start_object(keyAdd,cfr_ip_array);
 keyArr = bson_append_start_array(keyAdd,"$each");
 
 i = 0;
-
 snprintf(iStr,sizeof(iStr),"%d",i);
 bson_append_string(keyArr,iStr,ipaddr);
 
@@ -96,10 +95,40 @@ bson_append_finish_object(keyArrField);
 bson_append_finish_object(keyAdd);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
-
+mongo_update(conn, MONGO_DATABASE,&host_key,&setOp,MONGO_UPDATE_UPSERT);
 bson_destroy(&setOp);
-bson_destroy(&cond);
+
+bson_destroy(&host_key);
+
+// Again - locate right host key
+
+bson_buffer_init(&bb);
+bson_append_string(&bb,cfr_keyhash,keyhash);
+bson_from_buffer(&host_key,&bb);
+
+// insert keys into numbered key array
+
+bson_buffer_init(&bb);
+keyAdd = bson_append_start_object(&bb,"$addToSet");
+keyArrField = bson_append_start_object(keyAdd,cfr_host_array);
+keyArr = bson_append_start_array(keyAdd,"$each");
+
+i = 0;
+snprintf(iStr,sizeof(iStr),"%d",i);
+ThreadLock(cft_getaddr);
+bson_append_string(keyArr,iStr,IPString2Hostname(ipaddr));
+ThreadUnlock(cft_getaddr);
+
+bson_append_finish_object(keyArr);
+bson_append_finish_object(keyArrField);
+bson_append_finish_object(keyAdd);
+
+bson_from_buffer(&setOp,&bb);
+mongo_update(conn, MONGO_DATABASE,&host_key,&setOp,MONGO_UPDATE_UPSERT);
+bson_destroy(&setOp);
+
+bson_destroy(&host_key);
+
 }
 
 /*****************************************************************************/
@@ -109,7 +138,7 @@ void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *keyhas
 { bson_buffer bb;
   bson_buffer *setObj;
   bson_buffer *sub;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   int i;
   bson_buffer *arr;
@@ -121,7 +150,7 @@ void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *keyhas
 
 bson_buffer_init(&bb);
 bson_append_string(&bb,cfr_keyhash,keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -164,10 +193,10 @@ bson_append_finish_object(arr);
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);
+bson_destroy(&host_key);
 }
 
 /*****************************************************************************/
@@ -175,7 +204,7 @@ bson_destroy(&cond);
 void CFDB_SaveMonitorData(mongo_connection *conn, char *keyhash, enum monitord_rep rep_type, struct Item *data)
 
 { bson_buffer bb;
-  bson cond;  // host description
+  bson host_key;  // host description
   char varNameIndex[64];
   bson_buffer *setObj;
   bson setOp;
@@ -207,7 +236,7 @@ switch(rep_type)
 
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -251,10 +280,10 @@ for (ip = data; ip != NULL; ip=ip->next)
 bson_append_finish_object(setObj);
 bson_from_buffer(&setOp,&bb);
 
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);
+bson_destroy(&host_key);
 }
 
 /*****************************************************************************/
@@ -264,7 +293,7 @@ void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *keyhash, struct It
 { bson_buffer bb;
   bson_buffer *setObj;
   bson_buffer *arr;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   char arrName[64], kStr[32];
   struct Item *ip;
@@ -274,7 +303,7 @@ void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *keyhash, struct It
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -319,10 +348,10 @@ for (ip = data; ip != NULL; ip=ip->next)
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn,MONGO_DATABASE,&cond,&setOp,MONGO_UPDATE_UPSERT);
+mongo_update(conn,MONGO_DATABASE,&host_key,&setOp,MONGO_UPDATE_UPSERT);
  
 bson_destroy(&setOp);
-bson_destroy(&cond);
+bson_destroy(&host_key);
 }
 
 /*****************************************************************************/
@@ -335,7 +364,7 @@ void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj, *clObj, *keyArr, *keyAdd, *keyArrField;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   char name[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
@@ -347,7 +376,7 @@ void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, struct Item *data)
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -388,10 +417,10 @@ bson_append_finish_object(keyArrField);
 bson_append_finish_object(keyAdd);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);
+bson_destroy(&host_key);
 }
 
 /*****************************************************************************/
@@ -400,7 +429,7 @@ void CFDB_SaveVariables(mongo_connection *conn, char *keyhash, struct Item *data
 
 { bson_buffer bb;
   bson_buffer *setObj, *varObj, *keyArr, *keyAdd, *keyArrField, *arr;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   int i;
@@ -412,7 +441,7 @@ void CFDB_SaveVariables(mongo_connection *conn, char *keyhash, struct Item *data
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -429,12 +458,11 @@ for (ip = data; ip != NULL; ip=ip->next)
    
    sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,lval,rval);
    
-   snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars,scope,lval,cfr_type);
+   snprintf(varName, sizeof(varName),"%s.%s.%s.%s",cfr_vars,scope,lval,cfr_type);
    bson_append_string(setObj, varName, type);
    
-   snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars,scope,lval,cfr_rval);
+   snprintf(varName, sizeof(varName),"%s.%s.%s.%s",cfr_vars,scope,lval,cfr_rval);
    
-   // parse lists into an array
    if (IsCfList(type))
       {
       arr = bson_append_start_array(setObj, varName);
@@ -453,13 +481,14 @@ for (ip = data; ip != NULL; ip=ip->next)
       }
    else
       {
-      bson_append_string(setObj, varName,rval);
+      bson_append_string(setObj,varName,rval);
       }
    }
 
 bson_append_finish_object(setObj);
 
 // append scope.varname to key array
+
 keyAdd = bson_append_start_object(&bb , "$addToSet");
 keyArrField = bson_append_start_object(keyAdd , cfr_var_keys);
 keyArr = bson_append_start_array(keyAdd , "$each");
@@ -478,7 +507,7 @@ for (ip = data, i = 0; ip != NULL; ip=ip->next)
    snprintf(iStr, sizeof(iStr), "%d", i);
    snprintf(varName, sizeof(varName), "%s.%s", scope,lval);
    
-   bson_append_string(keyArr, iStr, varName);
+   bson_append_string(keyArr,iStr,varName);
    i++;
    }
 
@@ -487,10 +516,10 @@ bson_append_finish_object(keyArrField);
 bson_append_finish_object(keyAdd);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);  
+bson_destroy(&host_key);  
 }
 
 /*****************************************************************************/
@@ -499,7 +528,7 @@ void CFDB_SaveTotalCompliance(mongo_connection *conn, char *keyhash, struct Item
 
 { bson_buffer bb;
   bson_buffer *pushObj;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   bson_buffer *arr;
@@ -512,7 +541,7 @@ void CFDB_SaveTotalCompliance(mongo_connection *conn, char *keyhash, struct Item
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -539,10 +568,10 @@ bson_append_finish_object(arr);
 bson_append_finish_object(pushObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);  
+bson_destroy(&host_key);  
 }
 
 /*****************************************************************************/
@@ -552,7 +581,7 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_
 { bson_buffer bb;
   bson_buffer *pushObj;
   bson_buffer *arr, *sub;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   char handle[CF_MAXVARSIZE];
   long then;
@@ -565,7 +594,7 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -601,10 +630,10 @@ bson_append_finish_object(arr);
 bson_append_finish_object(pushObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);
+bson_destroy(&host_key);
 }
 
 /*****************************************************************************/
@@ -613,7 +642,7 @@ void CFDB_SaveLastSeen(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj, *sub;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   char inout, ipaddr[CF_MAXVARSIZE],dns[CF_MAXVARSIZE];
@@ -625,7 +654,7 @@ void CFDB_SaveLastSeen(mongo_connection *conn, char *keyhash, struct Item *data)
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -659,10 +688,10 @@ for (ip = data; ip != NULL; ip=ip->next)
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);  
+bson_destroy(&host_key);  
 }
 
 /*****************************************************************************/
@@ -672,7 +701,7 @@ void CFDB_SaveMeter(mongo_connection *conn, char *keyhash, struct Item *data)
 { bson_buffer bb;
   bson_buffer *setObj;
   bson_buffer *sub;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   char varName[CF_MAXVARSIZE];
@@ -682,7 +711,7 @@ void CFDB_SaveMeter(mongo_connection *conn, char *keyhash, struct Item *data)
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -702,10 +731,10 @@ for (ip = data; ip != NULL; ip=ip->next)
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);
+bson_destroy(&host_key);
 }
 
 /*****************************************************************************/
@@ -715,7 +744,7 @@ void CFDB_SavePerformance(mongo_connection *conn, char *keyhash, struct Item *da
 { bson_buffer bb;
   bson_buffer *setObj;
   bson_buffer *sub;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   char varName[CF_MAXVARSIZE];
@@ -726,7 +755,7 @@ void CFDB_SavePerformance(mongo_connection *conn, char *keyhash, struct Item *da
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -750,10 +779,10 @@ for (ip = data; ip != NULL; ip=ip->next)
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);
+bson_destroy(&host_key);
 }
 
 /*****************************************************************************/
@@ -762,7 +791,7 @@ void CFDB_SaveSetUid(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *keyArr, *keyAdd, *keyArrField;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   char progName[CF_MAXVARSIZE];
@@ -772,7 +801,7 @@ void CFDB_SaveSetUid(mongo_connection *conn, char *keyhash, struct Item *data)
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -794,10 +823,10 @@ bson_append_finish_object(keyArrField);
 bson_append_finish_object(keyAdd);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);
+bson_destroy(&host_key);
 }
 
 /*****************************************************************************/
@@ -807,7 +836,7 @@ void CFDB_SavePromiseCompliance(mongo_connection *conn, char *keyhash, struct It
 { bson_buffer bb;
   bson_buffer *setObj;
   bson_buffer *sub;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   char varName[CF_MAXVARSIZE];
@@ -819,7 +848,7 @@ void CFDB_SavePromiseCompliance(mongo_connection *conn, char *keyhash, struct It
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -843,10 +872,10 @@ for (ip = data; ip != NULL; ip=ip->next)
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);
+bson_destroy(&host_key);
 }
 
 /*****************************************************************************/
@@ -855,7 +884,7 @@ void CFDB_SaveFileChanges(mongo_connection *conn, char *keyhash, struct Item *da
 
 { bson_buffer bb;
   bson_buffer *pushObj;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   bson_buffer *arr;
@@ -869,7 +898,7 @@ void CFDB_SaveFileChanges(mongo_connection *conn, char *keyhash, struct Item *da
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -894,10 +923,10 @@ bson_append_finish_object(arr);
 bson_append_finish_object(pushObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);  
+bson_destroy(&host_key);  
 }
 
 /*****************************************************************************/
@@ -906,7 +935,7 @@ void CFDB_SaveFileDiffs(mongo_connection *conn, char *keyhash, struct Item *data
 
 { bson_buffer bb;
   bson_buffer *pushObj;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   bson_buffer *arr;
@@ -921,7 +950,7 @@ void CFDB_SaveFileDiffs(mongo_connection *conn, char *keyhash, struct Item *data
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -956,10 +985,10 @@ bson_append_finish_object(arr);
 bson_append_finish_object(pushObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);  
+bson_destroy(&host_key);  
 }
 
 /*****************************************************************************/
@@ -968,7 +997,7 @@ void CFDB_SaveBundles(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj, *sub;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   char bundle[CF_MAXVARSIZE];
@@ -980,7 +1009,7 @@ void CFDB_SaveBundles(mongo_connection *conn, char *keyhash, struct Item *data)
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -1010,10 +1039,10 @@ for (ip = data; ip != NULL; ip=ip->next)
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);  
+bson_destroy(&host_key);  
 }
 
 /*****************************************************************************/
@@ -1022,7 +1051,7 @@ void CFDB_SaveValue(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *pushObj;
-  bson cond;  // host description
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
   bson_buffer *arr;
@@ -1035,7 +1064,7 @@ void CFDB_SaveValue(mongo_connection *conn, char *keyhash, struct Item *data)
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&cond, &bb);
+bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
@@ -1063,12 +1092,11 @@ bson_append_finish_object(arr);
 bson_append_finish_object(pushObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &cond, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
-bson_destroy(&cond);  
+bson_destroy(&host_key);  
 }
-
 
 #endif  /* HAVE_MONGOC */
 

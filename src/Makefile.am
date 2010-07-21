@@ -49,6 +49,7 @@ libcfnova_la_SOURCES =						\
 	magnify.c						\
 	coordinates.c						\
 	cfcore.c                                                \
+	install.c						\
 	win_api.c						\
         win_disphelper.c                                        \
 	win_file.c						\
