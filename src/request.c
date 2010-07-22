@@ -25,6 +25,7 @@ void Nova_CfQueryCFDB(char *querystr)
  bson_buffer bb;
  struct Rlist *rp,*list;
  struct HubSoftware *hs;
+ struct HubQuery *hq;
  
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
@@ -36,17 +37,16 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
 // bson_from_buffer(&query,&bb);
 // CFDB_ReadAllSoftware(&dbconn,&query);
 
-list = CFDB_QuerySoftware(&dbconn,"zypper",NULL,NULL,false);
+hq = CFDB_QuerySoftware(&dbconn,"zypper",NULL,NULL,false);
 
-for (rp = list; rp != NULL; rp=rp->next)
+for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hs = (struct HubSoftware *)rp->item;
-   printf("N: %s\n",hs->name);
-   printf("V: %s\n",hs->version);
-   printf("A: %s\n",Nova_LongArch(hs->arch));
+   printf("result: (%s,%s,%s) ",hs->name,hs->version,Nova_LongArch(hs->arch));
+   printf("found on (%s=%s=%s)\n",hs->hh->keyhash,hs->hh->hostname,hs->hh->ipaddr);
    }
 
-DeleteRlist(list);
+DeleteHubQuery(hq,DeleteHubSoftware);
 
 //CFDB_ListEverything(&dbconn);
 

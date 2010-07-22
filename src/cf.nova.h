@@ -301,7 +301,7 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 #ifdef HAVE_LIBMONGOC
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
-struct Rlist *CFDB_QuerySoftware(mongo_connection *conn,char *name,char *ver,char *arch,int regex);
+struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *name,char *ver,char *arch,int regex);
 void PrintCFDBKey(bson_iterator *it, int depth);
 int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
 #endif /* HAVE_LIBMONGOC */
@@ -443,27 +443,29 @@ struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *name,enum observ
 
 /* install.c */
 
+struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records);
+void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)());
 struct HubHost *NewHubHost(char *keyhash,char *host,char *ipaddr);
 void DeleteHubHost(struct HubHost *hp);
-struct HubSoftware *NewHubSoftware(char *name,char *version,char *arch);
+struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch);
 void DeleteHubSoftware(struct HubSoftware *hs);
-struct HubClass *NewHubClass(double p, double dev, time_t t);
+struct HubClass *NewHubClass(struct HubHost *hh,double p, double dev, time_t t);
 void DeleteHubClass(struct HubClass *hc);
-struct HubTotalCompliance *NewHubTotalCompliance(time_t t,char *v,int k,int r,int n);
+struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,char *v,int k,int r,int n);
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
-struct HubVariable *NewHubVariable(char *type,char *scope,char *lval,char *rval);
+struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,char *rval);
 void DeleteHubVariable(struct HubVariable *hv);
-struct HubPromiseLog *NewHubPromiseLog(char *handle,time_t t);
+struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,time_t t);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
-struct HubLastSeen *NewHubLastSeen(char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
+struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
 void DeleteHubLastSeen(struct HubLastSeen *hp);
-struct HubMeter *NewHubMeter(char type,double kept,double repaired);
+struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double repaired);
 void DeleteHubMeter(struct HubMeter *hp);
-struct HubPerformance *NewHubPerformance(char *event,time_t t,double q,double e,double d);
+struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t,double q,double e,double d);
 void DeleteHubPerformance(struct HubPerformance *hp);
-struct HubSetUid *NewHubSetUid(char *file);
+struct HubSetUid *NewHubSetUid(struct HubHost *hh,char *file);
 void DeleteHubSetUid(struct HubSetUid *hp);
-struct HubPromiseCompliance *NewHubCompliance(char status,double e,double d,time_t t);
+struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char status,double e,double d,time_t t);
 void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp);
 
 /* knowledge.c */
@@ -960,6 +962,7 @@ struct HubHost
 
 struct HubSoftware
    {
+   struct HubHost *hh;
    char *name;
    char *version;
    char *arch;
@@ -967,6 +970,7 @@ struct HubSoftware
 
 struct HubClass
    {
+   struct HubHost *hh;
    double prob;
    double dev;
    time_t t;
@@ -974,6 +978,7 @@ struct HubClass
 
 struct HubTotalCompliance
    {
+   struct HubHost *hh;
    time_t t;
    char *version;
    int kept;
@@ -983,6 +988,7 @@ struct HubTotalCompliance
 
 struct HubVariable
    {
+   struct HubHost *hh;
    char *type;
    char *scope;
    char *lval;
@@ -991,12 +997,14 @@ struct HubVariable
 
 struct HubPromiseLog // promise kept,repaired or not kept
    {
+   struct HubHost *hh;
    char *handle;
    time_t t;
    };
 
 struct HubLastSeen
    {
+   struct HubHost *hh;      
    struct HubHost *rhost;
    char io;
    double hrsago;
@@ -1005,8 +1013,19 @@ struct HubLastSeen
    time_t t;
    };
 
+struct BundleSeen
+   {
+   struct HubHost *hh;      
+   char *bundle;
+   double hrsago;
+   double hrsavg;
+   double hrsdev;
+   time_t t;
+   };
+
 struct HubMeter
    {
+   struct HubHost *hh;      
    char type;
    double kept;
    double repaired;
@@ -1015,6 +1034,7 @@ struct HubMeter
 
 struct HubPerformance
    {
+   struct HubHost *hh;      
    char *event;
    double q;
    double e;
@@ -1024,15 +1044,22 @@ struct HubPerformance
   
 struct HubSetUid
    {
+   struct HubHost *hh;      
    struct HubHost *host;
    char *path;
    };
 
 struct HubPromiseCompliance
    {
+   struct HubHost *hh;      
    char status; // 'r' / 'k' / 'n'
    double e;
    double d;
    time_t t;
    };
 
+struct HubQuery
+   {
+   struct Rlist *hosts;
+   struct Rlist *records;
+   };

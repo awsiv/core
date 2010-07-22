@@ -19,6 +19,45 @@
 
 /*****************************************************************************/
 
+struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records)
+
+{ struct HubQuery *hq;
+
+if ((hq = malloc(sizeof(struct HubQuery))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubQuery");
+   }
+
+hq->hosts = hosts;
+hq->records = records;
+return hq;
+}
+
+/*****************************************************************************/
+
+void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)())
+
+{ struct Rlist *rp;
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   DeleteHubHost(rp->item);
+   rp->item = NULL;
+   }
+ 
+DeleteRlist(hq->hosts);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   (*fnptr)(rp->item);
+   rp->item = NULL;
+   }
+ 
+DeleteRlist(hq->records);
+}
+
+/*****************************************************************************/
+
 struct HubHost *NewHubHost(char *keyhash,char *hostname,char *ipaddr)
 
 { struct HubHost *hp;
@@ -82,7 +121,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubSoftware *NewHubSoftware(char *name,char *version,char *arch)
+struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch)
 
 { struct HubSoftware *hp;
 
@@ -90,6 +129,8 @@ if ((hp = malloc(sizeof(struct HubSoftware))) == NULL)
    {
    FatalError("Memory exhausted NewHubSoftware");
    }
+
+hp->hh = hh;
 
 if (name)
    {
@@ -146,7 +187,7 @@ free(hs);
 
 /*****************************************************************************/
 
-struct HubClass *NewHubClass(double p, double dev, time_t t)
+struct HubClass *NewHubClass(struct HubHost *hh,double p, double dev, time_t t)
 
 { struct HubClass *hp;
 
@@ -155,6 +196,7 @@ if ((hp = malloc(sizeof(struct HubClass))) == NULL)
    FatalError("Memory exhausted NewHubSoftware");
    }
 
+hp->hh = hh;
 hp->prob = p;
 hp->dev = dev;
 hp->t = t;
@@ -170,7 +212,7 @@ free(hc);
 
 /*****************************************************************************/
 
-struct HubTotalCompliance *NewHubTotalCompliance(time_t t,char *v,int k,int r,int n)
+struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,char *v,int k,int r,int n)
 
 { struct HubTotalCompliance *hp;
  
@@ -179,6 +221,7 @@ if ((hp = malloc(sizeof(struct HubTotalCompliance))) == NULL)
    FatalError("Memory exhausted NewHubSoftware");
    }
 
+hp->hh = hh;
 hp->t = t;
 hp->version = v;
 hp->kept = k;
@@ -196,7 +239,7 @@ free(ht);
 
 /*****************************************************************************/
 
-struct HubVariable *NewHubVariable(char *type,char *scope,char *lval,char *rval)
+struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,char *rval)
 
 { struct HubVariable *hp;
      
@@ -205,6 +248,7 @@ if ((hp = malloc(sizeof(struct HubVariable))) == NULL)
    FatalError("Memory exhausted NewHubVariable");
    }
 
+hp->hh = hh;
 hp->type = strdup(type);
 hp->scope = strdup(scope);
 hp->rval = strdup(rval);
@@ -222,7 +266,7 @@ free(hv);
 
 /*****************************************************************************/
 
-struct HubPromiseLog *NewHubPromiseLog(char *handle,time_t t)
+struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,time_t t)
 
 { struct HubPromiseLog *hp;
      
@@ -231,6 +275,7 @@ if ((hp = malloc(sizeof(struct HubPromiseLog))) == NULL)
    FatalError("Memory exhausted NewHubPromiseLog");
    }
 
+hp->hh = hh;
 hp->handle = strdup(handle);
 hp->t = t;
 return hp;
@@ -247,7 +292,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubLastSeen *NewHubLastSeen(char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t)
+struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t)
 
 { struct HubLastSeen *hp;
      
@@ -256,6 +301,7 @@ if ((hp = malloc(sizeof(struct HubLastSeen))) == NULL)
    FatalError("Memory exhausted NewHubLastSeen");
    }
 
+hp->hh = hh;
 hp->io = io;  // '+' or '-'
 hp->rhost = NewHubHost(kh,rhost,ip);
 hp->hrsago;
@@ -276,7 +322,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubMeter *NewHubMeter(char type,double kept,double repaired)
+struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double repaired)
 
 { struct HubMeter *hp;
      
@@ -285,6 +331,7 @@ if ((hp = malloc(sizeof(struct HubMeter))) == NULL)
    FatalError("Memory exhausted NewHubLastSeen");
    }
 
+hp->hh = hh;
 hp->type = type;
 hp->kept = kept;
 hp->repaired = repaired;
@@ -301,7 +348,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubPerformance *NewHubPerformance(char *event,time_t t,double q,double e,double d)
+struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t,double q,double e,double d)
 
 { struct HubPerformance *hp;
      
@@ -310,6 +357,7 @@ if ((hp = malloc(sizeof(struct HubPerformance))) == NULL)
    FatalError("Memory exhausted NewHubPerformance");
    }
 
+hp->hh = hh;
 hp->event = strdup(event);
 hp->q = q;
 hp->e = e;
@@ -328,7 +376,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubSetUid *NewHubSetUid(char *file)
+struct HubSetUid *NewHubSetUid(struct HubHost *hh,char *file)
 
 { struct HubSetUid *hp;
      
@@ -337,6 +385,7 @@ if ((hp = malloc(sizeof(struct HubSetUid))) == NULL)
    FatalError("Memory exhausted NewHubSetuid");
    }
 
+hp->hh = hh;
 hp->path = file;
 return hp;
 }
@@ -351,7 +400,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubPromiseCompliance *NewHubCompliance(char status,double e,double d,time_t t)
+struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char status,double e,double d,time_t t)
 
 { struct HubPromiseCompliance *hp;
      
@@ -360,6 +409,7 @@ if ((hp = malloc(sizeof(struct HubPromiseCompliance))) == NULL)
    FatalError("Memory exhausted NewHubPromiseCompliance");
    }
 
+hp->hh = hh;
 hp->status = status;
 hp->e = e;
 hp->d = d;

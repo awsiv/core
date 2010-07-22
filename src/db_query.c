@@ -52,14 +52,14 @@ mongo_cursor_destroy(cursor);
 
 /*****************************************************************************/
 
-struct Rlist *CFDB_QuerySoftware(mongo_connection *conn,char *lname,char *lver,char *larch,int regex)
+struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *lname,char *lver,char *larch,int regex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
-  struct Rlist *rp,*list = NULL;
   struct HubHost *hh;
+  struct Rlist *rp,*record_list = NULL, *host_list = NULL;
   char rname[CF_MAXVARSIZE],rversion[CF_MAXVARSIZE],rarch[3];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
   
@@ -87,6 +87,10 @@ cursor = mongo_find(conn,MONGO_DATABASE,bson_empty(&b),&field,0,0,0);
 while (mongo_cursor_next(cursor))  // loops over documents
    {
    bson_iterator_init(&it1,cursor->current.data);
+
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
 
    while (bson_iterator_next(&it1))
       {
@@ -169,7 +173,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
                if (match_name && match_version && match_arch)
                   {
-                  AppendRlistAlien(&list,NewHubSoftware(rname,rversion,rarch));
+                  AppendRlistAlien(&record_list,NewHubSoftware(NULL,rname,rversion,rarch));
                   }
                }               
             }
@@ -177,13 +181,28 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
 
    hh = NewHubHost(keyhash,addresses,hostnames);
-   Debug("FOUND ON %s,%s,%s\n",keyhash,addresses,hostnames);
+   AppendRlistAlien(&host_list,hh);
+   printf("FOUND ON %s,%s,%s\n",keyhash,addresses,hostnames);
+
+   // Now cache the host reference in all of the records to flatten the 2d list
+   
+   for (rp = record_list; rp != NULL; rp=rp->next)
+      {
+      struct HubSoftware *hs = (struct HubSoftware *)rp->item;
+      hs->hh = hh;
+      }
    }
 
 bson_destroy(&field);
 mongo_cursor_destroy(cursor);
-return list;
+return NewHubQuery(host_list,record_list);
 }
+
+/*****************************************************************************/
+
+
+
+/*****************************************************************************/
 
 /*****************************************************************************/
 /* Level                                                                     */
@@ -201,7 +220,6 @@ if (bson_iterator_type(it1) == bson_string && strcmp(bson_iterator_key(it1),cfr_
 if (strcmp(bson_iterator_key(it1),cfr_ip_array) == 0)
    {         
    bson_iterator_init(&it2, bson_iterator_value(it1));
-   ipaddr[0] = '\0';
    
    while (bson_iterator_next(&it2))
       {
@@ -211,8 +229,8 @@ if (strcmp(bson_iterator_key(it1),cfr_ip_array) == 0)
 
 if (strcmp(bson_iterator_key(it1),cfr_host_array) == 0)
    {         
+   printf("FOUND KEY.\n");
    bson_iterator_init(&it2, bson_iterator_value(it1));
-   hostnames[0] = '\0';
    
    while (bson_iterator_next(&it2))
       {
