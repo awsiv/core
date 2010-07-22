@@ -432,7 +432,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char status,double e,double d,time_t t)
+struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,char status,double e,double d,time_t t)
 
 { struct HubPromiseCompliance *hp;
      
@@ -442,6 +442,7 @@ if ((hp = malloc(sizeof(struct HubPromiseCompliance))) == NULL)
    }
 
 hp->hh = hh;
+hp->handle = strdup(handle);
 hp->status = status;
 hp->e = e;
 hp->d = d;
@@ -453,5 +454,6 @@ return hp;
 
 void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp)
 {
+free(hp->handle);
 free(hp); 
 }

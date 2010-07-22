@@ -30,6 +30,7 @@ void Nova_CfQueryCFDB(char *querystr)
  struct HubQuery *hq;
  struct HubTotalCompliance *ht;
  struct HubVariable *hv;
+ struct HubPromiseCompliance *hp;
  
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
@@ -99,7 +100,8 @@ printf("\n");
 
 ****************************************************************/
 
-hq = CFDB_QueryVariables(&dbconn,NULL,NULL,NULL,NULL);
+/* Example 4 **************************************************
+hq = CFDB_QueryVariables(&dbconn,"web.*",NULL,NULL,NULL,true);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -117,6 +119,27 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
    printf("%s  ",hh->hostname);
    }
 printf("\n");
+
+****************************************************************/
+
+hq = CFDB_QueryPromiseCompliance(&dbconn,NULL,'x',true);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hp = (struct HubPromiseCompliance *)rp->item;
+   printf("result: (%s) %lf,%lf at %s",hp->handle,hp->e,hp->d,cf_ctime(&(hp->t)));
+   printf("found on (%s=%s=%s)\n",hp->hh->keyhash,hp->hh->hostname,hp->hh->ipaddr);
+   }
+
+printf("Search returned matches from hosts: ");
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   printf("%s  ",hh->hostname);
+   }
+printf("\n");
+
 
 
 

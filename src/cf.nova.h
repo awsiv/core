@@ -303,7 +303,8 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *name,char *ver,char *arch,int regex);
 struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *lclass,int regex);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *lversion,time_t ltime,int lkept,int lnotkept,int lrepaired,int cmp);
-struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *lscope,char *llval,char *lrval,char *ltype);
+struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *lscope,char *llval,char *lrval,char *ltype,int reg);
+struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *handle,char lstatus,int regex);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
@@ -470,7 +471,7 @@ struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t
 void DeleteHubPerformance(struct HubPerformance *hp);
 struct HubSetUid *NewHubSetUid(struct HubHost *hh,char *file);
 void DeleteHubSetUid(struct HubSetUid *hp);
-struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char status,double e,double d,time_t t);
+struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,char status,double e,double d,time_t t);
 void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp);
 
 /* knowledge.c */
@@ -1061,7 +1062,8 @@ struct HubSetUid
 
 struct HubPromiseCompliance
    {
-   struct HubHost *hh;      
+   struct HubHost *hh;
+   char *handle;
    char status; // 'r' / 'k' / 'n'
    double e;
    double d;

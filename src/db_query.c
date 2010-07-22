@@ -176,7 +176,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
                if (match_name && match_version && match_arch)
                   {
                   found = true;
-                  printf("FOUND A MATCH %s\n",rname);
                   AppendRlistAlien(&record_list,NewHubSoftware(NULL,rname,rversion,rarch));
                   }
                }               
@@ -291,8 +290,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   CfOut(cf_error,"", " !! Unknown key \"%s\" in classes",bson_iterator_key(&it3));
                   }
                }
-
-            printf("COMPA %s %s\n",lclass,rclass);
 
             match_class = true;
             
@@ -518,7 +515,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *lscope,char *llval,char *lrval,char *ltype)
+struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *lscope,char *llval,char *lrval,char *ltype,int regex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
@@ -628,44 +625,55 @@ while (mongo_cursor_next(cursor))  // loops over documents
                      CfOut(cf_error,"", " !! Unknown key \"%s\" in total compliance",bson_iterator_key(&it3));
                      }
                   }
-                             
+
+               // Now do selection
+               
                match_type = match_scope = match_lval = match_rval = true;
                
-                
-/*            if (lt != -1 && lt > rt)
-              {
-              match_t = false;
-              }
-              
-            if (lkept != -1 && lkept > rkept)
-            {
-            match_kept = false;
-            }
-            
-            if (lnotkept != -1 && lnotkept > rnotkept)
-            {
-            match_notkept = false;
-            }               
-            
-            if (lrepaired != -1 && lrepaired > rrepaired)
-            {
-            match_repaired = false;
-            }               
-*/       
+               if (llval && !FullTextMatch(llval,rlval))
+                  {
+                  match_lval = false;
+                  }
+
+               if (regex)
+                  {
+                  if (lrval && !FullTextMatch(lrval,rrval))
+                     {
+                     match_rval = false;
+                     }
+                  
+                  if (lscope && !FullTextMatch(lscope,rscope))
+                     {
+                     match_scope = false;
+                     }
+                  
+                  if (ltype && !FullTextMatch(ltype,dtype))
+                     {
+                     match_type = false;
+                     }
+                  }
+               else
+                  {
+                  if (lrval && strcmp(lrval,rrval) != 0)
+                     {
+                     match_rval = false;
+                     }
+                  
+                  if (lscope && strcmp(lscope,rscope) != 0)
+                     {
+                     match_scope = false;
+                     }
+                  
+                  if (ltype && strcmp(ltype,dtype) != 0)
+                     {
+                     match_type = false;
+                     }
+                  }
+                  
                if (match_type && match_scope && match_lval && match_rval)
                   {
                   found = true;
                   AppendRlistAlien(&record_list,NewHubVariable(NULL,dtype,rscope,rlval,rrval,rtype));
-                  if (rtype== CF_SCALAR)
-                     {
-                     printf("INstalling (%s) %s.%s = %s\n",dtype,rscope,rlval,rrval);
-                     }
-                  else
-                     {
-                     printf("INstalling (%s) %s.%s = %s\n",dtype,rscope,rlval,"list");
-                     ShowRval(stdout,newlist,CF_LIST);
-                     printf("\n");
-                     }
                   }
                }
             }
@@ -691,6 +699,174 @@ bson_destroy(&field);
 mongo_cursor_destroy(cursor);
 return NewHubQuery(host_list,record_list);
 }
+
+/*****************************************************************************/
+
+struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *lhandle,char lstatus,int regex)
+
+{ bson_buffer bb,*sub1,*sub2,*sub3;
+  bson b,query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct HubHost *hh;
+  struct Rlist *rp,*record_list = NULL, *host_list = NULL;
+  time_t rtime;
+  double rsigma,rex;
+  char rhandle[CF_MAXVARSIZE],rstatus,*prstat;
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  int match_handle,match_status,found;
+  
+/* BEGIN query document */
+
+  // Can't understand the bson API for nested objects this, so work around..
+  
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,cfr_promisecompl,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+hostnames[0] = '\0';
+addresses[0] = '\0';
+
+//cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,bson_empty(&b),&field,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   rhandle[0] = '\0';
+   found = false;
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
+
+      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      
+      /* Query specific search/marshalling */
+
+      if (strcmp(bson_iterator_key(&it1),cfr_promisecompl) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+            strncpy(rhandle,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+
+            rex = 0;
+            rsigma = 0;
+            rtime = 0;
+            rstatus = 'x';
+            
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
+                  {
+                  rex = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
+                  {
+                  rsigma = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
+                  {
+                  rtime = bson_iterator_int(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_promisestatus) == 0)
+                  {
+                  prstat = (char *)bson_iterator_string(&it3);
+                  rstatus = *prstat;
+                  }
+               else
+                  {
+                  CfOut(cf_error,"", " !! Unknown key \"%s\" in promise compliance",bson_iterator_key(&it3));
+                  }
+               }
+
+            match_handle = match_status = true;
+            
+            if (regex)
+               {
+               if (lhandle && !FullTextMatch(lhandle,rhandle))
+                  {
+                  match_handle = false;
+                  }
+               }
+            else
+               {
+               if (lhandle && (strcmp(lhandle,rhandle) != 0))
+                  {
+                  match_handle = false;
+                  }
+               }
+
+            if (lstatus != 'x' && lstatus != rstatus)
+               {
+               match_status = false;
+               }
+            
+            if (match_handle && match_status)
+               {
+               found = true;
+               AppendRlistAlien(&record_list,NewHubCompliance(NULL,rhandle,rstatus,rex,rsigma,rtime));
+               }            
+            }
+         }   
+      }
+
+   if (found)
+      {
+      hh = NewHubHost(keyhash,addresses,hostnames);
+      AppendRlistAlien(&host_list,hh);
+
+      // Now cache the host reference in all of the records to flatten the 2d list
+   
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubClass *hs = (struct HubClass *)rp->item;
+         hs->hh = hh;
+         }
+      }
+   }
+
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,record_list);
+}
+
+
+
+
+
+
+    
+    /*
+struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t)
+
+struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double repaired)
+
+
+struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t,double q,double e,double d)
+
+struct HubSetUid *NewHubSetUid(struct HubHost *hh,char *file)
+
+struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char status,double e,double d,time_t t)
+
+
+*/
+
+
 
 /*****************************************************************************/
 /* Level                                                                     */
