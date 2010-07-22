@@ -517,6 +517,140 @@ return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/
+
+struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *lscope,char *llval,char *lrval,char *ltype)
+
+{ bson_buffer bb,*sub1,*sub2,*sub3;
+  bson b,query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3,it4;
+  struct HubHost *hh;
+  struct Rlist *rp,*record_list = NULL, *host_list = NULL;
+  int rkept,rnotkept,rrepaired,found = false;
+  int match_kept,match_notkept,match_repaired,match_version,match_t;
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rversion[CF_MAXVARSIZE];
+  char rscope[CF_MAXVARSIZE], rlval[CF_MAXVARSIZE],rrval[CF_BUFSIZE],rtype[CF_MAXVARSIZE];
+  time_t rt;
+  
+/* BEGIN query document */
+
+  // Can't understand the bson API for nested objects this, so work around..
+  
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,cfr_vars,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+hostnames[0] = '\0';
+addresses[0] = '\0';
+
+//cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,bson_empty(&b),&field,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
+
+      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      found = false;
+
+      /* Query specific search/marshalling */
+
+      if (strcmp(bson_iterator_key(&it1),cfr_vars) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3,bson_iterator_value(&it2));
+
+            strncmp(rscope,bson_iterator_string(&it2),CF_MAXVARSIZE);
+ 
+            while (bson_iterator_next(&it3))
+               {
+               bson_iterator_init(&it4,bson_iterator_value(&it3));
+                             
+               while (bson_iterator_next(&it4))
+                  {
+               printf("FOUND SCPE %s=%s\n",bson_iterator_key(&it4),bson_iterator_string(&it4));                
+                  
+                  if (strcmp(bson_iterator_key(&it3),cfr_rval) == 0)
+                     {
+                     strncpy(rrval,bson_iterator_string(&it3),CF_MAXVARSIZE);
+                     }
+                  else
+                     {
+                     CfOut(cf_error,"", " !! Unknown key \"%s\" in total compliance",bson_iterator_key(&it3));
+                     }
+                  }
+               
+               match_version = match_t = match_kept = match_notkept = match_repaired = true;
+               
+/*            if (lt != -1 && lt > rt)
+              {
+              match_t = false;
+              }
+              
+            if (lkept != -1 && lkept > rkept)
+            {
+            match_kept = false;
+            }
+            
+            if (lnotkept != -1 && lnotkept > rnotkept)
+            {
+            match_notkept = false;
+            }               
+            
+            if (lrepaired != -1 && lrepaired > rrepaired)
+            {
+            match_repaired = false;
+            }               
+*/       
+               if (match_kept && match_notkept && match_repaired && match_t && match_version)
+                  {
+                  found = true;
+                  AppendRlistAlien(&record_list,NewHubTotalCompliance(NULL,rt,rversion,rkept,rrepaired,rnotkept));
+                  }
+               }
+            }
+         }   
+      }
+
+   if (found)
+      {
+      hh = NewHubHost(keyhash,addresses,hostnames);
+      AppendRlistAlien(&host_list,hh);
+      
+      // Now cache the host reference in all of the records to flatten the 2d list
+      
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubTotalCompliance *hs = (struct HubTotalCompliance *)rp->item;
+         hs->hh = hh;
+         }
+      }
+   }
+
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,record_list);
+}
+
+/*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
 

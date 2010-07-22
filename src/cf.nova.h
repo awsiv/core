@@ -997,10 +997,10 @@ struct HubTotalCompliance
 struct HubVariable
    {
    struct HubHost *hh;
-   char *type;
    char *scope;
    char *lval;
-   char *rval;
+   void *rval;
+   char *rtype;
    };
 
 struct HubPromiseLog // promise kept,repaired or not kept

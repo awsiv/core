@@ -29,6 +29,7 @@ void Nova_CfQueryCFDB(char *querystr)
  struct HubClass *hc;
  struct HubQuery *hq;
  struct HubTotalCompliance *ht;
+ struct HubVariable *hv;
  
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
@@ -74,12 +75,34 @@ DeleteHubQuery(hq,DeleteHubClass);
 
 ****************************************************************/
 
+/* Example 3 **************************************************
+
 hq = CFDB_QueryTotalCompliance(&dbconn,NULL,-1,-1,-1,-1,CFDB_GREATERTHANEQ);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    ht = (struct HubTotalCompliance *)rp->item;
    printf("result: %s,%d,%d,%d at %s",ht->version,ht->kept,ht->repaired,ht->notkept,cf_ctime(&(ht->t)));
+   printf("found on (%s=%s=%s)\n",ht->hh->keyhash,ht->hh->hostname,ht->hh->ipaddr);
+   }
+
+printf("Search returned matches from hosts: ");
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   printf("%s  ",hh->hostname);
+   }
+printf("\n");
+
+****************************************************************/
+
+hq = CFDB_QueryVariables(&dbconn,NULL,"","","","");
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hv = (struct HubVariable *)rp->item;
+   printf("result: %s,%d,%d,%d at %s",hv->scope,hv->lval,hv->rval,cf_ctime(&(ht->t)));
    printf("found on (%s=%s=%s)\n",ht->hh->keyhash,ht->hh->hostname,ht->hh->ipaddr);
    }
 
