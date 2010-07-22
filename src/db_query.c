@@ -523,13 +523,14 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *lscope,char *l
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
   mongo_cursor *cursor;
-  bson_iterator it1,it2,it3,it4;
+  bson_iterator it1,it2,it3,it4,it5;
   struct HubHost *hh;
-  struct Rlist *rp,*record_list = NULL, *host_list = NULL;
+  struct Rlist *rp,*record_list = NULL, *host_list = NULL,*newlist;
   int rkept,rnotkept,rrepaired,found = false;
-  int match_kept,match_notkept,match_repaired,match_version,match_t;
+  int match_type,match_scope,match_lval,match_rval;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rversion[CF_MAXVARSIZE];
-  char rscope[CF_MAXVARSIZE], rlval[CF_MAXVARSIZE],rrval[CF_BUFSIZE],rtype[CF_MAXVARSIZE];
+  char rscope[CF_MAXVARSIZE], rlval[CF_MAXVARSIZE],mrval[CF_BUFSIZE],dtype[CF_MAXVARSIZE],rtype;
+  void *rrval;
   time_t rt;
   
 /* BEGIN query document */
@@ -568,6 +569,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
       CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       found = false;
 
+      rlval[0] = '\0';
+      rrval = NULL;
+      rtype = CF_SCALAR;
+      
       /* Query specific search/marshalling */
 
       if (strcmp(bson_iterator_key(&it1),cfr_vars) == 0)
@@ -578,28 +583,55 @@ while (mongo_cursor_next(cursor))  // loops over documents
             {
             bson_iterator_init(&it3,bson_iterator_value(&it2));
 
-            strncmp(rscope,bson_iterator_string(&it2),CF_MAXVARSIZE);
- 
+            strncpy(rscope,bson_iterator_key(&it2),CF_MAXVARSIZE);
+
             while (bson_iterator_next(&it3))
                {
                bson_iterator_init(&it4,bson_iterator_value(&it3));
-                             
+
+               strncpy(rlval,bson_iterator_key(&it3),CF_MAXVARSIZE-1);
+               
+               if (strcmp(bson_iterator_key(&it4),cfr_type) == 0)
+                  {
+                  strncpy(dtype,bson_iterator_string(&it4),CF_MAXVARSIZE-1);
+                  }
+               
                while (bson_iterator_next(&it4))
                   {
-               printf("FOUND SCPE %s=%s\n",bson_iterator_key(&it4),bson_iterator_string(&it4));                
-                  
-                  if (strcmp(bson_iterator_key(&it3),cfr_rval) == 0)
+                  if (strcmp(bson_iterator_key(&it4),cfr_rval) == 0)
                      {
-                     strncpy(rrval,bson_iterator_string(&it3),CF_MAXVARSIZE);
+                     switch (bson_iterator_type(&it4))
+                        {
+                        case bson_array:
+                        case bson_object:
+                            bson_iterator_init(&it5,bson_iterator_value(&it4));
+                            rrval = newlist;
+                            rtype = CF_LIST;
+                            while (bson_iterator_next(&it5))
+                               {
+                               AppendRScalar(&newlist,(char *)bson_iterator_string(&it5),CF_SCALAR);   
+                               }
+                            break;
+
+                        default:
+                            rrval = strdup(bson_iterator_string(&it4));
+                            rtype = CF_SCALAR;
+                            break;                            
+                        }
+                     }
+                  else if (strcmp(bson_iterator_key(&it4),cfr_type) == 0)
+                     {
+                     strncpy(dtype,bson_iterator_string(&it4),CF_MAXVARSIZE);
                      }
                   else
                      {
                      CfOut(cf_error,"", " !! Unknown key \"%s\" in total compliance",bson_iterator_key(&it3));
                      }
                   }
+                             
+               match_type = match_scope = match_lval = match_rval = true;
                
-               match_version = match_t = match_kept = match_notkept = match_repaired = true;
-               
+                
 /*            if (lt != -1 && lt > rt)
               {
               match_t = false;
@@ -620,10 +652,20 @@ while (mongo_cursor_next(cursor))  // loops over documents
             match_repaired = false;
             }               
 */       
-               if (match_kept && match_notkept && match_repaired && match_t && match_version)
+               if (match_type && match_scope && match_lval && match_rval)
                   {
                   found = true;
-                  AppendRlistAlien(&record_list,NewHubTotalCompliance(NULL,rt,rversion,rkept,rrepaired,rnotkept));
+                  AppendRlistAlien(&record_list,NewHubVariable(NULL,dtype,rscope,rlval,rrval,rtype));
+                  if (rtype== CF_SCALAR)
+                     {
+                     printf("INstalling (%s) %s.%s = %s\n",dtype,rscope,rlval,rrval);
+                     }
+                  else
+                     {
+                     printf("INstalling (%s) %s.%s = %s\n",dtype,rscope,rlval,"list");
+                     ShowRval(stdout,newlist,CF_LIST);
+                     printf("\n");
+                     }
                   }
                }
             }

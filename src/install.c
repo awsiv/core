@@ -266,7 +266,7 @@ free(ht);
 
 /*****************************************************************************/
 
-struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,char *rval)
+struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,char *rval,char rtype)
 
 { struct HubVariable *hp;
      
@@ -276,18 +276,23 @@ if ((hp = malloc(sizeof(struct HubVariable))) == NULL)
    }
 
 hp->hh = hh;
-hp->type = strdup(type);
+hp->rtype = rtype;
 hp->scope = strdup(scope);
-hp->rval = strdup(rval);
+hp->rval = rval;
 hp->lval = strdup(lval);
-
+hp->dtype = strdup(type);
 return hp;
 }
 
 /*****************************************************************************/
 
 void DeleteHubVariable(struct HubVariable *hv)
+
 {
+free(hv->dtype);
+free(hv->scope);
+free(hv->lval);
+DeleteRvalItem(hv->rval,hv->rtype);
 free(hv);
 }
 
@@ -296,7 +301,7 @@ free(hv);
 struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,time_t t)
 
 { struct HubPromiseLog *hp;
-     
+ 
 if ((hp = malloc(sizeof(struct HubPromiseLog))) == NULL)
    {
    FatalError("Memory exhausted NewHubPromiseLog");

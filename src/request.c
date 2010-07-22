@@ -36,6 +36,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    CfOut(cf_error, "", "!! Could not open connection to report database");
    }
 
+//CFDB_ListEverything(&dbconn);
+
 /* Example 1 **************************************************
 
 hq = CFDB_QuerySoftware(&dbconn,"zypper",NULL,NULL,false);
@@ -97,13 +99,14 @@ printf("\n");
 
 ****************************************************************/
 
-hq = CFDB_QueryVariables(&dbconn,NULL,"","","","");
+hq = CFDB_QueryVariables(&dbconn,NULL,NULL,NULL,NULL);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hv = (struct HubVariable *)rp->item;
-   printf("result: %s,%d,%d,%d at %s",hv->scope,hv->lval,hv->rval,cf_ctime(&(ht->t)));
-   printf("found on (%s=%s=%s)\n",ht->hh->keyhash,ht->hh->hostname,ht->hh->ipaddr);
+   printf("result: (%s) %s,%s = ",hv->dtype,hv->scope,hv->lval);
+   ShowRval(stdout,hv->rval,hv->rtype);
+   printf("found on (%s=%s=%s)\n",hv->hh->keyhash,hv->hh->hostname,hv->hh->ipaddr);
    }
 
 printf("Search returned matches from hosts: ");
@@ -116,7 +119,6 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
 printf("\n");
 
 
-// CFDB_ListEverything(&dbconn);
 
 if (!CFDB_Close(&dbconn))
    {

@@ -303,6 +303,7 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *name,char *ver,char *arch,int regex);
 struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *lclass,int regex);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *lversion,time_t ltime,int lkept,int lnotkept,int lrepaired,int cmp);
+struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *lscope,char *llval,char *lrval,char *ltype);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
@@ -457,7 +458,7 @@ struct HubClass *NewHubClass(struct HubHost *hh,char *class,double p, double dev
 void DeleteHubClass(struct HubClass *hc);
 struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,char *v,int k,int r,int n);
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
-struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,char *rval);
+struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,char *rval,char rtype);
 void DeleteHubVariable(struct HubVariable *hv);
 struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,time_t t);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
@@ -1000,7 +1001,8 @@ struct HubVariable
    char *scope;
    char *lval;
    void *rval;
-   char *rtype;
+   char *dtype;
+   char rtype;
    };
 
 struct HubPromiseLog // promise kept,repaired or not kept
