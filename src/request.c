@@ -24,18 +24,18 @@ void Nova_CfQueryCFDB(char *querystr)
  bson query,b;
  bson_buffer bb;
  struct Rlist *rp,*list;
+ struct HubHost *hh;
  struct HubSoftware *hs;
+ struct HubClass *hc;
  struct HubQuery *hq;
+ struct HubTotalCompliance *ht;
  
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
    CfOut(cf_error, "", "!! Could not open connection to report database");
    }
 
-// bson_buffer_init(&bb);
-// bson_append_string(&bb,cfr_keyhash,"MD5=b6755ae1cd085528535daed2f27a531c");
-// bson_from_buffer(&query,&bb);
-// CFDB_ReadAllSoftware(&dbconn,&query);
+/* Example 1 **************************************************
 
 hq = CFDB_QuerySoftware(&dbconn,"zypper",NULL,NULL,false);
 
@@ -48,7 +48,52 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
 DeleteHubQuery(hq,DeleteHubSoftware);
 
-//CFDB_ListEverything(&dbconn);
+****************************************************************/
+
+/* Example 2 **************************************************
+
+hq = CFDB_QueryClasses(&dbconn,"linux.*",true);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hc = (struct HubClass *)rp->item;
+   printf("result: %s,%lf,%lf,%s",hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+   printf("found on (%s=%s=%s)\n",hc->hh->keyhash,hc->hh->hostname,hc->hh->ipaddr);
+   }
+
+printf("Search returned matches from hosts: ");
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   printf("%s  ",hh->hostname);
+   }
+printf("\n");
+
+DeleteHubQuery(hq,DeleteHubClass);
+
+****************************************************************/
+
+hq = CFDB_QueryTotalCompliance(&dbconn,NULL,-1,-1,-1,-1,CFDB_GREATERTHANEQ);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   ht = (struct HubTotalCompliance *)rp->item;
+   printf("result: %s,%d,%d,%d at %s",ht->version,ht->kept,ht->repaired,ht->notkept,cf_ctime(&(ht->t)));
+   printf("found on (%s=%s=%s)\n",ht->hh->keyhash,ht->hh->hostname,ht->hh->ipaddr);
+   }
+
+printf("Search returned matches from hosts: ");
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   printf("%s  ",hh->hostname);
+   }
+printf("\n");
+
+
+// CFDB_ListEverything(&dbconn);
 
 if (!CFDB_Close(&dbconn))
    {

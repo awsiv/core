@@ -299,9 +299,13 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 /* db_query.c */
 
 #ifdef HAVE_LIBMONGOC
+
+struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *name,char *ver,char *arch,int regex);
+struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *lclass,int regex);
+struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *lversion,time_t ltime,int lkept,int lnotkept,int lrepaired,int cmp);
+
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
-struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *name,char *ver,char *arch,int regex);
 void PrintCFDBKey(bson_iterator *it, int depth);
 int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
 #endif /* HAVE_LIBMONGOC */
@@ -449,7 +453,7 @@ struct HubHost *NewHubHost(char *keyhash,char *host,char *ipaddr);
 void DeleteHubHost(struct HubHost *hp);
 struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch);
 void DeleteHubSoftware(struct HubSoftware *hs);
-struct HubClass *NewHubClass(struct HubHost *hh,double p, double dev, time_t t);
+struct HubClass *NewHubClass(struct HubHost *hh,char *class,double p, double dev, time_t t);
 void DeleteHubClass(struct HubClass *hc);
 struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,char *v,int k,int r,int n);
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
@@ -949,6 +953,9 @@ struct promise_value
 #define cfr_day           "t" // Substitute for time in value report
 #define cfr_valuereport   "VR"
 
+#define CFDB_GREATERTHANEQ 4
+#define CFDB_LESSTHANEQ 5
+
 /*****************************************************************************/
 /* Report DB API Structs                                                     */
 /*****************************************************************************/
@@ -971,6 +978,7 @@ struct HubSoftware
 struct HubClass
    {
    struct HubHost *hh;
+   char *class;
    double prob;
    double dev;
    time_t t;

@@ -187,7 +187,7 @@ free(hs);
 
 /*****************************************************************************/
 
-struct HubClass *NewHubClass(struct HubHost *hh,double p, double dev, time_t t)
+struct HubClass *NewHubClass(struct HubHost *hh,char *class,double p, double dev, time_t t)
 
 { struct HubClass *hp;
 
@@ -197,6 +197,16 @@ if ((hp = malloc(sizeof(struct HubClass))) == NULL)
    }
 
 hp->hh = hh;
+
+if (class)
+   {
+   hp->class = strdup(class);
+   }
+else
+   {
+   hp->class = NULL;
+   }
+
 hp->prob = p;
 hp->dev = dev;
 hp->t = t;
@@ -207,6 +217,11 @@ return hp;
 
 void DeleteHubClass(struct HubClass *hc)
 {
+if (hc->class)
+   {
+   free(hc->class);
+   }
+
 free(hc);
 }
 
@@ -223,7 +238,14 @@ if ((hp = malloc(sizeof(struct HubTotalCompliance))) == NULL)
 
 hp->hh = hh;
 hp->t = t;
-hp->version = v;
+if (v)
+   {
+   hp->version = strdup(v);
+   }
+else
+   {
+   hp->version = NULL;
+   }
 hp->kept = k;
 hp->repaired = r;
 hp->notkept = n;
@@ -234,6 +256,11 @@ return hp;
 
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht)
 {
+if (ht->version)
+   {
+   free(ht->version);
+   }
+
 free(ht);
 }
 

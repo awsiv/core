@@ -1569,6 +1569,8 @@ void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t from,enum 
   double av_week_kept = 0, av_week_repaired = 0;
   double av_hour_kept = 0, av_hour_repaired = 0;
   char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],key[CF_SMALLBUF],ref[CF_SMALLBUF];
+  long t;
+  time_t then;
   
 CfOut(cf_verbose,""," -> Packing total compliance data");
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_PROMISE_LOG);
@@ -1588,7 +1590,10 @@ while (!feof(fin))
    line[0] = '\0';
    fgets(line,CF_BUFSIZE-1,fin);
 
-   if (!Nova_LaterThan(line,ref))
+   sscanf(line,"%ld",&t);
+   then = (time_t)t;
+
+   if (then < from)
       {
       continue;
       }
