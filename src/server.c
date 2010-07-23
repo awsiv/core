@@ -588,7 +588,7 @@ RSA *Nova_SelectKeyRing(char *name)
   struct CfKeyBinding *kp;
   RSA *newkey;
   
-CfOut(cf_verbose,""," -> Looking for key for %s in cache",name);
+CfOut(cf_verbose,""," -> Looking for key for \"%s\" in cache",name);
  
 for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
    {
@@ -596,7 +596,7 @@ for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
 
    if (strcmp(kp->name,name) == 0)
       {
-      CfOut(cf_verbose,""," -> Retrieving key for %s from cache",name);
+      CfOut(cf_verbose,""," -> Retrieving key for \"%s\" from cache",name);
       ThreadLock(cft_system);
       RSA_up_ref(kp->key);
       ThreadUnlock(cft_system);
