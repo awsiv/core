@@ -305,6 +305,7 @@ struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *lclass,int regex
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *lversion,time_t ltime,int lkept,int lnotkept,int lrepaired,int cmp);
 struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *lscope,char *llval,char *lrval,char *ltype,int reg);
 struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *handle,char lstatus,int regex);
+struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *lhash,char *lhost,char *laddr,time_t lago,int regex);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
@@ -463,7 +464,7 @@ struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,cha
 void DeleteHubVariable(struct HubVariable *hv);
 struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,time_t t);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
-struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
+struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev);
 void DeleteHubLastSeen(struct HubLastSeen *hp);
 struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double repaired);
 void DeleteHubMeter(struct HubMeter *hp);
@@ -1021,7 +1022,6 @@ struct HubLastSeen
    double hrsago;
    double hrsavg;
    double hrsdev;
-   time_t t;
    };
 
 struct BundleSeen

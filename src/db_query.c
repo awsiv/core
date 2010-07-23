@@ -217,7 +217,7 @@ struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *lclass,int regex
   double rsigma,rex;
   char rclass[CF_MAXVARSIZE];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
-  int match_class,found;
+  int match_class,found = false;
   
 /* BEGIN query document */
 
@@ -845,15 +845,175 @@ mongo_cursor_destroy(cursor);
 return NewHubQuery(host_list,record_list);
 }
 
+/*****************************************************************************/
+
+struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *lhash,char *lhost,char *laddr,time_t lago,int regex)
+
+{ bson_buffer bb,*sub1,*sub2,*sub3;
+  bson b,query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct HubHost *hh;
+  struct Rlist *rp,*record_list = NULL, *host_list = NULL;
+  double rago,ravg,rdev;
+  char rhash[CF_MAXVARSIZE],rhost[CF_MAXVARSIZE],raddr[CF_MAXVARSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  int match_host,match_hash,match_addr,found = false;
+  
+/* BEGIN query document */
+
+  // Can't understand the bson API for nested objects this, so work around..
+  
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,cfr_lastseen,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+hostnames[0] = '\0';
+addresses[0] = '\0';
+
+//cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,bson_empty(&b),&field,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   rhash[0] = '\0';
+   raddr[0] = '\0';
+   rhost[0] = '\0';
+   found = false;
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
+
+      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      
+      /* Query specific search/marshalling */
+
+      if (strcmp(bson_iterator_key(&it1),cfr_lastseen) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+            strncpy(rhash,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+
+            ravg = 0;
+            rdev = 0;
+            rago = 0;
+            
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_hrsavg) == 0)
+                  {
+                  ravg = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_hrsdev) == 0)
+                  {
+                  rdev = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_hrsago) == 0)
+                  {
+                  rago = bson_iterator_int(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_dnsname) == 0)
+                  {
+                  strncpy(rhost,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_ipaddr) == 0)
+                  {
+                  strncpy(raddr,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+                  }
+               else
+                  {
+                  CfOut(cf_error,"", " !! Unknown key \"%s\" in last seen",bson_iterator_key(&it3));
+                  }
+               }
+
+            match_host = match_addr = match_hash = true;
+            
+            if (regex)
+               {
+               if (lhost && !FullTextMatch(lhost,rhost))
+                  {
+                  match_host = false;
+                  }
+
+               // Doesn't make sense to do regex on a key
+               if (lhash && (strcmp(lhash,rhash) != 0))
+                  {
+                  match_hash = false;
+                  }
+
+               if (laddr && !FullTextMatch(laddr,raddr))
+                  {
+                  match_addr = false;
+                  }
+               }
+            else
+               {
+               if (lhost && (strcmp(lhost,rhost) != 0))
+                  {
+                  match_host = false;
+                  }
+
+               if (lhash && (strcmp(lhash,rhash) != 0))
+                  {
+                  match_hash = false;
+                  }
+               
+               if (laddr && (strcmp(laddr,raddr) != 0))
+                  {
+                  match_addr = false;
+                  }
+               }
+            
+            if (match_hash && match_host && match_addr)
+               {
+               found = true;
+               AppendRlistAlien(&record_list,NewHubLastSeen(NULL,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev));
+               }            
+            }
+         }   
+      }
+
+   if (found)
+      {
+      hh = NewHubHost(keyhash,addresses,hostnames);
+      AppendRlistAlien(&host_list,hh);
+
+      // Now cache the host reference in all of the records to flatten the 2d list
+   
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubClass *hs = (struct HubClass *)rp->item;
+         hs->hh = hh;
+         }
+      }
+   }
+
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,record_list);
+}
+
+/*****************************************************************************/
 
 
-
-
-
-    
-    /*
-struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t)
-
+     /*
+     
 struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double repaired)
 
 
@@ -863,6 +1023,7 @@ struct HubSetUid *NewHubSetUid(struct HubHost *hh,char *file)
 
 struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char status,double e,double d,time_t t)
 
+Bundles
 
 */
 

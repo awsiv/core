@@ -324,7 +324,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t)
+struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev)
 
 { struct HubLastSeen *hp;
      
@@ -339,7 +339,6 @@ hp->rhost = NewHubHost(kh,rhost,ip);
 hp->hrsago;
 hp->hrsavg;
 hp->hrsdev;
-hp->t = t;
 
 return hp;
 }
