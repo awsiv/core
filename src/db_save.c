@@ -533,8 +533,10 @@ void CFDB_SaveTotalCompliance(mongo_connection *conn, char *keyhash, struct Item
   struct Item *ip;
   bson_buffer *arr;
   char iStr[32];
-  char then[CF_SMALLBUF],version[CF_SMALLBUF];
+  char version[CF_MAXVARSIZE];
   int kept,repaired,notrepaired;
+  long t;
+  time_t then;
   bson_buffer *sub;
   int i;
   
@@ -553,14 +555,15 @@ for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    {
    snprintf(iStr, sizeof(iStr), "%d", i);
    
-   sscanf(ip->name,"%63[^,], %127[^,],%d,%d,%d\n",then,version,&kept,&repaired,&notrepaired);
+   sscanf(ip->name,"%ld,%127[^,],%d,%d,%d\n",&t,version,&kept,&repaired,&notrepaired);
+   then = (time_t)t;
    
    sub = bson_append_start_object(arr, iStr);
-   bson_append_string(sub , cfr_time, then);
-   bson_append_string(sub , cfr_version, version);
-   bson_append_int(sub, cfr_kept, kept);
-   bson_append_int(sub, cfr_repaired, repaired);
-   bson_append_int(sub, cfr_notkept, notrepaired);
+   bson_append_int(sub,cfr_time, then);
+   bson_append_string(sub,cfr_version,version);
+   bson_append_int(sub,cfr_kept,kept);
+   bson_append_int(sub,cfr_repaired,repaired);
+   bson_append_int(sub,cfr_notkept,notrepaired);
    bson_append_finish_object(sub);
    }
 
@@ -722,9 +725,9 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%c: %lf %lf",&type,&kept,&repaired);
    snprintf(varName, sizeof(varName), "%s.%c", cfr_meter, type);
    
-   sub = bson_append_start_object(setObj , varName);
-   bson_append_double(sub, cfr_meterkept, kept);
-   bson_append_double(sub, cfr_meterrepaired , repaired);
+   sub = bson_append_start_object(setObj,varName);
+   bson_append_double(sub, cfr_meterkept,kept);
+   bson_append_double(sub, cfr_meterrepaired,repaired);
    bson_append_finish_object(sub);
    }
 
@@ -1029,7 +1032,6 @@ for (ip = data; ip != NULL; ip=ip->next)
    snprintf(varName, sizeof(varName),"%s.%s",cfr_bundles,bundle);
    
    sub = bson_append_start_object(setObj, varName);
-   bson_append_string(sub,cfr_name,bundle);
    bson_append_double(sub, cfr_hrsago, ago);
    bson_append_double(sub, cfr_hrsavg, average);
    bson_append_double(sub, cfr_hrsdev, dev);

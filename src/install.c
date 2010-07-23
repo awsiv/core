@@ -238,14 +238,8 @@ if ((hp = malloc(sizeof(struct HubTotalCompliance))) == NULL)
 
 hp->hh = hh;
 hp->t = t;
-if (v)
-   {
-   hp->version = strdup(v);
-   }
-else
-   {
-   hp->version = NULL;
-   }
+
+hp->version = strdup(v);
 hp->kept = k;
 hp->repaired = r;
 hp->notkept = n;
@@ -266,7 +260,7 @@ free(ht);
 
 /*****************************************************************************/
 
-struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,char *rval,char rtype)
+struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype)
 
 { struct HubVariable *hp;
      
@@ -417,7 +411,7 @@ if ((hp = malloc(sizeof(struct HubSetUid))) == NULL)
    }
 
 hp->hh = hh;
-hp->path = file;
+hp->path = strdup(file);
 return hp;
 }
 
@@ -456,3 +450,32 @@ void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp)
 free(hp->handle);
 free(hp); 
 }
+
+/*****************************************************************************/
+
+struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev)
+
+{ struct HubBundleSeen *hp;
+     
+if ((hp = malloc(sizeof(struct HubBundleSeen))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubLastSeen");
+   }
+
+hp->hh = hh;
+hp->bundle = strdup(rname);
+hp->hrsago;
+hp->hrsavg;
+hp->hrsdev;
+
+return hp;
+}
+
+/*****************************************************************************/
+
+void DeleteHubBundleSeen(struct HubBundleSeen *hp)
+{
+DeleteHubHost(hp->bundle);
+free(hp); 
+}
+

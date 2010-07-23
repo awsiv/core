@@ -32,37 +32,41 @@ void Nova_CfQueryCFDB(char *querystr)
  struct HubVariable *hv;
  struct HubPromiseCompliance *hp;
  struct HubLastSeen *hl;
+ struct HubMeter *hm;
+ struct HubPerformance *hP;
+ struct HubSetUid *hS;
+ struct HubBundleSeen *hb;
  
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
    CfOut(cf_error, "", "!! Could not open connection to report database");
    }
 
-//CFDB_ListEverything(&dbconn);
+// CFDB_ListEverything(&dbconn);
 
 /* Example 1 **************************************************
 
-hq = CFDB_QuerySoftware(&dbconn,"zypper",NULL,NULL,false);
+hq = CFDB_QuerySoftware(&dbconn,bson_empty(&b),"zypper",NULL,NULL,false);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hs = (struct HubSoftware *)rp->item;
-   printf("result: (%s,%s,%s) ",hs->name,hs->version,Nova_LongArch(hs->arch));
+   printf("softwareresult: (%s,%s,%s) ",hs->name,hs->version,Nova_LongArch(hs->arch));
    printf("found on (%s=%s=%s)\n",hs->hh->keyhash,hs->hh->hostname,hs->hh->ipaddr);
    }
 
 DeleteHubQuery(hq,DeleteHubSoftware);
 
-****************************************************************/
+*/
 
 /* Example 2 **************************************************
 
-hq = CFDB_QueryClasses(&dbconn,"linux.*",true);
+hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),"linux.*",true);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hc = (struct HubClass *)rp->item;
-   printf("result: %s,%lf,%lf,%s",hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+   printf("classresult: \"%s\" %lf,%lf,%s",hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
    printf("found on (%s=%s=%s)\n",hc->hh->keyhash,hc->hh->hostname,hc->hh->ipaddr);
    }
 
@@ -77,16 +81,16 @@ printf("\n");
 
 DeleteHubQuery(hq,DeleteHubClass);
 
-****************************************************************/
-
+*/
+ 
 /* Example 3 **************************************************
 
-hq = CFDB_QueryTotalCompliance(&dbconn,NULL,-1,-1,-1,-1,CFDB_GREATERTHANEQ);
+hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),NULL,-1,-1,-1,-1,CFDB_GREATERTHANEQ);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    ht = (struct HubTotalCompliance *)rp->item;
-   printf("result: %s,%d,%d,%d at %s",ht->version,ht->kept,ht->repaired,ht->notkept,cf_ctime(&(ht->t)));
+   printf("Tcomp result: %s,%d,%d,%d at %s",ht->version,ht->kept,ht->repaired,ht->notkept,cf_ctime(&(ht->t)));
    printf("found on (%s=%s=%s)\n",ht->hh->keyhash,ht->hh->hostname,ht->hh->ipaddr);
    }
 
@@ -99,15 +103,15 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
    }
 printf("\n");
 
-****************************************************************/
+*/
+/* Example 4 **************************************************/
 
-/* Example 4 **************************************************
-hq = CFDB_QueryVariables(&dbconn,"web.*",NULL,NULL,NULL,true);
+hq = CFDB_QueryVariables(&dbconn,bson_empty(&b),"we.*",NULL,NULL,NULL,true);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hv = (struct HubVariable *)rp->item;
-   printf("result: (%s) %s,%s = ",hv->dtype,hv->scope,hv->lval);
+   printf("Var result: (%s) %s,%s = ",hv->dtype,hv->scope,hv->lval);
    ShowRval(stdout,hv->rval,hv->rtype);
    printf("found on (%s=%s=%s)\n",hv->hh->keyhash,hv->hh->hostname,hv->hh->ipaddr);
    }
@@ -121,15 +125,16 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
    }
 printf("\n");
 
-****************************************************************/
+
 
 /* Example 5 **************************************************
-hq = CFDB_QueryPromiseCompliance(&dbconn,NULL,'x',true);
+
+hq = CFDB_QueryPromiseCompliance(&dbconn,bson_empty(&b),NULL,'x',true);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseCompliance *)rp->item;
-   printf("result: (%s) %lf,%lf at %s",hp->handle,hp->e,hp->d,cf_ctime(&(hp->t)));
+   printf("Pcomp result: (%s) %lf,%lf at %s",hp->handle,hp->e,hp->d,cf_ctime(&(hp->t)));
    printf("found on (%s=%s=%s)\n",hp->hh->keyhash,hp->hh->hostname,hp->hh->ipaddr);
    }
 
@@ -142,15 +147,17 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
    }
 printf("\n");
 
-****************************************************************/
+*/
 
-hq = CFDB_QueryLastSeen(&dbconn,NULL,NULL,NULL,0,true);
+/* Example 6 **************************************************
+   
+hq = CFDB_QueryLastSeen(&dbconn,bson_empty(&b),NULL,NULL,NULL,0,true);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hl = (struct HubLastSeen *)rp->item;
    
-   printf("result: (%c) %s=%s (%s) %lf,%lfpm%lf ",hl->io,hl->rhost->keyhash,hl->rhost->hostname,hl->rhost->ipaddr,hl->hrsago,hl->hrsavg,hl->hrsdev);
+   printf("Lastseen result: (%c) %s=%s (%s) %.2lf,%.2lfpm%.2lf\n",hl->io,hl->rhost->keyhash,hl->rhost->hostname,hl->rhost->ipaddr,hl->hrsago,hl->hrsavg,hl->hrsdev);
    printf("found on (%s=%s=%s)\n",hl->hh->keyhash,hl->hh->hostname,hl->hh->ipaddr);
    }
 
@@ -162,6 +169,102 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
    printf("%s  ",hh->hostname);
    }
 printf("\n");
+
+*/
+
+/* Example 7 **************************************************
+   
+hq = CFDB_QueryMeter(&dbconn,bson_empty(&b));
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hm = (struct HubMeter *)rp->item;
+   
+   printf("Meter result: (%c) %lf,%lf,%lf\n",hm->type,hm->kept,hm->notkept);
+   printf("found on (%s=%s=%s)\n",hm->hh->keyhash,hm->hh->hostname,hm->hh->ipaddr);
+   }
+
+printf("Search returned matches from hosts: ");
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   printf("%s  ",hh->hostname);
+   }
+printf("\n");
+
+*/
+
+
+/* Example 8 **************************************************
+   
+hq = CFDB_QueryPerformance(&dbconn,bson_empty(&b),NULL,true);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hm = (struct HubMeter *)rp->item;
+   
+   printf("Perf result: \"%s\" %lf,%lf,%lf at %s",hP->event,hP->q,hP->e,hP->d,cf_ctime(&(hP->t)));
+   printf("found on (%s=%s=%s)\n",hP->hh->keyhash,hP->hh->hostname,hP->hh->ipaddr);
+   }
+
+printf("Search returned matches from hosts: ");
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   printf("%s  ",hh->hostname);
+   }
+printf("\n");
+
+*/
+
+/* Example 9 ************************************************
+   
+hq = CFDB_QuerySetuid(&dbconn,bson_empty(&b),NULL,true);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hS = (struct HubSetUid *)rp->item;
+   
+   printf("Setuid result: %s\n",hS->path);
+   printf("found on (%s=%s=%s)\n",hS->hh->keyhash,hS->hh->hostname,hS->hh->ipaddr);
+   }
+
+printf("Search returned matches from hosts: ");
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   printf("%s  ",hh->hostname);
+   }
+printf("\n");
+
+*/
+
+/* Example 10 ***********************************************
+
+hq = CFDB_QueryBundleSeen(&dbconn,bson_empty(&b),NULL,true);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hb = (struct HubBundleSeen *)rp->item;
+   
+   printf("Bundle result: \"%s\" %.2lf,%.2lf,%.2lf\n",hb->bundle,hb->hrsago,hb->hrsavg,hb->hrsdev);
+   printf("found on (%s=%s=%s)\n",hb->hh->keyhash,hb->hh->hostname,hb->hh->ipaddr);
+   }
+
+printf("Search returned matches from hosts: ");
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   printf("%s  ",hh->hostname);
+   }
+printf("\n");
+
+
+*/
 
 
 

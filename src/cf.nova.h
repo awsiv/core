@@ -300,12 +300,16 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 #ifdef HAVE_LIBMONGOC
 
-struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *name,char *ver,char *arch,int regex);
-struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *lclass,int regex);
-struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *lversion,time_t ltime,int lkept,int lnotkept,int lrepaired,int cmp);
-struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *lscope,char *llval,char *lrval,char *ltype,int reg);
-struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *handle,char lstatus,int regex);
-struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *lhash,char *lhost,char *laddr,time_t lago,int regex);
+struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,bson *query,char *name,char *ver,char *arch,int regex);
+struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,bson *query,char *lclass,int regex);
+struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,bson *query,char *lversion,time_t ltime,int lkept,int lnotkept,int lrepaired,int cmp);
+struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,bson *query,char *lscope,char *llval,char *lrval,char *ltype,int reg);
+struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,bson *query,char *handle,char lstatus,int regex);
+struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,bson *query,char *lhash,char *lhost,char *laddr,time_t lago,int regex);
+struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query);
+struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,bson *query,char *rname,int regex);
+struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,bson *query,char *lname,int regex);
+struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn,bson *query,char *lname,int regex);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
@@ -460,7 +464,7 @@ struct HubClass *NewHubClass(struct HubHost *hh,char *class,double p, double dev
 void DeleteHubClass(struct HubClass *hc);
 struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,char *v,int k,int r,int n);
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
-struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,char *rval,char rtype);
+struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype);
 void DeleteHubVariable(struct HubVariable *hv);
 struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,time_t t);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
@@ -474,6 +478,8 @@ struct HubSetUid *NewHubSetUid(struct HubHost *hh,char *file);
 void DeleteHubSetUid(struct HubSetUid *hp);
 struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,char status,double e,double d,time_t t);
 void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp);
+struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev);
+void DeleteHubBundleSeen(struct HubBundleSeen *hp);
 
 /* knowledge.c */
 
@@ -1024,14 +1030,13 @@ struct HubLastSeen
    double hrsdev;
    };
 
-struct BundleSeen
+struct HubBundleSeen
    {
    struct HubHost *hh;      
    char *bundle;
    double hrsago;
    double hrsavg;
    double hrsdev;
-   time_t t;
    };
 
 struct HubMeter

@@ -1340,12 +1340,15 @@ DeleteItemList(data);
 
 void Nova_PackVariables(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ char name[CF_BUFSIZE],line[CF_BUFSIZE],scope[CF_MAXVARSIZE];
+{ char name[CF_BUFSIZE],line[CF_BUFSIZE],scope[CF_MAXVARSIZE],cache[CF_MAXVARSIZE];
   FILE *fin;
   int first = true;
 
 CfOut(cf_verbose,""," -> Packing variable data");
-  
+
+snprintf(cache,CF_MAXVARSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_STATICDB);
+MapName(cache);
+
 snprintf(name,CF_BUFSIZE-1,"%s/state/vars.out",CFWORKDIR);
 MapName(name);
 
@@ -1408,6 +1411,11 @@ while (!feof(fin))
       continue;
       }
 
+   if (strcmp(lval,cache) == 0) // Skip the internal cachce
+      {
+      continue;
+      }
+   
    if (first)
       {
       first = false;
