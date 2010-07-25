@@ -720,6 +720,7 @@ void Nova_Indent(int i);
 
 /* timeseries.c */
 
+double Num(double x);
 void Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawQAxes(struct CfDataView *cfv,int col);

@@ -31,7 +31,8 @@ void Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs)
   char newfile[CF_BUFSIZE];
 
 snprintf(newfile,CF_BUFSIZE,"/%s/%s/%s_mag.png",DOCROOT,keyhash,OBS[obs][0]);
- 
+MakeParentDirectory(newfile,true);
+
 cfv->title = OBS[obs][1];
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
 Nova_MakePalette(cfv);
@@ -103,9 +104,9 @@ for (i = 0; i < CF_MAGDATA; i++)
 
 for (i = 0; i < CF_MAGDATA; i++)
    {
-   ry = e[i];
-   rq = q[i];
-   rs = d[i];
+   ry = Num(e[i]);
+   rq = Num(q[i]);
+   rs = Num(d[i]);
    
    if (ry / ly > 1000)
       {

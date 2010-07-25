@@ -280,10 +280,10 @@ CFDB_QueryWeekView(&dbconn,"MD5=4a37e48645122312daf7862f2a0f0ef7",0,q,e,d);
 */
 
 
-
+/*
 double q[CF_TIMESERIESDATA],e[CF_TIMESERIESDATA],d[CF_TIMESERIESDATA];
 CFDB_QueryYearView(&dbconn,"MD5=4a37e48645122312daf7862f2a0f0ef7",0,q,e,d);
-
+*/
 
 
 /*
@@ -298,6 +298,17 @@ for (i = 0; i < CF_GRAINS; i++)
 printf("\n");
 */
 
+struct CfDataView cfv;
+Nova_BuildGraphs(&cfv);
+
+strcpy(DOCROOT,"/home/mark/tmp");
+int i;
+
+for (i = 0; i < 20; i++)
+   {
+   Nova_ViewMag(&cfv,"MD5=4a37e48645122312daf7862f2a0f0ef7",i);
+   Nova_ViewWeek(&cfv,"MD5=4a37e48645122312daf7862f2a0f0ef7",i);
+   }
 
 if (!CFDB_Close(&dbconn))
    {

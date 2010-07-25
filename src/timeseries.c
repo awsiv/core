@@ -18,6 +18,29 @@
 extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,BACKGR,ORANGE;
 extern char *UNITS[];
 
+
+/*****************************************************************************/
+
+double Num(double x)
+{
+if (isnan(x) || isinf(x))
+   {
+   return 0;
+   }
+
+if (x > CF_BIGNUMBER)
+   {
+   return 0;
+   }
+
+if (x < 0)
+   {
+   return 0;
+   }
+
+return x;
+}
+
 /*****************************************************************************/
 
 #ifdef HAVE_LIBGD
@@ -88,13 +111,6 @@ if (!CFDB_Close(&dbconn))
    CfOut(cf_error, "", "!! Could not close connection to report database");
    } 
 
-for (i = 0; i < CF_TIMESERIESDATA; i++)
-   {
-   cfv->data_E[i] = 0;
-   cfv->data_q[i] = 0;
-   cfv->bars[i] = 0;
-   }
-
 cfv->over = 0;
 cfv->under = 0;
 cfv->over_dev1 = 0;
@@ -110,114 +126,144 @@ Q_SIGMA = 0;
 
 for (i = 0; i < CF_TIMESERIESDATA; i++)
    {
-   ry = e[i];
-   rq = q[i];
-   rs = d[i];
+   ry = Num(e[i]);
+   rs = Num(d[i]);
+   rq = Num(q[i]);
 
-   if (ry > cfv->max)
+   if (ry + rq > 0)
       {
-      cfv->max = ry;
-      }
-
-   cfv->error_scale = (cfv->error_scale+rs)/2;
-
-   if (ry < cfv->min)
-      {
-      cfv->min = ry;
-      }
-
-   cfv->data_q[i] = rq;
-   cfv->data_E[i] = ry;
-   cfv->bars[i] = rs;
-
-   if (cfv->data_q[i] > cfv->data_E[i])
-      {
-      cfv->over++;
-      }
-
-   if (cfv->data_q[i] < cfv->data_E[i])
-      {
-      cfv->under++;
-      }
-
-   if (cfv->data_q[i] > cfv->data_E[i]+cfv->bars[i])
-      {
-      cfv->over_dev1++;
-      }
-
-   if (cfv->data_q[i] < cfv->data_E[i]-cfv->bars[i])
-      {
-      cfv->under_dev1++;
-      }
-
-   if (cfv->data_q[i] > cfv->data_E[i]+2*cfv->bars[i])
-      {
-      cfv->over_dev2++;
-      }
-
-   if (cfv->data_q[i] < cfv->data_E[i]-2*cfv->bars[i])
-      {
-      cfv->under_dev2++;
-      }
-
-   if (cfv->data_E[i] != 0)
-      {
-      Q_MEAN = GAverage(Q_MEAN,cfv->data_E[i],0.5);
-      }
-   
-   if (cfv->bars[i])
-      {
-      Q_SIGMA = GAverage(Q_SIGMA,cfv->bars[i],0.5);
+      have_data = true;
       }
    }
-
-if (cfv->max > CF_MAX_LIMIT)
-   {
-   cfv->max = CF_MAX_LIMIT;
-   }
-
-cfv->origin_x = cfv->margin;
-cfv->origin_y = cfv->height+cfv->margin;
-
-cfv->max_x = cfv->margin+cfv->width;
-cfv->max_y = cfv->margin;
-
-if (cfv->error_scale > cfv->max - cfv->min)
-   {
-   cfv->error_scale = cfv->max - cfv->min;
-   }
-
-if (cfv->max == cfv->min)
-   {
-   if (cfv->error_scale > 0)
-      {
-      cfv->max += cfv->error_scale/2.0;
-      cfv->min -= cfv->error_scale/2.0;
-      }
-   else
-      {
-      cfv->max += 1;
-      cfv->min -= 1;
-      }
-   }
-
-cfv->range = (cfv->max - cfv->min + cfv->error_scale);
-
-if (cfv->error_scale > (cfv->max - cfv->min)*1.5)
-   {
-   cfv->range = (cfv->max - cfv->min);
-   }
-else
-   {
-   cfv->range = (cfv->max - cfv->min + cfv->error_scale);   
-   }
-
-cfv->scale_x = (double)cfv->width / (double)CF_TIMESERIESDATA;
-cfv->scale_y = ((double) cfv->height) / cfv->range;
 
 if (have_data)
    {
-   CfOut(cf_verbose,""," -> Read data for %s\n",name);
+   for (i = 0; i < CF_TIMESERIESDATA; i++)
+      {
+      ry = Num(e[i]);
+      rs = Num(d[i]);
+      rq = Num(q[i]);
+      
+      if (ry > cfv->max)
+         {
+         cfv->max = ry;
+         }
+      
+      cfv->error_scale = (cfv->error_scale+rs)/2;
+      
+      if (ry < cfv->min)
+         {
+         cfv->min = ry;
+         }
+      
+      cfv->data_E[i] = ry;
+      cfv->bars[i] = rs;
+      cfv->data_q[i] = rq;
+      
+      if (rq > cfv->max)
+         {
+         cfv->max = rq;
+         }
+      
+      cfv->error_scale = (cfv->error_scale+rs)/2;
+      
+      if (rq < cfv->min)
+         {
+         cfv->min = rq;
+         }
+      
+      if (cfv->data_q[i] > cfv->data_E[i])
+         {
+         cfv->over++;
+         }
+      
+      if (cfv->data_q[i] < cfv->data_E[i])
+         {
+         cfv->under++;
+         }
+      
+      if (cfv->data_q[i] > cfv->data_E[i]+cfv->bars[i])
+         {
+         cfv->over_dev1++;
+         }
+      
+      if (cfv->data_q[i] < cfv->data_E[i]-cfv->bars[i])
+         {
+         cfv->under_dev1++;
+         }
+      
+      if (cfv->data_q[i] > cfv->data_E[i]+2*cfv->bars[i])
+         {
+         cfv->over_dev2++;
+         }
+      
+      if (cfv->data_q[i] < cfv->data_E[i]-2*cfv->bars[i])
+         {
+         cfv->under_dev2++;
+         }
+      
+      if (cfv->data_E[i] != 0)
+         {
+         Q_MEAN = GAverage(Q_MEAN,cfv->data_E[i],0.5);
+         }
+      
+      if (cfv->bars[i])
+         {
+         Q_SIGMA = GAverage(Q_SIGMA,cfv->bars[i],0.5);
+         }
+      }
+   
+   if (cfv->max > CF_MAX_LIMIT)
+      {
+      cfv->max = CF_MAX_LIMIT;
+      }
+   
+   cfv->origin_x = cfv->margin;
+   cfv->origin_y = cfv->height+cfv->margin;
+   
+   cfv->max_x = cfv->margin+cfv->width;
+   cfv->max_y = cfv->margin;
+   
+   if (cfv->error_scale > cfv->max - cfv->min)
+      {
+      cfv->error_scale = cfv->max - cfv->min;
+      }
+   
+   if (cfv->max == cfv->min)
+      {
+      if (cfv->error_scale > 0)
+         {
+         cfv->max += cfv->error_scale/2.0;
+         cfv->min -= cfv->error_scale/2.0;
+         }
+      else
+         {
+         cfv->max += 1;
+         cfv->min -= 1;
+         }
+      }
+   
+   cfv->range = (cfv->max - cfv->min + cfv->error_scale);
+   
+   if (cfv->error_scale > (cfv->max - cfv->min)*1.5)
+      {
+      cfv->range = (cfv->max - cfv->min);
+      }
+   else
+      {
+      cfv->range = (cfv->max - cfv->min + cfv->error_scale);   
+      }
+   
+   cfv->scale_x = (double)cfv->width / (double)CF_TIMESERIESDATA;
+   cfv->scale_y = ((double) cfv->height) / cfv->range;
+   }
+else
+   {
+   cfv->range = 2;
+   cfv->max += 1;
+   cfv->min -= 1;         
+   cfv->max += 1;
+   cfv->min -= 1;
    }
 }
 
@@ -366,7 +412,6 @@ y = Nova_ViewPortY(cfv,cfv->data_q[(int)sx],cfv->error_scale);
 gdImageSetThickness(cfv->im,3);
 gdImageArc(cfv->im,x,y,20,20,0,360,RED);
 }
-
 
 /***********************************************************/
 
