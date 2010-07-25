@@ -25,175 +25,81 @@ extern char *UNITS[];
 
 /*****************************************************************************/
 
-int Nova_ViewLongHistory(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *host)
+void Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs)
     
 { int i,y,hint,yr,num = 0,ago,lc;
   FILE *fout;
   struct stat s1,s2;
   char newfile[CF_BUFSIZE];
-  char oldfile[CF_BUFSIZE];
   double max=0,min=9999,range;
 
-  /* Initialization */
-
-CfOut(cf_verbose,""," -> Long term history for %s",filename);
-
-/* First look for a common scale for the whole history */
-
-for (yr = 2; yr >= 0; yr--)
-   {  
-   snprintf(oldfile,CF_BUFSIZE,"%s_%d.yr",filename,yr);
-
-   if (cfstat(oldfile,&s1) == -1)
-      {
-      continue;
-      }
-
-   if (!Nova_ReadLongHistory(cfv,oldfile))
-      {
-      continue;
-      }
-
-   if (cfv->max > max)
-      {
-      max = cfv->max;
-      }
+snprintf(newfile,CF_BUFSIZE,"%s/%s/%s_yr.png",DOCROOT,keyhash,OBS[obs][0]);
    
-   if (cfv->min < min)
-      {
-      min = cfv->min;
-      }   
-   }
-
-if (min == 9999 && max == 0 || min > max)
+cfv->title = OBS[obs][1];
+cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
+Nova_MakePalette(cfv);
+   
+for (y = 0; y < cfv->height+2*cfv->margin; y++)
    {
-   return false;
+   hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
+   gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
    }
+   
+/* Done initialization */
 
- 
-/* read the data in reverse order "years ago" */
-
-for (yr = 2; yr >= 0; yr--)
+Nova_ReadLongHistory(cfv,keyhash,obs);
+Nova_DrawLongHAxes(cfv,BLACK);
+Nova_PlotLongHFile(cfv,LIGHTRED,GREEN,YELLOW);
+Nova_Title(cfv,BLUE);
+   
+if ((fout = fopen(newfile, "wb")) == NULL)
    {
-   snprintf(oldfile,CF_BUFSIZE,"%s_%d.yr",filename,yr);
-   snprintf(newfile,CF_BUFSIZE,"%s_%d.yr.png",filename,yr);
-
-   if (cfstat(oldfile,&s1) == -1)
-      {
-      continue;
-      }
-
-   num++;
-   
-   cfv->title = title;
-   cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
-   Nova_MakePalette(cfv);
-   
-   for (y = 0; y < cfv->height+2*cfv->margin; y++)
-      {
-      hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
-      gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
-      }
-   
-   /* Done initialization */
-   
-   CfOut(cf_verbose,""," -> Looking for %s",oldfile);
-
-   if (!Nova_ReadLongHistory(cfv,oldfile))
-      {
-      CfOut(cf_verbose,"","Aborting %s\n",oldfile);
-      continue;
-      }
-
-   // One scale to unite them all...
-   
-   cfv->max = max;
-   cfv->min = min;
-   cfv->range = max-min;
-
-   cfv->scale_x = (double)cfv->width / (double)CF_LHISTORYDATA;
-   cfv->scale_y = ((double) cfv->height) / cfv->range;
-
-   if (cfv->max > 99999 || isinf(cfv->max) || isnan(cfv->max))
-      {
-      CfOut(cf_inform,""," !! Number overflow/error in %s",oldfile);
-      cfv->max = 10000;
-      continue;
-      }
-
-   if (cfv->range > 99999 || isinf(cfv->range) || isnan(cfv->range))
-      {
-      CfOut(cf_inform,""," !! Number overflow/error in %s",oldfile);      
-      cfv->max = 10000;
-      continue;
-      }
-
-   Nova_DrawLongHAxes(cfv,BLACK);
-   Nova_PlotLongHFile(cfv,LIGHTRED,GREEN,YELLOW);
-   Nova_Title(cfv,BLUE);
-   
-   if ((fout = fopen(newfile, "wb")) == NULL)
-      {
-      CfOut(cf_verbose,"fopen","Cannot write %s file\n",newfile);
-      return true;
-      }
-   else
-      {
-      CfOut(cf_verbose,""," -> Making %s\n",newfile);
-      }
-   
-   gdImagePng(cfv->im, fout);
-   fclose(fout);
-   gdImageDestroy(cfv->im);   
-   }
-
-if (num)
-   {
-   Nova_AnalyseLongHistory(cfv,filename,obs,host); 
-   return true;
+   CfOut(cf_verbose,"fopen","Cannot write %s file\n",newfile);
+   return;
    }
 else
    {
-   return false;
+   CfOut(cf_verbose,""," -> Making %s\n",newfile);
    }
+
+gdImagePng(cfv->im, fout);
+fclose(fout);
+gdImageDestroy(cfv->im);   
 }
 
 /**********************************************************************/
-/* Magdata                                                            */
+/* Yrdata                                                             */
 /**********************************************************************/
 
-int Nova_ReadLongHistory(struct CfDataView *cfv, char *name)
+void Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
-{ double range,rx,ry,rq,rs,sx = 0;
-  FILE *fp;
-  char buffer[CF_BUFSIZE];
+{ double range,rx,ry,rq,rs;
   double max,min;
-  int count = 0;
+  int count = 0,i;
+  mongo_connection dbconn;
+  double q[CF_LHISTORYDATA],e[CF_LHISTORYDATA],d[CF_LHISTORYDATA];
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+   {
+   CfOut(cf_error, "", "!! Could not open connection to report database");
+   }
+
+CFDB_QueryYearView(&dbconn,keyhash,obs,q,e,d);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_error, "", "!! Could not close connection to report database");
+   } 
 
 max = 0;
 min = 99999;
 cfv->error_scale = 0;      
   
-if ((fp = fopen(name,"r")) == NULL)
+for (i = 0; i < CF_LHISTORYDATA; i++)
    {
-   CfOut(cf_verbose,"","Cannot read mag long history data %s\n",name);
-   return false;
-   }
-
-for (sx = 0; sx < CF_LHISTORYDATA; sx++)
-   {
-   rx = rs = ry = 0;
-
-   memset(buffer,0,CF_BUFSIZE);
-      
-   if (!fgets(buffer,CF_BUFSIZE,fp))
-      {
-      break;
-      }
-
-   count++;
-
-   sscanf(buffer,"%lf %lf %lf %lf",&rx,&ry,&rs,&rq);
+   ry = e[i];
+   rq = q[i];
+   rs = d[i];
 
    if (ry > max)
       {
@@ -207,9 +113,9 @@ for (sx = 0; sx < CF_LHISTORYDATA; sx++)
       min = ry;
       }
 
-   cfv->data_E[(int)sx] = ry;
-   cfv->data_q[(int)sx] = rq;
-   cfv->bars[(int)sx] = rs;
+   cfv->data_E[i] = ry;
+   cfv->data_q[i] = rq;
+   cfv->bars[i] = rs;
    }
 
 cfv->origin_x = cfv->margin;
@@ -248,17 +154,6 @@ else
       {
       cfv->min = min;
       }   
-   }
-
-fclose(fp);
-
-if (count > 4)
-   {
-   return true;
-   }
-else
-   {
-   return false;
    }
 }
 

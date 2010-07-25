@@ -50,6 +50,7 @@ cfv->margin = 50;
 
 /* Get the list of clients */
 
+/*
 CfOut(cf_verbose,""," -> Entering the core in %s\n",AGGREGATION);
 chdir(AGGREGATION);
 
@@ -82,13 +83,10 @@ for (dirp = readdir(dirh); dirp != NULL; dirp = readdir(dirh))
 
 closedir(dirh);
 
-/* Create portal */
 
 Banner("Create Host Portal");
 serverlist = Nova_CreateHostPortal(serverlist);
 Nova_BuildMainMeter(&cfv_small,serverlist);
-
-/* Create host pages */
 
 for (ip = serverlist; ip != NULL; ip=ip->next)
    {
@@ -147,6 +145,7 @@ for (ip = serverlist; ip != NULL; ip=ip->next)
    chdir("..");
    }
 
+*/
 // Create a simple list of status for 3rd party export/integration
 
 snprintf(name,CF_BUFSIZE,"summary.z");

@@ -23,60 +23,38 @@ extern char *UNITS[];
 
 /*****************************************************************************/
 
-int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *host)
+void Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs)
     
 { int i,y,hint;
   FILE *fout;
   struct stat s1,s2;
   char newfile[CF_BUFSIZE];
-  char oldfile[CF_BUFSIZE];
 
-  /* Initialization */
-
-
-  // replace this with a single rate limiter lock for all updates
-  // as if one graph has been updated, all have been
-snprintf(newfile,CF_BUFSIZE,"%s_mag.png",filename);
-snprintf(oldfile,CF_BUFSIZE,"%s.mag",filename);
-
-if ((cfstat(oldfile,&s1) != -1) && (cfstat(newfile,&s2) != -1))
-   {
-   if (s2.st_mtime > s1.st_mtime)
-      {
-      /* no changes */
-      DATESTAMPS[obs] = s2.st_mtime;
-      return true;
-      }
-   }
+snprintf(newfile,CF_BUFSIZE,"/%s/%s/%s_mag.png",DOCROOT,keyhash,OBS[obs][0]);
  
-cfv->title = title;
+cfv->title = OBS[obs][1];
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
 Nova_MakePalette(cfv);
 
+/* background colour */
+
 for (y = 0; y < cfv->height+2*cfv->margin; y++)
    {
-   //hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
-   //gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
    gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,BACKGR);
    }
 
 /* Done initialization */
 
-CfOut(cf_verbose,""," -> Looking for %s",oldfile);
-
-if (!Nova_ReadMagTimeSeries(cfv,oldfile))
-   {
-   CfOut(cf_verbose,"","Aborting %s\n",oldfile);
-   return false;
-   }
-
+Nova_ReadMagTimeSeries(cfv,keyhash,obs);
 Nova_PlotMagQFile(cfv,LIGHTRED,GREEN,ORANGE);
 Nova_Title(cfv,BLUE);
+
+// Assume we are in the keyhash directory
 
 if ((fout = fopen(newfile, "wb")) == NULL)
    {
    CfOut(cf_verbose,"fopen","Cannot write %s file\n",newfile);
-   return true;
+   return;
    }
 else
    {
@@ -86,57 +64,49 @@ else
 gdImagePng(cfv->im, fout);
 fclose(fout);
 gdImageDestroy(cfv->im);
-
-Nova_AnalyseMag(cfv,filename,obs,host);
-
-cfstat(newfile,&s2);
-DATESTAMPS[obs] = s2.st_mtime;
-return true;
 }
 
 /**********************************************************************/
 /* Magdata                                                            */
 /**********************************************************************/
 
-int Nova_ReadMagTimeSeries(struct CfDataView *cfv, char *name)
+void Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs)
 
-{ double range,rx,ry,rq,rs,sx = 0;
+{ double range,rx,ry,rq,rs;
   double ly = 1,lq = 1,ls = 1;
-  FILE *fp;
-  char buffer[CF_BUFSIZE];
+  double q[CF_MAGDATA],e[CF_MAGDATA],d[CF_MAGDATA];
+  int i;
+  mongo_connection dbconn;
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+   {
+   CfOut(cf_error, "", "!! Could not open connection to report database");
+   }
+
+CFDB_QueryMagView(&dbconn,hostkey,obs,time(NULL) - 4*3600,q,e,d);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_error, "", "!! Could not close connection to report database");
+   } 
 
 cfv->max = 0;
 cfv->min = 99999;
 cfv->error_scale = 0;      
 
-/*now = time(NULL);
-here_and_now = now - (time_t)(4 * CF_TICKS_PER_HOUR);
-
-slot = GetTimeSlot(here_and_now);
-
-
-
-*/
-
-if ((fp = fopen(name,"r")) == NULL)
+for (i = 0; i < CF_MAGDATA; i++)
    {
-   CfOut(cf_verbose,"","Cannot read mag data %s\n",name);
-   return false;
+   cfv->data_E[i] = 0;
+   cfv->data_q[i] = 0;
+   cfv->bars[i] = 0;
    }
 
-for (sx = 0; sx < CF_MAGDATA; sx++)
+for (i = 0; i < CF_MAGDATA; i++)
    {
-   rx = rs = ry = 0;
-
-   memset(buffer,0,CF_BUFSIZE);
-      
-   if (!fgets(buffer,CF_BUFSIZE,fp))
-      { 
-      return false;
-      }
-
-   sscanf(buffer,"%lf %lf %lf %lf",&rx,&ry,&rs,&rq);
-
+   ry = e[i];
+   rq = q[i];
+   rs = d[i];
+   
    if (ry / ly > 1000)
       {
       ry = ly;
@@ -174,9 +144,9 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
       cfv->min = ry;
       }
    
-   ly = cfv->data_E[(int)sx] = ry;
-   lq = cfv->data_q[(int)sx] = rq;
-   ls = cfv->bars[(int)sx] = rs;
+   ly = cfv->data_E[i] = ry;
+   lq = cfv->data_q[i] = rq;
+   ls = cfv->bars[i] = rs;
    }
 
 cfv->max++;
@@ -222,9 +192,6 @@ else
 
 cfv->scale_x = (double)cfv->width / (double)CF_MAGDATA;
 cfv->scale_y = ((double) cfv->height) / cfv->range;
-
-fclose(fp);
-return true;
 }
 
 /*******************************************************************/

@@ -22,62 +22,30 @@ extern char *UNITS[];
 
 #ifdef HAVE_LIBGD
 
-int Nova_ViewWeek(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *host)
+void Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs)
     
 { int i,y,hint;
   FILE *fout;
   struct stat s1,s2;
   char newfile[CF_BUFSIZE];
-  char oldfile[CF_BUFSIZE];
-  char fileroot[CF_BUFSIZE];
 
   /* Initialization */
 
-snprintf(newfile,CF_BUFSIZE,"%s_weekly.png",filename);
-snprintf(oldfile,CF_BUFSIZE,"%s.q",filename);
-snprintf(fileroot,CF_BUFSIZE,"%s",filename);
+snprintf(newfile,CF_BUFSIZE,"%s/%s/%s_week.png",DOCROOT,keyhash,OBS[obs][0]);
 
-if ((cfstat(oldfile,&s1) == -1))
-   {
-   CfOut(cf_verbose,""," -> No q series data for %s - abort",filename);
-   return false;
-   }
-
-if ((cfstat(newfile,&s2) == -1))
-   {
-   CfOut(cf_verbose,""," -> No existing graph for %s",filename);
-   }
-else
-   {
-   if (s2.st_mtime > s1.st_mtime)
-      {
-      /* no changes */
-      CfOut(cf_verbose,""," -> No graphs up to date for %s",filename);
-      return true;
-      }
-   }
-
-CfOut(cf_verbose,""," -> There seem to be new data in %s\n",fileroot);
-
-cfv->title = title;
+cfv->title = OBS[obs][1];
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
+
 Nova_MakePalette(cfv);
 
 for (y = 0; y < cfv->height+2*cfv->margin; y++)
    {
-   //hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
-   //gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
    gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,BACKGR);
    }
 
 /* Done initialization */
 
-if (!Nova_ReadTimeSeries(cfv,fileroot))
-   {
-   CfOut(cf_verbose,""," -> Found no actual data in %s\n",fileroot);
-   return false;
-   }
-
+Nova_ReadTimeSeries(cfv,keyhash,obs);
 Nova_PlotQFile(cfv,LIGHTRED,GREEN,YELLOW);
 Nova_Title(cfv,BLUE);
 Nova_DrawQAxes(cfv,BLACK);
@@ -85,7 +53,7 @@ Nova_DrawQAxes(cfv,BLACK);
 if ((fout = fopen(newfile, "wb")) == NULL)
    {
    CfOut(cf_verbose,"fopen"," -> Making %s\n",newfile);
-   return false;
+   return;
    }
 else
    {
@@ -95,22 +63,37 @@ else
 gdImagePng(cfv->im, fout);
 fclose(fout);
 gdImageDestroy(cfv->im);
-
-Nova_AnalyseWeek(cfv,filename,obs,host);
-return true;
 }
 
 /**********************************************************************/
 
-int Nova_ReadTimeSeries(struct CfDataView *cfv, char *filename)
+void Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
-{ double rx,ry,rs,sx = 0;
+{ double rx,ry,rs,rq;
   FILE *fp;
-  char name[CF_BUFSIZE],buffer[CF_BUFSIZE];
-  int have_data = false;
+  char name[CF_BUFSIZE];
+  int i,have_data = false;
+  mongo_connection dbconn;
+  double q[CF_TIMESERIESDATA],e[CF_TIMESERIESDATA],d[CF_TIMESERIESDATA];
 
-strcpy(name,filename);
-strcat(name,".E-sigma");
+if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+   {
+   CfOut(cf_error, "", "!! Could not open connection to report database");
+   }
+
+CFDB_QueryWeekView(&dbconn,keyhash,obs,q,e,d);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_error, "", "!! Could not close connection to report database");
+   } 
+
+for (i = 0; i < CF_TIMESERIESDATA; i++)
+   {
+   cfv->data_E[i] = 0;
+   cfv->data_q[i] = 0;
+   cfv->bars[i] = 0;
+   }
 
 cfv->over = 0;
 cfv->under = 0;
@@ -122,26 +105,14 @@ cfv->max = 0;
 cfv->min = 99999;
 cfv->error_scale = 0;      
 
-if ((fp = fopen(name,"r")) == NULL)
+Q_MEAN = 0;
+Q_SIGMA = 0;
+
+for (i = 0; i < CF_TIMESERIESDATA; i++)
    {
-   CfOut(cf_verbose,"","Can't open time series %s\n",name);
-   return false;
-   }
-
-CfOut(cf_verbose,""," -> Studying time-series %s\n",name);
-
-for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
-   {
-   rx = ry = rs = 0;
-
-   memset(buffer,0,CF_BUFSIZE);
-      
-   if (!fgets(buffer,CF_BUFSIZE,fp))
-      {
-      return false;
-      }
-   
-   sscanf(buffer,"%lf %lf %lf",&rx,&ry,&rs);
+   ry = e[i];
+   rq = q[i];
+   rs = d[i];
 
    if (ry > cfv->max)
       {
@@ -155,108 +126,55 @@ for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
       cfv->min = ry;
       }
 
-   cfv->data_E[(int)sx] = ry;
-   cfv->bars[(int)sx] = rs;
+   cfv->data_q[i] = rq;
+   cfv->data_E[i] = ry;
+   cfv->bars[i] = rs;
 
-   if (ry > 0)
+   if (cfv->data_q[i] > cfv->data_E[i])
       {
-      have_data = true;
+      cfv->over++;
+      }
+
+   if (cfv->data_q[i] < cfv->data_E[i])
+      {
+      cfv->under++;
+      }
+
+   if (cfv->data_q[i] > cfv->data_E[i]+cfv->bars[i])
+      {
+      cfv->over_dev1++;
+      }
+
+   if (cfv->data_q[i] < cfv->data_E[i]-cfv->bars[i])
+      {
+      cfv->under_dev1++;
+      }
+
+   if (cfv->data_q[i] > cfv->data_E[i]+2*cfv->bars[i])
+      {
+      cfv->over_dev2++;
+      }
+
+   if (cfv->data_q[i] < cfv->data_E[i]-2*cfv->bars[i])
+      {
+      cfv->under_dev2++;
+      }
+
+   if (cfv->data_E[i] != 0)
+      {
+      Q_MEAN = GAverage(Q_MEAN,cfv->data_E[i],0.5);
+      }
+   
+   if (cfv->bars[i])
+      {
+      Q_SIGMA = GAverage(Q_SIGMA,cfv->bars[i],0.5);
       }
    }
-
-fclose(fp);
 
 if (cfv->max > CF_MAX_LIMIT)
    {
    cfv->max = CF_MAX_LIMIT;
    }
-
-strcpy(name,filename);
-strcat(name,".q");
-  
-if ((fp = fopen(name,"r")) == NULL)
-   {
-   CfOut(cf_verbose,"fopen"," -> Can't open %s\n",name);
-   return false;
-   }
-
-CfOut(cf_verbose,""," -> Studying time-series %s\n",name);
-
-Q_MEAN = 0;
-Q_SIGMA = 0;
-
-for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
-   {
-   memset(buffer,0,CF_BUFSIZE);
-   
-   if (!fgets(buffer,CF_BUFSIZE,fp))
-      {
-      return false;
-      }
-
-   sscanf(buffer,"%lf %lf %lf",&rx,&ry,&rs);
-
-   if (ry > cfv->max)
-      {
-      cfv->max = ry;
-      }
-
-   cfv->error_scale = (cfv->error_scale+rs)/2;
-
-   if (ry < cfv->min)
-      {
-      cfv->min = ry;
-      }
-
-   cfv->data_q[(int)sx] = ry;
-
-   if (cfv->data_q[(int)sx] > cfv->data_E[(int)sx])
-      {
-      cfv->over++;
-      }
-
-   if (cfv->data_q[(int)sx] < cfv->data_E[(int)sx])
-      {
-      cfv->under++;
-      }
-
-   if (cfv->data_q[(int)sx] > cfv->data_E[(int)sx]+cfv->bars[(int)sx])
-      {
-      cfv->over_dev1++;
-      }
-
-   if (cfv->data_q[(int)sx] < cfv->data_E[(int)sx]-cfv->bars[(int)sx])
-      {
-      cfv->under_dev1++;
-      }
-
-   if (cfv->data_q[(int)sx] > cfv->data_E[(int)sx]+2*cfv->bars[(int)sx])
-      {
-      cfv->over_dev2++;
-      }
-
-   if (cfv->data_q[(int)sx] < cfv->data_E[(int)sx]-2*cfv->bars[(int)sx])
-      {
-      cfv->under_dev2++;
-      }
-
-   if (ry > 0)
-      {
-      have_data = true;
-      }
-
-   if (cfv->data_E[(int)sx] != 0)
-      {
-      Q_MEAN = GAverage(Q_MEAN,cfv->data_E[(int)sx],0.5);
-      }
-   
-   if (cfv->bars[(int)sx])
-      {
-      Q_SIGMA = GAverage(Q_SIGMA,cfv->bars[(int)sx],0.5);
-      }
-   }
-
-fclose(fp);
 
 cfv->origin_x = cfv->margin;
 cfv->origin_y = cfv->height+cfv->margin;
@@ -301,8 +219,6 @@ if (have_data)
    {
    CfOut(cf_verbose,""," -> Read data for %s\n",name);
    }
-
-return have_data;
 }
 
 /**********************************************************************/
@@ -361,9 +277,7 @@ else
       gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
       }
    }
-
 }
-
 
 /*******************************************************************/
 
@@ -459,18 +373,11 @@ gdImageArc(cfv->im,x,y,20,20,0,360,RED);
 void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs,char *host)
 
 { char fname[CF_BUFSIZE],img[CF_BUFSIZE];
-  FILE *fp;
+  FILE *fp = stdout;
   double x;
 
   /* First find the variance sigma2 */
 
-snprintf(fname,CF_BUFSIZE,"%s_week.html",name);
-  
-if ((fp = fopen(fname,"w")) == 0)
-   {
-   CfOut(cf_verbose,"","Can't open week analysis file %s\n",fname);
-   return;   
-   }
 
 fprintf(fp,"<h3>Weekly trends on %s</h3>\n",name);
 

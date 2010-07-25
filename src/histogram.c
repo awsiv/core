@@ -22,51 +22,33 @@ extern int BLUES[];
 
 #ifdef HAVE_LIBGD
 
-void Nova_ViewHisto(struct CfDataView *cfv,char *filename, char *title,enum observables obs,char *host)
+void Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs)
     
 { int i,y,hint;
   double frac;
   FILE *fout;
   struct stat s1,s2;
   char newfile[CF_BUFSIZE];
-  char oldfile[CF_BUFSIZE];
   struct Item *spectrum;
 
   /* Initialization */
 
-snprintf(newfile,CF_BUFSIZE,"%s_hist.png",filename);
-snprintf(oldfile,CF_BUFSIZE,"%s.distr",filename);
+snprintf(newfile,CF_BUFSIZE,"%s/%s/%s_hist.png",DOCROOT,keyhash,OBS[obs][0]);
 
-if ((cfstat(oldfile,&s1) != -1) && (cfstat(newfile,&s2) != -1))
-   {
-   if (s2.st_mtime > s1.st_mtime)
-      {
-      /* no changes */
-      return;
-      }
-   }
-
-cfv->title = title;
+cfv->title = OBS[obs][1];
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
 Nova_MakePalette(cfv);
 
 for (y = 0; y < cfv->height+2*cfv->margin; y++)
    {
-   //hint = (int)((double)(cfv->height+2*cfv->margin-y)/(cfv->height+2*cfv->margin) * CF_SHADES);
-   //gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,GREYS[hint]);
    gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,BACKGR);
    }
 
 /* Done initialization */
 
-CfOut(cf_verbose,""," -> Looking for histogram %s",oldfile);
+Nova_ReadHistogram(cfv,keyhash,obs);
 
-if (!Nova_ReadHistogram(cfv,oldfile))
-   {
-   return;
-   }
-
-spectrum = Nova_AnalyseHistogram(cfv,filename,obs,host);
+spectrum = Nova_AnalyseHistogram(cfv,keyhash,obs);
 Nova_PlotHistogram(cfv,BLUES,spectrum);
 Nova_Title(cfv,BLUE);
 Nova_DrawHistoAxes(cfv,BLACK);
@@ -85,35 +67,33 @@ DeleteItemList(spectrum);
 
 /**********************************************************************/
 
-int Nova_ReadHistogram(struct CfDataView *cfv, char *name)
+void Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs)
 
-{ double rx,ry,rs,sx = 0;
-  FILE *fp;
-  char buffer[CF_BUFSIZE];
+{ double rx,ry;
+  int i;
+  mongo_connection dbconn;
+  double histo[CF_GRAINS];
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+   {
+   CfOut(cf_error, "", "!! Could not open connection to report database");
+   }
+
+CFDB_QueryHistogram(&dbconn,hostkey,obs,histo);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_error, "", "!! Could not close connection to report database");
+   } 
 
 cfv->max = 0;
 cfv->min = 99999;
 cfv->error_scale = 0;      
 
-if ((fp = fopen(name,"r")) == NULL)
+for (i = 0; i < CF_GRAINS; i++)
    {
-   CfOut(cf_verbose,"","Can't open histogram %s\n",name);
-   return false;
-   }
-
-for (sx = 0; sx < CF_GRAINS; sx++)
-   {
-   rx = ry = 0;
-
-   memset(buffer,0,CF_BUFSIZE);
+   ry = histo[i];
    
-   if (!fgets(buffer,CF_BUFSIZE,fp))
-      {
-      return false;
-      }
-   
-   sscanf(buffer,"%lf %lf",&rx,&ry);
-
    if (ry > cfv->max)
       {
       cfv->max = ry;
@@ -124,11 +104,8 @@ for (sx = 0; sx < CF_GRAINS; sx++)
       cfv->min = ry;
       }
 
-   cfv->data_E[(int)sx] = ry;
+   cfv->data_E[i] = ry;
    }
-
-fclose(fp);
-return true;
 }
 
 /**********************************************************************/
@@ -240,7 +217,7 @@ gdImageLine(cfv->im,origin_x+32*scale_x,origin_y,origin_x+cfv->width/2,cfv->max_
 
 /*******************************************************************/
 
-struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *name,enum observables obs,char *host)
+struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
 { double sx, q, delta, sum = 0, sigma2;
   int new_gradient = 0, past_gradient = 0, max = 0;
@@ -249,25 +226,17 @@ struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *name,enum observ
   char fname[CF_BUFSIZE],img[CF_BUFSIZE],output[CF_BUFSIZE];
   double sensitivity_factor = 1.2;
   struct Item *maxima = NULL;
-  FILE *fp;
+  FILE *fp = stdout;
 
   /* First find the variance sigma2 */
 
-snprintf(fname,CF_BUFSIZE,"%s_hist.html",name);
-  
-if ((fp = fopen(fname,"w")) == 0)
-   {
-   CfOut(cf_verbose,"","Can't open histogram analysis file %s\n",fname);
-   return NULL;   
-   }
-
-fprintf(fp,"<h3>Spectral analysis of %s</h3>",name);
+fprintf(fp,"<h3>Spectral analysis of %s</h3>",OBS[obs][0]);
 
 fprintf(fp,"<div id=\"legend\">\n");
 
-CfOut(cf_verbose,""," -> Looking for maxima in %s\n",name);
+CfOut(cf_verbose,""," -> Looking for maxima in %s\n",OBS[obs][0]);
 
-snprintf(img,CF_BUFSIZE,"reports/%s/%s_hist.png",host,name);
+snprintf(img,CF_BUFSIZE,"%s/%s/%s_hist.png",DOCROOT,keyhash,OBS[obs][0]);
 
 fprintf(fp,"<div id=\"graph\">\n");
 fprintf(fp,"<a href=\"%s\"><img src=\"%s\" width=\"590\"></a>\n",img,img);
@@ -284,8 +253,8 @@ for (sx = 1; sx < CF_GRAINS; sx++)
 
 sigma2 = sum / (double)CF_GRAINS;
 
-fprintf(fp,"<p> Maximum observed %s = %.2lf\n",name,Q_MAX);
-fprintf(fp,"<p> Minimum observed %s = %.2lf\n",name,Q_MIN);
+fprintf(fp,"<p> Maximum observed %s = %.2lf\n",OBS[obs][0],Q_MAX);
+fprintf(fp,"<p> Minimum observed %s = %.2lf\n",OBS[obs][0],Q_MIN);
 fprintf(fp,"<p> Approximate mean value over time = %.2lf\n",Q_MEAN);
 fprintf(fp,"<p> Approximate standard deviation time = %.2lf\n",Q_SIGMA);
 
