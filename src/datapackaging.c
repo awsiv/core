@@ -509,7 +509,7 @@ DeleteItemList(file);
 void Nova_PackMonitorWeek(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { int its,i,j,k, count = 0,err,first = true,slot = 0;
- double kept = 0, not_kept = 0, repaired = 0, nonzero;
+  double kept = 0, not_kept = 0, repaired = 0, nonzero;
   struct stat statbuf;
   struct Averages entry,det;
   char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
@@ -657,12 +657,11 @@ while (here_and_now < now)
    nonzero = 0;   
    memset(&entry,0,sizeof(entry));
 
-   strcpy(timekey,GenTimeKey(here_and_now));
-   here_and_now += CF_MEASURE_INTERVAL;
-   slot++;
-
    if (from > here_and_now)
       {
+      here_and_now += CF_MEASURE_INTERVAL;
+      strcpy(timekey,GenTimeKey(here_and_now));
+      slot++;
       continue;
       }
    
@@ -701,6 +700,10 @@ while (here_and_now < now)
          AppendItem(reply,buffer,NULL);
          }
       }
+
+   here_and_now += CF_MEASURE_INTERVAL;
+   strcpy(timekey,GenTimeKey(here_and_now));
+   slot++;
    }
 
 CloseDB(dbp);

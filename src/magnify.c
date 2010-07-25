@@ -33,6 +33,9 @@ int Nova_ViewLatest(struct CfDataView *cfv,char *filename, char *title,enum obse
 
   /* Initialization */
 
+
+  // replace this with a single rate limiter lock for all updates
+  // as if one graph has been updated, all have been
 snprintf(newfile,CF_BUFSIZE,"%s_mag.png",filename);
 snprintf(oldfile,CF_BUFSIZE,"%s.mag",filename);
 
@@ -105,7 +108,16 @@ int Nova_ReadMagTimeSeries(struct CfDataView *cfv, char *name)
 cfv->max = 0;
 cfv->min = 99999;
 cfv->error_scale = 0;      
-  
+
+/*now = time(NULL);
+here_and_now = now - (time_t)(4 * CF_TICKS_PER_HOUR);
+
+slot = GetTimeSlot(here_and_now);
+
+
+
+*/
+
 if ((fp = fopen(name,"r")) == NULL)
    {
    CfOut(cf_verbose,"","Cannot read mag data %s\n",name);

@@ -1490,6 +1490,353 @@ return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/
+
+int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da)
+
+{ bson_buffer b,bb,*sub1,*sub2,*sub3;
+  bson qu,query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  char search_name[CF_MAXVARSIZE];
+  double q,e,d;
+  int ok = false,start_slot,wrap_around;
+  
+/* BEGIN query document */
+
+bson_buffer_init(&b);
+bson_append_string(&b,cfr_keyhash,keyhash);
+bson_from_buffer(&query,&b);
+  
+/* BEGIN RESULT DOCUMENT */
+
+snprintf(search_name,CF_MAXVARSIZE-1,"%s%d",cfr_mag,obs);
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,search_name,1);
+bson_from_buffer(&field, &bb);
+
+/* Check from wrap around */
+
+start_slot = GetTimeSlot(start_time);
+
+wrap_around = (int)start_slot + CF_MAGDATA - CF_MAX_SLOTS;
+
+/* BEGIN SEARCH */
+
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Query specific search/marshalling */
+
+      if (strcmp(bson_iterator_key(&it1),search_name) == 0)
+         {
+         int slot = 0,st = 0;
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3,bson_iterator_value(&it2));
+            sscanf(bson_iterator_key(&it2),"%d",&st);
+
+            // Select the past 4 hours
+            
+            if (wrap_around > 0)
+               {
+               if (st >= wrap_around || st < start_slot)
+                  {
+                  continue;
+                  }
+               }
+            else
+               {
+               if (st < start_slot || st > start_slot + CF_MAGDATA)
+                  {
+                  continue;
+                  }
+               }
+
+            q = e = d = 0;
+
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_obs_q) == 0)
+                  {
+                  q = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
+                  {
+                  e = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
+                  {
+                  d = bson_iterator_double(&it3);
+                  }
+               }
+
+            qa[slot] = q;
+            ea[slot] = e;
+            da[slot] = d;
+            slot++;
+            }
+         }
+      }
+   }
+
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return ok;
+}
+
+/*****************************************************************************/
+
+int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da)
+
+{ bson_buffer b,bb,*sub1,*sub2,*sub3;
+  bson qu,query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  char search_name[CF_MAXVARSIZE];
+  double q,e,d;
+  int ok = false;
+  time_t start_time = CF_MONDAY_MORNING;
+  
+/* BEGIN query document */
+
+bson_buffer_init(&b);
+bson_append_string(&b,cfr_keyhash,keyhash);
+bson_from_buffer(&query,&b);
+  
+/* BEGIN RESULT DOCUMENT */
+
+snprintf(search_name,CF_MAXVARSIZE-1,"%s%d",cfr_week,obs);
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,search_name,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Query specific search/marshalling */
+
+      if (strcmp(bson_iterator_key(&it1),search_name) == 0)
+         {
+         int st = 0, index = 0;
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3,bson_iterator_value(&it2));
+            sscanf(bson_iterator_key(&it2),"%d",&st);
+
+            // Select the past 4 hours
+            
+            q = e = d = 0;
+
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_obs_q) == 0)
+                  {
+                  q = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
+                  {
+                  e = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
+                  {
+                  d = bson_iterator_double(&it3);
+                  }
+               }
+
+            // Slot starts at 1 due to coarse graining loop
+            
+            index = st/12 - 1;
+
+            qa[index] = q;
+            ea[index] = e;
+            da[index] = d;
+            }
+         }
+      }
+   }
+
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return ok;
+}
+
+/*****************************************************************************/
+
+int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da)
+
+{ bson_buffer b,bb,*sub1,*sub2,*sub3;
+  bson qu,query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  char search_name[CF_MAXVARSIZE];
+  double q,e,d;
+  int ok = false;
+  time_t start_time = CF_MONDAY_MORNING;
+  
+/* BEGIN query document */
+
+bson_buffer_init(&b);
+bson_append_string(&b,cfr_keyhash,keyhash);
+bson_from_buffer(&query,&b);
+  
+/* BEGIN RESULT DOCUMENT */
+
+snprintf(search_name,CF_MAXVARSIZE-1,"%s%d",cfr_yr,obs);
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,search_name,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Query specific search/marshalling */
+
+      if (strcmp(bson_iterator_key(&it1),search_name) == 0)
+         {
+         int st = 0, index = 0;
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3,bson_iterator_value(&it2));
+            sscanf(bson_iterator_key(&it2),"%d",&st);
+
+            // Select the past 4 hours
+            
+            q = e = d = 0;
+
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_obs_q) == 0)
+                  {
+                  q = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
+                  {
+                  e = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
+                  {
+                  d = bson_iterator_double(&it3);
+                  }
+               }
+
+            // Slot starts at 1 due to coarse graining loop
+            
+            index;
+
+            qa[index] = q;
+            ea[index] = e;
+            da[index] = d;
+
+            printf("Storing slot %s %lf,%lf,%lf\n",index,q,e,d);
+            }
+         }
+      }
+   }
+
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return ok;
+}
+
+/*****************************************************************************/
+
+int CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,enum observables obs,double *histo)
+
+{ bson_buffer b,bb,*sub1,*sub2,*sub3;
+  bson qu,query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  char search_name[CF_MAXVARSIZE];
+  double q,e,d;
+  int ok = false;
+  time_t start_time = CF_MONDAY_MORNING;
+  
+/* BEGIN query document */
+
+bson_buffer_init(&b);
+bson_append_string(&b,cfr_keyhash,keyhash);
+bson_from_buffer(&query,&b);
+  
+/* BEGIN RESULT DOCUMENT */
+
+snprintf(search_name,CF_MAXVARSIZE-1,"%s%d",cfr_histo,obs);
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,search_name,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   while (bson_iterator_next(&it1))
+      {
+      /* Query specific search/marshalling */
+
+      if (strcmp(bson_iterator_key(&it1),search_name) == 0)
+         {
+         int st = 0, index = 0;
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         while (bson_iterator_next(&it2))
+            {
+            histo[index] = bson_iterator_double(&it2);
+            index++;
+            }
+         }
+      }
+   }
+
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return ok;
+}
+
+/*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
 

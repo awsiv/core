@@ -104,7 +104,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
 printf("\n");
 
 */
-/* Example 4 **************************************************/
+/* Example 4 **************************************************
 
 hq = CFDB_QueryVariables(&dbconn,bson_empty(&b),"we.*",NULL,NULL,NULL,true);
 
@@ -125,7 +125,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
    }
 printf("\n");
 
-
+*/
 
 /* Example 5 **************************************************
 
@@ -266,6 +266,37 @@ printf("\n");
 
 */
 
+
+// graphs
+
+/*
+double q[CF_MAGDATA],e[CF_MAGDATA],d[CF_MAGDATA];
+CFDB_QueryMagView(&dbconn,"MD5=4a37e48645122312daf7862f2a0f0ef7",0,time(0) - 4*3600,q,e,d);
+*/
+
+/*
+double q[CF_TIMESERIESDATA],e[CF_TIMESERIESDATA],d[CF_TIMESERIESDATA];
+CFDB_QueryWeekView(&dbconn,"MD5=4a37e48645122312daf7862f2a0f0ef7",0,q,e,d);
+*/
+
+
+
+double q[CF_TIMESERIESDATA],e[CF_TIMESERIESDATA],d[CF_TIMESERIESDATA];
+CFDB_QueryYearView(&dbconn,"MD5=4a37e48645122312daf7862f2a0f0ef7",0,q,e,d);
+
+
+
+/*
+double histo[CF_GRAINS];
+CFDB_QueryHistogram(&dbconn,"MD5=4a37e48645122312daf7862f2a0f0ef7",0,histo);
+
+int i;
+for (i = 0; i < CF_GRAINS; i++)
+   {
+   printf("%.2lf ",histo[i]);
+   }
+printf("\n");
+*/
 
 
 if (!CFDB_Close(&dbconn))

@@ -45,8 +45,9 @@
 #undef PACKAGE
 
 #define CF_SHADES 25
-#define CF_TIMESERIESDATA 168
-#define CF_MAGDATA 48
+#define CF_TIMESERIESDATA 168 /* (24*7) */
+#define CF_MAGDATA 48         /* (4*12) */
+#define CF_MAX_SLOTS 2016     /* (24*7*12) */
 #define CF_LHISTORYDATA 1464
 #define CF_MAGMARGIN 0
 #define CF_LHISTORYMARGIN 0
@@ -311,11 +312,17 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,bson *query,char *
 struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,bson *query,char *lname,int regex);
 struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn,bson *query,char *lname,int regex);
 
+int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
+int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
+int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
+int CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,enum observables obs,double *histo);
+
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
 void PrintCFDBKey(bson_iterator *it, int depth);
 int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
-#endif /* HAVE_LIBMONGOC */
+
+#endif
 
 /* db_save.c */
 

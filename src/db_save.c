@@ -235,7 +235,7 @@ switch(rep_type)
 // find right host
 
 bson_buffer_init(&bb);
-bson_append_string(&bb, cfr_keyhash, keyhash);
+bson_append_string(&bb,cfr_keyhash,keyhash);
 bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
@@ -244,8 +244,7 @@ setObj = bson_append_start_object(&bb, "$set");
  
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   // extract timestamp
-   if (strncmp(ip->name,"T: ", 3) == 0)
+   if (strncmp(ip->name,"T: ",3) == 0)
       {
       switch(rep_type)
          {
@@ -269,12 +268,12 @@ for (ip = data; ip != NULL; ip=ip->next)
    q = e = dev = 0;
    sscanf(ip->name,"%d %lf %lf %lf",&observable,&q,&e,&dev);
    
-   snprintf(varNameIndex, sizeof(varNameIndex),"%s%d.%c.%d",repPrefix,observable,cfr_obs_q, slot);
-   bson_append_double(setObj, varNameIndex, q);
-   snprintf(varNameIndex, sizeof(varNameIndex),"%s%d.%c.%d",repPrefix,observable,cfr_obs_E, slot);
-   bson_append_double(setObj, varNameIndex, e);
-   snprintf(varNameIndex, sizeof(varNameIndex),"%s%d.%c.%d",repPrefix,observable,cfr_obs_sigma,slot);
-   bson_append_double(setObj, varNameIndex, dev);
+   snprintf(varNameIndex, sizeof(varNameIndex),"%s%d.%d.%s",repPrefix,observable,slot,cfr_obs_q);
+   bson_append_double(setObj,varNameIndex,q);
+   snprintf(varNameIndex, sizeof(varNameIndex),"%s%d.%d.%s",repPrefix,observable,slot,cfr_obs_E);
+   bson_append_double(setObj,varNameIndex,e);
+   snprintf(varNameIndex, sizeof(varNameIndex),"%s%d.%d.%s",repPrefix,observable,slot,cfr_obs_sigma);
+   bson_append_double(setObj,varNameIndex,dev);
    }
   
 bson_append_finish_object(setObj);
@@ -297,7 +296,8 @@ void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *keyhash, struct It
   bson setOp;
   char arrName[64], kStr[32];
   struct Item *ip;
-  int i,k, currHist;
+  int i,k;
+  double currHist;
   char *sp;
 
 // find right host
@@ -326,7 +326,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    
    for (k = 0; k < CF_GRAINS; k++)
       {
-      sscanf(sp,"%d",&currHist);
+      sscanf(sp,"%lf",&currHist);
       
       while (*(++sp) != ':')
          {
@@ -339,7 +339,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
       sp++;
       snprintf(kStr, sizeof(kStr),"%d",k);
-      bson_append_int(arr,kStr,currHist);
+      bson_append_double(arr,kStr,currHist);
       }
 
    bson_append_finish_object(arr);

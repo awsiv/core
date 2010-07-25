@@ -197,7 +197,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
- int observable,slot;
+  int observable,slot;
   double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
@@ -205,7 +205,7 @@ CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   CFDB_SaveMonitorData(dbconn, id, mon_rep_mag, data);
+   CFDB_SaveMonitorData(dbconn,id,mon_rep_mag,data);
    }
 #endif
 
@@ -230,7 +230,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  int weekly[CF_OBSERVABLES][CF_GRAINS];
+  double weekly[CF_OBSERVABLES][CF_GRAINS];
   int i = 0,j,k;
   char *sp;
  
@@ -259,7 +259,7 @@ for (ip = data; ip != NULL; ip=ip->next)
        
    for (k = 0; k < CF_GRAINS; k++)
       {
-      sscanf(sp,"%d",&(weekly[i][k]));
+      sscanf(sp,"%lf",&(weekly[i][k]));
       
       while (*(++sp) != ':')
          {
@@ -271,7 +271,7 @@ for (ip = data; ip != NULL; ip=ip->next)
          }
 
       sp++;
-      Debug("%d,",weekly[i][k]);
+      Debug("%lf,",weekly[i][k]);
       }
    
    Debug("\n");
