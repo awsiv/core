@@ -50,6 +50,7 @@ libcfnova_la_SOURCES =						\
 	coordinates.c						\
 	cfcore.c                                                \
 	install.c						\
+	hub.c							\
 	win_api.c						\
         win_disphelper.c                                        \
 	win_file.c						\

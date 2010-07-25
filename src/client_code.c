@@ -303,6 +303,7 @@ if (dbconnp && !CFDB_Close(&dbconn))
 
 #endif
 }
+
 /*********************************************************************/
 
 void DeleteReportBook(struct Item **reports)
@@ -317,3 +318,4 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
       }
    }
 }
+

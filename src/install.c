@@ -475,7 +475,7 @@ return hp;
 
 void DeleteHubBundleSeen(struct HubBundleSeen *hp)
 {
-DeleteHubHost(hp->bundle);
+free(hp->bundle);
 free(hp); 
 }
 

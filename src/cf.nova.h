@@ -452,6 +452,14 @@ struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *name,enum observ
 
 /* html.c */
 
+/* hub.c */
+
+void Nova_StartHub(int argc,char **argv);
+void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Promise *pp);
+void Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp);
+int Nova_HailPeer(char *host,struct Attributes a,struct Promise *pp);
+struct Item *Nova_ScanClients(void);
+
 /* install.c */
 
 struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records);
