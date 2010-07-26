@@ -307,7 +307,7 @@ struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,bson *query,ch
 struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,bson *query,char *lscope,char *llval,char *lrval,char *ltype,int reg);
 struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,bson *query,char *handle,char lstatus,int regex);
 struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,bson *query,char *lhash,char *lhost,char *laddr,time_t lago,int regex);
-struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query);
+struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *hostkey);
 struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,bson *query,char *rname,int regex);
 struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,bson *query,char *lname,int regex);
 struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn,bson *query,char *lname,int regex);
@@ -430,7 +430,7 @@ int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,
 /* graphs.c */
 
 char *Nova_GetHostClass(char *s);
-int Nova_BuildMeters(struct CfDataView *cfv,char *hostname);
+int Nova_BuildMeter(struct CfDataView *cfv,char *hostkey);
 void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired,char *s);
 void Nova_Title(struct CfDataView *cfv,int col);
 void Nova_BuildGraphs(struct CfDataView *cfv);
@@ -439,10 +439,9 @@ void Nova_MakeCosmosPalette(struct CfDataView *cfv);
 double Nova_GetNowPosition(time_t now);
 void Nova_IncludeFile(FILE *fout,char *name);
 void Nova_NavBar(FILE *fout);
-void Nova_GetLevel(char *id,int *kept,int *repaired);
+void Nova_GetLevel(char *key,char *id,int *kept,int *repaired);
 struct Item *Nova_CreateHostPortal(struct Item *list);
 void Nova_GetAllLevels(int *kept,int *repaired,struct Item *list,char **names);
-void Nova_GetLevels(int *kept,int *repaired,char *hostname,char **names);
 void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list);
 void Nova_GraphLegend(FILE *fp);
 void Nova_GraphMagLegend(FILE *fp);
@@ -1070,6 +1069,14 @@ struct HubMeter
    double repaired;
    double notkept;
    };
+
+#define cfmeter_hour 'H'
+#define cfmeter_week 'W'
+#define cfmeter_day  'D'
+#define cfmeter_perf 'P'
+#define cfmeter_comms 'C'
+#define cfmeter_anomaly 'A'
+#define cfmeter_other 'S'
 
 struct HubPerformance
    {

@@ -377,13 +377,18 @@ gdImageDestroy(cfv->im);
 
 /*****************************************************************************/
 
-int Nova_BuildMeters(struct CfDataView *cfv,char *hostname)
+int Nova_BuildMeter(struct CfDataView *cfv,char *hostkey)
 
 { FILE *fout;
   char filename[CF_BUFSIZE];
-  int kept,repaired,returnval = 0;
+  int returnval = 0;
+  double kept,repaired;
   struct stat sb;
   struct utimbuf t;
+  struct HubMeter *hm;
+  struct HubQuery *hq;
+  mongo_connection dbconn;
+  struct Rlist *rp;
   
 cfv->height = CF_METER_HEIGHT;
 cfv->width = CF_METER_WIDTH;
@@ -396,27 +401,63 @@ gdImageSetThickness(cfv->im,2);
 gdImageFilledRectangle(cfv->im,0,0,cfv->width+2*cfv->margin,cfv->height+2*cfv->margin,LIGHTGREY);
 gdImageRectangle(cfv->im,0,0,cfv->width+2*cfv->margin,cfv->height+2*cfv->margin,BLACK);
 
-// Bar 1
+// get data
 
-Nova_GetLevel("Week",&kept,&repaired);
-Nova_BarMeter(cfv,1,kept,repaired,"Week");
-Nova_GetLevel("Day",&kept,&repaired);
-Nova_BarMeter(cfv,2,kept,repaired,"Day");
-Nova_GetLevel("Hour",&kept,&repaired);
-Nova_BarMeter(cfv,3,kept,repaired,"Hour");
+if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+   {
+   CfOut(cf_error, "", "!! Could not open connection to report database");
+   }
 
-returnval = kept+repaired;
+hq = CFDB_QueryMeter(&dbconn,hostkey);
 
-Nova_GetLevel("Patch",&kept,&repaired);
-Nova_BarMeter(cfv,4,kept,repaired,"Ptch");
-Nova_GetLevel("Lics",&kept,&repaired);
-Nova_BarMeter(cfv,5,kept,repaired,"Lics");
-Nova_GetLevel("Comms",&kept,&repaired);
-Nova_BarMeter(cfv,6,kept,repaired,"Coms");
-Nova_GetLevel("Anom",&kept,&repaired);
-Nova_BarMeter(cfv,7,kept,repaired,"Anom");
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_error, "", "!! Could not close connection to report database");
+   } 
 
-snprintf(filename,CF_BUFSIZE,"meters.png");
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hm = (struct HubMeter *)rp->item;
+   printf("Meter result: (%c) %lf,%lf,%lf\n",hm->type,hm->kept,hm->notkept);
+   printf("found on (%s=%s=%s)\n",hm->hh->keyhash,hm->hh->hostname,hm->hh->ipaddr);
+
+   kept = hm->kept;
+   repaired = hm->repaired;
+   
+   switch (hm->type)
+      {
+      case cfmeter_week:
+          Nova_BarMeter(cfv,1,kept,repaired,"Week");
+          break;
+      case cfmeter_hour:
+          Nova_BarMeter(cfv,3,kept,repaired,"Hour");
+          returnval = kept+repaired;
+          break;          
+      case cfmeter_day:
+          Nova_BarMeter(cfv,2,kept,repaired,"Day");
+          break;
+      case cfmeter_perf:
+          Nova_BarMeter(cfv,4,kept,repaired,"Perf");
+          break;
+      case cfmeter_comms:
+          Nova_BarMeter(cfv,6,kept,repaired,"Coms");
+          break;
+      case cfmeter_anomaly:
+          Nova_BarMeter(cfv,7,kept,repaired,"Anom");
+          break;
+      case cfmeter_other:
+          Nova_BarMeter(cfv,5,kept,repaired,"Lics");
+          break;
+      }
+   }
+
+// Clean up
+
+DeleteHubQuery(hq,DeleteHubMeter);
+
+// Write graph
+
+snprintf(filename,CF_BUFSIZE,"%s/hub/%s/meter.png",DOCROOT,hostkey);
 
 if ((fout = fopen(filename, "wb")) == NULL)
    {
@@ -429,18 +470,6 @@ else
     
 gdImagePng(cfv->im, fout);
 fclose(fout);
-
-#ifdef HAVE_UTIME_H
-
-if (cfstat("comp_key",&sb) != -1)
-   {   
-   t.actime = sb.st_ctime;
-   t.modtime = sb.st_mtime;
-   utime("meters.png",&t);
-   }
-
-#endif
-
 gdImageDestroy(cfv->im);
 return returnval;
 }
@@ -741,43 +770,6 @@ snprintf(ss,CF_MAXVARSIZE-1,"%.1lf",kept);
 
 Nova_Font(cfv,n*h_offset+m*width+5,15,s,WHITE);
 Nova_Font(cfv,n*h_offset+m*width+5,27,ss,WHITE);
-}
-
-/*****************************************************************************/
-
-void Nova_GetLevel(char *id,int *kept,int *repaired)
-
-{ FILE *fin;
-  char buf[CF_BUFSIZE];
-  double a = 0, b= 0;
-  
-*kept = 0;
-*repaired = 0;
-
-if (strcmp(id,"Lics") == 0)
-   {
-   *kept = 100;
-   *repaired = 0;
-   }
-
-if ((fin = fopen("comp_key","r")) == NULL)
-   {
-   return;
-   }
-
-while(!feof(fin))
-   {
-   fgets(buf,CF_BUFSIZE-1,fin);
-
-   if (strncmp(buf,id,strlen(id)) == 0)
-      {
-      sscanf(buf,"%*s %lf %lf",&a,&b);
-      *kept = (int)(a+0.5);
-      *repaired = (int)(b+0.5);
-      }
-   }
-
-fclose(fin);
 }
 
 /*****************************************************************************/

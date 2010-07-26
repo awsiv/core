@@ -1011,10 +1011,10 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query)
+struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *lkeyhash)
 
-{ bson_buffer bb,*sub1,*sub2,*sub3;
-  bson b,field;
+{ bson_buffer b,bb,*sub1,*sub2,*sub3;
+  bson qe,field,query;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
@@ -1025,8 +1025,13 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query)
   
 /* BEGIN query document */
 
-  // Can't understand the bson API for nested objects this, so work around..
-  
+if (strlen(lkeyhash) == 0)
+   {
+   bson_buffer_init(&b);
+   bson_append_string(&b,cfr_keyhash,lkeyhash);
+   bson_from_buffer(&query,&b);
+   }
+
 /* BEGIN RESULT DOCUMENT */
 
 bson_buffer_init(&bb);
@@ -1041,7 +1046,14 @@ bson_from_buffer(&field, &bb);
 hostnames[0] = '\0';
 addresses[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
+if (strlen(lkeyhash) == 0)
+   {
+   cursor = mongo_find(conn,MONGO_DATABASE,bson_empty(&qe),&field,0,0,0);
+   }
+else
+   {
+   cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+   }
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
