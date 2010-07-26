@@ -415,7 +415,7 @@ gdImageArc(cfv->im,x,y,20,20,0,360,RED);
 
 /***********************************************************/
 
-void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs,char *host)
+void Nova_AnalyseWeek(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
 { char fname[CF_BUFSIZE],img[CF_BUFSIZE];
   FILE *fp = stdout;
@@ -424,11 +424,11 @@ void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs,cha
   /* First find the variance sigma2 */
 
 
-fprintf(fp,"<h3>Weekly trends on %s</h3>\n",name);
+fprintf(fp,"<h3>Weekly trends on %s</h3>\n",OBS[obs][0]);
 
 Nova_GraphLegend(fp);
 
-snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_weekly.png",keyhash,OBS[obs][0]);
+snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_weekly.png",DOCROOT,keyhash,OBS[obs][0]);
 
 fprintf(fp,"<div id=\"graph\">\n");
 fprintf(fp,"<a href=\"%s\"><img src=\"%s\" width=\"590\"></a>\n",img,img);

@@ -42,9 +42,10 @@ libcfnova_la_SOURCES =						\
 	knowledge.c						\
 	syntax.c						\
 	scorecards.c						\
+	graphics_core.c						\
 	copernicus.c						\
 	histogram.c						\
-	trends.c						\
+	yearly.c						\
 	weekly.c						\
 	magnify.c						\
 	coordinates.c						\

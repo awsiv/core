@@ -293,18 +293,18 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
 
 /***********************************************************/
 
-void Nova_AnalyseMag(struct CfDataView *cfv,char *name,enum observables obs,char *host)
+void Nova_AnalyseMag(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
 { char fname[CF_BUFSIZE],img[CF_BUFSIZE];
   FILE *fp = stdout;
 
   /* First find the variance sigma2 */
 
-fprintf(fp,"<h3>Zoom: %s Last four hours</h3>\n",name);
+fprintf(fp,"<h3>Zoom: %s Last four hours</h3>\n",OBS[obs][0]);
 
 Nova_GraphMagLegend(fp);
 
-snprintf(img,CF_BUFSIZE,"reports/%s/%s_mag.png",host,name);
+snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_mag.png",DOCROOT,keyhash,OBS[obs][0]);
 
 fprintf(fp,"<div id=\"graph\">\n");
 fprintf(fp,"<a href=\"%s\"><img src=\"%s\" width=\"590\"></a>\n",img,img);

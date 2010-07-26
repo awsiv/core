@@ -553,7 +553,7 @@ void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp);
 void Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs);
 void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3);
-void Nova_AnalyseMag(struct CfDataView *cfv,char *name,enum observables obs,char *host);
+void Nova_AnalyseMag(struct CfDataView *cfv,char *keyname,enum observables obs);
 void Nova_DrawMagQAxes(struct CfDataView *cfv,int col);
 
 /* monitoring.c */
@@ -725,15 +725,7 @@ void Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3);
-void Nova_AnalyseWeek(struct CfDataView *cfv,char *name,enum observables obs,char *host);
-
-/* trends.c */
-
-void Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
-void Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
-void Nova_DrawLongHAxes(struct CfDataView *cfv,int col);
-void Nova_PlotLongHFile(struct CfDataView *cfv,int col1,int col2,int col3);
-void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *name,enum observables obs,char *host);
+void Nova_AnalyseWeek(struct CfDataView *cfv,char *keyname,enum observables obs);
 
 
 #ifdef MINGW
@@ -850,7 +842,22 @@ int NovaWin_WmiDeInitialize(void);
 #endif  /* MINGW */
 
 
+/* yearly.c */
+
+void Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
+void Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
+void Nova_DrawLongHAxes(struct CfDataView *cfv,int col);
+void Nova_PlotLongHFile(struct CfDataView *cfv,int col1,int col2,int col3);
+void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observables obs);
+
+
+
 /***************************************************************************/
+
+
+#define CF_METER_HEIGHT 80
+#define CF_METER_WIDTH  500
+#define CF_METER_MARGIN 5
 
 #define NOVA_USES "relies on promise from"
 #define NOVA_GIVES "makes promise to"

@@ -299,7 +299,7 @@ printf("\n");
 */
 
 struct CfDataView cfv;
-Nova_BuildGraphs(&cfv);
+//Nova_BuildGraphs(&cfv);
 
 strcpy(DOCROOT,"/home/mark/tmp");
 int i;

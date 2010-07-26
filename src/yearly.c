@@ -11,7 +11,7 @@
 
 /*****************************************************************************/
 /*                                                                           */
-/* File: magnify.c                                                           */
+/* File: yearly.c                                                           */
 /*                                                                           */
 /*****************************************************************************/
 
@@ -242,7 +242,7 @@ for (sx = 0; sx < CF_LHISTORYDATA; sx++)
 
 /***********************************************************/
 
-void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *name,enum observables obs,char *host)
+void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
 { char fname[CF_BUFSIZE],img[CF_BUFSIZE];
   struct stat sb;
@@ -251,7 +251,7 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *name,enum observables 
 
   /* First find the variance sigma2 */
 
-fprintf(fp,"<h3>Lifecycle history: %s (beta)</h3>\n",name);
+fprintf(fp,"<h3>Lifecycle history: %s (beta)</h3>\n",OBS[obs][0]);
 
 Nova_GraphLegend(fp);
 
@@ -259,11 +259,11 @@ fprintf(fp,"<div id=\"graph\">\n");
 
 for (yr = 2; yr >= 0; yr--)
    {
-   snprintf(img,CF_BUFSIZE,"%s_%d.yr.png",name,yr);
+   snprintf(img,CF_BUFSIZE,"%s_%d.yr.png",OBS[obs][0],yr);
 
    if (cfstat(img,&sb) != -1)
       {
-      fprintf(fp,"<a href=\"reports/%s/%s\"><img src=\"reports/%s/%s\" width=\"200\"></a>\n",host,img,host,img);
+      fprintf(fp,"<a href=\"reports/%s/%s\"><img src=\"reports/%s/%s\" width=\"200\"></a>\n",keyhash,img,keyhash,img);
       }
    }
 

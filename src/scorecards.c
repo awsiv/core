@@ -9,417 +9,303 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+
+extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,BACKGR,ORANGE;
+extern char *UNITS[];
+
+
 /*****************************************************************************/
 /*                                                                           */
-/* File: graphs.c                                                            */
+/* File: scorecards.c                                                        */
 /*                                                                           */
 /*****************************************************************************/
 
-int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,BACKGR,ORANGE,SKY;
-
-int GREYS[CF_SHADES];
-int BLUES[CF_SHADES];
-int YELLOWS[CF_SHADES];
-int PINKS[CF_SHADES];
-int BROWNS[CF_SHADES];
-
-#define CF_METER_HEIGHT 80
-#define CF_METER_WIDTH  500
-#define CF_METER_MARGIN 5
-
-/*****************************************************************************/
-
-#ifdef HAVE_LIBGD
-
-void Nova_BuildGraphs(struct CfDataView *cfv)
-
-{ DIR *dirh;
-  struct dirent *dirp;
-  int i, count = 0, compliance;
-  char name[CF_BUFSIZE],description[CF_BUFSIZE],index[16];
-  struct Item *serverlist = NULL,*ip;
-  struct Item *eliminate = NULL;
-  struct CfDataView cfv_small;
-  struct Item *unique = NULL;
-  struct stat sb;
-  FILE *fout;
+void Nova_MainPage(char *host,struct Item *eliminate)
     
-cfv->height = 300;
-cfv->width = 700; //(7*24*2)*2; // halfhour
-cfv->margin = 50;
+{ FILE *fout;
 
-/* Get the list of clients */
-
-/*
-CfOut(cf_verbose,""," -> Entering the core in %s\n",AGGREGATION);
-chdir(AGGREGATION);
-
-if ((dirh = opendir(AGGREGATION)) == NULL)
+if (LICENSES == 0)
    {
-   CfOut(cf_error,"opendir","Can't open directory %s\n",AGGREGATION);
+   return;
+   }
+ 
+if ((fout = fopen("mainpage.html","w")) == NULL)
+   {
    return;
    }
 
-for (dirp = readdir(dirh); dirp != NULL; dirp = readdir(dirh))
+Nova_ShowAllGraphs(fout,host,eliminate);
+
+fclose(fout);
+}
+
+/*****************************************************************************/
+
+void Nova_OtherPages(char *host,struct Item *eliminate)
+    
+{ FILE *fout;
+  char name[CF_BUFSIZE],exist[CF_BUFSIZE];
+  char id[CF_BUFSIZE],desc[CF_BUFSIZE];
+  struct stat s1,s2;
+  int i;
+
+if (LICENSES == 0)
    {
-   if (cfstat(dirp->d_name,&sb) == -1)
-      {
-      CfOut(cf_error,"stat"," !! %s is unreadable",dirp->d_name);
-      continue;
-      }
-
-   if (strcmp(dirp->d_name,".") == 0 || strcmp(dirp->d_name,"..") == 0)
-      {
-      continue;
-      }
-   
-   if (!S_ISDIR(sb.st_mode))
-      {
-      continue;
-      }
-
-   AppendItem(&serverlist,dirp->d_name,NULL);
+   return;
    }
-
-closedir(dirh);
-
-
-Banner("Create Host Portal");
-serverlist = Nova_CreateHostPortal(serverlist);
-Nova_BuildMainMeter(&cfv_small,serverlist);
-
-for (ip = serverlist; ip != NULL; ip=ip->next)
+  
+for (i = 0; i < CF_OBSERVABLES; i++)
    {
-   char hostn[CF_MAXVARSIZE];
-   
-   if (chdir(ip->name) == -1)
+   Nova_LookupAggregateClassName(i,id,desc);
+
+   if (strcmp(id,"spare") == 0)
       {
-      printf("Could not write to directory %s\n",ip->name);
       continue;
       }
-   
-   snprintf(hostn,CF_MAXVARSIZE-1," -> Rendering reports for %s",ip->name);
-   Banner(hostn);
 
-   Nova_UnPackNerveBundle();
+   snprintf(exist,15,"%d",i);
 
-   for (i = 0; i < CF_OBSERVABLES; i++)
+   if (IsItemIn(eliminate,exist))
       {
-      Nova_LookupAggregateClassName(i,name,description);
-
-      if (strcmp(name,"spare") == 0)
-         {
-         continue;
-         }
-
-      if (i > ob_spare)
-         {
-         snprintf(description,CF_BUFSIZE-1,"measurement %s",name);
-         }
-      
-      CfOut(cf_verbose,""," -> Detected %s/%s\n",name,description);
-
-      if (!Nova_ViewLatest(cfv,name,description,i,ip->name))
-         {
-         snprintf(index,15,"%d",i);
-         PrependItem(&eliminate,index,NULL);
-         CfOut(cf_verbose,""," !! Eliminating %s/%s due to lack of data\n",name,description);
-         }
-
-      CfOut(cf_verbose,""," -> Processing host source %s / %s",ip->name,name);
-
-      Nova_ViewWeek(cfv,name,description,i,ip->name);
-      Nova_ViewHisto(cfv,name,description,i,ip->name);
-      Nova_ViewLongHistory(cfv,name,description,i,ip->name);
-      CfOut(cf_verbose,""," -> Done with %s / %s",ip->name,name);
+      continue;
       }
 
-   compliance = Nova_BuildMeters(&cfv_small,ip->name);
-   ip->counter = compliance;
-   ip->classes = Nova_GetHostClass(ip->name);
-   
-   Nova_MainPage(ip->name,eliminate);
-   Nova_OtherPages(ip->name,eliminate);
-   DeleteItemList(eliminate);
-   eliminate = NULL;
-   chdir("..");
-   }
+   snprintf(name,CF_BUFSIZE,"%s.html",id);
+   snprintf(exist,CF_BUFSIZE,"%s.mag",id);
 
-*/
-// Create a simple list of status for 3rd party export/integration
-
-snprintf(name,CF_BUFSIZE,"summary.z");
-
-if (fout = fopen(name,"w"))
-   {
-   for (ip = serverlist; ip != NULL; ip=ip->next)
+   if (cfstat(name,&s1) != -1 && cfstat(exist,&s2) != -1)
       {
-      if (!IsItemIn(unique,Hostname2IPString(ip->name)))
+      if (s1.st_mtime > s2.st_mtime)
          {
-         PrependItem(&unique,Hostname2IPString(ip->name),NULL);
-         
-         if (strcmp(ip->name,"localhost") == 0 || strcmp(ip->name,"127.0.0.1") == 0)
-            {
-            }
-         else
-            {
-            fprintf(fout,"%s,/Server/%s,%d\n",Hostname2IPString(ip->name),Titleize(ip->classes),ip->counter);
-            }
+         return;
          }
-         
+      }
+   
+   if ((fout = fopen(name,"w")) == NULL)
+      {
+      return;
       }
 
+   Nova_ShowGraph(fout,host,i,s2.st_mtime,(enum observables)i);
    fclose(fout);
    }
-
-DeleteItemList(unique);
-DeleteItemList(serverlist);
 }
 
 /*****************************************************************************/
 
-void Nova_Title(struct CfDataView *cfv,int col)
+void Nova_ShowAllGraphs(FILE *fp,char *keyhash,struct Item *eliminate)
 
-{ char datestr[CF_MAXVARSIZE];
-  char title[CF_MAXVARSIZE];
-  time_t now = time(NULL);
+{ int terminated1,terminated2,terminated3;
+  struct stat sb;
+  char img[CF_BUFSIZE];
+  char url[CF_BUFSIZE];
+  char hist[CF_BUFSIZE];
+  char mag[CF_BUFSIZE];
+  char week[CF_BUFSIZE];
+  char datestr[CF_MAXVARSIZE];
+  char top_name[CF_BUFSIZE],top_description[CF_BUFSIZE];
+  enum observables obs;
+  
+fprintf(fp,"<table>");
+ 
+for (obs = 0; obs < CF_OBSERVABLES; obs++)
+    {
+    Nova_LookupAggregateClassName(obs,top_name,top_description);
 
-strcpy(datestr,cf_ctime(&now));  
+    if (strcmp(top_name,"spare") == 0)
+       {
+       continue;
+       }
+
+    snprintf(hist,15,"%d",obs);
+
+    snprintf(datestr,CF_MAXVARSIZE,"%s",cf_ctime(&DATESTAMPS[obs]));
+    Chop(datestr);
+
+    /* Check is data stream has stopped for this service */
+    
+    if (IsItemIn(eliminate,hist))
+       {
+       continue;
+       }
+
+    /* Check current data stream */
+    
+    if (obs > ob_spare)
+       {
+       snprintf(top_description,CF_BUFSIZE-1,"measurement %s",top_name);
+       }
+
+    fprintf(fp,"<tr>");
+
+    snprintf(img,CF_BUFSIZE,"%s",top_description);
+    snprintf(url,CF_BUFSIZE,"%s.html",top_name);
+    snprintf(hist,CF_BUFSIZE,"%s_hist.html",top_name);
+    snprintf(mag,CF_BUFSIZE,"%s_mag.html",top_name);
+    snprintf(week,CF_BUFSIZE,"%s_week.html",top_name);
+
+    if (cfstat(url,&sb) == -1)
+       {
+       continue;
+       }    
+
+    snprintf(img,CF_BUFSIZE,"%s_weekly.png",top_name);
+    
+    if (cfstat(img,&sb) == -1)
+       {
+       terminated2 = true;
+       continue;
+       }
+
+    snprintf(url,CF_BUFSIZE,"%s/hub/%s/%s/%s.html",DOCROOT,keyhash,obs);
+    
+    fprintf(fp,"<th nowrap><div id=\"ip\">%s</div><br><br><a href=\"%s\">%s</a><br><br><small>Latest data<br>%s</small></th>\n",keyhash,URLControl("%s",url),top_name,datestr);
+
+    terminated1 = terminated2 = terminated3  = false;
+    
+    snprintf(img,CF_BUFSIZE,"%s_mag.png",top_name);
+
+    if (cfstat(img,&sb) == -1)
+       {
+       terminated1 = true;
+       }
+
+    snprintf(img,CF_BUFSIZE,"%s_hist.png",top_name);
+        
+    if (cfstat(img,&sb) == -1)
+       {
+       terminated3 = true;
+       }
+    
+    if (!terminated1)
+       {
+       snprintf(mag,CF_BUFSIZE,"%s/hub/%s/%s_mag.html",DOCROOT,keyhash,top_name);
+       snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_mag.png",DOCROOT,keyhash,top_name);
+       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=\"300\"></a></td>\n",URLControl("%s",mag),img);
+       }
+    else
+       {
+       fprintf(fp,"<td bgcolor=red><center>Data stream terminated</center></td>\n");
+       }
+
+    if (!terminated2)
+       {
+       snprintf(week,CF_BUFSIZE,"%s/hub/%s/%s_week.html",DOCROOT,keyhash,top_name);
+//       snprintf(img,CF_BUFSIZE,"reports/%s/%s_weekly.png",keyhash,top_name);
+//       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",URLControl("%s",week),img);
+       }
+    else
+       {
+       continue;
+       //fprintf(fp,"<td bgcolor=red><center>Data stream terminated</center></td>\n");
+       }
+
+    if (!terminated3)
+       {
+       snprintf(hist,CF_BUFSIZE,"reports/%s/%s_hist.html",keyhash,top_name);
+       snprintf(img,CF_BUFSIZE,"reports/%s/%s_hist.png",keyhash,top_name);
+       fprintf(fp,"<td><a href=\"%s\"><img src=\"%s\" width=300></a></td>\n",URLControl("%s",hist),img);
+       }
+    else
+       {
+       fprintf(fp,"<td bgcolor=red><center>Insufficient data</center></td>\n");
+       }
+    
+    fprintf(fp,"</tr>");
+    }
+
+fprintf(fp,"</table>");
+}
+
+/*****************************************************************************/
+
+void Nova_ShowGraph(FILE *fout,char *host,int i,time_t date,enum observables obs)
+
+{ char name1[CF_BUFSIZE],name2[CF_BUFSIZE],img[CF_BUFSIZE],datestr[CF_BUFSIZE];
+  char name[CF_BUFSIZE],description[CF_BUFSIZE];
+  double x1,y1,z1,x2,y2,z2;
+  FILE *fp1,*fp2;
+
+Nova_LookupAggregateClassName(i,name,description);
+  
+snprintf(name1,CF_BUFSIZE-1,"%s.mag",name);
+snprintf(img,CF_BUFSIZE-1,"reports/%s/%s_mag.png",host,name);
+
+snprintf(datestr,CF_MAXVARSIZE,"%s",cf_ctime(&date));
 Chop(datestr);
 
-snprintf(title,CF_MAXVARSIZE-1,"%s @ %s",cfv->title,datestr);
-    
-gdImageString(cfv->im,
-              gdFontGetGiant(),
-              cfv->im->sx / 2 - (strlen(title) * gdFontGetGiant()->w / 2),
-              cfv->margin/2,
-              title,col);
-}
+fprintf(fout,"<h4>%s</h4>\n",description);
 
-/*****************************************************************************/
+fprintf(fout,"<div id=\"legend\">\n");
 
-void Nova_MakePalette(struct CfDataView *cfv)
+fprintf(fout,"<h4>Last 3 years</h4>\n");
 
-{ int i,hint,r,g,b;
-  int startgrey = 220,startblue = 150, startgreen = 40;
+snprintf(name2,CF_MAXVARSIZE-1,"reports/%s/%s_yr.html",host,name);
+fprintf(fout,"<p><a href=\"%s\">Long history</a> provides a rough trend over the past 3 years\n",URLControl("%s",name2));
 
-BLACK = gdImageColorAllocate(cfv->im, 48, 48, 42);
-WHITE    = gdImageColorAllocate(cfv->im, 255, 255, 255);
-BLUE     = gdImageColorAllocate(cfv->im, 50, 100, 100);
-LIGHTRED = gdImageColorAllocate(cfv->im, 189, 58, 43);
+fprintf(fout,"<h2>Last 4 hours</h2>\n");
 
-for (i = 0; i < CF_SHADES; i++)
-   {
-   r = (int)((100.0)/(double)CF_SHADES * (double)i);
+fprintf(fout,"<h4>Latest info observed %s</h4>\n",datestr);
 
-   g = startgreen +
-       (int)( (100.0-(double)startgreen)/((double)CF_SHADES*1.5) * (double)i*1.5);
-
-   b = startblue + (int)((255.0-(double)startblue)/(double)CF_SHADES * (double)i);
-   BLUES[i] = gdImageColorAllocate(cfv->im,r,g,b);
-   }
+fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\" width=\"590\"></a></p>\n",img,img);
+fprintf(fout,"<p><table>\n");
 
 
-RED      = gdImageColorAllocate(cfv->im, 208, 45, 72);
-YELLOW   = gdImageColorAllocate(cfv->im, 242, 238, 134);
-GREEN    = gdImageColorAllocate(cfv->im, 115, 177, 103);
+fprintf(fout,"<p><table>\n");
 
-ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
-LIGHTGREY= gdImageColorAllocate(cfv->im, 75, 75, 66);
-//BACKGR   = gdImageColorAllocate(cfv->im,239, 234, 204); // Background
-BACKGR   = gdImageColorAllocate(cfv->im,255, 255, 255); // Background
-}
-
-/*****************************************************************************/
-
-void Nova_MakeCosmosPalette(struct CfDataView *cfv)
-
-{ int i,hint,r,g,b;
-  int startgrey = 160,startblue = 150, startgreen = 80;
-  int rs,gs,bs,re,ge,be,dr,dg,db;
-  
-BLACK = gdImageColorAllocate(cfv->im, 0, 0, 0);
-
-for (i = 0; i < CF_SHADES; i++)
-   {
-   r = (int)((255.0)/(double)CF_SHADES * (double)i);
+fprintf(fout,"<tr><th bgcolor=#eeeeee>Time</th>\n<th bgcolor=#eeeeee>q</th>\n<th bgcolor=#eeeeee>E(q)</th>\n<th bgcolor=#eeeeee>delta q</tdh></tr>\n");
    
-   g = startgreen +
-       (int)((255.0-(double)startgreen)/((double)CF_SHADES*1.5) * (double)i*1.5);
-
-   b = startblue + (int)((255.0-(double)startblue)/(double)CF_SHADES * (double)i);
-   BLUES[i] = gdImageColorAllocate(cfv->im,r,g,b);
-   }
-
-// Browns From 205,170,125, 165,130,85
-
-rs = 245;
-re = 210;
-gs = 245;
-ge = 210;
-bs = 245;
-be = 210;
-
-dr = (int)((double)(re-rs)/(double)CF_SHADES);
-dg = (int)((double)(ge-gs)/(double)CF_SHADES);
-db = (int)((double)(be-bs)/(double)CF_SHADES);
-
-for (i = 0; i < CF_SHADES; i++)
+if ((fp1 = fopen(name1,"r")) == NULL)
    {
-   r = rs + i * dr;
-   g = gs + i * dg;
-   b = bs + i * db;
-   BROWNS[i] = gdImageColorAllocate(cfv->im,r,g,b);
+   return;
    }
 
-// Yell 255,255,142 to 255,255,255
-
-rs = 255;
-re = 255;
-gs = 215;
-ge = 255;
-bs = 102;
-be = 200;
-
-dr = (int)((double)(re-rs)/(double)CF_SHADES);
-dg = (int)((double)(ge-gs)/(double)CF_SHADES);
-db = (int)((double)(be-bs)/(double)CF_SHADES);
-
-for (i = 0; i < CF_SHADES; i++)
+while (!feof(fp1))
    {
-   r = rs + i * dr;
-   g = gs + i * dg;
-   b = bs + i * db;
-   YELLOWS[i] = gdImageColorAllocate(cfv->im,r,g,b);
+   fscanf(fp1,"%lf %lf %lf %lf",&x1,&y1,&z1,&y2);
+   
+   fprintf(fout,"<tr><td bgcolor=#eeeeee>%f</td>\n<td bgcolor=#eeeeee>%f</td>\n<td bgcolor=#eeeeee>%f</td>\n<td bgcolor=#eeeeee>%f</td></tr>\n",x1,y2,y1,z1);
    }
 
-// pinks 238,213,183, 198,173,143
+fprintf(fout,"</table></p>\n");
+fclose(fp1);
 
-rs = 248;
-re = 193;
-gs = 229;
-ge = 168;
-bs = 203;
-be = 138;
+/* Averages */
 
-dr = (int)((double)(re-rs)/(double)CF_SHADES);
-dg = (int)((double)(ge-gs)/(double)CF_SHADES);
-db = (int)((double)(be-bs)/(double)CF_SHADES);
+fprintf(fout,"<h2>Past and previous weeks</h2>\n");
 
-for (i = 0; i < CF_SHADES; i++)
+snprintf(name1,CF_BUFSIZE-1,"%s.E-sigma",name);
+snprintf(name2,CF_BUFSIZE-1,"%s.q",name);
+snprintf(img,CF_BUFSIZE-1,"reports/%s/%s_weekly.png",host,name);
+
+fprintf(fout,"<p><a href=\"%s\"><img src=\"%s\" width=\"590\"></a></p>\n",img,img);
+fprintf(fout,"<p><table>\n");
+
+fprintf(fout,"<tr><th bgcolor=#eeeeee>Time</th>\n<th bgcolor=#eeeeee>q</th>\n<th bgcolor=#eeeeee>E(q)</th>\n<th bgcolor=#eeeeee>delta q</tdh></tr>\n");
+   
+if ((fp1 = fopen(name1,"r")) == NULL)
    {
-   r = rs + i * dr;
-   g = gs + i * dg;
-   b = bs + i * db;
-   PINKS[i] = gdImageColorAllocate(cfv->im,r,g,b);
+   return;
    }
 
-// "Greys" 205,170,125
-
-rs = 238;
-re = 220;
-gs = 213;
-ge = 220;
-bs = 183;
-be = 220;
-
-dr = (int)((double)(re-rs)/(double)CF_SHADES);
-dg = (int)((double)(ge-gs)/(double)CF_SHADES);
-db = (int)((double)(be-bs)/(double)CF_SHADES);
-
-for (i = 0; i < CF_SHADES; i++)
+if ((fp2 = fopen(name2,"r")) == NULL)
    {
-   r = rs + i * dr;
-   g = gs + i * dg;
-   b = bs + i * db;
-   GREYS[i] = gdImageColorAllocate(cfv->im,r,g,b);
+   return;
    }
 
+while (!feof(fp1))
+   {
+   fscanf(fp1,"%lf %lf %lf",&x1,&y1,&z1);
+   fscanf(fp2,"%lf %lf %lf",&x2,&y2,&z2);
+   
+   fprintf(fout,"<tr><td bgcolor=#eeeeee>%f</td>\n<td bgcolor=#eeeeee>%f</td>\n<td bgcolor=#eeeeee>%f</td>\n<td bgcolor=#eeeeee>%f</td></tr>\n",x1,y2,y1,z1);
+   }
 
-WHITE    = gdImageColorAllocate(cfv->im, 255, 255, 255);
-LIGHTGREY= gdImageColorAllocate(cfv->im, 220, 220, 220);
-GREEN    = gdImageColorAllocate(cfv->im, 0, 200, 0);
-BLUE     = gdImageColorAllocate(cfv->im, 50, 100, 100);
-YELLOW   = gdImageColorAllocate(cfv->im, 200, 255, 0);
-LIGHTRED = gdImageColorAllocate(cfv->im, 255, 150, 150);
-RED      = gdImageColorAllocate(cfv->im, 200, 0, 0);
-ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
-SKY      = gdImageColorAllocate(cfv->im, 255,255,255);
+fprintf(fout,"</table></p>\n");
+fprintf(fout,"</div>\n");
+fclose(fp1);
+fclose(fp2);
 }
-
-/*****************************************************************************/
-
-void Nova_GraphMagLegend(FILE *fout)
-{
-fprintf(fout,"<div id=\"legend\">"
-        "<table>"
-        "<tr>"
-        "<td><span id=\"below\">Average deviation below mean</span></td>"
-        "<td><span id=\"above\">Average deviation above mean</span></td>"
-        "<td><span id=\"last\">Last measured</span></td>"
-        "</tr>"
-        "</table>");
-}
-
-/*****************************************************************************/
-
-void Nova_GraphLegend(FILE *fout)
-{
-fprintf(fout,"<div id=\"legend\">"
-        "<table>"
-        "<tr>"
-        "<td><span id=\"below\">Local mean</span></td>"
-        "<td><span id=\"above\">Average deviation about mean</span></td>"
-        "<td><span id=\"last\">Last measured value</span></td>"
-        "</tr>"
-        "</table>");
-}
-
-/*****************************************************************************/
-
-double Nova_GetNowPosition(time_t now)
-
-{ int this_week,i,days=0,hrs=0,mins=0;
-  double position;
-  char str[CF_BUFSIZE],buf1[CF_BUFSIZE],buf4[CF_BUFSIZE],buf[CF_BUFSIZE];
-  static char *wdays[7] =
-      {
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri",
-      "Sat",
-      "Sun"
-      };
-  
-sprintf(str,"%s",cf_ctime(&now));
-
-sscanf(str,"%s %*s %*s %s %*s",buf1,buf4,buf);
-
-/* Day */
-
-for (i = 0; i < 7; i++)
-   {
-   if (strcmp(buf1,wdays[i]) == 0)
-      {
-      days = i;
-      break;
-      }
-   }
- 
-/* Hours */
-sscanf(buf4,"%[^:]",buf);
-hrs = atoi(buf);
-
-/* Minutes */
-sscanf(buf4,"%*[^:]:%[^:]",buf);
-mins = atoi(buf);
-
-this_week = days * 3600 * 24 + hrs * 3600 + (mins-2)* 60;
-return  ((double)this_week/(double)CF_WEEK * (double)CF_TIMESERIESDATA);
-}
-
 /*******************************************************************/
 
 void Nova_IncludeFile(FILE *fout,char *name)
@@ -1146,42 +1032,3 @@ if (strlen(class) > 0)
 return strdup("any");
 }
 
-/*****************************************************************************/
-
-void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour)
-
-{ char *err,ps[CF_MAXVARSIZE];
-  int x1,y1,x2,y2,margin = 1,padding=2,tab=3;
-  static char *font1 = "DejaVuSans";
-  char *font = font1;
-  int brect[8];
-  double size = 8.0;
-
-snprintf(ps,CF_MAXVARSIZE,"%s",s);
-
-
-/* brect
-   0	lower left corner, X position
-   1	lower left corner, Y position
-   2	lower right corner, X position
-   3	lower right corner, Y position
-   4	upper right corner, X position
-   5	upper right corner, Y position
-   6	upper left corner, X position
-   7	upper left corner, Y position
-*/
-
-err = gdImageStringFT(NULL,&brect[0],colour,font1,size,0.,0,0,ps);
-
-if (err)
-   {
-   printf("Rendering failure %s\n",err);
-   }
-
-// Plus y is now downward
-
-gdImageStringFT(cfv->im,&brect[0],colour,font,size,0.0,x,y,ps);
-}
-
-
-#endif
