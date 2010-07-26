@@ -33,7 +33,7 @@ void Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
   /* Initialization */
 
-snprintf(newfile,CF_BUFSIZE,"%s/%s/%s_hist.png",DOCROOT,keyhash,OBS[obs][0]);
+snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_hist.png",DOCROOT,keyhash,OBS[obs][0]);
 
 cfv->title = OBS[obs][1];
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
@@ -236,7 +236,7 @@ fprintf(fp,"<div id=\"legend\">\n");
 
 CfOut(cf_verbose,""," -> Looking for maxima in %s\n",OBS[obs][0]);
 
-snprintf(img,CF_BUFSIZE,"%s/%s/%s_hist.png",DOCROOT,keyhash,OBS[obs][0]);
+snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_hist.png",DOCROOT,keyhash,OBS[obs][0]);
 
 fprintf(fp,"<div id=\"graph\">\n");
 fprintf(fp,"<a href=\"%s\"><img src=\"%s\" width=\"590\"></a>\n",img,img);

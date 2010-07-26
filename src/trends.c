@@ -33,7 +33,7 @@ void Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables 
   char newfile[CF_BUFSIZE];
   double max=0,min=9999,range;
 
-snprintf(newfile,CF_BUFSIZE,"%s/%s/%s_yr.png",DOCROOT,keyhash,OBS[obs][0]);
+snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_yr.png",DOCROOT,keyhash,OBS[obs][0]);
    
 cfv->title = OBS[obs][1];
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
@@ -246,18 +246,10 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *name,enum observables 
 
 { char fname[CF_BUFSIZE],img[CF_BUFSIZE];
   struct stat sb;
-  FILE *fp;
+  FILE *fp = stdout;
   int yr,this_lifecycle,this;
 
   /* First find the variance sigma2 */
-
-snprintf(fname,CF_BUFSIZE,"%s_yr.html",name);
-  
-if ((fp = fopen(fname,"w")) == 0)
-   {
-   CfOut(cf_verbose,"","Can't open magnification analysis file %s\n",fname);
-   return;   
-   }
 
 fprintf(fp,"<h3>Lifecycle history: %s (beta)</h3>\n",name);
 
@@ -286,7 +278,6 @@ fprintf(fp,"<tr><td>Average variability </td><td>+/- %lf</td><td>%s</td></tr>\n"
 fprintf(fp,"</table>\n");
 
 fprintf(fp,"</div></div>\n");
-fclose(fp);
 }
 
 #endif

@@ -54,7 +54,7 @@ void Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
   /* Initialization */
 
-snprintf(newfile,CF_BUFSIZE,"%s/%s/%s_week.png",DOCROOT,keyhash,OBS[obs][0]);
+snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_week.png",DOCROOT,keyhash,OBS[obs][0]);
 
 cfv->title = OBS[obs][1];
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
@@ -428,13 +428,11 @@ fprintf(fp,"<h3>Weekly trends on %s</h3>\n",name);
 
 Nova_GraphLegend(fp);
 
-snprintf(img,CF_BUFSIZE,"reports/%s/%s_weekly.png",host,name);
+snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_weekly.png",keyhash,OBS[obs][0]);
 
 fprintf(fp,"<div id=\"graph\">\n");
 fprintf(fp,"<a href=\"%s\"><img src=\"%s\" width=\"590\"></a>\n",img,img);
 fprintf(fp,"</div>\n");
-
-
 
 fprintf(fp,"<div id=\"weekanalysis\">\n");
 
@@ -462,7 +460,6 @@ fprintf(fp,"<tr><td>Percentage 2 deviations under average/normal</td><td>%lf</td
 
 fprintf(fp,"</table>\n");
 fprintf(fp,"</div></div>\n");
-fclose(fp); 
 }
 
 #endif

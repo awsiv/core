@@ -41,14 +41,14 @@ libcfnova_la_SOURCES =						\
 	html.c							\
 	knowledge.c						\
 	syntax.c						\
-	graphs.c						\
+	scorecards.c						\
 	copernicus.c						\
 	histogram.c						\
 	trends.c						\
-	timeseries.c						\
+	weekly.c						\
 	magnify.c						\
 	coordinates.c						\
-	cfcore.c                                                \
+	topicmap.c                                              \
 	install.c						\
 	hub.c							\
 	win_api.c						\

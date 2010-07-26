@@ -30,7 +30,7 @@ void Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs)
   struct stat s1,s2;
   char newfile[CF_BUFSIZE];
 
-snprintf(newfile,CF_BUFSIZE,"/%s/%s/%s_mag.png",DOCROOT,keyhash,OBS[obs][0]);
+snprintf(newfile,CF_BUFSIZE,"/%s/hub/%s/%s_mag.png",DOCROOT,keyhash,OBS[obs][0]);
 MakeParentDirectory(newfile,true);
 
 cfv->title = OBS[obs][1];
@@ -296,17 +296,9 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
 void Nova_AnalyseMag(struct CfDataView *cfv,char *name,enum observables obs,char *host)
 
 { char fname[CF_BUFSIZE],img[CF_BUFSIZE];
-  FILE *fp;
+  FILE *fp = stdout;
 
   /* First find the variance sigma2 */
-
-snprintf(fname,CF_BUFSIZE,"%s_mag.html",name);
-  
-if ((fp = fopen(fname,"w")) == 0)
-   {
-   CfOut(cf_verbose,"","Can't open magnification analysis file %s\n",fname);
-   return;   
-   }
 
 fprintf(fp,"<h3>Zoom: %s Last four hours</h3>\n",name);
 
@@ -332,7 +324,6 @@ fprintf(fp,"<tr><td>Average variability </td><td>+/- %lf</td><td>%s</td></tr>\n"
 fprintf(fp,"</table>\n");
 
 fprintf(fp,"</div></div>\n");
-fclose(fp);
 }
 
 /**********************************************************************/
