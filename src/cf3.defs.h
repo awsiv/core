@@ -1795,12 +1795,31 @@ enum cf_meter
 meter_compliance_week,
 meter_compliance_day,
 meter_compliance_hour,
-meter_patch_day,
-meter_soft_day,
+meter_perf_day,
+meter_other_day,
 meter_comms_hour,
 meter_anomalies_day,
 meter_endmark
 };
+
+/*************************************************************************/
+/* definitions for test suite                                            */
+/*************************************************************************/
+
+// Classes: 601 - 650
+#define CF_CLASS_ALL 0
+#define CF_CLASS_REPORT 2
+#define CF_CLASS_VARS 4
+#define CF_CLASS_SLIST 8
+#define CF_CLASS_STRING 16
+#define CF_CLASS_PROCESS 32
+#define CF_CLASS_FILE 64
+#define CF_CLASS_DIR 128
+#define CF_CLASS_CMD 256
+#define CF_CLASS_OTHER 512
+#define CF_CLASS_TOP10 1024
+
+
 
 #include "prototypes3.h"
 

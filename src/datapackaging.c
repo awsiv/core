@@ -33,11 +33,11 @@ void Nova_PackPerformance(struct Item **reply,char *header,time_t from,enum cfd_
   CF_DBC *dbcp;
   char *key;
   void *value;
-  double now = (double)time(NULL),average = 0, var = 0;
-  double ticksperminute = 60.0;
+  time_t now = time(NULL);
+  double ticksperminute = 60.0,average = 0, var = 0;
   char name[CF_BUFSIZE],eventname[CF_BUFSIZE],buffer[CF_BUFSIZE];
   struct Event entry;
-  int ret,ksize,vsize,first = true;
+  int ret,ksize,vsize,first = true,kept = 0, repaired = 0,not_kept = 0;
 
 CfOut(cf_verbose,""," -> Packing performance data");
   
@@ -84,7 +84,20 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       var     = entry.Q.var;
 
       // Promise: reply with data only after the "from" time
-      
+
+      if (now - then > (int)(average+2.0*sqrt(var)+0.5))
+         {
+         not_kept++;
+         }
+      else if (now - then > (int)(average))
+         {
+         repaired++;
+         }
+      else
+         {
+         kept++;
+         }
+
       if (then < from)
          {
          continue;
@@ -137,6 +150,9 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
 
 DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
+
+METER_KEPT[meter_perf_day] = 100.0;
+METER_REPAIRED[meter_perf_day] = 0;
 }
 
 /*****************************************************************************/
@@ -1124,9 +1140,6 @@ for (ip = file; ip != NULL; ip = ip->next)
    }
 
 DeleteItemList(file);
-
-METER_REPAIRED[meter_soft_day] = 0;
-METER_KEPT[meter_soft_day] = 0;
 }
 
 /*****************************************************************************/
@@ -1254,17 +1267,6 @@ for (ip = file; ip != NULL; ip = ip->next)
    }
 
 DeleteItemList(file);
-
-if (count > 1)
-   {
-   METER_KEPT[meter_patch_day] = 0;
-   METER_REPAIRED[meter_patch_day] = 0;
-   }
-else
-   {
-   METER_KEPT[meter_patch_day] = 100.0;
-   METER_REPAIRED[meter_patch_day] = 0;
-   }
 }
 
 /*****************************************************************************/
@@ -1826,17 +1828,19 @@ if (METER_KEPT[meter_compliance_hour] > 0 && METER_REPAIRED[meter_compliance_hou
    AppendItem(reply,line,NULL);
    }
 
-if (METER_KEPT[meter_patch_day] > 0 || METER_REPAIRED[meter_patch_day] > 0)
+if (METER_KEPT[meter_perf_day] > 0 || METER_REPAIRED[meter_perf_day] > 0)
    {
-   snprintf(line,CF_BUFSIZE-1,"P: %.4lf %.4lf\n",METER_KEPT[meter_patch_day],METER_REPAIRED[meter_patch_day]);
+   snprintf(line,CF_BUFSIZE-1,"P: %.4lf %.4lf\n",METER_KEPT[meter_perf_day],METER_REPAIRED[meter_perf_day]);
    AppendItem(reply,line,NULL);
    }
 
-if (METER_KEPT[meter_soft_day] > 0 || METER_REPAIRED[meter_soft_day] > 0)
+if (METER_KEPT[meter_other_day] > 0 || METER_REPAIRED[meter_other_day] > 0)
    {
-   snprintf(line,CF_BUFSIZE-1,"S: %.4lf %.4lf\n",METER_KEPT[meter_soft_day],METER_REPAIRED[meter_soft_day]);
+   snprintf(line,CF_BUFSIZE-1,"S: %.4lf %.4lf\n",METER_KEPT[meter_other_day],METER_REPAIRED[meter_other_day]);
    AppendItem(reply,line,NULL);
    }
+
+SummarizeComm();
 
 if (METER_KEPT[meter_comms_hour] > 0 || METER_REPAIRED[meter_comms_hour] > 0)
    {
