@@ -52,6 +52,7 @@ libcfnova_la_SOURCES =						\
 	topicmap.c                                              \
 	install.c						\
 	hub.c							\
+	web_api.c						\
 	win_api.c						\
         win_disphelper.c                                        \
 	win_file.c						\

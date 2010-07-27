@@ -734,7 +734,6 @@ void Nova_MatrixOperation(double **A,double *v,int dim);
 int Nova_AlreadyInTribe(int node, int *tribe_id);
 void Nova_InitVertex(struct CfGraphNode *tribe,int i);
 
-
 /* weekly.c */
 
 double Num(double x);
