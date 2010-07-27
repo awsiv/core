@@ -1984,7 +1984,7 @@ void Nova_SummarizeLicense(char *stylesheet,char *header,char *footer,char *webd
   long ltime;
   time_t now,dt,then;
   double average,granted,sum_t = 0,ex_t = 0,lic_t = 0;
-  FILE *fout;
+  FILE *fout = stdout;
   
 CfOut(cf_verbose,""," -> Writing license summary");
 
@@ -2048,12 +2048,6 @@ if (OpenDB(name,&dbp))
    CloseDB(dbp);
    }
 
-if ((fout = fopen("license_report.html","w")) == NULL)
-   {
-   CfOut(cf_error,"fopen"," !! Unable to write license report");
-   return;
-   }
-
 now = time(NULL);
 snprintf(name,sizeof(name),"Mean observable license usage");
 fprintf(fout,"<div id=\"reporttext\">");
@@ -2078,6 +2072,6 @@ else
    }
 
 fprintf(fout,"</table></div>\n");
-fclose(fout);
+
 }
 

@@ -443,6 +443,7 @@ void Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs);
 void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
 void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum);
+struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observables obs);
 struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *keyhash,enum observables obs);
 
 /* html.c */
@@ -643,7 +644,7 @@ void Nova_CfQueryCFDB(char *query);
 /* scorecards.c */
 
 void Nova_PerformancePage(char *hostkey);
-struct Item *Nova_SummaryMeter(struct CfDataView *cfv,char *search_string);
+struct Item *Nova_SummaryMeter(char *search_string);
 int Nova_Meter(char *hostkey);
 struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
 struct Item *Nova_GreenHosts(struct Item *master);
@@ -722,6 +723,17 @@ void Nova_ShowBodyParts(struct BodySyntax *bs,int i);
 void Nova_ShowRange(char *s,enum cfdatatype type);
 void Nova_ShowBuiltinFunctions(void);
 void Nova_Indent(int i);
+
+/* topicmap.c */
+
+void Nova_SpecialQuote(char *name,char *type);
+void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char *view);
+int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double **tribe_adj,char **n,int topic,double **full_adj,int dim_full,int *tertiary_boundary);
+void Nova_EigenvectorCentrality(double **A,double *v,int dim);
+void Nova_MatrixOperation(double **A,double *v,int dim);
+int Nova_AlreadyInTribe(int node, int *tribe_id);
+void Nova_InitVertex(struct CfGraphNode *tribe,int i);
+
 
 /* weekly.c */
 

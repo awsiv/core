@@ -1025,7 +1025,7 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *lkeyhash)
   
 /* BEGIN query document */
 
-if (strlen(lkeyhash) == 0)
+if (lkeyhash && strlen(lkeyhash) != 0)
    {
    bson_buffer_init(&b);
    bson_append_string(&b,cfr_keyhash,lkeyhash);
@@ -1046,7 +1046,7 @@ bson_from_buffer(&field, &bb);
 hostnames[0] = '\0';
 addresses[0] = '\0';
 
-if (strlen(lkeyhash) == 0)
+if (lkeyhash == NULL || strlen(lkeyhash) == 0)
    {
    cursor = mongo_find(conn,MONGO_DATABASE,bson_empty(&qe),&field,0,0,0);
    }

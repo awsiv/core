@@ -346,7 +346,15 @@ printf("Making gfraphs\n");
 strcpy(DOCROOT,"/home/mark/tmp");
 
 Nova_Meter("MD5=4a37e48645122312daf7862f2a0f0ef7");
-Nova_PerformancePage("MD5=4a37e48645122312daf7862f2a0f0ef7");
+
+struct Item *ip,*result = Nova_SummaryMeter(NULL);
+
+for (ip = result; ip !=  NULL; ip=ip->next)
+   {
+   printf("HOST: %s\n",ip->name);
+   }
+
+//Nova_PerformancePage("MD5=4a37e48645122312daf7862f2a0f0ef7");
 
 if (!CFDB_Close(&dbconn))
    {

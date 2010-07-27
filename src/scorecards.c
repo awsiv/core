@@ -31,11 +31,11 @@ void Nova_PerformancePage(char *hostkey)
 
 if (LICENSES == 0)
    {
+
+printf("HERE.......\n");
 //   return;
    }
 
-
-printf("HERE.......\n");
 // Make common resources
   
 cfv.height = 300;
@@ -52,7 +52,6 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       }
 
    // Make the graphs
-   printf(" - Making graph %s\n",OBS[i][0]);
    Nova_ViewMag(&cfv,hostkey,i);
    Nova_ViewWeek(&cfv,hostkey,i);
    Nova_ViewHisto(&cfv,hostkey,i);
@@ -63,7 +62,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 /*****************************************************************************/
 
-struct Item *Nova_SummaryMeter(struct CfDataView *cfv,char *search_string)
+struct Item *Nova_SummaryMeter(char *search_string)
 
 { FILE *fout;
   char filename[CF_BUFSIZE];
@@ -79,22 +78,24 @@ struct Item *Nova_SummaryMeter(struct CfDataView *cfv,char *search_string)
   mongo_connection dbconn;
   struct Rlist *rp;
   struct Item *matches = NULL;
-  
+  struct CfDataView cfv;
+
 if (LICENSES == 0)
    {
-   return NULL;
+//   return NULL;
+   printf("HERE\n");
    }
 
-cfv->height = CF_METER_HEIGHT;
-cfv->width = CF_METER_WIDTH;
-cfv->margin = CF_METER_MARGIN;
-cfv->title = "System state";
-cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
-Nova_MakePalette(cfv);
+cfv.height = CF_METER_HEIGHT;
+cfv.width = CF_METER_WIDTH;
+cfv.margin = CF_METER_MARGIN;
+cfv.title = "System state";
+cfv.im = gdImageCreate(cfv.width+2*cfv.margin,cfv.height+2*cfv.margin);
+Nova_MakePalette(&cfv);
 
-gdImageSetThickness(cfv->im,2);
-gdImageFilledRectangle(cfv->im,0,0,cfv->width+2*cfv->margin,cfv->height+2*cfv->margin,LIGHTGREY);
-gdImageRectangle(cfv->im,0,0,cfv->width+2*cfv->margin,cfv->height+2*cfv->margin,BLACK);
+gdImageSetThickness(cfv.im,2);
+gdImageFilledRectangle(cfv.im,0,0,cfv.width+2*cfv.margin,cfv.height+2*cfv.margin,LIGHTGREY);
+gdImageRectangle(cfv.im,0,0,cfv.width+2*cfv.margin,cfv.height+2*cfv.margin,BLACK);
 
 // get data
 
@@ -113,14 +114,14 @@ if (!CFDB_Close(&dbconn))
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hm = (struct HubMeter *)rp->item;
-   printf("Meter result: (%c) %lf,%lf,%lf\n",hm->type,hm->kept,hm->notkept);
-   printf("found on (%s=%s=%s)\n",hm->hh->keyhash,hm->hh->hostname,hm->hh->ipaddr);
+   Debug("Meter result: (%c) %lf,%lf,%lf\n",hm->type,hm->kept,hm->notkept);
+   Debug("found on (%s=%s=%s)\n",hm->hh->keyhash,hm->hh->hostname,hm->hh->ipaddr);
 
    kept = hm->kept;
    repaired = hm->repaired;
 
    num++;
-   PrependItem(&matches,hm->hh->hostname,hm->hh->ipaddr);
+   IdempPrependItem(&matches,hm->hh->hostname,hm->hh->ipaddr);
    
    switch (hm->type)
       {
@@ -164,13 +165,13 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 kept /= num;
 repaired /= num;
 
-Nova_BarMeter(cfv,1,kept,repaired,"Week");
-Nova_BarMeter(cfv,2,kept,repaired,"Day");
-Nova_BarMeter(cfv,3,kept,repaired,"Hour");
-Nova_BarMeter(cfv,4,kept,repaired,"Perf");
-Nova_BarMeter(cfv,6,kept,repaired,"Coms");
-Nova_BarMeter(cfv,7,kept,repaired,"Anom");
-Nova_BarMeter(cfv,5,kept,repaired,"Core");
+Nova_BarMeter(&cfv,1,kept_week,rep_week,"Week");
+Nova_BarMeter(&cfv,2,kept_day,rep_day,"Day");
+Nova_BarMeter(&cfv,3,kept_hour,rep_hour,"Hour");
+Nova_BarMeter(&cfv,4,kept_perf,rep_perf,"Perf");
+Nova_BarMeter(&cfv,6,kept_comms,rep_comms,"Coms");
+Nova_BarMeter(&cfv,7,kept_anom,rep_anom,"Anom");
+Nova_BarMeter(&cfv,5,kept_other,rep_other,"Core");
 
 // Clean up
 
@@ -191,9 +192,9 @@ else
    CfOut(cf_verbose,""," -> Making %s\n",filename);
    }
     
-gdImagePng(cfv->im, fout);
+gdImagePng(cfv.im, fout);
 fclose(fout);
-gdImageDestroy(cfv->im);
+gdImageDestroy(cfv.im);
 return matches;
 }
 
@@ -215,8 +216,9 @@ int Nova_Meter(char *hostkey)
   
 if (LICENSES == 0)
    {
-   return 0;
-   }
+//   return 0;
+     printf(" - HERE \n");
+ }
 
 cfv.height = CF_METER_HEIGHT;
 cfv.width = CF_METER_WIDTH;
@@ -385,11 +387,6 @@ void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired
 
 count = 0;
 
-if (LICENSES == 0)
-   {
-   return;
-   }
-  
 for (y = v_offset+bar_height; y > v_offset; y -= thickness)
    {
    gdImageSetThickness(cfv->im,thickness);

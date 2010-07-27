@@ -48,7 +48,7 @@ for (y = 0; y < cfv->height+2*cfv->margin; y++)
 
 Nova_ReadHistogram(cfv,keyhash,obs);
 
-spectrum = Nova_AnalyseHistogram(cfv,keyhash,obs);
+spectrum = Nova_MapHistogram(cfv,keyhash,obs);
 Nova_PlotHistogram(cfv,BLUES,spectrum);
 Nova_Title(cfv,BLUE);
 Nova_DrawHistoAxes(cfv,BLACK);
@@ -213,6 +213,68 @@ for (ip = spectrum; ip != NULL; ip=ip->next)
 
 gdImageSetThickness(cfv->im,4);
 gdImageLine(cfv->im,origin_x+32*scale_x,origin_y,origin_x+cfv->width/2,cfv->max_y,lightred);
+}
+
+/*******************************************************************/
+
+struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observables obs)
+
+{ double sx, q, delta, sum = 0, sigma2;
+  int new_gradient = 0, past_gradient = 0, max = 0;
+  int redshift = 0, blueshift = 0;
+  int above_noise = false;
+  char fname[CF_BUFSIZE],img[CF_BUFSIZE],output[CF_BUFSIZE];
+  double sensitivity_factor = 1.2;
+  struct Item *maxima = NULL;
+
+  /* First find the variance sigma2 */
+
+CfOut(cf_verbose,""," -> Looking for maxima in %s\n",OBS[obs][0]);
+
+snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_hist.png",DOCROOT,keyhash,OBS[obs][0]);
+
+for (sx = 1; sx < CF_GRAINS; sx++)
+   {
+   q = cfv->data_E[(int)sx];
+   delta = cfv->data_E[(int)sx] - cfv->data_E[(int)(sx-1)];
+   sum += delta*delta;
+   }
+
+sigma2 = sum / (double)CF_GRAINS;
+
+for (sx = 1; sx < CF_GRAINS; sx++)
+   {
+   q = cfv->data_E[(int)sx];
+   delta = cfv->data_E[(int)sx] - cfv->data_E[(int)(sx-1)];
+
+   above_noise = (delta*delta > sigma2) * sensitivity_factor;
+   
+   if (above_noise)
+      {
+      new_gradient = delta;
+
+      if (new_gradient < 0 && past_gradient >= 0)
+         {
+         max++;
+
+         snprintf(output,CF_BUFSIZE-1,"key-%f",sx);
+         AppendItem(&maxima,output,NULL);
+         SetItemListCounter(maxima,output,sx-1);
+
+         if (sx < ((double)CF_GRAINS)/2.0 - 1.0)
+            {
+            redshift++;
+            }
+         else if (sx > ((double)CF_GRAINS)/2.0 + 1.0)
+            {
+            blueshift++;
+            }
+         }
+      }
+   
+   past_gradient = new_gradient;
+   }
+return maxima;
 }
 
 /*******************************************************************/
