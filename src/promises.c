@@ -23,10 +23,10 @@ char POLICY_SERVER[CF_BUFSIZE];
 
 /********************************************************************/
 
+/*
 void Nova_StorePromises(struct Bundle *bundles,struct Body *bodies)
 
-{
-  
+{  
 for (bp = bundles; bp != NULL; bp=bp->next)
    {
    BundleNode(FREPORT_HTML,bp->name);
@@ -73,7 +73,6 @@ for (bp = bundles; bp != NULL; bp=bp->next)
    fprintf(FREPORT_HTML,"%s\n",CFH[cfx_bundle][cfe]);
    }
 
-/* Now summarize the remaining bodies */
 
 fprintf(FREPORT_HTML,"<h1>All Bodies</h1>");
 fprintf(FREPORT_TXT,"\n\nAll Bodies\n\n");
@@ -93,6 +92,7 @@ for (bdp = bodies; bdp != NULL; bdp=bdp->next)
    }
  
 }
+*/
 
 /*****************************************************************************/
 

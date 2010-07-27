@@ -379,7 +379,7 @@ void Nova_GrandSummary()
 { char name[CF_BUFSIZE];
   FILE *fout;
 
-SummarizeComms();
+Nova_SummarizeComms();
 
 snprintf(name,CF_BUFSIZE-1,"%s/reports/comp_key",CFWORKDIR);
 
@@ -1835,7 +1835,7 @@ cf_fclose(fout);
 
 /*****************************************************************************/
 
-void SummarizeComms()
+void Nova_SummarizeComms()
 
 /* Go through the database of recent connections and check for
    Long Time No See ...*/

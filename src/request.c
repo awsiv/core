@@ -309,6 +309,7 @@ printf("\n");
 
 
 
+
 // graphs
 
 /*
@@ -340,19 +341,12 @@ for (i = 0; i < CF_GRAINS; i++)
 printf("\n");
 */
 
-/*
-struct CfDataView cfv;
 
+printf("Making gfraphs\n");
 strcpy(DOCROOT,"/home/mark/tmp");
-int i;
 
-for (i = 0; i < 20; i++)
-   {
-   Nova_ViewMag(&cfv,"MD5=4a37e48645122312daf7862f2a0f0ef7",i);
-   Nova_ViewWeek(&cfv,"MD5=4a37e48645122312daf7862f2a0f0ef7",i);
-   }
-*/
-
+Nova_Meter("MD5=4a37e48645122312daf7862f2a0f0ef7");
+Nova_PerformancePage("MD5=4a37e48645122312daf7862f2a0f0ef7");
 
 if (!CFDB_Close(&dbconn))
    {

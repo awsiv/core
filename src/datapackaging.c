@@ -1840,7 +1840,7 @@ if (METER_KEPT[meter_other_day] > 0 || METER_REPAIRED[meter_other_day] > 0)
    AppendItem(reply,line,NULL);
    }
 
-SummarizeComm();
+Nova_SummarizeComms();
 
 if (METER_KEPT[meter_comms_hour] > 0 || METER_REPAIRED[meter_comms_hour] > 0)
    {

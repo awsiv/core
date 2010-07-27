@@ -204,8 +204,8 @@ void Nova_MakePalette(struct CfDataView *cfv)
   int startgrey = 220,startblue = 150, startgreen = 40;
 
 BLACK = gdImageColorAllocate(cfv->im, 48, 48, 42);
-WHITE    = gdImageColorAllocate(cfv->im, 255, 255, 255);
-BLUE     = gdImageColorAllocate(cfv->im, 50, 100, 100);
+WHITE = gdImageColorAllocate(cfv->im, 255, 255, 255);
+BLUE  = gdImageColorAllocate(cfv->im, 50, 100, 100);
 LIGHTRED = gdImageColorAllocate(cfv->im, 189, 58, 43);
 
 for (i = 0; i < CF_SHADES; i++)
@@ -417,6 +417,7 @@ sscanf(buf4,"%*[^:]:%[^:]",buf);
 mins = atoi(buf);
 
 this_week = days * 3600 * 24 + hrs * 3600 + (mins-2)* 60;
+
 return  ((double)this_week/(double)CF_WEEK * (double)CF_TIMESERIESDATA);
 }
 

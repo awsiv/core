@@ -65,6 +65,17 @@ enum cfd_menu
 
 /*****************************************************************************/
 
+enum cf_rank_method
+   {
+   cfrank_compliance,
+   cfrank_anomaly,
+   cfrank_performance,
+   cfrank_lastseen,
+   cfrank_default
+   };
+
+/*****************************************************************************/
+
 struct CfDataView
    {
 #ifdef HAVE_GD_H
@@ -229,21 +240,6 @@ void Nova_MagProbe(void);
 void Nova_PackNerveBundle(void);
 void Nova_UnPackNerveBundle(void);
 void Nova_LookupAggregateClassName(int n,char *name, char *desc);
-
-/* cfcore.c */
-
-void Nova_ShowAllGraphs(FILE *fp,char *s,struct Item *el);
-void Nova_ShowGraph(FILE *fp,char *host,int i,time_t last,enum observables obs);
-void Nova_MainPage(char *s,struct Item *el);
-void Nova_OtherPages(char *s,struct Item *el);
-void Nova_PlotTopicCosmos(int topic,double **adj,char **names,int dim,char *view);
-int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double **tribe_adj,char **n,int topic,double **full_adj,int dim_full,int *tertiary_boundary);
-int Nova_AlreadyInTribe(int node, int *tribe_id);
-void Nova_InitVertex(struct CfGraphNode *v,int i);
-int Nova_NewVertex(struct CfGraphNode *tribe,int i,char *name,int distance,int real);
-void Nova_EigenvectorCentrality(double **A,double *v,int dim);
-void Nova_MatrixOperation(double **A,double *v,int dim);
-void Nova_SpecialQuote(char *name,char *type);
 
 /* client_code.c */
 
@@ -429,26 +425,17 @@ int Nova_CreateVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,
 int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,struct Promise *pp);
 #endif
 
-/* graphs.c */
 
-char *Nova_GetHostClass(char *s);
-int Nova_BuildMeter(struct CfDataView *cfv,char *hostkey);
-void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired,char *s);
+/* graphics_core.c */
+
 void Nova_Title(struct CfDataView *cfv,int col);
-void Nova_BuildGraphs(struct CfDataView *cfv);
 void Nova_MakePalette(struct CfDataView *cfv);
 void Nova_MakeCosmosPalette(struct CfDataView *cfv);
+void Nova_GraphMagLegend(FILE *fout);
+void Nova_GraphLegend(FILE *fout);
 double Nova_GetNowPosition(time_t now);
-void Nova_IncludeFile(FILE *fout,char *name);
-void Nova_NavBar(FILE *fout);
-void Nova_GetLevel(char *key,char *id,int *kept,int *repaired);
-struct Item *Nova_CreateHostPortal(struct Item *list);
-void Nova_GetAllLevels(int *kept,int *repaired,struct Item *list,char **names);
-void Nova_BuildMainMeter(struct CfDataView *cfv,struct Item *list);
-void Nova_GraphLegend(FILE *fp);
-void Nova_GraphMagLegend(FILE *fp);
-int Nova_CountHostIssues(struct Item *list);
 void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour);
+
 
 /* histogram.c */
 
@@ -646,12 +633,25 @@ void Nova_SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet
 void Nova_SummarizeValue(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_NoteVarUsage(void);
 void Nova_GrandSummary(void);
-void SummarizeComms(void);
+void Nova_SummarizeComms(void);
 void Nova_SummarizeLicense(char *stylesheet,char *banner,char *footer,char *webdriver);
 
 /* request.c */
 
 void Nova_CfQueryCFDB(char *query);
+
+/* scorecards.c */
+
+void Nova_PerformancePage(char *hostkey);
+struct Item *Nova_SummaryMeter(struct CfDataView *cfv,char *search_string);
+int Nova_Meter(char *hostkey);
+struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
+struct Item *Nova_GreenHosts(struct Item *master);
+struct Item *Nova_YellowHosts(struct Item *master);
+struct Item *Nova_RedHosts(struct Item *master);
+void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired,char *s);
+struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_method method,int max_return);
+int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *rep);
 
 /* server.c */
 
@@ -723,7 +723,7 @@ void Nova_ShowRange(char *s,enum cfdatatype type);
 void Nova_ShowBuiltinFunctions(void);
 void Nova_Indent(int i);
 
-/* timeseries.c */
+/* weekly.c */
 
 double Num(double x);
 void Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs);
@@ -855,10 +855,7 @@ void Nova_DrawLongHAxes(struct CfDataView *cfv,int col);
 void Nova_PlotLongHFile(struct CfDataView *cfv,int col1,int col2,int col3);
 void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observables obs);
 
-
-
 /***************************************************************************/
-
 
 #define CF_METER_HEIGHT 80
 #define CF_METER_WIDTH  500
@@ -894,8 +891,9 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observabl
 
 #define CF_BIGNUMBER 999999
 
-#define CF_RED_THRESHOLD 100
-#define CF_AMBER_THRESHOLD 50
+#define CF_RED_THRESHOLD 1000
+#define CF_AMBER_THRESHOLD 100
+#define CF_GREEN 0
 
 struct month_days
    {
