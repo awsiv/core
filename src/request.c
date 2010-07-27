@@ -36,6 +36,8 @@ void Nova_CfQueryCFDB(char *querystr)
  struct HubPerformance *hP;
  struct HubSetUid *hS;
  struct HubBundleSeen *hb;
+ struct HubFileChanges *hC;
+ struct HubFileDiff *hd;
  
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
@@ -263,8 +265,48 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
    }
 printf("\n");
 
-
 */
+
+hq = CFDB_QueryFileChanges(&dbconn,bson_empty(&b),NULL,false,-1,CFDB_GREATERTHANEQ);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hC = (struct HubFileChanges *)rp->item;
+   
+   printf("File: \"%s\" at %s\n",hC->path,cf_ctime(&(hC->t)));
+   printf("found on (%s=%s=%s)\n",hC->hh->keyhash,hC->hh->hostname,hC->hh->ipaddr);
+   }
+
+printf("Search returned matches from hosts: ");
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   printf("%s  ",hh->hostname);
+   }
+printf("\n");
+
+
+hq = CFDB_QueryFileDiff(&dbconn,bson_empty(&b),NULL,NULL,false,-1,CFDB_GREATERTHANEQ);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hd = (struct HubFileDiff *)rp->item;
+   
+   printf("File: \"%s\" at %s\n",hd->path,cf_ctime(&(hd->t)));
+   printf("Diff: %s",hd->diff);
+   printf("found on (%s=%s=%s)\n",hd->hh->keyhash,hd->hh->hostname,hd->hh->ipaddr);
+   }
+
+printf("Search returned matches from hosts: ");
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   printf("%s  ",hh->hostname);
+   }
+printf("\n");
+
 
 
 // graphs
@@ -298,8 +340,8 @@ for (i = 0; i < CF_GRAINS; i++)
 printf("\n");
 */
 
+/*
 struct CfDataView cfv;
-//Nova_BuildGraphs(&cfv);
 
 strcpy(DOCROOT,"/home/mark/tmp");
 int i;
@@ -309,6 +351,8 @@ for (i = 0; i < 20; i++)
    Nova_ViewMag(&cfv,"MD5=4a37e48645122312daf7862f2a0f0ef7",i);
    Nova_ViewWeek(&cfv,"MD5=4a37e48645122312daf7862f2a0f0ef7",i);
    }
+*/
+
 
 if (!CFDB_Close(&dbconn))
    {

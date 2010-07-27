@@ -905,9 +905,9 @@ bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
-pushObj = bson_append_start_object(&bb, "$pushAll");
+pushObj = bson_append_start_object(&bb,"$pushAll");
 
-arr = bson_append_start_array(pushObj , cfr_filechanges);
+arr = bson_append_start_array(pushObj,cfr_filechanges);
 
 for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    {
@@ -959,7 +959,7 @@ bson_buffer_init(&bb);
 
 pushObj = bson_append_start_object(&bb, "$pushAll");
 
-arr = bson_append_start_array(pushObj , cfr_filediffs);
+arr = bson_append_start_array(pushObj,cfr_filediffs);
 
 for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    {

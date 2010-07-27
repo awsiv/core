@@ -425,6 +425,58 @@ free(hp);
 
 /*****************************************************************************/
 
+struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t)
+
+{ struct HubFileChanges *hp;
+     
+if ((hp = (struct HubFileChanges *)malloc(sizeof(struct HubFileChanges))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubFileChange");
+   }
+
+hp->hh = hh;
+hp->path = strdup(file);
+hp->t = t;
+return hp;
+}
+
+/*****************************************************************************/
+
+void DeleteHubFileChange(struct HubFileChanges *hp)
+{
+free(hp->path);
+free(hp); 
+}
+
+/*****************************************************************************/
+
+struct HubFileDiff *NewHubFileDiff(struct HubHost *hh,char *file,char *diff,time_t t)
+
+{ struct HubFileDiff *hp;
+     
+if ((hp = malloc(sizeof(struct HubFileDiff))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubFileDiff");
+   }
+
+hp->hh = hh;
+hp->path = strdup(file);
+hp->diff = strdup(diff);
+hp->t = t;
+return hp;
+}
+
+/*****************************************************************************/
+
+void DeleteHubFileDiff(struct HubFileDiff *hp)
+{
+free(hp->path);
+free(hp->diff);
+free(hp); 
+}
+
+/*****************************************************************************/
+
 struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,char status,double e,double d,time_t t)
 
 { struct HubPromiseCompliance *hp;

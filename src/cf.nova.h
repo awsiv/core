@@ -311,6 +311,8 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *hostkey);
 struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,bson *query,char *rname,int regex);
 struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,bson *query,char *lname,int regex);
 struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn,bson *query,char *lname,int regex);
+struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,bson *query,char *lname,int regex,time_t lt,int cmp);
+struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,bson *query,char *lname,char *ldiff,int regex,time_t lt,int cmp);
 
 int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
 int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
@@ -494,6 +496,10 @@ struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,ch
 void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp);
 struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev);
 void DeleteHubBundleSeen(struct HubBundleSeen *hp);
+struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t);
+void DeleteHubFileChanges(struct HubFileChanges *hp);
+struct HubFileDiff *NewHubFileDiff(struct HubHost *hh,char *file,char *diff,time_t t);
+void DeleteHubFileDiff(struct HubFileDiff *hp);
 
 /* knowledge.c */
 
@@ -998,6 +1004,21 @@ struct HubHost
    char *hostname;
    };
 
+struct HubFileChanges
+   {
+   struct HubHost *hh;
+   char *path;
+   time_t t;
+   };
+
+struct HubFileDiff
+   {
+   struct HubHost *hh;
+   char *path;
+   char *diff;
+   time_t t;
+   };
+
 struct HubSoftware
    {
    struct HubHost *hh;
@@ -1091,7 +1112,6 @@ struct HubPerformance
 struct HubSetUid
    {
    struct HubHost *hh;      
-   struct HubHost *host;
    char *path;
    };
 
