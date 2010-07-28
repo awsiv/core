@@ -738,6 +738,8 @@ void Nova_InitVertex(struct CfGraphNode *tribe,int i);
 
 void Nova_EnterpriseModuleTrick(void);
 int Nova2PHP_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize);
+int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *buffer,int bufsize);
+int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize);
 
 /* weekly.c */
 

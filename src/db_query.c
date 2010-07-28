@@ -691,8 +691,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
       
       for (rp = record_list; rp != NULL; rp=rp->next)
          {
-         struct HubTotalCompliance *hs = (struct HubTotalCompliance *)rp->item;
-         hs->hh = hh;
+         struct HubVariable *hv = (struct HubVariable *)rp->item;
+         hv->hh = hh;
          }
       }
    }
@@ -835,8 +835,9 @@ while (mongo_cursor_next(cursor))  // loops over documents
    
       for (rp = record_list; rp != NULL; rp=rp->next)
          {
-         struct HubClass *hs = (struct HubClass *)rp->item;
-         hs->hh = hh;
+         struct HubPromiseCompliance *hp = (struct HubPromiseCompliance *)rp->item;
+
+         hp->hh = hh;
          }
       }
    }

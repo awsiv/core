@@ -359,6 +359,16 @@ for (ip = result; ip !=  NULL; ip=ip->next)
 //Nova_PerformancePage("MD5=4a37e48645122312daf7862f2a0f0ef7");
 */
 
+char buff[100000];
+Nova2PHP_software_in_report(NULL,NULL,NULL,NULL,0,buff,100000);
+printf("CLASSES: %s\n",buff);
+
+Nova2PHP_classes_report(NULL,NULL,0,buff,100000);
+printf("CLASSES: %s\n",buff);
+
+Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,buff,100000);
+printf("VARS: %s\n",buff);
+
 /*
 if (!CFDB_Close(&dbconn))
    {
