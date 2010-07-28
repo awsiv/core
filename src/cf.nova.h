@@ -297,7 +297,7 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 #ifdef HAVE_LIBMONGOC
 
-struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,bson *query,char *name,char *ver,char *arch,int regex);
+struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,bson *query,char *type,char *name,char *ver,char *arch,int regex);
 struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,bson *query,char *lclass,int regex);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,bson *query,char *lversion,time_t ltime,int lkept,int lnotkept,int lrepaired,int cmp);
 struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,bson *query,char *lscope,char *llval,char *lrval,char *ltype,int reg);
@@ -734,6 +734,11 @@ void Nova_MatrixOperation(double **A,double *v,int dim);
 int Nova_AlreadyInTribe(int node, int *tribe_id);
 void Nova_InitVertex(struct CfGraphNode *tribe,int i);
 
+/* web_api.c */
+
+void Nova_EnterpriseModuleTrick(void);
+int Nova2PHP_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize);
+
 /* weekly.c */
 
 double Num(double x);
@@ -742,7 +747,6 @@ void Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables o
 void Nova_DrawQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3);
 void Nova_AnalyseWeek(struct CfDataView *cfv,char *keyname,enum observables obs);
-
 
 #ifdef MINGW
 /* win_api.c */

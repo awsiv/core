@@ -52,7 +52,7 @@ mongo_cursor_destroy(cursor);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,bson *query,char *lname,char *lver,char *larch,int regex)
+struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,bson *query,char *type,char *lname,char *lver,char *larch,int regex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,field;
@@ -74,7 +74,7 @@ bson_buffer_init(&bb);
 bson_append_int(&bb,cfr_keyhash,1);
 bson_append_int(&bb,cfr_ip_array,1);
 bson_append_int(&bb,cfr_host_array,1);
-bson_append_int(&bb,cfr_software,1);
+bson_append_int(&bb,type,1);
 bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -101,7 +101,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       
       /* Query specific search/marshalling */
 
-      if (strcmp(bson_iterator_key(&it1),cfr_software) == 0)
+      if (strcmp(bson_iterator_key(&it1),type) == 0)
          {
          bson_iterator_init(&it2,bson_iterator_value(&it1));
 

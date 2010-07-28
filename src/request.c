@@ -38,17 +38,18 @@ void Nova_CfQueryCFDB(char *querystr)
  struct HubBundleSeen *hb;
  struct HubFileChanges *hC;
  struct HubFileDiff *hd;
+char buffer[10000];
  
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+/*if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
    CfOut(cf_error, "", "!! Could not open connection to report database");
    }
-
+*/
 // CFDB_ListEverything(&dbconn);
 
 /* Example 1 **************************************************
 
-hq = CFDB_QuerySoftware(&dbconn,bson_empty(&b),"zypper",NULL,NULL,false);
+hq = CFDB_QuerySoftware(&dbconn,bson_empty(&b),cfr_software,"zypper",NULL,NULL,false);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -267,6 +268,7 @@ printf("\n");
 
 */
 
+/*
 hq = CFDB_QueryFileChanges(&dbconn,bson_empty(&b),NULL,false,-1,CFDB_GREATERTHANEQ);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -307,7 +309,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
    }
 printf("\n");
 
-
+*/
 
 
 // graphs
@@ -341,7 +343,7 @@ for (i = 0; i < CF_GRAINS; i++)
 printf("\n");
 */
 
-
+/*
 printf("Making gfraphs\n");
 strcpy(DOCROOT,"/home/mark/tmp");
 
@@ -355,12 +357,14 @@ for (ip = result; ip !=  NULL; ip=ip->next)
    }
 
 //Nova_PerformancePage("MD5=4a37e48645122312daf7862f2a0f0ef7");
+*/
 
+/*
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_error, "", "!! Could not close connection to report database");
    } 
-
+*/
 #endif
 }
 
