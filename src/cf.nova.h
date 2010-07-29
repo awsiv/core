@@ -740,7 +740,16 @@ void Nova_EnterpriseModuleTrick(void);
 int Nova2PHP_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize);
 int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *buffer,int bufsize);
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize);
+int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *returnval,int bufsize);
+int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *buffer,int bufsize);
+int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddr,time_t lago,int lregex,char *returnval,int bufsize);
+int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *returnval,int bufsize);
+int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *returnval,int bufsize);
+int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *returnval,int bufsize);
+int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *returnval,int bufsize);
+int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *returnval,int bufsize);
 
+    
 /* weekly.c */
 
 double Num(double x);

@@ -40,11 +40,11 @@ void Nova_CfQueryCFDB(char *querystr)
  struct HubFileDiff *hd;
 char buffer[10000];
  
-/*if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
    CfOut(cf_error, "", "!! Could not open connection to report database");
    }
-*/
+
 // CFDB_ListEverything(&dbconn);
 
 /* Example 1 **************************************************
@@ -62,9 +62,9 @@ DeleteHubQuery(hq,DeleteHubSoftware);
 
 */
 
-/* Example 2 **************************************************
+/* Example 2 *************************************************
 
-hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),"linux.*",true);
+hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),NULL,false);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -82,9 +82,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
    }
 printf("\n");
 
-DeleteHubQuery(hq,DeleteHubClass);
+DeleteHubQuery(hq,DeleteHubClass);*/
 
-*/
  
 /* Example 3 **************************************************
 
@@ -205,7 +204,7 @@ hq = CFDB_QueryPerformance(&dbconn,bson_empty(&b),NULL,true);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   hm = (struct HubMeter *)rp->item;
+   hP = (struct HubPerformance *)rp->item;
    
    printf("Perf result: \"%s\" %lf,%lf,%lf at %s",hP->event,hP->q,hP->e,hP->d,cf_ctime(&(hP->t)));
    printf("found on (%s=%s=%s)\n",hP->hh->keyhash,hP->hh->hostname,hP->hh->ipaddr);
@@ -288,7 +287,6 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
    }
 printf("\n");
 
-
 hq = CFDB_QueryFileDiff(&dbconn,bson_empty(&b),NULL,NULL,false,-1,CFDB_GREATERTHANEQ);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -360,21 +358,44 @@ for (ip = result; ip !=  NULL; ip=ip->next)
 */
 
 char buff[100000];
-Nova2PHP_software_in_report(NULL,NULL,NULL,NULL,0,buff,100000);
-printf("CLASSES: %s\n",buff);
+//Nova2PHP_software_report(NULL,NULL,NULL,NULL,0,cfr_software,buff,100000);
+//printf("SW: %s\n",buff);
 
-Nova2PHP_classes_report(NULL,NULL,0,buff,100000);
-printf("CLASSES: %s\n",buff);
+//Nova2PHP_classes_report(NULL,NULL,0,buff,100000);
+//printf("CLASSES: %s\nCLASSES\n\n",buff);
 
-Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,buff,100000);
-printf("VARS: %s\n",buff);
+//Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,buff,100000);
+//printf("VARS: (%s)\nVARS\n\n",buff);
 
-/*
+//Nova2PHP_compliance_report(NULL,NULL,-1,-1,-1,-1,">",buff,100000);
+//printf("TC: (%s)\nTC\n\n",buff);
+
+//Nova2PHP_compliance_promises(NULL,NULL,"x",0,buff,10000);
+//printf("PR: (%s)\nPR\n\n",buff);
+
+//Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,buff,10000);
+//printf("LS: (%s)\nLS\n\n",buff);
+
+Nova2PHP_performance_report(NULL,NULL,0,buff,10000);
+printf("PF: (%s)\nPF\n\n",buff);
+
+Nova2PHP_performance_report(NULL,NULL,0,buff,10000);
+printf("SETUID: (%s)\nSETUID\n\n",buff);
+
+Nova2PHP_bundle_report(NULL,NULL,0,buff,10000);
+printf("BUNDLE: (%s)\nBUNDLE\n\n",buff);
+
+Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",buff,10000);
+printf("CHANGE: (%s)\nCHANGE\n\n",buff);
+
+Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",buff,10000);
+printf("CHANGE: (%s)\nCHANGE\n\n",buff);
+
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_error, "", "!! Could not close connection to report database");
    } 
-*/
+
 #endif
 }
 

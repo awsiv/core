@@ -442,7 +442,7 @@ return hp;
 
 /*****************************************************************************/
 
-void DeleteHubFileChange(struct HubFileChanges *hp)
+void DeleteHubFileChanges(struct HubFileChanges *hp)
 {
 free(hp->path);
 free(hp); 
