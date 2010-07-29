@@ -105,6 +105,7 @@ struct CfDataView
    double range;
    int margins;
    char *title;
+   char *docroot;
    };
 
 struct CfGraphNode
@@ -643,9 +644,9 @@ void Nova_CfQueryCFDB(char *query);
 
 /* scorecards.c */
 
-void Nova_PerformancePage(char *hostkey);
-struct Item *Nova_SummaryMeter(char *search_string);
-int Nova_Meter(char *hostkey);
+void Nova_PerformancePage(char *docroot,char *hostkey);
+void Nova_SummaryMeter(char *docroot,char *search_string);
+int Nova_Meter(char *docroot,char *hostkey);
 struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
 struct Item *Nova_GreenHosts(struct Item *master);
 struct Item *Nova_YellowHosts(struct Item *master);
@@ -737,6 +738,9 @@ void Nova_InitVertex(struct CfGraphNode *tribe,int i);
 /* web_api.c */
 
 void Nova_EnterpriseModuleTrick(void);
+
+void Nova2PHP_refresh_png(char *docroot,char *hostkey,char *selection);
+
 int Nova2PHP_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize);
 int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *buffer,int bufsize);
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize);
@@ -749,6 +753,17 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *returnval,
 int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *returnval,int bufsize);
 int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *returnval,int bufsize);
 
+int Nova2PHP_software_hosts(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize);
+int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *returnval,int bufsize);
+int Nova2PHP_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize);
+int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *returnval,int bufsize);
+int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,char *returnval,int bufsize);
+int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *returnval,int bufsize);
+int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *returnval,int bufsize);
+int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *returnval,int bufsize);
+int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *returnval,int bufsize);
+int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char *cmp,char *returnval,int bufsize);
+int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *returnval,int bufsize);
     
 /* weekly.c */
 

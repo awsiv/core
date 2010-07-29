@@ -980,7 +980,7 @@ for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    sub = bson_append_start_object(arr,iStr);
    bson_append_int(sub,cfr_time,then);
    bson_append_string(sub,cfr_name,name);
-   bson_append_string(sub,cfr_diff,name);
+   bson_append_string(sub,cfr_diff,change);
    bson_append_finish_object(sub);
    }
 

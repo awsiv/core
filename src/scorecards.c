@@ -20,7 +20,7 @@ extern char *UNITS[];
 /*                                                                           */
 /*****************************************************************************/
 
-void Nova_PerformancePage(char *hostkey)
+void Nova_PerformancePage(char *docroot,char *hostkey)
     
 { FILE *fout;
   char name[CF_BUFSIZE],exist[CF_BUFSIZE];
@@ -29,19 +29,14 @@ void Nova_PerformancePage(char *hostkey)
   struct CfDataView cfv;
   int i;
 
-if (LICENSES == 0)
-   {
-
-printf("HERE.......\n");
-//   return;
-   }
 
 // Make common resources
   
 cfv.height = 300;
 cfv.width = 700; //(7*24*2)*2; // halfhour
 cfv.margin = 50;
-  
+cfv.docroot = docroot;
+
 for (i = 0; i < CF_OBSERVABLES; i++)
    {
    Nova_LookupAggregateClassName(i,id,desc);
@@ -62,7 +57,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 /*****************************************************************************/
 
-struct Item *Nova_SummaryMeter(char *search_string)
+void Nova_SummaryMeter(char *docroot,char *search_string)
 
 { FILE *fout;
   char filename[CF_BUFSIZE];
@@ -77,19 +72,14 @@ struct Item *Nova_SummaryMeter(char *search_string)
   struct HubQuery *hq;
   mongo_connection dbconn;
   struct Rlist *rp;
-  struct Item *matches = NULL;
   struct CfDataView cfv;
-
-if (LICENSES == 0)
-   {
-//   return NULL;
-   printf("HERE\n");
-   }
 
 cfv.height = CF_METER_HEIGHT;
 cfv.width = CF_METER_WIDTH;
 cfv.margin = CF_METER_MARGIN;
 cfv.title = "System state";
+cfv.docroot = docroot;
+
 cfv.im = gdImageCreate(cfv.width+2*cfv.margin,cfv.height+2*cfv.margin);
 Nova_MakePalette(&cfv);
 
@@ -121,7 +111,6 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    repaired = hm->repaired;
 
    num++;
-   IdempPrependItem(&matches,hm->hh->hostname,hm->hh->ipaddr);
    
    switch (hm->type)
       {
@@ -179,13 +168,13 @@ DeleteHubQuery(hq,DeleteHubMeter);
 
 // Write graph
 
-snprintf(filename,CF_BUFSIZE,"%s/hub/common/meter.png",DOCROOT);
+snprintf(filename,CF_BUFSIZE,"%s/hub/common/meter.png",cfv.docroot);
 MakeParentDirectory(filename,true);
 
 if ((fout = fopen(filename, "wb")) == NULL)
    {
    CfOut(cf_error,"fopen"," !! Couldn't draw meter %s",filename);
-   return matches;
+   return;
    }
 else
    {
@@ -195,12 +184,11 @@ else
 gdImagePng(cfv.im, fout);
 fclose(fout);
 gdImageDestroy(cfv.im);
-return matches;
 }
 
 /*****************************************************************************/
 
-int Nova_Meter(char *hostkey)
+int Nova_Meter(char *docroot,char *hostkey)
 
 { FILE *fout;
   char filename[CF_BUFSIZE];
@@ -214,16 +202,11 @@ int Nova_Meter(char *hostkey)
   struct Rlist *rp;
   struct CfDataView cfv;
   
-if (LICENSES == 0)
-   {
-//   return 0;
-     printf(" - HERE \n");
- }
-
 cfv.height = CF_METER_HEIGHT;
 cfv.width = CF_METER_WIDTH;
 cfv.margin = CF_METER_MARGIN;
 cfv.title = "System state";
+cfv.docroot = docroot;
 cfv.im = gdImageCreate(cfv.width+2*cfv.margin,cfv.height+2*cfv.margin);
 Nova_MakePalette(&cfv);
 
@@ -287,7 +270,7 @@ DeleteHubQuery(hq,DeleteHubMeter);
 
 // Write graph
 
-snprintf(filename,CF_BUFSIZE,"%s/hub/%s/meter.png",DOCROOT,hostkey);
+snprintf(filename,CF_BUFSIZE,"%s/hub/%s/meter.png",cfv.docroot,hostkey);
 
 if ((fout = fopen(filename, "wb")) == NULL)
    {

@@ -379,7 +379,7 @@ char buff[100000];
 Nova2PHP_performance_report(NULL,NULL,0,buff,10000);
 printf("PF: (%s)\nPF\n\n",buff);
 
-Nova2PHP_performance_report(NULL,NULL,0,buff,10000);
+Nova2PHP_setuid_report(NULL,NULL,0,buff,10000);
 printf("SETUID: (%s)\nSETUID\n\n",buff);
 
 Nova2PHP_bundle_report(NULL,NULL,0,buff,10000);
@@ -390,6 +390,10 @@ printf("CHANGE: (%s)\nCHANGE\n\n",buff);
 
 Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",buff,10000);
 printf("CHANGE: (%s)\nCHANGE\n\n",buff);
+
+Nova2PHP_bundle_hosts(NULL,NULL,0,buff,10000);
+printf("HOSTS WITH: (%s)\nHOSTSWITH\n\n",buff);
+
 
 if (!CFDB_Close(&dbconn))
    {

@@ -1431,17 +1431,22 @@ while (mongo_cursor_next(cursor))  // loops over documents
          
          while (bson_iterator_next(&it2))
             {
-            if (strcmp(bson_iterator_key(&it2),cfr_name) == 0)
+            bson_iterator_init(&it3,bson_iterator_value(&it2));
+            
+            while (bson_iterator_next(&it3))
                {
-               strncpy(rname,bson_iterator_string(&it2),CF_BUFSIZE-1);
+               if (strcmp(bson_iterator_key(&it3),cfr_name) == 0)
+                  {
+                  strncpy(rname,bson_iterator_string(&it3),CF_BUFSIZE-1);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
+                  {
+                  rt = bson_iterator_int(&it3);
+                  }
                }
-            else if (strcmp(bson_iterator_key(&it2),cfr_time) == 0)
-               {
-               rt = bson_iterator_int(&it2);
-               }
-
+            
             match_name = match_t = true;
-
+            
             if (cmp == CFDB_GREATERTHANEQ)
                {
                if (lt != -1 && lt < rt)
@@ -1561,19 +1566,24 @@ while (mongo_cursor_next(cursor))  // loops over documents
          
          while (bson_iterator_next(&it2))
             {
-            if (strcmp(bson_iterator_key(&it2),cfr_name) == 0)
+            bson_iterator_init(&it3,bson_iterator_value(&it2));
+            
+            while (bson_iterator_next(&it3))
                {
-               strncpy(rname,bson_iterator_string(&it2),CF_BUFSIZE-1);
+               if (strcmp(bson_iterator_key(&it3),cfr_name) == 0)
+                  {
+                  strncpy(rname,bson_iterator_string(&it3),CF_BUFSIZE-1);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_diff) == 0)
+                  {
+                  strncpy(rdiff,bson_iterator_string(&it3),CF_BUFSIZE-1);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
+                  {
+                  rt = bson_iterator_int(&it3);
+                  }
                }
-            else if (strcmp(bson_iterator_key(&it2),cfr_diff) == 0)
-               {
-               strncpy(rdiff,bson_iterator_string(&it2),CF_BUFSIZE-1);
-               }
-            else if (strcmp(bson_iterator_key(&it2),cfr_time) == 0)
-               {
-               rt = bson_iterator_int(&it2);
-               }
-
+            
             match_name = match_t = true;
 
             if (cmp == CFDB_GREATERTHANEQ)
