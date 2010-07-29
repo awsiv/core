@@ -364,8 +364,8 @@ char buff[100000];
 //Nova2PHP_classes_report(NULL,NULL,0,buff,100000);
 //printf("CLASSES: %s\nCLASSES\n\n",buff);
 
-//Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,buff,100000);
-//printf("VARS: (%s)\nVARS\n\n",buff);
+Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,buff,100000);
+printf("VARS: (%s)\nVARS\n\n",buff);
 
 //Nova2PHP_compliance_report(NULL,NULL,-1,-1,-1,-1,">",buff,100000);
 //printf("TC: (%s)\nTC\n\n",buff);
@@ -376,6 +376,7 @@ char buff[100000];
 //Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,buff,10000);
 //printf("LS: (%s)\nLS\n\n",buff);
 
+/*
 Nova2PHP_performance_report(NULL,NULL,0,buff,10000);
 printf("PF: (%s)\nPF\n\n",buff);
 
@@ -393,7 +394,7 @@ printf("CHANGE: (%s)\nCHANGE\n\n",buff);
 
 Nova2PHP_bundle_hosts(NULL,NULL,0,buff,10000);
 printf("HOSTS WITH: (%s)\nHOSTSWITH\n\n",buff);
-
+*/
 
 if (!CFDB_Close(&dbconn))
    {

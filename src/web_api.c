@@ -237,8 +237,8 @@ else
    hq = CFDB_QueryVariables(&dbconn,bson_empty(&b),scope,lval,rval,type,regex);
    }
 
-returnval[0] = '\0';
 
+returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
 count += strlen(returnval);
@@ -253,12 +253,13 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    if (strlen(hv->dtype) > 1) // list
       {
       char b[CF_BUFSIZE];
+      b[0] = '\0';
       PrintRlist(b,CF_BUFSIZE,hv->rval);
       snprintf(buffer,CF_BUFSIZE-1,"<td>%s</td></tr>\n",b);
       }
    else
       {
-      snprintf(buffer,CF_BUFSIZE-1,"<td>%s</td></tr>\n",hv->rval);
+      snprintf(buffer,CF_BUFSIZE-1,"<td>%s</td></tr>\n",(char *)hv->rval);
       }
 
    tmpsize = strlen(buffer);
@@ -275,7 +276,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
 strcat(returnval,"</table>\n");
 
-DeleteHubQuery(hq,DeleteHubVariable);
+//DeleteHubQuery(hq,DeleteHubVariable);
 
 if (!CFDB_Close(&dbconn))
    {
