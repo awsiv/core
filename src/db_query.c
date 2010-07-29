@@ -554,7 +554,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
    keyhash[0] = '\0';
    hostnames[0] = '\0';
    addresses[0] = '\0';
-   newlist = NULL;
    
    while (bson_iterator_next(&it1))
       {
@@ -599,12 +598,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
                         case bson_array:
                         case bson_object:
                             bson_iterator_init(&it5,bson_iterator_value(&it4));
-                            rrval = newlist;
                             rtype = CF_LIST;
+                            
                             while (bson_iterator_next(&it5))
                                {
                                AppendRScalar(&newlist,(char *)bson_iterator_string(&it5),CF_SCALAR);   
                                }
+
+                            rrval = newlist;
                             break;
 
                         default:
@@ -677,6 +678,22 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   found = true;
                   AppendRlistAlien(&record_list,NewHubVariable(NULL,dtype,rscope,rlval,rrval,rtype));
                   }
+               else
+                  {
+                  switch(rtype)
+                     {
+                     case CF_SCALAR:
+                         free(rrval);
+                         break;
+                         
+                     case CF_LIST:
+                         DeleteRlist(rrval);
+                         break;
+                     }                  
+                  }
+
+               
+               newlist = NULL;
                }
             }
          }   
