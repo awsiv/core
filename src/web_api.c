@@ -38,6 +38,8 @@ if (false)
    Nova2PHP_setuid_report(NULL,NULL,0,buffer,10000);
    Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",buffer,10000);
    Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",buffer,10000);
+   CFDB_PutValue("one_two","three");
+   CFDB_GetValue("newvar",buffer,120);
    }
 }
 
@@ -864,6 +866,76 @@ return true;
 
 /*****************************************************************************/
 /* Search for hosts with property X,Y,Z                                      */
+/*****************************************************************************/
+
+int Nova2PHP_hostinfo(char *hostkey,char *returnval1,char *returnval2,int bufsize)
+
+{ char *report,buffer1[CF_BUFSIZE],buffer2[CF_BUFSIZE];
+  struct HubHost *hh;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count1 = 0,count2 = 0,tmpsize1,tmpsize2;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+
+/* BEGIN query document */
+
+if (hostkey && strlen(hostkey) != 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   }
+else
+   {
+   return false;
+   }
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+   {
+   CfOut(cf_error, "", "!! Could not open connection to report database");
+   return false;
+   }
+
+hq = CFDB_QueryHosts(&dbconn,&query);
+
+returnval1[0] = '\0';
+returnval2[0] = '\0';
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+
+   snprintf(buffer1,CF_MAXVARSIZE-1,"%s,",hh->hostname);
+   snprintf(buffer2,CF_MAXVARSIZE-1,"%s,",hh->ipaddr);
+
+   tmpsize1 = strlen(buffer1);
+   tmpsize2 = strlen(buffer2);
+   
+   if (count1 + tmpsize1 <= bufsize - 1)
+      {
+      strcat(returnval1,buffer1);
+      count1 += tmpsize1;
+      }
+
+   if (count2 + tmpsize2 <= bufsize - 1)
+      {
+      strcat(returnval2,buffer2);
+      count2 += tmpsize2;
+      }
+   }
+
+DeleteHubQuery(hq,NULL);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_error, "", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+
 /*****************************************************************************/
 
 int Nova2PHP_software_hosts(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize)

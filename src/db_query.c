@@ -56,7 +56,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
          while (bson_iterator_next(&it2))
             {
-            strncpy(rval,bson_iterator_string(&it2),size);
+            strncpy(rval,bson_iterator_string(&it2),size-1);
             mongo_cursor_destroy(cursor);
             CFDB_Close(&conn);
             return;
@@ -94,6 +94,63 @@ while(mongo_cursor_next(cursor))  // loops over documents
    }
 
 mongo_cursor_destroy(cursor);
+}
+
+/*****************************************************************************/
+
+struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query)
+
+{ bson_buffer bb,*sub1,*sub2,*sub3;
+  bson b,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct HubHost *hh;
+  struct Rlist *rp,*record_list = NULL, *host_list = NULL;
+  char rname[CF_MAXVARSIZE],rversion[CF_MAXVARSIZE],rarch[3];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  int found = false;
+  
+/* BEGIN query document */
+
+  // Can't understand the bson API for nested objects this, so work around..
+  
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+hostnames[0] = '\0';
+addresses[0] = '\0';
+
+cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
+
+      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      }      
+
+   hh = NewHubHost(keyhash,addresses,hostnames);
+   AppendRlistAlien(&host_list,hh);
+   }
+
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,NULL);
 }
 
 /*****************************************************************************/

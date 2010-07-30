@@ -407,6 +407,12 @@ printf("Revived value %s\n",value);
 CFDB_GetValue("one_two",value,120);
 printf("Revived value %s\n",value);
 
+char buf1[1024],buf2[1024];
+Nova2PHP_hostinfo("MD5=4dda03e4f9b7547b3dc52aa463059d90",buf1,buf2,1024);
+
+printf("HOST is %s = %s\n",buf1,buf2);
+
+     
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_error, "", "!! Could not close connection to report database");

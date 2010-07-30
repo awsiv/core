@@ -301,6 +301,8 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 void CFDB_GetValue(char *lval,char *rval,int size);
 
+struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query);
+
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,bson *query,char *type,char *name,char *ver,char *arch,int regex);
 struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,bson *query,char *lclass,int regex);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,bson *query,char *lversion,time_t ltime,int lkept,int lnotkept,int lrepaired,int cmp);
@@ -735,6 +737,14 @@ void Nova_Indent(int i);
 
 /* topicmap.c */
 
+void Nova_WebTopicMap_Initialize(void);
+void Nova_LookupUniqueTopic(char *typed_topic);
+void Nova_LookupMatchingTopics(char *typed_topic);
+void Nova_ScanLocalHierarchy(CfdbConn *cfdb,char *this_name,char *this_id,char *this_type,char *this_comment);
+void Nova_ScanLeadsAssociations(CfdbConn *cfdb,char *this_name,char *this_id,char *this_type,char *this_comment);
+void Nova_ScanOccurrences(CfdbConn *cfdb,char *this_name,char *this_id,char *this_type,char *this_comment);
+char *LocateTopicMapImage(void);
+
 void Nova_SpecialQuote(char *name,char *type);
 void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char *view);
 int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double **tribe_adj,char **n,int topic,double **full_adj,int dim_full,int *tertiary_boundary);
@@ -742,12 +752,14 @@ void Nova_EigenvectorCentrality(double **A,double *v,int dim);
 void Nova_MatrixOperation(double **A,double *v,int dim);
 int Nova_AlreadyInTribe(int node, int *tribe_id);
 void Nova_InitVertex(struct CfGraphNode *tribe,int i);
+int Nova_NewVertex(struct CfGraphNode *tribe,int node,char *name,int distance,int real);
 
 /* web_api.c */
 
 void Nova_EnterpriseModuleTrick(void);
 
 void Nova2PHP_refresh_png(char *docroot,char *hostkey,char *selection);
+int Nova2PHP_hostinfo(char *hostkey,char *hostname,char *ipaddress,int bufsize);
 
 int Nova2PHP_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize);
 int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *buffer,int bufsize);

@@ -58,7 +58,7 @@ DeleteRlist(hq->records);
 
 /*****************************************************************************/
 
-struct HubHost *NewHubHost(char *keyhash,char *hostname,char *ipaddr)
+struct HubHost *NewHubHost(char *keyhash,char *ipaddr,char *hostname)
 
 { struct HubHost *hp;
 
