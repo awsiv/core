@@ -36,6 +36,7 @@
 #ifdef HAVE_LIBMONGOC
 # define MONGO_HAVE_STDINT
 # define MONGO_DATABASE "cfreport.hosts"
+# define MONGO_SCRATCH "cfscratch.values"
 # include <mongo.h>
 #else
 # define mongo_connection char
@@ -298,6 +299,8 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 #ifdef HAVE_LIBMONGOC
 
+void CFDB_GetValue(char *lval,char *rval,int size);
+
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,bson *query,char *type,char *name,char *ver,char *arch,int regex);
 struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,bson *query,char *lclass,int regex);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,bson *query,char *lversion,time_t ltime,int lkept,int lnotkept,int lrepaired,int cmp);
@@ -326,9 +329,13 @@ int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
 /* db_save.c */
 
 #ifdef HAVE_LIBMONGOC
+
 int CFDB_Open(mongo_connection *conn, char *host, int port);
 int CFDB_Close(mongo_connection *conn);
 void CFDB_Initialize(void);
+
+void CFDB_PutValue(char *lval,char *rval);
+
 void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, struct Item *data);
 void CFDB_SaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep rep_type, struct Item *data);
 void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *kH, struct Item *data);
@@ -537,6 +544,7 @@ int Nova_EnterpriseModuleExpiry(char *day,char *month,char *year);
 void Nova_CheckLicensePromise(void);
 void Nova_LogLicenseStatus(void);
 int Nova_CheckLicenseWin(char *pos);
+char *Nova_LicenseOwner(void);
 
 /* logging.c */
 
@@ -1003,6 +1011,7 @@ struct promise_value
 #define cfr_var_keys      "vk"
 #define cfr_type          "T"
 #define cfr_rval          "V"
+#define cfr_lval          "lval"
 #define cfr_repairlog     "rl"
 #define cfr_notkeptlog    "nl"
 #define cfr_promisehandle "h"

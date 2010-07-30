@@ -23,6 +23,52 @@
 
 #ifdef HAVE_LIBMONGOC
 
+
+/*****************************************************************************/
+
+void CFDB_GetValue(char *lval,char *rval,int size)
+
+{ bson_buffer bb;
+  bson b,field,query;
+  bson_iterator it1,it2;
+  mongo_cursor *cursor;
+  mongo_connection conn;
+ 
+if (!CFDB_Open(&conn, "127.0.0.1", 27017))
+   {
+   CfOut(cf_error, "", "!! Could not open connection to report database");
+   return;
+   }
+    
+/* BEGIN SEARCH */
+
+cursor = mongo_find(&conn,MONGO_SCRATCH,bson_empty(&query),0,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   while(bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1),lval) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         while (bson_iterator_next(&it2))
+            {
+            strncpy(rval,bson_iterator_string(&it2),size);
+            mongo_cursor_destroy(cursor);
+            CFDB_Close(&conn);
+            return;
+            }
+         }
+      }    
+   }
+
+mongo_cursor_destroy(cursor);
+CFDB_Close(&conn);
+}
+
 /*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/

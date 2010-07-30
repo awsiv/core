@@ -59,6 +59,40 @@ void CFDB_Initialize()
 }
 
 /*****************************************************************************/
+/* Cache / scratch space                                                     */
+/*****************************************************************************/
+
+void CFDB_PutValue(char *lval,char *rval)
+
+{ bson_buffer bb;
+  bson_buffer *setObj;
+  bson setOp,empty;
+  struct Item *ip;
+  char varName[CF_MAXVARSIZE];
+  mongo_connection dbconn;
+ 
+if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+   {
+   CfOut(cf_error, "", "!! Could not open connection to report database");
+   return;
+   }
+  
+bson_buffer_init(&bb);
+setObj = bson_append_start_object(&bb, "$set");
+snprintf(varName, sizeof(varName),"%s.%s",lval,cfr_rval);
+bson_append_string(setObj,varName,rval);
+bson_append_finish_object(setObj);
+
+bson_from_buffer(&setOp,&bb);
+mongo_update(&dbconn, MONGO_SCRATCH,bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
+
+bson_destroy(&setOp);
+CFDB_Close(&dbconn);
+}
+
+/*****************************************************************************/
+/* Monitor data                                                              */
+/*****************************************************************************/
 
 void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr)
 

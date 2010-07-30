@@ -364,8 +364,8 @@ char buff[100000];
 //Nova2PHP_classes_report(NULL,NULL,0,buff,100000);
 //printf("CLASSES: %s\nCLASSES\n\n",buff);
 
-Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,buff,100000);
-printf("VARS: (%s)\nVARS\n\n",buff);
+//Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,buff,100000);
+//printf("VARS: (%s)\nVARS\n\n",buff);
 
 //Nova2PHP_compliance_report(NULL,NULL,-1,-1,-1,-1,">",buff,100000);
 //printf("TC: (%s)\nTC\n\n",buff);
@@ -395,6 +395,17 @@ printf("CHANGE: (%s)\nCHANGE\n\n",buff);
 Nova2PHP_bundle_hosts(NULL,NULL,0,buff,10000);
 printf("HOSTS WITH: (%s)\nHOSTSWITH\n\n",buff);
 */
+
+CFDB_PutValue("newvar","change val");
+CFDB_PutValue("newvar","And again....");
+CFDB_PutValue("one_two","three");
+
+char value[234];
+CFDB_GetValue("newvar",value,120);
+printf("Revived value %s\n",value);
+
+CFDB_GetValue("one_two",value,120);
+printf("Revived value %s\n",value);
 
 if (!CFDB_Close(&dbconn))
    {
