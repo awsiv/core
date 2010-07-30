@@ -33,6 +33,13 @@ int main()
   char u_day[8],u_month[8],u_year[8];
   unsigned char digest[EVP_MAX_MD_SIZE+1];
 
+
+printf("Enter unique company string: ");
+
+fflush(stdin);
+fgets(company,2047,stdin);
+Chop(company);
+
 printf("Enter the filename of the client\'s public key: ");
 scanf("%s",filename);
 
@@ -60,8 +67,6 @@ scanf("%s",f_year);
 printf("Enter number of licenses: ");
 scanf("%d",&number);
 
-printf("Enter unique company string: ");
-scanf("%[^\n]",company);
 
 printf("\nDate confirmed as: %s %s %s\n",f_day,f_month,f_year);
 printf("\nNumber of licenses granted: %d\n",number);
@@ -140,4 +145,30 @@ for (i = 0; i < CF_MD5_LEN; i++)
 
 return buffer; 
 }    
+
+/*********************************************************************/
+/*********************************************************************/
+
+int Chop(char *str) /* remove trailing spaces */
+
+{ int i;
+ 
+if ((str == NULL) || (strlen(str) == 0))
+   {
+   return;
+   }
+
+if (strlen(str) > 2047)
+   {
+   printf("Too long");
+   return;
+   }
+
+for (i = strlen(str)-1; isspace((int)str[i]); i--)
+   {
+   str[i] = '\0';
+   }
+}
+
+
 
