@@ -1648,5 +1648,28 @@ if (!CFDB_Close(&dbconn))
 return true;
 }
 
+/*****************************************************************************/
+/* Topic Map                                                                 */
+/*****************************************************************************/
 
+int Nova2PHP_search_topics(char *type,char *search,int regex,char *buffer,int bufsize)
+{
 
+ VERBOSE=1;
+ DEBUG=1;
+ printf("Testing...\n");
+ Nova_WebTopicMap_Initialize();
+
+// Nova_LookupUniqueAssoc(12,buffer,bufsize);
+
+ printf("----------------------------------\n");
+ Nova_SearchTopicMap(search,buffer,bufsize);
+ printf("and got: %s",buffer);
+ return true;
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_show_topic(int id,char * buffer,int bufsize)
+{
+}

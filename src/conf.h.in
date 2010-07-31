@@ -180,11 +180,20 @@
 /* Define to 1 if you have the `mongoc' library (-lmongoc). */
 #undef HAVE_LIBMONGOC
 
+/* Define to 1 if you have the `mysqlclient' library (-lmysqlclient). */
+#undef HAVE_LIBMYSQLCLIENT
+
 /* Define to 1 if you have the `nsl' library (-lnsl). */
 #undef HAVE_LIBNSL
 
 /* Define to 1 if you have the `pcre' library (-lpcre). */
 #undef HAVE_LIBPCRE
+
+/* Define to 1 if you have the `pq' library (-lpq). */
+#undef HAVE_LIBPQ
+
+/* Define to 1 if you have the <libpq-fe.h> header file. */
+#undef HAVE_LIBPQ_FE_H
 
 /* Define to 1 if you have the `pthreads' library (-lpthreads). */
 #undef HAVE_LIBPTHREADS
@@ -222,6 +231,9 @@
 /* Define to 1 if you have the <mongo.h> header file. */
 #undef HAVE_MONGO_H
 
+/* Define to 1 if you have the <mysql/mysql.h> header file. */
+#undef HAVE_MYSQL_MYSQL_H
+
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
 
@@ -230,6 +242,9 @@
 
 /* Define to 1 if you have the <pcre/pcre.h> header file. */
 #undef HAVE_PCRE_PCRE_H
+
+/* Define to 1 if you have the <pgsql/libpq-fe.h> header file. */
+#undef HAVE_PGSQL_LIBPQ_FE_H
 
 /* Define to 1 if you have the <platform_hacks.h> header file. */
 #undef HAVE_PLATFORM_HACKS_H

@@ -40,6 +40,8 @@ if (!CFDB_Open(&conn, "127.0.0.1", 27017))
    return;
    }
     
+rval[0] = '\0';
+
 /* BEGIN SEARCH */
 
 cursor = mongo_find(&conn,MONGO_SCRATCH,bson_empty(&query),0,0,0,0);

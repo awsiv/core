@@ -503,13 +503,13 @@ dnl AC_CHECK_LIB(rt, main)
 
 dnl Now check for database connectors
 
-dnl if test $WITH_SQL; then
-dnl  AC_CHECK_LIB(mysqlclient,main)
-dnl  AC_CHECK_LIB(pq,main)
-dnl  AC_CHECK_HEADERS(mysql/mysql.h)
-dnl  AC_CHECK_HEADERS(pgsql/libpq-fe.h)
-dnl  AC_CHECK_HEADERS(libpq-fe.h)
-dnl fi
+if test $WITH_SQL; then
+  AC_CHECK_LIB(mysqlclient,main)
+  AC_CHECK_LIB(pq,main)
+  AC_CHECK_HEADERS(mysql/mysql.h)
+  AC_CHECK_HEADERS(pgsql/libpq-fe.h)
+  AC_CHECK_HEADERS(libpq-fe.h)
+fi
 
 
 AC_ARG_WITH(ldap,

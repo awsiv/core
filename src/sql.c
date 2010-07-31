@@ -19,6 +19,13 @@
 /* Level                                                                     */
 /*****************************************************************************/
 
+int Nova_SizeCfSQLContainer()
+{
+return sizeof(CfdbConn);
+}
+
+/*****************************************************************************/
+
 void Nova_CreateDBQuery(enum cfdbtype type,char *query)
 
 { 
@@ -137,13 +144,20 @@ for (i = 0,rp = columns; rp != NULL; rp = rp->next,i++)
    
    (*type_table)[i] = cf_strdup(cols->next->item);
 
-   if (columns->next->next == NULL)
+   if (cols->next->next == NULL)
       {
       (*size_table)[i] = 0;
       }
    else
       {
-      (*size_table)[i] = Str2Int(cols->next->next->item);
+      if (cols->next->next->item)
+         {
+         (*size_table)[i] = Str2Int(cols->next->next->item);
+         }
+      else
+         {
+         (*size_table)[i] = 0;
+         }
       }
    
    DeleteRlist(cols);

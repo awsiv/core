@@ -438,6 +438,7 @@ int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,
 
 /* graphics_core.c */
 
+void Nova_BuildGraphs(struct CfDataView *cfv);
 void Nova_Title(struct CfDataView *cfv,int col);
 void Nova_MakePalette(struct CfDataView *cfv);
 void Nova_MakeCosmosPalette(struct CfDataView *cfv);
@@ -711,6 +712,7 @@ void NovaWin_AllocSplitServiceArgs(char *argStr, int *argcp, char ***argvp);
 
 /* sql.c */
 
+int Nova_SizeCfSQLContainer(void);
 int Nova_ValidateSQLTableName(char *table_path,char *db,char *table);
 int Nova_VerifyTablePromise(CfdbConn *cfdb,char *table_path,struct Rlist *columns,struct Attributes a,struct Promise *pp);
 int Nova_ValidateSQLTableName(char *table_path,char *db,char *table);
@@ -738,12 +740,15 @@ void Nova_Indent(int i);
 /* topicmap.c */
 
 void Nova_WebTopicMap_Initialize(void);
-void Nova_LookupUniqueTopic(char *typed_topic);
-void Nova_LookupMatchingTopics(char *typed_topic);
-void Nova_ScanLocalHierarchy(CfdbConn *cfdb,char *this_name,char *this_id,char *this_type,char *this_comment);
-void Nova_ScanLeadsAssociations(CfdbConn *cfdb,char *this_name,char *this_id,char *this_type,char *this_comment);
-void Nova_ScanOccurrences(CfdbConn *cfdb,char *this_name,char *this_id,char *this_type,char *this_comment);
-char *LocateTopicMapImage(void);
+
+int Nova_QueryTopicMap(char *typed_topic,char *result_type,char *buffer,int bufsize);
+int Nova_TopicByID(int id,char *result_type,char *buffer,int bufsize);
+void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize);
+void Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize);
+void Nova_ScanTheRest(CfdbConn *cfdb,char *this_name,char *this_type,char *buffer, int bufsize);
+void Nova_ScanLeadsAssociations(CfdbConn *cfdb,char *this_name,int from_id,char *buffer, int bufsize);
+void Nova_ScanOccurrences(CfdbConn *cfdb,int this_id,char *buffer, int bufsize);
+char *LocateTopicMapImage(int pid);
 
 void Nova_SpecialQuote(char *name,char *type);
 void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char *view);
@@ -784,7 +789,10 @@ int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *returnval,int
 int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *returnval,int bufsize);
 int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char *cmp,char *returnval,int bufsize);
 int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *returnval,int bufsize);
-    
+
+int Nova2PHP_search_topics(char *type,char *search,int regex,char *buffer,int bufsize);
+int Nova2PHP_show_topic(int id,char * buffer,int bufsize);
+
 /* weekly.c */
 
 double Num(double x);

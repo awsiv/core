@@ -412,6 +412,7 @@ Nova2PHP_hostinfo("MD5=4dda03e4f9b7547b3dc52aa463059d90",buf1,buf2,1024);
 
 printf("HOST is %s = %s\n",buf1,buf2);
 
+Nova2PHP_search_topics("sd","topic",1,buffer,2000);
      
 if (!CFDB_Close(&dbconn))
    {

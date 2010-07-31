@@ -1150,6 +1150,7 @@ struct DefineClasses
 
 struct Topic
    {
+   int id;
    char *topic_type;
    char *topic_name;
    char *topic_comment;
@@ -1213,8 +1214,8 @@ typedef struct
    int connected;
    int result;
    int row;
-   int maxcolumns;
-   int maxrows;
+   unsigned int maxcolumns;
+   unsigned int maxrows;
    int column;
    char **rowdata;
    char *blank;
@@ -1820,8 +1821,6 @@ meter_endmark
 #define CF_CLASS_CMD 256
 #define CF_CLASS_OTHER 512
 #define CF_CLASS_TOP10 1024
-
-
 
 #include "prototypes3.h"
 
