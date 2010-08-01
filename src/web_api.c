@@ -52,7 +52,7 @@ void Nova2PHP_refresh_png(char *docroot,char *hostkey,char *selection)
 {
 if (strcmp(selection,"performance") == 0)
    {
-   Nova_PerformancePage(docroot,hostkey);
+//   Nova_PerformancePage(docroot,hostkey);
    return;
    }
 
@@ -1712,3 +1712,51 @@ Nova_WebTopicMap_Initialize();
 buffer[0] = '0';
 Nova_ScanTheRest(id,buffer,bufsize);
 }
+
+/*****************************************************************************/
+
+void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize)
+
+{ struct Item *ip,*clist;
+  char work[CF_MAXVARSIZE];
+  static char *policies[] = { "compliance", "anomaly", "performance", "lastseen", NULL};
+  enum cf_rank_method pol;
+
+for (pol = 0; policies[pol] != NULL; pol++)
+   {
+   if (strcmp(policy,policies[pol]) == 0)
+      {
+      break;
+      }
+   }
+
+clist = Nova_RankHosts(NULL,pol,cfrank_compliance,n);
+
+buffer[0] = '0';
+strcat(buffer,"<table>\n\n\n");
+
+for (ip = clist; ip !=  NULL; ip=ip->next)
+   {
+   Nova_Meter("/srv/www/htdocs",ip->name);
+
+   if (Nova_IsGreen(ip->counter))
+      {
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"green.png\"></td><td>%s</td><td>%d</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->counter,ip->name);
+      }
+   else if (Nova_IsYellow(ip->counter))
+      {
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td>%s</td><td>%d</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->counter,ip->name);
+      }
+   else // if (Nova_IsRed(ip->counter))
+      {
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td>%s</td><td>%d</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->counter,ip->name);
+      }
+
+   Join(buffer,work);
+   }
+
+Join(buffer,"\n</table>\n");
+}
+
+
+

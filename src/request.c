@@ -412,11 +412,14 @@ printf("Category\n");
 Nova2PHP_show_topic_category(18,buffer,2000);
 printf("\n%s\n",buffer);
 
+
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_error, "", "!! Could not close connection to report database");
-   } 
+   }
 
+#else
+printf("For Cfengine internal only\n");
 #endif
 }
 

@@ -655,7 +655,7 @@ void Nova_CfQueryCFDB(char *query);
 
 /* scorecards.c */
 
-void Nova_PerformancePage(char *docroot,char *hostkey);
+void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize);
 void Nova_SummaryMeter(char *docroot,char *search_string);
 int Nova_Meter(char *docroot,char *hostkey);
 struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
@@ -665,6 +665,10 @@ struct Item *Nova_RedHosts(struct Item *master);
 void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired,char *s);
 struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_method method,int max_return);
 int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *rep);
+int Nova_IsRed(int level);
+int Nova_IsYellow(int level);
+int Nova_IsGreen(int level);
+
 
 /* server.c */
 
@@ -805,6 +809,7 @@ void Nova2PHP_show_topic(int id,char * buffer,int bufsize);
 void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_category(int id,char *buffer,int bufsize);
+void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize);
 
 /* weekly.c */
 

@@ -20,22 +20,23 @@ extern char *UNITS[];
 /*                                                                           */
 /*****************************************************************************/
 
-void Nova_PerformancePage(char *docroot,char *hostkey)
+void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize)
     
-{ FILE *fout;
-  char name[CF_BUFSIZE],exist[CF_BUFSIZE];
-  char id[CF_BUFSIZE],desc[CF_BUFSIZE];
-  struct stat s1,s2;
+{ char work[CF_BUFSIZE],hostname[CF_SMALLBUF],ipaddress[CF_SMALLBUF];
+  char desc[CF_MAXVARSIZE],id[CF_MAXVARSIZE];
   struct CfDataView cfv;
   int i;
 
-
 // Make common resources
-  
+
 cfv.height = 300;
 cfv.width = 700; //(7*24*2)*2; // halfhour
 cfv.margin = 50;
 cfv.docroot = docroot;
+
+Nova2PHP_hostinfo(hostkey,hostname,ipaddress,CF_MAXVARSIZE);
+
+snprintf(buffer,bufsize,"<table>\n");
 
 for (i = 0; i < CF_OBSERVABLES; i++)
    {
@@ -51,8 +52,26 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    Nova_ViewWeek(&cfv,hostkey,i);
    Nova_ViewHisto(&cfv,hostkey,i);
 
+   //th nowrap><div id="ip">cf006sun.cfengine.com</div><br><br><a href="/index.php?quote=reports/cf006sun.cfengine.com/users.html">users</a><br><br><small>Latest data<br>Sun Aug  1 15:51:02 2010</small></th>
+
+   //<td><a href="/index.php?quote=reports/cf006sun.cfengine.com/users_week.html"><img src="reports/cf006sun.cfengine.com/users_weekly.png" width=300></a></td>
+   
+   snprintf(work,CF_MAXVARSIZE,"<tr>");
+   snprintf(work,CF_MAXVARSIZE,"<th><div id=\"ip\">%s</div><br><br><a href=\"/performance_details.php?hostkey=%s\">%s</a><br><br><small>Latest data<br>%s</small></th>",hostname,hostkey,OBS[i][0],"SUNDAY");
+   Join(buffer,work);
+   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_mag.png\"></td>",hostkey,OBS[i][0]);
+   Join(buffer,work);
+   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_week.png\"></td>",hostkey,OBS[i][0]);
+   Join(buffer,work);
+   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_hist.png\"></td>",hostkey,OBS[i][0]);
+   Join(buffer,work);
+   snprintf(work,CF_MAXVARSIZE,"</tr>\n");
+   Join(buffer,work);
+   
    // Create the table (return iplist of printf)
    }
+
+Join(buffer,"</table>\n");
 }
 
 /*****************************************************************************/
@@ -231,8 +250,6 @@ if (!CFDB_Close(&dbconn))
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hm = (struct HubMeter *)rp->item;
-   printf("Meter result: (%c) %lf,%lf,%lf\n",hm->type,hm->kept,hm->notkept);
-   printf("found on (%s=%s=%s)\n",hm->hh->keyhash,hm->hh->hostname,hm->hh->ipaddr);
 
    kept = hm->kept;
    repaired = hm->repaired;
@@ -271,6 +288,7 @@ DeleteHubQuery(hq,DeleteHubMeter);
 // Write graph
 
 snprintf(filename,CF_BUFSIZE,"%s/hub/%s/meter.png",cfv.docroot,hostkey);
+MakeParentDirectory(filename,true);
 
 if ((fout = fopen(filename, "wb")) == NULL)
    {
@@ -291,17 +309,32 @@ return returnval;
 
 struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return)
 
-{ struct Item *hosts;
+{ struct Item *ip,*hosts,*counted =  NULL;
+  int num = 0;
  
-if (LICENSES == 0)
-   {
-   return NULL;
-   }
-
-hosts = Nova_ClassifyHostState(search_string,regex,method,max_return);
+hosts = Nova_ClassifyHostState(search_string,regex,method,0);
 hosts = SortItemListCounters(hosts);
 
-return hosts;
+if (max_return > 0)
+   {
+   for (ip = hosts; ip != NULL; ip = ip->next)
+      {
+      if (num++ > max_return)
+         {
+         break;
+         }
+
+      AppendItem(&counted,ip->name,ip->classes);
+      SetItemListCounter(counted,ip->name,ip->counter);
+      }
+
+   DeleteItemList(hosts);
+   return counted;
+   }
+else
+   {
+   return hosts;
+   }
 }
 
 /*****************************************************************************/
@@ -312,7 +345,7 @@ struct Item *Nova_GreenHosts(struct Item *master)
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
-   if (ip->counter < CF_AMBER_THRESHOLD)
+   if (Nova_IsGreen(ip->counter))
       {
       AppendItem(&hosts,ip->name,ip->classes);
       }
@@ -329,7 +362,7 @@ struct Item *Nova_YellowHosts(struct Item *master)
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
-   if (ip->counter >= CF_AMBER_THRESHOLD && ip->counter < CF_RED_THRESHOLD)
+   if (Nova_IsYellow(ip->counter))
       {
       AppendItem(&hosts,ip->name,ip->classes);
       }
@@ -346,7 +379,7 @@ struct Item *Nova_RedHosts(struct Item *master)
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
-   if (ip->counter >= CF_RED_THRESHOLD)
+   if (Nova_IsRed(ip->counter))
       {
       AppendItem(&hosts,ip->name,ip->classes);
       }
@@ -534,10 +567,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
          {
          int score = Nova_GetComplianceScore(method,akept,arepaired);
          
-         PrependItem(&list,hostnames,addresses);
-         SetItemListCounter(list,hostnames,score);
+         PrependItem(&list,keyhash,hostnames);
+         SetItemListCounter(list,keyhash,score);
          
-         if (num++ >= max_return)
+         if (max_return && (num++ >= max_return))
             {
             break;
             }
@@ -593,3 +626,49 @@ switch (method)
 
 return result;
 }
+
+/*****************************************************************************/
+
+int Nova_IsGreen(int level)
+
+{
+if (level < CF_AMBER_THRESHOLD)
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
+}
+
+/*****************************************************************************/
+
+int Nova_IsYellow(int level)
+
+{
+if (level >= CF_AMBER_THRESHOLD && level < CF_RED_THRESHOLD)
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
+}
+
+/*****************************************************************************/
+
+int Nova_IsRed(int level)
+
+{
+if (level >= CF_RED_THRESHOLD)
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
+}
+
