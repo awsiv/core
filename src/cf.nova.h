@@ -744,11 +744,20 @@ void Nova_WebTopicMap_Initialize(void);
 int Nova_QueryTopicMap(char *typed_topic,char *result_type,char *buffer,int bufsize);
 int Nova_TopicByID(int id,char *result_type,char *buffer,int bufsize);
 void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize);
+void Nova_ScanTheRest(int pid,char *buffer, int bufsize);
 void Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize);
-void Nova_ScanTheRest(CfdbConn *cfdb,char *this_name,char *this_type,char *buffer, int bufsize);
-void Nova_ScanLeadsAssociations(CfdbConn *cfdb,char *this_name,int from_id,char *buffer, int bufsize);
-void Nova_ScanOccurrences(CfdbConn *cfdb,int this_id,char *buffer, int bufsize);
+void Nova_ScanLeadsAssociations(int pid,char *buffer, int bufsize);
+void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize);
 char *LocateTopicMapImage(int pid);
+
+int Nova_GetTopicByPid(int pid,char *topic_name,char *topic_id,char *topic_type,char *topic_comment);
+int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_type,char *topic_comment,char *buffer,int bufsize);
+int Nova_AddAssocSearchBuffer(char *from_assoc,char *to_assoc,char *buffer,int bufsize);
+void Nova_AddOccurrenceBuffer(char *locator,enum representations locator_type,char *represents,char *buffer,int bufsize);
+
+char *Nova_PidURL(int pid,char *s);
+char *Nova_AssocURL(char *s);
+char *Nova_URL(char *s,char *rep);
 
 void Nova_SpecialQuote(char *name,char *type);
 void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char *view);
@@ -791,7 +800,11 @@ int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
 int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *returnval,int bufsize);
 
 int Nova2PHP_search_topics(char *type,char *search,int regex,char *buffer,int bufsize);
-int Nova2PHP_show_topic(int id,char * buffer,int bufsize);
+void Nova2PHP_show_topic(int id,char * buffer,int bufsize);
+
+void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize);
+void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize);
+void Nova2PHP_show_topic_category(int id,char *buffer,int bufsize);
 
 /* weekly.c */
 

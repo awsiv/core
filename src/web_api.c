@@ -1654,22 +1654,61 @@ return true;
 
 int Nova2PHP_search_topics(char *type,char *search,int regex,char *buffer,int bufsize)
 {
-
- VERBOSE=1;
- DEBUG=1;
- printf("Testing...\n");
- Nova_WebTopicMap_Initialize();
+Nova_WebTopicMap_Initialize();
 
 // Nova_LookupUniqueAssoc(12,buffer,bufsize);
 
- printf("----------------------------------\n");
- Nova_SearchTopicMap(search,buffer,bufsize);
- printf("and got: %s",buffer);
- return true;
+printf("----------------------------------\n");
+Nova_SearchTopicMap(search,buffer,bufsize);
+printf("and got: \n%s",buffer);
+return true;
 }
 
 /*****************************************************************************/
 
-int Nova2PHP_show_topic(int id,char * buffer,int bufsize)
+void Nova2PHP_show_topic(int id,char *buffer,int bufsize)
+
+{ char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_type[CF_BUFSIZE],topic_comment[CF_BUFSIZE];
+
+buffer[0] = '0';
+Nova_WebTopicMap_Initialize();
+
+if (Nova_GetTopicByPid(id,topic_name,topic_id,topic_type,topic_comment))
+   {
+   snprintf(buffer,bufsize,"Topic \"%s\" in category \"%s\":<p>\"%s\"",topic_name,topic_type,topic_comment);
+   }
+else
+   {
+   printf("No such topic\n");
+   }
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize)
+
 {
+Nova_WebTopicMap_Initialize();
+buffer[0] = '0';
+Nova_ScanLeadsAssociations(id,buffer,bufsize);
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize)
+
+{
+Nova_WebTopicMap_Initialize();
+buffer[0] = '0';
+Nova_ScanOccurrences(id,buffer,bufsize);
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_show_topic_category(int id,char *buffer,int bufsize)
+
+{
+Nova_WebTopicMap_Initialize();
+buffer[0] = '0';
+Nova_ScanTheRest(id,buffer,bufsize);
 }

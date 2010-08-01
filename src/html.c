@@ -71,7 +71,7 @@ else
 
 /*****************************************************************************/
 
-void Nova_IncludeFile(FILE *fout,char *name)
+void Nova_IncludeFile(char *name,char *buffer,int bufsize)
 
 { FILE *fin;
   char buf[CF_BUFSIZE];
@@ -86,7 +86,7 @@ while(!feof(fin))
    {
    buf[0] = '\0';
    fgets(buf,CF_BUFSIZE-1,fin);
-   fprintf(fout,"%s",buf);
+   Join(buffer,buf);
    }
 
 fclose(fin);

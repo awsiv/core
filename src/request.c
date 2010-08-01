@@ -396,24 +396,22 @@ Nova2PHP_bundle_hosts(NULL,NULL,0,buff,10000);
 printf("HOSTS WITH: (%s)\nHOSTSWITH\n\n",buff);
 */
 
-CFDB_PutValue("newvar","change val");
-CFDB_PutValue("newvar","And again....");
-CFDB_PutValue("one_two","three");
-
-char value[234];
-CFDB_GetValue("newvar",value,120);
-printf("Revived value %s\n",value);
-
-CFDB_GetValue("one_two",value,120);
-printf("Revived value %s\n",value);
-
-char buf1[1024],buf2[1024];
-Nova2PHP_hostinfo("MD5=4dda03e4f9b7547b3dc52aa463059d90",buf1,buf2,1024);
-
-printf("HOST is %s = %s\n",buf1,buf2);
-
+printf("Search\n");
 Nova2PHP_search_topics("sd","topic",1,buffer,2000);
-     
+printf("\n%s\n",buffer);
+printf("Sjow\n");
+Nova2PHP_show_topic(18,buffer,2000);
+printf("\n%s\n",buffer);
+printf("Leads\n");
+Nova2PHP_show_topic_leads(18,buffer,2000);
+printf("\n%s\n",buffer);
+printf("Hits\n");
+Nova2PHP_show_topic_hits(18,buffer,2000);
+printf("\n%s\n",buffer);
+printf("Category\n");
+Nova2PHP_show_topic_category(18,buffer,2000);
+printf("\n%s\n",buffer);
+
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_error, "", "!! Could not close connection to report database");
