@@ -1756,6 +1756,7 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
    }
 
 Join(buffer,"\n</table>\n");
+DeleteItemList(clist);
 }
 
 
