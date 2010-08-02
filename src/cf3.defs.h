@@ -237,6 +237,7 @@ enum cfgcontrol
    cfg_licenses,
    cfg_syslog_host,
    cfg_syslog_port,
+   cfg_fips_mode,
    cfg_noagent
    };
     
