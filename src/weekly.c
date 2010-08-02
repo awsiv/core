@@ -1,4 +1,3 @@
-
 /*
 
  This file is (C) Cfengine AS. See LICENSE for details.
@@ -54,7 +53,8 @@ void Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
   /* Initialization */
 
-snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_week.png",DOCROOT,keyhash,OBS[obs][0]);
+snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_week.png",cfv->docroot,keyhash,OBS[obs][0]);
+MakeParentDirectory(newfile,true);
 
 cfv->title = OBS[obs][1];
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);

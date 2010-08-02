@@ -30,7 +30,7 @@ void Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs)
   struct stat s1,s2;
   char newfile[CF_BUFSIZE];
 
-snprintf(newfile,CF_BUFSIZE,"/%s/hub/%s/%s_mag.png",DOCROOT,keyhash,OBS[obs][0]);
+snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_mag.png",cfv->docroot,keyhash,OBS[obs][0]);
 MakeParentDirectory(newfile,true);
 
 cfv->title = OBS[obs][1];

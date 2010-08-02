@@ -36,7 +36,7 @@ cfv.docroot = docroot;
 
 Nova2PHP_hostinfo(hostkey,hostname,ipaddress,CF_MAXVARSIZE);
 
-snprintf(buffer,bufsize,"<table>\n");
+snprintf(buffer,bufsize,"<table>\n",bufsize);
 
 for (i = 0; i < CF_OBSERVABLES; i++)
    {
@@ -48,30 +48,27 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       }
 
    // Make the graphs
+
    Nova_ViewMag(&cfv,hostkey,i);
    Nova_ViewWeek(&cfv,hostkey,i);
    Nova_ViewHisto(&cfv,hostkey,i);
-
-   //th nowrap><div id="ip">cf006sun.cfengine.com</div><br><br><a href="/index.php?quote=reports/cf006sun.cfengine.com/users.html">users</a><br><br><small>Latest data<br>Sun Aug  1 15:51:02 2010</small></th>
-
-   //<td><a href="/index.php?quote=reports/cf006sun.cfengine.com/users_week.html"><img src="reports/cf006sun.cfengine.com/users_weekly.png" width=300></a></td>
    
    snprintf(work,CF_MAXVARSIZE,"<tr>");
    snprintf(work,CF_MAXVARSIZE,"<th><div id=\"ip\">%s</div><br><br><a href=\"/performance_details.php?hostkey=%s\">%s</a><br><br><small>Latest data<br>%s</small></th>",hostname,hostkey,OBS[i][0],"SUNDAY");
-   Join(buffer,work);
-   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_mag.png\"></td>",hostkey,OBS[i][0]);
-   Join(buffer,work);
-   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_week.png\"></td>",hostkey,OBS[i][0]);
-   Join(buffer,work);
-   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_hist.png\"></td>",hostkey,OBS[i][0]);
-   Join(buffer,work);
+   Join(buffer,work,bufsize);
+   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_mag.png\" width=300></td>",hostkey,OBS[i][0]);
+   Join(buffer,work,bufsize);
+   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_week.png\" width=300></td>",hostkey,OBS[i][0]);
+   Join(buffer,work,bufsize);
+   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_hist.png\" width=300></td>",hostkey,OBS[i][0]);
+   Join(buffer,work,bufsize);
    snprintf(work,CF_MAXVARSIZE,"</tr>\n");
-   Join(buffer,work);
-   
+   Join(buffer,work,bufsize);
+
    // Create the table (return iplist of printf)
    }
 
-Join(buffer,"</table>\n");
+Join(buffer,"</table>\n",bufsize);
 }
 
 /*****************************************************************************/

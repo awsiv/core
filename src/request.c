@@ -38,7 +38,7 @@ void Nova_CfQueryCFDB(char *querystr)
  struct HubBundleSeen *hb;
  struct HubFileChanges *hC;
  struct HubFileDiff *hd;
-char buffer[10000];
+char buffer[100000];
  
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
@@ -396,6 +396,10 @@ Nova2PHP_bundle_hosts(NULL,NULL,0,buff,10000);
 printf("HOSTS WITH: (%s)\nHOSTSWITH\n\n",buff);
 */
 
+//Nova_PerformancePage("MD5=4a37e48645122312daf7862f2a0f0ef7");
+Nova_PerformancePage("/srv/www/htdocs","MD5=4dda03e4f9b7547b3dc52aa463059d90",buffer,200000);
+
+/*
 printf("Search\n");
 Nova2PHP_search_topics("sd","topic",1,buffer,2000);
 printf("\n%s\n",buffer);
@@ -411,7 +415,7 @@ printf("\n%s\n",buffer);
 printf("Category\n");
 Nova2PHP_show_topic_category(18,buffer,2000);
 printf("\n%s\n",buffer);
-
+*/
 
 if (!CFDB_Close(&dbconn))
    {

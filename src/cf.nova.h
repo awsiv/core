@@ -776,8 +776,9 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,char *name,int distance,in
 
 void Nova_EnterpriseModuleTrick(void);
 
-void Nova2PHP_refresh_png(char *docroot,char *hostkey,char *selection);
+void Nova2PHP_summary_meter(char *docroot,char *hostkey);
 int Nova2PHP_hostinfo(char *hostkey,char *hostname,char *ipaddress,int bufsize);
+void Nova2PHP_performance_analysis(char *docroot,char *hostkey,char *buffer,int bufsize);
 
 int Nova2PHP_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize);
 int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *buffer,int bufsize);

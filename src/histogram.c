@@ -33,7 +33,8 @@ void Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
   /* Initialization */
 
-snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_hist.png",DOCROOT,keyhash,OBS[obs][0]);
+snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_hist.png",cfv->docroot,keyhash,OBS[obs][0]);
+MakeParentDirectory(newfile,true);
 
 cfv->title = OBS[obs][1];
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
@@ -149,7 +150,7 @@ void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum)
  double range;
  double rx,ry,rs,sx = 0,s;
  double scale_x = ((double)cfv->width /(double)CF_GRAINS);
- double scale_y;
+ double scale_y = 10.0;
  double low,high;
  double xfill;
  int col = 0;

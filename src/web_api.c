@@ -47,26 +47,18 @@ if (false)
 /* Helper functions                                                          */
 /*****************************************************************************/
 
-void Nova2PHP_refresh_png(char *docroot,char *hostkey,char *selection)
+void Nova2PHP_summary_meter(char *docroot,char *hostkey)
 
 {
-if (strcmp(selection,"performance") == 0)
-   {
-//   Nova_PerformancePage(docroot,hostkey);
-   return;
-   }
+Nova_SummaryMeter(docroot,hostkey);
+}
 
-if (strcmp(selection,"summary_meter") == 0)
-   {
-   Nova_SummaryMeter(docroot,hostkey);
-   return;
-   }
+/*****************************************************************************/
 
-if (strcmp(selection,"host_meter") == 0)
-   {
-   Nova_Meter(docroot,hostkey);
-   return;
-   }
+void Nova2PHP_performance_analysis(char *docroot,char *hostkey,char *buffer,int bufsize)
+
+{
+Nova_PerformancePage(docroot,hostkey,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -1752,10 +1744,10 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
       snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td>%s</td><td>%d</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->counter,ip->name);
       }
 
-   Join(buffer,work);
+   Join(buffer,work,bufsize);
    }
 
-Join(buffer,"\n</table>\n");
+Join(buffer,"\n</table>\n",bufsize);
 DeleteItemList(clist);
 }
 

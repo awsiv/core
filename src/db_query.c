@@ -2275,7 +2275,7 @@ if (strcmp(bson_iterator_key(it1),cfr_ip_array) == 0)
    
    while (bson_iterator_next(&it2))
       {
-      Join(ipaddr,(char *)bson_iterator_string(&it2));
+      Join(ipaddr,(char *)bson_iterator_string(&it2),CF_BUFSIZE);
       }
    }
 
@@ -2285,7 +2285,7 @@ if (strcmp(bson_iterator_key(it1),cfr_host_array) == 0)
    
    while (bson_iterator_next(&it2))
       {
-      Join(hostnames,(char *)bson_iterator_string(&it2));
+      Join(hostnames,(char *)bson_iterator_string(&it2),CF_BUFSIZE);
       }
    }
 }

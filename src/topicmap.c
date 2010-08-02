@@ -329,14 +329,14 @@ while(CfFetchRow(&cfdb))
    tpid = Str2Int(CfFetchColumn(&cfdb,4));
 
    snprintf(buf,CF_BUFSIZE-1,"<li>%s %s</li>\n",Nova_PidURL(tpid,topic_name),topic_comment);
-   Join(buffer,buf);
+   Join(buffer,buf,bufsize);
    count++;
    }
 
 if (count == 0)
    {
    snprintf(buf,CF_BUFSIZE-1,"<li>(no sub-categories)</li>\n");
-   Join(buffer,buf);
+   Join(buffer,buf,bufsize);
    }
 
 strcat(buffer,"</ul>\n");
@@ -377,7 +377,7 @@ while(CfFetchRow(&cfdb))
    tpid = Str2Int(CfFetchColumn(&cfdb,4));
 
    snprintf(buf,CF_BUFSIZE-1,"<li>%s %s</li>\n",Nova_PidURL(tpid,topic_name),topic_comment);
-   Join(buffer,buf);   
+   Join(buffer,buf,bufsize);   
    }
 
 strcat(buffer,"</ul>\n");
@@ -447,11 +447,11 @@ while(CfFetchRow(&cfdb))
       strcat(buffer,"</ul>\n");
       
       snprintf(work,CF_MAXVARSIZE,"<li>  %s \"%s\" </li>\n<ul>\n",from_name,fassociation);
-      Join(buffer,work);
+      Join(buffer,work,bufsize);
       }
    
    snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s) </li>\n",Nova_PidURL(to_pid,to_name),to_type);
-   Join(buffer,work);
+   Join(buffer,work,bufsize);
    }
 
 strcat(buffer,"</ul>\n");
@@ -492,11 +492,11 @@ while(CfFetchRow(&cfdb))
       
       strcat(buffer,"</ul>\n");
       snprintf(work,CF_MAXVARSIZE,"<li>  %s \"%s\" </li>\n<ul>\n",to_name,bassociation);
-      Join(buffer,work);
+      Join(buffer,work,bufsize);
       }
    
    snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s) </li>\n",Nova_PidURL(from_pid,from_name),from_type);
-   Join(buffer,work);
+   Join(buffer,work,bufsize);
    }
 
 strcat(buffer,"</ul>\n");
@@ -578,7 +578,7 @@ int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_type,char *to
 { char buf[CF_BUFSIZE];
  
  snprintf(buf,CF_BUFSIZE-1,"<li>Topic \"%s\" found in category %s (%s)</li>\n",Nova_PidURL(pid,topic_name),topic_type,topic_comment);
-Join(buffer,buf);
+Join(buffer,buf,bufsize);
 return true;
 }
 
@@ -588,9 +588,9 @@ int Nova_AddAssocSearchBuffer(char *from_assoc,char *to_assoc,char *buffer,int b
 
 { char buf[CF_MAXVARSIZE];
 snprintf(buf,CF_BUFSIZE-1,"<li>Lead association \"%s\" &harr;",Nova_AssocURL(from_assoc));
-Join(buffer,buf);
+Join(buffer,buf,bufsize);
 snprintf(buf,CF_BUFSIZE-1," \"%s\"found</li>\n",Nova_AssocURL(to_assoc));
-Join(buffer,buf);
+Join(buffer,buf,bufsize);
 return true;
 }
 
@@ -634,7 +634,7 @@ switch (locator_type)
        break;
    }
 
-Join(buffer,work);
+Join(buffer,work,bufsize);
 }
 
 /*************************************************************************/

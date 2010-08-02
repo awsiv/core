@@ -86,7 +86,7 @@ while(!feof(fin))
    {
    buf[0] = '\0';
    fgets(buf,CF_BUFSIZE-1,fin);
-   Join(buffer,buf);
+   Join(buffer,buf,CF_BUFSIZE);
    }
 
 fclose(fin);
