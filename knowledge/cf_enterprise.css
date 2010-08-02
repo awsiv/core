@@ -189,25 +189,32 @@ padding: 5px;
 blockquote
 { 
 background: #FFFFFF;
-  color: #11aa22;
-  border-color: #767676;
+color: #11aa22;
+border-color: #767676;
 }
 
+#tab li a
+{ 
+color:#4b4b42;
+background-color:#fff; 
+}
 
-#banner li a
+#banner li a,li a:hover
 {
-padding: 5px;
-color: black;
-background-color: #fff;
+padding: 2px;
+color: white;
+background-color: #4b4b42;
 float: left;
 width: 14em;
 border: 1px;
+font-size: 120%;
+text-decoration: none;
 }
 
 #banner ul
 { 
-//  list-style-type: none;
-//  list-style-image: none;
+list-style-type: none;
+list-style-image: none;
 //display:none;
 border: 1px;
 background-color: #fff;
