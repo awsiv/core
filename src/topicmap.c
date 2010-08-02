@@ -161,18 +161,16 @@ CfCloseDB(&cfdb);
 
 /*********************************************************************/
 
-void Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize)
+void Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
 
 { CfdbConn cfdb;  
   char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_type[CF_BUFSIZE],to_type[CF_BUFSIZE];
-  char topic_comment[CF_BUFSIZE],topic[CF_BUFSIZE],type[CF_BUFSIZE],query[CF_BUFSIZE];
+  char topic_comment[CF_BUFSIZE],query[CF_BUFSIZE];
   char from_name[CF_BUFSIZE],from_assoc[CF_BUFSIZE],to_assoc[CF_BUFSIZE],to_name[CF_BUFSIZE];
   char work[CF_BUFSIZE],*sp;
   int pid,s,e;
 
 strcpy(buffer,"<ul>\n");
-  
-DeTypeTopic(typed_topic,topic,type);
 
 if (strlen(SQL_OWNER) == 0)
    {
@@ -216,7 +214,7 @@ while(CfFetchRow(&cfdb))
    
    pid = Str2Int(CfFetchColumn(&cfdb,4));
 
-   if (BlockTextCaseMatch(topic,topic_name,&s,&e))
+   if (BlockTextCaseMatch(search_topic,topic_name,&s,&e))
       {
       Nova_AddTopicSearchBuffer(pid,topic_name,topic_type,topic_comment,buffer,bufsize);
       }
@@ -249,7 +247,7 @@ while(CfFetchRow(&cfdb))
    strncpy(to_type,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
    strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
 
-   if (BlockTextCaseMatch(topic,from_assoc,&s,&e)||BlockTextCaseMatch(topic,to_assoc,&s,&e))
+   if (BlockTextCaseMatch(search_topic,from_assoc,&s,&e)||BlockTextCaseMatch(search_topic,to_assoc,&s,&e))
       {
       Nova_AddAssocSearchBuffer(from_assoc,to_assoc,buffer,bufsize);
       }
@@ -607,7 +605,7 @@ switch (locator_type)
        break;
        
    case cfk_web:
-       snprintf(work,CF_BUFSIZE-1,"<li>Link: <span id=\"url\">%s ...%s</a> </span>(URL)<li>\n",Nova_URL(locator,represents),URLHint(locator));
+       snprintf(work,CF_BUFSIZE-1,"<li>Link: <span id=\"url\">%s ...%s</a> </span>(URL)<li>\n",Nova_URL(locator,represents),locator);
        break;
 
    case cfk_file:

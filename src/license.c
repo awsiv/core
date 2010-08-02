@@ -171,8 +171,50 @@ int Nova_HashKey(char *filename,char *buffer,unsigned char digest[EVP_MAX_MD_SIZ
   const EVP_MD *md = NULL;
   char *file_buffer;
   FILE *fp;
-  int md_len;
+  int md_len,result = false;
   char fbuf[CF_BUFSIZE];
+
+md = EVP_get_digestbyname("sha256");       
+
+if (md == NULL)
+   {
+   CfOut(cf_error,""," !! Unable to compute a valid hash");
+   return false;
+   }
+
+EVP_DigestInit(&context,md);     
+EVP_DigestUpdate(&context,(unsigned char*)buffer,strlen(buffer));
+
+if ((fp = fopen(filename,"r")) == NULL)
+   {
+   result = false;
+   }
+else
+   {
+   fbuf[0] = '\0';
+   
+   while (!feof(fp))
+      {
+      fgets(fbuf,CF_BUFSIZE,fp);
+      EVP_DigestUpdate(&context,(unsigned char*)fbuf,strlen(fbuf));
+      }
+   
+   fclose(fp);
+
+   EVP_DigestFinal(&context,digest,&md_len);
+   
+// Compare this to the assertions
+   
+   if (strcmp(HashPrint(cf_sha256,digest),hash) == 0)
+      {   
+      return true;
+      }
+   
+   CfOut(cf_verbose,""," Key file %s was not authorized as policy server\n",filename);
+   result = false;
+   }
+
+// Support legacy
 
 md = EVP_get_digestbyname("md5");       
 
@@ -210,7 +252,8 @@ if (strcmp(HashPrint(cf_md5,digest),hash) == 0)
    }
 
 CfOut(cf_verbose,""," Key file %s was not authorized as policy server\n",filename);
-return false;
+
+return result;
 }
 
 /*****************************************************************************/

@@ -11,7 +11,7 @@
 #include <openssl/evp.h>
 #include <sys/stat.h>
 
-#define CF_MD5_LEN 16
+#define CF_SHA256_LEN 32
 #define CF_MAXVARSIZE 1024
 
 // gcc -o make_license_file make_license_file.c -lcrypto
@@ -102,7 +102,7 @@ OpenSSL_add_all_algorithms();
 OpenSSL_add_all_digests();
 ERR_load_crypto_strings();
 
-md = EVP_get_digestbyname("md5");       
+md = EVP_get_digestbyname("sha256");       
 
 if (md == NULL)
    {
@@ -136,9 +136,9 @@ char *ThisHashPrint(unsigned char digest[EVP_MAX_MD_SIZE+1])
 { unsigned int i;
   static char buffer[EVP_MAX_MD_SIZE*4];
 
-sprintf(buffer,"MD5=  ");
+sprintf(buffer,"SHA=  ");
 
-for (i = 0; i < CF_MD5_LEN; i++)
+for (i = 0; i < CF_SHA256_LEN; i++)
    {
    sprintf((char *)(buffer+4+2*i),"%02x", digest[i]);
    }
@@ -146,7 +146,6 @@ for (i = 0; i < CF_MD5_LEN; i++)
 return buffer; 
 }    
 
-/*********************************************************************/
 /*********************************************************************/
 
 int Chop(char *str) /* remove trailing spaces */

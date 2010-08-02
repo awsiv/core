@@ -166,6 +166,8 @@ average_time = 600;
 
 Nova_QueryForKnowledgeMap(conn,"delta",time(0) - average_time);
 
+//Nova_QueryForKnowledgeMap(conn,"full",time(0) - average_time);
+
 ServerDisconnection(conn);
 DeleteRlist(a.copy.servers);
 return true;
