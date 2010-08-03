@@ -119,10 +119,17 @@ void Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp)
 
 { struct Item *ip;
 
-if (fork() != 0)
+if ((!NO_FORK) && (fork() != 0))
    {
-   return; /* Child continues*/
-   }   
+   CfOut(cf_inform,"","cf-hub spawning\n");
+   exit(0);
+   }
+
+if (!NO_FORK)
+   {
+   ActAsDaemon(0);
+   }
+
 
 for (ip = list; ip != NULL; ip=ip->next)
    {

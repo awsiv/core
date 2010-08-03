@@ -329,7 +329,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev)
+struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t)
 
 { struct HubLastSeen *hp;
      
@@ -344,7 +344,7 @@ hp->rhost = NewHubHost(kh,rhost,ip);
 hp->hrsago;
 hp->hrsavg;
 hp->hrsdev;
-
+hp->t = t;
 return hp;
 }
 
@@ -516,7 +516,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev)
+struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev,time_t t)
 
 { struct HubBundleSeen *hp;
      
@@ -530,7 +530,7 @@ hp->bundle = strdup(rname);
 hp->hrsago;
 hp->hrsavg;
 hp->hrsdev;
-
+hp->t = t;
 return hp;
 }
 

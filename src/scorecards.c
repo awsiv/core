@@ -336,53 +336,65 @@ else
 
 /*****************************************************************************/
 
-struct Item *Nova_GreenHosts(struct Item *master)
+struct Item *Nova_GreenHosts()
 
-{ struct Item *ip,*hosts = NULL;
+{ struct Item *ip,*hosts = NULL,*sorted = NULL;
+
+hosts = Nova_ClassifyHostState(NULL,false,cfmeter_day,1000);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
    if (Nova_IsGreen(ip->counter))
       {
-      AppendItem(&hosts,ip->name,ip->classes);
+      AppendItem(&sorted,ip->name,ip->classes);
       }
    }
 
-return hosts;
+DeleteItemList(hosts);
+sorted = SortItemListNames(sorted);
+return sorted;
 }
 
 /*****************************************************************************/
 
-struct Item *Nova_YellowHosts(struct Item *master)
+struct Item *Nova_YellowHosts()
 
-{ struct Item *ip,*hosts = NULL;
+{ struct Item *ip,*hosts = NULL,*sorted = NULL;
+
+hosts = Nova_ClassifyHostState(NULL,false,cfmeter_day,1000);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
    if (Nova_IsYellow(ip->counter))
       {
-      AppendItem(&hosts,ip->name,ip->classes);
+      AppendItem(&sorted,ip->name,ip->classes);
       }
    }
 
-return hosts;
+DeleteItemList(hosts);
+sorted = SortItemListNames(sorted);
+return sorted;
 }
 
 /*****************************************************************************/
 
-struct Item *Nova_RedHosts(struct Item *master)
+struct Item *Nova_RedHosts()
 
-{ struct Item *ip,*hosts = NULL;
+{ struct Item *ip,*hosts = NULL,*sorted = NULL;
+
+hosts = Nova_ClassifyHostState(NULL,false,cfmeter_day,1000);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
    if (Nova_IsRed(ip->counter))
       {
-      AppendItem(&hosts,ip->name,ip->classes);
+      AppendItem(&sorted,ip->name,ip->classes);
       }
    }
 
-return hosts;
+DeleteItemList(hosts);
+sorted = SortItemListNames(sorted);
+return sorted;
 }
 
 /*****************************************************************************/

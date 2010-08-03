@@ -684,9 +684,9 @@ void CFDB_SaveLastSeen(mongo_connection *conn, char *keyhash, struct Item *data)
   struct Item *ip;
   char inout, ipaddr[CF_MAXVARSIZE],dns[CF_MAXVARSIZE];
   char hash[CF_MAXVARSIZE],varName[CF_MAXVARSIZE];
-  double ago,average,dev;
-  long fthen;
-  time_t then;
+  double ago = 0 ,average = 0,dev = 0;
+  long fthen = 0;
+  time_t then = 0;
  
 // find right host
 bson_buffer_init(&bb);
@@ -699,7 +699,7 @@ setObj = bson_append_start_object(&bb, "$set");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%c %128s %25s %15s %ld %lf %lf %lf\n",
+   sscanf(ip->name,"%c %250s %250s %250s %ld %lf %lf %lf\n",
           &inout,
           hash,
           dns,
@@ -1039,9 +1039,9 @@ void CFDB_SaveBundles(mongo_connection *conn, char *keyhash, struct Item *data)
   struct Item *ip;
   char bundle[CF_MAXVARSIZE];
   char hash[CF_MAXVARSIZE],varName[CF_MAXVARSIZE];
-  double ago,average,dev;
-  long fthen;
-  time_t then;
+  double ago = 0,average = 0,dev = 0;
+  long fthen = 0;
+  time_t then = 0;
  
 // find right host
 bson_buffer_init(&bb);
@@ -1054,7 +1054,7 @@ setObj = bson_append_start_object(&bb, "$set");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%25s %ld %lf %lf %lf\n",
+   sscanf(ip->name,"%250s %ld %lf %lf %lf\n",
           bundle,
           &fthen,
           &ago,
@@ -1066,9 +1066,10 @@ for (ip = data; ip != NULL; ip=ip->next)
    snprintf(varName, sizeof(varName),"%s.%s",cfr_bundles,bundle);
    
    sub = bson_append_start_object(setObj, varName);
-   bson_append_double(sub, cfr_hrsago, ago);
-   bson_append_double(sub, cfr_hrsavg, average);
-   bson_append_double(sub, cfr_hrsdev, dev);
+   bson_append_double(sub,cfr_hrsago,ago);
+   bson_append_double(sub,cfr_hrsavg,average);
+   bson_append_double(sub,cfr_hrsdev,dev);
+   bson_append_int(sub,cfr_time,then);
    bson_append_finish_object(sub);
    }
 

@@ -983,6 +983,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,bson *query,char *lha
   char rhash[CF_MAXVARSIZE],rhost[CF_MAXVARSIZE],raddr[CF_MAXVARSIZE];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
   int match_host,match_hash,match_addr,found = false;
+  time_t rt;
   
 /* BEGIN query document */
 
@@ -1015,6 +1016,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    raddr[0] = '\0';
    rhost[0] = '\0';
    found = false;
+   rt = 0;
    
    while (bson_iterator_next(&it1))
       {
@@ -1049,7 +1051,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                else if (strcmp(bson_iterator_key(&it3),cfr_hrsago) == 0)
                   {
-                  rago = bson_iterator_int(&it3);
+                  rago = bson_iterator_double(&it3);
                   }
                else if (strcmp(bson_iterator_key(&it3),cfr_dnsname) == 0)
                   {
@@ -1058,6 +1060,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
                else if (strcmp(bson_iterator_key(&it3),cfr_ipaddr) == 0)
                   {
                   strncpy(raddr,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
+                  {
+                  rt = bson_iterator_int(&it3);
                   }
                else
                   {
@@ -1106,7 +1112,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_hash && match_host && match_addr)
                {
                found = true;
-               AppendRlistAlien(&record_list,NewHubLastSeen(NULL,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev));
+               AppendRlistAlien(&record_list,NewHubLastSeen(NULL,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev,rt));
                }            
             }
          }   
@@ -1640,7 +1646,7 @@ struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,bson *query,char *lna
   struct Rlist *rp,*record_list = NULL, *host_list = NULL;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_MAXVARSIZE],rdiff[CF_BUFSIZE];
   int match_name,match_t,match_diff,found = false;
-  time_t rt;
+  time_t rt = 0;
   
 /* BEGIN query document */
 
@@ -1791,6 +1797,7 @@ struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn,bson *query,char *l
   char rname[CF_MAXVARSIZE];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
   int match_name,found = false;
+  time_t rt;
   
 /* BEGIN query document */
 
@@ -1821,6 +1828,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    addresses[0] = '\0';
    rname[0] = '\0';
    found = false;
+   rt = 0;
    
    while (bson_iterator_next(&it1))
       {
@@ -1857,6 +1865,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   {
                   rago = bson_iterator_double(&it3);
                   }
+               else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
+                  {
+                  rt = bson_iterator_int(&it3);
+                  }
                else
                   {
                   CfOut(cf_error,"", " !! Unknown key \"%s\" in bundle seen",bson_iterator_key(&it3));
@@ -1883,7 +1895,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name)
                {
                found = true;
-               AppendRlistAlien(&record_list,NewHubBundleSeen(NULL,rname,rago,ravg,rdev));
+               AppendRlistAlien(&record_list,NewHubBundleSeen(NULL,rname,rago,ravg,rdev,rt));
                }            
             }
          }   

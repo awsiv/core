@@ -397,7 +397,7 @@ printf("HOSTS WITH: (%s)\nHOSTSWITH\n\n",buff);
 */
 
 //Nova_PerformancePage("MD5=4a37e48645122312daf7862f2a0f0ef7");
-Nova_PerformancePage("/srv/www/htdocs","MD5=4dda03e4f9b7547b3dc52aa463059d90",buffer,200000);
+//Nova_PerformancePage("/srv/www/htdocs","MD5=4dda03e4f9b7547b3dc52aa463059d90",buffer,200000);
 
 /*
 printf("Search\n");
@@ -421,6 +421,18 @@ if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose, "", "!! Could not close connection to report database");
    }
+
+long n = Nova2PHP_count_hosts();
+printf("NUMBER = %ld\n",n);
+
+n = Nova2PHP_count_green_hosts();
+printf("NUMBER GR = %ld\n",n);
+
+n = Nova2PHP_count_red_hosts();
+printf("NUMBER R = %ld\n",n);
+
+n = Nova2PHP_count_yellow_hosts();
+printf("NUMBER Y = %ld\n",n);
 
 #else
 printf("For Cfengine internal only\n");

@@ -40,6 +40,10 @@ if (false)
    Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",buffer,10000);
    CFDB_PutValue("one_two","three");
    CFDB_GetValue("newvar",buffer,120);
+   Nova2PHP_count_hosts();
+   Nova2PHP_count_red_hosts();
+   Nova2PHP_count_yellow_hosts();
+   Nova2PHP_count_green_hosts();
    }
 }
 
@@ -470,16 +474,17 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    switch (hl->io)
       {
       case '+':
-          snprintf(inout,CF_SMALLBUF,"Hailed");
+          snprintf(inout,CF_SMALLBUF,"out(+)");
           break;
       case '-':
-          snprintf(inout,CF_SMALLBUF,"Hailed by");
+          snprintf(inout,CF_SMALLBUF,"in(-)");
           break;
       }
 
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
-            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,
-            hl->hrsago,hl->hrsavg,hl->hrsdev,
+   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
+            "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
+            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,cf_ctime(&(hl->t)),
+            hl->hrsago,hl->hrsavg,hl->hrsdev,hl->t,
             hl->rhost->keyhash);
           
    tmpsize = strlen(buffer);
@@ -684,7 +689,10 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hb = ( struct HubBundleSeen *)rp->item;
 
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%.2lf</td></tr>\n",hb->hh->hostname,hb->bundle,hb->hrsago,hb->hrsavg,hb->hrsdev);
+   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%s</td>"
+            "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td></tr>\n",
+            hb->hh->hostname,hb->bundle,cf_ctime(&(hb->t)),
+            hb->hrsago,hb->hrsavg,hb->hrsdev);
    
    tmpsize = strlen(buffer);
    
@@ -1706,6 +1714,8 @@ Nova_ScanTheRest(id,buffer,bufsize);
 }
 
 /*****************************************************************************/
+/* Hosts stats                                                               */
+/*****************************************************************************/
 
 void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize)
 
@@ -1733,15 +1743,15 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
 
    if (Nova_IsGreen(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"green.png\"></td><td>%s</td><td>%d</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->counter,ip->name);
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"green.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->name);
       }
    else if (Nova_IsYellow(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td>%s</td><td>%d</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->counter,ip->name);
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->name);
       }
    else // if (Nova_IsRed(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td>%s</td><td>%d</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->counter,ip->name);
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->name);
       }
 
    Join(buffer,work,bufsize);
@@ -1751,5 +1761,47 @@ Join(buffer,"\n</table>\n",bufsize);
 DeleteItemList(clist);
 }
 
+/*****************************************************************************/
 
+long Nova2PHP_count_hosts()
+
+{ struct Item *all = Nova_ClassifyHostState(NULL,false,-1,0);
+  int len = ListLen(all);
+
+DeleteItemList(all);
+return (long)len;
+}
+
+/*****************************************************************************/
+
+long Nova2PHP_count_red_hosts()
+
+{ struct Item *all = Nova_RedHosts();
+  int len = ListLen(all);
+
+DeleteItemList(all);
+return (long)len;
+}
+
+/*****************************************************************************/
+
+long Nova2PHP_count_yellow_hosts()
+
+{ struct Item *all = Nova_YellowHosts();
+  int len = ListLen(all);
+
+DeleteItemList(all);
+return (long)len; 
+}
+
+/*****************************************************************************/
+
+long Nova2PHP_count_green_hosts()
+
+{ struct Item *all = Nova_GreenHosts();
+  int len = ListLen(all);
+
+DeleteItemList(all);
+return (long)len;
+}
 

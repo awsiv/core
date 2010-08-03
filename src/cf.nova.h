@@ -483,7 +483,7 @@ struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,cha
 void DeleteHubVariable(struct HubVariable *hv);
 struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,time_t t);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
-struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev);
+struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
 void DeleteHubLastSeen(struct HubLastSeen *hp);
 struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double repaired);
 void DeleteHubMeter(struct HubMeter *hp);
@@ -493,7 +493,7 @@ struct HubSetUid *NewHubSetUid(struct HubHost *hh,char *file);
 void DeleteHubSetUid(struct HubSetUid *hp);
 struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,char status,double e,double d,time_t t);
 void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp);
-struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev);
+struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev,time_t t);
 void DeleteHubBundleSeen(struct HubBundleSeen *hp);
 struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t);
 void DeleteHubFileChanges(struct HubFileChanges *hp);
@@ -659,15 +659,16 @@ void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize);
 void Nova_SummaryMeter(char *docroot,char *search_string);
 int Nova_Meter(char *docroot,char *hostkey);
 struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
-struct Item *Nova_GreenHosts(struct Item *master);
-struct Item *Nova_YellowHosts(struct Item *master);
-struct Item *Nova_RedHosts(struct Item *master);
+struct Item *Nova_GreenHosts(void);
+struct Item *Nova_YellowHosts(void);
+struct Item *Nova_RedHosts(void);
 void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired,char *s);
 struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_method method,int max_return);
 int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *rep);
-int Nova_IsRed(int level);
-int Nova_IsYellow(int level);
 int Nova_IsGreen(int level);
+int Nova_IsYellow(int level);
+int Nova_IsRed(int level);
+
 
 
 /* server.c */
@@ -811,6 +812,11 @@ void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_category(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize);
+
+long Nova2PHP_count_hosts(void);
+long Nova2PHP_count_red_hosts(void);
+long Nova2PHP_count_yellow_hosts(void);
+long Nova2PHP_count_green_hosts(void);
 
 /* weekly.c */
 
@@ -1158,6 +1164,7 @@ struct HubLastSeen
    double hrsago;
    double hrsavg;
    double hrsdev;
+   time_t t;
    };
 
 struct HubBundleSeen
@@ -1167,6 +1174,7 @@ struct HubBundleSeen
    double hrsago;
    double hrsavg;
    double hrsdev;
+   time_t t;
    };
 
 struct HubMeter
