@@ -1,34 +1,30 @@
+# Info used in building the MAN files
 
-SUBDIRS = src pub docs knowledge GUI
+doc_DATA = index.php
 
-EXTRA_DIST = acconfig.h COPYING ChangeLog LICENSE README
+EXTRA_DIST = index.php *.php
 
-docdir = $(pkgdatadir)
-
-doc_DATA = ChangeLog README
 
 #
 # Some basic clean ups
 #
-MOSTLYCLEANFILES = *~
+MOSTLYCLEANFILES = *~ *.orig
 
 #
 # Get everything removed down to where rebuilding requires:
 # "make; make install"
 # 
-CLEANFILES =
+CLEANFILES = $(htmlfiles) $(psfiles)
 
 #
 # Get everything removed down to where rebuilding requires:
 # "configure; make; make install"
 #
-DISTCLEANFILES = 
+DISTCLEANFILES = *.log *.aux *.mbs *.mb *.info*
 
 #
 # Get everything removed down to where rebuilding requires:
 # "aclocal; autoconf; autoheader; automake --add-missing"
 # "configure; make; make install"
 #
-MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.sub \
-	configure install-sh missing mkinstalldirs depcomp ylwrap \
-	ltmain.sh mdate-sh
+MAINTAINERCLEANFILES = Makefile.in mdate-sh

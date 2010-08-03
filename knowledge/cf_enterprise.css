@@ -148,6 +148,17 @@ width: 100%;
 padding: 5px;
 }
 
+#topic
+{ 
+color: white;
+font-size: 150%;
+margin-top: 10px;
+}
+
+#subheading b
+{  
+color: #73b167;
+}
 
 #occurrences
 {  
@@ -347,7 +358,26 @@ width: 610px;
 background-color: white;
 }
 
+#info
+{  
+color: white;
+font-size: 140%;
+}
 
+#info ul
+{ 
+margin-top: 10px;
+ }
+
+#info li
+{  
+padding: 7px;
+}
+
+#meter img
+{  
+padding: 5px;
+}
 
 #primary
 {  
