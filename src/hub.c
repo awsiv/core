@@ -126,7 +126,7 @@ if (fork() != 0)
 
 for (ip = list; ip != NULL; ip=ip->next)
    {
-   Nova_HailPeer(ip->name,a,pp);
+   Nova_HailPeer(ip->classes,a,pp);
    }
 
 exit(0);
