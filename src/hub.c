@@ -134,10 +134,9 @@ exit(0);
 
 /********************************************************************/
 
-int Nova_HailPeer(char *host,struct Attributes a,struct Promise *pp)
+int Nova_HailPeer(char *peer,struct Attributes a,struct Promise *pp)
 
 { struct cfagent_connection *conn;
-  char peer[CF_MAXVARSIZE];
   time_t average_time;
  
 a.copy.portnumber = (short)5308;
@@ -152,7 +151,7 @@ conn = NewServerConnection(a,pp);
 
 if (conn == NULL)
    {
-   CfOut(cf_verbose,""," !! Peer \"%s\" did not respond to hail\n",host);
+   CfOut(cf_verbose,""," !! Peer \"%s\" did not respond to hail\n",peer);
    return false;
    }
 

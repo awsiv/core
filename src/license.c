@@ -34,9 +34,10 @@ int Nova_EnterpriseExpiry(char *day,char *month,char *year)
   int m_now,m_expire,d_now,d_expire,number = 1,am_policy_server = false;
   char f_day[16],f_month[16],f_year[16];
   char u_day[16],u_month[16],u_year[16];
-  unsigned char digest[EVP_MAX_MD_SIZE+1];
+  unsigned char digest[EVP_MAX_MD_SIZE+1],serverdig[CF_MAXVARSIZE];
   FILE *fp;
-
+  RSA * serverrsa;
+  
 if (THIS_AGENT_TYPE == cf_keygen)
    {
    return false;
@@ -90,8 +91,16 @@ if ((fp = fopen(name,"r")) != NULL)
       {
       snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s",f_month,number,f_day,f_year);
       }
-   
-   snprintf(serverkey,CF_MAXVARSIZE,"%s%c/ppkeys%c%s-%s.pub",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,"root",policy_server);
+
+   IPString2KeyDigest(policy_server,serverdig);
+
+   snprintf(serverkey,CF_MAXVARSIZE,"%s%c/ppkeys%c%s-%s.pub",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,"root",serverdig);
+   CfOut(cf_verbose,""," -> Look for server %s's key file as %s\n",policy_server,serverkey);
+
+   if (serverrsa = HavePublicKey("root",policy_server,serverdig))
+      {
+      RSA_free(serverrsa);
+      }
 
    if (Nova_HashKey(CFPUBKEYFILE,name,digest,hash))
       {
@@ -112,7 +121,7 @@ if ((fp = fopen(name,"r")) != NULL)
       }
    else
       {
-      CfOut(cf_verbose,"","Failed to verify license file for this host\n");
+      CfOut(cf_verbose,"","Failed to verify license file for this host (%s)\n",hash);
       LICENSES = 1;
       return true;
       }
@@ -187,7 +196,7 @@ EVP_DigestUpdate(&context,(unsigned char*)buffer,strlen(buffer));
 
 if ((fp = fopen(filename,"r")) == NULL)
    {
-   result = false;
+   return false;
    }
 else
    {
@@ -210,7 +219,7 @@ else
       return true;
       }
    
-   CfOut(cf_verbose,""," Key file %s was not authorized as policy server\n",filename);
+//   CfOut(cf_verbose,""," Key file %s was not authorized as policy server by sha256\n",filename);
    result = false;
    }
 
@@ -251,7 +260,7 @@ if (strcmp(HashPrint(cf_md5,digest),hash) == 0)
    return true;
    }
 
-CfOut(cf_verbose,""," Key file %s was not authorized as policy server\n",filename);
+//CfOut(cf_verbose,""," Key file %s was not authorized as policy server by md5\n",filename);
 
 return result;
 }

@@ -36,7 +36,7 @@ void CFDB_GetValue(char *lval,char *rval,int size)
  
 if (!CFDB_Open(&conn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return;
    }
     
@@ -2299,7 +2299,7 @@ if (bson_iterator_next(it))
    {
    if (bson_iterator_type(it) != valType)
       {
-      CfOut(cf_error, "", "!! CFDB value of unexpected type (was=%d,expected=%d)",bson_iterator_type(it), valType);
+      CfOut(cf_verbose,"", "!! CFDB value of unexpected type (was=%d,expected=%d)",bson_iterator_type(it), valType);
       return false;
       }
    

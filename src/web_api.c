@@ -87,7 +87,7 @@ if (hostkey && strlen(hostkey) != 0)
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -127,7 +127,7 @@ DeleteHubQuery(hq,DeleteHubSoftware);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -150,7 +150,7 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *returnval,i
  
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -194,7 +194,7 @@ DeleteHubQuery(hq,DeleteHubClass);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -215,7 +215,7 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -274,7 +274,7 @@ strcat(returnval,"</table>\n");
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -305,7 +305,7 @@ switch (*cmp)
   
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -350,7 +350,7 @@ DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -373,7 +373,7 @@ int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int reg
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -418,7 +418,7 @@ DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -442,7 +442,7 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -499,7 +499,7 @@ DeleteHubQuery(hq,DeleteHubLastSeen);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -522,7 +522,7 @@ int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *returnva
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -568,7 +568,7 @@ DeleteHubQuery(hq,DeleteHubPerformance);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -591,7 +591,7 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *returnval,in
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -635,7 +635,7 @@ DeleteHubQuery(hq,DeleteHubSetUid);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -659,7 +659,7 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *returnval,
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -703,7 +703,7 @@ DeleteHubQuery(hq,DeleteHubBundleSeen);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -733,7 +733,7 @@ switch (*cmp)
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -776,7 +776,7 @@ DeleteHubQuery(hq,DeleteHubFileChanges);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -807,7 +807,7 @@ switch (*cmp)
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -850,7 +850,7 @@ DeleteHubQuery(hq,DeleteHubFileDiff);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -886,7 +886,7 @@ else
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -922,7 +922,7 @@ DeleteHubQuery(hq,NULL);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -952,7 +952,7 @@ if (hostkey && strlen(hostkey) != 0)
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -988,7 +988,7 @@ DeleteHubQuery(hq,DeleteHubSoftware);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -1011,7 +1011,7 @@ int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *returnval,in
  
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -1051,7 +1051,7 @@ DeleteHubQuery(hq,DeleteHubClass);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -1072,7 +1072,7 @@ int Nova2PHP_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *ty
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -1111,7 +1111,7 @@ DeleteHubQuery(hq,DeleteHubVariable);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -1142,7 +1142,7 @@ switch (*cmp)
   
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -1181,7 +1181,7 @@ DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -1204,7 +1204,7 @@ int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,cha
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -1244,7 +1244,7 @@ DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -1268,7 +1268,7 @@ int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -1307,7 +1307,7 @@ DeleteHubQuery(hq,DeleteHubLastSeen);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -1330,7 +1330,7 @@ int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *returnval
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -1369,7 +1369,7 @@ DeleteHubQuery(hq,DeleteHubPerformance);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -1392,7 +1392,7 @@ int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *returnval,int
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -1431,7 +1431,7 @@ DeleteHubQuery(hq,DeleteHubSetUid);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -1455,7 +1455,7 @@ int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *returnval,i
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -1494,7 +1494,7 @@ DeleteHubQuery(hq,DeleteHubBundleSeen);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -1524,7 +1524,7 @@ switch (*cmp)
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -1563,7 +1563,7 @@ DeleteHubQuery(hq,DeleteHubFileChanges);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;
@@ -1595,7 +1595,7 @@ switch (*cmp)
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -1634,7 +1634,7 @@ DeleteHubQuery(hq,DeleteHubFileDiff);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 return true;

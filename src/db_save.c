@@ -29,7 +29,7 @@ connOpts.port = port;
 
 if (mongo_connect(conn,&connOpts) != 0)
    {
-   CfOut(cf_error, "mongo_connect", "!! Could not connect to database");
+   CfOut(cf_verbose, "mongo_connect", " -> Could not connect to database");
    return false;
    }
 
@@ -43,7 +43,7 @@ int CFDB_Close(mongo_connection *conn)
 {
 if (mongo_destroy(conn) != 0)
    {
-   CfOut(cf_error, "mongo_destroy", "!! Could not disconnect from database");
+   CfOut(cf_verbose, "mongo_destroy", " -> Could not disconnect from database");
    return false;
    }
 
@@ -73,7 +73,7 @@ void CFDB_PutValue(char *lval,char *rval)
  
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"","!! Could not open connection to report database");
    return;
    }
   

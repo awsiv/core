@@ -107,14 +107,14 @@ gdImageRectangle(cfv.im,0,0,cfv.width+2*cfv.margin,cfv.height+2*cfv.margin,BLACK
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    }
 
 hq = CFDB_QueryMeter(&dbconn,search_string);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    } 
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -234,14 +234,14 @@ gdImageRectangle(cfv.im,0,0,cfv.width+2*cfv.margin,cfv.height+2*cfv.margin,BLACK
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    }
 
 hq = CFDB_QueryMeter(&dbconn,hostkey);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    } 
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -450,7 +450,7 @@ struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_m
 
 if (!CFDB_Open(&conn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return NULL;
    }
 
@@ -580,7 +580,7 @@ mongo_cursor_destroy(cursor);
 
 if (!CFDB_Close(&conn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    } 
 
 return list;

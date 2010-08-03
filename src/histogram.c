@@ -77,14 +77,14 @@ void Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables ob
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    }
 
 CFDB_QueryHistogram(&dbconn,hostkey,obs,histo);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    } 
 
 cfv->max = 0;

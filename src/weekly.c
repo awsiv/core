@@ -101,14 +101,14 @@ void Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables o
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
-   CfOut(cf_error, "", "!! Could not open connection to report database");
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    }
 
 CFDB_QueryWeekView(&dbconn,keyhash,obs,q,e,d);
 
 if (!CFDB_Close(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not close connection to report database");
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    } 
 
 cfv->over = 0;
