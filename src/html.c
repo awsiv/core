@@ -19,7 +19,7 @@
 
 void Nova_Header(char *title,char *device_type, char *buffer, int bufsize)
 {
-snprint(buffer,bufsize,
+snprintf(buffer,bufsize,
 
 "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html>\n"
 "  <head>\n"
@@ -45,7 +45,7 @@ snprint(buffer,bufsize,
 
 void Nova_Footer(char *buffer, int bufsize)
 {
- snprint(buffer,bufsize,
+snprintf(buffer,bufsize,
          "</div>"
          "<div id=\"footer\">Copyright &copy; Cfengine AS</div></div>"
          "</body>"
