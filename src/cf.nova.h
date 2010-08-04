@@ -462,6 +462,7 @@ struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *keyhash,enum obs
 
 void Nova_Footer(char *buffer, int bufsize);
 void Nova_Header(char *title,char *device_type, char *buffer, int bufsize);
+void Nova_TabMenu(char *buffer, int bufsize);
 
 /* hub.c */
 

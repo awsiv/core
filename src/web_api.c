@@ -1846,8 +1846,11 @@ return (long)len;
 
 char *Nova_HostProfile(char *key)
 
-{ static buffer[CF_MAXVARSIZE];
+{ static char buffer[CF_BUFSIZE];
 
-snprintf(buffer,CF_BUFSIZE,"<a href=\"bundles.php?host=%s\">Bundles</a><br><a href=\"classes.php?host=%s\">Classes</a><br><a href=\"promises.php?host=%s\">Promises</a>",key,key,key);
+snprintf(buffer,CF_BUFSIZE,
+         "<table><tr><td><a href=\"bundles.php?host=%s\">Bundles</a></td><td><a href=\"classes.php?host=%s\">Classes</a></td></tr>"
+         "<tr><td><a href=\"intentions.php?host=%s\">Intentions</a></td><td><a href=\"promises.php?host=%s\">Promises</a></td></tr></table>",key,key,key,key);
+
 return buffer;
 }

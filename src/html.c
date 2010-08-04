@@ -54,6 +54,23 @@ snprintf(buffer,bufsize,
 
 /*****************************************************************************/
 
+void Nova_TabMenu(char *buffer, int bufsize)
+{
+snprintf(buffer,bufsize,
+         "<div id=\"banner\">"
+         "<ul>"
+         "<li><a href=\"index.php\"><b>Mission overview</b><br></a>"
+         "<li><a href=\"knowledge.php\"><b>Knowledge</b><br>Science</a>"
+         "<li><a href=\"helm.php\"><b>Mission control</b><br>Helm</a>"
+         "<li><a href=\"status.php\"><b>Mission status</b><br>Engineering</a>"
+         "<li><a href=\"security.php\"><b>Mission integrity</b><br>Security</a>"
+         "<li><a href=\"communications.php\"><b>Mission log</b><br>Communications</a>"
+         "</ul>"
+         "</div><br>");
+}
+
+/*****************************************************************************/
+
 void Nova_SpecialQuote(char *name,char *type)
 
 { char filename[CF_BUFSIZE],rootpath[CF_BUFSIZE];
