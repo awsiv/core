@@ -1,7 +1,7 @@
-# Info used in building the MAN files
 
-doc_DATA = index.php
-
+SUBDIRS = img
+GUIdir = $(docdir)/GUI
+GUI_DATA = index.php *.php
 EXTRA_DIST = index.php *.php
 
 

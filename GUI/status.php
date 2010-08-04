@@ -14,9 +14,18 @@ $title = "mission status";
 <div id="top">      <div id="search">
         <form method="post" action="/index.php">
           <p><input class="searchfield" type="text" name="regex" />&nbsp;Search</p>
-        </form>
+
+<select name="mytable">
+  <option>classes</option>
+  <option>software_packages</option>
+  <option>software_patches_avail</option>
+  <option>software_patch_status</option>
+  <option>variables</option>
+</select>
+
+          </form>
       </div> 
-          <a href="/index.php"><h2>CFENGINE NOVA <b><span id="subheading"><?php echo "$title";?></span></h2></a>
+          <a href="/index.php"><h2>CFENGINE NOVA <b><span id="subheading"><?php echo "$title";?></b></span></h2></a>
 
 <div id="banner">
 <ul>
@@ -39,9 +48,16 @@ $title = "mission status";
 <?php
 $hostkey = NULL;
 $name = ".*";
-$regex = 1;
+$useregex = 1;
 
-$ret = cfpr_report_classes($hostkey,$name,$regex);
+if ($mytable == "classes")
+   {
+   $ret = cfpr_report_classes($hostkey,$regex,true);
+   }
+else if ($mytable == "software_packages")
+   {
+   $ret = cfpr_report_software_in($regex,NULL,".*",".*",1);
+   }
 
 echo "<br>$ret<br>";
 
