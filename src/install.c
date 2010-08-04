@@ -341,9 +341,9 @@ if ((hp = malloc(sizeof(struct HubLastSeen))) == NULL)
 hp->hh = hh;
 hp->io = io;  // '+' or '-'
 hp->rhost = NewHubHost(kh,rhost,ip);
-hp->hrsago;
-hp->hrsavg;
-hp->hrsdev;
+hp->hrsago = ago;
+hp->hrsavg = avg;
+hp->hrsdev = dev;
 hp->t = t;
 return hp;
 }
@@ -527,9 +527,9 @@ if ((hp = malloc(sizeof(struct HubBundleSeen))) == NULL)
 
 hp->hh = hh;
 hp->bundle = strdup(rname);
-hp->hrsago;
-hp->hrsavg;
-hp->hrsdev;
+hp->hrsago = ago;
+hp->hrsavg = avg;
+hp->hrsdev = dev;
 hp->t = t;
 return hp;
 }

@@ -373,8 +373,8 @@ char buff[100000];
 //Nova2PHP_compliance_promises(NULL,NULL,"x",0,buff,10000);
 //printf("PR: (%s)\nPR\n\n",buff);
 
-//Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,buff,10000);
-//printf("LS: (%s)\nLS\n\n",buff);
+Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,buff,10000);
+printf("LS: (%s)\nLS\n\n",buff);
 
 /*
 Nova2PHP_performance_report(NULL,NULL,0,buff,10000);
