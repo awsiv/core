@@ -1109,7 +1109,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
       // Now cache the host reference in all of the records to flatten the 2d list
    
-      struct HubClass *hs = (struct HubClass *)rp->item;
+      struct HubLastSeen *hs = (struct HubLastSeen *)rp->item;
       hs->hh = hh;
       }
    }
@@ -1222,8 +1222,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
       AppendRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
-      struct HubClass *hs = (struct HubClass *)rp->item;
-      hs->hh = hh;
+      struct HubMeter *hm = (struct HubMeter *)rp->item;
+      hm->hh = hh;
       }
    }
 
@@ -1356,8 +1356,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
       // Now cache the host reference in all of the records to flatten the 2d list
    
-      struct HubClass *hs = (struct HubClass *)rp->item;
-      hs->hh = hh;
+      struct HubPerformance *hp = (struct HubPerformance *)rp->item;
+      hp->hh = hh;
       }
    }
 
@@ -1459,7 +1459,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
       // Now cache the host reference in all of the records to flatten the 2d list
    
-      struct HubClass *hs = (struct HubClass *)rp->item;
+      struct HubSetUid *hs = (struct HubSetUid *)rp->item;
       hs->hh = hh;
       }
    }
@@ -1592,7 +1592,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
       // Now cache the host reference in all of the records to flatten the 2d list
    
-      struct HubClass *hs = (struct HubClass *)rp->item;
+      struct HubFileChanges *hs = (struct HubFileChanges *)rp->item;
       hs->hh = hh;
       }
    }
@@ -1738,7 +1738,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
       // Now cache the host reference in all of the records to flatten the 2d list
    
-      struct HubClass *hs = (struct HubClass *)rp->item;
+      struct HubFileDiff *hs = (struct HubFileDiff *)rp->item;
       hs->hh = hh;
       }
    }
@@ -1873,7 +1873,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
       // Now cache the host reference in all of the records to flatten the 2d list
    
-      struct HubClass *hs = (struct HubClass *)rp->item;
+      struct HubBundleSeen *hs = (struct HubBundleSeen *)rp->item;
       hs->hh = hh;
       }
    }
