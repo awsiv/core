@@ -176,7 +176,7 @@ Nova_BarMeter(&cfv,3,kept_hour,rep_hour,"Hour");
 Nova_BarMeter(&cfv,4,kept_perf,rep_perf,"Perf");
 Nova_BarMeter(&cfv,6,kept_comms,rep_comms,"Coms");
 Nova_BarMeter(&cfv,7,kept_anom,rep_anom,"Anom");
-Nova_BarMeter(&cfv,5,kept_other,rep_other,"Core");
+Nova_BarMeter(&cfv,5,kept_other,rep_other,"Sec");
 
 // Clean up
 

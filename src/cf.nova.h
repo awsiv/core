@@ -460,6 +460,9 @@ struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *keyhash,enum obs
 
 /* html.c */
 
+void Nova_Footer(char *buffer, int bufsize);
+void Nova_Header(char *title,char *device_type, char *buffer, int bufsize);
+
 /* hub.c */
 
 void Nova_StartHub(int argc,char **argv);
@@ -813,11 +816,15 @@ void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_category(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize);
+void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
 
 long Nova2PHP_count_hosts(void);
 long Nova2PHP_count_red_hosts(void);
 long Nova2PHP_count_yellow_hosts(void);
 long Nova2PHP_count_green_hosts(void);
+
+char *Nova_HostProfile(char *key);
+void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
 
 /* weekly.c */
 

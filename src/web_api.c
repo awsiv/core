@@ -1675,7 +1675,7 @@ Nova_WebTopicMap_Initialize();
 
 if (Nova_GetTopicByPid(id,topic_name,topic_id,topic_type,topic_comment))
    {
-   snprintf(buffer,bufsize,"Topic \"%s\" in category \"%s\":<p>\"%s\"",topic_name,topic_type,topic_comment);
+   snprintf(buffer,bufsize,"<div id=\"topic\">'<span id=\"subject\">%s</span>' in section `<span id=\"category\">%s</span>:<p>\"%s\"</div>",topic_name,topic_type,topic_comment);
    }
 else
    {
@@ -1732,7 +1732,7 @@ for (pol = 0; policies[pol] != NULL; pol++)
       }
    }
 
-clist = Nova_RankHosts(NULL,pol,cfrank_compliance,n);
+clist = Nova_RankHosts(NULL,0,pol,n);
 
 buffer[0] = '0';
 strcat(buffer,"<table>\n\n\n");
@@ -1743,15 +1743,52 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
 
    if (Nova_IsGreen(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"green.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->name);
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"green.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td><td>%s</td></a></td></tr>\n",ip->classes,ip->name,Nova_HostProfile(ip->name));
       }
    else if (Nova_IsYellow(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->name);
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td><td>%s</td></a></td></tr>\n",ip->classes,ip->name,Nova_HostProfile(ip->name));
       }
    else // if (Nova_IsRed(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td></tr>\n",ip->classes,ip->name);
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td><td>%s</td></tr>\n",ip->classes,ip->name,Nova_HostProfile(ip->name));
+      }
+
+   Join(buffer,work,bufsize);
+   }
+
+Join(buffer,"\n</table>\n",bufsize);
+DeleteItemList(clist);
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize)
+
+{ struct Item *ip,*clist;
+  char work[CF_MAXVARSIZE];
+
+clist = Nova_RankHosts(policy,1,cfrank_compliance,n);
+clist = SortItemListNames(clist);
+
+buffer[0] = '0';
+strcat(buffer,"<table>\n\n\n");
+
+for (ip = clist; ip !=  NULL; ip=ip->next)
+   {
+   Nova_Meter("/srv/www/htdocs",ip->name);
+
+   if (Nova_IsGreen(ip->counter))
+      {
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"green.png\"></td><td>%s</td><td>%s</td></tr>\n",ip->classes,Nova_HostProfile(ip->name));
+      }
+   else if (Nova_IsYellow(ip->counter))
+      {
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td>%s</td><td>%s</td></tr>\n",ip->classes,Nova_HostProfile(ip->name));
+      }
+   else // if (Nova_IsRed(ip->counter))
+      {
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td>%s</td><td>%s</td></tr>\n",ip->classes,Nova_HostProfile(ip->name));
       }
 
    Join(buffer,work,bufsize);
@@ -1805,3 +1842,12 @@ DeleteItemList(all);
 return (long)len;
 }
 
+/*****************************************************************************/
+
+char *Nova_HostProfile(char *key)
+
+{ static buffer[CF_MAXVARSIZE];
+
+snprintf(buffer,CF_BUFSIZE,"<a href=\"bundles.php?host=%s\">Bundles</a><br><a href=\"classes.php?host=%s\">Classes</a><br><a href=\"promises.php?host=%s\">Promises</a>",key,key,key);
+return buffer;
+}

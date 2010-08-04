@@ -147,7 +147,6 @@ while (CfFetchRow(&cfdb))
    from_pid = Str2Int(CfFetchColumn(&cfdb,6));
    to_pid = Str2Int(CfFetchColumn(&cfdb,7));
 
-   printf("GOT: %s, %s...\n",from_name,from_assoc);
    snprintf(buffer,CF_BUFSIZE,"Association \"%s\" (with inverse \"%s\"), ",from_assoc,to_assoc);
 
 //format directly
@@ -422,7 +421,7 @@ if (cfdb.maxcolumns != 8)
 
 /* Look in both directions for associations - first into */
 
-snprintf(buffer,bufsize,"<ul>\n");
+snprintf(buffer,bufsize,"<div id=\"associations\"><h2>Insight, leads and perspectives:</h2>\n<ul>\n");
 
 save[0] = '\0';
 
@@ -444,11 +443,11 @@ while(CfFetchRow(&cfdb))
       strncpy(save,fassociation,CF_BUFSIZE-1);
       strcat(buffer,"</ul>\n");
       
-      snprintf(work,CF_MAXVARSIZE,"<li>  %s \"%s\" </li>\n<ul>\n",from_name,fassociation);
+      snprintf(work,CF_MAXVARSIZE,"<li>  %s \"%s\" \n<ul>\n",from_name,fassociation);
       Join(buffer,work,bufsize);
       }
    
-   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s) </li>\n",Nova_PidURL(to_pid,to_name),to_type);
+   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s) \n",Nova_PidURL(to_pid,to_name),to_type);
    Join(buffer,work,bufsize);
    }
 
@@ -489,15 +488,15 @@ while(CfFetchRow(&cfdb))
       strncpy(save,bassociation,CF_BUFSIZE-1);
       
       strcat(buffer,"</ul>\n");
-      snprintf(work,CF_MAXVARSIZE,"<li>  %s \"%s\" </li>\n<ul>\n",to_name,bassociation);
+      snprintf(work,CF_MAXVARSIZE,"<li>  %s \"%s\"\n<ul>\n",to_name,bassociation);
       Join(buffer,work,bufsize);
       }
    
-   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s) </li>\n",Nova_PidURL(from_pid,from_name),from_type);
+   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s) \n",Nova_PidURL(from_pid,from_name),from_type);
    Join(buffer,work,bufsize);
    }
 
-strcat(buffer,"</ul>\n");
+strcat(buffer,"</ul></div>\n");
 
 CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
@@ -507,7 +506,7 @@ CfCloseDB(&cfdb);
 
 void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
 
-{ char topic_name[CF_BUFSIZE],query[CF_MAXVARSIZE];
+{ char topic_name[CF_BUFSIZE],topic_type[CF_BUFSIZE],query[CF_MAXVARSIZE];
   char locator[CF_BUFSIZE],subtype[CF_BUFSIZE];
   enum representations locator_type;
   CfdbConn cfdb;  
@@ -528,6 +527,24 @@ if (!cfdb.connected)
 
 /* Finally occurrences of the mentioned topic */
 
+snprintf(query,CF_BUFSIZE,"SELECT topic_name,topic_type from topics where pid='%d'",this_id);
+
+CfNewQueryDB(&cfdb,query);
+
+if (cfdb.maxcolumns != 2)
+   {
+   CfOut(cf_error,""," !! The occurrences database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,2);
+   return;
+   }
+
+if (CfFetchRow(&cfdb))
+   {
+   strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
+   strncpy(topic_type,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
+   }
+
+CfDeleteQuery(&cfdb);
+
 snprintf(query,CF_BUFSIZE,"SELECT topic_name,locator,locator_type,subtype from occurrences where from_id='%d' order by locator_type,subtype",this_id);
 
 CfNewQueryDB(&cfdb,query);
@@ -538,7 +555,10 @@ if (cfdb.maxcolumns != 4)
    return;
    }
 
-snprintf(buffer,bufsize,"<ul>\n");
+snprintf(buffer,bufsize,
+         "<div id=\"occurrences\">\n"
+         "<h2>References to '<span id=\"subject\">%s</span>' in category `<span id=\"category\">%s</span>'</h2>"
+         "<ul>\n",topic_name,topic_type);
 
 while(CfFetchRow(&cfdb))
    {
@@ -550,7 +570,7 @@ while(CfFetchRow(&cfdb))
    Nova_AddOccurrenceBuffer(locator,locator_type,subtype,buffer,bufsize);
    }
 
-strcat(buffer,"</ul>\n");
+strcat(buffer,"</ul></div>\n");
 CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
 }
