@@ -469,7 +469,7 @@ count += strlen(returnval);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   hl = ( struct HubLastSeen *)rp->item;
+   hl = (struct HubLastSeen *)rp->item;
 
    switch (hl->io)
       {

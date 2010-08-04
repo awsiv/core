@@ -280,7 +280,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                if (match_name && match_version && match_arch)
                   {
                   found = true;
-                  rp = AppendRlistAlien(&record_list,NewHubSoftware(NULL,rname,rversion,rarch));
+                  rp = AppendRlistAlien(&record_list,NewHubSoftware(CF_THIS_HH,rname,rversion,rarch));
                   }
                }               
             }
@@ -294,8 +294,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
       
       // Now cache the host reference in all of the records to flatten the 2d list
       
-      struct HubSoftware *hs = (struct HubSoftware *)rp->item;
-      hs->hh = hh;
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubSoftware *hs = (struct HubSoftware *)rp->item;
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
       }
    }
 
@@ -411,7 +417,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_class)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubClass(NULL,rclass,rex,rsigma,rtime));
+               rp = AppendRlistAlien(&record_list,NewHubClass(CF_THIS_HH,rclass,rex,rsigma,rtime));
                }            
             }
          }   
@@ -423,9 +429,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
       AppendRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
-   
-      struct HubClass *hs = (struct HubClass *)rp->item;
-      hs->hh = hh;
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubClass *hs = (struct HubClass *)rp->item;
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
       }
    }
 
@@ -583,7 +594,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_kept && match_notkept && match_repaired && match_t && match_version)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubTotalCompliance(NULL,rt,rversion,rkept,rrepaired,rnotkept));
+               rp = AppendRlistAlien(&record_list,NewHubTotalCompliance(CF_THIS_HH,rt,rversion,rkept,rrepaired,rnotkept));
                }
             }
          }   
@@ -595,9 +606,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
       AppendRlistAlien(&host_list,hh);
       
       // Now cache the host reference in all of the records to flatten the 2d list
-      
-      struct HubTotalCompliance *hs = (struct HubTotalCompliance *)rp->item;
-      hs->hh = hh;
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubTotalCompliance *hs = (struct HubTotalCompliance *)rp->item;
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
       }
    }
 
@@ -772,7 +788,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                if (match_type && match_scope && match_lval && match_rval)
                   {
                   found = true;
-                  rp = AppendRlistAlien(&record_list,NewHubVariable(NULL,dtype,rscope,rlval,rrval,rtype));
+                  rp = AppendRlistAlien(&record_list,NewHubVariable(CF_THIS_HH,dtype,rscope,rlval,rrval,rtype));
                   }
                else
                   {
@@ -801,9 +817,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
       AppendRlistAlien(&host_list,hh);
       
       // Now cache the host reference in all of the records to flatten the 2d list
-      
-      struct HubVariable *hv = (struct HubVariable *)rp->item;
-      hv->hh = hh;
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubVariable *hv = (struct HubVariable *)rp->item;
+         if (hv->hh == CF_THIS_HH)
+            {
+            hv->hh = hh;
+            }
+         }
       }
    }
 
@@ -930,7 +951,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_handle && match_status)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubCompliance(NULL,rhandle,rstatus,rex,rsigma,rtime));
+               rp = AppendRlistAlien(&record_list,NewHubCompliance(CF_THIS_HH,rhandle,rstatus,rex,rsigma,rtime));
                }            
             }
          }   
@@ -941,10 +962,15 @@ while (mongo_cursor_next(cursor))  // loops over documents
       hh = NewHubHost(keyhash,addresses,hostnames);
       AppendRlistAlien(&host_list,hh);
 
-      // Now cache the host reference in all of the records to flatten the 2d list
-   
-      struct HubPromiseCompliance *hp = (struct HubPromiseCompliance *)rp->item;      
-      hp->hh = hh;
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubPromiseCompliance *hp = (struct HubPromiseCompliance *)rp->item;      
+
+         if (hp->hh == CF_THIS_HH)
+            {
+            hp->hh = hh;
+            }
+         }
       }
    }
 
@@ -962,7 +988,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,bson *query,char *lha
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
-  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL,*list_start = NULL;
   double rago,ravg,rdev;
   char rhash[CF_MAXVARSIZE],rhost[CF_MAXVARSIZE],raddr[CF_MAXVARSIZE];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
@@ -1000,6 +1026,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    raddr[0] = '\0';
    rhost[0] = '\0';
    found = false;
+   list_start = NULL;
    
    while (bson_iterator_next(&it1))
       {
@@ -1096,7 +1123,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_hash && match_host && match_addr)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubLastSeen(NULL,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev,rt));
+               AppendRlistAlien(&record_list,NewHubLastSeen(CF_THIS_HH,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev,rt));
                }            
             }
          }   
@@ -1108,9 +1135,15 @@ while (mongo_cursor_next(cursor))  // loops over documents
       AppendRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
-   
-      struct HubLastSeen *hs = (struct HubLastSeen *)rp->item;
-      hs->hh = hh;
+
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubLastSeen *hs = (struct HubLastSeen *)rp->item;
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
       }
    }
 
@@ -1211,7 +1244,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                }
 
             found = true;
-            rp = AppendRlistAlien(&record_list,NewHubMeter(NULL,*rcolumn,rkept,rrepaired));
+            rp = AppendRlistAlien(&record_list,NewHubMeter(CF_THIS_HH,*rcolumn,rkept,rrepaired));
             }
          }   
       }
@@ -1221,9 +1254,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
       hh = NewHubHost(keyhash,addresses,hostnames);
       AppendRlistAlien(&host_list,hh);
 
-      // Now cache the host reference in all of the records to flatten the 2d list
-      struct HubMeter *hm = (struct HubMeter *)rp->item;
-      hm->hh = hh;
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubMeter *hm = (struct HubMeter *)rp->item;
+         if (hm->hh == CF_THIS_HH)
+            {
+            hm->hh = hh;
+            }
+         }
       }
    }
 
@@ -1343,7 +1381,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubPerformance(NULL,rname,rtime,rq,rex,rsigma));
+               rp = AppendRlistAlien(&record_list,NewHubPerformance(CF_THIS_HH,rname,rtime,rq,rex,rsigma));
                }
             }
          }   
@@ -1355,9 +1393,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
       AppendRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
-   
-      struct HubPerformance *hp = (struct HubPerformance *)rp->item;
-      hp->hh = hh;
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubPerformance *hp = (struct HubPerformance *)rp->item;
+         if (hp->hh == CF_THIS_HH)
+            {
+            hp->hh = hh;
+            }
+         }
       }
    }
 
@@ -1446,7 +1489,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubSetUid(NULL,rname));
+               rp = AppendRlistAlien(&record_list,NewHubSetUid(CF_THIS_HH,rname));
                }
             }
          }   
@@ -1458,9 +1501,15 @@ while (mongo_cursor_next(cursor))  // loops over documents
       AppendRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
-   
-      struct HubSetUid *hs = (struct HubSetUid *)rp->item;
-      hs->hh = hh;
+
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubSetUid *hs = (struct HubSetUid *)rp->item;
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
       }
    }
 
@@ -1579,7 +1628,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name && match_t)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubFileChanges(NULL,rname,rt));
+               rp = AppendRlistAlien(&record_list,NewHubFileChanges(CF_THIS_HH,rname,rt));
                }
             }
          }   
@@ -1591,9 +1640,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
       AppendRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
-   
-      struct HubFileChanges *hs = (struct HubFileChanges *)rp->item;
-      hs->hh = hh;
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubFileChanges *hs = (struct HubFileChanges *)rp->item;
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
       }
    }
 
@@ -1725,7 +1779,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name && match_diff && match_t)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubFileDiff(NULL,rname,rdiff,rt));
+               rp = AppendRlistAlien(&record_list,NewHubFileDiff(CF_THIS_HH,rname,rdiff,rt));
                }
             }
          }   
@@ -1737,9 +1791,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
       AppendRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
-   
-      struct HubFileDiff *hs = (struct HubFileDiff *)rp->item;
-      hs->hh = hh;
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubFileDiff *hs = (struct HubFileDiff *)rp->item;
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
       }
    }
 
@@ -1860,7 +1919,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubBundleSeen(NULL,rname,rago,ravg,rdev,rt));
+               rp = AppendRlistAlien(&record_list,NewHubBundleSeen(CF_THIS_HH,rname,rago,ravg,rdev,rt));
                }            
             }
          }   
@@ -1872,9 +1931,15 @@ while (mongo_cursor_next(cursor))  // loops over documents
       AppendRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
-   
-      struct HubBundleSeen *hs = (struct HubBundleSeen *)rp->item;
-      hs->hh = hh;
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubBundleSeen *hs = (struct HubBundleSeen *)rp->item;
+
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
       }
    }
 

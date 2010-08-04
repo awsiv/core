@@ -56,6 +56,7 @@
 #define CF_MAX_ERROR_LIMIT 50
 #define CF_MAX_LIMIT 999999
 #define CF_N_CODE '\07'
+#define CF_THIS_HH (void *)-1
 
 enum cfd_menu
    {
