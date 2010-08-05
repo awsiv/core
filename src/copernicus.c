@@ -94,7 +94,7 @@ for (i = 0; i < tribe_size; i++)
 Nova_AnchorTrail(trail,centre);
 
 cfv.height = 650;
-cfv.width = 1000;
+cfv.width = 900;
 cfv.origin_x = 500;
 cfv.origin_y = 375;
 cfv.scale_x = (double)cfv.width/2;
