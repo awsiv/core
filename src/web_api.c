@@ -1675,7 +1675,7 @@ Nova_WebTopicMap_Initialize();
 
 if (Nova_GetTopicByPid(id,topic_name,topic_id,topic_type,topic_comment))
    {
-   snprintf(buffer,bufsize,"<div id=\"topic\">'<span id=\"subject\">%s</span>' in section `<span id=\"category\">%s</span>:<p>\"%s\"</div>",topic_name,topic_type,topic_comment);
+   snprintf(buffer,bufsize,"<div id=\"topic\">\n'<span id=\"subject\">%s</span>' in section `<span id=\"category\">%s</span>:<p>\"%s\"</div>",topic_name,topic_type,topic_comment);
    }
 else
    {

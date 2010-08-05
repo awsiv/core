@@ -36,9 +36,8 @@ snprintf(buffer,bufsize,
 "          <p><input class=\"searchfield\" type=\"text\" name=\"search_string\" />&nbsp;Search</p>\n"
 "        </form>\n"
 "      </div> \n"
-"          <a href=\"/index.php\"><h2>CFENGINE MISSION PORTAL <span id=\"subheading\"><b>overview</b></span></h2></a>\n"
-"    </div>\n"
-"<div id=\"primary\">");
+"          <a href=\"/index.php\"><h2>CFENGINE MISSION PORTAL <span id=\"subheading\"><b>%s</b></span></h2></a>\n"
+         "    </div>\n",title);
 }
 
 /*****************************************************************************/
@@ -46,7 +45,6 @@ snprintf(buffer,bufsize,
 void Nova_Footer(char *buffer, int bufsize)
 {
 snprintf(buffer,bufsize,
-         "</div>"
          "<div id=\"footer\">Copyright &copy; Cfengine AS</div></div>"
          "</body>"
          "</html>");

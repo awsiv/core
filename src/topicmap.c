@@ -391,7 +391,7 @@ void Nova_ScanLeadsAssociations(int pid,char *buffer,int bufsize)
   char to_type[CF_BUFSIZE],topic_comment[CF_BUFSIZE],*sp;
   enum representations locator_type;
   struct Rlist *rp;
-  CfdbConn cfdb;  
+  CfdbConn cfdb;
 
 if (strlen(SQL_OWNER) == 0)
    {
@@ -421,7 +421,7 @@ if (cfdb.maxcolumns != 8)
 
 /* Look in both directions for associations - first into */
 
-snprintf(buffer,bufsize,"<div id=\"associations\"><h2>Insight, leads and perspectives:</h2>\n<ul>\n");
+snprintf(buffer,bufsize,"<p><div id=\"associations\">\n<h2>Insight, leads and perspectives:</h2>\n<ul>\n");
 
 save[0] = '\0';
 
@@ -440,8 +440,12 @@ while(CfFetchRow(&cfdb))
 
    if (strcmp(fassociation,save) != 0)
       {
+      if (strlen(save) != 0)
+         {
+         strcat(buffer,"</ul>\n");
+         }
+      
       strncpy(save,fassociation,CF_BUFSIZE-1);
-      strcat(buffer,"</ul>\n");
       
       snprintf(work,CF_MAXVARSIZE,"<li>  %s \"%s\" \n<ul>\n",from_name,fassociation);
       Join(buffer,work,bufsize);
@@ -469,6 +473,8 @@ if (cfdb.maxcolumns != 8)
    return;
    }
 
+save[0] = '\0';
+
 while(CfFetchRow(&cfdb))
    {
    int from_pid,to_pid;
@@ -485,9 +491,13 @@ while(CfFetchRow(&cfdb))
 
    if (strcmp(bassociation,save) != 0)
       {
+      if (strlen(save) != 0)
+         {
+         strcat(buffer,"</ul>\n");
+         }
+      
       strncpy(save,bassociation,CF_BUFSIZE-1);
       
-      strcat(buffer,"</ul>\n");
       snprintf(work,CF_MAXVARSIZE,"<li>  %s \"%s\"\n<ul>\n",to_name,bassociation);
       Join(buffer,work,bufsize);
       }
