@@ -17,6 +17,27 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+char *BASIC_REPORTS[] =
+   {
+   "Bundle profile",
+   "Business value report",
+   "Class profile",
+   "Compliance by promise",
+   "Compliance summary",
+   "File change log",
+   "File change diffs",
+   "Last saw hosts",
+   "Patches available",
+   "Patch status",
+   "Performance",
+   "Promises repaired",
+   "Promises not kept",
+   "Setuid/gid root programs",
+   "Software installed",
+   "Variables",
+   NULL
+   };
+
 /*****************************************************************************/
 
 void Nova_EnterpriseModuleTrick()
@@ -1772,7 +1793,7 @@ void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize)
   char work[CF_MAXVARSIZE];
 
 clist = Nova_RankHosts(policy,1,cfrank_compliance,n);
-clist = SortItemListNames(clist);
+clist = SortItemListClasses(clist);
 
 buffer[0] = '0';
 strcat(buffer,"<table>\n\n\n");
@@ -1809,10 +1830,10 @@ void Nova2PHP_select_hosts(char *match,int n,char *buffer,int bufsize)
   char work[CF_MAXVARSIZE];
 
 clist = Nova_RankHosts(match,1,cfrank_compliance,n);
-clist = SortItemListNames(clist);
+clist = SortItemListClasses(clist);
 
-buffer[0] = '0';
-strcat(buffer,"<select name=\"hostkey\">\n\n\n");
+buffer[0] = '\0';
+strcat(buffer,"<select name=\"hostkey\">\n");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
@@ -1880,3 +1901,23 @@ snprintf(buffer,CF_BUFSIZE,
 
 return buffer;
 }
+
+/*****************************************************************************/
+
+void Nova2PHP_select_reports(char *buffer,int bufsize)
+
+{ char work[CF_MAXVARSIZE];
+  int i;
+
+buffer[0] = '\0';
+strcat(buffer,"<select name=\"report\">\n");
+
+for (i = 0; BASIC_REPORTS[i] != NULL; i++)
+   {
+   snprintf(work,CF_MAXVARSIZE,"<option value=\"%s\">%s</option>\n",BASIC_REPORTS[i],BASIC_REPORTS[i]);
+   Join(buffer,work,bufsize);
+   }
+
+Join(buffer,"\n</select>\n",bufsize);
+}
+

@@ -234,7 +234,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                else
                   {
-                  CfOut(cf_error,"", " !! Unknown key \"%s\" in software packages",bson_iterator_key(&it3));
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in software packages",bson_iterator_key(&it3));
                   }
                }
 
@@ -393,7 +393,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                else
                   {
-                  CfOut(cf_error,"", " !! Unknown key \"%s\" in classes",bson_iterator_key(&it3));
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in classes",bson_iterator_key(&it3));
                   }
                }
 
@@ -535,7 +535,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                else
                   {
-                  CfOut(cf_error,"", " !! Unknown key \"%s\" in total compliance",bson_iterator_key(&it3));
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in total compliance",bson_iterator_key(&it3));
                   }
                }
 
@@ -732,7 +732,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                      }
                   else
                      {
-                     CfOut(cf_error,"", " !! Unknown key \"%s\" in variables",bson_iterator_key(&it4));
+                     CfOut(cf_inform,"", " !! Unknown key \"%s\" in variables",bson_iterator_key(&it4));
                      }
                   }
 
@@ -922,7 +922,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                else
                   {
-                  CfOut(cf_error,"", " !! Unknown key \"%s\" in promise compliance",bson_iterator_key(&it3));
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in promise compliance",bson_iterator_key(&it3));
                   }
                }
 
@@ -1078,7 +1078,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                else
                   {
-                  CfOut(cf_error,"", " !! Unknown key \"%s\" in last seen",bson_iterator_key(&it3));
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in last seen",bson_iterator_key(&it3));
                   }
                }
 
@@ -1239,7 +1239,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                else
                   {
-                  CfOut(cf_error,"", " !! Unknown key \"%s\" in last seen",bson_iterator_key(&it3));
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in last seen",bson_iterator_key(&it3));
                   }
                }
 
@@ -1356,7 +1356,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                else
                   {
-                  CfOut(cf_error,"", " !! Unknown key \"%s\" in performance",bson_iterator_key(&it3));
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in performance",bson_iterator_key(&it3));
                   }
                }
 
@@ -1895,7 +1895,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                else
                   {
-                  CfOut(cf_error,"", " !! Unknown key \"%s\" in bundle seen",bson_iterator_key(&it3));
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in bundle seen",bson_iterator_key(&it3));
                   }
                }
 
