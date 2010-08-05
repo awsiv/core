@@ -21,7 +21,7 @@ switch ($report_type)
   {
   case  "Bundle profile":
     echo "<h4>$report_type</h4>";
-    $ret = cfpr_hosts_with_bundlesseen($hostkey,$search,true);
+    $report = cfpr_report_bundlesseen($hostkey,$search,true);
     break;
     
   case  "Business value report":
