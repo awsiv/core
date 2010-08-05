@@ -44,6 +44,9 @@ if (false)
    Nova2PHP_count_red_hosts();
    Nova2PHP_count_yellow_hosts();
    Nova2PHP_count_green_hosts();
+   Nova_Header("123","123",buffer,1000);
+   Nova_Footer(buffer,1000);
+   Nova2PHP_choose_hosts("123",2,buffer,1000);
    }
 }
 
@@ -1795,6 +1798,29 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
    }
 
 Join(buffer,"\n</table>\n",bufsize);
+DeleteItemList(clist);
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_select_hosts(char *match,int n,char *buffer,int bufsize)
+
+{ struct Item *ip,*clist;
+  char work[CF_MAXVARSIZE];
+
+clist = Nova_RankHosts(match,1,cfrank_compliance,n);
+clist = SortItemListNames(clist);
+
+buffer[0] = '0';
+strcat(buffer,"<select name=\"hostkey\">\n\n\n");
+
+for (ip = clist; ip !=  NULL; ip=ip->next)
+   {
+   snprintf(work,CF_MAXVARSIZE,"<option value=\"%s\">%s</option>\n",ip->name,ip->classes);
+   Join(buffer,work,bufsize);
+   }
+
+Join(buffer,"\n</select>\n",bufsize);
 DeleteItemList(clist);
 }
 

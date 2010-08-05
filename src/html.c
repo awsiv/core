@@ -25,7 +25,7 @@ snprintf(buffer,bufsize,
 "  <head>\n"
 "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />\n"
 "    <meta http-equiv=\"refresh\" CONTENT=\"150\">\n"
-"    <title>system_knowledge::mission status</title>\n"
+"    <title>%s</title>\n"
 "    <link rel=\"stylesheet\" href=\"/cf_enterprise.css\" type=\"text/css\" media=\"screen\" />\n"
 "    <link rel=\"stylesheet\" href=\"hand_/cf_enterprise.css\" type=\"text/css\" media=\"handheld\" />\n"
 "  </head>\n"
@@ -37,7 +37,7 @@ snprintf(buffer,bufsize,
 "        </form>\n"
 "      </div> \n"
 "          <a href=\"/index.php\"><h2>CFENGINE MISSION PORTAL <span id=\"subheading\"><b>%s</b></span></h2></a>\n"
-         "    </div>\n",title);
+         "    </div>\n",title,title);
 }
 
 /*****************************************************************************/

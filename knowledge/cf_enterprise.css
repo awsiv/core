@@ -93,7 +93,7 @@ a:selected
 color: #a00;
 }
 
-a:hover{text-decoration: underline;}
+#a:hover{text-decoration: underline;}
 
 #url a:hover{text-decoration: underline;}
 
@@ -150,8 +150,21 @@ padding: 5px;
 
 #topic
 { 
-color: white;
-font-size: 150%;
+color: #30302a;
+background-color: white;
+width: 60%;
+font-size: 120%;
+padding: 5px;
+margin-top: 10px;
+}
+
+#topic p
+{ 
+color: #30302a;
+background-color: white;
+width: 60%;
+font-size: 100%;
+padding: 5px;
 margin-top: 10px;
 }
 
@@ -210,7 +223,7 @@ color:#4b4b42;
 background-color:#fff; 
 }
 
-#banner li a,li a:hover
+#banner li a
 {
 padding: 2px;
 color: white;
@@ -234,6 +247,7 @@ background-color: #fff;
 
 #image
 { 
+margin-top: 80px;
 width: 35%;
 float: right; 
 }
@@ -716,6 +730,12 @@ color: #4c4c43;
 text-decoration: none;
 }
 
+#selector
+{ 
+color: white;
+font-size: 150%;
+font-family: DejaVuSans,Vera,Arial,sans-serif;
+}
 
 
 

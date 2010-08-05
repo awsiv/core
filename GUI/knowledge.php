@@ -37,7 +37,7 @@ $id = 12;
 
 $topic = cfpr_show_topic($id);
 
-echo "<div id=\"topic\">TOPIC ($id) $topic</div>";
+echo "<div id=\"topic\">$topic</div>";
 
 $leads = cfpr_show_topic_leads($id);
 
