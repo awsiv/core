@@ -18,7 +18,20 @@
 /*****************************************************************************/
 
 void Nova_Header(char *title,char *device_type, char *buffer, int bufsize)
-{
+
+{ char *stylesheet_normal = "nova.css";
+  char *stylesheet_phone = "nova_hand.css";
+  char *css;
+  
+if (strcmp(device_type,"mobile") == 0)
+   {
+   css = stylesheet_phone;
+   }
+else
+   {
+   css = stylesheet_normal;
+   }
+  
 snprintf(buffer,bufsize,
 
 "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html>\n"
@@ -26,18 +39,18 @@ snprintf(buffer,bufsize,
 "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />\n"
 "    <meta http-equiv=\"refresh\" CONTENT=\"150\">\n"
 "    <title>%s</title>\n"
-"    <link rel=\"stylesheet\" href=\"/cf_enterprise.css\" type=\"text/css\" media=\"screen\" />\n"
+"    <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"screen\" />\n"
 "    <link rel=\"stylesheet\" href=\"hand_/cf_enterprise.css\" type=\"text/css\" media=\"handheld\" />\n"
 "  </head>\n"
 "  <body>\n"
 "    <div id=\"top\">\n"
 "      <div id=\"search\">\n"
-"        <form method=\"post\" action=\"/index.php\">\n"
+"        <form method=\"post\" action=\"%s\">\n"
 "          <p><input class=\"searchfield\" type=\"text\" name=\"search_string\" />&nbsp;Search</p>\n"
 "        </form>\n"
 "      </div> \n"
 "          <a href=\"/index.php\"><h2>CFENGINE MISSION PORTAL <span id=\"subheading\"><b>%s</b></span></h2></a>\n"
-         "    </div>\n",title,title);
+         "    </div>\n",title,css,CF_KMAP,title);
 }
 
 /*****************************************************************************/

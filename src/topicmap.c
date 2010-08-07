@@ -288,7 +288,7 @@ if (!cfdb.connected)
    return;
    }
    
-snprintf(buffer,CF_MAXVARSIZE,"<h2>The rest of the category \"%s\":</h2><ul>\n <ul>",this_name);
+snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>The rest of the category \"%s\":</h2><ul>\n <ul>",this_name);
 
 /* sub-topics of this topic-type */
 
@@ -377,7 +377,7 @@ while(CfFetchRow(&cfdb))
    Join(buffer,buf,bufsize);   
    }
 
-strcat(buffer,"</ul>\n");
+strcat(buffer,"</ul></div>\n");
 CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
 }
@@ -1012,7 +1012,12 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,char *name,int distance,in
   int j;
 
 sshort[0] = '\0';
- 
+
+if (name == NULL)
+   {
+   return false;
+   }
+
 sscanf(name,"%*[^:]::%32[^\n]",sshort);
 
 /* If more than a few nodes, don't waste visual space on repeated topics */
