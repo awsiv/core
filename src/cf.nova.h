@@ -57,6 +57,7 @@
 #define CF_MAX_LIMIT 999999
 #define CF_N_CODE '\07'
 #define CF_THIS_HH (void *)-1
+#define CF_KMAP "knowledge.php"
 
 enum cfd_menu
    {
@@ -125,7 +126,7 @@ struct CfGraphNode
    int horizon; // distance to the edge
    };
 
-#define CF_MIN_RADIUS    30.0
+#define CF_MIN_RADIUS    30.0  // Reduce this at your peril, could hang gd
 #define CF_RADIUS_SCALE  25.0
 #define CF_NODEVISIBLE   18
 #define CF_CONTAINMENT_FACTOR 1.15
