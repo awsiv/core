@@ -167,16 +167,14 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       }
    }
 
-kept /= num;
-repaired /= num;
 
-Nova_BarMeter(&cfv,1,kept_week,rep_week,"Week");
-Nova_BarMeter(&cfv,2,kept_day,rep_day,"Day");
-Nova_BarMeter(&cfv,3,kept_hour,rep_hour,"Hour");
-Nova_BarMeter(&cfv,4,kept_perf,rep_perf,"Perf");
-Nova_BarMeter(&cfv,6,kept_comms,rep_comms,"Coms");
-Nova_BarMeter(&cfv,7,kept_anom,rep_anom,"Anom");
-Nova_BarMeter(&cfv,5,kept_other,rep_other,"Sec");
+Nova_BarMeter(&cfv,1,kept_week/num,rep_week/num,"Week");
+Nova_BarMeter(&cfv,2,kept_day/num,rep_day/num,"Day");
+Nova_BarMeter(&cfv,3,kept_hour/num,rep_hour/num,"Hour");
+Nova_BarMeter(&cfv,4,kept_perf/num,rep_perf/num,"Perf");
+Nova_BarMeter(&cfv,6,kept_comms/num,rep_comms/num,"Coms");
+Nova_BarMeter(&cfv,7,kept_anom/num,rep_anom/num,"Anom");
+Nova_BarMeter(&cfv,5,kept_other/num,rep_other/num,"Sec");
 
 // Clean up
 

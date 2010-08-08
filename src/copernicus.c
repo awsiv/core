@@ -838,9 +838,8 @@ for (dr = 0; dr <= radius; dr += radius/(double)CF_SHADES)
 void Nova_MapBall(FILE *fp,struct CfDataView cfv,struct CfGraphNode n)
 
 {
-fprintf(fp,"<area shape = \"circle\" coords=\"%d,%d,%d\" href=\"%%s?next=%s\" alt=\"topic\" title=\"%s\">\n",
-        (int)Nova_X(cfv,n.x),(int)Nova_Y(cfv,n.y),(int)n.radius,n.fullname,n.fullname);
-
+fprintf(fp,"<area shape = \"circle\" coords=\"%d,%d,%d\" href=\"%s?pid=%d\" alt=\"topic\" title=\"%s\">\n",
+        (int)Nova_X(cfv,n.x),(int)Nova_Y(cfv,n.y),(int)n.radius,CF_KMAP,n.real_id,n.fullname);
 }
 
 /*****************************************************************************/

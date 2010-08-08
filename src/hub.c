@@ -17,6 +17,7 @@
 #include "cf.nova.h"
 
 extern int  NO_FORK;
+int HUB_GENERATION = 0;
 
 /*****************************************************************************/
 
@@ -32,8 +33,8 @@ Banner("Starting hub core");
 memset(&a,0,sizeof(a));
 
 a.restart_class = "nonce";
-a.transaction.ifelapsed = CF_EXEC_IFELAPSED;
-a.transaction.expireafter = CF_EXEC_EXPIREAFTER;
+a.transaction.ifelapsed = 0;
+a.transaction.expireafter = 0;
 
 thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,a,pp);
 
@@ -68,14 +69,14 @@ while (true)
    {
    time_to_run = ScheduleRun();
    
-   if (time_to_run)
+   if (time_to_run || true)
       {
       CfOut(cf_verbose,""," -> Wake up");
       struct Item *masterhostlist = Nova_ScanClients();
       
-      Nova_ParallelizeScan(masterhostlist,a,pp);
-      
+      Nova_ParallelizeScan(masterhostlist,a,pp);      
       DeleteItemList(masterhostlist);
+      HUB_GENERATION++;
       }
    }
 
@@ -109,7 +110,10 @@ for (ip = masterlist, i = 0; ip != NULL; ip=ip->next)
 
 for (i = 0; i < scans; i++)
    {
-   Nova_ScanList(list[i],a,pp);
+   if (list[i])
+      {
+      Nova_ScanList(list[i],a,pp);
+      }
    }
 }
 
@@ -118,25 +122,49 @@ for (i = 0; i < scans; i++)
 void Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp)
 
 { struct Item *ip;
-
-if ((!NO_FORK) && (fork() != 0))
-   {
-   CfOut(cf_inform,"","cf-hub spawning\n");
-   exit(0);
-   }
-
-if (!NO_FORK)
-   {
-   ActAsDaemon(0);
-   }
-
+  pid_t child_id = 1;
+  
+CfOut(cf_verbose,"","----------------------------------------------------------------\n");
+CfOut(cf_verbose,""," Initiating scan on: ");
 
 for (ip = list; ip != NULL; ip=ip->next)
    {
-   Nova_HailPeer(ip->classes,a,pp);
+   CfOut(cf_verbose,""," ? %s ",ip->name);
    }
 
-exit(0);
+CfOut(cf_verbose,"","----------------------------------------------------------------\n");
+
+if (NO_FORK)
+   {
+   for (ip = list; ip != NULL; ip=ip->next)
+      {
+      Nova_HailPeer(ip->classes,a,pp);
+      }
+   }
+else
+   {
+   CfOut(cf_verbose,"","Spawning new process...\n");
+   child_id = fork();
+
+   if (child_id == 0)
+      {
+      // Am child
+      ALARM_PID = -1;
+      
+      for (ip = list; ip != NULL; ip=ip->next)
+         {
+         Nova_HailPeer(ip->classes,a,pp);
+         }
+      
+      exit(0);
+      }
+   else
+      {
+      // Parent returns to spawn again
+      cf_pwait(child_id);
+      return;
+      }
+   }
 }
 
 /********************************************************************/
@@ -144,8 +172,9 @@ exit(0);
 int Nova_HailPeer(char *peer,struct Attributes a,struct Promise *pp)
 
 { struct cfagent_connection *conn;
-  time_t average_time;
- 
+  time_t average_time, now = time(NULL);
+  int long_time_no_see = false;
+
 a.copy.portnumber = (short)5308;
 
 CfOut(cf_inform,"","...........................................................................\n");
@@ -169,10 +198,18 @@ pp->cache = NULL;
 // Choose full / delta
 
 average_time = 600;
+long_time_no_see = (HUB_GENERATION % 12 * 6 == 0); // Every 6 hours
 
-Nova_QueryForKnowledgeMap(conn,"delta",time(0) - average_time);
-
-//Nova_QueryForKnowledgeMap(conn,"full",time(0) - average_time);
+if (long_time_no_see)
+   {
+   CfOut(cf_verbose,""," -> Running full sensor sweep");
+   Nova_QueryForKnowledgeMap(conn,"full",time(0));
+   }
+else
+   {
+   CfOut(cf_verbose,""," -> Running short range sensor sweep");
+   Nova_QueryForKnowledgeMap(conn,"delta",now - average_time);
+   }
 
 ServerDisconnection(conn);
 DeleteRlist(a.copy.servers);

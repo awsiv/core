@@ -1,11 +1,14 @@
-
 <?php
-
 cfpr_header("knowledge bank","normal");
 
-#$id = 1491;
 
-$id = 1493;
+
+$id = $_GET['pid'];
+
+if (!$id)
+   {
+   $id = 935;
+   }
 
 echo "<div id=\"image\">";
 include("/srv/www/htdocs/graphs/$id.map");
@@ -24,8 +27,11 @@ echo "<p>$hits<p>";
 
 $leads = cfpr_show_topic_leads($id);
 
-echo "$leads";
+echo "<p>$leads";
 
+$cat = cfpr_show_topic_category($id);
+
+echo "<p>$cat";
 
 cfpr_footer();
 ?>

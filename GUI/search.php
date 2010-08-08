@@ -1,13 +1,19 @@
 <?php
-cfpr_header("results","ok");
-#
-# (C) Cfengine AS, PHP temporary solution
-#
-
 
 $search = $_POST['search'];
 $hostkey = $_POST['hostkey'];
 $report_type = $_POST['report'];
+
+if ($hostkey == "")
+   {
+   $search = $_GET['search'];
+   $hostkey = $_GET['hostkey'];
+   $report_type = $_GET['report'];
+   }
+
+$hostname =  cfpr_hostname($hostkey);
+
+cfpr_header("results $hostname","ok");
 
 #$select = cfpr_select_hosts(".*",100);
 #echo $select;

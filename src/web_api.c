@@ -465,6 +465,7 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
   bson query,b;
   bson_buffer bb;
   char inout[CF_SMALLBUF];
+  time_t then;
 
 /* BEGIN query document */
 
@@ -505,10 +506,12 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
           break;
       }
 
+   then = hl->t;
+   
    snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
             "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
-            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,cf_ctime(&(hl->t)),
-            hl->hrsago,hl->hrsavg,hl->hrsdev,hl->t,
+            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,cf_ctime(&then),
+            hl->hrsago,hl->hrsavg,hl->hrsdev,
             hl->rhost->keyhash);
           
    tmpsize = strlen(buffer);

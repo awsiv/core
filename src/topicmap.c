@@ -288,9 +288,12 @@ if (!cfdb.connected)
    return;
    }
    
-snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>The rest of the category \"%s\":</h2><ul>\n <ul>",this_name);
+snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>The rest of the category \"%s\":</h2>\n",this_name);
 
 /* sub-topics of this topic-type */
+
+strcat(buffer,"<ul>\n"); // outer list
+strcat(buffer,"<li><ul>\n"); // sub for same topic
 
 snprintf(query,CF_BUFSIZE,"SELECT topic_name,topic_id,topic_type,topic_comment,pid from topics where topic_type='%s' order by topic_name asc",this_id);
 
@@ -336,7 +339,7 @@ if (count == 0)
    Join(buffer,buf,bufsize);
    }
 
-strcat(buffer,"</ul>\n");
+strcat(buffer,"</ul></li>\n"); // close sublist
 
 /* Collect data - other topics of same type */
 
@@ -351,8 +354,11 @@ if (cfdb.maxcolumns != 5)
    return;
    }
 
+count = 0;
+
 while(CfFetchRow(&cfdb))
    {
+   count++;
    strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
    strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
    strncpy(topic_type,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
@@ -377,6 +383,12 @@ while(CfFetchRow(&cfdb))
    Join(buffer,buf,bufsize);   
    }
 
+if (count == 0)
+   {
+   snprintf(buf,CF_BUFSIZE-1,"<li>No other topics</li>\n");
+   Join(buffer,buf,bufsize);   
+   }
+
 strcat(buffer,"</ul></div>\n");
 CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
@@ -392,6 +404,7 @@ void Nova_ScanLeadsAssociations(int pid,char *buffer,int bufsize)
   enum representations locator_type;
   struct Rlist *rp;
   CfdbConn cfdb;
+  int have_data = false;
 
 if (strlen(SQL_OWNER) == 0)
    {
@@ -421,13 +434,16 @@ if (cfdb.maxcolumns != 8)
 
 /* Look in both directions for associations - first into */
 
-snprintf(buffer,bufsize,"<p><div id=\"associations\">\n<h2>Insight, leads and perspectives:</h2>\n<ul>\n");
+snprintf(buffer,bufsize,"<p><div id=\"associations\">\n<h2>Insight, leads and perspectives:</h2>\n");
 
+strcat(buffer,"<ul>\n");
 save[0] = '\0';
 
 while(CfFetchRow(&cfdb))
    {
    int from_pid,to_pid;
+
+   have_data = true;
 
    strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);   
    strncpy(from_type,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
@@ -442,20 +458,28 @@ while(CfFetchRow(&cfdb))
       {
       if (strlen(save) != 0)
          {
-         strcat(buffer,"</ul>\n");
+         strcat(buffer,"</ul></li>\n");
          }
       
       strncpy(save,fassociation,CF_BUFSIZE-1);
       
-      snprintf(work,CF_MAXVARSIZE,"<li>  %s \"%s\" \n<ul>\n",from_name,fassociation);
+      snprintf(work,CF_MAXVARSIZE,"<li>  %s \"%s\" \n <ul>\n",from_name,fassociation);
       Join(buffer,work,bufsize);
       }
    
-   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s) \n",Nova_PidURL(to_pid,to_name),to_type);
+   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s)</li>\n",Nova_PidURL(to_pid,to_name),to_type);
    Join(buffer,work,bufsize);
    }
 
-strcat(buffer,"</ul>\n");
+if (!have_data)
+   {
+   snprintf(work,CF_MAXVARSIZE,"<li>(no data) </li>\n");
+   Join(buffer,work,bufsize);   
+   }
+else
+   {
+   strcat(buffer,"</ul></li>\n"); // still have one open <ul> now
+   }
 
 CfDeleteQuery(&cfdb);
 
@@ -474,10 +498,12 @@ if (cfdb.maxcolumns != 8)
    }
 
 save[0] = '\0';
+have_data = false;
 
 while(CfFetchRow(&cfdb))
    {
    int from_pid,to_pid;
+   have_data = true;
 
    strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);   
    strncpy(from_type,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
@@ -493,7 +519,7 @@ while(CfFetchRow(&cfdb))
       {
       if (strlen(save) != 0)
          {
-         strcat(buffer,"</ul>\n");
+         strcat(buffer,"</ul></li>\n");
          }
       
       strncpy(save,bassociation,CF_BUFSIZE-1);
@@ -502,12 +528,22 @@ while(CfFetchRow(&cfdb))
       Join(buffer,work,bufsize);
       }
    
-   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s) \n",Nova_PidURL(from_pid,from_name),from_type);
+   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s)<li> \n",Nova_PidURL(from_pid,from_name),from_type);
    Join(buffer,work,bufsize);
    }
 
-strcat(buffer,"</ul></div>\n");
+if (have_data)
+   {
+   strcat(buffer,"</ul></li>\n");
+   }
+else
+   {
+   snprintf(work,CF_MAXVARSIZE,"<li> (no data)</li> \n");
+   Join(buffer,work,bufsize);   
+   }
 
+strcat(buffer,"</ul></div>\n");
+   
 CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
 }
@@ -519,7 +555,8 @@ void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
 { char topic_name[CF_BUFSIZE],topic_type[CF_BUFSIZE],query[CF_MAXVARSIZE];
   char locator[CF_BUFSIZE],subtype[CF_BUFSIZE];
   enum representations locator_type;
-  CfdbConn cfdb;  
+  CfdbConn cfdb;
+  int have_data = false;
 
 if (strlen(SQL_OWNER) == 0)
    {
@@ -572,12 +609,18 @@ snprintf(buffer,bufsize,
 
 while(CfFetchRow(&cfdb))
    {
+   have_data = true;
    strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
    strncpy(locator,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
    locator_type = Str2Int(CfFetchColumn(&cfdb,2));
    strncpy(subtype,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
 
    Nova_AddOccurrenceBuffer(locator,locator_type,subtype,buffer,bufsize);
+   }
+
+if (!have_data)
+   {
+   strcat(buffer,"<li>None</li>");
    }
 
 strcat(buffer,"</ul></div>\n");

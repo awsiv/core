@@ -1483,7 +1483,7 @@ void Nova_PackLastSeen(struct Item **reply,char *header,time_t from,enum cfd_men
   time_t tid = time(NULL);
   double now = (double)tid,average = 0, var = 0;
   double ticksperhr = (double)CF_TICKS_PER_HOUR;
-  char name[CF_BUFSIZE],hostname[CF_BUFSIZE],buffer[CF_BUFSIZE];
+  char name[CF_BUFSIZE],hostkey[CF_BUFSIZE],buffer[CF_BUFSIZE];
   struct CfKeyHostSeen entry;
   int ret,ksize,vsize,first = true;
 
@@ -1518,7 +1518,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    char tbuf[CF_BUFSIZE],addr[CF_BUFSIZE];
 
    memcpy(&then,value,sizeof(then));
-   strncpy(hostname,(char *)key,ksize);
+   strncpy(hostkey,(char *)key,ksize);
 
    if (value != NULL)
       {
@@ -1537,7 +1537,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    if (now - then > (double)LASTSEENEXPIREAFTER)
       {
       DeleteDB(dbp,key);
-      CfOut(cf_inform,""," -> Deleting expired entry for %s\n",hostname);
+      CfOut(cf_inform,""," -> Deleting expired entry for %s\n",hostkey);
       continue;
       }
 
@@ -1550,8 +1550,8 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       }
 
    snprintf(buffer,CF_BUFSIZE-1,"%c %s %s %s %ld %.2lf %.2lf %.2lf\n",
-           *hostname,
-           hostname+1,
+           *hostkey,
+           hostkey+1,
            IPString2Hostname(addr),
            addr,
            (long)fthen,
