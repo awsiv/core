@@ -1,0 +1,763 @@
+html{height: 100%;}
+
+body
+{ font-family: DejaVuSans,Vera,Arial,sans-serif;
+  padding: 0px;
+  margin: 10px;
+  font-size: 11px;;
+  color: #116622;
+  background: #4b4b42;
+}
+
+#wholebody
+{  
+width: 1000px;
+border: 1px;
+padding: 10px;
+}
+
+p
+{ margin: 0px;
+  padding: 0px 0px 6px 0px;
+  line-height: 1.7em;
+  font-size: 120%;
+}
+
+#menu
+{ 
+font-size: 110%;
+font-family: DejaVuSans,Vera,Arial,sans-serif;
+}
+
+#man pre
+{  
+font-family: courier;
+font-size: 11px;
+}
+
+#logo
+{  
+width: 60%;
+background-color: #efe ;
+padding: 10px;
+}
+
+table
+{  
+border: none;
+}
+
+h1
+{ 
+font-family: DejaVuSans,Vera,Aria,sans-serifl;
+font-weight: normal;
+background-color: #30302a;
+color: #73b167;
+padding: 10px;
+}
+
+a
+{  
+color: #07c;
+text-decoration: none;
+}
+
+h2
+{
+padding: 0px 10px 4px 10px;
+font-size: 120%;
+}
+
+h3
+{
+padding: 0px 10px 4px 10px;
+font-size: 120%;
+background-color: #fff;
+}
+
+
+h4
+{
+padding: 6px;
+font-size: 100%;
+}
+
+#url a
+{  
+color: #d00;
+text-decoration: none;
+}
+
+
+#a:hover{text-decoration: underline;}
+
+#url a:hover{text-decoration: underline;}
+
+blockquote
+{ background: #FFFFFF;
+  color: #11aa22;
+  border-color: #767676;
+}
+
+#intro
+{
+background-color: #fff; 
+width: 60%;
+/* border: 2px;*/
+color: #11aa22;
+padding: 5px;
+border-color: black;
+font-size: 100%;
+}
+
+#disambig
+{
+background-color: #fff; 
+width: 100%;
+/* border: 2px;*/
+color: #11aa22;
+padding: 5px;
+border-color: black;
+font-size: 100%;
+}
+
+#in
+{
+background: #ccc;
+float: right;
+}
+
+#associations
+{  
+color: #30302a;
+background-color: white; 
+/*border: 1px solid;*/
+width: 45%;
+padding: 5px;
+}
+
+#ontology
+{  
+background-color: #fff; 
+/*border: 1px solid;*/
+width: 100%;
+padding: 5px;
+}
+
+#topic
+{ 
+color: #30302a;
+background-color: white;
+width: 60%;
+font-size: 120%;
+padding: 5px;
+margin-top: 10px;
+}
+
+#topic p
+{ 
+color: #30302a;
+background-color: white;
+width: 45%;
+font-size: 100%;
+padding: 5px;
+margin-top: 10px;
+}
+
+#subheading b
+{  
+color: #73b167;
+}
+
+#occurrences
+{  
+background-color: #fff; 
+color: #30302a;
+width: 45%;
+padding: 5px;
+}
+
+
+#others
+{  
+color: #30302a;
+background-color: #fff; 
+/*border: 1px solid;*/
+width: 45%;
+padding: 5px;
+}
+
+#roles
+{  
+background-color: #fff; 
+margin-left: 20px;
+border: 1px solid;
+width: 460px;
+padding: 5px;
+}
+
+
+#thistype
+{  
+background-color: #eee; 
+/*border: 1px solid;*/
+width: 60%;
+padding: 5px;
+}
+
+
+blockquote
+{ 
+background: #FFFFFF;
+color: #11aa22;
+border-color: #767676;
+}
+
+#tab li a
+{ 
+color:#4b4b42;
+background-color:#fff; 
+}
+
+#banner li a
+{
+padding: 2px;
+color: white;
+background-color: #4b4b42;
+float: left;
+width: 14em;
+border: 1px;
+font-size: 120%;
+text-decoration: none;
+}
+
+#banner ul
+{ 
+list-style-type: none;
+list-style-image: none;
+border: 1px;
+background-color: #fff;
+} 
+
+
+#image
+{ 
+float: right; 
+}
+
+#image img
+{  
+width: 100%;
+float: right;
+border: solid 0px;
+margin-left: 10px;
+margin-bottom: 10px;
+}
+
+#embedded_image a img
+{  
+border: solid 0px;
+}
+
+#top
+{
+margin: 5px;
+background-color: #30302a;
+}
+
+#top li
+{ 
+width: 150px;
+}
+
+
+
+#search
+{ 
+color: #fff;
+float: right; 
+padding: 18px 15px 0px 0px;
+}
+
+
+#top h2
+{  
+padding: 15px;
+color: white;
+font-size: 160%;
+font-weight: normal;
+}
+
+/* footer */
+#footer
+{ 
+position: relative;
+width: 100%;
+height: 22px;
+padding: 10px;
+text-align: center; 
+border-top: 2px solid #F2F2F0;
+background: #30302a;
+color: white;
+margin-top: 10px;
+clear: both;
+display: none;
+}
+
+#footer a
+{ background: transparent;
+  color: #FFF;
+}
+
+#footer a:hover
+{
+margin: 10px;
+ background: transparent;
+  color: #555;
+}
+
+/* ------------------------------------------------*/
+
+#graph{ padding: 5px; }
+
+
+#histoanalysis
+{
+padding: 10px;
+background-color: #9d9777;
+color: #efeacc;
+}
+
+#weekanalysis table
+{
+padding: 5px;
+background-color: #9d9777;
+color: #efeacc;
+}
+
+#weekanalysis tr td
+{
+padding: 5px;
+background-color: #9d9777;
+color: #efeacc;
+}
+
+#maganalysis
+{  
+padding: 5px;
+background-color: #9d9777;
+color: #efeacc;
+}
+
+#longhistory
+{  
+padding: 5px;
+background-color: #9d9777;
+}
+
+/* ------------------------------------------------*/
+
+#legend
+{ 
+width: 610px;
+background-color: white;
+}
+
+#info
+{  
+color: #484842;
+font-size: 120%;
+}
+
+#info ul
+{ 
+margin-top: 10px;
+ }
+
+#info li
+{  
+padding: 7px;
+}
+
+#meter img
+{  
+padding: 5px;
+}
+
+#primary
+{  
+left: 3px;
+top: 6px;
+width: 100%;
+height:400px;
+}
+
+
+#primary h2
+{
+padding: 0px 10px 4px 10px;
+font-size: 120%;
+}
+
+
+#primary h4
+{
+padding: 6px;
+font-size: 100%;
+background-color: #fff;
+}
+
+#reporttext
+{ 
+width: 100%;
+}
+
+#reporttext h4
+{  
+background-color: #fff;
+padding: 5px;
+}
+
+
+#reporttext table
+{  
+width: 100%
+}
+
+#reporttext a
+{  
+color: #07c;
+}
+
+
+
+#primary table
+{
+background-color: white;
+width: 100%;
+}
+
+
+#primary ul
+{
+padding: 15px;
+list-style-type: none;
+list-style-image: none;
+border: none;
+}
+
+
+#primary td
+{
+font-size: 12px;
+padding: 5px;
+background-color: #f0f0eb;
+color: #4c4c43;
+border: solid 1px;
+border-color: #cecec7;
+}
+
+#primary th
+{
+padding: 10px;
+background-color: #f0f0eb;
+color: #4c4c43;
+border: solid 1px;
+border-color: #cecec7;
+}
+
+#explain table
+{ 
+margin-left: 100px;
+width: 300px;
+border-color: #4e8b8c;
+border-style: solid;
+border-width: 1px;
+}
+
+#explain td
+{ 
+background-color: #7d7757;
+font-size: 8px;
+font-weight: normal;
+}
+
+
+#rbuttons a
+{  
+padding: 10px;
+}
+
+#showvars TH 
+{ background: #aabbFF;
+font-family: DejaVuSans,Vera,Arial,sans-serif;
+font-size: 8pt;
+}
+
+#showvars TD { color: #000000;
+     background: #fff;
+     font-family: DejaVuSans,Vera,Arial;
+  font-size: 8pt;
+     padding: 5px;
+   }
+
+#showvars PRE { font-family: "Lucida Typewriter", "Courier", monotype;
+      font-style: normal;
+      font-size: 8pt;
+      background-color: #eee;
+    }
+
+#signalred table
+{  
+background-color: #d02d48;
+padding: 0px;
+border: 0px;
+}
+
+
+#signalred td
+{  
+color: #4c4c43;
+background-color: #d02d48;
+border: none;
+}
+
+#allhosts p
+{  
+font-size: 80%;
+}
+
+#allhosts img
+{  
+float: left;
+padding: 10px;
+}
+
+#allhosts table
+{  
+table-layout: fixed;
+width: 100%;
+}
+
+#signalyellow table
+{  
+background-color:  #f2ee86;
+padding: 0px;
+border: 0px;
+}
+
+#signalyellow td
+{  
+color: #4c4c43;
+background-color: #f2ee86;
+}
+
+#signalgreen table
+{  
+color: #4c4c43;
+background-color: #73b167;
+}
+
+#signalgreen td
+{  
+color: #4c4c43;
+background-color: #73b167;
+}
+
+#allhosts td
+{ 
+background-color: white;
+}
+
+#signalred a
+{
+color: red;
+padding: 10px;
+line-height: 110%;
+}
+
+#signalyellow a
+{  
+color: yellow;
+padding: 10px;
+line-height: 110%;
+}
+
+#signalgreen a
+{  
+color: green;
+padding: 10px;
+line-height: 110%;
+}
+
+
+#bundle
+{
+background-color: #eee;
+padding: 10px;
+}
+
+#nav
+{  
+margin-bottom: 20px;
+}
+
+#directory img
+{  
+float: left;
+margin-left: 20px;
+}
+
+#directory td
+{  
+font-size: 60%;
+padding: 0px;
+}
+
+#ok
+{
+width: 100%;
+background-color: white;
+padding: 0px;
+color: #090;; 
+}
+
+#warning
+{  
+width: 780px;
+padding: 0px;
+background-color: white;
+color: #f00;
+}
+
+
+
+.lval
+{  
+color:  #119922;
+}
+
+.rval
+{ 
+color: #a00;
+
+}
+
+.bodytype 
+{ 
+color: #060;
+font-weight: bold;
+}
+
+.bodyname 
+{ 
+color: #a00;
+font-weight: bold;
+}
+
+.args 
+{ 
+color: #966;
+font-weight: bold;
+}
+
+.context
+{ 
+color: #00a;
+font-weight: bold;
+}
+
+#change
+{
+width: 80%;  
+font-family: courier;
+color: blue;
+}
+
+#line
+{
+font-family: courier;
+color: red;
+}
+
+
+#pm
+{  
+font-family: courier;
+}
+
+
+#below
+{  
+font-family: DejaVuSans,Vera,Arial,sans-serif;
+background-color: #6cb150;
+padding: 5px;
+}
+
+#above
+{  
+font-family: DejaVuSans,Vera,Arial,sans-serif;
+background-color: #bd3a2b;
+padding: 5px;
+}
+
+#last
+{  
+font-family: DejaVuSans,Arial,sans-serif;
+background-color: #f2ca77;
+padding: 5px;
+}
+
+#subject
+{
+font-size: 130%;
+color: #9e9e97;
+ }
+
+#category
+{
+font-size: 110%;
+color: #4c4c43;
+text-decoration: none;
+}
+
+#selector
+{ 
+color: white;
+background-color: #30302a;
+font-size: 120%;
+font-family: DejaVuSans,Vera,Arial,sans-serif;
+}
+
+
+#selector a
+{ 
+color: white;
+font-size: 100%;
+font-family: DejaVuSans,Vera,Arial,sans-serif;
+}
+
+#selector table
+{ 
+background-color: #30302a ;
+border: 0px;
+}
+
+#selector td
+{ 
+color: white;
+background-color: #30302a;
+font-size: 100%;
+font-family: DejaVuSans,Vera,Arial,sans-serif;
+}
+
+#selector li
+{  
+padding: 4px;
+}
+
+
+
+
+
+
