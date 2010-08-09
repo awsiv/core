@@ -385,16 +385,15 @@ printf("SETUID: (%s)\nSETUID\n\n",buff);
 
 Nova2PHP_bundle_report(NULL,NULL,0,buff,10000);
 printf("BUNDLE: (%s)\nBUNDLE\n\n",buff);
-
+*/
 Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",buff,10000);
 printf("CHANGE: (%s)\nCHANGE\n\n",buff);
 
 Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",buff,10000);
 printf("CHANGE: (%s)\nCHANGE\n\n",buff);
 
-Nova2PHP_bundle_hosts(NULL,NULL,0,buff,10000);
-printf("HOSTS WITH: (%s)\nHOSTSWITH\n\n",buff);
-*/
+//Nova2PHP_bundle_hosts(NULL,NULL,0,buff,10000);
+//printf("HOSTS WITH: (%s)\nHOSTSWITH\n\n",buff);
 
 //Nova_PerformancePage("MD5=4a37e48645122312daf7862f2a0f0ef7");
 //Nova_PerformancePage("/srv/www/htdocs","MD5=4dda03e4f9b7547b3dc52aa463059d90",buffer,200000);

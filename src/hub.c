@@ -76,7 +76,6 @@ while (true)
       
       Nova_ParallelizeScan(masterhostlist,a,pp);      
       DeleteItemList(masterhostlist);
-      HUB_GENERATION++;
       }
    }
 
@@ -198,7 +197,7 @@ pp->cache = NULL;
 // Choose full / delta
 
 average_time = 600;
-long_time_no_see = (HUB_GENERATION % 12 * 6 == 0); // Every 6 hours
+long_time_no_see = (HUB_GENERATION++ % 12 * 6 == 0); // Every 6 hours
 
 if (long_time_no_see)
    {
