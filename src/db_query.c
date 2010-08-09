@@ -34,7 +34,7 @@ void CFDB_GetValue(char *lval,char *rval,int size)
   mongo_cursor *cursor;
   mongo_connection conn;
  
-if (!CFDB_Open(&conn, "127.0.0.1", 27017))
+if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return;
@@ -1981,6 +1981,8 @@ bson_from_buffer(&field, &bb);
 
 start_slot = GetTimeSlot(start_time);
 
+// Check that start + 4 hours is not greater than the week buffer
+
 wrap_around = (int)start_slot + CF_MAGDATA - CF_MAX_SLOTS;
 
 /* BEGIN SEARCH */
@@ -2007,7 +2009,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
             // Select the past 4 hours
             
-            if (wrap_around > 0)
+            if (wrap_around >= 0)
                {
                if (st >= wrap_around || st < start_slot)
                   {
@@ -2022,6 +2024,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                }
 
+            ok = true; // Have some relevant data
             q = e = d = 0;
 
             while (bson_iterator_next(&it3))
@@ -2048,6 +2051,9 @@ while (mongo_cursor_next(cursor))  // loops over documents
          }
       }
    }
+
+// Now we should transform the data to re-order during wrap-around,
+// since at the boundary the data come in the wrong order
 
 bson_destroy(&field);
 mongo_cursor_destroy(cursor);
@@ -2109,6 +2115,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             // Select the past 4 hours
             
             q = e = d = 0;
+            ok  = true;
 
             while (bson_iterator_next(&it3))
                {

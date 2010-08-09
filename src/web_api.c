@@ -113,7 +113,7 @@ if (hostkey && strlen(hostkey) != 0)
    bson_from_buffer(&query,&bb);
    }
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -176,7 +176,7 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *returnval,i
 
 /* BEGIN query document */
  
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -241,7 +241,7 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
   bson query,b;
   bson_buffer bb;
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -331,7 +331,7 @@ switch (*cmp)
        break;
    }
   
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -399,7 +399,7 @@ int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int reg
 
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -469,7 +469,7 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
 
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -552,7 +552,7 @@ int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *returnva
 
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -621,7 +621,7 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *returnval,in
 
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -689,7 +689,7 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *returnval,
 
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -766,7 +766,7 @@ switch (*cmp)
        break;
    }
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -840,7 +840,7 @@ switch (*cmp)
        break;
    }
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -919,7 +919,7 @@ else
    return false;
    }
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -985,7 +985,7 @@ if (hostkey && strlen(hostkey) != 0)
    bson_from_buffer(&query,&bb);
    }
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1044,7 +1044,7 @@ int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *returnval,in
 
 /* BEGIN query document */
  
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1105,7 +1105,7 @@ int Nova2PHP_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *ty
   bson query,b;
   bson_buffer bb;
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1175,7 +1175,7 @@ switch (*cmp)
        break;
    }
   
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1237,7 +1237,7 @@ int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,cha
 
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1301,7 +1301,7 @@ int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress
 
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1363,7 +1363,7 @@ int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *returnval
 
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1425,7 +1425,7 @@ int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *returnval,int
 
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1488,7 +1488,7 @@ int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *returnval,i
 
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1557,7 +1557,7 @@ switch (*cmp)
        break;
    }
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1628,7 +1628,7 @@ switch (*cmp)
        break;
    }
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;

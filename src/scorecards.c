@@ -105,7 +105,7 @@ gdImageRectangle(cfv.im,0,0,cfv.width+2*cfv.margin,cfv.height+2*cfv.margin,BLACK
 
 // get data
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    }
@@ -230,7 +230,7 @@ gdImageRectangle(cfv.im,0,0,cfv.width+2*cfv.margin,cfv.height+2*cfv.margin,BLACK
 
 // get data
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    }
@@ -458,7 +458,7 @@ struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_m
   mongo_connection conn;
   struct Item *list = NULL;
 
-if (!CFDB_Open(&conn, "127.0.0.1", 27017))
+if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return NULL;

@@ -79,7 +79,7 @@ void Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observable
   int i;
   mongo_connection dbconn;
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    {
    CfOut(cf_verbose,"","!! Could not open connection to report database");
    }

@@ -99,7 +99,7 @@ void Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables o
   mongo_connection dbconn;
   double q[CF_TIMESERIESDATA],e[CF_TIMESERIESDATA],d[CF_TIMESERIESDATA];
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    }

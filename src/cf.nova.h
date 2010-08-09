@@ -58,6 +58,7 @@
 #define CF_N_CODE '\07'
 #define CF_THIS_HH (void *)-1
 #define CF_KMAP "knowledge.php"
+#define CFDB_PORT 27017
 
 enum cfd_menu
    {

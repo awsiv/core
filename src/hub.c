@@ -69,7 +69,7 @@ while (true)
    {
    time_to_run = ScheduleRun();
    
-   if (time_to_run || true)
+   if (time_to_run)
       {
       CfOut(cf_verbose,""," -> Wake up");
       struct Item *masterhostlist = Nova_ScanClients();

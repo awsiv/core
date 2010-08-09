@@ -75,7 +75,7 @@ void Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables ob
   mongo_connection dbconn;
   double histo[CF_GRAINS];
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
+if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    }
