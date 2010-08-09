@@ -934,8 +934,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   snprintf(buffer1,CF_MAXVARSIZE-1,"%s,",hh->hostname);
-   snprintf(buffer2,CF_MAXVARSIZE-1,"%s,",hh->ipaddr);
+   snprintf(buffer1,CF_MAXVARSIZE-1,"%s ",hh->hostname);
+   snprintf(buffer2,CF_MAXVARSIZE-1,"%s ",hh->ipaddr);
 
    tmpsize1 = strlen(buffer1);
    tmpsize2 = strlen(buffer2);

@@ -690,7 +690,7 @@ void CFDB_SaveLastSeen(mongo_connection *conn, char *keyhash, struct Item *data)
  
 // find right host
 bson_buffer_init(&bb);
-bson_append_string(&bb, cfr_keyhash, keyhash);
+bson_append_string(&bb,cfr_keyhash,keyhash);
 bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
@@ -711,8 +711,8 @@ for (ip = data; ip != NULL; ip=ip->next)
    
    then = (time_t)fthen;
    
-   snprintf(varName, sizeof(varName), "%s.%c%s", cfr_lastseen,inout,keyhash);
-   
+   snprintf(varName, sizeof(varName), "%s.%c%s", cfr_lastseen,inout,hostkey);
+
    sub = bson_append_start_object(setObj, varName);
    bson_append_string(sub, cfr_dnsname, dns);
    bson_append_string(sub, cfr_ipaddr, ipaddr);
@@ -748,7 +748,7 @@ void CFDB_SaveMeter(mongo_connection *conn, char *keyhash, struct Item *data)
 
 // find right host
 bson_buffer_init(&bb);
-bson_append_string(&bb, cfr_keyhash, keyhash);
+bson_append_string(&bb,cfr_keyhash,keyhash);
 bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
