@@ -197,7 +197,7 @@ pp->cache = NULL;
 // Choose full / delta
 
 average_time = 600;
-long_time_no_see = (HUB_GENERATION++ % 12 * 6 == 0); // Every 6 hours
+long_time_no_see = (HUB_GENERATION % (12 * 6) == 0); // Every 6 hours
 
 if (long_time_no_see)
    {
@@ -210,6 +210,7 @@ else
    Nova_QueryForKnowledgeMap(conn,"delta",now - average_time);
    }
 
+HUB_GENERATION
 ServerDisconnection(conn);
 DeleteRlist(a.copy.servers);
 return true;
