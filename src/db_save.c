@@ -1085,7 +1085,7 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SaveValue(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveValueReport(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
   bson_buffer *pushObj;

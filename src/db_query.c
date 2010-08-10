@@ -1809,6 +1809,146 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
+struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,bson *query,enum promiselog_rep type,char *lhandle,int regex)
+
+{ bson_buffer bb,*sub1,*sub2,*sub3;
+  bson b,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct HubHost *hh;
+  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+  double rago,ravg,rdev;
+  char rhandle[CF_MAXVARSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  int match_name,found = false;
+  time_t rt;
+  
+/* BEGIN query document */
+
+  // Can't understand the bson API for nested objects this, so work around..
+
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+
+switch (type)
+   {
+   case plog_repaired:
+       bson_append_int(&bb,cfr_repairlog,1);
+       break;
+   case plog_notkept:
+   default:
+       bson_append_int(&bb,cfr_notkeptlog,1);
+       break;
+   }
+
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+hostnames[0] = '\0';
+addresses[0] = '\0';
+
+cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   found = false;
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
+
+      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      
+      /* Query specific search/marshalling */
+
+      if (strcmp(bson_iterator_key(&it1),cfr_repairlog) == 0 || strcmp(bson_iterator_key(&it1),cfr_notkeptlog) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+
+            rhandle[0] = '\0';
+            rt = 0;
+            
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_promisehandle) == 0)
+                  {
+                  strncpy(rhandle,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
+                  {
+                  rt = bson_iterator_int(&it3);
+                  }
+               else
+                  {
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in bundle seen",bson_iterator_key(&it3));
+                  }
+               }
+
+            match_name = true;
+            
+            if (regex)
+               {
+               if (lhandle && !FullTextMatch(lhandle,rhandle))
+                  {
+                  match_name = false;
+                  }
+               }
+            else
+               {
+               if (lhandle && (strcmp(lhandle,rhandle) != 0))
+                  {
+                  match_name = false;
+                  }
+               }
+            
+            if (match_name)
+               {
+               found = true;
+               rp = AppendRlistAlien(&record_list,NewHubPromiseLog(CF_THIS_HH,rhandle,rt));
+               }            
+            }
+         }   
+      }
+
+   if (found)
+      {
+      hh = NewHubHost(keyhash,addresses,hostnames);
+      AppendRlistAlien(&host_list,hh);
+
+      // Now cache the host reference in all of the records to flatten the 2d list
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubPromiseLog *hs = (struct HubPromiseLog *)rp->item;
+
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
+      }
+   }
+
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,record_list);
+}
+
+/*****************************************************************************/
+
 struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn,bson *query,char *lname,int regex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;

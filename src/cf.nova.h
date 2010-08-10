@@ -306,6 +306,7 @@ void CFDB_GetValue(char *lval,char *rval,int size);
 
 struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query);
 
+struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,bson *query,enum promiselog_rep type,char *lhandle,int regex);
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,bson *query,char *type,char *name,char *ver,char *arch,int regex);
 struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,bson *query,char *lclass,int regex);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,bson *query,char *lversion,time_t ltime,int lkept,int lnotkept,int lrepaired,int cmp);
@@ -356,7 +357,7 @@ void CFDB_SavePromiseCompliance(mongo_connection *conn, char *kH, struct Item *d
 void CFDB_SaveFileChanges(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveFileDiffs(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveBundles(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveValue(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveValueReport(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr);
 #endif
 

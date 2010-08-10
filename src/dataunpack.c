@@ -453,7 +453,7 @@ CfOut(cf_verbose,""," -> Value data..............................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   CFDB_SaveValue(dbconn,id,data);
+   CFDB_SaveValueReport(dbconn,id,data);
    }
 #endif
 
