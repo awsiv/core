@@ -305,7 +305,7 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 void CFDB_GetValue(char *lval,char *rval,int size);
 
 struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query);
-
+struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,bson *query,char *lday,char *lmonth,char *lyear);
 struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,bson *query,enum promiselog_rep type,char *lhandle,int regex);
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,bson *query,char *type,char *name,char *ver,char *arch,int regex);
 struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,bson *query,char *lclass,int regex);
@@ -507,6 +507,8 @@ struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t)
 void DeleteHubFileChanges(struct HubFileChanges *hp);
 struct HubFileDiff *NewHubFileDiff(struct HubHost *hh,char *file,char *diff,time_t t);
 void DeleteHubFileDiff(struct HubFileDiff *hp);
+struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double repaired,double notkept);
+void DeleteHubValue(struct HubValue *hp);
 
 /* knowledge.c */
 
@@ -791,6 +793,8 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,char *name,int distance,in
 
 void Nova_EnterpriseModuleTrick(void);
 
+int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize);
+int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *buffer,int bufsize);
 void Nova2PHP_summary_meter(char *docroot,char *hostkey);
 int Nova2PHP_hostinfo(char *hostkey,char *hostname,char *ipaddress,int bufsize);
 void Nova2PHP_performance_analysis(char *docroot,char *hostkey,char *buffer,int bufsize);
@@ -1195,6 +1199,15 @@ struct HubBundleSeen
    double hrsavg;
    double hrsdev;
    time_t t;
+   };
+
+struct HubValue
+   {
+   struct HubHost *hh;      
+   char* day;
+   double kept;
+   double repaired;
+   double notkept;
    };
 
 struct HubMeter

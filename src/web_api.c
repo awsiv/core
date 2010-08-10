@@ -93,6 +93,144 @@ Nova_PerformancePage(docroot,hostkey,buffer,bufsize);
 /* Search for answers                                                        */
 /*****************************************************************************/
 
+int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE];
+  struct HubPromiseLog *hp;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true);
+   }
+else
+   {
+   hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true);
+   }
+
+returnval[0] = '\0';
+
+strcat(returnval,"<table>\n");
+count += strlen(returnval);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hp = (struct HubPromiseLog *)rp->item;
+
+   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+            hp->hh->hostname,hp->handle,cf_ctime(&(hp->t)));
+          
+   tmpsize = strlen(buffer);
+   
+   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
+      {
+      break;
+      }
+   
+   strcat(returnval,buffer);
+   count += tmpsize;
+   }
+
+strcat(returnval,"</table>\n");
+
+DeleteHubQuery(hq,DeleteHubPromiseLog);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *returnval,int bufsize)
+
+{ struct HubValue *hp;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+  char buffer[CF_BUFSIZE];
+
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   hq = CFDB_QueryValueReport(&dbconn,&query,day,month,year);
+   }
+else
+   {
+   hq = CFDB_QueryValueReport(&dbconn,&query,day,month,year);
+   }
+
+returnval[0] = '\0';
+
+strcat(returnval,"<table>\n");
+count += strlen(returnval);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hp = (struct HubValue *)rp->item;
+
+   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+            hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept);
+          
+   tmpsize = strlen(buffer);
+   
+   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
+      {
+      break;
+      }
+   
+   strcat(returnval,buffer);
+   count += tmpsize;
+   }
+
+strcat(returnval,"</table>\n");
+
+DeleteHubQuery(hq,DeleteHubValue);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+
+
+}
+
+/*****************************************************************************/
+
 int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];

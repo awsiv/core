@@ -384,6 +384,33 @@ free(hp);
 
 /*****************************************************************************/
 
+struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double repaired,double notkept)
+
+{ struct HubValue *hp;
+     
+if ((hp = malloc(sizeof(struct HubValue))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubValue");
+   }
+
+hp->hh = hh;
+hp->day = strdup(day);
+hp->kept = kept;
+hp->repaired = repaired;
+hp->notkept = notkept;
+return hp;
+}
+
+/*****************************************************************************/
+
+void DeleteHubValue(struct HubValue *hp)
+{
+free(hp->day);
+free(hp);
+}
+
+/*****************************************************************************/
+
 struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t,double q,double e,double d)
 
 { struct HubPerformance *hp;

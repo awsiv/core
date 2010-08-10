@@ -1894,7 +1894,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                else
                   {
-                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in bundle seen",bson_iterator_key(&it3));
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in promise log",bson_iterator_key(&it3));
                   }
                }
 
@@ -1933,6 +1933,147 @@ while (mongo_cursor_next(cursor))  // loops over documents
       for (rp = record_list; rp != NULL; rp=rp->next)
          {
          struct HubPromiseLog *hs = (struct HubPromiseLog *)rp->item;
+
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
+      }
+   }
+
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,record_list);
+}
+
+/*****************************************************************************/
+
+struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,bson *query,char *lday,char *lmonth,char *lyear)
+
+{ bson_buffer bb,*sub1,*sub2,*sub3;
+  bson b,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct HubHost *hh;
+  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+  double rkept,rnotkept,rrepaired;
+  char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  int match_day,match_month,match_year,found = false;
+  time_t rt;
+  
+/* BEGIN query document */
+
+  // Can't understand the bson API for nested objects this, so work around..
+
+  // Turn start_time into Day Month Year
+  
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,cfr_valuereport,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+hostnames[0] = '\0';
+addresses[0] = '\0';
+
+cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   found = false;
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
+
+      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      
+      /* Query specific search/marshalling */
+
+      if (strcmp(bson_iterator_key(&it1),cfr_valuereport) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+
+            rday[0] = '\0';
+            rkept = 0;
+            rnotkept = 0;
+            rrepaired = 0;
+            
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_day) == 0)
+                  {
+                  strncpy(rday,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_kept) == 0)
+                  {
+                  rkept = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_notkept) == 0)
+                  {
+                  rkept = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_repaired) == 0)
+                  {
+                  rkept = bson_iterator_double(&it3);
+                  }
+               else
+                  {
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in value report",bson_iterator_key(&it3));
+                  }
+               }
+
+            match_day = match_month = match_year = true;
+            
+            if (lday && (strcmp(lday,rday) != 0))
+               {
+               match_day = false;
+               }
+            
+            if (lmonth && (strcmp(lmonth,rmonth) != 0))
+               {
+               match_month = false;
+               }
+
+            if (lyear && (strcmp(lyear,ryear) != 0))
+               {
+               match_year = false;
+               }
+            
+            if (match_day && match_month && match_year)
+               {
+               found = true;
+               rp = AppendRlistAlien(&record_list,NewHubValue(CF_THIS_HH,rday,rkept,rrepaired,rnotkept));
+               }
+            }
+         }   
+      }
+
+   if (found)
+      {
+      hh = NewHubHost(keyhash,addresses,hostnames);
+      AppendRlistAlien(&host_list,hh);
+
+      // Now cache the host reference in all of the records to flatten the 2d list
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubValue *hs = (struct HubValue *)rp->item;
 
          if (hs->hh == CF_THIS_HH)
             {
