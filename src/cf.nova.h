@@ -614,6 +614,12 @@ struct CfFileLine *AppendFileLine(struct CfFileLine **liststart,char *item,int p
 void DeleteAllFileLines(struct CfFileLine *item);
 void DeleteFileLine(struct CfFileLine  **liststart,struct CfFileLine *item);
 
+/* promise_db.c */
+
+void Nova_StoreExpandedPromise(struct Promise *pp);
+void Nova_StoreUnExpandedPromises(struct Bundle *bundles,struct Body *bodies);
+void Nova_StoreBody(struct Body *bdp);
+
 /* promises.c */
 
 void Nova_Version(void);
