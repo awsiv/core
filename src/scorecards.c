@@ -81,7 +81,7 @@ void Nova_SummaryMeter(char *docroot,char *search_string)
   double kept = 0,repaired = 0;
   double kept_week = 0,kept_day = 0,kept_hour = 0,kept_comms = 0,kept_anom = 0,kept_perf = 0,kept_other = 0;
   double rep_week = 0,rep_day = 0,rep_hour = 0,rep_comms = 0,rep_anom = 0,rep_perf = 0,rep_other = 0;
-  double num = 0;
+  double num_week = 0,num_day = 0,num_hour = 0,num_comms = 0,num_anom = 0,num_perf = 0,num_other = 0;
   struct stat sb;
   struct utimbuf t;
   struct HubMeter *hm;
@@ -126,55 +126,60 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    kept = hm->kept;
    repaired = hm->repaired;
 
-   num++;
-   
    switch (hm->type)
       {
       case cfmeter_week:
           kept_week += kept;
           rep_week += repaired;
+          num_week++;
           break;
           
       case cfmeter_hour:
           kept_hour += kept;
           rep_hour += repaired;
+          num_hour++;
           break;
           
       case cfmeter_day:
           kept_day += kept;
           rep_day += repaired;
+          num_day++;
           break;
           
       case cfmeter_perf:
           kept_perf += kept;
           rep_perf += repaired;
+          num_perf++;
           break;
           
       case cfmeter_comms:
           kept_comms += kept;
           rep_comms += repaired;
+          num_comms++;
           break;
           
       case cfmeter_anomaly:
           kept_anom += kept;
           rep_anom += repaired;
+          num_anom++;
           break;
           
       case cfmeter_other:
           kept_other += kept;
           rep_other += repaired;
+          num_other++;
           break;
       }
    }
 
 
-Nova_BarMeter(&cfv,1,kept_week/num,rep_week/num,"Week");
-Nova_BarMeter(&cfv,2,kept_day/num,rep_day/num,"Day");
-Nova_BarMeter(&cfv,3,kept_hour/num,rep_hour/num,"Hour");
-Nova_BarMeter(&cfv,4,kept_perf/num,rep_perf/num,"Perf");
-Nova_BarMeter(&cfv,6,kept_comms/num,rep_comms/num,"Coms");
-Nova_BarMeter(&cfv,7,kept_anom/num,rep_anom/num,"Anom");
-Nova_BarMeter(&cfv,5,kept_other/num,rep_other/num,"Sec");
+Nova_BarMeter(&cfv,1,kept_week/num_week,rep_week/num_week,"Week");
+Nova_BarMeter(&cfv,2,kept_day/num_day,rep_day/num_day,"Day");
+Nova_BarMeter(&cfv,3,kept_hour/num_hour,rep_hour/num_hour,"Hour");
+Nova_BarMeter(&cfv,4,kept_perf/num_perf,rep_perf/num_perf,"Perf");
+Nova_BarMeter(&cfv,5,kept_other/num_other,rep_other/num_other,"Sec");
+Nova_BarMeter(&cfv,6,kept_comms/num_comms,rep_comms/num_comms,"Coms");
+Nova_BarMeter(&cfv,7,kept_anom/num_anom,rep_anom/num_anom,"Anom");
 
 // Clean up
 
@@ -338,7 +343,7 @@ struct Item *Nova_GreenHosts()
 
 { struct Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(NULL,false,cfmeter_day,1000);
+hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,1000);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -359,7 +364,7 @@ struct Item *Nova_YellowHosts()
 
 { struct Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(NULL,false,cfmeter_day,1000);
+hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,1000);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -380,7 +385,7 @@ struct Item *Nova_RedHosts()
 
 { struct Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(NULL,false,cfmeter_day,1000);
+hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,1000);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -553,7 +558,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                    break;
                    
                case cfmeter_anomaly:
-                   akept[meter_anomalies_day]= rkept;
+                   akept[meter_anomalies_day] = rkept;
                    arepaired[meter_anomalies_day] = rrepaired;
                    break;
                    
@@ -601,7 +606,8 @@ return list;
 int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
 
 { int result = CF_GREEN;
- 
+  double kav,rav; 
+
 switch (method)
    {
    case cfrank_compliance:
@@ -618,16 +624,57 @@ switch (method)
        break;
        
    case cfrank_anomaly:
+       if (k[meter_anomalies_day] < 80)
+          {
+          result = CF_RED_THRESHOLD;
+          }
+       
+       if (r[meter_anomalies_day] > 20)
+          {
+          result = CF_AMBER_THRESHOLD;
+          }
        break;
        
    case cfrank_performance:
+       if (k[meter_perf_day] < 80)
+          {
+          result = CF_RED_THRESHOLD;
+          }
+       
+       if (r[meter_perf_day] > 20)
+          {
+          result = CF_AMBER_THRESHOLD;
+          }
+
        break;
        
    case cfrank_lastseen:
+       if (k[meter_comms_hour] < 80)
+          {
+          result = CF_RED_THRESHOLD;
+          }
+       
+       if (r[meter_comms_hour] > 20)
+          {
+          result = CF_AMBER_THRESHOLD;
+          }
 
        break;
        
    default:
+       kav = k[meter_comms_hour] + k[meter_compliance_hour] + k[meter_anomalies_day] / 3;
+       rav = r[meter_comms_hour] + r[meter_compliance_hour] + r[meter_anomalies_day] / 3;
+
+       if (kav < 80)
+          {
+          result = CF_RED_THRESHOLD;
+          }
+       
+       if (rav > 20)
+          {
+          result = CF_AMBER_THRESHOLD;
+          }
+
        break;
    }
 
