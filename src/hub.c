@@ -210,7 +210,7 @@ else
    Nova_QueryForKnowledgeMap(conn,"delta",now - average_time);
    }
 
-HUB_GENERATION
+HUB_GENERATION++;
 ServerDisconnection(conn);
 DeleteRlist(a.copy.servers);
 return true;
