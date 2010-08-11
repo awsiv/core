@@ -36,6 +36,7 @@
 #ifdef HAVE_LIBMONGOC
 # define MONGO_HAVE_STDINT
 # define MONGO_DATABASE "cfreport.hosts"
+# define MONGO_PROMISES "cfreport.promises"
 # define MONGO_SCRATCH "cfscratch.values"
 # include <mongo.h>
 #else
@@ -1106,6 +1107,18 @@ struct promise_value
 #define cfr_bundles       "B"
 #define cfr_day           "t" // Substitute for time in value report
 #define cfr_valuereport   "VR"
+
+#define cfp_bundlename    "bn"
+#define cfp_bundletype    "bt"
+#define cfp_bundleargs    "ba"
+#define cfp_promisetype   "pt"
+#define cfp_promiser      "p"
+#define cfp_classcontext  "c"
+#define cfp_file          "f"
+#define cfp_lineno        "l"
+#define cfp_constraints   "n"
+
+
 
 #define CFDB_GREATERTHANEQ 4
 #define CFDB_LESSTHANEQ 5

@@ -46,7 +46,7 @@ printf("promiser is %s\n",pp->promiser);
 // Cache these?
 
 printf("Bundle %s\n",pp->bundle);
-printf("Bundle of type",pp->bundletype);
+printf("Bundle of type %s\n",pp->bundletype);
 if (pp->audit)
    {
    printf("In file %s near line %d\n",pp->audit->filename,pp->lineno);
@@ -71,6 +71,7 @@ if (pp->ref)
 for (cp = pp->conlist; cp != NULL; cp = cp->next)
    {
    char rval_buffer[CF_BUFSIZE];
+   memset(rval_buffer, 0, sizeof(rval_buffer));
    PrintRval(rval_buffer,CF_BUFSIZE,cp->rval,cp->type);
    printf("  %s => %s\n",cp->lval,rval_buffer);
    }
@@ -85,6 +86,17 @@ void Nova_StoreUnExpandedPromises(struct Bundle *bundles,struct Body *bodies)
   struct Rlist *rp;
   struct SubType *sp;
   struct Promise *pp;
+  struct Constraint *cp;
+
+  mongo_connection dbconn = {0};
+  bson_buffer bbuf;
+  bson_buffer *sub, *args, *prObj, *prType, *pr, *cstr;
+  bson b;
+  int i, j;
+  char iStr[32], jStr[32];
+  char rval_buffer[CF_BUFSIZE];
+  char con[CF_MAXVARSIZE];
+  
 
 if (!SHOWREPORTS)
    {
@@ -93,25 +105,95 @@ if (!SHOWREPORTS)
 
 printf("BUNDLES........--------------------------------------------------------\n");
 
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose, "", "!! Could not open connection to promise database");
+   return;
+   }
+
+// clear existing data first
+ mongo_remove(&dbconn, MONGO_PROMISES, bson_empty(&b));
+
+
 for (bp = bundles; bp != NULL; bp=bp->next)
    {
+   bson_buffer_init(&bbuf);
+   bson_append_new_oid(&bbuf, "_id" );
+
+
    printf("\nBundle %s of type %s\n\n",bp->name,bp->type);
    printf("BUNDLE ARGS:\n");
 
-   for (rp = bp->args; rp != NULL; rp=rp->next)
+   bson_append_string(&bbuf, cfp_bundlename, bp->name);
+   bson_append_string(&bbuf, cfp_bundletype, bp->type);
+
+
+   args = bson_append_start_array(&bbuf, cfp_bundleargs);
+   for (rp = bp->args, i = 0; rp != NULL; rp=rp->next, i++)
       {   
       printf("   scalar arg %s\n",(char *)rp->item);
+
+      snprintf(iStr, sizeof(iStr), "%d", i);
+      bson_append_string(args, iStr, (char *)rp->item);
       }
+   bson_append_finish_object(args);
+
+   
+   prObj = bson_append_start_object(&bbuf, cfp_promisetype);
 
    for (sp = bp->subtypes; sp != NULL; sp = sp->next)
       {
       printf("PROMISE-TYPE: %s\n",sp->name);
+
+      prType = bson_append_start_array(prObj, sp->name);
+
+
       
-      for (pp = sp->promiselist; pp != NULL; pp = pp->next)
+      for (pp = sp->promiselist, i = 0; pp != NULL; pp = pp->next, i++)
          {
-         Nova_StoreExpandedPromise(pp);
+	 snprintf(iStr, sizeof(iStr), "%d", i);
+
+	 pr = bson_append_start_object(prType, iStr);
+	 
+	 bson_append_string(pr, cfp_promiser, pp->promiser);
+	 bson_append_string(pr, cfp_classcontext, pp->classes);
+
+	 if (pp->audit)
+	   {
+	     bson_append_string(pr, cfp_file, pp->audit->filename);
+	     bson_append_int(pr, cfp_lineno, pp->lineno);
+	   }
+
+	 cstr = bson_append_start_array(pr, cfp_constraints);
+	 for (cp = pp->conlist, j = 0; cp != NULL; cp = cp->next, j++)
+	   {
+	     memset(rval_buffer, 0, sizeof(rval_buffer));
+	     PrintRval(rval_buffer,CF_BUFSIZE,cp->rval,cp->type);
+	     printf("  %s => %s\n",cp->lval,rval_buffer);
+
+	     snprintf(con, sizeof(con), "%s => %s", cp->lval, rval_buffer);
+	     
+	     snprintf(jStr, sizeof(jStr), "%d", j);
+	     bson_append_string(cstr, jStr, con);
+	   }
+	 bson_append_finish_object(cstr);
+	 
+	 
+	 bson_append_finish_object(pr);
+
+	 Nova_StoreExpandedPromise(pp);
          }
+
+      bson_append_finish_object(prType);
       }
+
+   bson_append_finish_object(prObj);
+
+   
+   bson_from_buffer(&b, &bbuf);
+   
+   mongo_insert(&dbconn, MONGO_PROMISES, &b);
+   bson_destroy(&b);
    }
 
 /* Now summarize all bodies */
@@ -120,6 +202,14 @@ for (bdp = bodies; bdp != NULL; bdp=bdp->next)
    {
    Nova_StoreBody(bdp);
    }
+
+
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to promise database");
+   }
+
 }
 
 /*****************************************************************************/
