@@ -150,11 +150,13 @@ NewScalar("sys","license_owner",company,cf_str);
 snprintf(snumber,CF_SMALLBUF,"%d",LICENSES);
 NewScalar("sys","licenses_granted",snumber,cf_int);
 
+#ifdef HAVE_LIBMONGOC
 if (am_policy_server)
    {
    CFDB_PutValue("license_owner",company);
    CFDB_PutValue("licenses_granted",snumber);
    }
+#endif
 
 if ((cf_strcmp(VYEAR,u_year) > 0) || ((cf_strcmp(VYEAR,u_year) == 0) && (m_now > m_expire))
     || ((cf_strcmp(VYEAR,u_year) == 0) && (m_now == m_expire) && (d_now > d_expire)))
@@ -277,7 +279,9 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&ret
    licenses = Str2Int(retval);
    CfOut(cf_verbose,""," -> %d paid licenses have been purchased (this is a promise by you)",licenses);
    NewScalar("sys","licenses_promised",retval,cf_int);
+#ifdef HAVE_LIBMONGOC
    CFDB_PutValue("licenses_promised",retval);
+#endif
    }
 
 if (licenses == 0)

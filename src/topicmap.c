@@ -18,7 +18,8 @@
 void Nova_WebTopicMap_Initialize()
 
 { char retval[CF_MAXVARSIZE];
- 
+
+#ifdef HAVE_LIBMONGOC 
 CFDB_GetValue("SQL_TYPE",retval,CF_MAXVARSIZE);
 SQL_TYPE = Str2dbType(retval);
 
@@ -34,6 +35,7 @@ CFDB_GetValue("SQL_CONNECT_NAME",retval,CF_MAXVARSIZE);
 strcpy(SQL_CONNECT_NAME,retval);
 
 Debug("Loaded values: db=%s,type=%d,owner=%s,passwd=%s,server=%s,connect=%s\n",SQL_DATABASE,SQL_TYPE,SQL_OWNER,SQL_PASSWD,SQL_SERVER,SQL_CONNECT_NAME);
+#endif
 }
 
 /*****************************************************************************/

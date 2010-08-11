@@ -17,6 +17,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#ifdef HAVE_LIBMONGOC
+
 char *BASIC_REPORTS[] =
    {
    "Bundle profile",
@@ -2062,3 +2064,4 @@ for (i = 0; BASIC_REPORTS[i] != NULL; i++)
 Join(buffer,"\n</select>\n",bufsize);
 }
 
+#endif

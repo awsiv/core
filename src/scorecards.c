@@ -13,7 +13,7 @@
 extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,BACKGR,ORANGE;
 extern char *UNITS[];
 
-
+#ifdef HAVE_LIBMONGOC
 /*****************************************************************************/
 /*                                                                           */
 /* File: scorecards.c                                                        */
@@ -726,3 +726,4 @@ else
    }
 }
 
+#endif

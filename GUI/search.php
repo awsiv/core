@@ -32,6 +32,7 @@ switch ($report_type)
     
   case  "Business value report":
     echo "<h4>$report_type</h4>";
+    $report = cfpr_report_value($hostkey,NULL,NULL,NULL);
     break;
     
    case "Class profile":
@@ -82,10 +83,12 @@ switch ($report_type)
 
   case "Promises repaired":
     echo "<h4>$report_type</h4>";
+    $report = cfpr_report_repaired($hostkey,NULL);
     break;
 
   case "Promises not kept":
     echo "<h4>$report_type</h4>";
+    $report = cfpr_report_notkept($hostkey,NULL);
     break;
 
   case "Setuid/gid root programs":

@@ -221,7 +221,7 @@ if (reports == NULL)
    return false;
    }
 
-UnpackReportBook(HashPrint(cf_md5,conn->digest),conn->remoteip,reports);
+UnpackReportBook(HashPrint(CF_DEFAULT_DIGEST,conn->digest),conn->remoteip,reports);
 DeleteReportBook(reports);
 return true;
 }
