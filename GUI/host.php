@@ -53,7 +53,7 @@ echo "$allreps";?>
 <li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Promises repaired">promises repaired report</a>   Promises that were recently repaired 
 <li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Setuid/gid root programs">setuid report</a>   Known setuid programs found on system 
 <li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Software installed">software installed report</a>   Software already installed on system 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=">value report</a>   Value estimate / ROI of cfengine configuration 
+<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Business value report">value report</a>   Value estimate / ROI of cfengine configuration 
 <li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Variables">variables report</a> Values of set and discovered variables on this host context
 </ul>
 

@@ -37,7 +37,7 @@ snprintf(buffer,bufsize,
 "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"   \"http://www.w3.org/TR/html4/loose.dtd\"><html>\n"
 "  <head>\n"
 "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n"
-"    <meta http-equiv=\"refresh\" CONTENT=\"150\">\n"
+//"    <meta http-equiv=\"refresh\" CONTENT=\"150\">\n"
 "    <title>%s</title>\n"
 "    <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"screen\">\n"
 "    <link rel=\"stylesheet\" href=\"hand_/cf_enterprise.css\" type=\"text/css\" media=\"handheld\">\n"

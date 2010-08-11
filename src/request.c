@@ -433,6 +433,12 @@ printf("NUMBER R = %ld\n",n);
 n = Nova2PHP_count_yellow_hosts();
 printf("NUMBER Y = %ld\n",n);
 
+Nova2PHP_value_report(NULL,NULL,NULL,NULL,buffer,20000);
+printf("NLOTKEPT = %s\n",buffer);
+
+Nova2PHP_promiselog(NULL,NULL,plog_notkept,buffer,20000);
+printf("AVLU = %s\n",buffer);
+
 #else
 printf("For Cfengine internal only\n");
 #endif

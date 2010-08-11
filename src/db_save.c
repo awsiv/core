@@ -645,7 +645,7 @@ switch(rep_type)
        break;
    default:
        CfOut(cf_error, "", "!! Unknown promise log report type (%d)", rep_type);
-       FatalError("Software Error");
+       return;
    }
 
 pushObj = bson_append_start_object(&bb, "$pushAll");
@@ -654,7 +654,7 @@ arr = bson_append_start_array(pushObj, repName);
 for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    {
    snprintf(iStr, sizeof(iStr), "%d", i);   
-   sscanf(ip->name,"%ld,%127[^\n]",&then,handle);
+   sscanf(ip->name,"%ld,%254[^\n]",&then,handle);
    tthen = (time_t)then;
    
    sub = bson_append_start_object(arr, iStr);

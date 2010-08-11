@@ -267,8 +267,6 @@ if ((fp = fopen(name,"a")) == NULL)
    return;
    }
 
-// fprintf(fp,"%31[^,],%31[^,],%31[^,],%1023[^,],%512[^,],%8s",date,bundle,handle,ref,filename,lineno);
-
 fprintf(fp,"%ld,%s\n",(long)now,id);
 
 fclose(fp);
@@ -355,7 +353,6 @@ else
 
 CfOut(cf_verbose,""," -> recording value (%.4lf,%.4lf,%.4lf)",kept,repaired,notkept);
 WriteDB(dbp,key,&new_value,sizeof(struct promise_value));
-
 CloseDB(dbp);
 }
 

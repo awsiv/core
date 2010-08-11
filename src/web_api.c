@@ -61,6 +61,9 @@ if (false)
    Nova2PHP_setuid_report(NULL,NULL,0,buffer,10000);
    Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",buffer,10000);
    Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",buffer,10000);
+   Nova2PHP_value_report(NULL,NULL,NULL,NULL,buffer,1000);
+   Nova2PHP_promiselog(NULL,NULL,1,buffer,1000);
+
    CFDB_PutValue("one_two","three");
    CFDB_GetValue("newvar",buffer,120);
    Nova2PHP_count_hosts();
@@ -123,7 +126,7 @@ if (hostkey && strlen(hostkey) > 0)
    }
 else
    {
-   hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true);
+   hq = CFDB_QueryPromiseLog(&dbconn,bson_empty(&b),type,handle,true);
    }
 
 returnval[0] = '\0';
@@ -191,7 +194,7 @@ if (hostkey && strlen(hostkey) > 0)
    }
 else
    {
-   hq = CFDB_QueryValueReport(&dbconn,&query,day,month,year);
+   hq = CFDB_QueryValueReport(&dbconn,bson_empty(&b),day,month,year);
    }
 
 returnval[0] = '\0';
@@ -203,7 +206,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubValue *)rp->item;
 
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%.1lf</td><td>%.1lf</td><td>%.1lf</td></tr>\n",
             hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept);
           
    tmpsize = strlen(buffer);
@@ -373,7 +376,7 @@ return true;
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
-  struct HubVariable *hv;
+ struct HubVariable *hv,*hv2;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
   int count = 0, tmpsize = 0;
@@ -432,8 +435,20 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       break;
       }
    
-   strcat(returnval,buffer);
+   Join(returnval,buffer,bufsize);
    count += tmpsize;
+
+   // Split tables per scope
+   
+   if (rp->next)
+      {
+      hv2 = (struct HubVariable *)rp->next->item;
+
+      if (strcmp(hv->scope,hv2->scope) != 0)
+         {
+         Join(returnval,"</table><table>\n",bufsize);
+         }
+      }
    }
 
 strcat(returnval,"</table>\n");
