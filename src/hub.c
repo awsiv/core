@@ -210,18 +210,18 @@ pp->cache = NULL;
 
 if (long_time_no_see)
    {
-   CfOut(cf_verbose,""," -> Running full sensor sweep");
+   CfOut(cf_verbose,""," -> Running FULL sensor sweep of %s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
    Nova_QueryForKnowledgeMap(conn,"full",time(0));
+   YieldCurrentLock(thislock);
    }
 else
    {
-   CfOut(cf_verbose,""," -> Running short range sensor sweep");
+   CfOut(cf_verbose,""," -> Running differential sensor sweep of %s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
    Nova_QueryForKnowledgeMap(conn,"delta",now - average_time);
    }
 
 ServerDisconnection(conn);
 DeleteRlist(a.copy.servers);
-YieldCurrentLock(thislock);
 return true;
 }
 
