@@ -17,7 +17,7 @@
 #include "cf.nova.h"
 
 extern int  NO_FORK;
-int HUB_GENERATION = 0;
+extern int  CONTINUOUS;
 
 /*****************************************************************************/
 
@@ -171,8 +171,20 @@ else
 int Nova_HailPeer(char *peer,struct Attributes a,struct Promise *pp)
 
 { struct cfagent_connection *conn;
-  time_t average_time, now = time(NULL);
+  time_t average_time = 600, now = time(NULL);
   int long_time_no_see = false;
+  struct CfLock thislock;
+
+a.restart_class = "nonce";
+a.transaction.ifelapsed = 6*60;
+a.transaction.expireafter = CF_INFINITY;
+  
+thislock = AcquireLock(pp->promiser,peer,CFSTARTTIME,a,pp);
+
+if (thislock.lock != NULL)
+   {
+   long_time_no_see = true;
+   }
 
 a.copy.portnumber = (short)5308;
 
@@ -196,12 +208,6 @@ pp->cache = NULL;
 
 // Choose full / delta
 
-average_time = 600;
-
-BASE THIS ON TIMES NOT COUNT
-
-long_time_no_see = (HUB_GENERATION % (12 * 6) == 0); // Every 6 hours
-
 if (long_time_no_see)
    {
    CfOut(cf_verbose,""," -> Running full sensor sweep");
@@ -213,9 +219,9 @@ else
    Nova_QueryForKnowledgeMap(conn,"delta",now - average_time);
    }
 
-HUB_GENERATION++;
 ServerDisconnection(conn);
 DeleteRlist(a.copy.servers);
+YieldCurrentLock(thislock);
 return true;
 }
 

@@ -161,7 +161,7 @@ while (more)
       
       if (OpenDB(name,&dbp))
          {
-         snprintf(id,CF_MAXVARSIZE-1,"%s",conn->digest);
+         snprintf(id,CF_MAXVARSIZE-1,"%s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
          
          if (ReadDB(dbp,id,&e,sizeof(e)))
             {
