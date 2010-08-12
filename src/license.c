@@ -101,7 +101,13 @@ if ((fp = fopen(name,"r")) != NULL)
       {
       RSA_free(serverrsa);
       }
-
+   else
+      {
+      CfOut(cf_verbose,"","Failed to verify license file for this host (%s) as we don't know the policy hub's public ID\n",hash);
+      LICENSES = 0;
+      return false;
+      }
+   
    if (Nova_HashKey(CFPUBKEYFILE,name,digest,hash))
       {
       strcpy(u_day,f_day);
@@ -122,8 +128,8 @@ if ((fp = fopen(name,"r")) != NULL)
    else
       {
       CfOut(cf_verbose,"","Failed to verify license file for this host (%s)\n",hash);
-      LICENSES = 1;
-      return true;
+      LICENSES = 0;
+      return false; // Want to be able to bootstrap
       }
    }
 else

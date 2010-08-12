@@ -69,7 +69,7 @@ echo "<li><img src=\"/img/green_sign_big.png\"></li>\n";
 echo "<li>Key: $hostkey</li>";
 echo "<li>Alias: $hostname</li>"; 
 echo "<li>Last known address: $ipaddr</li>";
-echo "<li><a href=\"vitals.php\">Vital signs for this host</a></li>\n";
+echo "<li><a href=\"vitals.php?hostkey=$hostkey\">Vital signs for this host</a></li>\n";
 echo "<li><a href=\"magview.php\">Last four hours</a></li>\n";
 echo "<li><a href=\"year.php\">Long term trends</a></li>\n";
 echo "<li><a href=\"weekly.php\">Patterns</a></li>\n";

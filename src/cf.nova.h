@@ -325,6 +325,7 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
 int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
 int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
 int CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,enum observables obs,double *histo);
+int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
@@ -794,6 +795,7 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,char *name,int distance,in
 /* web_api.c */
 
 void Nova_EnterpriseModuleTrick(void);
+void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize);
 
 int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize);
 int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *buffer,int bufsize);

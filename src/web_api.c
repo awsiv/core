@@ -63,6 +63,7 @@ if (false)
    Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",buffer,10000);
    Nova2PHP_value_report(NULL,NULL,NULL,NULL,buffer,1000);
    Nova2PHP_promiselog(NULL,NULL,1,buffer,1000);
+   Nova2PHP_getlastupdate(NULL,buffer,10);
 
    CFDB_PutValue("one_two","three");
    CFDB_GetValue("newvar",buffer,120);
@@ -78,6 +79,45 @@ if (false)
 
 /*****************************************************************************/
 /* Helper functions                                                          */
+/*****************************************************************************/
+
+void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize)
+
+{ time_t then;
+  mongo_connection dbconn;
+
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   then = 0;
+   CFDB_QueryLastUpdate(&dbconn,hostkey,&then);
+   if (then > 0)
+      {
+      snprintf(buffer,bufsize,"%s",cf_ctime(&then));
+      }
+   else
+      {
+      snprintf(buffer,bufsize,"never");
+      }
+   }
+else
+   {
+   snprintf(buffer,bufsize,"never");
+   }
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+}
+
 /*****************************************************************************/
 
 void Nova2PHP_summary_meter(char *docroot,char *hostkey)

@@ -308,10 +308,9 @@ for (ip = data; ip != NULL; ip=ip->next)
    bson_append_double(setObj,varNameIndex,e);
    snprintf(varNameIndex, sizeof(varNameIndex),"%s%d.%d.%s",repPrefix,observable,slot,cfr_obs_sigma);
    bson_append_double(setObj,varNameIndex,dev);
-
-   printf("STORED INS SLOT %d = %s for %s (%.2lf,%.2lf,%.2lf)\n",slot,PrintTimeSlot(slot),keyhash,q,e,dev);
    }
-  
+
+bson_append_int(setObj,cfr_day,(long)time(NULL));
 bson_append_finish_object(setObj);
 bson_from_buffer(&setOp,&bb);
 

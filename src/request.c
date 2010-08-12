@@ -322,6 +322,14 @@ for (i = 0; i < CF_MAGDATA; i++)
    printf("%d (%.2lf,%.2lf,%.2lf)\n",i,q[i],e[i],d[i]);
    }
 
+struct CfDataView cfv;
+
+Nova_ReadMagTimeSeries(&cfv,"SHA=0adede6fc8115004e77550d0c99da03ad8f502f1e48683d924e97047a76e1b21",2);
+
+for (i = 0; i < CF_MAGDATA; i++)
+   {
+   printf("CFV %d (%.2lf,%.2lf,%.2lf)\n",i,cfv.data_q[i],cfv.data_E[i],cfv.bars[i]);
+   }
 
 /*
 double q[CF_TIMESERIESDATA],e[CF_TIMESERIESDATA],d[CF_TIMESERIESDATA];
@@ -446,6 +454,9 @@ Nova2PHP_promiselog(NULL,NULL,plog_notkept,buffer,20000);
 printf("AVLU = %s\n",buffer);
 */
 
+Nova2PHP_getlastupdate("SHA_852ffe9132338a8d76529ad522930933a111782959f028d8b63d35142531dc70",buffer,1000);
+
+printf("UPDATE = %s\n",buffer);
 #else
 printf("For Cfengine internal only\n");
 #endif

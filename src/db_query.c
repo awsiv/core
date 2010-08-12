@@ -2262,8 +2262,6 @@ bson_from_buffer(&field, &bb);
 
 start_slot = GetTimeSlot(start_time);
 
-printf("STARTINF AT %d = %s\n",start_slot,PrintTimeSlot(start_slot));
-
 // Check that start + 4 hours is not greater than the week buffer
 
 wrap_around = (int)start_slot + CF_MAGDATA - CF_MAX_SLOTS;
@@ -2280,8 +2278,6 @@ for (slot = 0; slot < CF_MAGDATA; slot++)
 /* BEGIN SEARCH */
 
 cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
-
-printf("Start slot matches inserted data, but noting comes out....: %d\n",start_slot);
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -2338,12 +2334,9 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                }
 
-            printf("Filling slot %d from %d (%lf,%lf,%lf)\n",slot,st,q,e,d);
-
             qa[Nova_MagViewOffset(start_slot,st,wrap_around)] = q;
             ea[Nova_MagViewOffset(start_slot,st,wrap_around)] = e;
             da[Nova_MagViewOffset(start_slot,st,wrap_around)] = d;
-            printf("Writinf %d to %d\n",st,Nova_MagViewOffset(start_slot,st,wrap_around));
             }
          }
       }
@@ -2373,6 +2366,56 @@ else
    {
    return db_slot - start_slot;
    }
+}
+
+/*****************************************************************************/
+
+int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date)
+
+{ bson_buffer b,bb,*sub1,*sub2,*sub3;
+  bson qu,query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1;
+  char search_name[CF_MAXVARSIZE];
+  int ok = false,slot,start_slot,wrap_around;
+  double q,e,d;
+  
+/* BEGIN query document */
+
+bson_buffer_init(&b);
+bson_append_string(&b,cfr_keyhash,keyhash);
+bson_from_buffer(&query,&b);
+  
+/* BEGIN RESULT DOCUMENT */
+
+snprintf(search_name,CF_MAXVARSIZE-1,"%s",cfr_day);
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_day,1);
+bson_from_buffer(&field, &bb);
+
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while (bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1),cfr_day) == 0)
+         {
+         *date = (time_t)bson_iterator_int(&it1);
+         }
+      }
+   }
+
+// Now we should transform the data to re-order during wrap-around,
+// since at the boundary the data come in the wrong order
+
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return ok;
 }
 
 /*****************************************************************************/

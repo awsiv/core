@@ -241,6 +241,7 @@ struct PromiseIdent *PromiseIdExists(char *handle);
 
 /* conversion.c */
 
+char *MapAddress (char *addr);
 void IPString2KeyDigest(char *ipv4,char *result);
 time_t StrToTime(char *s);
 enum cfhypervisors Str2Hypervisors(char *s);
@@ -870,6 +871,7 @@ int BadBundleSequence(enum cfagenttype agent);
 char *ConvTimeKey (char *str);
 char *GenTimeKey (time_t now);
 int GetTimeSlot(time_t here_and_now);
+char *PrintTimeSlot(int slot);
 
 /* graph.c */
 

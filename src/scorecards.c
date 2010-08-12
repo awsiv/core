@@ -23,7 +23,7 @@ extern char *UNITS[];
 void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize)
     
 { char work[CF_BUFSIZE],hostname[CF_SMALLBUF],ipaddress[CF_SMALLBUF];
-  char desc[CF_MAXVARSIZE],id[CF_MAXVARSIZE];
+  char desc[CF_MAXVARSIZE],id[CF_MAXVARSIZE],lastsaw[CF_SMALLBUF];
   struct CfDataView cfv;
   int i;
 
@@ -52,9 +52,11 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    Nova_ViewMag(&cfv,hostkey,i);
    Nova_ViewWeek(&cfv,hostkey,i);
    Nova_ViewHisto(&cfv,hostkey,i);
-   
+
+   Nova2PHP_getlastupdate(hostkey,lastsaw,CF_SMALLBUF);
+
    snprintf(work,CF_MAXVARSIZE,"<tr>");
-   snprintf(work,CF_MAXVARSIZE,"<th><div id=\"ip\">%s</div><br><br><a href=\"/performance_details.php?hostkey=%s\">%s</a><br><br><small>Latest data<br>%s</small></th>",hostname,hostkey,OBS[i][0],"SUNDAY");
+   snprintf(work,CF_MAXVARSIZE,"<th><div id=\"ip\">%s</div><br><br><a href=\"/performance_details.php?hostkey=%s\">%s</a><br><br><small>Latest data<br>%s</small></th>",hostname,hostkey,OBS[i][0],lastsaw);
    Join(buffer,work,bufsize);
    snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_mag.png\" width=300></td>",hostkey,OBS[i][0]);
    Join(buffer,work,bufsize);
