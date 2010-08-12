@@ -312,10 +312,16 @@ printf("\n");
 
 // graphs
 
-/*
+
 double q[CF_MAGDATA],e[CF_MAGDATA],d[CF_MAGDATA];
-CFDB_QueryMagView(&dbconn,"MD5=4a37e48645122312daf7862f2a0f0ef7",0,time(0) - 4*3600,q,e,d);
-*/
+CFDB_QueryMagView(&dbconn,"SHA=0adede6fc8115004e77550d0c99da03ad8f502f1e48683d924e97047a76e1b21",2,time(0) - 4*3600,q,e,d);
+
+int i;
+for (i = 0; i < CF_MAGDATA; i++)
+   {
+   printf("%d (%.2lf,%.2lf,%.2lf)\n",i,q[i],e[i],d[i]);
+   }
+
 
 /*
 double q[CF_TIMESERIESDATA],e[CF_TIMESERIESDATA],d[CF_TIMESERIESDATA];
@@ -373,8 +379,8 @@ char buff[100000];
 //Nova2PHP_compliance_promises(NULL,NULL,"x",0,buff,10000);
 //printf("PR: (%s)\nPR\n\n",buff);
 
-Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,buff,10000);
-printf("LS: (%s)\nLS\n\n",buff);
+//Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,buff,10000);
+//printf("LS: (%s)\nLS\n\n",buff);
 
 /*
 Nova2PHP_performance_report(NULL,NULL,0,buff,10000);
@@ -386,11 +392,11 @@ printf("SETUID: (%s)\nSETUID\n\n",buff);
 Nova2PHP_bundle_report(NULL,NULL,0,buff,10000);
 printf("BUNDLE: (%s)\nBUNDLE\n\n",buff);
 */
-Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",buff,10000);
-printf("CHANGE: (%s)\nCHANGE\n\n",buff);
+//Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",buff,10000);
+//printf("CHANGE: (%s)\nCHANGE\n\n",buff);
 
-Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",buff,10000);
-printf("CHANGE: (%s)\nCHANGE\n\n",buff);
+//Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",buff,10000);
+//printf("CHANGE: (%s)\nCHANGE\n\n",buff);
 
 //Nova2PHP_bundle_hosts(NULL,NULL,0,buff,10000);
 //printf("HOSTS WITH: (%s)\nHOSTSWITH\n\n",buff);
@@ -420,7 +426,7 @@ if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose, "", "!! Could not close connection to report database");
    }
-
+/*
 long n = Nova2PHP_count_hosts();
 printf("NUMBER = %ld\n",n);
 
@@ -438,6 +444,7 @@ printf("NLOTKEPT = %s\n",buffer);
 
 Nova2PHP_promiselog(NULL,NULL,plog_notkept,buffer,20000);
 printf("AVLU = %s\n",buffer);
+*/
 
 #else
 printf("For Cfengine internal only\n");

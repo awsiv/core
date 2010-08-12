@@ -330,6 +330,7 @@ void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
 void PrintCFDBKey(bson_iterator *it, int depth);
 int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
+int Nova_MagViewOffset(int start_slot,int dbslot,int wrap);
 
 #endif
 

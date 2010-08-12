@@ -2238,8 +2238,8 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   char search_name[CF_MAXVARSIZE];
+  int ok = false,slot,start_slot,wrap_around;
   double q,e,d;
-  int ok = false,start_slot,wrap_around;
   
 /* BEGIN query document */
 
@@ -2262,25 +2262,39 @@ bson_from_buffer(&field, &bb);
 
 start_slot = GetTimeSlot(start_time);
 
+printf("STARTINF AT %d = %s\n",start_slot,PrintTimeSlot(start_slot));
+
 // Check that start + 4 hours is not greater than the week buffer
 
 wrap_around = (int)start_slot + CF_MAGDATA - CF_MAX_SLOTS;
+
+// Initialize as there might be missing values
+
+for (slot = 0; slot < CF_MAGDATA; slot++)
+   {
+   qa[slot] = 0;
+   ea[slot] = 0;
+   da[slot] = 0;
+   }
 
 /* BEGIN SEARCH */
 
 cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
 
+printf("Start slot matches inserted data, but noting comes out....: %d\n",start_slot);
+
 while (mongo_cursor_next(cursor))  // loops over documents
    {
    bson_iterator_init(&it1,cursor->current.data);
-   
+
    while (bson_iterator_next(&it1))
       {
       /* Query specific search/marshalling */
 
       if (strcmp(bson_iterator_key(&it1),search_name) == 0)
          {
-         int slot = 0,st = 0;
+         int st = 0;
+         slot = 0;
          bson_iterator_init(&it2,bson_iterator_value(&it1));
 
          while (bson_iterator_next(&it2))
@@ -2309,7 +2323,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             q = e = d = 0;
 
             while (bson_iterator_next(&it3))
-               {
+                {
                if (strcmp(bson_iterator_key(&it3),cfr_obs_q) == 0)
                   {
                   q = bson_iterator_double(&it3);
@@ -2324,10 +2338,12 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                }
 
-            qa[slot] = q;
-            ea[slot] = e;
-            da[slot] = d;
-            slot++;
+            printf("Filling slot %d from %d (%lf,%lf,%lf)\n",slot,st,q,e,d);
+
+            qa[Nova_MagViewOffset(start_slot,st,wrap_around)] = q;
+            ea[Nova_MagViewOffset(start_slot,st,wrap_around)] = e;
+            da[Nova_MagViewOffset(start_slot,st,wrap_around)] = d;
+            printf("Writinf %d to %d\n",st,Nova_MagViewOffset(start_slot,st,wrap_around));
             }
          }
       }
@@ -2339,6 +2355,24 @@ while (mongo_cursor_next(cursor))  // loops over documents
 bson_destroy(&field);
 mongo_cursor_destroy(cursor);
 return ok;
+}
+
+/*****************************************************************************/
+
+int Nova_MagViewOffset(int start_slot,int db_slot,int wrap)
+{
+int offset = CF_MAX_SLOTS - start_slot;
+
+// Offset is the non-wrapped data size
+
+if (wrap >= 0 && db_slot < start_slot)
+   {
+   return offset + db_slot; // assumes db_slot is now < CF_MAGDATA
+   }
+else
+   {
+   return db_slot - start_slot;
+   }
 }
 
 /*****************************************************************************/
