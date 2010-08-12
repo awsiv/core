@@ -327,6 +327,8 @@ int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs
 int CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,enum observables obs,double *histo);
 int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date);
 
+struct HubQuery *CFDB_QueryPromises(mongo_connection *conn, char *bundleType, char *bundleName);
+
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
 void PrintCFDBKey(bson_iterator *it, int depth);
@@ -512,6 +514,8 @@ struct HubFileDiff *NewHubFileDiff(struct HubHost *hh,char *file,char *diff,time
 void DeleteHubFileDiff(struct HubFileDiff *hp);
 struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double repaired,double notkept);
 void DeleteHubValue(struct HubValue *hp);
+struct HubPromise *NewHubPromise(char *bn,char *bt,char **ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons);
+void DeleteHubPromise(struct HubPromise *hp);
 
 /* knowledge.c */
 
@@ -845,6 +849,7 @@ long Nova2PHP_count_green_hosts(void);
 
 char *Nova_HostProfile(char *key);
 void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
+int Nova2PHP_promises(char *bundletype, char *bundlename,char *returnval,int bufsize);
 
 /* weekly.c */
 
@@ -1116,7 +1121,10 @@ struct promise_value
 #define cfp_bundleargs    "ba"
 #define cfp_promisetype   "pt"
 #define cfp_promiser      "p"
+#define cfp_promisee      "e"
 #define cfp_classcontext  "c"
+#define cfp_comment       "o"
+#define cfp_handle        "h"
 #define cfp_file          "f"
 #define cfp_lineno        "l"
 #define cfp_constraints   "n"
@@ -1273,4 +1281,21 @@ struct HubQuery
    {
    struct Rlist *hosts;
    struct Rlist *records;
+   };
+
+
+struct HubPromise
+   {
+   char *bundleName;
+   char *bundleType;
+   char *bundleArgs;  // comma separated
+   char *promiseType;
+   char *promiser;
+   char *promisee;
+   char *classContext;
+   char *handle;
+   char *comment;
+   char *file;
+   int lineNo;
+   char **constraints;
    };

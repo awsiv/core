@@ -63,6 +63,7 @@ if (false)
    Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",buffer,10000);
    Nova2PHP_value_report(NULL,NULL,NULL,NULL,buffer,1000);
    Nova2PHP_promiselog(NULL,NULL,1,buffer,1000);
+   Nova2PHP_promises(NULL, NULL, NULL, 0);
    Nova2PHP_getlastupdate(NULL,buffer,10);
 
    CFDB_PutValue("one_two","three");
@@ -163,6 +164,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true);
+   bson_destroy(&query);
    }
 else
    {
@@ -178,7 +180,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseLog *)rp->item;
 
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",
             hp->hh->hostname,hp->handle,cf_ctime(&(hp->t)));
           
    tmpsize = strlen(buffer);
@@ -231,6 +233,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryValueReport(&dbconn,&query,day,month,year);
+   bson_destroy(&query);
    }
 else
    {
@@ -246,7 +249,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubValue *)rp->item;
 
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%.1lf</td><td>%.1lf</td><td>%.1lf</td></tr>\n",
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%.1lf</td><td>%.1lf</td><td>%.1lf</td></tr>\n",
             hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept);
           
    tmpsize = strlen(buffer);
@@ -305,6 +308,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 if (hostkey && strlen(hostkey) > 0)
    {
    hq = CFDB_QuerySoftware(&dbconn,&query,type,name,value,arch,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -319,7 +323,7 @@ count += strlen(returnval);
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hs = (struct HubSoftware *)rp->item;
-   snprintf(buffer,CF_BUFSIZE,"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
 
    tmpsize = strlen(buffer);
    
@@ -372,6 +376,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_from_buffer(&query,&bb);
 
    hq = CFDB_QueryClasses(&dbconn,&query,name,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -386,7 +391,7 @@ count += strlen(returnval);
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hc = (struct HubClass *)rp->item;
-   snprintf(buffer,CF_BUFSIZE,"<tr><td>%s</td><td>%s</td><td>%lf</td><td>%lf</td><td>%s</td></tr>\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%lf</td><td>%lf</td><td>%s</td></tr>\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
 
    tmpsize = strlen(buffer);
    
@@ -436,6 +441,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryVariables(&dbconn,&query,scope,lval,rval,type,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -460,18 +466,18 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       char b[CF_BUFSIZE];
       b[0] = '\0';
       PrintRlist(b,CF_BUFSIZE,hv->rval);
-      snprintf(buffer,CF_BUFSIZE-1,"<td>%s</td></tr>\n",b);
+      snprintf(buffer,sizeof(buffer),"<td>%s</td></tr>\n",b);
       }
    else
       {
-      snprintf(buffer,CF_BUFSIZE-1,"<td>%s</td></tr>\n",(char *)hv->rval);
+      snprintf(buffer,sizeof(buffer),"<td>%s</td></tr>\n",(char *)hv->rval);
       }
 
    tmpsize = strlen(buffer);
    
    if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
       {
-      snprintf(buffer,CF_BUFSIZE-1,"<td>too big</td></tr>\n");
+      snprintf(buffer,sizeof(buffer),"<td>too big</td></tr>\n");
       break;
       }
    
@@ -538,6 +544,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryTotalCompliance(&dbconn,&query,version,t,k,nk,rep,icmp);
+   bson_destroy(&query);
    }
 else
    {
@@ -553,7 +560,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    ht = (struct HubTotalCompliance *)rp->item;
 
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%d</td><td>%d</td><td>%d</td><td>%s</td></tr>\n",
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%d</td><td>%d</td><td>%d</td><td>%s</td></tr>\n",
             ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,cf_ctime(&(ht->t)));
           
    tmpsize = strlen(buffer);
@@ -606,6 +613,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryPromiseCompliance(&dbconn,&query,handle,*status,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -621,7 +629,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseCompliance *)rp->item;
 
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
             hp->hh->hostname,hp->handle,hp->e,hp->d,cf_ctime(&(hp->t)));
           
    tmpsize = strlen(buffer);
@@ -676,6 +684,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryLastSeen(&dbconn,&query,lhash,lhost,laddress,lago,lregex);
+   bson_destroy(&query);
    }
 else
    {
@@ -703,7 +712,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    then = hl->t;
    
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
             "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
             hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,cf_ctime(&then),
             hl->hrsago,hl->hrsavg,hl->hrsdev,
@@ -759,6 +768,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryPerformance(&dbconn,&query,job,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -774,7 +784,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hP = ( struct HubPerformance *)rp->item;
 
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
             hP->hh->hostname,
             hP->event,hP->q,hP->e,hP->d,cf_ctime(&(hP->t)));
    
@@ -828,6 +838,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QuerySetuid(&dbconn,&query,file,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -843,7 +854,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hS = ( struct HubSetUid *)rp->item;
 
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td></tr>\n",hS->hh->hostname,hS->path);
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td></tr>\n",hS->hh->hostname,hS->path);
    
    tmpsize = strlen(buffer);
    
@@ -896,6 +907,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryBundleSeen(&dbconn,&query,bundle,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -911,7 +923,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hb = ( struct HubBundleSeen *)rp->item;
 
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%s</td>"
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td>"
             "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td></tr>\n",
             hb->hh->hostname,hb->bundle,cf_ctime(&(hb->t)),
             hb->hrsago,hb->hrsavg,hb->hrsdev);
@@ -943,7 +955,7 @@ return true;
 
 int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];   
+{ char *report,buffer[CF_BUFSIZE];
   struct HubFileChanges *hC;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
@@ -973,6 +985,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryFileChanges(&dbconn,&query,file,regex,t,icmp);
+   bson_destroy(&query);
    }
 else
    {
@@ -988,7 +1001,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hC = (struct HubFileChanges *)rp->item;
 
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)));
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)));
    tmpsize = strlen(buffer);
    
    if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
@@ -1047,6 +1060,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryFileDiff(&dbconn,&query,file,diffs,regex,t,icmp);
+   bson_destroy(&query);
    }
 else
    {
@@ -1062,7 +1076,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hd = (struct HubFileDiff *)rp->item;
 
-   snprintf(buffer,CF_BUFSIZE-1,"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",hd->hh->hostname,hd->path,cf_ctime(&(hd->t)),hd->diff);
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",hd->hh->hostname,hd->path,cf_ctime(&(hd->t)),hd->diff);
    tmpsize = strlen(buffer);
    
    if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
@@ -1121,6 +1135,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
 hq = CFDB_QueryHosts(&dbconn,&query);
+bson_destroy(&query);
 
 returnval1[0] = '\0';
 returnval2[0] = '\0';
@@ -1189,6 +1204,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 if (hostkey && strlen(hostkey) > 0)
    {
    hq = CFDB_QuerySoftware(&dbconn,&query,type,name,value,arch,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -1252,6 +1268,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_from_buffer(&query,&bb);
 
    hq = CFDB_QueryClasses(&dbconn,&query,name,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -1312,6 +1329,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryVariables(&dbconn,&query,scope,lval,rval,type,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -1382,6 +1400,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryTotalCompliance(&dbconn,&query,version,t,k,nk,rep,icmp);
+   bson_destroy(&query);
    }
 else
    {
@@ -1444,6 +1463,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryPromiseCompliance(&dbconn,&query,handle,*status,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -1508,6 +1528,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryLastSeen(&dbconn,&query,lhash,lhost,laddress,lago,lregex);
+   bson_destroy(&query);
    }
 else
    {
@@ -1570,6 +1591,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryPerformance(&dbconn,&query,job,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -1632,6 +1654,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QuerySetuid(&dbconn,&query,file,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -1695,6 +1718,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryBundleSeen(&dbconn,&query,bundle,regex);
+   bson_destroy(&query);
    }
 else
    {
@@ -1764,6 +1788,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryFileChanges(&dbconn,&query,file,regex,t,icmp);
+   bson_destroy(&query);
    }
 else
    {
@@ -1835,6 +1860,7 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
    hq = CFDB_QueryFileDiff(&dbconn,&query,file,diffs,regex,t,icmp);
+   bson_destroy(&query);
    }
 else
    {
@@ -2118,5 +2144,85 @@ for (i = 0; BASIC_REPORTS[i] != NULL; i++)
 
 Join(buffer,"\n</select>\n",bufsize);
 }
+
+/*****************************************************************************/
+
+int Nova2PHP_promises(char *bundletype, char *bundlename,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE];
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  struct Rlist *records = NULL;
+  struct HubQuery *hq;
+  struct HubPromise *hp;
+  char promiseeText[CF_MAXVARSIZE];
+  
+
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+ hq = CFDB_QueryPromises(&dbconn,bundletype,bundlename);
+
+
+returnval[0] = '\0';
+
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hp = (struct HubPromise *)rp->item;
+   
+   if(NOTEMPTY(hp->promisee))
+     {
+       snprintf(promiseeText, sizeof(promiseeText), " makes the promise to '%s'", hp->promisee);
+     }
+   else
+     {
+       promiseeText[0] = '\0';
+     }
+
+   snprintf(buffer,sizeof(buffer), "<br><br>Resource object '%s' of type '%s'%s<br>......classcontext:%s<br>......handle:%s<br>......comment:%s<br>Promised in file '%s' near line '%d'.<br>Part of bundle '%s' (type '%s') with args '%s'.", hp->promiser, hp->promiseType, promiseeText, hp->classContext, hp->handle, hp->comment, hp->file, hp->lineNo, hp->bundleName, hp->bundleType,hp->bundleArgs);
+   
+   /*   
+   if(cons)
+     {
+       printf("cons: ");
+       for(i = 0; cons[i]; i++)
+	 {
+	   printf("%s,", cons[i]);
+	 }
+       printf("\n");
+     }
+   */
+
+   tmpsize = strlen(buffer);
+   
+   if (count + tmpsize > bufsize - 1)
+      {
+      break;
+      }
+   
+   strcat(returnval,buffer);
+   count += tmpsize;
+   }
+
+
+//snprintf(returnval, 10, "hello");
+
+DeleteHubQuery(hq,DeleteHubPromise);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+
 
 #endif

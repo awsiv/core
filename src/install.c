@@ -53,7 +53,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    rp->item = NULL;
    }
  
-DeleteRlist(hq->records);
+ DeleteRlist(hq->records);
+ free(hq);
 }
 
 /*****************************************************************************/
@@ -569,3 +570,51 @@ free(hp->bundle);
 free(hp); 
 }
 
+/*****************************************************************************/
+
+struct HubPromise *NewHubPromise(char *bn,char *bt,char **ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons)
+
+{ struct HubPromise *hp;
+     
+if ((hp = malloc(sizeof(struct HubPromise))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubPromise");
+   }
+
+ hp->bundleName = strdup(bn);
+ hp->bundleType = strdup(bt);
+ hp->bundleArgs = strdup(ba);
+ hp->promiseType = strdup(pt);
+ hp->promiser = strdup(pr);
+ hp->promisee = strdup(pe);
+ hp->classContext = strdup(cl);
+ hp->handle = strdup(ha);
+ hp->comment = strdup(co);
+ hp->file = strdup(fn);
+ hp->lineNo = lno;
+ hp->constraints = cons; // allocated by caller
+
+ return hp;
+}
+
+/*****************************************************************************/
+
+void DeleteHubPromise(struct HubPromise *hp)
+
+{
+  free(hp->bundleName);
+  free(hp->bundleType);
+  free(hp->bundleArgs);
+  free(hp->promiseType);
+  free(hp->promiser);
+  free(hp->promisee);
+  free(hp->classContext);
+  free(hp->handle);
+  free(hp->comment);
+  free(hp->file);
+  hp->lineNo = -1;
+  FreeStringArray(hp->constraints);
+
+  free(hp);
+  hp = NULL;
+}

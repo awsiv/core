@@ -84,7 +84,7 @@ void Nova_StoreUnExpandedPromises(struct Bundle *bundles,struct Body *bodies)
 { struct Body *bdp;
   struct Bundle *bp;
   struct Rlist *rp;
-  struct SubType *sp;
+  struct SubType *st;
   struct Promise *pp;
   struct Constraint *cp;
 
@@ -96,6 +96,7 @@ void Nova_StoreUnExpandedPromises(struct Bundle *bundles,struct Body *bodies)
   char iStr[32], jStr[32];
   char rval_buffer[CF_BUFSIZE];
   char con[CF_MAXVARSIZE];
+  char *sp;
   
 
 if (!SHOWREPORTS)
@@ -141,15 +142,15 @@ for (bp = bundles; bp != NULL; bp=bp->next)
    
    prObj = bson_append_start_object(&bbuf, cfp_promisetype);
 
-   for (sp = bp->subtypes; sp != NULL; sp = sp->next)
+   for (st = bp->subtypes; st != NULL; st = st->next)
       {
-      printf("PROMISE-TYPE: %s\n",sp->name);
+      printf("PROMISE-TYPE: %s\n",st->name);
 
-      prType = bson_append_start_array(prObj, sp->name);
+      prType = bson_append_start_array(prObj, st->name);
 
 
       
-      for (pp = sp->promiselist, i = 0; pp != NULL; pp = pp->next, i++)
+      for (pp = st->promiselist, i = 0; pp != NULL; pp = pp->next, i++)
          {
 	 snprintf(iStr, sizeof(iStr), "%d", i);
 
@@ -158,15 +159,42 @@ for (bp = bundles; bp != NULL; bp=bp->next)
 	 bson_append_string(pr, cfp_promiser, pp->promiser);
 	 bson_append_string(pr, cfp_classcontext, pp->classes);
 
+	 if (pp->promisee)
+	   {
+	     memset(rval_buffer, 0, sizeof(rval_buffer));
+	     PrintRval(rval_buffer,CF_BUFSIZE,pp->promisee,pp->petype);
+
+	     bson_append_string(pr, cfp_promisee, rval_buffer);
+	   }
+	 
+
 	 if (pp->audit)
 	   {
 	     bson_append_string(pr, cfp_file, pp->audit->filename);
 	     bson_append_int(pr, cfp_lineno, pp->lineno);
 	   }
 
-	 cstr = bson_append_start_array(pr, cfp_constraints);
-	 for (cp = pp->conlist, j = 0; cp != NULL; cp = cp->next, j++)
+	 if ((sp = GetConstraint("handle",pp,CF_SCALAR)) || (sp = PromiseID(pp)))
 	   {
+	     bson_append_string(pr, cfp_handle, sp);
+	   }
+	 
+	 if (sp = GetConstraint("comment",pp,CF_SCALAR))
+	   {
+	     bson_append_string(pr, cfp_comment, sp);
+	   }
+	 
+
+	 cstr = bson_append_start_array(pr, cfp_constraints);
+	 for (cp = pp->conlist, j = 0; cp != NULL; cp = cp->next)
+	   {
+	     // comments and handles have their own fields
+	     if(strcmp(cp->lval, "comment") == 0 ||
+		strcmp(cp->lval, "handle") == 0)
+	       { 
+		 continue;
+	       }
+	     
 	     memset(rval_buffer, 0, sizeof(rval_buffer));
 	     PrintRval(rval_buffer,CF_BUFSIZE,cp->rval,cp->type);
 	     printf("  %s => %s\n",cp->lval,rval_buffer);
@@ -175,6 +203,7 @@ for (bp = bundles; bp != NULL; bp=bp->next)
 	     
 	     snprintf(jStr, sizeof(jStr), "%d", j);
 	     bson_append_string(cstr, jStr, con);
+	     j++;
 	   }
 	 bson_append_finish_object(cstr);
 	 
