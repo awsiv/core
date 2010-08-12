@@ -66,9 +66,9 @@ if (false)
    Nova2PHP_promises(NULL, NULL, NULL, 0);
    Nova2PHP_getlastupdate(NULL,buffer,10);
 
-   Nova_AnalyseMag(NULL,5,buffer,10);
-   Nova_AnalyseWeek(NULL,5,buffer,10);
-   Nova_AnalyseHist(NULL,5,buffer,10);
+   Nova_AnalyseMag(NULL,NULL,5,buffer,10);
+   Nova_AnalyseWeek(NULL,NULL,5,buffer,10);
+   Nova_AnalyseHist(NULL,NULL,5,buffer,10);
    
    CFDB_PutValue("one_two","three");
    CFDB_GetValue("newvar",buffer,120);
@@ -79,6 +79,7 @@ if (false)
    Nova_Header("123","123",buffer,1000);
    Nova_Footer(buffer,1000);
    Nova2PHP_choose_hosts("123",2,buffer,1000);
+   NovaInitMeasurements();
    }
 }
 

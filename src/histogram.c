@@ -280,7 +280,7 @@ return maxima;
 
 /*******************************************************************/
 
-void Nova_AnalyseHistogram(char *keyhash,enum observables obs,char *buffer,int bufsize)
+void Nova_AnalyseHistogram(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 { double sx, q, delta, sum = 0, sigma2;
   int new_gradient = 0, past_gradient = 0, max = 0;
@@ -290,8 +290,8 @@ void Nova_AnalyseHistogram(char *keyhash,enum observables obs,char *buffer,int b
   double sensitivity_factor = 1.2;
   struct CfDataView cfv;
 
-Nova_ReadHistogram(&cfv,keyhash,obs);
-
+Nova_ViewHisto(&cfv,keyhash,obs);
+  
 snprintf(work,CF_BUFSIZE-1,"<div id=\"histoanalysis\">\n");
 Join(buffer,work,bufsize);
 

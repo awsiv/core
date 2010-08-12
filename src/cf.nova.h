@@ -464,7 +464,7 @@ void Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables ob
 void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
 void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum);
 struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observables obs);
-void Nova_AnalyseHistogram(char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova_AnalyseHistogram(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 /* html.c */
 
@@ -576,7 +576,7 @@ void Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs);
 void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3);
 void Nova_DrawMagQAxes(struct CfDataView *cfv,int col);
-void Nova_AnalyseMag(char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova_AnalyseMag(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 /* monitoring.c */
 
@@ -858,7 +858,7 @@ void Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3);
-void Nova_AnalyseWeek(char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova_AnalyseWeek(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 #ifdef MINGW
 /* win_api.c */

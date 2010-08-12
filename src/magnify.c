@@ -27,7 +27,6 @@ void Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs)
     
 { int i,y,hint;
   FILE *fout;
-  struct stat s1,s2;
   char newfile[CF_BUFSIZE];
 
 snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_mag.png",cfv->docroot,keyhash,OBS[obs][0]);
@@ -293,12 +292,21 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
 
 /***********************************************************/
 
-void Nova_AnalyseMag(char *hostkey,enum observables obs,char *buffer,int bufsize)
+void Nova_AnalyseMag(char *docroot,char *hostkey,enum observables obs,char *buffer,int bufsize)
 
 { char work[CF_BUFSIZE];
   struct CfDataView cfv;
+  char newfile[CF_BUFSIZE];
+  double y;
+  
+cfv.height = 300;
+cfv.width = 700; //(7*24*2)*2; // halfhour
+cfv.margin = 50;
+cfv.docroot = docroot;
 
-Nova_ReadMagTimeSeries(&cfv,hostkey,obs);
+/* Done initialization */
+
+Nova_ViewMag(&cfv,hostkey,obs);
 
 snprintf(work,CF_BUFSIZE,"<div id=\"maganalysis\">\n");
 Join(buffer,work,bufsize);

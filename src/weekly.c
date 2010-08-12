@@ -415,13 +415,20 @@ gdImageArc(cfv->im,x,y,20,20,0,360,RED);
 
 /***********************************************************/
 
-void Nova_AnalyseWeek(char *keyhash,enum observables obs,char *buffer,int bufsize)
+void Nova_AnalyseWeek(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 { char work[CF_BUFSIZE];
   double x;
   struct CfDataView cfv;
 
-Nova_ReadTimeSeries(&cfv,keyhash,obs);
+cfv.height = 300;
+cfv.width = 700; //(7*24*2)*2; // halfhour
+cfv.margin = 50;
+cfv.docroot = docroot;
+
+/* Done initialization */
+
+Nova_ViewWeek(&cfv,keyhash,obs);
 
 snprintf(work,CF_BUFSIZE-1,"<div id=\"weekanalysis\">\n");
 Join(buffer,work,bufsize);
