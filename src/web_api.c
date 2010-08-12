@@ -66,6 +66,10 @@ if (false)
    Nova2PHP_promises(NULL, NULL, NULL, 0);
    Nova2PHP_getlastupdate(NULL,buffer,10);
 
+   Nova_AnalyseMag(NULL,5,buffer,10);
+   Nova_AnalyseWeek(NULL,5,buffer,10);
+   Nova_AnalyseHist(NULL,5,buffer,10);
+   
    CFDB_PutValue("one_two","three");
    CFDB_GetValue("newvar",buffer,120);
    Nova2PHP_count_hosts();

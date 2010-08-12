@@ -280,53 +280,46 @@ return maxima;
 
 /*******************************************************************/
 
-struct Item *Nova_AnalyseHistogram(struct CfDataView *cfv,char *keyhash,enum observables obs)
+void Nova_AnalyseHistogram(char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 { double sx, q, delta, sum = 0, sigma2;
   int new_gradient = 0, past_gradient = 0, max = 0;
   int redshift = 0, blueshift = 0;
   int above_noise = false;
-  char fname[CF_BUFSIZE],img[CF_BUFSIZE],output[CF_BUFSIZE];
+  char work[CF_BUFSIZE];
   double sensitivity_factor = 1.2;
-  struct Item *maxima = NULL;
-  FILE *fp = stdout;
+  struct CfDataView cfv;
 
-  /* First find the variance sigma2 */
+Nova_ReadHistogram(&cfv,keyhash,obs);
 
-fprintf(fp,"<h3>Spectral analysis of %s</h3>",OBS[obs][0]);
-
-fprintf(fp,"<div id=\"legend\">\n");
-
-CfOut(cf_verbose,""," -> Looking for maxima in %s\n",OBS[obs][0]);
-
-snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_hist.png",DOCROOT,keyhash,OBS[obs][0]);
-
-fprintf(fp,"<div id=\"graph\">\n");
-fprintf(fp,"<a href=\"%s\"><img src=\"%s\" width=\"590\"></a>\n",img,img);
-fprintf(fp,"</div>\n");
-
-fprintf(fp,"<div id=\"histoanalysis\">\n");
+snprintf(work,CF_BUFSIZE-1,"<div id=\"histoanalysis\">\n");
+Join(buffer,work,bufsize);
 
 for (sx = 1; sx < CF_GRAINS; sx++)
    {
-   q = cfv->data_E[(int)sx];
-   delta = cfv->data_E[(int)sx] - cfv->data_E[(int)(sx-1)];
+   q = cfv.data_E[(int)sx];
+   delta = cfv.data_E[(int)sx] - cfv.data_E[(int)(sx-1)];
    sum += delta*delta;
    }
 
 sigma2 = sum / (double)CF_GRAINS;
 
-fprintf(fp,"<p> Maximum observed %s = %.2lf\n",OBS[obs][0],Q_MAX);
-fprintf(fp,"<p> Minimum observed %s = %.2lf\n",OBS[obs][0],Q_MIN);
-fprintf(fp,"<p> Approximate mean value over time = %.2lf\n",Q_MEAN);
-fprintf(fp,"<p> Approximate standard deviation time = %.2lf\n",Q_SIGMA);
+snprintf(work,CF_BUFSIZE-1,"<p> Maximum observed %s = %.2lf\n",OBS[obs][0],Q_MAX);
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE-1,"<p> Minimum observed %s = %.2lf\n",OBS[obs][0],Q_MIN);
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE-1,"<p> Approximate mean value over time = %.2lf\n",Q_MEAN);
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE-1,"<p> Approximate standard deviation time = %.2lf\n",Q_SIGMA);
+Join(buffer,work,bufsize);
 
-fprintf(fp,"<ol>\n");
+snprintf(work,CF_BUFSIZE-1,"<ol>\n");
+Join(buffer,work,bufsize);
 
 for (sx = 1; sx < CF_GRAINS; sx++)
    {
-   q = cfv->data_E[(int)sx];
-   delta = cfv->data_E[(int)sx] - cfv->data_E[(int)(sx-1)];
+   q = cfv.data_E[(int)sx];
+   delta = cfv.data_E[(int)sx] - cfv.data_E[(int)(sx-1)];
 
    above_noise = (delta*delta > sigma2) * sensitivity_factor;
    
@@ -338,33 +331,36 @@ for (sx = 1; sx < CF_GRAINS; sx++)
          {
          max++;
 
-         fprintf(fp,"<p>Spectral mode %d, with  peak found at %.0lf/%.0lf grains (conversion &asymp; %.2lf &plusmn; %.2lf)\n",max,sx-1,(double)CF_GRAINS,Q_MEAN,Q_SIGMA);
-
-         snprintf(output,CF_BUFSIZE-1,"key-%f",sx);
-         AppendItem(&maxima,output,NULL);
-         SetItemListCounter(maxima,output,sx-1);
+         snprintf(work,CF_BUFSIZE-1,"<p>Spectral mode %d, with  peak found at %.0lf/%.0lf grains (conversion &asymp; %.2lf &plusmn; %.2lf)\n",max,sx-1,(double)CF_GRAINS,Q_MEAN,Q_SIGMA);
+         Join(buffer,work,bufsize);
 
          if (sx < ((double)CF_GRAINS)/2.0 - 1.0)
             {
             redshift++;
-            fprintf(fp,"<ul><li>Red-shifted, i.e. shows retardation process</li></ul>\n");
-            fprintf(fp,"<div id = \"explain\"><table><tr><td><h4>What does this mean?</h4>"
+            snprintf(work,CF_BUFSIZE-1,"<ul><li>Red-shifted, i.e. shows retardation process</li></ul>\n");
+            Join(buffer,work,bufsize);
+            
+            snprintf(work,CF_BUFSIZE-1,"<div id = \"explain\"><table><tr><td><h4>What does this mean?</h4>"
                     "<p>If the distribution is skewed, it has a long ramp, indicating"
                     "a possible resource ceiling, a well-utilized system."
                     "Or there could be outliers of low value, because data are incomplete."
                     "Finally, it can indicate that this resource process is declining."
                     "</td></tr></table></div>\n");
+            Join(buffer,work,bufsize);
             }
          else if (sx > ((double)CF_GRAINS)/2.0 + 1.0)
             {
             blueshift++;
-            fprintf(fp,"<ul><li>Blue-shifted, i.e. shows acceleration process</li></ul>\n");
-            fprintf(fp,"<div id = \"explain\"><table><tr><td><h4>What does this mean?</h4>"
+            snprintf(work,CF_BUFSIZE-1,"<ul><li>Blue-shifted, i.e. shows acceleration process</li></ul>\n");
+            Join(buffer,work,bufsize);
+
+            snprintf(work,CF_BUFSIZE-1,"<div id = \"explain\"><table><tr><td><h4>What does this mean?</h4>"
                     "<p>If the distribution is skewed, it has a long tail, indicating"
                     "plenty of resources, or an under-used system."
                     "Or there could be outliers of low value, because data are incomplete."
                     "Finally, it can indicate that this resource process is declining."
                     "</td></tr></table></div>\n");
+            Join(buffer,work,bufsize);            
             }
 
          }
@@ -373,14 +369,14 @@ for (sx = 1; sx < CF_GRAINS; sx++)
    past_gradient = new_gradient;
    }
 
-fprintf(fp,"</ol>\n");      
+snprintf(work,CF_BUFSIZE-1,"</ol>\n");      
+Join(buffer,work,bufsize);
 
-fprintf(fp,"<p>Spectrum seems to be %d-modal (within the margins of uncertainty)</p>\n",max);
+snprintf(work,CF_BUFSIZE-1,"<p>Spectrum seems to be %d-modal (within the margins of uncertainty)</p>\n",max);
+Join(buffer,work,bufsize);
 
-
-fprintf(fp,"</div></div>\n");
-fclose(fp);
-return maxima;
+snprintf(work,CF_BUFSIZE-1,"</div>\n");
+Join(buffer,work,bufsize);
 }
 
 #endif

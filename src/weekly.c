@@ -415,51 +415,44 @@ gdImageArc(cfv->im,x,y,20,20,0,360,RED);
 
 /***********************************************************/
 
-void Nova_AnalyseWeek(struct CfDataView *cfv,char *keyhash,enum observables obs)
+void Nova_AnalyseWeek(char *keyhash,enum observables obs,char *buffer,int bufsize)
 
-{ char fname[CF_BUFSIZE],img[CF_BUFSIZE];
-  FILE *fp = stdout;
+{ char work[CF_BUFSIZE];
   double x;
+  struct CfDataView cfv;
 
-  /* First find the variance sigma2 */
+Nova_ReadTimeSeries(&cfv,keyhash,obs);
 
-
-fprintf(fp,"<h3>Weekly trends on %s</h3>\n",OBS[obs][0]);
-
-Nova_GraphLegend(fp);
-
-snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_weekly.png",DOCROOT,keyhash,OBS[obs][0]);
-
-fprintf(fp,"<div id=\"graph\">\n");
-fprintf(fp,"<a href=\"%s\"><img src=\"%s\" width=\"590\"></a>\n",img,img);
-fprintf(fp,"</div>\n");
-
-fprintf(fp,"<div id=\"weekanalysis\">\n");
-
-fprintf(fp,"<table>\n");
-fprintf(fp,"<tr><td>Maximum value </td><td>%lf</td><td>%s</td></tr>\n",cfv->max,UNITS[obs]);
-fprintf(fp,"<tr><td>Minimum value </td><td>%lf</td><td>%s</td></tr>\n",cfv->min,UNITS[obs]);
-
-Q_MAX = cfv->max;
-Q_MIN = cfv->min;
-
-x = 100*(double)cfv->over/(double)CF_TIMESERIESDATA;
-fprintf(fp,"<tr><td>Percentage over average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
-x = 100*(double)cfv->under/(double)CF_TIMESERIESDATA;
-fprintf(fp,"<tr><td>Percentage under average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
-
-x = 100*(double)cfv->over_dev1/(double)CF_TIMESERIESDATA;
-fprintf(fp,"<tr><td>Percentage 1 deviation over average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
-x = 100*(double)cfv->under_dev1/(double)CF_TIMESERIESDATA;
-fprintf(fp,"<tr><td>Percentage 1 deviation under average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
-
-x = 100*(double)cfv->over_dev2/(double)CF_TIMESERIESDATA;
-fprintf(fp,"<tr><td>Percentage 2 deviations over average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
-x = 100*(double)cfv->under_dev2/(double)CF_TIMESERIESDATA;
-fprintf(fp,"<tr><td>Percentage 2 deviations under average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
-
-fprintf(fp,"</table>\n");
-fprintf(fp,"</div></div>\n");
+snprintf(work,CF_BUFSIZE-1,"<div id=\"weekanalysis\">\n");
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE-1,"<table>\n");
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE-1,"<tr><td>Maximum value </td><td>%lf</td><td>%s</td></tr>\n",cfv.max,UNITS[obs]);
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE-1,"<tr><td>Minimum value </td><td>%lf</td><td>%s</td></tr>\n",cfv.min,UNITS[obs]);
+Join(buffer,work,bufsize);
+x = 100*(double)cfv.over/(double)CF_TIMESERIESDATA;
+snprintf(work,CF_BUFSIZE-1,"<tr><td>Percentage over average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
+Join(buffer,work,bufsize);
+x = 100*(double)cfv.under/(double)CF_TIMESERIESDATA;
+snprintf(work,CF_BUFSIZE-1,"<tr><td>Percentage under average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
+Join(buffer,work,bufsize);
+x = 100*(double)cfv.over_dev1/(double)CF_TIMESERIESDATA;
+snprintf(work,CF_BUFSIZE-1,"<tr><td>Percentage 1 deviation over average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
+Join(buffer,work,bufsize);
+x = 100*(double)cfv.under_dev1/(double)CF_TIMESERIESDATA;
+snprintf(work,CF_BUFSIZE-1,"<tr><td>Percentage 1 deviation under average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
+Join(buffer,work,bufsize);
+x = 100*(double)cfv.over_dev2/(double)CF_TIMESERIESDATA;
+snprintf(work,CF_BUFSIZE-1,"<tr><td>Percentage 2 deviations over average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
+Join(buffer,work,bufsize);
+x = 100*(double)cfv.under_dev2/(double)CF_TIMESERIESDATA;
+snprintf(work,CF_BUFSIZE-1,"<tr><td>Percentage 2 deviations under average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE-1,"</table>\n");
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE-1,"</div>\n");
+Join(buffer,work,bufsize);
 }
 
 #endif

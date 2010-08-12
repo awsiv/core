@@ -293,37 +293,34 @@ for (sx = 0; sx < CF_MAGDATA; sx++)
 
 /***********************************************************/
 
-void Nova_AnalyseMag(struct CfDataView *cfv,char *keyhash,enum observables obs)
+void Nova_AnalyseMag(char *hostkey,enum observables obs,char *buffer,int bufsize)
 
-{ char fname[CF_BUFSIZE],img[CF_BUFSIZE];
-  FILE *fp = stdout;
+{ char work[CF_BUFSIZE];
+  struct CfDataView cfv;
 
-  /* First find the variance sigma2 */
+Nova_ReadMagTimeSeries(&cfv,hostkey,obs);
 
-fprintf(fp,"<h3>Zoom: %s Last four hours</h3>\n",OBS[obs][0]);
-
-Nova_GraphMagLegend(fp);
-
-snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_mag.png",DOCROOT,keyhash,OBS[obs][0]);
-
-fprintf(fp,"<div id=\"graph\">\n");
-fprintf(fp,"<a href=\"%s\"><img src=\"%s\" width=\"590\"></a>\n",img,img);
-fprintf(fp,"</div>\n");
-
-fprintf(fp,"<div id=\"maganalysis\">\n");
-
-if (cfv->max - cfv->min < cfv->error_scale * 2)
+snprintf(work,CF_BUFSIZE,"<div id=\"maganalysis\">\n");
+Join(buffer,work,bufsize);
+   
+if (cfv.max - cfv.min < cfv.error_scale * 2)
    {
-   fprintf(fp,"<p><font color=red>The variations you are seeing are not significant.</p>");
+   snprintf(work,CF_BUFSIZE,"<p><font color=red>The variations you are seeing are not significant.</p>");
+   Join(buffer,work,bufsize);
    }
 
-fprintf(fp,"<table>\n");
-fprintf(fp,"<tr><td>Maximum value </td><td>%lf</td><td>%s</td></tr>\n",cfv->max,UNITS[obs]);
-fprintf(fp,"<tr><td>Minimum value </td><td>%lf</td><td>%s</td></tr>\n",cfv->min,UNITS[obs]);
-fprintf(fp,"<tr><td>Average variability </td><td>+/- %lf</td><td>%s</td></tr>\n",cfv->error_scale,UNITS[obs]);
-fprintf(fp,"</table>\n");
-
-fprintf(fp,"</div></div>\n");
+snprintf(work,CF_BUFSIZE,"<table>\n");
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE,"<tr><td>Maximum value </td><td>%lf</td><td>%s</td></tr>\n",cfv.max,UNITS[obs]);
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE,"<tr><td>Minimum value </td><td>%lf</td><td>%s</td></tr>\n",cfv.min,UNITS[obs]);
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE,"<tr><td>Average variability </td><td>+/- %lf</td><td>%s</td></tr>\n",cfv.error_scale,UNITS[obs]);
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE,"</table>\n");
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE,"</div>\n");
+Join(buffer,work,bufsize);
 }
 
 /**********************************************************************/

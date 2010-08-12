@@ -58,11 +58,11 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    snprintf(work,CF_MAXVARSIZE,"<tr>");
    snprintf(work,CF_MAXVARSIZE,"<th><div id=\"ip\">%s</div><br><br><a href=\"/performance_details.php?hostkey=%s\">%s</a><br><br><small>Latest data<br>%s</small></th>",hostname,hostkey,OBS[i][0],lastsaw);
    Join(buffer,work,bufsize);
-   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_mag.png\" width=300></td>",hostkey,OBS[i][0]);
+   snprintf(work,CF_MAXVARSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=d&view=mag\"><img src=\"/hub/%s/%s_mag.png\" width=\"300\" border=\"0\"></a></td>",hostkey,OBS[i][0]);
    Join(buffer,work,bufsize);
-   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_week.png\" width=300></td>",hostkey,OBS[i][0]);
+   snprintf(work,CF_MAXVARSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=d&view=week\"><img src=\"/hub/%s/%s_week.png\" width=\"300\" border=\"0\"></a></td>",hostkey,OBS[i][0]);
    Join(buffer,work,bufsize);
-   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/hub/%s/%s_hist.png\" width=300></td>",hostkey,OBS[i][0]);
+   snprintf(work,CF_MAXVARSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=d&view=hist\"><img src=\"/hub/%s/%s_hist.png\" width=\"300\" border=\"0\"></a></td>",hostkey,OBS[i][0]);
    Join(buffer,work,bufsize);
    snprintf(work,CF_MAXVARSIZE,"</tr>\n");
    Join(buffer,work,bufsize);

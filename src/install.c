@@ -583,7 +583,7 @@ if ((hp = malloc(sizeof(struct HubPromise))) == NULL)
 
  hp->bundleName = strdup(bn);
  hp->bundleType = strdup(bt);
- hp->bundleArgs = strdup(ba);
+// hp->bundleArgs = strdup(ba);
  hp->promiseType = strdup(pt);
  hp->promiser = strdup(pr);
  hp->promisee = strdup(pe);

@@ -21,9 +21,9 @@ void Nova_Header(char *title,char *device_type, char *buffer, int bufsize)
 
 { char *stylesheet_normal = "nova.css";
   char *stylesheet_phone = "nova_hand.css";
-  char *css;
+  char *css,*reload;
   
-if (strcmp(device_type,"mobile") == 0)
+if (strstr(device_type,"mobile") == 0)
    {
    css = stylesheet_phone;
    }
@@ -31,13 +31,22 @@ else
    {
    css = stylesheet_normal;
    }
-  
+
+if (strstr(device_type,"reload") == 0)
+   {
+   reload = "    <meta http-equiv=\"refresh\" CONTENT=\"150\">\n";
+   }
+else
+   {
+   reload ="";
+   }
+
 snprintf(buffer,bufsize,
 
 "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"   \"http://www.w3.org/TR/html4/loose.dtd\"><html>\n"
 "  <head>\n"
 "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n"
-//"    <meta http-equiv=\"refresh\" CONTENT=\"150\">\n"
+"    %s"
 "    <title>%s</title>\n"
 "    <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"screen\">\n"
 "    <link rel=\"stylesheet\" href=\"hand_/cf_enterprise.css\" type=\"text/css\" media=\"handheld\">\n"
@@ -50,7 +59,7 @@ snprintf(buffer,bufsize,
 "        </form>\n"
 "      </div> \n"
 "        <h2>CFENGINE MISSION PORTAL <span id=\"subheading\"><b>%s</b></span></h2>\n"
-         "    </div>\n",title,css,CF_KMAP,title);
+         "    </div>\n",reload,title,css,CF_KMAP,title);
 }
 
 /*****************************************************************************/
