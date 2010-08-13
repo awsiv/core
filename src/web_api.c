@@ -635,8 +635,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseCompliance *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
-            hp->hh->hostname,hp->handle,hp->e,hp->d,cf_ctime(&(hp->t)));
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promises.php?handle=%s\">%s</a></td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
+            hp->hh->hostname,hp->handle,hp->handle,hp->e,hp->d,cf_ctime(&(hp->t)));
           
    tmpsize = strlen(buffer);
    
@@ -2221,7 +2221,7 @@ Join(buffer,"\n</select>\n",bufsize);
 
 /*****************************************************************************/
 
-int Nova2PHP_promises(char *bundletype, char *bundlename,char *returnval,int bufsize)
+int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
 
 { mongo_connection dbconn;
   struct HubPromise *hp;
@@ -2237,8 +2237,6 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
-
- char *handle = "promise_change_cf_56";
 
  hp = CFDB_QueryPromise(&dbconn, handle);
  

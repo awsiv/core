@@ -854,7 +854,7 @@ void Nova2PHP_show_col_hosts(char *colour,int n,char *buffer,int bufsize);
 
 char *Nova_HostProfile(char *key);
 void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
-int Nova2PHP_promises(char *bundletype, char *bundlename,char *returnval,int bufsize);
+int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize);
 
 /* weekly.c */
 
