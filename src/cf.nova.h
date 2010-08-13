@@ -514,7 +514,7 @@ struct HubFileDiff *NewHubFileDiff(struct HubHost *hh,char *file,char *diff,time
 void DeleteHubFileDiff(struct HubFileDiff *hp);
 struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double repaired,double notkept);
 void DeleteHubValue(struct HubValue *hp);
-struct HubPromise *NewHubPromise(char *bn,char *bt,char **ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons);
+struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons);
 void DeleteHubPromise(struct HubPromise *hp);
 
 /* knowledge.c */

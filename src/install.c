@@ -572,7 +572,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubPromise *NewHubPromise(char *bn,char *bt,char **ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons)
+struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons)
 
 { struct HubPromise *hp;
      
@@ -583,7 +583,7 @@ if ((hp = malloc(sizeof(struct HubPromise))) == NULL)
 
  hp->bundleName = strdup(bn);
  hp->bundleType = strdup(bt);
-// hp->bundleArgs = strdup(ba);
+ hp->bundleArgs = strdup(ba);
  hp->promiseType = strdup(pt);
  hp->promiser = strdup(pr);
  hp->promisee = strdup(pe);
