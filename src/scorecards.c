@@ -79,6 +79,126 @@ Join(buffer,"</table>\n",bufsize);
 
 /*****************************************************************************/
 
+void Nova_ComplianceSummaryGraph(char *docroot,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE];
+  struct HubTotalCompliance *ht;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+  struct CfDataView cfv;
+  char newfile[CF_BUFSIZE];
+  const int span = 7 * 4;
+  double x,kept[span], repaired[span], notkept[span];
+  double tkept,trepaired,tnotkept,total;
+  FILE *fout;
+  time_t now,start;
+  int i,slot;
+  
+cfv.height = 200;
+cfv.width = 500;
+cfv.margin = 50;
+cfv.docroot = docroot;
+
+snprintf(newfile,CF_BUFSIZE,"%s/hub/common/compliance.png",cfv.docroot);
+MakeParentDirectory(newfile,true);
+
+cfv.title = "Compliance";
+cfv.im = gdImageCreate(cfv.width+2*cfv.margin,cfv.height+2*cfv.margin);
+Nova_MakePalette(&cfv);
+
+for (i = 0; i < (int)span; i++)
+   {
+   kept[i] = 0;
+   repaired[i] = 0;
+   notkept[i] = 0;
+   }
+
+/* BEGIN query document */
+
+icmp = CFDB_GREATERTHANEQ;
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return;
+   }
+
+// Query all hosts
+
+hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),NULL,-1,-1,-1,-1,CFDB_GREATERTHANEQ);
+
+returnval[0] = '\0';
+
+strcat(returnval,"<table>\n");
+count += strlen(returnval);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   ht = (struct HubTotalCompliance *)rp->item;
+
+// ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,ht->t;        
+// Divide each day into 4 lifecycle units 3600 * 24 / 4 seconds
+
+   now = time(0);
+   start = now - 24 * 3600 * 7;
+   
+   if (ht->t < start)
+      {
+      continue;
+      }
+   else
+      {
+      slot = (int)((double)(ht->t - start)/(double)(3600*6) + 0.5);
+      kept[slot] += ht->kept;
+      repaired[slot] += ht->repaired;
+      notkept[slot] += ht->notkept;
+      }
+   }
+
+for (i = 0; i < span; i++)
+   {
+   x = i * cfv.width/span;
+   total = notkept[i]+kept[i]+repaired[i];
+   tkept = kept[i] / total * cfv.height;
+   tnotkept = notkept[i]/total * cfv.height;
+   trepaired = repaired[i]/total * cfv.height;
+   
+   gdImageSetThickness(cfv.im,cfv.width/span);
+   gdImageLine(cfv.im,x,0,x,tnotkept,RED);
+   gdImageSetThickness(cfv.im,cfv.width/span);
+   gdImageLine(cfv.im,x,tnotkept,x,tnotkept+trepaired,YELLOW);
+   gdImageSetThickness(cfv.im,cfv.width/span);
+   gdImageLine(cfv.im,x,tnotkept+trepaired,x,cfv.height,GREEN);
+   }
+
+DeleteHubQuery(hq,DeleteHubTotalCompliance);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+if ((fout = fopen(newfile, "wb")) == NULL)
+   {
+   CfOut(cf_verbose,"fopen","Cannot write %s file\n",newfile);
+   return;
+   }
+else
+   {
+   CfOut(cf_verbose,""," -> Making %s\n",newfile);
+   }
+
+gdImagePng(cfv.im, fout);
+fclose(fout);
+gdImageDestroy(cfv.im);
+}
+
+/*****************************************************************************/
+
 void Nova_SummaryMeter(char *docroot,char *search_string)
 
 { FILE *fout;

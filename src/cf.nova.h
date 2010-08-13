@@ -691,7 +691,7 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *rep);
 int Nova_IsGreen(int level);
 int Nova_IsYellow(int level);
 int Nova_IsRed(int level);
-
+void Nova_ComplianceSummaryGraph(char *docroot,char *returnval,int bufsize);
 
 
 /* server.c */

@@ -454,9 +454,11 @@ Nova2PHP_promiselog(NULL,NULL,plog_notkept,buffer,20000);
 printf("AVLU = %s\n",buffer);
 */
 
-Nova2PHP_getlastupdate("SHA_852ffe9132338a8d76529ad522930933a111782959f028d8b63d35142531dc70",buffer,1000);
+//Nova2PHP_getlastupdate("SHA_852ffe9132338a8d76529ad522930933a111782959f028d8b63d35142531dc70",buffer,1000);
+//printf("UPDATE = %s\n",buffer);
 
-printf("UPDATE = %s\n",buffer);
+Nova_ComplianceSummaryGraph("/srv/www/htdocs",buffer,10);
+
 #else
 printf("For Cfengine internal only\n");
 #endif
