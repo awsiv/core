@@ -2665,50 +2665,36 @@ return ok;
 /* Promises collection                                                       */
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryPromises(mongo_connection *conn, char *bundleType, char *bundleName)
+struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle)
 /*
- * Returns all promises of a given bundle, or all
- * promises (if bundle is unspecified)
+ * Returns all attribs of one promise by its handle.
  */
 { bson_buffer b,bb,*sub1,*sub2,*sub3;
   bson qe,query;
   mongo_cursor *cursor;
-  bson_iterator it1,it2,it3,it4,it5;
+  bson_iterator it1,it2;
   struct HubHost *hh;
   struct Rlist *record_list = NULL;
-  int emptyQuery = true;
-  char bn[CF_MAXVARSIZE], bt[CF_MAXVARSIZE],ba[CF_MAXVARSIZE],
-    pt[CF_MAXVARSIZE], pr[CF_MAXVARSIZE], pe[CF_MAXVARSIZE],
-      cl[CF_MAXVARSIZE], ha[CF_MAXVARSIZE], co[CF_MAXVARSIZE],
-      fn[CF_MAXVARSIZE], **cons = {0};
+  char bn[CF_MAXVARSIZE] = {0}, bt[CF_MAXVARSIZE] = {0},ba[CF_MAXVARSIZE] = {0},
+    pt[CF_MAXVARSIZE] = {0}, pr[CF_MAXVARSIZE] = {0}, pe[CF_MAXVARSIZE] = {0},
+    cl[CF_MAXVARSIZE] = {0}, ha[CF_MAXVARSIZE] = {0}, co[CF_MAXVARSIZE] = {0},
+    fn[CF_MAXVARSIZE] = {0}, **cons = {0};
   int lno = -1;
   int i,bargCount,constCount;
   
   /* BEGIN query document */
 
-  if ((bundleType && strlen(bundleType) != 0)
-      && (bundleName && strlen(bundleName) != 0))
-    {
-      bson_buffer_init(&b);
-      bson_append_string(&b,cfp_bundletype,bundleType);
-      bson_append_string(&b,cfp_bundlename,bundleName);
-      bson_from_buffer(&query,&b);
-      emptyQuery = false;
-    }
+  bson_buffer_init(&b);
+  bson_append_string(&b,cfp_handle,handle);
+  bson_from_buffer(&query,&b);
+
 
   /* BEGIN SEARCH */
+  cursor = mongo_find(conn,MONGO_PROMISES,&query,NULL,0,0,0);
+  bson_destroy(&query);
 
-  if (emptyQuery)
-    {
-      cursor = mongo_find(conn,MONGO_PROMISES,bson_empty(&qe),NULL,0,0,0);
-    }
-  else
-    {
-      cursor = mongo_find(conn,MONGO_PROMISES,&query,NULL,0,0,0);
-      bson_destroy(&query);
-    }
 
-  while (mongo_cursor_next(cursor))  // loops over documents
+  if(mongo_cursor_next(cursor))  // loops over documents
     {
       bson_iterator_init(&it1,cursor->current.data);
    
@@ -2728,7 +2714,6 @@ struct HubQuery *CFDB_QueryPromises(mongo_connection *conn, char *bundleType, ch
 
 	      memset(ba,0,sizeof(ba));
 
-	      // save args (freed in DeleteHubPromise)
 	      bson_iterator_init(&it2,bson_iterator_value(&it1));
 
 	      while(bson_iterator_next(&it2))
@@ -2752,93 +2737,112 @@ struct HubQuery *CFDB_QueryPromises(mongo_connection *conn, char *bundleType, ch
 	    }
 	  else if(strcmp(bson_iterator_key(&it1), cfp_promisetype) == 0)
 	    {
-	      bson_iterator_init(&it2, bson_iterator_value(&it1));
-	      
-	      snprintf(pt, sizeof(pt), "%s", bson_iterator_key(&it2));
-	   
-	      bson_iterator_init(&it3, bson_iterator_value(&it2));
-	   
-	      while(bson_iterator_next(&it3)) // loops over promises
-		{
-		  bson_iterator_init(&it4, bson_iterator_value(&it3));
-
-		  while(bson_iterator_next(&it4))  // promise elements
-		    {
-		  
-		      if(strcmp(bson_iterator_key(&it4), cfp_promiser) == 0)
-			{
-			  snprintf(pr, sizeof(pr), "%s", bson_iterator_string(&it4));
-			}
-		      else if(strcmp(bson_iterator_key(&it4), cfp_promisee) == 0)
-			{
-			  snprintf(pe, sizeof(pe), "%s", bson_iterator_string(&it4));
-			}
-		      else if(strcmp(bson_iterator_key(&it4), cfp_classcontext) == 0)
-			{
-			  snprintf(cl, sizeof(cl), "%s", bson_iterator_string(&it4));
-			}
-		      else if(strcmp(bson_iterator_key(&it4), cfp_comment) == 0)
-			{
-			  snprintf(co, sizeof(co), "%s", bson_iterator_string(&it4));
-			}
-		      else if(strcmp(bson_iterator_key(&it4), cfp_handle) == 0)
-			{
-			  snprintf(ha, sizeof(ha), "%s", bson_iterator_string(&it4));
-			}
-		      else if(strcmp(bson_iterator_key(&it4), cfp_file) == 0)
-			{
-			  snprintf(fn, sizeof(fn), "%s", bson_iterator_string(&it4));
-			}
-		      else if(strcmp(bson_iterator_key(&it4), cfp_lineno) == 0)
-			{
-			  lno = bson_iterator_int(&it4);
-			}
-		      else if(strcmp(bson_iterator_key(&it4), cfp_constraints) == 0)
-			{
-			  bson_iterator_init(&it5,bson_iterator_value(&it4));
-				      
-			  // count constraints
-			  constCount = 0;
-			  while(bson_iterator_next(&it5))
-			    {
-			      constCount++;
-			    }
-			  
-			  if(constCount == 0)
-			    {
-			      cons = NULL;
-			      continue;
-			    }
-	      
-			  // save constraints (freed in DeleteHubPromise)
-			  bson_iterator_init(&it5,bson_iterator_value(&it4));
-			  cons = malloc(sizeof(char *) * (constCount + 1));
-			  
-			  i = 0;  // race-safe check
-			  while(bson_iterator_next(&it5) && (i < constCount))
-			    {
-			      cons[i] = strdup(bson_iterator_string(&it5));
-			      i++;
-			    }
-			  cons[i] = NULL;
-			  
-			}
-		    }
-		  
-		  AppendRlistAlien(&record_list,NewHubPromise(bn,bt,ba,pt,pr,pe,cl,ha,co,fn,lno,cons));
-		}   
-
+	      snprintf(pt, sizeof(pt), "%s", bson_iterator_string(&it1));
 	    }
+	  else if(strcmp(bson_iterator_key(&it1), cfp_promiser) == 0)
+	    {
+	      snprintf(pr, sizeof(pr), "%s", bson_iterator_string(&it1));
+	    }
+	  else if(strcmp(bson_iterator_key(&it1), cfp_promisee) == 0)
+	    {
+	      snprintf(pe, sizeof(pe), "%s", bson_iterator_string(&it1));
+	    }
+	  else if(strcmp(bson_iterator_key(&it1), cfp_classcontext) == 0)
+	    {
+	      snprintf(cl, sizeof(cl), "%s", bson_iterator_string(&it1));
+	    }
+	  else if(strcmp(bson_iterator_key(&it1), cfp_comment) == 0)
+	    {
+	      snprintf(co, sizeof(co), "%s", bson_iterator_string(&it1));
+	    }
+	  else if(strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
+	    {
+	      snprintf(ha, sizeof(ha), "%s", bson_iterator_string(&it1));
+	    }
+	  else if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
+	    {
+	      snprintf(fn, sizeof(fn), "%s", bson_iterator_string(&it1));
+	    }
+	  else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
+	    {
+	      lno = bson_iterator_int(&it1);
+	    }
+	  else if(strcmp(bson_iterator_key(&it1), cfp_constraints) == 0)
+	    {
+	      bson_iterator_init(&it2,bson_iterator_value(&it1));
+				      
+	      // count constraints
+	      constCount = 0;
+	      while(bson_iterator_next(&it2))
+		{
+		  constCount++;
+		}
+			  
+	      if(constCount == 0)
+		{
+		  cons = NULL;
+		  continue;
+		}
+	      
+	      // save constraints (freed in DeleteHubPromise)
+	      bson_iterator_init(&it2,bson_iterator_value(&it1));
+	      cons = malloc(sizeof(char *) * (constCount + 1));
+			  
+	      i = 0;  // race-safe check
+	      while(bson_iterator_next(&it2) && (i < constCount))
+		{
+		  cons[i] = strdup(bson_iterator_string(&it2));
+		  i++;
+		}
+	      cons[i] = NULL;
+			  
+	    }
+
+
+
+
+
+	  /*
+	    else if(strcmp(bson_iterator_key(&it1), cfp_promisetype) == 0)
+	    {
+	    bson_iterator_init(&it2, bson_iterator_value(&it1));
+	      
+	    snprintf(pt, sizeof(pt), "%s", bson_iterator_key(&it2));
+	   
+	    bson_iterator_init(&it3, bson_iterator_value(&it2));
+	   
+	    while(bson_iterator_next(&it3)) // loops over promises
+	    {
+	    bson_iterator_init(&it4, bson_iterator_value(&it3));
+
+	    while(bson_iterator_next(&it4))  // promise elements
+	    {
+		  
+	    if(strcmp(bson_iterator_key(&it4), cfp_promiser) == 0)
+	    {
+	    snprintf(pr, sizeof(pr), "%s", bson_iterator_string(&it4));
+	    }
+	    }
+		  
+
+	    }   
+
+	    }*/
 
 	}
 
-   
-   
+      // TODO: Save here
+      //AppendRlistAlien(&record_list,NewHubPromise(bn,bt,ba,pt,pr,pe,cl,ha,co,fn,lno,cons));
+    }
+  else
+    {
+      mongo_cursor_destroy(cursor);
+      return NULL;
     }
 
   mongo_cursor_destroy(cursor);
 
-  return NewHubQuery(NULL, record_list);
+  return NewHubPromise(bn,bt,ba,pt,pr,pe,cl,ha,co,fn,lno,cons);
 }
 
 /*****************************************************************************/

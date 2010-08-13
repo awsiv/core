@@ -2171,7 +2171,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
-
+/*
  hq = CFDB_QueryPromises(&dbconn,bundletype,bundlename);
 
 
@@ -2193,7 +2193,6 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    snprintf(buffer,sizeof(buffer), "<br><br>Resource object '%s' of type '%s'%s<br>......classcontext:%s<br>......handle:%s<br>......comment:%s<br>Promised in file '%s' near line '%d'.<br>Part of bundle '%s' (type '%s') with args '%s'.", hp->promiser, hp->promiseType, promiseeText, hp->classContext, hp->handle, hp->comment, hp->file, hp->lineNo, hp->bundleName, hp->bundleType,hp->bundleArgs);
    
-   /*   
    if(cons)
      {
        printf("cons: ");
@@ -2203,7 +2202,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 	 }
        printf("\n");
      }
-   */
+
 
    tmpsize = strlen(buffer);
    
@@ -2220,7 +2219,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 //snprintf(returnval, 10, "hello");
 
 DeleteHubQuery(hq,DeleteHubPromise);
-
+*/
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
