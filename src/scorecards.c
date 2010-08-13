@@ -167,11 +167,11 @@ for (i = 0; i < span; i++)
    tnotkept = notkept[i]/total * cfv.height;
    trepaired = repaired[i]/total * cfv.height;
    
-   gdImageSetThickness(cfv.im,cfv.width/span);
+   gdImageSetThickness(cfv.im,cfv.width/span+1);
    gdImageLine(cfv.im,x,0,x,tnotkept,RED);
-   gdImageSetThickness(cfv.im,cfv.width/span);
+   gdImageSetThickness(cfv.im,cfv.width/span+1);
    gdImageLine(cfv.im,x,tnotkept,x,tnotkept+trepaired,YELLOW);
-   gdImageSetThickness(cfv.im,cfv.width/span);
+   gdImageSetThickness(cfv.im,cfv.width/span+1);
    gdImageLine(cfv.im,x,tnotkept+trepaired,x,cfv.height,GREEN);
    }
 
