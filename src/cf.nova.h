@@ -328,7 +328,8 @@ int CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,enum observables ob
 int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date);
 
 struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle);
-struct HubQuery *CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
+int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
+struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, char *bType, char *bName);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);

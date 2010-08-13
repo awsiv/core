@@ -2847,7 +2847,7 @@ struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle)
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz)
+int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz)
 /*
  * For the promise with the given handle, returns the given field
  * (e.g. comment, promisee, etc.)
@@ -2893,6 +2893,62 @@ struct HubQuery *CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, cha
 
   return found;
 }
+
+/*****************************************************************************/
+
+struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, char *bType, char *bName)
+/*
+ * Returns a set of handles of promises matching given promiser regex
+ * XOR (bundle type, bundle name)
+ */
+{
+  bson_buffer b;
+  bson_iterator it1;
+  bson query,field;
+  mongo_cursor *cursor;
+  struct Rlist *handles = {0};
+
+  // query
+  bson_buffer_init(&b);
+  if(!EMPTY(prRegex))
+    {
+      bson_append_regex(&b, cfp_promiser, prRegex, "");
+    }
+  else
+    {
+      bson_append_string(&b,cfp_bundletype,bType);
+      bson_append_string(&b,cfp_bundlename,bName);
+    }
+  bson_from_buffer(&query,&b);
+
+  // returned attribute
+  bson_buffer_init(&b);
+  bson_append_int(&b,cfp_handle,1);
+  bson_from_buffer(&field,&b);
+  
+  
+  cursor = mongo_find(conn,MONGO_PROMISES,&query,&field,0,0,0);
+  bson_destroy(&query);
+  bson_destroy(&field);
+
+  while(mongo_cursor_next(cursor))  // iterate over docs
+    {
+      bson_iterator_init(&it1,cursor->current.data);
+      
+      while(bson_iterator_next(&it1))
+	{
+	  if(strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
+	    {
+	      AppendRScalar(&handles,bson_iterator_string(&it1), CF_SCALAR);
+	    }
+	}
+    }
+  
+  mongo_cursor_destroy(cursor);
+
+  return handles;
+}
+
 
 
 /*****************************************************************************/
