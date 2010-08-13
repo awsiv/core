@@ -23,7 +23,7 @@ cfpr_host_meter($hostkey);
 <h2>Generate report:</h2>
 
  <form method="post" action="search.php">
-<p><input class="searchfield" type="text" name="search" />&nbsp; search for .*?
+<p><input class="searchfield" type="text" name="search">&nbsp; search for .*?
 
 <p><?php $allhosts = cfpr_select_hosts(".*",100);
 echo "$allhosts";?>

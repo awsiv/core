@@ -169,9 +169,9 @@ void Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
   char topic_comment[CF_BUFSIZE],query[CF_BUFSIZE];
   char from_name[CF_BUFSIZE],from_assoc[CF_BUFSIZE],to_assoc[CF_BUFSIZE],to_name[CF_BUFSIZE];
   char work[CF_BUFSIZE],*sp;
-  int pid,s,e;
+  int pid,s,e,count = 0;
 
-strcpy(buffer,"<ul>\n");
+strcpy(buffer,"<div id=\"disambig\">\n<h2>The search suggests these topics:</h2>\n<ul>\n");
 
 if (strlen(SQL_OWNER) == 0)
    {
@@ -217,6 +217,7 @@ while(CfFetchRow(&cfdb))
 
    if (BlockTextCaseMatch(search_topic,topic_name,&s,&e))
       {
+      count++;
       Nova_AddTopicSearchBuffer(pid,topic_name,topic_type,topic_comment,buffer,bufsize);
       }
    }
@@ -235,7 +236,7 @@ if (cfdb.maxcolumns != 6)
    {
    CfOut(cf_error,""," !! The associations database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,6);
    CfCloseDB(&cfdb);
-   strcat(buffer,"</ul>\n");
+   strcat(buffer,"</ul></div>\n");
    return;
    }
 
@@ -250,11 +251,18 @@ while(CfFetchRow(&cfdb))
 
    if (BlockTextCaseMatch(search_topic,from_assoc,&s,&e)||BlockTextCaseMatch(search_topic,to_assoc,&s,&e))
       {
+      count++;
       Nova_AddAssocSearchBuffer(from_assoc,to_assoc,buffer,bufsize);
       }
    }
 
-strcat(buffer,"</ul>\n");
+if (count == 0)
+   {
+   snprintf(work,CF_MAXVARSIZE,"(no suitable results determined for %s)",search_topic);
+   Join(buffer,work,bufsize);
+   }
+
+strcat(buffer,"</ul></div>\n");
 CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
 }
@@ -649,8 +657,16 @@ return buf;
 int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_type,char *topic_comment,char *buffer,int bufsize)
 
 { char buf[CF_BUFSIZE];
- 
- snprintf(buf,CF_BUFSIZE-1,"<li>Topic \"%s\" found in category %s (%s)</li>\n",Nova_PidURL(pid,topic_name),topic_type,topic_comment);
+
+if (topic_comment && strlen(topic_comment) > 0)
+   {
+   snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in category %s (%s)</li>\n",Nova_PidURL(pid,topic_name),topic_type,topic_comment);
+   }
+else
+   {
+   snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in category %s</li>\n",Nova_PidURL(pid,topic_name),topic_type);
+   }
+
 Join(buffer,buf,bufsize);
 return true;
 }
@@ -660,9 +676,9 @@ return true;
 int Nova_AddAssocSearchBuffer(char *from_assoc,char *to_assoc,char *buffer,int bufsize)
 
 { char buf[CF_MAXVARSIZE];
-snprintf(buf,CF_BUFSIZE-1,"<li>Lead association \"%s\" &harr;",Nova_AssocURL(from_assoc));
+snprintf(buf,CF_BUFSIZE-1,"<li>There is a relationship: \"%s\" &harr;",Nova_AssocURL(from_assoc));
 Join(buffer,buf,bufsize);
-snprintf(buf,CF_BUFSIZE-1," \"%s\"found</li>\n",Nova_AssocURL(to_assoc));
+snprintf(buf,CF_BUFSIZE-1," \"%s\" found between certain topics</li>\n",Nova_AssocURL(to_assoc));
 Join(buffer,buf,bufsize);
 return true;
 }

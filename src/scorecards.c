@@ -520,7 +520,7 @@ int Nova_GetHostColour(char *lkeyhash)
   double akept[meter_endmark],arepaired[meter_endmark];
   double rkept,rrepaired;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
-  int num = 0,found = false,result;
+  int num = 0,found = false,result = -1;
   mongo_connection conn;
   struct Item *list = NULL;
 

@@ -1906,15 +1906,11 @@ return true;
 /* Topic Map                                                                 */
 /*****************************************************************************/
 
-int Nova2PHP_search_topics(char *type,char *search,int regex,char *buffer,int bufsize)
+int Nova2PHP_search_topics(char *search,int regex,char *buffer,int bufsize)
 {
 Nova_WebTopicMap_Initialize();
 
-// Nova_LookupUniqueAssoc(12,buffer,bufsize);
-
-printf("----------------------------------\n");
 Nova_SearchTopicMap(search,buffer,bufsize);
-printf("and got: \n%s",buffer);
 return true;
 }
 

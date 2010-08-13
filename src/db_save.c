@@ -655,7 +655,7 @@ arr = bson_append_start_array(pushObj, repName);
 for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    {
    snprintf(iStr, sizeof(iStr), "%d", i);   
-   sscanf(ip->name,"%ld,%254[^,],1024[^\n]",&then,handle,reason);
+   sscanf(ip->name,"%ld,%254[^,],%1024[^\n]",&then,handle,reason);
    tthen = (time_t)then;
    
    sub = bson_append_start_object(arr, iStr);

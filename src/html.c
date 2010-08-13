@@ -49,7 +49,6 @@ snprintf(buffer,bufsize,
 "    %s"
 "    <title>%s</title>\n"
 "    <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"screen\">\n"
-"    <link rel=\"stylesheet\" href=\"hand_/cf_enterprise.css\" type=\"text/css\" media=\"handheld\">\n"
 "  </head>\n"
 "  <body>\n"
 "    <div id=\"top\">\n"
@@ -79,12 +78,12 @@ void Nova_TabMenu(char *buffer, int bufsize)
 snprintf(buffer,bufsize,
          "<div id=\"banner\">"
          "<ul>"
-         "<li><a href=\"index.php\"><b>Mission summary</b><br></a>"
-         "<li><a href=\"helm.php\"><b>Mission planning</b></a>"
-         "<li><a href=\"status.php\"><b>Mission status</b></a>"
-         "<li><a href=\"views.php\"><b>Mission views</b></a>"
-         "<li><a href=\"communications.php\"><b>Mission log</b></a>"
-         "<li><a href=\"knowledge.php\"><b>Mission library</b></a>"
+         "<li><a href=\"index.php\"><b>Mission summary</b><br></a></li>"
+         "<li><a href=\"helm.php\"><b>Mission planning</b></a></li>"
+         "<li><a href=\"status.php\"><b>Mission status</b></a></li>"
+         "<li><a href=\"views.php\"><b>Mission views</b></a></li>"
+//         "<li><a href=\"communications.php\"><b>Mission log</b></a>"
+         "<li><a href=\"knowledge.php\"><b>Mission library</b></a></li>"
          "</ul>"
          "</div><br>");
 }
