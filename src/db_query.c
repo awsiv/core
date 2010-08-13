@@ -2669,18 +2669,16 @@ struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle)
 /*
  * Returns all attribs of one promise by its handle.
  */
-{ bson_buffer b,bb,*sub1,*sub2,*sub3;
-  bson qe,query;
+{ bson_buffer b;
+  bson query;
   mongo_cursor *cursor;
   bson_iterator it1,it2;
-  struct HubHost *hh;
-  struct Rlist *record_list = NULL;
   char bn[CF_MAXVARSIZE] = {0}, bt[CF_MAXVARSIZE] = {0},ba[CF_MAXVARSIZE] = {0},
     pt[CF_MAXVARSIZE] = {0}, pr[CF_MAXVARSIZE] = {0}, pe[CF_MAXVARSIZE] = {0},
     cl[CF_MAXVARSIZE] = {0}, ha[CF_MAXVARSIZE] = {0}, co[CF_MAXVARSIZE] = {0},
     fn[CF_MAXVARSIZE] = {0}, **cons = {0};
   int lno = -1;
-  int i,bargCount,constCount;
+  int i,constCount;
   
   /* BEGIN query document */
 
@@ -2797,42 +2795,7 @@ struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle)
 	      cons[i] = NULL;
 			  
 	    }
-
-
-
-
-
-	  /*
-	    else if(strcmp(bson_iterator_key(&it1), cfp_promisetype) == 0)
-	    {
-	    bson_iterator_init(&it2, bson_iterator_value(&it1));
-	      
-	    snprintf(pt, sizeof(pt), "%s", bson_iterator_key(&it2));
-	   
-	    bson_iterator_init(&it3, bson_iterator_value(&it2));
-	   
-	    while(bson_iterator_next(&it3)) // loops over promises
-	    {
-	    bson_iterator_init(&it4, bson_iterator_value(&it3));
-
-	    while(bson_iterator_next(&it4))  // promise elements
-	    {
-		  
-	    if(strcmp(bson_iterator_key(&it4), cfp_promiser) == 0)
-	    {
-	    snprintf(pr, sizeof(pr), "%s", bson_iterator_string(&it4));
-	    }
-	    }
-		  
-
-	    }   
-
-	    }*/
-
 	}
-
-      // TODO: Save here
-      //AppendRlistAlien(&record_list,NewHubPromise(bn,bt,ba,pt,pr,pe,cl,ha,co,fn,lno,cons));
     }
   else
     {

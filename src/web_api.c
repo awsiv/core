@@ -2223,14 +2223,11 @@ Join(buffer,"\n</select>\n",bufsize);
 
 int Nova2PHP_promises(char *bundletype, char *bundlename,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
-  struct Rlist *rp,*result;
-  int count = 0, tmpsize,icmp;
-  mongo_connection dbconn;
-  struct Rlist *records = NULL;
-  struct HubQuery *hq;
+{ mongo_connection dbconn;
   struct HubPromise *hp;
-  char promiseeText[CF_MAXVARSIZE];
+  char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
+  char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
+  int i,count;
   
 
 /* BEGIN query document */
@@ -2240,55 +2237,77 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
-/*
- hq = CFDB_QueryPromises(&dbconn,bundletype,bundlename);
 
+ char *handle = "promise_change_cf_56";
 
-returnval[0] = '\0';
-
-
-for (rp = hq->records; rp != NULL; rp=rp->next)
+ hp = CFDB_QueryPromise(&dbconn, handle);
+ 
+ if(!hp)
    {
-   hp = (struct HubPromise *)rp->item;
-   
-   if(!EMPTY(hp->promisee))
-     {
-       snprintf(promiseeText, sizeof(promiseeText), " makes the promise to '%s'", hp->promisee);
-     }
-   else
-     {
-       promiseeText[0] = '\0';
-     }
+     snprintf(returnval, bufsize, "<br>Promise '%s' not found in database", handle);
+     return false;
+   }
 
-   snprintf(buffer,sizeof(buffer), "<br><br>Resource object '%s' of type '%s'%s<br>......classcontext:%s<br>......handle:%s<br>......comment:%s<br>Promised in file '%s' near line '%d'.<br>Part of bundle '%s' (type '%s') with args '%s'.", hp->promiser, hp->promiseType, promiseeText, hp->classContext, hp->handle, hp->comment, hp->file, hp->lineNo, hp->bundleName, hp->bundleType,hp->bundleArgs);
-   
-   if(cons)
-     {
-       printf("cons: ");
-       for(i = 0; cons[i]; i++)
-	 {
-	   printf("%s,", cons[i]);
-	 }
-       printf("\n");
-     }
+ returnval[0] = '\0';
 
 
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+ if(EMPTY(hp->promisee))
+   {
+     promiseeText[0] = '\0';
+   }
+ else
+   {
+     snprintf(promiseeText, sizeof(promiseeText), " promises '%s'", hp->promisee);     
    }
 
 
-//snprintf(returnval, 10, "hello");
+ if(EMPTY(hp->bundleArgs))
+   {
+     bArgText[0] = '\0';
+   }
+ else
+   {
+     snprintf(bArgText, sizeof(bArgText), " with args '%s'", hp->bundleArgs);
+   }
 
-DeleteHubQuery(hq,DeleteHubPromise);
-*/
+ if(EMPTY(hp->comment))
+   {
+     commentText[0] = '\0';
+   }
+ else
+   {
+     snprintf(commentText, sizeof(commentText), "<br>     comment => %s", hp->comment);
+   }
+
+
+ constText[0] = '\0';
+
+ if(hp->constraints)
+   {
+     count = 0;
+     
+     for(i = 0; hp->constraints[i] != NULL; i++)
+       {
+	 count += strlen("<br>     ") + strlen(hp->constraints[i]);
+	 
+	 if(count < sizeof(constText))
+	   {
+	     strcat(constText, "<br>     ");
+	     strcat(constText, hp->constraints[i]);
+	   }
+	 else
+	   {
+	     break;
+	   }
+
+       }
+   }
+
+ snprintf(returnval, bufsize, "<br><br>Resource object '%s' of type %s%s%s<br>     context => %s<br>     handle => %s%s<br>Promised in file '%s' near line %d.<br>Part of bundle '%s' (type %s)%s.", hp->promiser, hp->promiseType, promiseeText, commentText, hp->classContext, hp->handle, constText, hp->file, hp->lineNo, hp->bundleName, hp->bundleType, bArgText);
+ 
+
+ DeleteHubPromise(hp);
+
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
