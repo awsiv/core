@@ -1819,7 +1819,7 @@ struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,bson *query,enum pr
   struct HubHost *hh;
   struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
   double rago,ravg,rdev;
-  char rhandle[CF_MAXVARSIZE];
+  char rhandle[CF_MAXVARSIZE],rcause[CF_BUFSIZE];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
   int match_name,found = false;
   time_t rt;
@@ -1881,6 +1881,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             bson_iterator_init(&it3, bson_iterator_value(&it2));
 
             rhandle[0] = '\0';
+            rcause[0] = '\0';
             rt = 0;
             
             while (bson_iterator_next(&it3))
@@ -1888,6 +1889,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
                if (strcmp(bson_iterator_key(&it3),cfr_promisehandle) == 0)
                   {
                   strncpy(rhandle,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_cause) == 0)
+                  {
+                  strncpy(rcause,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
                   }
                else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
                   {
@@ -1919,7 +1924,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubPromiseLog(CF_THIS_HH,rhandle,rt));
+               rp = AppendRlistAlien(&record_list,NewHubPromiseLog(CF_THIS_HH,rhandle,rcause,rt));
                }            
             }
          }   

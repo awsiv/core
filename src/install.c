@@ -304,7 +304,7 @@ free(hv);
 
 /*****************************************************************************/
 
-struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,time_t t)
+struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,char *cause,time_t t)
 
 { struct HubPromiseLog *hp;
  
@@ -315,6 +315,7 @@ if ((hp = malloc(sizeof(struct HubPromiseLog))) == NULL)
 
 hp->hh = hh;
 hp->handle = strdup(handle);
+hp->cause = strdup(cause);
 hp->t = t;
 return hp;
 }
@@ -325,6 +326,7 @@ void DeleteHubPromiseLog(struct HubPromiseLog *hp)
 
 {
 free(hp->handle);
+free(hp->cause);
 free(hp);
 }
 

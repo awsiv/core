@@ -186,8 +186,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseLog *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",
-            hp->hh->hostname,hp->handle,cf_ctime(&(hp->t)));
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+            hp->hh->hostname,hp->handle,hp->cause,cf_ctime(&(hp->t)));
           
    tmpsize = strlen(buffer);
    

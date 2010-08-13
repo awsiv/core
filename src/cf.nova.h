@@ -496,7 +496,7 @@ struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,cha
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
 struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype);
 void DeleteHubVariable(struct HubVariable *hv);
-struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,time_t t);
+struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,char *cause,time_t t);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
 struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
 void DeleteHubLastSeen(struct HubLastSeen *hp);
@@ -637,7 +637,7 @@ void Nova_StoreBody(struct Body *bdp);
 void Nova_Version(void);
 char *Nova_GetVersion(void);
 char * Nova_StrVersion(void);
-void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status);
+void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status,char *reason);
 time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *t);
 void Nova_CheckAutoBootstrap(void);
 void Nova_SetPolicyServer(char *name);
@@ -1080,6 +1080,7 @@ struct promise_value
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"
 #define cfr_patch_installed "pi"
+#define cfr_cause        "ca"
 #define cfr_class        "cl"
 #define cfr_class_keys   "ck"
 #define cfr_total_compliance "tc"
@@ -1206,6 +1207,7 @@ struct HubPromiseLog // promise kept,repaired or not kept
    {
    struct HubHost *hh;
    char *handle;
+   char *cause;
    time_t t;
    };
 

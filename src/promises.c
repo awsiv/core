@@ -192,7 +192,7 @@ return buf;
 
 /***************************************************************/
 
-void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status)
+void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status,char *reason)
 
 { CF_DB *dbp;
   FILE *fp;
@@ -267,7 +267,7 @@ if ((fp = fopen(name,"a")) == NULL)
    return;
    }
 
-fprintf(fp,"%ld,%s\n",(long)now,id);
+fprintf(fp,"%ld,%s,%s\n",(long)now,id,reason);
 
 fclose(fp);
 }

@@ -621,7 +621,7 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_
   bson_buffer *arr, *sub;
   bson host_key;  // host description
   bson setOp;
-  char handle[CF_MAXVARSIZE];
+  char handle[CF_MAXVARSIZE],reason[CF_BUFSIZE];
   long then;
   time_t tthen;
   struct Item *ip;
@@ -655,11 +655,12 @@ arr = bson_append_start_array(pushObj, repName);
 for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    {
    snprintf(iStr, sizeof(iStr), "%d", i);   
-   sscanf(ip->name,"%ld,%254[^\n]",&then,handle);
+   sscanf(ip->name,"%ld,%254[^,],1024[^\n]",&then,handle,reason);
    tthen = (time_t)then;
    
    sub = bson_append_start_object(arr, iStr);
-   bson_append_string(sub, cfr_promisehandle, handle);
+   bson_append_string(sub,cfr_promisehandle, handle);
+   bson_append_string(sub,cfr_cause,reason);
    bson_append_int(sub, cfr_time, then);
    bson_append_finish_object(sub);
    }
