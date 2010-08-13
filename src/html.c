@@ -80,11 +80,11 @@ snprintf(buffer,bufsize,
          "<div id=\"banner\">"
          "<ul>"
          "<li><a href=\"index.php\"><b>Mission summary</b><br></a>"
-         "<li><a href=\"helm.php\"><b>Mission plan</b><br>Helm</a>"
-         "<li><a href=\"status.php\"><b>Mission status</b><br>Engineering</a>"
-         "<li><a href=\"security.php\"><b>Mission integrity</b><br>Security</a>"
-         "<li><a href=\"communications.php\"><b>Mission log</b><br>Communications</a>"
-         "<li><a href=\"knowledge.php\"><b>Knowledge</b><br>Science</a>"
+         "<li><a href=\"helm.php\"><b>Mission planning</b></a>"
+         "<li><a href=\"status.php\"><b>Mission status</b></a>"
+         "<li><a href=\"views.php\"><b>Mission views</b></a>"
+         "<li><a href=\"communications.php\"><b>Mission log</b></a>"
+         "<li><a href=\"knowledge.php\"><b>Mission library</b></a>"
          "</ul>"
          "</div><br>");
 }
