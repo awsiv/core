@@ -2842,6 +2842,56 @@ struct HubQuery *CFDB_QueryPromises(mongo_connection *conn, char *bundleType, ch
 }
 
 /*****************************************************************************/
+
+struct HubQuery *CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz)
+/*
+ * For the promise with the given handle, returns the given field
+ * (e.g. comment, promisee, etc.)
+ */
+{
+  bson_buffer b;
+  bson_iterator it1;
+  bson query,field;
+  mongo_cursor *cursor;
+  int found = false;
+
+  // query
+  bson_buffer_init(&b);
+  bson_append_string(&b,cfp_handle,handle);
+  bson_from_buffer(&query,&b);
+
+  // returned attribute
+  bson_buffer_init(&b);
+  bson_append_int(&b,attrKey,1);
+  bson_from_buffer(&field,&b);
+  
+  
+  cursor = mongo_find(conn,MONGO_PROMISES,&query,&field,0,0,0);
+  bson_destroy(&query);
+  bson_destroy(&field);
+
+  if(mongo_cursor_next(cursor))  // take first doc should be (unique)
+    {
+      bson_iterator_init(&it1,cursor->current.data);
+      
+      while(bson_iterator_next(&it1))
+	{
+	  if(strcmp(bson_iterator_key(&it1), attrKey) == 0)
+	    {
+	      snprintf(attrVal, attrValSz, "%s", bson_iterator_string(&it1));
+	      found = true;
+	      break;
+	    }
+	}
+    }  
+  
+  mongo_cursor_destroy(cursor);
+
+  return found;
+}
+
+
+/*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
 
