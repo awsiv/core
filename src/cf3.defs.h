@@ -1826,7 +1826,7 @@ meter_endmark
 /* common macros                                                         */
 /*************************************************************************/
 
-#define NOTEMPTY(str) ((str != NULL) && (strlen(str) > 0))
+#define EMPTY(str) ((str == NULL) || (strlen(str) == 0))
 
 #include "prototypes3.h"
 

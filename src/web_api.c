@@ -2182,7 +2182,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromise *)rp->item;
    
-   if(NOTEMPTY(hp->promisee))
+   if(!EMPTY(hp->promisee))
      {
        snprintf(promiseeText, sizeof(promiseeText), " makes the promise to '%s'", hp->promisee);
      }
