@@ -94,14 +94,20 @@ void Nova_ComplianceSummaryGraph(char *docroot,char *returnval,int bufsize)
   const int span = 7 * 4;
   double x,kept[span], repaired[span], notkept[span];
   double tkept,trepaired,tnotkept,total;
+  double lkept,lrepaired,lnotkept,ltotal;
   FILE *fout;
   time_t now,start;
   int i,slot;
   
 cfv.height = 200;
-cfv.width = 500;
+cfv.width = 520;
 cfv.margin = 50;
 cfv.docroot = docroot;
+cfv.range = 180;
+cfv.min = 0;
+cfv.max = 100;
+cfv.origin_x = cfv.margin;
+cfv.origin_y = cfv.height - cfv.margin;
 
 snprintf(newfile,CF_BUFSIZE,"%s/hub/common/compliance.png",cfv.docroot);
 MakeParentDirectory(newfile,true);
@@ -159,20 +165,41 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       }
    }
 
+ltotal = lkept = lrepaired = lnotkept = 0;
+
 for (i = 0; i < span; i++)
    {
-   x = i * cfv.width/span;
+   x = i * (cfv.width-cfv.origin_x)/span + cfv.origin_x;
+
    total = notkept[i]+kept[i]+repaired[i];
-   tkept = kept[i] / total * cfv.height;
-   tnotkept = notkept[i]/total * cfv.height;
-   trepaired = repaired[i]/total * cfv.height;
+   tkept = kept[i] / total * cfv.range;
+   tnotkept = notkept[i]/total * cfv.range;
+   trepaired = repaired[i]/total * cfv.range;
+
+   if (ltotal > 0)
+      {
+      // Smoothing
+      gdImageSetThickness(cfv.im,cfv.width/span+1);
+      gdImageLine(cfv.im,x,0,x,(lnotkept+tnotkept)/2,RED);
+      gdImageSetThickness(cfv.im,cfv.width/span+1);
+      gdImageLine(cfv.im,x,(lnotkept+tnotkept)/2,x,(lnotkept+tnotkept+lrepaired+trepaired)/2,YELLOW);
+      gdImageSetThickness(cfv.im,cfv.width/span+1);
+      gdImageLine(cfv.im,x,(lnotkept+tnotkept+lrepaired+trepaired)/2,x,cfv.range,GREEN);
+      x += (cfv.width-cfv.origin_x)/span/2;
+      }
    
    gdImageSetThickness(cfv.im,cfv.width/span+1);
    gdImageLine(cfv.im,x,0,x,tnotkept,RED);
    gdImageSetThickness(cfv.im,cfv.width/span+1);
-   gdImageLine(cfv.im,x,tnotkept,x,tnotkept+trepaired,YELLOW);
+   gdImageLine(cfv.im,x,tnotkept,x,(tnotkept+trepaired),YELLOW);
    gdImageSetThickness(cfv.im,cfv.width/span+1);
-   gdImageLine(cfv.im,x,tnotkept+trepaired,x,cfv.height,GREEN);
+   gdImageLine(cfv.im,x,(tnotkept+trepaired),x,cfv.range,GREEN);
+
+
+   ltotal = total;
+   lkept = tkept;
+   lrepaired = trepaired;
+   lnotkept = tnotkept;
    }
 
 DeleteHubQuery(hq,DeleteHubTotalCompliance);
@@ -181,6 +208,55 @@ if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
+
+
+Nova_DrawComplianceAxes(&cfv,WHITE);
+
+
+/****************/
+
+  static char *font1 = "DejaVuSans";
+  char *font = font1;
+  static char *font2 = "Vera";
+  static char *font3 = "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf";
+  int brect[8];
+  char *err;
+  double size = 10.0;
+  
+  err= gdImageStringFT(NULL,&brect[0],0,font1,size,20.0,cfv.width/2,cfv.range/2,"Compliance");
+
+  if (err)
+   {
+   err= gdImageStringFT(NULL,&brect[0],0,font2,size,20.0,cfv.width/2,cfv.range/2,"Compliance");
+
+   if (err)
+      {
+      err= gdImageStringFT(NULL,&brect[0],0,font3,size,20.0,cfv.width/2,cfv.range/2,"Compliance");
+
+      if (err)
+         {
+         font = font3;      
+         }
+      else
+         {
+         font = font2;
+         }      
+      }
+   }
+else
+   {
+   font = font1;
+   }
+
+if (err)
+   {
+   printf("Rendering failure %s\n",err);
+   }
+
+
+
+/****************/
+
 
 if ((fout = fopen(newfile, "wb")) == NULL)
    {
@@ -429,6 +505,159 @@ gdImagePng(cfv.im, fout);
 fclose(fout);
 gdImageDestroy(cfv.im);
 return returnval;
+}
+
+/*****************************************************************************/
+
+int Nova_GetHostColour(char *lkeyhash)
+
+{ bson_buffer b,bb,*sub1,*sub2,*sub3;
+  bson qe,field,query;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct HubHost *hh;
+  struct Rlist *rp,*record_list = NULL, *host_list = NULL;
+  double akept[meter_endmark],arepaired[meter_endmark];
+  double rkept,rrepaired;
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
+  int num = 0,found = false,result;
+  mongo_connection conn;
+  struct Item *list = NULL;
+
+if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return -1;
+   }
+
+if (lkeyhash == NULL)
+   {
+   return -1;
+   }
+
+bson_buffer_init(&b);
+bson_append_string(&b,cfr_keyhash,lkeyhash);
+bson_from_buffer(&query,&b);
+
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,cfr_meter,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+hostnames[0] = '\0';
+addresses[0] = '\0';
+
+cursor = mongo_find(&conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   found = false;
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
+
+      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      
+      /* Query specific search/marshalling */
+
+      if (strcmp(bson_iterator_key(&it1),cfr_meter) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+            strncpy(rcolumn,bson_iterator_key(&it2),CF_SMALLBUF-1);
+
+            rkept = 0;
+            rrepaired = 0;
+            
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_meterkept) == 0)
+                  {
+                  rkept = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_meterrepaired) == 0)
+                  {
+                  rrepaired = bson_iterator_double(&it3);
+                  }
+               else
+                  {
+                  CfOut(cf_error,"", " !! Unknown key \"%s\" in last seen",bson_iterator_key(&it3));
+                  }
+               }
+
+            switch (*rcolumn)
+               {
+               case cfmeter_week:
+                   akept[meter_compliance_week]= rkept;
+                   arepaired[meter_compliance_week] = rrepaired;
+                   break;
+
+               case cfmeter_hour:
+                   akept[meter_compliance_hour] = rkept;
+                   arepaired[meter_compliance_hour] = rrepaired;
+                   break;
+                   
+               case cfmeter_day:
+                   akept[meter_compliance_day]= rkept;
+                   arepaired[meter_compliance_day] = rrepaired;
+                   break;
+                   
+               case cfmeter_perf:
+                   akept[meter_compliance_week]= rkept;
+                   arepaired[meter_compliance_week] = rrepaired;
+                   break;
+
+               case cfmeter_comms:
+                   akept[meter_comms_hour]= rkept;
+                   arepaired[meter_comms_hour] = rrepaired;
+                   break;
+                   
+               case cfmeter_anomaly:
+                   akept[meter_anomalies_day] = rkept;
+                   arepaired[meter_anomalies_day] = rrepaired;
+                   break;
+                   
+               case cfmeter_other:
+                   akept[meter_other_day]= rkept;
+                   arepaired[meter_other_day] = rrepaired;
+                   break;
+               }
+            
+            found = true;           
+            }
+         }   
+      }
+   
+   if (found)
+      {
+      result = Nova_GetComplianceScore(cfrank_default,akept,arepaired);
+      }
+   }
+
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+
+if (!CFDB_Close(&conn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   } 
+
+return result;
 }
 
 /*****************************************************************************/
@@ -851,5 +1080,29 @@ else
    return false;
    }
 }
+
+/**********************************************************************/
+
+void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col)
+
+{ int day,x,y;
+  double q,dq;
+  time_t now;
+  int ticksize = cfv->height/50;
+  static char *days[8] = { "7","6","5","4","3","2","1","0"};
+
+for (day = 0; day < 7; day++)
+   {
+   x = cfv->origin_x + day * cfv->width/7;
+   gdImageString(cfv->im, gdFontGetLarge(),x,cfv->range,days[day],col);
+   }
+
+gdImageString(cfv->im, gdFontGetLarge(),cfv->width/2,cfv->range+cfv->margin/2,"days",col);
+
+gdImageString(cfv->im, gdFontGetLarge(),0,0,"100%",col);
+gdImageString(cfv->im, gdFontGetLarge(),0,cfv->range,"0",col);      
+
+}
+
 
 #endif

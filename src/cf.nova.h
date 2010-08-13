@@ -694,7 +694,8 @@ int Nova_IsGreen(int level);
 int Nova_IsYellow(int level);
 int Nova_IsRed(int level);
 void Nova_ComplianceSummaryGraph(char *docroot,char *returnval,int bufsize);
-
+void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col);
+int Nova_GetHostColour(char *lkeyhash);
 
 /* server.c */
 
@@ -802,6 +803,7 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,char *name,int distance,in
 
 void Nova_EnterpriseModuleTrick(void);
 void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize);
+void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize);
 
 int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize);
 int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *buffer,int bufsize);
@@ -848,6 +850,7 @@ long Nova2PHP_count_hosts(void);
 long Nova2PHP_count_red_hosts(void);
 long Nova2PHP_count_yellow_hosts(void);
 long Nova2PHP_count_green_hosts(void);
+void Nova2PHP_show_col_hosts(char *colour,int n,char *buffer,int bufsize);
 
 char *Nova_HostProfile(char *key);
 void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);

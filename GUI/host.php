@@ -67,7 +67,11 @@ echo "<div id=\"info\">\n";
 $last = cfpr_getlastupdate($hostkey);
 
 echo "<ul>";
-echo "<li><img src=\"/img/green_sign_big.png\"></li>\n";
+
+$colour = cfpr_get_host_colour($hostkey);
+
+echo "<li><img src=\"/img/$colour"."_sign_big.png\"></li>\n";
+
 echo "<li>Key: $hostkey</li>";
 echo "<li>Alias: $hostname</li>"; 
 echo "<li>Last known address: $ipaddr</li>";

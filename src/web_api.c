@@ -80,6 +80,7 @@ if (false)
    Nova_Footer(buffer,1000);
    Nova2PHP_choose_hosts("123",2,buffer,1000);
    NovaInitMeasurements();
+   Nova2PHP_get_host_colour(NULL,buffer,3);
    }
 }
 
@@ -2033,21 +2034,67 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
 
    if (Nova_IsGreen(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"green.png\"></td><td>%s</td><td>%s</td></tr>\n",ip->classes,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<td><img src=\"green.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td><td>%s</td></a></td></tr>\n",ip->classes,ip->name,Nova_HostProfile(ip->name));
       }
    else if (Nova_IsYellow(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td>%s</td><td>%s</td></tr>\n",ip->classes,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td><td>%s</td></a></td></tr>\n",ip->classes,ip->name,Nova_HostProfile(ip->name));
       }
    else // if (Nova_IsRed(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td>%s</td><td>%s</td></tr>\n",ip->classes,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td><td>%s</td></a></td></tr>\n",ip->classes,ip->name,Nova_HostProfile(ip->name));
       }
 
    Join(buffer,work,bufsize);
    }
 
 Join(buffer,"\n</table>\n",bufsize);
+DeleteItemList(clist);
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_show_col_hosts(char *colour,int n,char *buffer,int bufsize)
+
+{ struct Item *ip,*clist;
+  char work[CF_MAXVARSIZE];
+  int counter = 0;
+  
+if (strcmp(colour,"green") == 0)
+   {
+   clist = Nova_GreenHosts();
+   }
+else if (strcmp(colour,"yellow") == 0)
+   {
+   clist = Nova_YellowHosts();
+   }
+else
+   {
+   clist = Nova_RedHosts();
+   }
+
+buffer[0] = '0';
+strcat(buffer,"<table>\n<tr>\n\n");
+
+for (ip = clist; ip !=  NULL; ip=ip->next)
+   {
+   if (counter++ % 6 == 0)
+      {
+      snprintf(work,CF_MAXVARSIZE,"</tr></tr>");
+      Join(buffer,work,bufsize);
+      }
+   
+   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"%s.png\"></td><td><a href=\"host.php?hostkey=%s\">%s</a></td></a></td>\n",colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
+   
+   Join(buffer,work,bufsize);
+
+   if (counter > n && counter % 6 == 0)
+      {
+      break;
+      }
+   }
+
+Join(buffer,"</tr>\n</table>\n",bufsize);
 DeleteItemList(clist);
 }
 
@@ -2116,6 +2163,28 @@ long Nova2PHP_count_green_hosts()
 
 DeleteItemList(all);
 return (long)len;
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize)
+
+{
+switch(Nova_GetHostColour(hostkey))
+   {
+   case CF_RED_THRESHOLD:
+       strncpy(buffer,"red",bufsize);
+       break;
+   case CF_AMBER_THRESHOLD:
+       strncpy(buffer,"yellow",bufsize);
+       break;
+   case CF_GREEN :
+       strncpy(buffer,"green",bufsize);
+       break;
+   default:
+       strncpy(buffer,"unknown",bufsize);
+       break;
+   }
 }
 
 /*****************************************************************************/
