@@ -2084,7 +2084,7 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
       Join(buffer,work,bufsize);
       }
    
-   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"%s.png\"></td><td><a href=\"host.php?hostkey=%s\">%s</a></td></a></td>\n",colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
+   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"%s.png\"> &nbsp;<a href=\"host.php?hostkey=%s\">%s</a></td></a></td>\n",colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
    
    Join(buffer,work,bufsize);
 
