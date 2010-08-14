@@ -42,6 +42,64 @@ Debug("Loaded values: db=%s,type=%d,owner=%s,passwd=%s,server=%s,connect=%s\n",S
 /* The main panels                                                           */
 /*****************************************************************************/
 
+int Nova_GetPidForTopic(char *typed_topic)
+    
+{ CfdbConn cfdb;
+  char *sp,query[CF_MAXVARSIZE],topic[CF_BUFSIZE],type[CF_BUFSIZE];
+  int ret;
+
+Nova_WebTopicMap_Initialize();
+  
+if (strlen(SQL_OWNER) == 0 || typed_topic == NULL)
+   {
+   return 0;
+   }
+
+//DeTypeTopic(typed_topic,topic,type);
+
+strcpy(topic,typed_topic);
+
+CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
+    
+if (!cfdb.connected)
+   {
+   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
+   return false;
+   }
+
+if (strlen(type) > 0)
+   {
+   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s' and topic_type = '%s'",topic,type);
+   }
+else
+   {
+   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s'",topic);
+   }
+
+CfNewQueryDB(&cfdb,query);
+
+if (cfdb.maxcolumns != 1)
+   {
+   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,1);
+   CfCloseDB(&cfdb);
+   return false;
+   }
+
+if (CfFetchRow(&cfdb))
+   {
+   ret = Str2Int(CfFetchColumn(&cfdb,0));
+   }
+else
+   {
+   ret = 0;
+   }
+
+CfDeleteQuery(&cfdb);
+return ret;
+}
+
+/*****************************************************************************/
+
 int Nova_GetTopicByPid(int pid,char *topic_name,char *topic_id,char *topic_type,char *topic_comment)
 
 { CfdbConn cfdb;

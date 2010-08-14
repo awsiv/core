@@ -200,6 +200,7 @@ void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version)
 { struct Constraint *cp;
   char promise_id[CF_BUFSIZE];
   struct Rlist *rp,*depends_on = GetListConstraint("depends_on",pp);
+  struct Rlist *class_list = SplitRegexAsRList(pp->classes,"[.!()|&]+",100,false);
   struct DefineClasses c = GetClassDefinitionConstraints(pp);
 
 if (LICENSES == 0)
@@ -214,7 +215,7 @@ fprintf(fp,"\ntopics:\n\n");
 fprintf(fp,"bundles::\n");
 fprintf(fp,"  \"%s\";\n",pp->bundle);
 
-fprintf(fp,"contexts::\n");
+fprintf(fp,"class_contexts::\n");
 fprintf(fp,"  \"%s\";\n",pp->classes);
 
 /* First the bundle container */
@@ -260,7 +261,8 @@ switch (pp->petype)
        
    }
 
-/* Now the constraint list */
+
+/* This promise handle's place in the cosmos */
 
 fprintf(fp,"promises::\n\n");
 
@@ -284,6 +286,15 @@ for (rp = depends_on; rp != NULL; rp=rp->next)
    fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,rp->item,NOVA_GIVES);
    }
 
+//DeleteRlist(depends_on);
+
+for (rp = class_list; rp != NULL; rp=rp->next)
+   {
+   fprintf(fp,"  \"%s\"\n",promise_id);
+   fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_USES,rp->item,NOVA_GIVES);
+   }
+
+DeleteRlist(class_list);
 
 /* Now pointers to the policy compilation */
 
@@ -291,44 +302,13 @@ fprintf(fp,"\n occurrences:\n");
 
 fprintf(fp,"%s::\n",promise_id);
 
-PromiseNode(fp,pp,1);
-
-if (pp->ref)
-   {
-   fprintf(fp,"   comment => \"%s\",\n",NovaEscape(pp->ref));
-   }
-else
-   {
-   fprintf(fp,"   comment => \"A promise of type %s made by: %s\",\n",pp->agentsubtype,NovaEscape(pp->promiser));
-   }
-
-fprintf(fp,"   represents => { \"%s\", \"%s\" };\n\n",pp->classes,pp->agentsubtype);
-
-fprintf(fp,"%s::\n",CanonifyName(pp->classes));
-PromiseNode(fp,pp,1);
-fprintf(fp,"   represents => { \"promise\", \"%s\", \"%s\" };\n\n",NovaEscape(pp->promiser),pp->agentsubtype);
+fprintf(fp,"\"promise.php?handle=%s\",\n",promise_id);
+fprintf(fp,"   represents => { \"definition\" };\n\n");
 
 fprintf(fp,"%s::\n",pp->bundle);
-fprintf(fp,"\"promises.cf.html#bundle_%s\"\n",pp->bundle);
-fprintf(fp,"   represents => { \"bundle reference\" };\n\n");
+fprintf(fp,"\"bundle.php?bundle=%s\"\n",pp->bundle);
+fprintf(fp,"   represents => { \"parent bundle\" };\n\n");
 
-for (cp = pp->conlist; cp != NULL; cp=cp->next)
-   {
-   fprintf(fp,"%s::\n",cp->lval);
-   PromiseNode(fp,pp,1);
-   fprintf(fp,"   represents => { \"used in promise\", \"%s\" };\n\n",promise_id);
-
-   if (cf_strcmp(cp->lval,"comment") == 0)
-      {
-      fprintf(fp,"\"%s\"\n",cp->rval);
-      fprintf(fp,"   representation => \"literal\",\n\n");
-      fprintf(fp,"   represents => { \"%s\" };\n",promise_id);
-      fprintf(fp,"%s::\n",promise_id);
-      fprintf(fp,"\"%s\"\n",cp->rval);
-      fprintf(fp,"   representation => \"literal\",\n\n");
-      fprintf(fp,"   represents => { \"comment\" };\n");
-      }
-   }
 
 /*
   Now we should analyze the classes to look for dependents and dependencies */
@@ -428,7 +408,7 @@ fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages
 fprintf(fp,"system_policy::\n");
 fprintf(fp,"  \"bundles\" comment => \"A modular collection of promises of different types\";\n");
 fprintf(fp,"  \"bodies\" comment => \"A modular collection of body constraints for re-use\";\n");
-fprintf(fp,"  \"contexts\" comment => \"Class expressions that say where or when a promise applies\";\n");
+fprintf(fp,"  \"class contexts\" comment => \"Class expressions that say where or when a promise applies\";\n");
 fprintf(fp,"  \"promisees\" comment => \"Recipients of a promise, i.e. promise handles, or persons\";\n");
 fprintf(fp,"  \"promisers\" comment => \"The objects affected by a promise\";\n");
 fprintf(fp,"  \"promises\" comment => \"Complete occurrences of promiser + promisee + promise-body\";\n");
@@ -554,74 +534,6 @@ for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
    fprintf(fp,"    association => a(\"returns data-type\",\"%s\",\"is returned by function\");\n",CF_DATATYPES[CF_FNCALL_TYPES[i].dtype]);
    }
 
-}
-
-/*****************************************************************************/
-
-void Nova_BundleNode(FILE *fp,char *bundle)
-
-{
-if (LICENSES == 0)
-   {
-   return;
-   }
-
-fprintf(fp,"<a name=\"bundle_%s\"></a>",bundle);
-}
-
-/*****************************************************************************/
-
-void Nova_BodyNode(FILE *fp,char *body,int calltype)
-
-{
- switch (calltype)
-    {
-    case 0:
-        fprintf(fp,"<a name=\"body_%s\"></a>",body);
-        break;
-    case 1:
-        fprintf(fp,"<a href=\"#body_%s\">",body);
-        break;
-    case 2:
-        fprintf(fp,"</a>");
-        break;
-    }
-
-}
-
-/*****************************************************************************/
-
-void Nova_TypeNode(FILE *fp,char *type)
-
-{
-if (LICENSES == 0)
-   {
-   return;
-   }
-
-fprintf(fp,"<a name=\"type_%s\"></a>\n",CanonifyName(type));
-}
-
-/*****************************************************************************/
-
-void Nova_PromiseNode(FILE *fp,struct Promise *pp,int calltype)
-
-{ char id[CF_BUFSIZE];
-
-strcpy(id,Nova_PromiseID(pp));
- 
-if (calltype)
-   {
-   fprintf(fp,"\"promises.cf.html#%s\"\n",id);
-   }
-else 
-   {
-   fprintf(fp,"<a name=\"%s\"></a>\n",id);
-   fprintf(fp,"<div id=\"nav\">\n");
-   fprintf(fp,"<a href=\"%s/promises.cf.html#bundle_%s\">[PARENT BUNDLE]</a>&nbsp;\n",WEBDRIVER,pp->bundle);
-   fprintf(fp,"<a href=\"%s/reports/host_portal.html\">[MACHINES]</a>\n",WEBDRIVER,id);
-   fprintf(fp,"</div>\n");
-   }
 }
 
 /*****************************************************************************/
@@ -755,10 +667,11 @@ return id;
 
 void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promise_id)
 
-{ struct Rlist *impacted = NULL, *potential, *rp;
+{ struct Rlist *impacted = NULL, *dependency = NULL, *potential, *rp;
   struct Bundle *bp;
   struct SubType *sp;
   struct Promise *pp2;
+  char *value;
   int found = false;
   
 /* For activated classes we can assume that no one will */
@@ -797,6 +710,39 @@ for (rp = potential; rp !=  NULL; rp=rp->next)
    {
    IdempPrependRScalar(&impacted,rp->item,CF_SCALAR);
    }
+
+potential = GetListConstraint("or",pp);
+
+for (rp = potential; rp !=  NULL; rp=rp->next)
+   {
+   IdempPrependRScalar(&dependency,rp->item,CF_SCALAR);
+   }
+
+potential = GetListConstraint("and",pp);
+
+for (rp = potential; rp !=  NULL; rp=rp->next)
+   {
+   IdempPrependRScalar(&dependency,rp->item,CF_SCALAR);
+   }
+
+if (value = GetConstraint("expression",pp,CF_SCALAR))
+   {
+   IdempPrependRScalar(&dependency,value,CF_SCALAR);
+   }
+
+// Now look for impact
+
+for (rp = dependency; rp != NULL; rp=rp->next)
+   {
+   fprintf(fp,"topics:\n");
+   fprintf(fp,"class_contexts::");
+   fprintf(fp,"  \"%s\"\n",pp->promiser);
+   fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_ISIMPACTED,rp->item,NOVA_IMPACTS);
+
+   // Might need to break these up further
+   }
+
+DeleteRlist(dependency);
 
 if (impacted == NULL)
    {
@@ -841,9 +787,9 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
             
             if (strstr(pp2->classes,rp->item) && cf_strcmp(rp->item,"any") != 0 && cf_strcmp(pp->classes,"any") != 0)
                {                           
-               fprintf(fp,"contexts::");
+               fprintf(fp,"class_contexts::");
                fprintf(fp,"  \"%s\"\n",NovaEscape(pp->classes));
-               fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_ACTIVATED,rp->item,NOVA_ACTIVATES);
+               fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_ACTIVATED,rp->item,NOVA_ACTIVATES);
                }
             }
          }
@@ -852,7 +798,7 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
 
 if (!found && THIS_AGENT_TYPE == cf_common)
    {
-   CfOut(cf_inform,"","Classes activated by the outcomes of promise ref \"%s\" did not occur in any promise proposal, so they are nullpotent",promise_id);
+   CfOut(cf_verbose,"","Classes activated by the outcomes of promise ref \"%s\" did not occur in any promise proposal, so they are nullpotent",promise_id);
    PromiseRef(cf_inform,pp);
    }
 

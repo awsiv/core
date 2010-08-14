@@ -186,8 +186,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseLog *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
-            hp->hh->hostname,hp->handle,hp->cause,cf_ctime(&(hp->t)));
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%s</td></tr>\n",
+            hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)));
           
    tmpsize = strlen(buffer);
    
@@ -207,6 +207,87 @@ DeleteHubQuery(hq,DeleteHubPromiseLog);
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE],hostname[CF_MAXVARSIZE];
+  struct HubPromiseLog *hp;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+  struct Item *ip,*summary = NULL;
+
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true);
+   bson_destroy(&query);
+   }
+else
+   {
+   hq = CFDB_QueryPromiseLog(&dbconn,bson_empty(&b),type,handle,true);
+   }
+
+hostname[0] = '\0';
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hp = (struct HubPromiseLog *)rp->item;
+   IdempPrependItem(&summary,hp->handle,hp->cause);
+   IncrementItemListCounter(summary,hp->handle);
+
+   if (hostname[0] == '\0')
+      {
+      strncpy(hostname,hp->hh->hostname,CF_MAXVARSIZE);
+      }
+   }
+
+DeleteHubQuery(hq,DeleteHubPromiseLog);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+if (summary == NULL)
+   {
+   snprintf(returnval,bufsize,"No data to report on");
+   }
+else
+   {
+   returnval[0] = '\0';
+   strcat(returnval,"<table>\n");
+
+   summary = SortItemListCounters(summary);
+   
+   for (ip = summary; ip != NULL; ip=ip->next)
+      {
+      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%d</td></tr>\n",
+               hostname,ip->name,ip->name,ip->classes,ip->counter);
+
+      Join(returnval,buffer,bufsize);
+      }
+   
+   strcat(returnval,"</table>\n");
    }
 
 return true;
@@ -1929,7 +2010,7 @@ if (Nova_GetTopicByPid(id,topic_name,topic_id,topic_type,topic_comment))
    }
 else
    {
-   printf("No such topic\n");
+   snprintf(buffer,bufsize,"No such topic\n");
    }
 }
 
@@ -2223,6 +2304,7 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
   struct HubPromise *hp;
   char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
   char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
+  char work[CF_MAXVARSIZE];
   int i,count;
   
 
@@ -2234,73 +2316,102 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hp = CFDB_QueryPromise(&dbconn, handle);
+hp = CFDB_QueryPromise(&dbconn, handle);
  
- if(!hp)
+if (!hp)
    {
-     snprintf(returnval, bufsize, "<br>Promise '%s' not found in database", handle);
-     return false;
+   snprintf(returnval, bufsize, "<br>Promise '%s' not found in database", handle);
+   return false;
    }
 
- returnval[0] = '\0';
+returnval[0] = '\0';
 
+strcat(returnval,"<div id=\"promise\"><table>\n");
 
- if(EMPTY(hp->promisee))
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">promise reference handle</td><td>:</td><td><span id=\"handle\">%s</span></td></tr>",hp->handle);
+Join(returnval,work,bufsize);
+
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">promised by affected object</td><td>:</td><td><span id=\"promiser\">%s</span></td></tr>",hp->promiser);
+Join(returnval,work,bufsize);
+
+if (EMPTY(hp->promisee))
    {
-     promiseeText[0] = '\0';
+   promiseeText[0] = '\0';
    }
- else
+else
    {
-     snprintf(promiseeText, sizeof(promiseeText), " promises '%s'", hp->promisee);     
-   }
-
-
- if(EMPTY(hp->bundleArgs))
-   {
-     bArgText[0] = '\0';
-   }
- else
-   {
-     snprintf(bArgText, sizeof(bArgText), " with args '%s'", hp->bundleArgs);
+   snprintf(promiseeText,sizeof(promiseeText),"%s",hp->promisee);     
    }
 
- if(EMPTY(hp->comment))
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">to stakeholders</td><td>:</td><td><span id=\"promisee\">%s</span></td></tr>",promiseeText);
+Join(returnval,work,bufsize);
+
+if (EMPTY(hp->comment))
    {
-     commentText[0] = '\0';
+   commentText[0] = '\0';
    }
- else
+else
    {
-     snprintf(commentText, sizeof(commentText), "<br>     comment => %s", hp->comment);
-   }
-
-
- constText[0] = '\0';
-
- if(hp->constraints)
-   {
-     count = 0;
-     
-     for(i = 0; hp->constraints[i] != NULL; i++)
-       {
-	 count += strlen("<br>     ") + strlen(hp->constraints[i]);
-	 
-	 if(count < sizeof(constText))
-	   {
-	     strcat(constText, "<br>     ");
-	     strcat(constText, hp->constraints[i]);
-	   }
-	 else
-	   {
-	     break;
-	   }
-
-       }
+   snprintf(commentText, sizeof(commentText),"%s",hp->comment);
    }
 
- snprintf(returnval, bufsize, "<br><br>Resource object '%s' of type %s%s%s<br>     context => %s<br>     handle => %s%s<br>Promised in file '%s' near line %d.<br>Part of bundle '%s' (type %s)%s.", hp->promiser, hp->promiseType, promiseeText, commentText, hp->classContext, hp->handle, constText, hp->file, hp->lineNo, hp->bundleName, hp->bundleType, bArgText);
- 
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">comment</td><td>:</td><td><span id=\"promiser\">%s</span></td></tr>",commentText);
+Join(returnval,work,bufsize);
 
- DeleteHubPromise(hp);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">promise type</td><td>:</td><td><span id=\"subtype\">%s</span></td></tr>",hp->promiseType);
+Join(returnval,work,bufsize);
+
+
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">applies in context</td><td>:</td><td><span id=\"class_context\">%s</span></td></tr>",hp->classContext);
+Join(returnval,work,bufsize);
+
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">located in</td><td>:</td><td>bundle \"<span id=\"bundle\"><a href=\"bundle.php?bundle=%s\">%s</a></span>\" of file <span id=\"file\">%s</span> near line %d</td></tr>",hp->bundleName,hp->bundleName,hp->file,hp->lineNo);
+Join(returnval,work,bufsize);
+
+/*
+snprintf(returnval, bufsize, "<br><br>Resource object '%s' of type %s%s%s<br>     context => %s<br>     handle => %s%s<br>Promised in file '%s' near line %d.<br>Part of bundle '%s' (type %s)%s.",
+         hp->promiser,
+         hp->promiseType,
+         promiseeText,
+         commentText,
+         hp->classContext,
+         hp->handle,
+         constText,
+         hp->file,
+         hp->lineNo,
+         hp->bundleName,
+         hp->bundleType,
+         bArgText);
+*/
+
+
+constText[0] = '\0';
+
+if (hp->constraints)
+   {
+   count = 0;
+   
+   for(i = 0; hp->constraints[i] != NULL; i++)
+      {
+      char lval[CF_MAXVARSIZE],rval[CF_MAXVARSIZE];
+
+      sscanf(hp->constraints[i],"%255s => %1023[^\n]",lval,rval);
+
+      if (strchr(rval,'('))
+         {
+         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span id=\"rval\"><a href=\"body.php?body=%s\">%s</a></span></td></tr>",lval,lval,rval,rval);
+         }
+      else
+         {
+         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span id=\"bodyname\">%s</span></td></tr>",lval,lval,rval);
+         }
+      Join(returnval,work,bufsize);   
+      }
+   }
+
+strcat(returnval,"</div></table>\n");
+    
+DeleteHubPromise(hp);
 
 if (!CFDB_Close(&dbconn))
    {
@@ -2309,6 +2420,5 @@ if (!CFDB_Close(&dbconn))
 
 return true;
 }
-
 
 #endif

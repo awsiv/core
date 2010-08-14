@@ -463,6 +463,9 @@ printf("AVLU = %s\n",buffer);
 Nova2PHP_show_col_hosts("green",200,buffer,1000);
 printf("HOSTS = %s\n",buffer);
 
+Nova_WebTopicMap_Initialize();
+printf("PID %d\n",Nova_GetPidForTopic("system_knowledge::views"));
+
 #else
 printf("For Cfengine internal only\n");
 #endif
