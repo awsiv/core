@@ -692,7 +692,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseCompliance *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promises.php?handle=%s\">%s</a></td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
             hp->hh->hostname,hp->handle,hp->handle,hp->e,hp->d,cf_ctime(&(hp->t)));
    Join(returnval,buffer,bufsize);
    }
@@ -750,7 +750,7 @@ returnval[0] = '\0';
 strcat(returnval,"<table>\n");
 count += strlen(returnval);
 
-snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>remote host</th><th>IP address</th><th>last seen</th><th>key</th>"
+snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>Direction</th><th>IP address</th><th>remote host</th><th>last seen</th>"
             "<th>Hours ago</th><th>Avg interval</th><th>Uncertainty</th><th>Host key</th></tr>\n");
 Join(returnval,buffer,bufsize);
    
@@ -2265,10 +2265,11 @@ returnval[0] = '\0';
 
 strcat(returnval,"<div id=\"promise\"><table>\n");
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Belonging to %s bundle</td><td>:</td><td><a href=\"bundle.php?bundle=%s\"><span id=\"bundle\">%s</span></a><td></tr>",hp->bundleType,hp->bundleName,hp->bundleName);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\" width=\"20%\">Belonging to %s bundle</td><td>:</td><td><a href=\"bundle.php?bundle=%s\"><span id=\"bundle\">%s</span></a><td></tr>",hp->bundleType,hp->bundleName,hp->bundleName);
 Join(returnval,work,bufsize);
 
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Defined in file</td><td>:</td><td><span id=\"file\">%s</span> near line %d</td></tr>",hp->file,hp->lineNo);
+Join(returnval,work,bufsize);
 
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Reference handle</td><td>:</td><td><span id=\"handle\">%s</span></td></tr>",hp->handle);
 Join(returnval,work,bufsize);
@@ -2332,8 +2333,6 @@ constText[0] = '\0';
 
 if (hp->constraints)
    {
-   count = 0;
-   
    for(i = 0; hp->constraints[i] != NULL; i++)
       {
       char lval[CF_MAXVARSIZE],rval[CF_MAXVARSIZE];
@@ -2349,6 +2348,11 @@ if (hp->constraints)
          snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span id=\"bodyname\">%s</span></td></tr>",lval,lval,rval);
          }
       Join(returnval,work,bufsize);   
+      }
+
+   if (i == 0)
+      {
+      Join(returnval,"body content is implicit, no futher details",bufsize);
       }
    }
 
@@ -2387,15 +2391,15 @@ handles = CFDB_QueryPromiseHandles(&dbconn,regex,type,bundle);
 
 returnval[0] = '\0';
 
-strcat(returnval,"<div id=\"promise\"><table>\n");
+strcat(returnval,"<div id=\"promise\"><ul>\n");
 
 for (rp = handles; rp != NULL; rp = rp->next)
    {
-   snprintf(work,CF_MAXVARSIZE-1,"<tr><td><span id=\"handle\">%s</span></td></tr>",rp->item);
+   snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"promise.php?handle=%s\">%s</a></li>",rp->item,rp->item);
    Join(returnval,work,bufsize);
    }
 
-strcat(returnval,"</table></div>\n");
+strcat(returnval,"</ul></div>\n");
 
 if (!CFDB_Close(&dbconn))
    {

@@ -9,6 +9,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+void Nova_DeTypeTopic(char *typed_topic,char *topic,char *type);
+
 /*****************************************************************************/
 /*                                                                           */
 /* File: topicmap.c                                                          */
@@ -55,9 +57,9 @@ if (strlen(SQL_OWNER) == 0 || typed_topic == NULL)
    return 0;
    }
 
-//DeTypeTopic(typed_topic,topic,type);
+Nova_DeTypeTopic(typed_topic,topic,type); // Linker trouble - copy this from core
 
-strcpy(topic,typed_topic);
+//strcpy(topic,typed_topic);
 
 CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
     
@@ -356,7 +358,7 @@ if (!cfdb.connected)
    return;
    }
    
-snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>The rest of the category \"%s\":</h2>\n",this_name);
+snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>The rest of the category \"%s\":</h2>\n",this_type);
 
 /* sub-topics of this topic-type */
 
@@ -695,7 +697,7 @@ while(CfFetchRow(&cfdb))
 
 if (!have_data)
    {
-   strcat(buffer,"<li>None</li>");
+   strcat(buffer,"<li>No immediate information is available on this topic</li>");
    }
 
 strcat(buffer,"</ul></div>\n");
@@ -1164,5 +1166,39 @@ tribe[node].radius = 0.0;
 tribe[node].orbit_parent = parent;
 tribe[node].distance_from_centre = distance;
 return true;
+}
+
+/*********************************************************************/
+// Copy from ontology.c because of a linker bug
+/*********************************************************************/
+
+void Nova_DeTypeTopic(char *typed_topic,char *topic,char *type)
+
+{
+type[0] = '\0';
+topic[0] = '\0';
+
+if (typed_topic == NULL)
+   {
+   return;
+   }
+
+if (*typed_topic == ':')
+   {
+   sscanf(typed_topic,"::%255[^\n]",topic);
+   }
+else if (strstr(typed_topic,"::"))
+   {
+   sscanf(typed_topic,"%255[^:]::%255[^\n]",type,topic);
+   
+   if (strlen(topic) == 0)
+      {
+      sscanf(typed_topic,"::%255[^\n]",topic);
+      }
+   }
+else
+   {
+   strncpy(topic,typed_topic,CF_MAXVARSIZE-1);
+   }
 }
 

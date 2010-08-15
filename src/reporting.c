@@ -1847,7 +1847,7 @@ void Nova_SummarizeComms()
   double kept = 1,not_kept = 0,repaired = 0,var,average;
   char name[CF_BUFSIZE], *key;
   void *value;
-  time_t now = time(NULL),then;
+  time_t now = time(NULL),then,resolution = 300;
 
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
 
@@ -1880,11 +1880,11 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       continue;
       }
 
-   if (now - then > (int)(average+2.0*sqrt(var)+0.5))
+   if ((now - then > (int)(average+2.0*sqrt(var)+0.5)) && (now - then > resolution*2))
       {
       not_kept++;
       }
-   else if (now - then > (int)(average))
+   else if (now - then > (int)(average+sqrt(var)+0.5) && (now - then > resolution*2))
       {
       repaired++;
       }

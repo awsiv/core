@@ -917,7 +917,7 @@ if (range == NULL)
    }
 
 fprintf(fp,"body_constraints::\n");
-fprintf(fp,"   \"%s\" association => a(\"is a body constraint of type\",\"%s\",\"has possible body constraints\"),\n",bs.lval,range);
+fprintf(fp,"   \"%s\" association => a(\"is a body constraint of type\",\"values::%s\",\"has possible body constraints\"),\n",bs.lval,range);
 fprintf(fp,"          comment => \"%s\";\n",NovaEscape(bs.description));
 
 switch(bs.dtype)
@@ -934,6 +934,6 @@ if (CF_VALUETYPES[i][0] != NULL)
    {
    fprintf(fp,"values::\n\n");
    fprintf(fp," \"%s\" comment => \"Represent type %s and should match %s\",\n",range,CF_DATATYPES[bs.dtype],NovaEscape(CF_VALUETYPES[i][0]));
-   fprintf(fp,"    association => a(\"are used in constraint parameters\",\"%s\",\"takes value\");\n",bs.lval);
+   fprintf(fp,"    association => a(\"are used in constraint parameters\",\"body_constraints::%s\",\"takes value\");\n",bs.lval);
    }
 }
