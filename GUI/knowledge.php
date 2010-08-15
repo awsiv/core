@@ -8,40 +8,46 @@ $topic = $_GET['topic'];
 
 if ($search == "")
    {
-   $id = $_GET['pid'];
+   $pid = $_GET['pid'];
 
-   if (!$id)
-      {
-      $id = 935;
-      }
-   
    if ($topic)
-     {
+      {
        // Could do: $search = $topic;
        
-       $id = cfpr_get_pid_for_topic("body_constraints",$topic);
-     }
+      $pid = cfpr_get_pid_for_topic("body_constraints",$topic);
+      }
+
+   if ($pid == 0 && $topic)
+      {
+      $ret = cfpr_search_topics($topic,true);
+      echo "$ret";
+      return;
+      }
+   else if ($pid == 0)
+      {
+      $pid = cfpr_get_pid_for_topic("","system policy");
+      }
     
     echo "<div id=\"image\">";
-    include("/srv/www/htdocs/graphs/$id.map");
+    include("/srv/www/htdocs/graphs/$pid.map");
     echo "</div>";
     
-    #$topic = cfpr_show_topic($id);
+    #$topic = cfpr_show_topic($pid);
     #echo "$topic";
     
 #    echo "<a href=\"new_topic.php\" type=\"submit\"><button>Propose a new topic</button></a>";
 #    echo "<button>Propose an insight or association</button>";
 #    echo "<button>Add a document reference to this topic</button>";
     
-    $hits = cfpr_show_topic_hits($id);
+    $hits = cfpr_show_topic_hits($pid);
     
     echo "<p>$hits<p>";
     
-    $leads = cfpr_show_topic_leads($id);
+    $leads = cfpr_show_topic_leads($pid);
     
     echo "<p>$leads";
     
-    $cat = cfpr_show_topic_category($id);
+    $cat = cfpr_show_topic_category($pid);
     
     echo "<p>$cat";
   }

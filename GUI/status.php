@@ -18,10 +18,7 @@ $g = cfpr_count_green_hosts();
 <ul>
 <li><img src="48px-Crystal_Clear_app_network_2.png"><a href="topN.php">Status all hosts</a>
 <li><img src="48px-Crystal_Clear_app_network_2.png"><a href="host.php">Status by host</a>
-<li><img src="48px-Crystal_Clear_app_network_2.png">Scan for hosts with property
-<li><img src="48px-Crystal_Clear_app_network_2.png">Summarize compliance
-<li><img src="48px-Crystal_Clear_app_network_2.png">Summarize performance
-<li><img src="48px-Crystal_Clear_app_network_2.png">Summarize business goals
+<li><img src="48px-Crystal_Clear_app_network_2.png">Query oracle
 <li><img src="48px-Crystal_Clear_app_network_2.png"><a href="index.php">Management summary</a>
 </ul>
 </td>
@@ -30,9 +27,9 @@ $g = cfpr_count_green_hosts();
 <div id="meter"><a href="topN.php"><img src="/hub/common/meter.png"></a></div>
 <ul>
 <li>Hosts known: <?php echo $all; ?>
-<li><img src="/img/red_sign.png">     <?php echo "$r"; ?> hosts known
-<li><img src="/img/yellow_sign.png">  <?php echo "$y"; ?> hosts known
-<li><img src="/img/green_sign.png">   <?php echo "$g"; ?> hosts known
+<li><a href="hosts.php?type=red"><img src="/img/red_sign.png"></a>     <?php echo "$r"; ?> hosts known
+<li><a href="hosts.php?type=yellow"><img src="/img/yellow_sign.png"></a>  <?php echo "$y"; ?> hosts known
+<li><a href="hosts.php?type=green"><img src="/img/green_sign.png"></a>   <?php echo "$g"; ?> hosts known
 <li>Average download time: 0.0 s
 <li>Hosts 2 dev overdue: 0
 </ul>

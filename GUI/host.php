@@ -36,26 +36,7 @@ echo "$allreps";?>
 
 </form>
 
-
-<ul>
-
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Bundle%20profile">bundles report</a>   Bundles used on this host 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Classes">classes report</a>   User defined classes observed on the system 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Compliance%20report">compliance report</a>   Total summary of host compliance 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=File%20changes%20report">file_changes report</a>   Latest observed changes to system files 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=File%20%diffs%20report">file_diffs report</a>   Latest observed differences to system files 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Last%20saw%20hosts">lastseen report</a>   Time and frequency of communications with peers 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Patches%20available">patches available report</a>   Patches already installed on system 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Patch%20status">patches installed report</a>   Patches not yet installed, but published by vendor 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Performance">performance report</a>   Time cost of verifying system promises 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Compliance by promise">promise report</a>   Per-promise average compliance report 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Promises%20not%20kept">promises not kept report</a>   Promises that were recently unkept 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Promises repaired">promises repaired report</a>   Promises that were recently repaired 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Setuid/gid root programs">setuid report</a>   Known setuid programs found on system 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Software installed">software installed report</a>   Software already installed on system 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Business value report">value report</a>   Value estimate / ROI of cfengine configuration 
-<li><a href="search.php?hostkey=<?php echo $hostkey;?>&report=Variables">variables report</a> Values of set and discovered variables on this host context
-</ul>
+BUNDLES/PASSPORT?
 
 </td>
 <td>                                                                        
@@ -66,25 +47,24 @@ echo "<div id=\"info\">\n";
 
 $last = cfpr_getlastupdate($hostkey);
 
-echo "<ul>";
+echo "<div id=\"meter\"><a href=\"topN.php\"><img src=\"/hub/$hostkey/meter.png\" align=right></a></div>";
+
+
+echo "<p><ul>";
 
 $colour = cfpr_get_host_colour($hostkey);
 
-echo "<li><img src=\"/img/$colour"."_sign_big.png\"></li>\n";
+echo "<li><a href=\"hosts.php?type=$colour\"><img src=\"/img/$colour"."_sign_big.png\"></a></li>\n";
 
-echo "<li>Key: $hostkey</li>";
+echo "<li>$hostkey</li>";
 echo "<li>Alias: $hostname</li>"; 
 echo "<li>Last known address: $ipaddr</li>";
 echo "<li>Last data were obtained at $last";
 echo "<li><a href=\"vitals.php?hostkey=$hostkey\">Vital signs for this host</a></li>\n";
-echo "<li><a href=\"magview.php\">Last four hours</a></li>\n";
-echo "<li><a href=\"year.php\">Long term trends</a></li>\n";
-echo "<li><a href=\"weekly.php\">Patterns</a></li>\n";
 echo "</ul></div>\n";
 
 cfpr_summary_meter(NULL);
 
-echo "<div id=\"meter\"><a href=\"topN.php\"><img src=\"/hub/$hostkey/meter.png\"></a></div>";
 ?>
 
 <form method="post" action="host.php">

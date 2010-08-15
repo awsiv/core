@@ -117,7 +117,7 @@ padding: 10px;
 #promise tr td
 {  
 background-color: #fff; 
-padding: 0px;
+padding: 3px;
 border: 0px;
 }
 
@@ -307,7 +307,10 @@ background-color: #30302a;
 width: 150px;
 }
 
-
+#keyhash
+{  
+font-size: 70%;
+}
 
 #search
 { 
@@ -627,12 +630,6 @@ padding: 10px;
 line-height: 110%;
 }
 
-
-#bundle
-{
-background-color: #eee;
-padding: 10px;
-}
 
 #nav
 {  
