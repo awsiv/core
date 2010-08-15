@@ -19,6 +19,8 @@
 
 /*****************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
+
 void Nova_StoreExpandedPromise(struct Promise *pp)
 
 { struct Constraint *cp;
@@ -257,3 +259,5 @@ for (cp = body->conlist; cp != NULL; cp=cp->next)
       }
    }
 }
+
+#endif

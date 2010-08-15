@@ -861,12 +861,6 @@ else
    strcpy(filename,filenode);
    }
 
-if (cfstat(filename,&sb) != -1)
-   {
-   CfOut(cf_inform,"","Graph \"%s\" already exists, delete to refresh\n",filename);
-   return;
-   }
-
 tribe_adj = (double **)malloc(sizeof(double *)*CF_TRIBE_SIZE);
 
 for (i = 0; i < CF_TRIBE_SIZE; i++)

@@ -81,7 +81,7 @@ snprintf(buffer,bufsize,
          "<li><a href=\"index.php\"><b>Mission summary</b><br></a></li>"
          "<li><a href=\"helm.php\"><b>Mission planning</b></a></li>"
          "<li><a href=\"status.php\"><b>Mission status</b></a></li>"
-         "<li><a href=\"views.php\"><b>Mission views</b></a></li>"
+//         "<li><a href=\"views.php\"><b>Mission views</b></a></li>"
 //         "<li><a href=\"communications.php\"><b>Mission log</b></a>"
          "<li><a href=\"knowledge.php\"><b>Mission library</b></a></li>"
          "</ul>"
