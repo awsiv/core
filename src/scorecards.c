@@ -967,12 +967,12 @@ switch (method)
    case cfrank_compliance:
        if (k[meter_compliance_hour] < 80)
           {
-          result = CF_RED_THRESHOLD;
+          result = CF_RED_THRESHOLD + 100 - k[meter_compliance_hour];
           }
        
        if (r[meter_compliance_hour] > 20)
           {
-          result = CF_AMBER_THRESHOLD;
+          result = CF_AMBER_THRESHOLD + r[meter_compliance_hour];
           }
        
        break;
@@ -980,24 +980,24 @@ switch (method)
    case cfrank_anomaly:
        if (k[meter_anomalies_day] < 80)
           {
-          result = CF_RED_THRESHOLD;
+          result = CF_RED_THRESHOLD + 100 - k[meter_anomalies_day];
           }
        
        if (r[meter_anomalies_day] > 20)
           {
-          result = CF_AMBER_THRESHOLD;
+          result = CF_AMBER_THRESHOLD + r[meter_anomalies_day];
           }
        break;
        
    case cfrank_performance:
        if (k[meter_perf_day] < 80)
           {
-          result = CF_RED_THRESHOLD;
+          result = CF_RED_THRESHOLD + 100 - k[meter_perf_day];
           }
        
        if (r[meter_perf_day] > 20)
           {
-          result = CF_AMBER_THRESHOLD;
+          result = CF_AMBER_THRESHOLD + r[meter_perf_day];
           }
 
        break;
@@ -1005,12 +1005,12 @@ switch (method)
    case cfrank_lastseen:
        if (k[meter_comms_hour] < 80)
           {
-          result = CF_RED_THRESHOLD;
+          result = CF_RED_THRESHOLD + 100 - k[meter_comms_hour];
           }
        
        if (r[meter_comms_hour] > 20)
           {
-          result = CF_AMBER_THRESHOLD;
+          result = CF_AMBER_THRESHOLD + r[meter_comms_hour];
           }
 
        break;
@@ -1021,12 +1021,12 @@ switch (method)
 
        if (kav < 80)
           {
-          result = CF_RED_THRESHOLD;
+          result = CF_RED_THRESHOLD + 100 - kav;
           }
        
        if (rav > 20)
           {
-          result = CF_AMBER_THRESHOLD;
+          result = CF_AMBER_THRESHOLD + rav;
           }
 
        break;

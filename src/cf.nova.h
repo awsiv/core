@@ -851,6 +851,7 @@ long Nova2PHP_count_red_hosts(void);
 long Nova2PHP_count_yellow_hosts(void);
 long Nova2PHP_count_green_hosts(void);
 void Nova2PHP_show_col_hosts(char *colour,int n,char *buffer,int bufsize);
+int Nova2PHP_list_promise_handles(char *regex,char *bundle,char *type,char *returnval,int bufsize);
 
 char *Nova_HostProfile(char *key);
 void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);

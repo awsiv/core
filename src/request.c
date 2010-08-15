@@ -460,11 +460,14 @@ printf("AVLU = %s\n",buffer);
 
 //Nova_ComplianceSummaryGraph("/srv/www/htdocs",buffer,10);
 
-Nova2PHP_show_col_hosts("green",200,buffer,1000);
-printf("HOSTS = %s\n",buffer);
+//Nova2PHP_show_col_hosts("green",200,buffer,1000);
+//printf("HOSTS = %s\n",buffer);
 
-Nova_WebTopicMap_Initialize();
-printf("PID %d\n",Nova_GetPidForTopic("system_knowledge::views"));
+//Nova_WebTopicMap_Initialize();
+//printf("PID %d\n",Nova_GetPidForTopic("system_knowledge::views"));
+
+Nova2PHP_list_promise_handles(".*","app_web_apache","agent",buffer,100000);
+printf("HANDLE: %s\n",buffer);
 
 #else
 printf("For Cfengine internal only\n");

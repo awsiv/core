@@ -2687,130 +2687,132 @@ struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle)
   
   /* BEGIN query document */
 
-  bson_buffer_init(&b);
-  bson_append_string(&b,cfp_handle,handle);
-  bson_from_buffer(&query,&b);
+bson_buffer_init(&b);
+bson_append_string(&b,cfp_handle,handle);
+bson_from_buffer(&query,&b);
 
 
-  /* BEGIN SEARCH */
-  cursor = mongo_find(conn,MONGO_PROMISES,&query,NULL,0,0,0);
-  bson_destroy(&query);
+/* BEGIN SEARCH */
+cursor = mongo_find(conn,MONGO_PROMISES,&query,NULL,0,0,0);
+bson_destroy(&query);
 
 
-  if(mongo_cursor_next(cursor))  // loops over documents
-    {
-      bson_iterator_init(&it1,cursor->current.data);
+if (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
    
-      while(bson_iterator_next(&it1))
-	{
-	  if(strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
-	    {
-	      snprintf(bn, sizeof(bn), "%s", bson_iterator_string(&it1));
-	    }
-	  else if(strcmp(bson_iterator_key(&it1), cfp_bundletype) == 0)
-	    {
-	      snprintf(bt, sizeof(bt), "%s", bson_iterator_string(&it1));
-	    }
-	  else if(strcmp(bson_iterator_key(&it1), cfp_bundleargs) == 0)
-	    {
-	      bson_iterator_init(&it2,bson_iterator_value(&it1));
+   while (bson_iterator_next(&it1))
+      {
+      if(strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
+         {
+         snprintf(bn, sizeof(bn), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_bundletype) == 0)
+         {
+         snprintf(bt, sizeof(bt), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_bundleargs) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         
+         memset(ba,0,sizeof(ba));
+         
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         
+         while(bson_iterator_next(&it2))
+            {
+            if(strlen(ba) + strlen(bson_iterator_string(&it2)) < sizeof(ba))
+               {
+               strcat(ba,bson_iterator_string(&it2));
+               strcat(ba, ",");
+               }
+            else
+               {
+               break;
+               }
+            }
+         
+         if(ba[0] != '\0')
+            {
+            ba[strlen(ba)-1] = '\0';  // remove last comma
+            }
+         
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_promisetype) == 0)
+         {
+         snprintf(pt, sizeof(pt), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_promiser) == 0)
+         {
+         snprintf(pr, sizeof(pr), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_promisee) == 0)
+         {
+         snprintf(pe, sizeof(pe), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_classcontext) == 0)
+         {
+         snprintf(cl, sizeof(cl), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_comment) == 0)
+         {
+         snprintf(co, sizeof(co), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
+         {
+         snprintf(ha, sizeof(ha), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
+         {
+         snprintf(fn, sizeof(fn), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
+         {
+         lno = bson_iterator_int(&it1);
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_constraints) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         
+         // count constraints
+         constCount = 0;
+         
+         while(bson_iterator_next(&it2))
+            {
+            constCount++;
+            }
+         
+         if(constCount == 0)
+            {
+            cons = NULL;
+            continue;
+            }
+         
+         // save constraints (freed in DeleteHubPromise)
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         cons = malloc(sizeof(char *) * (constCount + 1));
+         
+         i = 0;  // race-safe check
+         
+         while(bson_iterator_next(&it2) && (i < constCount))
+            {
+            cons[i] = strdup(bson_iterator_string(&it2));
+            i++;
+            }
+         
+         cons[i] = NULL;           
+         }
+      }
+   }
+else
+   {
+   mongo_cursor_destroy(cursor);
+   return NULL;
+   }
 
-	      memset(ba,0,sizeof(ba));
+mongo_cursor_destroy(cursor);
 
-	      bson_iterator_init(&it2,bson_iterator_value(&it1));
-
-	      while(bson_iterator_next(&it2))
-		{
-		  if(strlen(ba) + strlen(bson_iterator_string(&it2)) < sizeof(ba))
-		    {
-		      strcat(ba,bson_iterator_string(&it2));
-		      strcat(ba, ",");
-		    }
-		  else
-		    {
-		      break;
-		    }
-		}
-	      
-	      if(ba[0] != '\0')
-		{
-		  ba[strlen(ba)-1] = '\0';  // remove last comma
-		}
-
-	    }
-	  else if(strcmp(bson_iterator_key(&it1), cfp_promisetype) == 0)
-	    {
-	      snprintf(pt, sizeof(pt), "%s", bson_iterator_string(&it1));
-	    }
-	  else if(strcmp(bson_iterator_key(&it1), cfp_promiser) == 0)
-	    {
-	      snprintf(pr, sizeof(pr), "%s", bson_iterator_string(&it1));
-	    }
-	  else if(strcmp(bson_iterator_key(&it1), cfp_promisee) == 0)
-	    {
-	      snprintf(pe, sizeof(pe), "%s", bson_iterator_string(&it1));
-	    }
-	  else if(strcmp(bson_iterator_key(&it1), cfp_classcontext) == 0)
-	    {
-	      snprintf(cl, sizeof(cl), "%s", bson_iterator_string(&it1));
-	    }
-	  else if(strcmp(bson_iterator_key(&it1), cfp_comment) == 0)
-	    {
-	      snprintf(co, sizeof(co), "%s", bson_iterator_string(&it1));
-	    }
-	  else if(strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
-	    {
-	      snprintf(ha, sizeof(ha), "%s", bson_iterator_string(&it1));
-	    }
-	  else if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
-	    {
-	      snprintf(fn, sizeof(fn), "%s", bson_iterator_string(&it1));
-	    }
-	  else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
-	    {
-	      lno = bson_iterator_int(&it1);
-	    }
-	  else if(strcmp(bson_iterator_key(&it1), cfp_constraints) == 0)
-	    {
-	      bson_iterator_init(&it2,bson_iterator_value(&it1));
-				      
-	      // count constraints
-	      constCount = 0;
-	      while(bson_iterator_next(&it2))
-		{
-		  constCount++;
-		}
-			  
-	      if(constCount == 0)
-		{
-		  cons = NULL;
-		  continue;
-		}
-	      
-	      // save constraints (freed in DeleteHubPromise)
-	      bson_iterator_init(&it2,bson_iterator_value(&it1));
-	      cons = malloc(sizeof(char *) * (constCount + 1));
-			  
-	      i = 0;  // race-safe check
-	      while(bson_iterator_next(&it2) && (i < constCount))
-		{
-		  cons[i] = strdup(bson_iterator_string(&it2));
-		  i++;
-		}
-	      cons[i] = NULL;
-			  
-	    }
-	}
-    }
-  else
-    {
-      mongo_cursor_destroy(cursor);
-      return NULL;
-    }
-
-  mongo_cursor_destroy(cursor);
-
-  return NewHubPromise(bn,bt,ba,pt,pr,pe,cl,ha,co,fn,lno,cons);
+return NewHubPromise(bn,bt,ba,pt,pr,pe,cl,ha,co,fn,lno,cons);
 }
 
 /*****************************************************************************/
@@ -2828,38 +2830,38 @@ int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, c
   int found = false;
 
   // query
-  bson_buffer_init(&b);
-  bson_append_string(&b,cfp_handle,handle);
-  bson_from_buffer(&query,&b);
+bson_buffer_init(&b);
+bson_append_string(&b,cfp_handle,handle);
+bson_from_buffer(&query,&b);
 
   // returned attribute
-  bson_buffer_init(&b);
-  bson_append_int(&b,attrKey,1);
-  bson_from_buffer(&field,&b);
-  
-  
-  cursor = mongo_find(conn,MONGO_PROMISES,&query,&field,0,0,0);
-  bson_destroy(&query);
-  bson_destroy(&field);
+bson_buffer_init(&b);
+bson_append_int(&b,attrKey,1);
+bson_from_buffer(&field,&b);
 
-  if(mongo_cursor_next(cursor))  // take first doc should be (unique)
-    {
-      bson_iterator_init(&it1,cursor->current.data);
-      
-      while(bson_iterator_next(&it1))
-	{
-	  if(strcmp(bson_iterator_key(&it1), attrKey) == 0)
-	    {
-	      snprintf(attrVal, attrValSz, "%s", bson_iterator_string(&it1));
-	      found = true;
-	      break;
-	    }
-	}
-    }  
-  
-  mongo_cursor_destroy(cursor);
 
-  return found;
+cursor = mongo_find(conn,MONGO_PROMISES,&query,&field,0,0,0);
+bson_destroy(&query);
+bson_destroy(&field);
+
+if (mongo_cursor_next(cursor))  // take first doc should be (unique)
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while(bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1), attrKey) == 0)
+         {
+         snprintf(attrVal, attrValSz, "%s", bson_iterator_string(&it1));
+         found = true;
+         break;
+         }
+      }
+   }  
+
+mongo_cursor_destroy(cursor);
+
+return found;
 }
 
 /*****************************************************************************/
@@ -2878,15 +2880,16 @@ struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, ch
   // query
 bson_buffer_init(&b);
 
-if(!EMPTY(prRegex))
+if (!EMPTY(prRegex))
    {
-   bson_append_regex(&b, cfp_promiser, prRegex, "");
+   bson_append_regex(&b, cfp_promiser, prRegex,"");
    }
 else
    {
    bson_append_string(&b,cfp_bundletype,bType);
    bson_append_string(&b,cfp_bundlename,bName);
    }
+
 bson_from_buffer(&query,&b);
 
 // returned attribute
@@ -2894,8 +2897,8 @@ bson_buffer_init(&b);
 bson_append_int(&b,cfp_handle,1);
 bson_from_buffer(&field,&b);
 
-
 cursor = mongo_find(conn,MONGO_PROMISES,&query,&field,0,0,0);
+
 bson_destroy(&query);
 bson_destroy(&field);
 
@@ -2905,7 +2908,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    
    while(bson_iterator_next(&it1))
       {
-      if(strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
+      if (strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
          {
          AppendRScalar(&handles,(void *)bson_iterator_string(&it1),CF_SCALAR);
          }

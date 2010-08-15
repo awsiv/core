@@ -2011,15 +2011,15 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
 
    if (Nova_IsGreen(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"green.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td><td>%s</td></a></td></tr>\n",ip->classes,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"green.png\"></td><td><a href=\"host.php?%s\">%s</a></td><td><a href=\"host.php?%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else if (Nova_IsYellow(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td><td>%s</td></a></td></tr>\n",ip->classes,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td><a href=\"host.php?%s\">%s</a></td><td><a href=\"host.php?%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else // if (Nova_IsRed(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td><td>%s</td></tr>\n",ip->classes,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td><a href=\"host.php?%s\">%s</a></td><td><a href=\"host.php?%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
 
    Join(buffer,work,bufsize);
@@ -2265,45 +2265,49 @@ returnval[0] = '\0';
 
 strcat(returnval,"<div id=\"promise\"><table>\n");
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">promise reference handle</td><td>:</td><td><span id=\"handle\">%s</span></td></tr>",hp->handle);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Belonging to %s bundle</td><td>:</td><td><a href=\"bundle.php?bundle=%s\"><span id=\"bundle\">%s</span></a><td></tr>",hp->bundleType,hp->bundleName,hp->bundleName);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">promised by affected object</td><td>:</td><td><span id=\"promiser\">%s</span></td></tr>",hp->promiser);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Defined in file</td><td>:</td><td><span id=\"file\">%s</span> near line %d</td></tr>",hp->file,hp->lineNo);
+
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Reference handle</td><td>:</td><td><span id=\"handle\">%s</span></td></tr>",hp->handle);
+Join(returnval,work,bufsize);
+
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Affected object (promiser)</td><td>:</td><td><span id=\"promiser\">%s</span></td></tr>",hp->promiser);
 Join(returnval,work,bufsize);
 
 if (EMPTY(hp->promisee))
    {
-   promiseeText[0] = '\0';
+   strcpy(promiseeText,"None mentioned");
    }
 else
    {
    snprintf(promiseeText,sizeof(promiseeText),"%s",hp->promisee);     
    }
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">to stakeholders</td><td>:</td><td><span id=\"promisee\">%s</span></td></tr>",promiseeText);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Stakeholders (promisees)</td><td>:</td><td><span id=\"promisee\">%s</span></td></tr>",promiseeText);
 Join(returnval,work,bufsize);
 
 if (EMPTY(hp->comment))
    {
-   commentText[0] = '\0';
+   strcpy(commentText,"No comment");
    }
 else
    {
    snprintf(commentText, sizeof(commentText),"%s",hp->comment);
    }
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">comment</td><td>:</td><td><span id=\"promiser\">%s</span></td></tr>",commentText);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Comment</td><td>:</td><td><span id=\"promiser\">%s</span></td></tr>",commentText);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">promise type</td><td>:</td><td><span id=\"subtype\">%s</span></td></tr>",hp->promiseType);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Promise concerns</td><td>:</td><td><span id=\"subtype\">%s</span></td></tr>",hp->promiseType);
 Join(returnval,work,bufsize);
 
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">applies in context</td><td>:</td><td><span id=\"class_context\">%s</span></td></tr>",hp->classContext);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applying in the class context</td><td>:</td><td><span id=\"class_context\">%s</span></td></tr>",hp->classContext);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">located in</td><td>:</td><td>bundle \"<span id=\"bundle\"><a href=\"bundle.php?bundle=%s\">%s</a></span>\" of file <span id=\"file\">%s</span> near line %d</td></tr>",hp->bundleName,hp->bundleName,hp->file,hp->lineNo);
-Join(returnval,work,bufsize);
+
 
 /*
 snprintf(returnval, bufsize, "<br><br>Resource object '%s' of type %s%s%s<br>     context => %s<br>     handle => %s%s<br>Promised in file '%s' near line %d.<br>Part of bundle '%s' (type %s)%s.",
@@ -2321,6 +2325,8 @@ snprintf(returnval, bufsize, "<br><br>Resource object '%s' of type %s%s%s<br>   
          bArgText);
 */
 
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Body of the promise</td><td>:</td><td></td></tr>");
+Join(returnval,work,bufsize);
 
 constText[0] = '\0';
 
@@ -2346,7 +2352,7 @@ if (hp->constraints)
       }
    }
 
-strcat(returnval,"</div></table>\n");
+strcat(returnval,"</table></div>\n");
     
 DeleteHubPromise(hp);
 
@@ -2357,5 +2363,47 @@ if (!CFDB_Close(&dbconn))
 
 return true;
 }
+
+/*****************************************************************************/
+
+int Nova2PHP_list_promise_handles(char *regex,char *bundle,char *type,char *returnval,int bufsize)
+
+{ mongo_connection dbconn;
+  char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
+  char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
+  char work[CF_MAXVARSIZE];
+  struct Rlist *rp,*handles;
+  int i,count;
+  
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+handles = CFDB_QueryPromiseHandles(&dbconn,regex,type,bundle);
+
+returnval[0] = '\0';
+
+strcat(returnval,"<div id=\"promise\"><table>\n");
+
+for (rp = handles; rp != NULL; rp = rp->next)
+   {
+   snprintf(work,CF_MAXVARSIZE-1,"<tr><td><span id=\"handle\">%s</span></td></tr>",rp->item);
+   Join(returnval,work,bufsize);
+   }
+
+strcat(returnval,"</table></div>\n");
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+
 
 #endif

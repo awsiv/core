@@ -15,7 +15,7 @@ $addr = NULL;
 $tago = 0;
 
 //$ret = cfpr_report_lastseen($hostkey,$hash,$host,$addr,$tago,$regex);
-$ret = cfpr_topN_hosts($name,1000);
+$ret = cfpr_topN_hosts("compliance",1000);
 
 
 echo "<br>$ret<br>";
