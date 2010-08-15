@@ -854,7 +854,7 @@ void Nova_Print(struct CfDataView cfv,double x,double y,char *s,int colour)
   char *font = font1;
 
   int brect[8];
-  double size = 10.0;
+  double size = 8.0;
 
 if (strlen(s) > CF_NODEVISIBLE)
    {
@@ -947,7 +947,7 @@ void Nova_BigPrint(struct CfDataView cfv,double x,double y,char *s,int colour)
   static char *font3 = "DejaVuSans";
   char *font = font1;
   int brect[8];
-  double size = 12.0;
+  double size = 10.0;
 
 if (strlen(s) > CF_NODEVISIBLE)
    {

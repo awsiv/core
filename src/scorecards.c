@@ -463,7 +463,6 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
           break;
       case cfmeter_hour:
           Nova_BarMeter(&cfv,3,kept,repaired,"Hour");
-          returnval = kept+repaired;
           break;          
       case cfmeter_day:
           Nova_BarMeter(&cfv,2,kept,repaired,"Day");

@@ -534,8 +534,15 @@ while(CfFetchRow(&cfdb))
       snprintf(work,CF_MAXVARSIZE,"<li>  %s \"%s\" \n <ul>\n",from_name,fassociation);
       Join(buffer,work,bufsize);
       }
-   
-   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s)</li>\n",Nova_PidURL(to_pid,to_name),to_type);
+
+   if (strlen(to_type) > 0)
+      {
+      snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s)</li>\n",Nova_PidURL(to_pid,to_name),to_type);
+      }
+   else
+      {
+      snprintf(work,CF_MAXVARSIZE,"<li>  %s </li>\n",Nova_PidURL(to_pid,to_name));
+      }
    Join(buffer,work,bufsize);
    }
 

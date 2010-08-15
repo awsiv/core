@@ -788,7 +788,7 @@ void CFDB_SavePerformance(mongo_connection *conn, char *keyhash, struct Item *da
   bson setOp;
   struct Item *ip;
   char varName[CF_MAXVARSIZE];
-  time_t t;
+  long t;
   char eventname[CF_MAXVARSIZE];
   double measure = 0,average = 0,dev = 0;
 
@@ -812,7 +812,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    bson_append_double(sub, cfr_obs_q, measure);
    bson_append_double(sub, cfr_obs_E, average);
    bson_append_double(sub, cfr_obs_sigma, dev);
-   bson_append_int(sub, cfr_time, t);
+   bson_append_int(sub, cfr_time,t);
    bson_append_finish_object(sub);
    }
 

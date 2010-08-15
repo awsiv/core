@@ -174,7 +174,7 @@ topics:
 
  manager_view::
 
-   "request for change"              comment => "(RFC) The initial proposal for an intended change of system policy.";
+   "request for change"       comment => "(RFC) The initial proposal for an intended change of system policy.";
 
    "request for change"       association => a("are a basis for","change management","uses");
    "request for change"       association => a("might be an example of","intentions","might be a");
@@ -222,34 +222,33 @@ occurrences:
    "https://cfengine.com/copernicus/"
             represents => { "Support knowledge portal" };
 
-
  mission_status::
 
-   "/reports/meters.png"
+   "status.php"
 
-            represents => { "network host status", "/reports/host_portal.html" },
+            represents => { "network host status" },
             representation => "image";
 
-   "/managed_hosts.png"
+   "topN.php"
 
-            represents => { "see all managed hosts", "/reports/allhosts.html" },
+            represents => { "weakest hosts" },
             representation => "image";
 
-   "/which.php"
-            represents => { "Simple search for hosts with property" };
+   "host.php"
+            represents => { "Query hosts" };
 
 
  host_portal::
 
-   "reports/host_portal.html"
+   "host.php"
 
-            represents => { "portal" },
+            represents => { "host portal" },
             representation => "url";
 
 
  system_trends::
 
-   "reports/(.*)/mainpage.html"
+   "trends.php"
 
             represents => { "weekly $(match.1)" },
             representation => "file",
@@ -279,34 +278,12 @@ occurrences:
             path_root => "$(enterprise_start.doc_root)",
             web_root => "";
 
-
- hashes_report::
-
-   "A list of actual computed hash values for promised files."
-
-            represents => { "description" },
-            representation => "literal";
-
-   "reports/(.*)/hashes.html"
-
-            represents => { "on $(match.1)" },
-            representation => "file",
-            path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
-
  classes_report::
 
-   "Shows classes defined on the current host. This provides discovered information and dynamic properties of the system. Probabilities that classes have been defined are based on actual observation."
+   "Shows classes defined on the current host. Provides discovered information and dynamic properties of the system. Probabilities that classes have been defined are based on actual observation."
 
             represents => { "description" },
             representation => "literal";
-
-   "reports/(.*)/classes.html"
-
-            represents => { "on $(match.1)" },
-            representation => "file",
-            path_root => "$(enterprise_start.doc_root)",
-            web_root => "";
 
  variables_report::
 

@@ -1669,7 +1669,7 @@ METER_KEPT[meter_compliance_week] = av_week_kept;
 METER_REPAIRED[meter_compliance_week] = av_week_repaired;
 METER_KEPT[meter_compliance_day] = av_day_kept;
 METER_REPAIRED[meter_compliance_day] = av_day_repaired;
-METER_KEPT[meter_compliance_hour] = av_week_kept;
+METER_KEPT[meter_compliance_hour] = av_hour_kept;
 METER_REPAIRED[meter_compliance_hour] = av_hour_repaired;
 }
 

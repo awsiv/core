@@ -180,24 +180,17 @@ else
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-count += strlen(returnval);
 
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Time</th></tr>\n");
+Join(returnval,buffer,bufsize);
+         
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseLog *)rp->item;
 
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%s</td></tr>\n",
             hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)));
-          
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+   Join(returnval,buffer,bufsize);
    }
 
 strcat(returnval,"</table>\n");
@@ -278,11 +271,12 @@ else
    strcat(returnval,"<table>\n");
 
    summary = SortItemListCounters(summary);
-   
+   snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Occurrences</th></tr>\n");
+   Join(returnval,buffer,bufsize);
+            
    for (ip = summary; ip != NULL; ip=ip->next)
       {
-      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%d</td></tr>\n",
-               hostname,ip->name,ip->name,ip->classes,ip->counter);
+      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%d</td></tr>\n",hostname,ip->name,ip->name,ip->classes,ip->counter);
 
       Join(returnval,buffer,bufsize);
       }
@@ -330,7 +324,8 @@ else
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-count += strlen(returnval);
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Day</th><th>Kept</th><th>Repaired</th><th>Not kept</th></tr>\n");
+Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -338,16 +333,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%.1lf</td><td>%.1lf</td><td>%.1lf</td></tr>\n",
             hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept);
-          
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+   Join(returnval,buffer,bufsize);
    }
 
 strcat(returnval,"</table>\n");
@@ -360,8 +346,6 @@ if (!CFDB_Close(&dbconn))
    }
 
 return true;
-
-
 }
 
 /*****************************************************************************/
@@ -405,22 +389,15 @@ else
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-count += strlen(returnval);
 
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Name</th><th>Version</th><th>Architcture</th></tr>\n");
+Join(returnval,buffer,bufsize);
+      
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hs = (struct HubSoftware *)rp->item;
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
-
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+   Join(returnval,buffer,bufsize);
    }
 
 strcat(returnval,"</table>\n");
@@ -473,22 +450,15 @@ else
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-count += strlen(returnval);
+
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Class context</th><th>Occurs with<br>Probability</th><th>Uncertainty</th><th>Last seen</th></tr>\n");
+Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hc = (struct HubClass *)rp->item;
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%lf</td><td>%lf</td><td>%s</td></tr>\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
-
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+   Join(returnval,buffer,bufsize);
    }
 
 strcat(returnval,"</table>\n");
@@ -507,8 +477,8 @@ return true;
 
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
- struct HubVariable *hv,*hv2;
+{ char *report,buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE];
+  struct HubVariable *hv,*hv2;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
   int count = 0, tmpsize = 0;
@@ -535,7 +505,7 @@ else
    hq = CFDB_QueryVariables(&dbconn,bson_empty(&b),scope,lval,rval,type,regex);
    }
 
-
+lscope[0] = '\0';
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
@@ -543,8 +513,41 @@ count += strlen(returnval);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
+   char typestr[CF_SMALLBUF];
+   
    hv = (struct HubVariable *)rp->item;
-   snprintf(buffer,CF_BUFSIZE,"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td>\n",hv->hh->hostname,hv->dtype,hv->scope,hv->lval);
+
+   if (strcmp(lscope,hv->scope) != 0)
+      {
+      strcpy(lscope,hv->scope);
+      snprintf(buffer,CF_BUFSIZE,"<tr><th colspan=\"3\">Bundle scope <a href=\"bundle.php?bundle=%s\">%s</a><th></tr>\n",hv->scope,hv->scope);
+      Join(returnval,buffer,bufsize);
+      snprintf(buffer,CF_BUFSIZE,"<tr><th>host</th><th>type</th><th>name</th><th>value</th></tr>\n");
+      Join(returnval,buffer,bufsize);
+      }
+
+   switch (*hv->dtype)
+      {
+      case 's':
+          snprintf(typestr,CF_SMALLBUF,"string");
+          break;
+      case 'i':
+          snprintf(typestr,CF_SMALLBUF,"int");
+          break;
+      case 'r':
+          snprintf(typestr,CF_SMALLBUF,"real");
+          break;
+      case 'm':
+          snprintf(typestr,CF_SMALLBUF,"menu");
+          break;
+      }
+
+   if (strlen(hv->dtype) == 2)
+      {
+      strcat(typestr," list");
+      }
+   
+   snprintf(buffer,CF_BUFSIZE,"<tr><td>%s</td><td>%s</td><td><a href=\"knowledge.php?topic=%s\">%s</td>\n",hv->hh->hostname,typestr,hv->lval,hv->lval);
    strcat(returnval,buffer);
    count += strlen(buffer);
 
@@ -560,28 +563,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       snprintf(buffer,sizeof(buffer),"<td>%s</td></tr>\n",(char *)hv->rval);
       }
 
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      snprintf(buffer,sizeof(buffer),"<td>too big</td></tr>\n");
-      break;
-      }
-   
    Join(returnval,buffer,bufsize);
-   count += tmpsize;
-
-   // Split tables per scope
-   
-   if (rp->next)
-      {
-      hv2 = (struct HubVariable *)rp->next->item;
-
-      if (strcmp(hv->scope,hv2->scope) != 0)
-         {
-         Join(returnval,"</table><table>\n",bufsize);
-         }
-      }
    }
 
 strcat(returnval,"</table>\n");
@@ -641,24 +623,17 @@ else
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-count += strlen(returnval);
+
+snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>policy</th><th>kept</th><th>repaired</th><th>not kept</th><th>last seen</th></tr>\n");
+Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    ht = (struct HubTotalCompliance *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%d</td><td>%d</td><td>%d</td><td>%s</td></tr>\n",
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%d %%</td><td>%d %%</td><td>%d %%</td><td>%s</td></tr>\n",
             ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,cf_ctime(&(ht->t)));
-          
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+   Join(returnval,buffer,bufsize);
    }
 
 strcat(returnval,"</table>\n");
@@ -710,7 +685,8 @@ else
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-count += strlen(returnval);
+snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>promise handle</th><th>probability<br>kept</th><th>uncertainty</th><th>last seen</th></tr>\n");
+Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -718,16 +694,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promises.php?handle=%s\">%s</a></td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
             hp->hh->hostname,hp->handle,hp->handle,hp->e,hp->d,cf_ctime(&(hp->t)));
-          
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+   Join(returnval,buffer,bufsize);
    }
 
 strcat(returnval,"</table>\n");
@@ -783,6 +750,10 @@ returnval[0] = '\0';
 strcat(returnval,"<table>\n");
 count += strlen(returnval);
 
+snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>remote host</th><th>IP address</th><th>last seen</th><th>key</th>"
+            "<th>Hours ago</th><th>Avg interval</th><th>Uncertainty</th><th>Host key</th></tr>\n");
+Join(returnval,buffer,bufsize);
+   
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hl = (struct HubLastSeen *)rp->item;
@@ -800,20 +771,12 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    then = hl->t;
    
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
-            "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
+            "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td><span id=\"keyhash\">%s</span></td></tr>\n",
             hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,cf_ctime(&then),
             hl->hrsago,hl->hrsavg,hl->hrsdev,
             hl->rhost->keyhash);
           
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+   Join(returnval,buffer,bufsize);
    }
 
 strcat(returnval,"</table>\n");
@@ -865,8 +828,9 @@ else
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-count += strlen(returnval);
 
+snprintf(buffer,sizeof(buffer),"<tr><td>host</td><td>repair</td><td>Last time</td><td>Avg time</td><td>Uncertainty</td><td>Last performed</td></tr>\n");
+            
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hP = ( struct HubPerformance *)rp->item;
@@ -935,23 +899,15 @@ else
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-count += strlen(returnval);
+snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>setuid/setgid root file</th></tr>\n");
+Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hS = ( struct HubSetUid *)rp->item;
 
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td></tr>\n",hS->hh->hostname,hS->path);
-   
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+   Join(returnval,buffer,bufsize);
    }
 
 strcat(returnval,"</table>\n");
@@ -1004,26 +960,20 @@ else
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-count += strlen(returnval);
 
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Bundle</a></th><th>Last verified</th><th>Hours Ago</th><th>Avg interval</th><th>Uncertainty</th></tr>\n");
+Join(returnval,buffer,bufsize);
+   
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hb = ( struct HubBundleSeen *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td>"
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"bundle.php?bundle=%s\">%s</a></td><td>%s</td>"
             "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td></tr>\n",
-            hb->hh->hostname,hb->bundle,cf_ctime(&(hb->t)),
+            hb->hh->hostname,hb->bundle,hb->bundle,cf_ctime(&(hb->t)),
             hb->hrsago,hb->hrsavg,hb->hrsdev);
-   
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+
+   Join(returnval,buffer,bufsize);
    }
 
 strcat(returnval,"</table>\n");
@@ -1082,22 +1032,15 @@ else
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-count += strlen(returnval);
-
+snprintf(buffer,sizeof(buffer),"<tr><td>host</td><td>file</td><td>time of change</td></tr>\n");
+Join(returnval,buffer,bufsize);
+   
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hC = (struct HubFileChanges *)rp->item;
 
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)));
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+   Join(returnval,buffer,bufsize);
    }
 
 strcat(returnval,"</table>\n");
@@ -1157,22 +1100,16 @@ else
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-count += strlen(returnval);
+
+snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>file</th><th>change detected at</th><th>change</th></tr>\n");
+Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hd = (struct HubFileDiff *)rp->item;
 
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",hd->hh->hostname,hd->path,cf_ctime(&(hd->t)),hd->diff);
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+   Join(returnval,buffer,bufsize);
    }
 
 strcat(returnval,"</table>\n");
