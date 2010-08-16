@@ -1517,7 +1517,6 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    time_t fthen;
    char tbuf[CF_BUFSIZE],addr[CF_BUFSIZE];
 
-   memcpy(&then,value,sizeof(then));
    strncpy(hostkey,(char *)key,ksize);
 
    if (value != NULL)
