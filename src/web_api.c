@@ -2011,15 +2011,15 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
 
    if (Nova_IsGreen(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"green.png\"></td><td><a href=\"host.php?%s\">%s</a></td><td><a href=\"host.php?%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"green.png\"></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else if (Nova_IsYellow(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td><a href=\"host.php?%s\">%s</a></td><td><a href=\"host.php?%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else // if (Nova_IsRed(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td><a href=\"host.php?%s\">%s</a></td><td><a href=\"host.php?%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
 
    Join(buffer,work,bufsize);
@@ -2216,6 +2216,86 @@ return buffer;
 
 /*****************************************************************************/
 
+char *Nova2PHP_GetPromiseComment(char *handle)
+    
+{ static char buffer[CF_BUFSIZE];
+  mongo_connection dbconn;
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (CFDB_QueryPromiseAttr(&dbconn,handle,cfp_comment,buffer,CF_BUFSIZE))
+   {
+   return buffer;
+   }
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return "No comment";
+}
+
+/*****************************************************************************/
+
+char *Nova2PHP_GetPromiseBundle(char *handle)
+    
+{ static char buffer[CF_BUFSIZE];
+  mongo_connection dbconn;
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (CFDB_QueryPromiseAttr(&dbconn,handle,cfp_bundlename,buffer,CF_BUFSIZE))
+   {
+   return buffer;
+   }
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return "No such promise";
+}
+
+/*****************************************************************************/
+
+char *Nova2PHP_GetPromiseType(char *handle)
+    
+{ static char buffer[CF_BUFSIZE];
+  mongo_connection dbconn;
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (CFDB_QueryPromiseAttr(&dbconn,handle,cfp_promisetype,buffer,CF_BUFSIZE))
+   {
+   return buffer;
+   }
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return "No such promise";
+}
+
+/*****************************************************************************/
+/* Reports                                                                   */
+/*****************************************************************************/
+
 void Nova2PHP_select_reports(char *buffer,int bufsize)
 
 { char work[CF_MAXVARSIZE];
@@ -2370,7 +2450,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_list_promise_handles(char *regex,char *bundle,char *type,char *returnval,int bufsize)
+int Nova2PHP_list_promise_handles(char *regex,char *ptype,char *bundle,char *btype,char *returnval,int bufsize)
 
 { mongo_connection dbconn;
   char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
@@ -2387,7 +2467,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-handles = CFDB_QueryPromiseHandles(&dbconn,regex,NULL,type,bundle);
+handles = CFDB_QueryPromiseHandles(&dbconn,regex,NULL,btype,bundle);
 
 returnval[0] = '\0';
 
