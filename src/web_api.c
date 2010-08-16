@@ -2293,6 +2293,32 @@ return "No such promise";
 }
 
 /*****************************************************************************/
+
+char *Nova2PHP_GetPromiser(char *handle)
+    
+{ static char buffer[CF_BUFSIZE];
+  mongo_connection dbconn;
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (CFDB_QueryPromiseAttr(&dbconn,handle,cfp_promiser,buffer,CF_BUFSIZE))
+   {
+   return buffer;
+   }
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return "No such promise";
+}
+
+/*****************************************************************************/
 /* Reports                                                                   */
 /*****************************************************************************/
 
@@ -2378,14 +2404,14 @@ else
    snprintf(commentText, sizeof(commentText),"%s",hp->comment);
    }
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Comment</td><td>:</td><td><span id=\"promiser\">%s</span></td></tr>",commentText);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Comment on original intention</td><td>:</td><td><span id=\"promiser\">%s</span></td></tr>",commentText);
 Join(returnval,work,bufsize);
 
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Promise concerns</td><td>:</td><td><span id=\"subtype\">%s</span></td></tr>",hp->promiseType);
 Join(returnval,work,bufsize);
 
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applying in the class context</td><td>:</td><td><span id=\"class_context\">%s</span></td></tr>",hp->classContext);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applies in the class context</td><td>:</td><td><span id=\"class_context\">%s</span></td></tr>",hp->classContext);
 Join(returnval,work,bufsize);
 
 
@@ -2467,7 +2493,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-handles = CFDB_QueryPromiseHandles(&dbconn,regex,NULL,btype,bundle);
+handles = CFDB_QueryPromiseHandles(&dbconn,regex,ptype,btype,bundle);
 
 returnval[0] = '\0';
 

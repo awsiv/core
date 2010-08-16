@@ -860,7 +860,7 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize);
 char *Nova2PHP_GetPromiseComment(char *handle);
 char *Nova2PHP_GetPromiseBundle(char *handle);
 char *Nova2PHP_GetPromiseType(char *handle);
-
+char *Nova2PHP_GetPromiser(char *handle);
 
 /* weekly.c */
 
