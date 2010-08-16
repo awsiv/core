@@ -4,7 +4,7 @@
 /*                                                                           */
 /* Created: Wed Jul  7 09:25:43 2010                                         */
 /*                                                                           */
-/* MongoDB implementation of report save and query.                          */
+/* MongoDB implementation of report saving.                                  */
 /*                                                                           */
 /*****************************************************************************/
 

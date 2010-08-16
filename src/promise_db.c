@@ -200,6 +200,7 @@ for (bp = bundles; bp != NULL; bp=bp->next)
             bson_append_string(cstr, jStr, con);
             j++;
             }
+	 bson_append_finish_object(cstr);
          bson_append_finish_object(&bbuf);
 	 
          bson_from_buffer(&b, &bbuf);
@@ -214,9 +215,13 @@ for (bp = bundles; bp != NULL; bp=bp->next)
 
  /* Now summarize all bodies */
 
+
+ // clear existing data first
+mongo_remove(&dbconn, MONGO_BODIES, bson_empty(&b));
+
 for (bdp = bodies; bdp != NULL; bdp=bdp->next)
    {
-   Nova_StoreBody(bdp);
+   Nova_StoreBody(&dbconn, bdp);
    }
 
 if (!CFDB_Close(&dbconn))
@@ -227,37 +232,88 @@ if (!CFDB_Close(&dbconn))
 
 /*****************************************************************************/
 
-void Nova_StoreBody(struct Body *body)
+void Nova_StoreBody(mongo_connection *dbconn, struct Body *body)
     
 { struct Rlist *rp;
   struct Constraint *cp;
+  bson_buffer bbuf,bb, *args, *sub1, *sub2, *setObj;
+  char classContext[CF_MAXVARSIZE];
+  char rval_buffer[CF_BUFSIZE];
+  char iStr[32];
+  int i;
+  bson b,query;
 
-Debug("body %s type %s\n",body->name,body->type);
+  bson_buffer_init(&bbuf);
+  bson_append_new_oid(&bbuf, "_id" );
 
-for (rp = body->args; rp != NULL; rp=rp->next)
-   {
-   if (rp->type != CF_SCALAR)
-      {
-      FatalError("ShowBody - non-scalar paramater container");
-      }
+printf("body %s type %s\n",body->name,body->type);
+ 
+ bson_append_string(&bbuf, cfb_bodyname, body->name);
+ bson_append_string(&bbuf, cfb_bodytype, body->type);
 
-   Debug("%s\n",rp->item);
+
+ args = bson_append_start_array(&bbuf, cfb_bodyargs);
+ for (rp = body->args, i = 0; rp != NULL; rp=rp->next,i++)
+   {   
+     printf("%s\n",rp->item);     
+     snprintf(iStr, sizeof(iStr), "%d", i);
+     bson_append_string(args, iStr, (char *)rp->item);
    }
+ bson_append_finish_object(args);
+ 
+ bson_append_finish_object(&bbuf);
+ bson_from_buffer(&b, &bbuf);
+ 
+ mongo_insert(dbconn, MONGO_BODIES, &b);
+
+ bson_destroy(&b);
 
 
-for (cp = body->conlist; cp != NULL; cp=cp->next)
-   {
-   char rval_buffer[CF_BUFSIZE];
+ // do update with the lval - rval attribs
+ bson_buffer_init(&bb);
+ bson_append_string(&bb,cfb_bodyname,body->name);
+ bson_append_string(&bb,cfb_bodytype,body->type);
+ bson_from_buffer(&query,&bb);
+ 
+ 
+ bson_buffer_init(&bbuf);
 
-   PrintRval(rval_buffer,CF_BUFSIZE,cp->rval,cp->type);
+ setObj = bson_append_start_object(&bbuf, "$set");
+ sub1 = bson_append_start_object(setObj, cfb_classcontext);
+   for (cp = body->conlist; cp != NULL; cp=cp->next)
+     {
+       if (cp->classes != NULL)
+	 {
+	   // replace illegal key char '.' with  '&'
+	   ReplaceChar(cp->classes,classContext,sizeof(classContext),'.','&');
+	   printf(" if class context %s\n",cp->classes);
+	 }
+       else
+       {
+	 snprintf(classContext,sizeof(classContext),"any");
+       }
+       
+       sub2 = bson_append_start_object(sub1, classContext);
+       
+     memset(rval_buffer,0,sizeof(rval_buffer));
+     
+     PrintRval(rval_buffer,sizeof(rval_buffer),cp->rval,cp->type);
+     
+     printf("  %s => %s\n",cp->lval,rval_buffer);
+     
+     bson_append_string(sub2,cp->lval,rval_buffer);
+     
+     bson_append_finish_object(sub2);
+     }
+   bson_append_finish_object(sub1);
+   bson_append_finish_object(setObj);
+   
+   bson_from_buffer(&b, &bbuf);
+   mongo_update(dbconn,MONGO_BODIES,&query,&b,MONGO_UPDATE_UPSERT);
 
-   Debug("  %s => %s\n",cp->lval,rval_buffer);
+   bson_destroy(&query);
+   bson_destroy(&b);
 
-   if (cp->classes != NULL)
-      {
-      Debug(" if class context %s\n",cp->classes);
-      }
-   }
 }
 
 #endif

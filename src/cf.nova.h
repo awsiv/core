@@ -37,6 +37,7 @@
 # define MONGO_HAVE_STDINT
 # define MONGO_DATABASE "cfreport.hosts"
 # define MONGO_PROMISES "cfreport.promises"
+# define MONGO_BODIES   "cfreport.bodies"
 # define MONGO_SCRATCH "cfscratch.values"
 # include <mongo.h>
 #else
@@ -630,7 +631,7 @@ void DeleteFileLine(struct CfFileLine  **liststart,struct CfFileLine *item);
 
 void Nova_StoreExpandedPromise(struct Promise *pp);
 void Nova_StoreUnExpandedPromises(struct Bundle *bundles,struct Body *bodies);
-void Nova_StoreBody(struct Body *bdp);
+void Nova_StoreBody(mongo_connection *dbconn, struct Body *body);
 
 /* promises.c */
 
@@ -1128,6 +1129,7 @@ struct promise_value
 #define cfr_day           "t" // Substitute for time in value report
 #define cfr_valuereport   "VR"
 
+/* Promise DB */
 #define cfp_bundlename    "bn"
 #define cfp_bundletype    "bt"
 #define cfp_bundleargs    "ba"
@@ -1141,7 +1143,11 @@ struct promise_value
 #define cfp_lineno        "l"
 #define cfp_constraints   "n"
 
-
+/* Promise body DB */
+#define cfb_bodyname      "bn"
+#define cfb_bodytype      "bt"
+#define cfb_bodyargs      "ba"
+#define cfb_classcontext  "cc"
 
 #define CFDB_GREATERTHANEQ 4
 #define CFDB_LESSTHANEQ 5
