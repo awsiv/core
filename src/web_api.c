@@ -2387,7 +2387,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-handles = CFDB_QueryPromiseHandles(&dbconn,regex,type,bundle);
+handles = CFDB_QueryPromiseHandles(&dbconn,regex,NULL,type,bundle);
 
 returnval[0] = '\0';
 

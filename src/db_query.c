@@ -2866,10 +2866,10 @@ return found;
 
 /*****************************************************************************/
 
-struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, char *bType, char *bName)
+struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, char *prTypeRegex, char *bType, char *bName)
 /*
  * Returns a set of handles of promises matching given promiser regex
- * XOR (bundle type, bundle name)
+ * XOR promise type XOR (bundle type, bundle name)
  */
 { bson_buffer b;
   bson_iterator it1;
@@ -2883,6 +2883,10 @@ bson_buffer_init(&b);
 if (!EMPTY(prRegex))
    {
    bson_append_regex(&b, cfp_promiser, prRegex,"");
+   }
+else if(!EMPTY(prTypeRegex))
+   {
+   bson_append_regex(&b, cfp_promisetype, prTypeRegex,"");
    }
 else
    {
