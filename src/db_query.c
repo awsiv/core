@@ -2693,7 +2693,7 @@ bson_from_buffer(&query,&b);
 
 
 /* BEGIN SEARCH */
-cursor = mongo_find(conn,MONGO_PROMISES,&query,NULL,0,0,0);
+cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,NULL,0,0,0);
 bson_destroy(&query);
 
 
@@ -2840,7 +2840,7 @@ bson_append_int(&b,attrKey,1);
 bson_from_buffer(&field,&b);
 
 
-cursor = mongo_find(conn,MONGO_PROMISES,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,0);
 bson_destroy(&query);
 bson_destroy(&field);
 
@@ -2901,7 +2901,7 @@ bson_buffer_init(&b);
 bson_append_int(&b,cfp_handle,1);
 bson_from_buffer(&field,&b);
 
-cursor = mongo_find(conn,MONGO_PROMISES,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,0);
 
 bson_destroy(&query);
 bson_destroy(&field);

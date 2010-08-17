@@ -36,7 +36,8 @@
 #ifdef HAVE_LIBMONGOC
 # define MONGO_HAVE_STDINT
 # define MONGO_DATABASE "cfreport.hosts"
-# define MONGO_PROMISES "cfreport.promises"
+# define MONGO_PROMISES_EXP "cfreport.promises_exp"
+# define MONGO_PROMISES_UNEXP "cfreport.promises_unexp"
 # define MONGO_BODIES   "cfreport.bodies"
 # define MONGO_SCRATCH "cfscratch.values"
 # include <mongo.h>
@@ -1134,14 +1135,19 @@ struct promise_value
 #define cfp_bundletype    "bt"
 #define cfp_bundleargs    "ba"
 #define cfp_promisetype   "pt"
-#define cfp_promiser      "p"
-#define cfp_promisee      "e"
 #define cfp_classcontext  "c"
-#define cfp_comment       "o"
-#define cfp_handle        "h"
 #define cfp_file          "f"
 #define cfp_lineno        "l"
+#define cfp_promiser      "p"
+#define cfp_promiser_exp  "px"
+#define cfp_promisee      "e"
+#define cfp_promisee_exp  "ex"
+#define cfp_handle        "h"
+#define cfp_handle_exp    "hx"
+#define cfp_comment       "o"
+#define cfp_comment_exp   "ox"
 #define cfp_constraints   "n"
+#define cfp_constraints_exp "nx"
 
 /* Promise body DB */
 #define cfb_bodyname      "bn"
