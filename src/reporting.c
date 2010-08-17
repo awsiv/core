@@ -2075,3 +2075,31 @@ fprintf(fout,"</table></div>\n");
 
 }
 
+/*****************************************************************************/
+
+void Nova_ZenossSummary(char *docroot)
+
+{ char name[CF_MAXVARSIZE];
+ struct Item *clist,*ip;
+  FILE *fout;
+ 
+snprintf(name,CF_BUFSIZE,"%s/reports/summary.z",docroot);
+
+clist = Nova_RankHosts(NULL,0,cfrank_compliance,200);
+
+if (fout = fopen(name,"w"))
+   {
+   for (ip = clist; ip != NULL; ip=ip->next)
+      {
+      if (strcmp(ip->name,"localhost") == 0 || strcmp(ip->name,"127.0.0.1") == 0)
+         {
+         }
+      else
+         {
+         fprintf(fout,"%s,/Server/%s,%d\n",Hostname2IPString(ip->name),Titleize(ip->classes),ip->counter);
+         }
+      }
+   
+   fclose(fout);
+   }
+}
