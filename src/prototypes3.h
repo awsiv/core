@@ -1266,7 +1266,6 @@ void ReportError(char *s);
 void BannerSubType(char *bundlename,char *type,int p);
 void BannerSubSubType(char *bundlename,char *type);
 void Banner(char *s);
-void Nova_ZenossSummary(char *docroot);
 
 /* rlist.c */
 
