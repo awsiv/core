@@ -2185,21 +2185,19 @@ return (long)len;
 
 void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize)
 
-{
-switch(Nova_GetHostColour(hostkey))
+{ int score = Nova_GetHostColour(hostkey);
+
+if (score < CF_RED_THRESHOLD)
    {
-   case CF_RED_THRESHOLD:
-       strncpy(buffer,"red",bufsize);
-       break;
-   case CF_AMBER_THRESHOLD:
-       strncpy(buffer,"yellow",bufsize);
-       break;
-   case CF_GREEN :
-       strncpy(buffer,"green",bufsize);
-       break;
-   default:
-       strncpy(buffer,"unknown",bufsize);
-       break;
+   strncpy(buffer,"yellow",bufsize);
+   }
+else if (score < CF_AMBER_THRESHOLD)
+   {
+   strncpy(buffer,"green",bufsize);
+   }
+else
+   {
+   strncpy(buffer,"red",bufsize);
    }
 }
 
@@ -2319,6 +2317,72 @@ if (!CFDB_Close(&dbconn))
 
 return "No such promise";
 }
+
+/*****************************************************************************/
+
+int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE];
+  struct HubVariable *hv,*hv2;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize = 0;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+bson_buffer_init(&bb);
+bson_append_string(&bb,cfr_keyhash,hostkey);
+bson_from_buffer(&query,&bb);
+hq = CFDB_QueryVariables(&dbconn,&query,scope,lval,NULL,NULL,false);
+bson_destroy(&query);
+
+lscope[0] = '\0';
+returnval[0] = '\0';
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   char typestr[CF_SMALLBUF];
+   
+   hv = (struct HubVariable *)rp->item;
+
+   if (strlen(hv->dtype) > 1) // list
+      {
+      char b[CF_BUFSIZE];
+      b[0] = '\0';
+      PrintRlist(b,CF_BUFSIZE,hv->rval);
+      snprintf(buffer,sizeof(buffer),"%s",b);
+      }
+   else
+      {
+      snprintf(buffer,sizeof(buffer),"%s",(char *)hv->rval);
+      }
+
+   Join(returnval,buffer,bufsize);
+   }
+
+if (hq->records == NULL)
+   {
+   snprintf(buffer,sizeof(buffer),"Unknown value");
+   }
+
+DeleteHubQuery(hq,DeleteHubVariable);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+
+
 
 /*****************************************************************************/
 /* Reports                                                                   */

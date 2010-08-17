@@ -863,6 +863,7 @@ char *Nova2PHP_GetPromiseComment(char *handle);
 char *Nova2PHP_GetPromiseBundle(char *handle);
 char *Nova2PHP_GetPromiseType(char *handle);
 char *Nova2PHP_GetPromiser(char *handle);
+int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize);
 
 /* weekly.c */
 

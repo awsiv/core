@@ -287,7 +287,7 @@ void DeleteHubVariable(struct HubVariable *hv)
 free(hv->scope);
 free(hv->lval);
 
-switch(hv->rtype)
+/*switch(hv->rtype)
    {
    case CF_SCALAR:
        free(hv->rval);
@@ -297,6 +297,7 @@ switch(hv->rtype)
        DeleteRlist(hv->rval);
        break;
    }
+*/
 
 free(hv->dtype);
 free(hv);
