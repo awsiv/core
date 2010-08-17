@@ -28,17 +28,31 @@ if ($search == "")
       $pid = cfpr_get_pid_for_topic("","system policy");
       }
     
-    echo "<div id=\"image\">";
-    include("/srv/www/htdocs/graphs/$pid.map");
-    echo "</div>";
-    
     #$topic = cfpr_show_topic($pid);
     #echo "$topic";
     
 #    echo "<a href=\"new_topic.php\" type=\"submit\"><button>Propose a new topic</button></a>";
 #    echo "<button>Propose an insight or association</button>";
 #    echo "<button>Add a document reference to this topic</button>";
-    
+
+    echo "<table><tr><td valign=\"top\">";    
+
+    echo "<div id=\"image\">";
+    echo "<h2>Copernicus local cluster view</h2>";
+    include("/srv/www/htdocs/graphs/$pid.map");
+    echo "</div><br>";
+
+    echo "<div id=\"image\">";
+    if (file_exists("/srv/www/htdocs/graphs/influence_$pid.map"))
+       {
+       echo "<h2>Copernicus influence channel view</h2>";
+       include("/srv/www/htdocs/graphs/influence_$pid.map");
+       }
+
+    echo "</div>";
+
+    echo "</td><td>";    
+
     $hits = cfpr_show_topic_hits($pid);
     
     echo "<p>$hits<p>";
@@ -50,6 +64,9 @@ if ($search == "")
     $cat = cfpr_show_topic_category($pid);
     
     echo "<p>$cat";
+
+    echo "</td></tr></table>";
+
   }
 else
   {

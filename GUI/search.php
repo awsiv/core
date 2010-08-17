@@ -81,16 +81,28 @@ switch ($report_type)
     $report = cfpr_report_performance($hostkey,$search,true);
     break;
 
-  case "Promises repaired":
+  case "Promises repaired log":
     echo "<h4>$report_type</h4>";
-    $report = cfpr_summarize_repaired($hostkey,NULL);
-    //$report = cfpr_report_repaired($hostkey,NULL);
+    //$report = cfpr_summarize_repaired($hostkey,NULL);
+    $report = cfpr_report_repaired($hostkey,NULL);
     break;
 
-  case "Promises not kept":
+  case "Promises not kept log":
     echo "<h4>$report_type</h4>";
-    //$report = cfpr_report_notkept($hostkey,NULL);
-    $report = cfpr_summarize_notkept($hostkey,NULL);
+    $report = cfpr_report_notkept($hostkey,NULL);
+    //$report = cfpr_summarize_notkept($hostkey,NULL);
+    break;
+
+  case "Promises repaired summary":
+    echo "<h4>$report_type</h4>";
+    //$report = cfpr_summarize_repaired($hostkey,NULL);
+    $report = cfpr_report_repaired($hostkey,NULL);
+    break;
+
+  case "Promises not kept summary":
+    echo "<h4>$report_type</h4>";
+    $report = cfpr_report_notkept($hostkey,NULL);
+    //$report = cfpr_summarize_notkept($hostkey,NULL);
     break;
 
   case "Setuid/gid root programs":

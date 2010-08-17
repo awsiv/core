@@ -169,7 +169,7 @@ float: right;
 color: #30302a;
 background-color: white; 
 /*border: 1px solid;*/
-width: 60%;
+width: 100%;
 padding: 5px;
 }
 
@@ -185,7 +185,7 @@ padding: 5px;
 { 
 color: #30302a;
 background-color: white;
-width: 60%;
+width: 45%;
 font-size: 120%;
 padding: 5px;
 margin-top: 10px;
@@ -195,7 +195,7 @@ margin-top: 10px;
 { 
 color: #30302a;
 background-color: white;
-width: 60%;
+width: 100%;
 font-size: 100%;
 padding: 5px;
 margin-top: 10px;
@@ -210,7 +210,7 @@ color: #73b167;
 {  
 background-color: #fff; 
 color: #30302a;
-width: 60%;
+width: 100%;
 padding: 5px;
 }
 
@@ -220,7 +220,7 @@ padding: 5px;
 color: #30302a;
 background-color: #fff; 
 /*border: 1px solid;*/
-width: 60%;
+width: 100%;
 padding: 5px;
 }
 
@@ -238,7 +238,7 @@ padding: 5px;
 {  
 background-color: #eee; 
 /*border: 1px solid;*/
-width: 60%;
+width: 100%;
 padding: 5px;
 }
 
@@ -276,19 +276,27 @@ border: 1px;
 background-color: #fff;
 } 
 
+#status ul li
+{  
+font-size: 120%;
+padding: 5px;
+}
+
+#status img
+{ 
+padding: 20px;
+}
 
 #image
 { 
-float: right; 
+background-color: #fff;
+padding: 10px;
 }
 
 #image img
 {  
-width: 100%;
-float: right;
-border: solid 0px;
-margin-left: 10px;
-margin-bottom: 10px;
+width: 800px;
+border: none;
 }
 
 #embedded_image a img

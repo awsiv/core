@@ -795,7 +795,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   switch(rtype)
                      {
                      case CF_SCALAR:
-                         free(rrval);
+                         if (rrval)
+                            {
+                            free(rrval);
+                            }
                          break;
                          
                      case CF_LIST:

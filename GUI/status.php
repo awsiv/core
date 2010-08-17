@@ -15,15 +15,27 @@ $g = cfpr_count_green_hosts();
 <table border="0">
 <tr>
 <td>
-<ul>
-<li><img src="48px-Crystal_Clear_app_network_2.png"><a href="topN.php">Status all hosts</a>
-<li><img src="48px-Crystal_Clear_app_network_2.png"><a href="host.php">Status by host</a>
-<li><img src="48px-Crystal_Clear_app_network_2.png">Query oracle
-<li><img src="48px-Crystal_Clear_app_network_2.png"><a href="index.php">Management summary</a>
+<ul><li>
+<h2>Generate a report:</h2>
+
+ <form method="post" action="search.php">
+  <p>Search for:</p>
+<p><input class="searchfield" type="text" name="search" />
+
+  <p>on host:</p>
+<p><?php $allhosts = cfpr_select_hosts(".*",100);
+echo "$allhosts";?>
+<p>in report:</p>
+<p><?php $allreps = cfpr_select_reports(".*",100);
+echo "$allreps";?>
+<p>
+<input type="submit" value="Generate report">
+</form>
+</li>
 </ul>
-</td>
+
 <td>
-<h2>Average Compliance</h2>
+<h2>Average compliance of all hosts</h2>
 <div id="meter"><a href="topN.php"><img src="/hub/common/meter.png"></a></div>
 <ul>
 <li>Hosts known: <?php echo $all; ?>
@@ -34,17 +46,20 @@ $g = cfpr_count_green_hosts();
 <li>Hosts 2 dev overdue: 0
 </ul>
 
-
-
-
-
+</td>
+<td>
+<h2>Select specific host</h2>
+<form method="post" action="host.php">
+<p><?php $allhosts = cfpr_select_hosts(".*",100);
+echo "$allhosts";?>
+<p>
+<input type="submit">
+</form>
 </td>
 </tr>
 </table>
-
 </div>
      
 <?
-
 cfpr_footer();
 ?>

@@ -493,6 +493,12 @@ for (ip = data; ip != NULL; ip=ip->next)
    
    sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,lval,rval);
    
+   if (strchr(lval,'/'))
+      {
+      // Private data not meant to be seen
+      continue;
+      }
+   
    snprintf(varName, sizeof(varName),"%s.%s.%s.%s",cfr_vars,scope,lval,cfr_type);
    bson_append_string(setObj, varName, type);
    

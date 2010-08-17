@@ -1,6 +1,5 @@
 <?php
 
-
 $hostkey = $_POST['hostkey'];
 $report_type = $_POST['report'];
 
@@ -15,77 +14,105 @@ $ipaddr = cfpr_ipaddr($hostkey);
 $title = "host $hostname";
 cfpr_header("$title","normal");
 cfpr_host_meter($hostkey);
+$colour = cfpr_get_host_colour($hostkey);
+
+
 ?>
      
 <table>
 <tr>
 <td>
-<h2>Generate report:</h2>
+<div id="status">
 
- <form method="post" action="search.php">
-<p><input class="searchfield" type="text" name="search" />&nbsp; search for .*?
+<?php 
+echo "  <h2>Selected: $hostname</h2>";
+echo "<p><a href=\"hosts.php?type=$colour\"><img src=\"/img/$colour"."_sign_big.png\"></a><br></p>\n"; 
+?>
 
-<p><?php $allhosts = cfpr_select_hosts(".*",100);
-echo "$allhosts";?>
-&nbsp; on host
-<p><?php $allreps = cfpr_select_reports(".*",100);
-echo "$allreps";?>
-&nbsp; in report
-<p>
-<input type="submit">
+<?php
+$last = cfpr_getlastupdate($hostkey);
+$class = cfpr_get_variable($hostkey,"sys","ostype");
+$flavour = cfpr_get_variable($hostkey,"sys","flavour");
+$rel = cfpr_get_variable($hostkey,"sys","release");
+$load = cfpr_get_variable($hostkey,"mon","av_loadavg");
+$free = cfpr_get_variable($hostkey,"mon","av_diskfree");
 
-</form>
+echo "<p><ul>";
+#echo "<li>$hostkey</li>";
+echo "<li><i>Alias</i>: <b>$hostname</b></li>"; 
+echo "<li><i>Operating system class</i>: <b>$class</b></li>";
+echo "<li><i>Release</i>: <b>$rel</b></li>";
+echo "<li><i>Flavour</i>: <b>$flavour</b></li>";
+echo "<li><i>Last known address</i>: <b>$ipaddr</b></li>";
+echo "<li><i>Last data</i>: <b>$last</b></li>";
+echo "<li><i>Average load</i>: <b>$load %</b></li>";
+echo "<li><i>Average free on system disk</i>: <b>$free</b> </li>";
+echo "</ul></div>\n";
 
-BUNDLES/PASSPORT?
+?>
+
+
+</div>
+
 
 </td>
 <td>                                                                        
 
-
 <?php
 echo "<div id=\"info\">\n";
 
-$last = cfpr_getlastupdate($hostkey);
-
-echo "<div id=\"meter\"><a href=\"topN.php\"><img src=\"/hub/$hostkey/meter.png\" align=right></a></div>";
-
-
-echo "<p><ul>";
-
-$colour = cfpr_get_host_colour($hostkey);
-
-echo "<li><a href=\"hosts.php?type=$colour\"><img src=\"/img/$colour"."_sign_big.png\"></a></li>\n";
-
-echo "<li>$hostkey</li>";
-echo "<li>Alias: $hostname</li>"; 
-echo "<li>Last known address: $ipaddr</li>";
-echo "<li>Last data were obtained at $last";
-echo "<li><a href=\"vitals.php?hostkey=$hostkey\">Vital signs for this host</a></li>\n";
-echo "</ul></div>\n";
-
 cfpr_summary_meter(NULL);
 
+echo "<h2>Average compliance of $hostname</h2>";
+echo "<div id=\"meter\"><a href=\"topN.php\"><img src=\"/hub/$hostkey/meter.png\"></a></div>";
+
+echo "<ul>";
+echo "<li><img src=\"/img/vital.png\">&nbsp;<a href=\"vitals.php?hostkey=$hostkey\">Pulse and vital signs for this host</a></li>\n";
+
+echo "<li><form method=\"post\" action=\"search.php\">";
+echo "<p><input class=\"searchfield\" type=\"text\" name=\"search\" />&nbsp; match regex";
+
+echo "<p><input type=\"hidden\" name=\"hostkey\" value=\"$hostkey\">";
+
+$allreps = cfpr_select_reports(".*",100);
+
+echo "$allreps";
+echo "&nbsp; from report";
+echo "<p>";
+echo "<input type=\"submit\">";
+echo "</form>";
+echo "</ul>";
 ?>
 
+
+</form>
+
+
+</td>
+<td>
+
+<h2>Select specific host</h2>
 <form method="post" action="host.php">
 <p><?php $allhosts = cfpr_select_hosts(".*",100);
 echo "$allhosts";?>
 <p>
 <input type="submit">
-
 </form>
-
-</td>
-<td>
-<p>Host was last seen at .....
-<p>Links to this host...
-<p>Responsible for this host....
+<p>
+<br>
+<a href="status.php">View all hosts</a>
 </td>
 </tr>   
 </table>
 
 
 <?php
+$report = cfpr_summarize_notkept($hostkey,NULL);
+echo "<h4>Promises not kept in the past week</h4> $report";
+
+# Takes too long
+#$report = cfpr_summarize_repaired($hostkey,NULL);
+#echo "<h4>Promises repaired in the past week</h4> $report";
 
 cfpr_footer();
 ?>

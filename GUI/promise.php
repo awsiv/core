@@ -16,9 +16,25 @@ $pid = cfpr_get_pid_for_topic("promises","$handle");
 
 <table>
 <tr>
-<td>
-<?php $allhandles = cfpr_list_handles(".*"); 
-echo "$allhandles"; ?>
+<td valign="top">
+<?php 
+$mybundle = cfpr_get_promise_bundle($handle);
+echo "<h4>Other promises in bundle <a href=\"bundle.php?bundle=$mybundle\"><span id=\"bundle\">$mybundle</span></a></h4>";
+$allhandles = cfpr_list_handles_for_bundle($mybundle,"agent"); 
+echo "$allhandles"; 
+
+echo "<h4>Other promises by promiser</h4>";
+
+$promiser = cfpr_get_promiser($handle);
+$allhandles = cfpr_list_handles($promiser,""); 
+echo "$allhandles";
+
+$type = cfpr_get_promise_type($handle);
+echo "<h4>Other promises of type $type</h4>";
+$allhandles = cfpr_list_handles("",$type); 
+echo "$allhandles"; 
+?>
+
 </td>
 <td valign="top">
   <h2>Promise definition: </h2>
