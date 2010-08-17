@@ -1723,11 +1723,11 @@ while (mongo_cursor_next(cursor))  // loops over documents
                {
                if (strcmp(bson_iterator_key(&it3),cfr_name) == 0)
                   {
-                  strncpy(rname,bson_iterator_string(&it3),CF_BUFSIZE-1);
+		  snprintf(rname,sizeof(rname),"%s",bson_iterator_string(&it3));
                   }
                else if (strcmp(bson_iterator_key(&it3),cfr_diff) == 0)
                   {
-                  strncpy(rdiff,bson_iterator_string(&it3),CF_BUFSIZE-1);
+		  snprintf(rdiff,sizeof(rdiff),"%s",bson_iterator_string(&it3));
                   }
                else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
                   {
@@ -2594,7 +2594,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             ea[index] = e;
             da[index] = d;
 
-            printf("Storing slot %s %lf,%lf,%lf\n",index,q,e,d);
+            printf("Storing slot %d %lf,%lf,%lf\n",index,q,e,d);
             }
          }
       }
@@ -2667,7 +2667,7 @@ return ok;
 }
 
 /*****************************************************************************/
-/* Promises collection                                                       */
+/* Promises collections                                                      */
 /*****************************************************************************/
 
 struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle)
@@ -2922,6 +2922,55 @@ while(mongo_cursor_next(cursor))  // iterate over docs
 mongo_cursor_destroy(cursor);
 
 return handles;
+}
+
+/*****************************************************************************/
+
+struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName)
+/*
+ * Returns the set of classes used in the given bundle.
+ * MEMORY NOTE: Caller must free returned value with DeleteRlist()
+ */
+{ bson_buffer bbuf;
+  bson_iterator it1;
+  bson query,field;
+  mongo_cursor *cursor;
+  struct Rlist *classList = {0}, *tmpList = {0};
+
+  // query
+ bson_buffer_init(&bbuf);
+ bson_append_string(&bbuf,cfp_bundletype,bType);
+ bson_append_string(&bbuf,cfp_bundlename,bName);
+ bson_from_buffer(&query,&bbuf);
+
+ // returned attribute
+ bson_buffer_init(&bbuf);
+ bson_append_int(&bbuf,cfp_classcontext,1);
+ bson_from_buffer(&field,&bbuf);
+
+cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,0);
+
+bson_destroy(&query);
+bson_destroy(&field);
+
+while(mongo_cursor_next(cursor))  // iterate over docs
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while(bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1), cfp_classcontext) == 0)
+         {
+	   tmpList = SplitRegexAsRList((char *)bson_iterator_string(&it1),"[.!()|&]+",100,false);
+	   IdempAppendRlist(&classList,tmpList,CF_LIST);
+	   DeleteRlist(tmpList);
+         }
+      }
+   }
+
+mongo_cursor_destroy(cursor);
+
+return classList;
 }
 
 /*****************************************************************************/

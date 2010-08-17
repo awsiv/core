@@ -332,6 +332,7 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date);
 struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle);
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
 struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, char *prTypeRegex, char *bType, char *bName);
+struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
@@ -781,7 +782,6 @@ void Nova_ScanTheRest(int pid,char *buffer, int bufsize);
 void Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize);
 void Nova_ScanLeadsAssociations(int pid,char *buffer, int bufsize);
 void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize);
-char *LocateTopicMapImage(int pid);
 
 int Nova_GetTopicByPid(int pid,char *topic_name,char *topic_id,char *topic_type,char *topic_comment);
 int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_type,char *topic_comment,char *buffer,int bufsize);

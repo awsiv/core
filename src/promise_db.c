@@ -62,29 +62,29 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  bson_buffer_init(&bbuf);
  bson_append_new_oid(&bbuf, "_id" );
 
-printf("PROMISE: \n");
+Debug("PROMISE: \n");
 //MapPromiseToTopic(FKNOW,pp,v);
 
-printf("\nPromise type is %s, ",pp->agentsubtype);
-printf("class context %s \n",pp->classes);
+Debug("\nPromise type is %s, ",pp->agentsubtype);
+Debug("class context %s \n",pp->classes);
 
  bson_append_string(&bbuf,cfp_promisetype,pp->agentsubtype);
  bson_append_string(&bbuf, cfp_classcontext, pp->classes);
 
-printf("promiser is %s\n",pp->promiser);
+Debug("promiser is %s\n",pp->promiser);
 
  bson_append_string(&bbuf,cfp_promiser_exp,pp->promiser);
 
 
-printf("Bundle %s\n",pp->bundle);
- printf("Bundle of type %s\n",pp->bundletype);
+Debug("Bundle %s\n",pp->bundle);
+ Debug("Bundle of type %s\n",pp->bundletype);
 
  bson_append_string(&bbuf,cfp_bundlename,pp->bundle);
  bson_append_string(&bbuf,cfp_bundletype,pp->bundletype);
 
 if (pp->audit)
    {
-   printf("In file %s near line %d\n",pp->audit->filename,pp->lineno);
+   Debug("In file %s near line %d\n",pp->audit->filename,pp->lineno);
    bson_append_string(&bbuf,cfp_file,pp->audit->filename);
    bson_append_int(&bbuf, cfp_lineno, pp->lineno);
    }
@@ -97,14 +97,14 @@ if (pp->promisee)
    memset(rval_buffer, 0, sizeof(rval_buffer));
    PrintRval(rval_buffer,CF_BUFSIZE,pp->promisee,pp->petype);
 
-   printf(" -> %s\n",rval_buffer);
+   Debug(" -> %s\n",rval_buffer);
 
    bson_append_string(&bbuf,cfp_promisee_exp,rval_buffer);
    }
 
 if (pp->ref)
    {
-   printf("Comment: %s\n",pp->ref);
+   Debug("Comment: %s\n",pp->ref);
    bson_append_string(&bbuf,cfp_comment_exp,pp->ref);
    }
  
@@ -125,7 +125,7 @@ for (cp = pp->conlist, j = 0; cp != NULL; cp = cp->next)
 
    memset(rval_buffer, 0, sizeof(rval_buffer));
    PrintRval(rval_buffer,CF_BUFSIZE,cp->rval,cp->type);
-   printf("  %s => %s\n",cp->lval,rval_buffer);
+   Debug("  %s => %s\n",cp->lval,rval_buffer);
    
    snprintf(con, sizeof(con), "%s => %s", cp->lval, rval_buffer);
 	    

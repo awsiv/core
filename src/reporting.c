@@ -2083,7 +2083,7 @@ void Nova_ZenossSummary(char *docroot)
  struct Item *clist,*ip;
   FILE *fout;
  
-snprintf(name,CF_BUFSIZE,"%s/reports/summary.z",docroot);
+snprintf(name,sizeof(name),"%s/reports/summary.z",docroot);
 
 clist = Nova_RankHosts(NULL,0,cfrank_compliance,200);
 

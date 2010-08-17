@@ -184,7 +184,7 @@ void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize)
   CfdbConn cfdb;
   int from_pid,to_pid;  
 
-snprintf(query,CF_BUFSIZE,"SELECT from_name,from_type,from_assoc,to_assoc,to_type,to_name,from_id,to_id from associations where from_id='%d'",pid);
+snprintf(query,sizeof(query),"SELECT from_name,from_type,from_assoc,to_assoc,to_type,to_name,from_id,to_id from associations where from_id='%d'",pid);
 
 CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
 Debugcfdb(&cfdb);
@@ -365,7 +365,7 @@ snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>The rest of the category \
 strcat(buffer,"<ul>\n"); // outer list
 strcat(buffer,"<li><ul>\n"); // sub for same topic
 
-snprintf(query,CF_BUFSIZE,"SELECT topic_name,topic_id,topic_type,topic_comment,pid from topics where topic_type='%s' order by topic_name asc",this_id);
+snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_type,topic_comment,pid from topics where topic_type='%s' order by topic_name asc",this_id);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -413,7 +413,7 @@ strcat(buffer,"</ul></li>\n"); // close sublist
 
 /* Collect data - other topics of same type */
 
-snprintf(query,CF_BUFSIZE,"SELECT topic_name,topic_id,topic_type,topic_comment,pid from topics where topic_type='%s' order by topic_name asc",this_type);
+snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_type,topic_comment,pid from topics where topic_type='%s' order by topic_name asc",this_type);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -651,7 +651,7 @@ if (!cfdb.connected)
 
 /* Finally occurrences of the mentioned topic */
 
-snprintf(query,CF_BUFSIZE,"SELECT topic_name,topic_type from topics where pid='%d'",this_id);
+snprintf(query,sizeof(query),"SELECT topic_name,topic_type from topics where pid='%d'",this_id);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -669,7 +669,7 @@ if (CfFetchRow(&cfdb))
 
 CfDeleteQuery(&cfdb);
 
-snprintf(query,CF_BUFSIZE,"SELECT topic_name,locator,locator_type,subtype from occurrences where from_id='%d' order by locator_type,subtype",this_id);
+snprintf(query,sizeof(query),"SELECT topic_name,locator,locator_type,subtype from occurrences where from_id='%d' order by locator_type,subtype",this_id);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -705,18 +705,6 @@ CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
 }
 
-/*****************************************************************************/
-
-char *LocateTopicMapImage(int pid)
-
-{ static char buf[CF_BUFSIZE],name[CF_MAXVARSIZE];
-
-snprintf(buf,CF_MAXVARSIZE,"<img src=\"/graphs/%s.png\">",pid);
-snprintf(name,CF_MAXVARSIZE,"%s/graphs/%s.map",pid);
-Nova_IncludeFile(name,buf,CF_BUFSIZE);
-return buf;
-}
-
 /*************************************************************************/
 /* Level                                                                 */
 /*************************************************************************/
@@ -743,9 +731,9 @@ return true;
 int Nova_AddAssocSearchBuffer(char *from_assoc,char *to_assoc,char *buffer,int bufsize)
 
 { char buf[CF_MAXVARSIZE];
-snprintf(buf,CF_BUFSIZE-1,"<li>There is a relationship: \"%s\" &harr;",Nova_AssocURL(from_assoc));
+snprintf(buf,sizeof(buf),"<li>There is a relationship: \"%s\" &harr;",Nova_AssocURL(from_assoc));
 Join(buffer,buf,bufsize);
-snprintf(buf,CF_BUFSIZE-1," \"%s\" found between certain topics</li>\n",Nova_AssocURL(to_assoc));
+snprintf(buf,sizeof(buf)," \"%s\" found between certain topics</li>\n",Nova_AssocURL(to_assoc));
 Join(buffer,buf,bufsize);
 return true;
 }
