@@ -1926,7 +1926,8 @@ return true;
 int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsize)
 
 { mongo_connection dbconn;
- struct Rlist *classList,*rp;
+  struct Rlist *classList,*rp;
+  struct Item *ip,*list = NULL;
   char work[CF_MAXVARSIZE];
   
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -1941,11 +1942,24 @@ if (classList)
    {
    for (rp = classList; rp != NULL; rp=rp->next)
       {
-      snprintf(work,CF_MAXVARSIZE,"<li><span id=\"bundle\">%s</span></li>",rp->item);
+      PrependItem(&list,rp->item,NULL);
+      }
+   DeleteRlist(classList);
+   IdempPrependItem(&list,"any",NULL);
+   }
+
+if (list)
+   {
+   list = SortItemListNames(list);
+   
+   snprintf(buffer,bufsize,"<ul>\n");
+   for (ip = list; ip != NULL; ip=ip->next)
+      {
+      snprintf(work,CF_MAXVARSIZE,"<li><span id=\"classcontext\">%s</span></li>",ip->name);
       Join(buffer,work,bufsize);
       }
-   
-   DeleteRlist(classList);
+   strcat(buffer,"</ul>");
+   DeleteItemList(list);
    }
 
 if (!CFDB_Close(&dbconn))
@@ -2047,7 +2061,6 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return -1;
    }
-
 
 matched = CFDB_QueryBundlesUsing(&dbconn,name);
 
@@ -2626,7 +2639,7 @@ snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Promise concerns</td><td>:
 Join(returnval,work,bufsize);
 
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applies in the class context</td><td>:</td><td><span id=\"class_context\">%s</span></td></tr>",hp->classContext);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applies in the class context</td><td>:</td><td><span id=\"classcontext\">%s</span></td></tr>",hp->classContext);
 Join(returnval,work,bufsize);
 
 

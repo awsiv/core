@@ -3047,15 +3047,14 @@ while(mongo_cursor_next(cursor))  // iterate over docs
       {
       if (strcmp(bson_iterator_key(&it1), cfp_classcontext) == 0)
          {
-	   tmpList = SplitRegexAsRList((char *)bson_iterator_string(&it1),"[.!()|&]+",100,false);
-	   IdempAppendRlist(&classList,tmpList,CF_LIST);
-	   DeleteRlist(tmpList);
+         tmpList = SplitRegexAsRList((char *)bson_iterator_string(&it1),"[.!()|&]+",100,false);
+         IdempAppendRlist(&classList,tmpList,CF_LIST);
+         DeleteRlist(tmpList);
          }
       }
    }
 
 mongo_cursor_destroy(cursor);
-
 return classList;
 }
 
