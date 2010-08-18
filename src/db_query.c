@@ -2929,17 +2929,18 @@ return handles;
 
 /*****************************************************************************/
 
-struct Rlist *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *bNameRegex)
+struct Item *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *bNameRegex)
 /*
  * Returns bundles "type name" matching the given regex.
  * Gets all if left unspecified.
  */
+
 { bson_buffer bbuf;
   bson_iterator it1;
   bson query,field;
   mongo_cursor *cursor;
   int emptyQuery = true;
-  struct Rlist *matched = {0};
+  struct Item *matched = {0};
   char type[CF_MAXVARSIZE] = {0};
   char name[CF_MAXVARSIZE] = {0};
   char match[CF_MAXVARSIZE] = {0};
@@ -2947,40 +2948,40 @@ struct Rlist *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *
   // query
  bson_buffer_init(&bbuf);
  
- if(!EMPTY(bTypeRegex))
+if (!EMPTY(bTypeRegex))
    {
    bson_append_regex(&bbuf, cfp_bundletype, bTypeRegex,"");
    emptyQuery = false;
    }
 
- if(!EMPTY(bNameRegex))
+if (!EMPTY(bNameRegex))
    {
    bson_append_regex(&bbuf, cfp_bundlename, bNameRegex,"");
    emptyQuery = false;
    }
 
- if(emptyQuery)
+if (emptyQuery)
    {
    bson_empty(&query);
    }
- else
+else
    {
    bson_from_buffer(&query,&bbuf);
    }
- 
- // returned attribute
- bson_buffer_init(&bbuf);
- bson_append_int(&bbuf,cfp_bundletype,1);
- bson_append_int(&bbuf,cfp_bundlename,1);
- bson_from_buffer(&field,&bbuf);
+
+// returned attribute
+bson_buffer_init(&bbuf);
+bson_append_int(&bbuf,cfp_bundletype,1);
+bson_append_int(&bbuf,cfp_bundlename,1);
+bson_from_buffer(&field,&bbuf);
 
 cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,0);
 
- bson_destroy(&field);
+bson_destroy(&field);
 
- if(!emptyQuery)
+if (!emptyQuery)
    {
-     bson_destroy(&query);
+   bson_destroy(&query);
    }
 
 
@@ -2990,7 +2991,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    
    while(bson_iterator_next(&it1))
       {
-
+      
       if (strcmp(bson_iterator_key(&it1), cfp_bundletype) == 0)
          {
 	 snprintf(type,sizeof(type),"%s",bson_iterator_string(&it1));
@@ -3000,9 +3001,8 @@ while(mongo_cursor_next(cursor))  // iterate over docs
  	 snprintf(name,sizeof(name),"%s",bson_iterator_string(&it1));
          }
       }
-
-   snprintf(match,sizeof(match),"%s %s",type,name);
-   IdempAppendRlist(&matched,match,CF_SCALAR);
+   
+   IdempPrependItem(&matched,name,type);
    }
 
 mongo_cursor_destroy(cursor);
@@ -3100,7 +3100,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
 
 	   while(bson_iterator_next(&it2))
 	     {
-	       AppendItem(&args,bson_iterator_string(&it2),NULL);
+             AppendItem(&args,(char *)bson_iterator_string(&it2),NULL);
 	     }
 	   
 	   break;  // all records show the same args
@@ -3154,7 +3154,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
       {
       if (strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
          {
-	 IdempAppendItem(&bNameReferees,bson_iterator_string(&it1),NULL);
+	 IdempAppendItem(&bNameReferees,bson_iterator_string(&it1),"agent");
          }
       }
    }

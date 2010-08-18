@@ -332,7 +332,7 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date);
 struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle);
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
 struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, char *prTypeRegex, char *bType, char *bName);
-struct Rlist *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *bNameRegex);
+struct Item *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *bNameRegex);
 struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
 struct Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
 struct Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
@@ -679,6 +679,7 @@ void Nova_NoteVarUsage(void);
 void Nova_GrandSummary(void);
 void Nova_SummarizeComms(void);
 void Nova_SummarizeLicense(char *stylesheet,char *banner,char *footer,char *webdriver);
+void Nova_ZenossSummary(char *docroot);
 
 /* request.c */
 
@@ -869,7 +870,8 @@ char *Nova2PHP_GetPromiser(char *handle);
 int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize);
 int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsize);
 int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize);
-int Nova2PHP_list_all_bundles(char *name,char *type,char *buffer,int bufsize);
+int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize);
+int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize);
 
 /* weekly.c */
 

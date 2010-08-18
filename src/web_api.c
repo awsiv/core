@@ -1997,12 +1997,11 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_list_all_bundles(char *name,char *type,char *buffer,int bufsize)
+int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize)
 
 { mongo_connection dbconn;
-  struct Rlist *classList;
   char work[CF_MAXVARSIZE];
-  struct Rlist *matched,*rp;
+  struct Item *matched,*ip;
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -2010,20 +2009,21 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return -1;
    }
 
-matched = CFDB_QueryBundles(&dbconn, NULL, NULL);
+matched = CFDB_QueryBundles(&dbconn,type,NULL);
+matched = SortItemListClasses(matched);
 
 if (matched)
    {
-   snprintf(buffer,bufsize,"<ul>\n");
+   snprintf(buffer,bufsize,"<div id=\"bundles\"><ul>\n");
    
-   for (rp = matched; rp != NULL; rp=rp->next)
+   for (ip = matched; ip != NULL; ip=ip->next)
       {
-      snprintf(work,CF_MAXVARSIZE,"<li><span id=\"bundle\">%s</span></li>",rp->item);
+      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"bundle.php?type=%s\"><span id=\"bundletype\">%s</span></a> <a href=\"bundle.php?bundle=%s\"><span id=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->name);
       Join(buffer,work,bufsize);
       }
 
-   strcat(buffer,"</ul>\n");
-   DeleteRlist(matched);
+   strcat(buffer,"</ul></div>\n");
+   DeleteItemList(matched);
    }
 
 if (!CFDB_Close(&dbconn))
@@ -2031,6 +2031,46 @@ if (!CFDB_Close(&dbconn))
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
+return true;
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize)
+
+{ mongo_connection dbconn;
+  char work[CF_MAXVARSIZE];
+  struct Item *matched,*ip;
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return -1;
+   }
+
+
+matched = CFDB_QueryBundlesUsing(&dbconn,name);
+
+matched = SortItemListClasses(matched);
+
+if (matched)
+   {
+   snprintf(buffer,bufsize,"<div id=\"bundles\"><ul>\n");
+   
+   for (ip = matched; ip != NULL; ip=ip->next)
+      {
+      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"bundle.php?type=%s\"><span id=\"bundletype\">%s</span></a> <a href=\"bundle.php?bundle=%s\"><span id=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->name);
+      Join(buffer,work,bufsize);
+      }
+
+   strcat(buffer,"</ul></div>\n");
+   DeleteItemList(matched);
+   }
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
 
 return true;
 }
