@@ -866,6 +866,9 @@ char *Nova2PHP_GetPromiseBundle(char *handle);
 char *Nova2PHP_GetPromiseType(char *handle);
 char *Nova2PHP_GetPromiser(char *handle);
 int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize);
+int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsize);
+int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize);
+int Nova2PHP_list_all_bundles(char *name,char *type,char *buffer,int bufsize);
 
 /* weekly.c */
 

@@ -1850,7 +1850,6 @@ if (!CFDB_Close(&dbconn))
 return true;
 }
 
-
 /*****************************************************************************/
 
 int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *returnval,int bufsize)
@@ -1918,6 +1917,120 @@ if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
+
+return true;
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsize)
+
+{ mongo_connection dbconn;
+ struct Rlist *classList,*rp;
+  char work[CF_MAXVARSIZE];
+  
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return -1;
+   }
+
+classList = CFDB_QueryBundleClasses(&dbconn,type,name);
+
+if (classList)
+   {
+   for (rp = classList; rp != NULL; rp=rp->next)
+      {
+      snprintf(work,CF_MAXVARSIZE,"<li><span id=\"bundle\">%s</span></li>",rp->item);
+      Join(buffer,work,bufsize);
+      }
+   
+   DeleteRlist(classList);
+   }
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize)
+
+{ mongo_connection dbconn;
+  struct Rlist *classList;
+  struct Item *matched,*ip;
+  char work[CF_MAXVARSIZE];
+  
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return -1;
+   }
+
+matched = CFDB_QueryBundleArgs(&dbconn,type,name);
+
+if (matched)
+   {
+   snprintf(buffer,bufsize,"<ul>\n");
+   
+   for (ip = matched; ip != NULL; ip=ip->next)
+      {
+      snprintf(work,CF_MAXVARSIZE,"<li><span id=\"args\">%s</span></li>",ip->name);
+      Join(buffer,work,bufsize);
+      }
+
+   strcat(buffer,"</ul>\n");
+   DeleteItemList(matched);
+   }
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_list_all_bundles(char *name,char *type,char *buffer,int bufsize)
+
+{ mongo_connection dbconn;
+  struct Rlist *classList;
+  char work[CF_MAXVARSIZE];
+  struct Rlist *matched,*rp;
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return -1;
+   }
+
+matched = CFDB_QueryBundles(&dbconn, NULL, NULL);
+
+if (matched)
+   {
+   snprintf(buffer,bufsize,"<ul>\n");
+   
+   for (rp = matched; rp != NULL; rp=rp->next)
+      {
+      snprintf(work,CF_MAXVARSIZE,"<li><span id=\"bundle\">%s</span></li>",rp->item);
+      Join(buffer,work,bufsize);
+      }
+
+   strcat(buffer,"</ul>\n");
+   DeleteRlist(matched);
+   }
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
 
 return true;
 }
