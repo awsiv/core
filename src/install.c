@@ -286,6 +286,7 @@ void DeleteHubVariable(struct HubVariable *hv)
 {
 free(hv->scope);
 free(hv->lval);
+free(hv->dtype);
 
 switch(hv->rtype)
    {
@@ -301,7 +302,6 @@ switch(hv->rtype)
        break;
    }
 
-free(hv->dtype);
 free(hv);
 }
 

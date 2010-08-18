@@ -179,7 +179,7 @@ a.restart_class = "nonce";
 a.transaction.ifelapsed = 6*60;
 a.transaction.expireafter = CF_INFINITY;
   
-thislock = AcquireLock(pp->promiser,peer,CFSTARTTIME,a,pp);
+thislock = AcquireLock(pp->promiser,CanonifyName(peer),CFSTARTTIME,a,pp);
 
 if (thislock.lock != NULL)
    {

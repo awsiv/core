@@ -2357,14 +2357,12 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       char b[CF_BUFSIZE];
       b[0] = '\0';
       PrintRlist(b,CF_BUFSIZE,hv->rval);
-      snprintf(buffer,sizeof(buffer),"%s",b);
+      snprintf(returnval,bufsize-1,"%s",b);
       }
    else
       {
-      snprintf(buffer,sizeof(buffer),"%s",(char *)hv->rval);
+      snprintf(returnval,bufsize-1,"%s",(char *)hv->rval);
       }
-
-   Join(returnval,buffer,bufsize);
    }
 
 if (hq->records == NULL)
