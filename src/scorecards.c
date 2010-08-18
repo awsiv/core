@@ -22,7 +22,10 @@ extern char *UNITS[];
 
 void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize)
     
-{ char work[CF_BUFSIZE],hostname[CF_SMALLBUF],ipaddress[CF_SMALLBUF];
+{ 
+#ifdef HAVE_LIBGD
+
+  char work[CF_BUFSIZE],hostname[CF_SMALLBUF],ipaddress[CF_SMALLBUF];
   char desc[CF_MAXVARSIZE],id[CF_MAXVARSIZE],lastsaw[CF_SMALLBUF];
   struct CfDataView cfv;
   int i;
@@ -75,13 +78,17 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    }
 
 Join(buffer,"</table>\n",bufsize);
+
+#endif /* HAVE_LIBGD */
 }
 
 /*****************************************************************************/
 
 void Nova_ComplianceSummaryGraph(char *docroot,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{
+#ifdef HAVE_LIBGD
+  char *report,buffer[CF_BUFSIZE];
   struct HubTotalCompliance *ht;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
@@ -271,13 +278,18 @@ else
 gdImagePng(cfv.im, fout);
 fclose(fout);
 gdImageDestroy(cfv.im);
+
+#endif  /* HAVE_LIBGD */
 }
 
 /*****************************************************************************/
 
 void Nova_SummaryMeter(char *docroot,char *search_string)
 
-{ FILE *fout;
+{
+#ifdef HAVE_LIBGD
+
+  FILE *fout;
   char filename[CF_BUFSIZE];
   int returnval = 0;
   double kept = 0,repaired = 0;
@@ -405,15 +417,21 @@ else
 gdImagePng(cfv.im, fout);
 fclose(fout);
 gdImageDestroy(cfv.im);
+
+#endif /* HAVE_LIBGD */
 }
 
 /*****************************************************************************/
 
 int Nova_Meter(char *docroot,char *hostkey)
 
-{ FILE *fout;
-  char filename[CF_BUFSIZE];
+{
   int returnval = 0;
+
+#ifdef HAVE_LIBGD
+
+  FILE *fout;
+  char filename[CF_BUFSIZE];
   double kept,repaired;
   struct stat sb;
   struct utimbuf t;
@@ -503,6 +521,9 @@ else
 gdImagePng(cfv.im, fout);
 fclose(fout);
 gdImageDestroy(cfv.im);
+
+#endif /* HAVE_LIBGD */
+
 return returnval;
 }
 
@@ -758,7 +779,10 @@ return sorted;
 
 void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired,char *s)
 
-{ int n = number;
+{
+#ifdef HAVE_LIBGD
+
+  int n = number;
   int m = number - 1;
   int v_offset = 35,bar_height = CF_METER_HEIGHT-v_offset;
   int width = 35,h_offset = 15;
@@ -796,6 +820,8 @@ snprintf(ss,CF_MAXVARSIZE-1,"%.1lf",kept);
 
 Nova_Font(cfv,n*h_offset+m*width+5,15,s,WHITE);
 Nova_Font(cfv,n*h_offset+m*width+5,27,ss,WHITE);
+
+#endif /* HAVE_LIBGD */
 }
 
 /*****************************************************************************/
@@ -1084,7 +1110,10 @@ else
 
 void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col)
 
-{ int day,x,y;
+{
+#ifdef HAVE_LIBGD
+
+  int day,x,y;
   double q,dq;
   time_t now;
   int ticksize = cfv->height/50;
@@ -1101,6 +1130,7 @@ gdImageString(cfv->im, gdFontGetLarge(),cfv->width/2,cfv->range+cfv->margin/2,"d
 gdImageString(cfv->im, gdFontGetLarge(),0,0,"100%",col);
 gdImageString(cfv->im, gdFontGetLarge(),0,cfv->range,"0",col);      
 
+#endif  /* HAVE_LIBGD */
 }
 
 

@@ -42,11 +42,12 @@ return x;
 
 /*****************************************************************************/
 
-#ifdef HAVE_LIBGD
-
 void Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs)
     
-{ int i,y,hint;
+{
+#ifdef HAVE_LIBGD
+
+  int i,y,hint;
   FILE *fout;
   struct stat s1,s2;
   char newfile[CF_BUFSIZE];
@@ -86,6 +87,8 @@ else
 gdImagePng(cfv->im, fout);
 fclose(fout);
 gdImageDestroy(cfv->im);
+
+#endif  /* HAVE_LIBGD */
 }
 
 /**********************************************************************/
@@ -271,7 +274,10 @@ else
 
 void Nova_DrawQAxes(struct CfDataView *cfv,int col)
 
-{ int origin_x = cfv->margin;
+{
+#ifdef HAVE_LIBGD
+
+  int origin_x = cfv->margin;
   int origin_y = cfv->height+cfv->margin;
   int max_x = cfv->margin+cfv->width;
   int max_y = cfv->margin;
@@ -323,13 +329,18 @@ else
       gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
       }
    }
+
+#endif /* HAVE_LIBGD */
 }
 
 /*******************************************************************/
 
 void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3)
 
-{ int origin_x = cfv->margin;
+{ 
+#ifdef HAVE_LIBGD
+
+  int origin_x = cfv->margin;
   int origin_y = cfv->height+cfv->margin;
   int max_x = cfv->margin+cfv->width;
   int max_y = cfv->margin;
@@ -411,6 +422,8 @@ y = Nova_ViewPortY(cfv,cfv->data_q[(int)sx],cfv->error_scale);
 
 gdImageSetThickness(cfv->im,3);
 gdImageArc(cfv->im,x,y,20,20,0,360,RED);
+
+#endif  /* HAVE_LIBGD */
 }
 
 /***********************************************************/
@@ -461,5 +474,3 @@ Join(buffer,work,bufsize);
 snprintf(work,CF_BUFSIZE-1,"</div>\n");
 Join(buffer,work,bufsize);
 }
-
-#endif
