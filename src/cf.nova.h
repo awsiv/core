@@ -334,6 +334,7 @@ int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, c
 struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, char *prTypeRegex, char *bType, char *bName);
 struct Rlist *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *bNameRegex);
 struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
+struct Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
