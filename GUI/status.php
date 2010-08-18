@@ -16,21 +16,25 @@ $g = cfpr_count_green_hosts();
 <tr>
 <td>
 <ul><li>
-<h2>Generate a report:</h2>
+<h2>Report on multiple hosts:</h2>
 
  <form method="post" action="search.php">
-  <p>Search for:</p>
-<p><input class="searchfield" type="text" name="search" />
-
-  <p>on host:</p>
-<p><?php $allhosts = cfpr_select_hosts(".*",100);
-echo "$allhosts";?>
-<p>in report:</p>
+  <p>Search in report:</p>
 <p><?php $allreps = cfpr_select_reports(".*",100);
 echo "$allreps";?>
 <p>
 <input type="submit" value="Generate report">
 </form>
+<li><h2>Examine a specific host</h2>
+<form method="post" action="host.php">
+<p><?php $allhosts = cfpr_select_hosts(".*",100);
+echo "$allhosts";?>
+<p>
+<input type="submit">
+</form>
+
+
+
 </li>
 </ul>
 
@@ -47,15 +51,7 @@ echo "$allreps";?>
 </ul>
 
 </td>
-<td>
-<h2>Select specific host</h2>
-<form method="post" action="host.php">
-<p><?php $allhosts = cfpr_select_hosts(".*",100);
-echo "$allhosts";?>
-<p>
-<input type="submit">
-</form>
-</td>
+
 </tr>
 </table>
 </div>

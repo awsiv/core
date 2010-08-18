@@ -90,6 +90,12 @@ color: #d00;
 text-decoration: none;
 }
 
+#advancedquery
+{ 
+color: white;
+font-size: 140%;
+}
+
 
 #a:hover{text-decoration: underline;}
 
@@ -102,11 +108,35 @@ color: #11aa22;
 border-color: #767676;
 }
 
-#promise
+#showpromise tr td
+{  
+background-color: #fff;
+}
+
+#showbundle tr td
+{  
+background-color: #fff;
+}
+
+
+#bundles
 {  
 background-color: #fff; 
 padding: 0px;
 border: 0px;
+}
+
+#bundles tr td
+{  
+background-color: #fff; 
+padding: 10px;
+}
+
+
+#promise
+{  
+background-color: #fff; 
+padding: 0px;
 }
 
 #promise table
@@ -114,11 +144,11 @@ border: 0px;
 padding: 10px;
 }
 
-#promise tr td
+#promise table tr td
 {  
 background-color: #fff; 
 padding: 3px;
-border: 0px;
+border: none;
 }
 
 #promiser
@@ -703,7 +733,7 @@ color: #966;
 font-weight: bold;
 }
 
-#class_context
+#classcontext
 { 
 color: #00a;
 font-weight: bold;

@@ -13,7 +13,7 @@ cfpr_header("$title","normal");
 $pid = cfpr_get_pid_for_topic("promises","$handle");
 ?>
 
-
+<div id="showpromise">
 <table>
 <tr>
 <td valign="top">
@@ -48,8 +48,8 @@ echo "$promise<p>";
 
 if ($pid > 0) 
    {
-   $topic = cfpr_show_topic($pid);
-   echo "<p>$topic";
+#   $topic = cfpr_show_topic($pid);
+#   echo "<p>$topic";
    $leads = cfpr_show_topic_leads($pid);    
    echo "<p>$leads"; 
    }
@@ -58,7 +58,7 @@ if ($pid > 0)
 </td>
 </tr>
 </table>
-
+</div>
 
 <?php
 cfpr_footer();

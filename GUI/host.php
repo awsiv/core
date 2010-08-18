@@ -45,8 +45,8 @@ echo "<li><i>Release</i>: <b>$rel</b></li>";
 echo "<li><i>Flavour</i>: <b>$flavour</b></li>";
 echo "<li><i>Last known address</i>: <b>$ipaddr</b></li>";
 echo "<li><i>Last data</i>: <b>$last</b></li>";
-echo "<li><i>Average load</i>: <b>$load %</b></li>";
-echo "<li><i>Average free on system disk</i>: <b>$free</b> </li>";
+echo "<li><i>Average load</i>: <b>$load%</b></li>";
+echo "<li><i>Average free on system disk</i>: <b>$free%</b> </li>";
 echo "</ul></div>\n";
 
 ?>
@@ -70,14 +70,15 @@ echo "<ul>";
 echo "<li><img src=\"/img/vital.png\">&nbsp;<a href=\"vitals.php?hostkey=$hostkey\">Pulse and vital signs for this host</a></li>\n";
 
 echo "<li><form method=\"post\" action=\"search.php\">";
-echo "<p><input class=\"searchfield\" type=\"text\" name=\"search\" />&nbsp; match regex";
+echo "Search:";
+
+echo "<p><input class=\"searchfield\" type=\"text\" name=\"search\" />";
 
 echo "<p><input type=\"hidden\" name=\"hostkey\" value=\"$hostkey\">";
 
 $allreps = cfpr_select_reports(".*",100);
 
 echo "$allreps";
-echo "&nbsp; from report";
 echo "<p>";
 echo "<input type=\"submit\">";
 echo "</form>";
