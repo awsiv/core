@@ -39,7 +39,7 @@
 # define MONGO_PROMISES_EXP "cfreport.promises_exp"
 # define MONGO_PROMISES_UNEXP "cfreport.promises_unexp"
 # define MONGO_BODIES   "cfreport.bodies"
-# define MONGO_SCRATCH "cfscratch.values"
+# define MONGO_SCRATCH "cfreport.scratch"
 # include <mongo.h>
 #else
 # define mongo_connection char
