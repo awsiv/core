@@ -3114,6 +3114,57 @@ return args;
 }
 
 /*****************************************************************************/
+
+struct Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced)
+/*
+ * Returns the set of bundle names using the given bundle though
+ * methods:usebundle, NULL if none.
+ * Bundle types are implicitly agent (both referencing and referees).
+ * MEMORY NOTE: Caller must free returned value (!= NULL) with DeleteItemList()
+ */
+{ bson_buffer bbuf;
+  bson_iterator it1;
+  bson query,field;
+  mongo_cursor *cursor;
+  struct Item *bNameReferees = {0};
+  char queryConstr[CF_MAXVARSIZE];
+
+  snprintf(queryConstr,sizeof(queryConstr),"usebundle => %s",bNameReferenced);
+
+  // query
+ bson_buffer_init(&bbuf);
+ bson_append_string(&bbuf,cfp_constraints,queryConstr);
+ bson_from_buffer(&query,&bbuf);
+
+ // returned attribute
+ bson_buffer_init(&bbuf);
+ bson_append_int(&bbuf,cfp_bundlename,1);
+ bson_from_buffer(&field,&bbuf);
+
+cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,0);
+
+bson_destroy(&query);
+bson_destroy(&field);
+
+while(mongo_cursor_next(cursor))  // iterate over docs
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while(bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
+         {
+	 IdempAppendItem(&bNameReferees,bson_iterator_string(&it1),NULL);
+         }
+      }
+   }
+
+mongo_cursor_destroy(cursor);
+
+return bNameReferees;
+}
+
+/*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
 
