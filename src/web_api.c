@@ -2176,6 +2176,8 @@ void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize)
   static char *policies[] = { "compliance", "anomaly", "performance", "lastseen", NULL};
   enum cf_rank_method pol;
 
+Nova_WebTopicMap_Initialize();
+  
 for (pol = 0; policies[pol] != NULL; pol++)
    {
    if (strcmp(policy,policies[pol]) == 0)
@@ -2191,7 +2193,7 @@ strcat(buffer,"<table>\n\n\n");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
-   Nova_Meter("/srv/www/htdocs",ip->name);
+   Nova_Meter(DOCROOT,ip->name);
 
    if (Nova_IsGreen(ip->counter))
       {
@@ -2220,6 +2222,7 @@ void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize)
 { struct Item *ip,*clist;
   char work[CF_MAXVARSIZE];
 
+Nova_WebTopicMap_Initialize();  
 clist = Nova_RankHosts(policy,1,cfrank_compliance,n);
 clist = SortItemListClasses(clist);
 
@@ -2228,7 +2231,7 @@ strcat(buffer,"<table>\n\n\n");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
-   Nova_Meter("/srv/www/htdocs",ip->name);
+   Nova_Meter(DOCROOT,ip->name);
 
    if (Nova_IsGreen(ip->counter))
       {
