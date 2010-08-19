@@ -2682,11 +2682,11 @@ if (hp->constraints)
 
       if (strchr(rval,'('))
          {
-         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span id=\"rval\"><a href=\"body.php?body=%s\">%s</a></span></td></tr>",lval,lval,rval,rval);
+         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><a href=\"body.php?body=%s\"><span id=\"bodyname\">%s</span></a></td></tr>",lval,lval,rval,rval);
          }
       else
          {
-         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span id=\"bodyname\">%s</span></td></tr>",lval,lval,rval);
+         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span id=\"rval\">%s</span></td></tr>",lval,lval,rval);
          }
       Join(returnval,work,bufsize);   
       }
