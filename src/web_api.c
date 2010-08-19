@@ -2606,10 +2606,7 @@ returnval[0] = '\0';
 
 strcat(returnval,"<div id=\"promise\"><table>\n");
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\" width=\"20%\">Belonging to %s bundle</td><td>:</td><td><a href=\"bundle.php?bundle=%s\"><span id=\"bundle\">%s</span></a><td></tr>",hp->bundleType,hp->bundleName,hp->bundleName);
-Join(returnval,work,bufsize);
-
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Defined in file</td><td>:</td><td><span id=\"file\">%s</span> near line %d</td></tr>",hp->file,hp->lineNo);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\" width=\"20%\">Belonging to <span id=\"bundletype\">%s</span> bundle</td><td>:</td><td><a href=\"bundle.php?bundle=%s\"><span id=\"bundle\">%s</span></a><td></tr>",hp->bundleType,hp->bundleName,hp->bundleName);
 Join(returnval,work,bufsize);
 
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Reference handle</td><td>:</td><td><span id=\"handle\">%s</span></td></tr>",hp->handle);
@@ -2666,6 +2663,9 @@ snprintf(returnval, bufsize, "<br><br>Resource object '%s' of type %s%s%s<br>   
          hp->bundleType,
          bArgText);
 */
+
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Defined in file</td><td>:</td><td><span id=\"file\">%s</span> near line %d</td></tr>",hp->file,hp->lineNo);
+Join(returnval,work,bufsize);
 
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Body of the promise</td><td>:</td><td></td></tr>");
 Join(returnval,work,bufsize);
