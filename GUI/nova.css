@@ -153,17 +153,23 @@ border: none;
 
 #promiser
 {
+color: #a00;
 font-weight: bold;
+}
+
+#bundletype
+{  
+color: #0077bb;
 }
 
 #bundle
 {  
-font-weight: bold;
+color: #3000ff;
 }
 
 #file
 {  
-color: #f00;
+color: #008f0a;
 }
 
 #intro
@@ -723,7 +729,7 @@ font-weight: bold;
 
 #bodyname 
 { 
-color: #a00;
+color: #3000ff;
 font-weight: bold;
 }
 
@@ -735,7 +741,7 @@ font-weight: bold;
 
 #classcontext
 { 
-color: #00a;
+color: #3000ff;
 font-weight: bold;
 }
 
@@ -755,7 +761,19 @@ color: red;
 #handle
 {  
 font-weight: bold;
-color: #73b167;
+color: #a00;
+}
+
+#promisee
+{  
+font-weight: bold;
+color: #a00;
+}
+
+#subtype
+{  
+font-weight: bold;
+color: #0077bb;
 }
 
 #pm
