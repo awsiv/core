@@ -222,7 +222,7 @@ while(CfFetchRow(cfdb))
    
    if (size == CF_NOINT)
       {
-      cfPS(cf_error,CF_NOP,"",pp,a," !! Integer size of SQL datatype could not be determined - invalid promise.");
+      cfPS(cf_verbose,CF_NOP,"",pp,a," !! Integer size of SQL datatype could not be determined or was not specified - invalid promise.");
       Nova_DeleteSQLColumns(name_table,type_table,size_table,done,no_of_cols);
       CfDeleteQuery(cfdb);
       return false;

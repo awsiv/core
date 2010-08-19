@@ -338,15 +338,15 @@ void Nova_ScanTheRest(int pid,char *buffer, int bufsize)
   CfdbConn cfdb;  
   int tpid,count = 0;
 
-if (!Nova_GetTopicByPid(pid,this_name,this_id,this_type,topic_comment))
-   {
-   snprintf(buffer,bufsize,"No such topic was found");
-   return;
-   }
-
 if (strlen(SQL_OWNER) == 0)
    {
    snprintf(buffer,bufsize,"No knowledge database has yet formed ... please wait");
+   return;
+   }
+
+if (!Nova_GetTopicByPid(pid,this_name,this_id,this_type,topic_comment))
+   {
+   snprintf(buffer,bufsize,"No such topic was found (db %s)",SQL_DATABASE);
    return;
    }
 
