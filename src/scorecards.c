@@ -84,7 +84,7 @@ Join(buffer,"</table>\n",bufsize);
 
 /*****************************************************************************/
 
-void Nova_ComplianceSummaryGraph(char *docroot,char *returnval,int bufsize)
+void Nova_ComplianceSummaryGraph(char *docroot)
 
 {
 #ifdef HAVE_LIBGD
@@ -143,11 +143,6 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 // Query all hosts
 
 hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),NULL,-1,-1,-1,-1,CFDB_GREATERTHANEQ);
-
-returnval[0] = '\0';
-
-strcat(returnval,"<table>\n");
-count += strlen(returnval);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -259,8 +254,6 @@ if (err)
    {
    printf("Rendering failure %s\n",err);
    }
-
-
 
 /****************/
 
@@ -1128,7 +1121,7 @@ for (day = 0; day < 7; day++)
 gdImageString(cfv->im, gdFontGetLarge(),cfv->width/2,cfv->range+cfv->margin/2,"days",col);
 
 gdImageString(cfv->im, gdFontGetLarge(),0,0,"100%",col);
-gdImageString(cfv->im, gdFontGetLarge(),0,cfv->range,"0",col);      
+gdImageString(cfv->im, gdFontGetLarge(),0,cfv->range,"  0%",col);      
 
 #endif  /* HAVE_LIBGD */
 }

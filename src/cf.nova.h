@@ -700,7 +700,7 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *rep);
 int Nova_IsGreen(int level);
 int Nova_IsYellow(int level);
 int Nova_IsRed(int level);
-void Nova_ComplianceSummaryGraph(char *docroot,char *returnval,int bufsize);
+void Nova_ComplianceSummaryGraph(char *docroot);
 void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col);
 int Nova_GetHostColour(char *lkeyhash);
 
@@ -843,6 +843,8 @@ int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time
 
 int Nova2PHP_search_topics(char *search,int regex,char *buffer,int bufsize);
 void Nova2PHP_show_topic(int id,char * buffer,int bufsize);
+
+char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize);
 
 void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize);

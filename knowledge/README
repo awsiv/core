@@ -1,6 +1,0 @@
-
-These files are to be modified and used to establish a local knowledge
-engine using cf-know, with a web server interface. The index.php file
-provided shows how to create a server based on a PHP wrapper. You can
-make wrappers based on any web technology using this as a template.
-

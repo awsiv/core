@@ -144,6 +144,13 @@ Nova_PerformancePage(docroot,hostkey,buffer,bufsize);
 }
 
 /*****************************************************************************/
+
+char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize)
+{
+snprintf(buffer,bufsize,"%s",OBS[obs][0]);
+}
+
+/*****************************************************************************/
 /* Search for answers                                                        */
 /*****************************************************************************/
 

@@ -550,7 +550,7 @@ while(CfFetchRow(&cfdb))
 
 if (!have_data)
    {
-   snprintf(work,CF_MAXVARSIZE,"<li>(no data) </li>\n");
+   snprintf(work,CF_MAXVARSIZE,"<li>(no direct leads) </li>\n");
    Join(buffer,work,bufsize);   
    }
 else
@@ -615,7 +615,7 @@ if (have_data)
    }
 else
    {
-   snprintf(work,CF_MAXVARSIZE,"<li> (no data)</li> \n");
+   snprintf(work,CF_MAXVARSIZE,"<li> (no inferred leads)</li> \n");
    Join(buffer,work,bufsize);   
    }
 
