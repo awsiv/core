@@ -807,6 +807,7 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,char *name,int distance,in
 
 /* web_api.c */
 
+int Nova2PHP_docroot(char *buffer,int bufsize);
 void Nova_EnterpriseModuleTrick(void);
 void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize);
 void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize);

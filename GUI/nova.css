@@ -851,6 +851,18 @@ font-family: DejaVuSans,Vera,Arial,sans-serif;
 padding: 4px;
 }
 
+#example h1
+{  
+ font-family: DejaVuSans,Vera,Arial,sans-serif;
+ 
+}
+
+#example pre
+{ 
+background-color: #fff;
+color: #484842;
+padding: 10px;
+}
 
 
 

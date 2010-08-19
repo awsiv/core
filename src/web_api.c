@@ -148,6 +148,7 @@ Nova_PerformancePage(docroot,hostkey,buffer,bufsize);
 char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize)
 {
 snprintf(buffer,bufsize,"%s",OBS[obs][0]);
+return buffer;
 }
 
 /*****************************************************************************/
@@ -2099,10 +2100,18 @@ return true;
 /* Topic Map                                                                 */
 /*****************************************************************************/
 
+int Nova2PHP_docroot(char *buffer,int bufsize)
+{
+Nova_WebTopicMap_Initialize();
+snprintf(buffer,bufsize,"%s",DOCROOT);
+return true;
+}
+
+/*****************************************************************************/
+
 int Nova2PHP_search_topics(char *search,int regex,char *buffer,int bufsize)
 {
 Nova_WebTopicMap_Initialize();
-
 Nova_SearchTopicMap(search,buffer,bufsize);
 return true;
 }
