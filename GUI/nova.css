@@ -825,13 +825,6 @@ font-family: DejaVuSans,Vera,Arial,sans-serif;
 }
 
 
-#selector a
-{ 
-color: white;
-font-size: 100%;
-font-family: DejaVuSans,Vera,Arial,sans-serif;
-}
-
 #selector table
 { 
 background-color: #30302a ;
@@ -849,6 +842,14 @@ font-family: DejaVuSans,Vera,Arial,sans-serif;
 #selector li
 {  
 padding: 4px;
+}
+
+
+#selector a
+{ 
+color: lightyellow; //#f2eef6; 
+font-size: 100%;
+font-family: DejaVuSans,Vera,Arial,sans-serif;
 }
 
 #example h1

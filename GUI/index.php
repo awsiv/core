@@ -19,18 +19,18 @@ echo "<table><tr><td>\n";
 echo "<ul>\n";
 
 echo "<li><h2>$all hosts are under management</h2>";
-echo "<li><a href=\"hosts.php?type=red\"><img src=\"/img/red_sign_big.png\"></a> $r hosts known";
-echo "<li><a href=\"hosts.php?type=yellow\"><img src=\"/img/yellow_sign_big.png\"></a> $y hosts known";
-echo "<li><a href=\"hosts.php?type=green\"><img src=\"/img/green_sign_big.png\"></a> $g hosts known";
+echo "<li><a href=\"hosts.php?type=red\"><img src=\"/img/red_sign_big.png\"> $r hosts known</a>";
+echo "<li><a href=\"hosts.php?type=yellow\"><img src=\"/img/yellow_sign_big.png\"> $y hosts known</a>";
+echo "<li><a href=\"hosts.php?type=green\"><img src=\"/img/green_sign_big.png\"> $g hosts known</a>";
 echo "</ul>\n";
 echo "<ul><li>This edition licensed to `<b>$ret1</b>'. <li>Granted $ret2 licenses. <li>You promise to have paid for $ret3 paid</ul>";
 
 echo "</td><td>\n";
 cfpr_compliance_summary_graph();
-echo "<img src=\"/hub/common/compliance.png\">";                                                               
-echo "<br><br>";
-echo "<img src=\"/green.png\"> promises kept <img src=\"/yellow.png\"> repaired <img src=\"/red.png\"> not kept";
-echo "</td></tr></table>";
+echo "<ul><li><img src=\"/hub/common/compliance.png\">";                                                               
+echo "<br>";
+echo "<li><img src=\"/green.png\"> promises kept <li><img src=\"/yellow.png\">repaired <li><img src=\"/red.png\"> not kept";
+echo "</ul></td></tr></table>";
 echo "</div>";
 
 
