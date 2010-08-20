@@ -2939,7 +2939,7 @@ return matched;
 
 /*****************************************************************************/
 
-struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, char *prTypeRegex, char *bType, char *bName)
+struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex)
 /*
  * Returns a set of handles of promises matching given promiser regex
  * XOR promise type XOR (bundle type, bundle name)
@@ -2953,19 +2953,39 @@ struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, ch
   // query
 bson_buffer_init(&b);
 
-if (!EMPTY(prRegex))
+ if(regex)
    {
-   bson_append_regex(&b, cfp_promiser, prRegex,"");
+     if (!EMPTY(promiser))
+       {
+	 bson_append_regex(&b, cfp_promiser, promiser,"");
+       }
+     else if(!EMPTY(promiserType))
+       {
+	 bson_append_regex(&b, cfp_promisetype, promiserType,"");
+       }
+     else
+       {
+	 bson_append_regex(&b,cfp_bundletype,bType,"");
+	 bson_append_regex(&b,cfp_bundlename,bName,"");
+       }
    }
-else if(!EMPTY(prTypeRegex))
+ else
    {
-   bson_append_regex(&b, cfp_promisetype, prTypeRegex,"");
+     if (!EMPTY(promiser))
+       {
+	 bson_append_string(&b, cfp_promiser, promiser);
+       }
+     else if(!EMPTY(promiserType))
+       {
+	 bson_append_string(&b, cfp_promisetype, promiserType);
+       }
+     else
+       {
+	 bson_append_string(&b,cfp_bundletype,bType);
+	 bson_append_string(&b,cfp_bundlename,bName);
+       }
    }
-else
-   {
-   bson_append_string(&b,cfp_bundletype,bType);
-   bson_append_string(&b,cfp_bundlename,bName);
-   }
+
 
 bson_from_buffer(&query,&b);
 

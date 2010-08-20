@@ -333,7 +333,7 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date);
 struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle);
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
 struct Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
-struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, char *prTypeRegex, char *bType, char *bName);
+struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex);
 struct Item *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *bNameRegex);
 struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
 struct Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
@@ -868,7 +868,7 @@ long Nova2PHP_count_red_hosts(void);
 long Nova2PHP_count_yellow_hosts(void);
 long Nova2PHP_count_green_hosts(void);
 void Nova2PHP_show_col_hosts(char *colour,int n,char *buffer,int bufsize);
-int Nova2PHP_list_promise_handles(char *regex,char *ptype,char *bundle,char *type,char *returnval,int bufsize);
+int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *btype,int regex,char *returnval,int bufsize);
 
 char *Nova_HostProfile(char *key);
 void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);

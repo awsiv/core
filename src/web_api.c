@@ -2723,7 +2723,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_list_promise_handles(char *regex,char *ptype,char *bundle,char *btype,char *returnval,int bufsize)
+int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *btype,int regex,char *returnval,int bufsize)
 
 { mongo_connection dbconn;
   char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
@@ -2740,7 +2740,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-handles = CFDB_QueryPromiseHandles(&dbconn,regex,ptype,btype,bundle);
+handles = CFDB_QueryPromiseHandles(&dbconn,promiser,ptype,btype,bundle,regex);
 
 returnval[0] = '\0';
 
@@ -2758,6 +2758,8 @@ if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
+
+DeleteRlist(handles);
 
 return true;
 }
