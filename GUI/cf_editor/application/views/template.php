@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>CFengine Online Editior</title>
+		<title>Cfengine Nova Policy Editor</title>
 		<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>application/assets/css/jquery-ui-1.8.2.custom.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>application/assets/css/style.css" />
 		<script src="<?php echo base_url();?>application/assets/scripts/jquery-1.4.2.min.js" type="text/javascript"></script>
@@ -50,14 +50,14 @@
 	<div id="wrapper">
 	 <div id="header">
 		 <div id="title">
-		  <h2>Cfengine Nova</h2><h2 class="green">Policy editor</h2>
+		  <h2>Cfengine Nova</h2><h2 class="green">Policy Editor</h2>
 		  
 		  <div id="menu">
 		  <a href="#" id="new">New</a> |
 		  <a href="#" id="compile">Check syntax</a> |
 		  <a href="#" id="save">Save</a> |
 		  <a href="#">Publish</a> |
-		  <a href="https://cfengine.com/otrs/index.pl">Open support ticket </a> |
+		  <a href="https://cfengine.com/otrs/customer.pl">Open support ticket </a> |
 		  <a href="mailto:contact@cfengine.com">Feedback</a>
 		   </div> 
 		   

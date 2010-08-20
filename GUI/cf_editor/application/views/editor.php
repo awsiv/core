@@ -3,29 +3,20 @@
 	<div id="leftPanel">
 	 	<div class="ui-layout-content">
 		  <div id="Policies">
-		    <div class="title">Company Nova Policies</div>
+		    <div class="title">Nova Policies</div>
 		    <ul id="policies_list">
 		    
 		    </ul>
 		  </div>
 		  
 		  <div id="help-panel">
-		  <div class="title">Editing help-Copernicus</div>
-		  <div class="results">
-		  
-		  </div>
-		  <div class="links">
-			  <span>Examples</span>
-			  <span>Reference Manual</span>
-			  <span>Commands</span>
-			  <span>Best Practices</span>
-		  </div>
+		  <div class="title">Editing Tips</div>
+
 		  <div class="shortcuts">
-			  <span>Shortcuts:</span>
-			  <span>Ctrl+space-&gt; synatx autocompletion</span>
-			  <span>Tab       -&gt; indent</span>
-			  <span>Ctrl+z    -&gt; undo</span>
-			  <span>Ctrl+y    -&gt; Redo</span>
+			  <span>Ctrl+Space-&gt; Autocomplete</span>
+			  <span>Tab       -&gt; Indent</span>
+			  <span>Ctrl+Z    -&gt; Undo</span>
+			  <span>Ctrl+Y    -&gt; Redo</span>
 		  </div>
 		  </div>
 		</div>
@@ -36,16 +27,12 @@
 	 <div id="tabs">
 		  <ul>
 			   <li>
-			   <a href="#news">News From CFengine</a>
-			   <!--<span class="ui-icon ui-icon-close">Remove Tab</span>-->
+			   <a href="#news">Welcome</a>
+			   <span class="ui-icon ui-icon-close">Remove Tab</span>
 			   </li>
 		  </ul>
 		  <div id="news">
-		  Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. 
-		  Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante.
-		  Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo.
-		   Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. 
-		  Phasellus ipsum. Nunc tristique tempus lectus.
+		  Welcome to the Cfengine Nova Policy Editor.
 		  </div>
 	 </div>
 	 
@@ -243,7 +230,7 @@ $(document).ready(function() {
 	//hooking up the new link click event for adding the editor in newly created tab as well as adding context menu to it.
 	$('#new')
      .click(function() {
-    	 tab_content_input='<textarea id="code'+code_editor_counter+'" cols="120" rows="30">body monitor control\n{\nforgetrate => "0.7";\n}</textarea>'+
+    	 tab_content_input='<textarea id="code'+code_editor_counter+'" cols="120" rows="30"></textarea>'+
     	                  '<input type="hidden" name="tabtype" value="codeEditor" />';              
     	 addTab('new');
     	 var editor = CodeMirror.fromTextArea('code'+code_editor_counter, {
