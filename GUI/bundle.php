@@ -26,7 +26,7 @@ echo "<p>Arguments: <span id=\"args\">$args</span>";
 $classes = cfpr_get_classes_for_bundle($bundle,NULL);
 echo "<p>Host classes using this bundle: $classes";
 
-$list = cfpr_list_handles_for_bundle($bundle,"agent");
+$list = cfpr_list_handles_for_bundle($bundle,"agent",false);
 echo "<p>Promises in this bundle $list";
 
 $others = cfpr_list_bundles_using($bundle);
