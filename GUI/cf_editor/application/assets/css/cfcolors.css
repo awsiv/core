@@ -8,10 +8,10 @@ html {cursor: text;}
   color: black;
 }
 
-span.cf-comment {color: #A33;}
-span.cf-string {color: #22C;}
-span.cf-keyword {color: #80B;}
-span.cf-section {color: #292;}
-span.cf-error {color: #F00;}
-span.cf-name {}
-span.cf-punc {}
+span.cf-comment {color: #6f6b52;}    /* comment */
+span.cf-string {color: #a00; }     /* lval/rval string (includes promiser, promisees) */
+span.cf-keyword {color: #0077bb; } /* body/bundle type,promise type, promise attribute lval ,... */
+span.cf-section {color: #004105; }    /* body,bundle */
+span.cf-error {color: #f33; }      /* syntax error */
+span.cf-name {color: #3000ff; }    /* bundle/body/function name, class name */
+span.cf-punc {}    /* braces,commas,colons,paranthesis*/
