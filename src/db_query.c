@@ -2874,6 +2874,71 @@ return found;
 
 /*****************************************************************************/
 
+struct Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey)
+/*
+ * For the promise with the given (expanded) handle, returns a list of
+ * the given field (e.g. cfp_comment_exp, cfp_promisee_exp, etc.) expanded.  
+ * MEMORY NOTE: Caller must free returned val (!=NULL) with DeleteItemList()
+ */
+{
+  bson_buffer b;
+  bson_iterator it1,it2;
+  bson query,field;
+  mongo_cursor *cursor;
+  struct Item *matched = {0};
+
+  // query
+bson_buffer_init(&b);
+bson_append_string(&b,cfp_handle_exp,handle);
+bson_from_buffer(&query,&b);
+
+// returned attribute
+bson_buffer_init(&b);
+bson_append_int(&b,attrKey,1);
+bson_from_buffer(&field,&b);
+
+
+cursor = mongo_find(conn,MONGO_PROMISES_EXP,&query,&field,0,0,0);
+bson_destroy(&query);
+bson_destroy(&field);
+
+while(mongo_cursor_next(cursor))
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while(bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1), attrKey) == 0)
+         {
+
+	 // constraints are stored in an array
+	 if(strcmp(attrKey,cfp_constraints_exp) == 0)
+	   {
+	   bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+	   while(bson_iterator_next(&it2))
+	     {
+	     IdempAppendItem(&matched,bson_iterator_string(&it2),NULL);
+	     }
+
+	   }
+	 else
+	   {
+	   IdempAppendItem(&matched,bson_iterator_string(&it1),NULL);
+	   }
+
+         break;
+         }
+      }
+   }  
+
+mongo_cursor_destroy(cursor);
+
+return matched;
+}
+
+/*****************************************************************************/
+
 struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, char *prTypeRegex, char *bType, char *bName)
 /*
  * Returns a set of handles of promises matching given promiser regex
@@ -3158,7 +3223,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
       {
       if (strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
          {
-	 IdempAppendItem(&bNameReferees,bson_iterator_string(&it1),"agent");
+	   IdempAppendItem(&bNameReferees,(char *)bson_iterator_string(&it1),"agent");
          }
       }
    }

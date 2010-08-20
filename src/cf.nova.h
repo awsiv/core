@@ -332,6 +332,7 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date);
 
 struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle);
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
+struct Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
 struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *prRegex, char *prTypeRegex, char *bType, char *bName);
 struct Item *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *bNameRegex);
 struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
