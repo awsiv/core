@@ -21,13 +21,22 @@ if ($search == "")
   }
 
 if ($many)  // Returning query
-  {
-  switch ($report_type)
+   {
+   $hosts_only = $_POST['hosts_only'];
+
+   switch ($report_type)
       {
       case  "Bundle profile":
 	echo "<h4>$report_type</h4>";
 	$name = $_POST['name'];
-	$report = cfpr_report_bundlesseen(NULL,$name,true);
+	if ($hosts_only)
+  	   {
+           $report = cfpr_hosts_with_bundlesseen(NULL,$name,true);
+	   }
+	else
+	   {
+	   $report = cfpr_report_bundlesseen(NULL,$name,true);
+	   }
 	break;
 	
       case  "Business value report":
@@ -36,32 +45,68 @@ if ($many)  // Returning query
 	$months = $_POST['months'];
 	$years = $_POST['years'];
 	echo "<h4>Days: $days<br>Months: $months<br>Years: $years</h4>";
-	$report = cfpr_report_value(NULL,$days,$months,$years);
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_value(NULL,$days,$months,$years);
+	  }
+	else
+	  {
+	    $report = cfpr_report_value(NULL,$days,$months,$years);
+	  }
 	break;
 	
       case "Class profile":
 	echo "<h4>$report_type</h4>";
 	$name = $_POST['name'];
-	$report = cfpr_report_classes(NULL,$name,true);
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_classes(NULL,$name,true);
+	  }
+	else
+	  {
+	    $report = cfpr_report_classes(NULL,$name,true);
+	  }
 	break; 
 	
       case "Compliance by promise":
 	echo "<h4>$report_type</h4>";
 	$name = $_POST['name'];
 	$state = $_POST['state'];
-	$report = cfpr_report_compliance_promises(NULL,$name,$state,true);
+
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_compliance_promises(NULL,$name,$state,true);
+	  }
+	else
+	  {
+	    $report = cfpr_report_compliance_promises(NULL,$name,$state,true);
+	  }
 	break;
 	
       case "Compliance summary":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">");
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">");
+	  }
+	else
+	  {
+	    $report = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">");
+	  }
 	break;
 	
       case "File change log":
 	echo "<h4>$report_type</h4>";
 	$name = $_POST['name'];
 	$cal = -1;
-	$report = cfpr_report_filechanges(NULL,$name,true,-1,">");    
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_filechanges(NULL,$name,true,-1,">");    
+	  }
+	else
+	  {
+	    $report = cfpr_report_filechanges(NULL,$name,true,-1,">");    
+	  }
 	break;
 	
       case "File change diffs":
@@ -69,7 +114,14 @@ if ($many)  // Returning query
 	$name = $_POST['name'];
 	$diff = $_POST['diff'];
 	$cal = -1;
-	$report = cfpr_report_filediffs(NULL,$name,$diff,true,$cal,">");
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_filediffs(NULL,$name,$diff,true,$cal,">");
+	  }
+	else
+	  {
+	    $report = cfpr_report_filediffs(NULL,$name,$diff,true,$cal,">");
+	  }
 	break;
 	
       case "Last saw hosts":
@@ -82,7 +134,14 @@ if ($many)  // Returning query
 	   {
 	   $ago = -1;
 	   }
-	$report = cfpr_report_lastseen(NULL,$key,$name,$address,$ago,true);
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_lastseen(NULL,$key,$name,$address,$ago,true);
+	  }
+	else
+	  {
+	    $report = cfpr_report_lastseen(NULL,$key,$name,$address,$ago,true);
+	  }
 	break;
 	
       case "Patches available":
@@ -90,7 +149,14 @@ if ($many)  // Returning query
 	$name = $_POST['name'];
 	$version = $_POST['version'];
 	$arch = $_POST['arch'];
-	$report = cfpr_report_patch_avail(NULL,$name,$version,$arch,true);
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_patch_avail(NULL,$name,$version,$arch,true);
+	  }
+	else
+	  {
+	    $report = cfpr_report_patch_avail(NULL,$name,$version,$arch,true);
+	  }
 	break;
 	
       case "Patch status":
@@ -98,33 +164,69 @@ if ($many)  // Returning query
 	$name = $_POST['name'];
 	$version = $_POST['version'];
 	$arch = $_POST['arch'];
-	$report = cfpr_report_patch_in(NULL,$name,$version,$arch,true);
+
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_patch_in(NULL,$name,$version,$arch,true);
+	  }
+	else
+	  {
+	    $report = cfpr_report_patch_in(NULL,$name,$version,$arch,true);
+	  }
 	break;
 	
       case "Performance":
 	echo "<h4>$report_type</h4>";
 	$name = $_POST['name'];
-	$report = cfpr_report_performance(NULL,$name,true);
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_performance(NULL,$name,true);
+	  }
+	else
+	  {
+	    $report = cfpr_report_performance(NULL,$name,true);
+	  }
 	break;
 
       case "Promises repaired summary":	
       case "Promises repaired log":
 	echo "<h4>$report_type</h4>";
 	$name = $_POST['name'];
-	$report = cfpr_report_repaired(NULL,$name);
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_repaired(NULL,$name);
+	  }
+	else
+	  {
+	    $report = cfpr_report_repaired(NULL,$name);
+	  }
 	break;
 	
       case "Promises not kept summary":
       case "Promises not kept log":
 	echo "<h4>$report_type</h4>";
 	$name = $_POST['name'];
-	$report = cfpr_report_notkept(NULL,$name);
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_notkept(NULL,$name);
+	  }
+	else
+	  {
+	    $report = cfpr_report_notkept(NULL,$name);
+	  }
 	break;
 		
       case "Setuid/gid root programs":
 	echo "<h4>$report_type</h4>";
 	$name = $_POST['name'];
-	$ret = cfpr_report_setuid(NULL,$name,true);
+	if ($hosts_only)
+	  {
+	    $ret = cfpr_hosts_with_setuid(NULL,$name,true);
+	  }
+	else
+	  {
+	    $ret = cfpr_report_setuid(NULL,$name,true);
+	  }
 	break;
 	
       case "Software installed":
@@ -133,7 +235,14 @@ if ($many)  // Returning query
 	$version = $_POST['version'];
 	$arch = $_POST['arch'];
 	echo "<h4>Name: $name<br>Version: $version<br>Arch: $arch</h4>";
-	$report = cfpr_report_software_in(NULL,$name,$version,$arch,true);
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_software_in(NULL,$name,$version,$arch,true);
+	  }
+	else
+	  {
+	    $report = cfpr_report_software_in(NULL,$name,$version,$arch,true);
+	  }
 	break;
 	
       case "Variables":
@@ -142,7 +251,15 @@ if ($many)  // Returning query
 	$lval = $_POST['lval'];
 	$rval = $_POST['rval'];
 	$type = $_POST['type'];
-	$report = cfpr_report_vars(NULL,$scope,$lval,$rval,$type,true);
+
+	if ($hosts_only)
+	  {
+	    $report = cfpr_hosts_with_vars(NULL,$scope,$lval,$rval,$type,true);
+	  }
+	else
+	  {
+	    $report = cfpr_report_vars(NULL,$scope,$lval,$rval,$type,true);
+	  }
 	break;
       }
  
@@ -276,6 +393,7 @@ else // No hosktkey
 	echo "<p>Bundle pattern: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 	break;
@@ -288,6 +406,7 @@ else // No hosktkey
 	echo "<p>Years:<p><input class=\"searchfield\" type=\"text\" name=\"years\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 	break;
@@ -298,6 +417,7 @@ else // No hosktkey
 	echo "<p>Class pattern: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 	break; 
@@ -309,6 +429,7 @@ else // No hosktkey
 	echo "<p><select name=\"state\"><option value=\"x\">Any</option><option value=\"c\">Compliant</option><option value=\"r\">Repaired</option><option value=\"n\">Non-compliant</option></select>";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 
@@ -326,6 +447,7 @@ else // No hosktkey
         echo "<p>CALENDAR";
  	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 
@@ -339,6 +461,7 @@ else // No hosktkey
         echo "<p>CALENDAR";
  	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 
@@ -353,6 +476,7 @@ else // No hosktkey
 	echo "<p>Hours ago:<p><input class=\"searchfield\" type=\"text\" name=\"ago\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 
@@ -367,6 +491,7 @@ else // No hosktkey
 	echo "<p>Package architecture:<p><input class=\"searchfield\" type=\"text\" name=\"arch\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 
@@ -380,6 +505,7 @@ else // No hosktkey
 	echo "<p>Package architecture: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"arch\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 	
@@ -392,6 +518,7 @@ else // No hosktkey
 	echo "<p>Job name: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 	
@@ -403,6 +530,7 @@ else // No hosktkey
 	echo "<p>Promise handles: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 
@@ -414,6 +542,7 @@ else // No hosktkey
 	echo "<p>Promise handles: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 
@@ -425,6 +554,7 @@ else // No hosktkey
 	echo "<p>Filename: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 
@@ -438,6 +568,7 @@ else // No hosktkey
 	echo "<p>Package architecture: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"arch\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 
@@ -453,6 +584,7 @@ else // No hosktkey
 	echo "<select name=\"type\"><option value=\"s\">String</option><option value=\"sl\">String list</option><option value=\"i\">Integer</option><option value=\"il\">Integer list</option><option value=\"r\">Real</option><option value=\"rl\">Real list</option></select>";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
+	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
 	echo "<p><input type=\"submit\" value=\"Generate report\">";
 	echo "</form>";
 

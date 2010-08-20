@@ -23,7 +23,7 @@ $g = cfpr_count_green_hosts();
 <p><?php $allreps = cfpr_select_reports(".*",100);
 echo "$allreps";?>
 <p>
-<input type="submit" value="Generate report">
+<input type="submit" value="Formulate query">
 </form>
 <li><h2>Examine a specific host</h2>
 <form method="post" action="host.php">

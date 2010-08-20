@@ -312,6 +312,14 @@ border: 1px;
 background-color: #fff;
 } 
 
+#banner img
+{  
+padding: 0px;
+float: right;
+margin-right: 20px;
+margin-top: -15px;
+}
+
 #status ul li
 {  
 font-size: 120%;

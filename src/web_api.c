@@ -1215,7 +1215,7 @@ int Nova2PHP_software_hosts(char *hostkey,char *name,char *value, char *arch,int
   struct HubHost *hh;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize;
+  int counter = 0, n = 180;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
@@ -1245,24 +1245,29 @@ else
    hq = CFDB_QuerySoftware(&dbconn,bson_empty(&b),type,name,value,arch,regex);
    }
 
-returnval[0] = '\0';
+snprintf(returnval,bufsize,"<table>");
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   snprintf(buffer,CF_MAXVARSIZE-1,"%s,",hh->keyhash);
+   if (counter++ % 6 == 0)
+      {
+      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
+      Join(returnval,buffer,bufsize);
+      }
    
-   tmpsize = strlen(buffer);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
-   if (count + tmpsize > bufsize - 1)
+   Join(returnval,buffer,bufsize);
+   
+   if (counter > n && counter % 6 == 0)
       {
       break;
       }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
    }
+
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubSoftware);
 
@@ -1282,7 +1287,7 @@ int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *returnval,in
   struct HubHost *hh;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize;
+  int counter = 0, n = 180;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
@@ -1309,24 +1314,29 @@ else
    hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),name,regex);
    }
 
-returnval[0] = '\0';
+snprintf(returnval,bufsize,"<table>");
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   snprintf(buffer,CF_MAXVARSIZE-1,"%s,",hh->keyhash);
+   if (counter++ % 6 == 0)
+      {
+      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
+      Join(returnval,buffer,bufsize);
+      }
    
-   tmpsize = strlen(buffer);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
-   if (count + tmpsize > bufsize - 1)
+   Join(returnval,buffer,bufsize);
+   
+   if (counter > n && counter % 6 == 0)
       {
       break;
       }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
    }
+
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubClass);
 
@@ -1346,7 +1356,7 @@ int Nova2PHP_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *ty
   struct HubHost *hh;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize = 0;
+  int counter = 0, n = 180;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
@@ -1370,24 +1380,29 @@ else
    hq = CFDB_QueryVariables(&dbconn,bson_empty(&b),scope,lval,rval,type,regex);
    }
 
-returnval[0] = '\0';
+snprintf(returnval,bufsize,"<table>");
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   snprintf(buffer,CF_MAXVARSIZE-1,"%s,",hh->keyhash);
+   if (counter++ % 6 == 0)
+      {
+      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
+      Join(returnval,buffer,bufsize);
+      }
    
-   tmpsize = strlen(buffer);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
-   if (count + tmpsize > bufsize - 1)
+   Join(returnval,buffer,bufsize);
+   
+   if (counter > n && counter % 6 == 0)
       {
       break;
       }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
    }
+
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubVariable);
 
@@ -1407,7 +1422,7 @@ int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
   struct HubHost *hh;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize,icmp;
+  int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
@@ -1441,24 +1456,29 @@ else
    hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),version,t,k,nk,rep,icmp);
    }
 
-returnval[0] = '\0';
+snprintf(returnval,bufsize,"<table>");
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   snprintf(buffer,CF_MAXVARSIZE-1,"%s,",hh->keyhash);
+   if (counter++ % 6 == 0)
+      {
+      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
+      Join(returnval,buffer,bufsize);
+      }
    
-   tmpsize = strlen(buffer);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
-   if (count + tmpsize > bufsize - 1)
+   Join(returnval,buffer,bufsize);
+   
+   if (counter > n && counter % 6 == 0)
       {
       break;
       }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
    }
+
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
@@ -1478,7 +1498,7 @@ int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,cha
   struct HubHost *hh;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize,icmp;
+  int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
@@ -1505,24 +1525,29 @@ else
    }
 
 
-returnval[0] = '\0';
+snprintf(returnval,bufsize,"<table>");
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   snprintf(buffer,CF_MAXVARSIZE-1,"%s,",hh->keyhash);
+   if (counter++ % 6 == 0)
+      {
+      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
+      Join(returnval,buffer,bufsize);
+      }
    
-   tmpsize = strlen(buffer);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
-   if (count + tmpsize > bufsize - 1)
+   Join(returnval,buffer,bufsize);
+   
+   if (counter > n && counter % 6 == 0)
       {
       break;
       }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
    }
+
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
@@ -1542,7 +1567,7 @@ int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress
   struct HubHost *hh;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize,icmp;
+  int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
@@ -1569,24 +1594,29 @@ else
    hq = CFDB_QueryLastSeen(&dbconn,bson_empty(&b),lhash,lhost,laddress,lago,lregex);
    }
 
-returnval[0] = '\0';
+snprintf(returnval,bufsize,"<table>");
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   snprintf(buffer,CF_MAXVARSIZE-1,"%s,",hh->keyhash);
+   if (counter++ % 6 == 0)
+      {
+      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
+      Join(returnval,buffer,bufsize);
+      }
    
-   tmpsize = strlen(buffer);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
-   if (count + tmpsize > bufsize - 1)
+   Join(returnval,buffer,bufsize);
+   
+   if (counter > n && counter % 6 == 0)
       {
       break;
       }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
    }
+
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubLastSeen);
 
@@ -1606,7 +1636,7 @@ int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *returnval
   struct HubHost *hh;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize,icmp;
+  int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
@@ -1632,24 +1662,29 @@ else
    hq = CFDB_QueryPerformance(&dbconn,bson_empty(&b),job,regex);
    }
 
-returnval[0] = '\0';
+snprintf(returnval,bufsize,"<table>");
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   snprintf(buffer,CF_MAXVARSIZE-1,"%s,",hh->keyhash);
+   if (counter++ % 6 == 0)
+      {
+      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
+      Join(returnval,buffer,bufsize);
+      }
    
-   tmpsize = strlen(buffer);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
-   if (count + tmpsize > bufsize - 1)
+   Join(returnval,buffer,bufsize);
+   
+   if (counter > n && counter % 6 == 0)
       {
       break;
       }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
    }
+
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPerformance);
 
@@ -1669,7 +1704,7 @@ int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *returnval,int
   struct HubHost *hh;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize,icmp;
+  int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
@@ -1695,24 +1730,29 @@ else
    hq = CFDB_QuerySetuid(&dbconn,bson_empty(&b),file,regex);
    }
 
-returnval[0] = '\0';
+snprintf(returnval,bufsize,"<table>");
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   snprintf(buffer,CF_MAXVARSIZE-1,"%s,",hh->keyhash);
+   if (counter++ % 6 == 0)
+      {
+      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
+      Join(returnval,buffer,bufsize);
+      }
    
-   tmpsize = strlen(buffer);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
-   if (count + tmpsize > bufsize - 1)
+   Join(returnval,buffer,bufsize);
+   
+   if (counter > n && counter % 6 == 0)
       {
       break;
       }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
    }
+
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubSetUid);
 
@@ -1733,7 +1773,7 @@ int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *returnval,i
   struct HubHost *hh;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize,icmp;
+  int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
@@ -1759,24 +1799,29 @@ else
    hq = CFDB_QueryBundleSeen(&dbconn,bson_empty(&b),bundle,regex);
    }
 
-returnval[0] = '\0';
+snprintf(returnval,bufsize,"<table><tr>");
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   snprintf(buffer,CF_MAXVARSIZE-1,"%s,",hh->keyhash);
+   if (counter++ % 6 == 0)
+      {
+      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
+      Join(returnval,buffer,bufsize);
+      }
    
-   tmpsize = strlen(buffer);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
-   if (count + tmpsize > bufsize - 1)
+   Join(returnval,buffer,bufsize);
+   
+   if (counter > n && counter % 6 == 0)
       {
       break;
       }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
    }
+
+Join(returnval,"</tr></table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubBundleSeen);
 
@@ -1796,7 +1841,7 @@ int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
   struct HubHost *hh;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize,icmp;
+  int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
@@ -1829,24 +1874,29 @@ else
    hq = CFDB_QueryFileChanges(&dbconn,bson_empty(&b),file,regex,t,icmp);
    }
 
-returnval[0] = '\0';
+snprintf(returnval,bufsize,"<table>");
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   snprintf(buffer,CF_MAXVARSIZE-1,"%s,",hh->keyhash);
+   if (counter++ % 6 == 0)
+      {
+      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
+      Join(returnval,buffer,bufsize);
+      }
    
-   tmpsize = strlen(buffer);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
-   if (count + tmpsize > bufsize - 1)
+   Join(returnval,buffer,bufsize);
+   
+   if (counter > n && counter % 6 == 0)
       {
       break;
       }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
    }
+
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubFileChanges);
 
@@ -1866,7 +1916,7 @@ int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time
   struct HubHost *hh;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize,icmp;
+  int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
@@ -1900,25 +1950,29 @@ else
    hq = CFDB_QueryFileDiff(&dbconn,bson_empty(&b),file,diffs,regex,t,icmp);
    }
 
-returnval[0] = '\0';
+snprintf(returnval,bufsize,"<table>");
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   snprintf(buffer,CF_MAXVARSIZE-1,"%s,",hh->keyhash);
+   if (counter++ % 6 == 0)
+      {
+      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
+      Join(returnval,buffer,bufsize);
+      }
    
-   tmpsize = strlen(buffer);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
-   if (count + tmpsize > bufsize - 1)
+   Join(returnval,buffer,bufsize);
+   
+   if (counter > n && counter % 6 == 0)
       {
       break;
       }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
    }
 
+Join(returnval,"</table>\n",bufsize);
 DeleteHubQuery(hq,DeleteHubFileDiff);
 
 if (!CFDB_Close(&dbconn))
@@ -2372,11 +2426,11 @@ void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize)
 
 { int score = Nova_GetHostColour(hostkey);
 
-if (score < CF_RED_THRESHOLD)
+if (Nova_IsYellow(score))
    {
    strncpy(buffer,"yellow",bufsize);
    }
-else if (score < CF_AMBER_THRESHOLD)
+else if (Nova_IsGreen(score))
    {
    strncpy(buffer,"green",bufsize);
    }
@@ -2511,7 +2565,7 @@ int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,i
   struct HubVariable *hv,*hv2;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize = 0;
+  int count = 0, n = 180;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
