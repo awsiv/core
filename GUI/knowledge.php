@@ -39,14 +39,17 @@ if ($search == "")
 
     echo "<div id=\"image\">";
     echo "<h2>Copernicus local cluster view</h2>";
-    include("/srv/www/htdocs/graphs/$pid.map");
+
+    $docroot = cfpr_docroot();
+
+    include("$docroot/graphs/$pid.map");
     echo "</div><br>";
 
     echo "<div id=\"image\">";
-    if (file_exists("/srv/www/htdocs/graphs/influence_$pid.map"))
+    if (file_exists("$docroot/graphs/influence_$pid.map"))
        {
        echo "<h2>Copernicus influence channel view</h2>";
-       include("/srv/www/htdocs/graphs/influence_$pid.map");
+       include("$docroot/graphs/influence_$pid.map");
        }
 
     echo "</div>";

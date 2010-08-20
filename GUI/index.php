@@ -26,6 +26,7 @@ echo "</ul>\n";
 echo "<ul><li>This edition licensed to `<b>$ret1</b>'. <li>Granted $ret2 licenses. <li>You promise to have paid for $ret3 paid</ul>";
 
 echo "</td><td>\n";
+cfpr_compliance_summary_graph();
 echo "<img src=\"/hub/common/compliance.png\">";                                                               
 echo "<br><br>";
 echo "<img src=\"/green.png\"> promises kept <img src=\"/yellow.png\"> repaired <img src=\"/red.png\"> not kept";

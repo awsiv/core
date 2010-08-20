@@ -25,11 +25,16 @@ $colour = cfpr_get_host_colour($hostkey);
 <div id="status">
 
 <?php 
+echo "<p><form method=\"post\" action=\"host.php\">";
+$allhosts = cfpr_select_hosts(".*",100);
+echo "$allhosts";
+echo "<input type=\"submit\">";
+echo "</form></h2>";
+echo "<p>";
+
 echo "  <h2>Selected: $hostname</h2>";
 echo "<p><a href=\"hosts.php?type=$colour\"><img src=\"/img/$colour"."_sign_big.png\"></a><br></p>\n"; 
-?>
 
-<?php
 $last = cfpr_getlastupdate($hostkey);
 $class = cfpr_get_variable($hostkey,"sys","ostype");
 $flavour = cfpr_get_variable($hostkey,"sys","flavour");
@@ -51,10 +56,7 @@ echo "</ul></div>\n";
 
 ?>
 
-
 </div>
-
-
 </td>
 <td>                                                                        
 
@@ -64,13 +66,14 @@ echo "<div id=\"info\">\n";
 cfpr_summary_meter(NULL);
 
 echo "<h2>Average compliance of $hostname</h2>";
+
 echo "<div id=\"meter\"><a href=\"topN.php\"><img src=\"/hub/$hostkey/meter.png\"></a></div>";
 
 echo "<ul>";
 echo "<li><img src=\"/img/vital.png\">&nbsp;<a href=\"vitals.php?hostkey=$hostkey\">Pulse and vital signs for this host</a></li>\n";
 
 echo "<li><form method=\"post\" action=\"search.php\">";
-echo "Search:";
+echo "Search: (.*+[])";
 
 echo "<p><input class=\"searchfield\" type=\"text\" name=\"search\" />";
 
@@ -84,24 +87,7 @@ echo "<input type=\"submit\">";
 echo "</form>";
 echo "</ul>";
 ?>
-
-
 </form>
-
-
-</td>
-<td>
-
-<h2>Select specific host</h2>
-<form method="post" action="host.php">
-<p><?php $allhosts = cfpr_select_hosts(".*",100);
-echo "$allhosts";?>
-<p>
-<input type="submit">
-</form>
-<p>
-<br>
-<a href="status.php">View all hosts</a>
 </td>
 </tr>   
 </table>

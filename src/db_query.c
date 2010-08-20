@@ -995,7 +995,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,bson *query,char *lha
   double rago,ravg,rdev;
   char rhash[CF_MAXVARSIZE],rhost[CF_MAXVARSIZE],raddr[CF_MAXVARSIZE];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
-  int match_host,match_hash,match_addr,found = false;
+  int match_host,match_hash,match_addr,match_ago,found = false;
   time_t rt;
   
 /* BEGIN query document */
@@ -1085,7 +1085,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                }
 
-            match_host = match_addr = match_hash = true;
+            match_host = match_addr = match_hash = match_ago = true;
             
             if (regex)
                {
@@ -1122,8 +1122,13 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   match_addr = false;
                   }
                }
+
+            if (lago > rago)
+               {
+               match_ago = false;
+               }
             
-            if (match_hash && match_host && match_addr)
+            if (match_hash && match_host && match_addr && match_ago)
                {
                found = true;
                AppendRlistAlien(&record_list,NewHubLastSeen(CF_THIS_HH,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev,rt));

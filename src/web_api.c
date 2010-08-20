@@ -702,8 +702,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseCompliance *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
-            hp->hh->hostname,hp->handle,hp->handle,hp->e,hp->d,cf_ctime(&(hp->t)));
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
+            hp->hh->hostname,hp->handle,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_ctime(&(hp->t)));
    Join(returnval,buffer,bufsize);
    }
 
@@ -2762,5 +2762,20 @@ if (!CFDB_Close(&dbconn))
 return true;
 }
 
+/*****************************************************************************/
+
+char *Nova_LongState(char s)
+
+{
+ switch (s)
+    {
+    case 'c':
+        return "Compliant";
+    case 'r':
+        return "Repaired";
+    case 'n':
+        return "Not compliance";
+    }
+}
 
 #endif
