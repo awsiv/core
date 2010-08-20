@@ -1,3 +1,4 @@
+
 /*****************************************************************************/
 /*                                                                           */
 /* File: cf.nova.h                                                           */
@@ -336,6 +337,7 @@ struct Item *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *b
 struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
 struct Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
 struct Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
+struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
@@ -524,6 +526,10 @@ struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double rep
 void DeleteHubValue(struct HubValue *hp);
 struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons);
 void DeleteHubPromise(struct HubPromise *hp);
+struct HubBody *NewHubBody(char *bodyName,char *bodyType,char *bodyArgs);
+void DeleteHubBody(struct HubBody *hb);
+struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char *classContext);
+void DeleteHubBodyAttributes(struct HubBodyAttr *ha);
 
 /* knowledge.c */
 
@@ -1337,3 +1343,21 @@ struct HubPromise
    int lineNo;
    char **constraints;
    };
+
+
+struct HubBody
+  {
+  char *bodyName;
+  char *bodyType;
+  char *bodyArgs; // comma separated
+  struct HubBodyAttr *attr;
+  };
+
+
+struct HubBodyAttr
+  {
+  char *classContext;
+  char *lval;
+  char *rval;
+  struct HubBodyAttr *next;
+  };

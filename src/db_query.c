@@ -3169,6 +3169,103 @@ return bNameReferees;
 }
 
 /*****************************************************************************/
+
+struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name)
+/*
+ * Returns all attribs of one body by its type and name.
+ * MEMORY NOTE: Caller must use DeleteHubBody() on the reutrned val (!=NULL)
+ */
+{ bson_buffer b;
+  bson query;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  char ba[CF_MAXVARSIZE] = {0}, cc[CF_MAXVARSIZE] = {0};
+  char lval[CF_MAXVARSIZE] = {0}, rval[CF_MAXVARSIZE] = {0};
+  struct HubBody *hb = {0};
+  
+  /* BEGIN query document */
+
+bson_buffer_init(&b);
+bson_append_string(&b,cfb_bodytype,type);
+bson_append_string(&b,cfb_bodyname,name);
+bson_from_buffer(&query,&b);
+
+
+/* BEGIN SEARCH */
+cursor = mongo_find(conn,MONGO_BODIES,&query,NULL,0,0,0);
+bson_destroy(&query);
+
+
+if (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   hb = NewHubBody(type,name,NULL);
+   
+   while (bson_iterator_next(&it1))
+      {
+      if(strcmp(bson_iterator_key(&it1), cfb_bodyargs) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         
+         memset(ba,0,sizeof(ba));
+         
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         
+         while(bson_iterator_next(&it2))
+            {
+            if(strlen(ba) + strlen(bson_iterator_string(&it2)) < sizeof(ba))
+               {
+               strcat(ba,bson_iterator_string(&it2));
+               strcat(ba, ",");
+               }
+            else
+               {
+               break;
+               }
+            }
+         
+         if(ba[0] != '\0')
+            {
+            ba[strlen(ba)-1] = '\0';  // remove last comma
+	    hb->bodyArgs = strdup(ba);  // freed in DeleteHubBody()
+            }
+         
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfb_classcontext) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+	 while(bson_iterator_next(&it2))
+	   {
+	     snprintf(cc,sizeof(cc),"%s",bson_iterator_key(&it2));
+	     
+	     bson_iterator_init(&it3,bson_iterator_value(&it2));
+	     
+	     while(bson_iterator_next(&it3))
+	       {
+		 snprintf(lval,sizeof(lval),"%s",bson_iterator_key(&it3));
+		 snprintf(rval,sizeof(rval),"%s",bson_iterator_string(&it3));
+
+		 NewHubBodyAttr(hb,lval,rval,cc);
+	       }
+	     
+	   }
+	 
+         
+         }
+      }
+   }
+
+ 
+
+mongo_cursor_destroy(cursor);
+
+ return hb;
+}
+
+
+/*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
 

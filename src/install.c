@@ -623,3 +623,106 @@ void DeleteHubPromise(struct HubPromise *hp)
   free(hp);
   hp = NULL;
 }
+
+/*****************************************************************************/
+
+struct HubBody *NewHubBody(char *bodyName,char *bodyType,char *bodyArgs)
+{
+  struct HubBody *hb;
+
+if ((hb = malloc(sizeof(struct HubBody))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubBody");
+   }
+
+ hb->bodyName = strdup(bodyName);
+ hb->bodyType = strdup(bodyType);
+ 
+ if(EMPTY(bodyArgs))
+   {
+     hb->bodyArgs = NULL;
+   }
+ else
+   {
+     hb->bodyArgs = strdup(bodyArgs);
+   }
+ 
+
+ hb->attr = NULL;
+
+ return hb;
+}
+
+/*****************************************************************************/
+
+void DeleteHubBody(struct HubBody *hb)
+{
+  free(hb->bodyName);
+  free(hb->bodyType);
+
+  if(hb->bodyArgs)
+    {
+      free(hb->bodyArgs);
+    }
+
+  DeleteHubBodyAttributes(hb->attr);
+  
+  free(hb);
+}
+
+/*****************************************************************************/
+
+struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char *classContext)
+/* Appends to existing attribs */
+{
+  struct HubBodyAttr *ha,*curr;
+
+if ((ha = malloc(sizeof(struct HubBodyAttr))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubBodyAttr");
+   }
+
+ ha->lval = strdup(lval);
+ ha->rval = strdup(rval);
+ ha->classContext = strdup(classContext);
+ ha->next = NULL;
+
+
+ if(!hb->attr)
+   {
+     hb->attr = ha;
+   }
+ else
+   {
+     curr = hb->attr;
+ 
+     while(curr->next)
+       {
+	 curr = curr->next;
+       }
+     
+     curr->next = ha;
+   }
+
+ return ha;
+}
+
+/*****************************************************************************/
+
+void DeleteHubBodyAttributes(struct HubBodyAttr *ha)
+{
+  if(!ha)
+    {
+      return;
+    }
+
+  if(ha->next)
+    {
+      DeleteHubBodyAttributes(ha->next);
+    }
+
+  free(ha->lval);
+  free(ha->rval);
+  free(ha->classContext);
+  free(ha);
+}
