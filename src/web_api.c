@@ -107,6 +107,7 @@ if (hostkey && strlen(hostkey) > 0)
    {
    then = 0;
    CFDB_QueryLastUpdate(&dbconn,hostkey,&then);
+
    if (then > 0)
       {
       snprintf(buffer,bufsize,"%s",cf_ctime(&then));
@@ -434,6 +435,7 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *returnval,i
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;
+  time_t now = time(NULL);
 
 /* BEGIN query document */
  
@@ -467,7 +469,20 @@ Join(returnval,buffer,bufsize);
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hc = (struct HubClass *)rp->item;
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%lf</td><td>%lf</td><td>%s</td></tr>\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+   
+   if (now - hc->t > 6*3600)
+      {
+      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%lf</td><td>%lf</td><td><span id=\"amber\">%s</span></td></tr>\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+      }
+   else if (now - hc->t > (time_t)CF_WEEK)
+      {
+      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%lf</td><td>%lf</td><td><span id=\"red\">%s</span></td></tr>\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+      }
+   else
+      {
+      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%lf</td><td>%lf</td><td>%s</td></tr>\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+      }
+   
    Join(returnval,buffer,bufsize);
    }
 
@@ -2860,7 +2875,7 @@ returnval[0] = '\0';
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    struct HubClass *hc = (struct HubClass *)rp->item;
-   IdempItemCount(&order_results,hc->class);
+   IdempItemCount(&order_results,hc->class,NULL);
    }
 
 snprintf(returnval,bufsize,"<table>");

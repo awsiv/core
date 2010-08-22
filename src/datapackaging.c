@@ -217,13 +217,9 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       average = entry.Q.expect;
       var     = entry.Q.var;
 
-      if (PURGE == 'y')
+      if (now - then > (time_t)CF_WEEK)
          {
-         if (now - then > CF_WEEK*52)
-            {
-            DeleteDB(dbp,key);
-            }
-
+         DeleteDB(dbp,key);
          CfOut(cf_inform,""," -> Deleting expired entry for %s\n",eventname);
          continue;
          }

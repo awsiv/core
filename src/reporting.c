@@ -2080,12 +2080,14 @@ fprintf(fout,"</table></div>\n");
 void Nova_ZenossSummary(char *docroot)
 
 { char name[CF_MAXVARSIZE];
- struct Item *clist,*ip;
+ struct Item *clist = NULL,*ip;
   FILE *fout;
- 
+
 snprintf(name,sizeof(name),"%s/reports/summary.z",docroot);
 
+#ifdef HAVE_LIBMONGOC
 clist = Nova_RankHosts(NULL,0,cfrank_compliance,200);
+#endif
 
 if (fout = fopen(name,"w"))
    {
