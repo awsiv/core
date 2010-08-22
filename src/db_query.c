@@ -3256,10 +3256,12 @@ return bNameReferees;
 /*****************************************************************************/
 
 struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name)
+
 /*
  * Returns all attribs of one body by its type and name.
  * MEMORY NOTE: Caller must use DeleteHubBody() on the reutrned val (!=NULL)
  */
+
 { bson_buffer b;
   bson query;
   mongo_cursor *cursor;

@@ -2522,6 +2522,62 @@ return "No such promise";
 
 /*****************************************************************************/
 
+void Nova2PHP_GetPromiseBody(char *ref,char *returnval,int bufsize)
+    
+{ char work[CF_BUFSIZE];
+  char name[CF_MAXVARSIZE];
+  mongo_connection dbconn;
+  struct HubBody *hb;
+    
+sscanf(ref,"%[^(;]",name);
+  
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return;
+   }
+
+hb = CFDB_QueryBody(&dbconn,NULL,name);
+
+if (hb)
+   {
+   snprintf(returnval,CF_MAXVARSIZE-1,"<div id=\"showbody\"><table>\n");
+   
+   snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Type</td><td>:</td><td><a href=\"knowledge.php?topic=%s\">%s</a></td></tr>\n",hb->bodyType,hb->bodyType);
+   Join(returnval,work,bufsize);
+
+   snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Name</td><td>:</td><td><a href=\"knowledge.php?topic=%s\">%s</a></td></tr>\n",hb->bodyName,hb->bodyName);
+   Join(returnval,work,bufsize);
+         
+   if (hb->bodyArgs)
+      {
+      snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Arguments</td><td>:</td><td>%s</td></tr>\n",hb->bodyArgs);
+      Join(returnval,work,bufsize);
+      }
+   
+   if (hb->attr)
+      {
+      struct HubBodyAttr *ha; 
+      
+      for(ha = hb->attr; ha != NULL; ha = ha->next)
+         {
+         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span id=\"rval\">%s</span></td><td><a href=\"knowledge.php?topic=%s\">%s</a></td></tr>",ha->lval,ha->lval,ha->rval,ha->classContext,ha->classContext);
+         }
+      Join(returnval,work,bufsize);      
+      }
+   
+   DeleteHubBody(hb);
+   strcat(returnval,"</table></div>\n");
+   }
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+}
+
+/*****************************************************************************/
+
 char *Nova2PHP_GetPromiseType(char *handle)
     
 { static char buffer[CF_BUFSIZE];
