@@ -2847,12 +2847,12 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
 
-   hq = CFDB_QueryClasses(&dbconn,&query,name,regex,(time_t)CF_WEEK);
+   hq = CFDB_QueryClasses(&dbconn,&query,name,regex,CF_HUB_HORIZON);
    bson_destroy(&query);
    }
 else
    {
-   hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),name,regex,(time_t)CF_WEEK);
+   hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),name,regex,CF_HUB_HORIZON);
    }
 
 returnval[0] = '\0';
