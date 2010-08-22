@@ -307,12 +307,12 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 #ifdef HAVE_LIBMONGOC
 
 void CFDB_GetValue(char *lval,char *rval,int size);
-
+int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
 struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query);
 struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,bson *query,char *lday,char *lmonth,char *lyear);
 struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,bson *query,enum promiselog_rep type,char *lhandle,int regex);
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,bson *query,char *type,char *name,char *ver,char *arch,int regex);
-struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,bson *query,char *lclass,int regex);
+struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,bson *query,char *lclass,int regex,time_t horizon);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,bson *query,char *lversion,time_t ltime,int lkept,int lnotkept,int lrepaired,int cmp);
 struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,bson *query,char *lscope,char *llval,char *lrval,char *ltype,int reg);
 struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,bson *query,char *handle,char lstatus,int regex);
@@ -375,6 +375,7 @@ void CFDB_SaveFileDiffs(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveBundles(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveValueReport(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr);
+void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
 #endif
 
 /* datapackaging.c */
@@ -1042,6 +1043,7 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observabl
 #define NOVA_LICENSE "nova_track" "." DB_FEXT
 #define NOVA_VALUE "nova_value" "." DB_FEXT
 #define NOVA_NETWORK "nova_network" "." DB_FEXT
+#define NOVA_GLOBALCOUNTERS "nova_counters" "." DB_FEXT
 
 #define NOVA_BUNDLE_LOG "bundles" "." DB_FEXT
 #define NOVA_DIFF_LOG "nova_diff.log"
@@ -1054,6 +1056,8 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observabl
 #define CF_RED_THRESHOLD 1000
 #define CF_AMBER_THRESHOLD 100
 #define CF_GREEN 0
+
+#define CF_HUB_HORIZON 900 // 15 mins
 
 struct month_days
    {
@@ -1111,6 +1115,7 @@ struct promise_value
 #define cfr_cause        "ca"
 #define cfr_class        "cl"
 #define cfr_class_keys   "ck"
+#define cfr_class_jobs   "cj"
 #define cfr_total_compliance "tc"
 #define cfr_time          "t"
 #define cfr_version       "v"

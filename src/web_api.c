@@ -449,12 +449,12 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
 
-   hq = CFDB_QueryClasses(&dbconn,&query,name,regex);
+   hq = CFDB_QueryClasses(&dbconn,&query,name,regex,(time_t)CF_WEEK);
    bson_destroy(&query);
    }
 else
    {
-   hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),name,regex);
+   hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),name,regex,(time_t)CF_WEEK);
    }
 
 returnval[0] = '\0';
@@ -1306,12 +1306,12 @@ if (hostkey && strlen(hostkey) > 0)
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
 
-   hq = CFDB_QueryClasses(&dbconn,&query,name,regex);
+   hq = CFDB_QueryClasses(&dbconn,&query,name,regex,(time_t)CF_WEEK);
    bson_destroy(&query);
    }
 else
    {
-   hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),name,regex);
+   hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),name,regex,(time_t)CF_WEEK);
    }
 
 snprintf(returnval,bufsize,"<table>");
@@ -2818,6 +2818,80 @@ DeleteRlist(handles);
 return true;
 }
 
+
+/*****************************************************************************/
+
+int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize)
+
+{ char *report,work[CF_BUFSIZE];
+  struct HubHost *hh;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  struct Item *order_results = NULL,*ip;
+  int count = 0, tmpsize;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+
+/* BEGIN query document */
+ 
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+
+   hq = CFDB_QueryClasses(&dbconn,&query,name,regex,(time_t)CF_WEEK);
+   bson_destroy(&query);
+   }
+else
+   {
+   hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),name,regex,(time_t)CF_WEEK);
+   }
+
+returnval[0] = '\0';
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   struct HubClass *hc = (struct HubClass *)rp->item;
+   IdempItemCount(&order_results,hc->class);
+   }
+
+snprintf(returnval,bufsize,"<table>");
+
+/* Make a histogram of job vs number of hosts */
+order_results = SortItemListNames(order_results);
+
+for (ip = order_results; ip != NULL; ip = ip->next)
+   {   
+   snprintf(work,CF_BUFSIZE,"<tr><td>%s</td><td>%d</td></tr>",ip->name,ip->counter+1);
+   count = ip->counter+1;
+   Join(returnval,work,bufsize);
+   }
+
+if (count == 0)
+   {
+   snprintf(work,CF_BUFSIZE,"<tr><td>No occurrences</td></tr>");
+   Join(returnval,work,bufsize);
+   }
+
+strcat(returnval,"</table>");
+DeleteHubQuery(hq,DeleteHubClass);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return count;
+}
+
 /*****************************************************************************/
 
 char *Nova_LongState(char s)
@@ -2830,6 +2904,7 @@ char *Nova_LongState(char s)
     case 'r':
         return "Repaired";
     case 'n':
+    default:
         return "Not compliance";
     }
 }

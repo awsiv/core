@@ -393,12 +393,11 @@ bson_destroy(&host_key);
 
 void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, struct Item *data)
 
-/**
+/*
  *  Replacing existing class entry, but not deleting "old" entries (purging)
  */
 
-{ bson_buffer bb;
-  bson_buffer *setObj, *clObj, *keyArr, *keyAdd, *keyArrField;
+{ bson_buffer bb,*setObj,*clObj,*keyArr,*keyAdd,*keyArrField;
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
@@ -421,7 +420,7 @@ setObj = bson_append_start_object(&bb, "$set");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%[^,],%ld,%7.4lf,%7.4lf\n",name,&t,&e,&dev);   
+   sscanf(ip->name,"%[^,],%ld,%lf,%lf\n",name,&t,&e,&dev);   
    snprintf(varName, sizeof(varName), "%s.%s", cfr_class, name);
    
    clObj = bson_append_start_object(setObj , varName);
@@ -437,14 +436,14 @@ bson_append_finish_object(setObj);
 // insert keys into numbered key array
 
 keyAdd = bson_append_start_object(&bb , "$addToSet");
-keyArrField = bson_append_start_object(keyAdd , cfr_class_keys);
+keyArrField = bson_append_start_object(keyAdd,cfr_class_keys);
 keyArr = bson_append_start_array(keyAdd , "$each");
 
 for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    {
    sscanf(ip->name,"%[^,],%ld,%lf,%lf\n",name,&t,&e,&dev);   
    snprintf(iStr,sizeof(iStr),"%d",i);
-   bson_append_string(keyArr,iStr,name);
+   bson_append_string(keyArr,iStr,name);   
    }
 
 bson_append_finish_object(keyArr);
@@ -1143,6 +1142,7 @@ mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
 }
+
 
 #endif  /* HAVE_MONGOC */
 
