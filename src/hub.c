@@ -217,7 +217,7 @@ if (long_time_no_see)
       {
       char msg[CF_MAXVARSIZE];
       snprintf(msg,CF_MAXVARSIZE,"HUB full sensor sweep of peer %s",peer);
-      PromiseLog(msg);
+      Nova_HubLog(msg);
       }
    
    YieldCurrentLock(thislock);
@@ -231,7 +231,7 @@ else
       {
       char msg[CF_MAXVARSIZE];
       snprintf(msg,CF_MAXVARSIZE,"HUB delta sensor sweep of peer %s",peer);
-      PromiseLog(msg);
+      Nova_HubLog(msg);
       }
    }
 
@@ -287,5 +287,30 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
 DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
 return list;
+}
+
+/*********************************************************************/
+
+void Nova_HubLog(char *s)
+
+{ char filename[CF_BUFSIZE],start[CF_BUFSIZE],end[CF_BUFSIZE];
+  time_t now = time(NULL);
+  FILE *fout;
+
+if (s == NULL || strlen(s) ==  0)
+   {
+   return;
+   }
+  
+snprintf(filename,CF_BUFSIZE,"%s/%s",CFWORKDIR,"hub_log");
+
+if ((fout = fopen(filename,"a")) == NULL)
+   {
+   CfOut(cf_error,"fopen","Could not open %s",filename);
+   return;
+   }
+
+fprintf(fout,"%ld,%ld: %s\n",CFSTARTTIME,now,s);
+fclose(fout);
 }
 

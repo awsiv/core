@@ -490,6 +490,7 @@ void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Pro
 void Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp);
 int Nova_HailPeer(char *host,struct Attributes a,struct Promise *pp);
 struct Item *Nova_ScanClients(void);
+void Nova_HubLog(char *s);
 
 /* install.c */
 
