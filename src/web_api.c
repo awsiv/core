@@ -2591,14 +2591,14 @@ all_bodies = CFDB_QueryAllBodies(&dbconn,type,name);
 
 if (all_bodies)
    {
-   for (ip = all_bodies; ip = NULL; ip=ip->next)
+   for (ip = all_bodies; ip != NULL; ip=ip->next)
       {
       snprintf(returnval,CF_MAXVARSIZE-1,"<div id=\"bodies\"><ul>\n");
       
       snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"knowledge.php?topic=%s\">%s</a> ",ip->classes,ip->classes);
       Join(returnval,work,bufsize);
       
-      snprintf(work,CF_MAXVARSIZE-1,"<a href=\"body.php?body=%s&type=\">%s</a></li>\n",ip->name,ip->classes,ip->name);
+      snprintf(work,CF_MAXVARSIZE-1,"<a href=\"body.php?body=%s&type=%s\">%s</a></li>\n",ip->name,ip->classes,ip->name);
       Join(returnval,work,bufsize);
 
       strcat(returnval,"</ul></div>\n");

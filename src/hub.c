@@ -212,12 +212,27 @@ if (long_time_no_see)
    {
    CfOut(cf_verbose,""," -> Running FULL sensor sweep of %s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
    Nova_QueryForKnowledgeMap(conn,"full",time(0));
+
+   if (LOGGING)
+      {
+      char msg[CF_MAXVARSIZE];
+      snprintf(msg,CF_MAXVARSIZE,"HUB full sensor sweep of peer %s",peer);
+      PromiseLog(msg);
+      }
+   
    YieldCurrentLock(thislock);
    }
 else
    {
    CfOut(cf_verbose,""," -> Running differential sensor sweep of %s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
    Nova_QueryForKnowledgeMap(conn,"delta",now - average_time);
+
+   if (LOGGING)
+      {
+      char msg[CF_MAXVARSIZE];
+      snprintf(msg,CF_MAXVARSIZE,"HUB delta sensor sweep of peer %s",peer);
+      PromiseLog(msg);
+      }
    }
 
 ServerDisconnection(conn);

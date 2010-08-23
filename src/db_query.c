@@ -3408,7 +3408,7 @@ if (!emptyQuery)
 
 /* BEGIN SEARCH */
 
-if (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))  // loops over documents
    {
    bson_iterator_init(&it1,cursor->current.data);
    found = false;
@@ -3419,10 +3419,12 @@ if (mongo_cursor_next(cursor))  // loops over documents
          {
          strncpy(name,(char *)bson_iterator_string(&it1),CF_MAXVARSIZE-1);
          }
-      else if (strcmp(bson_iterator_key(&it1), cfb_bodyname) == 0)
+      else if (strcmp(bson_iterator_key(&it1), cfb_bodytype) == 0)
          {
          strncpy(type,(char *)bson_iterator_string(&it1),CF_MAXVARSIZE-1);
          }
+
+      found = true;
       }
 
    if (found)
