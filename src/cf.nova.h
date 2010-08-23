@@ -323,7 +323,6 @@ struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,bson *query,char *lname
 struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn,bson *query,char *lname,int regex);
 struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,bson *query,char *lname,int regex,time_t lt,int cmp);
 struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,bson *query,char *lname,char *ldiff,int regex,time_t lt,int cmp);
-
 int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
 int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
 int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
@@ -339,6 +338,7 @@ struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char 
 struct Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
 struct Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
 struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
+struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
@@ -815,7 +815,8 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,char *name,int distance,in
 
 /* web_api.c */
 
-void Nova2PHP_GetPromiseBody(char *ref, char *buffer, int bufsize);
+void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize);
+int Nova2PHP_list_bodies(char *name,char *type,char *buffer,int bufsize);
 char *Nova_LongState(char s);
 int Nova2PHP_docroot(char *buffer,int bufsize);
 void Nova_EnterpriseModuleTrick(void);

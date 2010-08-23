@@ -2522,14 +2522,11 @@ return "No such promise";
 
 /*****************************************************************************/
 
-void Nova2PHP_GetPromiseBody(char *ref,char *returnval,int bufsize)
+void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
     
 { char work[CF_BUFSIZE];
-  char name[CF_MAXVARSIZE];
   mongo_connection dbconn;
-  struct HubBody *hb;
-    
-sscanf(ref,"%[^(;]",name);
+  struct HubBody *hb;    
   
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -2537,21 +2534,21 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return;
    }
 
-hb = CFDB_QueryBody(&dbconn,NULL,name);
+hb = CFDB_QueryBody(&dbconn,type,name);
 
 if (hb)
    {
    snprintf(returnval,CF_MAXVARSIZE-1,"<div id=\"showbody\"><table>\n");
    
-   snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Type</td><td>:</td><td><a href=\"knowledge.php?topic=%s\">%s</a></td></tr>\n",hb->bodyType,hb->bodyType);
+   snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Type</td><td>:</td><td><a href=\"knowledge.php?topic=%s\">%s</a></td><td></td></tr>\n",hb->bodyType,hb->bodyType);
    Join(returnval,work,bufsize);
 
-   snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Name</td><td>:</td><td><a href=\"knowledge.php?topic=%s\">%s</a></td></tr>\n",hb->bodyName,hb->bodyName);
+   snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Name</td><td>:</td><td><a href=\"knowledge.php?topic=%s\">%s</a></td><td></td></tr>\n",hb->bodyName,hb->bodyName);
    Join(returnval,work,bufsize);
          
    if (hb->bodyArgs)
       {
-      snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Arguments</td><td>:</td><td>%s</td></tr>\n",hb->bodyArgs);
+      snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Arguments</td><td>:</td><td>%s</td><td></td></tr>\n",hb->bodyArgs);
       Join(returnval,work,bufsize);
       }
    
@@ -2574,6 +2571,46 @@ if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_list_bodies(char *name,char *type,char *returnval,int bufsize)
+
+{ mongo_connection dbconn;
+  char work[CF_MAXVARSIZE];
+  struct Item *all_bodies,*ip;    
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return -1;
+   }
+
+all_bodies = CFDB_QueryAllBodies(&dbconn,type,name);
+
+if (all_bodies)
+   {
+   for (ip = all_bodies; ip = NULL; ip=ip->next)
+      {
+      snprintf(returnval,CF_MAXVARSIZE-1,"<div id=\"bodies\"><ul>\n");
+      
+      snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"knowledge.php?topic=%s\">%s</a> ",ip->classes,ip->classes);
+      Join(returnval,work,bufsize);
+      
+      snprintf(work,CF_MAXVARSIZE-1,"<a href=\"body.php?body=%s&type=\">%s</a></li>\n",ip->name,ip->classes,ip->name);
+      Join(returnval,work,bufsize);
+
+      strcat(returnval,"</ul></div>\n");
+      }
+   }
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
 }
 
 /*****************************************************************************/
@@ -2779,27 +2816,8 @@ Join(returnval,work,bufsize);
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Promise concerns</td><td>:</td><td><span id=\"subtype\">%s</span></td></tr>",hp->promiseType);
 Join(returnval,work,bufsize);
 
-
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applies in the class context</td><td>:</td><td><span id=\"classcontext\">%s</span></td></tr>",hp->classContext);
 Join(returnval,work,bufsize);
-
-
-
-/*
-snprintf(returnval, bufsize, "<br><br>Resource object '%s' of type %s%s%s<br>     context => %s<br>     handle => %s%s<br>Promised in file '%s' near line %d.<br>Part of bundle '%s' (type %s)%s.",
-         hp->promiser,
-         hp->promiseType,
-         promiseeText,
-         commentText,
-         hp->classContext,
-         hp->handle,
-         constText,
-         hp->file,
-         hp->lineNo,
-         hp->bundleName,
-         hp->bundleType,
-         bArgText);
-*/
 
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Defined in file</td><td>:</td><td><span id=\"file\">%s</span> near line %d</td></tr>",hp->file,hp->lineNo);
 Join(returnval,work,bufsize);
@@ -2813,18 +2831,14 @@ if (hp->constraints)
    {
    for(i = 0; hp->constraints[i] != NULL; i++)
       {
-      char lval[CF_MAXVARSIZE],rval[CF_MAXVARSIZE];
+      char lval[CF_MAXVARSIZE],rval[CF_MAXVARSIZE],args[CF_MAXVARSIZE];
 
-      sscanf(hp->constraints[i],"%255s => %1023[^\n]",lval,rval);
+      args[0] = '\0';
+      sscanf(hp->constraints[i],"%255s => %1023[^(,;]%[^\n]",lval,rval,args);
 
-      if (strchr(rval,'('))
-         {
-         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><a href=\"body.php?body=%s\"><span id=\"bodyname\">%s</span></a></td></tr>",lval,lval,rval,rval);
-         }
-      else
-         {
-         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span id=\"rval\">%s</span></td></tr>",lval,lval,rval);
-         }
+      
+      snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><a href=\"body.php?body=%s&type=%s\"><span id=\"bodyname\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
+      
       Join(returnval,work,bufsize);   
       }
 

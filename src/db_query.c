@@ -2918,13 +2918,13 @@ while(mongo_cursor_next(cursor))
 
 	   while(bson_iterator_next(&it2))
 	     {
-	     IdempAppendItem(&matched,bson_iterator_string(&it2),NULL);
+	     IdempAppendItem(&matched,(char *)bson_iterator_string(&it2),NULL);
 	     }
 
 	   }
 	 else
 	   {
-	   IdempAppendItem(&matched,bson_iterator_string(&it1),NULL);
+	   IdempAppendItem(&matched,(char *)bson_iterator_string(&it1),NULL);
 	   }
 
          break;
@@ -3019,7 +3019,7 @@ return handles;
 
 /*****************************************************************************/
 
-struct Item *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *bNameRegex)
+struct Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex)
 /*
  * Returns bundles "type name" matching the given regex.
  * Gets all if left unspecified.
@@ -3036,7 +3036,7 @@ struct Item *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *b
   char match[CF_MAXVARSIZE] = {0};
 
   // query
- bson_buffer_init(&bbuf);
+bson_buffer_init(&bbuf);
  
 if (!EMPTY(bTypeRegex))
    {
@@ -3243,7 +3243,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
       {
       if (strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
          {
-	   IdempAppendItem(&bNameReferees,(char *)bson_iterator_string(&it1),"agent");
+         IdempAppendItem(&bNameReferees,(char *)bson_iterator_string(&it1),"agent");
          }
       }
    }
@@ -3277,11 +3277,9 @@ bson_append_string(&b,cfb_bodytype,type);
 bson_append_string(&b,cfb_bodyname,name);
 bson_from_buffer(&query,&b);
 
-
 /* BEGIN SEARCH */
 cursor = mongo_find(conn,MONGO_BODIES,&query,NULL,0,0,0);
 bson_destroy(&query);
-
 
 if (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -3291,7 +3289,7 @@ if (mongo_cursor_next(cursor))  // loops over documents
    
    while (bson_iterator_next(&it1))
       {
-      if(strcmp(bson_iterator_key(&it1), cfb_bodyargs) == 0)
+      if (strcmp(bson_iterator_key(&it1), cfb_bodyargs) == 0)
          {
          bson_iterator_init(&it2,bson_iterator_value(&it1));
          
@@ -3301,7 +3299,7 @@ if (mongo_cursor_next(cursor))  // loops over documents
          
          while(bson_iterator_next(&it2))
             {
-            if(strlen(ba) + strlen(bson_iterator_string(&it2)) < sizeof(ba))
+            if (strlen(ba) + strlen(bson_iterator_string(&it2)) < sizeof(ba))
                {
                strcat(ba,bson_iterator_string(&it2));
                strcat(ba, ",");
@@ -3325,32 +3323,118 @@ if (mongo_cursor_next(cursor))  // loops over documents
 
 	 while(bson_iterator_next(&it2))
 	   {
-	     snprintf(cc,sizeof(cc),"%s",bson_iterator_key(&it2));
+           snprintf(cc,sizeof(cc),"%s",bson_iterator_key(&it2));
+	   
+           bson_iterator_init(&it3,bson_iterator_value(&it2));
 	     
-	     bson_iterator_init(&it3,bson_iterator_value(&it2));
-	     
-	     while(bson_iterator_next(&it3))
-	       {
-		 snprintf(lval,sizeof(lval),"%s",bson_iterator_key(&it3));
-		 snprintf(rval,sizeof(rval),"%s",bson_iterator_string(&it3));
-
-		 NewHubBodyAttr(hb,lval,rval,cc);
-	       }
-	     
+           while(bson_iterator_next(&it3))
+              {
+              snprintf(lval,sizeof(lval),"%s",bson_iterator_key(&it3));
+              snprintf(rval,sizeof(rval),"%s",bson_iterator_string(&it3));
+              
+              NewHubBodyAttr(hb,lval,rval,cc);
+              }	     
 	   }
-	 
-         
          }
       }
    }
 
- 
-
 mongo_cursor_destroy(cursor);
 
- return hb;
+return hb;
 }
 
+/*****************************************************************************/
+
+struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex)
+
+/*
+ * Returns all attribs of one body by its type and name.
+ * MEMORY NOTE: Caller must use DeleteHubBody() on the reutrned val (!=NULL)
+ */
+
+{ bson_buffer b;
+  bson_buffer bbuf; 
+  bson query,field;
+  int emptyQuery = true,found;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  char ba[CF_MAXVARSIZE] = {0}, cc[CF_MAXVARSIZE] = {0};
+  char lval[CF_MAXVARSIZE] = {0}, rval[CF_MAXVARSIZE] = {0};
+  struct HubBody *hb = {0};
+  char type[CF_MAXVARSIZE] = {0};
+  char name[CF_MAXVARSIZE] = {0};
+  struct Item *record_list = NULL;
+
+  /* BEGIN query document */
+
+bson_buffer_init(&bbuf);
+ 
+if (!EMPTY(bTypeRegex))
+   {
+   bson_append_regex(&bbuf,cfb_bodytype,bTypeRegex,"");
+   emptyQuery = false;
+   }
+
+if (!EMPTY(bNameRegex))
+   {
+   bson_append_regex(&bbuf,cfb_bodyname,bNameRegex,"");
+   emptyQuery = false;
+   }
+
+if (emptyQuery)
+   {
+   bson_empty(&query);
+   }
+else
+   {
+   bson_from_buffer(&query,&bbuf);
+   }
+
+// returned attribute
+bson_buffer_init(&bbuf);
+bson_append_int(&bbuf,cfb_bodytype,1);
+bson_append_int(&bbuf,cfb_bodyname,1);
+bson_from_buffer(&field,&bbuf);
+
+cursor = mongo_find(conn,MONGO_BODIES,&query,&field,0,0,0);
+
+bson_destroy(&field);
+
+if (!emptyQuery)
+   {
+   bson_destroy(&query);
+   }
+
+/* BEGIN SEARCH */
+
+if (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   found = false;
+
+   while (bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1), cfb_bodyname) == 0)
+         {
+         strncpy(name,(char *)bson_iterator_string(&it1),CF_MAXVARSIZE-1);
+         }
+      else if (strcmp(bson_iterator_key(&it1), cfb_bodyname) == 0)
+         {
+         strncpy(type,(char *)bson_iterator_string(&it1),CF_MAXVARSIZE-1);
+         }
+      }
+
+   if (found)
+      {
+      PrependItem(&record_list,name,type);
+      }
+   }
+             
+mongo_cursor_destroy(cursor);
+
+return record_list;
+}
 
 /*****************************************************************************/
 /* Level                                                                     */
