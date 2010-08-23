@@ -2557,7 +2557,7 @@ if (hb)
       {
       struct HubBodyAttr *ha; 
       
-      for(ha = hb->attr; ha != NULL; ha = ha->next)
+      for (ha = hb->attr; ha != NULL; ha = ha->next)
          {
          snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span id=\"rval\">%s</span></td><td><a href=\"knowledge.php?topic=%s\">%s</a></td></tr>",ha->lval,ha->lval,ha->rval,ha->classContext,ha->classContext);
          }
@@ -2589,21 +2589,22 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
 all_bodies = CFDB_QueryAllBodies(&dbconn,type,name);
+all_bodies = SortItemListNames(all_bodies);
 
 if (all_bodies)
    {
+   snprintf(returnval,CF_MAXVARSIZE-1,"<div id=\"bodies\"><ul>\n");
+      
    for (ip = all_bodies; ip != NULL; ip=ip->next)
       {
-      snprintf(returnval,CF_MAXVARSIZE-1,"<div id=\"bodies\"><ul>\n");
-      
       snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"knowledge.php?topic=%s\">%s</a> ",ip->classes,ip->classes);
       Join(returnval,work,bufsize);
       
       snprintf(work,CF_MAXVARSIZE-1,"<a href=\"body.php?body=%s&type=%s\">%s</a></li>\n",ip->name,ip->classes,ip->name);
       Join(returnval,work,bufsize);
-
-      strcat(returnval,"</ul></div>\n");
       }
+   
+   strcat(returnval,"</ul></div>\n");
    }
 
 if (!CFDB_Close(&dbconn))
