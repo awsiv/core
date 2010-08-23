@@ -414,7 +414,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                }
             
-            if (match_class && (now - rtime > CF_HUB_HORIZON))
+	    if (match_class && (now - rtime < CF_HUB_HORIZON))
                {
                found = true;
                rp = AppendRlistAlien(&record_list,NewHubClass(CF_THIS_HH,rclass,rex,rsigma,rtime));

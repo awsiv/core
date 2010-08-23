@@ -2750,6 +2750,16 @@ Join(buffer,"\n</select>\n",bufsize);
 
 /*****************************************************************************/
 
+int Nova2PHP_summarize_promise_helper(char *bundleType, char *bundleName, char *handle, char **promisers, char *promisee, 
+				      char *comment, char *promiseType, char *classContext, char *file, int lineNo,
+				      char **constraints, char *returnval,int bufsize)
+{
+  
+}
+
+
+/*****************************************************************************/
+
 int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
 
 { mongo_connection dbconn;
