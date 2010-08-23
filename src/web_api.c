@@ -83,6 +83,7 @@ if (false)
    Nova2PHP_choose_hosts("123",2,buffer,1000);
    NovaInitMeasurements();
    Nova2PHP_get_host_colour(NULL,buffer,3);
+   Nova_Header("sd","we",buffer,3); 
    }
 }
 
