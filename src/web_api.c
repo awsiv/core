@@ -2758,7 +2758,6 @@ int Nova2PHP_summarize_promise_helper(char *bundleType, char *bundleName, char *
   
 }
 
-
 /*****************************************************************************/
 
 int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
