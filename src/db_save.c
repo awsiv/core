@@ -1108,7 +1108,6 @@ for (ip = data; ip != NULL; ip=ip->next)
    bson_append_int(sub,cfr_time,then);
    bson_append_finish_object(sub);
    }
- bson_append_string(setObj,"test","test1");
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
