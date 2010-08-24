@@ -63,7 +63,7 @@
 #define CF_THIS_HH (void *)-1
 #define CF_KMAP "knowledge.php"
 #define CFDB_PORT 27017
-#define MONITOR_CLASS_PREFIX "mXc"
+#define MONITOR_CLASS_PREFIX "mXc_"
 #define CF_CHANGE_HORIZON 10
 
 enum cfd_menu
@@ -821,6 +821,7 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,char *name,int distance,in
 
 /* web_api.c */
 
+void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize);
 void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize);
 int Nova2PHP_list_bodies(char *name,char *type,char *buffer,int bufsize);
 char *Nova_LongState(char s);

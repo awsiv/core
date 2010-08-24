@@ -2914,6 +2914,32 @@ DeleteRlist(handles);
 return true;
 }
 
+/*****************************************************************************/
+
+void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize)
+
+{ struct Event e;
+  CF_DB *dbp;
+  char name[CF_MAXVARSIZE];
+
+snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_NETWORK);
+      
+if (OpenDB(name,&dbp))
+   {
+   if (ReadDB(dbp,hostkey,&e,sizeof(e)))
+      {
+      snprintf(buffer,bufsize,"%.2lf &pm; %.2lf bytes/s",e.Q.expect,sqrt(e.Q.var));
+      }
+   else
+      {
+      snprintf(buffer,bufsize,"Too fast to measure");
+      }
+
+   return;
+   }
+
+CloseDB(dbp);         
+}
 
 /*****************************************************************************/
 
