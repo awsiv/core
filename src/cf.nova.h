@@ -895,6 +895,9 @@ int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize)
 int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize);
 int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize);
 
+/* pdf report */
+int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *returnval,int bufsize); 
+
 /* weekly.c */
 
 double Num(double x);

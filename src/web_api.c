@@ -672,8 +672,76 @@ if (!CFDB_Close(&dbconn))
    }
 
 return true;
-}
+} 
 
+/*****************************************************************************/
+int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE];
+  struct HubTotalCompliance *ht;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+
+/* BEGIN query document */
+
+switch (*cmp)
+   {
+   case '<': icmp = CFDB_LESSTHANEQ;
+       break;
+   default: icmp = CFDB_GREATERTHANEQ;
+       break;
+   }
+  
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   hq = CFDB_QueryTotalCompliance(&dbconn,&query,version,t,k,nk,rep,icmp);
+   bson_destroy(&query);
+   }
+else
+   {
+   hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),version,t,k,nk,rep,icmp);
+   }
+
+returnval[0] = '\0';
+
+//strcat(returnval,"<table>\n");
+
+snprintf(buffer,sizeof(buffer),"host;policy;kept;repaired;not kept;last seen\n");
+Join(returnval,buffer,bufsize);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   ht = (struct HubTotalCompliance *)rp->item;
+
+   snprintf(buffer,sizeof(buffer),"%s;%s;%d %%;%d %%;%d %%;%s\n",
+            ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,cf_ctime(&(ht->t)));
+   Join(returnval,buffer,bufsize);
+   }
+
+//strcat(returnval,"</table>\n");
+
+DeleteHubQuery(hq,DeleteHubTotalCompliance);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
 /*****************************************************************************/
 
 int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *returnval,int bufsize)
