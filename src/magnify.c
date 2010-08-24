@@ -114,24 +114,9 @@ for (i = 0; i < CF_MAGDATA; i++)
 
    if (ry + rq >= 1)
       {
-      have_data = true;
+      have_data++;
       }
    
-   if (ry / ly > 1000)
-      {
-      ry = ly;
-      }
-
-   if (rs / ls > 1000)
-      {
-      rs = ls;
-      }
-
-   if (rq / lq > 100000)
-      {
-      rq = lq;
-      }
-
    if (rq > cfv->max)
       {
       cfv->max = rq;
@@ -202,7 +187,15 @@ else
 
 cfv->scale_x = (double)cfv->width / (double)CF_MAGDATA;
 cfv->scale_y = ((double) cfv->height) / cfv->range;
-return have_data;
+
+if (have_data > 1)
+   {
+   return have_data;
+   }
+else
+   {
+   return false;
+   }
 }
 
 /*******************************************************************/
