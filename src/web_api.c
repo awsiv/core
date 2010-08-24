@@ -711,7 +711,7 @@ else
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>promise handle</th><th>probability<br>kept</th><th>uncertainty</th><th>last seen</th></tr>\n");
+snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>promise handle</th><th>Last known<br>state</th><th>probability<br>kept</th><th>uncertainty</th><th>last seen</th></tr>\n");
 Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -776,8 +776,8 @@ returnval[0] = '\0';
 strcat(returnval,"<table>\n");
 count += strlen(returnval);
 
-snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>Direction</th><th>IP address</th><th>remote host</th><th>last seen</th>"
-            "<th>Hours ago</th><th>Avg interval</th><th>Uncertainty</th><th>Host key</th></tr>\n");
+snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>Initiated</th><th>IP address</th><th>remote host</th><th>last seen</th>"
+            "<th>Hours ago</th><th>Avg interval</th><th>Uncertainty</th><th>Remote host key</th></tr>\n");
 Join(returnval,buffer,bufsize);
    
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -787,18 +787,18 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    switch (hl->io)
       {
       case '+':
-          snprintf(inout,CF_SMALLBUF,"out(+)");
+          snprintf(inout,CF_SMALLBUF,"by us (+)");
           break;
       case '-':
-          snprintf(inout,CF_SMALLBUF,"in(-)");
+          snprintf(inout,CF_SMALLBUF,"by them (-)");
           break;
       }
 
    then = hl->t;
    
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>"
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td>%s</td>"
             "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td><span id=\"keyhash\">%s</span></td></tr>\n",
-            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,cf_ctime(&then),
+            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->keyhash,hl->rhost->ipaddr,cf_ctime(&then),
             hl->hrsago,hl->hrsavg,hl->hrsdev,
             hl->rhost->keyhash);
           
