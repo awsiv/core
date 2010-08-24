@@ -325,7 +325,7 @@ bson_append_int(setObj,cfr_day,(long)time(NULL));
 bson_append_finish_object(setObj);
 bson_from_buffer(&setOp,&bb);
 
-mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, MONGO_DATABASE_MON, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 MongoCheckForError(conn,dbOperation,keyhash);
 

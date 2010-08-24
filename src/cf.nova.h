@@ -37,6 +37,7 @@
 # define MONGO_HAVE_STDINT
 # define MONGO_BASE "cfreport"
 # define MONGO_DATABASE MONGO_BASE ".hosts"
+# define MONGO_DATABASE_MON MONGO_BASE ".monitoring"
 # define MONGO_PROMISES_EXP MONGO_BASE ".promises_exp"
 # define MONGO_PROMISES_UNEXP MONGO_BASE ".promises_unexp"
 # define MONGO_BODIES   MONGO_BASE ".bodies"

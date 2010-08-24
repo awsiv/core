@@ -2291,7 +2291,7 @@ for (slot = 0; slot < CF_MAGDATA; slot++)
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE_MON,&query,&field,0,0,0);
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -2464,7 +2464,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE_MON,&query,&field,0,0,0);
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -2554,7 +2554,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE_MON,&query,&field,0,0,0);
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
