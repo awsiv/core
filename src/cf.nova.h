@@ -35,11 +35,12 @@
 
 #ifdef HAVE_LIBMONGOC
 # define MONGO_HAVE_STDINT
-# define MONGO_DATABASE "cfreport.hosts"
-# define MONGO_PROMISES_EXP "cfreport.promises_exp"
-# define MONGO_PROMISES_UNEXP "cfreport.promises_unexp"
-# define MONGO_BODIES   "cfreport.bodies"
-# define MONGO_SCRATCH "cfreport.scratch"
+# define MONGO_BASE "cfreport"
+# define MONGO_DATABASE MONGO_BASE ".hosts"
+# define MONGO_PROMISES_EXP MONGO_BASE ".promises_exp"
+# define MONGO_PROMISES_UNEXP MONGO_BASE ".promises_unexp"
+# define MONGO_BODIES   MONGO_BASE ".bodies"
+# define MONGO_SCRATCH MONGO_BASE ".scratch"
 # include <mongo.h>
 #else
 # define mongo_connection char
@@ -377,6 +378,8 @@ void CFDB_SaveBundles(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveValueReport(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
+void BsonToString(char *retBuf, int retBufSz, bson *b, int depth);
+void MongoCheckForError(mongo_connection *conn, char *operation, char *extra);
 #endif
 
 /* datapackaging.c */

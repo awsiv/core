@@ -130,8 +130,9 @@ bson_append_finish_object(keyAdd);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE,&host_key,&setOp,MONGO_UPDATE_UPSERT);
-bson_destroy(&setOp);
+MongoCheckForError(conn,"SaveHostID",keyhash);
 
+bson_destroy(&setOp);
 bson_destroy(&host_key);
 
 // Again - locate right host key
@@ -177,6 +178,7 @@ void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *keyhas
   int i;
   bson_buffer *arr;
   struct Item *ip;
+  char *dbOp = {0};
   char packNumStr[CF_MAXVARSIZE];
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch,archStr[CF_MAXVARSIZE];
 
@@ -194,16 +196,20 @@ switch (sw)
    {
    case sw_rep_installed:       
        arr = bson_append_start_array(setObj,cfr_software);
+       dbOp = "update installed software";
        break;
    case sw_rep_patch_installed:       
        arr = bson_append_start_array(setObj,cfr_patch_installed);
+       dbOp = "update patch installed software";
        break;
    case sw_rep_patch_avail:       
        arr = bson_append_start_array(setObj,cfr_patch_avail);
+       dbOp = "update patch available software";
        break;
 
    default:
        arr = bson_append_start_array(setObj,cfr_software);
+       dbOp = "update installed software";
        break;
    }
 
@@ -228,6 +234,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,dbOp,keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -247,6 +254,7 @@ void CFDB_SaveMonitorData(mongo_connection *conn, char *keyhash, enum monitord_r
   int observable,slot;
   double q,e,dev;
   char *repPrefix = {0};
+  char *dbOperation = {0};
   char t[CF_TIME_SIZE];
   char timekey[CF_SMALLBUF];
 
@@ -254,12 +262,15 @@ switch(rep_type)
    {
    case mon_rep_mag:
        repPrefix = cfr_mag;
+       dbOperation = "update mag";
        break;
    case mon_rep_week:
        repPrefix = cfr_week;
+       dbOperation = "update week";
        break;
    case mon_rep_yr:
        repPrefix = cfr_yr;
+       dbOperation = "update year";
        break;
    default:
        CfOut(cf_error, "", "!! Unknown monitord report type (%d)", rep_type);
@@ -275,7 +286,7 @@ bson_from_buffer(&host_key, &bb);
 bson_buffer_init(&bb);
 
 setObj = bson_append_start_object(&bb, "$set");
- 
+
 for (ip = data; ip != NULL; ip=ip->next)
    {
    if (strncmp(ip->name,"T: ",3) == 0)
@@ -315,6 +326,8 @@ bson_append_finish_object(setObj);
 bson_from_buffer(&setOp,&bb);
 
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+
+MongoCheckForError(conn,dbOperation,keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -384,6 +397,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn,MONGO_DATABASE,&host_key,&setOp,MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveMonitorHistograms",keyhash);
  
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -452,6 +466,7 @@ bson_append_finish_object(keyAdd);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveClasses",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -557,6 +572,7 @@ bson_append_finish_object(keyAdd);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveVariables",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -612,6 +628,7 @@ bson_append_finish_object(pushObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveTotalCompliance",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -633,6 +650,7 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_
   int i;
   char iStr[32];
   char *repName = {0};
+  char *dbOp;
 
 // find right host
 bson_buffer_init(&bb);
@@ -645,9 +663,11 @@ switch(rep_type)
    {
    case plog_repaired:
        repName = cfr_repairlog;
+       dbOp = "update promise repaired";
        break;
    case plog_notkept:
        repName = cfr_notkeptlog;
+       dbOp = "update promise not kept";
        break;
    default:
        CfOut(cf_error, "", "!! Unknown promise log report type (%d)", rep_type);
@@ -675,6 +695,7 @@ bson_append_finish_object(pushObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,dbOp,keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -734,6 +755,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveLastSeen",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -777,6 +799,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveMeter",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -825,6 +848,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SavePerformance",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -869,6 +893,7 @@ bson_append_finish_object(keyAdd);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveSetUid",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -918,6 +943,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SavePromiseCompliance",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -969,6 +995,7 @@ bson_append_finish_object(pushObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveFileChanges",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -1031,6 +1058,7 @@ bson_append_finish_object(pushObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveFileDiffs",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -1080,11 +1108,12 @@ for (ip = data; ip != NULL; ip=ip->next)
    bson_append_int(sub,cfr_time,then);
    bson_append_finish_object(sub);
    }
-
+ bson_append_string(setObj,"test","test1");
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveBundles",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -1138,6 +1167,7 @@ bson_append_finish_object(pushObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveValueReport",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  

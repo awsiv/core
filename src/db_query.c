@@ -3541,6 +3541,100 @@ switch(bson_iterator_type(it1))
    }
 }
 
+/*****************************************************************************/
+
+void BsonToString(char *retBuf, int retBufSz, bson *b, int depth)
+/* NOTE: Only depth 1 is implemented */
+{
+    bson_iterator i;
+    const char * key;
+    int temp;
+    char oidhex[25];
+    char buf[CF_MAXVARSIZE];
+
+    memset(retBuf,0,retBufSz);
+    bson_iterator_init( &i , b->data );
+
+    while ( bson_iterator_next( &i ) ){
+
+        bson_type t = bson_iterator_type( &i );
+
+        if ( t == 0 )
+	  {
+            break;
+	  }
+
+        key = bson_iterator_key( &i );
+
+        snprintf(buf,sizeof(buf),"%s : ",key);
+	Join(retBuf,buf,retBufSz);
+	
+
+        switch ( t ){
+        case bson_int: 
+	  snprintf(buf,sizeof(buf), "%d" , bson_iterator_int( &i ) ); 
+	  break;
+
+        case bson_double: 
+	  snprintf(buf,sizeof(buf), "%f" , bson_iterator_double( &i ) ); 
+	  break;
+
+        case bson_bool: 
+	  snprintf(buf,sizeof(buf), "%s" , bson_iterator_bool( &i ) ? "true" : "false" ); 
+	  break;
+
+        case bson_string: 
+	  snprintf(buf,sizeof(buf), "%s" , bson_iterator_string( &i ) ); 
+	  break;
+
+        case bson_null: 
+	  snprintf(buf,sizeof(buf), "null"); 
+	  break;
+
+        case bson_oid: 
+	  bson_oid_to_string(bson_iterator_oid(&i), oidhex); 
+	  snprintf(buf,sizeof(buf), "%s" , oidhex ); 
+	  break;
+
+        case bson_object:
+        case bson_array:
+	  // TODO: Not implemented yet..
+	  memset(buf,0,sizeof(buf));
+            break;
+
+        default:
+	  snprintf(buf,sizeof(buf) , "can't print type : %d\n" , t );
+        }
+
+	Join(retBuf,buf,retBufSz);
+	Join(retBuf,", ",retBufSz);
+    }
+    
+    retBuf[strlen(retBuf)-2] = 0;  // clear last comma
+}
+
+/*****************************************************************************/
+
+void MongoCheckForError(mongo_connection *conn, char *operation, char *extra)
+{
+  char dbErr[CF_MAXVARSIZE];
+  bson b;
+
+  if(!extra)
+    {
+      extra = "";
+    }
+
+if(mongo_cmd_get_last_error(conn, MONGO_BASE, &b))
+  {
+    BsonToString(dbErr,sizeof(dbErr),&b,1);
+    CfOut(cf_error, "", "!! Database error on %s (%s): %s", operation,extra,dbErr);
+  }
+ 
+ bson_destroy(&b);
+
+}
+
 
 #endif  /* HAVE LIB_MONGOC */
 
