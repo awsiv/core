@@ -471,8 +471,8 @@ void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour);
 
 /* histogram.c */
 
-void Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs);
-void Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs);
+int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs);
+int Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs);
 void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
 void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum);
 struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observables obs);
@@ -590,8 +590,8 @@ void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp);
 
 /* magnify.c */
 
-void Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs);
-void Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs);
+int Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs);
+int Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs);
 void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3);
 void Nova_DrawMagQAxes(struct CfDataView *cfv,int col);
 void Nova_AnalyseMag(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize);
@@ -892,8 +892,8 @@ int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize);
 /* weekly.c */
 
 double Num(double x);
-void Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs);
-void Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs);
+int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs);
+int Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3);
 void Nova_AnalyseWeek(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize);
@@ -1014,8 +1014,8 @@ int NovaWin_WmiDeInitialize(void);
 
 /* yearly.c */
 
-void Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
-void Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
+int Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
+int Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawLongHAxes(struct CfDataView *cfv,int col);
 void Nova_PlotLongHFile(struct CfDataView *cfv,int col1,int col2,int col3);
 void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observables obs);

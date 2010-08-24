@@ -42,7 +42,7 @@ return x;
 
 /*****************************************************************************/
 
-void Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs)
+int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs)
     
 {
 #ifdef HAVE_LIBGD
@@ -69,7 +69,11 @@ for (y = 0; y < cfv->height+2*cfv->margin; y++)
 
 /* Done initialization */
 
-Nova_ReadTimeSeries(cfv,keyhash,obs);
+if (!Nova_ReadTimeSeries(cfv,keyhash,obs))
+   {
+   return false;
+   }
+
 Nova_PlotQFile(cfv,LIGHTRED,GREEN,YELLOW);
 Nova_Title(cfv,BLUE);
 Nova_DrawQAxes(cfv,BLACK);
@@ -77,7 +81,7 @@ Nova_DrawQAxes(cfv,BLACK);
 if ((fout = fopen(newfile, "wb")) == NULL)
    {
    CfOut(cf_verbose,"fopen"," -> Making %s\n",newfile);
-   return;
+   return false;
    }
 else
    {
@@ -87,13 +91,13 @@ else
 gdImagePng(cfv->im, fout);
 fclose(fout);
 gdImageDestroy(cfv->im);
-
+return true;
 #endif  /* HAVE_LIBGD */
 }
 
 /**********************************************************************/
 
-void Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs)
+int Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
 { double rx,ry,rs,rq;
   FILE *fp;
@@ -105,6 +109,7 @@ void Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables o
 if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
    }
 
 CFDB_QueryWeekView(&dbconn,keyhash,obs,q,e,d);
@@ -133,9 +138,9 @@ for (i = 0; i < CF_TIMESERIESDATA; i++)
    rs = Num(d[i]);
    rq = Num(q[i]);
 
-   if (ry + rq > 0)
+   if (ry + rq > 1)
       {
-      have_data = true;
+      have_data++;
       }
    }
 
@@ -267,6 +272,15 @@ else
    cfv->min -= 1;         
    cfv->max += 1;
    cfv->min -= 1;
+   }
+
+if (have_data > 10)
+   {
+   return have_data;
+   }
+else
+   {
+   return false;
    }
 }
 

@@ -25,7 +25,7 @@ extern char *UNITS[];
 
 /*****************************************************************************/
 
-void Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs)
+int Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs)
     
 { int i,y,hint,yr,num = 0,ago,lc;
   FILE *fout;
@@ -47,7 +47,10 @@ for (y = 0; y < cfv->height+2*cfv->margin; y++)
    
 /* Done initialization */
 
-Nova_ReadLongHistory(cfv,keyhash,obs);
+if (!Nova_ReadLongHistory(cfv,keyhash,obs))
+   {
+   return false;
+   }
 Nova_DrawLongHAxes(cfv,BLACK);
 Nova_PlotLongHFile(cfv,LIGHTRED,GREEN,YELLOW);
 Nova_Title(cfv,BLUE);
@@ -55,7 +58,7 @@ Nova_Title(cfv,BLUE);
 if ((fout = fopen(newfile, "wb")) == NULL)
    {
    CfOut(cf_verbose,"fopen","Cannot write %s file\n",newfile);
-   return;
+   return false;
    }
 else
    {
@@ -64,24 +67,26 @@ else
 
 gdImagePng(cfv->im, fout);
 fclose(fout);
-gdImageDestroy(cfv->im);   
+gdImageDestroy(cfv->im);
+return true;
 }
 
 /**********************************************************************/
 /* Yrdata                                                             */
 /**********************************************************************/
 
-void Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs)
+int Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
 { double range,rx,ry,rq,rs;
   double max,min;
-  int count = 0,i;
+  int count = 0,i,have_data = false;
   mongo_connection dbconn;
   double q[CF_LHISTORYDATA],e[CF_LHISTORYDATA],d[CF_LHISTORYDATA];
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
    }
 
 CFDB_QueryYearView(&dbconn,keyhash,obs,q,e,d);
@@ -100,6 +105,11 @@ for (i = 0; i < CF_LHISTORYDATA; i++)
    ry = e[i];
    rq = q[i];
    rs = d[i];
+
+   if (rq > 0)
+      {
+      have_data = true;
+      }
 
    if (ry > max)
       {
@@ -155,6 +165,8 @@ else
       cfv->min = min;
       }   
    }
+
+return have_data;
 }
 
 /**********************************************************************/

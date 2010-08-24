@@ -22,7 +22,7 @@ extern int BLUES[];
 
 #ifdef HAVE_LIBGD
 
-void Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs)
+int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs)
     
 { int i,y,hint;
   double frac;
@@ -47,7 +47,10 @@ for (y = 0; y < cfv->height+2*cfv->margin; y++)
 
 /* Done initialization */
 
-Nova_ReadHistogram(cfv,keyhash,obs);
+if (!Nova_ReadHistogram(cfv,keyhash,obs))
+   {
+   return false;
+   }
 
 spectrum = Nova_MapHistogram(cfv,keyhash,obs);
 Nova_PlotHistogram(cfv,BLUES,spectrum);
@@ -57,27 +60,29 @@ Nova_DrawHistoAxes(cfv,BLACK);
 if ((fout = fopen(newfile, "wb")) == NULL)
    {
    CfOut(cf_error,"fopen","Cannot write %s file\n",newfile);
-   return;
+   return false;
    }
 
 gdImagePng(cfv->im, fout);
 fclose(fout);
 gdImageDestroy(cfv->im);
 DeleteItemList(spectrum);
+return true;
 }
 
 /**********************************************************************/
 
-void Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs)
+int Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs)
 
 { double rx,ry;
-  int i;
+ int i,have_data = false;
   mongo_connection dbconn;
   double histo[CF_GRAINS];
 
 if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
    }
 
 CFDB_QueryHistogram(&dbconn,hostkey,obs,histo);
@@ -94,6 +99,11 @@ cfv->error_scale = 0;
 for (i = 0; i < CF_GRAINS; i++)
    {
    ry = histo[i];
+
+   if (ry > 1)
+      {
+      have_data;
+      }
    
    if (ry > cfv->max)
       {
@@ -107,6 +117,8 @@ for (i = 0; i < CF_GRAINS; i++)
 
    cfv->data_E[i] = ry;
    }
+
+return true;
 }
 
 /**********************************************************************/

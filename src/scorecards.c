@@ -24,11 +24,10 @@ void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize)
     
 { 
 #ifdef HAVE_LIBGD
-
   char work[CF_BUFSIZE],hostname[CF_SMALLBUF],ipaddress[CF_SMALLBUF];
   char desc[CF_MAXVARSIZE],id[CF_MAXVARSIZE],lastsaw[CF_SMALLBUF];
   struct CfDataView cfv;
-  int i;
+  int i, have_week, have_mag, have_histo;
 
 // Make common resources
 
@@ -52,29 +51,30 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
    // Make the graphs
 
-   Nova_ViewMag(&cfv,hostkey,i);
-   Nova_ViewWeek(&cfv,hostkey,i);
-   Nova_ViewHisto(&cfv,hostkey,i);
+   have_week = Nova_ViewWeek(&cfv,hostkey,i);
+   have_mag = Nova_ViewMag(&cfv,hostkey,i);
+   have_histo = Nova_ViewHisto(&cfv,hostkey,i);
 
-   Nova2PHP_getlastupdate(hostkey,lastsaw,CF_SMALLBUF);
+   if (have_week || have_mag)
+      {   
+      Nova2PHP_getlastupdate(hostkey,lastsaw,CF_SMALLBUF);
 
-   snprintf(work,CF_MAXVARSIZE,"<tr>");
-
-   snprintf(work,CF_BUFSIZE,"<th><div id=\"ip\">%s</div><br><br>"
-            "<a href=\"/vitals.php?hostkey=%s&obs=%d&nm=%s&view=type\">%s</a>"
-            "<br><br><small>Latest data<br>%s</small></th>",hostname,hostkey,i,OBS[i][0],OBS[i][0],lastsaw);
-   
-   Join(buffer,work,bufsize);
-   snprintf(work,CF_BUFSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=%d&nm=%s&view=mag\"><img src=\"/hub/%s/%s_mag.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
-   Join(buffer,work,bufsize);
-   snprintf(work,CF_BUFSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=%d&nm=%s&view=week\"><img src=\"/hub/%s/%s_week.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
-   Join(buffer,work,bufsize);
-   snprintf(work,CF_BUFSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=%d&nm=%s&view=hist\"><img src=\"/hub/%s/%s_hist.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
-   Join(buffer,work,bufsize);
-   snprintf(work,CF_MAXVARSIZE,"</tr>\n");
-   Join(buffer,work,bufsize);
-
-   // Create the table (return iplist of printf)
+      snprintf(work,CF_MAXVARSIZE,"<tr>");
+      
+      snprintf(work,CF_BUFSIZE,"<th><div id=\"ip\">%s</div><br><br>"
+               "<a href=\"/vitals.php?hostkey=%s&obs=%d&nm=%s&view=type\">%s</a>"
+               "<br><br><small>Latest data<br>%s</small></th>",hostname,hostkey,i,OBS[i][0],OBS[i][0],lastsaw);
+      
+      Join(buffer,work,bufsize);
+      snprintf(work,CF_BUFSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=%d&nm=%s&view=mag\"><img src=\"/hub/%s/%s_mag.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+      Join(buffer,work,bufsize);
+      snprintf(work,CF_BUFSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=%d&nm=%s&view=week\"><img src=\"/hub/%s/%s_week.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+      Join(buffer,work,bufsize);
+      snprintf(work,CF_BUFSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=%d&nm=%s&view=hist\"><img src=\"/hub/%s/%s_hist.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+      Join(buffer,work,bufsize);
+      snprintf(work,CF_MAXVARSIZE,"</tr>\n");
+      Join(buffer,work,bufsize);
+      }
    }
 
 Join(buffer,"</table>\n",bufsize);

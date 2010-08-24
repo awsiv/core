@@ -23,7 +23,7 @@ extern char *UNITS[];
 
 /*****************************************************************************/
 
-void Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs)
+int Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs)
     
 { int i,y,hint;
   FILE *fout;
@@ -45,7 +45,11 @@ for (y = 0; y < cfv->height+2*cfv->margin; y++)
 
 /* Done initialization */
 
-Nova_ReadMagTimeSeries(cfv,keyhash,obs);
+if (!Nova_ReadMagTimeSeries(cfv,keyhash,obs))
+   {
+   return false;
+   }
+
 Nova_PlotMagQFile(cfv,LIGHTRED,GREEN,ORANGE);
 Nova_Title(cfv,BLUE);
 
@@ -54,7 +58,7 @@ Nova_Title(cfv,BLUE);
 if ((fout = fopen(newfile, "wb")) == NULL)
    {
    CfOut(cf_verbose,"fopen","Cannot write %s file\n",newfile);
-   return;
+   return false;
    }
 else
    {
@@ -64,18 +68,19 @@ else
 gdImagePng(cfv->im, fout);
 fclose(fout);
 gdImageDestroy(cfv->im);
+return true;
 }
 
 /**********************************************************************/
 /* Magdata                                                            */
 /**********************************************************************/
 
-void Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs)
+int Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs)
 
 { double range,rx,ry,rq,rs;
   double ly = 1,lq = 1,ls = 1;
   double q[CF_MAGDATA],e[CF_MAGDATA],d[CF_MAGDATA];
-  int i;
+  int i,have_data = false;
   mongo_connection dbconn;
 
 if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
@@ -106,6 +111,11 @@ for (i = 0; i < CF_MAGDATA; i++)
    ry = Num(e[i]);
    rq = Num(q[i]);
    rs = Num(d[i]);
+
+   if (ry + rq >= 1)
+      {
+      have_data = true;
+      }
    
    if (ry / ly > 1000)
       {
@@ -192,6 +202,7 @@ else
 
 cfv->scale_x = (double)cfv->width / (double)CF_MAGDATA;
 cfv->scale_y = ((double) cfv->height) / cfv->range;
+return have_data;
 }
 
 /*******************************************************************/
