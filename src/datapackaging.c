@@ -348,9 +348,9 @@ void Nova_PackFileChanges(struct Item **reply,char *header,time_t from,enum cfd_
   char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],ref[CF_SMALLBUF],key[CF_SMALLBUF];
   struct Item *ip,*file = NULL;
   char pm,start[32];
-  int i = 0,truncate,first = true;
   long lthen;
-  time_t then;
+  time_t then, now = time(NULL);
+  int i = 0,truncate,first = true,kept = CF_CHANGE_HORIZON,repaired = 0,not_kept = 0;
 
 CfOut(cf_verbose,""," -> Packing file change data");
 snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,CF_FILECHANGE);
@@ -368,6 +368,11 @@ while (!feof(fin))
 
    sscanf(line,"%ld",&lthen);
    then = (time_t)lthen;
+
+   if (now - then < 3600*24)
+      {
+      repaired++;
+      }
    
    if (then < from)
       {
@@ -404,6 +409,8 @@ for (ip = file; ip != NULL; ip = ip->next)
    }
 
 DeleteItemList(file);
+METER_KEPT[meter_other_day] = 100.0*kept/(kept+repaired+not_kept);
+METER_REPAIRED[meter_other_day] = 100.0*repaired/(kept+repaired+not_kept);
 }
 
 /*****************************************************************************/

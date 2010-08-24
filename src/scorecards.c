@@ -384,8 +384,8 @@ Nova_BarMeter(&cfv,1,kept_week/num_week,rep_week/num_week,"Week");
 Nova_BarMeter(&cfv,2,kept_day/num_day,rep_day/num_day,"Day");
 Nova_BarMeter(&cfv,3,kept_hour/num_hour,rep_hour/num_hour,"Hour");
 Nova_BarMeter(&cfv,4,kept_perf/num_perf,rep_perf/num_perf,"Perf");
-Nova_BarMeter(&cfv,5,kept_other/num_other,rep_other/num_other,"Sec");
-Nova_BarMeter(&cfv,6,kept_comms/num_comms,rep_comms/num_comms,"Coms");
+Nova_BarMeter(&cfv,5,kept_other/num_other,rep_other/num_other,"Chng");
+Nova_BarMeter(&cfv,6,kept_comms/num_comms,rep_comms/num_comms,"Seen");
 Nova_BarMeter(&cfv,7,kept_anom/num_anom,rep_anom/num_anom,"Anom");
 
 // Clean up

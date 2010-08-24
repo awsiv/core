@@ -1880,11 +1880,11 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       continue;
       }
 
-   if ((now - then > (average+2.0*sqrt(var)+0.5)) && (now - then > resolution*2))
+   if ((now - then > average+2.0*sqrt(var)) && (now - then > resolution*2))
       {
       not_kept++;
       }
-   else if (now - then > (average+sqrt(var)+0.5) && (now - then > resolution*2))
+   else if ((now - then > average+sqrt(var)) && (now - then > resolution*2))
       {
       repaired++;
       }

@@ -63,6 +63,7 @@
 #define CF_KMAP "knowledge.php"
 #define CFDB_PORT 27017
 #define MONITOR_CLASS_PREFIX "mXc"
+#define CF_CHANGE_HORIZON 10
 
 enum cfd_menu
    {
