@@ -64,7 +64,7 @@ if (dbconn)
 for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
-   sscanf(ip->name,"%[^,],%ld,%7.4lf,%7.4lf\n",name,&t,&q,&dev);
+   sscanf(ip->name,"%[^,],%ld,%lf,%lf\n",name,&t,&q,&dev);
    Debug("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s",name,q,dev,cf_ctime(&t));
    }
 }

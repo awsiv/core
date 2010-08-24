@@ -85,9 +85,9 @@ snprintf(buffer,bufsize,
 //         "<li><a href=\"communications.php\"><b>Mission log</b></a>"
          "<li><a href=\"knowledge.php\"><b>Mission library</b></a></li>"
          "</ul>"
-         "<a href=\"#\" onClick=\"history.go(-1)\"><img src=\"/img/icon_back.png\"></a>"
          "<a href=\"/index.php\"><img src=\"/img/icon_home.png\"></a>"
-         "<a href=\"#\" onClick=\"history.go(+1)\"><img src=\"/img/icon_fwd.png\"></a>"
+         "<a href=\"#\" onClick=\"javascript:history.go(+1)\"><img src=\"/img/icon_fwd.png\"></a>"
+         "<a href=\"#\" onClick=\"javascript:history.go(-1)\"><img src=\"/img/icon_back.png\"></a>"
          "</div><br>");
 }
 

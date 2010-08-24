@@ -62,6 +62,7 @@
 #define CF_THIS_HH (void *)-1
 #define CF_KMAP "knowledge.php"
 #define CFDB_PORT 27017
+#define MONITOR_CLASS_PREFIX "mXc"
 
 enum cfd_menu
    {
@@ -491,6 +492,7 @@ void Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp);
 int Nova_HailPeer(char *host,struct Attributes a,struct Promise *pp);
 struct Item *Nova_ScanClients(void);
 void Nova_HubLog(char *s);
+void Nova_CountMonitoredClasses(void);
 
 /* install.c */
 

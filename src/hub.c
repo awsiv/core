@@ -77,6 +77,10 @@ while (true)
       Nova_ParallelizeScan(masterhostlist,a,pp);      
       DeleteItemList(masterhostlist);
       }
+
+   Nova_CountMonitoredClasses();
+   CfOut(cf_verbose,"","Sleeping...\n");
+   sleep(CFPULSETIME);
    }
 
 YieldCurrentLock(thislock); // Never get here
@@ -314,3 +318,49 @@ fprintf(fout,"%ld,%ld: %s\n",CFSTARTTIME,now,s);
 fclose(fout);
 }
 
+/*********************************************************************/
+
+void Nova_CountMonitoredClasses()
+
+{ char *report,work[CF_BUFSIZE];
+  struct HubHost *hh;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  struct Item *order_results = NULL,*ip;
+  int count = 0, tmpsize;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+
+/* BEGIN query document */
+ 
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return;
+   }
+
+snprintf(work,CF_MAXVARSIZE-1,"%s.*",MONITOR_CLASS_PREFIX);
+
+hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),work,true,CF_HUB_HORIZON);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   struct HubClass *hc = (struct HubClass *)rp->item;
+   IdempItemCount(&order_results,hc->class,NULL);
+   }
+
+DeleteHubQuery(hq,DeleteHubClass);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+for (ip = order_results; ip != NULL; ip = ip->next)
+   {
+   char countstr[CF_SMALLBUF];
+   snprintf(countstr,CF_SMALLBUF,"%d",ip->counter+1);
+   NewScalar("remote_access",ip->name+strlen(MONITOR_CLASS_PREFIX),countstr,cf_int);
+   }
+}

@@ -443,7 +443,7 @@ for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    {
    sscanf(ip->name,"%[^,],%ld,%lf,%lf\n",name,&t,&e,&dev);   
    snprintf(iStr,sizeof(iStr),"%d",i);
-   bson_append_string(keyArr,iStr,name);   
+   bson_append_string(keyArr,iStr,name);
    }
 
 bson_append_finish_object(keyArr);
