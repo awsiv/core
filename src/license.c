@@ -116,6 +116,7 @@ if ((fp = fopen(name,"r")) != NULL)
       LICENSES = number;
       CfOut(cf_verbose,""," -> Verified license file %s - this is a policy server (%s)",hash,company);
       am_policy_server = true;
+      NewClass("am_policy_hub");
       }
    else if (Nova_HashKey(serverkey,name,digest,hash))
       {
