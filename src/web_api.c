@@ -762,6 +762,66 @@ if (!CFDB_Close(&dbconn))
 return true;
 }
 /*****************************************************************************/
+/*  */
+/*****************************************************************************/
+
+int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE];
+  struct HubPromiseLog *hp;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true);
+   bson_destroy(&query);
+   }
+else
+   {
+   hq = CFDB_QueryPromiseLog(&dbconn,bson_empty(&b),type,handle,true);
+   }
+
+returnval[0] = '\0';
+
+//snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Time</th></tr>\n");
+Join(returnval,buffer,bufsize);
+         
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hp = (struct HubPromiseLog *)rp->item;
+
+   snprintf(buffer,sizeof(buffer),"%s;%s;%s;%s\n",
+            hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)));
+   Join(returnval,buffer,bufsize);
+   }
+
+DeleteHubQuery(hq,DeleteHubPromiseLog);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+
+/*****************************************************************************/
 
 int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *returnval,int bufsize)
 

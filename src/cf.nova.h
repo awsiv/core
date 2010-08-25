@@ -905,6 +905,7 @@ void Nova2PHP_AnalyseHistogram(char *keyhash,int obs,char *buffer,int bufsize);
 
 /* pdf report */
 int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *returnval,int bufsize); 
+int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize);
 
 /* weekly.c */
 
