@@ -70,7 +70,12 @@ void CFDB_PutValue(char *lval,char *rval)
   struct Item *ip;
   char varName[CF_MAXVARSIZE];
   mongo_connection dbconn;
- 
+
+if (!IsDefinedClass("am_policy_hub"))
+   {
+   return;
+   }
+  
 if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    {
    CfOut(cf_verbose,"","!! Could not open connection to report database");
@@ -163,7 +168,6 @@ mongo_update(conn, MONGO_DATABASE,&host_key,&setOp,MONGO_UPDATE_UPSERT);
 bson_destroy(&setOp);
 
 bson_destroy(&host_key);
-
 }
 
 /*****************************************************************************/

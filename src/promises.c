@@ -537,6 +537,7 @@ else
       {
       fscanf(fin,"%s",name);
       fclose(fin);
+      NewScalar("sys","policy_hub",name,cf_str);
       }
    }
 }

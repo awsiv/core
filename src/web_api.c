@@ -3002,11 +3002,14 @@ if (OpenDB(name,&dbp))
       {
       snprintf(buffer,bufsize,"Too fast to measure");
       }
-
-   return;
+   }
+else
+   {
+   snprintf(buffer,bufsize,"Insufficient data");
    }
 
-CloseDB(dbp);         
+CloseDB(dbp);
+return;
 }
 
 /*****************************************************************************/
