@@ -33,11 +33,6 @@ void CFDB_GetValue(char *lval,char *rval,int size)
   bson_iterator it1,it2;
   mongo_cursor *cursor;
   mongo_connection conn;
-
-if (!IsDefinedClass("am_policy_hub"))
-   {
-   return;
-   }
   
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
