@@ -156,6 +156,8 @@ while (more)
          }
 
       // Promise to record data rate per host-digest and per IP
+
+      // REWRITE ME IN MONGO...
       
       snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_NETWORK);
       
@@ -205,7 +207,9 @@ while (more)
          
          WriteDB(dbp,id,&newe,sizeof(newe));
          CloseDB(dbp);
-         }      
+         }
+
+      // END REWRITE ME
       }
    else
       {

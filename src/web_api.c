@@ -2990,14 +2990,18 @@ void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize)
 { struct Event e;
   CF_DB *dbp;
   char name[CF_MAXVARSIZE];
+  char key[CF_MAXVARSIZE];
 
+// REWRITE ME IN MONGO
+  
 snprintf(name,CF_MAXVARSIZE-1,"/var/cfengine/state/%s",NOVA_NETWORK);
-      
+strcpy(key,hostkey);
+
 if (OpenDB(name,&dbp))
    {
-   if (ReadDB(dbp,hostkey,&e,sizeof(e)))
+   if (ReadDB(dbp,key,&e,sizeof(e)))
       {
-      snprintf(buffer,bufsize,"%.2lf &pm; %.2lf bytes/s",e.Q.expect,sqrt(e.Q.var));
+      snprintf(buffer,bufsize,"%.2lf &Delta; %.2lf bytes/s",e.Q.expect,sqrt(e.Q.var));
       }
    else
       {
