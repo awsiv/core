@@ -70,16 +70,14 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
 int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t since)
 
 { int done = false,tosend,cipherlen=0,value;
- char in[CF_BUFSIZE],out[CF_BUFSIZE],workbuf[CF_BUFSIZE],cfchangedstr[265],name[CF_BUFSIZE],id[CF_MAXVARSIZE];
+ char in[CF_BUFSIZE],out[CF_BUFSIZE],workbuf[CF_BUFSIZE],cfchangedstr[265];
   unsigned char iv[32] = {1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
   long n_read_total = 0,length = 0;
   EVP_CIPHER_CTX ctx;
   int plainlen,more = true,header = true,current_report = -1;
-  time_t now = time(NULL),time2 = 0,delta1 = 0,delta2 = 0,lastseen;
+  time_t now = time(NULL),time2 = 0,delta1 = 0,delta2 = 0;
   struct Item *reports[cf_codebook_size] = {0};
-  struct Event e,newe;
-  double datarate,delta;
-  CF_DB *dbp;
+  double datarate;
 
 NewReportBook(reports);
   
@@ -157,59 +155,7 @@ while (more)
 
       // Promise to record data rate per host-digest and per IP
 
-      // REWRITE ME IN MONGO...
-      
-      snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_NETWORK);
-      
-      if (OpenDB(name,&dbp))
-         {
-         snprintf(id,CF_MAXVARSIZE-1,"%s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
-         
-         if (ReadDB(dbp,id,&e,sizeof(e)))
-            {
-            lastseen = now - e.t;
-            newe.t = now;
-            newe.Q.q = datarate;
-            newe.Q.expect = GAverage(datarate,e.Q.expect,0.5);
-            delta = (datarate - e.Q.expect)*(datarate - e.Q.expect);
-            newe.Q.var = GAverage(delta,e.Q.var,0.5);
-            }
-         else
-            {
-            lastseen = 0;
-            newe.t = now;
-            newe.Q.q = 0;
-            newe.Q.expect = 0;
-            newe.Q.var = 0;
-            }
-         
-         WriteDB(dbp,id,&newe,sizeof(newe));
-
-         snprintf(id,CF_MAXVARSIZE-1,"%s",conn->remoteip);
-         
-         if (ReadDB(dbp,id,&e,sizeof(e)))
-            {
-            lastseen = now - e.t;
-            newe.t = now;
-            newe.Q.q = datarate;
-            newe.Q.expect = GAverage(datarate,e.Q.expect,0.5);
-            delta = (datarate - e.Q.expect)*(datarate - e.Q.expect);
-            newe.Q.var = GAverage(delta,e.Q.var,0.5);
-            }
-         else
-            {
-            lastseen = 0;
-            newe.t = now;
-            newe.Q.q = 0;
-            newe.Q.expect = 0;
-            newe.Q.var = 0;
-            }
-         
-         WriteDB(dbp,id,&newe,sizeof(newe));
-         CloseDB(dbp);
-         }
-
-      // END REWRITE ME
+      Nova_RecordNetwork(now,datarate,conn);
       }
    else
       {
@@ -323,3 +269,42 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
    }
 }
 
+/*********************************************************************/
+
+void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *conn)
+
+{ CF_DB *dbp;
+  struct Event e,newe;
+  char name[CF_MAXVARSIZE],id[CF_MAXVARSIZE];
+  double delta,lastseen;
+  // REWRITE ME IN MONGO...
+ 
+ snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_NETWORK);
+ 
+ if (OpenDB(name,&dbp))
+    {
+    snprintf(id,CF_MAXVARSIZE-1,"%s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
+    
+    if (ReadDB(dbp,id,&e,sizeof(e)))
+       {
+       lastseen = now - e.t;
+       newe.t = now;
+       newe.Q.q = datarate;
+       newe.Q.expect = GAverage(datarate,e.Q.expect,0.5);
+       delta = (datarate - e.Q.expect)*(datarate - e.Q.expect);
+       newe.Q.var = GAverage(delta,e.Q.var,0.5);
+       }
+    else
+       {
+       lastseen = 0;
+       newe.t = now;
+       newe.Q.q = 0;
+       newe.Q.expect = 0;
+       newe.Q.var = 0;
+       }
+    
+    WriteDB(dbp,id,&newe,sizeof(newe));
+    }
+ 
+ // END REWRITE ME
+}

@@ -260,6 +260,7 @@ int Nova_StoreIncomingReports(char *reply,struct Item **reports,int current_repo
 void NewReportBook(struct Item **reports);
 void DeleteReportBook(struct Item **reports);
 void UnpackReportBook(char *id,char *ipaddr,struct Item **reports);
+void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *conn);
 
 /* coordinates.c */
 
