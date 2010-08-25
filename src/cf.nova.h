@@ -602,7 +602,7 @@ int Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs);
 int Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs);
 void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3);
 void Nova_DrawMagQAxes(struct CfDataView *cfv,int col);
-void Nova_AnalyseMag(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova_AnalyseMag(char *docroot, char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 /* monitoring.c */
 
@@ -836,9 +836,10 @@ void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize);
 int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize);
 int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *buffer,int bufsize);
-void Nova2PHP_summary_meter(char *docroot,char *hostkey);
+void Nova2PHP_summary_meter(char *hostkey);
+void Nova2PHP_meter(char *hostkey);
 int Nova2PHP_hostinfo(char *hostkey,char *hostname,char *ipaddress,int bufsize);
-void Nova2PHP_performance_analysis(char *docroot,char *hostkey,char *buffer,int bufsize);
+void Nova2PHP_performance_analysis(char *hostkey,char *buffer,int bufsize);
 
 int Nova2PHP_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize);
 int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *buffer,int bufsize);
@@ -897,6 +898,10 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
 int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize);
 int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize);
 int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize);
+void Nova2PHP_AnalyseMag(char *hostkey,enum observables obs,char *buffer,int bufsize);
+void Nova2PHP_AnalyseWeek(char *hostkey,enum observables obs,char *buffer,int bufsize);
+void Nova2PHP_ComplianceSummaryGraph();
+void Nova2PHP_AnalyseHistogram(char *keyhash,int obs,char *buffer,int bufsize);
 
 /* pdf report */
 int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *returnval,int bufsize); 
