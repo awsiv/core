@@ -1,0 +1,61 @@
+localhost;unlabelled_promise;Unable to connect to server 127.0.0.1;Tue Aug 24 10:55:58 2010
+localhost;unlabelled_promise;Unable to connect to server 127.0.0.1;Tue Aug 24 10:06:01 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 13:26:08 2010
+localhost;promise_update_cf_95;Unable to connect to server 192.168.122.1;Mon Aug 23 13:17:49 2010
+localhost;promise_knowledge_cf_113;Protocol transaction broken off;Mon Aug 23 13:11:07 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 13:01:02 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:51:00 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:35:50 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:25:44 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:15:39 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:06:34 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 11:56:28 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 11:46:27 2010
+localhost;promise_knowledge_cf_113;Protocol transaction broken off;Mon Aug 23 11:31:17 2010
+localhost;promise_knowledge_cf_113;Protocol transaction broken off;Mon Aug 23 11:21:11 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 11:11:06 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 11:06:33 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 10:50:55 2010
+localhost;promise_knowledge_cf_121;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 10:46:22 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 10:46:22 2010
+localhost;promise_update_cf_95;Unable to connect to server 192.168.122.1;Mon Aug 23 09:35:41 2010
+localhost;unlabelled_promise;Unable to connect to server 127.0.0.1;Tue Aug 24 10:55:58 2010
+localhost;unlabelled_promise;Unable to connect to server 127.0.0.1;Tue Aug 24 10:06:01 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 13:26:08 2010
+localhost;promise_update_cf_95;Unable to connect to server 192.168.122.1;Mon Aug 23 13:17:49 2010
+localhost;promise_knowledge_cf_113;Protocol transaction broken off;Mon Aug 23 13:11:07 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 13:01:02 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:51:00 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:35:50 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:25:44 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:15:39 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:06:34 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 11:56:28 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 11:46:27 2010
+localhost;promise_knowledge_cf_113;Protocol transaction broken off;Mon Aug 23 11:31:17 2010
+localhost;promise_knowledge_cf_113;Protocol transaction broken off;Mon Aug 23 11:21:11 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 11:11:06 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 11:06:33 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 10:50:55 2010
+localhost;promise_knowledge_cf_121;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 10:46:22 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 10:46:22 2010
+localhost;unlabelled_promise;Unable to connect to server 127.0.0.1;Tue Aug 24 10:55:58 2010
+localhost;unlabelled_promise;Unable to connect to server 127.0.0.1;Tue Aug 24 10:06:01 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 13:26:08 2010
+localhost;promise_update_cf_95;Unable to connect to server 192.168.122.1;Mon Aug 23 13:17:49 2010
+localhost;promise_knowledge_cf_113;Protocol transaction broken off;Mon Aug 23 13:11:07 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 13:01:02 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:51:00 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:35:50 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:25:44 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:15:39 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 12:06:34 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 11:56:28 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 11:46:27 2010
+localhost;promise_knowledge_cf_113;Protocol transaction broken off;Mon Aug 23 11:31:17 2010
+localhost;promise_knowledge_cf_113;Protocol transaction broken off;Mon Aug 23 11:21:11 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 11:11:06 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 11:06:33 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 10:50:55 2010
+localhost;promise_knowledge_cf_121;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 10:46:22 2010
+localhost;promise_knowledge_cf_113;Challenge response from server knut/127.0.1.1 was incorrect!;Mon Aug 23 10:46:22 2010
