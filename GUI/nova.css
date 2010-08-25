@@ -873,7 +873,15 @@ color: #484842;
 padding: 10px;
 }
 
+#amber
+{  
+background-color: yellow;
+}
 
+#red
+{  
+background-color: red;
+}
 
 
 

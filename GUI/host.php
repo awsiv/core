@@ -41,6 +41,7 @@ $flavour = cfpr_get_variable($hostkey,"sys","flavour");
 $rel = cfpr_get_variable($hostkey,"sys","release");
 $load = cfpr_get_variable($hostkey,"mon","av_loadavg");
 $free = cfpr_get_variable($hostkey,"mon","av_diskfree");
+#$speed = cfpr_get_network_rate($hostkey);
 
 echo "<p><ul>";
 #echo "<li>$hostkey</li>";
@@ -52,6 +53,7 @@ echo "<li><i>Last known address</i>: <b>$ipaddr</b></li>";
 echo "<li><i>Last data</i>: <b>$last</b></li>";
 echo "<li><i>Average load</i>: <b>$load%</b></li>";
 echo "<li><i>Average free on system disk</i>: <b>$free%</b> </li>";
+echo "<li><i>Average network speed</i>: $speed</li>";
 echo "</ul></div>\n";
 
 ?>
@@ -86,6 +88,11 @@ echo "<p>";
 echo "<input type=\"submit\">";
 echo "</form>";
 echo "</ul>";
+
+$number = cfpr_get_class_frequency(NULL,"mXc.*");
+$nlist = cfpr_report_class_frequency($hostkey,"mXc.*");
+echo "Monitored jobs globally: $number<br>$nlist";
+
 ?>
 </form>
 </td>
