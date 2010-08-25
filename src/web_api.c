@@ -84,6 +84,7 @@ if (false)
    NovaInitMeasurements();
    Nova2PHP_get_host_colour(NULL,buffer,3);
    Nova_Header("sd","we",buffer,3); 
+   Nova2PHP_get_network_speed("","",3);
    }
 }
 
@@ -2990,7 +2991,7 @@ void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize)
   CF_DB *dbp;
   char name[CF_MAXVARSIZE];
 
-snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_NETWORK);
+snprintf(name,CF_MAXVARSIZE-1,"/var/cfengine/state/%s",NOVA_NETWORK);
       
 if (OpenDB(name,&dbp))
    {
@@ -3002,13 +3003,14 @@ if (OpenDB(name,&dbp))
       {
       snprintf(buffer,bufsize,"Too fast to measure");
       }
+   
+   CloseDB(dbp);
    }
 else
    {
    snprintf(buffer,bufsize,"Insufficient data");
    }
 
-CloseDB(dbp);
 return;
 }
 
