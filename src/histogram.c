@@ -159,7 +159,7 @@ void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum)
  int max_x = cfv->margin+cfv->width;
  int max_y = cfv->margin;
  int i,x,y,dev;
- double range;
+ double range,dq,q,ticksize;
  double rx,ry,rs,sx = 0,s;
  double scale_x = ((double)cfv->width /(double)CF_GRAINS);
  double scale_y = 10.0;
@@ -226,6 +226,38 @@ for (ip = spectrum; ip != NULL; ip=ip->next)
 
 gdImageSetThickness(cfv->im,4);
 gdImageLine(cfv->im,origin_x+32*scale_x,origin_y,origin_x+cfv->width/2,cfv->max_y,lightred);
+
+// Make 5 gradations
+
+dq = cfv->range/5.0;
+
+if (dq < 0.001)
+   {
+   char qstr[16];
+
+   q = cfv->max;
+   x = Nova_ViewPortX(cfv,0);
+   y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
+
+   gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y, col);
+   snprintf(qstr,15,"%.1f",q);
+   gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
+   }
+else
+   {
+   for (q = cfv->min; q <= cfv->min+cfv->range; q += dq)
+      {
+      char qstr[16];
+
+      x = Nova_ViewPortX(cfv,0);
+      y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
+      
+      gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y, col);
+      snprintf(qstr,15,"%.1f",q);
+      gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
+      }
+   }
+
 }
 
 /*******************************************************************/

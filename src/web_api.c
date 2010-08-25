@@ -3088,7 +3088,7 @@ order_results = SortItemListNames(order_results);
 
 for (ip = order_results; ip != NULL; ip = ip->next)
    {   
-   snprintf(work,CF_BUFSIZE,"<tr><td>%s</td><td>%d</td></tr>",ip->name,ip->counter+1);
+   snprintf(work,CF_BUFSIZE,"<tr><td>%s</td><td>%d</td></tr>",ip->name+strlen(MONITOR_CLASS_PREFIX),ip->counter+1);
    Join(returnval,work,bufsize);
    count += ip->counter+1;
    }

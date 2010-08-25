@@ -55,7 +55,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    have_mag = Nova_ViewMag(&cfv,hostkey,i);
    have_histo = Nova_ViewHisto(&cfv,hostkey,i);
 
-   if (have_week || have_mag)
+   if (have_histo)
       {   
       Nova2PHP_getlastupdate(hostkey,lastsaw,CF_SMALLBUF);
 
@@ -488,7 +488,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
           Nova_BarMeter(&cfv,7,kept,repaired,"Anom");
           break;
       case cfmeter_other:
-          Nova_BarMeter(&cfv,5,kept,repaired,"Lics");
+          Nova_BarMeter(&cfv,5,kept,repaired,"Chng");
           break;
       }
    }
