@@ -349,6 +349,8 @@ void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnam
 void PrintCFDBKey(bson_iterator *it, int depth);
 int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
 int Nova_MagViewOffset(int start_slot,int dbslot,int wrap);
+void MongoCheckForError(mongo_connection *conn, char *operation, char *extra);
+
 
 #endif
 
@@ -381,7 +383,7 @@ void CFDB_SaveValueReport(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
 void BsonToString(char *retBuf, int retBufSz, bson *b, int depth);
-void MongoCheckForError(mongo_connection *conn, char *operation, char *extra);
+void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 #endif
 
 /* datapackaging.c */
@@ -1119,9 +1121,6 @@ struct promise_value
 #define cfr_keyhash      "kH"
 #define cfr_ip_array     "IP"
 #define cfr_host_array   "ha"
-#define cfr_mag          "mg"
-#define cfr_week         "wk"
-#define cfr_yr           "yr"
 #define cfr_histo        "hs"
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"
@@ -1193,6 +1192,13 @@ struct promise_value
 #define cfb_bodytype      "bt"
 #define cfb_bodyargs      "ba"
 #define cfb_classcontext  "cc"
+
+/* monitoring (vital sign) DB */
+
+#define cfm_magobs        "mo"
+#define cfm_weekobs       "wo"
+#define cfm_yearobs       "yo"
+#define cfm_data          "dt"
 
 #define CFDB_GREATERTHANEQ 4
 #define CFDB_LESSTHANEQ 5

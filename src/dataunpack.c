@@ -203,6 +203,9 @@ void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 
 #ifdef HAVE_LIBMONGOC
+// monitor mag is always run during update
+CFDB_SaveLastUpdate(dbconn,id);
+
 if (dbconn)
    {
    CFDB_SaveMonitorData(dbconn,id,mon_rep_mag,data);

@@ -248,7 +248,7 @@ bson_destroy(&host_key);
 
 void CFDB_SaveMonitorData(mongo_connection *conn, char *keyhash, enum monitord_rep rep_type, struct Item *data)
 
-{ bson_buffer bb;
+{ bson_buffer bb,record;
   bson host_key;  // host description
   char varNameIndex[64];
   bson_buffer *setObj;
@@ -257,23 +257,23 @@ void CFDB_SaveMonitorData(mongo_connection *conn, char *keyhash, enum monitord_r
   struct Item *ip;
   int observable,slot;
   double q,e,dev;
-  char *repPrefix = {0};
   char *dbOperation = {0};
   char t[CF_TIME_SIZE];
   char timekey[CF_SMALLBUF];
+  char *obsKey = {0};
 
 switch(rep_type)
    {
    case mon_rep_mag:
-       repPrefix = cfr_mag;
+       obsKey = cfm_magobs;
        dbOperation = "update mag";
        break;
    case mon_rep_week:
-       repPrefix = cfr_week;
+       obsKey = cfm_weekobs;
        dbOperation = "update week";
        break;
    case mon_rep_yr:
-       repPrefix = cfr_yr;
+       obsKey = cfm_yearobs;
        dbOperation = "update year";
        break;
    default:
@@ -281,15 +281,6 @@ switch(rep_type)
        FatalError("Software Error");
    }
 
-// find right host
-
-bson_buffer_init(&bb);
-bson_append_string(&bb,cfr_keyhash,keyhash);
-bson_from_buffer(&host_key, &bb);
-
-bson_buffer_init(&bb);
-
-setObj = bson_append_start_object(&bb, "$set");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
@@ -316,25 +307,34 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    q = e = dev = 0;
    sscanf(ip->name,"%d %lf %lf %lf",&observable,&q,&e,&dev);
+
+   bson_buffer_init(&bb);
+   setObj = bson_append_start_object(&bb, "$set");
    
-   snprintf(varNameIndex, sizeof(varNameIndex),"%s%d.%d.%s",repPrefix,observable,slot,cfr_obs_q);
+   snprintf(varNameIndex, sizeof(varNameIndex),"%s.%d.%s",cfm_data,slot,cfr_obs_q);
    bson_append_double(setObj,varNameIndex,q);
-   snprintf(varNameIndex, sizeof(varNameIndex),"%s%d.%d.%s",repPrefix,observable,slot,cfr_obs_E);
+   snprintf(varNameIndex, sizeof(varNameIndex),"%s.%d.%s",cfm_data,slot,cfr_obs_E);
    bson_append_double(setObj,varNameIndex,e);
-   snprintf(varNameIndex, sizeof(varNameIndex),"%s%d.%d.%s",repPrefix,observable,slot,cfr_obs_sigma);
+   snprintf(varNameIndex, sizeof(varNameIndex),"%s.%d.%s",cfm_data,slot,cfr_obs_sigma);
    bson_append_double(setObj,varNameIndex,dev);
+
+   bson_append_finish_object(setObj);
+   bson_from_buffer(&setOp,&bb);
+
+   // find right host and report
+   bson_buffer_init(&record);
+   bson_append_string(&record,cfr_keyhash,keyhash);
+   bson_append_int(&record,obsKey,observable);
+   bson_from_buffer(&host_key, &record);
+
+   mongo_update(conn, MONGO_DATABASE_MON, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+
+   MongoCheckForError(conn,dbOperation,keyhash);
+
+   bson_destroy(&setOp);
+   bson_destroy(&host_key);
    }
-
-bson_append_int(setObj,cfr_day,(long)time(NULL));
-bson_append_finish_object(setObj);
-bson_from_buffer(&setOp,&bb);
-
-mongo_update(conn, MONGO_DATABASE_MON, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-
-MongoCheckForError(conn,dbOperation,keyhash);
-
-bson_destroy(&setOp);
-bson_destroy(&host_key);
+ 
 }
 
 /*****************************************************************************/
@@ -1174,6 +1174,36 @@ MongoCheckForError(conn,"SaveValueReport",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
+}
+
+/*****************************************************************************/
+
+void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash)
+
+{ bson_buffer bb;
+  bson_buffer *setObj;
+  bson host_key;  // host description
+  bson setOp;
+
+// find right host
+bson_buffer_init(&bb);
+bson_append_string(&bb,cfr_keyhash,keyhash);
+bson_from_buffer(&host_key, &bb);
+
+bson_buffer_init(&bb);
+
+setObj = bson_append_start_object(&bb, "$set");
+
+bson_append_int(setObj,cfr_day,(long)time(NULL));
+
+bson_append_finish_object(setObj);
+
+bson_from_buffer(&setOp,&bb);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveLastUpdate",keyhash);
+
+bson_destroy(&setOp);
+bson_destroy(&host_key);
 }
 
 

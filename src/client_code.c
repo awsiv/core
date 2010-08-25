@@ -279,7 +279,7 @@ void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *c
   double delta,lastseen;
   // REWRITE ME IN MONGO...
  
- snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_NETWORK);
+  snprintf(name,sizeof(name),"%s/state/%s",CFWORKDIR,NOVA_NETWORK);
  
  if (OpenDB(name,&dbp))
     {

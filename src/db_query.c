@@ -2256,7 +2256,6 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
   bson qu,query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
-  char search_name[CF_MAXVARSIZE];
   int ok = false,slot,start_slot,wrap_around;
   double q,e,d;
   
@@ -2264,17 +2263,12 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
 
 bson_buffer_init(&b);
 bson_append_string(&b,cfr_keyhash,keyhash);
+bson_append_int(&b,cfm_magobs,obs);
 bson_from_buffer(&query,&b);
   
 /* BEGIN RESULT DOCUMENT */
-
-snprintf(search_name,CF_MAXVARSIZE-1,"%s%d",cfr_mag,obs);
-
 bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_keyhash,1);
-bson_append_int(&bb,cfr_ip_array,1);
-bson_append_int(&bb,cfr_host_array,1);
-bson_append_int(&bb,search_name,1);
+bson_append_int(&bb,cfm_data,1);
 bson_from_buffer(&field, &bb);
 
 /* Check from wrap around */
@@ -2307,7 +2301,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Query specific search/marshalling */
 
-      if (strcmp(bson_iterator_key(&it1),search_name) == 0)
+      if (strcmp(bson_iterator_key(&it1),cfm_data) == 0)
          {
          int st = 0;
          slot = 0;
@@ -2456,17 +2450,12 @@ int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs
 
 bson_buffer_init(&b);
 bson_append_string(&b,cfr_keyhash,keyhash);
+bson_append_int(&b,cfm_weekobs,obs);
 bson_from_buffer(&query,&b);
   
 /* BEGIN RESULT DOCUMENT */
-
-snprintf(search_name,CF_MAXVARSIZE-1,"%s%d",cfr_week,obs);
-
 bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_keyhash,1);
-bson_append_int(&bb,cfr_ip_array,1);
-bson_append_int(&bb,cfr_host_array,1);
-bson_append_int(&bb,search_name,1);
+bson_append_int(&bb,cfm_data,1);
 bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -2482,7 +2471,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Query specific search/marshalling */
 
-      if (strcmp(bson_iterator_key(&it1),search_name) == 0)
+      if (strcmp(bson_iterator_key(&it1),cfm_data) == 0)
          {
          int st = 0, index = 0;
          bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -2538,7 +2527,6 @@ int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs
   bson qu,query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
-  char search_name[CF_MAXVARSIZE];
   double q,e,d;
   int ok = false;
   time_t start_time = CF_MONDAY_MORNING;
@@ -2547,17 +2535,12 @@ int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs
 
 bson_buffer_init(&b);
 bson_append_string(&b,cfr_keyhash,keyhash);
+bson_append_int(&b,cfm_yearobs,obs);
 bson_from_buffer(&query,&b);
   
 /* BEGIN RESULT DOCUMENT */
-
-snprintf(search_name,CF_MAXVARSIZE-1,"%s%d",cfr_yr,obs);
-
 bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_keyhash,1);
-bson_append_int(&bb,cfr_ip_array,1);
-bson_append_int(&bb,cfr_host_array,1);
-bson_append_int(&bb,search_name,1);
+bson_append_int(&bb,cfm_data,1);
 bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -2573,7 +2556,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Query specific search/marshalling */
 
-      if (strcmp(bson_iterator_key(&it1),search_name) == 0)
+      if (strcmp(bson_iterator_key(&it1),cfm_data) == 0)
          {
          int st = 0, index = 0;
          bson_iterator_init(&it2,bson_iterator_value(&it1));
