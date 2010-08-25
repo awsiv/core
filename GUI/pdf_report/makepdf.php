@@ -108,14 +108,15 @@ class PDF extends FPDF
     
     #****************************** 
     //Load data
-         function LoadData($file)
+    function LoadData($file)
     {
-	        //Read file lines
-		        $lines=file($file);
-	        $data=array();
-	        foreach($lines as $line)
-	            $data[]=explode(';',chop($line));
-	        return $data;
+	//Read file lines
+	$lines=file($file);
+	//$lines=explode("\n",$file); //TODO: use this for string input ?? 
+	$data=array();
+	foreach($lines as $line)
+	  $data[]=explode(';',chop($line));
+	return $data;
     }
     
     #******************************
