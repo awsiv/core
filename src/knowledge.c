@@ -742,7 +742,7 @@ void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promi
 
 if (handle && pp->ref)
    {
-   fprintf(fp,"topics: handles:: \"%s\"  comment => \"This labels a promise, saying: %s",handle,pp->ref);
+   fprintf(fp,"topics: handles:: \"%s\"  comment => \"%s\", ",handle,pp->ref);
    fprintf(fp,"association => a(\"is the handle for\",\"%s\",\"has a promise with handle\");\n",pp->promiser);
    }
 else if (handle)
