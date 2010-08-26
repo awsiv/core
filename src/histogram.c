@@ -164,7 +164,7 @@ void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum)
  int max_x = cfv->margin+cfv->width;
  int max_y = cfv->margin;
  int i,x,y,dev;
- double range,dq,q,ticksize = 5;;
+ double range,dq,q,ticksize = 0;
  double rx,ry,rs,sx = 0,s;
  double scale_x = ((double)cfv->width /(double)CF_GRAINS);
  double scale_y = 10.0;
