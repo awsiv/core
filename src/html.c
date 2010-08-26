@@ -57,7 +57,7 @@ snprintf(buffer,bufsize,
 "          <p><input class=\"searchfield\" type=\"text\" name=\"search_string\">&nbsp;Search</p>\n"
 "        </form>\n"
 "      </div> \n"
-"        <h2>CFENGINE MISSION PORTAL &alpha; <span id=\"subheading\"><b>%s</b></span></h2>\n"
+"        <h2>CFENGINE MISSION PORTAL <span id=\"subheading\"><b>%s</b></span></h2>\n"
          "    </div>\n",reload,title,css,CF_KMAP,title);
 }
 

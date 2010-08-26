@@ -102,7 +102,7 @@ for (i = 0; i < CF_GRAINS; i++)
 
    if (ry > 1)
       {
-      have_data;
+      have_data = true;
       }
    
    if (ry > cfv->max)
