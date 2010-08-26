@@ -164,7 +164,7 @@ void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum)
  int max_x = cfv->margin+cfv->width;
  int max_y = cfv->margin;
  int i,x,y,dev;
- double range,dq,q,ticksize = cfv->height/50;;
+ double range,dq,q,ticksize = 20;;
  double rx,ry,rs,sx = 0,s;
  double scale_x = ((double)cfv->width /(double)CF_GRAINS);
  double scale_y = 10.0;
@@ -283,7 +283,7 @@ struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observa
 
 CfOut(cf_verbose,""," -> Looking for maxima in %s\n",OBS[obs][0]);
 
-snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_hist.png",DOCROOT,keyhash,OBS[obs][0]);
+snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_hist.png",cfv->docroot,keyhash,OBS[obs][0]);
 
 for (sx = 1; sx < CF_GRAINS; sx++)
    {

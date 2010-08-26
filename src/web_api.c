@@ -3191,36 +3191,32 @@ char *Nova_LongState(char s)
 
 void Nova2PHP_AnalyseMag(char *hostkey,enum observables obs,char *buffer,int bufsize)
 {
-  Nova_WebTopicMap_Initialize();
-
-  Nova_AnalyseMag(DOCROOT,hostkey,obs,buffer,bufsize);
+Nova_WebTopicMap_Initialize();
+Nova_AnalyseMag(DOCROOT,hostkey,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
 
 void Nova2PHP_AnalyseWeek(char *keyhash,enum observables obs,char *buffer,int bufsize)
 {
-  Nova_WebTopicMap_Initialize();
-
-  Nova_AnalyseWeek(DOCROOT,keyhash,obs,buffer,bufsize);
+Nova_WebTopicMap_Initialize();
+Nova_AnalyseWeek(DOCROOT,keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
 
 void Nova2PHP_ComplianceSummaryGraph()
 {
-  Nova_WebTopicMap_Initialize();
-  
-  Nova_ComplianceSummaryGraph(DOCROOT);
+Nova_WebTopicMap_Initialize();
+Nova_ComplianceSummaryGraph(DOCROOT);
 }
 
 /*****************************************************************************/
 
 void Nova2PHP_AnalyseHistogram(char *keyhash,int obs,char *buffer,int bufsize)
 {
-  Nova_WebTopicMap_Initialize();
-  
-  Nova_AnalyseHistogram(DOCROOT,keyhash,obs,buffer,bufsize);
+Nova_WebTopicMap_Initialize();
+Nova_AnalyseHistogram(DOCROOT,keyhash,obs,buffer,bufsize);
 }
 
 
