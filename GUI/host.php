@@ -41,7 +41,7 @@ $flavour = cfpr_get_variable($hostkey,"sys","flavour");
 $rel = cfpr_get_variable($hostkey,"sys","release");
 $load = cfpr_get_variable($hostkey,"mon","av_loadavg");
 $free = cfpr_get_variable($hostkey,"mon","av_diskfree");
-#$speed = cfpr_get_network_rate($hostkey);
+$speed = cfpr_get_network_rate($hostkey);
 
 echo "<p><ul>";
 #echo "<li>$hostkey</li>";
@@ -89,8 +89,8 @@ echo "<input type=\"submit\">";
 echo "</form>";
 echo "</ul>";
 
-$number = cfpr_get_class_frequency(NULL,"mXc.*");
-$nlist = cfpr_report_class_frequency($hostkey,"mXc.*");
+$number = cfpr_get_class_frequency(NULL,"mXC.*");
+$nlist = cfpr_report_class_frequency($hostkey,"mXC.*");
 echo "Monitored jobs globally: $number<br>$nlist";
 
 ?>

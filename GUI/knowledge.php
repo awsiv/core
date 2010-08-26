@@ -54,7 +54,7 @@ if ($search == "")
 
     echo "</div>";
 
-    echo "</td><td>";    
+    echo "</td><td valign=\"top\">";    
 
     $hits = cfpr_show_topic_hits($pid);
     

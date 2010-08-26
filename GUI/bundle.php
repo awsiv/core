@@ -7,7 +7,7 @@ cfpr_header("bundle $bundle","normal");
 echo "<div id=\"showbundle\">";
 
 echo "<table>\n";
-echo "<tr><td width=\"30%\" valign=\"top\">";
+echo "<tr><td width=\"50%\" valign=\"top\">";
 
 $allbundles = cfpr_list_all_bundles(NULL);
 
