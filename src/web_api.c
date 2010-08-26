@@ -2967,7 +2967,7 @@ Join(returnval,work,bufsize);
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Reference handle</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span id=\"handle\">%s</span></a></td></tr>",hp->handle,hp->handle);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Affected object (promiser)</td><td>:</td><td><span id=\"promiser\">%s</span></td></tr>",hp->promiser);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Affected object (promiser)</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span id=\"promiser\">%s</span></a></td></tr>",hp->promiser,hp->promiser);
 Join(returnval,work,bufsize);
 
 if (EMPTY(hp->promisee))
@@ -2976,7 +2976,7 @@ if (EMPTY(hp->promisee))
    }
 else
    {
-   snprintf(promiseeText,sizeof(promiseeText),"%s",hp->promisee);     
+   snprintf(promiseeText,sizeof(promiseeText),"<a href=\"knowledge.php?topic=%s\">%s</a>",hp->promisee,hp->promisee);     
    }
 
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Stakeholders (promisees)</td><td>:</td><td><span id=\"promisee\">%s</span></td></tr>",promiseeText);
