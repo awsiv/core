@@ -2242,6 +2242,8 @@ int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize)
   char work[CF_BUFSIZE];
   struct Item *matched,*ip;
 
+Nova_WebTopicMap_Initialize();
+
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
@@ -2254,7 +2256,7 @@ matched = SortItemListClasses(matched);
 if (matched)
    {
    snprintf(buffer,bufsize,"<div id=\"bundles\"><table>\n"
-            "<tr><th>Type</th><th>Service bundle name</th><th>Pertaining to business goals</th></tr>");
+            "<tr><th>Type</th><th>Service bundle name</th><th>Pertaining to management goals</th></tr>");
    
    for (ip = matched; ip != NULL; ip=ip->next)
       {
