@@ -164,7 +164,7 @@ void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum)
  int max_x = cfv->margin+cfv->width;
  int max_y = cfv->margin;
  int i,x,y,dev;
- double range,dq,q,ticksize = 20;;
+ double range,dq,q,ticksize = 5;;
  double rx,ry,rs,sx = 0,s;
  double scale_x = ((double)cfv->width /(double)CF_GRAINS);
  double scale_y = 10.0;
@@ -263,8 +263,6 @@ for (ip = spectrum; ip != NULL; ip=ip->next)
 
 gdImageSetThickness(cfv->im,4);
 gdImageLine(cfv->im,origin_x+32*scale_x,origin_y,origin_x+cfv->width/2,cfv->max_y,lightred);
-
-
 }
 
 /*******************************************************************/
@@ -347,7 +345,7 @@ cfv.margin = 50;
 cfv.docroot = docroot;
 
 Nova_ViewHisto(&cfv,keyhash,obs);
-  
+
 snprintf(work,CF_BUFSIZE-1,"<div id=\"histoanalysis\">\n");
 Join(buffer,work,bufsize);
 
@@ -360,9 +358,9 @@ for (sx = 1; sx < CF_GRAINS; sx++)
 
 sigma2 = sum / (double)CF_GRAINS;
 
-snprintf(work,CF_BUFSIZE-1,"<p> Maximum observed %s = %.2lf\n",OBS[obs][0],Q_MAX);
+snprintf(work,CF_BUFSIZE-1,"<p> Maximum observed %s = %.2lf\n",OBS[obs][0],cfv->max);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"<p> Minimum observed %s = %.2lf\n",OBS[obs][0],Q_MIN);
+snprintf(work,CF_BUFSIZE-1,"<p> Minimum observed %s = %.2lf\n",OBS[obs][0],cfv->min);
 Join(buffer,work,bufsize);
 snprintf(work,CF_BUFSIZE-1,"<p> Approximate mean value over time = %.2lf\n",Q_MEAN);
 Join(buffer,work,bufsize);
