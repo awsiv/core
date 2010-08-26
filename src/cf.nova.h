@@ -795,6 +795,7 @@ void Nova_Indent(int i);
 
 /* topicmap.c */
 
+void Nova_FillInTopicComment(struct Item *ip);
 void Nova_WebTopicMap_Initialize(void);
 int Nova_GetPidForTopic(char *typed_topic);
 int Nova_QueryTopicMap(char *typed_topic,char *result_type,char *buffer,int bufsize);
@@ -813,6 +814,8 @@ void Nova_AddOccurrenceBuffer(char *locator,enum representations locator_type,ch
 char *Nova_PidURL(int pid,char *s);
 char *Nova_AssocURL(char *s);
 char *Nova_URL(char *s,char *rep);
+
+struct Item *Nova_GetBusinessGoals(char *handle);
 
 void Nova_SpecialQuote(char *name,char *type);
 void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char *view);
@@ -1055,6 +1058,9 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observabl
 #define NOVA_BUNDLE_DATA "uses variables defined in"
 #define NOVA_BUNDLE_DATA_INV_B "promises variables used by bundle"
 #define NOVA_BUNDLE_DATA_INV_P "promises variables used by promise"
+#define NOVA_HANDLE "is the handle for"
+#define NOVA_HANDLE_INV "has a promise with handle"
+
 
 #define NOVA_HISTORYDB "history" "." DB_FEXT
 #define NOVA_MEASUREDB "nova_measures" "." DB_FEXT

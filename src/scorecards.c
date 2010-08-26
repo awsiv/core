@@ -178,26 +178,26 @@ for (i = 0; i < span; i++)
    tnotkept = notkept[i]/total * cfv.range;
    trepaired = repaired[i]/total * cfv.range;
 
-   tkept -= 0.5; // Renormalize at baseline 50%
-   
+   // Factors of 2 to renormalize base scale to 50%
+
    if (ltotal > 0)
       {
       // Smoothing
       gdImageSetThickness(cfv.im,cfv.width/span+1);
       gdImageLine(cfv.im,x,0,x,(lnotkept+tnotkept)/2,RED);
       gdImageSetThickness(cfv.im,cfv.width/span+1);
-      gdImageLine(cfv.im,x,(lnotkept+tnotkept)/2,x,(lnotkept+tnotkept+lrepaired+trepaired)/2,YELLOW);
+      gdImageLine(cfv.im,x,(lnotkept+tnotkept),x,(lnotkept+tnotkept+lrepaired+trepaired),YELLOW);
       gdImageSetThickness(cfv.im,cfv.width/span+1);
-      gdImageLine(cfv.im,x,(lnotkept+tnotkept+lrepaired+trepaired)/2,x,cfv.range,GREEN);
+      gdImageLine(cfv.im,x,(lnotkept+tnotkept+lrepaired+trepaired),x,cfv.range,GREEN);
       x += (cfv.width-cfv.origin_x)/span/2;
       }
    
    gdImageSetThickness(cfv.im,cfv.width/span+1);
-   gdImageLine(cfv.im,x,0,x,tnotkept,RED);
+   gdImageLine(cfv.im,x,0,x,tnotkept*2,RED);
    gdImageSetThickness(cfv.im,cfv.width/span+1);
-   gdImageLine(cfv.im,x,tnotkept,x,(tnotkept+trepaired),YELLOW);
+   gdImageLine(cfv.im,x,tnotkept*2,x,(tnotkept+trepaired)*2,YELLOW);
    gdImageSetThickness(cfv.im,cfv.width/span+1);
-   gdImageLine(cfv.im,x,(tnotkept+trepaired),x,cfv.range,GREEN);
+   gdImageLine(cfv.im,x,(tnotkept+trepaired)*2,x,cfv.range,GREEN);
 
 
    ltotal = total;
@@ -1077,7 +1077,7 @@ for (day = 0; day < 7; day++)
    gdImageString(cfv->im, gdFontGetLarge(),x,cfv->range,days[day],col);
    }
 
-gdImageString(cfv->im, gdFontGetLarge(),cfv->width/2,cfv->range+cfv->margin/2,"days",col);
+gdImageString(cfv->im, gdFontGetLarge(),cfv->width/4,cfv->range+cfv->margin/2,"average compliance past days",col);
 
 gdImageString(cfv->im, gdFontGetLarge(),0,0,"100%",col);
 gdImageString(cfv->im, gdFontGetLarge(),0,cfv->range,"50%",col);      

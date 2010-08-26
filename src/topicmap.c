@@ -367,7 +367,8 @@ snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>The rest of the category \
 /* sub-topics of this topic-type */
 
 strcat(buffer,"<ul>\n"); // outer list
-strcat(buffer,"<li><ul>\n"); // sub for same topic
+snprintf(buf,CF_BUFSIZE-1,"<li>%s %s</li><ul>\n",Nova_PidURL(pid,this_name),topic_comment); // Start sublist
+Join(buffer,buf,bufsize);
 
 snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_type,topic_comment,pid from topics where topic_type='%s' order by topic_name asc",this_id);
 
@@ -710,6 +711,66 @@ CfCloseDB(&cfdb);
 }
 
 /*************************************************************************/
+
+struct Item *Nova_GetBusinessGoals(char *handle)
+
+{ char from_name[CF_BUFSIZE],from_type[CF_BUFSIZE],to_name[CF_BUFSIZE],work[CF_BUFSIZE];
+  char query[CF_BUFSIZE],fassociation[CF_BUFSIZE],bassociation[CF_BUFSIZE],save[CF_BUFSIZE];
+  char to_type[CF_BUFSIZE],topic_comment[CF_BUFSIZE],*sp;
+  struct Item *worklist = NULL, *ip;
+  enum representations locator_type;
+  int have_data = false;
+  CfdbConn cfdb;
+
+if (strlen(SQL_OWNER) == 0)
+   {
+   return NULL;
+   }
+
+CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
+    
+if (!cfdb.connected)
+   {
+   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
+   return NULL;
+   }
+
+/* Then associated topics */
+
+snprintf(query,CF_BUFSIZE,"SELECT from_name,from_type,from_assoc,to_assoc,to_type,to_name,from_id,to_id from associations where from_name='%s' and from_assoc='%s'",handle,NOVA_IMPACTS);
+
+CfNewQueryDB(&cfdb,query);
+
+if (cfdb.maxcolumns != 8)
+   {
+   CfOut(cf_error,""," !! The associations database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,8);
+   return NULL;
+   }
+
+/* Look in both directions for associations - first into */
+
+while(CfFetchRow(&cfdb))
+   {
+   int from_pid,to_pid;
+
+   strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);   
+   from_pid = Str2Int(CfFetchColumn(&cfdb,6));
+   to_pid = Str2Int(CfFetchColumn(&cfdb,7));
+
+   PrependFullItem(&worklist,from_name,NULL,from_pid,0);   
+   }
+
+CfDeleteQuery(&cfdb);
+
+for (ip = worklist; ip !=  NULL; ip=ip->next)
+   {
+   Nova_FillInTopicComment(ip);
+   }
+
+return worklist;
+}
+    
+/*************************************************************************/
 /* Level                                                                 */
 /*************************************************************************/
 
@@ -812,6 +873,46 @@ char *Nova_URL(char *s,char *rep)
  
 snprintf(buf,CF_MAXVARSIZE-1,"<a href=\"%s\">%s</a>",s,rep);
 return buf;
+}
+
+/*************************************************************************/
+
+void Nova_FillInTopicComment(struct Item *ip)
+
+{ CfdbConn cfdb;
+  char *sp,query[CF_MAXVARSIZE];
+  int ret;
+ 
+if (strlen(SQL_OWNER) == 0)
+   {
+   return;
+   }
+
+CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
+    
+if (!cfdb.connected)
+   {
+   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
+   return;
+   }
+
+snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_comment from topics where pid = '%d'",ip->counter);
+
+CfNewQueryDB(&cfdb,query);
+
+if (cfdb.maxcolumns != 1)
+   {
+   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,1);
+   CfCloseDB(&cfdb);
+   return;
+   }
+
+if (CfFetchRow(&cfdb))
+   {
+   ip->classes = strdup(CfFetchColumn(&cfdb,0));
+   }
+
+CfDeleteQuery(&cfdb);
 }
 
 /*****************************************************************************/

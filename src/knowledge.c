@@ -37,7 +37,6 @@ static char *CF_VALUETYPES[18][3] =
  ".*","an arbitrary string","unspecified characters",
  NULL,NULL,NULL
  };
-
     
 /*****************************************************************************/
 
@@ -202,6 +201,7 @@ void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version)
   struct Rlist *rp,*depends_on = GetListConstraint("depends_on",pp);
   struct Rlist *class_list = SplitRegexAsRList(pp->classes,"[.!()|&]+",100,false);
   struct DefineClasses c = GetClassDefinitionConstraints(pp);
+  char *bundlename = NULL;
 
 if (LICENSES == 0)
    {
@@ -229,9 +229,46 @@ fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
 fprintf(fp,"      association => a(\"makes promises\",\"%s\",\"is a promise made by\");\n",promise_id);
 
 
-
 fprintf(fp,"promise_types::\n");
 fprintf(fp,"  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype,"is promised in bundle",pp->bundle,"is a bundle with promises of type");
+
+/* Look for bundles used as promises through methods  -- these are service bundles */
+
+if (strcmp(pp->agentsubtype,"methods") == 0)
+   {
+   struct Constraint *cp;
+   struct FnCall *fnp;
+   
+   for (cp = pp->conlist; cp != NULL; cp = cp->next)
+      {
+      if (strcmp(cp->lval,"usebundle") == 0)
+         {
+         switch (cp->type)
+            {
+            case CF_SCALAR:
+                bundlename = (char *)cp->rval;
+                break;
+            case CF_FNCALL:
+                fnp = (struct FnCall *)cp->rval;
+                bundlename = fnp->name;
+                break;
+            default:
+                break;
+            }
+         }
+
+      if (bundlename)
+         {
+         if (pp->ref)
+            {
+            fprintf(fp,"occurrences: \n\n");
+            fprintf(fp," %s:: \"%s\"  representation => \"literal\",\n",bundlename);
+            fprintf(fp,"   represents => { \"Intention\" }; \ntopics:\n");
+            }
+         break;
+         }
+      }
+   }
 
 /* Promisees as topics too */
 
@@ -243,6 +280,20 @@ switch (pp->petype)
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);
        fprintf(fp,"  \"%s\"\n",pp->promisee);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
+
+       if (strncmp(pp->promisee,"goal",strlen("goal")) == 0)
+          {
+          fprintf(fp,"promises::\n\n");
+          fprintf(fp,"  \"%s\"\n",promise_id);
+          fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);
+
+          if (bundlename)
+             {
+             fprintf(fp,"bundles::\n\n");
+             fprintf(fp,"  \"%s\"\n",bundlename);
+             fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);             
+             }
+          }
        break;
 
    case CF_LIST:
@@ -254,6 +305,20 @@ switch (pp->petype)
           fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);          
           fprintf(fp,"  \"%s\"\n",rp->item);
           fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
+
+          if (strncmp(rp->item,"goal",strlen("goal")) == 0)
+             {
+             fprintf(fp,"promises::\n\n");
+             fprintf(fp,"  \"%s\"\n",promise_id);
+             fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);
+
+             if (bundlename)
+                {
+                fprintf(fp,"bundles::\n\n");
+                fprintf(fp,"  \"%s\"\n",bundlename);
+                fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);             
+                }             
+             }          
           }
        break;
    default:
@@ -667,13 +732,39 @@ return id;
 
 void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promise_id)
 
-{ struct Rlist *impacted = NULL, *dependency = NULL, *potential, *rp;
+{ struct Rlist *impacted = NULL, *dependency = NULL, *potential,*rp;
+  struct Item *goals,*ip;
   struct Bundle *bp;
   struct SubType *sp;
   struct Promise *pp2;
-  char *value;
+  char *value,*handle = (char *)GetConstraint("handle",pp,CF_SCALAR);
   int found = false;
-  
+
+if (handle && pp->ref)
+   {
+   fprintf(fp,"topics: handles:: \"%s\"  comment => \"This labels a promise, saying: %s",handle,pp->ref);
+   fprintf(fp,"association => a(\"is the handle for\",\"%s\",\"has a promise with handle\");\n",pp->promiser);
+   }
+else if (handle)
+   {
+   fprintf(fp,"topics: handles:: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",handle,NOVA_HANDLE,pp->promiser,NOVA_HANDLE_INV);
+   }
+
+if (handle)
+   {
+   if (goals = Nova_GetBusinessGoals(handle))
+      {
+      for (ip = goals; ip != NULL; ip=ip->next)
+         {
+         fprintf(fp,"topics: handles:: \"%s\"  association => a(\"contributes to business goal\",\"goals::%s\",\"is supported by a promise\");",handle,ip->name);
+         }
+
+      DeleteItemList(goals);
+      }
+
+   fprintf(fp,"occurrences: %s::  \"promise.php?handle=%s\", represents => { \"declaration\" }; \n",CanonifyName(handle),handle);
+   }
+
 /* For activated classes we can assume that no one will */
 
 potential = GetListConstraint("promise_kept",pp);
