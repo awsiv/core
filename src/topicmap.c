@@ -752,12 +752,11 @@ if (cfdb.maxcolumns != 8)
 while(CfFetchRow(&cfdb))
    {
    int from_pid,to_pid;
-
-   strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);   
+   strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);   
    from_pid = Str2Int(CfFetchColumn(&cfdb,6));
    to_pid = Str2Int(CfFetchColumn(&cfdb,7));
 
-   PrependFullItem(&worklist,from_name,NULL,from_pid,0);   
+   PrependFullItem(&worklist,to_name,NULL,to_pid,0);   
    }
 
 CfDeleteQuery(&cfdb);

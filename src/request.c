@@ -469,9 +469,8 @@ printf("AVLU = %s\n",buffer);
 //Nova2PHP_list_promise_handles(".*",NULL,"app_web_apache","agent",buffer,100000);
 //printf("HANDLE: %s\n",buffer);
 
-struct Item *list = Nova_GetBusinessGoals("app_web_apache");
-
-DebugListItemList(list);
+//struct Item *list = Nova_GetBusinessGoals("app_web_apache");
+//DebugListItemList(list);
 
 #else
 printf("For Cfengine internal only\n");
