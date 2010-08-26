@@ -118,7 +118,12 @@ for (i = 0; i < CF_GRAINS; i++)
    cfv->data_E[i] = ry;
    }
 
-return true;
+if (cfv->max == cfv->min)
+   {
+   have_data = false;
+   }
+
+return have_data;
 }
 
 /**********************************************************************/
@@ -159,7 +164,7 @@ void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum)
  int max_x = cfv->margin+cfv->width;
  int max_y = cfv->margin;
  int i,x,y,dev;
- double range,dq,q,ticksize;
+ double range,dq,q,ticksize = cfv->height/50;;
  double rx,ry,rs,sx = 0,s;
  double scale_x = ((double)cfv->width /(double)CF_GRAINS);
  double scale_y = 10.0;
@@ -178,6 +183,38 @@ range = (cfv->max - cfv->min + cfv->error_scale);
 scale_y = (double) cfv->height / range;
 
 gdImageSetThickness(cfv->im,1);
+
+// Make 5 gradations
+
+gdImageSetThickness(cfv->im,1);
+dq = cfv->range/5.0;
+
+if (dq < 0.001)
+   {
+   char qstr[16];
+
+   q = cfv->max;
+   x = Nova_ViewPortX(cfv,0);
+   y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
+
+   gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y,BLACK);
+   snprintf(qstr,15,"%.1f",q);
+   gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,BLACK);
+   }
+else
+   {
+   for (q = cfv->min; q <= cfv->min+cfv->range; q += dq)
+      {
+      char qstr[16];
+
+      x = Nova_ViewPortX(cfv,0);
+      y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
+      
+      gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y,BLACK);
+      snprintf(qstr,15,"%.1f",q);
+      gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,BLACK);
+      }
+   }
 
 // First plot average
 
@@ -227,36 +264,6 @@ for (ip = spectrum; ip != NULL; ip=ip->next)
 gdImageSetThickness(cfv->im,4);
 gdImageLine(cfv->im,origin_x+32*scale_x,origin_y,origin_x+cfv->width/2,cfv->max_y,lightred);
 
-// Make 5 gradations
-
-dq = cfv->range/5.0;
-
-if (dq < 0.001)
-   {
-   char qstr[16];
-
-   q = cfv->max;
-   x = Nova_ViewPortX(cfv,0);
-   y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
-
-   gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y, col);
-   snprintf(qstr,15,"%.1f",q);
-   gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
-   }
-else
-   {
-   for (q = cfv->min; q <= cfv->min+cfv->range; q += dq)
-      {
-      char qstr[16];
-
-      x = Nova_ViewPortX(cfv,0);
-      y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
-      
-      gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y, col);
-      snprintf(qstr,15,"%.1f",q);
-      gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,col);
-      }
-   }
 
 }
 
@@ -334,6 +341,11 @@ void Nova_AnalyseHistogram(char *docroot,char *keyhash,enum observables obs,char
   double sensitivity_factor = 1.2;
   struct CfDataView cfv;
 
+cfv.height = 300;
+cfv.width = 700; //(7*24*2)*2; // halfhour
+cfv.margin = 50;
+cfv.docroot = docroot;
+
 Nova_ViewHisto(&cfv,keyhash,obs);
   
 snprintf(work,CF_BUFSIZE-1,"<div id=\"histoanalysis\">\n");
@@ -381,7 +393,7 @@ for (sx = 1; sx < CF_GRAINS; sx++)
          if (sx < ((double)CF_GRAINS)/2.0 - 1.0)
             {
             redshift++;
-            snprintf(work,CF_BUFSIZE-1,"<ul><li>Red-shifted, i.e. shows retardation process</li></ul>\n");
+            snprintf(work,CF_BUFSIZE-1,"<ul><li>Red-shifted, typically shows retardation process</li></ul>\n");
             Join(buffer,work,bufsize);
             
             snprintf(work,CF_BUFSIZE-1,"<div id = \"explain\"><table><tr><td><h4>What does this mean?</h4>"
@@ -395,7 +407,7 @@ for (sx = 1; sx < CF_GRAINS; sx++)
          else if (sx > ((double)CF_GRAINS)/2.0 + 1.0)
             {
             blueshift++;
-            snprintf(work,CF_BUFSIZE-1,"<ul><li>Blue-shifted, i.e. shows acceleration process</li></ul>\n");
+            snprintf(work,CF_BUFSIZE-1,"<ul><li>Blue-shifted, typically shows acceleration process</li></ul>\n");
             Join(buffer,work,bufsize);
 
             snprintf(work,CF_BUFSIZE-1,"<div id = \"explain\"><table><tr><td><h4>What does this mean?</h4>"
