@@ -178,6 +178,8 @@ for (i = 0; i < span; i++)
    tnotkept = notkept[i]/total * cfv.range;
    trepaired = repaired[i]/total * cfv.range;
 
+   tkept -= 0.5; // Renormalize at baseline 50%
+   
    if (ltotal > 0)
       {
       // Smoothing
@@ -213,49 +215,6 @@ if (!CFDB_Close(&dbconn))
 
 
 Nova_DrawComplianceAxes(&cfv,WHITE);
-
-
-/****************/
-
-  static char *font1 = "DejaVuSans";
-  char *font = font1;
-  static char *font2 = "Vera";
-  static char *font3 = "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf";
-  int brect[8];
-  char *err;
-  double size = 10.0;
-  
-  err= gdImageStringFT(NULL,&brect[0],0,font1,size,20.0,cfv.width/2,cfv.range/2,"Compliance");
-
-  if (err)
-   {
-   err= gdImageStringFT(NULL,&brect[0],0,font2,size,20.0,cfv.width/2,cfv.range/2,"Compliance");
-
-   if (err)
-      {
-      err= gdImageStringFT(NULL,&brect[0],0,font3,size,20.0,cfv.width/2,cfv.range/2,"Compliance");
-
-      if (err)
-         {
-         font = font3;      
-         }
-      else
-         {
-         font = font2;
-         }      
-      }
-   }
-else
-   {
-   font = font1;
-   }
-
-if (err)
-   {
-   printf("Rendering failure %s\n",err);
-   }
-
-/****************/
 
 
 if ((fout = fopen(newfile, "wb")) == NULL)
@@ -1121,7 +1080,7 @@ for (day = 0; day < 7; day++)
 gdImageString(cfv->im, gdFontGetLarge(),cfv->width/2,cfv->range+cfv->margin/2,"days",col);
 
 gdImageString(cfv->im, gdFontGetLarge(),0,0,"100%",col);
-gdImageString(cfv->im, gdFontGetLarge(),0,cfv->range,"  0%",col);      
+gdImageString(cfv->im, gdFontGetLarge(),0,cfv->range,"50%",col);      
 
 #endif  /* HAVE_LIBGD */
 }

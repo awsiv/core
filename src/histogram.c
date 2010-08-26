@@ -123,6 +123,19 @@ if (cfv->max == cfv->min)
    have_data = false;
    }
 
+if (cfv->max > CF_MAX_LIMIT)
+   {
+   cfv->max = CF_MAX_LIMIT;
+   }
+
+cfv->origin_x = cfv->margin;
+cfv->origin_y = cfv->height+cfv->margin;
+
+cfv->max_x = cfv->margin+cfv->width;
+cfv->max_y = cfv->margin;
+
+cfv->range = (cfv->max - cfv->min);
+
 return have_data;
 }
 
@@ -157,7 +170,9 @@ for (sigma = 0; sigma < 5; sigma++)
 // Make 5 gradations
 
 gdImageSetThickness(cfv->im,1);
+
 dq = cfv->range/5.0;
+cfv->scale_y = (double) cfv->height / cfv->range;
 
 if (dq < 0.001)
    {
@@ -212,7 +227,7 @@ if (cfv->max == 0)
    return;
    }
 
-range = (cfv->max - cfv->min + cfv->error_scale);
+range = (cfv->max - cfv->min);
 scale_y = (double) cfv->height / range;
 
 // First plot average
