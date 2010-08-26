@@ -34,6 +34,14 @@ void CFDB_GetValue(char *lval,char *rval,int size)
   mongo_cursor *cursor;
   mongo_connection conn;
   
+  
+  // clients do not run mongo server -- will fail to connect
+if (!IsDefinedClass("am_policy_hub"))
+   {
+   return;
+   }
+
+  
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");

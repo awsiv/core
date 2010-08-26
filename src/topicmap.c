@@ -21,6 +21,8 @@ void Nova_WebTopicMap_Initialize()
 
 { char retval[CF_MAXVARSIZE];
 
+NewClass("am_policy_hub");
+
 #ifdef HAVE_LIBMONGOC 
 CFDB_GetValue("SQL_TYPE",retval,CF_MAXVARSIZE);
 SQL_TYPE = Str2dbType(retval);
