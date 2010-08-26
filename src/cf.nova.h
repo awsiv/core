@@ -314,7 +314,7 @@ void CFDB_GetValue(char *lval,char *rval,int size);
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
 struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query);
 struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,bson *query,char *lday,char *lmonth,char *lyear);
-struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,bson *query,enum promiselog_rep type,char *lhandle,int regex);
+struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,bson *query,enum promiselog_rep type,char *lhandle,int regex,int sortDescending);
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,bson *query,char *type,char *name,char *ver,char *arch,int regex);
 struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,bson *query,char *lclass,int regex,time_t horizon);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,bson *query,char *lversion,time_t ltime,int lkept,int lnotkept,int lrepaired,int cmp);
@@ -518,6 +518,7 @@ struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,cha
 void DeleteHubVariable(struct HubVariable *hv);
 struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,char *cause,time_t t);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
+int DescendingTimePromiseLog(void *p1, void *p2);
 struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
 void DeleteHubLastSeen(struct HubLastSeen *hp);
 struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double repaired);
@@ -903,7 +904,7 @@ int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize);
 int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize);
 void Nova2PHP_AnalyseMag(char *hostkey,enum observables obs,char *buffer,int bufsize);
 void Nova2PHP_AnalyseWeek(char *hostkey,enum observables obs,char *buffer,int bufsize);
-void Nova2PHP_ComplianceSummaryGraph();
+void Nova2PHP_ComplianceSummaryGraph(void);
 void Nova2PHP_AnalyseHistogram(char *keyhash,int obs,char *buffer,int bufsize);
 
 /* pdf report */

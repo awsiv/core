@@ -1826,7 +1826,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,bson *query,enum promiselog_rep type,char *lhandle,int regex)
+struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,bson *query,enum promiselog_rep type,char *lhandle,int regex,int sortDescending)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,field;
@@ -1946,6 +1946,13 @@ while (mongo_cursor_next(cursor))  // loops over documents
          }   
       }
 
+
+   if(sortDescending)
+      {
+      record_list = SortRlist(record_list,DescendingTimePromiseLog);
+      }
+
+
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
@@ -1966,6 +1973,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
 bson_destroy(&field);
 mongo_cursor_destroy(cursor);
+
 return NewHubQuery(host_list,record_list);
 }
 

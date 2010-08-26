@@ -335,6 +335,30 @@ free(hp);
 
 /*****************************************************************************/
 
+int DescendingTimePromiseLog(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts promise logs descending on time.
+ **/
+{
+  struct HubPromiseLog *pl1, *pl2;
+
+  pl1 = (struct HubPromiseLog *)p1;
+  pl2 = (struct HubPromiseLog *)p2;
+
+  // > orig
+
+  if(pl1->t > pl2->t)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+
+/*****************************************************************************/
+
 struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t)
 
 { struct HubLastSeen *hp;
@@ -726,3 +750,4 @@ void DeleteHubBodyAttributes(struct HubBodyAttr *ha)
   free(ha->classContext);
   free(ha);
 }
+

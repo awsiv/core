@@ -200,12 +200,12 @@ if (hostkey && strlen(hostkey) > 0)
    bson_buffer_init(&bb);
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true);
+   hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true,true);
    bson_destroy(&query);
    }
 else
    {
-   hq = CFDB_QueryPromiseLog(&dbconn,bson_empty(&b),type,handle,true);
+     hq = CFDB_QueryPromiseLog(&dbconn,bson_empty(&b),type,handle,true,true);
    }
 
 returnval[0] = '\0';
@@ -263,12 +263,12 @@ if (hostkey && strlen(hostkey) > 0)
    bson_buffer_init(&bb);
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true);
+   hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true,false);
    bson_destroy(&query);
    }
 else
    {
-   hq = CFDB_QueryPromiseLog(&dbconn,bson_empty(&b),type,handle,true);
+   hq = CFDB_QueryPromiseLog(&dbconn,bson_empty(&b),type,handle,true,false);
    }
 
 hostname[0] = '\0';
@@ -789,12 +789,12 @@ if (hostkey && strlen(hostkey) > 0)
    bson_buffer_init(&bb);
    bson_append_string(&bb,cfr_keyhash,hostkey);
    bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true);
+   hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true,true);
    bson_destroy(&query);
    }
 else
    {
-   hq = CFDB_QueryPromiseLog(&dbconn,bson_empty(&b),type,handle,true);
+   hq = CFDB_QueryPromiseLog(&dbconn,bson_empty(&b),type,handle,true,true);
    }
 
 returnval[0] = '\0';
