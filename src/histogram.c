@@ -136,6 +136,7 @@ void Nova_DrawHistoAxes(struct CfDataView *cfv,int col)
   int max_y = cfv->margin;
   int sigma;
   int x,y;
+  double q,dq;
   int ticksize = cfv->height/50;
   static char *grains[CF_GRAINS/4] = {"-2 sig","-sig","AV","+sig","+2 sig"};
   
@@ -152,37 +153,6 @@ for (sigma = 0; sigma < 5; sigma++)
    
    gdImageString(cfv->im, gdFontGetLarge(),x,origin_y+2*ticksize,grains[sigma],col);
    }
-}
-
-/*******************************************************************/
-
-void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum)
-
-{
- int origin_x = cfv->margin;
- int origin_y = cfv->height+cfv->margin;
- int max_x = cfv->margin+cfv->width;
- int max_y = cfv->margin;
- int i,x,y,dev;
- double range,dq,q,ticksize = 0;
- double rx,ry,rs,sx = 0,s;
- double scale_x = ((double)cfv->width /(double)CF_GRAINS);
- double scale_y = 10.0;
- double low,high;
- double xfill;
- int col = 0;
- int lightred = gdImageColorAllocate(cfv->im, 255, 150, 150);
- struct Item *ip;
-
-if (cfv->max == 0)
-   {
-   return;
-   }
-
-range = (cfv->max - cfv->min + cfv->error_scale);
-scale_y = (double) cfv->height / range;
-
-gdImageSetThickness(cfv->im,1);
 
 // Make 5 gradations
 
@@ -215,6 +185,35 @@ else
       gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,BLACK);
       }
    }
+}
+
+/*******************************************************************/
+
+void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum)
+
+{
+ int origin_x = cfv->margin;
+ int origin_y = cfv->height+cfv->margin;
+ int max_x = cfv->margin+cfv->width;
+ int max_y = cfv->margin;
+ int i,x,y,dev;
+ double range,dq,q,ticksize = 0;
+ double rx,ry,rs,sx = 0,s;
+ double scale_x = ((double)cfv->width /(double)CF_GRAINS);
+ double scale_y = 10.0;
+ double low,high;
+ double xfill;
+ int col = 0;
+ int lightred = gdImageColorAllocate(cfv->im, 255, 150, 150);
+ struct Item *ip;
+
+if (cfv->max == 0)
+   {
+   return;
+   }
+
+range = (cfv->max - cfv->min + cfv->error_scale);
+scale_y = (double) cfv->height / range;
 
 // First plot average
 
