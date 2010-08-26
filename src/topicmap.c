@@ -159,6 +159,7 @@ else
    }
 
 CfDeleteQuery(&cfdb);
+CfCloseDB(&cfdb);
 return ret;
 }
 
@@ -167,7 +168,7 @@ return ret;
 int Nova_QueryTopicMap(char *typed_topic,char *result_type,char *buffer,int bufsize)
 
 {
- return false;
+return false;
 }
 
 /*****************************************************************************/
@@ -744,6 +745,7 @@ CfNewQueryDB(&cfdb,query);
 if (cfdb.maxcolumns != 8)
    {
    CfOut(cf_error,""," !! The associations database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,8);
+   CfCloseDB(&cfdb);
    return NULL;
    }
 
@@ -760,6 +762,7 @@ while(CfFetchRow(&cfdb))
    }
 
 CfDeleteQuery(&cfdb);
+CfCloseDB(&cfdb);
 
 for (ip = worklist; ip !=  NULL; ip=ip->next)
    {
@@ -912,6 +915,7 @@ if (CfFetchRow(&cfdb))
    }
 
 CfDeleteQuery(&cfdb);
+CfCloseDB(&cfdb);
 }
 
 /*****************************************************************************/
