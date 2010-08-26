@@ -941,14 +941,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
             
             if (regex)
                {
-               if (lhandle && !FullTextMatch(lhandle,rhandle))
+	       if (!EMPTY(lhandle) && !FullTextMatch(lhandle,rhandle))
                   {
                   match_handle = false;
                   }
                }
             else
                {
-               if (lhandle && (strcmp(lhandle,rhandle) != 0))
+	       if (!EMPTY(lhandle) && (strcmp(lhandle,rhandle) != 0))
                   {
                   match_handle = false;
                   }
@@ -1924,14 +1924,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
             
             if (regex)
                {
-               if (lhandle && !FullTextMatch(lhandle,rhandle))
+	       if (!EMPTY(lhandle) && !FullTextMatch(lhandle,rhandle))
                   {
                   match_name = false;
                   }
                }
             else
                {
-               if (lhandle && (strcmp(lhandle,rhandle) != 0))
+	       if (!EMPTY(lhandle) && (strcmp(lhandle,rhandle) != 0))
                   {
                   match_name = false;
                   }
@@ -1941,7 +1941,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                {
                found = true;
                rp = AppendRlistAlien(&record_list,NewHubPromiseLog(CF_THIS_HH,rhandle,rcause,rt));
-               }            
+               }
             }
          }   
       }

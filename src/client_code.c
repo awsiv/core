@@ -59,8 +59,8 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    Nova_UnPackValueReport,  // nodata
    Nova_UnPackVariables,    // DBOK
    Nova_UnPackLastSeen,     // DBOK
-   Nova_UnPackRepairLog,    // DBOK (append - nonconvergent+reverse) LOG
-   Nova_UnPackNotKeptLog,   // DBOK (append - nonconvergent+reverse) LOG
+   Nova_UnPackRepairLog,    // DBOK (nopurge)
+   Nova_UnPackNotKeptLog,   // DBOK (nopurge)
    Nova_UnPackMeter,        // DBOK
    Nova_UnPackBundles
    };

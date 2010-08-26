@@ -643,7 +643,7 @@ bson_destroy(&host_key);
 void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_rep rep_type, struct Item *data)
 
 { bson_buffer bb;
-  bson_buffer *pushObj;
+  bson_buffer *setObj;
   bson_buffer *arr, *sub;
   bson host_key;  // host description
   bson setOp;
@@ -651,8 +651,7 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_
   long then;
   time_t tthen;
   struct Item *ip;
-  int i;
-  char iStr[32];
+  char varName[CF_MAXVARSIZE];
   char *repName = {0};
   char *dbOp;
 
@@ -678,24 +677,23 @@ switch(rep_type)
        return;
    }
 
-pushObj = bson_append_start_object(&bb, "$pushAll");
-arr = bson_append_start_array(pushObj, repName);
+setObj = bson_append_start_object(&bb, "$set");
 
-for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+for (ip = data; ip != NULL; ip=ip->next)
    {
-   snprintf(iStr, sizeof(iStr), "%d", i);   
    sscanf(ip->name,"%ld,%254[^,],%1024[^\n]",&then,handle,reason);
    tthen = (time_t)then;
+
+   snprintf(varName, sizeof(varName), "%s.%s@%d", repName,handle,then);
    
-   sub = bson_append_start_object(arr, iStr);
+   sub = bson_append_start_object(setObj, varName);
    bson_append_string(sub,cfr_promisehandle, handle);
    bson_append_string(sub,cfr_cause,reason);
    bson_append_int(sub, cfr_time, then);
    bson_append_finish_object(sub);
    }
 
-bson_append_finish_object(arr);
-bson_append_finish_object(pushObj);
+bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
