@@ -358,9 +358,9 @@ for (sx = 1; sx < CF_GRAINS; sx++)
 
 sigma2 = sum / (double)CF_GRAINS;
 
-snprintf(work,CF_BUFSIZE-1,"<p> Maximum observed %s = %.2lf\n",OBS[obs][0],cfv->max);
+snprintf(work,CF_BUFSIZE-1,"<p> Maximum observed %s = %.2lf\n",OBS[obs][0],cfv.max);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"<p> Minimum observed %s = %.2lf\n",OBS[obs][0],cfv->min);
+snprintf(work,CF_BUFSIZE-1,"<p> Minimum observed %s = %.2lf\n",OBS[obs][0],cfv.min);
 Join(buffer,work,bufsize);
 snprintf(work,CF_BUFSIZE-1,"<p> Approximate mean value over time = %.2lf\n",Q_MEAN);
 Join(buffer,work,bufsize);
