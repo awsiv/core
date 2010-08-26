@@ -463,11 +463,15 @@ printf("AVLU = %s\n",buffer);
 //Nova2PHP_show_col_hosts("green",200,buffer,1000);
 //printf("HOSTS = %s\n",buffer);
 
-Nova_WebTopicMap_Initialize();
-printf("PID %d\n",Nova_GetPidForTopic("promises::promise_site_cf_122"));
+//Nova_WebTopicMap_Initialize();
+//printf("PID %d\n",Nova_GetPidForTopic("promises::promise_site_cf_122"));
 
 //Nova2PHP_list_promise_handles(".*",NULL,"app_web_apache","agent",buffer,100000);
 //printf("HANDLE: %s\n",buffer);
+
+struct Item *list = Nova_GetBusinessGoals("app_web_apache");
+
+DebugListItemList(list);
 
 #else
 printf("For Cfengine internal only\n");
