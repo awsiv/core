@@ -630,7 +630,7 @@ void Nova_DumpSlowlyVaryingObservations(void);
 void Nova_LookupClassName(int n,char *name, char *desc);
 void Nova_SaveFilePosition(char *filename,long fileptr);
 long Nova_RestoreFilePosition(char *filename);
-int Nova_GetPersistentScalar(char *lval,char *rval,char *size,time_t timeout);
+int Nova_GetPersistentScalar(char *lval,char *rval,int size,time_t timeout);
 void Nova_SetPersistentScalar(char *lval,char *rval);
 
 /* outputs.c */

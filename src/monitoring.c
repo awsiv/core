@@ -1471,7 +1471,7 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-int Nova_GetPersistentScalar(char *lval,char *rval,char *size,time_t timeout)
+int Nova_GetPersistentScalar(char *lval,char *rval,int size,time_t timeout)
 
 { CF_DB *dbp;
   struct cf_pscalar var;
