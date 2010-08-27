@@ -322,7 +322,10 @@ fclose(fout);
 
 void Nova_CountMonitoredClasses()
 
-{ char *report,work[CF_BUFSIZE];
+{
+#ifdef HAVE_LIBMONGOC
+
+  char *report,work[CF_BUFSIZE];
   struct HubHost *hh;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
@@ -363,4 +366,6 @@ for (ip = order_results; ip != NULL; ip = ip->next)
    snprintf(countstr,CF_SMALLBUF,"%d",ip->counter+1);
    Nova_SetPersistentScalar(ip->name+strlen(MONITOR_CLASS_PREFIX),countstr);
    }
+
+#endif
 }
