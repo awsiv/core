@@ -1193,6 +1193,7 @@ struct cf_pscalar
 #define cfr_bundles       "B"
 #define cfr_day           "t" // Substitute for time in value report
 #define cfr_valuereport   "VR"
+#define cfr_netmeasure    "ne"
 
 /* Promise DB */
 #define cfp_bundlename    "bn"

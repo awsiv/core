@@ -1455,7 +1455,7 @@ void Nova_SetPersistentScalar(char *lval,char *rval)
   struct cf_pscalar new;
   char filename[CF_MAXVARSIZE];
 
-snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_PSCALARDB);
+snprintf(filename,sizeof(filename),"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_PSCALARDB);
 
 strncpy(new.rval,rval,CF_MAXVARSIZE);
 new.time = time(NULL);
@@ -1478,7 +1478,7 @@ int Nova_GetPersistentScalar(char *lval,char *rval,int size,time_t timeout)
   time_t now = time(NULL);
   char filename[CF_MAXVARSIZE];
   
-snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_PSCALARDB);
+snprintf(filename,sizeof(filename),"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_PSCALARDB);
 
 if (!OpenDB(filename,&dbp))
    {

@@ -3088,35 +3088,82 @@ return true;
 
 void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize)
 
-{ struct Event e;
-  CF_DB *dbp;
-  char name[CF_MAXVARSIZE];
-  char key[CF_MAXVARSIZE];
+{ 
+#ifdef HAVE_LIBMONGOC
 
-// REWRITE ME IN MONGO
-  
-snprintf(name,CF_MAXVARSIZE-1,"/var/cfengine/state/%s",NOVA_NETWORK);
-strcpy(key,hostkey);
+  mongo_connection dbconn;
+  mongo_cursor *cursor;
+  bson_iterator it1;
+  bson_buffer bb;
+  bson query,field;
+  int found = false;
+  struct Event e;
 
-if (OpenDB(name,&dbp))
-   {
-   if (ReadDB(dbp,key,&e,sizeof(e)))
-      {
-      snprintf(buffer,bufsize,"%.2lf &Delta; %.2lf bytes/s",e.Q.expect,sqrt(e.Q.var));
-      }
-   else
-      {
-      snprintf(buffer,bufsize,"Too fast to measure");
-      }
-   
-   CloseDB(dbp);
+
+  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to database (read network measurements)");
+    return;
    }
-else
+
+
+// query
+
+ bson_buffer_init(&bb);
+ bson_append_string(&bb,cfr_keyhash,hostkey);
+ bson_from_buffer(&query,&bb);
+
+ // returned value
+
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_netmeasure,1);
+ bson_from_buffer(&field,&bb);
+
+
+ cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,0);
+ bson_destroy(&query);
+ bson_destroy(&field);
+
+
+ if (mongo_cursor_next(cursor))  // not more than one record
+   {
+   bson_iterator it;
+   bson_iterator_init(&it, cursor->current.data);
+
+   while(bson_iterator_next(&it))
+     {
+       if(strcmp(bson_iterator_key(&it),cfr_netmeasure) == 0)
+	 {
+	   if(bson_iterator_bin_len(&it) == sizeof(e))
+	     {
+	       memcpy(&e,bson_iterator_bin_data(&it),sizeof(e));
+	       found = true;
+	     }
+	   else
+	     {
+	       CfOut(cf_verbose, "", "!! Existing network measurement incorrect - ignoring");
+	     }
+	 }
+     }
+   
+   }
+
+ mongo_cursor_destroy(cursor);
+
+ CFDB_Close(&dbconn);
+
+
+ if(found)
+   {
+   snprintf(buffer,bufsize,"%.2lf &Delta; %.2lf bytes/s",e.Q.expect,sqrt(e.Q.var));
+   }
+ else
    {
    snprintf(buffer,bufsize,"Insufficient data");
    }
 
-return;
+
+#endif /* HAVE_LIBMONGOC */
 }
 
 /*****************************************************************************/

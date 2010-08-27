@@ -272,39 +272,91 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 /*********************************************************************/
 
 void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *conn)
+// NOTE: NOT Thread-safe (use of HashPrint())
+{ 
+#ifdef HAVE_LIBMONGOC
 
-{ CF_DB *dbp;
-  struct Event e,newe;
-  char name[CF_MAXVARSIZE],id[CF_MAXVARSIZE];
-  double delta,lastseen;
-  // REWRITE ME IN MONGO...
+  mongo_connection dbconn;
+  mongo_cursor *cursor;
+  bson_iterator it1;
+  bson_buffer bb, *setObj;
+  bson query,field,update;
+  struct Event e = {0},newe = {0};
+  double delta;
+
+  newe.t = now;
+  newe.Q.q = 0;
+  newe.Q.expect = 0;
+  newe.Q.var = 0;
+
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to database (update network measurements)");
+   return;
+   }
+
+// query
+
+ bson_buffer_init(&bb);
+ bson_append_string(&bb,cfr_keyhash,HashPrint(CF_DEFAULT_DIGEST,conn->digest));
+ bson_from_buffer(&query,&bb);
+
+ // returned value
+
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_netmeasure,1);
+ bson_from_buffer(&field,&bb);
  
-  snprintf(name,sizeof(name),"%s/state/%s",CFWORKDIR,NOVA_NETWORK);
- 
- if (OpenDB(name,&dbp))
-    {
-    snprintf(id,CF_MAXVARSIZE-1,"%s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
-    
-    if (ReadDB(dbp,id,&e,sizeof(e)))
-       {
-       lastseen = now - e.t;
-       newe.t = now;
-       newe.Q.q = datarate;
-       newe.Q.expect = GAverage(datarate,e.Q.expect,0.5);
-       delta = (datarate - e.Q.expect)*(datarate - e.Q.expect);
-       newe.Q.var = GAverage(delta,e.Q.var,0.5);
-       }
-    else
-       {
-       lastseen = 0;
-       newe.t = now;
-       newe.Q.q = 0;
-       newe.Q.expect = 0;
-       newe.Q.var = 0;
-       }
-    
-    WriteDB(dbp,id,&newe,sizeof(newe));
-    }
- 
- // END REWRITE ME
+ cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,0);
+
+ if (mongo_cursor_next(cursor))  // not more than one record
+   {
+   bson_iterator it;
+   bson_iterator_init(&it, cursor->current.data);
+
+   while(bson_iterator_next(&it))
+     {
+       if(strcmp(bson_iterator_key(&it),cfr_netmeasure) == 0)
+	 {
+	   if(bson_iterator_bin_len(&it) == sizeof(e))
+	     {
+	       memcpy(&e,bson_iterator_bin_data(&it),sizeof(e));
+	       newe.t = now;
+	       newe.Q.q = datarate;
+	       newe.Q.expect = GAverage(datarate,e.Q.expect,0.5);
+	       delta = (datarate - e.Q.expect)*(datarate - e.Q.expect);
+	       newe.Q.var = GAverage(delta,e.Q.var,0.5);
+	     }
+	   else
+	     {
+	       CfOut(cf_verbose, "", "!! Existing network measurement incorrect - overwriting");
+	     }
+	 }
+     }
+   
+   }
+
+ mongo_cursor_destroy(cursor);
+
+
+ // update DB with new measurement
+ bson_buffer_init(&bb);
+
+ setObj = bson_append_start_object(&bb, "$set");
+ bson_append_binary(setObj,cfr_netmeasure,' ',(char *)&newe,sizeof(newe));  // unused type
+ bson_append_finish_object(setObj);
+
+ bson_from_buffer(&update,&bb);
+
+ mongo_update(&dbconn,MONGO_DATABASE,&query,&update,MONGO_UPDATE_UPSERT);
+
+
+ bson_destroy(&query);
+ bson_destroy(&field);
+ bson_destroy(&update);
+
+ CFDB_Close(&dbconn);
+
+#endif  /* HAVE_LIBMONGOC */
 }
