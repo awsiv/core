@@ -116,7 +116,11 @@ if (LICENSES <= 0)
    return false;
    }
 
-if (GetVariable("remote_access",handle,(void *)&retval,&rtype) != cf_notype)
+if (Nova_GetPersistentScalar(handle,recv,CF_BUFSIZE-1,CF_HUB_HORIZON))
+   {
+   return true;
+   }
+else if (GetVariable("remote_access",handle,(void *)&retval,&rtype) != cf_notype)
    {
    if (rtype == CF_SCALAR)
       {     

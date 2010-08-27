@@ -630,6 +630,8 @@ void Nova_DumpSlowlyVaryingObservations(void);
 void Nova_LookupClassName(int n,char *name, char *desc);
 void Nova_SaveFilePosition(char *filename,long fileptr);
 long Nova_RestoreFilePosition(char *filename);
+int Nova_GetPersistentScalar(char *lval,char *rval,char *size,time_t timeout);
+void Nova_SetPersistentScalar(char *lval,char *rval);
 
 /* outputs.c */
 
@@ -1066,6 +1068,7 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observabl
 #define NOVA_HISTORYDB "history" "." DB_FEXT
 #define NOVA_MEASUREDB "nova_measures" "." DB_FEXT
 #define NOVA_STATICDB  "nova_static" "." DB_FEXT
+#define NOVA_PSCALARDB  "nova_pscalar" "." DB_FEXT
 #define NOVA_COMPLIANCE "promise_compliance" "." DB_FEXT
 #define NOVA_REGISTRY "mswin" "." DB_FEXT
 #define NOVA_CACHE "nova_cache" "." DB_FEXT
@@ -1088,6 +1091,8 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observabl
 
 #define CF_HUB_HORIZON 900 // 15 mins
 
+/***************************************************************************/
+
 struct month_days
    {
    char *m;
@@ -1100,6 +1105,14 @@ struct promise_value
    double repaired;
    double notkept;
    };
+
+struct cf_pscalar
+   {
+   char rval[CF_MAXVARSIZE];
+   time_t time;
+   };
+
+/***************************************************************************/
 
 #define CF_REPAIR_LOG    "cf_repair.log"
 #define CF_NOTKEPT_LOG   "cf_notkept.log"

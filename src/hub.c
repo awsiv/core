@@ -361,6 +361,6 @@ for (ip = order_results; ip != NULL; ip = ip->next)
    {
    char countstr[CF_SMALLBUF];
    snprintf(countstr,CF_SMALLBUF,"%d",ip->counter+1);
-   NewScalar("remote_access",ip->name+strlen(MONITOR_CLASS_PREFIX),countstr,cf_int);
+   Nova_SetPersistentScalar(ip->name+strlen(MONITOR_CLASS_PREFIX),countstr);
    }
 }

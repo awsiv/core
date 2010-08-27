@@ -1448,6 +1448,65 @@ CloseDB(dbp);
 }
 
 /*****************************************************************************/
+
+void Nova_SetPersistentScalar(char *lval,char *rval)
+
+{ CF_DB *dbp;
+  struct cf_pscalar new;
+  char filename[CF_MAXVARSIZE];
+
+snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_PSCALARDB);
+
+strncpy(new.rval,rval,CF_MAXVARSIZE);
+new.time = time(NULL);
+
+if (!OpenDB(filename,&dbp))
+   {
+   return;
+   }
+
+WriteDB(dbp,lval,rval,sizeof(struct cf_pscalar));
+CloseDB(dbp);
+}
+
+/*****************************************************************************/
+
+int Nova_GetPersistentScalar(char *lval,char *rval,char *size,time_t timeout)
+
+{ CF_DB *dbp;
+  struct cf_pscalar var;
+  time_t now = time(NULL);
+  char filename[CF_MAXVARSIZE];
+  
+snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_PSCALARDB);
+
+if (!OpenDB(filename,&dbp))
+   {
+   return false;
+   }
+
+if (ReadDB(dbp,lval,&var,sizeof(struct cf_pscalar)))
+   {
+   CloseDB(dbp);
+
+   if (now > var.time + timeout)
+      {
+      DeleteDB(dbp,lval);
+      return false;
+      }
+   else
+      {
+      return true;
+      }
+   }
+else
+   {
+   CloseDB(dbp);
+   return false;
+   }
+}
+
+/*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
 
