@@ -139,20 +139,17 @@ void Nova2PHP_summary_meter(char *hostkey)
 
 {
 Nova_WebTopicMap_Initialize();
-
 Nova_SummaryMeter(DOCROOT,hostkey);
 }
+
+/*****************************************************************************/
 
 void Nova2PHP_meter(char *hostkey)
 
 {
 Nova_WebTopicMap_Initialize();
-
 Nova_Meter(DOCROOT,hostkey);
 }
-
-/*****************************************************************************/
-
 
 /*****************************************************************************/
 
@@ -160,7 +157,6 @@ void Nova2PHP_performance_analysis(char *hostkey,char *buffer,int bufsize)
 
 {
 Nova_WebTopicMap_Initialize();
-
 Nova_PerformancePage(DOCROOT,hostkey,buffer,bufsize);
 }
 
@@ -205,7 +201,7 @@ if (hostkey && strlen(hostkey) > 0)
    }
 else
    {
-     hq = CFDB_QueryPromiseLog(&dbconn,bson_empty(&b),type,handle,true,true);
+   hq = CFDB_QueryPromiseLog(&dbconn,bson_empty(&b),type,handle,true,true);
    }
 
 returnval[0] = '\0';
