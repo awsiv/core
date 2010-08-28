@@ -2433,15 +2433,15 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
 
    if (Nova_IsGreen(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"green.png\"></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts.php?type=green\"><img src=\"green.png\"></a></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else if (Nova_IsYellow(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts.php?type=green\"><img src=\"yellow.png\"></a></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else // if (Nova_IsRed(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts.php?type=red\"><img src=\"red.png\"></a></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
 
    Join(buffer,work,bufsize);
@@ -2546,13 +2546,13 @@ clist = Nova_RankHosts(match,1,cfrank_compliance,n);
 clist = SortItemListClasses(clist);
 
 buffer[0] = '\0';
-strcat(buffer,"<select name=\"hostkey\">\n");
+strcat(buffer,"<select name=\"hostkey\" onselect>\n");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
    if (strcmp(selected,ip->name) == 0)
       {
-      snprintf(work,CF_MAXVARSIZE,"<option value=\"%s\" selected=\"true\">%s</option>\n",ip->name,ip->classes);
+      snprintf(work,CF_MAXVARSIZE,"<option value=\"%s\" selected>%s</option>\n",ip->name,ip->classes);
       }
    else
       {
