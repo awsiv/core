@@ -2358,7 +2358,7 @@ void Nova2PHP_show_topic(int id,char *buffer,int bufsize)
 
 { char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_type[CF_BUFSIZE],topic_comment[CF_BUFSIZE];
 
-buffer[0] = '0';
+buffer[0] = '\0';
 Nova_WebTopicMap_Initialize();
 
 if (Nova_GetTopicByPid(id,topic_name,topic_id,topic_type,topic_comment))
@@ -2377,7 +2377,7 @@ void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize)
 
 {
 Nova_WebTopicMap_Initialize();
-buffer[0] = '0';
+buffer[0] = '\0';
 Nova_ScanLeadsAssociations(id,buffer,bufsize);
 }
 
@@ -2387,7 +2387,7 @@ void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize)
 
 {
 Nova_WebTopicMap_Initialize();
-buffer[0] = '0';
+buffer[0] = '\0';
 Nova_ScanOccurrences(id,buffer,bufsize);
 }
 
@@ -2397,7 +2397,7 @@ void Nova2PHP_show_topic_category(int id,char *buffer,int bufsize)
 
 {
 Nova_WebTopicMap_Initialize();
-buffer[0] = '0';
+buffer[0] = '\0';
 Nova_ScanTheRest(id,buffer,bufsize);
 }
 
@@ -2424,7 +2424,7 @@ for (pol = 0; policies[pol] != NULL; pol++)
 
 clist = Nova_RankHosts(NULL,0,pol,n);
 
-buffer[0] = '0';
+buffer[0] = '\0';
 strcat(buffer,"<table>\n\n\n");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
@@ -2462,7 +2462,7 @@ Nova_WebTopicMap_Initialize();
 clist = Nova_RankHosts(policy,1,cfrank_compliance,n);
 clist = SortItemListClasses(clist);
 
-buffer[0] = '0';
+buffer[0] = '\0';
 strcat(buffer,"<table>\n\n\n");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
@@ -2510,7 +2510,7 @@ else
    clist = Nova_RedHosts();
    }
 
-buffer[0] = '0';
+buffer[0] = '\0';
 strcat(buffer,"<table>\n<tr>\n\n");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
