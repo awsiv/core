@@ -97,7 +97,7 @@ if (false)
 
 void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize)
 
-{ time_t then;
+{ time_t then, now = time(NULL);
   mongo_connection dbconn;
 
 /* BEGIN query document */
@@ -115,7 +115,18 @@ if (hostkey && strlen(hostkey) > 0)
 
    if (then > 0)
       {
-      snprintf(buffer,bufsize,"%s",cf_ctime(&then));
+      if (now > then + CF_HUB_HORIZON)
+         {
+         snprintf(buffer,bufsize,"<span id=\"amber\">%s</span>",cf_ctime(&then));
+         }
+      else if (now > then + CF_HUB_HORIZON*2)
+         {
+         snprintf(buffer,bufsize,"<span id=\"red\">%s</span>",cf_ctime(&then));
+         }
+      else
+         {
+         snprintf(buffer,bufsize,"%s",cf_ctime(&then));
+         }
       }
    else
       {
@@ -2510,29 +2521,32 @@ else
    clist = Nova_RedHosts();
    }
 
-buffer[0] = '\0';
-strcat(buffer,"<table>\n<tr>\n\n");
-
-for (ip = clist; ip !=  NULL; ip=ip->next)
+if (clist)
    {
-   if (counter++ % 6 == 0)
+   buffer[0] = '\0';
+   strcat(buffer,"<table>\n<tr>\n\n");
+   
+   for (ip = clist; ip !=  NULL; ip=ip->next)
       {
-      snprintf(work,CF_MAXVARSIZE,"</tr></tr>");
+      if (counter++ % 6 == 0)
+         {
+         snprintf(work,CF_MAXVARSIZE,"</tr></tr>");
+         Join(buffer,work,bufsize);
+         }
+      
+      snprintf(work,CF_MAXVARSIZE,"<td><img src=\"%s.png\"> &nbsp;<a href=\"host.php?hostkey=%s\">%s</a></td></a></td>\n",colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
+      
       Join(buffer,work,bufsize);
+      
+      if (counter > n && counter % 6 == 0)
+         {
+         break;
+         }
       }
-   
-   snprintf(work,CF_MAXVARSIZE,"<td><img src=\"%s.png\"> &nbsp;<a href=\"host.php?hostkey=%s\">%s</a></td></a></td>\n",colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
-   
-   Join(buffer,work,bufsize);
 
-   if (counter > n && counter % 6 == 0)
-      {
-      break;
-      }
+   Join(buffer,"</tr>\n</table>\n",bufsize);
+   DeleteItemList(clist);
    }
-
-Join(buffer,"</tr>\n</table>\n",bufsize);
-DeleteItemList(clist);
 }
 
 /*****************************************************************************/
@@ -2637,7 +2651,7 @@ char *Nova_HostProfile(char *key)
 
 snprintf(buffer,CF_BUFSIZE,
          "<table><tr><td><a href=\"bundles.php?host=%s\">Bundles</a></td><td><a href=\"classes.php?host=%s\">Classes</a></td></tr>"
-         "<tr><td><a href=\"intentions.php?host=%s\">Intentions</a></td><td><a href=\"promises.php?host=%s\">Promises</a></td></tr></table>",key,key,key,key);
+         "<tr><td><a href=\"knowledge.php?topic=goals\">Goals</a></td><td><a href=\"promises.php?host=%s\">Promises</a></td></tr></table>",key,key,key);
 
 return buffer;
 }
@@ -3103,68 +3117,65 @@ void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize)
   struct Event e;
 
 
-  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to database (read network measurements)");
-    return;
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to database (read network measurements)");
+   return;
    }
 
 
 // query
 
- bson_buffer_init(&bb);
- bson_append_string(&bb,cfr_keyhash,hostkey);
- bson_from_buffer(&query,&bb);
+bson_buffer_init(&bb);
+bson_append_string(&bb,cfr_keyhash,hostkey);
+bson_from_buffer(&query,&bb);
 
- // returned value
+// returned value
 
- bson_buffer_init(&bb);
- bson_append_int(&bb,cfr_netmeasure,1);
- bson_from_buffer(&field,&bb);
-
-
- cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,0);
- bson_destroy(&query);
- bson_destroy(&field);
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_netmeasure,1);
+bson_from_buffer(&field,&bb);
 
 
- if (mongo_cursor_next(cursor))  // not more than one record
+cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,0);
+bson_destroy(&query);
+bson_destroy(&field);
+
+
+if (mongo_cursor_next(cursor))  // not more than one record
    {
    bson_iterator it;
    bson_iterator_init(&it, cursor->current.data);
-
-   while(bson_iterator_next(&it))
-     {
-       if(strcmp(bson_iterator_key(&it),cfr_netmeasure) == 0)
-	 {
-	   if(bson_iterator_bin_len(&it) == sizeof(e))
-	     {
-	       memcpy(&e,bson_iterator_bin_data(&it),sizeof(e));
-	       found = true;
-	     }
-	   else
-	     {
-	       CfOut(cf_verbose, "", "!! Existing network measurement incorrect - ignoring");
-	     }
-	 }
-     }
    
+   while(bson_iterator_next(&it))
+      {
+      if(strcmp(bson_iterator_key(&it),cfr_netmeasure) == 0)
+	 {
+         if(bson_iterator_bin_len(&it) == sizeof(e))
+            {
+            memcpy(&e,bson_iterator_bin_data(&it),sizeof(e));
+            found = true;
+            }
+         else
+            {
+            CfOut(cf_verbose, "", "!! Existing network measurement incorrect - ignoring");
+            }
+	 }
+      }
    }
+ 
+mongo_cursor_destroy(cursor);
 
- mongo_cursor_destroy(cursor);
+CFDB_Close(&dbconn);
 
- CFDB_Close(&dbconn);
-
-
- if(found)
+if (found)
    {
    snprintf(buffer,bufsize,"%.2lf &Delta; %.2lf bytes/s",e.Q.expect,sqrt(e.Q.var));
    }
- else
+else
    {
    snprintf(buffer,bufsize,"Insufficient data");
    }
-
 
 #endif /* HAVE_LIBMONGOC */
 }

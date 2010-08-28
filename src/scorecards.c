@@ -106,11 +106,11 @@ void Nova_ComplianceSummaryGraph(char *docroot)
   time_t now,start;
   int i,slot;
   
-cfv.height = 180;
+cfv.height = 200;
 cfv.width = 460;
 cfv.margin = 50;
 cfv.docroot = docroot;
-cfv.range = 100;
+cfv.range = 150;
 cfv.min = 0;
 cfv.max = 100;
 cfv.origin_x = cfv.margin;
@@ -338,7 +338,6 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       }
    }
 
-
 Nova_BarMeter(&cfv,1,kept_week/num_week,rep_week/num_week,"Week");
 Nova_BarMeter(&cfv,2,kept_day/num_day,rep_day/num_day,"Day");
 Nova_BarMeter(&cfv,3,kept_hour/num_hour,rep_hour/num_hour,"Hour");
@@ -352,7 +351,6 @@ Nova_BarMeter(&cfv,7,kept_anom/num_anom,rep_anom/num_anom,"Anom");
 DeleteHubQuery(hq,DeleteHubMeter);
 
 // Write graph
-
 snprintf(filename,CF_BUFSIZE,"%s/hub/common/meter.png",cfv.docroot);
 MakeParentDirectory(filename,true);
 
@@ -377,8 +375,7 @@ gdImageDestroy(cfv.im);
 
 int Nova_Meter(char *docroot,char *hostkey)
 
-{
-  int returnval = 0;
+{ int returnval = 0;
 
 #ifdef HAVE_LIBGD
 
@@ -736,26 +733,25 @@ void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired
 
   int n = number;
   int m = number - 1;
-  int v_offset = 35,bar_height = CF_METER_HEIGHT-v_offset;
+  int v_offset = 28,bar_height = CF_METER_HEIGHT-v_offset;
   int width = 35,h_offset = 15;
   int thickness = bar_height/20;
   int colour,x,y;
   double count;
   char ss[CF_MAXVARSIZE];
 
-count = 0;
-
-for (y = v_offset+bar_height; y > v_offset; y -= thickness)
+for (count = 0,y = v_offset+bar_height; y > v_offset && count < 20; y -= thickness,count++)
    {
    gdImageSetThickness(cfv->im,thickness);
 
    // 20 bars in the given height
-   
-   if (count/20 <= kept/100)
+   // if (count/20.0 <= kept/100) - rewtite
+          
+   if (count*5 <= kept)
       {
       colour = GREEN;
       }
-   else if (count/20 <= (kept+repaired)/100)
+   else if (count*5 <= (kept+repaired))
       {
       colour = YELLOW;
       }
@@ -765,7 +761,6 @@ for (y = v_offset+bar_height; y > v_offset; y -= thickness)
       }
 
    gdImageLine(cfv->im,n*h_offset+m*width,y,n*h_offset+n*width,y,colour);
-   count++;
    }
 
 snprintf(ss,CF_MAXVARSIZE-1,"%.1lf",kept);
