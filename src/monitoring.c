@@ -1491,16 +1491,16 @@ if (!OpenDB(filename,&dbp))
 
 if (ReadDB(dbp,lval,&var,sizeof(struct cf_pscalar)))
    {
-   CloseDB(dbp);
-
    if (now > var.time + timeout)
       {
       DeleteDB(dbp,lval);
       CfOut(cf_verbose,""," -> Persistent scalar timed out, so looking for default");
+      CloseDB(dbp);
       return false;
       }
    else
       {
+      CloseDB(dbp);
       return true;
       }
    }
