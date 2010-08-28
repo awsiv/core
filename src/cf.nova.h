@@ -881,7 +881,7 @@ void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_category(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize);
 void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
-void Nova2PHP_select_hosts(char *match,int n,char *buffer,int bufsize);
+void Nova2PHP_select_hosts(char *match,char *sel,int n,char *buffer,int bufsize);
 void Nova2PHP_select_reports(char *buffer,int bufsize);
 
 long Nova2PHP_count_hosts(void);

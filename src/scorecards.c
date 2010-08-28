@@ -106,11 +106,11 @@ void Nova_ComplianceSummaryGraph(char *docroot)
   time_t now,start;
   int i,slot;
   
-cfv.height = 200;
-cfv.width = 520;
+cfv.height = 150;
+cfv.width = 480;
 cfv.margin = 50;
 cfv.docroot = docroot;
-cfv.range = 180;
+cfv.range = 100;
 cfv.min = 0;
 cfv.max = 100;
 cfv.origin_x = cfv.margin;
@@ -120,7 +120,7 @@ snprintf(newfile,CF_BUFSIZE,"%s/hub/common/compliance.png",cfv.docroot);
 MakeParentDirectory(newfile,true);
 
 cfv.title = "Compliance";
-cfv.im = gdImageCreate(cfv.width+2*cfv.margin,cfv.height+2*cfv.margin);
+cfv.im = gdImageCreate(cfv.width+cfv.margin,cfv.height+cfv.margin);
 Nova_MakePalette(&cfv);
 
 for (i = 0; i < (int)span; i++)
@@ -1069,7 +1069,7 @@ void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col)
   double q,dq;
   time_t now;
   int ticksize = cfv->height/50;
-  static char *days[8] = { "7","6","5","4","3","2","1","0"};
+  static char *days[8] = { "6","5","4","3","2","1","Now","0"};
 
 for (day = 0; day < 7; day++)
    {

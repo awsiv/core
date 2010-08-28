@@ -2537,7 +2537,7 @@ DeleteItemList(clist);
 
 /*****************************************************************************/
 
-void Nova2PHP_select_hosts(char *match,int n,char *buffer,int bufsize)
+void Nova2PHP_select_hosts(char *match,char *selected,int n,char *buffer,int bufsize)
 
 { struct Item *ip,*clist;
   char work[CF_MAXVARSIZE];
