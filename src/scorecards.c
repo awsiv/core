@@ -106,8 +106,8 @@ void Nova_ComplianceSummaryGraph(char *docroot)
   time_t now,start;
   int i,slot;
   
-cfv.height = 150;
-cfv.width = 480;
+cfv.height = 180;
+cfv.width = 460;
 cfv.margin = 50;
 cfv.docroot = docroot;
 cfv.range = 100;

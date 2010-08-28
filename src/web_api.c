@@ -2550,7 +2550,14 @@ strcat(buffer,"<select name=\"hostkey\">\n");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
-   snprintf(work,CF_MAXVARSIZE,"<option value=\"%s\">%s</option>\n",ip->name,ip->classes);
+   if (strcmp(selected,ip->name) == 0)
+      {
+      snprintf(work,CF_MAXVARSIZE,"<option value=\"%s\" selected=\"true\">%s</option>\n",ip->name,ip->classes);
+      }
+   else
+      {
+      snprintf(work,CF_MAXVARSIZE,"<option value=\"%s\">%s</option>\n",ip->name,ip->classes);
+      }
    Join(buffer,work,bufsize);
    }
 
