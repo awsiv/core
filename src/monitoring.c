@@ -1465,6 +1465,7 @@ if (!OpenDB(filename,&dbp))
    return;
    }
 
+CfOut(cf_verbose,""," -> Setting persistent hub knowledge: %s =>\"%s\"",lval,rval);
 WriteDB(dbp,lval,rval,sizeof(struct cf_pscalar));
 CloseDB(dbp);
 }
@@ -1482,6 +1483,7 @@ snprintf(filename,sizeof(filename),"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE
 
 if (!OpenDB(filename,&dbp))
    {
+   CfOut(cf_verbose,""," -> Unable to open db while looking for persistent scalar");
    return false;
    }
 
@@ -1492,6 +1494,7 @@ if (ReadDB(dbp,lval,&var,sizeof(struct cf_pscalar)))
    if (now > var.time + timeout)
       {
       DeleteDB(dbp,lval);
+      CfOut(cf_verbose,""," -> Persistent scalar timed out, so looking for default");
       return false;
       }
    else
@@ -1502,6 +1505,7 @@ if (ReadDB(dbp,lval,&var,sizeof(struct cf_pscalar)))
 else
    {
    CloseDB(dbp);
+   CfOut(cf_verbose,""," -> Persistent scalar was not found, so looking for default");
    return false;
    }
 }
