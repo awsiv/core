@@ -1481,6 +1481,8 @@ int Nova_GetPersistentScalar(char *lval,char *rval,int size,time_t timeout)
   
 snprintf(filename,sizeof(filename),"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_PSCALARDB);
 
+*rval = '\0';
+
 if (!OpenDB(filename,&dbp))
    {
    CfOut(cf_verbose,""," -> Unable to open db while looking for persistent scalar");
