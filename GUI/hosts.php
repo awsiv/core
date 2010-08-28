@@ -19,8 +19,17 @@ switch ($type)
     break;
   }     
 
-echo "<b>$result</b>";
- 
+if ($result != "")
+   {
+   echo "<b>$result</b>";
+   }
+else
+   {
+   echo "<span id=\"announcement\"><table><tr><td width=\"70\"><img src=\"/img/info.png\"></td><td>No hosts in this category";
+   echo "<span id=\"colourbuttons\"><a href=\"hosts.php?type=green\"><img src=\"/img/green.png\"></a> <a href=\"hosts.php?type=yellow\"><img src=\"/img/yellow.png\"></a> <a href=\"hosts.php?type=red\"><img src=\"/img/red.png\"></a></span>";
+   echo "</td></tr></table></span>";
+   }
+
 echo "</div>";
 
 cfpr_footer();

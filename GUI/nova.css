@@ -2,6 +2,13 @@ html{height: 100%;}
 
 img { border: none;  }
 
+input,select {  
+width: 200px;
+background-color: #f0f0eb;
+}
+
+
+
 body
 { font-family: DejaVuSans,Vera,Arial,sans-serif;
   padding: 0px;
@@ -45,6 +52,11 @@ padding: 10px;
 }
 
 table
+{  
+border: none;
+}
+
+#noborder tr td
 {  
 border: none;
 }
@@ -317,18 +329,25 @@ background-color: #fff;
 padding: 0px;
 float: right;
 margin-right: 20px;
-margin-top: -15px;
+margin-top: -10px;
+}
+
+#status ul
+{  
+padding: 0;
+margin-top: 0px;
 }
 
 #status ul li
 {  
-font-size: 120%;
+font-size: 100%;
 padding: 5px;
 }
 
 #status img
 { 
 padding: 20px;
+float: right;
 }
 
 #image
@@ -461,10 +480,6 @@ color: #484842;
 font-size: 120%;
 }
 
-#info ul
-{ 
-margin-top: 10px;
- }
 
 #info li
 {  
@@ -474,6 +489,17 @@ padding: 7px;
 #meter img
 {  
 padding: 5px;
+}
+
+#meter ul li
+{  
+vertical-align: middle;
+}
+
+#notkeptinline a h4
+{  
+color: darkred;
+font-size: 150%;
 }
 
 #primary
@@ -543,7 +569,7 @@ border: none;
 {
 font-size: 12px;
 padding: 5px;
-background-color: #f0f0eb;
+background-color: #fff; 
 color: #4c4c43;
 border: solid 1px;
 border-color: #cecec7;
@@ -552,7 +578,7 @@ border-color: #cecec7;
 #primary th
 {
 padding: 10px;
-background-color: #f0f0eb;
+background-color: #fff; 
 color: #4c4c43;
 border: solid 1px;
 border-color: #cecec7;
@@ -574,10 +600,30 @@ font-size: 8px;
 font-weight: normal;
 }
 
+#announcement table
+{  
+width: 500px;
+}
+
+#announcement tr td
+{ 
+color: white;
+font-size: 200%;
+background-color: #30302a;
+float: center;
+vertical-align: middle;
+}
 
 #rbuttons a
 {  
 padding: 10px;
+}
+
+#colourbuttons a
+{  
+padding: 5px;
+margin-left: 5px;
+float: right;
 }
 
 #showvars TH 
@@ -658,6 +704,8 @@ background-color: #73b167;
 
 #allhosts td
 { 
+font-weight: normal;
+font-size: 90%;
 background-color: white;
 }
 

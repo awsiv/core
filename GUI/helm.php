@@ -11,8 +11,8 @@ cfpr_header("control","normal");
 
 
 <ul>
-<li><img src="48px-Crystal_Clear_app_network_2.png"><a href="editor.php">Edit policy offline</a>
-<li><img src="48px-Crystal_Clear_app_network_2.png"><a href="services.php">Explore the service catalogue</a>
+<li><a href="editor.php"><img src="/img/tool.png">&nbsp;Edit policy offline</a>
+<li><a href="services.php"><img src="/img/info.png">&nbsp;Explore the service catalogue</a>
 
 </ul>
 

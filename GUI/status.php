@@ -10,13 +10,53 @@ $g = cfpr_count_green_hosts();
 
 <div id="selector">
 
-
-
-<table border="0">
+<table>
 <tr>
+<td valign="top">
+<table>
+<tr><td>
+
+<?php echo "<span id=\"colourbuttons\"><a href=\"hosts.php?type=green\"><img src=\"/img/green.png\"></a> <a href=\"hosts.php?type=yellow\"><img src=\"/img/yellow.png\"></a> <a href=\"hosts.php?type=red\"><img src=\"/img/red.png\"></a></span>"; ?>
+<h2>Hosts:</h2>
+
+<ul>
+<li><i>Hosts known:</i> <?php echo $all; ?>
+<li><i>Ranked worst:</i> <a href="topN.php">Top 50</a>
+</ul>
+
+</td><tr>
+<tr><td>
+
+<h2>Status</h2>
+<ul>
+<li><a href="hosts.php?type=red"><img src="/img/red_sign_small.png"></a>     <?php echo "$r"; ?> hosts known
+<li><a href="hosts.php?type=yellow"><img src="/img/yellow_sign_small.png"></a>  <?php echo "$y"; ?> hosts known
+<li><a href="hosts.php?type=green"><img src="/img/green_sign_small.png"></a>   <?php echo "$g"; ?> hosts known
+<li>Average download time: 0.0 s
+<li>Hosts 2 dev overdue: 0
+</ul>
+
+</td></tr>
+</table>
+
 <td>
-<ul><li>
-<h2>Report on multiple hosts:</h2>
+
+<table>
+<tr><td>
+
+<h2>Average meters for all hosts</h2>
+
+<ul>
+<li><div id="meter"><a href="knowledge.php?topic=Status level meters"><img src="/hub/common/meter.png"></a></div>
+<li><img src="/img/dive.png"> <a href="host.php">Select a particular host</a>
+
+
+</ul>
+
+</td></tr>
+<tr><td>
+
+<h2>Report on all hosts:</h2>
 
  <form method="post" action="search.php">
   <p>Search in report:</p>
@@ -25,31 +65,10 @@ echo "$allreps";?>
 <p>
 <input type="submit" value="Formulate query">
 </form>
-<li><h2>Examine a specific host</h2>
-<form method="post" action="host.php">
-<p><?php $allhosts = cfpr_select_hosts(".*",100);
-echo "$allhosts";?>
-<p>
-<input type="submit">
-</form>
 
 
-
-</li>
-</ul>
-
-<td>
-<h2>Average compliance of all hosts</h2>
-<div id="meter"><a href="topN.php"><img src="/hub/common/meter.png"></a></div>
-<ul>
-<li>Hosts known: <?php echo $all; ?>
-<li><a href="hosts.php?type=red"><img src="/img/red_sign.png"></a>     <?php echo "$r"; ?> hosts known
-<li><a href="hosts.php?type=yellow"><img src="/img/yellow_sign.png"></a>  <?php echo "$y"; ?> hosts known
-<li><a href="hosts.php?type=green"><img src="/img/green_sign.png"></a>   <?php echo "$g"; ?> hosts known
-<li>Average download time: 0.0 s
-<li>Hosts 2 dev overdue: 0
-</ul>
-
+</td></tr>
+</table>
 </td>
 
 </tr>

@@ -16,7 +16,7 @@ echo "$allbundles";
 echo "</td><td valign=\"top\">";
 
 
-echo "<h2>Bundle definition:</h2>";
+echo "<h2>Bundle definition of $bundle:</h2>";
 
 echo "<p>Name: <span id=\"bundle\">$bundle</span><br>";
 
