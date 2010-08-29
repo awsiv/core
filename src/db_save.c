@@ -89,7 +89,7 @@ bson_append_string(setObj,varName,rval);
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(&dbconn, MONGO_SCRATCH,bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(&dbconn,MONGO_SCRATCH,bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
 CFDB_Close(&dbconn);

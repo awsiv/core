@@ -431,6 +431,21 @@ Nova2PHP_show_topic_category(18,buffer,2000);
 printf("\n%s\n",buffer);
 */
 
+ mongo_cursor *cursor;
+  bson_iterator it;
+ 
+    cursor = mongo_find(&dbconn,MONGO_SCRATCH,bson_empty(&b),0,0,0,0);
+
+while(mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it,cursor->current.data);
+
+   while(bson_iterator_next(&it))
+      {
+      PrintCFDBKey(&it,1);   
+      }
+   }
+
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose, "", "!! Could not close connection to report database");
