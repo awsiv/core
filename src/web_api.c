@@ -3144,13 +3144,11 @@ void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize)
   int found = false;
   struct Event e;
 
-
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to database (read network measurements)");
    return;
    }
-
 
 // query
 
@@ -3164,11 +3162,9 @@ bson_buffer_init(&bb);
 bson_append_int(&bb,cfr_netmeasure,1);
 bson_from_buffer(&field,&bb);
 
-
 cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,0);
 bson_destroy(&query);
 bson_destroy(&field);
-
 
 if (mongo_cursor_next(cursor))  // not more than one record
    {
@@ -3177,9 +3173,9 @@ if (mongo_cursor_next(cursor))  // not more than one record
    
    while(bson_iterator_next(&it))
       {
-      if(strcmp(bson_iterator_key(&it),cfr_netmeasure) == 0)
+      if (strcmp(bson_iterator_key(&it),cfr_netmeasure) == 0)
 	 {
-         if(bson_iterator_bin_len(&it) == sizeof(e))
+         if (bson_iterator_bin_len(&it) == sizeof(e))
             {
             memcpy(&e,bson_iterator_bin_data(&it),sizeof(e));
             found = true;
