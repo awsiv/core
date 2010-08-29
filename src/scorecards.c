@@ -38,7 +38,7 @@ cfv.docroot = docroot;
 
 Nova2PHP_hostinfo(hostkey,hostname,ipaddress,CF_MAXVARSIZE);
 
-snprintf(buffer,bufsize,"<table>\n",bufsize);
+snprintf(buffer,bufsize,"<table><tr><th></th><th>Past 4 hours</th><th>Past 4 weeks</th><th>Statistical complete history</th></tr>\n");
 
 for (i = 0; i < CF_OBSERVABLES; i++)
    {

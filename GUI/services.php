@@ -8,7 +8,7 @@ cfpr_header("service catalogue","normal");
 <h2>Services and methods</h2>
 
 <?php
-$services = cfpr_list_all_bundles("agent");
+$services = cfpr_list_all_bundles(agent);
      
 echo "$services";
 ?>

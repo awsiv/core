@@ -2160,7 +2160,8 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
 { mongo_connection dbconn;
   struct Rlist *classList,*rp;
   struct Item *ip,*list = NULL;
-  char work[CF_MAXVARSIZE];
+  char work[CF_MAXVARSIZE],context[CF_MAXVARSIZE];
+  int pid;
   
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -2185,9 +2186,13 @@ if (list)
    list = SortItemListNames(list);
    
    snprintf(buffer,bufsize,"<ul>\n");
+   
    for (ip = list; ip != NULL; ip=ip->next)
       {
-      snprintf(work,CF_MAXVARSIZE,"<li><span id=\"classcontext\">%s</span></li>",ip->name);
+      snprintf(context,CF_MAXVARSIZE,"class_contexts::%s",ip->name);
+      pid = Nova_GetPidForTopic(context);
+
+      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"knowledge.php?pid=%d\"><span id=\"classcontext\">%s</span></a></li>",pid,ip->name);
       Join(buffer,work,bufsize);
       }
    strcat(buffer,"</ul>");
@@ -2262,36 +2267,59 @@ matched = SortItemListClasses(matched);
 
 if (matched)
    {
-   snprintf(buffer,bufsize,"<div id=\"bundles\"><table>\n"
-            "<tr><th>Type</th><th>Service bundle name</th><th>Pertaining to management goals</th></tr>");
+   if (type)
+      {
+      snprintf(buffer,bufsize,"<div id=\"bundles\"><table>\n<tr><th>Type</th><th>Service bundle name</th><th>Contributing to goals</th><th></th></tr>\n");      }
+   else
+      {
+      snprintf(buffer,bufsize,"<div id=\"bundles\"><ul>\n");
+      }
    
    for (ip = matched; ip != NULL; ip=ip->next)
       {
       struct Item *ip2,*glist = Nova_GetBusinessGoals(ip->name);
       char goals[CF_BUFSIZE];
+      char colour[CF_SMALLBUF];
       
-      if (glist)
+      if (type && glist)
          {
-         snprintf(goals,CF_BUFSIZE,"<ul>");
-         
+         snprintf(goals,sizeof(goals),"<table>");
          for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
             {
-            snprintf(goals,CF_BUFSIZE,"<li><a href=\"knowledge.php?pid=%d\">%s</a> (%s)</li>",ip2->counter,ip2->name,ip2->classes);
+            snprintf(work,sizeof(work),"<tr><td><a href=\"knowledge.php?pid=%d\">%s</a> </td><td> %s</td></tr>",ip2->counter,ip2->name,ip2->classes);
             Join(goals,work,CF_BUFSIZE);
             }
-         strcat(goals,"</ul>");
+
+         strcat(goals,"</table>");
+         snprintf(colour,CF_SMALLBUF,"/img/green.png");
+         }
+      else if (type)
+         {
+         snprintf(goals,CF_MAXVARSIZE,"Does not promise to align with any goals");
+         snprintf(colour,CF_SMALLBUF,"/img/yellow.png");
+         }
+
+      if (type)
+         {
+         snprintf(work,CF_BUFSIZE,"<tr><td><a href=\"bundle.php?type=%s\"><span id=\"bundletype\">%s</span></a></td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span id=\"bundle\">%s</span></a></td><td>%s</td><td><img src=\"%s\"></td></tr>",ip->classes,ip->classes,ip->name,ip->classes,ip->name,goals,colour);
          }
       else
          {
-         snprintf(goals,CF_MAXVARSIZE,"No documented goals");
+         snprintf(work,CF_BUFSIZE,"<li><a href=\"bundle.php?type=%s\"><span id=\"bundletype\">%s</span></a> <a href=\"bundle.php?bundle=%s&type=%s\"><span id=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->classes,ip->name);
          }
       
-      snprintf(work,CF_BUFSIZE,"<tr><td><a href=\"bundle.php?type=%s\"><span id=\"bundletype\">%s</span></a></td><td><a href=\"bundle.php?bundle=%s\"><span id=\"bundle\">%s</span></a></td><td>%s</td></tr>",ip->classes,ip->classes,ip->name,ip->name,goals);
       Join(buffer,work,bufsize);
       DeleteItemList(glist);
       }
 
-   strcat(buffer,"</table></div>\n");
+   if (type)
+      {
+      strcat(buffer,"</table></div>\n");
+      }
+   else
+      {
+      strcat(buffer,"</ul></div>\n");
+      }
    DeleteItemList(matched);
    }
 
@@ -2327,7 +2355,7 @@ if (matched)
    
    for (ip = matched; ip != NULL; ip=ip->next)
       {
-      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"bundle.php?type=%s\"><span id=\"bundletype\">%s</span></a> <a href=\"bundle.php?bundle=%s\"><span id=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->name);
+      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"bundle.php?type=%s\"><span id=\"bundletype\">%s</span></a> <a href=\"bundle.php?bundle=%s&type=%s\"><span id=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->classes,ip->name);
       Join(buffer,work,bufsize);
       }
 
@@ -2978,7 +3006,7 @@ returnval[0] = '\0';
 
 strcat(returnval,"<div id=\"promise\"><table>\n");
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\" width=\"20%\">Belonging to <span id=\"bundletype\">%s</span> bundle</td><td>:</td><td><a href=\"bundle.php?bundle=%s\"><span id=\"bundle\">%s</span></a><td></tr>",hp->bundleType,hp->bundleName,hp->bundleName);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\" width=\"20%\">Belonging to <span id=\"bundletype\">%s</span> bundle</td><td>:</td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span id=\"bundle\">%s</span></a><td></tr>",hp->bundleType,hp->bundleName,hp->bundleType,hp->bundleName);
 Join(returnval,work,bufsize);
 
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Reference handle</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span id=\"handle\">%s</span></a></td></tr>",hp->handle,hp->handle);

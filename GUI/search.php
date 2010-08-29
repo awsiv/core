@@ -9,6 +9,7 @@ if ($report_type == "")
    $search = $_GET['search'];
    $hostkey = $_GET['hostkey'];
    $report_type = $_GET['report'];
+   $many = $_GET['manyhosts'];
    }
 
 $hostname =  cfpr_hostname($hostkey);
@@ -46,26 +47,26 @@ if ($many)  // Returning query
 	$years = $_POST['years'];
 	echo "<h4>Days: $days<br>Months: $months<br>Years: $years</h4>";
 	if ($hosts_only)
-	  {
-	    $report = cfpr_hosts_with_value(NULL,$days,$months,$years);
-	  }
+	   {
+	   $report = cfpr_hosts_with_value(NULL,$days,$months,$years);
+	   }
 	else
-	  {
-	    $report = cfpr_report_value(NULL,$days,$months,$years);
-	  }
+	   {
+	   $report = cfpr_report_value(NULL,$days,$months,$years);
+	   }
 	break;
 	
       case "Class profile":
 	echo "<h4>$report_type</h4>";
 	$name = $_POST['name'];
 	if ($hosts_only)
-	  {
-	    $report = cfpr_hosts_with_classes(NULL,$name,true);
-	  }
+	   {
+	   $report = cfpr_hosts_with_classes(NULL,$name,true);
+	   }
 	else
-	  {
-	    $report = cfpr_report_classes(NULL,$name,true);
-	  }
+	   {
+	   $report = cfpr_report_classes(NULL,$name,true);
+	   }
 	break; 
 	
       case "Compliance by promise":
@@ -385,6 +386,8 @@ else // No hosktkey
    {
    echo "<div id=\"advancedquery\">";
 
+   echo "<table><tr><td>";
+
    switch ($report_type)
       {
       case  "Bundle profile":
@@ -591,6 +594,7 @@ else // No hosktkey
 	break;
       }
 
+   echo "</td><td><h2>Tips</h2><ul><li>Use regular expressions that match the <i>whole string</i> you want to find<li><a href=\"knowledge.php?regular expression\">Learn about regular expressions</a></ul></td></tr></table>";
    echo "</div>\n";
   }
 

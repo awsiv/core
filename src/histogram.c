@@ -360,7 +360,7 @@ cfv.docroot = docroot;
 
 Nova_ViewHisto(&cfv,keyhash,obs);
 
-snprintf(work,CF_BUFSIZE-1,"<div id=\"histoanalysis\">\n");
+snprintf(work,CF_BUFSIZE-1,"<div id=\"histoanalysis\"><table>\n");
 Join(buffer,work,bufsize);
 
 for (sx = 1; sx < CF_GRAINS; sx++)
@@ -372,13 +372,13 @@ for (sx = 1; sx < CF_GRAINS; sx++)
 
 sigma2 = sum / (double)CF_GRAINS;
 
-snprintf(work,CF_BUFSIZE-1,"<p> Maximum observed %s = %.2lf\n",OBS[obs][0],cfv.max);
+snprintf(work,CF_BUFSIZE-1,"<tr><td> Maximum observed %s = %.2lf</td><td></td></tr>\n",OBS[obs][0],cfv.max);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"<p> Minimum observed %s = %.2lf\n",OBS[obs][0],cfv.min);
+snprintf(work,CF_BUFSIZE-1,"<tr><td> Minimum observed %s = %.2lf</td><td></td></tr>\n",OBS[obs][0],cfv.min);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"<p> Approximate mean value over time = %.2lf\n",Q_MEAN);
+snprintf(work,CF_BUFSIZE-1,"<tr><td> Approximate mean value over time = %.2lf</td><td></td></tr>\n",Q_MEAN);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"<p> Approximate standard deviation time = %.2lf\n",Q_SIGMA);
+snprintf(work,CF_BUFSIZE-1,"<tr><td> Approximate standard deviation time = %.2lf</td><td></td></tr>\n",Q_SIGMA);
 Join(buffer,work,bufsize);
 
 snprintf(work,CF_BUFSIZE-1,"<ol>\n");
@@ -399,7 +399,7 @@ for (sx = 1; sx < CF_GRAINS; sx++)
          {
          max++;
 
-         snprintf(work,CF_BUFSIZE-1,"<p>Spectral mode %d, with  peak found at %.0lf/%.0lf grains (conversion &asymp; %.2lf &plusmn; %.2lf)\n",max,sx-1,(double)CF_GRAINS,Q_MEAN,Q_SIGMA);
+         snprintf(work,CF_BUFSIZE-1,"<tr><td>Spectral mode %d, with  peak found at %.0lf/%.0lf grains (conversion &asymp; %.2lf &plusmn; %.2lf)</td><td>",max,sx-1,(double)CF_GRAINS,Q_MEAN,Q_SIGMA);
          Join(buffer,work,bufsize);
 
          if (sx < ((double)CF_GRAINS)/2.0 - 1.0)
@@ -409,10 +409,10 @@ for (sx = 1; sx < CF_GRAINS; sx++)
             Join(buffer,work,bufsize);
             
             snprintf(work,CF_BUFSIZE-1,"<div id = \"explain\"><table><tr><td><h4>What does this mean?</h4>"
-                    "<p>If the distribution is skewed, it has a long ramp, indicating"
-                    "a possible resource ceiling, a well-utilized system."
-                    "Or there could be outliers of low value, because data are incomplete."
-                    "Finally, it can indicate that this resource process is declining."
+                    "<p>If the distribution is skewed, it has a long ramp, indicating "
+                    "a possible resource ceiling, a well-utilized system. "
+                    "Or there could be outliers of low value, because data are incomplete. "
+                    "Finally, it can indicate that this resource process is declining. "
                     "</td></tr></table></div>\n");
             Join(buffer,work,bufsize);
             }
@@ -423,10 +423,10 @@ for (sx = 1; sx < CF_GRAINS; sx++)
             Join(buffer,work,bufsize);
 
             snprintf(work,CF_BUFSIZE-1,"<div id = \"explain\"><table><tr><td><h4>What does this mean?</h4>"
-                    "<p>If the distribution is skewed, it has a long tail, indicating"
-                    "plenty of resources, or an under-used system."
-                    "Or there could be outliers of low value, because data are incomplete."
-                    "Finally, it can indicate that this resource process is declining."
+                    "<p>If the distribution is skewed, it has a long tail, indicating "
+                    "plenty of resources, or an under-used system. "
+                    "Or there could be outliers of low value, because data are incomplete. "
+                    "Finally, it can indicate that this resource process is declining. "
                     "</td></tr></table></div>\n");
             Join(buffer,work,bufsize);            
             }
@@ -437,10 +437,10 @@ for (sx = 1; sx < CF_GRAINS; sx++)
    past_gradient = new_gradient;
    }
 
-snprintf(work,CF_BUFSIZE-1,"</ol>\n");      
+snprintf(work,CF_BUFSIZE-1,"</td></tr>\n");      
 Join(buffer,work,bufsize);
 
-snprintf(work,CF_BUFSIZE-1,"<p>Spectrum seems to be %d-modal (within the margins of uncertainty)</p>\n",max);
+snprintf(work,CF_BUFSIZE-1,"<tr><td>Spectrum seems to be %d-modal (within the margins of uncertainty)</td><td><div id = \"explain\"><table><tr><td><h4>What does this mean?</h4><p>A mode represents a maximum peak in the frequency spectrum. It indicates a probable statistical state of the system, which means that the system has this number of preferred behaviours.</td></tr></table></div></td></tr>\n",max);
 Join(buffer,work,bufsize);
 
 snprintf(work,CF_BUFSIZE-1,"</div>\n");

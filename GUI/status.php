@@ -21,7 +21,7 @@ $g = cfpr_count_green_hosts();
 
 <ul>
 <li><i>Hosts known:</i> <?php echo $all; ?>
-<li><i>Ranked worst:</i> <a href="topN.php">Top 50</a>
+<li><i>Ranked worst:</i> <a href="topN.php">Show top 50</a>
 </ul>
 
 </td><tr>
@@ -56,14 +56,15 @@ $g = cfpr_count_green_hosts();
 </td></tr>
 <tr><td>
 
-<h2>Report on all hosts:</h2>
+<h2>Search groups of hosts:</h2>
 
+<ul><li>
  <form method="post" action="search.php">
-  <p>Search in report:</p>
 <p><?php $allreps = cfpr_select_reports(".*",100);
 echo "$allreps";?>
 <p>
 <input type="submit" value="Formulate query">
+</ul>
 </form>
 
 

@@ -330,6 +330,11 @@ if (count == 0)
 strcat(buffer,"</ul></div>\n");
 CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
+
+if (count == 1)
+   {
+   // Something special for unique match?
+   }
 }
 
 /*****************************************************************************/
@@ -480,7 +485,7 @@ void Nova_ScanLeadsAssociations(int pid,char *buffer,int bufsize)
   enum representations locator_type;
   struct Rlist *rp;
   CfdbConn cfdb;
-  int have_data = false;
+  int have_data = false, any_data = false;
 
 if (strlen(SQL_OWNER) == 0)
    {
@@ -519,7 +524,7 @@ while(CfFetchRow(&cfdb))
    {
    int from_pid,to_pid;
 
-   have_data = true;
+   have_data = any_data = true;
 
    strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);   
    strncpy(from_type,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
@@ -618,6 +623,7 @@ while(CfFetchRow(&cfdb))
 if (have_data)
    {
    strcat(buffer,"</ul></li>\n");
+   any_data = true;
    }
 else
    {
@@ -626,7 +632,12 @@ else
    }
 
 strcat(buffer,"</ul></div>\n");
-   
+
+if (!any_data)
+   {
+   buffer[0] = '\0';
+   }
+
 CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
 }

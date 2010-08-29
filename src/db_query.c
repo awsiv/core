@@ -3189,14 +3189,14 @@ while(mongo_cursor_next(cursor))  // iterate over docs
       {
       if (strcmp(bson_iterator_key(&it1), cfp_bundleargs) == 0)
          {
-	   bson_iterator_init(&it2,bson_iterator_value(&it1));
-
-	   while(bson_iterator_next(&it2))
-	     {
-             AppendItem(&args,(char *)bson_iterator_string(&it2),NULL);
-	     }
-	   
-	   break;  // all records show the same args
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         
+         while(bson_iterator_next(&it2))
+            {
+            IdempAppendItem(&args,(char *)bson_iterator_string(&it2),NULL);
+            }
+         
+         break;  // all records show the same args
          }
       }
    }
