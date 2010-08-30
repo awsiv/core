@@ -932,20 +932,23 @@ padding: 10px;
 	margin-left:15px;
 	width:225px;
 	margin-top:25px;
-	height:270px;
+	height:275px;
 	-moz-border-radius: 8px;
         -webkit-border-radius: 8px;
 	padding-top:10px;
 
 }
 
-#menu a
+.menuitem
 {
-  font-size:16px;
-  font-family:Verdana, Geneva, sans-serif;
-  padding:1px 5px 1px 10px;
-  display:block;
+ font-size:14px;
+ font-family:Verdana, Geneva, sans-serif;
+ padding:1px 5px 1px 10px;
+ display:block;
 }
+
+
+
 #help-panel .links
 {
 	margin-top:5px;

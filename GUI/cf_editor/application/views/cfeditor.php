@@ -80,12 +80,11 @@
 		  </div>
 
 		  <div id="menu">
-			  <a href="#" id="new"><img src="<?php echo
-			  base_url();?>application/assets/Images/new.png"/>New</a>
-			  <a href="#" id="save"><img src="<?php echo base_url();?>application/assets/Images/save.png"/>Save</a>
-			  <img src="<?php echo base_url();?>application/assets/Images/check_syntax_grey.png"/>Check syntax (coming)
-			  <img src="<?php echo base_url();?>application/assets/Images/update_grey.png"/>Update (coming)
-			  <img src="<?php echo base_url();?>application/assets/Images/commit_grey.png"/>Commit (coming)
+			  <a href="#" class="menuitem" id="new"><img src="<?php echo base_url();?>application/assets/Images/new.png"/>New</a>
+			  <a href="#" class="menuitem" id="save"><img src="<?php echo base_url();?>application/assets/Images/save.png"/>Save</a>
+			  <span class="menuitem"><img src="<?php echo base_url();?>application/assets/Images/check_syntax_grey.png"/>Check syntax</span>
+			  <span class="menuitem"><img src="<?php echo base_url();?>application/assets/Images/update_grey.png"/>Update</span>
+			  <span class="menuitem"><img src="<?php echo base_url();?>application/assets/Images/commit_grey.png"/>Commit</span>
 
 <?php /*
 			  <div class="shortcuts">
@@ -312,7 +311,7 @@ $(document).ready(function() {
 	//hooking up the new link click event for adding the editor in newly created tab as well as adding context menu to it.
 	$('#new')
      .click(function() {
-    	 tab_content_input='<textarea id="code'+code_editor_counter+'" cols="120" rows="30">body monitor control\n{\nforgetrate => "0.7";\n}</textarea>'+
+    	 tab_content_input='<textarea id="code'+code_editor_counter+'" cols="120" rows="30"></textarea>'+
     	                  '<input type="hidden" name="tabtype" value="codeEditor" />';              
     	 addTab('new');
     	 var editor = CodeMirror.fromTextArea('code'+code_editor_counter, {
