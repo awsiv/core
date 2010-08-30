@@ -1,0 +1,36 @@
+bundle agent generate_reports
+
+{
+ vars:
+
+ !windows.policy_host::
+
+  "doc_root" string => readfile("$(sys.workdir)/document_root.dat",40),
+            comment => "Read the knowledge base document root for the web server";
+
+ commands:
+
+  any::
+
+    "$(sys.cf_report)"
+            handle => "generate_reports",
+           comment => "Generate reports on each local machine, for aggregation";
+
+  !policy_host::
+
+    "$(sys.cf_promises) -r"
+
+       comment => "Generate config knowledge format after update",
+       contain => silent_in_dir("$(sys.workdir)/inputs"),
+        action => if_elapsed("60");
+
+    #
+
+  policy_host::
+
+    "$(sys.cf_promises) -r"
+
+       comment => "Generate config knowledge format after update",
+       contain => silent_in_dir("$(doc_root)"),
+        action => if_elapsed("60");
+}

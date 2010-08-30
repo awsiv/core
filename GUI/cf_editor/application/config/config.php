@@ -11,7 +11,7 @@
 |	http://example.com/
 |
 */
-$config['base_url']	= "http://localhost:8081/CFengine";
+$config['base_url']	= "http://localhost/cf_editor/";
 
 /*
 |--------------------------------------------------------------------------

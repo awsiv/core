@@ -1,0 +1,74 @@
+bundle agent linux_harden_methods
+{
+vars:
+
+   # list all of xinetd services (case sensitive)
+
+   "xinetd_services" slist => {
+                               "chargen",
+                               "chargen-udp",
+                               "cup-lpd",
+                               "daytime",
+                               "daytime-upd",
+                               "echo",
+                               "echo-udp",
+                               "eklogin",
+                               "finger",
+                               "gssftp",
+                               "imap",
+                               "imaps",
+                               "ipop2",
+                               "ipop3",
+                               "krb5-telnet",
+                               "klogin",
+                               "kshell",
+                               "ktalk",
+                               "ntalk",
+                               "pop3s",
+                               "rexec",
+                               "rlogin",
+                               "rsh",
+                               "rsync",
+                               "servers",
+                               "services",
+                               "sgi_fam",
+                               "talk",
+                               "telnet",
+                               "tftp",
+                               "time",
+                               "time-udp",
+                               "vsftpd",
+                               "wu-ftpd"
+                              };
+methods:
+
+   # perform the actual disable all xinetd services according to the list above
+
+ linux.!debian::
+
+   "any"  usebundle => disable_xinetd("$(xinetd_services)");
+
+}
+
+###############################################################################
+
+bundle agent disable_xinetd(name)
+{
+ vars:
+   "status" string => execresult("/sbin/chkconfig --list $(name)", "useshell");
+
+ classes:
+   "on"  expression => regcmp(".*on","$(status)");
+   "off" expression => regcmp(".*off","$(status)");
+   
+ commands:
+   on::
+      "/sbin/chkconfig $(name) off",
+        comment => "disable $(name) service";
+
+ reports:
+   on::
+      "disabling $(name) service.";
+   off::
+      "$(name) has already been disabled. Don't need to perform the action.";   
+}

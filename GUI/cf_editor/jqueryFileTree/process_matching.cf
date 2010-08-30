@@ -1,0 +1,55 @@
+bundle agent process_matching 
+{
+vars:
+
+ "cf_components"       slist => { "cf-key", "cf-know",
+                                  "cf-monitord", "cf-promises", "cf-report",
+                                  "cf-runagent", "cf-serverd" };
+
+ windows::
+   "stop_signal"              string => "kill";
+
+ !windows::
+   "stop_signal"              string => "term";
+
+
+classes:
+
+  "restart_cf" expression => "Hr05.Min00_05";
+
+
+processes:
+
+  restart_cf::
+
+    "$(cf_components)" signals => { "$(stop_signal)" };
+
+  restart_cf.!windows::
+    "cf-execd"  signals => { "$(stop_signal)" };
+
+
+commands:
+
+  restart_cf.!windows::
+
+    "$(sys.cf_execd)";
+
+
+services:
+
+  restart_cf.windows::
+    "CfengineNovaExec"
+    service_policy => "stop",
+           comment => "Stop the executor service, part of scheduled restart";
+
+    "CfengineNovaExec"
+    service_policy => "start",
+           comment => "Start the executor service, part of scheduled restart";
+
+
+reports:
+
+  restart_cf::
+    "Reloaded configuration of all Cfengine components";
+
+}

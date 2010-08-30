@@ -1,0 +1,182 @@
+#####################################################
+#
+# Apache webserver module
+# 
+#####################################################
+
+bundle agent web_server(state)
+{
+vars:
+
+   "start_type" string => "start";
+			
+classes:
+
+   "web_servers" or => { "policy_host" };
+   "have_selinux" expression => fileexists("/usr/sbin/setenforce");
+
+processes:
+
+  SuSE.web_servers.on::
+
+   "apache2"
+     restart_class => "suse_start_apache";
+
+   "mysqld"
+     restart_class => "suse_start_mysql";
+
+  redhat.web_servers.on::
+
+   ".*httpd.*"
+     restart_class => "redhat_start_apache";
+
+   ".*mysqld.*"
+     restart_class => "redhat_start_mysql";
+
+  debian.web_servers.on::
+
+   ".*apache2.*"
+     restart_class => "debian_start_apache";
+
+   "/usr/sbin/mysqld.*"
+     restart_class => "debian_start_mysql";
+
+  SuSE.off::
+
+   "apache2"
+     process_stop => "/etc/init.d/apache2 stop";
+
+   "mysqld"
+     process_stop => "/etc/init.d/mysql stop";
+
+  redhat.off::
+
+   "/usr/sbin/httpd"
+     process_stop => "/etc/init.d/httpd stop";
+
+   "mysqld"
+     process_stop => "/etc/init.d/mysqld stop";
+
+  debian.off::
+
+   "/usr/sbin/apache2.*"
+     process_stop => "/etc/init.d/apache2 stop";
+
+   "mysqld"
+     process_stop => "/etc/init.d/mysql stop";
+
+ #########################################################
+
+commands:
+
+ web_servers.have_selinux::
+
+   "/usr/sbin/setenforce 0";
+
+ web_ok.suse_start_apache::
+
+   "/etc/init.d/apache2 $(start_type)";
+
+ suse_start_mysql::
+
+   "/etc/init.d/mysql start";
+
+ redhat_start_apache::
+
+   "/etc/init.d/httpd $(start_type)";
+
+ redhat_start_mysql::
+
+   "/etc/init.d/mysqld start";
+
+ web_ok.debian_start_apache::
+
+   "/etc/init.d/apache2 $(start_type)";
+
+ debian_start_mysql::
+
+   "/etc/init.d/mysql start";
+
+ #########################################################
+
+files:
+
+ SuSE.web_servers::
+
+  "/etc/sysconfig/apache2" 
+
+     edit_line => fixapache,
+     classes => if_ok("web_ok");
+
+# redhat.web_servers::
+#
+#  "/etc/httpd/conf/httpd.conf"
+#
+#     edit_line => comment_lines_matching("Listen 80","#"),
+#     classes => if_ok("web_ok");
+
+ debian.web_servers::
+
+  "/etc/apache2/ports.conf"
+
+     edit_line => append_if_no_line("Listen 443"),
+     classes => if_ok("web_ok");
+
+ #########################################################
+
+classes:
+
+  "on"  expression => strcmp("$(state)","on");
+  "off" expression => strcmp("$(state)","off");
+
+ #########################################################
+
+reports:
+
+ have_selinux::
+
+   " NB - Disabling SELinux to allow PHP to function";
+
+}
+
+#######################################################
+# For the library
+#######################################################
+
+bundle edit_line fixapache
+
+{
+vars:
+
+ "add_modules"     slist => { 
+                            "php5",
+                            "ssl" 
+                            };
+
+ "del_modules"     slist => { 
+                            "php3",
+                            "php4",
+                            "jk"
+                            };
+
+field_edits:
+
+ #####################################################################
+ # APACHE_MODULES="actions alias ssl php5 dav_svn authz_default jk" etc..
+ #####################################################################
+
+   "APACHE_MODULES=.*"
+
+      # Insert module "columns" between the quoted RHS 
+      # using space separators
+
+      edit_field => quoted_var("$(add_modules)","append");
+
+   "APACHE_MODULES=.*"
+
+      # Delete module "columns" between the quoted RHS 
+      # using space separators
+
+      edit_field => quoted_var("$(del_modules)","delete");
+
+}

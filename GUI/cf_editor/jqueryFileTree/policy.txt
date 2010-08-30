@@ -1,1 +1,0 @@
-body monitor control\n{\nforgetrate =&gt; "0.8";\n}

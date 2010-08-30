@@ -58,7 +58,7 @@
 	       </form>
 	       <h2>
 	       CFENGINE MISSION PORTAL
-	       <span id="subheading"><b>overview</b></span>
+	       <span id="subheading"><b>develop</b></span>
 	       </h2>
 	       <br class="clear_right" />
 	     </div>
@@ -83,7 +83,7 @@
 		  </div>
 		  
 		  <div id="Policies">
-		  <div class="title">Company Nova Policies</div>
+		  <div class="title">Nova Policies</div>
 		    <div id="container_policies_id">
 		    
 		    </div>
@@ -96,18 +96,13 @@
 	 <div id="tabs">
 		  <ul>
 			   <li>
-			   <a href="#news">News From CFengine</a>
-			   <!--<span class="ui-icon ui-icon-close">Remove Tab</span>-->
+			   <a href="#news">Welcome</a>
+			   <span class="ui-icon ui-icon-close">Remove Tab</span>
 			   </li>
 		  </ul>
 		  <div id="news">
-		  Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. 
-		  Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante.
-		  Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo.
-		   Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. 
-		  Phasellus ipsum. Nunc tristique tempus lectus.
-		  </div>
-	 </div>
+                  Welcome to the Cfengine Nova Development Center. Click "New" or an existing policy on the right to start editing.
+	          </div>
 	 
 	<!--  <div id="syntax_check_area">Area for checking syntax</div>-->
 	
