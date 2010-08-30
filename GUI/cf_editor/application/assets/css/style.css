@@ -1,0 +1,327 @@
+body{
+	background:#4b4b41;
+	margin:0;
+	padding:0;
+}
+
+#wrapper
+{
+	width:1066px;
+	background:#4b4b41;
+	margin:0 auto;
+}
+
+#header
+{
+	
+	width:1054px;
+	margin:0 auto;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#fff;
+	padding-left:5px;
+	padding-right:5px;
+	}
+	
+#title
+{
+	background:#2f302a;
+	padding-top:15px;
+	padding-bottom:19px;
+
+}
+
+#header h2
+{
+	margin:0;
+	padding:0;
+	display:inline;
+	font-weight:normal;
+	margin-left:10px;
+	margin-top:15px;
+}
+
+#header h2.green
+{
+	color:#9ad38f;
+	margin-left:15px;
+	
+}
+
+.clear
+{
+	clear:both;
+}
+#search
+{
+	float:right;
+	margin-right:20px;
+}
+
+#search input
+{
+	width:180px;
+	height:25px;
+	background:#EBECE7;
+}
+
+#searchlink
+{
+	padding-top:2px;
+	display:inline;
+	vertical-align:middle;
+}
+#search #searchlink a
+{
+	color:#ffffff;
+	text-decoration:none;
+	font-size:12px;
+	margin-top:5px;
+}
+
+
+#message
+{
+	width:245px;
+	margin:15px 0 25px 20px;
+	font-size:14px;
+	float:left;
+}
+
+#nav
+{
+	background:#4b4b41;
+}
+
+#menu
+{
+
+	background:#fff;
+    color:#A7a7a7;
+	padding:12px 30px 12px 10px;
+	-moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    font-size:14px;
+	display:inline;
+	margin-left:10px;
+	
+}
+
+#menu a
+{
+	text-decoration:none;
+	color:#a7a7a7;
+}
+
+#menu a:hover
+{
+	color:#176ba9;
+}
+
+#menu a:active
+{
+	color:#176ba9;
+}
+
+
+/*For editor Page*/
+#leftPanel
+{
+	height:400px;
+	width:250px;
+	background:#4b4b41;
+}
+
+.ui-layout-toggler-west-open { background: url(../Images/toggle-lt.gif) no-repeat center right; }
+.ui-layout-toggler-west-closed {background: url(../Images/toggle-lt-open.gif) no-repeat center right;}
+
+#rightPanel
+{
+	background:#4b4b41;
+}
+
+#syntax_check_area
+{
+	background:#ffffff;
+	width:95%;
+	height:200px;
+	margin-top:50px;
+}
+
+#Policies
+{
+	background:#ffffff;
+	margin-left:15px;
+	height:300px;
+	width:225px;
+	-moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+}
+
+#Policies .title
+{
+  color:#333331;
+  text-align:center;
+  font-size:16px;
+  font-family:Verdana, Geneva, sans-serif;
+  padding:5px 5px 5px 5px;
+}
+
+#help-panel
+{
+	background:#e8eaf9;
+	margin-left:15px;
+	width:225px;
+	margin-top:25px;
+	height:300px;
+	-moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+}
+#help-panel .title
+{
+  color:#333331;
+  text-align:center;
+  font-size:16px;
+  font-family:Verdana, Geneva, sans-serif;
+  padding:15px 5px 5px 5px;
+  font-weight:bold;
+}
+#help-panel .links
+{
+	margin-top:5px;
+}
+
+#help-panel .shortcuts
+{
+	margin-top:10px;
+}
+#help-panel .results 
+{
+	padding:5px;
+	border:solid 1px #a7a7a7;
+}
+
+#help-panel .shortcuts span
+{
+	display:block;
+	font:11px Verdana, Geneva, sans-serif;
+	padding:2px;
+	margin-left:5px;
+}
+#help-panel .links span
+{
+	display:block;
+	color:#176ba9;
+	font:12px Verdana, Geneva, sans-serif;
+	padding:2px;
+	margin-left:5px;
+}
+
+#help-panel .results span
+{
+	text-decoration:none;
+	display:block;
+	font:11px Verdana, Geneva, sans-serif;
+	padding:2px;
+}
+
+
+.ui-icon-close {
+cursor:pointer;
+float:left;
+margin:0.4em 0.2em 0 0;
+}
+
+.ui-corner-bottom
+{
+	-moz-border-radius: 0px 8px 8px 8px;
+    -webkit-border-radius: 0px 8px 8px 8px;
+}
+
+#tabs
+{
+	font-size:11px;
+	background:#4b4b41;
+	border:none;
+	padding:0;
+	width:95%;
+	-moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+}
+
+#tabs ul
+{
+	border:none;
+	padding:0;
+}
+
+#tabs div
+{
+	background:#ffffff;
+}
+
+/*for save dialog*/
+#dialog
+{
+	font-size:12px;
+}
+div.ui-dialog-buttonpane
+{
+	font-size:12px;
+}
+#dialog label, #dialog input { display:block; }
+#dialog label { margin-top: 0.5em; }
+#dialog input, #dialog textarea { width: 95%; } 
+
+/*for left side pane list*/
+#policies_list
+{
+	margin:5px 0 0 20px;
+	padding:0;
+	list-style:none;
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:12px;
+	color:#333331;
+	
+}
+
+#policies_list li
+{
+	padding:2px 2px;
+}
+
+#policies_list li a
+{
+	text-decoration:none;
+}
+
+#sfdialog
+{
+	font-size:14px;
+}
+
+#confirmation
+{
+	font-size:14px;
+}
+
+#footer
+{
+	color:#9AD38F;
+	text-align:center;
+	font-family:Verdana, Geneva, sans-serif;
+}
+
+#spinner
+{
+	z-index:10;
+}
+
+.searchframe
+{
+	border:none;
+	width:100%;
+	height:100%;
+}
+
+
+

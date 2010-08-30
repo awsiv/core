@@ -1,0 +1,56 @@
+
+body{
+	font-size:14px;
+}
+
+a{
+margin:0px;
+}
+.panels
+{
+	margin:0;
+	width:300px;
+	height:250px;
+	float:left;
+	margin-left:20px;
+}
+
+.panels fieldset
+{
+	width:290px;
+	height:240px;
+	padding:5px;
+	margin:0px;
+	/*padding:0;*/
+}
+
+.combo {position:relative;width:290px;text-align:left;padding:0;margin:0;}
+.combo * {padding:0;margin:0;}
+.combo label {display:block;float:left;width:92px;text-align:right;}
+.combo input {width:192px; background-color:#fff;height:1.5em;z-index:0;border:solid 1px #666}
+.combo ul {padding:1px;border:2px solid #ccc;width: 189px;background-color:#fff;position:absolute;right:3px;top:1.5em;display:none;z-index:1;}
+.combo li {display:block; width: 100%;}
+.combo li:hover
+{
+	background-color:#666;
+}
+
+.clear
+{
+	clear:left;
+}
+
+#createbdl
+{
+	font-size:10px;
+	color:#09F;
+	text-decoration:none;
+}
+
+label
+{
+	font-size:12px;
+}
+
+
+
