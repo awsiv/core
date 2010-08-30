@@ -3350,7 +3350,7 @@ for (sp = s; *sp != '\0'; sp += strlen(tline)+1)
           snprintf(work,sizeof(work),"<tr><td><span=\"pm\">%c</span></td><td>%d</td><td><span id=\"plusline\">%s</span></td><tr>",pm,line,diff);
           break;
       case '-':
-          snprintf(work,sizeof(work),"<tr><td><span=\"pm\">%c</span></td><td>%d</td><td><span id=\"plusline\">%s</span></td><tr>",pm,line,diff);
+          snprintf(work,sizeof(work),"<tr><td><span=\"pm\">%c</span></td><td>%d</td><td><span id=\"minusline\">%s</span></td><tr>",pm,line,diff);
           break;
       default:
           snprintf(work,sizeof(work),"<tr><td><span=\"pm\">%c</span></td><td>%d</td><td>%s</td><tr>",pm,line,diff);
