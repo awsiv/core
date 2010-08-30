@@ -83,9 +83,9 @@
 			  <a href="#" id="new"><img src="<?php echo
 			  base_url();?>application/assets/Images/new.png"/>New</a>
 			  <a href="#" id="save"><img src="<?php echo base_url();?>application/assets/Images/save.png"/>Save</a>
-			  <a href="#" id="compile"><img src="<?php echo base_url();?>application/assets/Images/check_syntax.png"/>Check syntax</a>
-			  <a href="#" id="update"><img src="<?php echo base_url();?>application/assets/Images/update.png"/>Update</a>
-			  <a href="#" id="commit"><img src="<?php echo base_url();?>application/assets/Images/commit.png"/>Commit</a>
+			  <img src="<?php echo base_url();?>application/assets/Images/check_syntax_grey.png"/>Check syntax (coming)
+			  <img src="<?php echo base_url();?>application/assets/Images/update_grey.png"/>Update (coming)
+			  <img src="<?php echo base_url();?>application/assets/Images/commit_grey.png"/>Commit (coming)
 
 <?php /*
 			  <div class="shortcuts">
