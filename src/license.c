@@ -320,21 +320,30 @@ void Nova_LogLicenseStatus()
 
 { CF_DB *dbp;
   CF_DBC *dbcp;
-  char rettype,datestr[CF_MAXVARSIZE],data[CF_MAXVARSIZE],name[CF_MAXVARSIZE];
+  char rettype,datestr[CF_MAXVARSIZE],data[CF_MAXVARSIZE],name[CF_BUFSIZE];
+  char buffer[CF_BUFSIZE],work[CF_BUFSIZE];
   void *retval;
-  time_t now = time(NULL);
   int licenses = 0,count = 0;
   struct Promise *pp = NewPromise("track_license","License tracker");
   struct Attributes dummyattr;
   struct CfLock thislock;
   struct QPoint entry;
   struct Rlist *counter = NULL;
+  int min = 9999999,max = -1,lic1,lic2,i = 0;
+  time_t now = time(NULL),dt,then;
+  double average,granted,sum_t = 0,ex_t = 0,lic_t = 0;
   int ksize,vsize;
-  void *value;
   char *key;
-
+  void *value;
+  long ltime;
+  
 dummyattr.transaction.ifelapsed = 10080; // 1 week
 dummyattr.transaction.expireafter = 10180; // 1 week
+
+if (!IsDefinedClass("am_policy_hub"))
+   {
+   return;
+   }
 
 thislock = AcquireLock("license_track",VUQNAME,CFSTARTTIME,dummyattr,pp);
 
@@ -399,7 +408,100 @@ snprintf(data,CF_MAXVARSIZE-1,"%d,%d,%d,%ld",count,LICENSES,licenses,(long)now);
 Chop(datestr);
 WriteDB(dbp,datestr,data,sizeof(data));
 
+/* Cache the license report */
+
+// Calculate utilization in each dt of the record
+
+then = time(NULL); // Set this to now for first round
+
+if (NewDBCursor(dbp,&dbcp))
+   {
+   while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
+      {
+      if (value == NULL)
+         {
+         continue;
+         }
+      
+      count = lic1 = lic2 = 0;
+      ltime = 0L;
+      
+      sscanf(value,"%d,%d,%d,%ld",&count,&lic1,&lic2,&ltime);
+      
+      i++;
+      now = (time_t)ltime;
+      
+      if (count > max)
+         {
+         max = count;
+         }
+      
+      if (count < min)
+         {
+         min = count;
+         }
+      
+      dt = now - then;
+      
+      if (dt > 0)
+         {
+         ex_t += (double)dt*count;
+         lic_t += (double)dt*lic1;
+         sum_t += (double)dt;
+         }
+      
+      if (then > 0)
+         {
+         then = now;
+         }
+      else
+         {
+         then = time(NULL);
+         }
+      }
+   
+   DeleteDBCursor(dbp,dbcp);
+   }
+
 CloseDB(dbp);
+   
+snprintf(buffer,sizeof(buffer),"<div id=\"license\">");
+Join(buffer,work,sizeof(buffer));
+snprintf(work,sizeof(work),"<h4>Last measured on %s based on %d samples</h4>",ctime(&now),i);
+Join(buffer,work,sizeof(buffer));
+snprintf(work,sizeof(work),"<table class=\"border\">\n");
+Join(buffer,work,sizeof(buffer));
+
+if (sum_t > 0)
+   {
+   average = ex_t/sum_t;
+   granted = lic_t/sum_t;
+   snprintf(work,sizeof(work),"<tr><td>Minimum observed level</td><td> &ge; %d</td><tr>\n",min);
+   Join(buffer,work,sizeof(buffer));
+   snprintf(work,sizeof(work),"<tr><td>Maximum observed level</td><td> &ge; %d hosts</td><tr>\n",max);
+   Join(buffer,work,sizeof(buffer));
+   snprintf(work,sizeof(work),"<tr><td>Mean actual usage</td><td> &ge; %lf</td></tr>\n",average);
+   Join(buffer,work,sizeof(buffer));
+   snprintf(work,sizeof(work),"<tr><td>Mean expected usage</td><td> &le; %lf</td><tr>\n",granted);
+   Join(buffer,work,sizeof(buffer));
+   snprintf(work,sizeof(work),"<tr><td>Mean utilization</td><td> &le; %lf %%</td><tr>\n",average/granted*100.0);
+   Join(buffer,work,sizeof(buffer));
+   }
+else
+   {
+   snprintf(work,sizeof(work),"<tr><td>Minimum observed level</td><td> &ge; %d</td><tr>\n",min);
+   Join(buffer,work,sizeof(buffer));
+   snprintf(work,sizeof(work),"<tr><td>Maximum observed level</td><td> &ge; %d hosts</td><tr>\n",max);
+   Join(buffer,work,sizeof(buffer));
+   snprintf(work,sizeof(work),"<tr><td>Mean usage</td><td> unknown</td><tr>\n");
+   Join(buffer,work,sizeof(buffer));
+   }
+
+snprintf(work,sizeof(work),"</table></div>\n");
+Join(buffer,work,sizeof(buffer));
+
+CFDB_PutValue("license_report",buffer);
+
 YieldCurrentLock(thislock);
 DeletePromise(pp);
 }
