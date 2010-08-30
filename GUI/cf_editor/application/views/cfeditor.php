@@ -150,7 +150,7 @@ $(document).ready(function() {
 	   }
 	,  west: {
 	      fxName:                "slide"
-	   ,  size:                  250
+	   ,  size:                  270
 	   ,togglerLength_closed:    21
 	   ,togglerAlign_closed:     "top"
 	   ,  spacing_closed:        8

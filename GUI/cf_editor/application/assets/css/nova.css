@@ -913,7 +913,8 @@ padding: 10px;
 	margin-left:15px;
 	width:225px;
 	margin-top:25px;
-	
+        -moz-border-radius: 8px;
+        -webkit-border-radius: 8px;
 }
 
 #Policies .title
