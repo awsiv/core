@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>CFengine Online Editior</title>
+		<title>develop</title>
 		<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>application/assets/css/jquery-ui-1.8.2.custom.css" />
 		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/assets/css/jqueryFileTree.css" />
 		<link type="text/css" rel="stylesheet" href="<?php echo base_url();?>application/assets/css/nova.css" />
@@ -88,6 +88,7 @@
 		    
 		    </div>
 		  </div>
+		  <br>
 		</div>
 	</div>
 	
