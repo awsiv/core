@@ -1751,7 +1751,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                }
             
-            match_name = match_t = true;
+            match_name = match_diff = match_t = true;
 
             if (cmp == CFDB_GREATERTHANEQ)
                {
