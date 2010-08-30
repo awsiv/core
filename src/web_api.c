@@ -88,6 +88,7 @@ if (false)
    Nova2PHP_summary_meter(NULL);
    Nova2PHP_meter(NULL);
    Nova2PHP_ComplianceSummaryGraph();
+   Nova2PHP_promiselog_pdf(NULL,NULL,1,buffer,1000);
    }
 }
 
