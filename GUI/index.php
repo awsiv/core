@@ -6,8 +6,6 @@ cfpr_header("overview","normal");
 <?php
 
 $ret1 = cfpr_getlicense_owner();
-$ret2 = cfpr_getlicenses_promised();
-$ret3 = cfpr_getlicenses_granted();
 
 $all = cfpr_count_all_hosts();
 $r = cfpr_count_red_hosts();
@@ -22,7 +20,8 @@ echo "<li><a href=\"hosts.php?type=red\"><img src=\"/img/red_sign_big.png\"> $r 
 echo "<li><a href=\"hosts.php?type=yellow\"><img src=\"/img/yellow_sign_big.png\"> $y hosts known</a>";
 echo "<li><a href=\"hosts.php?type=green\"><img src=\"/img/green_sign_big.png\"> $g hosts known</a>";
 echo "</ul>\n";
-echo "<ul><li>This edition licensed to `<b>$ret1</b>'. <li>Granted $ret2 licenses. <li>You promise to have paid for $ret3</ul>";
+echo "<ul><li>This edition licensed to `<b>$ret1</b>'.";
+echo "<li><a href=\"license.php\"><img src=\"/img/info.png\"></a></ul>";
 
 echo "</td><td valign=\"top\">\n";
 cfpr_compliance_summary_graph();

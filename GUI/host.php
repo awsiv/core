@@ -35,7 +35,7 @@ $colour = cfpr_get_host_colour($hostkey);
 echo "<form method=\"post\" action=\"host.php\">";
 $allhosts = cfpr_select_hosts($hostkey,".*",100);
 echo "$allhosts";
-echo "<input type=\"submit\" value=\"select\">";
+echo "<input type=\"submit\" value=\"select host\">";
 echo "<span id=\"colourbuttons\"><a href=\"hosts.php?type=green\"><img src=\"/img/green.png\"></a> <a href=\"hosts.php?type=yellow\"><img src=\"/img/yellow.png\"></a> <a href=\"hosts.php?type=red\"><img src=\"/img/red.png\"></a></span>";
 echo "</form>";
 ?>
@@ -97,6 +97,7 @@ echo "</td></tr><tr><td>";
 
 echo "<h2>Generate report</h2>";
 
+echo "simple search string:<br>";
 echo "<form method=\"post\" action=\"search.php\">";
 echo "<p><input class=\"searchfield\" type=\"text\" name=\"search\" />";
 
@@ -106,7 +107,7 @@ $allreps = cfpr_select_reports(".*",100);
 
 echo "$allreps";
 echo "<p>";
-echo "<input type=\"submit\">";
+echo "<input type=\"submit\" value=\"commit\">";
 echo "</form>";
 echo "</ul>";
 

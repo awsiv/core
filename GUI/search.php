@@ -116,13 +116,13 @@ if ($many)  // Returning query
 	$diff = $_POST['diff'];
 	$cal = -1;
 	if ($hosts_only)
-	  {
-	    $report = cfpr_hosts_with_filediffs(NULL,$name,$diff,true,$cal,">");
-	  }
+	   {
+	   $report = cfpr_hosts_with_filediffs(NULL,$name,$diff,true,$cal,">");
+	   }
 	else
-	  {
-	    $report = cfpr_report_filediffs(NULL,$name,$diff,true,$cal,">");
-	  }
+	   {
+	   $report = cfpr_report_filediffs(NULL,$name,$diff,true,$cal,">");
+	   }
 	break;
 	
       case "Last saw hosts":
@@ -439,8 +439,7 @@ else // No hosktkey
 	break;
 	
       case "Compliance summary":
-	echo "<h4>$report_type</h4>";
-
+	echo "<h4>$report_type (Not possible to search)</h4>";
 	break;
 	
       case "File change log":
@@ -594,7 +593,7 @@ else // No hosktkey
 	break;
       }
 
-   echo "</td><td><h2>Tips</h2><ul><li>Use regular expressions that match the <i>whole string</i> you want to find<li><a href=\"knowledge.php?regular expression\">Learn about regular expressions</a></ul></td></tr></table>";
+   echo "</td><td><h2>Tips</h2><ul><li>Use regular expressions that match the <i>whole string</i> you want to find<li><a href=\"knowledge.php?topic=regular expression\">Learn about regular expressions</a></ul></td></tr></table>";
    echo "</div>\n";
   }
 

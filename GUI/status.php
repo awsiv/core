@@ -16,7 +16,6 @@ $g = cfpr_count_green_hosts();
 <table>
 <tr><td>
 
-<?php echo "<span id=\"colourbuttons\"><a href=\"hosts.php?type=green\"><img src=\"/img/green.png\"></a> <a href=\"hosts.php?type=yellow\"><img src=\"/img/yellow.png\"></a> <a href=\"hosts.php?type=red\"><img src=\"/img/red.png\"></a></span>"; ?>
 <h2>Hosts:</h2>
 
 <ul>
@@ -63,7 +62,7 @@ $g = cfpr_count_green_hosts();
 <p><?php $allreps = cfpr_select_reports(".*",100);
 echo "$allreps";?>
 <p>
-<input type="submit" value="Formulate query">
+<input type="submit" value="step 1 of 2">
 </ul>
 </form>
 
