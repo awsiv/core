@@ -42,7 +42,7 @@ return x;
 
 /*****************************************************************************/
 
-int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs)
+int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs,int force)
     
 {
 #ifdef HAVE_LIBGD
@@ -58,7 +58,7 @@ int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs)
 snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_week.png",cfv->docroot,keyhash,OBS[obs][0]);
 MakeParentDirectory(newfile,true);
 
-if (stat(newfile,&sb) != -1)
+if (!force && stat(newfile,&sb) != -1)
    {
    if (now < sb.st_mtime + 6*3600)
       {
@@ -464,7 +464,7 @@ cfv.docroot = docroot;
 
 /* Done initialization */
 
-Nova_ViewWeek(&cfv,keyhash,obs);
+Nova_ViewWeek(&cfv,keyhash,obs,true);
 
 snprintf(work,CF_BUFSIZE-1,"<div id=\"weekanalysis\">\n");
 Join(buffer,work,bufsize);

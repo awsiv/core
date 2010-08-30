@@ -479,7 +479,7 @@ void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour);
 
 /* histogram.c */
 
-int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs);
+int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs,int force);
 int Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs);
 void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
 void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum);
@@ -917,7 +917,7 @@ int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,
 /* weekly.c */
 
 double Num(double x);
-int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs);
+int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs,int force);
 int Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3);

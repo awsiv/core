@@ -51,9 +51,9 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
    // Make the graphs
 
-   have_week = Nova_ViewWeek(&cfv,hostkey,i);
+   have_week = Nova_ViewWeek(&cfv,hostkey,i,false);
    have_mag = Nova_ViewMag(&cfv,hostkey,i);
-   have_histo = Nova_ViewHisto(&cfv,hostkey,i);
+   have_histo = Nova_ViewHisto(&cfv,hostkey,i,false);
 
    if (have_histo)
       {   
@@ -176,7 +176,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       }
    }
 
-ltotal = lkept = lrepaired = lnotkept = 0;
+ltotal = lkept = lrepaired = 0;
+lnotkept = 100;
 
 for (i = 0; i < span; i++)
    {

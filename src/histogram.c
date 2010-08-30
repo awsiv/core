@@ -22,7 +22,7 @@ extern int BLUES[];
 
 #ifdef HAVE_LIBGD
 
-int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs)
+int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs,int force)
     
 { int i,y,hint;
   double frac;
@@ -38,7 +38,7 @@ int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs)
 snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_hist.png",cfv->docroot,keyhash,OBS[obs][0]);
 MakeParentDirectory(newfile,true);
 
-if (stat(newfile,&sb) != -1)
+if (!force && stat(newfile,&sb) != -1)
    {
    if (now < sb.st_mtime + 3600)
       {
@@ -368,7 +368,7 @@ cfv.width = 700; //(7*24*2)*2; // halfhour
 cfv.margin = 50;
 cfv.docroot = docroot;
 
-Nova_ViewHisto(&cfv,keyhash,obs);
+Nova_ViewHisto(&cfv,keyhash,obs,true);
 
 snprintf(work,CF_BUFSIZE-1,"<div id=\"histoanalysis\"><table>\n");
 Join(buffer,work,bufsize);
