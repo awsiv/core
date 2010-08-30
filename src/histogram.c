@@ -457,4 +457,11 @@ snprintf(work,CF_BUFSIZE-1,"</div>\n");
 Join(buffer,work,bufsize);
 }
 
+#else  /* NOT HAVE_LIBGD */
+
+void Nova_AnalyseHistogram(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize)
+{
+
+}
+
 #endif

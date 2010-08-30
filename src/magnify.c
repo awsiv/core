@@ -393,4 +393,11 @@ else
    }
 }
 
+#else  /* NOT HAVE_LIBGD */
+
+void Nova_AnalyseMag(char *docroot,char *hostkey,enum observables obs,char *buffer,int bufsize)
+{
+
+}
+
 #endif
