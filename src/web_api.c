@@ -3332,30 +3332,36 @@ Nova_AnalyseHistogram(DOCROOT,keyhash,obs,buffer,bufsize);
 
 char *Nova_FormatDiff(char *s)
 
-{ char *sp,work[CF_BUFSIZE],diff[CF_BUFSIZE];
+{ char *sp,work[CF_BUFSIZE],diff[CF_BUFSIZE],tline[CF_BUFSIZE];
   static char returnval[CF_BUFSIZE];
   char pm;
   int line = 0;
 
 snprintf(returnval,sizeof(returnval),"<table>");
-  
-for (sp = s; *sp != '\0'; sp += strlen(sp)+1)
+
+for (sp = s; *sp != '\0'; sp += strlen(tline)+1)
    {
    sscanf(sp,"%c,%d,%2047[^\n]",&pm,&line,diff);
-
+   sscanf(sp,"%2047[^\n]",tline);
+   
    switch (pm)
       {
       case '+':
           snprintf(work,sizeof(work),"<tr><td><span=\"pm\">%c</span></td><td>%d</td><td><span id=\"plusline\">%s</span></td><tr>",pm,line,diff);
+          break;
       case '-':
           snprintf(work,sizeof(work),"<tr><td><span=\"pm\">%c</span></td><td>%d</td><td><span id=\"plusline\">%s</span></td><tr>",pm,line,diff);
-          
+          break;
+      default:
+          snprintf(work,sizeof(work),"<tr><td><span=\"pm\">%c</span></td><td>%d</td><td>%s</td><tr>",pm,line,diff);
+          break;
       }
    
    Join(returnval,work,sizeof(returnval));
    }
 
 strcat(returnval,"</table>");
+return returnval;
 }
 
 #endif
