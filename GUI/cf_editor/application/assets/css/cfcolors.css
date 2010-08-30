@@ -1,0 +1,17 @@
+html {cursor: text;}
+.editbox p {margin: 0;}
+.editbox {
+  margin: 0;
+  padding: 0;
+  font-family: monospace;
+  font-size: 10pt;
+  color: black;
+}
+
+span.cf-comment {color: #6f6b52;}    /* comment */
+span.cf-string {color: #a00; }     /* lval/rval string (includes promiser, promisees) */
+span.cf-keyword {color: #0077bb; } /* body/bundle type,promise type, promise attribute lval ,... */
+span.cf-section {color: #004105; }    /* body,bundle */
+span.cf-error {color: #f33; }      /* syntax error */
+span.cf-name {color: #3000ff; }    /* bundle/body/function name, class name */
+span.cf-punc {}    /* braces,commas,colons,paranthesis*/
