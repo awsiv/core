@@ -95,7 +95,7 @@ if ((fp = fopen(name,"r")) != NULL)
    IPString2KeyDigest(policy_server,serverdig);
 
    snprintf(serverkey,CF_MAXVARSIZE,"%s%c/ppkeys%c%s-%s.pub",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,"root",serverdig);
-   CfOut(cf_verbose,""," -> Look for server %s's key file as %s\n",policy_server,serverkey);
+   CfOut(cf_verbose,""," -> Look for server %s's key file\n",policy_server);
 
    if (serverrsa = HavePublicKey("root",policy_server,serverdig))
       {

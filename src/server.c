@@ -628,7 +628,7 @@ for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
       }
    }
 
-CfOut(cf_verbose,""," -> Caching key for %s",name);
+Debug(" -> Caching key for %s",name);
 
 rp = PrependRlist(&SERVER_KEYRING,"nothing",CF_SCALAR);
 
