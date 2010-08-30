@@ -151,7 +151,10 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 // Query all hosts
 
-hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),NULL,-1,-1,-1,-1,CFDB_GREATERTHANEQ);
+now = time(0);
+start = now - 24 * 3600 * 7;   
+
+hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -160,9 +163,6 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 // ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,ht->t;        
 // Divide each day into 4 lifecycle units 3600 * 24 / 4 seconds
 
-   now = time(0);
-   start = now - 24 * 3600 * 7;
-   
    if (ht->t < start)
       {
       continue;
@@ -222,9 +222,7 @@ if (!CFDB_Close(&dbconn))
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
-
 Nova_DrawComplianceAxes(&cfv,WHITE);
-
 
 if ((fout = fopen(newfile, "wb")) == NULL)
    {
