@@ -103,8 +103,9 @@ void Nova_ComplianceSummaryGraph(char *docroot)
   double tkept,trepaired,tnotkept,total;
   double lkept,lrepaired,lnotkept,ltotal;
   FILE *fout;
-  time_t now,start;
+  time_t now = time(NULL),start;
   int i,slot;
+  struct stat sb;
   
 cfv.height = 200;
 cfv.width = 460;
@@ -118,6 +119,14 @@ cfv.origin_y = cfv.height - cfv.margin;
 
 snprintf(newfile,CF_BUFSIZE,"%s/hub/common/compliance.png",cfv.docroot);
 MakeParentDirectory(newfile,true);
+
+if (stat(newfile,&sb) != -1)
+   {
+   if (now < sb.st_mtime + 3600)
+      {
+      return; // Data haven't changed
+      }
+   }
 
 cfv.title = "Compliance";
 cfv.im = gdImageCreate(cfv.width+cfv.margin,cfv.height+cfv.margin);

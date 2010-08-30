@@ -49,13 +49,22 @@ int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
   int i,y,hint;
   FILE *fout;
-  struct stat s1,s2;
+  struct stat sb;
   char newfile[CF_BUFSIZE];
-
+  time_t now = time(NULL);
+  
   /* Initialization */
 
 snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_week.png",cfv->docroot,keyhash,OBS[obs][0]);
 MakeParentDirectory(newfile,true);
+
+if (stat(newfile,&sb) != -1)
+   {
+   if (now < sb.st_mtime + 6*3600)
+      {
+      return true; // Data haven't changed
+      }
+   }
 
 cfv->title = OBS[obs][1];
 cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
