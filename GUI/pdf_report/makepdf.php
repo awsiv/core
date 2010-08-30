@@ -1,6 +1,5 @@
 <?php
 require('fpdf.php');
-
 class PDF extends FPDF
 {
     #****************************** 
@@ -10,33 +9,24 @@ class PDF extends FPDF
     }
     
     #******************************
-    //Page header
+    #Page header
     function Header()
     {
-	//Arial 8
 	$this->SetFont('Arial','',8);
-	//Move to the right
-
         $this->Text(30,10,$timestamp);
-	
 	$logo_path = 'logo_outside_new.jpg';
-	//Logo
 	$this->Image($logo_path,10,8,33);
-
-	//Line break
 	$this->Ln(20);
     }
     
     #******************************
-    //Page footer
+    # Page footer
     
     function Footer()
     {
-	//Position at 1.5 cm from bottom
+	# Position at 1.5 cm from bottom
 	$this->SetY(-15);
-	//Arial italic 8
 	$this->SetFont('Arial','I',8);
-	//Page number
 	$this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
 	
 	$this->SetY(-10);
@@ -45,52 +35,39 @@ class PDF extends FPDF
     }
     
     #******************************
-    // Title
+    # Title
     function ReportTitle($title)
     {
-	//Arial 12
 	$this->SetFont('Arial','',18);
-	//Background color
 	$this->SetTextColor(255,255,255);
 	$this->SetFillColor(158,152,120);
 	
 	$this->Rect(0, 28, 500, 10, "F" );
-	//Title
 	$this->Cell(0,6,"$title",0,1,'L',true);
-	//Line break
 	$this->Ln(4);
 	$this->SetTextColor(76,76,76);
     }
     
     #******************************
-    // Description
+    # Description
     function ReportDescription($text)
     {
-	//Arial 12
 	$this->SetFont('Arial','',10);
-
-	//Title
 	$this->MultiCell(0,5,"$text");
-	//Line break
 	$this->Ln(4);
     }
     
     #******************************
-    // Table Title
+    # Table Title
     function RptTableTitle($text, $y)
     {
-	//Arial 12
 	$this->SetFont('Arial','',14);
-	//Background color
 	$this->SetDrawColor(181,177,153);
 	$this->SetFillColor(239,240,234);
 	
 	$this->Rect(0, $y, 500, 10, "DF" );
-	//Title
 	$this->SetY($y+1);
-//	$this->Ln(5);
 	$this->Cell(0, 8,"$text",0,0,'L',true);
-	//Line break
 	$this->Ln(4);
     }
     
@@ -107,15 +84,28 @@ class PDF extends FPDF
     }
     
     #****************************** 
-    //Load data
+    # Load data
     function LoadData($file)
     {
-	//Read file lines
 	$lines=file($file);
-	//$lines=explode("\n",$file); //TODO: use this for string input ?? 
 	$data=array();
 	foreach($lines as $line)
 	  $data[]=explode(';',chop($line));
+	return $data;
+    }
+    
+    #****************************** 
+    # Parse data
+    function ParseData($arr)
+    {
+	$lines=explode('<nova_nl>',$arr); //TODO: use this for string input ?? 
+	$data=array();
+	foreach($lines as $line)
+	{
+//	    print($line);
+	    if (trim($line)!='')
+	    $data[]=explode(';',chop($line));
+	}
 	return $data;
     }
     
@@ -124,7 +114,7 @@ class PDF extends FPDF
     
     function NbLines($w,$txt) 
     { 
-	//Computes the number of lines a MultiCell of width w will take 
+	# Computes the number of lines a MultiCell of width w will take 
 	$cw=&$this->CurrentFont['cw']; 
 	if($w==0) 
 	  $w=$this->w-$this->rMargin-$this->x; 
@@ -194,15 +184,13 @@ class PDF extends FPDF
     # section 
     function DrawTable($ar1, $cols, $col_len)
     { 
-//	$this->CustomHeader(); 
+	# $this->CustomHeader(); 
         $font_size = 6;
-	# set the font that will be used 
 	$this->SetFont('Arial', '', $font_size);
 	$this->SetDrawColor(125,125,125);
 	
 	for($i=0; $i<count($ar1); $i++) 
 	{ 
-	    # bring the array element back to a local variable f1, f2, f3
 	    $nb = 0;
 	    for($j=0; $j<$cols; $j++) 
 	    {
@@ -228,11 +216,11 @@ class PDF extends FPDF
 	    { 
 		$this->AddPage(); 
 
-//		$this->CustomHeader(); 
+		# $this->CustomHeader(); 
 		$this->Ln(5); 
 
 		$this->SetFont('Arial', '', $font_size);
-		$startx = 0;//$this->GetX();
+		$startx = 0;
                 $starty = $this->GetY();
 	    }
 	    
@@ -257,36 +245,42 @@ class PDF extends FPDF
     
     function run($title, $description)
     {
-
 	$pdf=new PDF();
 	$pdf->AliasNbPages();
 	$pdf->SetFont('Arial','',14);
 	$pdf->AddPage();
 	
-	// report table
 	$logo_path = 'logo_outside_new.jpg';
 	$timestamp = 'Jan 31 2010';
 	
-	// cfpr function calls
-	// 1. get header
+	# cfpr function calls
+	# 1. get header
 	$header=array('Host','Promise Handle','Report','Time');
+	#cfpr_header("all hosts","normal");
 
-	// 2. get table data
-	//Data loading for table = cfpr function call
-	$data1=$pdf->LoadData('data4.txt');
+#	$ret = 'abc;asdf;asdf;asdfg\nabc;asdf;asdf;asdfg\nabc;asdf;asdf;asdfg\nabc;asdf;asdf;asdfg\nabc;asdf;asdf;asdfg\nabc;asdf;asdf;asdfg\n';
+	$ret = cfpr_report_notkept_pdf(NULL,NULL);
 	
+
+	# 2. get table data
+	# Data loading for table = cfpr function call
+#	$data1=$pdf->LoadData('data4.txt);
+#	$data1 = $pdf->ParseData($data_o);
+	
+	$data1 = $pdf->ParseData($ret);
+#	var_dump($data1);	
 	$rptTableTitle = 'DATA REPORTED';
 	$pdf->ReportTitle($title);
 	$pdf->ReportDescription("$description");
 	$pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
 	$pdf->Ln(8);
 	
-	// TODO: calculate the length of individual columns
+	# TODO: calculate the length of individual columns
 	$col_len = array(40,40,90,40);
 	$pdf->SetFont('Arial','',9);
-	// DrawTableHeader(array, col_count, col_len, font_size)
+	# DrawTableHeader(array, col_count, col_len, font_size)
 	$pdf->DrawTableHeader($header, 4, $col_len, 8);
-	// DrawTable(array, col_count, col_len)
+	# DrawTable(array, col_count, col_len)
 	$pdf->DrawTable($data1, 4, $col_len);
 	
 	$pdf->Output("rpt_promises_not_kept.pdf", "D");
