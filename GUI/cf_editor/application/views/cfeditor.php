@@ -51,36 +51,26 @@
     </head>
     <body>
 	     <div id="top">
+
 	       <form action="http://demo.cdengine.com/knowledge.php" method="post">
 		       <p>
 		       <input class="searchfield" type="text" name="search_string" />&nbsp;Search
 		       </p>
 	       </form>
+
 	       <h2>
 	       CFENGINE MISSION PORTAL
 	       <span id="subheading"><b>develop</b></span>
 	       </h2>
+
 	       <br class="clear_right" />
+
 	     </div>
 	     
 	<div id="editor">
 
 	<div id="leftPanel">
 	 	<div class="ui-layout-content">
-		  <div id="menu">
-			  <a href="#" id="new">New</a>
-			  <a href="#" id="compile">Check syntax</a>
-			  <a href="#" id="save">Save</a>
-			  <a href="#" id="commit">Commit</a>
-			  <a href="#" id="update">Update</a>
-			  <div class="shortcuts">
-				  <span>Shortcuts:</span>
-				  <span>Ctrl+space-&gt; synatx autocompletion</span>
-				  <span>Tab       -&gt; indent</span>
-				  <span>Ctrl+z    -&gt; undo</span>
-				  <span>Ctrl+y    -&gt; Redo</span>
-		     </div>
-		  </div>
 		  
 		  <div id="Policies">
 		  <div class="title">Nova Policies</div>
@@ -88,6 +78,26 @@
 		    
 		    </div>
 		  </div>
+
+		  <div id="menu">
+			  <a href="#" id="new"><img src="<?php echo
+			  base_url();?>application/assets/Images/new.png"/>New</a>
+			  <a href="#" id="save"><img src="<?php echo base_url();?>application/assets/Images/save.png"/>Save</a>
+			  <a href="#" id="compile"><img src="<?php echo base_url();?>application/assets/Images/check_syntax.png"/>Check syntax</a>
+			  <a href="#" id="update"><img src="<?php echo base_url();?>application/assets/Images/update.png"/>Update</a>
+			  <a href="#" id="commit"><img src="<?php echo base_url();?>application/assets/Images/commit.png"/>Commit</a>
+
+<?php /*
+			  <div class="shortcuts">
+				  <span>Shortcuts:</span>
+				  <span>Ctrl+Space-&gt; Autocompletion</span>
+				  <span>Tab       -&gt; Indent</span>
+				  <span>Ctrl+Z    -&gt; Undo</span>
+				  <span>Ctrl+Y    -&gt; Redo</span>
+     		          </div>
+*/?>
+		  </div>
+
 		  <br>
 		</div>
 	</div>
@@ -102,12 +112,12 @@
 			   </li>
 		  </ul>
 		  <div id="news">
-                  Welcome to the Cfengine Nova Development Center. Click "New" or an existing policy on the right to start editing.
+                  Welcome to the Cfengine Nova Development Center. Click "New" or an existing policy on the left to start editing.
 	          </div>
-	 
-	<!--  <div id="syntax_check_area">Area for checking syntax</div>-->
 	
 	</div>
+	 
+
 </div>
 </div>
 <div title="Tab data" id="dialog">
@@ -150,7 +160,7 @@ $(document).ready(function() {
 	   }
 	,  west: {
 	      fxName:                "slide"
-	   ,  size:                  270
+	   ,  size:                  260
 	   ,togglerLength_closed:    21
 	   ,togglerAlign_closed:     "top"
 	   ,  spacing_closed:        8
