@@ -88,7 +88,7 @@ if (false)
    Nova2PHP_summary_meter(NULL);
    Nova2PHP_meter(NULL);
    Nova2PHP_ComplianceSummaryGraph();
-   Nova2PHP_promiselog_pdf(NULL,NULL,1,buffer,1000);
+   Nova2PHP_promiselog_pdf(NULL,NULL,1,buffer,1000);      
    }
 }
 
@@ -808,17 +808,17 @@ else
 returnval[0] = '\0';
 
 //snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Time</th></tr>\n");
-Join(returnval,buffer,bufsize);
+//Join(returnval,buffer,bufsize);
          
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseLog *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"%s;%s;%s;%s\n",
+   snprintf(buffer,sizeof(buffer),"%s;%s;%s;%s<nova_nl>",
             hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)));
    Join(returnval,buffer,bufsize);
    }
-
+//Join(returnval,buffer,bufsize);
 DeleteHubQuery(hq,DeleteHubPromiseLog);
 
 if (!CFDB_Close(&dbconn))
