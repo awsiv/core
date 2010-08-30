@@ -831,6 +831,7 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,char *name,int distance,in
 
 /* web_api.c */
 
+char *Nova_FormatDiff(char *s);
 void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize);
 void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize);
 int Nova2PHP_list_bodies(char *name,char *type,char *buffer,int bufsize);
