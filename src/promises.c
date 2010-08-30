@@ -482,7 +482,6 @@ else
 printf(" -> Policy trajectory accepted\n");
 printf(" -> Attempting to initiate promised autonomous services\n\n");
 
-
 am_appliance = IsDefinedClass(CanonifyName(POLICY_SERVER));
 snprintf(name,CF_MAXVARSIZE,"ipv4_%s",CanonifyName(POLICY_SERVER));
 am_appliance |= IsDefinedClass(name);
