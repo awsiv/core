@@ -171,7 +171,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       }
    else
       {
-      slot = (int)((double)(ht->t - start)/(double)(3600*6) + 0.5);
+      slot = (int)((double)(ht->t - start)/(double)(3600*24*6) + 0.5);
       kept[slot] += ht->kept;
       repaired[slot] += ht->repaired;
       notkept[slot] += ht->notkept;
