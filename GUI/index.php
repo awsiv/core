@@ -30,8 +30,8 @@ echo "<h2>compliance promise summary</h2><br><br>";
 echo "<table id=\"noborder\"><tr><td valign=\"top\">";
 echo "<img src=\"/hub/common/compliance.png\">";                                                               
 echo "</td><td width=\"50%\" valign=\"top\">";
-echo "<ul><li><img src=\"/green.png\"> kept <li><img src=\"/yellow.png\"> repaired <li><img src=\"/red.png\"> not kept";
-echo "</ul></td></tr></table></td></tr></table>";
+echo "<ul><li><img src=\"/green.png\"> kept <li><img src=\"/yellow.png\"> repaired <li><img src=\"/red.png\"> not kept<br>";
+echo "<li><img src=\"/img/orange.png\"> no data</ul></td></tr></table></td></tr></table>";
 echo "</div>";
 
 
