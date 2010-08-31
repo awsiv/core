@@ -208,7 +208,7 @@ if ($many)  // Returning query
 	
       case "Promises not kept summary":
       case "Promises not kept log":
-	echo "<h4>$report_type</h4>";
+	echo "<h4 class=\"reportnotkept\">$report_type</h4>";
 	$name = $_POST['name'];
 	if ($hosts_only)
 	  {
@@ -343,7 +343,7 @@ else if ($hostkey != "") // Default search on single machine
 	break;
 	
       case "Promises not kept log":
-	echo "<h4>$report_type</h4>";
+	echo "<h4 class=\"reportnotkept\">$report_type</h4>";
 	$report = cfpr_report_notkept($hostkey,NULL);
 	//$report = cfpr_summarize_notkept($hostkey,NULL);
 	break;

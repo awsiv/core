@@ -90,7 +90,7 @@ echo "<h2>Analysis</h2>";
 echo "<div id=\"meter\">";
 echo "<ul>";
 echo "<li><a href=\"knowledge.php?topic=Status level meters\"><img src=\"/hub/$hostkey/meter.png\"></a></li>";
-echo "<li><a href=\"vitals.php?hostkey=$hostkey\"><img src=\"/img/dive.png\"> &nbsp;Pulse and vital signs for this host</a></li>\n";
+echo "<li><a href=\"vitals.php?hostkey=$hostkey\"><img class=\"icontext\" src=\"/img/dive.png\"> &nbsp;Pulse and vital signs for this host</a></li>\n";
 echo "</ul>";
 echo "</div>";
 echo "</td></tr><tr><td>";

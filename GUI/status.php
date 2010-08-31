@@ -28,9 +28,9 @@ $g = cfpr_count_green_hosts();
 
 <h2>Status</h2>
 <ul>
-<li><a href="hosts.php?type=red"><img src="/img/red_sign_small.png"></a>     <?php echo "$r"; ?> hosts known
-<li><a href="hosts.php?type=yellow"><img src="/img/yellow_sign_small.png"></a>  <?php echo "$y"; ?> hosts known
-<li><a href="hosts.php?type=green"><img src="/img/green_sign_small.png"></a>   <?php echo "$g"; ?> hosts known
+<li><a href="hosts.php?type=red"><img class="icontext" src="/img/red_sign_small.png"></a>     <?php echo "$r"; ?> hosts known
+<li><a href="hosts.php?type=yellow"><img class="icontext" src="/img/yellow_sign_small.png"></a>  <?php echo "$y"; ?> hosts known
+<li><a href="hosts.php?type=green"><img class="icontext" src="/img/green_sign_small.png"></a>   <?php echo "$g"; ?> hosts known
 <li>Average download time: 0.0 s
 <li>Hosts 2 dev overdue: 0
 </ul>
@@ -47,7 +47,7 @@ $g = cfpr_count_green_hosts();
 
 <ul>
 <li><div id="meter"><a href="knowledge.php?topic=Status level meters"><img src="/hub/common/meter.png"></a></div>
-<li><img src="/img/dive.png"> <a href="host.php">Select a particular host</a>
+<li><img class="icontext" src="/img/dive.png"> <a href="host.php">Select a particular host</a>
 
 
 </ul>

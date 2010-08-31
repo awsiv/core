@@ -80,11 +80,11 @@
 		  </div>
 
 		  <div id="menu">
-			  <a href="#" class="menuitem" id="new"><img src="<?php echo base_url();?>application/assets/Images/new.png"/>New</a>
-			  <a href="#" class="menuitem" id="save"><img src="<?php echo base_url();?>application/assets/Images/save.png"/>Save</a>
-			  <span class="menuitem"><img src="<?php echo base_url();?>application/assets/Images/check_syntax_grey.png"/>Check syntax</span>
-			  <span class="menuitem"><img src="<?php echo base_url();?>application/assets/Images/update_grey.png"/>Update</span>
-			  <span class="menuitem"><img src="<?php echo base_url();?>application/assets/Images/commit_grey.png"/>Commit</span>
+			  <a href="#" class="menuitem" id="new"><img class="icontext" src="<?php echo base_url();?>application/assets/Images/new.png"/>New</a>
+			  <a href="#" class="menuitem" id="save"><img class="icontext" src="<?php echo base_url();?>application/assets/Images/save.png"/>Save</a>
+			  <span class="menuitem"><img class="icontext" src="<?php echo base_url();?>application/assets/Images/check_syntax_grey.png"/>Check syntax</span>
+			  <span class="menuitem"><img class="icontext" src="<?php echo base_url();?>application/assets/Images/update_grey.png"/>Update</span>
+			  <span class="menuitem"><img class="icontext" src="<?php echo base_url();?>application/assets/Images/commit_grey.png"/>Commit</span>
 
 <?php /*
 			  <div class="shortcuts">

@@ -502,6 +502,16 @@ color: darkred;
 font-size: 150%;
 }
 
+.reportnotkept
+{
+color: darkred;
+}
+
+.icontext
+{
+vertical-align:middle;
+}
+
 #primary
 {  
 left: 3px;

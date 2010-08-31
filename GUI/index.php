@@ -16,12 +16,11 @@ echo "<div id=\"selector\">";
 echo "<table><tr><td valign=\"top\">\n";
 echo "<h2>$all hosts registered</h2>";
 echo "<ul>\n";
-echo "<li><a href=\"hosts.php?type=red\"><img src=\"/img/red_sign_big.png\"> $r hosts known</a>";
-echo "<li><a href=\"hosts.php?type=yellow\"><img src=\"/img/yellow_sign_big.png\"> $y hosts known</a>";
-echo "<li><a href=\"hosts.php?type=green\"><img src=\"/img/green_sign_big.png\"> $g hosts known</a>";
+echo "<li><a href=\"hosts.php?type=red\"><img class=\"icontext\" src=\"/img/red_sign_big.png\"> $r hosts known</a>";
+echo "<li><a href=\"hosts.php?type=yellow\"><img class=\"icontext\" src=\"/img/yellow_sign_big.png\"> $y hosts known</a>";
+echo "<li><a href=\"hosts.php?type=green\"><img class=\"icontext\" src=\"/img/green_sign_big.png\"> $g hosts known</a>";
 echo "</ul>\n";
-echo "<ul><li>This edition licensed to `<b>$ret1</b>'.";
-echo "<li><a href=\"license.php\"><img src=\"/img/info.png\"></a></ul>";
+echo "<a href=\"license.php\"><img class=\"icontext\" src=\"/img/icon_info_24x24.png\"></a> This edition licensed to `<b>$ret1</b>'.";
 
 echo "</td><td valign=\"top\">\n";
 cfpr_compliance_summary_graph();
