@@ -154,6 +154,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 now = time(0);
 start = now - 24 * 3600 * 7;   
 
+// This is not going to scale, so we need another way of computing this average
+
 hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -173,11 +175,12 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       kept[slot] += ht->kept;
       repaired[slot] += ht->repaired;
       notkept[slot] += ht->notkept;
+      count++;
       }
    }
 
 ltotal = lkept = lrepaired = 0;
-lnotkept = 100;
+lnotkept = 1;
 
 for (i = 0; i < span; i++)
    {
@@ -207,8 +210,15 @@ for (i = 0; i < span; i++)
    gdImageSetThickness(cfv.im,cfv.width/span+1);
    gdImageLine(cfv.im,x,tnotkept*2,x,(tnotkept+trepaired)*2,YELLOW);
    gdImageSetThickness(cfv.im,cfv.width/span+1);
-   gdImageLine(cfv.im,x,(tnotkept+trepaired)*2,x,cfv.range,GREEN);
 
+   if (total < 40) // No data
+      {
+      gdImageLine(cfv.im,x,(tnotkept+trepaired)*2,x,cfv.range,ORANGE);
+      }
+   else
+      {
+      gdImageLine(cfv.im,x,(tnotkept+trepaired)*2,x,cfv.range,GREEN);
+      }
 
    ltotal = total;
    lkept = tkept;

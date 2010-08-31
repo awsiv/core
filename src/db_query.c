@@ -556,7 +556,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             
             if (cmp == CFDB_GREATERTHANEQ)
                {
-               if (lt != -1 && lt < rt)
+               if (lt != -1 && lt > rt)
                   {
                   match_t = false;
                   }
@@ -578,7 +578,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                }
             else // CFDB_LESSTHANEQ
                {
-               if (lt != -1 && lt > rt)
+               if (lt != -1 && lt < rt)
                   {
                   match_t = false;
                   }
@@ -1614,14 +1614,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
             
             if (cmp == CFDB_GREATERTHANEQ)
                {
-               if (lt != -1 && lt < rt)
+               if (lt != -1 && lt > rt)
                   {
                   match_t = false;
                   }
                }
             else // CFDB_LESSTHANEQ
                {
-               if (lt != -1 && lt > rt)
+               if (lt != -1 && lt < rt)
                   {
                   match_t = false;
                   }
@@ -1755,14 +1755,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
             if (cmp == CFDB_GREATERTHANEQ)
                {
-               if (lt != -1 && lt < rt)
+               if (lt != -1 && lt > rt)
                   {
                   match_t = false;
                   }
                }
             else // CFDB_LESSTHANEQ
                {
-               if (lt != -1 && lt > rt)
+               if (lt != -1 && lt < rt)
                   {
                   match_t = false;
                   }
