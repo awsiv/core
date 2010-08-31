@@ -99,7 +99,8 @@ class PDF extends FPDF
     # Parse data
     function ParseData($arr)
     {
-	$lines=explode('<nova_nl>',$arr);
+	$tmp=str_replace("\n", ' ', $arr);
+	$lines=explode('<nova_nl>',$tmp);
 	$data=array();
 	foreach($lines as $line)
 	{
@@ -251,7 +252,7 @@ class PDF extends FPDF
 	$pdf->AliasNbPages();
 	$pdf->SetFont('Arial','',14);
 	$pdf->AddPage();
-	
+        
 	$logo_path = 'logo_outside_new.jpg';
 	$timestamp = 'Jan 31 2010';
 	
