@@ -9,14 +9,14 @@ $g = cfpr_count_green_hosts();
 ?>
 
 <div id="selector">
-
 <table>
 <tr>
 <td valign="top">
+<div id="noborder">
 <table>
 <tr><td>
 
-<h2>Hosts:</h2>
+<h2>Hosts</h2>
 
 <ul>
 <li><i>Hosts known:</i> <?php echo $all; ?>
@@ -37,12 +37,12 @@ $g = cfpr_count_green_hosts();
 
 </td></tr>
 </table>
-
+</div>
 <td>
+<div id="noborder">
 
 <table>
 <tr><td>
-
 <h2>Average meters for all hosts</h2>
 
 <ul>
@@ -55,7 +55,7 @@ $g = cfpr_count_green_hosts();
 </td></tr>
 <tr><td>
 
-<h2>Search groups of hosts:</h2>
+<h2>Search groups of hosts</h2>
 
 <ul><li>
  <form method="post" action="search.php">
@@ -69,12 +69,13 @@ echo "$allreps";?>
 
 </td></tr>
 </table>
+</div>
 </td>
 
 </tr>
 </table>
 </div>
-     
+
 <?
 cfpr_footer();
 ?>

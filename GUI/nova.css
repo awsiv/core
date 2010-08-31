@@ -435,35 +435,35 @@ margin: 10px;
 #histoanalysis
 {
 padding: 10px;
-background-color: #9d9777;
-color: #efeacc;
+background-color: #fff;
+color: #30302a;
 }
 
 #weekanalysis table
 {
 padding: 5px;
-background-color: #9d9777;
-color: #efeacc;
+background-color: #fff;
+color: #30302a;
 }
 
 #weekanalysis tr td
 {
 padding: 5px;
-background-color: #9d9777;
-color: #efeacc;
+background-color: #fff;
+color: #30302a;
 }
 
 #maganalysis
 {  
 padding: 5px;
-background-color: #9d9777;
-color: #efeacc;
+background-color: #fff;
+color: #30302a;
 }
 
 #longhistory
 {  
 padding: 5px;
-background-color: #9d9777;
+
 }
 
 /* ------------------------------------------------*/
@@ -584,21 +584,6 @@ border: solid 1px;
 border-color: #cecec7;
 }
 
-#explain table
-{ 
-margin-left: 100px;
-width: 300px;
-border-color: #4e8b8c;
-border-style: solid;
-border-width: 1px;
-}
-
-#explain td
-{ 
-background-color: #7d7757;
-font-size: 8px;
-font-weight: normal;
-}
 
 #announcement table
 {  
@@ -881,6 +866,11 @@ font-family: DejaVuSans,Vera,Arial,sans-serif;
 }
 
 
+#selector h4
+{  
+color: #30302a;
+}
+
 #selector table
 { 
 background-color: #30302a ;
@@ -903,7 +893,7 @@ padding: 4px;
 
 #selector a
 { 
-color: lightyellow; //#f2eef6; 
+color: #f8c358; #bba73e; // ##abbcdf;  //#86a4e0;
 font-size: 100%;
 font-family: DejaVuSans,Vera,Arial,sans-serif;
 }
@@ -931,5 +921,20 @@ background-color: yellow;
 background-color: red;
 }
 
+#plusline
+{  
+color: blue;
+}
 
+#minusline
+{  
+color: red;
+font-weight: bold;
+}
 
+#pm
+{  
+font-size: 150%;
+color: darkgreen;
+font-weight: bold;
+}
