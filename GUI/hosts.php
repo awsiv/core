@@ -4,7 +4,7 @@ $type = $_GET['type'];
 
 cfpr_header("$type hosts","normal");
 
-echo "<div id=\"allhosts\">";
+echo "<div id=\"allhosts\">\n";
 
 switch ($type)
   {
@@ -21,7 +21,7 @@ switch ($type)
 
 if ($result != "")
    {
-   echo "<b>$result</b>";
+   echo "$result";
    }
 else
    {
