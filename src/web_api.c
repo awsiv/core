@@ -2563,7 +2563,7 @@ if (clist)
          Join(buffer,work,bufsize);
          }
       
-      snprintf(work,CF_MAXVARSIZE,"<td><img src=\"%s.png\"> &nbsp;<a href=\"host.php?hostkey=%s\">%s</a></td></a></td>\n",colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<td><img class=\"icontext\" src=\"img/%s.png\"> &nbsp;<a href=\"host.php?hostkey=%s\">%s</a></td></a></td>\n",colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
       
       Join(buffer,work,bufsize);
       
