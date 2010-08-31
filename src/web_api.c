@@ -815,7 +815,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    hp = (struct HubPromiseLog *)rp->item;
 
    snprintf(buffer,sizeof(buffer),"%s;%s;%s;%s<nova_nl>",
-            hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)));
+            hp->hh->hostname,hp->handle,hp->cause,cf_ctime(&(hp->t)));
    Join(returnval,buffer,bufsize);
    }
 //Join(returnval,buffer,bufsize);
