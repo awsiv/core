@@ -193,56 +193,66 @@ class PDF extends FPDF
 	
 	for($i=0; $i<count($ar1); $i++) 
 	{ 
-	    $multicol = false;
+	    $multi_col = array();
 	    $nb = 0;
 	    for($j=0; $j<$cols; $j++) 
 	    {
 		$f[$j] = $ar1[$i][$j];
 		$tmp = $this->NbLines($col_len[$j],$f[$j]);
 		if($tmp > $nb)
-		  $nb = $tmp;
-		if($nb > 1)
-		  $multi_col = true;
-		else
-		  $multi_col = false;
+		{
+		    $nb = $tmp;
+		}
+		if($tmp > 1)
+		{
+		  $multi_col[$j] = true;
+		}
+		else 
+		{
+		  $multi_col[$j] = false;
+		}
 	    }
 	    
 	    # total y
 	    $hx = $nb * $font_size;
-
+	    
 	    #  check for page break 
 	    $startx = 0;    
-    	    $starty = $this->GetY(); 
+    	    $starty = $this->GetY();
+	    $rowmaxy = $starty + $hx;
+	    $newpage = false;
 	    for($j=0; $j<$cols; $j++) 
 	    {
-	    if(($j == 0) && ($this->GetY() + $hx > $this->PageBreakTrigger))
-	    { 
-		$this->AddPage(); 
-
-		# $this->CustomHeader(); 
-		$this->Ln(5); 
-
-		$this->SetFont('Arial', '', $font_size);
-		$startx = 0;
-                $starty = $this->GetY();
-	    }
-	    
-	    $rowmaxy = $starty + $hx;
-
-	    $this->SetXY($startx, $starty); 
-
-	    if(!$multi_col)
-		{
-		  $this->MultiCell($col_len[$j],$hx,$f[$j],1,$align,0);
+		if(($j == 0) && ($this->GetY() + $hx > $this->PageBreakTrigger))
+		{ 
+		    $this->AddPage(); 
+		    $this->Ln(5); 
+		    $this->SetFont('Arial', '', $font_size);
+		    $startx = 0;
+		    $starty = $this->GetY();
+		    $newpage = true;
 		}
-	    else
-		 {
-		     #$this->MultiCell($col_len[$j],$font_size,$f[$j],1,$align,0);
-		 }
-
-	    $startx+= $col_len[$j];
-	    	    $this->Ln(0); 
+		
+		
+		
+		$this->SetXY($startx, $starty); 
+		
+		if($multi_col[$j] == true)
+		{
+		    $this->MultiCell($col_len[$j],$font_size,$f[$j],1,$align,0);
+		}
+		else
+		{		  	
+		    $this->MultiCell($col_len[$j],$hx,$f[$j],1,$align,0); 
+		}
+		
+		$startx+= $col_len[$j];
+		$this->Ln(0);
 	    }
+	    if(!$newpage)
+	    {
+		$this->SetY($rowmaxy);
+	    }	    
 	}
     }
 }
