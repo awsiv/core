@@ -321,7 +321,7 @@ void Nova_LogLicenseStatus()
 { CF_DB *dbp;
   CF_DBC *dbcp;
   char rettype,datestr[CF_MAXVARSIZE],data[CF_MAXVARSIZE],name[CF_BUFSIZE];
-  char buffer[CF_BUFSIZE],work[CF_BUFSIZE];
+  char buffer[CF_BUFSIZE] = {0},work[CF_BUFSIZE] = {0};
   void *retval;
   int licenses = 0,count = 0;
   struct Promise *pp = NewPromise("track_license","License tracker");
