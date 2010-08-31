@@ -34,7 +34,7 @@ int Nova_EnterpriseExpiry(char *day,char *month,char *year)
   int m_now,m_expire,d_now,d_expire,number = 1,am_policy_server = false;
   char f_day[16],f_month[16],f_year[16];
   char u_day[16],u_month[16],u_year[16];
-  unsigned char digest[EVP_MAX_MD_SIZE+1],serverdig[CF_MAXVARSIZE];
+  unsigned char digest[EVP_MAX_MD_SIZE+1] = {0},serverdig[CF_MAXVARSIZE] = {0};
   FILE *fp;
   RSA * serverrsa;
   
@@ -107,6 +107,8 @@ if ((fp = fopen(name,"r")) != NULL)
       LICENSES = 0;
       return false;
       }
+
+   memset(digest,0,sizeof(digest));
    
    if (Nova_HashKey(CFPUBKEYFILE,name,digest,hash))
       {
@@ -118,7 +120,7 @@ if ((fp = fopen(name,"r")) != NULL)
       am_policy_server = true;
       NewClass("am_policy_hub");
       }
-   else if (Nova_HashKey(serverkey,name,digest,hash))
+   else if (memset(digest,0,sizeof(digest)) && Nova_HashKey(serverkey,name,digest,hash))
       {
       strcpy(u_day,f_day);
       strcpy(u_month,f_month);
