@@ -674,6 +674,7 @@ void Nova_EnterpriseContext(void);
 void Nova_PreSanitizePromise(struct Promise *pp);
 void Nova_TrackValue(char *date,double kept,double repaired, double notkept);
 void Nova_LastSawBundle(char *name);
+void Nova_EnterpriseDiscovery(void);
 
 /* registry.c */
 

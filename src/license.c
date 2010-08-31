@@ -500,8 +500,9 @@ else
 snprintf(work,sizeof(work),"</table></div>\n");
 Join(buffer,work,sizeof(buffer));
 
+#ifdef HAVE_LIBMONGOC
 CFDB_PutValue("license_report",buffer);
-
+#endif
 YieldCurrentLock(thislock);
 DeletePromise(pp);
 }

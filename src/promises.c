@@ -38,7 +38,12 @@ NewScalar("sys","zone",zone,cf_str);
 snprintf(vbuff,CF_BUFSIZE-1,"zone_%s",zone);
 NewClass(CanonifyName(vbuff));
 #endif
+}
 
+/*****************************************************************************/
+
+void Nova_EnterpriseDiscovery()
+{
 if (IsDefinedClass("redhat"))
    {
    Nova_SetDocRoot("/var/www/html");
@@ -661,6 +666,16 @@ void Nova_SetDocRoot(char *name)
 { char file[CF_BUFSIZE];
   FILE *fout,*fin;
   struct stat sb;
+  enum cfreport level;
+
+if (BOOTSTRAP)
+   {
+   level = cf_cmdout;
+   }
+else
+   {
+   level = cf_verbose;
+   }
 
 snprintf(file,CF_BUFSIZE-1,"%s/document_root.dat",CFWORKDIR);
 
@@ -674,7 +689,7 @@ if (cfstat(file,&sb) == -1 && strlen(name) > 0)
 
    fprintf(fout,"%s",name);
    fclose(fout);
-   CfOut(cf_cmdout,""," -> Setting document root for a knowledge base to %s",name);
+   CfOut(level,""," -> Setting document root for a knowledge base to %s",name);
    strcpy(DOCROOT,name);
    NewScalar("sys","doc_root",DOCROOT,cf_str);
    }
@@ -688,7 +703,7 @@ else
       file[0] = 0;
       fscanf(fin,"%255s",file);
       fclose(fin);
-      CfOut(cf_cmdout,""," -> Assuming document root for a knowledge base in %s",file);
+      CfOut(level,""," -> Assuming document root for a knowledge base in %s",file);
       strcpy(DOCROOT,name);
       NewScalar("sys","doc_root",DOCROOT,cf_str);
       }
