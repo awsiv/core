@@ -466,7 +466,6 @@ if (NewDBCursor(dbp,&dbcp))
 CloseDB(dbp);
    
 snprintf(buffer,sizeof(buffer),"<div id=\"license\">");
-Join(buffer,work,sizeof(buffer));
 snprintf(work,sizeof(work),"<h4>Last measured on %s based on %d samples</h4>",ctime(&now),i);
 Join(buffer,work,sizeof(buffer));
 snprintf(work,sizeof(work),"<table class=\"border\">\n");
