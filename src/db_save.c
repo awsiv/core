@@ -813,7 +813,7 @@ void CFDB_SavePerformance(mongo_connection *conn, char *keyhash, struct Item *da
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
-  char varName[CF_MAXVARSIZE];
+  char varName[CF_MAXVARSIZE],*sp;
   long t;
   char eventname[CF_MAXVARSIZE];
   double measure = 0,average = 0,dev = 0;
@@ -831,8 +831,16 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    eventname[0] = '\0';
    sscanf(ip->name,"%ld,%lf,%lf,%lf,%255[^\n]\n",&t,&measure,&average,&dev,eventname);
+
+   for (sp = eventname; *sp != '\0'; sp++)
+      {
+      if (*sp == '.') // Need to canonify the dots, as dot is not allowed in a mongo key
+         {
+         *sp = '_';
+         }
+      }
    
-   snprintf(varName, sizeof(varName), "%s.%s", cfr_performance, eventname);
+   snprintf(varName, sizeof(varName), "%s.%s",cfr_performance,eventname);
    
    sub = bson_append_start_object(setObj , varName);
    bson_append_double(sub, cfr_obs_q, measure);
