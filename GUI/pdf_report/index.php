@@ -99,8 +99,7 @@ class PDF extends FPDF
     # Parse data
     function ParseData($arr)
     {
-	$tmp=str_replace("\n", ' ', $arr);
-	$lines=explode('<nova_nl>',$tmp);
+	$lines=explode('<nova_nl>',$arr);
 	$data=array();
 	foreach($lines as $line)
 	{
@@ -194,6 +193,7 @@ class PDF extends FPDF
 	
 	for($i=0; $i<count($ar1); $i++) 
 	{ 
+	    $multicol = false;
 	    $nb = 0;
 	    for($j=0; $j<$cols; $j++) 
 	    {
@@ -202,9 +202,9 @@ class PDF extends FPDF
 		if($tmp > $nb)
 		  $nb = $tmp;
 		if($nb > 1)
-		  $multi_col[$j] = true;
+		  $multi_col = true;
 		else
-		  $multi_col[$j] = false;
+		  $multi_col = false;
 	    }
 	    
 	    # total y
@@ -231,13 +231,13 @@ class PDF extends FPDF
 
 	    $this->SetXY($startx, $starty); 
 
-	    if(!$multi_col[$j])
+	    if(!$multi_col)
 		{
 		  $this->MultiCell($col_len[$j],$hx,$f[$j],1,$align,0);
 		}
 	    else
 		 {
-		     $this->MultiCell($col_len[$j],$font_size,$f[$j],1,$align,0);
+		     #$this->MultiCell($col_len[$j],$font_size,$f[$j],1,$align,0);
 		 }
 
 	    $startx+= $col_len[$j];
