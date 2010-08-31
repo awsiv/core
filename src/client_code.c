@@ -56,7 +56,7 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    Nova_UnPackAvailPatches, // nodata
    Nova_UnPackPatchStatus,  // nodata
    Nova_UnPack_promise_output_common,  // nodata
-   Nova_UnPackValueReport,  // nodata
+   Nova_UnPackValueReport,  // DBOK (append) LOG
    Nova_UnPackVariables,    // DBOK
    Nova_UnPackLastSeen,     // DBOK
    Nova_UnPackRepairLog,    // DBOK (nopurge)

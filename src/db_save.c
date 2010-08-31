@@ -587,18 +587,16 @@ bson_destroy(&host_key);
 void CFDB_SaveTotalCompliance(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
-  bson_buffer *pushObj;
+  bson_buffer *setObj;
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
-  bson_buffer *arr;
-  char iStr[32];
   char version[CF_MAXVARSIZE];
   int kept,repaired,notrepaired;
+  char varName[CF_MAXVARSIZE];
   long t;
   time_t then;
   bson_buffer *sub;
-  int i;
   
 // find right host
 bson_buffer_init(&bb);
@@ -607,18 +605,17 @@ bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
-pushObj = bson_append_start_object(&bb, "$pushAll");
+setObj = bson_append_start_object(&bb, "$set");
 
-arr = bson_append_start_array(pushObj,cfr_total_compliance);
-
-for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+for (ip = data; ip != NULL; ip=ip->next)
    {
-   snprintf(iStr, sizeof(iStr), "%d", i);
-   
    sscanf(ip->name,"%ld,%127[^,],%d,%d,%d\n",&t,version,&kept,&repaired,&notrepaired);
    then = (time_t)t;
+
+
+   snprintf(varName,sizeof(varName),"%s.%d",cfr_total_compliance,then);
    
-   sub = bson_append_start_object(arr, iStr);
+   sub = bson_append_start_object(setObj, varName);
    bson_append_int(sub,cfr_time, then);
    bson_append_string(sub,cfr_version,version);
    bson_append_int(sub,cfr_kept,kept);
@@ -627,8 +624,7 @@ for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    bson_append_finish_object(sub);
    }
 
-bson_append_finish_object(arr);
-bson_append_finish_object(pushObj);
+bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
