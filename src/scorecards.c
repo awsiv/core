@@ -274,6 +274,12 @@ void Nova_SummaryMeter(char *docroot,char *search_string)
   struct Rlist *rp;
   struct CfDataView cfv;
 
+  // make sure GD finds fonts - FIXME for Windows
+  if(putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
+    {
+      CfOut(cf_error,"putenv","!! Cannot set GD font path environment");
+    }
+
 cfv.height = CF_METER_HEIGHT;
 cfv.width = CF_METER_WIDTH;
 cfv.margin = CF_METER_MARGIN;
@@ -407,6 +413,14 @@ int Nova_Meter(char *docroot,char *hostkey)
   mongo_connection dbconn;
   struct Rlist *rp;
   struct CfDataView cfv;
+
+  
+  // make sure GD finds fonts - FIXME for Windows
+  if(putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
+    {
+      CfOut(cf_error,"putenv","!! Cannot set GD font path environment");
+    }
+
   
 cfv.height = CF_METER_HEIGHT;
 cfv.width = CF_METER_WIDTH;

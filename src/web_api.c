@@ -2557,13 +2557,13 @@ if (clist)
    
    for (ip = clist; ip !=  NULL; ip=ip->next)
       {
-      if (counter++ % 6 == 0)
+      if (counter > 0 && (counter++ % 6 == 0))  // new row
          {
-         snprintf(work,CF_MAXVARSIZE,"</tr></tr>");
+         snprintf(work,CF_MAXVARSIZE,"</tr>\n<tr>");
          Join(buffer,work,bufsize);
          }
       
-      snprintf(work,CF_MAXVARSIZE,"<td><img class=\"icontext\" src=\"img/%s.png\"> &nbsp;<a href=\"host.php?hostkey=%s\">%s</a></td></a></td>\n",colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<td><img class=\"icontext\" src=\"img/%s.png\"> &nbsp;<a href=\"host.php?hostkey=%s\">%s</a></td>\n",colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
       
       Join(buffer,work,bufsize);
       
