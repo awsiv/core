@@ -15,7 +15,10 @@ if ($report_type == "")
 $hostname =  cfpr_hostname($hostkey);
 
 cfpr_header("search results","ok");
-
+if($report_type == "Promises not kept log")
+{
+ echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php\"><img src=\"/img/icon_pdf.png\"></a><br><br>";
+}
 if ($search == "")
   {
   $search = ".*";
