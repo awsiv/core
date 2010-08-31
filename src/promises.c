@@ -21,79 +21,6 @@
 
 char POLICY_SERVER[CF_BUFSIZE];
 
-/********************************************************************/
-
-/*
-void Nova_StorePromises(struct Bundle *bundles,struct Body *bodies)
-
-{  
-for (bp = bundles; bp != NULL; bp=bp->next)
-   {
-   BundleNode(FREPORT_HTML,bp->name);
-
-   fprintf(FREPORT_HTML,"%s Bundle %s%s%s %s%s%s\n",
-           CFH[cfx_bundle][cfb],
-           CFH[cfx_blocktype][cfb],bp->type,CFH[cfx_blocktype][cfe],
-           CFH[cfx_blockid][cfb],bp->name,CFH[cfx_blockid][cfe]);
-   
-   fprintf(FREPORT_HTML," %s ARGS:%s\n\n",CFH[cfx_line][cfb],CFH[cfx_line][cfe]);
-
-   fprintf(FREPORT_TXT,"Bundle %s in the context of %s\n\n",bp->name,bp->type);
-   fprintf(FREPORT_TXT,"   ARGS:\n\n");
-
-   for (rp = bp->args; rp != NULL; rp=rp->next)
-      {   
-      fprintf(FREPORT_HTML,"%s",CFH[cfx_line][cfb]);
-      fprintf(FREPORT_HTML,"   scalar arg %s%s%s\n",CFH[cfx_args][cfb],(char *)rp->item,CFH[cfx_args][cfe]);
-      fprintf(FREPORT_HTML,"%s",CFH[cfx_line][cfe]);
-      
-      fprintf(FREPORT_TXT,"   scalar arg %s\n\n",(char *)rp->item);
-      }
-  
-   fprintf(FREPORT_TXT,"   {\n");   
-   fprintf(FREPORT_HTML,"%s",CFH[cfx_promise][cfb]);
-   
-   for (sp = bp->subtypes; sp != NULL; sp = sp->next)
-      {
-      fprintf(FREPORT_HTML,"%s",CFH[cfx_line][cfb]);
-      TypeNode(FREPORT_HTML,sp->name);
-      fprintf(FREPORT_HTML,"%s",CFH[cfx_line][cfe]);
-      fprintf(FREPORT_TXT,"   TYPE: %s\n\n",sp->name);
-      
-      for (pp = sp->promiselist; pp != NULL; pp = pp->next)
-         {
-         ShowPromise(pp,6);
-         }
-      }
-   
-   fprintf(FREPORT_TXT,"   }\n");   
-   fprintf(FREPORT_TXT,"\n\n");
-   fprintf(FREPORT_HTML,"%s\n",CFH[cfx_promise][cfe]);
-   fprintf(FREPORT_HTML,"%s\n",CFH[cfx_line][cfe]);
-   fprintf(FREPORT_HTML,"%s\n",CFH[cfx_bundle][cfe]);
-   }
-
-
-fprintf(FREPORT_HTML,"<h1>All Bodies</h1>");
-fprintf(FREPORT_TXT,"\n\nAll Bodies\n\n");
-
-for (bdp = bodies; bdp != NULL; bdp=bdp->next)
-   {
-   fprintf(FREPORT_HTML,"%s%s\n",CFH[cfx_line][cfb],CFH[cfx_block][cfb]);
-   fprintf(FREPORT_HTML,"%s\n",CFH[cfx_promise][cfb]);
-
-   BodyNode(FREPORT_HTML,bdp->name,0);
-   ShowBody(bdp,3);
-
-   fprintf(FREPORT_TXT,"\n");
-   fprintf(FREPORT_HTML,"%s\n",CFH[cfx_promise][cfe]);
-   fprintf(FREPORT_HTML,"%s%s \n ",CFH[cfx_block][cfe],CFH[cfx_line][cfe]);
-   fprintf(FREPORT_HTML,"</p>");
-   }
- 
-}
-*/
-
 /*****************************************************************************/
 
 void Nova_EnterpriseContext()
@@ -111,6 +38,21 @@ NewScalar("sys","zone",zone,cf_str);
 snprintf(vbuff,CF_BUFSIZE-1,"zone_%s",zone);
 NewClass(CanonifyName(vbuff));
 #endif
+
+if (IsDefinedClass("redhat"))
+   {
+   Nova_SetDocRoot("/var/www/html");
+   }
+
+if (IsDefinedClass("SuSE"))
+   {
+   Nova_SetDocRoot("/srv/www/htdocs");
+   }
+
+if (IsDefinedClass("debian"))
+   {
+   Nova_SetDocRoot("/var/www");
+   }
 }
 
 /*****************************************************************************/
@@ -733,6 +675,8 @@ if (cfstat(file,&sb) == -1 && strlen(name) > 0)
    fprintf(fout,"%s",name);
    fclose(fout);
    CfOut(cf_cmdout,""," -> Setting document root for a knowledge base to %s",name);
+   strcpy(DOCROOT,name);
+   NewScalar("sys","doc_root",DOCROOT,cf_str);
    }
 else
    {
@@ -745,6 +689,8 @@ else
       fscanf(fin,"%255s",file);
       fclose(fin);
       CfOut(cf_cmdout,""," -> Assuming document root for a knowledge base in %s",file);
+      strcpy(DOCROOT,name);
+      NewScalar("sys","doc_root",DOCROOT,cf_str);
       }
    }
 }
