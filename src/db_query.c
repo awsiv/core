@@ -1309,9 +1309,6 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,bson *query,char *
 /* BEGIN RESULT DOCUMENT */
 
 bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_keyhash,1);
-bson_append_int(&bb,cfr_ip_array,1);
-bson_append_int(&bb,cfr_host_array,1);
 bson_append_int(&bb,cfr_performance,1);
 bson_from_buffer(&field, &bb);
 
@@ -1346,7 +1343,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
          while (bson_iterator_next(&it2))
             {
             bson_iterator_init(&it3, bson_iterator_value(&it2));
-            strncpy(rname,bson_iterator_key(&it2),CF_SMALLBUF-1);
+	    snprintf(rname,sizeof(rname),"%s",bson_iterator_key(&it2));
 
             rex = 0;
             rsigma = 0;
