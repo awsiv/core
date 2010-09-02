@@ -375,6 +375,12 @@ printf(" -> Operating System Release is %s\n",VSYSNAME.release);
 printf(" -> Architecture = %s\n",VSYSNAME.machine);
 printf(" -> Internal soft-class is %s\n",CLASSTEXT[VSYSTEMHARDCLASS]);
 
+if (!IsPrivileged())
+   {
+   CfOut(cf_error,""," !! You need root/administrator permissions to boostrap Cfengine");
+   FatalError("Insufficient privilege");
+   }
+
 if (IsDefinedClass("redhat"))
    {
    Nova_SetDocRoot("/var/www/html");
@@ -441,8 +447,6 @@ if (strlen(POLICY_SERVER) == 0)
 if (am_appliance)
    {
    char comm[CF_BUFSIZE],buffer[CF_BUFSIZE];
-   snprintf(comm,CF_BUFSIZE,"%s/bin/cf-promises -r",CFWORKDIR);
-   GetExecOutput(comm,buffer,false);
 
    printf(" ** This host recognizes itself as a Cfengine Policy Hub, with policy distribution and knowledge base.\n");
    printf(" -> The system is now converging. Full initialisation of self-analysis could take up to 30 minutes\n\n");
@@ -573,6 +577,8 @@ fprintf(fout,
 "\"cf-serverd\" restart_class => \"start_server\";\n\n"
 
 "commands:\n"
+"config.am_policy_hub::\n"
+"\"$(sys.cf_promises) -r\";"
 "start_exec.!windows::\n"
 "\"$(sys.cf_execd)\","
 "classes => outcome(\"executor\");\n"
