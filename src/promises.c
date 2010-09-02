@@ -448,6 +448,7 @@ if (am_appliance)
    {
    char comm[CF_BUFSIZE],buffer[CF_BUFSIZE];
 
+   NewClass("am_policy_hub");
    printf(" ** This host recognizes itself as a Cfengine Policy Hub, with policy distribution and knowledge base.\n");
    printf(" -> The system is now converging. Full initialisation and self-analysis could take up to 30 minutes\n\n");
    }
