@@ -275,11 +275,11 @@ void Nova_SummaryMeter(char *docroot,char *search_string)
   struct CfDataView cfv;
 
   // make sure GD finds fonts - FIXME for Windows
-  if(putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
-    {
-      CfOut(cf_error,"putenv","!! Cannot set GD font path environment");
-    }
-
+  if (putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
+     {
+     CfOut(cf_error,"putenv","!! Cannot set GD font path environment");
+     }
+  
 cfv.height = CF_METER_HEIGHT;
 cfv.width = CF_METER_WIDTH;
 cfv.margin = CF_METER_MARGIN;
@@ -416,11 +416,10 @@ int Nova_Meter(char *docroot,char *hostkey)
 
   
   // make sure GD finds fonts - FIXME for Windows
-  if(putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
-    {
-      CfOut(cf_error,"putenv","!! Cannot set GD font path environment");
-    }
-
+if (putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
+   {
+   CfOut(cf_error,"putenv","!! Cannot set GD font path environment");
+   }
   
 cfv.height = CF_METER_HEIGHT;
 cfv.width = CF_METER_WIDTH;
@@ -1091,12 +1090,17 @@ void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col)
 
 {
 #ifdef HAVE_LIBGD
-
+ 
   int day,x,y;
   double q,dq;
   time_t now;
   int ticksize = cfv->height/50;
   static char *days[8] = { "6","5","4","3","2","1","Now","0"};
+
+if (putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
+   {
+   CfOut(cf_error,"putenv","!! Cannot set GD font path environment");
+   }
 
 for (day = 0; day < 7; day++)
    {

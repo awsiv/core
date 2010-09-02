@@ -287,6 +287,11 @@ void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour)
   int brect[8];
   double size = 8.0;
 
+if (putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
+   {
+   CfOut(cf_error,"putenv","!! Cannot set GD font path environment");
+   }
+  
 snprintf(ps,CF_MAXVARSIZE,"%s",s);
 
 /* brect

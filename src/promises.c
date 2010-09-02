@@ -440,6 +440,9 @@ if (strlen(POLICY_SERVER) == 0)
 
 if (am_appliance)
    {
+   char comm[CF_BUFSIZE],buffer[CF_BUFSIZE];;
+   snprintf(comm,CF_BUFSIZE,"%s/bin/cf-promises -r");
+   GetExecOutput(comm,buffer,false);
    printf(" ** This host recognizes itself as a Cfengine Policy Hub, with policy distribution and knowledge base.\n");
    printf(" -> The system is now converging. Full initialisation of self-analysis could take up to 30 minutes\n\n");
    }
@@ -483,9 +486,10 @@ else
       {
       fscanf(fin,"%s",name);
       fclose(fin);
-      NewScalar("sys","policy_hub",name,cf_str);
       }
    }
+
+NewScalar("sys","policy_hub",name,cf_str);
 }
 
 /********************************************************************/

@@ -37,7 +37,7 @@ int Nova_EnterpriseExpiry(char *day,char *month,char *year)
   unsigned char digest[EVP_MAX_MD_SIZE+1] = {0},serverdig[CF_MAXVARSIZE] = {0};
   FILE *fp;
   RSA * serverrsa;
-  
+   
 if (THIS_AGENT_TYPE == cf_keygen)
    {
    return false;
@@ -61,18 +61,25 @@ if ((fp = fopen(name,"r")) != NULL)
 
 if (strlen(policy_server) == 0)
    {
-   if(!BOOTSTRAP)
-     {
-     CfOut(cf_inform,""," !! This host has not been bootstrapped, so a license cannot be verified (file \"%s\" is empty)", name);
-     }
-
+   if (!BOOTSTRAP)
+      {
+      CfOut(cf_inform,""," !! This host has not been bootstrapped, so a license cannot be verified (file \"%s\" is empty)", name);
+      }
+   
    LICENSES = 0;
    return false;
    }
 
 // if license file exists, set the date from that, else use the source coded one
 
-snprintf(name,CF_MAXVARSIZE-1,"%s%cinputs%clicense.dat",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
+snprintf(name,CF_MAXVARSIZE-1,"%s/inputs/license.dat",CFWORKDIR);
+MapName(name);
+
+if (stat(name,&sb) == -1)
+   {
+   snprintf(name,CF_MAXVARSIZE-1,"%s/masterfiles/license.dat",CFWORKDIR);
+   MapName(name);
+   }
 
 if ((fp = fopen(name,"r")) != NULL)
    {
@@ -94,7 +101,7 @@ if ((fp = fopen(name,"r")) != NULL)
 
    IPString2KeyDigest(policy_server,serverdig);
 
-   snprintf(serverkey,CF_MAXVARSIZE,"%s%c/ppkeys%c%s-%s.pub",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,"root",serverdig);
+   snprintf(serverkey,CF_MAXVARSIZE,"%s/ppkeys/%s-%s.pub",CFWORKDIR,"root",serverdig);
    CfOut(cf_verbose,""," -> Look for server %s's key file\n",policy_server);
 
    if (serverrsa = HavePublicKey("root",policy_server,serverdig))
