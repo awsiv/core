@@ -21,6 +21,8 @@ extern int  CONTINUOUS;
 
 /*****************************************************************************/
 
+#ifndef MINGW
+
 void Nova_StartHub(int argc,char **argv)
 
 { int pid,time_to_run = false;
@@ -367,5 +369,9 @@ for (ip = order_results; ip != NULL; ip = ip->next)
    Nova_SetPersistentScalar(ip->name+strlen(MONITOR_CLASS_PREFIX),countstr);
    }
 
-#endif
+#endif  /* HAVE_LIBMONGOC */
 }
+
+
+#endif  /* NOT MINGW */
+
