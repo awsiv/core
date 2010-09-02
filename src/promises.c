@@ -449,15 +449,15 @@ if (am_appliance)
    char comm[CF_BUFSIZE],buffer[CF_BUFSIZE];
 
    printf(" ** This host recognizes itself as a Cfengine Policy Hub, with policy distribution and knowledge base.\n");
-   printf(" -> The system is now converging. Full initialisation of self-analysis could take up to 30 minutes\n\n");
+   printf(" -> The system is now converging. Full initialisation and self-analysis could take up to 30 minutes\n\n");
    }
 else
    {
    printf(" -> System converging on trajectory\n");
    }
 
-printf("WARNING- this is a commercially licensed version of Cfengine. It is ILLEGAL\n");
-printf("         to install this only systems for which no license has been purchased.\n");
+printf("WARNING- this is a commercially licensed version of Cfengine. It is ILLEGAL to install\n");
+printf("         the software only systems for which no license has been granted by Cfengine AS.\n");
 }
 
 /********************************************************************/
