@@ -24,7 +24,7 @@ return false;
 
 /*****************************************************************************/
 
-int Nova_EnterpriseExpiry(char *day,char *month,char *year)
+int Nova_EnterpriseExpiry(char *day,char *month,char *year, char *setcompany)
 
 /* This function is a convenience to commerical clients during testing */
     
@@ -133,7 +133,7 @@ if ((fp = fopen(name,"r")) != NULL)
       strcpy(u_month,f_month);
       strcpy(u_year,f_year);
       LICENSES = number;
-      CfOut(cf_verbose,""," -> Verified license file %s - as a client of %s (%s)",hash,policy_server,company);
+      CfOut(cf_verbose,""," -> Verified license file %s - as a satellite of %s (%s)",hash,policy_server,company);
       }
    else
       {
@@ -146,6 +146,21 @@ else
    {
    CfOut(cf_inform,""," !! No commercial license file found - falling back on internal expiry\n");
    LICENSES = 1;
+   snprintf(company,sizeof(company),"%s",setcompany);
+   snprintf(name,sizeof(name),"%s/state/am_policy_hub",CFWORKDIR);
+   MapName(name);
+   
+   if (stat(name,&sb) != -1)
+      {
+      CfOut(cf_verbose,""," -> This is a policy server %s of %s",POLICY_SERVER,company);
+      am_policy_server = true;
+      NewClass("am_policy_hub");
+      }
+   else
+      {
+      CfOut(cf_verbose,""," -> This system is a satellite of (%s)",POLICY_SERVER);
+      am_policy_server = false;
+      }
    }
 
 m_now = Month2Int(VMONTH);
@@ -184,7 +199,7 @@ if ((cf_strcmp(VYEAR,u_year) > 0) || ((cf_strcmp(VYEAR,u_year) == 0) && (m_now >
    }
 else
    {
-   CfOut(cf_verbose,""," -> Found %d licenses, expiring on %s %s %s",LICENSES,u_day,u_month,u_year);
+   CfOut(cf_verbose,""," -> Found %d licenses, expiring on %s %s %s for %s",LICENSES,u_day,u_month,u_year,company);
    return false;
    }
 }

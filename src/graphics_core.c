@@ -283,7 +283,7 @@ void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour)
   static char *font1 = "DejaVuSans";
   static char *font2 = "Vera";
   static char *font3 = "/var/cfengine/fonts/ttf-dejavu/DejaVuSans.ttf";
-  char *font;
+  char *font = font1;
   int brect[8];
   double size = 8.0;
 

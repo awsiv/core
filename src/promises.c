@@ -359,7 +359,7 @@ CloseDB(dbp);
 void Nova_CheckAutoBootstrap()
 
 { struct stat sb;
-  char name[CF_BUFSIZE];
+ char name[CF_BUFSIZE];
   FILE *pp;
   int repaired = false, have_policy = false, am_appliance = false;
 
@@ -444,20 +444,23 @@ if (strlen(POLICY_SERVER) == 0)
    am_appliance = false;
    }
 
+snprintf(name,sizeof(name),"%s/state/am_policy_hub",CFWORKDIR);
+MapName(name);
+
 if (am_appliance)
    {
-   char comm[CF_BUFSIZE],buffer[CF_BUFSIZE];
-
    NewClass("am_policy_hub");
    printf(" ** This host recognizes itself as a Cfengine Policy Hub, with policy distribution and knowledge base.\n");
    printf(" -> The system is now converging. Full initialisation and self-analysis could take up to 30 minutes\n\n");
+   creat(name,0600);
    }
 else
    {
-   printf(" -> System converging on trajectory\n");
+   unlink(name);
+   printf(" -> Satellite system converging on trajectory\n");
    }
 
-printf("WARNING- this is a commercially licensed version of Cfengine. It is ILLEGAL to install\n");
+printf("\nNOTICE - this is a commercially licensed version of Cfengine. It is ILLEGAL to install\n");
 printf("         the software only systems for which no license has been granted by Cfengine AS.\n");
 }
 

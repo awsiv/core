@@ -47,7 +47,7 @@ void Nova_SyntaxCompletion(char *s)
   struct BodySyntax *bs,*bs2 = NULL;
   char output[CF_BUFSIZE];
 
-if (EnterpriseExpiry(LIC_DAY,LIC_MONTH,LIC_YEAR))
+if (EnterpriseExpiry(LIC_DAY,LIC_MONTH,LIC_YEAR,LIC_COMPANY))
    {
    CfOut(cf_error,"","Cfengine - autonomous configuration engine. This enterprise license has expired.\n");
    exit(1);
