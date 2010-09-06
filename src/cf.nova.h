@@ -922,7 +922,7 @@ int Nova2PHP_filechanges_report_pdf(char *hostkey,char *file,int regex,time_t t,
 int Nova2PHP_lastseen_report_pdf(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *returnval,int bufsize);
 int Nova2PHP_software_report_pdf(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize);
 int Nova2PHP_performance_report_pdf(char *hostkey,char *job,int regex,char *returnval,int bufsize);
-
+int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize);
 /* weekly.c */
 
 double Num(double x);

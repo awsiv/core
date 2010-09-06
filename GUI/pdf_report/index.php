@@ -691,6 +691,79 @@ function rpt_performance()
         $pdf->Output("Nova_performance_report.pdf", "D");
 }
 
+function rpt_repaired_log()
+{
+    $title = 'Promises repaired log';
+    $cols=4;
+    $col_len = array(40,40,90,40);
+    $header=array('Host','Promise Handle','Report','Time');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret = cfpr_report_repaired_pdf(NULL,NULL);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the List Promises repaired.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_promises_repaired_log.pdf", "D");
+    
+    }
+
+function rpt_repaired_summary()
+{
+    $title = 'Promises repaired summary';
+    $cols=4;
+    $col_len = array(40,40,90,40);
+    $header=array('Host','Promise Handle','Report','Occurrences');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret =  cfpr_summarize_repaired_pdf(NULL,NULL);
+
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the summary of promises repaired.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_promises_repaired_summary.pdf", "D");
+    
+    }
+
 #rpt_bundle_profile();
 #rpt_value();
 #rpt_class_profile();
@@ -700,5 +773,9 @@ function rpt_performance()
 #rpt_patches_available();
 # rpt_patch_status();
 # rpt_software_installed();
-rpt_performance();
+# rpt_performance();
+
+# rpt_repaired_log(); # this doesn't work : need better formatted data
+# rpt_not_kept();
+rpt_repaired_summary();
 ?>

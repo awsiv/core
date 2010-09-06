@@ -3848,5 +3848,86 @@ if (!CFDB_Close(&dbconn))
 return true;
 }
 /*****************************************************************************/
+
+int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE],hostname[CF_MAXVARSIZE];
+  struct HubPromiseLog *hp;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+  struct Item *ip,*summary = NULL;
+
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   hq = CFDB_QueryPromiseLog(&dbconn,&query,type,handle,true,false);
+   bson_destroy(&query);
+   }
+else
+   {
+   hq = CFDB_QueryPromiseLog(&dbconn,bson_empty(&b),type,handle,true,false);
+   }
+
+hostname[0] = '\0';
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hp = (struct HubPromiseLog *)rp->item;
+   IdempPrependItem(&summary,hp->handle,hp->cause);
+   IncrementItemListCounter(summary,hp->handle);
+
+   if (hostname[0] == '\0')
+      {
+      strncpy(hostname,hp->hh->hostname,CF_MAXVARSIZE);
+      }
+   }
+
+DeleteHubQuery(hq,DeleteHubPromiseLog);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+if (summary == NULL)
+   {
+   snprintf(returnval,bufsize,"No data to report on");
+   }
+else
+   {
+   returnval[0] = '\0';
+   strcat(returnval,"<table>\n");
+
+   summary = SortItemListCounters(summary);
+  // snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Occurrences</th></tr>\n");
+//   Join(returnval,buffer,bufsize);
+            
+   for (ip = summary; ip != NULL; ip=ip->next)
+      {
+      snprintf(buffer,sizeof(buffer),"%s;%s;%s;%d<nova_nl>",hostname,ip->name,ip->classes,ip->counter);
+
+      Join(returnval,buffer,bufsize);
+      }
+   
+//   strcat(returnval,"</table>\n");
+   }
+
+return true;
+}
+/*****************************************************************************/
 /*****************************************************************************/
 #endif
