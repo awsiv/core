@@ -655,6 +655,42 @@ function rpt_software_installed()
     $pdf->Output("Nova_software_installed.pdf", "D");
 }
 
+### Performance Report  ###
+function rpt_performance()
+{
+        $title = 'Performance';
+        $cols=6;
+        $col_len = array(40,80,15,15,20,40);
+        $header=array('Host','Repair','Last Time','Avg Time','Uncertainty','Last Performed');
+        $logo_path = 'logo_outside_new.jpg';
+    
+        $pdf=new PDF();
+        $pdf->AliasNbPages();
+        $pdf->SetFont('Arial','',14);
+        $pdf->AddPage();
+    
+        # give host name TODO
+	$ret = cfpr_report_performance_pdf(NULL,NULL,NULL);
+        $data1 = $pdf->ParseData($ret);
+    
+        # count the number of columns
+	    #$cols = (count($data1,1)/count($data1,0))-1;
+	    
+        $pdf->ReportTitle($title);
+        $description = 'This report shows the List of softwares installed.';
+        $pdf->ReportDescription($description);
+    
+        $rptTableTitle = 'DATA REPORTED';
+        $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+        $pdf->Ln(8);
+    
+        # TODO: calculate the length of individual columns
+	
+        $pdf->SetFont('Arial','',9);
+        $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+        $pdf->Output("Nova_performance_report.pdf", "D");
+}
+
 #rpt_bundle_profile();
 #rpt_value();
 #rpt_class_profile();
@@ -663,5 +699,6 @@ function rpt_software_installed()
 #rpt_lastseen();
 #rpt_patches_available();
 # rpt_patch_status();
-rpt_software_installed();
+# rpt_software_installed();
+rpt_performance();
 ?>

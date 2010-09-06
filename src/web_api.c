@@ -98,6 +98,7 @@ if (false)
    Nova2PHP_filechanges_report_pdf(NULL,NULL,false,-1,">",buffer,10000);
    Nova2PHP_lastseen_report_pdf(NULL,NULL,NULL,NULL,-1,0,buffer,10000);
    Nova2PHP_software_report_pdf(0,0,0,0,0,cfr_software,buffer,20);
+   Nova2PHP_performance_report_pdf(NULL,NULL,0,buffer,10000);
    }
 }
 
@@ -3776,7 +3777,76 @@ if (!CFDB_Close(&dbconn))
 
 return true;
 }
+/*****************************************************************************/
 
+int Nova2PHP_performance_report_pdf(char *hostkey,char *job,int regex,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE];
+  struct HubPerformance *hP;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   hq = CFDB_QueryPerformance(&dbconn,&query,job,regex);
+   bson_destroy(&query);
+   }
+else
+   {
+   hq = CFDB_QueryPerformance(&dbconn,bson_empty(&b),job,regex);
+   }
+
+returnval[0] = '\0';
+
+//strcat(returnval,"<table>\n");
+
+//snprintf(buffer,sizeof(buffer),"<tr><td>host</td><td>repair</td><td>Last time</td><td>Avg time</td><td>Uncertainty</td><td>Last performed</td></tr>\n");
+            
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hP = ( struct HubPerformance *)rp->item;
+
+   snprintf(buffer,sizeof(buffer),"%s;%s;%.2lf;%.2lf;%.2lf;%s<nova_nl>",
+            hP->hh->hostname,
+            hP->event,hP->q,hP->e,hP->d,cf_ctime(&(hP->t)));
+   
+   tmpsize = strlen(buffer);
+   
+   if (count + tmpsize > bufsize - 1)
+      {
+      break;
+      }
+   
+   strcat(returnval,buffer);
+   count += tmpsize;
+   }
+
+//strcat(returnval,"</table>\n");
+
+DeleteHubQuery(hq,DeleteHubPerformance);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
 /*****************************************************************************/
 /*****************************************************************************/
 #endif
