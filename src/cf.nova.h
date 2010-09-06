@@ -918,6 +918,7 @@ int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *return
 int Nova2PHP_value_report_pdf(char *hostkey,char *day,char *month,char *year,char *returnval,int bufsize);
 int Nova2PHP_classes_report_pdf(char *hostkey,char *name,int regex,char *returnval,int bufsize);
 int Nova2PHP_compliance_promises_pdf(char *hostkey,char *handle,char *status,int regex,char *returnval,int bufsize);
+int Nova2PHP_filechanges_report_pdf(char *hostkey,char *file,int regex,time_t t,char *cmp,char *returnval,int bufsize);
 
 /* weekly.c */
 

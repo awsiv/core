@@ -468,11 +468,50 @@ function rpt_compliance_promises()
     $pdf->Output("Nova_Compliance_by_promise.pdf", "D");
 }
 
+### Classes report ###
+
+function rpt_filechanges()
+{
+    $title = 'File Change Log';
+    $cols=3;
+    $col_len = array(70,70,70);
+    $header=array('Host','File', 'Time of Change');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+
+    # give host name TODO
+    $ret = cfpr_report_filechanges_pdf(NULL,NULL,NULL,NULL,NULL);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Files changed log.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    
+    $pdf->Output("Nova_File_change_log.pdf", "D");
+}
+
 
 
 #rpt_bundle_profile();
 #rpt_value();
 #rpt_class_profile();
 #rpt_compliance_promises();
-
+rpt_filechanges();
 ?>

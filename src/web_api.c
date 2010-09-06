@@ -95,7 +95,7 @@ if (false)
    Nova2PHP_value_report_pdf(NULL,NULL,NULL,NULL,buffer,1000);
    Nova2PHP_classes_report_pdf(NULL,NULL,0,buffer,1000);
    Nova2PHP_compliance_promises_pdf(NULL,NULL,"x",0,buffer,10000);
-      
+   Nova2PHP_filechanges_report_pdf(NULL,NULL,false,-1,">",buffer,10000);   
    }
 }
 
@@ -1050,7 +1050,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *returnval,int bufsize)
+int Nova2PHP_filechanges_report_pdf(char *hostkey,char *file,int regex,time_t t,char *cmp,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubFileChanges *hC;
@@ -1091,19 +1091,19 @@ else
 
 returnval[0] = '\0';
 
-strcat(returnval,"<table>\n");
-snprintf(buffer,sizeof(buffer),"<tr><td>host</td><td>file</td><td>time of change</td></tr>\n");
-Join(returnval,buffer,bufsize);
+//strcat(returnval,"<table>\n");
+//snprintf(buffer,sizeof(buffer),"<tr><td>host</td><td>file</td><td>time of change</td></tr>\n");
+//Join(returnval,buffer,bufsize);
    
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hC = (struct HubFileChanges *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)));
+   snprintf(buffer,sizeof(buffer),"%s;%s;%s<nova_nl>",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)));
    Join(returnval,buffer,bufsize);
    }
 
-strcat(returnval,"</table>\n");
+//strcat(returnval,"</table>\n");
 
 DeleteHubQuery(hq,DeleteHubFileChanges);
 
