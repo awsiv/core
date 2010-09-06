@@ -93,6 +93,7 @@ if (false)
    Nova2PHP_bundle_report_pdf(NULL,NULL,0,buffer,10000);
    Nova2PHP_value_report_pdf(NULL,NULL,NULL,NULL,buffer,1000);
    Nova2PHP_classes_report_pdf(NULL,NULL,0,buffer,1000);
+   Nova2PHP_compliance_promises_pdf(NULL,NULL,"x",0,buffer,10000);
    }
 }
 
@@ -3566,5 +3567,67 @@ if (!CFDB_Close(&dbconn))
 return true;
 }
 
+/*****************************************************************************/
+
+int Nova2PHP_compliance_promises_pdf(char *hostkey,char *handle,char *status,int regex,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE];
+  struct HubPromiseCompliance *hp;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   hq = CFDB_QueryPromiseCompliance(&dbconn,&query,handle,*status,regex);
+   bson_destroy(&query);
+   }
+else
+   {
+   hq = CFDB_QueryPromiseCompliance(&dbconn,bson_empty(&b),handle,*status,regex);
+   }
+
+returnval[0] = '\0';
+
+//strcat(returnval,"<table>\n");
+//snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>promise handle</th><th>Last known<br>state</th><th>probability<br>kept</th><th>uncertainty</th><th>last seen</th></tr>\n");
+//Join(returnval,buffer,bufsize);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hp = (struct HubPromiseCompliance *)rp->item;
+
+   snprintf(buffer,sizeof(buffer),"%s;%s;%.2lf;%.2lf;%s<nova_nl>",
+            hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_ctime(&(hp->t)));
+   Join(returnval,buffer,bufsize);
+   }
+
+//strcat(returnval,"</table>\n");
+
+DeleteHubQuery(hq,DeleteHubPromiseCompliance);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+
+/*****************************************************************************/
 /*****************************************************************************/
 #endif

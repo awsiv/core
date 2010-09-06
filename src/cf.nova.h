@@ -917,6 +917,7 @@ int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,
 int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *returnval,int bufsize);
 int Nova2PHP_value_report_pdf(char *hostkey,char *day,char *month,char *year,char *returnval,int bufsize);
 int Nova2PHP_classes_report_pdf(char *hostkey,char *name,int regex,char *returnval,int bufsize);
+int Nova2PHP_compliance_promises_pdf(char *hostkey,char *handle,char *status,int regex,char *returnval,int bufsize);
 
 /* weekly.c */
 
