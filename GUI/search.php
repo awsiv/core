@@ -57,7 +57,7 @@ if ($many)  // Returning query
 	   }
 	else
 	   {
-	   echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";      
+	   echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	   $report = cfpr_report_value(NULL,$days,$months,$years);
 	   }
 	break;
@@ -243,7 +243,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	    $ret = cfpr_report_setuid(NULL,$name,true);
 	  }
 	break;
