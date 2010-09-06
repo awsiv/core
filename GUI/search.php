@@ -15,10 +15,10 @@ if ($report_type == "")
 $hostname =  cfpr_hostname($hostkey);
 
 cfpr_header("search results","ok");
-if($hostkey != "" && $report_type == "Promises not kept log")
-{
- echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-}
+//if($hostkey != "" )//&& $report_type == "Promises not kept log")
+//{
+// echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+//}
 if ($search == "")
   {
   $search = ".*";
@@ -39,8 +39,10 @@ if ($many)  // Returning query
 	   }
 	else
 	   {
+	   echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";  
 	   $report = cfpr_report_bundlesseen(NULL,$name,true);
 	   }
+	
 	break;
 	
       case  "Business value report":
@@ -55,6 +57,7 @@ if ($many)  // Returning query
 	   }
 	else
 	   {
+	   echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";      
 	   $report = cfpr_report_value(NULL,$days,$months,$years);
 	   }
 	break;
@@ -68,6 +71,7 @@ if ($many)  // Returning query
 	   }
 	else
 	   {
+	   echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	   $report = cfpr_report_classes(NULL,$name,true);
 	   }
 	break; 
@@ -83,6 +87,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
+	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name&state=$state\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";     
 	    $report = cfpr_report_compliance_promises(NULL,$name,$state,true);
 	  }
 	break;
@@ -95,6 +100,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
+	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?host=$hostkey&type=$report_type\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">");
 	  }
 	break;
@@ -109,6 +115,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
+	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_filechanges(NULL,$name,true,-1,">");    
 	  }
 	break;
@@ -124,6 +131,7 @@ if ($many)  // Returning query
 	   }
 	else
 	   {
+	   // TODO: generate pdf report
 	   $report = cfpr_report_filediffs(NULL,$name,$diff,true,$cal,">");
 	   }
 	break;
@@ -144,6 +152,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
+	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name&address=$address&key=$key&ago=$ago\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_lastseen(NULL,$key,$name,$address,$ago,true);
 	  }
 	break;
@@ -159,6 +168,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
+	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name&version=$version&arch=$arch\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_patch_avail(NULL,$name,$version,$arch,true);
 	  }
 	break;
@@ -175,6 +185,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
+	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name&version=$version&arch=$arch\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_patch_in(NULL,$name,$version,$arch,true);
 	  }
 	break;
@@ -188,6 +199,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
+	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_performance(NULL,$name,true);
 	  }
 	break;
@@ -202,6 +214,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
+	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_repaired(NULL,$name);
 	  }
 	break;
@@ -216,6 +229,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
+	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_notkept(NULL,$name);
 	  }
 	break;
@@ -229,6 +243,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
+	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $ret = cfpr_report_setuid(NULL,$name,true);
 	  }
 	break;
@@ -245,6 +260,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
+	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name&version=$version&arch=$arch\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_software_in(NULL,$name,$version,$arch,true);
 	  }
 	break;
@@ -262,6 +278,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
+	    //TODO: generate pdf report
 	    $report = cfpr_report_vars(NULL,$scope,$lval,$rval,$type,true);
 	  }
 	break;
