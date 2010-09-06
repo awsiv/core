@@ -581,11 +581,87 @@ function rpt_patches_available()
     $pdf->Output("Nova_patches_available.pdf", "D");
 }
 
+### Patch Status  ###
+
+function rpt_patch_status()
+{
+    $title = 'Patch Status';
+    $cols=4;
+    $col_len = array(60,70,40,40);
+    $header=array('Host','Name','Version','Architecture');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret = cfpr_report_patch_in_pdf(NULL,NULL,NULL,NULL,NULL);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Status of patches.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_patch_status.pdf", "D");
+}
+
+### Software Installed  ###
+
+function rpt_software_installed()
+{
+    $title = 'Software Installed';
+    $cols=4;
+    $col_len = array(60,70,40,40);
+    $header=array('Host','Name','Version','Architecture');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret = cfpr_report_software_in_pdf(NULL,NULL,NULL,NULL,NULL);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the List of softwares installed.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_software_installed.pdf", "D");
+}
+
 #rpt_bundle_profile();
 #rpt_value();
 #rpt_class_profile();
 #rpt_compliance_promises();
 #rpt_filechanges();
 #rpt_lastseen();
-rpt_patches_available();
+#rpt_patches_available();
+# rpt_patch_status();
+rpt_software_installed();
 ?>
