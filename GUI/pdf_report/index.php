@@ -507,11 +507,48 @@ function rpt_filechanges()
     $pdf->Output("Nova_File_change_log.pdf", "D");
 }
 
+### Classes report ###
+
+function rpt_lastseen()
+{
+    $title = 'Last saw hosts';
+    $cols=9;
+    $col_len = array(30,15,20,30,25,15,15,15,45);
+    $header=array('Host','Initiated', 'IP Address', 'Remote Host', 'Last Seen', 'Hours Ago', ' Avg Interval', 'Uncertainty', 'Remote Host Key');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',10);
+    $pdf->AddPage();
+
+    # give host name TODO
+    $ret =  cfpr_report_lastseen_pdf(NULL,NULL,NULL,NULL,NULL,NULL);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Last Seen data.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',6);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_last_saw_hosts.pdf", "D");
+}
 
 
 #rpt_bundle_profile();
 #rpt_value();
 #rpt_class_profile();
 #rpt_compliance_promises();
-rpt_filechanges();
+#rpt_filechanges();
+rpt_lastseen();
 ?>

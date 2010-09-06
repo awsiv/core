@@ -95,7 +95,8 @@ if (false)
    Nova2PHP_value_report_pdf(NULL,NULL,NULL,NULL,buffer,1000);
    Nova2PHP_classes_report_pdf(NULL,NULL,0,buffer,1000);
    Nova2PHP_compliance_promises_pdf(NULL,NULL,"x",0,buffer,10000);
-   Nova2PHP_filechanges_report_pdf(NULL,NULL,false,-1,">",buffer,10000);   
+   Nova2PHP_filechanges_report_pdf(NULL,NULL,false,-1,">",buffer,10000);
+   Nova2PHP_lastseen_report_pdf(NULL,NULL,NULL,NULL,-1,0,buffer,10000);
    }
 }
 
@@ -3631,5 +3632,85 @@ return true;
 }
 
 /*****************************************************************************/
+
+int Nova2PHP_lastseen_report_pdf(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE];
+  struct HubLastSeen *hl;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+  char inout[CF_SMALLBUF];
+  time_t then;
+
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   hq = CFDB_QueryLastSeen(&dbconn,&query,lhash,lhost,laddress,lago,lregex);
+   bson_destroy(&query);
+   }
+else
+   {
+   hq = CFDB_QueryLastSeen(&dbconn,bson_empty(&b),lhash,lhost,laddress,lago,lregex);
+   }
+
+returnval[0] = '\0';
+
+strcat(returnval,"<table>\n");
+count += strlen(returnval);
+
+//snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>Initiated</th><th>IP address</th><th>remote host</th><th>last seen</th>"
+//            "<th>Hours ago</th><th>Avg interval</th><th>Uncertainty</th><th>Remote host key</th></tr>\n");
+//Join(returnval,buffer,bufsize);
+   
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hl = (struct HubLastSeen *)rp->item;
+
+   switch (hl->io)
+      {
+      case '+':
+          snprintf(inout,CF_SMALLBUF,"by us (+)");
+          break;
+      case '-':
+          snprintf(inout,CF_SMALLBUF,"by them (-)");
+          break;
+      }
+
+   then = hl->t;
+   
+   snprintf(buffer,sizeof(buffer),"%s;%s;%s;%s;%s;%.2lf;%.2lf;%.2lf;%s<nova_nl>",
+            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,cf_ctime(&then),
+            hl->hrsago,hl->hrsavg,hl->hrsdev,
+            hl->rhost->keyhash);
+          
+   Join(returnval,buffer,bufsize);
+   }
+
+//strcat(returnval,"</table>\n");
+
+DeleteHubQuery(hq,DeleteHubLastSeen);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+
 /*****************************************************************************/
 #endif
