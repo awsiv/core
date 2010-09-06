@@ -544,11 +544,48 @@ function rpt_lastseen()
     $pdf->Output("Nova_last_saw_hosts.pdf", "D");
 }
 
+### Patches Available  ###
+
+function rpt_patches_available()
+{
+    $title = 'Patches Available';
+    $cols=4;
+    $col_len = array(60,70,40,40);
+    $header=array('Host','Name','Version','Architecture');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret =  cfpr_report_patch_avail_pdf(NULL,NULL,NULL,NULL,NULL);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the List of patches available.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_patches_available.pdf", "D");
+}
 
 #rpt_bundle_profile();
 #rpt_value();
 #rpt_class_profile();
 #rpt_compliance_promises();
 #rpt_filechanges();
-rpt_lastseen();
+#rpt_lastseen();
+rpt_patches_available();
 ?>

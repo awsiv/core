@@ -97,6 +97,7 @@ if (false)
    Nova2PHP_compliance_promises_pdf(NULL,NULL,"x",0,buffer,10000);
    Nova2PHP_filechanges_report_pdf(NULL,NULL,false,-1,">",buffer,10000);
    Nova2PHP_lastseen_report_pdf(NULL,NULL,NULL,NULL,-1,0,buffer,10000);
+   Nova2PHP_software_report_pdf(0,0,0,0,0,cfr_software,buffer,20);
    }
 }
 
@@ -3669,7 +3670,7 @@ else
 
 returnval[0] = '\0';
 
-strcat(returnval,"<table>\n");
+//strcat(returnval,"<table>\n");
 count += strlen(returnval);
 
 //snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>Initiated</th><th>IP address</th><th>remote host</th><th>last seen</th>"
@@ -3712,5 +3713,70 @@ if (!CFDB_Close(&dbconn))
 return true;
 }
 
+/*****************************************************************************/
+
+int Nova2PHP_software_report_pdf(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE];
+  struct HubSoftware *hs;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+
+/* BEGIN query document */
+
+if (hostkey && strlen(hostkey) != 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   }
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   hq = CFDB_QuerySoftware(&dbconn,&query,type,name,value,arch,regex);
+   bson_destroy(&query);
+   }
+else
+   {
+   hq = CFDB_QuerySoftware(&dbconn,bson_empty(&b),type,name,value,arch,regex);
+   }
+
+returnval[0] = '\0';
+
+//strcat(returnval,"<table>\n");
+
+//snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Name</th><th>Version</th><th>Architcture</th></tr>\n");
+//Join(returnval,buffer,bufsize);
+      
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hs = (struct HubSoftware *)rp->item;
+   snprintf(buffer,sizeof(buffer),"%s;%s;%s;%s<nova_nl>",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
+   Join(returnval,buffer,bufsize);
+   }
+
+//strcat(returnval,"</table>\n");
+
+DeleteHubQuery(hq,DeleteHubSoftware);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+
+/*****************************************************************************/
 /*****************************************************************************/
 #endif
