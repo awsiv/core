@@ -89,11 +89,13 @@ if (false)
    Nova2PHP_meter(NULL);
    Nova2PHP_ComplianceSummaryGraph();
    /* pdf functions */
+   Nova2PHP_compliance_report_pdf(NULL,NULL,0,0,0,0,0,buffer,10000);
    Nova2PHP_promiselog_pdf(NULL,NULL,1,buffer,1000); 
    Nova2PHP_bundle_report_pdf(NULL,NULL,0,buffer,10000);
    Nova2PHP_value_report_pdf(NULL,NULL,NULL,NULL,buffer,1000);
    Nova2PHP_classes_report_pdf(NULL,NULL,0,buffer,1000);
    Nova2PHP_compliance_promises_pdf(NULL,NULL,"x",0,buffer,10000);
+      
    }
 }
 
@@ -3287,14 +3289,14 @@ returnval[0] = '\0';
 
 //strcat(returnval,"<table>\n");
 
-snprintf(buffer,sizeof(buffer),"host;policy;kept;repaired;not kept;last seen\n");
-Join(returnval,buffer,bufsize);
+//snprintf(buffer,sizeof(buffer),"host;policy;kept;repaired;not kept;last seen\n");
+//Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    ht = (struct HubTotalCompliance *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"%s;%s;%d %%;%d %%;%d %%;%s\n",
+   snprintf(buffer,sizeof(buffer),"%s;%s;%d %%;%d %%;%d %%;%s<nova_nl>",
             ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,cf_ctime(&(ht->t)));
    Join(returnval,buffer,bufsize);
    }
