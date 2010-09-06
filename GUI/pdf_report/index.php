@@ -184,9 +184,10 @@ class PDF extends FPDF
     
     #****************************** 
     # section 
-    function DrawTable($ar1, $cols, $col_len)
+    function DrawTable($ar1, $cols, $col_len, $header, $header_font)
     { 
 	# $this->CustomHeader(); 
+	$this->DrawTableHeader($header, $cols, $col_len, $header_font);
         $font_size = 6;
 	$this->SetFont('Arial', '', $font_size);
 	$this->SetDrawColor(125,125,125);
@@ -229,8 +230,10 @@ class PDF extends FPDF
 		    $this->Ln(5); 
 		    $this->SetFont('Arial', '', $font_size);
 		    $startx = 0;
-		    $starty = $this->GetY();
+
 		    $newpage = true;
+		    $this->DrawTableHeader($header, $cols, $col_len, $header_font);
+		    $starty = $this->GetY();
 		}
 		
 		
@@ -256,22 +259,156 @@ class PDF extends FPDF
 	}
     }
 }
+
+## functions for reports
+
+function rpt_bundle_profile()
+{
+    $cols=6;
+    $col_len = array(50,50,50,20,20,20);
+    
+    $pdf=new PDF();
+	$pdf->AliasNbPages();
+	$pdf->SetFont('Arial','',14);
+	$pdf->AddPage();
+	
+	$logo_path = 'logo_outside_new.jpg';
+
+  	# header
+	$header=array('Host','Bundle','Last verified','Hours Ago', 'Avg interval', 'Uncertainty');
+
+	# give host name TODO
+        $ret = cfpr_report_bundlesseen_pdf(NULL,NULL,NULL); #cfpr_report_bundle_profile_pdf(NULL,NULL,NULL);
+
+	$data1 = $pdf->ParseData($ret);
+
+	# count the number of columns	
+	#$cols = (count($data1,1)/count($data1,0))-1;
+        
+        $title = 'Bundle Profile';
+	$pdf->ReportTitle($title);
+        $description = 'This report shows the status of Bundles';
+	$pdf->ReportDescription($description);
+
+	$rptTableTitle = 'DATA REPORTED';
+	$pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+	$pdf->Ln(8);
+	
+	# TODO: calculate the length of individual columns
+	
+	$pdf->SetFont('Arial','',9);
+	# DrawTableHeader(array, col_count, col_len, font_size)
+#	$pdf->DrawTableHeader($header, 4, $col_len, 8);
+	# DrawTable(array, col_count, col_len, table header, font size)
+	$pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+	
+	$pdf->Output("Nova_bundle_profile.pdf", "D");
+}
+
+### business value report ###
+
+function rpt_value()
+{
+    $title = 'Business Value Report';
+    $cols=5;
+    $col_len = array(50,40,40,40,40);
+    $header=array('Host','Day','Kept','Repaired', 'Not kept');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+
+    # give host name TODO
+    $ret = cfpr_report_value_pdf(NULL,NULL,NULL,NULL); #cfpr_report_bundle_profile_pdf(NULL,NULL,NULL);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns	
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Business Value Report.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    # DrawTableHeader(array, col_count, col_len, font_size)
+    #	$pdf->DrawTableHeader($header, 4, $col_len, 8);
+    # DrawTable(array, col_count, col_len, table header, font size)
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    
+    $pdf->Output("Nova_business_value.pdf", "D");
+}
+
+### Classes report ###
+
+function rpt_class_profile()
+{
+    $title = 'Class Profile';
+    $cols=5;
+    $col_len = array(60,60,40,25,25);
+    $header=array('Host','Class Context','Occurs with probability','Uncertainty', 'Last seen');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret = cfpr_report_classes_pdf(NULL,NULL,NULL);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns	
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Classes Profile.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    # DrawTableHeader(array, col_count, col_len, font_size)
+    #	$pdf->DrawTableHeader($header, 4, $col_len, 8);
+    # DrawTable(array, col_count, col_len, table header, font size)
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    
+    $pdf->Output("Nova_class_profile.pdf", "D");
+}
+
+## reports end
    # function run($title, $description)
-   # {
+    function rpt_not_kept()
+    {
 	$pdf=new PDF();
 	$pdf->AliasNbPages();
 	$pdf->SetFont('Arial','',14);
 	$pdf->AddPage();
         
 	$logo_path = 'logo_outside_new.jpg';
-	$timestamp = 'Jan 31 2010';
-	
+		
 	# cfpr function calls
 	# 1. get header
 	$header=array('Host','Promise Handle','Report','Time');
 
 	$ret = cfpr_report_notkept_pdf(NULL,NULL);
+	
 	$data1 = $pdf->ParseData($ret);
+
+	# count the number of columns	
+	$cols = (count($data1,1)/count($data1,0))-1;
+        
 	$rptTableTitle = 'DATA REPORTED';
         $title = 'Promises Not Kept Log';
 	$pdf->ReportTitle($title);
@@ -284,11 +421,58 @@ class PDF extends FPDF
 	$col_len = array(40,40,90,40);
 	$pdf->SetFont('Arial','',9);
 	# DrawTableHeader(array, col_count, col_len, font_size)
-	$pdf->DrawTableHeader($header, 4, $col_len, 8);
+#	$pdf->DrawTableHeader($header, 4, $col_len, 8);
 	# DrawTable(array, col_count, col_len)
-	$pdf->DrawTable($data1, 4, $col_len);
+	$pdf->DrawTable($data1, 4, $col_len, $header, 8);
 	
-	$pdf->Output("rpt_promises_not_kept.pdf", "D");
+	$pdf->Output("Nova_promises_not_kept.pdf", "D");
     
+    }
+
+### Classes report ###
+
+function rpt_compliance_promises()
+{
+    $title = 'Compliance by promise';
+    $cols=6;
+    $col_len = array(50,50,30,30,25,25);
+    $header=array('Host','Promise Handle','Last known state','Probability kept', 'Uncertainty', 'Last seen');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret = cfpr_report_classes_pdf(NULL,NULL,NULL);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Compliance by promise.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    
+    $pdf->Output("Nova_Compliance_by_promise.pdf", "D");
+}
+
+
+
+#rpt_bundle_profile();
+#rpt_value();
+#rpt_class_profile();
+#rpt_compliance_promises();
 
 ?>
