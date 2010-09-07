@@ -816,7 +816,6 @@ switch($report_type)
     break;
  
  case "Compliance by promise":
-    print "Hello";
     rpt_compliance_promises($_GET['hostkey'],$_GET['search'],$_GET['state']);
     break;
     
