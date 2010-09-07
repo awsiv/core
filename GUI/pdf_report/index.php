@@ -103,7 +103,7 @@ class PDF extends FPDF
 	$this->Rect($this->left, $y, $width, 10, "DF" );
 	$this->SetY($y+1);
 	$this->SetX($this->left+1);
-	$this->Cell($width, 8,"$text",0,0,'L',true);
+	$this->Cell($width-2, 8,"$text",0,0,'L',true);
 	$this->Ln(4);
     }
     
