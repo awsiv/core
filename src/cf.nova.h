@@ -924,6 +924,7 @@ int Nova2PHP_lastseen_report_pdf(char *hostkey,char *lhash,char *lhost,char *lad
 int Nova2PHP_software_report_pdf(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize);
 int Nova2PHP_performance_report_pdf(char *hostkey,char *job,int regex,char *returnval,int bufsize);
 int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize);
+int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize);
 /* weekly.c */
 
 double Num(double x);
