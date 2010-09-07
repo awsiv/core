@@ -279,6 +279,7 @@ if ($many)  // Returning query
 	else
 	  {
 	    //TODO: generate pdf report
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&scope=$scope&lval=$lval&rval=$rval&type=$type\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	    $report = cfpr_report_vars(NULL,$scope,$lval,$rval,$type,true);
 	  }
 	break;
@@ -406,6 +407,7 @@ else if ($hostkey != "") // Default search on single machine
       case "Variables":
 	echo "<h4>$report_type</h4>";
 	$report = cfpr_report_vars($hostkey,NULL,$search,NULL,NULL,true);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
       }
  
