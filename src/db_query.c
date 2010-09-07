@@ -2300,6 +2300,7 @@ for (slot = 0; slot < CF_MAGDATA; slot++)
 
 cursor = mongo_find(conn,MONGO_DATABASE_MON,&query,&field,0,0,0);
 bson_destroy(&query);
+bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -2331,7 +2332,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                }
             else
                {
-               if (st < start_slot || st > start_slot + CF_MAGDATA)
+               if (st < start_slot || st >= start_slot + CF_MAGDATA)
                   {
                   continue;
                   }
@@ -2356,9 +2357,9 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                }
 
-            qa[Nova_MagViewOffset(start_slot,st,wrap_around)] = q;
-            ea[Nova_MagViewOffset(start_slot,st,wrap_around)] = e;
-            da[Nova_MagViewOffset(start_slot,st,wrap_around)] = d;
+	    qa[Nova_MagViewOffset(start_slot,st,wrap_around)] = q;
+	    ea[Nova_MagViewOffset(start_slot,st,wrap_around)] = e;
+	    da[Nova_MagViewOffset(start_slot,st,wrap_around)] = d;
             }
          }
       }
@@ -2367,7 +2368,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
 // Now we should transform the data to re-order during wrap-around,
 // since at the boundary the data come in the wrong order
 
-bson_destroy(&field);
 mongo_cursor_destroy(cursor);
 return ok;
 }
