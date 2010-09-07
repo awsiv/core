@@ -1,5 +1,6 @@
 <?php
 require('fpdf.php');
+#define('FPDF_FONTPATH','fonts/');
 class PDF extends FPDF
 {
     #****************************** 
@@ -14,7 +15,7 @@ class PDF extends FPDF
     {
 	$this->SetFont('Arial','',8);
         $this->Text(30,10,$timestamp);
-	$logo_path = 'logo_outside_new.jpg';
+	$logo_path = './logo_outside_new.jpg';
 	$this->Image($logo_path,10,8,33);
 	$this->Ln(20);
     }
@@ -31,7 +32,7 @@ class PDF extends FPDF
 	
 	$this->SetY(-10);
 	$this->SetFont('Arial','',6);
-	$this->Cell(0,10,'Run: '.date("m.d.y H:i:s",time()).'Cfengine Inc.',0,0,'C');
+	$this->Cell(0,10,'Run: '.date("m.d.y H:i:s",time()).'  Cfengine Inc.',0,0,'C');
     }
     
     #******************************
@@ -98,13 +99,14 @@ class PDF extends FPDF
     # Parse data
     function ParseData($arr)
     {
-	$lines=explode('<nova_nl>',$arr); //TODO: use this for string input ?? 
+	$lines=explode('<nova_nl>',$arr);
 	$data=array();
 	foreach($lines as $line)
 	{
-//	    print($line);
 	    if (trim($line)!='')
-	    $data[]=explode(';',chop($line));
+	    {
+	     $data[]=explode(';',chop($line));
+	    }
 	}
 	return $data;
     }
@@ -182,96 +184,232 @@ class PDF extends FPDF
     
     #****************************** 
     # section 
-    function DrawTable($ar1, $cols, $col_len)
+    function DrawTable($ar1, $cols, $col_len, $header, $header_font)
     { 
 	# $this->CustomHeader(); 
+	$this->DrawTableHeader($header, $cols, $col_len, $header_font);
         $font_size = 6;
 	$this->SetFont('Arial', '', $font_size);
 	$this->SetDrawColor(125,125,125);
 	
 	for($i=0; $i<count($ar1); $i++) 
 	{ 
+	    $multi_col = array();
 	    $nb = 0;
 	    for($j=0; $j<$cols; $j++) 
 	    {
 		$f[$j] = $ar1[$i][$j];
 		$tmp = $this->NbLines($col_len[$j],$f[$j]);
 		if($tmp > $nb)
-		  $nb = $tmp;
-		if($nb > 1)
+		{
+		    $nb = $tmp;
+		}
+		if($tmp > 1)
+		{
 		  $multi_col[$j] = true;
-		else
+		}
+		else 
+		{
 		  $multi_col[$j] = false;
+		}
 	    }
 	    
 	    # total y
 	    $hx = $nb * $font_size;
-
+	    
 	    #  check for page break 
 	    $startx = 0;    
-    	    $starty = $this->GetY(); 
+    	    $starty = $this->GetY();
+	    $rowmaxy = $starty + $hx;
+	    $newpage = false;
 	    for($j=0; $j<$cols; $j++) 
 	    {
-	    if(($j == 0) && ($this->GetY() + $hx > $this->PageBreakTrigger))
-	    { 
-		$this->AddPage(); 
+		if(($j == 0) && ($this->GetY() + $hx > $this->PageBreakTrigger))
+		{ 
+		    $this->AddPage(); 
+		    $this->Ln(5); 
+		    $this->SetFont('Arial', '', $font_size);
+		    $startx = 0;
 
-		# $this->CustomHeader(); 
-		$this->Ln(5); 
-
-		$this->SetFont('Arial', '', $font_size);
-		$startx = 0;
-                $starty = $this->GetY();
-	    }
-	    
-	    $rowmaxy = $starty + $hx;
-
-	    $this->SetXY($startx, $starty); 
-
-	    if(!$multi_col[$j])
-		{
-		  $this->MultiCell($col_len[$j],$hx,$f[$j],1,$align,0);
+		    $newpage = true;
+		    $this->DrawTableHeader($header, $cols, $col_len, $header_font);
+		    $starty = $this->GetY();
 		}
-	    else
-		 {
-		     $this->MultiCell($col_len[$j],$font_size,$f[$j],1,$align,0);
-		 }
-
-	    $startx+= $col_len[$j];
-	    	    $this->Ln(0); 
+		
+		
+		
+		$this->SetXY($startx, $starty); 
+		
+		if($multi_col[$j] == true)
+		{
+		    $this->MultiCell($col_len[$j],$font_size,$f[$j],1,$align,0);
+		}
+		else
+		{		  	
+		    $this->MultiCell($col_len[$j],$hx,$f[$j],1,$align,0); 
+		}
+		
+		$startx+= $col_len[$j];
+		$this->Ln(0);
 	    }
+	    if(!$newpage)
+	    {
+		$this->SetY($rowmaxy);
+	    }	    
 	}
     }
+}
+
+## functions for reports
+
+function rpt_bundle_profile($hostkey,$search)
+{
+    $cols=6;
+    $col_len = array(50,50,50,20,20,20);
+    $header=array('Host','Bundle','Last verified','Hours Ago', 'Avg interval', 'Uncertainty');
+    $logo_path = 'logo_outside_new.jpg';
     
-    function run($title, $description)
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    $ret = cfpr_report_bundlesseen_pdf($hostkey,$search,true);
+    
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns	
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $title = 'Bundle Profile';
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the status of Bundles';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    # DrawTableHeader(array, col_count, col_len, font_size)
+    #	$pdf->DrawTableHeader($header, 4, $col_len, 8);
+    # DrawTable(array, col_count, col_len, table header, font size)
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    
+    $pdf->Output("Nova_bundle_profile.pdf", "D");
+}
+
+### business value report ###
+
+function rpt_business_value($hostkey,$days,$months,$years)
+{
+    $title = 'Business Value Report';
+    $cols=5;
+    $col_len = array(50,40,40,40,40);
+    $header=array('Host','Day','Kept','Repaired', 'Not kept');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+
+    # give host name TODO
+    $ret = cfpr_report_value_pdf($hostkey,$days,$months,$years); #cfpr_report_bundle_profile_pdf(NULL,NULL,NULL);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns	
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Business Value Report.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    # DrawTableHeader(array, col_count, col_len, font_size)
+    #	$pdf->DrawTableHeader($header, 4, $col_len, 8);
+    # DrawTable(array, col_count, col_len, table header, font size)
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    
+    $pdf->Output("Nova_business_value.pdf", "D");
+}
+
+### Classes report ###
+
+function rpt_class_profile($name)
+{
+    $title = 'Class Profile';
+    $cols=5;
+    $col_len = array(60,60,40,25,25);
+    $header=array('Host','Class Context','Occurs with probability','Uncertainty', 'Last seen');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret = cfpr_report_classes_pdf(NULL,$name,true);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns	
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Classes Profile.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    # DrawTableHeader(array, col_count, col_len, font_size)
+    #	$pdf->DrawTableHeader($header, 4, $col_len, 8);
+    # DrawTable(array, col_count, col_len, table header, font size)
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    
+    $pdf->Output("Nova_class_profile.pdf", "D");
+}
+
+## reports end
+   # function run($title, $description)
+    function rpt_promise_notkept($hostkey,$search)
     {
 	$pdf=new PDF();
 	$pdf->AliasNbPages();
 	$pdf->SetFont('Arial','',14);
 	$pdf->AddPage();
-	
+        
 	$logo_path = 'logo_outside_new.jpg';
-	$timestamp = 'Jan 31 2010';
-	
+		
 	# cfpr function calls
 	# 1. get header
 	$header=array('Host','Promise Handle','Report','Time');
-	#cfpr_header("all hosts","normal");
 
-#	$ret = 'abc;asdf;asdf;asdfg\nabc;asdf;asdf;asdfg\nabc;asdf;asdf;asdfg\nabc;asdf;asdf;asdfg\nabc;asdf;asdf;asdfg\nabc;asdf;asdf;asdfg\n';
-	$ret = cfpr_report_notkept_pdf(NULL,NULL);
-	
-
-	# 2. get table data
-	# Data loading for table = cfpr function call
-#	$data1=$pdf->LoadData('data4.txt);
-#	$data1 = $pdf->ParseData($data_o);
+	$ret = cfpr_report_notkept_pdf($hostkey,$search);
 	
 	$data1 = $pdf->ParseData($ret);
-#	var_dump($data1);	
+
+	# count the number of columns	
+	$cols = (count($data1,1)/count($data1,0))-1;
+        
 	$rptTableTitle = 'DATA REPORTED';
+        $title = 'Promises Not Kept Log/Summary';
 	$pdf->ReportTitle($title);
-	$pdf->ReportDescription("$description");
+        $description = 'This report shows the list of promises Cfengine was not able to keep.';
+	$pdf->ReportDescription($description);
 	$pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
 	$pdf->Ln(8);
 	
@@ -279,11 +417,464 @@ class PDF extends FPDF
 	$col_len = array(40,40,90,40);
 	$pdf->SetFont('Arial','',9);
 	# DrawTableHeader(array, col_count, col_len, font_size)
-	$pdf->DrawTableHeader($header, 4, $col_len, 8);
+#	$pdf->DrawTableHeader($header, 4, $col_len, 8);
 	# DrawTable(array, col_count, col_len)
-	$pdf->DrawTable($data1, 4, $col_len);
+	$pdf->DrawTable($data1, 4, $col_len, $header, 8);
 	
-	$pdf->Output("rpt_promises_not_kept.pdf", "D");
+	$pdf->Output("Nova_promises_not_kept.pdf", "D");
+    
     }
+
+### Compliance by promise ##
+
+function rpt_compliance_promises($hostkey,$search,$state)
+{
+    $title = 'Compliance by promise';
+    $cols=6;
+    $col_len = array(50,50,30,30,25,25);
+    $header=array('Host','Promise Handle','Last known state','Probability kept', 'Uncertainty', 'Last seen');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret = cfpr_report_compliance_promises_pdf($hostkey,$search,$state,true);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Compliance by promise.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    
+    $pdf->Output("Nova_Compliance_by_promise.pdf", "D");
 }
+
+### Classes report ###
+
+function rpt_filechange_log($hostkey,$search)
+{
+    $title = 'File Change Log';
+    $cols=3;
+    $col_len = array(70,70,70);
+    $header=array('Host','File', 'Time of Change');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+
+    # give host name TODO
+    $ret = cfpr_report_filechanges_pdf($hostkey,$search,true,-1,">");
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Files changed log.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    
+    $pdf->Output("Nova_File_change_log.pdf", "D");
+}
+
+### Classes report ###
+
+function rpt_lastsaw_hosts($hostkey,$key,$name,$address,$ago)
+{
+    $title = 'Last saw hosts';
+    $cols=9;
+    $col_len = array(30,15,20,30,25,15,15,15,45);
+    $header=array('Host','Initiated', 'IP Address', 'Remote Host', 'Last Seen', 'Hours Ago', ' Avg Interval', 'Uncertainty', 'Remote Host Key');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',10);
+    $pdf->AddPage();
+
+    # give host name TODO
+    $ret =  cfpr_report_lastseen_pdf($hostkey,$key,$name,$address,$ago,true);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Last Seen data.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',6);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_last_saw_hosts.pdf", "D");
+}
+
+### Patches Available  ###
+
+function rpt_patches_available($hostkey,$search,$version,$arch)
+{
+    $title = 'Patches Available';
+    $cols=4;
+    $col_len = array(60,70,40,40);
+    $header=array('Host','Name','Version','Architecture');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret =  cfpr_report_patch_avail_pdf($hostkey,$search,$version,$arch,true);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the List of patches available.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_patches_available.pdf", "D");
+}
+
+### Patch Status  ###
+
+function rpt_patch_status($hostkey,$search,$version,$arch)
+{
+    $title = 'Patch Status';
+    $cols=4;
+    $col_len = array(60,70,40,40);
+    $header=array('Host','Name','Version','Architecture');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret = cfpr_report_patch_in_pdf($hostkey,$search,$version,$arch,true);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Status of patches.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_patch_status.pdf", "D");
+}
+
+### Software Installed  ###
+
+function rpt_software_installed($hostkey,$search,$version,$arch)
+{
+    $title = 'Software Installed';
+    $cols=4;
+    $col_len = array(60,70,40,40);
+    $header=array('Host','Name','Version','Architecture');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret = cfpr_report_software_in_pdf($hostkey,$search,$version,$arch,true);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the List of softwares installed.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_software_installed.pdf", "D");
+}
+
+### Performance Report  ###
+function rpt_performance($hostkey,$search)
+{
+        $title = 'Performance';
+        $cols=6;
+        $col_len = array(40,80,15,15,20,40);
+        $header=array('Host','Repair','Last Time','Avg Time','Uncertainty','Last Performed');
+        $logo_path = 'logo_outside_new.jpg';
+    
+        $pdf=new PDF();
+        $pdf->AliasNbPages();
+        $pdf->SetFont('Arial','',14);
+        $pdf->AddPage();
+    
+        # give host name TODO
+	$ret = cfpr_report_performance_pdf($hostkey,$search,true);
+        $data1 = $pdf->ParseData($ret);
+    
+        # count the number of columns
+	    #$cols = (count($data1,1)/count($data1,0))-1;
+	    
+        $pdf->ReportTitle($title);
+        $description = 'This report shows the List of softwares installed.';
+        $pdf->ReportDescription($description);
+    
+        $rptTableTitle = 'DATA REPORTED';
+        $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+        $pdf->Ln(8);
+    
+        # TODO: calculate the length of individual columns
+	
+        $pdf->SetFont('Arial','',9);
+        $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+        $pdf->Output("Nova_performance_report.pdf", "D");
+}
+
+function rpt_repaired_log($hostkey,$search)
+{
+    $title = 'Promises repaired log';
+    $cols=4;
+    $col_len = array(40,40,90,40);
+    $header=array('Host','Promise Handle','Report','Time');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret = cfpr_report_repaired_pdf($hostkey,$search);
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the List Promises repaired.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_promises_repaired_log.pdf", "D");
+    
+    }
+
+function rpt_repaired_summary($hostkey,$search)
+{
+    $title = 'Promises repaired summary';
+    $cols=4;
+    $col_len = array(40,40,90,40);
+    $header=array('Host','Promise Handle','Report','Occurrences');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret =  cfpr_summarize_repaired_pdf($hostkey,$search);
+
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the summary of promises repaired.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_promises_repaired_summary.pdf", "D");
+    
+    }
+
+function rpt_notkept_summary($hostkey,$search)
+{
+    $title = 'Promises not kept summary';
+    $cols=4;
+    $col_len = array(40,40,90,40);
+    $header=array('Host','Promise Handle','Report','Occurrences');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    # give host name TODO
+    $ret =  cfpr_summarize_notkept_pdf($hostkey,$search);
+
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the summary of promises not kept.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_promises_notkept_summary.pdf", "D");
+    
+    }
+
+# main control
+
+$report_type = $_GET['type'];
+
+switch($report_type)
+{
+ case  "Bundle profile":
+    rpt_bundle_profile($_GET['hostkey'],$_GET['search']);
+    break;
+ 
+ case  "Business value report":
+    rpt_business_value($_GET['hostkey'],$_GET['days'],$_GET['months'],$_GET['years']);
+    break;
+ 
+ case "Class profile":
+    rpt_class_profile($_GET['hostkey'],$_GET['search']);
+    break;
+ 
+ case "Compliance by promise":
+    print "Hello";
+    rpt_compliance_promises($_GET['hostkey'],$_GET['search'],$_GET['state']);
+    break;
+    
+ case "Compliance summary":
+    print "Not complete!!";
+    break;
+    
+ case "File change log":
+    rpt_filechange_log($_GET['hostkey'],$_GET['search']);
+    break;
+    
+ case "Last saw hosts":
+    rpt_lastsaw_hosts($_GET['hostkey'],$_GET['key'],$_GET['search'],$_GET['address'],$_GET['ago']);
+    break;
+    
+ case "Patches available":
+    rpt_patches_available($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch']);
+    break;
+ 
+ case "Patch status":
+    rpt_patch_status($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch']);
+    break;
+ 
+ case "Performance":
+        rpt_performance($_GET['hostkey'],$_GET['search']);
+        break;
+    
+ case "Promises repaired summary":
+ case "Promises repaired log":
+    rpt_repaired_log($_GET['hostkey'],$_GET['search']);
+    break;
+ case "Promises not kept summary":
+ case "Promises not kept log":
+    rpt_promise_notkept($_GET['hostkey'],$_GET['search']);
+    break;
+ 
+ case "Setuid/gid root programs":
+    print "Not implemented!!";
+    break;
+ 
+ case "Software installed":
+    rpt_software_installed($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch']);
+    break;
+}
+
+#rpt_bundle_profile();
+#rpt_value();
+#rpt_class_profile();
+#rpt_compliance_promises();
+#rpt_filechanges();
+#rpt_lastseen();
+#rpt_patches_available();
+# rpt_patch_status();
+# rpt_software_installed();
+# rpt_performance();
+
+# rpt_repaired_log(); # this doesn't work : need better formatted data
+# rpt_not_kept();
+# rpt_repaired_summary();
+# rpt_notkept_summary();
 ?>
