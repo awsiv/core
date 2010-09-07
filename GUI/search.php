@@ -100,7 +100,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?host=$hostkey&type=$report_type\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">");
 	  }
 	break;

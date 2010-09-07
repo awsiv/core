@@ -112,7 +112,7 @@ class PDF extends FPDF
     }
     
     #******************************
-    # compute the number of lines
+    # åcompute the number of lines
     
     function NbLines($w,$txt) 
     { 
@@ -462,6 +462,44 @@ function rpt_compliance_promises($hostkey,$search,$state)
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
     
     $pdf->Output("Nova_Compliance_by_promise.pdf", "D");
+}
+
+### Compliance Summary ##
+
+function rpt_compliance_summary($hostkey)
+{
+    $title = 'Compliance Summary';
+    $cols=6;
+    $col_len = array(50,50,25,25,25,35);
+    $header=array('Host','Policy','Kept','Repaired','Not kept', 'Last seen');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    
+    $ret = cfpr_report_compliance_summary_pdf($hostkey,NULL,-1,-1,-1,-1,">");
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Compliance Summary.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    
+    $pdf->Output("Nova_Compliance_summary.pdf", "D");
 }
 
 ### Classes report ###
@@ -820,7 +858,7 @@ switch($report_type)
     break;
     
  case "Compliance summary":
-    print "Not complete!!";
+    rpt_compliance_summary($_GET['hostkey']);
     break;
     
  case "File change log":
