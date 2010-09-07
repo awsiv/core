@@ -344,7 +344,7 @@ function rpt_business_value($hostkey,$days,$months,$years)
 
 ### Classes report ###
 
-function rpt_class_profile($name)
+function rpt_class_profile($hostkey,$search)
 {
     $title = 'Class Profile';
     $cols=5;
@@ -358,7 +358,7 @@ function rpt_class_profile($name)
     $pdf->AddPage();
     
     # give host name TODO
-    $ret = cfpr_report_classes_pdf(NULL,$name,true);
+    $ret = cfpr_report_classes_pdf($hostkey,$search,true);
     $data1 = $pdf->ParseData($ret);
     
     # count the number of columns	
