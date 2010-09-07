@@ -2602,7 +2602,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
             ea[index] = e;
             da[index] = d;
 
-            printf("Storing slot %d %lf,%lf,%lf\n",index,q,e,d);
             }
          }
       }

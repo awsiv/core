@@ -3928,6 +3928,40 @@ else
 
 return true;
 }
+
 /*****************************************************************************/
+
+int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize)
+{
+  int pid;
+  char topic_name[CF_BUFSIZE] = {0};
+  char topic_id[CF_BUFSIZE] = {0};
+  char topic_type[CF_BUFSIZE] = {0};
+  char topic_comment[CF_BUFSIZE] = {0};
+  char typedName[CF_MAXVARSIZE] = {0};
+
+  snprintf(typedName,sizeof(typedName),"system_reports::%s",reportName);
+
+  pid = Nova_GetPidForTopic(typedName);
+
+  if(pid && Nova_GetTopicByPid(pid,topic_name,topic_id,topic_type,topic_comment))
+    {
+      if(EMPTY(topic_comment))
+	{
+	  snprintf(returnval,bufsize,"(no comment for %s found in topic map)",reportName);
+	  return false;
+	}
+
+      snprintf(returnval,bufsize,"%s",topic_comment);
+      
+      return true;
+    }
+
+
+  snprintf(returnval,bufsize,"(no description for %s found in topic map)",reportName);
+  return false;
+
+}
+
 /*****************************************************************************/
 #endif

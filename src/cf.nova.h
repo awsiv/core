@@ -910,6 +910,7 @@ void Nova2PHP_AnalyseMag(char *hostkey,enum observables obs,char *buffer,int buf
 void Nova2PHP_AnalyseWeek(char *hostkey,enum observables obs,char *buffer,int bufsize);
 void Nova2PHP_ComplianceSummaryGraph(void);
 void Nova2PHP_AnalyseHistogram(char *keyhash,int obs,char *buffer,int bufsize);
+int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize);
 
 /* pdf report */
 int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *returnval,int bufsize); 
