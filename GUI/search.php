@@ -279,7 +279,7 @@ if ($many)  // Returning query
 	else
 	  {
 	    //TODO: generate pdf report
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&scope=$scope&lval=$lval&rval=$rval&type=$type\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&scope=$scope&lval=$lval&rval=$rval&var_type=$type\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	    $report = cfpr_report_vars(NULL,$scope,$lval,$rval,$type,true);
 	  }
 	break;

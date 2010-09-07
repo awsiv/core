@@ -877,6 +877,47 @@ function rpt_notkept_summary($hostkey,$search)
     
     }
 
+function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type)
+{
+    $title = 'Variables';
+    $cols=4;
+    $col_len = array(19,19,19,43);
+    $header=array('Host','Type','Name','Value');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $pdf=new PDF();
+    $pdf->AliasNbPages();
+    $pdf->SetFont('Arial','',14);
+    $pdf->AddPage();
+    if($hostkey == NULL)
+    {
+	$ret =  cfpr_report_vars_pdf(NULL,$scope,$lval,$rval,$type,true);
+    }
+    else
+    {
+	$ret =  cfpr_report_vars_pdf($hostkey,NULL,$search,NULL,NULL,true);
+    }
+    $data1 = $pdf->ParseData($ret);
+    
+    # count the number of columns
+    #$cols = (count($data1,1)/count($data1,0))-1;
+    
+    $pdf->ReportTitle($title);
+    $description = 'This report shows the Variable status.';
+    $pdf->ReportDescription($description);
+    
+    $rptTableTitle = 'DATA REPORTED';
+    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    # TODO: calculate the length of individual columns
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_variables.pdf", "D");
+}
+
+
 # main control
 
 $report_type = $_GET['type'];
@@ -939,6 +980,11 @@ switch($report_type)
  case "Software installed":
     rpt_software_installed($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch']);
     break;
+ 
+ case "Variables":
+    rpt_variables($_GET['hostkey'],$_GET['search'],$_GET['scope'],$_GET['lval'],$_GET['rval'],$_GET['var_type']);
+    break;
+    
 }
 
 #rpt_bundle_profile();
