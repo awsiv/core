@@ -3,12 +3,45 @@ require('fpdf.php');
 #define('FPDF_FONTPATH','fonts/');
 class PDF extends FPDF
 {
+    var $left=5;
+    var $right=5;
+    var $top=10;
+    var $pagewidth=210;
+    
     #****************************** 
-    function PDF($orientation='p', $unit='mm', $format='A4') 
+    function PDF($orientation='p', $unit='mm', $format='A4')
     { 
-    	$this->FPDF($orientation,$unit,$format); 
+    	$this->FPDF($orientation,$unit,$format);
+	
+	if($format=='A4' && $unit =='mm')
+	{
+	    $this->PDFSetMargins(5,10,5);
+	    $this->pagewidth=210;
+	}
     }
     
+    function PDFSetMargins($left,$top,$right)
+    {
+	$this->left=$left;
+	$this->right=$right;
+	$this->top=$top;
+	$this->SetMargins($this->left,$this->top,$this->right);
+    }
+    
+    function PDFGetLeftMargin()
+    {
+	return $this->left;
+    }
+    
+    function PDFGetRightMargin()
+    {
+	return $this->right;
+    }
+    
+    function PDFGetPageWidth()
+    {
+	return $this->pagewidth;
+    }
     #******************************
     #Page header
     function Header()
@@ -32,7 +65,7 @@ class PDF extends FPDF
 	
 	$this->SetY(-10);
 	$this->SetFont('Arial','',6);
-	$this->Cell(0,10,'Run: '.date("m.d.y H:i:s",time()).'  Cfengine Inc.',0,0,'C');
+	$this->Cell(0,10,'Run: '.date("m.d.y H:i:s",time()).'  Powered by Cfengine',0,0,'C');
     }
     
     #******************************
@@ -42,9 +75,9 @@ class PDF extends FPDF
 	$this->SetFont('Arial','',18);
 	$this->SetTextColor(255,255,255);
 	$this->SetFillColor(158,152,120);
-	
-	$this->Rect(0, 28, 500, 10, "F" );
-	$this->Cell(0,6,"$title",0,1,'L',true);
+	$width=$this->pagewidth-$this->left-$this->right;
+	$this->Rect($this->left, 28, $width, 10, "F" );
+	$this->Cell($width,6,"$title",0,1,'L',true);
 	$this->Ln(4);
 	$this->SetTextColor(76,76,76);
     }
@@ -54,7 +87,8 @@ class PDF extends FPDF
     function ReportDescription($text)
     {
 	$this->SetFont('Arial','',10);
-	$this->MultiCell(0,5,"$text");
+	$width=$this->pagewidth-$this->left-$this->right;
+	$this->MultiCell($width,5,"$text");
 	$this->Ln(4);
     }
     
@@ -65,10 +99,11 @@ class PDF extends FPDF
 	$this->SetFont('Arial','',14);
 	$this->SetDrawColor(181,177,153);
 	$this->SetFillColor(239,240,234);
-	
-	$this->Rect(0, $y, 500, 10, "DF" );
+	$width=$this->pagewidth-$this->left-$this->right;
+	$this->Rect($this->left, $y, $width, 10, "DF" );
 	$this->SetY($y+1);
-	$this->Cell(0, 8,"$text",0,0,'L',true);
+	$this->SetX($this->left+1);
+	$this->Cell($width, 8,"$text",0,0,'L',true);
 	$this->Ln(4);
     }
     
@@ -172,12 +207,13 @@ class PDF extends FPDF
     {
 	$this->SetDrawColor(125,125,125);
 	$this->SetFillColor(180,180,180);
-	$this->SetXY(0, $this->GetY());
+	$this->SetXY($this->left, $this->GetY());
 	for($i=0;$i<$count;$i++)
 	{
 	  if($i == 0)
 	      $align = 'L';
-	  $this->Cell($w[$i],$h,$header[$i],1,0,$align,1,true);
+	  $width = ($w[$i] * ($this->pagewidth - $this->left - $this->right))/100;
+	  $this->Cell($width,$h,$header[$i],1,0,$align,1,true);
 	}
 	$this->Ln();
     }
@@ -199,7 +235,8 @@ class PDF extends FPDF
 	    for($j=0; $j<$cols; $j++) 
 	    {
 		$f[$j] = $ar1[$i][$j];
-		$tmp = $this->NbLines($col_len[$j],$f[$j]);
+		$width = ($col_len[$j] * ($this->pagewidth - $this->left - $this->right))/100;
+		$tmp = $this->NbLines($width,$f[$j]);
 		if($tmp > $nb)
 		{
 		    $nb = $tmp;
@@ -218,7 +255,7 @@ class PDF extends FPDF
 	    $hx = $nb * $font_size;
 	    
 	    #  check for page break 
-	    $startx = 0;    
+	    $startx = $this->left;
     	    $starty = $this->GetY();
 	    $rowmaxy = $starty + $hx;
 	    $newpage = false;
@@ -229,27 +266,25 @@ class PDF extends FPDF
 		    $this->AddPage(); 
 		    $this->Ln(5); 
 		    $this->SetFont('Arial', '', $font_size);
-		    $startx = 0;
+		    $startx = $this->left;
 
 		    $newpage = true;
 		    $this->DrawTableHeader($header, $cols, $col_len, $header_font);
 		    $starty = $this->GetY();
 		}
 		
-		
-		
 		$this->SetXY($startx, $starty); 
-		
+		$width = ($col_len[$j] * ($this->pagewidth - $this->left - $this->right))/100;
 		if($multi_col[$j] == true)
 		{
-		    $this->MultiCell($col_len[$j],$font_size,$f[$j],1,$align,0);
+		    $this->MultiCell($width,$font_size,$f[$j],1,$align,0);
 		}
 		else
 		{		  	
-		    $this->MultiCell($col_len[$j],$hx,$f[$j],1,$align,0); 
+		    $this->MultiCell($width,$hx,$f[$j],1,$align,0); 
 		}
 		
-		$startx+= $col_len[$j];
+		$startx+= $width;
 		$this->Ln(0);
 	    }
 	    if(!$newpage)
@@ -261,11 +296,16 @@ class PDF extends FPDF
 }
 
 ## functions for reports
+function calc_width_percent($total,$width)
+{
+    $ret = ($width/$total)*100;
+    return $ret;
+}
 
 function rpt_bundle_profile($hostkey,$search)
 {
     $cols=6;
-    $col_len = array(50,50,50,20,20,20);
+    $col_len = array(24,23,23,10,10,10); #in percentage
     $header=array('Host','Bundle','Last verified','Hours Ago', 'Avg interval', 'Uncertainty');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -307,7 +347,7 @@ function rpt_business_value($hostkey,$days,$months,$years)
 {
     $title = 'Business Value Report';
     $cols=5;
-    $col_len = array(50,40,40,40,40);
+    $col_len = array(24,19,19,19,19);
     $header=array('Host','Day','Kept','Repaired', 'Not kept');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -348,7 +388,7 @@ function rpt_class_profile($hostkey,$search)
 {
     $title = 'Class Profile';
     $cols=5;
-    $col_len = array(60,60,40,25,25);
+    $col_len = array(28,28,20,12,12);
     $header=array('Host','Class Context','Occurs with probability','Uncertainty', 'Last seen');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -387,6 +427,8 @@ function rpt_class_profile($hostkey,$search)
    # function run($title, $description)
     function rpt_promise_notkept($hostkey,$search)
     {
+	$col_len = array(20,20,40,20);
+	
 	$pdf=new PDF();
 	$pdf->AliasNbPages();
 	$pdf->SetFont('Arial','',14);
@@ -414,7 +456,7 @@ function rpt_class_profile($hostkey,$search)
 	$pdf->Ln(8);
 	
 	# TODO: calculate the length of individual columns
-	$col_len = array(40,40,90,40);
+	
 	$pdf->SetFont('Arial','',9);
 	# DrawTableHeader(array, col_count, col_len, font_size)
 #	$pdf->DrawTableHeader($header, 4, $col_len, 8);
@@ -431,7 +473,7 @@ function rpt_compliance_promises($hostkey,$search,$state)
 {
     $title = 'Compliance by promise';
     $cols=6;
-    $col_len = array(50,50,30,30,25,25);
+    $col_len = array(24,24,14,14,12,12);
     $header=array('Host','Promise Handle','Last known state','Probability kept', 'Uncertainty', 'Last seen');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -470,7 +512,7 @@ function rpt_compliance_summary($hostkey)
 {
     $title = 'Compliance Summary';
     $cols=6;
-    $col_len = array(50,50,25,25,25,35);
+    $col_len = array(23,25,12,12,12,16);
     $header=array('Host','Policy','Kept','Repaired','Not kept', 'Last seen');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -508,7 +550,7 @@ function rpt_filechange_log($hostkey,$search)
 {
     $title = 'File Change Log';
     $cols=3;
-    $col_len = array(70,70,70);
+    $col_len = array(33,34,33);
     $header=array('Host','File', 'Time of Change');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -547,7 +589,7 @@ function rpt_lastsaw_hosts($hostkey,$key,$name,$address,$ago)
 {
     $title = 'Last saw hosts';
     $cols=9;
-    $col_len = array(30,15,20,30,25,15,15,15,45);
+    $col_len = array(14,8,10,14,12,7,7,7,21);
     $header=array('Host','Initiated', 'IP Address', 'Remote Host', 'Last Seen', 'Hours Ago', ' Avg Interval', 'Uncertainty', 'Remote Host Key');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -584,7 +626,7 @@ function rpt_patches_available($hostkey,$search,$version,$arch)
 {
     $title = 'Patches Available';
     $cols=4;
-    $col_len = array(60,70,40,40);
+    $col_len = array(29,33,19,19);
     $header=array('Host','Name','Version','Architecture');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -621,7 +663,7 @@ function rpt_patch_status($hostkey,$search,$version,$arch)
 {
     $title = 'Patch Status';
     $cols=4;
-    $col_len = array(60,70,40,40);
+    $col_len = array(29,33,19,19);
     $header=array('Host','Name','Version','Architecture');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -658,7 +700,7 @@ function rpt_software_installed($hostkey,$search,$version,$arch)
 {
     $title = 'Software Installed';
     $cols=4;
-    $col_len = array(60,70,40,40);
+    $col_len = array(21,33,19,19);
     $header=array('Host','Name','Version','Architecture');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -694,7 +736,7 @@ function rpt_performance($hostkey,$search)
 {
         $title = 'Performance';
         $cols=6;
-        $col_len = array(40,80,15,15,20,40);
+        $col_len = array(19,38,7.5,7.5,10,18);
         $header=array('Host','Repair','Last Time','Avg Time','Uncertainty','Last Performed');
         $logo_path = 'logo_outside_new.jpg';
     
@@ -729,7 +771,7 @@ function rpt_repaired_log($hostkey,$search)
 {
     $title = 'Promises repaired log';
     $cols=4;
-    $col_len = array(40,40,90,40);
+    $col_len = array(19,19,43,19);
     $header=array('Host','Promise Handle','Report','Time');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -765,7 +807,7 @@ function rpt_repaired_summary($hostkey,$search)
 {
     $title = 'Promises repaired summary';
     $cols=4;
-    $col_len = array(40,40,90,40);
+    $col_len = array(19,19,43,19);
     $header=array('Host','Promise Handle','Report','Occurrences');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -802,7 +844,7 @@ function rpt_notkept_summary($hostkey,$search)
 {
     $title = 'Promises not kept summary';
     $cols=4;
-    $col_len = array(40,40,90,40);
+    $col_len = array(19,19,43,19);
     $header=array('Host','Promise Handle','Report','Occurrences');
     $logo_path = 'logo_outside_new.jpg';
     
