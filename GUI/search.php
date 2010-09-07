@@ -39,7 +39,7 @@ if ($many)  // Returning query
 	   }
 	else
 	   {
-	   echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";  
+	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";  
 	   $report = cfpr_report_bundlesseen(NULL,$name,true);
 	   }
 	
@@ -57,7 +57,7 @@ if ($many)  // Returning query
 	   }
 	else
 	   {
-	   echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	   $report = cfpr_report_value(NULL,$days,$months,$years);
 	   }
 	break;
@@ -71,7 +71,7 @@ if ($many)  // Returning query
 	   }
 	else
 	   {
-	   echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	   $report = cfpr_report_classes(NULL,$name,true);
 	   }
 	break; 
@@ -87,7 +87,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name&state=$state\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";     
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";     
 	    $report = cfpr_report_compliance_promises(NULL,$name,$state,true);
 	  }
 	break;
@@ -100,7 +100,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?host=$hostkey&type=$report_type\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?host=$hostkey&type=$report_type\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">");
 	  }
 	break;
@@ -115,7 +115,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	    $report = cfpr_report_filechanges(NULL,$name,true,-1,">");    
 	  }
 	break;
@@ -152,7 +152,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name&address=$address&key=$key&ago=$ago\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&address=$address&key=$key&ago=$ago\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_lastseen(NULL,$key,$name,$address,$ago,true);
 	  }
 	break;
@@ -168,7 +168,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name&version=$version&arch=$arch\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	    $report = cfpr_report_patch_avail(NULL,$name,$version,$arch,true);
 	  }
 	break;
@@ -185,7 +185,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name&version=$version&arch=$arch\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_patch_in(NULL,$name,$version,$arch,true);
 	  }
 	break;
@@ -199,7 +199,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_performance(NULL,$name,true);
 	  }
 	break;
@@ -214,7 +214,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_repaired(NULL,$name);
 	  }
 	break;
@@ -229,7 +229,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_notkept(NULL,$name);
 	  }
 	break;
@@ -243,7 +243,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	    $ret = cfpr_report_setuid(NULL,$name,true);
 	  }
 	break;
@@ -260,7 +260,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<br><div id=\"banner\"><a href=\"/pdf_report/index.php?type=$report_type&name=$name&version=$version&arch=$arch\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
 	    $report = cfpr_report_software_in(NULL,$name,$version,$arch,true);
 	  }
 	break;
@@ -300,31 +300,38 @@ else if ($hostkey != "") // Default search on single machine
       case  "Bundle profile":
 	echo "<h4>$report_type</h4>";
 	$report = cfpr_report_bundlesseen($hostkey,$search,true);
+	 echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case  "Business value report":
 	echo "<h4>$report_type</h4>";
 	$report = cfpr_report_value($hostkey,NULL,NULL,NULL);
+	 echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&days=&months=&years=\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Class profile":
 	echo "<h4>$report_type</h4>";
 	$report = cfpr_report_classes($hostkey,$search,true);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break; 
 	
       case "Compliance by promise":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_compliance_promises($hostkey,$search,"x",true);
+	$state = "x";
+	$report = cfpr_report_compliance_promises($hostkey,$search,$state,true);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&state=$state\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Compliance summary":
 	echo "<h4>$report_type</h4>";
 	$report = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">");
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "File change log":
 	echo "<h4>$report_type</h4>";
 	$report = cfpr_report_filechanges($hostkey,$search,true,-1,">");    
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "File change diffs":
@@ -335,56 +342,65 @@ else if ($hostkey != "") // Default search on single machine
       case "Last saw hosts":
 	echo "<h4>$report_type</h4>";
 	$report = cfpr_report_lastseen($hostkey,NULL,$search,NULL,-1,true);
+	 echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&ago=-1\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Patches available":
 	echo "<h4>$report_type</h4>";
 	$report = cfpr_report_patch_avail($hostkey,$search,NULL,NULL,true);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Patch status":
 	echo "<h4>$report_type</h4>";
 	$report = cfpr_report_patch_in($hostkey,$search,NULL,NULL,true);
-	
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Performance":
 	echo "<h4>$report_type</h4>";
 	$report = cfpr_report_performance($hostkey,$search,true);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Promises repaired log":
 	echo "<h4>$report_type</h4>";
 	//$report = cfpr_summarize_repaired($hostkey,NULL);
 	$report = cfpr_report_repaired($hostkey,NULL);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Promises not kept log":
 	echo "<h4 class=\"reportnotkept\">$report_type</h4>";
 	$report = cfpr_report_notkept($hostkey,NULL);
 	//$report = cfpr_summarize_notkept($hostkey,NULL);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Promises repaired summary":
 	echo "<h4>$report_type</h4>";
 	//$report = cfpr_summarize_repaired($hostkey,NULL);
 	$report = cfpr_report_repaired($hostkey,NULL);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Promises not kept summary":
 	echo "<h4>$report_type</h4>";
 	$report = cfpr_report_notkept($hostkey,NULL);
 	//$report = cfpr_summarize_notkept($hostkey,NULL);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Setuid/gid root programs":
 	echo "<h4>$report_type</h4>";
 	$ret = cfpr_report_setuid($hostkey,$search,true);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Software installed":
 	echo "<h4>$report_type</h4>";
 	$report = cfpr_report_software_in($hostkey,$search,NULL,NULL,true);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Variables":

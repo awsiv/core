@@ -1,6 +1,6 @@
 <?php
 require('fpdf.php');
-#define('FPDF_FONTPATH','/pdf_report/fonts/');
+#define('FPDF_FONTPATH','fonts/');
 class PDF extends FPDF
 {
     #****************************** 
@@ -15,7 +15,7 @@ class PDF extends FPDF
     {
 	$this->SetFont('Arial','',8);
         $this->Text(30,10,$timestamp);
-	$logo_path = 'logo_outside_new.jpg';
+	$logo_path = './logo_outside_new.jpg';
 	$this->Image($logo_path,10,8,33);
 	$this->Ln(20);
     }
@@ -262,7 +262,7 @@ class PDF extends FPDF
 
 ## functions for reports
 
-function rpt_bundle_profile($name)
+function rpt_bundle_profile($hostkey,$search)
 {
     $cols=6;
     $col_len = array(50,50,50,20,20,20);
@@ -274,7 +274,7 @@ function rpt_bundle_profile($name)
     $pdf->SetFont('Arial','',14);
     $pdf->AddPage();
     
-    $ret = cfpr_report_bundlesseen_pdf(NULL,$name,true);
+    $ret = cfpr_report_bundlesseen_pdf($hostkey,$search,true);
     
     $data1 = $pdf->ParseData($ret);
     
@@ -303,7 +303,7 @@ function rpt_bundle_profile($name)
 
 ### business value report ###
 
-function rpt_business_value($days,$months,$years)
+function rpt_business_value($hostkey,$days,$months,$years)
 {
     $title = 'Business Value Report';
     $cols=5;
@@ -317,7 +317,7 @@ function rpt_business_value($days,$months,$years)
     $pdf->AddPage();
 
     # give host name TODO
-    $ret = cfpr_report_value_pdf(NULL,$days,$months,$years); #cfpr_report_bundle_profile_pdf(NULL,NULL,NULL);
+    $ret = cfpr_report_value_pdf($hostkey,$days,$months,$years); #cfpr_report_bundle_profile_pdf(NULL,NULL,NULL);
     $data1 = $pdf->ParseData($ret);
     
     # count the number of columns	
@@ -385,7 +385,7 @@ function rpt_class_profile($name)
 
 ## reports end
    # function run($title, $description)
-    function rpt_promise_notkept($name)
+    function rpt_promise_notkept($hostkey,$search)
     {
 	$pdf=new PDF();
 	$pdf->AliasNbPages();
@@ -398,7 +398,7 @@ function rpt_class_profile($name)
 	# 1. get header
 	$header=array('Host','Promise Handle','Report','Time');
 
-	$ret = cfpr_report_notkept_pdf(NULL,$name);
+	$ret = cfpr_report_notkept_pdf($hostkey,$search);
 	
 	$data1 = $pdf->ParseData($ret);
 
@@ -427,7 +427,7 @@ function rpt_class_profile($name)
 
 ### Compliance by promise ##
 
-function rpt_compliance_promises($name,$state)
+function rpt_compliance_promises($hostkey,$search,$state)
 {
     $title = 'Compliance by promise';
     $cols=6;
@@ -441,7 +441,7 @@ function rpt_compliance_promises($name,$state)
     $pdf->AddPage();
     
     # give host name TODO
-    $ret = cfpr_report_compliance_promises_pdf(NULL,$name,$state,true);
+    $ret = cfpr_report_compliance_promises_pdf($hostkey,$search,$state,true);
     $data1 = $pdf->ParseData($ret);
     
     # count the number of columns
@@ -466,7 +466,7 @@ function rpt_compliance_promises($name,$state)
 
 ### Classes report ###
 
-function rpt_filechanges($name)
+function rpt_filechange_log($hostkey,$search)
 {
     $title = 'File Change Log';
     $cols=3;
@@ -480,7 +480,7 @@ function rpt_filechanges($name)
     $pdf->AddPage();
 
     # give host name TODO
-    $ret = cfpr_report_filechanges_pdf(NULL,$name,true,-1,">");
+    $ret = cfpr_report_filechanges_pdf($hostkey,$search,true,-1,">");
     $data1 = $pdf->ParseData($ret);
     
     # count the number of columns
@@ -505,7 +505,7 @@ function rpt_filechanges($name)
 
 ### Classes report ###
 
-function rpt_lastsaw_hosts($key,$name,$address,$ago)
+function rpt_lastsaw_hosts($hostkey,$key,$name,$address,$ago)
 {
     $title = 'Last saw hosts';
     $cols=9;
@@ -519,7 +519,7 @@ function rpt_lastsaw_hosts($key,$name,$address,$ago)
     $pdf->AddPage();
 
     # give host name TODO
-    $ret =  cfpr_report_lastseen_pdf(NULL,$key,$name,$address,$ago,true);
+    $ret =  cfpr_report_lastseen_pdf($hostkey,$key,$name,$address,$ago,true);
     $data1 = $pdf->ParseData($ret);
     
     # count the number of columns
@@ -542,7 +542,7 @@ function rpt_lastsaw_hosts($key,$name,$address,$ago)
 
 ### Patches Available  ###
 
-function rpt_patches_available($name,$version,$arch)
+function rpt_patches_available($hostkey,$search,$version,$arch)
 {
     $title = 'Patches Available';
     $cols=4;
@@ -556,7 +556,7 @@ function rpt_patches_available($name,$version,$arch)
     $pdf->AddPage();
     
     # give host name TODO
-    $ret =  cfpr_report_patch_avail_pdf(NULL,$name,$version,$arch,true);
+    $ret =  cfpr_report_patch_avail_pdf($hostkey,$search,$version,$arch,true);
     $data1 = $pdf->ParseData($ret);
     
     # count the number of columns
@@ -579,7 +579,7 @@ function rpt_patches_available($name,$version,$arch)
 
 ### Patch Status  ###
 
-function rpt_patch_status($name,$version,$arch)
+function rpt_patch_status($hostkey,$search,$version,$arch)
 {
     $title = 'Patch Status';
     $cols=4;
@@ -593,7 +593,7 @@ function rpt_patch_status($name,$version,$arch)
     $pdf->AddPage();
     
     # give host name TODO
-    $ret = cfpr_report_patch_in_pdf(NULL,$name,$version,$arch,true);
+    $ret = cfpr_report_patch_in_pdf($hostkey,$search,$version,$arch,true);
     $data1 = $pdf->ParseData($ret);
     
     # count the number of columns
@@ -616,7 +616,7 @@ function rpt_patch_status($name,$version,$arch)
 
 ### Software Installed  ###
 
-function rpt_software_installed($name,$version,$arch)
+function rpt_software_installed($hostkey,$search,$version,$arch)
 {
     $title = 'Software Installed';
     $cols=4;
@@ -630,7 +630,7 @@ function rpt_software_installed($name,$version,$arch)
     $pdf->AddPage();
     
     # give host name TODO
-    $ret = cfpr_report_software_in_pdf(NULL,$name,$version,$arch,true);
+    $ret = cfpr_report_software_in_pdf($hostkey,$search,$version,$arch,true);
     $data1 = $pdf->ParseData($ret);
     
     # count the number of columns
@@ -652,7 +652,7 @@ function rpt_software_installed($name,$version,$arch)
 }
 
 ### Performance Report  ###
-function rpt_performance()
+function rpt_performance($hostkey,$search)
 {
         $title = 'Performance';
         $cols=6;
@@ -666,7 +666,7 @@ function rpt_performance()
         $pdf->AddPage();
     
         # give host name TODO
-	$ret = cfpr_report_performance_pdf(NULL,NULL,NULL);
+	$ret = cfpr_report_performance_pdf($hostkey,$search,true);
         $data1 = $pdf->ParseData($ret);
     
         # count the number of columns
@@ -687,7 +687,7 @@ function rpt_performance()
         $pdf->Output("Nova_performance_report.pdf", "D");
 }
 
-function rpt_repaired_log($name)
+function rpt_repaired_log($hostkey,$search)
 {
     $title = 'Promises repaired log';
     $cols=4;
@@ -701,7 +701,7 @@ function rpt_repaired_log($name)
     $pdf->AddPage();
     
     # give host name TODO
-    $ret = cfpr_report_repaired_pdf(NULL,$name);
+    $ret = cfpr_report_repaired_pdf($hostkey,$search);
     $data1 = $pdf->ParseData($ret);
     
     # count the number of columns
@@ -723,7 +723,7 @@ function rpt_repaired_log($name)
     
     }
 
-function rpt_repaired_summary($name)
+function rpt_repaired_summary($hostkey,$search)
 {
     $title = 'Promises repaired summary';
     $cols=4;
@@ -737,7 +737,7 @@ function rpt_repaired_summary($name)
     $pdf->AddPage();
     
     # give host name TODO
-    $ret =  cfpr_summarize_repaired_pdf(NULL,$name);
+    $ret =  cfpr_summarize_repaired_pdf($hostkey,$search);
 
     $data1 = $pdf->ParseData($ret);
     
@@ -760,7 +760,7 @@ function rpt_repaired_summary($name)
     
     }
 
-function rpt_notkept_summary($name)
+function rpt_notkept_summary($hostkey,$search)
 {
     $title = 'Promises not kept summary';
     $cols=4;
@@ -774,7 +774,7 @@ function rpt_notkept_summary($name)
     $pdf->AddPage();
     
     # give host name TODO
-    $ret =  cfpr_summarize_notkept_pdf(NULL,$name);
+    $ret =  cfpr_summarize_notkept_pdf($hostkey,$search);
 
     $data1 = $pdf->ParseData($ret);
     
@@ -799,23 +799,25 @@ function rpt_notkept_summary($name)
 
 # main control
 
-$report_type = $GET['type'];
+$report_type = $_GET['type'];
+
 switch($report_type)
 {
  case  "Bundle profile":
-    rpt_bundle_profile($GET['name']);
+    rpt_bundle_profile($_GET['hostkey'],$_GET['search']);
     break;
  
  case  "Business value report":
-    rpt_business_value($GET['days'],$GET['months'],$GET['years']);
+    rpt_business_value($_GET['hostkey'],$_GET['days'],$_GET['months'],$_GET['years']);
     break;
  
  case "Class profile":
-    rpt_class_profile($GET['name']);
+    rpt_class_profile($_GET['hostkey'],$_GET['search']);
     break;
  
  case "Compliance by promise":
-    rpt_compliance_promises($GET['name'],$GET['state']);
+    print "Hello";
+    rpt_compliance_promises($_GET['hostkey'],$_GET['search'],$_GET['state']);
     break;
     
  case "Compliance summary":
@@ -823,27 +825,32 @@ switch($report_type)
     break;
     
  case "File change log":
-    rpt_filechange_log($GET['name']);
+    rpt_filechange_log($_GET['hostkey'],$_GET['search']);
     break;
     
  case "Last saw hosts":
-    rpt_lastsaw_hosts($GET['key'],$GET['name'],$GET['address'],$GET['ago']);
+    rpt_lastsaw_hosts($_GET['hostkey'],$_GET['key'],$_GET['search'],$_GET['address'],$_GET['ago']);
     break;
     
  case "Patches available":
-    rpt_patches_available($GET['name'],$GET['version'],$GET['arch']);
+    rpt_patches_available($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch']);
     break;
  
  case "Patch status":
-    rpt_patch_status($GET['name'],$GET['version'],$GET['arch']);
+    rpt_patch_status($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch']);
     break;
+ 
+ case "Performance":
+        rpt_performance($_GET['hostkey'],$_GET['search']);
+        break;
+    
  case "Promises repaired summary":
  case "Promises repaired log":
-    rpt_repaired_log($GET['name']);
+    rpt_repaired_log($_GET['hostkey'],$_GET['search']);
     break;
  case "Promises not kept summary":
  case "Promises not kept log":
-    rpt_promise_notkept($GET['$name']);
+    rpt_promise_notkept($_GET['hostkey'],$_GET['search']);
     break;
  
  case "Setuid/gid root programs":
@@ -851,7 +858,7 @@ switch($report_type)
     break;
  
  case "Software installed":
-    rpt_software_installed($GET['name'],$GET['version'],$GET['arch']);
+    rpt_software_installed($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch']);
     break;
 }
 
