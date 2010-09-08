@@ -51,7 +51,7 @@ company[0] = '\0';
 
 // Verify first whether this host has been bootstrapped
 
-snprintf(name,CF_MAXVARSIZE-1,"%s%cpolicy_server.dat",CFWORKDIR,FILE_SEPARATOR);
+snprintf(name,sizeof(name),"%s%cpolicy_server.dat",CFWORKDIR,FILE_SEPARATOR);
 
 if ((fp = fopen(name,"r")) != NULL)
    {
@@ -72,7 +72,7 @@ if (strlen(policy_server) == 0)
 
 // if license file exists, set the date from that, else use the source coded one
 
-snprintf(name,CF_MAXVARSIZE-1,"%s/inputs/license.dat",CFWORKDIR);
+snprintf(name,sizeof(name),"%s/inputs/license.dat",CFWORKDIR);
 MapName(name);
 
 if (stat(name,&sb) == -1)
@@ -92,16 +92,16 @@ if ((fp = fopen(name,"r")) != NULL)
 
    if (strlen(company) > 0)
       {
-      snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s %s",f_month,number,f_day,f_year,company);
+      snprintf(name,sizeof(name),"%s-%o.%s Nova %s %s",f_month,number,f_day,f_year,company);
       }
    else
       {
-      snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s",f_month,number,f_day,f_year);
+      snprintf(name,sizeof(name),"%s-%o.%s Nova %s",f_month,number,f_day,f_year);
       }
 
    IPString2KeyDigest(policy_server,serverdig);
 
-   snprintf(serverkey,CF_MAXVARSIZE,"%s/ppkeys/%s-%s.pub",CFWORKDIR,"root",serverdig);
+   snprintf(serverkey,sizeof(name),"%s/ppkeys/%s-%s.pub",CFWORKDIR,"root",serverdig);
    CfOut(cf_verbose,""," -> Look for server %s's key file\n",policy_server);
 
    if (serverrsa = HavePublicKey("root",policy_server,serverdig))
@@ -172,8 +172,8 @@ d_expire = Str2Int(u_day);
 Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s = %d\n",VYEAR,year,VMONTH,month,VDAY,day,cf_strcmp(VDAY,day));
 Debug("Y. %s > %s\nM. %d > %d\nD: %d > %d = %d\n",VYEAR,year,m_now,m_expire,d_now,d_expire,cf_strcmp(VDAY,day));
 
-snprintf(EXPIRY,31,"%s %s %s",u_day,u_month,u_year);
-strcpy(LICENSE_COMPANY,company);
+snprintf(EXPIRY,CF_SMALLBUF-1,"%s %s %s",u_day,u_month,u_year);
+strncpy(LICENSE_COMPANY,company,CF_SMALLBUF-1);
 
 Nova_LogLicenseStatus();
 

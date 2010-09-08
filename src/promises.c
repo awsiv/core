@@ -359,7 +359,7 @@ CloseDB(dbp);
 void Nova_CheckAutoBootstrap()
 
 { struct stat sb;
- char name[CF_BUFSIZE];
+  char name[CF_BUFSIZE];
   FILE *pp;
   int repaired = false, have_policy = false, am_appliance = false;
 
