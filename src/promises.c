@@ -475,8 +475,6 @@ snprintf(file,CF_BUFSIZE-1,"%s/policy_server.dat",CFWORKDIR);
 
 if (strlen(name) > 0)
    {
-   strncpy(POLICY_SERVER,name,CF_BUFSIZE-1);
-
    if ((fout = fopen(file,"w")) == NULL)
       {
       CfOut(cf_error,"fopen","Unable to write policy server file! (%s)",file);
