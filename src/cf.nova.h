@@ -341,6 +341,8 @@ struct Item *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *b
 struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
 struct Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
 struct Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
+int CFDB_QueryBundleCount(mongo_connection *conn);
+int CFDB_QueryPromiseCount(mongo_connection *conn);
 struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
 struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
 
@@ -906,6 +908,8 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
 int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize);
 int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize);
 int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize);
+int Nova2PHP_get_bundle_count(char *buffer, int bufsize);
+int Nova2PHP_get_promise_count(char *buffer, int bufsize);
 void Nova2PHP_AnalyseMag(char *hostkey,enum observables obs,char *buffer,int bufsize);
 void Nova2PHP_AnalyseWeek(char *hostkey,enum observables obs,char *buffer,int bufsize);
 void Nova2PHP_ComplianceSummaryGraph(void);

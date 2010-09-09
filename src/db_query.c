@@ -3255,6 +3255,69 @@ return bNameReferees;
 
 /*****************************************************************************/
 
+int CFDB_QueryBundleCount(mongo_connection *conn)
+/**
+ * Returns the number of bundles (may appear multiple times in the
+ * promises DB).
+ **/
+{ bson_buffer bbuf;
+  bson_iterator it1;
+  bson query,field;
+  mongo_cursor *cursor;
+  struct Item *bundleNames = {0};
+  int bundleCount = 0;
+
+  // query all
+
+ // returned attribute
+ bson_buffer_init(&bbuf);
+ bson_append_int(&bbuf,cfp_bundlename,1);
+ bson_from_buffer(&field,&bbuf);
+
+ cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,bson_empty(&query),&field,0,0,0);
+
+bson_destroy(&field);
+
+while(mongo_cursor_next(cursor))  // iterate over docs
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while(bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
+         {
+         IdempPrependItem(&bundleNames,(char *)bson_iterator_string(&it1),NULL);
+         }
+      }
+   }
+
+mongo_cursor_destroy(cursor);
+
+bundleCount = ListLen(bundleNames);
+
+DeleteItemList(bundleNames);
+
+return bundleCount;
+}
+
+/*****************************************************************************/
+
+int CFDB_QueryPromiseCount(mongo_connection *conn)
+{ bson_buffer bbuf;
+  bson_iterator it1;
+  bson query,field;
+  mongo_cursor *cursor;
+  struct Item *bundleNames = {0};
+  int promiseCount = 0;
+
+  promiseCount = (int)mongo_count(conn,"cfreport","promises_unexp",NULL);
+  
+return promiseCount;
+}
+
+
+/*****************************************************************************/
+
 struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name)
 
 /*
