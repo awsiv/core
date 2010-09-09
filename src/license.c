@@ -172,7 +172,7 @@ d_expire = Str2Int(u_day);
 Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s = %d\n",VYEAR,year,VMONTH,month,VDAY,day,cf_strcmp(VDAY,day));
 Debug("Y. %s > %s\nM. %d > %d\nD: %d > %d = %d\n",VYEAR,year,m_now,m_expire,d_now,d_expire,cf_strcmp(VDAY,day));
 
-snprintf(EXPIRY,CF_SMALLBUF-1,"%s %s %s",u_day,u_month,u_year);
+snprintf(EXPIRY,sizeof(EXPIRY),"%s %s %s",u_day,u_month,u_year);
 strncpy(LICENSE_COMPANY,company,CF_SMALLBUF-1);
 
 Nova_LogLicenseStatus();
