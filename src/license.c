@@ -99,6 +99,8 @@ if ((fp = fopen(name,"r")) != NULL)
       snprintf(name,sizeof(name),"%s-%o.%s Nova %s",f_month,number,f_day,f_year);
       }
 
+   // This next step requires a pre-existing binding
+   
    IPString2KeyDigest(policy_server,serverdig);
 
    snprintf(serverkey,sizeof(name),"%s/ppkeys/%s-%s.pub",CFWORKDIR,"root",serverdig);

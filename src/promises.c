@@ -356,6 +356,23 @@ CloseDB(dbp);
 /* Bootstrap                                                                 */
 /*****************************************************************************/
 
+/*
+
+Bootstrapping is a tricky sequence of fragile events. We need to map shakey/IP
+and identify policy hub IP in a special order to bootstrap the license and agents.
+
+During bootstrap:
+
+ - InitGA (generic-agent) loads the public key
+ - The verifylicense function sets the policy hub but fails to verify license yet
+   as there is no key/IP binding
+ - Policy server gets set in workdir/state/am_policy_hub
+ - The agents gets run and start this all over again, but this time
+   the am_policy_hub is defined and caches the key/IP binding
+ - Now the license has a binding, resolves the policy hub's key and succeeds
+
+*/
+
 void Nova_CheckAutoBootstrap()
 
 { struct stat sb;
