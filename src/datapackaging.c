@@ -42,6 +42,7 @@ void Nova_PackPerformance(struct Item **reply,char *header,time_t from,enum cfd_
 CfOut(cf_verbose,""," -> Packing performance data");
   
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_PERFORMANCE);
+MapName(name);
 
 if (!OpenDB(name,&dbp))
    {

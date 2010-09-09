@@ -478,7 +478,7 @@ else
    }
 
 printf("\nNOTICE - this is a commercially licensed version of Cfengine. It is ILLEGAL to install\n");
-printf("         the software only systems for which no license has been granted by Cfengine AS.\n");
+printf("         the software on systems for which no license has been granted by Cfengine AS.\n");
 }
 
 /********************************************************************/
@@ -561,7 +561,7 @@ fprintf(fout,
 "    copy_from => u_scp(\"$(master_location)\"),\n"
 "    depth_search => u_recurse(\"inf\"),\n"
 "    action => u_immediate,\n"
-"    classes => success(\"config\");\n"
+"    classes => success(\"got_policy\");\n"
 "  \"$(sys.workdir)/bin\" \n"
 "    perms => u_p(\"700\"),\n"
 "    copy_from => u_scp(\"/usr/local/sbin\"),\n"
@@ -580,7 +580,7 @@ fprintf(fout,
 "    copy_from => u_scp(\"/var/cfengine/masterfiles\"),\n"
 "    depth_search => u_recurse(\"inf\"),\n"
 "    action => u_immediate,\n"
-"    classes => success(\"config\");\n\n"
+"    classes => success(\"got_policy\");\n\n"
 
 "     \"$(sys.workdir)\\bin-twin\\.\"\n"
 "         comment => \"Make sure we maintain a clone of the binaries for updating\",\n"
@@ -590,9 +590,9 @@ fprintf(fout,
 
 "\n"
 "processes:\n"
-"config.!windows::\n"
+"!windows::\n"
 "\"cf-execd\" restart_class => \"start_exec\";\n"
-"config.policy_host::\n"
+"policy_host::\n"
 "\"cf-serverd\" restart_class => \"start_server\";\n\n"
 
 "commands:\n"
@@ -607,7 +607,7 @@ fprintf(fout,
 "classes => outcome(\"server\");\n\n"
 
 "services:\n"
-"config.windows::\n"
+"windows::\n"
 "\"CfengineNovaExec\"\n"
 "   service_policy => \"start\",\n"
 "   service_method => bootstart,\n"
@@ -618,6 +618,7 @@ fprintf(fout,
 "      \"This host assumes the role of policy distribution host\";\n"
 "  bootstrap_mode.!policy_host::\n"
 "      \"This autonomous node assumes the role of voluntary client\";\n"
+"  got_policy::      \" -> Updated local policy from policy server\";\n"
 "  server_ok::      \" -> Started the server - system ready to serve\";\n"
 "  executor_ok::      \" -> Started the scheduler - system functional\";\n"
 "}\n"
