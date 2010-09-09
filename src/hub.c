@@ -210,6 +210,8 @@ if (conn == NULL)
 
 /* Check trust interaction*/
 
+a.copy.trustkey = true;
+
 pp->cache = NULL;
 
 // Choose full / delta
