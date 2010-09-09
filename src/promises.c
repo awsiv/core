@@ -669,7 +669,6 @@ CfOut(cf_cmdout,""," -> No policy failsafe discovered, assume temporary bootstra
 fclose(fout);
 }
 
-
 /********************************************************************/
 /* Level                                                            */
 /********************************************************************/
