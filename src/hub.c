@@ -198,6 +198,9 @@ CfOut(cf_inform,"","............................................................
 CfOut(cf_inform,""," * Hailing %s : %u\n",peer,a.copy.portnumber);
 CfOut(cf_inform,"","...........................................................................\n");
 
+/* Check trust interaction*/
+
+a.copy.trustkey = true;
 a.copy.servers = SplitStringAsRList(peer,'*');
 
 conn = NewServerConnection(a,pp);
@@ -207,10 +210,6 @@ if (conn == NULL)
    CfOut(cf_verbose,""," !! Peer \"%s\" did not respond to hail\n",peer);
    return false;
    }
-
-/* Check trust interaction*/
-
-a.copy.trustkey = true;
 
 pp->cache = NULL;
 
