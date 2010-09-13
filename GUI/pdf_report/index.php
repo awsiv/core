@@ -126,7 +126,7 @@ class PDF extends FPDF
 	$lines=file($file);
 	$data=array();
 	foreach($lines as $line)
-	  $data[]=explode(';',chop($line));
+	  $data[]=explode('<nc>',chop($line));
 	return $data;
     }
     
@@ -138,9 +138,10 @@ class PDF extends FPDF
 	$data=array();
 	foreach($lines as $line)
 	{
-	    if (trim($line)!='')
+	    $line = trim($line);
+	    if ($line!='')
 	    {
-	     $data[]=explode(';',chop($line));
+	     $data[]=explode('<nc>',chop($line));
 	    }
 	}
 	return $data;
@@ -235,6 +236,7 @@ class PDF extends FPDF
 	    for($j=0; $j<$cols; $j++) 
 	    {
 		$f[$j] = $ar1[$i][$j];
+		
 		$width = ($col_len[$j] * ($this->pagewidth - $this->left - $this->right))/100;
 		$tmp = $this->NbLines($width,$f[$j]);
 		if($tmp > $nb)
@@ -283,7 +285,7 @@ class PDF extends FPDF
 		{		  	
 		    $this->MultiCell($width,$hx,$f[$j],1,$align,0); 
 		}
-		
+
 		$startx+= $width;
 		$this->Ln(0);
 	    }
@@ -293,8 +295,104 @@ class PDF extends FPDF
 	    }	    
 	}
     }
-}
 
+    ###############################################
+    # Draw table with multiple tables
+    ###############################################
+    function DrawTableSpecial($ar1, $cols, $col_len, $header, $header_font)
+    { 
+	# $this->CustomHeader(); 
+#	$this->DrawTableHeader($header, $cols, $col_len, $header_font);
+	$font_size = 6;
+	$this->SetFont('Arial', '', $font_size);
+	$this->SetDrawColor(125,125,125);
+	for($i=0; $i<count($ar1); $i++) 
+	{ 
+	    $multi_col = array();
+	    $nb = 0;
+	    for($j=0; $j<$cols; $j++) 
+	    {
+		$f[$j] = $ar1[$i][$j];
+		$width = ($col_len[$j] * ($this->pagewidth - $this->left - $this->right))/100;
+		$tmp = $this->NbLines($width,$f[$j]);
+		if($tmp > $nb)
+		{
+		    $nb = $tmp;
+		}
+		if($tmp > 1)
+		{
+		    $multi_col[$j] = true;
+		}
+		else 
+		{
+		    $multi_col[$j] = false;
+		}
+	    }
+	    
+	    # total y
+	    $hx = $nb * $font_size;
+	    
+	    #  check for page break 
+	    $startx = $this->left;
+	    $starty = $this->GetY();
+	    $rowmaxy = $starty + $hx;
+	    $newpage = false;
+	    for($j=0; $j<$cols; $j++) 
+	    {
+		if(($j == 0) && ($this->GetY() + $hx > $this->PageBreakTrigger))
+		{ 
+		    $this->AddPage(); 
+		    $this->Ln(5); 
+		    $this->SetFont('Arial', '', $font_size);
+		    $startx = $this->left;
+		    
+		    $newpage = true;
+#		    $this->DrawTableHeader($header, $cols, $col_len, $header_font);
+		    $starty = $this->GetY();
+		}
+		
+		$this->SetXY($startx, $starty); 
+		$width = ($col_len[$j] * ($this->pagewidth - $this->left - $this->right))/100;
+		
+		$isheader = false;
+		$nh_removed = '';
+
+		if($j == 0){
+		    $pos = strpos($f[$j],'<nh>');
+#		    $data[]=explode('<nc>',chop($line));
+		    if($pos !== false) {					
+			$nh_removed = str_replace('<nh>', '', $f[$j]);
+			$isheader = true;
+		    }
+		}
+		
+		if($isheader === true)
+		{
+		    $ar1[$i][$j] = $nh_removed;
+		    $this->DrawTableHeader($ar1[$i], $cols, $col_len, $font_size);
+		    $j = $cols + 1;
+		}
+		else
+		{
+		    if($multi_col[$j] == true)
+		    {
+			$this->MultiCell($width,$font_size,$f[$j],1,$align,0);
+		    }
+		    else
+		    {		  	
+			$this->MultiCell($width,$hx,$f[$j],1,$align,0); 
+		    }
+		}
+		$startx+= $width;
+		$this->Ln(0);
+	    }
+	    if(!$newpage)
+	    {
+		$this->SetY($rowmaxy);
+	    }	    
+	}
+}
+}
 ## functions for reports
 function calc_width_percent($total,$width)
 {
@@ -468,12 +566,11 @@ function rpt_class_profile($hostkey,$search)
     }
 
 ### Compliance by promise ##
-
 function rpt_compliance_promises($hostkey,$search,$state)
 {
     $title = 'Compliance by promise';
     $cols=6;
-    $col_len = array(24,24,14,14,12,12);
+    $col_len = array(21,24,14,14,12,15);
     $header=array('Host','Promise Handle','Last known state','Probability kept', 'Uncertainty', 'Last seen');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -482,7 +579,6 @@ function rpt_compliance_promises($hostkey,$search,$state)
     $pdf->SetFont('Arial','',14);
     $pdf->AddPage();
     
-    # give host name TODO
     $ret = cfpr_report_compliance_promises_pdf($hostkey,$search,$state,true);
     $data1 = $pdf->ParseData($ret);
     
@@ -497,22 +593,17 @@ function rpt_compliance_promises($hostkey,$search,$state)
     $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
     
-    # TODO: calculate the length of individual columns
-    
     $pdf->SetFont('Arial','',9);
-    
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    
     $pdf->Output("Nova_Compliance_by_promise.pdf", "D");
 }
 
 ### Compliance Summary ##
-
 function rpt_compliance_summary($hostkey)
 {
     $title = 'Compliance Summary';
     $cols=6;
-    $col_len = array(23,25,12,12,12,16);
+    $col_len = array(25,27,10,10,10,18);
     $header=array('Host','Policy','Kept','Repaired','Not kept', 'Last seen');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -545,7 +636,6 @@ function rpt_compliance_summary($hostkey)
 }
 
 ### Classes report ###
-
 function rpt_filechange_log($hostkey,$search)
 {
     $title = 'File Change Log';
@@ -584,7 +674,6 @@ function rpt_filechange_log($hostkey,$search)
 }
 
 ### Classes report ###
-
 function rpt_lastsaw_hosts($hostkey,$key,$name,$address,$ago)
 {
     $title = 'Last saw hosts';
@@ -621,7 +710,6 @@ function rpt_lastsaw_hosts($hostkey,$key,$name,$address,$ago)
 }
 
 ### Patches Available  ###
-
 function rpt_patches_available($hostkey,$search,$version,$arch)
 {
     $title = 'Patches Available';
@@ -658,7 +746,6 @@ function rpt_patches_available($hostkey,$search,$version,$arch)
 }
 
 ### Patch Status  ###
-
 function rpt_patch_status($hostkey,$search,$version,$arch)
 {
     $title = 'Patch Status';
@@ -881,7 +968,7 @@ function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type)
 {
     $title = 'Variables';
     $cols=4;
-    $col_len = array(19,19,19,43);
+    $col_len = array(19,15,19,47);
     $header=array('Host','Type','Name','Value');
     $logo_path = 'logo_outside_new.jpg';
     
@@ -891,14 +978,14 @@ function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type)
     $pdf->AddPage();
     if($hostkey == NULL)
     {
-	$ret =  cfpr_report_vars_pdf(NULL,$scope,$lval,$rval,$type,true);
+	$ret = cfpr_report_vars_pdf(NULL,$scope,$lval,$rval,$type,true);
     }
     else
-    {
-	$ret =  cfpr_report_vars_pdf($hostkey,NULL,$search,NULL,NULL,true);
+    {   
+	$ret = cfpr_report_vars_pdf($hostkey,NULL,$search,NULL,NULL,true);
     }
     $data1 = $pdf->ParseData($ret);
-    
+
     # count the number of columns
     #$cols = (count($data1,1)/count($data1,0))-1;
     
@@ -910,10 +997,8 @@ function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type)
     $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
     
-    # TODO: calculate the length of individual columns
-    
     $pdf->SetFont('Arial','',9);
-    $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+    $pdf->DrawTableSpecial($data1, $cols, $col_len, $header, 8);
     $pdf->Output("Nova_variables.pdf", "D");
 }
 

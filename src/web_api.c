@@ -3353,7 +3353,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    ht = (struct HubTotalCompliance *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"%s;%s;%d %%;%d %%;%d %%;%s<nova_nl>",
+   snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%d<nc>%d<nc>%d<nc>%s<nova_nl>",
             ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,cf_ctime(&(ht->t)));
    Join(returnval,buffer,bufsize);
    }
@@ -3414,7 +3414,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseLog *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"%s;%s;%s;%s<nova_nl>",
+   snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%s<nova_nl>",
             hp->hh->hostname,hp->handle,hp->cause,cf_ctime(&(hp->t)));
    Join(returnval,buffer,bufsize);
    }
@@ -3473,7 +3473,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hb = ( struct HubBundleSeen *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"%s;%s;%s;%.2lf;%.2lf;%.2lf<nova_nl>",
+   snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%.2lf<nc>%.2lf<nc>%.2lf<nova_nl>",
             hb->hh->hostname,hb->bundle,cf_ctime(&(hb->t)),
             hb->hrsago,hb->hrsavg,hb->hrsdev);
 
@@ -3535,7 +3535,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubValue *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"%s;%s;%.1lf;%.1lf;%.1lf<nova_nl>",
+   snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%.1lf<nc>%.1lf<nc>%.1lf<nova_nl>",
             hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept);
    Join(returnval,buffer,bufsize);
    }
@@ -3600,15 +3600,15 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
   // TODO: this if else was used to give different colors to the 3rd col 
    if (now - hc->t > 6*3600)
       {
-      snprintf(buffer,sizeof(buffer),"%s;%s;%lf;%lf;%s<nova_nl>",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+      snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%lf<nc>%lf<nc>%s<nova_nl>",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
       }
    else if (now - hc->t > (time_t)CF_WEEK)
       {
-      snprintf(buffer,sizeof(buffer),"%s;%s;%lf;%lf;%s<nova_nl>",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+      snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%lf<nc>%lf<nc>%s<nova_nl>",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
       }
    else
       {
-      snprintf(buffer,sizeof(buffer),"%s;%s;%lf;%lf;%s<nova_nl>",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+      snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%lf<nc>%lf<nc>%s<nova_nl>",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
       }
    
    Join(returnval,buffer,bufsize);
@@ -3669,8 +3669,7 @@ returnval[0] = '\0';
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseCompliance *)rp->item;
-
-   snprintf(buffer,sizeof(buffer),"%s;%s;%.2lf;%.2lf;%s<nova_nl>",
+   snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%.2lf<nc>%.2lf<nc>%s<nova_nl>",
             hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_ctime(&(hp->t)));
    Join(returnval,buffer,bufsize);
    }
@@ -3748,7 +3747,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    then = hl->t;
    
-   snprintf(buffer,sizeof(buffer),"%s;%s;%s;%s;%s;%.2lf;%.2lf;%.2lf;%s<nova_nl>",
+   snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%s<nc>%s<nc>%.2lf<nc>%.2lf<nc>%.2lf<nc>%s<nova_nl>",
             hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,cf_ctime(&then),
             hl->hrsago,hl->hrsavg,hl->hrsdev,
             hl->rhost->keyhash);
@@ -3816,7 +3815,7 @@ returnval[0] = '\0';
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hs = (struct HubSoftware *)rp->item;
-   snprintf(buffer,sizeof(buffer),"%s;%s;%s;%s<nova_nl>",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
+   snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%s<nova_nl>",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
    Join(returnval,buffer,bufsize);
    }
 
@@ -3875,7 +3874,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hP = ( struct HubPerformance *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"%s;%s;%.2lf;%.2lf;%.2lf;%s<nova_nl>",
+   snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%.2lf<nc>%.2lf<nc>%.2lf<nc>%s<nova_nl>",
             hP->hh->hostname,
             hP->event,hP->q,hP->e,hP->d,cf_ctime(&(hP->t)));
    
@@ -3972,7 +3971,7 @@ else
             
    for (ip = summary; ip != NULL; ip=ip->next)
       {
-      snprintf(buffer,sizeof(buffer),"%s;%s;%s;%d<nova_nl>",hostname,ip->name,ip->classes,ip->counter);
+      snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%d<nova_nl>",hostname,ip->name,ip->classes,ip->counter);
 
       Join(returnval,buffer,bufsize);
       }
@@ -4032,7 +4031,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       strcpy(lscope,hv->scope);
       snprintf(buffer,CF_BUFSIZE,"Bundle scope %s<nova_nl>",hv->scope);
       Join(returnval,buffer,bufsize);
-      snprintf(buffer,CF_BUFSIZE,"host;type;name;value<nova_nl>");
+      snprintf(buffer,CF_BUFSIZE,"<nh>host<nc>type<nc>name<nc>value<nova_nl>");
       Join(returnval,buffer,bufsize);
       }
 
@@ -4057,7 +4056,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       strcat(typestr," list");
       }
    
-   snprintf(buffer,CF_BUFSIZE,"%s;%s;%s;",hv->hh->hostname,typestr,hv->lval);
+   snprintf(buffer,CF_BUFSIZE,"%s<nc>%s<nc>%s<nc>",hv->hh->hostname,typestr,hv->lval);
    strcat(returnval,buffer);
    count += strlen(buffer);
 
@@ -4174,7 +4173,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hC = (struct HubFileChanges *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"%s;%s;%s<nova_nl>",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)));
+   snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nova_nl>",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)));
    Join(returnval,buffer,bufsize);
    }
 
