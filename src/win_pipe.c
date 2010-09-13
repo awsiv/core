@@ -170,7 +170,7 @@ int NovaWin_cf_pclose_def(FILE *pfp, struct Attributes a, struct Promise *pp)
     }
   else
     {
-      cfPS(cf_inform,CF_INTERPT,"",pp,a," !! Finished script %s -- an error occurred (returned %d)\n",pp->promiser, (int)exitCode);
+      cfPS(cf_inform,CF_FAIL,"",pp,a," !! Finished script %s -- an error occurred (returned %d)\n",pp->promiser, (int)exitCode);
     }
 
   return (int)exitCode;
