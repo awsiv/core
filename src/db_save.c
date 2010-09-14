@@ -960,17 +960,15 @@ bson_destroy(&host_key);
 void CFDB_SaveFileChanges(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
-  bson_buffer *pushObj;
+  bson_buffer *setObj;
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
-  bson_buffer *arr;
-  char iStr[32];
-  char name[CF_SMALLBUF];
+  char name[CF_SMALLBUF],nameNoDot[CF_SMALLBUF];
+  char varName[128];
   bson_buffer *sub;
   time_t then;
   long date;
-  int i;
   
 // find right host
 bson_buffer_init(&bb);
@@ -979,25 +977,23 @@ bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
-pushObj = bson_append_start_object(&bb,"$pushAll");
+setObj = bson_append_start_object(&bb,"$set");
 
-arr = bson_append_start_array(pushObj,cfr_filechanges);
-
-for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+for (ip = data; ip != NULL; ip=ip->next)
    {
-   snprintf(iStr, sizeof(iStr), "%d", i);
-   
    sscanf(ip->name,"%ld,%255[^\n]",&date,name);
    then = (time_t)date;
+
+   ReplaceChar(name,nameNoDot,sizeof(nameNoDot),'.','_');
+   snprintf(varName,sizeof(varName),"%s.%s@%d",cfr_filechanges,nameNoDot,date);
    
-   sub = bson_append_start_object(arr,iStr);
+   sub = bson_append_start_object(setObj,varName);
    bson_append_int(sub,cfr_time,then);
    bson_append_string(sub,cfr_name,name);
    bson_append_finish_object(sub);
    }
 
-bson_append_finish_object(arr);
-bson_append_finish_object(pushObj);
+bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
@@ -1012,16 +1008,14 @@ bson_destroy(&host_key);
 void CFDB_SaveFileDiffs(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
-  bson_buffer *pushObj;
+  bson_buffer *setObj;
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
-  bson_buffer *arr;
-  char iStr[32];
-  char name[CF_MAXVARSIZE],change[CF_BUFSIZE];
+  char name[CF_MAXVARSIZE],change[CF_BUFSIZE],nameNoDot[CF_MAXVARSIZE];
+  char varName[128];
   bson_buffer *sub;
   time_t then;
-  int i;
   long t;
   char *sp;
 
@@ -1032,14 +1026,10 @@ bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
-pushObj = bson_append_start_object(&bb, "$pushAll");
+setObj = bson_append_start_object(&bb, "$set");
 
-arr = bson_append_start_array(pushObj,cfr_filediffs);
-
-for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+for (ip = data; ip != NULL; ip=ip->next)
    {
-   snprintf(iStr, sizeof(iStr), "%d", i);
-   
    change[0] = '\0';
    sscanf(ip->name,"%ld|%255[^|]|%2047[^\n]",&t,name,change);
 
@@ -1052,15 +1042,18 @@ for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
       }
 
    then = (time_t)t;
-   sub = bson_append_start_object(arr,iStr);
+
+   ReplaceChar(name,nameNoDot,sizeof(nameNoDot),'.','_');
+   snprintf(varName, sizeof(varName),"%s.%s@%d",cfr_filediffs,nameNoDot,t);
+   
+   sub = bson_append_start_object(setObj, varName);
    bson_append_int(sub,cfr_time,then);
    bson_append_string(sub,cfr_name,name);
    bson_append_string(sub,cfr_diff,change);
    bson_append_finish_object(sub);
    }
 
-bson_append_finish_object(arr);
-bson_append_finish_object(pushObj);
+bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
