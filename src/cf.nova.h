@@ -39,7 +39,8 @@
 # define MONGO_DATABASE MONGO_BASE ".hosts"
 # define MONGO_DATABASE_MON MONGO_BASE ".monitoring"
 # define MONGO_PROMISES_EXP MONGO_BASE ".promises_exp"
-# define MONGO_PROMISES_UNEXP MONGO_BASE ".promises_unexp"
+# define MONGO_PROMISES_UNEXP_COLLECTION "promises_unexp"
+# define MONGO_PROMISES_UNEXP MONGO_BASE "." MONGO_PROMISES_UNEXP_COLLECTION
 # define MONGO_BODIES   MONGO_BASE ".bodies"
 # define MONGO_SCRATCH MONGO_BASE ".scratch"
 # include <mongo.h>
@@ -345,6 +346,7 @@ int CFDB_QueryBundleCount(mongo_connection *conn);
 int CFDB_QueryPromiseCount(mongo_connection *conn);
 struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
 struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
+struct Item *CFDB_QueryCfstdAcls(mongo_connection *conn);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
@@ -929,6 +931,11 @@ int Nova2PHP_software_report_pdf(char *hostkey,char *name,char *value, char *arc
 int Nova2PHP_performance_report_pdf(char *hostkey,char *job,int regex,char *returnval,int bufsize);
 int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize);
 int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize);
+
+
+int Nova2PHP_cfstd_report_acl(char *hostkey, char *buf, int bufSz);
+
+
 /* weekly.c */
 
 double Num(double x);
@@ -1229,6 +1236,10 @@ struct cf_pscalar
 #define cfp_comment_exp   "ox"
 #define cfp_constraints   "n"
 #define cfp_constraints_exp "nx"
+
+/* Cfstd bundle names (from cfstd_* policies) */
+#define cfp_cfstd_bundle_acls "cfstd_acls"
+
 
 /* Promise body DB */
 #define cfb_bodyname      "bn"

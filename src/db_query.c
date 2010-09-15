@@ -3310,7 +3310,7 @@ int CFDB_QueryPromiseCount(mongo_connection *conn)
   struct Item *bundleNames = {0};
   int promiseCount = 0;
 
-  promiseCount = (int)mongo_count(conn,"cfreport","promises_unexp",NULL);
+  promiseCount = (int)mongo_count(conn,MONGO_BASE,MONGO_PROMISES_UNEXP_COLLECTION,NULL);
   
 return promiseCount;
 }
@@ -3500,6 +3500,100 @@ mongo_cursor_destroy(cursor);
 
 return record_list;
 }
+
+/*****************************************************************************/
+/*                            CFSTD QUERIES                                  */
+/*****************************************************************************/
+
+struct Item *CFDB_QueryCfstdAcls(mongo_connection *conn)
+/*
+ * Returns all Cfstd ACLs from expanded policy as
+ * "path;aces;owner;ifvarclass;handle"
+ * MEMORY NOTE: Caller must free returned value with DeleteItemList()
+ */
+{ bson_buffer bbuf;
+  bson_iterator it1,it2;
+  bson query,field;
+  mongo_cursor *cursor;
+  struct Item *retList = {0};
+  char path[CF_SMALLBUF] = {0};
+  char aces[CF_SMALLBUF] = {0};
+  char owner[CF_SMALLBUF] = {0};
+  char ifvarclass[CF_SMALLBUF] = {0};
+  char handle[CF_SMALLBUF] = {0};
+  char buf[CF_MAXVARSIZE] = {0};
+  char tmp[CF_SMALLBUF] = {0};
+
+  // query
+ bson_buffer_init(&bbuf);
+ bson_append_string(&bbuf,cfp_bundlename,cfp_cfstd_bundle_acls);
+ bson_append_string(&bbuf,cfp_promisetype,"files");
+ bson_from_buffer(&query,&bbuf);
+
+ // returned attribute
+ bson_buffer_init(&bbuf);
+ bson_append_int(&bbuf,cfp_promiser_exp,1);
+ bson_append_int(&bbuf,cfp_handle_exp,1);
+ bson_append_int(&bbuf,cfp_constraints_exp,1);
+ bson_from_buffer(&field,&bbuf);
+
+cursor = mongo_find(conn,MONGO_PROMISES_EXP,&query,&field,0,0,0);
+
+bson_destroy(&query);
+bson_destroy(&field);
+
+while(mongo_cursor_next(cursor))  // iterate over docs
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   // make sure everything gets defined
+   snprintf(path,sizeof(path),"(unknown)");
+   snprintf(aces,sizeof(aces),"(unknown)");   
+   snprintf(owner,sizeof(owner),"(unknown)");
+   snprintf(ifvarclass,sizeof(ifvarclass),"(unknown)");
+   snprintf(handle,sizeof(handle),"(unknown)");
+   
+   while(bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1), cfp_promiser_exp) == 0)
+         {
+         snprintf(path,sizeof(path),"%s",bson_iterator_string(&it1));
+         }
+      else if (strcmp(bson_iterator_key(&it1), cfp_handle_exp) == 0)
+         {
+         snprintf(handle,sizeof(handle),"%s",bson_iterator_string(&it1));
+         }
+      else if (strcmp(bson_iterator_key(&it1), cfp_constraints_exp) == 0)
+         {
+	 bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+	 while(bson_iterator_next(&it2))
+	   {
+           if(strncmp(bson_iterator_string(&it2), "aces =>", 7) == 0)
+	     {
+	     StripListSep(bson_iterator_string(&it2)+8,aces,sizeof(aces));
+	     }
+           else if(strncmp(bson_iterator_string(&it2), "owners =>", 9) == 0)
+	     {
+	     GetStringListElement(bson_iterator_string(&it2)+10,0,owner,sizeof(owner));
+	     }
+           else if(strncmp(bson_iterator_string(&it2), "ifvarclass =>", 13) == 0)
+	     {
+	     snprintf(ifvarclass,sizeof(ifvarclass),"%s",bson_iterator_string(&it2) + 14);
+	     }
+
+	   }
+         }
+      }
+   
+   snprintf(buf,sizeof(buf),"%s;%s;%s;%s;%s",path,aces,owner,ifvarclass,handle);
+   AppendItem(&retList,buf,NULL);
+   }
+
+mongo_cursor_destroy(cursor);
+return retList;
+}
+
 
 /*****************************************************************************/
 /* Level                                                                     */

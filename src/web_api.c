@@ -4192,4 +4192,47 @@ return true;
 
 /*****************************************************************************/
 /*****************************************************************************/
+
+int Nova2PHP_cfstd_report_acl(char *hostkey, char *buf, int bufSz)
+{
+  struct Item *aclPromises = {0}, *li = {0};
+  mongo_connection dbconn;
+
+  memset(buf,0,bufSz);
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return;
+   }
+
+
+  aclPromises = CFDB_QueryCfstdAcls(&dbconn);
+  
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+ if(aclPromises)
+   {
+
+     for(li = aclPromises; li != NULL; li = li->next)
+       {
+	 Join(buf,li->name,bufSz);
+	 Join(buf,"\n",bufSz);
+       }
+     
+     DeleteItemList(aclPromises);
+   }
+ else
+   {
+     return false;
+   }
+ 
+
+  return true;
+}
+
 #endif
