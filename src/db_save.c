@@ -912,6 +912,7 @@ void CFDB_SavePromiseCompliance(mongo_connection *conn, char *keyhash, struct It
 { bson_buffer bb;
   bson_buffer *setObj;
   bson_buffer *sub;
+  bson_buffer *keyArr, *keyAdd, *keyArrField;
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
@@ -920,6 +921,8 @@ void CFDB_SavePromiseCompliance(mongo_connection *conn, char *keyhash, struct It
   char status, statusStr[16];
   time_t then;
   double av,dev;
+  int i;
+  char iStr[32];
 
 // find right host
 bson_buffer_init(&bb);
@@ -941,11 +944,29 @@ for (ip = data; ip != NULL; ip=ip->next)
    bson_append_string(sub, cfr_promisestatus, statusStr);
    bson_append_double(sub, cfr_obs_E, av);
    bson_append_double(sub, cfr_obs_sigma, dev);
-   bson_append_double(sub, cfr_time, then);
+   bson_append_int(sub, cfr_time, then);
    bson_append_finish_object(sub);
    }
 
 bson_append_finish_object(setObj);
+
+// insert keys into numbered key array
+
+keyAdd = bson_append_start_object(&bb , "$addToSet");
+keyArrField = bson_append_start_object(keyAdd,cfr_promisecompl_keys);
+keyArr = bson_append_start_array(keyAdd , "$each");
+
+for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+   {
+   sscanf(ip->name,"%ld,%255[^,],%c,%lf,%lf\n",&then,handle,&status,&av,&dev);
+   snprintf(iStr,sizeof(iStr),"%d",i);
+   bson_append_string(keyArr,iStr,handle);
+   }
+
+bson_append_finish_object(keyArr);
+bson_append_finish_object(keyArrField);
+bson_append_finish_object(keyAdd);
+
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
@@ -1088,7 +1109,7 @@ bson_buffer_init(&bb);
 setObj = bson_append_start_object(&bb, "$set");
 
 for (ip = data; ip != NULL; ip=ip->next)
-   {
+  {// TODO: ISBUG %250s?
    sscanf(ip->name,"%250s %ld %lf %lf %lf\n",
           bundle,
           &fthen,

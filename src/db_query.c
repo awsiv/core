@@ -3502,13 +3502,13 @@ return record_list;
 }
 
 /*****************************************************************************/
-/*                            CFSTD QUERIES                                  */
+/*                    Special Purpose Policy QUERIES                         */
 /*****************************************************************************/
 
-struct Item *CFDB_QueryCfstdAcls(mongo_connection *conn)
+struct Item *CFDB_QuerySppAcls(mongo_connection *conn)
 /*
- * Returns all Cfstd ACLs from expanded policy as
- * "path;aces;owner;ifvarclass;handle"
+ * Returns all SPP ACLs from expanded policy as
+ * "handle;path;aces;owner;ifvarclass"
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
 { bson_buffer bbuf;
@@ -3516,17 +3516,16 @@ struct Item *CFDB_QueryCfstdAcls(mongo_connection *conn)
   bson query,field;
   mongo_cursor *cursor;
   struct Item *retList = {0};
+  char handle[CF_SMALLBUF] = {0};
   char path[CF_SMALLBUF] = {0};
   char aces[CF_SMALLBUF] = {0};
   char owner[CF_SMALLBUF] = {0};
   char ifvarclass[CF_SMALLBUF] = {0};
-  char handle[CF_SMALLBUF] = {0};
   char buf[CF_MAXVARSIZE] = {0};
-  char tmp[CF_SMALLBUF] = {0};
 
   // query
  bson_buffer_init(&bbuf);
- bson_append_string(&bbuf,cfp_bundlename,cfp_cfstd_bundle_acls);
+ bson_append_string(&bbuf,cfp_bundlename,cfp_spp_bundle_acls);
  bson_append_string(&bbuf,cfp_promisetype,"files");
  bson_from_buffer(&query,&bbuf);
 
@@ -3547,11 +3546,12 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    bson_iterator_init(&it1,cursor->current.data);
 
    // make sure everything gets defined
+   snprintf(handle,sizeof(handle),"(unknown)");
    snprintf(path,sizeof(path),"(unknown)");
    snprintf(aces,sizeof(aces),"(unknown)");   
    snprintf(owner,sizeof(owner),"(unknown)");
    snprintf(ifvarclass,sizeof(ifvarclass),"(unknown)");
-   snprintf(handle,sizeof(handle),"(unknown)");
+
    
    while(bson_iterator_next(&it1))
       {
@@ -3571,11 +3571,11 @@ while(mongo_cursor_next(cursor))  // iterate over docs
 	   {
            if(strncmp(bson_iterator_string(&it2), "aces =>", 7) == 0)
 	     {
-	     StripListSep(bson_iterator_string(&it2)+8,aces,sizeof(aces));
+	     StripListSep((char *)bson_iterator_string(&it2)+8,aces,sizeof(aces));
 	     }
            else if(strncmp(bson_iterator_string(&it2), "owners =>", 9) == 0)
 	     {
-	     GetStringListElement(bson_iterator_string(&it2)+10,0,owner,sizeof(owner));
+	     GetStringListElement((char *)bson_iterator_string(&it2)+10,0,owner,sizeof(owner));
 	     }
            else if(strncmp(bson_iterator_string(&it2), "ifvarclass =>", 13) == 0)
 	     {
@@ -3586,7 +3586,98 @@ while(mongo_cursor_next(cursor))  // iterate over docs
          }
       }
    
-   snprintf(buf,sizeof(buf),"%s;%s;%s;%s;%s",path,aces,owner,ifvarclass,handle);
+   snprintf(buf,sizeof(buf),"%s;%s;%s;%s;%s",handle,path,aces,owner,ifvarclass);
+   AppendItem(&retList,buf,NULL);
+   }
+
+mongo_cursor_destroy(cursor);
+return retList;
+}
+
+/*****************************************************************************/
+
+struct Item *CFDB_QuerySppCompliance(mongo_connection *conn, char *handle)
+/*
+ * Returns all SPP Compliance host entries as
+ * "host;status;timestr"
+ * MEMORY NOTE: Caller must free returned value with DeleteItemList()
+ */
+{ bson_buffer bbuf;
+  bson_iterator it1,it2,it3;
+  bson query,field;
+  mongo_cursor *cursor;
+  struct Item *retList = {0};
+  time_t t;
+  char host[CF_SMALLBUF] = {0};
+  char status = {0};
+  char time[CF_SMALLBUF] = {0};
+  char buf[CF_MAXVARSIZE] = {0};
+
+  // query
+ bson_buffer_init(&bbuf);
+ bson_append_string(&bbuf,cfr_promisecompl_keys,handle);
+ bson_from_buffer(&query,&bbuf);
+
+ // returned attribute
+ bson_buffer_init(&bbuf);
+ bson_append_int(&bbuf,cfr_promisecompl,1);
+ bson_append_int(&bbuf,cfr_ip_array,1);  // use host_array instead ?
+ bson_from_buffer(&field,&bbuf);
+
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+bson_destroy(&query);
+bson_destroy(&field);
+
+while(mongo_cursor_next(cursor))  // iterate over docs
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   // make sure everything gets defined
+   snprintf(host,sizeof(handle),"(unknown)");
+   snprintf(time,sizeof(time),"(unknown)");
+   status = '?';
+   t = 0;
+   
+   while(bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1), cfr_promisecompl) == 0)
+         {
+	 bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+	 while(bson_iterator_next(&it2))
+	   {
+	     if(strcmp(bson_iterator_key(&it2), handle) == 0)
+	       {
+	        bson_iterator_init(&it3,bson_iterator_value(&it2));
+	     
+		while(bson_iterator_next(&it3))
+		  {
+		  if (strcmp(bson_iterator_key(&it3), cfr_promisestatus) == 0)
+		    {
+		    status = *bson_iterator_string(&it3);
+		    }
+		  else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
+		    {
+		    t = bson_iterator_int(&it3);
+		    snprintf(time,sizeof(time),"%s",ctime(&t));
+		    }
+		  }
+	       }
+	   }
+	 }
+      else if (strcmp(bson_iterator_key(&it1), cfr_ip_array) == 0)
+         {
+	 bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+	 if(bson_iterator_next(&it2))  // just pick first IP
+	   {
+	     snprintf(host,sizeof(host),"%s",bson_iterator_string(&it2));
+	   }
+         }
+      }
+   
+   snprintf(buf,sizeof(buf),"%s;%c;%s",host,status,time);
    AppendItem(&retList,buf,NULL);
    }
 

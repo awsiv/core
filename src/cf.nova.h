@@ -346,7 +346,8 @@ int CFDB_QueryBundleCount(mongo_connection *conn);
 int CFDB_QueryPromiseCount(mongo_connection *conn);
 struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
 struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
-struct Item *CFDB_QueryCfstdAcls(mongo_connection *conn);
+struct Item *CFDB_QuerySppAcls(mongo_connection *conn);
+struct Item *CFDB_QuerySppCompliance(mongo_connection *conn, char *handle);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
@@ -933,7 +934,7 @@ int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_r
 int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize);
 
 
-int Nova2PHP_cfstd_report_acl(char *hostkey, char *buf, int bufSz);
+int Nova2PHP_spp_report_acl(char *hostkey, char *buf, int bufSz);
 
 
 /* weekly.c */
@@ -1209,6 +1210,7 @@ struct cf_pscalar
 #define cfr_obs_sigma     "d"
 #define cfr_setuid        "su"
 #define cfr_promisecompl  "pc"
+#define cfr_promisecompl_keys "pck"
 #define cfr_promisestatus "s"
 #define cfr_filechanges   "fc"
 #define cfr_filediffs     "fd"
@@ -1237,8 +1239,8 @@ struct cf_pscalar
 #define cfp_constraints   "n"
 #define cfp_constraints_exp "nx"
 
-/* Cfstd bundle names (from cfstd_* policies) */
-#define cfp_cfstd_bundle_acls "cfstd_acls"
+/* Special Purpose Policy bundle names (from spp_* policies) */
+#define cfp_spp_bundle_acls "spp_acls"
 
 
 /* Promise body DB */

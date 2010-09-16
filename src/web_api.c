@@ -3228,7 +3228,7 @@ char *Nova_LongState(char s)
         return "Repaired";
     case 'n':
     default:
-        return "Not compliance";
+        return "Not Compliant";
     }
 }
 
@@ -4191,48 +4191,78 @@ return true;
 
 
 /*****************************************************************************/
+/*                       Special Purpose Policies                            */
 /*****************************************************************************/
 
-int Nova2PHP_cfstd_report_acl(char *hostkey, char *buf, int bufSz)
+int Nova2PHP_spp_report_acl(char *hostkey, char *buf, int bufSz)
 {
-  struct Item *aclPromises = {0}, *li = {0};
+  struct Item *aclPromises = {0}, *hosts = {0};
+  struct Item *ip = {0}, *ip2 = {0};
   mongo_connection dbconn;
+  char handle[CF_MAXVARSIZE] = {0};
+  char path[CF_MAXVARSIZE] = {0};
+  char aces[CF_MAXVARSIZE] = {0};
+  char owner[CF_MAXVARSIZE] = {0};
+  char ifvarclass[CF_MAXVARSIZE] = {0};
+  char host[CF_MAXVARSIZE] = {0};
+  char statusStr[CF_SMALLBUF];
+  char time[CF_MAXVARSIZE] = {0};
+  char row[CF_MAXVARSIZE] = {0};
+  int ret = false;
+
 
   memset(buf,0,bufSz);
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-   return;
+   return false;
    }
 
-
-  aclPromises = CFDB_QueryCfstdAcls(&dbconn);
+ aclPromises = CFDB_QuerySppAcls(&dbconn);
   
+ if(aclPromises)
+   {
+     snprintf(buf,bufSz,"<table>\n");
+     Join(buf,"<tr><th>Host</th><th>Path</th><th>Permission (ACL)</th><th>Owner</th><th>State</th><th>Time Checked</th><th>Class Expression</th><th>Handle</th></tr>",bufSz);
+     
+     for(ip = aclPromises; ip != NULL; ip = ip->next)
+       {
+	 sscanf(ip->name,"%128[^;];%128[^;];%128[^;];%128[^;];%128[^$]",handle,path,aces,owner,ifvarclass);
 
-if (!CFDB_Close(&dbconn))
+	 hosts = CFDB_QuerySppCompliance(&dbconn,handle);
+
+	 if(hosts)
+	   {
+	   
+	   for(ip2 = hosts; ip2 != NULL; ip2 = ip2->next)
+	     {
+	     sscanf(ip2->name,"%128[^;];%8[^;];%128[^$]",host,statusStr,time);
+
+	     snprintf(row,sizeof(row),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+		      host,path,aces,owner,Nova_LongState(*statusStr),time,ifvarclass,handle);
+		   
+	     Join(buf,row,bufSz);
+	     }
+	     
+	   DeleteItemList(hosts);
+	   }
+       }
+
+     Join(buf,"</table>\n",bufSz);
+     
+     DeleteItemList(aclPromises);
+
+     ret = true;
+   }
+
+ if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
- if(aclPromises)
-   {
 
-     for(li = aclPromises; li != NULL; li = li->next)
-       {
-	 Join(buf,li->name,bufSz);
-	 Join(buf,"\n",bufSz);
-       }
-     
-     DeleteItemList(aclPromises);
-   }
- else
-   {
-     return false;
-   }
- 
-
-  return true;
+  return ret;
 }
 
 #endif
