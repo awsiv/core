@@ -3505,10 +3505,10 @@ return record_list;
 /*                    Special Purpose Policy QUERIES                         */
 /*****************************************************************************/
 
-struct Item *CFDB_QuerySppAcls(mongo_connection *conn)
+struct Item *CFDB_QuerySppAcls(mongo_connection *conn, char *sep)
 /*
  * Returns all SPP ACLs from expanded policy as
- * "handle;path;aces;owner;ifvarclass"
+ * "handle sep path sep aces sep owner sep action sep ifvarclass".
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
 { bson_buffer bbuf;
@@ -3516,9 +3516,10 @@ struct Item *CFDB_QuerySppAcls(mongo_connection *conn)
   bson query,field;
   mongo_cursor *cursor;
   struct Item *retList = {0};
-  char handle[CF_SMALLBUF] = {0};
   char path[CF_SMALLBUF] = {0};
   char aces[CF_SMALLBUF] = {0};
+  char action[CF_SMALLBUF] = {0};
+  char handle[CF_SMALLBUF] = {0};
   char owner[CF_SMALLBUF] = {0};
   char ifvarclass[CF_SMALLBUF] = {0};
   char buf[CF_MAXVARSIZE] = {0};
@@ -3548,7 +3549,8 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    // make sure everything gets defined
    snprintf(handle,sizeof(handle),"(unknown)");
    snprintf(path,sizeof(path),"(unknown)");
-   snprintf(aces,sizeof(aces),"(unknown)");   
+   snprintf(aces,sizeof(aces),"(unknown)");
+   snprintf(action,sizeof(action),"(unknown)");
    snprintf(owner,sizeof(owner),"(unknown)");
    snprintf(ifvarclass,sizeof(ifvarclass),"(unknown)");
 
@@ -3577,6 +3579,10 @@ while(mongo_cursor_next(cursor))  // iterate over docs
 	     {
 	     GetStringListElement((char *)bson_iterator_string(&it2)+10,0,owner,sizeof(owner));
 	     }
+           else if(strncmp(bson_iterator_string(&it2), "action_policy =>", 16) == 0)
+	     {
+	     snprintf(action,sizeof(action),"%s",bson_iterator_string(&it2) + 17);
+	     }
            else if(strncmp(bson_iterator_string(&it2), "ifvarclass =>", 13) == 0)
 	     {
 	     snprintf(ifvarclass,sizeof(ifvarclass),"%s",bson_iterator_string(&it2) + 14);
@@ -3586,7 +3592,100 @@ while(mongo_cursor_next(cursor))  // iterate over docs
          }
       }
    
-   snprintf(buf,sizeof(buf),"%s;%s;%s;%s;%s",handle,path,aces,owner,ifvarclass);
+   snprintf(buf,sizeof(buf),"%s%s%s%s%s%s%s%s%s%s%s",
+	    handle,sep,path,sep,aces,sep,owner,sep,action,sep,ifvarclass);
+   AppendItem(&retList,buf,NULL);
+   }
+
+mongo_cursor_destroy(cursor);
+return retList;
+}
+
+/*****************************************************************************/
+
+struct Item *CFDB_QuerySppServices(mongo_connection *conn, char *sep)
+/*
+ * Returns all SPP Servicess from expanded policy as
+ * "handle sep servicename sep servicepolicy sep action sep ifvarclass"
+ * MEMORY NOTE: Caller must free returned value with DeleteItemList()
+ */
+{ bson_buffer bbuf;
+  bson_iterator it1,it2;
+  bson query,field;
+  mongo_cursor *cursor;
+  struct Item *retList = {0};
+  char handle[CF_SMALLBUF] = {0};
+  char serviceName[CF_SMALLBUF] = {0};
+  char servicePolicy[CF_SMALLBUF] = {0};
+  char action[CF_SMALLBUF] = {0};
+  char ifvarclass[CF_SMALLBUF] = {0};
+  char buf[CF_MAXVARSIZE] = {0};
+
+  // query
+ bson_buffer_init(&bbuf);
+ bson_append_string(&bbuf,cfp_bundlename,cfp_spp_bundle_services);
+ bson_append_string(&bbuf,cfp_promisetype,"services");
+ bson_from_buffer(&query,&bbuf);
+
+ // returned attribute
+ bson_buffer_init(&bbuf);
+ bson_append_int(&bbuf,cfp_promiser_exp,1);
+ bson_append_int(&bbuf,cfp_handle_exp,1);
+ bson_append_int(&bbuf,cfp_constraints_exp,1);
+ bson_from_buffer(&field,&bbuf);
+
+cursor = mongo_find(conn,MONGO_PROMISES_EXP,&query,&field,0,0,0);
+
+bson_destroy(&query);
+bson_destroy(&field);
+
+while(mongo_cursor_next(cursor))  // iterate over docs
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   // make sure everything gets defined
+   snprintf(handle,sizeof(handle),"(unknown)");
+   snprintf(serviceName,sizeof(serviceName),"(unknown)");
+   snprintf(servicePolicy,sizeof(servicePolicy),"(unknown)");
+   snprintf(action,sizeof(action),"(unknown)");
+   snprintf(ifvarclass,sizeof(ifvarclass),"(unknown)");
+
+   
+   while(bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1), cfp_promiser_exp) == 0)
+         {
+         snprintf(serviceName,sizeof(serviceName),"%s",bson_iterator_string(&it1));
+         }
+      else if (strcmp(bson_iterator_key(&it1), cfp_handle_exp) == 0)
+         {
+         snprintf(handle,sizeof(handle),"%s",bson_iterator_string(&it1));
+         }
+      else if (strcmp(bson_iterator_key(&it1), cfp_constraints_exp) == 0)
+         {
+	 bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+	 while(bson_iterator_next(&it2))
+	   {
+           if(strncmp(bson_iterator_string(&it2), "service_policy =>", 17) == 0)
+	     {
+	     snprintf(servicePolicy,sizeof(servicePolicy),"%s",bson_iterator_string(&it2) + 18);
+	     }
+           else if(strncmp(bson_iterator_string(&it2), "action_policy =>", 16) == 0)
+	     {
+	     snprintf(action,sizeof(action),"%s",bson_iterator_string(&it2) + 17);
+	     }
+           else if(strncmp(bson_iterator_string(&it2), "ifvarclass =>", 13) == 0)
+	     {
+	     snprintf(ifvarclass,sizeof(ifvarclass),"%s",bson_iterator_string(&it2) + 14);
+	     }
+
+	   }
+         }
+      }
+   
+   snprintf(buf,sizeof(buf),"%s%s%s%s%s%s%s%s%s",
+	    handle,sep,serviceName,sep,servicePolicy,sep,action,sep,ifvarclass);
    AppendItem(&retList,buf,NULL);
    }
 
@@ -3599,7 +3698,7 @@ return retList;
 struct Item *CFDB_QuerySppCompliance(mongo_connection *conn, char *handle)
 /*
  * Returns all SPP Compliance host entries as
- * "host;status;timestr"
+ * "hostkeyhash;host;status;timestr"
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
 { bson_buffer bbuf;
@@ -3609,6 +3708,7 @@ struct Item *CFDB_QuerySppCompliance(mongo_connection *conn, char *handle)
   struct Item *retList = {0};
   time_t t;
   char host[CF_SMALLBUF] = {0};
+  char hostKeyHash[CF_SMALLBUF] = {0};
   char status = {0};
   char time[CF_SMALLBUF] = {0};
   char buf[CF_MAXVARSIZE] = {0};
@@ -3621,6 +3721,7 @@ struct Item *CFDB_QuerySppCompliance(mongo_connection *conn, char *handle)
  // returned attribute
  bson_buffer_init(&bbuf);
  bson_append_int(&bbuf,cfr_promisecompl,1);
+ bson_append_int(&bbuf,cfr_keyhash,1);
  bson_append_int(&bbuf,cfr_ip_array,1);  // use host_array instead ?
  bson_from_buffer(&field,&bbuf);
 
@@ -3634,7 +3735,8 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    bson_iterator_init(&it1,cursor->current.data);
 
    // make sure everything gets defined
-   snprintf(host,sizeof(handle),"(unknown)");
+   snprintf(host,sizeof(host),"(unknown)");
+   snprintf(hostKeyHash,sizeof(hostKeyHash),"(unknown)");
    snprintf(time,sizeof(time),"(unknown)");
    status = '?';
    t = 0;
@@ -3675,9 +3777,13 @@ while(mongo_cursor_next(cursor))  // iterate over docs
 	     snprintf(host,sizeof(host),"%s",bson_iterator_string(&it2));
 	   }
          }
+      else if (strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)
+         {
+	 snprintf(hostKeyHash,sizeof(hostKeyHash),"%s",bson_iterator_string(&it1));
+         }
       }
    
-   snprintf(buf,sizeof(buf),"%s;%c;%s",host,status,time);
+   snprintf(buf,sizeof(buf),"%s;%s;%c;%s",hostKeyHash,host,status,time);
    AppendItem(&retList,buf,NULL);
    }
 

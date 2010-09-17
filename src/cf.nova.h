@@ -346,7 +346,8 @@ int CFDB_QueryBundleCount(mongo_connection *conn);
 int CFDB_QueryPromiseCount(mongo_connection *conn);
 struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
 struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
-struct Item *CFDB_QuerySppAcls(mongo_connection *conn);
+struct Item *CFDB_QuerySppAcls(mongo_connection *conn, char *sep);
+struct Item *CFDB_QuerySppServices(mongo_connection *conn, char *sep);
 struct Item *CFDB_QuerySppCompliance(mongo_connection *conn, char *handle);
 
 void CFDB_ListEverything(mongo_connection *conn);
@@ -935,7 +936,7 @@ int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,cha
 
 
 int Nova2PHP_spp_report_acl(char *hostkey, char *buf, int bufSz);
-
+char *GetSppTableHeader(spp_t sppType);
 
 /* weekly.c */
 
@@ -1241,6 +1242,7 @@ struct cf_pscalar
 
 /* Special Purpose Policy bundle names (from spp_* policies) */
 #define cfp_spp_bundle_acls "spp_acls"
+#define cfp_spp_bundle_services "spp_services"
 
 
 /* Promise body DB */
@@ -1443,3 +1445,5 @@ struct HubBodyAttr
   char *rval;
   struct HubBodyAttr *next;
   };
+
+

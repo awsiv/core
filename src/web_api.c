@@ -4196,22 +4196,25 @@ return true;
 
 int Nova2PHP_spp_report_acl(char *hostkey, char *buf, int bufSz)
 {
-  struct Item *aclPromises = {0}, *hosts = {0};
+  struct Item *promises = {0}, *hosts = {0};
   struct Item *ip = {0}, *ip2 = {0};
   mongo_connection dbconn;
   char handle[CF_MAXVARSIZE] = {0};
-  char path[CF_MAXVARSIZE] = {0};
-  char aces[CF_MAXVARSIZE] = {0};
-  char owner[CF_MAXVARSIZE] = {0};
-  char ifvarclass[CF_MAXVARSIZE] = {0};
+  char action[CF_MAXVARSIZE] = {0};
   char host[CF_MAXVARSIZE] = {0};
+  char hostKeyHash[CF_MAXVARSIZE] = {0};
+  char cause[CF_MAXVARSIZE] = {0};
   char statusStr[CF_SMALLBUF];
   char time[CF_MAXVARSIZE] = {0};
+  char attributes[CF_MAXVARSIZE] = {0};
   char row[CF_MAXVARSIZE] = {0};
   int ret = false;
 
+  
+  spp_t sppType = spp_services;
 
   memset(buf,0,bufSz);
+
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -4219,16 +4222,30 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- aclPromises = CFDB_QuerySppAcls(&dbconn);
-  
- if(aclPromises)
+ switch(sppType)
+   {
+   case spp_acls:
+     promises = CFDB_QuerySppAcls(&dbconn,"</td><td>");
+     break;
+
+   case spp_services:
+     promises = CFDB_QuerySppServices(&dbconn,"</td><td>");
+     break;
+
+   default:
+     snprintf(buf,bufSz,"Unknown Special Purpose Policy Type");
+     CFDB_Close(&dbconn);
+     return false;
+   }
+   
+ if(promises)
    {
      snprintf(buf,bufSz,"<table>\n");
-     Join(buf,"<tr><th>Host</th><th>Path</th><th>Permission (ACL)</th><th>Owner</th><th>State</th><th>Time Checked</th><th>Class Expression</th><th>Handle</th></tr>",bufSz);
+     Join(buf,GetSppTableHeader(sppType),bufSz);
      
-     for(ip = aclPromises; ip != NULL; ip = ip->next)
+     for(ip = promises; ip != NULL; ip = ip->next)
        {
-	 sscanf(ip->name,"%128[^;];%128[^;];%128[^;];%128[^;];%128[^$]",handle,path,aces,owner,ifvarclass);
+	 sscanf(ip->name,"%128[^<]</td><td>%512[^$]",handle,attributes);
 
 	 hosts = CFDB_QuerySppCompliance(&dbconn,handle);
 
@@ -4237,10 +4254,12 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 	   
 	   for(ip2 = hosts; ip2 != NULL; ip2 = ip2->next)
 	     {
-	     sscanf(ip2->name,"%128[^;];%8[^;];%128[^$]",host,statusStr,time);
+	     sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%128[^$]",hostKeyHash,host,statusStr,time);
 
-	     snprintf(row,sizeof(row),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
-		      host,path,aces,owner,Nova_LongState(*statusStr),time,ifvarclass,handle);
+	     //CFDB_QueryStausCause(&dbconn,hostKeyHash,handle,*statusStr,cause,sizeof(cause));
+
+	     snprintf(row,sizeof(row),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+		      host,attributes,Nova_LongState(*statusStr),time,handle);
 		   
 	     Join(buf,row,bufSz);
 	     }
@@ -4251,7 +4270,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
      Join(buf,"</table>\n",bufSz);
      
-     DeleteItemList(aclPromises);
+     DeleteItemList(promises);
 
      ret = true;
    }
@@ -4263,6 +4282,22 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 
   return ret;
+}
+
+/*****************************************************************************/
+
+char *GetSppTableHeader(spp_t sppType)
+{
+  switch(sppType)
+    {
+    case spp_acls:
+      return "<tr><th>Host</th><th>Path</th><th>Permission (ACL)</th><th>Owner</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th><th>Handle</th></tr>";
+    case spp_services:
+      return "<tr><th>Host</th><th>Service name</th><th>Runstatus</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th><th>Handle</th></tr>";
+    }
+
+
+  return "<tr>Undefined Special Policy Header</tr>";
 }
 
 #endif
