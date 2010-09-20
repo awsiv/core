@@ -933,7 +933,8 @@ int Nova2PHP_software_report_pdf(char *hostkey,char *name,char *value, char *arc
 int Nova2PHP_performance_report_pdf(char *hostkey,char *job,int regex,char *returnval,int bufsize);
 int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize);
 int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize);
-
+int Nova2PHP_filediffs_report_pdf(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *returnval,int bufsize);
+char *Nova_FormatDiff_pdf(char *s);
 
 int Nova2PHP_spp_report_acl(char *hostkey, char *buf, int bufSz);
 char *GetSppTableHeader(spp_t sppType);

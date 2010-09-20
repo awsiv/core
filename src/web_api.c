@@ -100,13 +100,13 @@ if (false)
    Nova2PHP_software_report_pdf(0,0,0,0,0,cfr_software,buffer,20);
    Nova2PHP_performance_report_pdf(NULL,NULL,0,buffer,10000);
    Nova2PHP_vars_report_pdf(NULL,NULL,NULL,NULL,NULL,0,buffer,1000);
-      
+   Nova2PHP_filediffs_report_pdf(NULL,NULL,NULL,false,-1,">",buffer,10000);   
    }
 }
 
 /*****************************************************************************/
 /* Helper functions                                                          */
-/*****************************************************************************/
+/****************************************************************************/
 
 void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize)
 
@@ -4029,7 +4029,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    if (strcmp(lscope,hv->scope) != 0)
       {
       strcpy(lscope,hv->scope);
-      snprintf(buffer,CF_BUFSIZE,"Bundle scope %s<nova_nl>",hv->scope);
+      snprintf(buffer,CF_BUFSIZE,"<nh>Bundle scope %s<nova_nl>",hv->scope);
       Join(returnval,buffer,bufsize);
       snprintf(buffer,CF_BUFSIZE,"<nh>host<nc>type<nc>name<nc>value<nova_nl>");
       Join(returnval,buffer,bufsize);
@@ -4189,8 +4189,109 @@ if (!CFDB_Close(&dbconn))
 return true;
 }
 
+/*****************************************************************************/
+
+int Nova2PHP_filediffs_report_pdf(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE];   
+  struct HubFileDiff *hd;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+
+/* BEGIN query document */
+switch (*cmp)
+   {
+   case '<': icmp = CFDB_LESSTHANEQ;
+       break;
+   default: icmp = CFDB_GREATERTHANEQ;
+       break;
+   }
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   hq = CFDB_QueryFileDiff(&dbconn,&query,file,diffs,regex,t,icmp);
+   bson_destroy(&query);
+   }
+else
+   {
+   hq = CFDB_QueryFileDiff(&dbconn,bson_empty(&b),file,diffs,regex,t,icmp);
+   }
+
+returnval[0] = '\0';
+
+//strcat(returnval,"<table>\n");
+
+snprintf(buffer,sizeof(buffer),"<nh>host<nc>file<nc>change detected at<nc>change<nova_nl>");
+Join(returnval,buffer,bufsize);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hd = (struct HubFileDiff *)rp->item;
+
+   snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%s<nova_nl>",hd->hh->hostname,hd->path,cf_ctime(&(hd->t)),Nova_FormatDiff_pdf(hd->diff));
+   Join(returnval,buffer,bufsize);
+   }
+
+//strcat(returnval,"</table>\n");
+
+DeleteHubQuery(hq,DeleteHubFileDiff);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
 
 /*****************************************************************************/
+char *Nova_FormatDiff_pdf(char *s)
+
+{ char *sp,work[CF_BUFSIZE],diff[CF_BUFSIZE],tline[CF_BUFSIZE];
+  static char returnval[CF_BUFSIZE];
+  char pm;
+  int line = 0;
+
+snprintf(returnval,sizeof(returnval),"");
+
+for (sp = s; *sp != '\0'; sp += strlen(tline)+1)
+   {
+   sscanf(sp,"%c,%d,%2047[^\n]",&pm,&line,diff);
+   sscanf(sp,"%2047[^\n]",tline);
+   
+   switch (pm)
+      {
+      case '+':
+          snprintf(work,sizeof(work),"%c  %d  %s\n",pm,line,diff);
+          break;
+      case '-':
+          snprintf(work,sizeof(work),"%c  %d  %s\n",pm,line,diff);
+          break;
+      default:
+          snprintf(work,sizeof(work),"%c  %d  %s\n",pm,line,diff);
+          break;
+      }
+   
+   Join(returnval,work,sizeof(returnval));
+   }
+
+//strcat(returnval,"</table>");
+return returnval;
+}
+
 /*                       Special Purpose Policies                            */
 /*****************************************************************************/
 
