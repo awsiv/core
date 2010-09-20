@@ -480,10 +480,14 @@ int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int o
     return false;
     }
 
- if(setCfPs && a.transaction.action == cfa_warn)
+ if(a.transaction.action == cfa_warn)
     {
-    cfPS(cf_error,CF_WARN,"",pp,a," !! The service needs to be stopped");
-    return true;
+    if(setCfPs)
+      {
+      cfPS(cf_error,CF_WARN,"",pp,a," !! The service needs to be stopped, but policy is to warn only");
+      }
+
+    return false;
     }
  
  // we must stop any dependent services before stopping the service itself
@@ -530,7 +534,7 @@ int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, in
  int disableRes;
  
  // first make sure the service is stopped, then disable it
- if(!NovaWin_CheckServiceStop(managerHandle, srvHandle, onlyCheckDeps, isDependency, false, a, pp, false))
+ if(!NovaWin_CheckServiceStop(managerHandle, srvHandle, onlyCheckDeps, isDependency, false, a, pp, setCfPs))
     {
     CfOut(cf_error,"","!! Could not disable service because of failure when stopping it");
     return false;

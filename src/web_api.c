@@ -4431,8 +4431,6 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
        {
 	 sscanf(ip->name,"%128[^<]</td><td>%512[^$]",handle,attributes);
 
-	 printf("----GOT promise:\"%s\"",ip->name);
-
 	 hosts = CFDB_QuerySppCompliance(&dbconn,handle);
 
 	 if(hosts)
@@ -4441,8 +4439,6 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 	   for(ip2 = hosts; ip2 != NULL; ip2 = ip2->next)
 	     {
 	       
-	 printf("----GOT host:\"%s\"",ip2->name);
-
 	     sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%128[^$]",hostKeyHash,host,statusStr,time);
 
 	     //CFDB_QueryStausCause(&dbconn,hostKeyHash,handle,*statusStr,cause,sizeof(cause));
