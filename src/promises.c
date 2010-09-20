@@ -148,7 +148,7 @@ void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status sta
   struct Event e,newe;
   time_t now = time(NULL);
   double lastseen,delta2;
-  double vtrue = 1.0;      /* end with a rough probability */
+  double vstatus;      /* end with a rough probability */
 
 Debug("Note Promise Compliance\n");
 
@@ -164,6 +164,23 @@ cf_strncpy(previous,Nova_PromiseID(pp),CF_MAXVARSIZE);
 snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_COMPLIANCE);
 MapName(name);
 
+switch (status)
+   {
+   case cfn_kept:
+       vstatus = 1.0;
+       break;
+
+   case cfn_repaired:
+       vstatus = 0.5;
+       break;
+
+   case cfn_notkept:
+       vstatus = 0;
+       break;
+   default:
+       return;
+   }
+
 if (!OpenDB(name,&dbp))
    {
    return;
@@ -175,17 +192,17 @@ if (ReadDB(dbp,id,&e,sizeof(e)))
    {
    lastseen = now - e.t;
    newe.t = now;
-   newe.Q.q = vtrue;
-   newe.Q.expect = GAverage(vtrue,e.Q.expect,0.5);
-   delta2 = (vtrue - e.Q.expect)*(vtrue - e.Q.expect);
+   newe.Q.q = vstatus;
+   newe.Q.expect = GAverage(vstatus,e.Q.expect,0.5);
+   delta2 = (vstatus - e.Q.expect)*(vstatus - e.Q.expect);
    newe.Q.var = GAverage(delta2,e.Q.var,0.5);
    }
 else
    {
    lastseen = 0;
    newe.t = now;
-   newe.Q.q = 0.5*vtrue;
-   newe.Q.expect = 0.5*vtrue;  /* With no data it's 50/50 what we can say */
+   newe.Q.q = vstatus;
+   newe.Q.expect = 0.5*vstatus;  /* With no data it's 50/50 what we can say */
    newe.Q.var = 0.000;
    }
 
