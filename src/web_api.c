@@ -42,6 +42,17 @@ char *BASIC_REPORTS[] =
    NULL
    };
 
+char *SPP_REPORTS[] =
+   {
+   "ACLs",
+   "Commands",
+   "File Changes",
+   "File Diffs",
+   "Registry",
+   "Services",
+   NULL };
+
+
 /*****************************************************************************/
 
 void Nova_EnterpriseModuleTrick()
@@ -4258,6 +4269,7 @@ return true;
 }
 
 /*****************************************************************************/
+
 char *Nova_FormatDiff_pdf(char *s)
 
 { char *sp,work[CF_BUFSIZE],diff[CF_BUFSIZE],tline[CF_BUFSIZE];
@@ -4292,10 +4304,65 @@ for (sp = s; *sp != '\0'; sp += strlen(tline)+1)
 return returnval;
 }
 
+/*****************************************************************************/
 /*                       Special Purpose Policies                            */
 /*****************************************************************************/
 
-int Nova2PHP_spp_report_acl(char *hostkey, char *buf, int bufSz)
+void Nova2PHP_spp_reportnames(char *buf,int bufSz)
+
+{ int i;
+  char work[CF_SMALLBUF];
+
+buf[0] = '\0';
+Join(buf,"<select name=\"spp_report\">\n",bufSz);
+
+for (i = 0; SPP_REPORTS[i] != NULL; i++)
+   {
+   snprintf(work,sizeof(work),"<option value=\"%s\">%s</option>\n",SPP_REPORTS[i],SPP_REPORTS[i]);
+   Join(buf,work,bufSz);
+   }
+
+Join(buf,"\n</select>\n",bufSz);
+}
+
+/*****************************************************************************/
+
+spp_t SppReportNameToType(char *reportName)
+{
+  
+  if(strcmp(reportName,"ACLs") == 0)
+    {
+    return spp_acls;
+    }
+  else if(strcmp(reportName,"Commands") == 0)
+    {
+    return spp_commands;
+    }
+  else if(strcmp(reportName,"File Changes") == 0)
+    {
+    return spp_filechanges;
+    }
+  else if(strcmp(reportName,"File Diffs") == 0)
+    {
+    return spp_filediffs;
+    }
+  else if(strcmp(reportName,"Registry") == 0)
+    {
+    return spp_registry;
+    }
+  else if(strcmp(reportName,"Services") == 0)
+    {
+    return spp_services;
+    }
+  else
+    {
+    return spp_unknown;
+    }
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_spp_report(char *hostkey, char *reportName, char *buf, int bufSz)
 {
   struct Item *promises = {0}, *hosts = {0};
   struct Item *ip = {0}, *ip2 = {0};
@@ -4310,9 +4377,7 @@ int Nova2PHP_spp_report_acl(char *hostkey, char *buf, int bufSz)
   char attributes[CF_MAXVARSIZE] = {0};
   char row[CF_MAXVARSIZE] = {0};
   int ret = false;
-
-  
-  spp_t sppType = spp_services;
+  spp_t sppType;
 
   memset(buf,0,bufSz);
 
@@ -4323,14 +4388,32 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
+ sppType = SppReportNameToType(reportName);
+
  switch(sppType)
    {
    case spp_acls:
      promises = CFDB_QuerySppAcls(&dbconn,"</td><td>");
      break;
 
+   case spp_commands:
+     promises = CFDB_QuerySppCommands(&dbconn,"</td><td>");
+     break;
+
    case spp_services:
      promises = CFDB_QuerySppServices(&dbconn,"</td><td>");
+     break;
+
+   case spp_filechanges:
+     promises = CFDB_QuerySppPromiser(&dbconn,"</td><td>",cfp_spp_bundle_filechanges,"files");
+     break;
+
+   case spp_filediffs:
+     promises = CFDB_QuerySppPromiser(&dbconn,"</td><td>",cfp_spp_bundle_filediffs,"files");
+     break;
+
+   case spp_registry:
+     promises = CFDB_QuerySppRegistry(&dbconn,"</td><td>");
      break;
 
    default:
@@ -4341,12 +4424,14 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    
  if(promises)
    {
-     snprintf(buf,bufSz,"<table>\n");
+     snprintf(buf,bufSz,"\n<table>\n");
      Join(buf,GetSppTableHeader(sppType),bufSz);
      
      for(ip = promises; ip != NULL; ip = ip->next)
        {
 	 sscanf(ip->name,"%128[^<]</td><td>%512[^$]",handle,attributes);
+
+	 printf("----GOT promise:\"%s\"",ip->name);
 
 	 hosts = CFDB_QuerySppCompliance(&dbconn,handle);
 
@@ -4355,6 +4440,9 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 	   
 	   for(ip2 = hosts; ip2 != NULL; ip2 = ip2->next)
 	     {
+	       
+	 printf("----GOT host:\"%s\"",ip2->name);
+
 	     sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%128[^$]",hostKeyHash,host,statusStr,time);
 
 	     //CFDB_QueryStausCause(&dbconn,hostKeyHash,handle,*statusStr,cause,sizeof(cause));
@@ -4369,7 +4457,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 	   }
        }
 
-     Join(buf,"</table>\n",bufSz);
+     Join(buf,"\n</table>\n",bufSz);
      
      DeleteItemList(promises);
 
@@ -4393,6 +4481,13 @@ char *GetSppTableHeader(spp_t sppType)
     {
     case spp_acls:
       return "<tr><th>Host</th><th>Path</th><th>Permission (ACL)</th><th>Owner</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th><th>Handle</th></tr>";
+    case spp_commands:
+      return "<tr><th>Host</th><th>Command</th><th>Failclass</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th><th>Handle</th></tr>";
+    case spp_filechanges:
+    case spp_filediffs:
+      return "<tr><th>Host</th><th>Path</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th><th>Handle</th></tr>";
+    case spp_registry:
+      return "<tr><th>Host</th><th>Key</th><th>Value</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th><th>Handle</th></tr>";
     case spp_services:
       return "<tr><th>Host</th><th>Service name</th><th>Runstatus</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th><th>Handle</th></tr>";
     }

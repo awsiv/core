@@ -347,6 +347,9 @@ int CFDB_QueryPromiseCount(mongo_connection *conn);
 struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
 struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
 struct Item *CFDB_QuerySppAcls(mongo_connection *conn, char *sep);
+struct Item *CFDB_QuerySppCommands(mongo_connection *conn, char *sep);
+struct Item *CFDB_QuerySppPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType);
+struct Item *CFDB_QuerySppRegistry(mongo_connection *conn, char *sep);
 struct Item *CFDB_QuerySppServices(mongo_connection *conn, char *sep);
 struct Item *CFDB_QuerySppCompliance(mongo_connection *conn, char *handle);
 
@@ -936,8 +939,10 @@ int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,cha
 int Nova2PHP_filediffs_report_pdf(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *returnval,int bufsize);
 char *Nova_FormatDiff_pdf(char *s);
 
-int Nova2PHP_spp_report_acl(char *hostkey, char *buf, int bufSz);
+void Nova2PHP_spp_reportnames(char *buf,int bufSz);
+int Nova2PHP_spp_report(char *hostkey, char *reportName, char *buf, int bufSz);
 char *GetSppTableHeader(spp_t sppType);
+spp_t SppReportNameToType(char *reportName);
 
 /* weekly.c */
 
@@ -1243,6 +1248,10 @@ struct cf_pscalar
 
 /* Special Purpose Policy bundle names (from spp_* policies) */
 #define cfp_spp_bundle_acls "spp_acls"
+#define cfp_spp_bundle_commands "spp_commands"
+#define cfp_spp_bundle_filechanges "spp_file_changes"
+#define cfp_spp_bundle_filediffs "spp_file_diffs"
+#define cfp_spp_bundle_registry "spp_registry"
 #define cfp_spp_bundle_services "spp_services"
 
 
