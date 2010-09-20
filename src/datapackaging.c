@@ -1051,17 +1051,17 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
       }
    else
       {
-      if (measure == 1.0)
+      if (measure > 0.9)  // avoid rounding errors
          {
          // Compliant
          snprintf(name,CF_BUFSIZE-1,"%ld,%s,c,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
          }
-      else if (measure == 0.5)
+      else if (measure > 0.4 && measure < 0.6)
          {
          // Repaired
          snprintf(name,CF_BUFSIZE-1,"%ld,%s,r,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
          }
-      else if (measure == 0.0)
+      else if (measure < 0.1)
          {
          // Non-compliant
          snprintf(name,CF_BUFSIZE-1,"%ld,%,n,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
