@@ -63,11 +63,27 @@ $g = cfpr_count_green_hosts();
 echo "$allreps";?>
 <p>
 <input type="submit" value="step 1 of 2">
-</ul>
 </form>
+</ul>
+
+</td>
+
+<td>
+
+<h2>Special purpose policies</h2>
+
+<ul><li>
+ <form method="post" action="spp.php">
+<p><?php $allSppReps = cfpr_spp_reportnames();
+echo "$allSppReps";?>
+<p>
+<input type="submit" value="Generate">
+</form>
+</ul>
+</td>
 
 
-</td></tr>
+</tr>
 </table>
 </div>
 </td>
