@@ -1064,7 +1064,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
       else if (measure < 0.1)
          {
          // Non-compliant
-         snprintf(name,CF_BUFSIZE-1,"%ld,%,n,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
+         snprintf(name,CF_BUFSIZE-1,"%ld,%s,n,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
          }
 
       if (first && strlen(name) > 0)
