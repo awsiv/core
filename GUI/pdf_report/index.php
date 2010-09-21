@@ -65,7 +65,7 @@ class PDF extends FPDF
     function Header()
     {
 	$this->SetFont('Arial','',8);
-        $this->Text(30,10,$timestamp);
+        #$this->Text(30,10,$timestamp);
 	$logo_path = './logo_outside_new.jpg';
 	$this->Image($logo_path,10,8,33);
 	$this->Ln(20);
@@ -246,6 +246,7 @@ class PDF extends FPDF
         $font_size = 6;
 	$this->SetFont('Arial', '', $font_size);
 	$this->SetDrawColor(125,125,125);
+	$align=1;
 	
 	for($i=0; $i<count($ar1); $i++) 
 	{ 
@@ -427,8 +428,7 @@ function rpt_bundle_profile($hostkey,$search,&$pdf)
     $data1 = $pdf->ParseData($ret);
     
     $pdf->ReportTitle();
-    $description = 'This report shows the status of Bundles';
-    $pdf->ReportDescription($description);
+    $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
         
@@ -450,7 +450,6 @@ function rpt_business_value($hostkey,$days,$months,$years,&$pdf)
     $data1 = $pdf->ParseData($ret);
     
     $pdf->ReportTitle();
-    $description = 'This report shows the Business Value Report.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -475,7 +474,6 @@ function rpt_class_profile($hostkey,$search,&$pdf)
     #$cols = (count($data1,1)/count($data1,0))-1;
     
     $pdf->ReportTitle();
-    $description = 'This report shows the Classes Profile.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -496,7 +494,6 @@ function rpt_promise_notkept($hostkey,$search,&$pdf)
     $data1 = $pdf->ParseData($ret);
     
     $pdf->ReportTitle();
-    $description = 'This report shows the list of promises Cfengine was not able to keep.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -519,7 +516,6 @@ function rpt_compliance_promises($hostkey,$search,$state,&$pdf)
     $data1 = $pdf->ParseData($ret);
 
     $pdf->ReportTitle();
-    $description = 'This report shows the Compliance by promise.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -541,7 +537,6 @@ function rpt_compliance_summary($hostkey,&$pdf)
     $data1 = $pdf->ParseData($ret);
     
     $pdf->ReportTitle();
-    $description = 'This report shows the Compliance Summary.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -563,7 +558,6 @@ function rpt_filechange_log($hostkey,$search,&$pdf)
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
 
-    $description = 'This report shows the Files changed log.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -583,7 +577,6 @@ function rpt_lastsaw_hosts($hostkey,$key,$name,$address,$ago,&$pdf)
     $ret =  cfpr_report_lastseen_pdf($hostkey,$key,$name,$address,$ago,true);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
-    $description = 'This report shows the Last Seen data.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -603,7 +596,6 @@ function rpt_patches_available($hostkey,$search,$version,$arch,&$pdf)
     $ret =  cfpr_report_patch_avail_pdf($hostkey,$search,$version,$arch,true);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
-    $description = 'This report shows the List of patches available.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -623,7 +615,6 @@ function rpt_patch_status($hostkey,$search,$version,$arch,&$pdf)
     $ret = cfpr_report_patch_in_pdf($hostkey,$search,$version,$arch,true);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
-    $description = 'This report shows the Status of patches.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -644,7 +635,6 @@ function rpt_software_installed($hostkey,$search,$version,$arch,&$pdf)
     $ret = cfpr_report_software_in_pdf($hostkey,$search,$version,$arch,true);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
-    $description = 'This report shows the List of softwares installed.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -664,7 +654,6 @@ function rpt_performance($hostkey,$search,&$pdf)
 	$ret = cfpr_report_performance_pdf($hostkey,$search,true);
         $data1 = $pdf->ParseData($ret);
         $pdf->ReportTitle();
-        $description = 'This report shows the List of softwares installed.';
         $pdf->ReportDescription();
         $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
         $pdf->Ln(8);
@@ -683,7 +672,6 @@ function rpt_repaired_log($hostkey,$search,&$pdf)
     $ret = cfpr_report_repaired_pdf($hostkey,$search);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
-    $description = 'This report shows the List Promises repaired.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -703,7 +691,6 @@ function rpt_repaired_summary($hostkey,$search,&$pdf)
     $data1 = $pdf->ParseData($ret);
     
     $pdf->ReportTitle();
-    $description = 'This report shows the summary of promises repaired.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -723,7 +710,6 @@ function rpt_notkept_summary($hostkey,$search,&$pdf)
     $ret =  cfpr_summarize_notkept_pdf($hostkey,$search);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
-    $description = 'This report shows the summary of promises not kept.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -750,7 +736,6 @@ function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type,&$pdf)
     }
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
-    $description = 'This report shows the Variable status.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -771,7 +756,6 @@ function rpt_filediffs($hostkey,$search,$diff,$cal,&$pdf)
 
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
-    $description = 'This report shows the Variable status.';
     $pdf->ReportDescription();
     $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
@@ -779,6 +763,26 @@ function rpt_filediffs($hostkey,$search,$diff,$cal,&$pdf)
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTableSpecial($data1, $cols, $col_len, $header, 8);
     $pdf->Output("Nova_filediffs.pdf", "D");
+}
+
+function rpt_setuid($hostkey,$search,&$pdf)
+{
+    $cols=2;
+    $col_len = array(30,70);
+    #        $header=array('Host','Type','Name','Value');
+    $logo_path = 'logo_outside_new.jpg';
+    
+    $ret = cfpr_report_setuid_pdf($hostkey,$search,true);
+    
+    $data1 = $pdf->ParseData($ret);
+    $pdf->ReportTitle();
+    $pdf->ReportDescription();
+    $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTableSpecial($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_setuid_gid_report.pdf", "D");
 }
 
 # main control
