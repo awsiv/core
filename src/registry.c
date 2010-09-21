@@ -417,8 +417,8 @@ for (rp = a.database.rows; rp != NULL; rp=rp->next)
              }
           else
              {
-             cfPS(cf_error,CF_NOP,"",pp,a," !! Registry value incorrect, but only a warning was promised.");
-             cfPS(cf_inform,CF_NOP,"",pp,a," -> (%s,%s) incorrect for %s",name,value,pp->promiser);
+             cfPS(cf_error,CF_WARN,"",pp,a," !! Registry value incorrect, but only a warning was promised");
+             CfOut(cf_inform,""," -> (%s,%s) incorrect for %s",name,value,pp->promiser);
              }
           break;
           
