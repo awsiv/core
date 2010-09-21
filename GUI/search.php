@@ -131,7 +131,7 @@ if ($many)  // Returning query
 	   }
 	else
 	   {
-	   // TODO: generate pdf report
+	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&diff=$diff&cal=$cal\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	   $report = cfpr_report_filediffs(NULL,$name,$diff,true,$cal,">");
 	   }
 	break;
@@ -335,9 +335,11 @@ else if ($hostkey != "") // Default search on single machine
 	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
-      case "File change diffs":
+       case "File change diffs":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_filediffs($hostkey,$search,NULL,true,-1,">");
+	$cal = -1;
+	$report = cfpr_report_filediffs($hostkey,$search,NULL,true,$cal,">");
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&cal=$cal\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	break;
 	
       case "Last saw hosts":

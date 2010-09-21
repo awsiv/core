@@ -760,13 +760,32 @@ function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type,&$pdf)
     $pdf->Output("Nova_variables.pdf", "D");
 }
 
+function rpt_filediffs($hostkey,$search,$diff,$cal,&$pdf)
+{
+    $cols=4;
+    $col_len = array(19,15,19,47);
+    $header=array('Host','File','Change detected at','Change');
+    $logo_path = 'logo_outside_new.jpg';
+
+    $ret = cfpr_report_filediffs_pdf($hostkey,$search,$diff,true,$cal,">");
+
+    $data1 = $pdf->ParseData($ret);
+    $pdf->ReportTitle();
+    $description = 'This report shows the Variable status.';
+    $pdf->ReportDescription();
+    $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
+    $pdf->Ln(8);
+    
+    $pdf->SetFont('Arial','',9);
+    $pdf->DrawTableSpecial($data1, $cols, $col_len, $header, 8);
+    $pdf->Output("Nova_filediffs.pdf", "D");
+}
+
 # main control
 $report_type = $_GET['type'];
 $pdf=new PDF();
 $pdf->PDFSetReportName($report_type);
 $pdf->PDFSetTableTitle('DATA REPORTED');
-$desc=cfpr_report_description(NULL);
-$pdf->PDFSetDescription($desc);
 $pdf->AliasNbPages();
 $pdf->SetFont('Arial','',14);
 $pdf->AddPage();
@@ -774,64 +793,111 @@ $pdf->AddPage();
 switch($report_type)
 {
  case  "Bundle profile":
+    $desc=cfpr_report_description('bundle profile');
+    $pdf->PDFSetDescription($desc);
     rpt_bundle_profile($_GET['hostkey'],$_GET['search'],$pdf);
     break;
  
  case  "Business value report":
+    $desc=cfpr_report_description('value report');
+    $pdf->PDFSetDescription($desc);
     rpt_business_value($_GET['hostkey'],$_GET['days'],$_GET['months'],$_GET['years'],$pdf);
     break;
  
  case "Class profile":
+    $desc=cfpr_report_description('classes report');
+    $pdf->PDFSetDescription($desc);
     rpt_class_profile($_GET['hostkey'],$_GET['search'],$pdf);
     break;
  
  case "Compliance by promise":
+    $desc=cfpr_report_description('promise report');
+    $pdf->PDFSetDescription($desc);
     rpt_compliance_promises($_GET['hostkey'],$_GET['search'],$_GET['state'],$pdf);
     break;
     
  case "Compliance summary":
+    $desc=cfpr_report_description('compliance report');
+    $pdf->PDFSetDescription($desc);
     rpt_compliance_summary($_GET['hostkey'],$pdf);
     break;
     
  case "File change log":
+    $desc=cfpr_report_description('file_changes report');
+    $pdf->PDFSetDescription($desc);
     rpt_filechange_log($_GET['hostkey'],$_GET['search'],$pdf);
     break;
     
  case "Last saw hosts":
+    $desc=cfpr_report_description('lastseen report');
+    $pdf->PDFSetDescription($desc);
     rpt_lastsaw_hosts($_GET['hostkey'],$_GET['key'],$_GET['search'],$_GET['address'],$_GET['ago'],$pdf);
     break;
     
  case "Patches available":
+    $desc=cfpr_report_description('patches available report');
+    $pdf->PDFSetDescription($desc);
     rpt_patches_available($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch'],$pdf);
     break;
  
  case "Patch status":
+    $desc=cfpr_report_description('patches installed report');
+    $pdf->PDFSetDescription($desc);
     rpt_patch_status($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch'],$pdf);
     break;
  
  case "Performance":
-        rpt_performance($_GET['hostkey'],$_GET['search'],$pdf);
-        break;
+    $desc=cfpr_report_description('performance report');
+    $pdf->PDFSetDescription($desc);
+    rpt_performance($_GET['hostkey'],$_GET['search'],$pdf);
+    break;
     
  case "Promises repaired summary":
- case "Promises repaired log":
+    $desc=cfpr_report_description('promises repaired summary');
+    $pdf->PDFSetDescription($desc);
     rpt_repaired_log($_GET['hostkey'],$_GET['search'],$pdf);
     break;
+    
+ case "Promises repaired log":
+    $desc=cfpr_report_description('promises repaired report');
+    $pdf->PDFSetDescription($desc);
+    rpt_repaired_log($_GET['hostkey'],$_GET['search'],$pdf);
+    break;
+    
  case "Promises not kept summary":
+    $desc=cfpr_report_description('promises repaired report');
+    $pdf->PDFSetDescription($desc);
+    rpt_promise_notkept($_GET['hostkey'],$_GET['search'],$pdf);
+    break;
+    
  case "Promises not kept log":
+    $desc=cfpr_report_description('promises not kept report');
+    $pdf->PDFSetDescription($desc);
     rpt_promise_notkept($_GET['hostkey'],$_GET['search'],$pdf);
     break;
  
  case "Setuid/gid root programs":
-    print "Not implemented!!";
+    $desc=cfpr_report_description('setuid report');
+    $pdf->PDFSetDescription($desc);
+    rpt_setuid($_GET['hostkey'],$_GET['search'],$pdf);    
     break;
  
  case "Software installed":
+    $desc=cfpr_report_description('software installed report');
+    $pdf->PDFSetDescription($desc);
     rpt_software_installed($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch'],$pdf);
     break;
  
  case "Variables":
+    $desc=cfpr_report_description('variables report');
+    $pdf->PDFSetDescription($desc);    
     rpt_variables($_GET['hostkey'],$_GET['search'],$_GET['scope'],$_GET['lval'],$_GET['rval'],$_GET['var_type'],$pdf);
+    break;
+
+ case "File change diffs":
+    $desc=cfpr_report_description('file_diffs report');
+    $pdf->PDFSetDescription($desc);    
+    rpt_filediffs($_GET['hostkey'],$_GET['search'],$_GET['diff'],$_GET['cal'],$pdf);
     break;
     
 }
