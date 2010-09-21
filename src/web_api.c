@@ -111,7 +111,8 @@ if (false)
    Nova2PHP_software_report_pdf(0,0,0,0,0,cfr_software,buffer,20);
    Nova2PHP_performance_report_pdf(NULL,NULL,0,buffer,10000);
    Nova2PHP_vars_report_pdf(NULL,NULL,NULL,NULL,NULL,0,buffer,1000);
-   Nova2PHP_filediffs_report_pdf(NULL,NULL,NULL,false,-1,">",buffer,10000);   
+   Nova2PHP_filediffs_report_pdf(NULL,NULL,NULL,false,-1,">",buffer,10000);
+   Nova2PHP_setuid_report_pdf(NULL,NULL,0,buffer,10000);
    }
 }
 
@@ -4303,6 +4304,62 @@ for (sp = s; *sp != '\0'; sp += strlen(tline)+1)
 //strcat(returnval,"</table>");
 return returnval;
 }
+/*****************************************************************************/
+int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *returnval,int bufsize)
+
+{ char *report,buffer[CF_BUFSIZE];
+  struct HubSetUid *hS;   
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (hostkey && strlen(hostkey) > 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   hq = CFDB_QuerySetuid(&dbconn,&query,file,regex);
+   bson_destroy(&query);
+   }
+else
+   {
+   hq = CFDB_QuerySetuid(&dbconn,bson_empty(&b),file,regex);
+   }
+
+returnval[0] = '\0';
+
+snprintf(buffer,sizeof(buffer),"<nh>host<nc>setuid/setgid root file<nova_nl>\n");
+Join(returnval,buffer,bufsize);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hS = ( struct HubSetUid *)rp->item;
+
+   snprintf(buffer,sizeof(buffer),"%s<nc>%s<nova_nl>",hS->hh->hostname,hS->path);
+   Join(returnval,buffer,bufsize);
+   }
+
+DeleteHubQuery(hq,DeleteHubSetUid);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+/* pdf reports end*/
 
 /*****************************************************************************/
 /*                       Special Purpose Policies                            */
