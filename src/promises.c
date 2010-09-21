@@ -167,6 +167,7 @@ MapName(name);
 switch (status)
    {
    case cfn_kept:
+   case cfn_nop:
        vstatus = 1.0;
        break;
 
