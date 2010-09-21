@@ -36,7 +36,7 @@ CfOut(cf_verbose,""," -> Cfengine seems to be running inside a solaris zone of n
 
 NewScalar("sys","zone",zone,cf_str);
 snprintf(vbuff,CF_BUFSIZE-1,"zone_%s",zone);
-NewClass(CanonifyName(vbuff));
+NewClass(vbuff);
 #endif
 }
 

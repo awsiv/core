@@ -44,10 +44,12 @@ void NovaWin_GetInterfaceInfo()
  char *ifType;
  int tup, j;
 
- if(!BOOTSTRAP && (THIS_AGENT_TYPE != cf_agent)  && !Nova_CheckLicenseWin("NovaWin_GetInterfaceInfo"))
+
+ if(!BOOTSTRAP && (THIS_AGENT_TYPE != cf_agent) && (THIS_AGENT_TYPE != cf_keygen)  && !Nova_CheckLicenseWin("NovaWin_GetInterfaceInfo"))
     {
     return;
     }
+
 
  outBufLen = WORKING_BUFFER_SIZE;
  
@@ -175,7 +177,8 @@ void NovaWin_GetInterfaceInfo()
 
           // class e.g. ipv4_192_168_2_5
           snprintf(buf, sizeof(buf), "%s_%s", ifType, addrBuf);
-          NewClass(CanonifyName(buf));
+
+          NewClass(buf);
              
           // add address part-clasess and vars, if ipv4
           if(strcmp(ifType, "ipv4") == 0)
@@ -190,7 +193,7 @@ void NovaWin_GetInterfaceInfo()
 		   bufVal[j] = '\0';
 
 		   snprintf(buf, sizeof(buf), "ipv4_%s", bufVal);
-                   NewClass(CanonifyName(buf));
+                   NewClass(buf);
 		   
                    snprintf(buf, sizeof(buf), "ipv4_%d[%s]", tup, CanonifyName(ifNameBuf));
                    NewScalar("sys", buf, bufVal, cf_str);
