@@ -938,6 +938,8 @@ int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_r
 int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize);
 int Nova2PHP_filediffs_report_pdf(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *returnval,int bufsize);
 char *Nova_FormatDiff_pdf(char *s);
+int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *returnval,int bufsize);
+/* end pdf report */
 
 void Nova2PHP_spp_reportnames(char *buf,int bufSz);
 int Nova2PHP_spp_report(char *hostkey, char *reportName, char *buf, int bufSz);
