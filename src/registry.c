@@ -85,7 +85,7 @@ else if (a.database.operation && cf_strcmp(a.database.operation,"create") == 0)
    { 
    if (Nova_OpenRegistryKey(pp->promiser,&key_h,false))
       {
-      cfPS(cf_verbose,CF_NOP,"",pp,a," -> Registry key exists, promise kept");
+      CfOut(cf_verbose,""," -> Registry key exists");
       }
    else if (!Nova_OpenRegistryKey(pp->promiser,&key_h,true))
       {
