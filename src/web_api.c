@@ -4500,8 +4500,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 	     //CFDB_QueryStausCause(&dbconn,hostKeyHash,handle,*statusStr,cause,sizeof(cause));
 
-	     snprintf(row,sizeof(row),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
-		      host,attributes,Nova_LongState(*statusStr),time,handle);
+	     snprintf(row,sizeof(row),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+		      host,attributes,Nova_LongState(*statusStr),time);
 		   
 	     Join(buf,row,bufSz);
 	     }
@@ -4533,16 +4533,16 @@ char *GetSppTableHeader(spp_t sppType)
   switch(sppType)
     {
     case spp_acls:
-      return "<tr><th>Host</th><th>Path</th><th>Permission (ACL)</th><th>Owner</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th><th>Handle</th></tr>";
+      return "<tr><th>Host</th><th>Path</th><th>Permission (ACL)</th><th>Owner</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
     case spp_commands:
-      return "<tr><th>Host</th><th>Command</th><th>Failclass</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th><th>Handle</th></tr>";
+      return "<tr><th>Host</th><th>Command</th><th>Failclass</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
     case spp_filechanges:
     case spp_filediffs:
-      return "<tr><th>Host</th><th>Path</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th><th>Handle</th></tr>";
+      return "<tr><th>Host</th><th>Path</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
     case spp_registry:
-      return "<tr><th>Host</th><th>Key</th><th>Value</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th><th>Handle</th></tr>";
+      return "<tr><th>Host</th><th>Key</th><th>Value</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
     case spp_services:
-      return "<tr><th>Host</th><th>Service name</th><th>Runstatus</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th><th>Handle</th></tr>";
+      return "<tr><th>Host</th><th>Service name</th><th>Runstatus</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
     }
 
 
