@@ -295,6 +295,7 @@ void Nova_PackSetuid(struct Item **reply,char *header,time_t from,enum cfd_menu 
 CfOut(cf_verbose,""," -> Packing setuid data");
 
 snprintf(name,CF_BUFSIZE,"%s/cfagent.%s.log",CFWORKDIR,VSYSNAME.nodename);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -355,6 +356,7 @@ void Nova_PackFileChanges(struct Item **reply,char *header,time_t from,enum cfd_
 
 CfOut(cf_verbose,""," -> Packing file change data");
 snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,CF_FILECHANGE);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1160,6 +1162,7 @@ void Nova_PackAvailPatches(struct Item **reply,char *header,time_t from,enum cfd
 CfOut(cf_verbose,""," -> Packing available patch report...\n");
 
 snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_PATCHES_AVAIL);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1222,6 +1225,7 @@ void Nova_PackPatchStatus(struct Item **reply,char *header,time_t from,enum cfd_
 CfOut(cf_verbose,""," -> Packing patch installed data");
  
 snprintf(name,sizeof(name),"%s/state/%s",CFWORKDIR,NOVA_PATCHES_INSTALLED);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1591,6 +1595,7 @@ void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t from,enum 
   
 CfOut(cf_verbose,""," -> Packing total compliance data");
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_PROMISE_LOG);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1690,6 +1695,7 @@ void Nova_PackRepairLog(struct Item **reply,char *header,time_t from,enum cfd_me
 CfOut(cf_verbose,""," -> Packing repair data");
 
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1754,6 +1760,7 @@ void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t from,enum cfd_m
 CfOut(cf_verbose,""," -> Packing promise not-kept data");
   
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_NOTKEPT_LOG);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
