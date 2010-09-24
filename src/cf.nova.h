@@ -1009,6 +1009,7 @@ int NovaWin_GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal);
 /* win_net.c */
 
 void NovaWin_GetInterfaceInfo(void);
+int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, struct sockaddr_in *cinp, int cinpSz);
 
 /* win_pipe.c */
 

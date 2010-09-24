@@ -45,7 +45,7 @@ void NovaWin_GetInterfaceInfo()
  int tup, j;
 
 
- if(!BOOTSTRAP && (THIS_AGENT_TYPE != cf_agent) && (THIS_AGENT_TYPE != cf_keygen)  && !Nova_CheckLicenseWin("NovaWin_GetInterfaceInfo"))
+ if(!BOOTSTRAP && (THIS_AGENT_TYPE == cf_agent) && !Nova_CheckLicenseWin("NovaWin_GetInterfaceInfo"))
     {
     return;
     }
@@ -215,6 +215,78 @@ void NovaWin_GetInterfaceInfo()
     free(pAddresses);
     } 
 }
+
+int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, struct sockaddr_in *cinp, int cinpSz)
+/** 
+ * Tries a nonblocking connect and then restores blocking if
+ * successful. Returns true on success, false otherwise.
+ **/
+{
+  int res;
+  long arg;
+  struct sockaddr_in emptyCin = {0};
+
+  if(!cinp)
+    {
+      cinp = &emptyCin;
+      cinpSz = sizeof(emptyCin);
+    }
+  
+
+   /* set non-blocking socket */
+
+   u_long nonBlock = true;
+   if(ioctlsocket(conn->sd,FIONBIO,&nonBlock) != 0)
+     {
+     CfOut(cf_error,"ioctlsocket","!! Could not disable socket blocking mode");
+     }
+
+
+   res = connect(conn->sd,cinp,cinpSz);
+
+   if (res == SOCKET_ERROR)
+      {
+	fd_set myset;
+	int valopt;
+	socklen_t lon = sizeof(int);
+         
+	FD_ZERO(&myset);
+	FD_SET(conn->sd,&myset);
+
+	/* now wait for connect, but no more than tvp.sec */
+	res = select(conn->sd + 1, NULL, &myset, NULL, tvp);
+	if(getsockopt(conn->sd, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) != 0)
+	  {
+	    CfOut(cf_error,"getsockopt","!! Could not check connection status");
+	    return false;
+	  }
+	
+	if (valopt || res <= 0)
+	  {
+            CfOut(cf_inform,"connect"," !! Error connecting to server (timeout)");
+            return false;
+	  }
+      }
+
+
+   /* connection is succeed; return to blocking mode */
+
+   nonBlock = false;
+
+   if(ioctlsocket(conn->sd,FIONBIO,&nonBlock) != 0)
+     {
+     CfOut(cf_error,"ioctlsocket","!! Could not enable socket blocking mode");
+     }
+
+
+   if (setsockopt(conn->sd, SOL_SOCKET, SO_RCVTIMEO, (char *)tvp, sizeof(struct timeval)))
+      {
+      CfOut(cf_inform,"setsockopt","!! Couldn't set socket timeout");
+      }
+  
+  return true;
+}
+
 
 
 #endif  /* MINGW */
