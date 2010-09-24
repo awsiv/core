@@ -225,6 +225,8 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
   int res;
   long arg;
   struct sockaddr_in emptyCin = {0};
+  struct timeval tvRecv = {0};
+  u_long nonBlock;
 
   if(!cinp)
     {
@@ -235,13 +237,13 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
 
    /* set non-blocking socket */
 
-   u_long nonBlock = true;
+   nonBlock= true;
    if(ioctlsocket(conn->sd,FIONBIO,&nonBlock) != 0)
      {
      CfOut(cf_error,"ioctlsocket","!! Could not disable socket blocking mode");
      }
 
-
+   
    res = connect(conn->sd,cinp,cinpSz);
 
    if (res == SOCKET_ERROR)
@@ -279,7 +281,10 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
      }
 
 
-   if (setsockopt(conn->sd, SOL_SOCKET, SO_RCVTIMEO, (char *)tvp, sizeof(struct timeval)))
+   tvRecv.tv_sec = SHORT_RECVTIMEOUT;
+   tvRecv.tv_usec = 0;
+
+   if (setsockopt(conn->sd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tvRecv, sizeof(tvRecv)))
       {
       CfOut(cf_inform,"setsockopt","!! Couldn't set socket timeout");
       }
