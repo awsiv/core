@@ -1685,7 +1685,7 @@ for (ip = file; ip != NULL; ip = ip->next)
          strcat(version,sversion);
          }
 
-      kept = (kept+skept+1)/2;
+      kept = (kept+skept)/2;
       repaired = (repaired+srepaired+1)/2;
       notrepaired = (notrepaired+snotrepaired+1)/2;
       }
