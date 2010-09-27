@@ -1588,7 +1588,7 @@ if ((fin = cf_fopen(name,"r")) == NULL)
 
 /* Max 2016 entries - at least a week */
 
-snprintf(ref,CF_SMALLBUF,"%s",cf_ctime(&from));
+ref[0] = '\0';
 
 while (!feof(fin))
    {
@@ -1603,7 +1603,21 @@ while (!feof(fin))
       continue;
       }
 
-   PrependItem(&file,line,NULL);
+   strncpy(key,GenTimeKey(then),CF_SMALLBUF);
+
+   if (strcmp(ref,key) == 0)
+      {
+      // If more than one (max 2) store the other data in classes
+      if (file->classes == NULL)
+         {
+         file->classes = strdup(line);
+         }
+      }
+   else
+      {
+      PrependItem(&file,line,NULL);
+      strcpy(ref,key);
+      }
    }
 
 cf_fclose(fin);
@@ -1639,6 +1653,45 @@ for (ip = file; ip != NULL; ip = ip->next)
    av_week_kept = GAverage((double)kept,av_week_kept,0.1);
    av_week_repaired = GAverage((double)repaired,av_week_repaired,0.1);
 
+   // Check for two entries
+   
+   if (ip->classes)
+      {
+      int skept = 0,srepaired = 0,snotrepaired = 0;
+      char sversion[CF_MAXVARSIZE];
+      
+      sscanf(ip->classes,"%ld,%ld",&start,&end);
+      sscanf(strstr(ip->classes,"Outcome of version")+strlen("Outcome of version"),"%31[^:]",sversion);
+      sscanf(strstr(ip->classes,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&skept,&srepaired,&snotrepaired);
+      
+      if (i < 12*24)
+         {
+         av_day_kept = GAverage((double)skept,av_day_kept,0.5);
+         av_day_repaired = GAverage((double)srepaired,av_day_repaired,0.5);
+         }
+      
+      if (i < 12*2)
+         {
+         av_hour_kept = GAverage((double)skept,av_hour_kept,0.5);
+         av_hour_repaired = GAverage((double)srepaired,av_hour_repaired,0.5);
+         }
+      
+      av_week_kept = GAverage((double)skept,av_week_kept,0.1);
+      av_week_repaired = GAverage((double)srepaired,av_week_repaired,0.1);
+
+      if (strlen(version)+strlen(sversion)+4 < CF_MAXVARSIZE)
+         {
+         strcat(version,"<br>");
+         strcat(version,sversion);
+         }
+
+      kept = (kept+skept+1)/2;
+      repaired = (repaired+srepaired+1)/2;
+      notrepaired = (notrepaired+snotrepaired+1)/2;
+      }
+
+   // Now store
+   
    snprintf(buffer,CF_BUFSIZE-1,"%ld,%s,%d,%d,%d\n",start,version,kept,repaired,notrepaired);
    
    if (first)
