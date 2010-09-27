@@ -393,6 +393,8 @@ void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
 void BsonToString(char *retBuf, int retBufSz, bson *b, int depth);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
+void CFDB_PurgeDatabase(mongo_connection *conn);
+void CFDB_GetPurgeClasses(mongo_connection *conn, bson_iterator *classIt, struct Item **purgeKeysPtr);
 #endif
 
 /* datapackaging.c */

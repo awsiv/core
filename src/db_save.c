@@ -1222,6 +1222,121 @@ bson_destroy(&setOp);
 bson_destroy(&host_key);
 }
 
+/*****************************************************************************/
+/*                   REPORT DATABASE PURGE FUNCTIONS                         */
+/*****************************************************************************/
+
+void CFDB_PurgeDatabase(mongo_connection *conn)
+/**
+ * Remove old data from reports. Usually "old" means one week.
+ * For each host: collect keys to delete in a list, and call update once.
+ *
+ **/
+{
+  struct Item *purgeKeys = NULL;
+  mongo_cursor *cursor;
+  bson query,field,hostQuery;
+  bson_iterator it1;
+  bson_buffer bb;
+  char keyHash[CF_MAXVARSIZE];
+
+  CfOut(cf_verbose,"","Purging mongo report database....");
+  
+  // query all hosts
+  bson_empty(&query);
+  
+  // only retrieve the purgable reports
+  bson_buffer_init(&bb);
+  bson_append_int(&bb,cfr_keyhash,1);
+  bson_append_int(&bb,cfr_class,1);
+  bson_from_buffer(&field, &bb);
+
+  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+  bson_destroy(&field);
+
+
+  while(mongo_cursor_next(cursor))  // iterate over docs
+    {
+      bson_iterator_init(&it1,cursor->current.data);
+
+      memset(keyHash,0,sizeof(keyHash));
+      
+      while(bson_iterator_next(&it1))
+	{
+	  if (strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)
+	    {
+	      snprintf(keyHash,sizeof(keyHash),"%s",bson_iterator_string(&it1));
+	    }
+	  else if (strcmp(bson_iterator_key(&it1), cfr_class) == 0)
+	    {
+	      CFDB_GetPurgeClasses(conn,&it1,&purgeKeys);
+	    }
+	  else if (strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
+	    {
+	      //snprintf(name,sizeof(name),"%s",bson_iterator_string(&it1));
+	    }
+	}
+
+      bson_buffer_init(&bb);
+      bson_append_string(&bb,cfr_keyhash,keyHash);
+      bson_from_buffer(&hostQuery,&bb);
+
+      // UPDATE
+      
+      DeleteItemList(purgeKeys);
+      purgeKeys = NULL;
+      bson_destroy(&hostQuery);
+    }
+  
+
+  mongo_cursor_destroy(cursor);  
+
+}
+
+// NB: remove from ck - class keys also 
+
+void CFDB_GetPurgeClasses(mongo_connection *conn, bson_iterator *classIt, struct Item **purgeKeysPtr)
+
+{
+  bson_iterator it1,it2;
+  time_t classTime, now;
+  char purgeKey[CF_SMALLBUF];
+
+  now = time(NULL);
+
+  bson_iterator_init(&it1,bson_iterator_value(classIt));
+
+  while (bson_iterator_next(&it1))
+    {
+      bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+      while (bson_iterator_next(&it2))
+	{
+	  if(strcmp(bson_iterator_key(&it2),cfr_time) == 0)
+	    {
+	      classTime = bson_iterator_int(&it2);
+	      
+	      if(now - classTime >= CF_HUB_HORIZON)
+		{
+		  // purge both the class object and the class key array
+
+		  Debug("Class \"%s\" needs to be purged", bson_iterator_key(&it1));
+
+		  snprintf(purgeKey,sizeof(purgeKey),"%s.%s",cfr_class,bson_iterator_key(&it1));
+		  PrependItem(purgeKeysPtr,purgeKey,NULL);
+
+
+		  // TODO
+		  //snprintf(purgeKey,sizeof(purgeKey),"%s.%s",cfr_class_keys,bson_iterator_key(&it1));
+		  //PrependItem(purgeKeysPtr,purgeKey,NULL);
+		  
+		}
+
+	    }
+	}
+    }
+
+}
 
 #endif  /* HAVE_MONGOC */
 
