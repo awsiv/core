@@ -244,28 +244,11 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       }
    }
 
-// Now check the current heap
-
-for (ip = VHEAP; ip != NULL; ip=ip->next)
-   {
-   if (strncmp(ip->name,"Min",3) == 0 || strncmp(ip->name,"Hr",2) == 0 || strncmp(ip->name,"Q",1) == 0
-       || strncmp(ip->name,"Yr",2) == 0 || strncmp(ip->name,"Day",1) == 0 || strncmp(ip->name,"Morning",1) == 0
-       || strncmp(ip->name,"Afternoon",1) == 0 || strncmp(ip->name,"Evening",1) == 0 || strncmp(ip->name,"Night",1) == 0)
-      {
-      continue;
-      }
-   }
-
 for (i = 0; i < 1024; i++)
    {
    if (array[i].q <= 0.00001)
       {
       continue;
-      }
-
-   if (IsItemIn(VHEAP,array[i].name))
-      {
-      array[i].date = now;
       }
 
    if (first)
