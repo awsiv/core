@@ -75,7 +75,7 @@ int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t 
   long n_read_total = 0,length = 0;
   EVP_CIPHER_CTX ctx;
   int plainlen,more = true,header = true,current_report = -1;
-  time_t now = time(NULL),time2 = 0,delta1 = 0,delta2 = 0;
+  time_t now,time2 = 0,delta1 = 0,delta2 = 0;
   struct Item *reports[cf_codebook_size] = {0};
   double datarate;
 
@@ -86,6 +86,8 @@ snprintf(cfchangedstr,255,"%s%s",CF_CHANGEDSTR1,CF_CHANGEDSTR2);
 workbuf[0] = '\0';
 EVP_CIPHER_CTX_init(&ctx);  
 
+now = time(NULL);
+
 snprintf(in,CF_BUFSIZE-CF_PROTO_OFFSET,"QUERY %s %ld %ld",menu,(long)since,now);
 cipherlen = EncryptString(conn->encryption_type,in,out,conn->session_key,strlen(in)+1);
 snprintf(workbuf,CF_BUFSIZE,"SQUERY %4d",cipherlen);
@@ -93,6 +95,8 @@ memcpy(workbuf+CF_PROTO_OFFSET,out,cipherlen);
 tosend=cipherlen+CF_PROTO_OFFSET;   
 
 /* Send proposition C0 - query */
+
+ CfOut(cf_verbose,""," -> Sending query at %s",ctime(&now));
 
 if (SendTransaction(conn->sd,workbuf,tosend,CF_DONE) == -1)
    {

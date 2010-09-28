@@ -281,7 +281,7 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
      }
 
 
-   tvRecv.tv_sec = SHORT_RECVTIMEOUT;
+   tvRecv.tv_sec = RECVTIMEOUT;
    tvRecv.tv_usec = 0;
 
    if (setsockopt(conn->sd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tvRecv, sizeof(tvRecv)))
