@@ -433,12 +433,16 @@ return cf_strlen(buffer);
 /********************************************************************/
 
 pid_t Nova_StartTwin(int argc,char **argv)
+
 #ifdef MINGW
+
 {
 Debug("Nova_StartTwin(): Twin exec daemons are not supported on Windows - running as single process.\n");
 return 0;
 }
+
 #else  /* NOT MINGW */
+
 { FILE *fp;
   char name[CF_BUFSIZE];
   time_t last,now = time(NULL);
