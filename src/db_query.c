@@ -1075,13 +1075,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   {
                   rago = bson_iterator_double(&it3);
                   }
-               else if (strcmp(bson_iterator_key(&it3),cfr_dnsname) == 0)
-                  {
-                  strncpy(rhost,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
-                  }
                else if (strcmp(bson_iterator_key(&it3),cfr_ipaddr) == 0)
                   {
                   strncpy(raddr,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+
+		  // try to find host name of IP from local DB
+
+		  CFDB_QueryHostName(conn,raddr,rhost,sizeof(rhost));
+
                   }
                else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
                   {
@@ -2388,6 +2389,66 @@ else
    {
    return db_slot - start_slot;
    }
+}
+
+/*****************************************************************************/
+
+int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz)
+/*
+ * Scan DB to try to find the hostname of the given IP.
+ * Falls back to ip addres (parameter).
+ */
+{
+  bson_buffer bb;
+  bson query,field;
+  bson_iterator it1,it2;
+  mongo_cursor *cursor;
+  int ret = false;
+
+  // fallback
+  snprintf(hostName,hostNameSz,"%s",ipAddr);
+
+
+  // query
+  bson_buffer_init(&bb);
+  bson_append_string(&bb,cfr_ip_array,ipAddr);
+  bson_from_buffer(&query,&bb);
+
+  // result
+  bson_buffer_init(&bb);
+  bson_append_int(&bb,cfr_host_array,1);
+  bson_from_buffer(&field, &bb);
+
+  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+  bson_destroy(&query);
+  bson_destroy(&field);
+
+  if(mongo_cursor_next(cursor))  // take first match
+    {
+      bson_iterator_init(&it1,cursor->current.data);
+      
+      while (bson_iterator_next(&it1))
+	{
+	 if (strcmp(bson_iterator_key(&it1),cfr_host_array) == 0)
+	  {
+	    bson_iterator_init(&it2,&it1);	    
+	    
+	    if(bson_iterator_next(&it2))
+	      {
+		snprintf(hostName,hostNameSz,"%s",bson_iterator_string(&it2));
+		ret = true;
+		break;
+	      }
+	    
+	  }
+	}
+
+    }
+
+  mongo_cursor_destroy(cursor);
+
+  return ret;
+
 }
 
 /*****************************************************************************/
@@ -4070,7 +4131,10 @@ return retList;
 void CMDB_ScanHubHost(bson_iterator *it1,char *keyhash,char *ipaddr,char *hostnames)
 
 { bson_iterator it2;
- 
+  
+  int ipFound = false;
+  int hostFound = false;
+
 if (bson_iterator_type(it1) == bson_string && strcmp(bson_iterator_key(it1),cfr_keyhash) == 0)
    {         
    strncpy(keyhash,bson_iterator_string(it1),CF_MAXVARSIZE-1);
@@ -4082,7 +4146,9 @@ if (strcmp(bson_iterator_key(it1),cfr_ip_array) == 0)
    
    while (bson_iterator_next(&it2))
       {
+      ipFound = true;
       Join(ipaddr,(char *)bson_iterator_string(&it2),CF_BUFSIZE);
+      Join(ipaddr,", ",CF_BUFSIZE);
       }
    }
 
@@ -4092,9 +4158,33 @@ if (strcmp(bson_iterator_key(it1),cfr_host_array) == 0)
    
    while (bson_iterator_next(&it2))
       {
+      hostFound = true;
       Join(hostnames,(char *)bson_iterator_string(&it2),CF_BUFSIZE);
+      Join(hostnames,", ",CF_BUFSIZE);
       }
    }
+
+// remove any trailing ", "
+
+ if(ipFound)
+   {
+     if(ipaddr[strlen(ipaddr) - 2] == ',' &&
+	ipaddr[strlen(ipaddr) - 1] == ' ')
+       {
+	 ipaddr[strlen(ipaddr) - 2] = '\0';
+       }
+   }
+
+
+ if(hostFound)
+   {
+     if(hostnames[strlen(hostnames) - 2] == ',' &&
+	hostnames[strlen(hostnames) - 1] == ' ')
+       {
+	 hostnames[strlen(hostnames) - 2] = '\0';
+       }
+   }
+
 }
 
 /*****************************************************************************/

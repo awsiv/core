@@ -358,6 +358,7 @@ void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnam
 void PrintCFDBKey(bson_iterator *it, int depth);
 int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
 int Nova_MagViewOffset(int start_slot,int dbslot,int wrap);
+int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
 void MongoCheckForError(mongo_connection *conn, char *operation, char *extra);
 
 
@@ -1208,7 +1209,6 @@ struct cf_pscalar
 #define cfr_notkeptlog    "nl"
 #define cfr_promisehandle "h"
 #define cfr_lastseen      "ls"
-#define cfr_dnsname       "D"
 #define cfr_ipaddr        "i"
 #define cfr_hrsago        "a"
 #define cfr_hrsavg        "v"

@@ -708,7 +708,7 @@ void CFDB_SaveLastSeen(mongo_connection *conn, char *keyhash, struct Item *data)
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
-  char inout, ipaddr[CF_MAXVARSIZE],dns[CF_MAXVARSIZE];
+  char inout, ipaddr[CF_MAXVARSIZE];
   char hostkey[CF_MAXVARSIZE],varName[CF_MAXVARSIZE];
   double ago = 0 ,average = 0,dev = 0;
   long fthen = 0;
@@ -725,10 +725,9 @@ setObj = bson_append_start_object(&bb, "$set");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%c %625s %250s %250s %ld %lf %lf %lf\n",
+   sscanf(ip->name,"%c %625s %250s %ld %lf %lf %lf\n",
           &inout,
           hostkey,
-          dns,
           ipaddr,
           &fthen,
           &ago,
@@ -737,16 +736,9 @@ for (ip = data; ip != NULL; ip=ip->next)
    
    then = (time_t)fthen;
 
-   // map our own address
-   if(IsInterfaceAddress(dns))
-     {
-     snprintf(dns,sizeof(dns),"%s",VFQNAME);
-     }
-   
    snprintf(varName, sizeof(varName), "%s.%c%s", cfr_lastseen,inout,hostkey);
 
    sub = bson_append_start_object(setObj, varName);
-   bson_append_string(sub, cfr_dnsname, dns);
    bson_append_string(sub, cfr_ipaddr, ipaddr);
    bson_append_double(sub, cfr_hrsago, ago);
    bson_append_double(sub, cfr_hrsavg, average);
