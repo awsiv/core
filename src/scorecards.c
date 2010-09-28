@@ -156,6 +156,14 @@ start = now - 24 * 3600 * 7;
 
 // This is not going to scale, so we need another way of computing this average
 
+
+/*
+
+Replace all of this with look up getscratcharray
+
+*/
+
+
 hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -171,6 +179,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       }
    else
       {
+// slot = (maxslots - GetShiftSlot(start) + GetShiftSlot(ht->t)) % maxslots;
+    
       slot = (int)((double)(ht->t - start)/(double)(3600*24*6) + 0.5);
       kept[slot] += ht->kept;
       repaired[slot] += ht->repaired;
@@ -182,6 +192,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 ltotal = lkept = lrepaired = 0;
 lnotkept = 1;
 
+
+// For i = GetShiftSlot(start); j=0 - span; kept[i+j % span]
 for (i = 0; i < span; i++)
    {
    x = i * (cfv.width-cfv.origin_x)/span + cfv.origin_x;
