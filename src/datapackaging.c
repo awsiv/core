@@ -1634,8 +1634,9 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    // Complex parsing/extraction
 
+   version[0] = '\0';
    sscanf(ip->name,"%ld,%ld",&start,&end);
-   sscanf(strstr(ip->name,"Outcome of version")+strlen("Outcome of version"),"%31[^:]",version);
+   sscanf(strstr(ip->name,"Outcome of version")+strlen("Outcome of version"),"%64[^:]",version);
    sscanf(strstr(ip->name,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&kept,&repaired,&notrepaired);
 
    if (i < 12*24)
@@ -1659,9 +1660,10 @@ for (ip = file; ip != NULL; ip = ip->next)
       {
       int skept = 0,srepaired = 0,snotrepaired = 0;
       char sversion[CF_MAXVARSIZE];
-      
+
+      sversion[0] = '\0';
       sscanf(ip->classes,"%ld,%ld",&start,&end);
-      sscanf(strstr(ip->classes,"Outcome of version")+strlen("Outcome of version"),"%31[^:]",sversion);
+      sscanf(strstr(ip->classes,"Outcome of version")+strlen("Outcome of version"),"%64[^:]",sversion);
       sscanf(strstr(ip->classes,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&skept,&srepaired,&snotrepaired);
       
       if (i < 12*24)
