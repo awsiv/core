@@ -1656,7 +1656,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    // Check for two entries
    
-   if (ip->classes)
+   if (ip->classes && strlen(ip->classes) > 0)
       {
       int skept = 0,srepaired = 0,snotrepaired = 0;
       char sversion[CF_MAXVARSIZE];
