@@ -169,11 +169,12 @@ void NovaWin_GetInterfaceInfo()
 	    NewScalar("sys", "ipv6", addrBuf, cf_str);
             firstIfaceIp6 = false;
 	    }
-
+	  
+	  AppendItem(&IPADDRESSES,addrBuf,"");
 
           // e.g. sys.ipv4[Local_Area_Connection] = 192.168.2.5
           snprintf(buf, sizeof(buf), "%s[%s]", ifType, CanonifyName(ifNameBuf));
-          NewScalar("sys", buf, addrBuf, cf_str);
+          NewScalar("sys", buf, addrBuf, cf_str);	  
 
           // class e.g. ipv4_192_168_2_5
           snprintf(buf, sizeof(buf), "%s_%s", ifType, addrBuf);

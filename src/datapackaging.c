@@ -1476,6 +1476,7 @@ void Nova_PackLastSeen(struct Item **reply,char *header,time_t from,enum cfd_men
   double now = (double)tid,average = 0, var = 0;
   double ticksperhr = (double)CF_TICKS_PER_HOUR;
   char name[CF_BUFSIZE],hostkey[CF_BUFSIZE],buffer[CF_BUFSIZE];
+  char hostName[CF_SMALLBUF];
   struct CfKeyHostSeen entry;
   int ret,ksize,vsize,first = true;
 
@@ -1540,10 +1541,21 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       AppendItem(reply,header,NULL);
       }
 
+
+   // don't do DNS lookup, just map own address
+   if(IsInterfaceAddress(addr))
+     {
+     snprintf(hostName,sizeof(hostName),"%s",VFQNAME);
+     }
+   else
+     {
+     snprintf(hostName,sizeof(hostName),"%s",addr);
+     }
+
    snprintf(buffer,CF_BUFSIZE-1,"%c %s %s %s %ld %.2lf %.2lf %.2lf\n",
            *hostkey,
            hostkey+1,
-           IPString2Hostname(addr),
+           hostName,
            addr,
            (long)fthen,
            ((double)(now-then))/ticksperhr,

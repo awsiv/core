@@ -536,6 +536,13 @@ for (ip = data; ip != NULL; ip=ip->next)
           &dev);
 
    then = (time_t)fthen;
+
+   // map our own address
+   if(IsInterfaceAddress(asserted))
+     {
+     snprintf(asserted,sizeof(asserted),"%s",VFQNAME);
+     }
+
    
    Debug("Saw: %c%s (alias %s/%s) seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s",inout,hash,asserted,dns,ago,average,dev,cf_ctime(&fthen));
    }

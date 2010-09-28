@@ -736,6 +736,12 @@ for (ip = data; ip != NULL; ip=ip->next)
           &dev);
    
    then = (time_t)fthen;
+
+   // map our own address
+   if(IsInterfaceAddress(dns))
+     {
+     snprintf(dns,sizeof(dns),"%s",VFQNAME);
+     }
    
    snprintf(varName, sizeof(varName), "%s.%c%s", cfr_lastseen,inout,hostkey);
 
@@ -1233,11 +1239,11 @@ void CFDB_PurgeDatabase(mongo_connection *conn)
  *
  **/
 {
-  struct Item *purgeKeys = NULL;
+  struct Item *purgeKeys = NULL,*ip;
   mongo_cursor *cursor;
-  bson query,field,hostQuery;
+  bson query,field,hostQuery,op;
   bson_iterator it1;
-  bson_buffer bb;
+  bson_buffer bb,*unset;
   char keyHash[CF_MAXVARSIZE];
 
   CfOut(cf_verbose,"","Purging mongo report database....");
@@ -1282,10 +1288,23 @@ void CFDB_PurgeDatabase(mongo_connection *conn)
       bson_from_buffer(&hostQuery,&bb);
 
       // UPDATE
+      bson_buffer_init(&bb);
+      unset = bson_append_start_object(&bb, "$unset");
+
+      for (ip = purgeKeys; ip != NULL; ip=ip->next)
+	{
+	bson_append_int(unset, ip->name, 1);
+	}
+
+      bson_append_finish_object(unset);
+      bson_from_buffer(&op,&bb);
+
+      mongo_update(conn,MONGO_DATABASE,&hostQuery, &op, 0);
       
       DeleteItemList(purgeKeys);
       purgeKeys = NULL;
       bson_destroy(&hostQuery);
+      bson_destroy(&op);
     }
   
 
