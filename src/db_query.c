@@ -2431,7 +2431,7 @@ int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int
 	{
 	 if (strcmp(bson_iterator_key(&it1),cfr_host_array) == 0)
 	  {
-	    bson_iterator_init(&it2,&it1);	    
+	    bson_iterator_init(&it2,bson_iterator_value(&it1));
 	    
 	    if(bson_iterator_next(&it2))
 	      {
