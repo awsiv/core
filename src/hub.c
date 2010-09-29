@@ -80,6 +80,11 @@ while (true)
       DeleteItemList(masterhostlist);
       }
 
+   if (Nova_ShiftChange())
+      {
+      Nova_CacheTotalCompliance();
+      }
+
    Nova_CountMonitoredClasses();
    CfOut(cf_verbose,"","Sleeping...\n");
    sleep(CFPULSETIME);
@@ -217,8 +222,9 @@ pp->cache = NULL;
 
 if (long_time_no_see)
    {
+   time_t last_week = time(0) - (time_t)CF_WEEK;
    CfOut(cf_verbose,""," -> Running FULL sensor sweep of %s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
-   Nova_QueryForKnowledgeMap(conn,"full",time(0));
+   Nova_QueryForKnowledgeMap(conn,"full",last_week);
 
    if (LOGGING)
       {
@@ -247,87 +253,14 @@ DeleteRlist(a.copy.servers);
 return true;
 }
 
-/*********************************************************************/
-/* Hub control                                                       */
-/*********************************************************************/
-
-struct Item *Nova_ScanClients()
-
-{ CF_DB *dbp;
-  CF_DBC *dbcp;
-  char *key,name[CF_BUFSIZE];
-  void *value;
-  struct CfKeyHostSeen entry;
-  int ret,ksize,vsize, ok = false;
-  struct Item *list = NULL;
-
-snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
-MapName(name);
-
-if (!OpenDB(name,&dbp))
-   {
-   return NULL;
-   }
-
-if (!NewDBCursor(dbp,&dbcp))
-   {
-   CloseDB(dbp);
-   CfOut(cf_inform,""," !! Unable to scan last-seen database");
-   return NULL;
-   }
-
- /* Initialize the key/data return pair. */
-
-memset(&entry, 0, sizeof(entry));
-
- /* Walk through the database and print out the key/data pairs. */
-
-while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
-   {
-   if (value != NULL)
-      {
-      memcpy(&entry,value,sizeof(entry));
-      IdempPrependItem(&list,key+1,entry.address);
-      }
-   }
-
-DeleteDBCursor(dbp,dbcp);
-CloseDB(dbp);
-return list;
-}
 
 /*********************************************************************/
 
-void Nova_HubLog(char *s)
-
-{ char filename[CF_BUFSIZE],start[CF_BUFSIZE],end[CF_BUFSIZE];
-  time_t now = time(NULL);
-  FILE *fout;
-
-if (s == NULL || strlen(s) ==  0)
-   {
-   return;
-   }
-  
-snprintf(filename,CF_BUFSIZE,"%s/%s",CFWORKDIR,"hub_log");
-
-if ((fout = fopen(filename,"a")) == NULL)
-   {
-   CfOut(cf_error,"fopen","Could not open %s",filename);
-   return;
-   }
-
-fprintf(fout,"%ld,%ld: %s\n",CFSTARTTIME,now,s);
-fclose(fout);
-}
-
-/*********************************************************************/
-
-void Nova_ComputeCompliance()
+void Nova_CacheTotalCompliance()
 {
 #ifdef HAVE_LIBMONGOC
   const int span = 7 * 4;
-  double kept[span], repaired[span], notkept[span];
+  double kept[span],repaired[span],notkept[span];
   char key[CF_MAXVARSIZE],value[CF_MAXVARSIZE];
   time_t start,now = time(NULL);
   mongo_connection dbconn;
@@ -439,6 +372,94 @@ for (ip = order_results; ip != NULL; ip = ip->next)
 #endif  /* HAVE_LIBMONGOC */
 }
 
+/*********************************************************************/
+/* Hub control                                                       */
+/*********************************************************************/
+
+struct Item *Nova_ScanClients()
+
+{ CF_DB *dbp;
+  CF_DBC *dbcp;
+  char *key,name[CF_BUFSIZE];
+  void *value;
+  struct CfKeyHostSeen entry;
+  int ret,ksize,vsize, ok = false;
+  struct Item *list = NULL;
+
+snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
+MapName(name);
+
+if (!OpenDB(name,&dbp))
+   {
+   return NULL;
+   }
+
+if (!NewDBCursor(dbp,&dbcp))
+   {
+   CloseDB(dbp);
+   CfOut(cf_inform,""," !! Unable to scan last-seen database");
+   return NULL;
+   }
+
+ /* Initialize the key/data return pair. */
+
+memset(&entry, 0, sizeof(entry));
+
+ /* Walk through the database and print out the key/data pairs. */
+
+while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
+   {
+   if (value != NULL)
+      {
+      memcpy(&entry,value,sizeof(entry));
+      IdempPrependItem(&list,key+1,entry.address);
+      }
+   }
+
+DeleteDBCursor(dbp,dbcp);
+CloseDB(dbp);
+return list;
+}
+
+/*********************************************************************/
+
+void Nova_HubLog(char *s)
+
+{ char filename[CF_BUFSIZE],start[CF_BUFSIZE],end[CF_BUFSIZE];
+  time_t now = time(NULL);
+  FILE *fout;
+
+if (s == NULL || strlen(s) ==  0)
+   {
+   return;
+   }
+  
+snprintf(filename,CF_BUFSIZE,"%s/%s",CFWORKDIR,"hub_log");
+
+if ((fout = fopen(filename,"a")) == NULL)
+   {
+   CfOut(cf_error,"fopen","Could not open %s",filename);
+   return;
+   }
+
+fprintf(fout,"%ld,%ld: %s\n",CFSTARTTIME,now,s);
+fclose(fout);
+}
+
+/*********************************************************************/
+
+int Nova_ShiftChange()
+
+{
+if (IsDefinedClass("(Hr00|Hr06|Hr12|Hr18).Min00_05"))
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
+}
 
 #endif  /* NOT MINGW */
 
