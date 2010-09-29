@@ -1045,6 +1045,11 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hb = ( struct HubBundleSeen *)rp->item;
 
+   if (strcmp(hb->bundle,"QUERY") == 0)
+      {
+      continue;
+      }
+
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"bundle.php?bundle=%s\">%s</a></td><td>%s</td>"
             "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td></tr>\n",
             hb->hh->hostname,hb->bundle,hb->bundle,cf_ctime(&(hb->t)),
