@@ -30,7 +30,7 @@ void CFDB_GetValue(char *lval,char *rval,int size)
 
 { bson_buffer bb;
   bson b,field,query;
-  bson_iterator it1,it2;
+  bson_iterator it1;
   mongo_cursor *cursor;
   mongo_connection conn;
   
@@ -62,15 +62,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       if (strcmp(bson_iterator_key(&it1),lval) == 0)
          {
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
-
-         while (bson_iterator_next(&it2))
-            {
-            strncpy(rval,bson_iterator_string(&it2),size-1);
-            mongo_cursor_destroy(cursor);
-            CFDB_Close(&conn);
-            return;
-            }
+	 snprintf(rval,size,"%s",bson_iterator_string(&it1));
+	 break;
          }
       }    
    }
@@ -2405,10 +2398,6 @@ int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int
   mongo_cursor *cursor;
   int ret = false;
 
-  // fallback
-  snprintf(hostName,hostNameSz,"%s",ipAddr);
-
-
   // query
   bson_buffer_init(&bb);
   bson_append_string(&bb,cfr_ip_array,ipAddr);
@@ -2446,6 +2435,12 @@ int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int
     }
 
   mongo_cursor_destroy(cursor);
+
+  // fallback
+  if(ret == false)
+    {
+    snprintf(hostName,hostNameSz,"%s",ipAddr);
+    }
 
   return ret;
 

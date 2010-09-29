@@ -394,6 +394,7 @@ void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
 void BsonToString(char *retBuf, int retBufSz, bson *b, int depth);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
+
 void CFDB_PurgeDatabase(mongo_connection *conn);
 void CFDB_GetPurgeClasses(mongo_connection *conn, bson_iterator *classIt, struct Item **purgeKeysPtr);
 #endif
@@ -1191,7 +1192,7 @@ struct cf_pscalar
 #define cfr_patch_installed "pi"
 #define cfr_cause        "ca"
 #define cfr_class        "cl"
-#define cfr_class_keys   "ck"
+//#define cfr_class_keys   "ck"  // would optimize reads
 #define cfr_class_jobs   "cj"
 #define cfr_total_compliance "tc"
 #define cfr_time          "t"

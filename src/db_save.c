@@ -84,8 +84,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
   
 bson_buffer_init(&bb);
 setObj = bson_append_start_object(&bb, "$set");
-snprintf(varName, sizeof(varName),"%s.%s",lval,cfr_rval);
-bson_append_string(setObj,varName,rval);
+bson_append_string(setObj,lval,rval);
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
@@ -451,8 +450,8 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 bson_append_finish_object(setObj);
 
-// insert keys into numbered key array
-
+// insert keys into numbered key array? - would optimize reads later
+/*
 keyAdd = bson_append_start_object(&bb , "$addToSet");
 keyArrField = bson_append_start_object(keyAdd,cfr_class_keys);
 keyArr = bson_append_start_array(keyAdd , "$each");
@@ -467,6 +466,7 @@ for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
 bson_append_finish_object(keyArr);
 bson_append_finish_object(keyArrField);
 bson_append_finish_object(keyAdd);
+*/
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
@@ -1231,11 +1231,11 @@ void CFDB_PurgeDatabase(mongo_connection *conn)
  *
  **/
 {
-  struct Item *purgeKeys = NULL,*ip;
+  struct Item *purgeKeys = NULL,*ip = NULL;
   mongo_cursor *cursor;
   bson query,field,hostQuery,op;
   bson_iterator it1;
-  bson_buffer bb,*unset;
+  bson_buffer bb,*unset,*pull;
   char keyHash[CF_MAXVARSIZE];
 
   CfOut(cf_verbose,"","Purging mongo report database....");
@@ -1292,6 +1292,7 @@ void CFDB_PurgeDatabase(mongo_connection *conn)
       bson_from_buffer(&op,&bb);
 
       mongo_update(conn,MONGO_DATABASE,&hostQuery, &op, 0);
+
       
       DeleteItemList(purgeKeys);
       purgeKeys = NULL;
@@ -1304,7 +1305,7 @@ void CFDB_PurgeDatabase(mongo_connection *conn)
 
 }
 
-// NB: remove from ck - class keys also 
+/*****************************************************************************/
 
 void CFDB_GetPurgeClasses(mongo_connection *conn, bson_iterator *classIt, struct Item **purgeKeysPtr)
 
@@ -1331,16 +1332,11 @@ void CFDB_GetPurgeClasses(mongo_connection *conn, bson_iterator *classIt, struct
 		{
 		  // purge both the class object and the class key array
 
-		  Debug("Class \"%s\" needs to be purged", bson_iterator_key(&it1));
+		  Debug("Class \"%s\" needs to be purged (%lu seconds old)\n", bson_iterator_key(&it1), now - classTime);
 
 		  snprintf(purgeKey,sizeof(purgeKey),"%s.%s",cfr_class,bson_iterator_key(&it1));
 		  PrependItem(purgeKeysPtr,purgeKey,NULL);
 
-
-		  // TODO
-		  //snprintf(purgeKey,sizeof(purgeKey),"%s.%s",cfr_class_keys,bson_iterator_key(&it1));
-		  //PrependItem(purgeKeysPtr,purgeKey,NULL);
-		  
 		}
 
 	    }
