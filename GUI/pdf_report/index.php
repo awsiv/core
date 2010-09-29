@@ -45,6 +45,7 @@ class PDF extends FPDF
     {
 	$this->reportname = $name;
     }
+
     #******************************
     function PDFGetPageWidth()
     {
@@ -138,17 +139,6 @@ class PDF extends FPDF
     }
     
     #****************************** 
-    # Load data
-    function LoadData($file)
-    {
-	$lines=file($file);
-	$data=array();
-	foreach($lines as $line)
-	  $data[]=explode('<nc>',chop($line));
-	return $data;
-    }
-    
-    #****************************** 
     # Parse data
     function ParseData($arr)
     {
@@ -166,7 +156,7 @@ class PDF extends FPDF
     }
     
     #******************************
-    # åcompute the number of lines
+    # Compute the number of lines
     
     function NbLines($w,$txt) 
     { 
@@ -422,8 +412,7 @@ function rpt_bundle_profile($hostkey,$search,&$pdf)
     $cols=6;
     $col_len = array(24,23,23,10,10,10); #in percentage
     $header=array('Host','Bundle','Last verified','Hours Ago', 'Avg interval', 'Uncertainty');
-    $logo_path = 'logo_outside_new.jpg';
-    
+
     $ret = cfpr_report_bundlesseen_pdf($hostkey,$search,true);
     $data1 = $pdf->ParseData($ret);
     
@@ -434,7 +423,6 @@ function rpt_bundle_profile($hostkey,$search,&$pdf)
         
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_bundle_profile.pdf", "D");
 }
 
 ### business value report ###
@@ -444,7 +432,6 @@ function rpt_business_value($hostkey,$days,$months,$years,&$pdf)
     $cols=5;
     $col_len = array(24,19,19,19,19);
     $header=array('Host','Day','Kept','Repaired', 'Not kept');
-    $logo_path = 'logo_outside_new.jpg';
 
     $ret = cfpr_report_value_pdf($hostkey,$days,$months,$years);
     $data1 = $pdf->ParseData($ret);
@@ -456,7 +443,6 @@ function rpt_business_value($hostkey,$days,$months,$years,&$pdf)
     
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_business_value.pdf", "D");
 }
 
 ### Classes report ###
@@ -465,7 +451,6 @@ function rpt_class_profile($hostkey,$search,&$pdf)
     $cols=5;
     $col_len = array(28,28,20,12,12);
     $header=array('Host','Class Context','Occurs with probability','Uncertainty', 'Last seen');
-    $logo_path = 'logo_outside_new.jpg';
     
     $ret = cfpr_report_classes_pdf($hostkey,$search,true);
     $data1 = $pdf->ParseData($ret);
@@ -480,14 +465,11 @@ function rpt_class_profile($hostkey,$search,&$pdf)
     
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    
-    $pdf->Output("Nova_class_profile.pdf", "D");
 }
 
 function rpt_promise_notkept($hostkey,$search,&$pdf)
 {
     $col_len = array(20,20,40,20);
-    $logo_path = 'logo_outside_new.jpg';
     $header=array('Host','Promise Handle','Report','Time');
 
     $ret = cfpr_report_notkept_pdf($hostkey,$search);
@@ -495,13 +477,11 @@ function rpt_promise_notkept($hostkey,$search,&$pdf)
     
     $pdf->ReportTitle();
     $pdf->ReportDescription();
-    $pdf->RptTableTitle($rptTableTitle, $pdf->GetY() + 5);
+    $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
     $pdf->Ln(8);
     
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, 4, $col_len, $header, 8);
-    
-    $pdf->Output("Nova_promises_not_kept.pdf", "D");
 }
 
 ### Compliance by promise ##
@@ -510,7 +490,6 @@ function rpt_compliance_promises($hostkey,$search,$state,&$pdf)
     $cols=6;
     $col_len = array(21,24,14,14,12,15);
     $header=array('Host','Promise Handle','Last known state','Probability kept', 'Uncertainty', 'Last seen');
-    $logo_path = 'logo_outside_new.jpg';
     
     $ret = cfpr_report_compliance_promises_pdf($hostkey,$search,$state,true);
     $data1 = $pdf->ParseData($ret);
@@ -522,7 +501,6 @@ function rpt_compliance_promises($hostkey,$search,$state,&$pdf)
     
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_Compliance_by_promise.pdf", "D");
 }
 
 ### Compliance Summary ##
@@ -531,7 +509,6 @@ function rpt_compliance_summary($hostkey,&$pdf)
     $cols=6;
     $col_len = array(25,27,10,10,10,18);
     $header=array('Host','Policy','Kept','Repaired','Not kept', 'Last seen');
-    $logo_path = 'logo_outside_new.jpg';
     
     $ret = cfpr_report_compliance_summary_pdf($hostkey,NULL,-1,-1,-1,-1,">");
     $data1 = $pdf->ParseData($ret);
@@ -543,7 +520,6 @@ function rpt_compliance_summary($hostkey,&$pdf)
     
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_Compliance_summary.pdf", "D");
 }
 
 ### Classes report ###
@@ -552,7 +528,6 @@ function rpt_filechange_log($hostkey,$search,&$pdf)
     $cols=3;
     $col_len = array(33,34,33);
     $header=array('Host','File', 'Time of Change');
-    $logo_path = 'logo_outside_new.jpg';
     
     $ret = cfpr_report_filechanges_pdf($hostkey,$search,true,-1,">");
     $data1 = $pdf->ParseData($ret);
@@ -563,7 +538,6 @@ function rpt_filechange_log($hostkey,$search,&$pdf)
     $pdf->Ln(8);
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_File_change_log.pdf", "D");
 }
 
 ### Classes report ###
@@ -572,7 +546,6 @@ function rpt_lastsaw_hosts($hostkey,$key,$name,$address,$ago,&$pdf)
     $cols=9;
     $col_len = array(14,8,10,14,12,7,7,7,21);
     $header=array('Host','Initiated', 'IP Address', 'Remote Host', 'Last Seen', 'Hours Ago', ' Avg Interval', 'Uncertainty', 'Remote Host Key');
-    $logo_path = 'logo_outside_new.jpg';
 
     $ret =  cfpr_report_lastseen_pdf($hostkey,$key,$name,$address,$ago,true);
     $data1 = $pdf->ParseData($ret);
@@ -582,7 +555,6 @@ function rpt_lastsaw_hosts($hostkey,$key,$name,$address,$ago,&$pdf)
     $pdf->Ln(8);
     $pdf->SetFont('Arial','',6);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_last_saw_hosts.pdf", "D");
 }
 
 ### Patches Available  ###
@@ -591,7 +563,6 @@ function rpt_patches_available($hostkey,$search,$version,$arch,&$pdf)
     $cols=4;
     $col_len = array(29,33,19,19);
     $header=array('Host','Name','Version','Architecture');
-    $logo_path = 'logo_outside_new.jpg';
     
     $ret =  cfpr_report_patch_avail_pdf($hostkey,$search,$version,$arch,true);
     $data1 = $pdf->ParseData($ret);
@@ -601,7 +572,6 @@ function rpt_patches_available($hostkey,$search,$version,$arch,&$pdf)
     $pdf->Ln(8);
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_patches_available.pdf", "D");
 }
 
 ### Patch Status  ###
@@ -610,7 +580,6 @@ function rpt_patch_status($hostkey,$search,$version,$arch,&$pdf)
     $cols=4;
     $col_len = array(29,33,19,19);
     $header=array('Host','Name','Version','Architecture');
-    $logo_path = 'logo_outside_new.jpg';
 
     $ret = cfpr_report_patch_in_pdf($hostkey,$search,$version,$arch,true);
     $data1 = $pdf->ParseData($ret);
@@ -620,7 +589,6 @@ function rpt_patch_status($hostkey,$search,$version,$arch,&$pdf)
     $pdf->Ln(8);
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_patch_status.pdf", "D");
 }
 
 ### Software Installed  ###
@@ -630,7 +598,6 @@ function rpt_software_installed($hostkey,$search,$version,$arch,&$pdf)
     $cols=4;
     $col_len = array(21,33,19,19);
     $header=array('Host','Name','Version','Architecture');
-    $logo_path = 'logo_outside_new.jpg';
     
     $ret = cfpr_report_software_in_pdf($hostkey,$search,$version,$arch,true);
     $data1 = $pdf->ParseData($ret);
@@ -640,7 +607,6 @@ function rpt_software_installed($hostkey,$search,$version,$arch,&$pdf)
     $pdf->Ln(8);
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_software_installed.pdf", "D");
 }
 
 ### Performance Report  ###
@@ -649,7 +615,6 @@ function rpt_performance($hostkey,$search,&$pdf)
         $cols=6;
         $col_len = array(19,38,7.5,7.5,10,18);
         $header=array('Host','Repair','Last Time','Avg Time','Uncertainty','Last Performed');
-        $logo_path = 'logo_outside_new.jpg';
 
 	$ret = cfpr_report_performance_pdf($hostkey,$search,true);
         $data1 = $pdf->ParseData($ret);
@@ -659,7 +624,6 @@ function rpt_performance($hostkey,$search,&$pdf)
         $pdf->Ln(8);
         $pdf->SetFont('Arial','',9);
         $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-        $pdf->Output("Nova_performance_report.pdf", "D");
 }
 
 function rpt_repaired_log($hostkey,$search,&$pdf)
@@ -667,7 +631,6 @@ function rpt_repaired_log($hostkey,$search,&$pdf)
     $cols=4;
     $col_len = array(19,19,43,19);
     $header=array('Host','Promise Handle','Report','Time');
-    $logo_path = 'logo_outside_new.jpg';
 
     $ret = cfpr_report_repaired_pdf($hostkey,$search);
     $data1 = $pdf->ParseData($ret);
@@ -677,7 +640,6 @@ function rpt_repaired_log($hostkey,$search,&$pdf)
     $pdf->Ln(8);
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_promises_repaired_log.pdf", "D");
 }
 
 function rpt_repaired_summary($hostkey,$search,&$pdf)
@@ -685,7 +647,6 @@ function rpt_repaired_summary($hostkey,$search,&$pdf)
     $cols=4;
     $col_len = array(19,19,43,19);
     $header=array('Host','Promise Handle','Report','Occurrences');
-    $logo_path = 'logo_outside_new.jpg';
 
     $ret =  cfpr_summarize_repaired_pdf($hostkey,$search);
     $data1 = $pdf->ParseData($ret);
@@ -697,7 +658,6 @@ function rpt_repaired_summary($hostkey,$search,&$pdf)
 
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_promises_repaired_summary.pdf", "D");
 }
 
 function rpt_notkept_summary($hostkey,$search,&$pdf)
@@ -705,7 +665,6 @@ function rpt_notkept_summary($hostkey,$search,&$pdf)
     $cols=4;
     $col_len = array(19,19,43,19);
     $header=array('Host','Promise Handle','Report','Occurrences');
-    $logo_path = 'logo_outside_new.jpg';
 
     $ret =  cfpr_summarize_notkept_pdf($hostkey,$search);
     $data1 = $pdf->ParseData($ret);
@@ -715,8 +674,6 @@ function rpt_notkept_summary($hostkey,$search,&$pdf)
     $pdf->Ln(8);
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_promises_notkept_summary.pdf", "D");
-
 }
 
 function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type,&$pdf)
@@ -724,7 +681,6 @@ function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type,&$pdf)
     $cols=4;
     $col_len = array(19,15,19,47);
     $header=array('Host','Type','Name','Value');
-    $logo_path = 'logo_outside_new.jpg';
 
     if($hostkey == NULL)
     {
@@ -742,7 +698,6 @@ function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type,&$pdf)
     
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTableSpecial($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_variables.pdf", "D");
 }
 
 function rpt_filediffs($hostkey,$search,$diff,$cal,&$pdf)
@@ -750,7 +705,6 @@ function rpt_filediffs($hostkey,$search,$diff,$cal,&$pdf)
     $cols=4;
     $col_len = array(19,15,19,47);
     $header=array('Host','File','Change detected at','Change');
-    $logo_path = 'logo_outside_new.jpg';
 
     $ret = cfpr_report_filediffs_pdf($hostkey,$search,$diff,true,$cal,">");
 
@@ -762,7 +716,6 @@ function rpt_filediffs($hostkey,$search,$diff,$cal,&$pdf)
     
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTableSpecial($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_filediffs.pdf", "D");
 }
 
 function rpt_setuid($hostkey,$search,&$pdf)
@@ -770,7 +723,6 @@ function rpt_setuid($hostkey,$search,&$pdf)
     $cols=2;
     $col_len = array(30,70);
     #        $header=array('Host','Type','Name','Value');
-    $logo_path = 'logo_outside_new.jpg';
     
     $ret = cfpr_report_setuid_pdf($hostkey,$search,true);
     
@@ -782,11 +734,60 @@ function rpt_setuid($hostkey,$search,&$pdf)
     
     $pdf->SetFont('Arial','',9);
     $pdf->DrawTableSpecial($data1, $cols, $col_len, $header, 8);
-    $pdf->Output("Nova_setuid_gid_report.pdf", "D");
+}
+
+#
+# Send email
+#
+function EmailPDF($pdf, $pdf_filename)
+{
+    $to = "bishwa.shrestha@gmail.com";
+    $from = "bishwa.shrestha@cfengine.com";
+    $subject = "Nova Report";
+    $message = "<p>Please see the attachment.</p>";
+
+    // a random hash will be necessary to send mixed content
+    $separator = md5(time());
+
+    // carriage return type (we use a PHP end of line constant)
+    $eol = PHP_EOL;
+    
+    // attachment name
+    $filename = $pdf_filename;
+
+    // encode data (puts attachment in proper format)
+    $pdfdoc = $pdf->Output("", "S");
+    $attachment = chunk_split(base64_encode($pdfdoc));
+    
+    // main header (multipart mandatory)
+    $headers = "From: ".$from.$eol;
+    $headers .= "MIME-Version: 1.0".$eol;
+    $headers .= "Content-Type: multipart/mixed; boundary=\"".$separator."\"".$eol.$eol;
+    $headers .= "Content-Transfer-Encoding: 7bit".$eol;
+    $headers .= "This is a MIME encoded message.".$eol.$eol;
+    
+    // message
+    $headers .= "--".$separator.$eol;
+    $headers .= "Content-Type: text/html; charset=\"iso-8859-1\"".$eol;
+    $headers .= "Content-Transfer-Encoding: 8bit".$eol.$eol;
+    $headers .= $message.$eol.$eol;
+    
+    // attachment
+    $headers .= "--".$separator.$eol;
+    $headers .= "Content-Type: application/octet-stream; name=\"".$filename."\"".$eol;
+    $headers .= "Content-Transfer-Encoding: base64".$eol;
+    $headers .= "Content-Disposition: attachment".$eol.$eol;
+    $headers .= $attachment.$eol.$eol;
+    $headers .= "--".$separator."--";
+    
+    // send message
+    mail($to, $subject, "", $headers);
+    
 }
 
 # main control
 $report_type = $_GET['type'];
+$pdf_filename = preg_replace('/ /', '_', $report_type).'.pdf';
 $pdf=new PDF();
 $pdf->PDFSetReportName($report_type);
 $pdf->PDFSetTableTitle('DATA REPORTED');
@@ -906,19 +907,13 @@ switch($report_type)
     
 }
 
-#rpt_bundle_profile();
-#rpt_value();
-#rpt_class_profile();
-#rpt_compliance_promises();
-#rpt_filechanges();
-#rpt_lastseen();
-#rpt_patches_available();
-# rpt_patch_status();
-# rpt_software_installed();
-# rpt_performance();
-
-# rpt_repaired_log(); # this doesn't work : need better formatted data
-# rpt_not_kept();
-# rpt_repaired_summary();
-# rpt_notkept_summary();
+$pdf_action = $_GET['pdf_action'];  
+if($pdf_action == 'email')
+{
+  EmailPDF($pdf,$pdf_filename);
+}
+else
+{
+   $pdf->Output($pdf_filename, "D");
+}
 ?>
