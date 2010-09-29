@@ -513,6 +513,7 @@ int Nova_HailPeer(char *host,struct Attributes a,struct Promise *pp);
 struct Item *Nova_ScanClients(void);
 void Nova_HubLog(char *s);
 void Nova_CountMonitoredClasses(void);
+void Nova_ComputeCompliance(void);
 
 /* install.c */
 

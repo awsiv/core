@@ -226,7 +226,7 @@ if (long_time_no_see)
       snprintf(msg,CF_MAXVARSIZE,"HUB full sensor sweep of peer %s",peer);
       Nova_HubLog(msg);
       }
-   
+
    YieldCurrentLock(thislock);
    }
 else
@@ -319,6 +319,72 @@ if ((fout = fopen(filename,"a")) == NULL)
 
 fprintf(fout,"%ld,%ld: %s\n",CFSTARTTIME,now,s);
 fclose(fout);
+}
+
+/*********************************************************************/
+
+void Nova_ComputeCompliance()
+{
+#ifdef HAVE_LIBMONGOC
+  const int span = 7 * 4;
+  double kept[span], repaired[span], notkept[span];
+  char key[CF_MAXVARSIZE],value[CF_MAXVARSIZE];
+  time_t start,now = time(NULL);
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
+  struct HubTotalCompliance *ht;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int slot,count;
+  
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return;
+   }
+
+// Query all hosts in one time slot
+// ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,ht->t;        
+// Divide each day into 4 lifecycle units 3600 * 24 / 4 seconds
+
+now = time(NULL);
+start = now - 3600 * 6;   
+
+slot = GetShiftSlot(start);
+
+hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   ht = (struct HubTotalCompliance *)rp->item;
+
+   if (ht->t < start)
+      {
+      continue;
+      }
+   else
+      {
+      kept[slot] += ht->kept;
+      repaired[slot] += ht->repaired;
+      notkept[slot] += ht->notkept;
+      count++;
+      }
+   }
+
+DeleteHubQuery(hq,DeleteHubTotalCompliance);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+snprintf(key,CF_MAXVARSIZE,"tc_%d",slot);
+snprintf(value,CF_MAXVARSIZE,"%.2lf,%.2lf,%.2lf",kept[slot],repaired[slot],notkept[slot]);
+CFDB_PutValue(key,value);
+#endif
 }
 
 /*********************************************************************/

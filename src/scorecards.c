@@ -89,15 +89,9 @@ void Nova_ComplianceSummaryGraph(char *docroot)
 {
 #ifdef HAVE_LIBGD
   char *report,buffer[CF_BUFSIZE];
-  struct HubTotalCompliance *ht;
-  struct HubQuery *hq;
-  struct Rlist *rp,*result;
-  int count = 0, tmpsize,icmp;
-  mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
+  int count = 0, tmpsize;
   struct CfDataView cfv;
-  char newfile[CF_BUFSIZE];
+  char newfile[CF_BUFSIZE],key[CF_MAXVARSIZE],value[CF_MAXVARSIZE];
   const int span = 7 * 4;
   double x,kept[span], repaired[span], notkept[span];
   double tkept,trepaired,tnotkept,total;
@@ -139,61 +133,21 @@ for (i = 0; i < (int)span; i++)
    notkept[i] = 0;
    }
 
-/* BEGIN query document */
-
-icmp = CFDB_GREATERTHANEQ;
-
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-   {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
-   return;
-   }
-
-// Query all hosts
-
-now = time(0);
-start = now - 24 * 3600 * 7;   
-
-// This is not going to scale, so we need another way of computing this average
-
-
-/*
-
-Replace all of this with look up getscratcharray
-
-*/
-
-
-hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ);
-
-for (rp = hq->records; rp != NULL; rp=rp->next)
-   {
-   ht = (struct HubTotalCompliance *)rp->item;
-
-// ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,ht->t;        
-// Divide each day into 4 lifecycle units 3600 * 24 / 4 seconds
-
-   if (ht->t < start)
-      {
-      continue;
-      }
-   else
-      {
-// slot = (maxslots - GetShiftSlot(start) + GetShiftSlot(ht->t)) % maxslots;
-    
-      slot = (int)((double)(ht->t - start)/(double)(3600*24*6) + 0.5);
-      kept[slot] += ht->kept;
-      repaired[slot] += ht->repaired;
-      notkept[slot] += ht->notkept;
-      count++;
-      }
-   }
-
 ltotal = lkept = lrepaired = 0;
 lnotkept = 1;
 
+// Read the cached compliance summary
+
+for (i = 0,start = now - CF_WEEK; start < now; start += CF_SHIFT_INTERVAL,i++)
+   {
+   slot = GetShiftSlot(start);
+   snprintf(key,CF_MAXVARSIZE,"tc_%d",slot);
+   CFDB_GetValue(key,value,CF_MAXVARSIZE);
+   sscanf(value,"%lf,%lf,%lf",&(kept[slot]),&(repaired[slot]),&(notkept[slot]));
+   }
 
 // For i = GetShiftSlot(start); j=0 - span; kept[i+j % span]
+
 for (i = 0; i < span; i++)
    {
    x = i * (cfv.width-cfv.origin_x)/span + cfv.origin_x;
@@ -236,13 +190,6 @@ for (i = 0; i < span; i++)
    lkept = tkept;
    lrepaired = trepaired;
    lnotkept = tnotkept;
-   }
-
-DeleteHubQuery(hq,DeleteHubTotalCompliance);
-
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 Nova_DrawComplianceAxes(&cfv,WHITE);
