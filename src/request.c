@@ -431,7 +431,7 @@ Nova2PHP_show_topic_category(18,buffer,2000);
 printf("\n%s\n",buffer);
 */
 
- mongo_cursor *cursor;
+/* mongo_cursor *cursor;
   bson_iterator it;
  
     cursor = mongo_find(&dbconn,MONGO_SCRATCH,bson_empty(&b),0,0,0,0);
@@ -450,6 +450,7 @@ if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose, "", "!! Could not close connection to report database");
    }
+*/
 /*
 long n = Nova2PHP_count_hosts();
 printf("NUMBER = %ld\n",n);
@@ -473,7 +474,8 @@ printf("AVLU = %s\n",buffer);
 //Nova2PHP_getlastupdate("SHA_852ffe9132338a8d76529ad522930933a111782959f028d8b63d35142531dc70",buffer,1000);
 //printf("UPDATE = %s\n",buffer);
 
-//Nova_ComplianceSummaryGraph("/srv/www/htdocs",buffer,10);
+//Nova_CacheTotalCompliance();
+Nova_ComplianceSummaryGraph("/srv/www/htdocs");
 
 //Nova2PHP_show_col_hosts("green",200,buffer,1000);
 //printf("HOSTS = %s\n",buffer);

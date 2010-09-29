@@ -97,7 +97,7 @@ void Nova_ComplianceSummaryGraph(char *docroot)
   double tkept,trepaired,tnotkept,total;
   double lkept,lrepaired,lnotkept,ltotal;
   FILE *fout;
-  time_t now = time(NULL),start;
+  time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
   int i,slot;
   struct stat sb;
   
@@ -138,12 +138,12 @@ lnotkept = 1;
 
 // Read the cached compliance summary
 
-for (i = 0,start = now - CF_WEEK; start < now; start += CF_SHIFT_INTERVAL,i++)
+for (i = 0,start = now - one_week; start < now; start += CF_SHIFT_INTERVAL,i++)
    {
    slot = GetShiftSlot(start);
    snprintf(key,CF_MAXVARSIZE,"tc_%d",slot);
    CFDB_GetValue(key,value,CF_MAXVARSIZE);
-   sscanf(value,"%lf,%lf,%lf",&(kept[slot]),&(repaired[slot]),&(notkept[slot]));
+   sscanf(value,"%lf,%lf,%lf",&(kept[i]),&(repaired[i]),&(notkept[i]));
    }
 
 // For i = GetShiftSlot(start); j=0 - span; kept[i+j % span]

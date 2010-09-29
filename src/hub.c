@@ -82,6 +82,7 @@ while (true)
 
    if (Nova_ShiftChange())
       {
+      CfOut(cf_verbose,""," -> Scanning to compliance cache");
       Nova_CacheTotalCompliance();
       }
 
@@ -260,7 +261,7 @@ void Nova_CacheTotalCompliance()
 {
 #ifdef HAVE_LIBMONGOC
   const int span = 7 * 4;
-  double kept[span],repaired[span],notkept[span];
+  double kept[span],repaired[span],notkept[span],count = 0;
   char key[CF_MAXVARSIZE],value[CF_MAXVARSIZE];
   time_t start,now = time(NULL);
   mongo_connection dbconn;
@@ -269,7 +270,7 @@ void Nova_CacheTotalCompliance()
   struct HubTotalCompliance *ht;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int slot,count;
+  int slot;
   
 /* BEGIN query document */
 
@@ -285,6 +286,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 now = time(NULL);
 start = now - 3600 * 6;   
+
+for (slot = 0; slot < span; slot++)
+   {
+   kept[slot] = 0;
+   repaired[slot] = 0;
+   notkept[slot] = 0;
+   }
 
 slot = GetShiftSlot(start);
 
@@ -315,7 +323,14 @@ if (!CFDB_Close(&dbconn))
    }
 
 snprintf(key,CF_MAXVARSIZE,"tc_%d",slot);
-snprintf(value,CF_MAXVARSIZE,"%.2lf,%.2lf,%.2lf",kept[slot],repaired[slot],notkept[slot]);
+if (count > 0)
+   {
+   snprintf(value,CF_MAXVARSIZE,"%.2lf,%.2lf,%.2lf",kept[slot]/count,repaired[slot]/count,notkept[slot]/count);
+   }
+else
+   {
+   snprintf(value,CF_MAXVARSIZE,"0,0,0");
+   }
 CFDB_PutValue(key,value);
 #endif
 }
