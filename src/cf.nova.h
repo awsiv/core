@@ -394,10 +394,15 @@ void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
 void BsonToString(char *retBuf, int retBufSz, bson *b, int depth);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
+#endif  /* HAVE_LIBMONGOC */
 
-void CFDB_PurgeDatabase(mongo_connection *conn);
-void CFDB_GetPurgeClasses(mongo_connection *conn, bson_iterator *classIt, struct Item **purgeKeysPtr);
-#endif
+/* db_purge.c */
+
+#ifdef HAVE_LIBMONGOC
+void CFDB_PurgeReports(void);
+void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr);
+#endif /* HAVE_LIBMONGOC */
+
 
 /* datapackaging.c */
 
@@ -1130,6 +1135,8 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observabl
 #define CF_GREEN 0
 
 #define CF_HUB_HORIZON 900 // 15 mins
+#define CF_HUB_PURGESECS 604800  // one week
+
 
 /***************************************************************************/
 
@@ -1188,6 +1195,7 @@ struct cf_pscalar
 #define cfr_ip_array     "IP"
 #define cfr_host_array   "ha"
 #define cfr_histo        "hs"
+#define cfr_perf_event    "P"
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"
 #define cfr_patch_installed "pi"

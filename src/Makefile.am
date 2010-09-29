@@ -20,6 +20,7 @@ libcfnova_la_SOURCES =						\
 	database.c						\
 	db_save.c                                               \
         db_query.c                                              \
+        db_purge.c                                              \
 	sql.c							\
 	ldap.c							\
 	license.c						\

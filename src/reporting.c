@@ -206,6 +206,7 @@ void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *styleshee
 
 
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_PROMISE_LOG);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -382,6 +383,7 @@ void Nova_GrandSummary()
 Nova_SummarizeComms();
 
 snprintf(name,CF_BUFSIZE-1,"%s/reports/comp_key",CFWORKDIR);
+MapName(name);
 
 if ((fout = cf_fopen(name,"w")) == NULL)
    {
@@ -609,6 +611,7 @@ void Nova_SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,ch
   char start[32];
 
 snprintf(name,CF_BUFSIZE,"%s/cfagent.%s.log",CFWORKDIR,VSYSNAME.nodename);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -726,6 +729,7 @@ void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *styleshe
   int i = 0,truncate;
 
   snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,CF_FILECHANGE);
+  MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1055,6 +1059,7 @@ void Nova_SummarizePromiseRepaired(int xml,int html,int csv,int embed,char *styl
   int i = 0;
 
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1180,6 +1185,7 @@ void Nova_SummarizePromiseNotKept(int xml,int html,int csv,int embed,char *style
   int i = 0;
 
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_NOTKEPT_LOG);
+MapName(name);
 
 if ((fin = cf_fopen(name,"r")) == NULL)
    {
@@ -1855,6 +1861,7 @@ void Nova_SummarizeComms()
   double now = (double)time(NULL),then,resolution = 300;
 
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
+MapName(name);
 
 if (!OpenDB(name,&dbp))
    {
@@ -2089,6 +2096,7 @@ void Nova_ZenossSummary(char *docroot)
   FILE *fout;
 
 snprintf(name,sizeof(name),"%s/reports/summary.z",docroot);
+MapName(name);
 
 #ifdef HAVE_LIBMONGOC
 clist = Nova_RankHosts(NULL,0,cfrank_compliance,200);

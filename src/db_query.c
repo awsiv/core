@@ -1337,8 +1337,9 @@ while (mongo_cursor_next(cursor))  // loops over documents
          while (bson_iterator_next(&it2))
             {
             bson_iterator_init(&it3, bson_iterator_value(&it2));
-	    snprintf(rname,sizeof(rname),"%s",bson_iterator_key(&it2));
 
+
+	    snprintf(rname,sizeof(rname),"(unknown)");
             rex = 0;
             rsigma = 0;
             rtime = 0;
@@ -1346,7 +1347,11 @@ while (mongo_cursor_next(cursor))  // loops over documents
             
             while (bson_iterator_next(&it3))
                {
-               if (strcmp(bson_iterator_key(&it3),cfr_obs_q) == 0)
+               if (strcmp(bson_iterator_key(&it3),cfr_perf_event) == 0)
+                  {
+		  snprintf(rname,sizeof(rname),"%s",bson_iterator_string(&it3));
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_obs_q) == 0)
                   {
                   rq = bson_iterator_double(&it3);
                   }

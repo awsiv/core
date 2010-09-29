@@ -8,9 +8,9 @@
 /*                                                                           */
 /*****************************************************************************/
 
-// TODO: Fix regex queries, ensure index on cfr_keyhash and sw.n
+// TODO: ensure index on cfr_keyhash and sw.n
 // TODO: Purge old classes (only adding for now) - TTL "LASTSEENEXPIRE" in cfengine code
-// TODO: Report update errors!
+
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
@@ -641,6 +641,7 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_
 { bson_buffer bb;
   bson_buffer *setObj;
   bson_buffer *arr, *sub;
+  struct Item *keys = NULL;
   bson host_key;  // host description
   bson setOp;
   char handle[CF_MAXVARSIZE],reason[CF_BUFSIZE];
@@ -680,13 +681,29 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%ld,%254[^,],%1024[^\n]",&then,handle,reason);
    tthen = (time_t)then;
 
-   snprintf(varName, sizeof(varName), "%s.%s@%d", repName,handle,then);
+   snprintf(varName, sizeof(varName), "%s.%s@%s", repName,handle,GenTimeKey(tthen));
+
+   // check for duplicate keys
+   if(IsItemIn(keys,varName))
+     {
+     CfOut(cf_verbose, "", "!! Duplicate key \"%s\" in %s - second time=%s", varName, dbOp, cf_ctime(&tthen));
+     continue; // avoids DB update failure
+     }
+   else
+     {
+     PrependItem(&keys,varName,NULL);
+     }
    
    sub = bson_append_start_object(setObj, varName);
    bson_append_string(sub,cfr_promisehandle, handle);
    bson_append_string(sub,cfr_cause,reason);
    bson_append_int(sub, cfr_time, then);
    bson_append_finish_object(sub);
+   }
+
+ if(keys)
+   {
+   DeleteItemList(keys);
    }
 
 bson_append_finish_object(setObj);
@@ -811,9 +828,9 @@ void CFDB_SavePerformance(mongo_connection *conn, char *keyhash, struct Item *da
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
-  char varName[CF_MAXVARSIZE],*sp;
+  char varName[CF_MAXVARSIZE];
   long t;
-  char eventname[CF_MAXVARSIZE];
+  char eventname[CF_MAXVARSIZE],eventnameKey[CF_MAXVARSIZE];
   double measure = 0,average = 0,dev = 0;
 
 // find right host
@@ -830,17 +847,13 @@ for (ip = data; ip != NULL; ip=ip->next)
    eventname[0] = '\0';
    sscanf(ip->name,"%ld,%lf,%lf,%lf,%255[^\n]\n",&t,&measure,&average,&dev,eventname);
 
-   for (sp = eventname; *sp != '\0'; sp++)
-      {
-      if (*sp == '.') // Need to canonify the dots, as dot is not allowed in a mongo key
-         {
-         *sp = '_';
-         }
-      }
+   // Need to canonify the dots, as dot is not allowed in a mongo key
+   ReplaceChar(eventname,eventnameKey,sizeof(eventnameKey),'.','_');
    
-   snprintf(varName, sizeof(varName), "%s.%s",cfr_performance,eventname);
+   snprintf(varName, sizeof(varName), "%s.%s",cfr_performance,eventnameKey);
    
    sub = bson_append_start_object(setObj , varName);
+   bson_append_string(sub, cfr_perf_event, eventname);
    bson_append_double(sub, cfr_obs_q, measure);
    bson_append_double(sub, cfr_obs_E, average);
    bson_append_double(sub, cfr_obs_sigma, dev);
@@ -1218,131 +1231,6 @@ MongoCheckForError(conn,"SaveLastUpdate",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
-}
-
-/*****************************************************************************/
-/*                   REPORT DATABASE PURGE FUNCTIONS                         */
-/*****************************************************************************/
-
-void CFDB_PurgeDatabase(mongo_connection *conn)
-/**
- * Remove old data from reports. Usually "old" means one week.
- * For each host: collect keys to delete in a list, and call update once.
- *
- **/
-{
-  struct Item *purgeKeys = NULL,*ip = NULL;
-  mongo_cursor *cursor;
-  bson query,field,hostQuery,op;
-  bson_iterator it1;
-  bson_buffer bb,*unset,*pull;
-  char keyHash[CF_MAXVARSIZE];
-
-  CfOut(cf_verbose,"","Purging mongo report database....");
-  
-  // query all hosts
-  bson_empty(&query);
-  
-  // only retrieve the purgable reports
-  bson_buffer_init(&bb);
-  bson_append_int(&bb,cfr_keyhash,1);
-  bson_append_int(&bb,cfr_class,1);
-  bson_from_buffer(&field, &bb);
-
-  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
-  bson_destroy(&field);
-
-
-  while(mongo_cursor_next(cursor))  // iterate over docs
-    {
-      bson_iterator_init(&it1,cursor->current.data);
-
-      memset(keyHash,0,sizeof(keyHash));
-      
-      while(bson_iterator_next(&it1))
-	{
-	  if (strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)
-	    {
-	      snprintf(keyHash,sizeof(keyHash),"%s",bson_iterator_string(&it1));
-	    }
-	  else if (strcmp(bson_iterator_key(&it1), cfr_class) == 0)
-	    {
-	      CFDB_GetPurgeClasses(conn,&it1,&purgeKeys);
-	    }
-	  else if (strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
-	    {
-	      //snprintf(name,sizeof(name),"%s",bson_iterator_string(&it1));
-	    }
-	}
-
-      bson_buffer_init(&bb);
-      bson_append_string(&bb,cfr_keyhash,keyHash);
-      bson_from_buffer(&hostQuery,&bb);
-
-      // UPDATE
-      bson_buffer_init(&bb);
-      unset = bson_append_start_object(&bb, "$unset");
-
-      for (ip = purgeKeys; ip != NULL; ip=ip->next)
-	{
-	bson_append_int(unset, ip->name, 1);
-	}
-
-      bson_append_finish_object(unset);
-      bson_from_buffer(&op,&bb);
-
-      mongo_update(conn,MONGO_DATABASE,&hostQuery, &op, 0);
-
-      
-      DeleteItemList(purgeKeys);
-      purgeKeys = NULL;
-      bson_destroy(&hostQuery);
-      bson_destroy(&op);
-    }
-  
-
-  mongo_cursor_destroy(cursor);  
-
-}
-
-/*****************************************************************************/
-
-void CFDB_GetPurgeClasses(mongo_connection *conn, bson_iterator *classIt, struct Item **purgeKeysPtr)
-
-{
-  bson_iterator it1,it2;
-  time_t classTime, now;
-  char purgeKey[CF_SMALLBUF];
-
-  now = time(NULL);
-
-  bson_iterator_init(&it1,bson_iterator_value(classIt));
-
-  while (bson_iterator_next(&it1))
-    {
-      bson_iterator_init(&it2,bson_iterator_value(&it1));
-
-      while (bson_iterator_next(&it2))
-	{
-	  if(strcmp(bson_iterator_key(&it2),cfr_time) == 0)
-	    {
-	      classTime = bson_iterator_int(&it2);
-	      
-	      if(now - classTime >= CF_HUB_HORIZON)
-		{
-		  // purge both the class object and the class key array
-
-		  Debug("Class \"%s\" needs to be purged (%lu seconds old)\n", bson_iterator_key(&it1), now - classTime);
-
-		  snprintf(purgeKey,sizeof(purgeKey),"%s.%s",cfr_class,bson_iterator_key(&it1));
-		  PrependItem(purgeKeysPtr,purgeKey,NULL);
-
-		}
-
-	    }
-	}
-    }
-
 }
 
 #endif  /* HAVE_MONGOC */

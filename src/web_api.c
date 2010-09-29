@@ -2506,24 +2506,26 @@ else
 if (clist)
    {
    buffer[0] = '\0';
-   strcat(buffer,"<table>\n<tr>\n\n");
+   strcat(buffer,"<table>\n<tr>\n");
    
-   for (ip = clist; ip !=  NULL; ip=ip->next)
+   for (ip = clist; ip !=  NULL; ip=ip->next, counter++)
       {
-      if (counter > 0 && (counter++ % 6 == 0))  // new row
+      if (counter > 0 && (counter % 6 == 0))  // new row
          {
-         snprintf(work,CF_MAXVARSIZE,"</tr>\n<tr>");
+         snprintf(work,CF_MAXVARSIZE,"</tr>\n<tr>\n");
          Join(buffer,work,bufsize);
          }
       
-      snprintf(work,CF_MAXVARSIZE,"<td><img class=\"icontext\" src=\"img/%s.png\"> &nbsp;<a href=\"host.php?hostkey=%s\">%s</a></td>\n",colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<td><img src=\"img/%s.png\"><a href=\"host.php?hostkey=%s\">%s</a></td>\n",
+	       colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
       
       Join(buffer,work,bufsize);
       
-      if (counter > n && counter % 6 == 0)
+      if (counter > n && (counter % 6 == 0))
          {
          break;
          }
+
       }
 
    Join(buffer,"</tr>\n</table>\n",bufsize);

@@ -601,7 +601,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%ld,%127[^\n]",&then,handle);
    tthen = (time_t)then;
 
-   Debug("Repair: of promise \"%s\" at %s",handle,cf_ctime(&tthen));
+   Debug("Repair: of promise \"%s\" at %lu\n",handle,tthen);
    }
 }
 
@@ -627,7 +627,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%ld,%127[^\n]",&then,handle);
    tthen = (time_t)then;
-   Debug("Failure: of promise \"%s\" at %s",handle,cf_ctime(&tthen));
+   Debug("Failure: of promise \"%s\" at %lu\n",handle,tthen);
    }
 
 }
