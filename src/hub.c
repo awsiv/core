@@ -84,6 +84,7 @@ while (true)
       {
       CfOut(cf_verbose,""," -> Scanning to compliance cache");
       Nova_CacheTotalCompliance();
+      CFDB_PurgeReports();
       }
 
    Nova_CountMonitoredClasses();

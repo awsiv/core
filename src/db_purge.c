@@ -12,8 +12,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef HAVE_LIBMONGOC
-
 
 void CFDB_PurgeReports(void)
 /**
@@ -22,6 +20,8 @@ void CFDB_PurgeReports(void)
  *
  **/
 {
+#ifdef HAVE_LIBMONGOC
+
   struct Item *purgeKeys = NULL,*ip = NULL;
   mongo_connection dbconn;
   mongo_cursor *cursor;
@@ -107,7 +107,12 @@ void CFDB_PurgeReports(void)
 
   mongo_cursor_destroy(cursor);  
   CFDB_Close(&dbconn);
+
+#endif  /* HAVE_LIBMONGOC */
 }
+
+
+#ifdef HAVE_LIBMONGOC
 
 /*****************************************************************************/
 /*

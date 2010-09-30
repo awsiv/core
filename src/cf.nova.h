@@ -398,8 +398,8 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 
 /* db_purge.c */
 
-#ifdef HAVE_LIBMONGOC
 void CFDB_PurgeReports(void);
+#ifdef HAVE_LIBMONGOC
 void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr);
 #endif /* HAVE_LIBMONGOC */
 
