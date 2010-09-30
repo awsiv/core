@@ -327,8 +327,8 @@ else
    {
    snprintf(value,CF_MAXVARSIZE,"0,0,0");
    }
-CFDB_PutValue(key,value);
 
+CFDB_PutValue(key,value);
 CFDB_Close(&dbconn);
 
 #endif  /* HAVE_LIBMONGOC */

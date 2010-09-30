@@ -1568,9 +1568,9 @@ void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t from,enum 
   char version[CF_MAXVARSIZE];
   int kept,repaired,notrepaired;
   int i = 0,today = false,first = true;
-  double av_day_kept = 0, av_day_repaired = 0;
-  double av_week_kept = 0, av_week_repaired = 0;
-  double av_hour_kept = 0, av_hour_repaired = 0;
+  double av_day_kept = 100, av_day_repaired = 0;
+  double av_week_kept = 100, av_week_repaired = 0;
+  double av_hour_kept = 100, av_hour_repaired = 0;
   char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],key[CF_SMALLBUF],ref[CF_SMALLBUF];
   long t;
   time_t then;
@@ -1650,8 +1650,8 @@ for (ip = file; ip != NULL; ip = ip->next)
       av_hour_repaired = GAverage((double)repaired,av_hour_repaired,0.5);
       }
 
-   av_week_kept = GAverage((double)kept,av_week_kept,0.1);
-   av_week_repaired = GAverage((double)repaired,av_week_repaired,0.1);
+   av_week_kept = GAverage((double)kept,av_week_kept,0.5);
+   av_week_repaired = GAverage((double)repaired,av_week_repaired,0.5);
 
    // Check for two entries
    
