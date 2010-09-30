@@ -317,11 +317,6 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
 DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   }
-
 snprintf(key,CF_MAXVARSIZE,"tc_%d",slot);
 if (count > 0)
    {
@@ -332,7 +327,10 @@ else
    snprintf(value,CF_MAXVARSIZE,"0,0,0");
    }
 CFDB_PutValue(key,value);
-#endif
+
+CFDB_Close(&dbconn);
+
+#endif  /* HAVE_LIBMONGOC */
 }
 
 /*********************************************************************/
