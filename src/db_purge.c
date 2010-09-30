@@ -14,22 +14,11 @@
 
 
 void CFDB_PurgeReports(void)
-/**
- * Remove old data from reports. Usually "old" means one week.
- * For each host: collect keys to delete in a list, and call update once.
- *
- **/
 {
 #ifdef HAVE_LIBMONGOC
 
-  struct Item *purgeKeys = NULL,*ip = NULL;
   mongo_connection dbconn;
-  mongo_cursor *cursor;
-  bson query,field,hostQuery,op;
-  bson_iterator it1;
-  bson_buffer bb,*unset,*pull;
-  char keyHash[CF_MAXVARSIZE];
-  time_t now;
+
 
   CfOut(cf_verbose,"","Purging mongo report database....");
 
@@ -39,6 +28,37 @@ void CFDB_PurgeReports(void)
       CfOut(cf_verbose,"", "!! Could not open connection to report database on purge");
       return;
     }
+
+  
+  CFDB_PurgeTimestampedReports(&dbconn);
+  //CFDB_PurgeDropReports(&dbconn);  - rely on replace on update for now
+  
+
+  CFDB_Close(&dbconn);
+
+#endif  /* HAVE_LIBMONGOC */
+}
+
+/*****************************************************************************/
+
+#ifdef HAVE_LIBMONGOC
+
+void CFDB_PurgeTimestampedReports(mongo_connection *conn)
+/**
+ * Remove old data from reports with timestamp Usually "old" means one week.
+ * For each host: collect keys to delete in a list, and call update once.
+ *
+ **/
+{
+  struct Item *purgeKeys = NULL,*ip = NULL;
+  mongo_cursor *cursor;
+  bson query,field,hostQuery,op;
+  bson_iterator it1;
+  bson_buffer bb,*unset;
+  char keyHash[CF_MAXVARSIZE];
+  time_t now;
+  
+  CfOut(cf_verbose,"", " -> Purge timestamped reports");
   
   // query all hosts
   bson_empty(&query);
@@ -52,7 +72,7 @@ void CFDB_PurgeReports(void)
   bson_append_int(&bb,cfr_filediffs,1);
   bson_from_buffer(&field, &bb);
 
-  cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,0);
+  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
   bson_destroy(&field);
 
   now = time(NULL);
@@ -72,10 +92,10 @@ void CFDB_PurgeReports(void)
 	    }
 
 
-	  CFDB_PurgeScan(&dbconn,&it1,cfr_class,CF_HUB_HORIZON,now,&purgeKeys);
-	  CFDB_PurgeScan(&dbconn,&it1,cfr_performance,CF_HUB_PURGESECS,now,&purgeKeys);
-	  CFDB_PurgeScan(&dbconn,&it1,cfr_filechanges,CF_HUB_HORIZON,now,&purgeKeys);
-	  CFDB_PurgeScan(&dbconn,&it1,cfr_filediffs,CF_HUB_PURGESECS,now,&purgeKeys);
+	  CFDB_PurgeScan(conn,&it1,cfr_class,CF_HUB_HORIZON,now,&purgeKeys);
+	  CFDB_PurgeScan(conn,&it1,cfr_performance,CF_HUB_PURGESECS,now,&purgeKeys);
+	  CFDB_PurgeScan(conn,&it1,cfr_filechanges,CF_HUB_PURGESECS,now,&purgeKeys);
+	  CFDB_PurgeScan(conn,&it1,cfr_filediffs,CF_HUB_PURGESECS,now,&purgeKeys);
 	  
 	}
 
@@ -95,8 +115,8 @@ void CFDB_PurgeReports(void)
       bson_append_finish_object(unset);
       bson_from_buffer(&op,&bb);
 
-      mongo_update(&dbconn,MONGO_DATABASE,&hostQuery, &op, 0);
-      MongoCheckForError(&dbconn,"PurgeReports",keyHash);
+      mongo_update(conn,MONGO_DATABASE,&hostQuery, &op, 0);
+      MongoCheckForError(conn,"PurgeTimestampedReports",keyHash);
       
       DeleteItemList(purgeKeys);
       purgeKeys = NULL;
@@ -106,15 +126,47 @@ void CFDB_PurgeReports(void)
   
 
   mongo_cursor_destroy(cursor);  
-  CFDB_Close(&dbconn);
-
-#endif  /* HAVE_LIBMONGOC */
 }
 
+/*****************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
+void CFDB_PurgeDropReports(mongo_connection *conn)
+/**
+ *  Remove certain reports completely.
+ **/
+{
+  bson_buffer bb, *unset;
+  bson empty,op;
+  char *DROP_REPORTS[] = { cfr_setuid, cfr_vars, NULL };
+  int i;
+  
+  CfOut(cf_verbose,"", " -> Purge droppable reports");
+
+
+  // query all hosts
+  bson_empty(&empty);
+
+  
+  // define reports to drop (unset)
+  bson_buffer_init(&bb);
+  unset = bson_append_start_object(&bb, "$unset");
+  for (i = 0; DROP_REPORTS[i] != NULL; i++)
+    {
+    bson_append_int(unset, DROP_REPORTS[i], 1);
+    }
+  bson_append_finish_object(unset);
+  bson_from_buffer(&op,&bb);  
+
+
+  // run update
+  mongo_update(conn,MONGO_DATABASE,&empty,&op,MONGO_UPDATE_MULTI);
+  MongoCheckForError(conn,"PurgeDropReports",NULL);
+    
+  bson_destroy(&op);
+}
 
 /*****************************************************************************/
+
 /*
 void CFDB_PurgeScanClasses(mongo_connection *conn, bson_iterator *itp, time_t now, struct Item **purgeKeysPtr)
 

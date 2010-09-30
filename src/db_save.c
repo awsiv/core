@@ -481,9 +481,9 @@ bson_destroy(&host_key);
 void CFDB_SaveVariables(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
-  bson_buffer *setObj, *varObj, *keyArr, *keyAdd, *keyArrField, *arr;
+  bson_buffer *unset, *setObj, *varObj, *keyArr, *keyAdd, *keyArrField, *arr;
   bson host_key;  // host description
-  bson setOp;
+  bson setOp,unsetOp;
   struct Item *ip;
   int i;
   char iStr[32];
@@ -498,6 +498,18 @@ bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
+// delete any old report first
+
+unset = bson_append_start_object(&bb, "$unset");
+bson_append_int(unset,cfr_vars,1);
+bson_append_finish_object(unset);
+bson_from_buffer(&unsetOp,&bb);
+mongo_update(conn, MONGO_DATABASE, &host_key, &unsetOp, 0);
+MongoCheckForError(conn,"SaveVariables-DeleteOld",keyhash);
+bson_destroy(&unsetOp);
+
+
+bson_buffer_init(&bb);
 setObj = bson_append_start_object(&bb, "$set");
 
 for (ip = data; ip != NULL; ip=ip->next)
@@ -546,8 +558,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 bson_append_finish_object(setObj);
 
-// append scope.varname to key array
+// TODO: append scope.varname to key array more efficient ?
 
+/*
 keyAdd = bson_append_start_object(&bb , "$addToSet");
 keyArrField = bson_append_start_object(keyAdd , cfr_var_keys);
 keyArr = bson_append_start_array(keyAdd , "$each");
@@ -573,6 +586,7 @@ for (ip = data, i = 0; ip != NULL; ip=ip->next)
 bson_append_finish_object(keyArr);
 bson_append_finish_object(keyArrField);
 bson_append_finish_object(keyAdd);
+*/
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
@@ -876,9 +890,9 @@ bson_destroy(&host_key);
 void CFDB_SaveSetUid(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
-  bson_buffer *keyArr, *keyAdd, *keyArrField;
+  bson_buffer *keyArr, *set, *unset;
   bson host_key;  // host description
-  bson setOp;
+  bson setOp,unsetOp;
   struct Item *ip;
   char progName[CF_MAXVARSIZE];
   char iStr[32];
@@ -889,13 +903,14 @@ bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
 bson_from_buffer(&host_key, &bb);
 
+// old report is replaced
+
 bson_buffer_init(&bb);
 
 // insert keys into key array
 
-keyAdd = bson_append_start_object(&bb , "$addToSet");
-keyArrField = bson_append_start_object(keyAdd , cfr_setuid);
-keyArr = bson_append_start_array(keyAdd , "$each");
+set = bson_append_start_object(&bb , "$set");
+keyArr = bson_append_start_array(set, cfr_setuid);
 
 for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    {
@@ -905,8 +920,7 @@ for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
    }
 
 bson_append_finish_object(keyArr);
-bson_append_finish_object(keyArrField);
-bson_append_finish_object(keyAdd);
+bson_append_finish_object(set);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);

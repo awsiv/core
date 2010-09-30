@@ -400,6 +400,8 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 
 void CFDB_PurgeReports(void);
 #ifdef HAVE_LIBMONGOC
+void CFDB_PurgeDropReports(mongo_connection *conn);
+void CFDB_PurgeTimestampedReports(mongo_connection *conn);
 void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr);
 #endif /* HAVE_LIBMONGOC */
 
@@ -1212,7 +1214,7 @@ struct cf_pscalar
 #define cfr_repaired      "r"
 #define cfr_notkept       "N"
 #define cfr_vars          "vr"
-#define cfr_var_keys      "vk"
+//#define cfr_var_keys      "vk"  // would optimize reads
 #define cfr_type          "T"
 #define cfr_rval          "V"
 #define cfr_lval          "lval"
