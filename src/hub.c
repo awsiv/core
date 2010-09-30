@@ -64,7 +64,7 @@ signal(SIGHUP,SIG_IGN);
 signal(SIGPIPE,SIG_IGN);
 signal(SIGUSR1,HandleSignals);
 signal(SIGUSR2,HandleSignals);
- 
+
 umask(077);
 
 while (true)
@@ -83,6 +83,7 @@ while (true)
    if (Nova_ShiftChange())
       {
       CfOut(cf_verbose,""," -> Scanning to compliance cache");
+      NewClass("am_policy_hub");
       Nova_CacheTotalCompliance();
       CFDB_PurgeReports();
       }
