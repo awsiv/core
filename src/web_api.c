@@ -113,6 +113,9 @@ if (false)
    Nova2PHP_vars_report_pdf(NULL,NULL,NULL,NULL,NULL,0,buffer,1000);
    Nova2PHP_filediffs_report_pdf(NULL,NULL,NULL,false,-1,">",buffer,10000);
    Nova2PHP_setuid_report_pdf(NULL,NULL,0,buffer,10000);
+   
+   /* svn helper */
+      Nova2PHP_validate_policy(NULL,NULL,10000);
    }
 }
 
@@ -4547,4 +4550,32 @@ char *GetSppTableHeader(spp_t sppType)
   return "<tr>Undefined Special Policy Header</tr>";
 }
 
+/*****************************************************************************/
+int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize)
+
+{
+   char cmd[CF_BUFSIZE];
+   char output[CF_EXPANDSIZE];
+
+   snprintf(cmd,CF_BUFSIZE-1,"/var/cfengine/bin/cf-promises -f %s",file);
+   output[0] = '\0';
+
+   if(GetExecOutput(cmd,output,false))
+     {
+	if(output == NULL)
+	  {
+	     return 0;
+	  }	
+	else
+	  {
+	     snprintf(buffer,bufsize,"%s",output);
+	     return 1;
+	  }
+     }
+   else
+     {
+	return -1;
+     }   
+}
+/*****************************************************************************/
 #endif

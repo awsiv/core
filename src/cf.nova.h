@@ -954,6 +954,9 @@ char *Nova_FormatDiff_pdf(char *s);
 int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *returnval,int bufsize);
 /* end pdf report */
 
+/* svn helper functions */
+int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize);
+
 void Nova2PHP_spp_reportnames(char *buf,int bufSz);
 int Nova2PHP_spp_report(char *hostkey, char *reportName, char *buf, int bufSz);
 char *GetSppTableHeader(spp_t sppType);
