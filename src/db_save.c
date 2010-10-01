@@ -8,8 +8,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-// TODO: ensure index on cfr_keyhash and sw.n
-// TODO: Purge old classes (only adding for now) - TTL "LASTSEENEXPIRE" in cfengine code
+// TODO: ensure indeces on cfr_keyhash, etc. ?
 
 
 #include "cf3.defs.h"
@@ -450,8 +449,8 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 bson_append_finish_object(setObj);
 
-// insert keys into numbered key array? - would optimize reads later
-/*
+// insert keys into numbered key array - needed for efficient regexes
+
 keyAdd = bson_append_start_object(&bb , "$addToSet");
 keyArrField = bson_append_start_object(keyAdd,cfr_class_keys);
 keyArr = bson_append_start_array(keyAdd , "$each");
@@ -466,7 +465,7 @@ for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
 bson_append_finish_object(keyArr);
 bson_append_finish_object(keyArrField);
 bson_append_finish_object(keyAdd);
-*/
+
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);

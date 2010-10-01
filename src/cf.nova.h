@@ -404,6 +404,7 @@ void CFDB_PurgeDropReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedReports(mongo_connection *conn);
 void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr);
 void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr);
+void DeleteFromBsonArray(bson_buffer *bb, char *arrName, struct Item *elements);
 #endif /* HAVE_LIBMONGOC */
 
 
@@ -1207,7 +1208,7 @@ struct cf_pscalar
 #define cfr_patch_installed "pi"
 #define cfr_cause        "ca"
 #define cfr_class        "cl"
-//#define cfr_class_keys   "ck"  // would optimize reads
+#define cfr_class_keys   "ck"
 #define cfr_class_jobs   "cj"
 #define cfr_total_compliance "tc"
 #define cfr_time          "t"

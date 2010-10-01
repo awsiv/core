@@ -50,14 +50,14 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
  *
  **/
 {
-  struct Item *purgeKeys = NULL, *purgePcNames = NULL, *ip = NULL;
+  struct Item *purgeKeys = NULL, *ip;
+  struct Item *purgePcNames = NULL, *purgeClassNames = NULL;
   mongo_cursor *cursor;
   bson query,field,hostQuery,op;
   bson_iterator it1;
-  bson_buffer bb,*unset, *pullAll, *arr;
+  bson_buffer bb,*unset;
   char keyHash[CF_MAXVARSIZE];
   time_t now;
-  char iStr[64];
   int i;
   
   CfOut(cf_verbose,"", " -> Purge timestamped reports");
@@ -98,13 +98,13 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
 	    }
 
 
-	  CFDB_PurgeScan(conn,&it1,cfr_class,CF_HUB_HORIZON,now,&purgeKeys,NULL);
+	  CFDB_PurgeScan(conn,&it1,cfr_class,240,now,&purgeKeys,&purgeClassNames);
 	  CFDB_PurgeScan(conn,&it1,cfr_performance,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
 	  CFDB_PurgeScan(conn,&it1,cfr_filechanges,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
 	  CFDB_PurgeScan(conn,&it1,cfr_filediffs,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
 	  CFDB_PurgeScan(conn,&it1,cfr_promisecompl,CF_HUB_PURGESECS,now,&purgeKeys,&purgePcNames);
-	  CFDB_PurgeScan(conn,&it1,cfr_lastseen,CF_HUB_PURGESECS,now,&purgeKeys,&purgePcNames);
-	  CFDB_PurgeScan(conn,&it1,cfr_bundles,CF_HUB_PURGESECS,now,&purgeKeys,&purgePcNames);
+	  CFDB_PurgeScan(conn,&it1,cfr_lastseen,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
+	  CFDB_PurgeScan(conn,&it1,cfr_bundles,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
 	  CFDB_PurgeScanStrTime(conn,&it1,cfr_valuereport,CF_HUB_PURGESECS,now,&purgeKeys);
 	}
 
@@ -119,26 +119,15 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
       for (ip = purgeKeys; ip != NULL; ip=ip->next)
 	{
 	bson_append_int(unset, ip->name, 1);
+	printf("PURGING:\"%s\"\n",ip->name);
 	}
 
       bson_append_finish_object(unset);
 
 
       // key array elements
-      if(purgePcNames)  // cfr_promisecompl_keys array
-	{
-	pullAll = bson_append_start_object(&bb, "$pullAll");
-	arr = bson_append_start_array(pullAll,cfr_promisecompl_keys);
-
-	for (ip = purgePcNames, i = 0; ip != NULL; ip=ip->next, i++)
-	  {
-	  snprintf(iStr,sizeof(iStr),"%d",i);
-	  bson_append_string(arr, iStr, ip->name);
-	  }
-
-	bson_append_finish_object(arr);
-	bson_append_finish_object(pullAll);
-	}
+      DeleteFromBsonArray(&bb,cfr_class_keys,purgeClassNames);
+      DeleteFromBsonArray(&bb,cfr_promisecompl_keys,purgePcNames);
       
 
       bson_from_buffer(&op,&bb);
@@ -146,10 +135,15 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
       mongo_update(conn,MONGO_DATABASE,&hostQuery, &op, 0);
       MongoCheckForError(conn,"PurgeTimestampedReports",keyHash);
       
-      DeleteItemList(purgeKeys);
-      purgeKeys = NULL;
+      DeleteItemList(purgeClassNames);
+      purgeClassNames = NULL;
+
       DeleteItemList(purgePcNames);
       purgePcNames = NULL;
+
+      DeleteItemList(purgeKeys);
+      purgeKeys = NULL;
+
       bson_destroy(&hostQuery);
       bson_destroy(&op);
     }
@@ -273,7 +267,7 @@ void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey,
 		  
 		  if(purgeNamesPtr)
 		    {
-		    PrependItem(purgeNamesPtr,bson_iterator_key(&it1),NULL);
+		    PrependItem(purgeNamesPtr,(char *)bson_iterator_key(&it1),NULL);
 		    }
 
 		  Debug("Report key \"%s\" needs to be purged (%lu seconds old)\n", purgeKey, now - then);
@@ -320,7 +314,7 @@ void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *rep
 		continue;
 		}
 
-	      snprintf(thenStr,sizeof(thenStr),bson_iterator_string(&it2));
+	      snprintf(thenStr,sizeof(thenStr),"%s",bson_iterator_string(&it2));
 
 	      if(Nova_CoarseLaterThan(earliest,thenStr))  // definition of old
 		{
@@ -334,6 +328,37 @@ void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *rep
 	}
 
     }
+}
+
+/*****************************************************************************/
+
+void DeleteFromBsonArray(bson_buffer *bb, char *arrName, struct Item *elements)
+{
+  struct Item *ip = NULL;
+  bson_buffer *pullAll, *arr;
+  char iStr[64];
+  int i;
+  
+  if(!elements)
+    {
+      return;
+    }
+
+  pullAll = bson_append_start_object(bb, "$pullAll");
+  arr = bson_append_start_array(pullAll,arrName);
+
+  for (ip = elements, i = 0; ip != NULL; ip=ip->next, i++)
+    {
+      snprintf(iStr,sizeof(iStr),"%d",i);
+      bson_append_string(arr, iStr, ip->name);
+      
+      printf("      key-val:%s:%s\n",iStr,ip->name);
+    }
+
+  bson_append_finish_object(arr);
+  bson_append_finish_object(pullAll);
+
+
 }
 
 
