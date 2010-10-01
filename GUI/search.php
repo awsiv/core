@@ -3,6 +3,7 @@ $search = $_POST['search'];
 $hostkey = $_POST['hostkey'];
 $report_type = $_POST['report'];
 $many = $_POST['manyhosts'];
+$class_regex = $_POST['class_regex'];
 
 if ($report_type == "")
    {
@@ -10,6 +11,7 @@ if ($report_type == "")
    $hostkey = $_GET['hostkey'];
    $report_type = $_GET['report'];
    $many = $_GET['manyhosts'];
+   $class_regex = $_GET['class_regex'];
    }
 
 $hostname =  cfpr_hostname($hostkey);
@@ -32,13 +34,13 @@ if ($many)  // Returning query
 	$name = $_POST['name'];
 	if ($hosts_only)
   	   {
-           $report = cfpr_hosts_with_bundlesseen(NULL,$name,true);
+           $report = cfpr_hosts_with_bundlesseen(NULL,$name,true,$class_regex);
 	   }
 	else
 	   {
-	   $report = cfpr_report_bundlesseen(NULL,$name,true);
-	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";  
-	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email\">Email PDF</a></div><br><br>";
+	   $report = cfpr_report_bundlesseen(NULL,$name,true,$class_regex);
+	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";  
+	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex&pdf_action=email\">Email PDF</a></div><br><br>";
 	   }
 	
 	break;
@@ -312,7 +314,7 @@ else if ($hostkey != "") // Default search on single machine
       {
       case  "Bundle profile":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_bundlesseen($hostkey,$search,true);
+	$report = cfpr_report_bundlesseen($hostkey,$search,true,NULL);
 	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email\">Email PDF</a></div><br><br>";
 	break;
@@ -464,6 +466,7 @@ else // No hosktkey
 	echo "<h1>$report_type query</h1>";
 	echo "<form method=\"post\" action=\"search.php\">";
 	echo "<p>Bundle pattern: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";

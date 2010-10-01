@@ -102,7 +102,7 @@ if (false)
    /* pdf functions */
    Nova2PHP_compliance_report_pdf(NULL,NULL,0,0,0,0,0,buffer,10000);
    Nova2PHP_promiselog_pdf(NULL,NULL,1,buffer,1000); 
-   Nova2PHP_bundle_report_pdf(NULL,NULL,0,buffer,10000);
+   Nova2PHP_bundle_report_pdf(NULL,NULL,0,buffer,10000,NULL);
    Nova2PHP_value_report_pdf(NULL,NULL,NULL,NULL,buffer,1000);
    Nova2PHP_classes_report_pdf(NULL,NULL,0,buffer,1000);
    Nova2PHP_compliance_promises_pdf(NULL,NULL,"x",0,buffer,10000);
@@ -1005,7 +1005,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *returnval,int bufsize)
+int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *returnval,int bufsize,char *classRegex)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubBundleSeen *hb;   
@@ -1013,8 +1013,6 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *returnval,
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
 /* BEGIN query document */
 
@@ -1024,18 +1022,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryBundleSeen(&dbconn,&query,bundle,regex);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryBundleSeen(&dbconn,bson_empty(&b),bundle,regex);
-   }
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classRegex);
 
 returnval[0] = '\0';
 
@@ -1841,7 +1828,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *returnval,int bufsize)
+int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *returnval,int bufsize,char *classRegex)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubHost *hh;
@@ -1849,8 +1836,6 @@ int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *returnval,i
   struct Rlist *rp,*result;
   int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
 /* BEGIN query document */
 
@@ -1860,18 +1845,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryBundleSeen(&dbconn,&query,bundle,regex);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryBundleSeen(&dbconn,bson_empty(&b),bundle,regex);
-   }
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classRegex);
+
 
 snprintf(returnval,bufsize,"<table><tr>");
 
@@ -3443,7 +3418,7 @@ return true;
 }
 
 /*****************************************************************************/
-int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *returnval,int bufsize)
+int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *returnval,int bufsize,char *classRegex)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubBundleSeen *hb;   
@@ -3451,8 +3426,6 @@ int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *return
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
 /* BEGIN query document */
 
@@ -3462,18 +3435,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryBundleSeen(&dbconn,&query,bundle,regex);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryBundleSeen(&dbconn,bson_empty(&b),bundle,regex);
-   }
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classRegex);
 
 returnval[0] = '\0';
 

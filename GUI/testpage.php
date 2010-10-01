@@ -147,7 +147,7 @@ $file = 0;
 $ret = cfpr_report_setuid($hostkey,$file,$regex);
 echo "setuid $ret";
 
-$ret = cfpr_report_bundlesseen($hostkey,$name,$regex);
+$ret = cfpr_report_bundlesseen($hostkey,$name,$regex,NULL);
 echo "bundle profile $ret";
 
 $diff = NULL;

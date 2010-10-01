@@ -407,13 +407,13 @@ function calc_width_percent($total,$width)
     return $ret;
 }
 
-function rpt_bundle_profile($hostkey,$search,&$pdf)
+function rpt_bundle_profile($hostkey,$search,&$pdf,$class_regex)
 {
     $cols=6;
     $col_len = array(24,23,23,10,10,10); #in percentage
     $header=array('Host','Bundle','Last verified','Hours Ago', 'Avg interval', 'Uncertainty');
 
-    $ret = cfpr_report_bundlesseen_pdf($hostkey,$search,true);
+    $ret = cfpr_report_bundlesseen_pdf($hostkey,$search,true,$class_regex);
     $data1 = $pdf->ParseData($ret);
     
     $pdf->ReportTitle();
@@ -800,7 +800,7 @@ switch($report_type)
  case  "Bundle profile":
     $desc=cfpr_report_description('bundle profile');
     $pdf->PDFSetDescription($desc);
-    rpt_bundle_profile($_GET['hostkey'],$_GET['search'],$pdf);
+    rpt_bundle_profile($_GET['hostkey'],$_GET['search'],$pdf,$_GET['class_regex']);
     break;
  
  case  "Business value report":

@@ -15,7 +15,7 @@ $addr = NULL;
 $tago = 0;
 
 //$ret = cfpr_report_lastseen($hostkey,$hash,$host,$addr,$tago,$regex);
-$ret = cfpr_report_bundlesseen($hostkey,$name,$regex);
+$ret = cfpr_report_bundlesseen($hostkey,$name,$regex,NULL);
 
 
 echo "<br>$ret<br>";

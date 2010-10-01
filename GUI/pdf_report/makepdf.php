@@ -262,7 +262,7 @@ class PDF extends FPDF
 
 ## functions for reports
 
-function rpt_bundle_profile($hostkey,$search)
+function rpt_bundle_profile($hostkey,$search,$class_regex)
 {
     $cols=6;
     $col_len = array(50,50,50,20,20,20);
@@ -274,7 +274,7 @@ function rpt_bundle_profile($hostkey,$search)
     $pdf->SetFont('Arial','',14);
     $pdf->AddPage();
     
-    $ret = cfpr_report_bundlesseen_pdf($hostkey,$search,true);
+    $ret = cfpr_report_bundlesseen_pdf($hostkey,$search,true,$class_regex);
     
     $data1 = $pdf->ParseData($ret);
     
