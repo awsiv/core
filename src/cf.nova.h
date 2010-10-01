@@ -402,7 +402,8 @@ void CFDB_PurgeReports(void);
 #ifdef HAVE_LIBMONGOC
 void CFDB_PurgeDropReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedReports(mongo_connection *conn);
-void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr);
+void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr);
+void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr);
 #endif /* HAVE_LIBMONGOC */
 
 
@@ -1245,7 +1246,7 @@ struct cf_pscalar
 #define cfr_diff          "FD"
 #define cfr_bundles       "B"
 #define cfr_day           "t" // Substitute for time in value report
-#define cfr_valuereport   "VR"
+#define cfr_valuereport   "va"
 #define cfr_netmeasure    "ne"
 
 /* Promise DB */

@@ -627,7 +627,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    then = (time_t)t;
 
 
-   snprintf(varName,sizeof(varName),"%s.%d",cfr_total_compliance,then);
+   snprintf(varName,sizeof(varName),"%s.%s",cfr_total_compliance,GenTimeKey(then));
    
    sub = bson_append_start_object(setObj, varName);
    bson_append_int(sub,cfr_time, then);
@@ -1168,16 +1168,14 @@ bson_destroy(&host_key);
 void CFDB_SaveValueReport(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
-  bson_buffer *pushObj;
+  bson_buffer *set;
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
-  bson_buffer *arr;
-  char iStr[32];
+  bson_buffer *sub1, *sub2;
   char name[CF_SMALLBUF],datestr[CF_SMALLBUF];
   double kept,notkept,repaired;
-  bson_buffer *sub;
-  int i;
+
   
 // find right host
 bson_buffer_init(&bb);
@@ -1186,28 +1184,26 @@ bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
 
-pushObj = bson_append_start_object(&bb,"$pushAll");
+set = bson_append_start_object(&bb,"$set");
 
-arr = bson_append_start_array(pushObj,cfr_valuereport);
+sub1 = bson_append_start_object(set,cfr_valuereport);
 
-for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+for (ip = data; ip != NULL; ip=ip->next)
    {
-   snprintf(iStr, sizeof(iStr), "%d",i);   
-   sub = bson_append_start_object(arr,iStr);
 
+   sscanf(ip->name,"%100[^,],%lf,%lf,%lf\n",datestr,&kept,&repaired,&notkept);
 
-   sscanf(ip->name,"%[^,],%lf,%lf,%lf\n",datestr,&kept,&repaired,&notkept);
+   sub2 = bson_append_start_object(sub1,datestr);
+   bson_append_string(sub2,cfr_day,datestr);
+   bson_append_double(sub2,cfr_kept,kept);
+   bson_append_double(sub2,cfr_repaired,repaired);
+   bson_append_double(sub2,cfr_notkept,notkept);
 
-   bson_append_string(sub,cfr_day,datestr);
-   bson_append_double(sub,cfr_kept,kept);
-   bson_append_double(sub,cfr_repaired,repaired);
-   bson_append_double(sub,cfr_notkept,notkept);
-
-   bson_append_finish_object(sub);
+   bson_append_finish_object(sub2);
    }
 
-bson_append_finish_object(arr);
-bson_append_finish_object(pushObj);
+bson_append_finish_object(sub1);
+bson_append_finish_object(set);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);

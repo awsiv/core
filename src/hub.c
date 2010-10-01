@@ -38,7 +38,7 @@ a.restart_class = "nonce";
 a.transaction.ifelapsed = 0;
 a.transaction.expireafter = 0;
 
-thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,a,pp);
+thislock = AcquireLock(pp->promiser,VUQNAME,now,a,pp);
 
 if (thislock.lock == NULL)
    {

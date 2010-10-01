@@ -50,13 +50,15 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
  *
  **/
 {
-  struct Item *purgeKeys = NULL,*ip = NULL;
+  struct Item *purgeKeys = NULL, *purgePcNames = NULL, *ip = NULL;
   mongo_cursor *cursor;
   bson query,field,hostQuery,op;
   bson_iterator it1;
-  bson_buffer bb,*unset;
+  bson_buffer bb,*unset, *pullAll, *arr;
   char keyHash[CF_MAXVARSIZE];
   time_t now;
+  char iStr[64];
+  int i;
   
   CfOut(cf_verbose,"", " -> Purge timestamped reports");
   
@@ -70,6 +72,8 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
   bson_append_int(&bb,cfr_performance,1);
   bson_append_int(&bb,cfr_filechanges,1);
   bson_append_int(&bb,cfr_filediffs,1);
+  bson_append_int(&bb,cfr_promisecompl,1);
+  bson_append_int(&bb,cfr_valuereport,1);
   bson_from_buffer(&field, &bb);
 
   cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
@@ -92,18 +96,19 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
 	    }
 
 
-	  CFDB_PurgeScan(conn,&it1,cfr_class,CF_HUB_HORIZON,now,&purgeKeys);
-	  CFDB_PurgeScan(conn,&it1,cfr_performance,CF_HUB_PURGESECS,now,&purgeKeys);
-	  CFDB_PurgeScan(conn,&it1,cfr_filechanges,CF_HUB_PURGESECS,now,&purgeKeys);
-	  CFDB_PurgeScan(conn,&it1,cfr_filediffs,CF_HUB_PURGESECS,now,&purgeKeys);
-	  
+	  CFDB_PurgeScan(conn,&it1,cfr_class,CF_HUB_HORIZON,now,&purgeKeys,NULL);
+	  CFDB_PurgeScan(conn,&it1,cfr_performance,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
+	  CFDB_PurgeScan(conn,&it1,cfr_filechanges,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
+	  CFDB_PurgeScan(conn,&it1,cfr_filediffs,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
+	  CFDB_PurgeScan(conn,&it1,cfr_promisecompl,CF_HUB_PURGESECS,now,&purgeKeys,&purgePcNames);
+	  CFDB_PurgeScanStrTime(conn,&it1,cfr_valuereport,CF_HUB_PURGESECS,now,&purgeKeys);
 	}
 
       bson_buffer_init(&bb);
       bson_append_string(&bb,cfr_keyhash,keyHash);
       bson_from_buffer(&hostQuery,&bb);
 
-      // UPDATE
+      // keys
       bson_buffer_init(&bb);
       unset = bson_append_start_object(&bb, "$unset");
 
@@ -113,6 +118,25 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
 	}
 
       bson_append_finish_object(unset);
+
+
+      // key array elements
+      if(purgePcNames)  // cfr_promisecompl_keys array
+	{
+	pullAll = bson_append_start_object(&bb, "$pullAll");
+	arr = bson_append_start_array(pullAll,cfr_promisecompl_keys);
+
+	for (ip = purgePcNames, i = 0; ip != NULL; ip=ip->next, i++)
+	  {
+	  snprintf(iStr,sizeof(iStr),"%d",i);
+	  bson_append_string(arr, iStr, ip->name);
+	  }
+
+	bson_append_finish_object(arr);
+	bson_append_finish_object(pullAll);
+	}
+      
+
       bson_from_buffer(&op,&bb);
 
       mongo_update(conn,MONGO_DATABASE,&hostQuery, &op, 0);
@@ -120,6 +144,8 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
       
       DeleteItemList(purgeKeys);
       purgeKeys = NULL;
+      DeleteItemList(purgePcNames);
+      purgePcNames = NULL;
       bson_destroy(&hostQuery);
       bson_destroy(&op);
     }
@@ -212,7 +238,7 @@ void CFDB_PurgeScanClasses(mongo_connection *conn, bson_iterator *itp, time_t no
 
 /*****************************************************************************/
 
-void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr)
+void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr)
 
 {
   bson_iterator it1,it2;
@@ -240,7 +266,11 @@ void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey,
 		{
 		  snprintf(purgeKey,sizeof(purgeKey),"%s.%s",reportKey,bson_iterator_key(&it1));
 		  PrependItem(purgeKeysPtr,purgeKey,NULL);
-
+		  
+		  if(purgeNamesPtr)
+		    {
+		    PrependItem(purgeNamesPtr,bson_iterator_key(&it1),NULL);
+		    }
 
 		  Debug("Report key \"%s\" needs to be purged (%lu seconds old)\n", purgeKey, now - then);
 		}
@@ -250,6 +280,58 @@ void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey,
 
     }  
 }
+
+/*****************************************************************************/
+
+void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr)
+/**
+ * Like PurgeScan but uses time in format "30 Sep 2010" instead of time_t.
+ */
+{
+  bson_iterator it1,it2;
+  char thenStr[CF_SMALLBUF];
+  char purgeKey[CF_MAXVARSIZE];
+  char earliest[CF_SMALLBUF];
+
+  if (strcmp(bson_iterator_key(itp), reportKey) != 0)
+    {
+    return;
+    }
+
+  TimeToDateStr(now - oldThreshold,earliest,sizeof(earliest));
+
+  bson_iterator_init(&it1,bson_iterator_value(itp));
+
+  while (bson_iterator_next(&it1))
+    {
+      bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+      while (bson_iterator_next(&it2))
+	{
+	  if(strcmp(bson_iterator_key(&it2),cfr_time) == 0)
+	    {
+	      if(bson_iterator_type(&it2) != bson_string)
+		{
+		CfOut(cf_error, "", "!! Date is not string type in purge");
+		continue;
+		}
+
+	      snprintf(thenStr,sizeof(thenStr),bson_iterator_string(&it2));
+
+	      if(Nova_CoarseLaterThan(earliest,thenStr))  // definition of old
+		{
+		  snprintf(purgeKey,sizeof(purgeKey),"%s.%s",reportKey,bson_iterator_key(&it1));
+		  PrependItem(purgeKeysPtr,purgeKey,NULL);
+		  
+		  Debug("Report key \"%s\" needs to be purged (date is %s)\n", purgeKey, thenStr);
+		}
+
+	    }
+	}
+
+    }
+}
+
 
 #endif  /* HAVE_LIBMONGOC */
 

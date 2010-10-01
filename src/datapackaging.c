@@ -1274,7 +1274,7 @@ CfOut(cf_verbose,""," -> Packing promise data (deprecated)");
 
 void Nova_PackValueReport(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],name[CF_BUFSIZE];
+{ char name[CF_BUFSIZE];
   CF_DB *dbp;
   CF_DBC *dbcp;
   int ksize,vsize,first = true;
@@ -1283,7 +1283,7 @@ void Nova_PackValueReport(struct Item **reply,char *header,time_t from,enum cfd_
   FILE *fout;
   time_t now = time(NULL);
   struct promise_value pt;
-  struct Item *ip,*data = NULL;
+  struct Item *ip;
   char ref[CF_SMALLBUF];
 
 // Strip out the date resolution so we keep only each day of the year
@@ -1298,9 +1298,7 @@ if (!OpenDB(name,&dbp))
    return;
    }
 
-snprintf(name,CF_SMALLBUF,"%s",cf_ctime(&from));
-sscanf(name,"%*s %s %s %*s %s",month,day,year);
-snprintf(ref,CF_SMALLBUF-1,"%s %s %s",day,month,year);
+TimeToDateStr(from,ref,sizeof(ref));
 
 if (NewDBCursor(dbp,&dbcp))
    {
@@ -1330,7 +1328,6 @@ if (NewDBCursor(dbp,&dbcp))
    }
 
 CloseDB(dbp);
-DeleteItemList(data);
 }
 
 /*****************************************************************************/
