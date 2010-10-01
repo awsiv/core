@@ -700,7 +700,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    // check for duplicate keys
    if(IsItemIn(keys,varName))
      {
-     CfOut(cf_verbose, "", "!! Duplicate key \"%s\" in %s - second time=%s", varName, dbOp, cf_ctime(&tthen));
+     CfOut(cf_verbose, "", "!! Duplicate key \"%s\" in %s - ignoring second (time=%s)", varName, dbOp, cf_ctime(&tthen));
      continue; // avoids DB update failure
      }
    else

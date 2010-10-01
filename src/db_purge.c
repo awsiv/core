@@ -73,6 +73,8 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
   bson_append_int(&bb,cfr_filechanges,1);
   bson_append_int(&bb,cfr_filediffs,1);
   bson_append_int(&bb,cfr_promisecompl,1);
+  bson_append_int(&bb,cfr_lastseen,1);
+  bson_append_int(&bb,cfr_bundles,1);
   bson_append_int(&bb,cfr_valuereport,1);
   bson_from_buffer(&field, &bb);
 
@@ -101,6 +103,8 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
 	  CFDB_PurgeScan(conn,&it1,cfr_filechanges,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
 	  CFDB_PurgeScan(conn,&it1,cfr_filediffs,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
 	  CFDB_PurgeScan(conn,&it1,cfr_promisecompl,CF_HUB_PURGESECS,now,&purgeKeys,&purgePcNames);
+	  CFDB_PurgeScan(conn,&it1,cfr_lastseen,CF_HUB_PURGESECS,now,&purgeKeys,&purgePcNames);
+	  CFDB_PurgeScan(conn,&it1,cfr_bundles,CF_HUB_PURGESECS,now,&purgeKeys,&purgePcNames);
 	  CFDB_PurgeScanStrTime(conn,&it1,cfr_valuereport,CF_HUB_PURGESECS,now,&purgeKeys);
 	}
 
