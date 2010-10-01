@@ -119,7 +119,6 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
       for (ip = purgeKeys; ip != NULL; ip=ip->next)
 	{
 	bson_append_int(unset, ip->name, 1);
-	printf("PURGING:\"%s\"\n",ip->name);
 	}
 
       bson_append_finish_object(unset);
@@ -351,8 +350,6 @@ void DeleteFromBsonArray(bson_buffer *bb, char *arrName, struct Item *elements)
     {
       snprintf(iStr,sizeof(iStr),"%d",i);
       bson_append_string(arr, iStr, ip->name);
-      
-      printf("      key-val:%s:%s\n",iStr,ip->name);
     }
 
   bson_append_finish_object(arr);
