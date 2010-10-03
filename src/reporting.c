@@ -2117,4 +2117,6 @@ if (fout = fopen(name,"w"))
    
    fclose(fout);
    }
+
+chmod(name,0644);
 }

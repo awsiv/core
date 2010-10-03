@@ -16,8 +16,9 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-extern int  NO_FORK;
-extern int  CONTINUOUS;
+extern int NO_FORK;
+extern int CONTINUOUS;
+extern int CFH_ZENOSS;
 
 /*****************************************************************************/
 
@@ -88,6 +89,11 @@ while (true)
       CFDB_PurgeReports();
       }
 
+   if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
+      {
+      Nova_ZenossSummary(DOCROOT);
+      }
+   
    Nova_CountMonitoredClasses();
    CfOut(cf_verbose,"","Sleeping...\n");
    sleep(CFPULSETIME);
