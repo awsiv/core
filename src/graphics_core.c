@@ -80,7 +80,7 @@ GREEN    = gdImageColorAllocate(cfv->im, 115, 177, 103);
 ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
 LIGHTGREY= gdImageColorAllocate(cfv->im, 75, 75, 66);
 //BACKGR   = gdImageColorAllocate(cfv->im,239, 234, 204); // Background
-BACKGR   = gdImageColorAllocate(cfv->im,255, 255, 255); // Background
+BACKGR   = gdImageColorAllocate(cfv->im,225, 225, 227); // Background
 }
 
 /*****************************************************************************/

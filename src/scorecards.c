@@ -94,7 +94,7 @@ void Nova_ComplianceSummaryGraph(char *docroot)
   char newfile[CF_BUFSIZE],key[CF_MAXVARSIZE],value[CF_MAXVARSIZE];
   const int span = 7 * 4;
   double x,kept[span], repaired[span], notkept[span];
-  double tkept,trepaired,tnotkept,total;
+  double tkept,trepaired,tnotkept,total,y;
   double lkept,lrepaired,lnotkept,ltotal;
   FILE *fout;
   time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
@@ -112,6 +112,7 @@ cfv.origin_x = cfv.margin;
 cfv.origin_y = cfv.height - cfv.margin;
 
 snprintf(newfile,CF_BUFSIZE,"%s/hub/common/compliance.png",cfv.docroot);
+
 MakeParentDirectory(newfile,true);
 
 if (stat(newfile,&sb) != -1)
@@ -125,6 +126,13 @@ if (stat(newfile,&sb) != -1)
 cfv.title = "Compliance";
 cfv.im = gdImageCreate(cfv.width+cfv.margin,cfv.height+cfv.margin);
 Nova_MakePalette(&cfv);
+
+// Background
+
+for (y = 0; y < cfv.height; y++)
+   {
+   gdImageLine(cfv.im,0,y,cfv.width,y,BACKGR);
+   }
 
 for (i = 0; i < (int)span; i++)
    {
@@ -192,7 +200,7 @@ for (i = 0; i < span; i++)
    lnotkept = tnotkept;
    }
 
-Nova_DrawComplianceAxes(&cfv,WHITE);
+Nova_DrawComplianceAxes(&cfv,LIGHTGREY);
 
 if ((fout = fopen(newfile, "wb")) == NULL)
    {
