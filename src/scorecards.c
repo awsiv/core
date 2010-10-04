@@ -129,9 +129,9 @@ Nova_MakePalette(&cfv);
 
 // Background
 
-for (y = 0; y < cfv.height; y++)
+for (y = 0; y < cfv.height+cfv.margin; y++)
    {
-   gdImageLine(cfv.im,0,y,cfv.width,y,BACKGR);
+   gdImageLine(cfv.im,0,y,cfv.width+cfv.margin,y,BACKGR);
    }
 
 for (i = 0; i < (int)span; i++)
@@ -1072,13 +1072,21 @@ if (putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
 for (day = 0; day < 7; day++)
    {
    x = cfv->origin_x + day * cfv->width/7;
-   gdImageString(cfv->im, gdFontGetLarge(),x,cfv->range,days[day],col);
+   Nova_Font(cfv,x,cfv->range+cfv->margin/2,days[day],col);
    }
 
-gdImageString(cfv->im, gdFontGetLarge(),cfv->width/4,cfv->range+cfv->margin/2,"average compliance past days",col);
+Nova_Font(cfv,cfv->width/4,cfv->range+cfv->margin,"Average compliance (days ago)",col);
+Nova_Font(cfv,0,10,"100%",col);
+Nova_Font(cfv,0,cfv->range,"50%",col);
 
-gdImageString(cfv->im, gdFontGetLarge(),0,0,"100%",col);
-gdImageString(cfv->im, gdFontGetLarge(),0,cfv->range,"50%",col);      
+gdImageSetThickness(cfv->im,2);
+gdImageLine(cfv->im,cfv->margin,cfv->range,cfv->margin,0,BLACK);
+
+gdImageSetThickness(cfv->im,2);
+gdImageLine(cfv->im,cfv->margin,cfv->range,cfv->width,cfv->range,BLACK);
+
+//gdImageString(cfv->im, gdFontGetLarge(),0,0,"100%",col);
+//gdImageString(cfv->im, gdFontGetLarge(),0,cfv->range,"50%",col);      
 
 #endif  /* HAVE_LIBGD */
 }
