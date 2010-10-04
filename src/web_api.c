@@ -64,18 +64,18 @@ void Nova_EnterpriseModuleTrick()
  
 if (false)
    {
-   Nova2PHP_software_report(0,0,0,0,0,cfr_software,buffer,20);
-   Nova2PHP_classes_report(NULL,NULL,0,buffer,1000);
-   Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,buffer,1000);
-   Nova2PHP_compliance_promises(NULL,NULL,"x",0,buffer,10000);
-   Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,buffer,10000);
-   Nova2PHP_bundles_report(NULL,NULL,0,buffer,10000);
-   Nova2PHP_performance_report(NULL,NULL,0,buffer,10000);
-   Nova2PHP_setuid_report(NULL,NULL,0,buffer,10000);
-   Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",buffer,10000);
-   Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",buffer,10000);
-   Nova2PHP_value_report(NULL,NULL,NULL,NULL,buffer,1000);
-   Nova2PHP_promiselog(NULL,NULL,1,buffer,1000);
+   Nova2PHP_software_report(0,0,0,0,0,cfr_software,NULL,buffer,20);
+   Nova2PHP_classes_report(NULL,NULL,0,NULL,buffer,1000);
+   Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,NULL,buffer,1000);
+   Nova2PHP_compliance_promises(NULL,NULL,"x",0,NULL,buffer,10000);
+   Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,NULL,buffer,10000);
+   Nova2PHP_bundles_report(NULL,NULL,0,NULL,buffer,10000);
+   Nova2PHP_performance_report(NULL,NULL,0,NULL,buffer,10000);
+   Nova2PHP_setuid_report(NULL,NULL,0,NULL,buffer,10000);
+   Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",NULL,buffer,10000);
+   Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",NULL,buffer,10000);
+   Nova2PHP_value_report(NULL,NULL,NULL,NULL,NULL,buffer,1000);
+   Nova2PHP_promiselog(NULL,NULL,1,NULL,buffer,1000);
    Nova2PHP_promises(NULL, NULL, NULL, 0);
    Nova2PHP_getlastupdate(NULL,buffer,10);
 
@@ -211,7 +211,7 @@ return buffer;
 /* Search for answers                                                        */
 /*****************************************************************************/
 
-int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize)
+int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubPromiseLog *hp;
@@ -273,7 +273,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,char *returnval,int bufsize)
+int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE],hostname[CF_MAXVARSIZE];
   struct HubPromiseLog *hp;
@@ -355,7 +355,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *returnval,int bufsize)
+int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize)
 
 { struct HubValue *hp;
   struct HubQuery *hq;
@@ -403,7 +403,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize)
+int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubSoftware *hs;
@@ -467,7 +467,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *returnval,int bufsize)
+int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubClass *hc;
@@ -529,7 +529,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize)
+int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE];
   struct HubVariable *hv,*hv2;
@@ -634,7 +634,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *returnval,int bufsize)
+int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubTotalCompliance *ht;
@@ -704,7 +704,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *returnval,int bufsize)
+int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubPromiseCompliance *hp;
@@ -765,7 +765,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *returnval,int bufsize)
+int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubLastSeen *hl;
@@ -847,7 +847,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *returnval,int bufsize)
+int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubPerformance *hP;
@@ -918,7 +918,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *returnval,int bufsize)
+int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubSetUid *hS;   
@@ -979,7 +979,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *returnval,int bufsize,char *classRegex)
+int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize,char *classRegex)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubBundleSeen *hb;   
@@ -1036,7 +1036,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *returnval,int bufsize)
+int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
 
 {    char *report,buffer[CF_BUFSIZE];
      struct HubFileChanges *hC;
@@ -1103,7 +1103,7 @@ switch (*cmp)
 
 /*****************************************************************************/
 
-int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *returnval,int bufsize)
+int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];   
   struct HubFileDiff *hd;
