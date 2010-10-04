@@ -480,10 +480,10 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,bson *query,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp)
+struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp, char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
-  bson b,field;
+  bson b,query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
@@ -491,11 +491,36 @@ struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,bson *query,ch
   int rkept,rnotkept,rrepaired,found = false;
   int match_kept,match_notkept,match_repaired,match_version,match_t;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rversion[CF_MAXVARSIZE];
+  int emptyQuery = true;
+  char classRegexAnch[CF_MAXVARSIZE];
   time_t rt;
   
 /* BEGIN query document */
 
-  // Can't understand the bson API for nested objects this, so work around..
+  bson_buffer_init(&bb);
+
+if (!EMPTY(keyHash))
+   {
+   bson_append_string(&bb,cfr_keyhash,keyHash);
+   emptyQuery = false;
+   }
+
+ if(!EMPTY(classRegex))
+   {
+   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+   emptyQuery = false;
+   }
+
+ if(emptyQuery)
+   {
+   bson_empty(&query);
+   }
+ else
+   {
+   bson_from_buffer(&query,&bb);
+   }
+
   
 /* BEGIN RESULT DOCUMENT */
 
@@ -511,7 +536,14 @@ bson_from_buffer(&field, &bb);
 hostnames[0] = '\0';
 addresses[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+ bson_destroy(&field);
+
+ if(!emptyQuery)
+   {
+     bson_destroy(&query);
+   }
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -650,7 +682,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
    }
 
-bson_destroy(&field);
 mongo_cursor_destroy(cursor);
 return NewHubQuery(host_list,record_list);
 }
@@ -871,10 +902,10 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,bson *query,char *lhandle,char lstatus,int regex)
+struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
-  bson b,field;
+  bson b,query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
@@ -882,12 +913,39 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,bson *query,
   time_t rtime;
   double rsigma,rex;
   char rhandle[CF_MAXVARSIZE],rstatus,*prstat;
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  char keyHashDb[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
   int match_handle,match_status,found;
+  int emptyQuery = true;
+  char classRegexAnch[CF_MAXVARSIZE];
+
   
 /* BEGIN query document */
 
-  // Can't understand the bson API for nested objects this, so work around..
+  bson_buffer_init(&bb);
+
+if (!EMPTY(keyHash))
+   {
+   bson_append_string(&bb,cfr_keyhash,keyHash);
+   emptyQuery = false;
+   }
+
+ if(!EMPTY(classRegex))
+   {
+   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+   emptyQuery = false;
+   }
+
+ if(emptyQuery)
+   {
+   bson_empty(&query);
+   }
+ else
+   {
+   bson_from_buffer(&query,&bb);
+   }
+
+
   
 /* BEGIN RESULT DOCUMENT */
 
@@ -903,13 +961,20 @@ bson_from_buffer(&field, &bb);
 hostnames[0] = '\0';
 addresses[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+ bson_destroy(&field);
+
+ if(!emptyQuery)
+   {
+     bson_destroy(&query);
+   }
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
    bson_iterator_init(&it1,cursor->current.data);
 
-   keyhash[0] = '\0';
+   keyHashDb[0] = '\0';
    hostnames[0] = '\0';
    addresses[0] = '\0';
    rhandle[0] = '\0';
@@ -919,7 +984,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CMDB_ScanHubHost(&it1,keyHashDb,addresses,hostnames);
       
       /* Query specific search/marshalling */
 
@@ -995,7 +1060,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
    if (found)
       {
-      hh = NewHubHost(keyhash,addresses,hostnames);
+      hh = NewHubHost(keyHashDb,addresses,hostnames);
       AppendRlistAlien(&host_list,hh);
 
       for (rp = record_list; rp != NULL; rp=rp->next)
@@ -1010,7 +1075,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
    }
 
-bson_destroy(&field);
 mongo_cursor_destroy(cursor);
 return NewHubQuery(host_list,record_list);
 }
@@ -1565,21 +1629,47 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,bson *query,char *lname,int regex,time_t lt,int cmp)
+struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname,int regex,time_t lt,int cmp, char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
-  bson b,field;
+  bson b,query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
   struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_BUFSIZE];
+  char classRegexAnch[CF_MAXVARSIZE];
+  int emptyQuery = true;
   int match_name,match_t,found = false;
   time_t rt;
   
 /* BEGIN query document */
 
-  // Can't understand the bson API for nested objects this, so work around..
+  bson_buffer_init(&bb);
+
+if (!EMPTY(keyHash))
+   {
+   bson_append_string(&bb,cfr_keyhash,keyHash);
+   emptyQuery = false;
+   }
+
+ if(!EMPTY(classRegex))
+   {
+   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+   emptyQuery = false;
+   }
+
+ if(emptyQuery)
+   {
+   bson_empty(&query);
+   }
+ else
+   {
+   bson_from_buffer(&query,&bb);
+   }
+
+
   
 /* BEGIN RESULT DOCUMENT */
 
@@ -1595,8 +1685,15 @@ bson_from_buffer(&field, &bb);
 hostnames[0] = '\0';
 addresses[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
-//cursor = mongo_find(conn,MONGO_DATABASE,bson_empty(&b),&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+bson_destroy(&field);
+
+ if(!emptyQuery)
+   {
+   bson_destroy(&query);
+   }
+
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -1696,28 +1793,52 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
    }
 
-bson_destroy(&field);
 mongo_cursor_destroy(cursor);
 return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,bson *query,char *lname,char *ldiff,int regex,time_t lt,int cmp)
+struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
-  bson b,field;
+  bson b,query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
   struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_MAXVARSIZE],rdiff[CF_BUFSIZE];
   int match_name,match_t,match_diff,found = false;
+  char classRegexAnch[CF_MAXVARSIZE];
+  int emptyQuery = true;
   time_t rt = 0;
   
 /* BEGIN query document */
 
-  // Can't understand the bson API for nested objects this, so work around..
+  bson_buffer_init(&bb);
+
+if (!EMPTY(keyHash))
+   {
+   bson_append_string(&bb,cfr_keyhash,keyHash);
+   emptyQuery = false;
+   }
+
+ if(!EMPTY(classRegex))
+   {
+   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+   emptyQuery = false;
+   }
+
+ if(emptyQuery)
+   {
+   bson_empty(&query);
+   }
+ else
+   {
+   bson_from_buffer(&query,&bb);
+   }
+
   
 /* BEGIN RESULT DOCUMENT */
 
@@ -1733,7 +1854,15 @@ bson_from_buffer(&field, &bb);
 hostnames[0] = '\0';
 addresses[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+bson_destroy(&field);
+
+ if(!emptyQuery)
+   {
+   bson_destroy(&query);
+   }
+
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -1847,7 +1976,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
    }
 
-bson_destroy(&field);
 mongo_cursor_destroy(cursor);
 return NewHubQuery(host_list,record_list);
 }

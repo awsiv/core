@@ -642,10 +642,7 @@ int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
-/* BEGIN query document */
 
 switch (*cmp)
    {
@@ -661,18 +658,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryTotalCompliance(&dbconn,&query,version,t,k,nk,rep,icmp);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),version,t,k,nk,rep,icmp);
-   }
+ hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,NULL);
+
 
 returnval[0] = '\0';
 
@@ -712,10 +699,6 @@ int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int reg
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
-
-/* BEGIN query document */
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -723,18 +706,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryPromiseCompliance(&dbconn,&query,handle,*status,regex);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryPromiseCompliance(&dbconn,bson_empty(&b),handle,*status,regex);
-   }
+ hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,NULL);
+
 
 returnval[0] = '\0';
 
@@ -1044,10 +1017,7 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
      struct Rlist *rp,*result;
      int count = 0, tmpsize,icmp;
      mongo_connection dbconn;
-     bson query,b;
-     bson_buffer bb;
 
-/* BEGIN query document */
 switch (*cmp)
      {
       case '<': icmp = CFDB_LESSTHANEQ;
@@ -1061,19 +1031,9 @@ switch (*cmp)
 	   CfOut(cf_verbose,"", "!! Could not open connection to report database");
 	   return false;
      }
+
+   hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,NULL);
    
-   if (hostkey && strlen(hostkey) > 0)
-     {
-	   bson_buffer_init(&bb);
-	   bson_append_string(&bb,cfr_keyhash,hostkey);
-	   bson_from_buffer(&query,&bb);
-	   hq = CFDB_QueryFileChanges(&dbconn,&query,file,regex,t,icmp);
-	   bson_destroy(&query);
-     }
-   else
-     {
-	   hq = CFDB_QueryFileChanges(&dbconn,bson_empty(&b),file,regex,t,icmp);
-     }
    
    returnval[0] = '\0';
    
@@ -1111,10 +1071,8 @@ int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,tim
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
-/* BEGIN query document */
+
 switch (*cmp)
    {
    case '<': icmp = CFDB_LESSTHANEQ;
@@ -1129,18 +1087,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryFileDiff(&dbconn,&query,file,diffs,regex,t,icmp);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryFileDiff(&dbconn,bson_empty(&b),file,diffs,regex,t,icmp);
-   }
+ hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,NULL);
 
 returnval[0] = '\0';
 
@@ -1445,10 +1392,6 @@ int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
   struct Rlist *rp,*result;
   int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
-
-/* BEGIN query document */
 
 switch (*cmp)
    {
@@ -1464,18 +1407,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryTotalCompliance(&dbconn,&query,version,t,k,nk,rep,icmp);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),version,t,k,nk,rep,icmp);
-   }
+ hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,NULL);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1521,10 +1453,7 @@ int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,cha
   struct Rlist *rp,*result;
   int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
-/* BEGIN query document */
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -1532,19 +1461,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryPromiseCompliance(&dbconn,&query,handle,*status,regex);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryPromiseCompliance(&dbconn,bson_empty(&b),handle,*status,regex);
-   }
-
+ hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,NULL);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1852,8 +1769,6 @@ int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
   struct Rlist *rp,*result;
   int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
 /* BEGIN query document */
 switch (*cmp)
@@ -1870,18 +1785,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryFileChanges(&dbconn,&query,file,regex,t,icmp);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryFileChanges(&dbconn,bson_empty(&b),file,regex,t,icmp);
-   }
+ hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,NULL);
+
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1927,10 +1832,7 @@ int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time
   struct Rlist *rp,*result;
   int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
-/* BEGIN query document */
 
 switch (*cmp)
    {
@@ -1946,18 +1848,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryFileDiff(&dbconn,&query,file,diffs,regex,t,icmp);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryFileDiff(&dbconn,bson_empty(&b),file,diffs,regex,t,icmp);
-   }
+ hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,NULL);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -3247,10 +3138,7 @@ int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,in
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
-/* BEGIN query document */
 
 switch (*cmp)
    {
@@ -3266,25 +3154,10 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryTotalCompliance(&dbconn,&query,version,t,k,nk,rep,icmp);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryTotalCompliance(&dbconn,bson_empty(&b),version,t,k,nk,rep,icmp);
-   }
+
+ hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,NULL);
 
 returnval[0] = '\0';
-
-//strcat(returnval,"<table>\n");
-
-//snprintf(buffer,sizeof(buffer),"host;policy;kept;repaired;not kept;last seen\n");
-//Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -3294,8 +3167,6 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
             ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,cf_ctime(&(ht->t)));
    Join(returnval,buffer,bufsize);
    }
-
-//strcat(returnval,"</table>\n");
 
 DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
@@ -3529,10 +3400,6 @@ int Nova2PHP_compliance_promises_pdf(char *hostkey,char *handle,char *status,int
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
-
-/* BEGIN query document */
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -3540,18 +3407,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryPromiseCompliance(&dbconn,&query,handle,*status,regex);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryPromiseCompliance(&dbconn,bson_empty(&b),handle,*status,regex);
-   }
+ hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,NULL);
+
 
 returnval[0] = '\0';
 
@@ -4025,10 +3882,7 @@ int Nova2PHP_filechanges_report_pdf(char *hostkey,char *file,int regex,time_t t,
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
-/* BEGIN query document */
 switch (*cmp)
    {
    case '<': icmp = CFDB_LESSTHANEQ;
@@ -4043,24 +3897,10 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryFileChanges(&dbconn,&query,file,regex,t,icmp);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryFileChanges(&dbconn,bson_empty(&b),file,regex,t,icmp);
-   }
+ hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,NULL);
 
 returnval[0] = '\0';
 
-//strcat(returnval,"<table>\n");
-//snprintf(buffer,sizeof(buffer),"<tr><td>host</td><td>file</td><td>time of change</td></tr>\n");
-//Join(returnval,buffer,bufsize);
    
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -4069,8 +3909,6 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nova_nl>",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)));
    Join(returnval,buffer,bufsize);
    }
-
-//strcat(returnval,"</table>\n");
 
 DeleteHubQuery(hq,DeleteHubFileChanges);
 
@@ -4092,10 +3930,7 @@ int Nova2PHP_filediffs_report_pdf(char *hostkey,char *file,char *diffs,int regex
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
-/* BEGIN query document */
 switch (*cmp)
    {
    case '<': icmp = CFDB_LESSTHANEQ;
@@ -4110,22 +3945,9 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryFileDiff(&dbconn,&query,file,diffs,regex,t,icmp);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryFileDiff(&dbconn,bson_empty(&b),file,diffs,regex,t,icmp);
-   }
+ hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,NULL);
 
 returnval[0] = '\0';
-
-//strcat(returnval,"<table>\n");
 
 snprintf(buffer,sizeof(buffer),"<nh>host<nc>file<nc>change detected at<nc>change<nova_nl>");
 Join(returnval,buffer,bufsize);
@@ -4137,8 +3959,6 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%s<nova_nl>",hd->hh->hostname,hd->path,cf_ctime(&(hd->t)),Nova_FormatDiff_pdf(hd->diff));
    Join(returnval,buffer,bufsize);
    }
-
-//strcat(returnval,"</table>\n");
 
 DeleteHubQuery(hq,DeleteHubFileDiff);
 
