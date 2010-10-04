@@ -362,8 +362,6 @@ int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *r
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
   char buffer[CF_BUFSIZE];
 
 /* BEGIN query document */
@@ -374,18 +372,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryValueReport(&dbconn,&query,day,month,year);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryValueReport(&dbconn,bson_empty(&b),day,month,year);
-   }
+ hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,NULL);
 
 returnval[0] = '\0';
 
@@ -488,8 +475,6 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *returnval,i
   struct Rlist *rp,*result;
   int count = 0, tmpsize;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
   time_t now = time(NULL);
 
 /* BEGIN query document */
@@ -500,19 +485,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
 
-   hq = CFDB_QueryClasses(&dbconn,&query,name,regex,(time_t)CF_WEEK);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),name,regex,(time_t)CF_WEEK);
-   }
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,NULL);
 
 returnval[0] = '\0';
 
@@ -1350,8 +1324,6 @@ int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *returnval,in
   struct Rlist *rp,*result;
   int counter = 0, n = 180;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
 /* BEGIN query document */
  
@@ -1361,19 +1333,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-
-   hq = CFDB_QueryClasses(&dbconn,&query,name,regex,(time_t)CF_WEEK);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),name,regex,(time_t)CF_WEEK);
-   }
+hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,NULL);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -3151,19 +3111,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
 
-   hq = CFDB_QueryClasses(&dbconn,&query,name,regex,CF_HUB_HORIZON);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),name,regex,CF_HUB_HORIZON);
-   }
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,CF_HUB_HORIZON,NULL);
 
 returnval[0] = '\0';
 
@@ -3487,24 +3436,9 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryValueReport(&dbconn,&query,day,month,year);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryValueReport(&dbconn,bson_empty(&b),day,month,year);
-   }
+ hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,NULL);
 
 returnval[0] = '\0';
-
-//strcat(returnval,"<table>\n");
-//snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Day</th><th>Kept</th><th>Repaired</th><th>Not kept</th></tr>\n");
-//Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -3514,8 +3448,6 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
             hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept);
    Join(returnval,buffer,bufsize);
    }
-
-//strcat(returnval,"</table>\n");
 
 DeleteHubQuery(hq,DeleteHubValue);
 
@@ -3536,8 +3468,6 @@ int Nova2PHP_classes_report_pdf(char *hostkey,char *name,int regex,char *returnv
   struct Rlist *rp,*result;
   int count = 0, tmpsize;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
   time_t now = time(NULL);
 
 /* BEGIN query document */
@@ -3548,19 +3478,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-
-   hq = CFDB_QueryClasses(&dbconn,&query,name,regex,(time_t)CF_WEEK);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),name,regex,(time_t)CF_WEEK);
-   }
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,NULL);
 
 returnval[0] = '\0';
 

@@ -199,7 +199,7 @@ a.restart_class = "nonce";
 a.transaction.ifelapsed = 6*60;
 a.transaction.expireafter = CF_INFINITY;
   
-thislock = AcquireLock(pp->promiser,CanonifyName(peer),CFSTARTTIME,a,pp);
+thislock = AcquireLock(pp->promiser,CanonifyName(peer),now,a,pp);
 
 if (thislock.lock != NULL)
    {
@@ -368,7 +368,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 snprintf(work,CF_MAXVARSIZE-1,"%s.*",MONITOR_CLASS_PREFIX);
 
-hq = CFDB_QueryClasses(&dbconn,bson_empty(&b),work,true,CF_HUB_HORIZON);
+ hq = CFDB_QueryClasses(&dbconn,NULL,work,true,CF_HUB_HORIZON,NULL);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
