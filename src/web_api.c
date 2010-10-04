@@ -493,8 +493,6 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
   struct Rlist *rp,*result;
   int count = 0, tmpsize = 0;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -502,18 +500,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryVariables(&dbconn,&query,scope,lval,rval,type,regex);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryVariables(&dbconn,bson_empty(&b),scope,lval,rval,type,regex);
-   }
+ hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,NULL);
 
 lscope[0] = '\0';
 returnval[0] = '\0';
@@ -578,7 +565,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
 strcat(returnval,"</table>\n");
 
-//DeleteHubQuery(hq,DeleteHubVariable);
+DeleteHubQuery(hq,DeleteHubVariable);
 
 if (!CFDB_Close(&dbconn))
    {
@@ -829,10 +816,6 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,cha
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
-
-/* BEGIN query document */
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -840,18 +823,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QuerySetuid(&dbconn,&query,file,regex);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QuerySetuid(&dbconn,bson_empty(&b),file,regex);
-   }
+ hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,NULL);
 
 returnval[0] = '\0';
 
@@ -1239,8 +1211,6 @@ int Nova2PHP_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *ty
   struct Rlist *rp,*result;
   int counter = 0, n = 180;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -1248,18 +1218,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryVariables(&dbconn,&query,scope,lval,rval,type,regex);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryVariables(&dbconn,bson_empty(&b),scope,lval,rval,type,regex);
-   }
+ hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,NULL);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1529,10 +1488,6 @@ int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *returnval,int
   struct Rlist *rp,*result;
   int counter = 0, n = 180,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
-
-/* BEGIN query document */
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -1540,18 +1495,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QuerySetuid(&dbconn,&query,file,regex);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QuerySetuid(&dbconn,bson_empty(&b),file,regex);
-   }
+ hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,NULL);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -2562,8 +2506,6 @@ int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,i
   struct Rlist *rp,*result;
   int count = 0, n = 180;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -2571,11 +2513,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-bson_buffer_init(&bb);
-bson_append_string(&bb,cfr_keyhash,hostkey);
-bson_from_buffer(&query,&bb);
-hq = CFDB_QueryVariables(&dbconn,&query,scope,lval,NULL,NULL,false);
-bson_destroy(&query);
+hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,NULL,NULL,false,NULL);
 
 lscope[0] = '\0';
 returnval[0] = '\0';
@@ -3529,8 +3467,6 @@ int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,cha
   struct Rlist *rp,*result;
   int count = 0, tmpsize = 0;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -3538,24 +3474,11 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QueryVariables(&dbconn,&query,scope,lval,rval,type,regex);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QueryVariables(&dbconn,bson_empty(&b),scope,lval,rval,type,regex);
-   }
+ hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,NULL);
 
 lscope[0] = '\0';
 returnval[0] = '\0';
 
-//strcat(returnval,"<table>\n");
-count += strlen(returnval);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -3612,9 +3535,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-//strcat(returnval,"</table>\n");
 
-//DeleteHubQuery(hq,DeleteHubVariable);
+DeleteHubQuery(hq,DeleteHubVariable);
 
 if (!CFDB_Close(&dbconn))
    {
@@ -3801,10 +3723,7 @@ int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *classreg
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
-/* BEGIN query document */
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -3812,18 +3731,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (hostkey && strlen(hostkey) > 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   hq = CFDB_QuerySetuid(&dbconn,&query,file,regex);
-   bson_destroy(&query);
-   }
-else
-   {
-   hq = CFDB_QuerySetuid(&dbconn,bson_empty(&b),file,regex);
-   }
+ hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,NULL);
 
 returnval[0] = '\0';
 
