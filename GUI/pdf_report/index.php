@@ -739,7 +739,7 @@ function rpt_setuid($hostkey,$search,&$pdf)
 #
 # Send email
 #
-function EmailPDF($pdf, $pdf_filename)
+function EmailPDF($pdf, $pdf_filename, $to, $from, $subject, $message)
 {
     $to = "bishwa.shrestha@gmail.com";
     $from = "bishwa.shrestha@cfengine.com";
