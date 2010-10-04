@@ -102,7 +102,7 @@ if (false)
    /* pdf functions */
    Nova2PHP_compliance_report_pdf(NULL,NULL,0,0,0,0,0,NULL,buffer,10000);
    Nova2PHP_promiselog_pdf(NULL,NULL,1,NULL,buffer,1000); 
-   Nova2PHP_bundle_report_pdf(NULL,NULL,0,NULL,buffer,10000,NULL);
+   Nova2PHP_bundle_report_pdf(NULL,NULL,0,NULL,buffer,10000);
    Nova2PHP_value_report_pdf(NULL,NULL,NULL,NULL,NULL,buffer,1000);
    Nova2PHP_classes_report_pdf(NULL,NULL,0,NULL, buffer,1000);
    Nova2PHP_compliance_promises_pdf(NULL,NULL,"x",0,NULL, buffer,10000);
@@ -226,7 +226,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,true,NULL);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,true,classreg);
 
 returnval[0] = '\0';
 
@@ -276,7 +276,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,false,NULL);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,false,classreg);
 
 hostname[0] = '\0';
 
@@ -344,7 +344,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,NULL);
+ hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,classreg);
 
 returnval[0] = '\0';
 
@@ -392,7 +392,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
 
- hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,NULL);
+ hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg);
    
 
 returnval[0] = '\0';
@@ -442,7 +442,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,NULL);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg);
 
 returnval[0] = '\0';
 
@@ -500,7 +500,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,NULL);
+ hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
 
 lscope[0] = '\0';
 returnval[0] = '\0';
@@ -601,7 +601,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,NULL);
+ hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,classreg);
 
 
 returnval[0] = '\0';
@@ -649,7 +649,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,NULL);
+ hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,classreg);
 
 
 returnval[0] = '\0';
@@ -766,7 +766,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,NULL);
+ hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,classreg);
 
 
 returnval[0] = '\0';
@@ -823,7 +823,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,NULL);
+ hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
 
 returnval[0] = '\0';
 
@@ -854,7 +854,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize,char *classRegex)
+int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubBundleSeen *hb;   
@@ -871,7 +871,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classRegex);
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg);
 
 returnval[0] = '\0';
 
@@ -934,7 +934,7 @@ switch (*cmp)
 	   return false;
      }
 
-   hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,NULL);
+   hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,classreg);
    
    
    returnval[0] = '\0';
@@ -989,7 +989,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,NULL);
+ hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,classreg);
 
 returnval[0] = '\0';
 
@@ -1534,7 +1534,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *returnval,int bufsize,char *classRegex)
+int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubHost *hh;
@@ -1551,7 +1551,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classRegex);
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg);
 
 
 snprintf(returnval,bufsize,"<table><tr>");
@@ -2978,7 +2978,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
 
- hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,NULL);
+ hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,classreg);
 
 returnval[0] = '\0';
 
@@ -3019,7 +3019,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,true,NULL);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,true,classreg);
 
 returnval[0] = '\0';
          
@@ -3043,7 +3043,7 @@ return true;
 }
 
 /*****************************************************************************/
-int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize,char *classRegex)
+int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubBundleSeen *hb;   
@@ -3060,7 +3060,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classRegex);
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg);
 
 returnval[0] = '\0';
 
@@ -3112,7 +3112,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,NULL);
+ hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,classreg);
 
 returnval[0] = '\0';
 
@@ -3154,7 +3154,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,NULL);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg);
 
 returnval[0] = '\0';
 
@@ -3212,7 +3212,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,NULL);
+ hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,classreg);
 
 
 returnval[0] = '\0';
@@ -3262,7 +3262,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,NULL);
+ hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,classreg);
 
 returnval[0] = '\0';
 
@@ -3318,7 +3318,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,NULL);
+ hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg);
 
 
 returnval[0] = '\0';
@@ -3358,7 +3358,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,NULL);
+ hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,classreg);
 
 returnval[0] = '\0';
 
@@ -3408,7 +3408,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,false,NULL);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,false,classreg);
 
 hostname[0] = '\0';
 
@@ -3441,8 +3441,6 @@ else
    strcat(returnval,"<table>\n");
 
    summary = SortItemListCounters(summary);
-  // snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Occurrences</th></tr>\n");
-//   Join(returnval,buffer,bufsize);
             
    for (ip = summary; ip != NULL; ip=ip->next)
       {
@@ -3451,7 +3449,6 @@ else
       Join(returnval,buffer,bufsize);
       }
    
-//   strcat(returnval,"</table>\n");
    }
 
 return true;
@@ -3474,7 +3471,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,NULL);
+ hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
 
 lscope[0] = '\0';
 returnval[0] = '\0';
@@ -3606,7 +3603,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,NULL);
+ hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,classreg);
 
 returnval[0] = '\0';
 
@@ -3654,7 +3651,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,NULL);
+ hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,classreg);
 
 returnval[0] = '\0';
 
@@ -3731,7 +3728,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,NULL);
+ hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
 
 returnval[0] = '\0';
 
