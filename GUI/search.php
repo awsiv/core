@@ -53,13 +53,13 @@ if ($many)  // Returning query
 	echo "<h4>Days: $days<br>Months: $months<br>Years: $years</h4>";
 	if ($hosts_only)
 	   {
-	   $report = cfpr_hosts_with_value(NULL,$days,$months,$years);
+	   $report = cfpr_hosts_with_value(NULL,$days,$months,$years,$class_regex);
 	   }
 	else
 	   {
-	   $report = cfpr_report_value(NULL,$days,$months,$years);
-	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years&pdf_action=email\">Email PDF</a></div><br><br>";
+	   $report = cfpr_report_value(NULL,$days,$months,$years,$class_regex);
+	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	   }
 	break;
 	
@@ -68,13 +68,13 @@ if ($many)  // Returning query
 	$name = $_POST['name'];
 	if ($hosts_only)
 	   {
-	   $report = cfpr_hosts_with_classes(NULL,$name,true);
+	   $report = cfpr_hosts_with_classes(NULL,$name,true,$class_regex);
 	   }
 	else
 	   {
-	   $report = cfpr_report_classes(NULL,$name,true);
-	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
-	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email\">Email PDF</a></div><br><br>";   
+	   $report = cfpr_report_classes(NULL,$name,true,$class_regex);
+	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";   
 	   }
 	break; 
 	
@@ -85,13 +85,13 @@ if ($many)  // Returning query
 
 	if ($hosts_only)
 	  {
-	    $report = cfpr_hosts_with_compliance_promises(NULL,$name,$state,true);
+	    $report = cfpr_hosts_with_compliance_promises(NULL,$name,$state,true,$class_regex);
 	  }
 	else
 	  {
-	    $report = cfpr_report_compliance_promises(NULL,$name,$state,true);
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";     
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state&pdf_action=email\">Email PDF</a></div><br><br>";     
+	    $report = cfpr_report_compliance_promises(NULL,$name,$state,true,$class_regex);
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";     
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";     
 	  }
 	break;
 	
@@ -99,13 +99,13 @@ if ($many)  // Returning query
 	echo "<h4>$report_type</h4>";
 	if ($hosts_only)
 	  {
-	    $report = cfpr_hosts_with_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">");
+	    $report = cfpr_hosts_with_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">",$class_regex);
 	  }
 	else
 	  {	    
-	    $report = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">");
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email\">Email PDF</a></div><br><br>";   
+	    $report = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">",$class_regex);
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";   
 	  }
 	break;
 	
@@ -115,13 +115,13 @@ if ($many)  // Returning query
 	$cal = -1;
 	if ($hosts_only)
 	  {
-	    $report = cfpr_hosts_with_filechanges(NULL,$name,true,-1,">");    
+	    $report = cfpr_hosts_with_filechanges(NULL,$name,true,-1,">",$class_regex);    
 	  }
 	else
 	  {	    
-	    $report = cfpr_report_filechanges(NULL,$name,true,-1,">");
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email\">Email PDF</a></div><br><br>";
+	    $report = cfpr_report_filechanges(NULL,$name,true,-1,">",$class_regex);
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	  }
 	break;
 	
@@ -132,13 +132,13 @@ if ($many)  // Returning query
 	$cal = -1;
 	if ($hosts_only)
 	   {
-	   $report = cfpr_hosts_with_filediffs(NULL,$name,$diff,true,$cal,">");
+	   $report = cfpr_hosts_with_filediffs(NULL,$name,$diff,true,$cal,">",$class_regex);
 	   }
 	else
 	   {
-	   $report = cfpr_report_filediffs(NULL,$name,$diff,true,$cal,">");
-	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&diff=$diff&cal=$cal\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&diff=$diff&cal=$cal&pdf_action=email\">Email PDF</a></div><br><br>";
+	   $report = cfpr_report_filediffs(NULL,$name,$diff,true,$cal,">",$class_regex);
+	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&diff=$diff&cal=$cal&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	   echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&diff=$diff&cal=$cal&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	   }
 	break;
 	
@@ -154,13 +154,13 @@ if ($many)  // Returning query
 	   }
 	if ($hosts_only)
 	  {
-	    $report = cfpr_hosts_with_lastseen(NULL,$key,$name,$address,$ago,true);
+	    $report = cfpr_hosts_with_lastseen(NULL,$key,$name,$address,$ago,true,$class_regex);
 	  }
 	else
 	  {	    
-	    $report = cfpr_report_lastseen(NULL,$key,$name,$address,$ago,true);
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&address=$address&key=$key&ago=$ago\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&address=$address&key=$key&ago=$ago&pdf_action=email\">Email PDF</a></div><br><br>";
+	    $report = cfpr_report_lastseen(NULL,$key,$name,$address,$ago,true,$class_regex);
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&address=$address&key=$key&ago=$ago&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&address=$address&key=$key&ago=$ago&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	  }
 	break;
 	
@@ -171,13 +171,13 @@ if ($many)  // Returning query
 	$arch = $_POST['arch'];
 	if ($hosts_only)
 	  {
-	    $report = cfpr_hosts_with_patch_avail(NULL,$name,$version,$arch,true);
+	    $report = cfpr_hosts_with_patch_avail(NULL,$name,$version,$arch,true,$class_regex);
 	  }
 	else
 	  {	    
-	    $report = cfpr_report_patch_avail(NULL,$name,$version,$arch,true);
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&pdf_action=email\">Email PDF</a></div><br><br>";
+	    $report = cfpr_report_patch_avail(NULL,$name,$version,$arch,true,$class_regex);
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	  }
 	break;
 	
@@ -189,13 +189,13 @@ if ($many)  // Returning query
 
 	if ($hosts_only)
 	  {
-	    $report = cfpr_hosts_with_patch_in(NULL,$name,$version,$arch,true);
+	    $report = cfpr_hosts_with_patch_in(NULL,$name,$version,$arch,true,$class_regex);
 	  }
 	else
 	  {	  
-	    $report = cfpr_report_patch_in(NULL,$name,$version,$arch,true);
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&pdf_action=email\">Email PDF</a></div><br><br>";   
+	    $report = cfpr_report_patch_in(NULL,$name,$version,$arch,true,$class_regex);
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";   
 	  }
 	break;
 	
@@ -204,13 +204,13 @@ if ($many)  // Returning query
 	$name = $_POST['name'];
 	if ($hosts_only)
 	  {
-	    $report = cfpr_hosts_with_performance(NULL,$name,true);
+	    $report = cfpr_hosts_with_performance(NULL,$name,true,$class_regex);
 	  }
 	else
 	  {	   
-	    $report = cfpr_report_performance(NULL,$name,true);
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email\">Email PDF</a></div><br><br>";
+	    $report = cfpr_report_performance(NULL,$name,true,$class_regex);
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	  }
 	break;
 
@@ -220,13 +220,13 @@ if ($many)  // Returning query
 	$name = $_POST['name'];
 	if ($hosts_only)
 	  {
-	    $report = cfpr_hosts_with_repaired(NULL,$name);
+	    $report = cfpr_hosts_with_repaired(NULL,$name,$class_regex);
 	  }
 	else
 	  {	    
-	    $report = cfpr_report_repaired(NULL,$name);
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email\">Email PDF</a></div><br><br>";   
+	    $report = cfpr_report_repaired(NULL,$name,$class_regex);
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";   
 	  }
 	break;
 	
@@ -236,13 +236,13 @@ if ($many)  // Returning query
 	$name = $_POST['name'];
 	if ($hosts_only)
 	  {
-	    $report = cfpr_hosts_with_notkept(NULL,$name);
+	    $report = cfpr_hosts_with_notkept(NULL,$name,$class_regex);
 	  }
 	else
 	  {	    
-	    $report = cfpr_report_notkept(NULL,$name);
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email\">Email PDF</a></div><br><br>";   
+	    $report = cfpr_report_notkept(NULL,$name,$class_regex);
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";   
 	  }
 	break;
 		
@@ -251,13 +251,13 @@ if ($many)  // Returning query
 	$name = $_POST['name'];
 	if ($hosts_only)
 	  {
-	    $ret = cfpr_hosts_with_setuid(NULL,$name,true);
+	    $ret = cfpr_hosts_with_setuid(NULL,$name,true,$class_regex);
 	  }
 	else
 	  {	    
-	    $ret = cfpr_report_setuid(NULL,$name,true);
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email\">Email PDF</a></div><br><br>";
+	    $ret = cfpr_report_setuid(NULL,$name,true,$class_regex);
+	    echo "<br><div id=\"banner&class_regex=$class_regex\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	    echo "<br><div id=\"banner&class_regex=$class_regex\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	  }
 	break;
 	
@@ -269,13 +269,13 @@ if ($many)  // Returning query
 	echo "<h4>Name: $name<br>Version: $version<br>Arch: $arch</h4>";
 	if ($hosts_only)
 	  {
-	    $report = cfpr_hosts_with_software_in(NULL,$name,$version,$arch,true);
+	    $report = cfpr_hosts_with_software_in(NULL,$name,$version,$arch,true,$class_regex);
 	  }
 	else
 	  {	    
-	    $report = cfpr_report_software_in(NULL,$name,$version,$arch,true);
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&pdf_action=email\">Email PDF</a></div><br><br>";   
+	    $report = cfpr_report_software_in(NULL,$name,$version,$arch,true,$class_regex);
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";   
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";   
 	  }
 	break;
 	
@@ -288,13 +288,13 @@ if ($many)  // Returning query
 
 	if ($hosts_only)
 	  {
-	    $report = cfpr_hosts_with_vars(NULL,$scope,$lval,$rval,$type,true);
+	    $report = cfpr_hosts_with_vars(NULL,$scope,$lval,$rval,$type,true,$class_regex);
 	  }
 	else
 	  {    
-	    $report = cfpr_report_vars(NULL,$scope,$lval,$rval,$type,true);
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&scope=$scope&lval=$lval&rval=$rval&var_type=$type\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&scope=$scope&lval=$lval&rval=$rval&var_type=$type&pdf_action=email\">Email PDF</a></div><br><br>";
+	    $report = cfpr_report_vars(NULL,$scope,$lval,$rval,$type,true,$class_regex);
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&scope=$scope&lval=$lval&rval=$rval&var_type=$type&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	    echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&scope=$scope&lval=$lval&rval=$rval&var_type=$type&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	  }
 	break;
       }
@@ -314,134 +314,134 @@ else if ($hostkey != "") // Default search on single machine
       {
       case  "Bundle profile":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_bundlesseen($hostkey,$search,true,NULL);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_bundlesseen($hostkey,$search,true,NULL,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case  "Business value report":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_value($hostkey,NULL,NULL,NULL);	
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&days=&months=&years=\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&days=&months=&years=&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_value($hostkey,NULL,NULL,NULL,$class_regex);	
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&days=&months=&years=&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&days=&months=&years=&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Class profile":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_classes($hostkey,$search,true);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_classes($hostkey,$search,true,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break; 
 	
       case "Compliance by promise":
 	echo "<h4>$report_type</h4>";
 	$state = "x";
-	$report = cfpr_report_compliance_promises($hostkey,$search,$state,true);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&state=$state\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&state=$state&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_compliance_promises($hostkey,$search,$state,true,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&state=$state&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&state=$state&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Compliance summary":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">");
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">",$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "File change log":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_filechanges($hostkey,$search,true,-1,">");    
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_filechanges($hostkey,$search,true,-1,">",$class_regex);    
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
        case "File change diffs":
 	echo "<h4>$report_type</h4>";
 	$cal = -1;
-	$report = cfpr_report_filediffs($hostkey,$search,NULL,true,$cal,">");
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&cal=$cal\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&cal=$cal&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_filediffs($hostkey,$search,NULL,true,$cal,">",$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&cal=$cal&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&cal=$cal&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Last saw hosts":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_lastseen($hostkey,NULL,$search,NULL,-1,true);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&ago=-1\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&ago=-1&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_lastseen($hostkey,NULL,$search,NULL,-1,true,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&ago=-1&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&ago=-1&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Patches available":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_patch_avail($hostkey,$search,NULL,NULL,true);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_patch_avail($hostkey,$search,NULL,NULL,true,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Patch status":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_patch_in($hostkey,$search,NULL,NULL,true);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_patch_in($hostkey,$search,NULL,NULL,true,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Performance":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_performance($hostkey,$search,true);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_performance($hostkey,$search,true,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Promises repaired log":
 	echo "<h4>$report_type</h4>";
-	//$report = cfpr_summarize_repaired($hostkey,NULL);
-	$report = cfpr_report_repaired($hostkey,NULL);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email\">Email PDF</a></div><br><br>";
+	//$report = cfpr_summarize_repaired($hostkey,NULL,$class_regex);
+	$report = cfpr_report_repaired($hostkey,NULL,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Promises not kept log":
 	echo "<h4 class=\"reportnotkept\">$report_type</h4>";
-	$report = cfpr_report_notkept($hostkey,NULL);
-	//$report = cfpr_summarize_notkept($hostkey,NULL);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_notkept($hostkey,NULL,$class_regex);
+	//$report = cfpr_summarize_notkept($hostkey,NULL,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Promises repaired summary":
 	echo "<h4>$report_type</h4>";
-	//$report = cfpr_summarize_repaired($hostkey,NULL);
-	$report = cfpr_report_repaired($hostkey,NULL);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email\">Email PDF</a></div><br><br>";
+	//$report = cfpr_summarize_repaired($hostkey,NULL,$class_regex);
+	$report = cfpr_report_repaired($hostkey,NULL,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Promises not kept summary":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_notkept($hostkey,NULL);
-	//$report = cfpr_summarize_notkept($hostkey,NULL);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_notkept($hostkey,NULL,$class_regex);
+	//$report = cfpr_summarize_notkept($hostkey,NULL,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Setuid/gid root programs":
 	echo "<h4>$report_type</h4>";
-	$ret = cfpr_report_setuid($hostkey,$search,true);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email\">Email PDF</a></div><br><br>";
+	$ret = cfpr_report_setuid($hostkey,$search,true,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Software installed":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_software_in($hostkey,$search,NULL,NULL,true);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_software_in($hostkey,$search,NULL,NULL,true,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Variables":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_vars($hostkey,NULL,$search,NULL,NULL,true);
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
-	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email\">Email PDF</a></div><br><br>";
+	$report = cfpr_report_vars($hostkey,NULL,$search,NULL,NULL,true,$class_regex);
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
+	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
       }
  

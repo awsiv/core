@@ -427,13 +427,13 @@ function rpt_bundle_profile($hostkey,$search,&$pdf,$class_regex)
 
 ### business value report ###
 
-function rpt_business_value($hostkey,$days,$months,$years,&$pdf)
+function rpt_business_value($hostkey,$days,$months,$years,&$pdf,$class_regex)
 {
     $cols=5;
     $col_len = array(24,19,19,19,19);
     $header=array('Host','Day','Kept','Repaired', 'Not kept');
 
-    $ret = cfpr_report_value_pdf($hostkey,$days,$months,$years);
+    $ret = cfpr_report_value_pdf($hostkey,$days,$months,$years,$class_regex);
     $data1 = $pdf->ParseData($ret);
     
     $pdf->ReportTitle();
@@ -446,13 +446,13 @@ function rpt_business_value($hostkey,$days,$months,$years,&$pdf)
 }
 
 ### Classes report ###
-function rpt_class_profile($hostkey,$search,&$pdf)
+function rpt_class_profile($hostkey,$search,&$pdf,$class_regex)
 {
     $cols=5;
     $col_len = array(28,28,20,12,12);
     $header=array('Host','Class Context','Occurs with probability','Uncertainty', 'Last seen');
     
-    $ret = cfpr_report_classes_pdf($hostkey,$search,true);
+    $ret = cfpr_report_classes_pdf($hostkey,$search,true,$class_regex);
     $data1 = $pdf->ParseData($ret);
     
     # count the number of columns	
@@ -467,12 +467,12 @@ function rpt_class_profile($hostkey,$search,&$pdf)
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
 }
 
-function rpt_promise_notkept($hostkey,$search,&$pdf)
+function rpt_promise_notkept($hostkey,$search,&$pdf,$class_regex)
 {
     $col_len = array(20,20,40,20);
     $header=array('Host','Promise Handle','Report','Time');
 
-    $ret = cfpr_report_notkept_pdf($hostkey,$search);
+    $ret = cfpr_report_notkept_pdf($hostkey,$search,$class_regex);
     $data1 = $pdf->ParseData($ret);
     
     $pdf->ReportTitle();
@@ -485,13 +485,13 @@ function rpt_promise_notkept($hostkey,$search,&$pdf)
 }
 
 ### Compliance by promise ##
-function rpt_compliance_promises($hostkey,$search,$state,&$pdf)
+function rpt_compliance_promises($hostkey,$search,$state,&$pdf,$class_regex)
 {
     $cols=6;
     $col_len = array(21,24,14,14,12,15);
     $header=array('Host','Promise Handle','Last known state','Probability kept', 'Uncertainty', 'Last seen');
     
-    $ret = cfpr_report_compliance_promises_pdf($hostkey,$search,$state,true);
+    $ret = cfpr_report_compliance_promises_pdf($hostkey,$search,$state,true,$class_regex);
     $data1 = $pdf->ParseData($ret);
 
     $pdf->ReportTitle();
@@ -504,13 +504,13 @@ function rpt_compliance_promises($hostkey,$search,$state,&$pdf)
 }
 
 ### Compliance Summary ##
-function rpt_compliance_summary($hostkey,&$pdf)
+function rpt_compliance_summary($hostkey,&$pdf,$class_regex)
 {
     $cols=6;
     $col_len = array(25,27,10,10,10,18);
     $header=array('Host','Policy','Kept','Repaired','Not kept', 'Last seen');
     
-    $ret = cfpr_report_compliance_summary_pdf($hostkey,NULL,-1,-1,-1,-1,">");
+    $ret = cfpr_report_compliance_summary_pdf($hostkey,NULL,-1,-1,-1,-1,">",$class_regex);
     $data1 = $pdf->ParseData($ret);
     
     $pdf->ReportTitle();
@@ -523,13 +523,13 @@ function rpt_compliance_summary($hostkey,&$pdf)
 }
 
 ### Classes report ###
-function rpt_filechange_log($hostkey,$search,&$pdf)
+function rpt_filechange_log($hostkey,$search,&$pdf,$class_regex)
 {
     $cols=3;
     $col_len = array(33,34,33);
     $header=array('Host','File', 'Time of Change');
     
-    $ret = cfpr_report_filechanges_pdf($hostkey,$search,true,-1,">");
+    $ret = cfpr_report_filechanges_pdf($hostkey,$search,true,-1,">",$class_regex);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
 
@@ -541,13 +541,13 @@ function rpt_filechange_log($hostkey,$search,&$pdf)
 }
 
 ### Classes report ###
-function rpt_lastsaw_hosts($hostkey,$key,$name,$address,$ago,&$pdf)
+function rpt_lastsaw_hosts($hostkey,$key,$name,$address,$ago,&$pdf,$class_regex)
 {
     $cols=9;
     $col_len = array(14,8,10,14,12,7,7,7,21);
     $header=array('Host','Initiated', 'IP Address', 'Remote Host', 'Last Seen', 'Hours Ago', ' Avg Interval', 'Uncertainty', 'Remote Host Key');
 
-    $ret =  cfpr_report_lastseen_pdf($hostkey,$key,$name,$address,$ago,true);
+    $ret =  cfpr_report_lastseen_pdf($hostkey,$key,$name,$address,$ago,true,$class_regex);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
     $pdf->ReportDescription();
@@ -558,13 +558,13 @@ function rpt_lastsaw_hosts($hostkey,$key,$name,$address,$ago,&$pdf)
 }
 
 ### Patches Available  ###
-function rpt_patches_available($hostkey,$search,$version,$arch,&$pdf)
+function rpt_patches_available($hostkey,$search,$version,$arch,&$pdf,$class_regex)
 {
     $cols=4;
     $col_len = array(29,33,19,19);
     $header=array('Host','Name','Version','Architecture');
     
-    $ret =  cfpr_report_patch_avail_pdf($hostkey,$search,$version,$arch,true);
+    $ret =  cfpr_report_patch_avail_pdf($hostkey,$search,$version,$arch,true,$class_regex);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
     $pdf->ReportDescription();
@@ -575,13 +575,13 @@ function rpt_patches_available($hostkey,$search,$version,$arch,&$pdf)
 }
 
 ### Patch Status  ###
-function rpt_patch_status($hostkey,$search,$version,$arch,&$pdf)
+function rpt_patch_status($hostkey,$search,$version,$arch,&$pdf,$class_regex)
 {
     $cols=4;
     $col_len = array(29,33,19,19);
     $header=array('Host','Name','Version','Architecture');
 
-    $ret = cfpr_report_patch_in_pdf($hostkey,$search,$version,$arch,true);
+    $ret = cfpr_report_patch_in_pdf($hostkey,$search,$version,$arch,true,$class_regex);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
     $pdf->ReportDescription();
@@ -593,13 +593,13 @@ function rpt_patch_status($hostkey,$search,$version,$arch,&$pdf)
 
 ### Software Installed  ###
 
-function rpt_software_installed($hostkey,$search,$version,$arch,&$pdf)
+function rpt_software_installed($hostkey,$search,$version,$arch,&$pdf,$class_regex)
 {
     $cols=4;
     $col_len = array(21,33,19,19);
     $header=array('Host','Name','Version','Architecture');
     
-    $ret = cfpr_report_software_in_pdf($hostkey,$search,$version,$arch,true);
+    $ret = cfpr_report_software_in_pdf($hostkey,$search,$version,$arch,true,$class_regex);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
     $pdf->ReportDescription();
@@ -610,13 +610,13 @@ function rpt_software_installed($hostkey,$search,$version,$arch,&$pdf)
 }
 
 ### Performance Report  ###
-function rpt_performance($hostkey,$search,&$pdf)
+function rpt_performance($hostkey,$search,&$pdf,$class_regex)
 {
         $cols=6;
         $col_len = array(19,38,7.5,7.5,10,18);
         $header=array('Host','Repair','Last Time','Avg Time','Uncertainty','Last Performed');
 
-	$ret = cfpr_report_performance_pdf($hostkey,$search,true);
+	$ret = cfpr_report_performance_pdf($hostkey,$search,true,$class_regex);
         $data1 = $pdf->ParseData($ret);
         $pdf->ReportTitle();
         $pdf->ReportDescription();
@@ -626,13 +626,13 @@ function rpt_performance($hostkey,$search,&$pdf)
         $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
 }
 
-function rpt_repaired_log($hostkey,$search,&$pdf)
+function rpt_repaired_log($hostkey,$search,&$pdf,$class_regex)
 {
     $cols=4;
     $col_len = array(19,19,43,19);
     $header=array('Host','Promise Handle','Report','Time');
 
-    $ret = cfpr_report_repaired_pdf($hostkey,$search);
+    $ret = cfpr_report_repaired_pdf($hostkey,$search,$class_regex);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
     $pdf->ReportDescription();
@@ -642,13 +642,13 @@ function rpt_repaired_log($hostkey,$search,&$pdf)
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
 }
 
-function rpt_repaired_summary($hostkey,$search,&$pdf)
+function rpt_repaired_summary($hostkey,$search,&$pdf,$class_regex)
 {
     $cols=4;
     $col_len = array(19,19,43,19);
     $header=array('Host','Promise Handle','Report','Occurrences');
 
-    $ret =  cfpr_summarize_repaired_pdf($hostkey,$search);
+    $ret =  cfpr_summarize_repaired_pdf($hostkey,$search,$class_regex);
     $data1 = $pdf->ParseData($ret);
     
     $pdf->ReportTitle();
@@ -660,13 +660,13 @@ function rpt_repaired_summary($hostkey,$search,&$pdf)
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
 }
 
-function rpt_notkept_summary($hostkey,$search,&$pdf)
+function rpt_notkept_summary($hostkey,$search,&$pdf,$class_regex)
 {
     $cols=4;
     $col_len = array(19,19,43,19);
     $header=array('Host','Promise Handle','Report','Occurrences');
 
-    $ret =  cfpr_summarize_notkept_pdf($hostkey,$search);
+    $ret =  cfpr_summarize_notkept_pdf($hostkey,$search,$class_regex);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
     $pdf->ReportDescription();
@@ -676,7 +676,7 @@ function rpt_notkept_summary($hostkey,$search,&$pdf)
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
 }
 
-function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type,&$pdf)
+function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type,&$pdf,$class_regex)
 {
     $cols=4;
     $col_len = array(19,15,19,47);
@@ -684,11 +684,11 @@ function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type,&$pdf)
 
     if($hostkey == NULL)
     {
-	$ret = cfpr_report_vars_pdf(NULL,$scope,$lval,$rval,$type,true);
+	$ret = cfpr_report_vars_pdf(NULL,$scope,$lval,$rval,$type,true,$class_regex);
     }
     else
     {   
-	$ret = cfpr_report_vars_pdf($hostkey,NULL,$search,NULL,NULL,true);
+	$ret = cfpr_report_vars_pdf($hostkey,NULL,$search,NULL,NULL,true,$class_regex);
     }
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
@@ -700,13 +700,13 @@ function rpt_variables($hostkey,$search,$scope,$lval,$rval,$type,&$pdf)
     $pdf->DrawTableSpecial($data1, $cols, $col_len, $header, 8);
 }
 
-function rpt_filediffs($hostkey,$search,$diff,$cal,&$pdf)
+function rpt_filediffs($hostkey,$search,$diff,$cal,&$pdf,$class_regex)
 {
     $cols=4;
     $col_len = array(19,15,19,47);
     $header=array('Host','File','Change detected at','Change');
 
-    $ret = cfpr_report_filediffs_pdf($hostkey,$search,$diff,true,$cal,">");
+    $ret = cfpr_report_filediffs_pdf($hostkey,$search,$diff,true,$cal,">",$class_regex);
 
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
@@ -718,13 +718,13 @@ function rpt_filediffs($hostkey,$search,$diff,$cal,&$pdf)
     $pdf->DrawTableSpecial($data1, $cols, $col_len, $header, 8);
 }
 
-function rpt_setuid($hostkey,$search,&$pdf)
+function rpt_setuid($hostkey,$search,&$pdf,$class_regex)
 {
     $cols=2;
     $col_len = array(30,70);
     #        $header=array('Host','Type','Name','Value');
     
-    $ret = cfpr_report_setuid_pdf($hostkey,$search,true);
+    $ret = cfpr_report_setuid_pdf($hostkey,$search,true,$class_regex);
     
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
@@ -806,111 +806,116 @@ switch($report_type)
  case  "Business value report":
     $desc=cfpr_report_description('value report');
     $pdf->PDFSetDescription($desc);
-    rpt_business_value($_GET['hostkey'],$_GET['days'],$_GET['months'],$_GET['years'],$pdf);
+    rpt_business_value($_GET['hostkey'],$_GET['days'],$_GET['months'],$_GET['years'],$pdf,$_GET['class_regex']);
     break;
  
  case "Class profile":
     $desc=cfpr_report_description('classes report');
     $pdf->PDFSetDescription($desc);
-    rpt_class_profile($_GET['hostkey'],$_GET['search'],$pdf);
+    rpt_class_profile($_GET['hostkey'],$_GET['search'],$pdf,$_GET['class_regex']);
     break;
  
  case "Compliance by promise":
     $desc=cfpr_report_description('promise report');
     $pdf->PDFSetDescription($desc);
-    rpt_compliance_promises($_GET['hostkey'],$_GET['search'],$_GET['state'],$pdf);
+    rpt_compliance_promises($_GET['hostkey'],$_GET['search'],$_GET['state'],$pdf,$_GET['class_regex']);
     break;
     
  case "Compliance summary":
     $desc=cfpr_report_description('compliance report');
     $pdf->PDFSetDescription($desc);
-    rpt_compliance_summary($_GET['hostkey'],$pdf);
+    rpt_compliance_summary($_GET['hostkey'],$pdf,$_GET['class_regex']);
     break;
     
  case "File change log":
     $desc=cfpr_report_description('file_changes report');
     $pdf->PDFSetDescription($desc);
-    rpt_filechange_log($_GET['hostkey'],$_GET['search'],$pdf);
+    rpt_filechange_log($_GET['hostkey'],$_GET['search'],$pdf,$_GET['class_regex']);
     break;
     
  case "Last saw hosts":
     $desc=cfpr_report_description('lastseen report');
     $pdf->PDFSetDescription($desc);
-    rpt_lastsaw_hosts($_GET['hostkey'],$_GET['key'],$_GET['search'],$_GET['address'],$_GET['ago'],$pdf);
+    rpt_lastsaw_hosts($_GET['hostkey'],$_GET['key'],$_GET['search'],$_GET['address'],$_GET['ago'],$pdf,$_GET['class_regex']);
     break;
     
  case "Patches available":
     $desc=cfpr_report_description('patches available report');
     $pdf->PDFSetDescription($desc);
-    rpt_patches_available($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch'],$pdf);
+    rpt_patches_available($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch'],$pdf,$_GET['class_regex']);
     break;
  
  case "Patch status":
     $desc=cfpr_report_description('patches installed report');
     $pdf->PDFSetDescription($desc);
-    rpt_patch_status($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch'],$pdf);
+    rpt_patch_status($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch'],$pdf,$_GET['class_regex']);
     break;
  
  case "Performance":
     $desc=cfpr_report_description('performance report');
     $pdf->PDFSetDescription($desc);
-    rpt_performance($_GET['hostkey'],$_GET['search'],$pdf);
+    rpt_performance($_GET['hostkey'],$_GET['search'],$pdf,$_GET['class_regex']);
     break;
     
  case "Promises repaired summary":
     $desc=cfpr_report_description('promises repaired summary');
     $pdf->PDFSetDescription($desc);
-    rpt_repaired_log($_GET['hostkey'],$_GET['search'],$pdf);
+    rpt_repaired_log($_GET['hostkey'],$_GET['search'],$pdf,$_GET['class_regex']);
     break;
     
  case "Promises repaired log":
     $desc=cfpr_report_description('promises repaired report');
     $pdf->PDFSetDescription($desc);
-    rpt_repaired_log($_GET['hostkey'],$_GET['search'],$pdf);
+    rpt_repaired_log($_GET['hostkey'],$_GET['search'],$pdf,$_GET['class_regex']);
     break;
     
  case "Promises not kept summary":
     $desc=cfpr_report_description('promises repaired report');
     $pdf->PDFSetDescription($desc);
-    rpt_promise_notkept($_GET['hostkey'],$_GET['search'],$pdf);
+    rpt_promise_notkept($_GET['hostkey'],$_GET['search'],$pdf,$_GET['class_regex']);
     break;
     
  case "Promises not kept log":
     $desc=cfpr_report_description('promises not kept report');
     $pdf->PDFSetDescription($desc);
-    rpt_promise_notkept($_GET['hostkey'],$_GET['search'],$pdf);
+    rpt_promise_notkept($_GET['hostkey'],$_GET['search'],$pdf,$_GET['class_regex']);
     break;
  
  case "Setuid/gid root programs":
     $desc=cfpr_report_description('setuid report');
     $pdf->PDFSetDescription($desc);
-    rpt_setuid($_GET['hostkey'],$_GET['search'],$pdf);    
+    rpt_setuid($_GET['hostkey'],$_GET['search'],$pdf,$_GET['class_regex']);    
     break;
  
  case "Software installed":
     $desc=cfpr_report_description('software installed report');
     $pdf->PDFSetDescription($desc);
-    rpt_software_installed($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch'],$pdf);
+    rpt_software_installed($_GET['hostkey'],$_GET['search'],$_GET['version'],$_GET['arch'],$pdf,$_GET['class_regex']);
     break;
  
  case "Variables":
     $desc=cfpr_report_description('variables report');
     $pdf->PDFSetDescription($desc);    
-    rpt_variables($_GET['hostkey'],$_GET['search'],$_GET['scope'],$_GET['lval'],$_GET['rval'],$_GET['var_type'],$pdf);
+    rpt_variables($_GET['hostkey'],$_GET['search'],$_GET['scope'],$_GET['lval'],$_GET['rval'],$_GET['var_type'],$pdf,$_GET['class_regex']);
     break;
 
  case "File change diffs":
     $desc=cfpr_report_description('file_diffs report');
     $pdf->PDFSetDescription($desc);    
-    rpt_filediffs($_GET['hostkey'],$_GET['search'],$_GET['diff'],$_GET['cal'],$pdf);
+    rpt_filediffs($_GET['hostkey'],$_GET['search'],$_GET['diff'],$_GET['cal'],$pdf,$_GET['class_regex']);
     break;
     
 }
 
-$pdf_action = $_GET['pdf_action'];  
+$pdf_action = $_GET['pdf_action'];
+# get email parameters from ajax query
+# $to = $_POST['to'];
+# $from = $_POST['from'];
+# $subject = $_POST['subject'];
+# $msg = $_POST['message'];
 if($pdf_action == 'email')
 {
-  EmailPDF($pdf,$pdf_filename);
+  EmailPDF($pdf,$pdf_filename,$to,$from,$subject,$msg);
 }
 else
 {
