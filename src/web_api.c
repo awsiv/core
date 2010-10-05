@@ -3947,13 +3947,15 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize)
 {
    char cmd[CF_BUFSIZE];
    char output[CF_EXPANDSIZE];
-
-   snprintf(cmd,CF_BUFSIZE-1,"/var/cfengine/bin/cf-promises -f %s",file);
+   
+   InitializeGA(0,NULL);
+   
+   snprintf(cmd,CF_BUFSIZE-1,"%s%cbin%ccf-promises -f %s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,file);
    output[0] = '\0';
 
    if(GetExecOutput(cmd,output,false))
      {
-	if(output == NULL)
+	if(output[0] == '\0')
 	  {
 	     return 0;
 	  }	
