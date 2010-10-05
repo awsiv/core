@@ -787,7 +787,7 @@ function EmailPDF($pdf, $pdf_filename, $to, $from, $subject, $message)
 
 # main control
 $report_type = $_GET['type'];
-$pdf_filename = preg_replace('/ /', '_', $report_type).'.pdf';
+$pdf_filename = 'Nova_'.preg_replace('/ /', '_', $report_type).'.pdf';
 $pdf=new PDF();
 $pdf->PDFSetReportName($report_type);
 $pdf->PDFSetTableTitle('DATA REPORTED');
