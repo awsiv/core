@@ -214,8 +214,7 @@ return buffer;
 int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
-  struct HubPromiseLog *hp;
-  struct HubQuery *hq;
+  struct HubPromiseLog *hp;  struct HubQuery *hq;
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
@@ -1093,7 +1092,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_software_hosts(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *returnval,int bufsize)
+int Nova2PHP_software_hosts(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubHost *hh;
@@ -1109,7 +1108,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,NULL);
+ hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg);
 
 
 snprintf(returnval,bufsize,"<table>");
@@ -1148,7 +1147,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *returnval,int bufsize)
+int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubHost *hh;
@@ -1165,7 +1164,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,NULL);
+hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1203,7 +1202,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *returnval,int bufsize)
+int Nova2PHP_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubHost *hh;
@@ -1218,7 +1217,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,NULL);
+ hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1256,7 +1255,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *returnval,int bufsize)
+int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubHost *hh;
@@ -1279,7 +1278,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,NULL);
+ hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,classreg);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1317,7 +1316,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,char *returnval,int bufsize)
+int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubHost *hh;
@@ -1333,7 +1332,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,NULL);
+ hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,classreg);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1371,7 +1370,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *returnval,int bufsize)
+int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubHost *hh;
@@ -1389,7 +1388,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,NULL);
+ hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,classreg);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1427,7 +1426,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *returnval,int bufsize)
+int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubHost *hh;
@@ -1442,7 +1441,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,NULL);
+ hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,classreg);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1480,7 +1479,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *returnval,int bufsize)
+int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubHost *hh;
@@ -1495,7 +1494,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,NULL);
+ hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1590,7 +1589,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char *cmp,char *returnval,int bufsize)
+int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];   
   struct HubHost *hh;
@@ -1614,7 +1613,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,NULL);
+ hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,classreg);
 
 
 snprintf(returnval,bufsize,"<table>");
@@ -1653,7 +1652,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *returnval,int bufsize)
+int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];   
   struct HubHost *hh;
@@ -1677,7 +1676,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,NULL);
+ hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,classreg);
 
 snprintf(returnval,bufsize,"<table>");
 
