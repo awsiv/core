@@ -314,7 +314,7 @@ else if ($hostkey != "") // Default search on single machine
       {
       case  "Bundle profile":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_bundlesseen($hostkey,$search,true,NULL,$class_regex);
+	$report = cfpr_report_bundlesseen($hostkey,$search,true,$class_regex);
 	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
