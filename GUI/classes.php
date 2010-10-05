@@ -15,7 +15,7 @@ $tago = 0;
 
 //$ret = cfpr_report_lastseen($hostkey,$hash,$host,$addr,$tago,$regex);
 
-$ret = cfpr_report_classes($hostkey,$name,$regex);
+$ret = cfpr_report_classes($hostkey,$name,$regex,NULL);
 
 echo "<br>$ret<br>";
 

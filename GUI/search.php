@@ -409,16 +409,16 @@ else if ($hostkey != "") // Default search on single machine
 	
       case "Promises repaired summary":
 	echo "<h4>$report_type</h4>";
-	//$report = cfpr_summarize_repaired($hostkey,NULL,$class_regex);
-	$report = cfpr_report_repaired($hostkey,NULL,$class_regex);
+	$report = cfpr_summarize_repaired($hostkey,NULL,$class_regex);
+	//$report = cfpr_report_repaired($hostkey,NULL,$class_regex);
 	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
 	
       case "Promises not kept summary":
 	echo "<h4>$report_type</h4>";
-	$report = cfpr_report_notkept($hostkey,NULL,$class_regex);
-	//$report = cfpr_summarize_notkept($hostkey,NULL,$class_regex);
+	//$report = cfpr_report_notkept($hostkey,NULL,$class_regex);
+	$report = cfpr_summarize_notkept($hostkey,NULL,$class_regex);
 	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\"></a></div><br><br>";
 	echo "<br><div id=\"banner\"><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&pdf_action=email&class_regex=$class_regex\">Email PDF</a></div><br><br>";
 	break;
@@ -480,6 +480,7 @@ else // No hosktkey
 	echo "<p>Date:<p><input class=\"searchfield\" type=\"text\" name=\"days\" size=\"80\">";
 	echo "<p>Months:<p><input class=\"searchfield\" type=\"text\" name=\"months\" size=\"80\">";
 	echo "<p>Years:<p><input class=\"searchfield\" type=\"text\" name=\"years\" size=\"80\">";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -491,6 +492,7 @@ else // No hosktkey
 	echo "<h1>$report_type query</h1>";
 	echo "<form method=\"post\" action=\"search.php\">";
 	echo "<p>Class pattern: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -503,6 +505,7 @@ else // No hosktkey
 	echo "<form method=\"post\" action=\"search.php\">";
 	echo "<p>Promise by handle: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
 	echo "<p><select name=\"state\"><option value=\"x\">Any</option><option value=\"c\">Compliant</option><option value=\"r\">Repaired</option><option value=\"n\">Non-compliant</option></select>";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";				   
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -520,6 +523,7 @@ else // No hosktkey
 	echo "<form method=\"post\" action=\"search.php\">";
 	echo "<p>File name: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
         echo "<p>CALENDAR";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
  	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -534,6 +538,7 @@ else // No hosktkey
 	echo "<p>File name: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
 	echo "<p>Match content: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"diff\" size=\"80\">";
         echo "<p>CALENDAR";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">"; 
  	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -549,6 +554,7 @@ else // No hosktkey
 	echo "<p>Host address: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"address\" size=\"80\">";
 	echo "<p>Host's unique key:<p><input class=\"searchfield\" type=\"text\" name=\"key\" size=\"80\">";
 	echo "<p>Hours ago:<p><input class=\"searchfield\" type=\"text\" name=\"ago\" size=\"80\">";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -564,6 +570,7 @@ else // No hosktkey
 	echo "<p>Package name: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
 	echo "<p>package version: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"version\" size=\"80\">";
 	echo "<p>Package architecture:<p><input class=\"searchfield\" type=\"text\" name=\"arch\" size=\"80\">";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -578,6 +585,7 @@ else // No hosktkey
 	echo "<p>Package name: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
 	echo "<p>package version: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"version\" size=\"80\">";
 	echo "<p>Package architecture: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"arch\" size=\"80\">";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -591,6 +599,7 @@ else // No hosktkey
 	echo "<h1>$report_type query</h1>";
 	echo "<form method=\"post\" action=\"search.php\">";
 	echo "<p>Job name: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -603,6 +612,7 @@ else // No hosktkey
 	echo "<h1>$report_type query</h1>";
 	echo "<form method=\"post\" action=\"search.php\">";
 	echo "<p>Promise handles: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -615,6 +625,7 @@ else // No hosktkey
 	echo "<h1>$report_type query</h1>";
 	echo "<form method=\"post\" action=\"search.php\">";
 	echo "<p>Promise handles: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -627,6 +638,7 @@ else // No hosktkey
 	echo "<h1>$report_type query</h1>";
 	echo "<form method=\"post\" action=\"search.php\">";
 	echo "<p>Filename: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -641,6 +653,7 @@ else // No hosktkey
 	echo "<p>Package name: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"name\" size=\"80\">";
 	echo "<p>package version: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"version\" size=\"80\">";
 	echo "<p>Package architecture: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"arch\" size=\"80\">";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";
@@ -657,6 +670,7 @@ else // No hosktkey
 	echo "<p>Rvalue or content: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"rval\" size=\"80\">";
 	echo "<p>Type:<p>";
 	echo "<select name=\"type\"><option value=\"s\">String</option><option value=\"sl\">String list</option><option value=\"i\">Integer</option><option value=\"il\">Integer list</option><option value=\"r\">Real</option><option value=\"rl\">Real list</option></select>";
+	echo "<p>Host group: (.*+[])<p><input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\">";
 	echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
 	echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
 	echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\">";

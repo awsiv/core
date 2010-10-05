@@ -18,7 +18,7 @@ $status = NULL;
 
 //$ret = cfpr_report_lastseen($hostkey,$hash,$host,$addr,$tago,$regex);
 
-$ret = cfpr_report_compliance_promises($hostkey,$handle,"x",false);
+$ret = cfpr_report_compliance_promises($hostkey,$handle,"x",false,NULL);
 
 
 echo "<br>$ret<br>";

@@ -126,7 +126,7 @@ echo "</td></tr></table>";
 
 <?php
 echo "<div id=\"notkeptinline\">";
-$report = cfpr_summarize_notkept($hostkey,NULL);
+$report = cfpr_summarize_notkept($hostkey,NULL,NULL);
 echo "<a name=\"notkept\"><h4>Promises not kept in the past week</h4></a>";
 echo "$report";
 echo "<div>";
