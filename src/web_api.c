@@ -2388,8 +2388,9 @@ if (hb)
       for (ha = hb->attr; ha != NULL; ha = ha->next)
          {
          snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span id=\"rval\">%s</span></td><td><a href=\"knowledge.php?topic=%s\">%s</a></td></tr>",ha->lval,ha->lval,ha->rval,ha->classContext,ha->classContext);
+	 Join(returnval,work,bufsize);
          }
-      Join(returnval,work,bufsize);      
+
       }
    
    DeleteHubBody(hb);
