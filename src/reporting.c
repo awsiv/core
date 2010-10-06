@@ -1854,7 +1854,7 @@ void Nova_SummarizeComms()
 { CF_DB *dbp;
   CF_DBC *dbcp;
   int ret,ksize,vsize;
-  struct QPoint entry;
+  struct CfKeyHostSeen entry;
   double kept = 1,not_kept = 0,repaired = 0,var,average;
   char name[CF_BUFSIZE], *key;
   void *value;
@@ -1883,9 +1883,10 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    if (value != NULL)
       {
       memcpy(&entry,value,sizeof(entry));
-      then = entry.q;
-      average = entry.expect;
-      var = entry.var;
+
+      then = entry.Q.q;
+      average = (double)entry.Q.expect;
+      var = (double)entry.Q.var;
       }
    else
       {
