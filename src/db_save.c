@@ -654,7 +654,7 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_
 { bson_buffer bb;
   bson_buffer *setObj;
   bson_buffer *arr, *sub;
-  struct Item *keys = NULL;
+  struct Item *keys = NULL,*addedKey = NULL;
   bson host_key;  // host description
   bson setOp;
   char handle[CF_MAXVARSIZE],reason[CF_BUFSIZE];
@@ -697,14 +697,15 @@ for (ip = data; ip != NULL; ip=ip->next)
    snprintf(varName, sizeof(varName), "%s.%s@%s", repName,handle,GenTimeKey(tthen));
 
    // check for duplicate keys
-   if(IsItemIn(keys,varName))
+   addedKey = ReturnItemIn(keys,varName);
+   if(addedKey)
      {
-     CfOut(cf_verbose, "", "!! Duplicate key \"%s\" in %s - ignoring second (time=%s)", varName, dbOp, cf_ctime(&tthen));
+     Debug("!! Duplicate key \"%s\" in %s - ignoring second time=%s - stored=%s", varName, dbOp, cf_ctime(&tthen), addedKey->classes);
      continue; // avoids DB update failure
      }
    else
      {
-     PrependItem(&keys,varName,NULL);
+     PrependItem(&keys,varName,cf_ctime(&tthen));
      }
    
    sub = bson_append_start_object(setObj, varName);
@@ -714,10 +715,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    bson_append_finish_object(sub);
    }
 
- if(keys)
-   {
-   DeleteItemList(keys);
-   }
+DeleteItemList(keys);
 
 bson_append_finish_object(setObj);
 
