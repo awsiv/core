@@ -49,7 +49,7 @@ if (thislock.lock == NULL)
 
 if ((!NO_FORK) && (fork() != 0))
    {
-   CfOut(cf_inform,"","cf-execd starting %.24s\n",cf_ctime(&now));
+   CfOut(cf_inform,"","cf-hub starting %.24s\n",cf_ctime(&now));
    exit(0);
    }
 
@@ -194,38 +194,40 @@ int Nova_HailPeer(char *peer,struct Attributes a,struct Promise *pp)
   time_t average_time = 600, now = time(NULL);
   int long_time_no_see = false;
   struct CfLock thislock;
+  struct Promise *ppp = NewPromise("hail","open"); 
+  struct Attributes aa;
 
-a.restart_class = "nonce";
-a.transaction.ifelapsed = 6*60;
-a.transaction.expireafter = CF_INFINITY;
+aa.restart_class = "nonce";
+aa.transaction.ifelapsed = 6*60;
+aa.transaction.expireafter = CF_INFINITY;
   
-thislock = AcquireLock(pp->promiser,CanonifyName(peer),now,a,pp);
+thislock = AcquireLock(ppp->promiser,CanonifyName(peer),now,aa,ppp);
 
 if (thislock.lock != NULL)
    {
    long_time_no_see = true;
    }
 
-a.copy.portnumber = (short)5308;
+aa.copy.portnumber = (short)5308;
 
 CfOut(cf_inform,"","...........................................................................\n");
-CfOut(cf_inform,""," * Hailing %s : %u\n",peer,a.copy.portnumber);
+CfOut(cf_inform,""," * Hailing %s : %u\n",peer,aa.copy.portnumber);
 CfOut(cf_inform,"","...........................................................................\n");
 
 /* Check trust interaction*/
 
-a.copy.trustkey = true;
-a.copy.servers = SplitStringAsRList(peer,'*');
+aa.copy.trustkey = true;
+aa.copy.servers = SplitStringAsRList(peer,'*');
+ppp->cache = NULL;
 
-conn = NewServerConnection(a,pp);
+conn = NewServerConnection(aa,ppp);
+DeletePromise(ppp);
 
 if (conn == NULL)
    {
    CfOut(cf_verbose,""," !! Peer \"%s\" did not respond to hail\n",peer);
    return false;
    }
-
-pp->cache = NULL;
 
 // Choose full / delta
 
