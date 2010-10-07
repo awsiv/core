@@ -195,7 +195,7 @@ int Nova_HailPeer(char *peer,struct Attributes a,struct Promise *pp)
   int long_time_no_see = false;
   struct CfLock thislock;
   struct Promise *ppp = NewPromise("hail","open"); 
-  struct Attributes aa;
+  struct Attributes aa = {0};
 
 aa.restart_class = "nonce";
 aa.transaction.ifelapsed = 6*60;
