@@ -854,7 +854,7 @@ void Cf3ParseFile(char *filename);
 void Cf3ParseFiles(void);
 int NewPromiseProposals(void);
 void CompilationReport(char *filename);
-void HashVariables(void);
+void HashVariables(char *name);
 void HashControls(void);
 void UnHashVariables(void);
 void TheAgent(enum cfagenttype ag);
@@ -1356,6 +1356,8 @@ void TestRegularExpressions(void);
 void TestAgentPromises(void);
 void TestFunctionIntegrity(void);
 void SDIntegerDefault(char *ref,int cmp);
+void DebugBreak();
+
 
 /* server_transform.c */
 

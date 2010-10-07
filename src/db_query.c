@@ -4170,7 +4170,7 @@ return retList;
 struct Item *CFDB_QuerySppPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType)
 /*
  * Returns all SPP promisers from expanded policy as
- * "handle sep promiser sep action sep ifvarclass"
+ * "handle sep promiser sep ifvarclass"
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
 { bson_buffer bbuf;
@@ -4180,7 +4180,6 @@ struct Item *CFDB_QuerySppPromiser(mongo_connection *conn, char *sep, char *bund
   struct Item *retList = {0};
   char handle[CF_SMALLBUF] = {0};
   char path[CF_SMALLBUF] = {0};
-  char action[CF_SMALLBUF] = {0};
   char ifvarclass[CF_SMALLBUF] = {0};
   char buf[CF_MAXVARSIZE] = {0};
 
@@ -4210,7 +4209,6 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    // make sure everything gets defined
    snprintf(handle,sizeof(handle),"(unknown)");
    snprintf(path,sizeof(path),"(unknown)");
-   snprintf(action,sizeof(action),"(unknown)");
    snprintf(ifvarclass,sizeof(ifvarclass),"(unknown)");
 
    
@@ -4230,11 +4228,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
 
 	 while(bson_iterator_next(&it2))
 	   {
-           if(strncmp(bson_iterator_string(&it2), "action_policy =>", 16) == 0)
-	     {
-	     snprintf(action,sizeof(action),"%s",bson_iterator_string(&it2) + 17);
-	     }
-           else if(strncmp(bson_iterator_string(&it2), "ifvarclass =>", 13) == 0)
+           if(strncmp(bson_iterator_string(&it2), "ifvarclass =>", 13) == 0)
 	     {
 	     snprintf(ifvarclass,sizeof(ifvarclass),"%s",bson_iterator_string(&it2) + 14);
 	     }
@@ -4243,8 +4237,8 @@ while(mongo_cursor_next(cursor))  // iterate over docs
          }
       }
    
-   snprintf(buf,sizeof(buf),"%s%s%s%s%s%s%s",
-	    handle,sep,path,sep,action,sep,ifvarclass);
+   snprintf(buf,sizeof(buf),"%s%s%s%s%s",
+	    handle,sep,path,sep,ifvarclass);
    AppendItem(&retList,buf,NULL);
    }
 

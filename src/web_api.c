@@ -3931,7 +3931,7 @@ char *GetSppTableHeader(spp_t sppType)
       return "<tr><th>Host</th><th>Command</th><th>Failclass</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
     case spp_filechanges:
     case spp_filediffs:
-      return "<tr><th>Host</th><th>Path</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
+      return "<tr><th>Host</th><th>Path</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
     case spp_registry:
       return "<tr><th>Host</th><th>Key</th><th>Value</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
     case spp_services:
