@@ -141,7 +141,7 @@ while (more)
          }
       
       now = time(NULL);
-      delta2 = time2 - time(NULL);
+      delta2 = now - time2;
       
       CfOut(cf_verbose,""," -> Received reply of %d bytes at %s",length,ctime(&now));
 
