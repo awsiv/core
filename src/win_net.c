@@ -221,12 +221,12 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
 /** 
  * Tries a nonblocking connect and then restores blocking if
  * successful. Returns true on success, false otherwise.
+ * NB! Do not use recv() timeout - see note below.
  **/
 {
   int res;
   long arg;
   struct sockaddr_in emptyCin = {0};
-  struct timeval tvRecv = {0};
   u_long nonBlock;
 
   if(!cinp)
@@ -235,7 +235,6 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
       cinpSz = sizeof(emptyCin);
     }
   
-
    /* set non-blocking socket */
 
    nonBlock= true;
@@ -244,30 +243,55 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
      CfOut(cf_error,"ioctlsocket","!! Could not disable socket blocking mode");
      }
 
-   
    res = connect(conn->sd,cinp,cinpSz);
 
-   if (res == SOCKET_ERROR)
+   if (res != 0)
       {
-	fd_set myset;
-	int valopt;
-	socklen_t lon = sizeof(int);
-         
-	FD_ZERO(&myset);
-	FD_SET(conn->sd,&myset);
-
-	/* now wait for connect, but no more than tvp.sec */
-	res = select(conn->sd + 1, NULL, &myset, NULL, tvp);
-	if(getsockopt(conn->sd, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) != 0)
-	  {
-	    CfOut(cf_error,"getsockopt","!! Could not check connection status");
-	    return false;
-	  }
 	
-	if (valopt || res <= 0)
+	if(WSAGetLastError() == WSAEWOULDBLOCK)
 	  {
-            CfOut(cf_inform,"connect"," !! Error connecting to server (timeout)");
-            return false;
+	    fd_set wrset;
+	    fd_set exset;
+	    int valopt;
+	    socklen_t lon = sizeof(int);
+	    
+	    FD_ZERO(&wrset);
+	    FD_ZERO(&exset);
+	    FD_SET(conn->sd,&wrset);
+	    FD_SET(conn->sd,&exset);
+	    
+	    /* now wait for connect, but no more than tvp.sec */
+	    res = select(0, NULL, &wrset, &exset, tvp);
+
+	    if(res == SOCKET_ERROR)
+	      {
+		CfOut(cf_error,"select"," !! Error connecting to server (select error))");
+		return false;
+	      }
+	    else if(res == 0)
+	      {
+		CfOut(cf_error,""," !! Error connecting to server (timeout))");
+		return false;
+	      }
+
+
+	    if(getsockopt(conn->sd, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) != 0)
+	      {
+		CfOut(cf_error,"getsockopt","!! Could not check connection status");
+		return false;
+	      }
+	    
+	    if (valopt != 0)
+	      {
+		CfOut(cf_error,"connect"," !! Error connecting to server (timeout)");
+		return false;
+	      }
+
+	  }
+	else
+	  {
+	    CfOut(cf_error,"connect"," !! Error connecting to server");
+	    return false;
 	  }
       }
 
@@ -281,15 +305,22 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
      CfOut(cf_error,"ioctlsocket","!! Could not enable socket blocking mode");
      }
 
-
+   /*
+    * NB: recv() timeout is a bad idea.  struct timeval is very
+    *     unstable - interpreted differently on different
+    *     platforms. E.g. setting tv_sec to 50 (and tv_usec to 0)
+    *     results in a timeout of 0.5 seconds on Windows, but 50
+    *     seconds on Linux.
+    *
    tvRecv.tv_sec = RECVTIMEOUT;
    tvRecv.tv_usec = 0;
 
    if (setsockopt(conn->sd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tvRecv, sizeof(tvRecv)))
       {
-      CfOut(cf_inform,"setsockopt","!! Couldn't set socket timeout");
+      CfOut(cf_error,"setsockopt","!! Couldn't set socket timeout");
       }
-  
+   */
+
   return true;
 }
 
