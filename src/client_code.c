@@ -75,7 +75,7 @@ int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t 
   long n_read_total = 0,length = 0;
   EVP_CIPHER_CTX ctx;
   int plainlen,more = true,header = true,current_report = -1;
-  time_t now,time2 = 0,delta1 = 0,delta2 = 0;
+  time_t now,then,time2 = 0,delta1 = 0,delta2 = 0;
   struct Item *reports[cf_codebook_size] = {0};
   double datarate;
 
@@ -139,11 +139,12 @@ while (more)
          CfOut(cf_error,""," !! Invalid report format");
          return false;
          }
-      
+
+      then = now;
       now = time(NULL);
       delta2 = now - time2;
       
-      CfOut(cf_verbose,""," -> Received reply of %d bytes at %s",length,ctime(&now));
+      CfOut(cf_verbose,""," -> Received reply of %d bytes at %s -> Xfer time %d seconds (processing time %d seconds)",length,ctime(&now),delta2,now-then);
 
       if (delta2 > 0)
          {
@@ -152,9 +153,16 @@ while (more)
          }
       else
          {
-         delta2 = 0;
-         datarate = 0;
-         CfOut(cf_verbose,""," -> Data rate was unmeasurable (instantaneous)");
+         delta2 = (now-then)/2;
+         CfOut(cf_verbose,""," -> Data rate was unmeasurable (instantaneous) - computing outer boundary");
+         if (delta2 != 0)
+            {
+            datarate = (double)length/(double)delta2;
+            }
+         else
+            {
+            datarate = 0;
+            }
          }
 
       // Promise to record data rate per host-digest and per IP
