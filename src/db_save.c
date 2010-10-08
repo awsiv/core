@@ -605,6 +605,7 @@ void CFDB_SaveTotalCompliance(mongo_connection *conn, char *keyhash, struct Item
   bson setOp;
   struct Item *ip;
   char version[CF_MAXVARSIZE];
+  struct Item *keys = NULL,*addedKey = NULL;
   int kept,repaired,notrepaired;
   char varName[CF_MAXVARSIZE];
   long t;
@@ -627,6 +628,20 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 
    snprintf(varName,sizeof(varName),"%s.%s",cfr_total_compliance,GenTimeKey(then));
+
+
+   // check for duplicate keys
+   addedKey = ReturnItemIn(keys,varName);
+   if(addedKey)
+     {
+     Debug("!! Duplicate key \"%s\" in SaveTotalCompliance - ignoring second time=%s - stored=%s", varName, cf_ctime(&then), addedKey->classes);
+     continue; // avoids DB update failure
+     }
+   else
+     {
+     PrependItem(&keys,varName,cf_ctime(&then));
+     }
+
    
    sub = bson_append_start_object(setObj, varName);
    bson_append_int(sub,cfr_time, then);
@@ -636,6 +651,8 @@ for (ip = data; ip != NULL; ip=ip->next)
    bson_append_int(sub,cfr_notkept,notrepaired);
    bson_append_finish_object(sub);
    }
+
+DeleteItemList(keys);
 
 bson_append_finish_object(setObj);
 
