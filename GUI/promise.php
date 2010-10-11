@@ -1,5 +1,5 @@
 <?php
-
+include 'header.php';
 $handle = $_POST['handle'];
 
 if ($hostkey == "")
@@ -8,58 +8,71 @@ if ($hostkey == "")
    }
 
 $title = "promise $handle";
-cfpr_header("$title","normal");
-
 $pid = cfpr_get_pid_for_topic("promises","$handle");
 ?>
-
-<div id="showpromise">
-<table>
-<tr>
-<td valign="top">
-<?php 
-$mybundle = cfpr_get_promise_bundle($handle);
-echo "<h4>Other promises in bundle <a href=\"bundle.php?bundle=$mybundle\"><span id=\"bundle\">$mybundle</span></a></h4>";
-$allhandles = cfpr_list_handles_for_bundle($mybundle,"agent",false); 
-echo "$allhandles"; 
-
-echo "<h4>Other promises by promiser</h4>";
-
-$promiser = cfpr_get_promiser($handle);
-$allhandles = cfpr_list_handles($promiser,"",false); 
-echo "$allhandles";
-
-$type = cfpr_get_promise_type($handle);
-echo "<h4>Other promises of type $type</h4>";
-$allhandles = cfpr_list_handles("",$type,false); 
-echo "$allhandles"; 
-?>
-
-</td>
-<td valign="top">
-  <h2>Promise definition: </h2>
-
-<p>
-
-<?php 
-$promise = cfpr_summarize_promise($handle);
-
-echo "$promise<p>";
-
-if ($pid > 0) 
-   {
-#   $topic = cfpr_show_topic($pid);
-#   echo "<p>$topic";
-   $leads = cfpr_show_topic_leads($pid);    
-   echo "<p>$leads"; 
-   }
-
-?>
-</td>
-</tr>
-</table>
+ <div id="nav">
+             <ul class="grid_10">
+              <li><a href="index.php">SUMMARY</a></li>
+              <li><a href="helm.php">PLANNING</a></li>
+              <li><a href="status.php"  class="current">STATUS</a></li>
+              <li><a href="knowledge.php">LIBRARY</a></li>
+             </ul>
+             <span id="status" class="grid_2 alignright">
+             Login:Max Manus
+             </span>
+             <div class="clearleft"></div>
+    </div>
+     <div id="tabpane">
+     <div class="grid_5">
+	<?php 
+    $mybundle = cfpr_get_promise_bundle($handle);
+    echo "<h4>Other promises in bundle <a href=\"bundle.php?bundle=$mybundle\"><span id=\"bundle\">$mybundle</span></a></h4>";
+    $allhandles = cfpr_list_handles_for_bundle($mybundle,"agent",false); 
+    echo "$allhandles"; 
+    
+    echo "<h4>Other promises by promiser</h4>";
+    
+    $promiser = cfpr_get_promiser($handle);
+    $allhandles = cfpr_list_handles($promiser,"",false); 
+    echo "$allhandles";
+    
+    $type = cfpr_get_promise_type($handle);
+    echo "<h4>Other promises of type $type</h4>";
+    $allhandles = cfpr_list_handles("",$type,false); 
+    echo "$allhandles"; 
+    ?>
 </div>
-
-<?php
-cfpr_footer();
-?>
+<div class="grid_7">
+ <div class="panel">
+  <div class="panelhead">Promise definition: </div>
+  <div class="panelcontent">
+   <div class="tables">
+	<?php 
+    $promise = cfpr_summarize_promise($handle);
+    echo "$promise<p>";
+    
+    if ($pid > 0) 
+       {
+    #   $topic = cfpr_show_topic($pid);
+    #   echo "<p>$topic";
+       $leads = cfpr_show_topic_leads($pid);    
+       echo "<p>$leads"; 
+       }
+    
+    ?>
+    </div>
+       </div>
+      </div>
+     </div>
+     <div class="clearleft"></div>
+     
+  </div>
+  <script type="text/javascript">
+  $(document).ready(function() { 
+			 $('#tabpane').find('h4').addClass('panelhead');
+             $('#tabpane').find('ul').addClass('panelcontent');				 
+	});
+  </script>
+  <?php
+  include 'footer.php'
+  ?>

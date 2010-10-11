@@ -1,34 +1,33 @@
-<?php
-cfpr_header("control","normal");
-?>
-
-<div id="selector">
-
-<table>
-<tr>
-<td>
-<h2>Mission control and planning</h2>
-
-<table id="noborder"><tr><td>
-<ul>
-<li>
-<li><a href="services.php"><img class="icontext" src="/img/goal.png">&nbsp;Enterprise goals and Service Catalogue</a>
-<li><a href="editor.php"><img class="icontext" src="/img/tool.png">&nbsp;Develop and work on policy</a>
-<li><img class="icontext" src="/img/security.png">&nbsp;Security
-</ul>
-</td><td>
-<ul>
-<li><a href="search.php?report=Business%20value%20report&manyhosts=1"><img class="icontext" src="/img/info.png">&nbsp;Latest enterprise cost and value</a>
-<li><a href="knowledge.php?topic=best.*practice"><img class="icontext" src="/img/library.png">&nbsp;Standards and practices</a>
-<li><a href="knowledge.php?topic=policy.*"><img class="icontext" src="/img/library.png">&nbsp;Policy guidance</a>
-</ul>
-</td><tr></table>
-
-</td>
-</tr>
-</table>
-</div>
+<?php include 'header.php'?>
+<div id="nav">
+             <ul class="grid_10">
+              <li><a href="index.php">SUMMARY</a></li>
+              <li><a href="helm.php" class="current">PLANNING</a></li>
+              <li><a href="status.php">STATUS</a></li>
+              <li><a href="knowledgw.php">LIBRARY</a></li>
+             </ul>
+             <span id="status" class="grid_2 alignright">
+             Login:Max Manus
+             </span>
+             <div class="clearleft"></div>
+        </div>
+        
+<div id="tabpane">
+      <div class="pagepanel">
+          		<div class="panelhead"> Mission control and planning</div>
+                <div class="panelcontent">
      
-<?php
-cfpr_footer();
-?>
+    <ul class="grid_6">
+        <li><a href="services.php"><img src="/img/goal.png" class="align" /><span class="imglabel">Enterprise goals and Service Catalogue</a></span></li>
+        <li><a href="editor.php"><img src="/img/tool.png" class="align" /><span class="imglabel">Develop and work on policy</span></a></li>
+        <li><img src="/img/security.png" class="align" /><span class="imglabel">Security</span></li>
+    </ul>
+    <ul class="grid_6">
+        <li><a href="search.php?report=Business%20value%20report&manyhosts=1"><img src="/img/info.png" class="align" /><span class="imglabel">Latest enterprise cost and valu</span>e</a></li>
+        <li><a href="knowledge.php?topic=best.*practice"><img src="/img/library.png" class="align" /><span class="imglabel">Standards and practices</span></a></li>
+        <li><a href="knowledge.php?topic=policy.*"><img src="/img/library.png" class="align" /><span class="imglabel">Policy guidance</span></a></li>
+    </ul>
+    <div class="clearleft"></div>
+    </div> 
+    </div>
+<?php include 'footer.php'?> 
