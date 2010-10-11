@@ -43,22 +43,37 @@ else
 
 snprintf(buffer,bufsize,
 
-"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"   \"http://www.w3.org/TR/html4/loose.dtd\"><html>\n"
-"  <head>\n"
-"    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n"
-"    %s"
-"    <title>%s</title>\n"
-"    <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"screen\">\n"
-"  </head>\n"
-"  <body>\n"
-"    <div id=\"top\">\n"
-"      <div id=\"search\">\n"
-"        <form method=\"post\" action=\"%s\">\n"
-"          <p><input class=\"searchfield\" type=\"text\" name=\"search_string\">&nbsp;Search</p>\n"
-"        </form>\n"
-"      </div> \n"
-"        <h2>CFENGINE MISSION PORTAL <span id=\"subheading\"><b>%s</b></span></h2>\n"
-         "    </div>\n",reload,title,css,CF_KMAP,title);
+
+"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
+"<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+"<head>\n"
+"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
+"<title>Cfengine Mission Portal - %s</title>\n"
+"<link href=\"css/resets.css\" rel=\"stylesheet\" media=\"screen\" />\n"
+"<link href=\"css/960.css\" rel=\"stylesheet\" media=\"screen\" />\n"
+"<link href=\"css/style.css\" rel=\"stylesheet\" media=\"screen\" />\n"
+"<script src=\"scripts/jquery-1.4.2.min.js\" type=\"text/javascript\"></script>\n"
+"<script src=\"scripts/jquery-ui-1.8.2.custom.min.js\" type=\"text/javascript\"></script>\n"
+"<script src=\"scripts/jquery.tablesorter.min.js\" type=\"text/javascript\"></script>\n"
+"<script src=\"scripts/picnet.jquery.tablefilter.js\" type=\"text/javascript\"></script>\n"
+"<script src=\"scripts/jquery.tablesorter.pager.js\" type=\"text/javascript\"></script>\n"
+"</head>\n"
+"\n"
+"<body>\n"
+"<div id=\"wrapper\">\n"
+"   <div class=\"container_12\">\n"
+"    	<div id=\"header\">\n"
+"            <div class=\"grid_6 sitetitle\">CFENGINE MISSION PORTAL <span id=\"subheading\"><b>%s</b></span></div>\n"
+"\n"
+"  <div id=\"searchbox\" class=\"grid_4\"><form action=\"knowledge.php\" method=\"post\"><input type=\"text\" name=\"search\" class=\"align\"/><input type=\"submit\" class=\"searchbtn\" value=\"\"/></form></div>\n"
+"            <div id=\"historynav\" class=\"grid_2 alignright\">\n"
+"                <a href=\"javascript:history.go(-1)\"><img src=\"images/icon_arrow_back.png\"/></a>\n"
+"                <a href=\"index.php\"><img src=\"images/home.png\"/></a>\n"
+"                <a href=\"javascript:history.go(+1)\"><img src=\"images/icon_arrow_forward.png\"/></a>\n"
+"            </div>\n"
+"            <div class=\"clear\"></div>\n"
+"        </div>\n", title, title);
+
 }
 
 /*****************************************************************************/
