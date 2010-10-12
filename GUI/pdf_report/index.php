@@ -507,7 +507,7 @@ function rpt_compliance_promises($hostkey,$search,$state,&$pdf,$class_regex)
 function rpt_compliance_summary($hostkey,&$pdf,$class_regex)
 {
     $cols=6;
-    $col_len = array(25,27,10,10,10,18);
+    $col_len = array(25,33,8,8,8,18);
     $header=array('Host','Policy','Kept','Repaired','Not kept', 'Last seen');
     
     $ret = cfpr_report_compliance_summary_pdf($hostkey,NULL,-1,-1,-1,-1,">",$class_regex);
