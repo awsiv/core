@@ -316,8 +316,8 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 void CFDB_GetValue(char *lval,char *rval,int size);
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
 struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query);
-struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, char *classRegex);
-struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle,int regex,int sortDescending,char *classRegex);
+struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
+struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle,int regex,int sort,char *classRegex);
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex);
 struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp, char *classRegex);
@@ -544,7 +544,6 @@ struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,cha
 void DeleteHubVariable(struct HubVariable *hv);
 struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,char *cause,time_t t);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
-int DescendingTimePromiseLog(void *p1, void *p2);
 struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
 void DeleteHubLastSeen(struct HubLastSeen *hp);
 struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double repaired);
@@ -569,6 +568,10 @@ struct HubBody *NewHubBody(char *bodyName,char *bodyType,char *bodyArgs);
 void DeleteHubBody(struct HubBody *hb);
 struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char *classContext);
 void DeleteHubBodyAttributes(struct HubBodyAttr *ha);
+
+int SortPromiseLog(void *p1, void *p2);
+int SortBusinessValue(void *p1, void *p2);
+
 
 /* knowledge.c */
 

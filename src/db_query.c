@@ -2139,7 +2139,7 @@ return NewHubQuery(host_list,record_list);
 /*****************************************************************************/
 
 
-struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle,int regex,int sortDescending,char *classRegex)
+struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle,int regex,int sort,char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
@@ -2293,9 +2293,9 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
 
 
-   if(sortDescending)
+   if(sort)
       {
-      record_list = SortRlist(record_list,DescendingTimePromiseLog);
+      record_list = SortRlist(record_list,SortPromiseLog);
       }
 
 
@@ -2324,7 +2324,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, char *classRegex)
+struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
@@ -2470,6 +2470,11 @@ while (mongo_cursor_next(cursor))  // loops over documents
                }
             }
          }   
+      }
+
+   if(sort)
+      {
+      record_list = SortRlist(record_list,SortBusinessValue);
       }
 
    if (found)

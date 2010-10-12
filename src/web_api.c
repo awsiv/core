@@ -343,7 +343,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,classreg);
+ hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,classreg);
 
 returnval[0] = '\0';
 
@@ -3112,7 +3112,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,classreg);
+ hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,classreg);
 
 returnval[0] = '\0';
 
