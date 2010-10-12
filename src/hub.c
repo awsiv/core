@@ -87,8 +87,6 @@ while (true)
       NewClass("am_policy_hub");
       Nova_CacheTotalCompliance();
       CFDB_PurgeReports();
-      PurgeKeyRing();
-      UpdateLastSeen();
       }
 
    if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
@@ -97,6 +95,9 @@ while (true)
       }
    
    Nova_CountMonitoredClasses();
+   PurgeKeyRing();
+   UpdateLastSeen();
+
    CfOut(cf_verbose,"","Sleeping...\n");
    sleep(CFPULSETIME);
    }
