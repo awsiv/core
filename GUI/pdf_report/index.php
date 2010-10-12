@@ -449,7 +449,7 @@ function rpt_business_value($hostkey,$days,$months,$years,&$pdf,$class_regex)
 function rpt_class_profile($hostkey,$search,&$pdf,$class_regex)
 {
     $cols=5;
-    $col_len = array(28,28,20,12,12);
+    $col_len = array(28,28,18,10,16);
     $header=array('Host','Class Context','Occurs with probability','Uncertainty', 'Last seen');
     
     $ret = cfpr_report_classes_pdf($hostkey,$search,true,$class_regex);
