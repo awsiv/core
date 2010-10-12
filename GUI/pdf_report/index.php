@@ -10,6 +10,7 @@ class PDF extends FPDF
     var $reportname;
     var $tabletitle;
     var $description;
+    var $max_col_height=2;
     
     #****************************** 
     function PDF($orientation='p', $unit='mm', $format='A4')
@@ -232,29 +233,41 @@ class PDF extends FPDF
     function DrawTable($ar1, $cols, $col_len, $header, $header_font)
     { 
 	# $this->CustomHeader(); 
+	$this->SetFont('Arial', '', $header_font);
 	$this->DrawTableHeader($header, $cols, $col_len, $header_font);
         $font_size = 6;
-	$this->SetFont('Arial', '', $font_size);
 	$this->SetDrawColor(125,125,125);
 	$align=1;
-	
+ 	$max_col_height = 2;
+	$tmp_font = $font_size;
+	$tmp_multi = -1;
 	for($i=0; $i<count($ar1); $i++) 
 	{ 
+	    $tmp_font = $font_size;
+            
 	    $multi_col = array();
 	    $nb = 0;
 	    for($j=0; $j<$cols; $j++) 
-	    {
+	    {		
 		$f[$j] = $ar1[$i][$j];
-		
-		$width = ($col_len[$j] * ($this->pagewidth - $this->left - $this->right))/100;
+		$this->SetFont('Arial', '', $tmp_font);
+		$width = ($col_len[$j] * ($this->pagewidth - $this->left - $this->right))/100;		
 		$tmp = $this->NbLines($width,$f[$j]);
+
 		if($tmp > $nb)
 		{
 		    $nb = $tmp;
 		}
-		if($tmp > 1)
+		if($tmp > $max_col_height)
+		{
+		  $j--;
+		  $tmp_font--;
+		  $nb = $max_col_height;
+		}
+		else if($tmp > 1)
 		{
 		  $multi_col[$j] = true;
+		  $tmp_multi = $j;
 		}
 		else 
 		{
@@ -263,7 +276,7 @@ class PDF extends FPDF
 	    }
 	    
 	    # total y
-	    $hx = $nb * $font_size;
+	    $hx = $nb * $tmp_font;
 	    
 	    #  check for page break 
 	    $startx = $this->left;
@@ -288,10 +301,15 @@ class PDF extends FPDF
 		$width = ($col_len[$j] * ($this->pagewidth - $this->left - $this->right))/100;
 		if($multi_col[$j] == true)
 		{
-		    $this->MultiCell($width,$font_size,$f[$j],1,$align,0);
+      		    $this->SetFont('Arial', '', $tmp_font);
+		    if($j != $tmp_multi && $tmp_multi != -1)
+		    	  $this->MultiCell($width,$hx,$f[$j],1,$align,0);
+		    else if($j == $tmp_multi)	  
+		    	 $this->MultiCell($width,$tmp_font,$f[$j],1,$align,0);
 		}
 		else
 		{		  	
+		    $this->SetFont('Arial', '', $font_size);
 		    $this->MultiCell($width,$hx,$f[$j],1,$align,0); 
 		}
 
