@@ -116,7 +116,19 @@ if (strcmp("reports",pp->agentsubtype) == 0)
 void Nova_Version()
 
 {
-printf("This core uses commercial Nova extensions at version %s Copyright (C) Cfengine AS 2009-%s\n",VERSION,VYEAR);
+char vStr[CF_SMALLBUF];
+
+if(INFORM || VERBOSE)
+  {
+  snprintf(vStr,sizeof(vStr),"%s (%s)",VERSION,NOVA_REVISION);
+  }
+else
+  {
+  snprintf(vStr,sizeof(vStr),"%s",VERSION);
+  }
+
+printf("This core uses commercial Nova extensions at version %s Copyright (C) Cfengine AS 2009-%s\n",vStr,VYEAR);
+
 }
 
 /*****************************************************************************/
