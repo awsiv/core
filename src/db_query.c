@@ -971,7 +971,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, char *classRegex)
+struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, int sort, char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
@@ -1125,6 +1125,12 @@ while (mongo_cursor_next(cursor))  // loops over documents
             }
          }   
       }
+
+   if(sort)
+      {
+      record_list = SortRlist(record_list,SortPromiseCompliance);
+      }
+
 
    if (found)
       {

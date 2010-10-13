@@ -888,3 +888,25 @@ int SortPerformance(void *p1, void *p2)
     }
 }
 
+/*****************************************************************************/
+
+int SortPromiseCompliance(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts promise compliance descending on time.
+ **/
+{
+  struct HubPromiseCompliance *hp1, *hp2;
+
+  hp1 = (struct HubPromiseCompliance *)p1;
+  hp2 = (struct HubPromiseCompliance *)p2;
+
+  if(hp1->t > hp2->t)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+

@@ -648,7 +648,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,classreg);
+ hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
 
 
 returnval[0] = '\0';
@@ -1333,7 +1333,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,classreg);
+ hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,false,classreg);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -3213,7 +3213,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,classreg);
+ hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
 
 
 returnval[0] = '\0';
