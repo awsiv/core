@@ -98,7 +98,7 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
 	    }
 
 
-	  CFDB_PurgeScan(conn,&it1,cfr_class,240,now,&purgeKeys,&purgeClassNames);
+	  CFDB_PurgeScan(conn,&it1,cfr_class,CF_HUB_PURGESECS,now,&purgeKeys,&purgeClassNames);
 	  CFDB_PurgeScan(conn,&it1,cfr_performance,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
 	  CFDB_PurgeScan(conn,&it1,cfr_filechanges,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
 	  CFDB_PurgeScan(conn,&it1,cfr_filediffs,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
