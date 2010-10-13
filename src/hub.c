@@ -309,7 +309,7 @@ for (slot = 0; slot < span; slot++)
 
 slot = GetShiftSlot(start);
 
-hq = CFDB_QueryTotalCompliance(&dbconn,NULL,NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ,NULL);
+hq = CFDB_QueryTotalCompliance(&dbconn,NULL,NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ,false,NULL);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {

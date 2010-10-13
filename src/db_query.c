@@ -511,7 +511,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp, char *classRegex)
+struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp, int sort, char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
@@ -694,6 +694,11 @@ while (mongo_cursor_next(cursor))  // loops over documents
                }
             }
          }   
+      }
+
+   if(sort)
+      {
+      record_list = SortRlist(record_list,SortTotalCompliance);
       }
 
    if (found)
@@ -1786,7 +1791,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname,int regex,time_t lt,int cmp, char *classRegex)
+struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname,int regex,time_t lt,int cmp, int sort, char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
@@ -1932,6 +1937,12 @@ while (mongo_cursor_next(cursor))  // loops over documents
          }   
       }
 
+   if(sort)
+      {
+      record_list = SortRlist(record_list,SortFileChanges);
+      }
+
+
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
@@ -1955,7 +1966,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, char *classRegex)
+struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
@@ -2113,6 +2124,11 @@ while (mongo_cursor_next(cursor))  // loops over documents
                }
             }
          }   
+      }
+
+   if(sort)
+      {
+      record_list = SortRlist(record_list,SortFileDiff);
       }
 
    if (found)

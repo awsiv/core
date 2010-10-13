@@ -728,6 +728,9 @@ void DeleteHubBodyAttributes(struct HubBodyAttr *ha)
 }
 
 /*****************************************************************************/
+/*                        REPORT SORTING FUNCTIONS                           */
+/*****************************************************************************/
+
 
 int SortPromiseLog(void *p1, void *p2)
 /**
@@ -775,4 +778,69 @@ int SortBusinessValue(void *p1, void *p2)
     }
 }
 
+/*****************************************************************************/
+
+int SortTotalCompliance(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts total compliance descending on time.
+ **/
+{
+  struct HubTotalCompliance *hc1, *hc2;
+
+  hc1 = (struct HubTotalCompliance *)p1;
+  hc2 = (struct HubTotalCompliance *)p2;
+
+  if(hc1->t > hc2->t)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+
+/*****************************************************************************/
+
+int SortFileChanges(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts file changes descending on time.
+ **/
+{
+  struct HubFileChanges *hc1, *hc2;
+
+  hc1 = (struct HubFileChanges *)p1;
+  hc2 = (struct HubFileChanges *)p2;
+
+  if(hc1->t > hc2->t)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+
+/*****************************************************************************/
+
+int SortFileDiff(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts file diffs descending on time.
+ **/
+{
+  struct HubFileDiff *hd1, *hd2;
+
+  hd1 = (struct HubFileDiff *)p1;
+  hd2 = (struct HubFileDiff *)p2;
+
+  if(hd1->t > hd2->t)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
 
