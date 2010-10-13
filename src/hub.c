@@ -95,9 +95,6 @@ while (true)
       }
    
    Nova_CountMonitoredClasses();
-   PurgeKeyRing();
-   UpdateLastSeen();
-
    CfOut(cf_verbose,"","Sleeping...\n");
    sleep(CFPULSETIME);
    }
@@ -162,6 +159,8 @@ if (NO_FORK)
       {
       Nova_HailPeer(ip->classes,a,pp);
       }
+
+   UpdateLastSeen();
    }
 else
    {
@@ -177,7 +176,8 @@ else
          {
          Nova_HailPeer(ip->classes,a,pp);
          }
-      
+
+      UpdateLastSeen();
       exit(0);
       }
    else
