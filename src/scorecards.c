@@ -1058,6 +1058,7 @@ void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col)
 {
 #ifdef HAVE_LIBGD
  
+  const int span = 7 * 4;
   int day,x,y;
   double q,dq;
   time_t now;
@@ -1079,11 +1080,13 @@ Nova_Font(cfv,cfv->width/4,cfv->range+cfv->margin,"Average compliance (days ago)
 Nova_Font(cfv,0,10,"100%",col);
 Nova_Font(cfv,0,cfv->range,"50%",col);
 
-gdImageSetThickness(cfv->im,2);
-gdImageLine(cfv->im,cfv->margin,cfv->range,cfv->margin,0,BLACK);
+x = cfv->margin - (cfv->width/span+1)/2;
 
 gdImageSetThickness(cfv->im,2);
-gdImageLine(cfv->im,cfv->margin,cfv->range,cfv->width,cfv->range,BLACK);
+gdImageLine(cfv->im,x,cfv->range,x,0,BLACK);
+
+gdImageSetThickness(cfv->im,2);
+gdImageLine(cfv->im,x,cfv->range,cfv->width,cfv->range,BLACK);
 
 //gdImageString(cfv->im, gdFontGetLarge(),0,0,"100%",col);
 //gdImageString(cfv->im, gdFontGetLarge(),0,cfv->range,"50%",col);      
