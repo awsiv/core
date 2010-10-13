@@ -844,3 +844,47 @@ int SortFileDiff(void *p1, void *p2)
     }
 }
 
+/*****************************************************************************/
+
+int SortLastSeen(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts last seen descending on time.
+ **/
+{
+  struct HubLastSeen *hl1, *hl2;
+
+  hl1 = (struct HubLastSeen *)p1;
+  hl2 = (struct HubLastSeen *)p2;
+
+  if(hl1->t > hl2->t)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+
+/*****************************************************************************/
+
+int SortPerformance(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts performance descending on time.
+ **/
+{
+  struct HubPerformance *hp1, *hp2;
+
+  hp1 = (struct HubPerformance *)p1;
+  hp2 = (struct HubPerformance *)p2;
+
+  if(hp1->t > hp2->t)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+

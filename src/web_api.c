@@ -699,7 +699,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,classreg);
+ hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
 
 
 returnval[0] = '\0';
@@ -765,15 +765,16 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,classreg);
+ hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,true,classreg);
 
 
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
 
-snprintf(buffer,sizeof(buffer),"<tr><td>host</td><td>repair</td><td>Last time</td><td>Avg time</td><td>Uncertainty</td><td>Last performed</td></tr>\n");
-            
+snprintf(buffer,sizeof(buffer),"<tr><td>Host</td><td>Event</td><td>Last time</td><td>Avg time</td><td>Uncertainty</td><td>Last performed</td></tr>\n");
+Join(returnval,buffer,bufsize);            
+
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hP = ( struct HubPerformance *)rp->item;
@@ -1278,7 +1279,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,classreg);
+ hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,false,classreg);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1388,7 +1389,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,classreg);
+ hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,false,classreg);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -1441,7 +1442,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,classreg);
+ hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,false,classreg);
 
 snprintf(returnval,bufsize,"<table>");
 
@@ -3262,7 +3263,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,classreg);
+ hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
 
 returnval[0] = '\0';
 
@@ -3358,7 +3359,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,classreg);
+ hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,true,classreg);
 
 returnval[0] = '\0';
 

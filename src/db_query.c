@@ -1149,7 +1149,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,char *lhost,char *laddr,time_t lago,int regex,char *classRegex)
+struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,char *lhost,char *laddr,time_t lago,int regex,int sort,char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
@@ -1336,6 +1336,12 @@ while (mongo_cursor_next(cursor))  // loops over documents
          }   
       }
 
+   if(sort)
+      {
+      record_list = SortRlist(record_list,SortLastSeen);
+      }
+
+
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
@@ -1479,7 +1485,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname,int regex,char *classRegex)
+struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname,int regex,int sort,char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
@@ -1523,6 +1529,9 @@ if (!EMPTY(keyHash))
 /* BEGIN RESULT DOCUMENT */
 
 bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
 bson_append_int(&bb,cfr_performance,1);
 bson_from_buffer(&field, &bb);
 
@@ -1626,6 +1635,11 @@ while (mongo_cursor_next(cursor))  // loops over documents
                }
             }
          }   
+      }
+
+   if(sort)
+      {
+      record_list = SortRlist(record_list,SortPerformance);
       }
 
    if (found)
