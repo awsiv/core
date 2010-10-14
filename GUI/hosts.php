@@ -10,7 +10,7 @@ cfpr_header("$type hosts","normal");
               <li><a href="knowledge.php">LIBRARY</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
-             Summary -> Hosts
+             Summary : <?php echo $type; ?> hosts
              </span>
              <div class="clearleft"></div>
         </div>

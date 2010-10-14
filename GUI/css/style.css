@@ -216,6 +216,11 @@ border:solid 1px #000;
 	border-bottom:dotted 1px;
 }
 
+#ftsummary ul li a
+{
+	color:#fff;
+}
+
 .panelcontent li.note
 {
 	border:solid 1px #cecece;

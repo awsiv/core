@@ -17,7 +17,7 @@ cfpr_header("knowledge bank","normal");
         
         <div id="tabpane">
         <?php 
-		$search = $_POST['search_string'];
+		$search = $_POST['search'];
         $topic = $_GET['topic'];
 		
 		if ($search == "")
@@ -100,6 +100,9 @@ cfpr_header("knowledge bank","normal");
        styleit('div#occurrences')
 	   styleit('div#associations');
 	   styleit('div#others');
+	    $('div#disambig').addClass('pagepanel');
+        $('div#disambig').find('h2').addClass('panelhead');
+        $('div#disambig').find('ul').addClass('panelcontent');
 	 $('.imageviewer').dblclick(function()
 		{
 			$.fancybox({

@@ -31,7 +31,7 @@ $colour = cfpr_get_host_colour($hostkey);
               <li><a href="knowledge.php">LIBRARY</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
-             Login:Max Manus
+             Status : <?php echo $hostname;?>
              </span>
              <div class="clearleft"></div>
    </div>

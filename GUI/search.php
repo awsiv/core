@@ -27,7 +27,7 @@ cfpr_header("search results","ok");
               <li><a href="knowledge.php">LIBRARY</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
-             Login:Max Manus
+              Status: <?php echo $report_type;?>
              </span>
              <div class="clearleft"></div>
         </div>

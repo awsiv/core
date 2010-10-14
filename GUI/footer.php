@@ -1,36 +1,36 @@
 
        <div id="ftsummary">
          <ul class="grid_2">
-             <li>SUMMARY</li>
-             <li>Green Hosts</li>
-             <li>Yellow Hosts</li>
-             <li>Redhosts</li>
+             <li><a href="index.php">SUMMARY</a></li>
+             <li><a href="hosts.php?type=green">Green Hosts</a></li>
+             <li><a href="hosts.php?type=yellow">Yellow Hosts</a></li>
+             <li><a href="hosts.php?type=red">Redhosts</a></li>
          </ul>
          <ul class="grid_2">
-             <li>PLANNING</li>
-             <li>Create policy</li>
-             <li>Enterprises goals</li>
+             <li><a href="helm.php">PLANNING</a></li>
+             <li><a href="Cfeditor.php">Create policy</a></li>
+             <li><a href="services.php">Enterprises goals</a></li>
              <li>Security</li>
-             <li>Cost and Value</li>
-             <li>Standards</li>
-             <li>Policy Guide</li>
+             <li><a href="search.php?report=Business%20value%20report&manyhosts=1">Cost and Value</a></li>
+             <li><a href="knowledge.php?topic=best.*practice">Standards</a></li>
+             <li><a href="knowledge.php?topic=policy.*">Policy Guide</a></li>
          </ul>
          <ul class="grid_2">
-            <li> STATUS</li>
-            <li>Worse 50 hosts</li>
-            <li>Host details</li>
+            <li> <a href="status.php">STATUS</a></li>
+            <li><a href="topN.php">Worse 50 hosts</a></li>
+            <li><a href="host.php">Host details</a></li>
             <li>Create Report</li>
-            <li>-Compliance by Promise</li>
-            <li>-Compliance summary</li>
-            <li>-Promised repaired log</li>
-            <li>-Promised repaired summary</li>
+            <li><a href="search.php?report=Compliance by promise">-Compliance by Promise</a></li>
+            <li><a href="search.php?report=Compliance summary">-Compliance summary</a></li>
+            <li><a href="search.php?report=Promises repaired log">-Promised repaired log</a></li>
+            <li><a href="search.php?report=Promises repaired summary">-Promised repaired summary</a></li>
          </ul>
          <ul class="grid_2">
-             <li>LIBRARY</li>
+             <li><a href="knowledge.php">LIBRARY</a></li>
              <li>System Trends</li>
              <li>Copernicus</li>
-             <li>User Manual</li>
-             <li>Examples</li>
+             <li><a href="http://demo.cfengine.com/docs/st-bdma.html#Stem-cell-hosts">User Manual</a></li>
+             <li><a href="showexample.php">Examples</a></li>
              <li>Promise theory</li>
              <li>Components</span>
          </ul>
