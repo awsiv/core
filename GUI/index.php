@@ -25,8 +25,8 @@
                   <div class="panel">
                     <div class="panelhead"><?php echo $all?> hosts registerd</div>
                      <ul class="panelcontent">
- <li><a href="hosts.php?type=red"><img src="images/close.png" class="align"/><span class="imglabel"><?php echo $r?> hosts known</span></a></li>
- <li><a href="hosts.php?type=yellow"><img src="images/alert.png" class="align"/><span class="imglabel"><?php echo $y?> hosts known</span></a></li>
+<li><a href="hosts.php?type=red"><img src="images/red_sign_medium.png" class="align"/><span class="imglabel"><?php echo $r?> hosts known</span></a></li>
+<li><a href="hosts.php?type=yellow"><img src="images/yellow_sign_medium.png" class="align"/><span class="imglabel"><?php echo $y?> hosts known</span></a></li>
  <li><a href="hosts.php?type=green"><img src="images/green_sign_medium.png" class="align"/><span class="imglabel"><?php echo $g?> hosts known</span></a></li>
      <li class="note"><a href="license.php"><img src="images/info.png" class="align"/><span class="imglabel">This edition is licenced to <?php echo $ret1?></span></a></li>
                      </ul>

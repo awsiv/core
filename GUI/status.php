@@ -33,9 +33,9 @@
                   <div class="panel">
                     <div class="panelhead"> Status</div>
                      <ul class="panelcontent">
- <li><a href="hosts.php?type=red"><img src="images/close.png" class="align"/><span class="imglabel"><?php echo $r?> hosts known</span></a></li>
- <li><a href="hosts.php?type=yellow"><img src="images/alert.png" class="align"/><span class="imglabel"><?php echo $y?> hosts known</span></a></li>
- <li><a href="hosts.php?type=green"><img src="images/checkmark.png" class="align"/><span class="imglabel"><?php echo $g?> hosts known</span></a></li>
+ <li><a href="hosts.php?type=red"><img src="images/red_sign_medium.png" class="align"/><span class="imglabel"><?php echo $r?> hosts known</span></a></li>
+ <li><a href="hosts.php?type=yellow"><img src="images/yellow_sign_medium.png" class="align"/><span class="imglabel"><?php echo $y?> hosts known</span></a></li>
+ <li><a href="hosts.php?type=green"><img src="images/green_sign_medium.png" class="align"/><span class="imglabel"><?php echo $g?> hosts known</span></a></li>
  <li>Average downtime:0.0s</li>
  <li>Hosts 2 dev overdue:0</li>
                      </ul>

@@ -81,7 +81,7 @@ $colour = cfpr_get_host_colour($hostkey);
                <p> <label class="width_20">Average Free Disk:</label><label><?php echo $free?>%</label></p>
                <p><label class="width_20">Average network speed:</label><label><?php echo  $speed?></label></p>
                </div>
-               <img src="images/green_sign_medium.png" class="floatRight"/>
+               <?php echo "<img src=\"images/$colour"."_sign_medium.png\" class=\"floatRight\"/>"; ?>
                <div class="clearboth"></div>
                      </div>
                   </div>
