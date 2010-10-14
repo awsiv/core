@@ -7,8 +7,8 @@ $docroot = cfpr_docroot();
              <ul class="grid_10">
               <li><a href="index.php">SUMMARY</a></li>
               <li><a href="helm.php">PLANNING</a></li>
-              <li><a href="status.php" class="current">STATUS</a></li>
-              <li><a href="knowledge.php">LIBRARY</a></li>
+              <li><a href="status.php">STATUS</a></li>
+              <li><a href="knowledge.php" class="current">LIBRARY</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
              status
@@ -16,11 +16,9 @@ $docroot = cfpr_docroot();
              <div class="clearleft"></div>
         </div>
       <div id=tabpane>
-       <pre>
 		  <?php
           include("$docroot/docs/$example");
           ?>
-         </pre>
       </div>
 <?php
 include 'footer.php';
