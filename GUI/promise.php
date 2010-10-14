@@ -22,7 +22,8 @@ $pid = cfpr_get_pid_for_topic("promises","$handle");
              </span>
              <div class="clearleft"></div>
     </div>
-     <div id="tabpane">
+     <div id="tabpane"> 
+       <div class="pagepanel">
      <div class="grid_5">
 	<?php 
     $mybundle = cfpr_get_promise_bundle($handle);
@@ -65,7 +66,7 @@ $pid = cfpr_get_pid_for_topic("promises","$handle");
       </div>
      </div>
      <div class="clearleft"></div>
-     
+     </div>
   </div>
   <script type="text/javascript">
   $(document).ready(function() { 
