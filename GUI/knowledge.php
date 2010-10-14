@@ -98,15 +98,15 @@ cfpr_header("knowledge bank","normal");
   <script type="text/javascript" src="scripts/jquery.fancybox-1.3.1.js"></script>
   <script type="text/javascript">
 	$(document).ready(function() { 
-	   $target=$('div.panelcontent img');
-       $target.attr('src','/'+$target.attr('src'));
+	  // $target=$('div.panelcontent img');
+       //$target.attr('src','/'+$target.attr('src'));
        styleit('div#occurrences')
 	   styleit('div#associations');
 	   styleit('div#others');
 	    $('div#disambig').addClass('pagepanel');
         $('div#disambig').find('h2').addClass('panelhead');
         $('div#disambig').find('ul').addClass('panelcontent');
-	 /*$('.imageviewer').dblclick(function()
+	 $('.imageviewer').dblclick(function()
 		{
 			$.fancybox({
  //'orig' : $(this),
@@ -115,7 +115,7 @@ cfpr_header("knowledge bank","normal");
  'transitionIn' : 'elastic',
  'transitionOut' : 'elastic'
 }); 
-		});*/
+		});
 	});
     function styleit(element)
 	   {
