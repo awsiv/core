@@ -18,7 +18,7 @@ $pid = cfpr_get_pid_for_topic("promises","$handle");
               <li><a href="knowledge.php">LIBRARY</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
-             Login:Max Manus
+             Status : Promise
              </span>
              <div class="clearleft"></div>
     </div>
