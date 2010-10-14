@@ -28,7 +28,7 @@ $tago = 0;
         </div>
          <div id="tabpane">
          <div class="pagepanel">
-          		<div class="panelhead">Services and methods</div>
+          		<div class="panelhead">Bundles</div>
                 <div class="panelcontent">
                 <div class="tables">
 				<?php
