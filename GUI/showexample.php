@@ -11,7 +11,7 @@ $docroot = cfpr_docroot();
               <li><a href="knowledge.php" class="current">LIBRARY</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
-             status
+             Library : examples
              </span>
              <div class="clearleft"></div>
         </div>
