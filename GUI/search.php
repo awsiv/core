@@ -20,13 +20,13 @@ cfpr_header("search results","ok");
 ?>
 
      <div id="nav">
-             <ul class="grid_10">
+             <ul class="grid_8">
               <li><a href="index.php">SUMMARY</a></li>
               <li><a href="helm.php">PLANNING</a></li>
               <li><a href="status.php" class="current">STATUS</a></li>
               <li><a href="knowledge.php">LIBRARY</a></li>
              </ul>
-             <span id="status" class="grid_2 alignright">
+             <span id="status" class="grid_4 alignright">
               Status: <?php echo $report_type;?>
              </span>
              <div class="clearleft"></div>
