@@ -868,3 +868,17 @@ color:#73B169;
 {
 font-weight:bold;
 }
+
+#wholebody pre
+{
+	white-space:pre;
+	font-family:"Courier New", Courier, monospace;
+}
+
+#wholebody h1
+{
+	font-size:large;
+	font-family:Times New Roman;
+    font-weight:bold;
+    padding:10px;
+}
