@@ -232,7 +232,7 @@ static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *typ
 	}
       else
 	{
-	  CfOut(cf_verbose, "", "Waiting for command to finish (background=false)");
+	  CfOut(cf_verbose, "", "Waiting for command \"%s\" to finish (background=false)",comm);
 
 	  CloseHandle(childInRead);
 	  CloseHandle(childOutWrite);
