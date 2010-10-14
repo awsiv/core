@@ -421,9 +421,29 @@ dnl  Look for SQL connectors.
 dnl ######################################################################
 
 AC_ARG_WITH(sql,
-    [  --with-sql[=PATH] directory where MySQL/Postgress exists],
-    WITH_SQL=1,
-    WITH_SQL=0)
+	AS_HELP_STRING(--with-sql, [support database functions]), ,
+	with_sql=check)
+
+if test "x$with_sql" != xno; then
+   WITH_SQL=1
+else
+   WITH_SQL=0
+fi
+
+if test $WITH_SQL = 1; then
+  case "$target_os" in
+     linux*)
+        if [ `which pg_config` ]; then
+          CPPFLAGS=-I`pg_config --includedir`
+        fi
+  esac
+  AC_CHECK_LIB(mysqlclient,main)
+  AC_CHECK_LIB(pq,main)
+  AC_CHECK_HEADERS(mysql/mysql.h)
+  AC_CHECK_HEADERS(pgsql/libpq-fe.h)
+  AC_CHECK_HEADERS(libpq-fe.h)
+fi
+
 
 #
 # Report database driver - MongoDB C interface
