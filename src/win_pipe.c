@@ -232,16 +232,19 @@ static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *typ
 	}
       else
 	{
+	  CfOut(cf_verbose, "", "Waiting for command to finish (background=false)");
+
+	  CloseHandle(childInRead);
+	  CloseHandle(childOutWrite);
+	  CloseHandle(childInWrite);
+	  retPipe = childOutRead;
+
 	  if(WaitForSingleObject(childProcess, INFINITE) == WAIT_FAILED)
 	    {
 	      CfOut(cf_error,"WaitForSingleObject","!! Error waiting for process to finish");
 	      return NULL;
 	    }
 	  
-	  CloseHandle(childInRead);
-	  CloseHandle(childOutWrite);
-	  CloseHandle(childInWrite);
-	  retPipe = childOutRead;
 	}
     }
   else  // *type == 'w'
