@@ -64,7 +64,8 @@ cfpr_header("knowledge bank","normal");
 		   echo "<div class=\"panel\"><div class=\"panelhead\">Copernicus influence channel view</div>";
 		   echo "<div class=\"panelcontent\">";
 		   echo "<div class=\"imageviewer\"><div id=\"influence_knowledge_pic\">";
-		    include("$docroot/graphs/influence_2936.map");
+		    //include("$docroot/graphs/influence_2936.map");
+		   echo "hello influence_$pid";
 		   echo "</div></div></div></div>";
 		   }
 	
