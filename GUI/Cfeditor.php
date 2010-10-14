@@ -59,39 +59,10 @@
         <input type="hidden" id="tobesaved" ></input>
         <input type="hidden" id="tobesaved_name"></input>
     </div> 
-<div id="commitdlg" style="display:none;" title="Commit file" class="dialog">
-
-            <form>
-                <fieldset class="ui-helper-reset">
-                    <label for="tab_title">User name:</label>
-                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="username" />
-                    <label for="tab_title">Password:</label>
-                    <input type="password" class="ui-widget-content ui-corner-all" value="" id="password" />
-                    <label for="tab_title">Comment</label>
-                    <textarea class="ui-widget-content ui-corner-all" id="comments" name="comments"></textarea>
-                    <input type="hidden" id="event"></input>
-                </fieldset>
-            </form>
-
-   </div>
-<div id="svnauth" style="display:none;" title="Checkout" class="dialog">
-           <form>
-                <fieldset class="ui-helper-reset">
-                    <label for="tab_title">User name:</label>
-                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="user" />
-                    <label for="tab_title">Password:</label>
-                    <input type="password" class="ui-widget-content ui-corner-all" value="" id="password" />
-                    <input type="hidden" id="operation" ></input>
-                </fieldset>
-           </form>
-</div>
-
-   <div id="confirmation" style="display:none">
-   </div>
 <script src="scripts/Cfeditor/jquery.layout.min-1.2.0.js" type="text/javascript"></script>
 <script src="scripts/Cfeditor/codemirror.js" type="text/javascript"></script>
 <script src="scripts/Cfeditor/cf.js" type="text/javascript"></script>
-<script src="scripts/jquery.jcryption-1.1.min.js" type="text/javascript"></script>
+       
  <script type="text/javascript">
  $(document).ready(function() {
 	$("body").layout({
@@ -466,7 +437,8 @@
 	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(),'filestats':'old'}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
 	           success: function(data){
-                            $confirmation.dialog({title: "Saved"});
+
+	        	   $confirmation.dialog({title: "Saved"});
 	        	   $confirmation.html('<span>Operation completed sucessfully</span>'); 
 	        	   $confirmation.dialog('open');
 	             },
@@ -492,146 +464,8 @@
 	 	 	$(".ui-dialog-titlebar-close").hide();
 	 	 }
 	 });
+	
 
-	 $('#Checkout')
-	   .click(function() {
-           $("#operation").val('checkout');
-           $svndlg.dialog('open');
-         });
-
-          $('#Commit')
-	   .click(function() {
-           $cfd.dialog('open');
-          });
-
-          $('#update')
-	   .click(function() {
-           $("#operation").val('update');
-           $svndlg.dialog('open');
-         });
-          
-
-          
-   // dialogue to be displayed while making check out of the file
-
-          var $cfd = $('#commitdlg').dialog({
-		 autoOpen: false,
-		 modal: true,
-		 resizable: false,
-		 hide: 'puff',
-		 height: 'auto',
-		 width:400,
-		 closeText: 'hide',
-		 buttons: {
-		 'Save': function() {
-                        var keys;
-			var passwd;
-			$.jCryption.getKeys("policy/encrypt.php?generateKeypair=true",function(receivedKeys) {
-				keys = receivedKeys;
-				$.jCryption.encrypt($("#password").val(),keys,function(encrypted) {
-					passwd=encrypted;
-                                        $.ajax({
-						type: 'POST',
-						url: "policy/svnmodule.php",
-						data: {'passwd':passwd, 'op':'commit','file':current_tab_title,'comments':$("#comments").val(),'user':$("#username").val()},
-
-						success: function(data) {
-                                                        $(this).dialog('close');
-							$confirmation.dialog({title: "Commit"});
-	        	                                $confirmation.html('<span>File Comitted sucessfully </span>'); 
-	        	                                $confirmation.dialog('open');
-						}
-					});
-				   });
-			});
-	       },
-		'Cancel': function() {
-	 	   $(this).dialog('close');
-	 	   }
-	 	 },
-	 	open: function(event, ui) {	
-	 	 }
-
-	 });
-
-         var $svndlg = $('#svnauth').dialog({
-		 autoOpen: false,
-		 modal: true,
-		 resizable: false,
-		 hide: 'puff',
-		 height: 'auto',
-		 width:400,
-		 closeText: 'hide',
-                 buttons: {
-		 'Ok': function() {
-                        var keys;
-			var passwd;
-			$.jCryption.getKeys("policy/encrypt.php?generateKeypair=true",function(receivedKeys) {
-				keys = receivedKeys;
-				$.jCryption.encrypt($("#password").val(),keys,function(encrypted) {
-					passwd=encrypted;
-                                   $.ajax({
-						type: "POST",
-						async:false,
-						url: "policy/svnmodule.php",
-						data:({'op':$("#operation").val(),'user':$("#user").val(),'passwd':passwd}),
-						//data: "name="+current_tab_title+"&content="+html_stripped,
-						success: function(data){
-							var path = "policy/get_list.php";
-							$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){	
-							});
-							$confirmation.dialog({title: "Checked out"});
-							$confirmation.html('<span>Operation completed sucessfully</span>'); 
-							$confirmation.dialog('open');
-						},
-				
-					error:function(data){
-						$confirmation.dialog({title: "Error"});
-						$confirmation.html('<span>Error! occured</span>');
-						$confirmation.dialog('open');
-						}
-	                            }); 
-                                });
-                            });
-                },
-		'Cancel': function() {
-	 	   $(this).dialog('close');
-	 	   }
-	 	 },
-	 	open: function(event, ui) {	
-	 	 }
-
-	 });
-         
-         $('#update')
-		.click(function() {
-		$.ajax({
-			type: "POST",
-			async:false,
-			url: "policy/svnmodule.php",
-			data:({'op':'update'}),
-			//data: "name="+current_tab_title+"&content="+html_stripped,
-			success: function(data){
-				var path = "policy/get_list.php";
-				$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){	
-				});
-
-				$confirmation.dialog({title: "Updated out"});
-				$confirmation.html('<span>Operation completed sucessfully</span>'); 
-				$confirmation.dialog('open');
-
-			},
-
-		error:function(data){
-				$confirmation.dialog({title: "Error"});
-				$confirmation.html('<span>Error! occured</span>'); 
-				$confirmation.dialog('open');   
-
-			}
-
-		}); 
-
-	});
 	
 	jQuery(document).ajaxStart(function(){
 		 $('#spinner').css({top: '0' , left:$('body').width()/2 }).fadeIn();
