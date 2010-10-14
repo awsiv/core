@@ -66,6 +66,7 @@ cfpr_header("knowledge bank","normal");
 		   echo "<div class=\"imageviewer\"><div id=\"influence_knowledge_pic\">";
 		    //include("$docroot/graphs/influence_2936.map");
 		   echo "hello influence_$pid";
+		   echo "<img src=\"/graphs/influence_$pid.png\" />";
 		   echo "</div></div></div></div>";
 		   }
 	
