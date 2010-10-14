@@ -677,17 +677,17 @@ margin:0.4em 0.2em 0 0;
 }
 
 /*for save dialog*/
-#dialog
+#dialog,.dialog
 {
 	font-size:12px;
 }
-div.ui-dialog-buttonpane
+div.ui-dialog-buttonpane,.dialog.ui-dialog-buttonpane
 {
 	font-size:12px;
 }
-#dialog label, #dialog input { display:block; }
-#dialog label { margin-top: 0.5em; }
-#dialog input, #dialog textarea { width: 95%; } 
+#dialog label, #dialog input,.dialog label,.dialog input { display:block; }
+#dialog label,.dialog label { margin-top: 0.5em; }
+#dialog input, #dialog textarea,.dialog input,.dialog textarea { width: 95%; } 
 
 /*for left side pane list*/
 #policies_list
