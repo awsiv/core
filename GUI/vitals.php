@@ -49,7 +49,7 @@ $nm =  $_GET['nm'];
 		var newlink=oldlink.split('?');
 		 $.fancybox({
 		 'padding' : 0,
-		 'href' : '/vitaldetails.php?'+newlink[1], 'title' : 'Details',
+		 'href' : 'vitaldetails.php?'+newlink[1], 'title' : 'Details',
 		 'type':'ajax',
 		 'transitionIn' : 'elastic',
 		 'transitionOut' : 'elastic'
