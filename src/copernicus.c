@@ -848,13 +848,15 @@ void Nova_Print(struct CfDataView cfv,double x,double y,char *s,int colour)
     
 { char *err,ps[CF_MAXVARSIZE];
   int x1,y1,x2,y2,margin = 1,padding=2,tab=3;
-  static char *font1 = "DejaVuSans";
-  static char *font2 = "Vera";
-  static char *font3 = "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf";
-  char *font = font1;
-
+  char font1[CF_MAXVARSIZE] = {0};
+  char *font2 = "Vera";
+  char *font3 = "DejaVuSans.ttf";
+  char *font;
   int brect[8];
   double size = 8.0;
+
+  snprintf(font1,sizeof(font1),"%s/fonts/DejaVuSans.ttf", CFWORKDIR);
+  MapName(font1);
 
 if (strlen(s) > CF_NODEVISIBLE)
    {
@@ -877,35 +879,26 @@ else
    7	upper left corner, Y position
 */
 
-err = gdImageStringFT(NULL,&brect[0],0,font1,size,0.,0,0,ps);
+font = font1;
+err = gdImageStringFT(NULL,&brect[0],0,font,size,0.,0,0,ps);
 
 if (err)
    {
-   err = gdImageStringFT(NULL,&brect[0],0,font2,size,0.,0,0,ps);
+   font = font2;
+   err = gdImageStringFT(NULL,&brect[0],0,font,size,0.,0,0,ps);
 
    if (err)
       {
-      err = gdImageStringFT(NULL,&brect[0],0,font3,size,0.,0,0,ps);
+      font = font3;
+      err = gdImageStringFT(NULL,&brect[0],0,font,size,0.,0,0,ps);
       
       if (err)
-         {
-         font = font3;      
-         }
-      else
-         {
-         font = font2;
-         }      
+	{
+	CfOut(cf_error, "", "!! Font rendering failure: %s", err);
+	}
       }
    }
-else
-   {
-   font = font1;
-   }
 
-if (err)
-   {
-   printf("Rendering failure %s\n",err);
-   }
 
 // Top left = x2,y2
 // Top right = x1,y2
@@ -932,7 +925,7 @@ if (Nova_InRange(cfv,x1,y1) && Nova_InRange(cfv,x2,y2))
    }
 else
    {
-   CfOut(cf_error,""," -> Numerical Overflow at position (%d,%d)-(%d,%d) while mapping \"%s\"",x1,y1,x2,y2,s);
+   CfOut(cf_error,""," -> Numerical Overflow in Nova_Print at position (%d,%d)-(%d,%d) while mapping \"%s\"",x1,y1,x2,y2,s);
    }
 }
 
@@ -942,12 +935,16 @@ void Nova_BigPrint(struct CfDataView cfv,double x,double y,char *s,int colour)
     
 { char *err,ps[CF_MAXVARSIZE];
   int x1,y1,x2,y2,margin = 1,padding=4,tab=3;
-  static char *font1 = "DejaVuSans";
-  static char *font2 = "Vera";
-  static char *font3 = "DejaVuSans";
-  char *font = font1;
+  char font1[CF_MAXVARSIZE] = {0};
+  char *font2 = "Vera";
+  char *font3 = "DejaVuSans.ttf";
+  char *font;
   int brect[8];
   double size = 10.0;
+
+  snprintf(font1,sizeof(font1),"%s/fonts/DejaVuSans.ttf", CFWORKDIR);
+  MapName(font1);
+
 
 if (strlen(s) > CF_NODEVISIBLE)
    {
@@ -970,29 +967,24 @@ else
    7	upper left corner, Y position
 */
 
-err = gdImageStringFT(NULL,&brect[0],0,font1,size,0.,0,0,ps);
+font = font1;
+err = gdImageStringFT(NULL,&brect[0],0,font,size,0.,0,0,ps);
 
 if (err)
    {
-   err = gdImageStringFT(NULL,&brect[0],0,font2,size,0.,0,0,ps);
+   font = font2;
+   err = gdImageStringFT(NULL,&brect[0],0,font,size,0.,0,0,ps);
 
    if (err)
       {
-      err = gdImageStringFT(NULL,&brect[0],0,font3,size,0.,0,0,ps);
+      font = font3;
+      err = gdImageStringFT(NULL,&brect[0],0,font,size,0.,0,0,ps);
       
       if (err)
-         {
-         font = font3;      
-         }
-      else
-         {
-         font = font2;
-         }      
+	{
+	CfOut(cf_error, "", "!! Font rendering failure: %s", err);
+	}
       }
-   }
-else
-   {
-   font = font1;
    }
 
 // Top left = x2,y2
@@ -1020,7 +1012,7 @@ if (Nova_InRange(cfv,x1,y1) && Nova_InRange(cfv,x2,y2))
    }
 else
    {
-   CfOut(cf_error,""," -> Numerical Overflow at position (%d,%d)-(%d,%d) while mapping \"%s\"",x1,y1,x2,y2,s);
+   CfOut(cf_error,""," -> Numerical Overflow in Nova_BigPrint at position (%d,%d)-(%d,%d) while mapping \"%s\"",x1,y1,x2,y2,s);
    }
 }
 

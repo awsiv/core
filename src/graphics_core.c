@@ -280,17 +280,17 @@ void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour)
 
 { char *err,ps[CF_MAXVARSIZE];
   int x1,y1,x2,y2,margin = 1,padding=2,tab=3;
-  static char *font1 = "DejaVuSans";
-  static char *font2 = "Vera";
-  static char *font3 = "/var/cfengine/fonts/ttf-dejavu/DejaVuSans.ttf";
-  char *font = font1;
+  char font1[CF_MAXVARSIZE] = {0};
+  char *font2 = "Vera";
+  char *font3 = "DejaVuSans.ttf";
+  char *font;
   int brect[8];
   double size = 8.0;
 
-if (putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
-   {
-   CfOut(cf_error,"putenv","!! Cannot set GD font path environment");
-   }
+
+  snprintf(font1,sizeof(font1),"%s/fonts/DejaVuSans.ttf", CFWORKDIR);
+  MapName(font1);
+
   
 snprintf(ps,CF_MAXVARSIZE,"%s",s);
 
@@ -305,29 +305,24 @@ snprintf(ps,CF_MAXVARSIZE,"%s",s);
    7	upper left corner, Y position
 */
 
-err = gdImageStringFT(NULL,&brect[0],0,font1,size,0.,0,0,ps);
+font = font1;
+err = gdImageStringFT(NULL,&brect[0],0,font,size,0.,0,0,ps);
 
 if (err)
    {
-   err = gdImageStringFT(NULL,&brect[0],0,font2,size,0.,0,0,ps);
+   font = font2;
+   err = gdImageStringFT(NULL,&brect[0],0,font,size,0.,0,0,ps);
 
    if (err)
       {
-      err = gdImageStringFT(NULL,&brect[0],0,font3,size,0.,0,0,ps);
+      font = font3;
+      err = gdImageStringFT(NULL,&brect[0],0,font,size,0.,0,0,ps);
       
       if (err)
-         {
-         font = font3;      
-         }
-      else
-         {
-         font = font2;
-         }      
+	{
+	CfOut(cf_error, "", "!! Font rendering failure: %s", err);
+	}
       }
-   }
-else
-   {
-   font = font1;
    }
 
 // Plus y is now downward
