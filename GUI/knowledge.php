@@ -1,5 +1,5 @@
 <?php
-include 'header.php';
+cfpr_header("knowledge bank","normal");
 ?>
 <link href="css/jquery.fancybox-1.3.1.css" rel="stylesheet" media="screen" />
       <div id="nav">
@@ -10,13 +10,12 @@ include 'header.php';
               <li><a href="knowledge.php" class="current">LIBRARY</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
-             Login:Max Manus
+             Library : Knowledege bank
              </span>
              <div class="clearleft"></div>
         </div>
         
         <div id="tabpane">
-         <div class="grid_7">
         <?php 
 		$search = $_POST['search_string'];
         $topic = $_GET['topic'];
@@ -33,13 +32,24 @@ include 'header.php';
 		  {
 		  $ret = cfpr_search_topics($topic,true);
 		  echo "$ret";
+		  ?>
+		  </div>
+		  <script type="text/javascript">
+		  $(document).ready(function() { 
+		  $('div#disambig').addClass('pagepanel');
+          $('div#disambig').find('h2').addClass('panelhead');
+          $('div#disambig').find('ul').addClass('panelcontent');
+		  });
+		  </script>
+		  <?php
+		  include 'footer.php';
 		  return;
 		  }
 	   else if ($pid == 0)
 		  {
 		  $pid = cfpr_get_pid_for_topic("","system policy");
 		  }
-		  
+		 echo "<div class=\"grid_7\">";
 		 echo "<div class=\"panel\">";    
 		 echo "<div class=\"panelhead\">Copernicus local cluster view</div>";
 		 echo "<div class=\"panelcontent\">";
@@ -95,7 +105,7 @@ include 'header.php';
 			$.fancybox({
  //'orig' : $(this),
  'padding' : 0,
- 'href' : "#knowledge_pic", 'title' : 'Lorem ipsum dolor sit amet',
+ 'href' : "#knowledge_pic", 'title' : 'Knowledge Map',
  'transitionIn' : 'elastic',
  'transitionOut' : 'elastic'
 }); 

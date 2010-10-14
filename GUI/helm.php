@@ -1,13 +1,13 @@
-<?php include 'header.php'?>
+<?php cfpr_header("control","normal");?>
 <div id="nav">
              <ul class="grid_10">
               <li><a href="index.php">SUMMARY</a></li>
               <li><a href="helm.php" class="current">PLANNING</a></li>
               <li><a href="status.php">STATUS</a></li>
-              <li><a href="knowledgw.php">LIBRARY</a></li>
+              <li><a href="knowledge.php">LIBRARY</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
-             Login:Max Manus
+              Planning : control
              </span>
              <div class="clearleft"></div>
         </div>
@@ -19,7 +19,7 @@
      
     <ul class="grid_6">
         <li><a href="services.php"><img src="/img/goal.png" class="align" /><span class="imglabel">Enterprise goals and Service Catalogue</a></span></li>
-        <li><a href="editor.php"><img src="/img/tool.png" class="align" /><span class="imglabel">Develop and work on policy</span></a></li>
+        <li><a href="Cfeditor.php"><img src="/img/tool.png" class="align" /><span class="imglabel">Develop and work on policy</span></a></li>
         <li><img src="/img/security.png" class="align" /><span class="imglabel">Security</span></li>
     </ul>
     <ul class="grid_6">

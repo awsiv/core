@@ -1,5 +1,5 @@
 <?php
-include 'header.php';
+cfpr_header("weakest hosts","normal");
 $ret = cfpr_topN_hosts("compliance",1000);
 ?>
 <div id="nav">
@@ -10,7 +10,7 @@ $ret = cfpr_topN_hosts("compliance",1000);
               <li><a href="knowledge.php">LIBRARY</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
-             Login:Max Manus
+             Status : weak hosts
              </span>
              <div class="clearleft"></div>
     </div>

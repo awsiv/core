@@ -1,5 +1,5 @@
 <?php
-include 'header.php';
+cfpr_header("service catalogue","normal");
 ?>
       <div id="nav">
              <ul class="grid_10">
@@ -16,7 +16,7 @@ include 'header.php';
         
         <div id="tabpane">
          <div class="pagepanel">
-          		<div class="panelhead">Generate report</div>
+          		<div class="panelhead">Services and methods</div>
                 <div class="panelcontent">
                 <div class="tables">
                 <?php

@@ -1,6 +1,5 @@
   <?php 
-  
-    include 'header.php';  
+    cfpr_header("overview","normal");  
 	$ret1 = cfpr_getlicense_owner();
 	$all = cfpr_count_all_hosts();
 	$r = cfpr_count_red_hosts();
@@ -16,7 +15,7 @@
               <li><a href="knowledge.php">LIBRARY</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
-             Login:Max Manus
+             Home : Overview
              </span>
              <div class="clearleft"></div>
         </div>

@@ -1,6 +1,6 @@
 <?php
-include 'header.php';
 $type = $_GET['type']; 
+cfpr_header("$type hosts","normal");
 ?>
       <div id="nav">
              <ul class="grid_10">

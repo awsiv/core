@@ -1,5 +1,5 @@
 <?php
-include 'header.php';
+cfpr_header("license usage status","normal");
 $ret2 = cfpr_getlicenses_promised();
 $ret3 = cfpr_getlicenses_granted();
 $expiry = cfpr_getlicense_expiry();

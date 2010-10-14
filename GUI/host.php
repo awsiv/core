@@ -19,8 +19,7 @@ if ($hostkey == "")
 $hostname = cfpr_hostname($hostkey);
 $ipaddr = cfpr_ipaddr($hostkey);
 $title = "host $hostname";
-//cfpr_header("$title","normal");
-include 'header.php';
+cfpr_header("$title","normal");
 cfpr_host_meter($hostkey);
 $colour = cfpr_get_host_colour($hostkey);
   ?>
@@ -66,11 +65,11 @@ $colour = cfpr_get_host_colour($hostkey);
                      <div class="panelcontent">
        <p><label class="width_20">Alias:</label><label ><?php echo $hostname?></label></p>
       <p> <label class="width_20">OS Class:</label><label><?php echo $class?></label></p>
-       <p><label class="width_20">Relesae:</label><label><?php echo $rel?></label></p>
+       <p><label class="width_20">Release:</label><label><?php echo $rel?></label></p>
         <p><label class="width_20">Flavour:</label><label><?php echo $flavour?></label></p>
        <p><label class="width_20">Last Known :</label><label><?php echo $ipaddr?></label></p>
        <p><label class="width_20">Last date:</label><label><?php echo $last?></label></p>
-       <p><label class="width_20">ID:</label><label><?php echo $hostkey?></label></p>
+       <p><label class="width_20">ID:</label><label><small><?php echo $hostkey?></small></label></p>
                       </div>
                  </div>
                  
@@ -92,8 +91,8 @@ $colour = cfpr_get_host_colour($hostkey);
            	<div class="panel">
           		<div class="panelhead">Analysis</div>
                 <div class="panelcontent">
-                <p><a href="knowledge.php?topic=Status level meters"><img src="/hub/<?php echo $hostkey?>/meter.png"></a></p>
-         <p><a href="vitals.php?hostkey=<?php echo $hostkey?>"><img src="images/pulsed.png" class="align"/><span class="imglabel">Pusle and vital sign for this host</span></a></p>
+                <p><a href=\"knowledge.php?topic=Status level meters\"><img src="/hub/<?php echo $hostkey?>/meter.png"></a></p>
+         <p><a href="vitals.php?hostkey=<?php echo $hostkey?>"><img src="images/pulsed.png" class="align"/><span class="imglabel">Pulse and vital sign for this host</span></a></p>
                  </div>
           	</div>
             
@@ -128,7 +127,7 @@ $colour = cfpr_get_host_colour($hostkey);
           
           
 			<div class="panel">
-			<?php $report = cfpr_summarize_notkept($hostkey,NULL);?>
+			<?php $report = cfpr_summarize_notkept($hostkey,NULL,NULL);?>
 			<div class="panelhead">Promises not kept in the past week</div>
                 <div class="panelcontent">
                       <div class="tables">

@@ -1,6 +1,6 @@
 <?php
 $view =  $_GET['view'];
-include 'header.php';
+cfpr_header("vital signs","normal");
 $hostkey = $_POST['hostkey'];
 $report_type = $_POST['report'];
 if ($hostkey == "")

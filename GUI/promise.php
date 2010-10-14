@@ -1,5 +1,4 @@
 <?php
-include 'header.php';
 $handle = $_POST['handle'];
 
 if ($hostkey == "")
@@ -8,6 +7,7 @@ if ($hostkey == "")
    }
 
 $title = "promise $handle";
+cfpr_header("$title","normal");
 $pid = cfpr_get_pid_for_topic("promises","$handle");
 ?>
  <div id="nav">

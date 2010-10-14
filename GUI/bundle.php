@@ -1,11 +1,11 @@
 <?php
-include('header.php');
 $bundle = $_GET['bundle'];
 $type = $_GET['type'];
 if ($type == "")
    {
    $type = "agent";
    }
+cfpr_header("bundle $bundle","normal");
 ?>
 <div id="nav">
              <ul class="grid_10">

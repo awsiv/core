@@ -1,5 +1,5 @@
   <?php 
-    include 'header.php';  
+    cfpr_header("engineering status","normal");  
 	$ret1 = cfpr_getlicense_owner();
 	$all = cfpr_count_all_hosts();
 	$r = cfpr_count_red_hosts();
@@ -15,7 +15,7 @@
               <li><a href="knowledge.php">LIBRARY</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
-             Login:Max Manus
+             Status : hosts
              </span>
              <div class="clearleft"></div>
         </div>
@@ -36,7 +36,7 @@
  <li><a href="hosts.php?type=red"><img src="images/close.png" class="align"/><span class="imglabel"><?php echo $r?> hosts known</span></a></li>
  <li><a href="hosts.php?type=yellow"><img src="images/alert.png" class="align"/><span class="imglabel"><?php echo $y?> hosts known</span></a></li>
  <li><a href="hosts.php?type=green"><img src="images/checkmark.png" class="align"/><span class="imglabel"><?php echo $g?> hosts known</span></a></li>
- <li>Averafe downtime:0.0s</li>
+ <li>Average downtime:0.0s</li>
  <li>Hosts 2 dev overdue:0</li>
                      </ul>
                   </div>

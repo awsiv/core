@@ -1,7 +1,7 @@
 <?php
-include 'header.php';
 $body = $_GET['body'];
 $type = $_GET['type'];
+cfpr_header("body $body","normal");
 ?>
  <div id="nav">
              <ul class="grid_10">

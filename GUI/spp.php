@@ -1,5 +1,5 @@
 <?php
-include 'header.php';
+cfpr_header("Special Purpose Policy Reports","ok");
 $report_type = $_POST['spp_report'];
 $hostkey = "";
 ?>

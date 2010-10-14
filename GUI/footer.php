@@ -53,7 +53,7 @@
        
        
        <div id="footer">
-           <div class="grid_6 alignleft">
+           <div class="grid_6">
              <span class="grid_6">Support: Open Support Ticket</span><div class="clear"></div>
               <span class="grid_6">Versions: Nova build 2.0.1.0 community 3.0.1.0</span>
            </div>

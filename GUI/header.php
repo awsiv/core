@@ -17,7 +17,7 @@
 <div id="wrapper">
    <div class="container_12">
     	<div id="header">
-            <div class="grid_6 sitetitle">CFENGINE MISSION PORTAL - Host Cf001lin.cfengine.com#headerparam#</div> 
+            <div class="grid_6 sitetitle">CFENGINE MISSION PORTAL </div> 
   <div id="searchbox" class="grid_4"><form action="knowledge.php" method="post"><input type="text" name="search" class="align"/><input type="submit" class="searchbtn" value=""/></form></div>
             <div id="historynav" class="grid_2 alignright">
                 <a href="javascript:history.go(-1)"><img src="images/icon_arrow_back.png"/></a>
