@@ -106,13 +106,13 @@ cfpr_header("knowledge bank","normal");
         $('div#disambig').find('ul').addClass('panelcontent');
 	 $('.imageviewer').dblclick(function()
 		{
-			$.fancybox({
- //'orig' : $(this),
- 'padding' : 0,
- 'href' : "#knowledge_pic", 'title' : 'Knowledge Map',
- 'transitionIn' : 'elastic',
- 'transitionOut' : 'elastic'
-}); 
+					$.fancybox({
+		 //'orig' : $(this),
+		 'padding' : 0,
+		 'href' : '#'+$(this).find('div').attr('id'), 'title' : 'Knowledge Map',
+		 'transitionIn' : 'elastic',
+		 'transitionOut' : 'elastic'
+		}); 
 		});
 	});
     function styleit(element)
