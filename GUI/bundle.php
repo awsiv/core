@@ -15,7 +15,7 @@ cfpr_header("bundle $bundle","normal");
               <li><a href="knowledge.php">LIBRARY</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
-             status
+             Status : bundles
              </span>
              <div class="clearleft"></div>
         </div>
