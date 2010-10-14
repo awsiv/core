@@ -16,9 +16,11 @@ $docroot = cfpr_docroot();
              <div class="clearleft"></div>
         </div>
       <div id=tabpane>
-      <?php
-      include("$docroot/docs/$example");
-	  ?>
+       <pre>
+		  <?php
+          include("$docroot/docs/$example");
+          ?>
+         </pre>
       </div>
 <?php
 include 'footer.php';
