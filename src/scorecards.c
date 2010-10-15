@@ -938,32 +938,35 @@ switch (method)
    case cfrank_compliance:
        if (k[meter_compliance_hour] < 80)
           {
-          result = CF_RED_THRESHOLD + 100 - k[meter_compliance_hour];
+          result = CF_RED_THRESHOLD + 100;
           }
        
        if (r[meter_compliance_hour] > 20)
           {
           result = CF_AMBER_THRESHOLD + r[meter_compliance_hour];
           }
-       
+
+       result -= k[meter_compliance_hour];
        break;
        
    case cfrank_anomaly:
        if (k[meter_anomalies_day] < 80)
           {
-          result = CF_RED_THRESHOLD + 100 - k[meter_anomalies_day];
+          result = CF_RED_THRESHOLD + 100;
           }
        
        if (r[meter_anomalies_day] > 20)
           {
           result = CF_AMBER_THRESHOLD + r[meter_anomalies_day];
           }
+
+       result -= k[meter_anomalies_day];
        break;
        
    case cfrank_performance:
        if (k[meter_perf_day] < 80)
           {
-          result = CF_RED_THRESHOLD + 100 - k[meter_perf_day];
+          result = CF_RED_THRESHOLD + 100;
           }
        
        if (r[meter_perf_day] > 20)
@@ -971,12 +974,13 @@ switch (method)
           result = CF_AMBER_THRESHOLD + r[meter_perf_day];
           }
 
+       result -= k[meter_perf_day];
        break;
        
    case cfrank_lastseen:
        if (k[meter_comms_hour] < 80)
           {
-          result = CF_RED_THRESHOLD + 100 - k[meter_comms_hour];
+          result = CF_RED_THRESHOLD + 100;
           }
        
        if (r[meter_comms_hour] > 20)
@@ -984,6 +988,7 @@ switch (method)
           result = CF_AMBER_THRESHOLD + r[meter_comms_hour];
           }
 
+       result -= k[meter_comms_hour];
        break;
        
    default:
@@ -992,7 +997,7 @@ switch (method)
 
        if (kav < 80)
           {
-          result = CF_RED_THRESHOLD + 100 - kav;
+          result = CF_RED_THRESHOLD + 100;
           }
        
        if (rav > 20)
@@ -1000,6 +1005,7 @@ switch (method)
           result = CF_AMBER_THRESHOLD + rav;
           }
 
+       result -= kav;
        break;
    }
 
