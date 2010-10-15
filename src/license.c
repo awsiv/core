@@ -351,7 +351,7 @@ void Nova_LogLicenseStatus()
   void *retval;
   int licenses = 0,count = 0;
   struct Promise *pp = NewPromise("track_license","License tracker");
-  struct Attributes dummyattr;
+  struct Attributes dummyattr = {0};
   struct CfLock thislock;
   struct QPoint entry;
   struct Rlist *counter = NULL;

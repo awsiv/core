@@ -995,7 +995,7 @@ struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp)
   struct timespec start;
   FILE *fin = NULL;
   mode_t maskval = 0;
-  struct Attributes at;
+  struct Attributes at = {0};
 
 if (LICENSES == 0)
    {

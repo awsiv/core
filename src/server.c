@@ -268,7 +268,7 @@ char *Nova_GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,c
 { char in[CF_BUFSIZE],out[CF_BUFSIZE],sendbuffer[CF_BUFSIZE];
   int cipherlen,tosend,n,plainlen;
   struct cfagent_connection *conn;
-  struct Attributes a;
+  struct Attributes a = {0};
   struct Promise *pp = NewPromise("remotescalar","handle");
   char peer[CF_MAXVARSIZE];
   struct Rlist *rp;

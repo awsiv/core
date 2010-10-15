@@ -29,11 +29,10 @@ void Nova_StartHub(int argc,char **argv)
 { int pid,time_to_run = false;
   time_t now = time(NULL);
   struct Promise *pp = NewPromise("hub_cfengine","the aggregator"); 
-  struct Attributes a;
+  struct Attributes a = {0};
   struct CfLock thislock;
 
 Banner("Starting hub core");
-memset(&a,0,sizeof(a));
 
 a.restart_class = "nonce";
 a.transaction.ifelapsed = 0;
