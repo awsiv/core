@@ -10,7 +10,7 @@
              <li><a href="helm.php">PLANNING</a></li>
              <li><a href="Cfeditor.php">Create policy</a></li>
              <li><a href="services.php">Enterprises goals</a></li>
-             <li>Security</li>
+             <li><a href="knowledge.php?topic=security">Security</a></li>
              <li><a href="search.php?report=Business%20value%20report&manyhosts=1">Cost and Value</a></li>
              <li><a href="knowledge.php?topic=best.*practice">Standards</a></li>
              <li><a href="knowledge.php?topic=policy.*">Policy Guide</a></li>
@@ -23,16 +23,15 @@
             <li><a href="search.php?report=Compliance by promise">-Compliance by Promise</a></li>
             <li><a href="search.php?report=Compliance summary">-Compliance summary</a></li>
             <li><a href="search.php?report=Promises repaired log">-Promised repaired log</a></li>
-            <li><a href="search.php?report=Promises repaired summary">-Promised repaired summary</a></li>
+            <li><a href="search.php?report=Promises not kept log">-Promised not kept log</a></li>
          </ul>
          <ul class="grid_2">
              <li><a href="knowledge.php">LIBRARY</a></li>
-             <li>System Trends</li>
              <li>Copernicus</li>
-             <li><a href="http://demo.cfengine.com/docs/st-bdma.html#Stem-cell-hosts">User Manual</a></li>
-             <li><a href="showexample.php">Examples</a></li>
-             <li>Promise theory</li>
-             <li>Components</span>
+             <li><a href="http://demo.cfengine.com/docs/cf3-reference.html">User Manual</a></li>
+             <li><a href="knowledge.php?topic=example">Examples</a></li>
+             <li><a href="knowledge.php?topic=promise theory">Promise theory</a></li>
+             <li><a href="cf3-reference.html#Software-components">Cfengine Components</a></span>
          </ul>
          <div class="grid_4">
          <br />
