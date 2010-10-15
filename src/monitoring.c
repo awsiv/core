@@ -1162,7 +1162,7 @@ if (a.contain.timeout != 0)
    signal(SIGALRM,SIG_DFL);
    }
 
-cfPS(cf_inform,CF_CHG,"",pp,a," -> Collected sample of %s\n",pp->promiser);
+CfOut(cf_inform,""," -> Collected sample of %s\n",pp->promiser);
 umask(maskval);
 YieldCurrentLock(thislock);
 MONITOR_RESTARTED = false;
