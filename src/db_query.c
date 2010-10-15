@@ -4015,12 +4015,12 @@ return record_list;
 }
 
 /*****************************************************************************/
-/*                    Special Purpose Policy QUERIES                         */
+/*                     Content-Driven Policy queries                         */
 /*****************************************************************************/
 
-struct Item *CFDB_QuerySppAcls(mongo_connection *conn, char *sep)
+struct Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep)
 /*
- * Returns all SPP ACLs from expanded policy as
+ * Returns all CDP ACLs from expanded policy as
  * "handle sep path sep aces sep owner sep action sep ifvarclass".
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
@@ -4039,7 +4039,7 @@ struct Item *CFDB_QuerySppAcls(mongo_connection *conn, char *sep)
 
   // query
  bson_buffer_init(&bbuf);
- bson_append_string(&bbuf,cfp_bundlename,cfp_spp_bundle_acls);
+ bson_append_string(&bbuf,cfp_bundlename,cfp_cdp_bundle_acls);
  bson_append_string(&bbuf,cfp_promisetype,"files");
  bson_from_buffer(&query,&bbuf);
 
@@ -4116,9 +4116,9 @@ return retList;
 
 /*****************************************************************************/
 
-struct Item *CFDB_QuerySppCommands(mongo_connection *conn, char *sep)
+struct Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep)
 /*
- * Returns all SPP commands from expanded policy as
+ * Returns all CDP commands from expanded policy as
  * "handle sep command sep failclass sep action sep ifvarclass"
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
@@ -4136,7 +4136,7 @@ struct Item *CFDB_QuerySppCommands(mongo_connection *conn, char *sep)
 
   // query
  bson_buffer_init(&bbuf);
- bson_append_string(&bbuf,cfp_bundlename,cfp_spp_bundle_commands);
+ bson_append_string(&bbuf,cfp_bundlename,cfp_cdp_bundle_commands);
  bson_append_string(&bbuf,cfp_promisetype,"commands");
  bson_from_buffer(&query,&bbuf);
 
@@ -4208,9 +4208,9 @@ return retList;
 
 /*****************************************************************************/
 
-struct Item *CFDB_QuerySppPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType)
+struct Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType)
 /*
- * Returns all SPP promisers from expanded policy as
+ * Returns all CDP promisers from expanded policy as
  * "handle sep promiser sep ifvarclass"
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
@@ -4228,7 +4228,7 @@ struct Item *CFDB_QuerySppPromiser(mongo_connection *conn, char *sep, char *bund
  bson_buffer_init(&bbuf);
  bson_append_string(&bbuf,cfp_bundlename,bundleName);
  bson_append_string(&bbuf,cfp_promisetype,promiseType);
- bson_append_regex(&bbuf,cfp_handle_exp,"^spp_.*","");
+ bson_append_regex(&bbuf,cfp_handle_exp,"^cdp_.*","");
  bson_from_buffer(&query,&bbuf);
 
  // returned attribute
@@ -4289,9 +4289,9 @@ return retList;
 
 /*****************************************************************************/
 
-struct Item *CFDB_QuerySppRegistry(mongo_connection *conn, char *sep)
+struct Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep)
 /*
- * Returns all SPP commands from expanded policy as
+ * Returns all CDP commands from expanded policy as
  * "handle sep command sep value sep action sep ifvarclass"
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
@@ -4309,7 +4309,7 @@ struct Item *CFDB_QuerySppRegistry(mongo_connection *conn, char *sep)
 
   // query
  bson_buffer_init(&bbuf);
- bson_append_string(&bbuf,cfp_bundlename,cfp_spp_bundle_registry);
+ bson_append_string(&bbuf,cfp_bundlename,cfp_cdp_bundle_registry);
  bson_append_string(&bbuf,cfp_promisetype,"databases");
  bson_from_buffer(&query,&bbuf);
 
@@ -4381,9 +4381,9 @@ return retList;
 
 /*****************************************************************************/
 
-struct Item *CFDB_QuerySppServices(mongo_connection *conn, char *sep)
+struct Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep)
 /*
- * Returns all SPP Services from expanded policy as
+ * Returns all CDP Services from expanded policy as
  * "handle sep servicename sep servicepolicy sep action sep ifvarclass"
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
@@ -4401,7 +4401,7 @@ struct Item *CFDB_QuerySppServices(mongo_connection *conn, char *sep)
 
   // query
  bson_buffer_init(&bbuf);
- bson_append_string(&bbuf,cfp_bundlename,cfp_spp_bundle_services);
+ bson_append_string(&bbuf,cfp_bundlename,cfp_cdp_bundle_services);
  bson_append_string(&bbuf,cfp_promisetype,"services");
  bson_from_buffer(&query,&bbuf);
 
@@ -4473,9 +4473,9 @@ return retList;
 
 /*****************************************************************************/
 
-struct Item *CFDB_QuerySppCompliance(mongo_connection *conn, char *handle)
+struct Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle)
 /*
- * Returns all SPP Compliance host entries as
+ * Returns all CDP Compliance host entries as
  * "hostkeyhash;host;status;timestr"
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */

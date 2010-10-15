@@ -42,7 +42,7 @@ char *BASIC_REPORTS[] =
    NULL
    };
 
-char *SPP_REPORTS[] =
+char *CDP_REPORTS[] =
    {
    "ACLs",
    "Commands",
@@ -3756,20 +3756,20 @@ return true;
 /* pdf reports end*/
 
 /*****************************************************************************/
-/*                       Special Purpose Policies                            */
+/*                       Content-Driven Policies                             */
 /*****************************************************************************/
 
-void Nova2PHP_spp_reportnames(char *buf,int bufSz)
+void Nova2PHP_cdp_reportnames(char *buf,int bufSz)
 
 { int i;
   char work[CF_SMALLBUF];
 
 buf[0] = '\0';
-Join(buf,"<select name=\"spp_report\">\n",bufSz);
+Join(buf,"<select name=\"cdp_report\">\n",bufSz);
 
-for (i = 0; SPP_REPORTS[i] != NULL; i++)
+for (i = 0; CDP_REPORTS[i] != NULL; i++)
    {
-   snprintf(work,sizeof(work),"<option value=\"%s\">%s</option>\n",SPP_REPORTS[i],SPP_REPORTS[i]);
+   snprintf(work,sizeof(work),"<option value=\"%s\">%s</option>\n",CDP_REPORTS[i],CDP_REPORTS[i]);
    Join(buf,work,bufSz);
    }
 
@@ -3778,42 +3778,42 @@ Join(buf,"\n</select>\n",bufSz);
 
 /*****************************************************************************/
 
-spp_t SppReportNameToType(char *reportName)
+cdp_t CdpReportNameToType(char *reportName)
 {
   
   if(strcmp(reportName,"ACLs") == 0)
     {
-    return spp_acls;
+    return cdp_acls;
     }
   else if(strcmp(reportName,"Commands") == 0)
     {
-    return spp_commands;
+    return cdp_commands;
     }
   else if(strcmp(reportName,"File Changes") == 0)
     {
-    return spp_filechanges;
+    return cdp_filechanges;
     }
   else if(strcmp(reportName,"File Diffs") == 0)
     {
-    return spp_filediffs;
+    return cdp_filediffs;
     }
   else if(strcmp(reportName,"Registry") == 0)
     {
-    return spp_registry;
+    return cdp_registry;
     }
   else if(strcmp(reportName,"Services") == 0)
     {
-    return spp_services;
+    return cdp_services;
     }
   else
     {
-    return spp_unknown;
+    return cdp_unknown;
     }
 }
 
 /*****************************************************************************/
 
-int Nova2PHP_spp_report(char *hostkey, char *reportName, char *buf, int bufSz)
+int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
 {
   struct Item *promises = {0}, *hosts = {0};
   struct Item *ip = {0}, *ip2 = {0};
@@ -3828,7 +3828,7 @@ int Nova2PHP_spp_report(char *hostkey, char *reportName, char *buf, int bufSz)
   char attributes[CF_MAXVARSIZE] = {0};
   char row[CF_MAXVARSIZE] = {0};
   int ret = false;
-  spp_t sppType;
+  cdp_t cdpType;
 
   memset(buf,0,bufSz);
 
@@ -3839,36 +3839,36 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- sppType = SppReportNameToType(reportName);
+ cdpType = CdpReportNameToType(reportName);
 
- switch(sppType)
+ switch(cdpType)
    {
-   case spp_acls:
-     promises = CFDB_QuerySppAcls(&dbconn,"</td><td>");
+   case cdp_acls:
+     promises = CFDB_QueryCdpAcls(&dbconn,"</td><td>");
      break;
 
-   case spp_commands:
-     promises = CFDB_QuerySppCommands(&dbconn,"</td><td>");
+   case cdp_commands:
+     promises = CFDB_QueryCdpCommands(&dbconn,"</td><td>");
      break;
 
-   case spp_services:
-     promises = CFDB_QuerySppServices(&dbconn,"</td><td>");
+   case cdp_services:
+     promises = CFDB_QueryCdpServices(&dbconn,"</td><td>");
      break;
 
-   case spp_filechanges:
-     promises = CFDB_QuerySppPromiser(&dbconn,"</td><td>",cfp_spp_bundle_filechanges,"files");
+   case cdp_filechanges:
+     promises = CFDB_QueryCdpPromiser(&dbconn,"</td><td>",cfp_cdp_bundle_filechanges,"files");
      break;
 
-   case spp_filediffs:
-     promises = CFDB_QuerySppPromiser(&dbconn,"</td><td>",cfp_spp_bundle_filediffs,"files");
+   case cdp_filediffs:
+     promises = CFDB_QueryCdpPromiser(&dbconn,"</td><td>",cfp_cdp_bundle_filediffs,"files");
      break;
 
-   case spp_registry:
-     promises = CFDB_QuerySppRegistry(&dbconn,"</td><td>");
+   case cdp_registry:
+     promises = CFDB_QueryCdpRegistry(&dbconn,"</td><td>");
      break;
 
    default:
-     snprintf(buf,bufSz,"Unknown Special Purpose Policy Type");
+     snprintf(buf,bufSz,"Unknown Content-Driven Policy Type");
      CFDB_Close(&dbconn);
      return false;
    }
@@ -3876,13 +3876,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  if(promises)
    {
      snprintf(buf,bufSz,"\n<table>\n");
-     Join(buf,GetSppTableHeader(sppType),bufSz);
+     Join(buf,GetCdpTableHeader(cdpType),bufSz);
      
      for(ip = promises; ip != NULL; ip = ip->next)
        {
 	 sscanf(ip->name,"%128[^<]</td><td>%512[^$]",handle,attributes);
 
-	 hosts = CFDB_QuerySppCompliance(&dbconn,handle);
+	 hosts = CFDB_QueryCdpCompliance(&dbconn,handle);
 
 	 if(hosts)
 	   {
@@ -3922,20 +3922,20 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 /*****************************************************************************/
 
-char *GetSppTableHeader(spp_t sppType)
+char *GetCdpTableHeader(cdp_t cdpType)
 {
-  switch(sppType)
+  switch(cdpType)
     {
-    case spp_acls:
+    case cdp_acls:
       return "<tr><th>Host</th><th>Path</th><th>Permission (ACL)</th><th>Owner</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
-    case spp_commands:
+    case cdp_commands:
       return "<tr><th>Host</th><th>Command</th><th>Failclass</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
-    case spp_filechanges:
-    case spp_filediffs:
+    case cdp_filechanges:
+    case cdp_filediffs:
       return "<tr><th>Host</th><th>Path</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
-    case spp_registry:
+    case cdp_registry:
       return "<tr><th>Host</th><th>Key</th><th>Value</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
-    case spp_services:
+    case cdp_services:
       return "<tr><th>Host</th><th>Service name</th><th>Runstatus</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
     }
 

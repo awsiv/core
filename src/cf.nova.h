@@ -348,12 +348,12 @@ int CFDB_QueryBundleCount(mongo_connection *conn);
 int CFDB_QueryPromiseCount(mongo_connection *conn);
 struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
 struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
-struct Item *CFDB_QuerySppAcls(mongo_connection *conn, char *sep);
-struct Item *CFDB_QuerySppCommands(mongo_connection *conn, char *sep);
-struct Item *CFDB_QuerySppPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType);
-struct Item *CFDB_QuerySppRegistry(mongo_connection *conn, char *sep);
-struct Item *CFDB_QuerySppServices(mongo_connection *conn, char *sep);
-struct Item *CFDB_QuerySppCompliance(mongo_connection *conn, char *handle);
+struct Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep);
+struct Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep);
+struct Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType);
+struct Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep);
+struct Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep);
+struct Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
@@ -969,10 +969,10 @@ int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *classreg
 /* svn helper functions */
 int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize);
 
-void Nova2PHP_spp_reportnames(char *buf,int bufSz);
-int Nova2PHP_spp_report(char *hostkey, char *reportName, char *buf, int bufSz);
-char *GetSppTableHeader(spp_t sppType);
-spp_t SppReportNameToType(char *reportName);
+void Nova2PHP_cdp_reportnames(char *buf,int bufSz);
+int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz);
+char *GetCdpTableHeader(cdp_t cdpType);
+cdp_t CdpReportNameToType(char *reportName);
 
 /* weekly.c */
 
@@ -1037,7 +1037,7 @@ int NovaWin_GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal);
 /* win_net.c */
 
 void NovaWin_GetInterfaceInfo(void);
-int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, struct sockaddr_in *cinp, int cinpSz);
+int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, struct sockaddr *cinp, int cinpSz);
 
 /* win_pipe.c */
 
@@ -1279,13 +1279,13 @@ struct cf_pscalar
 #define cfp_constraints   "n"
 #define cfp_constraints_exp "nx"
 
-/* Special Purpose Policy bundle names (from spp_* policies) */
-#define cfp_spp_bundle_acls "spp_acls"
-#define cfp_spp_bundle_commands "spp_commands"
-#define cfp_spp_bundle_filechanges "spp_file_changes"
-#define cfp_spp_bundle_filediffs "spp_file_diffs"
-#define cfp_spp_bundle_registry "spp_registry"
-#define cfp_spp_bundle_services "spp_services"
+/* Content-Driven Policy bundle names (from cdp_* policies) */
+#define cfp_cdp_bundle_acls "cdp_acls"
+#define cfp_cdp_bundle_commands "cdp_commands"
+#define cfp_cdp_bundle_filechanges "cdp_file_changes"
+#define cfp_cdp_bundle_filediffs "cdp_file_diffs"
+#define cfp_cdp_bundle_registry "cdp_registry"
+#define cfp_cdp_bundle_services "cdp_services"
 
 
 /* Promise body DB */

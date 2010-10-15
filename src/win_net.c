@@ -217,7 +217,7 @@ void NovaWin_GetInterfaceInfo()
     } 
 }
 
-int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, struct sockaddr_in *cinp, int cinpSz)
+int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, struct sockaddr *cinp, int cinpSz)
 /** 
  * Tries a nonblocking connect and then restores blocking if
  * successful. Returns true on success, false otherwise.
