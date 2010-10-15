@@ -147,21 +147,52 @@ snprintf(buffer,bufsize,
 /*****************************************************************************/
 
 void Nova_TabMenu(char *title,char *buffer, int bufsize)
-{
-snprintf(buffer,bufsize,
 
-"       <div id=\"nav\">\n"
-"             <ul class=\"grid_10\">\n"
-"              <li><a href=\"#\" class=\"current\">SUMMARY</a></li>\n"
-"              <li><a href=\"helm.php\">PLANNING</a></li>\n"
-"              <li><a href=\"status.php\">STATUS</a></li>\n"
-"              <li><a href=\"knowledge.php\">KNOWLEDGE</a></li>\n"
-"             </ul>\n"
-"             <span id=\"status\" class=\"grid_2 alignright\">\n"
-"             %s\n"
-"             </span>\n"
-"             <div class=\"clearleft\"></div>\n"
-         "        </div>\n",title);
+{ char *class = "class=\"current\"";
+  char *css[4];
+ 
+if (strstr(title,"Status")||strstr(title,"Show"))
+   {
+   css[0] = "";
+   css[1] = "";
+   css[2] = class;
+   css[3] = "";
+   }
+else if (strstr(title,"Planning"))
+   {
+   css[0] = "";
+   css[1] = class;
+   css[2] = "";
+   css[3] = "";
+   }
+else if (strstr(title,"Knowledge"))
+   {
+   css[0] = "";
+   css[1] = "";
+   css[2] = "";
+   css[3] = class;
+   }
+else
+   {
+   css[0] = class;
+   css[1] = "";
+   css[2] = "";
+   css[3] = "";
+   }
+
+snprintf(buffer,bufsize,
+" <div id=\"nav\">\n"
+"   <ul class=\"grid_10\">\n"
+"      <li><a href=\"index.php\" %s>SUMMARY</a></li>\n"
+"      <li><a href=\"helm.php\" %s>PLANNING</a></li>\n"
+"      <li><a href=\"status.php\" %s>STATUS</a></li>\n"
+"      <li><a href=\"knowledge.php\" %s>KNOWLEDGE</a></li>\n"
+"   </ul>\n"
+"   <span id=\"status\" class=\"grid_2 alignright\">\n"
+"      %s\n"
+"   </span>\n"
+"   <div class=\"clearleft\"></div>\n"
+         " </div>\n",css[0],css[1],css[2],css[3],title);
 }
 
 /*****************************************************************************/
