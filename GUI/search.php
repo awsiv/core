@@ -404,29 +404,25 @@ else if ($hostkey != "") // Default search on single machine
 	break;
 	
       case "Promises repaired log":
-	//$report = cfpr_summarize_repaired($hostkey,NULL);
-	$report = cfpr_report_repaired($hostkey,NUL,$class_regex);
+	$report = cfpr_report_repaired($hostkey,NULL,$class_regex);
 	echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
 	break;
 	
       case "Promises not kept log":
 	
 	$report = cfpr_report_notkept($hostkey,NULL,$class_regex);
-	//$report = cfpr_summarize_notkept($hostkey,NULL);
 	echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
 	break;
 	
       case "Promises repaired summary":
 
-	//$report = cfpr_summarize_repaired($hostkey,NULL);
-	$report = cfpr_report_repaired($hostkey,NULL,$class_regex);
+	$report = cfpr_summarize_repaired($hostkey,NULL,NULL);
 	echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a>
 	<a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
 	break;
 	
       case "Promises not kept summary":
-	$report = cfpr_report_notkept($hostkey,NUL,$class_regexL);
-	//$report = cfpr_summarize_notkept($hostkey,NULL);
+	$report = cfpr_summarize_notkept($hostkey,NULL,NULL);
 	echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a>
 	<a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
 	break;
