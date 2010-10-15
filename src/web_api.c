@@ -2662,8 +2662,14 @@ if (hp->constraints)
       args[0] = '\0';
       sscanf(hp->constraints[i],"%255s => %1023[^(,;]%[^\n]",lval,rval,args);
 
-      
-      snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><a href=\"body.php?body=%s&type=%s\"><span id=\"bodyname\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
+      if (strcmp(lval,"usebundle") == 0)
+         {
+         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span id=\"bundlename\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
+         }
+      else
+         {
+         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><a href=\"body.php?body=%s&type=%s\"><span id=\"bodyname\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
+         }
       
       Join(returnval,work,bufsize);   
       }
@@ -3044,6 +3050,7 @@ return true;
 }
 
 /*****************************************************************************/
+
 int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
