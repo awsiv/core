@@ -514,7 +514,7 @@ void Nova_AnalyseHistogram(char *docroot,char *keyhash,enum observables obs,char
 
 void Nova_Footer(char *buffer, int bufsize);
 void Nova_Header(char *title,char *device_type, char *buffer, int bufsize);
-void Nova_TabMenu(char *buffer, int bufsize);
+void Nova_TabMenu(char *s,char *buffer, int bufsize);
 
 /* hub.c */
 
