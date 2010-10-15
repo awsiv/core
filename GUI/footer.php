@@ -31,7 +31,7 @@
              <li><a href="http://demo.cfengine.com/docs/cf3-reference.html">User Manual</a></li>
              <li><a href="knowledge.php?topic=example">Examples</a></li>
              <li><a href="knowledge.php?topic=promise theory">Promise theory</a></li>
-             <li><a href="cf3-reference.html#Software-components">Cfengine Components</a></span>
+             <li><a href="docs/cf3-reference.html#Software-components">Cfengine Components</a></span>
          </ul>
          <div class="grid_4">
          <br />
