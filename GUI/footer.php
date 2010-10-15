@@ -27,7 +27,7 @@
          </ul>
          <ul class="grid_2">
              <li><a href="knowledge.php">LIBRARY</a></li>
-             <li>Copernicus</li>
+             <li><a href="knowledge.php?topic=copernicus knowledge">Copernicus</a></li>
              <li><a href="http://demo.cfengine.com/docs/cf3-reference.html">User Manual</a></li>
              <li><a href="knowledge.php?topic=example">Examples</a></li>
              <li><a href="knowledge.php?topic=promise theory">Promise theory</a></li>
