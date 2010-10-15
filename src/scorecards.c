@@ -987,8 +987,8 @@ switch (method)
        break;
        
    default:
-       kav = k[meter_comms_hour] + k[meter_compliance_hour] + k[meter_anomalies_day] / 3;
-       rav = r[meter_comms_hour] + r[meter_compliance_hour] + r[meter_anomalies_day] / 3;
+       kav = (k[meter_comms_hour] + k[meter_compliance_hour] + k[meter_anomalies_day]) / 3;
+       rav = (r[meter_comms_hour] + r[meter_compliance_hour] + r[meter_anomalies_day]) / 3;
 
        if (kav < 80)
           {
