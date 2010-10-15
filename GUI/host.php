@@ -1,7 +1,6 @@
 <?php 
-  
       
-	$hostkey = $_POST['hostkey'];
+$hostkey = $_POST['hostkey'];
 $report_type = $_POST['report'];
 
 if ($hostkey == "")
@@ -20,21 +19,10 @@ $hostname = cfpr_hostname($hostkey);
 $ipaddr = cfpr_ipaddr($hostkey);
 $title = "host $hostname";
 cfpr_header("$title","normal");
+cfpr_menu("Status : host");
 cfpr_host_meter($hostkey);
 $colour = cfpr_get_host_colour($hostkey);
   ?>
-  <div id="nav">
-             <ul class="grid_10">
-              <li><a href="index.php" >SUMMARY</a></li>
-              <li><a href="helm.php">PLANNING</a></li>
-              <li><a href="status.php" class="current">STATUS</a></li>
-              <li><a href="knowledge.php">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-             Status : <?php echo $hostname;?>
-             </span>
-             <div class="clearleft"></div>
-   </div>
         
         <div id="tabpane">
          <div class="grid_5">
@@ -147,4 +135,6 @@ $(document).ready(function() {
 });
  
 </script>
-<?php include 'footer.php'?>
+<?php
+cfpr_footer();
+?>

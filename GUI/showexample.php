@@ -1,25 +1,14 @@
 <?php
-include 'header.php';
+cfpr_header("Cfengine example","");
 $example = $_GET['example'];
 $docroot = cfpr_docroot();
+cfpr_menu("Knowledge : example");
 ?>
-    <div id="nav">
-             <ul class="grid_10">
-              <li><a href="index.php">SUMMARY</a></li>
-              <li><a href="helm.php">PLANNING</a></li>
-              <li><a href="status.php">STATUS</a></li>
-              <li><a href="knowledge.php" class="current">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-             Library : examples
-             </span>
-             <div class="clearleft"></div>
-        </div>
       <div id=tabpane>
 		  <?php
           include("$docroot/docs/$example");
           ?>
       </div>
 <?php
-include 'footer.php';
+      cfpr_footer();
 ?>

@@ -1,5 +1,6 @@
 <?php
 cfpr_header("classes","normal");
+cfpr_menu("Intentions");
 ?>
 
 <div id="info">

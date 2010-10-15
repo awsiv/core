@@ -1,6 +1,6 @@
 <?php
 cfpr_header("compliance","normal");
-
+cfpr_menu("Status : Promises");
 $hostkey = NULL;
 $name = ".*";
 $regex = 1;
@@ -15,19 +15,6 @@ $handle = NULL;
 $tago = 0;
 $status = NULL;
 ?>
- <div id="nav">
-             <ul class="grid_10">
-              <li><a href="index.php">SUMMARY</a></li>
-              <li><a href="helm.php"  class="current">PLANNING</a></li>
-              <li><a href="status.php">STATUS</a></li>
-              <li><a href="knowledge.php">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-             Planning : services
-             </span>
-             <div class="clearleft"></div>
-        </div>
-        
         <div id="tabpane">
          <div class="pagepanel">
           		<div class="panelhead">Promises</div>
@@ -54,5 +41,5 @@ $(document).ready(function() {
 </script>
         
  <?php
-include 'footer.php';
+cfpr_footer();
 ?>

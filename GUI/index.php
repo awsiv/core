@@ -1,24 +1,13 @@
   <?php 
     cfpr_header("overview","normal");  
-	$ret1 = cfpr_getlicense_owner();
+   cfpr_menu("Home : overview");
+        $ret1 = cfpr_getlicense_owner();
 	$all = cfpr_count_all_hosts();
 	$r = cfpr_count_red_hosts();
 	$y = cfpr_count_yellow_hosts();
 	$g = cfpr_count_green_hosts();
   
   ?>       
-       <div id="nav">
-             <ul class="grid_10">
-              <li><a href="#" class="current">SUMMARY</a></li>
-              <li><a href="helm.php">PLANNING</a></li>
-              <li><a href="status.php">STATUS</a></li>
-              <li><a href="knowledge.php">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-             Home : Overview
-             </span>
-             <div class="clearleft"></div>
-        </div>
         
         <div id="tabpane">
           <div class="grid_4">

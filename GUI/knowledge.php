@@ -2,19 +2,10 @@
 cfpr_header("knowledge bank","normal");
 ?>
 <link href="css/jquery.fancybox-1.3.1.css" rel="stylesheet" media="screen" />
-      <div id="nav">
-             <ul class="grid_10">
-              <li><a href="index.php">SUMMARY</a></li>
-              <li><a href="helm.php">PLANNING</a></li>
-              <li><a href="status.php">STATUS</a></li>
-              <li><a href="knowledge.php" class="current">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-             Library : Knowledege bank
-             </span>
-             <div class="clearleft"></div>
-        </div>
-        
+
+<?php
+cfpr_menu("Knowledge bank");
+?>
         <div id="tabpane">
         <?php 
 		$search = $_POST['search'];
@@ -125,5 +116,5 @@ cfpr_header("knowledge bank","normal");
 </script>
         
  <?php
-include 'footer.php';
+cfpr_footer();
 ?>

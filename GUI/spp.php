@@ -1,21 +1,9 @@
 <?php
 cfpr_header("Special Purpose Policy Reports","ok");
+cfpr_menu("Status : Content-Driven Policy");
 $report_type = $_POST['spp_report'];
 $hostkey = "";
-?>
-      <div id="nav">
-             <ul class="grid_10">
-                  <li><a href="index.php">SUMMARY</a></li>
-                  <li><a href="helm.php">PLANNING</a></li>
-                  <li><a href="status.php" class="current">STATUS</a></li>
-                  <li><a href="knowledge.php">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-             Planning : services
-             </span>
-             <div class="clearleft"></div>
-        </div>
-        <?php
+
 		     $reportheading="";
 			switch($report_type)
 			{
@@ -71,5 +59,5 @@ $(document).ready(function() {
  
 </script>      
  <?php
-include 'footer.php';
+cfpr_footer();
 ?>

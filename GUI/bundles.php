@@ -1,6 +1,7 @@
 
 <?php
 cfpr_header("status","normal");
+cfpr_menu("Services : this host");
 
 $hostkey = NULL;
 $name = ".*";
@@ -14,18 +15,6 @@ $host = NULL;
 $addr = NULL;
 $tago = 0;
 ?>
-   <div id="nav">
-             <ul class="grid_10">
-              <li><a href="index.php">SUMMARY</a></li>
-              <li><a href="helm.php">PLANNING</a></li>
-              <li><a href="status.php" class="current">STATUS</a></li>
-              <li><a href="knowledge.php">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-             Status : bundles
-             </span>
-             <div class="clearleft"></div>
-        </div>
          <div id="tabpane">
          <div class="pagepanel">
           		<div class="panelhead">Bundles</div>
@@ -53,7 +42,7 @@ $(document).ready(function() {
 </script>
         
  <?php
-include 'footer.php';
+cfpr_footer();
 ?>
 
 

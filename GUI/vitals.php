@@ -13,18 +13,9 @@ $obs_name = cfpr_get_observable_name($obs);
 $nm =  $_GET['nm'];
 ?>
 <link href="css/jquery.fancybox-1.3.1.css" rel="stylesheet" media="screen" />
-      <div id="nav">
-             <ul class="grid_10">
-              <li><a href="index.php">SUMMARY</a></li>
-              <li><a href="helm.php">PLANNING</a></li>
-              <li><a href="status.php" class="current">STATUS</a></li>
-              <li><a href="knowledge.php">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-             Login:Max Manus
-             </span>
-             <div class="clearleft"></div>
-        </div>
+<?php
+cfpr_menu("Status : vital signs");
+?>
         
         <div id="tabpane">
             <div class="pagepanel">
@@ -58,5 +49,5 @@ $nm =  $_GET['nm'];
    });
 	 </script>
 <?php
-include 'footer.php';
+cfpr_footer();
 ?>

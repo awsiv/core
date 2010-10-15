@@ -1,6 +1,6 @@
 <?php
 cfpr_header("Intentions","normal");
-
+cfpr_menu("Intentions");
 ?>
 <h1>Intentions documented for promise</h1>
 

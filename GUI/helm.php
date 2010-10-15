@@ -1,17 +1,8 @@
-<?php cfpr_header("control","normal");?>
-<div id="nav">
-             <ul class="grid_10">
-              <li><a href="index.php">SUMMARY</a></li>
-              <li><a href="helm.php" class="current">PLANNING</a></li>
-              <li><a href="status.php">STATUS</a></li>
-              <li><a href="knowledge.php">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-              Planning : control
-             </span>
-             <div class="clearleft"></div>
-        </div>
-        
+<?php
+cfpr_header("control","normal");
+cfpr_menu("Planning : menu");
+?>
+       
 <div id="tabpane">
       <div class="pagepanel">
           		<div class="panelhead"> Mission control and planning</div>
@@ -31,4 +22,7 @@
     </div> 
     </div>
    </div>
-<?php include 'footer.php'?> 
+
+<?php
+cfpr_footer();
+?> 

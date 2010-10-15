@@ -6,19 +6,8 @@ if ($type == "")
    $type = "agent";
    }
 cfpr_header("bundle $bundle","normal");
+cfpr_menu("Show : Bundle definition");
 ?>
-<div id="nav">
-             <ul class="grid_10">
-              <li><a href="index.php">SUMMARY</a></li>
-              <li><a href="helm.php">PLANNING</a></li>
-              <li><a href="status.php" class="current">STATUS</a></li>
-              <li><a href="knowledge.php">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-             Status : bundles
-             </span>
-             <div class="clearleft"></div>
-        </div>
       <div id="tabpane">
           <div class="grid_5">
            <div class="panel">
@@ -60,5 +49,5 @@ cfpr_header("bundle $bundle","normal");
         <div class="clear"></div>
       </div>
  <?php
-include 'footer.php';
+cfpr_footer();
 ?>

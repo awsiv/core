@@ -1,19 +1,8 @@
 <?php
 $type = $_GET['type']; 
 cfpr_header("$type hosts","normal");
+cfpr_menu("Status : hosts");
 ?>
-      <div id="nav">
-             <ul class="grid_10">
-              <li><a href="index.php" class="current">SUMMARY</a></li>
-              <li><a href="helm.php">PLANNING</a></li>
-              <li><a href="status.php">STATUS</a></li>
-              <li><a href="knowledge.php">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-             Summary : <?php echo $type; ?> hosts
-             </span>
-             <div class="clearleft"></div>
-        </div>
         <div id="tabpane">
          <div class="pagepanel">
           		<div class="panelhead"><?php echo $type?> hosts</div>
@@ -50,5 +39,5 @@ cfpr_header("$type hosts","normal");
            </div>
         </div>
 <?php
-include 'footer.php';
+cfpr_footer();
 ?>

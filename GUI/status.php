@@ -5,20 +5,9 @@
 	$r = cfpr_count_red_hosts();
 	$y = cfpr_count_yellow_hosts();
 	$g = cfpr_count_green_hosts();
-  
+
+  cfpr_menu("Status : hosts");
   ?>       
-       <div id="nav">
-             <ul class="grid_10">
-              <li><a href="index.php">SUMMARY</a></li>
-              <li><a href="helm.php">PLANNING</a></li>
-              <li><a href="status.php" class="current">STATUS</a></li>
-              <li><a href="knowledge.php">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-             Status : hosts
-             </span>
-             <div class="clearleft"></div>
-        </div>
         
         <div id="tabpane">
           <div class="grid_4">
@@ -81,4 +70,6 @@
           <div class="clear"></div>
         </div>
         
-  <?php include 'footer.php'?>
+  <?php
+ cfpr_footer();
+ ?>
