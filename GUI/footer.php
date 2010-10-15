@@ -4,7 +4,7 @@
              <li><a href="index.php">SUMMARY</a></li>
              <li><a href="hosts.php?type=green">Green Hosts</a></li>
              <li><a href="hosts.php?type=yellow">Yellow Hosts</a></li>
-             <li><a href="hosts.php?type=red">Redhosts</a></li>
+             <li><a href="hosts.php?type=red">Red hosts</a></li>
          </ul>
          <ul class="grid_2">
              <li><a href="helm.php">PLANNING</a></li>
@@ -25,7 +25,7 @@
             <li><a href="search.php?report=Promises not kept log">Report Promised not kept log</a></li>
          </ul>
          <ul class="grid_2">
-             <li><a href="knowledge.php">LIBRARY</a></li>
+             <li><a href="knowledge.php">KNOWLEDGE</a></li>
              <li><a href="knowledge.php?topic=copernicus knowledge">Copernicus</a></li>
              <li><a href="http://demo.cfengine.com/docs/cf3-reference.html">User Manual</a></li>
              <li><a href="knowledge.php?topic=example">Examples</a></li>
@@ -52,11 +52,10 @@
        
        <div id="footer">
            <div class="grid_6 alignleft">
-             <span class="grid_6">Support: Open Support Ticket</span><div class="clear"></div>
-              <span class="grid_6">Versions: Nova build 2.0.1.0 community 3.0.1.0</span>
+              <span class="grid_6">Versions: Nova build 2.0.0 community 3.1.0</span>
            </div>
            <div class="grid_6 alignright">
-            <span class="grid_6">Copyright &copy; 2010 Cfengine AS-All rights reserved</span>
+            <span class="grid_6">Copyright &copy; 2010 Cfengine - All rights reserved</span>
            </div>
        <div class="clear"></div>
        </div> 

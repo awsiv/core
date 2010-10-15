@@ -363,8 +363,8 @@ void Nova_LogLicenseStatus()
   void *value;
   long ltime;
   
-dummyattr.transaction.ifelapsed = 10080; // 1 week
-dummyattr.transaction.expireafter = 10180; // 1 week
+dummyattr.transaction.ifelapsed = 1440; // 1 day
+dummyattr.transaction.expireafter = 1440; // 1 day
 
 if (!IsDefinedClass("am_policy_hub"))
    {
@@ -442,7 +442,7 @@ then = time(NULL); // Set this to now for first round
 
 if (NewDBCursor(dbp,&dbcp))
    {
-   while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
+   while (NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       {
       if (value == NULL)
          {
@@ -490,7 +490,8 @@ if (NewDBCursor(dbp,&dbcp))
    }
 
 CloseDB(dbp);
-   
+
+now = time(NULL);
 snprintf(buffer,sizeof(buffer),"<div id=\"license\">");
 snprintf(work,sizeof(work),"<h4>Last measured on %s based on %d samples</h4>",ctime(&now),i);
 Join(buffer,work,sizeof(buffer));
