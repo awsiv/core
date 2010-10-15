@@ -54,10 +54,10 @@
           	</div>
             
             <div class="panel">
-          		<div class="panelhead">Special purpose policies</div>
+          		<div class="panelhead">Content-Driven Policies</div>
                 <div class="panelcontent">
-                    <form method="post" action="spp.php">
-                          <p><?php $allSppReps = cfpr_spp_reportnames();
+                    <form method="post" action="cdp.php">
+                          <p><?php $allSppReps = cfpr_cdp_reportnames();
                           echo "$allSppReps";?>
                           <p>
                           <input type="submit" value="Generate">
