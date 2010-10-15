@@ -19,11 +19,10 @@
             <li> <a href="status.php">STATUS</a></li>
             <li><a href="topN.php">Worse 50 hosts</a></li>
             <li><a href="host.php">Host details</a></li>
-            <li>Create Report</li>
-            <li><a href="search.php?report=Compliance by promise">-Compliance by Promise</a></li>
-            <li><a href="search.php?report=Compliance summary">-Compliance summary</a></li>
-            <li><a href="search.php?report=Promises repaired log">-Promised repaired log</a></li>
-            <li><a href="search.php?report=Promises not kept log">-Promised not kept log</a></li>
+            <li><a href="search.php?report=Compliance by promise">Report Compliance by Promise</a></li>
+            <li><a href="search.php?report=Compliance summary">Report Compliance summary</a></li>
+            <li><a href="search.php?report=Promises repaired log">Report Promised repaired log</a></li>
+            <li><a href="search.php?report=Promises not kept log">Report Promised not kept log</a></li>
          </ul>
          <ul class="grid_2">
              <li><a href="knowledge.php">LIBRARY</a></li>
