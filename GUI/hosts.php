@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 $type = $_GET['type']; 
 cfpr_header("$type hosts","normal");
 cfpr_menu("Status : hosts");

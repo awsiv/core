@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 cfpr_header("compliance","normal");
 cfpr_menu("Status : Promises");
 $hostkey = NULL;

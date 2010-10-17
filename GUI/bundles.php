@@ -1,5 +1,9 @@
 
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 cfpr_header("status","normal");
 cfpr_menu("Services : this host");
 

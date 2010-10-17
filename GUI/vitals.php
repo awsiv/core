@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 $view =  $_GET['view'];
 cfpr_header("vital signs","normal");
 $hostkey = $_POST['hostkey'];

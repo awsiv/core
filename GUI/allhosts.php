@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 cfpr_header("all hosts","normal");
 
 $hostkey = NULL;

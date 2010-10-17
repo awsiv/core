@@ -1,13 +1,18 @@
-  <?php 
-    cfpr_header("engineering status","normal");  
-	$ret1 = cfpr_getlicense_owner();
-	$all = cfpr_count_all_hosts();
-	$r = cfpr_count_red_hosts();
-	$y = cfpr_count_yellow_hosts();
-	$g = cfpr_count_green_hosts();
+<?php 
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
 
-  cfpr_menu("Status : hosts");
-  ?>       
+cfpr_header("engineering status","normal");  
+
+$ret1 = cfpr_getlicense_owner();
+$all = cfpr_count_all_hosts();
+$r = cfpr_count_red_hosts();
+$y = cfpr_count_yellow_hosts();
+$g = cfpr_count_green_hosts();
+
+cfpr_menu("Status : hosts");
+?>       
         
         <div id="tabpane">
           <div class="grid_4">

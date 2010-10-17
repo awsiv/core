@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 cfpr_header("Content-Driven Policy Reports","ok");
 $report_type = $_POST['cdp_report'];
 $hostkey = "";

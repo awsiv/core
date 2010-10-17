@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 cfpr_header("weakest hosts","normal");
 $ret = cfpr_topN_hosts("compliance",1000);
 cfpr_menu("Status : weakest hosts");

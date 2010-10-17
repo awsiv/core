@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 cfpr_header("license usage status","normal");
 cfpr_menu("License : status");
 $ret2 = cfpr_getlicenses_promised();

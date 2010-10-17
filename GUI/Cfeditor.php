@@ -1,4 +1,10 @@
-<?php include 'header.php'; ?>
+<?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
+cfpr_header();
+?>
  <link href="css/jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />
     <div id="editor">
 	<div id="leftPanel">

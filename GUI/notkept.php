@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 cfpr_header("promises not kept","normal");
 cfpr_menu("Status : promises not kept");
 ?>

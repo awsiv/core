@@ -1,11 +1,16 @@
-  <?php 
-    cfpr_header("overview","normal");  
-   cfpr_menu("Home : overview");
-        $ret1 = cfpr_getlicense_owner();
-	$all = cfpr_count_all_hosts();
-	$r = cfpr_count_red_hosts();
-	$y = cfpr_count_yellow_hosts();
-	$g = cfpr_count_green_hosts();
+<?php 
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
+cfpr_header("overview","normal");  
+cfpr_menu("Home : overview");
+
+$ret1 = cfpr_getlicense_owner();
+$all = cfpr_count_all_hosts();
+$r = cfpr_count_red_hosts();
+$y = cfpr_count_yellow_hosts();
+$g = cfpr_count_green_hosts();
   
   ?>       
         

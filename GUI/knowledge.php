@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 cfpr_header("knowledge bank","normal");
 ?>
 <link href="css/jquery.fancybox-1.3.1.css" rel="stylesheet" media="screen" />

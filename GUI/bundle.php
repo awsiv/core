@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 $bundle = $_GET['bundle'];
 $type = $_GET['type'];
 if ($type == "")

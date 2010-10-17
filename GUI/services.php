@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 cfpr_header("service catalogue","normal");
 cfpr_menu("Planning : services");
 ?>

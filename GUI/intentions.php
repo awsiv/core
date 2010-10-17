@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 cfpr_header("Intentions","normal");
 cfpr_menu("Intentions");
 ?>

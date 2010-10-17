@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 $handle = $_POST['handle'];
 
 if ($hostkey == "")

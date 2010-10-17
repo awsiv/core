@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 cfpr_header("Cfengine example","");
 $example = $_GET['example'];
 $docroot = cfpr_docroot();
@@ -10,5 +14,5 @@ cfpr_menu("Knowledge : example");
           ?>
       </div>
 <?php
-      cfpr_footer();
+cfpr_footer();
 ?>

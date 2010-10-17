@@ -1,4 +1,7 @@
 <?php 
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
       
 $hostkey = $_POST['hostkey'];
 $report_type = $_POST['report'];

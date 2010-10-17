@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 $body = $_GET['body'];
 $type = $_GET['type'];
 cfpr_header("body $body","normal");

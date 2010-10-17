@@ -1,4 +1,8 @@
 <?php
+#
+# This file is (C) Cfengine AS. All rights reserved
+#
+
 cfpr_header("control","normal");
 cfpr_menu("Planning : menu");
 ?>
