@@ -825,11 +825,11 @@ void Nova_AddOccurrenceBuffer(char *locator,enum representations locator_type,ch
 switch (locator_type)
    {
    case cfk_url:
-       snprintf(work,CF_BUFSIZE-1,"<li>Link: <span id=\"url\"> %s</span>(URL)</li>\n",Nova_URL(locator,represents));
+       snprintf(work,CF_BUFSIZE-1,"<li>Link: <span id=\"url\"> %s</span> (URL)</li>\n",Nova_URL(locator,represents));
        break;
        
    case cfk_web:
-       snprintf(work,CF_BUFSIZE-1,"<li>Link: <span id=\"url\">%s ...%s</a> </span>(URL)<li>\n",Nova_URL(locator,represents),locator);
+       snprintf(work,CF_BUFSIZE-1,"<li>Link: <span id=\"url\">%s ...%s</a> </span> (URL)<li>\n",Nova_URL(locator,represents),locator);
        break;
 
    case cfk_file:
@@ -849,7 +849,7 @@ switch (locator_type)
        break;
 
    case cfk_portal:
-       snprintf(work,CF_BUFSIZE-1,"<li>Portal: <a href=\"%s\" target=\"_blank\">%s</a> </span>(URL)</li>\n",locator,represents);
+       snprintf(work,CF_BUFSIZE-1,"<li>Portal: <a href=\"%s\" target=\"_blank\">%s</a> </span> (URL)</li>\n",locator,represents);
        break;
        
    default:
