@@ -2,8 +2,7 @@
 #
 # This file is (C) Cfengine AS. All rights reserved
 #
-
-cfpr_header();
+cfpr_header("Policy editor","none");
 ?>
  <link href="css/jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />
     <div id="editor">
