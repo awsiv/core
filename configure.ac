@@ -386,6 +386,8 @@ fi
 
 AC_SUBST(OPENSSL_LIB_CPPFLAGS)
 
+AC_CHECK_FUNCS(FIPS_mode_set)
+
 #
 # Others
 #

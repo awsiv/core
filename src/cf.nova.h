@@ -256,6 +256,10 @@ void Nova_PackNerveBundle(void);
 void Nova_UnPackNerveBundle(void);
 void Nova_LookupAggregateClassName(int n,char *name, char *desc);
 
+/* cfnova.c */
+
+void Nova_Initialize(void);
+
 /* client_code.c */
 
 int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t since);
