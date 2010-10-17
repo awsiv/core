@@ -23,6 +23,10 @@ if (FIPS_MODE && !FIPS_mode_set(1))
    {
    FatalError("Unable to initialize validated FIPS mode");
    }
+else
+   {
+   CfOut(cf_verbose,""," ** Cfengine Nova Operating if FIPS 140-2 validated mode");
+   }
 #else
 if (FIPS_MODE)
    {
