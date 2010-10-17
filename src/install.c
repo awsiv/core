@@ -626,7 +626,7 @@ void DeleteHubPromise(struct HubPromise *hp)
 
 /*****************************************************************************/
 
-struct HubBody *NewHubBody(char *bodyName,char *bodyType,char *bodyArgs)
+struct HubBody *NewHubBody(char *bodyType,char *bodyName,char *bodyArgs)
 {
   struct HubBody *hb;
 
@@ -635,22 +635,22 @@ if ((hb = malloc(sizeof(struct HubBody))) == NULL)
    FatalError("Memory exhausted NewHubBody");
    }
 
- hb->bodyName = strdup(bodyName);
- hb->bodyType = strdup(bodyType);
- 
- if(EMPTY(bodyArgs))
-   {
-     hb->bodyArgs = NULL;
-   }
- else
-   {
-     hb->bodyArgs = strdup(bodyArgs);
-   }
- 
+hb->bodyName = strdup(bodyName);
+hb->bodyType = strdup(bodyType);
 
- hb->attr = NULL;
+if(EMPTY(bodyArgs))
+   {
+   hb->bodyArgs = NULL;
+   }
+else
+   {
+   hb->bodyArgs = strdup(bodyArgs);
+   }
 
- return hb;
+
+hb->attr = NULL;
+
+return hb;
 }
 
 /*****************************************************************************/
