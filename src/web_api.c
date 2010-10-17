@@ -1997,10 +1997,20 @@ return true;
 /*****************************************************************************/
 
 int Nova2PHP_search_topics(char *search,int regex,char *buffer,int bufsize)
-{
+
+{ int pid;
+ 
 Nova_WebTopicMap_Initialize();
-Nova_SearchTopicMap(search,buffer,bufsize);
-return true;
+
+if (pid = Nova_SearchTopicMap(search,buffer,bufsize))
+   {
+   // If there's only one match, just show it
+   Nova2PHP_show_topic(pid,buffer,bufsize);
+   }
+else
+   {
+   return true;
+   }
 }
 
 /*****************************************************************************/

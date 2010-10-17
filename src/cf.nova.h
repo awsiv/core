@@ -846,7 +846,7 @@ int Nova_QueryTopicMap(char *typed_topic,char *result_type,char *buffer,int bufs
 int Nova_TopicByID(int id,char *result_type,char *buffer,int bufsize);
 void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize);
 void Nova_ScanTheRest(int pid,char *buffer, int bufsize);
-void Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize);
+int Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize);
 void Nova_ScanLeadsAssociations(int pid,char *buffer, int bufsize);
 void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize);
 

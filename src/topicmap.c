@@ -227,7 +227,7 @@ CfCloseDB(&cfdb);
 
 /*********************************************************************/
 
-void Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
+int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
 
 { CfdbConn cfdb;  
   char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_type[CF_BUFSIZE],to_type[CF_BUFSIZE];
@@ -241,7 +241,7 @@ strcpy(buffer,"<div id=\"disambig\">\n<h2>The search suggests these topics:</h2>
 if (strlen(SQL_OWNER) == 0)
    {
    snprintf(buffer,bufsize,"No knowledge database has yet formed ... please wait");
-   return;
+   return 0;
    }
 
 CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
@@ -249,7 +249,7 @@ CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
 if (!cfdb.connected)
    {
    CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
-   return;
+   return 0;
    }
 
 snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_name,topic_id,topic_type,topic_comment,pid from topics");
@@ -260,7 +260,7 @@ if (cfdb.maxcolumns != 5)
    {
    CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,5);
    CfCloseDB(&cfdb);
-   return;
+   return 0;
    }
 
 while(CfFetchRow(&cfdb))
@@ -302,7 +302,7 @@ if (cfdb.maxcolumns != 6)
    CfOut(cf_error,""," !! The associations database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,6);
    CfCloseDB(&cfdb);
    strcat(buffer,"</ul></div>\n");
-   return;
+   return 0;
    }
 
 while(CfFetchRow(&cfdb))
@@ -333,7 +333,11 @@ CfCloseDB(&cfdb);
 
 if (count == 1)
    {
-   // Something special for unique match?
+   return pid;
+   }
+else
+   {
+   return 0;
    }
 }
 
@@ -884,7 +888,7 @@ char *Nova_URL(char *s,char *rep)
 
 { static char buf[CF_MAXVARSIZE];
  
-snprintf(buf,CF_MAXVARSIZE-1,"<a href=\"%s\">%s</a>",s,rep);
+snprintf(buf,CF_MAXVARSIZE-1,"<a href=\"%s\">%s</a>: ",s,rep);
 return buf;
 }
 
