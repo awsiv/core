@@ -234,7 +234,7 @@ int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
   char topic_comment[CF_BUFSIZE],query[CF_BUFSIZE];
   char from_name[CF_BUFSIZE],from_assoc[CF_BUFSIZE],to_assoc[CF_BUFSIZE],to_name[CF_BUFSIZE];
   char work[CF_BUFSIZE],*sp;
-  int pid,s,e,count = 0;
+  int save_pid = 0,pid,s,e,count = 0;
 
 strcpy(buffer,"<div id=\"disambig\">\n<h2>The search suggests these topics:</h2>\n<ul>\n");
 
@@ -284,6 +284,7 @@ while(CfFetchRow(&cfdb))
       {
       count++;
       Nova_AddTopicSearchBuffer(pid,topic_name,topic_type,topic_comment,buffer,bufsize);
+      save_pid = pid;
       }
    }
 
@@ -333,7 +334,7 @@ CfCloseDB(&cfdb);
 
 if (count == 1)
    {
-   return pid;
+   return save_pid;
    }
 else
    {

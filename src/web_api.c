@@ -2005,7 +2005,8 @@ Nova_WebTopicMap_Initialize();
 if (pid = Nova_SearchTopicMap(search,buffer,bufsize))
    {
    // If there's only one match, just show it
-   Nova2PHP_show_topic(pid,buffer,bufsize);
+   snprintf(buffer,bufsize,"<meta HTTP-EQUIV=\"REFRESH\" content=\"0; url=knowledge.php?pid=%d\">",pid);
+   return true;
    }
 else
    {
