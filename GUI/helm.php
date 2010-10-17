@@ -11,7 +11,7 @@ cfpr_menu("Planning : menu");
     <ul class="grid_6">
         <li><a href="services.php"><img src="/img/goal.png" class="align" /><span class="imglabel">Enterprise goals and Service Catalogue</span></a></li>
         <li><a href="Cfeditor.php"><img src="/img/tool.png" class="align" /><span class="imglabel">Develop and work on policy</span></a></li>
-        <li><img src="/img/security.png" class="align" /><span class="imglabel">Security</span></li>
+        <li><a href="knowledge.php?topic=security view"><img src="/img/security.png" class="align" /><span class="imglabel">Security</span></a></li>
     </ul>
     <ul class="grid_6">
         <li><a href="search.php?report=Business%20value%20report&manyhosts=1"><img src="/img/info.png" class="align" /><span class="imglabel">Latest enterprise cost and value</span></a></li>
