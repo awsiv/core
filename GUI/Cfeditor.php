@@ -85,7 +85,7 @@ cfpr_header("Policy editor","none");
                     <label for="tab_title">User name:</label>
                     <input type="text" class="ui-widget-content ui-corner-all" value="" id="user" />
                     <label for="tab_title">Password:</label>
-                    <input type="password" class="ui-widget-content ui-corner-all" value="" id="password" />
+                    <input type="password" class="ui-widget-content ui-corner-all" value="" id="svnauthpassword" />
                     <input type="hidden" id="operation" ></input>
                 </fieldset>
            </form>
@@ -514,12 +514,34 @@ cfpr_header("Policy editor","none");
            $("#operation").val('update');
            $svndlg.dialog('open');
          });
-          
+       
+	   $('#checksyntax')
+	   .click(function() {
+			$.ajax({
+			type: "POST",
+			async:false,
+			url: "policy/checksyntax.php",
+			data:({'file':current_tab_title}),
+			//data: "name="+current_tab_title+"&content="+html_stripped,
+			success: function(data){
+				$confirmation.dialog({title: "No Errors"});
+				$confirmation.html('<span>Compiled Sucessfully with no errors</span>'); 
+				$confirmation.dialog('open');
+
+			},
+		error:function(data){
+				$confirmation.dialog({title: "Error"});
+				$confirmation.html('<span>Error! occured</span>'); 
+				$confirmation.dialog('open');   
+			}
+
+		}); 	   
+		});
 
           
    // dialogue to be displayed while making check out of the file
 
-          var $cfd = $('#commitdlg').dialog({
+    var $cfd = $('#commitdlg').dialog({
 		 autoOpen: false,
 		 modal: true,
 		 resizable: false,
@@ -573,7 +595,7 @@ cfpr_header("Policy editor","none");
 			var passwd;
 			$.jCryption.getKeys("policy/encrypt.php?generateKeypair=true",function(receivedKeys) {
 				keys = receivedKeys;
-				$.jCryption.encrypt($("#password").val(),keys,function(encrypted) {
+				$.jCryption.encrypt($("#svnauthpassword").val(),keys,function(encrypted) {
 					passwd=encrypted;
                                    $.ajax({
 						type: "POST",
@@ -581,13 +603,18 @@ cfpr_header("Policy editor","none");
 						url: "policy/svnmodule.php",
 						data:({'op':$("#operation").val(),'user':$("#user").val(),'passwd':passwd}),
 						//data: "name="+current_tab_title+"&content="+html_stripped,
-						success: function(data){
+						success: function(ret){
+						    alert(ret.status);
 							var path = "policy/get_list.php";
 							$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){	
 							});
+						 //if(data.status)
+						 // {
+							$(this).dialog('close');
 							$confirmation.dialog({title: "Checked out"});
 							$confirmation.html('<span>Operation completed sucessfully</span>'); 
 							$confirmation.dialog('open');
+						 // }
 						},
 				
 					error:function(data){
@@ -608,7 +635,7 @@ cfpr_header("Policy editor","none");
 
 	 });
          
-         $('#update')
+     $('#update')
 		.click(function() {
 		$.ajax({
 			type: "POST",
