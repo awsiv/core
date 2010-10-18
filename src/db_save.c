@@ -667,36 +667,31 @@ bson_destroy(&host_key);
 /*****************************************************************************/
 
 void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_rep rep_type, struct Item *data)
-
-{ bson_buffer bb;
-  bson_buffer *setObj;
-  bson_buffer *arr, *sub;
-  struct Item *keys = NULL,*addedKey = NULL;
+{
+  bson_buffer bb,record;
   bson host_key;  // host description
+  char varNameIndex[64];
+  bson_buffer *setObj;
   bson setOp;
+  struct Item *ip;
+  int observable,slot;
+  char *dbOperation = {0};
+  char timekey[CF_SMALLBUF];
   char handle[CF_MAXVARSIZE],reason[CF_BUFSIZE];
+  char *collName;
+  char *dbOp;
   long then;
   time_t tthen;
-  struct Item *ip;
-  char varName[CF_MAXVARSIZE];
-  char *repName = {0};
-  char *dbOp;
-
-// find right host
-bson_buffer_init(&bb);
-bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&host_key, &bb);
-
-bson_buffer_init(&bb);
-
+  
+  
 switch(rep_type)
    {
    case plog_repaired:
-       repName = cfr_repairlog;
+       collName = MONGO_LOGS_REPAIRED;
        dbOp = "update promise repaired";
        break;
    case plog_notkept:
-       repName = cfr_notkeptlog;
+       collName = MONGO_LOGS_NOTKEPT;
        dbOp = "update promise not kept";
        break;
    default:
@@ -704,45 +699,42 @@ switch(rep_type)
        return;
    }
 
-setObj = bson_append_start_object(&bb, "$set");
-
 for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%ld,%254[^,],%1024[^\n]",&then,handle,reason);
    tthen = (time_t)then;
 
-   snprintf(varName, sizeof(varName), "%s.%s@%s", repName,handle,GenTimeKey(tthen));
+   snprintf(timekey,sizeof(timekey),"%s",GenTimeKey(tthen));
 
-   // check for duplicate keys
-   addedKey = ReturnItemIn(keys,varName);
-   if(addedKey)
-     {
-     Debug("!! Duplicate key \"%s\" in %s - ignoring second time=%s - stored=%s", varName, dbOp, cf_ctime(&tthen), addedKey->classes);
-     continue; // avoids DB update failure
-     }
-   else
-     {
-     PrependItem(&keys,varName,cf_ctime(&tthen));
-     }
+
+   // update
+   bson_buffer_init(&bb);
+   setObj = bson_append_start_object(&bb, "$set");
+
+   bson_append_string(setObj,cfr_cause,reason);
+   bson_append_int(setObj,cfr_time,tthen);
    
-   sub = bson_append_start_object(setObj, varName);
-   bson_append_string(sub,cfr_promisehandle, handle);
-   bson_append_string(sub,cfr_cause,reason);
-   bson_append_int(sub, cfr_time, then);
-   bson_append_finish_object(sub);
+   bson_append_finish_object(setObj);
+   bson_from_buffer(&setOp,&bb);
+
+   // find right host and report - key
+   bson_buffer_init(&record);
+   bson_append_string(&record,cfr_keyhash,keyhash);
+   bson_append_string(&record,cfr_promisehandle,handle);
+   bson_append_string(&record,cfr_timeslot,timekey);
+   bson_from_buffer(&host_key, &record);
+
+   mongo_update(conn, collName, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+
+   MongoCheckForError(conn,dbOperation,keyhash);
+
+   bson_destroy(&setOp);
+   bson_destroy(&host_key);
    }
 
-DeleteItemList(keys);
-
-bson_append_finish_object(setObj);
-
-bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,dbOp,keyhash);
-
-bson_destroy(&setOp);
-bson_destroy(&host_key);
+ 
 }
+
 
 /*****************************************************************************/
 

@@ -100,6 +100,33 @@ return hp;
 
 /*****************************************************************************/
 
+struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash)
+{
+  struct Rlist *lp;
+  struct HubHost *hh;
+
+  if(host_list == NULL)
+    {
+    return NULL;
+    }
+
+  
+   for (lp = host_list; lp->next != NULL; lp=lp->next)
+      {
+      hh = (struct HubHost *)lp->item;
+
+      if(strcmp(hh->keyhash,keyhash) == 0)
+	{
+	return hh;
+	}
+      }
+
+   return NULL;
+}
+
+
+/*****************************************************************************/
+
 void DeleteHubHost(struct HubHost *hp)
 {
 if (hp->keyhash)

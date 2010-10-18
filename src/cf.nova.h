@@ -45,6 +45,8 @@
 # define MONGO_PROMISES_UNEXP MONGO_BASE "." MONGO_PROMISES_UNEXP_COLLECTION
 # define MONGO_BODIES   MONGO_BASE ".bodies"
 # define MONGO_SCRATCH MONGO_BASE ".scratch"
+# define MONGO_LOGS_REPAIRED MONGO_BASE ".logs_rep"
+# define MONGO_LOGS_NOTKEPT MONGO_BASE ".logs_nk"
 # include <mongo.h>
 #else
 # define mongo_connection char
@@ -361,6 +363,8 @@ struct Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
+int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRegex);
+int QueryInsertHostInfo(mongo_connection *conn, struct Rlist *host_list);
 void PrintCFDBKey(bson_iterator *it, int depth);
 int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
 int Nova_MagViewOffset(int start_slot,int dbslot,int wrap);
@@ -402,10 +406,11 @@ void BsonToString(char *retBuf, int retBufSz, bson *b, int depth);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 #endif  /* HAVE_LIBMONGOC */
 
-/* db_purge.c */
+/* db_maintain.c */
 
-void CFDB_PurgeReports(void);
+void CFDB_Maintenance(void);
 #ifdef HAVE_LIBMONGOC
+void CFDB_EnsureIndeces(mongo_connection *conn);
 void CFDB_PurgeDropReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedReports(mongo_connection *conn);
 void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr);
@@ -538,6 +543,7 @@ int Nova_ShiftChange(void);
 struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records);
 void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)());
 struct HubHost *NewHubHost(char *keyhash,char *host,char *ipaddr);
+struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash);
 void DeleteHubHost(struct HubHost *hp);
 struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch);
 void DeleteHubSoftware(struct HubSoftware *hs);
@@ -1227,6 +1233,7 @@ struct cf_pscalar
 #define cfr_class_jobs   "cj"
 #define cfr_total_compliance "tc"
 #define cfr_time          "t"
+#define cfr_timeslot      "ts"
 #define cfr_version       "v"
 #define cfr_name          "n"
 #define cfr_arch          "a"
@@ -1238,8 +1245,8 @@ struct cf_pscalar
 #define cfr_type          "T"
 #define cfr_rval          "V"
 #define cfr_lval          "lval"
-#define cfr_repairlog     "rl"
-#define cfr_notkeptlog    "nl"
+//#define cfr_repairlog     "rl"  // moved to own collections
+//#define cfr_notkeptlog    "nl"
 #define cfr_promisehandle "h"
 #define cfr_lastseen      "ls"
 #define cfr_ipaddr        "i"
@@ -1264,6 +1271,9 @@ struct cf_pscalar
 #define cfr_day           "t" // Substitute for time in value report
 #define cfr_valuereport   "va"
 #define cfr_netmeasure    "ne"
+
+#define cfr_netmeasure    "ne"
+
 
 /* Promise DB */
 #define cfp_bundlename    "bn"

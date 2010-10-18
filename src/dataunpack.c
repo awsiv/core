@@ -592,7 +592,7 @@ CfOut(cf_verbose,""," -> Repair log data........................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   CFDB_SavePromiseLog(dbconn,id,plog_repaired,data);
+     CFDB_SavePromiseLog(dbconn,id,plog_repaired,data);
    }
 #endif
 
@@ -619,7 +619,7 @@ CfOut(cf_verbose,""," -> Not kept data...........................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   CFDB_SavePromiseLog(dbconn, id, plog_notkept, data);
+     CFDB_SavePromiseLog(dbconn, id, plog_notkept, data);
    }
 #endif
 

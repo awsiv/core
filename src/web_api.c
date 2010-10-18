@@ -243,7 +243,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-strcat(returnval,"</table>\n");
+ Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPromiseLog);
 
@@ -318,7 +318,8 @@ else
       Join(returnval,buffer,bufsize);
       }
    
-   strcat(returnval,"</table>\n");
+    Join(returnval,"</table>\n",bufsize);
+    
    }
 
 return true;
@@ -360,7 +361,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-strcat(returnval,"</table>\n");
+Join(returnval,"</table>\n",bufsize);
+
 
 DeleteHubQuery(hq,DeleteHubValue);
 
@@ -408,7 +410,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-strcat(returnval,"</table>\n");
+ Join(returnval,"</table>\n",bufsize);
+
 
 DeleteHubQuery(hq,DeleteHubSoftware);
 
@@ -470,7 +473,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-strcat(returnval,"</table>\n");
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubClass);
 
@@ -562,7 +565,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-strcat(returnval,"</table>\n");
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubVariable);
 
@@ -619,7 +622,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-strcat(returnval,"</table>\n");
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
@@ -666,7 +669,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-strcat(returnval,"</table>\n");
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
@@ -736,7 +739,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-strcat(returnval,"</table>\n");
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubLastSeen);
 
@@ -794,7 +797,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    count += tmpsize;
    }
 
-strcat(returnval,"</table>\n");
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPerformance);
 
@@ -839,7 +842,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-strcat(returnval,"</table>\n");
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubSetUid);
 
@@ -897,7 +900,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-strcat(returnval,"</table>\n");
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubBundleSeen);
 
@@ -951,7 +954,7 @@ switch (*cmp)
 	   Join(returnval,buffer,bufsize);
      }
    
-   strcat(returnval,"</table>\n");
+   Join(returnval,"</table>\n",bufsize);
    
    DeleteHubQuery(hq,DeleteHubFileChanges);
    
@@ -1006,7 +1009,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-strcat(returnval,"</table>\n");
+Join(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubFileDiff);
 
@@ -2610,6 +2613,7 @@ hp = CFDB_QueryPromise(&dbconn, handle);
 if (!hp)
    {
    snprintf(returnval, bufsize, "<br>Promise '%s' not found in database", handle);
+   CFDB_Close(&dbconn);
    return false;
    }
 

@@ -85,7 +85,7 @@ while (true)
       CfOut(cf_verbose,""," -> Scanning to compliance cache");
       NewClass("am_policy_hub");
       Nova_CacheTotalCompliance();
-      CFDB_PurgeReports();
+      CFDB_Maintenance();
       }
 
    if (CFH_ZENOSS && IsDefinedClass("Min00_05"))

@@ -1,10 +1,10 @@
 /*****************************************************************************/
 /*                                                                           */
-/* File: db_purge.c                                                          */
+/* File: db_maintain.c                                                       */
 /*                                                                           */
 /* Created: Wed Sept  29 14:47:33 2010                                       */
 /*                                                                           */
-/* MongoDB implementation of report purging.                                 */
+/* MongoDB implementation of database maintenance functions                  */
 /*                                                                           */
 /*****************************************************************************/
 
@@ -13,14 +13,13 @@
 #include "cf.nova.h"
 
 
-void CFDB_PurgeReports(void)
+/*****************************************************************************/
+
+void CFDB_Maintenance(void)
 {
 #ifdef HAVE_LIBMONGOC
 
   mongo_connection dbconn;
-
-
-  CfOut(cf_verbose,"","Purging mongo report database....");
 
 
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -29,10 +28,8 @@ void CFDB_PurgeReports(void)
       return;
     }
 
-  
+  CFDB_EnsureIndeces(&dbconn);
   CFDB_PurgeTimestampedReports(&dbconn);
-  //CFDB_PurgeDropReports(&dbconn);  - rely on replace on update for now
-  
 
   CFDB_Close(&dbconn);
 
@@ -42,6 +39,52 @@ void CFDB_PurgeReports(void)
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
+
+
+void CFDB_EnsureIndeces(mongo_connection *conn)
+/**
+ *  Makes sure certain keys have an index to optimize querying and updating.
+ **/
+{
+  bson_buffer bb;
+  bson b;
+
+  // main host collection
+
+  bson_buffer_init(&bb);
+  bson_append_int(&bb, cfr_keyhash, 1);
+  bson_from_buffer(&b, &bb);
+
+  if(!mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL))
+    {
+      CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE);
+    }
+
+  bson_destroy(&b);
+
+  
+  // log collections
+  bson_buffer_init(&bb);
+  bson_append_int(&bb, cfr_keyhash, 1);
+  bson_append_int(&bb, cfr_promisehandle, 1);
+  bson_append_int(&bb, cfr_timeslot, 1);
+  bson_from_buffer(&b, &bb);
+
+  if(!mongo_create_index(conn, MONGO_LOGS_REPAIRED, &b, 0, NULL))
+    {
+      CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_LOGS_REPAIRED);
+    }
+
+  if(!mongo_create_index(conn, MONGO_LOGS_NOTKEPT, &b, 0, NULL))
+    {
+      CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_LOGS_NOTKEPT);
+    }
+
+  bson_destroy(&b);
+  
+}
+
+/*****************************************************************************/
 
 void CFDB_PurgeTimestampedReports(mongo_connection *conn)
 /**
@@ -156,6 +199,7 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
 void CFDB_PurgeDropReports(mongo_connection *conn)
 /**
  *  Remove certain reports completely.
+ *  UNUSED - currently overwritten on save.
  **/
 {
   bson_buffer bb, *unset;
@@ -187,51 +231,6 @@ void CFDB_PurgeDropReports(mongo_connection *conn)
     
   bson_destroy(&op);
 }
-
-/*****************************************************************************/
-
-/*
-void CFDB_PurgeScanClasses(mongo_connection *conn, bson_iterator *itp, time_t now, struct Item **purgeKeysPtr)
-
-{
-  bson_iterator it1,it2;
-  time_t classTime;
-  char purgeKey[CF_SMALLBUF];
-
-  if (strcmp(bson_iterator_key(itp), cfr_class) != 0)
-    {
-    return;
-    }
-
-  bson_iterator_init(&it1,bson_iterator_value(itp));
-
-  while (bson_iterator_next(&it1))
-    {
-      bson_iterator_init(&it2,bson_iterator_value(&it1));
-
-      while (bson_iterator_next(&it2))
-	{
-	  if(strcmp(bson_iterator_key(&it2),cfr_time) == 0)
-	    {
-	      classTime = bson_iterator_int(&it2);
-	      
-	      if(now - classTime >= CF_HUB_HORIZON)
-		{
-		  // purge both the class object and the class key array
-
-		  Debug("Class \"%s\" needs to be purged (%lu seconds old)\n", bson_iterator_key(&it1), now - classTime);
-
-		  snprintf(purgeKey,sizeof(purgeKey),"%s.%s",cfr_class,bson_iterator_key(&it1));
-		  PrependItem(purgeKeysPtr,purgeKey,NULL);
-
-		}
-
-	    }
-	}
-    }
-
-}
-*/
 
 /*****************************************************************************/
 
