@@ -77,6 +77,8 @@
 #undef NT
 #undef DARWIN
 
+#undef HAVE_FIPS_MODE_SET
+
 /* SVR4 header stuff */
 
 #undef __EXTENSIONS__
@@ -137,9 +139,6 @@
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
-
-/* Define to 1 if you have the `FIPS_mode_set' function. */
-#undef HAVE_FIPS_MODE_SET
 
 /* Define to 1 if you have the <gd.h> header file. */
 #undef HAVE_GD_H
