@@ -5,7 +5,8 @@ $repo = 'https://svn.iu.hio.no/projects/Sudhir';
 $working_dir = realpath('../policies');
 $user=$_POST['user'];
 $passwd=$_POST['passwd'];
-$var = $jCryption->decrypt($_POST['passwd'], $_SESSION["d"]["int"], $_SESSION["n"]["int"]);
+session_start();
+$var = $jCryption->decrypt($passwd, $_SESSION["d"]["int"], $_SESSION["n"]["int"]);
 svn_auth_set_parameter(SVN_AUTH_PARAM_DEFAULT_USERNAME, $user);
 svn_auth_set_parameter(SVN_AUTH_PARAM_DEFAULT_PASSWORD, $var);
 
@@ -14,16 +15,26 @@ svn_auth_set_parameter(PHP_SVN_AUTH_PARAM_IGNORE_SSL_VERIFY_ERRORS,true);
 svn_auth_set_parameter(SVN_AUTH_PARAM_NO_AUTH_CACHE,true);
 
 $op=$_POST['op'];
+ /*$status=svn_checkout($repo, $working_dir);
+ $data=array(
+		'op'=>$op,
+        'user'=>svn_auth_get_parameter(SVN_AUTH_PARAM_DEFAULT_USERNAME) ,
+		'passwd'=>svn_auth_get_parameter(SVN_AUTH_PARAM_DEFAULT_PASSWORD),
+		'status'=>$status,
+		'working'=>$working_dir
+	     );
+ echo json_encode($data);*/
+
 if($op=='checkout')
 	{
         $status=svn_checkout($repo, $working_dir);
         $data=array(
 		'status'=>$status,
-                'working'=>$working_dir
+        'working'=>$working_dir
 	     );
         echo json_encode($data);
 	}
-elseif($op=='commit')
+/*elseif($op=='commit')
        {
         session_start();
         $path=$working_dir.'/'.$_POST['file'];
@@ -45,6 +56,6 @@ elseif($op=='update')
       {
        $dirstat=svn_update($working_dir);
        echo $dirstat;
-      }
+      }*/
   
 ?>
