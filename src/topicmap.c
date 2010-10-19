@@ -754,7 +754,7 @@ if (!cfdb.connected)
 
 /* Then associated topics */
 
-snprintf(query,CF_BUFSIZE,"SELECT from_name,from_type,from_assoc,to_assoc,to_type,to_name,from_id,to_id from associations where from_name='%s' and from_assoc='%s'",handle,NOVA_IMPACTS);
+snprintf(query,CF_BUFSIZE,"SELECT from_name,from_type,from_assoc,to_assoc,to_type,to_name,from_id,to_id from associations where from_name='%s' and from_assoc='%s'",handle,NOVA_GOAL);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -774,7 +774,7 @@ while(CfFetchRow(&cfdb))
    from_pid = Str2Int(CfFetchColumn(&cfdb,6));
    to_pid = Str2Int(CfFetchColumn(&cfdb,7));
 
-   PrependFullItem(&worklist,to_name,NULL,to_pid,0);   
+   PrependFullItem(&worklist,to_name,NULL,0,0);   
    }
 
 CfDeleteQuery(&cfdb);
@@ -914,13 +914,13 @@ if (!cfdb.connected)
    return;
    }
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_comment from topics where pid = '%d'",ip->counter);
+snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_comment,pid from topics where topic_name = '%s'",ip->name);
 
 CfNewQueryDB(&cfdb,query);
 
-if (cfdb.maxcolumns != 1)
+if (cfdb.maxcolumns != 2)
    {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,1);
+   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,2);
    CfCloseDB(&cfdb);
    return;
    }
@@ -928,6 +928,7 @@ if (cfdb.maxcolumns != 1)
 if (CfFetchRow(&cfdb))
    {
    ip->classes = strdup(CfFetchColumn(&cfdb,0));
+   ip->counter = Str2Int(CfFetchColumn(&cfdb,1));
    }
 
 CfDeleteQuery(&cfdb);

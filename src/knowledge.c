@@ -292,6 +292,7 @@ switch (pp->petype)
              fprintf(fp,"bundles::\n\n");
              fprintf(fp,"  \"%s\"\n",bundlename);
              fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);             
+             fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,pp->promisee,NOVA_GOAL_INV);
              }
           }
        break;
@@ -316,7 +317,8 @@ switch (pp->petype)
                 {
                 fprintf(fp,"bundles::\n\n");
                 fprintf(fp,"  \"%s\"\n",bundlename);
-                fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);             
+                fprintf(fp,"      association => impacts(\"%s\");\n",rp->item);
+                fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,rp->item,NOVA_GOAL_INV);
                 }             
              }          
           }
@@ -733,7 +735,7 @@ return id;
 void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promise_id)
 
 { struct Rlist *impacted = NULL, *dependency = NULL, *potential,*rp;
-  struct Item *goals,*ip;
+  struct Item *ip;
   struct Bundle *bp;
   struct SubType *sp;
   struct Promise *pp2;
@@ -752,16 +754,6 @@ else if (handle)
 
 if (handle)
    {
-   if (goals = Nova_GetBusinessGoals(handle))
-      {
-      for (ip = goals; ip != NULL; ip=ip->next)
-         {
-         fprintf(fp,"topics: handles:: \"%s\"  association => a(\"contributes to business goal\",\"goals::%s\",\"is supported by a promise\");",handle,ip->name);
-         }
-
-      DeleteItemList(goals);
-      }
-
    fprintf(fp,"occurrences: %s::  \"promise.php?handle=%s\", represents => { \"declaration\" }; \n",CanonifyName(handle),handle);
    }
 

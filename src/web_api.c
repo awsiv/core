@@ -1831,7 +1831,8 @@ if (matched)
    {
    if (type)
       {
-      snprintf(buffer,bufsize,"<div id=\"bundles\"><table>\n<tr><th>Type</th><th>Service bundle name</th><th>Contributing to goals</th><th></th></tr>\n");      }
+      snprintf(buffer,bufsize,"<div id=\"bundles\"><table>\n<tr><th>Type</th><th>Service bundle name</th><th>Contributing to goals</th><th></th></tr>\n");
+      }
    else
       {
       snprintf(buffer,bufsize,"<div id=\"bundles\"><ul>\n");
@@ -1846,6 +1847,7 @@ if (matched)
       if (type && glist)
          {
          snprintf(goals,sizeof(goals),"<table>");
+
          for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
             {
             snprintf(work,sizeof(work),"<tr><td><a href=\"knowledge.php?pid=%d\">%s</a> </td><td> %s</td></tr>",ip2->counter,ip2->name,ip2->classes);

@@ -1143,6 +1143,8 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observabl
 #define NOVA_HANDLE "is the handle for"
 #define NOVA_HANDLE_INV "has a promise with handle"
 
+#define NOVA_GOAL "contributes to business goal"
+#define NOVA_GOAL_INV "is supported by a promise"
 
 #define NOVA_HISTORYDB "history" "." DB_FEXT
 #define NOVA_MEASUREDB "nova_measures" "." DB_FEXT
