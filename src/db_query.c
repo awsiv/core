@@ -2270,10 +2270,6 @@ switch (type)
 
      while (bson_iterator_next(&it1))
        {
-	 /* Extract the common HubHost data */
-
-	 //CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-      
 	 /* Query specific search/marshalling */
             
 	 if (strcmp(bson_iterator_key(&it1),cfr_keyhash) == 0)
@@ -2317,7 +2313,6 @@ switch (type)
 	 
 	 if(!hh)
 	   {
-	     printf("APPENDING:\"%s\"\n");
 	     hh = NewHubHost(keyhash,NULL,NULL);  // we get more host info later
 	     AppendRlistAlien(&host_list,hh);
 	   }
@@ -2332,25 +2327,6 @@ switch (type)
 
  QueryInsertHostInfo(conn,host_list);
  
- /*
- if (found && !IsHubHostIn(host_list,keyhash))
-   {
-     hh = NewHubHost(keyhash,NULL,hostnames);
-     AppendRlistAlien(&host_list,hh);
-
-     // Now cache the host reference in all of the records to flatten the 2d list
-     for (rp = record_list; rp != NULL; rp=rp->next)
-       {
-	 struct HubPromiseLog *hs = (struct HubPromiseLog *)rp->item;
-
-	 if (hs->hh == CF_THIS_HH)
-	   {
-	     hs->hh = hh;
-	   }
-       }
-   }
- */
-
  if(sort)
    {
      record_list = SortRlist(record_list,SortPromiseLog);

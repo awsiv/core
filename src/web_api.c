@@ -521,7 +521,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       strcpy(lscope,hv->scope);
       snprintf(buffer,CF_BUFSIZE,"<tr><th colspan=\"3\">Bundle scope <a href=\"bundle.php?bundle=%s\">%s</a><th></tr>\n",hv->scope,hv->scope);
       Join(returnval,buffer,bufsize);
-      snprintf(buffer,CF_BUFSIZE,"<tr><th>host</th><th>type</th><th>name</th><th>value</th></tr>\n");
+      snprintf(buffer,CF_BUFSIZE,"<tr><th>Host</th><th>Type</th><th>Name</th><th>Value</th></tr>\n");
       Join(returnval,buffer,bufsize);
       }
 
@@ -610,7 +610,7 @@ returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
 
-snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>policy</th><th>kept</th><th>repaired</th><th>not kept</th><th>last seen</th></tr>\n");
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Policy</th><th>Kept</th><th>Repaired</th><th>Not kept</th><th>Last seen</th></tr>\n");
 Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -657,7 +657,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>promise handle</th><th>Last known<br>state</th><th>probability<br>kept</th><th>uncertainty</th><th>last seen</th></tr>\n");
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Last known<br>State</th><th>Probability<br>Kept</th><th>Uncertainty</th><th>Last seen</th></tr>\n");
 Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -710,7 +710,7 @@ returnval[0] = '\0';
 strcat(returnval,"<table>\n");
 count += strlen(returnval);
 
-snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>Initiated</th><th>IP address</th><th>remote host</th><th>last seen</th>"
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Initiated</th><th>IP address</th><th>Remote host</th><th>Last seen</th>"
             "<th>Hours ago</th><th>Avg interval</th><th>Uncertainty</th><th>Remote host key</th></tr>\n");
 Join(returnval,buffer,bufsize);
    
@@ -831,7 +831,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
-snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>setuid/setgid root file</th></tr>\n");
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Setuid/setgid root file</th></tr>\n");
 Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -943,7 +943,7 @@ switch (*cmp)
    returnval[0] = '\0';
    
    strcat(returnval,"<table>\n");
-   snprintf(buffer,sizeof(buffer),"<tr><td>host</td><td>file</td><td>time of change</td></tr>\n");
+   snprintf(buffer,sizeof(buffer),"<tr><td>Host</td><td>File</td><td>Time of change</td></tr>\n");
    Join(returnval,buffer,bufsize);
       
    for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -998,7 +998,7 @@ returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
 
-snprintf(buffer,sizeof(buffer),"<tr><th>host</th><th>file</th><th>change detected at</th><th>change</th></tr>\n");
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>File</th><th>Change detected at</th><th>Change</th></tr>\n");
 Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -3530,7 +3530,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       strcpy(lscope,hv->scope);
       snprintf(buffer,CF_BUFSIZE,"<nh>Bundle scope %s<nova_nl>",hv->scope);
       Join(returnval,buffer,bufsize);
-      snprintf(buffer,CF_BUFSIZE,"<nh>host<nc>type<nc>name<nc>value<nova_nl>");
+      snprintf(buffer,CF_BUFSIZE,"<nh>Host<nc>Type<nc>Name<nc>Value<nova_nl>");
       Join(returnval,buffer,bufsize);
       }
 
@@ -3697,7 +3697,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 returnval[0] = '\0';
 
-snprintf(buffer,sizeof(buffer),"<nh>host<nc>file<nc>change detected at<nc>change<nova_nl>");
+snprintf(buffer,sizeof(buffer),"<nh>Host<nc>File<nc>Change detected at<nc>Change<nova_nl>");
 Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -3774,7 +3774,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 returnval[0] = '\0';
 
-snprintf(buffer,sizeof(buffer),"<nh>host<nc>setuid/setgid root file<nova_nl>\n");
+snprintf(buffer,sizeof(buffer),"<nh>Host<nc>Setuid/setgid root file<nova_nl>\n");
 Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
