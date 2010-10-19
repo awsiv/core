@@ -111,7 +111,7 @@ struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash)
     }
 
   
-   for (lp = host_list; lp->next != NULL; lp=lp->next)
+   for (lp = host_list; lp != NULL; lp=lp->next)
       {
       hh = (struct HubHost *)lp->item;
 

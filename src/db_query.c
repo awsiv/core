@@ -2317,6 +2317,7 @@ switch (type)
 	 
 	 if(!hh)
 	   {
+	     printf("APPENDING:\"%s\"\n");
 	     hh = NewHubHost(keyhash,NULL,NULL);  // we get more host info later
 	     AppendRlistAlien(&host_list,hh);
 	   }

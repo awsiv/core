@@ -30,7 +30,7 @@ void CFDB_Maintenance(void)
 
   CFDB_EnsureIndeces(&dbconn);
   CFDB_PurgeTimestampedReports(&dbconn);
-
+  CFDB_PurgePromiseLogs(&dbconn,CF_HUB_PURGESECS,time(NULL));
   CFDB_Close(&dbconn);
 
 #endif  /* HAVE_LIBMONGOC */
@@ -192,6 +192,41 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
   
 
   mongo_cursor_destroy(cursor);  
+}
+
+/*****************************************************************************/
+
+void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t now)
+/**
+ * Deletes old repair and not kept log entries.
+ **/
+{
+  bson_buffer bb, *sub;
+  time_t oldStamp;
+  bson cond;
+
+  oldStamp = now - oldThreshold;
+
+  bson_buffer_init(&bb);
+
+  sub = bson_append_start_object(&bb,cfr_time);
+  bson_append_int(sub, "$lte", oldStamp);
+  bson_append_finish_object(sub);
+
+  bson_from_buffer(&cond, &bb);
+
+  mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
+
+  MongoCheckForError(conn,"timed delete host from repair logs collection",NULL);
+
+
+  mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
+
+  MongoCheckForError(conn,"timed delete host from not kept logs collection",NULL);
+
+
+  bson_destroy(&cond);
+  
 }
 
 /*****************************************************************************/

@@ -413,6 +413,7 @@ void CFDB_Maintenance(void);
 void CFDB_EnsureIndeces(mongo_connection *conn);
 void CFDB_PurgeDropReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedReports(mongo_connection *conn);
+void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t now);
 void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr);
 void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr);
 void DeleteFromBsonArray(bson_buffer *bb, char *arrName, struct Item *elements);
