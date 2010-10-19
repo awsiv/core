@@ -4504,7 +4504,7 @@ struct Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle)
  bson_buffer_init(&bbuf);
  bson_append_int(&bbuf,cfr_promisecompl,1);
  bson_append_int(&bbuf,cfr_keyhash,1);
- bson_append_int(&bbuf,cfr_ip_array,1);  // use host_array instead ?
+ bson_append_int(&bbuf,cfr_host_array,1);
  bson_from_buffer(&field,&bbuf);
 
 cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
@@ -4550,11 +4550,11 @@ while(mongo_cursor_next(cursor))  // iterate over docs
 	       }
 	   }
 	 }
-      else if (strcmp(bson_iterator_key(&it1), cfr_ip_array) == 0)
+      else if (strcmp(bson_iterator_key(&it1), cfr_host_array) == 0)
          {
 	 bson_iterator_init(&it2,bson_iterator_value(&it1));
 
-	 if(bson_iterator_next(&it2))  // just pick first IP
+	 if(bson_iterator_next(&it2))  // just pick first hostname
 	   {
 	     snprintf(host,sizeof(host),"%s",bson_iterator_string(&it2));
 	   }

@@ -145,11 +145,11 @@ if (hostkey && strlen(hostkey) > 0)
       {
       if (now > then + CF_HUB_HORIZON)
          {
-         snprintf(buffer,bufsize,"<span id=\"amber\">%s</span>",cf_ctime(&then));
+         snprintf(buffer,bufsize,"<span class=\"amber\">%s</span>",cf_ctime(&then));
          }
       else if (now > then + CF_HUB_HORIZON*2)
          {
-         snprintf(buffer,bufsize,"<span id=\"red\">%s</span>",cf_ctime(&then));
+         snprintf(buffer,bufsize,"<span class=\"red\">%s</span>",cf_ctime(&then));
          }
       else
          {
@@ -459,11 +459,11 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    
    if (now - hc->t > 6*3600)
       {
-      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%lf</td><td>%lf</td><td><span id=\"amber\">%s</span></td></tr>\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%lf</td><td>%lf</td><td><span class=\"amber\">%s</span></td></tr>\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
       }
    else if (now - hc->t > (time_t)CF_WEEK)
       {
-      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%lf</td><td>%lf</td><td><span id=\"red\">%s</span></td></tr>\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%lf</td><td>%lf</td><td><span class=\"red\">%s</span></td></tr>\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
       }
    else
       {
@@ -731,7 +731,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    then = hl->t;
    
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td>%s</td>"
-            "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td><span id=\"keyhash\">%s</span></td></tr>\n",
+            "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td><span class=\"keyhash\">%s</span></td></tr>\n",
             hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->keyhash,hl->rhost->ipaddr,cf_ctime(&then),
             hl->hrsago,hl->hrsavg,hl->hrsdev,
             hl->rhost->keyhash);
@@ -1754,7 +1754,7 @@ if (list)
       snprintf(context,CF_MAXVARSIZE,"class_contexts::%s",ip->name);
       pid = Nova_GetPidForTopic(context);
 
-      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"knowledge.php?pid=%d\"><span id=\"classcontext\">%s</span></a></li>",pid,ip->name);
+      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"knowledge.php?pid=%d\"><span class=\"classcontext\">%s</span></a></li>",pid,ip->name);
       Join(buffer,work,bufsize);
       }
    strcat(buffer,"</ul>");
@@ -1792,7 +1792,7 @@ if (matched)
    
    for (ip = matched; ip != NULL; ip=ip->next)
       {
-      snprintf(work,CF_MAXVARSIZE,"<li><span id=\"args\">%s</span></li>",ip->name);
+      snprintf(work,CF_MAXVARSIZE,"<li><span class=\"args\">%s</span></li>",ip->name);
       Join(buffer,work,bufsize);
       }
 
@@ -1863,11 +1863,11 @@ if (matched)
 
       if (type)
          {
-         snprintf(work,CF_BUFSIZE,"<tr><td><a href=\"bundle.php?type=%s\"><span id=\"bundletype\">%s</span></a></td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span id=\"bundle\">%s</span></a></td><td>%s</td><td><img src=\"%s\"></td></tr>",ip->classes,ip->classes,ip->name,ip->classes,ip->name,goals,colour);
+         snprintf(work,CF_BUFSIZE,"<tr><td><a href=\"bundle.php?type=%s\"><span class=\"bundletype\">%s</span></a></td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span class=\"bundle\">%s</span></a></td><td>%s</td><td><img src=\"%s\"></td></tr>",ip->classes,ip->classes,ip->name,ip->classes,ip->name,goals,colour);
          }
       else
          {
-         snprintf(work,CF_BUFSIZE,"<li><a href=\"bundle.php?type=%s\"><span id=\"bundletype\">%s</span></a> <a href=\"bundle.php?bundle=%s&type=%s\"><span id=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->classes,ip->name);
+         snprintf(work,CF_BUFSIZE,"<li><a href=\"bundle.php?type=%s\"><span class=\"bundletype\">%s</span></a> <a href=\"bundle.php?bundle=%s&type=%s\"><span class=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->classes,ip->name);
          }
       
       Join(buffer,work,bufsize);
@@ -1917,7 +1917,7 @@ if (matched)
    
    for (ip = matched; ip != NULL; ip=ip->next)
       {
-      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"bundle.php?type=%s\"><span id=\"bundletype\">%s</span></a> <a href=\"bundle.php?bundle=%s&type=%s\"><span id=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->classes,ip->name);
+      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"bundle.php?type=%s\"><span class=\"bundletype\">%s</span></a> <a href=\"bundle.php?bundle=%s&type=%s\"><span class=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->classes,ip->name);
       Join(buffer,work,bufsize);
       }
 
@@ -2028,7 +2028,7 @@ Nova_WebTopicMap_Initialize();
 
 if (Nova_GetTopicByPid(id,topic_name,topic_id,topic_type,topic_comment))
    {
-   snprintf(buffer,bufsize,"<div id=\"topic\">\n'<span id=\"subject\">%s</span>' in section `<span id=\"category\">%s</span>:<p>\"%s\"</div>",topic_name,topic_type,topic_comment);
+   snprintf(buffer,bufsize,"<div id=\"topic\">\n'<span class=\"subject\">%s</span>' in section `<span class=\"category\">%s</span>:<p>\"%s\"</div>",topic_name,topic_type,topic_comment);
    }
 else
    {
@@ -2402,7 +2402,7 @@ if (hb)
       
       for (ha = hb->attr; ha != NULL; ha = ha->next)
          {
-         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span id=\"rval\">%s</span></td><td><a href=\"knowledge.php?topic=%s\">%s</a></td></tr>",ha->lval,ha->lval,ha->rval,ha->classContext,ha->classContext);
+         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span class=\"rval\">%s</span></td><td><a href=\"knowledge.php?topic=%s\">%s</a></td></tr>",ha->lval,ha->lval,ha->rval,ha->classContext,ha->classContext);
 	 Join(returnval,work,bufsize);
          }
 
@@ -2621,13 +2621,13 @@ returnval[0] = '\0';
 
 strcat(returnval,"<div id=\"promise\"><table>\n");
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\" width=\"20%\">Belonging to <span id=\"bundletype\">%s</span> bundle</td><td>:</td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span id=\"bundle\">%s</span></a><td></tr>",hp->bundleType,hp->bundleName,hp->bundleType,hp->bundleName);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\" width=\"20%\">Belonging to <span class=\"bundletype\">%s</span> bundle</td><td>:</td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span class=\"bundle\">%s</span></a><td></tr>",hp->bundleType,hp->bundleName,hp->bundleType,hp->bundleName);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Reference handle</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span id=\"handle\">%s</span></a></td></tr>",hp->handle,hp->handle);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Reference handle</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span class=\"handle\">%s</span></a></td></tr>",hp->handle,hp->handle);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Affected object (promiser)</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span id=\"promiser\">%s</span></a></td></tr>",hp->promiser,hp->promiser);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Affected object (promiser)</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span class=\"promiser\">%s</span></a></td></tr>",hp->promiser,hp->promiser);
 Join(returnval,work,bufsize);
 
 if (EMPTY(hp->promisee))
@@ -2639,7 +2639,7 @@ else
    snprintf(promiseeText,sizeof(promiseeText),"<a href=\"knowledge.php?topic=%s\">%s</a>",hp->promisee,hp->promisee);     
    }
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Stakeholders (promisees)</td><td>:</td><td><span id=\"promisee\">%s</span></td></tr>",promiseeText);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Stakeholders (promisees)</td><td>:</td><td><span class=\"promisee\">%s</span></td></tr>",promiseeText);
 Join(returnval,work,bufsize);
 
 if (EMPTY(hp->comment))
@@ -2651,16 +2651,16 @@ else
    snprintf(commentText, sizeof(commentText),"%s",hp->comment);
    }
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Comment on original intention</td><td>:</td><td><span id=\"promiser\">%s</span></td></tr>",commentText);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Comment on original intention</td><td>:</td><td><span class=\"promiser\">%s</span></td></tr>",commentText);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Promise is about</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span id=\"subtype\">%s</span></a></td></tr>",hp->promiseType,hp->promiseType);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Promise is about</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span class=\"subtype\">%s</span></a></td></tr>",hp->promiseType,hp->promiseType);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applies in the class context</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span id=\"classcontext\">%s</span></a></td></tr>",hp->classContext,hp->classContext);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applies in the class context</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span class=\"classcontext\">%s</span></a></td></tr>",hp->classContext,hp->classContext);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Defined in file</td><td>:</td><td><span id=\"file\">%s</span> near line %d</td></tr>",hp->file,hp->lineNo);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Defined in file</td><td>:</td><td><span class=\"file\">%s</span> near line %d</td></tr>",hp->file,hp->lineNo);
 Join(returnval,work,bufsize);
 
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Body of the promise</td><td>:</td><td></td></tr>");
@@ -2679,11 +2679,11 @@ if (hp->constraints)
 
       if (strcmp(lval,"usebundle") == 0)
          {
-         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span id=\"bundlename\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
+         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span class=\"bundlename\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
          }
       else
          {
-         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span id=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><a href=\"body.php?body=%s&type=%s\"><span id=\"bodyname\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
+         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><a href=\"body.php?body=%s&type=%s\"><span class=\"bodyname\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
          }
       
       Join(returnval,work,bufsize);   
@@ -2907,6 +2907,23 @@ char *Nova_LongState(char s)
 
 /*****************************************************************************/
 
+char *Nova_LongStateWarn(char s)
+
+{
+ switch (s)
+    {
+    case 'c':
+        return "Compliant";
+    case 'r':
+        return "Repaired";
+    case 'n':
+    default:
+        return "<span class=\"amber\">Not Compliant</span>";
+    }
+}
+
+/*****************************************************************************/
+
 void Nova2PHP_AnalyseMag(char *hostkey,enum observables obs,char *buffer,int bufsize)
 {
 Nova_WebTopicMap_Initialize();
@@ -2956,13 +2973,13 @@ for (sp = s; *sp != '\0'; sp += strlen(tline)+1)
    switch (pm)
       {
       case '+':
-          snprintf(work,sizeof(work),"<tr><td><span id=\"pm\">%c</span></td><td>%d</td><td><span id=\"plusline\">%s</span></td><tr>",pm,line,diff);
+          snprintf(work,sizeof(work),"<tr><td><span class=\"pm\">%c</span></td><td>%d</td><td><span class=\"plusline\">%s</span></td><tr>",pm,line,diff);
           break;
       case '-':
-          snprintf(work,sizeof(work),"<tr><td><span id=\"pm\">%c</span></td><td>%d</td><td><span id=\"minusline\">%s</span></td><tr>",pm,line,diff);
+          snprintf(work,sizeof(work),"<tr><td><span class=\"pm\">%c</span></td><td>%d</td><td><span class=\"minusline\">%s</span></td><tr>",pm,line,diff);
           break;
       default:
-          snprintf(work,sizeof(work),"<tr><td><span id=\"pm\">%c</span></td><td>%d</td><td>%s</td><tr>",pm,line,diff);
+          snprintf(work,sizeof(work),"<tr><td><span class=\"pm\">%c</span></td><td>%d</td><td>%s</td><tr>",pm,line,diff);
           break;
       }
    
@@ -3917,7 +3934,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 	     //CFDB_QueryStausCause(&dbconn,hostKeyHash,handle,*statusStr,cause,sizeof(cause));
 
 	     snprintf(row,sizeof(row),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
-		      host,attributes,Nova_LongState(*statusStr),time);
+		      host,attributes,Nova_LongStateWarn(*statusStr),time);
 		   
 	     Join(buf,row,bufSz);
 	     }
