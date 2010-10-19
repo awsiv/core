@@ -726,12 +726,12 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    mongo_update(conn, collName, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
-   MongoCheckForError(conn,dbOperation,keyhash);
-
    bson_destroy(&setOp);
    bson_destroy(&host_key);
    }
 
+// should do this in loop, but not efficient...
+ MongoCheckForError(conn,dbOperation,keyhash);
  
 }
 

@@ -4011,5 +4011,29 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize)
 	return -1;
      }   
 }
+
 /*****************************************************************************/
+
+int Nova2PHP_delete_host(char *keyHash)
+{
+  mongo_connection dbconn;
+  
+
+  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+  
+  
+  CFDB_PurgeHost(&dbconn, keyHash);
+
+
+  CFDB_Close(&dbconn);
+
+  return true;
+}
+
+/*****************************************************************************/
+
 #endif

@@ -357,6 +357,40 @@ void DeleteFromBsonArray(bson_buffer *bb, char *arrName, struct Item *elements)
 
 }
 
+/*****************************************************************************/
+
+void CFDB_PurgeHost(mongo_connection *conn, char *keyHash)
+{
+  bson_buffer bb;
+  bson cond;
+
+  bson_buffer_init(&bb);
+  bson_append_string(&bb,cfr_keyhash,keyHash);
+  bson_from_buffer(&cond,&bb);
+  
+  mongo_remove(conn, MONGO_DATABASE, &cond);
+
+  MongoCheckForError(conn,"delete host from main collection",keyHash);
+
+  
+  mongo_remove(conn, MONGO_DATABASE_MON, &cond);
+
+  MongoCheckForError(conn,"delete host from monitord collection",keyHash);
+
+
+  mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
+
+  MongoCheckForError(conn,"delete host from repair logs collection",keyHash);
+
+
+  mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
+
+  MongoCheckForError(conn,"delete host from not kept logs collection",keyHash);
+
+
+  bson_destroy(&cond);  
+  
+}
 
 #endif  /* HAVE_LIBMONGOC */
 

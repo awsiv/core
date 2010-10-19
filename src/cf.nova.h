@@ -416,6 +416,7 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn);
 void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr);
 void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr);
 void DeleteFromBsonArray(bson_buffer *bb, char *arrName, struct Item *elements);
+void CFDB_PurgeHost(mongo_connection *conn, char *keyHash);
 #endif /* HAVE_LIBMONGOC */
 
 
@@ -984,6 +985,10 @@ void Nova2PHP_cdp_reportnames(char *buf,int bufSz);
 int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz);
 char *GetCdpTableHeader(cdp_t cdpType);
 cdp_t CdpReportNameToType(char *reportName);
+
+
+int Nova2PHP_delete_host(char *keyHash);
+
 
 /* weekly.c */
 
