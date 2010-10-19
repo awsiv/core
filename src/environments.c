@@ -48,6 +48,7 @@ if (Nova_EnvironmentsSanityChecks(a,pp))
    CF_NODES++;
 
    PromiseBanner(pp);
+   NewScalar("this","promiser",pp->promiser,cf_str);
    Nova_VerifyEnvironments(a,pp);
    }
 
