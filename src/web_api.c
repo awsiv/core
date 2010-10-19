@@ -2347,6 +2347,11 @@ char *Nova2PHP_GetPromiseBundle(char *handle)
 { static char buffer[CF_BUFSIZE];
   mongo_connection dbconn;
 
+  if(strcmp(handle,"internal_promise") == 0)
+    {
+    return "";
+    }
+
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
@@ -2467,6 +2472,11 @@ char *Nova2PHP_GetPromiseType(char *handle)
     
 { static char buffer[CF_BUFSIZE];
   mongo_connection dbconn;
+
+  if(strcmp(handle,"internal_promise") == 0)
+    {
+    return "";
+    }
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -2601,8 +2611,13 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
   char work[CF_MAXVARSIZE];
   int i,count;
   
+  
+  if(strcmp(handle,"internal_promise") == 0)
+    {
+    snprintf(returnval, bufsize, "<br> This is a promise made internally by Cfengine, and is thus not part of your policy.");
+    return true;
+    }
 
-/* BEGIN query document */
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
