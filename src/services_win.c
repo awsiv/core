@@ -629,15 +629,16 @@ int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int
     if(depHandle == NULL)
        {
 
-       if(IsStrIn(depName, PROTECTED_SERVICES))
+       if(IsStrIn(depName, PROTECTED_SERVICES, true))
          {
          CfOut(cf_inform, "", "Service \"%s\" is protected, assuming it is running", depName);
-	 continue;
          }
+       else
+	 {
+	 CfOut(cf_log,"OpenService","Could not open handle to service \"%s\" in order to check if dependency is running - assuming it is protected", depName);
+	 }
 
-       CfOut(cf_error,"OpenService","!! Could not open handle to service \"%s\" in order to check if dependency is running", depName);
-       free(srvConfig);
-       return false;
+       continue;
        }
 
     // check dependency run state
@@ -911,15 +912,16 @@ int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHandle, DW
     
     if(depHandle == NULL)
        {
-       if(IsStrIn(depName, PROTECTED_SERVICES))
-         {
-         CfOut(cf_inform, "", "Service \"%s\" is protected, assuming start time is correct", depName);
-	 continue;
-         }
+	 if(IsStrIn(depName, PROTECTED_SERVICES, true))
+           {
+           CfOut(cf_inform, "", "Service \"%s\" is protected, assuming start time is correct", depName);
+           }
+	 else
+	   {
+	   CfOut(cf_log,"OpenService","Could not open handle to service \"%s\" in order to check that dependency is enabled - assuming it is protected", depName);
+	   }
 
-       CfOut(cf_error,"","!! Could not open handle to service \"%s\" in order to enable service dependency", depName);
-       free(srvConfig);
-       return false;
+       continue;
        }
 
     Debug("Un-disabling dependencies of service \"%s\", if needed\n", depName);
