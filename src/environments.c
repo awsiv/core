@@ -32,6 +32,7 @@ void Nova_VerifyEnvironmentsPromise(struct Promise *pp)
 
 { struct Attributes a = {0};
   struct CfLock thislock;
+  struct Promise *pexp;
 
 #ifdef HAVE_LIBVIRT
 a = GetEnvironmentsAttributes(pp);
@@ -49,7 +50,10 @@ if (Nova_EnvironmentsSanityChecks(a,pp))
 
    PromiseBanner(pp);
    NewScalar("this","promiser",pp->promiser,cf_str);
+
+   pexp = ExpandDeRefPromise("this",pexp);
    Nova_VerifyEnvironments(a,pp);
+   DeletePromise(pexp);
    }
 
 YieldCurrentLock(thislock);
