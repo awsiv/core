@@ -944,6 +944,7 @@ void CFDB_SavePromiseCompliance(mongo_connection *conn, char *keyhash, struct It
   bson_buffer *setObj;
   bson_buffer *sub;
   bson_buffer *keyArr, *keyAdd, *keyArrField;
+  struct Item *keys = NULL,*addedKey = NULL;
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
@@ -971,6 +972,17 @@ for (ip = data; ip != NULL; ip=ip->next)
    snprintf(varName, sizeof(varName), "%s.%s", cfr_promisecompl, handle);
    snprintf(statusStr, sizeof(statusStr), "%c", status);
    
+   addedKey = ReturnItemIn(keys,varName);
+   if(addedKey)
+     {
+     Debug("!! Duplicate key \"%s\" in SavePromiseCompliance - ignoring second time=%s - stored=%s", varName, cf_ctime(&then), addedKey->classes);
+     continue; // avoids DB update failure
+     }
+   else
+     {
+     PrependItem(&keys,varName,cf_ctime(&then));
+     }
+
    sub = bson_append_start_object(setObj , varName);
    bson_append_string(sub, cfr_promisestatus, statusStr);
    bson_append_double(sub, cfr_obs_E, av);
@@ -987,17 +999,17 @@ keyAdd = bson_append_start_object(&bb , "$addToSet");
 keyArrField = bson_append_start_object(keyAdd,cfr_promisecompl_keys);
 keyArr = bson_append_start_array(keyAdd , "$each");
 
-for (ip = data, i = 0; ip != NULL; ip=ip->next, i++)
+for (ip = keys, i = 0; ip != NULL; ip=ip->next, i++)
    {
-   sscanf(ip->name,"%ld,%255[^,],%c,%lf,%lf\n",&then,handle,&status,&av,&dev);
    snprintf(iStr,sizeof(iStr),"%d",i);
-   bson_append_string(keyArr,iStr,handle);
+   bson_append_string(keyArr,iStr,ip->name);
    }
 
 bson_append_finish_object(keyArr);
 bson_append_finish_object(keyArrField);
 bson_append_finish_object(keyAdd);
 
+DeleteItemList(keys);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
