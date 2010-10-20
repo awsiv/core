@@ -18,9 +18,9 @@ cfpr_header("Policy editor","none");
 			<a href="#" class="menuitem" id="new"><img class="icontext" src="images/new.png"/>New</a>
 			  <a href="#" class="menuitem" id="save"><img class="icontext" src="images/save.png">Save</a>
 			  <a href="#" class="menuitem" id="checksyntax"><img class="icontext" src="images/check_syntax_grey.png"/>Check syntax</a>
-			  <a href="#" class="menuitem" id="update"><img class="icontext" src="images/update_grey.png"/>Update</span></a>
-			  <a href="#" class="menuitem" id="Commit"><img class="icontext" src="images/commit_grey.png"/>Commit</span></a>
-              <a href="#" class="menuitem" id="Checkout"><img class="icontext" src="images/commit_grey.png"/>Checkout</span></a>
+                          <a href="#" class="menuitem" id="Checkout"><img class="icontext" src="images/checkout.png"/>Checkout</span></a>
+			  <a href="#" class="menuitem" id="update"><img class="icontext" src="images/update.png"/>Update</span></a>
+			  <a href="#" class="menuitem" id="Commit"><img class="icontext" src="images/commit.png"/>Commit</span></a>
 		  </div>
 		</div>
 	</div>
