@@ -51,7 +51,7 @@ if (Nova_EnvironmentsSanityChecks(a,pp))
    PromiseBanner(pp);
    NewScalar("this","promiser",pp->promiser,cf_str);
 
-   pexp = ExpandDeRefPromise("this",pexp);
+   pexp = ExpandDeRefPromise("this",pp);
    Nova_VerifyEnvironments(a,pp);
    DeletePromise(pexp);
    }
