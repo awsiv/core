@@ -18,7 +18,7 @@ cfpr_header("Policy editor","none");
 			<a href="#" class="menuitem" id="new"><img class="icontext" src="images/new.png"/>New</a>
 			  <a href="#" class="menuitem" id="save"><img class="icontext" src="images/save.png">Save</a>
 			  <a href="#" class="menuitem" id="checksyntax"><img class="icontext" src="images/check_syntax_grey.png"/>Check syntax</a>
-                          <a href="#" class="menuitem" id="Checkout"><img class="icontext" src="images/checkout.png"/>Checkout</span></a>
+              <a href="#" class="menuitem" id="Checkout"><img class="icontext" src="images/checkout.png"/>Checkout</span></a>
 			  <a href="#" class="menuitem" id="update"><img class="icontext" src="images/update.png"/>Update</span></a>
 			  <a href="#" class="menuitem" id="Commit"><img class="icontext" src="images/commit.png"/>Commit</span></a>
               <a href="#" class="menuitem" id="svnlogs"><img class="icontext" src="images/commit_grey.png"/>SVN LOGS</span></a>
@@ -69,6 +69,8 @@ cfpr_header("Policy editor","none");
                     <input type="text" class="ui-widget-content ui-corner-all" value="" id="username" />
                     <label for="tab_title">Password:</label>
                     <input type="password" class="ui-widget-content ui-corner-all" value="" id="password" />
+                    <label for="tab_title" id="repolbl">Repository</label>
+                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="repo" />
                     <label for="tab_title" id="commentlbl">Comment</label>
                     <textarea class="ui-widget-content ui-corner-all" id="comments" name="comments"></textarea>
                     <input type="hidden" id="event"></input>
@@ -80,7 +82,7 @@ cfpr_header("Policy editor","none");
    </div>
    <div id="confirmation" style="display:none">
    </div>
-   <div id="svnlogtable">
+   <div id="svnlogtable" style="display:none;" class="dialog">
    
    </div>
 <script src="scripts/Cfeditor/jquery.layout.min-1.2.0.js" type="text/javascript"></script>
@@ -128,7 +130,7 @@ cfpr_header("Policy editor","none");
 	});
 	
 	var tab_counter = 2;
-		var code_editor_counter=1;
+		var code_editor_counter=0;//previously 1
 		var tab_title_input="Untitled-";
 		var tab_content_input="";
 		var current_tab_content="";
@@ -510,6 +512,8 @@ cfpr_header("Policy editor","none");
 		   $("#commentlbl").hide();
 		    $("#comments").hide();
 			$("#datatype").val('json');
+			$("#repo").show();
+			$("#repolbl").show();
            $cfd.dialog('open');
          });
 
@@ -517,6 +521,8 @@ cfpr_header("Policy editor","none");
 	   .click(function() {
 		 $("#comments").show();
 		 $("#commentlbl").show();
+		 $("#repo").hide();
+		 $("#repolbl").hide();
 		$("#operation").val('commit');
 		$("#datatype").val('json');
 			 var tabtype=$("input[name='tabtype']",current_tab_id).val();
@@ -536,8 +542,18 @@ cfpr_header("Policy editor","none");
            $("#operation").val('update');
 		   $("#commentlbl").hide();
 		   $("#comments").hide();
-		   $("#datatype").val('json')
-           $cfd.dialog('open');
+		   $("#repo").hide();
+		   $("#repolbl").hide();
+		   $("#datatype").val('json');
+		   if(code_editor_counter > 0)
+		     {
+				 alert("please close all the active policies tab");
+			 }
+			 else
+			 {
+				 $cfd.dialog('open');
+			 }
+           
          });
 	   
 	    $('#svnlogs')
@@ -545,7 +561,9 @@ cfpr_header("Policy editor","none");
            $("#operation").val('svnlogs');
 		   $("#commentlbl").hide();
 		   $("#comments").hide();
-		   $("#datatype").val('html');
+		   $("#repo").show();
+		   $("#repolbl").show();
+		   $("#datatype").val('json');
            $cfd.dialog('open');
          });
        
@@ -594,15 +612,19 @@ cfpr_header("Policy editor","none");
                         $.ajax({
 						type: 'POST',
 						url: "policy/svnmodule.php",
-						data: {'passwd':passwd, 'op':$("#operation").val(),'file':current_tab_title,'comments':$("#comments").val(),'user':$("#username").val()},
+						data: {'passwd':passwd, 'op':$("#operation").val(),'file':current_tab_title,'comments':$("#comments").val(),'user':$("#username").val(),'repo':$("#repo").val()},
                         dataType:$("#datatype").val(),
 						success: function(data) {
 							if($("#operation").val()=='checkout')
 							  {
 								  if(data.status)
 								  {
+								   var path = "policy/get_list.php";
+									$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){	
+									});
+								  $('#Checkout').hide();
 								  $confirmation.dialog({title: $("#operation").val()});
-								  $confirmation.html('<span>Check out sucessfull </span>'); 
+								  $confirmation.html('<span>Checkedout sucessfully </span>'); 
 								  }
 								  else
 								  {
@@ -614,7 +636,7 @@ cfpr_header("Policy editor","none");
 							  }
 						  else if($("#operation").val()=='svnlogs')
 							  { 
-								$('#svnlogtable').html(data);
+								$('#svnlogtable').html(data.table);
 								$('#svnlogtable table').tableFilter();
                                 $('#svnlogtable table').tablesorter({widgets: ['zebra']}); 
 								/* $.fancybox({
@@ -626,6 +648,20 @@ cfpr_header("Policy editor","none");
 								});*/ 
 								$svnlogdlg.dialog('open');
 							  }
+						else if($("#operation").val()=='update')
+							{
+								var path = "policy/get_list.php";
+							    $("#container_policies_id").load(path,{dir: 'policies/'}, function(data){});
+								 $confirmation.dialog({title: $("#operation").val()});
+								 $confirmation.html('<span>Updated Sucessfully </span>'); 
+								 $confirmation.dialog('open');
+							}
+						else if($("#operation").val()=='commit')
+							{
+								 $confirmation.dialog({title: $("#operation").val()});
+								 $confirmation.html('<span>'+current_tab_title+' commited Sucessfully </span>'); 
+								 $confirmation.dialog('open');
+							}
 						},
 					error:function(data){
 						$confirmation.dialog({title: "Error"});
@@ -647,7 +683,7 @@ cfpr_header("Policy editor","none");
 		 $("#password").val('');
 		 $("#comments").val('');
 		 $("#username").val('');
-          
+         $("#repo").val('');
 	 	 }
 
 	 });
