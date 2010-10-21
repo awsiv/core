@@ -728,6 +728,12 @@ void Nova_SetDocRoot(char *name)
   struct stat sb;
   enum cfreport level;
 
+if(LOOKUP)
+  {
+  CfOut(cf_verbose, "","Ignoring document root in lookup mode");
+  return;
+  }
+
 if (BOOTSTRAP)
    {
    level = cf_cmdout;
@@ -738,6 +744,7 @@ else
    }
 
 snprintf(file,CF_BUFSIZE-1,"%s/document_root.dat",CFWORKDIR);
+MapName(file);
 
 if (cfstat(file,&sb) == -1 && strlen(name) > 0)
    {

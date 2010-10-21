@@ -4008,7 +4008,7 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize)
    
    InitializeGA(0,NULL);
    
-   snprintf(cmd,CF_BUFSIZE-1,"%s%cbin%ccf-promises -f %s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,file);
+   snprintf(cmd,CF_BUFSIZE-1,"%s%cbin%ccf-promises -f %s -n",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,file);
    output[0] = '\0';
 
    if(GetExecOutput(cmd,output,false))

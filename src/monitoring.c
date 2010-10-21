@@ -587,7 +587,7 @@ void Nova_LoadSlowlyVaryingObservations()
   int ksize,vsize;
   char name[CF_BUFSIZE];
 
-if (THIS_AGENT_TYPE == cf_executor)
+if (THIS_AGENT_TYPE == cf_executor || LOOKUP)
    {
    return;
    }
