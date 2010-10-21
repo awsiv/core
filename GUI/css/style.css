@@ -923,3 +923,20 @@ font-weight:bold;
 background-color: #f79131;
 }
 
+#plusline
+{
+color: blue;
+}
+
+#minusline
+{
+color: red;
+font-weight: bold;
+}
+
+#pm
+{
+font-size: 150%;
+color: darkgreen;
+font-weight: bold;
+}
