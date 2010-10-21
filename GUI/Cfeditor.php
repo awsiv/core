@@ -31,16 +31,12 @@ cfpr_header("Policy editor","none");
 	 <div id="tabs">
 		  <ul>
 			   <li>
-			   <a href="#news">News From CFengine</a>
-			   <!--<span class="ui-icon ui-icon-close">Remove Tab</span>-->
+			   <a href="#news">Welcome</a>
+                           <!--<span class="ui-icon ui-icon-close">Remove Tab</span>-->
 			   </li>
 		  </ul>
 		  <div id="news">
-		  Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. 
-		  Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante.
-		  Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo.
-		   Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. 
-		  Phasellus ipsum. Nunc tristique tempus lectus.
+                  Welcome to the Cfengine Nova policy editor. Please click an existing policy file on the left, or "New" to start editing.
 		  </div>
 	 </div>
 
