@@ -76,6 +76,7 @@ cfpr_header("Policy editor","none");
                     <input type="hidden" id="event"></input>
                     <input type="hidden" id="operation" ></input>
                     <input type="hidden" id="datatype" ></input>
+                    <input type="hidden" id="cmtfile" ></input>
                 </fieldset>
             </form>
 
@@ -83,7 +84,8 @@ cfpr_header("Policy editor","none");
    <div id="confirmation" style="display:none">
    </div>
    <div id="svnlogtable" style="display:none;" class="dialog">
-   
+   </div>
+   <div id="checkoutconfirmation" style="display:none" class="dialog">
    </div>
 <script src="scripts/Cfeditor/jquery.layout.min-1.2.0.js" type="text/javascript"></script>
 <script src="scripts/Cfeditor/codemirror.js" type="text/javascript"></script>
@@ -445,6 +447,41 @@ cfpr_header("Policy editor","none");
 	      }
 	 }
 	 });
+	 	
+	 
+	 var $chkcnf=$('#checkoutconfirmation').dialog({
+		 autoOpen: false,
+		 modal: true,
+		 hide: 'puff',
+		 resizable: false,
+		 title:'Checkout',
+		 buttons: {
+		 'Ok': function() {
+			 $.ajax({
+					   type: "POST",
+					   url: "policy/empty_directory.php",
+					   success: function(data){
+						    $("#operation").val('checkout');
+							$("#commentlbl").hide();
+							$("#comments").hide();
+							$("#datatype").val('json');
+							$("#repo").show();
+							$("#repolbl").show();
+							$cfd.dialog('open');
+							
+						 },
+					error:function(data){
+							 $confirmation.dialog({title: "Error"});
+							 $confirmation.html('<span>Error! occured'+data.msg+'</span>'); 
+							 $confirmation.dialog('open');   
+						 }
+				   });
+	      },
+		'Cancel':function() {
+	      $(this).dialog('close');
+	      }
+	  }
+	 });
 	 
 	  var $svnlogdlg = $('#svnlogtable').dialog({
 		 autoOpen: false,
@@ -470,6 +507,32 @@ cfpr_header("Policy editor","none");
 		 width:400,
 		 closeText: 'hide',
 		 buttons: {
+		  'Save & Commit': function() {
+			  var file=$('#tobesaved_name',this).val();
+		    $.ajax({
+	           type: "POST",
+	           async:false,
+	           url: "policy/save_file_contents.php",
+	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(),'filestats':'old'}),
+	           
+	           success: function(data){
+				    $("#comments").show();
+		            $("#commentlbl").show();
+		            $("#repo").hide();
+		            $("#repolbl").hide();
+		            $("#operation").val('commit');
+		            $("#datatype").val('json');
+					$('#cmtfile').val(file);
+					$cfd.dialog('open');
+	             },
+              error:function(data){
+	            	 $confirmation.dialog({title: "Error"});
+	            	 $confirmation.html('<span>Error! occured</span>'); 
+	            	 $confirmation.dialog('open');   
+	             }
+	       }); 
+		    $(this).dialog('close');
+	       },
 		 'Save': function() {
 		 
 		 $.ajax({
@@ -479,7 +542,7 @@ cfpr_header("Policy editor","none");
 	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(),'filestats':'old'}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
 	           success: function(data){
-                            $confirmation.dialog({title: "Saved"});
+                     $confirmation.dialog({title: "Saved"});
 	        	   $confirmation.html('<span>Operation completed sucessfully</span>'); 
 	        	   $confirmation.dialog('open');
 	             },
@@ -508,13 +571,33 @@ cfpr_header("Policy editor","none");
 
 	 $('#Checkout')
 	   .click(function() {
-           $("#operation").val('checkout');
-		   $("#commentlbl").hide();
-		    $("#comments").hide();
-			$("#datatype").val('json');
-			$("#repo").show();
-			$("#repolbl").show();
-           $cfd.dialog('open');
+		    $.ajax({
+	           type: "POST",
+	           async:false,
+	           url: "policy/get_list.php?op=ischeckedout",
+	           success: function(data){
+				   if(data=='1')
+				     {
+	            	 $chkcnf.html('<span>Working directory is already checkedout. Proceed and replace contents</span>'); 
+	            	 $chkcnf.dialog('open');
+					 }
+					else
+					{
+					        $("#operation").val('checkout');
+							$("#commentlbl").hide();
+							$("#comments").hide();
+							$("#datatype").val('json');
+							$("#repo").show();
+							$("#repolbl").show();
+							$cfd.dialog('open');
+					}
+	             },
+              error:function(data){
+	            	 $confirmation.dialog({title: "Error"});
+	            	 $confirmation.html('<span>Error! occured</span>'); 
+	            	 $confirmation.dialog('open');   
+	             }
+	       });
          });
 
           $('#Commit')
@@ -523,18 +606,9 @@ cfpr_header("Policy editor","none");
 		 $("#commentlbl").show();
 		 $("#repo").hide();
 		 $("#repolbl").hide();
-		$("#operation").val('commit');
-		$("#datatype").val('json');
-			 var tabtype=$("input[name='tabtype']",current_tab_id).val();
-			 if(tabtype==undefined)
-			 {
-				 alert("No active file to commit");
-				 return;
-			 }
-			 else
-			 {
-			   $cfd.dialog('open');
-			 }
+		 $("#operation").val('commit');
+		 $("#datatype").val('json');
+		 $cfd.dialog('open');
           });
 
           $('#update')
@@ -573,12 +647,11 @@ cfpr_header("Policy editor","none");
 			type: "POST",
 			async:false,
 			url: "policy/checksyntax.php",
-			data:({'file':current_tab_title}),
-			//data: "name="+current_tab_title+"&content="+html_stripped,
 			success: function(data){
-				$confirmation.dialog({title: "No Errors"});
+				/*$confirmation.dialog({title: "No Errors"});
 				$confirmation.html('<span>Compiled Sucessfully with no errors</span>'); 
-				$confirmation.dialog('open');
+				$confirmation.dialog('open');*/
+				alert(data);
 
 			},
 		error:function(data){
@@ -612,7 +685,7 @@ cfpr_header("Policy editor","none");
                         $.ajax({
 						type: 'POST',
 						url: "policy/svnmodule.php",
-						data: {'passwd':passwd, 'op':$("#operation").val(),'file':current_tab_title,'comments':$("#comments").val(),'user':$("#username").val(),'repo':$("#repo").val()},
+						data: {'passwd':passwd, 'op':$("#operation").val(),'file':$('#cmtfile').val(),'comments':$("#comments").val(),'user':$("#username").val(),'repo':$("#repo").val()},
                         dataType:$("#datatype").val(),
 						success: function(data) {
 							if($("#operation").val()=='checkout')
@@ -622,7 +695,7 @@ cfpr_header("Policy editor","none");
 								   var path = "policy/get_list.php";
 									$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){	
 									});
-								  $('#Checkout').hide();
+								  //$('#Checkout').hide();
 								  $confirmation.dialog({title: $("#operation").val()});
 								  $confirmation.html('<span>Checkedout sucessfully </span>'); 
 								  }
@@ -652,7 +725,7 @@ cfpr_header("Policy editor","none");
 							{
 								var path = "policy/get_list.php";
 							    $("#container_policies_id").load(path,{dir: 'policies/'}, function(data){});
-								 $confirmation.dialog({title: $("#operation").val()});
+								 $confirmation.dialog({title: $('#cmtfile').val()});
 								 $confirmation.html('<span>Updated Sucessfully </span>'); 
 								 $confirmation.dialog('open');
 							}
@@ -662,11 +735,13 @@ cfpr_header("Policy editor","none");
 								 $confirmation.html('<span>'+current_tab_title+' commited Sucessfully </span>'); 
 								 $confirmation.dialog('open');
 							}
+							$('#cmtfile').val('');
 						},
 					error:function(data){
 						$confirmation.dialog({title: "Error"});
 						$confirmation.html('<span>Cannot Process the request '+data.status+'</span>');
 						$confirmation.dialog('open');
+						   $('#cmtfile').val('')
 						}
 					});
 				   });
@@ -675,7 +750,7 @@ cfpr_header("Policy editor","none");
 	       },
 		'Cancel': function() {
 	 	   $(this).dialog('close');
-		   //alert('cmt hello');
+		   $('#cmtfile').val('');
 	 	   }
 	 	 },
 	 	open: function(event, ui) {
@@ -684,8 +759,9 @@ cfpr_header("Policy editor","none");
 		 $("#comments").val('');
 		 $("#username").val('');
          $("#repo").val('');
-	 	 }
-
+	 	 },
+		 close: function(event, ui){ 
+		 }
 	 });
 
       /*   var $svndlg = $('#svnauth').dialog({
