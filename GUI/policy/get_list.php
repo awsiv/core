@@ -10,11 +10,11 @@
 		if( count($files) > 2 ) { /* The 2 accounts for . and .. */
 			echo "<ul id=\"policies_list_new\" class=\"jqueryFileTree\">";
 			// All dirs
-			foreach( $files as $file ) {
+			/*foreach( $files as $file ) {
 				if( file_exists($root . $_POST['dir'] . $file) && $file != '.' && $file != '..' && is_dir($root . $_POST['dir'] . $file) ) {
 					echo "<li class=\"directory collapsed\"><a href=\"#\" rel=\"".$root . htmlentities($_POST['dir'] . $file) . "/\">" . htmlentities($file) . "</a></li>";
 				}
-			}
+			}*/
 			// All files
 			$i=1;
 			foreach( $files as $file ) {
