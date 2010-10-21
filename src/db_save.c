@@ -972,7 +972,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    snprintf(varName, sizeof(varName), "%s.%s", cfr_promisecompl, handle);
    snprintf(statusStr, sizeof(statusStr), "%c", status);
    
-   addedKey = ReturnItemIn(keys,varName);
+   addedKey = ReturnItemIn(keys,handle);
    if(addedKey)
      {
      Debug("!! Duplicate key \"%s\" in SavePromiseCompliance - ignoring second time=%s - stored=%s", varName, cf_ctime(&then), addedKey->classes);
@@ -980,7 +980,7 @@ for (ip = data; ip != NULL; ip=ip->next)
      }
    else
      {
-     PrependItem(&keys,varName,cf_ctime(&then));
+     PrependItem(&keys,handle,cf_ctime(&then));
      }
 
    sub = bson_append_start_object(setObj , varName);
