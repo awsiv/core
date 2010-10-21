@@ -1,7 +1,8 @@
 <?php
 require_once("../jCryption-1.1.php");
 $jCryption = new jCryption();
-$repo = 'https://svn.iu.hio.no/projects/Sudhir';
+//$repo = 'https://svn.iu.hio.no/projects/Sudhir';
+$repo=$_POST['repo'];
 $working_dir = realpath('../policies');
 $user=$_POST['user'];
 $passwd=$_POST['passwd'];
@@ -70,6 +71,8 @@ elseif($op='log')
 		$limit=100;
 		$logstable="<div class=\"tables\"><table><thead><tr><th>Revision</th><th>Author</th><th>Msg</th><th>date</th><th>path</th></tr></thead><tbody>";
 		$logs=svn_log($repo,$headrev,0,$limit);
+		if(count($logs) >0)
+		 {
 			foreach ($logs as $rows)
 			{
 				$logstable.="<tr>";
@@ -98,8 +101,20 @@ elseif($op='log')
 				}
 				$logstable.="</tr>";
 			}
-		$logstable.="</tbody></table><div>";	
-		echo $logstable;
+		$logstable.="</tbody></table><div>";
+		$data=array(
+			'status'=>'success',
+			'table'=>$logstable
+			 );
+		echo json_encode ($data);
+		 }
+	  else
+		 {
+			$data=array(
+			'status'=>'Error',
+			 );
+		echo json_encode ($data);
+		 }	 
      }
 
 ?>
