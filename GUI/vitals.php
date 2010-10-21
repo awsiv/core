@@ -37,7 +37,7 @@ cfpr_menu("Status : vital signs");
      <script type="text/javascript" src="scripts/jquery.fancybox-1.3.1.js"></script>
      <script type="text/javascript">
 	 $(document).ready(function() {
-	 $("a:has(img)").click(function(e)
+	 $("#tabpane a:has(img)").click(function(e)
 		{
 	    e.preventDefault();
 		var oldlink=$(this).attr('href');
