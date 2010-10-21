@@ -595,12 +595,12 @@ while (now < CF_MONDAY_MORNING + CF_WEEK)
       }
 
    /* Promise: only print header if we intend to transmit some data */
-   
+
    if (first)
-      {
-      first = false;
-      AppendItem(reply,header,NULL);
-      }
+     {
+       first = false;
+       AppendItem(reply,header,NULL);
+     }
 
    /* Promise: Keep a small time-key enabling further compression by delta elimination */
 
@@ -608,15 +608,16 @@ while (now < CF_MONDAY_MORNING + CF_WEEK)
    AppendItem(reply,buffer,NULL);
    
    for (i = 0; i < CF_OBSERVABLES; i++)
-      {
-      if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
-         {
-         /* Promise: Keep the integer observable label so that we can eliminate zero entries */
+     {
+       if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
+	 {
+	   /* Promise: Keep the integer observable label so that we can eliminate zero entries */
          
-         snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
-         AppendItem(reply,buffer,NULL);
-         }
-      }
+	   snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
+	   AppendItem(reply,buffer,NULL);
+	 }
+     }
+     
    }
 
 // Promise: need to reproduce this for the monitoring, possibly on the far side
@@ -684,27 +685,30 @@ while (here_and_now < now)
       }
    
    /* Promise: only print header if we intend to transmit some data */
-   
-   if (first && nonzero != 0)
-      {
-      first = false;
-      AppendItem(reply,header,NULL);
-      }
 
-   /* Promise: Keep a small time-key enabling further compression by delta elimination */
+   if(nonzero != 0)
+     {
+       if (first)
+	 {
+	   first = false;
+	   AppendItem(reply,header,NULL);
+	 }
 
-   snprintf(buffer,CF_BUFSIZE,"T: %d\n",slot);
-   AppendItem(reply,buffer,NULL);
+       /* Promise: Keep a small time-key enabling further compression by delta elimination */
+
+       snprintf(buffer,CF_BUFSIZE,"T: %d\n",slot);
+       AppendItem(reply,buffer,NULL);
    
-   for (i = 0; i < CF_OBSERVABLES; i++)
-      {
-      if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
-         {
-         /* Promise: Keep the integer observable label so that we can eliminate zero entries */      
-         snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
-         AppendItem(reply,buffer,NULL);
-         }
-      }
+       for (i = 0; i < CF_OBSERVABLES; i++)
+	 {
+	   if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
+	     {
+	       /* Promise: Keep the integer observable label so that we can eliminate zero entries */      
+	       snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
+	       AppendItem(reply,buffer,NULL);
+	     }
+	 }
+     }
 
    here_and_now += CF_MEASURE_INTERVAL;
    strcpy(timekey,GenTimeKey(here_and_now));
@@ -1923,8 +1927,6 @@ CfOut(cf_verbose,""," -> Packing bundle log");
   
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,NOVA_BUNDLE_LOG);
 MapName(name);
-
-AppendItem(reply,header,NULL);
 
 if (!OpenDB(name,&dbp))
    {
