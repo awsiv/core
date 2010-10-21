@@ -759,10 +759,10 @@ function rpt_setuid($hostkey,$search,&$pdf,$class_regex)
 #
 function EmailPDF($pdf, $pdf_filename, $to, $from, $subject, $message)
 {
-    $to = "bishwa.shrestha@gmail.com";
+    /*$to = "bishwa.shrestha@gmail.com";
     $from = "bishwa.shrestha@cfengine.com";
     $subject = "Nova Report";
-    $message = "<p>Please see the attachment.</p>";
+    $message = "<p>Please see the attachment.</p>";*/
 
     // a random hash will be necessary to send mixed content
     $separator = md5(time());
@@ -927,10 +927,10 @@ switch($report_type)
 
 $pdf_action = $_GET['pdf_action'];
 # get email parameters from ajax query
-# $to = $_POST['to'];
-# $from = $_POST['from'];
-# $subject = $_POST['subject'];
-# $msg = $_POST['message'];
+ $to = $_POST['to'];
+ $from = $_POST['from'];
+ $subject = $_POST['subject'];
+ $msg = $_POST['message'];
 if($pdf_action == 'email')
 {
   EmailPDF($pdf,$pdf_filename,$to,$from,$subject,$msg);
