@@ -32,30 +32,74 @@ if($op=='checkout')
 		'status'=>$status,
         'working'=>$working_dir
 	     );
+		session_unset();
         echo json_encode($data);
 	}
-/*elseif($op=='commit')
+elseif($op=='commit')
        {
-        session_start();
+        //session_start();
         $path=$working_dir.'/'.$_POST['file'];
-        //$user=$_POST['user'];
-        //$passwd=$_POST['passwd'];
-        $comment=$_POST['comment'];
-        //$var = $jCryption->decrypt($_POST['passwd'], $_SESSION["d"]["int"], $_SESSION["n"]["int"]);
-        //svn_auth_set_parameter(SVN_AUTH_PARAM_DEFAULT_USERNAME, $user);
-        //svn_auth_set_parameter(SVN_AUTH_PARAM_DEFAULT_PASSWORD, $var);
-       $file_stat=svn_status($path);
+        $comment=$_POST['comments'];
+        $file_stat=svn_status($path);
         if($file_stat[0]['text_status']==2)
          {
          svn_add(realpath($path));
          }
         $cdetails=svn_commit($comment,array(realpath($path)));
+		session_unset();
         echo json_encode ($cdetails);
+		/*$data=array(
+	    'user'=>svn_auth_get_parameter(SVN_AUTH_PARAM_DEFAULT_USERNAME) ,
+		'passwd'=>svn_auth_get_parameter(SVN_AUTH_PARAM_DEFAULT_PASSWORD),
+        'working'=>$path,
+		'comment'=>$comment
+	     );
+        echo json_encode($data);*/
        }
 elseif($op=='update')
       {
-       $dirstat=svn_update($working_dir);
-       echo $dirstat;
-      }*/
-  
+	   $path=$working_dir.'/'.$_POST['file'];
+       $filestat=svn_update(realpath($working_dir));
+	   session_unset();
+       echo $filestat;
+      }
+
+elseif($op='log')
+     {
+		$headrev=SVN_REVISION_HEAD;
+		$limit=100;
+		$logstable="<div class=\"tables\"><table><thead><tr><th>Revision</th><th>Author</th><th>Msg</th><th>date</th><th>path</th></tr></thead><tbody>";
+		$logs=svn_log($repo,$headrev,0,$limit);
+			foreach ($logs as $rows)
+			{
+				$logstable.="<tr>";
+				foreach ($rows as $column=>$value)
+				{
+							 if($column=="paths")
+							   {
+								   $innertable="<table>";
+								   foreach ($value as $innerrows)
+									{
+									   $innertable.="<tr>";
+									   foreach ($innerrows as $innercol=>$colval)
+									   {
+										 $innertable.="<td>$colval</td>";  
+									   }
+									   $innertable.="</tr>";
+									}
+									$innertable.="</table>";
+									$logstable.="<td>$innertable</td>";
+							   }
+							   else
+							   {
+								   $logstable.="<td>$value</td>";
+							   }
+				 
+				}
+				$logstable.="</tr>";
+			}
+		$logstable.="</tbody></table><div>";	
+		echo $logstable;
+     }
+
 ?>

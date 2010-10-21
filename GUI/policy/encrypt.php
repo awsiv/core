@@ -14,4 +14,5 @@
 		$var = $jCryption->decrypt($_POST['jCryption'], $_SESSION["d"]["int"], $_SESSION["n"]["int"]);
 		echo $var;
 	}
+	
 ?>

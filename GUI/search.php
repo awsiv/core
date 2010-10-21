@@ -51,7 +51,7 @@ if ($many)  // Returning query
 	   }
 	else
 	   {
-		   echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";     
+		   echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex&pdf_action=email\" id=\"send_mail\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";     
 	  
 	   $report = cfpr_report_bundlesseen(NULL,$name,true,$class_regex);
 	   }
@@ -69,7 +69,7 @@ if ($many)  // Returning query
 	   }
 	else
 	   {
-		echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\"> $report_type Days: $days  Months: $months  Years: $years</span><a href=\"./pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";  
+		echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\"> $report_type Days: $days  Months: $months  Years: $years</span><a href=\"./pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&days=$days&months=$months&years=$years&class_regex=$class_regex&pdf_action=email\" id=\"send_mail\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";  
 	  
 	   $report = cfpr_report_value(NULL,$days,$months,$years,$class_regex);
 	   }
@@ -85,7 +85,7 @@ if ($many)  // Returning query
 	else
 	   {
 	   echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a>
-	   <a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
+	   <a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex&pdf_action=email\" id=\"send_mail\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
 	   $report = cfpr_report_classes(NULL,$name,true,$class_regex);
 	   }
 	break; 
@@ -102,7 +102,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-	    echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";     
+	    echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state&class_regex=$class_regex&pdf_action=email\" id=\"send_mail\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";     
 	    $report = cfpr_report_compliance_promises(NULL,$name,$state,true,$class_regex);
 	  }
 	break;
@@ -680,10 +680,7 @@ else // No hosktkey
 </div>
 <script type="text/javascript">
 $(document).ready(function() { 
-    //$('.tables table').prepend(
-     //   $('<thead></thead>').append($('.tables tr:first').remove())
-      //  );
-	$('.tables table:first').prepend(
+	$('.tables table').prepend(
        $('<thead></thead>').append($('.tables tr:first').remove())
        );
     $('.tables table').tableFilter();

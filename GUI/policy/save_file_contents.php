@@ -10,9 +10,9 @@
 				{
 					$msg="couldn't open file <i>$filetobesaved</i>";
 				}
-			
-				fwrite($handle, $_POST['content']);
-				$msg= "success writing to file";
+			    $content=str_replace('\\', '' , $_POST['content']);
+				fwrite($handle, $content);
+				$msg= "success writing to file,".$content;
 				fclose($handle);
 			}
 			elseif(file_exists($filetobesaved)&&$_POST['filestats']=='new')
@@ -27,15 +27,16 @@
 				{
 					$msg="couldn't open file <i>$filetobesaved</i>";
 				}
-			
-				fwrite($handle, $_POST['content']);
+			    $content=str_replace('\\', '' , $_POST['content']);
+				$content=str_replace('&gt;', '>' , $content);
+				fwrite($handle, $content);
 				$msg= "success writing to file";
 				fclose($handle);
 			}
 			
 			$details=array(
 		    'title'=>$_POST['file'],
-		    'path'=>'policies/'.$_POST['file'],
+		    'path'=>'../policies/'.$_POST['file'],
 		    'msg'=>$msg
 	        );		
 	       echo json_encode($details);

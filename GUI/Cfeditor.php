@@ -21,6 +21,7 @@ cfpr_header("Policy editor","none");
                           <a href="#" class="menuitem" id="Checkout"><img class="icontext" src="images/checkout.png"/>Checkout</span></a>
 			  <a href="#" class="menuitem" id="update"><img class="icontext" src="images/update.png"/>Update</span></a>
 			  <a href="#" class="menuitem" id="Commit"><img class="icontext" src="images/commit.png"/>Commit</span></a>
+              <a href="#" class="menuitem" id="svnlogs"><img class="icontext" src="images/commit_grey.png"/>SVN LOGS</span></a>
 		  </div>
 		</div>
 	</div>
@@ -72,31 +73,25 @@ cfpr_header("Policy editor","none");
                     <input type="text" class="ui-widget-content ui-corner-all" value="" id="username" />
                     <label for="tab_title">Password:</label>
                     <input type="password" class="ui-widget-content ui-corner-all" value="" id="password" />
-                    <label for="tab_title">Comment</label>
+                    <label for="tab_title" id="commentlbl">Comment</label>
                     <textarea class="ui-widget-content ui-corner-all" id="comments" name="comments"></textarea>
                     <input type="hidden" id="event"></input>
+                    <input type="hidden" id="operation" ></input>
+                    <input type="hidden" id="datatype" ></input>
                 </fieldset>
             </form>
 
    </div>
-<div id="svnauth" style="display:none;" title="Checkout" class="dialog">
-           <form>
-                <fieldset class="ui-helper-reset">
-                    <label for="tab_title">User name:</label>
-                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="user" />
-                    <label for="tab_title">Password:</label>
-                    <input type="password" class="ui-widget-content ui-corner-all" value="" id="svnauthpassword" />
-                    <input type="hidden" id="operation" ></input>
-                </fieldset>
-           </form>
-</div>
-
    <div id="confirmation" style="display:none">
+   </div>
+   <div id="svnlogtable">
+   
    </div>
 <script src="scripts/Cfeditor/jquery.layout.min-1.2.0.js" type="text/javascript"></script>
 <script src="scripts/Cfeditor/codemirror.js" type="text/javascript"></script>
 <script src="scripts/Cfeditor/cf.js" type="text/javascript"></script>
 <script src="scripts/jquery.jcryption-1.1.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="scripts/jquery.fancybox-1.3.1.js"></script>
  <script type="text/javascript">
  $(document).ready(function() {
 	$("body").layout({
@@ -453,6 +448,21 @@ cfpr_header("Policy editor","none");
 	 }
 	 });
 	 
+	  var $svnlogdlg = $('#svnlogtable').dialog({
+		 autoOpen: false,
+		 modal: true,
+		 hide: 'puff',
+		 resizable: true,
+		 height:500,
+		 width:900,
+		 title:'Change Logs',
+		 buttons: {
+		 'Ok': function() {
+	      $(this).dialog('close');
+	      }
+	 }
+	 });
+	 
     var $sfd = $('#sfdialog').dialog({
 		 autoOpen: false,
 		 modal: true,
@@ -501,18 +511,46 @@ cfpr_header("Policy editor","none");
 	 $('#Checkout')
 	   .click(function() {
            $("#operation").val('checkout');
-           $svndlg.dialog('open');
+		   $("#commentlbl").hide();
+		    $("#comments").hide();
+			$("#datatype").val('json');
+           $cfd.dialog('open');
          });
 
           $('#Commit')
 	   .click(function() {
-           $cfd.dialog('open');
+		 $("#comments").show();
+		 $("#commentlbl").show();
+		$("#operation").val('commit');
+		$("#datatype").val('json');
+			 var tabtype=$("input[name='tabtype']",current_tab_id).val();
+			 if(tabtype==undefined)
+			 {
+				 alert("No active file to commit");
+				 return;
+			 }
+			 else
+			 {
+			   $cfd.dialog('open');
+			 }
           });
 
           $('#update')
 	   .click(function() {
            $("#operation").val('update');
-           $svndlg.dialog('open');
+		   $("#commentlbl").hide();
+		   $("#comments").hide();
+		   $("#datatype").val('json')
+           $cfd.dialog('open');
+         });
+	   
+	    $('#svnlogs')
+	   .click(function() {
+           $("#operation").val('svnlogs');
+		   $("#commentlbl").hide();
+		   $("#comments").hide();
+		   $("#datatype").val('html');
+           $cfd.dialog('open');
          });
        
 	   $('#checksyntax')
@@ -541,7 +579,7 @@ cfpr_header("Policy editor","none");
           
    // dialogue to be displayed while making check out of the file
 
-    var $cfd = $('#commitdlg').dialog({
+     var $cfd = $('#commitdlg').dialog({
 		 autoOpen: false,
 		 modal: true,
 		 resizable: false,
@@ -550,38 +588,75 @@ cfpr_header("Policy editor","none");
 		 width:400,
 		 closeText: 'hide',
 		 buttons: {
-		 'Save': function() {
+		 'Ok': function() {
                         var keys;
 			var passwd;
 			$.jCryption.getKeys("policy/encrypt.php?generateKeypair=true",function(receivedKeys) {
 				keys = receivedKeys;
 				$.jCryption.encrypt($("#password").val(),keys,function(encrypted) {
 					passwd=encrypted;
-                                        $.ajax({
+                        $.ajax({
 						type: 'POST',
 						url: "policy/svnmodule.php",
-						data: {'passwd':passwd, 'op':'commit','file':current_tab_title,'comments':$("#comments").val(),'user':$("#username").val()},
-
+						data: {'passwd':passwd, 'op':$("#operation").val(),'file':current_tab_title,'comments':$("#comments").val(),'user':$("#username").val()},
+                        dataType:$("#datatype").val(),
 						success: function(data) {
-                                                        $(this).dialog('close');
-							$confirmation.dialog({title: "Commit"});
-	        	                                $confirmation.html('<span>File Comitted sucessfully </span>'); 
-	        	                                $confirmation.dialog('open');
+							if($("#operation").val()=='checkout')
+							  {
+								  if(data.status)
+								  {
+								  $confirmation.dialog({title: $("#operation").val()});
+								  $confirmation.html('<span>Check out sucessfull </span>'); 
+								  }
+								  else
+								  {
+								  $confirmation.dialog({title: $("#operation").val()});
+								  $confirmation.html('<span>Check out failed </span>'); 
+								  }
+								  $confirmation.dialog('open');
+								  
+							  }
+						  else if($("#operation").val()=='svnlogs')
+							  { 
+								$('#svnlogtable').html(data);
+								$('#svnlogtable table').tableFilter();
+                                $('#svnlogtable table').tablesorter({widgets: ['zebra']}); 
+								/* $.fancybox({
+								 //'orig' : $(this),
+								 'padding' : 0,
+								 'href' : '#svnlogtable', 'title' : 'ChangeLogs',
+								 'transitionIn' : 'elastic',
+								 'transitionOut' : 'elastic'
+								});*/ 
+								$svnlogdlg.dialog('open');
+							  }
+						},
+					error:function(data){
+						$confirmation.dialog({title: "Error"});
+						$confirmation.html('<span>Cannot Process the request '+data.status+'</span>');
+						$confirmation.dialog('open');
 						}
 					});
 				   });
 			});
+			$(this).dialog('close');
 	       },
 		'Cancel': function() {
 	 	   $(this).dialog('close');
+		   //alert('cmt hello');
 	 	   }
 	 	 },
-	 	open: function(event, ui) {	
+	 	open: function(event, ui) {
+		$(this).dialog({title: $("#operation").val()});
+		 $("#password").val('');
+		 $("#comments").val('');
+		 $("#username").val('');
+          
 	 	 }
 
 	 });
 
-         var $svndlg = $('#svnauth').dialog({
+      /*   var $svndlg = $('#svnauth').dialog({
 		 autoOpen: false,
 		 modal: true,
 		 resizable: false,
@@ -601,20 +676,22 @@ cfpr_header("Policy editor","none");
 						type: "POST",
 						async:false,
 						url: "policy/svnmodule.php",
-						data:({'op':$("#operation").val(),'user':$("#user").val(),'passwd':passwd}),
+						data:({'op':$("#operation").val(),'user':$("#user").val(),'passwd':passwd,'file':current_tab_title}),
+						dataType:'json',
 						//data: "name="+current_tab_title+"&content="+html_stripped,
 						success: function(ret){
-						    alert(ret.status);
+						    //alert(ret.status);
+						 if(ret.status)
+						  {
 							var path = "policy/get_list.php";
 							$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){	
 							});
-						 //if(data.status)
-						 // {
-							$(this).dialog('close');
-							$confirmation.dialog({title: "Checked out"});
+							$confirmation.dialog({title: $("#operation").val()});
 							$confirmation.html('<span>Operation completed sucessfully</span>'); 
 							$confirmation.dialog('open');
-						 // }
+							$("#user").val('');
+							$("#svnauthpassword").val('');
+						  }
 						},
 				
 					error:function(data){
@@ -625,6 +702,7 @@ cfpr_header("Policy editor","none");
 	                            }); 
                                 });
                             });
+			    $(this).dialog('close');
                 },
 		'Cancel': function() {
 	 	   $(this).dialog('close');
@@ -633,21 +711,20 @@ cfpr_header("Policy editor","none");
 	 	open: function(event, ui) {	
 	 	 }
 
-	 });
+	 });*/
          
-     $('#update')
+    /* $('#update')
 		.click(function() {
 		$.ajax({
 			type: "POST",
 			async:false,
 			url: "policy/svnmodule.php",
-			data:({'op':'update'}),
+			data:({'op':'update','file':current_tab_title,'user':$("#user").val(),'passwd':passwd}),
 			//data: "name="+current_tab_title+"&content="+html_stripped,
 			success: function(data){
 				var path = "policy/get_list.php";
 				$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){	
 				});
-
 				$confirmation.dialog({title: "Updated out"});
 				$confirmation.html('<span>Operation completed sucessfully</span>'); 
 				$confirmation.dialog('open');
@@ -663,7 +740,7 @@ cfpr_header("Policy editor","none");
 
 		}); 
 
-	});
+	});*/
 	
 	jQuery(document).ajaxStart(function(){
 		 $('#spinner').css({top: '0' , left:$('body').width()/2 }).fadeIn();

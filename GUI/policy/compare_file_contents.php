@@ -4,6 +4,7 @@
   		$file_path=$root.$_POST['file_path'];
 		$contents = file_get_contents($file_path);
 		$newcontents=str_replace('\u200b', '' , $_POST['newcontents']);
+		$newcontents=str_replace('\\', '' , $newcontents);
 		if($_POST['agent']=='webkit')
 		{
 		$newcontents=substr($newcontents, 0, -3);
@@ -14,8 +15,8 @@
 		}
 		$data=array(
 		'status'=>$status,
-		//'old'=>$contents,
-		//'newd'=>$newcontents,
+		'old'=>$contents,
+		'newd'=>$newcontents,
 	     );
 		echo json_encode($data);
 ?>
