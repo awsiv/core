@@ -10,7 +10,7 @@
 #include "cf.nova.h"
 
 
-extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,BACKGR,ORANGE;
+extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,BACKGR,ORANGE,GREENS[];
 extern char *UNITS[];
 
 #ifdef HAVE_LIBMONGOC
@@ -93,12 +93,13 @@ void Nova_ComplianceSummaryGraph(char *docroot)
   struct CfDataView cfv;
   char newfile[CF_BUFSIZE],key[CF_MAXVARSIZE],value[CF_MAXVARSIZE];
   const int span = 7 * 4;
+  const double scale = 4.0;
   double x,kept[span], repaired[span], notkept[span];
   double tkept,trepaired,tnotkept,total,y;
   double lkept,lrepaired,lnotkept,ltotal;
   FILE *fout;
   time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
-  int i,slot;
+  int i,j,slot;
   struct stat sb;
   
 cfv.height = 200;
@@ -127,11 +128,20 @@ cfv.title = "Compliance";
 cfv.im = gdImageCreate(cfv.width+cfv.margin,cfv.height+cfv.margin);
 Nova_MakePalette(&cfv);
 
-// Background
+// Grey Background
 
 for (y = 0; y < cfv.height+cfv.margin; y++)
    {
    gdImageLine(cfv.im,0,y,cfv.width+cfv.margin,y,BACKGR);
+   }
+
+// Green shading background
+
+for (i = 0; i < 16; i++)
+   {
+   x = i * (cfv.width - cfv.origin_x)/16 + cfv.origin_x + cfv.width/span/2;   
+   gdImageSetThickness(cfv.im,cfv.width/16);
+   gdImageLine(cfv.im,x,0,x,cfv.range,GREENS[i]);
    }
 
 for (i = 0; i < (int)span; i++)
@@ -165,33 +175,20 @@ for (i = 0; i < span; i++)
    tnotkept = notkept[i]/total * cfv.range;
    trepaired = repaired[i]/total * cfv.range;
 
-   // Factors of 2 to renormalize base scale to 50%
-
-   if (ltotal > 0)
-      {
-      // Smoothing
-      gdImageSetThickness(cfv.im,cfv.width/span+1);
-      gdImageLine(cfv.im,x,0,x,(lnotkept+tnotkept)/2,RED);
-      gdImageSetThickness(cfv.im,cfv.width/span+1);
-      gdImageLine(cfv.im,x,(lnotkept+tnotkept),x,(lnotkept+tnotkept+lrepaired+trepaired),YELLOW);
-      gdImageSetThickness(cfv.im,cfv.width/span+1);
-      gdImageLine(cfv.im,x,(lnotkept+tnotkept+lrepaired+trepaired),x,cfv.range,GREEN);
-      x += (cfv.width-cfv.origin_x)/span/2;
-      }
-   
-   gdImageSetThickness(cfv.im,cfv.width/span+1);
-   gdImageLine(cfv.im,x,0,x,tnotkept*2,RED);
-   gdImageSetThickness(cfv.im,cfv.width/span+1);
-   gdImageLine(cfv.im,x,tnotkept*2,x,(tnotkept+trepaired)*2,YELLOW);
-   gdImageSetThickness(cfv.im,cfv.width/span+1);
+   gdImageSetThickness(cfv.im,cfv.width/span/1.3);
+   gdImageLine(cfv.im,x,0,x,tnotkept*scale,RED);
+   gdImageSetThickness(cfv.im,cfv.width/span/1.3);
+   gdImageLine(cfv.im,x,tnotkept*scale,x,(tnotkept+trepaired)*scale,YELLOW);
 
    if (total < 40) // No data
       {
-      gdImageLine(cfv.im,x,(tnotkept+trepaired)*2,x,cfv.range,ORANGE);
+      gdImageSetThickness(cfv.im,cfv.width/span/2);
+      gdImageLine(cfv.im,x,(tnotkept+trepaired)*scale,x,cfv.range,ORANGE);
       }
    else
       {
-      gdImageLine(cfv.im,x,(tnotkept+trepaired)*2,x,cfv.range,GREEN);
+      gdImageSetThickness(cfv.im,1);
+      gdImageLine(cfv.im,x,(tnotkept+trepaired)*scale,x,cfv.range,WHITE);      
       }
 
    ltotal = total;
@@ -1084,7 +1081,7 @@ for (day = 0; day < 7; day++)
 
 Nova_Font(cfv,cfv->width/4,cfv->range+cfv->margin,"Average compliance (days ago)",col);
 Nova_Font(cfv,0,10,"100%",col);
-Nova_Font(cfv,0,cfv->range,"50%",col);
+Nova_Font(cfv,0,cfv->range,"75%",col);
 
 x = cfv->margin - (cfv->width/span+1)/2;
 

@@ -21,6 +21,7 @@
 int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,BACKGR,ORANGE,SKY;
 
 int GREYS[CF_SHADES];
+int GREENS[CF_SHADES];
 int BLUES[CF_SHADES];
 int YELLOWS[CF_SHADES];
 int PINKS[CF_SHADES];
@@ -64,14 +65,20 @@ LIGHTRED = gdImageColorAllocate(cfv->im, 189, 58, 43);
 for (i = 0; i < CF_SHADES; i++)
    {
    r = (int)((100.0)/(double)CF_SHADES * (double)i);
-
-   g = startgreen +
-       (int)( (100.0-(double)startgreen)/((double)CF_SHADES*1.5) * (double)i*1.5);
-
+   g = startgreen + (int)( (100.0-(double)startgreen)/((double)CF_SHADES*1.5) * (double)i*1.5);
    b = startblue + (int)((255.0-(double)startblue)/(double)CF_SHADES * (double)i);
    BLUES[i] = gdImageColorAllocate(cfv->im,r,g,b);
    }
 
+// Room for a about 16 pixels on the compliance graph width / span (scorecards.c)
+
+for (i = 0; i < 16; i++)
+   {
+   r = 40+(int)((115-40)/(double)16 * (double)i);
+   g = 100 + (int)( (148-100)/((double)16) * (double)i);
+   b = 60 + (int)((103-(double)60)/(double)16 * (double)i);
+   GREENS[i] = gdImageColorAllocate(cfv->im,r,g,b);
+   }
 
 RED      = gdImageColorAllocate(cfv->im, 208, 45, 72);
 YELLOW   = gdImageColorAllocate(cfv->im, 242, 238, 134);
@@ -79,7 +86,6 @@ GREEN    = gdImageColorAllocate(cfv->im, 115, 177, 103);
 
 ORANGE   = gdImageColorAllocate(cfv->im, 223,149,0);
 LIGHTGREY= gdImageColorAllocate(cfv->im, 75, 75, 66);
-//BACKGR   = gdImageColorAllocate(cfv->im,239, 234, 204); // Background
 BACKGR   = gdImageColorAllocate(cfv->im,225, 225, 227); // Background
 }
 
@@ -187,7 +193,6 @@ for (i = 0; i < CF_SHADES; i++)
    b = bs + i * db;
    GREYS[i] = gdImageColorAllocate(cfv->im,r,g,b);
    }
-
 
 WHITE    = gdImageColorAllocate(cfv->im, 255, 255, 255);
 LIGHTGREY= gdImageColorAllocate(cfv->im, 220, 220, 220);
