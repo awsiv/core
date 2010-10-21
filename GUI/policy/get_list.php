@@ -1,8 +1,19 @@
 <?php
-
-	//$data['policies']=$this->db_policy->get_policies();
-	//$this->load->view('policy_list',$data);
 	$root='../';
+	$checked = false;
+	if($_GET['op']=="ischeckedout")
+	{
+		if(file_exists($root . 'policies/') ) {
+			$files = scandir($root . 'policies/');
+			natcasesort($files);
+		    if( count($files) > 2 ) {
+			 $checked = true;	
+			}
+		}
+		echo $checked;
+		return;
+	}
+	
 	$_POST['dir'] = urldecode($_POST['dir']);
 	    if(file_exists($root . $_POST['dir']) ) {
 	    $files = scandir($root . $_POST['dir']);
