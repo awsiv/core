@@ -648,10 +648,10 @@ cfpr_header("Policy editor","none");
 			async:false,
 			url: "policy/checksyntax.php",
 			success: function(data){
-				/*$confirmation.dialog({title: "No Errors"});
+				$confirmation.dialog({title: "No Errors"});
 				$confirmation.html('<span>Compiled Sucessfully with no errors</span>'); 
-				$confirmation.dialog('open');*/
-				alert(data);
+				$confirmation.dialog('open');
+				
 
 			},
 		error:function(data){
