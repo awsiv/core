@@ -37,15 +37,24 @@ if($op=='checkout')
 	}
 elseif($op=='commit')
        {
-        //session_start();
-        $path=$working_dir.'/'.$_POST['file'];
+		 if($_POST['file']!="")
+		 {
+         $working_dir=$working_dir.'/'.$_POST['file'];
+		 }
         $comment=$_POST['comments'];
-        $file_stat=svn_status($path);
-        if($file_stat[0]['text_status']==2)
+        $file_stat=svn_status($working_dir);
+		foreach ($file_stat as $eachfile)
+		{
+		  if($eachfile['text_status']==2)
+		  {
+			svn_add($eachfile['path']);  
+		  }
+		}
+        /*if($file_stat[0]['text_status']==2)
          {
-         svn_add(realpath($path));
-         }
-        $cdetails=svn_commit($comment,array(realpath($path)));
+         svn_add($working_dir);
+         }*/
+        $cdetails=svn_commit($comment,array($working_dir));
 		session_unset();
         echo json_encode ($cdetails);
 		/*$data=array(
@@ -58,8 +67,8 @@ elseif($op=='commit')
        }
 elseif($op=='update')
       {
-	   $path=$working_dir.'/'.$_POST['file'];
-       $filestat=svn_update(realpath($working_dir));
+	   //$path=$working_dir.'/'.$_POST['file'];
+       $filestat=svn_update($working_dir);
 	   session_unset();
        echo $filestat;
       }
@@ -67,8 +76,8 @@ elseif($op=='update')
 elseif($op='log')
      {
 		$headrev=SVN_REVISION_HEAD;
-		$limit=100;
-		$logstable="<div class=\"tables\"><table><thead><tr><th>Revision</th><th>Author</th><th>Msg</th><th>date</th><th>path</th></tr></thead><tbody>";
+		$limit=50;
+		$logstable="<div class=\"tables\"><table><thead><th>Revision</th><th>Author</th><th>Msg</th><th>date</th><th>path</th></thead><tbody>";
 		$logs=svn_log($repo,$headrev,0,$limit);
 		if(count($logs) >0)
 		 {
