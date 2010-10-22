@@ -663,11 +663,20 @@ cfpr_header("Policy editor","none");
 			type: "POST",
 			async:false,
 			url: "policy/checksyntax.php",
-			datatype:'json',
+			dataType:'json',
 			success: function(data){
+				if(data.result=="SUCCESS")
+				{
 				$confirmation.dialog({title: "No Errors"});
 				$confirmation.html('<span>Compiled Sucessfully with no errors</span>'); 
 				$confirmation.dialog('open');
+				}
+				else
+				{
+				$confirmation.dialog({title: "Error Occured"});
+				$confirmation.html('<span>'+data.result+'</span>'); 
+				$confirmation.dialog('open');
+				}
 			},
 		    error:function(data){
 				$confirmation.dialog({title: "Error"});
