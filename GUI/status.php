@@ -20,7 +20,7 @@ cfpr_menu("Status : hosts");
              <div class="panelhead"> Hosts</div>
                  <ul class="panelcontent">
                  <li>Host Known: <?php echo $all?></li>
-                 <li>Ranked worst:<a href="topN.php">Show top 50</a></li>
+                 <li>Ranked worst: <a href="topN.php">Show top 50</a></li>
                 </ul>
            </div>
           
