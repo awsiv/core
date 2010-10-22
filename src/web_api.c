@@ -4005,30 +4005,29 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize)
 {
    char cmd[CF_BUFSIZE];
    char output[CF_EXPANDSIZE] = {0};
-   
-   InitializeGA(0,NULL);
+   int retVal;
+   FILE *pp;
 
    // NOTE: this is run as the web user
 
    snprintf(cmd,CF_BUFSIZE,"/var/cfengine/bin/cf-promises -n -f \"%s\"",file);
    output[0] = '\0';
 
-   if(GetExecOutput(cmd,output,false))
+   if((pp = cf_popen(cmd,"r")) == NULL)
      {
-	if(output[0] == '\0')
-	  {
-	     return 0;
-	  }	
-	else
-	  {
-	     snprintf(buffer,bufsize,"%s",output);
-	     return 1;
-	  }
+       snprintf(buffer,bufsize,"Could not run command \"%s\": %s", cmd, GetErrorStr());
+       return -1;
      }
-   else
-     {
-	return -1;
-     }   
+
+
+   if(!feof(pp))
+   {
+   fgets(buffer,bufsize,pp);
+   }
+
+   retVal = cf_pclose(pp);
+
+   return retVal; // 0 on success
 }
 
 /*****************************************************************************/
