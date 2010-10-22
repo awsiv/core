@@ -2,6 +2,7 @@
 		//$file=substr($_POST['file'], strrpos($filename, '.')
 		$filetobesaved='../policies/'.$_POST['file'];
 		$msg="";
+		$written=false;
 		if(file_exists($filetobesaved)&&$_POST['filestats']=='old')
 			{
 				//open file for writng and place pointer at the end
@@ -13,6 +14,7 @@
 			    $content=str_replace('\\', '' , $_POST['content']);
 				fwrite($handle, $content);
 				$msg= "success writing to file,".$content;
+				$written=true;
 				fclose($handle);
 			}
 			elseif(file_exists($filetobesaved)&&$_POST['filestats']=='new')
@@ -30,11 +32,13 @@
 			    $content=str_replace('\\', '' , $_POST['content']);
 				$content=str_replace('&gt;', '>' , $content);
 				fwrite($handle, $content);
+				$written=true;
 				$msg= "success writing to file";
 				fclose($handle);
 			}
 			
 			$details=array(
+			'status'=>$written,
 		    'title'=>$_POST['file'],
 		    'path'=>'../policies/'.$_POST['file'],
 		    'msg'=>$msg
