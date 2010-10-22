@@ -4004,14 +4004,13 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize)
 
 {
    char cmd[CF_BUFSIZE];
-   char output[CF_EXPANDSIZE] = {0};
+   char tmp[CF_MAXVARSIZE];
    int retVal;
    FILE *pp;
 
    // NOTE: this is run as the web user
 
    snprintf(cmd,CF_BUFSIZE,"/var/cfengine/bin/cf-promises -n -f \"%s\"",file);
-   output[0] = '\0';
 
    if((pp = cf_popen(cmd,"r")) == NULL)
      {
@@ -4019,11 +4018,13 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize)
        return -1;
      }
 
+   buffer[0] = '\0';
 
-   if(!feof(pp))
-   {
-   fgets(buffer,bufsize,pp);
-   }
+   while(!feof(pp))
+     {
+     fgets(tmp,sizeof(tmp),pp);
+     Join(buffer,tmp,bufsize);
+     }
 
    retVal = cf_pclose(pp);
 
