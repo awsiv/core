@@ -38,7 +38,7 @@ a.restart_class = "nonce";
 a.transaction.ifelapsed = 0;
 a.transaction.expireafter = 0;
 
-thislock = AcquireLock(pp->promiser,VUQNAME,now,a,pp);
+thislock = AcquireLock(pp->promiser,VUQNAME,now,a,pp,false);
 
 if (thislock.lock == NULL)
    {
@@ -200,10 +200,10 @@ int Nova_HailPeer(char *peer,struct Attributes a,struct Promise *pp)
   struct Attributes aa = {0};
 
 aa.restart_class = "nonce";
-aa.transaction.ifelapsed = 6*60;
+aa.transaction.ifelapsed = 60*6;
 aa.transaction.expireafter = CF_INFINITY;
   
-thislock = AcquireLock(ppp->promiser,CanonifyName(peer),now,aa,ppp);
+thislock = AcquireLock(ppp->promiser,CanonifyName(peer),now,aa,ppp,true);
 
 if (thislock.lock != NULL)
    {

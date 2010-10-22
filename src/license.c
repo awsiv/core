@@ -371,7 +371,7 @@ if (!IsDefinedClass("am_policy_hub"))
    return;
    }
 
-thislock = AcquireLock("license_track",VUQNAME,CFSTARTTIME,dummyattr,pp);
+thislock = AcquireLock("license_track",VUQNAME,CFSTARTTIME,dummyattr,pp,false);
 
 if (thislock.lock == NULL)
    {

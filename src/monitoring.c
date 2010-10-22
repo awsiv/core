@@ -1029,7 +1029,7 @@ else
 
 CFSTARTTIME = time(NULL);
 
-thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,at,pp);
+thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,at,pp,false);
 
 if (thislock.lock == NULL)
    {

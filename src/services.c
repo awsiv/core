@@ -38,7 +38,7 @@ void Nova_VerifyServices(struct Attributes a,struct Promise *pp)
 
 #endif
 
- thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,a,pp);
+ thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,a,pp,false);
 
  if (thislock.lock == NULL)
     {

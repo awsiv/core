@@ -67,7 +67,7 @@ if (LICENSES == 0)
 
 snprintf(lockname,CF_BUFSIZE-1,"db-%s",pp->promiser);
  
-thislock = AcquireLock(lockname,VUQNAME,CFSTARTTIME,a,pp);
+thislock = AcquireLock(lockname,VUQNAME,CFSTARTTIME,a,pp,false);
 
 if (thislock.lock == NULL)
    {

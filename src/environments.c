@@ -39,7 +39,7 @@ a = GetEnvironmentsAttributes(pp);
 
 if (Nova_EnvironmentsSanityChecks(a,pp))
    {
-   thislock = AcquireLock("virtual",VUQNAME,CFSTARTTIME,a,pp);
+   thislock = AcquireLock("virtual",VUQNAME,CFSTARTTIME,a,pp,false);
    
    if (thislock.lock == NULL)
       {
