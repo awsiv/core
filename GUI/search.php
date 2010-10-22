@@ -293,7 +293,7 @@ if ($many)  // Returning query
 	  }
 	else
 	  {
-		   echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type for Name: $name Version: $version Arch: $arch</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a><img src=\"/img/icon_pdf.png\" class=\"floatRight\"><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
+		   echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type for Name: $name Version: $version Arch: $arch</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&search=$name&version=$version&arch=$arch&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
 	      
 	    $report = cfpr_report_software_in(NULL,$name,$version,$arch,true,$class_regex);
 	  }
