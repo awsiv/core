@@ -1,7 +1,6 @@
 <?php
 require_once("../jCryption-1.1.php");
 $jCryption = new jCryption();
-//$repo = 'https://svn.iu.hio.no/projects/Sudhir';
 $repo=$_POST['repo'];
 $working_dir = realpath('../policies');
 $user=$_POST['user'];
