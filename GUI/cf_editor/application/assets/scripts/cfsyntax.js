@@ -144,7 +144,12 @@ var edit_line_bundle_syntax = {
          "select_field" : 
             {
             datatype: "int",
-            pcre_range: "1,99999999"
+            pcre_range: "0,99999999"
+            },
+         "start_fields_from_zero" : 
+            {
+            datatype: "(menu option)",
+            pcre_range: "true|false|yes|no|on|off"
             },
          "value_separator" : 
             {
@@ -1360,6 +1365,11 @@ var bundle_syntax = {
             datatype: "(menu option)",
             pcre_range: "true|false|yes|no|on|off"
             },
+         "timeout" : 
+            {
+            datatype: "int",
+            pcre_range: "1,3600"
+            },
          "trustkey" : 
             {
             datatype: "(menu option)",
@@ -1846,7 +1856,7 @@ var bundle_syntax = {
       "package_policy" : 
          {
          datatype: "(menu option)",
-         pcre_range: "add|delete|reinstall|update|patch|verify"
+         pcre_range: "add|delete|reinstall|update|addupdate|patch|verify"
          },
       "package_select" : 
          {
@@ -3895,6 +3905,283 @@ var bundle_syntax = {
          pcre_range: ".*"
          }
       }
+   },
+  hub:
+   {
+   "vars":
+      {
+      "string" : 
+         {
+         datatype: "string",
+         pcre_range: ".*"
+         },
+      "int" : 
+         {
+         datatype: "int",
+         pcre_range: "-99999999999,9999999999"
+         },
+      "real" : 
+         {
+         datatype: "real",
+         pcre_range: "-9.99999E100,9.99999E100"
+         },
+      "slist" : 
+         {
+         datatype: "slist",
+         pcre_range: ".*"
+         },
+      "ilist" : 
+         {
+         datatype: "ilist",
+         pcre_range: "-99999999999,9999999999"
+         },
+      "rlist" : 
+         {
+         datatype: "rlist",
+         pcre_range: "-9.99999E100,9.99999E100"
+         },
+      "policy" : 
+         {
+         datatype: "(menu option)",
+         pcre_range: "free|overridable|constant|ifdefined"
+         }
+      },
+   "classes":
+      {
+      "or" : 
+         {
+         datatype: "clist",
+         pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+         },
+      "and" : 
+         {
+         datatype: "clist",
+         pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+         },
+      "xor" : 
+         {
+         datatype: "clist",
+         pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+         },
+      "dist" : 
+         {
+         datatype: "rlist",
+         pcre_range: "-9.99999E100,9.99999E100"
+         },
+      "expression" : 
+         {
+         datatype: "class",
+         pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+         },
+      "not" : 
+         {
+         datatype: "class",
+         pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+         }
+      },
+   "reports":
+      {
+      "friend_pattern" : 
+         {
+         datatype: "string",
+         pcre_range: ".*"
+         },
+      "intermittency" : 
+         {
+         datatype: "real",
+         pcre_range: "0,1"
+         },
+      "lastseen" : 
+         {
+         datatype: "int",
+         pcre_range: "0,99999999999"
+         },
+      "printfile" : 
+            {
+         "file_to_print" : 
+            {
+            datatype: "string",
+            pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+            },
+         "number_of_lines" : 
+            {
+            datatype: "int",
+            pcre_range: "0,99999999999"
+            }
+            
+            },
+      "report_to_file" : 
+         {
+         datatype: "string",
+         pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+         },
+      "showstate" : 
+         {
+         datatype: "slist",
+         pcre_range: ".*"
+         }
+      },
+   "*":
+      {
+      "action" : 
+            {
+         "action_policy" : 
+            {
+            datatype: "(menu option)",
+            pcre_range: "fix|warn|nop"
+            },
+         "ifelapsed" : 
+            {
+            datatype: "int",
+            pcre_range: "0,99999999999"
+            },
+         "expireafter" : 
+            {
+            datatype: "int",
+            pcre_range: "0,99999999999"
+            },
+         "log_string" : 
+            {
+            datatype: "string",
+            pcre_range: ".*"
+            },
+         "log_level" : 
+            {
+            datatype: "(menu option)",
+            pcre_range: "inform|verbose|error|log"
+            },
+         "log_kept" : 
+            {
+            datatype: "string",
+            pcre_range: "stdout|udp_syslog|(\"?[a-zA-Z]:\\\\.*)|(/.*)"
+            },
+         "log_priority" : 
+            {
+            datatype: "(menu option)",
+            pcre_range: "emergency|alert|critical|error|warning|notice|info|debug"
+            },
+         "log_repaired" : 
+            {
+            datatype: "string",
+            pcre_range: "stdout|udp_syslog|(\"?[a-zA-Z]:\\\\.*)|(/.*)"
+            },
+         "log_failed" : 
+            {
+            datatype: "string",
+            pcre_range: "stdout|udp_syslog|(\"?[a-zA-Z]:\\\\.*)|(/.*)"
+            },
+         "value_kept" : 
+            {
+            datatype: "real",
+            pcre_range: ".*"
+            },
+         "value_repaired" : 
+            {
+            datatype: "real",
+            pcre_range: ".*"
+            },
+         "value_notkept" : 
+            {
+            datatype: "real",
+            pcre_range: ".*"
+            },
+         "audit" : 
+            {
+            datatype: "(menu option)",
+            pcre_range: "true|false|yes|no|on|off"
+            },
+         "background" : 
+            {
+            datatype: "(menu option)",
+            pcre_range: "true|false|yes|no|on|off"
+            },
+         "report_level" : 
+            {
+            datatype: "(menu option)",
+            pcre_range: "inform|verbose|error|log"
+            },
+         "measurement_class" : 
+            {
+            datatype: "string",
+            pcre_range: ".*"
+            }
+            
+            },
+      "classes" : 
+            {
+         "promise_repaired" : 
+            {
+            datatype: "slist",
+            pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+            },
+         "repair_failed" : 
+            {
+            datatype: "slist",
+            pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+            },
+         "repair_denied" : 
+            {
+            datatype: "slist",
+            pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+            },
+         "repair_timeout" : 
+            {
+            datatype: "slist",
+            pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+            },
+         "promise_kept" : 
+            {
+            datatype: "slist",
+            pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+            },
+         "cancel_kept" : 
+            {
+            datatype: "slist",
+            pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+            },
+         "cancel_repaired" : 
+            {
+            datatype: "slist",
+            pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+            },
+         "cancel_notkept" : 
+            {
+            datatype: "slist",
+            pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+            },
+         "persist_time" : 
+            {
+            datatype: "int",
+            pcre_range: "0,99999999999"
+            },
+         "timer_policy" : 
+            {
+            datatype: "(menu option)",
+            pcre_range: "absolute|reset"
+            }
+            
+            },
+      "ifvarclass" : 
+         {
+         datatype: "string",
+         pcre_range: ".*"
+         },
+      "handle" : 
+         {
+         datatype: "string",
+         pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+         },
+      "depends_on" : 
+         {
+         datatype: "slist",
+         pcre_range: ".*"
+         },
+      "comment" : 
+         {
+         datatype: "string",
+         pcre_range: ".*"
+         }
+      }
    }
 };
 
@@ -3961,6 +4248,11 @@ var body_control_syntax = {
          {
          datatype: "int",
          pcre_range: "0,99999999999"
+         },
+      "fips_mode" : 
+         {
+         datatype: "(menu option)",
+         pcre_range: "true|false|yes|no|on|off"
          }
    },
   agent:
@@ -4328,6 +4620,11 @@ var body_control_syntax = {
          {
          datatype: "(menu option)",
          pcre_range: "true|false|yes|no|on|off"
+         },
+      "timeout" : 
+         {
+         datatype: "int",
+         pcre_range: "1,9999"
          }
    },
   executor:
@@ -4537,6 +4834,19 @@ var body_control_syntax = {
          {
          datatype: "(menu option)",
          pcre_range: "true|false|yes|no|on|off"
+         }
+   },
+  hub:
+   {
+      "export_zenoss" : 
+         {
+         datatype: "(menu option)",
+         pcre_range: "true|false|yes|no|on|off"
+         },
+      "hub_schedule" : 
+         {
+         datatype: "slist",
+         pcre_range: ".*"
          }
    }
 };
