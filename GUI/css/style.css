@@ -95,6 +95,11 @@ clear:right;
 clear:both;
 }
 
+.margin-top10
+{
+margin-top:10px;
+}
+
 #status
 {
 color:#e1e1e3;
@@ -577,7 +582,6 @@ overflow:auto;
 	margin-left:15px;
 	width:225px;
 	margin-top:25px;
-	height:300px;
 	-moz-border-radius: 8px;
     -webkit-border-radius: 8px;
 	padding-top:10px;
