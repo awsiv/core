@@ -37,7 +37,7 @@ cfpr_menu("Knowledge bank");
 		  });
 		  </script>
 		  <?php
-		  include 'footer.php';
+                  cfpr_footer();
 		  return;
 		  }
 	   else if ($pid == 0)
