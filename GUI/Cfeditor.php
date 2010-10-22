@@ -202,7 +202,7 @@ cfpr_header("Policy editor","none");
 	   
 	$('#new')
      .click(function() {
-      tab_content_input='<textarea id="code'+code_editor_counter+'" cols="120" rows="30">body monitor control\n{\nforgetrate => "0.7";\n}</textarea>'+
+      tab_content_input='<textarea id="code'+code_editor_counter+'" cols="120" rows="30"></textarea>'+
     	                  '<input type="hidden" name="tabtype" value="codeEditor" />';              
     	 addTab('new');
     	 var editor = CodeMirror.fromTextArea('code'+code_editor_counter, {
