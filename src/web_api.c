@@ -4010,7 +4010,7 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize)
 
    // NOTE: this is run as the web user
 
-   snprintf(cmd,CF_BUFSIZE,"/var/cfengine/bin/cf-promises -f %s -n",file);
+   snprintf(cmd,CF_BUFSIZE,"/var/cfengine/bin/cf-promises -n -f \"%s\"",file);
    output[0] = '\0';
 
    if(GetExecOutput(cmd,output,false))
