@@ -5,6 +5,7 @@
       
 $hostkey = $_POST['hostkey'];
 $report_type = $_POST['report'];
+$op=$_POST['op'];
 
 if ($hostkey == "")
    {
@@ -16,7 +17,11 @@ if ($hostkey == "")
    {
    $hostkey = "none";
    }
-
+if ($op=="delete")
+{
+	$host=$_POST['delhost'];
+	cfpr_delete_host($host);
+}
 
 $hostname = cfpr_hostname($hostkey);
 $ipaddr = cfpr_ipaddr($hostkey);
@@ -72,7 +77,14 @@ $colour = cfpr_get_host_colour($hostkey);
                <p> <label class="width_20">Average Free Disk:</label><label><?php echo $free?>%</label></p>
                <p><label class="width_20">Average network speed:</label><label><?php echo  $speed?></label></p>
                </div>
+               <div class="floatRight">
                <?php echo "<img src=\"images/$colour"."_sign_medium.png\" class=\"floatRight\"/>"; ?>
+                <form method="post" action="host.php" onsubmit="return confirm('Are you sure you want to delete this host?');">
+                     <input type="hidden" name="op" id="op" value="delete"/>
+                     <input type="hidden" name="delhost" id="delhost" value="<?php echo $hostkey?>"/>
+                     <input class="btn margin-top10"  type="submit"  value="Delete host"/>
+                 </form>
+                </div>
                <div class="clearboth"></div>
                      </div>
                   </div>
