@@ -168,6 +168,8 @@ for (i = 0,start = now - one_week; start < now; start += CF_SHIFT_INTERVAL,i++)
 
 for (i = 0; i < span; i++)
    {
+   double red,yellow;
+   
    x = i * (cfv.width-cfv.origin_x)/span + cfv.origin_x;
 
    total = notkept[i]+kept[i]+repaired[i];
@@ -175,10 +177,25 @@ for (i = 0; i < span; i++)
    tnotkept = notkept[i]/total * cfv.range;
    trepaired = repaired[i]/total * cfv.range;
 
+   red = tnotkept*scale;
+
+   if (red > cfv.range)
+      {
+      red = cfv.range;
+      }
+   
    gdImageSetThickness(cfv.im,cfv.width/span/1.3);
-   gdImageLine(cfv.im,x,0,x,tnotkept*scale,RED);
+   gdImageLine(cfv.im,x,0,x,red,RED);
+
+   yellow = (tnotkept+trepaired)*scale;
+
+   if (yellow > cfv.range)
+      {
+      yellow = cfv.range;
+      }
+   
    gdImageSetThickness(cfv.im,cfv.width/span/1.3);
-   gdImageLine(cfv.im,x,tnotkept*scale,x,(tnotkept+trepaired)*scale,YELLOW);
+   gdImageLine(cfv.im,x,red,x,yellow,YELLOW);
 
    if (total < 40) // No data
       {
@@ -187,8 +204,11 @@ for (i = 0; i < span; i++)
       }
    else
       {
-      gdImageSetThickness(cfv.im,1);
-      gdImageLine(cfv.im,x,(tnotkept+trepaired)*scale,x,cfv.range,WHITE);      
+      if (yellow < cfv.range)
+         {
+         gdImageSetThickness(cfv.im,1);
+         gdImageLine(cfv.im,x,yellow,x,cfv.range,WHITE);
+         }
       }
 
    ltotal = total;
