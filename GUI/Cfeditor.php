@@ -343,18 +343,25 @@ cfpr_header("Policy editor","none");
            data:({'file':$('#tab_title').val(), 'content':$('#tab_content').html(), 'filestats':'new'}),
            dataType:'json',
            success: function(data){
+			   if(data.status)
+			   {
         	   var id= $('ul#policies_list_new li').length+1;
                var append_html='<li class="file ext_txt"><a href="#" rel="'+data.path+'" id="policy_'+id+'">'+data.title+'</a></li>';
                $('#policies_list_new').append(append_html);	
-               if($('#event').val()=='saving')
-	               {
 	  			   var append_html_tab='<input type="hidden" name="link" value="policy_'+id+'" />';
 	  			   $(current_tab_id).append(append_html_tab);
 	               $('a[href="'+current_tab_id+'"]',$tabs).html(data.title);
 	               $('#policy_'+id).hide('slow');
-	               }
-             }
-          });
+                }
+				else
+			  {
+				closetabs=false; 
+				$confirmation.dialog({title: "Error"});
+	            $confirmation.html('<span>Error! occured'+data.msg+'</span>'); 
+	            $confirmation.dialog('open'); 
+			  }
+		      }
+            });
 		 $(this).dialog('close');
 		 },
 		 'Cancel': function() {
@@ -476,6 +483,7 @@ cfpr_header("Policy editor","none");
 							 $confirmation.dialog('open');   
 						 }
 				   });
+			 $(this).dialog('close');
 	      },
 		'Cancel':function() {
 	      $(this).dialog('close');
@@ -571,7 +579,14 @@ cfpr_header("Policy editor","none");
 
 	 $('#Checkout')
 	   .click(function() {
-		    $.ajax({
+			 if(code_editor_counter > 0)
+		     {
+				 alert("please close all the active policies tab");
+				 
+			 }
+			 else
+			 {
+				  $.ajax({
 	           type: "POST",
 	           async:false,
 	           url: "policy/get_list.php?op=ischeckedout",
@@ -597,7 +612,8 @@ cfpr_header("Policy editor","none");
 	            	 $confirmation.html('<span>Error! occured</span>'); 
 	            	 $confirmation.dialog('open');   
 	             }
-	       });
+	           });
+			 }
          });
 
           $('#Commit')
@@ -647,14 +663,13 @@ cfpr_header("Policy editor","none");
 			type: "POST",
 			async:false,
 			url: "policy/checksyntax.php",
+			datatype:'json',
 			success: function(data){
 				$confirmation.dialog({title: "No Errors"});
 				$confirmation.html('<span>Compiled Sucessfully with no errors</span>'); 
 				$confirmation.dialog('open');
-				
-
 			},
-		error:function(data){
+		    error:function(data){
 				$confirmation.dialog({title: "Error"});
 				$confirmation.html('<span>Error! occured</span>'); 
 				$confirmation.dialog('open');   
@@ -732,7 +747,7 @@ cfpr_header("Policy editor","none");
 						else if($("#operation").val()=='commit')
 							{
 								 $confirmation.dialog({title: $("#operation").val()});
-								 $confirmation.html('<span>'+current_tab_title+' commited Sucessfully </span>'); 
+								 $confirmation.html('<span>'+$('#cmtfile').val()+' commited Sucessfully </span>'); 
 								 $confirmation.dialog('open');
 							}
 							$('#cmtfile').val('');
