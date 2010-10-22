@@ -6,20 +6,12 @@
 cfpr_header("Content-Driven Policy Reports","ok");
 $report_type = $_POST['cdp_report'];
 $hostkey = "";
+
+cfpr_menu("Status : hosts");
 ?>
-      <div id="nav">
-             <ul class="grid_10">
-                  <li><a href="index.php">SUMMARY</a></li>
-                  <li><a href="helm.php">PLANNING</a></li>
-                  <li><a href="status.php" class="current">STATUS</a></li>
-                  <li><a href="knowledge.php">LIBRARY</a></li>
-             </ul>
-             <span id="status" class="grid_2 alignright">
-             Planning : services
-             </span>
-             <div class="clearleft"></div>
-        </div>
-        <?php
+
+
+    <?php
 		     $reportheading="";
 			switch($report_type)
 			{
@@ -74,6 +66,7 @@ $(document).ready(function() {
 });
  
 </script>      
- <?php
-include 'footer.php';
-?>
+
+  <?php
+ cfpr_footer();
+ ?>
