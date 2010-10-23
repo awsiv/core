@@ -476,18 +476,18 @@ for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
 
 Debug(" -> Caching key for %s",name);
 
-rp = PrependRlist(&SERVER_KEYRING,"nothing",CF_SCALAR);
-
 ThreadLock(cft_system);
-
 kp = (struct CfKeyBinding *)malloc((sizeof(struct CfKeyBinding)));
+ThreadUnlock(cft_system);
 
 if (kp == NULL)
    {
-   ThreadUnlock(cft_system);
    return;
    }
 
+rp = PrependRlist(&SERVER_KEYRING,"nothing",CF_SCALAR);
+
+ThreadLock(cft_system);
 free(rp->item);
 rp->item = kp;
 
@@ -499,9 +499,9 @@ if ((kp->name = strdup(name)) == NULL)
    }
 
 RSA_up_ref(key);
-kp->key = key;
-
 ThreadUnlock(cft_system);
+
+kp->key = key;
 kp->timestamp = time(NULL);
 }
 
