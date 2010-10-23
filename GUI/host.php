@@ -18,10 +18,10 @@ if ($hostkey == "")
    $hostkey = "none";
    }
 if ($op=="delete")
-{
-	$host=$_POST['delhost'];
-	cfpr_delete_host($host);
-}
+   {
+   $host=$_POST['delhost'];
+   cfpr_delete_host($host);
+   }
 
 $hostname = cfpr_hostname($hostkey);
 $ipaddr = cfpr_ipaddr($hostkey);
@@ -30,7 +30,7 @@ cfpr_header("$title","normal");
 cfpr_menu("Status : host");
 cfpr_host_meter($hostkey);
 $colour = cfpr_get_host_colour($hostkey);
-  ?>
+?>
         
         <div id="tabpane">
          <div class="grid_5">
@@ -47,18 +47,19 @@ $colour = cfpr_get_host_colour($hostkey);
                      </form>
                      </div>
                   </div>
-              <?php
-				$last = cfpr_getlastupdate($hostkey);
-				$class = cfpr_get_variable($hostkey,"sys","ostype");
-				$flavour = cfpr_get_variable($hostkey,"sys","flavour");
-				$rel = cfpr_get_variable($hostkey,"sys","release");
-				$load = cfpr_get_variable($hostkey,"mon","av_loadavg");
-				$free = cfpr_get_variable($hostkey,"mon","av_diskfree");
-				$speed = cfpr_get_network_rate($hostkey);
-			  ?>
-                  <div class="panel">
-                        <div class="panelhead">Host Details</div>
-                     <div class="panelcontent">
+<?php
+$last = cfpr_getlastupdate($hostkey);
+$class = cfpr_get_variable($hostkey,"sys","ostype");
+$flavour = cfpr_get_variable($hostkey,"sys","flavour");
+$rel = cfpr_get_variable($hostkey,"sys","release");
+$load = cfpr_get_variable($hostkey,"mon","av_loadavg");
+$free = cfpr_get_variable($hostkey,"mon","av_diskfree");
+$speed = cfpr_get_network_rate($hostkey);
+?>
+
+<div class="panel">
+    <div class="panelhead">Host Details</div>
+     <div class="panelcontent">
        <p><label class="width_20">Alias:</label><label ><?php echo $hostname?></label></p>
       <p> <label class="width_20">OS Class:</label><label><?php echo $class?></label></p>
        <p><label class="width_20">Release:</label><label><?php echo $rel?></label></p>

@@ -75,6 +75,6 @@ cfpr_menu("Status : hosts");
           <div class="clear"></div>
         </div>
         
-  <?php
- cfpr_footer();
- ?>
+<?php
+cfpr_footer();
+?>

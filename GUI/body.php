@@ -10,13 +10,13 @@ cfpr_menu("Show : Body definition");
 ?>
      <div id="tabpane">
          <div class="grid_5">
-			 <?php
+<?php
              echo "<div class=\"panel\"><div class=\"panelhead\">Other bodies of type $type</div>";
              echo "<div class=\"panelcontent\">";
              $allbodies = cfpr_list_bodies(".*",$type);
              echo "$allbodies";
              echo "</div></div>";
-             ?>
+?>
          </div>
          <div class="grid_7">
              <?php
@@ -28,6 +28,7 @@ cfpr_menu("Show : Body definition");
              ?>
          </div>
      </div>
+
 <?php
-         cfpr_footer();
+cfpr_footer();
 ?>

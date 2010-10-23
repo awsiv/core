@@ -10,10 +10,6 @@ cfpr_menu("Services : this host");
 $hostkey = NULL;
 $name = ".*";
 $regex = 1;
-
-//$ret = cfpr_report_classes(NULL,$name,true);
-//$ret = cfpr_report_software_in(NULL,NULL,NULL,NULL,0);
-
 $hash = NULL;
 $host = NULL;
 $addr = NULL;
@@ -45,7 +41,7 @@ $(document).ready(function() {
  
 </script>
         
- <?php
+<?php
 cfpr_footer();
 ?>
 

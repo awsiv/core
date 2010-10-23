@@ -16,5 +16,5 @@ cfpr_menu("Status : weakest hosts");
             </div>
         </div>
 <?php
- cfpr_footer();
+cfpr_footer();
 ?> 

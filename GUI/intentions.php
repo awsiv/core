@@ -32,6 +32,5 @@ cfpr_menu("Intentions");
 </table>
 
 <?php
-
 cfpr_footer();
 ?>

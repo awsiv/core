@@ -18,47 +18,48 @@
   <div>
   <div class="grid_9">
 <?php
-	$hostkey = $_POST['hostkey'];
-	$report_type = $_POST['report'];
-	if ($hostkey == "")
-	   {
-	   $hostkey = $_GET['hostkey'];
-	   $report_type = $_GET['report'];
-	   }
-	$view =  $_GET['view'];
-	$obs =  $_GET['obs'];
-	$obs_name = cfpr_get_observable_name($obs);
-	$nm =  $_GET['nm'];
-	$host = cfpr_hostname($hostkey);
+
+$hostkey = $_POST['hostkey'];
+$report_type = $_POST['report'];
+if ($hostkey == "")
+   {
+   $hostkey = $_GET['hostkey'];
+   $report_type = $_GET['report'];
+   }
+$view =  $_GET['view'];
+$obs =  $_GET['obs'];
+$obs_name = cfpr_get_observable_name($obs);
+$nm =  $_GET['nm'];
+$host = cfpr_hostname($hostkey);
 
 switch ($view)
    {
    case 'mag':
-     echo "<div class=\"panel\"><div class=\"panelhead\">Past 4 hours' $obs_name on $host</div>";
-     echo "<div class=\"panelcontent\">";    
-     echo "<img src=\"/hub/$hostkey/$nm"."_mag.png\">";
-     $ret = cfpr_analysis_mag($hostkey,$obs);
-	 echo"</div></div>";
-     break;
+       echo "<div class=\"panel\"><div class=\"panelhead\">Past 4 hours' $obs_name on $host</div>";
+       echo "<div class=\"panelcontent\">";    
+       echo "<img src=\"/hub/$hostkey/$nm"."_mag.png\">";
+       $ret = cfpr_analysis_mag($hostkey,$obs);
+       echo"</div></div>";
+       break;
    case 'week':
-     echo "<div class=\"panel\"><div class=\"panelhead\">Past week's $obs_name on $host</div>";
-     echo "<div class=\"panelcontent\">";        
-     echo "<img src=\"/hub/$hostkey/$nm"."_week.png\">";
-     $ret = cfpr_analysis_week($hostkey,$obs);
-	 echo"</div></div>";
-     break;
+       echo "<div class=\"panel\"><div class=\"panelhead\">Past week's $obs_name on $host</div>";
+       echo "<div class=\"panelcontent\">";        
+       echo "<img src=\"/hub/$hostkey/$nm"."_week.png\">";
+       $ret = cfpr_analysis_week($hostkey,$obs);
+       echo"</div></div>";
+       break;
    case 'hist':
-     echo "<div class=\"panel\"><div class=\"panelhead\">Frequency spectrum for $obs_name on $host</div>";
-     echo "<div class=\"panelcontent\">";    
-     echo "<img src=\"/hub/$hostkey/$nm"."_hist.png\">";
-     $ret = cfpr_analysis_hist($hostkey,$obs);
-	 echo"</div></div>";
-     break;
-	default:
+       echo "<div class=\"panel\"><div class=\"panelhead\">Frequency spectrum for $obs_name on $host</div>";
+       echo "<div class=\"panelcontent\">";    
+       echo "<img src=\"/hub/$hostkey/$nm"."_hist.png\">";
+       $ret = cfpr_analysis_hist($hostkey,$obs);
+       echo"</div></div>";
+       break;
+   default:
    }
-	?>
-    </div>
-      <div class="grid_3">
+?>
+</div>
+<div class="grid_3">
           <div class="panel"><div class="panelhead">Legends</div>
                <ul class="panelcontent">
              <li><a href="hosts.php?type=red"><img src="/img/green.png" class="align"/><span class="imglabel">Indicates the identification of a maximum (peak) value, to the maximum accuracy of the data ccategories.</span></a></li>

@@ -61,6 +61,5 @@ MY TOPIC  <select>
 </div>
      
 <?php
-
 cfpr_footer();
 ?>

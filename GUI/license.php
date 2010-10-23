@@ -22,6 +22,6 @@ $txt = cfpr_getlicense_summary();
           </div>
         </div>
         </div>
-  <?php
- cfpr_footer();
+<?php
+cfpr_footer();
 ?>   

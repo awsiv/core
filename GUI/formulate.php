@@ -58,6 +58,5 @@ cfpr_header("map intentions to promises","normal");
 </div>
      
 <?php
-
 cfpr_footer();
 ?>

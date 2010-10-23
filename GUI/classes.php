@@ -45,7 +45,7 @@ $(document).ready(function() {
 });
  
 </script>
- <?php
+<?php
 cfpr_footer();
 ?>
         

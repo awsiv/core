@@ -12,7 +12,7 @@ $r = cfpr_count_red_hosts();
 $y = cfpr_count_yellow_hosts();
 $g = cfpr_count_green_hosts();
   
-  ?>       
+?>       
         
         <div id="tabpane">
           <div class="grid_4">
@@ -49,4 +49,6 @@ $g = cfpr_count_green_hosts();
           <div class="clear"></div>
         </div>
         
-  <?php     cfpr_footer();  ?>
+<?php
+cfpr_footer();
+?>

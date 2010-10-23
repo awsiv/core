@@ -8,10 +8,6 @@ cfpr_menu("Status : Promises");
 $hostkey = NULL;
 $name = ".*";
 $regex = 1;
-
-//$ret = cfpr_report_classes(NULL,$name,true);
-//$ret = cfpr_report_software_in(NULL,NULL,NULL,NULL,0);
-//$ret = cfpr_report_lastseen($hostkey,$hash,$host,$addr,$tago,$regex);
 $hash = NULL;
 $host = NULL;
 $addr = NULL;
@@ -44,6 +40,6 @@ $(document).ready(function() {
  
 </script>
         
- <?php
+<?php
 cfpr_footer();
 ?>

@@ -4,7 +4,8 @@
 #
 cfpr_header("Policy editor","none");
 ?>
- <link href="css/jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />
+
+<link href="css/jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />
     <div id="editor">
 	<div id="leftPanel">
 	 	<div class="ui-layout-content">
