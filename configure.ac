@@ -14,7 +14,7 @@ dnl
 dnl The version in the next line is the only one to set
 dnl
 
-AM_INIT_AUTOMAKE(cfnova,2.0.0b1)   dnl remember to set version
+AM_INIT_AUTOMAKE(cfnova,2.0.0b2)   dnl remember to set version
 
 AM_CONFIG_HEADER(src/conf.h)
 
