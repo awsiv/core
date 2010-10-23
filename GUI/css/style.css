@@ -13,7 +13,7 @@ min-width:960px;
 
 #header
 {
- font-family:Arial, Helvetica, sans-serif;
+ font-family:DejaVuSans,Arial, Helvetica, sans-serif;
  font-size:16px;
  color:#e1e1e3;
  margin-top:10px;
@@ -53,12 +53,13 @@ padding:0px 10px;
  height:25px;
  background:#e1e1e3;
  border:none;
- font:16px Arial, Helvetica, sans-serif;
+ font:16px DejaVuSans,Arial, Helvetica, sans-serif;
  color:#585750;
 }
 
 #nav
 {
+font-family:DejaVuSans,Arial, Helvetica, sans-serif;
 background:#52514a;
 color:#95c852;
 }
@@ -133,7 +134,7 @@ margin:10px 10px;
 background:url('../images/panelhead.png') repeat-x;	
 padding:10px;
 color:#e1e1e3;
-font-family:Arial, Helvetica, sans-serif;
+font-family:DejaVuSans,Arial, Helvetica, sans-serif;
 font-size:14px;
 }
 
@@ -142,7 +143,7 @@ font-size:14px;
 background:#55544d;	
 padding:10px;
 color:#e1e1e3;
-font-family:Arial, Helvetica, sans-serif;
+font-family:DejaVuSans,Arial, Helvetica, sans-serif;
 font-size:14px;
 }
 
@@ -150,7 +151,7 @@ font-size:14px;
 {
 background:#e1e1e3;
 padding:9px;
-font:14px Arial, Helvetica, sans-serif;
+font:14px DejaVuSans,Arial, Helvetica, sans-serif;
 }
 
 .panelcontent p
@@ -205,7 +206,7 @@ text-align:left;
 {
 padding:9px 0px;
 color:#1690cf;
-font-family:Arial, Helvetica, sans-serif;
+font-family:DejaVuSans,Arial, Helvetica, sans-serif;
 font-size:14px;
 }
 
@@ -213,7 +214,7 @@ font-size:14px;
 {
 	color:#fff;
 	background:#44443d;
-	font-family:Arial, Helvetica, sans-serif;
+	font-family:DejaVuSans,Arial, Helvetica, sans-serif;
     font-size:12px;
 	
 }
@@ -254,7 +255,7 @@ font-size:14px;
 .imglabel
 {
 	padding-left:10px;
-	font-family:Arial, Helvetica, sans-serif;
+	font-family:DejaVuSans,Arial, Helvetica, sans-serif;
     font-size:14px;
 }
 
@@ -267,7 +268,7 @@ font-size:14px;
 {
 	background:url(../images/footer.png) repeat-x;
 	color:#fff;
-	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-family:"Trebuchet MS", DejaVuSans,Arial, Helvetica, sans-serif;
 	font-size:12px;
 	padding-top:15px;
 	padding-bottom:40px;
@@ -296,7 +297,7 @@ font-size:14px;
 {
 	float:left;
 	width:55%;
-	font-family:Arial, Helvetica, sans-serif;
+	font-family:DejaVuSans,Arial, Helvetica, sans-serif;
 	margin-top:10px;
 	color:#585750;
 	margin-left:5px;
@@ -374,7 +375,7 @@ span.text
 }
 #tips p
 {
-	font-family:Arial, Helvetica, sans-serif;
+	font-family:DejaVuSans,Arial, Helvetica, sans-serif;
 	font-size:14px;
 	float:left;
 	background:#E1E1E3 none repeat scroll 0 0;
@@ -411,7 +412,7 @@ span.text
 }
 .tables table
 {
-font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+font-family:"Trebuchet MS", DejaVuSans,Arial, Helvetica, sans-serif;
 width:100%;
 border-collapse:collapse;
 }
@@ -839,7 +840,7 @@ small
 	background:url(../images/drilldown.png) center no-repeat;
 	text-align:center;
 	color:#fff;
-	font-family:Arial, Helvetica, sans-serif;
+	font-family:DejaVuSans,Arial, Helvetica, sans-serif;
 	width:191;
 	margin:0 auto;
 	display:block;
@@ -906,7 +907,7 @@ padding:10px;
 
 #subject
 {
-color: #fff;
+color: #73b169;
 font-weight:bold;
 font-size: 120%;
 }
