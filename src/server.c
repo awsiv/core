@@ -446,7 +446,7 @@ for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
 
    if (strcmp(kp->name,name) == 0)
       {
-      CfOut(cf_verbose,""," -> Retrieving key for \"%s\" from cache",name);
+      CfOut(cf_verbose,""," -> Retrieving key for \"%s\" from cache with address",name,kp->address);
       ThreadLock(cft_system);
       RSA_up_ref(kp->key);
       ThreadUnlock(cft_system);
@@ -459,7 +459,7 @@ return NULL;
 
 /********************************************************************/
 
-void Nova_IdempAddToKeyRing(char *name,RSA *key)
+void Nova_IdempAddToKeyRing(char *name,char *ipaddress,RSA *key)
 
 { struct Rlist *rp;
   struct CfKeyBinding *kp;
@@ -474,7 +474,7 @@ for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
       }
    }
 
-Debug(" -> Caching key for %s",name);
+CfOut(cf_verbose,""," -> Caching key for %s in the ring",name);
 
 ThreadLock(cft_system);
 kp = (struct CfKeyBinding *)malloc((sizeof(struct CfKeyBinding)));
@@ -485,22 +485,23 @@ if (kp == NULL)
    return;
    }
 
-rp = PrependRlist(&SERVER_KEYRING,"nothing",CF_SCALAR);
-
 ThreadLock(cft_system);
-free(rp->item);
-rp->item = kp;
-
 if ((kp->name = strdup(name)) == NULL)
    {
    free(kp);
    ThreadUnlock(cft_system);
    return;
    }
-
-RSA_up_ref(key);
 ThreadUnlock(cft_system);
 
+rp = PrependRlist(&SERVER_KEYRING,"nothing",CF_SCALAR);
+
+ThreadLock(cft_system);
+free(rp->item);
+rp->item = kp;
+RSA_up_ref(key);
+ThreadUnlock(cft_system);
+kp->address = strdup(ipaddress);
 kp->key = key;
 kp->timestamp = time(NULL);
 }
@@ -521,15 +522,18 @@ if (now < then + 3600 && then > 0 && then <= now + 3600)
    }
 
 then = now;
+rp = SERVER_KEYRING;
 
-for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
+while (rp !=  NULL)
    {
    kp = (struct CfKeyBinding *) rp->item;
 
-   CfOut(cf_verbose,""," -> Holding key for %s",kp->name);
+   CfOut(cf_verbose,""," -> Holding key for %s (%s)",kp->name,kp->address);
    
    if (now > kp->timestamp + KEYTTL*3600)
       {
+      ThreadLock(cft_system);
+
       if (rpp == NULL)
          {
          SERVER_KEYRING = rp->next;
@@ -539,16 +543,35 @@ for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
          rpp->next = rp->next;
          }
 
-      ThreadLock(cft_system);
       RSA_free(kp->key);
+      
+      if (kp->address)
+         {
+         free(kp->address);
+         }
+
       free(kp->name);
       free(kp);
-      free(rp);
+      free(rp);      
       ThreadUnlock(cft_system);
-      }
 
-   rpp = rp;
+      if (rpp == NULL)
+         {
+         rp = SERVER_KEYRING;
+         }
+      else
+         {
+         rp = rpp->next;
+         }
+      }
+   else
+      {
+      rpp = rp;
+      rp = rp->next;
+      }
    }
+
+CfOut(cf_verbose,"","----");
 }
 
 /********************************************************************/
