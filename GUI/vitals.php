@@ -44,7 +44,7 @@ cfpr_menu("Status : vital signs");
 		var newlink=oldlink.split('?');
 		 $.fancybox({
 		 'padding' : 0,
-		 'href' : 'vitaldetails.php?'+newlink[1], 'title' : 'Details',
+		 'href' : 'vitaldetails.php?'+newlink[1],
 		 'type':'ajax',
 		 'transitionIn' : 'elastic',
 		 'transitionOut' : 'elastic'
