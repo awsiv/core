@@ -88,6 +88,8 @@ cfpr_header("Policy editor","none");
    </div>
    <div id="checkoutconfirmation" style="display:none" class="dialog">
    </div>
+   <div id="usedRepo" style="display:none">  
+   </div>
 <script src="scripts/Cfeditor/jquery.layout.min-1.2.0.js" type="text/javascript"></script>
 <script src="scripts/Cfeditor/codemirror.js" type="text/javascript"></script>
 <script src="scripts/Cfeditor/cf.js" type="text/javascript"></script>
@@ -178,6 +180,7 @@ cfpr_header("Policy editor","none");
 	   $(".ui-tabs-panel").css('height', tab_height-50 );
 	   
 	   $('<img src="images/ajax-loader.gif" id="spinner" />').css('position','absolute').hide().appendTo('body');
+	   
 	   
 	   
 	   //load policies from database into left hand side panel on list with id Policies_list
@@ -721,6 +724,8 @@ cfpr_header("Policy editor","none");
 									$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){	
 									});
 								  //$('#Checkout').hide();
+					$('<div id="repoText"><span>SVN Repository Used</span></div>').css({position: 'absolute' , width:'100%'}).hide().appendTo('body');
+								  $('#usedRepo').html('<span>'+$("#repo").val()+'</span>');
 								  $confirmation.dialog({title: $("#operation").val()});
 								  $confirmation.html('<span>Checkedout sucessfully </span>'); 
 								  }
@@ -874,9 +879,14 @@ cfpr_header("Policy editor","none");
 		}); 
 
 	});*/
+	$('#repoText').live('click',function(){
+		$('#usedRepo').css({top: '0' , left:'0', margin:'17px' , opacity:'0.9'});
+		$('#usedRepo').slideToggle("slow");							 
+	 });
 	
 	jQuery(document).ajaxStart(function(){
 		 $('#spinner').css({top: '0' , left:$('body').width()/2 }).fadeIn();
+		 $('#repoText').css({top: '0' , left:'0'}).fadeOut();
 		 });
 	 jQuery(document).ajaxStop(function(){
 		 $('#spinner').css({top: '0' , left:$('body').width()/2 }).fadeOut();
@@ -886,7 +896,7 @@ cfpr_header("Policy editor","none");
 			  closetabindex="";
 			  closetabs=false;
 		   }
-		 
+		 $('#repoText').css({top: '0' , left:'0' }).fadeIn();
 		 });
 	   
 						   
