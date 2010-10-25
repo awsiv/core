@@ -267,13 +267,13 @@ if ($many)  // Returning query
           if ($hosts_only)
              {
              echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
-             $ret = cfpr_hosts_with_setuid(NULL,$name,true,$class_regex);
+             $report = cfpr_hosts_with_setuid(NULL,$name,true,$class_regex);
              }
           else
              {
              echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a>
 		   <a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
-             $ret = cfpr_report_setuid(NULL,$name,true,$class_regex);
+             $report = cfpr_report_setuid(NULL,$name,true,$class_regex);
              }
           break;
           
