@@ -370,6 +370,8 @@ cfv.docroot = docroot;
 
 Nova_ViewHisto(&cfv,keyhash,obs,true);
 
+*buffer = '\0';
+
 snprintf(work,CF_BUFSIZE-1,"<div id=\"histoanalysis\"><table>\n");
 Join(buffer,work,bufsize);
 

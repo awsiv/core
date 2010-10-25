@@ -466,6 +466,8 @@ cfv.docroot = docroot;
 
 Nova_ViewWeek(&cfv,keyhash,obs,true);
 
+*buffer = '\0';
+
 snprintf(work,CF_BUFSIZE-1,"<div id=\"weekanalysis\">\n");
 Join(buffer,work,bufsize);
 snprintf(work,CF_BUFSIZE-1,"<table>\n");

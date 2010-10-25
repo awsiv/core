@@ -313,6 +313,8 @@ cfv.docroot = docroot;
 
 Nova_ViewMag(&cfv,hostkey,obs);
 
+*buffer = '\0';
+
 snprintf(work,CF_BUFSIZE,"<div id=\"maganalysis\">\n");
 Join(buffer,work,bufsize);
    
