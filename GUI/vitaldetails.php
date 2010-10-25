@@ -14,7 +14,7 @@
 </head>
 <body>
 <div class="container_12">
-  <div class="grid_12"><span id='drilldown'>Drilldown</span></div>
+  <div class="grid_12"><span id='drilldown'>Details</span></div>
   <div>
   <div class="grid_9">
 <?php
