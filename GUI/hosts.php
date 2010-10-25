@@ -44,6 +44,12 @@ else
 </div>
 </div>
 
+        <script type="text/javascript">
+		$(document).ready(function() {
+		$('.tables table').find('img').addClass('align');
+		$('.tables table').find('a').addClass('imglabel');
+		});
+		</script>
 <?php
 cfpr_footer();
 ?>
