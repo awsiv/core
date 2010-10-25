@@ -179,13 +179,13 @@ else
 
 snprintf(buffer,bufsize,
 " <div id=\"nav\">\n"
-"   <ul class=\"grid_10\">\n"
+"   <ul class=\"grid_7\">\n"
 "      <li><a href=\"index.php\" %s>SUMMARY</a></li>\n"
 "      <li><a href=\"status.php\" %s>STATUS</a></li>\n"
 "      <li><a href=\"helm.php\" %s>PLANNING</a></li>\n"
 "      <li><a href=\"knowledge.php\" %s>KNOWLEDGE</a></li>\n"
 "   </ul>\n"
-"   <span id=\"status\" class=\"grid_2 alignright\">\n"
+"   <span id=\"status\" class=\"grid_5 alignright\">\n"
 "      %s\n"
 "   </span>\n"
 "   <div class=\"clearleft\"></div>\n"
