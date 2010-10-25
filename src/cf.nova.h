@@ -886,6 +886,7 @@ void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize);
 int Nova2PHP_list_bodies(char *name,char *type,char *buffer,int bufsize);
 char *Nova_LongState(char s);
 char *Nova_LongStateWarn(char s);
+void Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz);
 int Nova2PHP_docroot(char *buffer,int bufsize);
 void Nova_EnterpriseModuleTrick(void);
 void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize);

@@ -485,6 +485,8 @@ if (!CFDB_Close(&dbconn))
 return true;
 }
 
+
+
 /*****************************************************************************/
 
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,char *returnval,int bufsize)
@@ -2941,6 +2943,21 @@ char *Nova_LongStateWarn(char s)
 
 /*****************************************************************************/
 
+void Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz)
+{
+
+  if(now > then + threshold)
+    {
+    snprintf(outStr,outStrSz,"<span class=\"amber\">%s</span>",cf_ctime(&then));
+    }
+  else
+    {
+    snprintf(outStr,outStrSz,"%s",cf_ctime(&then));
+    }
+}
+
+/*****************************************************************************/
+
 void Nova2PHP_AnalyseMag(char *hostkey,enum observables obs,char *buffer,int bufsize)
 {
 Nova_WebTopicMap_Initialize();
@@ -3878,16 +3895,17 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
   char action[CF_MAXVARSIZE] = {0};
   char host[CF_MAXVARSIZE] = {0};
   char hostKeyHash[CF_MAXVARSIZE] = {0};
+  char thenStr[CF_SMALLBUF] = {0};
   char cause[CF_MAXVARSIZE] = {0};
   char statusStr[CF_SMALLBUF];
-  char time[CF_MAXVARSIZE] = {0};
+  time_t then = 0, now;
   char attributes[CF_MAXVARSIZE] = {0};
   char row[CF_MAXVARSIZE] = {0};
   int ret = false;
   cdp_t cdpType;
 
   memset(buf,0,bufSz);
-
+  now = time(NULL);
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -3946,12 +3964,14 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 	   for(ip2 = hosts; ip2 != NULL; ip2 = ip2->next)
 	     {
 	       
-	     sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%128[^$]",hostKeyHash,host,statusStr,time);
+	     sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%ld[^$]",hostKeyHash,host,statusStr,&then);
 
 	     //CFDB_QueryStausCause(&dbconn,hostKeyHash,handle,*statusStr,cause,sizeof(cause));
 
+	     Nova_TimeWarn(now,then,CF_HUB_HORIZON,thenStr,sizeof(thenStr));
+
 	     snprintf(row,sizeof(row),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
-		      host,attributes,Nova_LongStateWarn(*statusStr),time);
+		      host,attributes,Nova_LongStateWarn(*statusStr),thenStr);
 		   
 	     Join(buf,row,bufSz);
 	     }

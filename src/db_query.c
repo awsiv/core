@@ -4457,7 +4457,7 @@ return retList;
 struct Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle)
 /*
  * Returns all CDP Compliance host entries as
- * "hostkeyhash;host;status;timestr"
+ * "hostkeyhash;host;status;time_t"
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
 { bson_buffer bbuf;
@@ -4521,7 +4521,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
 		  else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
 		    {
 		    t = bson_iterator_int(&it3);
-		    snprintf(time,sizeof(time),"%s",ctime(&t));
+		    snprintf(time,sizeof(time),"%lu",t);
 		    }
 		  }
 	       }
