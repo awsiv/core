@@ -759,11 +759,6 @@ function rpt_setuid($hostkey,$search,&$pdf,$class_regex)
 #
 function EmailPDF($pdf, $pdf_filename, $to, $from, $subject, $message)
 {
-    /*$to = "bishwa.shrestha@gmail.com";
-    $from = "bishwa.shrestha@cfengine.com";
-    $subject = "Nova Report";
-    $message = "<p>Please see the attachment.</p>";*/
-
     // a random hash will be necessary to send mixed content
     $separator = md5(time());
 
@@ -782,7 +777,6 @@ function EmailPDF($pdf, $pdf_filename, $to, $from, $subject, $message)
     $headers .= "MIME-Version: 1.0".$eol;
     $headers .= "Content-Type: multipart/mixed; boundary=\"".$separator."\"".$eol.$eol;
     $headers .= "Content-Transfer-Encoding: 7bit".$eol;
-    $headers .= "This is a MIME encoded message.".$eol.$eol;
     
     // message
     $headers .= "--".$separator.$eol;
@@ -799,7 +793,7 @@ function EmailPDF($pdf, $pdf_filename, $to, $from, $subject, $message)
     $headers .= "--".$separator."--";
     
     // send message
-    mail($to, $subject, "", $headers);
+    mail($to, $subject, "", $headers,"-f$from");
     
 }
 
