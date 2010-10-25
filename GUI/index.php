@@ -17,7 +17,7 @@ $g = cfpr_count_green_hosts();
         <div id="tabpane">
           <div class="grid_4">
                   <div class="panel">
-                    <div class="panelhead"><?php echo $all?> hosts registerd</div>
+                    <div class="panelhead"><?php echo $all?> hosts registered</div>
                      <ul class="panelcontent">
 <li><a href="hosts.php?type=red"><img src="images/red_sign_medium.png" class="align"/><span class="imglabel"><?php echo $r?> hosts known</span></a></li>
 <li><a href="hosts.php?type=yellow"><img src="images/yellow_sign_medium.png" class="align"/><span class="imglabel"><?php echo $y?> hosts known</span></a></li>

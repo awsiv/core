@@ -777,7 +777,7 @@ returnval[0] = '\0';
 
 strcat(returnval,"<table>\n");
 
-snprintf(buffer,sizeof(buffer),"<tr><td>Host</td><td>Event</td><td>Last time</td><td>Avg time</td><td>Uncertainty</td><td>Last performed</td></tr>\n");
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Event</th><th>Last time</th><th>Avg time</th><th>Uncertainty</th><th>Last performed</th></tr>\n");
 Join(returnval,buffer,bufsize);            
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
