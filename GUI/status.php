@@ -41,7 +41,7 @@ cfpr_menu("Status : hosts");
                 <div class="panelcontent">
                     <ul>
                       <li> <a href="knowledge.php?topic=Status level meters"><img src="/hub/common/meter.png"></a></li>
-                       <li><img class="icontext" src="/img/dive.png"> <a href="host.php">Select a particular host</a></li>
+                       <li><img class="icontext" src="images/host.png"> <a href="host.php">Select a particular host</a></li>
                      </ul>
                  </div>
           	</div>
