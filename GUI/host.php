@@ -18,10 +18,10 @@ if ($hostkey == "")
    $hostkey = "none";
    }
 if ($op=="delete")
-   {
-   $host=$_POST['delhost'];
-   cfpr_delete_host($host);
-   }
+{
+	$host=$_POST['delhost'];
+	cfpr_delete_host($host);
+}
 
 $hostname = cfpr_hostname($hostkey);
 $ipaddr = cfpr_ipaddr($hostkey);
@@ -30,7 +30,7 @@ cfpr_header("$title","normal");
 cfpr_menu("Status : host");
 cfpr_host_meter($hostkey);
 $colour = cfpr_get_host_colour($hostkey);
-?>
+  ?>
         
         <div id="tabpane">
          <div class="grid_5">
@@ -47,25 +47,24 @@ $colour = cfpr_get_host_colour($hostkey);
                      </form>
                      </div>
                   </div>
-<?php
-$last = cfpr_getlastupdate($hostkey);
-$class = cfpr_get_variable($hostkey,"sys","ostype");
-$flavour = cfpr_get_variable($hostkey,"sys","flavour");
-$rel = cfpr_get_variable($hostkey,"sys","release");
-$load = cfpr_get_variable($hostkey,"mon","av_loadavg");
-$free = cfpr_get_variable($hostkey,"mon","av_diskfree");
-$speed = cfpr_get_network_rate($hostkey);
-?>
-
-<div class="panel">
-    <div class="panelhead">Host Details</div>
-     <div class="panelcontent">
+              <?php
+				$last = cfpr_getlastupdate($hostkey);
+				$class = cfpr_get_variable($hostkey,"sys","ostype");
+				$flavour = cfpr_get_variable($hostkey,"sys","flavour");
+				$rel = cfpr_get_variable($hostkey,"sys","release");
+				$load = cfpr_get_variable($hostkey,"mon","av_loadavg");
+				$free = cfpr_get_variable($hostkey,"mon","av_diskfree");
+				$speed = cfpr_get_network_rate($hostkey);
+			  ?>
+                  <div class="panel">
+                        <div class="panelhead">Host Details</div>
+                     <div class="panelcontent">
        <p><label class="width_20">Alias:</label><label ><?php echo $hostname?></label></p>
       <p> <label class="width_20">OS Class:</label><label><?php echo $class?></label></p>
        <p><label class="width_20">Release:</label><label><?php echo $rel?></label></p>
         <p><label class="width_20">Flavour:</label><label><?php echo $flavour?></label></p>
-       <p><label class="width_20">Last IP-address:</label><label><?php echo $ipaddr?></label></p>
-       <p><label class="width_20">Last Update:</label><label><?php echo $last?></label></p>
+       <p><label class="width_20">Last Known :</label><label><?php echo $ipaddr?></label></p>
+       <p><label class="width_20">Last date:</label><label><?php echo $last?></label></p>
        <p><label class="width_20">ID:</label><label><small><?php echo $hostkey?></small></label></p>
                       </div>
                  </div>
@@ -96,7 +95,8 @@ $speed = cfpr_get_network_rate($hostkey);
           		<div class="panelhead">Analysis</div>
                 <div class="panelcontent">
                 <p><a href="knowledge.php?topic=Status level meters"><img src="/hub/<?php echo $hostkey?>/meter.png"></a></p>
-         <p><a href="vitals.php?hostkey=<?php echo $hostkey?>"><img src="images/pulsed.png" class="align"/><span class="imglabel">Pulse and vital sign for this host</span></a></p>
+                <p><a href="vitals.php?hostkey=<?php echo $hostkey?>">Pulse and vital signs for this host</a></p>
+                <p><a href="vitals.php?hostkey=<?php echo $hostkey?>"><img src="images/pulsed.png" class="align"/></a></p>
                  </div>
           	</div>
             

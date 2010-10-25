@@ -38,7 +38,7 @@ if ($search == "")
 		  });
 		  </script>
 		  <?php
-		  include 'footer.php';
+                  cfpr_footer();
 		  return;
 		  }
 	   else if ($pid == 0)
