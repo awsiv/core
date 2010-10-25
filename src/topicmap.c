@@ -976,6 +976,9 @@ else
    strcpy(filename,filenode);
    }
 
+// Clean up old data
+unlink(filename);
+
 tribe_adj = (double **)malloc(sizeof(double *)*CF_TRIBE_SIZE);
 
 for (i = 0; i < CF_TRIBE_SIZE; i++)
