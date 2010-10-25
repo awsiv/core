@@ -928,18 +928,18 @@ font-weight:bold;
 background-color: #f79131;
 }
 
-#plusline
+.plusline
 {
 color: blue;
 }
 
-#minusline
+.minusline
 {
 color: red;
 font-weight: bold;
 }
 
-#pm
+.pm
 {
 font-size: 150%;
 color: darkgreen;
