@@ -738,6 +738,40 @@ div.ui-dialog-buttonpane,.dialog.ui-dialog-buttonpane
 	z-index:10;
 }
 
+#repoText
+{
+	z-index:5;
+	color:#fff;
+	cursor:pointer;
+	
+	text-align:center;
+}
+
+#repoText span
+{
+ color:#fff;
+ padding-left:2px;
+ padding-right:2px;
+ padding-bottom:1px;
+}
+
+
+#usedRepo
+{
+	text-align:center;
+}
+
+#usedRepo span
+{
+	color:#000;
+	font:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+    padding:4px;
+	background:#E8EAF9;
+	
+}
+
 /* file list browser css*/
 UL.jqueryFileTree {
 	font-family: Verdana, sans-serif;
