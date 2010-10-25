@@ -2360,17 +2360,14 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (CFDB_QueryPromiseAttr(&dbconn,handle,cfp_bundlename,buffer,CF_BUFSIZE))
-   {
-   return buffer;
-   }
+if (!CFDB_QueryPromiseAttr(&dbconn,handle,cfp_bundlename,buffer,CF_BUFSIZE))
+  {
+  *buffer = '\0';
+  }
 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   }
+ CFDB_Close(&dbconn);
 
-return "No such promise";
+ return buffer;
 }
 
 /*****************************************************************************/
@@ -2486,17 +2483,15 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (CFDB_QueryPromiseAttr(&dbconn,handle,cfp_promisetype,buffer,CF_BUFSIZE))
+if (!CFDB_QueryPromiseAttr(&dbconn,handle,cfp_promisetype,buffer,CF_BUFSIZE))
    {
-   return buffer;
+   *buffer = '\0';
    }
 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   }
 
-return "No such promise";
+ CFDB_Close(&dbconn);
+
+ return buffer;
 }
 
 /*****************************************************************************/
@@ -2512,17 +2507,14 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if (CFDB_QueryPromiseAttr(&dbconn,handle,cfp_promiser,buffer,CF_BUFSIZE))
+if (!CFDB_QueryPromiseAttr(&dbconn,handle,cfp_promiser,buffer,CF_BUFSIZE))
    {
-   return buffer;
+   *buffer = '\0';
    }
 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   }
+ CFDB_Close(&dbconn);
 
-return "No such promise";
+ return buffer;
 }
 
 /*****************************************************************************/
@@ -2627,11 +2619,11 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hp = CFDB_QueryPromise(&dbconn, handle);
- 
+hp = CFDB_QueryPromise(&dbconn, handle, NULL, 0);
+
 if (!hp)
    {
-   snprintf(returnval, bufsize, "<br>Promise '%s' not found in database", handle);
+   snprintf(returnval, bufsize, "<br> Promise '%s' was not found in the database.", handle);
    CFDB_Close(&dbconn);
    return false;
    }

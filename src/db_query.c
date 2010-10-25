@@ -3172,26 +3172,50 @@ return ok;
 /* Promises collections                                                      */
 /*****************************************************************************/
 
-struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle)
+struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char *file, int lineNo)
 /*
- * Returns all attribs of one promise by its handle.
+ * Returns all attribs of one promise by its handle XOR (file,lineno).
  */
-{ bson_buffer b;
-  bson query;
-  mongo_cursor *cursor;
+{ bson_buffer bb;
+  bson query,result;
+  mongo_cursor *cursor,*cursor2;
   bson_iterator it1,it2;
   char bn[CF_MAXVARSIZE] = {0}, bt[CF_MAXVARSIZE] = {0},ba[CF_MAXVARSIZE] = {0},
     pt[CF_MAXVARSIZE] = {0}, pr[CF_MAXVARSIZE] = {0}, pe[CF_MAXVARSIZE] = {0},
     cl[CF_MAXVARSIZE] = {0}, ha[CF_MAXVARSIZE] = {0}, co[CF_MAXVARSIZE] = {0},
     fn[CF_MAXVARSIZE] = {0}, **cons = {0};
+  char fileExp[CF_MAXVARSIZE] = {0};
+  int lineExp = 0;
   int lno = -1;
   int i,constCount;
-  
-  /* BEGIN query document */
+  int fileLineSearch = false;
 
-bson_buffer_init(&b);
-bson_append_string(&b,cfp_handle,handle);
-bson_from_buffer(&query,&b);
+  
+  if(EMPTY(file))  // use handle by default, (file,lineNo) if handle is not found
+    {
+    fileLineSearch = false;
+    }
+  else
+    {
+    fileLineSearch = true;
+    }  
+  
+
+/* BEGIN query document */
+
+bson_buffer_init(&bb);
+
+ if(fileLineSearch)
+   {
+   bson_append_string(&bb,cfp_file,file);
+   bson_append_int(&bb,cfp_lineno,lineNo);
+   }
+ else
+   {
+   bson_append_string(&bb,cfp_handle,handle);
+   }
+
+bson_from_buffer(&query,&bb);
 
 
 /* BEGIN SEARCH */
@@ -3306,7 +3330,59 @@ if (mongo_cursor_next(cursor))  // loops over documents
          }
       }
    }
-else
+ else if(!fileLineSearch)  // if not found in unexpanded promise DB, try expanded
+   {
+   mongo_cursor_destroy(cursor);
+
+   /* query */
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfp_handle_exp,handle);
+   bson_from_buffer(&query,&bb);   
+
+   /* result */
+   bson_buffer_init(&bb);
+   bson_append_int(&bb,cfp_file,1);
+   bson_append_int(&bb,cfp_lineno,1);
+   bson_from_buffer(&result,&bb);   
+
+
+   cursor2 = mongo_find(conn,MONGO_PROMISES_EXP,&query,&result,0,0,0);
+
+   bson_destroy(&query);
+   bson_destroy(&result);
+
+
+   if (mongo_cursor_next(cursor2))  // loops over documents
+   {
+     bson_iterator_init(&it1,cursor2->current.data);
+   
+     while (bson_iterator_next(&it1))
+       {
+	 if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
+	   {
+	   snprintf(fileExp, sizeof(fileExp), "%s", bson_iterator_string(&it1));
+	   }
+	 else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
+	   {
+	   lineExp = bson_iterator_int(&it1);
+	   }
+       }
+   }
+
+   mongo_cursor_destroy(cursor2);
+   
+   if(*fileExp != '\0' && lineExp != 0)
+     {
+     return CFDB_QueryPromise(conn,NULL,fileExp,lineExp);
+     }
+   else  // not found in expanded promise DB either
+     {
+     Debug("Promise handle \"%s\" not found in expanded promise DB", handle);
+     return NULL;
+     }
+
+   }
+ else  // not found in unexpanded DB by file and line either
    {
    mongo_cursor_destroy(cursor);
    return NULL;

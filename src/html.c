@@ -63,7 +63,7 @@ snprintf(buffer,bufsize,
 "<div id=\"wrapper\">\n"
 "   <div class=\"container_12\">\n"
 "    	<div id=\"header\">\n"
-"            <div class=\"grid_6 sitetitle\">CFENGINE MISSION PORTAL <span id=\"subheading\"><b>%s</b></span></div>\n"
+"            <div class=\"grid_6 sitetitle\"><a href=\"index.php\">CFENGINE MISSION PORTAL</a> <span id=\"subheading\"><b>%s</b></span></div>\n"
 "\n"
 "  <div id=\"searchbox\" class=\"grid_4\"><form action=\"knowledge.php\" method=\"post\"><input type=\"text\" name=\"search\" class=\"align\"/><input type=\"submit\" class=\"searchbtn\" value=\"\"/></form></div>\n"
 "            <div id=\"historynav\" class=\"grid_2 alignright\">\n"

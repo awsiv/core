@@ -342,7 +342,7 @@ int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs
 int CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,enum observables obs,double *histo);
 int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date);
 
-struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle);
+struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char *file, int lineNo);
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
 struct Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
 struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex);
