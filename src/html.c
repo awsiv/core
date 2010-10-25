@@ -90,6 +90,11 @@ snprintf(buffer,bufsize,
 "             <li><a href=\"license.php\">License summary</a></li>\n"
 "         </ul>\n"
 "         <ul class=\"grid_2\">\n"
+"            <li> <a href=\"status.php\">STATUS</a></li>\n"
+"            <li><a href=\"topN.php\">50 worst hosts</a></li>\n"
+"            <li><a href=\"host.php\">Select a particular host</a></li>\n"
+"         </ul>\n"
+"         <ul class=\"grid_2\">\n"
 "             <li><a href=\"helm.php\">PLANNING</a></li>\n"
 "             <li><a href=\"services.php\">Enterprises goals</a></li>\n"
 "             <li><a href=\"Cfeditor.php\">Develop and work on policy</a></li>\n"
@@ -97,11 +102,6 @@ snprintf(buffer,bufsize,
 "             <li><a href=\"search.php?report=Business%20value%20report&manyhosts=1\">Cost and value</a></li>\n"
 "             <li><a href=\"knowledge.php?topic=best.*practice\">Standards and practices</a></li>\n"
 "             <li><a href=\"knowledge.php?topic=policy.*\">Policy guidance</a></li>\n"
-"         </ul>\n"
-"         <ul class=\"grid_2\">\n"
-"            <li> <a href=\"status.php\">STATUS</a></li>\n"
-"            <li><a href=\"topN.php\">50 worst hosts</a></li>\n"
-"            <li><a href=\"host.php\">Select a particular host</a></li>\n"
 "         </ul>\n"
 "         <ul class=\"grid_2\">\n"
 "             <li><a href=\"knowledge.php\">KNOWLEDGE</a></li>\n"
@@ -151,15 +151,15 @@ void Nova_TabMenu(char *title,char *buffer, int bufsize)
 if (strstr(title,"Status")||strstr(title,"Show"))
    {
    css[0] = "";
-   css[1] = "";
-   css[2] = class;
+   css[1] = class;
+   css[2] = "";
    css[3] = "";
    }
 else if (strstr(title,"Planning"))
    {
    css[0] = "";
-   css[1] = class;
-   css[2] = "";
+   css[1] = "";
+   css[2] = class;
    css[3] = "";
    }
 else if (strstr(title,"Knowledge"))
@@ -181,8 +181,8 @@ snprintf(buffer,bufsize,
 " <div id=\"nav\">\n"
 "   <ul class=\"grid_10\">\n"
 "      <li><a href=\"index.php\" %s>SUMMARY</a></li>\n"
-"      <li><a href=\"helm.php\" %s>PLANNING</a></li>\n"
 "      <li><a href=\"status.php\" %s>STATUS</a></li>\n"
+"      <li><a href=\"helm.php\" %s>PLANNING</a></li>\n"
 "      <li><a href=\"knowledge.php\" %s>KNOWLEDGE</a></li>\n"
 "   </ul>\n"
 "   <span id=\"status\" class=\"grid_2 alignright\">\n"
