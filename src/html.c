@@ -128,7 +128,7 @@ snprintf(buffer,bufsize,
 "       </div>\n"
 "       <div id=\"footer\">\n"
 "           <div class=\"grid_6 alignleft\">\n"
-"              <span class=\"grid_6\">Versions: Nova build 2.0.0 community 3.1.0</span>\n"
+"              <span class=\"grid_6\">This hub runs Cfengine Nova %s (based on community core %s)</span>\n"
 "           </div>\n"
 "           <div class=\"grid_6 alignright\">\n"
 "            <span class=\"grid_6\">Copyright &copy; 2010 Cfengine - All rights reserved</span>\n"
@@ -138,7 +138,7 @@ snprintf(buffer,bufsize,
 "   </div>\n"
 "</div>\n"
 "</body>\n"
-"</html>\n" );
+"</html>\n",Nova_GetVersion(),Cf_GetVersion());
 }
 
 /*****************************************************************************/
