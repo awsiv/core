@@ -99,7 +99,8 @@ if ($many)  // Returning query
              }
           else
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state&class_regex=$class_regex&pdf_action=email\" id=\"send_mail\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";     
+             echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a>
+		    <a href=\"./pdf_report/index.php?type=$report_type&search=$name&state=$state&class_regex=$class_regex&pdf_action=email\" id=\"send_mail\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";     
              $report = cfpr_report_compliance_promises(NULL,$name,$state,true,$class_regex);
              }
           break;
@@ -351,7 +352,8 @@ else if ($hostkey != "") // Default search on single machine
       case "Compliance by promise":
           $state = "x";
           $report = cfpr_report_compliance_promises($hostkey,$search,$state,true,$class_regex);
-          echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
+          echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&state=$state&class_regex=$class_regex\"><img src=\"/img/icon_pdf.png\" class=\"floatRight\"></a>
+		 <a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&state=$state&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
           break;
           
       case "Compliance summary":
