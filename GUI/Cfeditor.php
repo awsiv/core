@@ -222,7 +222,6 @@ cfpr_header("Policy editor","none");
 		  
 		code_editor_counter++; 
 		$('.CodeMirror-wrapping',current_tab_id).get(0).style.height=$(current_tab_id).get(0).style.height;
-		//addcontextmenu();
 	});
 	
 	function openfile(file,link_id)
@@ -295,7 +294,7 @@ cfpr_header("Policy editor","none");
 			 $.ajax({
 			        type: "POST",
 			        url: "policy/compare_file_contents.php",
-			        data:({'file_path':'policies/'+tab_title,'newcontents':newcontents,'agent':agent}),
+			        data:({'file':tab_title,'newcontents':newcontents,'agent':agent}),
 			        dataType:'json',
 			        global: false,
 			        success: function(data){
@@ -351,11 +350,18 @@ cfpr_header("Policy editor","none");
 			   {
         	   var id= $('ul#policies_list_new li').length+1;
                var append_html='<li class="file ext_txt"><a href="#" rel="'+data.path+'" id="policy_'+id+'">'+data.title+'</a></li>';
-               $('#policies_list_new').append(append_html);	
-	  			   var append_html_tab='<input type="hidden" name="link" value="policy_'+id+'" />';
-	  			   $(current_tab_id).append(append_html_tab);
-	               $('a[href="'+current_tab_id+'"]',$tabs).html(data.title);
-	               $('#policy_'+id).hide('slow');
+               $('#policies_list_new').append(append_html);
+					 if($("#event").val()!="closing")
+					 {
+					   var append_html_tab='<input type="hidden" name="link" value="policy_'+id+'" />';
+					   $(current_tab_id).append(append_html_tab);
+					   $('a[href="'+current_tab_id+'"]',$tabs).html(data.title);
+					   $('#policy_'+id).hide('slow');
+					 }
+					 else
+					 {
+						$('#policy_'+id).show('slow');
+					 }
                 }
 				else
 			  {
