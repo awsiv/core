@@ -434,17 +434,16 @@ else if ($hostkey != "") // Default search on single machine
 	<a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex&pdf_action=email\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
           break;
       }
-   
-   if ($report)
-      {
-      echo "<div class=\"tables\">";
-      echo $report;
-      echo "</div></div> </div>";
-      }
-   else
-      {
-      echo "<div id=\"selector\"><h2>No results</h2></div>";
-      }
+    if ($report)
+       {
+	   echo "<div class=\"tables\">";
+       echo $report;
+	   echo "</div></div></div>";
+       }
+    else
+       {
+       echo "<div id=\"selector\"><h2>No results</h2></div>";
+       }
    }
 else // No hosktkey
    {
@@ -689,7 +688,7 @@ else // No hosktkey
                     <input type="hidden" id="parameters"></input>
                 </fieldset>
             </form>
-        </div>
+  </div>
 <script type="text/javascript">
 $(document).ready(function() { 
 	$('.tables table').prepend(
