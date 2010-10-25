@@ -95,7 +95,6 @@ $colour = cfpr_get_host_colour($hostkey);
           		<div class="panelhead">Analysis</div>
                 <div class="panelcontent">
                 <p><a href="knowledge.php?topic=Status level meters"><img src="/hub/<?php echo $hostkey?>/meter.png"></a></p>
-                <p><a href="vitals.php?hostkey=<?php echo $hostkey?>">Pulse and vital signs for this host</a></p>
                 <p><a href="vitals.php?hostkey=<?php echo $hostkey?>"><img src="images/pulsed.png" class="align"/></a></p>
                  </div>
           	</div>
