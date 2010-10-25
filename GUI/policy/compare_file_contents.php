@@ -1,7 +1,8 @@
 <?php
+        session_start();
    	    $status="unchanged";
 		$root="../";
-  		$file_path=$root.$_POST['file_path'];
+  		$file_path=$root."policies/".session_id().'/'.$_POST['file'];
 		$contents = file_get_contents($file_path);
 		$newcontents=str_replace('\u200b', '' , $_POST['newcontents']);
 		$newcontents=str_replace('\\', '' , $newcontents);

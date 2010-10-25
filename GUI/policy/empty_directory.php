@@ -1,8 +1,7 @@
 <?php
-
-
+session_start();
 //$ret=emptyDir('../policies/');
-$ret=deleteAll('../policies/',true);
+$ret=deleteAll('../policies/'.session_id().'/',true);
 echo $ret;
 
 function deleteAll($directory, $empty = false) { 

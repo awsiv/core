@@ -3,9 +3,20 @@ require_once("../jCryption-1.1.php");
 $jCryption = new jCryption();
 $repo=$_POST['repo'];
 $working_dir = realpath('../policies');
+session_start();
+if(!file_exists($working_dir.'/'.session_id()))
+  {
+	if(mkdir($working_dir.'/'.session_id(),0700))
+	{
+	  $working_dir=$working_dir.'/'.session_id();
+	}
+  }
+ else
+   {
+	$working_dir=$working_dir.'/'.session_id();   
+   }
 $user=$_POST['user'];
 $passwd=$_POST['passwd'];
-session_start();
 $var = $jCryption->decrypt($passwd, $_SESSION["d"]["int"], $_SESSION["n"]["int"]);
 svn_auth_set_parameter(SVN_AUTH_PARAM_DEFAULT_USERNAME, $user);
 svn_auth_set_parameter(SVN_AUTH_PARAM_DEFAULT_PASSWORD, $var);
@@ -30,7 +41,8 @@ if($op=='checkout')
         $status=svn_checkout($repo, $working_dir);
         $data=array(
 		'status'=>$status,
-        'working'=>$working_dir
+        'working'=>$working_dir,
+		'session'=>session_id()
 	     );
 		session_unset();
         echo json_encode($data);

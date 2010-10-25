@@ -1,6 +1,12 @@
 <?php 
+       session_start();
 		//$file=substr($_POST['file'], strrpos($filename, '.')
-		$filetobesaved='../policies/'.$_POST['file'];
+		$working_dir = realpath('../policies');
+		if(!file_exists($working_dir.'/'.session_id()))
+		  {
+			mkdir($working_dir.'/'.session_id(),0700);
+		  }
+		$filetobesaved='../policies/'.session_id().'/'.$_POST['file'];
 		$msg="";
 		$written=false;
 		if(file_exists($filetobesaved)&&$_POST['filestats']=='old')
@@ -40,7 +46,7 @@
 			$details=array(
 			'status'=>$written,
 		    'title'=>$_POST['file'],
-		    'path'=>'../policies/'.$_POST['file'],
+		    'path'=>'../policies/'.session_id().'/'.$_POST['file'],
 		    'msg'=>$msg
 	        );		
 	       echo json_encode($details);
