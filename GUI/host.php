@@ -60,11 +60,11 @@ $colour = cfpr_get_host_colour($hostkey);
                         <div class="panelhead">Host Details</div>
                      <div class="panelcontent">
        <p><label class="width_20">Alias:</label><label ><?php echo $hostname?></label></p>
-      <p> <label class="width_20">OS Class:</label><label><?php echo $class?></label></p>
+       <p><label class="width_20">OS class:</label><label><?php echo $class?></label></p>
        <p><label class="width_20">Release:</label><label><?php echo $rel?></label></p>
-        <p><label class="width_20">Flavour:</label><label><?php echo $flavour?></label></p>
-       <p><label class="width_20">Last Known :</label><label><?php echo $ipaddr?></label></p>
-       <p><label class="width_20">Last date:</label><label><?php echo $last?></label></p>
+       <p><label class="width_20">Flavour:</label><label><?php echo $flavour?></label></p>
+       <p><label class="width_20">Last IP-address:</label><label><?php echo $ipaddr?></label></p>
+       <p><label class="width_20">Last data:</label><label><?php echo $last?></label></p>
        <p><label class="width_20">ID:</label><label><small><?php echo $hostkey?></small></label></p>
                       </div>
                  </div>
