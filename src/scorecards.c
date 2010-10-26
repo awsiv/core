@@ -55,7 +55,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    have_mag = Nova_ViewMag(&cfv,hostkey,i);
    have_histo = Nova_ViewHisto(&cfv,hostkey,i,false);
 
-   if (have_histo)
+   if (have_mag)
       {   
       Nova2PHP_getlastupdate(hostkey,lastsaw,CF_SMALLBUF);
 
@@ -538,6 +538,8 @@ hostnames[0] = '\0';
 addresses[0] = '\0';
 
 cursor = mongo_find(&conn,MONGO_DATABASE,&query,&field,0,0,0);
+bson_destroy(&query);
+bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -633,7 +635,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
    }
 
-bson_destroy(&field);
 mongo_cursor_destroy(cursor);
 
 if (!CFDB_Close(&conn))
@@ -826,6 +827,8 @@ hostnames[0] = '\0';
 addresses[0] = '\0';
 
 cursor = mongo_find(&conn,MONGO_DATABASE,bson_empty(&qe),&field,0,0,0);
+bson_destroy(&field);
+
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -932,7 +935,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
    }
 
-bson_destroy(&field);
 mongo_cursor_destroy(cursor);
 
 if (!CFDB_Close(&conn))

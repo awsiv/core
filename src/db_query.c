@@ -2723,7 +2723,7 @@ wrap_around = (int)start_slot + CF_MAGDATA - CF_MAX_SLOTS;
 
 for (slot = 0; slot < CF_MAGDATA; slot++)
    {
-   qa[slot] = 0;
+   qa[slot] = -1;
    ea[slot] = 0;
    da[slot] = 0;
    }
@@ -2947,6 +2947,17 @@ int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs
   double q,e,d;
   int ok = false;
   time_t start_time = CF_MONDAY_MORNING;
+  int slot;
+
+// Initialize as there might be missing values
+
+for (slot = 0; slot < CF_TIMESERIESDATA; slot++)
+   {
+   qa[slot] = -1;
+   ea[slot] = 0;
+   da[slot] = 0;
+   }
+
   
 /* BEGIN query document */
 

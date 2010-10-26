@@ -147,7 +147,8 @@ for (i = 0; i < CF_TIMESERIESDATA; i++)
    rs = Num(d[i]);
    rq = Num(q[i]);
 
-   if (ry + rq > 1)
+   // Num() resets to zero negative numbers
+   if (q[i] > 1)
       {
       have_data++;
       }

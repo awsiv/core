@@ -113,7 +113,8 @@ for (i = 0; i < CF_MAGDATA; i++)
    rq = Num(q[i]);
    rs = Num(d[i]);
 
-   if (ry + rq >= 1)
+   // Num() resets to zero negative numbers
+   if (q[i] >= 0)
       {
       have_data++;
       }
