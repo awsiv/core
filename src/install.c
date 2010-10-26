@@ -937,3 +937,70 @@ int SortPromiseCompliance(void *p1, void *p2)
     }
 }
 
+
+/*****************************************************************************/
+
+int SortClasses(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts classes on name.
+ **/
+{
+  struct HubClass *hc1, *hc2;
+
+  hc1 = (struct HubClass *)p1;
+  hc2 = (struct HubClass *)p2;
+
+  if(strcmp(hc1->class,hc2->class) < 0)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+
+/*****************************************************************************/
+
+int SortSoftware(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts software on name.
+ **/
+{
+  struct HubSoftware *hs1, *hs2;
+
+  hs1 = (struct HubSoftware *)p1;
+  hs2 = (struct HubSoftware *)p2;
+
+  if(strcmp(hs1->name,hs2->name) < 0)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+
+/*****************************************************************************/
+
+int SortBundleSeen(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts software on name.
+ **/
+{
+  struct HubBundleSeen *hb1, *hb2;
+
+  hb1 = (struct HubBundleSeen *)p1;
+  hb2 = (struct HubBundleSeen *)p2;
+
+  if(strcmp(hb1->bundle,hb2->bundle) < 0)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+

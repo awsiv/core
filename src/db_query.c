@@ -158,7 +158,7 @@ return NewHubQuery(host_list,NULL);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex)
+struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex, int sort)
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
   mongo_cursor *cursor;
@@ -338,13 +338,20 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
    }
 
+if (sort)
+   {
+   record_list = SortRlist(record_list,SortSoftware);
+   }
+
+
+
 mongo_cursor_destroy(cursor);
 return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex)
+struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
@@ -504,6 +511,13 @@ while (mongo_cursor_next(cursor))  // loops over documents
          }
       }
    }
+ 
+
+if (sort)
+   {
+   record_list = SortRlist(record_list,SortClasses);
+   }
+
 
 mongo_cursor_destroy(cursor);
 return NewHubQuery(host_list,record_list);
@@ -2518,7 +2532,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, char *classRegex)
+struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, char *classRegex, int sort)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
@@ -2683,6 +2697,12 @@ while (mongo_cursor_next(cursor))  // loops over documents
          }
       }
    }
+
+if (sort)
+   {
+   record_list = SortRlist(record_list,SortBundleSeen);
+   }
+ 
 
 mongo_cursor_destroy(cursor);
 return NewHubQuery(host_list,record_list);

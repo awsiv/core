@@ -372,7 +372,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 snprintf(work,CF_MAXVARSIZE-1,"%s.*",MONITOR_CLASS_PREFIX);
 
- hq = CFDB_QueryClasses(&dbconn,NULL,work,true,CF_HUB_HORIZON,NULL);
+hq = CFDB_QueryClasses(&dbconn,NULL,work,true,CF_HUB_HORIZON,NULL,false);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {

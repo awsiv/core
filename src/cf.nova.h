@@ -324,8 +324,8 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
 struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query);
 struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
 struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle,int regex,int sort,char *classRegex);
-struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex);
-struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex);
+struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex, int sort);
+struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp, int sort, char *classRegex);
 struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,char *llval,char *lrval,char *ltype,int reg, char *classRegex);
 struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, int sort, char *classRegex);
@@ -333,7 +333,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
 struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *hostkey);
 struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname,int regex,int sort,char *classRegex);
 struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lname,int regex, char *classRegex);
-struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, char *classRegex);
+struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, char *classRegex, int sort);
 struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname,int regex,time_t lt,int cmp, int sort, char *classRegex);
 struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, char *classRegex);
 int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
@@ -346,7 +346,7 @@ struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char 
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
 struct Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
 struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex);
-struct Item *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *bNameRegex);
+struct Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
 struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
 struct Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
 struct Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
@@ -590,6 +590,9 @@ int SortFileDiff(void *p1, void *p2);
 int SortLastSeen(void *p1, void *p2);
 int SortPerformance(void *p1, void *p2);
 int SortPromiseCompliance(void *p1, void *p2);
+int SortClasses(void *p1, void *p2);
+int SortSoftware(void *p1, void *p2);
+int SortBundleSeen(void *p1, void *p2);
 
 
 /* knowledge.c */

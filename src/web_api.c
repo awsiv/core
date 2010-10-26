@@ -389,7 +389,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
 
- hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg);
+ hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,true);
    
 
 StartJoin(returnval,"<table>\n",bufsize);
@@ -438,7 +438,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
 
 StartJoin(returnval,"<table>\n",bufsize);
 
@@ -861,7 +861,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg);
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg,true);
 
 StartJoin(returnval,"<table>\n",bufsize);
 
@@ -1094,7 +1094,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg);
+ hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,false);
 
 
 StartJoin(returnval,"<table>\n",bufsize);
@@ -1150,7 +1150,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,false);
 
 StartJoin(returnval,"<table>\n",bufsize);
 
@@ -1536,7 +1536,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg);
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg,false);
 
 
 StartJoin(returnval,"<table>\n<tr>\n",bufsize);
@@ -2839,7 +2839,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,CF_HUB_HORIZON,NULL);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,CF_HUB_HORIZON,NULL,false);
 
 returnval[0] = '\0';
 
@@ -3106,7 +3106,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg);
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg,true);
 
 returnval[0] = '\0';
 
@@ -3118,6 +3118,11 @@ returnval[0] = '\0';
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hb = ( struct HubBundleSeen *)rp->item;
+
+   if (strcmp(hb->bundle,"QUERY") == 0)
+      {
+      continue;
+      }
 
    snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%.2lf<nc>%.2lf<nc>%.2lf<nova_nl>",
             hb->hh->hostname,hb->bundle,cf_ctime(&(hb->t)),
@@ -3200,7 +3205,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
 
 returnval[0] = '\0';
 
@@ -3364,7 +3369,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg);
+ hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,true);
 
 
 returnval[0] = '\0';
