@@ -61,9 +61,9 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
       Join(buffer,"<tr>\n",bufsize);
 
-      snprintf(work,CF_BUFSIZE,"<th><div id=\"ip\">%s</div><br><br>"
+      snprintf(work,CF_BUFSIZE,"<td><div id=\"ip\">%s</div><br><br>"
                "<a href=\"/vitals.php?hostkey=%s&obs=%d&nm=%s&view=type\">%s</a>"
-               "<br><br><small>Latest data<br>%s</small></th>",hostname,hostkey,i,OBS[i][0],OBS[i][0],lastsaw);      
+               "<br><br><small>Latest data<br>%s</small></td>",hostname,hostkey,i,OBS[i][0],OBS[i][0],lastsaw);      
       Join(buffer,work,bufsize);
 
 
