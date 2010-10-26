@@ -18,7 +18,7 @@ cfpr_header("Policy editor","none");
 		  <div id="menu">
 			<a href="#" class="menuitem" id="new"><img class="icontext" src="images/new.png"/>New</a>
 			  <a href="#" class="menuitem" id="save"><img class="icontext" src="images/save.png">Save</a>
-			  <a href="#" class="menuitem" id="checksyntax"><img class="icontext" src="images/check_syntax_grey.png"/>Check syntax</a>
+			  <a href="#" class="menuitem" id="checksyntax"><img class="icontext" src="images/check_syntax.png"/>Check syntax</a>
               <a href="#" class="menuitem" id="Checkout"><img class="icontext" src="images/checkout.png"/>Checkout</span></a>
 			  <a href="#" class="menuitem" id="update"><img class="icontext" src="images/update.png"/>Update</span></a>
 			  <a href="#" class="menuitem" id="Commit"><img class="icontext" src="images/commit.png"/>Commit</span></a>
@@ -254,7 +254,7 @@ cfpr_header("Policy editor","none");
 	             },
           error:function(data){
 	            	 $confirmation.dialog({title: "Error"});
-	            	 $confirmation.html('<span>Error! while performing request</span>'); 
+	            	 $confirmation.html('<span>An error occured while performing request</span>'); 
 	            	 $confirmation.dialog('open');   
 	             }
 	       }); 
@@ -367,7 +367,7 @@ cfpr_header("Policy editor","none");
 			  {
 				closetabs=false; 
 				$confirmation.dialog({title: "Error"});
-	            $confirmation.html('<span>Error! occured'+data.msg+'</span>'); 
+	            $confirmation.html('<span>An error occured'+data.msg+'</span>'); 
 	            $confirmation.dialog('open'); 
 			  }
 		      }
@@ -437,7 +437,7 @@ cfpr_header("Policy editor","none");
 	             },
             error:function(data){
 	            	 $confirmation.dialog({title: "Error"});
-	            	 $confirmation.html('<span>Error! occured'+data.msg+'</span>'); 
+	            	 $confirmation.html('<span>An error occured'+data.msg+'</span>'); 
 	            	 $confirmation.dialog('open');   
 	             }
 	       });
@@ -489,7 +489,7 @@ cfpr_header("Policy editor","none");
 						 },
 					error:function(data){
 							 $confirmation.dialog({title: "Error"});
-							 $confirmation.html('<span>Error! occured'+data.msg+'</span>'); 
+							 $confirmation.html('<span>An error occured'+data.msg+'</span>'); 
 							 $confirmation.dialog('open');   
 						 }
 				   });
@@ -545,7 +545,7 @@ cfpr_header("Policy editor","none");
 	             },
               error:function(data){
 	            	 $confirmation.dialog({title: "Error"});
-	            	 $confirmation.html('<span>Error! occured</span>'); 
+	            	 $confirmation.html('<span>An error occured</span>'); 
 	            	 $confirmation.dialog('open');   
 	             }
 	       }); 
@@ -566,7 +566,7 @@ cfpr_header("Policy editor","none");
 	             },
               error:function(data){
 	            	 $confirmation.dialog({title: "Error"});
-	            	 $confirmation.html('<span>Error! occured</span>'); 
+	            	 $confirmation.html('<span>An error occured</span>'); 
 	            	 $confirmation.dialog('open');   
 	             }
 	       }); 
@@ -591,7 +591,7 @@ cfpr_header("Policy editor","none");
 	   .click(function() {
 			 if(code_editor_counter > 0)
 		     {
-				 alert("please close all the active policies tab");
+				 alert("Please close all open editing-tabs first");
 				 
 			 }
 			 else
@@ -603,7 +603,7 @@ cfpr_header("Policy editor","none");
 	           success: function(data){
 				   if(data=='1')
 				     {
-	            	 $chkcnf.html('<span>Working directory is already checkedout. Proceed and replace contents</span>'); 
+	            	 $chkcnf.html('<span>Working directory is not empty. Do you want to replace its contents? </span>'); 
 	            	 $chkcnf.dialog('open');
 					 }
 					else
@@ -619,7 +619,7 @@ cfpr_header("Policy editor","none");
 	             },
               error:function(data){
 	            	 $confirmation.dialog({title: "Error"});
-	            	 $confirmation.html('<span>Error! occured</span>'); 
+	            	 $confirmation.html('<span>An error occured</span>'); 
 	            	 $confirmation.dialog('open');   
 	             }
 	           });
@@ -677,20 +677,20 @@ cfpr_header("Policy editor","none");
 			success: function(data){
 				if(data.result=="SUCCESS")
 				{
-				$confirmation.dialog({title: "No Errors"});
-				$confirmation.html('<span>Compiled Sucessfully with no errors</span>'); 
+				$confirmation.dialog({title: "Inputs are valid"});
+				$confirmation.html('<span>The policy contains no syntactic errors.</span>'); 
 				$confirmation.dialog('open');
 				}
 				else
 				{
-				$confirmation.dialog({title: "Error Occured"});
+				$confirmation.dialog({title: "Errors in policy"});
 				$confirmation.html('<span>'+data.result+'</span>'); 
 				$confirmation.dialog('open');
 				}
 			},
 		    error:function(data){
 				$confirmation.dialog({title: "Error"});
-				$confirmation.html('<span>Error! occured</span>'); 
+				$confirmation.html('<span>An error occured</span>'); 
 				$confirmation.dialog('open');   
 			}
 
@@ -730,10 +730,10 @@ cfpr_header("Policy editor","none");
 									$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){	
 									});
 								  //$('#Checkout').hide();
-					$('<div id="repoText"><span>SVN Repository Used</span></div>').css({position: 'absolute' , width:'100%'}).hide().appendTo('body');
+					$('<div id="repoText"><span>Subversion repository path</span></div>').css({position: 'absolute' , width:'100%'}).hide().appendTo('body');
 								  $('#usedRepo').html('<span>'+$("#repo").val()+'</span>');
 								  $confirmation.dialog({title: $("#operation").val()});
-								  $confirmation.html('<span>Checkedout sucessfully </span>'); 
+								  $confirmation.html('<span>Sucessfully checked out </span>'); 
 								  }
 								  else
 								  {
@@ -840,7 +840,7 @@ cfpr_header("Policy editor","none");
 				
 					error:function(data){
 						$confirmation.dialog({title: "Error"});
-						$confirmation.html('<span>Error! occured</span>');
+						$confirmation.html('<span>An error occured</span>');
 						$confirmation.dialog('open');
 						}
 	                            }); 
@@ -877,7 +877,7 @@ cfpr_header("Policy editor","none");
 
 		error:function(data){
 				$confirmation.dialog({title: "Error"});
-				$confirmation.html('<span>Error! occured</span>'); 
+				$confirmation.html('<span>An error occured</span>'); 
 				$confirmation.dialog('open');   
 
 			}
