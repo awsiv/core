@@ -227,9 +227,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,true,classreg);
 
-returnval[0] = '\0';
-
-strcat(returnval,"<table>\n");
+StartJoin(returnval,"<table>\n",bufsize);
 
 snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Time</th></tr>\n");
 Join(returnval,buffer,bufsize);
@@ -243,7 +241,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
- Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPromiseLog);
 
@@ -304,8 +302,7 @@ if (summary == NULL)
    }
 else
    {
-   returnval[0] = '\0';
-   strcat(returnval,"<table>\n");
+   StartJoin(returnval,"<table>\n",bufsize);   
 
    summary = SortItemListCounters(summary);
    snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Occurrences</th></tr>\n");
@@ -318,7 +315,7 @@ else
       Join(returnval,buffer,bufsize);
       }
    
-    Join(returnval,"</table>\n",bufsize);
+    EndJoin(returnval,"</table>\n",bufsize);
     
    }
 
@@ -346,9 +343,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,classreg);
 
-returnval[0] = '\0';
+StartJoin(returnval,"<table>\n",bufsize);
 
-strcat(returnval,"<table>\n");
 snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Day</th><th>Kept</th><th>Repaired</th><th>Not kept</th></tr>\n");
 Join(returnval,buffer,bufsize);
 
@@ -361,7 +357,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 
 DeleteHubQuery(hq,DeleteHubValue);
@@ -396,9 +392,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg);
    
 
-returnval[0] = '\0';
-
-strcat(returnval,"<table>\n");
+StartJoin(returnval,"<table>\n",bufsize);
 
 snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Name</th><th>Version</th><th>Architcture</th></tr>\n");
 Join(returnval,buffer,bufsize);
@@ -410,7 +404,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
- Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 
 DeleteHubQuery(hq,DeleteHubSoftware);
@@ -446,9 +440,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg);
 
-returnval[0] = '\0';
-
-strcat(returnval,"<table>\n");
+StartJoin(returnval,"<table>\n",bufsize);
 
 snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Class context</th><th>Occurs with<br>Probability</th><th>Uncertainty</th><th>Last seen</th></tr>\n");
 Join(returnval,buffer,bufsize);
@@ -473,7 +465,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubClass);
 
@@ -507,9 +499,9 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
 
 lscope[0] = '\0';
-returnval[0] = '\0';
 
-strcat(returnval,"<table>\n");
+StartJoin(returnval,"<table>\n",bufsize);
+
 count += strlen(returnval);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -567,7 +559,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubVariable);
 
@@ -608,9 +600,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,classreg);
 
 
-returnval[0] = '\0';
-
-strcat(returnval,"<table>\n");
+StartJoin(returnval,"<table>\n",bufsize);
 
 snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Policy</th><th>Kept</th><th>Repaired</th><th>Not kept</th><th>Last seen</th></tr>\n");
 Join(returnval,buffer,bufsize);
@@ -624,7 +614,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
@@ -656,9 +646,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
 
 
-returnval[0] = '\0';
+StartJoin(returnval,"<table>\n",bufsize);
 
-strcat(returnval,"<table>\n");
 snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Last known<br>State</th><th>Probability<br>Kept</th><th>Uncertainty</th><th>Last seen</th></tr>\n");
 Join(returnval,buffer,bufsize);
 
@@ -671,7 +660,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
@@ -707,9 +696,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
 
 
-returnval[0] = '\0';
+StartJoin(returnval,"<table>\n",bufsize);
 
-strcat(returnval,"<table>\n");
 count += strlen(returnval);
 
 snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Initiated</th><th>IP address</th><th>Remote host</th><th>Last seen</th>"
@@ -741,7 +729,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubLastSeen);
 
@@ -773,9 +761,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,true,classreg);
 
 
-returnval[0] = '\0';
-
-strcat(returnval,"<table>\n");
+StartJoin(returnval,"<table>\n",bufsize);
 
 snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Event</th><th>Last time</th><th>Avg time</th><th>Uncertainty</th><th>Last performed</th></tr>\n");
 Join(returnval,buffer,bufsize);            
@@ -799,7 +785,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    count += tmpsize;
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPerformance);
 
@@ -830,9 +816,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
 
-returnval[0] = '\0';
+StartJoin(returnval,"<table>\n",bufsize);
 
-strcat(returnval,"<table>\n");
 snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Setuid/setgid root file</th></tr>\n");
 Join(returnval,buffer,bufsize);
 
@@ -844,7 +829,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubSetUid);
 
@@ -878,9 +863,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg);
 
-returnval[0] = '\0';
-
-strcat(returnval,"<table>\n");
+StartJoin(returnval,"<table>\n",bufsize);
 
 snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Bundle</a></th><th>Last verified</th><th>Hours Ago</th><th>Avg interval</th><th>Uncertainty</th></tr>\n");
 Join(returnval,buffer,bufsize);
@@ -902,7 +885,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubBundleSeen);
 
@@ -942,9 +925,8 @@ switch (*cmp)
    hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,classreg);
    
    
-   returnval[0] = '\0';
-   
-   strcat(returnval,"<table>\n");
+   StartJoin(returnval,"<table>\n",bufsize);
+
    snprintf(buffer,sizeof(buffer),"<tr><td>Host</td><td>File</td><td>Time of change</td></tr>\n");
    Join(returnval,buffer,bufsize);
       
@@ -956,7 +938,7 @@ switch (*cmp)
 	   Join(returnval,buffer,bufsize);
      }
    
-   Join(returnval,"</table>\n",bufsize);
+   EndJoin(returnval,"</table>\n",bufsize);
    
    DeleteHubQuery(hq,DeleteHubFileChanges);
    
@@ -996,9 +978,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,true,classreg);
 
-returnval[0] = '\0';
-
-strcat(returnval,"<table>\n");
+StartJoin(returnval,"<table>\n",bufsize);
 
 snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>File</th><th>Change detected at</th><th>Change</th></tr>\n");
 Join(returnval,buffer,bufsize);
@@ -1011,7 +991,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    Join(returnval,buffer,bufsize);
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubFileDiff);
 
@@ -1117,7 +1097,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg);
 
 
-snprintf(returnval,bufsize,"<table>");
+StartJoin(returnval,"<table>\n",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
@@ -1139,7 +1119,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubSoftware);
 
@@ -1172,7 +1152,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg);
 
-snprintf(returnval,bufsize,"<table>");
+StartJoin(returnval,"<table>\n",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
@@ -1194,7 +1174,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubClass);
 
@@ -1225,7 +1205,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
 
-snprintf(returnval,bufsize,"<table>");
+StartJoin(returnval,"<table>\n",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
@@ -1247,7 +1227,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubVariable);
 
@@ -1286,7 +1266,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,false,classreg);
 
-snprintf(returnval,bufsize,"<table>");
+StartJoin(returnval,"<table>\n",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
@@ -1308,7 +1288,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
@@ -1340,7 +1320,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,false,classreg);
 
-snprintf(returnval,bufsize,"<table>");
+StartJoin(returnval,"<table>\n",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
@@ -1362,7 +1342,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
@@ -1396,7 +1376,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,false,classreg);
 
-snprintf(returnval,bufsize,"<table>");
+StartJoin(returnval,"<table>\n",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
@@ -1418,7 +1398,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubLastSeen);
 
@@ -1449,7 +1429,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,false,classreg);
 
-snprintf(returnval,bufsize,"<table>");
+StartJoin(returnval,"<table>\n",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
@@ -1471,7 +1451,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPerformance);
 
@@ -1502,7 +1482,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
 
-snprintf(returnval,bufsize,"<table>");
+StartJoin(returnval,"<table>\n",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
@@ -1524,7 +1504,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubSetUid);
 
@@ -1559,7 +1539,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg);
 
 
-snprintf(returnval,bufsize,"<table><tr>");
+StartJoin(returnval,"<table>\n<tr>\n",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
@@ -1581,7 +1561,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-Join(returnval,"</tr></table>\n",bufsize);
+EndJoin(returnval,"</tr></table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubBundleSeen);
 
@@ -1622,7 +1602,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,false,classreg);
 
 
-snprintf(returnval,bufsize,"<table>");
+StartJoin(returnval,"<table>\n",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
@@ -1644,7 +1624,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubFileChanges);
 
@@ -1684,7 +1664,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,false,classreg);
 
-snprintf(returnval,bufsize,"<table>");
+StartJoin(returnval,"<table>\n",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
@@ -1706,7 +1686,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-Join(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"</table>\n",bufsize);
 DeleteHubQuery(hq,DeleteHubFileDiff);
 
 if (!CFDB_Close(&dbconn))
@@ -2116,7 +2096,7 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
    Join(buffer,work,bufsize);
    }
 
-Join(buffer,"\n</table>\n",bufsize);
+EndJoin(buffer,"\n</table>\n",bufsize);
 DeleteItemList(clist);
 }
 
@@ -2154,7 +2134,7 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
    Join(buffer,work,bufsize);
    }
 
-Join(buffer,"\n</table>\n",bufsize);
+EndJoin(buffer,"\n</table>\n",bufsize);
 DeleteItemList(clist);
 }
 
@@ -2204,7 +2184,7 @@ if (clist)
 
       }
 
-   Join(buffer,"</tr>\n</table>\n",bufsize);
+   EndJoin(buffer,"</tr>\n</table>\n",bufsize);
    DeleteItemList(clist);
    }
 }
@@ -2415,7 +2395,7 @@ if (hb)
       }
    
    DeleteHubBody(hb);
-   strcat(returnval,"</table></div>\n");
+   EndJoin(returnval,"</table></div>\n",bufsize);
    }
 
 if (!CFDB_Close(&dbconn))
@@ -3972,7 +3952,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 	   }
        }
 
-     Join(buf,"\n</table>\n",bufSz);
+     EndJoin(buf,"\n</table>\n",bufSz);
      
      DeleteItemList(promises);
 

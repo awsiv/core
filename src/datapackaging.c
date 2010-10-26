@@ -473,9 +473,7 @@ while (!feof(fin))
          Chop(line);
          snprintf(reformat,CF_BUFSIZE-1,"%c,%s,%s%c",pm,no,change,CF_N_CODE);
 
-         if (!Join(aggregate,reformat,CF_BUFSIZE))
-            {
-            }
+         Join(aggregate,reformat,CF_BUFSIZE);
          }
       }
    
