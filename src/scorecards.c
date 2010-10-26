@@ -59,25 +59,55 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       {   
       Nova2PHP_getlastupdate(hostkey,lastsaw,CF_SMALLBUF);
 
-      snprintf(work,CF_MAXVARSIZE,"<tr>");
-      
+      Join(buffer,"<tr>\n",bufsize);
+
       snprintf(work,CF_BUFSIZE,"<th><div id=\"ip\">%s</div><br><br>"
                "<a href=\"/vitals.php?hostkey=%s&obs=%d&nm=%s&view=type\">%s</a>"
-               "<br><br><small>Latest data<br>%s</small></th>",hostname,hostkey,i,OBS[i][0],OBS[i][0],lastsaw);
+               "<br><br><small>Latest data<br>%s</small></th>",hostname,hostkey,i,OBS[i][0],OBS[i][0],lastsaw);      
+      Join(buffer,work,bufsize);
+
+
+      if(have_mag)
+	{
+	snprintf(work,CF_BUFSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=%d&nm=%s&view=mag\"><img src=\"/hub/%s/%s_mag.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+	}
+      else
+	{
+	snprintf(work,CF_BUFSIZE,"<td><img src=\"/images/monitoring_nodata.png\" width=\"300\" border=\"0\"></td>");
+	}
       
       Join(buffer,work,bufsize);
-      snprintf(work,CF_BUFSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=%d&nm=%s&view=mag\"><img src=\"/hub/%s/%s_mag.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+
+
+      if(have_week)
+	{
+	snprintf(work,CF_BUFSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=%d&nm=%s&view=week\"><img src=\"/hub/%s/%s_week.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+	}
+      else
+	{
+	snprintf(work,CF_BUFSIZE,"<td><img src=\"/images/monitoring_nodata.png\" width=\"300\" border=\"0\"></td>");
+	}
+
       Join(buffer,work,bufsize);
-      snprintf(work,CF_BUFSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=%d&nm=%s&view=week\"><img src=\"/hub/%s/%s_week.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+
+
+      if(have_histo)
+	{
+	snprintf(work,CF_BUFSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=%d&nm=%s&view=hist\"><img src=\"/hub/%s/%s_hist.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+	}
+      else
+	{
+	snprintf(work,CF_BUFSIZE,"<td><img src=\"/images/monitoring_nodata.png\" width=\"300\" border=\"0\"></td>");
+	}
+
       Join(buffer,work,bufsize);
-      snprintf(work,CF_BUFSIZE,"<td><a href=\"vitals.php?hostkey=%s&obs=%d&nm=%s&view=hist\"><img src=\"/hub/%s/%s_hist.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
-      Join(buffer,work,bufsize);
-      snprintf(work,CF_MAXVARSIZE,"</tr>\n");
-      Join(buffer,work,bufsize);
+
+
+      Join(buffer,"</tr>\n",bufsize);
       }
    }
 
-Join(buffer,"</table>\n",bufsize);
+EndJoin(buffer,"</table>\n",bufsize);
 
 #endif /* HAVE_LIBGD */
 }
