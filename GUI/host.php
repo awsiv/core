@@ -79,7 +79,7 @@ $colour = cfpr_get_host_colour($hostkey);
                </div>
                <div class="floatRight">
                <?php echo "<img src=\"images/$colour"."_sign_medium.png\" class=\"floatRight\"/>"; ?>
-                <form method="post" action="host.php" onsubmit="return confirm('Are you sure you want to delete this host?');">
+                <form method="post" action="host.php" onsubmit="return confirm('The host will be deleted from the report database of the hub. The hub will still try to pull it for reports, and it may thus reappear. Are you sure you want to delete this host?');">
                      <input type="hidden" name="op" id="op" value="delete"/>
                      <input type="hidden" name="delhost" id="delhost" value="<?php echo $hostkey?>"/>
                      <input class="btn margin-top10"  type="submit"  value="Delete host"/>
