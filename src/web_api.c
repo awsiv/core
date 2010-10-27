@@ -4019,8 +4019,10 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize)
 
    while(!feof(pp))
      {
-     fgets(tmp,sizeof(tmp),pp);
-     Join(buffer,tmp,bufsize);
+     if(fgets(tmp,sizeof(tmp),pp))
+       {
+       Join(buffer,tmp,bufsize);
+       }
      }
 
    retVal = cf_pclose(pp);
