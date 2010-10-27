@@ -89,7 +89,7 @@ elseif($op='log')
      {
 		$headrev=SVN_REVISION_HEAD;
 		$limit=50;
-		$logstable="<div class=\"tables\"><table><thead><th>Revision</th><th>Author</th><th>Msg</th><th>date</th><th>path</th></thead><tbody>";
+		$logstable="<div class=\"tables\"><table><thead><th>Revision</th><th>Author</th><th>Message</th><th>Date</th><th>File</th></thead><tbody>";
 		$logs=svn_log($repo,$headrev,0,$limit);
 		if(count($logs) >0)
 		 {
