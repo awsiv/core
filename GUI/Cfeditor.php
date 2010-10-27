@@ -305,7 +305,7 @@ cfpr_header("Policy editor","none");
 				        { 
 					       $('#tobesaved_name',$sfd).val(tab_title);
 					       $('#tobesaved',$sfd).val(newcontents);
-					       $('span',$sfd).html('The contents of the '+tab_title+' has been modified. Do you want to save the changes?');
+					       $('span',$sfd).html('The contents of '+tab_title+' has been modified. Do you want to save the changes?');
 				           $sfd.dialog('open');   
 				        }
 						else
