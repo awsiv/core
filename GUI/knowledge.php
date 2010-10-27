@@ -58,7 +58,8 @@ if ($search == "")
 		   }
 		 else
 		 {
-			echo "<span>No maps availabe for this topic.</span>";
+			echo "<span>This is an orphan topic. It is has currently no associations, and thus a topic map can not be built.\n";
+                        echo " <br> For more information see <a href=\"/docs/cf3-tutorial.html#Knowledge-Management\">knowledge management</a>.</span>";
 		 }
 		echo "</div></div></div></div>";
 	
