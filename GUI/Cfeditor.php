@@ -22,7 +22,7 @@ cfpr_header("Policy editor","none");
               <a href="#" class="menuitem" id="Checkout"><img class="icontext" src="images/checkout.png"/>Checkout</span></a>
 			  <a href="#" class="menuitem" id="update"><img class="icontext" src="images/update.png"/>Update</span></a>
 			  <a href="#" class="menuitem" id="Commit"><img class="icontext" src="images/commit.png"/>Commit</span></a>
-              <a href="#" class="menuitem" id="svnlogs"><img class="icontext" src="images/commit_grey.png"/>Log</span></a>
+              <a href="#" class="menuitem" id="svnlogs"><img class="icontext" src="images/log.png"/>Log</span></a>
 		  </div>
 		</div>
 	</div>
