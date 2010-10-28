@@ -51,6 +51,7 @@ $(document).ready(function() {
 		$title_element="";
 		var closetabs=false;
 		var closetabindex="";
+		var fileevent="";
 		
 	var $tabs = $('#tabs').tabs({
 	   tabTemplate: '<li><a href="#{href}">#{label}</a> <span class="ui-icon ui-icon-close">Remove Tab</span></li>',
@@ -227,7 +228,7 @@ $(document).ready(function() {
 		 {
 			 $("#tab_title").val(tab_title);
 			 $("#tab_content").html(newcontents);
-			 $("#event").val('closing');
+			 fileevent = "closing";
 			 $dialog.dialog('open');
 		 }
 		 code_editor_counter--;
@@ -245,10 +246,11 @@ $(document).ready(function() {
 		 hide: 'puff',
 		 buttons: {
 		 'Save': function() {
+		var agent=jQuery.uaMatch(navigator.userAgent).browser;
 		 $.ajax({
            type: "POST",
            url: "policy/save_file_contents.php",
-           data:({'file':$('#tab_title').val(), 'content':$('#tab_content').html(), 'filestats':'new'}),
+           data:({'file':$('#tab_title').val(), 'content':$('#tab_content').html(), 'filestats':'new', 'agent':agent}),
            dataType:'json',
            success: function(data){
 			   if(data.status)
@@ -256,7 +258,8 @@ $(document).ready(function() {
         	   var id= $('ul#policies_list_new li').length+1;
                var append_html='<li class="file ext_txt"><a href="#" rel="'+data.path+'" id="policy_'+id+'">'+data.title+'</a></li>';
                $('#policies_list_new').append(append_html);
-					 if($("#event").val()!="closing")
+			    
+					 if(fileevent!= "closing")
 					 {
 					   var append_html_tab='<input type="hidden" name="link" value="policy_'+id+'" />';
 					   $(current_tab_id).append(append_html_tab);
@@ -332,7 +335,7 @@ $(document).ready(function() {
 		 $.ajax({
 	           type: "POST",
 	           url: "policy/save_file_contents.php",
-	           data:({'file':current_tab_title, 'content':newcontents,'filestats':'old'}),
+	           data:({'file':current_tab_title, 'content':newcontents,'filestats':'old', 'agent':agent}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
 	           success: function(data){
 		           $confirmation.dialog({title: "Saved", width:default_dialog_width});
@@ -351,7 +354,7 @@ $(document).ready(function() {
 		 {
 			 $("#tab_title").val(current_tab_title);
 			 $("#tab_content").html(newcontents);
-			 $("#event").val('saving');
+			 fileevent = "saving";
 			 $dialog.dialog('open');
 		 }
 	   });
@@ -432,11 +435,12 @@ $(document).ready(function() {
 		 buttons: {
 		  'Save & Commit': function() {
 			  var file=$('#tobesaved_name',this).val();
+			  var agent=jQuery.uaMatch(navigator.userAgent).browser;
 		    $.ajax({
 	           type: "POST",
 	           async:false,
 	           url: "policy/save_file_contents.php",
-	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(),'filestats':'old'}),
+	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(), 'filestats':'old', 'agent':agent}),
 	           
 	           success: function(data){
 				    $("#comments").show();
@@ -457,12 +461,12 @@ $(document).ready(function() {
 		    $(this).dialog('close');
 	       },
 		 'Save': function() {
-		 
+		 var agent=jQuery.uaMatch(navigator.userAgent).browser;
 		 $.ajax({
 	           type: "POST",
 	           async:false,
 	           url: "policy/save_file_contents.php",
-	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(),'filestats':'old'}),
+	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(),'filestats':'old', 'agent':agent}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
 	           success: function(data){
                      $confirmation.dialog({title: "Saved", width:default_dialog_width});
