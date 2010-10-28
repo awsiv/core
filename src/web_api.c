@@ -1837,12 +1837,12 @@ if (matched)
             }
 
          strcat(goals,"</table>");
-         snprintf(colour,CF_SMALLBUF,"/img/green.png");
+         snprintf(colour,CF_SMALLBUF,"/images/green.png");
          }
       else if (type)
          {
          snprintf(goals,CF_MAXVARSIZE,"Does not promise to align with any goals");
-         snprintf(colour,CF_SMALLBUF,"/img/yellow.png");
+         snprintf(colour,CF_SMALLBUF,"/images/yellow.png");
          }
 
       if (type)
@@ -2082,15 +2082,15 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
 
    if (Nova_IsGreen(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts.php?type=green\"><img src=\"/img/green.png\"></a></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts.php?type=green\"><img src=\"/images/green.png\"></a></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else if (Nova_IsYellow(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts.php?type=green\"><img src=\"/img/yellow.png\"></a></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts.php?type=green\"><img src=\"/images/yellow.png\"></a></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else // if (Nova_IsRed(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts.php?type=red\"><img src=\"/img/red.png\"></a></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts.php?type=red\"><img src=\"/images/red.png\"></a></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
 
    Join(buffer,work,bufsize);
@@ -2172,7 +2172,7 @@ if (clist)
          Join(buffer,work,bufsize);
          }
       
-      snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/img/%s.png\"><a href=\"host.php?hostkey=%s\">%s</a></td>\n",
+      snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/images/%s.png\"><a href=\"host.php?hostkey=%s\">%s</a></td>\n",
 	       colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
       
       Join(buffer,work,bufsize);
