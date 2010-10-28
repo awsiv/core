@@ -103,7 +103,7 @@ function getCompletions(editor, pos) {
 function initResize(editor) {
   var wrap = editor.wrapping;
   var marker = document.createElement("IMG");
-  marker.src = "application/assets/css/resize.png";
+  marker.src = "/images/resize.png";
   marker.style.position = "absolute";
   marker.style.right = marker.style.bottom = "0px";
   marker.style.cursor = "pointer";
