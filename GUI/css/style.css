@@ -986,4 +986,17 @@ font-weight: bold;
 	width:100%;
 }
 
+#colourbuttons
+{
+	padding:10px 5px;
+}
+
+#colourbuttons a
+{
+	margin-left:5px;
+	border:solid 1px #000;
+	padding:1px 0 3px 0;
+}
+
+
 
