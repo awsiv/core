@@ -34,7 +34,7 @@ if ($result != "")
 else
    {
    echo "<div class=\"message\">";
-   echo "<img src=\"/img/info.png\" class=\"floatLeft align\"><span class=\"text\">No hosts in this category</span>";
+   echo "<img src=\"/images/info_services.png\" class=\"floatLeft align\"><span class=\"text\">No hosts in this category</span>";
    echo "<span id=\"colourbuttons\" class=\"floatRight\"><a href=\"hosts.php?type=green\"><img src=\"/img/green.png\" class=\"align\"></a> <a href=\"hosts.php?type=yellow\"><img src=\"/img/yellow.png\" class=\"align\"></a> <a href=\"hosts.php?type=red\"><img src=\"/img/red.png\" class=\"align\"></a></span><div class=\"clear\"></div></div>";
    }
 ?>
