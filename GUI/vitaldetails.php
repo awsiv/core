@@ -62,9 +62,9 @@ switch ($view)
 <div class="grid_3">
           <div class="panel"><div class="panelhead">Legends</div>
                <ul class="panelcontent">
-             <li><a href="hosts.php?type=red"><img src="/img/green.png" class="align"/><span class="imglabel">Indicates the identification of a maximum (peak) value, to the maximum accuracy of the data ccategories.</span></a></li>
-             <li><a href="hosts.php?type=yellow"><img src="/img/red.png" class="align"/><span class="imglabel">Indicates the identification of a maximum (peak) value, to the maximum accuracy of the data ccategories.</span></a></li>
-             <li><a href="hosts.php?type=green"><img src="/img/blue.png" class="align"/><span class="imglabel">Normalized frequency of values relative to the mean.</span></a></li>
+             <li><a href="hosts.php?type=red"><img src="images/green.png" class="align"/><span class="imglabel">Indicates the identification of a maximum (peak) value, to the maximum accuracy of the data ccategories.</span></a></li>
+             <li><a href="hosts.php?type=yellow"><img src="images/red.png" class="align"/><span class="imglabel">Indicates the identification of a maximum (peak) value, to the maximum accuracy of the data ccategories.</span></a></li>
+             <li><a href="hosts.php?type=green"><img src="images/blue.png" class="align"/><span class="imglabel">Normalized frequency of values relative to the mean.</span></a></li>
                      </ul>
              </div>
        </div>
