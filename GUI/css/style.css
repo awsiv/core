@@ -979,3 +979,11 @@ font-size: 150%;
 color: darkgreen;
 font-weight: bold;
 }
+
+.vitaltable table
+{
+	text-align:center;
+	width:100%;
+}
+
+
