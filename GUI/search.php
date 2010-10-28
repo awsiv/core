@@ -692,6 +692,7 @@ else // No hosktkey
                 </fieldset>
             </form>
   </div>
+                    
 <script type="text/javascript">
 $(document).ready(function() { 
 	$('.tables table:first').prepend(
