@@ -1,8 +1,6 @@
-
-SUBDIRS = images
-GUIdir = $(docdir)/GUI
-GUI_DATA = *.php
-EXTRA_DIST = *.php
+GUIdir = $(docdir)/GUI/images
+GUI_DATA = *
+EXTRA_DIST = *
 
 
 #
