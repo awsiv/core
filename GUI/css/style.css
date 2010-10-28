@@ -531,6 +531,12 @@ overflow:auto;
         font-family: monospace;
 	  }
 	  
+	  .CodeMirror-line-numbers div
+	  {
+		 font-size: 10pt;
+		 line-height:normal;
+	  }
+	  
 	  
 	  #leftPanel
 {
