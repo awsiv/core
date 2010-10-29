@@ -34,3 +34,16 @@ if (FIPS_MODE)
    }
 #endif
 }
+
+/*****************************************************************************/
+
+int Nova_HaveFIPS(void)
+{
+#ifdef HAVE_FIPS_MODE_SET
+return true;
+#else
+return false;
+#endif
+}
+
+

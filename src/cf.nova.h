@@ -261,6 +261,8 @@ void Nova_LookupAggregateClassName(int n,char *name, char *desc);
 /* cfnova.c */
 
 void Nova_Initialize(void);
+int Nova_HaveFIPS(void);
+
 
 /* client_code.c */
 
