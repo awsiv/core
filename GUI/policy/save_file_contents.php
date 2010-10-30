@@ -19,10 +19,7 @@
 				}
 			    $content=str_replace('\\\\', '\\' , $_POST['content']);
 			    $content=str_replace('\\"', '"' , $content);
-				if($_POST['agent']=='webkit')
-				{
-				$content=substr( $content, 0, -3);
-				}
+
 				fwrite($handle, $content);
 				$msg= "success writing to file,".$content;
 				$written=true;
@@ -44,10 +41,6 @@
 			    $content=str_replace('\\"', '"' , $content);
 
 				$content=str_replace('&gt;', '>' , $content);
-				if($_POST['agent']=='webkit')
-				{
-				$content=substr( $content, 0, -3);
-				}
 				fwrite($handle, $content);
 				$written=true;
 				$msg= "success writing to file";
