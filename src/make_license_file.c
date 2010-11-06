@@ -28,9 +28,9 @@ int main()
   FILE *fp;
   struct stat sb;
   int m_now,m_expire,d_now,d_expire;
-  char f_day[8],f_month[8],f_year[8];
+  char f_day[8],f_month[32],f_year[8];
   int number = 1;
-  char u_day[8],u_month[8],u_year[8];
+  char u_day[8],u_month[32],u_year[8];
   unsigned char digest[EVP_MAX_MD_SIZE+1];
 
 
