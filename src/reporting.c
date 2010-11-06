@@ -1131,7 +1131,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
-      fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],date,NRX[cfx_date][cfe]);
+      fprintf(fout,"%s %ld %s",NRX[cfx_date][cfb],date,NRX[cfx_date][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_event][cfb],handle,NRX[cfx_event][cfe]);
       fprintf(fout,"%s",NRX[cfx_entry][cfe]);
       }
