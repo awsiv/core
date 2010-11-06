@@ -6,7 +6,7 @@
 		$contents = file_get_contents($file_path);
 
                 $newcontents=str_replace('\\\\', '\\' , $_POST['newcontents']);
-                $newcontents=str_replace('\\"', '"' , $newcontents);
+//                $newcontents=str_replace('\\"', '"' , $newcontents);
 
 //		$newcontents=str_replace('\u200b', '' , $_POST['newcontents']);
 //		$newcontents=str_replace('\\', '' , $newcontents);

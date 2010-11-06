@@ -18,7 +18,7 @@
 					$msg="couldn't open file <i>$filetobesaved</i>";
 				}
 			    $content=str_replace('\\\\', '\\' , $_POST['content']);
-			    $content=str_replace('\\"', '"' , $content);
+//			    $content=str_replace('\\"', '"' , $content);
 
 				fwrite($handle, $content);
 				$msg= "success writing to file,".$content;
@@ -38,7 +38,7 @@
 					$msg="couldn't open file <i>$filetobesaved</i>";
 				}
 			    $content=str_replace('\\\\', '\\' , $_POST['content']);
-			    $content=str_replace('\\"', '"' , $content);
+//			    $content=str_replace('\\"', '"' , $content);
 
 				$content=str_replace('&gt;', '>' , $content);
 				fwrite($handle, $content);
