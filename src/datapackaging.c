@@ -1753,6 +1753,11 @@ while (!feof(fin))
       continue;
       }
 
+   if (cf_strlen(line) == 0 || (line[0] == '\n'))
+      {
+      continue;
+      }
+
    PrependItem(&file,line,NULL);
    }
 
@@ -1760,11 +1765,6 @@ cf_fclose(fin);
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
-   if (cf_strlen(ip->name) == 0)
-      {
-      continue;
-      }
-
    if (first)
       {
       first = false;
@@ -1818,6 +1818,11 @@ while (!feof(fin))
       continue;
       }
 
+   if (cf_strlen(line) == 0 || (line[0] == '\n'))
+      {
+      continue;
+      }
+
    PrependItem(&file,line,NULL);
    }
 
@@ -1825,11 +1830,6 @@ cf_fclose(fin);
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
-   if (cf_strlen(ip->name) == 0)
-      {
-      continue;
-      }
-
    if (first)
       {
       first = false;
