@@ -63,7 +63,7 @@ dnl ######################################################################
 
 AC_PROG_CC
 AC_PROG_RANLIB
-AC_DISABLE_STATIC
+AC_DISABLE_SHARED
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 AC_PATH_PROG(GETCONF, getconf, false, $PATH:$prefix/bin:/usr/bin:/usr/local/bin:/sw/bin)
