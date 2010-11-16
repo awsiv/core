@@ -77,8 +77,6 @@
 #undef NT
 #undef DARWIN
 
-#undef HAVE_FIPS_MODE_SET
-
 /* SVR4 header stuff */
 
 #undef __EXTENSIONS__
@@ -118,6 +116,9 @@
 /* Define to 1 if the system has the type `clockid_t'. */
 #undef HAVE_CLOCKID_T
 
+/* Define to 1 if you have the <dce/daclif.h> header file. */
+#undef HAVE_DCE_DACLIF_H
+
 /* Define to 1 if you have the <depot.h> header file. */
 #undef HAVE_DEPOT_H
 
@@ -140,6 +141,9 @@
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
+/* Have FIPS OpenSSL cannister */
+#undef HAVE_FIPS_MODE_SET
+
 /* Define to 1 if you have the <gd.h> header file. */
 #undef HAVE_GD_H
 
@@ -161,9 +165,6 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the <ldap.h> header file. */
-#undef HAVE_LDAP_H
-
 /* Define to 1 if you have the `acl' library (-lacl). */
 #undef HAVE_LIBACL
 
@@ -172,6 +173,9 @@
 
 /* Define to 1 if you have the `db' library (-ldb). */
 #undef HAVE_LIBDB
+
+/* Define to 1 if you have the `dce' library (-ldce). */
+#undef HAVE_LIBDCE
 
 /* Define to 1 if you have the `gd' library (-lgd). */
 #undef HAVE_LIBGD
@@ -197,6 +201,9 @@
 /* Define to 1 if you have the <libpq-fe.h> header file. */
 #undef HAVE_LIBPQ_FE_H
 
+/* Define to 1 if you have the `pthread' library (-lpthread). */
+#undef HAVE_LIBPTHREAD
+
 /* Define to 1 if you have the `pthreads' library (-lpthreads). */
 #undef HAVE_LIBPTHREADS
 
@@ -205,6 +212,9 @@
 
 /* Define to 1 if you have the `qdbm' library (-lqdbm). */
 #undef HAVE_LIBQDBM
+
+/* Define to 1 if you have the `rt' library (-lrt). */
+#undef HAVE_LIBRT
 
 /* Define to 1 if you have the `socket' library (-lsocket). */
 #undef HAVE_LIBSOCKET
@@ -265,9 +275,6 @@
 
 /* Define to 1 if you have the `realpath' function. */
 #undef HAVE_REALPATH
-
-/* Define to 1 if you have the `regcomp' function. */
-#undef HAVE_REGCOMP
 
 /* Define to 1 if you have the <regex.h> header file. */
 #undef HAVE_REGEX_H

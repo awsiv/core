@@ -63,8 +63,7 @@ dnl ######################################################################
 
 AC_PROG_CC
 AC_PROG_RANLIB
-AC_DISABLE_SHARED
-dnl AC_DISABLE_STATIC - maybe use shared libs later
+AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 AC_PATH_PROG(GETCONF, getconf, false, $PATH:$prefix/bin:/usr/bin:/usr/local/bin:/sw/bin)
@@ -77,41 +76,26 @@ dnl
 dnl Choose a database
 dnl
 
-AC_ARG_WITH(tokyocabinet,
-	AS_HELP_STRING(--with-tokyocabinet, [support database functions tokyo]),with_tokyo=yes,
-	with_tokyo=no)
-
-
-if test "x$with_tokyo" = xyes; then
-   AC_MSG_CHECKING(for TokyoCabinet)
-   WITH_TOKYO=1
-else
-   WITH_TOKYO=0
-fi
-
-dnl else qdbm?
-
-AC_ARG_WITH(qdbm,
-	AS_HELP_STRING(--with-qdbm, [support database functions qdbm]),with_qdbm=yes,
-	with_qdbm=no)
-
-if test "x$with_qdbm" = xyes; then
-   AC_MSG_CHECKING(for QDBM)
-   WITH_QDBM=1
-else
-   WITH_QDBM=0
-fi
-
-
+AC_ARG_WITH([tokyocabinet],
+    [AS_HELP_STRING([--with-tokyocabinet], [support database functions])])
+AS_IF([test "x$with_tokyocabinet" = "xyes"], [WITH_TOKYO=1], [WITH_TOKYO=0])
 
 if test $WITH_TOKYO = 1; then
+  AC_MSG_CHECKING(for TokyoCabinet)
   AC_CHECK_LIB(tokyocabinet,main, [], [AC_MSG_ERROR(Cannot find Tokyo Cabinet)])
   AC_CHECK_HEADERS(tcutil.h)
   AC_CHECK_HEADERS(tchdb.h)
   AC_DEFINE(TCDB, 1, [Define if Tokyo Cabinet is available.])
 fi
 
+dnl else qdbm?
+
+AC_ARG_WITH([qdbm],
+    [AS_HELP_STRING([--with-qdbm], [support database functions qdbm])])
+AS_IF([test "x$with_qdbm" = "xyes"], [WITH_QDBM=1], [WITH_QDBM=0])
+
 if test $WITH_QDBM = 1; then
+  AC_MSG_CHECKING(for QDBM)
   AC_CHECK_LIB(qdbm,main, [], [AC_MSG_ERROR(Cannot find Quick Database Manager)])
   AC_CHECK_HEADERS(depot.h)
   AC_DEFINE(QDB, 1, [Define if QDBM is available.])
@@ -122,7 +106,6 @@ dnl  Look for Berkeley DB.
 dnl 
 
 if test $WITH_QDBM = 0 -a $WITH_TOKYO = 0; then
-
   AC_ARG_WITH(berkeleydb,
     [  --with-berkeleydb[=PATH] directory where BerkeleyDB exists],
     BERKELEY_DB_DIR=$with_berkeleydb,
@@ -135,7 +118,7 @@ if test $WITH_QDBM = 0 -a $WITH_TOKYO = 0; then
     AC_MSG_ERROR(This release of cfengine requires a version of BerkeleyDB 4.4 or later)
   else
     if test "x$BERKELEY_DB_DIR" = "xdefault" ; then
-        for v in BerkeleyDB.4.2 BerkeleyDB.4.3 BerkeleyDB.4.4 BerkeleyDB.4.5 BerkeleyDB.4.6 BerkeleyDB.4.7; do
+        for v in BerkeleyDB.4.2 BerkeleyDB.4.3 BerkeleyDB.4.4 BerkeleyDB.4.5 BerkeleyDB.4.6 BerkeleyDB.4.7 BerkeleyDB.4.8; do
             for d in $prefix /opt /usr/local /usr/pkg /usr; do
                 test -d "$d/$v" && BERKELEY_DB_DIR="$d/$v"
             done
@@ -161,7 +144,7 @@ if test $WITH_QDBM = 0 -a $WITH_TOKYO = 0; then
 			CFLAGS="$CFLAGS $BERKELEY_DB_CFLAGS"
 			LDFLAGS="$LDFLAGS $BERKELEY_DB_LDFLAGS"
 			AC_SEARCH_LIBS(db_create, 
-				[db-4 db4 db-4.7 db-4.6 db-4.5 db-4.4 db-4.3 db-4.2 db-4.1 db-4.0], 
+				[db-4 db4 db-4.8 db-4.7 db-4.6 db-4.5 db-4.4 db-4.3 db-4.2 db-4.1 db-4.0], 
 				[BERKELEY_DB_LIB=$ac_cv_search_db_create])
 			CFLAGS="$save_CFLAGS"
 			LDFLAGS="$save_LDFLAGS"
@@ -211,7 +194,7 @@ if test $WITH_QDBM = 0 -a $WITH_TOKYO = 0; then
     elif test -d "$BERKELEY_DB_DIR"; then
 
         BERKELEY_DB_CFLAGS="-I$BERKELEY_DB_DIR/include"
-        for v in . db47 db46 db45 db44 db43 db42 db41 db40 db4 db33 db32 db3 db; do
+        for v in . db48 db47 db46 db45 db44 db43 db42 db41 db40 db4 db33 db32 db3 db; do
             if test -f "$BERKELEY_DB_DIR/include/$v/db.h"; then
                 BERKELEY_DB_CFLAGS="-I$BERKELEY_DB_DIR/include/$v"
 		break
@@ -219,7 +202,7 @@ if test $WITH_QDBM = 0 -a $WITH_TOKYO = 0; then
         done
 
         BERKELEY_DB_LIB="-ldb"
-        for v in db-4.7 db4.7 db47 db-4.6 db4.6 db46 db-4.5 db4.5 db45 db-4.4 db4.4 db44; do
+        for v in db-4.8 db48 db-4.7 db4.7 db47 db-4.6 db4.6 db46 db-4.5 db4.5 db45 db-4.4 db4.4 db44; do
             if test -f "$BERKELEY_DB_DIR/lib/lib$v.so"; then
                 BERKELEY_DB_LIB="-l$v"
 		break
@@ -386,24 +369,19 @@ fi
 
 AC_SUBST(OPENSSL_LIB_CPPFLAGS)
 
-AC_CHECK_LIB(crypto,FIPS_mode_set,AC_DEFINE(HAVE_FIPS_MODE_SET,1))
+AC_CHECK_LIB(crypto,FIPS_mode_set,AC_DEFINE([HAVE_FIPS_MODE_SET],1,Have FIPS OpenSSL cannister))
 
 #
 # Others
 #
 
-AC_ARG_WITH(libvirt,
-	AS_HELP_STRING(--with-libvirt, [support virtual machine management]),with_virt=yes,
-	with_virt=no)
+AC_ARG_WITH([libvirt],
+    [AS_HELP_STRING([--with-libvirt], [support virtual machine management])])
+AS_IF([test "x$with_libvirt" = "xyes"], [WITH_VIRT=1], [WITH_VIRT=0])
 
-if test "x$with_virt" = xyes; then
-   AC_MSG_CHECKING(for libvirt)
-   WITH_VIRT=1
-else
-   WITH_VIRT=0
-fi
 
 if test $WITH_VIRT = 1; then
+  AC_MSG_CHECKING(for libvirt)
   AC_CHECK_LIB(virt,main, [], [AC_MSG_ERROR(Cannot find libvirt)])
 fi
 
@@ -422,15 +400,9 @@ dnl ######################################################################
 dnl  Look for SQL connectors.
 dnl ######################################################################
 
-AC_ARG_WITH(sql,
-	AS_HELP_STRING(--with-sql, [support database functions]), ,
-	with_sql=check)
-
-if test "x$with_sql" != xno; then
-   WITH_SQL=1
-else
-   WITH_SQL=0
-fi
+AC_ARG_WITH([sql],
+    [AS_HELP_STRING([--with-sql], [support database functions])])
+AS_IF([test "x$with_sql" = "xyes"], [WITH_SQL=1], [WITH_SQL=0])
 
 if test $WITH_SQL = 1; then
   case "$target_os" in
@@ -471,59 +443,62 @@ if test $WITH_MONGO = 1; then
 fi
 
 
+
+
 dnl ######################################################################
 dnl Checks for perl compatible regular expressions
 dnl ######################################################################
 
-AC_ARG_WITH(pcre,
-    [  --with-pcre[[=PATH]] directory where Perl compatible regex exists (optionally in PATH)],
-    [
-        AC_MSG_CHECKING(pcre)
+AC_ARG_WITH([pcre],
+			[AS_HELP_STRING([--with-pcre[[=PATH]]], [support for Perl compatible regex (optionally search in PATH)])])
+AS_IF([test "x$with_pcre" != "xno"], [
+    AC_MSG_CHECKING([pcre])
+    if test "x$with_pcre" = "xyes" -o "x$with_pcre" = "x" ; then
+		for d in $prefix /usr/local /usr; do
+			if test -f "$d/include/pcre.h" ; then
+				CPPFLAGS="$CPPFLAGS -I$d/include"
+				LDFLAGS="$LDFLAGS -L$d/lib"
+				AC_MSG_RESULT($d)
+				FOUND_PCRE=1
+				break
+			fi
+		done
+		if test "x$FOUND_PCRE" = "x" ; then
+			AC_MSG_NOTICE([Cannot find PCRE - specify the path])
+		fi
+	else
+		if test -f "${withval}/include/pcre.h" ; then
+			CPPFLAGS="$CPPFLAGS -I${withval}/include"
+			LDFLAGS="$LDFLAGS -L${withval}/lib"
+			AC_MSG_RESULT("${withval}")
+		else
+			AC_MSG_NOTICE([Cannot find PCRE in $withval])
+		fi
+	fi
 
-        if test "x$withval" != "xno" ; then
-            if test "x$withval" != "xyes" ; then
-                if test "x$withval" = "xdefault" ; then
-                    for d in $prefix /usr/local /usr; do
-                        if test -f "$d/include/pcreposix.h" ; then
-                            CPPFLAGS="$CPPFLAGS -I$d/include"
-                            LDFLAGS="$LDFLAGS -L$d/lib"
-                            PCRE_LIB="-lpcreposix"
-                            AC_MSG_RESULT($d)
-                            break
-                        fi
-                    done
-                    if test x"$PCRE_LIB" = x ; then
-                        AC_MSG_ERROR(Cannot find PCRE)
-                    fi
-                else
-                if test -f "${withval}/include/pcreposix.h" ; then
-                    CPPFLAGS="$CPPFLAGS -I${withval}/include"
-                    LDFLAGS="$LDFLAGS -L${withval}/lib"
-                    AC_MSG_RESULT("${withval}")
-                else
-                    AC_MSG_ERROR(Cannot find PCRE)
-                fi
-                fi
-            else
-               AC_MSG_RESULT("yes")
-            fi
-            LIBS="$LIBS -lpcreposix"
-            AC_DEFINE(USE_PCRE, 1, [Define if PCRE is available.])
-        fi
-    ]
-)
+	AC_CHECK_HEADERS([pcre.h pcre/pcre.h])
+	AC_CHECK_LIB(pcre, main, [], [AC_MSG_WARN([Cannot find PCRE])])
+	AC_DEFINE(USE_PCRE, 1, [Define if PCRE is available.])
+])
 
-AC_CHECK_LIB(pcre, main, [], [AC_MSG_ERROR(Cannot find PCRE)])
+if test "x$ac_cv_lib_pcre_main" != "xyes"; then
+	AC_CHECK_HEADERS([regex.h rxposix.h])
+	AC_CHECK_FUNC([regcomp])
 
-dnl ######################################################################
-dnl Checks for regular expressions
-dnl GNU regex lib if you have regcomp in libc you should NOT have this lib too
-dnl ######################################################################
+	if test "x$ac_cv_header_regex_h" != "xyes" -a "x$ac_cv_header_rxposix_h" != "xyes" ; then
+		AC_MSG_ERROR([Either PCRE, rxposix or GNU regex is required])
+	fi
+fi
+
+LIBS="$LIBS $BERKELEY_DB_LDFLAGS $BERKELEY_DB_LIB $OPENSSL_LIB_LDFLAGS $OPENSSL_LIB_LIB"
 
 dnl AC_CHECK_LIB(rx, main) deprecated
-dnl AC_CHECK_LIB(rt, main)
+AC_CHECK_LIB(rt, main)
+
+
 
 dnl Now check for database connectors
+
 
 if test $WITH_SQL; then
   AC_CHECK_LIB(mysqlclient,main)
@@ -534,14 +509,11 @@ if test $WITH_SQL; then
 fi
 
 
-AC_ARG_WITH(ldap,
-	AS_HELP_STRING(--without-ldap, [support some graphic functions]),with_ldap=no,
-	with_ldap=yes)
-
-if test "x$with_ldap" != xno; then
-   AC_CHECK_HEADERS(ldap.h)
-   AC_CHECK_LIB(ldap,ldap_get_values_len)
-fi
+dnl Look for ldap
+  
+AC_ARG_WITH([ldap],
+    [AS_HELP_STRING([--with-ldap], [support ldap functions])])
+AS_IF([test "x$with_ldap" = "xyes"], [AC_CHECK_LIB([ldap], [ldap_get_values_len])])
 
 AC_CHECK_HEADERS(pcre.h)
 AC_CHECK_HEADERS(pcre/pcre.h)
@@ -565,7 +537,6 @@ AC_CHECK_HEADERS(sys/param.h)
 AC_CHECK_HEADERS(fcntl.h)
 AC_CHECK_HEADERS(sys/filesys.h)
 AC_CHECK_HEADERS(dustat.h)
-AC_CHECK_HEADERS(regex.h rxposix.h)
 AC_CHECK_HEADERS(sys/systeminfo.h)
 AC_CHECK_HEADERS(sys/acl.h)
 AC_CHECK_HEADERS(zone.h)
@@ -580,14 +551,12 @@ dnl ######################################################################
 dnl Checks for graph support
 dnl ######################################################################
 
-AC_ARG_WITH(gd,
-	AS_HELP_STRING(--without-gd, [support some graphic functions]),with_gd=no,
-	with_gd=yes)
-
-if test "x$with_gd" != xno; then
-   AC_CHECK_LIB(gd,main)
-   AC_CHECK_HEADERS(gd.h)
-fi
+AC_ARG_WITH([gd],
+    [AS_HELP_STRING([--with-gd], [support some graphic functions])])
+AS_IF([test "x$with_gd" = "xyes"], [
+    AC_CHECK_LIB(gd,main)
+    AC_CHECK_HEADERS(gd.h)
+])
 
 dnl ######################################################################
 dnl Checks for data types
@@ -610,7 +579,7 @@ dnl Check for special functions
 dnl ######################################################################
 
 AC_CHECK_FUNCS(getcwd getnetgrent waitpid seteuid setegid setreuid setregid)
-AC_CHECK_FUNCS(uname gethostname realpath regcomp chflags)
+AC_CHECK_FUNCS(uname gethostname realpath chflags)
 AC_CHECK_FUNCS(strstr strsep putenv drand48 srand48 getaddrinfo)
 AC_CHECK_FUNCS(bcopy mkfifo statfs statvfs door)
 AC_CHECK_FUNCS(sysinfo setsid strdup strrchr strerror snprintf sysconf)
@@ -672,27 +641,43 @@ dnl #######################################################################
 dnl Handle DCE + threading stuff
 dnl #######################################################################
 
-dnl AC_CHECK_LIB(pthread,main)         dnl POSIX threads
+AC_CHECK_LIB(pthread,main)         dnl POSIX threads
 
 if test "$ac_cv_lib_pthread_main" = "yes"; then
 	AC_CHECK_HEADERS(pthread.h)
 	AC_CHECK_HEADERS(sched.h)
 fi
 
+
+
 AC_CHECK_FUNC(lchown, AC_DEFINE(HAVE_LCHOWN))
+
+AC_CHECK_FUNC(pthread_attr_setstacksize, AC_DEFINE(HAVE_PTHREAD_ATTR_SETSTACKSIZE), AC_CHECK_LIB(pthread, pthread_create))
+AC_CHECK_FUNC(pthread_sigmask, AC_DEFINE(HAVE_PTHREAD_SIGMASK), AC_CHECK_LIB(pthread, pthread_create))
+
+
+AC_ARG_ENABLE([DCE], [AS_HELP_STRING([--enable-DCE], [support for DCE and ACLs])])
+AS_IF([test "x$enable_DCE" = "xyes"], [
+    AC_CHECK_LIB(thread, main)
+    AC_CHECK_LIB(dce, main)            dnl DFS
+    AC_CHECK_HEADERS(dce/daclif.h)
+    AC_CHECK_HEADERS(pthread.h)
+    AC_CHECK_HEADERS(sched.h)
+])
 
 
 dnl ######################################################################
 dnl Give the chance to enable SELINUX
 dnl ######################################################################
-dnl 
-AC_ARG_ENABLE(selinux, dnl 
-               [  --enable-selinux              Enable use of the SELINUX libraries],
-               [AC_DEFINE(WITH_SELINUX, 1, [Define if you want to use SELINUX])
-               LIB_SELINUX="-lselinux"
-               LIBS="$LIBS $LIB_SELINUX"
-               AC_SUBST(LIB_SELINUX)])
 
+AC_ARG_ENABLE([selinux], dnl
+    [AS_HELP_STRING([--enable-selinux], [Enable use of the SELINUX libraries])])
+AS_IF([test "x$enable_selinux" = "xyes"], [
+    AC_DEFINE(WITH_SELINUX, 1, [Define if you want to use SELINUX])
+    LIB_SELINUX="-lselinux"
+    LIBS="$LIBS $LIB_SELINUX"
+    AC_SUBST(LIB_SELINUX)
+])
 
 dnl ######################################################################
 dnl OS specific stuff
@@ -920,6 +905,64 @@ if test x"$GCC" = "xyes"; then
 else 
 	AC_MSG_RESULT(no)
 fi
+
+
+dnl ######################################################################
+dnl Summarize
+dnl ######################################################################
+
+AC_MSG_RESULT( )
+AC_MSG_RESULT(    Summary of options...)
+
+
+if test "x$ac_cv_lib_pcre_main" = "xyes"; then
+  AC_MSG_RESULT( -> Configured with PCRE libraries)
+else
+  AC_MSG_RESULT( -> No PCRE library support - reverting to POSIX builtins)
+fi
+
+if test $WITH_SQL = 1; then
+
+  if test "x$ac_cv_lib_mysqlclient_main" = "xyes"; then
+    AC_MSG_RESULT( -> Configured with MYSQL libraries)
+  fi
+
+  if test "x$ac_cv_lib_pq_main" = "xyes"; then
+    AC_MSG_RESULT( -> Configured with Postgres libraries)
+  fi
+
+else
+  AC_MSG_RESULT( -> No SQL library support for knowledge map)
+fi
+
+if test "x$ac_cv_lib_ldap_ldap_get_values_len" = "xyes"; then
+  AC_MSG_RESULT( -> Configured with LDAP libraries)
+else
+  AC_MSG_RESULT( -> No LDAP libraries included)
+fi
+
+if test $WITH_TOKYO = 1; then
+  AC_MSG_RESULT( -> Configured with Tokyo Cabinet)
+elif test $WITH_QDBM = 1; then
+  AC_MSG_RESULT( -> Configured with QDBM)
+else
+  AC_MSG_RESULT( -> Will look for BerkeleyDB in $BERKELEY_DB_DIR)
+fi
+
+if test $WITH_VIRT = 1; then
+  AC_MSG_RESULT( -> Configured with libvirt support)
+else
+  AC_MSG_RESULT( -> No libvirt support included)
+fi
+
+if test $WITH_MONGO = 1; then
+   AC_MSG_RESULT( -> Configured with libmongoc support)
+else
+   AC_MSG_RESULT( -> No libmongoc support included)
+fi
+
+AC_MSG_RESULT( )
+
 
 dnl ######################################################################
 dnl Now make the Makefiles
