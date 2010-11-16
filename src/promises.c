@@ -244,7 +244,12 @@ if ((fp = fopen(name,"a")) == NULL)
    return;
    }
 
-fprintf(fp,"%ld,%s,%s\n",(long)now,id,reason);
+fprintf(fp,"%ld,%s,%s",(long)now,id,reason);
+
+if(reason[strlen(reason) - 1] != '\n')
+  {
+  fprintf(fp,"\n");
+  }
 
 fclose(fp);
 }
