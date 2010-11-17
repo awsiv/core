@@ -627,7 +627,7 @@ void NovaShowValues(FILE *fp,struct BodySyntax bs);
 
 /* ldap.c */
 
-#ifdef HAVE_LDAP_H
+#ifdef HAVE_LIBLDAP
 void *Nova_LDAPValue(char *uri,char *basedn,char *filter,char *name,char *scope,char *sec);
 void *Nova_LDAPList(char *uri,char *dn,char *filter,char *name,char *scope,char *sec);
 void *Nova_LDAPArray(char *array,char *uri,char *dn,char *filter,char *scope,char *sec);
