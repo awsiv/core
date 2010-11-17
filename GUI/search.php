@@ -365,8 +365,7 @@ else if ($hostkey != "") // Default search on single machine
           
       case "File change log":
           $report = cfpr_report_filechanges($hostkey,$search,true,-1,">",$class_regex);    
-          echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"images/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex&pdf_action=email\" id=\"send_mail\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a>
-	<div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
+          echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex\"><img src=\"images/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&search=$search&class_regex=$class_regex&pdf_action=email\" id=\"send_mail\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
           break;
           
       case "File change diffs":
@@ -513,7 +512,6 @@ else // No hosktkey
           echo "<div class=\"panel\"><div class=\"panelhead\">$report_type query</div><div class=\"panelcontent\">";
           echo "<form method=\"post\" action=\"search.php\">";
           echo "<p>File name: (.*+[])<input class=\"searchfield\" type=\"text\" name=\"name\"></p>";
-          echo "<p>CALENDAR</p>";
           echo "<p>Host group: (.*+[])<input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\"></p>";
           echo "<p><input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
           echo "<p><input type=\"hidden\" name=\"report\" value=\"$report_type\">";
@@ -528,7 +526,6 @@ else // No hosktkey
           echo "<form method=\"post\" action=\"search.php\">";
           echo "<p>File name: (.*+[])<input class=\"searchfield\" type=\"text\" name=\"name\"></p>";
           echo "<p>Match content: (.*+[])<input class=\"searchfield\" type=\"text\" name=\"diff\" size=\"80\"></p>";
-          echo "<p>CALENDAR</p>";
           echo "<p>Host group: (.*+[])<input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\"></p>";
           echo "<input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
           echo "<input type=\"hidden\" name=\"report\" value=\"$report_type\">";

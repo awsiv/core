@@ -32,7 +32,7 @@ $g = cfpr_count_green_hosts();
         <?php cfpr_compliance_summary_graph();?>  
           <div class="grid_8">
            	<div class="panel">
-          		<div class="panelhead">Compliance promise summary</div>
+          		<div class="panelhead">Compliance summary</div>
                 <div class="panelcontent">
                   <img src="/hub/common/compliance.png" class="grid_6"/>
                   <ul class=" grid_2 grp_label">
