@@ -4384,8 +4384,8 @@ return retList;
 
 struct Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep)
 /*
- * Returns all CDP commands from expanded policy as
- * "handle sep command sep value sep action sep ifvarclass"
+ * Returns all CDP registry from expanded policy as
+ * "handle sep key sep value sep action sep ifvarclass"
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
 { bson_buffer bbuf;
@@ -4465,6 +4465,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    
    snprintf(buf,sizeof(buf),"%s%s%s%s%s%s%s%s%s",
 	    handle,sep,key,sep,value,sep,action,sep,ifvarclass);
+
    AppendItem(&retList,buf,NULL);
    }
 
@@ -4655,6 +4656,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
       }
    
    snprintf(buf,sizeof(buf),"%s;%s;%c;%s",hostKeyHash,host,status,time);
+
    AppendItem(&retList,buf,NULL);
    }
 
