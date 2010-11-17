@@ -8,7 +8,7 @@
 
 #define NOVA_REVISION "$Rev$"
 
-# ifdef HAVE_LDAP_H
+# ifdef HAVE_LIBLDAP
 #  include <ldap.h>
 # endif
 
