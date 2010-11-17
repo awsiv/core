@@ -781,7 +781,6 @@ int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg
   struct HubPerformance *hP;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -806,15 +805,10 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
             hP->hh->hostname,
             hP->event,hP->q,hP->e,hP->d,cf_ctime(&(hP->t)));
    
-   tmpsize = strlen(buffer);
-   
-   if (count + tmpsize > bufsize - strlen("</table>\n") - 1)
-      {
-      break;
-      }
-   
-   strcat(returnval,buffer);
-   count += tmpsize;
+   if(!Join(returnval,buffer,bufsize))
+     {
+     break;
+     }
    }
 
 EndJoin(returnval,"</table>\n",bufsize);
