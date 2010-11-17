@@ -926,6 +926,7 @@ int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char
 int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize);
+int Nova2PHP_promiselog_hosts(char *hostkey,char *handle,enum promiselog_rep type,char *classreg,char *returnval,int bufsize);
 
 int Nova2PHP_search_topics(char *search,int regex,char *buffer,int bufsize);
 void Nova2PHP_show_topic(int id,char * buffer,int bufsize);

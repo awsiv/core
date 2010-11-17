@@ -2223,10 +2223,15 @@ if (!EMPTY(keyHash))
    {
    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
 
-   if(QueryHostsWithClass(conn,&bb,classRegexAnch))
+   if(!QueryHostsWithClass(conn,&bb,classRegexAnch))
      {
-     emptyQuery = false;
+     // no host matches class regex, so stop
+     bson_from_buffer(&query,&bb);
+     bson_destroy(&query);
+     return NewHubQuery(NULL,NULL);
      }
+
+   emptyQuery = false;
    }
 
  if(emptyQuery)
