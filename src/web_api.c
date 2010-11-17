@@ -960,7 +960,7 @@ switch (*cmp)
    
    StartJoin(returnval,"<table>\n",bufsize);
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>Host</td><td>File</td><td>Time of change</td></tr>\n");
+   snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>File</th><th>Change detected at</th></tr>\n");
    Join(returnval,buffer,bufsize);
       
    for (rp = hq->records; rp != NULL; rp=rp->next)
