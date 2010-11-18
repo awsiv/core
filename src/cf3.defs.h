@@ -33,7 +33,7 @@
 #undef VERSION
 #undef Verbose
 
-#define CF3_REVISION "$Rev: 1504 $"
+#define CF3_REVISION "$Rev: 1508 $"
 
 #include "conf.h"
 
@@ -128,8 +128,8 @@ struct PromiseParser
    void *promisee;
 
    char currentid[CF_MAXVARSIZE];
+   char currenttype[CF_MAXVARSIZE];
    char *currentstring;
-   char *currenttype;
    char *currentclasses;
 
    struct Bundle *currentbundle;
