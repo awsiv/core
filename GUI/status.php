@@ -47,7 +47,7 @@ cfpr_menu("Status : hosts");
           	</div>
             
             <div class="panel">
-          		<div class="panelhead">Search groups of hosts</div>
+              <div class="panelhead">Reporting: search groups of hosts</div>
                 <div class="panelcontent">
                     <form method="post" action="search.php">
                           <p><?php $allreps = cfpr_select_reports(".*",100);

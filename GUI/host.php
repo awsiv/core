@@ -57,7 +57,7 @@ $colour = cfpr_get_host_colour($hostkey);
 				$speed = cfpr_get_network_rate($hostkey);
 			  ?>
                   <div class="panel">
-                        <div class="panelhead">Host Details</div>
+                     <div class="panelhead">Host Details (discovered)</div>
                      <div class="panelcontent">
        <p><label class="width_20">Alias:</label><label ><?php echo $hostname?></label></p>
        <p><label class="width_20">OS class:</label><label><?php echo $class?></label></p>
@@ -70,7 +70,7 @@ $colour = cfpr_get_host_colour($hostkey);
                  </div>
                  
                  <div class="panel">
-                        <div class="panelhead">Status</div>
+                   <div class="panelhead">Status (measured)</div>
                      <div class="panelcontent">
                <div class="width_80 floatLeft">
                <p><label class="width_20">Average Load:</label><label ><?php echo $load?>%</label></p>
