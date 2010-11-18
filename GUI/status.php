@@ -19,7 +19,7 @@ cfpr_menu("Status : hosts");
           <div class="panel">
              <div class="panelhead"> Hosts</div>
                  <ul class="panelcontent">
-                 <li>Host Known: <?php echo $all?></li>
+                 <li>Hosts Known: <?php echo $all?></li>
                  <li>Ranked worst: <a href="topN.php">Show top 50</a></li>
                 </ul>
            </div>
@@ -37,7 +37,7 @@ cfpr_menu("Status : hosts");
         <?php cfpr_compliance_summary_graph();?>  
           <div class="grid_8">
            	<div class="panel">
-          		<div class="panelhead">Average meters for all hosts</div>
+          		<div class="panelhead">Average meters summarizing all hosts</div>
                 <div class="panelcontent">
                     <ul>
                       <li> <a href="knowledge.php?topic=Status level meters"><img src="/hub/common/meter.png"></a></li>
@@ -59,7 +59,7 @@ cfpr_menu("Status : hosts");
           	</div>
             
             <div class="panel">
-          		<div class="panelhead">Content-Driven Policies</div>
+          		<div class="panelhead">Summary of Content-Driven Policies</div>
                 <div class="panelcontent">
                     <form method="post" action="cdp.php">
                           <p><?php $allSppReps = cfpr_cdp_reportnames();
