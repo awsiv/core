@@ -141,10 +141,7 @@ for (cp = pp->conlist, j = 0; cp != NULL; cp = cp->next)
  bson_destroy(&b);
 
 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to promise database");
-   }
+ CFDB_Close(&dbconn);
 
 }
 
