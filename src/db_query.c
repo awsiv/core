@@ -2202,7 +2202,6 @@ struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum 
   struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
   bson query, field;
   int emptyQuery = true;  
-  int match_name;
   char *collName;
   mongo_cursor *cursor;
   bson_buffer bb;
@@ -2218,6 +2217,22 @@ if (!EMPTY(keyHash))
    bson_append_string(&bb,cfr_keyhash,keyHash);
    emptyQuery = false;
    }
+
+
+if (!EMPTY(lhandle))
+   {
+   if(regex)
+     {
+     bson_append_regex(&bb,cfr_promisehandle,lhandle,"");
+     }
+   else
+     {
+     bson_append_string(&bb,cfr_promisehandle,lhandle);
+     }
+
+   emptyQuery = false;
+   }
+
 
  if(!EMPTY(classRegex))
    {
@@ -2309,35 +2324,15 @@ switch (type)
 	   }
        }
 
-     match_name = true;
-            
-     if (regex)
+     hh = GetHubHostIn(host_list,keyhash);
+     
+     if(!hh)
        {
-	 if (!EMPTY(lhandle) && !FullTextMatch(lhandle,rhandle))
-	   {
-	     match_name = false;
-	   }
+       hh = NewHubHost(keyhash,NULL,NULL);  // we get more host info later
+       AppendRlistAlien(&host_list,hh);
        }
-     else
-       {
-	 if (!EMPTY(lhandle) && (strcmp(lhandle,rhandle) != 0))
-	   {
-	     match_name = false;
-	   }
-       }
-            
-     if (match_name)
-       {
-	 hh = GetHubHostIn(host_list,keyhash);
-	 
-	 if(!hh)
-	   {
-	     hh = NewHubHost(keyhash,NULL,NULL);  // we get more host info later
-	     AppendRlistAlien(&host_list,hh);
-	   }
-
-	 rp = AppendRlistAlien(&record_list,NewHubPromiseLog(hh,rhandle,rcause,rt));
-       }
+     
+     rp = AppendRlistAlien(&record_list,NewHubPromiseLog(hh,rhandle,rcause,rt));
 
    }
 
@@ -4741,6 +4736,8 @@ int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRege
   bson query, field;
   mongo_cursor *cursor;
   int found = false;
+  char khMatches[16384];  /* each keyhash is ~70 bytes: size / 70
+			    gives max hosts returned */
 
   // query
   bson_buffer_init(&bbuf);
@@ -4756,8 +4753,10 @@ int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRege
 
   bson_destroy(&query);
   bson_destroy(&field);
-
-
+  
+  khMatches[0] = '^';  // anchor regex
+  khMatches[1] = '\0';
+  
 while(mongo_cursor_next(cursor))  // iterate over docs
    {
    bson_iterator_init(&it1,cursor->current.data);
@@ -4766,13 +4765,23 @@ while(mongo_cursor_next(cursor))  // iterate over docs
       {
       if (strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)
 	{
-	bson_append_string(bb,cfr_keyhash,bson_iterator_string(&it1));
+	Join(khMatches,(char *)bson_iterator_string(&it1),sizeof(khMatches));
+	Join(khMatches,"|",sizeof(khMatches));
 	found = true;
 	}
       }
    }
   
   mongo_cursor_destroy(cursor);
+
+  if(found)
+    {
+      // replace trailing | with anchor $
+      khMatches[strlen(khMatches) - 1] = '$';
+      bson_append_regex(bb,cfr_keyhash,khMatches,"");
+
+      Debug("QueryHostsWithClass regex=\"%s\"\n", khMatches);
+    }
 
   return found;
 }
