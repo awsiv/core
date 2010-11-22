@@ -379,6 +379,7 @@ for (rp = SERVERLIST; rp != NULL; rp = rp->next)
    }
 
 DeleteRlist(SERVERLIST);
+SERVERLIST = NULL;
 
 DeleteRlist(a.copy.servers);
 DeletePromise(pp);
