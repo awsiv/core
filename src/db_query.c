@@ -4754,8 +4754,7 @@ int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRege
   bson_destroy(&query);
   bson_destroy(&field);
   
-  khMatches[0] = '^';  // anchor regex
-  khMatches[1] = '\0';
+  khMatches[0] = '\0';
   
 while(mongo_cursor_next(cursor))  // iterate over docs
    {
@@ -4776,8 +4775,8 @@ while(mongo_cursor_next(cursor))  // iterate over docs
 
   if(found)
     {
-      // replace trailing | with anchor $
-      khMatches[strlen(khMatches) - 1] = '$';
+      // remove trailing |
+      khMatches[strlen(khMatches) - 1] = '\0';
       bson_append_regex(bb,cfr_keyhash,khMatches,"");
 
       Debug("QueryHostsWithClass regex=\"%s\"\n", khMatches);
