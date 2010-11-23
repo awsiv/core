@@ -33,7 +33,7 @@
 #undef VERSION
 #undef Verbose
 
-#define CF3_REVISION "$Rev: 1508 $"
+#define CF3_REVISION "$Rev: 1526 $"
 
 #include "conf.h"
 
