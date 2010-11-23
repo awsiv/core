@@ -745,11 +745,11 @@ void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promi
 if (handle && pp->ref)
    {
    fprintf(fp,"topics: handles:: \"%s\"  comment => \"%s\", ",handle,pp->ref);
-   fprintf(fp,"association => a(\"is the handle for\",\"%s\",\"has a promise with handle\");\n",pp->promiser);
+   fprintf(fp,"association => a(\"is the handle for\",\"%s\",\"has a promise with handle\");\n",NovaEscape(pp->promiser));
    }
 else if (handle)
    {
-   fprintf(fp,"topics: handles:: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",handle,NOVA_HANDLE,pp->promiser,NOVA_HANDLE_INV);
+   fprintf(fp,"topics: handles:: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",handle,NOVA_HANDLE,NovaEscape(pp->promiser),NOVA_HANDLE_INV);
    }
 
 if (handle)
@@ -819,7 +819,7 @@ for (rp = dependency; rp != NULL; rp=rp->next)
    {
    fprintf(fp,"topics:\n");
    fprintf(fp,"class_contexts::");
-   fprintf(fp,"  \"%s\"\n",pp->promiser);
+   fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
    fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_ISIMPACTED,rp->item,NOVA_IMPACTS);
 
    // Might need to break these up further

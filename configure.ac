@@ -15,8 +15,9 @@ dnl The version in the next line is the only one to set
 dnl
 
 AM_INIT_AUTOMAKE(cfnova,2.0.1a1)   dnl remember to set version
-
 AM_CONFIG_HEADER(src/conf.h)
+
+AC_CONFIG_MACRO_DIR(m4)
 
 #
 # Add to the default list of places in LDFLAGS to compensate for
