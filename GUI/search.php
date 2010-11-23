@@ -43,7 +43,7 @@ if ($many)  // Returning query
 	$name = $_POST['name'];
 	if ($hosts_only)
   	   {
-           echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+           echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
            $report = cfpr_hosts_with_bundlesseen(NULL,$name,true,$class_regex);
 	   }
 	else
@@ -61,7 +61,7 @@ if ($many)  // Returning query
           $years = $_POST['years'];
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">Days: $days<br>Months: $months<br>Years: $years</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">Days: $days<br>Months: $months<br>Years: $years</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_value(NULL,$days,$months,$years,$class_regex);
 	   }
           else
@@ -76,7 +76,7 @@ if ($many)  // Returning query
           $name = $_POST['name'];
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";   
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";   
              $report = cfpr_hosts_with_classes(NULL,$name,true,$class_regex);
              }
           else
@@ -94,7 +94,7 @@ if ($many)  // Returning query
           
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_compliance_promises(NULL,$name,$state,true,$class_regex);
              }
           else
@@ -109,7 +109,7 @@ if ($many)  // Returning query
           
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">",$class_regex);
              }
           else
@@ -125,7 +125,7 @@ if ($many)  // Returning query
           $cal = -1;
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_filechanges(NULL,$name,true,-1,">",$class_regex);    
              }
           else
@@ -144,7 +144,7 @@ if ($many)  // Returning query
           $cal = -1;
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_filediffs(NULL,$name,$diff,true,$cal,">",$class_regex);
              }
           else
@@ -166,7 +166,7 @@ if ($many)  // Returning query
              }
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_lastseen(NULL,$key,$name,$address,$ago,true,$class_regex);
              }
           else
@@ -185,7 +185,7 @@ if ($many)  // Returning query
           $arch = $_POST['arch'];
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_patch_avail(NULL,$name,$version,$arch,true,$class_regex);
              }
           else
@@ -203,7 +203,7 @@ if ($many)  // Returning query
           
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_patch_in(NULL,$name,$version,$arch,true,$class_regex);
              }
           else
@@ -218,7 +218,7 @@ if ($many)  // Returning query
           $name = $_POST['name'];
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_performance(NULL,$name,true,$class_regex);
              }
           else
@@ -235,7 +235,7 @@ if ($many)  // Returning query
           $name = $_POST['name'];
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_repaired(NULL,$name,$class_regex);
              }
           else
@@ -253,7 +253,7 @@ if ($many)  // Returning query
           $name = $_POST['name'];
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_notkept(NULL,$name,$class_regex);
              }
           else
@@ -268,7 +268,7 @@ if ($many)  // Returning query
           $name = $_POST['name'];
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_setuid(NULL,$name,true,$class_regex);
              }
           else
@@ -286,7 +286,7 @@ if ($many)  // Returning query
           
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type for Name: $name  Version: $version  Arch: $arch</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type for Name: $name  Version: $version  Arch: $arch</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_software_in(NULL,$name,$version,$arch,true,$class_regex);
              }
           else
@@ -306,7 +306,7 @@ if ($many)  // Returning query
           
           if ($hosts_only)
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div>";
+             echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
              $report = cfpr_hosts_with_vars(NULL,$scope,$lval,$rval,$type,true,$class_regex);
              }
           else
