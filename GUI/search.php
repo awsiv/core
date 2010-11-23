@@ -456,8 +456,8 @@ else // No hosktkey
           echo "<div class=\"panel\"><div class=\"panelhead\">$report_type query</div><div class=\"panelcontent\">";
           echo "<form method=\"post\" action=\"search.php\">";
           echo "<p>Bundle pattern: (.*+[])<input class=\"searchfield\" type=\"text\" name=\"name\" ></p>";
-          echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\"></p>";
           echo "<p>Host group: (.*+[])<input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\"></p>";
+          echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\"></p>";
           echo "<p><input type=\"submit\" value=\"Generate report\"></p>";
           echo "<input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
           echo "<input type=\"hidden\" name=\"report\" value=\"$report_type\">";
@@ -505,7 +505,10 @@ else // No hosktkey
           break;
           
       case "Compliance summary":
-          echo "<h4>$report_type (Not possible to search)</h4>";
+      case "Promises repaired summary":
+      case "Promises not kept summary":
+
+          echo "<h4>$report_type (not possible to search)</h4>";
           break;
           
       case "File change log":
