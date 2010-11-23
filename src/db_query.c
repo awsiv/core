@@ -277,34 +277,34 @@ while (mongo_cursor_next(cursor))  // loops over documents
                
                if (regex)
                   {
-                  if (lname && !FullTextMatch(lname,rname))
+		  if (!EMPTY(lname) && !FullTextMatch(lname,rname))
                      {
                      match_name = false;
                      }
 
-                  if (lver && !FullTextMatch(lver,rversion))
+                  if (!EMPTY(lver) && !FullTextMatch(lver,rversion))
                      {
                      match_version = false;
                      }
 
-                  if (larch && !FullTextMatch(larch,rarch))
+                  if (!EMPTY(larch) && !FullTextMatch(larch,rarch))
                      {
                      match_arch = false;
                      }
                   }
                else
                   {
-                  if (lname && (strcmp(lname,rname) != 0))
+		  if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
                      {
                      match_name = false;
                      }
                   
-                  if (lver && (strcmp(lver,rversion) != 0))
+                  if (!EMPTY(lver) && (strcmp(lver,rversion) != 0))
                      {
                      match_version = false;
                      }
                   
-                  if (larch && (strcmp(larch,rarch) != 0))
+                  if (!EMPTY(larch) && (strcmp(larch,rarch) != 0))
                      {
                      match_arch = false;
                      }                  
@@ -414,12 +414,13 @@ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
 
  if(!emptyQuery)
    {
-   bson_empty(&query);
+   bson_destroy(&query);
    }
 
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
+
    bson_iterator_init(&it1,cursor->current.data);
 
    keyhash[0] = '\0';
@@ -473,14 +474,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
             
             if (regex)
                {
-               if (lclass && !FullTextMatch(lclass,rclass))
+	       if (!EMPTY(lclass) && !FullTextMatch(lclass,rclass))
                   {
                   match_class = false;
                   }
                }
             else
                {
-               if (lclass && (strcmp(lclass,rclass) != 0))
+	       if (!EMPTY(lclass) && (strcmp(lclass,rclass) != 0))
                   {
                   match_class = false;
                   }
@@ -651,7 +652,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
             match_version = match_t = match_kept = match_notkept = match_repaired = true;
 
-            if (lversion && !FullTextMatch(lversion,rversion))
+            if (!EMPTY(lversion) && !FullTextMatch(lversion,rversion))
                {
                match_version = false;
                }
@@ -892,44 +893,44 @@ while (mongo_cursor_next(cursor))  // loops over documents
                
                if (regex)
                   {
-                  if (llval && !FullTextMatch(llval,rlval))
+		  if (!EMPTY(llval) && !FullTextMatch(llval,rlval))
                      {
                      match_lval = false;
                      }
 
-                  if (lrval && !FullTextMatch(lrval,rrval))
+                  if (!EMPTY(lrval) && !FullTextMatch(lrval,rrval))
                      {
                      match_rval = false;
                      }
 
-                  if (lscope && !FullTextMatch(lscope,rscope))
+                  if (!EMPTY(lscope) && !FullTextMatch(lscope,rscope))
                      {
                      match_scope = false;
                      }
                   
-                  if (ltype && !FullTextMatch(ltype,dtype))
+                  if (!EMPTY(ltype) && !FullTextMatch(ltype,dtype))
                      {
                      match_type = false;
                      }
                   }
                else
                   {
-                  if (llval && strcmp(llval,rlval) != 0)
+		  if (!EMPTY(llval) && strcmp(llval,rlval) != 0)
                      {
                      match_lval = false;
                      }
 
-                  if (lrval && strcmp(lrval,rrval) != 0)
+                  if (!EMPTY(lrval) && strcmp(lrval,rrval) != 0)
                      {
                      match_rval = false;
                      }
                   
-                  if (lscope && strcmp(lscope,rscope) != 0)
+                  if (!EMPTY(lscope) && strcmp(lscope,rscope) != 0)
                      {
                      match_scope = false;
                      }
                   
-                  if (ltype && strcmp(ltype,dtype) != 0)
+                  if (!EMPTY(ltype) && strcmp(ltype,dtype) != 0)
                      {
                      match_type = false;
                      }
@@ -1310,35 +1311,35 @@ while (mongo_cursor_next(cursor))  // loops over documents
             
             if (regex)
                {
-               if (lhost && !FullTextMatch(lhost,rhost))
+	       if (!EMPTY(lhost) && !FullTextMatch(lhost,rhost))
                   {
                   match_host = false;
                   }
 
                // Doesn't make sense to do regex on a key
-               if (lhash && (strcmp(lhash,rhash) != 0))
+               if (!EMPTY(lhash) && (strcmp(lhash,rhash) != 0))
                   {
                   match_hash = false;
                   }
 
-               if (laddr && !FullTextMatch(laddr,raddr))
+               if (!EMPTY(laddr) && !FullTextMatch(laddr,raddr))
                   {
                   match_addr = false;
                   }
                }
             else
                {
-               if (lhost && (strcmp(lhost,rhost) != 0))
+	       if (!EMPTY(lhost) && (strcmp(lhost,rhost) != 0))
                   {
                   match_host = false;
                   }
 
-               if (lhash && (strcmp(lhash,rhash) != 0))
+               if (!EMPTY(lhash) && (strcmp(lhash,rhash) != 0))
                   {
                   match_hash = false;
                   }
                
-               if (laddr && (strcmp(laddr,raddr) != 0))
+               if (!EMPTY(laddr) && (strcmp(laddr,raddr) != 0))
                   {
                   match_addr = false;
                   }
@@ -1637,14 +1638,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
             
             if (regex)
                {
-               if (lname && !FullTextMatch(lname,rname))
+	       if (!EMPTY(lname) && !FullTextMatch(lname,rname))
                   {
                   match_name = false;
                   }
                }
             else
                {
-               if (lname && (strcmp(lname,rname) != 0))
+	       if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
                   {
                   match_name = false;
                   }
@@ -1782,14 +1783,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
             
             if (regex)
                {
-               if (lname && !FullTextMatch(lname,rname))
+	       if (!EMPTY(lname) && !FullTextMatch(lname,rname))
                   {
                   match_name = false;
                   }
                }
             else
                {
-               if (lname && (strcmp(lname,rname) != 0))
+	       if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
                   {
                   match_name = false;
                   }
@@ -1952,14 +1953,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
             
             if (regex)
                {
-               if (lname && !FullTextMatch(lname,rname))
+               if (!EMPTY(lname) && !FullTextMatch(lname,rname))
                   {
                   match_name = false;
                   }
                }
             else
                {
-               if (lname && (strcmp(lname,rname) != 0))
+	       if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
                   {
                   match_name = false;
                   }
@@ -2131,29 +2132,29 @@ while (mongo_cursor_next(cursor))  // loops over documents
             
             if (regex)
                {
-               if (lname && !FullTextMatch(lname,rname))
+	       if (!EMPTY(lname) && !FullTextMatch(lname,rname))
                   {
                   match_name = false;
                   }
 
-               if (ldiff && !FullTextMatch(ldiff,rdiff))
+               if (!EMPTY(ldiff) && !FullTextMatch(ldiff,rdiff))
                   {
                   match_diff = false;
                   }
                }
             else
                {
-               if (lname && (strcmp(lname,rname) != 0))
+	       if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
                   {
                   match_name = false;
                   }
 
-               if (ldiff && (strcmp(ldiff,rdiff) != 0))
+               if (!EMPTY(ldiff) && (strcmp(ldiff,rdiff) != 0))
                   {
                   match_diff = false;
                   }
                }
-            
+
             if (match_name && match_diff && match_t)
                {
                found = true;
@@ -2658,14 +2659,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
             
             if (regex)
                {
-               if (lname && !FullTextMatch(lname,rname))
+	       if (!EMPTY(lname) && !FullTextMatch(lname,rname))
                   {
                   match_name = false;
                   }
                }
             else
                {
-               if (lname && (strcmp(lname,rname) != 0))
+	       if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
                   {
                   match_name = false;
                   }
