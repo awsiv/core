@@ -456,7 +456,7 @@ void Nova_AnalyseWeek(char *docroot,char *keyhash,enum observables obs,char *buf
 
 { char work[CF_BUFSIZE];
   double x;
-  struct CfDataView cfv;
+  struct CfDataView cfv = {0};
 
 cfv.height = 300;
 cfv.width = 700; //(7*24*2)*2; // halfhour
