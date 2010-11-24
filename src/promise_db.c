@@ -269,7 +269,6 @@ for (bp = bundles; bp != NULL; bp=bp->next)
 	 bson_destroy(&b);
 		     
          	 
-         //Nova_StoreExpandedPromise(pp);
          }      
       }   
    }
@@ -285,10 +284,9 @@ for (bdp = bodies; bdp != NULL; bdp=bdp->next)
    Nova_StoreBody(&dbconn, bdp);
    }
 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to promise database");
-   }
+
+ CFDB_Close(&dbconn);
+
 }
 
 /*****************************************************************************/

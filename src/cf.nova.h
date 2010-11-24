@@ -359,6 +359,7 @@ struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *b
 struct Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep);
 struct Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep);
 struct Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType);
+int CFDB_QueryLastFileChange(mongo_connection *conn, char *keyHash, char *reportType, char *fileName, char *outBuf, int outBufSz);
 struct Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep);
 struct Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep);
 struct Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);

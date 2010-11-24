@@ -4378,6 +4378,101 @@ return retList;
 
 /*****************************************************************************/
 
+int CFDB_QueryLastFileChange(mongo_connection *conn, char *keyHash, char *reportType, char *fileName, char *outBuf, int outBufSz)
+/*
+ * Queries a file change / file diff report for a given host and file,
+ * and writes the last time this file has been changed there to
+ * outBuf (of size outBufSz).
+ * No memory is allocated.
+ * Returns true if a date is found, false otherwise.
+ */
+{ bson_buffer bbuf;
+  bson_iterator it1,it2,it3;
+  bson query,field;
+  mongo_cursor *cursor;
+  char currFileName[CF_MAXVARSIZE];
+  time_t currTime;
+  time_t lastChange = 0;
+
+  // query
+ bson_buffer_init(&bbuf);
+ bson_append_string(&bbuf,cfr_keyhash,keyHash);
+ bson_from_buffer(&query,&bbuf);
+
+ // returned attribute
+ bson_buffer_init(&bbuf);
+ bson_append_int(&bbuf,reportType,1);
+ bson_from_buffer(&field,&bbuf);
+
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+bson_destroy(&query);
+bson_destroy(&field);
+
+if(mongo_cursor_next(cursor))  // should be only one document
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   while(bson_iterator_next(&it1))
+      {
+      if(strcmp(bson_iterator_key(&it1), reportType) == 0)
+	{
+	  bson_iterator_init(&it2,bson_iterator_value(&it1));
+	  
+	  while(bson_iterator_next(&it2))  // loops over report rows
+	    {
+	      
+	      bson_iterator_init(&it3,bson_iterator_value(&it2));
+
+	      currFileName[0] = '\0';
+	      currTime = 0;
+
+	      while(bson_iterator_next(&it3))
+		{
+		  if (strcmp(bson_iterator_key(&it3), cfr_name) == 0)
+		    {
+		      snprintf(currFileName,sizeof(currFileName),"%s",bson_iterator_string(&it3));
+		    }
+		  else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
+		    {
+		      currTime = bson_iterator_int(&it3);
+		    }
+		}
+
+	      if(strcmp(currFileName,fileName) == 0 && currTime > lastChange)
+		{
+		lastChange = currTime;
+		}
+	    }
+	}
+      }
+   
+   }
+
+mongo_cursor_destroy(cursor);
+
+ if(lastChange == 0)
+   {
+   snprintf(outBuf,outBufSz,"%s", "(never changed)");
+   }
+ else
+   {
+   snprintf(outBuf,outBufSz,"%s",cf_ctime(&lastChange)); 
+
+   // ctime makes newline for some reason...
+
+   if(outBuf[strlen(outBuf) - 1] == '\n')
+     {
+     outBuf[strlen(outBuf) - 1] = '\0';
+     }
+
+   }
+
+return (lastChange != 0);
+}
+
+/*****************************************************************************/
+
 struct Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep)
 /*
  * Returns all CDP registry from expanded policy as

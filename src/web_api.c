@@ -4070,8 +4070,13 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
   char thenStr[CF_SMALLBUF] = {0};
   char cause[CF_MAXVARSIZE] = {0};
   char statusStr[CF_SMALLBUF];
+  char lastChangeStr[CF_SMALLBUF];
+  char fileChangePath[CF_MAXVARSIZE];
+  char fileChangePathUrl[CF_MAXVARSIZE];
+  char *urlReportName;
   time_t then = 0, now;
   char attributes[CF_MAXVARSIZE] = {0};
+  char attributesTmp[CF_MAXVARSIZE] = {0};
   char row[CF_MAXVARSIZE] = {0};
   int ret = false;
   cdp_t cdpType;
@@ -4103,10 +4108,14 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
    case cdp_filechanges:
      promises = CFDB_QueryCdpPromiser(&dbconn,"</td><td>",cfp_cdp_bundle_filechanges,"files");
+     reportName = cfr_filechanges;
+     urlReportName = "File change log";
      break;
 
    case cdp_filediffs:
      promises = CFDB_QueryCdpPromiser(&dbconn,"</td><td>",cfp_cdp_bundle_filediffs,"files");
+     reportName = cfr_filediffs;
+     urlReportName = "File change diffs";
      break;
 
    case cdp_registry:
@@ -4124,7 +4133,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
      snprintf(buf,bufSz,"\n<table>\n");
      Join(buf,GetCdpTableHeader(cdpType),bufSz);
      
-     for(ip = promises; ip != NULL; ip = ip->next)
+     for(ip = promises; ip != NULL; ip = ip->next)  // join policy with host reports
        {
 	 sscanf(ip->name,"%128[^<]</td><td>%512[^$]",handle,attributes);
 
@@ -4138,12 +4147,35 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 	       
 	     sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%ld[^$]",hostKeyHash,host,statusStr,&then);
 
-	     //CFDB_QueryStausCause(&dbconn,hostKeyHash,handle,*statusStr,cause,sizeof(cause));
-
 	     Nova_TimeWarn(now,then,CF_HUB_HORIZON,thenStr,sizeof(thenStr));
 
-	     snprintf(row,sizeof(row),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
-		      host,attributes,Nova_LongStateWarn(*statusStr),thenStr);
+	     
+	     switch(cdpType)  // include special fields
+	       {
+	       case cdp_filechanges:
+	       case cdp_filediffs:
+
+		 sscanf(attributes, "%512[^<]", fileChangePath);
+		 
+		 snprintf(fileChangePathUrl, sizeof(fileChangePathUrl), "<a href=\"search.php?report=%s&hostkey=%s&search=%s\">%s</a>",
+			  urlReportName, hostKeyHash, fileChangePath,fileChangePath);
+
+		 // insert url to detailed report
+		 snprintf(attributesTmp,sizeof(attributesTmp),"%s",attributes);
+		 ReplaceStr(attributesTmp, attributes, sizeof(attributes), fileChangePath, fileChangePathUrl);
+
+		 printf("attributes=\"%s\"\n",attributes);
+
+		 CFDB_QueryLastFileChange(&dbconn, hostKeyHash, reportName,fileChangePath, lastChangeStr, sizeof(lastChangeStr));
+		 Join(attributes, "</td><td>", sizeof(attributes));
+		 Join(attributes, lastChangeStr, sizeof(attributes));
+
+		 break;
+	       }
+
+
+	     snprintf(row,sizeof(row),"<tr><td><a href=\"host.php?hostkey=%s\">%s</a></td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+		      hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr);
 		   
 	     if(!Join(buf,row,bufSz))
 	       {
@@ -4178,16 +4210,16 @@ char *GetCdpTableHeader(cdp_t cdpType)
   switch(cdpType)
     {
     case cdp_acls:
-      return "<tr><th>Host</th><th>Path</th><th>Permission (ACL)</th><th>Owner</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
+      return "<tr><th>Host</th><th>Path</th><th>Permission (ACL)</th><th>Owner</th><th>Action</th><th>Class expression</th><th>State</th><th>Last checked</th></tr>";
     case cdp_commands:
-      return "<tr><th>Host</th><th>Command</th><th>Failclass</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
+      return "<tr><th>Host</th><th>Command</th><th>Failclass</th><th>Action</th><th>Class expression</th><th>State</th><th>Last checked</th></tr>";
     case cdp_filechanges:
     case cdp_filediffs:
-      return "<tr><th>Host</th><th>Path</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
+      return "<tr><th>Host</th><th>Path</th><th>Class expression</th><th>Last change detected</th><th>State</th><th>Last checked</th></tr>";
     case cdp_registry:
-      return "<tr><th>Host</th><th>Key</th><th>Value</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
+      return "<tr><th>Host</th><th>Key</th><th>Value</th><th>Action</th><th>Class expression</th><th>State</th><th>Last checked</th></tr>";
     case cdp_services:
-      return "<tr><th>Host</th><th>Service name</th><th>Runstatus</th><th>Action</th><th>Class expression</th><th>State</th><th>Time checked</th></tr>";
+      return "<tr><th>Host</th><th>Service name</th><th>Runstatus</th><th>Action</th><th>Class expression</th><th>State</th><th>Last checked</th></tr>";
     }
 
 
