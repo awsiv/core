@@ -4164,8 +4164,6 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 		 snprintf(attributesTmp,sizeof(attributesTmp),"%s",attributes);
 		 ReplaceStr(attributesTmp, attributes, sizeof(attributes), fileChangePath, fileChangePathUrl);
 
-		 printf("attributes=\"%s\"\n",attributes);
-
 		 CFDB_QueryLastFileChange(&dbconn, hostKeyHash, reportName,fileChangePath, lastChangeStr, sizeof(lastChangeStr));
 		 Join(attributes, "</td><td>", sizeof(attributes));
 		 Join(attributes, lastChangeStr, sizeof(attributes));
