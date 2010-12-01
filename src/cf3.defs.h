@@ -33,7 +33,7 @@
 #undef VERSION
 #undef Verbose
 
-#define CF3_REVISION "$Rev: 1526 $"
+#define CF3_REVISION "$Rev: 1544 $"
 
 #include "conf.h"
 
@@ -253,6 +253,7 @@ enum cfacontrol
    cfa_addclasses,
    cfa_agentaccess,
    cfa_agentfacility,
+   cfa_alwaysvalidate,
    cfa_auditing,
    cfa_binarypaddingchar,
    cfa_bindtointerface,
