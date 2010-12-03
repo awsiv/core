@@ -7,9 +7,7 @@
 
                 $newcontents=str_replace('\\\\', '\\' , $_POST['newcontents']);
 //                $newcontents=str_replace('\\"', '"' , $newcontents);
-
-//		$newcontents=str_replace('\u200b', '' , $_POST['newcontents']);
-//		$newcontents=str_replace('\\', '' , $newcontents);
+                $newcontent=str_replace('&gt;', '>' , $newcontents);
 
 		if($_POST['agent']=='webkit')
 		{

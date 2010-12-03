@@ -45,25 +45,24 @@ cfpr_header("Policy editor","none");
 </div>
 </div> <!--hello-->
 
-    <div title="Tab data" id="dialog" style="display:none">
+    <div title="Tab data" id="dialog" style="display:none" class="dialog">
             <form>
                 <fieldset class="ui-helper-reset">
                     <label for="tab_title">File Name</label>
                     <input type="text" class="ui-widget-content ui-corner-all" value="" id="tab_title" name="tab_title" />
-                
+         
                     <textarea class="ui-widget-content ui-corner-all" id="tab_content" name="tab_content"></textarea>
                     <input type="hidden" id="event"></input>
                 </fieldset>
             </form>
         </div>
         
-    <div title="Save File" id="sfdialog" style="display:none">
+    <div title="Save File" id="sfdialog" style="display:none" class="dialog">
         <span></span>
         <input type="hidden" id="tobesaved" ></input>
         <input type="hidden" id="tobesaved_name"></input>
     </div> 
 <div id="commitdlg" style="display:none;" title="Commit file" class="dialog">
-
             <form>
                 <fieldset class="ui-helper-reset">
                     <label for="tab_title">User name:</label>
@@ -80,8 +79,8 @@ cfpr_header("Policy editor","none");
                     <input type="hidden" id="cmtfile" ></input>
                 </fieldset>
             </form>
-
    </div>
+   
    <div id="confirmation" style="display:none">
    </div>
    <div id="svnlogtable" style="display:none;" class="dialog">

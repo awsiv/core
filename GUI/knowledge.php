@@ -11,7 +11,6 @@ cfpr_header("knowledge bank","normal");
 cfpr_menu("Knowledge bank");
 ?>
         <div id="tabpane">
-
 <?php 
 $search = $_POST['search'];
 $topic = $_GET['topic'];

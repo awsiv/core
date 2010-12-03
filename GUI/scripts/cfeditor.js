@@ -51,6 +51,7 @@ $(document).ready(function() {
 		$title_element="";
 		var closetabs=false;
 		var closetabindex="";
+		var fileevent="";
 		
 	var $tabs = $('#tabs').tabs({
 	   tabTemplate: '<li><a href="#{href}">#{label}</a> <span class="ui-icon ui-icon-close">Remove Tab</span></li>',
@@ -227,7 +228,7 @@ $(document).ready(function() {
 		 {
 			 $("#tab_title").val(tab_title);
 			 $("#tab_content").html(newcontents);
-			 $("#event").val('closing');
+			 fileevent = "closing";
 			 $dialog.dialog('open');
 		 }
 		 code_editor_counter--;
@@ -245,10 +246,11 @@ $(document).ready(function() {
 		 hide: 'puff',
 		 buttons: {
 		 'Save': function() {
+		var agent=jQuery.uaMatch(navigator.userAgent).browser;
 		 $.ajax({
            type: "POST",
            url: "policy/save_file_contents.php",
-           data:({'file':$('#tab_title').val(), 'content':$('#tab_content').html(), 'filestats':'new'}),
+           data:({'file':$('#tab_title').val(), 'content':$('#tab_content').html(), 'filestats':'new', 'agent':agent}),
            dataType:'json',
            success: function(data){
 			   if(data.status)
@@ -256,7 +258,8 @@ $(document).ready(function() {
         	   var id= $('ul#policies_list_new li').length+1;
                var append_html='<li class="file ext_txt"><a href="#" rel="'+data.path+'" id="policy_'+id+'">'+data.title+'</a></li>';
                $('#policies_list_new').append(append_html);
-					 if($("#event").val()!="closing")
+			    
+					 if(fileevent!= "closing")
 					 {
 					   var append_html_tab='<input type="hidden" name="link" value="policy_'+id+'" />';
 					   $(current_tab_id).append(append_html_tab);
@@ -332,7 +335,7 @@ $(document).ready(function() {
 		 $.ajax({
 	           type: "POST",
 	           url: "policy/save_file_contents.php",
-	           data:({'file':current_tab_title, 'content':newcontents,'filestats':'old'}),
+	           data:({'file':current_tab_title, 'content':newcontents,'filestats':'old', 'agent':agent}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
 	           success: function(data){
 		           $confirmation.dialog({title: "Saved", width:default_dialog_width});
@@ -351,7 +354,7 @@ $(document).ready(function() {
 		 {
 			 $("#tab_title").val(current_tab_title);
 			 $("#tab_content").html(newcontents);
-			 $("#event").val('saving');
+			 fileevent = "saving";
 			 $dialog.dialog('open');
 		 }
 	   });
@@ -367,7 +370,10 @@ $(document).ready(function() {
 		 'Ok': function() {
 	      $(this).dialog('close');
 	      }
-	 }
+		 },
+		 open: function() {
+		 $(this).parent().find('.ui-dialog-buttonpane').find('button:first').focus()
+		 }
 	 });
 	 	
 	 
@@ -378,7 +384,7 @@ $(document).ready(function() {
 		 resizable: false,
 		 title:'Checkout',
 		 buttons: {
-		 'Ok': function() {
+		 'OK': function() {
 			 $.ajax({
 					   type: "POST",
 					   url: "policy/empty_directory.php",
@@ -403,7 +409,10 @@ $(document).ready(function() {
 		'Cancel':function() {
 	      $(this).dialog('close');
 	      }
-	  }
+	  },
+	  open: function() {
+		 $(this).parent().find('.ui-dialog-buttonpane').find('button:first').focus();
+		 }
 	 });
 	 
 	  var $svnlogdlg = $('#svnlogtable').dialog({
@@ -432,11 +441,12 @@ $(document).ready(function() {
 		 buttons: {
 		  'Save & Commit': function() {
 			  var file=$('#tobesaved_name',this).val();
+			  var agent=jQuery.uaMatch(navigator.userAgent).browser;
 		    $.ajax({
 	           type: "POST",
 	           async:false,
 	           url: "policy/save_file_contents.php",
-	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(),'filestats':'old'}),
+	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(), 'filestats':'old', 'agent':agent}),
 	           
 	           success: function(data){
 				    $("#comments").show();
@@ -457,12 +467,12 @@ $(document).ready(function() {
 		    $(this).dialog('close');
 	       },
 		 'Save': function() {
-		 
+		 var agent=jQuery.uaMatch(navigator.userAgent).browser;
 		 $.ajax({
 	           type: "POST",
 	           async:false,
 	           url: "policy/save_file_contents.php",
-	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(),'filestats':'old'}),
+	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(),'filestats':'old', 'agent':agent}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
 	           success: function(data){
                      $confirmation.dialog({title: "Saved", width:default_dialog_width});
@@ -704,6 +714,13 @@ $(document).ready(function() {
 		 close: function(event, ui){ 
 		 }
 	 });
+	 
+$('.dialog').find('input').keypress(function(e) {
+	if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+		$(this).parent().parent().parent().parent().find('.ui-dialog-buttonpane').find('button:first').trigger('click'); 
+		return false;
+	}
+});
 
 	$('#repoText').live('click',function(){
 		$('#usedRepo').css({top: '0' , left:'0', margin:'17px' , opacity:'0.9'});
