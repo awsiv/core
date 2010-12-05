@@ -222,6 +222,13 @@ else
 WriteDB(dbp,id,&newe,sizeof(newe));
 CloseDB(dbp);
 
+/* Just noise to log variables and classes */
+
+if (strcmp(pp->agentsubtype,"vars") == 0 || strcmp(pp->agentsubtype,"classes") == 0)
+   {
+   return;
+   }
+
 /* Now keep the next log */
 
 switch (status)
