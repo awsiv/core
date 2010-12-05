@@ -224,6 +224,11 @@ CloseDB(dbp);
 
 /* Just noise to log variables and classes */
 
+if (pp->agentsubtype == NULL)
+   {
+   return;
+   }
+
 if (strcmp(pp->agentsubtype,"vars") == 0 || strcmp(pp->agentsubtype,"classes") == 0)
    {
    return;
