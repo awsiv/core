@@ -33,7 +33,7 @@
 #undef VERSION
 #undef Verbose
 
-#define CF3_REVISION "$Rev: 1571 $"
+#define CF3_REVISION "$Rev: 1576 $"
 
 #include "conf.h"
 
@@ -112,7 +112,7 @@ struct PromiseParser
    char blocktype[CF_MAXVARSIZE];
    char blockid[CF_MAXVARSIZE];
 
-   char *filename;
+   char filename[CF_MAXVARSIZE];
    int line_pos;
    int line_no;
 
