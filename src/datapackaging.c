@@ -1724,7 +1724,7 @@ void Nova_PackRepairLog(struct Item **reply,char *header,time_t from,enum cfd_me
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
-  struct Item *ip,*file = NULL;
+  struct Item *ip = NULL,*file = NULL;
   int i = 0,first = true;
   long then;
   
