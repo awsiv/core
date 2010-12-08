@@ -325,7 +325,7 @@ void CFDB_GetValue(char *lval,char *rval,int size);
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
 struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query);
 struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
-struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle,int regex,int sort,char *classRegex);
+struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle, int regex, time_t from, time_t to,int sort,char *classRegex);
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex, int sort);
 struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp, int sort, char *classRegex);
@@ -898,7 +898,7 @@ void Nova_EnterpriseModuleTrick(void);
 void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize);
 void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,char *classreg, char *returnval,int bufsize);
-int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,char *classreg, char *returnval,int bufsize);
+int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,char *buffer,int bufsize);
 void Nova2PHP_summary_meter(char *hostkey);
 void Nova2PHP_meter(char *hostkey);
@@ -927,7 +927,7 @@ int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char
 int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize);
-int Nova2PHP_promiselog_hosts(char *hostkey,char *handle,enum promiselog_rep type,char *classreg,char *returnval,int bufsize);
+int Nova2PHP_promiselog_hosts(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize);
 
 int Nova2PHP_search_topics(char *search,int regex,char *buffer,int bufsize);
 void Nova2PHP_show_topic(int id,char * buffer,int bufsize);
@@ -972,7 +972,7 @@ int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize);
 
 /* pdf report */
 int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize); 
-int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,char *classreg,char *returnval,int bufsize);
+int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_value_report_pdf(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_classes_report_pdf(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize);

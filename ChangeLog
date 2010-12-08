@@ -1,3 +1,9 @@
+2.0.2 
+	Much faster report querying.
+	
+	Allows to specify age interval when querying promise not
+	kept and repaired.
+
 2.0.1   
 	Fixed promise query of not kept/promise repaired logs.
 

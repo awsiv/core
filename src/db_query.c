@@ -148,7 +148,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }      
 
    hh = NewHubHost(keyhash,addresses,hostnames);
-   AppendRlistAlien(&host_list,hh);
+   PrependRlistAlien(&host_list,hh);
    }
 
 bson_destroy(&field);
@@ -313,7 +313,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                if (match_name && match_version && match_arch)
                   {
                   found = true;
-                  rp = AppendRlistAlien(&record_list,NewHubSoftware(CF_THIS_HH,rname,rversion,rarch));
+                  rp = PrependRlistAlien(&record_list,NewHubSoftware(CF_THIS_HH,rname,rversion,rarch));
                   }
                }               
             }
@@ -323,7 +323,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
       
       // Now cache the host reference in all of the records to flatten the 2d list
       
@@ -490,7 +490,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 	    if (match_class && (now - rtime < horizon))
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubClass(CF_THIS_HH,rclass,rex,rsigma,rtime));
+               rp = PrependRlistAlien(&record_list,NewHubClass(CF_THIS_HH,rclass,rex,rsigma,rtime));
                }            
             }
          }   
@@ -499,7 +499,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
       for (rp = record_list; rp != NULL; rp=rp->next)
@@ -705,7 +705,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_kept && match_notkept && match_repaired && match_t && match_version)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubTotalCompliance(CF_THIS_HH,rt,rversion,rkept,rrepaired,rnotkept));
+               rp = PrependRlistAlien(&record_list,NewHubTotalCompliance(CF_THIS_HH,rt,rversion,rkept,rrepaired,rnotkept));
                }
             }
          }   
@@ -715,7 +715,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
       
       // Now cache the host reference in all of the records to flatten the 2d list
       for (rp = record_list; rp != NULL; rp=rp->next)
@@ -939,7 +939,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                if (match_type && match_scope && match_lval && match_rval)
                   {
                   found = true;
-                  rp = AppendRlistAlien(&record_list,NewHubVariable(CF_THIS_HH,dtype,rscope,rlval,rrval,rtype));
+                  rp = PrependRlistAlien(&record_list,NewHubVariable(CF_THIS_HH,dtype,rscope,rlval,rrval,rtype));
                   }
                else
                   {
@@ -968,7 +968,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
       
       // Now cache the host reference in all of the records to flatten the 2d list
       for (rp = record_list; rp != NULL; rp=rp->next)
@@ -1137,7 +1137,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_handle && match_status)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubCompliance(CF_THIS_HH,rhandle,rstatus,rex,rsigma,rtime));
+               rp = PrependRlistAlien(&record_list,NewHubCompliance(CF_THIS_HH,rhandle,rstatus,rex,rsigma,rtime));
                }            
             }
          }   
@@ -1146,7 +1146,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyHashDb,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
 
       for (rp = record_list; rp != NULL; rp=rp->next)
          {
@@ -1353,7 +1353,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_hash && match_host && match_addr && match_ago)
                {
                found = true;
-               AppendRlistAlien(&record_list,NewHubLastSeen(CF_THIS_HH,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev,rt));
+               PrependRlistAlien(&record_list,NewHubLastSeen(CF_THIS_HH,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev,rt));
                }            
             }
          }   
@@ -1362,7 +1362,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
 
@@ -1480,7 +1480,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                }
 
             found = true;
-            rp = AppendRlistAlien(&record_list,NewHubMeter(CF_THIS_HH,*rcolumn,rkept,rrepaired));
+            rp = PrependRlistAlien(&record_list,NewHubMeter(CF_THIS_HH,*rcolumn,rkept,rrepaired));
             }
          }   
       }
@@ -1488,7 +1488,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
 
       for (rp = record_list; rp != NULL; rp=rp->next)
          {
@@ -1654,7 +1654,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubPerformance(CF_THIS_HH,rname,rtime,rq,rex,rsigma));
+               rp = PrependRlistAlien(&record_list,NewHubPerformance(CF_THIS_HH,rname,rtime,rq,rex,rsigma));
                }
             }
          }   
@@ -1663,7 +1663,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
       for (rp = record_list; rp != NULL; rp=rp->next)
@@ -1799,7 +1799,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubSetUid(CF_THIS_HH,rname));
+               rp = PrependRlistAlien(&record_list,NewHubSetUid(CF_THIS_HH,rname));
                }
             }
          }   
@@ -1808,7 +1808,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
 
@@ -1969,7 +1969,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name && match_t)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubFileChanges(CF_THIS_HH,rname,rt));
+               rp = PrependRlistAlien(&record_list,NewHubFileChanges(CF_THIS_HH,rname,rt));
                }
             }
          }   
@@ -1978,7 +1978,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
       for (rp = record_list; rp != NULL; rp=rp->next)
@@ -2158,7 +2158,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name && match_diff && match_t)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubFileDiff(CF_THIS_HH,rname,rdiff,rt));
+               rp = PrependRlistAlien(&record_list,NewHubFileDiff(CF_THIS_HH,rname,rdiff,rt));
                }
             }
          }   
@@ -2167,7 +2167,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
       for (rp = record_list; rp != NULL; rp=rp->next)
@@ -2193,7 +2193,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle,int regex,int sort,char *classRegex)
+struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle, int regex, time_t from, time_t to, int sort,char *classRegex)
 {
   char classRegexAnch[CF_MAXVARSIZE];
   char rhandle[CF_MAXVARSIZE],rcause[CF_BUFSIZE];
@@ -2206,6 +2206,7 @@ struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum 
   char *collName;
   mongo_cursor *cursor;
   bson_buffer bb;
+  bson_buffer *timeRange, *sortObj;
   time_t rt;  
 
 
@@ -2220,7 +2221,7 @@ if (!EMPTY(keyHash))
    }
 
 
-if (!EMPTY(lhandle))
+if (!EMPTY(lhandle))  // promise handle
    {
    if(regex)
      {
@@ -2235,7 +2236,26 @@ if (!EMPTY(lhandle))
    }
 
 
- if(!EMPTY(classRegex))
+ if(from || to)  // time interval
+   {
+   timeRange = bson_append_start_object(&bb, cfr_time);
+   
+   if(from)
+     {
+     bson_append_int(timeRange, "$gte",from);
+     }
+   
+   if(to)
+     {
+     bson_append_int(timeRange, "$lte",to);
+     }
+
+   bson_append_finish_object(timeRange);
+   emptyQuery = false;
+   }
+
+
+ if(!EMPTY(classRegex))  // class
    {
    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
 
@@ -2249,6 +2269,7 @@ if (!EMPTY(lhandle))
 
    emptyQuery = false;
    }
+
 
  if(emptyQuery)
    {
@@ -2330,10 +2351,10 @@ switch (type)
      if(!hh)
        {
        hh = NewHubHost(keyhash,NULL,NULL);  // we get more host info later
-       AppendRlistAlien(&host_list,hh);
+       PrependRlistAlien(&host_list,hh);
        }
      
-     rp = AppendRlistAlien(&record_list,NewHubPromiseLog(hh,rhandle,rcause,rt));
+     rp = PrependRlistAlien(&record_list,NewHubPromiseLog(hh,rhandle,rcause,rt));
 
    }
 
@@ -2344,13 +2365,14 @@ switch (type)
  
  if(sort)
    {
-     record_list = SortRlist(record_list,SortPromiseLog);
+   record_list = SortRlist(record_list,SortPromiseLog);
    }
 
  mongo_cursor_destroy(cursor);
 
  return NewHubQuery(host_list,record_list);
 }
+
 
 /*****************************************************************************/
 
@@ -2496,7 +2518,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_day && match_month && match_year)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubValue(CF_THIS_HH,rday,rkept,rrepaired,rnotkept));
+               rp = PrependRlistAlien(&record_list,NewHubValue(CF_THIS_HH,rday,rkept,rrepaired,rnotkept));
                }
             }
          }   
@@ -2506,7 +2528,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
       for (rp = record_list; rp != NULL; rp=rp->next)
@@ -2675,7 +2697,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name)
                {
                found = true;
-               rp = AppendRlistAlien(&record_list,NewHubBundleSeen(CF_THIS_HH,rname,rago,ravg,rdev,rt));
+               rp = PrependRlistAlien(&record_list,NewHubBundleSeen(CF_THIS_HH,rname,rago,ravg,rdev,rt));
                }            
             }
          }   
@@ -2684,7 +2706,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
-      AppendRlistAlien(&host_list,hh);
+      PrependRlistAlien(&host_list,hh);
 
       // Now cache the host reference in all of the records to flatten the 2d list
       for (rp = record_list; rp != NULL; rp=rp->next)

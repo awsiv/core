@@ -485,12 +485,12 @@ function rpt_class_profile($hostkey,$search,&$pdf,$class_regex)
     $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
 }
 
-function rpt_promise_notkept($hostkey,$search,&$pdf,$class_regex)
+function rpt_promise_notkept($hostkey,$search,&$pdf,$hours_deltafrom,$hours_deltato,$class_regex)
 {
     $col_len = array(20,20,40,20);
     $header=array('Host','Promise Handle','Report','Time');
 
-    $ret = cfpr_report_notkept_pdf($hostkey,$search,$class_regex);
+    $ret = cfpr_report_notkept_pdf($hostkey,$search,intval($hours_deltafrom),intval($hours_deltato),$class_regex);
     $data1 = $pdf->ParseData($ret);
     
     $pdf->ReportTitle();
@@ -644,13 +644,13 @@ function rpt_performance($hostkey,$search,&$pdf,$class_regex)
         $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
 }
 
-function rpt_repaired_log($hostkey,$search,&$pdf,$class_regex)
+function rpt_repaired_log($hostkey,$search,&$pdf,$hours_deltafrom,$hours_deltato,$class_regex)
 {
     $cols=4;
     $col_len = array(19,19,43,19);
     $header=array('Host','Promise Handle','Report','Time');
 
-    $ret = cfpr_report_repaired_pdf($hostkey,$search,$class_regex);
+    $ret = cfpr_report_repaired_pdf($hostkey,$search,intval($hours_deltafrom),intval($hours_deltato),$class_regex);
     $data1 = $pdf->ParseData($ret);
     $pdf->ReportTitle();
     $pdf->ReportDescription();
@@ -878,7 +878,7 @@ switch($report_type)
  case "Promises repaired log":
     $desc=cfpr_report_description('promises repaired report');
     $pdf->PDFSetDescription($desc);
-    rpt_repaired_log($_GET['hostkey'],$_GET['search'],$pdf,$_GET['class_regex']);
+    rpt_repaired_log($_GET['hostkey'],$_GET['search'],$pdf,$_GET['hours_deltafrom'],$_GET['hours_deltato'],$_GET['class_regex']);
     break;
     
  case "Promises not kept summary":
@@ -890,7 +890,7 @@ switch($report_type)
  case "Promises not kept log":
     $desc=cfpr_report_description('promises not kept report');
     $pdf->PDFSetDescription($desc);
-    rpt_promise_notkept($_GET['hostkey'],$_GET['search'],$pdf,$_GET['class_regex']);
+    rpt_promise_notkept($_GET['hostkey'],$_GET['search'],$pdf,$_GET['hours_deltafrom'],$_GET['hours_deltato'],$_GET['class_regex']);
     break;
  
  case "Setuid/gid root programs":

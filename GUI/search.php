@@ -7,6 +7,8 @@ $search = $_POST['search'];
 $hostkey = $_POST['hostkey'];
 $report_type = $_POST['report'];
 $many = $_POST['manyhosts'];
+$hours_deltafrom = $_POST['hours_deltafrom'];
+$hours_deltato = $_POST['hours_deltato'];
 $class_regex = $_POST['class_regex'];
 
 if ($report_type == "")
@@ -15,6 +17,8 @@ if ($report_type == "")
    $hostkey = $_GET['hostkey'];
    $report_type = $_GET['report'];
    $many = $_GET['manyhosts'];
+   $hours_deltafrom = $_GET['hours_deltafrom'];
+   $hours_deltato = $_GET['hours_deltato'];
    $class_regex = $_GET['class_regex'];
    }
 
@@ -236,14 +240,13 @@ if ($many)  // Returning query
           if ($hosts_only)
              {
              echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
-             $report = cfpr_hosts_with_repaired(NULL,$name,$class_regex);
+             $report = cfpr_hosts_with_repaired(NULL,$name,intval($hours_deltafrom),intval($hours_deltato),$class_regex);
              }
           else
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"images/icon_pdf.png\" class=\"floatRight\"></a>
+             echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&hours_deltafrom=$hours_deltafrom&hours_deltato=$hours_deltato&class_regex=$class_regex\"><img src=\"images/icon_pdf.png\" class=\"floatRight\"></a>
 		  <a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex&pdf_action=email\" id=\"send_mail\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
-             
-             $report = cfpr_report_repaired(NULL,$name,$class_regex);
+             $report = cfpr_report_repaired(NULL,$name,intval($hours_deltafrom),intval($hours_deltato),$class_regex);
              }
           break;
           
@@ -254,13 +257,13 @@ if ($many)  // Returning query
           if ($hosts_only)
              {
              echo "<div class=\"pagepanel\"><div class=\"panelhead\">$report_type</div><div class=\"panelcontent\">";
-             $report = cfpr_hosts_with_notkept(NULL,$name,$class_regex);
+             $report = cfpr_hosts_with_notkept(NULL,$name,intval($hours_deltafrom),intval($hours_deltato),$class_regex);
              }
           else
              {
-             echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex\"><img src=\"images/icon_pdf.png\" class=\"floatRight\"></a>
+             echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&search=$name&hours_deltafrom=$hours_deltafrom&hours_deltato=$hours_deltato&class_regex=$class_regex\"><img src=\"images/icon_pdf.png\" class=\"floatRight\"></a>
 		   <a href=\"./pdf_report/index.php?type=$report_type&search=$name&class_regex=$class_regex&pdf_action=email\" id=\"send_mail\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
-             $report = cfpr_report_notkept(NULL,$name,$class_regex);
+             $report = cfpr_report_notkept(NULL,$name,intval($hours_deltafrom),intval($hours_deltato),$class_regex);
              }
           break;
 		
@@ -395,13 +398,13 @@ else if ($hostkey != "") // Default search on single machine
           break;
           
       case "Promises repaired log":
-          $report = cfpr_report_repaired($hostkey,NULL,$class_regex);
+          $report = cfpr_report_repaired($hostkey,NULL,0,0,$class_regex);
           echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"images/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex&pdf_action=email\" id=\"send_mail\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
           break;
           
       case "Promises not kept log":
           
-          $report = cfpr_report_notkept($hostkey,NULL,$class_regex);
+          $report = cfpr_report_notkept($hostkey,NULL,0,0,$class_regex);
           echo "<div class=\"pagepanel\"><div class=\"panelhead withpdfbtn\"><span class=\"text\">$report_type</span><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex\"><img src=\"images/icon_pdf.png\" class=\"floatRight\"></a><a href=\"./pdf_report/index.php?type=$report_type&hostkey=$hostkey&class_regex=$class_regex&pdf_action=email\" id=\"send_mail\"><img src=\"images/emailsend.png\" class=\"floatRight lnsendmail\"></a><div class=\"clearboth\"></div></div><div class=\"panelcontent\">";
           break;
           
@@ -603,6 +606,7 @@ else // No hosktkey
           echo "<form method=\"post\" action=\"search.php\">";
           echo "<p>Promise handles: (.*+[])<input class=\"searchfield\" type=\"text\" name=\"name\"></p>";
           echo "<p>Host group: (.*+[])<input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\"></p>";
+          echo "<p>From minimum age <input type=\"text\" name=\"hours_deltafrom\" size=\"2\"> hours to maximum age <input type=\"text\" name=\"hours_deltato\" size=\"2\"> hours old. </p>";
           echo "<input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
           echo "<input type=\"hidden\" name=\"report\" value=\"$report_type\">";
           echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\"></p>";
@@ -616,6 +620,7 @@ else // No hosktkey
           echo "<form method=\"post\" action=\"search.php\">";
           echo "<p>Promise handles: (.*+[])<input class=\"searchfield\" type=\"text\" name=\"name\"></p>";
           echo "<p>Host group: (.*+[])<input class=\"searchfield\" type=\"text\" name=\"class_regex\" size=\"80\"></p>";
+          echo "<p>From minimum age <input type=\"text\" name=\"hours_deltafrom\" size=\"2\"> hours to maximum age <input type=\"text\" name=\"hours_deltato\" size=\"2\"> hours old. </p>";
           echo "<input type=\"hidden\" name=\"manyhosts\" value=\"true\">";
           echo "<input type=\"hidden\" name=\"report\" value=\"$report_type\">";
           echo "<p>Return hostnames only: <input type=\"checkbox\" name=\"hosts_only\" value=\"true\"></p>";

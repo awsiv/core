@@ -75,7 +75,7 @@ if (false)
    Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",NULL,buffer,10000);
    Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",NULL,buffer,10000);
    Nova2PHP_value_report(NULL,NULL,NULL,NULL,NULL,buffer,1000);
-   Nova2PHP_promiselog(NULL,NULL,1,NULL,buffer,1000);
+   Nova2PHP_promiselog(NULL,NULL,1,0,0,NULL,buffer,1000);
    Nova2PHP_promises(NULL, NULL, NULL, 0);
    Nova2PHP_getlastupdate(NULL,buffer,10);
 
@@ -101,7 +101,7 @@ if (false)
    Nova2PHP_ComplianceSummaryGraph();
    /* pdf functions */
    Nova2PHP_compliance_report_pdf(NULL,NULL,0,0,0,0,0,NULL,buffer,10000);
-   Nova2PHP_promiselog_pdf(NULL,NULL,1,NULL,buffer,1000); 
+   Nova2PHP_promiselog_pdf(NULL,NULL,1,0,0,NULL,buffer,1000); 
    Nova2PHP_bundle_report_pdf(NULL,NULL,0,NULL,buffer,10000);
    Nova2PHP_value_report_pdf(NULL,NULL,NULL,NULL,NULL,buffer,1000);
    Nova2PHP_classes_report_pdf(NULL,NULL,0,NULL, buffer,1000);
@@ -211,7 +211,7 @@ return buffer;
 /* Search for answers                                                        */
 /*****************************************************************************/
 
-int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubPromiseLog *hp;  struct HubQuery *hq;
@@ -225,7 +225,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,true,classreg);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,true,classreg);
 
 StartJoin(returnval,"<table>\n",bufsize);
 
@@ -277,7 +277,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,false,classreg);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,0,0,false,classreg);
 
 hostname[0] = '\0';
 
@@ -1773,7 +1773,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_promiselog_hosts(char *hostkey,char *handle,enum promiselog_rep type,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_promiselog_hosts(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize)
 {
   struct HubHost *hh;
   struct HubQuery *hq;
@@ -1788,7 +1788,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,false,classreg);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,false,classreg);
 
 StartJoin(returnval,"<table>\n",bufsize);
 
@@ -3218,7 +3218,7 @@ return true;
 /*  */
 /*****************************************************************************/
 
-int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubPromiseLog *hp;
@@ -3233,7 +3233,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,true,classreg);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,true,classreg);
 
 returnval[0] = '\0';
          
@@ -3633,7 +3633,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,false,classreg);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,0,0,false,classreg);
 
 hostname[0] = '\0';
 
