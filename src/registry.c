@@ -15,9 +15,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef NT
-
-#include <windows.h>
+#ifdef MINGW
 
 /*****************************************************************************/
 
