@@ -3542,13 +3542,13 @@ while(mongo_cursor_next(cursor))
 
 	   while(bson_iterator_next(&it2))
 	     {
-	     IdempAppendItem(&matched,(char *)bson_iterator_string(&it2),NULL);
+	     IdempPrependItem(&matched,(char *)bson_iterator_string(&it2),NULL);
 	     }
 
 	   }
 	 else
 	   {
-	   IdempAppendItem(&matched,(char *)bson_iterator_string(&it1),NULL);
+	   IdempPrependItem(&matched,(char *)bson_iterator_string(&it1),NULL);
 	   }
 
          break;
@@ -3813,7 +3813,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
          
          while(bson_iterator_next(&it2))
             {
-            IdempAppendItem(&args,(char *)bson_iterator_string(&it2),NULL);
+            IdempPrependItem(&args,(char *)bson_iterator_string(&it2),NULL);
             }
          
          break;  // all records show the same args
@@ -3867,7 +3867,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
       {
       if (strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
          {
-         IdempAppendItem(&bNameReferees,(char *)bson_iterator_string(&it1),"agent");
+         IdempPrependItem(&bNameReferees,(char *)bson_iterator_string(&it1),"agent");
          }
       }
    }
@@ -4218,7 +4218,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    
    snprintf(buf,sizeof(buf),"%s%s%s%s%s%s%s%s%s%s%s",
 	    handle,sep,path,sep,aces,sep,owner,sep,action,sep,ifvarclass);
-   AppendItem(&retList,buf,NULL);
+   PrependItem(&retList,buf,NULL);
    }
 
 mongo_cursor_destroy(cursor);
@@ -4310,7 +4310,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    
    snprintf(buf,sizeof(buf),"%s%s%s%s%s%s%s%s%s",
 	    handle,sep,command,sep,failClass,sep,action,sep,ifvarclass);
-   AppendItem(&retList,buf,NULL);
+   PrependItem(&retList,buf,NULL);
    }
 
 mongo_cursor_destroy(cursor);
@@ -4391,7 +4391,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    
    snprintf(buf,sizeof(buf),"%s%s%s%s%s",
 	    handle,sep,path,sep,ifvarclass);
-   AppendItem(&retList,buf,NULL);
+   PrependItem(&retList,buf,NULL);
    }
 
 mongo_cursor_destroy(cursor);
@@ -4579,7 +4579,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    snprintf(buf,sizeof(buf),"%s%s%s%s%s%s%s%s%s",
 	    handle,sep,key,sep,value,sep,action,sep,ifvarclass);
 
-   AppendItem(&retList,buf,NULL);
+   PrependItem(&retList,buf,NULL);
    }
 
 mongo_cursor_destroy(cursor);
@@ -4671,7 +4671,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    
    snprintf(buf,sizeof(buf),"%s%s%s%s%s%s%s%s%s",
 	    handle,sep,serviceName,sep,servicePolicy,sep,action,sep,ifvarclass);
-   AppendItem(&retList,buf,NULL);
+   PrependItem(&retList,buf,NULL);
    }
 
 mongo_cursor_destroy(cursor);
@@ -4770,7 +4770,7 @@ while(mongo_cursor_next(cursor))  // iterate over docs
    
    snprintf(buf,sizeof(buf),"%s;%s;%c;%s",hostKeyHash,host,status,time);
 
-   AppendItem(&retList,buf,NULL);
+   PrependItem(&retList,buf,NULL);
    }
 
 mongo_cursor_destroy(cursor);

@@ -63,7 +63,7 @@ dnl Checks for programs.
 dnl ######################################################################
 
 AC_PROG_CC
-AC_PROG_RANLIB
+LT_INIT
 AC_DISABLE_SHARED
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
