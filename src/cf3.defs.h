@@ -33,7 +33,7 @@
 #undef VERSION
 #undef Verbose
 
-#define CF3_REVISION "$Rev: 1596 $"
+#define CF3_REVISION "$Rev: 1599 $"
 
 #include "conf.h"
 
@@ -487,6 +487,10 @@ enum cfeditorder
 #define CF_LOGRANGE    "stdout|udp_syslog|(\042?[a-zA-Z]:\\\\.*)|(/.*)"
 
 #define CF_FACILITY "LOG_USER,LOG_DAEMON,LOG_LOCAL0,LOG_LOCAL1,LOG_LOCAL2,LOG_LOCAL3,LOG_LOCAL4,LOG_LOCAL5,LOG_LOCAL6,LOG_LOCAL7"
+
+// Put this here now for caching efficiency
+
+#define NOVA_SOFTWARE_INSTALLED "software_packages.csv"
 
 /*************************************************************************/
 

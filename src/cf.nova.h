@@ -1171,7 +1171,7 @@ void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observabl
 #define NOVA_DIFF_LOG "nova_diff.log"
 #define NOVA_PATCHES_INSTALLED "software_patch_status.csv"
 #define NOVA_PATCHES_AVAIL "software_patches_avail.csv"
-#define NOVA_SOFTWARE_INSTALLED "software_packages.csv"
+/* #define NOVA_SOFTWARE_INSTALLED "software_packages.csv" Moved to cf3.defs.h */
 
 #define CF_BIGNUMBER 999999
 

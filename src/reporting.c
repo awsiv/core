@@ -1302,32 +1302,8 @@ DeleteItemList(file);
 
 void Nova_ReportSoftware(struct CfPackageManager *list)
 
-{ FILE *fout;
-  struct CfPackageManager *mp = NULL;
-  struct CfPackageItem *pi;
-  char name[CF_BUFSIZE],line[CF_BUFSIZE];
-  struct Item *ip,*file = NULL;
-  char start[32];
-  int i = 0;
-
-snprintf(name,CF_BUFSIZE,"%s/state/%s",CFWORKDIR,NOVA_SOFTWARE_INSTALLED);
-MapName(name);
-
-if ((fout = cf_fopen(name,"w")) == NULL)
-   {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
-   return;
-   }
-
-for (mp = list; mp != NULL; mp = mp->next)
-   {
-   for (pi = mp->pack_list; pi != NULL; pi=pi->next)
-      {
-      fprintf(fout,"%s,%s,%s,%s\n",pi->name,pi->version,pi->arch,ReadLastNode(GetArg0(mp->manager)));
-      }
-   }
-
-cf_fclose(fout);
+{
+// Deprecated
 }
 
 /*****************************************************************************/
