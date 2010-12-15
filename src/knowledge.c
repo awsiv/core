@@ -311,7 +311,7 @@ switch (pp->petype)
              {
              fprintf(fp,"promises::\n\n");
              fprintf(fp,"  \"%s\"\n",promise_id);
-             fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);
+             fprintf(fp,"      association => impacts(\"%s\");\n",rp->item);
 
              if (bundlename)
                 {
