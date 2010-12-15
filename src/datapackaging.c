@@ -1571,8 +1571,8 @@ void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t from,enum 
   double av_week_kept = 100, av_week_repaired = 0;
   double av_hour_kept = 100, av_hour_repaired = 0;
   char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],key[CF_SMALLBUF],ref[CF_SMALLBUF];
+  time_t then,now = time(NULL);
   long t;
-  time_t then;
   
 CfOut(cf_verbose,""," -> Packing total compliance data");
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_PROMISE_LOG);
@@ -1637,13 +1637,13 @@ for (ip = file; ip != NULL; ip = ip->next)
    sscanf(strstr(ip->name,"Outcome of version")+strlen("Outcome of version"),"%64[^:]",version);
    sscanf(strstr(ip->name,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&kept,&repaired,&notrepaired);
 
-   if (i < 12*24)
+   if (now - end < CF_DAY)
       {
       av_day_kept = GAverage((double)kept,av_day_kept,0.5);
       av_day_repaired = GAverage((double)repaired,av_day_repaired,0.5);
       }
 
-   if (i < 12*2)
+   if (now - end < CF_HOUR)
       {
       av_hour_kept = GAverage((double)kept,av_hour_kept,0.5);
       av_hour_repaired = GAverage((double)repaired,av_hour_repaired,0.5);
