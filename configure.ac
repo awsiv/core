@@ -5,9 +5,10 @@ dnl # script => aclocal; automake -a -c; autoconf
 dnl #
 dnl ##########################################################################
 
-AC_PREREQ(2.52)
+AC_PREREQ(2.64)
 
-AC_INIT(src/cfnova.c)
+AC_INIT
+AC_CONFIG_SRCDIR([src/cfnova.c])
 AC_CANONICAL_TARGET
 
 dnl
@@ -15,7 +16,7 @@ dnl The version in the next line is the only one to set
 dnl
 
 AM_INIT_AUTOMAKE(cfnova,2.0.2a1)   dnl remember to set version
-AM_CONFIG_HEADER(src/conf.h)
+AC_CONFIG_HEADERS([src/conf.h])
 
 AC_CONFIG_MACRO_DIR(m4)
 
@@ -63,9 +64,8 @@ dnl Checks for programs.
 dnl ######################################################################
 
 AC_PROG_CC
+LT_INIT([disable-shared])
 LT_INIT
-AC_DISABLE_SHARED
-AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 AC_PATH_PROG(GETCONF, getconf, false, $PATH:$prefix/bin:/usr/bin:/usr/local/bin:/sw/bin)
 
@@ -242,8 +242,7 @@ if test $WITH_QDBM = 0 -a $WITH_TOKYO = 0; then
 
     AC_MSG_CHECKING(Berkeley DB API)
 
-    AC_TRY_RUN(
-       [
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <db.h>
 #include <stdio.h>
 int main(void)
@@ -258,10 +257,8 @@ int main(void)
         exit(0);
         }
 }
-       ],
-       [AC_MSG_RESULT(OK)],
-       [AC_DEFINE(CF_OLD_DB,1,Define if old Berkeley API)]
-    )
+       ]])],[AC_MSG_RESULT(OK)],[AC_DEFINE(CF_OLD_DB,1,Define if old Berkeley API)
+    ],[])
 
     AC_CHECK_LIB(db, db_create)
 
@@ -340,8 +337,7 @@ else
 
     AC_MSG_CHECKING(OpenSSL Version)
 
-    AC_TRY_RUN(
-       [
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <openssl/opensslv.h>
 int main(void)
 {
@@ -349,11 +345,8 @@ int main(void)
         exit(1);
     exit(0);
 }
-       ],
-       [AC_MSG_RESULT(OK)],
-       [AC_MSG_ERROR(This release of cfengine requires openssl 0.9.7 or later)],
-       [AC_MSG_WARN(Assuming 0.9.7 or later when cross-compiling)]
-    )
+       ]])],[AC_MSG_RESULT(OK)],[AC_MSG_ERROR(This release of cfengine requires openssl 0.9.7 or later)],[AC_MSG_WARN(Assuming 0.9.7 or later when cross-compiling)
+    ])
 
     dnl ######################################################################
     dnl Checks for OpenSSL crypto lib
@@ -965,7 +958,8 @@ dnl ######################################################################
 dnl Now make the Makefiles
 dnl ######################################################################
 
-AC_OUTPUT(Makefile src/Makefile docs/Makefile pub/Makefile GUI/Makefile GUI/images/Makefile)
+AC_CONFIG_FILES([Makefile src/Makefile docs/Makefile pub/Makefile GUI/Makefile GUI/images/Makefile])
+AC_OUTPUT
 
 AC_MSG_RESULT(DONE: Configuration done. Run make/gmake to build cfengine.)
 
