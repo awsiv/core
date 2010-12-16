@@ -33,7 +33,7 @@
 #undef VERSION
 #undef Verbose
 
-#define CF3_REVISION "$Rev: 1612 $"
+#define CF3_REVISION "$Rev: 1619 $"
 
 #include "conf.h"
 
@@ -1584,6 +1584,7 @@ struct Packages
    enum version_cmp package_select;
    enum action_policy package_changes;
    struct Rlist *package_file_repositories;
+   struct Rlist *package_good_returncodes;
 
    char *package_list_command;
    char *package_list_version_regex;
