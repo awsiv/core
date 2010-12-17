@@ -968,6 +968,8 @@ setObj = bson_append_start_object(&bb, "$set");
 for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%ld,%255[^,],%c,%lf,%lf\n",&then,handle,&status,&av,&dev);
+
+   // status = c (compliant), r (repaired) or n (not kept)
    
    snprintf(varName, sizeof(varName), "%s.%s", cfr_promisecompl, handle);
    snprintf(statusStr, sizeof(statusStr), "%c", status);
