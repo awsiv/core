@@ -161,8 +161,6 @@ void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status sta
   time_t now = time(NULL);
   double lastseen,delta2;
   double vstatus;      /* end with a rough probability */
-  char *exceptions[] = { "vars", "classes", "insert_lines", "delete_lines", "replace_patterns", "field_edits", NULL };
-  int i;
   
 Debug("Note Promise Compliance\n");
 
@@ -229,16 +227,6 @@ CloseDB(dbp);
 if (pp->agentsubtype == NULL)
    {
    return;
-   }
-
-// Don't log these items
-
-for (i = 0; exceptions[i] != NULL; i++)
-   {
-   if (strcmp(pp->agentsubtype,exceptions[i]) == 0)
-      {
-      return;
-      }
    }
 
 /* Now keep the next log */
