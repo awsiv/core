@@ -670,7 +670,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  
  if(!status)  // any
    {
-   status = 'x';
+   status = "x";
    }
 
  hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
