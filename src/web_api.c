@@ -1376,6 +1376,12 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
+ if(!status)  // any
+   {
+   status = "x";
+   }
+
+
  hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,false,classreg);
 
 StartJoin(returnval,"<table>\n",bufsize);
@@ -3436,6 +3442,12 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
+
+ if(!status)  // any
+   {
+   status = "x";
+   }
+
 
  hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
 
