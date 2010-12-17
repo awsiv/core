@@ -989,7 +989,7 @@ return NewHubQuery(host_list,record_list);
 /*****************************************************************************/
 
 struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, int sort, char *classRegex)
-
+// status = c (compliant), r (repaired) or n (not kept), x (any)
 { bson_buffer bb,*sub1,*sub2,*sub3;
   bson b,query,field;
   mongo_cursor *cursor;
