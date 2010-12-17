@@ -1,0 +1,81 @@
+#########################################################################
+#
+#   file_security.cf - File Security; Permissions and Contents
+#
+#########################################################################
+
+bundle agent file_security
+{
+vars:
+
+  "edit_insert" string => "
+                           Example text
+                           maintained by Cfengine.";
+
+               
+windows::
+
+  "secret_files" slist => {
+                          "C:\Secret",
+                          "$(sys.windir)\Temp\secret.txt"
+                          };
+
+
+windows.DomainController::
+
+    "edit_files" slist => {
+                    "$(sys.windir)\Temp\motd_dc.txt"
+                    };
+
+windows.!DomainController::
+
+    "edit_files" slist => {
+                    "$(sys.windir)\Temp\motd.txt"
+                          };
+
+              
+!windows::
+
+  "secret_files" slist => {
+                          "/etc/shadow"
+                          };
+
+  "system_files" slist => {
+                          "/etc/passwd",
+                          "/etc/group",  
+                          "/etc/services" 
+                          };
+              
+    "edit_files" slist => {
+                    "/tmp/motd"
+                    };
+
+              
+files:
+
+   "$(edit_files)"
+     comment      => "Make sure files have the right contents",
+     create       => "true",
+     edit_line    => insert_lines("$(edit_insert)"),
+     edit_defaults => empty;
+
+   
+windows::
+
+   "$(secret_files)"
+      comment     => "Check permissions are strict on secret files/directories",
+      acl         => strict;
+
+    
+!windows::
+# NOTE: ACLs are supported on Linux platforms
+
+   "$(secret_files)"
+      comment      => "Check permissions are strict on secret files",
+      perms        => mo("o-rwx","root");    
+       
+   "$(system_files)"
+      comment      => "Check permissions are strict on system files",
+      perms        => mo("644","root");
+              
+}

@@ -1,0 +1,4 @@
+body monitor control
+{
+forgetrate =&gt; "0.7";
+}
