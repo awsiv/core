@@ -2164,14 +2164,14 @@ else
 
 void Nova2PHP_show_topic(int id,char *buffer,int bufsize)
 
-{ char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_type[CF_BUFSIZE],topic_comment[CF_BUFSIZE];
+{ char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE],topic_comment[CF_BUFSIZE];
 
 buffer[0] = '\0';
 Nova_WebTopicMap_Initialize();
 
-if (Nova_GetTopicByPid(id,topic_name,topic_id,topic_type,topic_comment))
+if (Nova_GetTopicByPid(id,topic_name,topic_id,topic_context,topic_comment))
    {
-   snprintf(buffer,bufsize,"<div id=\"topic\">\n'<span class=\"subject\">%s</span>' in section `<span class=\"category\">%s</span>:<p>\"%s\"</div>",topic_name,topic_type,topic_comment);
+   snprintf(buffer,bufsize,"<div id=\"topic\">\n'<span class=\"subject\">%s</span>' in section `<span class=\"category\">%s</span>:<p>\"%s\"</div>",topic_name,topic_context,topic_comment);
    }
 else
    {
@@ -3795,7 +3795,7 @@ int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize)
   int pid;
   char topic_name[CF_BUFSIZE] = {0};
   char topic_id[CF_BUFSIZE] = {0};
-  char topic_type[CF_BUFSIZE] = {0};
+  char topic_context[CF_BUFSIZE] = {0};
   char topic_comment[CF_BUFSIZE] = {0};
   char typedName[CF_MAXVARSIZE] = {0};
 
@@ -3803,7 +3803,7 @@ int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize)
 
   pid = Nova_GetPidForTopic(typedName);
 
-  if(pid && Nova_GetTopicByPid(pid,topic_name,topic_id,topic_type,topic_comment))
+  if(pid && Nova_GetTopicByPid(pid,topic_name,topic_id,topic_context,topic_comment))
     {
       if(EMPTY(topic_comment))
 	{
