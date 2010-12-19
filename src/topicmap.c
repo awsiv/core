@@ -9,7 +9,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-void Nova_DeTypeTopic(char *typed_topic,char *topic,char *type);
+void Nova_DeClassifyTopic(char *typed_topic,char *topic,char *type);
 
 /*****************************************************************************/
 /*                                                                           */
@@ -61,7 +61,7 @@ if (strlen(SQL_OWNER) == 0 || typed_topic == NULL)
    return 0;
    }
 
-Nova_DeTypeTopic(typed_topic,topic,type); // Linker trouble - copy this from core
+Nova_DeClassifyTopic(typed_topic,topic,type); // Linker trouble - copy this from core
 
 //strcpy(topic,typed_topic);
 
@@ -1288,33 +1288,33 @@ return true;
 // Copy from ontology.c because of a linker bug
 /*********************************************************************/
 
-void Nova_DeTypeTopic(char *typed_topic,char *topic,char *type)
+void Nova_DeClassifyTopic(char *classified_topic,char *topic,char *context)
 
 {
-type[0] = '\0';
+context[0] = '\0';
 topic[0] = '\0';
 
-if (typed_topic == NULL)
+if (classified_topic == NULL)
    {
    return;
    }
 
-if (*typed_topic == ':')
+if (*classified_topic == ':')
    {
-   sscanf(typed_topic,"::%255[^\n]",topic);
+   sscanf(classified_topic,"::%255[^\n]",topic);
    }
-else if (strstr(typed_topic,"::"))
+else if (strstr(classified_topic,"::"))
    {
-   sscanf(typed_topic,"%255[^:]::%255[^\n]",type,topic);
+   sscanf(classified_topic,"%255[^:]::%255[^\n]",context,topic);
    
    if (strlen(topic) == 0)
       {
-      sscanf(typed_topic,"::%255[^\n]",topic);
+      sscanf(classified_topic,"::%255[^\n]",topic);
       }
    }
 else
    {
-   strncpy(topic,typed_topic,CF_MAXVARSIZE-1);
+   strncpy(topic,classified_topic,CF_MAXVARSIZE-1);
    }
 }
 

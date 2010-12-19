@@ -33,7 +33,7 @@
 #undef VERSION
 #undef Verbose
 
-#define CF3_REVISION "$Rev: 1627 $"
+#define CF3_REVISION "$Rev: 1623 $"
 
 #include "conf.h"
 
@@ -466,7 +466,7 @@ enum cfeditorder
 
 #define CF_SIGNALRANGE "hup,int,trap,kill,pipe,cont,abrt,stop,quit,term,child,usr1,usr2,bus,segv"
 #define CF_BOOL      "true,false,yes,no,on,off"
-#define CF_LINKRANGE "symlink,hardlink,relative,absolute"
+#define CF_LINKRANGE "symlink,hardlink,relative,absolute,none"
 #define CF_TIMERANGE "0,2147483647"
 #define CF_VALRANGE  "0,99999999999"
 #define CF_INTRANGE  "-99999999999,9999999999"
@@ -1186,7 +1186,7 @@ struct DefineClasses
 struct Topic
    {
    int id;
-   char *topic_type;
+   char *topic_context;
    char *topic_name;
    char *topic_comment;
    struct Occurrence *occurrences;
@@ -1196,16 +1196,17 @@ struct Topic
 
 struct TopicAssociation
    {
-   char *assoc_type;
+   char *fwd_context;
    char *fwd_name;
    char *bwd_name;
    struct Rlist *associates;
-   char *associate_topic_type;
+   char *bwd_context;
    struct TopicAssociation *next;
    };
 
 struct Occurrence
    {
+   char *occurrence_context;
    char *locator; /* Promiser */
    enum representations rep_type;
    struct Rlist *represents; /* subtype represented by promiser */
