@@ -4090,7 +4090,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
   char lastChangeStr[CF_SMALLBUF];
   char fileChangePath[CF_MAXVARSIZE];
   char fileChangePathUrl[CF_MAXVARSIZE];
-  char *urlReportName;
+  char *urlReportName = "";
   time_t then = 0, now;
   char attributes[CF_MAXVARSIZE] = {0};
   char attributesTmp[CF_MAXVARSIZE] = {0};
@@ -4098,8 +4098,8 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
   int ret = false;
   cdp_t cdpType;
 
-  memset(buf,0,bufSz);
-  now = time(NULL);
+memset(buf,0,bufSz);
+now = time(NULL);
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -4145,77 +4145,75 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
      return false;
    }
    
- if(promises)
+if (promises)
    {
-     snprintf(buf,bufSz,"\n<table>\n");
-     Join(buf,GetCdpTableHeader(cdpType),bufSz);
-     
-     for(ip = promises; ip != NULL; ip = ip->next)  // join policy with host reports
-       {
-	 sscanf(ip->name,"%128[^<]</td><td>%512[^$]",handle,attributes);
-
-	 hosts = CFDB_QueryCdpCompliance(&dbconn,handle);
-
-	 if(hosts)
-	   {
-	   
-	   for(ip2 = hosts; ip2 != NULL; ip2 = ip2->next)
-	     {
-	       
-	     sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%ld[^$]",hostKeyHash,host,statusStr,&then);
-
-	     Nova_TimeWarn(now,then,CF_HUB_HORIZON,thenStr,sizeof(thenStr));
-
-	     
-	     switch(cdpType)  // include special fields
+   snprintf(buf,bufSz,"\n<table>\n");
+   Join(buf,GetCdpTableHeader(cdpType),bufSz);
+   
+   for(ip = promises; ip != NULL; ip = ip->next)  // join policy with host reports
+      {
+      sscanf(ip->name,"%128[^<]</td><td>%512[^$]",handle,attributes);
+      
+      hosts = CFDB_QueryCdpCompliance(&dbconn,handle);
+      
+      if (hosts)
+         {	   
+         for (ip2 = hosts; ip2 != NULL; ip2 = ip2->next)
+            {	       
+            sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%ld[^$]",hostKeyHash,host,statusStr,&then);
+            
+            Nova_TimeWarn(now,then,CF_HUB_HORIZON,thenStr,sizeof(thenStr));
+            
+	    
+            switch(cdpType)  // include special fields
 	       {
 	       case cdp_filechanges:
 	       case cdp_filediffs:
 
-		 sscanf(attributes, "%512[^<]", fileChangePath);
-		 
-		 snprintf(fileChangePathUrl, sizeof(fileChangePathUrl), "<a href=\"search.php?report=%s&hostkey=%s&search=%s\">%s</a>",
-			  urlReportName, hostKeyHash, fileChangePath,fileChangePath);
-
-		 // insert url to detailed report
-		 snprintf(attributesTmp,sizeof(attributesTmp),"%s",attributes);
-		 ReplaceStr(attributesTmp, attributes, sizeof(attributes), fileChangePath, fileChangePathUrl);
-
-		 CFDB_QueryLastFileChange(&dbconn, hostKeyHash, reportName,fileChangePath, lastChangeStr, sizeof(lastChangeStr));
-		 Join(attributes, "</td><td>", sizeof(attributes));
-		 Join(attributes, lastChangeStr, sizeof(attributes));
-
-		 break;
+                   sscanf(attributes, "%512[^<]", fileChangePath);
+                   
+                   snprintf(fileChangePathUrl, sizeof(fileChangePathUrl), "<a href=\"search.php?report=%s&hostkey=%s&search=%s\">%s</a>",
+                            urlReportName, hostKeyHash, fileChangePath,fileChangePath);
+                   
+                   // insert url to detailed report
+                   snprintf(attributesTmp,sizeof(attributesTmp),"%s",attributes);
+                   ReplaceStr(attributesTmp, attributes, sizeof(attributes), fileChangePath, fileChangePathUrl);
+                   
+                   CFDB_QueryLastFileChange(&dbconn, hostKeyHash, reportName,fileChangePath, lastChangeStr, sizeof(lastChangeStr));
+                   Join(attributes, "</td><td>", sizeof(attributes));
+                   Join(attributes, lastChangeStr, sizeof(attributes));
+                   
+                   break;
 	       }
-
-
-	     snprintf(row,sizeof(row),"<tr><td><a href=\"host.php?hostkey=%s\">%s</a></td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
-		      hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr);
-		   
-	     if(!Join(buf,row,bufSz))
+            
+            
+            snprintf(row,sizeof(row),"<tr><td><a href=\"host.php?hostkey=%s\">%s</a></td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+                     hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr);
+            
+            if(!Join(buf,row,bufSz))
 	       {
 	       break;
 	       }
-	     }
-	     
-	   DeleteItemList(hosts);
-	   }
-       }
-
-     EndJoin(buf,"\n</table>\n",bufSz);
-     
-     DeleteItemList(promises);
-
-     ret = true;
+            }
+         
+         DeleteItemList(hosts);
+         }
+      }
+   
+   EndJoin(buf,"\n</table>\n",bufSz);
+   
+   DeleteItemList(promises);
+   
+   ret = true;
    }
 
- if (!CFDB_Close(&dbconn))
+if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
 
-  return ret;
+return ret;
 }
 
 /*****************************************************************************/
