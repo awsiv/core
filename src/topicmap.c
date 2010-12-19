@@ -75,7 +75,7 @@ if (!cfdb.connected)
 
 if (strlen(type) > 0)
    {
-   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s' and topic_type = '%s'",topic,type);
+   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s' and topic_context = '%s'",topic,type);
    }
 else
    {
@@ -106,7 +106,7 @@ return ret;
 
 /*****************************************************************************/
 
-int Nova_GetTopicByPid(int pid,char *topic_name,char *topic_id,char *topic_type,char *topic_comment)
+int Nova_GetTopicByPid(int pid,char *topic_name,char *topic_id,char *topic_context,char *topic_comment)
 
 { CfdbConn cfdb;
   char *sp,query[CF_MAXVARSIZE];
@@ -125,7 +125,7 @@ if (!cfdb.connected)
    return false;
    }
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_name,topic_id,topic_type,topic_comment from topics where pid = '%d'",pid);
+snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_name,topic_id,topic_context,topic_comment from topics where pid = '%d'",pid);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -140,7 +140,7 @@ if (CfFetchRow(&cfdb))
    {
    strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
    strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-   strncpy(topic_type,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
+   strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
 
    if (sp = CfFetchColumn(&cfdb,3))
       {
@@ -184,12 +184,12 @@ int Nova_TopicByID(int id,char *result_type,char *buffer,int bufsize)
 
 void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize)
 
-{ char from_assoc[CF_BUFSIZE],to_assoc[CF_BUFSIZE],topic_type[CF_BUFSIZE],to_type[CF_BUFSIZE];
+{ char from_assoc[CF_BUFSIZE],to_assoc[CF_BUFSIZE],topic_context[CF_BUFSIZE],to_context[CF_BUFSIZE];
   char work[CF_BUFSIZE],query[CF_MAXVARSIZE],from_name[CF_BUFSIZE],to_name[CF_BUFSIZE],from_id[CF_SMALLBUF];
   CfdbConn cfdb;
   int from_pid,to_pid;  
 
-snprintf(query,sizeof(query),"SELECT from_name,from_type,from_assoc,to_assoc,to_type,to_name,from_id,to_id from associations where from_id='%d'",pid);
+snprintf(query,sizeof(query),"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name,from_id,to_id from associations where from_id='%d'",pid);
 
 CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
 Debugcfdb(&cfdb);
@@ -206,10 +206,10 @@ if (cfdb.maxcolumns != 8)
 while (CfFetchRow(&cfdb))
    {
    strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
-   strncpy(topic_type,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
+   strncpy(topic_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
    strncpy(from_assoc,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
    strncpy(to_assoc,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
-   strncpy(to_type,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
+   strncpy(to_context,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
    strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
    from_pid = Str2Int(CfFetchColumn(&cfdb,6));
    to_pid = Str2Int(CfFetchColumn(&cfdb,7));
@@ -218,7 +218,7 @@ while (CfFetchRow(&cfdb))
 
 //format directly
 
-//      Nova_ShowAssociation(&cfdb,cfrom_assoc,cto_assoc,ctopic_type,cto_type);
+//      Nova_ShowAssociation(&cfdb,cfrom_assoc,cto_assoc,ctopic_context,cto_context);
    }
 
 CfDeleteQuery(&cfdb);
@@ -230,7 +230,7 @@ CfCloseDB(&cfdb);
 int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
 
 { CfdbConn cfdb;  
-  char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_type[CF_BUFSIZE],to_type[CF_BUFSIZE];
+  char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE],to_context[CF_BUFSIZE];
   char topic_comment[CF_BUFSIZE],query[CF_BUFSIZE];
   char from_name[CF_BUFSIZE],from_assoc[CF_BUFSIZE],to_assoc[CF_BUFSIZE],to_name[CF_BUFSIZE];
   char work[CF_BUFSIZE],*sp;
@@ -252,7 +252,7 @@ if (!cfdb.connected)
    return 0;
    }
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_name,topic_id,topic_type,topic_comment,pid from topics");
+snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_name,topic_id,topic_context,topic_comment,pid from topics");
 
 CfNewQueryDB(&cfdb,query);
 
@@ -267,7 +267,7 @@ while(CfFetchRow(&cfdb))
    {
    strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
    strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-   strncpy(topic_type,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
+   strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
 
    if (sp = CfFetchColumn(&cfdb,3))
       {
@@ -283,7 +283,7 @@ while(CfFetchRow(&cfdb))
    if (BlockTextCaseMatch(search_topic,topic_name,&s,&e))
       {
       count++;
-      Nova_AddTopicSearchBuffer(pid,topic_name,topic_type,topic_comment,buffer,bufsize);
+      Nova_AddTopicSearchBuffer(pid,topic_name,topic_context,topic_comment,buffer,bufsize);
       save_pid = pid;
       }
    }
@@ -292,7 +292,7 @@ CfDeleteQuery(&cfdb);
 
 /* Then matching associations */
 
-snprintf(query,CF_BUFSIZE,"SELECT from_name,from_type,from_assoc,to_assoc,to_type,to_name from associations");
+snprintf(query,CF_BUFSIZE,"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name from associations");
 
 /* Expect multiple matches always with associations */
 
@@ -309,10 +309,10 @@ if (cfdb.maxcolumns != 6)
 while(CfFetchRow(&cfdb))
    {
    strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
-   strncpy(topic_type,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
+   strncpy(topic_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
    strncpy(from_assoc,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
    strncpy(to_assoc,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
-   strncpy(to_type,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
+   strncpy(to_context,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
    strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
 
    if (BlockTextCaseMatch(search_topic,from_assoc,&s,&e)||BlockTextCaseMatch(search_topic,to_assoc,&s,&e))
@@ -346,7 +346,7 @@ else
 
 void Nova_ScanTheRest(int pid,char *buffer, int bufsize)
 
-{ char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_type[CF_BUFSIZE],associate[CF_BUFSIZE],work[CF_BUFSIZE];
+{ char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE],associate[CF_BUFSIZE],work[CF_BUFSIZE];
   char topic_comment[CF_BUFSIZE],query[CF_MAXVARSIZE],buf[CF_BUFSIZE];
   char this_name[CF_BUFSIZE],this_id[CF_BUFSIZE],this_type[CF_BUFSIZE];
   enum representations locator_type;
@@ -381,7 +381,7 @@ strcat(buffer,"<ul>\n"); // outer list
 snprintf(buf,CF_BUFSIZE-1,"<li>%s %s</li><ul>\n",Nova_PidURL(pid,this_name),topic_comment); // Start sublist
 Join(buffer,buf,bufsize);
 
-snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_type,topic_comment,pid from topics where topic_type='%s' order by topic_name asc",this_id);
+snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,topic_comment,pid from topics where topic_context='%s' order by topic_name asc",this_id);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -396,7 +396,7 @@ while(CfFetchRow(&cfdb))
    {
    strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
    strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-   strncpy(topic_type,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
+   strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
 
    if (CfFetchColumn(&cfdb,3))
       {
@@ -429,7 +429,7 @@ strcat(buffer,"</ul></li>\n"); // close sublist
 
 /* Collect data - other topics of same type */
 
-snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_type,topic_comment,pid from topics where topic_type='%s' order by topic_name asc",this_type);
+snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,topic_comment,pid from topics where topic_context='%s' order by topic_name asc",this_type);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -447,7 +447,7 @@ while(CfFetchRow(&cfdb))
    count++;
    strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
    strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-   strncpy(topic_type,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
+   strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
 
    if (CfFetchColumn(&cfdb,3))
       {
@@ -484,9 +484,9 @@ CfCloseDB(&cfdb);
 
 void Nova_ScanLeadsAssociations(int pid,char *buffer,int bufsize)
 
-{ char from_name[CF_BUFSIZE],from_type[CF_BUFSIZE],to_name[CF_BUFSIZE],work[CF_BUFSIZE];
+{ char from_name[CF_BUFSIZE],from_context[CF_BUFSIZE],to_name[CF_BUFSIZE],work[CF_BUFSIZE];
   char query[CF_BUFSIZE],fassociation[CF_BUFSIZE],bassociation[CF_BUFSIZE],save[CF_BUFSIZE];
-  char to_type[CF_BUFSIZE],topic_comment[CF_BUFSIZE],*sp;
+  char to_context[CF_BUFSIZE],topic_comment[CF_BUFSIZE],*sp;
   enum representations locator_type;
   struct Rlist *rp;
   CfdbConn cfdb;
@@ -508,7 +508,7 @@ if (!cfdb.connected)
 
 /* Then associated topics */
 
-snprintf(query,CF_BUFSIZE,"SELECT from_name,from_type,from_assoc,to_assoc,to_type,to_name,from_id,to_id from associations where from_id='%d' order by from_assoc asc",pid);
+snprintf(query,CF_BUFSIZE,"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name,from_id,to_id from associations where from_id='%d' order by from_assoc asc",pid);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -532,10 +532,10 @@ while(CfFetchRow(&cfdb))
    have_data = any_data = true;
 
    strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);   
-   strncpy(from_type,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
+   strncpy(from_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
    strncpy(fassociation,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
    strncpy(bassociation,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
-   strncpy(to_type,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
+   strncpy(to_context,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
    strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
    from_pid = Str2Int(CfFetchColumn(&cfdb,6));
    to_pid = Str2Int(CfFetchColumn(&cfdb,7));
@@ -553,9 +553,9 @@ while(CfFetchRow(&cfdb))
       Join(buffer,work,bufsize);
       }
 
-   if (strlen(to_type) > 0)
+   if (strlen(to_context) > 0)
       {
-      snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s)</li>\n",Nova_PidURL(to_pid,to_name),to_type);
+      snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s)</li>\n",Nova_PidURL(to_pid,to_name),to_context);
       }
    else
       {
@@ -578,7 +578,7 @@ CfDeleteQuery(&cfdb);
 
 /* ... then onto */
 
-snprintf(query,CF_BUFSIZE,"SELECT from_name,from_type,from_assoc,to_assoc,to_type,to_name,from_id,to_id from associations where to_id='%d' order by to_assoc asc",pid);
+snprintf(query,CF_BUFSIZE,"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name,from_id,to_id from associations where to_id='%d' order by to_assoc asc",pid);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -599,10 +599,10 @@ while(CfFetchRow(&cfdb))
    have_data = true;
 
    strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);   
-   strncpy(from_type,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
+   strncpy(from_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
    strncpy(fassociation,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
    strncpy(bassociation,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
-   strncpy(to_type,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
+   strncpy(to_context,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
    strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
 
    from_pid = Str2Int(CfFetchColumn(&cfdb,6));
@@ -621,7 +621,7 @@ while(CfFetchRow(&cfdb))
       Join(buffer,work,bufsize);
       }
    
-   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s)<li> \n",Nova_PidURL(from_pid,from_name),from_type);
+   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s)<li> \n",Nova_PidURL(from_pid,from_name),from_context);
    Join(buffer,work,bufsize);
    }
 
@@ -651,7 +651,7 @@ CfCloseDB(&cfdb);
 
 void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
 
-{ char topic_name[CF_BUFSIZE],topic_type[CF_BUFSIZE],query[CF_MAXVARSIZE];
+{ char topic_name[CF_BUFSIZE],topic_context[CF_BUFSIZE],query[CF_MAXVARSIZE];
   char locator[CF_BUFSIZE],subtype[CF_BUFSIZE];
   enum representations locator_type;
   CfdbConn cfdb;
@@ -673,7 +673,7 @@ if (!cfdb.connected)
 
 /* Finally occurrences of the mentioned topic */
 
-snprintf(query,sizeof(query),"SELECT topic_name,topic_type from topics where pid='%d'",this_id);
+snprintf(query,sizeof(query),"SELECT topic_name,topic_context from topics where pid='%d'",this_id);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -686,7 +686,7 @@ if (cfdb.maxcolumns != 2)
 if (CfFetchRow(&cfdb))
    {
    strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
-   strncpy(topic_type,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
+   strncpy(topic_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
    }
 
 CfDeleteQuery(&cfdb);
@@ -704,7 +704,7 @@ if (cfdb.maxcolumns != 4)
 snprintf(buffer,bufsize,
          "<div id=\"occurrences\">\n"
          "<h2>References to '<span id=\"subject\">%s</span>' in category `<span id=\"category\">%s</span>'</h2>"
-         "<ul>\n",topic_name,topic_type);
+         "<ul>\n",topic_name,topic_context);
 
 while(CfFetchRow(&cfdb))
    {
@@ -731,9 +731,9 @@ CfCloseDB(&cfdb);
 
 struct Item *Nova_GetBusinessGoals(char *handle)
 
-{ char from_name[CF_BUFSIZE],from_type[CF_BUFSIZE],to_name[CF_BUFSIZE],work[CF_BUFSIZE];
+{ char from_name[CF_BUFSIZE],from_context[CF_BUFSIZE],to_name[CF_BUFSIZE],work[CF_BUFSIZE];
   char query[CF_BUFSIZE],fassociation[CF_BUFSIZE],bassociation[CF_BUFSIZE],save[CF_BUFSIZE];
-  char to_type[CF_BUFSIZE],topic_comment[CF_BUFSIZE],*sp;
+  char to_context[CF_BUFSIZE],topic_comment[CF_BUFSIZE],*sp;
   struct Item *worklist = NULL, *ip;
   enum representations locator_type;
   int have_data = false;
@@ -754,7 +754,7 @@ if (!cfdb.connected)
 
 /* Then associated topics */
 
-snprintf(query,CF_BUFSIZE,"SELECT from_name,from_type,from_assoc,to_assoc,to_type,to_name,from_id,to_id from associations where from_name='%s' and from_assoc='%s'",handle,NOVA_GOAL);
+snprintf(query,CF_BUFSIZE,"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name,from_id,to_id from associations where from_name='%s' and from_assoc='%s'",handle,NOVA_GOAL);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -792,17 +792,17 @@ return worklist;
 /* Level                                                                 */
 /*************************************************************************/
 
-int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_type,char *topic_comment,char *buffer,int bufsize)
+int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_context,char *topic_comment,char *buffer,int bufsize)
 
 { char buf[CF_BUFSIZE];
 
 if (topic_comment && strlen(topic_comment) > 0)
    {
-   snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in category %s (%s)</li>\n",Nova_PidURL(pid,topic_name),topic_type,topic_comment);
+   snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in category %s (%s)</li>\n",Nova_PidURL(pid,topic_name),topic_context,topic_comment);
    }
 else
    {
-   snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in category %s</li>\n",Nova_PidURL(pid,topic_name),topic_type);
+   snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in category %s</li>\n",Nova_PidURL(pid,topic_name),topic_context);
    }
 
 Join(buffer,buf,bufsize);
