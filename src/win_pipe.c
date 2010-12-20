@@ -164,14 +164,7 @@ int NovaWin_cf_pclose_def(FILE *pfp, struct Attributes a, struct Promise *pp)
     CfOut(cf_error, "fclose", "!! Could not close pipe stream (in def)");
     }
 
-  if(exitCode == 0)
-    {
-      cfPS(cf_verbose,CF_CHG,"",pp,a," -> Finished script - succeeded %s\n",pp->promiser);
-    }
-  else
-    {
-      cfPS(cf_inform,CF_FAIL,"",pp,a," !! Finished script %s -- an error occurred (returned %d)\n",pp->promiser, (int)exitCode);
-    }
+  VerifyCommandRetcode(exitCode,true,a,pp);
 
   return (int)exitCode;
 }
