@@ -2169,9 +2169,9 @@ void Nova2PHP_show_topic(int id,char *buffer,int bufsize)
 buffer[0] = '\0';
 Nova_WebTopicMap_Initialize();
 
-if (Nova_GetTopicByPid(id,topic_name,topic_id,topic_context,topic_comment))
+if (Nova_GetTopicByPid(id,topic_name,topic_id,topic_context))
    {
-   snprintf(buffer,bufsize,"<div id=\"topic\">\n'<span class=\"subject\">%s</span>' in section `<span class=\"category\">%s</span>:<p>\"%s\"</div>",topic_name,topic_context,topic_comment);
+   snprintf(buffer,bufsize,"<div id=\"topic\">\n'<span class=\"subject\">%s</span>' in section `<span class=\"category\">%s</span>:</div>",topic_name,topic_context);
    }
 else
    {
@@ -3799,27 +3799,28 @@ int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize)
   char topic_comment[CF_BUFSIZE] = {0};
   char typedName[CF_MAXVARSIZE] = {0};
 
-  snprintf(typedName,sizeof(typedName),"system_reports::%s",reportName);
+snprintf(typedName,sizeof(typedName),"system_reports::%s",reportName);
 
-  pid = Nova_GetPidForTopic(typedName);
+/*pid = Nova_GetPidForTopic(typedName);
 
-  if(pid && Nova_GetTopicByPid(pid,topic_name,topic_id,topic_context,topic_comment))
-    {
-      if(EMPTY(topic_comment))
-	{
-	  snprintf(returnval,bufsize,"(no comment for %s found in topic map)",reportName);
-	  return false;
-	}
+if (pid && Nova_GetTopicByPid(pid,topic_name,topic_id,topic_context))
+   {
+   if (EMPTY(topic_comment))
+      {
+      snprintf(returnval,bufsize,"(no comment for %s found in topic map)",reportName);
+      return false;
+      }
+   
+   snprintf(returnval,bufsize,"%s",topic_comment);
+   
+   return true;
+   }
 
-      snprintf(returnval,bufsize,"%s",topic_comment);
-      
-      return true;
-    }
+   FIX ME TO GET COMMENT..........
+*/
 
-
-  snprintf(returnval,bufsize,"(no description for %s found in topic map)",reportName);
-  return false;
-
+snprintf(returnval,bufsize,"(no description for %s found in topic map)",reportName);
+return false;
 }
 
 

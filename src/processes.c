@@ -26,6 +26,7 @@
 char *Nova_GetProcessOptions()
 {
 // Moved back into core
+ return NULL;
 }
 
 /*****************************************************************************/

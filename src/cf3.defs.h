@@ -33,7 +33,7 @@
 #undef VERSION
 #undef Verbose
 
-#define CF3_REVISION "$Rev: 1642 $"
+#define CF3_REVISION "$Rev: 1644 $"
 
 #include "conf.h"
 
@@ -1192,9 +1192,7 @@ struct Topic
    int id;
    char *topic_context;
    char *topic_name;
-   char *topic_comment;
    struct Item *synonyms;
-   struct Occurrence *occurrences;
    struct TopicAssociation *associations;
    struct Topic *next;
    };

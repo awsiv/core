@@ -106,7 +106,7 @@ return ret;
 
 /*****************************************************************************/
 
-int Nova_GetTopicByPid(int pid,char *topic_name,char *topic_id,char *topic_context,char *topic_comment)
+int Nova_GetTopicByPid(int pid,char *topic_name,char *topic_id,char *topic_context)
 
 { CfdbConn cfdb;
   char *sp,query[CF_MAXVARSIZE];
@@ -125,13 +125,13 @@ if (!cfdb.connected)
    return false;
    }
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_name,topic_id,topic_context,topic_comment from topics where pid = '%d'",pid);
+snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_name,topic_id,topic_context from topics where pid = '%d'",pid);
 
 CfNewQueryDB(&cfdb,query);
 
-if (cfdb.maxcolumns != 4)
+if (cfdb.maxcolumns != 3)
    {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,4);
+   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,3);
    CfCloseDB(&cfdb);
    return false;
    }
@@ -141,16 +141,6 @@ if (CfFetchRow(&cfdb))
    strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
    strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
    strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
-
-   if (sp = CfFetchColumn(&cfdb,3))
-      {
-      strncpy(topic_comment,sp,CF_BUFSIZE-1);
-      }
-   else
-      {
-      topic_comment[0] = '\0';
-      }
-
    ret = true;
    }
 else
@@ -252,13 +242,13 @@ if (!cfdb.connected)
    return 0;
    }
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_name,topic_id,topic_context,topic_comment,pid from topics");
+snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_name,topic_id,topic_context,pid from topics");
 
 CfNewQueryDB(&cfdb,query);
 
-if (cfdb.maxcolumns != 5)
+if (cfdb.maxcolumns != 4)
    {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,5);
+   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,4);
    CfCloseDB(&cfdb);
    return 0;
    }
@@ -267,23 +257,13 @@ while(CfFetchRow(&cfdb))
    {
    strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
    strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-   strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
-
-   if (sp = CfFetchColumn(&cfdb,3))
-      {
-      strncpy(topic_comment,sp,CF_BUFSIZE-1);
-      }
-   else
-      {
-      topic_comment[0] = '\0';
-      }
-   
-   pid = Str2Int(CfFetchColumn(&cfdb,4));
+   strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);   
+   pid = Str2Int(CfFetchColumn(&cfdb,3));
 
    if (BlockTextCaseMatch(search_topic,topic_name,&s,&e))
       {
       count++;
-      Nova_AddTopicSearchBuffer(pid,topic_name,topic_context,topic_comment,buffer,bufsize);
+      Nova_AddTopicSearchBuffer(pid,topic_name,topic_context,buffer,bufsize);
       save_pid = pid;
       }
    }
@@ -347,7 +327,7 @@ else
 void Nova_ScanTheRest(int pid,char *buffer, int bufsize)
 
 { char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE],associate[CF_BUFSIZE],work[CF_BUFSIZE];
-  char topic_comment[CF_BUFSIZE],query[CF_MAXVARSIZE],buf[CF_BUFSIZE];
+  char query[CF_MAXVARSIZE],buf[CF_BUFSIZE];
   char this_name[CF_BUFSIZE],this_id[CF_BUFSIZE],this_type[CF_BUFSIZE];
   enum representations locator_type;
   CfdbConn cfdb;  
@@ -359,7 +339,7 @@ if (strlen(SQL_OWNER) == 0)
    return;
    }
 
-if (!Nova_GetTopicByPid(pid,this_name,this_id,this_type,topic_comment))
+if (!Nova_GetTopicByPid(pid,this_name,this_id,this_type))
    {
    snprintf(buffer,bufsize,"No such topic was found (db %s)",SQL_DATABASE);
    return;
@@ -378,16 +358,16 @@ snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>The rest of the category \
 /* sub-topics of this topic-type */
 
 strcat(buffer,"<ul>\n"); // outer list
-snprintf(buf,CF_BUFSIZE-1,"<li>%s %s</li><ul>\n",Nova_PidURL(pid,this_name),topic_comment); // Start sublist
+snprintf(buf,CF_BUFSIZE-1,"<li>%s</li><ul>\n",Nova_PidURL(pid,this_name)); // Start sublist
 Join(buffer,buf,bufsize);
 
-snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,topic_comment,pid from topics where topic_context='%s' order by topic_name asc",this_id);
+snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",this_id);
 
 CfNewQueryDB(&cfdb,query);
 
-if (cfdb.maxcolumns != 5)
+if (cfdb.maxcolumns != 4)
    {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,5);
+   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,4);
    CfCloseDB(&cfdb);
    return;
    }
@@ -398,23 +378,14 @@ while(CfFetchRow(&cfdb))
    strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
    strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
 
-   if (CfFetchColumn(&cfdb,3))
-      {
-      strncpy(topic_comment,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
-      }
-   else
-      {
-      strncpy(topic_comment,"",CF_BUFSIZE-1);
-      }
-   
    if (strcmp(topic_name,this_name) == 0 || strcmp(topic_id,this_name) == 0)
       {
       continue;
       }
 
-   tpid = Str2Int(CfFetchColumn(&cfdb,4));
+   tpid = Str2Int(CfFetchColumn(&cfdb,3));
 
-   snprintf(buf,CF_BUFSIZE-1,"<li>%s %s</li>\n",Nova_PidURL(tpid,topic_name),topic_comment);
+   snprintf(buf,CF_BUFSIZE-1,"<li>%s</li>\n",Nova_PidURL(tpid,topic_name));
    Join(buffer,buf,bufsize);
    count++;
    }
@@ -429,13 +400,13 @@ strcat(buffer,"</ul></li>\n"); // close sublist
 
 /* Collect data - other topics of same type */
 
-snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,topic_comment,pid from topics where topic_context='%s' order by topic_name asc",this_type);
+snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",this_type);
 
 CfNewQueryDB(&cfdb,query);
 
-if (cfdb.maxcolumns != 5)
+if (cfdb.maxcolumns != 4)
    {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,5);
+   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,4);
    CfCloseDB(&cfdb);
    return;
    }
@@ -449,23 +420,14 @@ while(CfFetchRow(&cfdb))
    strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
    strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
 
-   if (CfFetchColumn(&cfdb,3))
-      {
-      strncpy(topic_comment,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
-      }
-   else
-      {
-      strncpy(topic_comment,"",CF_BUFSIZE-1);
-      }
-
    if (strcmp(topic_name,this_name) == 0 || strcmp(topic_id,this_name) == 0)
       {
       continue;
       }
 
-   tpid = Str2Int(CfFetchColumn(&cfdb,4));
+   tpid = Str2Int(CfFetchColumn(&cfdb,3));
 
-   snprintf(buf,CF_BUFSIZE-1,"<li>%s %s</li>\n",Nova_PidURL(tpid,topic_name),topic_comment);
+   snprintf(buf,CF_BUFSIZE-1,"<li>%s</li>\n",Nova_PidURL(tpid,topic_name));
    Join(buffer,buf,bufsize);   
    }
 
@@ -486,7 +448,7 @@ void Nova_ScanLeadsAssociations(int pid,char *buffer,int bufsize)
 
 { char from_name[CF_BUFSIZE],from_context[CF_BUFSIZE],to_name[CF_BUFSIZE],work[CF_BUFSIZE];
   char query[CF_BUFSIZE],fassociation[CF_BUFSIZE],bassociation[CF_BUFSIZE],save[CF_BUFSIZE];
-  char to_context[CF_BUFSIZE],topic_comment[CF_BUFSIZE],*sp;
+  char to_context[CF_BUFSIZE],*sp;
   enum representations locator_type;
   struct Rlist *rp;
   CfdbConn cfdb;
@@ -733,7 +695,7 @@ struct Item *Nova_GetBusinessGoals(char *handle)
 
 { char from_name[CF_BUFSIZE],from_context[CF_BUFSIZE],to_name[CF_BUFSIZE],work[CF_BUFSIZE];
   char query[CF_BUFSIZE],fassociation[CF_BUFSIZE],bassociation[CF_BUFSIZE],save[CF_BUFSIZE];
-  char to_context[CF_BUFSIZE],topic_comment[CF_BUFSIZE],*sp;
+  char to_context[CF_BUFSIZE],*sp;
   struct Item *worklist = NULL, *ip;
   enum representations locator_type;
   int have_data = false;
@@ -792,19 +754,11 @@ return worklist;
 /* Level                                                                 */
 /*************************************************************************/
 
-int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_context,char *topic_comment,char *buffer,int bufsize)
+int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_context,char *buffer,int bufsize)
 
 { char buf[CF_BUFSIZE];
 
-if (topic_comment && strlen(topic_comment) > 0)
-   {
-   snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in category %s (%s)</li>\n",Nova_PidURL(pid,topic_name),topic_context,topic_comment);
-   }
-else
-   {
-   snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in category %s</li>\n",Nova_PidURL(pid,topic_name),topic_context);
-   }
-
+snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in category %s</li>\n",Nova_PidURL(pid,topic_name),topic_context);
 Join(buffer,buf,bufsize);
 return true;
 }
@@ -906,6 +860,7 @@ if (strlen(SQL_OWNER) == 0)
    return;
    }
 
+/*
 CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
     
 if (!cfdb.connected)
@@ -933,6 +888,9 @@ if (CfFetchRow(&cfdb))
 
 CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
+*/
+
+ip->classes = strdup("PLEASE FILL ME IN topicmap.c");
 }
 
 /*****************************************************************************/

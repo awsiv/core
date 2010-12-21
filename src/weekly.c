@@ -100,8 +100,8 @@ else
 gdImagePng(cfv->im, fout);
 fclose(fout);
 gdImageDestroy(cfv->im);
-return true;
 #endif  /* HAVE_LIBGD */
+return true;
 }
 
 /**********************************************************************/
