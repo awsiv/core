@@ -33,7 +33,7 @@
 #undef VERSION
 #undef Verbose
 
-#define CF3_REVISION "$Rev: 1641 $"
+#define CF3_REVISION "$Rev: 1642 $"
 
 #include "conf.h"
 
@@ -1828,7 +1828,7 @@ struct Attributes
    char *bwd_name;
    struct Rlist *associates;
    struct Rlist *represents;
-   struct Rlist *synonyms;
+   struct Item *synonyms;
    char *rep_type;
    char *path_root;
    char *web_root;
