@@ -694,6 +694,11 @@ void Nova_SetPromiseOutputs(struct Promise *pp);
 void Nova_SetBundleOutputs(char *name);
 void Nova_ResetBundleOutputs(char *name);
 
+/* packages.c */
+
+int Nova_GetInstalledPkgsRpath(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp);
+int Nova_ExecPackageCommandRpath(char *command,int verify,int setCmdClasses,struct Attributes a,struct Promise *pp);
+
 /* processes.c */
 
 char *Nova_GetProcessOptions(void);

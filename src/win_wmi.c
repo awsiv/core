@@ -119,7 +119,7 @@ if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
       }
    else
       {
-	Debug("pkgname=\"%s\"", pkgName);
+	Debug("pkgname=\"%s\"\n", pkgName);
 	
 	snprintf(name, sizeof(name), "%s", ExtractFirstReference(nameRegex, pkgName));
         snprintf(version, sizeof(version), "%s", ExtractFirstReference(versionRegex, pkgName));
@@ -296,41 +296,4 @@ int NovaWin_WmiDeInitialize(void)
 
 #endif  /* MINGW */
 
-/*****************************************************************************/
 
-/* Copy from Cf3 verify_packages.c due to linker issues */
-
-static int Nova_PrependPackageItem(struct CfPackageItem **list,char *name,char *version,char *arch,struct Attributes a,struct Promise *pp)
-
-{ struct CfPackageItem *pi;
-
-if (strlen(name) == 0 || strlen(version) == 0 || strlen(arch) == 0)
-   {
-   return false;
-   }
-
-if ((pi = (struct CfPackageItem *)malloc(sizeof(struct CfPackageItem))) == NULL)
-   {
-   CfOut(cf_error,"malloc","Can't allocate new package\n");
-   return false;
-   }
-
-if (list)
-   {
-   pi->next = *list;
-   }
-else
-   {
-   pi->next = NULL;
-   }
-
-pi->name = strdup(name);
-pi->version = strdup(version);
-pi->arch = strdup(arch);
-*list = pi;
-
-/* Finally we need these for later schedule exec, once this iteration context has gone */
-
-pi->pp = DeRefCopyPromise("this",pp);
-return true;
-}

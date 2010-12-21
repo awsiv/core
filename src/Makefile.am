@@ -34,6 +34,7 @@ libcfnova_la_SOURCES =						\
 	outputs.c						\
 	promises.c						\
 	promise_db.c						\
+	packages.c						\
 	processes.c						\
 	services.c						\
 	services_win.c						\
