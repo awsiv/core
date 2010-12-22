@@ -228,6 +228,8 @@ int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
 
 strcpy(buffer,"<div id=\"disambig\">\n<h2>The search suggests these topics:</h2>\n<ul>\n");
 
+// Handle search strings context::topics
+
 if (strlen(SQL_OWNER) == 0)
    {
    snprintf(buffer,bufsize,"No knowledge database has yet formed ... please wait");
