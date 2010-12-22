@@ -77,6 +77,7 @@ MapName(name);
 
 if (stat(name,&sb) == -1)
    {
+   CfOut(cf_verbose,""," -> Looking to see if we can bootstrap from the master");
    snprintf(name,CF_MAXVARSIZE-1,"%s/masterfiles/license.dat",CFWORKDIR);
    MapName(name);
    }
