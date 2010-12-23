@@ -673,9 +673,8 @@ snprintf(buffer,bufsize,
          "<h2>References to '<span id=\"subject\">%s</span>' in category `<span id=\"category\">%s</span>'</h2>"
          "<ul>\n",topic_name,topic_context);
 
-snprintf(query,CF_BUFSIZE-1,"%s",CanonifyName(topic_name),CanonifyName(topic_name));
-
 AtomizeTopicContext(&context_list,topic_context);
+PrependAlphaList(&context_list,CanonifyName(topic_name));
 
 while(CfFetchRow(&cfdb))
    {
@@ -690,6 +689,10 @@ while(CfFetchRow(&cfdb))
    if (EvaluateORString(occurrence_context,context_list,0))
       {
       Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+      }
+   else
+      {
+      Nova_AddOccurrenceBuffer(topic_context,occurrence_context,locator_type,subtype,buffer,bufsize);
       }
    }
 
