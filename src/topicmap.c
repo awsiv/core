@@ -357,7 +357,7 @@ if (!cfdb.connected)
    return;
    }
    
-snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>The rest of the category \"%s\":</h2>\n",this_type);
+snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>The rest of the context \"%s\":</h2>\n",this_type);
 
 /* sub-topics of this topic-type */
 
@@ -670,11 +670,34 @@ if (cfdb.maxcolumns != 4)
 
 snprintf(buffer,bufsize,
          "<div id=\"occurrences\">\n"
-         "<h2>References to '<span id=\"subject\">%s</span>' in category `<span id=\"category\">%s</span>'</h2>"
+         "<h2>References to '<span id=\"subject\">%s</span>' in the context of `<span id=\"category\">%s</span>'</h2>"
          "<ul>\n",topic_name,topic_context);
 
 AtomizeTopicContext(&context_list,topic_context);
 PrependAlphaList(&context_list,CanonifyName(topic_name));
+
+//
+
+  int i;
+  struct Item *ip;
+  
+for (i = 0; i < CF_ALPHABETSIZE; i++)
+   {
+   if (context_list.list[i] == NULL)
+      {
+      }
+   else       
+      {
+      for (ip = context_list.list[i]; ip != NULL; ip=ip->next)
+         {
+         snprintf(query,CF_MAXVARSIZE," %s",ip->name);
+         strcat(buffer,query);
+         }
+      }
+   }
+
+
+//
 
 while(CfFetchRow(&cfdb))
    {
@@ -780,7 +803,7 @@ int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_context,char 
 
 { char buf[CF_BUFSIZE];
 
-snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in category %s</li>\n",Nova_PidURL(pid,topic_name),topic_context);
+snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in the context of %s</li>\n",Nova_PidURL(pid,topic_name),topic_context);
 Join(buffer,buf,bufsize);
 return true;
 }
