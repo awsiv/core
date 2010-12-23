@@ -689,10 +689,12 @@ while(CfFetchRow(&cfdb))
    if (EvaluateORString(occurrence_context,context_list,0))
       {
       Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+      snprintf(query,CF_MAXVARSIZE,"MATCH: %s = %s<br>",occurrence_context,topic_context);
+      strcat(buffer,query);
       }
    else
       {
-      snprintf(query,CF_MAXVARSIZE,"QUERY: %s = %s<br>",occurrence_context,topic_context);
+      snprintf(query,CF_MAXVARSIZE,"FAIL: %s = %s<br>",occurrence_context,topic_context);
       strcat(buffer,query);
       }
    }
