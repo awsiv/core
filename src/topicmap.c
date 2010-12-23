@@ -702,7 +702,8 @@ while(CfFetchRow(&cfdb))
 
    // Match occurrences that could overlap with the current context
 
-   if (EvaluateORString(occurrence_context,context_list,0))
+//   if (EvaluateORString(occurrence_context,context_list,0))
+   if (strstr(occurrence_context,topic_name))
       {
       Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
       }
