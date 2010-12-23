@@ -702,6 +702,8 @@ snprintf(op2,CF_MAXVARSIZE-1,".%s",query);
 snprintf(op3,CF_MAXVARSIZE-1,"%s&",query);
 snprintf(op4,CF_MAXVARSIZE-1,"&%s",query);
 
+//  %s[.&]|[.&]%s
+
 while(CfFetchRow(&cfdb))
    {
    have_data = true;
@@ -714,8 +716,8 @@ while(CfFetchRow(&cfdb))
 
    for (rp = frags; rp != NULL; rp=rp->next)
       {
-      if (strcmp(rp->item,query) == 0 || strstr(rp->item,op1) || strstr(rp->item,op2)
-          || strstr(rp->item,op3) || strstr(rp->item,op4))
+      if (strcmp(rp->item,query) == 0 || strcmp(strstr(rp->item,op1),op1) == 0 || strstr(rp->item,op2)
+          || strstr(rp->item,op3) || strcmp(strstr(rp->item,op4),op4) == 0)
          {
          Nova_AddOccurrenceBuffer(rp->item,locator,locator_type,subtype,buffer,bufsize);
          break;
