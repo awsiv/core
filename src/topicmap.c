@@ -689,7 +689,14 @@ while(CfFetchRow(&cfdb))
 
    if (EvaluateORString(occurrence_context,context_list,0))
       {
-      Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+      if (strcmp(occurrence_context,CanonifyName(topic_name)) == 0)
+         {
+         Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+         }
+      else
+         {
+         Nova_AddOccurrenceBuffer("*",locator,locator_type,subtype,buffer,bufsize);
+         }
       }
    }
 
