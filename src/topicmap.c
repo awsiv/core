@@ -823,7 +823,7 @@ switch (locator_type)
         break;          
 
    case cfk_literal:
-       snprintf(work,CF_BUFSIZE-1,"<li><p> \"%s\" (Text)</p></li>\n",locator);
+       snprintf(work,CF_BUFSIZE-1,"<li>%s:: <p> \"%s\" (Text)</p></li>\n",context,locator);
        break;
 
    case cfk_image:
