@@ -645,7 +645,7 @@ CfNewQueryDB(&cfdb,query);
 
 if (cfdb.maxcolumns != 2)
    {
-   snprintf(buffer,bufsize," !! The occurrences database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,2);
+   snprintf(buffer,bufsize," !! The topic database table did not promise the expected number of fields - got %d expected %d for pid %d\n",cfdb.maxcolumns,2,this_id);
    return;
    }
 
@@ -663,7 +663,7 @@ CfNewQueryDB(&cfdb,query);
 
 if (cfdb.maxcolumns != 4)
    {
-   snprintf(buffer,bufsize," !! The occurrences database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,4);
+   snprintf(buffer,bufsize," !! The occurrences database table did not promise the expected number of fields - got %d expected %d for \"%%%s%%\"\n",cfdb.maxcolumns,4,topic_name);
    return;
    }
 
