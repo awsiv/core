@@ -690,7 +690,7 @@ while(CfFetchRow(&cfdb))
       }
    else
       {
-      Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+      Nova_AddOccurrenceBuffer(occurrence_context,"XXX",locator_type,subtype,buffer,bufsize);
       }
    }
 
