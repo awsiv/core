@@ -831,7 +831,7 @@ switch (locator_type)
         break;          
 
    case cfk_literal:
-       snprintf(work,CF_BUFSIZE-1,"<li><i>%s</i>:: \"%s\" (%s)</p></li>\n",context,locator,subtype);
+       snprintf(work,CF_BUFSIZE-1,"<li><i>%s</i>:: \"%s\" (%s)</p></li>\n",context,locator,represents);
        break;
 
    case cfk_image:
