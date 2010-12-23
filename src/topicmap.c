@@ -75,7 +75,7 @@ if (!cfdb.connected)
 
 if (strlen(type) > 0)
    {
-   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s' and topic_context = '%s'",topic,type);
+   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s' and topic_context like '%%%s%%'",topic,type);
    }
 else
    {
@@ -90,6 +90,8 @@ if (cfdb.maxcolumns != 1)
    CfCloseDB(&cfdb);
    return false;
    }
+
+// Pick a representative if there are several
 
 if (CfFetchRow(&cfdb))
    {
@@ -616,7 +618,7 @@ CfCloseDB(&cfdb);
 void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
 
 { char topic_name[CF_BUFSIZE],topic_context[CF_BUFSIZE],query[CF_MAXVARSIZE];
-  char locator[CF_BUFSIZE],subtype[CF_BUFSIZE];
+  char occurrence_context[CF_BUFSIZE],locator[CF_BUFSIZE],subtype[CF_BUFSIZE];
   enum representations locator_type;
   CfdbConn cfdb;
   int have_data = false;
@@ -655,7 +657,7 @@ if (CfFetchRow(&cfdb))
 
 CfDeleteQuery(&cfdb);
 
-snprintf(query,sizeof(query),"SELECT topic_name,locator,locator_type,subtype from occurrences where from_id='%d' order by locator_type,subtype",this_id);
+snprintf(query,sizeof(query),"SELECT context,locator,locator_type,subtype from occurrences where from_id='%d' order by locator_type,subtype",this_id);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -673,12 +675,12 @@ snprintf(buffer,bufsize,
 while(CfFetchRow(&cfdb))
    {
    have_data = true;
-   strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
+   strncpy(occurrence_context,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
    strncpy(locator,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
    locator_type = Str2Int(CfFetchColumn(&cfdb,2));
    strncpy(subtype,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
 
-   Nova_AddOccurrenceBuffer(locator,locator_type,subtype,buffer,bufsize);
+   Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
    }
 
 if (!have_data)
@@ -779,18 +781,18 @@ return true;
 
 /*************************************************************************/
 
-void Nova_AddOccurrenceBuffer(char *locator,enum representations locator_type,char *represents,char *buffer,int bufsize)
+void Nova_AddOccurrenceBuffer(char *context,char *locator,enum representations locator_type,char *represents,char *buffer,int bufsize)
 
 { char work[CF_BUFSIZE];
  
 switch (locator_type)
    {
    case cfk_url:
-       snprintf(work,CF_BUFSIZE-1,"<li>Link: <span id=\"url\"> %s</span> (URL)</li>\n",Nova_URL(locator,represents));
+       snprintf(work,CF_BUFSIZE-1,"<li>%s:: <span id=\"url\"> %s</span> (URL)</li>\n",context,Nova_URL(locator,represents));
        break;
        
    case cfk_web:
-       snprintf(work,CF_BUFSIZE-1,"<li>Link: <span id=\"url\">%s ...%s</a> </span> (URL)<li>\n",Nova_URL(locator,represents),locator);
+       snprintf(work,CF_BUFSIZE-1,"<li>%s:: <span id=\"url\">%s ...%s</a> </span> (URL)<li>\n",context,Nova_URL(locator,represents),locator);
        break;
 
    case cfk_file:

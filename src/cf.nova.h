@@ -872,7 +872,7 @@ void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize);
 int Nova_GetTopicByPid(int pid,char *topic_name,char *topic_id,char *topic_type);
 int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_type,char *buffer,int bufsize);
 int Nova_AddAssocSearchBuffer(char *from_assoc,char *to_assoc,char *buffer,int bufsize);
-void Nova_AddOccurrenceBuffer(char *locator,enum representations locator_type,char *represents,char *buffer,int bufsize);
+void Nova_AddOccurrenceBuffer(char *context,char *locator,enum representations locator_type,char *represents,char *buffer,int bufsize);
 
 char *Nova_PidURL(int pid,char *s);
 char *Nova_AssocURL(char *s);
