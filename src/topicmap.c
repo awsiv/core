@@ -693,7 +693,6 @@ if (cfdb.maxcolumns != 4)
 AtomizeTopicContext(&context_list,topic_context);
 PrependAlphaList(&context_list,CanonifyName(topic_name));
 
-
 while(CfFetchRow(&cfdb))
    {
    have_data = true;
@@ -706,11 +705,11 @@ while(CfFetchRow(&cfdb))
 
    if (EvaluateORString(occurrence_context,context_list,0))
       {
-      if (strcmp(occurrence_context,CanonifyName(topic_name)) == 0)
+/*      if (strcmp(occurrence_context,CanonifyName(topic_name)) == 0)
          {
          Nova_AddOccurrenceBuffer("*",locator,locator_type,subtype,buffer,bufsize);
          }
-      else
+         else*/
          {
          Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
          }
@@ -943,7 +942,7 @@ ip->classes = strdup("PLEASE FILL ME IN topicmap.c");
 
 void AtomizeTopicContext(struct AlphaList *context_list,char *topic_context)
 
-{ struct Rlist *rp,*l = SplitRegexAsRList(topic_context,"[|&.]",99,false);
+{ struct Rlist *rp,*l = SplitRegexAsRList(topic_context,"[|]",99,false);
 
 InitAlphaList(context_list);
 
