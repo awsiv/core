@@ -670,7 +670,6 @@ snprintf(buffer,bufsize,
          "<h2>References to '<span id=\"subject\">%s</span>' in the context of `<span id=\"category\">%s</span>'</h2>"
          "<ul>\n",topic_name,topic_context);
 
-
 while (CfFetchRow(&cfdb))
    {
    snprintf(topic_context,CF_BUFSIZE,"<li>Also mentioned in context: <a href=\"knowledge.php?pid=%d\">%s</a> ",Str2Int(CfFetchColumn(&cfdb,1)),CfFetchColumn(&cfdb,0));
@@ -704,17 +703,6 @@ while(CfFetchRow(&cfdb))
    // Match occurrences that could overlap with the current context
 
    if (EvaluateORString(occurrence_context,context_list,0))
-      {
-/*      if (strcmp(occurrence_context,CanonifyName(topic_name)) == 0)
-         {
-         Nova_AddOccurrenceBuffer("*",locator,locator_type,subtype,buffer,bufsize);
-         }
-         else*/
-         {
-         Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
-         }
-      }
-   else if (strcmp(occurrence_context,CanonifyName(topic_name)) == 0)
       {
       Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
       }
@@ -843,7 +831,7 @@ switch (locator_type)
         break;          
 
    case cfk_literal:
-       snprintf(work,CF_BUFSIZE-1,"<li><i>%s</i>:: \"%s\" (Text)</p></li>\n",context,locator);
+       snprintf(work,CF_BUFSIZE-1,"<li><i>%s</i>:: \"%s\" (%s)</p></li>\n",context,locator,subtype);
        break;
 
    case cfk_image:
