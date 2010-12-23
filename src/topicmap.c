@@ -699,8 +699,8 @@ if (cfdb.maxcolumns != 4)
 snprintf(query,CF_MAXVARSIZE,"%s",CanonifyName(topic_name));
 snprintf(op1,CF_MAXVARSIZE-1,"%s.",query);
 snprintf(op2,CF_MAXVARSIZE-1,".%s",query);
-snprintf(op1,CF_MAXVARSIZE-1,"%s&",query);
-snprintf(op2,CF_MAXVARSIZE-1,"&%s",query);
+snprintf(op3,CF_MAXVARSIZE-1,"%s&",query);
+snprintf(op4,CF_MAXVARSIZE-1,"&%s",query);
 
 while(CfFetchRow(&cfdb))
    {
@@ -710,8 +710,6 @@ while(CfFetchRow(&cfdb))
    locator_type = Str2Int(CfFetchColumn(&cfdb,2));
    strncpy(subtype,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
 
-   snprintf(query,CF_BUFSIZE,"<p>XXX %s,%s,%d,%s<br>",occurrence_context,locator,locator_type,subtype);
-   strcat(buffer,query);
    frags = SplitStringAsRList(occurrence_context,'|');
 
    for (rp = frags; rp != NULL; rp=rp->next)
