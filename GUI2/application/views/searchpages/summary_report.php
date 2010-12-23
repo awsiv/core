@@ -1,0 +1,1 @@
+<h4><?php echo $report_type?> (not possible to search)</h4>
