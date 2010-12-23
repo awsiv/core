@@ -710,14 +710,14 @@ while(CfFetchRow(&cfdb))
    locator_type = Str2Int(CfFetchColumn(&cfdb,2));
    strncpy(subtype,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
 
-   frags = SplitRegexAsRList(occurrence_context,"[|]+",99,false);
+   frags = SplitStringAsRList(occurrence_context,'|');
 
    for (rp = frags; rp != NULL; rp=rp->next)
       {
       if (strcmp(rp->item,query) == 0 || strstr(rp->item,op1) || strstr(rp->item,op2)
           || strstr(rp->item,op3) || strstr(rp->item,op4))
          {
-         Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+         Nova_AddOccurrenceBuffer(rp->item,locator,locator_type,subtype,buffer,bufsize);
          break;
          }
       }
