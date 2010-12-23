@@ -356,8 +356,13 @@ if (!cfdb.connected)
    CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
    return;
    }
-   
-snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>The rest of the context \"%s\":</h2>\n",this_type);
+
+if (strcmp(this_type,"any") == 0)
+   {
+   return;
+   }
+
+snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>Other topics mentioned in the context of \"%s\":</h2>\n",this_type);
 
 /* sub-topics of this topic-type */
 
@@ -698,6 +703,10 @@ while(CfFetchRow(&cfdb))
          Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
          }
       }
+   else if (strcmp(occurrence_context,CanonifyName(topic_name)) == 0)
+      {
+      Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+      }
    }
 
 DeleteAlphaList(&context_list);
@@ -807,11 +816,11 @@ void Nova_AddOccurrenceBuffer(char *context,char *locator,enum representations l
 switch (locator_type)
    {
    case cfk_url:
-       snprintf(work,CF_BUFSIZE-1,"<li>%s:: <span id=\"url\"> %s</span> (URL)</li>\n",context,Nova_URL(locator,represents));
+       snprintf(work,CF_BUFSIZE-1,"<li><i>%s</i>:: <span id=\"url\"> %s</span> (URL)</li>\n",context,Nova_URL(locator,represents));
        break;
        
    case cfk_web:
-       snprintf(work,CF_BUFSIZE-1,"<li>%s:: <span id=\"url\">%s ...%s</a> </span> (URL)<li>\n",context,Nova_URL(locator,represents),locator);
+       snprintf(work,CF_BUFSIZE-1,"<li><i>%s</i>:: <span id=\"url\">%s ...%s</a> </span> (URL)<li>\n",context,Nova_URL(locator,represents),locator);
        break;
 
    case cfk_file:
@@ -823,7 +832,7 @@ switch (locator_type)
         break;          
 
    case cfk_literal:
-       snprintf(work,CF_BUFSIZE-1,"<li>%s:: <p> \"%s\" (Text)</p></li>\n",context,locator);
+       snprintf(work,CF_BUFSIZE-1,"<li><i>%s</i>:: <p> \"%s\" (Text)</p></li>\n",context,locator);
        break;
 
    case cfk_image:
