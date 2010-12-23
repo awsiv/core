@@ -622,6 +622,7 @@ void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
   enum representations locator_type;
   CfdbConn cfdb;
   int have_data = false;
+  struct AlphaList context_list;
 
 if (strlen(SQL_OWNER) == 0)
    {
@@ -674,6 +675,8 @@ snprintf(buffer,bufsize,
 
 snprintf(query,CF_BUFSIZE-1,"%s",CanonifyName(topic_name),CanonifyName(topic_name));
 
+AtomizeTopicContext(&context_list,topic_context);
+
 while(CfFetchRow(&cfdb))
    {
    have_data = true;
@@ -684,15 +687,13 @@ while(CfFetchRow(&cfdb))
 
    // Match occurrences that could overlap with the current context
 
-   if (FullTextMatch(query,occurrence_context))
+   if (EvaluateORString(occurrence_context,context_list,0))
       {
       Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
       }
-   else
-      {
-      Nova_AddOccurrenceBuffer(query,"XXX",locator_type,subtype,buffer,bufsize);
-      }
    }
+
+DeleteAlphaList(&context_list);
 
 if (!have_data)
    {
@@ -906,6 +907,24 @@ CfCloseDB(&cfdb);
 */
 
 ip->classes = strdup("PLEASE FILL ME IN topicmap.c");
+}
+
+
+
+/*************************************************************************/
+
+void AtomizeTopicContext(struct AlphaList *context_list,char *topic_context)
+
+{ struct Rlist *rp,*l = SplitRegexAsRList(topic_context,"[|&.]",99,false);
+
+InitAlphaList(context_list);
+
+for (rp = l; rp != NULL; rp=rp->next)
+   {
+   PrependAlphaList(context_list,rp->item);
+   }
+
+DeleteRlist(l);
 }
 
 /*****************************************************************************/
