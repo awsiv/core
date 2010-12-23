@@ -1,0 +1,22 @@
+<img src="graphs/2397.png" USEMAP="#knowledge_system" alt="body_constraints::real image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="624,145,36" href="knowledge.php?pid=2933" alt="topic" title="promisers::acl">
+<area shape = "circle" coords="612,78,36" href="knowledge.php?pid=812" alt="topic" title="technical_concepts::variables">
+<area shape = "circle" coords="540,108,36" href="knowledge.php?pid=2773" alt="topic" title="data_types::policy">
+<area shape = "circle" coords="472,74,36" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="455,140,36" href="knowledge.php?pid=2929" alt="topic" title="bundles::def">
+<area shape = "circle" coords="380,165,36" href="knowledge.php?pid=2768" alt="topic" title="data_types::int">
+<area shape = "circle" coords="431,216,36" href="knowledge.php?pid=2932" alt="topic" title="handles::common_def_vars_domain">
+<area shape = "circle" coords="277,261,31" href="knowledge.php?pid=593" alt="topic" title="functions::product">
+<area shape = "circle" coords="103,470,30" href="knowledge.php?pid=47" alt="topic" title="values::real number">
+<area shape = "circle" coords="218,398,30" href="knowledge.php?pid=2397" alt="topic" title="body_constraints::real">
+<area shape = "circle" coords="391,391,31" href="knowledge.php?pid=619" alt="topic" title="functions::sum">
+<area shape = "circle" coords="334,326,30" href="knowledge.php?pid=2769" alt="topic" title="data_types::real">
+<area shape = "circle" coords="487,280,36" href="knowledge.php?pid=2771" alt="topic" title="data_types::ilist">
+<area shape = "circle" coords="532,336,36" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="580,282,36" href="knowledge.php?pid=2925" alt="topic" title="bundles::change_management">
+<area shape = "circle" coords="661,288,36" href="knowledge.php?pid=2767" alt="topic" title="data_types::string">
+<area shape = "circle" coords="642,222,36" href="knowledge.php?pid=2930" alt="topic" title="promisers::domain">
+<area shape = "circle" coords="697,173,36" href="knowledge.php?pid=2770" alt="topic" title="data_types::slist">
+<area shape = "circle" coords="537,199,55" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+</map>

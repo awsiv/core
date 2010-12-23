@@ -1,0 +1,24 @@
+<img src="graphs/influence_2922.png" USEMAP="#knowledge_system" alt="promisers::security image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="261,396,30" href="knowledge.php?pid=3320" alt="topic" title="promises::promise_cfengine_cf_814">
+<area shape = "circle" coords="286,459,30" href="knowledge.php?pid=2916" alt="topic" title="promises::promise_promises_cf_62">
+<area shape = "circle" coords="357,414,30" href="knowledge.php?pid=2952" alt="topic" title="promises::promise_promises_cf_209">
+<area shape = "circle" coords="435,453,30" href="knowledge.php?pid=2928" alt="topic" title="promises::promise_promises_cf_82">
+<area shape = "circle" coords="449,388,30" href="knowledge.php?pid=2963" alt="topic" title="handles::cfengine_processes_vars_cf_components">
+<area shape = "circle" coords="547,388,30" href="knowledge.php?pid=2938" alt="topic" title="handles::common_def_vars_dir_masterfiles">
+<area shape = "circle" coords="498,330,30" href="knowledge.php?pid=3315" alt="topic" title="promises::promise_cfengine_cf_785">
+<area shape = "circle" coords="575,289,30" href="knowledge.php?pid=2944" alt="topic" title="handles::common_def_vars_dir_software">
+<area shape = "circle" coords="484,264,30" href="knowledge.php?pid=3319" alt="topic" title="promises::promise_cfengine_cf_807">
+<area shape = "circle" coords="666,89,30" href="knowledge.php?pid=3752" alt="topic" title="synonym::goal_1">
+<area shape = "circle" coords="507,200,30" href="knowledge.php?pid=2924" alt="topic" title="promises::promise_promises_cf_76">
+<area shape = "circle" coords="412,218,30" href="knowledge.php?pid=2950" alt="topic" title="promises::promise_promises_cf_206">
+<area shape = "circle" coords="371,158,30" href="knowledge.php?pid=2919" alt="topic" title="promises::promise_promises_cf_63">
+<area shape = "circle" coords="313,211,30" href="knowledge.php?pid=2959" alt="topic" title="handles::grant_access_datafiles">
+<area shape = "circle" coords="226,181,30" href="knowledge.php?pid=2935" alt="topic" title="handles::common_def_vars_acl">
+<area shape = "circle" coords="228,247,30" href="knowledge.php?pid=3240" alt="topic" title="handles::cfengine_web_server_vars_start_type">
+<area shape = "circle" coords="132,258,30" href="knowledge.php?pid=2941" alt="topic" title="handles::common_def_vars_dir_reports">
+<area shape = "circle" coords="194,309,30" href="knowledge.php?pid=3317" alt="topic" title="promises::promise_cfengine_cf_790">
+<area shape = "circle" coords="129,358,30" href="knowledge.php?pid=2948" alt="topic" title="handles::grant_access_policy">
+<area shape = "circle" coords="347,311,30" href="knowledge.php?pid=2921" alt="topic" title="class_contexts::any">
+<area shape = "circle" coords="133,418,55" href="knowledge.php?pid=2932" alt="topic" title="handles::common_def_vars_domain">
+</map>

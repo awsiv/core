@@ -1,0 +1,8 @@
+<img src="graphs/influence_3443.png" USEMAP="#knowledge_system" alt="handles::update_bins_vars_novapkg_solaris image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="496,468,30" href="knowledge.php?pid=3446" alt="topic" title="handles::update_bins_vars_novapkg_not_solaris">
+<area shape = "circle" coords="631,138,30" href="knowledge.php?pid=3443" alt="topic" title="handles::update_bins_vars_novapkg_solaris">
+<area shape = "circle" coords="230,156,30" href="knowledge.php?pid=3450" alt="topic" title="handles::update_bins_vars_pkgarch_solaris">
+<area shape = "circle" coords="363,312,30" href="knowledge.php?pid=3447" alt="topic" title="class_contexts::solaris">
+<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=3453" alt="topic" title="handles::update_bins_vars_pkgarch_not_solaris">
+</map>

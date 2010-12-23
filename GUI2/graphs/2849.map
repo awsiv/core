@@ -1,0 +1,9 @@
+<img src="graphs/2849.png" USEMAP="#knowledge_system" alt="shells::zsh image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="413,480,31" href="knowledge.php?pid=2846" alt="topic" title="shells::bash">
+<area shape = "circle" coords="644,304,31" href="knowledge.php?pid=2845" alt="topic" title="shells::tcsh">
+<area shape = "circle" coords="409,132,31" href="knowledge.php?pid=2849" alt="topic" title="shells::zsh">
+<area shape = "circle" coords="110,148,55" href="knowledge.php?pid=2848" alt="topic" title="shells::ksh">
+<area shape = "circle" coords="350,307,38" href="knowledge.php?pid=2807" alt="topic" title="operating_systems::environment variables">
+<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=2847" alt="topic" title="shells::csh">
+</map>

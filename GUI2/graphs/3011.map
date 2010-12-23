@@ -1,0 +1,27 @@
+<img src="graphs/3011.png" USEMAP="#knowledge_system" alt="bundles::cfengine_enable image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="153,448,55" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="201,483,55" href="knowledge.php?pid=2767" alt="topic" title="data_types::string">
+<area shape = "circle" coords="237,441,55" href="knowledge.php?pid=2769" alt="topic" title="data_types::real">
+<area shape = "circle" coords="303,428,55" href="knowledge.php?pid=2771" alt="topic" title="data_types::ilist">
+<area shape = "circle" coords="270,384,55" href="knowledge.php?pid=2773" alt="topic" title="data_types::policy">
+<area shape = "circle" coords="399,382,32" href="knowledge.php?pid=3013" alt="topic" title="promisers::rc_conf[cfengine3_enable]">
+<area shape = "circle" coords="519,395,52" href="knowledge.php?pid=3020" alt="topic" title="promisers::/usr/local/etc/rc.d/cfengine3.sh">
+<area shape = "circle" coords="631,362,52" href="knowledge.php?pid=3028" alt="topic" title="promisers::/etc/rc1.d/K11cfengine3">
+<area shape = "circle" coords="706,292,52" href="knowledge.php?pid=3034" alt="topic" title="promisers::/etc/rc3.d/S90cfengine3">
+<area shape = "circle" coords="724,204,52" href="knowledge.php?pid=3040" alt="topic" title="promisers::/etc/rc5.d/S90cfengine3">
+<area shape = "circle" coords="679,121,32" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="584,66,52" href="knowledge.php?pid=3017" alt="topic" title="promisers::rc_files">
+<area shape = "circle" coords="464,53,52" href="knowledge.php?pid=3023" alt="topic" title="promisers::/etc/rc.conf">
+<area shape = "circle" coords="352,86,52" href="knowledge.php?pid=3031" alt="topic" title="promisers::/etc/rc2.d/S90cfengine3">
+<area shape = "circle" coords="277,156,52" href="knowledge.php?pid=3037" alt="topic" title="promisers::/etc/rc4.d/S90cfengine3">
+<area shape = "circle" coords="259,244,52" href="knowledge.php?pid=3043" alt="topic" title="promisers::/etc/rc6.d/K11cfengine3">
+<area shape = "circle" coords="491,224,48" href="knowledge.php?pid=3011" alt="topic" title="bundles::cfengine_enable">
+<area shape = "circle" coords="220,334,55" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="172,299,55" href="knowledge.php?pid=2768" alt="topic" title="data_types::int">
+<area shape = "circle" coords="136,342,55" href="knowledge.php?pid=2770" alt="topic" title="data_types::slist">
+<area shape = "circle" coords="71,354,55" href="knowledge.php?pid=2772" alt="topic" title="data_types::rlist">
+<area shape = "circle" coords="103,399,55" href="knowledge.php?pid=2925" alt="topic" title="bundles::change_management">
+<area shape = "circle" coords="187,391,53" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="52,465,55" href="knowledge.php?pid=812" alt="topic" title="technical_concepts::variables">
+</map>

@@ -1,0 +1,27 @@
+<img src="graphs/influence_2924.png" USEMAP="#knowledge_system" alt="promises::promise_promises_cf_76 image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="282,383,30" href="knowledge.php?pid=2952" alt="topic" title="promises::promise_promises_cf_209">
+<area shape = "circle" coords="299,453,30" href="knowledge.php?pid=2916" alt="topic" title="promises::promise_promises_cf_62">
+<area shape = "circle" coords="375,405,30" href="knowledge.php?pid=2963" alt="topic" title="handles::cfengine_processes_vars_cf_components">
+<area shape = "circle" coords="446,456,30" href="knowledge.php?pid=2928" alt="topic" title="promises::promise_promises_cf_82">
+<area shape = "circle" coords="470,388,30" href="knowledge.php?pid=3315" alt="topic" title="promises::promise_cfengine_cf_785">
+<area shape = "circle" coords="571,402,30" href="knowledge.php?pid=2935" alt="topic" title="handles::common_def_vars_acl">
+<area shape = "circle" coords="533,336,30" href="knowledge.php?pid=3319" alt="topic" title="promises::promise_cfengine_cf_807">
+<area shape = "circle" coords="629,309,30" href="knowledge.php?pid=2944" alt="topic" title="handles::common_def_vars_dir_software">
+<area shape = "circle" coords="544,268,30" href="knowledge.php?pid=3358" alt="topic" title="handles::cfengine_update_folders_vars_dirs">
+<area shape = "circle" coords="601,208,30" href="knowledge.php?pid=2950" alt="topic" title="promises::promise_promises_cf_206">
+<area shape = "circle" coords="659,237,30" href="knowledge.php?pid=3754" alt="topic" title="synonym::goal_2">
+<area shape = "circle" coords="454,97,30" href="knowledge.php?pid=3752" alt="topic" title="synonym::goal_1">
+<area shape = "circle" coords="498,208,30" href="knowledge.php?pid=2924" alt="topic" title="promises::promise_promises_cf_76">
+<area shape = "circle" coords="496,137,30" href="knowledge.php?pid=2959" alt="topic" title="handles::grant_access_datafiles">
+<area shape = "circle" coords="411,176,30" href="knowledge.php?pid=2919" alt="topic" title="promises::promise_promises_cf_63">
+<area shape = "circle" coords="351,118,30" href="knowledge.php?pid=3240" alt="topic" title="handles::cfengine_web_server_vars_start_type">
+<area shape = "circle" coords="313,184,30" href="knowledge.php?pid=2932" alt="topic" title="handles::common_def_vars_domain">
+<area shape = "circle" coords="216,159,30" href="knowledge.php?pid=3317" alt="topic" title="promises::promise_cfengine_cf_790">
+<area shape = "circle" coords="239,229,30" href="knowledge.php?pid=2941" alt="topic" title="handles::common_def_vars_dir_reports">
+<area shape = "circle" coords="139,246,30" href="knowledge.php?pid=3320" alt="topic" title="promises::promise_cfengine_cf_814">
+<area shape = "circle" coords="214,295,30" href="knowledge.php?pid=2948" alt="topic" title="handles::grant_access_policy">
+<area shape = "circle" coords="145,348,30" href="knowledge.php?pid=3394" alt="topic" title="handles::cfengine_update_folders_files_create_dirs">
+<area shape = "circle" coords="380,290,30" href="knowledge.php?pid=2921" alt="topic" title="class_contexts::any">
+<area shape = "circle" coords="147,410,55" href="knowledge.php?pid=2938" alt="topic" title="handles::common_def_vars_dir_masterfiles">
+</map>

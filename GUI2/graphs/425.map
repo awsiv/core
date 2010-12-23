@@ -1,0 +1,14 @@
+<img src="graphs/425.png" USEMAP="#knowledge_system" alt="promise_types::storage image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="708,338,42" href="knowledge.php?pid=96" alt="topic" title="body_constraints::background">
+<area shape = "circle" coords="365,148,37" href="knowledge.php?pid=434" alt="topic" title="body_constraints::mount_options">
+<area shape = "circle" coords="263,74,51" href="knowledge.php?pid=744" alt="topic" title="cfengine_2::unmount">
+<area shape = "circle" coords="140,107,37" href="knowledge.php?pid=429" alt="topic" title="body_constraints::mount_type">
+<area shape = "circle" coords="90,222,30" href="knowledge.php?pid=425" alt="topic" title="promise_types::storage">
+<area shape = "circle" coords="150,334,43" href="knowledge.php?pid=432" alt="topic" title="body_constraints::mount_server">
+<area shape = "circle" coords="274,357,43" href="knowledge.php?pid=430" alt="topic" title="body_constraints::mount_source">
+<area shape = "circle" coords="236,216,35" href="knowledge.php?pid=426" alt="topic" title="body_constraints::mount">
+<area shape = "circle" coords="511,335,50" href="knowledge.php?pid=427" alt="topic" title="body_constraints::edit_fstab">
+<area shape = "circle" coords="649,475,42" href="knowledge.php?pid=120" alt="topic" title="body_constraints::useshell">
+<area shape = "circle" coords="639,389,55" href="knowledge.php?pid=38" alt="topic" title="values::boolean">
+</map>

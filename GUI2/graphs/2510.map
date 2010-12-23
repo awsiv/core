@@ -1,0 +1,27 @@
+<img src="graphs/2510.png" USEMAP="#knowledge_system" alt="body_constraints::timeout image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="277,368,55" href="knowledge.php?pid=2555" alt="topic" title="body_constraints::link_type">
+<area shape = "circle" coords="296,442,32" href="knowledge.php?pid=16" alt="topic" title="system_reports::lastseen report">
+<area shape = "circle" coords="390,398,55" href="knowledge.php?pid=2496" alt="topic" title="body_constraints::copy_size">
+<area shape = "circle" coords="470,468,55" href="knowledge.php?pid=193" alt="topic" title="body_constraints::copy_backup">
+<area shape = "circle" coords="511,385,55" href="knowledge.php?pid=2502" alt="topic" title="body_constraints::force_ipv4">
+<area shape = "circle" coords="636,419,55" href="knowledge.php?pid=202" alt="topic" title="body_constraints::linkcopy_patterns">
+<area shape = "circle" coords="604,333,55" href="knowledge.php?pid=2506" alt="topic" title="body_constraints::purge">
+<area shape = "circle" coords="738,320,55" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="641,258,55" href="knowledge.php?pid=2511" alt="topic" title="body_constraints::trustkey">
+<area shape = "circle" coords="746,202,55" href="knowledge.php?pid=2490" alt="topic" title="body_constraints::encrypt">
+<area shape = "circle" coords="614,181,55" href="knowledge.php?pid=2515" alt="topic" title="body_constraints::verify">
+<area shape = "circle" coords="642,108,32" href="knowledge.php?pid=2510" alt="topic" title="body_constraints::timeout">
+<area shape = "circle" coords="528,125,55" href="knowledge.php?pid=2494" alt="topic" title="body_constraints::copylink_patterns">
+<area shape = "circle" coords="493,53,32" href="knowledge.php?pid=189" alt="topic" title="body_constraints::servers">
+<area shape = "circle" coords="410,106,55" href="knowledge.php?pid=2500" alt="topic" title="body_constraints::force_update">
+<area shape = "circle" coords="316,42,55" href="knowledge.php?pid=201" alt="topic" title="body_constraints::findertype">
+<area shape = "circle" coords="293,129,55" href="knowledge.php?pid=2504" alt="topic" title="body_constraints::portnumber">
+<area shape = "circle" coords="162,106,55" href="knowledge.php?pid=211" alt="topic" title="body_constraints::preserve">
+<area shape = "circle" coords="212,188,55" href="knowledge.php?pid=2508" alt="topic" title="body_constraints::stealth">
+<area shape = "circle" coords="82,213,55" href="knowledge.php?pid=2489" alt="topic" title="body_constraints::compare">
+<area shape = "circle" coords="190,266,55" href="knowledge.php?pid=2513" alt="topic" title="body_constraints::type_check">
+<area shape = "circle" coords="99,331,55" href="knowledge.php?pid=2492" alt="topic" title="body_constraints::check_root">
+<area shape = "circle" coords="415,252,52" href="knowledge.php?pid=2487" alt="topic" title="body_constraints::copy_from">
+<area shape = "circle" coords="52,427,55" href="knowledge.php?pid=190" alt="topic" title="body_constraints::collapse_destination_dir">
+</map>

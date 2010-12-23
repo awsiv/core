@@ -1,0 +1,27 @@
+<img src="graphs/332.png" USEMAP="#knowledge_system" alt="promise_types::interfaces image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="605,161,35" href="knowledge.php?pid=47" alt="topic" title="values::a cfengine identifier">
+<area shape = "circle" coords="610,89,35" href="knowledge.php?pid=49" alt="topic" title="values::a file path">
+<area shape = "circle" coords="539,120,35" href="knowledge.php?pid=51" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="496,59,35" href="knowledge.php?pid=410" alt="topic" title="body_constraints::process_result">
+<area shape = "circle" coords="461,124,35" href="knowledge.php?pid=440" alt="topic" title="body_constraints::freespace">
+<area shape = "circle" coords="386,101,35" href="knowledge.php?pid=495" alt="topic" title="functions::canonify">
+<area shape = "circle" coords="401,173,35" href="knowledge.php?pid=522" alt="topic" title="functions::lastnode">
+<area shape = "circle" coords="327,197,35" href="knowledge.php?pid=529" alt="topic" title="functions::peerleader">
+<area shape = "circle" coords="386,244,35" href="knowledge.php?pid=539" alt="topic" title="functions::readtcp">
+<area shape = "circle" coords="156,281,30" href="knowledge.php?pid=335" alt="topic" title="body_constraints::ipv4_netmask">
+<area shape = "circle" coords="109,417,30" href="knowledge.php?pid=332" alt="topic" title="promise_types::interfaces">
+<area shape = "circle" coords="256,460,30" href="knowledge.php?pid=336" alt="topic" title="body_constraints::ipv6_address">
+<area shape = "circle" coords="206,371,30" href="knowledge.php?pid=333" alt="topic" title="body_constraints::tcp_ip">
+<area shape = "circle" coords="352,302,30" href="knowledge.php?pid=334" alt="topic" title="body_constraints::ipv4_address">
+<area shape = "circle" coords="423,309,35" href="knowledge.php?pid=48" alt="topic" title="values::a user/group id">
+<area shape = "circle" coords="430,381,35" href="knowledge.php?pid=50" alt="topic" title="values::a syslog level">
+<area shape = "circle" coords="495,340,35" href="knowledge.php?pid=246" alt="topic" title="body_constraints::file_result">
+<area shape = "circle" coords="548,393,35" href="knowledge.php?pid=423" alt="topic" title="body_constraints::restart_class">
+<area shape = "circle" coords="571,323,35" href="knowledge.php?pid=479" alt="topic" title="values::handle">
+<area shape = "circle" coords="649,335,35" href="knowledge.php?pid=501" alt="topic" title="functions::execresult">
+<area shape = "circle" coords="621,266,35" href="knowledge.php?pid=525" alt="topic" title="functions::ldapvalue">
+<area shape = "circle" coords="690,231,35" href="knowledge.php?pid=532" alt="topic" title="functions::readfile">
+<area shape = "circle" coords="623,194,35" href="knowledge.php?pid=542" alt="topic" title="functions::registryvalue">
+<area shape = "circle" coords="507,228,55" href="knowledge.php?pid=697" alt="topic" title="cfengine_3::string">
+</map>

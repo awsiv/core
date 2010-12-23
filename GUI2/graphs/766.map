@@ -1,0 +1,23 @@
+<img src="graphs/766.png" USEMAP="#knowledge_system" alt="operating_systems::slackware image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="606,90,40" href="knowledge.php?pid=468" alt="topic" title="body_constraints::data_type">
+<area shape = "circle" coords="396,59,40" href="knowledge.php?pid=467" alt="topic" title="body_constraints::stream_type">
+<area shape = "circle" coords="228,160,40" href="knowledge.php?pid=973" alt="topic" title="promisers::/proc/meminfo">
+<area shape = "circle" coords="207,251,40" href="knowledge.php?pid=976" alt="topic" title="promises::apache_watch_cpu">
+<area shape = "circle" coords="107,293,30" href="knowledge.php?pid=766" alt="topic" title="operating_systems::slackware">
+<area shape = "circle" coords="61,349,30" href="knowledge.php?pid=758" alt="topic" title="operating_systems::distro">
+<area shape = "circle" coords="78,408,36" href="knowledge.php?pid=762" alt="topic" title="operating_systems::ubuntu">
+<area shape = "circle" coords="153,458,36" href="knowledge.php?pid=764" alt="topic" title="operating_systems::redhat">
+<area shape = "circle" coords="273,489,36" href="knowledge.php?pid=767" alt="topic" title="operating_systems::gentoo">
+<area shape = "circle" coords="414,496,45" href="knowledge.php?pid=981" alt="topic" title="promises::promise_site_cf_300">
+<area shape = "circle" coords="546,476,40" href="knowledge.php?pid=979" alt="topic" title="promises::free_disk_watch">
+<area shape = "circle" coords="645,434,30" href="knowledge.php?pid=747" alt="topic" title="operating_systems::gnu/linux">
+<area shape = "circle" coords="691,378,36" href="knowledge.php?pid=761" alt="topic" title="operating_systems::suse">
+<area shape = "circle" coords="675,319,36" href="knowledge.php?pid=763" alt="topic" title="operating_systems::fedora">
+<area shape = "circle" coords="599,269,36" href="knowledge.php?pid=765" alt="topic" title="operating_systems::debian">
+<area shape = "circle" coords="480,237,36" href="knowledge.php?pid=977" alt="topic" title="promises::apache_watch_memory">
+<area shape = "circle" coords="377,363,35" href="knowledge.php?pid=972" alt="topic" title="contexts::linux">
+<area shape = "circle" coords="325,178,52" href="knowledge.php?pid=974" alt="topic" title="promises::free_memory_watch">
+<area shape = "circle" coords="618,183,40" href="knowledge.php?pid=469" alt="topic" title="body_constraints::history_type">
+<area shape = "circle" coords="507,121,55" href="knowledge.php?pid=970" alt="topic" title="promise_types::measurements">
+</map>

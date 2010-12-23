@@ -1,0 +1,21 @@
+<img src="graphs/3692.png" USEMAP="#knowledge_system" alt="class_contexts::kn_update image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="603,157,30" href="knowledge.php?pid=14" alt="topic" title="system_reports::file_changes report">
+<area shape = "circle" coords="583,84,30" href="knowledge.php?pid=26" alt="topic" title="system_reports::setuid report">
+<area shape = "circle" coords="496,118,30" href="knowledge.php?pid=837" alt="topic" title="cfengine_components::cfengine 2">
+<area shape = "circle" coords="404,89,30" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="392,163,30" href="knowledge.php?pid=2487" alt="topic" title="body_constraints::copy_from">
+<area shape = "circle" coords="307,203,30" href="knowledge.php?pid=2517" alt="topic" title="body_constraints::delete">
+<area shape = "circle" coords="209,221,30" href="knowledge.php?pid=3688" alt="topic" title="promisers::/var/www/db_stamp">
+<area shape = "circle" coords="115,465,30" href="knowledge.php?pid=3743" alt="topic" title="promises::knowledge_commands_cf_know_sg">
+<area shape = "circle" coords="428,495,30" href="knowledge.php?pid=3739" alt="topic" title="handles::knowledge_commands_cf_promise_r">
+<area shape = "circle" coords="283,412,30" href="knowledge.php?pid=3692" alt="topic" title="class_contexts::kn_update">
+<area shape = "circle" coords="306,276,30" href="knowledge.php?pid=3694" alt="topic" title="handles::knowledge_files_touch_db_stamp">
+<area shape = "circle" coords="377,327,30" href="knowledge.php?pid=15" alt="topic" title="system_reports::file_diffs report">
+<area shape = "circle" coords="474,310,30" href="knowledge.php?pid=29" alt="topic" title="system_reports::hashes report">
+<area shape = "circle" coords="553,355,30" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="589,285,30" href="knowledge.php?pid=2483" alt="topic" title="body_constraints::changes">
+<area shape = "circle" coords="683,261,30" href="knowledge.php?pid=2516" alt="topic" title="body_constraints::create">
+<area shape = "circle" coords="627,200,30" href="knowledge.php?pid=2518" alt="topic" title="body_constraints::depth_search">
+<area shape = "circle" coords="500,215,55" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+</map>

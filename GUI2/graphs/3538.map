@@ -1,0 +1,27 @@
+<img src="graphs/3538.png" USEMAP="#knowledge_system" alt="class_contexts::!windows.am_policy_hub.start_mongod image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="302,507,30" href="knowledge.php?pid=2964" alt="topic" title="class_contexts::windows">
+<area shape = "circle" coords="475,435,30" href="knowledge.php?pid=3538" alt="topic" title="class_contexts::!windows.am_policy_hub.start_mongod">
+<area shape = "circle" coords="394,372,30" href="knowledge.php?pid=3224" alt="topic" title="promisers::/usr/sbin/a2ensite ssl">
+<area shape = "circle" coords="489,363,30" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="572,338,30" href="knowledge.php?pid=3166" alt="topic" title="handles::cfengine_php_mod_commands_httpd_redhat">
+<area shape = "circle" coords="635,301,30" href="knowledge.php?pid=2443" alt="topic" title="body_constraints::contain">
+<area shape = "circle" coords="671,256,30" href="knowledge.php?pid=3170" alt="topic" title="handles::cfengine_php_mod_commands_apache2_debian">
+<area shape = "circle" coords="676,207,30" href="knowledge.php?pid=2960" alt="topic" title="bundles::cfengine_processes">
+<area shape = "circle" coords="650,159,30" href="knowledge.php?pid=3216" alt="topic" title="promisers::/usr/sbin/a2enmod php5 ssl">
+<area shape = "circle" coords="595,119,30" href="knowledge.php?pid=3001" alt="topic" title="handles::cfengine_processes_commands_cf_execd">
+<area shape = "circle" coords="518,90,30" href="knowledge.php?pid=3220" alt="topic" title="promisers::/usr/sbin/a2enmod ssl && /usr/sbin/a2enflag SSL && /usr/bin/gensslcert">
+<area shape = "circle" coords="426,75,30" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="330,77,30" href="knowledge.php?pid=3164" alt="topic" title="promisers::/etc/init.d/httpd restart">
+<area shape = "circle" coords="240,94,30" href="knowledge.php?pid=2442" alt="topic" title="body_constraints::args">
+<area shape = "circle" coords="166,125,30" href="knowledge.php?pid=3168" alt="topic" title="promisers::/etc/init.d/apache2 restart">
+<area shape = "circle" coords="116,167,30" href="knowledge.php?pid=2864" alt="topic" title="manual::module">
+<area shape = "circle" coords="95,215,30" href="knowledge.php?pid=3174" alt="topic" title="bundles::cfengine_policysrv">
+<area shape = "circle" coords="106,264,30" href="knowledge.php?pid=2999" alt="topic" title="promisers::"/var/cfengine/bin/cf-execd"">
+<area shape = "circle" coords="147,308,30" href="knowledge.php?pid=3218" alt="topic" title="handles::cfengine_policysrv_commands_a2enmod_debian">
+<area shape = "circle" coords="214,343,30" href="knowledge.php?pid=3046" alt="topic" title="bundles::cfengine_php_mod">
+<area shape = "circle" coords="386,223,30" href="knowledge.php?pid=2441" alt="topic" title="promise_types::commands">
+<area shape = "circle" coords="77,372,30" href="knowledge.php?pid=3509" alt="topic" title="class_contexts::am_policy_hub">
+<area shape = "circle" coords="256,437,30" href="knowledge.php?pid=3541" alt="topic" title="handles::update_commands_start_mongod">
+<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=3539" alt="topic" title="promisers::/var/cfengine/bin/mongod --fork --logpath /var/log/mongod.log --dbpath /var/cfengine/state > /dev/null < /dev/null 2>&1">
+</map>

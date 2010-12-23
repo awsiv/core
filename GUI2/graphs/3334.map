@@ -1,0 +1,27 @@
+<img src="graphs/3334.png" USEMAP="#knowledge_system" alt="class_contexts::debian image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="108,482,38" href="knowledge.php?pid=908" alt="topic" title="operating_systems::ubuntu">
+<area shape = "circle" coords="148,432,33" href="knowledge.php?pid=2834" alt="topic" title="commands_and_tools::apt-get">
+<area shape = "circle" coords="171,473,52" href="knowledge.php?pid=3170" alt="topic" title="handles::cfengine_php_mod_commands_apache2_debian">
+<area shape = "circle" coords="210,442,52" href="knowledge.php?pid=3214" alt="topic" title="promises::cfengine_policysrv_packages_install_package_debian">
+<area shape = "circle" coords="264,456,52" href="knowledge.php?pid=3233" alt="topic" title="promises::cfengine_policysrv_files_ssl">
+<area shape = "circle" coords="261,413,52" href="knowledge.php?pid=3260" alt="topic" title="handles::cfengine_web_server_processes_mysqld_on_debian">
+<area shape = "circle" coords="313,395,52" href="knowledge.php?pid=3684" alt="topic" title="handles::knowledge_vars_flavour_debian">
+<area shape = "circle" coords="270,366,52" href="knowledge.php?pid=3705" alt="topic" title="handles::knowledge_files_doc_root_debian">
+<area shape = "circle" coords="464,402,45" href="knowledge.php?pid=913" alt="topic" title="operating_systems::gentoo">
+<area shape = "circle" coords="653,340,45" href="knowledge.php?pid=904" alt="topic" title="operating_systems::distro">
+<area shape = "circle" coords="706,190,45" href="knowledge.php?pid=912" alt="topic" title="operating_systems::slackware">
+<area shape = "circle" coords="582,67,45" href="knowledge.php?pid=893" alt="topic" title="operating_systems::gnu/linux">
+<area shape = "circle" coords="375,62,45" href="knowledge.php?pid=909" alt="topic" title="operating_systems::fedora">
+<area shape = "circle" coords="241,179,45" href="knowledge.php?pid=907" alt="topic" title="operating_systems::suse">
+<area shape = "circle" coords="471,224,39" href="knowledge.php?pid=3016" alt="topic" title="class_contexts::linux">
+<area shape = "circle" coords="230,330,32" href="knowledge.php?pid=2835" alt="topic" title="commands_and_tools::dpkg">
+<area shape = "circle" coords="207,288,52" href="knowledge.php?pid=3184" alt="topic" title="handles::cfengine_policysrv_vars_match_package_debian">
+<area shape = "circle" coords="169,321,52" href="knowledge.php?pid=3229" alt="topic" title="handles::cfengine_policysrv_file_tidy_index_html">
+<area shape = "circle" coords="114,306,52" href="knowledge.php?pid=3257" alt="topic" title="handles::cfengine_web_server_processes_apache_on_debian">
+<area shape = "circle" coords="117,349,52" href="knowledge.php?pid=3336" alt="topic" title="handles::cfengine_editor_vars_web_owner_debian">
+<area shape = "circle" coords="65,368,52" href="knowledge.php?pid=3702" alt="topic" title="handles::knowledge_files_mysql_sock_debian">
+<area shape = "circle" coords="106,397,55" href="knowledge.php?pid=3708" alt="topic" title="handles::knowledge_files_cfagent_dir_debian">
+<area shape = "circle" coords="189,381,52" href="knowledge.php?pid=3334" alt="topic" title="class_contexts::debian">
+<area shape = "circle" coords="52,457,55" href="knowledge.php?pid=3338" alt="topic" title="handles::cfengine_editor_vars_web_group_debian">
+</map>

@@ -1,0 +1,30 @@
+<img src="graphs/941.png" USEMAP="#knowledge_system" alt="contexts::!up_and_running image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="247,402,30" href="knowledge.php?pid=69" alt="topic" title="body_constraints::friend_pattern">
+<area shape = "circle" coords="265,462,30" href="knowledge.php?pid=77" alt="topic" title="body_constraints::showstate">
+<area shape = "circle" coords="327,420,30" href="knowledge.php?pid=659" alt="topic" title="technical_concepts::intermittency">
+<area shape = "circle" coords="391,461,30" href="knowledge.php?pid=827" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="407,401,30" href="knowledge.php?pid=980" alt="topic" title="promisers::I am alive">
+<area shape = "circle" coords="492,407,30" href="knowledge.php?pid=982" alt="topic" title="bundles::anomalies">
+<area shape = "circle" coords="455,351,30" href="knowledge.php?pid=996" alt="topic" title="promises::promise_site_cf_338">
+<area shape = "circle" coords="529,320,30" href="knowledge.php?pid=999" alt="topic" title="promises::promise_site_cf_345">
+<area shape = "circle" coords="454,290,30" href="knowledge.php?pid=1002" alt="topic" title="promises::promise_site_cf_352">
+<area shape = "circle" coords="676,292,30" href="knowledge.php?pid=941" alt="topic" title="contexts::!up_and_running">
+<area shape = "circle" coords="465,87,30" href="knowledge.php?pid=942" alt="topic" title="promisers::Laptop wakes up">
+<area shape = "circle" coords="489,234,30" href="knowledge.php?pid=944" alt="topic" title="promises::promise_site_cf_100">
+<area shape = "circle" coords="404,242,30" href="knowledge.php?pid=76" alt="topic" title="body_constraints::report_to_file">
+<area shape = "circle" coords="386,181,30" href="knowledge.php?pid=644" alt="topic" title="security::lastseen">
+<area shape = "circle" coords="324,224,30" href="knowledge.php?pid=692" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="260,182,30" href="knowledge.php?pid=967" alt="topic" title="bundles::watch">
+<area shape = "circle" coords="245,243,30" href="knowledge.php?pid=981" alt="topic" title="promises::promise_site_cf_300">
+<area shape = "circle" coords="160,237,30" href="knowledge.php?pid=995" alt="topic" title="promisers::RootProc anomaly high 2 dev on $(mon.host) at Thu Sep 24 15:54:43 2009 
+    measured value 115 av $(mon.average_rootprocs) pm $(mon.stddev_rootprocs)">
+<area shape = "circle" coords="196,293,30" href="knowledge.php?pid=998" alt="topic" title="promisers::HIGH ENTROPY Incoming www anomaly high anomaly dev!! on $(mon.host) at Thu Sep 24 15:54:43 2009 
+    - measured value 0 av $(mon.average_www_in) pm $(mon.stddev_www_in)">
+<area shape = "circle" coords="123,324,30" href="knowledge.php?pid=1001" alt="topic" title="promisers::LOW ENTROPY Incoming www anomaly high anomaly dev!! on $(mon.host) at Thu Sep 24 15:54:43 2009
+     - measured value $(svalue_www_in) av $(average_www_in) pm $(stddev_www_in)">
+<area shape = "circle" coords="197,353,30" href="knowledge.php?pid=1004" alt="topic" title="promisers::Anomalous number of new TCP connections on $(mon.host) at Thu Sep 24 15:54:43 2009 
+    - measured value 0 av $(mon.average_tcpsyn_in) pm $(mon.stddev_tcpsyn_in)">
+<area shape = "circle" coords="326,322,30" href="knowledge.php?pid=943" alt="topic" title="promise_types::reports">
+<area shape = "circle" coords="136,424,55" href="knowledge.php?pid=72" alt="topic" title="body_constraints::printfile">
+</map>

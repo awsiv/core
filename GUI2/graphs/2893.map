@@ -1,0 +1,27 @@
+<img src="graphs/2893.png" USEMAP="#knowledge_system" alt="manual::printfile (compound body) image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="629,155,35" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="634,86,35" href="knowledge.php?pid=2410" alt="topic" title="body_constraints::friend_pattern">
+<area shape = "circle" coords="575,115,35" href="knowledge.php?pid=2412" alt="topic" title="body_constraints::lastseen">
+<area shape = "circle" coords="540,58,35" href="knowledge.php?pid=2415" alt="topic" title="body_constraints::showstate">
+<area shape = "circle" coords="511,120,35" href="knowledge.php?pid=3008" alt="topic" title="promisers::Reloaded configuration of all Cfengine components">
+<area shape = "circle" coords="449,98,35" href="knowledge.php?pid=3237" alt="topic" title="bundles::cfengine_web_server">
+<area shape = "circle" coords="462,166,35" href="knowledge.php?pid=3312" alt="topic" title="handles::cfengine_web_server_reports_have_selinux">
+<area shape = "circle" coords="401,189,35" href="knowledge.php?pid=3485" alt="topic" title="promisers::An update for Cfengine binaries is downloaded, installing...">
+<area shape = "circle" coords="450,233,35" href="knowledge.php?pid=3489" alt="topic" title="promisers::Successfully installed Cfengine binaries">
+<area shape = "circle" coords="298,248,30" href="knowledge.php?pid=2893" alt="topic" title="manual::printfile (compound body)">
+<area shape = "circle" coords="99,463,30" href="knowledge.php?pid=45" alt="topic" title="values::a positive integer">
+<area shape = "circle" coords="219,398,30" href="knowledge.php?pid=78" alt="topic" title="body_constraints::number_of_lines">
+<area shape = "circle" coords="380,417,30" href="knowledge.php?pid=77" alt="topic" title="body_constraints::file_to_print">
+<area shape = "circle" coords="339,332,30" href="knowledge.php?pid=2413" alt="topic" title="body_constraints::printfile">
+<area shape = "circle" coords="480,295,35" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="486,363,35" href="knowledge.php?pid=2411" alt="topic" title="body_constraints::intermittency">
+<area shape = "circle" coords="539,324,35" href="knowledge.php?pid=2414" alt="topic" title="body_constraints::report_to_file">
+<area shape = "circle" coords="582,374,35" href="knowledge.php?pid=2960" alt="topic" title="bundles::cfengine_processes">
+<area shape = "circle" coords="602,308,35" href="knowledge.php?pid=3010" alt="topic" title="handles::cfengine_processes_reports">
+<area shape = "circle" coords="666,319,35" href="knowledge.php?pid=3310" alt="topic" title="promisers:: NB - Disabling SELinux to allow PHP to function">
+<area shape = "circle" coords="643,254,35" href="knowledge.php?pid=3427" alt="topic" title="bundles::update_bins">
+<area shape = "circle" coords="700,221,35" href="knowledge.php?pid=3487" alt="topic" title="handles::update_bins_reports_installation">
+<area shape = "circle" coords="645,186,35" href="knowledge.php?pid=3491" alt="topic" title="handles::update_bins_reports_finish">
+<area shape = "circle" coords="549,218,55" href="knowledge.php?pid=2409" alt="topic" title="promise_types::reports">
+</map>

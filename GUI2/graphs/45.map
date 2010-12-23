@@ -1,0 +1,27 @@
+<img src="graphs/45.png" USEMAP="#knowledge_system" alt="values::a positive integer image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="683,85,44" href="knowledge.php?pid=2760" alt="topic" title="values::classes">
+<area shape = "circle" coords="326,255,46" href="knowledge.php?pid=2535" alt="topic" title="body_constraints::max_file_size">
+<area shape = "circle" coords="313,198,46" href="knowledge.php?pid=164" alt="topic" title="body_constraints::env_cpus">
+<area shape = "circle" coords="258,237,46" href="knowledge.php?pid=2686" alt="topic" title="body_constraints::pid">
+<area shape = "circle" coords="206,195,46" href="knowledge.php?pid=449" alt="topic" title="body_constraints::rsize">
+<area shape = "circle" coords="189,252,46" href="knowledge.php?pid=2690" alt="topic" title="body_constraints::ppid">
+<area shape = "circle" coords="116,240,46" href="knowledge.php?pid=2412" alt="topic" title="body_constraints::lastseen">
+<area shape = "circle" coords="143,294,46" href="knowledge.php?pid=2702" alt="topic" title="body_constraints::vsize">
+<area shape = "circle" coords="73,316,46" href="knowledge.php?pid=2419" alt="topic" title="body_constraints::expireafter">
+<area shape = "circle" coords="135,349,46" href="knowledge.php?pid=2754" alt="topic" title="body_constraints::select_line_number">
+<area shape = "circle" coords="94,397,46" href="knowledge.php?pid=2476" alt="topic" title="body_constraints::env_disk">
+<area shape = "circle" coords="83,464,34" href="knowledge.php?pid=2413" alt="topic" title="body_constraints::printfile">
+<area shape = "circle" coords="169,398,32" href="knowledge.php?pid=78" alt="topic" title="body_constraints::number_of_lines">
+<area shape = "circle" coords="170,456,46" href="knowledge.php?pid=2681" alt="topic" title="body_constraints::match_range">
+<area shape = "circle" coords="232,423,46" href="knowledge.php?pid=228" alt="topic" title="body_constraints::depth">
+<area shape = "circle" coords="275,471,46" href="knowledge.php?pid=2688" alt="topic" title="body_constraints::pgid">
+<area shape = "circle" coords="303,417,46" href="knowledge.php?pid=487" alt="topic" title="body_constraints::sensible_size">
+<area shape = "circle" coords="373,437,46" href="knowledge.php?pid=2700" alt="topic" title="body_constraints::threads">
+<area shape = "circle" coords="357,381,46" href="knowledge.php?pid=2417" alt="topic" title="body_constraints::ifelapsed">
+<area shape = "circle" coords="430,367,46" href="knowledge.php?pid=2724" alt="topic" title="body_constraints::sensible_count">
+<area shape = "circle" coords="375,327,46" href="knowledge.php?pid=2474" alt="topic" title="body_constraints::env_memory">
+<area shape = "circle" coords="426,284,46" href="knowledge.php?pid=2768" alt="topic" title="data_types::int">
+<area shape = "circle" coords="254,331,51" href="knowledge.php?pid=45" alt="topic" title="values::a positive integer">
+<area shape = "circle" coords="566,152,55" href="knowledge.php?pid=116" alt="topic" title="body_constraints::persist_time">
+</map>

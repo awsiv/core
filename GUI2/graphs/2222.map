@@ -1,0 +1,5 @@
+<img src="graphs/2222.png" USEMAP="#knowledge_system" alt="Special_Topics_Guide::ITIL image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="517,227,55" href="knowledge.php?pid=734" alt="topic" title="compliance::ISO/IEC 20000">
+<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=2222" alt="topic" title="Special_Topics_Guide::ITIL">
+</map>

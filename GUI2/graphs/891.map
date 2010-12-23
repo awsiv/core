@@ -1,0 +1,17 @@
+<img src="graphs/891.png" USEMAP="#knowledge_system" alt="mission_status::system outputs image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="709,329,42" href="knowledge.php?pid=24" alt="topic" title="system_reports::installed patches report">
+<area shape = "circle" coords="361,157,54" href="knowledge.php?pid=873" alt="topic" title="system_knowledge::mission status">
+<area shape = "circle" coords="316,76,46" href="knowledge.php?pid=20" alt="topic" title="system_reports::performance report">
+<area shape = "circle" coords="234,38,46" href="knowledge.php?pid=869" alt="topic" title="system_knowledge::copernicus">
+<area shape = "circle" coords="148,59,40" href="knowledge.php?pid=658" alt="topic" title="technical_concepts::faults">
+<area shape = "circle" coords="89,130,54" href="knowledge.php?pid=18" alt="topic" title="system_reports::lastseen report">
+<area shape = "circle" coords="81,224,30" href="knowledge.php?pid=891" alt="topic" title="mission_status::system outputs">
+<area shape = "circle" coords="126,305,46" href="knowledge.php?pid=21" alt="topic" title="system_reports::promise report">
+<area shape = "circle" coords="208,342,46" href="knowledge.php?pid=888" alt="topic" title="mission_status::system policy">
+<area shape = "circle" coords="294,322,40" href="knowledge.php?pid=890" alt="topic" title="mission_status::host portal">
+<area shape = "circle" coords="221,190,39" href="knowledge.php?pid=876" alt="topic" title="views::operator view">
+<area shape = "circle" coords="513,325,52" href="knowledge.php?pid=17" alt="topic" title="system_reports::installed software report">
+<area shape = "circle" coords="650,473,42" href="knowledge.php?pid=25" alt="topic" title="system_reports::available patches report">
+<area shape = "circle" coords="641,383,55" href="knowledge.php?pid=960" alt="topic" title="promise_types::packages">
+</map>

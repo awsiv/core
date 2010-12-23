@@ -1,0 +1,27 @@
+<img src="graphs/247.png" USEMAP="#knowledge_system" alt="body_constraints::link_from image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="605,144,37" href="knowledge.php?pid=199" alt="topic" title="body_constraints::delete">
+<area shape = "circle" coords="580,76,37" href="knowledge.php?pid=15" alt="topic" title="system_reports::file_changes report">
+<area shape = "circle" coords="493,109,37" href="knowledge.php?pid=216" alt="topic" title="body_constraints::edit_line">
+<area shape = "circle" coords="397,91,37" href="knowledge.php?pid=22" alt="topic" title="system_reports::setuid report">
+<area shape = "circle" coords="395,161,37" href="knowledge.php?pid=218" alt="topic" title="body_constraints::edit_defaults">
+<area shape = "circle" coords="324,210,37" href="knowledge.php?pid=198" alt="topic" title="body_constraints::create">
+<area shape = "circle" coords="358,199,31" href="knowledge.php?pid=257" alt="topic" title="body_constraints::when_no_source">
+<area shape = "circle" coords="108,127,30" href="knowledge.php?pid=51" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="232,201,30" href="knowledge.php?pid=248" alt="topic" title="body_constraints::copy_patterns">
+<area shape = "circle" coords="249,289,31" href="knowledge.php?pid=256" alt="topic" title="body_constraints::when_linking_children">
+<area shape = "circle" coords="118,381,30" href="knowledge.php?pid=162" alt="topic" title="body_constraints::copy_from">
+<area shape = "circle" coords="366,473,30" href="knowledge.php?pid=39" alt="topic" title="values::link type">
+<area shape = "circle" coords="280,376,30" href="knowledge.php?pid=252" alt="topic" title="body_constraints::link_type">
+<area shape = "circle" coords="442,415,31" href="knowledge.php?pid=49" alt="topic" title="values::a file path">
+<area shape = "circle" coords="398,345,32" href="knowledge.php?pid=254" alt="topic" title="body_constraints::source">
+<area shape = "circle" coords="667,333,30" href="knowledge.php?pid=38" alt="topic" title="values::boolean">
+<area shape = "circle" coords="510,304,30" href="knowledge.php?pid=250" alt="topic" title="body_constraints::link_children">
+<area shape = "circle" coords="355,275,30" href="knowledge.php?pid=247" alt="topic" title="body_constraints::link_from">
+<area shape = "circle" coords="434,314,37" href="knowledge.php?pid=202" alt="topic" title="body_constraints::depth_search">
+<area shape = "circle" coords="521,281,37" href="knowledge.php?pid=16" alt="topic" title="system_reports::hashes report">
+<area shape = "circle" coords="617,299,37" href="knowledge.php?pid=217" alt="topic" title="body_constraints::edit_xml">
+<area shape = "circle" coords="619,229,37" href="knowledge.php?pid=158" alt="topic" title="body_constraints::changes">
+<area shape = "circle" coords="690,180,37" href="knowledge.php?pid=223" alt="topic" title="body_constraints::file_select">
+<area shape = "circle" coords="507,195,55" href="knowledge.php?pid=988" alt="topic" title="promise_types::files">
+</map>

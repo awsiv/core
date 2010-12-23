@@ -1,0 +1,17 @@
+<img src="graphs/908.png" USEMAP="#knowledge_system" alt="operating_systems::ubuntu image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="587,171,37" href="knowledge.php?pid=3338" alt="topic" title="handles::cfengine_editor_vars_web_group_debian">
+<area shape = "circle" coords="538,84,37" href="knowledge.php?pid=3170" alt="topic" title="handles::cfengine_php_mod_commands_apache2_debian">
+<area shape = "circle" coords="433,134,37" href="knowledge.php?pid=3257" alt="topic" title="handles::cfengine_web_server_processes_apache_on_debian">
+<area shape = "circle" coords="309,143,37" href="knowledge.php?pid=3214" alt="topic" title="promises::cfengine_policysrv_packages_install_package_debian">
+<area shape = "circle" coords="339,234,37" href="knowledge.php?pid=3336" alt="topic" title="handles::cfengine_editor_vars_web_owner_debian">
+<area shape = "circle" coords="115,339,30" href="knowledge.php?pid=2835" alt="topic" title="commands_and_tools::dpkg">
+<area shape = "circle" coords="239,465,30" href="knowledge.php?pid=3016" alt="topic" title="class_contexts::linux">
+<area shape = "circle" coords="225,375,30" href="knowledge.php?pid=908" alt="topic" title="operating_systems::ubuntu">
+<area shape = "circle" coords="322,320,30" href="knowledge.php?pid=2834" alt="topic" title="commands_and_tools::apt-get">
+<area shape = "circle" coords="436,332,37" href="knowledge.php?pid=3233" alt="topic" title="promises::cfengine_policysrv_files_ssl">
+<area shape = "circle" coords="543,381,37" href="knowledge.php?pid=3184" alt="topic" title="handles::cfengine_policysrv_vars_match_package_debian">
+<area shape = "circle" coords="589,293,37" href="knowledge.php?pid=3260" alt="topic" title="handles::cfengine_web_server_processes_mysqld_on_debian">
+<area shape = "circle" coords="684,232,37" href="knowledge.php?pid=3229" alt="topic" title="handles::cfengine_policysrv_file_tidy_index_html">
+<area shape = "circle" coords="477,233,55" href="knowledge.php?pid=3334" alt="topic" title="class_contexts::debian">
+</map>

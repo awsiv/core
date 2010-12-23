@@ -1,0 +1,19 @@
+<img src="graphs/47.png" USEMAP="#knowledge_system" alt="values::real number image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="622,150,38" href="knowledge.php?pid=2767" alt="topic" title="data_types::string">
+<area shape = "circle" coords="558,74,38" href="knowledge.php?pid=812" alt="topic" title="technical_concepts::variables">
+<area shape = "circle" coords="470,132,38" href="knowledge.php?pid=2770" alt="topic" title="data_types::slist">
+<area shape = "circle" coords="373,182,38" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="326,229,35" href="knowledge.php?pid=593" alt="topic" title="functions::product">
+<area shape = "circle" coords="199,263,30" href="knowledge.php?pid=2397" alt="topic" title="body_constraints::real">
+<area shape = "circle" coords="102,369,33" href="knowledge.php?pid=2772" alt="topic" title="data_types::rlist">
+<area shape = "circle" coords="202,474,38" href="knowledge.php?pid=2406" alt="topic" title="body_constraints::dist">
+<area shape = "circle" coords="361,432,31" href="knowledge.php?pid=2400" alt="topic" title="body_constraints::rlist">
+<area shape = "circle" coords="245,368,30" href="knowledge.php?pid=47" alt="topic" title="values::real number">
+<area shape = "circle" coords="439,348,35" href="knowledge.php?pid=619" alt="topic" title="functions::sum">
+<area shape = "circle" coords="382,288,44" href="knowledge.php?pid=2769" alt="topic" title="data_types::real">
+<area shape = "circle" coords="512,326,38" href="knowledge.php?pid=2768" alt="topic" title="data_types::int">
+<area shape = "circle" coords="600,268,38" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="697,218,38" href="knowledge.php?pid=2771" alt="topic" title="data_types::ilist">
+<area shape = "circle" coords="535,200,55" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+</map>

@@ -1,0 +1,12 @@
+<img src="graphs/690.png" USEMAP="#knowledge_system" alt="cfengine_components::cfengine 1 image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="677,169,41" href="knowledge.php?pid=892" alt="topic" title="bundles::update">
+<area shape = "circle" coords="476,82,41" href="knowledge.php?pid=938" alt="topic" title="bundles::main">
+<area shape = "circle" coords="249,158,30" href="knowledge.php?pid=675" alt="topic" title="cfengine_components::cfservd">
+<area shape = "circle" coords="121,466,36" href="knowledge.php?pid=925" alt="topic" title="bundles::cfengine">
+<area shape = "circle" coords="219,350,30" href="knowledge.php?pid=690" alt="topic" title="cfengine_components::cfengine 1">
+<area shape = "circle" coords="316,233,31" href="knowledge.php?pid=681" alt="topic" title="cfengine_components::cfd">
+<area shape = "circle" coords="481,383,41" href="knowledge.php?pid=904" alt="topic" title="promises::promise_update_cf_29">
+<area shape = "circle" coords="679,293,41" href="knowledge.php?pid=947" alt="topic" title="promises::promise_site_cf_131">
+<area shape = "circle" coords="551,232,55" href="knowledge.php?pid=902" alt="topic" title="promisers::cf-serverd">
+</map>

@@ -1,0 +1,20 @@
+<img src="graphs/681.png" USEMAP="#knowledge_system" alt="cfengine_components::cfd image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="588,205,36" href="knowledge.php?pid=674" alt="topic" title="cfengine_components::cfagent">
+<area shape = "circle" coords="565,100,36" href="knowledge.php?pid=678" alt="topic" title="cfengine_components::cfrun">
+<area shape = "circle" coords="465,149,36" href="knowledge.php?pid=680" alt="topic" title="cfengine_components::cfenvgraph">
+<area shape = "circle" coords="361,107,36" href="knowledge.php?pid=714" alt="topic" title="cfengine_2::alerts">
+<area shape = "circle" coords="346,214,36" href="knowledge.php?pid=716" alt="topic" title="cfengine_2::broadcast">
+<area shape = "circle" coords="251,271,36" href="knowledge.php?pid=718" alt="topic" title="cfengine_2::defaultroute">
+<area shape = "circle" coords="120,312,30" href="knowledge.php?pid=690" alt="topic" title="cfengine_components::cfengine 1">
+<area shape = "circle" coords="207,508,30" href="knowledge.php?pid=902" alt="topic" title="promisers::cf-serverd">
+<area shape = "circle" coords="223,386,30" href="knowledge.php?pid=681" alt="topic" title="cfengine_components::cfd">
+<area shape = "circle" coords="342,339,30" href="knowledge.php?pid=675" alt="topic" title="cfengine_components::cfservd">
+<area shape = "circle" coords="330,449,36" href="knowledge.php?pid=677" alt="topic" title="cfengine_components::cfenvd">
+<area shape = "circle" coords="440,424,36" href="knowledge.php?pid=679" alt="topic" title="cfengine_components::cfshow">
+<area shape = "circle" coords="530,489,36" href="knowledge.php?pid=713" alt="topic" title="cfengine_2::acl">
+<area shape = "circle" coords="571,388,36" href="knowledge.php?pid=715" alt="topic" title="cfengine_2::binservers">
+<area shape = "circle" coords="679,355,36" href="knowledge.php?pid=717" alt="topic" title="cfengine_2::copy">
+<area shape = "circle" coords="615,267,36" href="knowledge.php?pid=719" alt="topic" title="cfengine_2::disks">
+<area shape = "circle" coords="470,288,55" href="knowledge.php?pid=691" alt="topic" title="cfengine_components::cfengine 2">
+</map>

@@ -1,0 +1,27 @@
+<img src="graphs/2877.png" USEMAP="#knowledge_system" alt="manual::location (compound body) image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="590,159,35" href="knowledge.php?pid=2602" alt="topic" title="body_constraints::expand_scalars">
+<area shape = "circle" coords="590,86,35" href="knowledge.php?pid=2604" alt="topic" title="body_constraints::insert_select">
+<area shape = "circle" coords="507,117,35" href="knowledge.php?pid=3575" alt="topic" title="promisers::$(lines)">
+<area shape = "circle" coords="447,64,35" href="knowledge.php?pid=3595" alt="topic" title="bundles::append_if_no_line">
+<area shape = "circle" coords="412,131,35" href="knowledge.php?pid=3597" alt="topic" title="promises::promise_cfengine_stdlib_cf_139">
+<area shape = "circle" coords="321,125,35" href="knowledge.php?pid=3599" alt="topic" title="promisers::$(list)">
+<area shape = "circle" coords="353,193,35" href="knowledge.php?pid=3601" alt="topic" title="bundles::resolvconf">
+<area shape = "circle" coords="280,236,35" href="knowledge.php?pid=3607" alt="topic" title="promises::promise_cfengine_stdlib_cf_168">
+<area shape = "circle" coords="276,203,30" href="knowledge.php?pid=345" alt="topic" title="body_constraints::before_after">
+<area shape = "circle" coords="115,272,30" href="knowledge.php?pid=2877" alt="topic" title="manual::location (compound body)">
+<area shape = "circle" coords="116,385,31" href="knowledge.php?pid=2752" alt="topic" title="body_constraints::match_value">
+<area shape = "circle" coords="300,463,31" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="236,382,32" href="knowledge.php?pid=347" alt="topic" title="body_constraints::select_line_matching">
+<area shape = "circle" coords="418,400,30" href="knowledge.php?pid=346" alt="topic" title="body_constraints::first_last">
+<area shape = "circle" coords="293,297,30" href="knowledge.php?pid=2615" alt="topic" title="body_constraints::location">
+<area shape = "circle" coords="345,342,35" href="knowledge.php?pid=2603" alt="topic" title="body_constraints::insert_type">
+<area shape = "circle" coords="433,323,35" href="knowledge.php?pid=2616" alt="topic" title="body_constraints::whitespace_policy">
+<area shape = "circle" coords="481,385,35" href="knowledge.php?pid=3577" alt="topic" title="promises::promise_cfengine_stdlib_cf_43">
+<area shape = "circle" coords="530,324,35" href="knowledge.php?pid=3596" alt="topic" title="promisers::$(str)">
+<area shape = "circle" coords="617,343,35" href="knowledge.php?pid=3598" alt="topic" title="bundles::append_if_no_lines">
+<area shape = "circle" coords="602,271,35" href="knowledge.php?pid=3600" alt="topic" title="promises::promise_cfengine_stdlib_cf_150">
+<area shape = "circle" coords="684,239,35" href="knowledge.php?pid=3606" alt="topic" title="promisers::search $(search)">
+<area shape = "circle" coords="612,195,35" href="knowledge.php?pid=3608" alt="topic" title="promisers::nameserver $(list)">
+<area shape = "circle" coords="482,223,55" href="knowledge.php?pid=3576" alt="topic" title="promise_types::insert_lines">
+</map>

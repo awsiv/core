@@ -1,0 +1,9 @@
+<img src="graphs/2842.png" USEMAP="#knowledge_system" alt="commands_and_tools::bison image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="682,209,42" href="knowledge.php?pid=2776" alt="topic" title="files::.a files">
+<area shape = "circle" coords="117,102,31" href="knowledge.php?pid=2775" alt="topic" title="files::.c files">
+<area shape = "circle" coords="231,152,45" href="knowledge.php?pid=2843" alt="topic" title="commands_and_tools::gcc">
+<area shape = "circle" coords="344,202,52" href="knowledge.php?pid=2779" alt="topic" title="files::.o files">
+<area shape = "circle" coords="581,447,42" href="knowledge.php?pid=2780" alt="topic" title="files::.so files">
+<area shape = "circle" coords="564,298,55" href="knowledge.php?pid=2844" alt="topic" title="commands_and_tools::ldd">
+</map>

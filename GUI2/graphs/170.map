@@ -1,0 +1,27 @@
+<img src="graphs/170.png" USEMAP="#knowledge_system" alt="body_constraints::encrypt image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="282,357,32" href="knowledge.php?pid=96" alt="topic" title="body_constraints::background">
+<area shape = "circle" coords="290,446,55" href="knowledge.php?pid=134" alt="topic" title="body_constraints::no_output">
+<area shape = "circle" coords="390,391,55" href="knowledge.php?pid=161" alt="topic" title="body_constraints::update_hashes">
+<area shape = "circle" coords="475,454,55" href="knowledge.php?pid=172" alt="topic" title="body_constraints::check_root">
+<area shape = "circle" coords="511,375,55" href="knowledge.php?pid=184" alt="topic" title="body_constraints::force_ipv4">
+<area shape = "circle" coords="639,400,55" href="knowledge.php?pid=189" alt="topic" title="body_constraints::purge">
+<area shape = "circle" coords="599,321,55" href="knowledge.php?pid=193" alt="topic" title="body_constraints::trustkey">
+<area shape = "circle" coords="729,299,55" href="knowledge.php?pid=197" alt="topic" title="body_constraints::verify">
+<area shape = "circle" coords="626,246,55" href="knowledge.php?pid=201" alt="topic" title="body_constraints::rmdirs">
+<area shape = "circle" coords="716,184,55" href="knowledge.php?pid=211" alt="topic" title="body_constraints::rmdeadlinks">
+<area shape = "circle" coords="737,102,30" href="knowledge.php?pid=162" alt="topic" title="body_constraints::copy_from">
+<area shape = "circle" coords="571,179,32" href="knowledge.php?pid=170" alt="topic" title="body_constraints::encrypt">
+<area shape = "circle" coords="605,91,55" href="knowledge.php?pid=132" alt="topic" title="body_constraints::preview">
+<area shape = "circle" coords="484,127,55" href="knowledge.php?pid=135" alt="topic" title="body_constraints::module">
+<area shape = "circle" coords="430,51,55" href="knowledge.php?pid=166" alt="topic" title="body_constraints::collapse_destination_dir">
+<area shape = "circle" coords="360,121,55" href="knowledge.php?pid=182" alt="topic" title="body_constraints::force_update">
+<area shape = "circle" coords="248,75,55" href="knowledge.php?pid=187" alt="topic" title="body_constraints::preserve">
+<area shape = "circle" coords="251,158,55" href="knowledge.php?pid=191" alt="topic" title="body_constraints::stealth">
+<area shape = "circle" coords="116,156,55" href="knowledge.php?pid=195" alt="topic" title="body_constraints::type_check">
+<area shape = "circle" coords="191,226,55" href="knowledge.php?pid=198" alt="topic" title="body_constraints::create">
+<area shape = "circle" coords="76,269,55" href="knowledge.php?pid=207" alt="topic" title="body_constraints::include_basedir">
+<area shape = "circle" coords="199,302,55" href="knowledge.php?pid=213" alt="topic" title="body_constraints::traverse_links">
+<area shape = "circle" coords="406,255,52" href="knowledge.php?pid=38" alt="topic" title="values::boolean">
+<area shape = "circle" coords="52,418,55" href="knowledge.php?pid=120" alt="topic" title="body_constraints::useshell">
+</map>

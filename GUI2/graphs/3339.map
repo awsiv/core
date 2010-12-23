@@ -1,0 +1,27 @@
+<img src="graphs/3339.png" USEMAP="#knowledge_system" alt="class_contexts::!windows.policy_host image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="223,320,55" href="knowledge.php?pid=3676" alt="topic" title="handles::knowledge_vars_group_suse">
+<area shape = "circle" coords="223,474,37" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="266,362,33" href="knowledge.php?pid=3655" alt="topic" title="handles::knowledge_vars_config_src">
+<area shape = "circle" coords="337,331,55" href="knowledge.php?pid=3717" alt="topic" title="handles::knowledge_files_doc_root_docs">
+<area shape = "circle" coords="433,354,55" href="knowledge.php?pid=3661" alt="topic" title="handles::knowledge_vars_icons">
+<area shape = "circle" coords="435,300,55" href="knowledge.php?pid=3723" alt="topic" title="handles::knowledge_files_doc_root_hub">
+<area shape = "circle" coords="538,285,55" href="knowledge.php?pid=3667" alt="topic" title="handles::knowledge_vars_owner_suse">
+<area shape = "circle" coords="467,244,55" href="knowledge.php?pid=3728" alt="topic" title="handles::knowledge_files_doc_root_docs_2">
+<area shape = "circle" coords="523,197,55" href="knowledge.php?pid=3673" alt="topic" title="handles::knowledge_vars_group_redhat">
+<area shape = "circle" coords="568,205,41" href="knowledge.php?pid=2908" alt="topic" title="class_contexts::policy_host">
+<area shape = "circle" coords="669,149,41" href="knowledge.php?pid=3340" alt="topic" title="promisers::/var/www/policies/.">
+<area shape = "circle" coords="625,76,41" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="480,59,41" href="knowledge.php?pid=2964" alt="topic" title="class_contexts::windows">
+<area shape = "circle" coords="379,115,44" href="knowledge.php?pid=3341" alt="topic" title="promisees::Cfengine Nova Editor">
+<area shape = "circle" coords="524,132,36" href="knowledge.php?pid=3343" alt="topic" title="handles::cfengine_editor_files_policies_dir">
+<area shape = "circle" coords="396,137,55" href="knowledge.php?pid=3679" alt="topic" title="handles::knowledge_vars_group_debian">
+<area shape = "circle" coords="309,175,32" href="knowledge.php?pid=3345" alt="topic" title="handles::cfengine_editor_files_policies_tidy">
+<area shape = "circle" coords="223,137,55" href="knowledge.php?pid=3720" alt="topic" title="handles::knowledge_files_doc_root_1">
+<area shape = "circle" coords="202,190,55" href="knowledge.php?pid=3664" alt="topic" title="handles::knowledge_vars_owner_redhat">
+<area shape = "circle" coords="95,196,55" href="knowledge.php?pid=3726" alt="topic" title="handles::knowledge_files_workdir_fonts">
+<area shape = "circle" coords="149,243,55" href="knowledge.php?pid=3670" alt="topic" title="handles::knowledge_vars_owner_debian">
+<area shape = "circle" coords="77,284,55" href="knowledge.php?pid=3732" alt="topic" title="handles::knowledge_files_doc_root_tidy">
+<area shape = "circle" coords="308,251,52" href="knowledge.php?pid=3339" alt="topic" title="class_contexts::!windows.policy_host">
+<area shape = "circle" coords="52,348,55" href="knowledge.php?pid=3658" alt="topic" title="handles::knowledge_vars_hosts">
+</map>

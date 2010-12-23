@@ -1,0 +1,14 @@
+<img src="graphs/803.png" USEMAP="#knowledge_system" alt="models_of_system_administration::self-healing image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="298,388,55" href="knowledge.php?pid=777" alt="topic" title="management_issues::business value">
+<area shape = "circle" coords="664,468,40" href="knowledge.php?pid=597" alt="topic" title="management_terminology::BDIM">
+<area shape = "circle" coords="484,386,33" href="knowledge.php?pid=653" alt="topic" title="technical_concepts::budget">
+<area shape = "circle" coords="459,287,55" href="knowledge.php?pid=656" alt="topic" title="technical_concepts::crises and fire fighting">
+<area shape = "circle" coords="650,184,43" href="knowledge.php?pid=802" alt="topic" title="models_of_system_administration::autonomics">
+<area shape = "circle" coords="287,81,43" href="knowledge.php?pid=801" alt="topic" title="models_of_system_administration::computer immunology">
+<area shape = "circle" coords="414,189,35" href="knowledge.php?pid=651" alt="topic" title="technical_concepts::reliability">
+<area shape = "circle" coords="240,225,55" href="knowledge.php?pid=655" alt="topic" title="technical_concepts::unusual operational behaviour">
+<area shape = "circle" coords="75,270,31" href="knowledge.php?pid=652" alt="topic" title="technical_concepts::availability">
+<area shape = "circle" coords="304,303,43" href="knowledge.php?pid=803" alt="topic" title="models_of_system_administration::self-healing">
+<area shape = "circle" coords="52,404,55" href="knowledge.php?pid=654" alt="topic" title="technical_concepts::normal operational behaviour">
+</map>

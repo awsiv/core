@@ -1,0 +1,23 @@
+<img src="graphs/3584.png" USEMAP="#knowledge_system" alt="bundles::comment_lines_containing image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="706,108,43" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="547,66,43" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="425,119,36" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="472,164,39" href="knowledge.php?pid=367" alt="topic" title="body_constraints::replace_value">
+<area shape = "circle" coords="403,166,44" href="knowledge.php?pid=3578" alt="topic" title="bundles::comment_lines_matching">
+<area shape = "circle" coords="283,153,44" href="knowledge.php?pid=3581" alt="topic" title="bundles::uncomment_lines_matching">
+<area shape = "circle" coords="169,186,38" href="knowledge.php?pid=3582" alt="topic" title="promisers::^$(comment)\s?($(regex))$">
+<area shape = "circle" coords="94,256,38" href="knowledge.php?pid=3586" alt="topic" title="promises::promise_cfengine_stdlib_cf_88">
+<area shape = "circle" coords="76,344,38" href="knowledge.php?pid=3588" alt="topic" title="promisers::^$(comment)\s?(.*$(regex).*)$">
+<area shape = "circle" coords="121,428,30" href="knowledge.php?pid=3584" alt="topic" title="bundles::comment_lines_containing">
+<area shape = "circle" coords="217,483,44" href="knowledge.php?pid=3580" alt="topic" title="promises::promise_cfengine_stdlib_cf_57">
+<area shape = "circle" coords="337,496,38" href="knowledge.php?pid=3579" alt="topic" title="promisers::^($(regex))$">
+<area shape = "circle" coords="451,463,38" href="knowledge.php?pid=3583" alt="topic" title="promises::promise_cfengine_stdlib_cf_73">
+<area shape = "circle" coords="526,393,38" href="knowledge.php?pid=3587" alt="topic" title="bundles::uncomment_lines_containing">
+<area shape = "circle" coords="544,304,38" href="knowledge.php?pid=3589" alt="topic" title="promises::promise_cfengine_stdlib_cf_104">
+<area shape = "circle" coords="310,324,36" href="knowledge.php?pid=364" alt="topic" title="promise_types::replace_patterns">
+<area shape = "circle" coords="565,257,34" href="knowledge.php?pid=2874" alt="topic" title="manual::replace_with (compound body)">
+<area shape = "circle" coords="518,210,32" href="knowledge.php?pid=2628" alt="topic" title="body_constraints::replace_with">
+<area shape = "circle" coords="715,232,43" href="knowledge.php?pid=997" alt="topic" title="promise_theory::topic-instances">
+<area shape = "circle" coords="631,149,55" href="knowledge.php?pid=2740" alt="topic" title="promise_types::occurrences">
+</map>

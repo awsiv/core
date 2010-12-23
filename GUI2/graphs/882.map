@@ -1,0 +1,18 @@
+<img src="graphs/882.png" USEMAP="#knowledge_system" alt="manager_view::request for change image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="695,186,39" href="knowledge.php?pid=15" alt="topic" title="system_reports::file_changes report">
+<area shape = "circle" coords="608,86,39" href="knowledge.php?pid=160" alt="topic" title="body_constraints::report_changes">
+<area shape = "circle" coords="516,180,39" href="knowledge.php?pid=639" alt="topic" title="security::hash">
+<area shape = "circle" coords="402,144,34" href="knowledge.php?pid=783" alt="topic" title="management_issues::identity management">
+<area shape = "circle" coords="234,176,34" href="knowledge.php?pid=594" alt="topic" title="compliance::SAS-70">
+<area shape = "circle" coords="327,207,37" href="knowledge.php?pid=592" alt="topic" title="compliance::SOX">
+<area shape = "circle" coords="104,220,30" href="knowledge.php?pid=821" alt="topic" title="promise_theory::promise proposals">
+<area shape = "circle" coords="152,463,31" href="knowledge.php?pid=818" alt="topic" title="promise_theory::intentions">
+<area shape = "circle" coords="201,327,30" href="knowledge.php?pid=882" alt="topic" title="manager_view::request for change">
+<area shape = "circle" coords="365,394,32" href="knowledge.php?pid=593" alt="topic" title="compliance::EUROSOX">
+<area shape = "circle" coords="346,300,31" href="knowledge.php?pid=790" alt="topic" title="management_issues::change management">
+<area shape = "circle" coords="550,350,39" href="knowledge.php?pid=16" alt="topic" title="system_reports::hashes report">
+<area shape = "circle" coords="672,404,39" href="knowledge.php?pid=161" alt="topic" title="body_constraints::update_hashes">
+<area shape = "circle" coords="714,280,39" href="knowledge.php?pid=988" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="603,252,55" href="knowledge.php?pid=158" alt="topic" title="body_constraints::changes">
+</map>

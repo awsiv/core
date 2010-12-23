@@ -1,0 +1,27 @@
+<img src="graphs/179.png" USEMAP="#knowledge_system" alt="body_constraints::acl_type image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="649,173,37" href="knowledge.php?pid=820" alt="topic" title="cfengine_components::cfagent">
+<area shape = "circle" coords="621,86,37" href="knowledge.php?pid=822" alt="topic" title="cfengine_components::cfexecd">
+<area shape = "circle" coords="547,132,37" href="knowledge.php?pid=824" alt="topic" title="cfengine_components::cfrun">
+<area shape = "circle" coords="461,123,37" href="knowledge.php?pid=826" alt="topic" title="cfengine_components::cfenvgraph">
+<area shape = "circle" coords="470,214,37" href="knowledge.php?pid=861" alt="topic" title="cfengine_2::binservers">
+<area shape = "circle" coords="404,251,30" href="knowledge.php?pid=179" alt="topic" title="body_constraints::acl_type">
+<area shape = "circle" coords="370,185,32" href="knowledge.php?pid=178" alt="topic" title="body_constraints::acl_method">
+<area shape = "circle" coords="317,236,32" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="246,234,32" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="261,308,32" href="knowledge.php?pid=2929" alt="topic" title="bundles::def">
+<area shape = "circle" coords="99,422,30" href="knowledge.php?pid=2770" alt="topic" title="data_types::slist">
+<area shape = "circle" coords="223,373,30" href="knowledge.php?pid=176" alt="topic" title="body_constraints::aces">
+<area shape = "circle" coords="291,397,30" href="knowledge.php?pid=177" alt="topic" title="body_constraints::acl_directory_inherit">
+<area shape = "circle" coords="326,464,32" href="knowledge.php?pid=180" alt="topic" title="body_constraints::specify_inherit_aces">
+<area shape = "circle" coords="379,413,32" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="450,414,32" href="knowledge.php?pid=2878" alt="topic" title="manual::acl (compound body)">
+<area shape = "circle" coords="435,340,32" href="knowledge.php?pid=2935" alt="topic" title="handles::common_def_vars_acl">
+<area shape = "circle" coords="348,324,31" href="knowledge.php?pid=2933" alt="topic" title="promisers::acl">
+<area shape = "circle" coords="508,323,37" href="knowledge.php?pid=821" alt="topic" title="cfengine_components::cfservd">
+<area shape = "circle" coords="557,398,37" href="knowledge.php?pid=823" alt="topic" title="cfengine_components::cfenvd">
+<area shape = "circle" coords="616,332,37" href="knowledge.php?pid=825" alt="topic" title="cfengine_components::cfshow">
+<area shape = "circle" coords="700,315,37" href="knowledge.php?pid=860" alt="topic" title="cfengine_2::alerts">
+<area shape = "circle" coords="668,230,37" href="knowledge.php?pid=862" alt="topic" title="cfengine_2::broadcast">
+<area shape = "circle" coords="568,237,55" href="knowledge.php?pid=837" alt="topic" title="cfengine_components::cfengine 2">
+</map>

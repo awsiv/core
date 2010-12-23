@@ -1,0 +1,23 @@
+<img src="graphs/1960.png" USEMAP="#knowledge_system" alt="Adoption::The Mission Plan image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="462,301,38" href="knowledge.php?pid=640" alt="topic" title="system_knowledge::system trends">
+<area shape = "circle" coords="490,113,39" href="knowledge.php?pid=649" alt="topic" title="views::manager view">
+<area shape = "circle" coords="425,145,38" href="knowledge.php?pid=642" alt="topic" title="system_knowledge::server lifecycle">
+<area shape = "circle" coords="235,64,30" href="knowledge.php?pid=1954" alt="topic" title="Adoption::Build, Deploy, Manage, Audit">
+<area shape = "circle" coords="151,194,30" href="knowledge.php?pid=1960" alt="topic" title="Adoption::The Mission Plan">
+<area shape = "circle" coords="249,145,30" href="knowledge.php?pid=2859" alt="topic" title="manual::Adoption">
+<area shape = "circle" coords="361,178,42" href="knowledge.php?pid=1971" alt="topic" title="Special_Topics_Guide::BDMA">
+<area shape = "circle" coords="227,292,33" href="knowledge.php?pid=942" alt="topic" title="BDMA::build">
+<area shape = "circle" coords="302,313,39" href="knowledge.php?pid=662" alt="topic" title="mission_status::system policy">
+<area shape = "circle" coords="144,392,35" href="knowledge.php?pid=651" alt="topic" title="views::security view">
+<area shape = "circle" coords="95,485,35" href="knowledge.php?pid=650" alt="topic" title="views::operator view">
+<area shape = "circle" coords="241,479,35" href="knowledge.php?pid=767" alt="topic" title="environment::monitoring">
+<area shape = "circle" coords="192,436,44" href="knowledge.php?pid=647" alt="topic" title="system_knowledge::mission status">
+<area shape = "circle" coords="342,476,34" href="knowledge.php?pid=2391" alt="topic" title="system_policy::bundles">
+<area shape = "circle" coords="518,476,34" href="knowledge.php?pid=763" alt="topic" title="management_terminology::goals">
+<area shape = "circle" coords="406,444,42" href="knowledge.php?pid=2852" alt="topic" title="knowledge_model::service catalogue">
+<area shape = "circle" coords="616,455,34" href="knowledge.php?pid=2829" alt="topic" title="commands_and_tools::cfengine">
+<area shape = "circle" coords="704,352,34" href="knowledge.php?pid=952" alt="topic" title="models_of_knowledge::topic maps">
+<area shape = "circle" coords="607,401,42" href="knowledge.php?pid=2827" alt="topic" title="commands_and_tools::copernicus">
+<area shape = "circle" coords="388,338,55" href="knowledge.php?pid=648" alt="topic" title="views::architect view">
+</map>

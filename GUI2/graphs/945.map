@@ -1,0 +1,23 @@
+<img src="graphs/945.png" USEMAP="#knowledge_system" alt="promisers::/etc/resolv.conf image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="263,382,55" href="knowledge.php?pid=942" alt="topic" title="promisers::Laptop wakes up">
+<area shape = "circle" coords="312,455,55" href="knowledge.php?pid=902" alt="topic" title="promisers::cf-serverd">
+<area shape = "circle" coords="403,398,55" href="knowledge.php?pid=948" alt="topic" title="promisers::mysql">
+<area shape = "circle" coords="521,432,55" href="knowledge.php?pid=905" alt="topic" title="promisers::cf-monitord">
+<area shape = "circle" coords="524,354,55" href="knowledge.php?pid=954" alt="topic" title="promisers::/etc/init.d/mysql start">
+<area shape = "circle" coords="651,331,55" href="knowledge.php?pid=911" alt="topic" title="promise_types::commands">
+<area shape = "circle" coords="564,271,55" href="knowledge.php?pid=959" alt="topic" title="promisers::no match">
+<area shape = "circle" coords="633,203,55" href="knowledge.php?pid=939" alt="topic" title="promisers::component">
+<area shape = "circle" coords="672,224,30" href="knowledge.php?pid=946" alt="topic" title="promises::promise_site_cf_108">
+<area shape = "circle" coords="438,94,31" href="knowledge.php?pid=988" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="492,200,33" href="knowledge.php?pid=945" alt="topic" title="promisers::/etc/resolv.conf">
+<area shape = "circle" coords="476,116,55" href="knowledge.php?pid=943" alt="topic" title="promise_types::reports">
+<area shape = "circle" coords="369,163,55" href="knowledge.php?pid=903" alt="topic" title="promise_types::processes">
+<area shape = "circle" coords="263,115,55" href="knowledge.php?pid=951" alt="topic" title="promisers::/usr/bin/zypper -non-interactive patch">
+<area shape = "circle" coords="236,193,55" href="knowledge.php?pid=910" alt="topic" title="promisers::/var/cfengine/bin/cf-serverd">
+<area shape = "circle" coords="105,201,55" href="knowledge.php?pid=957" alt="topic" title="promisers::/usr/bin/updatedb --prunepaths=/windows">
+<area shape = "circle" coords="172,270,55" href="knowledge.php?pid=914" alt="topic" title="promisers::/var/cfengine/bin/cf-monitord">
+<area shape = "circle" coords="84,329,55" href="knowledge.php?pid=960" alt="topic" title="promise_types::packages">
+<area shape = "circle" coords="368,281,52" href="knowledge.php?pid=938" alt="topic" title="bundles::main">
+<area shape = "circle" coords="52,423,55" href="knowledge.php?pid=895" alt="topic" title="promise_types::vars">
+</map>

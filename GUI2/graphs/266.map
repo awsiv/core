@@ -1,0 +1,22 @@
+<img src="graphs/266.png" USEMAP="#knowledge_system" alt="body_constraints::owners image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="221,401,55" href="knowledge.php?pid=49" alt="topic" title="values::a file path">
+<area shape = "circle" coords="266,464,55" href="knowledge.php?pid=51" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="337,412,55" href="knowledge.php?pid=334" alt="topic" title="body_constraints::ipv4_address">
+<area shape = "circle" coords="438,435,55" href="knowledge.php?pid=336" alt="topic" title="body_constraints::ipv6_address">
+<area shape = "circle" coords="432,366,55" href="knowledge.php?pid=423" alt="topic" title="body_constraints::restart_class">
+<area shape = "circle" coords="529,336,55" href="knowledge.php?pid=479" alt="topic" title="values::handle">
+<area shape = "circle" coords="449,289,55" href="knowledge.php?pid=501" alt="topic" title="functions::execresult">
+<area shape = "circle" coords="672,285,37" href="knowledge.php?pid=725" alt="topic" title="cfengine_2::groups">
+<area shape = "circle" coords="448,86,30" href="knowledge.php?pid=266" alt="topic" title="body_constraints::owners">
+<area shape = "circle" coords="473,228,33" href="knowledge.php?pid=48" alt="topic" title="values::a user/group id">
+<area shape = "circle" coords="379,226,55" href="knowledge.php?pid=50" alt="topic" title="values::a syslog level">
+<area shape = "circle" coords="333,162,55" href="knowledge.php?pid=246" alt="topic" title="body_constraints::file_result">
+<area shape = "circle" coords="262,215,55" href="knowledge.php?pid=335" alt="topic" title="body_constraints::ipv4_netmask">
+<area shape = "circle" coords="161,191,55" href="knowledge.php?pid=410" alt="topic" title="body_constraints::process_result">
+<area shape = "circle" coords="167,261,55" href="knowledge.php?pid=440" alt="topic" title="body_constraints::freespace">
+<area shape = "circle" coords="71,291,55" href="knowledge.php?pid=495" alt="topic" title="functions::canonify">
+<area shape = "circle" coords="150,338,55" href="knowledge.php?pid=522" alt="topic" title="functions::lastnode">
+<area shape = "circle" coords="300,313,52" href="knowledge.php?pid=697" alt="topic" title="cfengine_3::string">
+<area shape = "circle" coords="52,435,55" href="knowledge.php?pid=47" alt="topic" title="values::a cfengine identifier">
+</map>

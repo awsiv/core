@@ -1,0 +1,15 @@
+<img src="graphs/1004.png" USEMAP="#knowledge_system" alt="promise_theory::workflows image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="672,210,38" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="598,96,38" href="knowledge.php?pid=995" alt="topic" title="promise_theory::associations">
+<area shape = "circle" coords="469,171,38" href="knowledge.php?pid=997" alt="topic" title="promise_theory::topic-instances">
+<area shape = "circle" coords="318,210,38" href="knowledge.php?pid=2735" alt="topic" title="body_constraints::association">
+<area shape = "circle" coords="126,389,30" href="knowledge.php?pid=990" alt="topic" title="promise_theory::actions">
+<area shape = "circle" coords="261,356,30" href="knowledge.php?pid=1004" alt="topic" title="promise_theory::workflows">
+<area shape = "circle" coords="397,323,30" href="knowledge.php?pid=1003" alt="topic" title="promise_theory::stories">
+<area shape = "circle" coords="408,453,38" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="560,419,38" href="knowledge.php?pid=996" alt="topic" title="promise_theory::type-instances">
+<area shape = "circle" coords="719,423,38" href="knowledge.php?pid=1000" alt="topic" title="promise_theory::subjects">
+<area shape = "circle" coords="704,295,38" href="knowledge.php?pid=2764" alt="topic" title="values::comment">
+<area shape = "circle" coords="542,288,55" href="knowledge.php?pid=2734" alt="topic" title="promise_types::topics">
+</map>

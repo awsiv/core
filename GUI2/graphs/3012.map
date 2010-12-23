@@ -1,0 +1,24 @@
+<img src="graphs/3012.png" USEMAP="#knowledge_system" alt="class_contexts::freebsd image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="615,132,36" href="knowledge.php?pid=812" alt="topic" title="technical_concepts::variables">
+<area shape = "circle" coords="607,74,36" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="532,99,36" href="knowledge.php?pid=2768" alt="topic" title="data_types::int">
+<area shape = "circle" coords="466,64,36" href="knowledge.php?pid=2770" alt="topic" title="data_types::slist">
+<area shape = "circle" coords="443,120,36" href="knowledge.php?pid=2772" alt="topic" title="data_types::rlist">
+<area shape = "circle" coords="362,132,36" href="knowledge.php?pid=2925" alt="topic" title="bundles::change_management">
+<area shape = "circle" coords="406,180,36" href="knowledge.php?pid=2930" alt="topic" title="promisers::domain">
+<area shape = "circle" coords="191,217,30" href="knowledge.php?pid=3013" alt="topic" title="promisers::rc_conf[cfengine3_enable]">
+<area shape = "circle" coords="107,357,30" href="knowledge.php?pid=3025" alt="topic" title="handles::cfengine_enable_files_rc_conf_1">
+<area shape = "circle" coords="246,475,30" href="knowledge.php?pid=3022" alt="topic" title="handles::cfengine_enable_files_rc_d">
+<area shape = "circle" coords="415,377,30" href="knowledge.php?pid=3027" alt="topic" title="handles::cfengine_enable_files_rc_conf_2">
+<area shape = "circle" coords="261,367,30" href="knowledge.php?pid=3012" alt="topic" title="class_contexts::freebsd">
+<area shape = "circle" coords="275,259,30" href="knowledge.php?pid=3015" alt="topic" title="handles::cfengine_enable_vars_rc_conf">
+<area shape = "circle" coords="445,241,36" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="470,297,36" href="knowledge.php?pid=2767" alt="topic" title="data_types::string">
+<area shape = "circle" coords="535,261,36" href="knowledge.php?pid=2769" alt="topic" title="data_types::real">
+<area shape = "circle" coords="611,285,36" href="knowledge.php?pid=2771" alt="topic" title="data_types::ilist">
+<area shape = "circle" coords="617,227,36" href="knowledge.php?pid=2773" alt="topic" title="data_types::policy">
+<area shape = "circle" coords="693,204,36" href="knowledge.php?pid=2929" alt="topic" title="bundles::def">
+<area shape = "circle" coords="635,163,36" href="knowledge.php?pid=2932" alt="topic" title="handles::common_def_vars_domain">
+<area shape = "circle" coords="522,180,55" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+</map>

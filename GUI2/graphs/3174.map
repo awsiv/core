@@ -1,0 +1,27 @@
+<img src="graphs/3174.png" USEMAP="#knowledge_system" alt="bundles::cfengine_policysrv image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="192,442,30" href="knowledge.php?pid=3234" alt="topic" title="promisers::/etc/apache2/vhosts.d/vhost-ssl.conf">
+<area shape = "circle" coords="225,480,30" href="knowledge.php?pid=2441" alt="topic" title="promise_types::commands">
+<area shape = "circle" coords="268,446,30" href="knowledge.php?pid=3195" alt="topic" title="promisers::ssl-cert">
+<area shape = "circle" coords="333,455,30" href="knowledge.php?pid=2636" alt="topic" title="promise_types::packages">
+<area shape = "circle" coords="324,412,30" href="knowledge.php?pid=3224" alt="topic" title="promisers::/usr/sbin/a2ensite ssl">
+<area shape = "circle" coords="378,386,30" href="knowledge.php?pid=3185" alt="topic" title="promisers::apache2">
+<area shape = "circle" coords="323,360,30" href="knowledge.php?pid=3230" alt="topic" title="promisers::/etc/apache2/sites-available/ssl">
+<area shape = "circle" coords="416,434,30" href="knowledge.php?pid=2768" alt="topic" title="data_types::int">
+<area shape = "circle" coords="598,392,30" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="698,282,30" href="knowledge.php?pid=2770" alt="topic" title="data_types::slist">
+<area shape = "circle" coords="669,154,30" href="knowledge.php?pid=2767" alt="topic" title="data_types::string">
+<area shape = "circle" coords="525,69,30" href="knowledge.php?pid=812" alt="topic" title="technical_concepts::variables">
+<area shape = "circle" coords="333,66,30" href="knowledge.php?pid=2769" alt="topic" title="data_types::real">
+<area shape = "circle" coords="183,146,30" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="145,273,30" href="knowledge.php?pid=2771" alt="topic" title="data_types::ilist">
+<area shape = "circle" coords="423,245,30" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="265,327,30" href="knowledge.php?pid=3192" alt="topic" title="promisers::php5">
+<area shape = "circle" coords="221,293,30" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="190,333,30" href="knowledge.php?pid=3216" alt="topic" title="promisers::/usr/sbin/a2enmod php5 ssl">
+<area shape = "circle" coords="123,332,30" href="knowledge.php?pid=3176" alt="topic" title="promisers::match_package">
+<area shape = "circle" coords="146,374,30" href="knowledge.php?pid=3227" alt="topic" title="promisers::/var/www/.">
+<area shape = "circle" coords="102,407,30" href="knowledge.php?pid=3189" alt="topic" title="promisers::mysql-server">
+<area shape = "circle" coords="238,387,30" href="knowledge.php?pid=3174" alt="topic" title="bundles::cfengine_policysrv">
+<area shape = "circle" coords="107,452,55" href="knowledge.php?pid=3220" alt="topic" title="promisers::/usr/sbin/a2enmod ssl && /usr/sbin/a2enflag SSL && /usr/bin/gensslcert">
+</map>

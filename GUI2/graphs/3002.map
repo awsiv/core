@@ -1,0 +1,27 @@
+<img src="graphs/3002.png" USEMAP="#knowledge_system" alt="class_contexts::restart_cf.windows image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="619,125,39" href="knowledge.php?pid=3001" alt="topic" title="handles::cfengine_processes_commands_cf_execd">
+<area shape = "circle" coords="554,66,39" href="knowledge.php?pid=2956" alt="topic" title="handles::grant_access_reports">
+<area shape = "circle" coords="463,111,39" href="knowledge.php?pid=3345" alt="topic" title="handles::cfengine_editor_files_policies_tidy">
+<area shape = "circle" coords="364,150,39" href="knowledge.php?pid=2998" alt="topic" title="handles::cfengine_processes_stop_cf_execd">
+<area shape = "circle" coords="362,170,31" href="knowledge.php?pid=2970" alt="topic" title="class_contexts::restart_cf">
+<area shape = "circle" coords="103,226,30" href="knowledge.php?pid=3007" alt="topic" title="handles::cfengine_processes_services_start_cf_execd_windows">
+<area shape = "circle" coords="248,225,30" href="knowledge.php?pid=3002" alt="topic" title="class_contexts::restart_cf.windows">
+<area shape = "circle" coords="255,277,33" href="knowledge.php?pid=3552" alt="topic" title="handles::update_services_windows_executor">
+<area shape = "circle" coords="163,311,32" href="knowledge.php?pid=2707" alt="topic" title="body_constraints::service_policy">
+<area shape = "circle" coords="116,370,33" href="knowledge.php?pid=3427" alt="topic" title="bundles::update_bins">
+<area shape = "circle" coords="129,434,33" href="knowledge.php?pid=2709" alt="topic" title="body_constraints::service_method">
+<area shape = "circle" coords="199,483,33" href="knowledge.php?pid=3496" alt="topic" title="bundles::update">
+<area shape = "circle" coords="304,502,32" href="knowledge.php?pid=2392" alt="topic" title="system_policy::promises">
+<area shape = "circle" coords="409,485,33" href="knowledge.php?pid=2960" alt="topic" title="bundles::cfengine_processes">
+<area shape = "circle" coords="482,437,32" href="knowledge.php?pid=2708" alt="topic" title="body_constraints::service_dependencies">
+<area shape = "circle" coords="499,374,33" href="knowledge.php?pid=3484" alt="topic" title="handles::update_bins_services_stop_cf_execd_windows">
+<area shape = "circle" coords="455,314,33" href="knowledge.php?pid=2852" alt="topic" title="knowledge_model::service catalogue">
+<area shape = "circle" coords="307,388,31" href="knowledge.php?pid=2706" alt="topic" title="promise_types::services">
+<area shape = "circle" coords="512,274,31" href="knowledge.php?pid=3003" alt="topic" title="promisers::CfengineNovaExec">
+<area shape = "circle" coords="393,224,31" href="knowledge.php?pid=3005" alt="topic" title="handles::cfengine_processes_services_stop_cf_execd_windows">
+<area shape = "circle" coords="506,262,39" href="knowledge.php?pid=3343" alt="topic" title="handles::cfengine_editor_files_policies_dir">
+<area shape = "circle" coords="597,217,39" href="knowledge.php?pid=2967" alt="topic" title="handles::cfengine_processes_vars_stop_signal_windows">
+<area shape = "circle" coords="696,178,39" href="knowledge.php?pid=3437" alt="topic" title="handles::update_bins_vars_stop_signal_windows">
+<area shape = "circle" coords="530,164,55" href="knowledge.php?pid=2964" alt="topic" title="class_contexts::windows">
+</map>

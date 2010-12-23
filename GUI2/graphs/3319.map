@@ -1,0 +1,19 @@
+<img src="graphs/3319.png" USEMAP="#knowledge_system" alt="promises::promise_cfengine_cf_807 image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="295,387,55" href="knowledge.php?pid=3626" alt="topic" title="bundles::set_user_field">
+<area shape = "circle" coords="395,456,55" href="knowledge.php?pid=3313" alt="topic" title="bundles::fixapache">
+<area shape = "circle" coords="487,383,55" href="knowledge.php?pid=3628" alt="topic" title="promises::promise_cfengine_stdlib_cf_275">
+<area shape = "circle" coords="646,376,55" href="knowledge.php?pid=3610" alt="topic" title="bundles::set_variable_values">
+<area shape = "circle" coords="590,291,55" href="knowledge.php?pid=3632" alt="topic" title="promisers::$(group):.*">
+<area shape = "circle" coords="670,213,55" href="knowledge.php?pid=3616" alt="topic" title="promises::promise_cfengine_stdlib_cf_202">
+<area shape = "circle" coords="698,214,30" href="knowledge.php?pid=3318" alt="topic" title="promisers::APACHE_MODULES=.*">
+<area shape = "circle" coords="439,94,39" href="knowledge.php?pid=2921" alt="topic" title="class_contexts::any">
+<area shape = "circle" coords="507,196,34" href="knowledge.php?pid=3319" alt="topic" title="promises::promise_cfengine_cf_807">
+<area shape = "circle" coords="448,109,55" href="knowledge.php?pid=3627" alt="topic" title="promisers::$(user):.*">
+<area shape = "circle" coords="328,168,55" href="knowledge.php?pid=3320" alt="topic" title="promises::promise_cfengine_cf_814">
+<area shape = "circle" coords="170,154,55" href="knowledge.php?pid=3629" alt="topic" title="bundles::append_user_field">
+<area shape = "circle" coords="188,243,55" href="knowledge.php?pid=3615" alt="topic" title="promisers::\s*$(index)\s*=.*">
+<area shape = "circle" coords="78,308,55" href="knowledge.php?pid=3633" alt="topic" title="promises::promise_cfengine_stdlib_cf_295">
+<area shape = "circle" coords="384,281,52" href="knowledge.php?pid=349" alt="topic" title="promise_types::field_edits">
+<area shape = "circle" coords="52,421,55" href="knowledge.php?pid=2617" alt="topic" title="body_constraints::edit_field">
+</map>

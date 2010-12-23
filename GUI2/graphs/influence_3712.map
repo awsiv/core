@@ -1,0 +1,27 @@
+<img src="graphs/influence_3712.png" USEMAP="#knowledge_system" alt="handles::knowledge_files_doc_root_redhat image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="290,366,30" href="knowledge.php?pid=2910" alt="topic" title="promises::promise_promises_cf_53">
+<area shape = "circle" coords="302,445,30" href="knowledge.php?pid=2912" alt="topic" title="promises::promise_promises_cf_55">
+<area shape = "circle" coords="378,392,30" href="knowledge.php?pid=3178" alt="topic" title="handles::cfengine_policysrv_vars_match_package_suse">
+<area shape = "circle" coords="443,453,30" href="knowledge.php?pid=3229" alt="topic" title="handles::cfengine_policysrv_file_tidy_index_html">
+<area shape = "circle" coords="470,377,30" href="knowledge.php?pid=3236" alt="topic" title="handles::cfengine_policysrv_files_vhost_ssl">
+<area shape = "circle" coords="568,400,30" href="knowledge.php?pid=3345" alt="topic" title="handles::cfengine_editor_files_policies_tidy">
+<area shape = "circle" coords="537,325,30" href="knowledge.php?pid=3658" alt="topic" title="handles::knowledge_vars_hosts">
+<area shape = "circle" coords="636,304,30" href="knowledge.php?pid=3664" alt="topic" title="handles::knowledge_vars_owner_redhat">
+<area shape = "circle" coords="558,253,30" href="knowledge.php?pid=3670" alt="topic" title="handles::knowledge_vars_owner_debian">
+<area shape = "circle" coords="626,193,30" href="knowledge.php?pid=3679" alt="topic" title="handles::knowledge_vars_group_debian">
+<area shape = "circle" coords="659,105,30" href="knowledge.php?pid=3322" alt="topic" title="class_contexts::redhat">
+<area shape = "circle" coords="525,183,30" href="knowledge.php?pid=3712" alt="topic" title="handles::knowledge_files_doc_root_redhat">
+<area shape = "circle" coords="542,104,30" href="knowledge.php?pid=2911" alt="topic" title="promises::promise_promises_cf_54">
+<area shape = "circle" coords="449,139,30" href="knowledge.php?pid=2913" alt="topic" title="promises::promise_promises_cf_57">
+<area shape = "circle" coords="409,65,30" href="knowledge.php?pid=3197" alt="topic" title="promises::cfengine_policysrv_packages_install_package_suse">
+<area shape = "circle" coords="355,133,30" href="knowledge.php?pid=3233" alt="topic" title="promises::cfengine_policysrv_files_ssl">
+<area shape = "circle" coords="270,89,30" href="knowledge.php?pid=3343" alt="topic" title="handles::cfengine_editor_files_policies_dir">
+<area shape = "circle" coords="272,169,30" href="knowledge.php?pid=3655" alt="topic" title="handles::knowledge_vars_config_src">
+<area shape = "circle" coords="170,167,30" href="knowledge.php?pid=3661" alt="topic" title="handles::knowledge_vars_icons">
+<area shape = "circle" coords="227,233,30" href="knowledge.php?pid=3667" alt="topic" title="handles::knowledge_vars_owner_suse">
+<area shape = "circle" coords="141,275,30" href="knowledge.php?pid=3676" alt="topic" title="handles::knowledge_vars_group_suse">
+<area shape = "circle" coords="233,307,30" href="knowledge.php?pid=3697" alt="topic" title="handles::knowledge_files_mysql_sock_suse">
+<area shape = "circle" coords="390,262,30" href="knowledge.php?pid=2908" alt="topic" title="class_contexts::policy_host">
+<area shape = "circle" coords="156,398,55" href="knowledge.php?pid=3673" alt="topic" title="handles::knowledge_vars_group_redhat">
+</map>

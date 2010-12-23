@@ -1,0 +1,16 @@
+<img src="graphs/975.png" USEMAP="#knowledge_system" alt="promisers::/var/cfengine/state/cf_procs image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="680,154,43" href="knowledge.php?pid=72" alt="topic" title="body_constraints::printfile">
+<area shape = "circle" coords="422,85,43" href="knowledge.php?pid=69" alt="topic" title="body_constraints::friend_pattern">
+<area shape = "circle" coords="361,228,34" href="knowledge.php?pid=969" alt="topic" title="promisers::/var/cfengine/state/cf_rootprocs">
+<area shape = "circle" coords="200,266,34" href="knowledge.php?pid=978" alt="topic" title="promisers::/bin/df">
+<area shape = "circle" coords="145,331,30" href="knowledge.php?pid=976" alt="topic" title="promises::apache_watch_cpu">
+<area shape = "circle" coords="119,464,34" href="knowledge.php?pid=970" alt="topic" title="promise_types::measurements">
+<area shape = "circle" coords="297,483,33" href="knowledge.php?pid=977" alt="topic" title="promises::apache_watch_memory">
+<area shape = "circle" coords="221,407,30" href="knowledge.php?pid=975" alt="topic" title="promisers::/var/cfengine/state/cf_procs">
+<area shape = "circle" coords="398,462,34" href="knowledge.php?pid=973" alt="topic" title="promisers::/proc/meminfo">
+<area shape = "circle" coords="492,359,34" href="knowledge.php?pid=980" alt="topic" title="promisers::I am alive">
+<area shape = "circle" coords="375,322,32" href="knowledge.php?pid=967" alt="topic" title="bundles::watch">
+<area shape = "circle" coords="694,357,43" href="knowledge.php?pid=76" alt="topic" title="body_constraints::report_to_file">
+<area shape = "circle" coords="558,221,55" href="knowledge.php?pid=943" alt="topic" title="promise_types::reports">
+</map>

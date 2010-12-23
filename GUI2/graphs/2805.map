@@ -1,0 +1,6 @@
+<img src="graphs/2805.png" USEMAP="#knowledge_system" alt="operating_systems::virtualization image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="599,164,55" href="knowledge.php?pid=932" alt="topic" title="management_issues::cloud computing">
+<area shape = "circle" coords="350,323,55" href="knowledge.php?pid=967" alt="topic" title="models_of_organization::cloud">
+<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=2805" alt="topic" title="operating_systems::virtualization">
+</map>

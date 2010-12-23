@@ -1,0 +1,21 @@
+<img src="graphs/146.png" USEMAP="#knowledge_system" alt="body_constraints::database_type image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="628,195,37" href="knowledge.php?pid=69" alt="topic" title="body_constraints::friend_pattern">
+<area shape = "circle" coords="594,94,37" href="knowledge.php?pid=85" alt="topic" title="body_constraints::log_string">
+<area shape = "circle" coords="505,147,37" href="knowledge.php?pid=90" alt="topic" title="body_constraints::log_repaired">
+<area shape = "circle" coords="401,136,37" href="knowledge.php?pid=99" alt="topic" title="body_constraints::measurement_class">
+<area shape = "circle" coords="411,243,37" href="knowledge.php?pid=116" alt="topic" title="body_constraints::select_end">
+<area shape = "circle" coords="209,289,32" href="knowledge.php?pid=149" alt="topic" title="body_constraints::database_rows">
+<area shape = "circle" coords="108,327,30" href="knowledge.php?pid=147" alt="topic" title="body_constraints::database_operation">
+<area shape = "circle" coords="90,436,30" href="knowledge.php?pid=137" alt="topic" title="body_constraints::database_server">
+<area shape = "circle" coords="172,506,30" href="knowledge.php?pid=146" alt="topic" title="body_constraints::database_type">
+<area shape = "circle" coords="273,468,31" href="knowledge.php?pid=150" alt="topic" title="body_constraints::registry_exclude">
+<area shape = "circle" coords="190,397,30" href="knowledge.php?pid=136" alt="topic" title="promise_types::databases">
+<area shape = "circle" coords="357,334,38" href="knowledge.php?pid=148" alt="topic" title="body_constraints::database_columns">
+<area shape = "circle" coords="457,369,37" href="knowledge.php?pid=77" alt="topic" title="body_constraints::showstate">
+<area shape = "circle" coords="517,456,37" href="knowledge.php?pid=88" alt="topic" title="body_constraints::log_kept">
+<area shape = "circle" coords="588,379,37" href="knowledge.php?pid=92" alt="topic" title="body_constraints::log_failed">
+<area shape = "circle" coords="690,359,37" href="knowledge.php?pid=114" alt="topic" title="body_constraints::select_start">
+<area shape = "circle" coords="651,261,37" href="knowledge.php?pid=118" alt="topic" title="body_constraints::args">
+<area shape = "circle" coords="530,269,55" href="knowledge.php?pid=51" alt="topic" title="values::an arbitrary string">
+</map>

@@ -1,0 +1,17 @@
+<img src="graphs/328.png" USEMAP="#knowledge_system" alt="promise_types::replace_patterns image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="295,411,51" href="knowledge.php?pid=943" alt="topic" title="promise_types::reports">
+<area shape = "circle" coords="464,462,30" href="knowledge.php?pid=1034" alt="topic" title="promisers::cfexecd">
+<area shape = "circle" coords="673,316,30" href="knowledge.php?pid=329" alt="topic" title="body_constraints::replace_with">
+<area shape = "circle" coords="459,171,30" href="knowledge.php?pid=1035" alt="topic" title="promises::promise_library_cf_194">
+<area shape = "circle" coords="461,317,30" href="knowledge.php?pid=328" alt="topic" title="promise_types::replace_patterns">
+<area shape = "circle" coords="408,251,30" href="knowledge.php?pid=298" alt="topic" title="body_constraints::insert_type">
+<area shape = "circle" coords="450,158,30" href="knowledge.php?pid=311" alt="topic" title="body_constraints::location">
+<area shape = "circle" coords="355,87,30" href="knowledge.php?pid=297" alt="topic" title="body_constraints::expand_scalars">
+<area shape = "circle" coords="217,108,30" href="knowledge.php?pid=299" alt="topic" title="body_constraints::insert_select">
+<area shape = "circle" coords="175,201,30" href="knowledge.php?pid=1033" alt="topic" title="promises::promise_library_cf_190">
+<area shape = "circle" coords="313,180,30" href="knowledge.php?pid=296" alt="topic" title="promise_types::insert_lines">
+<area shape = "circle" coords="77,235,30" href="knowledge.php?pid=1036" alt="topic" title="promisers::Added a 5 minute schedule to crontabs">
+<area shape = "circle" coords="249,319,30" href="knowledge.php?pid=1031" alt="topic" title="bundles::upgrade_cfexecd">
+<area shape = "circle" coords="52,420,55" href="knowledge.php?pid=1032" alt="topic" title="promisers::0,5,10,15,20,25,30,35,40,45,50,55 * * * * /var/cfengine/bin/cf-execd -F">
+</map>

@@ -1,0 +1,27 @@
+<img src="graphs/135.png" USEMAP="#knowledge_system" alt="body_constraints::chroot image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="643,165,37" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="614,83,37" href="knowledge.php?pid=2442" alt="topic" title="body_constraints::args">
+<area shape = "circle" coords="536,126,37" href="knowledge.php?pid=2960" alt="topic" title="bundles::cfengine_processes">
+<area shape = "circle" coords="446,117,37" href="knowledge.php?pid=3001" alt="topic" title="handles::cfengine_processes_commands_cf_execd">
+<area shape = "circle" coords="454,204,37" href="knowledge.php?pid=3164" alt="topic" title="promisers::/etc/init.d/httpd restart">
+<area shape = "circle" coords="382,235,32" href="knowledge.php?pid=2889" alt="topic" title="manual::contain (compound body)">
+<area shape = "circle" coords="347,41,30" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="336,174,30" href="knowledge.php?pid=129" alt="topic" title="body_constraints::exec_owner">
+<area shape = "circle" coords="281,228,32" href="knowledge.php?pid=2447" alt="topic" title="body_constraints::exec_group">
+<area shape = "circle" coords="203,242,32" href="knowledge.php?pid=134" alt="topic" title="body_constraints::chdir">
+<area shape = "circle" coords="233,313,32" href="knowledge.php?pid=2451" alt="topic" title="body_constraints::no_output">
+<area shape = "circle" coords="101,466,30" href="knowledge.php?pid=42" alt="topic" title="values::boolean">
+<area shape = "circle" coords="214,386,30" href="knowledge.php?pid=126" alt="topic" title="body_constraints::useshell">
+<area shape = "circle" coords="293,390,32" href="knowledge.php?pid=2445" alt="topic" title="body_constraints::umask">
+<area shape = "circle" coords="355,437,30" href="knowledge.php?pid=135" alt="topic" title="body_constraints::chroot">
+<area shape = "circle" coords="392,370,32" href="knowledge.php?pid=2449" alt="topic" title="body_constraints::exec_timeout">
+<area shape = "circle" coords="463,335,32" href="knowledge.php?pid=136" alt="topic" title="body_constraints::preview">
+<area shape = "circle" coords="326,307,31" href="knowledge.php?pid=2443" alt="topic" title="body_constraints::contain">
+<area shape = "circle" coords="494,306,37" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="547,377,37" href="knowledge.php?pid=2864" alt="topic" title="manual::module">
+<area shape = "circle" coords="608,314,37" href="knowledge.php?pid=2999" alt="topic" title="promisers::"/var/cfengine/bin/cf-execd"">
+<area shape = "circle" coords="698,298,37" href="knowledge.php?pid=3046" alt="topic" title="bundles::cfengine_php_mod">
+<area shape = "circle" coords="664,218,37" href="knowledge.php?pid=3166" alt="topic" title="handles::cfengine_php_mod_commands_httpd_redhat">
+<area shape = "circle" coords="558,225,55" href="knowledge.php?pid=2441" alt="topic" title="promise_types::commands">
+</map>

@@ -1,0 +1,21 @@
+<img src="graphs/283.png" USEMAP="#knowledge_system" alt="body_constraints::delete_select image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="632,134,37" href="knowledge.php?pid=116" alt="topic" title="body_constraints::select_end">
+<area shape = "circle" coords="596,71,37" href="knowledge.php?pid=69" alt="topic" title="body_constraints::friend_pattern">
+<area shape = "circle" coords="521,107,37" href="knowledge.php?pid=92" alt="topic" title="body_constraints::log_failed">
+<area shape = "circle" coords="430,114,37" href="knowledge.php?pid=85" alt="topic" title="body_constraints::log_string">
+<area shape = "circle" coords="453,179,37" href="knowledge.php?pid=114" alt="topic" title="body_constraints::select_start">
+<area shape = "circle" coords="236,229,31" href="knowledge.php?pid=294" alt="topic" title="body_constraints::delete_if_not_contains_from_list">
+<area shape = "circle" coords="98,275,30" href="knowledge.php?pid=286" alt="topic" title="body_constraints::delete_if_not_startwith_from_list">
+<area shape = "circle" coords="59,386,31" href="knowledge.php?pid=292" alt="topic" title="body_constraints::delete_if_contains_from_list">
+<area shape = "circle" coords="150,478,30" href="knowledge.php?pid=282" alt="topic" title="promise_types::delete_lines">
+<area shape = "circle" coords="301,482,31" href="knowledge.php?pid=290" alt="topic" title="body_constraints::delete_if_not_match_from_list">
+<area shape = "circle" coords="399,395,31" href="knowledge.php?pid=288" alt="topic" title="body_constraints::delete_if_match_from_list">
+<area shape = "circle" coords="230,361,30" href="knowledge.php?pid=283" alt="topic" title="body_constraints::delete_select">
+<area shape = "circle" coords="440,242,30" href="knowledge.php?pid=284" alt="topic" title="body_constraints::delete_if_startwith_from_list">
+<area shape = "circle" coords="523,251,37" href="knowledge.php?pid=90" alt="topic" title="body_constraints::log_repaired">
+<area shape = "circle" coords="599,287,37" href="knowledge.php?pid=77" alt="topic" title="body_constraints::showstate">
+<area shape = "circle" coords="633,222,37" href="knowledge.php?pid=99" alt="topic" title="body_constraints::measurement_class">
+<area shape = "circle" coords="701,178,37" href="knowledge.php?pid=88" alt="topic" title="body_constraints::log_kept">
+<area shape = "circle" coords="552,179,55" href="knowledge.php?pid=51" alt="topic" title="values::an arbitrary string">
+</map>

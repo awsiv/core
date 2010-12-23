@@ -1,0 +1,17 @@
+<img src="graphs/2479.png" USEMAP="#knowledge_system" alt="body_constraints::environment_state image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="682,210,37" href="knowledge.php?pid=95" alt="topic" title="body_constraints::value_kept">
+<area shape = "circle" coords="617,96,37" href="knowledge.php?pid=129" alt="topic" title="body_constraints::exec_owner">
+<area shape = "circle" coords="506,171,37" href="knowledge.php?pid=149" alt="topic" title="body_constraints::db_server_connection_db">
+<area shape = "circle" coords="375,210,37" href="knowledge.php?pid=251" alt="topic" title="body_constraints::leaf_name">
+<area shape = "circle" coords="199,272,31" href="knowledge.php?pid=2469" alt="topic" title="body_constraints::env_name">
+<area shape = "circle" coords="117,414,30" href="knowledge.php?pid=155" alt="topic" title="promise_types::environments">
+<area shape = "circle" coords="270,491,31" href="knowledge.php?pid=2471" alt="topic" title="body_constraints::env_network">
+<area shape = "circle" coords="235,381,30" href="knowledge.php?pid=2467" alt="topic" title="body_constraints::environment_interface">
+<area shape = "circle" coords="432,326,39" href="knowledge.php?pid=158" alt="topic" title="body_constraints::env_addresses">
+<area shape = "circle" coords="453,453,37" href="knowledge.php?pid=106" alt="topic" title="body_constraints::measurement_class">
+<area shape = "circle" coords="585,419,37" href="knowledge.php?pid=142" alt="topic" title="body_constraints::db_server_owner">
+<area shape = "circle" coords="723,423,37" href="knowledge.php?pid=202" alt="topic" title="body_constraints::linkcopy_patterns">
+<area shape = "circle" coords="710,295,37" href="knowledge.php?pid=257" alt="topic" title="body_constraints::search_owners">
+<area shape = "circle" coords="569,288,55" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+</map>

@@ -1,0 +1,23 @@
+<img src="graphs/656.png" USEMAP="#knowledge_system" alt="manager_view::request for change image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="607,157,37" href="knowledge.php?pid=2883" alt="topic" title="manual::changes (compound body)">
+<area shape = "circle" coords="564,79,37" href="knowledge.php?pid=14" alt="topic" title="system_reports::file_changes report">
+<area shape = "circle" coords="473,124,37" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="364,131,37" href="knowledge.php?pid=29" alt="topic" title="system_reports::hashes report">
+<area shape = "circle" coords="391,213,37" href="knowledge.php?pid=2774" alt="topic" title="functions::hash">
+<area shape = "circle" coords="360,212,32" href="knowledge.php?pid=929" alt="topic" title="management_issues::identity management">
+<area shape = "circle" coords="179,227,32" href="knowledge.php?pid=738" alt="topic" title="compliance::SAS-70">
+<area shape = "circle" coords="276,260,35" href="knowledge.php?pid=736" alt="topic" title="compliance::SOX">
+<area shape = "circle" coords="143,292,31" href="knowledge.php?pid=2863" alt="topic" title="manual::Checksums and change management">
+<area shape = "circle" coords="107,357,30" href="knowledge.php?pid=974" alt="topic" title="promise_theory::promise proposals">
+<area shape = "circle" coords="216,470,30" href="knowledge.php?pid=971" alt="topic" title="promise_theory::intentions">
+<area shape = "circle" coords="204,389,30" href="knowledge.php?pid=656" alt="topic" title="manager_view::request for change">
+<area shape = "circle" coords="306,462,31" href="knowledge.php?pid=737" alt="topic" title="compliance::EUROSOX">
+<area shape = "circle" coords="384,373,31" href="knowledge.php?pid=2897" alt="topic" title="procedures::change detection scans">
+<area shape = "circle" coords="288,341,31" href="knowledge.php?pid=937" alt="topic" title="management_issues::change management">
+<area shape = "circle" coords="476,301,37" href="knowledge.php?pid=184" alt="topic" title="body_constraints::update_hashes">
+<area shape = "circle" coords="568,344,37" href="knowledge.php?pid=15" alt="topic" title="system_reports::file_diffs report">
+<area shape = "circle" coords="609,266,37" href="knowledge.php?pid=2486" alt="topic" title="body_constraints::report_diffs">
+<area shape = "circle" coords="691,211,37" href="knowledge.php?pid=183" alt="topic" title="body_constraints::report_changes">
+<area shape = "circle" coords="511,212,55" href="knowledge.php?pid=2483" alt="topic" title="body_constraints::changes">
+</map>

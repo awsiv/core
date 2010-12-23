@@ -1,0 +1,26 @@
+<img src="graphs/2983.png" USEMAP="#knowledge_system" alt="promisers::cf-report image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="155,450,55" href="knowledge.php?pid=2986" alt="topic" title="promisers::cf-runagent">
+<area shape = "circle" coords="187,485,55" href="knowledge.php?pid=1674" alt="topic" title="Software_components::cf-agent">
+<area shape = "circle" coords="230,454,55" href="knowledge.php?pid=2825" alt="topic" title="application_services::storage">
+<area shape = "circle" coords="294,463,55" href="knowledge.php?pid=2409" alt="topic" title="promise_types::reports">
+<area shape = "circle" coords="285,422,55" href="knowledge.php?pid=2974" alt="topic" title="promisers::cf-know">
+<area shape = "circle" coords="339,398,55" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="284,375,55" href="knowledge.php?pid=2980" alt="topic" title="promisers::cf-promises">
+<area shape = "circle" coords="461,387,30" href="knowledge.php?pid=826" alt="topic" title="cfengine_components::cfenvgraph">
+<area shape = "circle" coords="638,332,42" href="knowledge.php?pid=2960" alt="topic" title="bundles::cfengine_processes">
+<area shape = "circle" coords="702,215,42" href="knowledge.php?pid=3427" alt="topic" title="bundles::update_bins">
+<area shape = "circle" coords="615,104,31" href="knowledge.php?pid=825" alt="topic" title="cfengine_components::cfshow">
+<area shape = "circle" coords="428,64,42" href="knowledge.php?pid=2678" alt="topic" title="promise_types::processes">
+<area shape = "circle" coords="250,119,42" href="knowledge.php?pid=2994" alt="topic" title="handles::cfengine_processes_stop_cf_components">
+<area shape = "circle" coords="186,236,42" href="knowledge.php?pid=3470" alt="topic" title="handles::update_bins_processes_stop_cfengine">
+<area shape = "circle" coords="444,225,37" href="knowledge.php?pid=2983" alt="topic" title="promisers::cf-report">
+<area shape = "circle" coords="228,344,55" href="knowledge.php?pid=2740" alt="topic" title="promise_types::occurrences">
+<area shape = "circle" coords="184,313,55" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="153,349,55" href="knowledge.php?pid=2829" alt="topic" title="commands_and_tools::cfengine">
+<area shape = "circle" coords="87,349,55" href="knowledge.php?pid=2441" alt="topic" title="promise_types::commands">
+<area shape = "circle" coords="109,388,55" href="knowledge.php?pid=2977" alt="topic" title="promisers::cf-monitord">
+<area shape = "circle" coords="65,418,55" href="knowledge.php?pid=2734" alt="topic" title="promise_types::topics">
+<area shape = "circle" coords="200,399,52" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="52,468,55" href="knowledge.php?pid=839" alt="topic" title="cfengine_components::cfengine nova">
+</map>

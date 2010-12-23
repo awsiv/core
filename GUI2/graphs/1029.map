@@ -1,0 +1,18 @@
+<img src="graphs/1029.png" USEMAP="#knowledge_system" alt="promisers::$(regex) image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="613,195,37" href="knowledge.php?pid=896" alt="topic" title="promises::promise_update_cf_7">
+<area shape = "circle" coords="575,94,37" href="knowledge.php?pid=901" alt="topic" title="promises::promise_update_cf_21">
+<area shape = "circle" coords="475,147,37" href="knowledge.php?pid=906" alt="topic" title="promises::promise_update_cf_30">
+<area shape = "circle" coords="358,136,37" href="knowledge.php?pid=927" alt="topic" title="promises::promise_site_cf_40">
+<area shape = "circle" coords="369,243,37" href="knowledge.php?pid=934" alt="topic" title="promises::promise_site_cf_70">
+<area shape = "circle" coords="115,298,30" href="knowledge.php?pid=1028" alt="topic" title="bundles::DeleteLinesMatching">
+<area shape = "circle" coords="188,476,30" href="knowledge.php?pid=282" alt="topic" title="promise_types::delete_lines">
+<area shape = "circle" coords="208,368,30" href="knowledge.php?pid=1029" alt="topic" title="promisers::$(regex)">
+<area shape = "circle" coords="321,330,30" href="knowledge.php?pid=1030" alt="topic" title="promises::promise_library_cf_165">
+<area shape = "circle" coords="421,369,37" href="knowledge.php?pid=899" alt="topic" title="promises::promise_update_cf_13">
+<area shape = "circle" coords="488,456,37" href="knowledge.php?pid=904" alt="topic" title="promises::promise_update_cf_29">
+<area shape = "circle" coords="568,379,37" href="knowledge.php?pid=908" alt="topic" title="promises::promise_update_cf_31">
+<area shape = "circle" coords="684,359,37" href="knowledge.php?pid=932" alt="topic" title="promises::promise_site_cf_58">
+<area shape = "circle" coords="640,261,37" href="knowledge.php?pid=940" alt="topic" title="promises::promise_site_cf_91">
+<area shape = "circle" coords="503,269,55" href="knowledge.php?pid=893" alt="topic" title="contexts::any">
+</map>

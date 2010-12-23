@@ -1,0 +1,5 @@
+<img src="graphs/2826.png" USEMAP="#knowledge_system" alt="application_services::webserver image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="517,227,55" href="knowledge.php?pid=2822" alt="topic" title="application_services::web services">
+<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=2826" alt="topic" title="application_services::webserver">
+</map>

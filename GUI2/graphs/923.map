@@ -1,0 +1,16 @@
+<img src="graphs/923.png" USEMAP="#knowledge_system" alt="management_issues::business value image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="592,99,43" href="knowledge.php?pid=129" alt="topic" title="body_constraints::exec_owner">
+<area shape = "circle" coords="377,62,43" href="knowledge.php?pid=106" alt="topic" title="body_constraints::measurement_class">
+<area shape = "circle" coords="242,168,34" href="knowledge.php?pid=2759" alt="topic" title="values::action">
+<area shape = "circle" coords="108,262,35" href="knowledge.php?pid=2427" alt="topic" title="body_constraints::value_notkept">
+<area shape = "circle" coords="78,393,31" href="knowledge.php?pid=649" alt="topic" title="views::manager view">
+<area shape = "circle" coords="273,486,35" href="knowledge.php?pid=2425" alt="topic" title="body_constraints::value_repaired">
+<area shape = "circle" coords="546,471,32" href="knowledge.php?pid=949" alt="topic" title="models_of_system_administration::computer immunology">
+<area shape = "circle" coords="691,359,35" href="knowledge.php?pid=951" alt="topic" title="models_of_system_administration::self-healing">
+<area shape = "circle" coords="599,234,35" href="knowledge.php?pid=950" alt="topic" title="models_of_system_administration::autonomics">
+<area shape = "circle" coords="377,342,31" href="knowledge.php?pid=923" alt="topic" title="management_issues::business value">
+<area shape = "circle" coords="340,188,31" href="knowledge.php?pid=95" alt="topic" title="body_constraints::value_kept">
+<area shape = "circle" coords="603,208,43" href="knowledge.php?pid=142" alt="topic" title="body_constraints::db_server_owner">
+<area shape = "circle" coords="490,135,55" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+</map>

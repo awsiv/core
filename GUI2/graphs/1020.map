@@ -1,0 +1,18 @@
+<img src="graphs/1020.png" USEMAP="#knowledge_system" alt="promisers::.* image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="688,177,38" href="knowledge.php?pid=18" alt="topic" title="system_reports::lastseen report">
+<area shape = "circle" coords="629,85,38" href="knowledge.php?pid=448" alt="topic" title="body_constraints::deny">
+<area shape = "circle" coords="527,145,38" href="knowledge.php?pid=450" alt="topic" title="body_constraints::ifencrypted">
+<area shape = "circle" coords="407,178,38" href="knowledge.php?pid=1017" alt="topic" title="promises::promise_site_cf_393">
+<area shape = "circle" coords="363,199,31" href="knowledge.php?pid=1016" alt="topic" title="promisers::/home/mark/LapTop">
+<area shape = "circle" coords="111,233,30" href="knowledge.php?pid=1022" alt="topic" title="promises::promise_site_cf_401">
+<area shape = "circle" coords="195,464,30" href="knowledge.php?pid=1021" alt="topic" title="promise_types::roles">
+<area shape = "circle" coords="234,328,30" href="knowledge.php?pid=1020" alt="topic" title="promisers::.*">
+<area shape = "circle" coords="428,377,31" href="knowledge.php?pid=1018" alt="topic" title="promisers::/home/mark/.cfagent/bin/cf-agent">
+<area shape = "circle" coords="396,288,30" href="knowledge.php?pid=1015" alt="topic" title="bundles::access_rules">
+<area shape = "circle" coords="479,375,38" href="knowledge.php?pid=447" alt="topic" title="body_constraints::admit">
+<area shape = "circle" coords="600,347,38" href="knowledge.php?pid=449" alt="topic" title="body_constraints::maproot">
+<area shape = "circle" coords="726,351,38" href="knowledge.php?pid=451" alt="topic" title="body_constraints::resource_type">
+<area shape = "circle" coords="714,247,38" href="knowledge.php?pid=1019" alt="topic" title="promises::promise_site_cf_397">
+<area shape = "circle" coords="585,241,55" href="knowledge.php?pid=446" alt="topic" title="promise_types::access">
+</map>

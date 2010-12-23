@@ -1,0 +1,27 @@
+<img src="graphs/2967.png" USEMAP="#knowledge_system" alt="handles::cfengine_processes_vars_stop_signal_windows image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="270,381,55" href="knowledge.php?pid=2925" alt="topic" title="bundles::change_management">
+<area shape = "circle" coords="292,454,55" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="390,405,55" href="knowledge.php?pid=2930" alt="topic" title="promisers::domain">
+<area shape = "circle" coords="482,458,55" href="knowledge.php?pid=2767" alt="topic" title="data_types::string">
+<area shape = "circle" coords="512,386,55" href="knowledge.php?pid=2933" alt="topic" title="promisers::acl">
+<area shape = "circle" coords="642,401,55" href="knowledge.php?pid=2769" alt="topic" title="data_types::real">
+<area shape = "circle" coords="594,332,55" href="knowledge.php?pid=2936" alt="topic" title="promisers::dir_masterfiles">
+<area shape = "circle" coords="717,304,55" href="knowledge.php?pid=2771" alt="topic" title="data_types::ilist">
+<area shape = "circle" coords="608,261,55" href="knowledge.php?pid=2939" alt="topic" title="promisers::dir_reports">
+<area shape = "circle" coords="681,199,55" href="knowledge.php?pid=2773" alt="topic" title="data_types::policy">
+<area shape = "circle" coords="732,233,30" href="knowledge.php?pid=2965" alt="topic" title="promisers::stop_signal">
+<area shape = "circle" coords="485,95,30" href="knowledge.php?pid=2964" alt="topic" title="class_contexts::windows">
+<area shape = "circle" coords="538,204,32" href="knowledge.php?pid=2967" alt="topic" title="handles::cfengine_processes_vars_stop_signal_windows">
+<area shape = "circle" coords="546,124,55" href="knowledge.php?pid=2929" alt="topic" title="bundles::def">
+<area shape = "circle" coords="436,165,55" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="359,104,55" href="knowledge.php?pid=2932" alt="topic" title="handles::common_def_vars_domain">
+<area shape = "circle" coords="310,174,55" href="knowledge.php?pid=2768" alt="topic" title="data_types::int">
+<area shape = "circle" coords="186,147,55" href="knowledge.php?pid=2935" alt="topic" title="handles::common_def_vars_acl">
+<area shape = "circle" coords="215,220,55" href="knowledge.php?pid=2770" alt="topic" title="data_types::slist">
+<area shape = "circle" coords="85,238,55" href="knowledge.php?pid=2938" alt="topic" title="handles::common_def_vars_dir_masterfiles">
+<area shape = "circle" coords="182,289,55" href="knowledge.php?pid=2772" alt="topic" title="data_types::rlist">
+<area shape = "circle" coords="93,344,55" href="knowledge.php?pid=2941" alt="topic" title="handles::common_def_vars_dir_reports">
+<area shape = "circle" coords="397,284,52" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="52,428,55" href="knowledge.php?pid=812" alt="topic" title="technical_concepts::variables">
+</map>

@@ -1,0 +1,26 @@
+<img src="graphs/2879.png" USEMAP="#knowledge_system" alt="manual::depth_search (compound body) image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="164,433,55" href="knowledge.php?pid=15" alt="topic" title="system_reports::file_diffs report">
+<area shape = "circle" coords="204,477,55" href="knowledge.php?pid=29" alt="topic" title="system_reports::hashes report">
+<area shape = "circle" coords="249,435,55" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="321,439,55" href="knowledge.php?pid=2483" alt="topic" title="body_constraints::changes">
+<area shape = "circle" coords="304,386,55" href="knowledge.php?pid=2516" alt="topic" title="body_constraints::create">
+<area shape = "circle" coords="354,346,55" href="knowledge.php?pid=2531" alt="topic" title="body_constraints::edit_line">
+<area shape = "circle" coords="489,320,44" href="knowledge.php?pid=2524" alt="topic" title="body_constraints::include_dirs">
+<area shape = "circle" coords="613,309,30" href="knowledge.php?pid=2879" alt="topic" title="manual::depth_search (compound body)">
+<area shape = "circle" coords="699,241,44" href="knowledge.php?pid=2528" alt="topic" title="body_constraints::traverse_links">
+<area shape = "circle" coords="707,147,44" href="knowledge.php?pid=2522" alt="topic" title="body_constraints::include_basedir">
+<area shape = "circle" coords="632,72,31" href="knowledge.php?pid=228" alt="topic" title="body_constraints::depth">
+<area shape = "circle" coords="510,50,44" href="knowledge.php?pid=2526" alt="topic" title="body_constraints::rmdeadlinks">
+<area shape = "circle" coords="399,92,44" href="knowledge.php?pid=2520" alt="topic" title="body_constraints::exclude_dirs">
+<area shape = "circle" coords="349,179,44" href="knowledge.php?pid=2530" alt="topic" title="body_constraints::xdev">
+<area shape = "circle" coords="531,187,39" href="knowledge.php?pid=2518" alt="topic" title="body_constraints::depth_search">
+<area shape = "circle" coords="278,269,55" href="knowledge.php?pid=26" alt="topic" title="system_reports::setuid report">
+<area shape = "circle" coords="213,293,55" href="knowledge.php?pid=837" alt="topic" title="cfengine_components::cfengine 2">
+<area shape = "circle" coords="150,266,55" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="135,319,55" href="knowledge.php?pid=2487" alt="topic" title="body_constraints::copy_from">
+<area shape = "circle" coords="67,339,55" href="knowledge.php?pid=2517" alt="topic" title="body_constraints::delete">
+<area shape = "circle" coords="113,381,55" href="knowledge.php?pid=2532" alt="topic" title="body_constraints::edit_xml">
+<area shape = "circle" coords="209,367,52" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="52,455,55" href="knowledge.php?pid=14" alt="topic" title="system_reports::file_changes report">
+</map>

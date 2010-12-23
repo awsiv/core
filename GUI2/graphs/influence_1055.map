@@ -1,0 +1,9 @@
+<img src="graphs/influence_1055.png" USEMAP="#knowledge_system" alt="promisers::apache2 image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="433,428,30" href="knowledge.php?pid=1063" alt="topic" title="promisers::apache2-mod_php5">
+<area shape = "circle" coords="650,273,30" href="knowledge.php?pid=1062" alt="topic" title="promises::promise_webserver_cf_62">
+<area shape = "circle" coords="428,121,30" href="knowledge.php?pid=1055" alt="topic" title="promisers::apache2">
+<area shape = "circle" coords="149,135,30" href="knowledge.php?pid=1065" alt="topic" title="promisers::php5">
+<area shape = "circle" coords="373,276,30" href="knowledge.php?pid=1066" alt="topic" title="contexts::software_ok">
+<area shape = "circle" coords="182,401,30" href="knowledge.php?pid=1064" alt="topic" title="promisers::apache2-prefork">
+</map>

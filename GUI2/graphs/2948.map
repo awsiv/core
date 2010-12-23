@@ -1,0 +1,23 @@
+<img src="graphs/2948.png" USEMAP="#knowledge_system" alt="handles::grant_access_policy image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="222,394,55" href="knowledge.php?pid=2727" alt="topic" title="body_constraints::admit">
+<area shape = "circle" coords="268,460,55" href="knowledge.php?pid=2729" alt="topic" title="body_constraints::maproot">
+<area shape = "circle" coords="339,406,55" href="knowledge.php?pid=2731" alt="topic" title="body_constraints::resource_type">
+<area shape = "circle" coords="441,430,55" href="knowledge.php?pid=2949" alt="topic" title="promisers::delta">
+<area shape = "circle" coords="435,357,55" href="knowledge.php?pid=2951" alt="topic" title="promisers::full">
+<area shape = "circle" coords="532,325,55" href="knowledge.php?pid=2954" alt="topic" title="promisers::/var/cfengine/reports">
+<area shape = "circle" coords="452,275,55" href="knowledge.php?pid=2957" alt="topic" title="promisers::/var/cfengine/master_software_updates">
+<area shape = "circle" coords="671,299,30" href="knowledge.php?pid=2946" alt="topic" title="promisers::/var/cfengine/masterfiles">
+<area shape = "circle" coords="716,88,32" href="knowledge.php?pid=2921" alt="topic" title="class_contexts::any">
+<area shape = "circle" coords="411,57,38" href="knowledge.php?pid=3561" alt="topic" title="promises::update_files_inputs_dir">
+<area shape = "circle" coords="541,178,33" href="knowledge.php?pid=2948" alt="topic" title="handles::grant_access_policy">
+<area shape = "circle" coords="381,209,55" href="knowledge.php?pid=2728" alt="topic" title="body_constraints::deny">
+<area shape = "circle" coords="335,142,55" href="knowledge.php?pid=2730" alt="topic" title="body_constraints::ifencrypted">
+<area shape = "circle" coords="263,198,55" href="knowledge.php?pid=2945" alt="topic" title="bundles::access_rules">
+<area shape = "circle" coords="162,172,55" href="knowledge.php?pid=2950" alt="topic" title="promises::promise_promises_cf_206">
+<area shape = "circle" coords="168,247,55" href="knowledge.php?pid=2952" alt="topic" title="promises::promise_promises_cf_209">
+<area shape = "circle" coords="71,278,55" href="knowledge.php?pid=2956" alt="topic" title="handles::grant_access_reports">
+<area shape = "circle" coords="151,328,55" href="knowledge.php?pid=2959" alt="topic" title="handles::grant_access_datafiles">
+<area shape = "circle" coords="301,302,52" href="knowledge.php?pid=492" alt="topic" title="promise_types::access">
+<area shape = "circle" coords="52,430,55" href="knowledge.php?pid=16" alt="topic" title="system_reports::lastseen report">
+</map>

@@ -1,0 +1,27 @@
+<img src="graphs/538.png" USEMAP="#knowledge_system" alt="functions::readstringlist image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="217,388,32" href="knowledge.php?pid=538" alt="topic" title="functions::readstringlist">
+<area shape = "circle" coords="232,460,55" href="knowledge.php?pid=103" alt="topic" title="body_constraints::repair_denied">
+<area shape = "circle" coords="303,414,55" href="knowledge.php?pid=105" alt="topic" title="body_constraints::promise_kept">
+<area shape = "circle" coords="375,459,55" href="knowledge.php?pid=153" alt="topic" title="body_constraints::aces">
+<area shape = "circle" coords="393,393,55" href="knowledge.php?pid=165" alt="topic" title="body_constraints::servers">
+<area shape = "circle" coords="491,400,55" href="knowledge.php?pid=261" alt="topic" title="body_constraints::bsdflags">
+<area shape = "circle" coords="449,338,55" href="knowledge.php?pid=524" alt="topic" title="functions::ldaplist">
+<area shape = "circle" coords="533,304,55" href="knowledge.php?pid=530" alt="topic" title="functions::peerleaders">
+<area shape = "circle" coords="448,271,55" href="knowledge.php?pid=697" alt="topic" title="cfengine_3::string">
+<area shape = "circle" coords="671,302,38" href="knowledge.php?pid=77" alt="topic" title="body_constraints::showstate">
+<area shape = "circle" coords="716,89,38" href="knowledge.php?pid=69" alt="topic" title="body_constraints::friend_pattern">
+<area shape = "circle" coords="412,58,38" href="knowledge.php?pid=85" alt="topic" title="body_constraints::log_string">
+<area shape = "circle" coords="541,180,34" href="knowledge.php?pid=51" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="385,223,32" href="knowledge.php?pid=101" alt="topic" title="body_constraints::promise_repaired">
+<area shape = "circle" coords="370,150,55" href="knowledge.php?pid=104" alt="topic" title="body_constraints::repair_timeout">
+<area shape = "circle" coords="299,197,55" href="knowledge.php?pid=149" alt="topic" title="body_constraints::database_rows">
+<area shape = "circle" coords="226,151,55" href="knowledge.php?pid=157" alt="topic" title="body_constraints::specify_inherit_aces">
+<area shape = "circle" coords="208,218,55" href="knowledge.php?pid=235" alt="topic" title="body_constraints::search_bsdflags">
+<area shape = "circle" coords="111,211,55" href="knowledge.php?pid=505" alt="topic" title="functions::getindices">
+<area shape = "circle" coords="153,273,55" href="knowledge.php?pid=528" alt="topic" title="functions::peers">
+<area shape = "circle" coords="68,307,55" href="knowledge.php?pid=551" alt="topic" title="functions::splitstring">
+<area shape = "circle" coords="154,340,55" href="knowledge.php?pid=895" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="301,305,52" href="knowledge.php?pid=698" alt="topic" title="cfengine_3::slist">
+<area shape = "circle" coords="52,435,55" href="knowledge.php?pid=102" alt="topic" title="body_constraints::repair_failed">
+</map>

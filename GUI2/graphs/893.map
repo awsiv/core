@@ -1,0 +1,27 @@
+<img src="graphs/893.png" USEMAP="#knowledge_system" alt="operating_systems::gnu/linux image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="699,289,43" href="knowledge.php?pid=2834" alt="topic" title="commands_and_tools::apt-get">
+<area shape = "circle" coords="518,314,43" href="knowledge.php?pid=2837" alt="topic" title="commands_and_tools::emerge">
+<area shape = "circle" coords="500,155,43" href="knowledge.php?pid=2836" alt="topic" title="commands_and_tools::portage">
+<area shape = "circle" coords="464,240,55" href="knowledge.php?pid=913" alt="topic" title="operating_systems::gentoo">
+<area shape = "circle" coords="592,85,40" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="483,168,46" href="knowledge.php?pid=3045" alt="topic" title="handles::cfengine_enable_files_rc_files">
+<area shape = "circle" coords="410,166,30" href="knowledge.php?pid=904" alt="topic" title="operating_systems::distro">
+<area shape = "circle" coords="358,113,40" href="knowledge.php?pid=912" alt="topic" title="operating_systems::slackware">
+<area shape = "circle" coords="320,176,40" href="knowledge.php?pid=3334" alt="topic" title="class_contexts::debian">
+<area shape = "circle" coords="322,84,34" href="knowledge.php?pid=2832" alt="topic" title="commands_and_tools::zypper">
+<area shape = "circle" coords="163,69,34" href="knowledge.php?pid=2831" alt="topic" title="commands_and_tools::yast">
+<area shape = "circle" coords="99,219,34" href="knowledge.php?pid=2830" alt="topic" title="commands_and_tools::yum">
+<area shape = "circle" coords="219,326,34" href="knowledge.php?pid=2833" alt="topic" title="commands_and_tools::rpm">
+<area shape = "circle" coords="232,188,31" href="knowledge.php?pid=907" alt="topic" title="operating_systems::suse">
+<area shape = "circle" coords="230,187,43" href="knowledge.php?pid=3017" alt="topic" title="promisers::rc_files">
+<area shape = "circle" coords="248,346,43" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="284,261,55" href="knowledge.php?pid=3019" alt="topic" title="handles::cfengine_enable_vars_rc_files">
+<area shape = "circle" coords="265,333,30" href="knowledge.php?pid=893" alt="topic" title="operating_systems::gnu/linux">
+<area shape = "circle" coords="338,335,40" href="knowledge.php?pid=909" alt="topic" title="operating_systems::fedora">
+<area shape = "circle" coords="390,387,40" href="knowledge.php?pid=3322" alt="topic" title="class_contexts::redhat">
+<area shape = "circle" coords="428,325,40" href="knowledge.php?pid=3348" alt="topic" title="handles::cfengine_limit_execd_processes_check_cf_execd">
+<area shape = "circle" coords="374,250,39" href="knowledge.php?pid=3016" alt="topic" title="class_contexts::linux">
+<area shape = "circle" coords="624,465,43" href="knowledge.php?pid=2835" alt="topic" title="commands_and_tools::dpkg">
+<area shape = "circle" coords="612,355,55" href="knowledge.php?pid=908" alt="topic" title="operating_systems::ubuntu">
+</map>

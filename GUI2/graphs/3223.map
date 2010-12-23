@@ -1,0 +1,21 @@
+<img src="graphs/3223.png" USEMAP="#knowledge_system" alt="class_contexts::a2ensite_ssl image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="693,198,41" href="knowledge.php?pid=2636" alt="topic" title="promise_types::packages">
+<area shape = "circle" coords="540,93,41" href="knowledge.php?pid=3189" alt="topic" title="promisers::mysql-server">
+<area shape = "circle" coords="584,226,37" href="knowledge.php?pid=3176" alt="topic" title="promisers::match_package">
+<area shape = "circle" coords="458,95,37" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="485,199,42" href="knowledge.php?pid=3184" alt="topic" title="handles::cfengine_policysrv_vars_match_package_debian">
+<area shape = "circle" coords="412,115,34" href="knowledge.php?pid=3229" alt="topic" title="handles::cfengine_policysrv_file_tidy_index_html">
+<area shape = "circle" coords="341,201,34" href="knowledge.php?pid=3705" alt="topic" title="handles::knowledge_files_doc_root_debian">
+<area shape = "circle" coords="256,116,30" href="knowledge.php?pid=3230" alt="topic" title="promisers::/etc/apache2/sites-available/ssl">
+<area shape = "circle" coords="105,280,30" href="knowledge.php?pid=3226" alt="topic" title="handles::cfengine_policysrv_commands_a2ensite_ssl">
+<area shape = "circle" coords="260,440,40" href="knowledge.php?pid=3233" alt="topic" title="promises::cfengine_policysrv_files_ssl">
+<area shape = "circle" coords="258,278,30" href="knowledge.php?pid=3223" alt="topic" title="class_contexts::a2ensite_ssl">
+<area shape = "circle" coords="343,353,34" href="knowledge.php?pid=3215" alt="topic" title="class_contexts::a2enmod_php5_ssl">
+<area shape = "circle" coords="416,438,34" href="knowledge.php?pid=3702" alt="topic" title="handles::knowledge_files_mysql_sock_debian">
+<area shape = "circle" coords="487,351,34" href="knowledge.php?pid=3708" alt="topic" title="handles::knowledge_files_cfagent_dir_debian">
+<area shape = "circle" coords="414,276,33" href="knowledge.php?pid=3182" alt="topic" title="class_contexts::debian.policy_host">
+<area shape = "circle" coords="544,457,41" href="knowledge.php?pid=3185" alt="topic" title="promisers::apache2">
+<area shape = "circle" coords="695,347,41" href="knowledge.php?pid=3192" alt="topic" title="promisers::php5">
+<area shape = "circle" coords="597,274,55" href="knowledge.php?pid=3214" alt="topic" title="promises::cfengine_policysrv_packages_install_package_debian">
+</map>

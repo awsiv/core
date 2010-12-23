@@ -1,0 +1,12 @@
+<img src="graphs/3579.png" USEMAP="#knowledge_system" alt="promisers::^($(regex))$ image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="658,198,41" href="knowledge.php?pid=2632" alt="topic" title="promise_types::methods">
+<area shape = "circle" coords="399,93,41" href="knowledge.php?pid=2916" alt="topic" title="promises::promise_promises_cf_62">
+<area shape = "circle" coords="55,184,30" href="knowledge.php?pid=3578" alt="topic" title="bundles::comment_lines_matching">
+<area shape = "circle" coords="58,370,34" href="knowledge.php?pid=364" alt="topic" title="promise_types::replace_patterns">
+<area shape = "circle" coords="142,276,30" href="knowledge.php?pid=3579" alt="topic" title="promisers::^($(regex))$">
+<area shape = "circle" coords="312,275,31" href="knowledge.php?pid=3580" alt="topic" title="promises::promise_cfengine_stdlib_cf_57">
+<area shape = "circle" coords="406,457,41" href="knowledge.php?pid=2907" alt="topic" title="bundles::cfengine_management">
+<area shape = "circle" coords="661,348,41" href="knowledge.php?pid=2919" alt="topic" title="promises::promise_promises_cf_63">
+<area shape = "circle" coords="496,274,55" href="knowledge.php?pid=2921" alt="topic" title="class_contexts::any">
+</map>

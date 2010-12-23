@@ -1,0 +1,5 @@
+<img src="graphs/influence_3523.png" USEMAP="#knowledge_system" alt="class_contexts::start_server image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="472,260,30" href="knowledge.php?pid=3526" alt="topic" title="handles::update_commands_start_cf_serverd">
+<area shape = "circle" coords="52,514,30" href="knowledge.php?pid=3523" alt="topic" title="class_contexts::start_server">
+</map>

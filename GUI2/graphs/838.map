@@ -1,0 +1,27 @@
+<img src="graphs/838.png" USEMAP="#knowledge_system" alt="cfengine_components::cfengine 3 image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="148,465,37" href="knowledge.php?pid=820" alt="topic" title="cfengine_components::cfagent">
+<area shape = "circle" coords="232,390,33" href="knowledge.php?pid=1674" alt="topic" title="Software_components::cf-agent">
+<area shape = "circle" coords="260,455,55" href="knowledge.php?pid=2441" alt="topic" title="promise_types::commands">
+<area shape = "circle" coords="336,410,55" href="knowledge.php?pid=2678" alt="topic" title="promise_types::processes">
+<area shape = "circle" coords="428,444,55" href="knowledge.php?pid=2740" alt="topic" title="promise_types::occurrences">
+<area shape = "circle" coords="437,380,55" href="knowledge.php?pid=2829" alt="topic" title="commands_and_tools::cfengine">
+<area shape = "circle" coords="545,371,55" href="knowledge.php?pid=2977" alt="topic" title="promisers::cf-monitord">
+<area shape = "circle" coords="482,319,55" href="knowledge.php?pid=2983" alt="topic" title="promisers::cf-report">
+<area shape = "circle" coords="555,271,55" href="knowledge.php?pid=2989" alt="topic" title="promisers::cf-serverd">
+<area shape = "circle" coords="666,273,38" href="knowledge.php?pid=2453" alt="topic" title="promise_types::databases">
+<area shape = "circle" coords="698,145,38" href="knowledge.php?pid=842" alt="topic" title="cfengine_components::enterprise level cfengine">
+<area shape = "circle" coords="482,126,38" href="knowledge.php?pid=2747" alt="topic" title="promise_types::measurements">
+<area shape = "circle" coords="574,200,34" href="knowledge.php?pid=839" alt="topic" title="cfengine_components::cfengine nova">
+<area shape = "circle" coords="572,84,37" href="knowledge.php?pid=812" alt="topic" title="technical_concepts::variables">
+<area shape = "circle" coords="444,198,33" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="355,218,55" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="288,167,55" href="knowledge.php?pid=2734" alt="topic" title="promise_types::topics">
+<area shape = "circle" coords="243,226,55" href="knowledge.php?pid=2825" alt="topic" title="application_services::storage">
+<area shape = "circle" coords="137,212,55" href="knowledge.php?pid=2974" alt="topic" title="promisers::cf-know">
+<area shape = "circle" coords="165,274,55" href="knowledge.php?pid=2980" alt="topic" title="promisers::cf-promises">
+<area shape = "circle" coords="70,305,55" href="knowledge.php?pid=2986" alt="topic" title="promisers::cf-runagent">
+<area shape = "circle" coords="159,341,55" href="knowledge.php?pid=2996" alt="topic" title="promisers::cf-execd">
+<area shape = "circle" coords="317,313,52" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="52,430,55" href="knowledge.php?pid=2409" alt="topic" title="promise_types::reports">
+</map>

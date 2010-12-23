@@ -1,0 +1,18 @@
+<img src="graphs/65.png" USEMAP="#knowledge_system" alt="body_constraints::dist image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="675,163,38" href="knowledge.php?pid=666" alt="topic" title="technical_concepts::variables">
+<area shape = "circle" coords="604,80,38" href="knowledge.php?pid=697" alt="topic" title="cfengine_3::string">
+<area shape = "circle" coords="480,134,38" href="knowledge.php?pid=699" alt="topic" title="cfengine_3::int">
+<area shape = "circle" coords="335,163,38" href="knowledge.php?pid=820" alt="topic" title="promise_theory::policy">
+<area shape = "circle" coords="123,148,32" href="knowledge.php?pid=943" alt="topic" title="promise_types::reports">
+<area shape = "circle" coords="222,205,33" href="knowledge.php?pid=659" alt="topic" title="technical_concepts::intermittency">
+<area shape = "circle" coords="78,420,32" href="knowledge.php?pid=702" alt="topic" title="cfengine_3::rlist">
+<area shape = "circle" coords="422,470,30" href="knowledge.php?pid=65" alt="topic" title="body_constraints::dist">
+<area shape = "circle" coords="274,384,30" href="knowledge.php?pid=43" alt="topic" title="values::real number">
+<area shape = "circle" coords="321,262,30" href="knowledge.php?pid=701" alt="topic" title="cfengine_3::real">
+<area shape = "circle" coords="421,340,38" href="knowledge.php?pid=692" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="568,315,38" href="knowledge.php?pid=698" alt="topic" title="cfengine_3::slist">
+<area shape = "circle" coords="720,319,38" href="knowledge.php?pid=700" alt="topic" title="cfengine_3::ilist">
+<area shape = "circle" coords="706,225,38" href="knowledge.php?pid=827" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="550,220,55" href="knowledge.php?pid=895" alt="topic" title="promise_types::vars">
+</map>

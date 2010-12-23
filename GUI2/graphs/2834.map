@@ -1,0 +1,14 @@
+<img src="graphs/2834.png" USEMAP="#knowledge_system" alt="commands_and_tools::apt-get image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="678,158,39" href="knowledge.php?pid=893" alt="topic" title="operating_systems::gnu/linux">
+<area shape = "circle" coords="561,76,39" href="knowledge.php?pid=907" alt="topic" title="operating_systems::suse">
+<area shape = "circle" coords="437,154,39" href="knowledge.php?pid=912" alt="topic" title="operating_systems::slackware">
+<area shape = "circle" coords="122,193,30" href="knowledge.php?pid=2835" alt="topic" title="commands_and_tools::dpkg">
+<area shape = "circle" coords="79,472,32" href="knowledge.php?pid=3334" alt="topic" title="class_contexts::debian">
+<area shape = "circle" coords="144,361,30" href="knowledge.php?pid=2834" alt="topic" title="commands_and_tools::apt-get">
+<area shape = "circle" coords="209,251,31" href="knowledge.php?pid=908" alt="topic" title="operating_systems::ubuntu">
+<area shape = "circle" coords="483,292,39" href="knowledge.php?pid=904" alt="topic" title="operating_systems::distro">
+<area shape = "circle" coords="647,336,39" href="knowledge.php?pid=909" alt="topic" title="operating_systems::fedora">
+<area shape = "circle" coords="703,235,39" href="knowledge.php?pid=913" alt="topic" title="operating_systems::gentoo">
+<area shape = "circle" coords="554,212,55" href="knowledge.php?pid=3016" alt="topic" title="class_contexts::linux">
+</map>

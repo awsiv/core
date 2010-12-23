@@ -1,0 +1,23 @@
+<img src="graphs/272.png" USEMAP="#knowledge_system" alt="body_constraints::disable_mode image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="691,181,38" href="knowledge.php?pid=674" alt="topic" title="cfengine_components::cfagent">
+<area shape = "circle" coords="635,86,38" href="knowledge.php?pid=677" alt="topic" title="cfengine_components::cfenvd">
+<area shape = "circle" coords="539,148,38" href="knowledge.php?pid=679" alt="topic" title="cfengine_components::cfshow">
+<area shape = "circle" coords="425,181,38" href="knowledge.php?pid=713" alt="topic" title="cfengine_2::acl">
+<area shape = "circle" coords="514,127,32" href="knowledge.php?pid=51" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="463,211,34" href="knowledge.php?pid=274" alt="topic" title="body_constraints::disable_suffix">
+<area shape = "circle" coords="367,158,32" href="knowledge.php?pid=276" alt="topic" title="body_constraints::newname">
+<area shape = "circle" coords="319,249,32" href="knowledge.php?pid=827" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="107,377,30" href="knowledge.php?pid=45" alt="topic" title="values::posix file mode or permission">
+<area shape = "circle" coords="260,335,30" href="knowledge.php?pid=272" alt="topic" title="body_constraints::disable_mode">
+<area shape = "circle" coords="312,463,32" href="knowledge.php?pid=699" alt="topic" title="cfengine_3::int">
+<area shape = "circle" coords="362,378,34" href="knowledge.php?pid=278" alt="topic" title="body_constraints::rotate">
+<area shape = "circle" coords="459,432,32" href="knowledge.php?pid=721" alt="topic" title="cfengine_2::disable">
+<area shape = "circle" coords="506,340,32" href="knowledge.php?pid=988" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="413,294,31" href="knowledge.php?pid=737" alt="topic" title="cfengine_2::rename">
+<area shape = "circle" coords="493,384,38" href="knowledge.php?pid=675" alt="topic" title="cfengine_components::cfservd">
+<area shape = "circle" coords="607,355,38" href="knowledge.php?pid=678" alt="topic" title="cfengine_components::cfrun">
+<area shape = "circle" coords="726,359,38" href="knowledge.php?pid=680" alt="topic" title="cfengine_components::cfenvgraph">
+<area shape = "circle" coords="715,252,38" href="knowledge.php?pid=714" alt="topic" title="cfengine_2::alerts">
+<area shape = "circle" coords="593,246,55" href="knowledge.php?pid=691" alt="topic" title="cfengine_components::cfengine 2">
+</map>

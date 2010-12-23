@@ -1,0 +1,14 @@
+<img src="graphs/2404.png" USEMAP="#knowledge_system" alt="body_constraints::and image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="707,335,43" href="knowledge.php?pid=2397" alt="topic" title="body_constraints::real">
+<area shape = "circle" coords="373,150,35" href="knowledge.php?pid=2408" alt="topic" title="body_constraints::not">
+<area shape = "circle" coords="268,74,30" href="knowledge.php?pid=12" alt="topic" title="system_reports::classes report">
+<area shape = "circle" coords="143,108,35" href="knowledge.php?pid=2407" alt="topic" title="body_constraints::expression">
+<area shape = "circle" coords="91,225,30" href="knowledge.php?pid=2404" alt="topic" title="body_constraints::and">
+<area shape = "circle" coords="152,338,35" href="knowledge.php?pid=2405" alt="topic" title="body_constraints::xor">
+<area shape = "circle" coords="280,362,30" href="knowledge.php?pid=2403" alt="topic" title="body_constraints::or">
+<area shape = "circle" coords="241,219,32" href="knowledge.php?pid=2402" alt="topic" title="promise_types::classes">
+<area shape = "circle" coords="507,333,48" href="knowledge.php?pid=2406" alt="topic" title="body_constraints::dist">
+<area shape = "circle" coords="646,474,43" href="knowledge.php?pid=2400" alt="topic" title="body_constraints::rlist">
+<area shape = "circle" coords="636,387,55" href="knowledge.php?pid=47" alt="topic" title="values::real number">
+</map>

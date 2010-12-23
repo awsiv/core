@@ -1,0 +1,19 @@
+<img src="graphs/influence_3329.png" USEMAP="#knowledge_system" alt="class_contexts::SuSE image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="340,290,30" href="knowledge.php?pid=3308" alt="topic" title="promises::cfengine_web_server_files_sysconfig_apache2">
+<area shape = "circle" coords="439,469,30" href="knowledge.php?pid=3219" alt="topic" title="class_contexts::a2enmod_ssl">
+<area shape = "circle" coords="429,340,30" href="knowledge.php?pid=3197" alt="topic" title="promises::cfengine_policysrv_packages_install_package_suse">
+<area shape = "circle" coords="510,288,30" href="knowledge.php?pid=3333" alt="topic" title="handles::cfengine_editor_vars_web_group_suse">
+<area shape = "circle" coords="651,282,30" href="knowledge.php?pid=3236" alt="topic" title="handles::cfengine_policysrv_files_vhost_ssl">
+<area shape = "circle" coords="602,221,30" href="knowledge.php?pid=3697" alt="topic" title="handles::knowledge_files_mysql_sock_suse">
+<area shape = "circle" coords="673,163,30" href="knowledge.php?pid=3246" alt="topic" title="handles::cfengine_web_server_processes_mysqld_on_suse">
+<area shape = "circle" coords="653,81,30" href="knowledge.php?pid=2908" alt="topic" title="class_contexts::policy_host">
+<area shape = "circle" coords="536,147,30" href="knowledge.php?pid=3178" alt="topic" title="handles::cfengine_policysrv_vars_match_package_suse">
+<area shape = "circle" coords="476,88,30" href="knowledge.php?pid=3331" alt="topic" title="handles::cfengine_editor_vars_web_owner_suse">
+<area shape = "circle" coords="369,131,30" href="knowledge.php?pid=3173" alt="topic" title="handles::cfengine_php_mod_commands_apache2_suse">
+<area shape = "circle" coords="230,120,30" href="knowledge.php?pid=3686" alt="topic" title="handles::knowledge_vars_flavour_suse">
+<area shape = "circle" coords="246,186,30" href="knowledge.php?pid=3243" alt="topic" title="handles::cfengine_web_server_processes_apache_on_suse">
+<area shape = "circle" coords="149,233,30" href="knowledge.php?pid=3700" alt="topic" title="handles::knowledge_files_cfagent_dir_suse">
+<area shape = "circle" coords="419,213,30" href="knowledge.php?pid=3329" alt="topic" title="class_contexts::SuSE">
+<area shape = "circle" coords="163,302,55" href="knowledge.php?pid=3426" alt="topic" title="handles::garbage_collection_files_zypper_log">
+</map>

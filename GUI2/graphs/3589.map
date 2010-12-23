@@ -1,0 +1,18 @@
+<img src="graphs/3589.png" USEMAP="#knowledge_system" alt="promises::promise_cfengine_stdlib_cf_104 image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="238,406,55" href="knowledge.php?pid=3578" alt="topic" title="bundles::comment_lines_matching">
+<area shape = "circle" coords="326,463,55" href="knowledge.php?pid=3580" alt="topic" title="promises::promise_cfengine_stdlib_cf_57">
+<area shape = "circle" coords="392,394,55" href="knowledge.php?pid=3582" alt="topic" title="promisers::^$(comment)\s?($(regex))$">
+<area shape = "circle" coords="512,373,55" href="knowledge.php?pid=3584" alt="topic" title="bundles::comment_lines_containing">
+<area shape = "circle" coords="453,301,55" href="knowledge.php?pid=3586" alt="topic" title="promises::promise_cfengine_stdlib_cf_88">
+<area shape = "circle" coords="672,284,30" href="knowledge.php?pid=3588" alt="topic" title="promisers::^$(comment)\s?(.*$(regex).*)$">
+<area shape = "circle" coords="448,86,44" href="knowledge.php?pid=2921" alt="topic" title="class_contexts::any">
+<area shape = "circle" coords="473,227,34" href="knowledge.php?pid=3589" alt="topic" title="promises::promise_cfengine_stdlib_cf_104">
+<area shape = "circle" coords="360,219,55" href="knowledge.php?pid=3579" alt="topic" title="promisers::^($(regex))$">
+<area shape = "circle" coords="273,161,55" href="knowledge.php?pid=3581" alt="topic" title="bundles::uncomment_lines_matching">
+<area shape = "circle" coords="207,231,55" href="knowledge.php?pid=3583" alt="topic" title="promises::promise_cfengine_stdlib_cf_73">
+<area shape = "circle" coords="87,252,55" href="knowledge.php?pid=3585" alt="topic" title="promisers::^(.*$(regex).*)$">
+<area shape = "circle" coords="146,325,55" href="knowledge.php?pid=3587" alt="topic" title="bundles::uncomment_lines_containing">
+<area shape = "circle" coords="299,313,52" href="knowledge.php?pid=364" alt="topic" title="promise_types::replace_patterns">
+<area shape = "circle" coords="52,434,55" href="knowledge.php?pid=2628" alt="topic" title="body_constraints::replace_with">
+</map>

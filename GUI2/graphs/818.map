@@ -1,0 +1,25 @@
+<img src="graphs/818.png" USEMAP="#knowledge_system" alt="promise_theory::intentions image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="698,315,43" href="knowledge.php?pid=21" alt="topic" title="system_reports::promise report">
+<area shape = "circle" coords="454,267,40" href="knowledge.php?pid=1021" alt="topic" title="promise_types::roles">
+<area shape = "circle" coords="600,236,43" href="knowledge.php?pid=888" alt="topic" title="mission_status::system policy">
+<area shape = "circle" coords="437,79,43" href="knowledge.php?pid=569" alt="topic" title="boot_services::PXE">
+<area shape = "circle" coords="466,198,55" href="knowledge.php?pid=794" alt="topic" title="BDMA::build">
+<area shape = "circle" coords="387,202,40" href="knowledge.php?pid=832" alt="topic" title="promise_theory::topics">
+<area shape = "circle" coords="277,47,40" href="knowledge.php?pid=895" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="320,164,46" href="knowledge.php?pid=820" alt="topic" title="promise_theory::policy">
+<area shape = "circle" coords="290,228,40" href="knowledge.php?pid=847" alt="topic" title="promise_theory::services">
+<area shape = "circle" coords="263,153,30" href="knowledge.php?pid=833" alt="topic" title="promise_theory::facts">
+<area shape = "circle" coords="101,180,40" href="knowledge.php?pid=882" alt="topic" title="manager_view::request for change">
+<area shape = "circle" coords="81,323,40" href="knowledge.php?pid=835" alt="topic" title="promise_theory::actions">
+<area shape = "circle" coords="231,383,30" href="knowledge.php?pid=834" alt="topic" title="promise_theory::behaviours">
+<area shape = "circle" coords="204,264,31" href="knowledge.php?pid=818" alt="topic" title="promise_theory::intentions">
+<area shape = "circle" coords="278,316,40" href="knowledge.php?pid=821" alt="topic" title="promise_theory::promise proposals">
+<area shape = "circle" coords="216,489,40" href="knowledge.php?pid=876" alt="topic" title="views::operator view">
+<area shape = "circle" coords="289,384,46" href="knowledge.php?pid=20" alt="topic" title="system_reports::performance report">
+<area shape = "circle" coords="364,362,40" href="knowledge.php?pid=846" alt="topic" title="promise_theory::communicated information">
+<area shape = "circle" coords="440,381,40" href="knowledge.php?pid=819" alt="topic" title="promise_theory::bundles">
+<area shape = "circle" coords="362,281,39" href="knowledge.php?pid=822" alt="topic" title="promise_theory::promises">
+<area shape = "circle" coords="621,470,43" href="knowledge.php?pid=875" alt="topic" title="views::manager view">
+<area shape = "circle" coords="608,373,55" href="knowledge.php?pid=14" alt="topic" title="system_reports::compliance report">
+</map>

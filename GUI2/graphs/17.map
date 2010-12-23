@@ -1,0 +1,5 @@
+<img src="graphs/17.png" USEMAP="#knowledge_system" alt="system_reports::license report image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="517,227,55" href="knowledge.php?pid=657" alt="topic" title="manager_view::software licenses">
+<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=17" alt="topic" title="system_reports::license report">
+</map>

@@ -1,0 +1,15 @@
+<img src="graphs/867.png" USEMAP="#knowledge_system" alt="system_knowledge::server lifecycle image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="686,157,40" href="knowledge.php?pid=20" alt="topic" title="system_reports::performance report">
+<area shape = "circle" coords="513,78,40" href="knowledge.php?pid=820" alt="topic" title="promise_theory::policy">
+<area shape = "circle" coords="280,146,37" href="knowledge.php?pid=21" alt="topic" title="system_reports::promise report">
+<area shape = "circle" coords="113,260,30" href="knowledge.php?pid=867" alt="topic" title="system_knowledge::server lifecycle">
+<area shape = "circle" coords="73,400,40" href="knowledge.php?pid=866" alt="topic" title="system_knowledge::service catalogue">
+<area shape = "circle" coords="251,470,45" href="knowledge.php?pid=873" alt="topic" title="system_knowledge::mission status">
+<area shape = "circle" coords="402,373,33" href="knowledge.php?pid=871" alt="topic" title="system_knowledge::management issues">
+<area shape = "circle" coords="231,349,31" href="knowledge.php?pid=875" alt="topic" title="views::manager view">
+<area shape = "circle" coords="339,214,47" href="knowledge.php?pid=14" alt="topic" title="system_reports::compliance report">
+<area shape = "circle" coords="518,349,40" href="knowledge.php?pid=818" alt="topic" title="promise_theory::intentions">
+<area shape = "circle" coords="688,267,40" href="knowledge.php?pid=821" alt="topic" title="promise_theory::promise proposals">
+<area shape = "circle" coords="578,213,55" href="knowledge.php?pid=822" alt="topic" title="promise_theory::promises">
+</map>

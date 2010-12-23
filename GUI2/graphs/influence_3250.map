@@ -1,0 +1,17 @@
+<img src="graphs/influence_3250.png" USEMAP="#knowledge_system" alt="handles::cfengine_web_server_processes_httpd_on_redhat image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="213,393,30" href="knowledge.php?pid=2910" alt="topic" title="promises::promise_promises_cf_53">
+<area shape = "circle" coords="305,455,30" href="knowledge.php?pid=2912" alt="topic" title="promises::promise_promises_cf_55">
+<area shape = "circle" coords="372,380,30" href="knowledge.php?pid=3229" alt="topic" title="handles::cfengine_policysrv_file_tidy_index_html">
+<area shape = "circle" coords="498,357,30" href="knowledge.php?pid=3236" alt="topic" title="handles::cfengine_policysrv_files_vhost_ssl">
+<area shape = "circle" coords="436,278,30" href="knowledge.php?pid=3655" alt="topic" title="handles::knowledge_vars_config_src">
+<area shape = "circle" coords="663,93,30" href="knowledge.php?pid=3322" alt="topic" title="class_contexts::redhat">
+<area shape = "circle" coords="470,192,30" href="knowledge.php?pid=3181" alt="topic" title="handles::cfengine_policysrv_vars_match_package_redhat">
+<area shape = "circle" coords="340,190,30" href="knowledge.php?pid=2911" alt="topic" title="promises::promise_promises_cf_54">
+<area shape = "circle" coords="249,127,30" href="knowledge.php?pid=2913" alt="topic" title="promises::promise_promises_cf_57">
+<area shape = "circle" coords="181,203,30" href="knowledge.php?pid=3233" alt="topic" title="promises::cfengine_policysrv_files_ssl">
+<area shape = "circle" coords="55,226,30" href="knowledge.php?pid=3345" alt="topic" title="handles::cfengine_editor_files_policies_tidy">
+<area shape = "circle" coords="117,304,30" href="knowledge.php?pid=3658" alt="topic" title="handles::knowledge_vars_hosts">
+<area shape = "circle" coords="277,291,30" href="knowledge.php?pid=2908" alt="topic" title="class_contexts::policy_host">
+<area shape = "circle" coords="52,406,55" href="knowledge.php?pid=3343" alt="topic" title="handles::cfengine_editor_files_policies_dir">
+</map>

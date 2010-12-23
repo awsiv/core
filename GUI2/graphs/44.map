@@ -1,0 +1,27 @@
+<img src="graphs/44.png" USEMAP="#knowledge_system" alt="values::a time range image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="683,87,43" href="knowledge.php?pid=126" alt="topic" title="body_constraints::useshell">
+<area shape = "circle" coords="321,266,47" href="knowledge.php?pid=45" alt="topic" title="values::a positive integer">
+<area shape = "circle" coords="312,207,47" href="knowledge.php?pid=544" alt="topic" title="functions::accumulated">
+<area shape = "circle" coords="256,247,47" href="knowledge.php?pid=550" alt="topic" title="functions::countclassesmatching">
+<area shape = "circle" coords="209,201,47" href="knowledge.php?pid=552" alt="topic" title="functions::diskfree">
+<area shape = "circle" coords="189,258,47" href="knowledge.php?pid=559" alt="topic" title="functions::getgid">
+<area shape = "circle" coords="117,240,47" href="knowledge.php?pid=588" alt="topic" title="functions::now">
+<area shape = "circle" coords="139,297,47" href="knowledge.php?pid=594" alt="topic" title="functions::randomint">
+<area shape = "circle" coords="67,313,47" href="knowledge.php?pid=598" alt="topic" title="functions::readrealarray">
+<area shape = "circle" coords="125,351,47" href="knowledge.php?pid=601" alt="topic" title="functions::readstringarrayidx">
+<area shape = "circle" coords="74,395,47" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="149,403,31" href="knowledge.php?pid=44" alt="topic" title="values::a time range">
+<area shape = "circle" coords="136,462,47" href="knowledge.php?pid=46" alt="topic" title="values::integer">
+<area shape = "circle" coords="204,436,47" href="knowledge.php?pid=545" alt="topic" title="functions::ago">
+<area shape = "circle" coords="234,491,47" href="knowledge.php?pid=551" alt="topic" title="functions::countlinesmatching">
+<area shape = "circle" coords="273,440,47" href="knowledge.php?pid=558" alt="topic" title="functions::getfields">
+<area shape = "circle" coords="335,473,47" href="knowledge.php?pid=561" alt="topic" title="functions::getuid">
+<area shape = "circle" coords="334,414,47" href="knowledge.php?pid=589" alt="topic" title="functions::on">
+<area shape = "circle" coords="409,415,47" href="knowledge.php?pid=596" alt="topic" title="functions::readintarray">
+<area shape = "circle" coords="368,365,47" href="knowledge.php?pid=600" alt="topic" title="functions::readstringarray">
+<area shape = "circle" coords="432,334,47" href="knowledge.php?pid=615" alt="topic" title="functions::selectservers">
+<area shape = "circle" coords="363,310,47" href="knowledge.php?pid=2771" alt="topic" title="data_types::ilist">
+<area shape = "circle" coords="247,344,51" href="knowledge.php?pid=2768" alt="topic" title="data_types::int">
+<area shape = "circle" coords="564,157,55" href="knowledge.php?pid=42" alt="topic" title="values::boolean">
+</map>

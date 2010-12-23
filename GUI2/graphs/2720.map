@@ -1,0 +1,24 @@
+<img src="graphs/2720.png" USEMAP="#knowledge_system" alt="body_constraints::volume image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="646,152,36" href="knowledge.php?pid=126" alt="topic" title="body_constraints::useshell">
+<area shape = "circle" coords="631,80,36" href="knowledge.php?pid=184" alt="topic" title="body_constraints::update_hashes">
+<area shape = "circle" coords="568,114,36" href="knowledge.php?pid=211" alt="topic" title="body_constraints::preserve">
+<area shape = "circle" coords="502,85,36" href="knowledge.php?pid=245" alt="topic" title="body_constraints::empty_file_before_editing">
+<area shape = "circle" coords="492,158,36" href="knowledge.php?pid=351" alt="topic" title="body_constraints::allow_blank_fields">
+<area shape = "circle" coords="431,197,36" href="knowledge.php?pid=474" alt="topic" title="body_constraints::edit_fstab">
+<area shape = "circle" coords="306,180,31" href="knowledge.php?pid=2867" alt="topic" title="manual::volume (compound body)">
+<area shape = "circle" coords="165,206,30" href="knowledge.php?pid=487" alt="topic" title="body_constraints::sensible_size">
+<area shape = "circle" coords="96,333,31" href="knowledge.php?pid=2726" alt="topic" title="body_constraints::scan_arrivals">
+<area shape = "circle" coords="152,469,30" href="knowledge.php?pid=2712" alt="topic" title="promise_types::storage">
+<area shape = "circle" coords="290,508,31" href="knowledge.php?pid=2724" alt="topic" title="body_constraints::sensible_count">
+<area shape = "circle" coords="406,423,31" href="knowledge.php?pid=2722" alt="topic" title="body_constraints::freespace">
+<area shape = "circle" coords="261,342,30" href="knowledge.php?pid=2720" alt="topic" title="body_constraints::volume">
+<area shape = "circle" coords="490,244,30" href="knowledge.php?pid=484" alt="topic" title="body_constraints::check_foreign">
+<area shape = "circle" coords="482,320,36" href="knowledge.php?pid=136" alt="topic" title="body_constraints::preview">
+<area shape = "circle" coords="552,302,36" href="knowledge.php?pid=190" alt="topic" title="body_constraints::collapse_destination_dir">
+<area shape = "circle" coords="609,347,36" href="knowledge.php?pid=226" alt="topic" title="body_constraints::rmdirs">
+<area shape = "circle" coords="635,278,36" href="knowledge.php?pid=308" alt="topic" title="body_constraints::include_start_delimiter">
+<area shape = "circle" coords="704,255,36" href="knowledge.php?pid=361" alt="topic" title="body_constraints::start_fields_from_zero">
+<area shape = "circle" coords="663,195,36" href="knowledge.php?pid=2429" alt="topic" title="body_constraints::audit">
+<area shape = "circle" coords="571,209,55" href="knowledge.php?pid=42" alt="topic" title="values::boolean">
+</map>

@@ -1,0 +1,5 @@
+<img src="graphs/2802.png" USEMAP="#knowledge_system" alt="operating_systems::system packages image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="517,227,55" href="knowledge.php?pid=2803" alt="topic" title="operating_systems::package managers">
+<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=2802" alt="topic" title="operating_systems::system packages">
+</map>

@@ -1,0 +1,5 @@
+<img src="graphs/influence_3300.png" USEMAP="#knowledge_system" alt="handles::cfengine_web_server_commands_start_apache_debian image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="517,227,55" href="knowledge.php?pid=3298" alt="topic" title="class_contexts::debian_start_apache">
+<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=3300" alt="topic" title="handles::cfengine_web_server_commands_start_apache_debian">
+</map>

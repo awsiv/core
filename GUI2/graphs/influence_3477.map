@@ -1,0 +1,20 @@
+<img src="graphs/influence_3477.png" USEMAP="#knowledge_system" alt="promises::update_bins_packages_package_update image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="703,157,37" href="knowledge.php?pid=2956" alt="topic" title="handles::grant_access_reports">
+<area shape = "circle" coords="658,78,37" href="knowledge.php?pid=2998" alt="topic" title="handles::cfengine_processes_stop_cf_execd">
+<area shape = "circle" coords="582,130,37" href="knowledge.php?pid=3005" alt="topic" title="handles::cfengine_processes_services_stop_cf_execd_windows">
+<area shape = "circle" coords="492,157,37" href="knowledge.php?pid=3343" alt="topic" title="handles::cfengine_editor_files_policies_dir">
+<area shape = "circle" coords="328,165,31" href="knowledge.php?pid=3487" alt="topic" title="handles::update_bins_reports_installation">
+<area shape = "circle" coords="181,174,34" href="knowledge.php?pid=3481" alt="topic" title="promises::update_bins_files_pkg_copy">
+<area shape = "circle" coords="97,287,31" href="knowledge.php?pid=3484" alt="topic" title="handles::update_bins_services_stop_cf_execd_windows">
+<area shape = "circle" coords="139,420,30" href="knowledge.php?pid=3477" alt="topic" title="promises::update_bins_packages_package_update">
+<area shape = "circle" coords="276,472,31" href="knowledge.php?pid=3478" alt="topic" title="promisers::/var/cfengine/software_updates/ubuntu_10_x86_64">
+<area shape = "circle" coords="404,403,31" href="knowledge.php?pid=3470" alt="topic" title="handles::update_bins_processes_stop_cfengine">
+<area shape = "circle" coords="265,312,30" href="knowledge.php?pid=3454" alt="topic" title="class_contexts::bin_newpkg">
+<area shape = "circle" coords="532,237,38" href="knowledge.php?pid=3473" alt="topic" title="handles::update_bins_processes_stop_cf_execd">
+<area shape = "circle" coords="545,325,37" href="knowledge.php?pid=2967" alt="topic" title="handles::cfengine_processes_vars_stop_signal_windows">
+<area shape = "circle" coords="636,301,37" href="knowledge.php?pid=3001" alt="topic" title="handles::cfengine_processes_commands_cf_execd">
+<area shape = "circle" coords="737,311,44" href="knowledge.php?pid=3007" alt="topic" title="handles::cfengine_processes_services_start_cf_execd_windows">
+<area shape = "circle" coords="722,216,37" href="knowledge.php?pid=3345" alt="topic" title="handles::cfengine_editor_files_policies_tidy">
+<area shape = "circle" coords="625,211,55" href="knowledge.php?pid=2964" alt="topic" title="class_contexts::windows">
+</map>

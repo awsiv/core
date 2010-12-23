@@ -1,0 +1,27 @@
+<img src="graphs/3329.png" USEMAP="#knowledge_system" alt="class_contexts::SuSE image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="243,307,55" href="knowledge.php?pid=3331" alt="topic" title="handles::cfengine_editor_vars_web_owner_suse">
+<area shape = "circle" coords="97,383,39" href="knowledge.php?pid=3168" alt="topic" title="promisers::/etc/init.d/apache2 restart">
+<area shape = "circle" coords="334,478,39" href="knowledge.php?pid=2441" alt="topic" title="promise_types::commands">
+<area shape = "circle" coords="553,376,39" href="knowledge.php?pid=3171" alt="topic" title="class_contexts::restart_webserver.SuSE">
+<area shape = "circle" coords="325,380,35" href="knowledge.php?pid=3173" alt="topic" title="handles::cfengine_php_mod_commands_apache2_suse">
+<area shape = "circle" coords="395,304,55" href="knowledge.php?pid=3426" alt="topic" title="handles::garbage_collection_files_zypper_log">
+<area shape = "circle" coords="520,300,55" href="knowledge.php?pid=3243" alt="topic" title="handles::cfengine_web_server_processes_apache_on_suse">
+<area shape = "circle" coords="477,249,55" href="knowledge.php?pid=3697" alt="topic" title="handles::knowledge_files_mysql_sock_suse">
+<area shape = "circle" coords="540,202,55" href="knowledge.php?pid=3308" alt="topic" title="promises::cfengine_web_server_files_sysconfig_apache2">
+<area shape = "circle" coords="602,191,41" href="knowledge.php?pid=3175" alt="topic" title="class_contexts::SuSE.policy_host">
+<area shape = "circle" coords="667,119,41" href="knowledge.php?pid=2908" alt="topic" title="class_contexts::policy_host">
+<area shape = "circle" coords="529,70,41" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="379,111,41" href="knowledge.php?pid=3176" alt="topic" title="promisers::match_package">
+<area shape = "circle" coords="520,135,36" href="knowledge.php?pid=3178" alt="topic" title="handles::cfengine_policysrv_vars_match_package_suse">
+<area shape = "circle" coords="364,140,55" href="knowledge.php?pid=3333" alt="topic" title="handles::cfengine_editor_vars_web_group_suse">
+<area shape = "circle" coords="372,92,42" href="knowledge.php?pid=3185" alt="topic" title="promisers::apache2">
+<area shape = "circle" coords="184,47,40" href="knowledge.php?pid=2636" alt="topic" title="promise_types::packages">
+<area shape = "circle" coords="80,128,40" href="knowledge.php?pid=3189" alt="topic" title="promisers::mysql-server">
+<area shape = "circle" coords="226,110,35" href="knowledge.php?pid=3197" alt="topic" title="promises::cfengine_policysrv_packages_install_package_suse">
+<area shape = "circle" coords="145,167,55" href="knowledge.php?pid=3686" alt="topic" title="handles::knowledge_vars_flavour_suse">
+<area shape = "circle" coords="159,221,55" href="knowledge.php?pid=3246" alt="topic" title="handles::cfengine_web_server_processes_mysqld_on_suse">
+<area shape = "circle" coords="72,260,55" href="knowledge.php?pid=3700" alt="topic" title="handles::knowledge_files_cfagent_dir_suse">
+<area shape = "circle" coords="314,243,52" href="knowledge.php?pid=3329" alt="topic" title="class_contexts::SuSE">
+<area shape = "circle" coords="52,327,55" href="knowledge.php?pid=3236" alt="topic" title="handles::cfengine_policysrv_files_vhost_ssl">
+</map>

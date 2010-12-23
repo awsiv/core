@@ -1,0 +1,27 @@
+<img src="graphs/2441.png" USEMAP="#knowledge_system" alt="promise_types::commands image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="277,368,55" href="knowledge.php?pid=3285" alt="topic" title="handles::cfengine_web_server_commands_start_apache_suse">
+<area shape = "circle" coords="296,442,32" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="390,398,55" href="knowledge.php?pid=3174" alt="topic" title="bundles::cfengine_policysrv">
+<area shape = "circle" coords="470,468,55" href="knowledge.php?pid=2864" alt="topic" title="manual::module">
+<area shape = "circle" coords="511,385,55" href="knowledge.php?pid=3218" alt="topic" title="handles::cfengine_policysrv_commands_a2enmod_debian">
+<area shape = "circle" coords="636,419,55" href="knowledge.php?pid=2999" alt="topic" title="promisers::"/var/cfengine/bin/cf-execd"">
+<area shape = "circle" coords="604,333,55" href="knowledge.php?pid=3224" alt="topic" title="promisers::/usr/sbin/a2ensite ssl">
+<area shape = "circle" coords="738,320,55" href="knowledge.php?pid=3046" alt="topic" title="bundles::cfengine_php_mod">
+<area shape = "circle" coords="641,258,55" href="knowledge.php?pid=3279" alt="topic" title="promisers::/usr/sbin/setenforce 0">
+<area shape = "circle" coords="746,202,55" href="knowledge.php?pid=3166" alt="topic" title="handles::cfengine_php_mod_commands_httpd_redhat">
+<area shape = "circle" coords="614,181,55" href="knowledge.php?pid=3283" alt="topic" title="promisers::/etc/init.d/apache2 start">
+<area shape = "circle" coords="642,108,32" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="528,125,55" href="knowledge.php?pid=3170" alt="topic" title="handles::cfengine_php_mod_commands_apache2_debian">
+<area shape = "circle" coords="493,53,32" href="knowledge.php?pid=2442" alt="topic" title="body_constraints::args">
+<area shape = "circle" coords="410,106,55" href="knowledge.php?pid=3216" alt="topic" title="promisers::/usr/sbin/a2enmod php5 ssl">
+<area shape = "circle" coords="316,42,55" href="knowledge.php?pid=2960" alt="topic" title="bundles::cfengine_processes">
+<area shape = "circle" coords="293,129,55" href="knowledge.php?pid=3220" alt="topic" title="promisers::/usr/sbin/a2enmod ssl && /usr/sbin/a2enflag SSL && /usr/bin/gensslcert">
+<area shape = "circle" coords="162,106,55" href="knowledge.php?pid=3001" alt="topic" title="handles::cfengine_processes_commands_cf_execd">
+<area shape = "circle" coords="212,188,55" href="knowledge.php?pid=3237" alt="topic" title="bundles::cfengine_web_server">
+<area shape = "circle" coords="82,213,55" href="knowledge.php?pid=3164" alt="topic" title="promisers::/etc/init.d/httpd restart">
+<area shape = "circle" coords="190,266,55" href="knowledge.php?pid=3281" alt="topic" title="handles::cfengine_web_server_commands_set_selinux">
+<area shape = "circle" coords="99,331,55" href="knowledge.php?pid=3168" alt="topic" title="promisers::/etc/init.d/apache2 restart">
+<area shape = "circle" coords="415,252,52" href="knowledge.php?pid=2441" alt="topic" title="promise_types::commands">
+<area shape = "circle" coords="52,427,55" href="knowledge.php?pid=2443" alt="topic" title="body_constraints::contain">
+</map>

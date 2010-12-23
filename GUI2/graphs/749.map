@@ -1,0 +1,5 @@
+<img src="graphs/749.png" USEMAP="#knowledge_system" alt="operating_systems::sunos image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="517,227,55" href="knowledge.php?pid=748" alt="topic" title="operating_systems::solaris">
+<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=749" alt="topic" title="operating_systems::sunos">
+</map>

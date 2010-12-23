@@ -1,0 +1,27 @@
+<img src="graphs/25.png" USEMAP="#knowledge_system" alt="system_reports::software installed report image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="655,155,37" href="knowledge.php?pid=19" alt="topic" title="system_reports::patches installed report">
+<area shape = "circle" coords="629,79,37" href="knowledge.php?pid=837" alt="topic" title="cfengine_components::cfengine 2">
+<area shape = "circle" coords="561,119,37" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="481,111,37" href="knowledge.php?pid=2638" alt="topic" title="body_constraints::package_method">
+<area shape = "circle" coords="488,191,37" href="knowledge.php?pid=2676" alt="topic" title="body_constraints::package_select">
+<area shape = "circle" coords="328,216,31" href="knowledge.php?pid=21" alt="topic" title="system_reports::performance report">
+<area shape = "circle" coords="251,181,31" href="knowledge.php?pid=23" alt="topic" title="system_reports::promises repaired report">
+<area shape = "circle" coords="166,189,31" href="knowledge.php?pid=647" alt="topic" title="system_knowledge::mission status">
+<area shape = "circle" coords="96,237,31" href="knowledge.php?pid=664" alt="topic" title="mission_status::host portal">
+<area shape = "circle" coords="60,315,31" href="knowledge.php?pid=804" alt="topic" title="technical_concepts::faults">
+<area shape = "circle" coords="68,400,31" href="knowledge.php?pid=16" alt="topic" title="system_reports::lastseen report">
+<area shape = "circle" coords="117,470,31" href="knowledge.php?pid=22" alt="topic" title="system_reports::promise report">
+<area shape = "circle" coords="195,505,31" href="knowledge.php?pid=24" alt="topic" title="system_reports::promises not kept report">
+<area shape = "circle" coords="280,498,31" href="knowledge.php?pid=662" alt="topic" title="mission_status::system policy">
+<area shape = "circle" coords="350,448,31" href="knowledge.php?pid=665" alt="topic" title="mission_status::system outputs">
+<area shape = "circle" coords="386,370,31" href="knowledge.php?pid=2827" alt="topic" title="commands_and_tools::copernicus">
+<area shape = "circle" coords="223,343,30" href="knowledge.php?pid=650" alt="topic" title="views::operator view">
+<area shape = "circle" coords="455,257,30" href="knowledge.php?pid=25" alt="topic" title="system_reports::software installed report">
+<area shape = "circle" coords="524,286,37" href="knowledge.php?pid=20" alt="topic" title="system_reports::patches available report">
+<area shape = "circle" coords="570,352,37" href="knowledge.php?pid=943" alt="topic" title="BDMA::deploy">
+<area shape = "circle" coords="625,293,37" href="knowledge.php?pid=2637" alt="topic" title="body_constraints::package_architectures">
+<area shape = "circle" coords="704,279,37" href="knowledge.php?pid=2675" alt="topic" title="body_constraints::package_policy">
+<area shape = "circle" coords="674,205,37" href="knowledge.php?pid=2677" alt="topic" title="body_constraints::package_version">
+<area shape = "circle" coords="580,211,55" href="knowledge.php?pid=2636" alt="topic" title="promise_types::packages">
+</map>

@@ -1,0 +1,27 @@
+<img src="graphs/20.png" USEMAP="#knowledge_system" alt="system_reports::patches available report image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="683,85,43" href="knowledge.php?pid=651" alt="topic" title="views::security view">
+<area shape = "circle" coords="326,254,47" href="knowledge.php?pid=2903" alt="topic" title="management_issues::patch management">
+<area shape = "circle" coords="313,197,31" href="knowledge.php?pid=20" alt="topic" title="system_reports::patches available report">
+<area shape = "circle" coords="258,236,47" href="knowledge.php?pid=3185" alt="topic" title="promisers::apache2">
+<area shape = "circle" coords="206,194,47" href="knowledge.php?pid=943" alt="topic" title="BDMA::deploy">
+<area shape = "circle" coords="189,250,47" href="knowledge.php?pid=3192" alt="topic" title="promisers::php5">
+<area shape = "circle" coords="116,238,47" href="knowledge.php?pid=2637" alt="topic" title="body_constraints::package_architectures">
+<area shape = "circle" coords="143,292,47" href="knowledge.php?pid=3197" alt="topic" title="promises::cfengine_policysrv_packages_install_package_suse">
+<area shape = "circle" coords="73,313,47" href="knowledge.php?pid=2675" alt="topic" title="body_constraints::package_policy">
+<area shape = "circle" coords="119,348,62" href="knowledge.php?pid=3474" alt="topic" title="promisers::cfengine-nova">
+<area shape = "circle" coords="93,394,47" href="knowledge.php?pid=2677" alt="topic" title="body_constraints::package_version">
+<area shape = "circle" coords="77,465,43" href="knowledge.php?pid=650" alt="topic" title="views::operator view">
+<area shape = "circle" coords="163,399,55" href="knowledge.php?pid=25" alt="topic" title="system_reports::software installed report">
+<area shape = "circle" coords="170,452,47" href="knowledge.php?pid=3174" alt="topic" title="bundles::cfengine_policysrv">
+<area shape = "circle" coords="232,420,47" href="knowledge.php?pid=837" alt="topic" title="cfengine_components::cfengine 2">
+<area shape = "circle" coords="275,467,47" href="knowledge.php?pid=3189" alt="topic" title="promisers::mysql-server">
+<area shape = "circle" coords="303,413,47" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="373,434,47" href="knowledge.php?pid=3195" alt="topic" title="promisers::ssl-cert">
+<area shape = "circle" coords="357,377,47" href="knowledge.php?pid=2638" alt="topic" title="body_constraints::package_method">
+<area shape = "circle" coords="430,364,47" href="knowledge.php?pid=3427" alt="topic" title="bundles::update_bins">
+<area shape = "circle" coords="375,325,47" href="knowledge.php?pid=2676" alt="topic" title="body_constraints::package_select">
+<area shape = "circle" coords="426,282,47" href="knowledge.php?pid=3477" alt="topic" title="promises::update_bins_packages_package_update">
+<area shape = "circle" coords="254,328,51" href="knowledge.php?pid=2636" alt="topic" title="promise_types::packages">
+<area shape = "circle" coords="566,151,55" href="knowledge.php?pid=19" alt="topic" title="system_reports::patches installed report">
+</map>

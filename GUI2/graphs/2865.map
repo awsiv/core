@@ -1,0 +1,19 @@
+<img src="graphs/2865.png" USEMAP="#knowledge_system" alt="manual::match_value (compound body) image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="567,145,39" href="knowledge.php?pid=142" alt="topic" title="body_constraints::db_server_owner">
+<area shape = "circle" coords="475,73,39" href="knowledge.php?pid=95" alt="topic" title="body_constraints::value_kept">
+<area shape = "circle" coords="347,128,39" href="knowledge.php?pid=158" alt="topic" title="body_constraints::env_addresses">
+<area shape = "circle" coords="207,176,39" href="knowledge.php?pid=129" alt="topic" title="body_constraints::exec_owner">
+<area shape = "circle" coords="123,239,31" href="knowledge.php?pid=2615" alt="topic" title="body_constraints::location">
+<area shape = "circle" coords="84,330,34" href="knowledge.php?pid=2754" alt="topic" title="body_constraints::select_line_number">
+<area shape = "circle" coords="108,434,30" href="knowledge.php?pid=2865" alt="topic" title="manual::match_value (compound body)">
+<area shape = "circle" coords="296,476,30" href="knowledge.php?pid=2747" alt="topic" title="promise_types::measurements">
+<area shape = "circle" coords="459,413,34" href="knowledge.php?pid=2758" alt="topic" title="body_constraints::track_growing_file">
+<area shape = "circle" coords="436,308,32" href="knowledge.php?pid=2756" alt="topic" title="body_constraints::extraction_regex">
+<area shape = "circle" coords="272,371,30" href="knowledge.php?pid=2752" alt="topic" title="body_constraints::match_value">
+<area shape = "circle" coords="248,267,30" href="knowledge.php?pid=347" alt="topic" title="body_constraints::select_line_matching">
+<area shape = "circle" coords="407,313,39" href="knowledge.php?pid=149" alt="topic" title="body_constraints::db_server_connection_db">
+<area shape = "circle" coords="535,258,39" href="knowledge.php?pid=106" alt="topic" title="body_constraints::measurement_class">
+<area shape = "circle" coords="675,210,39" href="knowledge.php?pid=202" alt="topic" title="body_constraints::linkcopy_patterns">
+<area shape = "circle" coords="441,193,55" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+</map>

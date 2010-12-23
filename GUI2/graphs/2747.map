@@ -1,0 +1,23 @@
+<img src="graphs/2747.png" USEMAP="#knowledge_system" alt="promise_types::measurements image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="181,443,55" href="knowledge.php?pid=866" alt="topic" title="cfengine_2::directories">
+<area shape = "circle" coords="235,481,55" href="knowledge.php?pid=861" alt="topic" title="cfengine_2::binservers">
+<area shape = "circle" coords="283,441,55" href="knowledge.php?pid=870" alt="topic" title="cfengine_2::filters">
+<area shape = "circle" coords="368,437,55" href="knowledge.php?pid=863" alt="topic" title="cfengine_2::copy">
+<area shape = "circle" coords="338,390,55" href="knowledge.php?pid=873" alt="topic" title="cfengine_2::ignore">
+<area shape = "circle" coords="381,347,55" href="knowledge.php?pid=865" alt="topic" title="cfengine_2::disks">
+<area shape = "circle" coords="552,303,43" href="knowledge.php?pid=2752" alt="topic" title="body_constraints::match_value">
+<area shape = "circle" coords="693,239,30" href="knowledge.php?pid=2748" alt="topic" title="body_constraints::stream_type">
+<area shape = "circle" coords="696,134,43" href="knowledge.php?pid=2751" alt="topic" title="body_constraints::units">
+<area shape = "circle" coords="559,67,33" href="knowledge.php?pid=839" alt="topic" title="cfengine_components::cfengine nova">
+<area shape = "circle" coords="384,89,43" href="knowledge.php?pid=2750" alt="topic" title="body_constraints::history_type">
+<area shape = "circle" coords="304,182,43" href="knowledge.php?pid=2749" alt="topic" title="body_constraints::data_type">
+<area shape = "circle" coords="510,184,37" href="knowledge.php?pid=2747" alt="topic" title="promise_types::measurements">
+<area shape = "circle" coords="262,290,55" href="knowledge.php?pid=868" alt="topic" title="cfengine_2::editfiles">
+<area shape = "circle" coords="198,323,55" href="knowledge.php?pid=862" alt="topic" title="cfengine_2::broadcast">
+<area shape = "circle" coords="115,315,55" href="knowledge.php?pid=872" alt="topic" title="cfengine_2::homeservers">
+<area shape = "circle" coords="124,364,55" href="knowledge.php?pid=864" alt="topic" title="cfengine_2::defaultroute">
+<area shape = "circle" coords="65,400,55" href="knowledge.php?pid=874" alt="topic" title="cfengine_2::import">
+<area shape = "circle" coords="229,385,52" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="52,462,55" href="knowledge.php?pid=860" alt="topic" title="cfengine_2::alerts">
+</map>

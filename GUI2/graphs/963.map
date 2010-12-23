@@ -1,0 +1,9 @@
+<img src="graphs/963.png" USEMAP="#knowledge_system" alt="models_of_organization::object paradigm image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="676,75,51" href="knowledge.php?pid=954" alt="topic" title="models_of_organization::hierarchies">
+<area shape = "circle" coords="123,222,30" href="knowledge.php?pid=964" alt="topic" title="models_of_organization::cascading">
+<area shape = "circle" coords="294,474,30" href="knowledge.php?pid=959" alt="topic" title="models_of_organization::object orientation">
+<area shape = "circle" coords="270,363,30" href="knowledge.php?pid=963" alt="topic" title="models_of_organization::object paradigm">
+<area shape = "circle" coords="247,251,32" href="knowledge.php?pid=960" alt="topic" title="models_of_organization::hierarchical structure">
+<area shape = "circle" coords="537,132,55" href="knowledge.php?pid=2347" alt="topic" title="Special_Topics_Guide::Hierarchies">
+</map>

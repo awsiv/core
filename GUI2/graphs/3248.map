@@ -1,0 +1,27 @@
+<img src="graphs/3248.png" USEMAP="#knowledge_system" alt="promisers::.*httpd.* image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="270,381,55" href="knowledge.php?pid=2974" alt="topic" title="promisers::cf-know">
+<area shape = "circle" coords="292,454,55" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="390,405,55" href="knowledge.php?pid=2980" alt="topic" title="promisers::cf-promises">
+<area shape = "circle" coords="482,458,55" href="knowledge.php?pid=2679" alt="topic" title="body_constraints::process_count">
+<area shape = "circle" coords="512,386,55" href="knowledge.php?pid=2986" alt="topic" title="promisers::cf-runagent">
+<area shape = "circle" coords="642,401,55" href="knowledge.php?pid=2703" alt="topic" title="body_constraints::process_stop">
+<area shape = "circle" coords="594,332,55" href="knowledge.php?pid=2992" alt="topic" title="promisers::cf-hub">
+<area shape = "circle" coords="717,304,55" href="knowledge.php?pid=2705" alt="topic" title="body_constraints::signals">
+<area shape = "circle" coords="608,261,55" href="knowledge.php?pid=2996" alt="topic" title="promisers::cf-execd">
+<area shape = "circle" coords="681,199,55" href="knowledge.php?pid=2971" alt="topic" title="promisers::cf-key">
+<area shape = "circle" coords="732,233,30" href="knowledge.php?pid=3250" alt="topic" title="handles::cfengine_web_server_processes_httpd_on_redhat">
+<area shape = "circle" coords="485,95,30" href="knowledge.php?pid=3237" alt="topic" title="bundles::cfengine_web_server">
+<area shape = "circle" coords="538,204,32" href="knowledge.php?pid=3248" alt="topic" title="promisers::.*httpd.*">
+<area shape = "circle" coords="546,124,55" href="knowledge.php?pid=2977" alt="topic" title="promisers::cf-monitord">
+<area shape = "circle" coords="436,165,55" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="359,104,55" href="knowledge.php?pid=2983" alt="topic" title="promisers::cf-report">
+<area shape = "circle" coords="310,174,55" href="knowledge.php?pid=2684" alt="topic" title="body_constraints::process_select">
+<area shape = "circle" coords="186,147,55" href="knowledge.php?pid=2989" alt="topic" title="promisers::cf-serverd">
+<area shape = "circle" coords="215,220,55" href="knowledge.php?pid=2704" alt="topic" title="body_constraints::restart_class">
+<area shape = "circle" coords="85,238,55" href="knowledge.php?pid=2994" alt="topic" title="handles::cfengine_processes_stop_cf_components">
+<area shape = "circle" coords="182,289,55" href="knowledge.php?pid=2960" alt="topic" title="bundles::cfengine_processes">
+<area shape = "circle" coords="93,344,55" href="knowledge.php?pid=2998" alt="topic" title="handles::cfengine_processes_stop_cf_execd">
+<area shape = "circle" coords="397,284,52" href="knowledge.php?pid=2678" alt="topic" title="promise_types::processes">
+<area shape = "circle" coords="52,428,55" href="knowledge.php?pid=837" alt="topic" title="cfengine_components::cfengine 2">
+</map>

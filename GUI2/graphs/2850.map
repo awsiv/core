@@ -1,0 +1,23 @@
+<img src="graphs/2850.png" USEMAP="#knowledge_system" alt="Introduction_to_Cfengine_Nova::What's new in Nova 2.0 image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="623,114,30" href="knowledge.php?pid=3427" alt="topic" title="bundles::update_bins">
+<area shape = "circle" coords="561,63,30" href="knowledge.php?pid=2678" alt="topic" title="promise_types::processes">
+<area shape = "circle" coords="476,102,30" href="knowledge.php?pid=3496" alt="topic" title="bundles::update">
+<area shape = "circle" coords="383,135,30" href="knowledge.php?pid=2994" alt="topic" title="handles::cfengine_processes_stop_cf_components">
+<area shape = "circle" coords="369,152,30" href="knowledge.php?pid=2124" alt="topic" title="Mission_Portal::Mission Portal">
+<area shape = "circle" coords="104,204,30" href="knowledge.php?pid=2014" alt="topic" title="Windows_specific_features_in_Nova::Notes on windows policies">
+<area shape = "circle" coords="253,203,30" href="knowledge.php?pid=2232" alt="topic" title="Special_Topics_Guide::Content-Driven Policies">
+<area shape = "circle" coords="170,320,30" href="knowledge.php?pid=2851" alt="topic" title="management_terminology::business goals">
+<area shape = "circle" coords="84,400,30" href="knowledge.php?pid=649" alt="topic" title="views::manager view">
+<area shape = "circle" coords="146,485,30" href="knowledge.php?pid=2706" alt="topic" title="promise_types::services">
+<area shape = "circle" coords="310,513,30" href="knowledge.php?pid=648" alt="topic" title="views::architect view">
+<area shape = "circle" coords="452,461,30" href="knowledge.php?pid=2391" alt="topic" title="system_policy::bundles">
+<area shape = "circle" coords="465,369,30" href="knowledge.php?pid=763" alt="topic" title="management_terminology::goals">
+<area shape = "circle" coords="281,408,54" href="knowledge.php?pid=2852" alt="topic" title="knowledge_model::service catalogue">
+<area shape = "circle" coords="522,248,30" href="knowledge.php?pid=2226" alt="topic" title="Special_Topics_Guide::Virtualization">
+<area shape = "circle" coords="401,202,30" href="knowledge.php?pid=2850" alt="topic" title="Introduction_to_Cfengine_Nova::What's new in Nova 2.0">
+<area shape = "circle" coords="517,231,30" href="knowledge.php?pid=3470" alt="topic" title="handles::update_bins_processes_stop_cfengine">
+<area shape = "circle" coords="602,192,30" href="knowledge.php?pid=2960" alt="topic" title="bundles::cfengine_processes">
+<area shape = "circle" coords="695,159,30" href="knowledge.php?pid=3522" alt="topic" title="handles::update_processes_cf_hub">
+<area shape = "circle" coords="539,147,55" href="knowledge.php?pid=2992" alt="topic" title="promisers::cf-hub">
+</map>

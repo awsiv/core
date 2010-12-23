@@ -1,0 +1,23 @@
+<img src="graphs/254.png" USEMAP="#knowledge_system" alt="body_constraints::search_mode image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="686,85,44" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="341,249,46" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="312,191,46" href="knowledge.php?pid=257" alt="topic" title="body_constraints::search_owners">
+<area shape = "circle" coords="259,237,46" href="knowledge.php?pid=2542" alt="topic" title="body_constraints::search_size">
+<area shape = "circle" coords="189,209,46" href="knowledge.php?pid=263" alt="topic" title="body_constraints::mtime">
+<area shape = "circle" coords="188,272,46" href="knowledge.php?pid=2546" alt="topic" title="body_constraints::search_bsdflags">
+<area shape = "circle" coords="113,289,46" href="knowledge.php?pid=265" alt="topic" title="body_constraints::exec_regex">
+<area shape = "circle" coords="164,336,46" href="knowledge.php?pid=2550" alt="topic" title="body_constraints::file_result">
+<area shape = "circle" coords="124,390,46" href="knowledge.php?pid=269" alt="topic" title="body_constraints::issymlinkto">
+<area shape = "circle" coords="122,465,30" href="knowledge.php?pid=49" alt="topic" title="values::posix file mode or permission">
+<area shape = "circle" coords="201,396,31" href="knowledge.php?pid=254" alt="topic" title="body_constraints::search_mode">
+<area shape = "circle" coords="216,458,46" href="knowledge.php?pid=2540" alt="topic" title="body_constraints::path_name">
+<area shape = "circle" coords="279,421,46" href="knowledge.php?pid=262" alt="topic" title="body_constraints::ctime">
+<area shape = "circle" coords="341,459,46" href="knowledge.php?pid=2544" alt="topic" title="body_constraints::search_groups">
+<area shape = "circle" coords="357,397,46" href="knowledge.php?pid=264" alt="topic" title="body_constraints::atime">
+<area shape = "circle" coords="434,391,46" href="knowledge.php?pid=2548" alt="topic" title="body_constraints::exec_program">
+<area shape = "circle" coords="394,337,46" href="knowledge.php?pid=268" alt="topic" title="body_constraints::file_types">
+<area shape = "circle" coords="447,291,46" href="knowledge.php?pid=2887" alt="topic" title="manual::file_select (compound body)">
+<area shape = "circle" coords="279,328,50" href="knowledge.php?pid=2538" alt="topic" title="body_constraints::file_select">
+<area shape = "circle" coords="574,152,55" href="knowledge.php?pid=251" alt="topic" title="body_constraints::leaf_name">
+</map>

@@ -1,0 +1,27 @@
+<img src="graphs/3237.png" USEMAP="#knowledge_system" alt="bundles::cfengine_web_server image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="270,389,55" href="knowledge.php?pid=3258" alt="topic" title="promisers::/usr/sbin/mysqld.*">
+<area shape = "circle" coords="299,452,32" href="knowledge.php?pid=2409" alt="topic" title="promise_types::reports">
+<area shape = "circle" coords="390,413,55" href="knowledge.php?pid=3273" alt="topic" title="promisers::/usr/sbin/apache2.*">
+<area shape = "circle" coords="482,467,55" href="knowledge.php?pid=2678" alt="topic" title="promise_types::processes">
+<area shape = "circle" coords="512,394,55" href="knowledge.php?pid=3283" alt="topic" title="promisers::/etc/init.d/apache2 start">
+<area shape = "circle" coords="642,410,55" href="knowledge.php?pid=3238" alt="topic" title="promisers::start_type">
+<area shape = "circle" coords="594,338,55" href="knowledge.php?pid=3291" alt="topic" title="promisers::/etc/init.d/httpd start">
+<area shape = "circle" coords="717,310,55" href="knowledge.php?pid=3248" alt="topic" title="promisers::.*httpd.*">
+<area shape = "circle" coords="608,266,55" href="knowledge.php?pid=3305" alt="topic" title="promisers::/etc/sysconfig/apache2">
+<area shape = "circle" coords="681,202,55" href="knowledge.php?pid=3255" alt="topic" title="promisers::.*apache2.*">
+<area shape = "circle" coords="732,237,37" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="485,96,37" href="knowledge.php?pid=812" alt="topic" title="technical_concepts::variables">
+<area shape = "circle" coords="538,208,33" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="546,125,55" href="knowledge.php?pid=3267" alt="topic" title="promisers::/usr/sbin/httpd">
+<area shape = "circle" coords="433,176,32" href="knowledge.php?pid=2441" alt="topic" title="promise_types::commands">
+<area shape = "circle" coords="359,106,55" href="knowledge.php?pid=3279" alt="topic" title="promisers::/usr/sbin/setenforce 0">
+<area shape = "circle" coords="310,177,55" href="knowledge.php?pid=3185" alt="topic" title="promisers::apache2">
+<area shape = "circle" coords="186,150,55" href="knowledge.php?pid=3287" alt="topic" title="promisers::/etc/init.d/mysql start">
+<area shape = "circle" coords="215,224,55" href="knowledge.php?pid=3244" alt="topic" title="promisers::mysqld">
+<area shape = "circle" coords="85,242,55" href="knowledge.php?pid=3295" alt="topic" title="promisers::/etc/init.d/mysqld start">
+<area shape = "circle" coords="182,295,55" href="knowledge.php?pid=3251" alt="topic" title="promisers::.*mysqld.*">
+<area shape = "circle" coords="93,352,55" href="knowledge.php?pid=3310" alt="topic" title="promisers:: NB - Disabling SELinux to allow PHP to function">
+<area shape = "circle" coords="397,290,52" href="knowledge.php?pid=3237" alt="topic" title="bundles::cfengine_web_server">
+<area shape = "circle" coords="52,437,55" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+</map>

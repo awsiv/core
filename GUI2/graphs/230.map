@@ -1,0 +1,27 @@
+<img src="graphs/230.png" USEMAP="#knowledge_system" alt="body_constraints::search_size image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="698,255,43" href="knowledge.php?pid=15" alt="topic" title="system_reports::file_changes report">
+<area shape = "circle" coords="545,212,33" href="knowledge.php?pid=49" alt="topic" title="values::a file path">
+<area shape = "circle" coords="452,210,30" href="knowledge.php?pid=226" alt="topic" title="body_constraints::path_name">
+<area shape = "circle" coords="618,91,40" href="knowledge.php?pid=698" alt="topic" title="cfengine_3::slist">
+<area shape = "circle" coords="489,150,47" href="knowledge.php?pid=235" alt="topic" title="body_constraints::search_bsdflags">
+<area shape = "circle" coords="426,135,30" href="knowledge.php?pid=230" alt="topic" title="body_constraints::search_size">
+<area shape = "circle" coords="414,62,41" href="knowledge.php?pid=233" alt="topic" title="body_constraints::search_groups">
+<area shape = "circle" coords="360,102,41" href="knowledge.php?pid=237" alt="topic" title="body_constraints::mtime">
+<area shape = "circle" coords="307,61,41" href="knowledge.php?pid=239" alt="topic" title="body_constraints::exec_regex">
+<area shape = "circle" coords="294,132,41" href="knowledge.php?pid=243" alt="topic" title="body_constraints::file_types">
+<area shape = "circle" coords="102,82,33" href="knowledge.php?pid=51" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="230,146,30" href="knowledge.php?pid=224" alt="topic" title="body_constraints::leaf_name">
+<area shape = "circle" coords="172,205,40" href="knowledge.php?pid=45" alt="topic" title="values::posix file mode or permission">
+<area shape = "circle" coords="265,207,47" href="knowledge.php?pid=228" alt="topic" title="body_constraints::search_mode">
+<area shape = "circle" coords="98,326,40" href="knowledge.php?pid=697" alt="topic" title="cfengine_3::string">
+<area shape = "circle" coords="229,267,47" href="knowledge.php?pid=246" alt="topic" title="body_constraints::file_result">
+<area shape = "circle" coords="292,283,41" href="knowledge.php?pid=231" alt="topic" title="body_constraints::search_owners">
+<area shape = "circle" coords="303,354,41" href="knowledge.php?pid=236" alt="topic" title="body_constraints::ctime">
+<area shape = "circle" coords="357,315,41" href="knowledge.php?pid=238" alt="topic" title="body_constraints::atime">
+<area shape = "circle" coords="410,355,41" href="knowledge.php?pid=241" alt="topic" title="body_constraints::exec_program">
+<area shape = "circle" coords="424,285,41" href="knowledge.php?pid=244" alt="topic" title="body_constraints::issymlinkto">
+<area shape = "circle" coords="359,209,41" href="knowledge.php?pid=223" alt="topic" title="body_constraints::file_select">
+<area shape = "circle" coords="622,457,43" href="knowledge.php?pid=16" alt="topic" title="system_reports::hashes report">
+<area shape = "circle" coords="609,331,55" href="knowledge.php?pid=988" alt="topic" title="promise_types::files">
+</map>

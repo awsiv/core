@@ -1,0 +1,26 @@
+<img src="graphs/841.png" USEMAP="#knowledge_system" alt="cfengine_components::cfengine 3.0.x image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="155,450,55" href="knowledge.php?pid=866" alt="topic" title="cfengine_2::directories">
+<area shape = "circle" coords="187,485,55" href="knowledge.php?pid=821" alt="topic" title="cfengine_components::cfservd">
+<area shape = "circle" coords="230,454,55" href="knowledge.php?pid=861" alt="topic" title="cfengine_2::binservers">
+<area shape = "circle" coords="294,463,55" href="knowledge.php?pid=823" alt="topic" title="cfengine_components::cfenvd">
+<area shape = "circle" coords="285,422,55" href="knowledge.php?pid=863" alt="topic" title="cfengine_2::copy">
+<area shape = "circle" coords="339,398,55" href="knowledge.php?pid=825" alt="topic" title="cfengine_components::cfshow">
+<area shape = "circle" coords="284,375,55" href="knowledge.php?pid=865" alt="topic" title="cfengine_2::disks">
+<area shape = "circle" coords="461,387,30" href="knowledge.php?pid=841" alt="topic" title="cfengine_components::cfengine 3.0.x">
+<area shape = "circle" coords="638,332,42" href="knowledge.php?pid=839" alt="topic" title="cfengine_components::cfengine nova">
+<area shape = "circle" coords="702,215,42" href="knowledge.php?pid=947" alt="topic" title="models_of_system_administration::promise theory">
+<area shape = "circle" coords="615,104,31" href="knowledge.php?pid=836" alt="topic" title="cfengine_components::cfengine 1">
+<area shape = "circle" coords="428,64,42" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="250,119,42" href="knowledge.php?pid=840" alt="topic" title="cfengine_components::cfengine 2.2.x">
+<area shape = "circle" coords="186,236,42" href="knowledge.php?pid=2827" alt="topic" title="commands_and_tools::copernicus">
+<area shape = "circle" coords="444,225,37" href="knowledge.php?pid=2829" alt="topic" title="commands_and_tools::cfengine">
+<area shape = "circle" coords="228,344,55" href="knowledge.php?pid=860" alt="topic" title="cfengine_2::alerts">
+<area shape = "circle" coords="184,313,55" href="knowledge.php?pid=822" alt="topic" title="cfengine_components::cfexecd">
+<area shape = "circle" coords="153,349,55" href="knowledge.php?pid=862" alt="topic" title="cfengine_2::broadcast">
+<area shape = "circle" coords="87,349,55" href="knowledge.php?pid=824" alt="topic" title="cfengine_components::cfrun">
+<area shape = "circle" coords="109,388,55" href="knowledge.php?pid=864" alt="topic" title="cfengine_2::defaultroute">
+<area shape = "circle" coords="65,418,55" href="knowledge.php?pid=826" alt="topic" title="cfengine_components::cfenvgraph">
+<area shape = "circle" coords="200,399,52" href="knowledge.php?pid=837" alt="topic" title="cfengine_components::cfengine 2">
+<area shape = "circle" coords="52,468,55" href="knowledge.php?pid=820" alt="topic" title="cfengine_components::cfagent">
+</map>

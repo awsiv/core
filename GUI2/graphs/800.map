@@ -1,0 +1,22 @@
+<img src="graphs/800.png" USEMAP="#knowledge_system" alt="technical_concepts::normal operational behaviour image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="650,110,38" href="knowledge.php?pid=2852" alt="topic" title="knowledge_model::service catalogue">
+<area shape = "circle" coords="558,61,38" href="knowledge.php?pid=13" alt="topic" title="system_reports::compliance report">
+<area shape = "circle" coords="487,121,38" href="knowledge.php?pid=647" alt="topic" title="system_knowledge::mission status">
+<area shape = "circle" coords="333,189,38" href="knowledge.php?pid=2425" alt="topic" title="body_constraints::value_repaired">
+<area shape = "circle" coords="173,174,35" href="knowledge.php?pid=2759" alt="topic" title="values::action">
+<area shape = "circle" coords="176,297,40" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="236,235,45" href="knowledge.php?pid=95" alt="topic" title="body_constraints::value_kept">
+<area shape = "circle" coords="167,340,32" href="knowledge.php?pid=802" alt="topic" title="technical_concepts::crises and fire fighting">
+<area shape = "circle" coords="96,412,35" href="knowledge.php?pid=799" alt="topic" title="technical_concepts::budget">
+<area shape = "circle" coords="147,488,32" href="knowledge.php?pid=801" alt="topic" title="technical_concepts::unusual operational behaviour">
+<area shape = "circle" coords="284,513,30" href="knowledge.php?pid=800" alt="topic" title="technical_concepts::normal operational behaviour">
+<area shape = "circle" coords="402,467,32" href="knowledge.php?pid=798" alt="topic" title="technical_concepts::availability">
+<area shape = "circle" coords="413,385,32" href="knowledge.php?pid=797" alt="topic" title="technical_concepts::reliability">
+<area shape = "circle" coords="260,419,31" href="knowledge.php?pid=949" alt="topic" title="models_of_system_administration::computer immunology">
+<area shape = "circle" coords="460,275,38" href="knowledge.php?pid=2427" alt="topic" title="body_constraints::value_notkept">
+<area shape = "circle" coords="360,234,53" href="knowledge.php?pid=923" alt="topic" title="management_issues::business value">
+<area shape = "circle" coords="585,196,38" href="knowledge.php?pid=645" alt="topic" title="system_knowledge::management issues">
+<area shape = "circle" coords="704,174,38" href="knowledge.php?pid=642" alt="topic" title="system_knowledge::server lifecycle">
+<area shape = "circle" coords="574,142,55" href="knowledge.php?pid=649" alt="topic" title="views::manager view">
+</map>

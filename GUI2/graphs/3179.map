@@ -1,0 +1,18 @@
+<img src="graphs/3179.png" USEMAP="#knowledge_system" alt="class_contexts::redhat.policy_host image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="614,153,40" href="knowledge.php?pid=2768" alt="topic" title="data_types::int">
+<area shape = "circle" coords="489,75,40" href="knowledge.php?pid=812" alt="topic" title="technical_concepts::variables">
+<area shape = "circle" coords="392,171,40" href="knowledge.php?pid=2767" alt="topic" title="data_types::string">
+<area shape = "circle" coords="240,252,33" href="knowledge.php?pid=3176" alt="topic" title="promisers::match_package">
+<area shape = "circle" coords="110,324,33" href="knowledge.php?pid=2908" alt="topic" title="class_contexts::policy_host">
+<area shape = "circle" coords="136,387,35" href="knowledge.php?pid=3712" alt="topic" title="handles::knowledge_files_doc_root_redhat">
+<area shape = "circle" coords="138,474,30" href="knowledge.php?pid=3710" alt="topic" title="handles::knowledge_files_mysql_sock_redhat">
+<area shape = "circle" coords="262,500,30" href="knowledge.php?pid=3205" alt="topic" title="handles::cfengine_policysrv_packages_install_package_redhat">
+<area shape = "circle" coords="337,429,35" href="knowledge.php?pid=3714" alt="topic" title="handles::knowledge_files_cfagent_dir_redhat">
+<area shape = "circle" coords="226,430,30" href="knowledge.php?pid=3179" alt="topic" title="class_contexts::redhat.policy_host">
+<area shape = "circle" coords="411,388,33" href="knowledge.php?pid=3322" alt="topic" title="class_contexts::redhat">
+<area shape = "circle" coords="276,323,31" href="knowledge.php?pid=3181" alt="topic" title="handles::cfengine_policysrv_vars_match_package_redhat">
+<area shape = "circle" coords="526,291,40" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="689,256,40" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="511,205,55" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+</map>

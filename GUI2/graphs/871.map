@@ -1,0 +1,19 @@
+<img src="graphs/871.png" USEMAP="#knowledge_system" alt="system_knowledge::management issues image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="678,163,38" href="knowledge.php?pid=20" alt="topic" title="system_reports::performance report">
+<area shape = "circle" coords="609,80,38" href="knowledge.php?pid=818" alt="topic" title="promise_theory::intentions">
+<area shape = "circle" coords="489,135,38" href="knowledge.php?pid=821" alt="topic" title="promise_theory::promise proposals">
+<area shape = "circle" coords="349,164,38" href="knowledge.php?pid=846" alt="topic" title="promise_theory::communicated information">
+<area shape = "circle" coords="240,206,31" href="knowledge.php?pid=21" alt="topic" title="system_reports::promise report">
+<area shape = "circle" coords="121,320,33" href="knowledge.php?pid=867" alt="topic" title="system_knowledge::server lifecycle">
+<area shape = "circle" coords="140,469,37" href="knowledge.php?pid=873" alt="topic" title="system_knowledge::mission status">
+<area shape = "circle" coords="366,503,30" href="knowledge.php?pid=866" alt="topic" title="system_knowledge::service catalogue">
+<area shape = "circle" coords="486,376,30" href="knowledge.php?pid=871" alt="topic" title="system_knowledge::management issues">
+<area shape = "circle" coords="290,386,30" href="knowledge.php?pid=875" alt="topic" title="views::manager view">
+<area shape = "circle" coords="335,263,30" href="knowledge.php?pid=14" alt="topic" title="system_reports::compliance report">
+<area shape = "circle" coords="433,342,38" href="knowledge.php?pid=794" alt="topic" title="BDMA::build">
+<area shape = "circle" coords="574,317,38" href="knowledge.php?pid=820" alt="topic" title="promise_theory::policy">
+<area shape = "circle" coords="722,320,38" href="knowledge.php?pid=832" alt="topic" title="promise_theory::topics">
+<area shape = "circle" coords="708,226,38" href="knowledge.php?pid=1021" alt="topic" title="promise_types::roles">
+<area shape = "circle" coords="557,221,55" href="knowledge.php?pid=822" alt="topic" title="promise_theory::promises">
+</map>

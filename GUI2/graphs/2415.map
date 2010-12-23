@@ -1,0 +1,27 @@
+<img src="graphs/2415.png" USEMAP="#knowledge_system" alt="body_constraints::showstate image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="282,357,32" href="knowledge.php?pid=95" alt="topic" title="body_constraints::value_kept">
+<area shape = "circle" coords="290,446,55" href="knowledge.php?pid=142" alt="topic" title="body_constraints::db_server_owner">
+<area shape = "circle" coords="390,391,55" href="knowledge.php?pid=158" alt="topic" title="body_constraints::env_addresses">
+<area shape = "circle" coords="475,454,55" href="knowledge.php?pid=251" alt="topic" title="body_constraints::leaf_name">
+<area shape = "circle" coords="511,375,55" href="knowledge.php?pid=265" alt="topic" title="body_constraints::exec_regex">
+<area shape = "circle" coords="639,400,55" href="knowledge.php?pid=273" alt="topic" title="body_constraints::copy_patterns">
+<area shape = "circle" coords="599,321,55" href="knowledge.php?pid=333" alt="topic" title="body_constraints::insert_if_startwith_from_list">
+<area shape = "circle" coords="729,299,55" href="knowledge.php?pid=356" alt="topic" title="body_constraints::field_separator">
+<area shape = "circle" coords="626,246,55" href="knowledge.php?pid=382" alt="topic" title="body_constraints::package_arch_regex">
+<area shape = "circle" coords="716,184,55" href="knowledge.php?pid=395" alt="topic" title="body_constraints::package_list_name_regex">
+<area shape = "circle" coords="737,102,30" href="knowledge.php?pid=2409" alt="topic" title="promise_types::reports">
+<area shape = "circle" coords="571,179,32" href="knowledge.php?pid=2415" alt="topic" title="body_constraints::showstate">
+<area shape = "circle" coords="605,91,55" href="knowledge.php?pid=129" alt="topic" title="body_constraints::exec_owner">
+<area shape = "circle" coords="484,127,55" href="knowledge.php?pid=149" alt="topic" title="body_constraints::db_server_connection_db">
+<area shape = "circle" coords="430,51,55" href="knowledge.php?pid=202" alt="topic" title="body_constraints::linkcopy_patterns">
+<area shape = "circle" coords="360,121,55" href="knowledge.php?pid=257" alt="topic" title="body_constraints::search_owners">
+<area shape = "circle" coords="248,75,55" href="knowledge.php?pid=269" alt="topic" title="body_constraints::issymlinkto">
+<area shape = "circle" coords="251,158,55" href="knowledge.php?pid=317" alt="topic" title="body_constraints::delete_if_startwith_from_list">
+<area shape = "circle" coords="116,156,55" href="knowledge.php?pid=347" alt="topic" title="body_constraints::select_line_matching">
+<area shape = "circle" coords="191,226,55" href="knowledge.php?pid=367" alt="topic" title="body_constraints::replace_value">
+<area shape = "circle" coords="76,269,55" href="knowledge.php?pid=386" alt="topic" title="body_constraints::package_delete_convention">
+<area shape = "circle" coords="199,302,55" href="knowledge.php?pid=414" alt="topic" title="body_constraints::package_patch_installed_regex">
+<area shape = "circle" coords="406,255,52" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="52,418,55" href="knowledge.php?pid=106" alt="topic" title="body_constraints::measurement_class">
+</map>

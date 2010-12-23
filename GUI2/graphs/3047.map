@@ -1,0 +1,21 @@
+<img src="graphs/3047.png" USEMAP="#knowledge_system" alt="class_contexts::redhat_5|centos_5 image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="697,116,38" href="knowledge.php?pid=14" alt="topic" title="system_reports::file_changes report">
+<area shape = "circle" coords="647,64,38" href="knowledge.php?pid=26" alt="topic" title="system_reports::setuid report">
+<area shape = "circle" coords="562,98,38" href="knowledge.php?pid=837" alt="topic" title="cfengine_components::cfengine 2">
+<area shape = "circle" coords="460,116,38" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="382,143,31" href="knowledge.php?pid=3048" alt="topic" title="promisers::/etc/php.d/cfmod.ini">
+<area shape = "circle" coords="210,208,33" href="knowledge.php?pid=3070" alt="topic" title="promises::cfengine_php_mod_svn_so_redhat5_32">
+<area shape = "circle" coords="101,330,30" href="knowledge.php?pid=3056" alt="topic" title="handles::cfengine_php_mod_json_ini_redhat5">
+<area shape = "circle" coords="206,454,33" href="knowledge.php?pid=3066" alt="topic" title="promises::cfengine_php_mod_cfmod_so_redhat5_32">
+<area shape = "circle" coords="446,486,30" href="knowledge.php?pid=3053" alt="topic" title="handles::cfengine_php_mod_svn_ini_redhat5">
+<area shape = "circle" coords="639,401,33" href="knowledge.php?pid=3062" alt="topic" title="handles::cfengine_php_mod_json_so_redhat5_64">
+<area shape = "circle" coords="641,264,33" href="knowledge.php?pid=3059" alt="topic" title="handles::cfengine_php_mod_json_so_redhat5_32">
+<area shape = "circle" coords="385,332,30" href="knowledge.php?pid=3047" alt="topic" title="class_contexts::redhat_5|centos_5">
+<area shape = "circle" coords="451,178,30" href="knowledge.php?pid=3050" alt="topic" title="handles::cfengine_php_mod_cfmod_ini_redhat5">
+<area shape = "circle" coords="521,228,38" href="knowledge.php?pid=15" alt="topic" title="system_reports::file_diffs report">
+<area shape = "circle" coords="622,212,38" href="knowledge.php?pid=29" alt="topic" title="system_reports::hashes report">
+<area shape = "circle" coords="728,214,38" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="718,155,38" href="knowledge.php?pid=2483" alt="topic" title="body_constraints::changes">
+<area shape = "circle" coords="610,152,55" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+</map>

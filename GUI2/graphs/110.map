@@ -1,0 +1,17 @@
+<img src="graphs/110.png" USEMAP="#knowledge_system" alt="body_constraints::repair_denied image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="249,385,32" href="knowledge.php?pid=81" alt="topic" title="promise_types::*">
+<area shape = "circle" coords="336,456,55" href="knowledge.php?pid=111" alt="topic" title="body_constraints::repair_timeout">
+<area shape = "circle" coords="404,378,55" href="knowledge.php?pid=113" alt="topic" title="body_constraints::cancel_kept">
+<area shape = "circle" coords="529,354,55" href="knowledge.php?pid=115" alt="topic" title="body_constraints::cancel_notkept">
+<area shape = "circle" coords="467,272,55" href="knowledge.php?pid=2436" alt="topic" title="body_constraints::timer_policy">
+<area shape = "circle" coords="669,92,50" href="knowledge.php?pid=2770" alt="topic" title="data_types::slist">
+<area shape = "circle" coords="489,189,35" href="knowledge.php?pid=110" alt="topic" title="body_constraints::repair_denied">
+<area shape = "circle" coords="372,180,55" href="knowledge.php?pid=109" alt="topic" title="body_constraints::repair_failed">
+<area shape = "circle" coords="281,114,55" href="knowledge.php?pid=112" alt="topic" title="body_constraints::promise_kept">
+<area shape = "circle" coords="213,193,55" href="knowledge.php?pid=114" alt="topic" title="body_constraints::cancel_repaired">
+<area shape = "circle" coords="88,217,55" href="knowledge.php?pid=116" alt="topic" title="body_constraints::persist_time">
+<area shape = "circle" coords="150,299,55" href="knowledge.php?pid=2891" alt="topic" title="manual::classes (compound body)">
+<area shape = "circle" coords="309,285,51" href="knowledge.php?pid=2760" alt="topic" title="values::classes">
+<area shape = "circle" coords="52,423,55" href="knowledge.php?pid=108" alt="topic" title="body_constraints::promise_repaired">
+</map>

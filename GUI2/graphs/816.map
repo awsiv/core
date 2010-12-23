@@ -1,0 +1,6 @@
+<img src="graphs/816.png" USEMAP="#knowledge_system" alt="technical_concepts::global variables image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="599,164,55" href="knowledge.php?pid=815" alt="topic" title="technical_concepts::lists">
+<area shape = "circle" coords="350,323,55" href="knowledge.php?pid=1637" alt="topic" title="Variable_expansion_in_cfengine_3::List variable substitution and expansion">
+<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=816" alt="topic" title="technical_concepts::global variables">
+</map>

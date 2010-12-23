@@ -1,0 +1,21 @@
+<img src="graphs/3313.png" USEMAP="#knowledge_system" alt="bundles::fixapache image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="244,409,55" href="knowledge.php?pid=3626" alt="topic" title="bundles::set_user_field">
+<area shape = "circle" coords="324,466,55" href="knowledge.php?pid=3319" alt="topic" title="promises::promise_cfengine_cf_807">
+<area shape = "circle" coords="396,406,55" href="knowledge.php?pid=3628" alt="topic" title="promises::promise_cfengine_stdlib_cf_275">
+<area shape = "circle" coords="522,400,55" href="knowledge.php?pid=3610" alt="topic" title="bundles::set_variable_values">
+<area shape = "circle" coords="478,329,55" href="knowledge.php?pid=3632" alt="topic" title="promisers::$(group):.*">
+<area shape = "circle" coords="541,265,55" href="knowledge.php?pid=3616" alt="topic" title="promises::promise_cfengine_stdlib_cf_202">
+<area shape = "circle" coords="601,251,41" href="knowledge.php?pid=3316" alt="topic" title="promisers::del_modules">
+<area shape = "circle" coords="667,151,30" href="knowledge.php?pid=3314" alt="topic" title="promisers::add_modules">
+<area shape = "circle" coords="528,84,35" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+<area shape = "circle" coords="377,141,41" href="knowledge.php?pid=3318" alt="topic" title="promisers::APACHE_MODULES=.*">
+<area shape = "circle" coords="519,174,35" href="knowledge.php?pid=3313" alt="topic" title="bundles::fixapache">
+<area shape = "circle" coords="365,179,55" href="knowledge.php?pid=3627" alt="topic" title="promisers::$(user):.*">
+<area shape = "circle" coords="270,228,55" href="knowledge.php?pid=3320" alt="topic" title="promises::promise_cfengine_cf_814">
+<area shape = "circle" coords="145,216,55" href="knowledge.php?pid=3629" alt="topic" title="bundles::append_user_field">
+<area shape = "circle" coords="160,290,55" href="knowledge.php?pid=3615" alt="topic" title="promisers::\s*$(index)\s*=.*">
+<area shape = "circle" coords="72,344,55" href="knowledge.php?pid=3633" alt="topic" title="promises::promise_cfengine_stdlib_cf_295">
+<area shape = "circle" coords="315,321,52" href="knowledge.php?pid=349" alt="topic" title="promise_types::field_edits">
+<area shape = "circle" coords="52,437,55" href="knowledge.php?pid=2617" alt="topic" title="body_constraints::edit_field">
+</map>

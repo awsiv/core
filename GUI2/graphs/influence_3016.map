@@ -1,0 +1,7 @@
+<img src="graphs/influence_3016.png" USEMAP="#knowledge_system" alt="class_contexts::linux image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="633,131,30" href="knowledge.php?pid=3045" alt="topic" title="handles::cfengine_enable_files_rc_files">
+<area shape = "circle" coords="165,132,30" href="knowledge.php?pid=3019" alt="topic" title="handles::cfengine_enable_vars_rc_files">
+<area shape = "circle" coords="486,419,30" href="knowledge.php?pid=3348" alt="topic" title="handles::cfengine_limit_execd_processes_check_cf_execd">
+<area shape = "circle" coords="461,239,30" href="knowledge.php?pid=3016" alt="topic" title="class_contexts::linux">
+</map>

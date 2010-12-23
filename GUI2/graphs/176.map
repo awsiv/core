@@ -1,0 +1,27 @@
+<img src="graphs/176.png" USEMAP="#knowledge_system" alt="body_constraints::aces image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="283,360,32" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="292,446,52" href="knowledge.php?pid=109" alt="topic" title="body_constraints::repair_failed">
+<area shape = "circle" coords="390,392,52" href="knowledge.php?pid=111" alt="topic" title="body_constraints::repair_timeout">
+<area shape = "circle" coords="474,454,52" href="knowledge.php?pid=113" alt="topic" title="body_constraints::cancel_kept">
+<area shape = "circle" coords="511,379,55" href="knowledge.php?pid=180" alt="topic" title="body_constraints::specify_inherit_aces">
+<area shape = "circle" coords="640,404,55" href="knowledge.php?pid=286" alt="topic" title="body_constraints::bsdflags">
+<area shape = "circle" coords="600,324,55" href="knowledge.php?pid=562" alt="topic" title="functions::getusers">
+<area shape = "circle" coords="722,301,52" href="knowledge.php?pid=570" alt="topic" title="functions::hostsseen">
+<area shape = "circle" coords="621,248,52" href="knowledge.php?pid=590" alt="topic" title="functions::peers">
+<area shape = "circle" coords="709,187,52" href="knowledge.php?pid=602" alt="topic" title="functions::readstringlist">
+<area shape = "circle" coords="736,103,30" href="knowledge.php?pid=2933" alt="topic" title="promisers::acl">
+<area shape = "circle" coords="571,180,32" href="knowledge.php?pid=176" alt="topic" title="body_constraints::aces">
+<area shape = "circle" coords="601,95,52" href="knowledge.php?pid=108" alt="topic" title="body_constraints::promise_repaired">
+<area shape = "circle" coords="482,131,52" href="knowledge.php?pid=110" alt="topic" title="body_constraints::repair_denied">
+<area shape = "circle" coords="430,55,52" href="knowledge.php?pid=112" alt="topic" title="body_constraints::promise_kept">
+<area shape = "circle" coords="361,125,52" href="knowledge.php?pid=115" alt="topic" title="body_constraints::cancel_notkept">
+<area shape = "circle" coords="248,75,55" href="knowledge.php?pid=189" alt="topic" title="body_constraints::servers">
+<area shape = "circle" coords="251,159,55" href="knowledge.php?pid=560" alt="topic" title="functions::getindices">
+<area shape = "circle" coords="123,159,52" href="knowledge.php?pid=563" alt="topic" title="functions::grep">
+<area shape = "circle" coords="196,228,52" href="knowledge.php?pid=586" alt="topic" title="functions::ldaplist">
+<area shape = "circle" coords="84,271,52" href="knowledge.php?pid=592" alt="topic" title="functions::peerleaders">
+<area shape = "circle" coords="204,304,52" href="knowledge.php?pid=617" alt="topic" title="functions::splitstring">
+<area shape = "circle" coords="406,257,52" href="knowledge.php?pid=2770" alt="topic" title="data_types::slist">
+<area shape = "circle" coords="52,422,55" href="knowledge.php?pid=114" alt="topic" title="body_constraints::cancel_repaired">
+</map>

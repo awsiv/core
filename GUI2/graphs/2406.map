@@ -1,0 +1,20 @@
+<img src="graphs/2406.png" USEMAP="#knowledge_system" alt="body_constraints::dist image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="622,146,37" href="knowledge.php?pid=2925" alt="topic" title="bundles::change_management">
+<area shape = "circle" coords="584,75,37" href="knowledge.php?pid=812" alt="topic" title="technical_concepts::variables">
+<area shape = "circle" coords="503,116,37" href="knowledge.php?pid=2770" alt="topic" title="data_types::slist">
+<area shape = "circle" coords="406,123,37" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="430,198,37" href="knowledge.php?pid=2773" alt="topic" title="data_types::policy">
+<area shape = "circle" coords="260,268,34" href="knowledge.php?pid=593" alt="topic" title="functions::product">
+<area shape = "circle" coords="101,316,30" href="knowledge.php?pid=2397" alt="topic" title="body_constraints::real">
+<area shape = "circle" coords="72,473,30" href="knowledge.php?pid=2406" alt="topic" title="body_constraints::dist">
+<area shape = "circle" coords="269,497,31" href="knowledge.php?pid=2400" alt="topic" title="body_constraints::rlist">
+<area shape = "circle" coords="185,406,30" href="knowledge.php?pid=47" alt="topic" title="values::real number">
+<area shape = "circle" coords="372,389,34" href="knowledge.php?pid=619" alt="topic" title="functions::sum">
+<area shape = "circle" coords="316,328,42" href="knowledge.php?pid=2769" alt="topic" title="data_types::real">
+<area shape = "circle" coords="506,278,37" href="knowledge.php?pid=2768" alt="topic" title="data_types::int">
+<area shape = "circle" coords="588,318,37" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="624,246,37" href="knowledge.php?pid=2771" alt="topic" title="data_types::ilist">
+<area shape = "circle" coords="697,196,37" href="knowledge.php?pid=2767" alt="topic" title="data_types::string">
+<area shape = "circle" coords="537,197,55" href="knowledge.php?pid=2394" alt="topic" title="promise_types::vars">
+</map>

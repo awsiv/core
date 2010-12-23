@@ -1,0 +1,20 @@
+<img src="graphs/1079.png" USEMAP="#knowledge_system" alt="promisers::APACHE_MODULES=.* image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="619,155,38" href="knowledge.php?pid=322" alt="topic" title="body_constraints::field_separator">
+<area shape = "circle" coords="554,76,38" href="knowledge.php?pid=317" alt="topic" title="body_constraints::allow_blank_fields">
+<area shape = "circle" coords="464,137,38" href="knowledge.php?pid=326" alt="topic" title="body_constraints::select_field">
+<area shape = "circle" coords="364,189,38" href="knowledge.php?pid=321" alt="topic" title="body_constraints::field_operation">
+<area shape = "circle" coords="362,216,32" href="knowledge.php?pid=1026" alt="topic" title="promisers::NETCONFIG_DNS_STATIC_SEARCHLIST.*">
+<area shape = "circle" coords="103,292,32" href="knowledge.php?pid=1024" alt="topic" title="promisers::search">
+<area shape = "circle" coords="248,290,34" href="knowledge.php?pid=1023" alt="topic" title="bundles::resolver">
+<area shape = "circle" coords="257,376,30" href="knowledge.php?pid=1080" alt="topic" title="promises::promise_webserver_cf_128">
+<area shape = "circle" coords="321,473,30" href="knowledge.php?pid=1072" alt="topic" title="bundles::fixapache">
+<area shape = "circle" coords="442,422,31" href="knowledge.php?pid=1081" alt="topic" title="promises::promise_webserver_cf_135">
+<area shape = "circle" coords="350,399,30" href="knowledge.php?pid=1079" alt="topic" title="promisers::APACHE_MODULES=.*">
+<area shape = "circle" coords="512,356,32" href="knowledge.php?pid=1027" alt="topic" title="promises::promise_library_cf_113">
+<area shape = "circle" coords="393,289,31" href="knowledge.php?pid=315" alt="topic" title="promise_types::field_edits">
+<area shape = "circle" coords="506,340,38" href="knowledge.php?pid=324" alt="topic" title="body_constraints::field_value">
+<area shape = "circle" coords="596,279,38" href="knowledge.php?pid=319" alt="topic" title="body_constraints::extend_fields">
+<area shape = "circle" coords="696,227,38" href="knowledge.php?pid=327" alt="topic" title="body_constraints::value_separator">
+<area shape = "circle" coords="530,208,55" href="knowledge.php?pid=316" alt="topic" title="body_constraints::edit_field">
+</map>

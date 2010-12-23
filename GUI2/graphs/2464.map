@@ -1,0 +1,20 @@
+<img src="graphs/2464.png" USEMAP="#knowledge_system" alt="body_constraints::database_rows image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="248,398,55" href="knowledge.php?pid=560" alt="topic" title="functions::getindices">
+<area shape = "circle" coords="310,462,55" href="knowledge.php?pid=108" alt="topic" title="body_constraints::promise_repaired">
+<area shape = "circle" coords="391,406,55" href="knowledge.php?pid=115" alt="topic" title="body_constraints::cancel_notkept">
+<area shape = "circle" coords="514,423,55" href="knowledge.php?pid=110" alt="topic" title="body_constraints::repair_denied">
+<area shape = "circle" coords="496,349,55" href="knowledge.php?pid=180" alt="topic" title="body_constraints::specify_inherit_aces">
+<area shape = "circle" coords="599,306,55" href="knowledge.php?pid=112" alt="topic" title="body_constraints::promise_kept">
+<area shape = "circle" coords="495,264,55" href="knowledge.php?pid=286" alt="topic" title="body_constraints::bsdflags">
+<area shape = "circle" coords="661,87,34" href="knowledge.php?pid=2453" alt="topic" title="promise_types::databases">
+<area shape = "circle" coords="498,197,33" href="knowledge.php?pid=2464" alt="topic" title="body_constraints::database_rows">
+<area shape = "circle" coords="387,208,55" href="knowledge.php?pid=114" alt="topic" title="body_constraints::cancel_repaired">
+<area shape = "circle" coords="304,152,55" href="knowledge.php?pid=109" alt="topic" title="body_constraints::repair_failed">
+<area shape = "circle" coords="245,218,55" href="knowledge.php?pid=176" alt="topic" title="body_constraints::aces">
+<area shape = "circle" coords="119,217,55" href="knowledge.php?pid=111" alt="topic" title="body_constraints::repair_timeout">
+<area shape = "circle" coords="162,287,55" href="knowledge.php?pid=189" alt="topic" title="body_constraints::servers">
+<area shape = "circle" coords="77,342,55" href="knowledge.php?pid=113" alt="topic" title="body_constraints::cancel_kept">
+<area shape = "circle" coords="335,307,52" href="knowledge.php?pid=2770" alt="topic" title="data_types::slist">
+<area shape = "circle" coords="52,432,55" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+</map>

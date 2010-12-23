@@ -1,0 +1,6 @@
+<img src="graphs/1005.png" USEMAP="#knowledge_system" alt="promise_theory::dependencies image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="648,119,55" href="knowledge.php?pid=2094" alt="topic" title="Using_the_knowledge_msp::Understanding dependencies">
+<area shape = "circle" coords="151,430,55" href="knowledge.php?pid=976" alt="topic" title="promise_theory::conditional promises">
+<area shape = "circle" coords="449,243,55" href="knowledge.php?pid=1005" alt="topic" title="promise_theory::dependencies">
+</map>

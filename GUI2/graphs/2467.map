@@ -1,0 +1,18 @@
+<img src="graphs/2467.png" USEMAP="#knowledge_system" alt="body_constraints::environment_interface image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="590,174,37" href="knowledge.php?pid=265" alt="topic" title="body_constraints::exec_regex">
+<area shape = "circle" coords="541,85,37" href="knowledge.php?pid=95" alt="topic" title="body_constraints::value_kept">
+<area shape = "circle" coords="438,136,37" href="knowledge.php?pid=202" alt="topic" title="body_constraints::linkcopy_patterns">
+<area shape = "circle" coords="315,145,37" href="knowledge.php?pid=129" alt="topic" title="body_constraints::exec_owner">
+<area shape = "circle" coords="345,238,37" href="knowledge.php?pid=257" alt="topic" title="body_constraints::search_owners">
+<area shape = "circle" coords="114,335,30" href="knowledge.php?pid=2469" alt="topic" title="body_constraints::env_name">
+<area shape = "circle" coords="90,465,30" href="knowledge.php?pid=155" alt="topic" title="promise_types::environments">
+<area shape = "circle" coords="256,484,31" href="knowledge.php?pid=2471" alt="topic" title="body_constraints::env_network">
+<area shape = "circle" coords="185,409,30" href="knowledge.php?pid=2467" alt="topic" title="body_constraints::environment_interface">
+<area shape = "circle" coords="328,326,30" href="knowledge.php?pid=158" alt="topic" title="body_constraints::env_addresses">
+<area shape = "circle" coords="441,338,37" href="knowledge.php?pid=149" alt="topic" title="body_constraints::db_server_connection_db">
+<area shape = "circle" coords="546,388,37" href="knowledge.php?pid=106" alt="topic" title="body_constraints::measurement_class">
+<area shape = "circle" coords="592,298,37" href="knowledge.php?pid=251" alt="topic" title="body_constraints::leaf_name">
+<area shape = "circle" coords="685,236,37" href="knowledge.php?pid=142" alt="topic" title="body_constraints::db_server_owner">
+<area shape = "circle" coords="481,237,55" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+</map>

@@ -1,0 +1,16 @@
+<img src="graphs/108.png" USEMAP="#knowledge_system" alt="body_constraints::promise_repaired image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="299,413,55" href="knowledge.php?pid=586" alt="topic" title="functions::ldaplist">
+<area shape = "circle" coords="429,463,52" href="knowledge.php?pid=55" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="508,389,55" href="knowledge.php?pid=562" alt="topic" title="functions::getusers">
+<area shape = "circle" coords="651,349,52" href="knowledge.php?pid=189" alt="topic" title="body_constraints::servers">
+<area shape = "circle" coords="554,280,55" href="knowledge.php?pid=570" alt="topic" title="functions::hostsseen">
+<area shape = "circle" coords="700,86,48" href="knowledge.php?pid=2760" alt="topic" title="values::classes">
+<area shape = "circle" coords="534,201,34" href="knowledge.php?pid=108" alt="topic" title="body_constraints::promise_repaired">
+<area shape = "circle" coords="383,213,55" href="knowledge.php?pid=560" alt="topic" title="functions::getindices">
+<area shape = "circle" coords="231,184,52" href="knowledge.php?pid=176" alt="topic" title="body_constraints::aces">
+<area shape = "circle" coords="196,267,55" href="knowledge.php?pid=563" alt="topic" title="functions::grep">
+<area shape = "circle" coords="80,327,52" href="knowledge.php?pid=286" alt="topic" title="body_constraints::bsdflags">
+<area shape = "circle" coords="369,316,52" href="knowledge.php?pid=2770" alt="topic" title="data_types::slist">
+<area shape = "circle" coords="52,439,55" href="knowledge.php?pid=180" alt="topic" title="body_constraints::specify_inherit_aces">
+</map>

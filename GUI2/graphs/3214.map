@@ -1,0 +1,27 @@
+<img src="graphs/3214.png" USEMAP="#knowledge_system" alt="promises::cfengine_policysrv_packages_install_package_debian image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="155,448,55" href="knowledge.php?pid=3427" alt="topic" title="bundles::update_bins">
+<area shape = "circle" coords="187,484,55" href="knowledge.php?pid=20" alt="topic" title="system_reports::patches available report">
+<area shape = "circle" coords="230,453,55" href="knowledge.php?pid=2675" alt="topic" title="body_constraints::package_policy">
+<area shape = "circle" coords="295,462,55" href="knowledge.php?pid=837" alt="topic" title="cfengine_components::cfengine 2">
+<area shape = "circle" coords="285,420,55" href="knowledge.php?pid=2677" alt="topic" title="body_constraints::package_version">
+<area shape = "circle" coords="339,396,55" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="285,372,55" href="knowledge.php?pid=3174" alt="topic" title="bundles::cfengine_policysrv">
+<area shape = "circle" coords="442,382,43" href="knowledge.php?pid=3192" alt="topic" title="promisers::php5">
+<area shape = "circle" coords="610,346,30" href="knowledge.php?pid=3182" alt="topic" title="class_contexts::debian.policy_host">
+<area shape = "circle" coords="702,250,43" href="knowledge.php?pid=3215" alt="topic" title="class_contexts::a2enmod_php5_ssl">
+<area shape = "circle" coords="675,139,43" href="knowledge.php?pid=3189" alt="topic" title="promisers::mysql-server">
+<area shape = "circle" coords="542,64,30" href="knowledge.php?pid=2908" alt="topic" title="class_contexts::policy_host">
+<area shape = "circle" coords="366,62,43" href="knowledge.php?pid=3195" alt="topic" title="promisers::ssl-cert">
+<area shape = "circle" coords="227,132,43" href="knowledge.php?pid=3185" alt="topic" title="promisers::apache2">
+<area shape = "circle" coords="193,242,43" href="knowledge.php?pid=3334" alt="topic" title="class_contexts::debian">
+<area shape = "circle" coords="448,218,38" href="knowledge.php?pid=3214" alt="topic" title="promises::cfengine_policysrv_packages_install_package_debian">
+<area shape = "circle" coords="228,341,55" href="knowledge.php?pid=2638" alt="topic" title="body_constraints::package_method">
+<area shape = "circle" coords="184,309,55" href="knowledge.php?pid=25" alt="topic" title="system_reports::software installed report">
+<area shape = "circle" coords="153,346,55" href="knowledge.php?pid=2676" alt="topic" title="body_constraints::package_select">
+<area shape = "circle" coords="87,346,55" href="knowledge.php?pid=943" alt="topic" title="BDMA::deploy">
+<area shape = "circle" coords="110,385,55" href="knowledge.php?pid=2903" alt="topic" title="management_issues::patch management">
+<area shape = "circle" coords="65,416,55" href="knowledge.php?pid=2637" alt="topic" title="body_constraints::package_architectures">
+<area shape = "circle" coords="200,397,52" href="knowledge.php?pid=2636" alt="topic" title="promise_types::packages">
+<area shape = "circle" coords="52,467,55" href="knowledge.php?pid=19" alt="topic" title="system_reports::patches installed report">
+</map>

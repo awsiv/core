@@ -1,0 +1,27 @@
+<img src="graphs/80.png" USEMAP="#knowledge_system" alt="body_constraints::action_policy image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="705,65,45" href="knowledge.php?pid=51" alt="topic" title="values::an arbitrary string">
+<area shape = "circle" coords="468,156,45" href="knowledge.php?pid=87" alt="topic" title="body_constraints::log_level">
+<area shape = "circle" coords="425,39,34" href="knowledge.php?pid=41" alt="topic" title="values::a positive integer">
+<area shape = "circle" coords="429,123,31" href="knowledge.php?pid=81" alt="topic" title="body_constraints::ifelapsed">
+<area shape = "circle" coords="394,158,45" href="knowledge.php?pid=90" alt="topic" title="body_constraints::log_repaired">
+<area shape = "circle" coords="231,116,45" href="knowledge.php?pid=889" alt="topic" title="mission_status::system reports">
+<area shape = "circle" coords="332,162,55" href="knowledge.php?pid=797" alt="topic" title="BDMA::audit">
+<area shape = "circle" coords="353,202,45" href="knowledge.php?pid=98" alt="topic" title="body_constraints::report_level">
+<area shape = "circle" coords="323,240,45" href="knowledge.php?pid=83" alt="topic" title="body_constraints::expireafter">
+<area shape = "circle" coords="205,263,38" href="knowledge.php?pid=482" alt="topic" title="values::select_region">
+<area shape = "circle" coords="95,323,38" href="knowledge.php?pid=478" alt="topic" title="values::ifvarclass">
+<area shape = "circle" coords="92,421,38" href="knowledge.php?pid=481" alt="topic" title="values::comment">
+<area shape = "circle" coords="200,483,38" href="knowledge.php?pid=477" alt="topic" title="values::classes">
+<area shape = "circle" coords="336,463,38" href="knowledge.php?pid=480" alt="topic" title="values::depends_on">
+<area shape = "circle" coords="398,376,38" href="knowledge.php?pid=479" alt="topic" title="values::handle">
+<area shape = "circle" coords="238,374,35" href="knowledge.php?pid=78" alt="topic" title="promise_types::*">
+<area shape = "circle" coords="409,290,45" href="knowledge.php?pid=88" alt="topic" title="body_constraints::log_kept">
+<area shape = "circle" coords="477,316,45" href="knowledge.php?pid=38" alt="topic" title="values::boolean">
+<area shape = "circle" coords="455,261,55" href="knowledge.php?pid=96" alt="topic" title="body_constraints::background">
+<area shape = "circle" coords="516,268,45" href="knowledge.php?pid=92" alt="topic" title="body_constraints::log_failed">
+<area shape = "circle" coords="509,225,31" href="knowledge.php?pid=80" alt="topic" title="body_constraints::action_policy">
+<area shape = "circle" coords="552,194,45" href="knowledge.php?pid=99" alt="topic" title="body_constraints::measurement_class">
+<area shape = "circle" coords="433,207,44" href="knowledge.php?pid=476" alt="topic" title="values::action">
+<area shape = "circle" coords="627,106,55" href="knowledge.php?pid=85" alt="topic" title="body_constraints::log_string">
+</map>

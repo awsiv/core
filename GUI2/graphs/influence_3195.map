@@ -1,0 +1,13 @@
+<img src="graphs/influence_3195.png" USEMAP="#knowledge_system" alt="promisers::ssl-cert image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="396,459,30" href="knowledge.php?pid=3219" alt="topic" title="class_contexts::a2enmod_ssl">
+<area shape = "circle" coords="371,357,30" href="knowledge.php?pid=3195" alt="topic" title="promisers::ssl-cert">
+<area shape = "circle" coords="637,316,30" href="knowledge.php?pid=3192" alt="topic" title="promisers::php5">
+<area shape = "circle" coords="709,234,46" href="knowledge.php?pid=3334" alt="topic" title="class_contexts::debian">
+<area shape = "circle" coords="491,90,30" href="knowledge.php?pid=2908" alt="topic" title="class_contexts::policy_host">
+<area shape = "circle" coords="516,193,30" href="knowledge.php?pid=3214" alt="topic" title="promises::cfengine_policysrv_packages_install_package_debian">
+<area shape = "circle" coords="310,101,30" href="knowledge.php?pid=3185" alt="topic" title="promisers::apache2">
+<area shape = "circle" coords="153,214,30" href="knowledge.php?pid=3218" alt="topic" title="handles::cfengine_policysrv_commands_a2enmod_debian">
+<area shape = "circle" coords="347,255,30" href="knowledge.php?pid=3215" alt="topic" title="class_contexts::a2enmod_php5_ssl">
+<area shape = "circle" coords="52,362,55" href="knowledge.php?pid=3189" alt="topic" title="promisers::mysql-server">
+</map>

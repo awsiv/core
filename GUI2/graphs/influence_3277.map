@@ -1,0 +1,20 @@
+<img src="graphs/influence_3277.png" USEMAP="#knowledge_system" alt="handles::cfengine_web_server_processes_mysqld_off_debian image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="340,290,30" href="knowledge.php?pid=3257" alt="topic" title="handles::cfengine_web_server_processes_apache_on_debian">
+<area shape = "circle" coords="439,469,30" href="knowledge.php?pid=3215" alt="topic" title="class_contexts::a2enmod_php5_ssl">
+<area shape = "circle" coords="429,340,30" href="knowledge.php?pid=3214" alt="topic" title="promises::cfengine_policysrv_packages_install_package_debian">
+<area shape = "circle" coords="510,288,30" href="knowledge.php?pid=3338" alt="topic" title="handles::cfengine_editor_vars_web_group_debian">
+<area shape = "circle" coords="651,282,30" href="knowledge.php?pid=3277" alt="topic" title="handles::cfengine_web_server_processes_mysqld_off_debian">
+<area shape = "circle" coords="602,221,39" href="knowledge.php?pid=3705" alt="topic" title="handles::knowledge_files_doc_root_debian">
+<area shape = "circle" coords="673,163,30" href="knowledge.php?pid=3229" alt="topic" title="handles::cfengine_policysrv_file_tidy_index_html">
+<area shape = "circle" coords="653,81,30" href="knowledge.php?pid=2908" alt="topic" title="class_contexts::policy_host">
+<area shape = "circle" coords="536,147,30" href="knowledge.php?pid=3184" alt="topic" title="handles::cfengine_policysrv_vars_match_package_debian">
+<area shape = "circle" coords="476,88,30" href="knowledge.php?pid=3336" alt="topic" title="handles::cfengine_editor_vars_web_owner_debian">
+<area shape = "circle" coords="319,49,43" href="knowledge.php?pid=3223" alt="topic" title="class_contexts::a2ensite_ssl">
+<area shape = "circle" coords="369,131,30" href="knowledge.php?pid=3233" alt="topic" title="promises::cfengine_policysrv_files_ssl">
+<area shape = "circle" coords="230,120,30" href="knowledge.php?pid=3702" alt="topic" title="handles::knowledge_files_mysql_sock_debian">
+<area shape = "circle" coords="246,186,30" href="knowledge.php?pid=3170" alt="topic" title="handles::cfengine_php_mod_commands_apache2_debian">
+<area shape = "circle" coords="149,233,30" href="knowledge.php?pid=3708" alt="topic" title="handles::knowledge_files_cfagent_dir_debian">
+<area shape = "circle" coords="419,213,30" href="knowledge.php?pid=3334" alt="topic" title="class_contexts::debian">
+<area shape = "circle" coords="163,302,55" href="knowledge.php?pid=3684" alt="topic" title="handles::knowledge_vars_flavour_debian">
+</map>

@@ -1,0 +1,27 @@
+<img src="graphs/3340.png" USEMAP="#knowledge_system" alt="promisers::/var/www/policies/. image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="202,412,55" href="knowledge.php?pid=2560" alt="topic" title="body_constraints::move_obstructions">
+<area shape = "circle" coords="226,468,55" href="knowledge.php?pid=15" alt="topic" title="system_reports::file_diffs report">
+<area shape = "circle" coords="293,428,55" href="knowledge.php?pid=2517" alt="topic" title="body_constraints::delete">
+<area shape = "circle" coords="367,463,55" href="knowledge.php?pid=29" alt="topic" title="system_reports::hashes report">
+<area shape = "circle" coords="380,405,55" href="knowledge.php?pid=2531" alt="topic" title="body_constraints::edit_line">
+<area shape = "circle" coords="473,405,55" href="knowledge.php?pid=838" alt="topic" title="cfengine_components::cfengine 3">
+<area shape = "circle" coords="426,353,55" href="knowledge.php?pid=2533" alt="topic" title="body_constraints::edit_defaults">
+<area shape = "circle" coords="499,317,55" href="knowledge.php?pid=2483" alt="topic" title="body_constraints::changes">
+<area shape = "circle" coords="413,294,55" href="knowledge.php?pid=2551" alt="topic" title="body_constraints::link_from">
+<area shape = "circle" coords="572,322,38" href="knowledge.php?pid=3343" alt="topic" title="handles::cfengine_editor_files_policies_dir">
+<area shape = "circle" coords="676,186,30" href="knowledge.php?pid=3341" alt="topic" title="promisees::Cfengine Nova Editor">
+<area shape = "circle" coords="505,81,30" href="knowledge.php?pid=3321" alt="topic" title="bundles::cfengine_editor">
+<area shape = "circle" coords="295,153,38" href="knowledge.php?pid=3345" alt="topic" title="handles::cfengine_editor_files_policies_tidy">
+<area shape = "circle" coords="477,209,33" href="knowledge.php?pid=3340" alt="topic" title="promisers::/var/www/policies/.">
+<area shape = "circle" coords="345,253,55" href="knowledge.php?pid=2516" alt="topic" title="body_constraints::create">
+<area shape = "circle" coords="307,199,55" href="knowledge.php?pid=26" alt="topic" title="system_reports::setuid report">
+<area shape = "circle" coords="252,247,55" href="knowledge.php?pid=2518" alt="topic" title="body_constraints::depth_search">
+<area shape = "circle" coords="169,219,55" href="knowledge.php?pid=837" alt="topic" title="cfengine_components::cfengine 2">
+<area shape = "circle" coords="172,278,55" href="knowledge.php?pid=2532" alt="topic" title="body_constraints::edit_xml">
+<area shape = "circle" coords="80,289,55" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="140,334,55" href="knowledge.php?pid=2538" alt="topic" title="body_constraints::file_select">
+<area shape = "circle" coords="77,378,55" href="knowledge.php?pid=2487" alt="topic" title="body_constraints::copy_from">
+<area shape = "circle" coords="284,336,52" href="knowledge.php?pid=2481" alt="topic" title="promise_types::files">
+<area shape = "circle" coords="52,446,55" href="knowledge.php?pid=14" alt="topic" title="system_reports::file_changes report">
+</map>

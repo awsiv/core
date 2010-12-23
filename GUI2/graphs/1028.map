@@ -1,0 +1,18 @@
+<img src="graphs/1028.png" USEMAP="#knowledge_system" alt="bundles::DeleteLinesMatching image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="595,169,37" href="knowledge.php?pid=172" alt="topic" title="body_constraints::check_root">
+<area shape = "circle" coords="549,83,37" href="knowledge.php?pid=96" alt="topic" title="body_constraints::background">
+<area shape = "circle" coords="450,133,37" href="knowledge.php?pid=161" alt="topic" title="body_constraints::update_hashes">
+<area shape = "circle" coords="331,141,37" href="knowledge.php?pid=132" alt="topic" title="body_constraints::preview">
+<area shape = "circle" coords="361,231,37" href="knowledge.php?pid=170" alt="topic" title="body_constraints::encrypt">
+<area shape = "circle" coords="112,340,30" href="knowledge.php?pid=1028" alt="topic" title="bundles::DeleteLinesMatching">
+<area shape = "circle" coords="88,466,30" href="knowledge.php?pid=283" alt="topic" title="body_constraints::delete_select">
+<area shape = "circle" coords="248,484,32" href="knowledge.php?pid=1030" alt="topic" title="promises::promise_library_cf_165">
+<area shape = "circle" coords="180,412,30" href="knowledge.php?pid=282" alt="topic" title="promise_types::delete_lines">
+<area shape = "circle" coords="332,323,38" href="knowledge.php?pid=295" alt="topic" title="body_constraints::not_matching">
+<area shape = "circle" coords="453,328,37" href="knowledge.php?pid=135" alt="topic" title="body_constraints::module">
+<area shape = "circle" coords="553,376,37" href="knowledge.php?pid=120" alt="topic" title="body_constraints::useshell">
+<area shape = "circle" coords="597,289,37" href="knowledge.php?pid=166" alt="topic" title="body_constraints::collapse_destination_dir">
+<area shape = "circle" coords="687,229,37" href="knowledge.php?pid=134" alt="topic" title="body_constraints::no_output">
+<area shape = "circle" coords="491,230,55" href="knowledge.php?pid=38" alt="topic" title="values::boolean">
+</map>

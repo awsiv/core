@@ -1,0 +1,24 @@
+<img src="graphs/63.png" USEMAP="#knowledge_system" alt="body_constraints::and image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="649,150,36" href="knowledge.php?pid=46" alt="topic" title="values::a cfengine class expression">
+<area shape = "circle" coords="635,79,36" href="knowledge.php?pid=496" alt="topic" title="functions::changedbefore">
+<area shape = "circle" coords="574,112,36" href="knowledge.php?pid=498" alt="topic" title="functions::classmatch">
+<area shape = "circle" coords="510,84,36" href="knowledge.php?pid=503" alt="topic" title="functions::filesexist">
+<area shape = "circle" coords="501,155,36" href="knowledge.php?pid=510" alt="topic" title="functions::hashmatch">
+<area shape = "circle" coords="442,194,36" href="knowledge.php?pid=512" alt="topic" title="functions::hostinnetgroup">
+<area shape = "circle" coords="297,188,31" href="knowledge.php?pid=67" alt="topic" title="body_constraints::not">
+<area shape = "circle" coords="160,212,30" href="knowledge.php?pid=63" alt="topic" title="body_constraints::and">
+<area shape = "circle" coords="94,337,31" href="knowledge.php?pid=64" alt="topic" title="body_constraints::xor">
+<area shape = "circle" coords="148,470,33" href="knowledge.php?pid=65" alt="topic" title="body_constraints::dist">
+<area shape = "circle" coords="281,508,30" href="knowledge.php?pid=62" alt="topic" title="body_constraints::or">
+<area shape = "circle" coords="393,425,30" href="knowledge.php?pid=13" alt="topic" title="system_reports::classes report">
+<area shape = "circle" coords="253,346,30" href="knowledge.php?pid=61" alt="topic" title="promise_types::classes">
+<area shape = "circle" coords="493,241,37" href="knowledge.php?pid=66" alt="topic" title="body_constraints::expression">
+<area shape = "circle" coords="491,313,36" href="knowledge.php?pid=492" alt="topic" title="functions::accessedbefore">
+<area shape = "circle" coords="559,296,36" href="knowledge.php?pid=497" alt="topic" title="functions::classify">
+<area shape = "circle" coords="614,340,36" href="knowledge.php?pid=502" alt="topic" title="functions::fileexists">
+<area shape = "circle" coords="639,272,36" href="knowledge.php?pid=508" alt="topic" title="functions::groupexists">
+<area shape = "circle" coords="705,250,36" href="knowledge.php?pid=511" alt="topic" title="functions::hostrange">
+<area shape = "circle" coords="666,191,36" href="knowledge.php?pid=513" alt="topic" title="functions::iprange">
+<area shape = "circle" coords="577,205,55" href="knowledge.php?pid=491" alt="topic" title="data_types::class">
+</map>

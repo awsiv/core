@@ -1,0 +1,27 @@
+<img src="graphs/3205.png" USEMAP="#knowledge_system" alt="handles::cfengine_policysrv_packages_install_package_redhat image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="146,444,55" href="knowledge.php?pid=20" alt="topic" title="system_reports::patches available report">
+<area shape = "circle" coords="172,483,55" href="knowledge.php?pid=837" alt="topic" title="cfengine_components::cfengine 2">
+<area shape = "circle" coords="212,451,55" href="knowledge.php?pid=982" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="268,465,55" href="knowledge.php?pid=2638" alt="topic" title="body_constraints::package_method">
+<area shape = "circle" coords="265,422,55" href="knowledge.php?pid=2676" alt="topic" title="body_constraints::package_select">
+<area shape = "circle" coords="319,404,55" href="knowledge.php?pid=2903" alt="topic" title="management_issues::patch management">
+<area shape = "circle" coords="274,375,55" href="knowledge.php?pid=3427" alt="topic" title="bundles::update_bins">
+<area shape = "circle" coords="431,415,30" href="knowledge.php?pid=3179" alt="topic" title="class_contexts::redhat.policy_host">
+<area shape = "circle" coords="610,382,42" href="knowledge.php?pid=3189" alt="topic" title="promisers::mysql-server">
+<area shape = "circle" coords="705,266,42" href="knowledge.php?pid=3195" alt="topic" title="promisers::ssl-cert">
+<area shape = "circle" coords="660,136,30" href="knowledge.php?pid=2908" alt="topic" title="class_contexts::policy_host">
+<area shape = "circle" coords="501,67,42" href="knowledge.php?pid=3185" alt="topic" title="promisers::apache2">
+<area shape = "circle" coords="322,100,42" href="knowledge.php?pid=3192" alt="topic" title="promisers::php5">
+<area shape = "circle" coords="227,215,42" href="knowledge.php?pid=3322" alt="topic" title="class_contexts::redhat">
+<area shape = "circle" coords="466,241,36" href="knowledge.php?pid=3205" alt="topic" title="handles::cfengine_policysrv_packages_install_package_redhat">
+<area shape = "circle" coords="235,336,55" href="knowledge.php?pid=25" alt="topic" title="system_reports::software installed report">
+<area shape = "circle" coords="209,297,55" href="knowledge.php?pid=943" alt="topic" title="BDMA::deploy">
+<area shape = "circle" coords="169,329,55" href="knowledge.php?pid=2637" alt="topic" title="body_constraints::package_architectures">
+<area shape = "circle" coords="113,314,55" href="knowledge.php?pid=2675" alt="topic" title="body_constraints::package_policy">
+<area shape = "circle" coords="116,358,55" href="knowledge.php?pid=2677" alt="topic" title="body_constraints::package_version">
+<area shape = "circle" coords="62,377,55" href="knowledge.php?pid=3174" alt="topic" title="bundles::cfengine_policysrv">
+<area shape = "circle" coords="107,406,55" href="knowledge.php?pid=3474" alt="topic" title="promisers::cfengine-nova">
+<area shape = "circle" coords="190,390,52" href="knowledge.php?pid=2636" alt="topic" title="promise_types::packages">
+<area shape = "circle" coords="52,465,55" href="knowledge.php?pid=19" alt="topic" title="system_reports::patches installed report">
+</map>

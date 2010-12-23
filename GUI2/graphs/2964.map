@@ -1,0 +1,27 @@
+<img src="graphs/2964.png" USEMAP="#knowledge_system" alt="class_contexts::windows image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="282,366,52" href="knowledge.php?pid=3639" alt="topic" title="handles::change_management_vars_watch_files">
+<area shape = "circle" coords="299,442,32" href="knowledge.php?pid=2967" alt="topic" title="handles::cfengine_processes_vars_stop_signal_windows">
+<area shape = "circle" coords="394,395,52" href="knowledge.php?pid=3484" alt="topic" title="handles::update_bins_services_stop_cf_execd_windows">
+<area shape = "circle" coords="472,464,52" href="knowledge.php?pid=2998" alt="topic" title="handles::cfengine_processes_stop_cf_execd">
+<area shape = "circle" coords="512,383,52" href="knowledge.php?pid=3522" alt="topic" title="handles::update_processes_cf_hub">
+<area shape = "circle" coords="636,416,52" href="knowledge.php?pid=3005" alt="topic" title="handles::cfengine_processes_services_stop_cf_execd_windows">
+<area shape = "circle" coords="604,332,52" href="knowledge.php?pid=3537" alt="topic" title="handles::update_commands_start_cf_hub">
+<area shape = "circle" coords="736,319,52" href="knowledge.php?pid=3343" alt="topic" title="handles::cfengine_editor_files_policies_dir">
+<area shape = "circle" coords="641,258,52" href="knowledge.php?pid=3552" alt="topic" title="handles::update_services_windows_executor">
+<area shape = "circle" coords="744,203,52" href="knowledge.php?pid=3437" alt="topic" title="handles::update_bins_vars_stop_signal_windows">
+<area shape = "circle" coords="614,183,52" href="knowledge.php?pid=3567" alt="topic" title="handles::update_files_sys_workdir_lib">
+<area shape = "circle" coords="646,108,32" href="knowledge.php?pid=2956" alt="topic" title="handles::grant_access_reports">
+<area shape = "circle" coords="529,127,52" href="knowledge.php?pid=3473" alt="topic" title="handles::update_bins_processes_stop_cf_execd">
+<area shape = "circle" coords="497,53,32" href="knowledge.php?pid=2969" alt="topic" title="handles::cfengine_processes_vars_stop_signal_unix">
+<area shape = "circle" coords="413,108,52" href="knowledge.php?pid=3520" alt="topic" title="handles::update_processes_cf_execd">
+<area shape = "circle" coords="320,46,52" href="knowledge.php?pid=3001" alt="topic" title="handles::cfengine_processes_commands_cf_execd">
+<area shape = "circle" coords="298,131,52" href="knowledge.php?pid=3533" alt="topic" title="handles::update_commands_start_cf_execd_not_windows">
+<area shape = "circle" coords="168,109,52" href="knowledge.php?pid=3007" alt="topic" title="handles::cfengine_processes_services_start_cf_execd_windows">
+<area shape = "circle" coords="218,189,52" href="knowledge.php?pid=3541" alt="topic" title="handles::update_commands_start_mongod">
+<area shape = "circle" coords="90,214,52" href="knowledge.php?pid=3345" alt="topic" title="handles::cfengine_editor_files_policies_tidy">
+<area shape = "circle" coords="197,266,52" href="knowledge.php?pid=3564" alt="topic" title="handles::update_files_sys_workdir_bin">
+<area shape = "circle" coords="106,330,52" href="knowledge.php?pid=3439" alt="topic" title="handles::update_bins_vars_stop_signal_unix">
+<area shape = "circle" coords="418,252,52" href="knowledge.php?pid=2964" alt="topic" title="class_contexts::windows">
+<area shape = "circle" coords="52,428,55" href="knowledge.php?pid=3570" alt="topic" title="handles::update_files_usr_local_sbin">
+</map>

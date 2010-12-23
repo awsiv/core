@@ -1,0 +1,21 @@
+<img src="graphs/1077.png" USEMAP="#knowledge_system" alt="promisers::APACHE_CONF_INCLUDE_FILES="/home/mark/cfengine-inputs/httpd.conf" image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="695,186,39" href="knowledge.php?pid=300" alt="topic" title="body_constraints::insert_if_startwith_from_list">
+<area shape = "circle" coords="609,86,39" href="knowledge.php?pid=304" alt="topic" title="body_constraints::insert_if_match_from_list">
+<area shape = "circle" coords="517,180,39" href="knowledge.php?pid=308" alt="topic" title="body_constraints::insert_if_contains_from_list">
+<area shape = "circle" coords="456,143,33" href="knowledge.php?pid=38" alt="topic" title="values::boolean">
+<area shape = "circle" coords="401,222,35" href="knowledge.php?pid=297" alt="topic" title="body_constraints::expand_scalars">
+<area shape = "circle" coords="318,160,33" href="knowledge.php?pid=311" alt="topic" title="body_constraints::location">
+<area shape = "circle" coords="264,248,33" href="knowledge.php?pid=1032" alt="topic" title="promisers::0,5,10,15,20,25,30,35,40,45,50,55 * * * * /var/cfengine/bin/cf-execd -F">
+<area shape = "circle" coords="104,220,30" href="knowledge.php?pid=1078" alt="topic" title="promises::promise_webserver_cf_115">
+<area shape = "circle" coords="153,463,30" href="knowledge.php?pid=1072" alt="topic" title="bundles::fixapache">
+<area shape = "circle" coords="201,327,30" href="knowledge.php?pid=1077" alt="topic" title="promisers::APACHE_CONF_INCLUDE_FILES="/home/mark/cfengine-inputs/httpd.conf"">
+<area shape = "circle" coords="291,379,33" href="knowledge.php?pid=298" alt="topic" title="body_constraints::insert_type">
+<area shape = "circle" coords="374,441,33" href="knowledge.php?pid=1031" alt="topic" title="bundles::upgrade_cfexecd">
+<area shape = "circle" coords="428,354,33" href="knowledge.php?pid=1033" alt="topic" title="promises::promise_library_cf_190">
+<area shape = "circle" coords="346,300,31" href="knowledge.php?pid=296" alt="topic" title="promise_types::insert_lines">
+<area shape = "circle" coords="551,350,39" href="knowledge.php?pid=302" alt="topic" title="body_constraints::insert_if_not_startwith_from_list">
+<area shape = "circle" coords="673,404,39" href="knowledge.php?pid=306" alt="topic" title="body_constraints::insert_if_not_match_from_list">
+<area shape = "circle" coords="714,280,39" href="knowledge.php?pid=310" alt="topic" title="body_constraints::insert_if_not_contains_from_list">
+<area shape = "circle" coords="604,252,55" href="knowledge.php?pid=299" alt="topic" title="body_constraints::insert_select">
+</map>

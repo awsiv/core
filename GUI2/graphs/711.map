@@ -1,0 +1,23 @@
+<img src="graphs/711.png" USEMAP="#knowledge_system" alt="cfengine_3::databases image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="268,365,52" href="knowledge.php?pid=707" alt="topic" title="cfengine_3::storage">
+<area shape = "circle" coords="308,447,52" href="knowledge.php?pid=714" alt="topic" title="cfengine_2::alerts">
+<area shape = "circle" coords="399,386,52" href="knowledge.php?pid=716" alt="topic" title="cfengine_2::broadcast">
+<area shape = "circle" coords="510,431,52" href="knowledge.php?pid=718" alt="topic" title="cfengine_2::defaultroute">
+<area shape = "circle" coords="520,345,52" href="knowledge.php?pid=720" alt="topic" title="cfengine_2::directories">
+<area shape = "circle" coords="649,333,52" href="knowledge.php?pid=722" alt="topic" title="cfengine_2::editfiles">
+<area shape = "circle" coords="574,261,52" href="knowledge.php?pid=726" alt="topic" title="cfengine_2::homeservers">
+<area shape = "circle" coords="667,195,55" href="knowledge.php?pid=728" alt="topic" title="cfengine_2::import">
+<area shape = "circle" coords="678,102,31" href="knowledge.php?pid=693" alt="topic" title="cfengine_components::cfengine nova">
+<area shape = "circle" coords="527,178,32" href="knowledge.php?pid=711" alt="topic" title="cfengine_3::databases">
+<area shape = "circle" coords="539,87,52" href="knowledge.php?pid=713" alt="topic" title="cfengine_2::acl">
+<area shape = "circle" coords="422,124,52" href="knowledge.php?pid=715" alt="topic" title="cfengine_2::binservers">
+<area shape = "circle" coords="342,55,52" href="knowledge.php?pid=717" alt="topic" title="cfengine_2::copy">
+<area shape = "circle" coords="288,135,52" href="knowledge.php?pid=719" alt="topic" title="cfengine_2::disks">
+<area shape = "circle" coords="161,117,52" href="knowledge.php?pid=721" alt="topic" title="cfengine_2::disable">
+<area shape = "circle" coords="195,201,52" href="knowledge.php?pid=725" alt="topic" title="cfengine_2::groups">
+<area shape = "circle" coords="74,242,55" href="knowledge.php?pid=727" alt="topic" title="cfengine_2::ignore">
+<area shape = "circle" coords="183,293,55" href="knowledge.php?pid=729" alt="topic" title="cfengine_2::interfaces">
+<area shape = "circle" coords="377,253,52" href="knowledge.php?pid=827" alt="topic" title="promise_theory::promise-type">
+<area shape = "circle" coords="52,416,55" href="knowledge.php?pid=724" alt="topic" title="cfengine_2::filters">
+</map>

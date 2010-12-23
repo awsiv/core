@@ -1,0 +1,15 @@
+<img src="graphs/836.png" USEMAP="#knowledge_system" alt="cfengine_components::cfengine 1 image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="567,145,39" href="knowledge.php?pid=3427" alt="topic" title="bundles::update_bins">
+<area shape = "circle" coords="475,73,39" href="knowledge.php?pid=2678" alt="topic" title="promise_types::processes">
+<area shape = "circle" coords="347,128,39" href="knowledge.php?pid=3496" alt="topic" title="bundles::update">
+<area shape = "circle" coords="207,176,39" href="knowledge.php?pid=2994" alt="topic" title="handles::cfengine_processes_stop_cf_components">
+<area shape = "circle" coords="123,239,30" href="knowledge.php?pid=821" alt="topic" title="cfengine_components::cfservd">
+<area shape = "circle" coords="296,476,31" href="knowledge.php?pid=2829" alt="topic" title="commands_and_tools::cfengine">
+<area shape = "circle" coords="272,371,30" href="knowledge.php?pid=836" alt="topic" title="cfengine_components::cfengine 1">
+<area shape = "circle" coords="249,267,30" href="knowledge.php?pid=827" alt="topic" title="cfengine_components::cfd">
+<area shape = "circle" coords="407,313,39" href="knowledge.php?pid=3470" alt="topic" title="handles::update_bins_processes_stop_cfengine">
+<area shape = "circle" coords="535,258,39" href="knowledge.php?pid=2960" alt="topic" title="bundles::cfengine_processes">
+<area shape = "circle" coords="675,210,39" href="knowledge.php?pid=3515" alt="topic" title="handles::update_processes_cf_serverd">
+<area shape = "circle" coords="441,193,55" href="knowledge.php?pid=2989" alt="topic" title="promisers::cf-serverd">
+</map>

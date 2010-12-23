@@ -1,0 +1,9 @@
+<img src="graphs/influence_3086.png" USEMAP="#knowledge_system" alt="handles::cfengine_php_mod_json_so_redhat4_32 image pending">
+<map name="knowledge_system">
+<area shape = "circle" coords="414,480,31" href="knowledge.php?pid=3083" alt="topic" title="handles::cfengine_php_mod_json_ini_redhat4">
+<area shape = "circle" coords="645,303,31" href="knowledge.php?pid=3081" alt="topic" title="handles::cfengine_php_mod_cfmod_ini_redhat4">
+<area shape = "circle" coords="409,132,31" href="knowledge.php?pid=3086" alt="topic" title="handles::cfengine_php_mod_json_so_redhat4_32">
+<area shape = "circle" coords="111,148,55" href="knowledge.php?pid=3093" alt="topic" title="handles::cfengine_php_mod_json_so_redhat4_64">
+<area shape = "circle" coords="351,306,38" href="knowledge.php?pid=3079" alt="topic" title="class_contexts::redhat_4">
+<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=3090" alt="topic" title="promises::cfengine_php_mod_cfmod_so_redhat4_32">
+</map>
