@@ -696,10 +696,11 @@ if (cfdb.maxcolumns != 4)
    must be too big. BUT anything must!= "any"
 */
 
-snprintf(op1,CF_MAXVARSIZE-1,"%s.",topic_name);
-snprintf(op2,CF_MAXVARSIZE-1,".%s",topic_name);
-snprintf(op1,CF_MAXVARSIZE-1,"%s&",topic_name);
-snprintf(op2,CF_MAXVARSIZE-1,"&%s",topic_name);
+snprintf(query,CF_MAXVARSIZE,"%s",CanonifyName(topic_name));
+snprintf(op1,CF_MAXVARSIZE-1,"%s.",query);
+snprintf(op2,CF_MAXVARSIZE-1,".%s",query);
+snprintf(op1,CF_MAXVARSIZE-1,"%s&",query);
+snprintf(op2,CF_MAXVARSIZE-1,"&%s",query);
 
 while(CfFetchRow(&cfdb))
    {
@@ -713,10 +714,11 @@ while(CfFetchRow(&cfdb))
 
    for (rp = frags; rp != NULL; rp=rp->next)
       {
-      if (strcmp(rp->item,topic_name) == 0 || strstr(rp->item,op1) || strstr(rp->item,op2)
+      if (strcmp(rp->item,query) == 0 || strstr(rp->item,op1) || strstr(rp->item,op2)
           || strstr(rp->item,op3) || strstr(rp->item,op4))
          {
          Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+         break;
          }
       }
 
