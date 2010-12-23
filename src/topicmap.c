@@ -710,6 +710,7 @@ while(CfFetchRow(&cfdb))
    locator_type = Str2Int(CfFetchColumn(&cfdb,2));
    strncpy(subtype,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
 
+   snprintf(query,CF_BUFSIZE,"%s,%s,%d,%s<br>",occurrence_context,locator,locator_type,subtype);
    frags = SplitStringAsRList(occurrence_context,'|');
 
    for (rp = frags; rp != NULL; rp=rp->next)
