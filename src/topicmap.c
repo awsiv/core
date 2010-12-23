@@ -535,12 +535,7 @@ while(CfFetchRow(&cfdb))
    Join(buffer,work,bufsize);
    }
 
-if (!have_data)
-   {
-   snprintf(work,CF_MAXVARSIZE,"<li>(no direct leads) </li>\n");
-   Join(buffer,work,bufsize);   
-   }
-else
+if (have_data)
    {
    strcat(buffer,"</ul></li>\n"); // still have one open <ul> now
    }
@@ -601,11 +596,6 @@ if (have_data)
    strcat(buffer,"</ul></li>\n");
    any_data = true;
    }
-else
-   {
-   snprintf(work,CF_MAXVARSIZE,"<li> (no inferred leads)</li> \n");
-   Join(buffer,work,bufsize);   
-   }
 
 strcat(buffer,"</ul></div>\n");
 
@@ -643,7 +633,7 @@ if (!cfdb.connected)
    return;
    }
 
-/* Finally occurrences of the mentioned topic */
+// Check the name of the topic first
 
 snprintf(query,sizeof(query),"SELECT topic_name,topic_context from topics where pid='%d'",this_id);
 
@@ -663,6 +653,33 @@ if (CfFetchRow(&cfdb))
 
 CfDeleteQuery(&cfdb);
 
+// Look for mentions in other contexts
+
+snprintf(query,sizeof(query),"SELECT topic_context,topic_id from topics where topic_name='%s'",topic_name);
+
+CfNewQueryDB(&cfdb,query);
+
+if (cfdb.maxcolumns != 2)
+   {
+   snprintf(buffer,bufsize," !! The topic database table did not promise the expected number of fields - got %d expected %d for %s\n",cfdb.maxcolumns,2,topic_name);
+   return;
+   }
+
+snprintf(buffer,bufsize,
+         "<div id=\"occurrences\">\n"
+         "<h2>References to '<span id=\"subject\">%s</span>' in the context of `<span id=\"category\">%s</span>'</h2>"
+         "<ul>\n",topic_name,topic_context);
+
+
+while (CfFetchRow(&cfdb))
+   {
+   snprintf(topic_context,CF_BUFSIZE,"<li>Also mentioned in context: <a href=\"knowledge.php?pid=%d\">%s</a> ",Str2Int(CfFetchColumn(&cfdb,1)),CfFetchColumn(&cfdb,0));
+   }
+
+CfDeleteQuery(&cfdb);
+
+// Now get actual documents
+
 snprintf(query,sizeof(query),"SELECT context,locator,locator_type,subtype from occurrences where context like '%%%s%%' order by locator_type,subtype",CanonifyName(topic_name));
 
 CfNewQueryDB(&cfdb,query);
@@ -672,11 +689,6 @@ if (cfdb.maxcolumns != 4)
    snprintf(buffer,bufsize," !! The occurrences table did not promise the expected number of fields - got %d expected %d for \"%%%s%%\"\n",cfdb.maxcolumns,4,topic_name);
    return;
    }
-
-snprintf(buffer,bufsize,
-         "<div id=\"occurrences\">\n"
-         "<h2>References to '<span id=\"subject\">%s</span>' in the context of `<span id=\"category\">%s</span>'</h2>"
-         "<ul>\n",topic_name,topic_context);
 
 AtomizeTopicContext(&context_list,topic_context);
 PrependAlphaList(&context_list,CanonifyName(topic_name));

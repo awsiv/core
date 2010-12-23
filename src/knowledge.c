@@ -524,13 +524,15 @@ for (i = 0; i < CF3_MODULES; i++)
 
    for (j = 0; ss[j].btype != NULL; j++)
       {
+      fprintf(fp,"occurrences: %s:: \"/docs/cf3-reference.html#%s-in-agent-promises\" represents => { \"manual reference %s\" } \n",ss[j].subtype,ss[j].subtype);
+      
       if (ss[j].bs != NULL) /* In a bundle */
          {
          bs = ss[j].bs;
 
          for (l = 0; bs[l].lval != NULL; l++)
             {
-            fprintf(fp,"promise_types::\n");
+            fprintf(fp,"topics:\n promise_types::\n");
             fprintf(fp,"   \"%s\";\n",ss[j].subtype);
             
             fprintf(fp,"body_constraints::\n");
