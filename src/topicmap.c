@@ -614,9 +614,8 @@ void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
 
 { char topic_name[CF_BUFSIZE],topic_context[CF_BUFSIZE],query[CF_MAXVARSIZE];
   char occurrence_context[CF_BUFSIZE],locator[CF_BUFSIZE],subtype[CF_BUFSIZE];
-  char op1[CF_MAXVARSIZE],op2[CF_MAXVARSIZE],op3[CF_MAXVARSIZE],op4[CF_MAXVARSIZE];
   enum representations locator_type;
-  struct Rlist *rp,*frags;
+  struct Rlist *rp,*frags,*atoms,*rrp;
   int have_data = false;
   CfdbConn cfdb;
 
@@ -643,6 +642,8 @@ CfNewQueryDB(&cfdb,query);
 if (cfdb.maxcolumns != 2)
    {
    snprintf(buffer,bufsize," !! The topic database table did not promise the expected number of fields - got %d expected %d for pid %d\n",cfdb.maxcolumns,2,this_id);
+   CfDeleteQuery(&cfdb);
+   CfCloseDB(&cfdb);
    return;
    }
 
@@ -650,6 +651,12 @@ if (CfFetchRow(&cfdb))
    {
    strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
    strncpy(topic_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
+   }
+else
+   {
+   CfDeleteQuery(&cfdb);
+   CfCloseDB(&cfdb);
+   return;
    }
 
 CfDeleteQuery(&cfdb);
@@ -687,6 +694,8 @@ CfNewQueryDB(&cfdb,query);
 if (cfdb.maxcolumns != 4)
    {
    snprintf(buffer,bufsize," !! The occurrences table did not promise the expected number of fields - got %d expected %d for \"%%%s%%\"\n",cfdb.maxcolumns,4,topic_name);
+   CfDeleteQuery(&cfdb);
+   CfCloseDB(&cfdb);
    return;
    }
 
@@ -697,10 +706,6 @@ if (cfdb.maxcolumns != 4)
 */
 
 snprintf(query,CF_MAXVARSIZE,"%s",CanonifyName(topic_name));
-snprintf(op1,CF_MAXVARSIZE-1,"%s.",query);
-snprintf(op2,CF_MAXVARSIZE-1,".%s",query);
-snprintf(op3,CF_MAXVARSIZE-1,"%s&",query);
-snprintf(op4,CF_MAXVARSIZE-1,"&%s",query);
 
 while(CfFetchRow(&cfdb))
    {
@@ -714,19 +719,33 @@ while(CfFetchRow(&cfdb))
 
    for (rp = frags; rp != NULL; rp=rp->next)
       {
-      char *sp1 = strstr(rp->item,op1);
-      char *sp2 = strstr(rp->item,op4);
+      int found = false;
       
-      if (strcmp(rp->item,query) == 0 || sp1 && (strcmp(sp1,op2) == 0) || strstr(rp->item,op1)
-          || strstr(rp->item,op3) || sp2 && (strcmp(sp2,op4) == 0))
+      if (strcmp(rp->item,query) == 0)
          {
          Nova_AddOccurrenceBuffer(rp->item,locator,locator_type,subtype,buffer,bufsize);
          break;
          }
       else
          {
-         Nova_AddOccurrenceBuffer(rp->item,locator,locator_type,"xxx",buffer,bufsize);
-         break;
+         atoms = SplitRegexAsRList(occurrence_context,"[.&()]",10,false);
+
+         for (rrp = atoms; rrp != NULL; rrp=rrp->next)
+            {
+            if (strcmp(rrp->item,query) == 0)
+               {               
+               Nova_AddOccurrenceBuffer(rrp->item,locator,locator_type,subtype,buffer,bufsize);
+               found = true;
+               break;
+               }
+            }
+
+         DeleteRlist(atoms);
+         
+         if (found)
+            {
+            break;
+            }
          }
       }
 
