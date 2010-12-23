@@ -672,6 +672,8 @@ snprintf(buffer,bufsize,
          "<h2>References to '<span id=\"subject\">%s</span>' in category `<span id=\"category\">%s</span>'</h2>"
          "<ul>\n",topic_name,topic_context);
 
+snprintf(query,CF_BUFSIZE-1,".*[.|&()]%s[.|&()].*",CanonifyName(topic_name));
+
 while(CfFetchRow(&cfdb))
    {
    have_data = true;
@@ -680,7 +682,12 @@ while(CfFetchRow(&cfdb))
    locator_type = Str2Int(CfFetchColumn(&cfdb,2));
    strncpy(subtype,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
 
-   Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+   // Match occurrences that could overlap with the current context
+
+   if (FullTextMatch(query,occurrence_context))
+      {
+      Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+      }
    }
 
 if (!have_data)
