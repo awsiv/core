@@ -1,54 +1,118 @@
-<?php 
-#
-# This file is (C) Cfengine AS. All rights reserved
-#
-
-cfpr_header("overview","normal");  
-cfpr_menu("Home : overview");
-
-$ret1 = cfpr_getlicense_owner();
-$all = cfpr_count_all_hosts();
-$r = cfpr_count_red_hosts();
-$y = cfpr_count_yellow_hosts();
-$g = cfpr_count_green_hosts();
-  
-?>       
-        
-        <div id="tabpane">
-          <div class="grid_4">
-                  <div class="panel">
-                    <div class="panelhead"><?php echo $all?> hosts registered</div>
-                     <ul class="panelcontent">
-<li><a href="hosts.php?type=red"><img src="images/red_sign_medium.png" class="align"/><span class="imglabel"><?php echo $r?> hosts known</span></a></li>
-<li><a href="hosts.php?type=yellow"><img src="images/yellow_sign_medium.png" class="align"/><span class="imglabel"><?php echo $y?> hosts known</span></a></li>
- <li><a href="hosts.php?type=green"><img src="images/green_sign_medium.png" class="align"/><span class="imglabel"><?php echo $g?> hosts known</span></a></li>
-     <li class="note"><a href="license.php"><img src="images/info.png" class="align"/><span class="imglabel">This edition is licenced to <?php echo $ret1?></span></a></li>
-                     </ul>
-                     <p>
-                     
-                     </p>
-                  </div>
-           </div>
-        <?php cfpr_compliance_summary_graph();?>  
-          <div class="grid_8">
-           	<div class="panel">
-          		<div class="panelhead">Compliance summary</div>
-                <div class="panelcontent">
-                  <img src="/hub/common/compliance.png" class="grid_6"/>
-                  <ul class=" grid_2 grp_label">
-                  	<li><img src="images/button-green.png" class="align"/><span class="imglabel">kept</span></li>
-                    <li><img src="images/button-yellow.png" class="align"/><span class="imglabel">repaired</span></li>
-                    <li><img src="images/button-red.png" class="align"/><span class="imglabel">not kept</span></li>
-                    <li><img src="images/button-orange.png" class="align"/><span class="imglabel">no data</span></li> 
-                  </ul>
-                  <div class="clear"></div>
-                 </div>
-          	</div>
-          </div>
-          
-          <div class="clear"></div>
-        </div>
-        
 <?php
-cfpr_footer();
-?>
+/*
+|---------------------------------------------------------------
+| PHP ERROR REPORTING LEVEL
+|---------------------------------------------------------------
+|
+| By default CI runs with error reporting set to ALL.  For security
+| reasons you are encouraged to change this when your site goes live.
+| For more info visit:  http://www.php.net/error_reporting
+|
+*/
+	error_reporting(E_ALL);
+
+/*
+|---------------------------------------------------------------
+| SYSTEM FOLDER NAME
+|---------------------------------------------------------------
+|
+| This variable must contain the name of your "system" folder.
+| Include the path if the folder is not in the same  directory
+| as this file.
+|
+| NO TRAILING SLASH!
+|
+*/
+	$system_folder = "system";
+
+/*
+|---------------------------------------------------------------
+| APPLICATION FOLDER NAME
+|---------------------------------------------------------------
+|
+| If you want this front controller to use a different "application"
+| folder then the default one you can set its name here. The folder 
+| can also be renamed or relocated anywhere on your server.
+| For more info please see the user guide:
+| http://codeigniter.com/user_guide/general/managing_apps.html
+|
+|
+| NO TRAILING SLASH!
+|
+*/
+	$application_folder = "application";
+
+/*
+|===============================================================
+| END OF USER CONFIGURABLE SETTINGS
+|===============================================================
+*/
+
+
+/*
+|---------------------------------------------------------------
+| SET THE SERVER PATH
+|---------------------------------------------------------------
+|
+| Let's attempt to determine the full-server path to the "system"
+| folder in order to reduce the possibility of path problems.
+| Note: We only attempt this if the user hasn't specified a 
+| full server path.
+|
+*/
+if (strpos($system_folder, '/') === FALSE)
+{
+	if (function_exists('realpath') AND @realpath(dirname(__FILE__)) !== FALSE)
+	{
+		$system_folder = realpath(dirname(__FILE__)).'/'.$system_folder;
+	}
+}
+else
+{
+	// Swap directory separators to Unix style for consistency
+	$system_folder = str_replace("\\", "/", $system_folder); 
+}
+
+/*
+|---------------------------------------------------------------
+| DEFINE APPLICATION CONSTANTS
+|---------------------------------------------------------------
+|
+| EXT		- The file extension.  Typically ".php"
+| SELF		- The name of THIS file (typically "index.php")
+| FCPATH	- The full server path to THIS file
+| BASEPATH	- The full server path to the "system" folder
+| APPPATH	- The full server path to the "application" folder
+|
+*/
+define('EXT', '.php');
+define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
+define('FCPATH', str_replace(SELF, '', __FILE__));
+define('BASEPATH', $system_folder.'/');
+
+if (is_dir($application_folder))
+{
+	define('APPPATH', $application_folder.'/');
+}
+else
+{
+	if ($application_folder == '')
+	{
+		$application_folder = 'application';
+	}
+
+	define('APPPATH', BASEPATH.$application_folder.'/');
+}
+
+/*
+|---------------------------------------------------------------
+| LOAD THE FRONT CONTROLLER
+|---------------------------------------------------------------
+|
+| And away we go...
+|
+*/
+require_once BASEPATH.'codeigniter/CodeIgniter'.EXT;
+
+/* End of file index.php */
+/* Location: ./index.php */
