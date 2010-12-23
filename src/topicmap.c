@@ -657,7 +657,7 @@ if (CfFetchRow(&cfdb))
 
 CfDeleteQuery(&cfdb);
 
-snprintf(query,sizeof(query),"SELECT context,locator,locator_type,subtype from occurrences where from_id='%d' order by locator_type,subtype",this_id);
+snprintf(query,sizeof(query),"SELECT context,locator,locator_type,subtype from occurrences where context like '%%%s%%' order by locator_type,subtype",CanonifyName(topic_name));
 
 CfNewQueryDB(&cfdb,query);
 
