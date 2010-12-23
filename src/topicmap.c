@@ -691,11 +691,11 @@ while(CfFetchRow(&cfdb))
       {
       if (strcmp(occurrence_context,CanonifyName(topic_name)) == 0)
          {
-         Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+         Nova_AddOccurrenceBuffer("*",locator,locator_type,subtype,buffer,bufsize);
          }
       else
          {
-         Nova_AddOccurrenceBuffer("*",locator,locator_type,subtype,buffer,bufsize);
+         Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
          }
       }
    }
