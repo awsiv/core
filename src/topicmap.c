@@ -719,8 +719,8 @@ while(CfFetchRow(&cfdb))
       char *sp1 = strstr(rp->item,op1);
       char *sp2 = strstr(rp->item,op4);
       
-      if (strcmp(rp->item,query) == 0 || sp1 && strcmp(sp1,op1) == 0 || strstr(rp->item,op2)
-          || strstr(rp->item,op3) || sp2 && strcmp(sp2,op4) == 0)
+      if (strcmp(rp->item,query) == 0 || sp1 && (strcmp(sp1,op2) == 0) || strstr(rp->item,op1)
+          || strstr(rp->item,op3) || sp2 && (strcmp(sp2,op4) == 0))
          {
          Nova_AddOccurrenceBuffer(rp->item,locator,locator_type,subtype,buffer,bufsize);
          break;
