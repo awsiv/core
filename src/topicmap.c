@@ -711,6 +711,7 @@ while(CfFetchRow(&cfdb))
    strncpy(subtype,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
 
    snprintf(query,CF_BUFSIZE,"%s,%s,%d,%s<br>",occurrence_context,locator,locator_type,subtype);
+   Join(buffer,query,CF_BUFSIZE);
    frags = SplitStringAsRList(occurrence_context,'|');
 
    for (rp = frags; rp != NULL; rp=rp->next)
