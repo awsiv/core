@@ -692,7 +692,8 @@ while(CfFetchRow(&cfdb))
       }
    else
       {
-      Nova_AddOccurrenceBuffer(topic_context,occurrence_context,locator_type,subtype,buffer,bufsize);
+      snprintf(query,CF_MAXVARSIZE,"QUERY: %s = %s<br>",occurrence_context,topic_context);
+      strcat(buffer,query);
       }
    }
 
