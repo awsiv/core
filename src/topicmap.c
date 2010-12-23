@@ -676,28 +676,6 @@ snprintf(buffer,bufsize,
 AtomizeTopicContext(&context_list,topic_context);
 PrependAlphaList(&context_list,CanonifyName(topic_name));
 
-//
-
-  int i;
-  struct Item *ip;
-  
-for (i = 0; i < CF_ALPHABETSIZE; i++)
-   {
-   if (context_list.list[i] == NULL)
-      {
-      }
-   else       
-      {
-      for (ip = context_list.list[i]; ip != NULL; ip=ip->next)
-         {
-         snprintf(query,CF_MAXVARSIZE," %s",ip->name);
-         strcat(buffer,query);
-         }
-      }
-   }
-
-
-//
 
 while(CfFetchRow(&cfdb))
    {
@@ -712,13 +690,6 @@ while(CfFetchRow(&cfdb))
    if (EvaluateORString(occurrence_context,context_list,0))
       {
       Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
-      snprintf(query,CF_MAXVARSIZE,"MATCH: %s = %s<br>",occurrence_context,topic_context);
-      strcat(buffer,query);
-      }
-   else
-      {
-      snprintf(query,CF_MAXVARSIZE,"FAIL: %s = %s<br>",occurrence_context,topic_context);
-      strcat(buffer,query);
       }
    }
 
