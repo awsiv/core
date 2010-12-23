@@ -656,7 +656,7 @@ CfDeleteQuery(&cfdb);
 
 // Look for mentions in other contexts
 
-snprintf(query,sizeof(query),"SELECT topic_context,topic_id from topics where topic_name='%s'",topic_name);
+snprintf(query,sizeof(query),"SELECT topic_context,pid from topics where topic_name='%s'",topic_name);
 
 CfNewQueryDB(&cfdb,query);
 
@@ -710,8 +710,8 @@ while(CfFetchRow(&cfdb))
    locator_type = Str2Int(CfFetchColumn(&cfdb,2));
    strncpy(subtype,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
 
-   snprintf(query,CF_BUFSIZE,"%s,%s,%d,%s<br>",occurrence_context,locator,locator_type,subtype);
-   Join(buffer,query,CF_BUFSIZE);
+   snprintf(query,CF_BUFSIZE,"<p>XXX %s,%s,%d,%s<br>",occurrence_context,locator,locator_type,subtype);
+   strcat(buffer,query);
    frags = SplitStringAsRList(occurrence_context,'|');
 
    for (rp = frags; rp != NULL; rp=rp->next)
