@@ -524,7 +524,7 @@ for (i = 0; i < CF3_MODULES; i++)
 
    for (j = 0; ss[j].btype != NULL; j++)
       {
-      fprintf(fp,"occurrences: %s:: \"/docs/cf3-reference.html#%s-in-agent-promises\" represents => { \"manual reference %s\" } \n",ss[j].subtype,ss[j].subtype,ss[j].subtype);
+      fprintf(fp,"occurrences: %s:: \"/docs/cf3-reference.html#%s-in-agent-promises\" represents => { \"manual reference %s\" }; \n",ss[j].subtype,ss[j].subtype,ss[j].subtype);
       
       if (ss[j].bs != NULL) /* In a bundle */
          {
