@@ -614,10 +614,11 @@ void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
 
 { char topic_name[CF_BUFSIZE],topic_context[CF_BUFSIZE],query[CF_MAXVARSIZE];
   char occurrence_context[CF_BUFSIZE],locator[CF_BUFSIZE],subtype[CF_BUFSIZE];
+  char op1[CF_MAXVARSIZE],op2[CF_MAXVARSIZE],op3[CF_MAXVARSIZE],op4[CF_MAXVARSIZE];
   enum representations locator_type;
-  CfdbConn cfdb;
+  struct Rlist *rp,*frags;
   int have_data = false;
-  struct AlphaList context_list;
+  CfdbConn cfdb;
 
 if (strlen(SQL_OWNER) == 0)
    {
@@ -689,8 +690,16 @@ if (cfdb.maxcolumns != 4)
    return;
    }
 
-AtomizeTopicContext(&context_list,topic_context);
-PrependAlphaList(&context_list,CanonifyName(topic_name));
+/* Match occurrences that could overlap with the current context.
+   Take a simple approach - if we are in topic_context, then
+   topic_context&anything is within topic_context, but topic_context|anything
+   must be too big. BUT anything must!= "any"
+*/
+
+snprintf(op1,CF_MAXVARSIZE-1,"%s.",topic_name);
+snprintf(op2,CF_MAXVARSIZE-1,".%s",topic_name);
+snprintf(op1,CF_MAXVARSIZE-1,"%s&",topic_name);
+snprintf(op2,CF_MAXVARSIZE-1,"&%s",topic_name);
 
 while(CfFetchRow(&cfdb))
    {
@@ -700,16 +709,19 @@ while(CfFetchRow(&cfdb))
    locator_type = Str2Int(CfFetchColumn(&cfdb,2));
    strncpy(subtype,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
 
-   // Match occurrences that could overlap with the current context
+   frags = SplitRegexAsRList(occurrence_context,"[|]+",99,false);
 
-//   if (EvaluateORString(occurrence_context,context_list,0))
-   if (strstr(occurrence_context,topic_name))
+   for (rp = frags; rp != NULL; rp=rp->next)
       {
-      Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+      if (strcmp(rp->item,topic_name) == 0 || strstr(rp->item,op1) || strstr(rp->item,op2)
+          || strstr(rp->item,op3) || strstr(rp->item,op4))
+         {
+         Nova_AddOccurrenceBuffer(occurrence_context,locator,locator_type,subtype,buffer,bufsize);
+         }
       }
-   }
 
-DeleteAlphaList(&context_list);
+   DeleteRlist(frags);
+   }
 
 if (!have_data)
    {
@@ -923,24 +935,6 @@ CfCloseDB(&cfdb);
 */
 
 ip->classes = strdup("PLEASE FILL ME IN topicmap.c");
-}
-
-
-
-/*************************************************************************/
-
-void AtomizeTopicContext(struct AlphaList *context_list,char *topic_context)
-
-{ struct Rlist *rp,*l = SplitRegexAsRList(topic_context,"[|]",99,false);
-
-InitAlphaList(context_list);
-
-for (rp = l; rp != NULL; rp=rp->next)
-   {
-   PrependAlphaList(context_list,rp->item);
-   }
-
-DeleteRlist(l);
 }
 
 /*****************************************************************************/
