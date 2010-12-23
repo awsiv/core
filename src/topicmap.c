@@ -633,7 +633,7 @@ CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
     
 if (!cfdb.connected)
    {
-   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
+   snprintf(buffer,bufsize," !! Could not open sql_db %s\n",SQL_DATABASE);
    return;
    }
 
@@ -645,7 +645,7 @@ CfNewQueryDB(&cfdb,query);
 
 if (cfdb.maxcolumns != 2)
    {
-   CfOut(cf_error,""," !! The occurrences database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,2);
+   snprintf(buffer,bufsize," !! The occurrences database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,2);
    return;
    }
 
@@ -663,7 +663,7 @@ CfNewQueryDB(&cfdb,query);
 
 if (cfdb.maxcolumns != 4)
    {
-   CfOut(cf_error,""," !! The occurrences database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,4);
+   snprintf(buffer,bufsize," !! The occurrences database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,4);
    return;
    }
 
