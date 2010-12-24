@@ -981,7 +981,7 @@ if (cfdb.maxcolumns != 1)
 
 if (CfFetchRow(&cfdb))
    {
-   ip->classes = CfFetchColumn(&cfdb,0);
+   ip->classes = strdup(CfFetchColumn(&cfdb,0));
    }
 
 CfDeleteQuery(&cfdb);
@@ -1023,7 +1023,7 @@ if (cfdb.maxcolumns != 1)
 
 if (CfFetchRow(&cfdb))
    {
-   ip->classes = CfFetchColumn(&cfdb,0);
+   ip->classes = strdup(CfFetchColumn(&cfdb,0));
    }
 
 CfDeleteQuery(&cfdb);
