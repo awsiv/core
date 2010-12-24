@@ -263,7 +263,7 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
             {
             fprintf(fp,"occurrences: \n\n");
             fprintf(fp," %s:: \"%s\"  representation => \"literal\",\n",bundlename,pp->ref);
-            fprintf(fp,"   represents => { \"Intention\" }; \ntopics:\n");
+            fprintf(fp,"   represents => { \"description\" }; \ntopics:\n");
             }
          break;
          }

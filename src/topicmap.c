@@ -968,7 +968,49 @@ if (CfFetchRow(&cfdb))
 
 CfDeleteQuery(&cfdb);
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT locator from occurrences where subtype = 'description' and context link '%%%s%%'",CanonifyName(ip->name));
+snprintf(query,CF_MAXVARSIZE-1,"SELECT locator from occurrences where subtype = 'description'");
+
+CfNewQueryDB(&cfdb,query);
+
+if (cfdb.maxcolumns != 1)
+   {
+   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,1);
+   CfCloseDB(&cfdb);
+   return;
+   }
+
+if (CfFetchRow(&cfdb))
+   {
+   ip->classes = CfFetchColumn(&cfdb,0);
+   }
+
+CfDeleteQuery(&cfdb);
+
+CfCloseDB(&cfdb);
+}
+
+/*************************************************************************/
+
+void Nova_FillInBundleComment(struct Item *ip)
+
+{ CfdbConn cfdb;
+  char *sp,query[CF_MAXVARSIZE];
+  int ret;
+ 
+if (strlen(SQL_OWNER) == 0)
+   {
+   return;
+   }
+
+CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
+    
+if (!cfdb.connected)
+   {
+   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
+   return;
+   }
+
+snprintf(query,CF_MAXVARSIZE-1,"SELECT locator from occurrences where subtype = 'description' and context='%s'",ip->name);
 
 CfNewQueryDB(&cfdb,query);
 

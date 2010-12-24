@@ -1972,6 +1972,8 @@ if (matched)
       struct Item *ip2,*glist = Nova_GetBusinessGoals(ip->name);
       char goals[CF_BUFSIZE];
       char colour[CF_SMALLBUF];
+
+      // void Nova_FillInBundleComment(struct Item *ip)
       
       if (type && glist)
          {
@@ -1981,7 +1983,7 @@ if (matched)
             {
             snprintf(work,sizeof(work),"<tr><td><a href=\"knowledge.php?pid=%d\">%s</a> </td><td> %s</td></tr>",ip2->counter,ip2->name,ip2->classes);
 
-            if(!Join(goals,work,CF_BUFSIZE))
+            if (!Join(goals,work,CF_BUFSIZE))
 	      {
 	      break;
 	      }
