@@ -357,12 +357,7 @@ if (!cfdb.connected)
    return;
    }
 
-if (strcmp(this_type,"any") == 0)
-   {
-   return;
-   }
-
-snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>Other topics mentioned in the context of \"%s\":</h2>\n",this_type);
+snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>Other topics mentioned in the context of \"%s/%s\":</h2>\n",this_id,this_type);
 
 /* sub-topics of this topic-type */
 
@@ -409,35 +404,38 @@ strcat(buffer,"</ul></li>\n"); // close sublist
 
 /* Collect data - other topics of same type */
 
-snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",this_type);
-
-CfNewQueryDB(&cfdb,query);
-
-if (cfdb.maxcolumns != 4)
+if (strcmp(this_type,"any") != 0)
    {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,4);
-   CfCloseDB(&cfdb);
-   return;
-   }
-
-count = 0;
-
-while(CfFetchRow(&cfdb))
-   {
-   count++;
-   strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
-   strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-   strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
-
-   if (strcmp(topic_name,this_name) == 0 || strcmp(topic_id,this_name) == 0)
+   snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",this_type);
+   
+   CfNewQueryDB(&cfdb,query);
+   
+   if (cfdb.maxcolumns != 4)
       {
-      continue;
+      CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,4);
+      CfCloseDB(&cfdb);
+      return;
       }
-
-   tpid = Str2Int(CfFetchColumn(&cfdb,3));
-
-   snprintf(buf,CF_BUFSIZE-1,"<li>%s</li>\n",Nova_PidURL(tpid,topic_name));
-   Join(buffer,buf,bufsize);   
+   
+   count = 0;
+   
+   while(CfFetchRow(&cfdb))
+      {
+      count++;
+      strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
+      strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
+      strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
+      
+      if (strcmp(topic_name,this_name) == 0 || strcmp(topic_id,this_name) == 0)
+         {
+         continue;
+         }
+      
+      tpid = Str2Int(CfFetchColumn(&cfdb,3));
+      
+      snprintf(buf,CF_BUFSIZE-1,"<li>%s</li>\n",Nova_PidURL(tpid,topic_name));
+      Join(buffer,buf,bufsize);   
+      }
    }
 
 if (count == 0)
@@ -616,7 +614,7 @@ void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
   char occurrence_context[CF_BUFSIZE],locator[CF_BUFSIZE],subtype[CF_BUFSIZE];
   enum representations locator_type;
   struct Rlist *rp,*frags,*atoms,*rrp;
-  int have_data = false;
+  int have_data = false,empty = true;
   CfdbConn cfdb;
 
 if (strlen(SQL_OWNER) == 0)
@@ -680,7 +678,18 @@ snprintf(buffer,bufsize,
 
 while (CfFetchRow(&cfdb))
    {
-   snprintf(topic_context,CF_BUFSIZE,"<li>Also mentioned in context: <a href=\"knowledge.php?pid=%d\">%s</a> ",Str2Int(CfFetchColumn(&cfdb,1)),CfFetchColumn(&cfdb,0));
+   if (strcmp(CfFetchColumn(&cfdb,0),topic_context) != 0)
+      {
+      if (empty)
+         {
+         snprintf(query,CF_BUFSIZE,"<li>Also mentioned in contexts of: ");
+         Join(buffer,query,bufsize);
+         empty = false;
+         }
+      
+      snprintf(query,CF_BUFSIZE,"<a href=\"knowledge.php?pid=%d\">%s</a> ",Str2Int(CfFetchColumn(&cfdb,1)),CfFetchColumn(&cfdb,0));
+      Join(buffer,query,bufsize);
+      }
    }
 
 CfDeleteQuery(&cfdb);
@@ -734,7 +743,7 @@ while(CfFetchRow(&cfdb))
             {
             if (strcmp(rrp->item,query) == 0)
                {               
-               Nova_AddOccurrenceBuffer(rrp->item,locator,locator_type,subtype,buffer,bufsize);
+               Nova_AddOccurrenceBuffer(rp->item,locator,locator_type,subtype,buffer,bufsize);
                found = true;
                break;
                }
@@ -857,11 +866,11 @@ void Nova_AddOccurrenceBuffer(char *context,char *locator,enum representations l
 switch (locator_type)
    {
    case cfk_url:
-       snprintf(work,CF_BUFSIZE-1,"<li><i>%s</i>:: <span id=\"url\"> %s</span> (URL)</li>\n",context,Nova_URL(locator,represents));
+       snprintf(work,CF_BUFSIZE-1,"<li>%s:: <span id=\"url\"> %s</span> (URL)</li>\n",context,Nova_URL(locator,represents));
        break;
        
    case cfk_web:
-       snprintf(work,CF_BUFSIZE-1,"<li><i>%s</i>:: <span id=\"url\">%s ...%s</a> </span> (URL)<li>\n",context,Nova_URL(locator,represents),locator);
+       snprintf(work,CF_BUFSIZE-1,"<li>%s:: <span id=\"url\">%s ...%s</a> </span> (URL)<li>\n",context,Nova_URL(locator,represents),locator);
        break;
 
    case cfk_file:
@@ -873,7 +882,7 @@ switch (locator_type)
         break;          
 
    case cfk_literal:
-       snprintf(work,CF_BUFSIZE-1,"<li><i>%s</i>:: \"%s\" (%s)</p></li>\n",context,locator,represents);
+       snprintf(work,CF_BUFSIZE-1,"<li>%s:: \"<span id=\"quote\">%s</span>\" (%s)</p></li>\n",context,locator,represents);
        break;
 
    case cfk_image:
@@ -933,7 +942,6 @@ if (strlen(SQL_OWNER) == 0)
    return;
    }
 
-/*
 CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
     
 if (!cfdb.connected)
@@ -942,28 +950,43 @@ if (!cfdb.connected)
    return;
    }
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_comment,pid from topics where topic_name = '%s'",ip->name);
+snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s'",ip->name);
 
 CfNewQueryDB(&cfdb,query);
 
-if (cfdb.maxcolumns != 2)
+if (cfdb.maxcolumns != 1)
    {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,2);
+   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,1);
    CfCloseDB(&cfdb);
    return;
    }
 
 if (CfFetchRow(&cfdb))
    {
-   ip->classes = strdup(CfFetchColumn(&cfdb,0));
-   ip->counter = Str2Int(CfFetchColumn(&cfdb,1));
+   ip->counter = Str2Int(CfFetchColumn(&cfdb,0));
    }
 
 CfDeleteQuery(&cfdb);
-CfCloseDB(&cfdb);
-*/
 
-ip->classes = strdup("PLEASE FILL ME IN topicmap.c");
+snprintf(query,CF_MAXVARSIZE-1,"SELECT locator from occurrences where subtype = 'description' and context link '%%%s%%'",CanonifyName(ip->name));
+
+CfNewQueryDB(&cfdb,query);
+
+if (cfdb.maxcolumns != 1)
+   {
+   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,1);
+   CfCloseDB(&cfdb);
+   return;
+   }
+
+if (CfFetchRow(&cfdb))
+   {
+   ip->classes = CfFetchColumn(&cfdb,0);
+   }
+
+CfDeleteQuery(&cfdb);
+
+CfCloseDB(&cfdb);
 }
 
 /*****************************************************************************/

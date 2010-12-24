@@ -372,7 +372,7 @@ fprintf(fp,"%s::\n",promise_id);
 fprintf(fp,"\"promise.php?handle=%s\",\n",promise_id);
 fprintf(fp,"   represents => { \"definition\" };\n\n");
 
-fprintf(fp,"%s::\n",pp->bundle);
+fprintf(fp,"system_policy.bundles.%s::\n",pp->bundle);
 fprintf(fp,"\"bundle.php?bundle=%s\"\n",pp->bundle);
 fprintf(fp,"   represents => { \"parent bundle\" };\n\n");
 
