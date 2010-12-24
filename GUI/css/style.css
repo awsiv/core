@@ -957,6 +957,11 @@ font-size: 120%;
 color: #c00;
 }
 
+#quote
+{ 
+font-style: italic;
+}
+
 #category
 {
 color: #eee;
