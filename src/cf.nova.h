@@ -858,7 +858,8 @@ void Nova_Indent(int i);
 
 /* topicmap.c */
 
-void Nova_FillInTopicComment(struct Item *ip);
+void Nova_FillInGoalComment(struct Item *ip);
+char *Nova_GetBundleComment(char *bundle);
 void Nova_WebTopicMap_Initialize(void);
 int Nova_GetPidForTopic(char *typed_topic);
 int Nova_QueryTopicMap(char *typed_topic,char *result_type,char *buffer,int bufsize);

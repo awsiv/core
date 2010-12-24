@@ -1960,7 +1960,7 @@ if (matched)
    {
    if (type)
       {
-      snprintf(buffer,bufsize,"<div id=\"bundles\"><table>\n<tr><th>Type</th><th>Service bundle name</th><th>Contributing to goals</th><th></th></tr>\n");
+      snprintf(buffer,bufsize,"<div id=\"bundles\"><table>\n<tr><th>Type</th><th>Service bundle name</th><th>Description</th><th>Contributing to goals</th><th></th></tr>\n");
       }
    else
       {
@@ -1972,8 +1972,6 @@ if (matched)
       struct Item *ip2,*glist = Nova_GetBusinessGoals(ip->name);
       char goals[CF_BUFSIZE];
       char colour[CF_SMALLBUF];
-
-      // void Nova_FillInBundleComment(struct Item *ip)
       
       if (type && glist)
          {
@@ -1994,13 +1992,13 @@ if (matched)
          }
       else if (type)
          {
-         snprintf(goals,CF_MAXVARSIZE,"Does not promise to align with any goals");
+         snprintf(goals,CF_MAXVARSIZE,"Not directly aligned with any recorded goals");
          snprintf(colour,CF_SMALLBUF,"/images/yellow.png");
          }
 
       if (type)
          {
-         snprintf(work,CF_BUFSIZE,"<tr><td><a href=\"bundle.php?type=%s\"><span class=\"bundletype\">%s</span></a></td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span class=\"bundle\">%s</span></a></td><td>%s</td><td><img src=\"%s\"></td></tr>",ip->classes,ip->classes,ip->name,ip->classes,ip->name,goals,colour);
+         snprintf(work,CF_BUFSIZE,"<tr><td><a href=\"bundle.php?type=%s\"><span class=\"bundletype\">%s</span></a></td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span class=\"bundle\">%s</span></a></td><td>%s</td><td>%s</td><td><img src=\"%s\"></td></tr>",ip->classes,ip->classes,ip->name,ip->classes,ip->name,Nova_GetBundleComment(ip->name),goals,colour);
          }
       else
          {

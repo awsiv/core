@@ -817,7 +817,6 @@ while(CfFetchRow(&cfdb))
    strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);   
    from_pid = Str2Int(CfFetchColumn(&cfdb,6));
    to_pid = Str2Int(CfFetchColumn(&cfdb,7));
-
    PrependFullItem(&worklist,to_name,NULL,0,0);   
    }
 
@@ -826,7 +825,7 @@ CfCloseDB(&cfdb);
 
 for (ip = worklist; ip !=  NULL; ip=ip->next)
    {
-   Nova_FillInTopicComment(ip);
+   Nova_FillInGoalComment(ip);
    }
 
 return worklist;
@@ -931,67 +930,7 @@ return buf;
 
 /*************************************************************************/
 
-void Nova_FillInTopicComment(struct Item *ip)
-
-{ CfdbConn cfdb;
-  char *sp,query[CF_MAXVARSIZE];
-  int ret;
- 
-if (strlen(SQL_OWNER) == 0)
-   {
-   return;
-   }
-
-CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
-    
-if (!cfdb.connected)
-   {
-   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
-   return;
-   }
-
-snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s'",ip->name);
-
-CfNewQueryDB(&cfdb,query);
-
-if (cfdb.maxcolumns != 1)
-   {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,1);
-   CfCloseDB(&cfdb);
-   return;
-   }
-
-if (CfFetchRow(&cfdb))
-   {
-   ip->counter = Str2Int(CfFetchColumn(&cfdb,0));
-   }
-
-CfDeleteQuery(&cfdb);
-
-snprintf(query,CF_MAXVARSIZE-1,"SELECT locator from occurrences where subtype = 'description'");
-
-CfNewQueryDB(&cfdb,query);
-
-if (cfdb.maxcolumns != 1)
-   {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,1);
-   CfCloseDB(&cfdb);
-   return;
-   }
-
-if (CfFetchRow(&cfdb))
-   {
-   ip->classes = strdup(CfFetchColumn(&cfdb,0));
-   }
-
-CfDeleteQuery(&cfdb);
-
-CfCloseDB(&cfdb);
-}
-
-/*************************************************************************/
-
-void Nova_FillInBundleComment(struct Item *ip)
+void Nova_FillInGoalComment(struct Item *ip)
 
 { CfdbConn cfdb;
   char *sp,query[CF_MAXVARSIZE];
@@ -1029,6 +968,53 @@ if (CfFetchRow(&cfdb))
 CfDeleteQuery(&cfdb);
 
 CfCloseDB(&cfdb);
+}
+
+/*************************************************************************/
+
+char *Nova_GetBundleComment(char *bundle)
+
+{ CfdbConn cfdb;
+  char *sp,query[CF_MAXVARSIZE];
+  static char buf[CF_BUFSIZE];
+  int ret;
+ 
+if (strlen(SQL_OWNER) == 0)
+   {
+   return "";
+   }
+
+CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
+    
+if (!cfdb.connected)
+   {
+   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
+   return "";
+   }
+
+snprintf(query,CF_MAXVARSIZE-1,"SELECT locator from occurrences where subtype = 'description' and context='%s'",bundle);
+
+CfNewQueryDB(&cfdb,query);
+
+if (cfdb.maxcolumns != 1)
+   {
+   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,1);
+   CfCloseDB(&cfdb);
+   return "";
+   }
+
+if (CfFetchRow(&cfdb))
+   {
+   strncpy(buf,CfFetchColumn(&cfdb,0),CF_BUFSIZE);
+   }
+else
+   {
+   buf[0] = '\0';
+   }
+
+CfDeleteQuery(&cfdb);
+CfCloseDB(&cfdb);
+return buf;
 }
 
 /*****************************************************************************/
