@@ -949,6 +949,29 @@ if (!cfdb.connected)
    return;
    }
 
+// Get goal pid
+
+snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name='%s'",ip->name);
+
+CfNewQueryDB(&cfdb,query);
+
+if (cfdb.maxcolumns != 1)
+   {
+   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,1);
+   CfCloseDB(&cfdb);
+   return;
+   }
+
+if (CfFetchRow(&cfdb))
+   {
+   ip->counter = Str2Int(CfFetchColumn(&cfdb,0));
+   }
+
+CfDeleteQuery(&cfdb);
+
+
+// Get comment
+
 snprintf(query,CF_MAXVARSIZE-1,"SELECT locator from occurrences where context='goals.%s'",CanonifyName(ip->name));
 
 CfNewQueryDB(&cfdb,query);
@@ -966,7 +989,6 @@ if (CfFetchRow(&cfdb))
    }
 
 CfDeleteQuery(&cfdb);
-
 CfCloseDB(&cfdb);
 }
 
