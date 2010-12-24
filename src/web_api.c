@@ -1992,7 +1992,7 @@ if (matched)
          }
       else if (type)
          {
-         snprintf(goals,CF_MAXVARSIZE,"Not directly aligned with any recorded goals");
+         snprintf(goals,CF_MAXVARSIZE,"Unknown");
          snprintf(colour,CF_SMALLBUF,"/images/yellow.png");
          }
 

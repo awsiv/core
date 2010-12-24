@@ -949,7 +949,7 @@ if (!cfdb.connected)
    return;
    }
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT locator from occurrences where subtype = 'description' and context='%s'",ip->name);
+snprintf(query,CF_MAXVARSIZE-1,"SELECT locator from occurrences where context='goals.%s'",CanonifyName(ip->name));
 
 CfNewQueryDB(&cfdb,query);
 
