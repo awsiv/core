@@ -1,6 +1,0 @@
-<img src="graphs/2787.png" USEMAP="#knowledge_system" alt="files::/etc/fstab image pending">
-<map name="knowledge_system">
-<area shape = "circle" coords="648,119,55" href="knowledge.php?pid=2789" alt="topic" title="files::/etc/filesystems">
-<area shape = "circle" coords="151,430,55" href="knowledge.php?pid=2788" alt="topic" title="files::/etc/vfstab">
-<area shape = "circle" coords="449,243,55" href="knowledge.php?pid=2787" alt="topic" title="files::/etc/fstab">
-</map>

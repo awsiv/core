@@ -1,5 +1,0 @@
-<img src="graphs/728.png" USEMAP="#knowledge_system" alt="faults::bad memory reference image pending">
-<map name="knowledge_system">
-<area shape = "circle" coords="517,227,55" href="knowledge.php?pid=724" alt="topic" title="faults::segmentation fault">
-<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=728" alt="topic" title="faults::bad memory reference">
-</map>

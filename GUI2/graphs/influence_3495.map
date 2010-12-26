@@ -1,7 +1,0 @@
-<img src="graphs/influence_3495.png" USEMAP="#knowledge_system" alt="handles::update_bins_reports_fail image pending">
-<map name="knowledge_system">
-<area shape = "circle" coords="625,143,30" href="knowledge.php?pid=3492" alt="topic" title="class_contexts::bin_update_fail">
-<area shape = "circle" coords="438,264,30" href="knowledge.php?pid=3474" alt="topic" title="promisers::cfengine-nova">
-<area shape = "circle" coords="251,385,30" href="knowledge.php?pid=3488" alt="topic" title="class_contexts::bin_update_success">
-<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=3491" alt="topic" title="handles::update_bins_reports_finish">
-</map>

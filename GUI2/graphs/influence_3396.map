@@ -1,9 +1,0 @@
-<img src="graphs/influence_3396.png" USEMAP="#knowledge_system" alt="class_contexts::Sunday image pending">
-<map name="knowledge_system">
-<area shape = "circle" coords="401,496,30" href="knowledge.php?pid=3405" alt="topic" title="handles::garbage_collection_files_promise_log">
-<area shape = "circle" coords="641,313,30" href="knowledge.php?pid=3402" alt="topic" title="handles::garbage_collection_files_cf_notkept_log">
-<area shape = "circle" coords="397,136,30" href="knowledge.php?pid=3399" alt="topic" title="handles::garbage_collection_files_cf_repair_log">
-<area shape = "circle" coords="88,152,30" href="knowledge.php?pid=3411" alt="topic" title="handles::garbage_collection_files_mongod_log">
-<area shape = "circle" coords="336,317,30" href="knowledge.php?pid=3396" alt="topic" title="class_contexts::Sunday">
-<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=3408" alt="topic" title="handles::garbage_collection_files_cf_value_log">
-</map>

@@ -1,8 +1,0 @@
-<img src="graphs/influence_3012.png" USEMAP="#knowledge_system" alt="class_contexts::freebsd image pending">
-<map name="knowledge_system">
-<area shape = "circle" coords="496,468,30" href="knowledge.php?pid=3022" alt="topic" title="handles::cfengine_enable_files_rc_d">
-<area shape = "circle" coords="631,138,30" href="knowledge.php?pid=3015" alt="topic" title="handles::cfengine_enable_vars_rc_conf">
-<area shape = "circle" coords="230,156,30" href="knowledge.php?pid=3025" alt="topic" title="handles::cfengine_enable_files_rc_conf_1">
-<area shape = "circle" coords="363,312,30" href="knowledge.php?pid=3012" alt="topic" title="class_contexts::freebsd">
-<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=3027" alt="topic" title="handles::cfengine_enable_files_rc_conf_2">
-</map>

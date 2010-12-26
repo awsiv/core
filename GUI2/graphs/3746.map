@@ -1,6 +1,0 @@
-<img src="graphs/3746.png" USEMAP="#knowledge_system" alt="AMD::EBC image pending">
-<map name="knowledge_system">
-<area shape = "circle" coords="599,164,55" href="knowledge.php?pid=3745" alt="topic" title="AMD::EGC">
-<area shape = "circle" coords="350,323,55" href="knowledge.php?pid=3744" alt="topic" title="company::AMD">
-<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=3746" alt="topic" title="AMD::EBC">
-</map>

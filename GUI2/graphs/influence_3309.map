@@ -1,6 +1,0 @@
-<img src="graphs/influence_3309.png" USEMAP="#knowledge_system" alt="class_contexts::have_selinux image pending">
-<map name="knowledge_system">
-<area shape = "circle" coords="627,134,30" href="knowledge.php?pid=3312" alt="topic" title="handles::cfengine_web_server_reports_have_selinux">
-<area shape = "circle" coords="171,414,30" href="knowledge.php?pid=3281" alt="topic" title="handles::cfengine_web_server_commands_set_selinux">
-<area shape = "circle" coords="445,246,30" href="knowledge.php?pid=3309" alt="topic" title="class_contexts::have_selinux">
-</map>

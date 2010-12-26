@@ -1,5 +1,0 @@
-<img src="graphs/750.png" USEMAP="#knowledge_system" alt="operating_systems::macos X image pending">
-<map name="knowledge_system">
-<area shape = "circle" coords="517,227,55" href="knowledge.php?pid=760" alt="topic" title="operating_systems::darwin">
-<area shape = "circle" coords="52,514,55" href="knowledge.php?pid=750" alt="topic" title="operating_systems::macos X">
-</map>

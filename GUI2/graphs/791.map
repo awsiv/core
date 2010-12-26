@@ -1,7 +1,0 @@
-<img src="graphs/791.png" USEMAP="#knowledge_system" alt="technical_concepts::scalability image pending">
-<map name="knowledge_system">
-<area shape = "circle" coords="600,450,30" href="knowledge.php?pid=2270" alt="topic" title="Special_Topics_Guide::Federation">
-<area shape = "circle" coords="294,126,30" href="knowledge.php?pid=2250" alt="topic" title="Architecture_Principles::Distributed execution and federation">
-<area shape = "circle" coords="343,382,30" href="knowledge.php?pid=955" alt="topic" title="models_of_organization::federated architecture">
-<area shape = "circle" coords="52,514,30" href="knowledge.php?pid=791" alt="topic" title="technical_concepts::scalability">
-</map>
