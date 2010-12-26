@@ -216,7 +216,7 @@ fprintf(fp,"bundles::\n");
 fprintf(fp,"  \"%s\";\n",pp->bundle);
 
 fprintf(fp,"class_contexts::\n");
-fprintf(fp,"  \"%s\";\n",pp->classes);
+fprintf(fp,"  \"%s\";\n",NovaEscape(pp->classes));
 
 /* First the bundle container */
 
@@ -358,7 +358,7 @@ for (rp = depends_on; rp != NULL; rp=rp->next)
 for (rp = class_list; rp != NULL; rp=rp->next)
    {
    fprintf(fp,"  \"%s\"\n",promise_id);
-   fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_USES,rp->item,NOVA_GIVES);
+   fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_USES,NovaEscape(rp->item),NOVA_GIVES);
    }
 
 DeleteRlist(class_list);
@@ -822,7 +822,7 @@ for (rp = dependency; rp != NULL; rp=rp->next)
    fprintf(fp,"topics:\n");
    fprintf(fp,"class_contexts::");
    fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
-   fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_ISIMPACTED,rp->item,NOVA_IMPACTS);
+   fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_ISIMPACTED,NovaEscape(rp->item),NOVA_IMPACTS);
 
    // Might need to break these up further
    }
@@ -874,7 +874,7 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
                {                           
                fprintf(fp,"class_contexts::");
                fprintf(fp,"  \"%s\"\n",NovaEscape(pp->classes));
-               fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_ACTIVATED,rp->item,NOVA_ACTIVATES);
+               fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_ACTIVATED,NovaEscape(rp->item),NOVA_ACTIVATES);
                }
             }
          }
