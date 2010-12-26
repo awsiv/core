@@ -42,7 +42,7 @@ if ($search == "")
 		  }
 	   else if ($pid == 0)
 		  {
-		  $pid = cfpr_get_pid_for_topic("","system policy");
+		  $pid = cfpr_get_pid_for_topic("system_knowledge","mission status");
 		  }
 		 echo "<div class=\"grid_7\">";
 		 echo "<div class=\"panel\">";    

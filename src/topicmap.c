@@ -257,6 +257,8 @@ if (cfdb.maxcolumns != 4)
    return 0;
    }
 
+work[0] = '\0';
+
 while(CfFetchRow(&cfdb))
    {
    strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
@@ -266,9 +268,14 @@ while(CfFetchRow(&cfdb))
 
    if (BlockTextCaseMatch(search_topic,topic_name,&s,&e))
       {
-      count++;
-      Nova_AddTopicSearchBuffer(pid,topic_name,topic_context,buffer,bufsize);
-      save_pid = pid;
+      // Ignore multiple contexts
+      
+      if (strlen(work) > 0 && strcmp(work,topic_name) != 0)
+         {
+         count++;
+         Nova_AddTopicSearchBuffer(pid,topic_name,topic_context,buffer,bufsize);
+         save_pid = pid;
+         }
       }
    }
 
