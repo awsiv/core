@@ -270,7 +270,7 @@ while(CfFetchRow(&cfdb))
       {
       // Ignore multiple contexts
       
-      if (strlen(work) > 0 && strcmp(work,topic_name) != 0)
+	if (strlen(work) == 0 || strlen(work) == 0 && strcmp(work,topic_name) != 0)
          {
          count++;
          Nova_AddTopicSearchBuffer(pid,topic_name,topic_context,buffer,bufsize);
