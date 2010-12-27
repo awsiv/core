@@ -2,10 +2,10 @@
 	
 /*
 |--------------------------------------------------------------------------
-| Picture settings
+| application settings
 |
-| 'filename_max_length' = Max length of filename.
-| 'upload_base_path' = Base path of upload directory.
+| 'image dir' = image directory path to be used by application.
+| 'scripts dir' = scripts directory path where the  java scripts are placed .
 |--------------------------------------------------------------------------
 */
 $config['image_dir'] = 'images/';
@@ -14,3 +14,11 @@ $config['scripts_dir']= 'scripts/';
 $config['hub_dir']='/hub/';
 $config['graph_dir']='./graphs/';
 $config['policies_dir']='./policies/';
+
+/*
+|----------------------------------------------------------------------------
+|This item is for adjusting the environment on which the cfengine web
+|app is deployed. On production it should be stated as production
+|---------------------------------------------------------------------------
+*/
+$config['env']='development';
