@@ -210,7 +210,7 @@ if (thislock.lock != NULL)
    long_time_no_see = true;
    }
 
-aa.copy.portnumber = (short)5308;
+aa.copy.portnumber = SHORT_CFENGINEPORT;
 
 CfOut(cf_inform,"","...........................................................................\n");
 CfOut(cf_inform,""," * Hailing %s : %u\n",peer,aa.copy.portnumber);

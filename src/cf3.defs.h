@@ -33,7 +33,7 @@
 #undef VERSION
 #undef Verbose
 
-#define CF3_REVISION "$Rev: 1656 $"
+#define CF3_REVISION "$Rev: 1657 $"
 
 #include "conf.h"
 
@@ -412,7 +412,8 @@ enum cfrecontrol
 enum cfhcontrol
    {
    cfh_export_zenoss,
-   cfh_schedule
+   cfh_schedule,
+   cfh_port,
    };
 
 /*************************************************************************/
