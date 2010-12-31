@@ -676,6 +676,8 @@ return counter;
 
 double Nova_SignPerturbation(int i)
 
+// Stagger the radial distances of bodies so they fit better into the space.
+    
 { int j;
   double x = -1.0;
 
