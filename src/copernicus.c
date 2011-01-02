@@ -45,7 +45,7 @@ void Nova_IlluminateTribe(int *tribe_id,struct CfGraphNode *tribe_node,double **
 
 /*****************************************************************************/
 
-void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,double **tribe_adj,int tribe_size,double *tribe_evc,char **n,int topic,double **full_adj,int dim_full,int tertiary_boundary)
+void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,double *tribe_evc,int topic,double **full_adj,int dim_full)
 
 { struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],
      neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE];
@@ -405,7 +405,7 @@ return imax;
 
 /*****************************************************************************/
 
-int Nova_SplayAdjacent(int i,double **adj,int tribe_size,struct CfGraphNode *tribe,int *trail,struct CfGraphNode *neighbours)
+int Nova_SplayAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,struct CfGraphNode *tribe,int *trail,struct CfGraphNode *neighbours)
 
 { int j,k,l,m,counter = 0;
   int incr,max = 0,min = 999;
@@ -512,7 +512,7 @@ return counter;
 
 /*****************************************************************************/
 
-int Nova_GetAdjacent(int i,double **adj,int tribe_size,struct CfGraphNode *tribe, struct CfGraphNode *neighbours)
+int Nova_GetAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,struct CfGraphNode *tribe, struct CfGraphNode *neighbours)
 
 { int j,counter = 0;
 
@@ -1138,7 +1138,7 @@ if (*y2 < 0)
 
 #else
 
-void Nova_IlluminateTribe(int *tribe_id,struct CfGraphNode *tribe_node,double **tribe_adj,int tribe_size,double *tribe_evc,char **n,int topic,double **full_adj,int dim_full,int tertiary_boundary)
+void Nova_IlluminateTribe(int *tribe_id,struct CfGraphNode *tribe_node,double **tribe_adj,int tribe_size,double *tribe_evc,char **n,int topic,double **full_adj,int dim_full)
 
 {
 }

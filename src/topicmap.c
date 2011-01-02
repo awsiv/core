@@ -157,19 +157,265 @@ return ret;
 
 /*****************************************************************************/
 
-int Nova_QueryTopicMap(char *typed_topic,char *result_type,char *buffer,int bufsize)
+int Nova_TopicTreeByID(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,double *evc,double *tribe_evc)
 
-{
-return false;
-}
+{ char to_name[CF_BUFSIZE],to_context[CF_BUFSIZE],to_assoc[CF_BUFSIZE];
+  char from_name[CF_BUFSIZE],from_context[CF_BUFSIZE],from_assoc[CF_BUFSIZE];
+  char *a_name,*a_context;
+  int from_pid,to_pid,a_pid;
+  char inlist[CF_BUFSIZE],query[CF_BUFSIZE],work[CF_BUFSIZE];
+  struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE];
+  int tribe_counter = 0,secondary_boundary,tertiary_boundary,i,j;
+  CfdbConn cfdb;
 
-/*****************************************************************************/
+if (strlen(SQL_OWNER) == 0)
+   {
+   return false;
+   }
 
-int Nova_TopicByID(int id,char *result_type,char *buffer,int bufsize)
+for (i = 0; i < CF_TRIBE_SIZE; i++)
+   {
+   Nova_InitVertex(tribe_nodes,i);
+   tribe_id[i] = -1;
+   tribe_evc[i] = 0;
+   
+   for (j = 0; j < CF_TRIBE_SIZE; j++)
+      {
+      tribe_adj[i][j] = 0;
+      }      
+   }
 
-{
-// if stat DOCROOT/hub/common/id.png
- return false;
+// Open DB dialogue
+
+CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
+    
+if (!cfdb.connected)
+   {
+   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
+   return false;
+   }
+
+tribe_id[0] = pid;
+Nova_NewVertex(tribe_nodes,0,0,pid);
+
+/* Probe sub-graph */
+    
+tribe_counter = 1;
+
+// Nearest neighbours
+
+snprintf(query,sizeof(query),"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name,from_id,to_id from associations where from_id='%d' or to_id='%d'",pid,pid);
+
+CfNewQueryDB(&cfdb,query);
+
+if (cfdb.maxcolumns != 8)
+   {
+   CfOut(cf_error,""," !! The associations database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,8);
+   CfCloseDB(&cfdb);
+   return false;
+   }
+
+while (CfFetchRow(&cfdb))
+   {
+   strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
+   strncpy(from_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
+   strncpy(from_assoc,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
+   strncpy(to_assoc,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
+   strncpy(to_context,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
+   strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
+   from_pid = Str2Int(CfFetchColumn(&cfdb,6));
+   to_pid = Str2Int(CfFetchColumn(&cfdb,7));
+
+   if (from_pid == pid)
+      {
+      a_name = to_name;
+      a_context = to_context;
+      a_pid = to_pid;
+      }
+   else
+      {
+      a_name = from_name;
+      a_context = from_context;
+      a_pid = from_pid;
+      }
+
+   Debug("NEAREST NEIGHOUR: %s::%s at %d\n",a_context,a_name,a_pid);
+
+   if (Nova_AlreadyInTribe(a_pid,tribe_id))
+      {
+      continue;
+      }
+
+   if (Nova_NewVertex(tribe_nodes,tribe_counter,1,a_pid))
+      {
+      neighbours1[tribe_counter].real_id = a_pid;
+      tribe_id[tribe_counter] = a_pid;
+      //tribe_evc[counter] = evc[possible_neighbour];
+      tribe_adj[tribe_counter][0] = 1;
+      tribe_adj[0][tribe_counter] = 1;
+      }
+   
+   if (tribe_counter++ >= CF_TRIBE_SIZE-1)
+      {
+      break;
+      }   
+   }
+
+secondary_boundary = tribe_counter;
+
+CfDeleteQuery(&cfdb);
+
+if (tribe_counter < CF_TRIBE_SIZE && secondary_boundary > 0)
+   {
+   for (i = 0; i < secondary_boundary; i++)
+      {
+      snprintf(query,sizeof(query),"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name,from_id,to_id from associations where from_id='%d' or to_id='%d'",neighbours1[i].real_id,neighbours1[i].real_id);
+
+      CfNewQueryDB(&cfdb,query);
+      
+      while (CfFetchRow(&cfdb))
+         {
+         if (tribe_counter++ >= CF_TRIBE_SIZE-1)
+            {
+            break;
+            }
+         
+         strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
+         strncpy(from_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
+         strncpy(from_assoc,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
+         strncpy(to_assoc,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
+         strncpy(to_context,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
+         strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
+         from_pid = Str2Int(CfFetchColumn(&cfdb,6));
+         to_pid = Str2Int(CfFetchColumn(&cfdb,7));
+         
+         if (from_pid == neighbours1[i].real_id)
+            {
+            a_name = to_name;
+            a_context = to_context;
+            a_pid = to_pid;
+            }
+         else
+            {
+            a_name = from_name;
+            a_context = from_context;
+            a_pid = from_pid;
+            }
+         
+         if (Nova_AlreadyInTribe(a_pid,tribe_id))
+            {
+            continue;
+            }
+         
+         Debug("  2nd NEIGHOUR: %s::%s at %d\n",a_context,a_name,a_pid);
+
+         if (Nova_NewVertex(tribe_nodes,tribe_counter,1,a_pid))
+            {            
+            neighbours2[i][tribe_counter].real_id = a_pid;
+            tribe_id[tribe_counter] = a_pid;
+            tribe_adj[tribe_counter][0] = 1;
+            tribe_adj[0][tribe_counter] = 1;
+            }
+      
+         if (tribe_counter >= CF_TRIBE_SIZE-1)
+            {
+            break;
+            }                
+         }
+      
+      if (tribe_counter >= CF_TRIBE_SIZE-1)
+         {
+         break;
+         }                     
+      
+      CfDeleteQuery(&cfdb);
+      }
+   }
+
+tertiary_boundary = tribe_counter;
+
+if (tribe_counter < CF_TRIBE_SIZE-1 && tertiary_boundary > 0)
+   {
+   for (i = 0; i < secondary_boundary; i++)
+      {
+      for (j = secondary_boundary; j < tertiary_boundary; j++)
+         {
+         if (tribe_counter++ >= CF_TRIBE_SIZE-1)
+            {
+            break;
+            }               
+         
+         snprintf(query,sizeof(query),"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name,from_id,to_id from associations where from_id='%d' or to_id='%d'",neighbours2[i][j].real_id,neighbours2[i][j].real_id);
+         
+         CfNewQueryDB(&cfdb,query);
+         
+         while (CfFetchRow(&cfdb))
+            {
+            strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
+            strncpy(from_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
+            strncpy(from_assoc,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
+            strncpy(to_assoc,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
+            strncpy(to_context,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
+            strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
+            from_pid = Str2Int(CfFetchColumn(&cfdb,6));
+            to_pid = Str2Int(CfFetchColumn(&cfdb,7));
+            
+            if (from_pid == neighbours2[i][j].real_id)
+               {
+               a_name = to_name;
+               a_context = to_context;
+               a_pid = to_pid;
+               }
+            else
+               {
+               a_name = from_name;
+               a_context = from_context;
+               a_pid = from_pid;
+               }
+
+            if (a_pid == neighbours1[i].real_id)
+               {
+               continue;
+               }
+
+            if (Nova_AlreadyInTribe(a_pid,tribe_id))
+               {
+               continue;
+               }            
+
+            Debug("     3rd NEIGHBOUR (%d): %s::%s at %d\n",tribe_counter,a_context,a_name,a_pid);
+            
+            if (Nova_NewVertex(tribe_nodes,tribe_counter,1,a_pid))
+               {            
+               neighbours3[i][j][tribe_counter].real_id = a_pid;
+               tribe_id[tribe_counter] = a_pid;
+               tribe_adj[tribe_counter][0] = 1;
+               tribe_adj[0][tribe_counter] = 1;
+               }
+
+            if (tribe_counter >= CF_TRIBE_SIZE-1)
+               {
+               break;
+               }            
+            }
+         
+         if (tribe_counter >= CF_TRIBE_SIZE-1)
+            {
+            break;
+            }               
+         
+         CfDeleteQuery(&cfdb);
+         }
+      
+      if (tribe_counter >= CF_TRIBE_SIZE-1)
+         {
+         break;
+         }                     
+      }
+   }
+
+CfCloseDB(&cfdb);
+return tribe_counter;
 }
 
 /******************************************************************************/
@@ -1050,15 +1296,15 @@ return buf;
 /* Plot cosmos                                                               */
 /*****************************************************************************/
 
-void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char *view)
+void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char *view,double *evc)
 
 /* This assumes that we have the whole graph in a matrix */
-    
+
 { char filename[CF_BUFSIZE], filenode[CF_MAXVARSIZE];
   struct CfGraphNode tribe_nodes[CF_TRIBE_SIZE];
   int i,tribe_id[CF_TRIBE_SIZE],tribe_size,tertiary_boundary = 0;
   double tribe_evc[CF_TRIBE_SIZE];
-  double **tribe_adj;
+  double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
   struct stat sb;
 
 if (LICENSES == 0)
@@ -1090,37 +1336,22 @@ else
 // Clean up old data
 unlink(filename);
 
-tribe_adj = (double **)malloc(sizeof(double *)*CF_TRIBE_SIZE);
-
-for (i = 0; i < CF_TRIBE_SIZE; i++)
-   {
-   tribe_adj[i] = (double *)malloc(sizeof(double)*CF_TRIBE_SIZE);
-   }
-
 /* Count the  number of nodes in the solar system, to max number based on Dunbar's limit */  
 
-if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,names,topic,full_adj,dim,&tertiary_boundary))
+if (tribe_size = Nova_TopicTreeByID(tribe_id,tribe_nodes,tribe_adj,topic,evc,tribe_evc))
+    //Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,names,topic,full_adj,dim,evc,tribe_evc))
    {
-   Debug("Tribesize of %d for %s...........\n",tribe_size,names[topic]);
-
+   // If local view
    Nova_EigenvectorCentrality(tribe_adj,tribe_evc,CF_TRIBE_SIZE);
-   Nova_IlluminateTribe(tribe_id,tribe_nodes,tribe_adj,tribe_size,tribe_evc,names,topic,full_adj,dim,tertiary_boundary);
-   Nova_DrawTribe(filename,tribe_id,tribe_nodes,tribe_adj,tribe_size,tribe_evc,names,topic,full_adj,dim,tertiary_boundary);
+   Nova_DrawTribe(filename,tribe_id,tribe_nodes,tribe_adj,tribe_size,tribe_evc,topic,full_adj,dim);
    }
-
-for (i = 0; i < CF_TRIBE_SIZE; i++)
-   {
-   free(tribe_adj[i]);
-   }
-
-free(tribe_adj);
 }
 
 /*************************************************************************/
 /* Local patch computation                                               */
 /*************************************************************************/
 
-int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double **tribe_adj,char **n,int topic,double **full_adj,int dim_full,int *tertiary_boundary)
+int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double **tribe_adj,char **n,int topic,double **full_adj,int dim_full,double *evc,double *tribe_evc)
 
 /* This function generates a breadth-first connected sub-graph of the full graph
    and identifies the orbits and distances, up to a maximum of Dunbar's tribe-size */
@@ -1134,6 +1365,7 @@ for (i = 0; i < CF_TRIBE_SIZE; i++)
    {
    Nova_InitVertex(tribe_nodes,i);
    tribe_id[i] = -1;
+   tribe_evc[i] = 0;
    
    for (j = 0; j < CF_TRIBE_SIZE; j++)
       {
@@ -1141,12 +1373,10 @@ for (i = 0; i < CF_TRIBE_SIZE; i++)
       }      
    }
 
-*tertiary_boundary = 1;
-
 /* Anchor sub-graph */
 
 tribe_id[0] = topic;
-Nova_NewVertex(tribe_nodes,0,n[topic],0,topic);
+Nova_NewVertex(tribe_nodes,0,0,topic);
 
 /* Probe sub-graph */
     
@@ -1165,9 +1395,10 @@ for (possible_neighbour = 0; possible_neighbour < dim_full; possible_neighbour++
       {
       CfOut(cf_verbose,""," ->> (%d) \"%s\" orbits topic \"%s\"\n",counter,n[possible_neighbour],n[topic]);
 
-      if (Nova_NewVertex(tribe_nodes,counter,n[possible_neighbour],1,possible_neighbour))
+      if (Nova_NewVertex(tribe_nodes,counter,1,possible_neighbour))
          {
-         tribe_id[counter] = possible_neighbour;      
+         tribe_id[counter] = possible_neighbour;
+         tribe_evc[counter] = evc[possible_neighbour];
          tribe_adj[counter][0] = 1;
          tribe_adj[0][counter] = 1;
          counter++;
@@ -1183,7 +1414,6 @@ for (possible_neighbour = 0; possible_neighbour < dim_full; possible_neighbour++
 /* Look recursively at 2nd order neighbourhoods */
 
 nearest_neighbour_boundary = counter;
-*tertiary_boundary = nearest_neighbour_boundary;
 
 for (j = 1; j < nearest_neighbour_boundary; j++)
    {
@@ -1208,9 +1438,10 @@ for (j = 1; j < nearest_neighbour_boundary; j++)
          {
          CfOut(cf_verbose,""," ->> (%d) \"%s\" 2nd orbit of topic \"%s\"\n",counter,n[possible_neighbour],n[tribe_id[j]]);
             
-         if (Nova_NewVertex(tribe_nodes,counter,n[possible_neighbour],2,possible_neighbour))
+         if (Nova_NewVertex(tribe_nodes,counter,2,possible_neighbour))
             {
             tribe_id[counter] = possible_neighbour;            
+            tribe_evc[counter] = evc[possible_neighbour];
             tribe_adj[counter][j] = 1;
             tribe_adj[j][counter] = 1;
             counter++;
@@ -1249,9 +1480,10 @@ for (j = nearest_neighbour_boundary; j < counter; j++)
          {
          CfOut(cf_verbose,""," -> (%d) \"%s\" 3rd orbit of topic \"%s\"\n",counter,n[possible_neighbour],n[tribe_id[j]]);
                
-         if (Nova_NewVertex(tribe_nodes,counter,n[possible_neighbour],3,possible_neighbour))
+         if (Nova_NewVertex(tribe_nodes,counter,3,possible_neighbour))
             {
             tribe_id[counter] = possible_neighbour;            
+            tribe_evc[counter] = evc[possible_neighbour];
             tribe_adj[counter][j] = 1;
             tribe_adj[j][counter] = 1;            
             counter++;
@@ -1272,9 +1504,10 @@ return counter;
 /* Level                                                                 */
 /*************************************************************************/
 
-void Nova_EigenvectorCentrality(double **A,double *v,int dim)
+void Nova_EigenvectorCentrality(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim)
 
 { int i, n;
+  double max = 0.0001;
 
 for (i = 0; i < dim; i++)
    {
@@ -1285,17 +1518,30 @@ for (n = 0; n < 10; n++)
    {
    Nova_MatrixOperation(A,v,dim);
    }
+
+for (i = 0; i < dim; i++)
+   {
+   if (v[i] > max)
+      {
+      max = v[i];
+      }
+   }
+
+// Renormalize
+
+for (i = 0; i < dim; i++)
+   {
+   v[i] = v[i] / max;
+   }
 }
 
 /*************************************************************************/
 
-void Nova_MatrixOperation(double **A,double *v,int dim)
+void Nova_MatrixOperation(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim)
 
 { int i,j;
   double max = 0.000000001;
-  double *vp;
-  
-vp = (double *)malloc(sizeof(double)*dim);
+  double vp[CF_TRIBE_SIZE];
 
 for (i = 0; i < dim; i++)
    {
@@ -1314,8 +1560,6 @@ for (i = 0; i < dim; i++)
    {
    v[i] = vp[i] / max;
    }
-
-free(vp);
 }
 
 /*************************************************************************/
@@ -1343,7 +1587,7 @@ void Nova_InitVertex(struct CfGraphNode *tribe,int i)
   
 tribe[i].real_id = 0;
 memset(tribe[i].shortname,0,CF_SMALLBUF);
-tribe[i].fullname =  NULL;
+memset(tribe[i].fullname,0,CF_SMALLBUF);
 tribe[i].potential = 0.0;      
 tribe[i].x = 0.0;
 tribe[i].y = 0.0;
@@ -1354,20 +1598,22 @@ tribe[i].distance_from_centre = 0;
 
 /*************************************************************************/
 
-int Nova_NewVertex(struct CfGraphNode *tribe,int node,char *name,int distance,int real)
+int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real)
 
 { const int parent = 1;
-  char sshort[CF_MAXVARSIZE];
+ char sshort[CF_BUFSIZE],name[CF_BUFSIZE];
+  char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE];
   int j;
 
 sshort[0] = '\0';
 
-if (name == NULL)
+if (!Nova_GetTopicByPid(real,topic_name,topic_id,topic_context))
    {
    return false;
    }
 
-sscanf(name,"%*[^:]::%32[^\n]",sshort);
+sscanf(topic_name,"%32[^\n]",sshort);
+snprintf(name,CF_MAXVARSIZE,"%s::%s",topic_context,topic_name);
 
 /* If more than a few nodes, don't waste visual space on repeated topics */
 
@@ -1385,7 +1631,7 @@ if (node > 5)
 
 tribe[node].real_id = real; 
 strncpy(tribe[node].shortname,sshort,CF_SMALLBUF-1);
-tribe[node].fullname = name;
+strncpy(tribe[node].fullname,name,2*CF_SMALLBUF-1);
 tribe[node].potential = 0.0;      
 tribe[node].x = 0.0;
 tribe[node].y = 0.0;
