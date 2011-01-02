@@ -31,16 +31,15 @@ void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,
 
 { struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],
      neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE];
-  char s[CF_MAXVARSIZE],pngfile[CF_MAXVARSIZE],mapfile[CF_MAXVARSIZE];
+  char s[CF_MAXVARSIZE],pngfile[CF_MAXVARSIZE],work[CF_BUFSIZE];
   int tribe_tops[CF_TRIBE_SIZE], num_tops,size1,size2[CF_TRIBE_SIZE],
-      size3[CF_TRIBE_SIZE][CF_TRIBE_SIZE],i,j,k;
+      size3[CF_TRIBE_SIZE][CF_TRIBE_SIZE],trail[CF_TRIBE_SIZE],i,j,k;
   double x,y,theta0,dtheta0,theta1,dtheta1,theta2,dtheta2,pi = 3.1416;
   double orbital_r1,orbital_r2,orbital_r3,orbital_r4,orbital_r5,corona;
   double max_x = 0,max_y = 0, min_x = 0, min_y = 0, lagrange;
-  int trail[CF_TRIBE_SIZE];
   struct CfDataView cfv;
-  FILE *fout,*fmap;
   int centre = Nova_GetMaxEvcNode(tribe_evc,tribe_size);
+  FILE *fout;
 
 if (LICENSES == 0)
    {
@@ -49,12 +48,10 @@ if (LICENSES == 0)
 
 /* Initialize the tribe*/
 
-if (tribe_size < 2)
+/*if (tribe_size < 2)
    {
    return;
-   }
-
-//num_tops = Nova_GetEvcTops(tribe_adj,tribe_size,tribe_evc,tribe_tops);
+   }*/
 
 Nova_ClearTrail(trail);
 
@@ -99,21 +96,10 @@ neighbours1[centre].angle = 0;
 // Write the image map
 
 strncpy(pngfile,ReadLastNode(filename),CF_MAXVARSIZE-1);
-strncpy(mapfile,filename,CF_MAXVARSIZE-1);
-strcpy(strstr(mapfile,".png"),".map");
 
-if ((fmap = fopen(mapfile, "w")) == NULL)
-   {
-   CfOut(cf_verbose,"fopen","Cannot write %s file\n",filename);
-   return;
-   }
-else
-   {
-   CfOut(cf_verbose,""," -> Making map %s\n",filename);
-   }
-
-fprintf(fmap,"<img src=\"graphs/%s\" USEMAP=\"#knowledge_system\" alt=\"%s image pending\">\n",pngfile,tribe_node[0].fullname);
-fprintf(fmap,"<map name=\"knowledge_system\">\n");
+snprintf(buffer,bufsize,"<img src=\"graphs/%s\" USEMAP=\"#knowledge_system\" alt=\"%s image pending\">\n",pngfile,tribe_node[0].fullname);
+snprintf(work,CF_BUFSIZE,"<map name=\"knowledge_system\">\n");
+Join(buffer,work,bufsize);
 
 /* Pre-compute relative positions for scaling */
 
@@ -278,7 +264,7 @@ for (i = 0; i < size1; i++)
          Nova_AlignmentCorrection(&x,&y,neighbours2[i][j].x,neighbours2[i][j].y);
 
          Nova_Line(cfv,neighbours2[i][j].x,neighbours2[i][j].y,neighbours3[i][j][k].x,neighbours3[i][j][k].y,LIGHTRED);
-         Nova_MapBall(fmap,cfv,neighbours3[i][j][k]);
+         Nova_MapBall(cfv,neighbours3[i][j][k],buffer,bufsize);
 
          if (neighbours3[i][j][k].real_id == topic)
             {
@@ -294,7 +280,7 @@ for (i = 0; i < size1; i++)
 
       // Render 2ndary after
 
-      Nova_MapBall(fmap,cfv,neighbours2[i][j]);
+      Nova_MapBall(cfv,neighbours2[i][j],buffer,bufsize);
                   
       if (neighbours2[i][j].real_id == topic)
          {
@@ -308,7 +294,7 @@ for (i = 0; i < size1; i++)
          }
       }
 
-   Nova_MapBall(fmap,cfv,neighbours1[i]);
+   Nova_MapBall(cfv,neighbours1[i],buffer,bufsize);
    
    if (neighbours1[i].real_id == topic)
       {
@@ -322,7 +308,7 @@ for (i = 0; i < size1; i++)
       }
    }
 
-Nova_MapBall(fmap,cfv,tribe_node[centre]);
+Nova_MapBall(cfv,tribe_node[centre],buffer,bufsize);
 
 if (size1 == 0)
    {   
@@ -362,8 +348,7 @@ gdImageDestroy(cfv.im);
 
 // Close image map
 
-fprintf(fmap,"</map>\n");
-fclose(fmap);
+Join(buffer,"</map>\n",bufsize);
 }
 
 /*****************************************************************************/
@@ -819,11 +804,13 @@ for (dr = 0; dr <= radius; dr += radius/(double)CF_SHADES)
 
 /*****************************************************************************/
 
-void Nova_MapBall(FILE *fp,struct CfDataView cfv,struct CfGraphNode n)
+void Nova_MapBall(struct CfDataView cfv,struct CfGraphNode n,char *buffer,int bufsize)
 
-{
-fprintf(fp,"<area shape = \"circle\" coords=\"%d,%d,%d\" href=\"%s?pid=%d\" alt=\"topic\" title=\"%s\">\n",
-        (int)Nova_X(cfv,n.x),(int)Nova_Y(cfv,n.y),(int)n.radius,CF_KMAP,n.real_id,n.fullname);
+{ char work[CF_BUFSIZE];
+ 
+snprintf(work,CF_BUFSIZE,"<area shape = \"circle\" coords=\"%d,%d,%d\" href=\"%s?pid=%d\" alt=\"topic\" title=\"%s\">\n",
+         (int)Nova_X(cfv,n.x),(int)Nova_Y(cfv,n.y),(int)n.radius,CF_KMAP,n.real_id,n.fullname);
+Join(buffer,work,bufsize);
 }
 
 /*****************************************************************************/
