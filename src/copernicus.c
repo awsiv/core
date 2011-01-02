@@ -27,25 +27,7 @@ extern int BROWNS[CF_SHADES];
 
 /*****************************************************************************/
 
-void Nova_IlluminateTribe(int *tribe_id,struct CfGraphNode *tribe_node,double **tribe_adj,int tribe_size,double *tribe_evc,char **n,int topic,double **full_adj,int dim_full,int tertiary_boundary)
-
-{ int centre = Nova_GetMaxEvcNode(tribe_evc,tribe_size);
-  int i,j;
-
-  for (i = 0; i < tribe_size; i++)
-     {
-     Debug("(%d) %f - %s\n",i,tribe_evc[i],tribe_node[i].fullname);
-     }
-  
-// Set distances, radii and illumination and horizons
-  
-// By design, the maximum horizon distance can be 6
-  
-}
-
-/*****************************************************************************/
-
-void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,double *tribe_evc,int topic,double **full_adj,int dim_full)
+void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,double *tribe_evc,int topic,double **full_adj,int dim_full,char *buffer,int bufsize)
 
 { struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],
      neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE];

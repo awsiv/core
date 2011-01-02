@@ -282,8 +282,7 @@ int Nova_ViewScaleY(struct CfDataView *cfv,double y);
 
 /* copernicus.c */
 
-void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,double **full_adj,int dim_full);
-void Nova_IlluminateTribe(int *tribe_id,struct CfGraphNode *tribe_node, double **tribe_adj,int tribe_size, double *tribe_evc,char **n,int topic,double **full_adj,int dim_full,int tertiary_boundary);
+void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,double **full_adj,int dim_full,char *buffer,int bufsize);
 int Nova_GetMaxEvcNode(double *evc,int tribe_size);
 int Nova_GetAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size, struct CfGraphNode *tribe, struct CfGraphNode *neighbours);
 int Nova_SplayAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,struct CfGraphNode *tribe,int *trail,struct CfGraphNode *neighbours);
@@ -862,7 +861,6 @@ void Nova_FillInGoalComment(struct Item *ip);
 char *Nova_GetBundleComment(char *bundle);
 void Nova_WebTopicMap_Initialize(void);
 int Nova_GetPidForTopic(char *typed_topic);
-int Nova_TopicTreeByID(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,double *evc,double *tribe_evc);
 void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize);
 void Nova_ScanTheRest(int pid,char *buffer, int bufsize);
 int Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize);
@@ -881,8 +879,8 @@ char *Nova_URL(char *s,char *rep);
 struct Item *Nova_GetBusinessGoals(char *handle);
 
 void Nova_SpecialQuote(char *name,char *type);
-void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char *view,double *evc);
-int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double **tribe_adj,char **n,int topic,double **full_adj,int dim_full,double *evc,double *tribe_evc);
+void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char *view,double *evc,char *buf,int size);
+int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,double *evc,double *tribe_evc);
 void Nova_EigenvectorCentrality(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim);
 void Nova_MatrixOperation(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim);
 int Nova_AlreadyInTribe(int node, int *tribe_id);
