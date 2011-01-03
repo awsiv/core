@@ -1,12 +1,12 @@
 <?php
 
-class Welcome extends Controller {
+class Welcome extends Cf_Controller{
 
-	function Welcome()
-	{
-		parent::Controller();
-        parse_str($_SERVER['QUERY_STRING'],$_GET);		
-	}
+	function __construct()
+		{
+			parent::__construct();			
+			parse_str($_SERVER['QUERY_STRING'],$_GET);
+		}
 	
 	function index()
 	{
