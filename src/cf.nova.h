@@ -282,7 +282,7 @@ int Nova_ViewScaleY(struct CfDataView *cfv,double y);
 
 /* copernicus.c */
 
-void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,double **full_adj,int dim_full,char *buffer,int bufsize);
+void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,char *buffer,int bufsize);
 int Nova_GetMaxEvcNode(double *evc,int tribe_size);
 int Nova_GetAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size, struct CfGraphNode *tribe, struct CfGraphNode *neighbours);
 int Nova_SplayAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,struct CfGraphNode *tribe,int *trail,struct CfGraphNode *neighbours);
@@ -879,8 +879,8 @@ char *Nova_URL(char *s,char *rep);
 struct Item *Nova_GetBusinessGoals(char *handle);
 
 void Nova_SpecialQuote(char *name,char *type);
-void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char *view,double *evc,char *buf,int size);
-int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,double *evc,double *tribe_evc);
+void Nova_PlotTopicCosmos(int topic,char *view,char *buf,int size);
+int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,double *tribe_evc);
 void Nova_EigenvectorCentrality(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim);
 void Nova_MatrixOperation(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim);
 int Nova_AlreadyInTribe(int node, int *tribe_id);
@@ -889,6 +889,7 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real);
 
 /* web_api.c */
 
+void Nova2PHP_get_knowledge_view(int pid,char *view,char *buffer,int bufsize);
 char *Nova_FormatDiff(char *s);
 void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize);
 void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize);

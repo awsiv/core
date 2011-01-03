@@ -1033,7 +1033,7 @@ return buf;
 /* Plot cosmos                                                               */
 /*****************************************************************************/
 
-void Nova_PlotTopicCosmos(int topic,double **full_adj,char **names,int dim,char *view,double *evc,char *buffer,int bufsize)
+void Nova_PlotTopicCosmos(int topic,char *view,char *buffer,int bufsize)
 
 /* This assumes that we have the whole graph in a matrix */
 
@@ -1049,7 +1049,7 @@ if (LICENSES == 0)
    return;
    }
 
-CfOut(cf_verbose,""," -> Create Cosmos for %s\n",names[topic]);
+CfOut(cf_verbose,""," -> Create Cosmos for topic_id %d\n",topic);
 
 if (view)
    {
@@ -1075,10 +1075,10 @@ unlink(filename);
 
 /* Count the  number of nodes in the solar system, to max number based on Dunbar's limit */  
 
-if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,evc,tribe_evc))
+if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,tribe_evc))
    {
    Nova_EigenvectorCentrality(tribe_adj,tribe_evc,CF_TRIBE_SIZE);
-   Nova_DrawTribe(filename,tribe_id,tribe_nodes,tribe_adj,tribe_size,tribe_evc,topic,full_adj,dim,buffer,bufsize);
+   Nova_DrawTribe(filename,tribe_id,tribe_nodes,tribe_adj,tribe_size,tribe_evc,topic,buffer,bufsize);
    }
 }
 
@@ -1086,7 +1086,7 @@ if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,evc,tribe_ev
 /* Local patch computation                                               */
 /*************************************************************************/
 
-int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,double *evc,double *tribe_evc)
+int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,double *tribe_evc)
 
 /* This function generates a breadth-first connected sub-graph of the full graph
    and identifies the orbits and distances, up to a maximum of Dunbar's tribe-size */
@@ -1182,7 +1182,6 @@ while (CfFetchRow(&cfdb))
       {
       neighbours1[tribe_counter].real_id = a_pid;
       tribe_id[tribe_counter] = a_pid;
-      //tribe_evc[counter] = evc[possible_neighbour];
       tribe_adj[tribe_counter][0] = 1;
       tribe_adj[0][tribe_counter] = 1;
       tribe_counter++;

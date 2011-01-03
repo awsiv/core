@@ -123,6 +123,15 @@ if (false)
 /* Helper functions                                                          */
 /****************************************************************************/
 
+void Nova2PHP_get_knowledge_view(int pid,char *view,char *buffer,int bufsize)
+
+{
+Nova_WebTopicMap_Initialize();
+Nova_PlotTopicCosmos(pid,view,buffer,bufsize);
+}
+
+/****************************************************************************/
+
 void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize)
 
 { time_t then, now = time(NULL);

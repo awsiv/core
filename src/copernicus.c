@@ -27,7 +27,7 @@ extern int BROWNS[CF_SHADES];
 
 /*****************************************************************************/
 
-void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,double *tribe_evc,int topic,double **full_adj,int dim_full,char *buffer,int bufsize)
+void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,double *tribe_evc,int topic,char *buffer,int bufsize)
 
 { struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],
      neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE];
@@ -1107,14 +1107,7 @@ if (*y2 < 0)
 
 #else
 
-void Nova_IlluminateTribe(int *tribe_id,struct CfGraphNode *tribe_node,double **tribe_adj,int tribe_size,double *tribe_evc,char **n,int topic,double **full_adj,int dim_full)
-
-{
-}
-
-/*****************************************************************************/
-
-void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,double **tribe_adj,int tribe_size,double *tribe_evc,char **n,int topic,double **full_adj,int dim_full,int tertiary_boundary)
+void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,double *tribe_evc,int topic,char *buffer,int bufsize)
 {
 }
     
