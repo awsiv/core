@@ -41,11 +41,6 @@ void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node,
   int centre = Nova_GetMaxEvcNode(tribe_evc,tribe_size);
   FILE *fout;
 
-/*if (tribe_size < 2)
-   {
-   return;
-   }*/
-
 Nova_ClearTrail(trail);
 
 for (i = 0; i < tribe_size; i++)
@@ -327,7 +322,7 @@ else
 
 if ((fout = fopen(filename, "wb")) == NULL)
    {
-   CfOut(cf_verbose,"fopen","Cannot write %s file\n",filename);
+   CfOut(cf_error,"fopen","Cannot write %s file\n",filename);
    return;
    }
 else
