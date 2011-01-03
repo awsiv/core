@@ -6,7 +6,8 @@
              <li><a href="<?php echo site_url()?>/welcome/knowledge" class="<?php $text=isset($library)?$library:""; echo $text ?>">KNOWLEDGE</a></li>
              </ul>
              <span id="status" class="grid_2 alignright">
-             <?php $text=isset($nav_text)?$nav_text:""; echo $text?> 
+             <?php //$text=isset($nav_text)?$nav_text:""; echo $text?>	
+			 Loggedin : <?php echo $this->session->userdata('username');?>		 
              </span>
              <div class="clearleft"></div>
  </div>
