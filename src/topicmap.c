@@ -1051,7 +1051,7 @@ if (LICENSES == 0)
 
 CfOut(cf_verbose,""," -> Create Cosmos for topic_id %d\n",topic);
 
-if (view)
+if (view && strlen(view) > 0)
    {
    snprintf(filenode,CF_MAXVARSIZE-1,"%s_%d.png",view,topic);
    }
