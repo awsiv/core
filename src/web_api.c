@@ -1,4 +1,3 @@
-
 /*
 
  This file is (C) Cfengine AS. See LICENSE for details.
@@ -115,7 +114,12 @@ if (false)
    Nova2PHP_setuid_report_pdf(NULL,NULL,0,NULL, buffer,10000);
    
    /* svn helper */
-      Nova2PHP_validate_policy(NULL,NULL,10000);
+   Nova2PHP_validate_policy(NULL,NULL,10000);
+   /*
+    * commenting
+    */
+   Nova2PHP_add_comment(NULL, NULL, NULL, NULL, NULL, 10000);
+   Nova2PHP_get_comment(NULL,NULL,NULL,NULL,NULL,-1,NULL,10000);
    }
 }
 
@@ -4305,6 +4309,43 @@ int Nova2PHP_delete_host(char *keyHash)
   return true;
 }
 
+/*****************************************************************************/
+
+/*for commenting functionality */
+
+int Nova2PHP_add_comment(char *keyhash, char *subkey, char *handle, char *username, char *comment, time_t datetime)
+{
+  char *collection = "test.comments";
+   
+  struct Item *data = NULL, *ip = NULL;
+  char msg[CF_MAXVARSIZE] = {0};
+  mongo_connection dbconn;
+   
+  Chop(handle);
+  Chop(subkey);
+  Chop(keyhash);
+  Chop(comment);
+  Chop(username);
+  snprintf(msg, CF_MAXVARSIZE, "%s,%s,%ld\n",username,comment,datetime);
+  AppendItem(&data, msg, NULL);
+   
+  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+      CfOut(cf_verbose,"", "!! Could not open connection to report database");
+      return false;
+    }
+  
+  CFDB_AddComment(&dbconn,keyhash,subkey,handle, data);
+  CFDB_Close(&dbconn);
+  return 1;
+}
+
+/*****************************************************************************/
+/*commenting*/
+int Nova2PHP_get_comment(char *keyhash, char *subkey, char *handle, char *username, char *comment, time_t datetime, char *returnval, int bufsize)
+{
+  return 1;
+}
 /*****************************************************************************/
 
 #endif

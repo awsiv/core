@@ -366,13 +366,12 @@ struct Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
 void CFDB_ListEverything(mongo_connection *conn);
 void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
 int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRegex);
-int QueryInsertHostInfo(mongo_connection *conn, struct Rlist *host_list);
+int QueryInsertHostInfo(mongo_connection *conn,struct Rlist *host_list);
 void PrintCFDBKey(bson_iterator *it, int depth);
 int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
 int Nova_MagViewOffset(int start_slot,int dbslot,int wrap);
 int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
 void MongoCheckForError(mongo_connection *conn, char *operation, char *extra);
-
 
 #endif
 
@@ -406,6 +405,11 @@ void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
 void BsonToString(char *retBuf, int retBufSz, bson *b, int depth);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
+/*
+ * commenting
+ */
+void CFDB_AddComment(mongo_connection *conn, char *keyhash,char *subkey, char *handle, struct Item *data);
+
 #endif  /* HAVE_LIBMONGOC */
 
 /* db_maintain.c */
@@ -994,6 +998,11 @@ int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *classreg
 
 /* svn helper functions */
 int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize);
+/*
+ * commenting
+ */
+int Nova2PHP_add_comment(char *keyhash, char *subkey, char *handle, char *username, char *comment, time_t datetime);
+int Nova2PHP_get_comment(char *keyhash, char *subkey, char *handle, char *username, char *comment, time_t datetime, char *returnval, int bufsize);
 
 void Nova2PHP_cdp_reportnames(char *buf,int bufSz);
 int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz);
@@ -1337,6 +1346,14 @@ struct cf_pscalar
 #define cfm_yearobs       "yo"
 #define cfm_data          "dt"
 
+/*commenting*/
+#define cfc_subkey "sK"
+#define cfc_handle "hL"
+#define cfc_comment "cmt"
+#define cfc_username "uN"
+#define cfc_datetime "dT"
+#define cfc_message "cM" 
+
 #define CFDB_GREATERTHANEQ 4
 #define CFDB_LESSTHANEQ 5
 
@@ -1525,4 +1542,21 @@ struct HubBodyAttr
   struct HubBodyAttr *next;
   };
 
+/*
+ * Commenting on reports
+ 
+struct HubComment
+{
+  char *user;
+  char *msg;
+  time_t t;
+};
 
+struct HubCommentInfo
+{
+  struct HubHost *hh;
+  char *subkey;
+  char *handle;
+  struct HubComment *comment;
+};
+*/
