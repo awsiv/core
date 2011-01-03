@@ -39,6 +39,7 @@ CFDB_GetValue("SQL_CONNECT_NAME",retval,CF_MAXVARSIZE);
 strcpy(SQL_CONNECT_NAME,retval);
 CFDB_GetValue("document_root",retval,CF_MAXVARSIZE);
 strncpy(DOCROOT,retval,CF_MAXVARSIZE);
+snprintf(GRAPHDIR,CF_MAXVARSIZE,"%s/graphs",DOCROOT);
 
 Debug("Loaded values: db=%s,type=%d,owner=%s,passwd=%s,server=%s,connect=%s,docroot=%s\n",SQL_DATABASE,SQL_TYPE,SQL_OWNER,SQL_PASSWD,SQL_SERVER,SQL_CONNECT_NAME,DOCROOT);
 #endif
