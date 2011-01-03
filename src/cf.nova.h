@@ -128,8 +128,8 @@ struct CfGraphNode
    {
    int real_id;
    int tribe_id;
-   char shortname[CF_SMALLBUF];
-   char fullname[2*CF_SMALLBUF];
+   char *shortname;
+   char *fullname;
    double potential;
    double x,y;
    double radius;

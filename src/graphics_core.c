@@ -293,9 +293,8 @@ void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour)
   double size = 8.0;
 
 
-  snprintf(font1,sizeof(font1),"%s/fonts/DejaVuSans.ttf", CFWORKDIR);
-  MapName(font1);
-
+snprintf(font1,sizeof(font1),"%s/fonts/DejaVuSans.ttf", CFWORKDIR);
+MapName(font1);
   
 snprintf(ps,CF_MAXVARSIZE,"%s",s);
 

@@ -120,6 +120,7 @@ if (false)
     */
    Nova2PHP_add_comment(NULL, NULL, NULL, NULL, NULL, 10000);
    Nova2PHP_get_comment(NULL,NULL,NULL,NULL,NULL,-1,NULL,10000);
+   Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
    }
 }
 

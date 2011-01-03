@@ -1435,8 +1435,8 @@ void Nova_InitVertex(struct CfGraphNode *tribe,int i)
 { const int parent = 1;
   
 tribe[i].real_id = 0;
-memset(tribe[i].shortname,0,CF_SMALLBUF);
-memset(tribe[i].fullname,0,CF_SMALLBUF);
+tribe[i].shortname = NULL;
+tribe[i].fullname = NULL;
 tribe[i].potential = 0.0;      
 tribe[i].x = 0.0;
 tribe[i].y = 0.0;
@@ -1484,8 +1484,8 @@ if (strlen(sshort) == 0)
    }
 
 tribe[node].real_id = real; 
-strncpy(tribe[node].shortname,sshort,CF_SMALLBUF-1);
-strncpy(tribe[node].fullname,name,2*CF_SMALLBUF-1);
+tribe[node].shortname = strdup(sshort);
+tribe[node].fullname = strdup(name);
 tribe[node].potential = 0.0;      
 tribe[node].x = 0.0;
 tribe[node].y = 0.0;

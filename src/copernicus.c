@@ -337,6 +337,18 @@ gdImageDestroy(cfv.im);
 // Close image map
 
 Join(buffer,"</map>\n",bufsize);
+
+for (i = 0; i < CF_TRIBE_SIZE; i++)
+   {
+   if (tribe_node[i].fullname)
+      {
+      free(tribe_node[i].fullname);
+      }
+   if (tribe_node[i].shortname)
+      {
+      free(tribe_node[i].shortname);
+      }
+   }
 }
 
 /*****************************************************************************/
