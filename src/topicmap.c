@@ -1045,11 +1045,6 @@ void Nova_PlotTopicCosmos(int topic,char *view,char *buffer,int bufsize)
   double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
   struct stat sb;
 
-if (LICENSES == 0)
-   {
-   return;
-   }
-
 CfOut(cf_verbose,""," -> Create Cosmos for topic_id %d\n",topic);
 
 if (view && strlen(view) > 0)
