@@ -95,6 +95,12 @@ Join(buffer,work,bufsize);
 
 size1 = Nova_SplayAdjacent(centre,tribe_adj,tribe_size,tribe_node,trail,neighbours1);
 
+if (size1 < 1)
+   {
+   snprintf(buffer,CF_MAXVARSIZE,"Didn't find any local cluster");
+   return;
+   }
+
 theta0 = 0.64; 
 dtheta0 = 2 * pi / (double)size1;
 
@@ -384,7 +390,7 @@ int Nova_SplayAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_
 
 if (i < 0)
    {
-   return 2;
+   return 0;
    }
   
 for (j = 0; j < tribe_size; j++)
@@ -421,7 +427,7 @@ for (j = 0; j < tribe_size; j++)
 
 if (counter == 0)
    {
-   return 2;
+   return 0;
    }
 
 // s = sort(f) biggest first
