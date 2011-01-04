@@ -1440,6 +1440,11 @@ if (max > 0.0001)
    for (i = 0; i < dim; i++)
       {
       v[i] = vp[i] / max;
+
+      if (isnan(v[i]))
+         {
+         v[i] = 0;
+         }      
       }
    }
 }
