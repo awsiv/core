@@ -1071,7 +1071,7 @@ unlink(filename);
 
 /* Count the  number of nodes in the solar system, to max number based on Dunbar's limit */  
 
-if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,tribe_evc))
+if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,tribe_evc,view))
    {
    Nova_EigenvectorCentrality(tribe_adj,tribe_evc,CF_TRIBE_SIZE);
    Nova_DrawTribe(filename,tribe_id,tribe_nodes,tribe_adj,tribe_size,tribe_evc,topic,buffer,bufsize);
@@ -1082,14 +1082,14 @@ if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,tribe_evc))
 /* Local patch computation                                               */
 /*************************************************************************/
 
-int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,double *tribe_evc)
+int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,double *tribe_evc,char *view_pattern)
 
 /* This function generates a breadth-first connected sub-graph of the full graph
    and identifies the orbits and distances, up to a maximum of Dunbar's tribe-size */
 
 { char to_name[CF_BUFSIZE],to_context[CF_BUFSIZE],to_assoc[CF_BUFSIZE];
   char from_name[CF_BUFSIZE],from_context[CF_BUFSIZE],from_assoc[CF_BUFSIZE];
-  char *a_name,*a_context;
+  char *a_name,*a_context,view[CF_MAXVARSIZE];
   int from_pid,to_pid,a_pid;
   char inlist[CF_BUFSIZE],query[CF_BUFSIZE],work[CF_BUFSIZE];
   struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE];
@@ -1111,6 +1111,15 @@ for (i = 0; i < CF_TRIBE_SIZE; i++)
       {
       tribe_adj[i][j] = 0;
       }      
+   }
+
+if (view_pattern && strcmp(view_pattern,"influence") == 0)
+   {
+   snprintf(view,CF_MAXVARSIZE,"%s|%s|%s|%s|%s|%s|%s",NOVA_GIVES,NOVA_USES,NOVA_IMPACTS,NOVA_ISIMPACTED,NOVA_BUNDLE_DATA,NOVA_BUNDLE_DATA_INV_B,NOVA_BUNDLE_DATA_INV_P);
+   }
+else
+   {
+   snprintf(view,CF_MAXVARSIZE,".*");
    }
 
 // Open DB dialogue
@@ -1169,6 +1178,14 @@ while (CfFetchRow(&cfdb))
 
    Debug("NEAREST NEIGHOUR: %s::%s at %d\n",a_context,a_name,a_pid);
 
+   if (FullTextMatch(view,from_assoc)||FullTextMatch(view,to_assoc))
+      {
+      }
+   else
+      {
+      continue;
+      }
+   
    if (Nova_AlreadyInTribe(a_pid,tribe_id))
       {
       continue;
@@ -1229,7 +1246,12 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && secondary_boundary > 0)
             a_context = from_context;
             a_pid = from_pid;
             }
-         
+
+         if (view && !(FullTextMatch(view,from_assoc)||FullTextMatch(view,to_assoc)))
+            {
+            continue;
+            }
+
          if (Nova_AlreadyInTribe(a_pid,tribe_id))
             {
             continue;
@@ -1307,6 +1329,11 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && tertiary_boundary > 0)
                continue;
                }
 
+            if (view && !(FullTextMatch(view,from_assoc)||FullTextMatch(view,to_assoc)))
+               {
+               continue;
+               }
+            
             if (Nova_AlreadyInTribe(a_pid,tribe_id))
                {
                continue;
