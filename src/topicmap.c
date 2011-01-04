@@ -1405,9 +1405,12 @@ for (i = 0; i < dim; i++)
 
 // Renormalize
 
-for (i = 0; i < dim; i++)
+if (max > 0.0001)
    {
-   v[i] = v[i] / max;
+   for (i = 0; i < dim; i++)
+      {
+      v[i] = v[i] / max;
+      }
    }
 }
 
@@ -1432,9 +1435,12 @@ for (i = 0; i < dim; i++)
       }
    }
 
-for (i = 0; i < dim; i++)
+if (max > 0.0001)
    {
-   v[i] = vp[i] / max;
+   for (i = 0; i < dim; i++)
+      {
+      v[i] = vp[i] / max;
+      }
    }
 }
 
