@@ -213,7 +213,7 @@ if (thislock.lock != NULL)
 aa.copy.portnumber = (short)atoi(STR_CFENGINEPORT);
 
 CfOut(cf_inform,"","...........................................................................\n");
-CfOut(cf_inform,""," * Hailing %s : %u\n",peer,(int)ntohs(aa.copy.portnumber));
+CfOut(cf_inform,""," * Hailing %s : %u\n",peer,(int)aa.copy.portnumber;
 CfOut(cf_inform,"","...........................................................................\n");
 
 /* Check trust interaction*/
