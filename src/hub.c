@@ -210,7 +210,7 @@ if (thislock.lock != NULL)
    long_time_no_see = true;
    }
 
-aa.copy.portnumber = atos(STR_CFENGINEPORT);
+aa.copy.portnumber = (short)atoi(STR_CFENGINEPORT);
 
 CfOut(cf_inform,"","...........................................................................\n");
 CfOut(cf_inform,""," * Hailing %s : %u\n",peer,(int)ntohs(aa.copy.portnumber));
