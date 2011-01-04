@@ -85,7 +85,7 @@ neighbours1[centre].angle = 0;
 
 strncpy(pngfile,ReadLastNode(filename),CF_MAXVARSIZE-1);
 
-snprintf(buffer,bufsize,"<img src=\"graphs/%s\" USEMAP=\"#knowledge_system_%s\" alt=\"%s image pending\">\n",pngfile,tribe_node[0].fullname,CanonifyName(pngfile));
+snprintf(buffer,bufsize,"<img src=\"graphs/%s\" USEMAP=\"#knowledge_system_%s\" alt=\"%s image pending\">\n",pngfile,CanonifyName(pngfile),tribe_node[0].fullname);
 snprintf(work,CF_BUFSIZE,"<map name=\"knowledge_system_%s\">\n",CanonifyName(pngfile));
 Join(buffer,work,bufsize);
 
