@@ -387,7 +387,7 @@ while(CfFetchRow(&cfdb))
 
 if (count == 0)
    {
-   snprintf(buf,CF_BUFSIZE-1,"<li>(no sub-categories)</li>\n");
+   snprintf(buf,CF_BUFSIZE-1,"<li>(no child categories)</li>\n");
    Join(buffer,buf,bufsize);
    }
 
@@ -977,6 +977,11 @@ if (cfdb.maxcolumns != 1)
 if (CfFetchRow(&cfdb))
    {
    ip->classes = strdup(CfFetchColumn(&cfdb,0));
+   }
+else
+   {
+   snprintf(query,CF_MAXVARSIZE,"No description found for 'goals.%s'",CanonifyName(ip->name));
+   ip->classes = strdup(query);
    }
 
 CfDeleteQuery(&cfdb);
