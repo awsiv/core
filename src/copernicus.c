@@ -384,7 +384,7 @@ int Nova_SplayAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_
 
 if (i < 0)
    {
-   return 0;
+   return 2;
    }
   
 for (j = 0; j < tribe_size; j++)
@@ -421,7 +421,7 @@ for (j = 0; j < tribe_size; j++)
 
 if (counter == 0)
    {
-   return 0;
+   return 2;
    }
 
 // s = sort(f) biggest first
