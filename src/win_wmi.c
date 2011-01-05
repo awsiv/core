@@ -27,7 +27,6 @@
 /* static prototypes */
 static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp);
 static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp);
-static int Nova_PrependPackageItem(struct CfPackageItem **list,char *name,char *version,char *arch,struct Attributes a,struct Promise *pp);
 
 DISPATCH_OBJ(wmiSvc);
 
@@ -126,7 +125,7 @@ if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
           
         Debug("regex_pkgname=\"%s\", regex_pkgver=\"%s\"\n", name, version);
       
-      if (!Nova_PrependPackageItem(pkgList, name, version, VSYSNAME.machine, a, pp))
+      if (!PrependPackageItem(pkgList, name, version, VSYSNAME.machine, a, pp))
          {
          CfOut(cf_error, "", "!! Could not prepend package name to list");
          }
@@ -200,7 +199,7 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
 	    }
 
 
-	  if(!Nova_PrependPackageItem(pkgList, caption, version, VSYSNAME.machine, a, pp))
+	  if(!PrependPackageItem(pkgList, caption, version, VSYSNAME.machine, a, pp))
 	    {
 	      CfOut(cf_error, "", "!! Could not prepend package name to list");
 	    }
