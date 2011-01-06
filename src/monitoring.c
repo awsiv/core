@@ -122,7 +122,7 @@ if (SLOTS[0][0][0] != 0)
 
 snprintf(filename,CF_BUFSIZE-1,"%s%cstate%cts_key",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
 
-if ((fin = cf_fopen(filename,"r")) == NULL)
+if ((fin = fopen(filename,"r")) == NULL)
    {
    Nova_GetClassName(n,name,desc);
    return;
@@ -140,7 +140,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       }
    }
 
-cf_fclose(fin);
+fclose(fin);
 Nova_GetClassName(n,name,desc);
 return;
 }
@@ -161,7 +161,7 @@ if (SLOTS[0][0][0] != 0)
 
 snprintf(filename,CF_BUFSIZE-1,"ts_key");
 
-if ((fin = cf_fopen(filename,"r")) == NULL)
+if ((fin = fopen(filename,"r")) == NULL)
    {
    Nova_GetClassName(n,name,desc);
    return;
@@ -179,7 +179,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       }
    }
 
-cf_fclose(fin);
+fclose(fin);
 Nova_GetClassName(n,name,desc);
 return;
 }
@@ -348,7 +348,7 @@ switch (a.measure.data_type)
 
 snprintf(filename,CF_BUFSIZE-1,"%s%cstate%cts_key",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
 
-if ((fout = cf_fopen(filename,"w")) == NULL)
+if ((fout = fopen(filename,"w")) == NULL)
    {
    return;
    }
@@ -370,7 +370,7 @@ for (i = 0; i < CF_OBSERVABLES-ob_spare; i++)
       }
    }
 
-cf_fclose(fout);
+fclose(fout);
 chmod(filename,0600);
 }
 
@@ -492,9 +492,9 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    {
    sprintf(filename,"%s_%d.yr",OBS[i][0],age);
 
-   if ((fp[i] = cf_fopen(filename,"w")) == NULL)
+   if ((fp[i] = fopen(filename,"w")) == NULL)
       {
-      CfOut(cf_error,"cf_fopen","Could not open %s\n",filename);
+      CfOut(cf_error,"fopen","Could not open %s\n",filename);
       exit(1);
       }
    }
@@ -510,7 +510,7 @@ Debug("CLOSE YEAR %d\n",age);
 
 for (i = 0; i < CF_OBSERVABLES; i++)
    {
-   cf_fclose(fp[i]);
+   fclose(fp[i]);
    }
 }
 
@@ -672,9 +672,9 @@ if (!OpenDB(name,&dbp))
 
 snprintf(name,CF_BUFSIZE-1,"%s%cstate%cstatic_data",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Unable to save discovery data in %s\n",name);
+   CfOut(cf_error,"fopen","Unable to save discovery data in %s\n",name);
    return;
    }
 
@@ -705,7 +705,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
 
 DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
-cf_fclose(fout);
+fclose(fout);
 }
 
 /*****************************************************************************/
@@ -1081,7 +1081,7 @@ else
          return NULL;
          }
       
-      fin = cf_fopen(pp->promiser,"r");
+      fin = fopen(pp->promiser,"r");
 
       if (a.measure.growing)
          {
@@ -1374,7 +1374,7 @@ if (a.measure.history_type && cf_strcmp(a.measure.history_type,"log") == 0)
    {
    snprintf(filename,CF_BUFSIZE,"%s%cstate%c%s_measure.log",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,handle);
 
-   if ((fout = cf_fopen(filename,"a")) == NULL)
+   if ((fout = fopen(filename,"a")) == NULL)
       {
       cfPS(cf_error,CF_FAIL,"",pp,a,"Unable to open the output log \"%s\"",filename);
       PromiseRef(cf_error,pp);
@@ -1387,7 +1387,7 @@ if (a.measure.history_type && cf_strcmp(a.measure.history_type,"log") == 0)
    fprintf(fout,"%s,%ld,%s\n",sdate,(long)now,value);
    CfOut(cf_verbose,"","Logging: %s,%s to %s\n",sdate,value,filename);
 
-   cf_fclose(fout);
+   fclose(fout);
    }
 else // scalar or static
    {

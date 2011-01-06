@@ -208,9 +208,9 @@ void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *styleshee
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_PROMISE_LOG);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_error,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -240,11 +240,11 @@ while (!feof(fin))
    PrependItem(&file,line,NULL);
    }
 
-cf_fclose(fin);
+fclose(fin);
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -362,7 +362,7 @@ if (XML)
    fprintf(fout,"</output>\n");
    }
 
-cf_fclose(fout);
+fclose(fout);
 DeleteItemList(file);
 
 METER_KEPT[meter_compliance_week] = av_week_kept;
@@ -385,9 +385,9 @@ Nova_SummarizeComms();
 snprintf(name,CF_BUFSIZE-1,"%s/reports/comp_key",CFWORKDIR);
 MapName(name);
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -445,9 +445,9 @@ else
    snprintf(name,CF_BUFSIZE,"promise_compliance.txt");
    }
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    CloseDB(dbp);
    return;
    }
@@ -598,7 +598,7 @@ if (XML)
    fprintf(fout,"</output>\n");
    }
 
-cf_fclose(fout);
+fclose(fout);
 }
 
 /*****************************************************************************/
@@ -613,9 +613,9 @@ void Nova_SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,ch
 snprintf(name,CF_BUFSIZE,"%s/cfagent.%s.log",CFWORKDIR,VSYSNAME.nodename);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -645,11 +645,11 @@ while (!feof(fin))
    PrependItem(&file,line,NULL);
    }
 
-cf_fclose(fin);
+fclose(fin);
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -711,7 +711,7 @@ if (XML)
    fprintf(fout,"</output>\n");
    }
 
-cf_fclose(fout);
+fclose(fout);
 DeleteItemList(file);
 }
 
@@ -731,9 +731,9 @@ void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *styleshe
   snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,CF_FILECHANGE);
   MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -763,11 +763,11 @@ while (!feof(fin))
    PrependItem(&file,line,NULL);
    }
 
-cf_fclose(fin);
+fclose(fin);
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -839,7 +839,7 @@ if (XML)
    fprintf(fout,"</output>\n");
    }
 
-cf_fclose(fout);
+fclose(fout);
 DeleteItemList(file);
 
 
@@ -850,9 +850,9 @@ file = NULL;
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,NOVA_DIFF_LOG);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -986,7 +986,7 @@ while (!feof(fin))
       }
    }
 
-cf_fclose(fin);
+fclose(fin);
 
 if (html)
    {
@@ -1005,9 +1005,9 @@ else
    snprintf(name,CF_BUFSIZE,"file_diffs.txt");
    }
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -1042,7 +1042,7 @@ if (XML)
    fprintf(fout,"</output>\n");
    }
 
-cf_fclose(fout);
+fclose(fout);
 DeleteItemList(file);
 }
 
@@ -1061,9 +1061,9 @@ void Nova_SummarizePromiseRepaired(int xml,int html,int csv,int embed,char *styl
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -1093,11 +1093,11 @@ while (!feof(fin))
    PrependItem(&file,line,NULL);
    }
 
-cf_fclose(fin);
+fclose(fin);
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -1167,7 +1167,7 @@ if (XML)
    fprintf(fout,"</output>\n");
    }
 
-cf_fclose(fout);
+fclose(fout);
 DeleteItemList(file);
 }
 
@@ -1187,9 +1187,9 @@ void Nova_SummarizePromiseNotKept(int xml,int html,int csv,int embed,char *style
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_NOTKEPT_LOG);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -1219,11 +1219,11 @@ while (!feof(fin))
    PrependItem(&file,line,NULL);
    }
 
-cf_fclose(fin);
+fclose(fin);
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -1294,7 +1294,7 @@ if (XML)
    fprintf(fout,"</output>\n");
    }
 
-cf_fclose(fout);
+fclose(fout);
 DeleteItemList(file);
 }
 
@@ -1321,9 +1321,9 @@ void Nova_ReportPatches(struct CfPackageManager *list)
 snprintf(name,CF_BUFSIZE,"%s/state/%s",CFWORKDIR,NOVA_PATCHES_INSTALLED);
 MapName(name);
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -1335,13 +1335,13 @@ for (mp = list; mp != NULL; mp = mp->next)
       }
    }
 
-cf_fclose(fout);
+fclose(fout);
 
 snprintf(name,CF_BUFSIZE,"%s/state/%s",CFWORKDIR,NOVA_PATCHES_AVAIL);
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -1354,7 +1354,7 @@ for (mp = list; mp != NULL; mp = mp->next)
       }
    }
 
-cf_fclose(fout);
+fclose(fout);
 }
 
 /*****************************************************************************/
@@ -1369,9 +1369,9 @@ void Nova_SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,
 snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_SOFTWARE_INSTALLED);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
    return;
    }
 
@@ -1400,11 +1400,11 @@ while (!feof(fin))
       }
    }
 
-cf_fclose(fin);
+fclose(fin);
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -1478,7 +1478,7 @@ if (XML)
    fprintf(fout,"</output>\n");
    }
 
-cf_fclose(fout);
+fclose(fout);
 DeleteItemList(file);
 }
 
@@ -1496,9 +1496,9 @@ CfOut(cf_verbose,"","Creating available patch report...\n");
 snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_PATCHES_AVAIL);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
    return;
    }
 
@@ -1527,11 +1527,11 @@ while (!feof(fin))
       }
    }
 
-cf_fclose(fin);
+fclose(fin);
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -1607,7 +1607,7 @@ if (XML)
    fprintf(fout,"</output>\n");
    }
 
-cf_fclose(fout);
+fclose(fout);
 DeleteItemList(file);
 file = NULL;
 
@@ -1618,9 +1618,9 @@ CfOut(cf_verbose,"","Creating patch status report...\n");
 snprintf(name,sizeof(name),"%s/state/%s",CFWORKDIR,NOVA_PATCHES_INSTALLED);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
    return;
    }
 
@@ -1650,11 +1650,11 @@ while (!feof(fin))
       }
    }
 
-cf_fclose(fin);
+fclose(fin);
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -1728,7 +1728,7 @@ if (XML)
    fprintf(fout,"</output>\n");
    }
 
-cf_fclose(fout);
+fclose(fout);
 DeleteItemList(file);
 }
 
@@ -1776,9 +1776,9 @@ void Nova_SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet
 snprintf(name,sizeof(name),"%s/state/vars.out",CFWORKDIR);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open variable notes %s (try again later)",name);
+   CfOut(cf_inform,"fopen","Cannot open variable notes %s (try again later)",name);
    return;
    }
 
@@ -1791,9 +1791,9 @@ else
    return;
    }
 
-if ((fout = cf_fopen(name,"w")) == NULL)
+if ((fout = fopen(name,"w")) == NULL)
    {
-   CfOut(cf_error,"cf_fopen","Cannot open the destination file %s",name);
+   CfOut(cf_error,"fopen","Cannot open the destination file %s",name);
    return;
    }
 
@@ -1810,14 +1810,14 @@ while (!feof(fin))
    fprintf(fout,"%s",line);
    }
 
-cf_fclose(fin);
+fclose(fin);
 
 if (html && !embed)
    {
    fprintf(fout,"</div>\n");
    }
 
-cf_fclose(fout);
+fclose(fout);
 }
 
 /*****************************************************************************/

@@ -280,9 +280,9 @@ CfOut(cf_verbose,""," -> Packing setuid data");
 snprintf(name,CF_BUFSIZE,"%s/cfagent.%s.log",CFWORKDIR,VSYSNAME.nodename);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -295,7 +295,7 @@ while (!feof(fin))
    PrependItem(&file,line,NULL);
    }
 
-cf_fclose(fin);
+fclose(fin);
 
 file = SortItemListNames(file);
 
@@ -341,9 +341,9 @@ CfOut(cf_verbose,""," -> Packing file change data");
 snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,CF_FILECHANGE);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -368,7 +368,7 @@ while (!feof(fin))
    PrependItem(&file,line,NULL);
    }
 
-cf_fclose(fin);
+fclose(fin);
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
@@ -418,9 +418,9 @@ CfOut(cf_verbose,""," -> Packing diff data");
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,NOVA_DIFF_LOG);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -491,7 +491,7 @@ while (!feof(fin))
       }
    }
 
-cf_fclose(fin);
+fclose(fin);
 
 for (i = 0,ip = file; ip != NULL; ip = ip->next)
    {
@@ -1086,9 +1086,9 @@ CfOut(cf_verbose,""," -> Packing software data");
 snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_SOFTWARE_INSTALLED);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
    return;
    }
 
@@ -1104,7 +1104,7 @@ while (!feof(fin))
       }
    }
 
-cf_fclose(fin);
+fclose(fin);
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
@@ -1149,9 +1149,9 @@ CfOut(cf_verbose,""," -> Packing available patch report...\n");
 snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_PATCHES_AVAIL);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
    return;
    }
 
@@ -1167,7 +1167,7 @@ while (!feof(fin))
       }
    }
 
-cf_fclose(fin);
+fclose(fin);
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
@@ -1212,9 +1212,9 @@ CfOut(cf_verbose,""," -> Packing patch installed data");
 snprintf(name,sizeof(name),"%s/state/%s",CFWORKDIR,NOVA_PATCHES_INSTALLED);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s - you need to run a package discovery promise to create it in cf-agent",name);
    return;
    }
 
@@ -1231,7 +1231,7 @@ while (!feof(fin))
       }
    }
 
-cf_fclose(fin);
+fclose(fin);
 
 
 for (ip = file; ip != NULL; ip = ip->next)
@@ -1578,9 +1578,9 @@ CfOut(cf_verbose,""," -> Packing total compliance data");
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_PROMISE_LOG);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -1618,7 +1618,7 @@ while (!feof(fin))
       }
    }
 
-cf_fclose(fin);
+fclose(fin);
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
@@ -1733,9 +1733,9 @@ CfOut(cf_verbose,""," -> Packing repair data");
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -1761,7 +1761,7 @@ while (!feof(fin))
    PrependItem(&file,line,NULL);
    }
 
-cf_fclose(fin);
+fclose(fin);
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
@@ -1798,9 +1798,9 @@ CfOut(cf_verbose,""," -> Packing promise not-kept data");
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_NOTKEPT_LOG);
 MapName(name);
 
-if ((fin = cf_fopen(name,"r")) == NULL)
+if ((fin = fopen(name,"r")) == NULL)
    {
-   CfOut(cf_inform,"cf_fopen","Cannot open the source log %s",name);
+   CfOut(cf_inform,"fopen","Cannot open the source log %s",name);
    return;
    }
 
@@ -1826,7 +1826,7 @@ while (!feof(fin))
    PrependItem(&file,line,NULL);
    }
 
-cf_fclose(fin);
+fclose(fin);
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
