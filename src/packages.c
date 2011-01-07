@@ -73,13 +73,13 @@ int Nova_ExecPackageCommandRpath(char *command,int verify,int setCmdClasses,stru
   char line[CF_MAXVARSIZE];
 
 
-  if(strcmp(command,"/cf_internal_rpath_add") == 0)
+  if(BEGINSWITH(command,"/cf_internal_rpath_add"))
     {
-    packName = command + 23;
+    packName = command + 23;  // pack name comes after command
     snprintf(line,sizeof(line),"install %s",packName);
     result = AppendIfNoSuchLine(RPATH_FILE,line);
     }
-  else if(strcmp(command,"/cf_internal_rpath_delete") == 0)
+  else if(BEGINSWITH(command,"/cf_internal_rpath_delete"))
     {
     
     result = true;
