@@ -673,12 +673,12 @@ while (CfFetchRow(&cfdb))
       {
       if (empty)
          {
-         snprintf(query,CF_BUFSIZE,"<li>Also mentioned in contexts of: ");
+	 snprintf(query,sizeof(query),"<li>Also mentioned in contexts of: ");
          Join(buffer,query,bufsize);
          empty = false;
          }
       
-      snprintf(query,CF_BUFSIZE,"<a href=\"knowledge.php?pid=%d\">%s</a> ",Str2Int(CfFetchColumn(&cfdb,1)),CfFetchColumn(&cfdb,0));
+      snprintf(query,sizeof(query),"<a href=\"knowledge.php?pid=%d\">%s</a> ",Str2Int(CfFetchColumn(&cfdb,1)),CfFetchColumn(&cfdb,0));
       Join(buffer,query,bufsize);
       }
    }

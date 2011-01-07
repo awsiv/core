@@ -78,8 +78,9 @@ int Nova_ExecPackageCommandRpath(char *command,int verify,int setCmdClasses,stru
     }
   else if(BEGINSWITH(command,"/cf_internal_rpath_delete"))
     {
-    
-    result = true;
+    packName = command + 26;  // pack name comes after command
+    snprintf(line,sizeof(line),"install %s",packName);
+    result = DeleteLine(RPATH_FILE,line);
     }
   else
     {
