@@ -82,6 +82,7 @@ margin-left:10px;
 -webkit-border-top-left-radius: 8px;
 
 }
+
 .clearleft
 {
 clear:left;
@@ -104,7 +105,7 @@ margin-top:10px;
 #status
 {
 color:#e1e1e3;
-padding:13px 0 10px 0px;
+padding:5px 0 1px 0px;
 }
 
 #tabpane
@@ -955,24 +956,6 @@ font-size: 120%;
 #url a
 {
 color: #c00;
-}
-
-#quote
-{ 
-font-style: italic;
-font-weight: normal;
-color: green;
-}
-
-#occurrences li
-{  
-font-size: 90%;
-//font-weight: bold;
-}
-
-#associations li
-{  
-font-size: 90%;
 }
 
 #category
