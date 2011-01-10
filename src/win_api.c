@@ -250,8 +250,8 @@ int NovaWin_uname(struct utsname *buf)
  * --------------
  * sysname: WINDOWS_NT-5.1.2600 Workstation
  * nodename: ecs-laptop
- * release: Service Pack 3.0
- * version: Windows XP
+ * release: Windows XP
+ * version: Service Pack 3.0
  * machine: i686
  */
 {
@@ -301,11 +301,11 @@ int NovaWin_uname(struct utsname *buf)
  WINVER_BUILD = osInfo.dwBuildNumber;
 
 
- // release - set to service pack number
+ // version - set to service pack number
 
- snprintf(buf->release, _SYS_NMLN, "Service Pack %d.%d", osInfo.wServicePackMajor, osInfo.wServicePackMinor);
+ snprintf(buf->version, _SYS_NMLN, "Service Pack %d.%d", osInfo.wServicePackMajor, osInfo.wServicePackMinor);
 
- // version - set to human friendly string representing OS version
+ // release - set to human friendly string representing OS release
  // TODO: Update on new OS releases
  switch(osInfo.dwMajorVersion)  // the joy of 10 products for every release...
     {                            // see http://msdn.microsoft.com/en-us/library/ms724833(VS.85).aspx
@@ -317,11 +317,11 @@ int NovaWin_uname(struct utsname *buf)
 
                if(osInfo.wProductType == VER_NT_WORKSTATION)
                   {
-                  snprintf(buf->version, _SYS_NMLN, "Windows 7");
+                  snprintf(buf->release, _SYS_NMLN, "Windows 7");
                   }
                else
                   {
-                  snprintf(buf->version, _SYS_NMLN, "Windows Server 2008 R2");
+                  snprintf(buf->release, _SYS_NMLN, "Windows Server 2008 R2");
                   }
 
                break;
@@ -330,17 +330,17 @@ int NovaWin_uname(struct utsname *buf)
 
                if(osInfo.wProductType == VER_NT_WORKSTATION)
                   {
-                  snprintf(buf->version, _SYS_NMLN, "Windows Vista");
+                  snprintf(buf->release, _SYS_NMLN, "Windows Vista");
                   }
                else
                   {
-                  snprintf(buf->version, _SYS_NMLN, "Windows Server 2008");
+                  snprintf(buf->release, _SYS_NMLN, "Windows Server 2008");
                   }
 	  
                break;
 
            default:
-               snprintf(buf->version, _SYS_NMLN, "unknown-osrelease");
+               snprintf(buf->release, _SYS_NMLN, "unknown-osrelease");
                break;
            }
 
@@ -356,26 +356,26 @@ int NovaWin_uname(struct utsname *buf)
                   {
                   if(sysInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
                      {
-                     snprintf(buf->version, _SYS_NMLN, "Windows XP Professional x64 Edition");
+                     snprintf(buf->release, _SYS_NMLN, "Windows XP Professional x64 Edition");
                      }
                   else
                      {
-                     snprintf(buf->version, _SYS_NMLN, "unknown-osrelease");
+                     snprintf(buf->release, _SYS_NMLN, "unknown-osrelease");
                      }
                   }
                else  // server
                   {
                   if(GetSystemMetrics(SM_SERVERR2) != 0)
                      {
-                     snprintf(buf->version, _SYS_NMLN, "Windows Server 2003 R2");
+                     snprintf(buf->release, _SYS_NMLN, "Windows Server 2003 R2");
                      }
                   else if(osInfo.wSuiteMask == VER_SUITE_WH_SERVER)
                      {
-                     snprintf(buf->version, _SYS_NMLN, "Windows Home Server");
+                     snprintf(buf->release, _SYS_NMLN, "Windows Home Server");
                      }
                   else
                      {
-                     snprintf(buf->version, _SYS_NMLN, "Windows Server 2003");
+                     snprintf(buf->release, _SYS_NMLN, "Windows Server 2003");
                      }
                   }
 
@@ -383,25 +383,25 @@ int NovaWin_uname(struct utsname *buf)
 
            case 1:
 
-               snprintf(buf->version, _SYS_NMLN, "Windows XP");
+               snprintf(buf->release, _SYS_NMLN, "Windows XP");
 
                break;
 
            case 0:
 	  
-               snprintf(buf->version, _SYS_NMLN, "Windows 2000");
+               snprintf(buf->release, _SYS_NMLN, "Windows 2000");
 	  
                break;
 
            default:
-               snprintf(buf->version, _SYS_NMLN, "unknown-osrelease");
+               snprintf(buf->release, _SYS_NMLN, "unknown-osrelease");
                break;
            }
 
         break;
 
     default:
-        snprintf(buf->version, _SYS_NMLN, "unknown-osrelease");
+        snprintf(buf->release, _SYS_NMLN, "unknown-osrelease");
         break;
     }
   
