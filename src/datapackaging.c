@@ -1377,7 +1377,8 @@ while (!feof(fin))
             fgets(line,CF_BUFSIZE-1,fin);
             
             if (strncmp(line,"Scope",strlen("Scope")) == 0)
-               {
+	       {
+	       break;
                }
             }
 
