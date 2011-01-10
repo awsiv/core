@@ -7,8 +7,8 @@
              </ul>
              <span id="status" class="grid_2 alignright">
              <?php //$text=isset($nav_text)?$nav_text:""; echo $text?>	
-			 Loggedin : <?php echo $this->session->userdata('username');?>
-             <a href="<?php echo site_url('auth/logout'); ?>" title="logout"><img src="<?php echo get_imagedir();?>logout.png" class="align"/></a>		 
+			 Logged in : <?php echo $this->session->userdata('username');?>
+             <a href="<?php echo site_url('auth/logout'); ?>" title="logout"><img src="<?php echo get_imagedir();?>logout.png" class="align" alt="logout"/></a>
              </span>
              <div class="clearleft"></div>
  </div>
