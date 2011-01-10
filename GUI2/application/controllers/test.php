@@ -36,9 +36,9 @@ class Test extends Controller
 	 {
 	   $this->load->database();
 	   //$dbhandle = mysql_connect("localhost", "root", "") 
-       // or die("Unable to connect to MySQL");
-       echo "Connected to MySQL<br>";
-	   
+           // or die("Unable to connect to MySQL");
+           echo "Connected to MySQL<br>";
+
 	 }
-	
+
 }
