@@ -85,13 +85,13 @@ $(document).ready(function() {
 	   $("#tabs").css('height', tab_height-15 );
 	   $(".ui-tabs-panel").css('height', tab_height-50 );
 	   
-	   $('<img src="images/ajax-loader.gif" id="spinner" />').css('position','absolute').hide().appendTo('body');
+	   $('<img src="../images/ajax-loader.gif" id="spinner" />').css('position','absolute').hide().appendTo('body');
 	   
 	   
 	   
 	   //load policies from database into left hand side panel on list with id Policies_list
-	var path = "policy/get_list.php";
-	$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){	
+	var path = "cfeditor/get_list";
+	$("#container_policies_id").load(path,{dir: 'policies'}, function(data){	
 	});
 	
 	$('ul#policies_list_new li a').live('click',function(){
@@ -117,8 +117,8 @@ $(document).ready(function() {
     	 addTab('new');
     	 var editor = CodeMirror.fromTextArea('code'+code_editor_counter, {
     		    parserfile: ["cfsyntax.js", "parsecf.js"],
-    		    stylesheet: "css/cfcolors.css",
-    		    path: "scripts/Cfeditor/",
+    		    stylesheet: "../css/cfcolors.css",
+    		    path: "../scripts/Cfeditor/",
     		    lineNumbers: true,
     		    styleNumbers: styleLineNum,
     		    initCallback: function(e){initComplete(e); initResize(e); initChangeTracker(e);},
@@ -134,11 +134,11 @@ $(document).ready(function() {
 	 {
 		 $.ajax({
 	           type: "POST",
-	           url: "policy/get_file_contents.php",
+	           url: "cfeditor/get_contents",
 	           data:({'file_path':file}),
 	           dataType:'json',
 	           success: function(data){
-	        	   tab_title_input=data.filename;
+	        	  tab_title_input=data.filename;
 	        	   //cur_file_path=data.information.server_path;
 		           tab_content_input='<input type="hidden" name="tabtype" value="codeEditor" /><input type="hidden" name="link" value="'+link_id+'" />'+
 		                             '<textarea id="code'+code_editor_counter+'" cols="120" rows="30">'+data.content+'</textarea>';
@@ -146,8 +146,8 @@ $(document).ready(function() {
 		       	    addTab('existing');//adding the new tab
 			       	 var editor = CodeMirror.fromTextArea('code'+code_editor_counter, {
 			       		    parserfile: ["cfsyntax.js", "parsecf.js"],
-			       		    stylesheet: "css/cfcolors.css", // you may have to adjust the path
-			       		    path: "scripts/Cfeditor/",
+			       		    stylesheet: "../css/cfcolors.css", // you may have to adjust the path
+			       		    path: "../scripts/Cfeditor/",
 			       		    lineNumbers: true,
 			       		    styleNumbers: styleLineNum,
 			       		    initCallback: function(e){initComplete(e); initResize(e); initChangeTracker(e);},
@@ -199,7 +199,7 @@ $(document).ready(function() {
 		 {
 			 $.ajax({
 			        type: "POST",
-			        url: "policy/compare_file_contents.php",
+			        url: "cfeditor/compare_contents",
 			        data:({'file':tab_title,'newcontents':newcontents,'agent':agent}),
 			        dataType:'json',
 			        global: false,
@@ -249,7 +249,7 @@ $(document).ready(function() {
 		var agent=jQuery.uaMatch(navigator.userAgent).browser;
 		 $.ajax({
            type: "POST",
-           url: "policy/save_file_contents.php",
+           url: "cfeditor/save_contents",
            data:({'file':$('#tab_title').val(), 'content':$('#tab_content').html(), 'filestats':'new', 'agent':agent}),
            dataType:'json',
            success: function(data){
@@ -334,7 +334,7 @@ $(document).ready(function() {
 		 {
 		 $.ajax({
 	           type: "POST",
-	           url: "policy/save_file_contents.php",
+	           url: "cfeditor/save_contents",
 	           data:({'file':current_tab_title, 'content':newcontents,'filestats':'old', 'agent':agent}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
 	           success: function(data){
@@ -387,7 +387,7 @@ $(document).ready(function() {
 		 'OK': function() {
 			 $.ajax({
 					   type: "POST",
-					   url: "policy/empty_directory.php",
+					   url: "cfeditor/clear_dir",
 					   success: function(data){
 						    $("#operation").val('checkout');
 							$("#commentlbl").hide();
@@ -430,6 +430,7 @@ $(document).ready(function() {
 	 }
 	 });
 	 
+	//save file dialogue to be displayed when user clicks the cross icon on the tab.
     var $sfd = $('#sfdialog').dialog({
 		 autoOpen: false,
 		 modal: true,
@@ -445,7 +446,7 @@ $(document).ready(function() {
 		    $.ajax({
 	           type: "POST",
 	           async:false,
-	           url: "policy/save_file_contents.php",
+	           url: "cfeditor/save_contents",
 	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(), 'filestats':'old', 'agent':agent}),
 	           
 	           success: function(data){
@@ -471,7 +472,7 @@ $(document).ready(function() {
 		 $.ajax({
 	           type: "POST",
 	           async:false,
-	           url: "policy/save_file_contents.php",
+	           url: "cfeditor/save_contents",
 	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(),'filestats':'old', 'agent':agent}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
 	           success: function(data){
@@ -511,10 +512,10 @@ $(document).ready(function() {
 			 }
 			 else
 			 {
-				  $.ajax({
+			   $.ajax({
 	           type: "POST",
 	           async:false,
-	           url: "policy/get_list.php?op=ischeckedout",
+	           url: "cfeditor/is_checked_out",
 	           success: function(data){
 				   if(data=='1')
 				     {
@@ -587,7 +588,7 @@ $(document).ready(function() {
 			$.ajax({
 			type: "POST",
 			async:false,
-			url: "policy/checksyntax.php",
+			url: "cfeditor/check_syntax",
 			dataType:'json',
 			success: function(data){
 				if(data.result=="SUCCESS")
@@ -627,13 +628,13 @@ $(document).ready(function() {
 		 'Ok': function() {
                         var keys;
 			var passwd;
-			$.jCryption.getKeys("policy/encrypt.php?generateKeypair=true",function(receivedKeys) {
+			$.jCryption.getKeys("cfeditor/get_keys",function(receivedKeys) {
 				keys = receivedKeys;
 				$.jCryption.encrypt($("#password").val(),keys,function(encrypted) {
 					passwd=encrypted;
                         $.ajax({
 						type: 'POST',
-						url: "policy/svnmodule.php",
+						url: "cfeditor/"+$("#operation").val(),
 						data: {'passwd':passwd, 'op':$("#operation").val(),'file':$('#cmtfile').val(),'comments':$("#comments").val(),'user':$("#username").val(),'repo':$("#repo").val()},
                         dataType:$("#datatype").val(),
 						success: function(data) {
@@ -641,8 +642,8 @@ $(document).ready(function() {
 							  {
 								  if(data.status)
 								  {
-								   var path = "policy/get_list.php";
-									$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){	
+								   var path = "cfeditor/get_list";
+									$("#container_policies_id").load(path,{dir: 'policies'}, function(data){	
 									});
 								  //$('#Checkout').hide();
 					$('<div id="repoText"><span>Subversion repository path</span></div>').css({position: 'absolute' , width:'100%'}).hide().appendTo('body');
@@ -674,7 +675,7 @@ $(document).ready(function() {
 							  }
 						else if($("#operation").val()=='update')
 							{
-								var path = "policy/get_list.php";
+								var path = "cfeditor/get_list";
 							    $("#container_policies_id").load(path,{dir: 'policies/'}, function(data){});
 								 $confirmation.dialog({title: $('#operation').val(), width:default_dialog_width});
 								 $confirmation.html('<span>Sucessfully updated. </span>'); 
