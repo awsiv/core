@@ -408,8 +408,8 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 /*
  * commenting
  */
-void CFDB_AddComment(mongo_connection *conn, char *keyhash,char *subkey, char *handle, struct Item *data);
-
+void CFDB_AddComment(mongo_connection *conn, char *keyhash, int cid, struct Item *data);
+struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, struct Item *data);
 #endif  /* HAVE_LIBMONGOC */
 
 /* db_maintain.c */
@@ -1001,8 +1001,8 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize);
 /*
  * commenting
  */
-int Nova2PHP_add_comment(char *keyhash, char *subkey, char *handle, char *username, char *comment, time_t datetime);
-int Nova2PHP_get_comment(char *keyhash, char *subkey, char *handle, char *username, char *comment, time_t datetime, char *returnval, int bufsize);
+int Nova2PHP_add_comment(char *keyhash, int cid, char *username, char *comment, time_t datetime);
+int Nova2PHP_get_comment(char *keyhash, int cid, char *username, time_t from, time_t to, char *returnval, int bufsize);
 
 void Nova2PHP_cdp_reportnames(char *buf,int bufSz);
 int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz);
@@ -1347,8 +1347,7 @@ struct cf_pscalar
 #define cfm_data          "dt"
 
 /*commenting*/
-#define cfc_subkey "sK"
-#define cfc_handle "hL"
+#define cfc_cid "cid"
 #define cfc_comment "cmt"
 #define cfc_username "uN"
 #define cfc_datetime "dT"
@@ -1542,21 +1541,25 @@ struct HubBodyAttr
   struct HubBodyAttr *next;
   };
 
+
 /*
  * Commenting on reports
- 
+ */ 
 struct HubComment
 {
   char *user;
   char *msg;
   time_t t;
+  struct HubComment *next;
 };
 
 struct HubCommentInfo
 {
   struct HubHost *hh;
-  char *subkey;
-  char *handle;
+  int cid;
+  char *user;
+  char *msg;
+  time_t t;
   struct HubComment *comment;
 };
-*/
+

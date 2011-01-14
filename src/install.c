@@ -1,4 +1,3 @@
-
 /*
 
  This file is (C) Cfengine AS. See COSL LICENSE for details.
@@ -752,6 +751,62 @@ void DeleteHubBodyAttributes(struct HubBodyAttr *ha)
   free(ha->rval);
   free(ha->classContext);
   free(ha);
+}
+
+/*commenting*/
+/*****************************************************************************/
+struct HubComment *NewHubComment(char *user,char *msg,time_t t)
+
+{ struct HubComment *hc;
+
+  if ((hc = malloc(sizeof(struct HubComment))) == NULL)
+    {
+      FatalError("Memory exhausted HubComment");
+    }
+
+  hc->user = strdup(user);
+  hc->msg = strdup(msg);
+  hc->t = t;
+  hc->next=NULL;
+  return hc;
+}
+
+/*****************************************************************************/
+
+void DeleteHubComment(struct HubComment *hc)
+{
+  free(hc->user);
+  free(hc->msg);
+  free(hc);
+}
+
+/*****************************************************************************/
+struct HubCommentInfo *NewHubCommentInfo(struct HubHost *hh,int cid,char *user,char *msg,time_t t)
+
+{ struct HubCommentInfo *hci;
+
+  if ((hci = malloc(sizeof(struct HubCommentInfo))) == NULL)
+    {
+      FatalError("Memory exhausted HubCommentInfo");
+    }
+
+  hci->hh = hh;
+  hci->cid = cid;
+  hci->comment = NewHubComment(user,msg,t);
+  return hci;
+}
+
+/*****************************************************************************/
+
+void DeleteHubCommentInfo(struct HubCommentInfo *hci)
+{
+  struct HubComment *hc;
+  for (hc = hci->comment; hc != NULL; hc=hc->next)
+    {
+     DeleteHubComment(hc);
+    }
+
+  free(hci);
 }
 
 /*****************************************************************************/

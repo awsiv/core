@@ -1266,7 +1266,7 @@ bson_destroy(&host_key);
  */
 /*****************************************************************************/
 
-void CFDB_AddComment(mongo_connection *conn, char *keyhash, char *subkey, char *handle,struct Item *data)
+void CFDB_AddComment(mongo_connection *conn, char *keyhash, int cid, struct Item *data)
 {
   bson_buffer bb,record;
   bson host_key;
@@ -1283,25 +1283,22 @@ void CFDB_AddComment(mongo_connection *conn, char *keyhash, char *subkey, char *
    int options = MONGO_INDEX_UNIQUE |  MONGO_INDEX_DROP_DUPS;
    char *collection = "cfreport.comments";
    int count=0;
-
+   
    // Add index, TODO: must do this while creating the database
    bson_buffer_init( &buf_key );
    bson_append_int( &buf_key, cfr_keyhash, 1 );
-   bson_append_int(&buf_key,cfc_subkey,1); 
-   bson_append_int(&buf_key,cfc_handle,1); 
+   bson_append_int(&buf_key,cfc_cid,1); 
    bson_from_buffer( &b_key, &buf_key );
    mongo_create_index(conn, collection, &b_key, options, NULL);
    MongoCheckForError(conn,"CreateIndex",keyhash);
    bson_destroy(&b_key);
-
+   
    // find right host
    bson_buffer_init(&bb);
    bson_append_string(&bb,cfr_keyhash,keyhash);
-   bson_append_string(&bb,cfc_subkey,subkey);
-   bson_append_string(&bb,cfc_handle,handle);
+   bson_append_int(&bb,cfc_cid,cid);
    bson_from_buffer(&host_key, &bb);
-   bson_print(&host_key);
-
+   
    bson_buffer_init(&bb);
    setObj = bson_append_start_object(&bb, "$addToSet");
    sscanf(data->name,"%255[^,],%255[^,],%ld\n",username,msg,&datetime);
@@ -1310,14 +1307,14 @@ void CFDB_AddComment(mongo_connection *conn, char *keyhash, char *subkey, char *
    bson_append_string(sub,cfc_message,msg);
    bson_append_int(sub,cfc_datetime,datetime);
    bson_append_finish_object(sub);
-
+   
    bson_append_finish_object(setObj);
    bson_from_buffer(&setOp,&bb);
-   bson_print(&setOp);
+   
    mongo_update(conn, collection, &host_key, &setOp, MONGO_UPDATE_UPSERT);
    bson_destroy(&host_key);
    bson_destroy(&setOp);
- MongoCheckForError(conn,"AddComments",keyhash);
+   MongoCheckForError(conn,"AddComments",keyhash);
 }
 
 #endif  /* HAVE_MONGOC */

@@ -1,4 +1,3 @@
-
 /*
 
  This file is (C) Cfengine AS. See COSL LICENSE for details.
@@ -1681,7 +1680,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
    {
    record_list = SortRlist(record_list,SortPerformance);
    }
-
 
 mongo_cursor_destroy(cursor);
 return NewHubQuery(host_list,record_list);
@@ -5134,6 +5132,155 @@ if(mongo_cmd_get_last_error(conn, MONGO_BASE, &b))
  bson_destroy(&b);
 
 }
+/*****************************************************************************/
+
+struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid,  struct Item *data)
+
+{ bson_buffer bb;
+  bson b,query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct HubCommentInfo *hci = NULL;
+  struct HubComment *hc = NULL, *tail=NULL;
+  struct Rlist *ret = NULL, *commentlist=NULL;
+
+  char kh[CF_SMALLBUF];
+  char username[CF_SMALLBUF] = {0}, comment[CF_BUFSIZE];
+  int datetime, found = false;
+  int emptyQuery = true, firstComment=false;
+  time_t from, to;
+
+  sscanf(data->name,"%255[^,],%ld,%ld\n",username,&from,&to);
+  bson_buffer_init(&bb);
+
+  if (!EMPTY(keyhash))
+    {
+      bson_append_string(&bb,cfr_keyhash,keyhash);
+      emptyQuery = false;
+    }
+
+  if (cid>0)
+    {
+      bson_append_int(&bb,cfc_cid,cid);
+      emptyQuery = false;
+    }
+  
+  if (!EMPTY(username))
+    {
+      bson_append_string(&bb,"cmt.uN",username);
+      emptyQuery = false;
+    }
+  
+  if(emptyQuery)
+    {
+      bson_empty(&query);
+    }
+  else
+    {
+      bson_from_buffer(&query,&bb);
+    }
+
+  bson_buffer_init(&bb);
+  bson_append_int(&bb,cfr_keyhash,1);
+  bson_append_int(&bb,cfc_cid,1);
+  bson_append_int(&bb,cfc_comment,1);
+  //bson_append_int(&bb,"cmt.uN",1);
+  //bson_append_int(&bb,"cmt.dT",1);
+  //bson_append_int(&bb,"cmt.cM",1);
+  bson_from_buffer(&field, &bb);
+
+  cursor = mongo_find(conn,"cfreport.comments",&query,&field,0,0,0);
+
+  bson_destroy(&field);
+  if(!emptyQuery)
+    {
+      bson_destroy(&query);
+    }
+
+  while (mongo_cursor_next(cursor))  // loops over documents
+    { 
+      bson_iterator_init(&it1,cursor->current.data);
+      kh[0] = '\0';
+      username[0] = '\0';
+      comment[0] = '\0';
+
+      while (bson_iterator_next(&it1))
+        {
+          switch(bson_iterator_type(&it1))
+            {
+            case bson_string:
+              if (strcmp(bson_iterator_key(&it1),cfr_keyhash) == 0)
+                {
+                  strncpy(kh, bson_iterator_string(&it1),CF_SMALLBUF - 1);
+                }
+	      break;
+	      case bson_int:
+		if (strcmp(bson_iterator_key(&it1),cfc_cid) == 0)
+                {
+		  cid = bson_iterator_int(&it1);
+                }
+		break;
+            case bson_object:
+            case bson_array:
+              bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+	      while (bson_iterator_next(&it2))
+		{
+		  bson_iterator_init(&it3, bson_iterator_value(&it2));
+		  while (bson_iterator_next(&it3))
+		    {
+		      if (strcmp(bson_iterator_key(&it3),cfc_username) == 0)
+			{
+			  strncpy(username, bson_iterator_string(&it3), CF_SMALLBUF - 1);
+			}
+		      else if (strcmp(bson_iterator_key(&it3),cfc_message) == 0)
+			{
+			  strncpy(comment, bson_iterator_string(&it3), CF_BUFSIZE - 1);
+			}
+		      else if (strcmp(bson_iterator_key(&it3),cfc_datetime) == 0)
+			{
+			  datetime = bson_iterator_int(&it3);
+			}
+		      else
+			{
+			  CfOut(cf_inform,"", " !! Unknown key \"%s\" in last seen",bson_iterator_key(&it3));
+			}
+		    }
+		  if (hci == NULL)
+		    {
+		      hci = NewHubCommentInfo(CF_THIS_HH,cid,username,comment,datetime);
+		      firstComment = true;
+		    }
+		  else 
+		    {
+		      hc = NewHubComment(username,comment,datetime);
+		      if(firstComment)
+		      {
+			hci->comment->next = hc;
+			firstComment=false;
+		      }
+		      else
+			{
+			  tail->next=hc;
+			}
+		      tail=hc;		      
+		    }
+		}
+	      AppendRlistAlien(&ret,hci);
+      	      hci = NULL;
+	      tail = NULL;
+	      hc=NULL;
+              break;
+            default:
+              break;
+            }
+        }
+    }
+  mongo_cursor_destroy(cursor);
+  return ret;
+}
+
+/*****************************************************************************/
 
 
 #endif  /* HAVE LIB_MONGOC */
