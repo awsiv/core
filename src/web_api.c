@@ -4351,10 +4351,16 @@ int Nova2PHP_get_comment(char *keyhash, int cid, char *username, time_t from, ti
   struct HubComment *hc;
   struct Rlist *result, *rp;
 
+  char fuser[CF_SMALLBUF] = {0};
+
   Chop(keyhash);
   Chop(username);
 
-  snprintf(msg, CF_MAXVARSIZE, "%s,%ld,%ld\n",username, from, to);
+  if(username)
+    {
+      snprintf(fuser, CF_SMALLBUF,"%s", username);
+    }
+  snprintf(msg, CF_BUFSIZE, "%s,%ld,%ld\n",fuser, from, to);
   AppendItem(&data, msg, NULL);
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {

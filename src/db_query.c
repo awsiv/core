@@ -1,3 +1,4 @@
+
 /*
 
  This file is (C) Cfengine AS. See COSL LICENSE for details.
@@ -28,7 +29,7 @@
 void CFDB_GetValue(char *lval,char *rval,int size)
 
 { bson_buffer bb;
-  bson b,field,query;
+  bson field,query;
   bson_iterator it1;
   mongo_cursor *cursor;
   mongo_connection conn;
@@ -5142,17 +5143,18 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
   bson_iterator it1,it2,it3;
   struct HubCommentInfo *hci = NULL;
   struct HubComment *hc = NULL, *tail=NULL;
-  struct Rlist *ret = NULL, *commentlist=NULL;
+  struct Rlist *ret = NULL;
 
-  char kh[CF_SMALLBUF];
-  char username[CF_SMALLBUF] = {0}, comment[CF_BUFSIZE];
-  int datetime, found = false;
-  int emptyQuery = true, firstComment=false;
-  time_t from, to;
+  char kh[CF_SMALLBUF] = {0}, username[CF_SMALLBUF] = {0}, comment[CF_BUFSIZE] = {0};
+  char  fusername[CF_SMALLBUF] = {0};
+  time_t datetime = -1,from = -1,to = -1;
 
-  sscanf(data->name,"%255[^,],%ld,%ld\n",username,&from,&to);
+  int emptyQuery = true, firstComment=false, specificQuery = false /* for search other than keyhash and cid */;
+
+  sscanf(data->name,"%255[^','],%ld,%ld\n",fusername,&from,&to);
+
+  Chop(fusername);
   bson_buffer_init(&bb);
-
   if (!EMPTY(keyhash))
     {
       bson_append_string(&bb,cfr_keyhash,keyhash);
@@ -5165,12 +5167,18 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
       emptyQuery = false;
     }
   
-  if (!EMPTY(username))
+  if (!EMPTY(fusername))
     {
-      bson_append_string(&bb,"cmt.uN",username);
+      bson_append_string(&bb,"cmt.uN",fusername);
       emptyQuery = false;
+      specificQuery = true;
     }
-  
+
+  if(from >= 0 || to >= 0)
+    {
+      specificQuery = true;
+    }
+
   if(emptyQuery)
     {
       bson_empty(&query);
@@ -5239,13 +5247,27 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
 			}
 		      else if (strcmp(bson_iterator_key(&it3),cfc_datetime) == 0)
 			{
-			  datetime = bson_iterator_int(&it3);
+			  datetime = (time_t)bson_iterator_int(&it3);
+			  /* Define brackets for the start and end time eg. (from,to] => including to */
 			}
 		      else
 			{
 			  CfOut(cf_inform,"", " !! Unknown key \"%s\" in last seen",bson_iterator_key(&it3));
 			}
 		    }
+		  /* apply filter: username then datetime*/
+		  if(specificQuery)
+		    {
+		      if(strcmp(username, fusername) != 0) 
+			{
+			  continue;			  			  
+			}
+		      if (!(datetime <= to && datetime >= from) && from >= 0 && to >= 0)
+			{
+			  continue;
+			}
+		    }
+		  
 		  if (hci == NULL)
 		    {
 		      hci = NewHubCommentInfo(CF_THIS_HH,cid,username,comment,datetime);
@@ -5266,7 +5288,10 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
 		      tail=hc;		      
 		    }
 		}
-	      AppendRlistAlien(&ret,hci);
+	      if(hci)
+		{
+		  AppendRlistAlien(&ret,hci);
+		}
       	      hci = NULL;
 	      tail = NULL;
 	      hc=NULL;
