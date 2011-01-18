@@ -711,7 +711,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
          }   
       }
 
-
    if (found)
       {
       hh = NewHubHost(keyhash,addresses,hostnames);
@@ -757,7 +756,6 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
   time_t rt;
   int emptyQuery = true;
   char classRegexAnch[CF_MAXVARSIZE];
-
   
 /* BEGIN query document */
 
@@ -785,7 +783,6 @@ if (!EMPTY(keyHash))
    bson_from_buffer(&query,&bb);
    }
 
-  
 /* BEGIN RESULT DOCUMENT */
 
 bson_buffer_init(&bb);
@@ -957,7 +954,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
                          break;
                      }                  
                   }
-
                
                newlist = NULL;
                }
@@ -1003,7 +999,6 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHas
   int match_handle,match_status,found;
   int emptyQuery = true;
   char classRegexAnch[CF_MAXVARSIZE];
-
   
 /* BEGIN query document */
 
@@ -5143,17 +5138,22 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
   bson_iterator it1,it2,it3;
   struct HubCommentInfo *hci = NULL;
   struct HubComment *hc = NULL, *tail=NULL;
-  struct Rlist *ret = NULL;
+  struct HubHost *hh;
+  struct Rlist *ret = NULL, *host_list = NULL;
 
-  char kh[CF_SMALLBUF] = {0}, username[CF_SMALLBUF] = {0}, comment[CF_BUFSIZE] = {0};
+  char kh[CF_MAXVARSIZE] = {0}, username[CF_MAXVARSIZE] = {0}, comment[CF_BUFSIZE] = {0}, rptData[CF_BUFSIZE] = {0};
   char  fusername[CF_SMALLBUF] = {0};
   time_t datetime = -1,from = -1,to = -1;
 
   int emptyQuery = true, firstComment=false, specificQuery = false /* for search other than keyhash and cid */;
-
-  sscanf(data->name,"%255[^','],%ld,%ld\n",fusername,&from,&to);
-
-  Chop(fusername);
+  if(BEGINSWITH(data->name,","))
+    {
+      sscanf(data->name + 1,"%ld,%ld\n",&from,&to);
+    }
+  else
+    {
+      sscanf(data->name,"%255[^','],%ld,%ld\n",fusername,&from,&to);
+    }
   bson_buffer_init(&bb);
   if (!EMPTY(keyhash))
     {
@@ -5169,7 +5169,7 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
   
   if (!EMPTY(fusername))
     {
-      bson_append_string(&bb,"cmt.uN",fusername);
+      bson_append_string(&bb,"cM.u",fusername);
       emptyQuery = false;
       specificQuery = true;
     }
@@ -5191,13 +5191,14 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
   bson_buffer_init(&bb);
   bson_append_int(&bb,cfr_keyhash,1);
   bson_append_int(&bb,cfc_cid,1);
+  bson_append_int(&bb,cfc_reportdata,1);
   bson_append_int(&bb,cfc_comment,1);
   //bson_append_int(&bb,"cmt.uN",1);
   //bson_append_int(&bb,"cmt.dT",1);
   //bson_append_int(&bb,"cmt.cM",1);
   bson_from_buffer(&field, &bb);
 
-  cursor = mongo_find(conn,"cfreport.comments",&query,&field,0,0,0);
+  cursor = mongo_find(conn,MONGO_COMMENTS,&query,&field,0,0,0);
 
   bson_destroy(&field);
   if(!emptyQuery)
@@ -5219,8 +5220,12 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
             case bson_string:
               if (strcmp(bson_iterator_key(&it1),cfr_keyhash) == 0)
                 {
-                  strncpy(kh, bson_iterator_string(&it1),CF_SMALLBUF - 1);
+                  strncpy(kh, bson_iterator_string(&it1),CF_MAXVARSIZE - 1);   		 
                 }
+	      else if (strcmp(bson_iterator_key(&it1),cfc_reportdata) == 0)
+		{
+		  strncpy(rptData, bson_iterator_string(&it1),CF_BUFSIZE - 1);
+		}
 	      break;
 	      case bson_int:
 		if (strcmp(bson_iterator_key(&it1),cfc_cid) == 0)
@@ -5239,7 +5244,7 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
 		    {
 		      if (strcmp(bson_iterator_key(&it3),cfc_username) == 0)
 			{
-			  strncpy(username, bson_iterator_string(&it3), CF_SMALLBUF - 1);
+			  strncpy(username, bson_iterator_string(&it3), CF_MAXVARSIZE - 1);
 			}
 		      else if (strcmp(bson_iterator_key(&it3),cfc_message) == 0)
 			{
@@ -5258,7 +5263,7 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
 		  /* apply filter: username then datetime*/
 		  if(specificQuery)
 		    {
-		      if(strcmp(username, fusername) != 0) 
+		      if(strcmp(username, fusername) != 0 && !EMPTY(fusername)) 
 			{
 			  continue;			  			  
 			}
@@ -5269,8 +5274,11 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
 		    }
 		  
 		  if (hci == NULL)
-		    {
-		      hci = NewHubCommentInfo(CF_THIS_HH,cid,username,comment,datetime);
+		    {	
+		      hh = NewHubHost(keyhash,NULL,NULL);
+		      PrependRlistAlien(&host_list,hh);
+		      QueryInsertHostInfo(conn,host_list);
+		      hci = NewHubCommentInfo(hh,cid,username,comment,datetime);
 		      firstComment = true;
 		    }
 		  else 

@@ -1266,30 +1266,28 @@ bson_destroy(&host_key);
  */
 /*****************************************************************************/
 
-void CFDB_AddComment(mongo_connection *conn, char *keyhash, int cid, struct Item *data)
+void CFDB_AddComment(mongo_connection *conn, char *keyhash, int cid, char *reportData, struct Item *data)
 {
   bson_buffer bb,record;
   bson host_key;
   bson_buffer *setObj, *sub;
   bson setOp;
+  bson b_key;
+  bson_buffer buf_key;
    
-  char timekey[CF_SMALLBUF];
-  char username[CF_SMALLBUF];
+  char username[CF_MAXVARSIZE];
   char msg[CF_BUFSIZE];
   long datetime;
   
-   bson b_key;
-   bson_buffer buf_key;
-   int options = MONGO_INDEX_UNIQUE |  MONGO_INDEX_DROP_DUPS;
-   char *collection = "cfreport.comments";
-   int count=0;
+  int options = MONGO_INDEX_UNIQUE |  MONGO_INDEX_DROP_DUPS;
+  int count=0;
    
-   // Add index, TODO: must do this while creating the database
+  // Add index, TODO: must do this while creating the database
    bson_buffer_init( &buf_key );
    bson_append_int( &buf_key, cfr_keyhash, 1 );
    bson_append_int(&buf_key,cfc_cid,1); 
    bson_from_buffer( &b_key, &buf_key );
-   mongo_create_index(conn, collection, &b_key, options, NULL);
+   mongo_create_index(conn, MONGO_COMMENTS, &b_key, options, NULL);
    MongoCheckForError(conn,"CreateIndex",keyhash);
    bson_destroy(&b_key);
    
@@ -1297,6 +1295,10 @@ void CFDB_AddComment(mongo_connection *conn, char *keyhash, int cid, struct Item
    bson_buffer_init(&bb);
    bson_append_string(&bb,cfr_keyhash,keyhash);
    bson_append_int(&bb,cfc_cid,cid);
+   if(!EMPTY(reportData))
+     {
+       bson_append_string(&bb,cfc_reportdata,reportData);
+     }
    bson_from_buffer(&host_key, &bb);
    
    bson_buffer_init(&bb);
@@ -1311,7 +1313,7 @@ void CFDB_AddComment(mongo_connection *conn, char *keyhash, int cid, struct Item
    bson_append_finish_object(setObj);
    bson_from_buffer(&setOp,&bb);
    
-   mongo_update(conn, collection, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+   mongo_update(conn, MONGO_COMMENTS, &host_key, &setOp, MONGO_UPDATE_UPSERT);
    bson_destroy(&host_key);
    bson_destroy(&setOp);
    MongoCheckForError(conn,"AddComments",keyhash);

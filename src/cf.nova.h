@@ -47,6 +47,7 @@
 # define MONGO_SCRATCH MONGO_BASE ".scratch"
 # define MONGO_LOGS_REPAIRED MONGO_BASE ".logs_rep"
 # define MONGO_LOGS_NOTKEPT MONGO_BASE ".logs_nk"
+# define MONGO_COMMENTS MONGO_BASE ".comments"
 # include <mongo.h>
 #else
 # define mongo_connection char
@@ -408,7 +409,7 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 /*
  * commenting
  */
-void CFDB_AddComment(mongo_connection *conn, char *keyhash, int cid, struct Item *data);
+void CFDB_AddComment(mongo_connection *conn, char *keyhash, int cid, char *reportData, struct Item *data);
 struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, struct Item *data);
 #endif  /* HAVE_LIBMONGOC */
 
@@ -1001,7 +1002,7 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize);
 /*
  * commenting
  */
-int Nova2PHP_add_comment(char *keyhash, int cid, char *username, char *comment, time_t datetime);
+int Nova2PHP_add_comment(char *keyhash, int cid, char *reportData, char *username, char *comment, time_t datetime);
 int Nova2PHP_get_comment(char *keyhash, int cid, char *username, time_t from, time_t to, char *returnval, int bufsize);
 
 void Nova2PHP_cdp_reportnames(char *buf,int bufSz);
@@ -1348,10 +1349,11 @@ struct cf_pscalar
 
 /*commenting*/
 #define cfc_cid "cid"
-#define cfc_comment "cmt"
-#define cfc_username "uN"
-#define cfc_datetime "dT"
-#define cfc_message "cM" 
+#define cfc_reportdata "rD"
+#define cfc_comment "cM"
+#define cfc_username "u"
+#define cfc_datetime "d"
+#define cfc_message "m" 
 
 #define CFDB_GREATERTHANEQ 4
 #define CFDB_LESSTHANEQ 5
