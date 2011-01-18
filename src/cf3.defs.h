@@ -33,7 +33,7 @@
 #undef VERSION
 #undef Verbose
 
-#define CF3_REVISION "$Rev: 1681 $"
+#define CF3_REVISION "$Rev: 1691 $"
 
 #include "conf.h"
 
@@ -976,7 +976,8 @@ enum cf_thread_mutex
   cft_policy,       // protects structs for refreshing policy files
   cft_db_lastseen,  // lastseen dbs (in cf-serverd)
   cft_no_tpolicy,
-  cft_report
+  cft_report,
+  cft_vscope        // protects VSCOPE
   };
 
 enum cf_status
