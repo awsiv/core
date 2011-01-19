@@ -85,16 +85,13 @@ int Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables
 
 if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    {
-   CfOut(cf_verbose,"","!! Could not open connection to report database");
+   CfOut(cf_error,"","!! Could not open connection to report database to read mag time series");
    return false;
    }
 
 CFDB_QueryMagView(&dbconn,hostkey,obs,time(NULL) - 4*3600,q,e,d);
 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"","!! Could not close connection to report database");
-   } 
+CFDB_Close(&dbconn);
 
 cfv->max = 0;
 cfv->min = 99999;

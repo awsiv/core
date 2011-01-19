@@ -287,7 +287,7 @@ void Nova_CacheTotalCompliance()
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   CfOut(cf_error,"", "!! Could not open connection to report database to cache total compliance");
    return;
    }
 
@@ -365,7 +365,7 @@ void Nova_CountMonitoredClasses()
  
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   CfOut(cf_error,"", "!! Could not open connection to report database to count monitored classes");
    return;
    }
 

@@ -321,7 +321,7 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 #ifdef HAVE_LIBMONGOC
 
-void CFDB_GetValue(char *lval,char *rval,int size);
+int CFDB_GetValue(char *lval,char *rval,int size);
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
 struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query);
 struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
@@ -384,7 +384,7 @@ int CFDB_Open(mongo_connection *conn, char *host, int port);
 int CFDB_Close(mongo_connection *conn);
 void CFDB_Initialize(void);
 
-void CFDB_PutValue(char *lval,char *rval);
+int CFDB_PutValue(char *lval,char *rval);
 
 void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, struct Item *data);
 void CFDB_SaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep rep_type, struct Item *data);

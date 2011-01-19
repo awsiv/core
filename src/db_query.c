@@ -26,7 +26,7 @@
 
 /*****************************************************************************/
 
-void CFDB_GetValue(char *lval,char *rval,int size)
+int CFDB_GetValue(char *lval,char *rval,int size)
 
 { bson_buffer bb;
   bson field,query;
@@ -38,14 +38,15 @@ void CFDB_GetValue(char *lval,char *rval,int size)
   // clients do not run mongo server -- will fail to connect
 if (!IsDefinedClass("am_policy_hub"))
    {
-   return;
+   CfOut(cf_verbose,"","Ignoring DB get of (%s) - we are not a policy server",lval);
+   return false;
    }
 
   
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
-   return;
+   CfOut(cf_verbose,"", "!! Could not open connection to report database to get value %s", lval);
+   return false;
    }
     
 rval[0] = '\0';

@@ -28,7 +28,7 @@ result = mongo_connect(conn,&connOpts);
 
 if (result != 0)
    {
-   CfOut(cf_error, "mongo_connect", "!! Could not connect to mongo server (got %d)", result);
+   CfOut(cf_verbose, "mongo_connect", "!! Could not connect to mongo server (got %d)", result);
    return false;
    }
 
@@ -42,7 +42,7 @@ int CFDB_Close(mongo_connection *conn)
 {
 if (mongo_destroy(conn) != 0)
    {
-   CfOut(cf_verbose, "mongo_destroy", "!! Could not disconnect from mongo server");
+   CfOut(cf_error, "mongo_destroy", "!! Could not disconnect from mongo server");
    return false;
    }
 
@@ -54,14 +54,14 @@ return true;
 void CFDB_Initialize()
     
 {
- //  make sure indices on cfr_keyhash and sw.n exist and monitord arrays exist
+ //  unused
 }
 
 /*****************************************************************************/
 /* Cache / scratch space                                                     */
 /*****************************************************************************/
 
-void CFDB_PutValue(char *lval,char *rval)
+int CFDB_PutValue(char *lval,char *rval)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -72,13 +72,14 @@ void CFDB_PutValue(char *lval,char *rval)
 
 if (!IsDefinedClass("am_policy_hub"))
    {
-   return;
+   CfOut(cf_verbose,"","Ignoring DB put of (%s=%s) - we are not a policy server",lval,rval);
+   return false;
    }
   
 if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    {
-   CfOut(cf_verbose,"","!! Could not open connection to report database");
-   return;
+   CfOut(cf_verbose,"","!! Could not open connection to report database to put value %s",lval);
+   return false;
    }
   
 bson_buffer_init(&bb);
@@ -91,6 +92,8 @@ mongo_update(&dbconn,MONGO_SCRATCH,bson_empty(&empty), &setOp, MONGO_UPDATE_UPSE
 
 bson_destroy(&setOp);
 CFDB_Close(&dbconn);
+
+return true;
 }
 
 /*****************************************************************************/

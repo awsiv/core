@@ -239,7 +239,7 @@ void UnpackReportBook(char *id,char *ipaddr,struct Item **reports)
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
-   CfOut(cf_verbose, "", "!! Could not open connection to report database");
+   CfOut(cf_error, "", "!! Could not open connection to report database for saving");
    dbconnp = NULL;
    }
 
@@ -258,9 +258,9 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 CFDB_SaveHostID(&dbconn,id,ipaddr);
 
-if (dbconnp && !CFDB_Close(&dbconn))
+if (dbconnp)
    {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   CFDB_Close(&dbconn);
    }
 
 #endif
@@ -303,7 +303,7 @@ void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *c
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to database (update network measurements)");
+   CfOut(cf_error,"", "!! Could not open connection to database (update network measurements)");
    return;
    }
 

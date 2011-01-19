@@ -117,16 +117,14 @@ int Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables ob
 
 if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   CfOut(cf_error,"", "!! Could not open connection to report database on reading time series");
    return false;
    }
 
 CFDB_QueryWeekView(&dbconn,keyhash,obs,q,e,d);
 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   } 
+CFDB_Close(&dbconn);
+
 
 cfv->over = 0;
 cfv->under = 0;
