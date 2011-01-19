@@ -8,9 +8,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-// TODO: ensure indeces on cfr_keyhash, etc. ?
-
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
@@ -22,13 +19,16 @@
 int CFDB_Open(mongo_connection *conn, char *host, int port)
 
 { mongo_connection_options connOpts;
+  int result;
 
 snprintf(connOpts.host, sizeof(connOpts.host), "%s", host);
 connOpts.port = port;
 
-if (mongo_connect(conn,&connOpts) != 0)
+result = mongo_connect(conn,&connOpts);
+
+if (result != 0)
    {
-   CfOut(cf_verbose, "mongo_connect", " -> Could not connect to database");
+   CfOut(cf_error, "mongo_connect", "!! Could not connect to mongo server (got %d)", result);
    return false;
    }
 
@@ -42,7 +42,7 @@ int CFDB_Close(mongo_connection *conn)
 {
 if (mongo_destroy(conn) != 0)
    {
-   CfOut(cf_verbose, "mongo_destroy", " -> Could not disconnect from database");
+   CfOut(cf_verbose, "mongo_destroy", "!! Could not disconnect from mongo server");
    return false;
    }
 
