@@ -482,8 +482,9 @@ class Mongo_db {
 	 		show_error("Nothing to update in Mongo collection or update is not an array", 500);
 	 	
 	 	try {
-	 		$this->db->{$collection}->update($this->wheres, array('$set' => $data), array('safe' => TRUE, 'multiple' => FALSE));
-	 		return(TRUE);
+	 		$result=$this->db->{$collection}->update($this->wheres, array('$set' => $data), array('safe' => TRUE, 'multiple' => FALSE));
+	 		//return(TRUE);
+                        return $result;
 	 	} catch(MongoCursorException $e) {
 	 		show_error("Update of data into MongoDB failed: {$e->getMessage()}", 500);
 	 	}
