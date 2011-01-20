@@ -527,7 +527,10 @@ printf("         the software on systems for which no license has been granted b
 /********************************************************************/
 
 void Nova_SetPolicyServer(char *name)
-
+/* 
+ * If name contains a string, it's written to file,
+ * if not, name is filled with the contents of file.
+ */
 { char file[CF_BUFSIZE];
   FILE *fout,*fin;
 
