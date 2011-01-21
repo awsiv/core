@@ -356,9 +356,8 @@ strcat(buffer,"<ul>\n"); // outer list
 snprintf(buf,CF_BUFSIZE-1,"<li>%s</li><ul>\n",Nova_PidURL(pid,this_name)); // Start sublist
 Join(buffer,buf,bufsize);
 
-snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",this_id);
-
 CfNewQueryDB(&cfdb,query);
+snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",EscapeSQL(&cfdb,this_id));
 
 if (cfdb.maxcolumns != 4)
    {
@@ -397,7 +396,7 @@ strcat(buffer,"</ul></li>\n"); // close sublist
 
 if (strcmp(this_type,"any") != 0)
    {
-   snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",this_type);
+   snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",EscapeSQL(&cfdb,this_type));
    
    CfNewQueryDB(&cfdb,query);
    
