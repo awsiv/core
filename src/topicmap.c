@@ -652,7 +652,7 @@ CfDeleteQuery(&cfdb);
 // Look for mentions in other contexts
 
 CfNewQueryDB(&cfdb,query);
-snprintf(query,sizeof(query),"SELECT topic_context,pid from topics where topic_name='%s'",EscapeSQL(&cfdb,topic_name));
+snprintf(query,sizeof(query),"SELECT topic_context,pid from topics where topic_name='%s'",topic_name);
 
 if (cfdb.maxcolumns != 2)
    {
