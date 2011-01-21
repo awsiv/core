@@ -633,28 +633,28 @@ if ((hp = malloc(sizeof(struct HubPromise))) == NULL)
 void DeleteHubPromise(struct HubPromise *hp)
 
 {
-  free(hp->bundleName);
-  free(hp->bundleType);
-  free(hp->bundleArgs);
-  free(hp->promiseType);
-  free(hp->promiser);
-  free(hp->promisee);
-  free(hp->classContext);
-  free(hp->handle);
-  free(hp->comment);
-  free(hp->file);
-  hp->lineNo = -1;
-  FreeStringArray(hp->constraints);
+free(hp->bundleName);
+free(hp->bundleType);
+free(hp->bundleArgs);
+free(hp->promiseType);
+free(hp->promiser);
+free(hp->promisee);
+free(hp->classContext);
+free(hp->handle);
+free(hp->comment);
+free(hp->file);
+hp->lineNo = -1;
+FreeStringArray(hp->constraints);
 
-  free(hp);
-  hp = NULL;
+free(hp);
+hp = NULL;
 }
 
 /*****************************************************************************/
 
 struct HubBody *NewHubBody(char *bodyType,char *bodyName,char *bodyArgs)
-{
-  struct HubBody *hb;
+
+{ struct HubBody *hb;
 
 if ((hb = malloc(sizeof(struct HubBody))) == NULL)
    {
@@ -682,131 +682,134 @@ return hb;
 /*****************************************************************************/
 
 void DeleteHubBody(struct HubBody *hb)
+
 {
-  free(hb->bodyName);
-  free(hb->bodyType);
+free(hb->bodyName);
+free(hb->bodyType);
 
-  if(hb->bodyArgs)
-    {
-      free(hb->bodyArgs);
-    }
+if (hb->bodyArgs)
+   {
+   free(hb->bodyArgs);
+   }
 
-  DeleteHubBodyAttributes(hb->attr);
-  
-  free(hb);
+DeleteHubBodyAttributes(hb->attr);
+
+free(hb);
 }
 
 /*****************************************************************************/
 
 struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char *classContext)
 /* Appends to existing attribs */
-{
-  struct HubBodyAttr *ha,*curr;
+
+{ struct HubBodyAttr *ha,*curr;
 
 if ((ha = malloc(sizeof(struct HubBodyAttr))) == NULL)
    {
    FatalError("Memory exhausted NewHubBodyAttr");
    }
 
- ha->lval = strdup(lval);
- ha->rval = strdup(rval);
- ha->classContext = strdup(classContext);
- ha->next = NULL;
+ha->lval = strdup(lval);
+ha->rval = strdup(rval);
+ha->classContext = strdup(classContext);
+ha->next = NULL;
 
-
- if(!hb->attr)
+if (!hb->attr)
    {
-     hb->attr = ha;
+   hb->attr = ha;
    }
- else
+else
    {
-     curr = hb->attr;
- 
-     while(curr->next)
-       {
-	 curr = curr->next;
-       }
-     
-     curr->next = ha;
+   curr = hb->attr;
+   
+   while(curr->next)
+      {
+      curr = curr->next;
+      }
+   
+   curr->next = ha;
    }
 
- return ha;
+return ha;
 }
 
 /*****************************************************************************/
 
 void DeleteHubBodyAttributes(struct HubBodyAttr *ha)
 {
-  if(!ha)
-    {
-      return;
-    }
+if (!ha)
+   {
+   return;
+   }
 
-  if(ha->next)
-    {
-      DeleteHubBodyAttributes(ha->next);
-    }
+if (ha->next)
+   {
+   DeleteHubBodyAttributes(ha->next);
+   }
 
-  free(ha->lval);
-  free(ha->rval);
-  free(ha->classContext);
-  free(ha);
+free(ha->lval);
+free(ha->rval);
+free(ha->classContext);
+free(ha);
 }
 
 /*commenting*/
 /*****************************************************************************/
+
 struct HubComment *NewHubComment(char *user,char *msg,time_t t)
 
 { struct HubComment *hc;
 
-  if ((hc = malloc(sizeof(struct HubComment))) == NULL)
-    {
-      FatalError("Memory exhausted HubComment");
-    }
+if ((hc = malloc(sizeof(struct HubComment))) == NULL)
+   {
+   FatalError("Memory exhausted HubComment");
+   }
 
-  hc->user = strdup(user);
-  hc->msg = strdup(msg);
-  hc->t = t;
-  hc->next=NULL;
-  return hc;
+hc->user = strdup(user);
+hc->msg = strdup(msg);
+hc->t = t;
+hc->next=NULL;
+return hc;
 }
 
 /*****************************************************************************/
 
 void DeleteHubComment(struct HubComment *hc)
 {
-  free(hc->user);
-  free(hc->msg);
-  free(hc);
+free(hc->user);
+free(hc->msg);
+free(hc);
 }
 
 /*****************************************************************************/
+
 struct HubCommentInfo *NewHubCommentInfo(struct HubHost *hh,int cid,char *user,char *msg,time_t t)
 
 { struct HubCommentInfo *hci;
 
-  if ((hci = malloc(sizeof(struct HubCommentInfo))) == NULL)
-    {
-      FatalError("Memory exhausted HubCommentInfo");
-    }
+if ((hci = malloc(sizeof(struct HubCommentInfo))) == NULL)
+   {
+   FatalError("Memory exhausted HubCommentInfo");
+   }
 
-  hci->hh = hh;
-  hci->cid = cid;
-  hci->comment = NewHubComment(user,msg,t);
-  return hci;
+hci->hh = hh;
+hci->cid = cid;
+hci->comment = NewHubComment(user,msg,t);
+return hci;
 }
 
 /*****************************************************************************/
 
 void DeleteHubCommentInfo(struct HubCommentInfo *hci)
-{
-  struct HubComment *hc;
-  for (hc = hci->comment; hc != NULL; hc=hc->next)
-    {
-     DeleteHubComment(hc);
-    }
 
-  free(hci);
+{ struct HubComment *hc;
+
+for (hc = hci->comment; hc != NULL; hc=hc->next)
+   {
+   DeleteHubComment(hc);
+   }
+
+free(hci);
 }
 
 /*****************************************************************************/

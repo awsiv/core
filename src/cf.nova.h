@@ -588,6 +588,11 @@ struct HubBody *NewHubBody(char *bodyName,char *bodyType,char *bodyArgs);
 void DeleteHubBody(struct HubBody *hb);
 struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char *classContext);
 void DeleteHubBodyAttributes(struct HubBodyAttr *ha);
+struct HubComment *NewHubComment(char *user,char *msg,time_t t);
+struct HubCommentInfo *NewHubCommentInfo(struct HubHost *hh,int cid,char *user,char *msg,time_t t);
+void DeleteHubComment(struct HubComment *hc);
+void DeleteHubCommentInfo(struct HubCommentInfo *hci);
+
 
 int SortPromiseLog(void *p1, void *p2);
 int SortBusinessValue(void *p1, void *p2);
