@@ -76,11 +76,11 @@ if (!cfdb.connected)
 
 if (strlen(type) > 0)
    {
-   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s' and topic_context like '%%%s%%'",topic,type);
+   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s' and topic_context like '%%%s%%'",EscapeSQL(&cfdb,topic),type);
    }
 else
    {
-   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s'",topic);
+   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s'",EscapeSQL(&cfdb,topic));
    }
 
 CfNewQueryDB(&cfdb,query);
@@ -652,9 +652,8 @@ CfDeleteQuery(&cfdb);
 
 // Look for mentions in other contexts
 
-snprintf(query,sizeof(query),"SELECT topic_context,pid from topics where topic_name='%s'",topic_name);
-
 CfNewQueryDB(&cfdb,query);
+snprintf(query,sizeof(query),"SELECT topic_context,pid from topics where topic_name='%s'",EscapeSQL(&cfdb,topic_name));
 
 if (cfdb.maxcolumns != 2)
    {
@@ -942,9 +941,8 @@ if (!cfdb.connected)
 
 // Get goal pid
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name='%s'",ip->name);
-
 CfNewQueryDB(&cfdb,query);
+snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name='%s'",EscapeSQL(&cfdb,ip->name));
 
 if (cfdb.maxcolumns != 1)
    {
