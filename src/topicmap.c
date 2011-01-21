@@ -396,7 +396,7 @@ strcat(buffer,"</ul></li>\n"); // close sublist
 
 if (strcmp(this_type,"any") != 0)
    {
-   snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",EscapeSQL(&cfdb,this_type));
+   snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",this_type);
    
    CfNewQueryDB(&cfdb,query);
    
