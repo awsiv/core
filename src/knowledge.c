@@ -344,7 +344,7 @@ else
    fprintf(fp,"   comment => \"(Uncommented <i>%s</i> promise by: %.25s..)\";\n",pp->agentsubtype,NovaEscape(pp->promiser));
    }
 
-fprintf(fp,"\"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",promise_id,NOVA_ACTIVATED,pp->classes,NOVA_ACTIVATES);
+fprintf(fp,"\"%s\" association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",promise_id,NOVA_ACTIVATED,pp->classes,NOVA_ACTIVATES);
 fprintf(fp,"\"%s\" association => a(\"is a promise of type\",\"%s\",\"has current exemplars\");\n",promise_id,pp->agentsubtype);
 
 for (rp = depends_on; rp != NULL; rp=rp->next)
