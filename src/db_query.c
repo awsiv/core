@@ -71,6 +71,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
+return true;
 }
 
 /*****************************************************************************/
