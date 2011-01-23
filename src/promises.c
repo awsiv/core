@@ -20,6 +20,136 @@
 #endif
 
 char POLICY_SERVER[CF_BUFSIZE];
+struct PromiseIdent *PROMISER_LIST[CF_HASHTABLESIZE] = { NULL };
+struct PromiseIdent *PROMISER_REGEXES = NULL;
+
+/*****************************************************************************/
+
+void Nova_NewPromiser(struct Promise *pp)
+
+{ int hash;
+  char unique[CF_BUFSIZE];
+
+if ( strcmp(pp->agentsubtype,"methods") == 0)
+   {
+   return;
+   }
+  
+if (IsNakedVar(pp->promiser,'$') || strcmp(pp->agentsubtype,"vars") == 0 || strcmp(pp->agentsubtype,"classes") == 0)
+   {
+   snprintf(unique,CF_BUFSIZE,"%s: %s (%s)",pp->agentsubtype,pp->promiser,pp->bundle);
+   }
+else
+   {
+   snprintf(unique,CF_BUFSIZE,"%s: %s",pp->agentsubtype,pp->promiser);
+   }
+  
+hash = GetHash(unique);
+  
+if (IsRegex(pp->promiser) && (strchr(pp->promiser,'*') || strchr(pp->promiser,'+')))
+   {
+   PrependPromiserList(&PROMISER_REGEXES,unique,pp);
+   }
+else
+   {
+   PrependPromiserList(&(PROMISER_LIST[hash]),unique,pp);
+   }
+}
+
+/*****************************************************************************/
+
+void Nova_AnalyzePromiseConflicts()
+
+{ int i;
+  struct PromiseIdent *p1,*p2;
+  struct Rlist *contexts1,*contexts2;
+  struct Promise *pp = NULL;
+
+// There should be no duplicate entries in these lists when we get here
+  
+for (i = 0; i < CF_HASHTABLESIZE; i++)
+   {
+   if (PROMISER_LIST[i])
+      {
+      if (PROMISER_LIST[i]->next)
+         {
+         for (p1 = PROMISER_LIST[i]; p1 != NULL; p1=p1->next)
+            {
+            int count = 0;
+            
+            for (p2 = PROMISER_LIST[i]; p2 != NULL; p2=p2->next)
+               {
+               if (p1 == p2)
+                  {
+                  continue;
+                  }
+
+               if (strcmp(p1->handle,p2->handle) == 0)
+                  {
+                  count++;
+                  }
+               }
+
+            if (count < 1) // Could be a hashing ghost
+               {
+               continue;
+               }
+
+            contexts1 = SplitContextExpression(p1->classes,pp);
+
+            count = 0;
+            
+            for (p2 = p1->next; p2 != NULL; p2=p2->next)
+               {
+               if (strcmp(p1->handle,p2->handle) != 0) // Can be hash collisions
+                  {
+                  continue;
+                  }
+               
+               contexts2 = SplitContextExpression(p2->classes,pp);
+               
+               if (Nova_ClassesIntersect(contexts1,contexts2))
+                  {                     
+                  if (count++ == 0)
+                     {
+                     CfOut(cf_error,"","I: The resource \"%s\" makes a number of possibly conflicting promises: ",p1->handle);
+                     CfOut(cf_error,"","\n %d: In %s\n    Near line %d\n    In the context of \"%s\"\n",count,p1->filename,p1->lineno,p1->classes);
+                     count++;
+                     }
+                  CfOut(cf_error,"","\n %d: In %s\n    Near line %d\n    In the context of \"%s\"\n", count,p2->filename,p2->lineno,p2->classes);
+                  }
+               
+               DeleteRlist(contexts2);
+               }
+
+            DeleteRlist(contexts1);
+            }
+         }
+
+      // Check if there are any patterns that might overlap
+      
+      for (p1 = PROMISER_REGEXES; p1 != NULL; p1=p1->next)
+         {
+         if (FullTextMatch(p1->handle,PROMISER_LIST[i]->handle))
+            {
+            CfOut(cf_error,""," ! promiser \"%s\" might conflict with \"%s\" in file %s near line %d\n",p1->handle,PROMISER_LIST[i]->handle,PROMISER_LIST[i]->filename,PROMISER_LIST[i]->lineno);
+            }
+         }
+      }
+   }
+
+/* Finally check if any of the patterns could overlap one another
+   This is a much harder problem....
+
+for (p1 = PROMISER_REGEXES; p1 != NULL; p1=p1->next)
+   {
+   for (p2 = PROMISER_REGEXES; p2 != NULL; p2=p2->next)
+      {
+      }
+   }
+
+*/
+}
 
 /*****************************************************************************/
 
@@ -795,3 +925,24 @@ else
    }
 }
 
+/********************************************************************/
+
+int Nova_ClassesIntersect(struct Rlist *contexts1,struct Rlist *contexts2)
+
+{ struct Rlist *rp1, *rp2;
+
+for (rp1 = contexts1; rp1 != NULL; rp1=rp1->next)
+   {
+   for (rp2 = contexts2; rp2 != NULL; rp2=rp2->next)
+      {
+      // Should strictly check the commutation on [.&] also
+      
+      if (strcmp(rp1->item,rp2->item) == 0)
+         {
+         return true;
+         }
+      }
+   }
+
+return false;
+}

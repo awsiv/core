@@ -18,6 +18,46 @@
 
 /*****************************************************************************/
 
+void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp)
+
+{ struct PromiseIdent *ptr;
+
+for (ptr = *list; ptr != NULL; ptr = ptr->next)
+   {
+   if (pp->lineno == ptr->lineno)
+      {
+      if (strcmp(pp->audit->filename,ptr->filename) == 0)
+         {
+         return;
+         }
+      }
+   }
+
+if ((ptr = malloc(sizeof(struct PromiseIdent))) == NULL)
+   {
+   FatalError("MemoryAlloc NewPromiseId\n");
+   }
+
+ptr->filename = strdup(pp->audit->filename);
+
+if (ptr->classes)
+   {
+   ptr->classes = strdup(pp->classes);
+   }
+else
+   {
+   ptr->classes = strdup("any");
+   }
+
+ptr->lineno = pp->lineno;
+ptr->handle = strdup(s);
+ptr->next = *list;
+*list = ptr;
+}
+
+
+/*****************************************************************************/
+
 struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records)
 
 { struct HubQuery *hq;

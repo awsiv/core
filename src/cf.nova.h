@@ -549,6 +549,7 @@ int Nova_ShiftChange(void);
 
 /* install.c */
 
+void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp);
 struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records);
 void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)());
 struct HubHost *NewHubHost(char *keyhash,char *host,char *ipaddr);
@@ -743,6 +744,9 @@ void Nova_PreSanitizePromise(struct Promise *pp);
 void Nova_TrackValue(char *date,double kept,double repaired, double notkept);
 void Nova_LastSawBundle(char *name);
 void Nova_EnterpriseDiscovery(void);
+void Nova_AnalyzePromiseConflicts(void);
+void Nova_NewPromiser(struct Promise *pp);
+int Nova_ClassesIntersect(struct Rlist *contexts1,struct Rlist *contexts2);
 
 /* registry.c */
 
