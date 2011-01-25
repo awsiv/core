@@ -118,8 +118,8 @@ if (false)
    /*
     * commenting
     */
-   Nova2PHP_add_comment(NULL,-1,NULL,NULL,NULL,10000);
-   Nova2PHP_get_comment(NULL,-1, NULL,-1,-1,NULL,10000);
+   Nova2PHP_add_comment(NULL,NULL,NULL,NULL,NULL,10000);
+   Nova2PHP_get_comment(NULL,NULL, NULL,-1,-1,NULL,10000);
    Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
    }
 }
@@ -4306,33 +4306,47 @@ int Nova2PHP_delete_host(char *keyHash)
 /*****************************************************************************/
 
 /*for commenting functionality */
+/* reportData must be read as sscanf(ip->name,"%254[^,],%254[^,],%1024[^\n]",&then,handle,reason);*/
+int Nova2PHP_add_comment(char *keyhash, char *cid, char *reportData, char *username, char *comment, time_t datetime)
 
-int Nova2PHP_add_comment(char *keyhash, int cid, char *reportData, char *username, char *comment, time_t datetime)
-
-{ struct Item *data = NULL, *ip = NULL;
+{ struct Item *data = NULL, *ip = NULL, *report = NULL;
   char msg[CF_BUFSIZE] = {0};
+  char reportText[CF_BUFSIZE] = {0};
+  char commentId[CF_MAXVARSIZE] = {0};
   mongo_connection dbconn;
    
-  Chop(keyhash);
-  Chop(comment);
-  Chop(username);
   snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,comment,datetime);
   AppendItem(&data, msg, NULL);
-   
+
+  if(cid)
+    {
+      snprintf(commentId, CF_MAXVARSIZE, "%s",cid);
+    }
+
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
       CfOut(cf_verbose,"", "!! Could not open connection to report database");
       return false;
     }
   
-  CFDB_AddComment(&dbconn,keyhash, cid, reportData, data);
+  
+  CFDB_AddComment(&dbconn,keyhash, commentId, reportData, data);
+  if(!cid)
+    {
+      //       snprintf(cid, CF_MAXVARSIZE, "%s",commentId);
+      //snprintf(reportText,CF_BUFSIZE,"%ld,%s,%s",1293492358,"knowledge_commands_cf_promise_r"," -> Linked files /tmp/mysql.sock -> /var/run/mysqld/mysqld.sock","knowledge_files_mysql_sock_debian");/*reportData*/
+      snprintf(reportText,CF_BUFSIZE,"%s",reportData);
+      AppendItem(&report,reportText,NULL);
+      CFDBRef_PromiseLog_Comments(&dbconn, keyhash, commentId, plog_repaired, report);
+    }
+
   CFDB_Close(&dbconn);
   return 1;
 }
 
 /*****************************************************************************/
 /*commenting*/
-int Nova2PHP_get_comment(char *keyhash, int cid, char *username, time_t from, time_t to, char *returnval, int bufsize)
+int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, time_t to, char *returnval, int bufsize)
 
 { struct Item *data = NULL, *ip = NULL;
   char msg[CF_BUFSIZE] = {0};
@@ -4343,13 +4357,20 @@ int Nova2PHP_get_comment(char *keyhash, int cid, char *username, time_t from, ti
   struct Rlist *result, *rp;
 
   char fuser[CF_MAXVARSIZE] = {0};
-
-  Chop(keyhash);
-  Chop(username);
+  char kh[CF_MAXVARSIZE] = {0};
+  char commentId[CF_MAXVARSIZE] = {0};
 
   if(username)
     {
       snprintf(fuser, CF_MAXVARSIZE,"%s", username);
+    }
+  if(keyhash)
+    {
+      snprintf(kh, CF_MAXVARSIZE,"%s", keyhash);
+    }
+  if(cid)
+    {
+      snprintf(commentId, CF_MAXVARSIZE,"%s", cid);
     }
 
   snprintf(msg, CF_BUFSIZE, "%s,%ld,%ld\n",fuser, from, to);
@@ -4359,17 +4380,17 @@ int Nova2PHP_get_comment(char *keyhash, int cid, char *username, time_t from, ti
       CfOut(cf_verbose,"", "!! Could not open connection to report database");
       return false;
     }
+  printf("web_api:bishwa => cid = %s\n", commentId);
+  result = CFDB_QueryComments(&dbconn, kh, commentId, data);
 
-  result = CFDB_QueryComments(&dbconn, keyhash, cid, data);
   returnval[0] = '\0';
-
   snprintf(buffer,sizeof(buffer),"<table><tr><td>Host<td>Hub Commenting <td><tr>\n");
   Join(returnval,buffer,bufsize);
   
   for (rp = result; rp != NULL; rp=rp->next)
     {
       hci = ( struct HubCommentInfo *) rp->item;
-      snprintf(buffer,sizeof(buffer),"<tr><td>%s<td><td>%d<td><tr>\n", hci->hh->hostname,hci->cid); 
+      snprintf(buffer,sizeof(buffer),"<tr><td>%s<td><td>%s<td><tr>\n", hci->hh->hostname,hci->cid); 
       if(!Join(returnval,buffer,bufsize))
 	{
 	  break;

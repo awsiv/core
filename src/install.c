@@ -823,7 +823,7 @@ free(hc);
 
 /*****************************************************************************/
 
-struct HubCommentInfo *NewHubCommentInfo(struct HubHost *hh,int cid,char *user,char *msg,time_t t)
+struct HubCommentInfo *NewHubCommentInfo(struct HubHost *hh,char *cid,char *user,char *msg,time_t t)
 
 { struct HubCommentInfo *hci;
 
@@ -833,7 +833,7 @@ if ((hci = malloc(sizeof(struct HubCommentInfo))) == NULL)
    }
 
 hci->hh = hh;
-hci->cid = cid;
+hci->cid = strdup(cid);
 hci->comment = NewHubComment(user,msg,t);
 return hci;
 }
@@ -844,6 +844,7 @@ void DeleteHubCommentInfo(struct HubCommentInfo *hci)
 
 { struct HubComment *hc;
 
+  free(hci->cid);
 for (hc = hci->comment; hc != NULL; hc=hc->next)
    {
    DeleteHubComment(hc);

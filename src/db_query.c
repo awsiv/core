@@ -2413,7 +2413,6 @@ if (!EMPTY(keyHash))
    bson_from_buffer(&query,&bb);
    }
 
-  
   // Turn start_time into Day Month Year
   
 /* BEGIN RESULT DOCUMENT */
@@ -5132,7 +5131,7 @@ if(mongo_cmd_get_last_error(conn, MONGO_BASE, &b))
 }
 /*****************************************************************************/
 
-struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid,  struct Item *data)
+struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, char *cid,  struct Item *data)
 
 { bson_buffer bb;
   bson b,query,field;
@@ -5143,9 +5142,10 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
   struct HubHost *hh;
   struct Rlist *ret = NULL, *host_list = NULL;
 
-  char kh[CF_MAXVARSIZE] = {0}, username[CF_MAXVARSIZE] = {0}, comment[CF_BUFSIZE] = {0}, rptData[CF_BUFSIZE] = {0};
+  char kh[CF_MAXVARSIZE] = {0},commentId[CF_MAXVARSIZE] = {0}, username[CF_MAXVARSIZE] = {0}, comment[CF_BUFSIZE] = {0}, rptData[CF_BUFSIZE] = {0};
   char  fusername[CF_SMALLBUF] = {0};
   time_t datetime = -1,from = -1,to = -1;
+  bson_oid_t bsonid;
 
   int emptyQuery = true, firstComment=false, specificQuery = false /* for search other than keyhash and cid */;
   if(BEGINSWITH(data->name,","))
@@ -5159,13 +5159,14 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
   bson_buffer_init(&bb);
   if (!EMPTY(keyhash))
     {
-      bson_append_string(&bb,cfr_keyhash,keyhash);
+      bson_append_string(&bb,cfc_keyhash,keyhash);
       emptyQuery = false;
     }
 
-  if (cid>0)
+  if (!EMPTY(cid))
     {
-      bson_append_int(&bb,cfc_cid,cid);
+      bson_oid_from_string(&bsonid,cid);
+      bson_append_oid(&bb,"_id",&bsonid);
       emptyQuery = false;
     }
   
@@ -5191,13 +5192,10 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
     }
 
   bson_buffer_init(&bb);
-  bson_append_int(&bb,cfr_keyhash,1);
-  bson_append_int(&bb,cfc_cid,1);
+  bson_append_int(&bb,"_id",1);
+  bson_append_int(&bb,cfc_keyhash,1);
   bson_append_int(&bb,cfc_reportdata,1);
   bson_append_int(&bb,cfc_comment,1);
-  //bson_append_int(&bb,"cmt.uN",1);
-  //bson_append_int(&bb,"cmt.dT",1);
-  //bson_append_int(&bb,"cmt.cM",1);
   bson_from_buffer(&field, &bb);
 
   cursor = mongo_find(conn,MONGO_COMMENTS,&query,&field,0,0,0);
@@ -5214,13 +5212,20 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
       kh[0] = '\0';
       username[0] = '\0';
       comment[0] = '\0';
+      commentId[0] = '\0';
 
       while (bson_iterator_next(&it1))
         {
           switch(bson_iterator_type(&it1))
             {
+	    case bson_oid:
+	      if (strcmp(bson_iterator_key(&it1),"_id") == 0)
+		{
+		  bson_oid_to_string(bson_iterator_oid(&it1),commentId);
+		}
+	      break;
             case bson_string:
-              if (strcmp(bson_iterator_key(&it1),cfr_keyhash) == 0)
+              if (strcmp(bson_iterator_key(&it1),cfc_keyhash) == 0)
                 {
                   strncpy(kh, bson_iterator_string(&it1),CF_MAXVARSIZE - 1);   		 
                 }
@@ -5229,12 +5234,6 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
 		  strncpy(rptData, bson_iterator_string(&it1),CF_BUFSIZE - 1);
 		}
 	      break;
-	      case bson_int:
-		if (strcmp(bson_iterator_key(&it1),cfc_cid) == 0)
-                {
-		  cid = bson_iterator_int(&it1);
-                }
-		break;
             case bson_object:
             case bson_array:
               bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -5277,10 +5276,10 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, 
 		  
 		  if (hci == NULL)
 		    {	
-		      hh = NewHubHost(keyhash,NULL,NULL);
-		      PrependRlistAlien(&host_list,hh);
+		      hh = NewHubHost(kh,NULL,NULL);
+		      PrependRlistAlien(&host_list,hh);		      
 		      QueryInsertHostInfo(conn,host_list);
-		      hci = NewHubCommentInfo(hh,cid,username,comment,datetime);
+		      hci = NewHubCommentInfo(hh,commentId,username,comment,datetime);
 		      firstComment = true;
 		    }
 		  else 

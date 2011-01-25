@@ -409,8 +409,9 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 /*
  * commenting
  */
-void CFDB_AddComment(mongo_connection *conn, char *keyhash, int cid, char *reportData, struct Item *data);
-struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, int cid, struct Item *data);
+char * CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *reportData, struct Item *data);
+struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, char *cid, struct Item *data);
+void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *keyhash, char *commentId, enum promiselog_rep rep_type, struct Item *data);
 #endif  /* HAVE_LIBMONGOC */
 
 /* db_maintain.c */
@@ -590,7 +591,7 @@ void DeleteHubBody(struct HubBody *hb);
 struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char *classContext);
 void DeleteHubBodyAttributes(struct HubBodyAttr *ha);
 struct HubComment *NewHubComment(char *user,char *msg,time_t t);
-struct HubCommentInfo *NewHubCommentInfo(struct HubHost *hh,int cid,char *user,char *msg,time_t t);
+struct HubCommentInfo *NewHubCommentInfo(struct HubHost *hh,char *cid,char *user,char *msg,time_t t);
 void DeleteHubComment(struct HubComment *hc);
 void DeleteHubCommentInfo(struct HubCommentInfo *hci);
 
@@ -1011,8 +1012,8 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize);
 /*
  * commenting
  */
-int Nova2PHP_add_comment(char *keyhash, int cid, char *reportData, char *username, char *comment, time_t datetime);
-int Nova2PHP_get_comment(char *keyhash, int cid, char *username, time_t from, time_t to, char *returnval, int bufsize);
+int Nova2PHP_add_comment(char *keyhash, char *cid, char *reportData, char *username, char *comment, time_t datetime);
+int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, time_t to, char *returnval, int bufsize);
 
 void Nova2PHP_cdp_reportnames(char *buf,int bufSz);
 int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz);
@@ -1357,8 +1358,9 @@ struct cf_pscalar
 #define cfm_data          "dt"
 
 /*commenting*/
-#define cfc_cid "cid"
-#define cfc_reportdata "rD"
+#define cfc_keyhash "_kh"
+#define cfc_cid "_cid"
+#define cfc_reportdata "_rD"
 #define cfc_comment "cM"
 #define cfc_username "u"
 #define cfc_datetime "d"
@@ -1567,7 +1569,7 @@ struct HubComment
 struct HubCommentInfo
 {
   struct HubHost *hh;
-  int cid;
+  char *cid;
   char *user;
   char *msg;
   time_t t;
