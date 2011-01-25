@@ -120,6 +120,7 @@ if (false)
     */
    Nova2PHP_add_comment(NULL,NULL,NULL,NULL,NULL,10000);
    Nova2PHP_get_comment(NULL,NULL, NULL,-1,-1,NULL,10000);
+   Nova2PHP_get_host_commentid(NULL,NULL,1000);
    Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
    }
 }
@@ -4416,5 +4417,57 @@ int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, 
   return true;
 }
 /*****************************************************************************/
+int Nova2PHP_get_host_commentid(char *hostkey, char *returnval, int bufsize)
+{
+  char *report,buffer[CF_BUFSIZE];//,buffer2[CF_BUFSIZE];
+  //  struct HubHost *hh;
+  //  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  //  int count1 = 0,count2 = 0,tmpsize1,tmpsize2;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
 
+/* BEGIN query document */
+
+if (hostkey && strlen(hostkey) != 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   }
+else
+   {
+   return false;
+   }
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+result = CFDB_QueryCommentId(&dbconn,&query);
+
+bson_destroy(&query);
+returnval[0] = '\0';
+if(!result)
+  {
+    return false;
+  }
+
+for (rp = result; rp != NULL; rp=rp->next)
+   {
+     snprintf(buffer,CF_MAXVARSIZE-1,"%s",(char *)rp->item);
+   }
+snprintf(returnval,CF_MAXVARSIZE-1,"%s ",buffer);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
+/*****************************************************************************/
 #endif

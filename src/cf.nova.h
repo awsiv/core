@@ -413,6 +413,7 @@ char * CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *r
 struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, char *cid, struct Item *data);
 void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *keyhash, char *commentId, enum promiselog_rep rep_type, struct Item *data);
 void CFDBRef_HostID_Comments(mongo_connection *conn,char *keyhash, char *commentId);
+struct Rlist *CFDB_QueryCommentId(mongo_connection *conn,bson *query);
 #endif  /* HAVE_LIBMONGOC */
 
 /* db_maintain.c */
@@ -1015,6 +1016,7 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize);
  */
 int Nova2PHP_add_comment(char *keyhash, char *cid, char *reportData, char *username, char *comment, time_t datetime);
 int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, time_t to, char *returnval, int bufsize);
+int Nova2PHP_get_host_commentid(char *hostkey, char *returnval, int bufsize);
 
 void Nova2PHP_cdp_reportnames(char *buf,int bufSz);
 int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz);

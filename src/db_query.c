@@ -5313,7 +5313,75 @@ struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, char *cid
   mongo_cursor_destroy(cursor);
   return ret;
 }
+/*****************************************************************************/
 
+struct Rlist *CFDB_QueryCommentId(mongo_connection *conn,bson *query)
+
+{ bson_buffer bb,*sub1,*sub2,*sub3;
+  bson b,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+    struct HubHost *hh;
+  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+  char rname[CF_MAXVARSIZE],rversion[CF_MAXVARSIZE],rarch[3];
+  char commentId[CF_MAXVARSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  int found = false;
+  
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+ bson_append_int(&bb,"cid",1);
+//bson_append_int(&bb,cfr_ip_array,1);
+//bson_append_int(&bb,cfr_host_array,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+addresses[0] = '\0';
+
+cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
+ if(!cursor)
+   {
+     return NULL;
+   }
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+
+   keyhash[0] = '\0';
+   
+   while (bson_iterator_next(&it1))
+      {
+	switch(bson_iterator_type(&it1))
+	  {
+	  case bson_oid:
+
+	    break;
+	  case bson_string:
+	    if (strcmp(bson_iterator_key(&it1),cfc_keyhash) == 0)
+	      {
+		strncpy(keyhash, bson_iterator_string(&it1),CF_MAXVARSIZE - 1);    \
+
+	      }
+	    else if (strcmp(bson_iterator_key(&it1),"cid") == 0)
+	      {
+		strncpy(commentId, bson_iterator_string(&it1),CF_MAXVARSIZE - 1);
+	      }
+	    break;
+	  }      
+	
+      }
+   if(commentId && strlen(commentId)>0)
+     {
+       PrependRlistAlien(&host_list,commentId);
+     }
+   }
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return host_list;
+}
 /*****************************************************************************/
 
 
