@@ -412,6 +412,7 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 char * CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *reportData, struct Item *data);
 struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, char *cid, struct Item *data);
 void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *keyhash, char *commentId, enum promiselog_rep rep_type, struct Item *data);
+void CFDBRef_HostID_Comments(mongo_connection *conn,char *keyhash, char *commentId);
 #endif  /* HAVE_LIBMONGOC */
 
 /* db_maintain.c */

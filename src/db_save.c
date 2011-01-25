@@ -1443,6 +1443,32 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 
 /*****************************************************************************/
+void CFDBRef_HostID_Comments(mongo_connection *conn,char *keyhash, char *commentId)
+{
+  bson_buffer bb;
+  bson_buffer *setObj;
+  bson host_key;  // host description                                                                                                                                                           
+  bson setOp;
+  time_t t;
 
+  // locate right host key                                                                                                                                                                        
+  bson_buffer_init(&bb);
+  bson_append_string(&bb,cfr_keyhash,keyhash);
+  bson_from_buffer(&host_key,&bb);
+
+   // update
+   bson_buffer_init(&bb);
+   setObj = bson_append_start_object(&bb, "$set");
+   bson_append_string(setObj,"cid",commentId);
+   bson_append_finish_object(setObj);
+
+   bson_from_buffer(&setOp,&bb);
+   mongo_update(conn, MONGO_DATABASE,&host_key,&setOp,0);
+   MongoCheckForError(conn,"SaveHostID",keyhash);
+
+  bson_destroy(&setOp);
+  bson_destroy(&host_key);
+}
+/*****************************************************************************/
 #endif  /* HAVE_MONGOC */
 

@@ -4331,13 +4331,14 @@ int Nova2PHP_add_comment(char *keyhash, char *cid, char *reportData, char *usern
   
   
   CFDB_AddComment(&dbconn,keyhash, commentId, reportData, data);
-  if(!cid)
+  if(!cid && strlen(commentId)>0 )
     {
       //       snprintf(cid, CF_MAXVARSIZE, "%s",commentId);
       //snprintf(reportText,CF_BUFSIZE,"%ld,%s,%s",1293492358,"knowledge_commands_cf_promise_r"," -> Linked files /tmp/mysql.sock -> /var/run/mysqld/mysqld.sock","knowledge_files_mysql_sock_debian");/*reportData*/
       snprintf(reportText,CF_BUFSIZE,"%s",reportData);
       AppendItem(&report,reportText,NULL);
-      CFDBRef_PromiseLog_Comments(&dbconn, keyhash, commentId, plog_repaired, report);
+      //     CFDBRef_PromiseLog_Comments(&dbconn, keyhash, commentId, plog_repaired, report);
+      CFDBRef_HostID_Comments(&dbconn,keyhash, commentId);
     }
 
   CFDB_Close(&dbconn);
@@ -4380,7 +4381,7 @@ int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, 
       CfOut(cf_verbose,"", "!! Could not open connection to report database");
       return false;
     }
-  printf("web_api:bishwa => cid = %s\n", commentId);
+
   result = CFDB_QueryComments(&dbconn, kh, commentId, data);
 
   returnval[0] = '\0';
