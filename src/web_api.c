@@ -4386,20 +4386,20 @@ int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, 
   result = CFDB_QueryComments(&dbconn, kh, commentId, data);
 
   returnval[0] = '\0';
-  snprintf(buffer,sizeof(buffer),"<table><tr><td>Host<td>Hub Commenting <td><tr>\n");
+  snprintf(buffer,sizeof(buffer),"<table><tr><td>User</td><td>Date </td><td>Comment</td></tr>\n");
   Join(returnval,buffer,bufsize);
   
   for (rp = result; rp != NULL; rp=rp->next)
     {
       hci = ( struct HubCommentInfo *) rp->item;
-      snprintf(buffer,sizeof(buffer),"<tr><td>%s<td><td>%s<td><tr>\n", hci->hh->hostname,hci->cid); 
-      if(!Join(returnval,buffer,bufsize))
-	{
-	  break;
-	}
+      //      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><tr>\n", hci->hh->hostname,hci->cid); 
+      //    if(!Join(returnval,buffer,bufsize))
+      //	{
+      //	  break;
+      //	}
      for(hc = hci->comment; hc != NULL; hc=hc->next)
 	{
-	  snprintf(buffer,sizeof(buffer),"<tr><td>%s<td><td>%ld<td>%s<td><tr>\n", hc->user, hc->t, hc->msg);
+	  snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%ld</td><td>%s</td></tr>\n", hc->user, hc->t, hc->msg);
 	  if(!Join(returnval,buffer,bufsize))
 	    {
 	      break;
