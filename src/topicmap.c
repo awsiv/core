@@ -211,6 +211,7 @@ int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
   char from_name[CF_BUFSIZE],from_assoc[CF_BUFSIZE],to_assoc[CF_BUFSIZE],to_name[CF_BUFSIZE];
   char work[CF_BUFSIZE],*sp;
   int save_pid = 0,pid,s,e,count = 0;
+  struct Item *list = NULL;
 
 strcpy(buffer,"<div id=\"disambig\">\n<h2>The search suggests these topics:</h2>\n<ul>\n");
 
@@ -254,11 +255,17 @@ while(CfFetchRow(&cfdb))
       {
       // Ignore multiple contexts
       
-	if (strlen(work) == 0 || strlen(work) == 0 && strcmp(work,topic_name) != 0)
+      if (strlen(work) == 0 || strlen(work) == 0 && strcmp(work,topic_name) != 0)
          {
+         if (IsItemIn(list,topic_name))
+            {
+            continue;
+            }
+         
          count++;
          Nova_AddTopicSearchBuffer(pid,topic_name,topic_context,buffer,bufsize);
          save_pid = pid;
+         PrependItem(&list,topic_name,NULL);
          }
       }
    }
@@ -292,8 +299,14 @@ while(CfFetchRow(&cfdb))
 
    if (BlockTextCaseMatch(search_topic,from_assoc,&s,&e)||BlockTextCaseMatch(search_topic,to_assoc,&s,&e))
       {
+      if (IsItemIn(list,from_assoc))
+         {
+         continue;
+         }
       count++;
       Nova_AddAssocSearchBuffer(from_assoc,to_assoc,buffer,bufsize);
+
+      PrependItem(&list,from_assoc,NULL);
       }
    }
 
@@ -306,6 +319,7 @@ if (count == 0)
 strcat(buffer,"</ul></div>\n");
 CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
+DeleteItemList(list);
 
 if (count == 1)
    {
