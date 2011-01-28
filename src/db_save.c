@@ -1312,14 +1312,14 @@ char *CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *re
      }
    else{
      bson_append_new_oid(&bb,"_id");
+     bson_append_string(&bb,cfc_keyhash,keyhash);
+
+     if(!EMPTY(reportData))
+       {
+	 bson_append_string(&bb,cfc_reportdata,reportData);
+       }
    }
 
-   bson_append_string(&bb,cfc_keyhash,keyhash);
-
-   if(!EMPTY(reportData))
-     {
-       bson_append_string(&bb,cfc_reportdata,reportData);
-     }
    bson_from_buffer(&host_key, &bb);
    
    bson_buffer_init(&bb);

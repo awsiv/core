@@ -4341,7 +4341,7 @@ int Nova2PHP_add_comment(char *keyhash, char *cid, int reportType, char *reportD
     }
   
   CFDB_AddComment(&dbconn,keyhash, commentId, reportData, data);
-  if(strlen(cid)<15 && strlen(commentId)>0 )
+  if((!cid || strlen(cid)<15) && strlen(commentId)>0 )
     {
       //       snprintf(cid, CF_MAXVARSIZE, "%s",commentId);
       //snprintf(reportText,CF_BUFSIZE,"%ld,%s,%s",1293492358,"knowledge_commands_cf_promise_r"," -> Linked files /tmp/mysql.sock -> /var/run/mysqld/mysqld.sock","knowledge_files_mysql_sock_debian");/*reportData*/
