@@ -28,8 +28,8 @@ $ipaddr = cfpr_ipaddr($hostkey);
 
 $commentid = cfpr_get_host_commentid($hostkey);
 $comments="";
-if ($hostkey != "" && $commentid != "" && ($_POST["username"]) && ($_POST["commentArea"]) && ($op=="addcomment")) {
-   cfpr_comment_add($hostkey,$commentid,1,'New Report bishwa 123456789',$_POST["username"],10,$_POST["commentArea"]);
+if ($hostkey != "" && ($_POST["username"]) && ($_POST["commentArea"]) && ($op=="addcomment")) {
+   cfpr_comment_add($hostkey,"",$commentid,1,"$hostname,$ipaddr",$_POST["username"],time(),$_POST["commentArea"]);
 }
 
 
