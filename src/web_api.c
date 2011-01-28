@@ -118,7 +118,7 @@ if (false)
    /*
     * commenting
     */
-   Nova2PHP_add_comment(NULL,NULL,NULL,NULL,NULL,10000);
+   Nova2PHP_add_comment(NULL,NULL,-1,NULL,NULL,NULL,10000);
    Nova2PHP_get_comment(NULL,NULL, NULL,-1,-1,NULL,10000);
    Nova2PHP_get_host_commentid(NULL,NULL,1000);
    Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
@@ -4308,7 +4308,7 @@ int Nova2PHP_delete_host(char *keyHash)
 
 /*for commenting functionality */
 /* reportData must be read as sscanf(ip->name,"%254[^,],%254[^,],%1024[^\n]",&then,handle,reason);*/
-int Nova2PHP_add_comment(char *keyhash, char *cid, char *reportData, char *username, char *comment, time_t datetime)
+int Nova2PHP_add_comment(char *keyhash, char *cid, int reportType, char *reportData, char *username, char *comment, time_t datetime)
 
 { struct Item *data = NULL, *ip = NULL, *report = NULL;
   char msg[CF_BUFSIZE] = {0};
@@ -4338,8 +4338,15 @@ int Nova2PHP_add_comment(char *keyhash, char *cid, char *reportData, char *usern
       //snprintf(reportText,CF_BUFSIZE,"%ld,%s,%s",1293492358,"knowledge_commands_cf_promise_r"," -> Linked files /tmp/mysql.sock -> /var/run/mysqld/mysqld.sock","knowledge_files_mysql_sock_debian");/*reportData*/
       snprintf(reportText,CF_BUFSIZE,"%s",reportData);
       AppendItem(&report,reportText,NULL);
-      //     CFDBRef_PromiseLog_Comments(&dbconn, keyhash, commentId, plog_repaired, report);
-      CFDBRef_HostID_Comments(&dbconn,keyhash, commentId);
+      switch(reportType)
+	{
+	case CFREPORT_HOSTS:
+ 	  CFDBRef_HostID_Comments(&dbconn,keyhash, commentId);
+	  break;
+	case CFREPORT_PRLOG:
+	  CFDBRef_PromiseLog_Comments(&dbconn, keyhash, commentId, plog_repaired, report);
+	  break;
+	}
     }
 
   CFDB_Close(&dbconn);
@@ -4459,8 +4466,8 @@ if(!result)
 for (rp = result; rp != NULL; rp=rp->next)
    {
      snprintf(buffer,CF_MAXVARSIZE-1,"%s",(char *)rp->item);
+     snprintf(returnval,CF_MAXVARSIZE-1,"%s ",buffer);
    }
-snprintf(returnval,CF_MAXVARSIZE-1,"%s ",buffer);
 
 if (!CFDB_Close(&dbconn))
    {

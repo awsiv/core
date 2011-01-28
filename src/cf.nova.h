@@ -1014,7 +1014,7 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize);
 /*
  * commenting
  */
-int Nova2PHP_add_comment(char *keyhash, char *cid, char *reportData, char *username, char *comment, time_t datetime);
+int Nova2PHP_add_comment(char *keyhash, char *cid, int reportType, char *reportData, char *username, char *comment, time_t datetime);
 int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, time_t to, char *returnval, int bufsize);
 int Nova2PHP_get_host_commentid(char *hostkey, char *returnval, int bufsize);
 
@@ -1368,6 +1368,10 @@ struct cf_pscalar
 #define cfc_username "u"
 #define cfc_datetime "d"
 #define cfc_message "m" 
+
+#define CFREPORT_HOSTS 1
+#define CFREPORT_PRLOG 2
+#define CFREPORT_PRSUMMARY 3
 
 #define CFDB_GREATERTHANEQ 4
 #define CFDB_LESSTHANEQ 5

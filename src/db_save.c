@@ -1375,6 +1375,19 @@ char *CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *re
 }
 
 /*****************************************************************************/
+time_t rev_ctime(char *str_time)
+{
+  struct tm tm;
+  char buf[255];
+  time_t t=(time_t)0;
+
+  snprintf(buf,sizeof(buf),"%s",str_time);
+  strptime(buf, "%A %b %d %H:%M:%S %Y", &tm);
+  t = mktime(&tm);
+  return t;
+}
+
+/*****************************************************************************/
 
 void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *keyhash, char *commentId, enum promiselog_rep rep_type, struct Item *data)
 {
@@ -1392,6 +1405,7 @@ void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *keyhash, char *co
   char *dbOp;
   long then;
   time_t tthen;
+  char time_buf[255] = {0};
   
   bson_oid_t bsonid;
   
@@ -1413,8 +1427,8 @@ switch(rep_type)
 // TODO: loop not required -> remove
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%ld,%254[^,],%1024[^\n]",&then,handle,reason);
-   tthen = (time_t)then;
+   sscanf(ip->name,"%254[^,],%254[^,],%1024[^\n]",&time_buf,handle,reason);
+   tthen = (time_t) rev_ctime(time_buf);
 
    snprintf(timekey,sizeof(timekey),"%s",GenTimeKey(tthen));
 
