@@ -1333,7 +1333,8 @@ char *CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *re
    
    bson_append_finish_object(setObj);
    bson_from_buffer(&setOp,&bb);
-   
+   bson_print(&setOp);
+   bson_print(&host_key);
    mongo_update(conn, MONGO_COMMENTS, &host_key, &setOp, MONGO_UPDATE_UPSERT);
    MongoCheckForError(conn,"AddComments",keyhash);
    bson_destroy(&setOp);
@@ -1375,16 +1376,17 @@ char *CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *re
 }
 
 /*****************************************************************************/
-time_t rev_ctime(char *str_time)
+static time_t rev_ctime(char *str_time)
 {
   struct tm tm;
   char buf[255];
-  time_t t=(time_t)0;
+  time_t t;
 
   snprintf(buf,sizeof(buf),"%s",str_time);
+  memset(&tm, 0, sizeof(tm));
   strptime(buf, "%A %b %d %H:%M:%S %Y", &tm);
-  t = mktime(&tm);
-  return t;
+  printf("bishwa: rev_time: %s(%ld) => %d\n",buf, t,ctime(mktime(&tm)));
+  return mktime(&tm);
 }
 
 /*****************************************************************************/
@@ -1404,8 +1406,8 @@ void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *keyhash, char *co
   char *collName;
   char *dbOp;
   long then;
-  time_t tthen;
-  char time_buf[255] = {0};
+  const time_t tthen;
+  char time_buf[255];
   
   bson_oid_t bsonid;
   
@@ -1426,10 +1428,13 @@ switch(rep_type)
 
 // TODO: loop not required -> remove
 for (ip = data; ip != NULL; ip=ip->next)
-   {
-   sscanf(ip->name,"%254[^,],%254[^,],%1024[^\n]",&time_buf,handle,reason);
-   tthen = (time_t) rev_ctime(time_buf);
-
+  {
+    // for time in human readable format
+     //   sscanf(ip->name,"%254[^,],%254[^,],%1024[^\n]",time_buf,handle,reason);
+    //   tthen = rev_ctime(time_buf);
+        sscanf(ip->name,"%ld,%254[^,],%1024[^\n]",tthen,handle,reason);
+	
+  printf("bishwa: rev_time: %s(%ld)\n",time_buf, tthen);
    snprintf(timekey,sizeof(timekey),"%s",GenTimeKey(tthen));
 
    // update
@@ -1446,7 +1451,8 @@ for (ip = data; ip != NULL; ip=ip->next)
    bson_append_int(&record,cfr_time,tthen);
    bson_from_buffer(&host_key, &record);
    mongo_update(conn, collName, &host_key, &setOp, 0);
-
+   bson_print(&setOp);
+   bson_print(&host_key);
    bson_destroy(&setOp);
    bson_destroy(&host_key);
    }

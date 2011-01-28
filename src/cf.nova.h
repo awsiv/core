@@ -566,7 +566,7 @@ struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,cha
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
 struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype);
 void DeleteHubVariable(struct HubVariable *hv);
-struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,char *cause,time_t t);
+struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,char *cause,time_t t, char *commentId);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
 struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
 void DeleteHubLastSeen(struct HubLastSeen *hp);
@@ -1372,6 +1372,9 @@ struct cf_pscalar
 #define CFREPORT_HOSTS 1
 #define CFREPORT_PRLOG 2
 #define CFREPORT_PRSUMMARY 3
+#define CF_NOCOMMENT "NO_COMMENT"
+#define CF_SHOWCOMMENT "Show Comment"
+#define CF_ADDCOMMENT "Add Comment"
 
 #define CFDB_GREATERTHANEQ 4
 #define CFDB_LESSTHANEQ 5
@@ -1445,6 +1448,7 @@ struct HubPromiseLog // promise kept,repaired or not kept
    char *handle;
    char *cause;
    time_t t;
+   char *comment_id;
    };
 
 struct HubLastSeen

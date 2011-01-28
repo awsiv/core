@@ -228,7 +228,7 @@ return buffer;
 
 int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char *report,buffer[CF_BUFSIZE], comment[CF_MAXVARSIZE], comment_link[CF_BUFSIZE];
   struct HubPromiseLog *hp;  struct HubQuery *hq;
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
@@ -244,15 +244,25 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 StartJoin(returnval,"<table>\n",bufsize);
 
-snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Time</th></tr>\n");
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Time</th><th>Comment</th></tr>\n");
 Join(returnval,buffer,bufsize);
          
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseLog *)rp->item;
+   if(strcmp(hp->comment_id,CF_NOCOMMENT) == 0)
+     {
+       snprintf(comment_link,sizeof(comment_link),"\"comments.php?hostkey=%s&comment_id=%s&report_type=%d&report_data=%ld,%s,%s\"",hostkey,hp->comment_id,CFREPORT_PRLOG,hp->t,hp->handle,hp->cause);
+       snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
+     }
+   else
+     {
+       snprintf(comment_link,sizeof(comment_link),"\"comments.php?comment_id=%s\"",hp->comment_id);
+       snprintf(comment,sizeof(comment),"%s",CF_ADDCOMMENT);
+     }
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=\"comments.php?%s\">%s</a><td></tr>\n", hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), hp->comment_id, comment);
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%s</td></tr>\n",
-            hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)));
+   printf("Bihwa <tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=%s/a>%s<td></tr>\n", hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), hp->comment_id, comment);
 
    if(!Join(returnval,buffer,bufsize))
      {
@@ -4330,9 +4340,8 @@ int Nova2PHP_add_comment(char *keyhash, char *cid, int reportType, char *reportD
       return false;
     }
   
-  
   CFDB_AddComment(&dbconn,keyhash, commentId, reportData, data);
-  if(!cid && strlen(commentId)>0 )
+  if(strlen(cid)<15 && strlen(commentId)>0 )
     {
       //       snprintf(cid, CF_MAXVARSIZE, "%s",commentId);
       //snprintf(reportText,CF_BUFSIZE,"%ld,%s,%s",1293492358,"knowledge_commands_cf_promise_r"," -> Linked files /tmp/mysql.sock -> /var/run/mysqld/mysqld.sock","knowledge_files_mysql_sock_debian");/*reportData*/
@@ -4345,6 +4354,7 @@ int Nova2PHP_add_comment(char *keyhash, char *cid, int reportType, char *reportD
 	  break;
 	case CFREPORT_PRLOG:
 	  CFDBRef_PromiseLog_Comments(&dbconn, keyhash, commentId, plog_repaired, report);
+	    printf("webapi: bishwa : %s : %s\n",cid, commentId);
 	  break;
 	}
     }

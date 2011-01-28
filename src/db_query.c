@@ -2193,7 +2193,7 @@ struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum 
 {
   char classRegexAnch[CF_MAXVARSIZE];
   char rhandle[CF_MAXVARSIZE],rcause[CF_BUFSIZE];
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE], commentId[CF_MAXVARSIZE];
   bson_iterator it1;
   struct HubHost *hh;
   struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
@@ -2284,6 +2284,7 @@ if (!EMPTY(lhandle))  // promise handle
  bson_append_int(&bb,cfr_cause,1);
  bson_append_int(&bb,cfr_promisehandle,1);
  bson_append_int(&bb,cfr_time,1);
+ bson_append_int(&bb,"cid",1);
  bson_from_buffer(&field,&bb);
 
 switch (type)
@@ -2318,6 +2319,8 @@ switch (type)
      addresses[0] = '\0';
      rhandle[0] = '\0';
      rcause[0] = '\0';
+     commentId[0] = '\0';
+     snprintf(commentId,sizeof(commentId),"%s",CF_NOCOMMENT);
      rt = 0;
 
      while (bson_iterator_next(&it1))
@@ -2336,6 +2339,10 @@ switch (type)
 	   {
 	     snprintf(rcause,sizeof(rcause),"%s",bson_iterator_string(&it1));
 	   }
+	 else if (strcmp(bson_iterator_key(&it1),"cid") == 0)
+	   {
+	     snprintf(commentId,sizeof(commentId),"%s",bson_iterator_string(&it1));
+	   }
 	 else if (strcmp(bson_iterator_key(&it1),cfr_time) == 0)
 	   {
 	     rt = bson_iterator_int(&it1);
@@ -2350,7 +2357,7 @@ switch (type)
        PrependRlistAlien(&host_list,hh);
        }
      
-     rp = PrependRlistAlien(&record_list,NewHubPromiseLog(hh,rhandle,rcause,rt));
+     rp = PrependRlistAlien(&record_list,NewHubPromiseLog(hh,rhandle,rcause,rt,commentId));
 
    }
 
