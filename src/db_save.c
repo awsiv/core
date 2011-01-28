@@ -1385,7 +1385,6 @@ static time_t rev_ctime(char *str_time)
   snprintf(buf,sizeof(buf),"%s",str_time);
   memset(&tm, 0, sizeof(tm));
   strptime(buf, "%A %b %d %H:%M:%S %Y", &tm);
-  printf("bishwa: rev_time: %s(%ld) => %d\n",buf, t,ctime(mktime(&tm)));
   return mktime(&tm);
 }
 
@@ -1434,7 +1433,6 @@ for (ip = data; ip != NULL; ip=ip->next)
     //   tthen = rev_ctime(time_buf);
         sscanf(ip->name,"%ld,%254[^,],%1024[^\n]",tthen,handle,reason);
 	
-  printf("bishwa: rev_time: %s(%ld)\n",time_buf, tthen);
    snprintf(timekey,sizeof(timekey),"%s",GenTimeKey(tthen));
 
    // update

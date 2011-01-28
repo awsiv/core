@@ -5358,6 +5358,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    bson_iterator_init(&it1,cursor->current.data);
 
    keyhash[0] = '\0';
+   commentId[0] = '\0';
    
    while (bson_iterator_next(&it1))
       {
@@ -5380,7 +5381,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 	  }      
 	
       }
-   if(commentId && strlen(commentId)>0)
+   if(commentId && strlen(commentId)>15)
      {
        PrependRlistAlien(&host_list,commentId);
      }

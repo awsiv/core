@@ -253,12 +253,12 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    if(strcmp(hp->comment_id,CF_NOCOMMENT) == 0)
      {
        snprintf(comment_link,sizeof(comment_link),"\"comments.php?hostkey=%s&comment_id=%s&report_type=%d&report_data=%ld,%s,%s\"",hostkey,hp->comment_id,CFREPORT_PRLOG,hp->t,hp->handle,hp->cause);
-       snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
+       snprintf(comment,sizeof(comment),"%s",CF_ADDCOMMENT);
      }
    else
      {
        snprintf(comment_link,sizeof(comment_link),"\"comments.php?comment_id=%s\"",hp->comment_id);
-       snprintf(comment,sizeof(comment),"%s",CF_ADDCOMMENT);
+       snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
      }
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=\"comments.php?%s\">%s</a><td></tr>\n", hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), hp->comment_id, comment);
 
@@ -4354,7 +4354,6 @@ int Nova2PHP_add_comment(char *keyhash, char *cid, int reportType, char *reportD
 	  break;
 	case CFREPORT_PRLOG:
 	  CFDBRef_PromiseLog_Comments(&dbconn, keyhash, commentId, plog_repaired, report);
-	    printf("webapi: bishwa : %s : %s\n",cid, commentId);
 	  break;
 	}
     }
