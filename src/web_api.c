@@ -118,7 +118,7 @@ if (false)
    /*
     * commenting
     */
-   Nova2PHP_add_comment(NULL,NULL,-1,NULL,NULL,NULL,10000);
+   Nova2PHP_add_comment(NULL,NULL,NULL,-1,NULL,NULL,NULL,10000);
    Nova2PHP_get_comment(NULL,NULL, NULL,-1,-1,NULL,10000);
    Nova2PHP_get_host_commentid(NULL,NULL,1000);
    Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
@@ -252,7 +252,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    hp = (struct HubPromiseLog *)rp->item;
    if(strcmp(hp->comment_id,CF_NOCOMMENT) == 0)
      {
-       snprintf(comment_link,sizeof(comment_link),"\"comments.php?hostkey=%s&comment_id=%s&report_type=%d&report_data=%ld,%s,%s\"",hostkey,hp->comment_id,CFREPORT_PRLOG,hp->t,hp->handle,hp->cause);
+       snprintf(comment_link,sizeof(comment_link),"\"comments.php?hostkey=%s&comment_id=%s&report_type=%d&report_data=%s&time=%ld\"",hostkey,hp->comment_id,CFREPORT_PRLOG,hp->oid,hp->t);
        snprintf(comment,sizeof(comment),"%s",CF_ADDCOMMENT);
      }
    else
@@ -260,9 +260,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
        snprintf(comment_link,sizeof(comment_link),"\"comments.php?comment_id=%s\"",hp->comment_id);
        snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
      }
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=\"comments.php?%s\">%s</a><td></tr>\n", hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), hp->comment_id, comment);
-
-   printf("Bihwa <tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=%s/a>%s<td></tr>\n", hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), hp->comment_id, comment);
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=%s>%s</a><td></tr>\n", hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), comment_link, comment);
 
    if(!Join(returnval,buffer,bufsize))
      {
@@ -4318,12 +4316,12 @@ int Nova2PHP_delete_host(char *keyHash)
 
 /*for commenting functionality */
 /* reportData must be read as sscanf(ip->name,"%254[^,],%254[^,],%1024[^\n]",&then,handle,reason);*/
-int Nova2PHP_add_comment(char *keyhash, char *cid, int reportType, char *reportData, char *username, char *comment, time_t datetime)
+int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, char *reportData, char *username, char *comment, time_t datetime)
 
 { struct Item *data = NULL, *ip = NULL, *report = NULL;
   char msg[CF_BUFSIZE] = {0};
   char reportText[CF_BUFSIZE] = {0};
-  char commentId[CF_MAXVARSIZE] = {0};
+  char commentId[CF_MAXVARSIZE] = {0}, objectId[CF_MAXVARSIZE] = {0};
   mongo_connection dbconn;
    
   snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,comment,datetime);
@@ -4333,6 +4331,10 @@ int Nova2PHP_add_comment(char *keyhash, char *cid, int reportType, char *reportD
     {
       snprintf(commentId, CF_MAXVARSIZE, "%s",cid);
     }
+  if(repid)
+    {
+      snprintf(objectId, CF_MAXVARSIZE, "%s",repid);
+    }
 
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -4341,10 +4343,9 @@ int Nova2PHP_add_comment(char *keyhash, char *cid, int reportType, char *reportD
     }
   
   CFDB_AddComment(&dbconn,keyhash, commentId, reportData, data);
-  if((!cid || strlen(cid)<15) && strlen(commentId)>0 )
+  if((!cid || strlen(cid)<15) && strlen(commentId)>0 && repid)
     {
-      //       snprintf(cid, CF_MAXVARSIZE, "%s",commentId);
-      //snprintf(reportText,CF_BUFSIZE,"%ld,%s,%s",1293492358,"knowledge_commands_cf_promise_r"," -> Linked files /tmp/mysql.sock -> /var/run/mysqld/mysqld.sock","knowledge_files_mysql_sock_debian");/*reportData*/
+
       snprintf(reportText,CF_BUFSIZE,"%s",reportData);
       AppendItem(&report,reportText,NULL);
       switch(reportType)
@@ -4353,7 +4354,7 @@ int Nova2PHP_add_comment(char *keyhash, char *cid, int reportType, char *reportD
  	  CFDBRef_HostID_Comments(&dbconn,keyhash, commentId);
 	  break;
 	case CFREPORT_PRLOG:
-	  CFDBRef_PromiseLog_Comments(&dbconn, keyhash, commentId, plog_repaired, report);
+	  CFDBRef_PromiseLog_Comments(&dbconn, objectId, commentId, plog_repaired);
 	  break;
 	}
     }

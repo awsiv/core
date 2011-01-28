@@ -1333,8 +1333,6 @@ char *CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *re
    
    bson_append_finish_object(setObj);
    bson_from_buffer(&setOp,&bb);
-   bson_print(&setOp);
-   bson_print(&host_key);
    mongo_update(conn, MONGO_COMMENTS, &host_key, &setOp, MONGO_UPDATE_UPSERT);
    MongoCheckForError(conn,"AddComments",keyhash);
    bson_destroy(&setOp);
@@ -1390,7 +1388,7 @@ static time_t rev_ctime(char *str_time)
 
 /*****************************************************************************/
 
-void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *keyhash, char *commentId, enum promiselog_rep rep_type, struct Item *data)
+void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *oid, char *commentId, enum promiselog_rep rep_type)
 {
   bson_buffer bb,record;
   bson host_key;  // host description
@@ -1426,14 +1424,27 @@ switch(rep_type)
    }
 
 // TODO: loop not required -> remove
-for (ip = data; ip != NULL; ip=ip->next)
+//for (ip = data; ip != NULL; ip=ip->next)
   {
     // for time in human readable format
      //   sscanf(ip->name,"%254[^,],%254[^,],%1024[^\n]",time_buf,handle,reason);
     //   tthen = rev_ctime(time_buf);
-        sscanf(ip->name,"%ld,%254[^,],%1024[^\n]",tthen,handle,reason);
+    // find right host and report - key
+    bson_buffer_init(&record);
+    if(!EMPTY(oid))
+     {
+       bson_oid_from_string(&bsonid,oid);
+       bson_append_oid(&bb,"_id",&bsonid);
+     }
+   else
+     {
+       // TODO: Error messaging
+       return;
+     }
+    bson_from_buffer(&host_key, &record);
+    //    sscanf(ip->name,"%ld,%254[^,],%1024[^\n]",tthen,handle,reason);
 	
-   snprintf(timekey,sizeof(timekey),"%s",GenTimeKey(tthen));
+    //snprintf(timekey,sizeof(timekey),"%s",GenTimeKey(tthen));
 
    // update
    bson_buffer_init(&bb);
@@ -1442,21 +1453,18 @@ for (ip = data; ip != NULL; ip=ip->next)
    bson_append_finish_object(setObj);
    bson_from_buffer(&setOp,&bb);
 
-   // find right host and report - key
-   bson_buffer_init(&record);
-   bson_append_string(&record,cfr_keyhash,keyhash);
+   /*bson_append_string(&record,cfr_keyhash,keyhash);
    bson_append_string(&record,cfr_promisehandle,handle);
    bson_append_int(&record,cfr_time,tthen);
-   bson_from_buffer(&host_key, &record);
+   bson_from_buffer(&host_key, &record);*/
+   
    mongo_update(conn, collName, &host_key, &setOp, 0);
-   bson_print(&setOp);
-   bson_print(&host_key);
    bson_destroy(&setOp);
    bson_destroy(&host_key);
    }
 
 // should do this in loop, but not efficient...
- MongoCheckForError(conn,dbOperation,keyhash);
+ MongoCheckForError(conn,dbOperation,oid);
 }
 
 

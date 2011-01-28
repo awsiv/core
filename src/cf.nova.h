@@ -205,7 +205,7 @@ struct CfFileLine
 /* acl.c */
 
 void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
-void Nova_SetACLDefaults(char *path, struct CfACL *acl);
+void  Nova_SetACLDefaults(char *path, struct CfACL *acl);
 int Nova_CheckACLSyntax(char *file,struct CfACL acl,struct Promise *pp);
 int Nova_CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support, int mask_support,struct Promise *pp);
 int Nova_CheckModeSyntax(char **mode_p, char *valid_nperms, char *valid_ops,struct Promise *pp);
@@ -411,7 +411,7 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
  */
 char * CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *reportData, struct Item *data);
 struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, char *cid, struct Item *data);
-void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *keyhash, char *commentId, enum promiselog_rep rep_type, struct Item *data);
+void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *oid, char *commentId, enum promiselog_rep rep_type);
 void CFDBRef_HostID_Comments(mongo_connection *conn,char *keyhash, char *commentId);
 struct Rlist *CFDB_QueryCommentId(mongo_connection *conn,bson *query);
 #endif  /* HAVE_LIBMONGOC */
@@ -566,7 +566,7 @@ struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,cha
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
 struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype);
 void DeleteHubVariable(struct HubVariable *hv);
-struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,char *cause,time_t t, char *commentId);
+struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,char *cause,time_t t, char *commentId,char *oid);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
 struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
 void DeleteHubLastSeen(struct HubLastSeen *hp);
@@ -1014,7 +1014,7 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize);
 /*
  * commenting
  */
-int Nova2PHP_add_comment(char *keyhash, char *cid, int reportType, char *reportData, char *username, char *comment, time_t datetime);
+int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, char *reportData, char *username, char *comment, time_t datetime);
 int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, time_t to, char *returnval, int bufsize);
 int Nova2PHP_get_host_commentid(char *hostkey, char *returnval, int bufsize);
 
@@ -1448,7 +1448,8 @@ struct HubPromiseLog // promise kept,repaired or not kept
    char *handle;
    char *cause;
    time_t t;
-   char *comment_id;
+   char *comment_id;  
+   char *oid;  
    };
 
 struct HubLastSeen
