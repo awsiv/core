@@ -1434,7 +1434,7 @@ switch(rep_type)
     if(!EMPTY(oid))
      {
        bson_oid_from_string(&bsonid,oid);
-       bson_append_oid(&bb,"_id",&bsonid);
+       bson_append_oid(&record,"_id",&bsonid);
      }
    else
      {
