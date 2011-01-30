@@ -4,6 +4,8 @@
 	Allows to specify age interval when querying promise not
 	kept and repaired.
 
+	Promiser conflict identifcation
+
 2.0.1   
 	Fixed promise query of not kept/promise repaired logs.
 
