@@ -1005,5 +1005,8 @@ font-weight: bold;
 	padding:1px 0 3px 0;
 }
 
+.show_comment_btn { cursor: pointer; }
+.add_comment_btn { cursor: pointer; }
+
 
 

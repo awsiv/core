@@ -3,6 +3,11 @@
 # This file is (C) Cfengine AS. All rights reserved
 #
       
+$commentid = cfpr_get_host_commentid($hostkey);
+$comments="";
+if ($hostkey != "" && ($_POST["username"]) && ($_POST["commentArea"]) && ($op=="addcomment")) {
+   cfpr_comment_add($hostkey,"",$commentid,1,"$hostname,$ipaddr",$_POST["username"],time(),$_POST["comment_text"]);
+}
 
 cfpr_host_meter($hostkey);
 $colour = cfpr_get_host_colour($hostkey);
@@ -43,7 +48,43 @@ $colour = cfpr_get_host_colour($hostkey);
        <p><label class="width_20">ID:</label><label><small><?php echo $hostkey?></small></label></p>
                       </div>
                  </div>
-                 
+
+                 <div class="panel">
+                     <div class="panelhead">Comments</div>
+                     <div class="panelcontent">
+                     <p><label class="width_20">hostKey:</label><label ><?php echo $hostname?></label></p>
+                     <?php
+                        if ($commentid != "")
+                        {
+                         echo "<div> <a href=\"#\" class=\"show_comment_btn\">Show Comments ($commentid)</a> </div>";
+                        }
+                        else
+                        {
+                         echo "<div> <a href=\"#\" class=\"add_comment_btn\">Add Comment</a> </div>";
+                        }
+                     ?>
+
+                     <div id="comments">
+                       <?php
+                       if ($commentid != "")
+                       {
+                         $comments = cfpr_comment_query('',$commentid,'',-1,-1);
+                         echo $comments;
+                         echo "<div> <a href=\"#\" class=\"add_comment_btn\">Add Comment</a> </div>";
+                       }
+                     ?>
+                     </div>
+
+                     <div id="add_comment">
+                       <form name ="add_comment_form" action="host.php" method="post">
+                        <p><label>Username: </label><input type="text" name="username"></p>
+                        <p> <textarea name="comment_text" rows="10" cols="50"> </textarea> </p>
+                        <input type="hidden" name="hostkey" id="hostkey" value="<?php echo $hostkey?>"/>
+                        <input type="hidden" name="op" id="op" value="addcomment"/>
+                        <input type="submit" value="Comment!" name="submit_comment">
+                        </form>
+                     </div>
+
                  <div class="panel">
                    <div class="panelhead">Status (measured)</div>
                      <div class="panelcontent">
@@ -130,3 +171,21 @@ $(document).ready(function() {
 });
 </script>
 
+<script type="text/javascript" src="scripts/jquery-1.4.2.min.js"></script>
+ <script type="text/javascript">
+$('#comments').hide();
+$('#add_comment').hide();
+
+$('.show_comment_btn').click(function() {
+    $('#comments').slideToggle('slow');
+    $(this).text($(this).text() == 'Hide Comments' ? 'Show Comments' : 'Hide  Comments');
+    return false;
+});
+
+$('.add_comment_btn').click(function() {
+    $('#add_comment').slideToggle('slow');
+   $(this).text($(this).text() == 'Hide Comments' ? 'Show Comments' : 'Hide  Comments');
+    return false;
+});
+
+ </script>
