@@ -216,7 +216,7 @@ fprintf(fp,"bundles::\n");
 fprintf(fp,"  \"%s\";\n",pp->bundle);
 
 fprintf(fp,"class_contexts::\n");
-fprintf(fp,"  \"%s\";\n",NovaEscape(pp->classes));
+fprintf(fp,"  \"%s\";\n",pp->classes);
 
 /* First the bundle container */
 
@@ -344,7 +344,7 @@ else
    fprintf(fp,"   comment => \"(Uncommented <i>%s</i> promise by: %.25s..)\";\n",pp->agentsubtype,NovaEscape(pp->promiser));
    }
 
-fprintf(fp,"\"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",promise_id,NOVA_ACTIVATED,pp->classes,NOVA_ACTIVATES);
+fprintf(fp,"\"%s\" association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",promise_id,NOVA_ACTIVATED,pp->classes,NOVA_ACTIVATES);
 fprintf(fp,"\"%s\" association => a(\"is a promise of type\",\"%s\",\"has current exemplars\");\n",promise_id,pp->agentsubtype);
 
 for (rp = depends_on; rp != NULL; rp=rp->next)
@@ -873,7 +873,7 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
             if (strstr(pp2->classes,rp->item) && cf_strcmp(rp->item,"any") != 0 && cf_strcmp(pp->classes,"any") != 0)
                {                           
                fprintf(fp,"class_contexts::");
-               fprintf(fp,"  \"%s\"\n",NovaEscape(pp->classes));
+               fprintf(fp,"  \"%s\"\n",pp->classes);
                fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_ACTIVATED,NovaEscape(rp->item),NOVA_ACTIVATES);
                }
             }

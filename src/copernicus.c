@@ -97,7 +97,7 @@ size1 = Nova_SplayAdjacent(centre,tribe_adj,tribe_size,tribe_node,trail,neighbou
 
 if (size1 < 1)
    {
-   snprintf(buffer,CF_MAXVARSIZE,"Didn't find any local cluster");
+   snprintf(buffer,CF_MAXVARSIZE,"Singleton topic - %d associations",size1);
    return;
    }
 

@@ -450,7 +450,7 @@ gdImageRectangle(cfv.im,0,0,cfv.width+2*cfv.margin,cfv.height+2*cfv.margin,BLACK
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_error,"", "!! Could not open connection to report database on meter query");
-   return;
+   return returnval;
    }
 
 hq = CFDB_QueryMeter(&dbconn,hostkey);

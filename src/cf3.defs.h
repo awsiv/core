@@ -33,7 +33,7 @@
 #undef VERSION
 #undef Verbose
 
-#define CF3_REVISION "$Rev: 1691 $"
+#define CF3_REVISION "$Rev: 1718 $"
 
 #include "conf.h"
 
@@ -707,6 +707,7 @@ struct PromiseIdent
    {
    char *handle;
    char *filename;
+   char *classes;
    int lineno;
    struct PromiseIdent *next;
    };
@@ -977,7 +978,8 @@ enum cf_thread_mutex
   cft_db_lastseen,  // lastseen dbs (in cf-serverd)
   cft_no_tpolicy,
   cft_report,
-  cft_vscope        // protects VSCOPE
+  cft_vscope,           // protects VSCOPE
+  cft_server_keyseen  // protects   SERVER_KEYSEEN
   };
 
 enum cf_status

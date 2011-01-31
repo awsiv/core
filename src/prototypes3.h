@@ -491,9 +491,13 @@ void SpecialQuote(char *topic,char *type);
 void LastSawBundle(char *name);
 int GetInstalledPkgsRpath(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp);
 int ExecPackageCommandRpath(char *command,int verify,int setCmdClasses,struct Attributes a,struct Promise *pp);
+int ForeignZone(char *s);
+void NewPromiser(struct Promise *pp);
+void AnalyzePromiseConflicts(void);
 
 /* env_context.c */
 
+struct Rlist *SplitContextExpression(char *s,struct Promise *pp);
 void ValidateClassSyntax(char *str);
 int Abort(void);
 int ValidClassName(char *name);
@@ -750,9 +754,11 @@ int ExpandOverflow(char *str1,char *str2);
 char *JoinPath(char *path,char *leaf);
 char *JoinSuffix(char *path,char *leaf);
 int StartJoin(char *path,char *leaf,int bufsize);
+int StartJoinFast(char *path,char *leaf,char **nextFree,int bufsize);
 int Join(char *path,char *leaf,int bufsize);
+int JoinFast(char *path,char *leaf,char **nextFree,int bufsize);
 int EndJoin(char *path,char *leaf,int bufsize);
-int JoinMargin(char *path,char *leaf,int bufsize,int margin);
+int JoinMargin(char *path,char *leaf,char **nextFree,int bufsize,int margin);
 int IsAbsPath(char *path);
 void AddSlash(char *str);
 void DeleteSlash(char *str);
@@ -1497,6 +1503,7 @@ void AssertThreadLocked(enum cf_thread_mutex name, char *fname);
 pthread_mutex_t *NameToThreadMutex(enum cf_thread_mutex name);
 #endif
 void RemoveDates(char *s);
+void PurgeLocks(void);
 
 /* timeout.c */
 

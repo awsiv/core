@@ -76,11 +76,11 @@ if (!cfdb.connected)
 
 if (strlen(type) > 0)
    {
-   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s' and topic_context like '%%%s%%'",topic,type);
+   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s' and topic_context like '%%%s%%'",EscapeSQL(&cfdb,topic),type);
    }
 else
    {
-   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s'",topic);
+   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s'",EscapeSQL(&cfdb,topic));
    }
 
 CfNewQueryDB(&cfdb,query);
@@ -211,6 +211,7 @@ int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
   char from_name[CF_BUFSIZE],from_assoc[CF_BUFSIZE],to_assoc[CF_BUFSIZE],to_name[CF_BUFSIZE];
   char work[CF_BUFSIZE],*sp;
   int save_pid = 0,pid,s,e,count = 0;
+  struct Item *list = NULL;
 
 strcpy(buffer,"<div id=\"disambig\">\n<h2>The search suggests these topics:</h2>\n<ul>\n");
 
@@ -254,11 +255,17 @@ while(CfFetchRow(&cfdb))
       {
       // Ignore multiple contexts
       
-	if (strlen(work) == 0 || strlen(work) == 0 && strcmp(work,topic_name) != 0)
+      if (strlen(work) == 0 || strlen(work) == 0 && strcmp(work,topic_name) != 0)
          {
+         if (IsItemIn(list,topic_name))
+            {
+            continue;
+            }
+         
          count++;
          Nova_AddTopicSearchBuffer(pid,topic_name,topic_context,buffer,bufsize);
          save_pid = pid;
+         PrependItem(&list,topic_name,NULL);
          }
       }
    }
@@ -292,8 +299,14 @@ while(CfFetchRow(&cfdb))
 
    if (BlockTextCaseMatch(search_topic,from_assoc,&s,&e)||BlockTextCaseMatch(search_topic,to_assoc,&s,&e))
       {
+      if (IsItemIn(list,from_assoc))
+         {
+         continue;
+         }
       count++;
       Nova_AddAssocSearchBuffer(from_assoc,to_assoc,buffer,bufsize);
+
+      PrependItem(&list,from_assoc,NULL);
       }
    }
 
@@ -306,6 +319,7 @@ if (count == 0)
 strcat(buffer,"</ul></div>\n");
 CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
+DeleteItemList(list);
 
 if (count == 1)
    {
@@ -356,8 +370,7 @@ strcat(buffer,"<ul>\n"); // outer list
 snprintf(buf,CF_BUFSIZE-1,"<li>%s</li><ul>\n",Nova_PidURL(pid,this_name)); // Start sublist
 Join(buffer,buf,bufsize);
 
-snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",this_id);
-
+snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",EscapeSQL(&cfdb,this_id));
 CfNewQueryDB(&cfdb,query);
 
 if (cfdb.maxcolumns != 4)
@@ -397,7 +410,7 @@ strcat(buffer,"</ul></li>\n"); // close sublist
 
 if (strcmp(this_type,"any") != 0)
    {
-   snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",this_type);
+   snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",EscapeSQL(&cfdb,this_type));
    
    CfNewQueryDB(&cfdb,query);
    
@@ -652,8 +665,7 @@ CfDeleteQuery(&cfdb);
 
 // Look for mentions in other contexts
 
-snprintf(query,sizeof(query),"SELECT topic_context,pid from topics where topic_name='%s'",topic_name);
-
+snprintf(query,sizeof(query),"SELECT topic_context,pid from topics where topic_name='%s'",EscapeSQL(&cfdb,topic_name));
 CfNewQueryDB(&cfdb,query);
 
 if (cfdb.maxcolumns != 2)
@@ -942,8 +954,7 @@ if (!cfdb.connected)
 
 // Get goal pid
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name='%s'",ip->name);
-
+snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name='%s'",EscapeSQL(&cfdb,ip->name));
 CfNewQueryDB(&cfdb,query);
 
 if (cfdb.maxcolumns != 1)

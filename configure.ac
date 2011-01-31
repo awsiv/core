@@ -5,7 +5,7 @@ dnl # script => aclocal; automake -a -c; autoconf
 dnl #
 dnl ##########################################################################
 
-AC_PREREQ(2.64)
+AC_PREREQ(2.63)
 
 AC_INIT
 AC_CONFIG_SRCDIR([src/cfnova.c])
@@ -15,7 +15,7 @@ dnl
 dnl The version in the next line is the only one to set
 dnl
 
-AM_INIT_AUTOMAKE(cfnova,2.0.2b1)   dnl remember to set version
+AM_INIT_AUTOMAKE(cfnova,2.0.2)   dnl remember to set version
 AC_CONFIG_HEADERS([src/conf.h])
 
 AC_CONFIG_MACRO_DIR(m4)
