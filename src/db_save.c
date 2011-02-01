@@ -70,7 +70,7 @@ int CFDB_PutValue(char *lval,char *rval)
   char varName[CF_MAXVARSIZE];
   mongo_connection dbconn;
 
-if (!IsDefinedClass("am_policy_hub"))
+if (!IsDefinedClass("am_policy_hub") || IsDefinedClass("am_php_module"))
    {
    CfOut(cf_verbose,"","Ignoring DB put of (%s=%s) - we are not a policy server",lval,rval);
    return false;

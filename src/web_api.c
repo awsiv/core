@@ -2181,7 +2181,7 @@ if (!CFDB_Close(&dbconn))
 
 int Nova2PHP_set_siteurl(char *siteUrl)
 {
-  NewClass("am_policy_hub");
+  NewClass("am_php_module");
   return CFDB_PutValue("site_url", siteUrl);
 }
 
@@ -2278,7 +2278,7 @@ void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize)
   enum cf_rank_method pol;
   char siteUrl[CF_MAXVARSIZE];
   
-  NewClass("am_policy_hub");  // required to get value
+  NewClass("am_php_module");  // required to get value
 
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
