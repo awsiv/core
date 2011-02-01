@@ -1595,7 +1595,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
             {
             bson_iterator_init(&it3, bson_iterator_value(&it2));
 
-
 	    snprintf(rname,sizeof(rname),"(unknown)");
             rex = 0;
             rsigma = 0;
@@ -1629,7 +1628,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in performance",bson_iterator_key(&it3));
                   }
                }
-
             
             match_name = true;
             
@@ -1833,7 +1831,7 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
   struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_BUFSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_BUFSIZE], handle[CF_MAXVARSIZE];
   char classRegexAnch[CF_MAXVARSIZE];
   int emptyQuery = true;
   int match_name,match_t,found = false;
@@ -1873,6 +1871,7 @@ bson_append_int(&bb,cfr_keyhash,1);
 bson_append_int(&bb,cfr_ip_array,1);
 bson_append_int(&bb,cfr_host_array,1);
 bson_append_int(&bb,cfr_filechanges,1);
+bson_append_int(&bb,"cmt",1);
 bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -1916,7 +1915,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
          
          while (bson_iterator_next(&it2))
             {
-            bson_iterator_init(&it3,bson_iterator_value(&it2));
+	      snprintf(handle,CF_MAXVARSIZE,"%s",bson_iterator_key(&it2));
+	      bson_iterator_init(&it3,bson_iterator_value(&it2));
             
             while (bson_iterator_next(&it3))
                {
@@ -1928,6 +1928,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   {
                   rt = bson_iterator_int(&it3);
                   }
+	       else if (strcmp(bson_iterator_key(&it3),"cmt") == 0)
+		 {
+		   snprintf(handle,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
+		 }
                }
             
             match_name = match_t = true;
@@ -1965,7 +1969,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name && match_t)
                {
                found = true;
-               rp = PrependRlistAlien(&record_list,NewHubFileChanges(CF_THIS_HH,rname,rt));
+               rp = PrependRlistAlien(&record_list,NewHubFileChanges(CF_THIS_HH,rname,rt,handle));
                }
             }
          }   
@@ -2395,7 +2399,7 @@ struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char
   struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
   double rkept,rnotkept,rrepaired;
   char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],handle[CF_MAXVARSIZE];
   int match_day,match_month,match_year,found = false;
   char classRegexAnch[CF_MAXVARSIZE];
   int emptyQuery = true;
@@ -2472,11 +2476,11 @@ while (mongo_cursor_next(cursor))  // loops over documents
       if (strcmp(bson_iterator_key(&it1),cfr_valuereport) == 0)
          {
          bson_iterator_init(&it2,bson_iterator_value(&it1));
-
+	 
          while (bson_iterator_next(&it2))
             {
             bson_iterator_init(&it3, bson_iterator_value(&it2));
-
+	    
             rday[0] = '\0';
             rkept = 0;
             rnotkept = 0;
@@ -5398,7 +5402,108 @@ return host_list;
 }
 /*****************************************************************************/
 
+int CFDB_GetRow(mongo_connection *conn, char *db, bson *query, char *rowname, char *row, int level)
 
+{ bson_buffer bb;
+  bson field;
+  bson_iterator it1,it2,it3,it4;
+  mongo_cursor *cursor;
+  char keyhash[CF_MAXVARSIZE],top[10]={0},buffer[CF_MAXVARSIZE],buf[CF_MAXVARSIZE];
+  int match_name,found = false;
+  double rsigma,rex,rq;
+  time_t rtime;
+
+/* BEGIN SEARCH */
+ snprintf(top,3,"%s",rowname);
+ top[2] = '\0';
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,rowname,1);
+bson_from_buffer(&field, &bb);
+
+ cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
+ bson_print(&field);
+ row[0] = '\0';
+ while (mongo_cursor_next(cursor))  // loops over documents
+   {
+     bson_iterator_init(&it1,cursor->current.data);
+     
+     while (bson_iterator_next(&it1))
+       {
+	 if (strcmp(bson_iterator_key(&it1),top) == 0)
+	   {
+	     bson_iterator_init(&it2,bson_iterator_value(&it1));
+	     
+	     while (bson_iterator_next(&it2))
+	       {
+		 bson_iterator_init(&it3, bson_iterator_value(&it2));
+		 while (bson_iterator_next(&it3))
+		   {
+		     buffer[0] = '\0';
+		     buf[0] = '\0';
+		     snprintf(buffer,CF_MAXVARSIZE,"%s",bson_iterator_key(&it3));
+		     switch ( bson_iterator_type(&it3) ){
+		     case bson_int:
+		       snprintf(buf,sizeof(buf), "%s: %d" , buffer,bson_iterator_int( &it3 ) );
+		       break;
+
+		     case bson_double:
+		       snprintf(buf,sizeof(buf), "%s: %f" , buffer, bson_iterator_double( &it3 ) );
+		       break;
+
+		     case bson_bool:
+		       snprintf(buf,sizeof(buf), "%s: %s" , buffer, bson_iterator_bool( &it3 ) ? "true" : "false" );
+		       break;
+
+		     case bson_string:
+		       snprintf(buf,sizeof(buf), "%s: %s" , buffer, bson_iterator_string( &it3 ) );
+		       break;
+
+		     case bson_null:
+		       snprintf(buf,sizeof(buf), "null");
+		       buf[0] = '\0';
+		       break;
+
+		     case bson_oid:
+		       //		       bson_oid_to_string(bson_iterator_oid(&it3), oidhex);
+		       //snprintf(buf,sizeof(buf), "%s: %s" , bson_iterator_key(&it3),oidhex );
+		       break;
+
+		     case bson_object:
+		     case bson_array:
+		       // TODO: Not implemented yet..
+		       buf[0] = '\0';
+		       break;
+
+		     default:
+		       snprintf(buf,sizeof(buf) , "can't print type : %d\n" ,  bson_iterator_type(&it3) );
+		       break;
+		     }
+		     if(buf && strlen(buf) !=0)
+		       {
+			 Join(row,buf,CF_BUFSIZE - 1);
+			 Join(row,",",CF_BUFSIZE - 1);
+		       }
+		   }
+	       }
+	   }
+       }
+   }
+
+ mongo_cursor_destroy(cursor);
+ if(row && strlen(row) > 2)
+   {
+     if( row[strlen(row) - 1] == ',')
+       {
+	 row[strlen(row) - 1] = '\0';
+       }
+     return true;
+   }
+ else
+   {
+     return false;
+   }
+ }
 #endif  /* HAVE LIB_MONGOC */
 
 

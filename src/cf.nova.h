@@ -409,11 +409,15 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 /*
  * commenting
  */
-char * CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *reportData, struct Item *data);
+int CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *reportData, struct Item *data);
 struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, char *cid, struct Item *data);
 void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *oid, char *commentId, enum promiselog_rep rep_type);
 void CFDBRef_HostID_Comments(mongo_connection *conn,char *keyhash, char *commentId);
 struct Rlist *CFDB_QueryCommentId(mongo_connection *conn,bson *query);
+void CFDBRef_Performance_Comments(mongo_connection *conn, char *keyhash, char *handle, char *cid);
+int CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid);
+int CFDB_GetRow(mongo_connection *conn, char *db, bson *query, char *rowname, char *row,int level);
+
 #endif  /* HAVE_LIBMONGOC */
 
 /* db_maintain.c */
@@ -580,7 +584,7 @@ struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,ch
 void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp);
 struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev,time_t t);
 void DeleteHubBundleSeen(struct HubBundleSeen *hp);
-struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t);
+struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t, char *handle);
 void DeleteHubFileChanges(struct HubFileChanges *hp);
 struct HubFileDiff *NewHubFileDiff(struct HubHost *hh,char *file,char *diff,time_t t);
 void DeleteHubFileDiff(struct HubFileDiff *hp);
@@ -1372,6 +1376,12 @@ struct cf_pscalar
 #define CFREPORT_HOSTS 1
 #define CFREPORT_PRLOG 2
 #define CFREPORT_PRSUMMARY 3
+#define CFREPORT_PERF 4
+#define CFREPORT_VALUE 5
+#define CFREPORT_FILECHANGES 6
+#define CFREPORT_FILEDIFFS 7
+
+
 #define CF_NOCOMMENT "NO_COMMENT"
 #define CF_SHOWCOMMENT "Show Comment"
 #define CF_ADDCOMMENT "Add Comment"
@@ -1395,6 +1405,7 @@ struct HubFileChanges
    struct HubHost *hh;
    char *path;
    time_t t;
+   char *handle;
    };
 
 struct HubFileDiff

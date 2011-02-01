@@ -539,7 +539,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t)
+struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t,char *handle)
 
 { struct HubFileChanges *hp;
      
@@ -551,6 +551,7 @@ if ((hp = (struct HubFileChanges *)malloc(sizeof(struct HubFileChanges))) == NUL
 hp->hh = hh;
 hp->path = strdup(file);
 hp->t = t;
+hp->handle = strdup(handle);
 return hp;
 }
 
@@ -559,6 +560,7 @@ return hp;
 void DeleteHubFileChanges(struct HubFileChanges *hp)
 {
 free(hp->path);
+free(hp->handle);
 free(hp); 
 }
 

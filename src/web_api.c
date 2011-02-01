@@ -968,6 +968,9 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
      struct Rlist *rp,*result;
      int count = 0, tmpsize,icmp;
      mongo_connection dbconn;
+     char comment_link[CF_MAXVARSIZE] = {0}, comment[CF_MAXVARSIZE] = {0}, handle_buf[CF_MAXVARSIZE] = {0};
+     int is_rpt_handle = false;
+     int i = 0;
 
 switch (*cmp)
      {
@@ -988,14 +991,36 @@ switch (*cmp)
    
    StartJoin(returnval,"<table>\n",bufsize);
 
-   snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>File</th><th>Change detected at</th></tr>\n");
+   snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>File</th><th>Change detected at</th><th>Comment</th></tr>\n");
    Join(returnval,buffer,bufsize);
-      
+
    for (rp = hq->records; rp != NULL; rp=rp->next)
      {
+       is_rpt_handle = false;
        hC = (struct HubFileChanges *)rp->item;
-	
-       snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)));
+       snprintf(handle_buf,sizeof(handle_buf),"%s",hC->handle);
+   
+       for(i = 0;(handle_buf[i] != '\0')|| (i>=sizeof(handle_buf));i++)
+	 {
+	   if(handle_buf[i] == '@')
+	     {
+	       is_rpt_handle = true;
+	       break;
+	     }
+	 }
+
+       if(is_rpt_handle) /* handle doesn't contain objectid for comment */
+	 {
+	   snprintf(comment_link,sizeof(comment_link),"\"comments.php?hostkey=%s&handle=%s&report_type=%d\"",hC->hh->keyhash,hC->handle,CFREPORT_FILECHANGES);
+	   snprintf(comment,sizeof(comment),"%s",CF_ADDCOMMENT);
+	 }
+       else
+	 {
+	   snprintf(comment_link,sizeof(comment_link),"\"comments.php?comment_id=%s\"",hC->handle);
+	   snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
+	 }     
+
+       snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)),comment_link,comment);
 
        if(!Join(returnval,buffer,bufsize))
 	 {
@@ -4315,15 +4340,26 @@ int Nova2PHP_delete_host(char *keyHash)
 /*****************************************************************************/
 
 /*for commenting functionality */
-/* reportData must be read as sscanf(ip->name,"%254[^,],%254[^,],%1024[^\n]",&then,handle,reason);*/
+
 int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, char *reportData, char *username, char *comment, time_t datetime)
 
 { struct Item *data = NULL, *ip = NULL, *report = NULL;
   char msg[CF_BUFSIZE] = {0};
-  char reportText[CF_BUFSIZE] = {0};
+  char reportText[CF_BUFSIZE] = {0}, row[CF_BUFSIZE] = {0};
   char commentId[CF_MAXVARSIZE] = {0}, objectId[CF_MAXVARSIZE] = {0};
   mongo_connection dbconn;
-   
+  char handle[CF_MAXVARSIZE]={0};
+  bson query,b, result;
+  bson_buffer bb;
+
+  char row_name[CF_MAXVARSIZE] = {0};
+  bson_iterator it1,it2;
+  int level = 0, getrow=false;
+  
+  //  sscanf(reportData,"%255[^,],",handle);
+  
+  printf("Bishwa: %s\n",repid);
+  
   snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,comment,datetime);
   AppendItem(&data, msg, NULL);
 
@@ -4335,32 +4371,90 @@ int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, 
     {
       snprintf(objectId, CF_MAXVARSIZE, "%s",repid);
     }
-
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
       CfOut(cf_verbose,"", "!! Could not open connection to report database");
       return false;
     }
-  
-  CFDB_AddComment(&dbconn,keyhash, commentId, reportData, data);
-  if((!cid || strlen(cid)<15) && strlen(commentId)>0 && repid)
-    {
 
-      snprintf(reportText,CF_BUFSIZE,"%s",reportData);
-      AppendItem(&report,reportText,NULL);
+  if (keyhash && strlen(keyhash) != 0 )//&& (cid && strlen(cid)!=0))
+    {
+      bson_buffer_init(&bb);
+      bson_append_string(&bb,cfr_keyhash,keyhash);
+      bson_from_buffer(&query,&bb);
+
       switch(reportType)
+        {
+        case CFREPORT_HOSTS:
+	  //          CFDBRef_HostID_Comments(&dbconn,keyhash, commentId);
+          break;
+        case CFREPORT_PRLOG:
+	  //	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_performance,repid);
+          //CFDB_GetRow(&dbconn, "cfreport.logs_nk", &query, row_name, row, level);
+          break;
+        case CFREPORT_PERF:
+	  level = 3;
+	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_performance,repid);
+	  getrow = CFDB_GetRow(&dbconn, "cfreport.hosts", &query, row_name, row, level);
+          break;
+	case CFREPORT_VALUE: /*value report*/
+	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_valuereport,repid);
+	  getrow = CFDB_GetRow(&dbconn, "cfreport.hosts", &query, row_name, row, level);
+	  break;
+	case CFREPORT_FILECHANGES:  
+	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filechanges,repid);
+	  getrow = CFDB_GetRow(&dbconn, "cfreport.hosts", &query, row_name, row, level);
+	  break;
+	case CFREPORT_FILEDIFFS:  
+	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filediffs,repid);
+	  getrow = CFDB_GetRow(&dbconn, "cfreport.hosts", &query, row_name, row, level);
+	  break;
+	  
+        }
+      printf("Webapi: %s\n",row);
+    }
+  else
+    {
+      return false;
+    }
+  
+  if(getrow)
+    {
+      CFDB_AddComment(&dbconn,keyhash, commentId, row, data);
+    
+      if((!cid || strlen(cid)<15) && strlen(commentId)>0 && repid)
 	{
-	case CFREPORT_HOSTS:
- 	  CFDBRef_HostID_Comments(&dbconn,keyhash, commentId);
-	  break;
-	case CFREPORT_PRLOG:
-	  CFDBRef_PromiseLog_Comments(&dbconn, objectId, commentId, plog_repaired);
-	  break;
+	  snprintf(reportText,CF_BUFSIZE,"%s",reportData);
+	  AppendItem(&report,reportText,NULL);
+	  switch(reportType)
+	    {
+	    case CFREPORT_HOSTS:
+	      CFDBRef_HostID_Comments(&dbconn,keyhash, commentId);
+	      break;
+	    case CFREPORT_PRLOG:
+	      CFDBRef_PromiseLog_Comments(&dbconn, objectId, commentId, plog_repaired);
+	      break;
+	    case CFREPORT_PERF:
+	      CFDBRef_Performance_Comments(&dbconn, keyhash,repid, commentId);
+	      break;
+	    case CFREPORT_VALUE: /*value report*/
+	      snprintf(row_name, sizeof(row_name), "%s.%s.cmt",cfr_valuereport,repid);
+	      getrow = CFDBRef_AddToRow(&dbconn, "cfreport.hosts", &query, row_name, commentId);
+	      break;
+	    case CFREPORT_FILECHANGES:
+	      snprintf(row_name, sizeof(row_name), "%s.%s.cmt",cfr_filechanges,repid);
+	      getrow = CFDBRef_AddToRow(&dbconn, "cfreport.hosts", &query, row_name, commentId);
+	      break;
+	    case CFREPORT_FILEDIFFS:
+	      snprintf(row_name, sizeof(row_name), "%s.%s.cmt",cfr_filediffs,repid);
+	      getrow = CFDBRef_AddToRow(&dbconn, "cfreport.hosts", &query, row_name, commentId);
+	      break;
+	    }
 	}
     }
-
+  bson_destroy(&query);
   CFDB_Close(&dbconn);
-  return 1;
+  return true;
 }
 
 /*****************************************************************************/
@@ -4409,11 +4503,6 @@ int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, 
   for (rp = result; rp != NULL; rp=rp->next)
     {
       hci = ( struct HubCommentInfo *) rp->item;
-      //      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><tr>\n", hci->hh->hostname,hci->cid); 
-      //    if(!Join(returnval,buffer,bufsize))
-      //	{
-      //	  break;
-      //	}
      for(hc = hci->comment; hc != NULL; hc=hc->next)
 	{
 	  snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%ld</td><td>%s</td></tr>\n", hc->user, hc->t, hc->msg);
@@ -4436,11 +4525,8 @@ int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, 
 /*****************************************************************************/
 int Nova2PHP_get_host_commentid(char *hostkey, char *returnval, int bufsize)
 {
-  char *report,buffer[CF_BUFSIZE];//,buffer2[CF_BUFSIZE];
-  //  struct HubHost *hh;
-  //  struct HubQuery *hq;
+  char *report,buffer[CF_BUFSIZE];
   struct Rlist *rp,*result;
-  //  int count1 = 0,count2 = 0,tmpsize1,tmpsize2;
   mongo_connection dbconn;
   bson query,b;
   bson_buffer bb;

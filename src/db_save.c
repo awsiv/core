@@ -1269,15 +1269,14 @@ bson_destroy(&host_key);
  */
 /*****************************************************************************/
 
-char *CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *reportData, struct Item *data)
+int CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *reportData, struct Item *data)
 {
   bson_buffer bb,record;
   bson host_key;
   bson_buffer *setObj, *sub;
   bson setOp;
   bson b_key;
-  bson_buffer buf_key;
-   
+  bson_buffer buf_key;   
   char username[CF_MAXVARSIZE];
   char msg[CF_BUFSIZE];
   long datetime;
@@ -1287,7 +1286,7 @@ char *CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *re
 
   /* for getting object id */
   mongo_cursor *cursor;
-  bson_iterator it1;//,it2,it3;
+  bson_iterator it1;
   bson field;
   char objectId[CF_MAXVARSIZE] = {0};
   bson_oid_t bsonid;
@@ -1370,7 +1369,7 @@ char *CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *re
    
    snprintf(cid,CF_MAXVARSIZE,"%s",objectId);
    
-   return objectId;
+   return true;
 }
 
 /*****************************************************************************/
@@ -1423,12 +1422,6 @@ switch(rep_type)
        return;
    }
 
-// TODO: loop not required -> remove
-//for (ip = data; ip != NULL; ip=ip->next)
-  {
-    // for time in human readable format
-     //   sscanf(ip->name,"%254[^,],%254[^,],%1024[^\n]",time_buf,handle,reason);
-    //   tthen = rev_ctime(time_buf);
     // find right host and report - key
     bson_buffer_init(&record);
     if(!EMPTY(oid))
@@ -1442,9 +1435,6 @@ switch(rep_type)
        return;
      }
     bson_from_buffer(&host_key, &record);
-    //    sscanf(ip->name,"%ld,%254[^,],%1024[^\n]",tthen,handle,reason);
-	
-    //snprintf(timekey,sizeof(timekey),"%s",GenTimeKey(tthen));
 
    // update
    bson_buffer_init(&bb);
@@ -1452,16 +1442,10 @@ switch(rep_type)
    bson_append_string(setObj,"cid",commentId);
    bson_append_finish_object(setObj);
    bson_from_buffer(&setOp,&bb);
-
-   /*bson_append_string(&record,cfr_keyhash,keyhash);
-   bson_append_string(&record,cfr_promisehandle,handle);
-   bson_append_int(&record,cfr_time,tthen);
-   bson_from_buffer(&host_key, &record);*/
    
    mongo_update(conn, collName, &host_key, &setOp, 0);
    bson_destroy(&setOp);
    bson_destroy(&host_key);
-   }
 
 // should do this in loop, but not efficient...
  MongoCheckForError(conn,dbOperation,oid);
@@ -1496,5 +1480,68 @@ void CFDBRef_HostID_Comments(mongo_connection *conn,char *keyhash, char *comment
   bson_destroy(&host_key);
 }
 /*****************************************************************************/
+void CFDBRef_Performance_Comments(mongo_connection *conn, char *keyhash, char *handle, char *cid)
+
+{ bson_buffer bb;
+  bson_buffer *setObj;
+  bson_buffer *sub;
+  bson host_key;  // host description
+  bson setOp;
+  struct Item *ip;
+  char varName[CF_MAXVARSIZE];
+  long t;
+  char eventname[CF_MAXVARSIZE],eventnameKey[CF_MAXVARSIZE];
+  double measure = 0,average = 0,dev = 0;
+
+// find right host
+bson_buffer_init(&bb);
+bson_append_string(&bb, cfr_keyhash, keyhash);
+//bson_append_string(&bb, cfr_keyhash, keyhash);
+bson_from_buffer(&host_key, &bb);
+
+bson_buffer_init(&bb);
+
+setObj = bson_append_start_object(&bb, "$set");
+snprintf(varName, sizeof(varName), "%s.%s.cid",cfr_performance,handle);  
+bson_append_string(setObj, varName, cid);
+bson_append_finish_object(setObj);
+
+bson_from_buffer(&setOp,&bb);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, 0);
+MongoCheckForError(conn,"SavePerformance",keyhash);
+
+bson_destroy(&setOp);
+bson_destroy(&host_key);
+}
+
+/*****************************************************************************/
+int CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid)
+
+{ bson_buffer bb;
+  bson_buffer *setObj;
+  bson_buffer *sub;
+  bson host_key;  // host description
+  bson setOp;
+  struct Item *ip;
+  char varName[CF_MAXVARSIZE];
+  long t;
+  char eventname[CF_MAXVARSIZE],eventnameKey[CF_MAXVARSIZE];
+  double measure = 0,average = 0,dev = 0;
+
+bson_buffer_init(&bb);
+setObj = bson_append_start_object(&bb, "$set");
+snprintf(varName, sizeof(varName), "%s",row_name);  
+bson_append_string(setObj, varName, cid);
+bson_append_finish_object(setObj);
+
+bson_from_buffer(&setOp,&bb);
+mongo_update(conn, coll, query, &setOp, 0);
+MongoCheckForError(conn,row_name,cid);
+
+bson_destroy(&setOp);
+}
+
+/*****************************************************************************/
+
 #endif  /* HAVE_MONGOC */
 
