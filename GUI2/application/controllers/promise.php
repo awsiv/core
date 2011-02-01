@@ -11,7 +11,7 @@ class Promise extends Controller
 		$hostkey = NULL;
 		$name = ".*";
 		$regex = 1;
-    $handle = NULL;
+                $handle = NULL;
 		$data=array(
 			 'title' => "Cfengine Mission Portal - compliance",
              'title_header'=>"Compliance",
@@ -28,9 +28,9 @@ class Promise extends Controller
 		{
 		 $handle = isset($_POST['handle'])? $_POST['handle']:NULL;
 		}
-    $mybundle = cfpr_get_promise_bundle($handle);
+                $mybundle = cfpr_get_promise_bundle($handle);
 		$promiser = cfpr_get_promiser($handle);
-    $type = cfpr_get_promise_type($handle);
+                $type = cfpr_get_promise_type($handle);
 		 $data=array(
 				'handle'=>$handle,
 				'title_header'=>"promise $handle",
