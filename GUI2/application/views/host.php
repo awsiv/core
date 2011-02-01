@@ -2,12 +2,6 @@
 #
 # This file is (C) Cfengine AS. All rights reserved
 #
-      
-$commentid = cfpr_get_host_commentid($hostkey);
-$comments="";
-if ($hostkey != "" && ($_POST["username"]) && ($_POST["commentArea"]) && ($op=="addcomment")) {
-   cfpr_comment_add($hostkey,"",$commentid,1,"$hostname,$ipaddr",$_POST["username"],time(),$_POST["comment_text"]);
-}
 
 cfpr_host_meter($hostkey);
 $colour = cfpr_get_host_colour($hostkey);
@@ -56,7 +50,7 @@ $colour = cfpr_get_host_colour($hostkey);
                      <?php
                         if ($commentid != "")
                         {
-                         echo "<div> <a href=\"#\" class=\"show_comment_btn\">Show Comments ($commentid)</a> </div>";
+                         echo "<div> <a href=\"#\" class=\"show_comment_btn\">Show Comments</a> </div>";
                         }
                         else
                         {
@@ -68,7 +62,6 @@ $colour = cfpr_get_host_colour($hostkey);
                        <?php
                        if ($commentid != "")
                        {
-                         $comments = cfpr_comment_query('',$commentid,'',-1,-1);
                          echo $comments;
                          echo "<div> <a href=\"#\" class=\"add_comment_btn\">Add Comment</a> </div>";
                        }
@@ -76,14 +69,17 @@ $colour = cfpr_get_host_colour($hostkey);
                      </div>
 
                      <div id="add_comment">
-                       <form name ="add_comment_form" action="host.php" method="post">
+                       <form name ="add_comment_form" action="<?php echo site_url('welcome/host/')?>" method="post">
                         <p><label>Username: </label><input type="text" name="username"></p>
                         <p> <textarea name="comment_text" rows="10" cols="50"> </textarea> </p>
                         <input type="hidden" name="hostkey" id="hostkey" value="<?php echo $hostkey?>"/>
                         <input type="hidden" name="op" id="op" value="addcomment"/>
-                        <input type="submit" value="Comment!" name="submit_comment">
+                        <input type="submit" value="Comment!" name="submit_comment"> 
                         </form>
                      </div>
+
+		     </div>
+		   </div>
 
                  <div class="panel">
                    <div class="panelhead">Status (measured)</div>

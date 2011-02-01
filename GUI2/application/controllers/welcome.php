@@ -86,16 +86,35 @@ class Welcome extends Cf_Controller{
 	 {
 	  $hostkey=isset($_POST['hostkey'])? $_POST['hostkey'] : "none";
 	 }
+
 	 $hostname=cfpr_hostname($hostkey);
 	 $ipaddr=cfpr_ipaddr($hostkey);
+	 $username=isset($_POST['username'])? $_POST['username'] : "";
+	 $comment_text=isset($_POST['comment_text'])? $_POST['comment_text'] : "";
+	 $commentid = cfpr_get_host_commentid($hostkey);
+	 $op = isset($_POST['op'])? $_POST['op'] : "";
+	
+	 if (!is_null($username) && !is_null($comment_text) && $op=="addcomment")
+	 {
+   	  cfpr_comment_add($hostkey,"",$commentid,1,"$hostname,$ipaddr",$username,time(),$comment_text);
+	  $username="";
+	  $comment_text="";
+	 } 
+	 $commentid = cfpr_get_host_commentid($hostkey);
+
+	 $comments=cfpr_comment_query('',$commentid,'',-1,-1);	 
+
 	 $data=array(
 	        'hostkey'=>$hostkey,
 			'title_header'=>"host ".$hostname,
-		    'title'=>"Cfengine Mission Portal - host ".$ipaddr,
+			'title'=>"Cfengine Mission Portal - host ".$ipaddr,
 			'nav_text'=>"Status : host",
 			'status'=>"current",
-			'hostname'=>$hostname,
-			'ipaddr'=>$ipaddr
+			'hostname'=>$hostname,	
+			'ipaddr'=>$ipaddr,			
+			'commentid'=>$commentid,
+			'op'=>$op,
+			'comments'=>$comments
 			);
 	  $this->template->load('template', 'host',$data); 
 	}
