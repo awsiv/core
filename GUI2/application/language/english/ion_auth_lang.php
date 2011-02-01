@@ -43,5 +43,17 @@ $lang['logout_successful'] 		 	 = 'Logged Out Successfully';
 // Account Changes
 $lang['update_successful'] 		 	 = 'Account Information Successfully Updated';
 $lang['update_unsuccessful'] 		 	 = 'Unable to Update Account Information';
-$lang['delete_successful'] 		 	 = 'User Deleted';
-$lang['delete_unsuccessful'] 		 	 = 'Unable to Delete User';
+$lang['user_delete_successful'] 		 	 = 'User Deleted';
+$lang['user_delete_unsuccessful'] 		 	 = 'Unable to Delete User';
+
+//Group createion
+$lang['group_creation_successful']              ="Group Sucessfully Created";
+$lang['group_creation_unsuccessful']            ="Unable to Create Group";
+$lang['group_creation_duplicate']               ="Group name already Exists";
+
+//Group changes
+$lang['group_delete_successful'] 		= 'Group Deleted';
+$lang['group_delete_unsuccessful'] 		= 'Unable to Delete Group';
+$lang['group_update_successful']                = 'Group Information Sucessfully Updated';
+$lang['group_update_unsuccessful']              = 'Unable to Update group';
+

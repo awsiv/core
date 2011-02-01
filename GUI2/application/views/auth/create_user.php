@@ -1,51 +1,41 @@
-<div class='mainInfo'>
 
-	<h1>Create User</h1>
-	<p>Please enter the users information below.</p>
-	
+
+<div class="panelhead">Create User</div>
 	<div id="infoMessage"><?php echo $message;?></div>
-	
-    <?php echo form_open("auth/create_user");?>
-      <p>User Name:<br />
-      <?php echo form_input($user_name);?>
-      </p>
-      <p>First Name:<br />
-      <?php echo form_input($first_name);?>
+ <div class="form">
+    <?php echo form_open("auth/create_user",array('id'=>'create_user'));?>
+      <p>
+     <?php echo form_label('User Name',$user_name['name']);
+       echo form_input($user_name);?>
       </p>
       
-      <p>Last Name:<br />
-      <?php echo form_input($last_name);?>
+      <p>
+       <?php echo form_label('Email',$email['name']);
+      echo form_input($email);?>
+      </p>      
+      
+      <p>
+       <?php echo form_label('Password',$password['name']);
+       echo form_input($password);?>
       </p>
       
-      <p>Company Name:<br />
-      <?php echo form_input($company);?>
+      <p>
+      <?php echo form_label('Confirm Password',$password_confirm['name']);
+      echo form_input($password_confirm);?>
       </p>
       
-      <p>Email:<br />
-      <?php echo form_input($email);?>
+      <p>
+      <?php echo form_label('Group');
+      //echo form_dropdown('group', $groups,set_value('group', '2'));
+	       // echo form_dropdown($group['name'],$group['options'],$group['default']);
+      foreach($groups as $group)
+      {
+          echo form_checkbox($group);
+          echo form_label($group['id'], $group['id'],array('class'=>'group'));
+      }
+      ?>
       </p>
       
-      <p>Phone:<br />
-      <?php echo form_input($phone1);?>-<?php echo form_input($phone2);?>-<?php echo form_input($phone3);?>
-      </p>
-      
-      <p>Password:<br />
-      <?php echo form_input($password);?>
-      </p>
-      
-      <p>Confirm Password:<br />
-      <?php echo form_input($password_confirm);?>
-      </p>
-      
-      <p>Group<br />
-      <?php //echo form_dropdown('group', $groups,set_value('group', '2'));
-	        echo form_dropdown($group['name'],$group['options'],$group['default']);?>
-      </p>
-      
-      
-      <p><?php echo form_submit('submit', 'Create User');?></p>
-
-      
+      <p id="btnholder"><?php echo form_submit(array('name'=>'submit','class'=>'btn','value'=>'Create User'));?></p>
     <?php echo form_close();?>
-
-</div>
+ </div>

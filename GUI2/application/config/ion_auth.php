@@ -137,7 +137,7 @@ $config['email_type'] = 'html';
 	/**
 	 * Message Start Delimiter
 	 **/
-	$config['message_start_delimiter'] = '<p>';
+	$config['message_start_delimiter'] = '<p class="success">';
 	
 	/**
 	 * Message End Delimiter
@@ -147,7 +147,7 @@ $config['email_type'] = 'html';
 	/**
 	 * Error Start Delimiter
 	 **/
-	$config['error_start_delimiter'] = '<p>';
+	$config['error_start_delimiter'] = '<p class="error">';
 	
 	/**
 	 * Error End Delimiter

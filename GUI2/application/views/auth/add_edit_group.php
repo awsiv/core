@@ -1,21 +1,24 @@
-<div class='mainInfo'>
-
-	<h1><?php echo $operation ;?></h1>
-	<p>Please enter the groups information below.</p>
+<div class="panelhead"><?php echo $operation ;?> Group</div>
 	
 	<div id="infoMessage"><?php echo $message;?></div>
-	
-    <?php echo form_open("auth/manage_group/".$this->uri->segment(3).'/'.$this->uri->segment(4));?>
+<div class="form">
+    <?php echo form_open("auth/manage_group/".$this->uri->segment(3).'/'.$this->uri->segment(4),array('id'=>$operation.'_group'));?>
     
-      <p>Group Name:<br />
-      <?php echo form_input($name);?>
+      <p>
+      <?php
+       echo form_label('Group Name',$name['name']);
+       echo form_input($name);
+       ?>
       </p>
       
-      <p>Description:<br />
-      <?php echo form_textarea($description);?>
+      <p>
+      <?php  echo form_label('Description',$description['name'],array('class'=>'aligntop'));
+       echo form_textarea($description);?>
       </p>
       
-      <p><?php echo form_submit('submit', $operation);?></p>
+      <p id="btnholder">
+      <?php echo form_submit(array('name'=>'submit','value'=>$operation,'class'=>'btn'));?>
+      </p>
 
     <?php echo form_close();?>
 

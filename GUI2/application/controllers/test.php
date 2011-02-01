@@ -29,9 +29,61 @@ class Test extends Controller
 		'message'		=> "testing",
 		'level'			=> "0",
 		));
-		echo $output;
-	 } 
-	 
+            echo $output;
+	 }
+
+         function mongodbselect()
+         {
+         $this->load->library('mongo_db');
+         
+         //$result = $this->mongo_db->select(array('uri','message'))->get('app_logs');
+         //$this->mongo_db->where(array('group'=>'faculty'));
+         $result=$this->mongo_db->get('app_logs');
+         //$result=$this->mongo_db->select(array('username'))->get_where('users',array('group'=>'admin'));
+         //print_r($result) ;
+         foreach ($result as  $docs) {
+             //print_r($value)  ;
+              $obj=(object)$docs;
+             /*foreach ($docs as $key => $value) {
+                 echo $key.$value;
+                 echo '</br>';
+             }*/
+            /* echo $docs['uri'];
+
+             */
+           // echo $obj->user_name.' ' ;
+             print_r ($docs);
+            /* foreach ($obj->group as $group )
+             {
+                 echo $group.'</br>';
+             }*/
+           echo '</br>';   
+           }
+         }
+
+         function mongodbinput()
+         {
+            //$this->load->library('mongo_db');
+            $this->load->model('ion_auth_model_mongo');
+            /*$output=$this->mongo_db->insert('users',array(
+                    'username' => 'sudhir',
+                    'password' => $this->ion_auth_model_mongo->hash_password('password',true),
+                    'group'=>array('admin','developer','management')
+            ));*/
+            //$result=$this->ion_auth_model_mongo->register('sudhir', 'password','sudhir2pandey@gmail.com',array('admin','developer','faculty'));
+          $result=$this->ion_auth_model_mongo->register('hi', 'password','sudhir2pandey@gmail.com',array('admin','developer','faculty'));
+
+            echo $result;
+         }
+         
+	 function mongodbupdate()
+         {
+          $this->load->library('mongo_db');
+          $this->mongo_db->where(array('_id'=>new MongoId('4d36a0424a235a8024000000')));
+          $result=$this->mongo_db->update('users',array('username'=>'sudhir'));
+          print_r($result);
+         }
+
 	 function mysqltest()
 	 {
 	   $this->load->database();
@@ -41,4 +93,95 @@ class Test extends Controller
 
 	 }
 
+         function logintest()
+         {
+             /*$this->load->config('ion_auth', TRUE);
+             $this->identity_column = $this->config->item('identity', 'ion_auth');
+             $this->load->library('mongo_db');
+             $result=$this->mongo_db->select(array($this->identity_column, '_id', 'password','group'))
+                           ->where(array($this->identity_column => 'sudhir','active' => 1))
+                           ->limit(1)
+                           ->get_object('users');
+            echo $result->password;*/
+
+              $this->load->library('ion_auth');
+              $result=$this->ion_auth->login('administrator','password');
+              echo $result;
+
+         }
+
+         function isadmintest()
+         {
+              $this->load->library('ion_auth');
+              $result=$this->ion_auth->login('administrator','password');
+              if($result)
+                  echo $this->ion_auth->is_admin();
+
+         }
+
+         function get_users()
+         {
+             $this->load->library('ion_auth');
+             $user=$this->ion_auth->get_user('4d36a0424a235a8024000000');
+             //$result=$this->ion_auth->get_users_array();
+             //print_r($user);
+             
+             print_r ($user->_id);
+         }
+
+         function remove_user()
+         {
+             $this->load->library('ion_auth');
+             $result=$this->ion_auth->delete_user('4d3846c14a235a755f000008');
+             print_r($result);
+
+         }
+
+         function test_group()
+         {
+             $this->load->library('ion_auth');
+              //$result=$this->ion_auth->create_group(array('name'=>'manager'));
+              $result=$this->ion_auth->get_groups();
+              foreach($result as $group)
+              {
+                  echo $group['name'].' '.$group['_id'].'<br/>';
+              }
+         }
+
+         function test_update()
+         {
+         $this->load->library('mongo_db');
+         $this->mongo_db->where(array('group'=>'faculties'));
+         $this->mongo_db->update('users',array('group.$' => "faculty"));
+         $this->mongo_db->clear();
+         $result=$this->mongo_db->get('users');
+         print_r($result);
+         }
+
+         function update_remove()
+         {
+         $this->load->library('mongo_db');
+         $this->mongo_db->where(array('group'=>'faculties'));
+         $result=$this->mongo_db->update_remove_field('users',array('groups'=>1));
+         print_r($result);
+         }
+
+         function test_update_group()
+         {
+             $this->load->model('ion_auth_model_mongo');
+             $this->load->library('ion_auth');
+              //$result=$this->ion_auth->create_group(array('name'=>'manager'));
+              //$result=$this->ion_auth_model_mongo->upate_group('4d3b187a4a235a5366000015',array('name'=>'manager'));
+              //echo $result.$this->ion_auth->messages();
+
+             $result= $this->ion_auth_model_mongo->get_group($group->_id != $id);
+             if($result_id !='4d3b187a4a235a5366000015')
+                {
+		  $this->ion_auth->set_error('group_creation_duplicate');
+                }
+              echo $this->ion_auth->errors();
+
+         }
+
+        
 }

@@ -417,7 +417,34 @@ class Mongo_db {
 	 	
 	 	//return(iterator_to_array($documents));
 	 }
-	 
+
+         public function get_object($collection = ""){
+             $result=$this->get($collection);
+             return $this->construct_object($result);
+         }
+
+         public function get_where_object($collection="",$where=array(),$limit=9999){
+             $result=$this->get_where($collection,$where,$limit);
+             $this->clear();
+             return $this->construct_object($result);
+         }
+
+         private function construct_object($arg)
+         {
+            if(count($arg==1))
+             {
+               $obj=NULL;
+               foreach ($arg as $docs)
+                {
+                 $obj=(object)$docs;
+                }
+               return $obj;
+             }
+         }
+
+
+
+
 	/**
 	 *	--------------------------------------------------------------------------------
 	 *	COUNT
@@ -490,6 +517,23 @@ class Mongo_db {
 	 	}
 	 	
 	 }
+
+        public function update_remove_field($collection = "",$data=array())
+        {
+            if(empty($collection))
+	 		show_error("No Mongo collection selected to update", 500);
+	 	if(count($data) == 0 || !is_array($data))
+	 		show_error("Nothing to update in Mongo collection or update is not an array", 500);
+
+	 	try {
+	 		$result=$this->db->{$collection}->update($this->wheres, array('$unset' => $data), array('safe' => TRUE, 'multiple' => FALSE, '$type'=>0));
+	 		//return(TRUE);
+                        return $result;
+	 	} catch(MongoCursorException $e) {
+	 		show_error("Update of data into MongoDB failed: {$e->getMessage()}", 500);
+	 	}
+            
+        }
 	 
 	/**
 	 *	--------------------------------------------------------------------------------
@@ -507,8 +551,11 @@ class Mongo_db {
 	 	if(count($data) == 0 || !is_array($data))
 	 		show_error("Nothing to update in Mongo collection or update is not an array", 500);
 	 	try {
-	 		$this->db->{$collection}->update($this->wheres, array('$set' => $data), array('safe' => TRUE, 'multiple' => TRUE));
-	 		return(TRUE);
+	 		$result=$this->db->{$collection}->update($this->wheres, array('$set' => $data), array('safe' => TRUE, 'multiple' => TRUE));
+	 		if($result['n']>=1)
+                           return (TRUE);
+                        else
+                           return (FALSE);
 	 	} catch(MongoCursorException $e) {
 	 		show_error("Update of data into MongoDB failed: {$e->getMessage()}", 500);
 	 	}
@@ -530,7 +577,8 @@ class Mongo_db {
 	 	
 	 	try {
 	 		$this->db->{$collection}->remove($this->wheres, array('safe' => TRUE, 'justOne' => TRUE));
-	 		return(TRUE);
+	 		$this->clear();
+                        return(TRUE);
 	 	} catch(MongoCursorException $e) {
 	 		show_error("Delete of data into MongoDB failed: {$e->getMessage()}", 500);
 	 	}
@@ -613,7 +661,7 @@ class Mongo_db {
 	 		show_error("No Mongo collection specified to remove index from", 500);
 	 	if(empty($keys) || !is_array($keys))
 	 		show_error("Index could not be removed from MongoDB Collection because no keys were specified", 500);
-	 	if($this->db->{$collection}->deleteIndex($keys, $options) == TRUE):
+	 	if($this->db->{$collection}->deleteIndex($keys) == TRUE):
 	 		$this->clear();
 	 		return($this);
 	 	else:
@@ -729,7 +777,7 @@ class Mongo_db {
 	 *	Resets the class variables to default settings
 	 */
 	
-	private function clear() {
+	public function clear() {
 		$this->selects = array();
 		$this->wheres = array();
 		$this->limit = NULL;

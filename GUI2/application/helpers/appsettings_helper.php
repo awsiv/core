@@ -38,6 +38,16 @@ function get_policiesdir()
 	 $CI=&get_instance();
 	 return $CI->config->item('policies_dir');
 	}
+        
+function is_ajax() {
+    return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+    ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'));
+}
+
+function set_success_limiters($message)
+{
+  return '<p class="success">'.$message.'</p>';
+}
 
 
 ?>

@@ -90,7 +90,7 @@ class Ion_auth
 		$this->ci->load->library('email');
 		$this->ci->load->library('session');
 		$this->ci->lang->load('ion_auth');
-		$this->ci->load->model('ion_auth_model');
+		$this->ci->load->model('ion_auth_model_mongo');
 		$this->ci->load->helper('cookie');
 
 		$this->messages = array();
@@ -103,7 +103,7 @@ class Ion_auth
 		//auto-login the user if they are remembered
 		if (!$this->logged_in() && get_cookie('identity') && get_cookie('remember_code'))
 		{
-			$this->ci->ion_auth_model->login_remembered_user();
+			$this->ci->ion_auth_model_mongo->login_remembered_user();
 		}
 	}
 
@@ -115,12 +115,12 @@ class Ion_auth
 	 **/
 	public function __call($method, $arguments)
 	{
-		if (!method_exists( $this->ci->ion_auth_model, $method) )
+		if (!method_exists( $this->ci->ion_auth_model_mongo, $method) )
 		{
 			throw new Exception('Undefined method Ion_auth::' . $method . '() called');
 		}
 
-		return call_user_func_array( array($this->ci->ion_auth_model, $method), $arguments);
+		return call_user_func_array( array($this->ci->ion_auth_model_mongo, $method), $arguments);
 	}
 
 	/**
@@ -131,7 +131,7 @@ class Ion_auth
 	 **/
 	public function activate($id, $code=false)
 	{
-		if ($this->ci->ion_auth_model->activate($id, $code))
+		if ($this->ci->ion_auth_model_mongo->activate($id, $code))
 		{
 			$this->set_message('activate_successful');
 			return TRUE;
@@ -149,7 +149,7 @@ class Ion_auth
 	 **/
 	public function deactivate($id)
 	{
-		if ($this->ci->ion_auth_model->deactivate($id))
+		if ($this->ci->ion_auth_model_mongo->deactivate($id))
 		{
 			$this->set_message('deactivate_successful');
 			return TRUE;
@@ -167,7 +167,7 @@ class Ion_auth
 	 **/
 	public function change_password($identity, $old, $new)
 	{
-		if ($this->ci->ion_auth_model->change_password($identity, $old, $new))
+		if ($this->ci->ion_auth_model_mongo->change_password($identity, $old, $new))
 		{
 			$this->set_message('password_change_successful');
 			return TRUE;
@@ -185,7 +185,7 @@ class Ion_auth
 	 **/
 	public function forgotten_password($email)
 	{
-		if ( $this->ci->ion_auth_model->forgotten_password($email) )
+		if ( $this->ci->ion_auth_model_mongo->forgotten_password($email) )
 		{
 			// Get user information
 			$user = $this->get_user_by_email($email);
@@ -232,7 +232,7 @@ class Ion_auth
 	public function forgotten_password_complete($code)
 	{
 		$identity = $this->ci->config->item('identity', 'ion_auth');
-		$profile  = $this->ci->ion_auth_model->profile($code, true); //pass the code to profile
+		$profile  = $this->ci->ion_auth_model_mongo->profile($code, true); //pass the code to profile
 
 		if (!is_object($profile))
 		{
@@ -240,7 +240,7 @@ class Ion_auth
 			return FALSE;
 		}
 
-		$new_password = $this->ci->ion_auth_model->forgotten_password_complete($code, $profile->salt);
+		$new_password = $this->ci->ion_auth_model_mongo->forgotten_password_complete($code, $profile->salt);
 
 		if ($new_password)
 		{
@@ -282,13 +282,13 @@ class Ion_auth
 	 * @return void
 	 * @author Mathew
 	 **/
-	public function register($username, $password, $email, $additional_data, $group_name = false) //need to test email activation
+	public function register($username, $password, $email, $group, $additional_data = false) //need to test email activation
 	{
 		$email_activation = $this->ci->config->item('email_activation', 'ion_auth');
 
 		if (!$email_activation)
 		{
-			$id = $this->ci->ion_auth_model->register($username, $password, $email, $additional_data, $group_name);
+			$id = $this->ci->ion_auth_model_mongo->register($username, $password, $email, $group, $additional_data);
 			if ($id !== FALSE)
 			{
 				$this->set_message('account_creation_successful');
@@ -302,7 +302,7 @@ class Ion_auth
 		}
 		else
 		{
-			$id = $this->ci->ion_auth_model->register($username, $password, $email, $additional_data, $group_name);
+			$id = $this->ci->ion_auth_model_mongo->register($username, $password, $email, $group, $additional_data);
 
 			if (!$id)
 			{
@@ -310,7 +310,7 @@ class Ion_auth
 				return FALSE;
 			}
 
-			$deactivate = $this->ci->ion_auth_model->deactivate($id);
+			$deactivate = $this->ci->ion_auth_model_mongo->deactivate($id);
 
 			if (!$deactivate)
 			{
@@ -318,9 +318,9 @@ class Ion_auth
 				return FALSE;
 			}
 
-			$activation_code = $this->ci->ion_auth_model->activation_code;
+			$activation_code = $this->ci->ion_auth_model_mongo->activation_code;
 			$identity        = $this->ci->config->item('identity', 'ion_auth');
-			$user            = $this->ci->ion_auth_model->get_user($id)->row();
+			$user            = $this->ci->ion_auth_model_mongo->get_user($id);
 
 			$data = array(
 				'identity'   => $user->{$identity},
@@ -359,7 +359,7 @@ class Ion_auth
 	 **/
 	public function login($identity, $password, $remember=false)
 	{
-		if ($this->ci->ion_auth_model->login($identity, $password, $remember))
+		if ($this->ci->ion_auth_model_mongo->login($identity, $password, $remember))
 		{
 			$this->set_message('login_successful');
 			return TRUE;
@@ -423,7 +423,8 @@ class Ion_auth
 		$admin_group = $this->ci->config->item('admin_group', 'ion_auth');
 		$user_group  = $this->ci->session->userdata('group');
 
-		return $user_group == $admin_group;
+		//return $user_group == $admin_group;
+                return in_array(strtolower($admin_group), $user_group);
 	}
 
 	/**
@@ -455,19 +456,25 @@ class Ion_auth
 		$session  = $this->ci->config->item('identity', 'ion_auth');
 		$identity = $this->ci->session->userdata($session);
 
-		return $this->ci->ion_auth_model->profile($identity);
+		return $this->ci->ion_auth_model_mongo->profile($identity);
 	}
 
 	/**
 	 * Get Users
 	 *
-	 * @return object Users
+	 * @return objects Users
 	 * @author Ben Edmunds
 	 **/
 	public function get_users($group_name=false, $limit=NULL, $offset=NULL)
 	{
-		return $this->ci->ion_auth_model->get_users($group_name, $limit, $offset)->result();
+		return $this->ci->ion_auth_model_mongo->get_users($group_name, $limit, $offset);
 	}
+
+
+        public function get_user_group($id)
+        {
+            return $this->ci->ion_auth_model_mongo->get_users_group($id);
+        }
 
 	/**
 	 * Get Users Array
@@ -477,7 +484,7 @@ class Ion_auth
 	 **/
 	public function get_users_array($group_name=false, $limit=NULL, $offset=NULL)
 	{
-		return $this->ci->ion_auth_model->get_users($group_name, $limit, $offset)->result_array();
+		return $this->ci->ion_auth_model_mongo->get_users_by_group($group_name, $limit, $offset);
 	}
 
 	/**
@@ -488,7 +495,7 @@ class Ion_auth
 	 **/
 	public function get_newest_users($limit = 10)
 	{
-		return $this->ci->ion_auth_model->get_newest_users($limit)->result();
+		return (object)$this->ci->ion_auth_model_mongo->get_newest_users($limit);
 	}
 
 	/**
@@ -499,7 +506,7 @@ class Ion_auth
 	 **/
 	public function get_newest_users_array($limit = 10)
 	{
-		return $this->ci->ion_auth_model->get_newest_users($limit)->result_array();
+		return $this->ci->ion_auth_model_mongo->get_newest_users($limit);
 	}
 
 	/**
@@ -510,7 +517,7 @@ class Ion_auth
 	 **/
 	public function get_active_users($group_name = false)
 	{
-		return $this->ci->ion_auth_model->get_active_users($group_name)->result();
+		return (object)$this->ci->ion_auth_model_mongo->get_active_users($group_name);
 	}
 
 	/**
@@ -521,7 +528,7 @@ class Ion_auth
 	 **/
 	public function get_active_users_array($group_name = false)
 	{
-		return $this->ci->ion_auth_model->get_active_users($group_name)->result_array();
+		return $this->ci->ion_auth_model_mongo->get_active_users($group_name);
 	}
 
 	/**
@@ -532,7 +539,7 @@ class Ion_auth
 	 **/
 	public function get_inactive_users($group_name = false)
 	{
-		return $this->ci->ion_auth_model->get_inactive_users($group_name)->result();
+		return (object)$this->ci->ion_auth_model_mongo->get_inactive_users($group_name);
 	}
 
 	/**
@@ -543,7 +550,7 @@ class Ion_auth
 	 **/
 	public function get_inactive_users_array($group_name = false)
 	{
-		return $this->ci->ion_auth_model->get_inactive_users($group_name)->result_array();
+		return $this->ci->ion_auth_model_mongo->get_inactive_users($group_name);
 	}
 
 	/**
@@ -554,7 +561,7 @@ class Ion_auth
 	 **/
 	public function get_user($id=false)
 	{
-		return $this->ci->ion_auth_model->get_user($id)->row();
+		return $this->ci->ion_auth_model_mongo->get_user($id);
 	}
 
 	/**
@@ -565,7 +572,7 @@ class Ion_auth
 	 **/
 	public function get_user_by_email($email)
 	{
-		return $this->ci->ion_auth_model->get_user_by_email($email)->row();
+		return (object)$this->ci->ion_auth_model_mongo->get_user_by_email($email);
 	}
 
 	/**
@@ -576,7 +583,7 @@ class Ion_auth
 	 **/
 	public function get_user_array($id=false)
 	{
-		return $this->ci->ion_auth_model->get_user($id)->row_array();
+		return $this->ci->ion_auth_model_mongo->get_user($id);
 	}
 
 
@@ -588,7 +595,7 @@ class Ion_auth
 	 **/
 	public function update_user($id, $data)
 	{
-		if ($this->ci->ion_auth_model->update_user($id, $data))
+		if ($this->ci->ion_auth_model_mongo->update_user($id, $data))
 		{
 			$this->set_message('update_successful');
 			return TRUE;
@@ -607,15 +614,28 @@ class Ion_auth
 	 **/
 	public function delete_user($id)
 	{
-		if ($this->ci->ion_auth_model->delete_user($id))
+		if ($this->ci->ion_auth_model_mongo->delete_user($id))
 		{
-			$this->set_message('delete_successful');
+			$this->set_message('user_delete_successful');
 			return TRUE;
 		}
 
-		$this->set_error('delete_unsuccessful');
+		$this->set_error('user_delete_unsuccessful');
 		return FALSE;
 	}
+
+
+        public function delete_group($id)
+        {
+            if($this->ci->ion_auth_model_mongo->delete_group($id))
+            {
+                $this->set_message('group_delete_successful');
+	        return TRUE;
+            }
+
+           $this->set_error('group_delete_unsuccessful');
+	   return FALSE;
+        }
 
 
 	/**
@@ -759,7 +779,7 @@ class Ion_auth
 	 **/
 	 public function get_groups()
 	 {
-		 return $this->ci->ion_auth_model->get_groups()->result_array();
+		 return $this->ci->ion_auth_model_mongo->get_groups();
 	 }
 	 
 	 
@@ -773,7 +793,7 @@ class Ion_auth
 	 
 	  public function get_group($id)
 	 {
-		 return $this->ci->ion_auth_model->get_group($id);
+		 return $this->ci->ion_auth_model_mongo->get_group($id);
 	 }
 	 
 	 /**
@@ -786,7 +806,7 @@ class Ion_auth
 	 
 	 public function create_group($data)
 	 {
-		 $id=$this->ci->ion_auth_model->create_group($data);
+		 $id=$this->ci->ion_auth_model_mongo->create_group($data);
 		 if ($id !== FALSE)
 			{
 				$this->set_message('group_creation_successful');
@@ -804,13 +824,13 @@ class Ion_auth
 	 *update_group
 	 *Update the group
 	 *
-	 *@return object
+	 *@return bool
 	 *@author sudhir
 	 **/
 	 
 	 public function update_group($id,$data)
 	  {
-		  if ($this->ci->ion_auth_model->update_group($id, $data))
+	    if ($this->ci->ion_auth_model_mongo->update_group($id, $data))
 		{
 			$this->set_message('group_update_successful');
 			return TRUE;
