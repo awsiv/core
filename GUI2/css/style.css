@@ -68,7 +68,7 @@ color:#95c852;
 {
 float:left;
 padding:13px 10px 10px 10px;
-margin-left:10px;	
+margin-left:10px;
 }
 
 #nav ul li a.current
@@ -127,12 +127,12 @@ font-size:1.9em;
 .panel
 {
 border:solid 1px #cecece;
-margin:10px 10px;	
+margin:10px 10px;
 }
 
 .panelhead
 {
-background:url('../images/panelhead.png') repeat-x;	
+background:url('../images/panelhead.png') repeat-x;
 padding:10px;
 color:#e1e1e3;
 font-family:DejaVuSans,Arial, Helvetica, sans-serif;
@@ -141,7 +141,7 @@ font-size:14px;
 
 .knwlgpanelhead
 {
-background:#55544d;	
+background:#55544d;
 padding:10px;
 color:#e1e1e3;
 font-family:DejaVuSans,Arial, Helvetica, sans-serif;
@@ -217,7 +217,7 @@ font-size:14px;
 	background:#44443d;
 	font-family:DejaVuSans,Arial, Helvetica, sans-serif;
     font-size:12px;
-	
+
 }
 
 #ftsummary ul
@@ -273,7 +273,7 @@ font-size:14px;
 	font-size:12px;
 	padding-top:15px;
 	padding-bottom:40px;
-	margin-bottom:20px;	
+	margin-bottom:20px;
 }
 
 .hostinfo
@@ -369,7 +369,7 @@ span.text
 	/*background:#e1e1e3;*/
 	margin-top:10px;
 }
-#tips img 
+#tips img
 {
 	float:left;
 	width:128px;
@@ -399,7 +399,7 @@ span.text
 	font-style:italic;
 	text-decoration:underline;
 }
-#tips p a 
+#tips p a
 {
 	display: block;
 	padding:5px;
@@ -418,7 +418,7 @@ width:100%;
 border-collapse:collapse;
 }
 
-.tables td, .tables th 
+.tables td, .tables th
 {
 font-size:1em;
 /*border:1px solid #98bf21;*/
@@ -426,7 +426,7 @@ border:1px solid #CECECE;
 padding:3px 7px 2px 7px;
 }
 
-.tables th 
+.tables th
 {
 font-size:1.1em;
 text-align:left;
@@ -441,15 +441,15 @@ background-repeat:no-repeat;
 cursor:pointer;
 }
 
-th.headerSortDown { 
-    background-image: url(../images/desc.gif); 
-    background-color: #3399FF; 
-} 
+th.headerSortDown {
+    background-image: url(../images/desc.gif);
+    background-color: #3399FF;
+}
 
-th.headerSortUp { 
-    background-image: url(../images/asc.gif); 
-    background-color: #3399FF; 
-} 
+th.headerSortUp {
+    background-image: url(../images/asc.gif);
+    background-color: #3399FF;
+}
 
 tr.odd td
 {
@@ -487,7 +487,7 @@ tr even td
 	padding:5px 5px;
 }
 
-.tables tr.alt td 
+.tables tr.alt td
 {
 color:#000000;
 background-color:#EAF2D3;
@@ -531,14 +531,14 @@ overflow:auto;
         font-size: 10pt;
         font-family: monospace;
 	  }
-	  
+
 	  .CodeMirror-line-numbers div
 	  {
 		 font-size: 10pt;
 		 line-height:normal;
 	  }
-	  
-	  
+
+
 	  #leftPanel
 {
 	height:400px;
@@ -572,7 +572,7 @@ overflow:auto;
 	margin-top:25px;
 	-moz-border-radius: 8px;
     -webkit-border-radius: 8px;
-	
+
 }
 
 #Policies .title
@@ -623,7 +623,7 @@ vertical-align:middle;
 {
 	margin-top:10px;
 }
-#help-panel .results 
+#help-panel .results
 {
 	padding:5px;
 	border:solid 1px #a7a7a7;
@@ -699,7 +699,7 @@ div.ui-dialog-buttonpane,.dialog.ui-dialog-buttonpane
 }
 #dialog label, #dialog input,.dialog label,.dialog input { display:block; }
 #dialog label,.dialog label { margin-top: 0.5em; }
-#dialog input, #dialog textarea,.dialog input,.dialog textarea { width: 95%; } 
+#dialog input, #dialog textarea,.dialog input,.dialog textarea { width: 95%; }
 
 /*for left side pane list*/
 #policies_list
@@ -710,7 +710,7 @@ div.ui-dialog-buttonpane,.dialog.ui-dialog-buttonpane
 	font-family:Verdana, Geneva, sans-serif;
 	font-size:12px;
 	color:#333331;
-	
+
 }
 
 #policies_list li
@@ -750,7 +750,7 @@ div.ui-dialog-buttonpane,.dialog.ui-dialog-buttonpane
 	z-index:5;
 	color:#fff;
 	cursor:pointer;
-	
+
 	text-align:center;
 }
 
@@ -776,7 +776,7 @@ div.ui-dialog-buttonpane,.dialog.ui-dialog-buttonpane
 	font-weight:bold;
     padding:4px;
 	background:#E8EAF9;
-	
+
 }
 
 /* file list browser css*/
@@ -935,7 +935,7 @@ font-weight:bold;
     white-space: -o-pre-wrap;    /* Opera 7 */
     word-wrap: break-word;       /* Internet Explorer 5.5+ */
 
-	
+
 }
 
 #wholebody h1
@@ -965,7 +965,7 @@ font-weight:bold;
 }
 
 .amber
-{  
+{
 background-color: #f79131;
 }
 
