@@ -30,7 +30,7 @@ if($comment_id == "NO_COMMENT")
   <p><label>Username: </label><input type=\"text\" name=\"username\"></p>
   <p><label>Report Data: </label><input type=\"text\" name=\"report_data\"></p>
   <p> <textarea name=\"comment_text\" rows=\"10\" cols=\"50\"> </textarea> </p>
-  <input type=\"hidden\" name=\"hostkey\" id=\"hostkey\" value=\"<?php echo $hostkey?>\"/>
+  <input type=\"hidden\" name=\"hostkey\" id=\"hostkey\" value=\"$hostkey\"/>
   <input type=\"hidden\" name=\"op\" id=\"op\" value=\"addcomment\"/>
   <input type=\"hidden\" name=\"report_type\" id=\"report_type\" value=\"$report_type\"/>
   <input type=\"hidden\" name=\"time\" id=\"time\" value=\"$time\"/>
@@ -39,7 +39,7 @@ if($comment_id == "NO_COMMENT")
   <input type=\"submit\" value=\"Comment!\" name=\"submitComment1\">
   </form>
  </div>
-";
+"; /* echo ends here */
 }
 else 
 {

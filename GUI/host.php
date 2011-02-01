@@ -108,7 +108,7 @@ $colour = cfpr_get_host_colour($hostkey);
                        <form name ="addCommentForm1" action="host.php" method="post">
                         <p><label>Username: </label><input type="text" name="username"></p>
                         <p> <textarea name="commentArea" rows="10" cols="50"> </textarea> </p>
-                        <input type="hidden" name="hostkey" id="hostkey" value="<?php echo $hostkey?>"/>
+                        <input type="hidden" name="hostkey" id="hostkey" value="$hostkey"/>
                         <input type="hidden" name="op" id="op" value="addcomment"/>
                         <input type="submit" value="Comment!" name="submitComment1">
                         </form>
