@@ -967,6 +967,8 @@ void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
 void Nova2PHP_select_hosts(char *match,char *sel,int n,char *buffer,int bufsize);
 void Nova2PHP_select_reports(char *buffer,int bufsize);
 
+int Nova2PHP_set_siteurl(char *siteUrl);
+
 long Nova2PHP_count_hosts(void);
 long Nova2PHP_count_red_hosts(void);
 long Nova2PHP_count_yellow_hosts(void);

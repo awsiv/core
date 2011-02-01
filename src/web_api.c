@@ -2178,6 +2178,14 @@ if (!CFDB_Close(&dbconn))
 
 
 /*****************************************************************************/
+
+int Nova2PHP_set_siteurl(char *siteUrl)
+{
+  return CFDB_PutValue("site_url", siteUrl);
+}
+
+
+/*****************************************************************************/
 /* Topic Map                                                                 */
 /*****************************************************************************/
 
@@ -2267,6 +2275,13 @@ void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize)
   char work[CF_MAXVARSIZE];
   static char *policies[] = { "compliance", "anomaly", "performance", "lastseen", NULL};
   enum cf_rank_method pol;
+  char siteUrl[CF_MAXVARSIZE];
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+    CfOut(cf_error, "", "!! Could not get site url in topN");
+    return;
+    }
 
 Nova_WebTopicMap_Initialize();
   
@@ -2289,7 +2304,7 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
 
    if (Nova_IsGreen(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/green\"><img src=\"/images/green.png\"></a></td><td><a href=\"<?php echo site_url('welcome/host')>/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+	snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/green\"><img src=\"/images/green.png\"></a></td><td><a href=\"%s/bundle/host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else if (Nova_IsYellow(ip->counter))
       {
