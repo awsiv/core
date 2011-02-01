@@ -10,13 +10,13 @@ class Cf_Controller extends Controller
 		$this->load->library('ion_auth');
 		$this->load->library('session');
 		$this->load->helper(array('url','html'));
-		
+		cfpr_set_siteurl(site_url());
 		// Login: If not logged in, redirect to  authentication index
 		if(!$this->ion_auth->logged_in())
 		{
 			redirect('auth/index','refresh');
 		}
-		
+                
 	}
 }
 
