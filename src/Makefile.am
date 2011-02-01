@@ -83,7 +83,9 @@ noinst_HEADERS =							\
 	conf.h   							\
 	cf3.defs.h							\
 	cf3.extern.h							\
-	snprintf.h
+        cf.events.h                                                     \
+        win_disphelper.h                                                \
+	snprintf.h                                                      
 
 include_HEADERS = cf.nova.h
 
