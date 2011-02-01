@@ -5422,7 +5422,6 @@ bson_append_int(&bb,rowname,1);
 bson_from_buffer(&field, &bb);
 
  cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,0);
- bson_print(&field);
  row[0] = '\0';
  while (mongo_cursor_next(cursor))  // loops over documents
    {

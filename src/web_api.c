@@ -4358,8 +4358,6 @@ int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, 
   
   //  sscanf(reportData,"%255[^,],",handle);
   
-  printf("Bishwa: %s\n",repid);
-  
   snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,comment,datetime);
   AppendItem(&data, msg, NULL);
 
@@ -4387,10 +4385,13 @@ int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, 
         {
         case CFREPORT_HOSTS:
 	  //          CFDBRef_HostID_Comments(&dbconn,keyhash, commentId);
+	  snprintf(row, sizeof(row),"%s",reportData);
+	  getrow = true;
           break;
         case CFREPORT_PRLOG:
-	  //	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_performance,repid);
-          //CFDB_GetRow(&dbconn, "cfreport.logs_nk", &query, row_name, row, level);
+	  snprintf(row, sizeof(row), "%s",reportData);
+	  //          CFDB_GetRow(&dbconn, "cfreport.logs_nk", &query, row_name, row, level);
+	  getrow = true;
           break;
         case CFREPORT_PERF:
 	  level = 3;
@@ -4411,7 +4412,6 @@ int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, 
 	  break;
 	  
         }
-      printf("Webapi: %s\n",row);
     }
   else
     {
