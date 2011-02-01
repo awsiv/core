@@ -777,7 +777,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    then = hl->t;
    
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td>%s</td>"
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td><a href=\"host/%s\">%s</a></td><td>%s</td>"
             "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td><span class=\"keyhash\">%s</span></td></tr>\n",
             hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->keyhash,hl->rhost->ipaddr,cf_ctime(&then),
             hl->hrsago,hl->hrsavg,hl->hrsdev,
@@ -1203,7 +1203,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       Join(returnval,buffer,bufsize);
       }
    
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1261,7 +1261,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       Join(returnval,buffer,bufsize);
       }
    
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1317,7 +1317,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       Join(returnval,buffer,bufsize);
       }
    
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1381,7 +1381,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       Join(returnval,buffer,bufsize);
       }
    
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1444,7 +1444,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       Join(returnval,buffer,bufsize);
       }
    
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1503,7 +1503,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       Join(returnval,buffer,bufsize);
       }
    
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1559,7 +1559,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       Join(returnval,buffer,bufsize);
       }
    
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1615,7 +1615,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       Join(returnval,buffer,bufsize);
       }
    
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1675,7 +1675,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       Join(returnval,buffer,bufsize);
       }
    
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1741,7 +1741,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       Join(returnval,buffer,bufsize);
       }
    
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1806,7 +1806,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       Join(returnval,buffer,bufsize);
       }
    
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1861,7 +1861,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       Join(returnval,buffer,bufsize);
       }
    
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host.php?hostkey=%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -2289,15 +2289,15 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
 
    if (Nova_IsGreen(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts.php?type=green\"><img src=\"/images/green.png\"></a></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/green\"><img src=\"/images/green.png\"></a></td><td><a href=\"<?php echo site_url('welcome/host')>/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else if (Nova_IsYellow(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts.php?type=green\"><img src=\"/images/yellow.png\"></a></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/yellow\"><img src=\"/images/yellow.png\"></a></td><td><a href=\"host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else // if (Nova_IsRed(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts.php?type=red\"><img src=\"/images/red.png\"></a></td><td><a href=\"host.php?hostkey=%s\">%s</a></td><td><a href=\"host.php?hostkey=%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/red\"><img src=\"/images/red.png\"></a></td><td><a href=\"host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
 
    if(!Join(buffer,work,bufsize))
@@ -2389,7 +2389,7 @@ if (clist)
 	   }
          }
       
-      snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/images/%s.png\"><a href=\"host.php?hostkey=%s\">%s</a></td>\n",
+      snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/images/%s.png\"><a href=\"host/%s\">%s</a></td>\n",
 	       colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
       
       if(!Join(buffer,work,bufsize))
@@ -2514,7 +2514,7 @@ char *Nova_HostProfile(char *key)
 { static char buffer[CF_BUFSIZE];
 
 snprintf(buffer,CF_BUFSIZE,
-         "<table><tr><td><a href=\"bundles.php?host=%s\">Bundles</a></td><td><a href=\"classes.php?host=%s\">Classes</a></td></tr>"
+         "<table><tr><td><a href=\"bundles.php/%s\">Bundles</a></td><td><a href=\"classes.php?host=%s\">Classes</a></td></tr>"
          "<tr><td><a href=\"knowledge.php?topic=goals\">Goals</a></td><td><a href=\"promises.php?host=%s\">Promises</a></td></tr></table>",key,key,key);
 
 return buffer;
@@ -4229,7 +4229,7 @@ if (promises)
 	       }
             
             
-            snprintf(row,sizeof(row),"<tr><td><a href=\"host.php?hostkey=%s\">%s</a></td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+            snprintf(row,sizeof(row),"<tr><td><a href=\"host/%s\">%s</a></td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
                      hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr);
             
             if(!Join(buf,row,bufSz))
