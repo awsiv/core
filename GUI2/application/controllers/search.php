@@ -17,6 +17,7 @@ class Search extends Controller
        $hours_deltato = isset($getparams['hours_deltato'])?$getparams['hours_deltato']:$this->input->post('hours_deltato');
        $class_regex = isset($getparams['class_regex'])?$getparams['class_regex']:$this->input->post('class_regex');
 	   $hosts_only = isset($getparams['hosts_only'])?$getparams['hosts_only']:$this->input->post('hosts_only');
+           $state=isset($getparams['state'])?$getparams['state']:$this->input->post('state');
 	   
 	   $hostname =  cfpr_hostname($hostkey);
 	   //necessary for search result view
