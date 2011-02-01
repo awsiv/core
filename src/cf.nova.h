@@ -1368,7 +1368,7 @@ struct cf_pscalar
 
 /*commenting*/
 #define cfc_keyhash "_kh"
-#define cfc_cid "_cid"
+#define cfc_cid "cid"
 #define cfc_reportdata "_rD"
 #define cfc_comment "cM"
 #define cfc_username "u"

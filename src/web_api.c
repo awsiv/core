@@ -260,7 +260,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
        snprintf(comment_link,sizeof(comment_link),"\"comments.php?comment_id=%s\"",hp->comment_id);
        snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
      }
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=%s>%s</a><td></tr>\n", hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), comment_link, comment);
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n", hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), comment_link, comment);
 
    if(!Join(returnval,buffer,bufsize))
      {
@@ -4374,8 +4374,6 @@ int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, 
   bson_iterator it1,it2;
   int level = 0, getrow=false;
   
-  //  sscanf(reportData,"%255[^,],",handle);
-  
   snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,comment,datetime);
   AppendItem(&data, msg, NULL);
 
@@ -4414,19 +4412,19 @@ int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, 
         case CFREPORT_PERF:
 	  level = 3;
 	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_performance,repid);
-	  getrow = CFDB_GetRow(&dbconn, "cfreport.hosts", &query, row_name, row, level);
+	  getrow = CFDB_GetRow(&dbconn, MONGO_DATABASE, &query, row_name, row, level);
           break;
 	case CFREPORT_VALUE: /*value report*/
 	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_valuereport,repid);
-	  getrow = CFDB_GetRow(&dbconn, "cfreport.hosts", &query, row_name, row, level);
+	  getrow = CFDB_GetRow(&dbconn, MONGO_DATABASE, &query, row_name, row, level);
 	  break;
 	case CFREPORT_FILECHANGES:  
 	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filechanges,repid);
-	  getrow = CFDB_GetRow(&dbconn, "cfreport.hosts", &query, row_name, row, level);
+	  getrow = CFDB_GetRow(&dbconn, MONGO_DATABASE, &query, row_name, row, level);
 	  break;
 	case CFREPORT_FILEDIFFS:  
 	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filediffs,repid);
-	  getrow = CFDB_GetRow(&dbconn, "cfreport.hosts", &query, row_name, row, level);
+	  getrow = CFDB_GetRow(&dbconn, MONGO_DATABASE, &query, row_name, row, level);
 	  break;
 	  
         }
@@ -4453,19 +4451,19 @@ int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, 
 	      CFDBRef_PromiseLog_Comments(&dbconn, objectId, commentId, plog_repaired);
 	      break;
 	    case CFREPORT_PERF:
-	      CFDBRef_Performance_Comments(&dbconn, keyhash,repid, commentId);
+	      CFDBRef_Performance_Comments(&dbconn, keyhash,repid, commentId); /*TODO: use CFDBRef_AddToRow instead*/
 	      break;
 	    case CFREPORT_VALUE: /*value report*/
-	      snprintf(row_name, sizeof(row_name), "%s.%s.cmt",cfr_valuereport,repid);
-	      getrow = CFDBRef_AddToRow(&dbconn, "cfreport.hosts", &query, row_name, commentId);
+	      snprintf(row_name, sizeof(row_name), "%s.%s.%s",cfr_valuereport,repid,cfc_cid);
+	      getrow = CFDBRef_AddToRow(&dbconn, MONGO_DATABASE, &query, row_name, commentId);
 	      break;
 	    case CFREPORT_FILECHANGES:
-	      snprintf(row_name, sizeof(row_name), "%s.%s.cmt",cfr_filechanges,repid);
-	      getrow = CFDBRef_AddToRow(&dbconn, "cfreport.hosts", &query, row_name, commentId);
+	      snprintf(row_name, sizeof(row_name), "%s.%s.%s",cfr_filechanges,repid,cfc_cid);
+	      getrow = CFDBRef_AddToRow(&dbconn, MONGO_DATABASE, &query, row_name, commentId);
 	      break;
 	    case CFREPORT_FILEDIFFS:
-	      snprintf(row_name, sizeof(row_name), "%s.%s.cmt",cfr_filediffs,repid);
-	      getrow = CFDBRef_AddToRow(&dbconn, "cfreport.hosts", &query, row_name, commentId);
+	      snprintf(row_name, sizeof(row_name), "%s.%s.%s",cfr_filediffs,repid,cfc_cid);
+	      getrow = CFDBRef_AddToRow(&dbconn, MONGO_DATABASE, &query, row_name, commentId);
 	      break;
 	    }
 	}

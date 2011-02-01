@@ -1871,7 +1871,7 @@ bson_append_int(&bb,cfr_keyhash,1);
 bson_append_int(&bb,cfr_ip_array,1);
 bson_append_int(&bb,cfr_host_array,1);
 bson_append_int(&bb,cfr_filechanges,1);
-bson_append_int(&bb,"cmt",1);
+bson_append_int(&bb,cfc_cid,1);
 bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -1928,7 +1928,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   {
                   rt = bson_iterator_int(&it3);
                   }
-	       else if (strcmp(bson_iterator_key(&it3),"cmt") == 0)
+	       else if (strcmp(bson_iterator_key(&it3),cfc_cid) == 0)
 		 {
 		   snprintf(handle,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
 		 }
@@ -2289,7 +2289,7 @@ if (!EMPTY(lhandle))  // promise handle
  bson_append_int(&bb,cfr_cause,1);
  bson_append_int(&bb,cfr_promisehandle,1);
  bson_append_int(&bb,cfr_time,1);
- bson_append_int(&bb,"cid",1);
+ bson_append_int(&bb,cfc_cid,1);
  bson_from_buffer(&field,&bb);
 
 switch (type)
@@ -2345,7 +2345,7 @@ switch (type)
 	   {
 	     snprintf(rcause,sizeof(rcause),"%s",bson_iterator_string(&it1));
 	   }
-	 else if (strcmp(bson_iterator_key(&it1),"cid") == 0)
+	 else if (strcmp(bson_iterator_key(&it1),cfc_cid) == 0)
 	   {
 	     snprintf(commentId,sizeof(commentId),"%s",bson_iterator_string(&it1));
 	   }
@@ -5349,7 +5349,7 @@ struct Rlist *CFDB_QueryCommentId(mongo_connection *conn,bson *query)
 
 bson_buffer_init(&bb);
 bson_append_int(&bb,cfr_keyhash,1);
- bson_append_int(&bb,"cid",1);
+ bson_append_int(&bb,cfc_cid,1);
 //bson_append_int(&bb,cfr_ip_array,1);
 //bson_append_int(&bb,cfr_host_array,1);
 bson_from_buffer(&field, &bb);
@@ -5383,7 +5383,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 		strncpy(keyhash, bson_iterator_string(&it1),CF_MAXVARSIZE - 1);    \
 
 	      }
-	    else if (strcmp(bson_iterator_key(&it1),"cid") == 0)
+	    else if (strcmp(bson_iterator_key(&it1),cfc_cid) == 0)
 	      {
 		strncpy(commentId, bson_iterator_string(&it1),CF_MAXVARSIZE - 1);
 	      }

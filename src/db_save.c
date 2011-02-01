@@ -1439,7 +1439,7 @@ switch(rep_type)
    // update
    bson_buffer_init(&bb);
    setObj = bson_append_start_object(&bb, "$set");
-   bson_append_string(setObj,"cid",commentId);
+   bson_append_string(setObj,cfc_cid,commentId);
    bson_append_finish_object(setObj);
    bson_from_buffer(&setOp,&bb);
    
@@ -1469,7 +1469,7 @@ void CFDBRef_HostID_Comments(mongo_connection *conn,char *keyhash, char *comment
    // update
    bson_buffer_init(&bb);
    setObj = bson_append_start_object(&bb, "$set");
-   bson_append_string(setObj,"cid",commentId);
+   bson_append_string(setObj,cfc_cid,commentId);
    bson_append_finish_object(setObj);
 
    bson_from_buffer(&setOp,&bb);
@@ -1502,7 +1502,7 @@ bson_from_buffer(&host_key, &bb);
 bson_buffer_init(&bb);
 
 setObj = bson_append_start_object(&bb, "$set");
-snprintf(varName, sizeof(varName), "%s.%s.cid",cfr_performance,handle);  
+ snprintf(varName, sizeof(varName), "%s.%s.%s",cfr_performance,handle,cfc_cid);  
 bson_append_string(setObj, varName, cid);
 bson_append_finish_object(setObj);
 
