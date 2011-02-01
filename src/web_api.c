@@ -2304,15 +2304,15 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
 
    if (Nova_IsGreen(ip->counter))
       {
-	snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/green\"><img src=\"/images/green.png\"></a></td><td><a href=\"%s/bundle/host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+	snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/green\"><img src=\"/images/green.png\"></a></td><td><a href=\"%s/welcome/host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else if (Nova_IsYellow(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/yellow\"><img src=\"/images/yellow.png\"></a></td><td><a href=\"host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+	snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/yellow\"><img src=\"/images/yellow.png\"></a></td><td><a href=\"%s/welcome/host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else // if (Nova_IsRed(ip->counter))
       {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/red\"><img src=\"/images/red.png\"></a></td><td><a href=\"host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+	snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/red\"><img src=\"/images/red.png\"></a></td><td><a href=\"%s/welcome/host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
 
    if(!Join(buffer,work,bufsize))
