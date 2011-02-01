@@ -48,11 +48,11 @@ else
 		
 		$("#tabpane a").click(function(e)
 		{
-	    e.preventDefault();
+	       /* e.preventDefault();
 		var oldlink=$(this).attr('href');
 		var newlink=oldlink.split('?');
 		var splitted=newlink[1].split('=');
-		location.replace('<?php echo site_url(); ?>/welcome/host/'+splitted[1]+'='+splitted[2]);
+		location.replace('<?php echo site_url(); ?>/welcome/host/'+splitted[1]+'='+splitted[2]);*/
 	    });
 		});
 		</script>
