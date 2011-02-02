@@ -154,6 +154,7 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
 { char *caption = NULL;
   char *version = NULL;
   char *sp;
+  int count = 0;
 
   DISPATCH_OBJ(colSoftware);
 
@@ -218,11 +219,18 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
 	  version = NULL;
         }
 
+      count++;
 
     } NEXT(softwareItem);
 
 
 SAFE_RELEASE(colSoftware);
+
+if(count == 0)
+  {
+  // can never have empty list since Cfengine is installed
+  CfOut(cf_error,"", "!! List of installed packages is empty - make sure \"Windows Installer Provider\" is installed and working");
+  }
 
 return true;
 }
