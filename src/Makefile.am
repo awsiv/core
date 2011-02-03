@@ -75,14 +75,7 @@ libcfnova_la_SOURCES =						\
 #
 
 noinst_HEADERS =							\
-	cf.defs.h							\
-	cf.extern.h							\
-	cf3.server.h							\
-	prototypes3.h							\
-	prototypes.h							\
 	conf.h   							\
-	cf3.defs.h							\
-	cf3.extern.h							\
         cf.events.h                                                     \
         win_disphelper.h                                                \
 	snprintf.h                                                      
