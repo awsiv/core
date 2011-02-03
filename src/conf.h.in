@@ -168,6 +168,10 @@
 /* Define to 1 if you have the `acl' library (-lacl). */
 #undef HAVE_LIBACL
 
+/* Define to 1 if you have the `cfconstellation' library (-lcfconstellation).
+   */
+#undef HAVE_LIBCFCONSTELLATION
+
 /* Define to 1 if you have the `crypto' library (-lcrypto). */
 #undef HAVE_LIBCRYPTO
 

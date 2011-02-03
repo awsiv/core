@@ -413,6 +413,20 @@ if test $WITH_SQL = 1; then
 fi
 
 
+dnl
+dnl Enterprise extensions
+dnl
+
+AC_ARG_WITH(constellation,
+        AS_HELP_STRING(--without-constellation, [disable Constellation enterprise extensions (enabled by default)]),[],
+        with_constellation=yes)
+
+if test "x$with_constellation" != xno; then
+   AC_CHECK_LIB(cfconstellation,main)
+fi
+
+
+
 #
 # Report database driver - MongoDB C interface
 #

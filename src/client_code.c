@@ -96,7 +96,7 @@ tosend=cipherlen+CF_PROTO_OFFSET;
 
 /* Send proposition C0 - query */
 
- CfOut(cf_verbose,""," -> Sending query at %s",ctime(&now));
+ CfOut(cf_verbose,""," -> Sending query at %s",cf_ctime(&now));
 
 if (SendTransaction(conn->sd,workbuf,tosend,CF_DONE) == -1)
    {

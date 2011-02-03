@@ -233,7 +233,7 @@ switch (type)
 // Promise: return size as a service
 
 time2 = time(NULL);
-CfOut(cf_verbose,""," -> Assembled reply at %s",ctime(&time2));
+CfOut(cf_verbose,""," -> Assembled reply at %s",cf_ctime(&time2));
 
 snprintf(buffer,CF_MAXVARSIZE,"CFR: %ld %ld %ld",delta1,time2,ItemListSize(reply));
 PrependItem(&reply,buffer,NULL);
@@ -245,6 +245,7 @@ for (ip = reply; ip != NULL; ip=ip->next)
    if (SendTransaction(conn->sd_reply,out,cipherlen,CF_MORE) == -1)
       {
       CfOut(cf_error,"send","Failed send");
+      DeleteItemList(reply);
       return false;
       }
    }
@@ -254,6 +255,7 @@ cipherlen = EncryptString(conn->encryption_type,"QUERY complete",out,conn->sessi
 if (SendTransaction(conn->sd_reply,out,cipherlen,CF_DONE) == -1)
    {
    CfOut(cf_error,"send","Failed send");
+   DeleteItemList(reply);
    return false;
    }
 
@@ -581,7 +583,7 @@ CfOut(cf_verbose,"","----");
 
 enum cfd_menu String2Menu(char *s)
 
-{ static char *menus[] = { "delta", "full", NULL };
+{ static char *menus[] = { "delta", "full", "relay", NULL };
   int i;
  
 for (i = 0; menus[i] != NULL; i++)
