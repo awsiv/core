@@ -123,7 +123,7 @@ class Welcome extends Cf_Controller{
 	{
 	$data=array(
 			'title_header'=>"weakest hosts",
-		    'title'=>"Cfengine Mission Portal - weakest hosts ",
+		        'title'=>"Cfengine Mission Portal - weakest hosts ",
 			'nav_text'=>"Status : weakest hosts",
 			'status'=>"current",
 			'ret' => cfpr_top_n_hosts("compliance",1000),
