@@ -5,7 +5,10 @@ class Promise extends Controller
 	{
 		parent::Controller();
 	}
-	
+	 function index()
+	 {
+	  this->plist();
+	 }	
 	function plist()
 	{
 		$hostkey = NULL;
