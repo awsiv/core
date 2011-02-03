@@ -4,7 +4,7 @@
              <li>SUMMARY</li>
              <li>Green Hosts</li>
              <li>Yellow Hosts</li>
-             <li>Redhosts</li>
+             <li>Red Hosts</li>
          </ul>
          <ul class="grid_2">
              <li>PLANNING</li>
@@ -32,7 +32,7 @@
              <li>User Manual</li>
              <li>Examples</li>
              <li>Promise theory</li>
-             <li>Components</span>
+             <li>Components</li>
          </ul>
          <div class="grid_4">
          <br />
@@ -45,7 +45,7 @@
          <br />
          <br />
          <br />
-         <span class="grid_4 alignright"><img src="images/Cfengine_logo_white_trans.png" width="74px" height="48px"/></span>
+         <span class="grid_4 alignright"><img src="<?php echo get_imagedir();?>Cfengine_logo_white_trans.png" width="74px" height="48px"/></span>
          </div>
          <div class="clear"></div>
        </div>
