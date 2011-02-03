@@ -233,6 +233,16 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
+  
+  char siteUrl[CF_MAXVARSIZE];
+  
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in Promise log");
+      return;
+    }
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -252,15 +262,15 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    hp = (struct HubPromiseLog *)rp->item;
    if(strcmp(hp->comment_id,CF_NOCOMMENT) == 0)
      {
-       snprintf(comment_link,sizeof(comment_link),"\"comments.php?hostkey=%s&comment_id=%s&report_type=%d&report_data=%s&time=%ld\"",hostkey,hp->comment_id,CFREPORT_PRLOG,hp->oid,hp->t);
+       snprintf(comment_link,sizeof(comment_link),"\"%s/notes/add/hostkey/%s/note_id/%s/report_type/%d/report_data/%s/time/%ld\"",siteUrl,hostkey,hp->comment_id,CFREPORT_PRLOG,hp->oid,hp->t);
        snprintf(comment,sizeof(comment),"%s",CF_ADDCOMMENT);
      }
    else
      {
-       snprintf(comment_link,sizeof(comment_link),"\"comments.php?comment_id=%s\"",hp->comment_id);
+       snprintf(comment_link,sizeof(comment_link),"\"%s/notes/show/note_id/%s\"",siteUrl,hp->comment_id);
        snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
      }
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n", hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), comment_link, comment);
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"%s/promise/details/%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n", hp->hh->hostname,siteUrl,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), comment_link, comment);
 
    if(!Join(returnval,buffer,bufsize))
      {
@@ -291,6 +301,17 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
   struct Item *ip,*summary = NULL;
+
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in Promise Log Summary");
+      return;
+    }
+
 
 /* BEGIN query document */
 
@@ -337,7 +358,7 @@ else
             
    for (ip = summary; ip != NULL; ip=ip->next)
       {
-      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%d</td></tr>\n",hostname,ip->name,ip->name,ip->classes,ip->counter);
+	snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"%s/promise/details/%s\">%s</a></td><td>%s</td><td>%d</td></tr>\n",hostname,siteUrl,ip->name,ip->name,ip->classes,ip->counter);
 
       if(!Join(returnval,buffer,bufsize))
 	{
@@ -531,6 +552,16 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
   int count = 0, tmpsize = 0;
   mongo_connection dbconn;
 
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in vars report");
+      return;
+    }
+
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
@@ -554,7 +585,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    if (strcmp(lscope,hv->scope) != 0)
       {
       strcpy(lscope,hv->scope);
-      snprintf(buffer,CF_BUFSIZE,"<tr><th colspan=\"3\">Bundle scope <a href=\"bundle.php?bundle=%s\">%s</a><th></tr>\n",hv->scope,hv->scope);
+      snprintf(buffer,CF_BUFSIZE,"<tr><th colspan=\"3\">Bundle scope <a href=\"%s/bundle/details/bundle/%s\">%s</a><th></tr>\n",siteUrl,hv->scope,hv->scope);
       Join(returnval,buffer,bufsize);
       snprintf(buffer,CF_BUFSIZE,"<tr><th>Host</th><th>Type</th><th>Name</th><th>Value</th></tr>\n");
       Join(returnval,buffer,bufsize);
@@ -581,7 +612,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       strcat(typestr," list");
       }
    
-   snprintf(buffer,CF_BUFSIZE,"<tr><td>%s</td><td>%s</td><td><a href=\"knowledge.php?topic=%s\">%s</td>\n",hv->hh->hostname,typestr,hv->lval,hv->lval);
+   snprintf(buffer,CF_BUFSIZE,"<tr><td>%s</td><td>%s</td><td><a href=\"%s/knowledge/topic/%s\">%s</td>\n",hv->hh->hostname,typestr,siteUrl,hv->lval,hv->lval);
    strcat(returnval,buffer);
    count += strlen(buffer);
 
@@ -685,6 +716,16 @@ int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int reg
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
 
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in Compliance promises");
+      return;
+    }
+
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
@@ -708,8 +749,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseCompliance *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"promise.php?handle=%s\">%s</a></td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
-            hp->hh->hostname,hp->handle,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_ctime(&(hp->t)));
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"%s/promise/details/%s\">%s</a></td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
+            hp->hh->hostname,siteUrl,hp->handle,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_ctime(&(hp->t)));
 
    if(!Join(returnval,buffer,bufsize))
      {
@@ -911,6 +952,16 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,c
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
 
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in Bundle Report");
+      return;
+    }
+
 /* BEGIN query document */
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -935,9 +986,9 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       continue;
       }
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"bundle.php?bundle=%s\">%s</a></td><td>%s</td>"
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"%s/bundle/details/bundle/%s\">%s</a></td><td>%s</td>"
             "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td></tr>\n",
-            hb->hh->hostname,hb->bundle,hb->bundle,cf_ctime(&(hb->t)),
+            hb->hh->hostname,siteUrl,hb->bundle,hb->bundle,cf_ctime(&(hb->t)),
             hb->hrsago,hb->hrsavg,hb->hrsdev);
 
    if(!Join(returnval,buffer,bufsize))
@@ -971,6 +1022,15 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
      char comment_link[CF_MAXVARSIZE] = {0}, comment[CF_MAXVARSIZE] = {0}, handle_buf[CF_MAXVARSIZE] = {0};
      int is_rpt_handle = false;
      int i = 0;
+     char siteUrl[CF_MAXVARSIZE];
+
+     NewClass("am_php_module");  // required to get value
+
+     if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+       {
+	 CfOut(cf_error, "", "!! Could not get site url in Filechanges report");
+	 return;
+       }
 
 switch (*cmp)
      {
@@ -1011,12 +1071,12 @@ switch (*cmp)
 
        if(is_rpt_handle) /* handle doesn't contain objectid for comment */
 	 {
-	   snprintf(comment_link,sizeof(comment_link),"\"comments.php?hostkey=%s&handle=%s&report_type=%d\"",hC->hh->keyhash,hC->handle,CFREPORT_FILECHANGES);
+	   snprintf(comment_link,sizeof(comment_link),"\"%s/notes/add/hostkey/%s/handle/%s/report_type/%d\"",siteUrl,hC->hh->keyhash,hC->handle,CFREPORT_FILECHANGES);
 	   snprintf(comment,sizeof(comment),"%s",CF_ADDCOMMENT);
 	 }
        else
 	 {
-	   snprintf(comment_link,sizeof(comment_link),"\"comments.php?comment_id=%s\"",hC->handle);
+	   snprintf(comment_link,sizeof(comment_link),"\"%s/note/show/note_id/%s\"",siteUrl,hC->handle);
 	   snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
 	 }     
 
@@ -1892,7 +1952,15 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
   struct Item *ip,*list = NULL;
   char work[CF_MAXVARSIZE],context[CF_MAXVARSIZE];
   int pid;
-  
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in classes for bundle");
+      return;
+    }
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
@@ -1922,7 +1990,7 @@ if (list)
       snprintf(context,CF_MAXVARSIZE,"class_contexts::%s",ip->name);
       pid = Nova_GetPidForTopic(context);
 
-      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"knowledge.php?pid=%d\"><span class=\"classcontext\">%s</span></a></li>",pid,ip->name);
+      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"%s/welcome/knowledge/pid/%d\"><span class=\"classcontext\">%s</span></a></li>",siteUrl,pid,ip->name);
 
       if(!Join(buffer,work,bufsize))
 	{
@@ -1993,6 +2061,16 @@ int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize)
   char work[CF_BUFSIZE];
   struct Item *matched,*ip;
 
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in List all bundles");
+      return;
+    }
+
 Nova_WebTopicMap_Initialize();
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -2027,7 +2105,7 @@ if (matched)
 
          for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
             {
-            snprintf(work,sizeof(work),"<tr><td><a href=\"knowledge.php?pid=%d\">%s</a> </td><td> %s</td></tr>",ip2->counter,ip2->name,ip2->classes);
+	      snprintf(work,sizeof(work),"<tr><td><a href=\"%s/knowledge/pid/%d\">%s</a> </td><td> %s</td></tr>",siteUrl,ip2->counter,ip2->name,ip2->classes);
 
             if (!Join(goals,work,CF_BUFSIZE))
 	      {
@@ -2046,11 +2124,11 @@ if (matched)
 
       if (type)
          {
-         snprintf(work,CF_BUFSIZE,"<tr><td><a href=\"bundle.php?type=%s\"><span class=\"bundletype\">%s</span></a></td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span class=\"bundle\">%s</span></a></td><td>%s</td><td>%s</td><td><img src=\"%s\"></td></tr>",ip->classes,ip->classes,ip->name,ip->classes,ip->name,Nova_GetBundleComment(ip->name),goals,colour);
+	   snprintf(work,CF_BUFSIZE,"<tr><td><a href=\"%s/bundle/details/type/%s\"><span class=\"bundletype\">%s</span></a></td><td><a href=\"%s/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a></td><td>%s</td><td>%s</td><td><img src=\"%s\"></td></tr>",siteUrl,ip->classes,ip->classes,ip->name,siteUrl,ip->classes,ip->name,Nova_GetBundleComment(ip->name),goals,colour);
          }
       else
          {
-         snprintf(work,CF_BUFSIZE,"<li><a href=\"bundle.php?type=%s\"><span class=\"bundletype\">%s</span></a> <a href=\"bundle.php?bundle=%s&type=%s\"><span class=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->classes,ip->name);
+	   snprintf(work,CF_BUFSIZE,"<li><a href=\"%s/bundle/details/type/%s\"><span class=\"bundletype\">%s</span></a> <a href=\"%s/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a></li>",siteUrl,ip->classes,ip->classes,siteUrl,ip->name,ip->classes,ip->name);
          }
       
       if(!Join(buffer,work,bufsize))
@@ -2087,6 +2165,15 @@ int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize)
 { mongo_connection dbconn;
   char work[CF_MAXVARSIZE];
   struct Item *matched,*ip;
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in List bundles using");
+      return;
+    }
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -2104,7 +2191,7 @@ if (matched)
    
    for (ip = matched; ip != NULL; ip=ip->next)
       {
-      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"bundle.php?type=%s\"><span class=\"bundletype\">%s</span></a> <a href=\"bundle.php?bundle=%s&type=%s\"><span class=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->classes,ip->name);
+	snprintf(work,CF_MAXVARSIZE,"<li><a href=\"%s/bundle/details/type/%s\"><span class=\"bundletype\">%s</span></a> <a href=\"%s/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a></li>",siteUrl,ip->classes,ip->classes,siteUrl,ip->name,ip->classes,ip->name);
 
       if(!Join(buffer,work,bufsize))
 	{
@@ -2202,13 +2289,22 @@ return true;
 int Nova2PHP_search_topics(char *search,int regex,char *buffer,int bufsize)
 
 { int pid;
- 
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in search topics");
+      return;
+    }
+
 Nova_WebTopicMap_Initialize();
 
 if (pid = Nova_SearchTopicMap(search,buffer,bufsize))
    {
    // If there's only one match, just show it
-   snprintf(buffer,bufsize,"<meta HTTP-EQUIV=\"REFRESH\" content=\"0; url=knowledge.php?pid=%d\">",pid);
+     snprintf(buffer,bufsize,"<meta HTTP-EQUIV=\"REFRESH\" content=\"0; url=%s/welcome/knowledge/pid/%d\">",siteUrl,pid);
    return true;
    }
 else
@@ -2307,7 +2403,7 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
 
    if (Nova_IsGreen(ip->counter))
       {
-	snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/green\"><img src=\"/images/green.png\"></a></td><td><a href=\"%s/welcome/host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+	snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"%s/welcome/hosts/green\"><img src=\"/images/green.png\"></a></td><td><a href=\"%s/welcome/host/%s\">%s</a></td><td><a href=\"%s/welcome/host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,siteUrl,ip->name,ip->classes,siteUrl,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else if (Nova_IsYellow(ip->counter))
       {
@@ -2531,9 +2627,19 @@ char *Nova_HostProfile(char *key)
 
 { static char buffer[CF_BUFSIZE];
 
+char siteUrl[CF_MAXVARSIZE];
+
+NewClass("am_php_module");  // required to get value
+
+if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+  {
+    CfOut(cf_error, "", "!! Could not get site url in host profile");
+    return;
+  }
+
 snprintf(buffer,CF_BUFSIZE,
-         "<table><tr><td><a href=\"bundles.php/%s\">Bundles</a></td><td><a href=\"classes.php?host=%s\">Classes</a></td></tr>"
-         "<tr><td><a href=\"knowledge.php?topic=goals\">Goals</a></td><td><a href=\"promises.php?host=%s\">Promises</a></td></tr></table>",key,key,key);
+         "<table><tr><td><a href=\"%s/bundle/index/%s\">Bundles</a></td><td><a href=\"%s/welcome/classes/host/%s\">Classes</a></td></tr>"
+         "<tr><td><a href=\"%s/welcome/knowledge/topic/goals\">Goals</a></td><td><a href=\"%s/promise/index/%s\">Promises</a></td></tr></table>",siteUrl,key,siteUrl,key,siteUrl,siteUrl,key);
 
 return buffer;
 }
@@ -2599,7 +2705,15 @@ void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
 { char work[CF_BUFSIZE];
   mongo_connection dbconn;
   struct HubBody *hb;    
-  
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in get promise body");
+      return;
+    }
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
@@ -2612,10 +2726,10 @@ if (hb)
    {
    snprintf(returnval,CF_MAXVARSIZE-1,"<div id=\"showbody\"><table>\n");
    
-   snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Type</td><td>:</td><td><a href=\"knowledge.php?topic=%s\">%s</a></td><td></td></tr>\n",hb->bodyType,hb->bodyType);
+   snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Type</td><td>:</td><td><a href=\"%s/welcome/knowledge/topic/%s\">%s</a></td><td></td></tr>\n",siteUrl,hb->bodyType,hb->bodyType);
    Join(returnval,work,bufsize);
 
-   snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Name</td><td>:</td><td><a href=\"knowledge.php?topic=%s\">%s</a></td><td></td></tr>\n",hb->bodyName,hb->bodyName);
+   snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Name</td><td>:</td><td><a href=\"%s/welcome/knowledge/topic/%s\">%s</a></td><td></td></tr>\n",siteUrl,hb->bodyName,hb->bodyName);
    Join(returnval,work,bufsize);
          
    if (hb->bodyArgs)
@@ -2630,7 +2744,7 @@ if (hb)
       
       for (ha = hb->attr; ha != NULL; ha = ha->next)
          {
-         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><span class=\"rval\">%s</span></td><td><a href=\"knowledge.php?topic=%s\">%s</a></td></tr>",ha->lval,ha->lval,ha->rval,ha->classContext,ha->classContext);
+	   snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"%s/welcome/knowledge/topic/%s\">%s</a></span></td><td>=></td><td><span class=\"rval\">%s</span></td><td><a href=\"%s/welcome/knowledge/topic/%s\">%s</a></td></tr>",siteUrl,ha->lval,ha->lval,ha->rval,ha->classContext,ha->classContext);
 	 Join(returnval,work,bufsize);
          }
 
@@ -2653,7 +2767,15 @@ int Nova2PHP_list_bodies(char *name,char *type,char *returnval,int bufsize)
 { mongo_connection dbconn;
   char work[CF_MAXVARSIZE];
   struct Item *all_bodies,*ip;    
+  char siteUrl[CF_MAXVARSIZE];
 
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in List bodies");
+      return;
+    }
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
@@ -2669,10 +2791,10 @@ if (all_bodies)
       
    for (ip = all_bodies; ip != NULL; ip=ip->next)
       {
-      snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"knowledge.php?topic=%s\">%s</a> ",ip->classes,ip->classes);
+	snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"%s/welcome/knowledge/topic/%s\">%s</a> ",siteUrl,ip->classes,ip->classes);
       Join(returnval,work,bufsize);
       
-      snprintf(work,CF_MAXVARSIZE-1,"<a href=\"body.php?body=%s&type=%s\">%s</a></li>\n",ip->name,ip->classes,ip->name);
+      snprintf(work,CF_MAXVARSIZE-1,"<a href=\"%s/welcome/body/body/%s/type/%s\">%s</a></li>\n",siteUrl,ip->name,ip->classes,ip->name);
       Join(returnval,work,bufsize);
       }
    
@@ -2827,7 +2949,16 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
   char work[CF_MAXVARSIZE];
   int i,count;
   
-  
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in summarize promise");
+      return;
+    }
+
   if(strcmp(handle,"internal_promise") == 0)
     {
     snprintf(returnval, bufsize, "<br> This is a promise made internally by Cfengine, and is thus not part of your policy.");
@@ -2854,13 +2985,13 @@ returnval[0] = '\0';
 
 strcat(returnval,"<div id=\"promise\"><table>\n");
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\" width=\"20%\">Belonging to <span class=\"bundletype\">%s</span> bundle</td><td>:</td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span class=\"bundle\">%s</span></a><td></tr>",hp->bundleType,hp->bundleName,hp->bundleType,hp->bundleName);
+ snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\" width=\"20%\">Belonging to <span class=\"bundletype\">%s</span> bundle</td><td>:</td><td><a href=\"%s/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a><td></tr>",hp->bundleType,siteUrl,hp->bundleName,hp->bundleType,hp->bundleName);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Reference handle</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span class=\"handle\">%s</span></a></td></tr>",hp->handle,hp->handle);
+ snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Reference handle</td><td>:</td><td><a href=\"%s/welcome/knowledge/topic/%s\"><span class=\"handle\">%s</span></a></td></tr>",siteUrl,hp->handle,hp->handle);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Affected object (promiser)</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span class=\"promiser\">%s</span></a></td></tr>",hp->promiser,hp->promiser);
+ snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Affected object (promiser)</td><td>:</td><td><a href=\"%s/welcome/knowledge/topic/%s\"><span class=\"promiser\">%s</span></a></td></tr>",siteUrl,hp->promiser,hp->promiser);
 Join(returnval,work,bufsize);
 
 if (EMPTY(hp->promisee))
@@ -2869,7 +3000,7 @@ if (EMPTY(hp->promisee))
    }
 else
    {
-   snprintf(promiseeText,sizeof(promiseeText),"<a href=\"knowledge.php?topic=%s\">%s</a>",hp->promisee,hp->promisee);     
+     snprintf(promiseeText,sizeof(promiseeText),"<a href=\"%s/welcome/knowledge/topic/%s\">%s</a>",siteUrl,hp->promisee,hp->promisee);     
    }
 
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Stakeholders (promisees)</td><td>:</td><td><span class=\"promisee\">%s</span></td></tr>",promiseeText);
@@ -2887,10 +3018,10 @@ else
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Comment on original intention</td><td>:</td><td><span class=\"promiser\">%s</span></td></tr>",commentText);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Promise is about</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span class=\"subtype\">%s</span></a></td></tr>",hp->promiseType,hp->promiseType);
+snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Promise is about</td><td>:</td><td><a href=\"%s/welcome/knowledge/topic/%s\"><span class=\"subtype\">%s</span></a></td></tr>",siteUrl,hp->promiseType,hp->promiseType);
 Join(returnval,work,bufsize);
 
-snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applies in the class context</td><td>:</td><td><a href=\"knowledge.php?topic=%s\"><span class=\"classcontext\">%s</span></a></td></tr>",hp->classContext,hp->classContext);
+ snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applies in the class context</td><td>:</td><td><a href=\"%s/welcome/knowledge/topic/%s\"><span class=\"classcontext\">%s</span></a></td></tr>",siteUrl,hp->classContext,hp->classContext);
 Join(returnval,work,bufsize);
 
 snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Defined in file</td><td>:</td><td><span class=\"file\">%s</span> near line %d</td></tr>",hp->file,hp->lineNo);
@@ -2912,11 +3043,11 @@ if (hp->constraints)
 
       if (strcmp(lval,"usebundle") == 0)
          {
-         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><a href=\"bundle.php?bundle=%s&type=%s\"><span class=\"bundlename\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
+	   snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"%s/welcome/knowledge/topic/%s\">%s</a></span></td><td>=></td><td><a href=\"%s/bundle/details/bundle/%s/type/%s\"><span class=\"bundlename\">%s</span>%s</a></td></tr>",siteUrl,lval,lval,siteUrl,rval,lval,rval,args);
          }
       else
          {
-         snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"knowledge.php?topic=%s\">%s</a></span></td><td>=></td><td><a href=\"body.php?body=%s&type=%s\"><span class=\"bodyname\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
+	   snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"%s/welcome/knowledge/topic/%s\">%s</a></span></td><td>=></td><td><a href=\"%s/welcome/body/body/%s/type/%s\"><span class=\"bodyname\">%s</span>%s</a></td></tr>",siteUrl,lval,lval,siteUrl,rval,lval,rval,args);
          }
       
       Join(returnval,work,bufsize);   
@@ -2951,6 +3082,16 @@ int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
   struct Rlist *rp,*handles;
   int i,count;
   
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in List Promise Handles");
+      return;
+    }
+
 /* BEGIN query document */
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -2967,7 +3108,7 @@ strcat(returnval,"<div id=\"promise\"><ul>\n");
 
 for (rp = handles; rp != NULL; rp = rp->next)
    {
-   snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"promise.php?handle=%s\">%s</a></li>",rp->item,rp->item);
+     snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"%s/promise/details/%s\">%s</a></li>",siteUrl,rp->item,rp->item);
    Join(returnval,work,bufsize);
    }
 
@@ -4158,6 +4299,16 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
   int ret = false;
   cdp_t cdpType;
 
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in CDP report");
+      return;
+    }
+
 memset(buf,0,bufSz);
 now = time(NULL);
 
@@ -4232,7 +4383,7 @@ if (promises)
 
                    sscanf(attributes, "%512[^<]", fileChangePath);
                    
-                   snprintf(fileChangePathUrl, sizeof(fileChangePathUrl), "<a href=\"search.php?report=%s&hostkey=%s&search=%s\">%s</a>",
+                   snprintf(fileChangePathUrl, sizeof(fileChangePathUrl), "<a href=\"%s/search/index/report/%s/hostkey/%s/search/%s\">%s</a>",siteUrl,
                             urlReportName, hostKeyHash, fileChangePath,fileChangePath);
                    
                    // insert url to detailed report
