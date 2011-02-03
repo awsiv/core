@@ -14,10 +14,10 @@ class Promise extends Controller
                 $handle = NULL;
 		$data=array(
 			 'title' => "Cfengine Mission Portal - compliance",
-             'title_header'=>"Compliance",
-             'nav_text'=>"Status : Promises",
-      		 'status'=>"current",
-      		 'promise_list'=> cfpr_report_compliance_promises($hostkey,$handle,"x",false,NULL),
+                         'title_header'=>"Compliance",
+                         'nav_text'=>"Status : Promises",
+      		         'status'=>"current",
+      		         'promise_list'=> cfpr_report_compliance_promises($hostkey,$handle,"x",false,NULL),
 			 ); 
 		$this->template->load('template','promise/promises',$data);
 	}
