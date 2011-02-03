@@ -19,7 +19,7 @@
    <div class="container_12">
     	<div id="header">
             <div class="grid_6 sitetitle">CFENGINE MISSION PORTAL <span id="subheading"><b><?php echo $title_header ;?></b></span></div> 
-  <div id="searchbox" class="grid_4"><form action="knowledge" method="post"><input type="text" name="search" class="align"/><input type="submit" class="searchbtn" value=""/></form></div>
+  <div id="searchbox" class="grid_4"><form action="<?php echo site_url('welcome/knowledge')?>" method="post"><input type="text" name="search" class="align"/><input type="submit" class="searchbtn" value=""/></form></div>
             <div id="historynav" class="grid_2 alignright">
                 <a href="javascript:history.go(-1)"><img src="<?php echo get_imagedir();?>icon_arrow_back.png"/></a>
                 <a href="<?php echo site_url()?>"><img src="<?php echo get_imagedir();?>/home.png"/></a>
