@@ -1,0 +1,4 @@
+AuthUserFile /home/sudhir/apache_pwd
+AuthName "Submissions"
+AuthType Basic
+require valid-user
