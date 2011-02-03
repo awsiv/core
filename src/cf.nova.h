@@ -73,14 +73,6 @@
 #define MONITOR_CLASS_PREFIX "mXC_"
 #define CF_CHANGE_HORIZON 10
 
-enum cfd_menu
-   {
-   cfd_menu_delta,
-   cfd_menu_full,
-   cfd_menu_relay,
-   cfd_menu_error
-   };
-
 /*****************************************************************************/
 
 enum cf_rank_method
@@ -200,7 +192,7 @@ struct CfFileLine
 /************************************************************************************/
 
 #ifndef HAVE_SERV_H
-#include "cf3.server.h"
+#include "../../core/src/cf3.server.h"
 #endif
    
 /* acl.c */
@@ -284,6 +276,7 @@ int Nova_ViewScaleY(struct CfDataView *cfv,double y);
 
 /* copernicus.c */
 
+void Nova_PrimeGraph(struct Rlist **semantic);
 void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,char *buffer,int bufsize);
 int Nova_GetMaxEvcNode(double *evc,int tribe_size);
 int Nova_GetAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size, struct CfGraphNode *tribe, struct CfGraphNode *neighbours);

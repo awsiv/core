@@ -14,8 +14,8 @@
 
 /* Functions related to windows user and group management. */
 
-#include "cf3.defs.h"
-#include "cf3.extern.h"
+#include "../../core/src/cf3.defs.h"
+#include "../../core/src/cf3.extern.h"
 #include "cf.nova.h"
 
 #ifdef MINGW

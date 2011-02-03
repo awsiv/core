@@ -12,8 +12,8 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "cf3.defs.h"
-#include "cf3.extern.h"
+#include "../../core/src/cf3.defs.h"
+#include "../../core/src/cf3.extern.h"
 #include "cf.nova.h"
 
 extern int LIGHTRED,YELLOW,ORANGE,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,SKY;
@@ -24,6 +24,20 @@ extern int PINKS[CF_SHADES];
 extern int BROWNS[CF_SHADES];
 
 #ifdef HAVE_GD_H
+
+/*****************************************************************************/
+
+void Nova_PrimeGraph(struct Rlist **semantics)
+
+{
+PrependRScalar(semantics,NOVA_GIVES,CF_SCALAR);
+PrependRScalar(semantics,NOVA_USES,CF_SCALAR);
+PrependRScalar(semantics,NOVA_IMPACTS,CF_SCALAR);
+PrependRScalar(semantics,NOVA_ISIMPACTED,CF_SCALAR);
+PrependRScalar(semantics,NOVA_BUNDLE_DATA,CF_SCALAR);
+PrependRScalar(semantics,NOVA_BUNDLE_DATA_INV_B,CF_SCALAR);
+PrependRScalar(semantics,NOVA_BUNDLE_DATA_INV_P,CF_SCALAR);
+}
 
 /*****************************************************************************/
 
