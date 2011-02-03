@@ -12,8 +12,8 @@ class Welcome extends Cf_Controller{
 	{
 	    $data=array(
 		'title'=>"Cfengine Mission Portal - overview",
-        'title_header'=>"overview",
-        'nav_text'=>"Home : overview",
+                'title_header'=>"overview",
+                'nav_text'=>"Home : overview",
 		'summary'=>"current"
 		);
 		$this->template->load('template', 'index',$data);
@@ -52,15 +52,15 @@ class Welcome extends Cf_Controller{
 	{
 	    $getparams=$this->uri->uri_to_assoc(3);
 	    $search = isset($getparams['search'])?$getparams['search']:$this->input->post('search');
-        $topic = isset($getparams['topic'])?$getparams['topic']:$this->input->post('topic');
+            $topic = isset($getparams['topic'])?$getparams['topic']:$this->input->post('topic');
 		$pid = isset($getparams['pid'])?$getparams['pid']:$this->input->post('pid');
 		$data=array(
 		 'search' => $search,
 		 'topic' => $topic,
 		 'pid'=> $pid,
 		 'title'=>"Cfengine Mission Portal - Knowledge bank",
-         'title_header'=>"Knowledge bank",
-         'nav_text'=>"Knowledgebank",
+                 'title_header'=>"Knowledge bank",
+                 'nav_text'=>"Knowledgebank",
 		 'library'=>"current"
 		 );
 	  $this->template->set('injected_item','<link href="'.get_cssdir().'jquery.fancybox-1.3.1.css" rel="stylesheet" media="screen" />');
@@ -135,7 +135,7 @@ class Welcome extends Cf_Controller{
 	{
 	$data=array(
 			'title_header'=>"service catalogue",
-		    'title'=>"Cfengine Mission Portal - service catalogue ",
+		        'title'=>"Cfengine Mission Portal - service catalogue ",
 			'nav_text'=>"Planning : services",
 			'planning'=>"current",
 			'services' => cfpr_list_all_bundles("agent"),
@@ -168,11 +168,11 @@ class Welcome extends Cf_Controller{
 	$addr = NULL;
 	$tago = 0;
 	$data=array(
-	     'title_header'=>"classes",
+	         'title_header'=>"classes",
 		 'title'=>"Cfengine Mission Portal - classes ",
 		 'nav_text'=>"Status : classes",
 		 'status'=>"current",
-	     'ret' => cfpr_report_classes($hostkey,$name,$regex,NULL),
+	         'ret' => cfpr_report_classes($hostkey,$name,$regex,NULL),
 	    );
 	$this->template->load('template', 'classes',$data);
 	}
@@ -187,6 +187,24 @@ class Welcome extends Cf_Controller{
 	 $params = $this->uri->uri_to_assoc(3);
 	 redirect('/search/'.$this->uri->assoc_to_uri($params));
 	}
+
+        function body()
+        {
+            $getparams=$this->uri->uri_to_assoc(3);
+            $body = isset($getparams['body'])?$getparams['body']:$this->input->post('search');
+            $type = isset($getparams['type'])?$getparams['type']:$this->input->post('type');
+            $data=array(
+	         'title_header'=>"body ".$body,
+		 'title'=>"Cfengine Mission Portal - classes ",
+		 'nav_text'=>"show : body",
+		 'status'=>"current",
+	         'allbodies' => cfpr_list_bodies(".*",$type),
+                 'def'=> cfpr_get_promise_body($body,$type),
+                 'type'=>$type
+	    );
+	$this->template->load('template', 'body',$data);
+            
+        }
 	
 }
 
