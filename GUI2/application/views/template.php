@@ -9,5 +9,5 @@ include('includes/menu.php');
 <?php echo $contents ;?>
 </div>
 <?php
-cfpr_footer();
+include('includes/footer.php');
 ?>
