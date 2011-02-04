@@ -124,6 +124,7 @@ while (more)
 
    plainlen = DecryptString(conn->encryption_type,in,out,conn->session_key,cipherlen);
 
+
     // Check the header for timing of response - we can eventually use this to
     // measure the network performance
    
