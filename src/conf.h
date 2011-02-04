@@ -1,3 +1,4 @@
+/* src/conf.h.  Generated from conf.h.in by configure.  */
 /* src/conf.h.in.  Generated from configure.ac by autoheader.  */
 /* cfengine for GNU
  
@@ -24,490 +25,490 @@
 
 */
 /* The old route entry structure in newer BSDs */
-#undef HAVE_ORTENTRY
+/* #undef HAVE_ORTENTRY */
 
 /* Do we ahve any route entry structure ? */
-#undef HAVE_RTENTRY
+#define HAVE_RTENTRY 1
 
 /* Whether to use the local REGEX functions */
-#undef REGEX_MALLOC
+/* #undef REGEX_MALLOC */
 
 /* Whether to use LCHOWN to change ownerships */
-#undef HAVE_LCHOWN
+#define HAVE_LCHOWN 1
 
 /* Whether the thread library has setmask */
-#undef HAVE_PTHREAD_SIGMASK
+#define HAVE_PTHREAD_SIGMASK 1
 
 /* Whether the thread library has setstacksize */
-#undef HAVE_PTHREAD_ATTR_SETSTACKSIZE
+#define HAVE_PTHREAD_ATTR_SETSTACKSIZE 1
 
 /* Whether libdb has db_open */
-#undef HAVE_DB_CREATE
+/* #undef HAVE_DB_CREATE */
 
 /* Does the host have /var/run directory? */
-#undef HAVE_VAR_RUN
+/* #undef HAVE_VAR_RUN */
 
 
 /* Special OS defines */
-#undef SUN3
-#undef SUN4
-#undef SOLARIS
-#undef ULTRIX
-#undef HPuUX
-#undef AIX
-#undef OSF
-#undef IRIX
-#undef LINUX
-#undef DEBIAN
-#undef FREEBSD
-#undef NETBSD
-#undef NEWS_OS
-#undef BSDOS
-#undef BSD43
-#undef AOS
-#undef SCO
-#undef NEXTSTEP
-#undef CFCRAY
-#undef CFQNX
-#undef CFGNU
-#undef UNIXWARE
-#undef OPENBSD
-#undef HAVE_SYS_ACL_H
-#undef NOTBROKEN
-#undef NT
-#undef DARWIN
+/* #undef SUN3 */
+/* #undef SUN4 */
+/* #undef SOLARIS */
+/* #undef ULTRIX */
+/* #undef HPuUX */
+/* #undef AIX */
+/* #undef OSF */
+/* #undef IRIX */
+#define LINUX 1
+/* #undef DEBIAN */
+/* #undef FREEBSD */
+/* #undef NETBSD */
+/* #undef NEWS_OS */
+/* #undef BSDOS */
+/* #undef BSD43 */
+/* #undef AOS */
+/* #undef SCO */
+/* #undef NEXTSTEP */
+/* #undef CFCRAY */
+/* #undef CFQNX */
+/* #undef CFGNU */
+/* #undef UNIXWARE */
+/* #undef OPENBSD */
+/* #undef HAVE_SYS_ACL_H */
+/* #undef NOTBROKEN */
+/* #undef NT */
+/* #undef DARWIN */
 
 /* SVR4 header stuff */
 
-#undef __EXTENSIONS__
-#undef _POSIX_C_SOURCE
+/* #undef __EXTENSIONS__ */
+/* #undef _POSIX_C_SOURCE */
 
 /* Solaris 2.6 */
 
-#undef __BIT_TYPES_DEFINED__
+/* #undef __BIT_TYPES_DEFINED__ */
 
 /* LOCK and LOG directories */
 
-#undef WORKDIR
+#define WORKDIR "/var/cfengine"
 
 /* Special CFEngine symbols */
 
-#undef AUTOCONF_HOSTNAME
-#undef AUTOCONF_SYSNAME
+/* #undef AUTOCONF_HOSTNAME */
+/* #undef AUTOCONF_SYSNAME */
 
 /* Define if old Berkeley API */
-#undef CF_OLD_DB
+/* #undef CF_OLD_DB */
 
 /* Define to 1 if you have the <acl.h> header file. */
-#undef HAVE_ACL_H
+/* #undef HAVE_ACL_H */
 
 /* Define to 1 if you have the <acl/libacl.h> header file. */
-#undef HAVE_ACL_LIBACL_H
+/* #undef HAVE_ACL_LIBACL_H */
 
 /* Define to 1 if you have the `bcopy' function. */
-#undef HAVE_BCOPY
+#define HAVE_BCOPY 1
 
 /* Define to 1 if you have the <bson.h> header file. */
-#undef HAVE_BSON_H
+/* #undef HAVE_BSON_H */
 
 /* Define to 1 if you have the `chflags' function. */
-#undef HAVE_CHFLAGS
+/* #undef HAVE_CHFLAGS */
 
 /* Define to 1 if the system has the type `clockid_t'. */
-#undef HAVE_CLOCKID_T
+#define HAVE_CLOCKID_T 1
 
 /* Define to 1 if you have the <dce/daclif.h> header file. */
-#undef HAVE_DCE_DACLIF_H
+/* #undef HAVE_DCE_DACLIF_H */
 
 /* Define to 1 if you have the <depot.h> header file. */
-#undef HAVE_DEPOT_H
+/* #undef HAVE_DEPOT_H */
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
-#undef HAVE_DIRENT_H
+#define HAVE_DIRENT_H 1
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
-#undef HAVE_DLFCN_H
+#define HAVE_DLFCN_H 1
 
 /* Define to 1 if you have the `door' function. */
-#undef HAVE_DOOR
+/* #undef HAVE_DOOR */
 
 /* Define to 1 if you have the `drand48' function. */
-#undef HAVE_DRAND48
+#define HAVE_DRAND48 1
 
 /* Define to 1 if you have the <dustat.h> header file. */
-#undef HAVE_DUSTAT_H
+/* #undef HAVE_DUSTAT_H */
 
 /* Define to 1 if you have the <fcntl.h> header file. */
-#undef HAVE_FCNTL_H
+#define HAVE_FCNTL_H 1
 
 /* Have FIPS OpenSSL cannister */
-#undef HAVE_FIPS_MODE_SET
+/* #undef HAVE_FIPS_MODE_SET */
 
 /* Define to 1 if you have the <gd.h> header file. */
-#undef HAVE_GD_H
+/* #undef HAVE_GD_H */
 
 /* Define to 1 if you have the `getaddrinfo' function. */
-#undef HAVE_GETADDRINFO
+#define HAVE_GETADDRINFO 1
 
 /* Define to 1 if you have the `getcwd' function. */
-#undef HAVE_GETCWD
+#define HAVE_GETCWD 1
 
 /* Define to 1 if you have the `gethostname' function. */
-#undef HAVE_GETHOSTNAME
+#define HAVE_GETHOSTNAME 1
 
 /* Define to 1 if you have the `getnetgrent' function. */
-#undef HAVE_GETNETGRENT
+#define HAVE_GETNETGRENT 1
 
 /* Define to 1 if you have the `getzoneid' function. */
-#undef HAVE_GETZONEID
+/* #undef HAVE_GETZONEID */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-#undef HAVE_INTTYPES_H
+#define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `acl' library (-lacl). */
-#undef HAVE_LIBACL
+/* #undef HAVE_LIBACL */
 
 /* Define to 1 if you have the `cfconstellation' library (-lcfconstellation).
    */
-#undef HAVE_LIBCFCONSTELLATION
+/* #undef HAVE_LIBCFCONSTELLATION */
 
 /* Define to 1 if you have the `crypto' library (-lcrypto). */
-#undef HAVE_LIBCRYPTO
+#define HAVE_LIBCRYPTO 1
 
 /* Define to 1 if you have the `db' library (-ldb). */
-#undef HAVE_LIBDB
+#define HAVE_LIBDB 1
 
 /* Define to 1 if you have the `dce' library (-ldce). */
-#undef HAVE_LIBDCE
+/* #undef HAVE_LIBDCE */
 
 /* Define to 1 if you have the `gd' library (-lgd). */
-#undef HAVE_LIBGD
+/* #undef HAVE_LIBGD */
 
 /* Define to 1 if you have the `ldap' library (-lldap). */
-#undef HAVE_LIBLDAP
+/* #undef HAVE_LIBLDAP */
 
 /* Define to 1 if you have the `mongoc' library (-lmongoc). */
-#undef HAVE_LIBMONGOC
+/* #undef HAVE_LIBMONGOC */
 
 /* Define to 1 if you have the `mysqlclient' library (-lmysqlclient). */
-#undef HAVE_LIBMYSQLCLIENT
+/* #undef HAVE_LIBMYSQLCLIENT */
 
 /* Define to 1 if you have the `nsl' library (-lnsl). */
-#undef HAVE_LIBNSL
+/* #undef HAVE_LIBNSL */
 
 /* Define to 1 if you have the `pcre' library (-lpcre). */
-#undef HAVE_LIBPCRE
+#define HAVE_LIBPCRE 1
 
 /* Define to 1 if you have the `pq' library (-lpq). */
-#undef HAVE_LIBPQ
+/* #undef HAVE_LIBPQ */
 
 /* Define to 1 if you have the <libpq-fe.h> header file. */
-#undef HAVE_LIBPQ_FE_H
+/* #undef HAVE_LIBPQ_FE_H */
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
-#undef HAVE_LIBPTHREAD
+#define HAVE_LIBPTHREAD 1
 
 /* Define to 1 if you have the `pthreads' library (-lpthreads). */
-#undef HAVE_LIBPTHREADS
+/* #undef HAVE_LIBPTHREADS */
 
 /* Define to 1 if you have the `PW' library (-lPW). */
-#undef HAVE_LIBPW
+/* #undef HAVE_LIBPW */
 
 /* Define to 1 if you have the `qdbm' library (-lqdbm). */
-#undef HAVE_LIBQDBM
+/* #undef HAVE_LIBQDBM */
 
 /* Define to 1 if you have the `rt' library (-lrt). */
-#undef HAVE_LIBRT
+#define HAVE_LIBRT 1
 
 /* Define to 1 if you have the `socket' library (-lsocket). */
-#undef HAVE_LIBSOCKET
+/* #undef HAVE_LIBSOCKET */
 
 /* Define to 1 if you have the `thread' library (-lthread). */
-#undef HAVE_LIBTHREAD
+/* #undef HAVE_LIBTHREAD */
 
 /* Define to 1 if you have the `tokyocabinet' library (-ltokyocabinet). */
-#undef HAVE_LIBTOKYOCABINET
+/* #undef HAVE_LIBTOKYOCABINET */
 
 /* Define to 1 if you have the `virt' library (-lvirt). */
-#undef HAVE_LIBVIRT
+/* #undef HAVE_LIBVIRT */
 
 /* Define to 1 if you have the <malloc.h> header file. */
-#undef HAVE_MALLOC_H
+#define HAVE_MALLOC_H 1
 
 /* Define to 1 if you have the <memory.h> header file. */
-#undef HAVE_MEMORY_H
+#define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the `mkfifo' function. */
-#undef HAVE_MKFIFO
+#define HAVE_MKFIFO 1
 
 /* Define to 1 if you have the <mongo_except.h> header file. */
-#undef HAVE_MONGO_EXCEPT_H
+/* #undef HAVE_MONGO_EXCEPT_H */
 
 /* Define to 1 if you have the <mongo.h> header file. */
-#undef HAVE_MONGO_H
+/* #undef HAVE_MONGO_H */
 
 /* Define to 1 if you have the <mysql/mysql.h> header file. */
-#undef HAVE_MYSQL_MYSQL_H
+/* #undef HAVE_MYSQL_MYSQL_H */
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
-#undef HAVE_NDIR_H
+/* #undef HAVE_NDIR_H */
 
 /* Define to 1 if you have the <pcre.h> header file. */
-#undef HAVE_PCRE_H
+#define HAVE_PCRE_H 1
 
 /* Define to 1 if you have the <pcre/pcre.h> header file. */
-#undef HAVE_PCRE_PCRE_H
+/* #undef HAVE_PCRE_PCRE_H */
 
 /* Define to 1 if you have the <pgsql/libpq-fe.h> header file. */
-#undef HAVE_PGSQL_LIBPQ_FE_H
+/* #undef HAVE_PGSQL_LIBPQ_FE_H */
 
 /* Define to 1 if you have the <platform_hacks.h> header file. */
-#undef HAVE_PLATFORM_HACKS_H
+/* #undef HAVE_PLATFORM_HACKS_H */
 
 /* Has NT extended process memory structure */
-#undef HAVE_PROCESS_MEMORY_COUNTERS_EX
+/* #undef HAVE_PROCESS_MEMORY_COUNTERS_EX */
 
 /* Define if you have POSIX threads libraries and header files. */
-#undef HAVE_PTHREAD
+#define HAVE_PTHREAD 1
 
 /* Define to 1 if you have the <pthread.h> header file. */
-#undef HAVE_PTHREAD_H
+#define HAVE_PTHREAD_H 1
 
 /* Define to 1 if you have the `putenv' function. */
-#undef HAVE_PUTENV
+#define HAVE_PUTENV 1
 
 /* Define to 1 if you have the `realpath' function. */
-#undef HAVE_REALPATH
+#define HAVE_REALPATH 1
 
 /* Define to 1 if you have the <sched.h> header file. */
-#undef HAVE_SCHED_H
+#define HAVE_SCHED_H 1
 
 /* Define to 1 if you have the `setegid' function. */
-#undef HAVE_SETEGID
+#define HAVE_SETEGID 1
 
 /* Define to 1 if you have the `seteuid' function. */
-#undef HAVE_SETEUID
+#define HAVE_SETEUID 1
 
 /* Define to 1 if you have the `setregid' function. */
-#undef HAVE_SETREGID
+#define HAVE_SETREGID 1
 
 /* Define to 1 if you have the `setreuid' function. */
-#undef HAVE_SETREUID
+#define HAVE_SETREUID 1
 
 /* Define to 1 if you have the `setsid' function. */
-#undef HAVE_SETSID
+#define HAVE_SETSID 1
 
 /* Define to 1 if you have the `snprintf' function. */
-#undef HAVE_SNPRINTF
+#define HAVE_SNPRINTF 1
 
 /* Define to 1 if you have the `srand48' function. */
-#undef HAVE_SRAND48
+#define HAVE_SRAND48 1
 
 /* Define to 1 if you have the `statfs' function. */
-#undef HAVE_STATFS
+#define HAVE_STATFS 1
 
 /* Define to 1 if you have the `statvfs' function. */
-#undef HAVE_STATVFS
+#define HAVE_STATVFS 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#undef HAVE_STDINT_H
+#define HAVE_STDINT_H 1
 
 /* Define to 1 if you have the <stdlib.h> header file. */
-#undef HAVE_STDLIB_H
+#define HAVE_STDLIB_H 1
 
 /* Define to 1 if you have the `strdup' function. */
-#undef HAVE_STRDUP
+#define HAVE_STRDUP 1
 
 /* Define to 1 if you have the `strerror' function. */
-#undef HAVE_STRERROR
+#define HAVE_STRERROR 1
 
 /* Define to 1 if you have the <strings.h> header file. */
-#undef HAVE_STRINGS_H
+#define HAVE_STRINGS_H 1
 
 /* Define to 1 if you have the <string.h> header file. */
-#undef HAVE_STRING_H
+#define HAVE_STRING_H 1
 
 /* Define to 1 if you have the `strrchr' function. */
-#undef HAVE_STRRCHR
+#define HAVE_STRRCHR 1
 
 /* Define to 1 if you have the `strsep' function. */
-#undef HAVE_STRSEP
+#define HAVE_STRSEP 1
 
 /* Define to 1 if you have the `strstr' function. */
-#undef HAVE_STRSTR
+#define HAVE_STRSTR 1
 
 /* Define to 1 if `sa_len' is a member of `struct sockaddr'. */
-#undef HAVE_STRUCT_SOCKADDR_SA_LEN
+/* #undef HAVE_STRUCT_SOCKADDR_SA_LEN */
 
 /* Define to 1 if you have the `sysconf' function. */
-#undef HAVE_SYSCONF
+#define HAVE_SYSCONF 1
 
 /* Define to 1 if you have the `sysinfo' function. */
-#undef HAVE_SYSINFO
+#define HAVE_SYSINFO 1
 
 /* Define to 1 if you have the <sys/acl.h> header file. */
-#undef HAVE_SYS_ACL_H
+/* #undef HAVE_SYS_ACL_H */
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */
-#undef HAVE_SYS_DIR_H
+/* #undef HAVE_SYS_DIR_H */
 
 /* Define to 1 if you have the <sys/filesys.h> header file. */
-#undef HAVE_SYS_FILESYS_H
+/* #undef HAVE_SYS_FILESYS_H */
 
 /* Define to 1 if you have the <sys/loadavg.h> header file. */
-#undef HAVE_SYS_LOADAVG_H
+/* #undef HAVE_SYS_LOADAVG_H */
 
 /* Define to 1 if you have the <sys/malloc.h> header file. */
-#undef HAVE_SYS_MALLOC_H
+/* #undef HAVE_SYS_MALLOC_H */
 
 /* Define to 1 if you have the <sys/mount.h> header file. */
-#undef HAVE_SYS_MOUNT_H
+#define HAVE_SYS_MOUNT_H 1
 
 /* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
    */
-#undef HAVE_SYS_NDIR_H
+/* #undef HAVE_SYS_NDIR_H */
 
 /* Define to 1 if you have the <sys/param.h> header file. */
-#undef HAVE_SYS_PARAM_H
+#define HAVE_SYS_PARAM_H 1
 
 /* Define to 1 if you have the <sys/sockio.h> header file. */
-#undef HAVE_SYS_SOCKIO_H
+/* #undef HAVE_SYS_SOCKIO_H */
 
 /* Define to 1 if you have the <sys/statfs.h> header file. */
-#undef HAVE_SYS_STATFS_H
+#define HAVE_SYS_STATFS_H 1
 
 /* Define to 1 if you have the <sys/statvfs.h> header file. */
-#undef HAVE_SYS_STATVFS_H
+#define HAVE_SYS_STATVFS_H 1
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
-#undef HAVE_SYS_STAT_H
+#define HAVE_SYS_STAT_H 1
 
 /* Define to 1 if you have the <sys/systeminfo.h> header file. */
-#undef HAVE_SYS_SYSTEMINFO_H
+/* #undef HAVE_SYS_SYSTEMINFO_H */
 
 /* Define to 1 if you have the <sys/time.h> header file. */
-#undef HAVE_SYS_TIME_H
+#define HAVE_SYS_TIME_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
-#undef HAVE_SYS_TYPES_H
+#define HAVE_SYS_TYPES_H 1
 
 /* Define to 1 if you have the <sys/vfs.h> header file. */
-#undef HAVE_SYS_VFS_H
+#define HAVE_SYS_VFS_H 1
 
 /* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
-#undef HAVE_SYS_WAIT_H
+#define HAVE_SYS_WAIT_H 1
 
 /* Define to 1 if you have the <tchdb.h> header file. */
-#undef HAVE_TCHDB_H
+/* #undef HAVE_TCHDB_H */
 
 /* Define to 1 if you have the <tcutil.h> header file. */
-#undef HAVE_TCUTIL_H
+/* #undef HAVE_TCUTIL_H */
 
 /* Define to 1 if you have the <thread.h> header file. */
-#undef HAVE_THREAD_H
+/* #undef HAVE_THREAD_H */
 
 /* Define to 1 if you have the <time.h> header file. */
-#undef HAVE_TIME_H
+#define HAVE_TIME_H 1
 
 /* Define to 1 if you have the `uname' function. */
-#undef HAVE_UNAME
+#define HAVE_UNAME 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#undef HAVE_UNISTD_H
+#define HAVE_UNISTD_H 1
 
 /* Define to 1 if you have the <utime.h> header file. */
-#undef HAVE_UTIME_H
+#define HAVE_UTIME_H 1
 
 /* Define to 1 if you have the <vfs.h> header file. */
-#undef HAVE_VFS_H
+/* #undef HAVE_VFS_H */
 
 /* Define to 1 if you have the `waitpid' function. */
-#undef HAVE_WAITPID
+#define HAVE_WAITPID 1
 
 /* Define to 1 if you have the <winsock2.h> header file. */
-#undef HAVE_WINSOCK2_H
+/* #undef HAVE_WINSOCK2_H */
 
 /* Define to 1 if you have the <zone.h> header file. */
-#undef HAVE_ZONE_H
+/* #undef HAVE_ZONE_H */
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
-#undef LT_OBJDIR
+#define LT_OBJDIR ".libs/"
 
 /* Native NT build. */
-#undef MINGW
+/* #undef MINGW */
 
 /* Name of package */
-#undef PACKAGE
+#define PACKAGE "cfnova"
 
 /* Define to the address where bug reports for this package should be sent. */
-#undef PACKAGE_BUGREPORT
+#define PACKAGE_BUGREPORT ""
 
 /* Define to the full name of this package. */
-#undef PACKAGE_NAME
+#define PACKAGE_NAME ""
 
 /* Define to the full name and version of this package. */
-#undef PACKAGE_STRING
+#define PACKAGE_STRING ""
 
 /* Define to the one symbol short name of this package. */
-#undef PACKAGE_TARNAME
+#define PACKAGE_TARNAME ""
 
 /* Define to the home page for this package. */
-#undef PACKAGE_URL
+#define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#undef PACKAGE_VERSION
+#define PACKAGE_VERSION ""
 
 /* Define to the necessary symbol if this constant uses a non-standard name on
    your system. */
-#undef PTHREAD_CREATE_JOINABLE
+/* #undef PTHREAD_CREATE_JOINABLE */
 
 /* Define if QDBM is available. */
-#undef QDB
+/* #undef QDB */
 
 /* Define to 1 if you have the ANSI C header files. */
-#undef STDC_HEADERS
+#define STDC_HEADERS 1
 
 /* Define if Tokyo Cabinet is available. */
-#undef TCDB
+/* #undef TCDB */
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
-#undef TIME_WITH_SYS_TIME
+#define TIME_WITH_SYS_TIME 1
 
 /* Define if BerkeleyDB is available. */
-#undef USE_BERKELEY_DB
+#define USE_BERKELEY_DB 1
 
 /* Define if OpenSSL is available. */
-#undef USE_OPENSSL_LIB
+#define USE_OPENSSL_LIB 1
 
 /* Define if PCRE is available. */
-#undef USE_PCRE
+#define USE_PCRE 1
 
 /* Version number of package */
-#undef VERSION
+#define VERSION "2.0.3a1"
 
 /* Define if you want to use SELINUX */
-#undef WITH_SELINUX
+/* #undef WITH_SELINUX */
 
 /* Define if XEN cpuid-based HVM detection is available. */
-#undef XEN_CPUID_SUPPORT
+#define XEN_CPUID_SUPPORT 1
 
 /* Define to empty if `const' does not conform to ANSI C. */
-#undef const
+/* #undef const */
 
 /* Define to `int' if <sys/types.h> doesn't define. */
-#undef gid_t
+/* #undef gid_t */
 
 /* Define to `int' if <sys/types.h> does not define. */
-#undef mode_t
+/* #undef mode_t */
 
 /* Define to `int' if <sys/types.h> does not define. */
-#undef pid_t
+/* #undef pid_t */
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
-#undef size_t
+/* #undef size_t */
 
 /* Define to `int' if <sys/types.h> doesn't define. */
-#undef uid_t
+/* #undef uid_t */

@@ -76,6 +76,15 @@ libcfnova_la_SOURCES =						\
 
 noinst_HEADERS =							\
 	conf.h   							\
+        cf.defs.h                                                       \
+        prototypes.h                                                    \
+        cf.extern.h                                                     \
+        config.h                                                        \
+        prototypes3.h                                                   \
+        cf3.defs.h                                                      \
+        cf3.server.h                                                    \
+        cf3parse.h                                                      \
+        cf3.extern.h                                                    \
         cf.events.h                                                     \
         win_disphelper.h                                                \
 	snprintf.h                                                      
@@ -109,3 +118,4 @@ DISTCLEANFILES = cflex.c cfparse.c cfparse.h
 #
 
 MAINTAINERCLEANFILES = Makefile.in conf.h.in stamp-h.in
+

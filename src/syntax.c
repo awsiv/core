@@ -6,8 +6,8 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "../../core/src/cf3.defs.h"
-#include "../../core/src/cf3.extern.h"
+#include "cf3.defs.h"
+#include "cf3.extern.h"
 #include "cf.nova.h"
 
 void Nova_SyntaxTree2JavaScript()

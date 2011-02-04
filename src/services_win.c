@@ -6,8 +6,8 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "../../core/src/cf3.defs.h"
-#include "../../core/src/cf3.extern.h"
+#include "cf3.defs.h"
+#include "cf3.extern.h"
 #include "cf.nova.h"
 
 // services that can't be opened (Windows Server 2008 - separate for each OS?)
