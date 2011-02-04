@@ -27,12 +27,12 @@
 	/**
 	 * Site Title, example.com
 	 */
-	$config['site_title']		   = "http://localhost:8081/ionauth";
+	$config['site_title']		   = "http://sudhir.no-ip.biz:8088/";
 	
-	/**
+         /*
 	 * Admin Email, admin@example.com
 	 */
-	$config['admin_email']		   = "admin@example.com";
+	$config['admin_email']		   = "sudhir.pandey@cfengine.com";
 	
 	/**
 	 * Default group, use name
