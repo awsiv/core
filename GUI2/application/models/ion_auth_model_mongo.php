@@ -239,25 +239,26 @@ class Ion_auth_model_mongo extends CI_Model
 	 **/
 	public function change_password($identity, $old, $new)
 	{
-            $result=$this->mongo_db->select(array('password','salt'))
-                              ->where(array($this->identity_column => $identity))
+         
+             $result=$this->mongo_db->select(array('password','username'))
+                              ->where(array('_id' => new MongoId($identity)))
                               ->limit(1)
-                              ->get('users');
-
+                              ->get_object('users');
+            
 	    //$result = $query->row();
 
-	    $db_password = $result['password'];
-	    $old	 = $this->hash_password_db($identity, $old);
-	    $new	 = $this->hash_password($new, $result->salt);
+	    $db_password = $result->password;
+	    $old	 = $this->hash_password_db($result->username, $old);
+	    $new	 = $this->hash_password($new, $this->store_salt ? $result->salt : FALSE);
 
 	    if ($db_password === $old)
 	    {
 	    	//store the new password and reset the remember code so all remembered instances have to re-login
 		$data = array(
 			    'password' => $new,
-			    'remember_code' => '',
+			    //'remember_code' => '',
 			     );
-                $result=$this->mongo_db->where(array($this->identity_column => $identity))->update('users', $data);
+                $result=$this->mongo_db->where(array('_id' => new MongoId($identity)))->update('users', $data);
 		//$this->db->where($this->ion_auth->_extra_where);
 		//$this->db->update($this->tables['users'], $data, array($this->identity_column => $identity));
 
@@ -826,7 +827,7 @@ class Ion_auth_model_mongo extends CI_Model
 		//extend the users cookies if the option is enabled
 		if ($this->config->item('user_extend_on_login', 'ion_auth'))
 		{
-		    $this->remember_user($user->id);
+		    $this->remember_user($user->_id);
 		}
 
 		return TRUE;
@@ -839,7 +840,7 @@ class Ion_auth_model_mongo extends CI_Model
 	 * remember_user
 	 *
 	 * @return bool
-	 * @author Ben Edmunds
+	 * @author Sudhir pandey
 	 **/
 	private function remember_user($id)
 	{
@@ -848,9 +849,10 @@ class Ion_auth_model_mongo extends CI_Model
 		return FALSE;
 	    }
 
-	    $user = (object)$this->get_user($id);
-            
+	    $user = $this->get_user($id);
 	    $salt = sha1($user->password);
+
+            $this->mongo_db->clear();
             $this->mongo_db->where(array('_id' => new MongoId($id)));
 	    $result=$this->mongo_db->update('users', array('remember_code' => $salt));
 
