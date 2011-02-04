@@ -7,7 +7,7 @@ class Promise extends Controller
 	}
 	 function index()
 	 {
-	  this->plist();
+	  $this->plist();
 	 }	
 	function plist()
 	{
