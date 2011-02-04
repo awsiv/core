@@ -11,7 +11,6 @@
 /* Created: Tue Jul 27 15:44:14 2010                                         */
 /*                                                                           */
 /*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
@@ -241,7 +240,7 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in Promise log");
-      return;
+      return false;
     }
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -309,7 +308,7 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in Promise Log Summary");
-      return;
+      return false;
     }
 
 
@@ -559,7 +558,7 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in vars report");
-      return;
+      return false;
     }
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -612,7 +611,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       strcat(typestr," list");
       }
    
-   snprintf(buffer,CF_BUFSIZE,"<tr><td>%s</td><td>%s</td><td><a href=\"%s/knowledge/topic/%s\">%s</td>\n",hv->hh->hostname,typestr,siteUrl,hv->lval,hv->lval);
+   snprintf(buffer,CF_BUFSIZE,"<tr><td>%s</td><td>%s</td><td><a href=\"%s/welcome/knowledge/topic/%s\">%s</td>\n",hv->hh->hostname,typestr,siteUrl,hv->lval,hv->lval);
    strcat(returnval,buffer);
    count += strlen(buffer);
 
@@ -723,7 +722,7 @@ int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int reg
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in Compliance promises");
-      return;
+      return false;
     }
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -959,7 +958,7 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,c
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in Bundle Report");
-      return;
+      return false;
     }
 
 /* BEGIN query document */
@@ -1029,7 +1028,7 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
      if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
        {
 	 CfOut(cf_error, "", "!! Could not get site url in Filechanges report");
-	 return;
+	 return false;
        }
 
 switch (*cmp)
@@ -1959,7 +1958,7 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in classes for bundle");
-      return;
+      return false;
     }
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -2068,7 +2067,7 @@ int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize)
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in List all bundles");
-      return;
+      return false;
     }
 
 Nova_WebTopicMap_Initialize();
@@ -2105,7 +2104,7 @@ if (matched)
 
          for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
             {
-	      snprintf(work,sizeof(work),"<tr><td><a href=\"%s/knowledge/pid/%d\">%s</a> </td><td> %s</td></tr>",siteUrl,ip2->counter,ip2->name,ip2->classes);
+	      snprintf(work,sizeof(work),"<tr><td><a href=\"%s/welcome/knowledge/pid/%d\">%s</a> </td><td> %s</td></tr>",siteUrl,ip2->counter,ip2->name,ip2->classes);
 
             if (!Join(goals,work,CF_BUFSIZE))
 	      {
@@ -2124,7 +2123,7 @@ if (matched)
 
       if (type)
          {
-	   snprintf(work,CF_BUFSIZE,"<tr><td><a href=\"%s/bundle/details/type/%s\"><span class=\"bundletype\">%s</span></a></td><td><a href=\"%s/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a></td><td>%s</td><td>%s</td><td><img src=\"%s\"></td></tr>",siteUrl,ip->classes,ip->classes,ip->name,siteUrl,ip->classes,ip->name,Nova_GetBundleComment(ip->name),goals,colour);
+	   snprintf(work,CF_BUFSIZE,"<tr><td><a href=\"%s/bundle/details/type/%s\"><span class=\"bundletype\">%s</span></a></td><td><a href=\"%s/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a></td><td>%s</td><td>%s</td><td><img src=\"%s\"></td></tr>",siteUrl,ip->classes,ip->classes,siteUrl,ip->name,ip->classes,ip->name,Nova_GetBundleComment(ip->name),goals,colour);
          }
       else
          {
@@ -2172,7 +2171,7 @@ int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize)
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in List bundles using");
-      return;
+      return false;
     }
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -2296,7 +2295,7 @@ int Nova2PHP_search_topics(char *search,int regex,char *buffer,int bufsize)
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in search topics");
-      return;
+      return false;
     }
 
 Nova_WebTopicMap_Initialize();
@@ -2369,7 +2368,7 @@ Nova_ScanTheRest(id,buffer,bufsize);
 void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize)
 
 { struct Item *ip,*clist;
-  char work[CF_MAXVARSIZE];
+  char work[CF_BUFSIZE] = {0};//[CF_MAXVARSIZE];
   static char *policies[] = { "compliance", "anomaly", "performance", "lastseen", NULL};
   enum cf_rank_method pol;
   char siteUrl[CF_MAXVARSIZE];
@@ -2403,15 +2402,15 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
 
    if (Nova_IsGreen(ip->counter))
       {
-	snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"%s/welcome/hosts/green\"><img src=\"/images/green.png\"></a></td><td><a href=\"%s/welcome/host/%s\">%s</a></td><td><a href=\"%s/welcome/host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,siteUrl,ip->name,ip->classes,siteUrl,ip->name,ip->name,Nova_HostProfile(ip->name));
+	snprintf(work,sizeof(work),"<tr><td><a href=\"%s/welcome/hosts/green\"><img src=\"/images/green.png\"></a></td><td><a href=\"%s/welcome/host/%s\">%s</a></td><td><a href=\"%s/welcome/host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,siteUrl,ip->name,ip->classes,siteUrl,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else if (Nova_IsYellow(ip->counter))
       {
-	snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/yellow\"><img src=\"/images/yellow.png\"></a></td><td><a href=\"%s/welcome/host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+	snprintf(work,sizeof(work),"<tr><td><a href=\"hosts/yellow\"><img src=\"/images/yellow.png\"></a></td><td><a href=\"%s/welcome/host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
    else // if (Nova_IsRed(ip->counter))
       {
-	snprintf(work,CF_MAXVARSIZE,"<tr><td><a href=\"hosts/red\"><img src=\"/images/red.png\"></a></td><td><a href=\"%s/welcome/host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+	snprintf(work,sizeof(work),"<tr><td><a href=\"hosts/red\"><img src=\"/images/red.png\"></a></td><td><a href=\"%s/welcome/host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",siteUrl,ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
       }
 
    if(!Join(buffer,work,bufsize))
@@ -2472,6 +2471,15 @@ void Nova2PHP_show_col_hosts(char *colour,int n,char *buffer,int bufsize)
 { struct Item *ip,*clist;
   char work[CF_MAXVARSIZE];
   int counter = 0;
+  char siteUrl[CF_MAXVARSIZE];
+
+  NewClass("am_php_module");  // required to get value                                                                                                                                         
+
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in topN");
+      return;
+    }
   
 if (strcmp(colour,"green") == 0)
    {
@@ -2503,8 +2511,8 @@ if (clist)
 	   }
          }
       
-      snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/images/%s.png\"><a href=\"host/%s\">%s</a></td>\n",
-	       colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
+      snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/images/%s.png\"><a href=\"%s/welcome/host/%s\">%s</a></td>\n",
+	       colour,siteUrl,ip->name,ip->classes,Nova_HostProfile(ip->name));
       
       if(!Join(buffer,work,bufsize))
 	{
@@ -2634,7 +2642,7 @@ NewClass("am_php_module");  // required to get value
 if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
   {
     CfOut(cf_error, "", "!! Could not get site url in host profile");
-    return;
+    return NULL;
   }
 
 snprintf(buffer,CF_BUFSIZE,
@@ -2774,7 +2782,7 @@ int Nova2PHP_list_bodies(char *name,char *type,char *returnval,int bufsize)
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in List bodies");
-      return;
+      return false;
     }
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -2956,7 +2964,7 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in summarize promise");
-      return;
+      return false;
     }
 
   if(strcmp(handle,"internal_promise") == 0)
@@ -3089,7 +3097,7 @@ int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in List Promise Handles");
-      return;
+      return false;
     }
 
 /* BEGIN query document */
@@ -4306,7 +4314,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
   if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
     {
       CfOut(cf_error, "", "!! Could not get site url in CDP report");
-      return;
+      return false;
     }
 
 memset(buf,0,bufSz);
