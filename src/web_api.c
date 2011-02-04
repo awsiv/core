@@ -233,7 +233,7 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
   
-  char siteUrl[CF_MAXVARSIZE];
+  char siteUrl[CF_MAXVARSIZE] = {0};
   
   NewClass("am_php_module");  // required to get value
 
@@ -2752,7 +2752,7 @@ if (hb)
       
       for (ha = hb->attr; ha != NULL; ha = ha->next)
          {
-	   snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"%s/welcome/knowledge/topic/%s\">%s</a></span></td><td>=></td><td><span class=\"rval\">%s</span></td><td><a href=\"%s/welcome/knowledge/topic/%s\">%s</a></td></tr>",siteUrl,ha->lval,ha->lval,ha->rval,ha->classContext,ha->classContext);
+	   snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"%s/welcome/knowledge/topic/%s\">%s</a></span></td><td>=></td><td><span class=\"rval\">%s</span></td><td><a href=\"%s/welcome/knowledge/topic/%s\">%s</a></td></tr>",siteUrl,ha->lval,ha->lval,ha->rval,siteUrl,ha->classContext,ha->classContext);
 	 Join(returnval,work,bufsize);
          }
 
@@ -3116,7 +3116,7 @@ strcat(returnval,"<div id=\"promise\"><ul>\n");
 
 for (rp = handles; rp != NULL; rp = rp->next)
    {
-     snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"%s/promise/details/%s\">%s</a></li>",siteUrl,rp->item,rp->item);
+     snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"%s/promise/details/%s\">%s</a></li>",siteUrl,(char*)rp->item,(char*)rp->item);
    Join(returnval,work,bufsize);
    }
 

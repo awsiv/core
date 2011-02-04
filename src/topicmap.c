@@ -621,6 +621,15 @@ void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
   int have_data = false,empty = true;
   CfdbConn cfdb;
 
+  char siteUrl[CF_MAXVARSIZE] = {0};
+
+  NewClass("am_php_module");  // required to get value                                                                                                                                          
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in ScanOccurrences");
+      return;
+    }
+
 if (strlen(SQL_OWNER) == 0)
    {
    snprintf(buffer,bufsize,"No knowledge database has yet formed ... please wait");
@@ -690,7 +699,7 @@ while (CfFetchRow(&cfdb))
          empty = false;
          }
       
-      snprintf(query,sizeof(query),"<a href=\"knowledge.php?pid=%d\">%s</a> ",Str2Int(CfFetchColumn(&cfdb,1)),CfFetchColumn(&cfdb,0));
+      snprintf(query,sizeof(query),"<a href=\"%s/welcome/knowledge/pid/%d\">%s</a> ",siteUrl,Str2Int(CfFetchColumn(&cfdb,1)),CfFetchColumn(&cfdb,0));
       Join(buffer,query,bufsize);
       }
    }
@@ -907,8 +916,15 @@ Join(buffer,work,bufsize);
 char *Nova_PidURL(int pid,char *s)
 
 { static char buf[CF_MAXVARSIZE];
+  char siteUrl[CF_MAXVARSIZE] = {0};
 
-snprintf(buf,CF_MAXVARSIZE-1,"<a href=\"/knowledge.php?pid=%d\">%s</a>",pid,s);
+  NewClass("am_php_module");  // required to get value                                                                                                                                          
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in PidUrl");
+      return NULL;
+    }
+  snprintf(buf,CF_MAXVARSIZE-1,"<a href=\"%s/welcome/knowledge/pid/%d\">%s</a>",siteUrl,pid,s);
 return buf;
 }
 
@@ -917,8 +933,16 @@ return buf;
 char *Nova_AssocURL(char *s)
 
 { static char buf[CF_MAXVARSIZE];
- 
-snprintf(buf,CF_MAXVARSIZE-1,"<a href=\"/knowledge.php?assoc=%s\">%s</a>",s,s);
+  char siteUrl[CF_MAXVARSIZE] = {0};
+
+  NewClass("am_php_module");  // required to get value
+  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
+    {
+      CfOut(cf_error, "", "!! Could not get site url in Assoc Url");
+      return NULL;
+    }
+
+  snprintf(buf,CF_MAXVARSIZE-1,"<a href=\"%s/welcome/knowledge/assoc/%s\">%s</a>",siteUrl,s,s);
 return buf;
 }
 /*************************************************************************/
