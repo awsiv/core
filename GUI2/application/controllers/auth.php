@@ -134,7 +134,7 @@ class Auth extends Controller {
 	}
 
 	//change password
-	function change_password()
+	function change_password($id=Null)
 	{
 		$this->form_validation->set_rules('old', 'Old password', 'required');
 		$this->form_validation->set_rules('new', 'New Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[new_confirm]');
@@ -144,7 +144,7 @@ class Auth extends Controller {
 		{
 			redirect('auth/login', 'refresh');
 		}
-		$user = $this->ion_auth->get_user($this->session->userdata('user_id'));
+		//$user = $this->ion_auth->get_user($this->session->userdata('user_id'));
 
 		if ($this->form_validation->run() == false)
 		{ //display the form
@@ -154,34 +154,31 @@ class Auth extends Controller {
 			$this->data['old_password'] = array('name' => 'old',
 				'id' => 'old',
 				'type' => 'password',
+                                'value' => $this->form_validation->set_value('old')
 			);
 			$this->data['new_password'] = array('name' => 'new',
 				'id' => 'new',
 				'type' => 'password',
+                                'value' => $this->form_validation->set_value('new')
 			);
 			$this->data['new_password_confirm'] = array('name' => 'new_confirm',
 				'id' => 'new_confirm',
 				'type' => 'password',
+                                'value' => $this->form_validation->set_value('new_confirm')
 			);
-			$this->data['user_id'] = array('name' => 'user_id',
-				'id' => 'user_id',
-				'type' => 'hidden',
-				'value' => $user->id,
-			);
-
 			//render
 			$this->load->view('auth/change_password', $this->data);
 		}
 		else
 		{
-			$identity = $this->session->userdata($this->config->item('identity', 'ion_auth'));
-
+			$identity = isset($id)?$id:$this->session->userdata($this->session->userdata('user_id'));
 			$change = $this->ion_auth->change_password($identity, $this->input->post('old'), $this->input->post('new'));
 
 			if ($change)
 			{ //if the password was successfully changed
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
-				$this->logout();
+				//$this->logout();
+                                redirect('auth/index', 'refresh');
 			}
 			else
 			{
