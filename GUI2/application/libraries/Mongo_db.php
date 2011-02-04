@@ -440,6 +440,7 @@ class Mongo_db {
                 }
                return $obj;
              }
+             return false;
          }
 
 
