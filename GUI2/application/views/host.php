@@ -158,10 +158,6 @@ $(document).ready(function() {
 
     $('.tables table').tableFilter();
     $('.tables table').tablesorter({widgets: ['zebra']}); 
-	var oldlink=$("#tabpane table a").attr('href');
-	var newlink=oldlink.split('?');
-	var opt=newlink[1].split('=');
-	$("#tabpane table a").attr('href','<?php echo site_url()?>/welcome/promise/'+opt[1]);
 	//the link generated shoud be site_url/welcome/promise/param1/param2
 	
 });
