@@ -79,11 +79,9 @@ noinst_HEADERS =							\
         cf.defs.h                                                       \
         prototypes.h                                                    \
         cf.extern.h                                                     \
-        config.h                                                        \
         prototypes3.h                                                   \
         cf3.defs.h                                                      \
         cf3.server.h                                                    \
-        cf3parse.h                                                      \
         cf3.extern.h                                                    \
         cf.events.h                                                     \
         win_disphelper.h                                                \
