@@ -8,9 +8,8 @@
             <div class="panelhead">Weakest host</div>
                <div class="panelcontent">
 			      <div class="tables">
-                      <?php echo $ret ?>
+                               <?php echo $ret ?>
 			      </div>
                </div>
             </div>
         </div>
-	</div>
