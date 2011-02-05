@@ -1516,7 +1516,7 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-int CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid)
+void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -1539,6 +1539,7 @@ bson_from_buffer(&setOp,&bb);
 mongo_update(conn, coll, query, &setOp, 0);
 MongoCheckForError(conn,row_name,cid);
 bson_destroy(&setOp);
+
 }
 
 /*****************************************************************************/

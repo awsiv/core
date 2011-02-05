@@ -4550,7 +4550,7 @@ int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, 
       return false;
     }
 
-  if (keyhash && strlen(keyhash) != 0 )//&& (cid && strlen(cid)!=0))
+  if (keyhash && strlen(keyhash) != 0 ) //&& (cid && strlen(cid)!=0))
     {
       bson_buffer_init(&bb);
       bson_append_string(&bb,cfr_keyhash,keyhash);
@@ -4614,15 +4614,15 @@ int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, 
 	      break;
 	    case CFREPORT_VALUE: /*value report*/
 	      snprintf(row_name, sizeof(row_name), "%s.%s.%s",cfr_valuereport,repid,cfc_cid);
-	      getrow = CFDBRef_AddToRow(&dbconn, MONGO_DATABASE, &query, row_name, commentId);
+	      CFDBRef_AddToRow(&dbconn, MONGO_DATABASE, &query, row_name, commentId);
 	      break;
 	    case CFREPORT_FILECHANGES:
 	      snprintf(row_name, sizeof(row_name), "%s.%s.%s",cfr_filechanges,repid,cfc_cid);
-	      getrow = CFDBRef_AddToRow(&dbconn, MONGO_DATABASE, &query, row_name, commentId);
+	      CFDBRef_AddToRow(&dbconn, MONGO_DATABASE, &query, row_name, commentId);
 	      break;
 	    case CFREPORT_FILEDIFFS:
 	      snprintf(row_name, sizeof(row_name), "%s.%s.%s",cfr_filediffs,repid,cfc_cid);
-	      getrow = CFDBRef_AddToRow(&dbconn, MONGO_DATABASE, &query, row_name, commentId);
+	      CFDBRef_AddToRow(&dbconn, MONGO_DATABASE, &query, row_name, commentId);
 	      break;
 	    }
 	}

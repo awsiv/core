@@ -403,7 +403,7 @@ void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *oid, char *commen
 void CFDBRef_HostID_Comments(mongo_connection *conn,char *keyhash, char *commentId);
 struct Rlist *CFDB_QueryCommentId(mongo_connection *conn,bson *query);
 void CFDBRef_Performance_Comments(mongo_connection *conn, char *keyhash, char *handle, char *cid);
-int CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid);
+void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid);
 int CFDB_GetRow(mongo_connection *conn, char *db, bson *query, char *rowname, char *row,int level);
 
 #endif  /* HAVE_LIBMONGOC */
