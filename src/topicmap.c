@@ -1081,48 +1081,28 @@ void Nova_PlotTopicCosmos(int topic,char *view,char *buffer,int bufsize)
 { char filename[CF_BUFSIZE], filenode[CF_MAXVARSIZE];
   struct CfGraphNode tribe_nodes[CF_TRIBE_SIZE];
   int i,tribe_id[CF_TRIBE_SIZE],tribe_size,tertiary_boundary = 0;
-  double tribe_evc[CF_TRIBE_SIZE];
+  double tribe_evc[CF_TRIBE_SIZE] = {0};
   double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
-  struct stat sb;
-
-CfOut(cf_verbose,""," -> Create Cosmos for topic_id %d\n",topic);
-
-if (view && strlen(view) > 0)
-   {
-   snprintf(filenode,CF_MAXVARSIZE-1,"%s_%d.png",view,topic);
-   }
-else
-   {
-   snprintf(filenode,CF_MAXVARSIZE-1,"%d.png",topic);
-   }
-
-if (strlen(GRAPHDIR) > 0)
-   {
-   snprintf(filename,CF_BUFSIZE,"%s/%s",GRAPHDIR,filenode);
-   MakeParentDirectory(filename,false);
-   }
-else
-   {
-   strcpy(filename,filenode);
-   }
-
-// Clean up old data
-unlink(filename);
+  struct Item *jsout = NULL;
 
 /* Count the  number of nodes in the solar system, to max number based on Dunbar's limit */  
 
-if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,tribe_evc,view))
+  snprintf(buffer,bufsize,"HELLO");
+  
+if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,view))
    {
    Nova_EigenvectorCentrality(tribe_adj,tribe_evc,CF_TRIBE_SIZE);
-   Nova_DrawTribe(filename,tribe_id,tribe_nodes,tribe_adj,tribe_size,tribe_evc,topic,buffer,bufsize);
+   Nova_DrawTribe(tribe_id,tribe_nodes,tribe_adj,tribe_size,tribe_evc,topic,buffer,bufsize);
    }
+
+DeleteItemList(jsout);
 }
 
 /*************************************************************************/
 /* Local patch computation                                               */
 /*************************************************************************/
 
-int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,double *tribe_evc,char *view_pattern)
+int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,char *view_pattern)
 
 /* This function generates a breadth-first connected sub-graph of the full graph
    and identifies the orbits and distances, up to a maximum of Dunbar's tribe-size */
@@ -1145,7 +1125,6 @@ for (i = 0; i < CF_TRIBE_SIZE; i++)
    {
    Nova_InitVertex(tribe_nodes,i);
    tribe_id[i] = -1;
-   tribe_evc[i] = 0;
    
    for (j = 0; j < CF_TRIBE_SIZE; j++)
       {
@@ -1299,7 +1278,7 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && secondary_boundary > 0)
          
          Debug("  2nd NEIGHOUR: %s::%s at %d\n",a_context,a_name,a_pid);
 
-         if (Nova_NewVertex(tribe_nodes,tribe_counter,1,a_pid))
+         if (Nova_NewVertex(tribe_nodes,tribe_counter,2,a_pid))
             {            
             neighbours2[i][tribe_counter].real_id = a_pid;
             tribe_id[tribe_counter] = a_pid;
@@ -1381,7 +1360,7 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && tertiary_boundary > 0)
 
             Debug("     3rd NEIGHBOUR (%d): %s::%s at %d\n",tribe_counter,a_context,a_name,a_pid);
             
-            if (Nova_NewVertex(tribe_nodes,tribe_counter,1,a_pid))
+            if (Nova_NewVertex(tribe_nodes,tribe_counter,3,a_pid))
                {            
                neighbours3[i][j][tribe_counter].real_id = a_pid;
                tribe_id[tribe_counter] = a_pid;
@@ -1510,16 +1489,11 @@ return false;
 
 void Nova_InitVertex(struct CfGraphNode *tribe,int i)
 
-{ const int parent = 1;
-  
+{ int j;
+ 
 tribe[i].real_id = 0;
 tribe[i].shortname = NULL;
 tribe[i].fullname = NULL;
-tribe[i].potential = 0.0;      
-tribe[i].x = 0.0;
-tribe[i].y = 0.0;
-tribe[i].radius = CF_MIN_RADIUS;
-tribe[i].orbit_parent = parent;
 tribe[i].distance_from_centre = 0;
 }
 
@@ -1527,8 +1501,7 @@ tribe[i].distance_from_centre = 0;
 
 int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real)
 
-{ const int parent = 1;
- char sshort[CF_BUFSIZE],name[CF_BUFSIZE];
+{ char sshort[CF_BUFSIZE],name[CF_BUFSIZE];
   char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE];
   int j;
 
@@ -1564,11 +1537,6 @@ if (strlen(sshort) == 0)
 tribe[node].real_id = real; 
 tribe[node].shortname = strdup(sshort);
 tribe[node].fullname = strdup(name);
-tribe[node].potential = 0.0;      
-tribe[node].x = 0.0;
-tribe[node].y = 0.0;
-tribe[node].radius = 0.0;
-tribe[node].orbit_parent = parent;
 tribe[node].distance_from_centre = distance;
 return true;
 }

@@ -57,6 +57,7 @@ snprintf(buffer,bufsize,
 "<script src=\"scripts/jquery.tablesorter.min.js\" type=\"text/javascript\"></script>\n"
 "<script src=\"scripts/picnet.jquery.tablefilter.js\" type=\"text/javascript\"></script>\n"
 "<script src=\"scripts/jquery.tablesorter.pager.js\" type=\"text/javascript\"></script>\n"
+"<script type=\"text/javascript\" src=\"scripts/jit.js\"></script>\n"
 "</head>\n"
 "\n"
 "<body>\n"

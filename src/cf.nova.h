@@ -4,6 +4,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#ifndef NOVA
 #define NOVA 1
 
 #define NOVA_REVISION "$Rev$"
@@ -88,9 +89,7 @@ enum cf_rank_method
 
 struct CfDataView
    {
-#ifdef HAVE_GD_H
    gdImagePtr im;
-#endif
    int width;
    int height;
    int margin;
@@ -124,13 +123,7 @@ struct CfGraphNode
    int tribe_id;
    char *shortname;
    char *fullname;
-   double potential;
-   double x,y;
-   double radius;
-   double angle;
-   int orbit_parent; /* For non-central nodes - who is the star? */
    int distance_from_centre;
-   int horizon; // distance to the edge
    };
 
 #define CF_MIN_RADIUS    30.0  // Reduce this at your peril, could hang gd
@@ -277,7 +270,8 @@ int Nova_ViewScaleY(struct CfDataView *cfv,double y);
 /* copernicus.c */
 
 void Nova_PrimeGraph(struct Rlist **semantic);
-void Nova_DrawTribe(char *filename,int *tribe_id,struct CfGraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,char *buffer,int bufsize);
+void Nova_DrawTribe_PNG(char *filename,int *tribe_id,struct CfGraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,char *buffer,int bufsize);
+void Nova_DrawTribe(int *tribe_id,struct CfGraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,char *buffer,int bufsize);
 int Nova_GetMaxEvcNode(double *evc,int tribe_size);
 int Nova_GetAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size, struct CfGraphNode *tribe, struct CfGraphNode *neighbours);
 int Nova_SplayAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,struct CfGraphNode *tribe,int *trail,struct CfGraphNode *neighbours);
@@ -895,7 +889,7 @@ struct Item *Nova_GetBusinessGoals(char *handle);
 
 void Nova_SpecialQuote(char *name,char *type);
 void Nova_PlotTopicCosmos(int topic,char *view,char *buf,int size);
-int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,double *tribe_evc,char *v);
+int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,char *v);
 void Nova_EigenvectorCentrality(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim);
 void Nova_MatrixOperation(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim);
 int Nova_AlreadyInTribe(int node, int *tribe_id);
@@ -1595,3 +1589,4 @@ struct HubCommentInfo
   struct HubComment *comment;
 };
 
+#endif
