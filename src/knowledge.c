@@ -210,6 +210,7 @@ if (LICENSES == 0)
    return;
    }
 
+/*
 NewClass("am_policy_hub");  // required to get value
 
 if (!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
@@ -217,6 +218,7 @@ if (!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
    CfOut(cf_error, "", "!! Could not get site url in Map Promise to topic");
    return;
    }
+*/
 
 strcpy(promise_id,Nova_PromiseID(pp));
 
@@ -379,6 +381,7 @@ fprintf(fp,"\n occurrences:\n");
 
 fprintf(fp,"%s::\n",promise_id);
 
+/*
 if (strlen(siteUrl) > 0)
    {
    fprintf(fp,"\"%s/promise/details/handle/%s\",\n",siteUrl,promise_id);
@@ -388,6 +391,7 @@ if (strlen(siteUrl) > 0)
    fprintf(fp,"\"%s/bundle/details/bundle/%s\"\n",siteUrl,pp->bundle);
    fprintf(fp,"   represents => { \"parent bundle\" };\n\n");
    }
+*/
 
 /*
   Now we should analyze the classes to look for dependents and dependencies */
@@ -757,6 +761,7 @@ void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promi
   int found = false;
   char siteUrl[CF_MAXVARSIZE] = {0};
 
+/*
 NewClass("am_policy_hub");  // required to get value
 
 if (!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
@@ -764,7 +769,8 @@ if (!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
    CfOut(cf_error, "", "!! Could not get site url in Map Class parameter Associations");
    return;
    }
-
+*/
+  
 if (handle && pp->ref)
    {
    fprintf(fp,"topics: handles:: \"%s\"  comment => \"%s\", ",handle,pp->ref);
@@ -775,10 +781,12 @@ else if (handle)
    fprintf(fp,"topics: handles:: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",handle,NOVA_HANDLE,NovaEscape(pp->promiser),NOVA_HANDLE_INV);
    }
 
+/*
 if (handle && strlen(siteUrl) > 0)
    {
    fprintf(fp,"occurrences: %s::  \"%s/promise/details/handle/%s\", represents => { \"declaration\" }; \n",siteUrl,CanonifyName(handle),handle);
    }
+*/
 
 /* For activated classes we can assume that no one will */
 
