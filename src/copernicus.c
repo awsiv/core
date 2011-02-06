@@ -44,20 +44,35 @@ void Nova_DrawTribe(int *tribe_id,struct CfGraphNode *tribe_node,double tribe_ad
 { int centre = Nova_GetMaxEvcNode(tribe_evc,tribe_size);
   int i,j;
   double radius;
-  char work[CF_BUFSIZE];
+  char work[CF_BUFSIZE],url[CF_MAXVARSIZE];
+  char *colour;
 
-  strcat(buffer,"ZUBBA");
-  
 for (i = 0; i < tribe_size; i++)
    {
    if (i == topic)
       {
       // The topic might not be central, so inflate its importance a little
       radius = 1.5 * CF_MIN_RADIUS + CF_RADIUS_SCALE*tribe_evc[i];
+      colour = "#ffcc33";
       }
    else
       {
       radius = CF_MIN_RADIUS + CF_RADIUS_SCALE*tribe_evc[i];
+      switch (tribe_node[i].distance_from_centre)
+         {
+         case 0:
+             colour = "#ffcc33";
+             break;
+         case 1:
+             colour = "#d2bfa5";
+             break;
+         case 2:
+             colour = "#CCB99F";
+             break;
+         default:
+             colour= "#787878";
+             break;
+         }
       }
 
    /* FORMAT
@@ -72,15 +87,17 @@ for (i = 0; i < tribe_size; i++)
       }
       },
    */
+
+   snprintf(url,CF_MAXVARSIZE,"http://localhost/knowledge.php?pid=%d",tribe_node[i].real_id);
    
    snprintf(work,bufsize,
-            "function init(){ var json = ["
             "{ "
-            "\"id\": \"g%d\","
-            "\"name\": \"%s\""
-            " \"data\": { '$color':'#dddddd', '$dim': %.1lf, \"$type\": \"gradientCircle\""
+            "\"id\": \"g%d\",\n"
+            "\"name\": \"%s\",\n"
+            "\"link\" : \"%s\",\n"
+            " \"data\": { '$color':'%s', '$dim': %.1lf, \"$type\": \"gradientCircle\"},\n"
             "\"adjacencies\": [ ",
-            i,tribe_node[i].shortname,radius
+            i,tribe_node[i].shortname,radius,url,colour
             );
 
    Join(buffer,work,bufsize);
@@ -94,10 +111,8 @@ for (i = 0; i < tribe_size; i++)
          }
       }
    
-   Join(buffer,"]}",bufsize);
+   Join(buffer,"],\n},\n",bufsize);
    }
-
-Join(buffer,"];",bufsize);
 
 // Cleanup
 

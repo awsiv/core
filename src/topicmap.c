@@ -1083,19 +1083,18 @@ void Nova_PlotTopicCosmos(int topic,char *view,char *buffer,int bufsize)
   int i,tribe_id[CF_TRIBE_SIZE],tribe_size,tertiary_boundary = 0;
   double tribe_evc[CF_TRIBE_SIZE] = {0};
   double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
-  struct Item *jsout = NULL;
 
 /* Count the  number of nodes in the solar system, to max number based on Dunbar's limit */  
 
-  snprintf(buffer,bufsize,"HELLO");
-  
+snprintf(buffer,bufsize,"function init(){ var json = [");
+
 if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,view))
    {
    Nova_EigenvectorCentrality(tribe_adj,tribe_evc,CF_TRIBE_SIZE);
    Nova_DrawTribe(tribe_id,tribe_nodes,tribe_adj,tribe_size,tribe_evc,topic,buffer,bufsize);
    }
 
-DeleteItemList(jsout);
+Join(buffer,"];",bufsize);
 }
 
 /*************************************************************************/

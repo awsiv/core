@@ -237,6 +237,24 @@ font-size:14px;
 	color:#fff;
 }
 
+
+            .node{
+                background-color: #fff;
+                border: 1px solid #eee;
+                padding: 2px;
+                -moz-box-shadow: 3px 3px 5px #888;
+                -webkit-box-shadow: 3px 3px 5px #888;
+                box-shadow: 3px 3px 5px #888;
+
+            }
+
+            .node a {
+                color: #003399;
+                background-color: transparent;
+                font-weight: normal;
+             }
+
+
 .panelcontent li.note
 {
 	border:solid 1px #cecece;
