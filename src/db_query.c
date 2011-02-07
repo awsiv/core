@@ -34,14 +34,13 @@ int CFDB_GetValue(char *lval,char *rval,int size)
   mongo_cursor *cursor;
   mongo_connection conn;
   
-  
-  // clients do not run mongo server -- will fail to connect
-if (!IsDefinedClass("am_policy_hub") || !IsDefinedClass("am_php_module"))
+   // clients do not run mongo server -- will fail to connect
+
+if (!IsDefinedClass("am_policy_hub") && !IsDefinedClass("am_php_module"))
    {
    CfOut(cf_verbose,"","Ignoring DB get of (%s) - we are not a policy server",lval);
    return false;
    }
-
   
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
