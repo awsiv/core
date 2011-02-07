@@ -29,14 +29,6 @@ void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize)
   struct CfDataView cfv;
   int i, have_week, have_mag, have_histo;
 
-  char siteUrl[CF_MAXVARSIZE] = {0};
-
-  NewClass("am_php_module");  // required to get value 
-  if(!CFDB_GetValue("site_url",siteUrl,sizeof(siteUrl)))
-    {
-      CfOut(cf_error, "", "!! Could not get site url in ScanOccurrences");
-      return;
-    }
 // Make common resources
 
 cfv.height = 300;
@@ -70,14 +62,14 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       Join(buffer,"<tr>\n",bufsize);
 
       snprintf(work,CF_BUFSIZE,"<td><div id=\"ip\">%s</div><br><br>"
-               "<a href=\"%s/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/type\">%s</a>"
-               "<br><br><small>Latest data<br>%s</small></td>",hostname,siteUrl,hostkey,i,OBS[i][0],OBS[i][0],lastsaw);      
+               "<a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/type\">%s</a>"
+               "<br><br><small>Latest data<br>%s</small></td>",hostname,hostkey,i,OBS[i][0],OBS[i][0],lastsaw);      
       Join(buffer,work,bufsize);
 
 
       if(have_mag)
 	{
-	  snprintf(work,CF_BUFSIZE,"<td><a href=\"%s/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/mag\"><img src=\"/hub/%s/%s_mag.png\" width=\"300\" border=\"0\"></a></td>",siteUrl,hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+	  snprintf(work,CF_BUFSIZE,"<td><a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/mag\"><img src=\"/hub/%s/%s_mag.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
 	}
       else
 	{
@@ -89,7 +81,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
       if(have_week)
 	{
-	  snprintf(work,CF_BUFSIZE,"<td><a href=\"%s/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/week\"><img src=\"/hub/%s/%s_week.png\" width=\"300\" border=\"0\"></a></td>",siteUrl,hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+	  snprintf(work,CF_BUFSIZE,"<td><a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/week\"><img src=\"/hub/%s/%s_week.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
 	}
       else
 	{
@@ -101,7 +93,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
       if(have_histo)
 	{
-	  snprintf(work,CF_BUFSIZE,"<td><a href=\"%s/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/hist\"><img src=\"/hub/%s/%s_hist.png\" width=\"300\" border=\"0\"></a></td>",siteUrl,hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+	  snprintf(work,CF_BUFSIZE,"<td><a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/hist\"><img src=\"/hub/%s/%s_hist.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
 	}
       else
 	{
