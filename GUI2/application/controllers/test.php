@@ -207,5 +207,19 @@ class Test extends CI_Controller
 
             echo $this->email->print_debugger();
          }
+
+         function mongoextensiontest()
+         {
+           $connection = new Mongo('localhost:27017');
+           // Select a database
+           $db = $connection->blog;
+           //select tables
+           //$posts = $db->posts;
+           $document = array( 
+                             'title' => 'test',
+                                 );
+           $result=$db->posts->insert($document);
+           print_r($result);
+         }
         
 }
