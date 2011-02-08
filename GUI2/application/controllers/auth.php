@@ -191,7 +191,7 @@ class Auth extends Controller {
 	//forgot password
 	function forgot_password()
 	{
-		$this->form_validation->set_rules('email', 'Email Address', 'required');
+		$this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
 		if ($this->form_validation->run() == false)
 		{
 			//setup the input

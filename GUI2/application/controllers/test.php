@@ -1,11 +1,11 @@
 <?php
 
-class Test extends Controller
+class Test extends CI_Controller
 {
 	
 	function Test()
 	 {
-		 parent::Controller();
+		 parent::__construct();
      
 	 }
 	
@@ -38,7 +38,7 @@ class Test extends Controller
          
          //$result = $this->mongo_db->select(array('uri','message'))->get('app_logs');
          //$this->mongo_db->where(array('group'=>'faculty'));
-         $result=$this->mongo_db->get('app_logs');
+         $result=$this->mongo_db->get('users');
          //$result=$this->mongo_db->select(array('username'))->get_where('users',array('group'=>'admin'));
          //print_r($result) ;
          foreach ($result as  $docs) {
@@ -183,5 +183,29 @@ class Test extends Controller
 
          }
 
+         function test_login_remmembered()
+         {
+             $this->load->helper('cookie');
+             $this->load->library('mongo_db');
+              $result = $this->mongo_db->select(array($this->identity_column,'_id', 'group'))
+			      ->where(array('username' =>get_cookie('identity'),'remember_code'=>get_cookie('remember_code')))
+			      ->limit(1)
+			      ->get_object('users');
+              print_r($result);
+         }
+
+         function mail_test()
+         {
+            $this->load->library('email');
+            $this->email->from('Sudhir.Pandey@cfengine.com', 'cfengine');
+            $this->email->to('sudhir2pandey@gmail.com');
+
+            $this->email->subject('Email Test');
+            $this->email->message('Testing the email class.');
+
+            $this->email->send();
+
+            echo $this->email->print_debugger();
+         }
         
 }

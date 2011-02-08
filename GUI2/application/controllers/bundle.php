@@ -1,9 +1,9 @@
 <?php 
- class Bundle extends Controller
+ class Bundle extends Cf_Controller
   {
 	function Bundle()
 	 {
-		 parent::Controller();
+		 parent::__construct();
 	 }
 	 
 	function index()

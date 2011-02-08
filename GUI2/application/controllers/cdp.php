@@ -1,9 +1,9 @@
 <?php
-class Cdp extends Controller
+class Cdp extends Cf_Controller
 {
   function Cdp()
   {
-   parent::Controller();
+   parent::__construct();
   }
   
   function index()

@@ -1,9 +1,9 @@
 <?php
- class Cfeditor extends Controller {
+ class Cfeditor extends Cf_Controller {
   
   function Cfeditor()
    {
-   parent::Controller();
+   parent::__construct();
    $this->load->library('jcryption');
    session_start();
    }

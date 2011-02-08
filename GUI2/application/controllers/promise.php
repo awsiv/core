@@ -1,9 +1,9 @@
 <?php 
-class Promise extends Controller
+class Promise extends Cf_Controller
  {
 	function Promise()
 	{
-		parent::Controller();
+		parent::__construct();
 	}
 	 function index()
 	 {

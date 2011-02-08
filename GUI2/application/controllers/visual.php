@@ -1,9 +1,9 @@
 <?
-class Visual extends Controller
+class Visual extends Cf_Controller
 {
   function Visual()
   {
-  parent::Controller();	
+  parent::__construct();
   }
   
   function vital($hostkey=NULL)

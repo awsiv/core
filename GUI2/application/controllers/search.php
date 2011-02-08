@@ -1,9 +1,9 @@
 <?php
-class Search extends Controller
+class Search extends Cf_Controller
 {
   function Search()
    {
-	 parent::Controller(); 	 
+	 parent::__construct();
    }
 	
    function index()

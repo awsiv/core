@@ -8,7 +8,7 @@ class Welcome extends Cf_Controller{
 			parse_str($_SERVER['QUERY_STRING'],$_GET);
 		}
 	
-	function index()
+function index()
 	{
 	    $data=array(
 		'title'=>"Cfengine Mission Portal - overview",
@@ -19,7 +19,7 @@ class Welcome extends Cf_Controller{
 		$this->template->load('template', 'index',$data);
 	}
 	
-	function status()
+function status()
 	{
 	  $data=array(
 		'title'=>"Cfengine Mission Portal - engineering status",
@@ -37,7 +37,7 @@ class Welcome extends Cf_Controller{
 	  $this->template->load('template', 'status',$data);
 	}
 	
-	function helm()
+function helm()
 	{
 	  $data=array(
 		'title'=>"Cfengine Mission Portal - control",
@@ -48,7 +48,7 @@ class Welcome extends Cf_Controller{
 	  $this->template->load('template', 'helm',$data);
 	}
 	
-	function knowledge()
+function knowledge()
 	{
 	    $getparams=$this->uri->uri_to_assoc(3);
 	    $search = isset($getparams['search'])?$getparams['search']:$this->input->post('search');
@@ -67,7 +67,7 @@ class Welcome extends Cf_Controller{
 	  $this->template->load('template', 'knowledge',$data);
 	}
 	
-	function hosts($type)
+function hosts($type)
 	{
 	  
 	  $data=array(
@@ -80,7 +80,7 @@ class Welcome extends Cf_Controller{
 	  $this->template->load('template', 'hosts',$data);
 	}
 	
-	function host($hostkey=NULL)
+function host($hostkey=NULL)
 	{
 	 if(is_null($hostkey))
 	 {
@@ -91,18 +91,18 @@ class Welcome extends Cf_Controller{
 	 $ipaddr=cfpr_ipaddr($hostkey);
 	 $username=isset($_POST['username'])? $_POST['username'] : "";
 	 $comment_text=isset($_POST['comment_text'])? $_POST['comment_text'] : "";
-	 $commentid = cfpr_get_host_commentid($hostkey);
+	 $is_commented = cfpr_get_host_commentid($hostkey);
 	 $op = isset($_POST['op'])? $_POST['op'] : "";
-	
-	 if (!is_null($username) && !is_null($comment_text) && $op=="addcomment")
+
+        /* if (!is_null($username) && !is_null($comment_text) && $op=="addcomment")
 	 {
    	  cfpr_comment_add($hostkey,"",$commentid,1,"$hostname,$ipaddr",$username,time(),$comment_text);
 	  $username="";
 	  $comment_text="";
-	 } 
-	 $commentid = cfpr_get_host_commentid($hostkey);
+	 } */
+	// $commentid = cfpr_get_host_commentid($hostkey);
 
-	 $comments=cfpr_comment_query('',$commentid,'',-1,-1);	 
+	 //$comments=cfpr_comment_query('',$commentid,'',-1,-1);
 
 	 $data=array(
 	        'hostkey'=>$hostkey,
@@ -112,14 +112,13 @@ class Welcome extends Cf_Controller{
 			'status'=>"current",
 			'hostname'=>$hostname,	
 			'ipaddr'=>$ipaddr,			
-			'commentid'=>$commentid,
-			'op'=>$op,
-			'comments'=>$comments
+			'is_commented'=>$is_commented,
+			'op'=>$op
 			);
 	  $this->template->load('template', 'host',$data); 
 	}
 	
-	function weakest_host()
+function weakest_host()
 	{
 	$data=array(
 			'title_header'=>"weakest hosts",
@@ -131,7 +130,7 @@ class Welcome extends Cf_Controller{
 	 $this->template->load('template', 'topN',$data);
 	}
 	
-	function services()
+function services()
 	{
 	$data=array(
 			'title_header'=>"service catalogue",
@@ -143,7 +142,7 @@ class Welcome extends Cf_Controller{
 	$this->template->load('template', 'services',$data);
 	}
 	
-	function license()
+function license()
 	{
 	$data=array(
 	      'title_header'=>"license usage status",
@@ -158,7 +157,7 @@ class Welcome extends Cf_Controller{
 	$this->template->load('template', 'license',$data);
 	}
 	
-	function classes()
+function classes()
 	{
 	$hostkey = NULL;
 	$name = ".*";
@@ -177,18 +176,18 @@ class Welcome extends Cf_Controller{
 	$this->template->load('template', 'classes',$data);
 	}
 	
-	function cfeditor()
+function cfeditor()
 	{
 	 redirect('/cfeditor/');
 	}
 	
-	function search()
+function search()
 	{
 	 $params = $this->uri->uri_to_assoc(3);
 	 redirect('/search/'.$this->uri->assoc_to_uri($params));
 	}
 
-        function body()
+function body()
         {
             $getparams=$this->uri->uri_to_assoc(3);
             $body = isset($getparams['body'])?$getparams['body']:$this->input->post('search');
