@@ -1005,8 +1005,8 @@ font-weight: bold;
 	padding:1px 0 3px 0;
 }
 
-.show_comment_btn { cursor: pointer; }
-.add_comment_btn { cursor: pointer; }
+a#show_cmt { cursor: pointer; color: #E1E1E3 }
+a#add_cmt { cursor: pointer; color: #E1E1E3 }
 
 /*Administration*/
 
