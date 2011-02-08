@@ -1070,7 +1070,7 @@ if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,view))
    Nova_DrawTribe(tribe_id,tribe_nodes,tribe_adj,tribe_size,tribe_evc,topic,buffer,bufsize);
    }
 
-Join(buffer,"];",bufsize);
+Join(buffer,"]",bufsize);
 }
 
 /*************************************************************************/

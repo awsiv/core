@@ -90,9 +90,10 @@ if ($search == "")
 
                
 
+                            function init(){ var json =
 <?php
          $map = cfpr_get_knowledge_view($pid,NULL);
-          echo "\n function init(){ var json = $map\n";
+          echo "\n  $map;\n";
 ?>
 
 
