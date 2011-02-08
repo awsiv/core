@@ -374,7 +374,7 @@ fprintf(fp,"\"/promise/details/handle/%s\",\n",promise_id);
 fprintf(fp,"   represents => { \"definition\" };\n\n");
 
 fprintf(fp,"system_policy.bundles.%s::\n",pp->bundle);
-fprintf(fp,"\"bundle/details/bundle/%s\"\n",pp->bundle);
+fprintf(fp,"\"/bundle/details/bundle/%s\"\n",pp->bundle);
 fprintf(fp,"   represents => { \"parent bundle\" };\n\n");
 
 /*  Now we should analyze the classes to look for dependents and dependencies */
