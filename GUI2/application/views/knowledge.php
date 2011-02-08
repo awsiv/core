@@ -103,15 +103,6 @@ if ($search == "")
 		 'transitionOut' : 'elastic'
 		}); 
 		});
-		
-	//hack for making links inside knowledge map work
-	 $("#tabpane a").click(function(e)
-		{
-	    e.preventDefault();
-		var oldlink=$(this).attr('href');
-		var newlink=oldlink.split('?');
-		location.replace('<?php echo site_url(); ?>/welcome/knowledge?'+newlink[1]);
-	 });
 	
 	});
     function styleit(element)
