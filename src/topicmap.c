@@ -1062,7 +1062,7 @@ void Nova_PlotTopicCosmos(int topic,char *view,char *buffer,int bufsize)
 
 /* Count the  number of nodes in the solar system, to max number based on Dunbar's limit */  
 
-snprintf(buffer,bufsize,"function init(){ var json = [");
+snprintf(buffer,bufsize,"[");
 
 if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,view))
    {
