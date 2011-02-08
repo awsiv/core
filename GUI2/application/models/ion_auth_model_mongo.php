@@ -336,10 +336,8 @@ class Ion_auth_model_mongo extends CI_Model
 	    $key = $this->hash_password(microtime().$email);
 
 	    $this->forgotten_password_code = $key;
-
-	    $this->db;
-
-	    $this->mongo_db->where(array('email' => $email))->update('users', array('forgotten_password_code' => $key), array('email' => $email));
+            
+	    $this->mongo_db->where(array('email' => $email))->update('users', array('forgotten_password_code' => $key));
 
 	    return true;
 	}
@@ -769,7 +767,6 @@ class Ion_auth_model_mongo extends CI_Model
 	    $this->load->helper('date');
             $this->mongo_db->where( array('_id' => new MongoId($id)));
 	    $this->mongo_db->update('users', array('last_login' => now()));
-
 	    return TRUE;
 	}
 
@@ -805,25 +802,24 @@ class Ion_auth_model_mongo extends CI_Model
 		    return FALSE;
 	    }
 
-	    $result = $this->mongo_db->select(array($this->identity_column.',_id, group'))
-			      ->where(array($this->identity_colum =>get_cookie('identity'),'remember_code'=>get_cookie('remember_code')))
+	    $result = $this->mongo_db->select(array($this->identity_column,'_id','group'))
+			      ->where(array($this->identity_column =>get_cookie('identity'),'remember_code'=>get_cookie('remember_code')))
 			      ->limit(1)
-			      ->get('users');
+			      ->get_object('users');
 
 	    //if the user was found, sign them in
-	    if (is_array($result))
+	    if (is_object($result))
 	    {
-		$user = (object)$result;
+		$user = $result;
 
 		$this->update_last_login($user->_id);
 
 		$session_data = array(
-				    $this->identity_column => $user->{$this->identity_column},
-				    'user_id'              => $user->_id, //everyone likes to overwrite id so we'll use user_id
-				    'group'                => $user->group,
+				    $this->identity_column => $result->{$this->identity_column},
+				    'user_id'              => $result->_id, //everyone likes to overwrite id so we'll use user_id
+				    'group'                => $result->group,
 				     );
 		$this->session->set_userdata($session_data);
-                
 		//extend the users cookies if the option is enabled
 		if ($this->config->item('user_extend_on_login', 'ion_auth'))
 		{
@@ -856,7 +852,7 @@ class Ion_auth_model_mongo extends CI_Model
             $this->mongo_db->where(array('_id' => new MongoId($id)));
 	    $result=$this->mongo_db->update('users', array('remember_code' => $salt));
 
-	    if ($result['n'] > -1)
+	    if ($result)
 	    {
 		set_cookie(array(
 			    'name'   => 'identity',
