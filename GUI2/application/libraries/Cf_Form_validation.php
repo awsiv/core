@@ -3,7 +3,7 @@
 class Cf_Form_validation extends CI_Form_validation {
      function __construct()
     {
-        parent::CI_Form_validation();
+        parent::__construct();
     }
     
     function unique($value, $params) {

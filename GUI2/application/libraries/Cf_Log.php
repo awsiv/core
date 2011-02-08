@@ -3,13 +3,12 @@ class Cf_Log extends CI_Log
 {
      var $mongo;
 	function __construct()
-    {
+       {
     	$this->mongo = new Mongo("localhost");
-        parent::CI_Log();
+        parent::__construct();
 		//$this->load->library('mongo_db');
-		$cfg=& get_config();
-		
-    }
+       $cfg=& get_config();
+        }
 
 	function write_log($level = 'error', $msg, $php_error = FALSE)
 	{		

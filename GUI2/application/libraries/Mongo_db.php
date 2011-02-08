@@ -406,9 +406,7 @@ class Mongo_db {
 	 		show_error("In order to retreive documents from MongoDB, a collection name must be passed", 500);
 	 	$results = array();
 	 	$documents = $this->db->{$collection}->find($this->wheres, $this->selects)->limit((int) $this->limit)->skip((int) $this->offset)->sort($this->sorts);
-	 	
 	 	$returns = array();
-	 	
 	 	foreach($documents as $doc):
 	 		$returns[] = $doc;
 	 	endforeach;
