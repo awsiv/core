@@ -71,7 +71,7 @@ class Test extends CI_Controller
                     'group'=>array('admin','developer','management')
             ));*/
             //$result=$this->ion_auth_model_mongo->register('sudhir', 'password','sudhir2pandey@gmail.com',array('admin','developer','faculty'));
-          $result=$this->ion_auth_model_mongo->register('hi', 'password','sudhir2pandey@gmail.com',array('admin','developer','faculty'));
+          $result=$this->ion_auth_model_mongo->register('mark', 'abacadaba','mark@cfengine.com',array('admin','developer','faculty'));
 
             echo $result;
          }
