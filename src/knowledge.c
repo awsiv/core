@@ -755,7 +755,7 @@ else if (handle)
 
 if (handle)
    {
-   fprintf(fp,"occurrences: %s::  \"promise/details/handle/%s\", represents => { \"declaration\" }; \n",CanonifyName(handle),handle);
+   fprintf(fp,"occurrences: %s::  \"/promise/details/handle/%s\", represents => { \"declaration\" }; \n",CanonifyName(handle),handle);
    }
 
 /* For activated classes we can assume that no one will */
