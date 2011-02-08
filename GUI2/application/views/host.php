@@ -46,36 +46,29 @@ $colour = cfpr_get_host_colour($hostkey);
                  <div class="panel">
                      <div class="panelhead">Comments</div>
                      <div class="panelcontent">
-                     <p><label class="width_20">hostKey:</label><label ><?php echo $hostname?></label></p>
+                     <p><label class="width_20">host Key:</label><label ><?php echo $hostname?></label></p>
                      <?php
-                        if ($commentid != "")
+                     if ($is_commented != "")
                         {
-                         echo "<div> <a href=\"#\" class=\"show_comment_btn\">Show Comments</a> </div>";
-                        }
-                        else
-                        {
-                         echo "<div> <a href=\"#\" class=\"add_comment_btn\">Add Comment</a> </div>";
-                        }
                      ?>
-
-                     <div id="comments">
+                     <a href="<?php echo site_url('notes/show_notes').'/'.$hostkey?>" class="btn floatRight" id="show_cmt" style="<?php if(is_commented)?>">Show Notes</a>
+                     <a href="#" class="btn floatRight" id="add_cmt" style="display:none">Add Note</a>
                        <?php
-                       if ($commentid != "")
-                       {
-                         echo $comments;
-                         echo "<div> <a href=\"#\" class=\"add_comment_btn\">Add Comment</a> </div>";
                        }
-                     ?>
+                       else
+                       {
+                       ?>
+                        <a href="<?php echo site_url('notes/show_notes').'/'.$hostkey?>" class="btn floatRight" id="show_cmt" style="display:none">Show Notes</a>
+                        <a href="#" class="btn floatRight" id="add_cmt" style="display:block">Add Note</a>
+                        <?php
+                        }
+                        ?>
+                      <div class="clearright"></div>
+                     <div id="comments">
                      </div>
 
                      <div id="add_comment">
-                       <form name ="add_comment_form" action="<?php echo site_url('welcome/host/')?>" method="post">
-                        <p><label>Username: </label><input type="text" name="username"></p>
-                        <p> <textarea name="comment_text" rows="10" cols="50"> </textarea> </p>
-                        <input type="hidden" name="hostkey" id="hostkey" value="<?php echo $hostkey?>"/>
-                        <input type="hidden" name="op" id="op" value="addcomment"/>
-                        <input type="submit" value="Comment!" name="submit_comment"> 
-                        </form>
+                       
                      </div>
 
 		     </div>
@@ -159,13 +152,24 @@ $(document).ready(function() {
     $('.tables table').tableFilter();
     $('.tables table').tablesorter({widgets: ['zebra']}); 
 	//the link generated shoud be site_url/welcome/promise/param1/param2
-	
+    $('#comments').hide();
+    $('#add_cmt').click(function(event) {
+        event.preventDefault();
+        $('#add_comment').slideToggle('slow');
+    });
+    $('#show_cmt').click(function(event){
+        event.preventDefault();
+        $('#comments').load($(this).attr('href'));
+        $('#comments').slideDown('slow');
+        $(this).hide();
+        $('#add_cmt').show();
+        
+    });
 });
 </script>
 
-<script type="text/javascript" src="scripts/jquery-1.4.2.min.js"></script>
  <script type="text/javascript">
-$('#comments').hide();
+
 $('#add_comment').hide();
 
 $('.show_comment_btn').click(function() {
@@ -174,10 +178,6 @@ $('.show_comment_btn').click(function() {
     return false;
 });
 
-$('.add_comment_btn').click(function() {
-    $('#add_comment').slideToggle('slow');
-   $(this).text($(this).text() == 'Hide Comments' ? 'Show Comments' : 'Hide  Comments');
-    return false;
-});
+
 
  </script>
