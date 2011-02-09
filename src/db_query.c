@@ -28,11 +28,7 @@
 
 int CFDB_GetValue(char *lval,char *rval,int size)
 
-{ bson_buffer bb;
-  bson field,query;
-  bson_iterator it1;
-  mongo_cursor *cursor;
-  mongo_connection conn;
+{ mongo_connection conn;
   
    // clients do not run mongo server -- will fail to connect
 
@@ -48,11 +44,26 @@ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    return false;
    }
     
+CFDB_HandleGetValue(lval,rval,size,&conn);
+
+
+CFDB_Close(&conn);
+
+return true;
+}
+
+/*****************************************************************************/
+
+void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn)
+{
+ bson_buffer bb;
+ bson field,query;
+ bson_iterator it1;
+ mongo_cursor *cursor;
+
 rval[0] = '\0';
 
-/* BEGIN SEARCH */
-
-cursor = mongo_find(&conn,MONGO_SCRATCH,bson_empty(&query),0,0,0,0);
+cursor = mongo_find(conn,MONGO_SCRATCH,bson_empty(&query),0,0,0,0);
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -69,8 +80,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    }
 
 mongo_cursor_destroy(cursor);
-CFDB_Close(&conn);
-return true;
+
 }
 
 /*****************************************************************************/

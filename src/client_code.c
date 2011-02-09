@@ -73,7 +73,6 @@ int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t 
  char in[CF_BUFSIZE],out[CF_BUFSIZE],workbuf[CF_BUFSIZE],cfchangedstr[265];
   unsigned char iv[32] = {1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
   long n_read_total = 0,length = 0;
-  EVP_CIPHER_CTX ctx;
   int plainlen,more = true,header = true,current_report = -1;
   time_t now,then,time2 = 0,delta1 = 0,delta2 = 0;
   struct Item *reports[cf_codebook_size] = {0};
@@ -84,7 +83,6 @@ NewReportBook(reports);
 snprintf(cfchangedstr,255,"%s%s",CF_CHANGEDSTR1,CF_CHANGEDSTR2);
 
 workbuf[0] = '\0';
-EVP_CIPHER_CTX_init(&ctx);  
 
 now = time(NULL);
 
@@ -176,8 +174,6 @@ while (more)
       current_report = Nova_StoreIncomingReports(out,reports,current_report);
       }
    }
-
-EVP_CIPHER_CTX_cleanup(&ctx);
 
 if (reports == NULL)
    {
