@@ -37,7 +37,7 @@ if (!Nova_ReadLongHistory(cfv,keyhash,obs))
    return false;
    }
 
-Nova_PlotLongHFile(cfv,LIGHTRED,GREEN,YELLOW);
+Nova_PlotLongHFile(cfv,buffer,bufsize);
 
 return true;
 }
@@ -102,16 +102,20 @@ return have_data;
 
 /*******************************************************************/
 
-void Nova_PlotLongHFile(struct CfDataView *cfv,int col1,int col2,int col3)
+void Nova_PlotLongHFile(struct CfDataView *cfv,char *buffer,int bufsize)
 
-{ int i,x,y,lx = 0,ly = 0,now,under,over,av;
-  double range,sx;
-  double low,high,a,s;
+{ int i;
+ char work[CF_MAXVARSIZE];
  
-for (sx = 0; sx < CF_LHISTORYDATA; sx++)
+strcpy(buffer,"[");
+ 
+for (i = 0; i < CF_LHISTORYDATA; i++)
    {
-   //plot x, data_E[(int)sx],CF_LHISTORYMARGIN);
+   snprintf(work,CF_MAXVARSIZE,"[%d,%lf,%lf,%lf],",i,cfv->data_q[i],cfv->data_E[i],cfv->bars[i]);
+   Join(buffer,work,bufsize);
    }
+
+Join(buffer,"]",bufsize);
 }
 
 /***********************************************************/

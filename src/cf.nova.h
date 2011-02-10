@@ -503,7 +503,7 @@ void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour);
 int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs,int force,char *buffer,int bufsize);
 int Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs);
 void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
-void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum);
+void Nova_PlotHistogram(struct CfDataView *cfv,char *buffer,int bufsize);
 struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_AnalyseHistogram(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize);
 
@@ -1017,7 +1017,7 @@ double Num(double x);
 int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs,int force,char *buffer,int bufsize);
 int Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawQAxes(struct CfDataView *cfv,int col);
-void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3);
+void Nova_PlotQFile(struct CfDataView *cfv,char *buffer,int bufsze);
 void Nova_AnalyseWeek(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 #ifdef MINGW
@@ -1140,7 +1140,7 @@ int NovaWin_WmiDeInitialize(void);
 int Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs,char *buffer,int bufsize);
 int Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawLongHAxes(struct CfDataView *cfv,int col);
-void Nova_PlotLongHFile(struct CfDataView *cfv,int col1,int col2,int col3);
+void Nova_PlotLongHFile(struct CfDataView *cfv,char *buffer,int bufsize);
 void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observables obs);
 
 /***************************************************************************/

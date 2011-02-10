@@ -72,8 +72,7 @@ if (!Nova_ReadTimeSeries(cfv,keyhash,obs))
    return false;
    }
 
-Nova_PlotQFile(cfv,LIGHTRED,GREEN,YELLOW);
-
+Nova_PlotQFile(cfv,buffer,bufsize);
 return true;
 }
 
@@ -95,9 +94,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    }
 
 CFDB_QueryWeekView(&dbconn,keyhash,obs,q,e,d);
-
 CFDB_Close(&dbconn);
-
 
 cfv->over = 0;
 cfv->under = 0;
@@ -221,27 +218,25 @@ else
 
 /*******************************************************************/
 
-void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3)
+void Nova_PlotQFile(struct CfDataView *cfv,char *buffer,int bufsize)
 
 { int i,x,y,lx = 0,ly = 0;
   double rx,ry,rs,sx = 0,s;
   double low,high,av;
   time_t now = time(NULL);
-  char work[CF_BUFSIZE];
+  char work[CF_MAXVARSIZE];
 
 // First plot average
 
-for (sx = 0; sx < CF_TIMESERIESDATA; sx++)
+strcpy(buffer,"[ ");
+  
+for (i = 0; i < CF_TIMESERIESDATA; i++)
    {
-   x = Nova_ViewPortX(cfv,sx);
-   y = Nova_ViewPortY(cfv,cfv->data_E[(int)sx],cfv->error_scale);
-
-   y = Nova_ViewPortY(cfv,cfv->data_q[(int)sx],cfv->error_scale);
-
-   snprintf(work,CF_BUFSIZE,"[ %lf,%lf,%lf,%lf ],");
+   snprintf(work,CF_MAXVARSIZE,"[ %d,%lf,%lf,%lf ],",i,cfv->data_q[i],cfv->data_E[i],cfv->bars[i]);
+   Join(buffer,work,bufsize);
    }
 
-
+Join(buffer,"]",bufsize);
 }
 
 /***********************************************************/

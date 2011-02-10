@@ -36,7 +36,7 @@ if (!Nova_ReadHistogram(cfv,keyhash,obs))
    }
 
 spectrum = Nova_MapHistogram(cfv,keyhash,obs);
-Nova_PlotHistogram(cfv,BLUES,spectrum);
+Nova_PlotHistogram(cfv,buffer,bufsize);
 DeleteItemList(spectrum);
 return true;
 }
@@ -104,30 +104,21 @@ return have_data;
 
 /*******************************************************************/
 
-void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum)
+void Nova_PlotHistogram(struct CfDataView *cfv,char *buffer,int bufsize)
 
 { int i,x,y,dev;
- double range,dq,q,ticksize = 0;
- double rx,ry,rs,sx = 0,s;
- double low,high;
- double xfill;
- int col = 0;
- struct Item *ip;
+  struct Item *ip;
+  char work[CF_MAXVARSIZE];
 
-// First plot average
-
-for (sx = 0; sx < CF_GRAINS; sx++)
+strcpy(buffer,"[");
+  
+for (i = 0; i < CF_GRAINS; i++)
    {
-   
-   // plot x,y sx,cfv->data_E[(int)sx]
+   snprintf(work,CF_MAXVARSIZE,"[%d,%lf]",i,cfv->data_E[i]);
+   Join(buffer,work,bufsize);
    }
 
-for (ip = spectrum; ip != NULL; ip=ip->next)
-   {
-   sx = ip->counter;
-   
-// Mark turning points?
-   }
+Join(buffer,"]",bufsize);
 }
 
 /*******************************************************************/
