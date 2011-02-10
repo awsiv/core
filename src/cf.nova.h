@@ -25,11 +25,6 @@
 # include <acl/libacl.h>
 #endif
 
-#ifdef HAVE_GD_H
-#include <gd.h>
-#include <gdfontl.h>
-#include <gdfontg.h>
-#endif
 
 #ifdef HAVE_LIBVIRT
 # include <libvirt/libvirt.h>
@@ -89,16 +84,6 @@ enum cf_rank_method
 
 struct CfDataView
    {
-   gdImagePtr im;
-   int width;
-   int height;
-   int margin;
-   int max_x;  // Window dimensions
-   int max_y;
-   int origin_x;
-   int origin_y;
-   double scale_x;
-   double scale_y;
    double max;
    double min;
    int over;
@@ -515,7 +500,7 @@ void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour);
 
 /* histogram.c */
 
-int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs,int force);
+int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs,int force,char *buffer,int bufsize);
 int Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs);
 void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
 void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum);
@@ -657,10 +642,9 @@ void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp);
 
 /* magnify.c */
 
-int Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs);
+int Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs,char *buffer,int bufsize);
 int Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs);
-void Nova_PlotMagQFile(struct CfDataView *cfv,int col1,int col2,int col3);
-void Nova_DrawMagQAxes(struct CfDataView *cfv,int col);
+void Nova_PlotMagQFile(struct CfDataView *cfv,char *buffer,int bufsize);
 void Nova_AnalyseMag(char *docroot, char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 /* monitoring.c */
@@ -897,6 +881,18 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real);
 
 /* web_api.c */
 
+char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize);
+int Nova2PHP_get_observable_id(char *name);
+void Nova2PHP_get_magnified_view(char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova2PHP_get_weekly_view(char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova2PHP_get_yearly_view(char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova2PHP_get_histogram_view(char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova2PHP_get_magnified_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova2PHP_get_weekly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova2PHP_get_yearly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova2PHP_get_histogram_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
+
+
 void Nova2PHP_get_knowledge_view(int pid,char *view,char *buffer,int bufsize);
 char *Nova_FormatDiff(char *s);
 void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize);
@@ -943,9 +939,6 @@ int Nova2PHP_promiselog_hosts(char *hostkey,char *handle,enum promiselog_rep typ
 
 int Nova2PHP_search_topics(char *search,int regex,char *buffer,int bufsize);
 void Nova2PHP_show_topic(int id,char * buffer,int bufsize);
-
-char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize);
-
 void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_category(int id,char *buffer,int bufsize);
@@ -1021,7 +1014,7 @@ int Nova2PHP_delete_host(char *keyHash);
 /* weekly.c */
 
 double Num(double x);
-int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs,int force);
+int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs,int force,char *buffer,int bufsize);
 int Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotQFile(struct CfDataView *cfv,int col1,int col2,int col3);
@@ -1144,7 +1137,7 @@ int NovaWin_WmiDeInitialize(void);
 
 /* yearly.c */
 
-int Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
+int Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs,char *buffer,int bufsize);
 int Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawLongHAxes(struct CfDataView *cfv,int col);
 void Nova_PlotLongHFile(struct CfDataView *cfv,int col1,int col2,int col3);

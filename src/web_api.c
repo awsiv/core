@@ -11,6 +11,7 @@
 /* Created: Tue Jul 27 15:44:14 2010                                         */
 /*                                                                           */
 /*****************************************************************************/
+
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
@@ -48,8 +49,8 @@ char *CDP_REPORTS[] =
    "File Diffs",
    "Registry",
    "Services",
-   NULL };
-
+   NULL
+   };
 
 /*****************************************************************************/
 
@@ -188,6 +189,60 @@ if (!CFDB_Close(&dbconn))
 
 /*****************************************************************************/
 
+int Nova2PHP_get_observable_id(char *name)
+{
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_get_magnified_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
+{
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_get_weekly_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
+{
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_get_yearly_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
+{
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_get_histogram_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
+{
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_get_magnified_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
+{
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_get_weekly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
+{
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_get_yearly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
+{
+}
+
+/*****************************************************************************/
+
+void Nova2PHP_get_histogram_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
+{
+}
+
+/*****************************************************************************/
+
 void Nova2PHP_summary_meter(char *hostkey)
 
 {
@@ -249,20 +304,20 @@ Join(returnval,buffer,bufsize);
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseLog *)rp->item;
-   if(strcmp(hp->comment_id,CF_NOCOMMENT) == 0)
-     {
-       snprintf(comment_link,sizeof(comment_link),"\"/notes/add/hostkey/%s/note_id/%s/report_type/%d/report_data/%s/time/%ld\"",hostkey,hp->comment_id,CFREPORT_PRLOG,hp->oid,hp->t);
-       snprintf(comment,sizeof(comment),"%s",CF_ADDCOMMENT);
-     }
+   if (strcmp(hp->comment_id,CF_NOCOMMENT) == 0)
+      {
+      snprintf(comment_link,sizeof(comment_link),"\"/notes/add/hostkey/%s/note_id/%s/report_type/%d/report_data/%s/time/%ld\"",hostkey,hp->comment_id,CFREPORT_PRLOG,hp->oid,hp->t);
+      snprintf(comment,sizeof(comment),"%s",CF_ADDCOMMENT);
+      }
    else
-     {
-       snprintf(comment_link,sizeof(comment_link),"\"/notes/show/note_id/%s\"",hp->comment_id);
-       snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
-     }
+      {
+      snprintf(comment_link,sizeof(comment_link),"\"/notes/show/note_id/%s\"",hp->comment_id);
+      snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
+      }
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"/promise/details/%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n", hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), comment_link, comment);
-
+   
    if(!Join(returnval,buffer,bufsize))
-     {
+      {
      break;
      }
    }

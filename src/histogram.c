@@ -20,40 +20,13 @@ extern int BLUES[];
 
 /*****************************************************************************/
 
-#ifdef HAVE_LIBGD
-
-int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs,int force)
+int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs,int force,char *buffer,int bufsize)
     
 { int i,y,hint;
   double frac;
-  FILE *fout;
-  struct stat s1,s2;
-  char newfile[CF_BUFSIZE];
   struct Item *spectrum;
-  struct stat sb;
-  time_t now = time(NULL);
-  
-  /* Initialization */
-
-snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_hist.png",cfv->docroot,keyhash,OBS[obs][0]);
-MakeParentDirectory(newfile,true);
-
-if (!force && stat(newfile,&sb) != -1)
-   {
-   if (now < sb.st_mtime + 3600)
-      {
-      return true; // Data haven't changed
-      }
-   }
 
 cfv->title = OBS[obs][1];
-cfv->im = gdImageCreate(cfv->width+2*cfv->margin,cfv->height+2*cfv->margin);
-Nova_MakePalette(cfv);
-
-for (y = 0; y < cfv->height+2*cfv->margin; y++)
-   {
-   gdImageLine(cfv->im,0,y,cfv->width+2*cfv->margin,y,BACKGR);
-   }
 
 /* Done initialization */
 
@@ -64,18 +37,6 @@ if (!Nova_ReadHistogram(cfv,keyhash,obs))
 
 spectrum = Nova_MapHistogram(cfv,keyhash,obs);
 Nova_PlotHistogram(cfv,BLUES,spectrum);
-Nova_Title(cfv,BLUE);
-Nova_DrawHistoAxes(cfv,BLACK);
-    
-if ((fout = fopen(newfile, "wb")) == NULL)
-   {
-   CfOut(cf_error,"fopen","Cannot write %s file\n",newfile);
-   return false;
-   }
-
-gdImagePng(cfv->im, fout);
-fclose(fout);
-gdImageDestroy(cfv->im);
 DeleteItemList(spectrum);
 return true;
 }
@@ -138,155 +99,35 @@ if (cfv->max > CF_MAX_LIMIT)
    cfv->max = CF_MAX_LIMIT;
    }
 
-cfv->origin_x = cfv->margin;
-cfv->origin_y = cfv->height+cfv->margin;
-
-cfv->max_x = cfv->margin+cfv->width;
-cfv->max_y = cfv->margin;
-
-cfv->range = (cfv->max - cfv->min);
-
 return have_data;
-}
-
-/**********************************************************************/
-
-void Nova_DrawHistoAxes(struct CfDataView *cfv,int col)
-
-{ int origin_x = cfv->margin;
-  int origin_y = cfv->height+cfv->margin;
-  int max_x = cfv->margin+cfv->width;
-  int max_y = cfv->margin;
-  int sigma;
-  int x,y;
-  double q,dq;
-  int ticksize = cfv->height/50;
-  static char *grains[CF_GRAINS/4] = {"-2 sig","-sig","AV","+sig","+2 sig"};
-  
-gdImageLine(cfv->im, origin_x, origin_y, max_x, origin_y, col);
-gdImageLine(cfv->im, origin_x, origin_y, origin_x, max_y, col);
-
-/* from -2 to +2 sigma  */
-
-for (sigma = 0; sigma < 5; sigma++)
-   {
-   x = origin_x + (CF_GRAINS/4) * sigma * (int)((double)cfv->width/(double)CF_GRAINS+0.5);
-
-   gdImageLine(cfv->im, x, origin_y-ticksize, x, origin_y+ticksize, col);
-   
-   gdImageString(cfv->im, gdFontGetLarge(),x,origin_y+2*ticksize,grains[sigma],col);
-   }
-
-// Make 5 gradations
-
-gdImageSetThickness(cfv->im,1);
-
-dq = cfv->range/5.0;
-cfv->scale_y = (double) cfv->height / cfv->range;
-
-if (dq < 0.001)
-   {
-   char qstr[16];
-
-   q = cfv->max;
-   x = Nova_ViewPortX(cfv,0);
-   y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
-
-   gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y,BLACK);
-   snprintf(qstr,15,"%.1f",q);
-   gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,BLACK);
-   }
-else
-   {
-   for (q = cfv->min; q <= cfv->min+cfv->range; q += dq)
-      {
-      char qstr[16];
-
-      x = Nova_ViewPortX(cfv,0);
-      y = Nova_ViewPortY(cfv,q,CF_MAGMARGIN);
-      
-      gdImageLine(cfv->im, x-2*ticksize, y, cfv->max_x, y,BLACK);
-      snprintf(qstr,15,"%.1f",q);
-      gdImageString(cfv->im, gdFontGetLarge(),x-6*ticksize,y,qstr,BLACK);
-      }
-   }
 }
 
 /*******************************************************************/
 
 void Nova_PlotHistogram(struct CfDataView *cfv,int *blues,struct Item *spectrum)
 
-{
- int origin_x = cfv->margin;
- int origin_y = cfv->height+cfv->margin;
- int max_x = cfv->margin+cfv->width;
- int max_y = cfv->margin;
- int i,x,y,dev;
+{ int i,x,y,dev;
  double range,dq,q,ticksize = 0;
  double rx,ry,rs,sx = 0,s;
- double scale_x = ((double)cfv->width /(double)CF_GRAINS);
- double scale_y = 10.0;
  double low,high;
  double xfill;
  int col = 0;
- int lightred = gdImageColorAllocate(cfv->im, 255, 150, 150);
  struct Item *ip;
-
-if (cfv->max == 0)
-   {
-   return;
-   }
-
-range = (cfv->max - cfv->min);
-scale_y = (double) cfv->height / range;
 
 // First plot average
 
 for (sx = 0; sx < CF_GRAINS; sx++)
    {
-   x = origin_x + (sx * scale_x);
-   y = origin_y  - (int)((cfv->data_E[(int)sx]-cfv->min + cfv->error_scale) * scale_y);
-   s = cfv->bars[(int)sx] * scale_y;
    
-   low = y-s;
-   high = (y+s > origin_y)? origin_y : y+s;
-   
-   //dev = 50 - abs(25 + ((double)50/(double)CF_GRAINS)*(sx-CF_GRAINS));
-
-   dev = sx * (double)CF_SHADES/(double)CF_GRAINS;
-   xfill = x;
-   
-   for (col = 0; col < CF_SHADES; col++)
-      {
-      xfill += (double)cfv->width/(double)CF_GRAINS/((double)CF_SHADES);
-      gdImageLine(cfv->im,xfill,origin_y,xfill,y,blues[col]);
-      }
-
-   //gdImageFilledRectangle(cfv->im,x,origin_y,x+1,y,lightred);
+   // plot x,y sx,cfv->data_E[(int)sx]
    }
 
 for (ip = spectrum; ip != NULL; ip=ip->next)
    {
    sx = ip->counter;
-   x = origin_x + (sx * scale_x);
-   y = origin_y  - (int)((cfv->data_E[(int)sx]-cfv->min + cfv->error_scale) * scale_y);
-   s = cfv->bars[(int)sx] * scale_y;
    
-   low = y-s;
-   high = (y+s > origin_y)? origin_y : y+s;
-   
-   dev = sx * (double)CF_SHADES/(double)CF_GRAINS;
-   xfill = x;
-   
-   for (col = 0; col < CF_SHADES; col++)
-      {
-      xfill += (double)cfv->width/(double)CF_GRAINS/((double)CF_SHADES);
-      gdImageLine(cfv->im,xfill,origin_y,xfill,y,GREEN);
-      }
+// Mark turning points?
    }
-
-gdImageSetThickness(cfv->im,4);
-gdImageLine(cfv->im,origin_x+32*scale_x,origin_y,origin_x+cfv->width/2,cfv->max_y,lightred);
 }
 
 /*******************************************************************/
@@ -304,8 +145,6 @@ struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observa
   /* First find the variance sigma2 */
 
 CfOut(cf_verbose,""," -> Looking for maxima in %s\n",OBS[obs][0]);
-
-snprintf(img,CF_BUFSIZE,"%s/hub/%s/%s_hist.png",cfv->docroot,keyhash,OBS[obs][0]);
 
 for (sx = 1; sx < CF_GRAINS; sx++)
    {
@@ -363,12 +202,9 @@ void Nova_AnalyseHistogram(char *docroot,char *keyhash,enum observables obs,char
   double sensitivity_factor = 1.2;
   struct CfDataView cfv;
 
-cfv.height = 300;
-cfv.width = 700; //(7*24*2)*2; // halfhour
-cfv.margin = 50;
 cfv.docroot = docroot;
 
-Nova_ViewHisto(&cfv,keyhash,obs,true);
+Nova_ViewHisto(&cfv,keyhash,obs,true,buffer,bufsize);
 
 *buffer = '\0';
 
@@ -459,11 +295,3 @@ snprintf(work,CF_BUFSIZE-1,"</div>\n");
 Join(buffer,work,bufsize);
 }
 
-#else  /* NOT HAVE_LIBGD */
-
-void Nova_AnalyseHistogram(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize)
-{
-
-}
-
-#endif

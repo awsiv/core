@@ -22,19 +22,11 @@ extern char *UNITS[];
 
 void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize)
     
-{ 
-#ifdef HAVE_LIBGD
-  char work[CF_BUFSIZE],hostname[CF_SMALLBUF],ipaddress[CF_SMALLBUF];
+{ char work[CF_BUFSIZE],hostname[CF_SMALLBUF],ipaddress[CF_SMALLBUF];
   char desc[CF_MAXVARSIZE],id[CF_MAXVARSIZE],lastsaw[CF_SMALLBUF];
-  struct CfDataView cfv;
   int i, have_week, have_mag, have_histo;
+  struct CfDataView cfv;
 
-// Make common resources
-
-cfv.height = 300;
-cfv.width = 700; //(7*24*2)*2; // halfhour
-cfv.margin = 50;
-cfv.docroot = docroot;
 
 Nova2PHP_hostinfo(hostkey,hostname,ipaddress,CF_MAXVARSIZE);
 
@@ -51,9 +43,9 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
    // Make the graphs
 
-   have_week = Nova_ViewWeek(&cfv,hostkey,i,false);
-   have_mag = Nova_ViewMag(&cfv,hostkey,i);
-   have_histo = Nova_ViewHisto(&cfv,hostkey,i,false);
+//   have_week = Nova_ViewWeek(&cfv,hostkey,i,false);
+//   have_mag = Nova_ViewMag(&cfv,hostkey,i);
+//   have_histo = Nova_ViewHisto(&cfv,hostkey,i,false);
 
    if (have_mag)
       {   
@@ -65,114 +57,64 @@ for (i = 0; i < CF_OBSERVABLES; i++)
                "<a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/type\">%s</a>"
                "<br><br><small>Latest data<br>%s</small></td>",hostname,hostkey,i,OBS[i][0],OBS[i][0],lastsaw);      
       Join(buffer,work,bufsize);
-
-
-      if(have_mag)
-	{
-	  snprintf(work,CF_BUFSIZE,"<td><a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/mag\"><img src=\"/hub/%s/%s_mag.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
-	}
+      
+      
+      if (have_mag)
+         {
+         snprintf(work,CF_BUFSIZE,"<td><a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/mag\"><img src=\"/hub/%s/%s_mag.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+         }
       else
-	{
-	snprintf(work,CF_BUFSIZE,"<td><img src=\"/images/monitoring_nodata.png\" width=\"300\" border=\"0\"></td>");
-	}
+         {
+         snprintf(work,CF_BUFSIZE,"<td><img src=\"/images/monitoring_nodata.png\" width=\"300\" border=\"0\"></td>");
+         }
       
       Join(buffer,work,bufsize);
 
 
-      if(have_week)
-	{
-	  snprintf(work,CF_BUFSIZE,"<td><a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/week\"><img src=\"/hub/%s/%s_week.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
-	}
+      if (have_week)
+         {
+         snprintf(work,CF_BUFSIZE,"<td><a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/week\"><img src=\"/hub/%s/%s_week.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+         }
       else
-	{
-	snprintf(work,CF_BUFSIZE,"<td><img src=\"/images/monitoring_nodata.png\" width=\"300\" border=\"0\"></td>");
-	}
-
+         {
+         snprintf(work,CF_BUFSIZE,"<td><img src=\"/images/monitoring_nodata.png\" width=\"300\" border=\"0\"></td>");
+         }
+      
       Join(buffer,work,bufsize);
-
-
+      
+      
       if(have_histo)
-	{
-	  snprintf(work,CF_BUFSIZE,"<td><a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/hist\"><img src=\"/hub/%s/%s_hist.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
-	}
+         {
+         snprintf(work,CF_BUFSIZE,"<td><a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/hist\"><img src=\"/hub/%s/%s_hist.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
+         }
       else
-	{
-	snprintf(work,CF_BUFSIZE,"<td><img src=\"/images/monitoring_nodata.png\" width=\"300\" border=\"0\"></td>");
-	}
-
+         {
+         snprintf(work,CF_BUFSIZE,"<td><img src=\"/images/monitoring_nodata.png\" width=\"300\" border=\"0\"></td>");
+         }
+      
       Join(buffer,work,bufsize);
-
-
+            
       Join(buffer,"</tr>\n",bufsize);
       }
    }
 
 EndJoin(buffer,"</table>\n",bufsize);
-
-#endif /* HAVE_LIBGD */
 }
 
 /*****************************************************************************/
 
 void Nova_ComplianceSummaryGraph(char *docroot)
 
-{
-#ifdef HAVE_LIBGD
-  char *report,buffer[CF_BUFSIZE];
+{ char *report,buffer[CF_BUFSIZE];
   int count = 0, tmpsize;
-  struct CfDataView cfv;
   char newfile[CF_BUFSIZE],key[CF_MAXVARSIZE],value[CF_MAXVARSIZE];
   const int span = 7 * 4;
   const double scale = 4.0;
   double x,kept[span], repaired[span], notkept[span];
   double tkept,trepaired,tnotkept,total,y;
   double lkept,lrepaired,lnotkept,ltotal;
-  FILE *fout;
   time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
   int i,j,slot;
-  struct stat sb;
-  
-cfv.height = 200;
-cfv.width = 460;
-cfv.margin = 50;
-cfv.docroot = docroot;
-cfv.range = 150;
-cfv.min = 0;
-cfv.max = 100;
-cfv.origin_x = cfv.margin;
-cfv.origin_y = cfv.height - cfv.margin;
-
-snprintf(newfile,CF_BUFSIZE,"%s/hub/common/compliance.png",cfv.docroot);
-
-MakeParentDirectory(newfile,true);
-
-if (stat(newfile,&sb) != -1)
-   {
-   if (now < sb.st_mtime + 3600)
-      {
-      return; // Data haven't changed
-      }
-   }
-
-cfv.title = "Compliance";
-cfv.im = gdImageCreate(cfv.width+cfv.margin,cfv.height+cfv.margin);
-Nova_MakePalette(&cfv);
-
-// Grey Background
-
-for (y = 0; y < cfv.height+cfv.margin; y++)
-   {
-   gdImageLine(cfv.im,0,y,cfv.width+cfv.margin,y,BACKGR);
-   }
-
-// Green shading background
-
-for (i = 0; i < 16; i++)
-   {
-   x = i * (cfv.width - cfv.origin_x)/16 + cfv.origin_x + cfv.width/span/2;   
-   gdImageSetThickness(cfv.im,cfv.width/16);
-   gdImageLine(cfv.im,x,0,x,cfv.range,GREENS[i]);
-   }
 
 for (i = 0; i < (int)span; i++)
    {
@@ -192,89 +134,16 @@ for (i = 0,start = now - one_week; start < now; start += CF_SHIFT_INTERVAL,i++)
    snprintf(key,CF_MAXVARSIZE,"tc_%d",slot);
    CFDB_GetValue(key,value,CF_MAXVARSIZE);
    sscanf(value,"%lf,%lf,%lf",&(kept[i]),&(repaired[i]),&(notkept[i]));
+
+   // print UTC(time), 
    }
-
-// For i = GetShiftSlot(start); j=0 - span; kept[i+j % span]
-
-for (i = 0; i < span; i++)
-   {
-   double red,yellow;
-   
-   x = i * (cfv.width-cfv.origin_x)/span + cfv.origin_x;
-
-   total = notkept[i]+kept[i]+repaired[i];
-   tkept = kept[i] / total * cfv.range;
-   tnotkept = notkept[i]/total * cfv.range;
-   trepaired = repaired[i]/total * cfv.range;
-
-   red = tnotkept*scale;
-
-   if (red > cfv.range)
-      {
-      red = cfv.range;
-      }
-   
-   gdImageSetThickness(cfv.im,cfv.width/span/1.3);
-   gdImageLine(cfv.im,x,0,x,red,RED);
-
-   yellow = (tnotkept+trepaired)*scale;
-
-   if (yellow > cfv.range)
-      {
-      yellow = cfv.range;
-      }
-   
-   gdImageSetThickness(cfv.im,cfv.width/span/1.3);
-   gdImageLine(cfv.im,x,red,x,yellow,YELLOW);
-
-   if (total < 40) // No data
-      {
-      gdImageSetThickness(cfv.im,cfv.width/span/2);
-      gdImageLine(cfv.im,x,(tnotkept+trepaired)*scale,x,cfv.range,ORANGE);
-      }
-   else
-      {
-      if (yellow < cfv.range)
-         {
-         gdImageSetThickness(cfv.im,1);
-         gdImageLine(cfv.im,x,yellow,x,cfv.range,WHITE);
-         }
-      }
-
-   ltotal = total;
-   lkept = tkept;
-   lrepaired = trepaired;
-   lnotkept = tnotkept;
-   }
-
-Nova_DrawComplianceAxes(&cfv,LIGHTGREY);
-
-if ((fout = fopen(newfile, "wb")) == NULL)
-   {
-   CfOut(cf_verbose,"fopen","Cannot write %s file\n",newfile);
-   return;
-   }
-else
-   {
-   CfOut(cf_verbose,""," -> Making %s\n",newfile);
-   }
-
-gdImagePng(cfv.im, fout);
-fclose(fout);
-gdImageDestroy(cfv.im);
-
-#endif  /* HAVE_LIBGD */
 }
 
 /*****************************************************************************/
 
 void Nova_SummaryMeter(char *docroot,char *search_string)
 
-{
-#ifdef HAVE_LIBGD
-
-  FILE *fout;
-  char filename[CF_BUFSIZE];
+{  char filename[CF_BUFSIZE];
   int returnval = 0;
   double kept = 0,repaired = 0;
   double kept_week = 0,kept_day = 0,kept_hour = 0,kept_comms = 0,kept_anom = 0,kept_perf = 0,kept_other = 0;
@@ -287,25 +156,6 @@ void Nova_SummaryMeter(char *docroot,char *search_string)
   mongo_connection dbconn;
   struct Rlist *rp;
   struct CfDataView cfv;
-
-  // make sure GD finds fonts - FIXME for Windows
-  if (putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
-     {
-     CfOut(cf_error,"putenv","!! Cannot set GD font path environment");
-     }
-  
-cfv.height = CF_METER_HEIGHT;
-cfv.width = CF_METER_WIDTH;
-cfv.margin = CF_METER_MARGIN;
-cfv.title = "System state";
-cfv.docroot = docroot;
-
-cfv.im = gdImageCreate(cfv.width+2*cfv.margin,cfv.height+2*cfv.margin);
-Nova_MakePalette(&cfv);
-
-gdImageSetThickness(cfv.im,2);
-gdImageFilledRectangle(cfv.im,0,0,cfv.width+2*cfv.margin,cfv.height+2*cfv.margin,LIGHTGREY);
-gdImageRectangle(cfv.im,0,0,cfv.width+2*cfv.margin,cfv.height+2*cfv.margin,BLACK);
 
 // get data
 
@@ -385,26 +235,6 @@ Nova_BarMeter(&cfv,7,kept_anom/num_anom,rep_anom/num_anom,"Anom");
 // Clean up
 
 DeleteHubQuery(hq,DeleteHubMeter);
-
-// Write graph
-snprintf(filename,CF_BUFSIZE,"%s/hub/common/meter.png",cfv.docroot);
-MakeParentDirectory(filename,true);
-
-if ((fout = fopen(filename, "wb")) == NULL)
-   {
-   CfOut(cf_error,"fopen"," !! Couldn't draw meter %s",filename);
-   return;
-   }
-else
-   {
-   CfOut(cf_verbose,""," -> Making %s\n",filename);
-   }
-    
-gdImagePng(cfv.im, fout);
-fclose(fout);
-gdImageDestroy(cfv.im);
-
-#endif /* HAVE_LIBGD */
 }
 
 /*****************************************************************************/
@@ -412,10 +242,6 @@ gdImageDestroy(cfv.im);
 int Nova_Meter(char *docroot,char *hostkey)
 
 { int returnval = 0;
-
-#ifdef HAVE_LIBGD
-
-  FILE *fout;
   char filename[CF_BUFSIZE];
   double kept,repaired;
   struct stat sb;
@@ -425,27 +251,6 @@ int Nova_Meter(char *docroot,char *hostkey)
   mongo_connection dbconn;
   struct Rlist *rp;
   struct CfDataView cfv;
-
-  
-  // make sure GD finds fonts - FIXME for Windows
-if (putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
-   {
-   CfOut(cf_error,"putenv","!! Cannot set GD font path environment");
-   }
-  
-cfv.height = CF_METER_HEIGHT;
-cfv.width = CF_METER_WIDTH;
-cfv.margin = CF_METER_MARGIN;
-cfv.title = "System state";
-cfv.docroot = docroot;
-cfv.im = gdImageCreate(cfv.width+2*cfv.margin,cfv.height+2*cfv.margin);
-Nova_MakePalette(&cfv);
-
-gdImageSetThickness(cfv.im,2);
-gdImageFilledRectangle(cfv.im,0,0,cfv.width+2*cfv.margin,cfv.height+2*cfv.margin,LIGHTGREY);
-gdImageRectangle(cfv.im,0,0,cfv.width+2*cfv.margin,cfv.height+2*cfv.margin,BLACK);
-
-// get data
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -496,28 +301,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 // Clean up
 
 DeleteHubQuery(hq,DeleteHubMeter);
-
-// Write graph
-
-snprintf(filename,CF_BUFSIZE,"%s/hub/%s/meter.png",cfv.docroot,hostkey);
-MakeParentDirectory(filename,true);
-
-if ((fout = fopen(filename, "wb")) == NULL)
-   {
-   return returnval;
-   }
-else
-   {
-   CfOut(cf_verbose,""," -> Making %s\n",filename);
-   }
-    
-gdImagePng(cfv.im, fout);
-fclose(fout);
-gdImageDestroy(cfv.im);
-
-#endif /* HAVE_LIBGD */
-
-return returnval;
+return true;
 }
 
 /*****************************************************************************/
@@ -767,53 +551,6 @@ for (ip = hosts; ip != NULL; ip=ip->next)
 DeleteItemList(hosts);
 sorted = SortItemListNames(sorted);
 return sorted;
-}
-
-/*****************************************************************************/
-
-void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired,char *s)
-
-{
-#ifdef HAVE_LIBGD
-
-  int n = number;
-  int m = number - 1;
-  int v_offset = 28,bar_height = CF_METER_HEIGHT-v_offset;
-  int width = 35,h_offset = 15;
-  int thickness = bar_height/20;
-  int colour,x,y;
-  double count;
-  char ss[CF_MAXVARSIZE];
-
-for (count = 0,y = v_offset+bar_height; y > v_offset && count < 20; y -= thickness,count++)
-   {
-   gdImageSetThickness(cfv->im,thickness);
-
-   // 20 bars in the given height
-   // if (count/20.0 <= kept/100) - rewtite
-          
-   if (count*5 <= kept)
-      {
-      colour = GREEN;
-      }
-   else if (count*5 <= (kept+repaired))
-      {
-      colour = YELLOW;
-      }
-   else
-      {
-      colour = RED;
-      }
-
-   gdImageLine(cfv->im,n*h_offset+m*width,y,n*h_offset+n*width,y,colour);
-   }
-
-snprintf(ss,CF_MAXVARSIZE-1,"%.1lf",kept);
-
-Nova_Font(cfv,n*h_offset+m*width+5,15,s,WHITE);
-Nova_Font(cfv,n*h_offset+m*width+5,27,ss,WHITE);
-
-#endif /* HAVE_LIBGD */
 }
 
 /*****************************************************************************/
@@ -1104,49 +841,5 @@ else
    return false;
    }
 }
-
-/**********************************************************************/
-
-void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col)
-
-{
-#ifdef HAVE_LIBGD
- 
-  const int span = 7 * 4;
-  int day,x,y;
-  double q,dq;
-  time_t now;
-  int ticksize = cfv->height/50;
-  static char *days[8] = { "6","5","4","3","2","1","Now","0"};
-
-if (putenv("GDFONTPATH=/var/cfengine/fonts") != 0)
-   {
-   CfOut(cf_error,"putenv","!! Cannot set GD font path environment");
-   }
-
-for (day = 0; day < 7; day++)
-   {
-   x = cfv->origin_x + day * cfv->width/7;
-   Nova_Font(cfv,x,cfv->range+cfv->margin/2,days[day],col);
-   }
-
-Nova_Font(cfv,cfv->width/4,cfv->range+cfv->margin,"Average compliance (days ago)",col);
-Nova_Font(cfv,0,10,"100%",col);
-Nova_Font(cfv,0,cfv->range,"75%",col);
-
-x = cfv->margin - (cfv->width/span+1)/2;
-
-gdImageSetThickness(cfv->im,2);
-gdImageLine(cfv->im,x,cfv->range,x,0,BLACK);
-
-gdImageSetThickness(cfv->im,2);
-gdImageLine(cfv->im,x,cfv->range,cfv->width,cfv->range,BLACK);
-
-//gdImageString(cfv->im, gdFontGetLarge(),0,0,"100%",col);
-//gdImageString(cfv->im, gdFontGetLarge(),0,cfv->range,"50%",col);      
-
-#endif  /* HAVE_LIBGD */
-}
-
 
 #endif
