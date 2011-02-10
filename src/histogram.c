@@ -20,23 +20,24 @@ extern int BLUES[];
 
 /*****************************************************************************/
 
-int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs,int force,char *buffer,int bufsize)
+int Nova_ViewHisto(char *keyhash,enum observables obs,char *buffer,int bufsize)
     
 { int i,y,hint;
   double frac;
   struct Item *spectrum;
-
-cfv->title = OBS[obs][1];
+  struct CfDataView cfv;
+  
+cfv.title = OBS[obs][1];
 
 /* Done initialization */
 
-if (!Nova_ReadHistogram(cfv,keyhash,obs))
+if (!Nova_ReadHistogram(&cfv,keyhash,obs))
    {
    return false;
    }
 
-spectrum = Nova_MapHistogram(cfv,keyhash,obs);
-Nova_PlotHistogram(cfv,buffer,bufsize);
+spectrum = Nova_MapHistogram(&cfv,keyhash,obs);
+Nova_PlotHistogram(&cfv,buffer,bufsize);
 DeleteItemList(spectrum);
 return true;
 }
@@ -192,10 +193,16 @@ void Nova_AnalyseHistogram(char *docroot,char *keyhash,enum observables obs,char
   char work[CF_BUFSIZE];
   double sensitivity_factor = 1.2;
   struct CfDataView cfv;
+  struct Item *spectrum;
 
 cfv.docroot = docroot;
 
-Nova_ViewHisto(&cfv,keyhash,obs,true,buffer,bufsize);
+if (!Nova_ReadHistogram(&cfv,keyhash,obs))
+   {
+   return;
+   }
+
+spectrum = Nova_MapHistogram(&cfv,keyhash,obs);
 
 *buffer = '\0';
 
@@ -284,5 +291,7 @@ Join(buffer,work,bufsize);
 
 snprintf(work,CF_BUFSIZE-1,"</div>\n");
 Join(buffer,work,bufsize);
+DeleteItemList(spectrum);
+
 }
 

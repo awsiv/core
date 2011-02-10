@@ -21,21 +21,21 @@ extern char *UNITS[];
 
 /*****************************************************************************/
 
-int Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs,char *buffer,int bufsize)
+int Nova_ViewMag(char *keyhash,enum observables obs,char *buffer,int bufsize)
     
 { int i,y,hint;
-
-cfv->title = OBS[obs][1];
+  struct CfDataView cfv;
+ 
+cfv.title = OBS[obs][1];
 
 /* Done initialization */
 
-if (!Nova_ReadMagTimeSeries(cfv,keyhash,obs))
+if (!Nova_ReadMagTimeSeries(&cfv,keyhash,obs))
    {
    return false;
    }
 
-Nova_PlotMagQFile(cfv,buffer,bufsize);
-
+Nova_PlotMagQFile(&cfv,buffer,bufsize);
 return true;
 }
 
@@ -139,7 +139,7 @@ Join(buffer,"]",bufsize);
 
 /***********************************************************/
 
-void Nova_AnalyseMag(char *docroot,char *hostkey,enum observables obs,char *buffer,int bufsize)
+void Nova_AnalyseMag(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 { char work[CF_BUFSIZE];
   struct CfDataView cfv;
@@ -148,7 +148,10 @@ void Nova_AnalyseMag(char *docroot,char *hostkey,enum observables obs,char *buff
   
 /* Done initialization */
 
-Nova_ViewMag(&cfv,hostkey,obs,buffer,bufsize);
+if (!Nova_ReadMagTimeSeries(&cfv,keyhash,obs))
+   {
+   return;
+   }
 
 *buffer = '\0';
 

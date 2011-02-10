@@ -196,25 +196,32 @@ int Nova2PHP_get_observable_id(char *name)
 /*****************************************************************************/
 
 void Nova2PHP_get_magnified_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
+
 {
+Nova_ViewMag(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
 
 void Nova2PHP_get_weekly_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
 {
+Nova_ViewWeek(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
 
 void Nova2PHP_get_yearly_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
+
 {
+Nova_ViewLongHistory(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
 
 void Nova2PHP_get_histogram_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
+
 {
+Nova_ViewHisto(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/

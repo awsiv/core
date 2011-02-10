@@ -23,22 +23,22 @@ extern char *UNITS[];
 
 /*****************************************************************************/
 
-int Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs,char *buffer,int bufsize)
+int Nova_ViewLongHistory(char *keyhash,enum observables obs,char *buffer,int bufsize)
     
 { int i,y,hint,yr,num = 0,ago,lc;
   double max=0,min=9999,range;
-
-cfv->title = OBS[obs][1];
+  struct CfDataView cfv;
+  
+cfv.title = OBS[obs][1];
 
 /* Done initialization */
 
-if (!Nova_ReadLongHistory(cfv,keyhash,obs))
+if (!Nova_ReadLongHistory(&cfv,keyhash,obs))
    {
    return false;
    }
 
-Nova_PlotLongHFile(cfv,buffer,bufsize);
-
+Nova_PlotLongHFile(&cfv,buffer,bufsize);
 return true;
 }
 

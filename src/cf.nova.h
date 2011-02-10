@@ -500,7 +500,7 @@ void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour);
 
 /* histogram.c */
 
-int Nova_ViewHisto(struct CfDataView *cfv,char *keyhash,enum observables obs,int force,char *buffer,int bufsize);
+int Nova_ViewHisto(char *keyhash,enum observables obs,char *buffer,int bufsize);
 int Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs);
 void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
 void Nova_PlotHistogram(struct CfDataView *cfv,char *buffer,int bufsize);
@@ -642,7 +642,7 @@ void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp);
 
 /* magnify.c */
 
-int Nova_ViewMag(struct CfDataView *cfv,char *keyhash,enum observables obs,char *buffer,int bufsize);
+int Nova_ViewMag(char *keyhash,enum observables obs,char *buffer,int bufsize);
 int Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs);
 void Nova_PlotMagQFile(struct CfDataView *cfv,char *buffer,int bufsize);
 void Nova_AnalyseMag(char *docroot, char *keyhash,enum observables obs,char *buffer,int bufsize);
@@ -1014,7 +1014,7 @@ int Nova2PHP_delete_host(char *keyHash);
 /* weekly.c */
 
 double Num(double x);
-int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs,int force,char *buffer,int bufsize);
+int Nova_ViewWeek(char *keyhash,enum observables obs,char *buffer,int bufsize);
 int Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotQFile(struct CfDataView *cfv,char *buffer,int bufsze);
@@ -1137,7 +1137,7 @@ int NovaWin_WmiDeInitialize(void);
 
 /* yearly.c */
 
-int Nova_ViewLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs,char *buffer,int bufsize);
+int Nova_ViewLongHistory(char *keyhash,enum observables obs,char *buffer,int bufsize);
 int Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawLongHAxes(struct CfDataView *cfv,int col);
 void Nova_PlotLongHFile(struct CfDataView *cfv,char *buffer,int bufsize);

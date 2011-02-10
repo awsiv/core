@@ -14,12 +14,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,BACKGR,ORANGE;
-extern char *UNITS[];
-
-
-/*****************************************************************************/
-
 double Num(double x)
 {
 if (isnan(x) || isinf(x))
@@ -42,37 +36,27 @@ return x;
 
 /*****************************************************************************/
 
-int Nova_ViewWeek(struct CfDataView *cfv,char *keyhash,enum observables obs,int force,char *buffer,int bufsize)
+int Nova_ViewWeek(char *keyhash,enum observables obs,char *buffer,int bufsize)
     
 { int i,y,hint;
   FILE *fout;
   struct stat sb;
   char newfile[CF_BUFSIZE];
   time_t now = time(NULL);
+  struct CfDataView cfv;
   
   /* Initialization */
 
-snprintf(newfile,CF_BUFSIZE,"%s/hub/%s/%s_week.png",cfv->docroot,keyhash,OBS[obs][0]);
-MakeParentDirectory(newfile,true);
-
-if (!force && stat(newfile,&sb) != -1)
-   {
-   if (now < sb.st_mtime + 6*3600)
-      {
-      return true; // Data haven't changed
-      }
-   }
-
-cfv->title = OBS[obs][1];
+cfv.title = OBS[obs][1];
 
 /* Done initialization */
 
-if (!Nova_ReadTimeSeries(cfv,keyhash,obs))
+if (!Nova_ReadTimeSeries(&cfv,keyhash,obs))
    {
    return false;
    }
 
-Nova_PlotQFile(cfv,buffer,bufsize);
+Nova_PlotQFile(&cfv,buffer,bufsize);
 return true;
 }
 
@@ -251,7 +235,10 @@ cfv.docroot = docroot;
 
 /* Done initialization */
 
-Nova_ViewWeek(&cfv,keyhash,obs,true,buffer,bufsize);
+if (!Nova_ReadTimeSeries(&cfv,keyhash,obs))
+   {
+   return;
+   }
 
 *buffer = '\0';
 
