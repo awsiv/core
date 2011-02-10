@@ -673,16 +673,14 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_
 {
   bson_buffer bb,record;
   bson host_key;  // host description
-  char varNameIndex[64];
   bson_buffer *setObj;
   bson setOp;
   struct Item *ip;
   int observable,slot;
-  char *dbOperation = {0};
   char timekey[CF_SMALLBUF];
   char handle[CF_MAXVARSIZE],reason[CF_BUFSIZE];
   char *collName;
-  char *dbOp;
+  char *dbOp = NULL;
   long then;
   time_t tthen;
   
@@ -734,7 +732,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    }
 
 // should do this in loop, but not efficient...
- MongoCheckForError(conn,dbOperation,keyhash);
+ MongoCheckForError(conn,dbOp,keyhash);
  
 }
 
@@ -1544,5 +1542,5 @@ bson_destroy(&setOp);
 
 /*****************************************************************************/
 
-#endif  /* HAVE_MONGOC */
+#endif  /* HAVE_LIBMONGOC */
 

@@ -269,6 +269,13 @@ return true;
 /*********************************************************************/
 
 void Nova_CacheTotalCompliance()
+/*
+ * Caches the current slot of total compliance.
+ * WARNING: Must be run every 5 mins (otherwise slot from last week
+ * will show in graph).
+ * WARNING: We might use one week old data (TotalCompliance gets one
+ * week old)
+ */
 {
 #ifdef HAVE_LIBMONGOC
   const int span = 7 * 4;
