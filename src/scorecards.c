@@ -19,20 +19,21 @@
 
 void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize)
     
-{ char work[CF_BUFSIZE];
-
+{ char work[CF_BUFSIZE],desc[CF_BUFSIZE];
+  int i;
+ 
 strcpy(buffer,"[");
 
 for (i = 0; i < CF_OBSERVABLES; i++)
    {
-   Nova_LookupAggregateClassName(i,id,desc);
+   Nova_LookupAggregateClassName(i,work,desc);
 
-   if (strcmp(id,"spare") == 0)
+   if (strcmp(work,"spare") == 0)
       {
       continue;
       }
 
-   snprintf(work,"%d,",i);
+   snprintf(work,CF_BUFSIZE,"%d,",i);
    Join(buffer,work,bufsize);
    }
 

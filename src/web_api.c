@@ -275,7 +275,7 @@ Nova_PerformancePage(DOCROOT,hostkey,buffer,bufsize);
 
 char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize)
 {
-snprintf(buffer,bufsize,"%s",OBS[obs][0]);
+snprintf(buffer,bufsize,"[ \"%s\", \"%s\"]",OBS[obs][0],OBS[obs][1]);
 return buffer;
 }
 
