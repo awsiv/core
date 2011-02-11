@@ -221,5 +221,10 @@ class Test extends CI_Controller
            $result=$db->posts->insert($document);
            print_r($result);
          }
+
+         function mongoclasstest()
+         {
+             $this->load->library('mongo_db');
+         }
         
 }
