@@ -76,6 +76,7 @@ int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t 
   int plainlen,more = true,header = true,current_report = -1;
   time_t now,then,time2 = 0,delta1 = 0,delta2 = 0;
   struct Item *reports[cf_codebook_size] = {0};
+  char keyHash[EVP_MAX_MD_SIZE*4];
   double datarate;
 
 NewReportBook(reports);
@@ -180,7 +181,7 @@ if (reports == NULL)
    return false;
    }
 
-UnpackReportBook(HashPrint(CF_DEFAULT_DIGEST,conn->digest),conn->remoteip,reports);
+UnpackReportBook(HashPrintSafe(CF_DEFAULT_DIGEST,conn->digest,keyHash),conn->remoteip,reports);
 DeleteReportBook(reports);
 return true;
 }

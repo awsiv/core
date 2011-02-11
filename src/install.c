@@ -373,7 +373,7 @@ free(hv);
 
 /*****************************************************************************/
 
-struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,char *cause,time_t t,char *commentId,char *oid)
+struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *policy,char *handle,char *cause,time_t t,char *commentId,char *oid)
 
 { struct HubPromiseLog *hp;
  
@@ -383,6 +383,7 @@ if ((hp = malloc(sizeof(struct HubPromiseLog))) == NULL)
    }
 
 hp->hh = hh;
+hp->policy = strdup(policy);
 hp->handle = strdup(handle);
 hp->cause = strdup(cause);
 hp->comment_id = strdup(commentId);
@@ -396,6 +397,7 @@ return hp;
 void DeleteHubPromiseLog(struct HubPromiseLog *hp)
 
 {
+free(hp->policy);
 free(hp->handle);
 free(hp->cause);
 free(hp->comment_id);
