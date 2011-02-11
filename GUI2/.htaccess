@@ -1,8 +1,4 @@
 
-AuthUserFile /home/sudhir/apache_pwd
-AuthName "Submissions"
-AuthType Basic
-require valid-user
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
