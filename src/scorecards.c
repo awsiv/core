@@ -10,9 +10,6 @@
 #include "cf.nova.h"
 
 
-extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,BACKGR,ORANGE,GREENS[];
-extern char *UNITS[];
-
 #ifdef HAVE_LIBMONGOC
 /*****************************************************************************/
 /*                                                                           */
@@ -22,15 +19,9 @@ extern char *UNITS[];
 
 void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize)
     
-{ char work[CF_BUFSIZE],hostname[CF_SMALLBUF],ipaddress[CF_SMALLBUF];
-  char desc[CF_MAXVARSIZE],id[CF_MAXVARSIZE],lastsaw[CF_SMALLBUF];
-  int i, have_week, have_mag, have_histo;
-  struct CfDataView cfv;
+{ char work[CF_BUFSIZE];
 
-
-Nova2PHP_hostinfo(hostkey,hostname,ipaddress,CF_MAXVARSIZE);
-
-snprintf(buffer,bufsize,"<table><tr><th></th><th>Past 4 hours</th><th>Past week</th><th>Statistical complete history</th></tr>\n");
+strcpy(buffer,"[");
 
 for (i = 0; i < CF_OBSERVABLES; i++)
    {
@@ -41,64 +32,11 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       continue;
       }
 
-   // Make the graphs
-
-//   have_week = Nova_ViewWeek(&cfv,hostkey,i,false);
-//   have_mag = Nova_ViewMag(&cfv,hostkey,i);
-//   have_histo = Nova_ViewHisto(&cfv,hostkey,i,false);
-
-   if (have_mag)
-      {   
-      Nova2PHP_getlastupdate(hostkey,lastsaw,CF_SMALLBUF);
-
-      Join(buffer,"<tr>\n",bufsize);
-
-      snprintf(work,CF_BUFSIZE,"<td><div id=\"ip\">%s</div><br><br>"
-               "<a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/type\">%s</a>"
-               "<br><br><small>Latest data<br>%s</small></td>",hostname,hostkey,i,OBS[i][0],OBS[i][0],lastsaw);      
-      Join(buffer,work,bufsize);
-      
-      
-      if (have_mag)
-         {
-         snprintf(work,CF_BUFSIZE,"<td><a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/mag\"><img src=\"/hub/%s/%s_mag.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
-         }
-      else
-         {
-         snprintf(work,CF_BUFSIZE,"<td><img src=\"/images/monitoring_nodata.png\" width=\"300\" border=\"0\"></td>");
-         }
-      
-      Join(buffer,work,bufsize);
-
-
-      if (have_week)
-         {
-         snprintf(work,CF_BUFSIZE,"<td><a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/week\"><img src=\"/hub/%s/%s_week.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
-         }
-      else
-         {
-         snprintf(work,CF_BUFSIZE,"<td><img src=\"/images/monitoring_nodata.png\" width=\"300\" border=\"0\"></td>");
-         }
-      
-      Join(buffer,work,bufsize);
-      
-      
-      if(have_histo)
-         {
-         snprintf(work,CF_BUFSIZE,"<td><a href=\"/visual/vitaldetail/hostkey/%s/obs/%d/nm/%s/view/hist\"><img src=\"/hub/%s/%s_hist.png\" width=\"300\" border=\"0\"></a></td>",hostkey,i,OBS[i][0],hostkey,OBS[i][0]);
-         }
-      else
-         {
-         snprintf(work,CF_BUFSIZE,"<td><img src=\"/images/monitoring_nodata.png\" width=\"300\" border=\"0\"></td>");
-         }
-      
-      Join(buffer,work,bufsize);
-            
-      Join(buffer,"</tr>\n",bufsize);
-      }
+   snprintf(work,"%d,",i);
+   Join(buffer,work,bufsize);
    }
 
-EndJoin(buffer,"</table>\n",bufsize);
+Join(buffer,"]",bufsize);
 }
 
 /*****************************************************************************/

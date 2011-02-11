@@ -189,12 +189,6 @@ if (!CFDB_Close(&dbconn))
 
 /*****************************************************************************/
 
-int Nova2PHP_get_observable_id(char *name)
-{
-}
-
-/*****************************************************************************/
-
 void Nova2PHP_get_magnified_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 {
@@ -283,6 +277,23 @@ char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize)
 {
 snprintf(buffer,bufsize,"%s",OBS[obs][0]);
 return buffer;
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_get_observable_id(char *name)
+
+{ int i;
+
+for (i = 0; i < CF_OBSERVABLES; i++)
+   {
+   if (strcmp(name,OBS[i][0]) == 0)
+      {
+      return i;
+      }
+   }
+
+return -1;
 }
 
 /*****************************************************************************/

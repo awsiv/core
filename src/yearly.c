@@ -15,14 +15,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY;
-extern int GREYS[CF_SHADES];
-extern int BLUES[CF_SHADES];
-extern time_t DATESTAMPS[CF_OBSERVABLES];
-extern char *UNITS[];
-
-/*****************************************************************************/
-
 int Nova_ViewLongHistory(char *keyhash,enum observables obs,char *buffer,int bufsize)
     
 { int i,y,hint,yr,num = 0,ago,lc;

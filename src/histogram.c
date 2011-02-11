@@ -15,11 +15,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-extern int LIGHTRED,YELLOW,WHITE,BLACK,GREEN,BLUE,LIGHTGREY,ORANGE,BACKGR;
-extern int BLUES[];
-
-/*****************************************************************************/
-
 int Nova_ViewHisto(char *keyhash,enum observables obs,char *buffer,int bufsize)
     
 { int i,y,hint;

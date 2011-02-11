@@ -16,14 +16,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-extern int LIGHTRED,YELLOW,ORANGE,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,SKY;
-extern int GREYS[CF_SHADES];
-extern int BLUES[CF_SHADES];
-extern int YELLOWS[CF_SHADES];
-extern int PINKS[CF_SHADES];
-extern int BROWNS[CF_SHADES];
-
-
 /*****************************************************************************/
 
 void Nova_PrimeGraph(struct Rlist **semantics)

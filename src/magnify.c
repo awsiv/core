@@ -15,12 +15,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-extern int LIGHTRED,YELLOW,WHITE,BLACK,RED,GREEN,BLUE,LIGHTGREY,BACKGR,ORANGE;
-extern time_t DATESTAMPS[CF_OBSERVABLES];
-extern char *UNITS[];
-
-/*****************************************************************************/
-
 int Nova_ViewMag(char *keyhash,enum observables obs,char *buffer,int bufsize)
     
 { int i,y,hint;
