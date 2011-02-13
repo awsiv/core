@@ -95,8 +95,8 @@ if (false)
    Nova2PHP_get_host_colour(NULL,buffer,3);
    Nova_Header("sd","we",buffer,3); 
    Nova2PHP_get_network_speed("","",3);
-   Nova2PHP_summary_meter(NULL);
-   Nova2PHP_meter(NULL);
+   Nova2PHP_summary_meter(NULL,NULL,0);
+   Nova2PHP_meter(NULL,NULL,0);
    Nova2PHP_ComplianceSummaryGraph();
    /* pdf functions */
    Nova2PHP_compliance_report_pdf(NULL,NULL,0,0,0,0,0,NULL,buffer,10000);
@@ -250,20 +250,20 @@ Nova_AnalyseHistogram(keyhash,obs,buffer,bufsize);
 
 /*****************************************************************************/
 
-void Nova2PHP_summary_meter(char *hostkey)
+void Nova2PHP_summary_meter(char *hostkey,char *buffer,int bufsize)
 
 {
 Nova_WebTopicMap_Initialize();
-Nova_SummaryMeter(DOCROOT,hostkey);
+Nova_SummaryMeter(DOCROOT,hostkey,buffer,bufsize);
 }
 
 /*****************************************************************************/
 
-void Nova2PHP_meter(char *hostkey)
+void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize)
 
 {
 Nova_WebTopicMap_Initialize();
-Nova_Meter(DOCROOT,hostkey);
+Nova_Meter(DOCROOT,hostkey,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -2361,7 +2361,7 @@ strcat(buffer,"<table>\n\n\n");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
-   Nova_Meter(DOCROOT,ip->name);
+   Nova_Meter(DOCROOT,ip->name,buffer,bufsize);
 
    if (Nova_IsGreen(ip->counter))
       {
@@ -2402,7 +2402,7 @@ strcat(buffer,"<table>\n\n\n");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
-   Nova_Meter(DOCROOT,ip->name);
+   Nova_Meter(DOCROOT,ip->name,buffer,bufsize);
 
    if (Nova_IsGreen(ip->counter))
       {

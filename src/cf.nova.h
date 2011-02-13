@@ -760,8 +760,8 @@ void Nova_CfQueryCFDB(char *query);
 /* scorecards.c */
 
 void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize);
-void Nova_SummaryMeter(char *docroot,char *search_string);
-int Nova_Meter(char *docroot,char *hostkey);
+void Nova_SummaryMeter(char *docroot,char *search_string,char *buffer,int bufsize);
+int Nova_Meter(char *docroot,char *hostkey,char *buffer,int bufsize);
 struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
 struct Item *Nova_GreenHosts(void);
 struct Item *Nova_YellowHosts(void);
@@ -909,8 +909,8 @@ void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,char *classreg, char *returnval,int bufsize);
 int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,char *buffer,int bufsize);
-void Nova2PHP_summary_meter(char *hostkey);
-void Nova2PHP_meter(char *hostkey);
+void Nova2PHP_summary_meter(char *hostkey,char *buffer,int bufsize);
+void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_hostinfo(char *hostkey,char *hostname,char *ipaddress,int bufsize);
 void Nova2PHP_performance_analysis(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *classreg, char *returnval,int bufsize);

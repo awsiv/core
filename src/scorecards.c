@@ -80,7 +80,7 @@ for (i = 0,start = now - one_week; start < now; start += CF_SHIFT_INTERVAL,i++)
 
 /*****************************************************************************/
 
-void Nova_SummaryMeter(char *docroot,char *search_string)
+void Nova_SummaryMeter(char *docroot,char *search_string,char *buffer,int bufsize)
 
 {  char filename[CF_BUFSIZE];
   int returnval = 0;
@@ -180,7 +180,7 @@ DeleteHubQuery(hq,DeleteHubMeter);
 
 /*****************************************************************************/
 
-int Nova_Meter(char *docroot,char *hostkey)
+int Nova_Meter(char *docroot,char *hostkey,char *buffer,int bufsize)
 
 { int returnval = 0;
   char filename[CF_BUFSIZE];
@@ -251,6 +251,8 @@ return true;
 
 int Nova_GetHostColour(char *lkeyhash)
 
+/* note the similarities between this fn and ClassifyHostState() */
+    
 { bson_buffer b,bb,*sub1,*sub2,*sub3;
   bson qe,field,query;
   mongo_cursor *cursor;
@@ -523,6 +525,8 @@ return sorted;
 
 struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_method method,int max_return)
 
+/* note the similarities between this fn and GetHostColour() */
+    
 { bson_buffer b,bb,*sub1,*sub2,*sub3;
   bson qe,field,query;
   mongo_cursor *cursor;
