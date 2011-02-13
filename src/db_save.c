@@ -1267,7 +1267,7 @@ bson_destroy(&host_key);
  */
 /*****************************************************************************/
 
-int CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *reportData, struct Item *data)
+int CFDB_AddNote(mongo_connection *conn, char *keyhash, char *nid, char *reportData, struct Item *data)
 {
   bson_buffer bb,record;
   bson host_key;
@@ -1288,86 +1288,95 @@ int CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *repo
   bson field;
   char objectId[CF_MAXVARSIZE] = {0};
   bson_oid_t bsonid;
-  int found = false;
+  int found = false, newnote = false, retval=true;
    
   // Add index, TODO: must do this while creating the database
   
   bson_buffer_init( &buf_key );
-  bson_append_int( &buf_key, cfc_keyhash, 1 );
-  bson_append_int(&buf_key,cfc_reportdata,1);
+  bson_append_int( &buf_key, cfn_keyhash, 1 );
+  bson_append_int(&buf_key,cfn_reportdata,1);
   bson_from_buffer( &b_key, &buf_key );
-  mongo_create_index(conn, MONGO_COMMENTS, &b_key, options, NULL);
+  mongo_create_index(conn, MONGO_NOTEBOOK, &b_key, options, NULL);
   MongoCheckForError(conn,"CreateIndex",keyhash);
   bson_destroy(&b_key);
   
    // find right host
    bson_buffer_init(&bb);
-   if(!EMPTY(cid))
+   if(!EMPTY(nid))
      {
-       bson_oid_from_string(&bsonid,cid);
+       bson_oid_from_string(&bsonid,nid);
        bson_append_oid(&bb,"_id",&bsonid);
      }
-   else{
-     bson_append_new_oid(&bb,"_id");
-     bson_append_string(&bb,cfc_keyhash,keyhash);
-
-     if(!EMPTY(reportData))
-       {
-	 bson_append_string(&bb,cfc_reportdata,reportData);
-       }
-   }
+   else
+     {
+       newnote = true;
+       bson_append_new_oid(&bb,"_id");
+       bson_append_string(&bb,cfn_keyhash,keyhash);
+       
+       if(!EMPTY(reportData))
+	 {
+	   bson_append_string(&bb,cfn_reportdata,reportData);
+	 }
+     }
 
    bson_from_buffer(&host_key, &bb);
    
+   sscanf(data->name,"%255[^,],%255[^,],%ld\n",username,msg,&datetime);
+
    bson_buffer_init(&bb);
    setObj = bson_append_start_object(&bb, "$addToSet");
-   sscanf(data->name,"%255[^,],%255[^,],%ld\n",username,msg,&datetime);
-   sub = bson_append_start_object(setObj, cfc_comment);
-   bson_append_string(sub,cfc_username,username);
-   bson_append_string(sub,cfc_message,msg);
-   bson_append_int(sub,cfc_datetime,datetime);
-   bson_append_finish_object(sub);
-   
+   sub = bson_append_start_object(setObj, cfn_note);
+   bson_append_string(sub,cfn_username,username);
+   bson_append_string(sub,cfn_message,msg);
+   bson_append_int(sub,cfn_datetime,datetime);
+   bson_append_finish_object(sub);   
    bson_append_finish_object(setObj);
    bson_from_buffer(&setOp,&bb);
-   mongo_update(conn, MONGO_COMMENTS, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+
+   mongo_update(conn, MONGO_NOTEBOOK, &host_key, &setOp, MONGO_UPDATE_UPSERT);
    MongoCheckForError(conn,"AddComments",keyhash);
    bson_destroy(&setOp);
-
-   // get the objectid                                                                                                                                                                         
-   bson_buffer_init(&bb);
-   bson_append_int(&bb,"_id",1);
-   bson_from_buffer(&field, &bb);
-
-   cursor = mongo_find(conn, MONGO_COMMENTS, &host_key, &field,0,0,0);
-   MongoCheckForError(conn,"GetCommentID",keyhash);
-   bson_destroy(&field);
-   bson_destroy(&host_key);
-
-   while(mongo_cursor_next(cursor) && !found)
+  
+   if(newnote)
      {
-       bson_iterator_init(&it1,cursor->current.data);
-       objectId[0] = '\0';
-       while (bson_iterator_next(&it1))
-	 {	  
-	   switch(bson_iterator_type(&it1))
-	     {       
-	     case bson_oid:
-	       if(strcmp(bson_iterator_key(&it1),"_id") == 0)
-		 {
-		   bson_oid_to_string(bson_iterator_oid(&it1),objectId);
-		   found = true;
+       // get the objectid                                                                                                                                                                         
+       bson_buffer_init(&bb);
+       bson_append_int(&bb,"_id",1);
+       bson_from_buffer(&field, &bb);
+       
+       cursor = mongo_find(conn, MONGO_NOTEBOOK, &host_key, &field,0,0,0);
+       MongoCheckForError(conn,"GetCommentID",keyhash);
+       bson_destroy(&field);
+       
+       while(mongo_cursor_next(cursor) && !found)
+	 {
+	   bson_iterator_init(&it1,cursor->current.data);
+	   objectId[0] = '\0';
+	   while (bson_iterator_next(&it1))
+	     {	  
+	       switch(bson_iterator_type(&it1))
+		 {       
+		 case bson_oid:
+		   if(strcmp(bson_iterator_key(&it1),"_id") == 0)
+		     {
+		       bson_oid_to_string(bson_iterator_oid(&it1),objectId);
+		       found = true;
+		     }
+		   break;
+		 default:
+		   break;
 		 }
-	       break;
-	     default:
-	       break;
 	     }
 	 }
+       if(!found)
+	 {
+	   CfOut(cf_verbose, "", "!! Unable to add note");
+	   retval=false;
+	 }
+       snprintf(nid,CF_MAXVARSIZE,"%s",objectId);   
      }
-   
-   snprintf(cid,CF_MAXVARSIZE,"%s",objectId);
-   
-   return true;
+   bson_destroy(&host_key);
+   return retval;
 }
 
 /*****************************************************************************/
@@ -1385,159 +1394,29 @@ static time_t rev_ctime(char *str_time)
 
 /*****************************************************************************/
 
-void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *oid, char *commentId, enum promiselog_rep rep_type)
-{
-  bson_buffer bb,record;
-  bson host_key;  // host description
-  char varNameIndex[64];
+void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *nid)
+
+{ bson_buffer bb;
   bson_buffer *setObj;
+  bson_buffer *sub;
+  bson host_key;  // host description
   bson setOp;
   struct Item *ip;
-  int observable,slot;
-  char *dbOperation = {0};
-  char timekey[CF_SMALLBUF];
-  char handle[CF_MAXVARSIZE],reason[CF_BUFSIZE];
-  char *collName;
-  char *dbOp;
-  long then;
-  const time_t tthen;
-  char time_buf[255];
-  
-  bson_oid_t bsonid;
-  
-switch(rep_type)
-   {
-   case plog_repaired:
-       collName = MONGO_LOGS_REPAIRED;
-       dbOp = "update promise repaired";
-       break;
-   case plog_notkept:
-       collName = MONGO_LOGS_NOTKEPT;
-       dbOp = "update promise not kept";
-       break;
-   default:
-       CfOut(cf_error, "", "!! Unknown promise log report type (%d)", rep_type);
-       return;
-   }
+  char varName[CF_MAXVARSIZE];
+  long t;
+  char eventname[CF_MAXVARSIZE],eventnameKey[CF_MAXVARSIZE];
+  double measure = 0,average = 0,dev = 0;
 
-    // find right host and report - key
-    bson_buffer_init(&record);
-    if(!EMPTY(oid))
-     {
-       bson_oid_from_string(&bsonid,oid);
-       bson_append_oid(&record,"_id",&bsonid);
-     }
-   else
-     {
-       // TODO: Error messaging
-       return;
-     }
-    bson_from_buffer(&host_key, &record);
-
-   // update
-   bson_buffer_init(&bb);
-   setObj = bson_append_start_object(&bb, "$set");
-   bson_append_string(setObj,cfc_cid,commentId);
-   bson_append_finish_object(setObj);
-   bson_from_buffer(&setOp,&bb);
-   
-   mongo_update(conn, collName, &host_key, &setOp, 0);
-   bson_destroy(&setOp);
-   bson_destroy(&host_key);
-
-// should do this in loop, but not efficient...
- MongoCheckForError(conn,dbOperation,oid);
-}
-
-
-/*****************************************************************************/
-void CFDBRef_HostID_Comments(mongo_connection *conn,char *keyhash, char *commentId)
-{
-  bson_buffer bb;
-  bson_buffer *setObj;
-  bson host_key;  // host description                                                                                                                                                           
-  bson setOp;
-  time_t t;
-
-  // locate right host key                                                                                                                                                                        
   bson_buffer_init(&bb);
-  bson_append_string(&bb,cfr_keyhash,keyhash);
-  bson_from_buffer(&host_key,&bb);
-
-   // update
-   bson_buffer_init(&bb);
-   setObj = bson_append_start_object(&bb, "$set");
-   bson_append_string(setObj,cfc_cid,commentId);
-   bson_append_finish_object(setObj);
-
-   bson_from_buffer(&setOp,&bb);
-   mongo_update(conn, MONGO_DATABASE,&host_key,&setOp,0);
-   MongoCheckForError(conn,"SaveHostID",keyhash);
-
+  setObj = bson_append_start_object(&bb, "$set");
+  snprintf(varName, sizeof(varName), "%s",row_name);  
+  bson_append_string(setObj, varName, nid);
+  bson_append_finish_object(setObj);
+  bson_from_buffer(&setOp,&bb);
+  
+  mongo_update(conn, coll, query, &setOp, 0);
+  MongoCheckForError(conn,row_name,nid);
   bson_destroy(&setOp);
-  bson_destroy(&host_key);
-}
-/*****************************************************************************/
-void CFDBRef_Performance_Comments(mongo_connection *conn, char *keyhash, char *handle, char *cid)
-
-{ bson_buffer bb;
-  bson_buffer *setObj;
-  bson_buffer *sub;
-  bson host_key;  // host description
-  bson setOp;
-  struct Item *ip;
-  char varName[CF_MAXVARSIZE];
-  long t;
-  char eventname[CF_MAXVARSIZE],eventnameKey[CF_MAXVARSIZE];
-  double measure = 0,average = 0,dev = 0;
-
-// find right host
-bson_buffer_init(&bb);
-bson_append_string(&bb, cfr_keyhash, keyhash);
-//bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&host_key, &bb);
-
-bson_buffer_init(&bb);
-
-setObj = bson_append_start_object(&bb, "$set");
- snprintf(varName, sizeof(varName), "%s.%s.%s",cfr_performance,handle,cfc_cid);  
-bson_append_string(setObj, varName, cid);
-bson_append_finish_object(setObj);
-
-bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, 0);
-MongoCheckForError(conn,"SavePerformance",keyhash);
-
-bson_destroy(&setOp);
-bson_destroy(&host_key);
-}
-
-/*****************************************************************************/
-
-void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid)
-
-{ bson_buffer bb;
-  bson_buffer *setObj;
-  bson_buffer *sub;
-  bson host_key;  // host description
-  bson setOp;
-  struct Item *ip;
-  char varName[CF_MAXVARSIZE];
-  long t;
-  char eventname[CF_MAXVARSIZE],eventnameKey[CF_MAXVARSIZE];
-  double measure = 0,average = 0,dev = 0;
-
-bson_buffer_init(&bb);
-setObj = bson_append_start_object(&bb, "$set");
-snprintf(varName, sizeof(varName), "%s",row_name);  
-bson_append_string(setObj, varName, cid);
-bson_append_finish_object(setObj);
-
-bson_from_buffer(&setOp,&bb);
-mongo_update(conn, coll, query, &setOp, 0);
-MongoCheckForError(conn,row_name,cid);
-bson_destroy(&setOp);
-
 }
 
 /*****************************************************************************/

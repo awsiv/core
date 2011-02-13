@@ -797,7 +797,7 @@ else
 
 /*****************************************************************************/
 
-void Nova_BarMeterNova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize)
+void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize)
 
 {
 snprintf(buffer,bufsize,"{ title: \"%s\", position: %d, kept: %lf, repaired: %lf, notkept: %lf },",name,pos,kept,rep,100-kept-rep);

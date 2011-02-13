@@ -373,7 +373,7 @@ free(hv);
 
 /*****************************************************************************/
 
-struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *policy,char *handle,char *cause,time_t t,char *commentId,char *oid)
+struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *policy,char *handle,char *cause,time_t t,char *noteId,char *oid)
 
 { struct HubPromiseLog *hp;
  
@@ -386,7 +386,7 @@ hp->hh = hh;
 hp->policy = strdup(policy);
 hp->handle = strdup(handle);
 hp->cause = strdup(cause);
-hp->comment_id = strdup(commentId);
+hp->nid = strdup(noteId);
 hp->oid = strdup(oid);
 hp->t = t;
 return hp;
@@ -400,7 +400,7 @@ void DeleteHubPromiseLog(struct HubPromiseLog *hp)
 free(hp->policy);
 free(hp->handle);
 free(hp->cause);
-free(hp->comment_id);
+free(hp->nid);
 free(hp->oid);
 free(hp);
 }
@@ -804,13 +804,13 @@ free(ha);
 /*commenting*/
 /*****************************************************************************/
 
-struct HubComment *NewHubComment(char *user,char *msg,time_t t)
+struct HubNote *NewHubNote(char *user,char *msg,time_t t)
 
-{ struct HubComment *hc;
+{ struct HubNote *hc;
 
-if ((hc = malloc(sizeof(struct HubComment))) == NULL)
+if ((hc = malloc(sizeof(struct HubNote))) == NULL)
    {
-   FatalError("Memory exhausted HubComment");
+   FatalError("Memory exhausted HubNote");
    }
 
 hc->user = strdup(user);
@@ -822,7 +822,7 @@ return hc;
 
 /*****************************************************************************/
 
-void DeleteHubComment(struct HubComment *hc)
+void DeleteHubNote(struct HubNote *hc)
 {
 free(hc->user);
 free(hc->msg);
@@ -831,33 +831,32 @@ free(hc);
 
 /*****************************************************************************/
 
-struct HubCommentInfo *NewHubCommentInfo(struct HubHost *hh,char *cid,char *user,char *msg,time_t t)
+struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t)
 
-{ struct HubCommentInfo *hci;
+{ struct HubNoteInfo *hci;
 
-if ((hci = malloc(sizeof(struct HubCommentInfo))) == NULL)
+if ((hci = malloc(sizeof(struct HubNoteInfo))) == NULL)
    {
-   FatalError("Memory exhausted HubCommentInfo");
+   FatalError("Memory exhausted HubNoteInfo");
    }
 
 hci->hh = hh;
-hci->cid = strdup(cid);
-hci->comment = NewHubComment(user,msg,t);
+hci->nid = strdup(nid);
+hci->note = NewHubNote(user,msg,t);
 return hci;
 }
 
 /*****************************************************************************/
 
-void DeleteHubCommentInfo(struct HubCommentInfo *hci)
+void DeleteHubNoteInfo(struct HubNoteInfo *hci)
 
-{ struct HubComment *hc;
+{ struct HubNote *hc;
 
-  free(hci->cid);
-for (hc = hci->comment; hc != NULL; hc=hc->next)
-   {
-   DeleteHubComment(hc);
-   }
-
+  free(hci->nid);
+  for (hc = hci->note; hc != NULL; hc=hc->next)
+    {
+      DeleteHubNote(hc);
+    }
 free(hci);
 }
 

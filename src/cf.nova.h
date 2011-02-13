@@ -43,7 +43,7 @@
 # define MONGO_SCRATCH MONGO_BASE ".scratch"
 # define MONGO_LOGS_REPAIRED MONGO_BASE ".logs_rep"
 # define MONGO_LOGS_NOTKEPT MONGO_BASE ".logs_nk"
-# define MONGO_COMMENTS MONGO_BASE ".comments"
+# define MONGO_NOTEBOOK MONGO_BASE ".notebook"
 # include <mongo.h>
 #else
 # define mongo_connection char
@@ -381,15 +381,12 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 /*
  * commenting
  */
-int CFDB_AddComment(mongo_connection *conn, char *keyhash, char *cid, char *reportData, struct Item *data);
-struct Rlist *CFDB_QueryComments(mongo_connection *conn,char *keyhash, char *cid, struct Item *data);
-void CFDBRef_PromiseLog_Comments(mongo_connection *conn, char *oid, char *commentId, enum promiselog_rep rep_type);
-void CFDBRef_HostID_Comments(mongo_connection *conn,char *keyhash, char *commentId);
-struct Rlist *CFDB_QueryCommentId(mongo_connection *conn,bson *query);
-void CFDBRef_Performance_Comments(mongo_connection *conn, char *keyhash, char *handle, char *cid);
+int CFDB_AddNote(mongo_connection *conn, char *keyhash, char *nid, char *reportData, struct Item *data);
+struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid, struct Item *data);
+struct Rlist *CFDB_QueryNoteId(mongo_connection *conn,bson *query);
 void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid);
-int CFDB_GetRow(mongo_connection *conn, char *db, bson *query, char *rowname, char *row,int level);
-
+int CFDB_GetRow(mongo_connection *conn, char *db, bson *query, char *rowname, char *row, int rowSz, int level);
+void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int depth);
 #endif  /* HAVE_LIBMONGOC */
 
 /* db_maintain.c */
@@ -542,7 +539,7 @@ struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,cha
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
 struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype);
 void DeleteHubVariable(struct HubVariable *hv);
-struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *policy, char *handle,char *cause,time_t t, char *commentId,char *oid);
+struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *policy, char *handle,char *cause,time_t t, char *noteId,char *oid);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
 struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
 void DeleteHubLastSeen(struct HubLastSeen *hp);
@@ -568,10 +565,10 @@ struct HubBody *NewHubBody(char *bodyName,char *bodyType,char *bodyArgs);
 void DeleteHubBody(struct HubBody *hb);
 struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char *classContext);
 void DeleteHubBodyAttributes(struct HubBodyAttr *ha);
-struct HubComment *NewHubComment(char *user,char *msg,time_t t);
-struct HubCommentInfo *NewHubCommentInfo(struct HubHost *hh,char *cid,char *user,char *msg,time_t t);
-void DeleteHubComment(struct HubComment *hc);
-void DeleteHubCommentInfo(struct HubCommentInfo *hci);
+struct HubNote *NewHubNote(char *user,char *msg,time_t t);
+struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t);
+void DeleteHubNote(struct HubNote *hc);
+void DeleteHubNoteInfo(struct HubNoteInfo *hci);
 
 
 int SortPromiseLog(void *p1, void *p2);
@@ -759,7 +756,7 @@ void Nova_CfQueryCFDB(char *query);
 
 /* scorecards.c */
 
-void Nova_BarMeterNova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize);
+void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize);
 void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize);
 void Nova_Meter(char *hostkey,char *buffer,int bufsize);
 struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
@@ -1000,9 +997,10 @@ int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize);
 /*
  * commenting
  */
-int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, char *reportData, char *username, char *comment, time_t datetime);
-int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, time_t to, char *returnval, int bufsize);
-int Nova2PHP_get_host_commentid(char *hostkey, char *returnval, int bufsize);
+int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *username, time_t datetime, char *note);
+int Nova2PHP_add_note(char *noteid,char *username, time_t datetime, char* note);
+int Nova2PHP_get_notes(char *keyhash, char *cid, char *username, time_t from, time_t to, char *returnval, int bufsize);
+int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize);
 
 void Nova2PHP_cdp_reportnames(char *buf,int bufSz);
 int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz);
@@ -1348,13 +1346,13 @@ struct cf_pscalar
 #define cfm_data          "dt"
 
 /*commenting*/
-#define cfc_keyhash "_kh"
-#define cfc_cid "cid"
-#define cfc_reportdata "_rD"
-#define cfc_comment "cM"
-#define cfc_username "u"
-#define cfc_datetime "d"
-#define cfc_message "m" 
+#define cfn_keyhash "_kh"
+#define cfn_nid "nid"
+#define cfn_reportdata "_rD"
+#define cfn_note "n"
+#define cfn_username "u"
+#define cfn_datetime "d"
+#define cfn_message "m" 
 
 #define CFREPORT_HOSTS 1
 #define CFREPORT_PRLOG 2
@@ -1443,7 +1441,7 @@ struct HubPromiseLog // promise kept,repaired or not kept
    char *handle;
    char *cause;
    time_t t;
-   char *comment_id;  
+   char *nid;  
    char *oid;  
    };
 
@@ -1565,22 +1563,22 @@ struct HubBodyAttr
 /*
  * Commenting on reports
  */ 
-struct HubComment
+struct HubNote
 {
   char *user;
   char *msg;
   time_t t;
-  struct HubComment *next;
+  struct HubNote *next;
 };
 
-struct HubCommentInfo
+struct HubNoteInfo
 {
   struct HubHost *hh;
-  char *cid;
+  char *nid;
   char *user;
   char *msg;
   time_t t;
-  struct HubComment *comment;
+  struct HubNote *note;
 };
 
 #endif

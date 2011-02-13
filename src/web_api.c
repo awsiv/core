@@ -118,9 +118,11 @@ if (false)
    /*
     * commenting
     */
-   Nova2PHP_add_comment(NULL,NULL,NULL,-1,NULL,NULL,NULL,10000);
-   Nova2PHP_get_comment(NULL,NULL, NULL,-1,-1,NULL,10000);
-   Nova2PHP_get_host_commentid(NULL,NULL,1000);
+   Nova2PHP_add_new_note(NULL,NULL, -1,NULL, -1, NULL);
+   Nova2PHP_add_note(NULL,NULL,-1,NULL);
+   Nova2PHP_get_notes(NULL,NULL, NULL,-1,-1,NULL,10000);
+   Nova2PHP_get_host_noteid(NULL,NULL,1000);
+
    Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
    }
 }
@@ -326,14 +328,14 @@ Join(returnval,buffer,bufsize);
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseLog *)rp->item;
-   if (strcmp(hp->comment_id,CF_NOCOMMENT) == 0)
+   if (strcmp(hp->nid,CF_NOCOMMENT) == 0)
       {
-      snprintf(comment_link,sizeof(comment_link),"\"/notes/add/hostkey/%s/note_id/%s/report_type/%d/report_data/%s/time/%ld\"",hostkey,hp->comment_id,CFREPORT_PRLOG,hp->oid,hp->t);
+      snprintf(comment_link,sizeof(comment_link),"\"/notes/add/hostkey/%s/note_id/%s/report_type/%d/report_data/%s/time/%ld\"",hostkey,hp->nid,CFREPORT_PRLOG,hp->oid,hp->t);
       snprintf(comment,sizeof(comment),"%s",CF_ADDCOMMENT);
       }
    else
       {
-      snprintf(comment_link,sizeof(comment_link),"\"/notes/show/note_id/%s\"",hp->comment_id);
+      snprintf(comment_link,sizeof(comment_link),"\"/notes/show/note_id/%s\"",hp->nid);
       snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
       }
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"/promise/details/%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n", hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), comment_link, comment);
@@ -4364,138 +4366,167 @@ int Nova2PHP_delete_host(char *keyHash)
 }
 
 /*****************************************************************************/
-
 /*for commenting functionality */
+/*****************************************************************************/
 
-int Nova2PHP_add_comment(char *keyhash, char *repid, char *cid, int reportType, char *reportData, char *username, char *comment, time_t datetime)
+int Nova2PHP_add_note(char *noteid,char *username, time_t datetime,char* note)
 
-{ struct Item *data = NULL, *ip = NULL, *report = NULL;
-  char msg[CF_BUFSIZE] = {0};
-  char reportText[CF_BUFSIZE] = {0}, row[CF_BUFSIZE] = {0};
-  char commentId[CF_MAXVARSIZE] = {0}, objectId[CF_MAXVARSIZE] = {0};
+{ struct Item *data = NULL;
+  char msg[CF_BUFSIZE] = {0}, nid[CF_MAXVARSIZE] = {0};
   mongo_connection dbconn;
-  char handle[CF_MAXVARSIZE]={0};
-  bson query,b, result;
   bson_buffer bb;
+  int ret = 0;
 
-  char row_name[CF_MAXVARSIZE] = {0};
-  bson_iterator it1,it2;
-  int level = 0, getrow=false;
-  
-  snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,comment,datetime);
-  AppendItem(&data, msg, NULL);
+  if(!noteid || strlen(noteid) == 0)
+    {
+      CfOut(cf_verbose,"", "!! Noteid is empty");
+      return false;
+    }
 
-  if(cid)
-    {
-      snprintf(commentId, CF_MAXVARSIZE, "%s",cid);
-    }
-  if(repid)
-    {
-      snprintf(objectId, CF_MAXVARSIZE, "%s",repid);
-    }
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
       CfOut(cf_verbose,"", "!! Could not open connection to report database");
       return false;
     }
 
-  if (keyhash && strlen(keyhash) != 0 ) //&& (cid && strlen(cid)!=0))
-    {
-      bson_buffer_init(&bb);
-      bson_append_string(&bb,cfr_keyhash,keyhash);
-      bson_from_buffer(&query,&bb);
+  snprintf(nid, CF_MAXVARSIZE, "%s",noteid);
+  snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,note,datetime);
+  AppendItem(&data, msg, NULL);
 
-      switch(reportType)
-        {
-        case CFREPORT_HOSTS:
-	  //          CFDBRef_HostID_Comments(&dbconn,keyhash, commentId);
-	  snprintf(row, sizeof(row),"%s",reportData);
-	  getrow = true;
-          break;
-        case CFREPORT_PRLOG:
-	  snprintf(row, sizeof(row), "%s",reportData);
-	  //          CFDB_GetRow(&dbconn, "cfreport.logs_nk", &query, row_name, row, level);
-	  getrow = true;
-          break;
-        case CFREPORT_PERF:
-	  level = 3;
-	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_performance,repid);
-	  getrow = CFDB_GetRow(&dbconn, MONGO_DATABASE, &query, row_name, row, level);
-          break;
-	case CFREPORT_VALUE: /*value report*/
-	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_valuereport,repid);
-	  getrow = CFDB_GetRow(&dbconn, MONGO_DATABASE, &query, row_name, row, level);
-	  break;
-	case CFREPORT_FILECHANGES:  
-	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filechanges,repid);
-	  getrow = CFDB_GetRow(&dbconn, MONGO_DATABASE, &query, row_name, row, level);
-	  break;
-	case CFREPORT_FILEDIFFS:  
-	  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filediffs,repid);
-	  getrow = CFDB_GetRow(&dbconn, MONGO_DATABASE, &query, row_name, row, level);
-	  break;
-	  
-        }
-    }
-  else
+  ret = CFDB_AddNote(&dbconn,NULL,nid,NULL,data);
+
+  CFDB_Close(&dbconn);
+  return ret;
+}
+
+/*****************************************************************************/
+/*for commenting functionality */
+/*****************************************************************************/
+int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *username, time_t datetime, char *note)
+
+{ struct Item *data = NULL, *ip = NULL, *report = NULL;
+  char msg[CF_BUFSIZE] = {0};
+  char reportText[CF_BUFSIZE] = {0}, row[CF_BUFSIZE] = {0};
+  char noteId[CF_MAXVARSIZE] = {0}, objectId[CF_MAXVARSIZE] = {0};
+  mongo_connection dbconn;
+  char handle[CF_MAXVARSIZE]={0};
+  bson query,b, result;
+  bson_buffer bb;
+  bson_oid_t oid;
+
+  char row_name[CF_MAXVARSIZE] = {0}, row_add[CF_MAXVARSIZE] = {0}, db[CF_MAXVARSIZE] = {0};
+  bson_iterator it1,it2;
+  int level = 0, getrow=false, ret;
+  
+  snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,note,datetime);
+  AppendItem(&data, msg, NULL);
+
+  if (!keyhash || strlen(keyhash) == 0 || !repid || strlen(repid)==0)
     {
+      CfOut(cf_verbose,"", "!! Hostkey and report id not given. Nothing to look for");
       return false;
     }
-  
-  if(getrow)
+
+  //  snprintf(objectId, CF_MAXVARSIZE, "%s",repid);
+
+  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
-      CFDB_AddComment(&dbconn,keyhash, commentId, row, data);
-    
-      if((!cid || strlen(cid)<15) && strlen(commentId)>0 && repid)
-	{
-	  snprintf(reportText,CF_BUFSIZE,"%s",reportData);
-	  AppendItem(&report,reportText,NULL);
-	  switch(reportType)
-	    {
-	    case CFREPORT_HOSTS:
-	      CFDBRef_HostID_Comments(&dbconn,keyhash, commentId);
-	      break;
-	    case CFREPORT_PRLOG:
-	      CFDBRef_PromiseLog_Comments(&dbconn, objectId, commentId, plog_repaired);
-	      break;
-	    case CFREPORT_PERF:
-	      CFDBRef_Performance_Comments(&dbconn, keyhash,repid, commentId); /*TODO: use CFDBRef_AddToRow instead*/
-	      break;
-	    case CFREPORT_VALUE: /*value report*/
-	      snprintf(row_name, sizeof(row_name), "%s.%s.%s",cfr_valuereport,repid,cfc_cid);
-	      CFDBRef_AddToRow(&dbconn, MONGO_DATABASE, &query, row_name, commentId);
-	      break;
-	    case CFREPORT_FILECHANGES:
-	      snprintf(row_name, sizeof(row_name), "%s.%s.%s",cfr_filechanges,repid,cfc_cid);
-	      CFDBRef_AddToRow(&dbconn, MONGO_DATABASE, &query, row_name, commentId);
-	      break;
-	    case CFREPORT_FILEDIFFS:
-	      snprintf(row_name, sizeof(row_name), "%s.%s.%s",cfr_filediffs,repid,cfc_cid);
-	      CFDBRef_AddToRow(&dbconn, MONGO_DATABASE, &query, row_name, commentId);
-	      break;
-	    }
-	}
+      CfOut(cf_verbose,"", "!! Could not open connection to report database");
+      return false;
     }
+
+  //create query
+  bson_buffer_init(&bb);
+  bson_append_string(&bb,cfr_keyhash,keyhash);
+  bson_from_buffer(&query,&bb);
+  
+  //get report
+  switch(reportType)
+    {
+    case CFREPORT_HOSTS:
+      level = 2;
+      snprintf(row_name, sizeof(row_name), "%s","ha"); // taking the IP addresses
+      snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
+      getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
+      snprintf(row_add, sizeof(row_add), "%s",cfn_nid);
+      break;
+
+    case CFREPORT_PRLOG:
+      level = 1;
+      snprintf(db, sizeof(db), "%s", MONGO_LOGS_REPAIRED);
+      
+      bson_oid_from_string(&oid,repid);
+      bson_buffer_init(&bb);
+      bson_append_oid(&bb,"_id",&oid);
+      bson_from_buffer(&query,&bb);
+      getrow = CFDB_GetRow(&dbconn, db, &query, "*", row, sizeof(row), level);
+      snprintf(row_add, sizeof(row_add), "%s",cfn_nid); 
+      break;
+
+    case CFREPORT_PERF:
+      snprintf(row_name, sizeof(row_name), "%s.%s",cfr_performance,repid);
+      snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
+      getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
+      snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
+      break;
+
+    case CFREPORT_VALUE: /*value report*/
+      snprintf(row_name, sizeof(row_name), "%s.%s",cfr_valuereport,repid);
+      snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
+      getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
+      snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
+      break;
+    case CFREPORT_FILECHANGES:  
+      snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filechanges,repid);
+      snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
+      getrow = CFDB_GetRow(&dbconn, MONGO_DATABASE, &query, row_name, row, sizeof(row), level);
+      snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
+      break;
+    case CFREPORT_FILEDIFFS:  
+      snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filediffs,repid);
+      snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
+      getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
+      snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
+      break;
+      
+    }
+
+  if(!getrow)
+    {
+      CfOut(cf_verbose,"", "!! Could not find report for: hostkey = %s, report ID = %s", keyhash, repid);
+      bson_destroy(&query);
+      return false;
+    }
+
+  // add note
+  ret = CFDB_AddNote(&dbconn,keyhash, noteId, row, data);
+
+  //add DBRef
+  if(strlen(noteId)>0 && ret)
+    {
+      CFDBRef_AddToRow(&dbconn, db, &query, row_add, noteId);
+    }
+  //TODO: delete comment if addtorow fails?
   bson_destroy(&query);
   CFDB_Close(&dbconn);
-  return true;
+  return ret;
 }
 
 /*****************************************************************************/
 /*commenting*/
-int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, time_t to, char *returnval, int bufsize)
+int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, time_t to, char *returnval, int bufsize)
 
 { struct Item *data = NULL, *ip = NULL;
   char msg[CF_BUFSIZE] = {0};
   char buffer[CF_BUFSIZE] = {0};
   mongo_connection dbconn;
-  struct HubCommentInfo *hci;
-  struct HubComment *hc;
+  struct HubNoteInfo *hni;
+  struct HubNote *hn;
   struct Rlist *result, *rp;
 
   char fuser[CF_MAXVARSIZE] = {0};
   char kh[CF_MAXVARSIZE] = {0};
-  char commentId[CF_MAXVARSIZE] = {0};
+  char noteId[CF_MAXVARSIZE] = {0};
 
   if(username)
     {
@@ -4505,20 +4536,23 @@ int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, 
     {
       snprintf(kh, CF_MAXVARSIZE,"%s", keyhash);
     }
-  if(cid)
+  if(nid)
     {
-      snprintf(commentId, CF_MAXVARSIZE,"%s", cid);
+      snprintf(noteId, CF_MAXVARSIZE,"%s", nid);
     }
 
   snprintf(msg, CF_BUFSIZE, "%s,%ld,%ld\n",fuser, from, to);
+
   AppendItem(&data, msg, NULL);
+
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
       CfOut(cf_verbose,"", "!! Could not open connection to report database");
       return false;
     }
 
-  result = CFDB_QueryComments(&dbconn, kh, commentId, data);
+  printf("bishwa: noteId = %s, data=%s\n", noteId,msg);
+  result = CFDB_QueryNotes(&dbconn, kh, noteId, data);
 
   returnval[0] = '\0';
   snprintf(buffer,sizeof(buffer),"<table><tr><td>User</td><td>Date </td><td>Comment</td></tr>\n");
@@ -4526,16 +4560,16 @@ int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, 
   
   for (rp = result; rp != NULL; rp=rp->next)
     {
-      hci = ( struct HubCommentInfo *) rp->item;
-     for(hc = hci->comment; hc != NULL; hc=hc->next)
+      hni = ( struct HubNoteInfo *) rp->item;
+     for(hn = hni->note; hn != NULL; hn=hn->next)
 	{
-	  snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%ld</td><td>%s</td></tr>\n", hc->user, hc->t, hc->msg);
+	  snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%ld</td><td>%s</td></tr>\n", hn->user, hn->t, hn->msg);
 	  if(!Join(returnval,buffer,bufsize))
 	    {
 	      break;
 	    }
 	}
-      hci = NULL;
+      hni = NULL;
     }
   EndJoin(returnval,"</table>\n",bufsize);
   DeleteRlist(result);
@@ -4547,7 +4581,7 @@ int Nova2PHP_get_comment(char *keyhash, char *cid, char *username, time_t from, 
   return true;
 }
 /*****************************************************************************/
-int Nova2PHP_get_host_commentid(char *hostkey, char *returnval, int bufsize)
+int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
 {
   char *report,buffer[CF_BUFSIZE];
   struct Rlist *rp,*result;
@@ -4574,7 +4608,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-result = CFDB_QueryCommentId(&dbconn,&query);
+result = CFDB_QueryNoteId(&dbconn,&query);
 
 bson_destroy(&query);
 returnval[0] = '\0';
