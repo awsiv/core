@@ -5241,7 +5241,6 @@ struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  
       username[0] = '\0';
       note[0] = '\0';
       noteId[0] = '\0';
-      bson_print(&cursor->current);
       while (bson_iterator_next(&it1))
         {
           switch(bson_iterator_type(&it1))

@@ -4551,7 +4551,6 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
       return false;
     }
 
-  printf("bishwa: noteId = %s, data=%s\n", noteId,msg);
   result = CFDB_QueryNotes(&dbconn, kh, noteId, data);
 
   returnval[0] = '\0';
