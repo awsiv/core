@@ -155,7 +155,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       }      
 
    hh = NewHubHost(keyhash,addresses,hostnames);
@@ -245,7 +245,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       found = false;
       
       /* Query specific search/marshalling */
@@ -444,7 +444,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
       /* Query specific search/marshalling */
 
@@ -614,7 +614,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       found = false;
       
       /* Query specific search/marshalling */
@@ -830,7 +830,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       found = false;
 
       rlval[0] = '\0';
@@ -1075,7 +1075,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyHashDb,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyHashDb,addresses,hostnames);
       
       /* Query specific search/marshalling */
 
@@ -1262,7 +1262,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
       /* Query specific search/marshalling */
 
@@ -1453,7 +1453,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
       /* Query specific search/marshalling */
 
@@ -1592,7 +1592,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
       /* Query specific search/marshalling */
 
@@ -1769,7 +1769,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
       /* Query specific search/marshalling */
 
@@ -1911,7 +1911,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
       /* Query specific search/marshalling */
 
@@ -2091,7 +2091,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
       /* Query specific search/marshalling */
 
@@ -2480,7 +2480,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
       /* Query specific search/marshalling */
 
@@ -2659,7 +2659,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
       /* Query specific search/marshalling */
 
@@ -4805,7 +4805,7 @@ return retList;
 /* Level                                                                     */
 /*****************************************************************************/
 
-void CMDB_ScanHubHost(bson_iterator *it1,char *keyhash,char *ipaddr,char *hostnames)
+void CFDB_ScanHubHost(bson_iterator *it1,char *keyhash,char *ipaddr,char *hostnames)
 
 { bson_iterator it2;
   
@@ -4969,9 +4969,9 @@ int QueryInsertHostInfo(mongo_connection *conn, struct Rlist *host_list)
       bson_iterator_init(&it1,cursor->current.data);
       
       while(bson_iterator_next(&it1))
-	{
-	  CMDB_ScanHubHost(&it1,keyHash,ipAddrs,hostNames);
-	}
+         {
+         CFDB_ScanHubHost(&it1,keyHash,ipAddrs,hostNames);
+         }
       
       hh = GetHubHostIn(host_list,keyHash);
       

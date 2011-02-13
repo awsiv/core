@@ -337,7 +337,7 @@ struct Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep);
 struct Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
 
 void CFDB_ListEverything(mongo_connection *conn);
-void CMDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
+void CFDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
 int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRegex);
 int QueryInsertHostInfo(mongo_connection *conn,struct Rlist *host_list);
 void PrintCFDBKey(bson_iterator *it, int depth);
@@ -759,14 +759,14 @@ void Nova_CfQueryCFDB(char *query);
 
 /* scorecards.c */
 
+void Nova_BarMeterNova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize);
 void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize);
-void Nova_SummaryMeter(char *docroot,char *search_string,char *buffer,int bufsize);
-int Nova_Meter(char *docroot,char *hostkey,char *buffer,int bufsize);
+void Nova_Meter(char *hostkey,char *buffer,int bufsize);
 struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
 struct Item *Nova_GreenHosts(void);
 struct Item *Nova_YellowHosts(void);
 struct Item *Nova_RedHosts(void);
-void Nova_BarMeter(struct CfDataView *cfv,int number,double kept,double repaired,char *s);
+struct Item *Nova_BlueHosts(void);
 struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_method method,int max_return);
 int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *rep);
 int Nova_IsGreen(int level);
@@ -949,6 +949,7 @@ void Nova2PHP_select_hosts(char *match,char *sel,int n,char *buffer,int bufsize)
 void Nova2PHP_select_reports(char *buffer,int bufsize);
 
 long Nova2PHP_count_hosts(void);
+long Nova2PHP_count_blue_hosts(void);
 long Nova2PHP_count_red_hosts(void);
 long Nova2PHP_count_yellow_hosts(void);
 long Nova2PHP_count_green_hosts(void);

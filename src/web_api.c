@@ -253,8 +253,7 @@ Nova_AnalyseHistogram(keyhash,obs,buffer,bufsize);
 void Nova2PHP_summary_meter(char *hostkey,char *buffer,int bufsize)
 
 {
-Nova_WebTopicMap_Initialize();
-Nova_SummaryMeter(DOCROOT,hostkey,buffer,bufsize);
+Nova_Meter(NULL,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -262,8 +261,7 @@ Nova_SummaryMeter(DOCROOT,hostkey,buffer,bufsize);
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize)
 
 {
-Nova_WebTopicMap_Initialize();
-Nova_Meter(DOCROOT,hostkey,buffer,bufsize);
+Nova_Meter(hostkey,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -2104,14 +2102,14 @@ if (matched)
 
          for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
             {
-	      snprintf(work,sizeof(work),"<tr><td><a href=\"/welcome/knowledge/pid/%d\">%s</a> </td><td> %s</td></tr>",ip2->counter,ip2->name,ip2->classes);
-
+            snprintf(work,sizeof(work),"<tr><td><a href=\"/welcome/knowledge/pid/%d\">%s</a> </td><td> %s</td></tr>",ip2->counter,ip2->name,ip2->classes);
+            
             if (!Join(goals,work,CF_BUFSIZE))
-	      {
-	      break;
-	      }
+               {
+               break;
+               }
             }
-
+         
          strcat(goals,"</table>");
          snprintf(colour,CF_SMALLBUF,"/images/green.png");
          }
@@ -2181,14 +2179,14 @@ if (matched)
    
    for (ip = matched; ip != NULL; ip=ip->next)
       {
-	snprintf(work,CF_MAXVARSIZE,"<li><a href=\"/bundle/details/type/%s\"><span class=\"bundletype\">%s</span></a> <a href=\"/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->classes,ip->name);
-
+      snprintf(work,CF_MAXVARSIZE,"<li><a href=\"/bundle/details/type/%s\"><span class=\"bundletype\">%s</span></a> <a href=\"/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->classes,ip->name);
+      
       if(!Join(buffer,work,bufsize))
-	{
-	break;
-	}
+         {
+         break;
+         }
       }
-
+   
    strcat(buffer,"</ul></div>\n");
    DeleteItemList(matched);
    }
@@ -2214,17 +2212,16 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return -1;
    }
  
- bundleCount = CFDB_QueryBundleCount(&dbconn);
-
+bundleCount = CFDB_QueryBundleCount(&dbconn);
 
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
- snprintf(buffer,bufsize,"%d",bundleCount);
+snprintf(buffer,bufsize,"%d",bundleCount);
 
- return true;
+return true;
 }
 
 /*****************************************************************************/
@@ -2239,8 +2236,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return -1;
    }
- 
- promiseCount = CFDB_QueryPromiseCount(&dbconn);
+
+promiseCount = CFDB_QueryPromiseCount(&dbconn);
 
 
 if (!CFDB_Close(&dbconn))
@@ -2248,9 +2245,9 @@ if (!CFDB_Close(&dbconn))
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
 
- snprintf(buffer,bufsize,"%d",promiseCount);
+snprintf(buffer,bufsize,"%d",promiseCount);
 
- return true;
+return true;
 }
 
 /*****************************************************************************/
@@ -2340,7 +2337,7 @@ Nova_ScanTheRest(id,buffer,bufsize);
 void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize)
 
 { struct Item *ip,*clist;
-  char work[CF_BUFSIZE] = {0};//[CF_MAXVARSIZE];
+  char work[CF_BUFSIZE] = {0};
   static char *policies[] = { "compliance", "anomaly", "performance", "lastseen", NULL};
   enum cf_rank_method pol;
 
@@ -2357,32 +2354,34 @@ for (pol = 0; policies[pol] != NULL; pol++)
 clist = Nova_RankHosts(NULL,0,pol,n);
 
 buffer[0] = '\0';
-strcat(buffer,"<table>\n\n\n");
+strcat(buffer,"[");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
-   Nova_Meter(DOCROOT,ip->name,buffer,bufsize);
-
    if (Nova_IsGreen(ip->counter))
       {
-	snprintf(work,sizeof(work),"<tr><td><a href=\"/welcome/hosts/green\"><img src=\"/images/green.png\"></a></td><td><a href=\"/welcome/host/%s\">%s</a></td><td><a href=\"/welcome/host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,sizeof(work),"{ colour: \"green\", key: \"%s\", id: \"%s\"},",ip->name,ip->classes);
       }
    else if (Nova_IsYellow(ip->counter))
       {
-	snprintf(work,sizeof(work),"<tr><td><a href=\"hosts/yellow\"><img src=\"/images/yellow.png\"></a></td><td><a href=\"/welcome/host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,sizeof(work),"{ colour: \"yellow\", key: \"%s\", id: \"%s\"},",ip->name,ip->classes);
       }
-   else // if (Nova_IsRed(ip->counter))
+   else if (Nova_IsRed(ip->counter))
       {
-	snprintf(work,sizeof(work),"<tr><td><a href=\"hosts/red\"><img src=\"/images/red.png\"></a></td><td><a href=\"/welcome/host/%s\">%s</a></td><td><a href=\"host/%s\"><img src=\"/hub/%s/meter.png\"></a></td><td>%s</td></a></td></tr>\n",ip->name,ip->classes,ip->name,ip->name,Nova_HostProfile(ip->name));
+      snprintf(work,sizeof(work),"{ colour: \"red\", key: \"%s\", id: \"%s\"},",ip->name,ip->classes);
       }
-
-   if(!Join(buffer,work,bufsize))
-     {
-     break;
-     }
+   else
+      {
+      snprintf(work,sizeof(work),"{ colour: \"blue\", key: \"%s\", id: \"%s\"},",ip->name,ip->classes);      
+      }
+   
+   if (!Join(buffer,work,bufsize))
+      {
+      break;
+      }
    }
 
-EndJoin(buffer,"\n</table>\n",bufsize);
+EndJoin(buffer,"]",bufsize);
 DeleteItemList(clist);
 }
 
@@ -2398,32 +2397,14 @@ clist = Nova_RankHosts(policy,1,cfrank_compliance,n);
 clist = SortItemListClasses(clist);
 
 buffer[0] = '\0';
-strcat(buffer,"<table>\n\n\n");
+strcat(buffer,"[");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
-   Nova_Meter(DOCROOT,ip->name,buffer,bufsize);
-
-   if (Nova_IsGreen(ip->counter))
-      {
-      snprintf(work,CF_MAXVARSIZE,"<td><img src=\"green.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td><td>%s</td></a></td></tr>\n",ip->classes,ip->name,Nova_HostProfile(ip->name));
-      }
-   else if (Nova_IsYellow(ip->counter))
-      {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"yellow.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td><td>%s</td></a></td></tr>\n",ip->classes,ip->name,Nova_HostProfile(ip->name));
-      }
-   else // if (Nova_IsRed(ip->counter))
-      {
-      snprintf(work,CF_MAXVARSIZE,"<tr><td><img src=\"red.png\"></td><td>%s</td><td><img src=\"/hub/%s/meter.png\"></td><td>%s</td></a></td></tr>\n",ip->classes,ip->name,Nova_HostProfile(ip->name));
-      }
-
-   if(!Join(buffer,work,bufsize))
-     {
-     break;
-     }
+// Why is this here?
    }
 
-EndJoin(buffer,"\n</table>\n",bufsize);
+EndJoin(buffer,"]",bufsize);
 DeleteItemList(clist);
 }
 
@@ -2443,44 +2424,31 @@ else if (strcmp(colour,"yellow") == 0)
    {
    clist = Nova_YellowHosts();
    }
-else
+else if (strcmp(colour,"red") == 0)
    {
    clist = Nova_RedHosts();
+   }
+else
+   {
+   clist = Nova_BlueHosts();
    }
 
 if (clist)
    {
    buffer[0] = '\0';
-   strcat(buffer,"<table>\n<tr>\n");
+   strcat(buffer,"[");
    
    for (ip = clist; ip !=  NULL; ip=ip->next, counter++)
-      {
-      if (counter > 0 && (counter % 6 == 0))  // new row
-         {
-         snprintf(work,CF_MAXVARSIZE,"</tr>\n<tr>\n");
-
-         if(!Join(buffer,work,bufsize))
-	   {
-	   break;
-	   }
-         }
+      {      
+      snprintf(work,CF_MAXVARSIZE,"key: \"%s\", id: \"%s\"",ip->name,ip->classes);
       
-      snprintf(work,CF_MAXVARSIZE,"<td><img src=\"/images/%s.png\"><a href=\"/welcome/host/%s\">%s</a></td>\n",
-	       colour,ip->name,ip->classes,Nova_HostProfile(ip->name));
-      
-      if(!Join(buffer,work,bufsize))
-	{
-	break;
-	}
-      
-      if (counter > n && (counter % 6 == 0))
+      if (!Join(buffer,work,bufsize))
          {
          break;
          }
-
       }
 
-   EndJoin(buffer,"</tr>\n</table>\n",bufsize);
+   EndJoin(buffer,"]",bufsize);
    DeleteItemList(clist);
    }
 }
@@ -2557,6 +2525,17 @@ return (long)len;
 long Nova2PHP_count_green_hosts()
 
 { struct Item *all = Nova_GreenHosts();
+  int len = ListLen(all);
+
+DeleteItemList(all);
+return (long)len;
+}
+
+/*****************************************************************************/
+
+long Nova2PHP_count_blue_hosts()
+
+{ struct Item *all = Nova_BlueHosts();
   int len = ListLen(all);
 
 DeleteItemList(all);
@@ -2727,7 +2706,7 @@ if (all_bodies)
       
    for (ip = all_bodies; ip != NULL; ip=ip->next)
       {
-	snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"/welcome/knowledge/topic/%s\">%s</a> ",ip->classes,ip->classes);
+      snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"/welcome/knowledge/topic/%s\">%s</a> ",ip->classes,ip->classes);
       Join(returnval,work,bufsize);
       
       snprintf(work,CF_MAXVARSIZE-1,"<a href=\"/welcome/body/body/%s/type/%s\">%s</a></li>\n",ip->name,ip->classes,ip->name);
@@ -3044,10 +3023,7 @@ return true;
 
 void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize)
 
-{ 
-#ifdef HAVE_LIBMONGOC
-
-  mongo_connection dbconn;
+{ mongo_connection dbconn;
   mongo_cursor *cursor;
   bson_iterator it1;
   bson_buffer bb;
@@ -3111,8 +3087,6 @@ else
    {
    snprintf(buffer,bufsize,"Insufficient data");
    }
-
-#endif /* HAVE_LIBMONGOC */
 }
 
 /*****************************************************************************/

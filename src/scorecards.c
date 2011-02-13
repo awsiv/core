@@ -80,11 +80,9 @@ for (i = 0,start = now - one_week; start < now; start += CF_SHIFT_INTERVAL,i++)
 
 /*****************************************************************************/
 
-void Nova_SummaryMeter(char *docroot,char *search_string,char *buffer,int bufsize)
+void Nova_Meter(char *search_string,char *buffer,int bufsize)
 
-{  char filename[CF_BUFSIZE];
-  int returnval = 0;
-  double kept = 0,repaired = 0;
+{ double kept = 0,repaired = 0;
   double kept_week = 0,kept_day = 0,kept_hour = 0,kept_comms = 0,kept_anom = 0,kept_perf = 0,kept_other = 0;
   double rep_week = 0,rep_day = 0,rep_hour = 0,rep_comms = 0,rep_anom = 0,rep_perf = 0,rep_other = 0;
   double num_week = 0,num_day = 0,num_hour = 0,num_comms = 0,num_anom = 0,num_perf = 0,num_other = 0;
@@ -94,7 +92,6 @@ void Nova_SummaryMeter(char *docroot,char *search_string,char *buffer,int bufsiz
   struct HubQuery *hq;
   mongo_connection dbconn;
   struct Rlist *rp;
-  struct CfDataView cfv;
 
 // get data
 
@@ -163,88 +160,17 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       }
    }
 
-/*
-Nova_BarMeter(&cfv,1,kept_week/num_week,rep_week/num_week,"Week");
-Nova_BarMeter(&cfv,2,kept_day/num_day,rep_day/num_day,"Day");
-Nova_BarMeter(&cfv,3,kept_hour/num_hour,rep_hour/num_hour,"Hour");
-Nova_BarMeter(&cfv,4,kept_perf/num_perf,rep_perf/num_perf,"Perf");
-Nova_BarMeter(&cfv,5,kept_other/num_other,rep_other/num_other,"Chng");
-Nova_BarMeter(&cfv,6,kept_comms/num_comms,rep_comms/num_comms,"Seen");
-Nova_BarMeter(&cfv,7,kept_anom/num_anom,rep_anom/num_anom,"Anom");
-*/
+Nova_BarMeter(1,kept_week/num_week,rep_week/num_week,"Week",buffer,bufsize);
+Nova_BarMeter(2,kept_day/num_day,rep_day/num_day,"Day",buffer,bufsize);
+Nova_BarMeter(3,kept_hour/num_hour,rep_hour/num_hour,"Hour",buffer,bufsize);
+Nova_BarMeter(4,kept_perf/num_perf,rep_perf/num_perf,"Perf",buffer,bufsize);
+Nova_BarMeter(5,kept_other/num_other,rep_other/num_other,"Chng",buffer,bufsize);
+Nova_BarMeter(6,kept_comms/num_comms,rep_comms/num_comms,"Seen",buffer,bufsize);
+Nova_BarMeter(7,kept_anom/num_anom,rep_anom/num_anom,"Anom",buffer,bufsize);
 
 // Clean up
 
 DeleteHubQuery(hq,DeleteHubMeter);
-}
-
-/*****************************************************************************/
-
-int Nova_Meter(char *docroot,char *hostkey,char *buffer,int bufsize)
-
-{ int returnval = 0;
-  char filename[CF_BUFSIZE];
-  double kept,repaired;
-  struct stat sb;
-  struct utimbuf t;
-  struct HubMeter *hm;
-  struct HubQuery *hq;
-  mongo_connection dbconn;
-  struct Rlist *rp;
-  struct CfDataView cfv;
-
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-   {
-   CfOut(cf_error,"", "!! Could not open connection to report database on meter query");
-   return returnval;
-   }
-
-hq = CFDB_QueryMeter(&dbconn,hostkey);
-
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   } 
-
-for (rp = hq->records; rp != NULL; rp=rp->next)
-   {
-   hm = (struct HubMeter *)rp->item;
-
-   kept = hm->kept;
-   repaired = hm->repaired;
-/*
-   switch (hm->type)
-      {
-      case cfmeter_week:
-          Nova_BarMeter(&cfv,1,kept,repaired,"Week");
-          break;
-      case cfmeter_hour:
-          Nova_BarMeter(&cfv,3,kept,repaired,"Hour");
-          break;          
-      case cfmeter_day:
-          Nova_BarMeter(&cfv,2,kept,repaired,"Day");
-          break;
-      case cfmeter_perf:
-          Nova_BarMeter(&cfv,4,kept,repaired,"Perf");
-          break;
-      case cfmeter_comms:
-          Nova_BarMeter(&cfv,6,kept,repaired,"Coms");
-          break;
-      case cfmeter_anomaly:
-          Nova_BarMeter(&cfv,7,kept,repaired,"Anom");
-          break;
-      case cfmeter_other:
-          Nova_BarMeter(&cfv,5,kept,repaired,"Chng");
-          break;
-      }
-
-*/
-   }
-
-// Clean up
-
-DeleteHubQuery(hq,DeleteHubMeter);
-return true;
 }
 
 /*****************************************************************************/
@@ -314,7 +240,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
       /* Query specific search/marshalling */
 
@@ -520,6 +446,27 @@ return sorted;
 }
 
 /*****************************************************************************/
+
+struct Item *Nova_BlueHosts()
+
+{ struct Item *ip,*hosts = NULL,*sorted = NULL;
+
+hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,1000);
+
+for (ip = hosts; ip != NULL; ip=ip->next)
+   {
+   if (Nova_IsBlue(ip->counter))
+      {
+      AppendItem(&sorted,ip->name,ip->classes);
+      }
+   }
+
+DeleteItemList(hosts);
+sorted = SortItemListNames(sorted);
+return sorted;
+}
+
+/*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
 
@@ -579,7 +526,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       /* Extract the common HubHost data */
 
-      CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
 
       if (strcmp(bson_iterator_key(&it1),cfr_day) == 0)
          {
@@ -846,6 +793,14 @@ else
    {
    return false;
    }
+}
+
+/*****************************************************************************/
+
+void Nova_BarMeterNova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize)
+
+{
+snprintf(buffer,bufsize,"{ title: \"%s\", position: %d, kept: %lf, repaired: %lf, notkept: %lf },",name,pos,kept,rep,100-kept-rep);
 }
 
 #endif
