@@ -22,9 +22,7 @@ int Nova_ViewHisto(char *keyhash,enum observables obs,char *buffer,int bufsize)
   struct Item *spectrum;
   struct CfDataView cfv;
   
-cfv.title = OBS[obs][1];
-
-/* Done initialization */
+*buffer = '\0';
 
 if (!Nova_ReadHistogram(&cfv,keyhash,obs))
    {
@@ -179,7 +177,7 @@ return maxima;
 
 /*******************************************************************/
 
-void Nova_AnalyseHistogram(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize)
+void Nova_AnalyseHistogram(char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 { double sx, q, delta, sum = 0, sigma2;
   int new_gradient = 0, past_gradient = 0, max = 0;
@@ -187,10 +185,10 @@ void Nova_AnalyseHistogram(char *docroot,char *keyhash,enum observables obs,char
   int above_noise = false;
   char work[CF_BUFSIZE];
   double sensitivity_factor = 1.2;
-  struct CfDataView cfv;
+  struct CfDataView cfv = {0};
   struct Item *spectrum;
 
-cfv.docroot = docroot;
+*buffer = '\0';
 
 if (!Nova_ReadHistogram(&cfv,keyhash,obs))
    {
@@ -199,10 +197,7 @@ if (!Nova_ReadHistogram(&cfv,keyhash,obs))
 
 spectrum = Nova_MapHistogram(&cfv,keyhash,obs);
 
-*buffer = '\0';
-
-snprintf(work,CF_BUFSIZE-1,"<div id=\"histoanalysis\"><table>\n");
-Join(buffer,work,bufsize);
+strcpy(buffer,"[");
 
 for (sx = 1; sx < CF_GRAINS; sx++)
    {
@@ -213,16 +208,9 @@ for (sx = 1; sx < CF_GRAINS; sx++)
 
 sigma2 = sum / (double)CF_GRAINS;
 
-snprintf(work,CF_BUFSIZE-1,"<tr><td> Maximum observed %s = %.2lf</td><td></td></tr>\n",OBS[obs][0],cfv.max);
+snprintf(work,CF_BUFSIZE-1,"Maximum observed %s = %.2lf\",",OBS[obs][0],cfv.max);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"<tr><td> Minimum observed %s = %.2lf</td><td></td></tr>\n",OBS[obs][0],cfv.min);
-Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"<tr><td> Approximate mean value over time = %.2lf</td><td></td></tr>\n",Q_MEAN);
-Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"<tr><td> Approximate standard deviation time = %.2lf</td><td></td></tr>\n",Q_SIGMA);
-Join(buffer,work,bufsize);
-
-snprintf(work,CF_BUFSIZE-1,"<ol>\n");
+snprintf(work,CF_BUFSIZE-1,"Minimum observed %s = %.2lf\",",OBS[obs][0],cfv.min);
 Join(buffer,work,bufsize);
 
 for (sx = 1; sx < CF_GRAINS; sx++)
@@ -240,53 +228,35 @@ for (sx = 1; sx < CF_GRAINS; sx++)
          {
          max++;
 
-         snprintf(work,CF_BUFSIZE-1,"<tr><td>Spectral mode %d, with  peak found at %.0lf/%.0lf grains (conversion &asymp; %.2lf &plusmn; %.2lf)</td><td>",max,sx-1,(double)CF_GRAINS,Q_MEAN,Q_SIGMA);
+         snprintf(work,CF_BUFSIZE-1,"\"%d: Spectral mode with peak at %.0lf/%.0lf grains, ",max,sx-1,(double)CF_GRAINS);
          Join(buffer,work,bufsize);
 
          if (sx < ((double)CF_GRAINS)/2.0 - 1.0)
             {
             redshift++;
-            snprintf(work,CF_BUFSIZE-1,"<ul><li>Red-shifted, typically shows retardation process</li></ul>\n");
-            Join(buffer,work,bufsize);
-            
-            snprintf(work,CF_BUFSIZE-1,"<div id = \"explain\"><table><tr><td><h4>What does this mean?</h4>"
-                    "<p>If the distribution is skewed, it has a long ramp, indicating "
-                    "a possible resource ceiling, a well-utilized system. "
-                    "Or there could be outliers of low value, because data are incomplete. "
-                    "Finally, it can indicate that this resource process is declining. "
-                    "</td></tr></table></div>\n");
+            snprintf(work,CF_BUFSIZE-1,"red-shifted, e.g. a retardation process where usage is declining. "
+                     "If the distribution is skewed, it has a long ramp, indicating "
+                     "a possible resource ceiling, a well-utilized system. "
+                     "Or there could be outliers of low value, because data are incomplete.\",");
             Join(buffer,work,bufsize);
             }
          else if (sx > ((double)CF_GRAINS)/2.0 + 1.0)
             {
             blueshift++;
-            snprintf(work,CF_BUFSIZE-1,"<ul><li>Blue-shifted, typically shows acceleration process</li></ul>\n");
-            Join(buffer,work,bufsize);
-
-            snprintf(work,CF_BUFSIZE-1,"<div id = \"explain\"><table><tr><td><h4>What does this mean?</h4>"
-                    "<p>If the distribution is skewed, it has a long tail, indicating "
+            snprintf(work,CF_BUFSIZE-1,"blue-shifted, e.g. an acceleration process where usage is increasing. "
+                     "If the distribution is skewed, it has a long tail, indicating "
                     "plenty of resources, or an under-used system. "
-                    "Or there could be outliers of low value, because data are incomplete. "
-                    "Finally, it can indicate that this resource process is declining. "
-                    "</td></tr></table></div>\n");
+                    "Or there could be outliers of low value, because data are incomplete.\",");
             Join(buffer,work,bufsize);            
             }
-
          }
       }
    
    past_gradient = new_gradient;
    }
 
-snprintf(work,CF_BUFSIZE-1,"</td></tr>\n");      
 Join(buffer,work,bufsize);
-
-snprintf(work,CF_BUFSIZE-1,"<tr><td>Spectrum seems to be %d-modal (within the margins of uncertainty)</td><td><div id = \"explain\"><table><tr><td><h4>What does this mean?</h4><p>A mode represents a maximum peak in the frequency spectrum. It indicates a probable statistical state of the system, which means that the system has this number of preferred behaviours.</td></tr></table></div></td></tr>\n",max);
-Join(buffer,work,bufsize);
-
-snprintf(work,CF_BUFSIZE-1,"</div>\n");
-Join(buffer,work,bufsize);
+Join(buffer,"]",bufsize);
 DeleteItemList(spectrum);
-
 }
 

@@ -225,51 +225,42 @@ Join(buffer,"]",bufsize);
 
 /***********************************************************/
 
-void Nova_AnalyseWeek(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize)
+void Nova_AnalyseWeek(char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 { char work[CF_BUFSIZE];
   double x;
   struct CfDataView cfv = {0};
 
-cfv.docroot = docroot;
-
-/* Done initialization */
+*buffer = '\0';
 
 if (!Nova_ReadTimeSeries(&cfv,keyhash,obs))
    {
    return;
    }
 
-*buffer = '\0';
+strcpy(buffer,"[");
 
-snprintf(work,CF_BUFSIZE-1,"<div id=\"weekanalysis\">\n");
+snprintf(work,CF_BUFSIZE-1,"\"Maximum value: %lf %s\",",cfv.max,UNITS[obs]);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"<table>\n");
-Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"<tr><td>Maximum value </td><td>%lf</td><td>%s</td></tr>\n",cfv.max,UNITS[obs]);
-Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"<tr><td>Minimum value </td><td>%lf</td><td>%s</td></tr>\n",cfv.min,UNITS[obs]);
+snprintf(work,CF_BUFSIZE-1,"\"Minimum value %lf %s\",",cfv.min,UNITS[obs]);
 Join(buffer,work,bufsize);
 x = 100*(double)cfv.over/(double)CF_TIMESERIESDATA;
-snprintf(work,CF_BUFSIZE-1,"<tr><td>Percentage over average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
+snprintf(work,CF_BUFSIZE-1,"\"Percentage over average/normal: %lf\%\",",x);
 Join(buffer,work,bufsize);
 x = 100*(double)cfv.under/(double)CF_TIMESERIESDATA;
-snprintf(work,CF_BUFSIZE-1,"<tr><td>Percentage under average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
+snprintf(work,CF_BUFSIZE-1,"\"Percentage under average/normal: %lf\%\",",x);
 Join(buffer,work,bufsize);
 x = 100*(double)cfv.over_dev1/(double)CF_TIMESERIESDATA;
-snprintf(work,CF_BUFSIZE-1,"<tr><td>Percentage 1 deviation over average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
+snprintf(work,CF_BUFSIZE-1,"\"Percentage 1 deviation over mean: %lf\%\",",x);
 Join(buffer,work,bufsize);
 x = 100*(double)cfv.under_dev1/(double)CF_TIMESERIESDATA;
-snprintf(work,CF_BUFSIZE-1,"<tr><td>Percentage 1 deviation under average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
+snprintf(work,CF_BUFSIZE-1,"\"Percentage 1 deviation under mean: %lf\%\",",x);
 Join(buffer,work,bufsize);
 x = 100*(double)cfv.over_dev2/(double)CF_TIMESERIESDATA;
-snprintf(work,CF_BUFSIZE-1,"<tr><td>Percentage 2 deviations over average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
+snprintf(work,CF_BUFSIZE-1,"\"Percentage 2 deviations over mean: %lf\%\",",x);
 Join(buffer,work,bufsize);
 x = 100*(double)cfv.under_dev2/(double)CF_TIMESERIESDATA;
-snprintf(work,CF_BUFSIZE-1,"<tr><td>Percentage 2 deviations under average/normal</td><td>%lf</td><td>\%</td></tr>\n",x);
+snprintf(work,CF_BUFSIZE-1,"\"Percentage 2 deviations under mean: %lf\%\"",x);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"</table>\n");
-Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"</div>\n");
-Join(buffer,work,bufsize);
+Join(buffer,"]",bufsize);
 }

@@ -505,7 +505,7 @@ int Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs
 void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
 void Nova_PlotHistogram(struct CfDataView *cfv,char *buffer,int bufsize);
 struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observables obs);
-void Nova_AnalyseHistogram(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova_AnalyseHistogram(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 /* html.c */
 
@@ -645,7 +645,7 @@ void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp);
 int Nova_ViewMag(char *keyhash,enum observables obs,char *buffer,int bufsize);
 int Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs);
 void Nova_PlotMagQFile(struct CfDataView *cfv,char *buffer,int bufsize);
-void Nova_AnalyseMag(char *docroot, char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova_AnalyseMag(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 /* monitoring.c */
 
@@ -1018,7 +1018,7 @@ int Nova_ViewWeek(char *keyhash,enum observables obs,char *buffer,int bufsize);
 int Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotQFile(struct CfDataView *cfv,char *buffer,int bufsze);
-void Nova_AnalyseWeek(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize);
+void Nova_AnalyseWeek(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 #ifdef MINGW
 /* win_api.c */
@@ -1141,7 +1141,7 @@ int Nova_ViewLongHistory(char *keyhash,enum observables obs,char *buffer,int buf
 int Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_DrawLongHAxes(struct CfDataView *cfv,int col);
 void Nova_PlotLongHFile(struct CfDataView *cfv,char *buffer,int bufsize);
-void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyname,enum observables obs);
+void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int bufsize);
 
 /***************************************************************************/
 

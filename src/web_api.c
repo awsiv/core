@@ -222,12 +222,14 @@ Nova_ViewHisto(keyhash,obs,buffer,bufsize);
 
 void Nova2PHP_get_magnified_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
 {
+Nova_AnalyseMag(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
 
 void Nova2PHP_get_weekly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
 {
+Nova_AnalyseWeek(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -235,6 +237,7 @@ void Nova2PHP_get_weekly_analysis(char *keyhash,enum observables obs,char *buffe
 void Nova2PHP_get_yearly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 {
+Nova_AnalyseLongHistory(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -242,6 +245,7 @@ void Nova2PHP_get_yearly_analysis(char *keyhash,enum observables obs,char *buffe
 void Nova2PHP_get_histogram_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 {
+Nova_AnalyseHistogram(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -3225,34 +3229,10 @@ void Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int 
 
 /*****************************************************************************/
 
-void Nova2PHP_AnalyseMag(char *hostkey,enum observables obs,char *buffer,int bufsize)
-{
-Nova_WebTopicMap_Initialize();
-Nova_AnalyseMag(DOCROOT,hostkey,obs,buffer,bufsize);
-}
-
-/*****************************************************************************/
-
-void Nova2PHP_AnalyseWeek(char *keyhash,enum observables obs,char *buffer,int bufsize)
-{
-Nova_WebTopicMap_Initialize();
-Nova_AnalyseWeek(DOCROOT,keyhash,obs,buffer,bufsize);
-}
-
-/*****************************************************************************/
-
 void Nova2PHP_ComplianceSummaryGraph()
 {
 Nova_WebTopicMap_Initialize();
 Nova_ComplianceSummaryGraph(DOCROOT);
-}
-
-/*****************************************************************************/
-
-void Nova2PHP_AnalyseHistogram(char *keyhash,int obs,char *buffer,int bufsize)
-{
-Nova_WebTopicMap_Initialize();
-Nova_AnalyseHistogram(DOCROOT,keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -3293,6 +3273,7 @@ return returnval;
 /*****************************************************************************/
 /* pdf sub routines */
 /*****************************************************************************/
+
 int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];

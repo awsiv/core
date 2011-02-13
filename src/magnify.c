@@ -133,42 +133,39 @@ Join(buffer,"]",bufsize);
 
 /***********************************************************/
 
-void Nova_AnalyseMag(char *docroot,char *keyhash,enum observables obs,char *buffer,int bufsize)
+void Nova_AnalyseMag(char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 { char work[CF_BUFSIZE];
-  struct CfDataView cfv;
+  struct CfDataView cfv = {0};
   char newfile[CF_BUFSIZE];
   double y;
   
-/* Done initialization */
+*buffer = '\0';
 
 if (!Nova_ReadMagTimeSeries(&cfv,keyhash,obs))
    {
    return;
    }
 
-*buffer = '\0';
-
-snprintf(work,CF_BUFSIZE,"<div id=\"maganalysis\">\n");
-Join(buffer,work,bufsize);
+strcpy(buffer,"[");
    
 if (cfv.max - cfv.min < cfv.error_scale * 2)
    {
-   snprintf(work,CF_BUFSIZE,"<p><font color=red>The variations you are seeing are not significant.</p>");
+   snprintf(work,CF_BUFSIZE,"\"No significant variations\",");
+   Join(buffer,work,bufsize);
+   }
+else
+   {
+   snprintf(work,CF_BUFSIZE,"\"Significant variations\",");
    Join(buffer,work,bufsize);
    }
 
-snprintf(work,CF_BUFSIZE,"<table>\n");
+snprintf(work,CF_BUFSIZE,"\"Maximum value_ %lf %s\",",cfv.max,UNITS[obs]);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"<tr><td>Maximum value </td><td>%lf</td><td>%s</td></tr>\n",cfv.max,UNITS[obs]);
+snprintf(work,CF_BUFSIZE,"\"Minimum value: %lf %s\",",cfv.min,UNITS[obs]);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"<tr><td>Minimum value </td><td>%lf</td><td>%s</td></tr>\n",cfv.min,UNITS[obs]);
+snprintf(work,CF_BUFSIZE,"\"Average variability: %lf %s\",",cfv.error_scale,UNITS[obs]);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"<tr><td>Average variability </td><td>+/- %lf</td><td>%s</td></tr>\n",cfv.error_scale,UNITS[obs]);
-Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"</table>\n");
-Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"</div>\n");
-Join(buffer,work,bufsize);
+Join(buffer,"]",bufsize);
 }
 

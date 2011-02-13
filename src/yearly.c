@@ -112,21 +112,27 @@ Join(buffer,"]",bufsize);
 
 /***********************************************************/
 
-void Nova_AnalyseLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs)
+void Nova_AnalyseLongHistory(char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 { char work[CF_BUFSIZE];
   struct stat sb;
   int yr,this_lifecycle,this;
+  struct CfDataView cfv = {0};
 
-  /* First find the variance sigma2 */
+*buffer = '\0';
+  
+if (!Nova_ReadTimeSeries(&cfv,keyhash,obs))
+   {
+   return;
+   }
 
-snprintf(work,CF_BUFSIZE,"<div id=\"longhistory\">\n");
+strcpy(buffer,"[");
 
-snprintf(work,CF_BUFSIZE,"<table>\n");
-snprintf(work,CF_BUFSIZE,"<tr><td>Maximum value </td><td>%.2lf</td><td>%s</td></tr>\n",cfv->max,UNITS[obs]);
-snprintf(work,CF_BUFSIZE,"<tr><td>Minimum value </td><td>%.2lf</td><td>%s</td></tr>\n",cfv->min,UNITS[obs]);
-snprintf(work,CF_BUFSIZE,"<tr><td>Average variability </td><td>+/- %lf</td><td>%s</td></tr>\n",cfv->error_scale,UNITS[obs]);
-snprintf(work,CF_BUFSIZE,"</table>\n");
-
-snprintf(work,CF_BUFSIZE,"</div></div>\n");
+snprintf(work,CF_BUFSIZE,"\"Maximum value: %.2lf %s\",",cfv.max,UNITS[obs]);
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE,"\"Minimum value: %.2lf %s\",",cfv.min,UNITS[obs]);
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE,"\"Average variability: %lf %s\"",cfv.error_scale,UNITS[obs]);
+Join(buffer,work,bufsize);
+Join(buffer,"]",bufsize);
 }
