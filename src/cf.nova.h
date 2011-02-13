@@ -772,6 +772,7 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *rep);
 int Nova_IsGreen(int level);
 int Nova_IsYellow(int level);
 int Nova_IsRed(int level);
+int Nova_IsBlue(int level);
 void Nova_ComplianceSummaryGraph(char *docroot);
 void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col);
 int Nova_GetHostColour(char *lkeyhash);
@@ -1189,6 +1190,7 @@ void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int
 #define CF_RED_THRESHOLD 1000
 #define CF_AMBER_THRESHOLD 100
 #define CF_GREEN 0
+#define CF_CODE_BLUE -1
 
 #define CF_HUB_HORIZON 900 // 15 mins
 #define CF_HUB_PURGESECS 604800  // one week

@@ -257,10 +257,10 @@ int Nova_GetHostColour(char *lkeyhash)
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
   struct Rlist *rp,*record_list = NULL, *host_list = NULL;
-  double akept[meter_endmark],arepaired[meter_endmark];
+  double akept[meter_endmark] = {0},arepaired[meter_endmark] = {0};
   double rkept,rrepaired;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
-  int num = 0,found = false,result = -1;
+  int num = 0,found = false,result = -1,awol = false;
   mongo_connection conn;
   struct Item *list = NULL;
 
@@ -286,6 +286,7 @@ bson_append_int(&bb,cfr_keyhash,1);
 bson_append_int(&bb,cfr_ip_array,1);
 bson_append_int(&bb,cfr_host_array,1);
 bson_append_int(&bb,cfr_meter,1);
+bson_append_int(&bb,cfr_day,1);
 bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -305,6 +306,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    hostnames[0] = '\0';
    addresses[0] = '\0';
    found = false;
+   awol = false;
    
    while (bson_iterator_next(&it1))
       {
@@ -313,6 +315,18 @@ while (mongo_cursor_next(cursor))  // loops over documents
       CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
       /* Query specific search/marshalling */
+
+      if (strcmp(bson_iterator_key(&it1),cfr_day) == 0)
+         {
+         time_t then,now = time(NULL);
+         then = (time_t)bson_iterator_int(&it1);
+
+         if (now > then + CF_HUB_HORIZON)
+            {
+            awol = true;
+            break; // Machine is officially AWOL
+            }
+         }
 
       if (strcmp(bson_iterator_key(&it1),cfr_meter) == 0)
          {
@@ -384,10 +398,17 @@ while (mongo_cursor_next(cursor))  // loops over documents
             }
          }   
       }
-   
+
    if (found)
       {
-      result = Nova_GetComplianceScore(cfrank_default,akept,arepaired);
+      if (awol)
+         {
+         result = CF_CODE_BLUE;
+         }
+      else
+         {
+         result = Nova_GetComplianceScore(cfrank_default,akept,arepaired);
+         }
       }
    }
 
@@ -511,7 +532,7 @@ struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_m
   double akept[meter_endmark],arepaired[meter_endmark];
   double rkept,rrepaired;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
-  int num = 0,found = false;
+  int num = 0,found = false,awol;
   mongo_connection conn;
   struct Item *list = NULL;
 
@@ -528,6 +549,7 @@ bson_append_int(&bb,cfr_keyhash,1);
 bson_append_int(&bb,cfr_ip_array,1);
 bson_append_int(&bb,cfr_host_array,1);
 bson_append_int(&bb,cfr_meter,1);
+bson_append_int(&bb,cfr_day,1);
 bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -547,12 +569,25 @@ while (mongo_cursor_next(cursor))  // loops over documents
    hostnames[0] = '\0';
    addresses[0] = '\0';
    found = false;
+   awol = false;
    
    while (bson_iterator_next(&it1))
       {
       /* Extract the common HubHost data */
 
       CMDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+
+      if (strcmp(bson_iterator_key(&it1),cfr_day) == 0)
+         {
+         time_t then,now = time(NULL);
+         then = (time_t)bson_iterator_int(&it1);
+
+         if (now > then + CF_HUB_HORIZON)
+            {
+            awol = true;
+            break; // Machine is officially AWOL
+            }
+         }
       
       /* Query specific search/marshalling */
 
@@ -631,7 +666,16 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       if (search_string == NULL || FullTextMatch(search_string,hostnames))
          {
-         int score = Nova_GetComplianceScore(method,akept,arepaired);
+         int score;
+         
+         if (awol)
+            {
+            score = CF_CODE_BLUE;
+            }
+         else
+            {
+            score = Nova_GetComplianceScore(method,akept,arepaired);
+            }
          
          PrependItem(&list,keyhash,hostnames);
          SetItemListCounter(list,keyhash,score);
@@ -776,6 +820,21 @@ int Nova_IsRed(int level)
 
 {
 if (level >= CF_RED_THRESHOLD)
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
+}
+
+/*****************************************************************************/
+
+int Nova_IsBlue(int level)
+
+{
+if (level == CF_CODE_BLUE)
    {
    return true;
    }
