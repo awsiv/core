@@ -47,16 +47,18 @@ int Nova_ViewWeek(char *keyhash,enum observables obs,char *buffer,int bufsize)
   
   /* Initialization */
 
-cfv.title = OBS[obs][1];
+  strcpy(buffer,"[");
 
 /* Done initialization */
 
 if (!Nova_ReadTimeSeries(&cfv,keyhash,obs))
    {
+   Join(buffer,"]",bufsize);
    return false;
    }
 
 Nova_PlotQFile(&cfv,buffer,bufsize);
+Join(buffer,"]",bufsize);
 return true;
 }
 

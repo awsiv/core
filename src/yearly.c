@@ -21,16 +21,18 @@ int Nova_ViewLongHistory(char *keyhash,enum observables obs,char *buffer,int buf
   double max=0,min=9999,range;
   struct CfDataView cfv;
   
-cfv.title = OBS[obs][1];
+strcpy(buffer,"[");
 
 /* Done initialization */
 
 if (!Nova_ReadLongHistory(&cfv,keyhash,obs))
    {
+   Join(buffer,"]",bufsize);
    return false;
    }
 
 Nova_PlotLongHFile(&cfv,buffer,bufsize);
+Join(buffer,"]",bufsize);
 return true;
 }
 
@@ -99,15 +101,11 @@ void Nova_PlotLongHFile(struct CfDataView *cfv,char *buffer,int bufsize)
 { int i;
  char work[CF_MAXVARSIZE];
  
-strcpy(buffer,"[");
- 
 for (i = 0; i < CF_LHISTORYDATA; i++)
    {
    snprintf(work,CF_MAXVARSIZE,"[%d,%lf,%lf,%lf],",i,cfv->data_q[i],cfv->data_E[i],cfv->bars[i]);
    Join(buffer,work,bufsize);
    }
-
-Join(buffer,"]",bufsize);
 }
 
 /***********************************************************/

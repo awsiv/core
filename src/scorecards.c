@@ -93,11 +93,12 @@ void Nova_Meter(char *search_string,char *buffer,int bufsize)
   mongo_connection dbconn;
   struct Rlist *rp;
 
-// get data
+strcpy(buffer,"[");
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_error,"", "!! Could not open connection to report database on meter summary");
+   Join(buffer,"]",bufsize);
    return;
    }
 
@@ -160,17 +161,21 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       }
    }
 
-Nova_BarMeter(1,kept_week/num_week,rep_week/num_week,"Week",buffer,bufsize);
-Nova_BarMeter(2,kept_day/num_day,rep_day/num_day,"Day",buffer,bufsize);
-Nova_BarMeter(3,kept_hour/num_hour,rep_hour/num_hour,"Hour",buffer,bufsize);
-Nova_BarMeter(4,kept_perf/num_perf,rep_perf/num_perf,"Perf",buffer,bufsize);
-Nova_BarMeter(5,kept_other/num_other,rep_other/num_other,"Chng",buffer,bufsize);
-Nova_BarMeter(6,kept_comms/num_comms,rep_comms/num_comms,"Seen",buffer,bufsize);
-Nova_BarMeter(7,kept_anom/num_anom,rep_anom/num_anom,"Anom",buffer,bufsize);
+if (hq->records != NULL)
+   {
+   Nova_BarMeter(1,kept_week/num_week,rep_week/num_week,"Week",buffer,bufsize);
+   Nova_BarMeter(2,kept_day/num_day,rep_day/num_day,"Day",buffer,bufsize);
+   Nova_BarMeter(3,kept_hour/num_hour,rep_hour/num_hour,"Hour",buffer,bufsize);
+   Nova_BarMeter(4,kept_perf/num_perf,rep_perf/num_perf,"Perf",buffer,bufsize);
+   Nova_BarMeter(5,kept_other/num_other,rep_other/num_other,"Chng",buffer,bufsize);
+   Nova_BarMeter(6,kept_comms/num_comms,rep_comms/num_comms,"Seen",buffer,bufsize);
+   Nova_BarMeter(7,kept_anom/num_anom,rep_anom/num_anom,"Anom",buffer,bufsize);
+   }
 
 // Clean up
 
 DeleteHubQuery(hq,DeleteHubMeter);
+Join(buffer,"]",bufsize);
 }
 
 /*****************************************************************************/
@@ -799,8 +804,10 @@ else
 
 void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize)
 
-{
-snprintf(buffer,bufsize,"{ title: \"%s\", position: %d, kept: %lf, repaired: %lf, notkept: %lf },",name,pos,kept,rep,100-kept-rep);
+{ char work[CF_BUFSIZE];
+ 
+snprintf(work,CF_BUFSIZE,"{ title: \"%s\", position: %d, kept: %lf, repaired: %lf, notkept: %lf },",name,pos,kept,rep,100-kept-rep);
+Join(buffer,buffer,bufsize);
 }
 
 #endif

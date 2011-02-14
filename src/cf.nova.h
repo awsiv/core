@@ -906,7 +906,7 @@ void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,char *classreg, char *returnval,int bufsize);
 int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,char *buffer,int bufsize);
-void Nova2PHP_summary_meter(char *hostkey,char *buffer,int bufsize);
+void Nova2PHP_summary_meter(char *buffer,int bufsize);
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_hostinfo(char *hostkey,char *hostname,char *ipaddress,int bufsize);
 void Nova2PHP_performance_analysis(char *hostkey,char *buffer,int bufsize);

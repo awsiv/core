@@ -20,16 +20,18 @@ int Nova_ViewMag(char *keyhash,enum observables obs,char *buffer,int bufsize)
 { int i,y,hint;
   struct CfDataView cfv;
  
-cfv.title = OBS[obs][1];
+strcpy(buffer,"[");
 
 /* Done initialization */
 
 if (!Nova_ReadMagTimeSeries(&cfv,keyhash,obs))
    {
+   Join(buffer,"]",bufsize);
    return false;
    }
 
 Nova_PlotMagQFile(&cfv,buffer,bufsize);
+Join(buffer,"]",bufsize);
 return true;
 }
 
@@ -120,15 +122,11 @@ void Nova_PlotMagQFile(struct CfDataView *cfv,char *buffer,int bufsize)
 { char work[CF_MAXVARSIZE];
  int i; 
 
-strcpy(buffer,"[");
- 
 for (i = 0; i < CF_MAGDATA; i++)
    {
    snprintf(work,CF_MAXVARSIZE," [%d,%lf,%lf,%lf],",i, cfv->data_q[i], cfv->data_E[i],cfv->bars[i]);
    Join(buffer,work,bufsize);
    }
-
-Join(buffer,"]",bufsize);
 }
 
 /***********************************************************/

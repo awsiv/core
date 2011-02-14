@@ -22,16 +22,18 @@ int Nova_ViewHisto(char *keyhash,enum observables obs,char *buffer,int bufsize)
   struct Item *spectrum;
   struct CfDataView cfv;
   
-*buffer = '\0';
+strcpy(buffer,"[");
 
 if (!Nova_ReadHistogram(&cfv,keyhash,obs))
    {
+   Join(buffer,"]",bufsize);
    return false;
    }
 
 spectrum = Nova_MapHistogram(&cfv,keyhash,obs);
 Nova_PlotHistogram(&cfv,buffer,bufsize);
 DeleteItemList(spectrum);
+Join(buffer,"]",bufsize);
 return true;
 }
 
@@ -104,15 +106,11 @@ void Nova_PlotHistogram(struct CfDataView *cfv,char *buffer,int bufsize)
   struct Item *ip;
   char work[CF_MAXVARSIZE];
 
-strcpy(buffer,"[");
-  
 for (i = 0; i < CF_GRAINS; i++)
    {
    snprintf(work,CF_MAXVARSIZE,"[%d,%lf]",i,cfv->data_E[i]);
    Join(buffer,work,bufsize);
    }
-
-Join(buffer,"]",bufsize);
 }
 
 /*******************************************************************/
