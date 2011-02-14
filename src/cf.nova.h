@@ -545,19 +545,19 @@ struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rho
 void DeleteHubLastSeen(struct HubLastSeen *hp);
 struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double repaired);
 void DeleteHubMeter(struct HubMeter *hp);
-struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t,double q,double e,double d);
+struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t,double q,double e,double d,char *noteid, char *handle);
 void DeleteHubPerformance(struct HubPerformance *hp);
 struct HubSetUid *NewHubSetUid(struct HubHost *hh,char *file);
 void DeleteHubSetUid(struct HubSetUid *hp);
 struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,char status,double e,double d,time_t t);
 void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp);
-struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev,time_t t);
+struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev,time_t t,char *noteid);
 void DeleteHubBundleSeen(struct HubBundleSeen *hp);
-struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t, char *handle);
+struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t, char *noteid,char *handle);
 void DeleteHubFileChanges(struct HubFileChanges *hp);
 struct HubFileDiff *NewHubFileDiff(struct HubHost *hh,char *file,char *diff,time_t t);
 void DeleteHubFileDiff(struct HubFileDiff *hp);
-struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double repaired,double notkept);
+struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double repaired,double notkept,char *noteid, char *handle);
 void DeleteHubValue(struct HubValue *hp);
 struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons);
 void DeleteHubPromise(struct HubPromise *hp);
@@ -1355,17 +1355,19 @@ struct cf_pscalar
 #define cfn_message "m" 
 
 #define CFREPORT_HOSTS 1
-#define CFREPORT_PRLOG 2
+#define CFREPORT_REPAIRED 2
 #define CFREPORT_PRSUMMARY 3
-#define CFREPORT_PERF 4
+#define CFREPORT_PERFORMANCE 4
 #define CFREPORT_VALUE 5
 #define CFREPORT_FILECHANGES 6
 #define CFREPORT_FILEDIFFS 7
+#define CFREPORT_BUNDLE 8
+#define CFREPORT_NOTKEPT 9
 
 
-#define CF_NOCOMMENT "NO_COMMENT"
-#define CF_SHOWCOMMENT "Show Comment"
-#define CF_ADDCOMMENT "Add Comment"
+#define CF_NONOTE "NO_NOTE"
+#define CF_SHOWNOTE "Show Note"
+#define CF_ADDNOTE "Add Note"
 
 #define CFDB_GREATERTHANEQ 4
 #define CFDB_LESSTHANEQ 5
@@ -1386,6 +1388,7 @@ struct HubFileChanges
    struct HubHost *hh;
    char *path;
    time_t t;
+     char *nid;
    char *handle;
    };
 
@@ -1464,6 +1467,7 @@ struct HubBundleSeen
    double hrsavg;
    double hrsdev;
    time_t t;
+   char *nid;
    };
 
 struct HubValue
@@ -1473,6 +1477,8 @@ struct HubValue
    double kept;
    double repaired;
    double notkept;
+     char *nid;
+     char *handle;
    };
 
 struct HubMeter
@@ -1500,6 +1506,8 @@ struct HubPerformance
    double e;
    double d;
    time_t t;
+   char *nid;
+     char *handle;  
    };
   
 struct HubSetUid

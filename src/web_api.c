@@ -304,10 +304,10 @@ return -1;
 
 int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE], comment[CF_MAXVARSIZE], comment_link[CF_BUFSIZE];
+{ char *report,buffer[CF_BUFSIZE], note[CF_MAXVARSIZE], note_link[CF_BUFSIZE];
   struct HubPromiseLog *hp;  struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize,icmp;
+  int count = 0, tmpsize,icmp, reportType;
   mongo_connection dbconn;
   
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -320,23 +320,35 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 StartJoin(returnval,"<table>\n",bufsize);
 
-snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Time</th><th>Comment</th></tr>\n");
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Time</th><th>Notes</th></tr>\n");
 Join(returnval,buffer,bufsize);
          
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseLog *)rp->item;
-   if (strcmp(hp->nid,CF_NOCOMMENT) == 0)
+   if (strcmp(hp->nid,CF_NONOTE) == 0)
       {
-      snprintf(comment_link,sizeof(comment_link),"\"/notes/add/hostkey/%s/note_id/%s/report_type/%d/report_data/%s/time/%ld\"",hostkey,hp->nid,CFREPORT_PRLOG,hp->oid,hp->t);
-      snprintf(comment,sizeof(comment),"%s",CF_ADDCOMMENT);
+	switch (type)
+	  {
+	  case plog_repaired:
+	    reportType = CFREPORT_REPAIRED;
+	    break;
+	  case plog_notkept:
+	  default:
+	    reportType = CFREPORT_NOTKEPT;
+	    break;
+	  }
+	snprintf(note_link,sizeof(note_link),"\"/notes/add/hostkey/%s/report_type/%d/handle/%s\"",hp->hh->keyhash,reportType,hp->oid);
+	snprintf(note,sizeof(note),"%s",CF_ADDNOTE);
       }
    else
       {
-      snprintf(comment_link,sizeof(comment_link),"\"/notes/show/note_id/%s\"",hp->nid);
-      snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
+      snprintf(note_link,sizeof(note_link),"\"/notes/show/noteid/%s\"",hp->nid);
+      snprintf(note,sizeof(note),"%s",CF_SHOWNOTE);
       }
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"/promise/details/%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n", hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)), comment_link, comment);
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"/promise/details/%s\">%s</a></td><td>%s</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n", 
+	    hp->hh->hostname,hp->handle,hp->handle,hp->cause,cf_ctime(&(hp->t)),
+	    note_link,note);
    
    if(!Join(returnval,buffer,bufsize))
       {
@@ -410,9 +422,12 @@ else
    summary = SortItemListCounters(summary);
    snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Occurrences</th></tr>\n");
    Join(returnval,buffer,bufsize);
-            
+   
+   /*   snprintf(note_link,CF_MAXVARSIZE,"\"/notes/add/hostkey/%s/report_type/%d/handle/%s\"",hostkey,CFREPORT_PRSUMMARY,ip->name);
+   snprintf(note,CF_MAXVARSIZE,"%s",CF_SHOWNOTE);
+   */
    for (ip = summary; ip != NULL; ip=ip->next)
-      {
+     {
 	snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"/promise/details/%s\">%s</a></td><td>%s</td><td>%d</td></tr>\n",hostname,ip->name,ip->name,ip->classes,ip->counter);
 
       if(!Join(returnval,buffer,bufsize))
@@ -438,6 +453,7 @@ int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *c
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
   char buffer[CF_BUFSIZE];
+  char note_link[CF_MAXVARSIZE],note[CF_MAXVARSIZE];
 
 /* BEGIN query document */
 
@@ -451,15 +467,26 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 StartJoin(returnval,"<table>\n",bufsize);
 
-snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Day</th><th>Kept</th><th>Repaired</th><th>Not kept</th></tr>\n");
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Day</th><th>Kept</th><th>Repaired</th><th>Not kept</th><th>Notes</th></tr>\n");
 Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubValue *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%.1lf</td><td>%.1lf</td><td>%.1lf</td></tr>\n",
-            hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept);
+   if(strcmp(hp->nid,CF_NONOTE) == 0)
+     {
+       snprintf(note_link,CF_MAXVARSIZE,"\"/notes/add/hostkey/%s/report_type/%d/handle/%s\"",hp->hh->keyhash,CFREPORT_VALUE,hp->handle);
+       snprintf(note,CF_MAXVARSIZE,"%s",CF_ADDNOTE);
+     }
+   else
+     {
+       snprintf(note_link,CF_MAXVARSIZE,"\"/note/show/noteid/%s\"",hp->nid);
+       snprintf(note,CF_MAXVARSIZE,"%s",CF_SHOWNOTE);
+     }
+
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%.1lf</td><td>%.1lf</td><td>%.1lf</td><td><a href=%s>%s</a></td></tr>\n",
+            hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept,note_link,note);
 
    if(!Join(returnval,buffer,bufsize))
      {
@@ -880,7 +907,7 @@ return true;
 
 int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char *report,buffer[CF_BUFSIZE],note_link[CF_MAXVARSIZE],note[CF_MAXVARSIZE];
   struct HubPerformance *hP;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
@@ -897,16 +924,28 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 StartJoin(returnval,"<table>\n",bufsize);
 
-snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Event</th><th>Last time</th><th>Avg time</th><th>Uncertainty</th><th>Last performed</th></tr>\n");
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Event</th><th>Last time</th><th>Avg time</th><th>Uncertainty</th><th>Last performed</th><th>Notes</th></tr>\n");
 Join(returnval,buffer,bufsize);            
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hP = ( struct HubPerformance *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
+   if(strcmp(hP->nid,CF_NONOTE) == 0)
+     {
+       snprintf(note_link,CF_MAXVARSIZE,"\"/notes/add/hostkey/%s/report_type/%d/handle/%s\"",hP->hh->keyhash,CFREPORT_PERFORMANCE,hP->handle);
+       snprintf(note,CF_MAXVARSIZE,"%s",CF_ADDNOTE);
+     }
+   else
+     {
+       snprintf(note_link,CF_MAXVARSIZE,"\"/note/show/noteid/%s\"",hP->nid);
+       snprintf(note,CF_MAXVARSIZE,"%s",CF_SHOWNOTE);
+     }
+
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n",
             hP->hh->hostname,
-            hP->event,hP->q,hP->e,hP->d,cf_ctime(&(hP->t)));
+            hP->event,hP->q,hP->e,hP->d,cf_ctime(&(hP->t)),
+	    note_link,note);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -985,6 +1024,7 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,c
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
+  char note_link[CF_MAXVARSIZE],note[CF_MAXVARSIZE];
 
 /* BEGIN query document */
 
@@ -998,7 +1038,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 StartJoin(returnval,"<table>\n",bufsize);
 
-snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Bundle</a></th><th>Last verified</th><th>Hours Ago</th><th>Avg interval</th><th>Uncertainty</th></tr>\n");
+snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Bundle</a></th><th>Last verified</th><th>Hours Ago</th><th>Avg interval</th><th>Uncertainty</th><th>Notes</th></tr>\n");
 Join(returnval,buffer,bufsize);
    
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -1010,10 +1050,21 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       continue;
       }
 
+   if(strcmp(hb->nid,CF_NONOTE) == 0)
+     {
+       snprintf(note_link,CF_MAXVARSIZE,"\"/notes/add/hostkey/%s/report_type/%d/handle/%s\"",hb->hh->keyhash,CFREPORT_BUNDLE,hb->bundle);
+       snprintf(note,CF_MAXVARSIZE,"%s",CF_ADDNOTE);
+     }
+   else
+     {
+       snprintf(note_link,CF_MAXVARSIZE,"\"/note/show/noteid/%s\"",hb->nid);
+       snprintf(note,CF_MAXVARSIZE,"%s",CF_SHOWNOTE);
+     }
    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"/bundle/details/bundle/%s\">%s</a></td><td>%s</td>"
-            "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td></tr>\n",
+            "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td><a href=%s>%s</a></td></tr>\n",
             hb->hh->hostname,hb->bundle,hb->bundle,cf_ctime(&(hb->t)),
-            hb->hrsago,hb->hrsavg,hb->hrsdev);
+            hb->hrsago,hb->hrsavg,hb->hrsdev,
+	    note_link,note);
 
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1037,15 +1088,13 @@ return true;
 
 int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
 
-{    char *report,buffer[CF_BUFSIZE];
-     struct HubFileChanges *hC;
-     struct HubQuery *hq;
-     struct Rlist *rp,*result;
-     int count = 0, tmpsize,icmp;
-     mongo_connection dbconn;
-     char comment_link[CF_MAXVARSIZE] = {0}, comment[CF_MAXVARSIZE] = {0}, handle_buf[CF_MAXVARSIZE] = {0};
-     int is_rpt_handle = false;
-     int i = 0;
+{ char *report,buffer[CF_BUFSIZE];
+  struct HubFileChanges *hC;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int count = 0, tmpsize,icmp;
+  mongo_connection dbconn;
+  char note_link[CF_MAXVARSIZE] = {0},note[CF_MAXVARSIZE] = {0};
 
 switch (*cmp)
      {
@@ -1066,36 +1115,25 @@ switch (*cmp)
    
    StartJoin(returnval,"<table>\n",bufsize);
 
-   snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>File</th><th>Change detected at</th><th>Comment</th></tr>\n");
+   snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>File</th><th>Change detected at</th><th>Notes</th></tr>\n");
    Join(returnval,buffer,bufsize);
 
    for (rp = hq->records; rp != NULL; rp=rp->next)
      {
-       is_rpt_handle = false;
        hC = (struct HubFileChanges *)rp->item;
-       snprintf(handle_buf,sizeof(handle_buf),"%s",hC->handle);
-   
-       for(i = 0;(handle_buf[i] != '\0')|| (i>=sizeof(handle_buf));i++)
+              
+       if(strcmp(hC->nid,CF_NONOTE) == 0)
 	 {
-	   if(handle_buf[i] == '@')
-	     {
-	       is_rpt_handle = true;
-	       break;
-	     }
-	 }
-
-       if(is_rpt_handle) /* handle doesn't contain objectid for comment */
-	 {
-	   snprintf(comment_link,sizeof(comment_link),"\"/notes/add/hostkey/%s/handle/%s/report_type/%d\"",hC->hh->keyhash,hC->handle,CFREPORT_FILECHANGES);
-	   snprintf(comment,sizeof(comment),"%s",CF_ADDCOMMENT);
+	   snprintf(note_link,CF_MAXVARSIZE,"\"/notes/add/hostkey/%s/report_type/%d/handle/%s\"",hC->hh->keyhash,CFREPORT_FILECHANGES,hC->handle);
+	   snprintf(note,CF_MAXVARSIZE,"%s",CF_ADDNOTE);
 	 }
        else
 	 {
-	   snprintf(comment_link,sizeof(comment_link),"\"/note/show/note_id/%s\"",hC->handle);
-	   snprintf(comment,sizeof(comment),"%s",CF_SHOWCOMMENT);
+	   snprintf(note_link,CF_MAXVARSIZE,"\"/note/show/noteid/%s\"",hC->nid);
+	   snprintf(note,CF_MAXVARSIZE,"%s",CF_SHOWNOTE);
 	 }     
 
-       snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)),comment_link,comment);
+       snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)),note_link,note);
 
        if(!Join(returnval,buffer,bufsize))
 	 {
@@ -4449,7 +4487,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
       snprintf(row_add, sizeof(row_add), "%s",cfn_nid);
       break;
 
-    case CFREPORT_PRLOG:
+    case CFREPORT_REPAIRED:
       level = 1;
       snprintf(db, sizeof(db), "%s", MONGO_LOGS_REPAIRED);
       
@@ -4461,7 +4499,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
       snprintf(row_add, sizeof(row_add), "%s",cfn_nid); 
       break;
 
-    case CFREPORT_PERF:
+    case CFREPORT_PERFORMANCE:
       snprintf(row_name, sizeof(row_name), "%s.%s",cfr_performance,repid);
       snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
       getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
@@ -4477,16 +4515,34 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
     case CFREPORT_FILECHANGES:  
       snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filechanges,repid);
       snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
-      getrow = CFDB_GetRow(&dbconn, MONGO_DATABASE, &query, row_name, row, sizeof(row), level);
+      getrow = CFDB_GetRow(&dbconn,db, &query, row_name, row, sizeof(row), level);
       snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
       break;
+/*
     case CFREPORT_FILEDIFFS:  
       snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filediffs,repid);
       snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
       getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
       snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
       break;
-      
+*/
+    case CFREPORT_BUNDLE:
+      snprintf(row_name, sizeof(row_name), "%s.%s",cfr_bundles,repid);
+      snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
+      getrow = CFDB_GetRow(&dbconn,db, &query, row_name, row, sizeof(row), level);
+      snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
+      break;
+    case CFREPORT_NOTKEPT:
+      level = 1;
+      snprintf(db, sizeof(db), "%s", MONGO_LOGS_NOTKEPT);
+
+      bson_oid_from_string(&oid,repid);
+      bson_buffer_init(&bb);
+      bson_append_oid(&bb,"_id",&oid);
+      bson_from_buffer(&query,&bb);
+      getrow = CFDB_GetRow(&dbconn, db, &query, "*", row, sizeof(row), level);
+      snprintf(row_add, sizeof(row_add), "%s",cfn_nid);
+      break;
     }
 
   if(!getrow)
@@ -4616,8 +4672,8 @@ if(!result)
 
 for (rp = result; rp != NULL; rp=rp->next)
    {
-     snprintf(buffer,CF_MAXVARSIZE-1,"%s",(char *)rp->item);
-     snprintf(returnval,CF_MAXVARSIZE-1,"%s ",buffer);
+     snprintf(buffer,CF_MAXVARSIZE,"%s",(char *)rp->item);
+     snprintf(returnval,CF_MAXVARSIZE,"%s ",buffer);
    }
 
 if (!CFDB_Close(&dbconn))

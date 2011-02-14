@@ -350,7 +350,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
 if (sort)
    {
-   record_list = SortRlist(record_list,SortSoftware);
+     record_list = SortRlist(record_list,SortSoftware);
    }
 
 
@@ -526,7 +526,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
 if (sort)
    {
-   record_list = SortRlist(record_list,SortClasses);
+     record_list = SortRlist(record_list,SortClasses);
    }
 
 
@@ -740,7 +740,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
  if(sort)
    {
-   record_list = SortRlist(record_list,SortTotalCompliance);
+     record_list = SortRlist(record_list,SortTotalCompliance);
    }
 
 
@@ -1474,9 +1474,9 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   {
                   rkept = bson_iterator_double(&it3);
                   }
-               else if (strcmp(bson_iterator_key(&it3),cfr_meterrepaired) == 0)
+	       else if (strcmp(bson_iterator_key(&it3),cfr_meterrepaired) == 0)
                   {
-                  rrepaired = bson_iterator_double(&it3);
+		    rrepaired = bson_iterator_double(&it3);
                   }
                else
                   {
@@ -1521,7 +1521,7 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
   struct Rlist *rp =  NULL,*record_list = NULL, *host_list = NULL;
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_MAXVARSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_MAXVARSIZE], noteid[CF_MAXVARSIZE], rhandle[CF_MAXVARSIZE];
   int match_name,found = false;
   double rsigma,rex,rq;
   time_t rtime;
@@ -1561,6 +1561,7 @@ bson_append_int(&bb,cfr_keyhash,1);
 bson_append_int(&bb,cfr_ip_array,1);
 bson_append_int(&bb,cfr_host_array,1);
 bson_append_int(&bb,cfr_performance,1);
+ bson_append_int(&bb,cfn_nid,1);
 bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -1602,7 +1603,9 @@ while (mongo_cursor_next(cursor))  // loops over documents
          while (bson_iterator_next(&it2))
             {
             bson_iterator_init(&it3, bson_iterator_value(&it2));
-
+	    snprintf(rhandle,CF_MAXVARSIZE,"%s",bson_iterator_key(&it2));
+	    snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
+	    
 	    snprintf(rname,sizeof(rname),"(unknown)");
             rex = 0;
             rsigma = 0;
@@ -1631,6 +1634,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   {
                   rtime = bson_iterator_int(&it3);
                   }
+	       else if (strcmp(bson_iterator_key(&it1),cfn_nid) == 0)
+		 {
+		   snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
+		 }
                else
                   {
                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in performance",bson_iterator_key(&it3));
@@ -1657,7 +1664,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name)
                {
                found = true;
-               rp = PrependRlistAlien(&record_list,NewHubPerformance(CF_THIS_HH,rname,rtime,rq,rex,rsigma));
+               rp = PrependRlistAlien(&record_list,NewHubPerformance(CF_THIS_HH,rname,rtime,rq,rex,rsigma,noteid,rhandle));
                }
             }
          }   
@@ -1682,7 +1689,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
  if(sort)
    {
-   record_list = SortRlist(record_list,SortPerformance);
+     record_list = SortRlist(record_list,SortPerformance);
    }
 
 mongo_cursor_destroy(cursor);
@@ -1839,7 +1846,7 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
   struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_BUFSIZE], handle[CF_MAXVARSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_BUFSIZE], handle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
   char classRegexAnch[CF_MAXVARSIZE];
   int emptyQuery = true;
   int match_name,match_t,found = false;
@@ -1924,6 +1931,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
          while (bson_iterator_next(&it2))
             {
 	      snprintf(handle,CF_MAXVARSIZE,"%s",bson_iterator_key(&it2));
+	      snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
 	      bson_iterator_init(&it3,bson_iterator_value(&it2));
             
             while (bson_iterator_next(&it3))
@@ -1936,10 +1944,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   {
                   rt = bson_iterator_int(&it3);
                   }
-	       else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
-		 {
-		   snprintf(handle,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
-		 }
+	       else if (strcmp(bson_iterator_key(&it1),cfn_nid) == 0)
+                 {
+                   snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
+                 }
                }
             
             match_name = match_t = true;
@@ -1977,7 +1985,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name && match_t)
                {
                found = true;
-               rp = PrependRlistAlien(&record_list,NewHubFileChanges(CF_THIS_HH,rname,rt,handle));
+               rp = PrependRlistAlien(&record_list,NewHubFileChanges(CF_THIS_HH,rname,rt,noteid,handle));
                }
             }
          }   
@@ -2002,7 +2010,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
  if(sort)
    {
-   record_list = SortRlist(record_list,SortFileChanges);
+     record_list = SortRlist(record_list,SortFileChanges);
    }
 
 
@@ -2191,7 +2199,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
  if(sort)
    {
-   record_list = SortRlist(record_list,SortFileDiff);
+     record_list = SortRlist(record_list,SortFileDiff);
    }
 
 
@@ -2205,7 +2213,7 @@ struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum 
 {
   char classRegexAnch[CF_MAXVARSIZE];
   char rhandle[CF_MAXVARSIZE],rcause[CF_BUFSIZE];
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE], noteId[CF_MAXVARSIZE], oid[CF_MAXVARSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE], noteid[CF_MAXVARSIZE], oid[CF_MAXVARSIZE];
   bson_iterator it1;
   struct HubHost *hh;
   struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
@@ -2332,14 +2340,14 @@ switch (type)
      addresses[0] = '\0';
      rhandle[0] = '\0';
      rcause[0] = '\0';
-     noteId[0] = '\0';
+     noteid[0] = '\0';
      oid[0] = '\0';
-     snprintf(noteId,sizeof(noteId),"%s",CF_NOCOMMENT);
      rt = 0;
 
      while (bson_iterator_next(&it1))
        {
 	 /* Query specific search/marshalling */
+	 snprintf(noteid,sizeof(noteid),"%s",CF_NONOTE);
             
 	 if (strcmp(bson_iterator_key(&it1),cfr_keyhash) == 0)
 	   {
@@ -2355,7 +2363,7 @@ switch (type)
 	   }
 	 else if (strcmp(bson_iterator_key(&it1),cfn_nid) == 0)
 	   {
-	     snprintf(noteId,sizeof(noteId),"%s",bson_iterator_string(&it1));
+	     snprintf(noteid,sizeof(noteid),"%s",bson_iterator_string(&it1));
 	   }
 	 else if (strcmp(bson_iterator_key(&it1),cfr_time) == 0)
 	   {
@@ -2377,8 +2385,7 @@ switch (type)
      
      char *rpolname = "Default Policy";  // FIXME: insert and then get from query
 
-     rp = PrependRlistAlien(&record_list,NewHubPromiseLog(hh,rpolname,rhandle,rcause,rt,noteId,oid));
-
+     rp = PrependRlistAlien(&record_list,NewHubPromiseLog(hh,rpolname,rhandle,rcause,rt,noteid,oid));
    }
 
 
@@ -2388,7 +2395,7 @@ switch (type)
  
  if(sort)
    {
-   record_list = SortRlist(record_list,SortPromiseLog);
+     record_list = SortRlist(record_list,SortPromiseLog);
    }
 
  mongo_cursor_destroy(cursor);
@@ -2409,7 +2416,7 @@ struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char
   struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
   double rkept,rnotkept,rrepaired;
   char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],handle[CF_MAXVARSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
   int match_day,match_month,match_year,found = false;
   char classRegexAnch[CF_MAXVARSIZE];
   int emptyQuery = true;
@@ -2489,7 +2496,9 @@ while (mongo_cursor_next(cursor))  // loops over documents
 	 
          while (bson_iterator_next(&it2))
             {
-            bson_iterator_init(&it3, bson_iterator_value(&it2));
+	     snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
+	     snprintf(rhandle,CF_MAXVARSIZE,"%s",bson_iterator_key(&it2));
+	     bson_iterator_init(&it3, bson_iterator_value(&it2));
 	    
             rday[0] = '\0';
             rkept = 0;
@@ -2514,6 +2523,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   {
                   rrepaired = bson_iterator_double(&it3);
                   }
+	       else if (strcmp(bson_iterator_key(&it1),cfn_nid) == 0)
+                 {
+                   snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
+                 }
                else
                   {
                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in value report",bson_iterator_key(&it3));
@@ -2540,7 +2553,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_day && match_month && match_year)
                {
                found = true;
-               rp = PrependRlistAlien(&record_list,NewHubValue(CF_THIS_HH,rday,rkept,rrepaired,rnotkept));
+               rp = PrependRlistAlien(&record_list,NewHubValue(CF_THIS_HH,rday,rkept,rrepaired,rnotkept,noteid,rhandle));
                }
             }
          }   
@@ -2567,7 +2580,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
  if(sort)
    {
-   record_list = SortRlist(record_list,SortBusinessValue);
+     record_list = SortRlist(record_list,SortBusinessValue);
    }
 
 
@@ -2587,7 +2600,7 @@ struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, cha
   struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
   double rago,ravg,rdev;
   char rname[CF_MAXVARSIZE];
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],noteid[CF_BUFSIZE];
   int match_name,found = false;
   int emptyQuery = true;
   char classRegexAnch[CF_MAXVARSIZE];
@@ -2670,6 +2683,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             {
             bson_iterator_init(&it3, bson_iterator_value(&it2));
             strncpy(rname,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+	    snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
 
             ravg = 0;
             rdev = 0;
@@ -2693,6 +2707,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   {
                   rt = bson_iterator_int(&it3);
                   }
+	       else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
+		 {
+		   snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_key(&it3)); 
+		 }
                else
                   {
                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in bundle seen",bson_iterator_key(&it3));
@@ -2719,7 +2737,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name)
                {
                found = true;
-               rp = PrependRlistAlien(&record_list,NewHubBundleSeen(CF_THIS_HH,rname,rago,ravg,rdev,rt));
+               rp = PrependRlistAlien(&record_list,NewHubBundleSeen(CF_THIS_HH,rname,rago,ravg,rdev,rt,noteid));
                }            
             }
          }   
@@ -2745,7 +2763,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
 if (sort)
    {
-   record_list = SortRlist(record_list,SortBundleSeen);
+     record_list = SortRlist(record_list,SortBundleSeen);
    }
  
 
@@ -5401,8 +5419,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 	  case bson_string:
 	    if (strcmp(bson_iterator_key(&it1),cfn_keyhash) == 0)
 	      {
-		strncpy(keyhash, bson_iterator_string(&it1),CF_MAXVARSIZE - 1);    \
-
+		strncpy(keyhash, bson_iterator_string(&it1),CF_MAXVARSIZE - 1);
 	      }
 	    else if (strcmp(bson_iterator_key(&it1),cfn_nid) == 0)
 	      {

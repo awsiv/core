@@ -462,7 +462,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double repaired,double notkept)
+struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double repaired,double notkept,char *noteid,char *handle)
 
 { struct HubValue *hp;
      
@@ -476,6 +476,8 @@ hp->day = strdup(day);
 hp->kept = kept;
 hp->repaired = repaired;
 hp->notkept = notkept;
+hp->nid = strdup(noteid);
+hp->handle = strdup(handle);
 return hp;
 }
 
@@ -484,12 +486,14 @@ return hp;
 void DeleteHubValue(struct HubValue *hp)
 {
 free(hp->day);
+free(hp->nid);
+free(hp->handle);
 free(hp);
 }
 
 /*****************************************************************************/
 
-struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t,double q,double e,double d)
+struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t,double q,double e,double d,char *noteid, char *handle)
 
 { struct HubPerformance *hp;
      
@@ -504,6 +508,8 @@ hp->q = q;
 hp->e = e;
 hp->d = d;
 hp->t = t;
+hp->nid = strdup(noteid);
+hp->handle = strdup(handle);
 return hp;
 }
 
@@ -512,6 +518,8 @@ return hp;
 void DeleteHubPerformance(struct HubPerformance *hp)
 {
 free(hp->event);
+free(hp->nid);
+free(hp->handle);
 free(hp); 
 }
 
@@ -541,7 +549,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t,char *handle)
+struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t,char *noteid,char *handle)
 
 { struct HubFileChanges *hp;
      
@@ -554,6 +562,7 @@ hp->hh = hh;
 hp->path = strdup(file);
 hp->t = t;
 hp->handle = strdup(handle);
+hp->nid = strdup(noteid);
 return hp;
 }
 
@@ -563,6 +572,7 @@ void DeleteHubFileChanges(struct HubFileChanges *hp)
 {
 free(hp->path);
 free(hp->handle);
+free(hp->nid);
 free(hp); 
 }
 
@@ -623,7 +633,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev,time_t t)
+struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev,time_t t,char *noteid)
 
 { struct HubBundleSeen *hp;
      
@@ -638,6 +648,7 @@ hp->hrsago = ago;
 hp->hrsavg = avg;
 hp->hrsdev = dev;
 hp->t = t;
+hp->nid = strdup(noteid);
 return hp;
 }
 
@@ -646,6 +657,7 @@ return hp;
 void DeleteHubBundleSeen(struct HubBundleSeen *hp)
 {
 free(hp->bundle);
+free(hp->nid);
 free(hp); 
 }
 
