@@ -270,7 +270,6 @@ Nova_Meter(hostkey,buffer,bufsize);
 void Nova2PHP_performance_analysis(char *hostkey,char *buffer,int bufsize)
 
 {
-Nova_WebTopicMap_Initialize();
 Nova_PerformancePage(DOCROOT,hostkey,buffer,bufsize);
 }
 

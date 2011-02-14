@@ -9,7 +9,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-
 #ifdef HAVE_LIBMONGOC
 /*****************************************************************************/
 /*                                                                           */
