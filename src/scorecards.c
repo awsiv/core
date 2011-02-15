@@ -811,7 +811,7 @@ void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bu
 
 { char work[CF_BUFSIZE];
  
-snprintf(work,CF_BUFSIZE,"{ title: \"%s\", position: %d, kept: %lf, repaired: %lf, notkept: %lf }",name,pos,kept,rep,100-kept-rep);
+snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf }",name,pos,kept,rep,100-kept-rep);
 Join(buffer,work,bufsize);
 }
 

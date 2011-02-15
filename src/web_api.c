@@ -2398,19 +2398,19 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
    {
    if (Nova_IsGreen(ip->counter))
       {
-      snprintf(work,sizeof(work),"{ colour: \"green\", key: \"%s\", id: \"%s\"},",ip->name,ip->classes);
+      snprintf(work,sizeof(work),"{ \"colour\": \"green\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
       }
    else if (Nova_IsYellow(ip->counter))
       {
-      snprintf(work,sizeof(work),"{ colour: \"yellow\", key: \"%s\", id: \"%s\"},",ip->name,ip->classes);
+      snprintf(work,sizeof(work),"{ \"colour\": \"yellow\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
       }
    else if (Nova_IsRed(ip->counter))
       {
-      snprintf(work,sizeof(work),"{ colour: \"red\", key: \"%s\", id: \"%s\"},",ip->name,ip->classes);
+      snprintf(work,sizeof(work),"{ \"colour\": \"red\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
       }
    else
       {
-      snprintf(work,sizeof(work),"{ colour: \"blue\", key: \"%s\", id: \"%s\"},",ip->name,ip->classes);      
+      snprintf(work,sizeof(work),"{ \"colour\": \"blue\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);      
       }
    
    if (!Join(buffer,work,bufsize))
@@ -2439,7 +2439,7 @@ strcat(buffer,"[");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
-   snprintf(work,CF_MAXVARSIZE,"{ key: \"%s\", id: \"%s\"}",ip->name,ip->classes);
+   snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\", \"id\": \"%s\"}",ip->name,ip->classes);
 
    if (ip && ip->next != NULL)
       {
@@ -2488,7 +2488,7 @@ if (clist)
    
    for (ip = clist; ip !=  NULL; ip=ip->next, counter++)
       {      
-      snprintf(work,CF_MAXVARSIZE,"{ key: \"%s\", id: \"%s\"}",ip->name,ip->classes);
+      snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\", \"id\": \"%s\"}",ip->name,ip->classes);
       
       if (ip && ip->next != NULL)
          {
@@ -2521,7 +2521,7 @@ strcat(buffer,"[");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
-   snprintf(work,CF_MAXVARSIZE,"{ key: \"%s\" , id: \"%s\"}",ip->name,ip->classes);
+   snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\" , \"id\": \"%s\"}",ip->name,ip->classes);
 
    if (ip && ip->next != NULL)
       {
