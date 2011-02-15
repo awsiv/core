@@ -38,9 +38,7 @@
               <div class="panelhead">Reporting: search groups of hosts</div>
                 <div class="panelcontent">
                     <form method="post" action="<?php echo site_url('search/index');?>">
-                          <p><?php 
-                          echo "$allreps";?>
-                          <p>
+                        <p><?php echo form_dropdown('report',$allreps,'Bundle profile')?></p>
                           <input type="submit" value="step 1 of 2">
                      </form>
                  </div>
@@ -50,9 +48,7 @@
           		<div class="panelhead">Summary of Content-Driven Policies</div>
                 <div class="panelcontent">
                     <form method="post" action="<?php echo site_url('cdp/index')?>">
-                          <p><?php 
-                          echo "$allSppReps";?>
-                          <p>
+                          <p><?php echo $allSppReps;?><p>
                           <input type="submit" value="Generate">
                      </form>
                  </div>
