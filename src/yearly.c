@@ -103,7 +103,13 @@ void Nova_PlotLongHFile(struct CfDataView *cfv,char *buffer,int bufsize)
  
 for (i = 0; i < CF_LHISTORYDATA; i++)
    {
-   snprintf(work,CF_MAXVARSIZE,"[%d,%lf,%lf,%lf],",i,cfv->data_q[i],cfv->data_E[i],cfv->bars[i]);
+   snprintf(work,CF_MAXVARSIZE,"[%d,%lf,%lf,%lf]",i,cfv->data_q[i],cfv->data_E[i],cfv->bars[i]);
+
+   if (i < CF_LHISTORYDATA-1)
+      {
+      strcat(work,",");
+      }
+
    Join(buffer,work,bufsize);
    }
 }

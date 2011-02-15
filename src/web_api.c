@@ -2439,7 +2439,17 @@ strcat(buffer,"[");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
-// Why is this here?
+   snprintf(work,CF_MAXVARSIZE,"{ key: \"%s\", id: \"%s\"}",ip->name,ip->classes);
+
+   if (ip && ip->next != NULL)
+      {
+      strcat(work,",");
+      }
+   
+   if (!Join(buffer,work,bufsize))
+      {
+      break;
+      }
    }
 
 EndJoin(buffer,"]",bufsize);
@@ -2478,7 +2488,12 @@ if (clist)
    
    for (ip = clist; ip !=  NULL; ip=ip->next, counter++)
       {      
-      snprintf(work,CF_MAXVARSIZE,"key: \"%s\", id: \"%s\"",ip->name,ip->classes);
+      snprintf(work,CF_MAXVARSIZE,"{ key: \"%s\", id: \"%s\"}",ip->name,ip->classes);
+      
+      if (ip && ip->next != NULL)
+         {
+         strcat(work,",");
+         }
       
       if (!Join(buffer,work,bufsize))
          {
@@ -2502,26 +2517,24 @@ clist = Nova_RankHosts(match,1,cfrank_compliance,n);
 clist = SortItemListClasses(clist);
 
 buffer[0] = '\0';
-strcat(buffer,"<select name=\"hostkey\" onselect>\n");
+strcat(buffer,"[");
 
 for (ip = clist; ip !=  NULL; ip=ip->next)
    {
-   if (strcmp(selected,ip->name) == 0)
-      {
-      snprintf(work,CF_MAXVARSIZE,"<option value=\"%s\" selected>%s</option>\n",ip->name,ip->classes);
-      }
-   else
-      {
-      snprintf(work,CF_MAXVARSIZE,"<option value=\"%s\">%s</option>\n",ip->name,ip->classes);
-      }
+   snprintf(work,CF_MAXVARSIZE,"{ key: \"%s\" , id: \"%s\"}",ip->name,ip->classes);
 
-   if(!Join(buffer,work,bufsize))
+   if (ip && ip->next != NULL)
+      {
+      strcat(work,",");
+      }
+   
+   if (!Join(buffer,work,bufsize))
      {
      break;
      }
    }
 
-EndJoin(buffer,"\n</select>\n",bufsize);
+EndJoin(buffer,"]",bufsize);
 DeleteItemList(clist);
 }
 
@@ -2880,15 +2893,19 @@ void Nova2PHP_select_reports(char *buffer,int bufsize)
   int i;
 
 buffer[0] = '\0';
-strcat(buffer,"<select name=\"report\">\n");
+strcat(buffer,"[");
 
 for (i = 0; BASIC_REPORTS[i] != NULL; i++)
    {
-   snprintf(work,CF_MAXVARSIZE,"<option value=\"%s\">%s</option>\n",BASIC_REPORTS[i],BASIC_REPORTS[i]);
+   snprintf(work,CF_MAXVARSIZE,"\"%s\"",BASIC_REPORTS[i]);
+   if (BASIC_REPORTS[i+1] != NULL)
+      {
+      strcat(work,",");
+      }
    Join(buffer,work,bufsize);
    }
 
-Join(buffer,"\n</select>\n",bufsize);
+Join(buffer,"]",bufsize);
 }
 
 /*****************************************************************************/
@@ -3244,7 +3261,7 @@ void Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int 
 void Nova2PHP_ComplianceSummaryGraph()
 {
 Nova_WebTopicMap_Initialize();
-Nova_ComplianceSummaryGraph(DOCROOT);
+Nova_ComplianceSummaryGraph();
 }
 
 /*****************************************************************************/

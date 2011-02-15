@@ -120,11 +120,17 @@ else
 void Nova_PlotMagQFile(struct CfDataView *cfv,char *buffer,int bufsize)
 
 { char work[CF_MAXVARSIZE];
- int i; 
+  int i; 
 
 for (i = 0; i < CF_MAGDATA; i++)
    {
-   snprintf(work,CF_MAXVARSIZE," [%d,%lf,%lf,%lf],",i, cfv->data_q[i], cfv->data_E[i],cfv->bars[i]);
+   snprintf(work,CF_MAXVARSIZE," [%d,%lf,%lf,%lf]",i, cfv->data_q[i], cfv->data_E[i],cfv->bars[i]);
+
+   if (i < CF_MAGDATA-1)
+      {
+      strcat(work,",");
+      }
+   
    Join(buffer,work,bufsize);
    }
 }

@@ -218,7 +218,13 @@ strcpy(buffer,"[ ");
   
 for (i = 0; i < CF_TIMESERIESDATA; i++)
    {
-   snprintf(work,CF_MAXVARSIZE,"[ %d,%lf,%lf,%lf ],",i,cfv->data_q[i],cfv->data_E[i],cfv->bars[i]);
+   snprintf(work,CF_MAXVARSIZE,"[ %d,%lf,%lf,%lf ]",i,cfv->data_q[i],cfv->data_E[i],cfv->bars[i]);
+
+   if (i < CF_TIMESERIESDATA-1)
+      {
+      strcat(work,",");
+      }
+
    Join(buffer,work,bufsize);
    }
 

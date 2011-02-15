@@ -41,7 +41,7 @@ Join(buffer,"]",bufsize);
 
 /*****************************************************************************/
 
-void Nova_ComplianceSummaryGraph(char *docroot)
+void Nova_ComplianceSummaryGraph()
 
 { char *report,buffer[CF_BUFSIZE];
   int count = 0, tmpsize;
@@ -163,11 +163,17 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 if (hq->records != NULL)
    {
    Nova_BarMeter(1,kept_week/num_week,rep_week/num_week,"Week",buffer,bufsize);
+   strcat(buffer,",");
    Nova_BarMeter(2,kept_day/num_day,rep_day/num_day,"Day",buffer,bufsize);
+   strcat(buffer,",");
    Nova_BarMeter(3,kept_hour/num_hour,rep_hour/num_hour,"Hour",buffer,bufsize);
+   strcat(buffer,",");
    Nova_BarMeter(4,kept_perf/num_perf,rep_perf/num_perf,"Perf",buffer,bufsize);
+   strcat(buffer,",");
    Nova_BarMeter(5,kept_other/num_other,rep_other/num_other,"Chng",buffer,bufsize);
+   strcat(buffer,",");
    Nova_BarMeter(6,kept_comms/num_comms,rep_comms/num_comms,"Seen",buffer,bufsize);
+   strcat(buffer,",");
    Nova_BarMeter(7,kept_anom/num_anom,rep_anom/num_anom,"Anom",buffer,bufsize);
    }
 
@@ -805,7 +811,7 @@ void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bu
 
 { char work[CF_BUFSIZE];
  
-snprintf(work,CF_BUFSIZE,"{ title: \"%s\", position: %d, kept: %lf, repaired: %lf, notkept: %lf },",name,pos,kept,rep,100-kept-rep);
+snprintf(work,CF_BUFSIZE,"{ title: \"%s\", position: %d, kept: %lf, repaired: %lf, notkept: %lf }",name,pos,kept,rep,100-kept-rep);
 Join(buffer,buffer,bufsize);
 }
 

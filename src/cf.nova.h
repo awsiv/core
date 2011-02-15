@@ -770,7 +770,7 @@ int Nova_IsGreen(int level);
 int Nova_IsYellow(int level);
 int Nova_IsRed(int level);
 int Nova_IsBlue(int level);
-void Nova_ComplianceSummaryGraph(char *docroot);
+void Nova_ComplianceSummaryGraph(void);
 void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col);
 int Nova_GetHostColour(char *lkeyhash);
 

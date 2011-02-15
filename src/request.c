@@ -475,7 +475,7 @@ printf("AVLU = %s\n",buffer);
 //printf("UPDATE = %s\n",buffer);
 
 //Nova_CacheTotalCompliance();
-Nova_ComplianceSummaryGraph("/srv/www/htdocs");
+Nova_ComplianceSummaryGraph();
 
 //Nova2PHP_show_col_hosts("green",200,buffer,1000);
 //printf("HOSTS = %s\n",buffer);

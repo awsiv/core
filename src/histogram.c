@@ -109,6 +109,12 @@ void Nova_PlotHistogram(struct CfDataView *cfv,char *buffer,int bufsize)
 for (i = 0; i < CF_GRAINS; i++)
    {
    snprintf(work,CF_MAXVARSIZE,"[%d,%lf]",i,cfv->data_E[i]);
+
+   if (i < CF_GRAINS-1)
+      {
+      strcat(work,",");
+      }
+
    Join(buffer,work,bufsize);
    }
 }
