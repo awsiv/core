@@ -11,23 +11,11 @@
                 <div class="panelcontent">
                 <div class="tables">
 <?php
-				
-switch ($type)
-   {
-   case "red":
-       $result = cfpr_show_red_hosts();
-       break;
-   case "green":
-       $result = cfpr_show_green_hosts();
-       break;
-   case "yellow":
-       $result = cfpr_show_yellow_hosts();
-       break;
-   }     
 
-if ($result != "")
+if (count($tabledata)>0)
    {
-   echo "$result";
+    $col_list = $this->table->make_columns($tabledata, 6);
+    echo $this->table->generate($col_list);
    }
 else
    {
@@ -40,19 +28,3 @@ else
 </div>
 </div>
 </div>
-
-        <script type="text/javascript">
-		$(document).ready(function() {
-		$('.tables table').find('img').addClass('align');
-		$('.tables table').find('a').addClass('imglabel');
-		
-		$("#tabpane a").click(function(e)
-		{
-	       /* e.preventDefault();
-		var oldlink=$(this).attr('href');
-		var newlink=oldlink.split('?');
-		var splitted=newlink[1].split('=');
-		location.replace('<?php echo site_url(); ?>/welcome/host/'+splitted[1]+'='+splitted[2]);*/
-	    });
-		});
-		</script>

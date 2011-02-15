@@ -12,10 +12,7 @@ $colour = cfpr_get_host_colour($hostkey);
                     <div class="panelhead">Select host: <?php if($hostkey=="none") echo "No host selected" ;?> </div>
                      <div class="panelcontent">
                      <form method="post" action="<?php ?>">
-                     <?php
-                     $allhosts = cfpr_select_hosts($hostkey,".*",100);
-                     echo "$allhosts";
-					 ?>
+                     <?php echo form_dropdown('hostkey', $allhosts)?>
                      <input class="btn floatRight"  type="submit"  value="Select host" />
                      <div class="clearright"></div>
                      </form>
@@ -47,22 +44,22 @@ $colour = cfpr_get_host_colour($hostkey);
                      <div class="panelhead">Comments</div>
                      <div class="panelcontent">
                      <p><label class="width_20">host Key:</label><label ><?php echo $hostname?></label></p>
-                     <?php
+                      <?php
                      if ($is_commented != "")
-                        {
-                     ?>
-                     <a href="<?php echo site_url('notes/show_notes').'/'.$hostkey?>" class="btn floatRight" id="show_cmt" style="<?php if(is_commented)?>">Show Notes</a>
+                         {
+                      ?>
+                     <a href="<?php echo site_url('notes/show_notes').'/'.$hostkey?>" class="btn floatRight" id="show_cmt">Show Notes</a>
                      <a href="#" class="btn floatRight" id="add_cmt" style="display:none">Add Note</a>
-                       <?php
+                      <?php
                        }
                        else
                        {
-                       ?>
+                      ?>
                         <a href="<?php echo site_url('notes/show_notes').'/'.$hostkey?>" class="btn floatRight" id="show_cmt" style="display:none">Show Notes</a>
                         <a href="#" class="btn floatRight" id="add_cmt" style="display:block">Add Note</a>
-                        <?php
+                       <?php
                         }
-                        ?>
+                       ?>
                       <div class="clearright"></div>
                      <div id="comments">
                      </div>
@@ -110,8 +107,7 @@ $colour = cfpr_get_host_colour($hostkey);
                 <form method="post" action="<?php echo site_url('search/')?>">
                 <p>Simple search string:</p>
                 <p><input class="searchfield" type="text" name="search" /></p>
-                <p><?php $allreps = cfpr_select_reports(".*",100);
-				  echo "$allreps";?></p>
+                 <p><?php echo form_dropdown('report',$allreps,'Bundle profile')?></p>
                 <input type="hidden" name="hostkey" value="<?php echo $hostkey?>">
                 <p><input type="submit" value="commit"></p>
                 </form>
@@ -155,8 +151,10 @@ $(document).ready(function() {
     $('#comments').hide();
     $('#add_cmt').click(function(event) {
         event.preventDefault();
+        $('#add_comment').load('<?php echo site_url('notes/add').'/'.$hostkey?>')
         $('#add_comment').slideToggle('slow');
     });
+
     $('#show_cmt').click(function(event){
         event.preventDefault();
         $('#comments').load($(this).attr('href'));
