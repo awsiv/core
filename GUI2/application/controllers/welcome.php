@@ -6,6 +6,8 @@ class Welcome extends Cf_Controller{
 		{
 			parent::__construct();			
 			parse_str($_SERVER['QUERY_STRING'],$_GET);
+                        $this->load->helper('form');
+                        $this->load->library('table');
 		}
 	
 function index()
@@ -21,6 +23,8 @@ function index()
 	
 function status()
 	{
+
+          $reports=json_decode(cfpr_select_reports(".*",100));
 	  $data=array(
 		'title'=>"Cfengine Mission Portal - engineering status",
         'title_header'=>"engineering status",
@@ -31,7 +35,7 @@ function status()
 		'r' => cfpr_count_red_hosts(),
 		'y' => cfpr_count_yellow_hosts(),
 		'g' => cfpr_count_green_hosts(),
-		'allreps' => cfpr_select_reports(".*",100),
+		'allreps' =>  array_combine($reports, $reports),
 		'allSppReps' => cfpr_cdp_reportnames()
 		);
 	  $this->template->load('template', 'status',$data);
@@ -69,13 +73,36 @@ function knowledge()
 	
 function hosts($type)
 	{
+         $result=array();
+         switch ($type)
+         {
+          case "red":
+           $result = json_decode(cfpr_show_red_hosts(),true);
+           break;
+         case "green":
+           $result = json_decode(cfpr_show_green_hosts(),true);
+           break;
+         case "yellow":
+           $result = json_decode(cfpr_show_yellow_hosts(),true);
+           break;
+        }
+
+        $columns=array();
+        if(count($result)>0)
+        {
+            foreach($result as $cols)
+            {
+                array_push($columns,  img(array('src'=>'images/'.$type.'.png','class'=>'align')).anchor('welcome/host/'.$cols['key'],$cols['id'],'class="imglabel"'));
+            }
+        }
 	  
 	  $data=array(
 		 'type'=>$type,
-         'title_header'=>"engineering status",
+                 'title_header'=>"engineering status",
 		 'title'=>"Cfengine Mission Portal - ".$type." hosts",
 		 'nav_text'=>"Status : hosts",
-		 'status'=>"current"
+		 'status'=>"current",
+                 'tabledata'=>$columns,
 		 );
 	  $this->template->load('template', 'hosts',$data);
 	}
@@ -86,14 +113,21 @@ function host($hostkey=NULL)
 	 {
 	  $hostkey=isset($_POST['hostkey'])? $_POST['hostkey'] : "none";
 	 }
-
+         $reports=json_decode(cfpr_select_reports(".*",100));
 	 $hostname=cfpr_hostname($hostkey);
 	 $ipaddr=cfpr_ipaddr($hostkey);
 	 $username=isset($_POST['username'])? $_POST['username'] : "";
 	 $comment_text=isset($_POST['comment_text'])? $_POST['comment_text'] : "";
-	 $is_commented = cfpr_get_host_commentid($hostkey);
+	 $is_commented = cfpr_get_host_noteid($hostkey);
 	 $op = isset($_POST['op'])? $_POST['op'] : "";
-
+         $allhosts = array();
+         $string=cfpr_select_hosts($hostkey,".*",100);
+         $jsonarr=json_decode($string,true);
+             $host=array();
+             foreach ($jsonarr as $data)
+             {
+                 $allhosts[$data['key']]=$data['id'];
+             }
         /* if (!is_null($username) && !is_null($comment_text) && $op=="addcomment")
 	 {
    	  cfpr_comment_add($hostkey,"",$commentid,1,"$hostname,$ipaddr",$username,time(),$comment_text);
@@ -113,7 +147,9 @@ function host($hostkey=NULL)
 			'hostname'=>$hostname,	
 			'ipaddr'=>$ipaddr,			
 			'is_commented'=>$is_commented,
-			'op'=>$op
+			'op'=>$op,
+                        'allreps' =>  array_combine($reports, $reports),
+                        'allhosts'=> $allhosts
 			);
 	  $this->template->load('template', 'host',$data); 
 	}
