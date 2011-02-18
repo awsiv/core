@@ -46,7 +46,7 @@ int Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables o
   double max,min;
   int count = 0,i,have_data = false;
   mongo_connection dbconn;
-  double q[CF_LHISTORYDATA],e[CF_LHISTORYDATA],d[CF_LHISTORYDATA];
+  double q[CF_LHISTORYDATA] = {0},e[CF_LHISTORYDATA] = {0},d[CF_LHISTORYDATA]={0};
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
