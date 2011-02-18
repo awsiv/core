@@ -30,11 +30,16 @@ void Nova_NewPromiser(struct Promise *pp)
 { int hash;
   char unique[CF_BUFSIZE];
 
-if ( strcmp(pp->agentsubtype,"methods") == 0)
+if (strcmp(pp->agentsubtype,"methods") == 0)
    {
-   return;
+   return; // Method promisers are not real objects
    }
-  
+
+if (strcmp(pp->agentsubtype,"delete_lines") == 0)
+   {
+   return; // Deletion cannot confict
+   }
+
 if (IsNakedVar(pp->promiser,'$') || strcmp(pp->agentsubtype,"vars") == 0 || strcmp(pp->agentsubtype,"classes") == 0)
    {
    snprintf(unique,CF_BUFSIZE,"%s: %s (%s)",pp->agentsubtype,pp->promiser,pp->bundle);
@@ -876,11 +881,11 @@ void Nova_SetDocRoot(char *name)
   struct stat sb;
   enum cfreport level;
 
-if(LOOKUP)
-  {
-  CfOut(cf_verbose, "","Ignoring document root in lookup mode");
-  return;
-  }
+if (LOOKUP)
+   {
+   CfOut(cf_verbose, "","Ignoring document root in lookup mode");
+   return;
+   }
 
 if (BOOTSTRAP)
    {
