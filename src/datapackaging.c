@@ -2142,6 +2142,11 @@ if (strcmp(arch,"x86_64") == 0)
    return "x";
    }
 
+if (strcmp(arch,"s390x") == 0)
+   {
+   return "s";
+   }
+
 if (strcmp(arch,"default") == 0)
    {
    return "d";
