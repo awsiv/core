@@ -1,5 +1,5 @@
 
-SUBDIRS = src pub docs GUI
+SUBDIRS = src pub docs GUI2
 
 EXTRA_DIST = acconfig.h COPYING ChangeLog LICENSE README
 

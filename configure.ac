@@ -963,7 +963,7 @@ dnl ######################################################################
 dnl Now make the Makefiles
 dnl ######################################################################
 
-AC_CONFIG_FILES([Makefile src/Makefile docs/Makefile pub/Makefile GUI/Makefile GUI/images/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile docs/Makefile pub/Makefile GUI2/Makefile GUI2/images/Makefile])
 AC_OUTPUT
 
 AC_MSG_RESULT(DONE: Configuration done. Run make/gmake to build cfengine.)
