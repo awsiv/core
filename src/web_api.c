@@ -4700,5 +4700,69 @@ if (!CFDB_Close(&dbconn))
 
 return true;
 }
+
 /*****************************************************************************/
+/*                           Constellation                                   */
+/*****************************************************************************/
+
+
+int Con2PHP_summarize_notkept(char *policyName, enum time_window time, char *buf, int bufsize)
+
+{
+
+#ifdef HAVE_LIBCFCONSTELLATION
+
+
+ struct HubQuery *hq;
+ mongo_connection dbconn;
+
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+ hq = CFDB_QueryPromiseLogSummary(policyName,time,buf,bufsize);
+
+
+
+/*
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,0,0,false,classreg);
+
+hostname[0] = '\0';
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hp = (struct HubPromiseLog *)rp->item;
+   IdempPrependItem(&summary,hp->handle,hp->cause);
+   IncrementItemListCounter(summary,hp->handle);
+
+   if (hostname[0] == '\0')
+      {
+      strncpy(hostname,hp->hh->hostname,CF_MAXVARSIZE);
+      }
+   }
+
+
+*/
+
+ DeleteHubQuery(hq,DeleteHubPromiseLog);
+
+ CFDB_Close(&dbconn);
+
+ return true;
+
+#else  /* NOT HAVE_LIBCFCONSTELLATION */
+
+ snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_summarize_notkept() in Nova-only environment\n");
+ CfOut(cf_error, "", buf);
+ return false;
+
 #endif
+
+}
+
+
+#endif  /* HAVE_LIBMONGOC */
+

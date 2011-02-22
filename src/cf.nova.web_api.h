@@ -109,3 +109,8 @@ void Nova2PHP_AnalyseWeek(char *hostkey,enum observables obs,char *buffer,int bu
 void Nova2PHP_ComplianceSummaryGraph(void);
 void Nova2PHP_AnalyseHistogram(char *keyhash,int obs,char *buffer,int bufsize);
 int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize);
+
+
+// constellation function stubs
+
+int Con2PHP_summarize_notkept(char *policyName, enum time_window time, char *buf, int bufsize);
