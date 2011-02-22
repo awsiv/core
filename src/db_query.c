@@ -956,11 +956,13 @@ while (mongo_cursor_next(cursor))  // loops over documents
                          if (rrval)
                             {
                             free(rrval);
+			    rrval = NULL;
                             }
                          break;
                          
                      case CF_LIST:
                          DeleteRlist(rrval);
+			 rrval = NULL;
                          break;
                      }                  
                   }

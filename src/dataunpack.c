@@ -760,6 +760,11 @@ if (strcmp(arch,"x") == 0)
    return "x86_64";
    }
 
+if (strcmp(arch,"t") == 0)
+   {
+   return "s390";
+   }
+
 if (strcmp(arch,"s") == 0)
    {
    return "s390x";
