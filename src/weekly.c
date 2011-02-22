@@ -228,7 +228,7 @@ for (i = 0; i < CF_TIMESERIESDATA; i++)
    Join(buffer,work,bufsize);
    }
 
-Join(buffer,"]",bufsize);
+//Join(buffer,"]",bufsize);
 }
 
 /***********************************************************/
