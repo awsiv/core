@@ -18,25 +18,38 @@
 
 void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize)
     
-{ char work[CF_BUFSIZE],desc[CF_BUFSIZE];
+{ char work[CF_BUFSIZE],lastsaw[CF_SMALLBUF], hostname[CF_SMALLBUF],ipaddress[CF_SMALLBUF];
+  char desc[CF_BUFSIZE],id[CF_BUFSIZE];
+  
   int i;
  
-strcpy(buffer,"[");
+strcpy(buffer,"{");
+
+Nova2PHP_hostinfo(hostkey,hostname,ipaddress,CF_MAXVARSIZE);
+Nova2PHP_getlastupdate(hostkey,lastsaw,CF_SMALLBUF);
+ lastsaw[strlen(lastsaw)-1] = '\0'; /*remove the trailing newline*/
+snprintf(work,CF_BUFSIZE, "\"hostname\" : \"%s\", \"ip\" : \"%s\", \"ls\" : \"%s\", \"obs\" : [",
+	 hostname,ipaddress,lastsaw);
+
+Join(buffer,work,bufsize);
 
 for (i = 0; i < CF_OBSERVABLES; i++)
-   {
-   Nova_LookupAggregateClassName(i,work,desc);
+   {     
+     Nova_LookupAggregateClassName(i,id,desc);
 
-   if (strcmp(work,"spare") == 0)
+   if (strcmp(id,"spare") == 0)
       {
-      continue;
+	continue;
       }
 
-   snprintf(work,CF_BUFSIZE,"%d,",i);
+   snprintf(work,CF_BUFSIZE, "{ \"id\" : \"%s\", \"desc\" : \"%s\", \"i\" : %d },",
+	    id,desc,i);
+
    Join(buffer,work,bufsize);
    }
-
-Join(buffer,"]",bufsize);
+ buffer[strlen(buffer)-1] = '\0'; /*remove last comma*/
+ Join(buffer,"]",bufsize);
+ Join(buffer,"}",bufsize);
 }
 
 /*****************************************************************************/
