@@ -87,7 +87,7 @@ noinst_HEADERS =							\
         win_disphelper.h                                                \
 	snprintf.h                                                      
 
-include_HEADERS = cf.nova.h
+include_HEADERS = cf.nova.h cf.nova.web_api.h
 
 #
 # Some basic clean ups
