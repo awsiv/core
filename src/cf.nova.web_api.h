@@ -1,3 +1,20 @@
+/*
+
+ This file is (C) Cfengine AS. See LICENSE for details.
+
+*/
+
+/*****************************************************************************/
+/*                                                                           */
+/* File: web_api.c                                                           */
+/*                                                                           */
+/* Created: Tue Feb 22 14:35:16 2011                                         */
+/*                                                                           */
+/*****************************************************************************/
+
+// Separation needed because it is included by php extension
+
+
 char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize);
 int Nova2PHP_get_observable_id(char *name);
 void Nova2PHP_get_magnified_view(char *keyhash,enum observables obs,char *buffer,int bufsize);
