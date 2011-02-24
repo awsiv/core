@@ -4723,8 +4723,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseLogSummary(policyName,time,buf,bufsize);
-
+ hq = CFDB_QuerySumNotKept(policyName,time); // FIXME: struct not buf
 
 
 /*
