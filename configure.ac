@@ -18,6 +18,8 @@ dnl
 AM_INIT_AUTOMAKE(cfnova,2.0.3a1)   dnl remember to set version
 AM_MAINTAINER_MODE
 
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
+
 AC_CONFIG_HEADERS([src/conf.h])
 
 AC_CONFIG_MACRO_DIR(m4)
