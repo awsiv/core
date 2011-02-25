@@ -9,7 +9,6 @@ class Cf_Form_validation extends CI_Form_validation {
     function unique($value, $params) {
 
         $CI =& get_instance();
-        $CI->load->database();
         $CI->load->library('mongo_db');
 
         $CI->form_validation->set_message('unique',
