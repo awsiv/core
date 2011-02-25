@@ -9,7 +9,7 @@
             <div class="vitaltable">
                 <div id="graph-pulses-vital-sign">
                     <?php foreach ($performanceData['obs'] as $index => $fetchData) {
- ?>
+                    ?>
 
                         <h3><a href="#"><?php echo $fetchData['id']; ?>  <?php echo $performanceData['ls']; ?> </a></h3>
                         <div>
@@ -22,7 +22,7 @@
                                 </ul>
                             </div>
                         </div>
-<?php } ?>
+                    <?php } ?>
                 </div>
             </div>
         </div>
@@ -32,6 +32,20 @@
 
 
 <script type="text/javascript">
+
+     // tabs
+    $tabs = $( ".tabs" ).tabs({
+        selected: null,
+        ajaxOptions: {
+            error: function( xhr, status, index, anchor ) {
+                $( anchor.hash ).html(
+                "Couldn't load this tab. We'll try to fix this as soon as possible. " );
+            }
+        },
+         spinner: 'Retrieving data...'        
+    });
+
+
 
     $("#graph-pulses-vital-sign").addClass("ui-accordion ui-accordion-icons ui-widget ui-helper-reset")
     .find("h3")
@@ -43,6 +57,8 @@
         .toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom")
         .find("> .ui-icon").toggleClass("ui-icon-triangle-1-e ui-icon-triangle-1-s").end()
         .next().toggleClass("ui-accordion-content-active").slideToggle();
+        var $link = $('.ui-tabs-nav li:eq(1) a',$(this).next());       
+        $link.trigger('click');
         return false;
     })
     .next()
@@ -55,17 +71,9 @@
     .focusout(function() { $(this).parent().toggleClass("ui-state-hover"); })
 
 
-    // tabs
-    $( ".tabs" ).tabs({
-        selected: null,
-        ajaxOptions: {
-            error: function( xhr, status, index, anchor ) {
-                $( anchor.hash ).html(
-                "Couldn't load this tab. We'll try to fix this as soon as possible. " +
-                    "If this wouldn't be a demo." );
-            }
-        }
-    });
+   
+
+   
 
 
 </script>
