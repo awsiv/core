@@ -466,6 +466,10 @@ tr even td
  background:#E1E1E3;
  vertical-align:middle;
 }
+.tables td a
+{
+    word-wrap:break-word;
+}
 
 .tables td a:hover
 {
