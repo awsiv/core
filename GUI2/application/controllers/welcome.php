@@ -58,17 +58,49 @@ function knowledge()
 	    $search = isset($getparams['search'])?$getparams['search']:$this->input->post('search');
             $topic = isset($getparams['topic'])?$getparams['topic']:$this->input->post('topic');
 		$pid = isset($getparams['pid'])?$getparams['pid']:$this->input->post('pid');
-		$data=array(
-		 'search' => $search,
-		 'topic' => $topic,
-		 'pid'=> $pid,
-		 'title'=>"Cfengine Mission Portal - Knowledge bank",
-                 'title_header'=>"Knowledge bank",
-                 'nav_text'=>"Knowledgebank",
-		 'library'=>"current"
-		 );
-	  $this->template->set('injected_item','<link href="'.get_cssdir().'jquery.fancybox-1.3.1.css" rel="stylesheet" media="screen" />');
-	  $this->template->load('template', 'knowledge',$data);
+		 if (!$pid)
+            $pid = cfpr_get_pid_for_topic("", "system policy");
+
+        $data = array(
+            'search' => $search,
+            'topic' => $topic,
+            'pid' => $pid,
+            'title' => "Cfengine Mission Portal - Knowledge bank",
+            'title_header' => "Knowledge bank",
+            'nav_text' => "Knowledgebank",
+            'library' => "current"
+        );
+
+        $gdata = cfpr_get_knowledge_view($pid, '');
+
+
+        $data['graphdata'] = ($gdata);
+        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
+            ',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>
+            ',
+            '<style type="text/css">
+            /*<![CDATA[*/
+
+
+            .node{
+                background-color: #ccccff;
+                border: 1px;
+                -moz-box-shadow: 3px 3px 5px #888;
+                -webkit-box-shadow: 3px 3px 5px #888;
+                box-shadow: 3px 3px 5px #888;
+
+            }
+
+
+            /*]]>*/
+        </style>
+',
+            '<link href="' . get_cssdir() . 'jquery.fancybox-1.3.1.css" rel="stylesheet" media="screen" />');
+
+
+        $this->template->set('injected_item', implode("", $scripts));
+        $this->template->load('template', 'knowledge', $data);
 	}
 	
 function hosts($type)
