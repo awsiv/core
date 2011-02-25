@@ -9,7 +9,8 @@ class Cf_Exceptions extends CI_Exceptions {
 		$this->env = $cfg->item('env', 'appsettings');
 		
 	 }
-			public function show_error($heading, $message, $template = 'error_general', $status_code = 500) {
+         
+public function show_error($heading, $message, $template = 'error_general', $status_code = 500) {
             		
 		    if($this->env == "development")
 				 {
@@ -44,7 +45,7 @@ class Cf_Exceptions extends CI_Exceptions {
 				}
 			}
 			
-			function show_php_error($severity, $message, $filepath, $line)
+function show_php_error($severity, $message, $filepath, $line)
 	        {
 			$config =& get_config();
 		    $this->env = $config['env'];
