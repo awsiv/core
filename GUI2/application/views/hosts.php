@@ -14,8 +14,18 @@
 
 if (count($tabledata)>0)
    {
-    $col_list = $this->table->make_columns($tabledata, 6);
-    echo $this->table->generate($col_list);
+    //$col_list = $this->table->make_columns($tabledata, 6);
+    //echo $this->table->generate($col_list);
+    echo "<table><tr>";
+    for($i=0;$i<count($tabledata);$i++)
+    {
+        if($i%6==0 && $i!=0)
+        {
+            echo '</tr><tr>';
+        }
+        echo '<td>'.$tabledata[$i].'</td>';
+    }
+    echo "</tr></table>";
    }
 else
    {
