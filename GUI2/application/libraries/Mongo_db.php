@@ -1,5 +1,4 @@
-<? if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
+﻿<? if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /* PLEASE NOTE: Alex Bilbe (http://www.alexbilbie.com) has merged this fork of his original code back into his own. http://bitbucket.org/alexbilbie/codeigniter-mongo-library/wiki/Home
 */
@@ -19,7 +18,6 @@
  */
 
 class Mongo_db {
-	
 	private $CI;
 	private $config_file = 'mongo_db';
 	
@@ -441,9 +439,6 @@ class Mongo_db {
              return false;
          }
 
-
-
-
 	/**
 	 *	--------------------------------------------------------------------------------
 	 *	COUNT
@@ -795,8 +790,5 @@ class Mongo_db {
 	private function where_init($param) {
 		if(!isset($this->wheres[$param]))
 			$this->wheres[$param] = array();
-	}
-	
+	}	
 }
-
-?>
