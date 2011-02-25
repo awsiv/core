@@ -1,5 +1,4 @@
 <?php
-
 class Test extends CI_Controller
 {
 	
@@ -38,7 +37,7 @@ class Test extends CI_Controller
          
          //$result = $this->mongo_db->select(array('uri','message'))->get('app_logs');
          //$this->mongo_db->where(array('group'=>'faculty'));
-         $result=$this->mongo_db->get('users');
+         $result=$this->mongo_db->get('app_logs');
          //$result=$this->mongo_db->select(array('username'))->get_where('users',array('group'=>'admin'));
          //print_r($result) ;
          foreach ($result as  $docs) {
@@ -63,17 +62,9 @@ class Test extends CI_Controller
 
          function mongodbinput()
          {
-            //$this->load->library('mongo_db');
-            $this->load->model('ion_auth_model_mongo');
-            /*$output=$this->mongo_db->insert('users',array(
-                    'username' => 'sudhir',
-                    'password' => $this->ion_auth_model_mongo->hash_password('password',true),
-                    'group'=>array('admin','developer','management')
-            ));*/
-            //$result=$this->ion_auth_model_mongo->register('sudhir', 'password','sudhir2pandey@gmail.com',array('admin','developer','faculty'));
-          $result=$this->ion_auth_model_mongo->register('mark', 'abacadaba','mark@cfengine.com',array('admin','developer','faculty'));
-
-            echo $result;
+          $this->load->model('ion_auth_model_mongo');
+          $result=$this->ion_auth_model_mongo->register('admin', 'admin','admin@cfengine.com',array('admin','developer','faculty'));
+          echo $result;
          }
          
 	 function mongodbupdate()
@@ -225,6 +216,47 @@ class Test extends CI_Controller
          function mongoclasstest()
          {
              $this->load->library('mongo_db');
+         }
+
+         function test_json()
+         {
+             $string=cfpr_show_green_hosts("green");
+             $jsonarr=json_decode($string,true);
+             $host=array();
+
+             foreach ($jsonarr as $data)
+             {
+               //array_push(&$keys,$data['key'])
+               //array_push(&$names,$data['id'])
+                 $host[$data['key']]=$data['id'];
+             }
+            /* foreach ($jsonarr as $obj)
+             {
+                 
+                     echo $obj['key']."<br/>";
+                     echo $obj['id']."<br/>";
+                 
+             }
+            */
+             print_r($host);
+
+         }
+
+         function allhostjson()
+         {
+             $result=cfpr_select_reports(".*",100);
+             print_r(json_decode($result));
+         }
+
+         function virtualdesktop()
+         {
+             $this->load->view('testviews/MUI_test/virtual_desktop');
+         }
+
+         function loadreports()
+         {
+             $this->load->helper('html');
+             $this->load->view('testviews/MUI_test/reportslist');
          }
         
 }
