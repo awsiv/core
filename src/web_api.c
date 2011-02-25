@@ -4715,6 +4715,9 @@ int Con2PHP_summarize_notkept(char *policyName, enum time_window time, char *buf
 
  struct HubQuery *hq;
  mongo_connection dbconn;
+ struct Rlist *rp;
+ struct HubPromiseSum *hs;
+ char buffer[CF_MAXVARSIZE];
 
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -4723,7 +4726,24 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QuerySumNotKept(policyName,time); // FIXME: struct not buf
+ hq = CFDB_QuerySumNotKept(&dbconn,policyName,time);
+
+StartJoin(buf,"<table>\n",bufsize);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hs = (struct HubPromiseSum *)rp->item;
+
+   
+   snprintf(buffer,sizeof(buffer),"<td>%s</td><td>%s</td><td>%d</td>\n",hs->policy,hs->handle,hs->occurences);
+   
+   if(!Join(buf,buffer,bufsize))
+     {
+     break;
+     }
+   }
+
+EndJoin(buf,"</table>\n",bufsize);
 
 
 /*
@@ -4746,7 +4766,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
 */
 
- DeleteHubQuery(hq,DeleteHubPromiseLog);
+ DeleteHubQuery(hq,DeleteHubPromiseSum);
 
  CFDB_Close(&dbconn);
 

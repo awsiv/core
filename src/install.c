@@ -407,6 +407,34 @@ free(hp);
 
 /*****************************************************************************/
 
+struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *policy,char *handle,int occurences)
+
+{ struct HubPromiseSum *hs;
+ 
+if ((hs = malloc(sizeof(struct HubPromiseSum))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubPromiseSum");
+   }
+
+hs->hh = hh;
+hs->policy = strdup(policy);
+hs->handle = strdup(handle);
+hs->occurences = occurences;
+
+return hs;
+}
+
+/*****************************************************************************/
+
+void DeleteHubPromiseSum(struct HubPromiseSum *hs)
+
+{
+free(hs->policy);
+free(hs->handle);
+}
+
+/*****************************************************************************/
+
 struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t)
 
 { struct HubLastSeen *hp;

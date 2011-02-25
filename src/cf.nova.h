@@ -541,6 +541,8 @@ struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,cha
 void DeleteHubVariable(struct HubVariable *hv);
 struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *policy, char *handle,char *cause,time_t t, char *noteId,char *oid);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
+struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *policy,char *handle,int occurences);
+void DeleteHubPromiseSum(struct HubPromiseSum *hs);
 struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
 void DeleteHubLastSeen(struct HubLastSeen *hp);
 struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double repaired);
@@ -1356,6 +1358,14 @@ struct HubPromiseLog // promise kept,repaired or not kept
    char *oid;  
    };
 
+struct HubPromiseSum // promise not kept/repaired summary
+   {
+   struct HubHost *hh;
+   char *policy;
+   char *handle;
+   int occurences;
+   };
+
 struct HubLastSeen
    {
    struct HubHost *hh;      
@@ -1496,6 +1506,7 @@ struct HubNoteInfo
   time_t t;
   struct HubNote *note;
 };
+
 
 #endif
 
