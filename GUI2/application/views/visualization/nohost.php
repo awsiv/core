@@ -8,21 +8,7 @@
         <div class="panelcontent">
             <div class="vitaltable">
                 <div id="graph-pulses-vital-sign">
-                    <?php foreach ($performanceData['obs'] as $index => $fetchData) {
- ?>
-
-                        <h3><a href="#"><?php echo $fetchData['id']; ?>  <?php echo $performanceData['ls']; ?> </a></h3>
-                        <div>
-
-                            <div class="tabs">
-                                <ul>
-                                    <li><a href="/graph/magnifiedView/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>">Past 4 hours</a></li>
-                                    <li><a href="/graph/weekview/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>">Past Week</a></li>
-                                    <li><a href="/graph/histogramView/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>">Statistical complete history</a></li>
-                                </ul>
-                            </div>
-                        </div>
-<?php } ?>
+                   No host selected . Please select a host to see its vital signs.
                 </div>
             </div>
         </div>

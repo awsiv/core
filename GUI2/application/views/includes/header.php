@@ -7,7 +7,7 @@
 <link href="<?php echo get_cssdir();?>960.css" rel="stylesheet" media="screen" />
 <link href="<?php echo get_cssdir();?>style.css" rel="stylesheet" media="screen" />
 <script src="<?php echo get_scriptdir();?>jquery-1.4.2.min.js" type="text/javascript"></script>
-<script src="<?php echo get_scriptdir();?>jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
+<script src="<?php echo get_scriptdir();?>jquery-ui-1.8.9.custom.min.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir();?>jquery.tablesorter.min.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir();?>picnet.jquery.tablefilter.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir();?>jquery.tablesorter.pager.js" type="text/javascript"></script>
