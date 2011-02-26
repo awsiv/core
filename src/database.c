@@ -210,17 +210,23 @@ if (!Nova_NewSQLColumns(table,columns,&name_table,&type_table,&size_table,&done)
 
 while(CfFetchRow(cfdb))
    {
+   char *sizestr;
    name[0] = '\0';
    type[0] = '\0';
    size = CF_NOINT;
-   
+
    strncpy(name,CfFetchColumn(cfdb,0),CF_MAXVARSIZE-1);
    strncpy(type,ToLowerStr(CfFetchColumn(cfdb,1)),CF_MAXVARSIZE-1);
-   size = Str2Int(CfFetchColumn(cfdb,2));
+   sizestr = CfFetchColumn(cfdb,2);
 
+   if (sizestr)
+      {
+      size = Str2Int(sizestr);
+      }
+   
    CfOut(cf_verbose,"","    ... discovered column (%s,%s,%d)",name,type,size);
    
-   if (size == CF_NOINT)
+   if (sizestr && size == CF_NOINT)
       {
       cfPS(cf_verbose,CF_NOP,"",pp,a," !! Integer size of SQL datatype could not be determined or was not specified - invalid promise.");
       Nova_DeleteSQLColumns(name_table,type_table,size_table,done,no_of_cols);
