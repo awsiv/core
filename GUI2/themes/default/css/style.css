@@ -118,6 +118,7 @@ margin-left: 10px;
 #nav ul li a.current
 {
  color: #1690CF;
+ background:#f3f3f3;
  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8DD), to(white));
  background:-moz-linear-gradient(90deg,#ffffff ,#E8E8DD) repeat scroll 0 0;
 }
@@ -222,8 +223,8 @@ margin-top:10px;
 {
 /*background:#E8E8DD;*/
 background:#f3f3f3;
-background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FEFEFE), to(#CCC));
-background:-moz-linear-gradient(90deg, #CCCCCC, #FEFEFE) repeat scroll 0 0;
+background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FEFEFE), to(#f3f3f3));
+background:-moz-linear-gradient(90deg, #f3f3f3, #FEFEFE) repeat scroll 0 0;
 min-height:600px;
 }
 
@@ -351,8 +352,8 @@ font-size:14px;
 .panelcontent
 {
 background:#e1e1e3;
-background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FEFEFE), to(#CCC));
-background:-moz-linear-gradient(90deg, #CCCCCC, #FEFEFE) repeat scroll 0 0;
+background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FEFEFE), to(#F3F3F3));
+background:-moz-linear-gradient(90deg, #F3F3F3, #FEFEFE) repeat scroll 0 0;
 padding:9px;
 font:14px DejaVuSans,Arial, Helvetica, sans-serif;
 }
