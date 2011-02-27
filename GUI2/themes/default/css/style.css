@@ -122,8 +122,64 @@ margin-left: 10px;
  background:-moz-linear-gradient(90deg,#ffffff ,#E8E8DD) repeat scroll 0 0;
 }
 
+/*
+------------------------------------------
+Infovis related css
+-------------------------------------------------
+*/
+#hostsummary
+{
+    margin:auto;
+    overflow:hidden;
+}
 
+#inner-details {
+  font-size:12px;
+}
 
+.tip {
+	 text-align: left;
+	 width:auto;
+	 max-width:500px;
+}
+
+.tip-title {
+  font-size: 11px;
+  text-align:center;
+  margin-bottom:2px;
+}
+
+pre {
+	background-color:#EEEEEE;
+	border:1px solid #CCCCCC;
+	font-size:10px;
+	margin:5px auto;
+	padding:5px;
+	width:170px;
+
+	white-space: pre-wrap;
+	white-space: -moz-pre-wrap;
+	white-space: -webkit-pre-wrap;
+	white-space: -pre-wrap;
+	white-space: -o-pre-wrap;
+	word-wrap: break-word;
+}
+
+.tip {
+    color: #fff;
+    width: 139px;
+    background-color: #454545;
+    border:1px solid #303030;
+    -moz-box-shadow:#555 2px 2px 8px;
+    -webkit-box-shadow:#555 2px 2px 8px;
+    -o-box-shadow:#555 2px 2px 8px;
+    box-shadow:#555 2px 2px 8px;
+    opacity:0.9;
+    filter:alpha(opacity=90);
+    font-size:10px;
+    font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
+    padding:7px;
+}
 
 /*
 ---------------------------------------------------------------------------------------
@@ -157,10 +213,15 @@ clear:both;
 {
 margin-top:10px;
 }
+.margin-0
+{
+    margin:0;
+}
 
 #tabpane
 {
 /*background:#E8E8DD;*/
+background:#f3f3f3;
 background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FEFEFE), to(#CCC));
 background:-moz-linear-gradient(90deg, #CCCCCC, #FEFEFE) repeat scroll 0 0;
 min-height:600px;
@@ -290,6 +351,8 @@ font-size:14px;
 .panelcontent
 {
 background:#e1e1e3;
+background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FEFEFE), to(#CCC));
+background:-moz-linear-gradient(90deg, #CCCCCC, #FEFEFE) repeat scroll 0 0;
 padding:9px;
 font:14px DejaVuSans,Arial, Helvetica, sans-serif;
 }
