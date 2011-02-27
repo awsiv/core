@@ -12,18 +12,28 @@ class Welcome extends Cf_Controller{
 	
 function index()
 	{
+         $bc = array(
+               'title' => 'Dash Board',
+               'url' => 'welcome/index',
+               'isRoot' => true
+               );
+         $this->breadcrumb->setBreadCrumb($bc);
 	    $data=array(
 		'title'=>"Cfengine Mission Portal - overview",
                 'title_header'=>"overview",
-                'nav_text'=>"Home : overview",
-		'summary'=>"current"
+                'breadcrumbs'=>$this->breadcrumblist->display()
 		);
 		$this->template->load('template', 'index',$data);
 	}
 	
 function status()
 	{
-
+        $bc = array(
+               'title' => 'All host',
+               'url' => 'welcome/status',
+               'isRoot' => false
+               );
+        $this->breadcrumb->setBreadCrumb($bc);
           $reports=json_decode(cfpr_select_reports(".*",100));
 	  $data=array(
 		'title'=>"Cfengine Mission Portal - engineering status",
@@ -36,7 +46,8 @@ function status()
 		'y' => cfpr_count_yellow_hosts(),
 		'g' => cfpr_count_green_hosts(),
 		'allreps' =>  array_combine($reports, $reports),
-		'allSppReps' => cfpr_cdp_reportnames()
+		'allSppReps' => cfpr_cdp_reportnames(),
+                'breadcrumbs'=>$this->breadcrumblist->display()
 		);
 	  $this->template->load('template', 'status',$data);
 	}
@@ -141,6 +152,12 @@ function hosts($type)
 	
 function host($hostkey=NULL)
 	{
+         $bc = array(
+               'title' => 'Host',
+               'url' => 'welcome/host',
+               'isRoot' => false
+               );
+        $this->breadcrumb->setBreadCrumb($bc);
 	 if(is_null($hostkey))
 	 {
 	  $hostkey=isset($_POST['hostkey'])? $_POST['hostkey'] : "none";
@@ -153,8 +170,7 @@ function host($hostkey=NULL)
 	 $is_commented = cfpr_get_host_noteid($hostkey);
 	 $op = isset($_POST['op'])? $_POST['op'] : "";
          $allhosts = array();
-         $string=cfpr_select_hosts($hostkey,".*",100);
-         $jsonarr=json_decode($string,true);
+         $jsonarr=json_decode(cfpr_select_hosts($hostkey,".*",100),true);
              $host=array();
              foreach ($jsonarr as $data)
              {
@@ -181,7 +197,8 @@ function host($hostkey=NULL)
 			'is_commented'=>$is_commented,
 			'op'=>$op,
                         'allreps' =>  array_combine($reports, $reports),
-                        'allhosts'=> $allhosts
+                        'allhosts'=> $allhosts,
+                        'breadcrumbs'=>$this->breadcrumblist->display()
 			);
 	  $this->template->load('template', 'host',$data); 
 	}
@@ -272,6 +289,40 @@ function body()
 	$this->template->load('template', 'body',$data);
             
         }
+
+  function listhost()
+  {
+     $bc = array(
+               'title' => 'Host List',
+               'url' => 'welcome/listhost',
+               'isRoot' => false
+               );
+         $this->breadcrumb->setBreadCrumb($bc);
+	 
+         /*$allhosts = array();
+         $jsonarr=json_decode(cfpr_select_hosts("none",".*",100),true);
+             foreach ($jsonarr as $data)
+             {
+                 $allhosts[$data['key']]=$data['id'];
+             }*/
+        $cells=array();
+        $result=json_decode(cfpr_select_hosts("none",".*",100),true);
+        if(count($result)>0)
+        {
+            foreach($result as $cols)
+            {
+                array_push($cells, anchor('welcome/host/'.$cols['key'],$cols['id'],'class="imglabel"'));
+            }
+        }
+
+            $data=array(
+		'title'=>"Cfengine Mission Portal - Filter",
+                'title_header'=>"Filter Host",
+                'tabledata'=>$cells,
+                'breadcrumbs'=>$this->breadcrumblist->display()
+		);
+     $this->template->load('template','hostlist',$data);
+  }
 	
 }
 
