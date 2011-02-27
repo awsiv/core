@@ -5,10 +5,7 @@
 //cfpr_header("overview","normal");  
 //cfpr_menu("Home : overview");
 $ret1 = cfpr_getlicense_owner();
-$all = cfpr_count_all_hosts();
-$r = cfpr_count_red_hosts();
-$y = cfpr_count_yellow_hosts();
-$g = cfpr_count_green_hosts(); 
+
 ?>
 <div id="dashboard" class="ui-widget-wrapper ui-widget-content grid_10 push_1">
     <div class="titleborder">
@@ -52,23 +49,18 @@ $g = cfpr_count_green_hosts();
             <li><?php echo anchor('welcome/Knowledge/topic/best.*practice','Policy guidance','policy guidance')?></li>
        </ul>
     </div>
-    <div class="clear"></div>-->
+   -->
 </div>
+        <div class="clear"></div>
 
           <div class="grid_4">
                   <div class="panel">
                     <div class="panelhead"><?php echo $all?> hosts registered</div>
-                     <ul class="panelcontent">
-<li><a href="<?php echo site_url()?>/welcome/hosts/red"><img src="<?php echo get_imagedir();?>red_sign_medium.png" class="align"/><span class="imglabel"><?php echo $r?> hosts known</span></a></li>
-<li><a href="<?php echo site_url()?>/welcome/hosts/yellow"><img src="<?php echo get_imagedir();?>yellow_sign_medium.png" class="align"/><span class="imglabel"><?php echo $y?> hosts known</span></a></li>
- <li><a href="<?php echo site_url()?>/welcome/hosts/green"><img src="<?php echo get_imagedir();?>green_sign_medium.png" class="align"/><span class="imglabel"><?php echo $g?> hosts known</span></a></li>
-     <li class="note"><a href="license"><img src="<?php echo get_imagedir();?>info.png" class="align"/><span class="imglabel">This edition is licenced to <?php echo $ret1?></span></a></li>
-                     </ul>
-                     <p>
-                     
-                     </p>
-                  </div>
+                    <div id="hostsummary" class="panelcontent">
+                        
+                    </div>
            </div>
+          </div>
         <?php cfpr_compliance_summary_graph();?>  
           <div class="grid_8">
            	<div class="panel">
@@ -94,6 +86,7 @@ $g = cfpr_count_green_hosts();
                  style: {
                      width:200,
                      background:'#454545',
+                     opacity:0.9,
                      name: 'dark',
                       border: {
                                   width: 1,
@@ -121,8 +114,9 @@ $g = cfpr_count_green_hosts();
                           }
                        }
                   });
+                //draw the status of all the host 
+                init(<?php echo "$r,$y,$g,$all"?>);
               });
-
           </script>
 
 
