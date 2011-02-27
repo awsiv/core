@@ -10,11 +10,22 @@ $r = cfpr_count_red_hosts();
 $y = cfpr_count_yellow_hosts();
 $g = cfpr_count_green_hosts(); 
 ?>
-<div id="Dashboard">
-    <div id="reports" class="grid_4 push_2 panelcontent">
+<div id="dashboard" class="ui-widget-wrapper ui-widget-content grid_10 push_1">
+    <div class="titleborder">
+        <h1>Quick tasks</h1>
+    </div>
+    <ul id="dashboard-buttons">
+        <li><?php echo anchor('welcome/status','Over all',array('title'=>'Status of all host Summarized','class'=>'overall'))?></li>
+        <li><?php echo anchor('welcome/listhost','Individual',array('title'=>'Status of particular host','class'=>'individual'))?></li>
+        <li><?php echo anchor('welcome/pulse_vitals','Vitals',array('title'=>'vital signs of particular host','class'=>'vitals'))?></li>
+        <li><?php echo anchor('auth/Index','Administration',array('title'=>'Administer the content and users','class'=>'admin'))?></li>
+        <li><?php echo anchor('welcome/helm','Configuration',array('title'=>'Work on Policies to configure system','class'=>'configure'))?></li>
+        <li><?php echo anchor('welcome/knowledge','Knowlegde',array('title'=>'Knowledge map of your system','class'=>'knowledge'))?></li>
+    </ul>
+    <!--<div id="reports" class="grid_4 push_2 panelcontent">
         <ul>
             <li><?php echo anchor('welcome/status','All Hosts','title=allhosts')?></li>
-            <li><?php echo anchor('welcome/host','Host Only','particular host')?></li>
+            <li><?php echo anchor('welcome/listhost','Host Only','particular host')?></li>
             <li><?php echo anchor('welcome/hubs','Hubs','all hubs')?></li>
             <li><?php echo anchor('welcome/pulse_Vitals','View Pulse and Vitals','pulse and vitals')?></li>
         </ul>
@@ -41,7 +52,7 @@ $g = cfpr_count_green_hosts();
             <li><?php echo anchor('welcome/Knowledge/topic/best.*practice','Policy guidance','policy guidance')?></li>
        </ul>
     </div>
-    <div class="clear"></div>
+    <div class="clear"></div>-->
 </div>
 
           <div class="grid_4">
