@@ -11,6 +11,7 @@
 <script src="<?php echo get_scriptdir();?>jquery.tablesorter.min.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir();?>picnet.jquery.tablefilter.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir();?>jquery.tablesorter.pager.js" type="text/javascript"></script>
+<script src="<?php echo get_scriptdir();?>jquery.qtip-1.0.min.js" type="text/javascript"></script>
 <?php $injected= isset($injected_item)?$injected_item:"" ;echo $injected;?>
 </head>
 
@@ -25,6 +26,6 @@
 	      Hello! <strong><?php echo $this->session->userdata('username');?></strong>
                &nbsp;| &nbsp;
              <a href="<?php echo site_url('auth/logout'); ?>" title="logout">logout</a>
-            </p
+            </p>
             <div class="clear"></div>
         </div>
