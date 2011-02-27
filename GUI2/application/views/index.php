@@ -15,9 +15,9 @@ $g = cfpr_count_green_hosts();
         <h1>Quick tasks</h1>
     </div>
     <ul id="dashboard-buttons">
-        <li><?php echo anchor('welcome/status','Over all',array('title'=>'Status of all host Summarized','class'=>'overall'))?></li>
+        <li><?php echo anchor('welcome/status','Over all',array('title'=>'Summarized status of all host','class'=>'overall'))?></li>
         <li><?php echo anchor('welcome/listhost','Individual',array('title'=>'Status of particular host','class'=>'individual'))?></li>
-        <li><?php echo anchor('welcome/pulse_vitals','Vitals',array('title'=>'vital signs of particular host','class'=>'vitals'))?></li>
+        <li><?php echo anchor('welcome/pulse_vitals','Vitals',array('title'=>'Vital signs of particular host','class'=>'vitals'))?></li>
         <li><?php echo anchor('auth/Index','Administration',array('title'=>'Administer the content and users','class'=>'admin'))?></li>
         <li><?php echo anchor('welcome/helm','Configuration',array('title'=>'Work on Policies to configure system','class'=>'configure'))?></li>
         <li><?php echo anchor('welcome/knowledge','Knowlegde',array('title'=>'Knowledge map of your system','class'=>'knowledge'))?></li>
@@ -87,4 +87,42 @@ $g = cfpr_count_green_hosts();
           </div>
           
           <div class="clear"></div>
+          <script type="text/javascript">
+              $(document).ready(function()
+              {
+                $('#dashboard-buttons').find('a[title]').qtip({
+                 style: {
+                     width:200,
+                     background:'#454545',
+                     name: 'dark',
+                      border: {
+                                  width: 1,
+                                  radius: 1
+                              },
+                     tip:{
+                         corner:'topMiddle',
+                         size:{
+                             x:10,
+                             y:10
+                             }
+                     }
+                 },
+                 show:{
+                     effect:{
+                        type:'fade',
+                        lenght:200
+                     }
+                 },
+
+                 position: {
+                     corner: {
+                             target: 'bottomMiddle',
+                             tooltip: 'topMiddle'
+                          }
+                       }
+                  });
+              });
+
+          </script>
+
 
