@@ -18,10 +18,46 @@ function index()
                'isRoot' => true
                );
          $this->breadcrumb->setBreadCrumb($bc);
+
+         $all = cfpr_count_all_hosts();
+           $r = cfpr_count_red_hosts();
+           $y = cfpr_count_yellow_hosts();
+           $g = cfpr_count_green_hosts();
+
+            $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
+            ',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>
+            ',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'hostsummary.js"></script>
+            ',
+            '<style type="text/css">
+            /*<![CDATA[*/
+
+
+            .node{
+                background-color: #ccccff;
+                border: 1px;
+                -moz-box-shadow: 3px 3px 5px #888;
+                -webkit-box-shadow: 3px 3px 5px #888;
+                box-shadow: 3px 3px 5px #888;
+
+            }
+
+
+            /*]]>*/
+        </style>
+         ');
+
+        $this->template->set('injected_item', implode("", $scripts));
+
 	    $data=array(
 		'title'=>"Cfengine Mission Portal - overview",
                 'title_header'=>"overview",
-                'breadcrumbs'=>$this->breadcrumblist->display()
+                'breadcrumbs'=>$this->breadcrumblist->display(),
+                'all'=>$all,
+                'r'=>$r,
+                'y'=>$y,
+                'g'=>$g
 		);
 		$this->template->load('template', 'index',$data);
 	}
