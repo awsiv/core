@@ -325,6 +325,10 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
+/*
+ * Bread crumbs configuration
+ */
+$config['breadcrumbDelimiter'] = "&raquo;";
 
 /* End of file config.php */
 /* Location: ./system/application/config/config.php */
