@@ -17,6 +17,12 @@ width:95%;
 min-width:960px;
 }
 
+
+/*
+-------------------------------------------------------------------------------------------------
+* for the header of the wep app
+------------------------------------------------------------------------------------------------
+*/
 #header
 {
  color:#e1e1e3;
@@ -45,6 +51,13 @@ p#userbox a{
     text-decoration: none;
 }
 
+
+
+/*
+---------------------------------------------------------------------------------------
+for the navifation area of the web application 
+---------------------------------------------------------------------------------------
+*/
 #searcharea
 {
     padding-top:9px;
@@ -70,9 +83,6 @@ label#searchbox input
     outline: medium none;
     padding: 4px 0 0 23px;
     width:220px;
-}
-.hidden{
-    display:none;
 }
 
 #nav
@@ -108,9 +118,27 @@ margin-left: 10px;
 #nav ul li a.current
 {
  color: #1690CF;
+ background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8DD), to(white));
  background:-moz-linear-gradient(90deg,#ffffff ,#E8E8DD) repeat scroll 0 0;
 }
 
+
+
+
+/*
+---------------------------------------------------------------------------------------
+for the tool tip to be displayed
+---------------------------------------------------------------------------------------
+*/
+
+/*
+----------------------------------------------------------------------------------
+useful classes
+-----------------------------------------------------------------------------------
+*/
+.hidden{
+    display:none;
+}
 .clearleft
 {
 clear:left;
@@ -133,6 +161,7 @@ margin-top:10px;
 #tabpane
 {
 /*background:#E8E8DD;*/
+background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FEFEFE), to(#CCC));
 background:-moz-linear-gradient(90deg, #CCCCCC, #FEFEFE) repeat scroll 0 0;
 min-height:600px;
 }
