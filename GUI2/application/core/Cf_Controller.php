@@ -7,7 +7,7 @@ class Cf_Controller extends CI_Controller
 	{
 		parent::__construct();		
 		
-		$this->load->library('ion_auth');
+		$this->load->library(array('ion_auth','breadcrumb','breadcrumblist'));
 		$this->load->library('session');
 		$this->load->helper(array('url','html'));
 		///cfpr_set_siteurl(site_url());
