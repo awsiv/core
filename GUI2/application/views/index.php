@@ -84,7 +84,6 @@ $ret1 = cfpr_getlicense_owner();
               {
                 $('#dashboard-buttons').find('a[title]').qtip({
                  style: {
-                     width:200,
                      background:'#454545',
                      opacity:0.9,
                      name: 'dark',
