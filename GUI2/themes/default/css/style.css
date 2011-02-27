@@ -336,8 +336,8 @@ margin:10px 10px;
 background:url('../images/panelhead.png') repeat-x;
 padding:10px;
 color:#e1e1e3;
-font-family:DejaVuSans,Arial, Helvetica, sans-serif;
-font-size:14px;
+text-transform: uppercase;
+font-weight: bold;
 }
 
 .knwlgpanelhead
