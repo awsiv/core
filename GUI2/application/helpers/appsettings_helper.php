@@ -3,8 +3,15 @@
 
 function get_cssdir()
 	{
-	 $CI=&get_instance();
-	 return base_url().$CI->config->item('css_dir');
+	$CI=&get_instance();
+        if($CI->session->userdata('theme'))
+         {
+	  return base_url().'themes/'.$CI->session->userdata('theme').'/'.$CI->config->item('css_dir');
+         }
+         else {
+
+         return base_url().$CI->config->item('default').$CI->config->item('css_dir');
+          }
 	}
 
 function get_scriptdir()
