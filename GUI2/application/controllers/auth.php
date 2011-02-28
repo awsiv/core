@@ -48,11 +48,13 @@ class Auth extends Controller {
 			//$this->load->view('auth/index', $this->data);
                         if(is_ajax ())
                         {
-                         $this->load->view('auth/user_list',$this->data);
+                         //$this->load->view('auth/user_list',$this->data);
+                            $this->load->view('welcome/index',$this->data);
                         }
                         else
                         {
-                        $this->template->load('template', 'auth/index',$this->data);
+                        //$this->template->load('template', 'auth/index',$this->data);
+                        redirect($this->config->item('base_url'), 'refresh');
                         }
 		}
 	}
