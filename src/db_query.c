@@ -5156,7 +5156,7 @@ void BsonToString(char *retBuf, int retBufSz, bson *b, int depth)
 
 /*****************************************************************************/
 
-void MongoCheckForError(mongo_connection *conn, char *operation, char *extra)
+void MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra)
 {
   char dbErr[CF_MAXVARSIZE];
   bson b;
