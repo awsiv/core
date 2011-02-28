@@ -1210,6 +1210,7 @@ struct cf_pscalar
 #define cfr_day           "t" // Substitute for time in value report
 #define cfr_valuereport   "va"
 #define cfr_netmeasure    "ne"
+#define cfr_environment   "env"
 
 #define cfr_netmeasure    "ne"
 

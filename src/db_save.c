@@ -410,6 +410,79 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
+static void CFDB_PutEnvironmentForHost(mongo_connection *conn, const char *keyhash,
+                                       const char *environment)
+{
+    bson_buffer bb;
+    bson host_key, op;
+
+    /* { kH: $keyhash } */
+    bson_buffer_init(&bb);
+    bson_append_string(&bb, cfr_keyhash, keyhash);
+    bson_from_buffer(&host_key, &bb);
+
+    if (environment)
+    {
+        bson_buffer *env_sub;
+
+        /* { $set: { env: $environment } } */
+        bson_buffer_init(&bb);
+        env_sub = bson_append_start_object(&bb, "$set");
+        bson_append_string(env_sub, cfr_environment, environment);
+        bson_append_finish_object(env_sub);
+        bson_from_buffer(&op, &bb);
+    }
+    else
+    {
+        bson_buffer *env_sub;
+
+        /* { $unset: { env: 1 } } */
+        bson_buffer_init(&bb);
+        env_sub = bson_append_start_object(&bb, "$unset");
+        bson_append_string(env_sub, cfr_environment, "1");
+        bson_append_finish_object(env_sub);
+        bson_from_buffer(&op, &bb);
+    }
+
+    mongo_update(conn, MONGO_DATABASE, &host_key, &op, MONGO_UPDATE_UPSERT);
+
+    MongoCheckForError(conn, "PutEnvironmentForHost", keyhash);
+
+    bson_destroy(&op);
+    bson_destroy(&host_key);
+}
+
+#define ENV_NAME_PREFIX "environment_"
+#define ENV_NAME_LEN (sizeof(ENV_NAME_PREFIX) / sizeof(char) - 1)
+
+static void CFDB_SaveEnvironment(mongo_connection *conn, const char *keyhash,
+                                 const struct Item *data)
+{
+    const struct Item *i;
+    char *environment = NULL;
+
+    for (i = data; i; i = i->next)
+    {
+        char classname[CF_MAXVARSIZE] = "";
+        sscanf(i->name, "%[^,]", classname);
+
+        if (!strncmp(ENV_NAME_PREFIX, classname, ENV_NAME_LEN)
+            && strlen(classname) > ENV_NAME_LEN)
+        {
+            if (environment)
+            {
+                /* FIXME: warn user */
+                free(environment);
+            }
+            environment = strdup(classname + ENV_NAME_LEN);
+        }
+    }
+
+    CFDB_PutEnvironmentForHost(conn, keyhash, environment);
+
+    free(environment);
+}
+
 void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, struct Item *data)
 
 /*
@@ -473,6 +546,8 @@ bson_append_finish_object(keyAdd);
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 MongoCheckForError(conn,"SaveClasses",keyhash);
+
+CFDB_SaveEnvironment(conn, keyhash, data);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
