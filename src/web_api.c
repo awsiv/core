@@ -4498,7 +4498,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
     {
     case CFREPORT_HOSTS:
       level = 2;
-      snprintf(row_name, sizeof(row_name), "%s","ha"); // taking the IP addresses
+      snprintf(row_name, sizeof(row_name), "%s","ip"); // taking the IP addresses
       snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
       getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
       snprintf(row_add, sizeof(row_add), "%s",cfn_nid);
@@ -4625,15 +4625,16 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
   result = CFDB_QueryNotes(&dbconn, kh, noteId, data);
 
   returnval[0] = '\0';
-  snprintf(buffer,sizeof(buffer),"<table><tr><td>User</td><td>Date </td><td>Comment</td></tr>\n");
-  Join(returnval,buffer,bufsize);
+  //  snprintf(buffer,sizeof(buffer),"<table><tr><td>User</td><td>Date </td><td>Comment</td></tr>\n");
+  Join(returnval,"[",bufsize);
   
   for (rp = result; rp != NULL; rp=rp->next)
     {
       hni = ( struct HubNoteInfo *) rp->item;
      for(hn = hni->note; hn != NULL; hn=hn->next)
 	{
-	  snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%ld</td><td>%s</td></tr>\n", hn->user, hn->t, hn->msg);
+	  //	  snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%ld</td><td>%s</td></tr>\n", hn->user, hn->t, hn->msg);
+	  snprintf(buffer,sizeof(buffer),"[ {\"user\":\"%s\"}, {\"date\":%ld}, {\"message\":\"%s\"} ],", hn->user, hn->t, hn->msg);
 	  if(!Join(returnval,buffer,bufsize))
 	    {
 	      break;
@@ -4641,7 +4642,8 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
 	}
       hni = NULL;
     }
-  EndJoin(returnval,"</table>\n",bufsize);
+  returnval[strlen(returnval)-1] = '\0'; /* remove (,) at the end*/
+  EndJoin(returnval,"]\n",bufsize);
   DeleteRlist(result);
   if (!CFDB_Close(&dbconn))
     {
