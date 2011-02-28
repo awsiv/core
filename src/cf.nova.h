@@ -539,9 +539,9 @@ struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,cha
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
 struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype);
 void DeleteHubVariable(struct HubVariable *hv);
-struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *policy, char *handle,char *cause,time_t t, char *noteId,char *oid);
+struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh, char *handle,char *cause,time_t t, char *noteId,char *oid);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
-struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *policy,char *handle,int occurences);
+struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *handle,int occurences);
 void DeleteHubPromiseSum(struct HubPromiseSum *hs);
 struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
 void DeleteHubLastSeen(struct HubLastSeen *hp);
@@ -1350,7 +1350,7 @@ struct HubVariable
 struct HubPromiseLog // promise kept,repaired or not kept
    {
    struct HubHost *hh;
-   char *policy;
+     //   char *policy;
    char *handle;
    char *cause;
    time_t t;

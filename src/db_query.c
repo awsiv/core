@@ -2385,9 +2385,8 @@ switch (type)
        PrependRlistAlien(&host_list,hh);
        }
      
-     char *rpolname = "Default Policy";  // FIXME: insert and then get from query
 
-     rp = PrependRlistAlien(&record_list,NewHubPromiseLog(hh,rpolname,rhandle,rcause,rt,noteid,oid));
+     rp = PrependRlistAlien(&record_list,NewHubPromiseLog(hh,rhandle,rcause,rt,noteid,oid));
    }
 
 

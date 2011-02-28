@@ -436,8 +436,8 @@ else
 	}
       }
    
-    EndJoin(returnval,"</table>\n",bufsize);
-    
+   EndJoin(returnval,"</table>\n",bufsize);
+   DeleteItemList(summary);
    }
 
 return true;
@@ -3815,7 +3815,7 @@ else
 	break;
 	}
       }
-   
+   DeleteItemList(summary);
    }
 
 return true;
@@ -4708,7 +4708,7 @@ return true;
 /*****************************************************************************/
 
 
-int Con2PHP_summarize_notkept(char *policyName, enum time_window time, char *buf, int bufsize)
+int Con2PHP_summarize_notkept(enum time_window time, char *buf, int bufsize)
 
 {
 
@@ -4728,7 +4728,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QuerySumNotKept(&dbconn,policyName,time);
+ hq = CFDB_QuerySumNotKept(&dbconn,NULL,time);
 
 StartJoin(buf,"<table>\n",bufsize);
 
@@ -4737,7 +4737,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    hs = (struct HubPromiseSum *)rp->item;
 
    
-   snprintf(buffer,sizeof(buffer),"<td>%s</td><td>%s</td><td>%d</td>\n",hs->policy,hs->handle,hs->occurences);
+   snprintf(buffer,sizeof(buffer),"<tr><td><a href=\"/promise/details/%s\">%s</td><td>%d</td></tr>\n",
+	    hs->handle,hs->handle,hs->occurences);
    
    if(!Join(buf,buffer,bufsize))
      {
@@ -4745,28 +4746,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
      }
    }
 
-EndJoin(buf,"</table>\n",bufsize);
-
-
-/*
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,0,0,false,classreg);
-
-hostname[0] = '\0';
-
-for (rp = hq->records; rp != NULL; rp=rp->next)
-   {
-   hp = (struct HubPromiseLog *)rp->item;
-   IdempPrependItem(&summary,hp->handle,hp->cause);
-   IncrementItemListCounter(summary,hp->handle);
-
-   if (hostname[0] == '\0')
-      {
-      strncpy(hostname,hp->hh->hostname,CF_MAXVARSIZE);
-      }
-   }
-
-
-*/
+ EndJoin(buf,"</table>\n",bufsize);
 
  DeleteHubQuery(hq,DeleteHubPromiseSum);
 
@@ -4783,6 +4763,65 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 #endif
 
 }
+
+/*****************************************************************************/
+
+int Con2PHP_count_notkept(char *promiseHandle, enum time_window time, char *buf, int bufsize)
+
+{
+
+#ifdef HAVE_LIBCFCONSTELLATION
+
+
+ struct HubQuery *hq;
+ mongo_connection dbconn;
+ struct Rlist *rp;
+ struct HubPromiseSum *hs;
+ char buffer[CF_MAXVARSIZE];
+
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+ hq = CFDB_QuerySumNotKept(&dbconn,promiseHandle,time);
+
+StartJoin(buf,"<table>\n",bufsize);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hs = (struct HubPromiseSum *)rp->item;
+
+   
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"/promise/details/%s\">%s</td><td>%d</td></tr>\n",
+	    hs->policy,hs->handle,hs->handle,hs->occurences);
+   
+   if(!Join(buf,buffer,bufsize))
+     {
+     break;
+     }
+   }
+
+ EndJoin(buf,"</table>\n",bufsize);
+
+ DeleteHubQuery(hq,DeleteHubPromiseSum);
+
+ CFDB_Close(&dbconn);
+
+ return true;
+
+#else  /* NOT HAVE_LIBCFCONSTELLATION */
+
+ snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_summarize_notkept() in Nova-only environment\n");
+ CfOut(cf_error, "", buf);
+ return false;
+
+#endif
+
+}
+
 
 
 #endif  /* HAVE_LIBMONGOC */
