@@ -150,6 +150,17 @@ int Nova2PHP_add_note(char *noteid,char *username, time_t datetime, char* note);
 int Nova2PHP_get_notes(char *keyhash, char *cid, char *username, time_t from, time_t to, char *returnval, int bufsize);
 int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize);
 
+typedef enum cdp_report
+{
+  cdp_acls,
+  cdp_commands,
+  cdp_filechanges,
+  cdp_filediffs,
+  cdp_registry,
+  cdp_services,
+  cdp_unknown
+}cdp_t;
+
 void Nova2PHP_cdp_reportnames(char *buf,int bufSz);
 int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz);
 char *GetCdpTableHeader(cdp_t cdpType);
