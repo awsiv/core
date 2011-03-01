@@ -34,14 +34,16 @@ class Visual extends Cf_Controller {
         if ($hostkey != 'none') {
             $graphdata = cfpr_performance_analysis($hostkey);
             $convertData = json_decode($graphdata, true);
-
-            if (is_array($convertData)) {
-                //var_dump($convertData);
+            if (is_array($convertData) && !empty($convertData)) {
                 $data['performanceData'] = $convertData;
                 $this->template->load('template', 'visualization/vital', $data);
+            } else {
+                $data['noDataMessage'] = "No data available for this host";
+                $this->template->load('template', '/visualization/nohost', $data);
             }
         } else {
-             $this->template->load('template','/visualization/nohost',$data);
+            $data['noDataMessage'] = "No host selected";
+            $this->template->load('template', '/visualization/nohost', $data);
         }
     }
 

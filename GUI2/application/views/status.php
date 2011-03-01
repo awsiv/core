@@ -28,7 +28,7 @@
           		<div class="panelhead">Average meters summarizing all hosts</div>
                 <div class="panelcontent">
                     <ul>
-                      <li> <a href="knowledge/topic/Status level meters"><img src="/hub/common/meter.png"></a></li>
+                      <li><?php include_once('graph/summaryCompliance.php'); ?></li>
                        <li><img class="icontext" src="<?php echo get_imagedir();?>/host.png"> <a href="<?php echo site_url('/welcome/host')?>">Select a particular host</a></li>
                      </ul>
                  </div>
@@ -57,4 +57,3 @@
           </div>
           
           <div class="clear"></div>
-

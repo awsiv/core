@@ -4,27 +4,144 @@ class Graph extends CI_Controller {
 
     function __construct() {
         parent::__construct();
-        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'flot/excanvas.min.js">  </script><![endif]-->
+        $this->scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'flot/excanvas.min.js">  </script><![endif]-->
             ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.min.js"> </script>
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.js"> </script>
                 ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.magnifiedview.js"> </script>
+            'mv' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.magnifiedview.js"> </script>
                 ');
 
 
-        $this->template->set('injected_item', implode('', $scripts));
+        $this->template->set('injected_item', implode('', $this->scripts));
     }
 
-    function summary() {
-        $data = cfpr_compliance_summary_graph();
-        var_dump($data);
+
+     function summaryhost() {
+
+
+
+        $hostKey = 'SHA=e28c6c3484481d758ced809933abf404478d48272e64a23a65e38ee4cc28a920';
+        unset($this->scripts['mv']);
+        $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.highlighter.js"> </script>
+                ');
+        $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.valuelabels.js"> </script>
+                ');
+        $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.stack.js"> </script>
+                ');
+
+        $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit.js"> </script>
+                ');
+
+
+
+
+        $this->template->set('injected_item', implode('', $this->scripts));
+
+        $this->data = array(
+            'title' => "Cfengine Mission Portal - overview",
+            'title_header' => "overview",
+            'nav_text' => "Home : overview",
+            'summary' => "current"
+        );
+
+        $gdata = cfpr_host_meter($hostKey);
+        $convertedData = json_decode($gdata, true);
+        die($gdata);
+        $keptSeries = array();
+        $notKeptSeries = array();
+        $repairedSeries = array();
+
+        $values = array();
+        $this->data['graphSeries'] = array();
+        $labels = array('kept', 'not kept', 'repaired');
+        foreach ($convertedData as $key => $graphData) {
+
+            $keptSeries[] = array($key, $graphData['kept']);
+            $notKeptSeries[] = array($key, $graphData['notkept']);
+            $repairedSeries[] = array($key, $graphData['repaired']);
+
+            $values[] = array('label' => $graphData['title'],
+                'values' => array($graphData['kept'], $graphData['notkept'], $graphData['repaired']));
+        }
+
+        $this->data['graphSeries']['kept'] = json_encode($keptSeries);
+        $this->data['graphSeries']['notkept'] = json_encode($notKeptSeries);
+        $this->data['graphSeries']['repaired'] = json_encode($repairedSeries);
+        $this->data['graphSeries']['labels'] = json_encode($labels);
+        $this->data['graphSeries']['values'] = json_encode($values);
+
+
+        $this->template->load('template', 'graph/summaryCompliance', $this->data);
+
+    }
+
+    function summary($hostKey=null) {
+
+
+
+        
+        unset($this->scripts['mv']);
+        $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.highlighter.js"> </script>
+                ');
+        $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.valuelabels.js"> </script>
+                ');
+        $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.stack.js"> </script>
+                ');
+
+        $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit.js"> </script>
+                ');
+
+
+
+
+        $this->template->set('injected_item', implode('', $this->scripts));
+
+        $this->data = array(
+            'title' => "Cfengine Mission Portal - overview",
+            'title_header' => "overview",
+            'nav_text' => "Home : overview",
+            'summary' => "current"
+        );
+
+        if (!$hostKey)
+        $gdata = cfpr_summary_meter();
+        else $gdata = cfpr_host_meter($hostKey);
+        
+        $convertedData = json_decode($gdata, true);
+        
+        $keptSeries = array();
+        $notKeptSeries = array();
+        $repairedSeries = array();
+        
+        $values = array();
+        $this->data['graphSeries'] = array();
+        $labels = array('kept', 'not kept', 'repaired');
+        foreach ($convertedData as $key => $graphData) {
+
+            $keptSeries[] = array($key, $graphData['kept']);
+            $notKeptSeries[] = array($key, $graphData['notkept']);
+            $repairedSeries[] = array($key, $graphData['repaired']);
+
+            $values[] = array('label' => $graphData['title'],
+                'values' => array($graphData['kept'], $graphData['notkept'], $graphData['repaired']));
+        }
+
+        $this->data['graphSeries']['kept'] = json_encode($keptSeries);
+        $this->data['graphSeries']['notkept'] = json_encode($notKeptSeries);
+        $this->data['graphSeries']['repaired'] = json_encode($repairedSeries);
+        $this->data['graphSeries']['labels'] = json_encode($labels);
+        $this->data['graphSeries']['values'] = json_encode($values);
+
+
+        $this->template->load('template', 'graph/summaryCompliance', $this->data);
+      
     }
 
     function magnifiedView($parameter) {
         $getparams = $this->uri->uri_to_assoc(3);
 
-         $observables = $getparams['obs'];
-         $hostKey = $getparams['host'];
+        $observables = $getparams['obs'];
+        $hostKey = $getparams['host'];
 
         $graphData = cfpr_get_magnified_view($hostKey, $observables);
         $convertData = json_decode($graphData, true);
@@ -200,8 +317,8 @@ class Graph extends CI_Controller {
         $pid = 758;
 
         $data = cfpr_get_knowledge_view($pid, '');
-
-
+        var_dump($data);
+        die();
         $this->data['graphdata'] = ($data);
         $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>',

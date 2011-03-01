@@ -96,7 +96,7 @@ $colour = cfpr_get_host_colour($hostkey);
            	<div class="panel">
           		<div class="panelhead">Analysis</div>
                 <div class="panelcontent">
-                <p><a href="knowledge.php?topic=Status level meters"><img src="<?php echo get_hubdir().$hostkey?>/meter.png"></a></p>
+                <p><?php include_once('graph/summaryCompliance.php'); ?></p>
                 <p><a href="<?php echo site_url('visual/vital').'/'.$hostkey ?>" ><img src="<?php echo get_imagedir()?>pulsed.png" class="align"/></a></p>
                  </div>
           	</div>
