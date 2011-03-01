@@ -15,6 +15,8 @@
 #ifndef CF_NOVA_WEB_API_H
 #define CF_NOVA_WEB_API_H
 
+#include <stdbool.h>
+
 // Separation needed because it is included by php extension
 
 
