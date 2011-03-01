@@ -1,5 +1,4 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
-
 // Code here is run before ALL controllers
 class Cf_Controller extends CI_Controller
 {	

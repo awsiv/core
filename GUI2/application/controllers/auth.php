@@ -48,8 +48,8 @@ class Auth extends Controller {
 			//$this->load->view('auth/index', $this->data);
                         if(is_ajax ())
                         {
-                         //$this->load->view('auth/user_list',$this->data);
-                            $this->load->view('welcome/index',$this->data);
+                         $this->load->view('auth/user_list',$this->data);
+                            //$this->load->view('welcome/index',$this->data);
                         }
                         else
                         {

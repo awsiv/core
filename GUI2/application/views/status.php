@@ -21,6 +21,13 @@
 
                      </ul>
                   </div>
+
+              <div class="panel">
+                    <div class="panelhead"> View Reports </div>
+                    <div id="reportcontrol" class="panelcontent">
+
+                    </div>
+                  </div>
            </div>
         <?php cfpr_compliance_summary_graph();?>  
           <div class="grid_8">
@@ -57,3 +64,7 @@
           </div>
           
           <div class="clear"></div>
+          <script type="text/javascript">
+            reportcontrol(<?php echo $jsondata?>);
+          </script>
+

@@ -19,8 +19,11 @@
 <div id="wrapper">
    <div class="container_12">
     	<div id="header">
-            <div class="grid_6 sitetitle">CFENGINE MISSION PORTAL 
+            <div class="grid_6 sitetitle">
+                <a href="<?php echo site_url('welcome/index'); ?>" title="dashboard">
+                CFENGINE MISSION PORTAL
                 <span id="subheading"> <b><?php echo $title_header ;?></b></span>
+                </a>
             </div>
             <p id="userbox" class="grid_2">
 	      Hello! <strong><?php echo $this->session->userdata('username');?></strong>

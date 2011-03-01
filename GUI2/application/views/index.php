@@ -114,7 +114,7 @@ $ret1 = cfpr_getlicense_owner();
                        }
                   });
                 //draw the status of all the host 
-                init(<?php echo "$r,$y,$g,$all"?>);
+                hostsummary(<?php echo "$r,$y,$g,$all"?>);
               });
           </script>
 

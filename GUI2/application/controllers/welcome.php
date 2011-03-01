@@ -69,8 +69,8 @@ class Welcome extends Cf_Controller {
 
         $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
             ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>
-            ');
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>');
 
         $this->template->set('injected_item', implode("", $scripts));
 
@@ -86,6 +86,7 @@ class Welcome extends Cf_Controller {
             'r' => cfpr_count_red_hosts(),
             'y' => cfpr_count_yellow_hosts(),
             'g' => cfpr_count_green_hosts(),
+ 			'jsondata'=>$this->_get_jsondata_for_report_control(),
             'allreps' => array_combine($reports, $reports),
             'allSppReps' => cfpr_cdp_reportnames(),
             'breadcrumbs' => $this->breadcrumblist->display()
@@ -115,22 +116,81 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'status', $data);
     }
 
-    function helm() {
-        $data = array(
-            'title' => "Cfengine Mission Portal - control",
-            'title_header' => "control",
-            'nav_text' => "Planning : menu",
-            'planning' => "current"
-        );
-        $this->template->load('template', 'helm', $data);
-    }
+function _get_jsondata_for_report_control()
+     {
+          $reports=json_decode(cfpr_select_reports(".*",100));
+          $adjacencies=array();
+          $rootnode=array("id"=>"node0","name"=>"","data"=>array("\$type"=>"none"));
+          $control=array();
 
-    function knowledge() {
-        $getparams = $this->uri->uri_to_assoc(3);
-        $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
-        $topic = isset($getparams['topic']) ? $getparams['topic'] : $this->input->post('topic');
-        $pid = isset($getparams['pid']) ? $getparams['pid'] : $this->input->post('pid');
-        if (!$pid)
+          $i=1;
+          foreach($reports as $report)
+          {
+             $node=array(
+                'nodeTo'=>'node'.$i,
+                 'data'=>array("\$type"=>'none')
+             );
+             $adjacencies[$i-1]=$node;
+             $i++;
+          }
+          $rootnode['adjacencies']=$adjacencies;
+          array_push($control, $rootnode);
+
+          $i=1;
+          foreach($reports as $report)
+          {
+             $node_property=array(
+              'id'=>'node'.$i,
+               'name'=>$report,
+               'data'=>array("\$angularwidth"=>"20","\$color"=>$this->_rand_colorCode(),"\$height"=>90+$i),
+                'adjacencies'=>array()
+             );
+              array_push($control, $node_property);
+              $i++;
+          }
+              //print_r($nodelist);
+              //print_r(json_encode($control));
+              return json_encode($control);
+     }
+
+     function _rand_colorCode(){
+            $r = dechex(mt_rand(0,255)); // generate the red component
+            $g = dechex(mt_rand(0,255)); // generate the green component
+            $b = dechex(mt_rand(0,255)); // generate the blue component
+            $rgb = $r.$g.$b;
+            if($r == $g && $g == $b){
+            $rgb = substr($rgb,0,3); // shorter version
+            }
+             if( strlen( $rgb ) == 4 )
+            {
+                $rgb = $rgb . rand(10,99);
+            }
+            else if( strlen( $rgb ) == 5 )
+            {
+               $rgb = $rgb . rand(0,9);
+            }
+            return '#'.$rgb;
+        }
+	
+   function helm()
+	{
+	  $data=array(
+		'title'=>"Cfengine Mission Portal - control",
+        'title_header'=>"control",
+        'nav_text'=>"Planning : menu",
+		'planning'=>"current"
+		);
+	  $this->template->load('template', 'helm',$data);
+	}
+	
+function knowledge()
+	{
+	    $getparams=$this->uri->uri_to_assoc(3);
+	    $search = isset($getparams['search'])?$getparams['search']:$this->input->post('search');
+            $topic = isset($getparams['topic'])?$getparams['topic']:$this->input->post('topic');
+		$pid = isset($getparams['pid'])?$getparams['pid']:$this->input->post('pid');
+		 if (!$pid)
+     
             $pid = cfpr_get_pid_for_topic("", "system policy");
 
         $data = array(

@@ -228,6 +228,14 @@ background:-moz-linear-gradient(90deg, #f3f3f3, #FEFEFE) repeat scroll 0 0;
 min-height:600px;
 }
 
+#tabpane [type='text']
+{
+    border: 1px solid #CCCCCC;
+    font-family: Helvetica,Arial,sans-serif;
+    font-size: 0.9em;
+    padding: 5px;
+}
+
 .ui-widget-wrapper
 {
     margin: 0 0 20px;
