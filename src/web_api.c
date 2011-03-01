@@ -4419,6 +4419,201 @@ int Nova2PHP_delete_host(char *keyHash)
 }
 
 /*****************************************************************************/
+
+bool Nova2PHP_environments_list(struct EnvironmentsList **out)
+{
+    mongo_connection dbconn;
+    bson_buffer bb;
+    bson cmd;
+    bson result;
+    bson_iterator i;
+    bson_iterator values;
+
+    *out = NULL;
+
+    if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+        CfOut(cf_verbose, "", " !! Could not open connection to report database");
+        return false;
+    }
+
+    /* { distinct: 'hosts', key: 'env' } */
+    bson_buffer_init(&bb);
+    bson_append_string(&bb, "distinct", "hosts");
+    bson_append_string(&bb, "key", "env");
+    bson_from_buffer(&cmd, &bb);
+
+    if (!mongo_run_command(&dbconn, MONGO_BASE, &cmd, &result))
+    {
+        MongoCheckForError(&dbconn,"Nova2PHP_environments_list", "");
+        bson_buffer_destroy(&bb);
+        bson_destroy(&cmd);
+        CFDB_Close(&dbconn);
+        return false;
+    }
+
+    bson_destroy(&cmd);
+
+    if (!bson_find(&i, &result, "values"))
+    {
+        CfOut(cf_verbose, "", " Malformed query result in Nova2PHP_environments_list");
+        bson_destroy(&result);
+        CFDB_Close(&dbconn);
+        return false;
+    }
+
+    if (bson_iterator_type(&i) != bson_array)
+    {
+        CfOut(cf_verbose, "", " Malformed query result in Nova2PHP_environments_list");
+        bson_destroy(&result);
+        CFDB_Close(&dbconn);
+        return false;
+    }
+
+    bson_iterator_subiterator(&i, &values);
+
+    while (bson_iterator_next(&values))
+    {
+        struct EnvironmentsList *node = malloc(sizeof(struct EnvironmentsList));
+        node->next = *out;
+        node->name = strdup(bson_iterator_string(&values));
+        *out = node;
+    }
+
+    bson_destroy(&result);
+    CFDB_Close(&dbconn);
+    return true;
+}
+
+bool Nova2PHP_environment_contents(const char *environment, struct HostsList **out)
+{
+    mongo_connection dbconn;
+    mongo_cursor *cursor;
+    bson_buffer bb;
+    bson query, fields;
+
+    *out = NULL;
+
+    if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+        CfOut(cf_verbose, "", " !! Could not open connection to report database");
+        return false;
+    }
+
+    if (environment)
+    {
+        /* { env: $environment } */
+        bson_buffer_init(&bb);
+        bson_append_string(&bb, "env", environment);
+    }
+    else
+    {
+        /* { env: { $exists: 0 } } */
+        bson_buffer_init(&bb);
+        bson_append_start_object(&bb, "env");
+        bson_append_int(&bb, "$exists", 0);
+        bson_append_finish_object(&bb);
+    }
+    bson_from_buffer(&query, &bb);
+
+    /* { kH: 1 } */
+    bson_buffer_init(&bb);
+    bson_append_int(&bb, "kH", 1);
+    bson_from_buffer(&fields, &bb);
+
+    cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &fields, 0, 0, 0);
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    while (mongo_cursor_next(cursor))
+    {
+        bson_iterator i;
+
+        if (!bson_find(&i, &cursor->current, "kH"))
+        {
+            CfOut(cf_verbose, "", "Malformed query result in Nova2PHP_environment_contents");
+            mongo_cursor_destroy(cursor);
+            CFDB_Close(&dbconn);
+            return false;
+        }
+
+        struct HostsList *node = malloc(sizeof(struct HostsList));
+        node->next = *out;
+        node->keyhash = strdup(bson_iterator_string(&i));
+        *out = node;
+    }
+
+    mongo_cursor_destroy(cursor);
+    return true;
+}
+
+char *Nova2PHP_get_host_environment(const char *hostkey)
+{
+    mongo_connection dbconn;
+    bson_buffer bb;
+    bson query, fields;
+    bson result;
+    bool res;
+    bson_iterator i;
+    char *environment = NULL;
+
+    if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+        CfOut(cf_verbose, "", " !! Could not open connection to report database");
+        return false;
+    }
+
+    /* { kH: $hostkey } */
+    bson_buffer_init(&bb);
+    bson_append_string(&bb, "kH", hostkey);
+    bson_from_buffer(&query, &bb);
+
+    /* { env: 1 } */
+    bson_buffer_init(&bb);
+    bson_append_int(&bb, "env", 1);
+    bson_from_buffer(&fields, &bb);
+
+    res = mongo_find_one(&dbconn, MONGO_DATABASE, &query, &fields, &result);
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    if (res)
+    {
+        if (bson_find(&i, &result, "env"))
+        {
+            environment = strdup(bson_iterator_string(&i));
+        }
+        bson_destroy(&result);
+    }
+
+    CFDB_Close(&dbconn);
+    return environment;
+}
+
+void FreeEnvironmentsList(struct EnvironmentsList *list)
+{
+    if (list)
+    {
+        FreeEnvironmentsList(list->next);
+        free(list->name);
+        free(list);
+    }
+}
+
+void FreeHostsList(struct HostsList *list)
+{
+    if (list)
+    {
+        FreeHostsList(list->next);
+        free(list->keyhash);
+        free(list);
+    }
+}
+
+
+/*****************************************************************************/
 /*for commenting functionality */
 /*****************************************************************************/
 

@@ -169,4 +169,26 @@ cdp_t CdpReportNameToType(char *reportName);
 
 int Nova2PHP_delete_host(char *keyHash);
 
+struct EnvironmentsList
+{
+    char *name;
+    struct EnvironmentsList *next;
+};
+
+bool Nova2PHP_environments_list(struct EnvironmentsList **out);
+
+struct HostsList
+{
+    char *keyhash;
+    struct HostsList *next;
+};
+
+bool Nova2PHP_environment_contents(const char *environment,
+                                   struct HostsList **out);
+
+char *Nova2PHP_get_host_environment(const char *keyhash);
+
+void FreeEnvironmentsList(struct EnvironmentsList *list);
+void FreeHostsList(struct HostsList *list);
+
 #endif // CF_NOVA_WEB_API_H
