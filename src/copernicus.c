@@ -80,16 +80,21 @@ for (i = 0; i < tribe_size; i++)
       },
    */
 
-   snprintf(url,CF_MAXVARSIZE,"http://localhost/knowledge.php?pid=%d",tribe_node[i].real_id);
+   snprintf(url,CF_MAXVARSIZE,"/welcome/knowledge/pid/%d",tribe_node[i].real_id);
    
    snprintf(work,CF_BUFSIZE,
             "{ "
             "\"id\": \"g%d\",\n"
             "\"name\": \"%s\",\n"
-            "\"link\" : \"%s\",\n"
-            " \"data\": { '$color':'%s', '$dim': %.1lf, \"$type\": \"gradientCircle\"},\n"
+            " \"data\": "
+	              "{ " 
+	              "'$color':'%s', "
+	              "'$dim': %.1lf, "
+	              "\"$type\": \"gradientCircle\","
+	              "\"link\": \"%s\""
+	              "},\n"
             "\"adjacencies\": [ ",
-            i,tribe_node[i].shortname,radius,url,colour
+            i,tribe_node[i].shortname,colour,radius,url
             );
 
    Join(buffer,work,bufsize);
