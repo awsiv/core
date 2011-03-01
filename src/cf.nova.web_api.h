@@ -12,6 +12,9 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#ifndef CF_NOVA_WEB_API_H
+#define CF_NOVA_WEB_API_H
+
 // Separation needed because it is included by php extension
 
 
@@ -153,3 +156,4 @@ cdp_t CdpReportNameToType(char *reportName);
 
 int Nova2PHP_delete_host(char *keyHash);
 
+#endif // CF_NOVA_WEB_API_H
