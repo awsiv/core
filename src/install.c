@@ -405,7 +405,7 @@ free(hp);
 
 /*****************************************************************************/
 
-struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *handle,int occurences)
+struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *handle,char *cause,int occurences)
 
 { struct HubPromiseSum *hs;
  
@@ -416,6 +416,16 @@ if ((hs = malloc(sizeof(struct HubPromiseSum))) == NULL)
 
 hs->hh = hh;
 hs->handle = strdup(handle);
+
+ if(cause)
+   {
+   hs->cause = strdup(cause);
+   }
+ else
+   {
+   hs->cause = NULL;
+   }
+
 hs->occurences = occurences;
 
 return hs;
@@ -426,7 +436,12 @@ return hs;
 void DeleteHubPromiseSum(struct HubPromiseSum *hs)
 
 {
-free(hs->handle);
+  free(hs->handle);
+
+  if(hs->cause)
+    {
+    free(hs->cause);
+    }
 }
 
 /*****************************************************************************/

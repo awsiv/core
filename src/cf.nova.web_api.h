@@ -113,5 +113,6 @@ int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize);
 
 // constellation function stubs
 
-int Con2PHP_summarize_notkept(enum time_window time, char *buf, int bufsize);
-int Con2PHP_count_notkept(char *promiseHandle, enum time_window time, char *buf, int bufsize);
+int Con2PHP_summarize_notkept(enum time_window tw, char *buf, int bufsize);
+int Con2PHP_count_notkept(char *promiseHandle, enum time_window tw, char *buf, int bufsize);
+int Con2PHP_reasons_notkept(char *promiseHandle, enum time_window tw, char *buf, int bufsize);
