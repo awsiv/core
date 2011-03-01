@@ -185,6 +185,12 @@ function _get_jsondata_for_report_control()
 	
 function knowledge()
 	{
+           $bc = array(
+            'title' => 'Knowledge Map',
+            'url' => 'welcome/index',
+            'isRoot' => false
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
 	    $getparams=$this->uri->uri_to_assoc(3);
 	    $search = isset($getparams['search'])?$getparams['search']:$this->input->post('search');
             $topic = isset($getparams['topic'])?$getparams['topic']:$this->input->post('topic');
@@ -199,8 +205,7 @@ function knowledge()
             'pid' => $pid,
             'title' => "Cfengine Mission Portal - Knowledge bank",
             'title_header' => "Knowledge bank",
-            'nav_text' => "Knowledgebank",
-            'library' => "current"
+            'breadcrumbs' => $this->breadcrumblist->display(),
         );
 
         $gdata = cfpr_get_knowledge_view($pid, '');
