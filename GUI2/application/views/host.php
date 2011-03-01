@@ -11,8 +11,8 @@ $colour = cfpr_get_host_colour($hostkey);
                   <div class="panel">
                     <div class="panelhead">Select host: <?php if($hostkey=="none") echo "No host selected" ;?> </div>
                      <div class="panelcontent">
-                     <form method="post" action="<?php ?>">
-                     <?php echo form_dropdown('hostkey', $allhosts)?>
+                  <?php echo form_open('welcome/host'); ?>
+                      <?php echo form_dropdown('hostkey', $allhosts)?>
                      <input class="btn floatRight"  type="submit"  value="Select host" />
                      <div class="clearright"></div>
                      </form>

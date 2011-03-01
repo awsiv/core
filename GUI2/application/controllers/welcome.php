@@ -284,6 +284,7 @@ function knowledge()
         );
         $this->breadcrumb->setBreadCrumb($bc);
         if (is_null($hostkey)) {
+            
             $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : "none";
         }
         $reports = json_decode(cfpr_select_reports(".*", 100));
@@ -330,7 +331,7 @@ function knowledge()
         $gdata = cfpr_host_meter($hostkey);
 
         $convertedData = json_decode($gdata, true);
-
+        
         $values = array();
         $data['graphSeries'] = array();
         $labels = array('kept', 'not kept', 'repaired');
