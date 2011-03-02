@@ -394,29 +394,6 @@ AC_CHECK_FUNC(getaddrinfo, , AC_CHECK_LIB(socket, getaddrinfo))
 dnl AC_SEARCH_LIBS(socket, socket, ,
 dnl    [AC_CHECK_LIB(nsl, socket, LIBS="$LIBS -lsocket -lnsl", , -lsocket)])
 
-dnl ######################################################################
-dnl  Look for SQL connectors.
-dnl ######################################################################
-
-AC_ARG_WITH([sql],
-    [AS_HELP_STRING([--with-sql], [support database functions])])
-AS_IF([test "x$with_sql" = "xyes"], [WITH_SQL=1], [WITH_SQL=0])
-
-if test $WITH_SQL = 1; then
-  case "$target_os" in
-     linux*)
-        if [ `which pg_config` ]; then
-          CPPFLAGS=-I`pg_config --includedir`
-        fi
-  esac
-  AC_CHECK_LIB(mysqlclient,main)
-  AC_CHECK_LIB(pq,main)
-  AC_CHECK_HEADERS(mysql/mysql.h)
-  AC_CHECK_HEADERS(pgsql/libpq-fe.h)
-  AC_CHECK_HEADERS(libpq-fe.h)
-fi
-
-
 dnl
 dnl Enterprise extensions
 dnl
@@ -502,20 +479,6 @@ LIBS="$LIBS $BERKELEY_DB_LDFLAGS $BERKELEY_DB_LIB $OPENSSL_LIB_LDFLAGS $OPENSSL_
 
 dnl AC_CHECK_LIB(rx, main) deprecated
 AC_CHECK_LIB(rt, main)
-
-
-
-dnl Now check for database connectors
-
-
-if test $WITH_SQL; then
-  AC_CHECK_LIB(mysqlclient,main)
-  AC_CHECK_LIB(pq,main)
-  AC_CHECK_HEADERS(mysql/mysql.h)
-  AC_CHECK_HEADERS(pgsql/libpq-fe.h)
-  AC_CHECK_HEADERS(libpq-fe.h)
-fi
-
 
 dnl Look for ldap
   
@@ -916,20 +879,6 @@ if test "x$ac_cv_lib_pcre_main" = "xyes"; then
   AC_MSG_RESULT( -> Configured with PCRE libraries)
 else
   AC_MSG_RESULT( -> No PCRE library support - reverting to POSIX builtins)
-fi
-
-if test $WITH_SQL = 1; then
-
-  if test "x$ac_cv_lib_mysqlclient_main" = "xyes"; then
-    AC_MSG_RESULT( -> Configured with MYSQL libraries)
-  fi
-
-  if test "x$ac_cv_lib_pq_main" = "xyes"; then
-    AC_MSG_RESULT( -> Configured with Postgres libraries)
-  fi
-
-else
-  AC_MSG_RESULT( -> No SQL library support for knowledge map)
 fi
 
 if test "x$ac_cv_lib_ldap_ldap_get_values_len" = "xyes"; then
