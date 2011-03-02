@@ -432,49 +432,6 @@ if test $WITH_MONGO = 1; then
 fi
 
 
-
-
-dnl ######################################################################
-dnl Checks for perl compatible regular expressions
-dnl ######################################################################
-
-AC_ARG_WITH([pcre],
-			[AS_HELP_STRING([--with-pcre[[=PATH]]], [support for Perl compatible regex (optionally search in PATH)])])
-AS_IF([test "x$with_pcre" != "xno"], [
-    AC_MSG_CHECKING([pcre])
-    if test "x$with_pcre" = "xyes" -o "x$with_pcre" = "x" ; then
-		for d in $prefix /usr/local /usr; do
-			if test -f "$d/include/pcre.h" ; then
-				CPPFLAGS="$CPPFLAGS -I$d/include"
-				LDFLAGS="$LDFLAGS -L$d/lib"
-				AC_MSG_RESULT($d)
-				FOUND_PCRE=1
-				break
-			fi
-		done
-		if test "x$FOUND_PCRE" = "x" ; then
-			AC_MSG_NOTICE([Cannot find PCRE - specify the path])
-		fi
-	else
-		if test -f "${withval}/include/pcre.h" ; then
-			CPPFLAGS="$CPPFLAGS -I${withval}/include"
-			LDFLAGS="$LDFLAGS -L${withval}/lib"
-			AC_MSG_RESULT("${withval}")
-		else
-			AC_MSG_NOTICE([Cannot find PCRE in $withval])
-		fi
-	fi
-
-	AC_CHECK_HEADERS([pcre.h pcre/pcre.h])
-	AC_CHECK_LIB(pcre, main, [], [AC_MSG_WARN([Cannot find PCRE])])
-	AC_DEFINE(USE_PCRE, 1, [Define if PCRE is available.])
-])
-
-if test "x$ac_cv_lib_pcre_main" != "xyes"; then
-
-	AC_MSG_ERROR([PCRE is required])
-fi
-
 LIBS="$LIBS $BERKELEY_DB_LDFLAGS $BERKELEY_DB_LIB $OPENSSL_LIB_LDFLAGS $OPENSSL_LIB_LIB"
 
 dnl AC_CHECK_LIB(rx, main) deprecated
@@ -485,9 +442,6 @@ dnl Look for ldap
 AC_ARG_WITH([ldap],
     [AS_HELP_STRING([--with-ldap], [support ldap functions])])
 AS_IF([test "x$with_ldap" = "xyes"], [AC_CHECK_LIB([ldap], [ldap_get_values_len])])
-
-AC_CHECK_HEADERS(pcre.h)
-AC_CHECK_HEADERS(pcre/pcre.h)
 
 dnl ######################################################################
 dnl Checks for header files.
@@ -874,12 +828,6 @@ dnl ######################################################################
 AC_MSG_RESULT( )
 AC_MSG_RESULT(    Summary of options...)
 
-
-if test "x$ac_cv_lib_pcre_main" = "xyes"; then
-  AC_MSG_RESULT( -> Configured with PCRE libraries)
-else
-  AC_MSG_RESULT( -> No PCRE library support - reverting to POSIX builtins)
-fi
 
 if test "x$ac_cv_lib_ldap_ldap_get_values_len" = "xyes"; then
   AC_MSG_RESULT( -> Configured with LDAP libraries)
