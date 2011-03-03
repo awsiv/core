@@ -943,6 +943,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                      }
                   }
                   
+	       // NOTE: rrval's ownership (deallocation) is either transferred, or it is freed here
                if (match_type && match_scope && match_lval && match_rval)
                   {
                   found = true;
@@ -956,17 +957,16 @@ while (mongo_cursor_next(cursor))  // loops over documents
                          if (rrval)
                             {
                             free(rrval);
-			    rrval = NULL;
                             }
                          break;
                          
                      case CF_LIST:
                          DeleteRlist(rrval);
-			 rrval = NULL;
                          break;
                      }                  
                   }
                
+	       rrval = NULL;
                newlist = NULL;
                }
             }
