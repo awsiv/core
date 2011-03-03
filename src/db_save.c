@@ -557,6 +557,8 @@ bson_destroy(&host_key);
 
 void CFDB_SaveVariables(mongo_connection *conn, char *keyhash, struct Item *data)
 
+/* Should be deprecated some time - was replaced after Nova 2.0.2 */
+
 { bson_buffer bb;
   bson_buffer *unset, *setObj, *varObj, *keyArr, *keyAdd, *keyArrField, *arr;
   bson host_key;  // host description
@@ -635,6 +637,90 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 bson_append_finish_object(setObj);
 
+bson_from_buffer(&setOp,&bb);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveVariables",keyhash);
+
+bson_destroy(&setOp);
+bson_destroy(&host_key);  
+}
+
+/*****************************************************************************/
+
+void CFDB_SaveVariables2(mongo_connection *conn, char *keyhash, struct Item *data)
+
+{ bson_buffer bb;
+  bson_buffer *setObj, *varObj, *keyArr, *keyAdd, *keyArrField, *arr;
+  bson host_key;  // host description
+  bson setOp;
+  struct Item *ip;
+  int i;
+  char iStr[32];
+  long tl;
+  time_t t;
+  struct Rlist *rp,*list;
+  char type[CF_SMALLBUF],lval[CF_MAXVARSIZE],rval[CF_BUFSIZE],
+      scope[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
+  
+// find right host
+bson_buffer_init(&bb);
+bson_append_string(&bb, cfr_keyhash, keyhash);
+bson_from_buffer(&host_key, &bb);
+
+bson_buffer_init(&bb);
+setObj = bson_append_start_object(&bb, "$set");
+
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   if (strncmp(ip->name,"S:", 2) == 0)
+      {
+      scope[0] = '\0';
+      sscanf(ip->name+2,"%254[^\n]",scope);
+      continue;
+      }
+   
+   sscanf(ip->name,"%4[^,],%ld,%255[^,],%2040[^\n]",type,&tl,lval,rval);
+
+   t = (time_t)tl;
+   
+   if (strchr(lval,'/'))
+      {
+      // Private data not meant to be seen
+      continue;
+      }
+   
+   snprintf(varName, sizeof(varName),"%s.%s.%s.%s",cfr_vars,scope,lval,cfr_type);
+   bson_append_string(setObj, varName, type);
+
+   snprintf(varName, sizeof(varName),"%s.%s.%s.%s",cfr_vars,scope,lval,cfr_time);
+   bson_append_int(setObj, varName, t);
+   
+   snprintf(varName, sizeof(varName),"%s.%s.%s.%s",cfr_vars,scope,lval,cfr_rval);
+   
+   if (IsCfList(type))
+      {
+      arr = bson_append_start_array(setObj, varName);
+  
+      list = ParseShownRlist(rval);
+      
+      for (rp = list, i = 0; rp != NULL; rp=rp->next, i++)
+         {
+         snprintf(iStr, sizeof(iStr), "%d", i);
+         bson_append_string(arr, iStr, rp->item);
+         }
+      
+      DeleteRlist(list);
+      
+      bson_append_finish_object(arr);
+      }
+   else
+      {
+      bson_append_string(setObj,varName,rval);
+      }
+   }
+
+bson_append_finish_object(setObj);
+
 // TODO: append scope.varname to key array more efficient ?
 
 /*
@@ -667,7 +753,7 @@ bson_append_finish_object(keyAdd);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveVariables",keyhash);
+MongoCheckForError(conn,"SaveVariables2",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -1184,7 +1270,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    then = (time_t)t;
 
    ReplaceChar(name,nameNoDot,sizeof(nameNoDot),'.','_');
-   snprintf(varName, sizeof(varName),"%s.%s@%d",cfr_filediffs,nameNoDot,t);
+   snprintf(varName, sizeof(varName),"%s.%s@%d",cfr_filediffs,nameNoDot,then);
    
    sub = bson_append_start_object(setObj, varName);
    bson_append_int(sub,cfr_time,then);

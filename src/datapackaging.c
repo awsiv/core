@@ -206,7 +206,6 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    double measure;
    time_t then;
 
-   memcpy(&then,value,sizeof(then));
    strncpy(eventname,(char *)key,CF_BUFSIZE-1);
 
    if (value != NULL)
@@ -1336,6 +1335,8 @@ CloseDB(dbp);
 
 void Nova_PackVariables(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
+/* Should be deprecated some time - was replaced after Nova 2.0.2 */
+
 { char name[CF_BUFSIZE],line[CF_BUFSIZE],scope[CF_MAXVARSIZE],cache[CF_MAXVARSIZE];
   FILE *fin;
   int first = true;
@@ -1353,7 +1354,7 @@ if ((fin = fopen(name,"r")) == NULL)
    CfOut(cf_verbose,""," -> No variable data yet");
    return;
    }
-
+ 
 while (!feof(fin))
    {
    char lval[CF_MAXVARSIZE],type[CF_MAXVARSIZE],rval[CF_MAXVARSIZE];
@@ -1462,6 +1463,91 @@ while (!feof(fin))
    }
 
 fclose(fin);
+}
+
+/*****************************************************************************/
+
+void Nova_PackVariables2(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+/* Includes date-stamp of variable (but not avg and stddev). */
+{
+char filename[CF_MAXVARSIZE];
+char buf[CF_BUFSIZE];
+CF_DB *dbp;
+CF_DBC *dbcp;
+struct Variable *var;
+char *key;  // scope.lval
+void *val;
+int i, keySize, valSize;
+time_t varExpireAge = CF_MONTH;  // remove vars from DB after one month
+time_t now = time(NULL);
+int first = true;
+char scope[CF_MAXVARSIZE], lval[CF_MAXVARSIZE], prevScope[CF_MAXVARSIZE] = {0};
+char *dtypeStr;
+
+CfOut(cf_verbose,""," -> Packing variable data with date stamp");
+
+snprintf(filename,sizeof(filename),"%s/state/%s",CFWORKDIR,CF_VARIABLES);
+MapName(filename);
+
+if (!OpenDB(filename,&dbp))
+   {
+   return;
+   }
+
+
+ if (!NewDBCursor(dbp,&dbcp))
+   {
+   CfOut(cf_inform,""," !! Unable to scan variable db");
+   CloseDB(dbp);
+   return;
+   }
+
+
+while(NextDB(dbp,dbcp,&key,&keySize,&val,&valSize))
+   {
+   if (val != NULL)
+      {
+      var = (struct Variable *)val;
+
+      if(var->e.t < from)
+        {
+	continue;
+        }
+
+      sscanf(key, "%255[^.].%s255", scope, lval);
+
+      if(strcmp(scope,"const") == 0)
+	{
+	// skip const scope (newline, etc.)
+	continue;
+	}
+
+
+
+      if (first)
+	{
+	first = false;
+	AppendItem(reply,header,NULL);
+	}
+
+      // ensure we are in right scope-section
+      if(strcmp(scope, prevScope) != 0)
+	{
+	snprintf(buf,sizeof(buf),"S:%s",scope);
+	AppendItem(reply,buf,NULL);
+	strcpy(prevScope,scope);
+	}
+	
+      dtypeStr = Dtype2Str(var->dtype);
+
+      snprintf(buf, sizeof(buf), "%s,%ld,%s,%s\n", dtypeStr, var->e.t, lval, var->rval);
+      AppendItem(reply,buf,NULL);
+      }
+   }
+
+DeleteDBCursor(dbp,dbcp);
+CloseDB(dbp);
+  
 }
 
 /*****************************************************************************/

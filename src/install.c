@@ -327,8 +327,8 @@ free(ht);
 
 /*****************************************************************************/
 
-struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype)
-
+struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype,time_t t)
+// NOTE: rval must be allocated by caller
 { struct HubVariable *hp;
      
 if ((hp = malloc(sizeof(struct HubVariable))) == NULL)
@@ -338,10 +338,11 @@ if ((hp = malloc(sizeof(struct HubVariable))) == NULL)
 
 hp->hh = hh;
 hp->rtype = rtype;
-hp->scope = strdup(scope);
 hp->rval = rval;
+hp->scope = strdup(scope);
 hp->lval = strdup(lval);
 hp->dtype = strdup(type);
+hp->t = t;
 return hp;
 }
 

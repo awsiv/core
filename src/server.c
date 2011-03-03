@@ -220,7 +220,8 @@ switch (type)
        Nova_PackPatchStatus(&reply,CFR_PATCHSTATUS,from,type);
        Nova_Pack_promise_output_common(&reply,CFR_PROMISEOUT,from,type);
        Nova_PackValueReport(&reply,CFR_VALUE,from,type);
-       Nova_PackVariables(&reply,CFR_VARS,from,type);
+       Nova_PackVariables2(&reply,CFR_VARD,from,type);
+       //Nova_PackVariables(&reply,CFR_VARS,from,type);  //DEPRECATED
        Nova_PackLastSeen(&reply,CFR_LASTSEEN,from,type);
        Nova_PackRepairLog(&reply,CFR_REPAIRLOG,from,type);
        Nova_PackNotKeptLog(&reply,CFR_NOTKEPTLOG,from,type);

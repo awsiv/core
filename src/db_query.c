@@ -767,6 +767,7 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
   int emptyQuery = true;
   char classRegexAnch[CF_MAXVARSIZE];
   
+  
 /* BEGIN query document */
 
   bson_buffer_init(&bb);
@@ -850,15 +851,17 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
             while (bson_iterator_next(&it3))
                {
+	       rlval[0] = '\0';
+	       rtype = CF_SCALAR;
+	       rrval = NULL;
+               newlist = NULL;
+	       dtype[0] = '\0';
+	       rt = 0;
+
                bson_iterator_init(&it4,bson_iterator_value(&it3));
 
                strncpy(rlval,bson_iterator_key(&it3),CF_MAXVARSIZE-1);
-               
-               if (strcmp(bson_iterator_key(&it4),cfr_type) == 0)
-                  {
-                  strncpy(dtype,bson_iterator_string(&it4),CF_MAXVARSIZE-1);
-                  }
-               
+
                while (bson_iterator_next(&it4))
                   {
                   if (strcmp(bson_iterator_key(&it4),cfr_rval) == 0)
@@ -887,6 +890,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   else if (strcmp(bson_iterator_key(&it4),cfr_type) == 0)
                      {
                      strncpy(dtype,bson_iterator_string(&it4),CF_MAXVARSIZE);
+                     }
+                  else if (strcmp(bson_iterator_key(&it4),cfr_time) == 0)
+                     {
+		     rt = bson_iterator_int(&it4);
                      }
                   else
                      {
@@ -947,7 +954,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                if (match_type && match_scope && match_lval && match_rval)
                   {
                   found = true;
-                  rp = PrependRlistAlien(&record_list,NewHubVariable(CF_THIS_HH,dtype,rscope,rlval,rrval,rtype));
+                  rp = PrependRlistAlien(&record_list,NewHubVariable(CF_THIS_HH,dtype,rscope,rlval,rrval,rtype,rt));
                   }
                else
                   {
@@ -966,8 +973,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
                      }                  
                   }
                
-	       rrval = NULL;
-               newlist = NULL;
                }
             }
          }   

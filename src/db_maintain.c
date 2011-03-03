@@ -112,6 +112,7 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
   bson_buffer_init(&bb);
   bson_append_int(&bb,cfr_keyhash,1);
   bson_append_int(&bb,cfr_class,1);
+  bson_append_int(&bb,cfr_vars,1);
   bson_append_int(&bb,cfr_performance,1);
   bson_append_int(&bb,cfr_filechanges,1);
   bson_append_int(&bb,cfr_filediffs,1);
@@ -142,6 +143,7 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
 
 
 	  CFDB_PurgeScan(conn,&it1,cfr_class,CF_HUB_PURGESECS,now,&purgeKeys,&purgeClassNames);
+	  CFDB_PurgeScan(conn,&it1,cfr_vars,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
 	  CFDB_PurgeScan(conn,&it1,cfr_performance,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
 	  CFDB_PurgeScan(conn,&it1,cfr_filechanges,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
 	  CFDB_PurgeScan(conn,&it1,cfr_filediffs,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
@@ -272,13 +274,27 @@ void CFDB_PurgeDropReports(mongo_connection *conn)
 void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr)
 
 {
-  bson_iterator it1,it2;
+  bson_iterator it1,it2,it3;
+  char var[CF_MAXVARSIZE], key[CF_MAXVARSIZE];
   time_t then;
-  char purgeKey[CF_MAXVARSIZE];
+  int deep;
+  int foundStamp;
+  int emptyLev2 = true;
+
 
   if (strcmp(bson_iterator_key(itp), reportKey) != 0)
     {
     return;
+    }
+
+  // some reports have time deeper into the db structure
+  if(strcmp(reportKey, cfr_vars) == 0)
+    {
+      deep = true;
+    }
+  else
+    {
+      deep = false;
     }
 
   bson_iterator_init(&it1,bson_iterator_value(itp));
@@ -287,29 +303,90 @@ void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey,
     {
       bson_iterator_init(&it2,bson_iterator_value(&it1));
 
+      emptyLev2 = true;
+
       while (bson_iterator_next(&it2))
 	{
-	  if(strcmp(bson_iterator_key(&it2),cfr_time) == 0)
+	  emptyLev2 = false;
+	  
+	  if(deep) // one level extra
 	    {
-	      then = bson_iterator_int(&it2);
-	      
-	      if(now - then >= oldThreshold)  // definition of old
+	      bson_iterator_init(&it3,bson_iterator_value(&it2));
+
+	      snprintf(var,sizeof(var),"%s.%s.%s",reportKey,bson_iterator_key(&it1),bson_iterator_key(&it2));
+	      snprintf(key,sizeof(key),"%s",(char *)bson_iterator_key(&it2));
+	      foundStamp = false;
+
+	      while(bson_iterator_next(&it3))
 		{
-		  snprintf(purgeKey,sizeof(purgeKey),"%s.%s",reportKey,bson_iterator_key(&it1));
-		  PrependItem(purgeKeysPtr,purgeKey,NULL);
-		  
+		foundStamp = CFDB_CheckAge(var,key,&it3,now,oldThreshold,purgeKeysPtr,purgeNamesPtr);
+
+		if(foundStamp)
+		  {
+		    break;
+		  }
+		}
+
+	      if(!foundStamp)  // remove keys with missing timestamps
+		{
+		  PrependItem(purgeKeysPtr,var,NULL);
 		  if(purgeNamesPtr)
 		    {
-		    PrependItem(purgeNamesPtr,(char *)bson_iterator_key(&it1),NULL);
+		    PrependItem(purgeNamesPtr,key,NULL);
 		    }
-
-		  Debug("Report key \"%s\" needs to be purged (%lu seconds old)\n", purgeKey, now - then);
 		}
+	  
+	    }
+	  else  // not deep
+	    {
+	      snprintf(var,sizeof(var),"%s.%s",reportKey,bson_iterator_key(&it1));
+	      snprintf(key,sizeof(key),"%s",(char *)bson_iterator_key(&it1));
+	      CFDB_CheckAge(var,key,&it2,now,oldThreshold,purgeKeysPtr,purgeNamesPtr);
 
 	    }
 	}
 
+      if(emptyLev2)
+	{
+	snprintf(var,sizeof(var),"%s.%s",reportKey,bson_iterator_key(&it1));
+	PrependItem(purgeKeysPtr,var,NULL);
+	}
+
     }  
+}
+
+/*****************************************************************************/
+
+int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t oldThreshold, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr)
+{
+  time_t then;
+  int found;
+  
+  if(strcmp(bson_iterator_key(it),cfr_time) == 0)
+    {
+      found = true;
+
+      then = bson_iterator_int(it);
+		  
+      if(now - then >= oldThreshold)  // definition of old
+	{
+	  PrependItem(purgeKeysPtr,var,NULL);
+		      
+	  if(purgeNamesPtr)
+	    {
+	      PrependItem(purgeNamesPtr,key,NULL);
+	    }
+		      
+	  Debug("Report key \"%s\" needs to be purged (%lu seconds old)\n", var, now - then);
+	}
+
+    }
+  else
+    {
+      found = false;
+    }
+  
+  return found;
 }
 
 /*****************************************************************************/

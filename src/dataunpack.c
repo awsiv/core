@@ -475,6 +475,8 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 void Nova_UnPackVariables(mongo_connection *dbconn, char *id, struct Item *data)
 
+/* Should be deprecated some time - was replaced after Nova 2.0.2 */
+
 { struct Item *ip;
   char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],scope[CF_MAXVARSIZE];
 
@@ -499,7 +501,42 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,name,value);
    
+   Debug("line is \"%s\"\n", ip->name);
    Debug("var: (%s) \"%s\"=\"%s\"\n",type,name,value);
+   }
+
+}
+
+/*****************************************************************************/
+
+void Nova_UnPackVariables2(mongo_connection *dbconn, char *id, struct Item *data)
+
+{ struct Item *ip;
+  char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],scope[CF_MAXVARSIZE];
+  time_t t;
+
+CfOut(cf_verbose,""," -> Variable data with date stamp...........");
+
+#ifdef HAVE_LIBMONGOC
+if (dbconn)
+   {
+     CFDB_SaveVariables2(dbconn, id, data);
+   }
+#endif
+
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   if (strncmp(ip->name,"S:", 2) == 0)
+      {
+      scope[0] = '\0';
+      sscanf(ip->name+2,"%254[^\n]",scope);
+      Debug("SCOPE: %s\n",scope);
+      continue;
+      }
+
+   sscanf(ip->name,"%4[^,],%ld,%255[^,],%2040[^\n]",type,&t,name,value);
+   
+   Debug("var: (%s) at %s \"%s\"=\"%s\"\n",type,cf_ctime(&t),name,value);
    }
 
 }

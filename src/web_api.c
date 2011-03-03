@@ -627,10 +627,10 @@ return true;
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE];
+  char rvalBuf[CF_MAXVARSIZE];
   struct HubVariable *hv,*hv2;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
-  int count = 0, tmpsize = 0;
   mongo_connection dbconn;
 
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -645,8 +645,6 @@ lscope[0] = '\0';
 
 StartJoin(returnval,"<table>\n",bufsize);
 
-count += strlen(returnval);
-
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    char typestr[CF_SMALLBUF];
@@ -656,9 +654,9 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    if (strcmp(lscope,hv->scope) != 0)
       {
       strcpy(lscope,hv->scope);
-      snprintf(buffer,CF_BUFSIZE,"<tr><th colspan=\"3\">Bundle scope <a href=\"/bundle/details/bundle/%s\">%s</a><th></tr>\n",hv->scope,hv->scope);
+      snprintf(buffer,CF_BUFSIZE,"<tr><th colspan=\"5\">Bundle scope <a href=\"/bundle/details/bundle/%s\">%s</a><th></tr>\n",hv->scope,hv->scope);
       Join(returnval,buffer,bufsize);
-      snprintf(buffer,CF_BUFSIZE,"<tr><th>Host</th><th>Type</th><th>Name</th><th>Value</th></tr>\n");
+      snprintf(buffer,CF_BUFSIZE,"<tr><th>Host</th><th>Type</th><th>Name</th><th>Value</th><th>Last seen</th></tr>\n");
       Join(returnval,buffer,bufsize);
       }
 
@@ -682,22 +680,19 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       {
       strcat(typestr," list");
       }
-   
-   snprintf(buffer,CF_BUFSIZE,"<tr><td>%s</td><td>%s</td><td><a href=\"/welcome/knowledge/topic/%s\">%s</td>\n",hv->hh->hostname,typestr,hv->lval,hv->lval);
-   strcat(returnval,buffer);
-   count += strlen(buffer);
 
    if (strlen(hv->dtype) > 1) // list
       {
-      char b[CF_BUFSIZE];
-      b[0] = '\0';
-      PrintRlist(b,CF_BUFSIZE,hv->rval);
-      snprintf(buffer,sizeof(buffer),"<td>%s</td></tr>\n",b);
+      PrintRlist(rvalBuf,sizeof(rvalBuf),hv->rval);
       }
    else
       {
-      snprintf(buffer,sizeof(buffer),"<td>%s</td></tr>\n",(char *)hv->rval);
+      snprintf(rvalBuf,sizeof(rvalBuf),"%s",(char *)hv->rval);
       }
+
+   
+   snprintf(buffer,CF_BUFSIZE,"<tr><td>%s</td><td>%s</td><td><a href=\"/welcome/knowledge/topic/%s\">%s<td>%s</td></td><td>%s</td></tr>\n",
+	    hv->hh->hostname,typestr,hv->lval,hv->lval,rvalBuf,cf_ctime(&hv->t));
 
    if(!Join(returnval,buffer,bufsize))
      {

@@ -10,7 +10,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#define cf_codebook_size 23
+#define cf_codebook_size 24
 
 char *CF_CODEBOOK[cf_codebook_size] =
    {
@@ -30,6 +30,7 @@ char *CF_CODEBOOK[cf_codebook_size] =
    CFR_PATCHSTATUS,
    CFR_PROMISEOUT,
    CFR_VALUE,
+   CFR_VARD,
    CFR_VARS,
    CFR_LASTSEEN,
    CFR_REPAIRLOG,
@@ -57,6 +58,7 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
    Nova_UnPackPatchStatus,  // nodata
    Nova_UnPack_promise_output_common,  // nodata
    Nova_UnPackValueReport,  //  (append) LOG
+   Nova_UnPackVariables2,    // DBOK
    Nova_UnPackVariables,    // DBOK
    Nova_UnPackLastSeen,     // DBOK
    Nova_UnPackRepairLog,    // DBOK (nopurge)

@@ -1,3 +1,21 @@
+2.0.3 
+	New interface with interactive graphs on Nova hub.
+
+	User management on hub.
+
+	Support for adding notes to all hosts and reports.
+
+	Support for policy staging environments.
+
+	TODO: Configurable aging time on reports stored on hub.
+
+	The variables report got a last-seen column. Now variables
+	are stored in the hub for a longer time like classes, 
+	and not overwritten on every update.
+
+	Reliability improvements, especially when querying
+	the variables report.
+
 2.0.2 
 	Much faster report querying.
 	

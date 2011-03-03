@@ -363,6 +363,7 @@ void CFDB_SaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep re
 void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveClasses(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveVariables(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveVariables2(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveTotalCompliance(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SavePromiseLog(mongo_connection *conn, char *kH, enum promiselog_rep rep_type, struct Item *data);
 void CFDB_SaveLastSeen(mongo_connection *conn, char *kH, struct Item *data);
@@ -398,6 +399,7 @@ void CFDB_PurgeDropReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedReports(mongo_connection *conn);
 void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t now);
 void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr);
+int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t oldThreshold, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr);
 void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr);
 void DeleteFromBsonArray(bson_buffer *bb, char *arrName, struct Item *elements);
 void CFDB_PurgeHost(mongo_connection *conn, char *keyHash);
@@ -422,6 +424,7 @@ void Nova_PackPatchStatus(struct Item **reply,char *header,time_t date,enum cfd_
 void Nova_Pack_promise_output_common(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackValueReport(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackVariables(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackVariables2(struct Item **reply,char *header,time_t from,enum cfd_menu type);
 void Nova_PackLastSeen(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackRepairLog(struct Item **reply,char *header,time_t date,enum cfd_menu type);
@@ -451,6 +454,7 @@ void Nova_UnPackPatchStatus(mongo_connection *dbconn, char *id, struct Item *dat
 void Nova_UnPack_promise_output_common(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackValueReport(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackVariables(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackVariables2(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, struct Item *data);
@@ -537,7 +541,7 @@ struct HubClass *NewHubClass(struct HubHost *hh,char *class,double p, double dev
 void DeleteHubClass(struct HubClass *hc);
 struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,char *v,int k,int r,int n);
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
-struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype);
+struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype,time_t t);
 void DeleteHubVariable(struct HubVariable *hv);
 struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh, char *handle,char *cause,time_t t, char *noteId,char *oid);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
@@ -1114,6 +1118,7 @@ struct cf_pscalar
 #define CFR_PROMISEOUT "POT"
 #define CFR_VALUE "VAL"
 #define CFR_VARS "VAR"
+#define CFR_VARD "VRD"  // with date stamp
 #define CFR_LASTSEEN "SEN"
 #define CFR_REPAIRLOG "PRL"
 #define CFR_NOTKEPTLOG "NKL"
@@ -1310,6 +1315,7 @@ struct HubVariable
    void *rval;
    char *dtype;
    char rtype;
+   time_t t;
    };
 
 struct HubPromiseLog // promise kept,repaired or not kept

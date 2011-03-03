@@ -1736,6 +1736,8 @@ DeleteItemList(file);
 
 void Nova_NoteVarUsage()
 
+/* DEPRECATED: Use NoteVarUsageDB() */
+
 { char name[CF_BUFSIZE];
 
 if (MINUSF) /* Only do this for the default policy */
