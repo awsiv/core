@@ -21,14 +21,42 @@ class Search extends Cf_Controller
 	   
 	   $hostname =  cfpr_hostname($hostkey);
 	   //necessary for search result view
-	   
+       //must use site_url for making bread crumbs work
+          if(!is_ajax ())
+          {
+                $params='';
+               if(count($getparams)>0)
+               {
+                 $params=$this->uri->assoc_to_uri($getparams);
+               }
+               else
+               {
+                 foreach($_POST as $key=>$value)
+                 {
+                     if(empty($value))
+                     {
+                         $params.=$key.'/';
+                     }
+                     else
+                     {
+                         $params.=$key.'/'.$value.'/';
+                     }
+                 }
+               //$params=$this->uri->assoc_to_uri($_POST);
+                }
+           $bc = array(
+            'title' => 'Reports',
+            'url' => site_url("search/index/$params"),
+            'isRoot' => false
+           );
+          $this->breadcrumb->setBreadCrumb($bc);
+          }
 	   $data=array(
 	         'report_type'=>$report_type,
 			 'title'=>"Cfengine Mission Portal - search results",
-             'title_header'=>"search results",
-             'nav_text'=>"Status : $report_type",
-			 'status'=>"current",
-			 'report_title'=>$report_type
+                         'title_header'=>"search results",
+			 'report_title'=>$report_type,
+                         'breadcrumbs' => $this->breadcrumblist->display(),
 			 );
 	   
 	   if ($search == "")
@@ -67,7 +95,7 @@ class Search extends Cf_Controller
 				  }
 				  else //not nothing else is satisfied display extra form for more search paramaters
 				  {
-				     $this->template->load('template','searchpages/bundleprofile',$data);
+                                      is_ajax()?$this->load->view('searchpages/bundleprofile',$data):$this->template->load('template','searchpages/bundleprofile',$data);
 				  }
 		    break;
 			case "Business value report":
@@ -101,7 +129,7 @@ class Search extends Cf_Controller
 				    }
 				  else
 				    {
-					  $this->template->load('template','searchpages/business_value_report',$data);
+					  is_ajax()?$this->load->view('searchpages/business_value_report',$data):$this->template->load('template','searchpages/business_value_report',$data);
 				    }
 		    break; 
             case "Class profile":
@@ -130,7 +158,7 @@ class Search extends Cf_Controller
 					}
 				   else
 				    {
-					$this->template->load('template','searchpages/class_profile',$data);
+					is_ajax()?$this->load->view('searchpages/class_profile',$data):$this->template->load('template','searchpages/class_profile',$data);
 					}
 			break;
 			case "Compliance by promise":
@@ -160,7 +188,7 @@ class Search extends Cf_Controller
 				  }
 				  else
 				  {
-				  $this->template->load('template','searchpages/compliance_by_promise',$data);
+				  is_ajax()?$this->load->view('searchpages/compliance_by_promise',$data):$this->template->load('template','searchpages/compliance_by_promise',$data);
 				  }
 			break;
 			case "Compliance summary":
@@ -189,7 +217,7 @@ class Search extends Cf_Controller
 				  }
 				  else
 				  {
-				  $this->template->load('template','searchpages/summary_report',$data);
+				  is_ajax()?$this->load->view('searchpages/summary_report',$data):$this->template->load('template','searchpages/summary_report',$data);
 				  }
 			break;
 			case "File change log":
@@ -218,7 +246,7 @@ class Search extends Cf_Controller
 				 }
 				 else
 				 {
-				 $this->template->load('template','searchpages/file_change_log',$data);
+				 is_ajax()?$this->load->view('searchpages/file_change_log',$data):$this->template->load('template','searchpages/file_change_log',$data);
 				 }
 			break;
 			case "File change diffs":
@@ -249,7 +277,7 @@ class Search extends Cf_Controller
 				 }
 				 else
 				 {
-				   $this->template->load('template','searchpages/file_change_diffs',$data);
+				   is_ajax()?$this->load->view('searchpages/file_change_diffs',$data):$this->template->load('template','searchpages/file_change_diffs',$data);
 				 }
             break;
             case "Last saw hosts":
@@ -283,7 +311,7 @@ class Search extends Cf_Controller
                 }
                 else
                 {
-				   $this->template->load('template','searchpages/last_saw_hosts',$data);
+				   is_ajax()?$this->load->view('searchpages/last_saw_hosts',$data):$this->template->load('template','searchpages/last_saw_hosts',$data);
                 }	
         break;
         case "Patches available":
@@ -314,7 +342,7 @@ class Search extends Cf_Controller
                 }
               else
                 {
-				 $this->template->load('template','searchpages/patches_available',$data);
+				 is_ajax()?$this->load->view('searchpages/patches_available',$data):$this->template->load('template','searchpages/patches_available',$data);
                 }
         break;
         case "Patch status":
@@ -345,7 +373,7 @@ class Search extends Cf_Controller
               }
              else
               {
-			  $this->template->load('template','searchpages/patch_status',$data);
+			  is_ajax()?$this->load->view('searchpages/patch_status',$data):$this->template->load('template','searchpages/patch_status',$data);
               }
         break;
 		case "Performance":
@@ -374,7 +402,7 @@ class Search extends Cf_Controller
 			  }
 			else
 			  {
-			  $this->template->load('template','searchpages/performance',$data);
+			  is_ajax()?$this->load->view('searchpages/performance',$data):$this->template->load('template','searchpages/performance',$data);
 			  }
         break;
         case "Promises repaired log":
@@ -407,7 +435,7 @@ class Search extends Cf_Controller
               }
             else
               {
-			  $this->template->load('template','searchpages/promises_repaired_log',$data);
+			is_ajax()?$this->load->view('searchpages/promises_repaired_log',$data):$this->template->load('template','searchpages/promises_repaired_log',$data);
               }
 	    break;
         case "Promises not kept summary":
@@ -440,7 +468,7 @@ class Search extends Cf_Controller
 			  }
 			 else
 			 {
-			 $this->template->load('template','searchpages/promises_not_kept',$data);
+			 is_ajax()?$this->load->view('searchpages/promises_not_kept',$data):$this->template->load('template','searchpages/promises_not_kept',$data);
 			 }
         break; 
         case "Setuid/gid root programs":
@@ -469,7 +497,7 @@ class Search extends Cf_Controller
 			 }
 			 else
 			 {
-			 $this->template->load('template','searchpages/uid_gid_root_programs',$data);
+			 is_ajax()?$this->load->view('searchpages/uid_gid_root_programs',$data):$this->template->load('template','searchpages/uid_gid_root_programs',$data);
 			 }
         break;
         case "Software installed":
@@ -500,7 +528,7 @@ class Search extends Cf_Controller
 			}
 			else
 			{
-			$this->template->load('template','searchpages/software_installed',$data);
+			is_ajax()?$this->load->view('searchpages/software_installed',$data):$this->template->load('template','searchpages/software_installed',$data);
 			}
         break;
         case "Variables":
@@ -532,7 +560,7 @@ class Search extends Cf_Controller
             }
             else
             {
-			 $this->template->load('template','searchpages/variables',$data);
+			 is_ajax()?$this->load->view('searchpages/variables',$data):$this->template->load('template','searchpages/variables',$data);
             }
         break;
         default:

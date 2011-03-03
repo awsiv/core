@@ -1,4 +1,4 @@
- <div class="panel"><div class="panelhead"><?php echo $report_type?> query</div>
+ <div id="searchform" class="panel"><div class="panelhead"><?php echo $report_type?> query</div>
  <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
           <p>Host name: (.*+[])<input class="searchfield" type="text" name="name"></p>

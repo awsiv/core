@@ -1,4 +1,4 @@
-<div class="pagepanel">
+<div id="searchform" class="pagepanel">
 	 <div class="panelhead"><?php echo $report_type?></div>
 	   <div class="panelcontent">
 		   <div class="tables">

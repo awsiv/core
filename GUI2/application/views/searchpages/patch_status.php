@@ -1,4 +1,4 @@
- <div class="panel">
+ <div id="searchform" class="panel">
    <div class="panelhead"><?php echo $report_type ?></div>
    <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">

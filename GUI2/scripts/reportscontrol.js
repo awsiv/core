@@ -1,3 +1,22 @@
+var $reportcontroldialog=$('.dialog').dialog({
+		 autoOpen: false,
+		 modal: true,
+		 hide: 'puff',
+		 resizable: false,
+		 title:'Checkout',
+		 buttons: {
+		 'OK': function() {
+			 $(this).dialog('close');
+	      },
+		'Cancel':function() {
+	      $(this).dialog('close');
+	      }
+	  },
+	  open: function() {
+
+		 }
+	 });
+ 
 function reportcontrol(json)
 {
  var ua = navigator.userAgent,
@@ -18,8 +37,8 @@ function reportcontrol(json)
     injectInto: 'reportcontrol',
     //Change node and edge styles such as
     //color, width, lineWidth and edge types
-    'width': 400,
-    'height':400 ,
+    'width': 300,
+    'height':300 ,
     Node: {
       overridable: true,
       type: useGradients? 'gradient-multipie' : 'multipie'
@@ -62,24 +81,42 @@ function reportcontrol(json)
       //List node connections onClick
       onClick: function(node, eventInfo, e){
         if (!node) return;
-        var html = "<h4>" + node.name + " connections</h4><ul><li>", ans = [];
-        /*node.eachAdjacency(function(adj){
-          // if on the same level i.e siblings
-            if (adj.nodeTo._depth == node._depth) {
-              ans.push(adj.nodeTo.name);
-            }
-          });
-        $jit.id('inner-details').innerHTML = html + ans.join("</li><li>") + "</li></ul>";*/
-         sb.tips.hide();
+         sb.tips.hide;
          //rotate
          sb.rotate(node, animate? 'animate' : 'replot', {
            duration: 1000,
            transition: $jit.Trans.Quart.easeInOut
 
        });
+        $('#repdialog').load('/search/index', {report: node.name}, function() {
+               //$reportcontroldialog.dialog('open');
+               var $dialog=$(this);
+               var $closebtn=$("<a class='ui-panel-close'><span class='ui-icon ui-icon-closethick'></span></a>");
+               $(this).slideDown('slow');
+                $(this).find('.panelhead').append($closebtn);
+                $closebtn.hover(function () {
+                             $(this).addClass("ui-state-hover");
+                        },
+                           function () {
+                             $(this).removeClass("ui-state-hover");
+                         });
+                 $closebtn.click(function(){
+                   $dialog.fadeOut();
+                 })
+               });
+       
+         
+        /*node.eachAdjacency(function(adj){
+          // if on the same level i.e siblings
+            if (adj.nodeTo._depth == node._depth) {
+              ans.push(adj.nodeTo.name);
+            }
+          });
+
+        $jit.id('inner-details').innerHTML = html + ans.join("</li><li>") + "</li></ul>";*/
       }
     },
-    levelDistance: 60,
+    levelDistance: 50,
     // Only used when Label type is 'HTML' or 'SVG'
     // Add text to the labels.
     // This method is only triggered on label creation
@@ -123,5 +160,6 @@ function reportcontrol(json)
   sb.refresh();
   //end
 }
+
 
 

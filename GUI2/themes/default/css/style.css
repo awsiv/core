@@ -346,7 +346,25 @@ padding:10px;
 color:#e1e1e3;
 text-transform: uppercase;
 font-weight: bold;
+position:relative;
 }
+
+.ui-panel-close{
+    height: 18px;
+    margin: -10px 0 0;
+    padding: 1px;
+    position: absolute;
+    right: 0.3em;
+    top: 50%;
+    width: 19px;
+}
+.ui-panel-span{
+    display:block;
+    margin:1px
+}
+.ui-icon {background-image: url("/images/ui-icons_ffffff_256x240.png"); display: block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; width:16px; height:16px }
+.ui-icon-closethick { background-position: -96px -128px; }
+.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {background-image: url("/images/ui-icons_ef8c08_256x240.png") }
 
 .knwlgpanelhead
 {

@@ -58,6 +58,7 @@ final class BreadCrumbList{
 			}else{
 				//$return_str .= "<li><span class=\"current\">".$uBC->getTitle().'</span> '.$del."</li>";
                                  $return_str .= "<li>".anchor($uBC->getUrl(),$uBC->getTitle(), array('class'=>'current')).' '.$del."</li>";
+                               
 			}
 		$i++;
 		}
