@@ -96,7 +96,6 @@ if (false)
    Nova_Header("sd","we",buffer,3); 
    Nova2PHP_get_network_speed("","",3);
    Nova2PHP_meter(NULL,NULL,0);
-   Nova2PHP_ComplianceSummaryGraph();
    /* pdf functions */
    Nova2PHP_compliance_report_pdf(NULL,NULL,0,0,0,0,0,NULL,buffer,10000);
    Nova2PHP_promiselog_pdf(NULL,NULL,1,0,0,NULL,buffer,1000); 

@@ -474,8 +474,6 @@ printf("AVLU = %s\n",buffer);
 //Nova2PHP_getlastupdate("SHA_852ffe9132338a8d76529ad522930933a111782959f028d8b63d35142531dc70",buffer,1000);
 //printf("UPDATE = %s\n",buffer);
 
-//Nova_CacheTotalCompliance();
-Nova_ComplianceSummaryGraph();
 
 //Nova2PHP_show_col_hosts("green",200,buffer,1000);
 //printf("HOSTS = %s\n",buffer);

@@ -76,7 +76,7 @@ void Nova_ComplianceSummaryGraph(char *buffer,int bufsize)
   const double scale = 4.0;
   double x,kept, repaired, notkept;
   time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
-  int i;
+  int i,slot;
 
 // Read the cached compliance summary
 
@@ -92,7 +92,7 @@ for (i = 0,start = now - one_week; start < now; start += CF_SHIFT_INTERVAL,i++)
    snprintf(date,CF_SMALLBUF,"%s",cdate(&start));
    Chop(date);
    
-   snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf }",date,i,kept,rep,notkept);
+   snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf }",date,i,kept,repaired,notkept);
    strcat(buffer,",");
    }
 
