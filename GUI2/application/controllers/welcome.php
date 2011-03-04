@@ -86,7 +86,7 @@ class Welcome extends Cf_Controller {
             'r' => cfpr_count_red_hosts(),
             'y' => cfpr_count_yellow_hosts(),
             'g' => cfpr_count_green_hosts(),
- 			'jsondata'=>$this->_get_jsondata_for_report_control(),
+            'jsondata' => $this->_get_jsondata_for_report_control(),
             'allreps' => array_combine($reports, $reports),
             'allSppReps' => cfpr_cdp_reportnames(),
             'breadcrumbs' => $this->breadcrumblist->display()
@@ -94,109 +94,101 @@ class Welcome extends Cf_Controller {
 
 
         $gdata = cfpr_summary_meter();
+        $returnedData = $this->_convert_summary_compliance_graph($gdata);
+        $data = array_merge($data, $returnedData);
+        $this->template->load('template', 'status', $data);
+    }
 
-        $convertedData = json_decode($gdata, true);
+    function _convert_summary_compliance_graph($rawData) {
+        $convertedData = json_decode($rawData, true);
 
         $values = array();
         $data['graphSeries'] = array();
-        $labels = array('kept', 'not kept', 'repaired');
+        $labels = array('kept', 'repaired', 'not kept');
         foreach ($convertedData as $key => $graphData) {
 
             $values[] = array('label' => $graphData['title'],
-                'values' => array($graphData['kept'], $graphData['notkept'], $graphData['repaired']));
+                'values' => array($graphData['kept'], $graphData['repaired'], $graphData['notkept']));
         }
 
 
         $data['graphSeries']['labels'] = json_encode($labels);
         $data['graphSeries']['values'] = json_encode($values);
-
-
-
-
-        $this->template->load('template', 'status', $data);
+        return $data;
     }
 
-function _get_jsondata_for_report_control()
-     {
-          $reports=json_decode(cfpr_select_reports(".*",100));
-          $adjacencies=array();
-          $rootnode=array("id"=>"node0","name"=>"","data"=>array("\$type"=>"none"));
-          $control=array();
+    function _get_jsondata_for_report_control() {
+        $reports = json_decode(cfpr_select_reports(".*", 100));
+        $adjacencies = array();
+        $rootnode = array("id" => "node0", "name" => "", "data" => array("\$type" => "none"));
+        $control = array();
 
-          $i=1;
-          foreach($reports as $report)
-          {
-             $node=array(
-                'nodeTo'=>'node'.$i,
-                 'data'=>array("\$type"=>'none')
-             );
-             $adjacencies[$i-1]=$node;
-             $i++;
-          }
-          $rootnode['adjacencies']=$adjacencies;
-          array_push($control, $rootnode);
-
-          $i=1;
-          foreach($reports as $report)
-          {
-             $node_property=array(
-              'id'=>'node'.$i,
-               'name'=>$report,
-               'data'=>array("\$angularwidth"=>"20","\$color"=>$this->_rand_colorCode(),"\$height"=>90+$i),
-                'adjacencies'=>array()
-             );
-              array_push($control, $node_property);
-              $i++;
-          }
-              //print_r($nodelist);
-              //print_r(json_encode($control));
-              return json_encode($control);
-     }
-
-     function _rand_colorCode(){
-            $r = dechex(mt_rand(0,255)); // generate the red component
-            $g = dechex(mt_rand(0,255)); // generate the green component
-            $b = dechex(mt_rand(0,255)); // generate the blue component
-            $rgb = $r.$g.$b;
-            if($r == $g && $g == $b){
-            $rgb = substr($rgb,0,3); // shorter version
-            }
-             if( strlen( $rgb ) == 4 )
-            {
-                $rgb = $rgb . rand(10,99);
-            }
-            else if( strlen( $rgb ) == 5 )
-            {
-               $rgb = $rgb . rand(0,9);
-            }
-            return '#'.$rgb;
+        $i = 1;
+        foreach ($reports as $report) {
+            $node = array(
+                'nodeTo' => 'node' . $i,
+                'data' => array("\$type" => 'none')
+            );
+            $adjacencies[$i - 1] = $node;
+            $i++;
         }
-	
-   function helm()
-	{
-	  $data=array(
-		'title'=>"Cfengine Mission Portal - control",
-        'title_header'=>"control",
-        'nav_text'=>"Planning : menu",
-		'planning'=>"current"
-		);
-	  $this->template->load('template', 'helm',$data);
-	}
-	
-function knowledge()
-	{
-           $bc = array(
+        $rootnode['adjacencies'] = $adjacencies;
+        array_push($control, $rootnode);
+
+        $i = 1;
+        foreach ($reports as $report) {
+            $node_property = array(
+                'id' => 'node' . $i,
+                'name' => $report,
+                'data' => array("\$angularwidth" => "20", "\$color" => $this->_rand_colorCode(), "\$height" => 90 + $i),
+                'adjacencies' => array()
+            );
+            array_push($control, $node_property);
+            $i++;
+        }
+        //print_r($nodelist);
+        //print_r(json_encode($control));
+        return json_encode($control);
+    }
+
+    function _rand_colorCode() {
+        $r = dechex(mt_rand(0, 255)); // generate the red component
+        $g = dechex(mt_rand(0, 255)); // generate the green component
+        $b = dechex(mt_rand(0, 255)); // generate the blue component
+        $rgb = $r . $g . $b;
+        if ($r == $g && $g == $b) {
+            $rgb = substr($rgb, 0, 3); // shorter version
+        }
+        if (strlen($rgb) == 4) {
+            $rgb = $rgb . rand(10, 99);
+        } else if (strlen($rgb) == 5) {
+            $rgb = $rgb . rand(0, 9);
+        }
+        return '#' . $rgb;
+    }
+
+    function helm() {
+        $data = array(
+            'title' => "Cfengine Mission Portal - control",
+            'title_header' => "control",
+            'nav_text' => "Planning : menu",
+            'planning' => "current"
+        );
+        $this->template->load('template', 'helm', $data);
+    }
+
+    function knowledge() {
+        $bc = array(
             'title' => 'Knowledge Map',
             'url' => 'welcome/index',
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
-	    $getparams=$this->uri->uri_to_assoc(3);
-	    $search = isset($getparams['search'])?$getparams['search']:$this->input->post('search');
-            $topic = isset($getparams['topic'])?$getparams['topic']:$this->input->post('topic');
-		$pid = isset($getparams['pid'])?$getparams['pid']:$this->input->post('pid');
-		 if (!$pid)
-     
+        $getparams = $this->uri->uri_to_assoc(3);
+        $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
+        $topic = isset($getparams['topic']) ? $getparams['topic'] : $this->input->post('topic');
+        $pid = isset($getparams['pid']) ? $getparams['pid'] : $this->input->post('pid');
+        if (!$pid)
             $pid = cfpr_get_pid_for_topic("", "system policy");
 
         $data = array(
@@ -262,7 +254,7 @@ function knowledge()
         }
         $bc = array(
             'title' => "$type hosts",
-            'url' => 'welcome/hosts/'.$type,
+            'url' => 'welcome/hosts/' . $type,
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
@@ -279,7 +271,7 @@ function knowledge()
     function host($hostkey=NULL) {
 
 
-          $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
+        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
             ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>
             ');
@@ -293,7 +285,7 @@ function knowledge()
         );
         $this->breadcrumb->setBreadCrumb($bc);
         if (is_null($hostkey)) {
-            
+
             $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : "none";
         }
         $reports = json_decode(cfpr_select_reports(".*", 100));
@@ -309,17 +301,6 @@ function knowledge()
         foreach ($jsonarr as $data) {
             $allhosts[$data['key']] = $data['id'];
         }
-        /* if (!is_null($username) && !is_null($comment_text) && $op=="addcomment")
-          {
-          cfpr_comment_add($hostkey,"",$commentid,1,"$hostname,$ipaddr",$username,time(),$comment_text);
-          $username="";
-          $comment_text="";
-          } */
-        // $commentid = cfpr_get_host_commentid($hostkey);
-        //$comments=cfpr_comment_query('',$commentid,'',-1,-1);
-
-
-
 
         $data = array(
             'hostkey' => $hostkey,
@@ -339,21 +320,8 @@ function knowledge()
 
         $gdata = cfpr_host_meter($hostkey);
 
-        $convertedData = json_decode($gdata, true);
-        
-        $values = array();
-        $data['graphSeries'] = array();
-        $labels = array('kept', 'not kept', 'repaired');
-        foreach ($convertedData as $key => $graphData) {
-
-            $values[] = array('label' => $graphData['title'],
-                'values' => array($graphData['kept'], $graphData['notkept'], $graphData['repaired']));
-        }
-
-
-        $data['graphSeries']['labels'] = json_encode($labels);
-        $data['graphSeries']['values'] = json_encode($values);
-
+        $returnedData = $this->_convert_summary_compliance_graph($gdata);
+        $data = array_merge($data, $returnedData);
 
         $this->template->load('template', 'host', $data);
     }

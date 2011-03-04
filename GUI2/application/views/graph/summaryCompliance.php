@@ -32,7 +32,7 @@ var Log = {
 function init(){
   //init data
   var json = {
-      color: ['#A3DF00',  '#D43030','#EEEE00'],
+      color: ['#A3DF00','#EEEE00','#D43030'],
       'label': <?php echo $graphSeries['labels']; ?>,
       'values':  <?php echo $graphSeries['values']; ?>
 
