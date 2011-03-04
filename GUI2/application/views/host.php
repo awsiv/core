@@ -7,8 +7,8 @@ cfpr_host_meter($hostkey);
 $colour = cfpr_get_host_colour($hostkey);
   ?>
         
-         <div class="grid_5">
-                  <div class="panel">
+         <div class="grid_4">
+                  <!--<div class="panel">
                     <div class="panelhead">Select host: <?php if($hostkey=="none") echo "No host selected" ;?> </div>
                      <div class="panelcontent">
                   <?php echo form_open('welcome/host'); ?>
@@ -17,7 +17,15 @@ $colour = cfpr_get_host_colour($hostkey);
                      <div class="clearright"></div>
                      </form>
                      </div>
-                  </div>
+                  </div>-->
+             <div class="panel">
+                    <div class="panelhead"> View Reports </div>
+                    <div id="reportcontrol" class="panelcontent">
+                     <form method="post" action="<?php echo site_url('search/')?>">
+                          <input type="hidden" name="hostkey" value="<?php echo $hostkey?>">
+                    </form>
+                    </div>
+               </div>
               <?php
 				$last = cfpr_getlastupdate($hostkey);
 				$class = cfpr_get_variable($hostkey,"sys","ostype");
@@ -27,18 +35,7 @@ $colour = cfpr_get_host_colour($hostkey);
 				$free = cfpr_get_variable($hostkey,"mon","av_diskfree");
 				$speed = cfpr_get_network_rate($hostkey);
 			  ?>
-                  <div class="panel">
-                     <div class="panelhead">Host Details (discovered)</div>
-                     <div class="panelcontent">
-       <p><label class="width_20">Alias:</label><label ><?php echo $hostname?></label></p>
-       <p><label class="width_20">OS class:</label><label><?php echo $class?></label></p>
-       <p><label class="width_20">Release:</label><label><?php echo $rel?></label></p>
-       <p><label class="width_20">Flavour:</label><label><?php echo $flavour?></label></p>
-       <p><label class="width_20">Last IP-address:</label><label><?php echo $ipaddr?></label></p>
-       <p><label class="width_20">Last data:</label><label><?php echo $last?></label></p>
-       <p><label class="width_20">ID:</label><label><small><?php echo $hostkey?></small></label></p>
-                      </div>
-                 </div>
+                  
 
                  <div class="panel">
                      <div class="panelhead">Comments</div>
@@ -92,7 +89,7 @@ $colour = cfpr_get_host_colour($hostkey);
                   </div>
              </div>
           <?php cfpr_summary_meter(NULL);?>
-          <div class="grid_7">
+          <div class="grid_8">
            	<div class="panel">
           		<div class="panelhead">Analysis</div>
                 <div class="panelcontent">
@@ -101,7 +98,7 @@ $colour = cfpr_get_host_colour($hostkey);
                  </div>
           	</div>
             
-            <div class="panel">
+            <!--<div class="panel">
           		<div class="panelhead">Generate report</div>
                 <div class="panelcontent">
                 <form method="post" action="<?php echo site_url('search/')?>">
@@ -112,7 +109,19 @@ $colour = cfpr_get_host_colour($hostkey);
                 <p><input type="submit" value="commit"></p>
                 </form>
                 </div>
-             </div>
+             </div>-->
+                 <div class="panel">
+                     <div class="panelhead">Host Details (discovered)</div>
+                     <div class="panelcontent">
+       <p><label class="width_20">Alias:</label><label ><?php echo $hostname?></label></p>
+       <p><label class="width_20">OS class:</label><label><?php echo $class?></label></p>
+       <p><label class="width_20">Release:</label><label><?php echo $rel?></label></p>
+       <p><label class="width_20">Flavour:</label><label><?php echo $flavour?></label></p>
+       <p><label class="width_20">Last IP-address:</label><label><?php echo $ipaddr?></label></p>
+       <p><label class="width_20">Last data:</label><label><?php echo $last?></label></p>
+       <p><label class="width_20">ID:</label><label><small><?php echo $hostkey?></small></label></p>
+                      </div>
+                 </div>
              
               <div class="panel">
           		<div class="panelhead">Monitored jobs</div>
@@ -163,6 +172,13 @@ $(document).ready(function() {
         $('#add_cmt').show();
         
     });
+    $('.btn').hover(function () {
+                             $(this).addClass("btn-hover");
+                        },
+                           function () {
+                             $(this).removeClass("btn-hover");
+                         });
+    reportcontrol(<?php echo $jsondata?>,"host");
 });
 </script>
 

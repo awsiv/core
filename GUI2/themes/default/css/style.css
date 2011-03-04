@@ -418,10 +418,19 @@ padding:2px;
 
 .btn
 {
-background:url(../images/button.png) repeat-x;
-color:#e1e1e3;
+/*background:url(../images/button.png) repeat-x;*/
+color:#1690CF;
 padding:7px;
-border:solid 1px #000;
+border:solid 1px #CCC;
+font-size:9pt;
+font-weight: bold;
+background:#f0f0f0;
+}
+
+.btn-hover
+{
+    background:#CCCCCC;
+    cursor: pointer;
 }
 
 .alignright
@@ -1238,9 +1247,6 @@ font-weight: bold;
 	padding:1px 0 3px 0;
 }
 
-a#show_cmt { cursor: pointer; color: #E1E1E3 }
-a#add_cmt { cursor: pointer; color: #E1E1E3 }
-
 /*Administration*/
 
 ul.admin_menu
@@ -1298,9 +1304,9 @@ ul.admin_menu li.current
 /*reset the buttons property if any*/
 
 
-#btnholder a
+#btnholder btn a
 {
-    color:#fff;
+    background:#E1E1E3;
 }
 
 .form

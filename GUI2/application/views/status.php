@@ -58,7 +58,7 @@
                 <div class="panelcontent">
                     <form method="post" action="<?php echo site_url('cdp/index')?>">
                           <p><?php echo $allSppReps;?><p>
-                          <input type="submit" value="Generate">
+                          <input class="btn" type="submit" value="Generate">
                      </form>
                  </div>
           	</div>
@@ -67,6 +67,6 @@
           
           <div class="clear"></div>
           <script type="text/javascript">
-            reportcontrol(<?php echo $jsondata?>);
+            reportcontrol(<?php echo $jsondata?>,"overall");
           </script>
 

@@ -17,7 +17,7 @@ var $reportcontroldialog=$('.dialog').dialog({
 		 }
 	 });
  
-function reportcontrol(json)
+function reportcontrol(json,basis)
 {
  var ua = navigator.userAgent,
       iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
@@ -81,14 +81,16 @@ function reportcontrol(json)
       //List node connections onClick
       onClick: function(node, eventInfo, e){
         if (!node) return;
-         sb.tips.hide;
+         sb.tips.hide();
          //rotate
          sb.rotate(node, animate? 'animate' : 'replot', {
            duration: 1000,
            transition: $jit.Trans.Quart.easeInOut
 
        });
-        $('#repdialog').load('/search/index', {report: node.name}, function() {
+       if(basis=="overall")
+           {
+           $('#repdialog').load('/search/index', {report: node.name}, function() {
                //$reportcontroldialog.dialog('open');
                var $dialog=$(this);
                var $closebtn=$("<a class='ui-panel-close'><span class='ui-icon ui-icon-closethick'></span></a>");
@@ -104,8 +106,13 @@ function reportcontrol(json)
                    $dialog.fadeOut();
                  })
                });
+            }
+          if(basis=="host")
+              {
+                var html='<input type="hidden" name="report" value="'+node.name+'" />'
+                $('#reportcontrol').find('form').append(html).submit();
+              }
        
-         
         /*node.eachAdjacency(function(adj){
           // if on the same level i.e siblings
             if (adj.nodeTo._depth == node._depth) {

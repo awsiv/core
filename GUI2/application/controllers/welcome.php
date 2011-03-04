@@ -75,7 +75,7 @@ class Welcome extends Cf_Controller {
         $this->template->set('injected_item', implode("", $scripts));
 
         $this->breadcrumb->setBreadCrumb($bc);
-        $reports = json_decode(cfpr_select_reports(".*", 100));
+        //$reports = json_decode(cfpr_select_reports(".*", 100));
         $data = array(
             'title' => "Cfengine Mission Portal - engineering status",
             'title_header' => "engineering status",
@@ -86,8 +86,8 @@ class Welcome extends Cf_Controller {
             'r' => cfpr_count_red_hosts(),
             'y' => cfpr_count_yellow_hosts(),
             'g' => cfpr_count_green_hosts(),
-            'jsondata' => $this->_get_jsondata_for_report_control(),
-            'allreps' => array_combine($reports, $reports),
+            'jsondata' => $this->_get_jsondata_for_report_control(cfpr_select_reports(".*", 100)),
+            //'allreps' => array_combine($reports, $reports),
             'allSppReps' => cfpr_cdp_reportnames(),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
@@ -98,6 +98,7 @@ class Welcome extends Cf_Controller {
         $data = array_merge($data, $returnedData);
         $this->template->load('template', 'status', $data);
     }
+
 
     function _convert_summary_compliance_graph($rawData) {
         $convertedData = json_decode($rawData, true);
@@ -117,8 +118,15 @@ class Welcome extends Cf_Controller {
         return $data;
     }
 
-    function _get_jsondata_for_report_control() {
-        $reports = json_decode(cfpr_select_reports(".*", 100));
+    /**
+     * For getting json data for report report control using info vis sunbrust
+     * @return <json>
+     * @author sudhir
+     * @param <array>
+     *
+     */
+    function _get_jsondata_for_report_control($reportlist) {
+        $reports = json_decode($reportlist);
         $adjacencies = array();
         $rootnode = array("id" => "node0", "name" => "", "data" => array("\$type" => "none"));
         $control = array();
@@ -150,7 +158,12 @@ class Welcome extends Cf_Controller {
         //print_r(json_encode($control));
         return json_encode($control);
     }
-
+    /**
+     * For generating random color
+     * @author sudhir pandey
+     * @return <string>
+     *
+     */
     function _rand_colorCode() {
         $r = dechex(mt_rand(0, 255)); // generate the red component
         $g = dechex(mt_rand(0, 255)); // generate the green component
@@ -273,14 +286,14 @@ class Welcome extends Cf_Controller {
 
         $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
             ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>
-            ');
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>');
 
         $this->template->set('injected_item', implode("", $scripts));
 
         $bc = array(
             'title' => 'Host',
-            'url' => 'welcome/host',
+            'url' => 'welcome/host/'.$hostkey,
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
@@ -314,6 +327,7 @@ class Welcome extends Cf_Controller {
             'op' => $op,
             'allreps' => array_combine($reports, $reports),
             'allhosts' => $allhosts,
+            'jsondata' => $this->_get_jsondata_for_report_control(cfpr_select_reports(".*", 100)),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
 
@@ -417,12 +431,38 @@ class Welcome extends Cf_Controller {
         );
         $this->breadcrumb->setBreadCrumb($bc);
 
-        /* $allhosts = array();
-          $jsonarr=json_decode(cfpr_select_hosts("none",".*",100),true);
-          foreach ($jsonarr as $data)
-          {
-          $allhosts[$data['key']]=$data['id'];
-          } */
+       //for creating the initial table of hosts as cfpr_select_hosts return the json data
+        $cells = array();
+        $result = json_decode(cfpr_select_hosts("none", ".*", 100), true);
+        if (count($result) > 0) {
+            foreach ($result as $cols) {
+                array_push($cells, anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
+            }
+        }
+
+        $data = array(
+            'title' => "Cfengine Mission Portal - Filter",
+            'title_header' => "Filter Host",
+            'tabledata' => $cells,
+            'breadcrumbs' => $this->breadcrumblist->display()
+        );
+        $this->template->load('template', 'hostlist', $data);
+    }
+
+    function pulse_vitals()
+    {
+        $scripts = array('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery.form.js"> </script>');
+
+        $this->template->set('injected_item', implode("", $scripts));
+
+        $bc = array(
+            'title' => 'Host List',
+            'url' => 'welcome/listhost',
+            'isRoot' => false
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
+
+       //for creating the initial table of hosts as cfpr_select_hosts return the json data
         $cells = array();
         $result = json_decode(cfpr_select_hosts("none", ".*", 100), true);
         if (count($result) > 0) {

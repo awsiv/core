@@ -10,9 +10,7 @@ class Auth extends Controller {
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->library('ion_auth');
-		$this->load->library('session');
-		$this->load->library('form_validation');
+		$this->load->library(array('ion_auth','ion_auth','form_validation','breadcrumb','breadcrumblist'));
                 //list of errors wrapped in <p> class of errors
                 $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
 		//$this->load->database();
@@ -58,6 +56,35 @@ class Auth extends Controller {
                         }
 		}
 	}
+
+        function admin_page()
+        {
+            $bc = array(
+            'title' => 'Admin',
+            'url' => 'auth/admin_page',
+            'isRoot' => false
+           );
+             $this->breadcrumb->setBreadCrumb($bc);
+             $this->data['title']="Cfengine Mission Portal - Admin";
+                        $this->data['title_header']="Admin";
+                        $this->data['admin']="current";
+			$this->data['username'] = $this->session->userdata('username');
+			$this->data['message'] = (validation_errors()) ? '<p class="error">'.validation_errors().'</p>' : $this->session->flashdata('message');
+			//list the users
+			$this->data['users'] = $this->ion_auth->get_users_array();
+			//$this->load->view('auth/index', $this->data);
+                        $this->data['breadcrumbs'] = $this->breadcrumblist->display();
+                        if(is_ajax ())
+                        {
+                         $this->load->view('auth/user_list',$this->data);
+                            //$this->load->view('welcome/index',$this->data);
+                        }
+                        else
+                        {
+                        $this->template->load('template', 'auth/index',$this->data);
+                        }
+            
+        }
 
 	//log the user in
 	function login()

@@ -15,7 +15,7 @@ $ret1 = cfpr_getlicense_owner();
         <li><?php echo anchor('welcome/status','Over all',array('title'=>'Summarized status of all host','class'=>'overall'))?></li>
         <li><?php echo anchor('welcome/listhost','Individual',array('title'=>'Status of particular host','class'=>'individual'))?></li>
         <li><?php echo anchor('welcome/pulse_vitals','Vitals',array('title'=>'Vital signs of particular host','class'=>'vitals'))?></li>
-        <li><?php echo anchor('auth/Index','Administration',array('title'=>'Administer the content and users','class'=>'admin'))?></li>
+        <li><?php echo anchor('auth/admin_page','Administration',array('title'=>'Administer the content and users','class'=>'admin'))?></li>
         <li><?php echo anchor('welcome/helm','Configuration',array('title'=>'Work on Policies to configure system','class'=>'configure'))?></li>
         <li><?php echo anchor('welcome/knowledge','Knowlegde',array('title'=>'Knowledge map of your system','class'=>'knowledge'))?></li>
     </ul>
@@ -24,7 +24,7 @@ $ret1 = cfpr_getlicense_owner();
             <li><?php echo anchor('welcome/status','All Hosts','title=allhosts')?></li>
             <li><?php echo anchor('welcome/listhost','Host Only','particular host')?></li>
             <li><?php echo anchor('welcome/hubs','Hubs','all hubs')?></li>
-            <li><?php echo anchor('welcome/pulse_Vitals','View Pulse and Vitals','pulse and vitals')?></li>
+            <li><?php echo anchor('welcome/pulse_vitals','View Pulse and Vitals','pulse and vitals')?></li>
         </ul>
     </div>
     <div id="planning" class="grid_4 push_2 panelcontent">
