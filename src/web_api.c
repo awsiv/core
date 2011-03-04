@@ -2413,6 +2413,11 @@ for (ip = clist; ip !=  NULL; ip=ip->next)
       }
    }
 
+if (clist)
+   {
+   buffer[strlen(buffer)-1] = '\0';
+   }
+
 EndJoin(buffer,"]",bufsize);
 DeleteItemList(clist);
 }
