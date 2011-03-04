@@ -139,7 +139,7 @@ class Search extends Cf_Controller
 						if($hosts_only)
 						{
 						 $data['report_result']= cfpr_hosts_with_classes(NULL,$name,true,$class_regex);
-						 $this->template->load('template','searchpages/search_result_group',$data);
+						 is_ajax()?$this->load->view('searchpages/search_result_group',$data):$this->template->load('template','searchpages/search_result_group',$data);
 						}
 						else
 						{

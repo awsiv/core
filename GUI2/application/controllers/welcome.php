@@ -406,6 +406,10 @@ class Welcome extends Cf_Controller {
     }
 
     function listhost() {
+        $scripts = array('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery.form.js"> </script>');
+
+        $this->template->set('injected_item', implode("", $scripts));
+
         $bc = array(
             'title' => 'Host List',
             'url' => 'welcome/listhost',
