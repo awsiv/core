@@ -89,7 +89,7 @@ for (i = 0,start = now - one_week; start < now; start += CF_SHIFT_INTERVAL,i++)
    CFDB_GetValue(key,value,CF_MAXVARSIZE);
    sscanf(value,"%lf,%lf,%lf",&kept,&repaired,&notkept);
 
-   snprintf(date,CF_SMALLBUF,"%s",cdate(&start));
+   snprintf(date,CF_SMALLBUF,"%s",cf_ctime(&start));
    Chop(date);
    
    snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf }",date,i,kept,repaired,notkept);
