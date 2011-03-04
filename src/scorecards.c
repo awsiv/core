@@ -69,40 +69,34 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 /*****************************************************************************/
 
-void Nova_ComplianceSummaryGraph()
+void Nova_ComplianceSummaryGraph(char *buffer,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
-  int count = 0, tmpsize;
-  char newfile[CF_BUFSIZE],key[CF_MAXVARSIZE],value[CF_MAXVARSIZE];
+{ char key[CF_MAXVARSIZE],value[CF_MAXVARSIZE],work[CF_BUFSIZE],date[CF_SMALLBUF];
   const int span = 7 * 4;
   const double scale = 4.0;
-  double x,kept[span], repaired[span], notkept[span];
-  double tkept,trepaired,tnotkept,total,y;
-  double lkept,lrepaired,lnotkept,ltotal;
+  double x,kept, repaired, notkept;
   time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
-  int i,j,slot;
-
-for (i = 0; i < (int)span; i++)
-   {
-   kept[i] = 0;
-   repaired[i] = 0;
-   notkept[i] = 0;
-   }
-
-ltotal = lkept = lrepaired = 0;
-lnotkept = 1;
+  int i;
 
 // Read the cached compliance summary
 
+snprintf(buffer,bufsize,"[");
+  
 for (i = 0,start = now - one_week; start < now; start += CF_SHIFT_INTERVAL,i++)
    {
    slot = GetShiftSlot(start);
    snprintf(key,CF_MAXVARSIZE,"tc_%d",slot);
    CFDB_GetValue(key,value,CF_MAXVARSIZE);
-   sscanf(value,"%lf,%lf,%lf",&(kept[i]),&(repaired[i]),&(notkept[i]));
+   sscanf(value,"%lf,%lf,%lf",&kept,&repaired,&notkept);
 
-   // print UTC(time), 
+   snprintf(date,CF_SMALLBUF,"%s",cdate(&start));
+   Chop(date);
+   
+   snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf }",date,i,kept,rep,notkept);
+   strcat(buffer,",");
    }
+
+buffer[strlen(buffer)-1] = ']';
 }
 
 /*****************************************************************************/
@@ -190,44 +184,44 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
 if (hq->records != NULL)
   {
-    if(num_week>0)
-      {
-	Nova_BarMeter(1,kept_week/num_week,rep_week/num_week,"Week",buffer,bufsize);
-	strcat(buffer,",");
-      }
-    if(num_day>0)
-      {
-	Nova_BarMeter(2,kept_day/num_day,rep_day/num_day,"Day",buffer,bufsize);
-	strcat(buffer,",");
-      }
-    if(num_hour>0)
-      {
-	Nova_BarMeter(3,kept_hour/num_hour,rep_hour/num_hour,"Hour",buffer,bufsize);
-	strcat(buffer,",");
-      }
-    if(num_perf>0)
-      {
-	Nova_BarMeter(4,kept_perf/num_perf,rep_perf/num_perf,"Perf",buffer,bufsize);
-	strcat(buffer,",");
-      }
-    if(num_other>0)
-      {
-	Nova_BarMeter(5,kept_other/num_other,rep_other/num_other,"Chng",buffer,bufsize);
-	strcat(buffer,",");
-      }
-    if(num_comms>0)
-      {
-	Nova_BarMeter(6,kept_comms/num_comms,rep_comms/num_comms,"Seen",buffer,bufsize);
-	strcat(buffer,",");
-      }
-    if(num_anom>0)
-      {
-	Nova_BarMeter(7,kept_anom/num_anom,rep_anom/num_anom,"Anom",buffer,bufsize);
-      }
-     else
-       {
-	 buffer[strlen(buffer)-1] = '\0';
-       }
+  if (num_week>0)
+     {
+     Nova_BarMeter(1,kept_week/num_week,rep_week/num_week,"Week",buffer,bufsize);
+     strcat(buffer,",");
+     }
+  if (num_day>0)
+     {
+     Nova_BarMeter(2,kept_day/num_day,rep_day/num_day,"Day",buffer,bufsize);
+     strcat(buffer,",");
+     }
+  if (num_hour>0)
+     {
+     Nova_BarMeter(3,kept_hour/num_hour,rep_hour/num_hour,"Hour",buffer,bufsize);
+     strcat(buffer,",");
+     }
+  if (num_perf>0)
+     {
+     Nova_BarMeter(4,kept_perf/num_perf,rep_perf/num_perf,"Perf",buffer,bufsize);
+     strcat(buffer,",");
+     }
+  if (num_other>0)
+     {
+     Nova_BarMeter(5,kept_other/num_other,rep_other/num_other,"Chng",buffer,bufsize);
+     strcat(buffer,",");
+     }
+  if (num_comms>0)
+     {
+     Nova_BarMeter(6,kept_comms/num_comms,rep_comms/num_comms,"Seen",buffer,bufsize);
+     strcat(buffer,",");
+     }
+  if (num_anom>0)
+     {
+     Nova_BarMeter(7,kept_anom/num_anom,rep_anom/num_anom,"Anom",buffer,bufsize);
+     }
+  else
+     {
+     buffer[strlen(buffer)-1] = '\0';
+     }
   }
 
 // Clean up
@@ -864,8 +858,8 @@ void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bu
 
 { char work[CF_BUFSIZE];
  
- snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf }",name,pos,kept,rep,100-kept-rep);
- Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf }",name,pos,kept,rep,100-kept-rep);
+Join(buffer,work,bufsize);
 }
 
 #endif

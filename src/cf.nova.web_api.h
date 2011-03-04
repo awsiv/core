@@ -111,10 +111,9 @@ int Nova2PHP_get_bundle_count(char *buffer, int bufsize);
 int Nova2PHP_get_promise_count(char *buffer, int bufsize);
 void Nova2PHP_AnalyseMag(char *hostkey,enum observables obs,char *buffer,int bufsize);
 void Nova2PHP_AnalyseWeek(char *hostkey,enum observables obs,char *buffer,int bufsize);
-void Nova2PHP_ComplianceSummaryGraph(void);
+void Nova2PHP_ComplianceSummaryGraph(char *buffer,int bufsize);
 void Nova2PHP_AnalyseHistogram(char *keyhash,int obs,char *buffer,int bufsize);
 int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize);
-
 
 // constellation function stubs
 

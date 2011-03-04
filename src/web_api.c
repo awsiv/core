@@ -3253,10 +3253,9 @@ void Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int 
 
 /*****************************************************************************/
 
-void Nova2PHP_ComplianceSummaryGraph()
+void Nova2PHP_ComplianceSummaryGraph(char *buffer,int bufsize)
 {
-Nova_WebTopicMap_Initialize();
-Nova_ComplianceSummaryGraph();
+Nova_ComplianceSummaryGraph(buffer,bufsize);
 }
 
 /*****************************************************************************/
