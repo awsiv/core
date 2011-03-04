@@ -260,14 +260,18 @@ function knowledge()
                 array_push($columns, img(array('src' => 'images/' . $type . '.png', 'class' => 'align')) . anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
             }
         }
-
+        $bc = array(
+            'title' => "$type hosts",
+            'url' => 'welcome/hosts/'.$type,
+            'isRoot' => false
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
             'type' => $type,
             'title_header' => "engineering status",
             'title' => "Cfengine Mission Portal - " . $type . " hosts",
-            'nav_text' => "Status : hosts",
-            'status' => "current",
             'tabledata' => $columns,
+            'breadcrumbs' => $this->breadcrumblist->display(),
         );
         $this->template->load('template', 'hosts', $data);
     }

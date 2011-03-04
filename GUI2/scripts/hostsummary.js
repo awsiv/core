@@ -44,7 +44,8 @@ function hostsummary(redhosts,yellowhosts,greenhosts,total){
           "$angularWidth": (360/total)*redhosts,
           "$color": "#dd3333",
           "$height": 70,
-          "numbers":redhosts
+          "numbers":redhosts,
+          "type":"red"
         },
         "adjacencies": [
             {
@@ -68,7 +69,8 @@ function hostsummary(redhosts,yellowhosts,greenhosts,total){
           "$angularWidth": (360/total)*yellowhosts,
           "$color": "#FFFF00",
           "$height": 73,
-          "numbers":yellowhosts
+          "numbers":yellowhosts,
+          "type":"yellow"
         },
         "adjacencies": [
             "node1", "node3"
@@ -80,7 +82,8 @@ function hostsummary(redhosts,yellowhosts,greenhosts,total){
           "$angularWidth": (360/total)*greenhosts,
           "$color": "#bf0",
           "$height": 75,
-          "numbers":greenhosts
+          "numbers":greenhosts,
+          "type":"green"
         },
         "adjacencies": [
             "node1", "node2"
@@ -143,6 +146,8 @@ function hostsummary(redhosts,yellowhosts,greenhosts,total){
       onClick: function(node, eventInfo, e){
         if (!node) return;
         var html = "<h4>" + node.name + " connections</h4><ul><li>", ans = [];
+       // alert(node.data.type);
+        window.location.replace("/welcome/hosts/"+node.data.type);
         /*node.eachAdjacency(function(adj){
           // if on the same level i.e siblings
             if (adj.nodeTo._depth == node._depth) {
