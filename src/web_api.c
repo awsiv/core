@@ -4897,6 +4897,21 @@ return true;
 }
 
 /*****************************************************************************/
+
+int Nova2PHP_enterprise_version(char *buf, int bufsize)
+{
+#ifdef HAVE_LIBCFCONSTELLATION
+
+snprintf(buf, bufsize, "Constellation %s", Constellation_GetVersion());
+
+#else
+
+snprintf(buf, bufsize, "Nova %s", Nova_GetVersion());
+
+#endif
+}
+
+/*****************************************************************************/
 /*                           Constellation                                   */
 /*****************************************************************************/
 
