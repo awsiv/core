@@ -11,6 +11,12 @@ class Promise extends Cf_Controller
 	 }	
 	function plist()
 	{
+              $bc = array(
+                'title' => 'Promises',
+                'url' => 'promise',
+                'isRoot' => false
+               );
+               $this->breadcrumb->setBreadCrumb($bc);
 		$hostkey = NULL;
 		$name = ".*";
 		$regex = 1;
@@ -18,9 +24,8 @@ class Promise extends Cf_Controller
 		$data=array(
 			 'title' => "Cfengine Mission Portal - compliance",
                          'title_header'=>"Compliance",
-                         'nav_text'=>"Status : Promises",
-      		         'status'=>"current",
       		         'promise_list'=> cfpr_report_compliance_promises($hostkey,$handle,"x",false,NULL),
+                         'breadcrumbs' => $this->breadcrumblist->display()
 			 ); 
 		$this->template->load('template','promise/promises',$data);
 	}
@@ -34,6 +39,12 @@ class Promise extends Cf_Controller
                 $mybundle = cfpr_get_promise_bundle($handle);
 		$promiser = cfpr_get_promiser($handle);
                 $type = cfpr_get_promise_type($handle);
+                 $bc = array(
+                'title' => 'Promise',
+                'url' => 'promise/details',
+                'isRoot' => false
+               );
+                  $this->breadcrumb->setBreadCrumb($bc);
 		 $data=array(
 				'handle'=>$handle,
 				'title_header'=>"promise $handle",
@@ -46,7 +57,8 @@ class Promise extends Cf_Controller
 				'allhandlespromiser'=>cfpr_list_handles($promiser,"",false),
 				'type'=>$type,
 				'allhandlesbytype' => cfpr_list_handles("",$type,false),
-				'promise' => cfpr_summarize_promise($handle)
+				'promise' => cfpr_summarize_promise($handle),
+                                'breadcrumbs' => $this->breadcrumblist->display()
 				);
 		 $this->template->load('template', 'promise/promise',$data);
 	}

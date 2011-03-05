@@ -530,7 +530,7 @@ class Auth extends Controller {
 			   $this->form_validation->set_rules('name', 'Name', 'required|xss_clean|unique[groups.name]');
                        else
                            $this->form_validation->set_rules('name', 'Name', 'required|xss_clean');
-			$this->form_validation->set_rules('description', 'Description', 'xss_clean');
+		     $this->form_validation->set_rules('description', 'Description', 'required|xss_clean');
 			if ($this->form_validation->run() == true)
 			{
 				$data=array('name'=>$this->input->post('name'),'description'=>$this->input->post('description'));
@@ -539,6 +539,11 @@ class Auth extends Controller {
                                     $this->__load_group_add_edit($op,$id);
                                     return;
 				  }
+                                  if($op=='create' && $this->ion_auth->create_group($data)=="")
+                                  {
+                                    $this->__load_group_add_edit($op,$id);
+                                    return;
+                                  }
                                  if(is_ajax ())
                                         {
                                          $this->data['message'] =$this->ion_auth->messages();

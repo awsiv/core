@@ -5,7 +5,7 @@
    {
    parent::__construct();
    $this->load->library('jcryption');
-   session_start();
+   //session_start();
    }
   
    function index()

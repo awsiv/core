@@ -836,7 +836,7 @@ class Ion_auth
 			return TRUE;
 		}
 
-		$this->set_error('group_update_unsuccessful');
+		//$this->set_error('group_update_unsuccessful');
 		return FALSE;
 	  }
 

@@ -19,7 +19,7 @@
 <div id="wrapper">
    <div class="container_12">
     	<div id="header">
-            <div class="grid_6 sitetitle">
+            <div class="grid_9 sitetitle">
                 <a href="<?php echo site_url('welcome/index'); ?>" title="dashboard">
                 CFENGINE MISSION PORTAL
                 <span id="subheading"> <b><?php echo $title_header ;?></b></span>

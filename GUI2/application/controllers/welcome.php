@@ -181,11 +181,18 @@ class Welcome extends Cf_Controller {
     }
 
     function helm() {
+         $bc = array(
+            'title' => 'Configure',
+            'url' => 'welcome/helm',
+            'isRoot' => false
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
             'title' => "Cfengine Mission Portal - control",
             'title_header' => "control",
             'nav_text' => "Planning : menu",
-            'planning' => "current"
+            'planning' => "current",
+            'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'helm', $data);
     }
@@ -193,7 +200,7 @@ class Welcome extends Cf_Controller {
     function knowledge() {
         $bc = array(
             'title' => 'Knowledge Map',
-            'url' => 'welcome/index',
+            'url' => 'welcome/knowledge',
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
@@ -352,12 +359,17 @@ class Welcome extends Cf_Controller {
     }
 
     function services() {
+         $bc = array(
+            'title' => 'Services',
+            'url' => 'welcome/services',
+            'isRoot' => false
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
             'title_header' => "service catalogue",
             'title' => "Cfengine Mission Portal - service catalogue ",
-            'nav_text' => "Planning : services",
-            'planning' => "current",
             'services' => cfpr_list_all_bundles("agent"),
+            'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'services', $data);
     }

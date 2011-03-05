@@ -904,16 +904,16 @@ class Ion_auth_model_mongo extends CI_Model
 	    }
             $old_doc=$this->mongo_db->get_where_object('groups',array('_id'=>new MongoId($id)));
 	    $this->mongo_db->where(array('_id'=>new MongoId($id)));
-            $result=$this->mongo_db->update('groups', $data);
+            $result_group=$this->mongo_db->update('groups', $data);
 	    //if($result['n']==1)return TRUE; else return FALSE;
             //$this->get_users_by_group($)
 
             // make changes of the ripple effect of change of group in the user table;
             $this->mongo_db->clear();
             $this->mongo_db->where(array('group'=>$old_doc->name));
-            $result=$this->mongo_db->update_all('users',array('group.$' => $data['name']));
+            $result_user=$this->mongo_db->update_all('users',array('group.$' => $data['name']));
             $this->mongo_db->clear();
-            return $result;
+            return True;
 	}
 
 }
