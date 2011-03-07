@@ -19,7 +19,6 @@
 
 // Separation needed because it is included by php extension
 
-
 char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize);
 int Nova2PHP_get_observable_id(char *name);
 void Nova2PHP_get_magnified_view(char *keyhash,enum observables obs,char *buffer,int bufsize);
@@ -45,7 +44,7 @@ void Nova_EnterpriseModuleTrick(void);
 void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize);
 void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,char *classreg, char *returnval,int bufsize);
-int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,int rowsPerPage,int pageNum,char *returnval,int bufsize);
+int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,struct PageInfo *page,char *returnval,int bufsize);
 int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,char *buffer,int bufsize);
 void Nova2PHP_summary_meter(char *buffer,int bufsize);
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize);

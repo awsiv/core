@@ -301,14 +301,13 @@ return -1;
 /* Search for answers                                                        */
 /*****************************************************************************/
 
-int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,int rowsPerPage,int pageNum,char *returnval,int bufsize)
+int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE], note[CF_MAXVARSIZE], note_link[CF_BUFSIZE];
   struct HubPromiseLog *hp;  struct HubQuery *hq;
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp, reportType;
   mongo_connection dbconn;
-  int resCount;
   
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -318,7 +317,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,true,classreg);
 
- resCount = PageRecords(&(hq->records),rowsPerPage,pageNum);
+ PageRecords(&(hq->records),page,DeleteHubPromiseLog);
 
 StartJoin(returnval,"<table>\n",bufsize);
 
@@ -4905,19 +4904,20 @@ int Nova2PHP_enterprise_version(char *buf, int bufsize)
 {
 #ifdef HAVE_LIBCFCONSTELLATION
 
-  snprintf(buf, bufsize, "Constellation %s", Constellation_GetVersion());
+snprintf(buf, bufsize, "Constellation %s", Constellation_GetVersion());
 
- return true;
+return true;
 
 #else
 
- snprintf(buf, bufsize, "Nova %s", Nova_GetVersion());
+snprintf(buf, bufsize, "Nova %s", Nova_GetVersion());
  
- return true;
+return true;
 
 #endif
 
- return false;
+
+return false;
 }
 
 /*****************************************************************************/

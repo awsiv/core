@@ -1164,13 +1164,81 @@ int SortBundleSeen(void *p1, void *p2)
 
 /*****************************************************************************/
 
-int PageRecords(struct Rlist **records_p, int rowsPerPage, int pageNum)
+int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)())
 /**
  * Unlinks and unallocates records not within the desired page.
- * Returns the total number of records given as input.
+ * Writes the total number of records given as input.
  **/
 {
+  struct Rlist *rp;
+  struct Rlist *prevStartEl, *startEl, *endEl;
+  int startIdx, endIdx;
+  int count = 0;
+
+  if(page->resultsPerPage <= 0 || page->pageNum <= 0)
+    {
+    CfOut(cf_error, "", "!! Wrong parameters to PageRecords() - %d,%d",
+	  page->resultsPerPage, page->pageNum);
+    return false;
+    }
+  
+  startIdx = page->resultsPerPage*(page->pageNum - 1);
+  endIdx = (page->resultsPerPage*page->pageNum) - 1;
+
+  prevStartEl = NULL;  // points to startEl
+  startEl = *records_p;
+  endEl = NULL;
+
+  for(rp = *records_p; rp != NULL; rp = rp->next)
+    {
+      if(count == endIdx)
+	{
+	  endEl = rp;
+	}
+
+      count++;
+
+      if(count == startIdx && rp->next)  // next is startEl
+	{
+	  prevStartEl = rp;
+	  startEl = rp->next;
+	}
+      
+    }
   
   
+  // now unlink uneccessary elements at start and end
   
+  if(prevStartEl)
+    {
+      prevStartEl->next = NULL;
+
+      for(rp = *records_p; rp != NULL; rp = rp->next)
+	{
+	  (*fnptr)(rp->item);
+	  rp->item = NULL;
+	}
+      
+      DeleteRlist(*records_p);
+      *records_p = NULL;  // restored below
+    }
+  
+
+  if(endEl)
+    {
+      for(rp = endEl->next; rp != NULL; rp = rp->next)
+	{
+	  (*fnptr)(rp->item);
+	  rp->item = NULL;
+	}
+      
+      DeleteRlist(endEl->next);
+      endEl->next = NULL;
+    }
+  
+  
+  *records_p = startEl;
+  page->totalResultCount = count;
+  
+  return true;
 }

@@ -126,6 +126,15 @@ struct CfFileLine
 
 /*****************************************************************************/
 
+struct PageInfo
+{
+  int resultsPerPage;
+  int pageNum;
+  int totalResultCount;
+};
+
+/*****************************************************************************/
+
 #ifdef MINGW
 
 #define EVENTSOURCE_NAME "Cfengine Nova"  // appears in e.g. Event Viewer
@@ -588,8 +597,7 @@ int SortClasses(void *p1, void *p2);
 int SortSoftware(void *p1, void *p2);
 int SortBundleSeen(void *p1, void *p2);
 
-int PageRecords(struct Rlist **records_p, int rowsPerPage, int pageNum);
-
+int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)());
 
 /* knowledge.c */
 
