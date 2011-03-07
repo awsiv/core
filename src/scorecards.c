@@ -23,7 +23,7 @@ void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize)
   int i, havedata=false;
   struct CfDataView cfv;
 
-strcpy(buffer,"{");
+strcpy(buffer,"{ ");
 
 Nova2PHP_hostinfo(hostkey,hostname,ipaddress,CF_MAXVARSIZE);
 Nova2PHP_getlastupdate(hostkey,lastsaw,CF_SMALLBUF);
@@ -57,8 +57,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
  if(havedata)
    {
-     buffer[strlen(buffer)-1] = '\0'; /*remove last comma*/
-     Join(buffer,"]",bufsize);
+     buffer[strlen(buffer)-1] = ']';
    }
  else
    {
@@ -92,8 +91,11 @@ for (i = 0,start = now - one_week; start < now; start += CF_SHIFT_INTERVAL,i++)
    snprintf(date,CF_SMALLBUF,"%s",cf_ctime(&start));
    Chop(date);
    
-   snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf }",date,i,kept,repaired,notkept);
-   strcat(buffer,",");
+   snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf },",date,i,kept,repaired,notkept);
+   if(!Join(buffer,work,bufsize))
+     {
+       break;
+     }
    }
 
 buffer[strlen(buffer)-1] = ']';
