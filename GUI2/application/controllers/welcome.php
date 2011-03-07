@@ -28,25 +28,9 @@ class Welcome extends Cf_Controller {
             ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'hostsummary.js"></script>
             ',
-            '<style type="text/css">
-            /*<![CDATA[*/
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'graphs/host-meter.js"> </script>'
+        );
 
-
-            .node{
-                background-color: #ccccff;
-                border: 1px;
-                -moz-box-shadow: 3px 3px 5px #888;
-                -webkit-box-shadow: 3px 3px 5px #888;
-                box-shadow: 3px 3px 5px #888;
-
-            }
-
-
-            /*]]>*/
-        </style>
-         ');
-
-        $this->template->set('injected_item', implode("", $scripts));
 
         $data = array(
             'title' => "Cfengine Mission Portal - overview",
@@ -57,6 +41,17 @@ class Welcome extends Cf_Controller {
             'y' => $y,
             'g' => $g
         );
+
+        $gdata = cfpr_compliance_summary_graph();
+        if ($gdata) {
+            $graphData = $this->_convert_summary_compliance_graph($gdata);            
+            $data = array_merge($data, $graphData);
+        }
+
+        
+        $this->template->set('injected_item', implode("", $scripts));
+
+
         $this->template->load('template', 'index', $data);
     }
 
@@ -114,6 +109,7 @@ class Welcome extends Cf_Controller {
 
         $data['graphSeries']['labels'] = json_encode($labels);
         $data['graphSeries']['values'] = json_encode($values);
+        
         return $data;
     }
 
@@ -365,7 +361,7 @@ class Welcome extends Cf_Controller {
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
-        
+
 
         $gdata = cfpr_top_n_hosts("compliance", 1000);
         $ret = array();
@@ -373,11 +369,11 @@ class Welcome extends Cf_Controller {
 
             $ret = json_decode($gdata, TRUE);
             // get the value
-            
+
             foreach ($ret as $index => $val) {
                 $rawData = cfpr_host_meter($val['key']);
                 $graphData = $this->_convert_summary_compliance_graph($rawData);
-                $ret[$index] = array_merge($ret[$index],$graphData);
+                $ret[$index] = array_merge($ret[$index], $graphData);
             }
         }
 
@@ -388,7 +384,6 @@ class Welcome extends Cf_Controller {
             'status' => "current",
             'ret' => $ret,
             'breadcrumbs' => $this->breadcrumblist->display()
-
         );
         $this->template->load('template', 'topN', $data);
     }
