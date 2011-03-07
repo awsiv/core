@@ -9,7 +9,7 @@ class Promise extends Cf_Controller
 	 {
 	  $this->plist();
 	 }	
-	function plist()
+	function plist($key = NULL)
 	{
               $bc = array(
                 'title' => 'Promises',
@@ -17,7 +17,7 @@ class Promise extends Cf_Controller
                 'isRoot' => false
                );
                $this->breadcrumb->setBreadCrumb($bc);
-		$hostkey = NULL;
+		$hostkey = $key;
 		$name = ".*";
 		$regex = 1;
                 $handle = NULL;

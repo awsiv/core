@@ -20,13 +20,24 @@ class Visual extends Cf_Controller {
     }
 
     function vital($hostkey=NULL) {
+
+        
+
         $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : $hostkey;
+
+        $bc = array(
+            'title' => 'Vitals',
+            'url' => 'visual/vital/'.$hostkey,
+            'isRoot' => false
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
+
         $data = array(
             'title' => "Cfengine Mission Portal - vital signs",
             'title_header' => "vital signs",
             'nav_text' => "Status : vital signs",
             'status' => "current",
-            //'ret' => cfpr_performance_analysis($hostkey),
+            'breadcrumbs' => $this->breadcrumblist->display(),
             'hostKey' => $hostkey
         );
 

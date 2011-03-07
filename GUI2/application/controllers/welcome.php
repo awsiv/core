@@ -99,7 +99,6 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'status', $data);
     }
 
-
     function _convert_summary_compliance_graph($rawData) {
         $convertedData = json_decode($rawData, true);
 
@@ -158,6 +157,7 @@ class Welcome extends Cf_Controller {
         //print_r(json_encode($control));
         return json_encode($control);
     }
+
     /**
      * For generating random color
      * @author sudhir pandey
@@ -181,7 +181,7 @@ class Welcome extends Cf_Controller {
     }
 
     function helm() {
-         $bc = array(
+        $bc = array(
             'title' => 'Configure',
             'url' => 'welcome/helm',
             'isRoot' => false
@@ -300,7 +300,7 @@ class Welcome extends Cf_Controller {
 
         $bc = array(
             'title' => 'Host',
-            'url' => 'welcome/host/'.$hostkey,
+            'url' => 'welcome/host/' . $hostkey,
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
@@ -348,18 +348,53 @@ class Welcome extends Cf_Controller {
     }
 
     function weakest_host() {
+        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
+            ',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>
+                ',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery-ui-1.8.9.custom.min.js"> </script>
+                ',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'graphs/host-meter.js"> </script>'
+        );
+        $this->template->set('injected_item', implode("", $scripts));
+
+        $bc = array(
+            'title' => 'Weakest Host',
+            'url' => 'welcome/weakest_host',
+            'isRoot' => false
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
+        
+
+        $gdata = cfpr_top_n_hosts("compliance", 1000);
+        $ret = array();
+        if ($gdata) {
+
+            $ret = json_decode($gdata, TRUE);
+            // get the value
+            
+            foreach ($ret as $index => $val) {
+                $rawData = cfpr_host_meter($val['key']);
+                $graphData = $this->_convert_summary_compliance_graph($rawData);
+                $ret[$index] = array_merge($ret[$index],$graphData);
+            }
+        }
+
         $data = array(
             'title_header' => "weakest hosts",
             'title' => "Cfengine Mission Portal - weakest hosts ",
             'nav_text' => "Status : weakest hosts",
             'status' => "current",
-            'ret' => cfpr_top_n_hosts("compliance", 1000),
+            'ret' => $ret,
+            'breadcrumbs' => $this->breadcrumblist->display()
+
         );
         $this->template->load('template', 'topN', $data);
     }
 
     function services() {
-         $bc = array(
+        $bc = array(
             'title' => 'Services',
             'url' => 'welcome/services',
             'isRoot' => false
@@ -388,8 +423,8 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'license', $data);
     }
 
-    function classes() {
-        $hostkey = NULL;
+    function classes($key = NULL) {
+        $hostkey = $key;
         $name = ".*";
         $regex = 1;
         $hash = NULL;
@@ -443,7 +478,7 @@ class Welcome extends Cf_Controller {
         );
         $this->breadcrumb->setBreadCrumb($bc);
 
-       //for creating the initial table of hosts as cfpr_select_hosts return the json data
+        //for creating the initial table of hosts as cfpr_select_hosts return the json data
         $cells = array();
         $result = json_decode(cfpr_select_hosts("none", ".*", 100), true);
         if (count($result) > 0) {
@@ -461,8 +496,7 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'hostlist', $data);
     }
 
-    function pulse_vitals()
-    {
+    function pulse_vitals() {
         $scripts = array('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery.form.js"> </script>');
 
         $this->template->set('injected_item', implode("", $scripts));
@@ -474,7 +508,7 @@ class Welcome extends Cf_Controller {
         );
         $this->breadcrumb->setBreadCrumb($bc);
 
-       //for creating the initial table of hosts as cfpr_select_hosts return the json data
+        //for creating the initial table of hosts as cfpr_select_hosts return the json data
         $cells = array();
         $result = json_decode(cfpr_select_hosts("none", ".*", 100), true);
         if (count($result) > 0) {

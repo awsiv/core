@@ -11,9 +11,9 @@
 	$this->blist();
 	}
         
-	function blist()
+	function blist($key = NULL)
 	 {
-		$hostkey = NULL;
+		$hostkey =  $key;
 		$name = ".*";
 		$regex = 1;
 		$hash = NULL;
