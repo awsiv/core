@@ -45,7 +45,7 @@ void Nova_EnterpriseModuleTrick(void);
 void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize);
 void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,char *classreg, char *returnval,int bufsize);
-int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize);
+int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,int rowsPerPage,int pageNum,char *returnval,int bufsize);
 int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,char *buffer,int bufsize);
 void Nova2PHP_summary_meter(char *buffer,int bufsize);
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize);
@@ -114,6 +114,7 @@ void Nova2PHP_AnalyseWeek(char *hostkey,enum observables obs,char *buffer,int bu
 void Nova2PHP_ComplianceSummaryGraph(char *buffer,int bufsize);
 void Nova2PHP_AnalyseHistogram(char *keyhash,int obs,char *buffer,int bufsize);
 int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize);
+int Nova2PHP_enterprise_version(char *buf, int bufsize);
 
 // constellation function stubs
 

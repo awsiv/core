@@ -1162,3 +1162,15 @@ int SortBundleSeen(void *p1, void *p2)
     }
 }
 
+/*****************************************************************************/
+
+int PageRecords(struct Rlist **records_p, int rowsPerPage, int pageNum)
+/**
+ * Unlinks and unallocates records not within the desired page.
+ * Returns the total number of records given as input.
+ **/
+{
+  
+  
+  
+}

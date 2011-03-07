@@ -576,7 +576,6 @@ struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char 
 void DeleteHubNote(struct HubNote *hc);
 void DeleteHubNoteInfo(struct HubNoteInfo *hci);
 
-
 int SortPromiseLog(void *p1, void *p2);
 int SortBusinessValue(void *p1, void *p2);
 int SortTotalCompliance(void *p1, void *p2);
@@ -588,6 +587,8 @@ int SortPromiseCompliance(void *p1, void *p2);
 int SortClasses(void *p1, void *p2);
 int SortSoftware(void *p1, void *p2);
 int SortBundleSeen(void *p1, void *p2);
+
+int PageRecords(struct Rlist **records_p, int rowsPerPage, int pageNum);
 
 
 /* knowledge.c */
