@@ -318,7 +318,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,true,classreg);
  PageRecords(&(hq->records),page,DeleteHubPromiseLog);
  //StartJoin(returnval,"<table>\n",bufsize);
-strcpy(returnval,"{");
+strcpy(returnval,"[");
 
 //snprintf(buffer,sizeof(buffer), "<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Time</th><th>Notes</th></tr>\n");
 Join(returnval,buffer,bufsize);
@@ -373,7 +373,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    }
 
  returnval[strlen(returnval)-1]='\0';
-EndJoin(returnval,"}",bufsize);
+EndJoin(returnval,"]",bufsize);
 DeleteHubQuery(hq,DeleteHubPromiseLog);
 
 if (!CFDB_Close(&dbconn))
@@ -434,7 +434,7 @@ if (summary == NULL)
 else
    {
      //   StartJoin(returnval,"<table>\n",bufsize);   
-     strcpy(returnval,"{ ");
+     strcpy(returnval,"[");
 
    summary = SortItemListCounters(summary);
    //snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Report</th><th>Occurrences</th></tr>\n");
@@ -456,7 +456,7 @@ else
       }
    returnval[strlen(returnval)-1]='\0';
    //   EndJoin(returnval,"</table>\n",bufsize);
-   EndJoin(returnval,"}\n",bufsize);
+   EndJoin(returnval,"]\n",bufsize);
    DeleteItemList(summary);
    }
 
@@ -486,7 +486,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,classreg);
 
  //StartJoin(returnval,"<table>\n",bufsize);
- strcpy(returnval,"{ ");
+ strcpy(returnval,"[");
 
  //snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Day</th><th>Kept</th><th>Repaired</th><th>Not kept</th><th>Notes</th></tr>\n");
  //Join(returnval,buffer,bufsize);
@@ -525,7 +525,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
      }
    }
  returnval[strlen(returnval)-1]='\0';
-EndJoin(returnval,"}\n",bufsize);
+EndJoin(returnval,"]\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubValue);
 
@@ -560,7 +560,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    
 
  //StartJoin(returnval,"<table>\n",bufsize);
- strcpy(returnval,"{ ");
+ strcpy(returnval,"[");
 
  //snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Name</th><th>Version</th><th>Architcture</th></tr>\n");
  //Join(returnval,buffer,bufsize);
@@ -577,7 +577,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    }
 
  returnval[strlen(returnval)-1]='\0';
-EndJoin(returnval,"}\n",bufsize);
+EndJoin(returnval,"]\n",bufsize);
 
 
 DeleteHubQuery(hq,DeleteHubSoftware);
@@ -614,7 +614,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
 
  //StartJoin(returnval,"<table>\n",bufsize);
- strcpy(returnval,"{ ");
+ strcpy(returnval,"[");
 
  //snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Class context</th><th>Occurs with<br>Probability</th><th>Uncertainty</th><th>Last seen</th></tr>\n");
  //Join(returnval,buffer,bufsize);
@@ -626,7 +626,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    //   if (now - hc->t > 6*3600)
       {
 	//      snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%lf</td><td>%lf</td><td><span class=\"amber\">%s</span></td></tr>\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
-	snprintf(buffer,sizeof(buffer),"{\"host\":\"%s\",\"context\":\"%s\",\"prob\":%lf,\"uncert\":%lf,\"lastseen\":%ld},",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
+	snprintf(buffer,sizeof(buffer),"{\"host\":\"%s\",\"context\":\"%s\",\"prob\":%lf,\"uncert\":%lf,\"lastseen\":%ld},",hc->hh->hostname,hc->class,hc->prob,hc->dev,hc->t);
       }
       //   else if (now - hc->t > (time_t)CF_WEEK)
       {
@@ -645,7 +645,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
  returnval[strlen(returnval)-1]='\0';
 //EndJoin(returnval,"</table>\n",bufsize);
-EndJoin(returnval,"}\n",bufsize);
+EndJoin(returnval,"]\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubClass);
 
@@ -683,7 +683,7 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
 lscope[0] = '\0';
 
 //StartJoin(returnval,"<table>\n",bufsize);
- strcpy(returnval,"[ ");
+ strcpy(returnval,"[");
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -701,7 +701,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 	  Join(returnval,"]},",bufsize); // end object
 	}
 
-      snprintf(buffer,CF_BUFSIZE,"{\"scope\" : \"%s\",\"data\" : [ ",hv->scope);
+      snprintf(buffer,CF_BUFSIZE,"{\"scope\" : \"%s\",\"data\" : [",hv->scope);
       Join(returnval,buffer,bufsize);
       //      snprintf(buffer,CF_BUFSIZE,"<tr><th>Host</th><th>Type</th><th>Name</th><th>Value</th><th>Last seen</th></tr>\n");
       //      Join(returnval,buffer,bufsize);
@@ -797,7 +797,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 
  //StartJoin(returnval,"<table>\n",bufsize);
- strcpy(returnval,"{ ");
+ strcpy(returnval,"[");
 
  //snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Policy</th><th>Kept</th><th>Repaired</th><th>Not kept</th><th>Last seen</th></tr>\n");
  //Join(returnval,buffer,bufsize);
@@ -807,8 +807,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    ht = (struct HubTotalCompliance *)rp->item;
 
    snprintf(buffer,sizeof(buffer),
-	    "{\"host\" : \"%s\",\"policy\" : \"%s\",\"kept\" : %d,\"repaired\" : %d,\"notkept\" : %d,\"lastseen\" : %s},",
-            ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,cf_ctime(&(ht->t)));
+	    "{\"host\" : \"%s\",\"policy\" : \"%s\",\"kept\" : %d,\"repaired\" : %d,\"notkept\" : %d,\"lastseen\" : %ld},",
+            ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,ht->t);
 
    if(!Join(returnval,buffer,bufsize))
      {
@@ -818,7 +818,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
 //EndJoin(returnval,"</table>\n",bufsize);
 returnval[strlen(returnval)-1]='\0';
-EndJoin(returnval,"}\n",bufsize);
+EndJoin(returnval,"]\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
@@ -856,7 +856,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 
  //StartJoin(returnval,"<table>\n",bufsize);
- strcpy(returnval,"{ ");
+ strcpy(returnval,"[");
 
  //snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Promise handle</th><th>Last known<br>State</th><th>Probability<br>Kept</th><th>Uncertainty</th><th>Last seen</th></tr>\n");
  //Join(returnval,buffer,bufsize);
@@ -868,8 +868,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    /*snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"/promise/details/%s\">%s</a></td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%s</td></tr>\n",
             hp->hh->hostname,hp->handle,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_ctime(&(hp->t)));
    */
-   snprintf(buffer,sizeof(buffer),"{\"host\" : \"%s\",\"handle\" : \"%s\",\"state\" : \"%s\",\"kept\" : %.2lf,\"uncert\" : %.2lf,\"dt\" : \"%s\"},",
-            hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_ctime(&(hp->t)));
+   snprintf(buffer,sizeof(buffer),"{\"host\" : \"%s\",\"handle\" : \"%s\",\"state\" : \"%s\",\"kept\" : %.2lf,\"uncert\" : %.2lf,\"dt\" : %ld},",
+            hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,hp->t);
    if(!Join(returnval,buffer,bufsize))
      {
      break;
@@ -878,7 +878,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
 //EndJoin(returnval,"</table>\n",bufsize);
  returnval[strlen(returnval)-1]='\0';
-EndJoin(returnval,"}\n",bufsize);
+EndJoin(returnval,"]\n",bufsize);
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
 if (!CFDB_Close(&dbconn))
@@ -901,6 +901,7 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
   mongo_connection dbconn;
   char inout[CF_SMALLBUF];
   time_t then;
+  
 
 /* BEGIN query document */
 
@@ -912,9 +913,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
 
-
  //StartJoin(returnval,"<table>\n",bufsize);
-StartJoin(returnval,"{ ",bufsize);
+StartJoin(returnval,"[",bufsize);
 
 count += strlen(returnval);
 
@@ -948,7 +948,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    snprintf(buffer,sizeof(buffer),
 	    "\"host\" : \"%s\",</td><td>%s</td><td>%s</td><td><a href=\"host/%s\">%s</a></td><td>%s</td>"
             "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td><span class=\"keyhash\">%s</span></td></tr>\n",
-            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->keyhash,hl->rhost->ipaddr,cf_ctime(&then),
+            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->keyhash,hl->rhost->ipaddr,then,
             hl->hrsago,hl->hrsavg,hl->hrsdev,
             hl->rhost->keyhash);
    
@@ -958,7 +958,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
      }
    }
 // bishwa
-EndJoin(returnval,"</table>\n",bufsize);
+EndJoin(returnval,"]\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubLastSeen);
 
@@ -989,10 +989,11 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,true,classreg);
 
 
-StartJoin(returnval,"<table>\n",bufsize);
+ //StartJoin(returnval,"<table>\n",bufsize);
+ strcpy(returnval,"[");
 
-snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Event</th><th>Last time</th><th>Avg time</th><th>Uncertainty</th><th>Last performed</th><th>Notes</th></tr>\n");
-Join(returnval,buffer,bufsize);            
+ //snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Event</th><th>Last time</th><th>Avg time</th><th>Uncertainty</th><th>Last performed</th><th>Notes</th></tr>\n");
+ //Join(returnval,buffer,bufsize);            
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -1000,27 +1001,35 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    if(strcmp(hP->nid,CF_NONOTE) == 0)
      {
-       snprintf(note_link,CF_MAXVARSIZE,"\"/notes/add/hostkey/%s/report_type/%d/handle/%s\"",hP->hh->keyhash,CFREPORT_PERFORMANCE,hP->handle);
-       snprintf(note,CF_MAXVARSIZE,"%s",CF_ADDNOTE);
+       //      snprintf(note_link,CF_MAXVARSIZE,"\"/notes/add/hostkey/%s/report_type/%d/handle/%s\"",hP->hh->keyhash,CFREPORT_PERFORMANCE,hP->handle);
+       //snprintf(note,CF_MAXVARSIZE,"%s",CF_ADDNOTE);
+       snprintf(buffer,sizeof(buffer),"{\"host\" : \"%s\",\"event\" : \"%s\",\"last\" : %.2lf,\"avg\" : %.2lf,\"uncert\" : %.2lf,\"performed\" : %ld,"
+		"\"note\" : { \"action\" : \"add\",\"hostkey\" : \"%s\",\"type\" : %d,\"rid\" : \"%s\" }},",
+		hP->hh->hostname,hP->event,hP->q,hP->e,hP->d,hP->t,
+		hP->hh->keyhash,CFREPORT_PERFORMANCE,hP->handle);
      }
    else
      {
-       snprintf(note_link,CF_MAXVARSIZE,"\"/note/show/noteid/%s\"",hP->nid);
-       snprintf(note,CF_MAXVARSIZE,"%s",CF_SHOWNOTE);
+       //       snprintf(note_link,CF_MAXVARSIZE,"\"/note/show/noteid/%s\"",hP->nid);
+       //       snprintf(note,CF_MAXVARSIZE,"%s",CF_SHOWNOTE);
+       snprintf(buffer,sizeof(buffer),"{\"host\" : \"%s\",\"event\" : \"%s\",\"time\" : %.2lf,\"avg\" : %.2lf,\"uncert\" : %.2lf,\"performed\" : %ld,"
+		"\"note\" : { \"action\" : \"show\",\"nid\" : \"%s\" }},",
+		hP->hh->hostname,hP->event,hP->q,hP->e,hP->d,hP->t,
+		hP->nid);
      }
-
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n",
+   
+/*   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n",
             hP->hh->hostname,
             hP->event,hP->q,hP->e,hP->d,cf_ctime(&(hP->t)),
-	    note_link,note);
-   
+	    note_link,note);*/
    if(!Join(returnval,buffer,bufsize))
      {
-     break;
+      break;
      }
    }
-
-EndJoin(returnval,"</table>\n",bufsize);
+//EndJoin(returnval,"</table>\n",bufsize);
+ returnval[strlen(returnval)-1] = '\0';
+EndJoin(returnval,"]\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPerformance);
 
@@ -1051,24 +1060,26 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
 
-StartJoin(returnval,"<table>\n",bufsize);
+ //StartJoin(returnval,"<table>\n",bufsize);
+ strcpy(returnval,"[");
 
-snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Setuid/setgid root file</th></tr>\n");
+ /*snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Setuid/setgid root file</th></tr>\n");
 Join(returnval,buffer,bufsize);
-
+ */
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hS = ( struct HubSetUid *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td></tr>\n",hS->hh->hostname,hS->path);
+   snprintf(buffer,sizeof(buffer),"{\"host\" : \"%s\",\"file\" : \"%s\"},",hS->hh->hostname,hS->path);
 
    if(!Join(returnval,buffer,bufsize))
      {
      break;
      }
    }
-
-EndJoin(returnval,"</table>\n",bufsize);
+//EndJoin(returnval,"</table>\n",bufsize);
+ returnval[strlen(returnval)-1] = '\0';
+EndJoin(returnval,"]\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubSetUid);
 
@@ -1103,11 +1114,11 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg,true);
 
-StartJoin(returnval,"<table>\n",bufsize);
-
-snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Bundle</a></th><th>Last verified</th><th>Hours Ago</th><th>Avg interval</th><th>Uncertainty</th><th>Notes</th></tr>\n");
+ //StartJoin(returnval,"<table>\n",bufsize);
+ strcpy(returnval,"[");
+   /*snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Bundle</a></th><th>Last verified</th><th>Hours Ago</th><th>Avg interval</th><th>Uncertainty</th><th>Notes</th></tr>\n");
 Join(returnval,buffer,bufsize);
-   
+   */
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hb = ( struct HubBundleSeen *)rp->item;
@@ -1119,27 +1130,39 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    if(strcmp(hb->nid,CF_NONOTE) == 0)
      {
-       snprintf(note_link,CF_MAXVARSIZE,"\"/notes/add/hostkey/%s/report_type/%d/handle/%s\"",hb->hh->keyhash,CFREPORT_BUNDLE,hb->bundle);
-       snprintf(note,CF_MAXVARSIZE,"%s",CF_ADDNOTE);
+       //       snprintf(note_link,CF_MAXVARSIZE,"\"/notes/add/hostkey/%s/report_type/%d/handle/%s\"",hb->hh->keyhash,CFREPORT_BUNDLE,hb->bundle);
+       //       snprintf(note,CF_MAXVARSIZE,"%s",CF_ADDNOTE);
+       snprintf(buffer,sizeof(buffer),"{\"host\" : \"%s\",\"bundle\" : \"%s\",\"verified\" : %ld,\"ago\" : %.2lf,\"avg\" : %.2lf,\"uncert\" : %.2lf,"
+		"\"note\" : { \"action\" : \"add\",\"hostkey\" : \"%s\",\"type\" : %d,\"rid\" : \"%s\" }},",
+		hb->hh->hostname,hb->bundle,hb->t,
+		hb->hrsago,hb->hrsavg,hb->hrsdev,
+		hb->hh->keyhash,CFREPORT_BUNDLE,hb->bundle);
      }
    else
      {
-       snprintf(note_link,CF_MAXVARSIZE,"\"/note/show/noteid/%s\"",hb->nid);
-       snprintf(note,CF_MAXVARSIZE,"%s",CF_SHOWNOTE);
+       //       snprintf(note_link,CF_MAXVARSIZE,"\"/note/show/noteid/%s\"",hb->nid);
+       //       snprintf(note,CF_MAXVARSIZE,"%s",CF_SHOWNOTE);
+       snprintf(buffer,sizeof(buffer),"{\"host\" : \"%s\",\"bundle\" : \"%s\",\"verified\" : %ld,\"ago\" : %.2lf,\"avg\" : %.2lf,\"uncert\" : \"%.2lf\","
+		"\"note\" : { \"action\" : \"show\",\"nid\" : \"%s\" }},",
+		hb->hh->hostname,hb->bundle,hb->t,
+		hb->hrsago,hb->hrsavg,hb->hrsdev,
+		hb->hh->keyhash,hb->nid);
      }
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"/bundle/details/bundle/%s\">%s</a></td><td>%s</td>"
+   /*   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td><a href=\"/bundle/details/bundle/%s\">%s</a></td><td>%s</td>"
             "<td>%.2lf</td><td>%.2lf</td><td>%.2lf</td><td><a href=%s>%s</a></td></tr>\n",
             hb->hh->hostname,hb->bundle,hb->bundle,cf_ctime(&(hb->t)),
             hb->hrsago,hb->hrsavg,hb->hrsdev,
 	    note_link,note);
-
+   */
    if(!Join(returnval,buffer,bufsize))
      {
      break;
      }
    }
 
-EndJoin(returnval,"</table>\n",bufsize);
+ //EndJoin(returnval,"</table>\n",bufsize);
+returnval[strlen(returnval)-1] = '\0'; 
+EndJoin(returnval,"]",bufsize);
 
 DeleteHubQuery(hq,DeleteHubBundleSeen);
 
@@ -1180,27 +1203,36 @@ switch (*cmp)
    hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,classreg);
    
    
-   StartJoin(returnval,"<table>\n",bufsize);
+   //   StartJoin(returnval,"<table>\n",bufsize);
+   StartJoin(returnval,"[",bufsize);
 
-   snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>File</th><th>Change detected at</th><th>Notes</th></tr>\n");
+   /*   snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>File</th><th>Change detected at</th><th>Notes</th></tr>\n");
    Join(returnval,buffer,bufsize);
-
+   */
    for (rp = hq->records; rp != NULL; rp=rp->next)
      {
        hC = (struct HubFileChanges *)rp->item;
               
        if(strcmp(hC->nid,CF_NONOTE) == 0)
 	 {
-	   snprintf(note_link,CF_MAXVARSIZE,"\"/notes/add/hostkey/%s/report_type/%d/handle/%s\"",hC->hh->keyhash,CFREPORT_FILECHANGES,hC->handle);
-	   snprintf(note,CF_MAXVARSIZE,"%s",CF_ADDNOTE);
+	   //	   snprintf(note_link,CF_MAXVARSIZE,"\"/notes/add/hostkey/%s/report_type/%d/handle/%s\"",hC->hh->keyhash,CFREPORT_FILECHANGES,hC->handle);
+	   //	   snprintf(note,CF_MAXVARSIZE,"%s",CF_ADDNOTE);
+	   snprintf(buffer,sizeof(buffer),"{\"host\" : \"%s\",\"file\" : \"%s\",\"dt\" : %ld,"
+		    "\"note\" : { \"action\" : \"add\",\"hostkey\" : \"%s\",\"type\" : %d,\"rid\" : \"%s\" }},",
+		    hC->hh->hostname,hC->path,hC->t,
+		    hC->hh->keyhash,CFREPORT_FILECHANGES,hC->handle);
 	 }
        else
 	 {
-	   snprintf(note_link,CF_MAXVARSIZE,"\"/note/show/noteid/%s\"",hC->nid);
-	   snprintf(note,CF_MAXVARSIZE,"%s",CF_SHOWNOTE);
+	   //	   snprintf(note_link,CF_MAXVARSIZE,"\"/note/show/noteid/%s\"",hC->nid);
+	   //	   snprintf(note,CF_MAXVARSIZE,"%s",CF_SHOWNOTE);
+	   snprintf(buffer,sizeof(buffer),"{\"host\" : \"%s\",\"file\" : \"%s\",\"dt\" : %ld,"
+		    "\"note\" : { \"action\" : \"show\",\"nid\" : \"%s\" }},",
+		    hC->hh->hostname,hC->path,cf_ctime(&(hC->t)),
+		    hC->nid);
 	 }     
 
-       snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)),note_link,note);
+       //       snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td><a href=%s>%s</a></td></tr>\n",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)),note_link,note);
 
        if(!Join(returnval,buffer,bufsize))
 	 {
@@ -1208,7 +1240,9 @@ switch (*cmp)
 	 }
      }
    
-   EndJoin(returnval,"</table>\n",bufsize);
+   //   EndJoin(returnval,"</table>\n",bufsize);
+   returnval[strlen(returnval) - 1] = '\0';
+   EndJoin(returnval,"]\n",bufsize);
    
    DeleteHubQuery(hq,DeleteHubFileChanges);
    
@@ -1248,16 +1282,18 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,true,classreg);
 
-StartJoin(returnval,"<table>\n",bufsize);
+StartJoin(returnval,"[",bufsize);
 
-snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>File</th><th>Change detected at</th><th>Change</th></tr>\n");
-Join(returnval,buffer,bufsize);
+//snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>File</th><th>Change detected at</th><th>Change</th></tr>\n");
+//Join(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hd = (struct HubFileDiff *)rp->item;
 
-   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",hd->hh->hostname,hd->path,cf_ctime(&(hd->t)),Nova_FormatDiff(hd->diff));
+   //   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",hd->hh->hostname,hd->path,cf_ctime(&(hd->t)),Nova_FormatDiff(hd->diff));
+   snprintf(buffer,sizeof(buffer),"{\"host\" : \"%s\",\"file\" : \"%s\",\"time\" : %ld,\"change\" : %s},",
+	    hd->hh->hostname,hd->path,hd->t,Nova_FormatDiff(hd->diff));
 
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1265,7 +1301,12 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
      }
    }
 
-EndJoin(returnval,"</table>\n",bufsize);
+//EndJoin(returnval,"</table>\n",bufsize);
+ if(strlen(returnval) > 2)
+   {
+     returnval[strlen(returnval) - 1] = '\0'; 
+   }
+EndJoin(returnval,"]\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubFileDiff);
 
@@ -3344,30 +3385,34 @@ char *Nova_FormatDiff(char *s)
   char pm;
   int line = 0;
 
-snprintf(returnval,sizeof(returnval),"<table>");
+  //snprintf(returnval,sizeof(returnval),"<table>");
+  strcpy(returnval,"[");
 
 for (sp = s; *sp != '\0'; sp += strlen(tline)+1)
    {
    sscanf(sp,"%c,%d,%2047[^\n]",&pm,&line,diff);
    sscanf(sp,"%2047[^\n]",tline);
-   
-   switch (pm)
+
+   snprintf(work,sizeof(work),"{ \"pm\" : \"%c\",\"line\" : %d, \"diff\" : \"%s\"},",pm,line,diff);
+   /*   switch (pm)
       {
       case '+':
-          snprintf(work,sizeof(work),"<tr><td><span class=\"pm\">%c</span></td><td>%d</td><td><span class=\"plusline\">%s</span></td><tr>",pm,line,diff);
+	//          snprintf(work,sizeof(work),"<tr><td><span class=\"pm\">%c</span></td><td>%d</td><td><span class=\"plusline\">%s</span></td><tr>",pm,line,diff);
+	
           break;
       case '-':
-          snprintf(work,sizeof(work),"<tr><td><span class=\"pm\">%c</span></td><td>%d</td><td><span class=\"minusline\">%s</span></td><tr>",pm,line,diff);
+	snprintf(work,sizeof(work),"{ \"pm\" : \"%c\",\"line\" : %d,</td><td><span class=\"minusline\">%s</span></td><tr>",pm,line,diff);
           break;
       default:
           snprintf(work,sizeof(work),"<tr><td><span class=\"pm\">%c</span></td><td>%d</td><td>%s</td><tr>",pm,line,diff);
           break;
       }
-   
+   */
    Join(returnval,work,sizeof(returnval));
    }
 
-strcat(returnval,"</table>");
+ returnval[strlen(returnval) - 1] = ']';
+ //strcat(returnval,"</table>");
 return returnval;
 }
 /*****************************************************************************/
@@ -4900,7 +4945,7 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
      for(hn = hni->note; hn != NULL; hn=hn->next)
 	{
 	  //	  snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%ld</td><td>%s</td></tr>\n", hn->user, hn->t, hn->msg);
-	  snprintf(buffer,sizeof(buffer),"[ {\"user\":\"%s\"}, {\"date\":%ld}, {\"message\":\"%s\"} ],", hn->user, hn->t, hn->msg);
+	  snprintf(buffer,sizeof(buffer),"[{\"user\":\"%s\"}, {\"date\":%ld}, {\"message\":\"%s\"}],", hn->user, hn->t, hn->msg);
 	  if(!Join(returnval,buffer,bufsize))
 	    {
 	      break;
