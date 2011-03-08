@@ -63,7 +63,7 @@ void Nova_EnterpriseModuleTrick()
  
 if (false)
    {
-   Nova2PHP_software_report(0,0,0,0,0,cfr_software,NULL,buffer,20);
+     //   Nova2PHP_software_report(0,0,0,0,0,cfr_software,NULL,buffer,20);
    Nova2PHP_classes_report(NULL,NULL,0,NULL,buffer,1000);
    Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,NULL,buffer,1000);
    Nova2PHP_compliance_promises(NULL,NULL,"x",0,NULL,buffer,10000);
@@ -539,7 +539,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubSoftware *hs;
@@ -557,7 +557,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 
  hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,true);
-   
+ PageRecords(&(hq->records),page,DeleteHubSoftware);
 
  //StartJoin(returnval,"<table>\n",bufsize);
  strcpy(returnval,"[");
@@ -3371,7 +3371,7 @@ void Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int 
 
 /*****************************************************************************/
 
-void Nova2PHP_ComplianceSummaryGraph(char *buffer,int bufsize)
+void Nova2PHP_ComplianceSummaryGraph(char *policy, char *buffer,int bufsize)
 {
 Nova_ComplianceSummaryGraph(buffer,bufsize);
 }
