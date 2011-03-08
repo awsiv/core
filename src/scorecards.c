@@ -27,7 +27,6 @@ strcpy(buffer,"{ ");
 
 Nova2PHP_hostinfo(hostkey,hostname,ipaddress,CF_MAXVARSIZE);
 Nova2PHP_getlastupdate(hostkey,lastsaw,CF_SMALLBUF);
-lastsaw[strlen(lastsaw)-1] = '\0'; /*remove the trailing newline*/
 
 snprintf(work,CF_BUFSIZE, "\"hostname\" : \"%s\", \"ip\" : \"%s\", \"ls\" : \"%s\", \"obs\" : [",
 	 hostname,ipaddress,lastsaw);

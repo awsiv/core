@@ -142,6 +142,7 @@ void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize)
 
 { time_t then, now = time(NULL);
   mongo_connection dbconn;
+  char buf[CF_SMALLBUF];
 
 /* BEGIN query document */
 
@@ -158,17 +159,21 @@ if (hostkey && strlen(hostkey) > 0)
 
    if (then > 0)
       {
+	snprintf(buf,sizeof(buf), "%s", cf_ctime(&then));
+	buf[strlen(buf)-1] = '\0'; /*remove the trailing newline*/
+
+	
       if (now > then + CF_HUB_HORIZON)
          {
-         snprintf(buffer,bufsize,"<span class=\"amber\">%s</span>",cf_ctime(&then));
+         snprintf(buffer,bufsize,"<span class=\"amber\">%s</span>",buf);
          }
       else if (now > then + CF_HUB_HORIZON*2)
          {
-         snprintf(buffer,bufsize,"<span class=\"red\">%s</span>",cf_ctime(&then));
+         snprintf(buffer,bufsize,"<span class=\"red\">%s</span>",buf);
          }
       else
          {
-         snprintf(buffer,bufsize,"%s",cf_ctime(&then));
+         snprintf(buffer,bufsize,"%s",buf);
          }
       }
    else
