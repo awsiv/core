@@ -560,7 +560,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  PageRecords(&(hq->records),page,DeleteHubSoftware);
 
  //StartJoin(returnval,"<table>\n",bufsize);
- strcpy(returnval,"[");
+ snprintf(buffer,sizeof(buffer),"[ meta:{count : %d}, data:{", page->totalResultCount);
+ StartJoin(returnval,buffer,bufsize);
 
  //snprintf(buffer,sizeof(buffer),"<tr><th>Host</th><th>Name</th><th>Version</th><th>Architcture</th></tr>\n");
  //Join(returnval,buffer,bufsize);
@@ -577,7 +578,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    }
 
  returnval[strlen(returnval)-1]='\0';
-EndJoin(returnval,"]\n",bufsize);
+EndJoin(returnval,"} ]\n",bufsize);
 
 
 DeleteHubQuery(hq,DeleteHubSoftware);
