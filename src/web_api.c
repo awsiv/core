@@ -4568,21 +4568,23 @@ char *Nova2PHP_get_host_environment(const char *hostkey)
 
 void FreeEnvironmentsList(struct EnvironmentsList *list)
 {
-    if (list)
+    while (list)
     {
-        FreeEnvironmentsList(list->next);
+        struct EnvironmentList *next = list->next;
         free(list->name);
         free(list);
+        list = next;
     }
 }
 
 void FreeHostsList(struct HostsList *list)
 {
-    if (list)
+    while (list)
     {
-        FreeHostsList(list->next);
+        struct HostsList *next = list->next;
         free(list->keyhash);
         free(list);
+        list = next;
     }
 }
 
