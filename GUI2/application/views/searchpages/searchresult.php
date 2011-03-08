@@ -8,10 +8,56 @@
  </div>
    <div class="panelcontent">
      <div class="tables">
-      <?php echo $report_result ;?>
+      <?php
+       $result = json_decode($report_result,true);
+       $rows=  array_values($result['data']);
+       $heading="";
+       $i=0;
+       foreach ($rows as $row)
+       {
+        if($i==0)
+        {
+          $this->table->set_heading(array_keys($row)); //seting the heads of table
+        }
+        $this->table->add_row(array_values($row));
+        $i++;
+       }
+      echo $this->table->generate();
+      $pg = paging($current,$number_of_rows,$result['meta']['count'],100);
+      //$this->table->set_heading($keys);
+      //foreach ($result as $key=>$value)
+      //{
+       
+      //}
+      //echo $report_result .'<br />';
+      //echo json_last_error();
+      //print_r($result);
+      //print_r($heading);
+      ?>
      </div>
+       <div class="Paging">
+           <div>
+           <div class="pages">
+                                    <div class="inside">
+                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['first'])?>" title="Go to First Page" class="first"><span>&laquo;</span></a>
+                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['prev'])?>" title="Go to Previous Page" class="prev"><span>&lsaquo;</span></a>
+
+                                    <? for ($i=$pg['start'];$i<=$pg['end'];$i++) {
+                                       if ($i==$pg['page']) $current = 'current'; else $current="";
+                                    ?>
+
+                                    <a href="<?=site_url("search/index/".$params."page/$i")?>" title="Go to Page <?=$i?>" class="page <?=$current?>"><span><?=$i?></span></a>
+
+                                    <? } ?>
+
+                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['next'])?>" title="Go to Next Page" class="next"><span>&rsaquo;</span></a>
+                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['last'])?>" title="Go to Last Page" class="last"><span>&raquo;</span></a>
+                                    </div>
+          </div>
+       </div>
     </div>
   </div>
+</div>
 <div title="Send mail" id="dialog" style="display:none">
             <form>
                 <fieldset class="ui-helper-reset">
@@ -23,17 +69,17 @@
                     <input type="text" class="ui-widget-content ui-corner-all" value="" id="mail_subject" name="mail_subject" />
                     <label for="mail_desc">Message:</label>
                     <textarea class="ui-widget-content ui-corner-all" id="mail_desc" name="mail_desc"></textarea>
-                    <input type="hidden" id="parameters"></input>
+                    <input type="hidden" id="parameters" />
                 </fieldset>
             </form>
   </div>
 <script type="text/javascript">
 $(document).ready(function() { 
-	$('.tables table:first').prepend(
-       $('<thead></thead>').append($('.tables tr:first').remove())
-       );
-    $('.tables table').tableFilter();
-    $('.tables table').tablesorter({widgets: ['zebra']}); 
+	//$('.tables table:first').prepend(
+       //$('<thead></thead>').append($('.tables tr:first').remove())
+       //);
+  $('.tables table').tableFilter();
+    $('.tables table').tablesorter({widgets: ['zebra']});
 	
 	var $dialog = $('#dialog').dialog({
 		 autoOpen: false,

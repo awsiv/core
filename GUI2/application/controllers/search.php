@@ -4,6 +4,7 @@ class Search extends Cf_Controller
   function Search()
    {
 	 parent::__construct();
+         $this->load->library(array('table','pagination'));
    }
 	
    function index()
@@ -20,14 +21,38 @@ class Search extends Cf_Controller
            $state=isset($getparams['state'])?$getparams['state']:$this->input->post('state');
 	   
 	   $hostname =  cfpr_hostname($hostkey);
+
+           $rows=isset($getparams['rows'])?$getparams['rows']:50;
+           $page_number=isset($getparams['page'])?$getparams['page']:1;
 	   //necessary for search result view
-       //must use site_url for making bread crumbs work
+          //must use site_url for making bread crumbs work
+          
+           $params='';
           if(!is_ajax ())
           {
-                $params='';
+                
                if(count($getparams)>0)
                {
-                 $params=$this->uri->assoc_to_uri($getparams);
+                 //$params=$this->uri->assoc_to_uri($getparams);
+                 foreach($getparams as $key=>$value)
+                 {
+                     if(empty($value))
+                     {
+                         if($key<>"page")
+                         {
+                          $params.=$key.'/';
+                         }
+                     }
+                     else
+                     {
+
+                         if($key <>"page")
+                         {
+                         $params.=$key.'/'.$value.'/';
+                         }
+
+                     }
+                 }
                }
                else
                {
@@ -42,6 +67,7 @@ class Search extends Cf_Controller
                          $params.=$key.'/'.$value.'/';
                      }
                  }
+                 // $params.='rows/20/page/1';
                //$params=$this->uri->assoc_to_uri($_POST);
                 }
            $bc = array(
@@ -57,6 +83,9 @@ class Search extends Cf_Controller
                          'title_header'=>"search results",
 			 'report_title'=>$report_type,
                          'breadcrumbs' => $this->breadcrumblist->display(),
+                         'current'=>$page_number,
+                         'number_of_rows'=>$rows,
+                         'params'=>$params
 			 );
 	   
 	   if ($search == "")
@@ -450,7 +479,7 @@ class Search extends Cf_Controller
 				   }
 				  else
 				   {
-				   $data['report_result'] =  cfpr_report_notkept(NULL,$name,intval($hours_deltafrom),intval($hours_deltato),$class_regex);
+				   $data['report_result'] =  cfpr_report_notkept(NULL,$name,intval($hours_deltafrom),intval($hours_deltato),$class_regex,$rows,$page_number);
 				   $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/hours_deltafrom/'.$hours_deltafrom.'/hours_deltato/'.$hours_deltato);
 				   $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/pdfaction/email'.$hours_deltafrom.'/hours_deltato/'.$hours_deltato);
 				   $this->template->load('template','searchpages/searchresult',$data);
@@ -463,7 +492,7 @@ class Search extends Cf_Controller
 			   if($report_type=="Promises not kept summary")
 			      $data['report_result'] =   cfpr_summarize_notkept($hostkey,NULL,NULL);
 			   if($report_type=="Promises not kept log")
-			      $data['report_result'] = cfpr_report_notkept($hostkey,NULL,0,0,$class_regex);
+			      $data['report_result'] = cfpr_report_notkept($hostkey,NULL,0,0,$class_regex,$rows,$page_number);
 			  $this->template->load('template','searchpages/searchresult',$data);
 			  }
 			 else
@@ -508,12 +537,12 @@ class Search extends Cf_Controller
              $arch = isset($_POST['arch'])?$_POST['arch']:"";
 			   if($hosts_only)
 				   {
-				   $data['report_result'] = cfpr_hosts_with_software_in(NULL,$name,$version,$arch,true,$class_regex);
+				   $data['report_result'] = cfpr_hosts_with_software_in(NULL,$name,$version,$arch,true,$class_regex,$rows,$page_number);
 				   $this->template->load('template','searchpages/search_result_group',$data);
 				   }
 				  else
 				   {
-				   $data['report_result'] =  cfpr_report_software_in(NULL,$name,$version,$arch,true,$class_regex);
+				   $data['report_result'] =  cfpr_report_software_in(NULL,$name,$version,$arch,true,$class_regex,$rows,$page_number);
 				   $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/version/'.$version.'/arch/'.$arch);
 				   $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/version/'.$version.'/arch/'.$arch.'/pdfaction/email');
 				   $this->template->load('template','searchpages/searchresult',$data);
@@ -523,7 +552,7 @@ class Search extends Cf_Controller
 			{
 			  $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class/'.$class_regex.'/search/'.$search);
 			  $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class/'.$class_regex.'/search/'.$search.'/pdfaction/email');
-			  $data['report_result'] = cfpr_report_software_in($hostkey,$search,NULL,NULL,true,$class_regex);
+			  $data['report_result'] = cfpr_report_software_in($hostkey,$search,NULL,NULL,true,$class_regex,$rows,$page_number);
 			  $this->template->load('template','searchpages/searchresult',$data);
 			}
 			else
