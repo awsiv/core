@@ -110,7 +110,7 @@ padding:5px 0 1px 0px;
 
 #tabpane
 {
-background:#bdbdbf url(../images/gd_back.png) repeat-x;
+background:#bdbdbf url(/images/gd_back.png) repeat-x;
 min-height:600px;
 }
 .message
@@ -132,7 +132,7 @@ margin:10px 10px;
 
 .panelhead
 {
-background:url('../images/panelhead.png') repeat-x;
+background:url('/images/panelhead.png') repeat-x;
 padding:10px;
 color:#e1e1e3;
 font-family:DejaVuSans,Arial, Helvetica, sans-serif;
@@ -189,7 +189,7 @@ padding:2px;
 
 .btn
 {
-background:url(../images/button.png) repeat-x;
+background:url(/images/button.png) repeat-x;
 color:#e1e1e3;
 padding:7px;
 border:solid 1px #000;
@@ -267,7 +267,7 @@ font-size:14px;
 
 #footer
 {
-	background:url(../images/footer.png) repeat-x;
+	background:url(/images/footer.png) repeat-x;
 	color:#fff;
 	font-family:"Trebuchet MS", DejaVuSans,Arial, Helvetica, sans-serif;
 	font-size:12px;
@@ -278,7 +278,7 @@ font-size:14px;
 
 .hostinfo
 {
-	background:url(../images/dogear.png) no-repeat;
+	background:url(/images/dogear.png) no-repeat;
 	background-color:#E1E1E3;
 	background-position:100% 0%;
 	border:1px solid #ccc;
@@ -435,19 +435,19 @@ padding-bottom:4px;
 /*background-color:#A7C942;*/
 background-color:#52514A;
 color:#ffffff;
-background-image:url(../images/bg.gif);
+background-image:url(/images/bg.gif);
 background-position:right center;
 background-repeat:no-repeat;
 cursor:pointer;
 }
 
 th.headerSortDown {
-    background-image: url(../images/desc.gif);
+    background-image: url(/images/desc.gif);
     background-color: #3399FF;
 }
 
 th.headerSortUp {
-    background-image: url(../images/asc.gif);
+    background-image: url(/images/asc.gif);
     background-color: #3399FF;
 }
 
@@ -550,8 +550,8 @@ overflow:auto;
 	background:#4b4b41;
 }
 
-.ui-layout-toggler-west-open { background: url(../images/toggle-lt.gif) no-repeat center right; }
-.ui-layout-toggler-west-closed {background: url(../images/toggle-lt-open.gif) no-repeat center right;}
+.ui-layout-toggler-west-open { background: url(/images/toggle-lt.gif) no-repeat center right; }
+.ui-layout-toggler-west-closed {background: url(/images/toggle-lt-open.gif) no-repeat center right;}
 
 #rightPanel
 {

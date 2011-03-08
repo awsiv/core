@@ -18,7 +18,8 @@ var hostMeter  = {
         this.initialize();
     },
     initialize: function() {
-        var json = this.options.data;
+        var json = this.options.data;      
+        
         var barChartOptions = {
             //id of the visualization container
             injectInto: this.element.attr('id'),
@@ -37,8 +38,8 @@ var hostMeter  = {
 
         $.extend(barChartOptions,this.options.barChartOptions);
         var barChart = new $jit.BarChart(barChartOptions);
-        //load JSON data.
         barChart.loadJSON(json);
+        
     },
     options: { // initial values are stored in the widget's prototype
         data: '',

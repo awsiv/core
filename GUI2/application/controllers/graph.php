@@ -16,6 +16,14 @@ class Graph extends CI_Controller {
     }
 
 
+     function  complianceSummary() {
+
+         $data =  cfpr_compliance_summary_graph();
+         var_dump($data);
+        
+     }
+
+
      function summaryhost() {
 
 
@@ -45,6 +53,7 @@ class Graph extends CI_Controller {
         );
 
         $gdata = cfpr_host_meter($hostKey);
+        var_dump($gdata);
         $convertedData = json_decode($gdata, true);
         die($gdata);
         $keptSeries = array();

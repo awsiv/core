@@ -26,9 +26,10 @@ class Welcome extends Cf_Controller {
             ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>
             ',
+                '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'graphs/host-meter.js"> </script>
+                    ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'hostsummary.js"></script>
-            ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'graphs/host-meter.js"> </script>'
+            '
         );
 
 
@@ -42,7 +43,7 @@ class Welcome extends Cf_Controller {
             'g' => $g
         );
 
-        $gdata = cfpr_compliance_summary_graph();
+        $gdata = cfpr_compliance_summary_graph(null);
         if ($gdata) {
             $graphData = $this->_convert_summary_compliance_graph($gdata);            
             $data = array_merge($data, $graphData);
@@ -88,7 +89,7 @@ class Welcome extends Cf_Controller {
         );
 
 
-        $gdata = cfpr_summary_meter();
+        $gdata = cfpr_summary_meter(null);
         $returnedData = $this->_convert_summary_compliance_graph($gdata);
         $data = array_merge($data, $returnedData);
         $this->template->load('template', 'status', $data);
@@ -431,7 +432,7 @@ class Welcome extends Cf_Controller {
             'title' => "Cfengine Mission Portal - classes ",
             'nav_text' => "Status : classes",
             'status' => "current",
-            'ret' => cfpr_report_classes($hostkey, $name, $regex, NULL),
+            'ret' => json_decode(cfpr_report_classes($hostkey, $name, $regex, NULL),true),
         );
         $this->template->load('template', 'classes', $data);
     }
@@ -520,8 +521,6 @@ class Welcome extends Cf_Controller {
         );
         $this->template->load('template', 'hostlist', $data);
     }
-
 }
-
 /* End of file welcome.php */
 /* Location: ./system/application/controllers/welcome.php */

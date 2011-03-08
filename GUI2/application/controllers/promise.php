@@ -24,7 +24,7 @@ class Promise extends Cf_Controller
 		$data=array(
 			 'title' => "Cfengine Mission Portal - compliance",
                          'title_header'=>"Compliance",
-      		         'promise_list'=> cfpr_report_compliance_promises($hostkey,$handle,"x",false,NULL),
+      		         'promise_list'=> json_decode(cfpr_report_compliance_promises($hostkey,$handle,"x",false,NULL),true),
                          'breadcrumbs' => $this->breadcrumblist->display()
 			 ); 
 		$this->template->load('template','promise/promises',$data);

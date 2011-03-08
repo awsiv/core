@@ -11,7 +11,7 @@
                     <?php foreach ($performanceData['obs'] as $index => $fetchData) {
                     ?>
 
-                        <h3><a href="#"><?php echo $fetchData['id']; ?>  <?php echo $performanceData['ls']; ?> </a></h3>
+                        <h3><a href="#"><?php echo $fetchData['id']; ?>  <?php echo date('D F d h:m:s Y',$performanceData['ls']); ?> </a></h3>
                         <div>
 
                             <div class="tabs">

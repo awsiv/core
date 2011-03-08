@@ -29,7 +29,7 @@
 		$data=array(
 			 'title'=>"Cfengine Mission Portal - Bundles",
                          'title_header'=>"search results",
-      			 'bundle_list'=> cfpr_report_bundlesseen($hostkey,$name,$regex,NULL),
+      			 'bundle_list'=> json_decode(cfpr_report_bundlesseen($hostkey,$name,$regex,NULL),true),
                          'breadcrumbs' => $this->breadcrumblist->display()
 			 ); 
 		$this->template->load('template','bundle/bundle_list',$data);

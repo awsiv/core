@@ -30,7 +30,6 @@
                 </ul>
            </div>
            </div>
-        <?php cfpr_compliance_summary_graph();?>  
           <div class="grid_8">
               <div id="repdialog" class="hidden"></div>
            	<div class="panel">

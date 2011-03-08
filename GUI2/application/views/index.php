@@ -71,6 +71,30 @@ $ret1 = cfpr_getlicense_owner();
 </div>
 <div class="clear"></div>
 <script type="text/javascript">
+
+
+    // for summary compliance graph
+        var json = {
+            color: ['#A3DF00','#EEEE00','#D43030'],
+            'label': <?php echo $graphSeries['labels']; ?>,
+            'values':  <?php echo $graphSeries['values']; ?>
+        };
+
+
+        var barOption =  {
+            showLabels:false,
+            barsOffset:0,
+            Tips: {
+                enable: true,
+                onShow: function(tip, elem) {
+                    var string = elem.label + '<br />' + 'Value :: ' + elem.value;
+                    tip.innerHTML =  string;
+                }
+            }
+        };
+    $('#compliance_summary').hostMeter({data:json,barChartOptions:barOption});
+
+
     $(document).ready(function()
     {
         $('#dashboard-buttons').find('a[title]').qtip({
@@ -105,32 +129,14 @@ $ret1 = cfpr_getlicense_owner();
             }
         });
 
-        // for summary compliance graph
-        var json = {
-            color: ['#A3DF00','#EEEE00','#D43030'],
-            'label': <?php echo $graphSeries['labels']; ?>,
-            'values':  <?php echo $graphSeries['values']; ?>
-        };
+        
 
 
-        var barOption =  {
-            showLabels:false,
-            barsOffset:0,
-            Tips: {
-                enable: true,
-                onShow: function(tip, elem) {
-                    var string = elem.label + '<br />' + 'Value :: ' + elem.value;
-                    tip.innerHTML =  string;
-                }
-            }
-        };
-
-
-        $('#compliance_summary').hostMeter({data:json,barChartOptions:barOption});
-
+        
 
 
         //draw the status of all the host
         hostsummary(<?php echo "$r,$y,$g,$all" ?>);
     });
-</script>
+
+    </script>
