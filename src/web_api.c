@@ -1350,13 +1350,7 @@ StartJoin(returnval,"[",bufsize);
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
-   /*
-   if (counter++ % 6 == 0)
-      {
-      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
-      Join(returnval,buffer,bufsize);
-      }
-   */
+
    counter++;
    snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
@@ -1405,19 +1399,14 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,false);
 
-StartJoin(returnval,"<table>\n",bufsize);
+StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
 
-   if (counter++ % 6 == 0)
-      {
-      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
-      Join(returnval,buffer,bufsize);
-      }
-   
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   counter++;
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1430,7 +1419,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-EndJoin(returnval,"</table>\n",bufsize);
+ returnval[strlen(returnval)-1]=']';
+//EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubClass);
 
@@ -1461,19 +1451,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
 
-StartJoin(returnval,"<table>\n",bufsize);
+StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
-
-   if (counter++ % 6 == 0)
-      {
-      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
-      Join(returnval,buffer,bufsize);
-      }
-   
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   counter++;
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1486,7 +1470,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-EndJoin(returnval,"</table>\n",bufsize);
+ returnval[strlen(returnval)-1]=']';;
+//EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubVariable);
 
@@ -1525,19 +1510,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,false,classreg);
 
-StartJoin(returnval,"<table>\n",bufsize);
+StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
-
-   if (counter++ % 6 == 0)
-      {
-      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
-      Join(returnval,buffer,bufsize);
-      }
-   
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   counter++;   
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1549,8 +1528,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       break;
       }
    }
-
-EndJoin(returnval,"</table>\n",bufsize);
+ returnval[strlen(returnval)-1]=']';
+ //EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
@@ -1588,19 +1567,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,false,classreg);
 
-StartJoin(returnval,"<table>\n",bufsize);
+StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
-
-   if (counter++ % 6 == 0)
-      {
-      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
-      Join(returnval,buffer,bufsize);
-      }
-   
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   counter++;   
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1612,8 +1585,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       break;
       }
    }
-
-EndJoin(returnval,"</table>\n",bufsize);
+ returnval[strlen(returnval)-1]=']';
+ //EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
@@ -1647,19 +1620,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,false,classreg);
 
-StartJoin(returnval,"<table>\n",bufsize);
+StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
-
-   if (counter++ % 6 == 0)
-      {
-      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
-      Join(returnval,buffer,bufsize);
-      }
-   
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   counter++;   
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1671,8 +1638,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       break;
       }
    }
-
-EndJoin(returnval,"</table>\n",bufsize);
+ returnval[strlen(returnval)-1]=']';
+ //EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubLastSeen);
 
@@ -1703,19 +1670,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,false,classreg);
 
-StartJoin(returnval,"<table>\n",bufsize);
+StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
-
-   if (counter++ % 6 == 0)
-      {
-      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
-      Join(returnval,buffer,bufsize);
-      }
-   
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   counter++;   
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1727,8 +1688,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       break;
       }
    }
-
-EndJoin(returnval,"</table>\n",bufsize);
+ returnval[strlen(returnval)-1]=']';
+//EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPerformance);
 
@@ -1759,19 +1720,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
 
-StartJoin(returnval,"<table>\n",bufsize);
+StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
-
-   if (counter++ % 6 == 0)
-      {
-      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
-      Join(returnval,buffer,bufsize);
-      }
-   
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   counter++;   
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1783,8 +1738,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       break;
       }
    }
-
-EndJoin(returnval,"</table>\n",bufsize);
+ returnval[strlen(returnval)-1]=']';
+//EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubSetUid);
 
@@ -1819,19 +1774,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg,false);
 
 
-StartJoin(returnval,"<table>\n<tr>\n",bufsize);
+StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
-
-   if (counter++ % 6 == 0)
-      {
-      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
-      Join(returnval,buffer,bufsize);
-      }
-   
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   counter++;   
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1843,8 +1792,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       break;
       }
    }
-
-EndJoin(returnval,"</tr></table>\n",bufsize);
+ returnval[strlen(returnval)-1]=']';
+//EndJoin(returnval,"</tr></table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubBundleSeen);
 
@@ -1885,19 +1834,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,false,classreg);
 
 
-StartJoin(returnval,"<table>\n",bufsize);
+StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
-
-   if (counter++ % 6 == 0)
-      {
-      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
-      Join(returnval,buffer,bufsize);
-      }
-   
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   counter++;
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1909,8 +1852,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       break;
       }
    }
-
-EndJoin(returnval,"</table>\n",bufsize);
+ returnval[strlen(returnval)-1]=']';
+ //EndJoin(returnval,"</table>\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubFileChanges);
 
@@ -1950,19 +1893,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,false,classreg);
 
-StartJoin(returnval,"<table>\n",bufsize);
+StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
-
-   if (counter++ % 6 == 0)
-      {
-      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
-      Join(returnval,buffer,bufsize);
-      }
-   
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   counter++;
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -1974,8 +1911,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       break;
       }
    }
-
-EndJoin(returnval,"</table>\n",bufsize);
+ returnval[strlen(returnval)-1]=']';
+//EndJoin(returnval,"</table>\n",bufsize);
 DeleteHubQuery(hq,DeleteHubFileDiff);
 
 if (!CFDB_Close(&dbconn))
@@ -2005,19 +1942,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,false,classreg);
 
-StartJoin(returnval,"<table>\n",bufsize);
+StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
    hh = (struct HubHost *)rp->item;
-
-   if (counter++ % 6 == 0)
-      {
-      snprintf(buffer,CF_MAXVARSIZE,"</tr></tr>");
-      Join(returnval,buffer,bufsize);
-      }
-   
-   snprintf(buffer,CF_MAXVARSIZE,"<td><a href=\"host/%s\">%s</a><br>%s</td>\n",hh->keyhash,hh->hostname,hh->ipaddr);
+   counter++;
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
    if(!Join(returnval,buffer,bufsize))
      {
@@ -2029,8 +1960,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       break;
       }
    }
-
-EndJoin(returnval,"</table>\n",bufsize);
+ returnval[strlen(returnval)-1]=']';
+//EndJoin(returnval,"</table>\n",bufsize);
 DeleteHubQuery(hq,DeleteHubFileDiff);
 
 
