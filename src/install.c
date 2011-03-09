@@ -327,6 +327,34 @@ free(ht);
 
 /*****************************************************************************/
 
+struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(int slot, int count, double kept, double repaired, double notkept, time_t genTime)
+
+{ struct HubCacheTotalCompliance *tc;
+ 
+if ((tc = malloc(sizeof(struct HubCacheTotalCompliance))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubSoftware");
+   }
+
+ tc->slot = slot;
+ tc->count = count;
+ tc->kept = kept;
+ tc->repaired = repaired;
+ tc->notkept = notkept;
+ tc->genTime = genTime;
+
+return tc;
+}
+
+/*****************************************************************************/
+
+void DeleteHubCacheTotalCompliance(struct HubCacheTotalCompliance *tc)
+{
+free(tc);
+}
+
+/*****************************************************************************/
+
 struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype,time_t t)
 // NOTE: rval must be allocated by caller
 { struct HubVariable *hp;
@@ -1144,7 +1172,7 @@ int SortSoftware(void *p1, void *p2)
 
 int SortBundleSeen(void *p1, void *p2)
 /**
- * For SortRlist() - sorts software on name.
+ * For SortRlist() - sorts bundles on name.
  **/
 {
   struct HubBundleSeen *hb1, *hb2;
@@ -1160,6 +1188,26 @@ int SortBundleSeen(void *p1, void *p2)
     {
     return false;
     }
+}
+
+/*****************************************************************************/
+
+struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(struct Rlist *records, int slot)
+{
+  struct Rlist *rp;
+  struct HubCacheTotalCompliance *tc;
+
+  for(rp = records; rp != NULL; rp = rp->next)
+    {
+      tc = (struct HubCacheTotalCompliance *)rp->item;
+
+      if(tc->slot == slot)
+	{
+	return tc;
+	}
+    }
+  
+  return NULL;
 }
 
 /*****************************************************************************/

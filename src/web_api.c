@@ -3308,7 +3308,7 @@ void Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int 
 
 void Nova2PHP_ComplianceSummaryGraph(char *policy, char *buffer,int bufsize)
 {
-Nova_ComplianceSummaryGraph(buffer,bufsize);
+ Nova_ComplianceSummaryGraph(policy,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -4635,12 +4635,13 @@ void FreeEnvironmentsList(struct EnvironmentsList *list)
 {
     while (list)
     {
-        struct EnvironmentList *next = list->next;
+        struct EnvironmentsList *next = list->next;
         free(list->name);
         free(list);
         list = next;
     }
 }
+
 
 void FreeHostsList(struct HostsList *list)
 {

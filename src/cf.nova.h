@@ -41,6 +41,7 @@
 # define MONGO_PROMISES_UNEXP MONGO_BASE "." MONGO_PROMISES_UNEXP_COLLECTION
 # define MONGO_BODIES   MONGO_BASE ".bodies"
 # define MONGO_SCRATCH MONGO_BASE ".scratch"
+# define MONGO_CACHE MONGO_BASE ".cache"
 # define MONGO_LOGS_REPAIRED MONGO_BASE ".logs_rep"
 # define MONGO_LOGS_NOTKEPT MONGO_BASE ".logs_nk"
 # define MONGO_NOTEBOOK MONGO_BASE ".notebook"
@@ -388,6 +389,9 @@ void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
 void BsonToString(char *retBuf, int retBufSz, bson *b, int depth);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
+
+struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
+
 /*
  * commenting
  */
@@ -534,6 +538,7 @@ struct Item *Nova_ScanClients(void);
 void Nova_HubLog(char *s);
 void Nova_CountMonitoredClasses(void);
 void Nova_CacheTotalCompliance(void);
+void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot, time_t start, time_t now);
 int Nova_ShiftChange(void);
 
 /* install.c */
@@ -585,6 +590,9 @@ struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char 
 void DeleteHubNote(struct HubNote *hc);
 void DeleteHubNoteInfo(struct HubNoteInfo *hci);
 
+struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(int slot, int count, double kept, double repaired, double notkept, time_t genTime);
+void DeleteHubCacheTotalCompliance(struct HubCacheTotalCompliance *tc);
+
 int SortPromiseLog(void *p1, void *p2);
 int SortBusinessValue(void *p1, void *p2);
 int SortTotalCompliance(void *p1, void *p2);
@@ -596,6 +604,7 @@ int SortPromiseCompliance(void *p1, void *p2);
 int SortClasses(void *p1, void *p2);
 int SortSoftware(void *p1, void *p2);
 int SortBundleSeen(void *p1, void *p2);
+struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(struct Rlist *records, int slot);
 
 int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)());
 
@@ -785,7 +794,7 @@ int Nova_IsGreen(int level);
 int Nova_IsYellow(int level);
 int Nova_IsRed(int level);
 int Nova_IsBlue(int level);
-void Nova_ComplianceSummaryGraph(char *buffer,int bufsize);
+void Nova_ComplianceSummaryGraph(char *policy,char *buffer,int bufsize);
 void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col);
 int Nova_GetHostColour(char *lkeyhash);
 
@@ -1162,8 +1171,6 @@ struct cf_pscalar
 #define cfr_type          "T"
 #define cfr_rval          "V"
 #define cfr_lval          "lval"
-//#define cfr_repairlog     "rl"  // moved to own collections
-//#define cfr_notkeptlog    "nl"
 #define cfr_promisehandle "h"
 #define cfr_lastseen      "ls"
 #define cfr_ipaddr        "i"
@@ -1242,6 +1249,12 @@ struct cf_pscalar
 #define cfn_username "u"
 #define cfn_datetime "d"
 #define cfn_message "m" 
+
+/* cache collection */
+#define cfc_cachetype "ct"
+#define cfc_cachecompliance "cc"  // total compliance
+#define cfc_count "cn"
+#define cfc_timegen "tg"
 
 #define CFREPORT_HOSTS 1
 #define CFREPORT_REPAIRED 2
@@ -1464,6 +1477,18 @@ struct HubBodyAttr
   char *lval;
   char *rval;
   struct HubBodyAttr *next;
+  };
+
+/* cfreport.cache */
+
+struct HubCacheTotalCompliance
+  {
+  int slot;
+  int count;
+  double kept;
+  double repaired;
+  double notkept;
+  time_t genTime;
   };
 
 

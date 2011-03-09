@@ -5180,6 +5180,89 @@ if(mongo_cmd_get_last_error(conn, MONGO_BASE, &b))
  bson_destroy(&b);
 
 }
+
+/*****************************************************************************/
+
+struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime)
+{
+  bson_buffer bb;
+  bson_iterator it1,it2,it3;
+  mongo_cursor *cursor;
+  struct Rlist *record_list = NULL;
+  bson query,field;
+  char slotStr[CF_SMALLBUF];
+  double kept,repaired,notkept;
+  int slot,count;
+  time_t genTime;
+
+  bson_buffer_init(&bb);
+  bson_append_string(&bb,cfc_cachetype,cfc_cachecompliance);
+  bson_from_buffer(&query,&bb);
+
+  cursor = mongo_find(conn,MONGO_CACHE,&query,bson_empty(&field),0,0,0);
+
+  bson_destroy(&query);
+
+  if (mongo_cursor_next(cursor))  // loops over cache types (want just one)
+    {
+    bson_iterator_init(&it1,cursor->current.data);
+
+    while(bson_iterator_next(&it1))
+      {
+      if(strcmp(bson_iterator_key(&it1),policy) != 0)
+	{
+        continue;
+	}
+      
+      bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+      while(bson_iterator_next(&it2))
+	{
+	slot = -1;
+	sscanf(bson_iterator_key(&it2), "%d", &slot);
+	
+	bson_iterator_init(&it3,bson_iterator_value(&it2));
+	
+	kept = 0;
+	repaired = 0;
+	notkept = 0;
+	count = 0;
+	genTime = 0;
+
+	while(bson_iterator_next(&it3))
+	  {
+	    if(strcmp(bson_iterator_key(&it3),cfr_kept) == 0)
+	      {
+		kept = bson_iterator_double(&it3);
+	      }
+	    else if(strcmp(bson_iterator_key(&it3),cfr_repaired) == 0)
+	      {
+		repaired = bson_iterator_double(&it3);
+	      }
+	    else if(strcmp(bson_iterator_key(&it3),cfr_notkept) == 0)
+	      {
+		notkept = bson_iterator_double(&it3);
+	      }
+	    else if(strcmp(bson_iterator_key(&it3),cfc_count) == 0)
+	      {
+		count = bson_iterator_int(&it3);
+	      }
+	    else if(strcmp(bson_iterator_key(&it3),cfc_timegen) == 0)
+	      {
+		genTime = bson_iterator_int(&it3);
+	      }
+	  }
+	  
+	PrependRlistAlien(&record_list,NewHubCacheTotalCompliance(slot,count,kept,repaired,notkept,genTime));
+	}
+      
+      }
+
+    }
+
+  return NewHubQuery(NULL, record_list);
+}
+
 /*****************************************************************************/
 
 struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  struct Item *data)

@@ -67,37 +67,72 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 /*****************************************************************************/
 
-void Nova_ComplianceSummaryGraph(char *buffer,int bufsize)
-
-{ char key[CF_MAXVARSIZE],value[CF_MAXVARSIZE],work[CF_BUFSIZE],date[CF_SMALLBUF];
-  const int span = 7 * 4;
-  const double scale = 4.0;
-  double x,kept, repaired, notkept;
-  time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
-  int i,slot;
+void Nova_ComplianceSummaryGraph(char *policy, char *buffer, int bufsize)
 
 // Read the cached compliance summary
+
+{ char key[CF_MAXVARSIZE],value[CF_MAXVARSIZE],work[CF_BUFSIZE],date[CF_SMALLBUF];
+  mongo_connection dbconn;
+  struct HubCacheTotalCompliance *tc;
+  struct HubQuery *hq;
+  struct Rlist *rp;
+  double kept, repaired, notkept, nodata;
+  time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
+  int i,slot,count;
+
+  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to cache database");
+   return;
+   }
+
+  hq = CFDB_QueryCachedTotalCompliance(&dbconn, policy, now - CF_WEEK);
+  
+  CFDB_Close(&dbconn);
+
 
 snprintf(buffer,bufsize,"[");
   
 for (i = 0,start = now - one_week; start < now; start += CF_SHIFT_INTERVAL,i++)
    {
-   slot = GetShiftSlot(start);
-   snprintf(key,CF_MAXVARSIZE,"tc_%d",slot);
-   CFDB_GetValue(key,value,CF_MAXVARSIZE);
-   sscanf(value,"%lf,%lf,%lf",&kept,&repaired,&notkept);
+     slot = GetShiftSlot(start);
+     
+     tc = GetHubCacheTotalComplianceSlot(hq->records,slot);
 
-   snprintf(date,CF_SMALLBUF,"%s",cf_ctime(&start));
-   Chop(date);
+     
+     if(tc && (tc->genTime > now - one_week))
+       {
+	 kept = tc->kept;
+	 repaired = tc->repaired;
+	 notkept = tc->notkept;
+	 nodata = 0;
+	 count = tc->count;
+       }
+     else
+       {
+	 kept = 0;
+	 repaired = 0;
+	 notkept = 0;
+	 nodata = 100.0;
+	 count = 0;
+       }
+
+     
+   CtimeHourInterval(start,date,sizeof(date));
+
    
-   snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf },",date,i,kept,repaired,notkept);
+   snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf, \"nodata\": %lf, \"count\": %d },",
+	    date, i, kept, repaired, notkept, nodata, count);
+
    if(!Join(buffer,work,bufsize))
      {
        break;
      }
    }
 
-buffer[strlen(buffer)-1] = ']';
+ buffer[strlen(buffer)-1] = ']';
+
+  DeleteHubQuery(hq,DeleteHubCacheTotalCompliance);
 }
 
 /*****************************************************************************/

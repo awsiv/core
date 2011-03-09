@@ -775,7 +775,7 @@ void CFDB_SaveTotalCompliance(mongo_connection *conn, char *keyhash, struct Item
   long t;
   time_t then;
   bson_buffer *sub;
-  
+
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
@@ -826,6 +826,7 @@ MongoCheckForError(conn,"SaveTotalCompliance",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
+
 }
 
 /*****************************************************************************/
@@ -1391,6 +1392,49 @@ MongoCheckForError(conn,"SaveValueReport",keyhash);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
+}
+
+/*****************************************************************************/
+
+void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired, double notkept, int count, time_t genTime)
+
+{ bson_buffer bb;
+  bson_buffer *set;
+  bson cacheType, setOp;
+  bson_buffer *sub1, *sub2;
+  char slotStr[CF_SMALLBUF];
+
+snprintf(slotStr, sizeof(slotStr), "%d", slot);
+
+bson_buffer_init(&bb);
+bson_append_string(&bb,cfc_cachetype,cfc_cachecompliance);
+bson_from_buffer(&cacheType,&bb);
+
+  
+bson_buffer_init(&bb);
+
+set = bson_append_start_object(&bb,"$set");
+
+sub1 = bson_append_start_object(set,policy);
+
+sub2 = bson_append_start_object(sub1,slotStr);
+bson_append_double(sub2,cfr_kept,kept);
+bson_append_double(sub2,cfr_repaired,repaired);
+bson_append_double(sub2,cfr_notkept,notkept);
+bson_append_int(sub2,cfc_count,count);
+bson_append_int(sub2,cfc_timegen,genTime);
+bson_append_finish_object(sub2);
+
+bson_append_finish_object(sub1);
+bson_append_finish_object(set);
+
+bson_from_buffer(&setOp,&bb);
+
+mongo_update(conn, MONGO_CACHE, &cacheType, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn, "SaveCachedTotalCompliance", policy);
+
+bson_destroy(&setOp);
+bson_destroy(&cacheType);  
 }
 
 /*****************************************************************************/
