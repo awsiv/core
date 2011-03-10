@@ -1401,10 +1401,8 @@ void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int sl
 { bson_buffer bb;
   bson_buffer *set;
   bson cacheType, setOp;
-  bson_buffer *sub1, *sub2;
-  char slotStr[CF_SMALLBUF];
-
-snprintf(slotStr, sizeof(slotStr), "%d", slot);
+  bson_buffer *sub1;
+  char varName[CF_SMALLBUF];
 
 bson_buffer_init(&bb);
 bson_append_string(&bb,cfc_cachetype,cfc_cachecompliance);
@@ -1415,15 +1413,15 @@ bson_buffer_init(&bb);
 
 set = bson_append_start_object(&bb,"$set");
 
-sub1 = bson_append_start_object(set,policy);
+ snprintf(varName,sizeof(varName), "%s.%d", policy, slot);
 
-sub2 = bson_append_start_object(sub1,slotStr);
-bson_append_double(sub2,cfr_kept,kept);
-bson_append_double(sub2,cfr_repaired,repaired);
-bson_append_double(sub2,cfr_notkept,notkept);
-bson_append_int(sub2,cfc_count,count);
-bson_append_int(sub2,cfc_timegen,genTime);
-bson_append_finish_object(sub2);
+sub1 = bson_append_start_object(set,varName);
+
+bson_append_double(sub1,cfr_kept,kept);
+bson_append_double(sub1,cfr_repaired,repaired);
+bson_append_double(sub1,cfr_notkept,notkept);
+bson_append_int(sub1,cfc_count,count);
+bson_append_int(sub1,cfc_timegen,genTime);
 
 bson_append_finish_object(sub1);
 bson_append_finish_object(set);
