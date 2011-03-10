@@ -73,6 +73,12 @@ LT_INIT
 AC_PROG_INSTALL
 AC_PATH_PROG(GETCONF, getconf, false, $PATH:$prefix/bin:/usr/bin:/usr/local/bin:/sw/bin)
 
+dnl
+dnl Enable large file support
+dnl
+AC_SYS_LARGEFILE
+AC_TYPE_OFF_T
+
 dnl ######################################################################
 dnl Checks for libraries.
 dnl ######################################################################
