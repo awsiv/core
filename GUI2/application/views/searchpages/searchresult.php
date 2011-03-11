@@ -10,35 +10,59 @@
      <div class="tables">
       <?php
        $result = json_decode($report_result,true);
-       $rows=  array_values($result['data']);
+       
+         $this->table->set_heading(array_keys($result['meta']['header']));
        $heading="";
-       $i=0;
-       foreach ($rows as $row)
+       foreach ($result['data'] as $row)
        {
-        if($i==0)
-        {
-          $this->table->set_heading(array_keys($row)); //seting the heads of table
-        }
-        $this->table->add_row(array_values($row));
-        $i++;
+        //$this->table->add_row($row);
+           $temp=array();
+           foreach($result['meta']['header'] as $key=>$value)
+           {
+              if(!is_array($value))
+              {
+                 if(strtolower($key)=="lastseen"||strtolower($key)=="last verified")
+                      array_push($temp,  date('D F d h:m:s Y',$row[$value]));
+                  else
+                  array_push($temp, $row[$value]);
+              }
+             else
+              {
+                    if(strtolower($key)=="note")
+                    {
+                        $link=site_url("notes").'/' ;
+                        foreach($value as $subkey=>$subval)
+                        {
+                          $index=$subval/100;
+                          $index2=$subval%100;
+                          $data=$row[$index][$index2];
+                          $link.="$subkey/$data/";
+                        }
+                      array_push($temp, anchor($link, 'note'));
+                         //array_push($temp, 'note');
+                    }
+              }
+           }
+          $this->table->add_row($temp);
        }
       echo $this->table->generate();
       $pg = paging($current,$number_of_rows,$result['meta']['count'],100);
+
       //$this->table->set_heading($keys);
       //foreach ($result as $key=>$value)
       //{
        
       //}
-      //echo $report_result .'<br />';
+     echo $report_result .'<br />';
       //echo json_last_error();
-      //print_r($result);
+     // print_r($result);
       //print_r($heading);
       ?>
      </div>
        <div class="Paging">
            <div>
            <div class="pages">
-                                    <div class="inside">
+                                   <div class="inside">
                                     <a href="<?=site_url('search/index/'.$params.'page/'.$pg['first'])?>" title="Go to First Page" class="first"><span>&laquo;</span></a>
                                     <a href="<?=site_url('search/index/'.$params.'page/'.$pg['prev'])?>" title="Go to Previous Page" class="prev"><span>&lsaquo;</span></a>
 
