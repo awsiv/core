@@ -64,16 +64,16 @@ void Nova_EnterpriseModuleTrick()
 if (false)
    {
      //   Nova2PHP_software_report(0,0,0,0,0,cfr_software,NULL,buffer,20);
-   Nova2PHP_classes_report(NULL,NULL,0,NULL,buffer,1000);
-   Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,NULL,buffer,1000);
-   Nova2PHP_compliance_promises(NULL,NULL,"x",0,NULL,buffer,10000);
-   Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,NULL,buffer,10000);
-   Nova2PHP_bundles_report(NULL,NULL,0,NULL,buffer,10000);
-   Nova2PHP_performance_report(NULL,NULL,0,NULL,buffer,10000);
-   Nova2PHP_setuid_report(NULL,NULL,0,NULL,buffer,10000);
-   Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",NULL,buffer,10000);
-   Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",NULL,buffer,10000);
-   Nova2PHP_value_report(NULL,NULL,NULL,NULL,NULL,buffer,1000);
+     //   Nova2PHP_classes_report(NULL,NULL,0,NULL,buffer,1000);
+     //   Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,NULL,buffer,1000);
+     //   Nova2PHP_compliance_promises(NULL,NULL,"x",0,NULL,buffer,10000);
+     //   Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,NULL,buffer,10000);
+     //   Nova2PHP_bundles_report(NULL,NULL,0,NULL,buffer,10000);
+     //   Nova2PHP_performance_report(NULL,NULL,0,NULL,buffer,10000);
+     //   Nova2PHP_setuid_report(NULL,NULL,0,NULL,buffer,10000);
+     //   Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",NULL,buffer,10000);
+     //   Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",NULL,buffer,10000);
+     //   Nova2PHP_value_report(NULL,NULL,NULL,NULL,NULL,buffer,1000);
    //   Nova2PHP_promiselog(NULL,NULL,1,0,0,NULL,buffer,1000);
    Nova2PHP_promises(NULL, NULL, NULL, 0);
    //   Nova2PHP_getlastupdate(NULL,buffer,10);
@@ -310,7 +310,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  snprintf(buffer,sizeof(buffer), 
 	  "{\"meta\":{\"count\" : %d,"
 	  "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Time\":3,"
-	  "\"note\":{\"action\":400,\"hostkey\":401,\"reporttype\":402,\"rid\":403,\"nid\":401}"
+	  "\"Note\":{\"index\":4,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":1}}"
 	  "}},\"data\":[", page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
@@ -388,7 +388,6 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
  hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,0,0,false,classreg);
-
 hostname[0] = '\0';
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -418,9 +417,9 @@ else
    {     
      summary = SortItemListCounters(summary);
      snprintf(buffer,sizeof(buffer),
-	      "{\"meta\":{\"count\" : 1,"
+	      "{\"meta\":{\"count\" : %d,"
 	      "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Occurrences\":3"
-	      "}},\"data\":["/*,page->totalResultCount*/);
+	      "}},\"data\":[",ListLen(summary));
      
    StartJoin(returnval,buffer,bufsize);
    
@@ -435,6 +434,7 @@ else
 	break;
 	}
       }
+
    if(returnval[strlen(returnval)-1]==',')
      {
        returnval[strlen(returnval)-1]='\0';
@@ -448,7 +448,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { struct HubValue *hp;
   struct HubQuery *hq;
@@ -468,13 +468,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
  hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,classreg);
 
- // PageRecords(&(hq->records),page,DeleteHubSoftware);
+ PageRecords(&(hq->records),page,DeleteHubValue);
  snprintf(buffer,sizeof(buffer),
 	  "{\"meta\":{\"count\" : %d,"
 	  "\"header\":{\"Host\":0,\"Day\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,"
 	  /*if action=add:hostkey,reporttype,rid else if action==show:nid*/
-	  "\"note\":{\"action\":500,\"hostkey\":501,\"reporttype\":502,\"rid\":503,\"nid\":501}"
-	  "}},\"data\":[", 100/*page->totalResultCount*/);
+	  "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":1}}"
+	  "}},\"data\":[", page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -576,7 +576,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE]={0};
   struct HubClass *hc;
@@ -596,13 +596,12 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 
  hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
-
- //PageRecords(&(hq->records),page,DeleteHubSoftware);
+ PageRecords(&(hq->records),page,DeleteHubClass);
 
  snprintf(buffer,sizeof(buffer),
 	  "{\"meta\":{\"count\" : %d,"
 	  "\"header\": {\"Host\":0,\"Class Context\":1,\"Occurs with Probability\":2,\"Uncertainty\":3,\"Last seen\":4"
-	  "}},\"data\":[", 100/*page->totalResultCount*/);
+	  "}},\"data\":[", page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -633,7 +632,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE],canonifiedValue[CF_BUFSIZE];
   char rvalBuf[CF_MAXVARSIZE];
@@ -642,25 +641,21 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
   struct Rlist *rp,*result;
   mongo_connection dbconn;
   
-  int first = true, endscope=false;
+  int first = true, countadded=false;
+  int scope_record_count = 0;
+
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
- hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
-
+hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
+PageRecords(&(hq->records),page,DeleteHubVariable);
 lscope[0] = '\0';
 
-// PageRecords(&(hq->records),page,DeleteHubSoftware);
-
-// snprintf(buffer,sizeof(buffer),
-//	  "{\"meta\":{\"count\" : %d,"
-//	  "\"header\": {\"scope\":0,\"host\":0,\"type\":101,\"name\":102,\"value\":103,\"date\":104" 	  
-//	  "}},\"data\":[", 100/*page->totalResultCount*/);
-// StartJoin(returnval,buffer,bufsize);
- StartJoin(returnval,"{\"meta\":{\"count\":100},",bufsize);
+ snprintf(buffer,sizeof(buffer),"{\"meta\":{\"count\":%d},",page->totalResultCount);
+ StartJoin(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -674,10 +669,11 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       if(!first)
 	{
 	  returnval[strlen(returnval)-1] = '\0';
-	  Join(returnval,"]},",bufsize); // end object
+	  snprintf(buffer,CF_BUFSIZE,"],\"count\":%d},",scope_record_count);
+	  Join(returnval,buffer,bufsize); // end scope
 	}
      
-      snprintf(buffer,CF_BUFSIZE,"\"%s\":{\"count\":10,"
+      snprintf(buffer,CF_BUFSIZE,"\"%s\":{"
 	       "\"header\":{\"Host\":0,\"Type\":1,\"Name\":2,\"Value\":3},"
 	       "\"data\":[",hv->scope);
       Join(returnval,buffer,bufsize);
@@ -721,16 +717,27 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    if(!Join(returnval,buffer,bufsize))
      {
+       countadded=true;;
        break;
      }
+   scope_record_count++;
    }
 
-if (!first )
+ if(first)
+   {
+     returnval[strlen(returnval)-1] = ']';
+   }
+ else if (!countadded )
   {
     returnval[strlen(returnval)-1] = '\0';
-    Join(returnval,"]}",bufsize); // end scope object
+    snprintf(buffer,CF_BUFSIZE,"],\"count\":%d}",scope_record_count);
+    Join(returnval,buffer,bufsize); // end scope
   }
-//returnval[strlen(returnval)-1] = '\0';
+ else
+   {
+     returnval[strlen(returnval)-1] = '\0';
+   }
+
 EndJoin(returnval,"}\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubVariable);
@@ -744,8 +751,7 @@ return true;
 }
 
 /*****************************************************************************/
-
-int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,struct PageInfo *page, char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubTotalCompliance *ht;
@@ -769,13 +775,12 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
  hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,classreg);
-
- // PageRecords(&(hq->records),page,DeleteHubSoftware);
+ PageRecords(&(hq->records),page,DeleteHubTotalCompliance);
 
  snprintf(buffer,sizeof(buffer),
 	  "{\"meta\":{\"count\" : %d,"
 	  "\"header\": {\"Host\":0,\"Policy\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,\"Last seen\":5" 
-	  "}},\"data\":[", 100/*page->totalResultCount*/);
+	  "}},\"data\":[", page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -809,7 +814,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubPromiseCompliance *hp;
@@ -830,13 +835,12 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
  hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
-
- // PageRecords(&(hq->records),page,DeleteHubSoftware);
+ PageRecords(&(hq->records),page,DeleteHubPromiseCompliance);
 
  snprintf(buffer,sizeof(buffer),
           "{\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"Promise Handle\":1,\"Last Known State\":2,\"Probability Kept\":3,\"Uncertainty\":4,\"Last seen\":5"
-          "}},\"data\":[", 100/*page->totalResultCount*/);
+          "}},\"data\":[",page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -868,7 +872,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubLastSeen *hl;
@@ -879,7 +883,6 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
   char inout[CF_SMALLBUF];
   time_t then;
   
-
 /* BEGIN query document */
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -888,12 +891,12 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
  hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
- // PageRecords(&(hq->records),page,DeleteHubSoftware);
+ PageRecords(&(hq->records),page,DeleteHubLastSeen);
 
  snprintf(buffer,sizeof(buffer),
           "{\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"Initiated\":1,\"Remote Host\":2,\"IP Address\":3,\"Last seen\":4,\"Hours Ago\":5,\"Avg Interval\":6,\"Uncertainty\":7,\"Remote Host key\":8"
-          "}},\"data\":[", 1000/*page->totalResultCount*/);
+          "}},\"data\":[",page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
 count += strlen(returnval);
@@ -943,8 +946,7 @@ return true;
 }
 
 /*****************************************************************************/
-
-int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg,struct PageInfo *page, char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE],note_link[CF_MAXVARSIZE],note[CF_MAXVARSIZE];
   struct HubPerformance *hP;
@@ -959,13 +961,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
  hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,true,classreg);
- // PageRecords(&(hq->records),page,DeleteHubSoftware);
+ PageRecords(&(hq->records),page,DeleteHubPerformance);
 
  snprintf(buffer,sizeof(buffer),
           "{\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"Event\":1,\"Last time\":2,\"Avg Time\":3,\"Uncertainty\":4,\"Last performed\":5,"
-	  "\"Note\":{\"action\":600,\"hostkey\":601,\"reporttype\":602,\"rid\":603,\"nid\":601}"
-          "}},\"data\":[", 100/*page->totalResultCount*/);
+	  "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":1}}"
+          "}},\"data\":[",page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -1010,7 +1012,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubSetUid *hS;   
@@ -1026,13 +1028,12 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
  hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
-
- // PageRecords(&(hq->records),page,DeleteHubSoftware);
+ PageRecords(&(hq->records),page,DeleteHubSetUid);
 
  snprintf(buffer,sizeof(buffer),
           "{\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"File\":1"
-          "}},\"data\":[", 100/*page->totalResultCount*/);
+          "}},\"data\":[", page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -1065,7 +1066,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubBundleSeen *hb;   
@@ -1084,13 +1085,12 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
  hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg,true);
-
-  // PageRecords(&(hq->records),page,DeleteHubSoftware);
+ PageRecords(&(hq->records),page,DeleteHubBundleSeen);
  snprintf(buffer,sizeof(buffer),
           "{\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"Hours Ago\":3,\"Avg Interval\":4,\"Uncertainty\":5,"
-          "\"Note\":{\"action\":600,\"hostkey\":601,\"reporttype\":602,\"rid\":603,\"nid\":601}"
-          "}},\"data\":[", 100/*page->totalResultCount*/);
+	  "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":1}}"
+          "}},\"data\":[",page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -1142,7 +1142,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
   struct HubFileChanges *hC;
@@ -1167,13 +1167,13 @@ switch (*cmp)
      }
 
    hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,classreg);
-    // PageRecords(&(hq->records),page,DeleteHubSoftware);
+   PageRecords(&(hq->records),page,DeleteHubFileChanges);
 
  snprintf(buffer,sizeof(buffer),
           "{\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2,"
-          "\"note\":{\"action\":300,\"hostkey\":301,\"reporttype\":302,\"rid\":303,\"nid\":301}"
-          "}},\"data\":[", 100/*page->totalResultCount*/);
+	  "\"Note\":{\"index\":3,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":1}}"
+          "}},\"data\":[",page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
    for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -1219,7 +1219,7 @@ switch (*cmp)
 
 /*****************************************************************************/
 
-int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];   
   struct HubFileDiff *hd;
@@ -1227,7 +1227,6 @@ int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,tim
   struct Rlist *rp,*result;
   int count = 0, tmpsize,icmp;
   mongo_connection dbconn;
-
 
 switch (*cmp)
    {
@@ -1244,14 +1243,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
  hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,true,classreg);
-
- // PageRecords(&(hq->records),page,DeleteHubSoftware);
+PageRecords(&(hq->records),page,DeleteHubFileDiff);
  
  snprintf(buffer,sizeof(buffer),
           "{\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2,"
-	  "\"Change\":{\"plusminus\":300,\"line\":301,\"diff\":302}"
-          "}},\"data\":[", 100/*page->totalResultCount*/);
+	  "\"Change\":{\"index\":3,\"subkeys\":{\"plusminus\":0,\"line\":1,\"diff\":2}}"
+          "}},\"data\":[",page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
