@@ -671,6 +671,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 	  returnval[strlen(returnval)-1] = '\0';
 	  snprintf(buffer,CF_BUFSIZE,"],\"count\":%d},",scope_record_count);
 	  Join(returnval,buffer,bufsize); // end scope
+	  scope_record_count=0;
 	}
      
       snprintf(buffer,CF_BUFSIZE,"\"%s\":{"
@@ -717,7 +718,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    if(!Join(returnval,buffer,bufsize))
      {
-       countadded=true;;
+       countadded=true;
        break;
      }
    scope_record_count++;
