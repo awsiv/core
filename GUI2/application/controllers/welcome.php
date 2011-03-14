@@ -463,7 +463,8 @@ class Welcome extends Cf_Controller {
     }
 
     function listhost() {
-        $scripts = array('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery.form.js"> </script>');
+        $scripts = array('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery.form.js"> </script>',
+                         '<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />');
 
         $this->template->set('injected_item', implode("", $scripts));
 
@@ -482,12 +483,14 @@ class Welcome extends Cf_Controller {
                 array_push($cells, anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
             }
         }
-
+        //cfpr_report_software_in(NULL,NULL,NULL,NULL,true,NULL,NULL,NULL);
+        $data=cfpr_report_classes(NULL,NULL,true,NULL,NULL,NULL);
         $data = array(
             'title' => "Cfengine Mission Portal - Filter",
             'title_header' => "Filter Host",
             'tabledata' => $cells,
-            'breadcrumbs' => $this->breadcrumblist->display()
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'classes'=>  autocomplete($data, "Class Context")
         );
         $this->template->load('template', 'hostlist', $data);
     }

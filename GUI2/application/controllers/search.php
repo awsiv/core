@@ -5,15 +5,19 @@ class Search extends Cf_Controller
    {
 	 parent::__construct();
          $this->load->library(array('table','pagination'));
+         $this->load->helper('form');
    }
 	
    function index()
    {
        $getparams=$this->uri->uri_to_assoc(3);
 	   $search = isset($getparams['search'])?$getparams['search']:$this->input->post('search');
-           $hostkey = isset($getparams['hostkey'])?$getparams['hostkey']:$this->input->post('hostkey');
+
+           $hostkey = isset($getparams['hostkey'])?$getparams['hostkey']:$this->input->post('hostkey');//shoud be read from param
            $report_type =isset($getparams['report'])?$getparams['report']:$this->input->post('report');
-           $many = isset($getparams['manyhosts'])?$getparams['manyhosts']:$this->input->post('manyhosts');
+           $many = isset($getparams['manyhosts'])?$getparams['manyhosts']:$this->input->post('manyhosts');//shoud be read from param
+
+           $host = isset($getparams['host'])?$getparams['host']:$this->input->post('host');
            $hours_deltafrom = isset($getparams['hours_deltafrom'])?$getparams['hours_deltafrom']:$this->input->post('hours_deltafrom');
            $hours_deltato = isset($getparams['hours_deltato'])?$getparams['hours_deltato']:$this->input->post('hours_deltato');
            $class_regex = isset($getparams['class_regex'])?$getparams['class_regex']:$this->input->post('class_regex');
@@ -22,12 +26,24 @@ class Search extends Cf_Controller
 	   
 	   $hostname =  cfpr_hostname($hostkey);
 
-           $rows=isset($getparams['rows'])?$getparams['rows']:50;
+           $rows=isset($getparams['rows'])?$getparams['rows']:($this->input->post('rows')?$this->input->post('rows'):10);
            $page_number=isset($getparams['page'])?$getparams['page']:1;
 	   //necessary for search result view
           //must use site_url for making bread crumbs work
-          
+           if($host=="All")
+           {
+               $hostkey="";
+               $many=true;
+           }
+           elseif($host!="")
+           {
+              $many=false;
+              $hostkey=$host;
+           }
+
+
            $params='';
+           $breadcrumbs_url="search/index/";
           if(!is_ajax ())
           {
                 
@@ -38,17 +54,22 @@ class Search extends Cf_Controller
                  {
                      if(empty($value))
                      {
-                         if($key<>"page")
+                         if($key<>"page" && $key<>"rows")
                          {
-                          $params.=$key.'/';
+                          //
+                          //$params.=$key.'/';
                          }
                      }
                      else
                      {
 
-                         if($key <>"page")
+                         if($key <>"page" && $key<>"rows")
                          {
                          $params.=$key.'/'.$value.'/';
+                         }
+                         if($key=="host" || $key=="report")
+                         {
+                            $breadcrumbs_url.=$key.'/'.$value.'/';
                          }
 
                      }
@@ -60,11 +81,15 @@ class Search extends Cf_Controller
                  {
                      if(empty($value))
                      {
-                         $params.=$key.'/';
+                         //$params.=$key.'/';
                      }
                      else
                      {
                          $params.=$key.'/'.$value.'/';
+                         if($key=="host" || $key=="report")
+                         {
+                            $breadcrumbs_url.=$key.'/'.$value.'/';
+                         }
                      }
                  }
                  // $params.='rows/20/page/1';
@@ -72,11 +97,15 @@ class Search extends Cf_Controller
                 }
            $bc = array(
             'title' => 'Reports',
-            'url' => site_url("search/index/$params"),
+            'url' => site_url("$breadcrumbs_url"),
             'isRoot' => false
            );
           $this->breadcrumb->setBreadCrumb($bc);
           }
+
+          //for css of autocompletion to work
+          $inject = array('<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />');
+          $this->template->set('injected_item', implode("", $inject));
 	   $data=array(
 	         'report_type'=>$report_type,
 			 'title'=>"Cfengine Mission Portal - search results",
@@ -107,10 +136,10 @@ class Search extends Cf_Controller
 				      }
 				  else
 				     {
-					 $data['report_result'] = cfpr_report_bundlesseen(NULL,$name,true,$class_regex);
+					 $data['report_result'] = cfpr_report_bundlesseen(NULL,$name,true,$class_regex,$rows,$page_number);
 					 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex);
 					 $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/pdfaction/email');
-					 $this->template->load('template','searchpages/searchresult',$data);
+					 $this->template->load('template','searchpages/businessresult',$data);
 				     }
 				  }
 				  elseif($hostkey!="") //when only a particular host is selected
@@ -118,8 +147,8 @@ class Search extends Cf_Controller
 				     
 					 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/class/'.$class_regex);
 					 $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/class/'.$class_regex.'/pdfaction/email');
-					 $data['report_result'] =  cfpr_report_bundlesseen($hostkey,$search,true,$class_regex);
-					 $this->template->load('template','searchpages/searchresult',$data);
+					 $data['report_result'] =  cfpr_report_bundlesseen($hostkey,$search,true,$class_regex,$rows,$page_number);
+					 $this->template->load('template','searchpages/businessresult',$data);
 					 
 				  }
 				  else //not nothing else is satisfied display extra form for more search paramaters
@@ -144,7 +173,7 @@ class Search extends Cf_Controller
                                                   $data['report_title'] = $report_type;
                                                   $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/days/'.$days.'/months/'.$months.'/years/'.$years.'/class_regex/'.$class_regex);
                                                   $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/days/'.$days.'/months/'.$months.'/years/'.$years.'/class_regex/'.$class_regex.'/pdfaction/email');
-                                                  $data['report_result'] = cfpr_report_value(NULL,$days,$months,$years,$class_regex);
+                                                  $data['report_result'] = cfpr_report_value(NULL,$days,$months,$years,$class_regex,$rows,$page_number);
                                                   $this->template->load('template','searchpages/businessresult',$data);
 						}
 					}
@@ -153,7 +182,7 @@ class Search extends Cf_Controller
 					 $data['report_title']= $report_type;
 					 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class_regex/'.$class_regex);
                                          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class_regex/'.$class_regex.'/pdfaction/email');
-					 $data['report_result'] = cfpr_report_value($hostkey,NULL,NULL,NULL,$class_regex);
+					 $data['report_result'] = cfpr_report_value($hostkey,NULL,NULL,NULL,$class_regex,$rows,$page_number);
 					 $this->template->load('template','searchpages/businessresult',$data);
 				    }
 				  else
@@ -167,14 +196,14 @@ class Search extends Cf_Controller
                      $name = isset($_POST['name'])?$_POST['name']:"";
 						if($hosts_only)
 						{
-						 $data['report_result']= cfpr_hosts_with_classes(NULL,$name,true,$class_regex);
+						 $data['report_result']= $this->__host_only_table(json_decode(cfpr_hosts_with_classes(NULL,$name,true,$class_regex),true));
 						 is_ajax()?$this->load->view('searchpages/search_result_group',$data):$this->template->load('template','searchpages/search_result_group',$data);
 						}
 						else
 						{
 						  $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/class_regex/'.$class_regex);
 					          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/class_regex/'.$class_regex.'/pdfaction/email');
-						  $data['report_result'] =  cfpr_report_classes(NULL,$name,true,$class_regex);
+						  $data['report_result'] =  cfpr_report_classes(NULL,$name,true,$class_regex,$rows,$page_number);
 						 $this->template->load('template','searchpages/searchresult',$data);
 						}
 					}
@@ -182,7 +211,7 @@ class Search extends Cf_Controller
 				    {
 					 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search);
                                          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/pdfaction/email');
-					 $data['report_result'] = cfpr_report_classes($hostkey,$search,true,$class_regex);
+					 $data['report_result'] = cfpr_report_classes($hostkey,$search,true,$class_regex,$rows,$page_number);
 					 $this->template->load('template','searchpages/searchresult',$data);
 					}
 				   else
@@ -204,7 +233,7 @@ class Search extends Cf_Controller
 						{
 						  $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/state/'.$state.'/class_regex/'.$class_regex);
 					          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/state/'.$state.'/class_regex/'.$class_regex.'/pdfaction/email');
-						  $data['report_result'] = cfpr_report_compliance_promises(NULL,$name,$state,true,$class_regex);
+						  $data['report_result'] = cfpr_report_compliance_promises(NULL,$name,$state,true,$class_regex,$rows,$page_number);
 						 $this->template->load('template','searchpages/searchresult',$data);
 						}
 				  }
@@ -212,7 +241,7 @@ class Search extends Cf_Controller
 				  {
 					 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/state/'.$state.'/class_regex/'.$class_regex);
                                          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/state/'.$state.'/class_regex/'.$class_regex.'/pdfaction/email');
-					 $data['report_result'] = cfpr_report_compliance_promises($hostkey,$search,$state,true,$class_regex);
+					 $data['report_result'] = cfpr_report_compliance_promises($hostkey,$search,$state,true,$class_regex,$rows,$page_number);
 					 $this->template->load('template','searchpages/searchresult',$data); 
 				  }
 				  else
@@ -233,7 +262,7 @@ class Search extends Cf_Controller
 						 $data['report_title'] = $report_type;
 						 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/class_regex/'.$class_regex.'/hostkey/'.$hostkey);
 					         $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/class_regex/'.$class_regex.'/hostkey/'.$hostkey.'/pdfaction/email');
-						 $data['report_result'] =  cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">",$class_regex);
+						 $data['report_result'] =  cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">",$class_regex,$rows,$page_number);
 						 $this->template->load('template','searchpages/searchresult',$data);
 						}
 				  }
@@ -241,7 +270,7 @@ class Search extends Cf_Controller
 				  {
 					 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class_regex/'.$class_regex);
                                          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class_regex/'.$class_regex.'/pdfaction/email');
-					 $data['report_result'] = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">",$class_regex);
+					 $data['report_result'] = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">",$class_regex,$rows,$page_number);
 					 $this->template->load('template','searchpages/searchresult',$data); 
 				  }
 				  else
@@ -262,16 +291,16 @@ class Search extends Cf_Controller
 						{
 						  $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/class_regex/'.$class_regex.'/hostkey/'.$hostkey);
 					          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/class_regex/'.$class_regex.'/hostkey/'.$hostkey.'/pdfaction/email');
-						  $data['report_result'] =  cfpr_report_filechanges(NULL,$name,true,-1,">",$class_regex);
-						  $this->template->load('template','searchpages/searchresult',$data);
+						  $data['report_result'] =  cfpr_report_filechanges(NULL,$name,true,-1,">",$class_regex,$rows,$page_number);
+						  $this->template->load('template','searchpages/businessresult',$data);
 						}
 				 }
 				 elseif($hostkey!="")
 				 {
 				 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/class_regex/'.$class_regex);
 				 $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/class_regex/'.$class_regex.'/pdfaction/email');
-			         $data['report_result'] =  cfpr_report_filechanges($hostkey,$search,true,-1,">",$class_regex);
-				 $this->template->load('template','searchpages/searchresult',$data);
+			         $data['report_result'] =  cfpr_report_filechanges($hostkey,$search,true,-1,">",$class_regex,$rows,$page_number);
+				 $this->template->load('template','searchpages/businessresult',$data);
 				 }
 				 else
 				 {
@@ -293,7 +322,7 @@ class Search extends Cf_Controller
 						{
 						  $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/diff/'.$diff.'/cal/'.$cal.'/class_regex/'.$class_regex);
 					          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/diff/'.$diff.'/cal/'.$cal.'/class_regex/'.$class_regex.'/pdfaction/email');
-						  $data['report_result'] =  cfpr_report_filediffs(NULL,$name,$diff,true,$cal,">",$class_regex);
+						  $data['report_result'] =  cfpr_report_filediffs(NULL,$name,$diff,true,$cal,">",$class_regex,$rows,$page_number);
 						 $this->template->load('template','searchpages/filechangediff_result',$data);
 						}
 				 }
@@ -301,7 +330,7 @@ class Search extends Cf_Controller
 				 {
 				    $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/cal/'.$cal.'/class_regex/'.$class_regex);
                                     $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/cal/'.$cal.'/class_regex/'.$class_regex.'/pdfaction/email');
-			            $data['report_result'] = cfpr_report_filediffs($hostkey,$search,NULL,true,$cal,">",$class_regex);
+			            $data['report_result'] = cfpr_report_filediffs($hostkey,$search,NULL,true,$cal,">",$class_regex,$rows,$page_number);
 				    $this->template->load('template','searchpages/filechangediff_result',$data);
 				 }
 				 else
@@ -324,7 +353,7 @@ class Search extends Cf_Controller
 					 }
 				  else
 				     {
-					 $data['report_result'] = cfpr_report_lastseen(NULL,$key,$name,$address,$ago,true,$class_regex);
+					 $data['report_result'] = cfpr_report_lastseen(NULL,$key,$name,$address,$ago,true,$class_regex,$rows,$page_number);
 					 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/key/'.$key.'/address/'.$address.'/ago'.$ago);
 					 $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/key/'.$key.'/address/'.$address.'/ago'.$ago.'/pdfaction/email');
 					 $this->template->load('template','searchpages/searchresult',$data);
@@ -334,7 +363,7 @@ class Search extends Cf_Controller
                 {
 				         $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/class/'.$class_regex.'/ago/-1');
 					 $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/class/'.$class_regex.'/pdfaction/email/ago/-1');
-					 $data['report_result'] =  cfpr_report_lastseen($hostkey,NULL,$search,NULL,-1,true,$class_regex);
+					 $data['report_result'] =  cfpr_report_lastseen($hostkey,NULL,$search,NULL,-1,true,$class_regex,$rows,$page_number);
 					 $this->template->load('template','searchpages/searchresult',$data);
 				
                 }
@@ -416,18 +445,18 @@ class Search extends Cf_Controller
 				   }
 				  else
 				   {
-				   $data['report_result'] = cfpr_report_performance(NULL,$name,true,$class_regex);
+				   $data['report_result'] = cfpr_report_performance(NULL,$name,true,$class_regex,$rows,$page_number);
 				   $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex);
 				   $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/pdfaction/email');
-				   $this->template->load('template','searchpages/searchresult',$data);
+				   $this->template->load('template','searchpages/businessresult',$data);
 				   }
 			  }
 			elseif($hostkey!="")
 			  {
 			  $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/class/'.$class_regex);
 			  $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/class/'.$class_regex.'/pdfaction/email');
-			  $data['report_result'] =  cfpr_report_performance($hostkey,$search,true,$class_regex);
-			  $this->template->load('template','searchpages/searchresult',$data);
+			  $data['report_result'] =  cfpr_report_performance($hostkey,$search,true,$class_regex,$rows,$page_number);
+			  $this->template->load('template','searchpages/businessresult',$data);
 			  }
 			else
 			  {
@@ -511,7 +540,7 @@ class Search extends Cf_Controller
 				   }
 				  else
 				   {
-				   $data['report_result'] =  cfpr_report_setuid(NULL,$name,true,$class_regex);
+				   $data['report_result'] =  cfpr_report_setuid(NULL,$name,true,$class_regex,$rows,$page_number);
 				   $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex);
 				   $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/pdfaction/email');
 				   $this->template->load('template','searchpages/searchresult',$data);
@@ -521,7 +550,7 @@ class Search extends Cf_Controller
 			 {
 			  $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class/'.$class_regex.'/search/'.$search);
 			  $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class/'.$class_regex.'/search/'.$search.'/pdfaction/email');
-			  $data['report_result'] = cfpr_report_setuid($hostkey,$search,true,$class_regex);
+			  $data['report_result'] = cfpr_report_setuid($hostkey,$search,true,$class_regex,$rows,$page_number);
 			  $this->template->load('template','searchpages/searchresult',$data);
 			 }
 			 else
@@ -531,10 +560,10 @@ class Search extends Cf_Controller
         break;
         case "Software installed":
 		    if($many)
-			{
-			 $name = isset($_POST['name'])?$_POST['name']:"";
-             $version = isset($_POST['version'])?$_POST['version']:"";
-             $arch = isset($_POST['arch'])?$_POST['arch']:"";
+                    {
+                        $name = isset($_POST['name'])?$_POST['name']:"";
+                    $version = isset($_POST['version'])?$_POST['version']:"";
+                    $arch = isset($_POST['arch'])?$_POST['arch']:"";
 			   if($hosts_only)
 				   {
 				   $data['report_result'] = cfpr_hosts_with_software_in(NULL,$name,$version,$arch,true,$class_regex,$rows,$page_number);
@@ -545,7 +574,7 @@ class Search extends Cf_Controller
 				   $data['report_result'] =  cfpr_report_software_in(NULL,$name,$version,$arch,true,$class_regex,$rows,$page_number);
 				   $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/version/'.$version.'/arch/'.$arch);
 				   $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/version/'.$version.'/arch/'.$arch.'/pdfaction/email');
-				   $this->template->load('template','searchpages/searchresult',$data);
+				   $this->template->load('template','searchpages/businessresult',$data);
 				   }
 			}
 			elseif($hostkey!="")
@@ -553,11 +582,15 @@ class Search extends Cf_Controller
 			  $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class/'.$class_regex.'/search/'.$search);
 			  $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class/'.$class_regex.'/search/'.$search.'/pdfaction/email');
 			  $data['report_result'] = cfpr_report_software_in($hostkey,$search,NULL,NULL,true,$class_regex,$rows,$page_number);
-			  $this->template->load('template','searchpages/searchresult',$data);
+			  $this->template->load('template','searchpages/businessresult',$data);
 			}
 			else
 			{
-			is_ajax()?$this->load->view('searchpages/software_installed',$data):$this->template->load('template','searchpages/software_installed',$data);
+                        $data['options']=$this->__host_availabe();
+                        $data['package_name_list']=$this->__software_installed_autocomplete('Name');
+                        $data['architecture']=$this->__software_installed_autocomplete('Architecture');
+                        $data['version']=$this->__software_installed_autocomplete('Version');
+                   	is_ajax()?$this->load->view('searchpages/software_installed',$data):$this->template->load('template','searchpages/software_installed',$data);
 			}
         break;
         case "Variables":
@@ -574,7 +607,7 @@ class Search extends Cf_Controller
 				   }
 				  else
 				   {
-				   $data['report_result'] =  cfpr_report_vars(NULL,$scope,$lval,$rval,$type,true,$class_regex);
+				   $data['report_result'] =  cfpr_report_vars(NULL,$scope,$lval,$rval,$type,true,$class_regex,$rows,$page_number);
 				   $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/class_regex/'.$class_regex.'/scope/'.$scope.'/lval/'.$lval.'/rval/'.$rval.'/var_type/'.$type);
 				   $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/class_regex/'.$class_regex.'/scope/'.$scope.'/lval/'.$lval.'/rval/'.$rval.'/var_type/'.$type.'/pdfaction/email');
 				   $this->template->load('template','searchpages/variable_result',$data);
@@ -584,7 +617,7 @@ class Search extends Cf_Controller
             {
 			$data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class/'.$class_regex.'/search/'.$search);
 			  $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class/'.$class_regex.'/search/'.$search.'/pdfaction/email');
-			  $data['report_result'] =cfpr_report_vars($hostkey,NULL,$search,NULL,NULL,true,$class_regex);
+			  $data['report_result'] =cfpr_report_vars($hostkey,NULL,$search,NULL,NULL,true,$class_regex,$rows,$page_number);
 			  $this->template->load('template','searchpages/variable_result',$data);
             }
             else
@@ -597,5 +630,67 @@ class Search extends Cf_Controller
 	    }
 	       
    }
-   
+
+   function __software_installed_autocomplete($column)
+        {
+            $data=cfpr_report_software_in(NULL,NULL,NULL,NULL,true,NULL,NULL,NULL);
+            $decoded_data=json_decode($data);
+            $column_index=$decoded_data->meta->header->$column;
+            $column=array();
+            foreach ($decoded_data->data as $rows)
+            {
+              array_push($column,$rows[$column_index]);
+            }
+            $unique_elements=array_unique($column);
+            if(is_array($unique_elements))  //necessary because the array_unique some times return associative array
+            {
+                $val=array_values($unique_elements);
+                return json_encode($val);
+            }
+            else
+            {
+                return json_encode($unique_elements);
+            }
+
+        }
+    function __host_availabe()
+        {
+            $result= json_decode(cfpr_select_hosts("none", ".*", 100));
+            $allhosts=array('All'=>'All host');
+            if (count($result) > 0) {
+            foreach ($result as $host) {
+                $allhosts[$host->key]=$host->id;
+            }
+            }
+           return $allhosts;
+        }
+
+    function __host_only_table($data_array)
+    {
+        $table="";
+        $cells = array();
+        if (count($data_array) > 0) {
+            foreach ($data_array as $cols) {
+                array_push($cells, anchor('welcome/host/' . $cols['hostkey'], $cols['hostname'], 'class="imglabel"'));
+            }
+        }
+        if (count($cells)>0)
+           {
+            $table.="<table><tr>";
+            for($i=0;$i<count($cells);$i++)
+            {
+                if($i%6==0 && $i!=0)
+                {
+                    $table.='</tr><tr>';
+                }
+                $table.='<td>'.$cells[$i].'</td>';
+            }
+            $table.="</tr></table>";
+           }
+         else
+         {
+            $table.="<table><tr><td>No Host Found !!!</td></tr></table>";
+         }
+       return $table;
+    }
 }

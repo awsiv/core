@@ -37,7 +37,7 @@
              }
              $this->table->clear();
        }
-      $pg = paging($current,$number_of_rows,$result['meta']['totalcount'],100);
+      $pg = paging($current,$number_of_rows,$result['meta']['count'],100);
      echo $report_result .'<br />';
       //echo json_last_error();
      // print_r($result);
@@ -46,6 +46,13 @@
      </div>
        <div class="Paging">
            <div>
+               <?
+               echo form_open('search/index/'.$params);
+                echo   form_input('rows', $number_of_rows);
+                echo "Rows/Page";
+                 echo form_close();
+                ?>
+           </div>
            <div class="pages">
                                    <div class="inside">
                                     <a href="<?=site_url('search/index/'.$params.'page/'.$pg['first'])?>" title="Go to First Page" class="first"><span>&laquo;</span></a>
@@ -55,15 +62,14 @@
                                        if ($i==$pg['page']) $current = 'current'; else $current="";
                                     ?>
 
-                                    <a href="<?=site_url("search/index/".$params."page/$i")?>" title="Go to Page <?=$i?>" class="page <?=$current?>"><span><?=$i?></span></a>
+                                    <a href="<?=site_url("search/index/".$params."rows/$number_of_rows/page/$i")?>" title="Go to Page <?=$i?>" class="page <?=$current?>"><span><?=$i?></span></a>
 
                                     <? } ?>
 
                                     <a href="<?=site_url('search/index/'.$params.'page/'.$pg['next'])?>" title="Go to Next Page" class="next"><span>&rsaquo;</span></a>
                                     <a href="<?=site_url('search/index/'.$params.'page/'.$pg['last'])?>" title="Go to Last Page" class="last"><span>&raquo;</span></a>
                                     </div>
-          </div>
-       </div>
+           </div>
     </div>
   </div>
 </div>

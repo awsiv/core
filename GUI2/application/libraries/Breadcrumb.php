@@ -12,13 +12,16 @@ final class BreadCrumb{
 	private $title;
 	private $url;
 	private $isRoot;
+        private $ci;
 
 	/*
 	 * No need to set anything up.  I autoload it and
 	 * let the setters mutate the properties through the
 	 * setBreadCrumb function
 	 */
-	function BreadCrumb(){}
+	function BreadCrumb(){
+          
+        }
 
 	/*
 	 * Takes an array which represents this class (BreadCrumb)
@@ -33,6 +36,7 @@ final class BreadCrumb{
 		$CI =& get_Instance();
 		$CI->breadcrumblist->add($this);
 		$_SESSION['breadCrumbList'] = $CI->breadcrumblist->getBreadCrumbs();
+               
 	}
 
 	function getTitle(){

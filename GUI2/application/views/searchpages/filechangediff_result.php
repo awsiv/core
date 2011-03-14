@@ -31,15 +31,15 @@
                     if(strtolower($key)=="change")
                     {
                       $table="<table>";
-                          $subindexs=  array_values($value);
-                          $index=$subindexs[0]/100;
+                          $subindexs=  array_values($value['subkeys']);
+                          $index=$value['index'];
                           
                             foreach($row[$index] as $subrows)
                             {
                                 $table.="<tr>";
                                 foreach($subindexs as $subindex)
                                 {
-                                 $cell=$subrows[$subindex%100];
+                                 $cell=$subrows[$subindex];
                                  $table.="<td>$cell</td>";
                                 }
                                 $table.="</tr>";

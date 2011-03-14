@@ -1,18 +1,21 @@
-<link href="<?php echo get_cssdir()?>jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />
 <div class="pagepanel">
  <div class="panelhead withpdfbtn">
    <span class="text"><?php echo $report_title?></span>
-  <a href="<?php echo $report_link?>"><img src="<?php echo get_imagedir()?>icon_pdf.png" class="floatRight"></a>
+   <a href="<?php echo site_url('search/index/report/'.$report_title)?>" id="advsearch">Advance search</a>
+   <a href="<?php echo $report_link?>"><img src="<?php echo get_imagedir()?>icon_pdf.png" class="floatRight"></a>
    <a href="<?php echo $email_link?>" id="send_mail"><img src="<?php echo get_imagedir()?>emailsend.png" class="floatRight lnsendmail"></a>
    <div class="clearboth"></div>
  </div>
    <div class="panelcontent">
-     <div class="tables">
+       <div id="filterdialog" class="hidden"></div>
+        <div class="tables">
       <?php
        $result = json_decode($report_result,true);
 
          $this->table->set_heading(array_keys($result['meta']['header']));
        $heading="";
+       if(count($result['data'])>0)
+       {
        foreach ($result['data'] as $row)
        {
         //$this->table->add_row($row);
@@ -21,7 +24,7 @@
            {
               if(!is_array($value))
               {
-                  if(strtolower($key)=="lastseen"||strtolower($key)=="time")
+                  if(strtolower($key)=="lastseen"||strtolower($key)=="time" || strtolower($key)=="last verified")
                       array_push($temp,  date('D F d h:m:s Y',$row[$value]));
                   else
                   array_push($temp, $row[$value]);
@@ -57,9 +60,14 @@
      // print_r($result);
       //print_r($heading);
       ?>
-     </div>
        <div class="Paging">
            <div>
+               <?
+               echo form_open('search/index/'.$params);
+                echo   form_input('rows', $number_of_rows);
+                echo "Rows/Page";
+                 echo form_close();
+                ?>
            </div>
            <div class="pages">
                                    <div class="inside">
@@ -70,7 +78,7 @@
                                        if ($i==$pg['page']) $current = 'current'; else $current="";
                                     ?>
 
-                                    <a href="<?=site_url("search/index/".$params."page/$i")?>" title="Go to Page <?=$i?>" class="page <?=$current?>"><span><?=$i?></span></a>
+                                    <a href="<?=site_url("search/index/".$params."rows/$number_of_rows/page/$i")?>" title="Go to Page <?=$i?>" class="page <?=$current?>"><span><?=$i?></span></a>
 
                                     <? } ?>
 
@@ -79,6 +87,13 @@
                                     </div>
            </div>
     </div>
+       <?php
+       }
+       else{
+         echo"<table><tr><td>NO Data Found !!</td></tr></table>";
+       }
+       ?>
+      </div>
   </div>
 </div>
 <div title="Send mail" id="dialog" style="display:none">
@@ -101,8 +116,27 @@ $(document).ready(function() {
 	//$('.tables table:first').prepend(
        //$('<thead></thead>').append($('.tables tr:first').remove())
        //);
-  $('.tables table').tableFilter();
+   $('.tables table').tableFilter();
     $('.tables table').tablesorter({widgets: ['zebra']});
+
+        $('#advsearch').click(function(event){
+            event.preventDefault();
+             $('#filterdialog').load('/search/index', {'report':'<?php echo $report_title ?>'}, function() {
+              var $dialog=$(this);
+               var $closebtn=$("<a class='ui-panel-close'><span class='ui-icon ui-icon-closethick'></span></a>");
+               $(this).slideDown('slow');
+                $(this).find('.panelhead').append($closebtn);
+                 $closebtn.hover(function () {
+                             $(this).addClass("ui-state-hover");
+                        },
+                           function () {
+                             $(this).removeClass("ui-state-hover");
+                         });
+                  $closebtn.click(function(){
+                   $dialog.fadeOut();
+                 });
+               });
+        });
 
 	var $dialog = $('#dialog').dialog({
 		 autoOpen: false,

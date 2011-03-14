@@ -105,4 +105,26 @@ function paging($page,$rp,$total,$limit)
 
         return $paging;
 }
+
+function autocomplete($report_data,$column)
+        {
+            $decoded_data=json_decode($report_data);
+            $column_index=$decoded_data->meta->header->$column;
+            $column=array();
+            foreach ($decoded_data->data as $rows)
+            {
+              array_push($column,$rows[$column_index]);
+            }
+            $unique_elements=array_unique($column);
+            if(is_array($unique_elements))  //necessary because the array_unique some times return associative array
+            {
+                $val=array_values($unique_elements);
+                return json_encode($val);
+            }
+            else
+            {
+                return json_encode($unique_elements);
+            }
+
+        }
 ?>

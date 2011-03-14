@@ -1,12 +1,13 @@
-<link href="<?php echo get_cssdir()?>jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />
 <div class="pagepanel">
  <div class="panelhead withpdfbtn">
    <span class="text"><?php echo $report_title?></span>
-  <a href="<?php echo $report_link?>"><img src="<?php echo get_imagedir()?>icon_pdf.png" class="floatRight"></a>
+   <a href="<?php echo site_url('search/index/report/'.$report_title)?>" id="advsearch">Advance search</a>
+   <a href="<?php echo $report_link?>"><img src="<?php echo get_imagedir()?>icon_pdf.png" class="floatRight"></a>
    <a href="<?php echo $email_link?>" id="send_mail"><img src="<?php echo get_imagedir()?>emailsend.png" class="floatRight lnsendmail"></a>
    <div class="clearboth"></div>
  </div>
    <div class="panelcontent">
+       <div id="filterdialog" class="hidden"></div>
      <div class="tables">
       <?php
        $result = json_decode($report_result,true);
@@ -53,32 +54,38 @@
       //{
        
       //}
-     echo $report_result .'<br />';
+  //echo $report_result .'<br />';
       //echo json_last_error();
      // print_r($result);
       //print_r($heading);
       ?>
      </div>
        <div class="Paging">
-           <div>
+            <div>
+               <?php
+                echo form_open('search/index/'.$params);
+                echo   form_input('rows', $number_of_rows);
+                echo "Rows/Page";
+                 echo form_close();
+                ?>
+               </div>
            <div class="pages">
                                    <div class="inside">
-                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['first'])?>" title="Go to First Page" class="first"><span>&laquo;</span></a>
-                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['prev'])?>" title="Go to Previous Page" class="prev"><span>&lsaquo;</span></a>
+                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['first']).'/rows/'.$number_of_rows?>" title="Go to First Page" class="first"><span>&laquo;</span></a>
+                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['prev']).'/rows/'.$number_of_rows?>" title="Go to Previous Page" class="prev"><span>&lsaquo;</span></a>
 
                                     <? for ($i=$pg['start'];$i<=$pg['end'];$i++) {
                                        if ($i==$pg['page']) $current = 'current'; else $current="";
                                     ?>
 
-                                    <a href="<?=site_url("search/index/".$params."page/$i")?>" title="Go to Page <?=$i?>" class="page <?=$current?>"><span><?=$i?></span></a>
+                                    <a href="<?=site_url("search/index/".$params."page/$i".'/rows/'.$number_of_rows)?>" title="Go to Page <?=$i?>" class="page <?=$current?>"><span><?=$i?></span></a>
 
                                     <? } ?>
 
-                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['next'])?>" title="Go to Next Page" class="next"><span>&rsaquo;</span></a>
-                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['last'])?>" title="Go to Last Page" class="last"><span>&raquo;</span></a>
+                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['next'].'/rows/'.$number_of_rows)?>" title="Go to Next Page" class="next"><span>&rsaquo;</span></a>
+                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['last'].'/rows/'.$number_of_rows)?>" title="Go to Last Page" class="last"><span>&raquo;</span></a>
                                     </div>
           </div>
-       </div>
     </div>
   </div>
 </div>
@@ -99,46 +106,27 @@
   </div>
 <script type="text/javascript">
 $(document).ready(function() { 
-	//$('.tables table:first').prepend(
-       //$('<thead></thead>').append($('.tables tr:first').remove())
-       //);
+
   $('.tables table').tableFilter();
     $('.tables table').tablesorter({widgets: ['zebra']});
-	
-	var $dialog = $('#dialog').dialog({
-		 autoOpen: false,
-		 modal: true,
-		 hide: 'puff',
-		 buttons: {
-		 'Send': function() {
-		 $.ajax({
-           type: "POST",
-           url: $('#parameters').val(),
-           data:({'to':$('#to_contacts').val(),'subject':$('#mail_subject').val(),'message':$('#mail_desc').val(),'from':$('#from_contacts').val()}),
-           dataType:'json',
-           success: function(data){
-        	  
-             }
-          });
-		 $(this).dialog('close');
-		 },
-		 'Cancel': function() {
-		 $(this).dialog('close');
-		 }
-		 },
-		 open: function() {
-		 $('#to_contacts').focus();
-		 
-		 },
-		 close: function() {
-		 
-		 }
-		 });
-	
-	$('a#send_mail').click(function(e){	
-	  e.preventDefault();
-	  $('#parameters').val($(this).attr('href'));
-      $dialog.dialog('open');
-	});
+
+        $('#advsearch').click(function(event){
+            event.preventDefault();
+           $('#filterdialog').load('/search/index', {'report':'<?php echo $report_title ?>'}, function() {
+              var $dialog=$(this);
+               var $closebtn=$("<a class='ui-panel-close'><span class='ui-icon ui-icon-closethick'></span></a>");
+               $(this).slideDown('slow');
+                $(this).find('.panelhead').append($closebtn);
+                 $closebtn.hover(function () {
+                             $(this).addClass("ui-state-hover");
+                        },
+                           function () {
+                             $(this).removeClass("ui-state-hover");
+                         });
+                  $closebtn.click(function(){
+                   $dialog.fadeOut();
+                 });
+               });
+        });   
 });
 </script>

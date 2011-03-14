@@ -13,7 +13,7 @@ $ret1 = cfpr_getlicense_owner();
     <ul id="dashboard-buttons">
         <li><?php echo anchor('welcome/status', 'Over all', array('title' => 'Summarized status of all host', 'class' => 'overall')) ?></li>
         <li><?php echo anchor('welcome/listhost', 'Individual', array('title' => 'Status of particular host', 'class' => 'individual')) ?></li>
-        <li><?php echo anchor('welcome/pulse_vitals', 'Vitals', array('title' => 'Vital signs of particular host', 'class' => 'vitals')) ?></li>
+        <li><?php echo anchor('search/index/host/All/report/Software installed', 'software installed', array('title' => 'short cut to software installed', 'class' => 'vitals')) ?></li>
         <li><?php echo anchor('auth/admin_page', 'Administration', array('title' => 'Administer the content and users', 'class' => 'admin')) ?></li>
         <li><?php echo anchor('welcome/helm', 'Configuration', array('title' => 'Work on Policies to configure system', 'class' => 'configure')) ?></li>
         <li><?php echo anchor('welcome/knowledge', 'Knowlegde', array('title' => 'Knowledge map of your system', 'class' => 'knowledge')) ?></li>

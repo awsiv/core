@@ -17,7 +17,6 @@ width:95%;
 min-width:960px;
 }
 
-
 /*
 -------------------------------------------------------------------------------------------------
 * for the header of the wep app
@@ -381,7 +380,7 @@ background:#e1e1e3;
 background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FEFEFE), to(#F3F3F3));
 background:-moz-linear-gradient(90deg, #F3F3F3, #FEFEFE) repeat scroll 0 0;
 padding:9px;
-font:14px DejaVuSans,Arial, Helvetica, sans-serif;
+/*font:14px DejaVuSans,Arial, Helvetica, sans-serif;*/
 }
 
 .panelcontent p
@@ -389,6 +388,12 @@ font:14px DejaVuSans,Arial, Helvetica, sans-serif;
 display:block;
 width:100%;
 padding:5px 0;
+}
+
+ui-widget
+{
+    font-family:inherit;
+    font-size: inherit;
 }
 
 .width_20
@@ -411,6 +416,11 @@ padding-top:4px;
 margin-top:2px;
 }
 
+#tabpane input:focus
+{
+border:solid 1px #efc692
+}
+
 .panelcontent li
 {
 padding:2px;
@@ -420,7 +430,7 @@ padding:2px;
 {
 /*background:url(../images/button.png) repeat-x;*/
 color:#1690CF;
-padding:7px;
+padding:4px 8px;
 border:solid 1px #CCC;
 font-size:9pt;
 font-weight: bold;
