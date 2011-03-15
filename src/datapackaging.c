@@ -2171,7 +2171,7 @@ return true;
 int Nova_LifeCycleLater(char *coarse_cycle,time_t from)
 
 { char now[CF_MAXVARSIZE],nm[CF_MAXVARSIZE],om[CF_MAXVARSIZE];
-  int year,nlc,olc,o_m,n_m;
+  int year = 0,nlc,olc = 0,o_m,n_m;
 
 /* Because cycles are endless, this will work up to a year */
   
@@ -2182,7 +2182,11 @@ nlc = year % 3;
 
 sscanf(coarse_cycle,"%[^_]_%*[^_]_%d",om,&olc);
 
-o_m = Month2Int(om);
+if ((o_m = Month2Int(om)) < 0)
+   {
+   o_m = 0;
+   }
+
 n_m = Month2Int(nm);
 
 if ((nlc == olc) && (n_m <= o_m))

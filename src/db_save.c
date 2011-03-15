@@ -284,7 +284,6 @@ switch(rep_type)
        FatalError("Software Error");
    }
 
-
 for (ip = data; ip != NULL; ip=ip->next)
    {
    if (strncmp(ip->name,"T: ",3) == 0)
@@ -1507,27 +1506,28 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, char *nid, char *reportD
   
    // find right host
    bson_buffer_init(&bb);
-   if(!EMPTY(nid))
-     {
-       bson_oid_from_string(&bsonid,nid);
-       bson_append_oid(&bb,"_id",&bsonid);
-     }
-   else
-     {
-       newnote = true;
-       bson_append_new_oid(&bb,"_id");
-       bson_append_string(&bb,cfn_keyhash,keyhash);
-       
-       if(!EMPTY(reportData))
-	 {
-	   bson_append_string(&bb,cfn_reportdata,reportData);
-	 }
-     }
 
+   if(!EMPTY(nid))
+      {
+      bson_oid_from_string(&bsonid,nid);
+      bson_append_oid(&bb,"_id",&bsonid);
+      }
+   else
+      {
+      newnote = true;
+      bson_append_new_oid(&bb,"_id");
+      bson_append_string(&bb,cfn_keyhash,keyhash);
+      
+      if (!EMPTY(reportData))
+	 {
+         bson_append_string(&bb,cfn_reportdata,reportData);
+	 }
+      }
+   
    bson_from_buffer(&host_key, &bb);
    
    sscanf(data->name,"%255[^,],%255[^,],%ld\n",username,msg,&datetime);
-
+   
    bson_buffer_init(&bb);
    setObj = bson_append_start_object(&bb, "$addToSet");
    sub = bson_append_start_object(setObj, cfn_note);
@@ -1585,16 +1585,17 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, char *nid, char *reportD
 }
 
 /*****************************************************************************/
+
 static time_t rev_ctime(char *str_time)
-{
-  struct tm tm;
+
+{ struct tm tm;
   char buf[255];
   time_t t;
 
-  snprintf(buf,sizeof(buf),"%s",str_time);
-  memset(&tm, 0, sizeof(tm));
-  strptime(buf, "%A %b %d %H:%M:%S %Y", &tm);
-  return mktime(&tm);
+snprintf(buf,sizeof(buf),"%s",str_time);
+memset(&tm, 0, sizeof(tm));
+strptime(buf, "%A %b %d %H:%M:%S %Y", &tm);
+return mktime(&tm);
 }
 
 /*****************************************************************************/
