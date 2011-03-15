@@ -90,7 +90,7 @@
        <?php
        }
        else{
-         echo"<table><tr><td>NO Data Found !!</td></tr></table>";
+         echo"<table><tr><td>".$this->lang->line("no_data")."</td></tr></table>";
        }
        ?>
       </div>

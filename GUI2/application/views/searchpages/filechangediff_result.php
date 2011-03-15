@@ -13,6 +13,8 @@
 
          $this->table->set_heading(array_keys($result['meta']['header']));
        $heading="";
+         if(count($result['data'])>0)
+       {
        foreach ($result['data'] as $row)
        {
         //$this->table->add_row($row);
@@ -64,9 +66,16 @@
      // print_r($result);
       //print_r($heading);
       ?>
-     </div>
+     
        <div class="Paging">
            <div>
+               <?
+               echo form_open('search/index/'.$params);
+                echo   form_input('rows', $number_of_rows);
+                echo "Rows/Page";
+                 echo form_close();
+                ?>
+           </div>
            <div class="pages">
                                    <div class="inside">
                                     <a href="<?=site_url('search/index/'.$params.'page/'.$pg['first'])?>" title="Go to First Page" class="first"><span>&laquo;</span></a>
@@ -84,8 +93,14 @@
                                     <a href="<?=site_url('search/index/'.$params.'page/'.$pg['last'])?>" title="Go to Last Page" class="last"><span>&raquo;</span></a>
                                     </div>
           </div>
-       </div>
+       
     </div>
+         <?php
+       }else{
+         echo"<table><tr><td>".$this->lang->line("no_data")."</td></tr></table>";
+       }
+         ?>
+         </div>
   </div>
 </div>
 <div title="Send mail" id="dialog" style="display:none">

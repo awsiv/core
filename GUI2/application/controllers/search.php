@@ -204,7 +204,7 @@ class Search extends Cf_Controller
 						  $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/class_regex/'.$class_regex);
 					          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/class_regex/'.$class_regex.'/pdfaction/email');
 						  $data['report_result'] =  cfpr_report_classes(NULL,$name,true,$class_regex,$rows,$page_number);
-						 $this->template->load('template','searchpages/searchresult',$data);
+						 $this->template->load('template','searchpages/businessresult',$data);
 						}
 					}
 				   elseif($hostkey!="")
@@ -212,7 +212,7 @@ class Search extends Cf_Controller
 					 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search);
                                          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/pdfaction/email');
 					 $data['report_result'] = cfpr_report_classes($hostkey,$search,true,$class_regex,$rows,$page_number);
-					 $this->template->load('template','searchpages/searchresult',$data);
+					 $this->template->load('template','searchpages/businessresult',$data);
 					}
 				   else
 				    {
@@ -234,7 +234,7 @@ class Search extends Cf_Controller
 						  $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/state/'.$state.'/class_regex/'.$class_regex);
 					          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/state/'.$state.'/class_regex/'.$class_regex.'/pdfaction/email');
 						  $data['report_result'] = cfpr_report_compliance_promises(NULL,$name,$state,true,$class_regex,$rows,$page_number);
-						 $this->template->load('template','searchpages/searchresult',$data);
+						 $this->template->load('template','searchpages/businessresult',$data);
 						}
 				  }
 				  elseif($hostkey!="")
@@ -242,7 +242,7 @@ class Search extends Cf_Controller
 					 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/state/'.$state.'/class_regex/'.$class_regex);
                                          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/state/'.$state.'/class_regex/'.$class_regex.'/pdfaction/email');
 					 $data['report_result'] = cfpr_report_compliance_promises($hostkey,$search,$state,true,$class_regex,$rows,$page_number);
-					 $this->template->load('template','searchpages/searchresult',$data); 
+					 $this->template->load('template','searchpages/businessresult',$data);
 				  }
 				  else
 				  {
@@ -263,7 +263,7 @@ class Search extends Cf_Controller
 						 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/class_regex/'.$class_regex.'/hostkey/'.$hostkey);
 					         $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/class_regex/'.$class_regex.'/hostkey/'.$hostkey.'/pdfaction/email');
 						 $data['report_result'] =  cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">",$class_regex,$rows,$page_number);
-						 $this->template->load('template','searchpages/searchresult',$data);
+						 $this->template->load('template','searchpages/businessresult',$data);
 						}
 				  }
 				  elseif($hostkey!="")
@@ -271,7 +271,7 @@ class Search extends Cf_Controller
 					 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class_regex/'.$class_regex);
                                          $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/class_regex/'.$class_regex.'/pdfaction/email');
 					 $data['report_result'] = cfpr_report_compliance_summary($hostkey,NULL,-1,-1,-1,-1,">",$class_regex,$rows,$page_number);
-					 $this->template->load('template','searchpages/searchresult',$data); 
+					 $this->template->load('template','searchpages/businessresult',$data);
 				  }
 				  else
 				  {
@@ -356,7 +356,7 @@ class Search extends Cf_Controller
 					 $data['report_result'] = cfpr_report_lastseen(NULL,$key,$name,$address,$ago,true,$class_regex,$rows,$page_number);
 					 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/key/'.$key.'/address/'.$address.'/ago'.$ago);
 					 $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/key/'.$key.'/address/'.$address.'/ago'.$ago.'/pdfaction/email');
-					 $this->template->load('template','searchpages/searchresult',$data);
+					 $this->template->load('template','searchpages/businessresult',$data);
 					 }
                 }
                 elseif($hostkey!="")
@@ -388,7 +388,7 @@ class Search extends Cf_Controller
 					 $data['report_result'] = cfpr_report_patch_avail(NULL,$name,$version,$arch,true,$class_regex,$rows,$page_number);
 					 $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/version/'.$version.'/arch/'.$arch);
 					 $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/version/'.$version.'/arch/'.$arch.'/pdfaction/email');
-					 $this->template->load('template','searchpages/searchresult',$data);
+					 $this->template->load('template','searchpages/businessresult',$data);
 					 }
                 }
               elseif($hostkey!="")
@@ -396,7 +396,7 @@ class Search extends Cf_Controller
 				$data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/class/'.$class_regex);
 			        $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/class/'.$class_regex.'/pdfaction/email');
 			        $data['report_result'] =  cfpr_report_patch_avail($hostkey,$search,NULL,NULL,true,$class_regex,$rows,$page_number);
-				$this->template->load('template','searchpages/searchresult',$data);
+				$this->template->load('template','searchpages/businessresult',$data);
                 }
               else
                 {
@@ -419,7 +419,7 @@ class Search extends Cf_Controller
 				   $data['report_result'] = cfpr_report_patch_in(NULL,$name,$version,$arch,true,$class_regex,$rows,$page_number);
 				   $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/version/'.$version.'/arch/'.$arch);
 				   $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/version/'.$version.'/arch/'.$arch.'/pdfaction/email');
-				   $this->template->load('template','searchpages/searchresult',$data);
+				   $this->template->load('template','searchpages/businessresult',$data);
 				   }
               }
              elseif($hostkey!="")
@@ -427,7 +427,7 @@ class Search extends Cf_Controller
 			  $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/class/'.$class_regex);
 			  $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/hostkey/'.$hostkey.'/search/'.$search.'/class/'.$class_regex.'/pdfaction/email');
 			  $data['report_result'] =  cfpr_report_patch_in($hostkey,$search,NULL,NULL,true,$class_regex,$rows,$page_number);
-			  $this->template->load('template','searchpages/searchresult',$data);
+			  $this->template->load('template','searchpages/businessresult',$data);
               }
              else
               {
@@ -543,7 +543,7 @@ class Search extends Cf_Controller
 				   $data['report_result'] =  cfpr_report_setuid(NULL,$name,true,$class_regex,$rows,$page_number);
 				   $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex);
 				   $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/pdfaction/email');
-				   $this->template->load('template','searchpages/searchresult',$data);
+				   $this->template->load('template','searchpages/businessresult',$data);
 				   }
 			 }
 			 elseif($hostkey!="")
