@@ -16,15 +16,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ((array) $bundle_list as $value) {
+                    <?php foreach ((array) $bundle_list['data'] as $value) {
                     ?>
                         <tr>
-                            <td><?php echo $value['host']; ?></td>
-                            <td><a href="<?php echo site_url('/bundle/details'); ?>/bundle/<?php echo $value['bundle']; ?>"><?php echo $value['bundle']; ?></a></td>
-                            <td><?php echo date('D F d h:m:s Y', $value['verified']); ?></td>
-                            <td><?php echo $value['ago']; ?></td>
-                            <td><?php echo $value['avg']; ?></td>
-                            <td><?php echo $value['uncert']; ?></td>
+                            <td><?php echo $value['0']; ?></td>
+                            <td><a href="<?php echo site_url('/bundle/details'); ?>/bundle/<?php echo $value['1']; ?>"><?php echo $value['1']; ?></a></td>
+                            <td><?php echo date('D F d h:m:s Y', $value['2']); ?></td>
+                            <td><?php echo $value['3']; ?></td>
+                            <td><?php echo $value['4']; ?></td>
+                            <td><?php echo $value['5']; ?></td>
                         </tr>
                     <?php } ?>
                 </tbody>

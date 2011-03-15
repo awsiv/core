@@ -83,7 +83,5 @@ function init(){
     barChart.loadJSON(json);
 }
 init();
-
-    //]]>
-
+//]]>
 </script>

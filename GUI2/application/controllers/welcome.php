@@ -432,7 +432,7 @@ class Welcome extends Cf_Controller {
             'title' => "Cfengine Mission Portal - classes ",
             'nav_text' => "Status : classes",
             'status' => "current",
-            'ret' => json_decode(cfpr_report_classes($hostkey, $name, $regex, NULL),true),
+            'ret' => json_decode(cfpr_report_classes($hostkey, $name, $regex, NULL,1000,1),true),
         );
         $this->template->load('template', 'classes', $data);
     }

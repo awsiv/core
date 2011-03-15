@@ -36,6 +36,7 @@
      // tabs
     $tabs = $( ".tabs" ).tabs({
         selected: null,
+        cache: true,
         ajaxOptions: {
             error: function( xhr, status, index, anchor ) {
                 $( anchor.hash ).html(

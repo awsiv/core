@@ -19,13 +19,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($ret as $value) {  ?>
+                        <?php foreach ((array)$ret['data'] as $index=>$value) {  ?>
                             <tr>
-                                <td><?php echo $value['host']; ?></td>
-                                <td><?php echo $value['context']; ?></td>
-                                <td><?php echo $value['prob']; ?></td>
-                                <td><?php echo $value['uncert']; ?></td>
-                                <td><?php echo date('D F d h:m:s Y', $value['lastseen']);  ?></td>
+                                <td><?php echo $value[0]; ?></td>
+                                <td><?php echo $value[1]; ?></td>
+                                <td><?php echo $value[2]; ?></td>
+                                <td><?php echo $value[3]; ?></td>
+                                <td><?php echo date('D F d h:m:s Y', $value['4']);  ?></td>
                             </tr>
                         <?php } ?>
                     </tbody>

@@ -6,9 +6,9 @@ class Visual extends Cf_Controller {
         parent::__construct();
 
         // inject the required js files
-        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'flot/excanvas.min.js">  </script><![endif]-->
+        $scripts = array('<!--[if lte IE 8]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'flot/excanvas.min.js">  </script><![endif]-->
             ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.min.js"> </script>
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.js"> </script>
                 ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.magnifiedview.js"> </script>
                 ',

@@ -15,15 +15,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ((array)$promise_list as $value) {
+                    <?php foreach ((array)$promise_list['data'] as $value) {
  ?>
                         <tr>
-                            <td><?php echo $value['host']; ?></td>
-                            <td><a href="<?php echo site_url() ?>/promise/details/<?php echo $value['handle']; ?>"><?php echo $value['handle']; ?></a></td>
-                            <td><?php echo $value['state']; ?></td>
-                            <td><?php echo $value['kept']; ?></td>
-                            <td><?php echo $value['uncert']; ?></td>
-                            <td><?php echo date('D F d h:m:s Y', $value['dt']); ?></td>
+                            <td><?php echo $value['0']; ?></td>
+                            <td><a href="<?php echo site_url() ?>/promise/details/<?php echo $value['1']; ?>"><?php echo $value['1']; ?></a></td>
+                            <td><?php echo $value['2']; ?></td>
+                            <td><?php echo $value['3']; ?></td>
+                            <td><?php echo $value['4']; ?></td>
+                            <td><?php echo date('D F d h:m:s Y', $value['5']); ?></td>
                         </tr>
 <?php } ?>
                 </tbody>

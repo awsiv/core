@@ -1,7 +1,7 @@
 <div id="placeholder-weekly_<?php echo $observable; ?>" style="height: 300px; width: 95%; "></div>
 <script language="javascript" type="text/javascript">
     //<![CDATA[
-    
+(function() {
     var magnifiedViewdata = <?php echo ($graphdata); ?>;
     var lineSeries1 = <?php echo ($graphdatalineseries1); ?>;
     var lineSeries2 = <?php echo ($graphdatalineseries2); ?>;
@@ -34,6 +34,7 @@
         { data:lineSeries2,lines: {show: true, lineWidth: 1},color:"rgb(0, 204, 0)"}
     ]
     ,options);
+    })();
     //]]>
 </script>
 
