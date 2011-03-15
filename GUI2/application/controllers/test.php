@@ -258,5 +258,97 @@ class Test extends CI_Controller
              $this->load->helper('html');
              $this->load->view('testviews/MUI_test/reportslist');
          }
+
+         function jsondata()
+         {
+          $reports=json_decode(cfpr_select_reports(".*",100));
+          $adjacencies=array();
+          $rootnode=array("id"=>"node0","name"=>"","data"=>array("\$type"=>"none"));
+          $control=array();
+          
+          $i=1;
+          foreach($reports as $report)
+          {
+             $node=array(
+                'nodeTo'=>'node'.$i,
+                 'data'=>array("\$type"=>'none')
+             );
+             $adjacencies[$i-1]=$node;
+             $i++;
+          }
+          $rootnode['adjacencies']=$adjacencies;
+          array_push($control, $rootnode);
+
+          $i=1;
+          foreach($reports as $report)
+          {
+             $node_property=array(
+              'id'=>'node'.$i,
+               'name'=>$report,
+               'data'=>array("\$angularwidth"=>"20","\$color"=>"#bf0","\$height"=>70+$i),
+                'adjacencies'=>array()
+             );
+              array_push($control, $node_property);
+              $i++;
+              echo $this->_rand_colorCode().'<br />';
+          }
+
+          //print_r($nodelist);
+          //print_r(json_encode($control));
+         }
+
+         function _rand_colorCode(){
+            $r = dechex(mt_rand(0,255)); // generate the red component
+            $g = dechex(mt_rand(0,255)); // generate the green component
+            $b = dechex(mt_rand(0,255)); // generate the blue component
+            $rgb = $r.$g.$b;
+            if($r == $g && $g == $b){
+            $rgb = substr($rgb,0,3); // shorter version
+            }
+            if( strlen( $rgb ) == 4 )
+            {
+                $rgb = $rgb . rand(10,99);
+            }
+            else if( strlen( $rgb ) == 5 )
+            {
+               $rgb = $rgb . rand(0,9);
+            }
+            return '#'.$rgb;
+        }
+
+        function software_installed_autocomplete($column)
+        {
+            $data=cfpr_report_software_in(NULL,NULL,NULL,NULL,true,NULL,NULL,NULL);
+            $decoded_data=json_decode($data);
+            $column_index=$decoded_data->meta->header->$column;
+            $column=array();
+            foreach ($decoded_data->data as $rows)
+            {
+              array_push($column,$rows[$column_index]);
+            }
+            $unique_value=array_unique($column);
+            
+            if(is_array($unique_value))
+            {
+                $val=array_values($unique_value);
+                echo json_encode($val);
+            }
+            else
+            {
+                echo json_encode($unique_value);
+            }
+        }
+
+        function host_availabe()
+        {
+            $result= json_decode(cfpr_select_hosts("none", ".*", 100));
+            $allhosts=array();
+            if (count($result) > 0) {
+            foreach ($result as $cols) {
+                $allhosts[$cols->id]=$cols->key;
+            }
+            }
+            print_r($allhosts);
+        }
         
 }
