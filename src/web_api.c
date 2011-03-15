@@ -310,7 +310,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  snprintf(buffer,sizeof(buffer), 
 	  "{\"meta\":{\"count\" : %d,"
 	  "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Time\":3,"
-	  "\"Note\":{\"index\":4,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":1}}"
+	  "\"Note\":{\"index\":4,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
 	  "}},\"data\":[", page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
@@ -332,7 +332,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 	  }
 	snprintf(buffer,sizeof(buffer), 
 		 "[ \"%s\",\"%s\",\"%s\",%ld,"
-		 "[ \"add\",\"%s\",%d,\"%s\"]"
+		 "[ \"add\",\"%s\",%d,\"%s\",\"\"]"
 		 "],",
 		 hp->hh->hostname,hp->handle,canonifiedCause,hp->t,
 		 hp->hh->keyhash,reportType,hp->oid);
@@ -341,12 +341,11 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
       {
 	snprintf(buffer,sizeof(buffer), 
 		 "[ \"%s\",\"%s\",\"%s\",%ld,"
-		 "[ \"show\",\"%s\"]"
+		 "[ \"show\",\"\",\"\",\"\",\"%s\"]"
 	       "],",
 	       hp->hh->hostname,hp->handle,canonifiedCause,hp->t,
 	       hp->nid);
       }
-   
    if(!Join(returnval,buffer,bufsize))
       {
      break;
@@ -471,7 +470,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 	  "{\"meta\":{\"count\" : %d,"
 	  "\"header\":{\"Host\":0,\"Day\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,"
 	  /*if action=add:hostkey,reporttype,rid else if action==show:nid*/
-	  "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":1}}"
+	  "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
 	  "}},\"data\":[", page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
@@ -483,7 +482,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
      {
        snprintf(buffer,sizeof(buffer),
 		"[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf,"
-		"[\"add\",\"%s\",%d,\"%s\"]],",
+		"[\"add\",\"%s\",%d,\"%s\",\"\"]],",
 		hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept,
 		hp->hh->keyhash,CFREPORT_VALUE,hp->handle);
        }
@@ -491,7 +490,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
      {
        snprintf(buffer,sizeof(buffer),
 		"[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf,"
-		"[\"show\",\"%s\"]],",
+		"[\"show\",\"\",\"\",\"\",\"%s\"]],",
 		hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept,
 		hp->nid);
      }
@@ -627,7 +626,6 @@ if (!CFDB_Close(&dbconn))
 
 return true;
 }
-
 /*****************************************************************************/
 
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
@@ -636,11 +634,12 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
   char rvalBuf[CF_MAXVARSIZE];
   struct HubVariable *hv,*hv2;
   struct HubQuery *hq;
+
   struct Rlist *rp,*result;
   mongo_connection dbconn;
   
   int first = true, countadded=false;
-  int scope_record_count = 0;
+  int scope_record_count = 0,last_scope_record_count=0,first_scope_record_count=0, meta_len=0;
 
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -649,10 +648,14 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
    }
 
 hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
+
+CountMarginRecordsVars(&(hq->records),page,&first_scope_record_count,&last_scope_record_count);
 PageRecords(&(hq->records),page,DeleteHubVariable);
+
 lscope[0] = '\0';
 
  snprintf(buffer,sizeof(buffer),"{\"meta\":{\"count\":%d},",page->totalResultCount);
+ meta_len=strlen(buffer);
  StartJoin(returnval,buffer,bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -664,19 +667,20 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       {
       strcpy(lscope,hv->scope);
       
-      if(!first)
-	{
+      if(strlen(buffer)>meta_len)
+	{	  
 	  returnval[strlen(returnval)-1] = '\0';
-	  snprintf(buffer,CF_BUFSIZE,"],\"count\":%d},",scope_record_count);
+	  snprintf(buffer,CF_BUFSIZE,"],\"count\":%d},",first?first_scope_record_count:scope_record_count);
 	  Join(returnval,buffer,bufsize); // end scope
 	  scope_record_count=0;
+	  first=false;
 	}
      
       snprintf(buffer,CF_BUFSIZE,"\"%s\":{"
 	       "\"header\":{\"Host\":0,\"Type\":1,\"Name\":2,\"Value\":3},"
 	       "\"data\":[",hv->scope);
       Join(returnval,buffer,bufsize);
-      first = false;
+      
       }
 
    switch (*hv->dtype)
@@ -722,16 +726,15 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    scope_record_count++;
    }
 
- if(first)
+ if (!countadded )
+  {
+    returnval[strlen(returnval)-1] = '\0';
+    snprintf(buffer,CF_BUFSIZE,"],\"count\":%d}",last_scope_record_count);
+    Join(returnval,buffer,bufsize); // end scope
+  }else if(first)
    {
      returnval[strlen(returnval)-1] = ']';
    }
- else if (!countadded )
-  {
-    returnval[strlen(returnval)-1] = '\0';
-    snprintf(buffer,CF_BUFSIZE,"],\"count\":%d}",scope_record_count);
-    Join(returnval,buffer,bufsize); // end scope
-  }
  else
    {
      returnval[strlen(returnval)-1] = '\0';
@@ -965,7 +968,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  snprintf(buffer,sizeof(buffer),
           "{\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"Event\":1,\"Last time\":2,\"Avg Time\":3,\"Uncertainty\":4,\"Last performed\":5,"
-	  "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":1}}"
+	  "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
           "}},\"data\":[",page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
@@ -976,14 +979,14 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    if(strcmp(hP->nid,CF_NONOTE) == 0)
      {
        snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%.2lf,%.2lf,%.2lf,%ld,"
-		"[\"add\",\"%s\",%d,\"%s\"]],",
+		"[\"add\",\"%s\",%d,\"%s\",\"\"]],",
 		hP->hh->hostname,hP->event,hP->q,hP->e,hP->d,hP->t,
 		hP->hh->keyhash,CFREPORT_PERFORMANCE,hP->handle);
      }
    else
      {
        snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%.2lf,%.2lf,%.2lf,%ld,"
-		"[\"show\",\"%s\"]],",
+		"[\"show\",\"\",\"\",\"\",\"%s\"]],",
 		hP->hh->hostname,hP->event,hP->q,hP->e,hP->d,hP->t,
 		hP->nid);
      }
@@ -1088,7 +1091,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
  snprintf(buffer,sizeof(buffer),
           "{\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"Hours Ago\":3,\"Avg Interval\":4,\"Uncertainty\":5,"
-	  "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":1}}"
+	  "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
           "}},\"data\":[",page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
@@ -1104,7 +1107,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    if(strcmp(hb->nid,CF_NONOTE) == 0)
      {
        snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,%.2lf,%.2lf,%.2lf,"
-		"[\"add\",\"%s\",%d,\"%s\"]],",
+		"[\"add\",\"%s\",%d,\"%s\",\"\"]],",
 		hb->hh->hostname,hb->bundle,hb->t,
 		hb->hrsago,hb->hrsavg,hb->hrsdev,
 		hb->hh->keyhash,CFREPORT_BUNDLE,hb->bundle);
@@ -1112,10 +1115,10 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    else
      {
        snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,%.2lf,%.2lf,%.2lf,"
-		"[\"show\",\"%s\"]],",
+		"[\"show\",\"\",\"\",\"\",\"%s\"]],",
 		hb->hh->hostname,hb->bundle,hb->t,
 		hb->hrsago,hb->hrsavg,hb->hrsdev,
-		hb->hh->keyhash,hb->nid);
+		hb->nid);
      }
 
    if(!Join(returnval,buffer,bufsize))
@@ -1171,7 +1174,7 @@ switch (*cmp)
  snprintf(buffer,sizeof(buffer),
           "{\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2,"
-	  "\"Note\":{\"index\":3,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":1}}"
+	  "\"Note\":{\"index\":3,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
           "}},\"data\":[",page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
@@ -1182,14 +1185,14 @@ switch (*cmp)
        if(strcmp(hC->nid,CF_NONOTE) == 0)
 	 {
 	   snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,"
-		    "[\"add\",\"%s\",%d,\"%s\"]],",
+		    "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
 		    hC->hh->hostname,hC->path,hC->t,
 		    hC->hh->keyhash,CFREPORT_FILECHANGES,hC->handle);
 	 }
        else
 	 {
 	   snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,"
-		    "[\"show\",\"%s\"]],",
+		    "[\"show\",\"\",\"\",\"\",\"%s\"]],",
 		    hC->hh->hostname,hC->path,hC->t,
 		    hC->nid);
 	 }     
@@ -4764,6 +4767,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
       break;
 
     case CFREPORT_PERFORMANCE:
+      level = 3;
       snprintf(row_name, sizeof(row_name), "%s.%s",cfr_performance,repid);
       snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
       getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
@@ -4771,12 +4775,14 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
       break;
 
     case CFREPORT_VALUE: /*value report*/
+      level = 3;
       snprintf(row_name, sizeof(row_name), "%s.%s",cfr_valuereport,repid);
       snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
       getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
       snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
       break;
     case CFREPORT_FILECHANGES:  
+      level = 3;
       snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filechanges,repid);
       snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
       getrow = CFDB_GetRow(&dbconn,db, &query, row_name, row, sizeof(row), level);
@@ -4791,6 +4797,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
       break;
 */
     case CFREPORT_BUNDLE:
+      level = 3;
       snprintf(row_name, sizeof(row_name), "%s.%s",cfr_bundles,repid);
       snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
       getrow = CFDB_GetRow(&dbconn,db, &query, row_name, row, sizeof(row), level);
@@ -4873,14 +4880,14 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
   result = CFDB_QueryNotes(&dbconn, kh, noteId, data);
 
   returnval[0] = '\0';
-  Join(returnval,"{\"data\":[",bufsize);
+  StartJoin(returnval,"{\"data\":[",bufsize);
   
   for (rp = result; rp != NULL; rp=rp->next)
     {
       hni = ( struct HubNoteInfo *) rp->item;
      for(hn = hni->note; hn != NULL; hn=hn->next)
 	{
-	  snprintf(buffer,sizeof(buffer),"[{\"user\":\"%s\"}, {\"date\":%ld}, {\"message\":\"%s\"}],", hn->user, hn->t, hn->msg);
+	  snprintf(buffer,sizeof(buffer),"[{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\"}],", hn->user, hn->t, hn->msg);
 	  if(!Join(returnval,buffer,bufsize))
 	    {
 	      break;
@@ -4894,8 +4901,9 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
       returnval[strlen(returnval) - 1] = '\0';
     }
 
-  Join(returnval,"]",bufsize);
-  snprintf(buffer,sizeof(buffer),",\"meta\":{\"count\":%d}}\n",count);
+  snprintf(buffer,sizeof(buffer),"],\"meta\":{\"count\":%d}}\n",count);
+  EndJoin(returnval,buffer,bufsize);
+
   DeleteRlist(result);
   if (!CFDB_Close(&dbconn))
     {

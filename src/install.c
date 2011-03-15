@@ -1291,14 +1291,14 @@ int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)())
  return true;
 }
 /*****************************************************************************/
-int CountTrailingRecordsVars(struct Rlist **records_p, struct PageInfo *page)
+void CountMarginRecordsVars(struct Rlist **records_p, struct PageInfo *page,int *start_count,int *end_count)
 /**
  * Counts the total records for a scope
  * if it spans multiple pages
  **/
-{ int startIdx=0, endIdx=0,count=0, scope_count=0;
-  struct HubVariable *hv,*hv2;
-  struct Rlist *rp,*rp2;
+{ int startIdx=0, endIdx=0,count=0, head_count=0, tail_count=0;
+  struct HubVariable *hv,*hv2,*hv3;
+  struct Rlist *rp,*rp2,*rp3;
   int last_scope=false;
   char lscope[CF_MAXVARSIZE];
 
@@ -1317,28 +1317,45 @@ int CountTrailingRecordsVars(struct Rlist **records_p, struct PageInfo *page)
       if (strcmp(lscope,hv->scope) != 0)
 	{
 	  strcpy(lscope,hv->scope);
-	  scope_count=0;
+	  tail_count=0;
 	}
 
-      if(count == endIdx && rp->next)
+      if(count == startIdx && rp->next)
 	{
-	  last_scope=true;
-	  for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
-	    {
-	      hv2 = (struct HubVariable *)rp2->item;
+	  head_count=tail_count;
+	  for (rp3 = rp; rp3 != NULL; rp3=rp3->next)
+	     {
+	       hv3 = (struct HubVariable *)rp3->item;
 
-	      if (strcmp(lscope,hv2->scope) != 0)
-		{
-		  break;
-		}
-	      scope_count++;
-	    }
-	}
-      count++;
-      if(!last_scope)
-	{
-	  scope_count++;
-	}
-    } 
-  return scope_count;
+	       if (strcmp(lscope,hv3->scope) != 0)
+		 {
+		   break;
+		 }
+	       head_count++;
+	     }
+	 }
+
+       if(count == endIdx && rp->next)
+	 {
+	   last_scope=true;
+	   for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
+	     {
+	       hv2 = (struct HubVariable *)rp2->item;
+
+	       if (strcmp(lscope,hv2->scope) != 0)
+		 {
+		   break;
+		 }
+	       tail_count++;
+	     }
+	 }
+       count++;
+       if(!last_scope)
+	 {
+	   tail_count++;
+	 }
+    }
+  
+  *start_count = head_count;
+  *end_count = tail_count;
 }
