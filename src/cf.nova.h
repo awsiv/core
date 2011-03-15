@@ -607,7 +607,7 @@ int SortBundleSeen(void *p1, void *p2);
 struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(struct Rlist *records, int slot);
 
 int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)());
-
+int CountTrailingRecordsVars(struct Rlist **records_p, struct PageInfo *page);
 /* knowledge.c */
 
 void Nova_SyntaxCompletion(char *s);

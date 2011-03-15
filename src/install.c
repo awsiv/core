@@ -1255,10 +1255,8 @@ int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)())
        }
       
     }
-  
-  
+
  // now unlink uneccessary elements at start and end
-  
  if(prevStartEl)
     {
     prevStartEl->next = NULL;
@@ -1291,4 +1289,56 @@ int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)())
  page->totalResultCount = count;
   
  return true;
+}
+/*****************************************************************************/
+int CountTrailingRecordsVars(struct Rlist **records_p, struct PageInfo *page)
+/**
+ * Counts the total records for a scope
+ * if it spans multiple pages
+ **/
+{ int startIdx=0, endIdx=0,count=0, scope_count=0;
+  struct HubVariable *hv,*hv2;
+  struct Rlist *rp,*rp2;
+  int last_scope=false;
+  char lscope[CF_MAXVARSIZE];
+
+  rp = *records_p;
+
+  startIdx = page->resultsPerPage*(page->pageNum - 1);
+  endIdx = (page->resultsPerPage*page->pageNum) - 1;
+
+  lscope[0] = '\0';
+
+  for (rp = *records_p; (rp != NULL && !last_scope); rp=rp->next)
+    {
+      char typestr[CF_SMALLBUF];
+
+      hv = (struct HubVariable *)rp->item;
+      if (strcmp(lscope,hv->scope) != 0)
+	{
+	  strcpy(lscope,hv->scope);
+	  scope_count=0;
+	}
+
+      if(count == endIdx && rp->next)
+	{
+	  last_scope=true;
+	  for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
+	    {
+	      hv2 = (struct HubVariable *)rp2->item;
+
+	      if (strcmp(lscope,hv2->scope) != 0)
+		{
+		  break;
+		}
+	      scope_count++;
+	    }
+	}
+      count++;
+      if(!last_scope)
+	{
+	  scope_count++;
+	}
+    } 
+  return scope_count;
 }
