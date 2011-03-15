@@ -1951,7 +1951,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   {
                   rt = bson_iterator_int(&it3);
                   }
-	       else if (strcmp(bson_iterator_key(&it1),cfn_nid) == 0)
+	       else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
                  {
                    snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
                  }
@@ -2529,7 +2529,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   {
                   rrepaired = bson_iterator_double(&it3);
                   }
-	       else if (strcmp(bson_iterator_key(&it1),cfn_nid) == 0)
+	       else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
                  {
                    snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
                  }
@@ -2715,7 +2715,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
 	       else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
 		 {
-		   snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_key(&it3)); 
+		   snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3)); 
 		 }
                else
                   {
