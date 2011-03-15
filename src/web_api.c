@@ -369,7 +369,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE],hostname[CF_MAXVARSIZE],report[CF_BUFSIZE];
   struct HubPromiseLog *hp;
@@ -387,14 +387,14 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,0,0,false,classreg);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,false,classreg);
 hostname[0] = '\0';
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseLog *)rp->item;
-   IdempPrependItem(&summary,hp->handle,hp->cause);
-   IncrementItemListCounter(summary,hp->handle);
+   ip = IdempPrependItem(&summary,hp->handle,hp->cause);
+   ip->counter++;
 
    if (hostname[0] == '\0')
       {
@@ -404,10 +404,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
 DeleteHubQuery(hq,DeleteHubPromiseLog);
 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   }
+CFDB_Close(&dbconn);
+
 
 if (summary == NULL)
    {
