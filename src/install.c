@@ -1,6 +1,6 @@
 /*
 
- This file is (C) Cfengine AS. See COSL LICENSE for details.
+This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 */
 
@@ -22,37 +22,37 @@ void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp)
 
 { struct PromiseIdent *ptr;
 
-for (ptr = *list; ptr != NULL; ptr = ptr->next)
-   {
-   if (pp->lineno == ptr->lineno)
-      {
-      if (strcmp(pp->audit->filename,ptr->filename) == 0)
-         {
-         return;
-         }
-      }
-   }
+ for (ptr = *list; ptr != NULL; ptr = ptr->next)
+    {
+    if (pp->lineno == ptr->lineno)
+       {
+       if (strcmp(pp->audit->filename,ptr->filename) == 0)
+          {
+          return;
+          }
+       }
+    }
 
-if ((ptr = malloc(sizeof(struct PromiseIdent))) == NULL)
-   {
-   FatalError("MemoryAlloc NewPromiseId\n");
-   }
+ if ((ptr = malloc(sizeof(struct PromiseIdent))) == NULL)
+    {
+    FatalError("MemoryAlloc NewPromiseId\n");
+    }
 
-ptr->filename = strdup(pp->audit->filename);
+ ptr->filename = strdup(pp->audit->filename);
 
-if (ptr->classes)
-   {
-   ptr->classes = strdup(pp->classes);
-   }
-else
-   {
-   ptr->classes = strdup("any");
-   }
+ if (ptr->classes)
+    {
+    ptr->classes = strdup(pp->classes);
+    }
+ else
+    {
+    ptr->classes = strdup("any");
+    }
 
-ptr->lineno = pp->lineno;
-ptr->handle = strdup(s);
-ptr->next = *list;
-*list = ptr;
+ ptr->lineno = pp->lineno;
+ ptr->handle = strdup(s);
+ ptr->next = *list;
+ *list = ptr;
 }
 
 
@@ -62,14 +62,14 @@ struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records)
 
 { struct HubQuery *hq;
 
-if ((hq = malloc(sizeof(struct HubQuery))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubQuery");
-   }
+ if ((hq = malloc(sizeof(struct HubQuery))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubQuery");
+    }
 
-hq->hosts = hosts;
-hq->records = records;
-return hq;
+ hq->hosts = hosts;
+ hq->records = records;
+ return hq;
 }
 
 /*****************************************************************************/
@@ -78,19 +78,19 @@ void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)())
 
 { struct Rlist *rp;
 
-for (rp = hq->hosts; rp != NULL; rp=rp->next)
-   {
-   DeleteHubHost(rp->item);
-   rp->item = NULL;
-   }
+ for (rp = hq->hosts; rp != NULL; rp=rp->next)
+    {
+    DeleteHubHost(rp->item);
+    rp->item = NULL;
+    }
  
-DeleteRlist(hq->hosts);
+ DeleteRlist(hq->hosts);
 
-for (rp = hq->records; rp != NULL; rp=rp->next)
-   {
-   (*fnptr)(rp->item);
-   rp->item = NULL;
-   }
+ for (rp = hq->records; rp != NULL; rp=rp->next)
+    {
+    (*fnptr)(rp->item);
+    rp->item = NULL;
+    }
  
  DeleteRlist(hq->records);
  free(hq);
@@ -102,65 +102,65 @@ struct HubHost *NewHubHost(char *keyhash,char *ipaddr,char *hostname)
 
 { struct HubHost *hp;
 
-if ((hp = malloc(sizeof(struct HubHost))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubHost");
-   }
+ if ((hp = malloc(sizeof(struct HubHost))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubHost");
+    }
 
-if (keyhash)
-   {
-   hp->keyhash = strdup(keyhash);
-   }
-else
-   {
-   hp->keyhash = NULL;
-   }
+ if (keyhash)
+    {
+    hp->keyhash = strdup(keyhash);
+    }
+ else
+    {
+    hp->keyhash = NULL;
+    }
 
-if (ipaddr)
-   {
-   hp->ipaddr = strdup(ipaddr);
-   }
-else
-   {
-   hp->ipaddr = NULL;
-   }
+ if (ipaddr)
+    {
+    hp->ipaddr = strdup(ipaddr);
+    }
+ else
+    {
+    hp->ipaddr = NULL;
+    }
 
-if (hostname)
-   {
-   hp->hostname = strdup(hostname);
-   }
-else
-   {
-   hp->hostname = NULL;
-   }
+ if (hostname)
+    {
+    hp->hostname = strdup(hostname);
+    }
+ else
+    {
+    hp->hostname = NULL;
+    }
 
-return hp;
+ return hp;
 }
 
 /*****************************************************************************/
 
 struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash)
 {
-  struct Rlist *lp;
-  struct HubHost *hh;
+ struct Rlist *lp;
+ struct HubHost *hh;
 
-  if(host_list == NULL)
+ if(host_list == NULL)
     {
     return NULL;
     }
 
   
-   for (lp = host_list; lp != NULL; lp=lp->next)
-      {
-      hh = (struct HubHost *)lp->item;
+ for (lp = host_list; lp != NULL; lp=lp->next)
+    {
+    hh = (struct HubHost *)lp->item;
 
-      if(strcmp(hh->keyhash,keyhash) == 0)
-	{
-	return hh;
-	}
-      }
+    if(strcmp(hh->keyhash,keyhash) == 0)
+       {
+       return hh;
+       }
+    }
 
-   return NULL;
+ return NULL;
 }
 
 
@@ -168,22 +168,22 @@ struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash)
 
 void DeleteHubHost(struct HubHost *hp)
 {
-if (hp->keyhash)
-   {
-   free(hp->keyhash);
-   }
+ if (hp->keyhash)
+    {
+    free(hp->keyhash);
+    }
 
-if (hp->ipaddr)
-   {
-   free(hp->ipaddr);
-   }
+ if (hp->ipaddr)
+    {
+    free(hp->ipaddr);
+    }
 
-if (hp->hostname)
-   {
-   free(hp->hostname);
-   }
+ if (hp->hostname)
+    {
+    free(hp->hostname);
+    }
 
-free(hp);
+ free(hp);
 }
 
 /*****************************************************************************/
@@ -192,64 +192,64 @@ struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,c
 
 { struct HubSoftware *hp;
 
-if ((hp = malloc(sizeof(struct HubSoftware))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubSoftware");
-   }
+ if ((hp = malloc(sizeof(struct HubSoftware))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubSoftware");
+    }
 
-hp->hh = hh;
+ hp->hh = hh;
 
-if (name)
-   {
-   hp->name = strdup(name);
-   }
-else
-   {
-   hp->name = NULL;
-   }
+ if (name)
+    {
+    hp->name = strdup(name);
+    }
+ else
+    {
+    hp->name = NULL;
+    }
 
-if (version)
-   {
-   hp->version = strdup(version);
-   }
-else
-   {
-   hp->version = NULL;
-   }
+ if (version)
+    {
+    hp->version = strdup(version);
+    }
+ else
+    {
+    hp->version = NULL;
+    }
 
-if (arch)
-   {
-   hp->arch = strdup(arch);
-   }
-else
-   {
-   hp->arch = NULL;
-   }
+ if (arch)
+    {
+    hp->arch = strdup(arch);
+    }
+ else
+    {
+    hp->arch = NULL;
+    }
 
 
-return hp;
+ return hp;
 }
 
 /*****************************************************************************/
 
 void DeleteHubSoftware(struct HubSoftware *hs)
 {
-if (hs->name)
-   {
-   free(hs->name);
-   }
+ if (hs->name)
+    {
+    free(hs->name);
+    }
 
-if (hs->version)
-   {
-   free(hs->version);
-   }
+ if (hs->version)
+    {
+    free(hs->version);
+    }
 
-if (hs->arch)
-   {
-   free(hs->arch);
-   }
+ if (hs->arch)
+    {
+    free(hs->arch);
+    }
 
-free(hs);
+ free(hs);
 }
 
 /*****************************************************************************/
@@ -258,38 +258,38 @@ struct HubClass *NewHubClass(struct HubHost *hh,char *class,double p, double dev
 
 { struct HubClass *hp;
 
-if ((hp = malloc(sizeof(struct HubClass))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubSoftware");
-   }
+ if ((hp = malloc(sizeof(struct HubClass))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubSoftware");
+    }
 
-hp->hh = hh;
+ hp->hh = hh;
 
-if (class)
-   {
-   hp->class = strdup(class);
-   }
-else
-   {
-   hp->class = NULL;
-   }
+ if (class)
+    {
+    hp->class = strdup(class);
+    }
+ else
+    {
+    hp->class = NULL;
+    }
 
-hp->prob = p;
-hp->dev = dev;
-hp->t = t;
-return hp;
+ hp->prob = p;
+ hp->dev = dev;
+ hp->t = t;
+ return hp;
 }
 
 /*****************************************************************************/
 
 void DeleteHubClass(struct HubClass *hc)
 {
-if (hc->class)
-   {
-   free(hc->class);
-   }
+ if (hc->class)
+    {
+    free(hc->class);
+    }
 
-free(hc);
+ free(hc);
 }
 
 /*****************************************************************************/
@@ -298,44 +298,45 @@ struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,cha
 
 { struct HubTotalCompliance *hp;
  
-if ((hp = malloc(sizeof(struct HubTotalCompliance))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubSoftware");
-   }
+ if ((hp = malloc(sizeof(struct HubTotalCompliance))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubSoftware");
+    }
 
-hp->hh = hh;
-hp->t = t;
+ hp->hh = hh;
+ hp->t = t;
 
-hp->version = strdup(v);
-hp->kept = k;
-hp->repaired = r;
-hp->notkept = n;
-return hp;
+ hp->version = strdup(v);
+ hp->kept = k;
+ hp->repaired = r;
+ hp->notkept = n;
+ return hp;
 }
 
 /*****************************************************************************/
 
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht)
 {
-if (ht->version)
-   {
-   free(ht->version);
-   }
+ if (ht->version)
+    {
+    free(ht->version);
+    }
 
-free(ht);
+ free(ht);
 }
 
 /*****************************************************************************/
 
-struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(int slot, int count, double kept, double repaired, double notkept, time_t genTime)
+struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int count, double kept, double repaired, double notkept, time_t genTime)
 
 { struct HubCacheTotalCompliance *tc;
  
-if ((tc = malloc(sizeof(struct HubCacheTotalCompliance))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubSoftware");
-   }
+ if ((tc = malloc(sizeof(struct HubCacheTotalCompliance))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubSoftware");
+    }
 
+ tc->policy = strdup(policy);
  tc->slot = slot;
  tc->count = count;
  tc->kept = kept;
@@ -343,14 +344,15 @@ if ((tc = malloc(sizeof(struct HubCacheTotalCompliance))) == NULL)
  tc->notkept = notkept;
  tc->genTime = genTime;
 
-return tc;
+ return tc;
 }
 
 /*****************************************************************************/
 
 void DeleteHubCacheTotalCompliance(struct HubCacheTotalCompliance *tc)
 {
-free(tc);
+ free(tc->policy);
+ free(tc);
 }
 
 /*****************************************************************************/
@@ -359,19 +361,19 @@ struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,cha
 // NOTE: rval must be allocated by caller
 { struct HubVariable *hp;
      
-if ((hp = malloc(sizeof(struct HubVariable))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubVariable");
-   }
+ if ((hp = malloc(sizeof(struct HubVariable))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubVariable");
+    }
 
-hp->hh = hh;
-hp->rtype = rtype;
-hp->rval = rval;
-hp->scope = strdup(scope);
-hp->lval = strdup(lval);
-hp->dtype = strdup(type);
-hp->t = t;
-return hp;
+ hp->hh = hh;
+ hp->rtype = rtype;
+ hp->rval = rval;
+ hp->scope = strdup(scope);
+ hp->lval = strdup(lval);
+ hp->dtype = strdup(type);
+ hp->t = t;
+ return hp;
 }
 
 /*****************************************************************************/
@@ -379,25 +381,25 @@ return hp;
 void DeleteHubVariable(struct HubVariable *hv)
 
 {
-free(hv->scope);
-free(hv->lval);
-free(hv->dtype);
+ free(hv->scope);
+ free(hv->lval);
+ free(hv->dtype);
 
-switch(hv->rtype)
-   {
-   case CF_SCALAR:
-       if (hv->rval)
-          {
-          free(hv->rval);
-          }
-       break;
+ switch(hv->rtype)
+    {
+    case CF_SCALAR:
+        if (hv->rval)
+           {
+           free(hv->rval);
+           }
+        break;
        
-   case CF_LIST:
-       DeleteRlist(hv->rval);
-       break;
-   }
+    case CF_LIST:
+        DeleteRlist(hv->rval);
+        break;
+    }
 
-free(hv);
+ free(hv);
 }
 
 /*****************************************************************************/
@@ -406,18 +408,18 @@ struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,char *cau
 
 { struct HubPromiseLog *hp;
  
-if ((hp = malloc(sizeof(struct HubPromiseLog))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubPromiseLog");
-   }
+ if ((hp = malloc(sizeof(struct HubPromiseLog))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubPromiseLog");
+    }
 
-hp->hh = hh;
-hp->handle = strdup(handle);
-hp->cause = strdup(cause);
-hp->nid = strdup(noteId);
-hp->oid = strdup(oid);
-hp->t = t;
-return hp;
+ hp->hh = hh;
+ hp->handle = strdup(handle);
+ hp->cause = strdup(cause);
+ hp->nid = strdup(noteId);
+ hp->oid = strdup(oid);
+ hp->t = t;
+ return hp;
 }
 
 /*****************************************************************************/
@@ -425,11 +427,11 @@ return hp;
 void DeleteHubPromiseLog(struct HubPromiseLog *hp)
 
 {
-free(hp->handle);
-free(hp->cause);
-free(hp->nid);
-free(hp->oid);
-free(hp);
+ free(hp->handle);
+ free(hp->cause);
+ free(hp->nid);
+ free(hp->oid);
+ free(hp);
 }
 
 /*****************************************************************************/
@@ -438,26 +440,26 @@ struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *handle,char *cau
 
 { struct HubPromiseSum *hs;
  
-if ((hs = malloc(sizeof(struct HubPromiseSum))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubPromiseSum");
-   }
+ if ((hs = malloc(sizeof(struct HubPromiseSum))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubPromiseSum");
+    }
 
-hs->hh = hh;
-hs->handle = strdup(handle);
+ hs->hh = hh;
+ hs->handle = strdup(handle);
 
  if(cause)
-   {
-   hs->cause = strdup(cause);
-   }
+    {
+    hs->cause = strdup(cause);
+    }
  else
-   {
-   hs->cause = NULL;
-   }
+    {
+    hs->cause = NULL;
+    }
 
-hs->occurences = occurences;
+ hs->occurences = occurences;
 
-return hs;
+ return hs;
 }
 
 /*****************************************************************************/
@@ -465,9 +467,9 @@ return hs;
 void DeleteHubPromiseSum(struct HubPromiseSum *hs)
 
 {
-  free(hs->handle);
+ free(hs->handle);
 
-  if(hs->cause)
+ if(hs->cause)
     {
     free(hs->cause);
     }
@@ -479,27 +481,27 @@ struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rho
 
 { struct HubLastSeen *hp;
      
-if ((hp = malloc(sizeof(struct HubLastSeen))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubLastSeen");
-   }
+ if ((hp = malloc(sizeof(struct HubLastSeen))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubLastSeen");
+    }
 
-hp->hh = hh;
-hp->io = io;  // '+' or '-'
-hp->rhost = NewHubHost(kh,rhost,ip);
-hp->hrsago = ago;
-hp->hrsavg = avg;
-hp->hrsdev = dev;
-hp->t = t;
-return hp;
+ hp->hh = hh;
+ hp->io = io;  // '+' or '-'
+ hp->rhost = NewHubHost(kh,rhost,ip);
+ hp->hrsago = ago;
+ hp->hrsavg = avg;
+ hp->hrsdev = dev;
+ hp->t = t;
+ return hp;
 }
 
 /*****************************************************************************/
 
 void DeleteHubLastSeen(struct HubLastSeen *hp)
 {
-DeleteHubHost(hp->rhost);
-free(hp); 
+ DeleteHubHost(hp->rhost);
+ free(hp); 
 }
 
 /*****************************************************************************/
@@ -508,24 +510,24 @@ struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double rep
 
 { struct HubMeter *hp;
      
-if ((hp = malloc(sizeof(struct HubMeter))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubLastSeen");
-   }
+ if ((hp = malloc(sizeof(struct HubMeter))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubLastSeen");
+    }
 
-hp->hh = hh;
-hp->type = type;
-hp->kept = kept;
-hp->repaired = repaired;
-hp->notkept = 100.0 - kept - repaired;
-return hp;
+ hp->hh = hh;
+ hp->type = type;
+ hp->kept = kept;
+ hp->repaired = repaired;
+ hp->notkept = 100.0 - kept - repaired;
+ return hp;
 }
 
 /*****************************************************************************/
 
 void DeleteHubMeter(struct HubMeter *hp)
 {
-free(hp);
+ free(hp);
 }
 
 /*****************************************************************************/
@@ -534,29 +536,29 @@ struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double rep
 
 { struct HubValue *hp;
      
-if ((hp = malloc(sizeof(struct HubValue))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubValue");
-   }
+ if ((hp = malloc(sizeof(struct HubValue))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubValue");
+    }
 
-hp->hh = hh;
-hp->day = strdup(day);
-hp->kept = kept;
-hp->repaired = repaired;
-hp->notkept = notkept;
-hp->nid = strdup(noteid);
-hp->handle = strdup(handle);
-return hp;
+ hp->hh = hh;
+ hp->day = strdup(day);
+ hp->kept = kept;
+ hp->repaired = repaired;
+ hp->notkept = notkept;
+ hp->nid = strdup(noteid);
+ hp->handle = strdup(handle);
+ return hp;
 }
 
 /*****************************************************************************/
 
 void DeleteHubValue(struct HubValue *hp)
 {
-free(hp->day);
-free(hp->nid);
-free(hp->handle);
-free(hp);
+ free(hp->day);
+ free(hp->nid);
+ free(hp->handle);
+ free(hp);
 }
 
 /*****************************************************************************/
@@ -565,30 +567,30 @@ struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t
 
 { struct HubPerformance *hp;
      
-if ((hp = malloc(sizeof(struct HubPerformance))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubPerformance");
-   }
+ if ((hp = malloc(sizeof(struct HubPerformance))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubPerformance");
+    }
 
-hp->hh = hh;
-hp->event = strdup(event);
-hp->q = q;
-hp->e = e;
-hp->d = d;
-hp->t = t;
-hp->nid = strdup(noteid);
-hp->handle = strdup(handle);
-return hp;
+ hp->hh = hh;
+ hp->event = strdup(event);
+ hp->q = q;
+ hp->e = e;
+ hp->d = d;
+ hp->t = t;
+ hp->nid = strdup(noteid);
+ hp->handle = strdup(handle);
+ return hp;
 }
 
 /*****************************************************************************/
 
 void DeleteHubPerformance(struct HubPerformance *hp)
 {
-free(hp->event);
-free(hp->nid);
-free(hp->handle);
-free(hp); 
+ free(hp->event);
+ free(hp->nid);
+ free(hp->handle);
+ free(hp); 
 }
 
 /*****************************************************************************/
@@ -597,22 +599,22 @@ struct HubSetUid *NewHubSetUid(struct HubHost *hh,char *file)
 
 { struct HubSetUid *hp;
      
-if ((hp = malloc(sizeof(struct HubSetUid))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubSetuid");
-   }
+ if ((hp = malloc(sizeof(struct HubSetUid))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubSetuid");
+    }
 
-hp->hh = hh;
-hp->path = strdup(file);
-return hp;
+ hp->hh = hh;
+ hp->path = strdup(file);
+ return hp;
 }
 
 /*****************************************************************************/
 
 void DeleteHubSetUid(struct HubSetUid *hp)
 {
-free(hp->path);
-free(hp); 
+ free(hp->path);
+ free(hp); 
 }
 
 /*****************************************************************************/
@@ -621,27 +623,27 @@ struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t,
 
 { struct HubFileChanges *hp;
      
-if ((hp = (struct HubFileChanges *)malloc(sizeof(struct HubFileChanges))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubFileChange");
-   }
+ if ((hp = (struct HubFileChanges *)malloc(sizeof(struct HubFileChanges))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubFileChange");
+    }
 
-hp->hh = hh;
-hp->path = strdup(file);
-hp->t = t;
-hp->handle = strdup(handle);
-hp->nid = strdup(noteid);
-return hp;
+ hp->hh = hh;
+ hp->path = strdup(file);
+ hp->t = t;
+ hp->handle = strdup(handle);
+ hp->nid = strdup(noteid);
+ return hp;
 }
 
 /*****************************************************************************/
 
 void DeleteHubFileChanges(struct HubFileChanges *hp)
 {
-free(hp->path);
-free(hp->handle);
-free(hp->nid);
-free(hp); 
+ free(hp->path);
+ free(hp->handle);
+ free(hp->nid);
+ free(hp); 
 }
 
 /*****************************************************************************/
@@ -650,25 +652,25 @@ struct HubFileDiff *NewHubFileDiff(struct HubHost *hh,char *file,char *diff,time
 
 { struct HubFileDiff *hp;
      
-if ((hp = malloc(sizeof(struct HubFileDiff))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubFileDiff");
-   }
+ if ((hp = malloc(sizeof(struct HubFileDiff))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubFileDiff");
+    }
 
-hp->hh = hh;
-hp->path = strdup(file);
-hp->diff = strdup(diff);
-hp->t = t;
-return hp;
+ hp->hh = hh;
+ hp->path = strdup(file);
+ hp->diff = strdup(diff);
+ hp->t = t;
+ return hp;
 }
 
 /*****************************************************************************/
 
 void DeleteHubFileDiff(struct HubFileDiff *hp)
 {
-free(hp->path);
-free(hp->diff);
-free(hp); 
+ free(hp->path);
+ free(hp->diff);
+ free(hp); 
 }
 
 /*****************************************************************************/
@@ -677,26 +679,26 @@ struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,ch
 
 { struct HubPromiseCompliance *hp;
      
-if ((hp = malloc(sizeof(struct HubPromiseCompliance))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubPromiseCompliance");
-   }
+ if ((hp = malloc(sizeof(struct HubPromiseCompliance))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubPromiseCompliance");
+    }
 
-hp->hh = hh;
-hp->handle = strdup(handle);
-hp->status = status;
-hp->e = e;
-hp->d = d;
-hp->t = t;
-return hp;
+ hp->hh = hh;
+ hp->handle = strdup(handle);
+ hp->status = status;
+ hp->e = e;
+ hp->d = d;
+ hp->t = t;
+ return hp;
 };
 
 /*****************************************************************************/
 
 void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp)
 {
-free(hp->handle);
-free(hp); 
+ free(hp->handle);
+ free(hp); 
 }
 
 /*****************************************************************************/
@@ -705,28 +707,28 @@ struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago
 
 { struct HubBundleSeen *hp;
      
-if ((hp = malloc(sizeof(struct HubBundleSeen))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubLastSeen");
-   }
+ if ((hp = malloc(sizeof(struct HubBundleSeen))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubLastSeen");
+    }
 
-hp->hh = hh;
-hp->bundle = strdup(rname);
-hp->hrsago = ago;
-hp->hrsavg = avg;
-hp->hrsdev = dev;
-hp->t = t;
-hp->nid = strdup(noteid);
-return hp;
+ hp->hh = hh;
+ hp->bundle = strdup(rname);
+ hp->hrsago = ago;
+ hp->hrsavg = avg;
+ hp->hrsdev = dev;
+ hp->t = t;
+ hp->nid = strdup(noteid);
+ return hp;
 }
 
 /*****************************************************************************/
 
 void DeleteHubBundleSeen(struct HubBundleSeen *hp)
 {
-free(hp->bundle);
-free(hp->nid);
-free(hp); 
+ free(hp->bundle);
+ free(hp->nid);
+ free(hp); 
 }
 
 /*****************************************************************************/
@@ -735,10 +737,10 @@ struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, 
 
 { struct HubPromise *hp;
      
-if ((hp = malloc(sizeof(struct HubPromise))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubPromise");
-   }
+ if ((hp = malloc(sizeof(struct HubPromise))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubPromise");
+    }
 
  hp->bundleName = strdup(bn);
  hp->bundleType = strdup(bt);
@@ -761,21 +763,21 @@ if ((hp = malloc(sizeof(struct HubPromise))) == NULL)
 void DeleteHubPromise(struct HubPromise *hp)
 
 {
-free(hp->bundleName);
-free(hp->bundleType);
-free(hp->bundleArgs);
-free(hp->promiseType);
-free(hp->promiser);
-free(hp->promisee);
-free(hp->classContext);
-free(hp->handle);
-free(hp->comment);
-free(hp->file);
-hp->lineNo = -1;
-FreeStringArray(hp->constraints);
+ free(hp->bundleName);
+ free(hp->bundleType);
+ free(hp->bundleArgs);
+ free(hp->promiseType);
+ free(hp->promiser);
+ free(hp->promisee);
+ free(hp->classContext);
+ free(hp->handle);
+ free(hp->comment);
+ free(hp->file);
+ hp->lineNo = -1;
+ FreeStringArray(hp->constraints);
 
-free(hp);
-hp = NULL;
+ free(hp);
+ hp = NULL;
 }
 
 /*****************************************************************************/
@@ -784,27 +786,27 @@ struct HubBody *NewHubBody(char *bodyType,char *bodyName,char *bodyArgs)
 
 { struct HubBody *hb;
 
-if ((hb = malloc(sizeof(struct HubBody))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubBody");
-   }
+ if ((hb = malloc(sizeof(struct HubBody))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubBody");
+    }
 
-hb->bodyName = strdup(bodyName);
-hb->bodyType = strdup(bodyType);
+ hb->bodyName = strdup(bodyName);
+ hb->bodyType = strdup(bodyType);
 
-if(EMPTY(bodyArgs))
-   {
-   hb->bodyArgs = NULL;
-   }
-else
-   {
-   hb->bodyArgs = strdup(bodyArgs);
-   }
+ if(EMPTY(bodyArgs))
+    {
+    hb->bodyArgs = NULL;
+    }
+ else
+    {
+    hb->bodyArgs = strdup(bodyArgs);
+    }
 
 
-hb->attr = NULL;
+ hb->attr = NULL;
 
-return hb;
+ return hb;
 }
 
 /*****************************************************************************/
@@ -812,17 +814,17 @@ return hb;
 void DeleteHubBody(struct HubBody *hb)
 
 {
-free(hb->bodyName);
-free(hb->bodyType);
+ free(hb->bodyName);
+ free(hb->bodyType);
 
-if (hb->bodyArgs)
-   {
-   free(hb->bodyArgs);
-   }
+ if (hb->bodyArgs)
+    {
+    free(hb->bodyArgs);
+    }
 
-DeleteHubBodyAttributes(hb->attr);
+ DeleteHubBodyAttributes(hb->attr);
 
-free(hb);
+ free(hb);
 }
 
 /*****************************************************************************/
@@ -832,53 +834,53 @@ struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char
 
 { struct HubBodyAttr *ha,*curr;
 
-if ((ha = malloc(sizeof(struct HubBodyAttr))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubBodyAttr");
-   }
+ if ((ha = malloc(sizeof(struct HubBodyAttr))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubBodyAttr");
+    }
 
-ha->lval = strdup(lval);
-ha->rval = strdup(rval);
-ha->classContext = strdup(classContext);
-ha->next = NULL;
+ ha->lval = strdup(lval);
+ ha->rval = strdup(rval);
+ ha->classContext = strdup(classContext);
+ ha->next = NULL;
 
-if (!hb->attr)
-   {
-   hb->attr = ha;
-   }
-else
-   {
-   curr = hb->attr;
+ if (!hb->attr)
+    {
+    hb->attr = ha;
+    }
+ else
+    {
+    curr = hb->attr;
    
-   while(curr->next)
-      {
-      curr = curr->next;
-      }
+    while(curr->next)
+       {
+       curr = curr->next;
+       }
    
-   curr->next = ha;
-   }
+    curr->next = ha;
+    }
 
-return ha;
+ return ha;
 }
 
 /*****************************************************************************/
 
 void DeleteHubBodyAttributes(struct HubBodyAttr *ha)
 {
-if (!ha)
-   {
-   return;
-   }
+ if (!ha)
+    {
+    return;
+    }
 
-if (ha->next)
-   {
-   DeleteHubBodyAttributes(ha->next);
-   }
+ if (ha->next)
+    {
+    DeleteHubBodyAttributes(ha->next);
+    }
 
-free(ha->lval);
-free(ha->rval);
-free(ha->classContext);
-free(ha);
+ free(ha->lval);
+ free(ha->rval);
+ free(ha->classContext);
+ free(ha);
 }
 
 /*commenting*/
@@ -888,25 +890,25 @@ struct HubNote *NewHubNote(char *user,char *msg,time_t t)
 
 { struct HubNote *hc;
 
-if ((hc = malloc(sizeof(struct HubNote))) == NULL)
-   {
-   FatalError("Memory exhausted HubNote");
-   }
+ if ((hc = malloc(sizeof(struct HubNote))) == NULL)
+    {
+    FatalError("Memory exhausted HubNote");
+    }
 
-hc->user = strdup(user);
-hc->msg = strdup(msg);
-hc->t = t;
-hc->next=NULL;
-return hc;
+ hc->user = strdup(user);
+ hc->msg = strdup(msg);
+ hc->t = t;
+ hc->next=NULL;
+ return hc;
 }
 
 /*****************************************************************************/
 
 void DeleteHubNote(struct HubNote *hc)
 {
-free(hc->user);
-free(hc->msg);
-free(hc);
+ free(hc->user);
+ free(hc->msg);
+ free(hc);
 }
 
 /*****************************************************************************/
@@ -915,15 +917,15 @@ struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char 
 
 { struct HubNoteInfo *hci;
 
-if ((hci = malloc(sizeof(struct HubNoteInfo))) == NULL)
-   {
-   FatalError("Memory exhausted HubNoteInfo");
-   }
+ if ((hci = malloc(sizeof(struct HubNoteInfo))) == NULL)
+    {
+    FatalError("Memory exhausted HubNoteInfo");
+    }
 
-hci->hh = hh;
-hci->nid = strdup(nid);
-hci->note = NewHubNote(user,msg,t);
-return hci;
+ hci->hh = hh;
+ hci->nid = strdup(nid);
+ hci->note = NewHubNote(user,msg,t);
+ return hci;
 }
 
 /*****************************************************************************/
@@ -932,12 +934,12 @@ void DeleteHubNoteInfo(struct HubNoteInfo *hci)
 
 { struct HubNote *hc;
 
-  free(hci->nid);
-  for (hc = hci->note; hc != NULL; hc=hc->next)
+ free(hci->nid);
+ for (hc = hci->note; hc != NULL; hc=hc->next)
     {
-      DeleteHubNote(hc);
+    DeleteHubNote(hc);
     }
-free(hci);
+ free(hci);
 }
 
 /*****************************************************************************/
@@ -950,16 +952,16 @@ int SortPromiseLog(void *p1, void *p2)
  * For SortRlist() - sorts promise logs descending on time.
  **/
 {
-  struct HubPromiseLog *pl1, *pl2;
+ struct HubPromiseLog *pl1, *pl2;
 
-  pl1 = (struct HubPromiseLog *)p1;
-  pl2 = (struct HubPromiseLog *)p2;
+ pl1 = (struct HubPromiseLog *)p1;
+ pl2 = (struct HubPromiseLog *)p2;
 
-  if(pl1->t > pl2->t)
+ if(pl1->t > pl2->t)
     {
     return true;
     }
-  else
+ else
     {
     return false;
     }
@@ -972,20 +974,20 @@ int SortBusinessValue(void *p1, void *p2)
  * For SortRlist() - sorts business value descending on time.
  **/
 {
-  struct HubValue *hv1, *hv2;
-  time_t t1, t2;
+ struct HubValue *hv1, *hv2;
+ time_t t1, t2;
 
-  hv1 = (struct HubValue *)p1;
-  hv2 = (struct HubValue *)p2;
+ hv1 = (struct HubValue *)p1;
+ hv2 = (struct HubValue *)p2;
 
-  DateStrToTime(hv1->day,&t1);
-  DateStrToTime(hv2->day,&t2);
+ DateStrToTime(hv1->day,&t1);
+ DateStrToTime(hv2->day,&t2);
 
-  if(t1 > t2)
+ if(t1 > t2)
     {
     return true;
     }
-  else
+ else
     {
     return false;
     }
@@ -998,16 +1000,16 @@ int SortTotalCompliance(void *p1, void *p2)
  * For SortRlist() - sorts total compliance descending on time.
  **/
 {
-  struct HubTotalCompliance *hc1, *hc2;
+ struct HubTotalCompliance *hc1, *hc2;
 
-  hc1 = (struct HubTotalCompliance *)p1;
-  hc2 = (struct HubTotalCompliance *)p2;
+ hc1 = (struct HubTotalCompliance *)p1;
+ hc2 = (struct HubTotalCompliance *)p2;
 
-  if(hc1->t > hc2->t)
+ if(hc1->t > hc2->t)
     {
     return true;
     }
-  else
+ else
     {
     return false;
     }
@@ -1020,16 +1022,16 @@ int SortFileChanges(void *p1, void *p2)
  * For SortRlist() - sorts file changes descending on time.
  **/
 {
-  struct HubFileChanges *hc1, *hc2;
+ struct HubFileChanges *hc1, *hc2;
 
-  hc1 = (struct HubFileChanges *)p1;
-  hc2 = (struct HubFileChanges *)p2;
+ hc1 = (struct HubFileChanges *)p1;
+ hc2 = (struct HubFileChanges *)p2;
 
-  if(hc1->t > hc2->t)
+ if(hc1->t > hc2->t)
     {
     return true;
     }
-  else
+ else
     {
     return false;
     }
@@ -1042,16 +1044,16 @@ int SortFileDiff(void *p1, void *p2)
  * For SortRlist() - sorts file diffs descending on time.
  **/
 {
-  struct HubFileDiff *hd1, *hd2;
+ struct HubFileDiff *hd1, *hd2;
 
-  hd1 = (struct HubFileDiff *)p1;
-  hd2 = (struct HubFileDiff *)p2;
+ hd1 = (struct HubFileDiff *)p1;
+ hd2 = (struct HubFileDiff *)p2;
 
-  if(hd1->t > hd2->t)
+ if(hd1->t > hd2->t)
     {
     return true;
     }
-  else
+ else
     {
     return false;
     }
@@ -1064,16 +1066,16 @@ int SortLastSeen(void *p1, void *p2)
  * For SortRlist() - sorts last seen descending on time.
  **/
 {
-  struct HubLastSeen *hl1, *hl2;
+ struct HubLastSeen *hl1, *hl2;
 
-  hl1 = (struct HubLastSeen *)p1;
-  hl2 = (struct HubLastSeen *)p2;
+ hl1 = (struct HubLastSeen *)p1;
+ hl2 = (struct HubLastSeen *)p2;
 
-  if(hl1->t > hl2->t)
+ if(hl1->t > hl2->t)
     {
     return true;
     }
-  else
+ else
     {
     return false;
     }
@@ -1086,16 +1088,16 @@ int SortPerformance(void *p1, void *p2)
  * For SortRlist() - sorts performance descending on time.
  **/
 {
-  struct HubPerformance *hp1, *hp2;
+ struct HubPerformance *hp1, *hp2;
 
-  hp1 = (struct HubPerformance *)p1;
-  hp2 = (struct HubPerformance *)p2;
+ hp1 = (struct HubPerformance *)p1;
+ hp2 = (struct HubPerformance *)p2;
 
-  if(hp1->t > hp2->t)
+ if(hp1->t > hp2->t)
     {
     return true;
     }
-  else
+ else
     {
     return false;
     }
@@ -1108,16 +1110,16 @@ int SortPromiseCompliance(void *p1, void *p2)
  * For SortRlist() - sorts promise compliance descending on time.
  **/
 {
-  struct HubPromiseCompliance *hp1, *hp2;
+ struct HubPromiseCompliance *hp1, *hp2;
 
-  hp1 = (struct HubPromiseCompliance *)p1;
-  hp2 = (struct HubPromiseCompliance *)p2;
+ hp1 = (struct HubPromiseCompliance *)p1;
+ hp2 = (struct HubPromiseCompliance *)p2;
 
-  if(hp1->t > hp2->t)
+ if(hp1->t > hp2->t)
     {
     return true;
     }
-  else
+ else
     {
     return false;
     }
@@ -1131,16 +1133,16 @@ int SortClasses(void *p1, void *p2)
  * For SortRlist() - sorts classes on name.
  **/
 {
-  struct HubClass *hc1, *hc2;
+ struct HubClass *hc1, *hc2;
 
-  hc1 = (struct HubClass *)p1;
-  hc2 = (struct HubClass *)p2;
+ hc1 = (struct HubClass *)p1;
+ hc2 = (struct HubClass *)p2;
 
-  if(strcmp(hc1->class,hc2->class) < 0)
+ if(strcmp(hc1->class,hc2->class) < 0)
     {
     return true;
     }
-  else
+ else
     {
     return false;
     }
@@ -1153,16 +1155,16 @@ int SortSoftware(void *p1, void *p2)
  * For SortRlist() - sorts software on name.
  **/
 {
-  struct HubSoftware *hs1, *hs2;
+ struct HubSoftware *hs1, *hs2;
 
-  hs1 = (struct HubSoftware *)p1;
-  hs2 = (struct HubSoftware *)p2;
+ hs1 = (struct HubSoftware *)p1;
+ hs2 = (struct HubSoftware *)p2;
 
-  if(strcmp(hs1->name,hs2->name) < 0)
+ if(strcmp(hs1->name,hs2->name) < 0)
     {
     return true;
     }
-  else
+ else
     {
     return false;
     }
@@ -1175,16 +1177,16 @@ int SortBundleSeen(void *p1, void *p2)
  * For SortRlist() - sorts bundles on name.
  **/
 {
-  struct HubBundleSeen *hb1, *hb2;
+ struct HubBundleSeen *hb1, *hb2;
 
-  hb1 = (struct HubBundleSeen *)p1;
-  hb2 = (struct HubBundleSeen *)p2;
+ hb1 = (struct HubBundleSeen *)p1;
+ hb2 = (struct HubBundleSeen *)p2;
 
-  if(strcmp(hb1->bundle,hb2->bundle) < 0)
+ if(strcmp(hb1->bundle,hb2->bundle) < 0)
     {
     return true;
     }
-  else
+ else
     {
     return false;
     }
@@ -1194,20 +1196,20 @@ int SortBundleSeen(void *p1, void *p2)
 
 struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(struct Rlist *records, int slot)
 {
-  struct Rlist *rp;
-  struct HubCacheTotalCompliance *tc;
+ struct Rlist *rp;
+ struct HubCacheTotalCompliance *tc;
 
-  for(rp = records; rp != NULL; rp = rp->next)
+ for(rp = records; rp != NULL; rp = rp->next)
     {
-      tc = (struct HubCacheTotalCompliance *)rp->item;
+    tc = (struct HubCacheTotalCompliance *)rp->item;
 
-      if(tc->slot == slot)
-	{
-	return tc;
-	}
+    if(tc->slot == slot)
+       {
+       return tc;
+       }
     }
   
-  return NULL;
+ return NULL;
 }
 
 /*****************************************************************************/
@@ -1218,75 +1220,75 @@ int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)())
  * Writes the total number of records given as input.
  **/
 {
-  struct Rlist *rp;
-  struct Rlist *prevStartEl, *startEl, *endEl;
-  int startIdx, endIdx;
-  int count = 0;
+ struct Rlist *rp;
+ struct Rlist *prevStartEl, *startEl, *endEl;
+ int startIdx, endIdx;
+ int count = 0;
 
-  if(page->resultsPerPage <= 0 || page->pageNum <= 0)
+ if(page->resultsPerPage <= 0 || page->pageNum <= 0)
     {
     CfOut(cf_error, "", "!! Wrong parameters to PageRecords() - %d,%d",
 	  page->resultsPerPage, page->pageNum);
     return false;
     }
   
-  startIdx = page->resultsPerPage*(page->pageNum - 1);
-  endIdx = (page->resultsPerPage*page->pageNum) - 1;
+ startIdx = page->resultsPerPage*(page->pageNum - 1);
+ endIdx = (page->resultsPerPage*page->pageNum) - 1;
 
-  prevStartEl = NULL;  // points to startEl
-  startEl = *records_p;
-  endEl = NULL;
+ prevStartEl = NULL;  // points to startEl
+ startEl = *records_p;
+ endEl = NULL;
 
-  for(rp = *records_p; rp != NULL; rp = rp->next)
+ for(rp = *records_p; rp != NULL; rp = rp->next)
     {
-      if(count == endIdx)
-	{
-	  endEl = rp;
-	}
+    if(count == endIdx)
+       {
+       endEl = rp;
+       }
 
-      count++;
+    count++;
 
-      if(count == startIdx && rp->next)  // next is startEl
-	{
-	  prevStartEl = rp;
-	  startEl = rp->next;
-	}
+    if(count == startIdx && rp->next)  // next is startEl
+       {
+       prevStartEl = rp;
+       startEl = rp->next;
+       }
       
     }
   
   
-  // now unlink uneccessary elements at start and end
+ // now unlink uneccessary elements at start and end
   
-  if(prevStartEl)
+ if(prevStartEl)
     {
-      prevStartEl->next = NULL;
+    prevStartEl->next = NULL;
 
-      for(rp = *records_p; rp != NULL; rp = rp->next)
-	{
-	  (*fnptr)(rp->item);
-	  rp->item = NULL;
-	}
+    for(rp = *records_p; rp != NULL; rp = rp->next)
+       {
+       (*fnptr)(rp->item);
+       rp->item = NULL;
+       }
       
-      DeleteRlist(*records_p);
-      *records_p = NULL;  // restored below
+    DeleteRlist(*records_p);
+    *records_p = NULL;  // restored below
     }
   
 
-  if(endEl)
+ if(endEl)
     {
-      for(rp = endEl->next; rp != NULL; rp = rp->next)
-	{
-	  (*fnptr)(rp->item);
-	  rp->item = NULL;
-	}
+    for(rp = endEl->next; rp != NULL; rp = rp->next)
+       {
+       (*fnptr)(rp->item);
+       rp->item = NULL;
+       }
       
-      DeleteRlist(endEl->next);
-      endEl->next = NULL;
+    DeleteRlist(endEl->next);
+    endEl->next = NULL;
     }
   
   
-  *records_p = startEl;
-  page->totalResultCount = count;
+ *records_p = startEl;
+ page->totalResultCount = count;
   
-  return true;
+ return true;
 }

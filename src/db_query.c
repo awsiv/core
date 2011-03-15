@@ -5189,8 +5189,8 @@ struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *p
   bson_iterator it1,it2,it3;
   mongo_cursor *cursor;
   struct Rlist *record_list = NULL;
+  char policyDB[CF_MAXVARSIZE];
   bson query,field;
-  char slotStr[CF_SMALLBUF];
   double kept,repaired,notkept;
   int slot,count;
   time_t genTime;
@@ -5209,7 +5209,16 @@ struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *p
 
     while(bson_iterator_next(&it1))
       {
-      if(strcmp(bson_iterator_key(&it1),policy) != 0)
+
+      if(bson_iterator_type(&it1) != bson_object)
+	{
+	continue;
+	}
+
+      snprintf(policyDB,sizeof(policyDB),"%s",bson_iterator_key(&it1));
+	
+      // if policy specified, retrieve only that one
+      if(policy && strcmp(policyDB,policy) != 0) 
 	{
         continue;
 	}
@@ -5252,8 +5261,10 @@ struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *p
 		genTime = bson_iterator_int(&it3);
 	      }
 	  }
-	  
-	PrependRlistAlien(&record_list,NewHubCacheTotalCompliance(slot,count,kept,repaired,notkept,genTime));
+        if(genTime >= minGenTime)
+           {
+           PrependRlistAlien(&record_list,NewHubCacheTotalCompliance(policyDB,slot,count,kept,repaired,notkept,genTime));
+           }
 	}
       
       }

@@ -18,21 +18,22 @@
 
 int CFDB_Open(mongo_connection *conn, char *host, int port)
 
-{ mongo_connection_options connOpts;
-  int result;
+{
+ mongo_connection_options connOpts;
+ int result;
 
-snprintf(connOpts.host, sizeof(connOpts.host), "%s", host);
-connOpts.port = port;
+ snprintf(connOpts.host, sizeof(connOpts.host), "%s", host);
+ connOpts.port = port;
 
-result = mongo_connect(conn,&connOpts);
+ result = mongo_connect(conn,&connOpts);
 
-if (result != 0)
-   {
-   CfOut(cf_verbose, "mongo_connect", "!! Could not connect to mongo server (got %d)", result);
-   return false;
-   }
+ if (result != 0)
+    {
+    CfOut(cf_verbose, "mongo_connect", "!! Could not connect to mongo server (got %d)", result);
+    return false;
+    }
 
-return true;
+ return true;
 }
 
 /*****************************************************************************/
@@ -81,6 +82,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    CfOut(cf_verbose,"","!! Could not open connection to report database to put value %s",lval);
    return false;
    }
+
   
 bson_buffer_init(&bb);
 setObj = bson_append_start_object(&bb, "$set");
@@ -112,7 +114,7 @@ void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr)
   double e = 0, dev = 0;
   char iStr[32];
   int i;
-  
+
 // locate right host key
 
 bson_buffer_init(&bb);
@@ -1413,7 +1415,7 @@ bson_buffer_init(&bb);
 
 set = bson_append_start_object(&bb,"$set");
 
- snprintf(varName,sizeof(varName), "%s.%d", policy, slot);
+snprintf(varName,sizeof(varName), "%s.%d", policy, slot);
 
 sub1 = bson_append_start_object(set,varName);
 

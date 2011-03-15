@@ -3315,7 +3315,7 @@ void Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int 
 
 void Nova2PHP_ComplianceSummaryGraph(char *policy, char *buffer,int bufsize)
 {
- Nova_ComplianceSummaryGraph(policy,buffer,bufsize);
+ ComplianceSummaryGraph(policy,false,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -4981,6 +4981,23 @@ return false;
 /*                           Constellation                                   */
 /*****************************************************************************/
 
+void Con2PHP_ComplianceSummaryGraph(char *policy, char *buffer,int bufsize)
+{
+ char buf[CF_MAXVARSIZE];
+ 
+ #ifdef HAVE_LIBCFCONSTELLATION
+ 
+ ComplianceSummaryGraph(policy,true,buffer,bufsize);
+ 
+ #else
+ 
+ snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_ComplianceSummaryGraph() in Nova-only environment\n");
+ CfOut(cf_error, "", buf);
+ 
+ #endif
+}
+
+/*****************************************************************************/
 
 int Con2PHP_summarize_notkept(enum time_window tw, char *buf, int bufsize)
 

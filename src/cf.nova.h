@@ -590,7 +590,7 @@ struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char 
 void DeleteHubNote(struct HubNote *hc);
 void DeleteHubNoteInfo(struct HubNoteInfo *hci);
 
-struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(int slot, int count, double kept, double repaired, double notkept, time_t genTime);
+struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int count, double kept, double repaired, double notkept, time_t genTime);
 void DeleteHubCacheTotalCompliance(struct HubCacheTotalCompliance *tc);
 
 int SortPromiseLog(void *p1, void *p2);
@@ -794,7 +794,7 @@ int Nova_IsGreen(int level);
 int Nova_IsYellow(int level);
 int Nova_IsRed(int level);
 int Nova_IsBlue(int level);
-void Nova_ComplianceSummaryGraph(char *policy,char *buffer,int bufsize);
+void ComplianceSummaryGraph(char *policy, bool constellation, char *buffer, int bufsize);
 void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col);
 int Nova_GetHostColour(char *lkeyhash);
 
@@ -1483,6 +1483,7 @@ struct HubBodyAttr
 
 struct HubCacheTotalCompliance
   {
+  char *policy;
   int slot;
   int count;
   double kept;
