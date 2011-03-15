@@ -514,7 +514,7 @@ setObj = bson_append_start_object(&bb, "$set");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sscanf(ip->name,"%[^,],%ld,%lf,%lf\n",name,&t,&e,&dev);   
+   sscanf(ip->name,"%[^,],%ld,%lf,%lf\n",name,(time_t *)&t,&e,&dev);   
    snprintf(varName, sizeof(varName), "%s.%s", cfr_class, name);
    
    clObj = bson_append_start_object(setObj , varName);
