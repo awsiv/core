@@ -77,7 +77,6 @@ libcfnova_la_SOURCES =						\
 noinst_HEADERS =							\
 	conf.h   							\
         cf.defs.h                                                       \
-        prototypes.h                                                    \
         cf.extern.h                                                     \
         prototypes3.h                                                   \
         cf3.defs.h                                                      \
