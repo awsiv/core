@@ -480,7 +480,7 @@ class Welcome extends Cf_Controller {
         $result = json_decode(cfpr_select_hosts("none", ".*", 100), true);
         if (count($result) > 0) {
             foreach ($result as $cols) {
-                array_push($cells, anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
+                array_push($cells, anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"')."&nbsp;&nbsp;&nbsp;".anchor('visual/vital/' . $cols['key'], "View vitals",'class="viewvitalslnk"'));
             }
         }
         //cfpr_report_software_in(NULL,NULL,NULL,NULL,true,NULL,NULL,NULL);
