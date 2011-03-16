@@ -67,7 +67,7 @@ void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize)
 
 /*****************************************************************************/
 
-void ComplianceSummaryGraph(char *policy, bool constellation, char *buffer, int bufsize)
+void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize)
 
 // Read the cached compliance summary (either from Hub or
 // Constellation DB)
@@ -91,7 +91,7 @@ void ComplianceSummaryGraph(char *policy, bool constellation, char *buffer, int 
     {
 #ifdef HAVE_LIBCFCONSTELLATION
      
-    hq = CFDB_QuerySumComp(&dbconn, policy, now - CF_WEEK);
+    hq = CFDB_QuerySumComp(&dbconn, hubKeyHash, policy, now - CF_WEEK);
 
 #else
     CfOut(cf_error, "", "!! Trying to get constellation data from data ComplianceSummaryGraph() without libcfconstellation");

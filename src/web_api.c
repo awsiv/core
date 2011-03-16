@@ -3318,7 +3318,7 @@ void Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int 
 
 void Nova2PHP_ComplianceSummaryGraph(char *policy, char *buffer,int bufsize)
 {
- ComplianceSummaryGraph(policy,false,buffer,bufsize);
+ ComplianceSummaryGraph(NULL,policy,false,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -4989,13 +4989,13 @@ return false;
 /*                           Constellation                                   */
 /*****************************************************************************/
 
-void Con2PHP_ComplianceSummaryGraph(char *policy, char *buffer,int bufsize)
+void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer,int bufsize)
 {
  char buf[CF_MAXVARSIZE];
  
  #ifdef HAVE_LIBCFCONSTELLATION
  
- ComplianceSummaryGraph(policy,true,buffer,bufsize);
+ ComplianceSummaryGraph(hubKeyHash,policy,true,buffer,bufsize);
  
  #else
  
@@ -5007,7 +5007,7 @@ void Con2PHP_ComplianceSummaryGraph(char *policy, char *buffer,int bufsize)
 
 /*****************************************************************************/
 
-int Con2PHP_summarize_notkept(enum time_window tw, char *buf, int bufsize)
+int Con2PHP_summarize_notkept(char *hubKeyHash, enum time_window tw, char *buf, int bufsize)
 
 {
 
@@ -5027,7 +5027,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QuerySumNotKept(&dbconn,NULL,tw);
+hq = CFDB_QuerySumNotKept(&dbconn,hubKeyHash,NULL,tw);
 
 StartJoin(buf,"<table>\n",bufsize);
 
@@ -5065,7 +5065,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
 /*****************************************************************************/
 
-int Con2PHP_count_notkept(char *promiseHandle, enum time_window tw, char *buf, int bufsize)
+int Con2PHP_count_notkept(char *hubKeyHash, char *promiseHandle, enum time_window tw, char *buf, int bufsize)
 
 {
 
@@ -5086,7 +5086,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QuerySumNotKept(&dbconn,promiseHandle,tw);
+hq = CFDB_QuerySumNotKept(&dbconn,hubKeyHash,promiseHandle,tw);
 
  if(hq && hq->records)
    {
@@ -5118,7 +5118,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 /*****************************************************************************/
 
-int Con2PHP_reasons_notkept(char *promiseHandle, enum time_window tw, char *buf, int bufsize)
+int Con2PHP_reasons_notkept(char *hubKeyHash, char *promiseHandle, enum time_window tw, char *buf, int bufsize)
 
 {
 
@@ -5138,7 +5138,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
- hq = CFDB_QueryReasonsNotKept(&dbconn,promiseHandle,tw);
+hq = CFDB_QueryReasonsNotKept(&dbconn,hubKeyHash,promiseHandle,tw);
 
 
 StartJoin(buf,"<table>\n",bufsize);

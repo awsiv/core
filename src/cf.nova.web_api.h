@@ -117,10 +117,10 @@ int Nova2PHP_enterprise_version(char *buf, int bufsize);
 
 // constellation function stubs
 
-void Con2PHP_ComplianceSummaryGraph(char *policy, char *buffer,int bufsize);
-int Con2PHP_summarize_notkept(enum time_window tw, char *buf, int bufsize);
-int Con2PHP_count_notkept(char *promiseHandle, enum time_window tw, char *buf, int bufsize);
-int Con2PHP_reasons_notkept(char *promiseHandle, enum time_window tw, char *buf, int bufsize);
+void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer,int bufsize);
+int Con2PHP_summarize_notkept(char *hubKeyHash, enum time_window tw, char *buf, int bufsize);
+int Con2PHP_count_notkept(char *hubKeyHash, char *promiseHandle, enum time_window tw, char *buf, int bufsize);
+int Con2PHP_reasons_notkept(char *hubKeyHash, char *promiseHandle, enum time_window tw, char *buf, int bufsize);
 
 /* pdf report */
 int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize); 

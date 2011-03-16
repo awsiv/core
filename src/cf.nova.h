@@ -795,7 +795,7 @@ int Nova_IsGreen(int level);
 int Nova_IsYellow(int level);
 int Nova_IsRed(int level);
 int Nova_IsBlue(int level);
-void ComplianceSummaryGraph(char *policy, bool constellation, char *buffer, int bufsize);
+void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize);
 void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col);
 int Nova_GetHostColour(char *lkeyhash);
 
