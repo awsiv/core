@@ -58,6 +58,7 @@
 #define CF_MAGDATA 48         /* (4*12) */
 #define CF_MAX_SLOTS 2016     /* (24*7*12) */
 #define CF_LHISTORYDATA 1464
+#define CF_YEAR_SLOTS 3*52
 #define CF_MAGMARGIN 0
 #define CF_LHISTORYMARGIN 0
 #define CF_TRIBE_SIZE 25
@@ -445,9 +446,9 @@ void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t date,enum cfd_m
 void Nova_PackMeter(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackBundles(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 int Nova_CoarseLaterThan(char *key,char *from);
+int Nova_YearSlot(char *day,char *month, char *lifecycle);
 int Nova_LaterThan(char *bigger,char *smaller);
 char *Nova_ShortArch(char *arch);
-int Nova_LifeCycleLater(char *coarse_cycle,time_t from);
 
 /* dataunpack.c */
 

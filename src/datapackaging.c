@@ -822,12 +822,12 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 void Nova_PackMonitorYear(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int its,i,j,k, count = 0,err,this_lifecycle,ago, this,first = true,nodate,showtime,slot;
-  char timekey[CF_MAXVARSIZE],timekey_now[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
+{ int its,i,j,k, count = 0,err,this_lifecycle,ago, this,first = true,nodate,showtime,slot,last_slot,now_slot;
+  char timekey[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
   char d[CF_TIME_SIZE],m[CF_TIME_SIZE],l[CF_TIME_SIZE],s[CF_TIME_SIZE],om[CF_TIME_SIZE];
   char *day = VDAY,*month=VMONTH,*lifecycle=VLIFECYCLE,*shift=VSHIFT;
   double num[CF_OBSERVABLES],qav[CF_OBSERVABLES],varav[CF_OBSERVABLES],eav[CF_OBSERVABLES];
-  char filename[CF_BUFSIZE],coarse_cycle[CF_SMALLBUF];
+  char filename[CF_BUFSIZE];
   struct Averages value;
   time_t now;
   CF_DB *dbp;
@@ -842,13 +842,16 @@ if (!OpenDB(filename,&dbp))
    return;
    }
 
-snprintf(timekey_now,CF_MAXVARSIZE-1,"%s_%.3s_%s_%s",day,month,lifecycle,shift);
-
 /* Now we graphs of the past 3 years, in order from 2 years ago to now */
 
 ago = 2;
 
-//NovaOpenNewLifeCycle(ago,fp);
+// Data are stored in a modulo 3 year clock. When we collect data for presentation,
+// we always start from slot "now + 1" - 3 years and run to now. Each slot is a week
+// so 3 x 52 slots in total.
+
+// Data should be marshalled so that "now" is the last slot = 3x52-1
+
 strncpy(l,lifecycle,31);
 
 this_lifecycle = Str2Int(l+strlen("Lcycle_"));
@@ -870,17 +873,20 @@ for (i = 0; i < CF_OBSERVABLES;i++)
    varav[i] = 0;
    }
 
+// Record now slot so we can offset now as time (0-- mod CF_YEAR_SLOTS)
+
+last_slot = now_slot = Nova_YearSlot(d,m,l);
+
 while(true)
    {
    snprintf(timekey,CF_MAXVARSIZE-1,"%s_%s_%s_%s",d,m,l,s);
-   snprintf(coarse_cycle,CF_SMALLBUF,"%s_%s",m,l);
    nodate = true;
    
-   if (slot = Nova_LifeCycleLater(coarse_cycle,from))
+   if (slot = Nova_YearSlot(d,m,l))
       {
       if (ReadDB(dbp,timekey,&value,sizeof(struct Averages)))
          {
-         if (strcmp(m,om) != 0)
+         if (slot != last_slot)
             {
             showtime = true;
             
@@ -894,7 +900,8 @@ while(true)
             
             if (nodate)
                {
-               snprintf(buffer,CF_BUFSIZE,"T: %d\n",slot);
+               // Offset time so that "now" is the last element in the array
+               snprintf(buffer,CF_BUFSIZE,"T: %d\n",(slot-now_slot+CF_YEAR_SLOTS-1)%CF_YEAR_SLOTS);
                AppendItem(reply,buffer,NULL);
                nodate = false;
                }  
@@ -938,9 +945,10 @@ while(true)
                   {
                   snprintf(buffer,CF_BUFSIZE-1,"%d %.2lf %.2lf %.2lf\n",i,qav[i],eav[i],sqrt(varav[i]));
                   AppendItem(reply,buffer,NULL);
-                  strcpy(om,m);
                   }
                
+               last_slot = slot;
+
                qav[i] = 0;
                eav[i] = 0;
                varav[i] = 0;
@@ -2168,33 +2176,28 @@ return true;
 
 /*****************************************************************************/
 
-int Nova_LifeCycleLater(char *coarse_cycle,time_t from)
+int Nova_YearSlot(char *day,char *month, char *lifecycle)
 
-{ char now[CF_MAXVARSIZE],nm[CF_MAXVARSIZE],om[CF_MAXVARSIZE];
-  int year = 0,nlc,olc = 0,o_m,n_m;
+{ static long days[] = {31,28,31,30,31,30,31,31,30,31,30,31};
+  int d = 0,m = 0,l = 0,weeks = 0, ds;
 
-/* Because cycles are endless, this will work up to a year */
+// Year days up to the end of last month + day
+ 
+sscanf(day,"%d",&d);
+l = Str2Int(lifecycle+strlen("Lcycle_"));
   
-snprintf(now,CF_MAXVARSIZE-1,"%s",cf_ctime(&from));
-
-sscanf(now,"%*s %s %*s %*s %d",nm,&year);
-nlc = year % 3;
-
-sscanf(coarse_cycle,"%[^_]_%*[^_]_%d",om,&olc);
-
-if ((o_m = Month2Int(om)) < 0)
+if ((m = (int)Month2Int(month)) < 1)
    {
-   o_m = 0;
+   ds = 0 + d;
+   }
+else
+   {
+   ds = days[m-1] + d;
    }
 
-n_m = Month2Int(nm);
+weeks = ds / 7;
 
-if ((nlc == olc) && (n_m <= o_m))
-   {
-   return o_m + 12*olc; // hash slot for this month/year
-   }
-
-return false;
+return l*52 + weeks; // mod 3*52
 }
 
 /*****************************************************************************/

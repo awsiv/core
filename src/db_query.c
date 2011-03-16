@@ -3131,7 +3131,6 @@ int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs
   bson_iterator it1,it2,it3;
   double q,e,d;
   int ok = false;
-  time_t start_time = CF_MONDAY_MORNING;
   
 /* BEGIN query document */
 
@@ -3188,14 +3187,13 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                }
 
-            // Slot starts at 1 due to coarse graining loop
+            // Store 
             
-            index;
+            index = st;
 
             qa[index] = q;
             ea[index] = e;
             da[index] = d;
-
             }
          }
       }

@@ -401,7 +401,7 @@ if (!OpenDB(filename,&dbp))
 
 snprintf(timekey_now,CF_MAXVARSIZE-1,"%s_%.3s_%s_%s",day,month,lifecycle,shift);
 
-/* Now we graphs of the past 3 years, in order from 2 years ago */
+/* Graphs of the past 3 years, in order from 2 years ago */
 
 ago = 2;
 
