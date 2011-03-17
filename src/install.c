@@ -436,7 +436,7 @@ void DeleteHubPromiseLog(struct HubPromiseLog *hp)
 
 /*****************************************************************************/
 
-struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *handle,char *cause,int occurences)
+struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *handle,char *cause,int occurences, int hostOccurences)
 
 { struct HubPromiseSum *hs;
  
@@ -458,6 +458,7 @@ struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *handle,char *cau
     }
 
  hs->occurences = occurences;
+ hs->hostOccurences = hostOccurences;
 
  return hs;
 }
@@ -473,6 +474,8 @@ void DeleteHubPromiseSum(struct HubPromiseSum *hs)
     {
     free(hs->cause);
     }
+
+ free(hs);
 }
 
 /*****************************************************************************/

@@ -32,6 +32,7 @@
 #endif
 
 #ifdef HAVE_LIBMONGOC
+// WARNING: If changing collection names: grep through source
 # define MONGO_HAVE_STDINT
 # define MONGO_BASE "cfreport"
 # define MONGO_DATABASE MONGO_BASE ".hosts"
@@ -401,6 +402,7 @@ struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid, s
 struct Rlist *CFDB_QueryNoteId(mongo_connection *conn,bson *query);
 void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid);
 int CFDB_GetRow(mongo_connection *conn, char *db, bson *query, char *rowname, char *row, int rowSz, int level);
+struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey, char *qVal);
 void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int depth);
 #endif  /* HAVE_LIBMONGOC */
 
@@ -560,7 +562,7 @@ struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,cha
 void DeleteHubVariable(struct HubVariable *hv);
 struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh, char *handle,char *cause,time_t t, char *noteId,char *oid);
 void DeleteHubPromiseLog(struct HubPromiseLog *hp);
-struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *handle,char *cause,int occurences);
+struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *handle,char *cause,int occurences, int hostOccurences);
 void DeleteHubPromiseSum(struct HubPromiseSum *hs);
 struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
 void DeleteHubLastSeen(struct HubLastSeen *hp);
@@ -1124,8 +1126,8 @@ struct cf_pscalar
 #define CFR_CLASS "CLS"
 #define CFR_SETUID "SUI"
 #define CFR_FCHANGE "CHG"
-#define CFR_FDIFF "DIF"
 #define CFR_MONITOR_WEEK "MNW"
+#define CFR_FDIFF "DIF"
 #define CFR_MONITOR_MAG "MNM"
 #define CFR_MONITOR_HIST "MNH"
 #define CFR_MONITOR_YEAR "MNY"
@@ -1359,6 +1361,7 @@ struct HubPromiseSum // promise not kept/repaired summary
    char *handle;
    char *cause;
    int occurences;
+   int hostOccurences;
    };
 
 struct HubLastSeen
