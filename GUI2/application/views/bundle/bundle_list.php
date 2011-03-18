@@ -3,21 +3,21 @@
     <div class="panelcontent">
         <div class="tables">
 
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Host</th>
-                        <th>Bundle list</th>
-                        <th>Last verified</th>
-                        <th>Hours ago</th>
-                        <th>Avg. interval</th>
-                        <th>Uncertainty</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ((array) $bundle_list['data'] as $value) {
-                    ?>
+            <?php if (!empty($bundle_list['data'])) {
+ ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Host</th>
+                            <th>Bundle list</th>
+                            <th>Last verified</th>
+                            <th>Hours ago</th>
+                            <th>Avg. interval</th>
+                            <th>Uncertainty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ((array) $bundle_list['data'] as $value) { ?>
                         <tr>
                             <td><?php echo $value['0']; ?></td>
                             <td><a href="<?php echo site_url('/bundle/details'); ?>/bundle/<?php echo $value['1']; ?>"><?php echo $value['1']; ?></a></td>
@@ -29,6 +29,12 @@
                     <?php } ?>
                 </tbody>
             </table>
+            <?php } else {
+ ?>
+                    <div>
+<?php echo $this->lang->line("no_data"); ?>
+                </div>
+<?php } ?>
         </div>
     </div>
 </div>

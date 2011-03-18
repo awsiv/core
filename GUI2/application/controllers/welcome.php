@@ -291,7 +291,13 @@ class Welcome extends Cf_Controller {
         $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
             ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>');
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>',
+           '<script  src="' . get_scriptdir() . 'widgets/notes.js" type="text/javascript"></script>
+           ',
+           '<script  src="' . get_scriptdir() . 'jquery.form.js" type="text/javascript"></script>
+            ',
+            '<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />'
+            );
 
         $this->template->set('injected_item', implode("", $scripts));
 
@@ -310,7 +316,7 @@ class Welcome extends Cf_Controller {
         $ipaddr = cfpr_ipaddr($hostkey);
         $username = isset($_POST['username']) ? $_POST['username'] : "";
         $comment_text = isset($_POST['comment_text']) ? $_POST['comment_text'] : "";
-        $is_commented = cfpr_get_host_noteid($hostkey);
+        $is_commented = trim(cfpr_get_host_noteid($hostkey));
         $op = isset($_POST['op']) ? $_POST['op'] : "";
         $allhosts = array();
         $jsonarr = json_decode(cfpr_select_hosts($hostkey, ".*", 100), true);

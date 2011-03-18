@@ -104,7 +104,11 @@ class Search extends Cf_Controller
           }
 
           //for css of autocompletion to work
-          $inject = array('<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />');
+          $inject = array('<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />',
+                            '<script  src="' . get_scriptdir() . 'widgets/notes.js" type="text/javascript"></script>',
+              '<script  src="' . get_scriptdir() . 'jquery.form.js" type="text/javascript"></script>'
+);
+
           $this->template->set('injected_item', implode("", $inject));
 	   $data=array(
 	         'report_type'=>$report_type,

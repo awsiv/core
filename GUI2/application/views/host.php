@@ -44,19 +44,15 @@ $colour = cfpr_get_host_colour($hostkey);
                       <?php
                      if ($is_commented != "")
                          {
+                          $noteUrl = site_url('notes/index/action/show/nid').'/'.$is_commented.'/';
+                         }
+                         else {
+                             $noteUrl = site_url('notes/index/action/add/hostkey').'/'.$hostkey.'/';
+
+                         }
                       ?>
-                     <a href="<?php echo site_url('notes/show_notes').'/'.$hostkey?>" class="btn floatRight" id="show_cmt">Show Notes</a>
-                     <a href="#" class="btn floatRight" id="add_cmt" style="display:none">Add Note</a>
-                      <?php
-                       }
-                       else
-                       {
-                      ?>
-                        <a href="<?php echo site_url('notes/show_notes').'/'.$hostkey?>" class="btn floatRight" id="show_cmt" style="display:none">Show Notes</a>
-                        <a href="#" class="btn floatRight" id="add_cmt" style="display:block">Add Note</a>
-                       <?php
-                        }
-                       ?>
+                     <a href="<?php echo $noteUrl ?>" class="btn floatRight note" id="add_cmt">Notes</a>
+                     
                       <div class="clearright"></div>
                      <div id="comments">
                      </div>
@@ -155,43 +151,10 @@ $(document).ready(function() {
         );
 
     $('.tables table').tableFilter();
-    $('.tables table').tablesorter({widgets: ['zebra']}); 
-	//the link generated shoud be site_url/welcome/promise/param1/param2
-    $('#comments').hide();
-    $('#add_cmt').click(function(event) {
-        event.preventDefault();
-        $('#add_comment').load('<?php echo site_url('notes/add').'/'.$hostkey?>')
-        $('#add_comment').slideToggle('slow');
-    });
+    $('.tables table').tablesorter({widgets: ['zebra']});
 
-    $('#show_cmt').click(function(event){
-        event.preventDefault();
-        $('#comments').load($(this).attr('href'));
-        $('#comments').slideDown('slow');
-        $(this).hide();
-        $('#add_cmt').show();
-        
-    });
-    $('.btn').hover(function () {
-                             $(this).addClass("btn-hover");
-                        },
-                           function () {
-                             $(this).removeClass("btn-hover");
-                         });
+    $('.note').notes();
+	
     reportcontrol(<?php echo $jsondata?>,"host");
 });
 </script>
-
- <script type="text/javascript">
-
-$('#add_comment').hide();
-
-$('.show_comment_btn').click(function() {
-    $('#comments').slideToggle('slow');
-    $(this).text($(this).text() == 'Hide Comments' ? 'Show Comments' : 'Hide  Comments');
-    return false;
-});
-
-
-
- </script>

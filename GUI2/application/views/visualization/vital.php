@@ -11,14 +11,17 @@
                     <?php foreach ($performanceData['obs'] as $index => $fetchData) {
                     ?>
 
-                        <h3><a href="#"><?php echo $fetchData['id']; ?>  <?php echo date('D F d h:m:s Y',$performanceData['ls']); ?> </a></h3>
+                    <h3><a href="#"><?php echo $fetchData['id']; ?> (<?php echo $fetchData['desc']; ?>)<br/>
+                        <?php echo date('D F d h:m:s Y', $performanceData['ls']); ?></a>
+                        </h3>
                         <div>
 
                             <div class="tabs">
                                 <ul>
-                                    <li><a href="/graph/magnifiedView/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>">Past 4 hours</a></li>
-                                    <li><a href="/graph/weekview/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>">Past Week</a></li>
-                                    <li><a href="/graph/histogramView/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>">Statistical complete history</a></li>
+                                    <li><a href="/graph/magnifiedView/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Past 4 hours</span></a></li>
+                                    <li><a href="/graph/weekview/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Past Week</span></a></li>
+                                    <li><a href="/graph/yearview/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Year View</span></a></li>
+                                    <li><a href="/graph/histogramView/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Statistical complete history</span></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -33,7 +36,7 @@
 
 <script type="text/javascript">
 
-     // tabs
+    // tabs
     $tabs = $( ".tabs" ).tabs({
         selected: null,
         cache: true,
@@ -43,7 +46,7 @@
                 "Couldn't load this tab. We'll try to fix this as soon as possible. " );
             }
         },
-         spinner: 'Retrieving data...'        
+        spinner: 'Retrieving data...'
     });
 
 

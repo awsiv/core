@@ -1,51 +1,145 @@
 <?php
-class Notes extends Cf_Controller{
 
-	function __construct()
-		{
-			parent::__construct();
-		$this->load->library('form_validation');
-                $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
-		}
+class Notes extends Cf_Controller {
 
-        function index()
-        {
-            
+    function __construct() {
+        parent::__construct();
+        $this->load->library('form_validation');
+        $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
+    }
+
+    function index() {
+
+        $params = $this->uri->uri_to_assoc(3);
+        $action = isset($params['action']) ? $params['action'] : "";
+        $hostkey = isset($params['hostkey']) ? $params['hostkey'] : NULL;
+        ;
+        $this->data = array();
+        $rid = isset($params['rid']) ? urldecode(base64_decode($params['rid'])) : "";
+        $reportType = isset($params['reporttype']) ? $params['reporttype'] : "";
+        $hostKey = isset($params['hostkey']) ? $params['hostkey'] : "";
+        $nid = isset($params['nid']) ? $params['nid'] : "";
+
+        $this->data['nid'] = $nid;
+        $this->data['rid'] = $rid;
+        $this->data['hostkey'] = $hostKey;
+        $this->data['reporttype'] = $reportType;
+
+        if ($action == "show") {
+            $comments = cfpr_query_note($hostkey, $nid, '', -1, -1);
+            $this->data['data'] = json_decode($comments, TRUE);
+            $this->data['form_url'] = '/notes/addnote';
+        } else if ($action == "add") {
+            $this->data['data'] = array();
+            $this->data['form_url'] = '/notes/addnewnote';
+        }
+        $this->load->view('/notes/view_notes', $this->data);
+    }
+
+    function addnote() {
+
+        $nid = $this->input->post('nid');
+        $message = $this->input->post('Message');
+        $username = 'bishwa';
+        $date = strtotime("now");
+        $ret = cfpr_add_note($nid, $username, $date, $message);
+
+         if (!$ret) {
+            // SOMETHING WENT WRONG WHILE ADDITION
+            $this->output->set_status_header('400', 'Cannot insert the note.');
+            echo $ret;
+            exit;
         }
 
-        function add($hostkey)
-        {
-            $this->form_validation->set_rules('comment_text', 'comment_text', 'required|valid_email');
-		if ($this->form_validation->run() == true)
-		{ //check to see if the user is logging in
-                     //$username=$this->input->post('user_name');
-                     $note=$this->input->post('comment_text');
-                     $hostkey=$this->input->post('host_key');
-                     $noteid = cfpr_get_host_noteid($hostkey);
-                     cfpr_add_note($commentid,$username,time(),$comment_text);
-                     $this->data['message']="Comments Sucessfully added";
-                    
-                }
-                else
-                {
-                    $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-                    $this->data['lbl_email']="Email";
-                    $this->data['hostkey']=$hostkey;
-		    $this->data['note'] = array('name' => 'comment',
-				'id' => 'comment',
-				'type' => 'text',
-				'value' => $this->form_validation->set_value('text'),
-                               );
-                    $this->load->view('notes/add_notes',$this->data);
-                }
+        $result = sprintf(' <tr>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+             </tr>', $username, $date, $message);
+
+        $jsonResult = array('nid' => $ret,
+            'html' => $result);
+        $returnData = json_encode($jsonResult);
+        echo $returnData;
+    }
+
+    function addnewnote() {
+
+        $rid = trim($this->input->post('rid')) ? $this->input->post('rid') : "none";
+        $message = $this->input->post('Message');
+        $report_type = trim($this->input->post('reporttype')) ? $this->input->post('reporttype') : 1;
+        $keyhash = $this->input->post('hash');
+        $username = 'bishwa';
+        $date = strtotime("now");
+
+
+
+        $ret = cfpr_new_note($keyhash, $rid, $report_type, $username, $date, $message);
+        if (!$ret) {
+            // SOMETHING WENT WRONG WHILE ADDITION 
+            $this->output->set_status_header('400', 'Cannot insert the note.');
+            echo $ret;
+            exit;
         }
 
-        function show_notes($hostkey)
-        {
-         $noteid = cfpr_get_host_noteid($hostkey);
-          $comments=cfpr_query_note($hostkey,$noteid,'',-1,-1);
-         echo $comments;
+        // send a row to append in result
+        $result = sprintf(' <tr>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+             </tr>', $username, $date, $message);
+
+        $jsonResult = array('nid' => $ret,
+            'html' => $result);
+        $returnData = json_encode($jsonResult);
+        echo $returnData;
+    }
+
+    function getNotes($hostKey, $action) {
+
+        $hostkey = 'SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e';
+        $noteid = NULL;
+        $username = NULL;
+        $from = -1;
+        $to = -1;
+        $notes = array();
+        if ($action == 'show') {
+            $json = cfpr_query_note($hostkey, $noteid, $username, $from, $to);
+            $notes = json_decode($json);
         }
+        $this->data = array();
+
+        $this->load->view('notes/view_notes', $this->data);
+    }
+
+    function add($hostkey) {
+        $this->form_validation->set_rules('comment_text', 'comment_text', 'required|valid_email');
+        if ($this->form_validation->run() == true) { //check to see if the user is logging in
+            //$username=$this->input->post('user_name');
+            $note = $this->input->post('comment_text');
+            $hostkey = $this->input->post('host_key');
+            $noteid = cfpr_get_host_noteid($hostkey);
+            cfpr_add_note($commentid, $username, time(), $comment_text);
+            $this->data['message'] = "Comments Sucessfully added";
+        } else {
+            $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+            $this->data['lbl_email'] = "Email";
+            $this->data['hostkey'] = $hostkey;
+            $this->data['note'] = array('name' => 'comment',
+                'id' => 'comment',
+                'type' => 'text',
+                'value' => $this->form_validation->set_value('text'),
+            );
+            $this->load->view('notes/add_notes', $this->data);
+        }
+    }
+
+    function show_notes($hostkey) {
+        $noteid = cfpr_get_host_noteid($hostkey);
+        $comments = cfpr_query_note($hostkey, $noteid, '', -1, -1);
+        echo $comments;
+    }
+
 }
 
 ?>
