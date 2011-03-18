@@ -40,7 +40,7 @@ class Notes extends Cf_Controller {
 
         $nid = $this->input->post('nid');
         $message = $this->input->post('Message');
-        $username = 'bishwa';
+        $username =  $this->session->userdata('username');
         $date = strtotime("now");
         $ret = cfpr_add_note($nid, $username, $date, $message);
 
@@ -55,7 +55,7 @@ class Notes extends Cf_Controller {
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-             </tr>', $username, $date, $message);
+             </tr>', $username, date('D F d h:m:s Y',$date), $message);
 
         $jsonResult = array('nid' => $ret,
             'html' => $result);
@@ -69,7 +69,7 @@ class Notes extends Cf_Controller {
         $message = $this->input->post('Message');
         $report_type = trim($this->input->post('reporttype')) ? $this->input->post('reporttype') : 1;
         $keyhash = $this->input->post('hash');
-        $username = 'bishwa';
+        $username =  $this->session->userdata('username');
         $date = strtotime("now");
 
 
@@ -87,7 +87,7 @@ class Notes extends Cf_Controller {
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-             </tr>', $username, $date, $message);
+             </tr>', $username, date('D F d h:m:s Y',$date), $message);
 
         $jsonResult = array('nid' => $ret,
             'html' => $result);

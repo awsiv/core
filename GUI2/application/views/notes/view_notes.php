@@ -1,6 +1,6 @@
 <div class="tables" style="overflow:auto; height: 250px;">
     <table class="table" id="notes-table">
-        <thead>
+        <thead class="nobgimage">
             <tr>
                 <th>User</th>
                 <th>Date</th>
@@ -12,7 +12,7 @@
             <?php foreach($data['data'] as $index=>$d) { ?>
             <tr>
                 <td><?php echo $d['user']; ?></td>
-                <td><?php echo $d['date']; ?></td>
+                <td><?php echo date('D F d h:m:s Y',$d['date']); ?></td>
                 <td><?php echo $d['message']; ?></td>
 
             </tr>

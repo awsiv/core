@@ -694,6 +694,20 @@ background-repeat:no-repeat;
 cursor:pointer;
 }
 
+.tables .nobgimage th
+{
+font-weight:bold;
+text-align:left;
+padding:8px;
+/*background-color:#A7C942;*/
+background-color:#52514A;
+color:#ffffff;
+background-image:none;
+background-position:right center;
+background-repeat:no-repeat;
+cursor:pointer;
+}
+
 th.headerSortDown {
     background-image: url(../images/desc.gif);
     background-color: #3399FF;
