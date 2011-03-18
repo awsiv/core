@@ -4748,16 +4748,15 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
     {
     case CFREPORT_HOSTS:
         level = 2;
-        snprintf(row_name, sizeof(row_name), "%s","ip"); // taking the IP addresses
+        snprintf(row_name, sizeof(row_name), "%s",cfr_ip_array); // taking the IP addresses
         snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
         getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s",cfn_nid);
+        snprintf(row_add, sizeof(row_add),"%s",cfn_nid);
         break;
 
     case CFREPORT_REPAIRED:
         level = 1;
         snprintf(db, sizeof(db), "%s", MONGO_LOGS_REPAIRED);
-      
         bson_oid_from_string(&oid,repid);
         bson_buffer_init(&bb);
         bson_append_oid(&bb,"_id",&oid);
@@ -4803,6 +4802,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
         getrow = CFDB_GetRow(&dbconn,db, &query, row_name, row, sizeof(row), level);
         snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
         break;
+
     case CFREPORT_NOTKEPT:
         level = 1;
         snprintf(db, sizeof(db), "%s", MONGO_LOGS_NOTKEPT);
@@ -4822,14 +4822,12 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
     bson_destroy(&query);
     return false;
     }
-
  // add note
  ret = CFDB_AddNote(&dbconn,keyhash, noteId, row, data);
-
  //add DBRef
  if(strlen(noteId)>0 && ret)
     {
-    CFDBRef_AddToRow(&dbconn, db, &query, row_add, noteId);
+      CFDBRef_AddToRow(&dbconn, db, &query, row_add, noteId);
     }
  //TODO: delete comment if addtorow fails?
  bson_destroy(&query);
@@ -4887,7 +4885,7 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
     hni = ( struct HubNoteInfo *) rp->item;
     for(hn = hni->note; hn != NULL; hn=hn->next)
        {
-       snprintf(buffer,sizeof(buffer),"[{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\"}],", hn->user, hn->t, hn->msg);
+       snprintf(buffer,sizeof(buffer),"{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\"},", hn->user, hn->t, hn->msg);
        if(!Join(returnval,buffer,bufsize))
           {
           break;
