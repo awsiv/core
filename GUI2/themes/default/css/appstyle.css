@@ -78,6 +78,7 @@ p#userbox a{
    display:inline-block;
    background-position: center;
    float: left;
+   margin-left: -6px;
 }
 
 #breadcrumb li span.front{
