@@ -119,7 +119,7 @@ int Nova2PHP_enterprise_version(char *buf, int bufsize);
 
 void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer,int bufsize);
 int Con2PHP_summarize_promiselog(char *hubKeyHash, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize);
-int Con2PHP_count_notkept(char *hubKeyHash, char *promiseHandle, enum time_window tw, char *buf, int bufsize);
+int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize);
 int Con2PHP_reasons_notkept(char *hubKeyHash, char *promiseHandle, enum time_window tw, char *buf, int bufsize);
 
 /* pdf report */

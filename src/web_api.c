@@ -5071,7 +5071,7 @@ int Con2PHP_summarize_promiselog(char *hubKeyHash, enum promiselog_rep log_type,
 
 /*****************************************************************************/
 
-int Con2PHP_count_notkept(char *hubKeyHash, char *promiseHandle, enum time_window tw, char *buf, int bufsize)
+int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize)
 
 {
 
@@ -5093,7 +5093,7 @@ int Con2PHP_count_notkept(char *hubKeyHash, char *promiseHandle, enum time_windo
     return false;
     }
 
- hq = CFDB_QuerySumPromiseLog(&dbconn,hubKeyHash,promiseHandle,plog_notkept,tw);
+ hq = CFDB_QuerySumPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type,tw);
 
  CFDB_Close(&dbconn);
 
