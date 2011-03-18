@@ -12,7 +12,7 @@ final class BreadCrumb{
 	private $title;
 	private $url;
 	private $isRoot;
-        private $ci;
+        
 
 	/*
 	 * No need to set anything up.  I autoload it and

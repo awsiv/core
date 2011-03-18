@@ -51,7 +51,7 @@ $autoload['libraries'] = array('template','session');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('url','appsettings_helper');
+$autoload['helper'] = array('url','appsettings_helper','cf_util_helper');
 
 
 /*

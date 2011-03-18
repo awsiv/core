@@ -27,7 +27,14 @@ $(function() {
 			return split( term ).pop();
 		}
 
-		$( "#packagename" ).autocomplete({
+		$( "#packagename" )
+                .bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+                .autocomplete({
                         minLength: 2,
                         source: function( request, response ) {
 					// delegate back to autocomplete, but extract the last term

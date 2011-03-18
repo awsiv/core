@@ -11,19 +11,7 @@
         <div class="clear"></div>
         <div id="hostlist" class="panelcontent tables">
         <?php
-        if (count($tabledata)>0)
-           {
-            echo "<table><tr>";
-            for($i=0;$i<count($tabledata);$i++)
-            {
-                if($i%6==0 && $i!=0)
-                {
-                    echo '</tr><tr>';
-                }
-                echo '<td>'.$tabledata[$i].'</td>';
-            }
-            echo "</tr></table>";
-           }
+           echo $hoststable;
         ?>
       </div>
     </div>
@@ -45,7 +33,12 @@
 			return split( term ).pop();
 		}
 
-		$( "#classlist" ).autocomplete({
+		$( "#classlist" ).bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			}).autocomplete({
                         minLength: 2,
                         source: function( request, response ) {
 					// delegate back to autocomplete, but extract the last term

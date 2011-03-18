@@ -3,11 +3,11 @@
 include('includes/header.php');
 ?>
 <?php
-include('includes/menu.php');
+//include('includes/menu.php');
 ?>
-<div id="tabpane">
+<!--<div id="tabpane">-->
 <?php echo $contents ;?>
-</div>
+<!--</div>-->
 <?php
 include('includes/footer.php');
 ?>

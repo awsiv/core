@@ -11,7 +11,7 @@ class Welcome extends Cf_Controller {
 
     function index() {
         $bc = array(
-            'title' => 'Dash Board',
+            'title' => 'cfengine mission portal',
             'url' => 'welcome/index',
             'isRoot' => true
         );
@@ -66,7 +66,8 @@ class Welcome extends Cf_Controller {
         $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
             ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>');
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportcontrol2.js"> </script>');
 
         $this->template->set('injected_item', implode("", $scripts));
 
@@ -83,6 +84,7 @@ class Welcome extends Cf_Controller {
             'y' => cfpr_count_yellow_hosts(),
             'g' => cfpr_count_green_hosts(),
             'jsondata' => $this->_get_jsondata_for_report_control(cfpr_select_reports(".*", 100)),
+            'jsondata2'=>  create_json_node_for_report_control(),
             //'allreps' => array_combine($reports, $reports),
             'allSppReps' => cfpr_cdp_reportnames(),
             'breadcrumbs' => $this->breadcrumblist->display()
@@ -482,21 +484,14 @@ class Welcome extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         //for creating the initial table of hosts as cfpr_select_hosts return the json data
-        $cells = array();
         $result = json_decode(cfpr_select_hosts("none", ".*", 100), true);
-        if (count($result) > 0) {
-            foreach ($result as $cols) {
-                array_push($cells, anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"')."&nbsp;&nbsp;&nbsp;".anchor('visual/vital/' . $cols['key'], "View vitals",'class="viewvitalslnk"'));
-            }
-        }
-        //cfpr_report_software_in(NULL,NULL,NULL,NULL,true,NULL,NULL,NULL);
         $data=cfpr_report_classes(NULL,NULL,true,NULL,NULL,NULL);
         $data = array(
             'title' => "Cfengine Mission Portal - Filter",
             'title_header' => "Filter Host",
-            'tabledata' => $cells,
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'classes'=>  autocomplete($data, "Class Context")
+            'classes'=>  autocomplete($data, "Class Context"),
+            'hoststable'=>  host_only_table( $result)
         );
         $this->template->load('template', 'hostlist', $data);
     }

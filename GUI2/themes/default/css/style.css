@@ -68,7 +68,7 @@ for the navifation area of the web application
 #searchbox 
 {
     background: url("../images/bg-search.gif") no-repeat scroll 0 0 transparent;
-    display: block;
+    display: inline-block;
     height: 21px;
     width: 246px;
 }

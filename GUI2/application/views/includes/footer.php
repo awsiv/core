@@ -1,5 +1,5 @@
 
-       <div id="ftsummary">
+      <!-- <div id="ftsummary">
          <ul class="grid_2">
              <li>SUMMARY</li>
              <li>Green Hosts</li>
@@ -65,6 +65,10 @@
        
                
    </div>
-</div>
+</div>-->
+       <div id="footer">
+              <p class="grid_5 push_1">copyright &copy; 2010 cfengine AS - All rights reserved</p>
+          </div>
+        </div>
 </body>
 </html>

@@ -10,6 +10,7 @@ class Search extends Cf_Controller
 	
    function index()
    {
+       
        $getparams=$this->uri->uri_to_assoc(3);
 	   $search = isset($getparams['search'])?$getparams['search']:$this->input->post('search');
 
@@ -200,7 +201,7 @@ class Search extends Cf_Controller
                      $name = isset($_POST['name'])?$_POST['name']:"";
 						if($hosts_only)
 						{
-						 $data['report_result']= $this->__host_only_table(json_decode(cfpr_hosts_with_classes(NULL,$name,true,$class_regex),true));
+						 $data['report_result']= host_only_table(json_decode(cfpr_hosts_with_classes(NULL,$name,true,$class_regex),true));
 						 is_ajax()?$this->load->view('searchpages/search_result_group',$data):$this->template->load('template','searchpages/search_result_group',$data);
 						}
 						else
@@ -512,7 +513,10 @@ class Search extends Cf_Controller
 				   }
 				  else
 				   {
-				   $data['report_result'] =  cfpr_report_notkept(NULL,$name,intval($hours_deltafrom),intval($hours_deltato),$class_regex,$rows,$page_number);
+                                      if($report_type=="Promises not kept summary")
+			                 $data['report_result'] =   cfpr_summarize_notkept(NULL,NULL,NULL);
+			             if($report_type=="Promises not kept log")
+			                  $data['report_result'] =  cfpr_report_notkept(NULL,$name,intval($hours_deltafrom),intval($hours_deltato),$class_regex,$rows,$page_number);
 				   $data['report_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/hours_deltafrom/'.$hours_deltafrom.'/hours_deltato/'.$hours_deltato);
 				   $data['email_link']=site_url('/pdfreports/index/type/'.$report_type.'/search/'.$name.'/class_regex/'.$class_regex.'/pdfaction/email'.$hours_deltafrom.'/hours_deltato/'.$hours_deltato);
 				   $this->template->load('template','searchpages/businessresult',$data);

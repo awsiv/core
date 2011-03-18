@@ -65,7 +65,11 @@
           </div>
           
           <div class="clear"></div>
+          <div id="controltest">
+
+          </div>
           <script type="text/javascript">
             reportcontrol(<?php echo $jsondata?>,"overall");
+            reportcontrol2(<?php echo $jsondata2?>,"overall");
           </script>
 

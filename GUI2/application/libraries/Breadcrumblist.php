@@ -54,10 +54,18 @@ final class BreadCrumbList{
 			$uBC = $bc;
 			$del = $i < count($iter)?$this->delimiter:'';
 			if($i < count($iter)){
-				$return_str .= "<li>".anchor($uBC->getUrl(),$uBC->getTitle().' '.$del, array('class'=>'activeBreadCrumbs'))."</li>";
+                                if ($uBC->isRoot())
+                                 $return_str .= "<li>".anchor($uBC->getUrl(),$uBC->getTitle(), array('class'=>'activeBreadCrumbs'))."<span class=\"front\"></span></li>";
+                                else
+                                 $return_str .= "<li><span class=\"back\"></span>".anchor($uBC->getUrl(),$uBC->getTitle().' '.$del, array('class'=>'activeBreadCrumbs'))."<span class=\"front\"></span></li>";
+                               
 			}else{
 				//$return_str .= "<li><span class=\"current\">".$uBC->getTitle().'</span> '.$del."</li>";
-                                 $return_str .= "<li>".anchor($uBC->getUrl(),$uBC->getTitle(), array('class'=>'current')).' '.$del."</li>";
+                                 //$return_str .= "<li>".anchor($uBC->getUrl(),$uBC->getTitle(), array('class'=>'current')).' '.$del."</li>";
+                                   if ($uBC->isRoot())
+                                     $return_str .= "<li>".anchor($uBC->getUrl(),$uBC->getTitle(), array('class'=>'current'))."<span class=\"front\"></span></li>";
+                                   else
+                                    $return_str .= "<li><span class=\"back\"></span>".anchor($uBC->getUrl(),$uBC->getTitle(), array('class'=>'current'))."<span class=\"front\"></span></li>";
                                
 			}
 		$i++;
