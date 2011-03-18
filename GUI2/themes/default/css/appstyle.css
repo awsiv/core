@@ -1,0 +1,263 @@
+/* 
+    Document   : appstyle
+    Created on : Mar 17, 2011, 5:44:51 PM
+    Author     : user
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+ body {
+                background: url("../images/bg_tile.png") repeat-x scroll 0 0 #2B7B98;
+                color: #fff;
+                font-family: Myriad Pro,Helvetica, Arial, sans-serif;
+                font-size: 12px;
+                line-height: 16px;
+                /*text-shadow: white 0px 1px 0px;*/
+      }
+
+ b{
+   font-weight: bold;
+  }
+
+#wrapper{
+      width:80%;
+      min-width: 960px;
+      /*border: solid 1px red;*/
+      margin:0 auto;
+}
+
+#header
+{
+   
+}
+
+.sitetitle
+{
+    font-size: 21px;
+    text-transform: uppercase;
+    margin-top: 25px;
+}
+
+p#userbox{
+    background: url("../images/logged_in_as.png") no-repeat scroll 0 7px transparent;
+    float: right;
+    margin-top:10px;
+    padding: 5px 0 0 18px;
+    font-size: 14px;
+
+}
+
+p#userbox a{
+    color: #CEAC0F;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+#breadcrumb
+{
+    margin-top: 25px;
+    margin-bottom:10px;
+}
+#breadcrumb li{
+    float:left;
+}
+
+#breadcrumb li span.back{
+   background: url("../images/breadcrumb_back.png") no-repeat;
+   width:10px;
+   height:20px;
+   display:inline-block;
+   background-position: center;
+   float: left;
+}
+
+#breadcrumb li span.front{
+   background: url("../images/breadcrumb_front.png") no-repeat;
+   width:10px;
+   height:20px;
+   display:inline-block;
+   background-position: center;
+   float: left;
+}
+
+#breadcrumb li a{
+  text-transform: uppercase;
+    color:#000000;
+    background: url("../images/breadcrumb_body.png") repeat scroll 0 0 transparent;
+    display: block;
+    float: left;
+    height: 20px;
+    line-height: 20px;
+    padding-left: 5px;
+    padding-right:5px;
+}
+
+#webadmin
+{
+    float:right;
+    width:100%;
+}
+
+.adminbtn{
+    background: url("../images/admin.png") no-repeat;
+    width:55px;
+    height:55px;
+    display:block;
+    margin: 0 10px 10px 10px;
+    float:right;
+}
+
+.settingbtn{
+   background: url("../images/settings.png") no-repeat;
+   width:55px;
+   height:55px;
+   display:block;
+   float:right;
+  
+}
+
+.clearright{
+    clear:right;
+}
+
+.clearleft{
+    clear:left;
+}
+
+.clearboth{
+    clear:both;
+}
+
+
+
+
+#searcharea
+{
+    float: right;
+    margin-top:30px;
+}
+#searcharea form
+{
+    width: 208px;
+}
+#searchbox
+{
+    background: url("../images/searchbar.png") no-repeat;
+    display: block;
+    height: 25px;
+    width: 208px;
+}
+
+label#searchbox input
+{
+    background: none repeat scroll 0 0 transparent;
+    font:9pt Helvetica,Arial,Tahoma,sans-serif;
+    border: medium none;
+    color: #666666;
+    outline: medium none;
+    padding: 4px 0 0 23px;
+    width:220px;
+}
+
+#body{
+    color: #000000;
+}
+#body .left{
+    background: url("../images/box_main_left.png") no-repeat;
+    min-width:11px;
+    height:511px;
+    float:left;
+}
+
+#body .middle{
+    background: url("../images/box_main_mid_tile.png") repeat-x;
+    height: 511px;
+    float:left;
+    min-width: 97.7%;
+}
+
+.licenseinfo{
+    text-decoration: underline;
+}
+
+#body .right{
+     background: url("../images/box_main_right.png") no-repeat;
+     min-width:11px;
+     height:511px;
+     float:left;
+}
+
+/*for working pane*/
+#work {
+   
+    margin-bottom: 10px;
+    min-width: 960px;
+}
+
+#work .header{
+    margin-top: 50px;
+}
+#work h1
+{
+    font-size: 42px;
+    text-align:center;
+}
+
+#work .header p{
+    font-size: 15px;
+    text-align:center;
+    margin-top: 25px;
+}
+
+#work .dash{
+    margin-top: 85px;
+}
+
+#work .dash ul{
+    list-style: none;
+    margin: 0 auto;
+    width: 500px;
+}
+
+#work .dash ul li{
+    float:left;
+    margin:20px;
+    text-align: center;
+}
+
+#work .dash ul li a{
+     width:85px;
+     display:block;
+     padding-top: 85px;
+     font-size: 11px;
+     color:#717171;
+}
+
+#work .dash a.status{
+     background: url("../images/status.png") no-repeat;
+}
+
+#work .dash a.library{
+     background: url("../images/library.png") no-repeat;
+}
+
+#work .dash a.engineering{
+     background: url("../images/engineering.png") no-repeat;
+}
+
+#work .dash a.planning{
+     background: url("../images/planning.png") no-repeat;
+}
+
+#footer p{
+    color:#08a3c1;
+}
