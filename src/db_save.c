@@ -1522,12 +1522,14 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, char *nid, char *reportD
 	 {
          bson_append_string(&bb,cfn_reportdata,reportData);
 	 }
-      }
-   
+      }   
    bson_from_buffer(&host_key, &bb);
-   
+  
    sscanf(data->name,"%255[^,],%255[^,],%ld\n",username,msg,&datetime);
    
+   EscapeChar(msg, sizeof(msg),'\\');
+   EscapeChar(msg, sizeof(msg),'\"');
+
    bson_buffer_init(&bb);
    setObj = bson_append_start_object(&bb, "$addToSet");
    sub = bson_append_start_object(setObj, cfn_note);

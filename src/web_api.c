@@ -116,10 +116,10 @@ void Nova_EnterpriseModuleTrick()
     /*
      * commenting
      */
-    Nova2PHP_add_new_note(NULL,NULL, -1,NULL, -1, NULL);
-    Nova2PHP_add_note(NULL,NULL,-1,NULL);
-    Nova2PHP_get_notes(NULL,NULL, NULL,-1,-1,NULL,10000);
-    Nova2PHP_get_host_noteid(NULL,NULL,1000);
+    Nova2PHP_add_new_note(NULL,NULL, -1,NULL, -1, NULL,NULL,100);
+    Nova2PHP_add_note(NULL,NULL,-1,NULL,NULL,100);
+    Nova2PHP_get_notes(NULL,NULL, NULL,-1,-1,NULL,1000000);
+    Nova2PHP_get_host_noteid(NULL,NULL,4096);
 
     Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
     }
@@ -4672,7 +4672,7 @@ void FreeHostsList(struct HostsList *list)
 /*for commenting functionality */
 /*****************************************************************************/
 
-int Nova2PHP_add_note(char *noteid,char *username, time_t datetime,char* note)
+int Nova2PHP_add_note(char *noteid,char *username, time_t datetime,char* note,char *returnval, int bufsize)
 
 { struct Item *data = NULL;
  char msg[CF_BUFSIZE] = {0}, nid[CF_MAXVARSIZE] = {0};
@@ -4697,15 +4697,19 @@ int Nova2PHP_add_note(char *noteid,char *username, time_t datetime,char* note)
  AppendItem(&data, msg, NULL);
 
  ret = CFDB_AddNote(&dbconn,NULL,nid,NULL,data);
-
  CFDB_Close(&dbconn);
+ snprintf(returnval,bufsize,"%d",ret);
+ if(ret)
+   {
+     snprintf(returnval,bufsize,"%s",nid);
+   }
  return ret;
 }
 
 /*****************************************************************************/
 /*for commenting functionality */
 /*****************************************************************************/
-int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *username, time_t datetime, char *note)
+int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *username, time_t datetime, char *note,char *returnval, int bufsize)
 
 { struct Item *data = NULL, *ip = NULL, *report = NULL;
  char msg[CF_BUFSIZE] = {0};
@@ -4825,9 +4829,11 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
  // add note
  ret = CFDB_AddNote(&dbconn,keyhash, noteId, row, data);
  //add DBRef
+ snprintf(returnval,bufsize,"%d",ret);
  if(strlen(noteId)>0 && ret)
     {
       CFDBRef_AddToRow(&dbconn, db, &query, row_add, noteId);
+      snprintf(returnval,bufsize,"%s",noteId);
     }
  //TODO: delete comment if addtorow fails?
  bson_destroy(&query);
