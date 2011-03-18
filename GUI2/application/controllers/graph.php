@@ -15,16 +15,83 @@ class Graph extends CI_Controller {
         $this->template->set('injected_item', implode('', $this->scripts));
     }
 
+    function complianceSummary() {
 
-     function  complianceSummary() {
+        $data = cfpr_compliance_summary_graph('');
+        //print $data;
+//$data = utf8_encode($data);
+        $array = json_decode($data, true);
+// break down the array in day slot
+        foreach ($array as $val) {
+            $title = trim($val['title']);
+            $date = substr($title, 0, strripos($title, '  '));
+            $timeSlot = trim(strrchr($title, '  '));
+            $slot[$date][$timeSlot] = $val;
+        }
 
-         $data =  cfpr_compliance_summary_graph();
-         var_dump($data);
-        
-     }
+        // make a average of everything
+        foreach ($slot as &$s) {
+            $totalSlots = count($s);
+            $totalKept = 0;
+            $totalRepaired = 0;
+            $totalNotKept = 0;
+            $noData = 0;
+            $totalCount = 0;
+
+            foreach ($s as $timeSlots) {
+                // we compute average of kept,repaired, not kept, no data
+                if ($timeSlots['nodata'] == '100')
+                    continue; // no data so..
 
 
-     function summaryhost() {
+                    $totalKept += $timeSlots['kept'];
+                $totalRepaired += $timeSlots['repaired'];
+                $totalNotKept += $timeSlots['notkept'];
+                $noData += $timeSlots['nodata'];
+                $totalCount += $timeSlots['count'];
+            }
+
+            $avgKept = $totalKept / $totalSlots;
+            $avgRepaired = $totalNotKept / $totalSlots;
+            $avgNotKept = $totalRepaired / $totalSlots;
+            $avgNoData = $noData / $totalSlots;
+
+            // make a new node
+            $avg = array('kept' => $avgKept,
+                'notkept' => $avgNotKept,
+                'repaired' => $avgRepaired,
+                'nodata' => $avgNoData,
+                'count' => $totalCount);
+            $s['avg'] = $avg;
+        }
+
+
+        $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.highlighter.js"> </script>
+                ');
+        $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.valuelabels.js"> </script>
+                ');
+        $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.stack.js"> </script>
+                ');
+
+        $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit.js"> </script>
+                ');
+
+
+
+
+        $this->template->set('injected_item', implode('', $this->scripts));
+        $this->data = array(
+            'title' => "Cfengine Mission Portal - overview",
+            'title_header' => "overview",
+            'nav_text' => "Home : overview",
+            'summary' => "current",
+            'pie' => $slot
+        );
+
+        $this->template->load('template', 'graph/pie', $this->data);
+    }
+
+    function summaryhost() {
 
 
 
@@ -81,14 +148,13 @@ class Graph extends CI_Controller {
 
 
         $this->template->load('template', 'graph/summaryCompliance', $this->data);
-
     }
 
     function summary($hostKey=null) {
 
 
 
-        
+
         unset($this->scripts['mv']);
         $this->scripts[] = ('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.highlighter.js"> </script>
                 ');
@@ -113,15 +179,16 @@ class Graph extends CI_Controller {
         );
 
         if (!$hostKey)
-        $gdata = cfpr_summary_meter();
-        else $gdata = cfpr_host_meter($hostKey);
-        
+            $gdata = cfpr_summary_meter();
+        else
+            $gdata = cfpr_host_meter($hostKey);
+
         $convertedData = json_decode($gdata, true);
-        
+
         $keptSeries = array();
         $notKeptSeries = array();
         $repairedSeries = array();
-        
+
         $values = array();
         $this->data['graphSeries'] = array();
         $labels = array('kept', 'not kept', 'repaired');
@@ -143,7 +210,6 @@ class Graph extends CI_Controller {
 
 
         $this->template->load('template', 'graph/summaryCompliance', $this->data);
-      
     }
 
     function magnifiedView($parameter) {
@@ -159,8 +225,6 @@ class Graph extends CI_Controller {
             $hostData = cfpr_getlastupdate($hostKey);
 
             $lastUpdated = trim(strip_tags($hostData));
-
-            $lastUpdated = strtotime($lastUpdated) * 1000;
 
             $this->data['graphLastUpdated'] = $lastUpdated;
             $this->data['graphdata'] = ($graphData);
@@ -178,7 +242,7 @@ class Graph extends CI_Controller {
                 $tempMinValue[] = ($values[2] - $values[3]);
             }
 
-            # we can calculate the min and maximum y value for float as well
+# we can calculate the min and maximum y value for float as well
             $this->data['graphdatamax'] = ceil(max($tempMaxValue) + 1);
             $min = (min($tempMinValue) != 0) ? min($tempMinValue) - 1 : 0;
             $min = ceil($min);
@@ -210,8 +274,6 @@ class Graph extends CI_Controller {
             $lastUpdated = trim(strip_tags($hostData));
 
 
-            $lastUpdated = strtotime($lastUpdated) * 1000;
-            //$host = "[" . substr($host, 1, -1);
             $this->data['graphLastUpdated'] = $lastUpdated;
             $this->data['graphdata'] = ($graphData);
             $this->data['observable'] = $observables;
@@ -230,7 +292,7 @@ class Graph extends CI_Controller {
                 $tempMinValue[] = ($values[2] - $values[3]);
             }
 
-            # we can calculate the min and maximum y value for float as well
+# we can calculate the min and maximum y value for float as well
             $this->data['graphdatamax'] = ceil(max($tempMaxValue) + 1);
             $min = (min($tempMinValue) != 0) ? min($tempMinValue) - 1 : 0;
             $min = ceil($min);
@@ -243,7 +305,7 @@ class Graph extends CI_Controller {
             $this->load->view('graph/weekly', $this->data);
         } else
             echo "No data available.";
-        //$this->template->load('template', 'graph/weekly', $this->data);
+//$this->template->load('template', 'graph/weekly', $this->data);
     }
 
     function yearView() {
@@ -253,19 +315,17 @@ class Graph extends CI_Controller {
         $hostKey = $getparams['host'];
 
         $graphData = cfpr_get_yearly_view($hostKey, $observables);
+        // var_dump($graphData);
         $convertData = json_decode($graphData, true);
         if (!empty($convertData)) {
 
             $hostData = cfpr_getlastupdate($hostKey);
-
             $lastUpdated = trim(strip_tags($hostData));
+         
 
-
-            $lastUpdated = strtotime($lastUpdated) * 1000;
             $this->data['graphLastUpdated'] = $lastUpdated;
             $this->data['graphdata'] = ($graphData);
             $this->data['observable'] = $observables;
-
             $manipulatedSeriesData = json_decode($graphData);
 
             $lineSeries1 = array();
@@ -280,7 +340,7 @@ class Graph extends CI_Controller {
                 $tempMinValue[] = ($values[2] - $values[3]);
             }
 
-            # we can calculate the min and maximum y value for float as well
+# we can calculate the min and maximum y value for float as well
             $this->data['graphdatamax'] = ceil(max($tempMaxValue) + 1);
             $min = (min($tempMinValue) != 0) ? min($tempMinValue) - 1 : 0;
             $min = ceil($min);
@@ -290,7 +350,7 @@ class Graph extends CI_Controller {
 
             $this->data['graphdatalineseries1'] = json_encode($lineSeries1);
             $this->data['graphdatalineseries2'] = json_encode($lineSeries2);
-            $this->template->load('template', 'graph/yearview', $this->data);
+            $this->load->view('graph/yearview', $this->data);
         } else
             echo "No data available.";
     }
@@ -318,7 +378,7 @@ class Graph extends CI_Controller {
             $this->load->view('graph/histogram', $this->data);
         } else
             echo "No data available";
-        //$this->template->load('template', 'graph/histogram', $this->data);
+//$this->template->load('template', 'graph/histogram', $this->data);
     }
 
     function knowledgeMap() {
@@ -357,15 +417,34 @@ class Graph extends CI_Controller {
 
     function accordian() {
 
+        $observables = 1;
+        $hostKey = 'SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e';
+        echo "12";
+        $graphData = cfpr_get_yearly_view($hostKey, $observables);
+        var_dump($graphData);
+        die();
+
         $hostKey = 'SHA=38c5642ccb0dc74bc754aa1a63e81760869e1b3405bf9e43ad85c99822628e8e';
         $data = cfpr_performance_analysis($hostKey);
         $convertData = json_decode($data, true);
 
+
         if (is_array($convertData)) {
-            //var_dump($convertData);
+            var_dump($convertData);
+            die();
             $this->data['performanceData'] = $convertData;
             $this->template->load('template', 'graph/accordian', $this->data);
         }
+    }
+
+    function test() {
+
+        $observables = 1;
+        $hostKey = 'SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e';
+        echo "12";
+        $graphData = cfpr_get_yearly_view($hostKey, $observables);
+        var_dump($graphData);
+        die();
     }
 
 }

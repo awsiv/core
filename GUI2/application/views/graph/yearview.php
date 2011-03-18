@@ -15,7 +15,13 @@
             yaxis: {
                 min: <?php echo $graphdatamin; ?>,
                 max: <?php echo $graphdatamax; ?>
-            }
+            },
+             xaxis: {
+            max:156,
+            tickSize:4,
+            ticks: [[0, "-3 years"], [52, "-2 years"], [103, "-1 years"],[155,'<?php echo date('D F d Y',$graphLastUpdated); ?>']]
+
+        }
 
         
         };

@@ -44,6 +44,7 @@ class Visual extends Cf_Controller {
 
         if ($hostkey != 'none') {
             $graphdata = cfpr_performance_analysis($hostkey);
+
             $convertData = json_decode($graphdata, true);
             if (is_array($convertData) && !empty($convertData)) {
                 $data['performanceData'] = $convertData;
