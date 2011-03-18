@@ -493,38 +493,38 @@ if (NewDBCursor(dbp,&dbcp))
 CloseDB(dbp);
 
 now = time(NULL);
-snprintf(buffer,sizeof(buffer),"<div id=\"license\">");
-snprintf(work,sizeof(work),"<h4>Last measured on %s based on %d samples</h4>",ctime(&now),i);
+snprintf(buffer,sizeof(buffer),"{");
+snprintf(work,sizeof(work),"\"Last measured on\":\"%s\", \"samples\":%d,",ctime(&now),i);
 Join(buffer,work,sizeof(buffer));
-snprintf(work,sizeof(work),"<table class=\"border\">\n");
-Join(buffer,work,sizeof(buffer));
+//snprintf(work,sizeof(work),"<table class=\"border\">\n");
+//Join(buffer,work,sizeof(buffer));
 
 if (sum_t > 0)
    {
    average = ex_t/sum_t;
    granted = lic_t/sum_t;
-   snprintf(work,sizeof(work),"<tr><td>Minimum observed level</td><td> &ge; %d</td><tr>\n",min);
+   snprintf(work,sizeof(work),"\"Minimum observed level\":%d,",min);
    Join(buffer,work,sizeof(buffer));
-   snprintf(work,sizeof(work),"<tr><td>Maximum observed level</td><td> &ge; %d hosts</td><tr>\n",max);
+   snprintf(work,sizeof(work),"\"Maximum observed level\":%d,",max);
    Join(buffer,work,sizeof(buffer));
-   snprintf(work,sizeof(work),"<tr><td>Mean actual usage</td><td> &ge; %lf</td></tr>\n",average);
+   snprintf(work,sizeof(work),"\"Mean actual usage\":%lf,",average);
    Join(buffer,work,sizeof(buffer));
-   snprintf(work,sizeof(work),"<tr><td>Mean expected usage</td><td> &le; %lf</td><tr>\n",granted);
+   snprintf(work,sizeof(work),"\"Mean expected usage\":%lf,",granted);
    Join(buffer,work,sizeof(buffer));
-   snprintf(work,sizeof(work),"<tr><td>Mean utilization</td><td> &le; %lf %%</td><tr>\n",average/granted*100.0);
+   snprintf(work,sizeof(work),"\"Mean utilization\":%lf",average/granted*100.0);
    Join(buffer,work,sizeof(buffer));
    }
 else
    {
-   snprintf(work,sizeof(work),"<tr><td>Minimum observed level</td><td> &ge; %d</td><tr>\n",min);
+   snprintf(work,sizeof(work),"\"Minimum observed level\":%d,",min);
    Join(buffer,work,sizeof(buffer));
-   snprintf(work,sizeof(work),"<tr><td>Maximum observed level</td><td> &ge; %d hosts</td><tr>\n",max);
+   snprintf(work,sizeof(work),"\"Maximum observed level\":%d,",max);
    Join(buffer,work,sizeof(buffer));
-   snprintf(work,sizeof(work),"<tr><td>Mean usage</td><td> unknown</td><tr>\n");
+   snprintf(work,sizeof(work),"\"Mean usage\":\"unknown\"");
    Join(buffer,work,sizeof(buffer));
    }
 
-snprintf(work,sizeof(work),"</table></div>\n");
+snprintf(work,sizeof(work),"}");
 Join(buffer,work,sizeof(buffer));
 
 #ifdef HAVE_LIBMONGOC
