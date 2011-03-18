@@ -3165,7 +3165,7 @@ int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs
           while (bson_iterator_next(&it2))
              {
              bson_iterator_init(&it3,bson_iterator_value(&it2));
-             sscanf(bson_iterator_key(&it2),"%d",&st);
+             sscanf(bson_iterator_key(&it3),"%d",&st);
 
              // Select the past 4 hours
             
