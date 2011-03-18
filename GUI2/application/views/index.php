@@ -3,7 +3,7 @@
               <div id="work" class="middle">
                   <div class="grid_8 push_2 header">
                       <h1>
-                          Welcome to Cfengine.
+                          <?php echo  $this->lang->line('front_greeting');?>
                       </h1>
                       <p><?php
                       echo $this->lang->line('licese_to');

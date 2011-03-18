@@ -67,7 +67,7 @@
    </div>
 </div>-->
        <div id="footer">
-              <p class="grid_5 push_1">copyright &copy; 2010 cfengine AS - All rights reserved</p>
+              <p class="grid_5 push_1">Copyright &copy; 2010 cfengine AS - All rights reserved</p>
           </div>
         </div>
 </body>

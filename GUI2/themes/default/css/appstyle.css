@@ -15,6 +15,11 @@ root {
     display: block;
 }
 
+@font-face {
+  font-family: Myriad Pro;
+  src: url(fonts/MyriadPro-Regular.eot);
+}
+
  body {
                 background: url("../images/bg_tile.png") repeat-x scroll 0 0 #2B7B98;
                 color: #fff;
