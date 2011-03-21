@@ -175,12 +175,16 @@ struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *t
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
- char rname[CF_MAXVARSIZE] = {0},rversion[CF_MAXVARSIZE] = {0},rarch[3] = {0};
+ char rname[CF_MAXVARSIZE] = {0},rversion[CF_MAXVARSIZE] = {0},rarch[3] = {0},arch[3] = {0};
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
  char classRegexAnch[CF_MAXVARSIZE];
  int emptyQuery = true;
  int found = false;
-  
+
+ if(!EMPTY(larch))
+   {
+     snprintf(arch,2,"%c",larch[0]);
+   }
 /* BEGIN query document */
 
  bson_buffer_init(&bb);
@@ -296,8 +300,7 @@ struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *t
                       {
                       match_version = false;
                       }
-
-                   if (!EMPTY(larch) && !FullTextMatch(larch,rarch))
+                   if (!EMPTY(larch) && !FullTextMatch(arch,rarch))
                       {
                       match_arch = false;
                       }
@@ -314,12 +317,11 @@ struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *t
                       match_version = false;
                       }
                   
-                   if (!EMPTY(larch) && (strcmp(larch,rarch) != 0))
+                   if (!EMPTY(larch) && (strcmp(arch,rarch) != 0))
                       {
                       match_arch = false;
                       }                  
                    }
-
                 if (match_name && match_version && match_arch)
                    {
                    found = true;
