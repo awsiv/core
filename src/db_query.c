@@ -4847,8 +4847,8 @@ void CFDB_ScanHubHost(bson_iterator *it1,char *keyhash,char *ipaddr,char *hostna
     while (bson_iterator_next(&it2))
        {
        ipFound = true;
-       Join(ipaddr,(char *)bson_iterator_string(&it2),CF_BUFSIZE);
-       Join(ipaddr,", ",CF_BUFSIZE);
+       Join(ipaddr,(char *)bson_iterator_string(&it2),CF_MAXVARSIZE);
+       Join(ipaddr,", ",CF_MAXVARSIZE);
        }
     }
 
@@ -4859,8 +4859,8 @@ void CFDB_ScanHubHost(bson_iterator *it1,char *keyhash,char *ipaddr,char *hostna
     while (bson_iterator_next(&it2))
        {
        hostFound = true;
-       Join(hostnames,(char *)bson_iterator_string(&it2),CF_BUFSIZE);
-       Join(hostnames,", ",CF_BUFSIZE);
+       Join(hostnames,(char *)bson_iterator_string(&it2),CF_MAXVARSIZE);
+       Join(hostnames,", ",CF_MAXVARSIZE);
        }
     }
 

@@ -5021,10 +5021,10 @@ int Con2PHP_count_hubs(char *classification, char *buf, int bufsize)
  struct HubQuery *hq;
  mongo_connection dbconn;
  struct Rlist *rp;
- struct HubPromiseSum *hs;
+ struct HubHost *hh;
  char buffer[CF_MAXVARSIZE];
  int result = false;
- int count = 0, hostCount = 0;
+ int count = 0;
 
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -5033,31 +5033,17 @@ int Con2PHP_count_hubs(char *classification, char *buf, int bufsize)
     return false;
     }
 
-// hq = CFDB_QueryHubs(&dbconn,hubKeyHash);
+ hq = CFDB_QueryHubs(&dbconn);
 
  CFDB_Close(&dbconn);
 
- if(hq)
-    {
-    for(rp = hq->records; rp != NULL; rp = rp->next)
-       {
-       // usually iterates once (a specific promise handle is supplied)
-       hs = (struct HubPromiseSum *)rp->item;
-       count += hs->occurences;
-       hostCount += hs->hostOccurences;
-       }
-    result = true;
-    }
- else
-    {
-    result = false;
-    }
+ count = RlistLen(hq->hosts);
 
- snprintf(buf,bufsize,"{total : %d, hosts : %d}", count, hostCount);
+ snprintf(buf,bufsize,"{ hosts : %d}", count);
  
- DeleteHubQuery(hq,DeleteHubPromiseSum);
+ DeleteHubQuery(hq, NULL);
 
- return result;
+ return true;
 
 #else  /* NOT HAVE_LIBCFCONSTELLATION */
 
@@ -5081,10 +5067,9 @@ int Con2PHP_show_hubs(char *classification, char *buf, int bufsize)
  struct HubQuery *hq;
  mongo_connection dbconn;
  struct Rlist *rp;
- struct HubPromiseSum *hs;
- char buffer[CF_MAXVARSIZE];
+ struct HubHost *hh;
+ char row[CF_MAXVARSIZE];
  int result = false;
- int count = 0, hostCount = 0;
 
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -5093,18 +5078,22 @@ int Con2PHP_show_hubs(char *classification, char *buf, int bufsize)
     return false;
     }
 
-// hq = CFDB_QueryHubs(&dbconn,hubKeyHash);
+ hq = CFDB_QueryHubs(&dbconn);
 
  CFDB_Close(&dbconn);
 
+ StartJoin(buf,"<table>\n",bufsize);
+
  if(hq)
     {
-    for(rp = hq->records; rp != NULL; rp = rp->next)
+    for(rp = hq->hosts; rp != NULL; rp = rp->next)
        {
-       // usually iterates once (a specific promise handle is supplied)
-       hs = (struct HubPromiseSum *)rp->item;
-       count += hs->occurences;
-       hostCount += hs->hostOccurences;
+       hh = (struct HubHost *)rp->item;
+       
+       snprintf(row,sizeof(row),"<tr><td>%s</td><td>%s</td></tr>\n",
+                hh->keyhash, hh->hostname);
+       
+       Join(buf,row,bufsize);
        }
     result = true;
     }
@@ -5113,9 +5102,10 @@ int Con2PHP_show_hubs(char *classification, char *buf, int bufsize)
     result = false;
     }
 
- snprintf(buf,bufsize,"{total : %d, hosts : %d}", count, hostCount);
+ EndJoin(buf,"</table>\n",bufsize);
+  
  
- DeleteHubQuery(hq,DeleteHubPromiseSum);
+ DeleteHubQuery(hq,NULL);
 
  return result;
 
