@@ -5135,7 +5135,7 @@ int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promise
 
 /*****************************************************************************/
 
-int Con2PHP_reasons_notkept(char *hubKeyHash, char *promiseHandle, enum time_window tw, char *buf, int bufsize)
+int Con2PHP_reasons_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize)
 
 {
 
@@ -5155,7 +5155,7 @@ int Con2PHP_reasons_notkept(char *hubKeyHash, char *promiseHandle, enum time_win
     return false;
     }
 
- hq = CFDB_QueryReasonsNotKept(&dbconn,hubKeyHash,promiseHandle,tw);
+ hq = CFDB_QueryReasonsPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type,tw);
 
 
  StartJoin(buf,"<table>\n",bufsize);
@@ -5184,7 +5184,7 @@ int Con2PHP_reasons_notkept(char *hubKeyHash, char *promiseHandle, enum time_win
 
 #else  /* NOT HAVE_LIBCFCONSTELLATION */
 
- snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_reasons_notkept() in Nova-only environment\n");
+ snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_reasons_promiselog() in Nova-only environment\n");
  CfOut(cf_error, "", buf);
  return false;
 
