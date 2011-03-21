@@ -105,7 +105,7 @@ return true;
 void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr)
 
 { bson_buffer bb;
-  bson_buffer *setObj,*clObj,*keyArr,*keyAdd,*keyArrField;
+ bson_buffer *setObj, *arr;
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
@@ -121,55 +121,35 @@ bson_buffer_init(&bb);
 bson_append_string(&bb,cfr_keyhash,keyhash);
 bson_from_buffer(&host_key,&bb);
 
-// insert keys into numbered key array
+// ip address - replace array with one el (more later - aging..)
 
 bson_buffer_init(&bb);
-keyAdd = bson_append_start_object(&bb,"$addToSet");
-keyArrField = bson_append_start_object(keyAdd,cfr_ip_array);
-keyArr = bson_append_start_array(keyAdd,"$each");
-
-i = 0;
-snprintf(iStr,sizeof(iStr),"%d",i);
-bson_append_string(keyArr,iStr,ipaddr);
-
-bson_append_finish_object(keyArr);
-bson_append_finish_object(keyArrField);
-bson_append_finish_object(keyAdd);
+setObj = bson_append_start_object(&bb,"$set");
+arr = bson_append_start_array(setObj,cfr_ip_array);
+bson_append_string(setObj,"0",ipaddr);
+bson_append_finish_object(arr);
+bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE,&host_key,&setOp,MONGO_UPDATE_UPSERT);
 MongoCheckForError(conn,"SaveHostID",keyhash);
 
 bson_destroy(&setOp);
-bson_destroy(&host_key);
 
-// Again - locate right host key
-
-bson_buffer_init(&bb);
-bson_append_string(&bb,cfr_keyhash,keyhash);
-bson_from_buffer(&host_key,&bb);
-
-// insert keys into numbered key array
+// host name
 
 bson_buffer_init(&bb);
-keyAdd = bson_append_start_object(&bb,"$addToSet");
-keyArrField = bson_append_start_object(keyAdd,cfr_host_array);
-keyArr = bson_append_start_array(keyAdd,"$each");
-
-i = 0;
-snprintf(iStr,sizeof(iStr),"%d",i);
-ThreadLock(cft_getaddr);
-bson_append_string(keyArr,iStr,IPString2Hostname(ipaddr));
-ThreadUnlock(cft_getaddr);
-
-bson_append_finish_object(keyArr);
-bson_append_finish_object(keyArrField);
-bson_append_finish_object(keyAdd);
+setObj = bson_append_start_object(&bb,"$set");
+arr = bson_append_start_array(setObj,cfr_host_array);
+bson_append_string(setObj,"0",IPString2Hostname(ipaddr));
+bson_append_finish_object(arr);
+bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE,&host_key,&setOp,MONGO_UPDATE_UPSERT);
-bson_destroy(&setOp);
+MongoCheckForError(conn,"SaveHostID",keyhash);
 
+bson_destroy(&setOp);
 bson_destroy(&host_key);
 }
 

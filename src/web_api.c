@@ -5011,6 +5011,126 @@ void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer
 
 /*****************************************************************************/
 
+int Con2PHP_count_hubs(char *classification, char *buf, int bufsize)
+
+{
+
+#ifdef HAVE_LIBCFCONSTELLATION
+
+
+ struct HubQuery *hq;
+ mongo_connection dbconn;
+ struct Rlist *rp;
+ struct HubPromiseSum *hs;
+ char buffer[CF_MAXVARSIZE];
+ int result = false;
+ int count = 0, hostCount = 0;
+
+
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+// hq = CFDB_QueryHubs(&dbconn,hubKeyHash);
+
+ CFDB_Close(&dbconn);
+
+ if(hq)
+    {
+    for(rp = hq->records; rp != NULL; rp = rp->next)
+       {
+       // usually iterates once (a specific promise handle is supplied)
+       hs = (struct HubPromiseSum *)rp->item;
+       count += hs->occurences;
+       hostCount += hs->hostOccurences;
+       }
+    result = true;
+    }
+ else
+    {
+    result = false;
+    }
+
+ snprintf(buf,bufsize,"{total : %d, hosts : %d}", count, hostCount);
+ 
+ DeleteHubQuery(hq,DeleteHubPromiseSum);
+
+ return result;
+
+#else  /* NOT HAVE_LIBCFCONSTELLATION */
+
+ snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_count_hubs() in Nova-only environment\n");
+ CfOut(cf_error, "", buf);
+ return false;
+
+#endif
+
+}
+
+/*****************************************************************************/
+
+int Con2PHP_show_hubs(char *classification, char *buf, int bufsize)
+
+{
+
+#ifdef HAVE_LIBCFCONSTELLATION
+
+
+ struct HubQuery *hq;
+ mongo_connection dbconn;
+ struct Rlist *rp;
+ struct HubPromiseSum *hs;
+ char buffer[CF_MAXVARSIZE];
+ int result = false;
+ int count = 0, hostCount = 0;
+
+
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+// hq = CFDB_QueryHubs(&dbconn,hubKeyHash);
+
+ CFDB_Close(&dbconn);
+
+ if(hq)
+    {
+    for(rp = hq->records; rp != NULL; rp = rp->next)
+       {
+       // usually iterates once (a specific promise handle is supplied)
+       hs = (struct HubPromiseSum *)rp->item;
+       count += hs->occurences;
+       hostCount += hs->hostOccurences;
+       }
+    result = true;
+    }
+ else
+    {
+    result = false;
+    }
+
+ snprintf(buf,bufsize,"{total : %d, hosts : %d}", count, hostCount);
+ 
+ DeleteHubQuery(hq,DeleteHubPromiseSum);
+
+ return result;
+
+#else  /* NOT HAVE_LIBCFCONSTELLATION */
+
+ snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_show_hubs() in Nova-only environment\n");
+ CfOut(cf_error, "", buf);
+ return false;
+
+#endif
+
+}
+
+/*****************************************************************************/
+
 int Con2PHP_summarize_promiselog(char *hubKeyHash, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize)
 {
 
