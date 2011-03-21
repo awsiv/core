@@ -387,7 +387,7 @@ void CFDB_SaveFileChanges(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveFileDiffs(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveBundles(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveValueReport(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr);
+void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char *ipaddr);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
 void BsonToString(char *retBuf, int retBufSz, bson *b, int depth);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);

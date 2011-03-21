@@ -102,19 +102,13 @@ return true;
 /* Monitor data                                                              */
 /*****************************************************************************/
 
-void CFDB_SaveHostID(mongo_connection *conn,char *keyhash,char *ipaddr)
+void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char *ipaddr)
 
 { bson_buffer bb;
  bson_buffer *setObj, *arr;
-  bson host_key;  // host description
-  bson setOp;
-  struct Item *ip;
-  char name[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
-  time_t t;
-  double e = 0, dev = 0;
-  char iStr[32];
-  int i;
-
+ bson host_key;  // host description
+ bson setOp;
+ 
 // locate right host key
 
 bson_buffer_init(&bb);
@@ -131,7 +125,7 @@ bson_append_finish_object(arr);
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE,&host_key,&setOp,MONGO_UPDATE_UPSERT);
+mongo_update(conn, database,&host_key,&setOp,MONGO_UPDATE_UPSERT);
 MongoCheckForError(conn,"SaveHostID",keyhash);
 
 bson_destroy(&setOp);
@@ -146,7 +140,7 @@ bson_append_finish_object(arr);
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE,&host_key,&setOp,MONGO_UPDATE_UPSERT);
+mongo_update(conn, database,&host_key,&setOp,MONGO_UPDATE_UPSERT);
 MongoCheckForError(conn,"SaveHostID",keyhash);
 
 bson_destroy(&setOp);
