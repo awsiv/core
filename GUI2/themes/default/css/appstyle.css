@@ -23,15 +23,11 @@ root {
  body {
                 background: url("../images/bg_tile.png") repeat-x scroll 0 0 #2B7B98;
                 color: #fff;
-                font-family: Myriad Pro,Helvetica, Arial, sans-serif;
+                font-family: 'Myriad Pro',Helvetica, Arial, sans-serif;
                 font-size: 12px;
                 line-height: 16px;
                 /*text-shadow: white 0px 1px 0px;*/
       }
-
- b{
-   font-weight: bold;
-  }
 
 #wrapper{
       width:80%;
@@ -39,6 +35,15 @@ root {
       /*border: solid 1px red;*/
       margin:0 auto;
 }
+
+.amber {
+background-color: #F79131;
+}
+
+.red {
+background-color: #AA0000;
+}
+
 
 #header
 {

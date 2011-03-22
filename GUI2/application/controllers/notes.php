@@ -26,7 +26,9 @@ class Notes extends Cf_Controller {
         $this->data['reporttype'] = $reportType;
 
         if ($action == "show") {
-            $comments = cfpr_query_note($hostkey, $nid, '', -1, -1);
+            $comments = (cfpr_query_note($hostkey, $nid, '', -1, -1));
+            $comments = utf8_encode($comments);
+
             $this->data['data'] = json_decode($comments, TRUE);
             $this->data['form_url'] = '/notes/addnote';
         } else if ($action == "add") {
@@ -40,11 +42,11 @@ class Notes extends Cf_Controller {
 
         $nid = $this->input->post('nid');
         $message = $this->input->post('Message');
-        $username =  $this->session->userdata('username');
+        $username = $this->session->userdata('username');
         $date = strtotime("now");
         $ret = cfpr_add_note($nid, $username, $date, $message);
 
-         if (!$ret) {
+        if (!$ret) {
             // SOMETHING WENT WRONG WHILE ADDITION
             $this->output->set_status_header('400', 'Cannot insert the note.');
             echo $ret;
@@ -55,7 +57,7 @@ class Notes extends Cf_Controller {
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-             </tr>', $username, date('D F d h:m:s Y',$date), $message);
+             </tr>', $username, date('D F d h:m:s Y', $date), $message);
 
         $jsonResult = array('nid' => $ret,
             'html' => $result);
@@ -69,10 +71,8 @@ class Notes extends Cf_Controller {
         $message = $this->input->post('Message');
         $report_type = trim($this->input->post('reporttype')) ? $this->input->post('reporttype') : 1;
         $keyhash = $this->input->post('hash');
-        $username =  $this->session->userdata('username');
+        $username = $this->session->userdata('username');
         $date = strtotime("now");
-
-
 
         $ret = cfpr_new_note($keyhash, $rid, $report_type, $username, $date, $message);
         if (!$ret) {
@@ -87,57 +87,12 @@ class Notes extends Cf_Controller {
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-             </tr>', $username, date('D F d h:m:s Y',$date), $message);
+             </tr>', $username, date('D F d h:m:s Y', $date), $message);
 
         $jsonResult = array('nid' => $ret,
             'html' => $result);
         $returnData = json_encode($jsonResult);
         echo $returnData;
-    }
-
-    function getNotes($hostKey, $action) {
-
-        $hostkey = 'SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e';
-        $noteid = NULL;
-        $username = NULL;
-        $from = -1;
-        $to = -1;
-        $notes = array();
-        if ($action == 'show') {
-            $json = cfpr_query_note($hostkey, $noteid, $username, $from, $to);
-            $notes = json_decode($json);
-        }
-        $this->data = array();
-
-        $this->load->view('notes/view_notes', $this->data);
-    }
-
-    function add($hostkey) {
-        $this->form_validation->set_rules('comment_text', 'comment_text', 'required|valid_email');
-        if ($this->form_validation->run() == true) { //check to see if the user is logging in
-            //$username=$this->input->post('user_name');
-            $note = $this->input->post('comment_text');
-            $hostkey = $this->input->post('host_key');
-            $noteid = cfpr_get_host_noteid($hostkey);
-            cfpr_add_note($commentid, $username, time(), $comment_text);
-            $this->data['message'] = "Comments Sucessfully added";
-        } else {
-            $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-            $this->data['lbl_email'] = "Email";
-            $this->data['hostkey'] = $hostkey;
-            $this->data['note'] = array('name' => 'comment',
-                'id' => 'comment',
-                'type' => 'text',
-                'value' => $this->form_validation->set_value('text'),
-            );
-            $this->load->view('notes/add_notes', $this->data);
-        }
-    }
-
-    function show_notes($hostkey) {
-        $noteid = cfpr_get_host_noteid($hostkey);
-        $comments = cfpr_query_note($hostkey, $noteid, '', -1, -1);
-        echo $comments;
     }
 
 }

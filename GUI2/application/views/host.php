@@ -3,7 +3,6 @@
 # This file is (C) Cfengine AS. All rights reserved
 #
 
-cfpr_host_meter($hostkey);
 $colour = cfpr_get_host_colour($hostkey);
   ?>
         
@@ -93,19 +92,7 @@ $colour = cfpr_get_host_colour($hostkey);
                 <p><a href="<?php echo site_url('visual/vital').'/'.$hostkey ?>" ><img src="<?php echo get_imagedir()?>pulsed.png" class="align"/></a></p>
                  </div>
           	</div>
-            
-            <!--<div class="panel">
-          		<div class="panelhead">Generate report</div>
-                <div class="panelcontent">
-                <form method="post" action="<?php echo site_url('search/')?>">
-                <p>Simple search string:</p>
-                <p><input class="searchfield" type="text" name="search" /></p>
-                 <p><?php echo form_dropdown('report',$allreps,'Bundle profile')?></p>
-                <input type="hidden" name="hostkey" value="<?php echo $hostkey?>">
-                <p><input type="submit" value="commit"></p>
-                </form>
-                </div>
-             </div>-->
+         
                  <div class="panel">
                      <div class="panelhead">Host Details (discovered)</div>
                      <div class="panelcontent">
@@ -114,7 +101,7 @@ $colour = cfpr_get_host_colour($hostkey);
        <p><label class="width_20">Release:</label><label><?php echo $rel?></label></p>
        <p><label class="width_20">Flavour:</label><label><?php echo $flavour?></label></p>
        <p><label class="width_20">Last IP-address:</label><label><?php echo $ipaddr?></label></p>
-       <p><label class="width_20">Last data:</label><label><?php echo $last?></label></p>
+       <p><label class="width_20">Last data:</label><label><?php echo getDateStatus($last);?></label></p>
        <p><label class="width_20">ID:</label><label><small><?php echo $hostkey?></small></label></p>
                       </div>
                  </div>

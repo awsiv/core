@@ -20,8 +20,8 @@
                     $temp = array();
                     foreach ($result['meta']['header'] as $key => $value) {
                         if (!is_array($value)) {
-                            if (strtolower($key) == "lastseen" || strtolower($key) == "time" || strtolower($key) == "last verified")
-                                array_push($temp, date('D F d h:m:s Y', $row[$value]));
+                            if (strtolower($key) == "lastseen" || strtolower($key) == "last seen" || strtolower($key) == "time" || strtolower($key) == "last verified")
+                                array_push($temp,  getDateStatus($row[$value]));
                             else
                                 array_push($temp, $row[$value]);
                         }

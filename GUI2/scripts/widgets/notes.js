@@ -39,9 +39,10 @@ var notes  = {
         // is the json data object returned by the server
         
 
-        //alert('status: ' + statusText + '\n\nresponseText: \n' + responseText +
-          //  '\n\nThe output div should have already been updated with the responseText.');
-          console.log(responseText);
+         //alert('status: ' + statusText + '\n\nresponseText: \n' + responseText +
+         //  '\n\nThe output div should have already been updated with the responseText.');
+         // console.log(responseText);
+         
          $('#notes-table tbody #no-data-row',self.temp).remove();
          $('form textarea',self.temp).val('');
 
