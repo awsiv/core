@@ -619,13 +619,79 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,st
  EndJoin(returnval,"]}\n",bufsize);
  DeleteHubQuery(hq,DeleteHubClass);
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+ CFDB_Close(&dbconn);
 
  return true;
 }
+
+/*****************************************************************************/
+
+int Nova2PHP_classes_summary(char **kHs, char *class, char *buf, int bufsize)
+{
+ mongo_connection dbconn;
+ struct HubQuery *hq;
+ struct HubClassSum *hc;
+ struct HubHost *hh;
+ struct Rlist *rp;
+ char work[CF_MAXVARSIZE];
+ 
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+ hq = CFDB_QueryClassSum(&dbconn,kHs,class);
+
+ StartJoin(buf, "{", bufsize);
+
+ if(hq && hq->hosts)
+    {
+
+    Join(buf, "\"hosts\":[", bufsize);
+    
+    for(rp = hq->hosts; rp != NULL; rp = rp->next)
+       {
+       hh = (struct HubHost *)rp->item;
+       snprintf(work, sizeof(work), "[\"%s\",\"%s\"]\n,", hh->hostname, hh->keyhash);
+       
+       if(!Join(buf, work, bufsize - 10))
+          {
+          break;
+          }           
+       }
+
+    ReplaceTrailingChar(buf, ',', '\0');
+
+    Join(buf, "]", bufsize);
+    Join(buf, ",\n\"classes\":[", bufsize - 10);
+    
+    for(rp = hq->records; rp != NULL; rp = rp->next)
+       {
+       hc = (struct HubClassSum *)rp->item;
+       snprintf(work, sizeof(work), "[\"%s\",%d]\n,", hc->class, hc->frequency);
+
+       if(!Join(buf, work, bufsize - 10))
+          {
+          break;
+          }
+       }
+
+    ReplaceTrailingChar(buf, ',', '\0');
+
+    Join(buf, "]", bufsize);
+    
+    }
+
+ EndJoin(buf, "}", bufsize);
+ 
+ DeleteHubQuery(hq,DeleteHubClassSum);
+
+ CFDB_Close(&dbconn);
+
+ return true;
+}
+
 /*****************************************************************************/
 
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
@@ -5302,6 +5368,53 @@ int Con2PHP_reasons_promiselog(char *hubKeyHash, char *promiseHandle, enum promi
 
 }
 
+/*****************************************************************************/
+
+int Con2PHP_environments_list(char *hubKeyHash, char *buf, int bufsize)
+
+{
+
+#ifdef HAVE_LIBCFCONSTELLATION
+
+
+ struct HubQuery *hq;
+ mongo_connection dbconn;
+ struct Rlist *rp;
+ struct HubCacheTotalCompliance *tc;
+ char buffer[CF_MAXVARSIZE];
+ int result = false;
+
+
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+ hq = CFDB_QuerySumComp(&dbconn, hubKeyHash, NULL, time(NULL) - CF_WEEK);
+
+ CFDB_Close(&dbconn);
+
+ for(rp = hq->records; rp != NULL; rp = rp->next)
+    {
+    tc = (struct HubCacheTotalCompliance *)rp->item;
+    //IdempPrepend();...
+    
+    }
+ 
+ DeleteHubQuery(hq,DeleteHubCacheTotalCompliance);
+
+ return true;
+
+#else  /* NOT HAVE_LIBCFCONSTELLATION */
+
+ snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_count_hubs() in Nova-only environment\n");
+ CfOut(cf_error, "", buf);
+ return false;
+
+#endif
+
+}
 
 
 #endif  /* HAVE_LIBMONGOC */

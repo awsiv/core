@@ -123,10 +123,6 @@ struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query)
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
  int found = false;
   
-/* BEGIN query document */
-
- // Can't understand the bson API for nested objects this, so work around..
-  
 /* BEGIN RESULT DOCUMENT */
 
  bson_buffer_init(&bb);
@@ -534,6 +530,139 @@ struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lc
 
  mongo_cursor_destroy(cursor);
  return NewHubQuery(host_list,record_list);
+}
+
+/******************************************************************/
+
+struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **kHs, char *class)
+/**
+ * kHs is NULL or NULL-terminated array of strings
+ *
+ * NOTE: Can probably be made more efficient using group by class keys with a count
+ **/
+{
+ bson_buffer bb, *arr1, *arr2, *obj;
+ bson_iterator it1,it2;
+ bson query, field;
+ mongo_cursor *cursor;
+ struct Rlist *hostList = NULL, *recordList = NULL;
+ struct Item *classList = NULL, *ip;
+ char keyhash[CF_MAXVARSIZE],hostnames[CF_MAXVARSIZE],addresses[CF_MAXVARSIZE];
+ char iStr[CF_SMALLBUF];
+ int classFrequency;
+ int i;
+
+ Debug("CFDB_QueryClassSum()\n");
+
+  // query
+ bson_buffer_init(&bb);
+ bson_append_string(&bb,cfr_class_keys,class);
+
+ if(kHs && kHs[0])
+    {
+    arr1 = bson_append_start_array(&bb,"$or");
+
+    for(i = 0; kHs[i] != NULL; i++)
+       {
+       snprintf(iStr, sizeof(iStr), "%d", i);
+       
+       obj = bson_append_start_object(arr1, iStr);
+       bson_append_string(obj, cfr_keyhash, kHs[i]);
+       bson_append_finish_object(obj);
+       }
+        
+    bson_append_finish_object(arr1);
+    }
+ 
+ bson_from_buffer(&query,&bb);
+
+// returned attribute
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_keyhash,1);
+ bson_append_int(&bb,cfr_ip_array,1);
+ bson_append_int(&bb,cfr_host_array,1);
+ bson_from_buffer(&field,&bb);
+
+ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+ bson_destroy(&field);
+ // query freed below
+
+ // 1: of the old hosts, find subset matching new class
+
+ while(mongo_cursor_next(cursor))
+    {
+    bson_iterator_init(&it1,cursor->current.data);
+
+    keyhash[0] = '\0';
+    addresses[0] = '\0';
+    hostnames[0] = '\0';
+    
+    while (bson_iterator_next(&it1))
+       {
+       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+       }
+    
+    if(!EMPTY(keyhash))
+        {
+        PrependRlistAlien(&hostList,NewHubHost(keyhash,addresses,hostnames));
+        Debug("matched host %s,%s\n", keyhash, addresses);
+        }
+    }
+
+ // 2: find all distinct classes in subset of hosts
+ classList = CFDB_QueryDistinct(conn, MONGO_BASE, "hosts", cfr_class_keys, &query);
+
+ bson_destroy(&query);
+
+ // 3: count occurences of each class in subset of hosts
+ for(ip = classList; ip != NULL; ip = ip->next)
+    {
+     bson_buffer_init(&bb);
+
+
+     if(kHs && kHs[0])
+        {
+        arr1 = bson_append_start_array(&bb,"$or");
+        
+        for(i = 0; kHs[i] != NULL; i++)
+           {
+           snprintf(iStr, sizeof(iStr), "%d", i);
+           
+           obj = bson_append_start_object(arr1, iStr);
+           bson_append_string(obj, cfr_keyhash, kHs[i]);
+           bson_append_finish_object(obj);
+           }
+        
+        bson_append_finish_object(arr1);
+        }
+
+
+     obj = bson_append_start_object(&bb,cfr_class_keys);
+     arr2 = bson_append_start_array(obj, "$all");
+     bson_append_string(arr2,cfr_class_keys,class);
+     bson_append_string(arr2, cfr_class_keys, ip->name);     
+     bson_append_finish_object(arr2);
+     bson_append_finish_object(obj);
+     
+     bson_from_buffer(&query,&bb);
+
+     classFrequency = (int)mongo_count(conn, MONGO_BASE, "hosts", &query);
+
+     Debug("class (%s,%d)\n", ip->name, classFrequency);
+
+     PrependRlistAlien(&recordList,NewHubClassSum(CF_THIS_HH, ip->name, classFrequency));
+     
+     bson_destroy(&query);
+    }
+ 
+
+ DeleteItemList(classList);
+
+ mongo_cursor_destroy(cursor);
+
+ recordList = SortRlist(recordList,SortClassSum);
+
+ return NewHubQuery(hostList, recordList);
 }
 
 /*****************************************************************************/
@@ -5089,8 +5218,10 @@ void PrintCFDBKey(bson_iterator *it1, int depth)
 
 /*****************************************************************************/
 
-void BsonToString(char *retBuf, int retBufSz, bson *b, int depth)
+void BsonToString(char *retBuf, int retBufSz, char *data)
 /* NOTE: Only depth 1 is implemented */
+
+/* data = (bson *)b->data*/
 {
  bson_iterator i;
  const char * key;
@@ -5099,7 +5230,7 @@ void BsonToString(char *retBuf, int retBufSz, bson *b, int depth)
  char buf[CF_MAXVARSIZE];
 
  memset(retBuf,0,retBufSz);
- bson_iterator_init( &i , b->data );
+ bson_iterator_init( &i , data );
 
  while ( bson_iterator_next( &i ) ){
 
@@ -5143,9 +5274,16 @@ void BsonToString(char *retBuf, int retBufSz, bson *b, int depth)
      break;
 
  case bson_object:
+     buf[0] = '{';
+     BsonToString(buf+1, sizeof(buf-1), (char *)bson_iterator_value( &i ));
+     EndJoin(buf,"}",sizeof(buf));
+     break;
+
  case bson_array:
-     // TODO: Not implemented yet..
-     memset(buf,0,sizeof(buf));
+
+     buf[0] = '[';
+     BsonToString(buf+1, sizeof(buf-1), (char *)bson_iterator_value( &i ));
+     EndJoin(buf,"]",sizeof(buf));
      break;
 
  default:
@@ -5173,7 +5311,7 @@ void MongoCheckForError(mongo_connection *conn, const char *operation, const cha
 
  if(mongo_cmd_get_last_error(conn, MONGO_BASE, &b))
     {
-    BsonToString(dbErr,sizeof(dbErr),&b,1);
+    BsonToString(dbErr,sizeof(dbErr),b.data);
     CfOut(cf_error, "", "!! Database error on %s (%s): %s", operation,extra,dbErr);
     }
  
@@ -5613,10 +5751,28 @@ int CFDB_GetRow(mongo_connection *conn, char *db, bson *query, char *rowname, ch
 
 /******************************************************************/
 
-struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey, char *qVal)
+struct Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey, char *qVal)
 /**
  * Queries for distinct occurences of dKey in a query matching qKey = qVal
  */
+{
+ struct Item *retVal;
+ bson_buffer bb;
+
+ bson query;
+
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, qKey, qVal);
+ bson_from_buffer(&query, &bb);
+
+ retVal = CFDB_QueryDistinct(conn, database, collection, dKey, &query);
+
+ bson_destroy(&query);
+
+ return retVal;
+}
+ 
+struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson)
 {
  bson_buffer bb,*query;
  bson cmd,result;
@@ -5626,12 +5782,11 @@ struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *co
  bson_buffer_init(&bb);
  bson_append_string(&bb, "distinct", collection);
  bson_append_string(&bb, "key", dKey);
+ 
 
- if(!EMPTY(qKey))
+ if(queryBson)
     {
-    query = bson_append_start_object(&bb, "query");
-    bson_append_string(query,qKey,qVal);
-    bson_append_finish_object(query);
+    bson_append_bson(&bb, "query", queryBson);
     }
  
  bson_from_buffer(&cmd, &bb);
@@ -5667,9 +5822,10 @@ struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *co
     PrependItem(&ret,(char *)bson_iterator_string(&values),NULL);
     }
 
+ bson_destroy(&result);
+ 
  return ret;
 }
-
 
 /******************************************************************/
 

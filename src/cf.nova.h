@@ -312,6 +312,7 @@ struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char
 struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle, int regex, time_t from, time_t to,int sort,char *classRegex);
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex, int sort);
 struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **kHs, char *class);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp, int sort, char *classRegex);
 struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,char *llval,char *lrval,char *ltype,int reg, char *classRegex);
 struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, int sort, char *classRegex);
@@ -389,7 +390,7 @@ void CFDB_SaveBundles(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveValueReport(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char *ipaddr);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
-void BsonToString(char *retBuf, int retBufSz, bson *b, int depth);
+void BsonToString(char *retBuf, int retBufSz, char *data);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 
 struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
@@ -402,7 +403,8 @@ struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid, s
 struct Rlist *CFDB_QueryNoteId(mongo_connection *conn,bson *query);
 void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid);
 int CFDB_GetRow(mongo_connection *conn, char *db, bson *query, char *rowname, char *row, int rowSz, int level);
-struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey, char *qVal);
+struct Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey, char *qVal);
+struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson);
 void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int depth);
 #endif  /* HAVE_LIBMONGOC */
 
@@ -556,6 +558,8 @@ struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,c
 void DeleteHubSoftware(struct HubSoftware *hs);
 struct HubClass *NewHubClass(struct HubHost *hh,char *class,double p, double dev, time_t t);
 void DeleteHubClass(struct HubClass *hc);
+struct HubClassSum *NewHubClassSum(struct HubHost *hh,char *class,int frequency);
+void DeleteHubClassSum(struct HubClassSum *hc);
 struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,char *v,int k,int r,int n);
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
 struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype,time_t t);
@@ -605,6 +609,7 @@ int SortLastSeen(void *p1, void *p2);
 int SortPerformance(void *p1, void *p2);
 int SortPromiseCompliance(void *p1, void *p2);
 int SortClasses(void *p1, void *p2);
+int SortClassSum(void *p1, void *p2);
 int SortSoftware(void *p1, void *p2);
 int SortBundleSeen(void *p1, void *p2);
 struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(struct Rlist *records, int slot);
@@ -1320,6 +1325,13 @@ struct HubClass
    double prob;
    double dev;
    time_t t;
+   };
+
+struct HubClassSum
+   {
+   struct HubHost *hh;
+   char *class;
+   int frequency;  // across all hosts
    };
 
 struct HubTotalCompliance

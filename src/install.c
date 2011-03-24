@@ -294,6 +294,45 @@ void DeleteHubClass(struct HubClass *hc)
 
 /*****************************************************************************/
 
+struct HubClassSum *NewHubClassSum(struct HubHost *hh,char *class,int frequency)
+
+{ struct HubClassSum *hc;
+
+ if ((hc = malloc(sizeof(struct HubClassSum))) == NULL)
+    {
+    FatalError("Memory exhausted NewHubClassSum");
+    }
+
+ hc->hh = hh;
+
+ if (class)
+    {
+    hc->class = strdup(class);
+    }
+ else
+    {
+    hc->class = NULL;
+    }
+
+ hc->frequency = frequency;
+ 
+ return hc;
+}
+
+/*****************************************************************************/
+
+void DeleteHubClassSum(struct HubClassSum *hc)
+{
+ if (hc->class)
+    {
+    free(hc->class);
+    }
+
+ free(hc);
+}
+
+/*****************************************************************************/
+
 struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,char *v,int k,int r,int n)
 
 { struct HubTotalCompliance *hp;
@@ -1142,6 +1181,28 @@ int SortClasses(void *p1, void *p2)
  hc2 = (struct HubClass *)p2;
 
  if(strcmp(hc1->class,hc2->class) < 0)
+    {
+    return true;
+    }
+ else
+    {
+    return false;
+    }
+}
+
+/*****************************************************************************/
+
+int SortClassSum(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts classes on frequency.
+ **/
+{
+ struct HubClassSum *hc1, *hc2;
+
+ hc1 = (struct HubClassSum *)p1;
+ hc2 = (struct HubClassSum *)p2;
+
+ if(hc1->frequency > hc2->frequency)
     {
     return true;
     }
