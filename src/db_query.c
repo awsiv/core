@@ -550,14 +550,21 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **kHs, char *cl
  char keyhash[CF_MAXVARSIZE],hostnames[CF_MAXVARSIZE],addresses[CF_MAXVARSIZE];
  char iStr[CF_SMALLBUF];
  int classFrequency;
+ bool emptyQuery = true;
  int i;
 
  Debug("CFDB_QueryClassSum()\n");
 
   // query
  bson_buffer_init(&bb);
- bson_append_string(&bb,cfr_class_keys,class);
 
+ if(!EMPTY(class))
+    {
+    bson_append_string(&bb,cfr_class_keys,class);
+    emptyQuery = false;
+    }
+
+ 
  if(kHs && kHs[0])
     {
     arr1 = bson_append_start_array(&bb,"$or");
@@ -572,9 +579,19 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **kHs, char *cl
        }
         
     bson_append_finish_object(arr1);
+    
+    emptyQuery = false;
     }
+
  
- bson_from_buffer(&query,&bb);
+ if(emptyQuery)
+    {
+    bson_empty(&query);
+    }
+ else
+    {
+    bson_from_buffer(&query,&bb);
+    }
 
 // returned attribute
  bson_buffer_init(&bb);
@@ -612,7 +629,10 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **kHs, char *cl
  // 2: find all distinct classes in subset of hosts
  classList = CFDB_QueryDistinct(conn, MONGO_BASE, "hosts", cfr_class_keys, &query);
 
- bson_destroy(&query);
+ if(!emptyQuery)
+    {
+    bson_destroy(&query);
+    }
 
  // 3: count occurences of each class in subset of hosts
  for(ip = classList; ip != NULL; ip = ip->next)
@@ -639,7 +659,12 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **kHs, char *cl
 
      obj = bson_append_start_object(&bb,cfr_class_keys);
      arr2 = bson_append_start_array(obj, "$all");
-     bson_append_string(arr2,cfr_class_keys,class);
+     
+     if(!EMPTY(class))
+        {
+        bson_append_string(arr2,cfr_class_keys,class);
+        }
+     
      bson_append_string(arr2, cfr_class_keys, ip->name);     
      bson_append_finish_object(arr2);
      bson_append_finish_object(obj);
