@@ -49,69 +49,69 @@
             ?>
                 <div class="Paging">
                     <div>
-<?
-                echo form_open('search/index/' . $params);
-                echo form_input('rows', $number_of_rows);
-                echo "Rows/Page";
-                echo form_close();
-?>
+                    <?
+                    echo form_open('search/index/' . $params);
+                    echo form_input('rows', $number_of_rows);
+                    echo "Rows/Page";
+                    echo form_close();
+                    ?>
                 </div>
                 <div class="pages">
                     <div class="inside">
                         <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['first']) ?>" title="Go to First Page" class="first"><span>&laquo;</span></a>
                         <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['prev']) ?>" title="Go to Previous Page" class="prev"><span>&lsaquo;</span></a>
 
-<?
-                    for ($i = $pg['start']; $i <= $pg['end']; $i++) {
-                        if ($i == $pg['page'])
-                            $current = 'current'; else
-                            $current="";
-?>
+                        <?
+                        for ($i = $pg['start']; $i <= $pg['end']; $i++) {
+                            if ($i == $pg['page'])
+                                $current = 'current'; else
+                                $current="";
+                        ?>
 
-                        <a href="<?= site_url("search/index/" . $params . "rows/$number_of_rows/page/$i") ?>" title="Go to Page <?= $i ?>" class="page <?= $current ?>"><span><?= $i ?></span></a>
+                            <a href="<?= site_url("search/index/" . $params . "rows/$number_of_rows/page/$i") ?>" title="Go to Page <?= $i ?>" class="page <?= $current ?>"><span><?= $i ?></span></a>
 
-<? } ?>
+                        <? } ?>
 
                         <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['next']) ?>" title="Go to Next Page" class="next"><span>&rsaquo;</span></a>
                         <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>&raquo;</span></a>
                     </div>
                 </div>
             </div>
-<?php
-                }
-                else {
-                    echo"<table><tr><td>" . $this->lang->line("no_data") . "</td></tr></table>";
-                }
-?>
+            <?php
+                    }
+                    else {
+                        echo"<table><tr><td>" . $this->lang->line("no_data") . "</td></tr></table>";
+                    }
+            ?>
+                </div>
             </div>
         </div>
-    </div>
-    <div title="Send mail" id="dialog" style="display:none">
-        <form>
-            <fieldset class="ui-helper-reset">
-                <label for="to_contacts">To:</label>
-                <input type="text" class="ui-widget-content ui-corner-all" value="" id="to_contacts" name="to_contacts" />
-                <label for="from_contacts">From:</label>
-                <input type="text" class="ui-widget-content ui-corner-all" value="" id="from_contacts" name="from_contacts" />
-                <label for="mail_subject">Subject:</label>
-                <input type="text" class="ui-widget-content ui-corner-all" value="" id="mail_subject" name="mail_subject" />
-                <label for="mail_desc">Message:</label>
-                <textarea class="ui-widget-content ui-corner-all" id="mail_desc" name="mail_desc"></textarea>
-                <input type="hidden" id="parameters" />
-            </fieldset>
-        </form>
-    </div>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            //$('.tables table:first').prepend(
-            //$('<thead></thead>').append($('.tables tr:first').remove())
-            //);
-            $('.tables table').tableFilter();
-            $('.tables table').tablesorter({widgets: ['zebra']});
+        <div title="Send mail" id="dialog" style="display:none">
+            <form>
+                <fieldset class="ui-helper-reset">
+                    <label for="to_contacts">To:</label>
+                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="to_contacts" name="to_contacts" />
+                    <label for="from_contacts">From:</label>
+                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="from_contacts" name="from_contacts" />
+                    <label for="mail_subject">Subject:</label>
+                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="mail_subject" name="mail_subject" />
+                    <label for="mail_desc">Message:</label>
+                    <textarea class="ui-widget-content ui-corner-all" id="mail_desc" name="mail_desc"></textarea>
+                    <input type="hidden" id="parameters" />
+                </fieldset>
+            </form>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                //$('.tables table:first').prepend(
+                //$('<thead></thead>').append($('.tables tr:first').remove())
+                //);
+                $('.tables table').tableFilter();
+                $('.tables table').tablesorter({widgets: ['zebra']});
 
-            $('#advsearch').click(function(event){
-                event.preventDefault();
-                $('#filterdialog').load('/search/index', {'report':'<?php echo $report_title ?>'}, function() {
+                $('#advsearch').click(function(event){
+                    event.preventDefault();
+                    $('#filterdialog').load('/search/index', {'report':'<?php echo $report_title ?>'}, function() {
                 var $dialog=$(this);
                 var $closebtn=$("<a class='ui-panel-close'><span class='ui-icon ui-icon-closethick'></span></a>");
                 $(this).slideDown('slow');
@@ -128,7 +128,9 @@
             });
         });
 
-        var $dialog = $('#dialog').dialog({
+        var $dialog = $('#dialog');
+        
+        $dialog.dialog({
             autoOpen: false,
             modal: true,
             hide: 'puff',
@@ -136,21 +138,31 @@
                 'Send': function() {
                     $.ajax({
                         type: "POST",
-                        url: $('#parameters').val(),
-                        data:({'to':$('#to_contacts').val(),'subject':$('#mail_subject').val(),'message':$('#mail_desc').val(),'from':$('#from_contacts').val()}),
+                        url: $('#parameters',$dialog).val(),
+                        data:({'to':$('#to_contacts',$dialog).val(),'subject':$('#mail_subject',$dialog).val(),'message':$('#mail_desc',$dialog).val(),'from':$('#from_contacts',$dialog).val()}),
                         dataType:'json',
+                        async: false,
+                        beforeSend: function(XMLHttpRequest) {
+                            $dialog.append("<div id='tempdiv' class='amber'>sending mail please wait a while...</div>");
+                        },
                         success: function(data){
+                            alert(data.message);
+                            $dialog.dialog('close');
+                            $('#tempdiv',$dialog).remove();
 
+                        },
+                        error: function(jqXHR, textStatus, errorThrown){
+                            alert(textStatus);
                         }
                     });
-                    $(this).dialog('close');
+                   
                 },
                 'Cancel': function() {
                     $(this).dialog('close');
                 }
             },
             open: function() {
-                $('#to_contacts').focus();
+                $('#to_contacts',$dialog).focus();
 
             },
             close: function() {
@@ -160,7 +172,7 @@
 
         $('a#send_mail').click(function(e){
             e.preventDefault();
-            $('#parameters').val($(this).attr('href'));
+            $('#parameters',$dialog).val($(this).attr('href'));
             $dialog.dialog('open');
         });
 

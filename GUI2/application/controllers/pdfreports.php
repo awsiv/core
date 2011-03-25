@@ -5,6 +5,33 @@ class pdfreports extends Cf_Controller {
     function __construct() {
         parent::__construct();
         $this->load->library('cf_pdf');
+        $this->predefinedKeys = array(
+            'hostkey',
+            'type',
+            'search',
+            'class_regex',
+            'days',
+            'months',
+            'years',
+            'address',
+            'ago',
+            'version',
+            'arch',
+            'cal',
+            'hours_deltafrom',
+            'hours_deltato',
+            'pdfaction',
+            'to',
+            'from',
+            'subject',
+            'message',
+            'diff',
+            'scope',
+            'lval',
+            'rval',
+            'state',
+            'key'
+        );
     }
 
     function populateParamsWithDefault($params) {
@@ -21,6 +48,13 @@ class pdfreports extends Cf_Controller {
             'version',
             'arch',
             'cal',
+            'hours_deltafrom',
+            'hours_deltato',
+            'pdfaction',
+            'to',
+            'from',
+            'subject',
+            'message',
             'diff',
             'scope',
             'lval',
@@ -38,9 +72,12 @@ class pdfreports extends Cf_Controller {
     }
 
     function index() {
-        $params = $this->uri->uri_to_assoc(3);
 
-        $params = $this->populateParamsWithDefault($params);
+        $this->load->library('email');
+
+        $params = $this->uri->uri_to_assoc(3, $this->predefinedKeys);
+
+        //$params = $this->populateParamsWithDefault($params);
         $report_type = isset($params['type']) ? $params['type'] : "";
         $pdf_filename = 'Nova_' . preg_replace('/ /', '_', $report_type) . '.pdf';
         $pdf = new cf_pdf();
@@ -49,7 +86,7 @@ class pdfreports extends Cf_Controller {
         $pdf->AliasNbPages();
         $pdf->SetFont('Arial', '', 14);
         $pdf->AddPage();
-       
+
         switch ($report_type) {
             case "Bundle profile":
                 $desc = cfpr_report_description('bundle profile');
@@ -141,8 +178,8 @@ class pdfreports extends Cf_Controller {
                 $this->rpt_setuid($params['hostkey'], $params['search'], $pdf, $params['class_regex']);
                 break;
 
-            case "Software installed":               
-                
+            case "Software installed":
+
                 $desc = cfpr_report_description('software installed report');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_software_installed($params['hostkey'], $params['search'], $params['version'], $params['arch'], $pdf, $params['class_regex']);
@@ -161,7 +198,64 @@ class pdfreports extends Cf_Controller {
                 break;
         }
 
-        $pdf->Output($pdf_filename, "D");
+        $pdf_action = $params['pdfaction'];
+
+        # get email parameters from ajax query
+        if ($pdf_action == 'email') {
+
+            $to = $_POST['to'];
+            $from = $_POST['from'];
+            $subject = $_POST['subject'];
+            $msg = $_POST['message'];
+            $this->emailPDF($pdf, $pdf_filename, $to, $from, $subject, $msg);
+        } else {
+            $pdf->Output($pdf_filename, "D");
+        }
+    }
+
+    /**
+     * Emails the pdf
+     * @param <type> $pdf
+     * @param <type> $pdf_filename
+     * @param <type> $to
+     * @param <type> $from
+     * @param <type> $subject
+     * @param <type> $message
+     */
+    function emailPDF($pdf, $pdf_filename, $to, $from, $subject, $message) {
+
+        // a random hash will be necessary to send mixed content
+        $separator = md5(time());
+
+        // carriage return type (we use a PHP end of line constant)
+        $eol = PHP_EOL;
+
+        // attachment name
+        $filename = $pdf_filename;
+        // encode data (puts attachment in proper format)
+        $pdfdoc = $pdf->Output("./tmp/$filename", "F");
+
+        $this->email->from($from);
+        $this->email->to($to);
+
+        $this->email->subject($subject);
+        $this->email->message('Email from cfengine.');
+        $this->email->attach('./tmp/' . $filename);
+
+        if (!$this->email->send()) {
+            // error sending mail
+            // SOMETHING WENT WRONG WHILE ADDITION
+            $this->output->set_status_header('400', 'Cannot send the mail this time.');
+            echo 'Something went wrong while sending mail';
+            exit;
+        }
+
+        $retData = array('message' => 'Mail has been sent to the given address.');
+        $jsonReturn = json_encode($retData);
+
+        echo $jsonReturn;
+        @unlink('./tmp/' . $filename);
+        exit();
     }
 
     ## functions for reports
@@ -178,9 +272,7 @@ class pdfreports extends Cf_Controller {
 
         $ret = cfpr_report_bundlesseen_pdf($hostkey, $search, true, $class_regex);
         $data1 = $pdf->ParseData($ret);
-        
 
-        
         $pdf->ReportTitle();
         $pdf->ReportDescription();
         $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
@@ -362,7 +454,7 @@ class pdfreports extends Cf_Controller {
         $header = array('Host', 'Name', 'Version', 'Architecture');
 
         $ret = cfpr_report_software_in_pdf($hostkey, $search, $version, $arch, true, $class_regex);
-        $data1 = $pdf->ParseData($ret);        
+        $data1 = $pdf->ParseData($ret);
         $pdf->ReportTitle();
         $pdf->ReportDescription();
         $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
@@ -490,4 +582,3 @@ class pdfreports extends Cf_Controller {
     }
 
 }
-
