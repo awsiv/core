@@ -10,6 +10,9 @@
 	The variables report got a last-seen column. Now variables
 	are stored in the hub for a longer time like classes, 
 	and not overwritten on every update.
+
+	The report of reports-promises are shown in the promise repaired log 
+	in the Mission Portal.
 	
 	Only showing the last seen host name and ip address when
 	listing hosts and on the host page.
