@@ -181,14 +181,14 @@ void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize)
 void Nova2PHP_get_magnified_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 {
- Nova_ViewMag(keyhash,obs,buffer,bufsize);
+Nova_ViewMag(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
 
 void Nova2PHP_get_weekly_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
 {
- Nova_ViewWeek(keyhash,obs,buffer,bufsize);
+Nova_ViewWeek(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -196,7 +196,7 @@ void Nova2PHP_get_weekly_view(char *keyhash,enum observables obs,char *buffer,in
 void Nova2PHP_get_yearly_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 {
- Nova_ViewLongHistory(keyhash,obs,buffer,bufsize);
+Nova_ViewLongHistory(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -204,14 +204,14 @@ void Nova2PHP_get_yearly_view(char *keyhash,enum observables obs,char *buffer,in
 void Nova2PHP_get_histogram_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
 
 {
- Nova_ViewHisto(keyhash,obs,buffer,bufsize);
+Nova_ViewHisto(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
 
 void Nova2PHP_get_magnified_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
 {
- Nova_AnalyseMag(keyhash,obs,buffer,bufsize);
+Nova_AnalyseMag(keyhash,obs,buffer,bufsize);
 }
 
 /*****************************************************************************/
