@@ -255,11 +255,11 @@ char vStr[CF_SMALLBUF];
 
 if(INFORM || VERBOSE)
   {
-  snprintf(vStr,sizeof(vStr),"%s (%s)",VERSION,NOVA_REVISION);
+  snprintf(vStr,sizeof(vStr),"%s (%s)",NOVA_VERSION,NOVA_REVISION);
   }
 else
   {
-  snprintf(vStr,sizeof(vStr),"%s",VERSION);
+  snprintf(vStr,sizeof(vStr),"%s",NOVA_VERSION);
   }
 
 printf("This core uses commercial Nova extensions at version %s Copyright (C) Cfengine AS 2009-%s\n",vStr,VYEAR);
@@ -271,7 +271,7 @@ printf("This core uses commercial Nova extensions at version %s Copyright (C) Cf
 char *Nova_GetVersion()
 
 {
-return VERSION;
+return NOVA_VERSION;
 }
 
 /*****************************************************************************/
@@ -280,7 +280,7 @@ char *Nova_StrVersion()
 
 { static char buf[64];
 
-snprintf(buf,63,"Contains Nova extensions at version %s\n",VERSION);
+snprintf(buf,63,"Contains Nova extensions at version %s\n",NOVA_VERSION);
 return buf;
 }
 
