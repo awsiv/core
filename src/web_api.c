@@ -5037,7 +5037,7 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
 
 int Nova2PHP_enterprise_version(char *buf, int bufsize)
 {
-#ifdef HAVE_LIBCFCONSTELLATION
+#ifdef HAVE_CONSTELLATION
 
  snprintf(buf, bufsize, "Constellation %s", Constellation_GetVersion());
 
@@ -5063,7 +5063,7 @@ void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer
 {
  char buf[CF_MAXVARSIZE];
  
-#ifdef HAVE_LIBCFCONSTELLATION
+#ifdef HAVE_CONSTELLATION
  
  ComplianceSummaryGraph(hubKeyHash,policy,true,buffer,bufsize);
  
@@ -5190,7 +5190,7 @@ int Con2PHP_show_hubs(char *classification, char *buf, int bufsize)
 int Con2PHP_summarize_promiselog(char *hubKeyHash, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize)
 {
 
-#ifdef HAVE_LIBCFCONSTELLATION
+#ifdef HAVE_CONSTELLATION
 
 
  struct HubQuery *hq;
@@ -5239,7 +5239,7 @@ int Con2PHP_summarize_promiselog(char *hubKeyHash, enum promiselog_rep log_type,
 
  return true;
 
-#else  /* NOT HAVE_LIBCFCONSTELLATION */
+#else  /* NOT HAVE_CONSTELLATION */
 
  snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_summarize_promiselog() in Nova-only environment\n");
  CfOut(cf_error, "", buf);
@@ -5255,7 +5255,7 @@ int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promise
 
 {
 
-#ifdef HAVE_LIBCFCONSTELLATION
+#ifdef HAVE_CONSTELLATION
 
 
  struct HubQuery *hq;
@@ -5299,7 +5299,7 @@ int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promise
 
  return result;
 
-#else  /* NOT HAVE_LIBCFCONSTELLATION */
+#else  /* NOT HAVE_CONSTELLATION */
 
  snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_count_notkept() in Nova-only environment\n");
  CfOut(cf_error, "", buf);
@@ -5315,7 +5315,7 @@ int Con2PHP_reasons_promiselog(char *hubKeyHash, char *promiseHandle, enum promi
 
 {
 
-#ifdef HAVE_LIBCFCONSTELLATION
+#ifdef HAVE_CONSTELLATION
 
 
  struct HubQuery *hq;
@@ -5358,7 +5358,7 @@ int Con2PHP_reasons_promiselog(char *hubKeyHash, char *promiseHandle, enum promi
 
  return true;
 
-#else  /* NOT HAVE_LIBCFCONSTELLATION */
+#else  /* NOT HAVE_CONSTELLATION */
 
  snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_reasons_promiselog() in Nova-only environment\n");
  CfOut(cf_error, "", buf);

@@ -9,6 +9,10 @@
 
 #define NOVA_REVISION "$Rev$"
 
+#ifdef HAVE_CONFIG_H
+#  include "conf.h"
+#endif
+
 # ifdef HAVE_LIBLDAP
 #  include <ldap.h>
 # endif
@@ -1534,6 +1538,6 @@ struct HubNoteInfo
 #endif
 
 
-#ifdef HAVE_LIBCFCONSTELLATION
+#ifdef HAVE_CONSTELLATION
 #include <cf.constellation.h>
 #endif

@@ -1,13 +1,19 @@
+top_srcdir = $(abs_srcdir)/../../core
+top_builddir = $(abs_srcdir)/../../core
+top_build_prefix = $(abs_srcdir)/../../core/
+
 AM_CFLAGS = $(GCC_CFLAG) @CFLAGS@  
 AM_YFLAGS = -d
 LEXLIB = @LEXLIB@
-LDADD = $(BERKELEY_DB_LDFLAGSD) $(BERKELEY_DB_LIB) $(OPENSSL_LIB_LDFLAGS) $(OPENSSL_LIB_LIB) libpromises.la 
+LDADD = $(BERKELEY_DB_LDFLAGS) $(BERKELEY_DB_LIB) $(OPENSSL_LIB_LDFLAGS) $(OPENSSL_LIB_LIB) $(srcdir)/../../core/src/libpromises.la
 INCLUDES = $(BERKELEY_DB_CFLAGS) $(OPENSSL_LIB_CPPFLAGS)
 AM_LDFLAGS = $(BERKELEY_DB_LDFLAGS) $(OPENSSL_LIB_LDFLAGS) @LDFLAGS@
 
-lib_LTLIBRARIES = libcfnova.la
+AM_CPPFLAGS = -I$(srcdir)/../../core/src $(CONSTELLATION_CFLAGS)
 
-libcfnova_la_LDFLAGS = -version-info 1:0:0 -no-undefined
+noinst_LTLIBRARIES = libcfnova.la libcfhub.la
+
+libcfnova_la_LDFLAGS = -no-undefined
 
 # Separate out a library
 
@@ -54,7 +60,6 @@ libcfnova_la_SOURCES =						\
 	coordinates.c						\
 	topicmap.c                                              \
 	install.c						\
-	hub.c							\
 	web_api.c						\
 	win_api.c						\
         win_disphelper.c                                        \
@@ -70,21 +75,14 @@ libcfnova_la_SOURCES =						\
 	win_user.c                                              \
         win_wmi.c
 
+libcfhub_la_SOURCES =	                                        \
+	hub.c
 #
 # Pickup header files here so Automake knows about them
 #
 
 noinst_HEADERS =							\
-	conf.h   							\
-        cf.defs.h                                                       \
-        cf.extern.h                                                     \
-        prototypes3.h                                                   \
-        cf3.defs.h                                                      \
-        cf3.server.h                                                    \
-        cf3.extern.h                                                    \
-        cf.events.h                                                     \
-        win_disphelper.h                                                \
-	snprintf.h                                                      
+        win_disphelper.h
 
 include_HEADERS = cf.nova.h cf.nova.web_api.h
 
@@ -114,5 +112,5 @@ DISTCLEANFILES = cflex.c cfparse.c cfparse.h
 # "configure; make; make install"
 #
 
-MAINTAINERCLEANFILES = Makefile.in conf.h.in stamp-h.in
+MAINTAINERCLEANFILES = Makefile.in stamp-h.in
 

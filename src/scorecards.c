@@ -89,7 +89,7 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
 
  if(constellation)
     {
-#ifdef HAVE_LIBCFCONSTELLATION
+#ifdef HAVE_CONSTELLATION
      
     hq = CFDB_QuerySumComp(&dbconn, hubKeyHash, policy, now - CF_WEEK);
 

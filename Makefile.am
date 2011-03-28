@@ -1,5 +1,8 @@
+top_srcdir = $(abs_srcdir)/../core
+top_builddir = $(abs_srcdir)/../core
+top_build_prefix = $(abs_srcdir)/../core/
 
-SUBDIRS = src pub docs GUI2
+SUBDIRS = src docs GUI2
 
 EXTRA_DIST = acconfig.h COPYING ChangeLog LICENSE README
 

@@ -1,3 +1,7 @@
+top_srcdir = $(abs_srcdir)/../../../core
+top_builddir = $(abs_srcdir)/../../../core
+top_build_prefix = $(abs_srcdir)/../../../core/
+
 GUIdir = $(docdir)/GUI/images
 GUI_DATA = *
 EXTRA_DIST = *
