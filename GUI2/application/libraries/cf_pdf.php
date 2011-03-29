@@ -220,9 +220,22 @@ class cf_pdf extends FPDF
 	$this->SetXY($this->left, $this->GetY());
 	for($i=0;$i<$count;$i++)
 	{
-	  if($i == 0) $align = 'L';
-	  $width = ($w[$i] * ($this->pagewidth - $this->left - $this->right))/100;
-	  $this->Cell($width,$h,$header[$i],1,0,$align,1,false);
+	  if($i == 0) 
+	  {
+	   $align = 'L';	   
+	  }
+	  if(!isset($header[$i+1]) && $i < $count -1)
+	  {
+		$width = (100 * ($this->pagewidth - $this->left - $this->right))/100;
+	  }
+	  else 
+	  {
+	   $width = ($w[$i] * ($this->pagewidth - $this->left - $this->right))/100;
+	  }
+	  if(isset($header[$i]))
+	  {	  
+	    $this->Cell($width,$h,$header[$i],1,0,$align,1,false);
+	  }
 	}
 	$this->Ln();
     }
@@ -237,7 +250,7 @@ class cf_pdf extends FPDF
         $font_size = 6;
 	$this->SetDrawColor(125,125,125);
 	$align=1;
- 	$max_col_height = 2;
+ 	$max_col_height = 4;
 	$tmp_font = $font_size;
 	$tmp_multi = -1;
 	for($i=0; $i<count($ar1); $i++)
@@ -327,7 +340,7 @@ class cf_pdf extends FPDF
     ###############################################
     function DrawTableSpecial($ar1, $cols, $col_len, $header, $header_font)
     {
-	$font_size = 6;
+    	$font_size = 6;
         $align=1;
 	$this->SetFont('Arial', '', $font_size);
 	$this->SetDrawColor(125,125,125);
@@ -335,9 +348,16 @@ class cf_pdf extends FPDF
 	{
 	    $multi_col = array();
 	    $nb = 0;
-	    for($j=0; $j<$cols; $j++)
+	    for($j=0; $j< count($ar1[$i]); $j++) # $cols; $j++)
 	    {
-		$f[$j] = $ar1[$i][$j];
+		if(isset($ar1[$i][$j]))
+		{
+		 $f[$j] = $ar1[$i][$j];
+		}
+		else
+		{
+		 $f[$j] = "";
+		}
 		$width = ($col_len[$j] * ($this->pagewidth - $this->left - $this->right))/100;
 		$tmp = $this->NbLines($width,$f[$j]);
 		if($tmp > $nb)
