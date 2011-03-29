@@ -420,7 +420,7 @@ class pdfreports extends Cf_Controller {
 
     function rpt_patches_available($hostkey, $search, $version, $arch, &$pdf, $class_regex) {
         $cols = 4;
-        $col_len = array(29, 33, 19, 19);
+        $col_len = array(30, 30, 20, 20);
         $header = array('Host', 'Name', 'Version', 'Architecture');
 
         $ret = cfpr_report_patch_avail_pdf($hostkey, $search, $version, $arch, true, $class_regex);
@@ -437,7 +437,7 @@ class pdfreports extends Cf_Controller {
 
     function rpt_patch_status($hostkey, $search, $version, $arch, &$pdf, $class_regex) {
         $cols = 4;
-        $col_len = array(29, 33, 19, 19);
+        $col_len = array(30, 30, 20, 20);
         $header = array('Host', 'Name', 'Version', 'Architecture');
 
         $ret = cfpr_report_patch_in_pdf($hostkey, $search, $version, $arch, true, $class_regex);
@@ -454,7 +454,7 @@ class pdfreports extends Cf_Controller {
 
     function rpt_software_installed($hostkey, $search, $version, $arch, &$pdf, $class_regex) {
         $cols = 4;
-        $col_len = array(21, 33, 19, 19);
+        $col_len = array(30, 30, 20, 20);
         $header = array('Host', 'Name', 'Version', 'Architecture');
 
         $ret = cfpr_report_software_in_pdf($hostkey, $search, $version, $arch, true, $class_regex);
