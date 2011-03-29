@@ -586,15 +586,19 @@ int ScheduleRun(void);
 int main(int argc,char *argv[])
 
 {
+#ifdef MINGW
+
+CfOut(cf_error,"","This service is not available on Windows.");
+return 1;
+
+#else
+
 CheckOpts(argc,argv);
 GenericInitialize(argc,argv,"hub");
 ThisAgentInit();
 KeepPromises();
-
-#ifdef MINGW
-CfOut(cf_error,"","This service is not available on Windows.");
-#else
 StartHub(argc,argv);
+
 #endif
 
 return 0;
