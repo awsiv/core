@@ -326,7 +326,9 @@ class pdfreports extends Cf_Controller {
     }
 
     function rpt_promise_notkept($hostkey, $search, &$pdf, $hours_deltafrom, $hours_deltato, $class_regex='') {
-        $col_len = array(20, 20, 40, 20);
+//        $col_len = array(20, 20, 45, 15);
+// working	  $col_len = array(19, 19, 43, 19); 
+ 	  $col_len = array(15, 21, 49, 15);
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
         $ret = cfpr_report_notkept_pdf($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
@@ -484,6 +486,7 @@ class pdfreports extends Cf_Controller {
 
     function rpt_repaired_log($hostkey, $search, &$pdf, $hours_deltafrom, $hours_deltato, $class_regex) {
         $cols = 4;
+//        $col_len = array(20, 20, 45, 15);
         $col_len = array(19, 19, 43, 19);
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
@@ -539,7 +542,8 @@ class pdfreports extends Cf_Controller {
         } else {
             $ret = cfpr_report_vars_pdf($hostkey, NULL, $search, NULL, NULL, true, $class_regex);
         }
-        $data1 = $pdf->ParseData($ret);
+	$data1 = $pdf->ParseData($ret);
+
         $pdf->ReportTitle();
         $pdf->ReportDescription();
         $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
