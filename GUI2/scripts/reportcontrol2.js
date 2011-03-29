@@ -12,6 +12,7 @@ function reportcontrol2(json,basis)
   var nativeTextSupport = labelType == 'Native';
   var useGradients = nativeCanvasSupport;
   var animate = !(iStuff || !nativeCanvasSupport);
+  var initiaload=true;
   
 var reports = new $jit.Sunburst({
      //id container for the visualization
@@ -65,28 +66,30 @@ var reports = new $jit.Sunburst({
          reports.rotate(node, animate? 'animate' : 'replot', {
            duration: 1000,
            transition: $jit.Trans.Quart.easeInOut
-
-       });
-       },
-       onMouseEnter:function(node){
-           node.setData('color','#dd3333');
-        node.eachSubnode(function(node) {
-                  node.setData('color','#dd3333');
-                  console.log(node.name +' ' +node.getData('color'));
-                });
-        reports.refresh();
-       },
-       onMouseLeave:function(node){
-            node.setData('color','#3333dd');
-            node.eachSubnode(function(node) {
-                  //alert(node.name);
-                  //alert(node.getData('color'));
-                  node.setData('color','#3333dd');
-                  console.log(node.name +' ' +node.getData('color'));
-                 
             });
-         reports.refresh();
-       }
+            
+       reports.graph.eachNode(function(node) {
+            if(node._depth==1)
+           {
+               if (node.selected && node.collapsed) {
+                    reports.op.expand(node, {
+                        'type': 'animate',
+                        'duration': 700,
+                        'transition': $jit.Trans.Back.easeOut
+                      });
+
+                }
+                else {
+                     reports.op.contract(node, {
+                        'type': 'animate',
+                        'duration': 700,
+                        'transition': $jit.Trans.Quart.easeInOut
+                      });
+                }
+           }
+         });
+       
+     }
      },
      // Only used when Label type is 'HTML' or 'SVG'
      // Add text to the labels.
@@ -122,10 +125,29 @@ var reports = new $jit.Sunburst({
          var w = domElement.offsetWidth;
          style.left = (left - w / 2) + 'px';
        }
-     }
+
+     },
+    
+     onAfterPlotNode: function(node){
+        if(node._depth==1 && initiaload==true)
+           {
+       
+             reports.op.contract(node, {
+                'type': 'animate',
+                'duration': 700,
+                'transition': $jit.Trans.Quart.easeInOut
+              });
+          }
+    },
+    onComplete:function(){
+          initiaload=false
+    }
+
 });
  //load JSON data.
  reports.loadJSON(json);
  //compute positions and plot.
  reports.refresh();
+ console.log(reports);
+ 
 }

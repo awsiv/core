@@ -118,10 +118,10 @@ function host_only_table($data_array) {
 
     if (count($data_array) > 0) {
         foreach ($data_array as $cols) {
-            $keys = array_keys($cols);
-            //array_push($cells, anchor('welcome/host/' . $cols['hostkey'], $cols['hostname'], 'class="imglabel"'));
+            //$keys = array_keys($cols); if key valuesupplied in format{"key":"","id":""}
+            //array_push($cells, anchor('welcome/host/' . $cols[$keys[0]], $cols['hostname'], 'class="imglabel"'));
             //use first key as param and second key as text as keys tend to change like key or hostkey, hostname or id etc
-            array_push($cells, anchor('welcome/host/' . $cols[$keys[0]], $cols[$keys[1]], 'class="imglabel"') . anchor('visual/vital/' . $cols[$keys[0]], "View vitals", 'class="viewvitalslnk"'));
+            array_push($cells, anchor('welcome/host/' . $cols[1], $cols[0], 'class="imglabel"') . anchor('visual/vital/' . $cols[1], "View vitals", 'class="viewvitalslnk"'));
         }
     }
     if (count($cells) > 0) {

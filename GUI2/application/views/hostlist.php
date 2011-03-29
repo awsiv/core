@@ -8,7 +8,9 @@
          <input type="hidden" name="hosts_only" value="true">
          <input class="btn" type="submit" value="Filter" class="grid_1">
          </form>
+        <?php echo anchor('test/cfclasses','help',array('id'=>'getclass')) ?>
         <div class="clear"></div>
+        <div id="filters"><span>Selected classes:</span><ul></ul></div>
         <div id="hostlist" class="panelcontent tables">
         <?php
            echo $hoststable;
@@ -61,5 +63,41 @@
 					return false;
 				}
 		});
+
+           var $filter=$('#filters').find('ul');
+
+           $('#getclass').classtags({
+                   url:"/test/cfclasses",
+                   complete:function(event,data){
+                       //console.log(data.selectedclass);
+                       var li = $("<li>");
+                       li.text(data.selectedclass).data('filter',data.selectedclass).appendTo($filter);
+                       $("<a>").text("X").appendTo(li)
+                       //$filter.append('<li>'+data.selectedclass+'<a href="#" title="removefilter">X</a></li>');
+                       var filters=new Array();
+                               $filter.find('li').each(function(index) {
+                                    filters.push($(this).data('filter'));
+                               });
+                      $('#hostlist').load('/welcome/ajaxlisthost/',{'filter':filters},function(){});
+                   }
+               });
+
+           $filter.delegate('a','click',function(event){
+                              event.preventDefault();
+                              $(this).parent().remove();
+                              var filters=new Array();
+                              /*if($filter.find('li:last').data('filter')){
+                              $('#hostlist').load('/welcome/listhost/'+$filter.find('li:last').data('filter'));
+                              }
+                              else{
+                                $('#hostlist').load('/welcome/listhost/NULL');
+                              }*/
+                               $filter.find('li').each(function(index) {
+                                    filters.push($(this).data('filter'));
+                               });
+                               $('#hostlist').load('/welcome/ajaxlisthost/',{'filter':filters},function(){});
+                               
+
+                       });
     })
 </script>

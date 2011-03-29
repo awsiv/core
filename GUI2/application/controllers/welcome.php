@@ -470,8 +470,17 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'body', $data);
     }
 
+
+   /**
+    *
+    * @param <type> $currentclass
+    * @return <type>
+    * for listing a host calls the hostlist view at the end
+    */
     function listhost() {
+        
         $scripts = array('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery.form.js"> </script>',
+                         '<script  src="' . get_scriptdir() . 'widgets/classtags.js" type="text/javascript"></script>',
                          '<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />');
 
         $this->template->set('injected_item', implode("", $scripts));
@@ -482,19 +491,50 @@ class Welcome extends Cf_Controller {
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
-
+        $res = cfpr_class_cloud(NULL,NUll);
+        $arr=json_decode($res);
+        
         //for creating the initial table of hosts as cfpr_select_hosts return the json data
-        $result = json_decode(cfpr_select_hosts("none", ".*", 100), true);
-        $data=cfpr_report_classes(NULL,NULL,true,NULL,NULL,NULL);
+        //$result = json_decode(cfpr_select_hosts("none", ".*", 100), true);
+        $classes=cfpr_report_classes(NULL,NULL,true,NULL,NULL,NULL);
         $data = array(
             'title' => "Cfengine Mission Portal - Filter",
             'title_header' => "Filter Host",
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'classes'=>  autocomplete($data, "Class Context"),
-            'hoststable'=>  host_only_table( $result)
+            'classes'=>  autocomplete($classes, "Class Context"),
+            'hoststable'=>  host_only_table( $arr->hosts)
         );
         $this->template->load('template', 'hostlist', $data);
     }
+
+    function ajaxlisthost($currentclass=NULL)
+    {
+     $filters=$this->input->post('filter');
+     $hostlist=NULL;
+         if($filters)
+         {
+            $arr="";
+            foreach($filters as $class)
+             {
+               $arr=json_decode(cfpr_class_cloud($hostlist,$class));
+               $hostarr= array();
+               foreach ($arr->hosts as $host)
+               {
+                  array_push($hostarr, $host[1]);
+               }
+               $hostlist=implode(",",$hostarr);
+               $this->session->set_userdata('lastclass',$class);
+               $this->session->set_userdata('hostlist',$hostlist);
+              }
+            echo  host_only_table( $arr->hosts);
+         }
+         else
+         {
+           $arr=json_decode(cfpr_class_cloud(NULL,NULL));
+           echo  host_only_table( $arr->hosts);
+         }
+   }
+
 
     function pulse_vitals() {
         $scripts = array('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery.form.js"> </script>');

@@ -12,7 +12,7 @@ var notes  = {
         
     },
     showRequest: function (formData, jqForm, options) {
-        // formData is an array; here we use $.param to convert it to a string to display it
+        // formData is an array; here we use $.param toa convert it to a string to display it
         // but the form plugin does this for you automatically when it submits the data
         var queryString = $.param(formData);
 
@@ -94,6 +94,7 @@ var notes  = {
                 // always return false to prevent standard browser submit and page navigation
                 return false;
             });
+
 
             
         

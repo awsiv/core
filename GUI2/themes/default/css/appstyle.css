@@ -16,14 +16,14 @@ root {
 }
 
 @font-face {
-  font-family: Myriad Pro;
+  font-family: "Myriad Pro";
   src: url(fonts/MyriadPro-Regular.eot);
 }
 
  body {
                 background: url("../images/bg_tile.png") repeat-x scroll 0 0 #2B7B98;
                 color: #fff;
-                font-family: 'Myriad Pro',Helvetica, Arial, sans-serif;
+                font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
                 font-size: 12px;
                 line-height: 16px;
                 /*text-shadow: white 0px 1px 0px;*/
@@ -268,6 +268,17 @@ label#searchbox input
 #work .dash a.planning{
      background: url("../images/planning.png") no-repeat;
 }
+
+#tagCloud {
+  width:290px; background-color:#575454; text-align:center; padding:5px;
+  overflow:auto; font-size:70%; font-family:arial;
+}  
+#tagList { margin:0; padding:0; }
+#tagList li {
+  list-style-type:none; float:left; margin:0 10px; height:35px;
+}
+#tagList li a { text-decoration:none; color:#ffffff; }
+#tagList li a:hover {text-decoration:underline; }
 
 #footer p{
     color:#08a3c1;
