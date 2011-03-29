@@ -79,6 +79,8 @@ class pdfreports extends Cf_Controller {
 
         //$params = $this->populateParamsWithDefault($params);
         $report_type = isset($params['type']) ? $params['type'] : "";
+
+      
         $pdf_filename = 'Nova_' . preg_replace('/ /', '_', $report_type) . '.pdf';
         $pdf = new cf_pdf();
         $pdf->PDFSetReportName($report_type);
@@ -163,7 +165,7 @@ class pdfreports extends Cf_Controller {
             case "Promises not kept summary":
                 $desc = cfpr_report_description('promises repaired report');
                 $pdf->PDFSetDescription($desc);
-                $this->rpt_promise_notkept($params['hostkey'], $params['search'], $pdf, $params['class_regex']);
+                $this->rpt_promise_notkept($params['hostkey'], $params['search'], $pdf,'','', $params['class_regex']);
                 break;
 
             case "Promises not kept log":
@@ -172,7 +174,7 @@ class pdfreports extends Cf_Controller {
                 $this->rpt_promise_notkept($params['hostkey'], $params['search'], $pdf, $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex']);
                 break;
 
-            case "Setuid/gid root programs":
+            case "Setuid-gid root programs":
                 $desc = cfpr_report_description('setuid report');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_setuid($params['hostkey'], $params['search'], $pdf, $params['class_regex']);
@@ -323,7 +325,7 @@ class pdfreports extends Cf_Controller {
         $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
     }
 
-    function rpt_promise_notkept($hostkey, $search, &$pdf, $hours_deltafrom, $hours_deltato, $class_regex) {
+    function rpt_promise_notkept($hostkey, $search, &$pdf, $hours_deltafrom, $hours_deltato, $class_regex='') {
         $col_len = array(20, 20, 40, 20);
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
@@ -567,7 +569,7 @@ class pdfreports extends Cf_Controller {
     function rpt_setuid($hostkey, $search, &$pdf, $class_regex) {
         $cols = 2;
         $col_len = array(30, 70);
-        #        $header=array('Host','Type','Name','Value');
+        $header = array('Host', 'Type', 'Name', 'Value');
 
         $ret = cfpr_report_setuid_pdf($hostkey, $search, true, $class_regex);
 

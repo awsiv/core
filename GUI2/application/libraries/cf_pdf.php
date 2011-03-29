@@ -328,6 +328,7 @@ class cf_pdf extends FPDF
     function DrawTableSpecial($ar1, $cols, $col_len, $header, $header_font)
     {
 	$font_size = 6;
+        $align=1;
 	$this->SetFont('Arial', '', $font_size);
 	$this->SetDrawColor(125,125,125);
 	for($i=0; $i<count($ar1); $i++)

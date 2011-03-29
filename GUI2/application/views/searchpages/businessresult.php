@@ -86,7 +86,7 @@
                 </div>
             </div>
         </div>
-        <div title="Send mail" id="dialog" style="display:none">
+        <div title="Send mail" id="dialog" style="width:400px;display:none">
             <form>
                 <fieldset class="ui-helper-reset">
                     <label for="to_contacts">To:</label>
@@ -134,6 +134,7 @@
             autoOpen: false,
             modal: true,
             hide: 'puff',
+            width: 'auto',
             buttons: {
                 'Send': function() {
                     $.ajax({
