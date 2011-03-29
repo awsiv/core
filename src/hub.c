@@ -108,7 +108,7 @@ while (true)
       {
       CfOut(cf_verbose,""," -> Scanning to compliance cache");
       NewClass("am_policy_hub");
-      Nova_CacheTotalCompliance();
+      Nova_CacheTotalCompliance(false);
       CFDB_Maintenance();
       }
 
@@ -292,7 +292,7 @@ return true;
 
 /*********************************************************************/
 
-void Nova_CacheTotalCompliance()
+void Nova_CacheTotalCompliance(bool allSlots)
 /*
  * Caches the current slot of total compliance.
  * WARNING: Must be run every 5 mins (otherwise no data is show in the
@@ -315,9 +315,18 @@ void Nova_CacheTotalCompliance()
 // Divide each day into 4 lifecycle units 3600 * 24 / 4 seconds
 
 now = time(NULL);
-start = now - 3600 * 6;   
 
-slot = GetShiftSlot(start);
+
+
+if(allSlots)
+   {
+   start = GetShiftSlotStart(now - (3600 * 24 * 7));  // previous week
+   }
+else
+   {
+   start = GetShiftSlotStart(now - (3600 * 6));  // previous time slot   
+   }
+
 
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -326,23 +335,33 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return;
    }
 
-// first any environment, then environment-specific
-
- Nova_CacheTotalComplianceEnv(&dbconn,"any",NULL,slot,start,now);
 
  if (!Nova2PHP_environments_list(&env))
    {
    CfOut(cf_error, "", "!! Unable to query list of environments");
    return;
    }
-  
- for (ep = env; ep != NULL; ep = ep->next)
-   {
-     snprintf(envName, sizeof(envName), "%s", ep->name);
-     snprintf(envClass, sizeof(envClass), "environment_%s", ep->name);
 
-     Nova_CacheTotalComplianceEnv(&dbconn,envName,envClass,slot,start,now);
+ for(; start + (3600 * 6) < now; start += CF_SHIFT_INTERVAL) // in case of all slots
+    {
+    start = GetShiftSlotStart(start);  // in case of daylight saving time
+    slot = GetShiftSlot(start);
+
+    time_t tmp = start;
+
+    // first any environment, then environment-specific
+
+    Nova_CacheTotalComplianceEnv(&dbconn,"any",NULL,slot,start,now);
+  
+    for (ep = env; ep != NULL; ep = ep->next)
+       {
+       snprintf(envName, sizeof(envName), "%s", ep->name);
+       snprintf(envClass, sizeof(envClass), "environment_%s", ep->name);
+       
+       Nova_CacheTotalComplianceEnv(&dbconn,envName,envClass,slot,start,now);
+       }
     }
+ 
 
 FreeEnvironmentsList(env);
 CFDB_Close(&dbconn);
@@ -367,7 +386,7 @@ void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *e
   repaired = 0;
   notkept = 0;
   count = 0;
-
+  
   hq = CFDB_QueryTotalCompliance(conn,NULL,NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ,false,envClass);
 
   for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -562,6 +581,7 @@ int ScheduleRun(void);
       { "no-lock",no_argument,0,'K'},
       { "no-fork",no_argument,0,'F' },
       { "continuous",no_argument,0,'c' },
+      { "cache",no_argument,0,'a' },
       { "logging",no_argument,0,'l' },
       { NULL,0,0,'\0' }
       };
@@ -577,6 +597,7 @@ int ScheduleRun(void);
       "Ignore locking constraints during execution (ifelapsed/expireafter) if \"too soon\" to run",
       "Run as a foreground processes (do not fork)",
       "Continuous update mode of operation",
+      "Rebuild database caches used for efficient query handling (e.g. compliance graphs)",
       "Enable logging of updates to the promise log",
       NULL
       };
@@ -617,7 +638,7 @@ void CheckOpts(int argc,char **argv)
   int c;
   char ld_library_path[CF_BUFSIZE];
 
-while ((c=getopt_long(argc,argv,"cd:vKf:VhFlM",OPTIONS,&optindex)) != EOF)
+while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMa",OPTIONS,&optindex)) != EOF)
   {
   switch ((char) c)
       {
@@ -675,6 +696,11 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlM",OPTIONS,&optindex)) != EOF)
       case 'c':
           CONTINUOUS = true;
           break;
+
+      case 'a':
+          Nova_CacheTotalCompliance(true);
+          exit(0);
+          break;          
           
       case 'F':
           NO_FORK = true;

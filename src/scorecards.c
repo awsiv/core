@@ -72,7 +72,7 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
 // Read the cached compliance summary (either from Hub or
 // Constellation DB)
 
-{ char key[CF_MAXVARSIZE],value[CF_MAXVARSIZE],work[CF_BUFSIZE],date[CF_SMALLBUF];
+{ char key[CF_MAXVARSIZE],value[CF_MAXVARSIZE],work[CF_BUFSIZE];
  mongo_connection dbconn;
  struct HubCacheTotalCompliance *tc;
  struct HubQuery *hq;
@@ -109,9 +109,20 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
 
 
  snprintf(buffer,bufsize,"[");
-  
- for (i = 0,start = now - one_week; start < now; start += CF_SHIFT_INTERVAL,i++)
+
+ start = GetShiftSlotStart(now - one_week);
+
+ if(start == -1)
     {
+    CfOut(cf_error, "", "!! Could not get start of interval");
+    DeleteHubQuery(hq,DeleteHubCacheTotalCompliance);
+    return;
+    }
+  
+ for (i = 0; i < 28; start += CF_SHIFT_INTERVAL,i++)
+    {
+    
+    start = GetShiftSlotStart(start);  // in case of daylight saving time
     slot = GetShiftSlot(start);
      
     tc = GetHubCacheTotalComplianceSlot(hq->records,slot);
@@ -134,12 +145,9 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
        count = 0;
        }
 
-     
-    CtimeHourInterval(start,date,sizeof(date));
-
-   
-    snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf, \"nodata\": %lf, \"count\": %d },",
-             date, i, kept, repaired, notkept, nodata, count);
+    
+    snprintf(work,CF_BUFSIZE,"{ \"start\": %d, \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf, \"nodata\": %lf, \"count\": %d },",
+             start, i, kept, repaired, notkept, nodata, count);
 
     if(!Join(buffer,work,bufsize))
        {
