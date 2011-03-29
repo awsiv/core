@@ -80,6 +80,7 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
  double kept, repaired, notkept, nodata;
  time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
  int i,slot,count;
+ char buf[CF_MAXVARSIZE];
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -145,9 +146,10 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
        count = 0;
        }
 
+    CtimeHourInterval(start, buf, sizeof(buf));
     
-    snprintf(work,CF_BUFSIZE,"{ \"start\": %d, \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf, \"nodata\": %lf, \"count\": %d },",
-             start, i, kept, repaired, notkept, nodata, count);
+    snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"start\": %d, \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf, \"nodata\": %lf, \"count\": %d },",
+             buf, start, i, kept, repaired, notkept, nodata, count);
 
     if(!Join(buffer,work,bufsize))
        {
