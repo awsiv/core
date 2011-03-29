@@ -25,26 +25,6 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #define TIMESTAMP_WAIT 500  // msecs between checking two process timestamps (for % CPU usage)
 
 
-#ifndef HAVE_PROCESS_MEMORY_COUNTERS_EX
-
-typedef struct _PROCESS_MEMORY_COUNTERS_EX {
-   DWORD cb;
-   DWORD PageFaultCount;
-   SIZE_T PeakWorkingSetSize;
-   SIZE_T WorkingSetSize;
-   SIZE_T QuotaPeakPagedPoolUsage;
-   SIZE_T QuotaPagedPoolUsage;
-   SIZE_T QuotaPeakNonPagedPoolUsage;
-   SIZE_T QuotaNonPagedPoolUsage;
-   SIZE_T PagefileUsage;
-   SIZE_T PeakPagefileUsage;
-   SIZE_T PrivateUsage;
-} PROCESS_MEMORY_COUNTERS_EX;
-typedef PROCESS_MEMORY_COUNTERS_EX *PPROCESS_MEMORY_COUNTERS_EX;
-
-#endif  /* NOT HAVE_PROCESS_MEMORY_COUNTERS_EX */
-
-
 /* static prototypes */
 static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeStamp, DWORDLONG totalPhysMemB);
 static int EnableDebugPriv(void);
