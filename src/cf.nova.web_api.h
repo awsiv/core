@@ -128,6 +128,7 @@ int Con2PHP_reasons_promiselog(char *hubKeyHash, char *promiseHandle, enum promi
 int Con2PHP_environments_list(char *hubKeyHash, char *buf, int bufsize);
 
 int Con2PHP_promise_popularity(char *promiseHandle, char *buf, int bufsize);
+int Con2PHP_rank_promise_popularity(char *buf, int bufsize);
 
 /* pdf report */
 int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize); 
