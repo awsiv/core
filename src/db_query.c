@@ -3048,6 +3048,22 @@ int Nova_MagViewOffset(int start_slot,int db_slot,int wrap)
 
 /*****************************************************************************/
 
+int CFDB_QueryHostCount(mongo_connection *conn)
+/**
+ * Counts number of hosts.
+ * Can be extended to support some query criteria.
+ *
+ **/
+{
+ bson query;
+
+ bson_empty(&query);
+ 
+ return (int)mongo_count(conn, MONGO_BASE, "hosts", &query);
+}
+
+/*****************************************************************************/
+
 int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz)
 /*
  * Scan DB to try to find the hostname of the given IP.

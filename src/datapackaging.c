@@ -991,7 +991,7 @@ void Nova_PackCompliance(struct Item **reply,char *header,time_t from,enum cfd_m
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE];
-  double lsea = CF_WEEK * 52; /* expire after a year */
+  double lsea = CF_WEEK; /* expire after a week */
   struct Event entry,e,newe;
   int i = 0,ksize,vsize,first = true;
   CF_DB *dbp;

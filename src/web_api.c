@@ -5081,7 +5081,7 @@ int Con2PHP_count_hubs(char *classification, char *buf, int bufsize)
 
 {
 
-#ifdef HAVE_LIBCFCONSTELLATION
+#ifdef HAVE_CONSTELLATION
 
 
  struct HubQuery *hq;
@@ -5111,7 +5111,7 @@ int Con2PHP_count_hubs(char *classification, char *buf, int bufsize)
 
  return true;
 
-#else  /* NOT HAVE_LIBCFCONSTELLATION */
+#else  /* NOT HAVE_CONSTELLATION */
 
  snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_count_hubs() in Nova-only environment\n");
  CfOut(cf_error, "", buf);
@@ -5127,7 +5127,7 @@ int Con2PHP_show_hubs(char *classification, char *buf, int bufsize)
 
 {
 
-#ifdef HAVE_LIBCFCONSTELLATION
+#ifdef HAVE_CONSTELLATION
 
 
  struct HubQuery *hq;
@@ -5175,7 +5175,7 @@ int Con2PHP_show_hubs(char *classification, char *buf, int bufsize)
 
  return result;
 
-#else  /* NOT HAVE_LIBCFCONSTELLATION */
+#else  /* NOT HAVE_CONSTELLATION */
 
  snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_show_hubs() in Nova-only environment\n");
  CfOut(cf_error, "", buf);
@@ -5374,7 +5374,7 @@ int Con2PHP_environments_list(char *hubKeyHash, char *buf, int bufsize)
 
 {
 
-#ifdef HAVE_LIBCFCONSTELLATION
+#ifdef HAVE_CONSTELLATION
 
 
  struct HubQuery *hq;
@@ -5398,7 +5398,7 @@ int Con2PHP_environments_list(char *hubKeyHash, char *buf, int bufsize)
  for(rp = hq->records; rp != NULL; rp = rp->next)
     {
     tc = (struct HubCacheTotalCompliance *)rp->item;
-    //IdempPrepend();...
+    //IdempPrepend();... FIXME---------------
     
     }
  
@@ -5406,15 +5406,77 @@ int Con2PHP_environments_list(char *hubKeyHash, char *buf, int bufsize)
 
  return true;
 
-#else  /* NOT HAVE_LIBCFCONSTELLATION */
+#else  /* NOT HAVE_CONSTELLATION */
 
- snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_count_hubs() in Nova-only environment\n");
+ snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_environments_list() in Nova-only environment\n");
  CfOut(cf_error, "", buf);
  return false;
 
 #endif
 
 }
+
+/*****************************************************************************/
+
+int Con2PHP_promise_popularity(char *promiseHandle, char *buf, int bufsize)
+
+{
+
+#ifdef HAVE_CONSTELLATION
+
+
+ struct HubQuery *hq;
+ mongo_connection dbconn;
+ struct Rlist *rp;
+ struct HubCacheTotalCompliance *tc;
+ char buffer[CF_MAXVARSIZE];
+ int hostCount;
+ double popularity;
+ bool res;
+
+
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+ hostCount = CFDB_QueryHostCount(&dbconn);
+
+ if(hostCount < 0)
+    {
+    snprintf(buf,bufsize,"!! Error when couting hosts");
+    CfOut(cf_error, "", buf);
+    return false;
+    }
+
+ printf("hostcount:%d\n", hostCount);
+
+ res = CFDB_QueryPromisePopularity(&dbconn,promiseHandle,hostCount,&popularity);
+
+ CFDB_Close(&dbconn);
+ 
+ if(!res)
+    {
+    snprintf(buf,bufsize,"!! Error when couting promises");
+    CfOut(cf_error, "", buf);
+    return false;
+    }
+
+ snprintf(buf, bufsize, "{popularity : %f}", popularity);
+
+ return true;
+
+#else  /* NOT HAVE_CONSTELLATION */
+
+ snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_promise_popularity() in Nova-only environment\n");
+ CfOut(cf_error, "", buf);
+ return false;
+
+#endif
+
+}
+
 
 
 #endif  /* HAVE_LIBMONGOC */
