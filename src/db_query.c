@@ -532,11 +532,11 @@ struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lc
  return NewHubQuery(host_list,record_list);
 }
 
-/******************************************************************/
+/*****************************************************************************/
 
-struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **kHs, char *class)
+struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
 /**
- * kHs is NULL or NULL-terminated array of strings
+ * classes is NULL or NULL-terminated array of strings
  *
  * NOTE: Can probably be made more efficient using group by class keys with a count
  **/
@@ -558,31 +558,23 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **kHs, char *cl
   // query
  bson_buffer_init(&bb);
 
- if(!EMPTY(class))
+ if(classes && classes[0])
     {
-    bson_append_string(&bb,cfr_class_keys,class);
-    emptyQuery = false;
-    }
+    obj = bson_append_start_object(&bb,cfr_class_keys);
+    arr1 = bson_append_start_array(&bb,"$all");
 
- 
- if(kHs && kHs[0])
-    {
-    arr1 = bson_append_start_array(&bb,"$or");
-
-    for(i = 0; kHs[i] != NULL; i++)
+    for(i = 0; classes[i] != NULL; i++)
        {
        snprintf(iStr, sizeof(iStr), "%d", i);
-       
-       obj = bson_append_start_object(arr1, iStr);
-       bson_append_string(obj, cfr_keyhash, kHs[i]);
-       bson_append_finish_object(obj);
+       bson_append_string(obj, iStr, classes[i]);
        }
         
     bson_append_finish_object(arr1);
+    bson_append_finish_object(obj);
     
     emptyQuery = false;
     }
-
+ 
  
  if(emptyQuery)
     {
@@ -604,7 +596,7 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **kHs, char *cl
  bson_destroy(&field);
  // query freed below
 
- // 1: of the old hosts, find subset matching new class
+ // 1: collect hosts matching new class
 
  while(mongo_cursor_next(cursor))
     {
@@ -626,7 +618,10 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **kHs, char *cl
         }
     }
 
- // 2: find all distinct classes in subset of hosts
+ mongo_cursor_destroy(cursor);
+
+ 
+ // 2: find all distinct classes in these hosts
  classList = CFDB_QueryDistinct(conn, MONGO_BASE, "hosts", cfr_class_keys, &query);
 
  if(!emptyQuery)
@@ -634,40 +629,26 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **kHs, char *cl
     bson_destroy(&query);
     }
 
+ 
  // 3: count occurences of each class in subset of hosts
  for(ip = classList; ip != NULL; ip = ip->next)
     {
      bson_buffer_init(&bb);
-
-
-     if(kHs && kHs[0])
-        {
-        arr1 = bson_append_start_array(&bb,"$or");
-        
-        for(i = 0; kHs[i] != NULL; i++)
-           {
-           snprintf(iStr, sizeof(iStr), "%d", i);
-           
-           obj = bson_append_start_object(arr1, iStr);
-           bson_append_string(obj, cfr_keyhash, kHs[i]);
-           bson_append_finish_object(obj);
-           }
-        
-        bson_append_finish_object(arr1);
-        }
-
-
+     
      obj = bson_append_start_object(&bb,cfr_class_keys);
-     arr2 = bson_append_start_array(obj, "$all");
+     arr1 = bson_append_start_array(&bb,"$all");
      
-     if(!EMPTY(class))
+     for(i = 0; classes && classes[i] != NULL; i++)
         {
-        bson_append_string(arr2,cfr_class_keys,class);
+        snprintf(iStr, sizeof(iStr), "%d", i);
+        bson_append_string(obj, iStr, classes[i]);
         }
+     snprintf(iStr, sizeof(iStr), "%d", i);
+     bson_append_string(obj, iStr, ip->name);     
      
-     bson_append_string(arr2, cfr_class_keys, ip->name);     
-     bson_append_finish_object(arr2);
+     bson_append_finish_object(arr1);
      bson_append_finish_object(obj);
+
      
      bson_from_buffer(&query,&bb);
 
@@ -676,14 +657,12 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **kHs, char *cl
      Debug("class (%s,%d)\n", ip->name, classFrequency);
 
      PrependRlistAlien(&recordList,NewHubClassSum(CF_THIS_HH, ip->name, classFrequency));
-     
+
      bson_destroy(&query);
     }
  
 
  DeleteItemList(classList);
-
- mongo_cursor_destroy(cursor);
 
  recordList = SortRlist(recordList,SortClassSum);
 
@@ -5244,8 +5223,6 @@ void PrintCFDBKey(bson_iterator *it1, int depth)
 /*****************************************************************************/
 
 void BsonToString(char *retBuf, int retBufSz, char *data)
-/* NOTE: Only depth 1 is implemented */
-
 /* data = (bson *)b->data*/
 {
  bson_iterator i;
@@ -5796,6 +5773,8 @@ struct Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char 
 
  return retVal;
 }
+
+/******************************************************************/
  
 struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson)
 {

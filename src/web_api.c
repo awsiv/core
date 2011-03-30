@@ -626,7 +626,7 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,st
 
 /*****************************************************************************/
 
-int Nova2PHP_classes_summary(char **kHs, char *class, char *buf, int bufsize)
+int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
 {
  mongo_connection dbconn;
  struct HubQuery *hq;
@@ -641,7 +641,7 @@ int Nova2PHP_classes_summary(char **kHs, char *class, char *buf, int bufsize)
     return false;
     }
 
- hq = CFDB_QueryClassSum(&dbconn,kHs,class);
+ hq = CFDB_QueryClassSum(&dbconn,classes);
 
  StartJoin(buf, "{", bufsize);
 
