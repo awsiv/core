@@ -21,18 +21,20 @@
 
 #ifdef MINGW
 
+static int GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal);
+
 // last measured CPU ticks
 ULARGE_INTEGER ticksWorkLast = {0};
 ULARGE_INTEGER ticksTotalLast = {0};
 
 
-void NovaWin_GatherCPUData(double *CF_THIS)
+void GatherCPUData(double *CF_THIS)
 {
   ULARGE_INTEGER ticksWork;
   ULARGE_INTEGER ticksTotal;
   double util;
 
-  if(!NovaWin_GetCpuTicks(&ticksWork, &ticksTotal))
+  if(!GetCpuTicks(&ticksWork, &ticksTotal))
     {
       CfOut(cf_verbose, "", "Skipping this CPU measure due to lack of data");
       return;
@@ -60,7 +62,7 @@ void NovaWin_GatherCPUData(double *CF_THIS)
 
 /*********************************************************************/
 
-int NovaWin_GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal)
+static int GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal)
 /*
  * Gets the number of CPU ticks used in non-idle threads and the
  * total. This are total for all the cores and CPUs of the system.

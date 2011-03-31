@@ -977,8 +977,7 @@ void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char
 
 /* win_mon.c */
 
-void NovaWin_GatherCPUData(double *CF_THIS);
-int NovaWin_GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal);
+void GatherCPUData(double *CF_THIS);
 
 /* win_net.c */
 
