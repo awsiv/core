@@ -784,18 +784,19 @@ struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, 
     FatalError("Memory exhausted NewHubPromise");
     }
 
- hp->bundleName = strdup(bn);
- hp->bundleType = strdup(bt);
- hp->bundleArgs = strdup(ba);
- hp->promiseType = strdup(pt);
- hp->promiser = strdup(pr);
- hp->promisee = strdup(pe);
- hp->classContext = strdup(cl);
- hp->handle = strdup(ha);
- hp->comment = strdup(co);
- hp->file = strdup(fn);
+ hp->bundleName = CFSTRDUP(bn);
+ hp->bundleType = CFSTRDUP(bt);
+ hp->bundleArgs = CFSTRDUP(ba);
+ hp->promiseType = CFSTRDUP(pt);
+ hp->promiser = CFSTRDUP(pr);
+ hp->promisee = CFSTRDUP(pe);
+ hp->classContext = CFSTRDUP(cl);
+ hp->handle = CFSTRDUP(ha);
+ hp->comment = CFSTRDUP(co);
+ hp->file = CFSTRDUP(fn);
  hp->lineNo = lno;
  hp->constraints = cons; // allocated by caller
+ hp->popularity = 0;  // optional
 
  return hp;
 }
@@ -805,19 +806,23 @@ struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, 
 void DeleteHubPromise(struct HubPromise *hp)
 
 {
- free(hp->bundleName);
- free(hp->bundleType);
- free(hp->bundleArgs);
- free(hp->promiseType);
- free(hp->promiser);
- free(hp->promisee);
- free(hp->classContext);
- free(hp->handle);
- free(hp->comment);
- free(hp->file);
+ CFFREE(hp->bundleName);
+ CFFREE(hp->bundleType);
+ CFFREE(hp->bundleArgs);
+ CFFREE(hp->promiseType);
+ CFFREE(hp->promiser);
+ CFFREE(hp->promisee);
+ CFFREE(hp->classContext);
+ CFFREE(hp->handle);
+ CFFREE(hp->comment);
+ CFFREE(hp->file);
  hp->lineNo = -1;
- FreeStringArray(hp->constraints);
 
+ if(hp->constraints)
+    {
+    FreeStringArray(hp->constraints);
+    }
+ 
  free(hp);
  hp = NULL;
 }
@@ -1258,6 +1263,50 @@ int SortBundleSeen(void *p1, void *p2)
 
 /*****************************************************************************/
 
+int SortPromisePopularAscending(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts least popular promises first.
+ **/
+{
+ struct HubPromise *hp1, *hp2;
+
+ hp1 = (struct HubPromise *)p1;
+ hp2 = (struct HubPromise *)p2;
+
+ if(hp1->popularity < hp2->popularity)
+    {
+    return true;
+    }
+ else
+    {
+    return false;
+    }
+}
+
+/*****************************************************************************/
+
+int SortPromisePopularDescending(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts most popular promises first.
+ **/
+{
+ struct HubPromise *hp1, *hp2;
+
+ hp1 = (struct HubPromise *)p1;
+ hp2 = (struct HubPromise *)p2;
+
+ if(hp1->popularity > hp2->popularity)
+    {
+    return true;
+    }
+ else
+    {
+    return false;
+    }
+}
+
+/*****************************************************************************/
+
 struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(struct Rlist *records, int slot)
 {
  struct Rlist *rp;
@@ -1354,7 +1403,9 @@ int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)())
   
  return true;
 }
+
 /*****************************************************************************/
+
 void CountMarginRecordsVars(struct Rlist **records_p, struct PageInfo *page,int *start_count,int *end_count)
 /**
  * Counts the total records for a scope

@@ -3163,7 +3163,9 @@ int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
  char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
  char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
  char work[CF_MAXVARSIZE];
- struct Rlist *rp,*handles;
+ struct Rlist *rp;
+ struct HubQuery *hq;
+ struct HubPromise *hp;
  int i,count;
   
 /* BEGIN query document */
@@ -3174,28 +3176,35 @@ int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
     return false;
     }
 
- handles = CFDB_QueryPromiseHandles(&dbconn,promiser,ptype,btype,bundle,regex);
+ hq = CFDB_QueryPromiseHandles(&dbconn,promiser,ptype,btype,bundle,regex,false);
 
+ CFDB_Close(&dbconn);
+
+ 
  returnval[0] = '\0';
 
- strcat(returnval,"<div id=\"promise\"><ul>\n");
-
- for (rp = handles; rp != NULL; rp = rp->next)
+ if(hq)
     {
-    snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"/promise/details/%s\">%s</a></li>",(char*)rp->item,(char*)rp->item);
-    Join(returnval,work,bufsize);
+    StartJoin(returnval, "<div id=\"promise\"><ul>\n", bufsize);
+        
+    for (rp = hq->records; rp != NULL; rp=rp->next)
+       {
+       hp = (struct HubPromise *)rp->item;
+       snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"/promise/details/%s\">%s</a></li>",(char*)hp->handle,(char*)hp->handle);
+       Join(returnval,work,bufsize);
+       }
+    
+    EndJoin(returnval, "</ul></div>\n", bufsize);
+    
+    DeleteHubQuery(hq,DeleteHubPromise);
+
+    return true;
+    }
+ else  // no result
+    {
+    return false;
     }
 
- strcat(returnval,"</ul></div>\n");
-
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- DeleteRlist(handles);
-
- return true;
 }
 
 /*****************************************************************************/
@@ -5224,7 +5233,7 @@ int Con2PHP_summarize_promiselog(char *hubKeyHash, enum promiselog_rep log_type,
     hs = (struct HubPromiseSum *)rp->item;
 
    
-    snprintf(buffer,sizeof(buffer),"<tr><td><a href=\"/promise/details/%s\">%s</td><td>%d</td><td>%d</td></tr>\n",
+    snprintf(buffer,sizeof(buffer),"<tr><td><a href=\"/promise/details/%s\">%s</a></td><td>%d</td><td>%d</td></tr>\n",
              hs->handle,hs->handle,hs->occurences,hs->hostOccurences);
    
     if(!Join(buf,buffer,bufsize))
@@ -5475,18 +5484,20 @@ int Con2PHP_promise_popularity(char *promiseHandle, char *buf, int bufsize)
 
 /*****************************************************************************/
 
-int Con2PHP_rank_promise_popularity(char *buf, int bufsize)
+int Con2PHP_rank_promise_popularity(bool sortAscending, char *buf, int bufsize)
+
+// TODO: Pageinfo
 
 {
 
 #ifdef HAVE_CONSTELLATION
 
  struct HubQuery *hq;
+ struct HubPromise *hp;
+ struct Rlist *rp;
  mongo_connection dbconn;
- char buffer[CF_MAXVARSIZE];
- int hostCount;
- double popularity;
-
+ char work[CF_MAXVARSIZE];
+ void *sortFn;
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -5494,18 +5505,42 @@ int Con2PHP_rank_promise_popularity(char *buf, int bufsize)
     return false;
     }
 
+ if(sortAscending)
+    {
+    sortFn = SortPromisePopularAscending;
+    }
+ else
+    {
+    sortFn = SortPromisePopularDescending;
+    }
 
- buf[0] = '\0';
+ StartJoin(buf,"<table>\n",bufsize);
  
  hq = CFDB_RankPromisePopularity(&dbconn,false);
 
  CFDB_Close(&dbconn);
  
- if(hq)
+ if(hq && hq->records)
     {
-    snprintf(buf, bufsize, "{ popularity : %f }", popularity);
+    hq->records = SortRlist(hq->records,sortFn);
+    
+    for (rp = hq->records; rp != NULL; rp=rp->next)
+       {
+       hp = (struct HubPromise *)rp->item;
+       
+       snprintf(work, sizeof(work), "<tr><td><a href=\"/promise/details/%s\">%s</a></td><td>%f</td></tr>\n",
+                hp->handle, hp->handle, hp->popularity);
+
+       if(!Join(buf,work,bufsize))
+          {
+          break;
+          }
+       }
+    
+    DeleteHubQuery(hq,DeleteHubPromise);
     }
 
+ EndJoin(buf,"</table>\n",bufsize);
 
  return true;
 

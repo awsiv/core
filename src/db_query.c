@@ -3758,64 +3758,105 @@ struct Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle,
 
 /*****************************************************************************/
 
-struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex)
+struct HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex, bool filter)
 /*
  * Returns a set of handles of promises matching given promiser regex
- * XOR promise type XOR (bundle type, bundle name)
+ * XOR promise type XOR (bundle type, bundle name) XOR all.  All
+ * promiser types of vars and classes, and bundle types of edit_line
+ * and server may optinally be excluded since they often only lead to
+ * mess in Knowledge Management. 
  */
-{ bson_buffer b;
+{ bson_buffer bb, *obj, *arr;
  bson_iterator it1;
  bson query,field;
  mongo_cursor *cursor;
- struct Rlist *handles = {0};
+ struct Rlist *recordList = NULL;
+ bool emptyQuery = true;
 
  // query
- bson_buffer_init(&b);
+ bson_empty(&query);
+ bson_buffer_init(&bb);
 
  if(regex)
     {
     if (!EMPTY(promiser))
        {
-       bson_append_regex(&b, cfp_promiser, promiser,"");
+       bson_append_regex(&bb, cfp_promiser, promiser,"");
+       emptyQuery = false;
        }
     else if(!EMPTY(promiserType))
        {
-       bson_append_regex(&b, cfp_promisetype, promiserType,"");
+       bson_append_regex(&bb, cfp_promisetype, promiserType,"");
+       emptyQuery = false;
        }
-    else
+    else if(!EMPTY(bType))
        {
-       bson_append_regex(&b,cfp_bundletype,bType,"");
-       bson_append_regex(&b,cfp_bundlename,bName,"");
+       bson_append_regex(&bb,cfp_bundletype,bType,"");
+       bson_append_regex(&bb,cfp_bundlename,bName,"");
+       emptyQuery = false;
        }
     }
  else
     {
     if (!EMPTY(promiser))
        {
-       bson_append_string(&b, cfp_promiser, promiser);
+       bson_append_string(&bb, cfp_promiser, promiser);
+       emptyQuery = false;
        }
     else if(!EMPTY(promiserType))
        {
-       bson_append_string(&b, cfp_promisetype, promiserType);
+       bson_append_string(&bb, cfp_promisetype, promiserType);
+       emptyQuery = false;
        }
-    else
+    else if(!EMPTY(bType))
        {
-       bson_append_string(&b,cfp_bundletype,bType);
-       bson_append_string(&b,cfp_bundlename,bName);
+       bson_append_string(&bb,cfp_bundletype,bType);
+       bson_append_string(&bb,cfp_bundlename,bName);
+       emptyQuery = false;
        }
     }
 
+ 
+ if(filter)
+    {
+    // filter promises of type vars and classes
+    obj = bson_append_start_object(&bb, cfp_promisetype);
+    arr = bson_append_start_array(obj, "$nin");
 
- bson_from_buffer(&query,&b);
+    bson_append_string(arr, "0", "vars");
+    bson_append_string(arr, "1", "classes");
+    
+    bson_append_finish_object(arr);
+    bson_append_finish_object(obj);
+
+    // filter promises in edit_line and server bundles
+    obj = bson_append_start_object(&bb, cfp_bundletype);
+    arr = bson_append_start_array(obj, "$nin");
+
+    bson_append_string(arr, "0", "edit_line");
+    bson_append_string(arr, "1", "server");
+    
+    bson_append_finish_object(arr);
+    bson_append_finish_object(obj);
+
+    emptyQuery = false;
+    }
+
+ 
+ if(!emptyQuery)
+    {
+    bson_from_buffer(&query,&bb);
+    }
+
 
 // returned attribute
- bson_buffer_init(&b);
- bson_append_int(&b,cfp_handle,1);
- bson_from_buffer(&field,&b);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfp_handle,1);
+ bson_from_buffer(&field,&bb);
 
  cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,0);
 
- bson_destroy(&query);
+ bson_destroy(&query);  // ok for empty as well
  bson_destroy(&field);
 
  while(mongo_cursor_next(cursor))  // iterate over docs
@@ -3826,14 +3867,14 @@ struct Rlist *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, c
        {
        if (strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
           {
-          AppendRScalar(&handles,(void *)bson_iterator_string(&it1),CF_SCALAR);
+          PrependRlistAlien(&recordList,NewHubPromise(NULL,NULL,NULL,NULL,NULL,NULL,NULL,(char *)bson_iterator_string(&it1),NULL,NULL,0,NULL));
           }
        }
     }
 
  mongo_cursor_destroy(cursor);
 
- return handles;
+ return NewHubQuery(NULL, recordList);
 }
 
 /*****************************************************************************/
