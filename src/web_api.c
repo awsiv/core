@@ -4612,6 +4612,8 @@ bool Nova2PHP_environments_list(struct EnvironmentsList **out)
  return true;
 }
 
+/*****************************************************************************/
+
 bool Nova2PHP_environment_contents(const char *environment, struct HostsList **out)
 {
  mongo_connection dbconn;
@@ -4674,6 +4676,8 @@ bool Nova2PHP_environment_contents(const char *environment, struct HostsList **o
  mongo_cursor_destroy(cursor);
  return true;
 }
+
+/*****************************************************************************/
 
 char *Nova2PHP_get_host_environment(const char *hostkey)
 {
@@ -5165,8 +5169,8 @@ int Con2PHP_show_hubs(char *classification, char *buf, int bufsize)
        {
        hh = (struct HubHost *)rp->item;
        
-       snprintf(row,sizeof(row),"<tr><td>%s</td><td>%s</td></tr>\n",
-                hh->keyhash, hh->hostname);
+       snprintf(row,sizeof(row),"<tr><td><a href=\"constellation.php?hkh=%s\">%s</a></td><td>%s</td></tr>\n",  // FIXME
+                hh->keyhash, hh->keyhash, hh->hostname);
        
        Join(buf,row,bufsize);
        }
@@ -5385,14 +5389,12 @@ int Con2PHP_environments_list(char *hubKeyHash, char *buf, int bufsize)
 
 #ifdef HAVE_CONSTELLATION
 
-
- struct HubQuery *hq;
  mongo_connection dbconn;
- struct Rlist *rp;
- struct HubCacheTotalCompliance *tc;
  char buffer[CF_MAXVARSIZE];
- int result = false;
-
+ struct Item *environments, *ip;
+ char work[CF_MAXVARSIZE];
+ bson query;
+ 
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -5400,19 +5402,31 @@ int Con2PHP_environments_list(char *hubKeyHash, char *buf, int bufsize)
     return false;
     }
 
- hq = CFDB_QuerySumComp(&dbconn, hubKeyHash, NULL, time(NULL) - CF_WEEK);
-
- CFDB_Close(&dbconn);
-
- for(rp = hq->records; rp != NULL; rp = rp->next)
+ if(EMPTY(hubKeyHash))
     {
-    tc = (struct HubCacheTotalCompliance *)rp->item;
-    //IdempPrepend();... FIXME---------------
-    
+    environments = CFDB_QueryDistinct(&dbconn, CONST_MONGO_BASE, "sum_compliance_wk", cfl_polname, bson_empty(&query));
+    }
+ else
+    {
+    environments = CFDB_QueryDistinctStr(&dbconn, CONST_MONGO_BASE, "sum_compliance_wk", cfl_polname, cfl_hubkeyhash, hubKeyHash);
     }
  
- DeleteHubQuery(hq,DeleteHubCacheTotalCompliance);
+ CFDB_Close(&dbconn);
 
+ StartJoin(buf, "[ ", bufsize);
+
+ for(ip = environments; ip != NULL; ip = ip->next)
+    {
+    snprintf(work, sizeof(work), "\"%s\",", ip->name);
+    Join(buf, work, bufsize);
+    }
+
+ ReplaceTrailingChar(buf, ',', '\0');
+ 
+ EndJoin(buf, " ]", bufsize);
+ 
+ DeleteItemList(environments);
+ 
  return true;
 
 #else  /* NOT HAVE_CONSTELLATION */
@@ -5480,7 +5494,6 @@ int Con2PHP_promise_popularity(char *promiseHandle, char *buf, int bufsize)
 #endif
 
 }
-
 
 /*****************************************************************************/
 
