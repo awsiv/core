@@ -104,7 +104,6 @@ class Welcome extends Cf_Controller {
         $data['graphSeries'] = array();
         $labels = array('kept', 'repaired', 'not kept');
         foreach ($convertedData as $key => $graphData) {
-
             $values[] = array('label' => $graphData['title'],
                 'values' => array($graphData['kept'], $graphData['repaired'], $graphData['notkept']));
         }

@@ -2,30 +2,32 @@
 class Cf_Log extends CI_Log
 {
      var $mongo;
-	function __construct()
+
+     public function __construct()
        {
-    	$this->mongo = new Mongo("localhost");
         parent::__construct();
 		//$this->load->library('mongo_db');
-       $cfg=& get_config();
+         $this->mongo = new Mongo("localhost");
+         $this->_enabled=true;
         }
 
 	function write_log($level = 'error', $msg, $php_error = FALSE)
-	{		
-		if ($this->_enabled === FALSE)
+	{
+            if ($this->_enabled === FALSE)
 		{
-			return FALSE;
+                return FALSE;
 		}
 
 		$level = strtoupper($level);
-
+              
 		if ( ! isset($this->_levels[$level]) OR ($this->_levels[$level] > $this->_threshold))
 		{
-			return FALSE;
+                    
+                    return FALSE;
 		}
-
 		$db = $this->mongo->phpcfengine->app_logs;
 	   //$output=$this->mongo_db->insert('app_logs',array(
+         
         $output = $db->insert(array(
 		// Server Info
 		'server_name'	=> $_SERVER['SERVER_NAME'],
@@ -42,7 +44,8 @@ class Cf_Log extends CI_Log
 		'message'		=> $msg,
 		'level'			=> $level,
 		));
-		return $output;
+                 
+	return $output;
 	}
 
 }

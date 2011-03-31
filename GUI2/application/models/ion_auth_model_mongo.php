@@ -159,7 +159,7 @@ class Ion_auth_model_mongo extends CI_Model
 	 * activate
 	 *
 	 * @return void
-	 * @author Mathew
+	 * @author sudhir
 	 **/
 	public function activate($id, $code = false)
 	{
@@ -206,7 +206,7 @@ class Ion_auth_model_mongo extends CI_Model
 	 * Deactivate
 	 *
 	 * @return void
-	 * @author Mathew
+	 * @author sudhir
 	 **/
 	public function deactivate($id = 0)
 	{
@@ -234,7 +234,7 @@ class Ion_auth_model_mongo extends CI_Model
 	 * change password
 	 *
 	 * @return bool
-	 * @author Mathew
+	 * @author sudhir
 	 **/
 	public function change_password($identity, $old, $new)
 	{
@@ -644,7 +644,7 @@ class Ion_auth_model_mongo extends CI_Model
 	 * get_users_group
 	 *
 	 * @return object
-	 * @author Ben Edmunds
+	 * @author sudhir
 	 **/
 	public function get_users_group($id=false)
 	{

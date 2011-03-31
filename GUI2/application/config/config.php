@@ -328,7 +328,7 @@ $config['proxy_ips'] = '';
 /*
  * Bread crumbs configuration
  */
-$config['breadcrumbDelimiter'] = "&raquo;";
+$config['breadcrumbDelimiter'] = "";
 
 /* End of file config.php */
 /* Location: ./system/application/config/config.php */

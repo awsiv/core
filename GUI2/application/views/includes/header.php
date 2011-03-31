@@ -51,6 +51,7 @@
                         &nbsp;| &nbsp;
                         <a href="<?php echo site_url('auth/logout'); ?>" title="logout">logout</a>
                        </p>
+                       <p>Online users:<?php echo $this->onlineusers->total_users()?></p>
                       <p class="clearright"></p>
                       <div id="webadmin">
 
