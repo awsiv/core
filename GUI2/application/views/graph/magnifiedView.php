@@ -25,11 +25,12 @@
 
                 tickFormatter: function (val, axis) {
 
-                    var subtract = (4-(val/12))*60*60*1000;
+                    var subtract = (4-(val/12))*60*60;
 
                     var actualDate = parseInt(options.series.magnifiedView.lastUpdated,10);
                     var displayDate = actualDate -subtract;
-                    var d = new Date(displayDate);
+                    var d = new Date();
+                    d.setTime( displayDate * 1000 );
                     return d.getHours() + ' : ' + d.getMinutes();
 
 
