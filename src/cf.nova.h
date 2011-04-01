@@ -312,6 +312,7 @@ int CFDB_GetValue(char *lval,char *rval,int size);
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn);
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
 struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query);
+struct HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, char *classRegex);
 struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
 struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle, int regex, time_t from, time_t to,int sort,char *classRegex);
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex, int sort);

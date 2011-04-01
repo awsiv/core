@@ -164,6 +164,56 @@ struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query)
 
 /*****************************************************************************/
 
+struct HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, char *classRegex)
+{ bson_buffer bb;
+ bson query;
+ struct HubQuery *hq;
+ char classRegexAnch[CF_MAXVARSIZE];
+ int emptyQuery = true;
+  
+/* BEGIN query document */
+ bson_buffer_init(&bb);
+
+ if (!EMPTY(hostNameRegex))
+    {
+    bson_append_regex(&bb,cfr_host_array,hostNameRegex,"");
+    emptyQuery = false;
+    }
+
+ if (!EMPTY(ipRegex))
+    {
+    bson_append_regex(&bb,cfr_ip_array,ipRegex,"");
+    emptyQuery = false;
+    }
+
+ if(!EMPTY(classRegex))
+    {
+    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+    emptyQuery = false;
+    }
+
+ if(emptyQuery)
+    {
+    bson_empty(&query);
+    }
+ else
+    {
+    bson_from_buffer(&query,&bb);
+    }
+
+ hq = CFDB_QueryHosts(conn,&query);
+
+ if(!emptyQuery)
+    {
+    bson_destroy(&query);
+    }
+ 
+ return hq;
+}
+
+/*****************************************************************************/
+
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex, int sort)
 { bson_buffer bb,*sub1,*sub2,*sub3;
  bson b,query,field;

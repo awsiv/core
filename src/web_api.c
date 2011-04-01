@@ -2561,7 +2561,7 @@ void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize)
  buffer[0] = '\0';
  strcat(buffer,"[");
 
- for (ip = clist; ip !=  NULL; ip=ip->next)
+ for (ip = clist; ip != NULL; ip=ip->next)
     {
     snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\", \"id\": \"%s\"}",ip->name,ip->classes);
 
@@ -2578,6 +2578,66 @@ void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize)
 
  EndJoin(buffer,"]",bufsize);
  DeleteItemList(clist);
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,struct PageInfo *page,char *buf,int bufsize)
+
+{
+ struct HubQuery *hq;
+ struct HubHost *hh;
+ struct Rlist *rp;
+ mongo_connection dbconn;
+ char work[CF_MAXVARSIZE];
+
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+ hq = CFDB_QueryHostsByAddress(&dbconn,hostNameRegex,ipRegex,classRegex);
+
+ CFDB_Close(&dbconn);
+ 
+ if(!(hq && hq->hosts))
+    {
+    StartJoin(buf, "{}", bufsize);
+    return true;
+    }
+    
+ PageRecords(&(hq->hosts),page,DeleteHubHost);
+ 
+ snprintf(work,sizeof(work),
+          "{\"meta\":{\"count\" : %d,"
+          "\"header\": {\"Key Hash\":0,\"Host name\":1,\"IP address\":2"
+          "}},\n\"data\":[",page->totalResultCount);
+
+ StartJoin(buf,work,bufsize);
+ 
+ for (rp = hq->hosts; rp != NULL; rp=rp->next)
+       {
+       hh = (struct HubHost *)rp->item;
+       
+       snprintf(work, sizeof(work), "[\"%s\", \"%s\", \"%s\"]\n,",
+                hh->hostname, hh->ipaddr, hh->keyhash);
+
+       if(!Join(buf,work,bufsize))
+          {
+          break;
+          }
+       }
+    
+ DeleteHubQuery(hq,NULL);
+    
+ 
+ ReplaceTrailingChar(buf, ',', '\0');
+
+ EndJoin(buf,"]}",bufsize);
+
+ return true;
+
 }
 
 /*****************************************************************************/
