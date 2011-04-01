@@ -117,11 +117,11 @@ for (i = 0; i < CF_HASHTABLESIZE; i++)
                   {                     
                   if (count++ == 0)
                      {
-                     CfOut(cf_error,"","I: The resource \"%s\" makes a number of possibly conflicting promises: ",p1->handle);
-                     CfOut(cf_error,"","\n %d: In %s\n    Near line %d\n    In the context of \"%s\"\n",count,p1->filename,p1->lineno,p1->classes);
+                     CfOut(cf_inform,"","I: The resource \"%s\" makes a number of possibly conflicting promises: ",p1->handle);
+                     CfOut(cf_inform,"","\n %d: In %s\n    Near line %d\n    In the context of \"%s\"\n",count,p1->filename,p1->lineno,p1->classes);
                      count++;
                      }
-                  CfOut(cf_error,"","\n %d: In %s\n    Near line %d\n    In the context of \"%s\"\n", count,p2->filename,p2->lineno,p2->classes);
+                  CfOut(cf_inform,"","\n %d: In %s\n    Near line %d\n    In the context of \"%s\"\n", count,p2->filename,p2->lineno,p2->classes);
                   }
                
                DeleteRlist(contexts2);
@@ -137,7 +137,7 @@ for (i = 0; i < CF_HASHTABLESIZE; i++)
          {
          if (FullTextMatch(p1->handle,PROMISER_LIST[i]->handle))
             {
-            CfOut(cf_error,""," ! promiser \"%s\" might conflict with \"%s\" in file %s near line %d\n",p1->handle,PROMISER_LIST[i]->handle,PROMISER_LIST[i]->filename,PROMISER_LIST[i]->lineno);
+            CfOut(cf_inform,""," ! promiser \"%s\" might conflict with \"%s\" in file %s near line %d\n",p1->handle,PROMISER_LIST[i]->handle,PROMISER_LIST[i]->filename,PROMISER_LIST[i]->lineno);
             }
          }
       }
