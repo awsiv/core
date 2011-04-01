@@ -37,6 +37,7 @@ var tags  = {
                  }
                    });
                  });
+         $(".ui-dialog-titlebar").hide();
          self.temp.delegate('a', 'click',self.addclassfilter);
     },
 
