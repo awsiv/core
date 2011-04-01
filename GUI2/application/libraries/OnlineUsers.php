@@ -22,12 +22,12 @@ class OnlineUsers{
         function  __construct() {
             $this->ip=$_SERVER['REMOTE_ADDR'];
             $this->CI=& get_instance() ;
-            $this->CI->load->library('mongo_db');
+            $this->CI->load->library(array('mongo_db','session'));
 
         }
 	function OnlineUsers(){
-                $this->data=$this->CI->mongo_db->where(array('ip'=>$this->ip))->get('onlineusers');
-               // echo json_encode($this->data);
+                $this->data=$this->CI->mongo_db->where(array('user_id'=>$this->CI->session->userdata('id')))->get('onlineusers');
+                //echo json_encode($this->data);
 		
 		$timeout = time()-120;
 		
@@ -36,6 +36,7 @@ class OnlineUsers{
                         {
                         $this->data=array();
                         $this->data['ip']=$this->ip;
+                        $this->data['user_id']=$this->CI->session->userdata('user_id');
 			$this->data['time'] = time();
 			$this->data['uri'] = $_SERVER['REQUEST_URI'];
 			//Loads the USER_AGENT class if it's not loaded yet
@@ -51,8 +52,8 @@ class OnlineUsers{
 		}
 		else
 		{
-                        $this->CI->mongo_db->where(array('ip' => $this->ip));
-		        $this->CI->mongo_db->update('onlineusers', array('time' => time(),'uri'=>$_SERVER['REQUEST_URI']));
+                        $this->CI->mongo_db->where(array('user_id'=>$this->CI->session->userdata('user_id')));
+		        $this->CI->mongo_db->update('onlineusers', array('ip'=>$this->ip,'time' => time(),'uri'=>$_SERVER['REQUEST_URI']));
                         $this->CI->mongo_db->clear();
 		}
 		

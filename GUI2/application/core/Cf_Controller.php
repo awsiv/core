@@ -13,11 +13,14 @@ class Cf_Controller extends CI_Controller
                 $this->lang->load('cf_message');
 		///cfpr_set_siteurl(site_url());
 		// Login: If not logged in, redirect to  authentication index
-                $this->onlineusers->onlineusers();
 		if(!$this->ion_auth->logged_in())
 		{
 			redirect('auth/index','refresh');
 		}
+                else
+                {
+                   $this->onlineusers->onlineusers();
+                }
                 
 	}
 }
