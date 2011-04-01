@@ -5451,7 +5451,7 @@ int Con2PHP_promise_popularity(char *promiseHandle, char *buf, int bufsize)
  mongo_connection dbconn;
  char buffer[CF_MAXVARSIZE];
  int hostCount;
- double popularity;
+ double popularity = 0;
  bool res;
 
 
@@ -5480,7 +5480,7 @@ int Con2PHP_promise_popularity(char *promiseHandle, char *buf, int bufsize)
     CfOut(cf_error, "", buf);
     return false;
     }
-
+ 
  snprintf(buf, bufsize, "{popularity : %f}", popularity);
 
  return true;

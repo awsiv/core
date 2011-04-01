@@ -14,6 +14,9 @@
 	The report of reports-promises are shown in the promise repaired log 
 	in the Mission Portal.
 	
+	New option cf-hub --cache, recreates the cache data needed
+	by the web interface.
+	
 	Only showing the last seen host name and ip address when
 	listing hosts and on the host page.
 
