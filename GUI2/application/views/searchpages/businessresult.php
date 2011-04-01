@@ -11,45 +11,13 @@
         <div class="tables">
             <?php
             $result = json_decode($report_result, true);
-            $this->table->set_heading(array_keys($result['meta']['header']));
-            $heading = "";
             if (count($result['data']) > 0) {
-                foreach ($result['data'] as $row) {
-                    //$this->table->add_row($row);
-                    $temp = array();
-                    foreach ($result['meta']['header'] as $key => $value) {
-                        if (!is_array($value)) {
-                            if (strtolower($key) == "lastseen" || strtolower($key) == "last seen" || strtolower($key) == "time" || strtolower($key) == "last verified")
-                                array_push($temp, getDateStatus($row[$value]));
-                            else
-                                array_push($temp, $row[$value]);
-                        }
-                        else {
-                            if (strtolower($key) == "note") {
-                                $link = site_url("notes") . '/index/';
-                                $data_index = $value['index'];
-                                // var_dump($row[$data_index] );
-                                foreach ($value['subkeys'] as $subkey => $subval) {
-                                    $data = trim($row[$data_index][$subval]);
-                                    if ($subkey == 'rid') {
-                                        $data = urlencode(base64_encode(utf8_encode($data)));
-                                    }
-                                    if ($data != '') {
-                                        $link.="$subkey/$data/";
-                                    }
-                                }
-                                array_push($temp, anchor($link, 'note', 'class=note'));
-                            }
-                        }
-                    }
-                    $this->table->add_row($temp);
-                }
-                echo $this->table->generate();
+                echo $this->cf_table->generateReportTable($result,$report_title);
                 $pg = paging($current, $number_of_rows, $result['meta']['count'], 100);
             ?>
                 <div class="Paging">
                     <div>
-                    <?
+                    <?php
                     echo form_open('search/index/' . $params);
                     echo form_input('rows', $number_of_rows);
                     echo "Rows/Page";
@@ -137,15 +105,13 @@
             width: 'auto',
             buttons: {
                 'Send': function() {
+                    $dialog.append("<div id='tempdiv' class='amber'>sending mail please wait a while...</div>");
                     $.ajax({
                         type: "POST",
                         url: $('#parameters',$dialog).val(),
                         data:({'to':$('#to_contacts',$dialog).val(),'subject':$('#mail_subject',$dialog).val(),'message':$('#mail_desc',$dialog).val(),'from':$('#from_contacts',$dialog).val()}),
                         dataType:'json',
-                        async: false,
-                        beforeSend: function(XMLHttpRequest) {
-                            $dialog.append("<div id='tempdiv' class='amber'>sending mail please wait a while...</div>");
-                        },
+                        async: false,                      
                         success: function(data){
                             alert(data.message);
                             $dialog.dialog('close');
@@ -154,6 +120,7 @@
                         },
                         error: function(jqXHR, textStatus, errorThrown){
                             alert(textStatus);
+                            $('#tempdiv',$dialog).remove();
                         }
                     });
                    

@@ -7,16 +7,7 @@ $colour = cfpr_get_host_colour($hostkey);
   ?>
         
          <div class="grid_4">
-                  <!--<div class="panel">
-                    <div class="panelhead">Select host: <?php if($hostkey=="none") echo "No host selected" ;?> </div>
-                     <div class="panelcontent">
-                  <?php echo form_open('welcome/host'); ?>
-                      <?php echo form_dropdown('hostkey', $allhosts)?>
-                     <input class="btn floatRight"  type="submit"  value="Select host" />
-                     <div class="clearright"></div>
-                     </form>
-                     </div>
-                  </div>-->
+                
              <div class="panel">
                     <div class="panelhead"> View Reports </div>
                     <div id="reportcontrol" class="panelcontent">
@@ -122,21 +113,24 @@ $colour = cfpr_get_host_colour($hostkey);
           
           
 			<div class="panel">
-			<?php $report = cfpr_summarize_notkept($hostkey,NULL,NULL);?>
+			<?php $report = cfpr_summarize_notkept($hostkey,NULL,NULL,NULL,NULL);?>
 			<div class="panelhead">Promises not kept in the past week</div>
                 <div class="panelcontent">
                       <div class="tables">
-                      <?php echo $report ?>
+
+                      <?php
+                      $tableData = json_decode($report,true);
+                      if (is_array($tableData)) {
+                      echo  $this->cf_table->generateReportTable(json_decode($tableData,true));
+                      } else echo "No data found";
+                      ?>
+
                       </div>
                 </div>
             </div>
  
 <script type="text/javascript">
 $(document).ready(function() { 
-    $('.tables table').prepend(
-        $('<thead></thead>').append($('.tables tr:first').remove())
-        );
-
     $('.tables table').tableFilter();
     $('.tables table').tablesorter({widgets: ['zebra']});
 

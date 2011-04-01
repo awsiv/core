@@ -4,7 +4,7 @@ class Search extends Cf_Controller {
 
     function Search() {
         parent::__construct();
-        $this->load->library(array('table', 'pagination'));
+        $this->load->library(array('table','cf_table', 'pagination'));
         $this->load->helper('form');
     }
 
@@ -182,7 +182,7 @@ class Search extends Cf_Controller {
                 } elseif ($hostkey != "") {
 
                     $pdfurlParams = array('type' => $report_type,
-                        'hostKey' => $hostKey,
+                        'hostKey' => $hostkey,
                         'class_regex' => $class_regex
                     );
                     $data['report_title'] = $report_type;
@@ -251,7 +251,7 @@ class Search extends Cf_Controller {
                         'class_regex' => $class_regex,
                         'search' => $search,
                         'state' => $state,
-                        'hostKey' => $hostKey
+                        'hostkey' => $hostkey
                     );
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
@@ -273,7 +273,7 @@ class Search extends Cf_Controller {
 
                         $pdfurlParams = array('type' => $report_type,
                             'class_regex' => $class_regex,
-                            'hostKey' => $hostKey
+                            'hostkey' => $hostkey
                         );
                         $data['report_title'] = $report_type;
                         $data['report_link'] = site_url('/pdfreports/index' . $this->assoc_to_uri($pdfurlParams));
@@ -284,7 +284,7 @@ class Search extends Cf_Controller {
                 } elseif ($hostkey != "") {
                     $pdfurlParams = array('type' => $report_type,
                         'class_regex' => $class_regex,
-                        'hostKey' => $hostKey
+                        'hostkey' => $hostkey
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -303,7 +303,7 @@ class Search extends Cf_Controller {
                     } else {
                         $pdfurlParams = array('type' => $report_type,
                             'class_regex' => $class_regex,
-                            'hostKey' => $hostKey
+                            'hostkey' => $hostkey
                         );
                         $data['report_link'] = site_url('/pdfreports/index' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -313,7 +313,7 @@ class Search extends Cf_Controller {
                 } elseif ($hostkey != "") {
                     $pdfurlParams = array('type' => $report_type,
                         'class_regex' => $class_regex,
-                        'hostKey' => $hostKey,
+                        'hostkey' => $hostkey,
                         'search' => $search
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
@@ -347,7 +347,7 @@ class Search extends Cf_Controller {
                 } elseif ($hostkey != "") {
                     $pdfurlParams = array('type' => $report_type,
                         'class_regex' => $class_regex,
-                        'hostkey' => $hostKey,
+                        'hostkey' => $hostkey,
                         'cal' => $cal,
                         'search' => $search
                     );
@@ -389,7 +389,7 @@ class Search extends Cf_Controller {
 
                     $pdfurlParams = array('type' => $report_type,
                         'class_regex' => $class_regex,
-                        'hostkey' => $hostKey,
+                        'hostkey' => $hostkey,
                         'ago' => -1,
                         'search' => $search
                     );
@@ -397,7 +397,7 @@ class Search extends Cf_Controller {
                     $data['report_link'] = site_url('/pdfreports/index' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email/');
                     $data['report_result'] = cfpr_report_lastseen($hostkey, NULL, $search, NULL, -1, true, $class_regex, $rows, $page_number);
-                    $this->template->load('template', 'searchpages/searchresult', $data);
+                    $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/last_saw_hosts', $data) : $this->template->load('template', 'searchpages/last_saw_hosts', $data);
                 }
@@ -430,7 +430,7 @@ class Search extends Cf_Controller {
                     $pdfurlParams = array('type' => $report_type,
                         'class_regex' => $class_regex,
                         'search' => $search,
-                        'hostkey' => $hostKey
+                        'hostkey' => $hostkey
                     );
 
                     $data['report_link'] = site_url('/pdfreports/index' . $this->assoc_to_uri($pdfurlParams));
@@ -469,7 +469,7 @@ class Search extends Cf_Controller {
                     $pdfurlParams = array('type' => $report_type,
                         'class_regex' => $class_regex,
                         'search' => $search,
-                        'hostkey' => $hostKey
+                        'hostkey' => $hostkey
                     );
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
@@ -501,7 +501,7 @@ class Search extends Cf_Controller {
                 } elseif ($hostkey != "") {
                     $pdfurlParams = array('type' => $report_type,
                         'class_regex' => $class_regex,
-                        'search' => $name,
+                        'search' => $search,
                         'hostkey' => $hostkey
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
@@ -543,9 +543,9 @@ class Search extends Cf_Controller {
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     if ($report_type == "Promises repaired log")
-                        $data['report_result'] = cfpr_report_repaired($hostkey, NULL, 0, 0, $class_regex);
+                        $data['report_result'] = cfpr_report_repaired($hostkey, NULL, 0, 0, $class_regex,$rows,$page_number);
                     if ($report_type == "Promises repaired summary")
-                        $data['report_result'] = cfpr_summarize_repaired($hostkey, NULL, NULL);
+                        $data['report_result'] = cfpr_summarize_repaired($hostkey, NULL, NULL,$rows,$page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 }
                 else {

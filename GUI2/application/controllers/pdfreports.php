@@ -80,7 +80,7 @@ class pdfreports extends Cf_Controller {
         //$params = $this->populateParamsWithDefault($params);
         $report_type = isset($params['type']) ? $params['type'] : "";
 
-      
+
         $pdf_filename = 'Nova_' . preg_replace('/ /', '_', $report_type) . '.pdf';
         $pdf = new cf_pdf();
         $pdf->PDFSetReportName($report_type);
@@ -165,7 +165,7 @@ class pdfreports extends Cf_Controller {
             case "Promises not kept summary":
                 $desc = cfpr_report_description('promises repaired report');
                 $pdf->PDFSetDescription($desc);
-                $this->rpt_promise_notkept($params['hostkey'], $params['search'], $pdf,'','', $params['class_regex']);
+                $this->rpt_promise_notkept($params['hostkey'], $params['search'], $pdf, '', '', $params['class_regex']);
                 break;
 
             case "Promises not kept log":
@@ -202,6 +202,7 @@ class pdfreports extends Cf_Controller {
 
         $pdf_action = $params['pdfaction'];
 
+
         # get email parameters from ajax query
         if ($pdf_action == 'email') {
 
@@ -235,29 +236,44 @@ class pdfreports extends Cf_Controller {
         // attachment name
         $filename = $pdf_filename;
         // encode data (puts attachment in proper format)
-        $pdfdoc = $pdf->Output("./tmp/$filename", "F");
+        try {
 
-        $this->email->from($from);
-        $this->email->to($to);
+            // check for directory
+            if (!file_exists("./tmp")) {
+                mkdir("./tmp", 0777);
+            }
 
-        $this->email->subject($subject);
-        $this->email->message('Email from cfengine.');
-        $this->email->attach('./tmp/' . $filename);
+            if (!is_writable('./tmp')) {
+                throw new Exception('directory /tmp is not writable ');
+            }
 
-        if (!$this->email->send()) {
-            // error sending mail
-            // SOMETHING WENT WRONG WHILE ADDITION
+            $pdfdoc = $pdf->Output("./tmp/$filename", "F");
+
+            $this->email->from($from);
+            $this->email->to($to);
+
+            $this->email->subject($subject);
+            $this->email->message('Email from cfengine.');
+            $this->email->attach('./tmp/' . $filename);
+
+            if (!$this->email->send()) {
+                // error sending mail
+                // SOMETHING WENT WRONG WHILE ADDITION
+                $this->output->set_status_header('400', 'Cannot send the mail this time.');
+                echo 'Something went wrong while sending mail';
+                exit;
+            }
+
+            $retData = array('message' => 'Mail has been sent to the given address.');
+            $jsonReturn = json_encode($retData);
+
+            echo $jsonReturn;
+            @unlink('./tmp/' . $filename);
+            exit();
+        } catch (Exception $e) {
             $this->output->set_status_header('400', 'Cannot send the mail this time.');
             echo 'Something went wrong while sending mail';
-            exit;
         }
-
-        $retData = array('message' => 'Mail has been sent to the given address.');
-        $jsonReturn = json_encode($retData);
-
-        echo $jsonReturn;
-        @unlink('./tmp/' . $filename);
-        exit();
     }
 
     ## functions for reports
@@ -327,8 +343,8 @@ class pdfreports extends Cf_Controller {
 
     function rpt_promise_notkept($hostkey, $search, &$pdf, $hours_deltafrom, $hours_deltato, $class_regex='') {
 //        $col_len = array(20, 20, 45, 15);
-// working	  $col_len = array(19, 19, 43, 19); 
- 	  $col_len = array(15, 21, 49, 15);
+// working	  $col_len = array(19, 19, 43, 19);
+        $col_len = array(15, 21, 49, 15);
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
         $ret = cfpr_report_notkept_pdf($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
@@ -542,7 +558,7 @@ class pdfreports extends Cf_Controller {
         } else {
             $ret = cfpr_report_vars_pdf($hostkey, NULL, $search, NULL, NULL, true, $class_regex);
         }
-	$data1 = $pdf->ParseData($ret);
+        $data1 = $pdf->ParseData($ret);
 
         $pdf->ReportTitle();
         $pdf->ReportDescription();

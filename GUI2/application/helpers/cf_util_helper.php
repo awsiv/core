@@ -238,10 +238,10 @@ function create_json_node_for_report_control() {
  * @param <type> $timestamp
  * @return <string> datetime with wrapped in span with colorclass
  */
-function getDateStatus($timestamp) {
-    $colorClass = '';
+function getDateStatus($timestamp,$noColor=false) {
+    
     $timestamp = trim($timestamp);
-   
+    $colorClass = '';
     $now = time();
     // 6 hours
     if ($now - $timestamp > 6*3600) {
@@ -251,6 +251,7 @@ function getDateStatus($timestamp) {
     if ($now - $timestamp > 7*24*3600) {
         $colorClass = 'red';
     }
+    if ($noColor) $colorClass = '';
     $formattedDate = date('D F d h:m:s Y',$timestamp);
     return "<span class=$colorClass>$formattedDate</span>";
     

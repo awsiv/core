@@ -10,7 +10,7 @@
      <div class="tables">
       <?php
        $result = json_decode($report_result,true);
-
+       
          $this->table->set_heading(array_keys($result['meta']['header']));
        $heading="";
          if(count($result['data'])>0)
