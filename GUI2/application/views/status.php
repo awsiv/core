@@ -68,7 +68,6 @@
 
 <div class="clear"></div>
 
-<a href="#" id="test">TEST</a>
 <div id="controltest">
 
 </div>
@@ -140,12 +139,12 @@
         Events: {
             enable: true,
             onClick: function(node, eventInfo, e) {
-                if ( startTrack[node.label])
-               alert ('Start timestamp::' + startTrack[node.label])
-               
+                if ( startTrack[node.label]) {
+                  var option = {'url':'/widget/summaryCompliance/'+startTrack[node.label],'title':'Overview'};
+                  $('body').popup(option);
+                }
+            }
         }
-        }
-
     };
 
     $barChart = new $jit.BarChart(barChartOptions);

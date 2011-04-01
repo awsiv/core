@@ -70,6 +70,8 @@ $ret1 = cfpr_getlicense_owner();
     </div>
 </div>
 <div class="clear"></div>
+
+
 <script type="text/javascript">
 
 
@@ -139,4 +141,7 @@ $ret1 = cfpr_getlicense_owner();
         hostsummary(<?php echo "$r,$y,$g,$all" ?>);
     });
 
+
+
+   
     </script>

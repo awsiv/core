@@ -6,7 +6,7 @@ class Welcome extends Cf_Controller {
         parent::__construct();
         parse_str($_SERVER['QUERY_STRING'], $_GET);
         $this->load->helper('form');
-        $this->load->library('table');
+        $this->load->library('table','cf_table');
     }
 
     function index() {
@@ -68,7 +68,10 @@ class Welcome extends Cf_Controller {
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'graphs/host-meter.js"> </script>
                     ',
+            '<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />
+             ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>',
+             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . '/widgets/popup.js"> </script>',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportcontrol2.js"> </script>');
 
         $this->template->set('injected_item', implode("", $scripts));
@@ -439,8 +442,6 @@ class Welcome extends Cf_Controller {
         if ($gdata) {
 
             $ret = json_decode($gdata, TRUE);
-// get the value
-
             foreach ($ret as $index => $val) {
                 $rawData = cfpr_host_meter($val['key']);
                 $graphData = $this->_convert_summary_compliance_graph($rawData);
