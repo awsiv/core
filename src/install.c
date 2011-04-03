@@ -779,26 +779,26 @@ struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, 
 
 { struct HubPromise *hp;
      
- if ((hp = malloc(sizeof(struct HubPromise))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubPromise");
-    }
+if ((hp = malloc(sizeof(struct HubPromise))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubPromise");
+   }
 
- hp->bundleName = CFSTRDUP(bn);
- hp->bundleType = CFSTRDUP(bt);
- hp->bundleArgs = CFSTRDUP(ba);
- hp->promiseType = CFSTRDUP(pt);
- hp->promiser = CFSTRDUP(pr);
- hp->promisee = CFSTRDUP(pe);
- hp->classContext = CFSTRDUP(cl);
- hp->handle = CFSTRDUP(ha);
- hp->comment = CFSTRDUP(co);
- hp->file = CFSTRDUP(fn);
- hp->lineNo = lno;
- hp->constraints = cons; // allocated by caller
- hp->popularity = 0;  // optional
+hp->bundleName = CFSTRDUP(bn);
+hp->bundleType = CFSTRDUP(bt);
+hp->bundleArgs = CFSTRDUP(ba);
+hp->promiseType = CFSTRDUP(pt);
+hp->promiser = CFSTRDUP(pr);
+hp->promisee = CFSTRDUP(pe);
+hp->classContext = CFSTRDUP(cl);
+hp->handle = CFSTRDUP(ha);
+hp->comment = CFSTRDUP(co);
+hp->file = CFSTRDUP(fn);
+hp->lineNo = lno;
+hp->constraints = cons; // allocated by caller
+hp->popularity = 0;  // optional
 
- return hp;
+return hp;
 }
 
 /*****************************************************************************/
@@ -806,25 +806,26 @@ struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, 
 void DeleteHubPromise(struct HubPromise *hp)
 
 {
- CFFREE(hp->bundleName);
- CFFREE(hp->bundleType);
- CFFREE(hp->bundleArgs);
- CFFREE(hp->promiseType);
- CFFREE(hp->promiser);
- CFFREE(hp->promisee);
- CFFREE(hp->classContext);
- CFFREE(hp->handle);
- CFFREE(hp->comment);
- CFFREE(hp->file);
- hp->lineNo = -1;
+CFFREE(hp->bundleName);
+CFFREE(hp->bundleType);
+CFFREE(hp->bundleArgs);
+CFFREE(hp->promiseType);
+CFFREE(hp->promiser);
+CFFREE(hp->promisee);
+CFFREE(hp->classContext);
+CFFREE(hp->handle);
+CFFREE(hp->comment);
+CFFREE(hp->file);
 
- if(hp->constraints)
-    {
-    FreeStringArray(hp->constraints);
-    }
- 
- free(hp);
- hp = NULL;
+hp->lineNo = -1;
+
+if (hp->constraints)
+   {
+   FreeStringArray(hp->constraints);
+   }
+
+free(hp);
+hp = NULL;
 }
 
 /*****************************************************************************/
@@ -833,27 +834,27 @@ struct HubBody *NewHubBody(char *bodyType,char *bodyName,char *bodyArgs)
 
 { struct HubBody *hb;
 
- if ((hb = malloc(sizeof(struct HubBody))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubBody");
-    }
+if ((hb = malloc(sizeof(struct HubBody))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubBody");
+   }
 
- hb->bodyName = strdup(bodyName);
- hb->bodyType = strdup(bodyType);
+hb->bodyName = strdup(bodyName);
+hb->bodyType = strdup(bodyType);
 
- if(EMPTY(bodyArgs))
-    {
-    hb->bodyArgs = NULL;
-    }
- else
-    {
-    hb->bodyArgs = strdup(bodyArgs);
-    }
+if (EMPTY(bodyArgs))
+   {
+   hb->bodyArgs = NULL;
+   }
+else
+   {
+   hb->bodyArgs = strdup(bodyArgs);
+   }
 
 
- hb->attr = NULL;
+hb->attr = NULL;
 
- return hb;
+return hb;
 }
 
 /*****************************************************************************/
@@ -861,17 +862,17 @@ struct HubBody *NewHubBody(char *bodyType,char *bodyName,char *bodyArgs)
 void DeleteHubBody(struct HubBody *hb)
 
 {
- free(hb->bodyName);
- free(hb->bodyType);
+free(hb->bodyName);
+free(hb->bodyType);
 
- if (hb->bodyArgs)
-    {
-    free(hb->bodyArgs);
-    }
+if (hb->bodyArgs)
+   {
+   free(hb->bodyArgs);
+   }
 
- DeleteHubBodyAttributes(hb->attr);
+DeleteHubBodyAttributes(hb->attr);
 
- free(hb);
+free(hb);
 }
 
 /*****************************************************************************/
@@ -913,21 +914,22 @@ struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char
 /*****************************************************************************/
 
 void DeleteHubBodyAttributes(struct HubBodyAttr *ha)
+
 {
- if (!ha)
-    {
-    return;
-    }
+if (!ha)
+   {
+   return;
+   }
 
- if (ha->next)
-    {
-    DeleteHubBodyAttributes(ha->next);
-    }
+if (ha->next)
+   {
+   DeleteHubBodyAttributes(ha->next);
+   }
 
- free(ha->lval);
- free(ha->rval);
- free(ha->classContext);
- free(ha);
+free(ha->lval);
+free(ha->rval);
+free(ha->classContext);
+free(ha);
 }
 
 /*commenting*/
@@ -937,25 +939,25 @@ struct HubNote *NewHubNote(char *user,char *msg,time_t t)
 
 { struct HubNote *hc;
 
- if ((hc = malloc(sizeof(struct HubNote))) == NULL)
-    {
-    FatalError("Memory exhausted HubNote");
-    }
+if ((hc = malloc(sizeof(struct HubNote))) == NULL)
+   {
+   FatalError("Memory exhausted HubNote");
+   }
 
- hc->user = strdup(user);
- hc->msg = strdup(msg);
- hc->t = t;
- hc->next=NULL;
- return hc;
+hc->user = strdup(user);
+hc->msg = strdup(msg);
+hc->t = t;
+hc->next=NULL;
+return hc;
 }
 
 /*****************************************************************************/
 
 void DeleteHubNote(struct HubNote *hc)
 {
- free(hc->user);
- free(hc->msg);
- free(hc);
+free(hc->user);
+free(hc->msg);
+free(hc);
 }
 
 /*****************************************************************************/
@@ -964,15 +966,15 @@ struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char 
 
 { struct HubNoteInfo *hci;
 
- if ((hci = malloc(sizeof(struct HubNoteInfo))) == NULL)
-    {
-    FatalError("Memory exhausted HubNoteInfo");
-    }
+if ((hci = malloc(sizeof(struct HubNoteInfo))) == NULL)
+   {
+   FatalError("Memory exhausted HubNoteInfo");
+   }
 
- hci->hh = hh;
- hci->nid = strdup(nid);
- hci->note = NewHubNote(user,msg,t);
- return hci;
+hci->hh = hh;
+hci->nid = strdup(nid);
+hci->note = NewHubNote(user,msg,t);
+return hci;
 }
 
 /*****************************************************************************/
@@ -981,37 +983,37 @@ void DeleteHubNoteInfo(struct HubNoteInfo *hci)
 
 { struct HubNote *hc;
 
- free(hci->nid);
- for (hc = hci->note; hc != NULL; hc=hc->next)
-    {
-    DeleteHubNote(hc);
-    }
- free(hci);
+free(hci->nid);
+
+for (hc = hci->note; hc != NULL; hc=hc->next)
+   {
+   DeleteHubNote(hc);
+   }
+
+free(hci);
 }
 
 /*****************************************************************************/
 /*                        REPORT SORTING FUNCTIONS                           */
 /*****************************************************************************/
 
-
 int SortPromiseLog(void *p1, void *p2)
 /**
  * For SortRlist() - sorts promise logs descending on time.
  **/
-{
- struct HubPromiseLog *pl1, *pl2;
+{ struct HubPromiseLog *pl1, *pl2;
 
- pl1 = (struct HubPromiseLog *)p1;
- pl2 = (struct HubPromiseLog *)p2;
+pl1 = (struct HubPromiseLog *)p1;
+pl2 = (struct HubPromiseLog *)p2;
 
- if(pl1->t > pl2->t)
-    {
-    return true;
-    }
- else
-    {
-    return false;
-    }
+if (pl1->t > pl2->t)
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
 }
 
 /*****************************************************************************/
@@ -1020,24 +1022,23 @@ int SortBusinessValue(void *p1, void *p2)
 /**
  * For SortRlist() - sorts business value descending on time.
  **/
-{
- struct HubValue *hv1, *hv2;
- time_t t1, t2;
+{ struct HubValue *hv1, *hv2;
+  time_t t1, t2;
 
- hv1 = (struct HubValue *)p1;
- hv2 = (struct HubValue *)p2;
+hv1 = (struct HubValue *)p1;
+hv2 = (struct HubValue *)p2;
 
- DateStrToTime(hv1->day,&t1);
- DateStrToTime(hv2->day,&t2);
+DateStrToTime(hv1->day,&t1);
+DateStrToTime(hv2->day,&t2);
 
- if(t1 > t2)
-    {
-    return true;
-    }
- else
-    {
-    return false;
-    }
+if (t1 > t2)
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
 }
 
 /*****************************************************************************/

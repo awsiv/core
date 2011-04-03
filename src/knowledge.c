@@ -15,7 +15,13 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+/*****************************************************************************/
+
 struct Item *NOVA_BUNDLEDEPENDENCE = NULL;
+
+extern struct Rlist *GOALS;
+
+/*****************************************************************************/
 
 static char *CF_VALUETYPES[18][3] =
  {
@@ -38,6 +44,9 @@ static char *CF_VALUETYPES[18][3] =
  NULL,NULL,NULL
  };
     
+
+/*****************************************************************************/
+/* Level                                                                     */
 /*****************************************************************************/
 
 void Nova_SyntaxCompletion(char *s)
@@ -282,18 +291,21 @@ switch (pp->petype)
        fprintf(fp,"  \"%s\"\n",pp->promisee);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
 
-       if (strncmp(pp->promisee,"goal",strlen("goal")) == 0)
+       for (rp = GOALS; rp != NULL; rp = rp->next)
           {
-          fprintf(fp,"promises::\n\n");
-          fprintf(fp,"  \"%s\"\n",promise_id);
-          fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);
-
-          if (bundlename)
+          if (FullTextMatch(rp->item,pp->promisee))
              {
-             fprintf(fp,"bundles::\n\n");
-             fprintf(fp,"  \"%s\"\n",bundlename);
-             fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);             
-             fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,pp->promisee,NOVA_GOAL_INV);
+             fprintf(fp,"promises::\n\n");
+             fprintf(fp,"  \"%s\"\n",promise_id);
+             fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);
+             
+             if (bundlename)
+                {
+                fprintf(fp,"bundles::\n\n");
+                fprintf(fp,"  \"%s\"\n",bundlename);
+                fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);             
+                fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,pp->promisee,NOVA_GOAL_INV);
+                }
              }
           }
        break;
@@ -308,20 +320,23 @@ switch (pp->petype)
           fprintf(fp,"  \"%s\"\n",rp->item);
           fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
 
-          if (strncmp(rp->item,"goal",strlen("goal")) == 0)
+          for (rp = GOALS; rp != NULL; rp = rp->next)
              {
-             fprintf(fp,"promises::\n\n");
-             fprintf(fp,"  \"%s\"\n",promise_id);
-             fprintf(fp,"      association => impacts(\"%s\");\n",rp->item);
-
-             if (bundlename)
+             if (FullTextMatch(rp->item,pp->promisee))
                 {
-                fprintf(fp,"bundles::\n\n");
-                fprintf(fp,"  \"%s\"\n",bundlename);
+                fprintf(fp,"promises::\n\n");
+                fprintf(fp,"  \"%s\"\n",promise_id);
                 fprintf(fp,"      association => impacts(\"%s\");\n",rp->item);
-                fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,rp->item,NOVA_GOAL_INV);
-                }             
-             }          
+                
+                if (bundlename)
+                   {
+                   fprintf(fp,"bundles::\n\n");
+                   fprintf(fp,"  \"%s\"\n",bundlename);
+                   fprintf(fp,"      association => impacts(\"%s\");\n",rp->item);
+                   fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,rp->item,NOVA_GOAL_INV);
+                   }
+                }
+             }
           }
        break;
    default:

@@ -317,8 +317,7 @@ void Nova_CacheTotalCompliance(bool allSlots)
 now = time(NULL);
 
 
-
-if(allSlots)
+if (allSlots)
    {
    start = GetShiftSlotStart(now - (3600 * 24 * 7));  // previous week
    }
@@ -328,7 +327,6 @@ else
    }
 
 
-
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_error,"", "!! Could not open connection to report database to cache total compliance");
@@ -336,32 +334,32 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
 
- if (!Nova2PHP_environments_list(&env))
+if (!Nova2PHP_environments_list(&env))
    {
    CfOut(cf_error, "", "!! Unable to query list of environments");
    return;
    }
 
- for(; start + (3600 * 6) < now; start += CF_SHIFT_INTERVAL) // in case of all slots
-    {
-    start = GetShiftSlotStart(start);  // in case of daylight saving time
-    slot = GetShiftSlot(start);
+for(; start + (3600 * 6) < now; start += CF_SHIFT_INTERVAL) // in case of all slots
+   {
+   start = GetShiftSlotStart(start);  // in case of daylight saving time
+   slot = GetShiftSlot(start);
+   
+   time_t tmp = start;
+   
+   // first any environment, then environment-specific
+   
+   Nova_CacheTotalComplianceEnv(&dbconn,"any",NULL,slot,start,now);
+   
+   for (ep = env; ep != NULL; ep = ep->next)
+      {
+      snprintf(envName, sizeof(envName), "%s", ep->name);
+      snprintf(envClass, sizeof(envClass), "environment_%s", ep->name);
+      
+      Nova_CacheTotalComplianceEnv(&dbconn,envName,envClass,slot,start,now);
+      }
+   }
 
-    time_t tmp = start;
-
-    // first any environment, then environment-specific
-
-    Nova_CacheTotalComplianceEnv(&dbconn,"any",NULL,slot,start,now);
-  
-    for (ep = env; ep != NULL; ep = ep->next)
-       {
-       snprintf(envName, sizeof(envName), "%s", ep->name);
-       snprintf(envClass, sizeof(envClass), "environment_%s", ep->name);
-       
-       Nova_CacheTotalComplianceEnv(&dbconn,envName,envClass,slot,start,now);
-       }
-    }
- 
 
 FreeEnvironmentsList(env);
 CFDB_Close(&dbconn);
@@ -382,33 +380,33 @@ void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *e
   double kept,repaired,notkept;
   int count;
 
-  kept = 0;
-  repaired = 0;
-  notkept = 0;
-  count = 0;
-  
-  hq = CFDB_QueryTotalCompliance(conn,NULL,NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ,false,envClass);
+kept = 0;
+repaired = 0;
+notkept = 0;
+count = 0;
 
-  for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-      ht = (struct HubTotalCompliance *)rp->item;
-	  
-      kept += ht->kept;
-      repaired += ht->repaired;
-      notkept += ht->notkept;
-      count++;
-    }
-      
-  DeleteHubQuery(hq,DeleteHubTotalCompliance);
-  
-  if(count > 0)
-    {
-      kept = kept/count;
-      repaired = repaired/count;
-      notkept = notkept/count;
-    }
+hq = CFDB_QueryTotalCompliance(conn,NULL,NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ,false,envClass);
 
-  CFDB_SaveCachedTotalCompliance(conn, envName, slot, kept, repaired, notkept, count, now); 
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   ht = (struct HubTotalCompliance *)rp->item;
+   
+   kept += ht->kept;
+   repaired += ht->repaired;
+   notkept += ht->notkept;
+   count++;
+   }
+
+DeleteHubQuery(hq,DeleteHubTotalCompliance);
+
+if(count > 0)
+   {
+   kept = kept/count;
+   repaired = repaired/count;
+   notkept = notkept/count;
+   }
+
+CFDB_SaveCachedTotalCompliance(conn, envName, slot, kept, repaired, notkept, count, now); 
 
 #endif  /* HAVE_LIBMONGOC */
 }

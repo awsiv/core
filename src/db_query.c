@@ -2600,183 +2600,181 @@ struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum 
 struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
- bson b,query,field;
- mongo_cursor *cursor;
- bson_iterator it1,it2,it3;
- struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
- double rkept,rnotkept,rrepaired;
- char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
- char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
- int match_day,match_month,match_year,found = false;
- char classRegexAnch[CF_MAXVARSIZE];
- int emptyQuery = true;
- time_t rt;
+  bson b,query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct HubHost *hh;
+  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+  double rkept,rnotkept,rrepaired;
+  char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
+  int match_day,match_month,match_year,found = false;
+  char classRegexAnch[CF_MAXVARSIZE];
+  int emptyQuery = true;
+  time_t rt;
   
 /* BEGIN query document */
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
-    {
-    bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
-    }
+if (!EMPTY(keyHash))
+   {
+   bson_append_string(&bb,cfr_keyhash,keyHash);
+   emptyQuery = false;
+   }
 
- if(!EMPTY(classRegex))
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
-    }
+if (!EMPTY(classRegex))
+   {
+   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+   emptyQuery = false;
+   }
 
- if(emptyQuery)
-    {
-    bson_empty(&query);
-    }
- else
-    {
-    bson_from_buffer(&query,&bb);
-    }
+if (emptyQuery)
+   {
+   bson_empty(&query);
+   }
+else
+   {
+   bson_from_buffer(&query,&bb);
+   }
 
  // Turn start_time into Day Month Year
   
 /* BEGIN RESULT DOCUMENT */
 
- bson_buffer_init(&bb);
- bson_append_int(&bb,cfr_keyhash,1);
- bson_append_int(&bb,cfr_ip_array,1);
- bson_append_int(&bb,cfr_host_array,1);
- bson_append_int(&bb,cfr_valuereport,1);
- bson_from_buffer(&field, &bb);
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,cfr_valuereport,1);
+bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
- hostnames[0] = '\0';
- addresses[0] = '\0';
+hostnames[0] = '\0';
+addresses[0] = '\0';
 
- cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
 
- bson_destroy(&field);
+bson_destroy(&field);
 
- if(!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
+if (!emptyQuery)
+   {
+   bson_destroy(&query);
+   }
 
-
- while (mongo_cursor_next(cursor))  // loops over documents
-    {
-    bson_iterator_init(&it1,cursor->current.data);
-
-    keyhash[0] = '\0';
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
-    found = false;
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
    
-    while (bson_iterator_next(&it1))
-       {
-       /* Extract the common HubHost data */
-
-       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   found = false;
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
       
-       /* Query specific search/marshalling */
-
-       if (strcmp(bson_iterator_key(&it1),cfr_valuereport) == 0)
-          {
-          bson_iterator_init(&it2,bson_iterator_value(&it1));
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      
+      /* Query specific search/marshalling */
+      
+      if (strcmp(bson_iterator_key(&it1),cfr_valuereport) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
 	 
-          while (bson_iterator_next(&it2))
-             {
-	     snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
-	     snprintf(rhandle,CF_MAXVARSIZE,"%s",bson_iterator_key(&it2));
-	     bson_iterator_init(&it3, bson_iterator_value(&it2));
+         while (bson_iterator_next(&it2))
+            {
+            snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
+            snprintf(rhandle,CF_MAXVARSIZE,"%s",bson_iterator_key(&it2));
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
 	    
-             rday[0] = '\0';
-             rkept = 0;
-             rnotkept = 0;
-             rrepaired = 0;
+            rday[0] = '\0';
+            rkept = 0;
+            rnotkept = 0;
+            rrepaired = 0;
             
-             while (bson_iterator_next(&it3))
-                {
-                if (strcmp(bson_iterator_key(&it3),cfr_day) == 0)
-                   {
-                   strncpy(rday,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_kept) == 0)
-                   {
-                   rkept = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_notkept) == 0)
-                   {
-                   rnotkept = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_repaired) == 0)
-                   {
-                   rrepaired = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
-                   {
-                   snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
-                   }
-                else
-                   {
-                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in value report",bson_iterator_key(&it3));
-                   }
-                }
-
-             match_day = match_month = match_year = true;
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_day) == 0)
+                  {
+                  strncpy(rday,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_kept) == 0)
+                  {
+                  rkept = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_notkept) == 0)
+                  {
+                  rnotkept = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_repaired) == 0)
+                  {
+                  rrepaired = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
+                  {
+                  snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
+                  }
+               else
+                  {
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in value report",bson_iterator_key(&it3));
+                  }
+               }
             
-             if (lday && (strcmp(lday,rday) != 0))
-                {
-                match_day = false;
-                }
+            match_day = match_month = match_year = true;
             
-             if (lmonth && (strcmp(lmonth,rmonth) != 0))
-                {
-                match_month = false;
-                }
-
-             if (lyear && (strcmp(lyear,ryear) != 0))
-                {
-                match_year = false;
-                }
+            if (lday && (strcmp(lday,rday) != 0))
+               {
+               match_day = false;
+               }
             
-             if (match_day && match_month && match_year)
-                {
-                found = true;
-                rp = PrependRlistAlien(&record_list,NewHubValue(CF_THIS_HH,rday,rkept,rrepaired,rnotkept,noteid,rhandle));
-                }
-             }
-          }   
-       }
+            if (lmonth && (strcmp(lmonth,rmonth) != 0))
+               {
+               match_month = false;
+               }
+            
+            if (lyear && (strcmp(lyear,ryear) != 0))
+               {
+               match_year = false;
+               }
+            
+            if (match_day && match_month && match_year)
+               {
+               found = true;
+               rp = PrependRlistAlien(&record_list,NewHubValue(CF_THIS_HH,rday,rkept,rrepaired,rnotkept,noteid,rhandle));
+               }
+            }
+         }   
+      }
+   
+   
+   if (found)
+      {
+      hh = NewHubHost(keyhash,addresses,hostnames);
+      PrependRlistAlien(&host_list,hh);
+      
+      // Now cache the host reference in all of the records to flatten the 2d list
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubValue *hs = (struct HubValue *)rp->item;
+         
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
+      }
+   }
 
+if (sort)
+   {
+   record_list = SortRlist(record_list,SortBusinessValue);
+   }
 
-    if (found)
-       {
-       hh = NewHubHost(keyhash,addresses,hostnames);
-       PrependRlistAlien(&host_list,hh);
-
-       // Now cache the host reference in all of the records to flatten the 2d list
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubValue *hs = (struct HubValue *)rp->item;
-
-          if (hs->hh == CF_THIS_HH)
-             {
-             hs->hh = hh;
-             }
-          }
-       }
-    }
-
- if(sort)
-    {
-    record_list = SortRlist(record_list,SortBusinessValue);
-    }
-
-
- mongo_cursor_destroy(cursor);
- return NewHubQuery(host_list,record_list);
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/
@@ -2784,182 +2782,182 @@ struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char
 struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, char *classRegex, int sort)
 
 { bson_buffer bb,*sub1,*sub2,*sub3;
- bson b,query,field;
- mongo_cursor *cursor;
- bson_iterator it1,it2,it3;
- struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
- double rago,ravg,rdev;
- char rname[CF_MAXVARSIZE];
- char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],noteid[CF_BUFSIZE];
- int match_name,found = false;
- int emptyQuery = true;
- char classRegexAnch[CF_MAXVARSIZE];
- time_t rt;
+  bson b,query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct HubHost *hh;
+  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+  double rago,ravg,rdev;
+  char rname[CF_MAXVARSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],noteid[CF_BUFSIZE];
+  int match_name,found = false;
+  int emptyQuery = true;
+  char classRegexAnch[CF_MAXVARSIZE];
+  time_t rt;
   
 /* BEGIN query document */
 
- bson_buffer_init(&bb);
+bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
-    {
-    bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
-    }
+if (!EMPTY(keyHash))
+   {
+   bson_append_string(&bb,cfr_keyhash,keyHash);
+   emptyQuery = false;
+   }
 
- if(!EMPTY(classRegex))
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
-    }
+if (!EMPTY(classRegex))
+   {
+   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+   emptyQuery = false;
+   }
 
- if(emptyQuery)
-    {
-    bson_empty(&query);
-    }
- else
-    {
-    bson_from_buffer(&query,&bb);
-    }
+if (emptyQuery)
+   {
+   bson_empty(&query);
+   }
+else
+   {
+   bson_from_buffer(&query,&bb);
+   }
 
 /* BEGIN RESULT DOCUMENT */
 
- bson_buffer_init(&bb);
- bson_append_int(&bb,cfr_keyhash,1);
- bson_append_int(&bb,cfr_ip_array,1);
- bson_append_int(&bb,cfr_host_array,1);
- bson_append_int(&bb,cfr_bundles,1);
- bson_from_buffer(&field, &bb);
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,cfr_bundles,1);
+bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
- hostnames[0] = '\0';
- addresses[0] = '\0';
+hostnames[0] = '\0';
+addresses[0] = '\0';
 
- cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
 
- bson_destroy(&field);
+bson_destroy(&field);
 
- if(!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
+if (!emptyQuery)
+   {
+   bson_destroy(&query);
+   }
 
 
- while (mongo_cursor_next(cursor))  // loops over documents
-    {
-    bson_iterator_init(&it1,cursor->current.data);
-
-    keyhash[0] = '\0';
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
-    rname[0] = '\0';
-    found = false;
-    rt = 0;
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
    
-    while (bson_iterator_next(&it1))
-       {
-       /* Extract the common HubHost data */
-
-       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   rname[0] = '\0';
+   found = false;
+   rt = 0;
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
       
-       /* Query specific search/marshalling */
-
-       if (strcmp(bson_iterator_key(&it1),cfr_bundles) == 0)
-          {
-          bson_iterator_init(&it2,bson_iterator_value(&it1));
-
-          while (bson_iterator_next(&it2))
-             {
-             bson_iterator_init(&it3, bson_iterator_value(&it2));
-             strncpy(rname,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
-             snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
-
-             ravg = 0;
-             rdev = 0;
-             rago = 0;
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      
+      /* Query specific search/marshalling */
+      
+      if (strcmp(bson_iterator_key(&it1),cfr_bundles) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+            strncpy(rname,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+            snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
             
-             while (bson_iterator_next(&it3))
-                {
-                if (strcmp(bson_iterator_key(&it3),cfr_hrsavg) == 0)
-                   {
-                   ravg = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_hrsdev) == 0)
-                   {
-                   rdev = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_hrsago) == 0)
-                   {
-                   rago = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
-                   {
-                   rt = bson_iterator_int(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
-                   {
-		   snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3)); 
-                   }
-                else
-                   {
-                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in bundle seen",bson_iterator_key(&it3));
-                   }
-                }
-
-             match_name = true;
+            ravg = 0;
+            rdev = 0;
+            rago = 0;
             
-             if (regex)
-                {
-                if (!EMPTY(lname) && !FullTextMatch(lname,rname))
-                   {
-                   match_name = false;
-                   }
-                }
-             else
-                {
-                if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
-                   {
-                   match_name = false;
-                   }
-                }
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_hrsavg) == 0)
+                  {
+                  ravg = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_hrsdev) == 0)
+                  {
+                  rdev = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_hrsago) == 0)
+                  {
+                  rago = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
+                  {
+                  rt = bson_iterator_int(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
+                  {
+                  snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3)); 
+                  }
+               else
+                  {
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in bundle seen",bson_iterator_key(&it3));
+                  }
+               }
             
-             if (match_name)
-                {
-                found = true;
-                rp = PrependRlistAlien(&record_list,NewHubBundleSeen(CF_THIS_HH,rname,rago,ravg,rdev,rt,noteid));
-                }            
-             }
-          }   
-       }
+            match_name = true;
+            
+            if (regex)
+               {
+               if (!EMPTY(lname) && !FullTextMatch(lname,rname))
+                  {
+                  match_name = false;
+                  }
+               }
+            else
+               {
+               if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
+                  {
+                  match_name = false;
+                  }
+               }
+            
+            if (match_name)
+               {
+               found = true;
+               rp = PrependRlistAlien(&record_list,NewHubBundleSeen(CF_THIS_HH,rname,rago,ravg,rdev,rt,noteid));
+               }            
+            }
+         }   
+      }
+   
+   if (found)
+      {
+      hh = NewHubHost(keyhash,addresses,hostnames);
+      PrependRlistAlien(&host_list,hh);
+      
+      // Now cache the host reference in all of the records to flatten the 2d list
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubBundleSeen *hs = (struct HubBundleSeen *)rp->item;
+         
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
+      }
+   }
 
-    if (found)
-       {
-       hh = NewHubHost(keyhash,addresses,hostnames);
-       PrependRlistAlien(&host_list,hh);
+if (sort)
+   {
+   record_list = SortRlist(record_list,SortBundleSeen);
+   }
 
-       // Now cache the host reference in all of the records to flatten the 2d list
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubBundleSeen *hs = (struct HubBundleSeen *)rp->item;
 
-          if (hs->hh == CF_THIS_HH)
-             {
-             hs->hh = hh;
-             }
-          }
-       }
-    }
-
- if (sort)
-    {
-    record_list = SortRlist(record_list,SortBundleSeen);
-    }
- 
-
- mongo_cursor_destroy(cursor);
- return NewHubQuery(host_list,record_list);
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/
