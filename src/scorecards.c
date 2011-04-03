@@ -73,93 +73,91 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
 // Constellation DB)
 
 { char key[CF_MAXVARSIZE],value[CF_MAXVARSIZE],work[CF_BUFSIZE];
- mongo_connection dbconn;
- struct HubCacheTotalCompliance *tc;
- struct HubQuery *hq;
- struct Rlist *rp;
- double kept, repaired, notkept, nodata;
- time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
- int i,slot,count;
- char buf[CF_MAXVARSIZE];
+  mongo_connection dbconn;
+  struct HubCacheTotalCompliance *tc;
+  struct HubQuery *hq;
+  struct Rlist *rp;
+  double kept, repaired, notkept, nodata;
+  time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
+  int i,slot,count;
+  char buf[CF_MAXVARSIZE];
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to cache database");
-    return;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to cache database");
+   return;
+   }
 
- if(constellation)
-    {
+if (constellation)
+   {
 #ifdef HAVE_CONSTELLATION
-     
-    hq = CFDB_QuerySumComp(&dbconn, hubKeyHash, policy, now - CF_WEEK);
-
+   
+   hq = CFDB_QuerySumComp(&dbconn, hubKeyHash, policy, now - CF_WEEK);
+   
 #else
-    CfOut(cf_error, "", "!! Trying to get constellation data from data ComplianceSummaryGraph() without libcfconstellation");
-    CFDB_Close(&dbconn);
-    return;
+   CfOut(cf_error, "", "!! Trying to get constellation data from data ComplianceSummaryGraph() without libcfconstellation");
+   CFDB_Close(&dbconn);
+   return;
 #endif
-     
-    }
- else  // Nova
-    {
-    hq = CFDB_QueryCachedTotalCompliance(&dbconn, policy, now - CF_WEEK);
-    }
+   
+   }
+else  // Nova
+   {
+   hq = CFDB_QueryCachedTotalCompliance(&dbconn, policy, now - CF_WEEK);
+   }
 
- CFDB_Close(&dbconn);
+CFDB_Close(&dbconn);
 
 
- snprintf(buffer,bufsize,"[");
+snprintf(buffer,bufsize,"[");
 
- start = GetShiftSlotStart(now - one_week);
+start = GetShiftSlotStart(now - one_week);
 
- if(start == -1)
-    {
-    CfOut(cf_error, "", "!! Could not get start of interval");
-    DeleteHubQuery(hq,DeleteHubCacheTotalCompliance);
-    return;
-    }
+if (start == -1)
+   {
+   CfOut(cf_error, "", "!! Could not get start of interval");
+   DeleteHubQuery(hq,DeleteHubCacheTotalCompliance);
+   return;
+   }
   
- for (i = 0; i < 28; start += CF_SHIFT_INTERVAL,i++)
-    {
-    
-    start = GetShiftSlotStart(start);  // in case of daylight saving time
-    slot = GetShiftSlot(start);
-     
-    tc = GetHubCacheTotalComplianceSlot(hq->records,slot);
+for (i = 0; i < 28; start += CF_SHIFT_INTERVAL,i++)
+   {
+   start = GetShiftSlotStart(start);  // in case of daylight saving time
+   slot = GetShiftSlot(start);
+   
+   tc = GetHubCacheTotalComplianceSlot(hq->records,slot);
+   
+   if (tc)
+      {
+      kept = tc->kept;
+      repaired = tc->repaired;
+      notkept = tc->notkept;
+      nodata = 0;
+      count = tc->count;
+      }
+   else
+      {
+      kept = 0;
+      repaired = 0;
+      notkept = 0;
+      nodata = 100.0;
+      count = 0;
+      }
+   
+   CtimeHourInterval(start, buf, sizeof(buf));
+   
+   snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"start\": %d, \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf, \"nodata\": %lf, \"count\": %d },",
+            buf, start, i, kept, repaired, notkept, nodata, count);
+   
+   if (!Join(buffer,work,bufsize))
+      {
+      break;
+      }
+   }
 
-     
-    if(tc)
-       {
-       kept = tc->kept;
-       repaired = tc->repaired;
-       notkept = tc->notkept;
-       nodata = 0;
-       count = tc->count;
-       }
-    else
-       {
-       kept = 0;
-       repaired = 0;
-       notkept = 0;
-       nodata = 100.0;
-       count = 0;
-       }
+buffer[strlen(buffer)-1] = ']';
 
-    CtimeHourInterval(start, buf, sizeof(buf));
-    
-    snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"start\": %d, \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf, \"nodata\": %lf, \"count\": %d },",
-             buf, start, i, kept, repaired, notkept, nodata, count);
-
-    if(!Join(buffer,work,bufsize))
-       {
-       break;
-       }
-    }
-
- buffer[strlen(buffer)-1] = ']';
-
- DeleteHubQuery(hq,DeleteHubCacheTotalCompliance);
+DeleteHubQuery(hq,DeleteHubCacheTotalCompliance);
 }
 
 /*****************************************************************************/

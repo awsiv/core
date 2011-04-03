@@ -19,8 +19,6 @@
 
 struct Item *NOVA_BUNDLEDEPENDENCE = NULL;
 
-extern struct Rlist *GOALS;
-
 /*****************************************************************************/
 
 static char *CF_VALUETYPES[18][3] =
