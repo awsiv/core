@@ -30,20 +30,7 @@ static char SLOTS[CF_OBSERVABLES-ob_spare][2][CF_MAXVARSIZE];
 
 void NovaInitMeasurements()
 
-{ int i;
-
-for (i = 0; i < CF_DUNBAR_WORK; i++)
-   {
-   MEASUREMENTS[i] = NULL;
-   NOVA_DATA[i].path = NULL;
-   NOVA_DATA[i].output = NULL;
-   }
-
-for (i = 0; i < CF_OBSERVABLES; i++)
-   {
-   UNITS[i] = NULL;
-   }
-
+{
 UNITS[ob_users] = "average users per 2.5 mins";
 UNITS[ob_rootprocs] = "processes";
 UNITS[ob_otherprocs] = "processes";
@@ -98,12 +85,6 @@ UNITS[ob_cpu0] = "percent";
 UNITS[ob_cpu1] = "percent";
 UNITS[ob_cpu2] = "percent";
 UNITS[ob_cpu3] = "percent";
-UNITS[ob_spare] = NULL;
-
-for (i = ob_spare; i < CF_OBSERVABLES; i++)
-   {
-   UNITS[i] = NULL;
-   }
 }
 
 /*****************************************************************************/
