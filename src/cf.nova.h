@@ -700,8 +700,6 @@ void Nova_DumpSlowlyVaryingObservations(void);
 void Nova_LookupClassName(int n,char *name, char *desc);
 void Nova_SaveFilePosition(char *filename,long fileptr);
 long Nova_RestoreFilePosition(char *filename);
-int Nova_GetPersistentScalar(char *lval,char *rval,int size,time_t timeout);
-void Nova_SetPersistentScalar(char *lval,char *rval);
 void Nova_LookupAggregateClassName(int n,char *name,char *desc);
 
 /* outputs.c */
@@ -754,6 +752,11 @@ void Nova_EnterpriseDiscovery(void);
 void Nova_AnalyzePromiseConflicts(void);
 void Nova_NewPromiser(struct Promise *pp);
 int Nova_ClassesIntersect(struct Rlist *contexts1,struct Rlist *contexts2);
+
+/* pscalar.c */
+
+int Nova_GetPersistentScalar(char *lval,char *rval,int size,time_t timeout);
+void Nova_SetPersistentScalar(char *lval,char *rval);
 
 /* registry.c */
 

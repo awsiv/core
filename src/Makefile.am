@@ -41,6 +41,7 @@ libcfnova_la_SOURCES =						\
 	promise_db.c						\
 	packages.c						\
 	processes.c						\
+	pscalar.c						\
 	services.c						\
 	services_win.c						\
 	environments.c						\
