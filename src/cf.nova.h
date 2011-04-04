@@ -235,15 +235,6 @@ int Nova_ParseModeNt(char **modePtr, ACCESS_MASK *perms);
 ACCESS_MODE Nova_ParsePermTypeNt(char *ace);
 #endif  /* MINGW */
 
-/* aggregation.c */
-
-void Nova_Aggregate(char *stylesheet,char *banner,char *footer,char *webdriver);
-void Nova_WriteSignalData(FILE *fout,char *filename);
-void Nova_MagProbe(void);
-void Nova_PackNerveBundle(void);
-void Nova_UnPackNerveBundle(void);
-void Nova_LookupAggregateClassName(int n,char *name, char *desc);
-
 /* cfnova.c */
 
 void Nova_Initialize(void);
@@ -711,6 +702,7 @@ void Nova_SaveFilePosition(char *filename,long fileptr);
 long Nova_RestoreFilePosition(char *filename);
 int Nova_GetPersistentScalar(char *lval,char *rval,int size,time_t timeout);
 void Nova_SetPersistentScalar(char *lval,char *rval);
+void Nova_LookupAggregateClassName(int n,char *name,char *desc);
 
 /* outputs.c */
 

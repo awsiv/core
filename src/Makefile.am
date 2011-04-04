@@ -32,7 +32,6 @@ libcfnova_la_SOURCES =						\
 	license.c						\
 	registry.c						\
 	monitoring.c						\
-	aggregation.c						\
 	server.c						\
 	datapackaging.c						\
 	dataunpack.c						\
