@@ -108,80 +108,54 @@ for (i = ob_spare; i < CF_OBSERVABLES; i++)
 
 /*****************************************************************************/
 
-void Nova_LookupClassName(int n,char *name,char *desc)
-
-{ FILE *fin;
-  char filename[CF_BUFSIZE];
-  int i;
+static void Nova_LoadSlots(void)
+{
+FILE *f;
+char filename[CF_BUFSIZE];
+int i;
 
 if (SLOTS[0][0][0] != 0)
    {
-   Nova_GetClassName(n,name,desc);
    return;
    }
 
 snprintf(filename,CF_BUFSIZE-1,"%s%cstate%cts_key",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
 
-if ((fin = fopen(filename,"r")) == NULL)
+if ((f = fopen(filename, "r")) == NULL)
    {
-   Nova_GetClassName(n,name,desc);
    return;
    }
 
-for (i = 0; i < CF_OBSERVABLES; i++)
+for (i = 0; i < CF_OBSERVABLES; ++i)
    {
    if (i < ob_spare)
       {
-      fgets(filename,CF_BUFSIZE-1,fin);
+      fscanf(f, "%*[^\n]\n");
       }
    else
       {
-      fscanf(fin,"%*d,%[^,],%[^\n]",SLOTS[i-ob_spare][0],SLOTS[i-ob_spare][1]);
+      fscanf(f, "%*d,%[^,],%[^\n]", SLOTS[i - ob_spare][0], SLOTS[i - ob_spare][1]);
       }
    }
+fclose(f);
+}
 
-fclose(fin);
-Nova_GetClassName(n,name,desc);
-return;
+/*****************************************************************************/
+
+void Nova_LookupClassName(int n,char *name,char *desc)
+
+{
+Nova_LoadSlots();
+Nova_GetClassName(n, name, desc);
 }
 
 /*****************************************************************************/
 
 void Nova_LookupAggregateClassName(int n,char *name,char *desc)
 
-{ FILE *fin;
-  char filename[CF_BUFSIZE];
-  int i;
-
-if (SLOTS[0][0][0] != 0)
-   {
-   Nova_GetClassName(n,name,desc);
-   return;
-   }
-
-snprintf(filename,CF_BUFSIZE-1,"ts_key");
-
-if ((fin = fopen(filename,"r")) == NULL)
-   {
-   Nova_GetClassName(n,name,desc);
-   return;
-   }
-
-for (i = 0; i < CF_OBSERVABLES; i++)
-   {
-   if (i < ob_spare)
-      {
-      fgets(filename,CF_BUFSIZE-1,fin);
-      }
-   else
-      {
-      fscanf(fin,"%*d,%[^,],%[^\n]",SLOTS[i-ob_spare][0],SLOTS[i-ob_spare][1]);
-      }
-   }
-
-fclose(fin);
+{
+Nova_LoadSlots();
 Nova_GetClassName(n,name,desc);
-return;
 }
 
 /*****************************************************************************/
