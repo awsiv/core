@@ -31,24 +31,27 @@ class Widget extends CI_Controller {
             $data="";
             if($hostname)
             {
-               $data=json_decode(cfpr_show_hosts_name($hostname,NULL,10,1),true);
-               $response=$this->__format_to_html($data);
+               $data=json_decode(cfpr_show_hosts_name('^'.$hostname,NULL,10,1),true);
             }
             else
             {
                $data=json_decode(cfpr_show_hosts_name(NULL,NULL,10,1),true);
             }
-           echo $this->__format_to_html($data);
+           echo $this->__format_to_html($data,'hostname');
         }
 
-        function __format_to_html($result)
+        function __format_to_html($result,$display)
         {
           $html="";
 
           if (key_exists('data', $result) && count($result['data']) > 0) {
               $html.="<ul>";
                 foreach ($result['data'] as $row) {
-                    $html.="<li><a href=".site_url('welcome/host')."/".$row[2].">$row[1]</a></li>";
+                     if($display=='hostname')
+                    $html.="<li><a href=".site_url('welcome/host')."/".$row[2].">$row[0] ($row[1])</a></li>";
+
+                     if($display=='ipaddress')
+                          $html.="<li><a href=".site_url('welcome/host')."/".$row[2].">$row[1] ($row[0])</a></li>";
                 }
                $html.="</ul>";
             }
@@ -72,13 +75,12 @@ class Widget extends CI_Controller {
             if($ipaddress)
             {
                $data=json_decode(cfpr_show_hosts_ip($ipaddress,NULL,10,1),true);
-               $response=$this->__format_to_html($data);
             }
             else
             {
                $data=json_decode(cfpr_show_hosts_ip(NULL,NULL,10,1),true);
             }
-           echo $this->__format_to_html($data);
+           echo $this->__format_to_html($data,'ipaddress');
         }
 
       function cfclasses()

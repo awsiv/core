@@ -50,6 +50,7 @@ var hostfinder={
          self.cfui.categories.delegate('li','click',{ui:self},self.categoryselected)
          self.temp.delegate('form','submit',{ui:self},self.searchsubmit);
          self.element.bind('click',function(event){event.preventDefault();self.temp.dialog('open')});
+         self.temp.find('#aplhaPaging').delegate('li','click',{ui:self},self.sortalphabetically);
          self.cfui.searchform.delegate('input[type="text"]','focusin',self.searchboxevent);
          self.cfui.searchform.delegate('input[type="text"]','focusout',self.searchboxevent);
          self.cfui.searchform.find('input[type="text"]').data('default',self.cfui.searchform.find('input[type="text"]').val());
@@ -97,7 +98,7 @@ var hostfinder={
                   $.each(data, function(i, val) {
                         var li = $("<li>");
                         $("<a>").text(val[0]).attr({title:val[0], href:"#"}).appendTo(li);
-                        li.children().css("fontSize",  val[1] + "em");
+                        li.children().css("fontSize",  val[1]/10+1 + "em");
                         li.appendTo("#tagList");
                      });
         });
@@ -147,6 +148,13 @@ var hostfinder={
     {
       if(this.value==$(this).data('default') && event.type=='focusin')this.value='';
       if(this.value=='' && event.type=='focusout')this.value=$(this).data('default');
+    },
+
+    sortalphabetically:function(event)
+    {
+      var self=event.data.ui
+      //alert($(this).text());
+      self.cfui.resultpane.load('/widget/search_by_hostname',{'value':$(this).text()},function(){});
     }
 
 
