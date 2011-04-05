@@ -1,118 +1,202 @@
-var notes  = {
-    _create: function() {
-    // alert('notes created')
-    },
-    _init: function() {
-        var self = this;
-        this.element.click(function(event){
-            self.initialize();
-            event.preventDefault();
-            return false;
-        });
+(function($) {
+    var widgetNamespace = "uiExt";
+    var widgetName = "ajaxyDialog";
+    
+
+    $.widget(widgetNamespace + "." + widgetName, {
+        options: {
+            extractTitleSelector: "h1, h2, h3, h4, h5",
+            chainAjaxySelector: "a:not([target]), form:not([target])",
+            closeDialogSelector: "a.dialog-close",
+            originalElement: null // store a refrence to the originally called element
+        },
         
-    },
-    showRequest: function (formData, jqForm, options) {
-        // formData is an array; here we use $.param toa convert it to a string to display it
-        // but the form plugin does this for you automatically when it submits the data
-        var queryString = $.param(formData);
-
-        // jqForm is a jQuery object encapsulating the form element.  To access the
-        // DOM element for the form do this:
-        // var formElement = jqForm[0];
-
-        //alert('About to submit: \n\n' + queryString);
-
-        // here we could return false to prevent the form from being submitted;
-        // returning anything other than false will allow the form submit to continue
-        return true;
-    } ,
-    showResponse: function(responseText, statusText, xhr, $form)  {
-        // for normal html responses, the first argument to the success callback
-        // is the XMLHttpRequest object's responseText property
-
-        // if the ajaxSubmit method was passed an Options Object with the dataType
-        // property set to 'xml' then the first argument to the success callback
-        // is the XMLHttpRequest object's responseXML property
-
-        // if the ajaxSubmit method was passed an Options Object with the dataType
-        // property set to 'json' then the first argument to the success callback
-        // is the json data object returned by the server
-        
-
-         //alert('status: ' + statusText + '\n\nresponseText: \n' + responseText +
-         //  '\n\nThe output div should have already been updated with the responseText.');
-         // console.log(responseText);
-         
-         $('#notes-table tbody #no-data-row',self.temp).remove();
-         $('form textarea',self.temp).val('');
-
-        $('#notes-table tbody',self.temp).append(responseText.html);
-
-        // change url
-        var newUrl = '/notes/index/action/show/nid/'+responseText.nid;
-        self.element.attr('href',newUrl);
-
-    } ,
-
-     addError: function (jqXHR, textStatus, errorThrown)
-    {
+        _create: function() {
+            var self = this;
+            var element = self.element[0];
             
-        alert(jqXHR.responseText);
-        
-    },
-    _refresh: function() {
-        self.temp.load(self.url, {}, function(){
-            self.temp.dialog({
-                height: 'auto',
-                width: 'auto',
-                modal: true
-            });
-            $('#notes-form',self.temp).submit(function(e) {
-                e.preventDefault();
-                // inside event callbacks 'this' is the DOM element so we first
-                // wrap it in a jQuery object and then invoke ajaxSubmit
-                var aoptions = {
-                    target:        '',   // target element(s) to be updated with server response
-                    beforeSubmit:  self.showRequest,  // pre-submit callback
-                    success:       self.showResponse,  // post-submit callback
-                    error: self.addError,
-                    dataType:  'json'        // 'xml', 'script', or 'json' (expected server response type)
-              
-                // other available options:
-                //url:       url         // override for form's 'action' attribute
-                //type:      type        // 'get' or 'post', override for form's 'method' attribute
-                //clearForm: true        // clear all form fields after successful submit
-                //resetForm: true        // reset the form after successful submit
+            if (element.tagName.toUpperCase() == "A") {
+                $(element).bind("click."+self.widgetName,  function(event, ui) {
+                    if (self.options.originalElement == null) {
+                        self.options.originalElement = element;
+                    }
 
-                // $.ajax options can be used here too, for example:
-                //timeout:   3000
-                };
+                    self._handleClick();
+                    return false;
+                });
+            }
+            else if (element.tagName.toUpperCase() == "FORM") {
+                $(element).bind("submit."+self.widgetName,  function(event, ui) {
+                    if (self.options.originalElement == null) {
+                        self.options.originalElement = element;
+                    }
 
-                $(this).ajaxSubmit(aoptions);
+                    self._handleSubmit();
+                    return false;
+                });
+            }
+        },
 
-                // !!! Important !!!
-                // always return false to prevent standard browser submit and page navigation
-                return false;
-            });
+        open: function() {
+            var self = this;
+            var element = self.element[0];
 
+            if ( element.tagName.toUpperCase() == "A") {
+                self._handleClick();
+            } else if (element.tagName.toUpperCase() == "FORM") {
+                self._handleSubmit();
+            }
+        },
 
+        close: function() {
+            this.dialogContainer().dialog("close");
+        },
+
+        _handleClick: function() {
+            var self = this;
+            var url = this.element.attr("href");
+            var requestDialog = self.dialogContainer();
             
-        
-           
-        });
-        return false;
+            if (self.firstClicked != null)
+                self.firstClicked = self.element;
 
+            $("body").css("cursor", "progress");
 
-    },
+            $.ajax({
+                url: url,
+                dataType: "html",
+                success: function(resp, status, xhr) {
+                    if (xhr.status != 0) {
+                        self._loadToDialog(resp);
+                    } else {
+                        //stupid jquery calling this 'success', it's
+                        //network unavailable.
+                        self._displayFailure(url, xhr, status);
+                    }
+                },
+                error: function(xhr, msg) {
+                    self._displayFailure(url, xhr, msg);
+                }
+            });
+        },
 
-    initialize: function() {
-        self = this;
-        self.url = this.element.attr('href');
-      
-        // load the view and then save make a dialog out of it 
-        self.temp = $('<div style="display:hidden" title="Notes"></div>').appendTo('body');
-        self._refresh();
+        _handleSubmit: function() {
+            var self = this;
+            var form = self.element;
+            var actionUri = form.attr("action");
+            var serialized = form.serialize();
 
-    }
-};
-$.widget("ui.notes", notes); // create the widget
+            $("body").css("cursor", "progress");
+
+            $.ajax({
+                url: actionUri,
+                data: serialized,
+                type: form.attr("method").toUpperCase(),
+                dataType: "html",
+                success: function(resp, status, xhr) {
+                    if (xhr.status != 0) {
+                        var callback = self.options.change;
+                        var nid = $(resp).find('input[name=nid]').val();
+                        if ($.isFunction(callback) && nid) callback(nid,self.options.originalElement);
+                        self._loadToDialog(resp);
+                    } else {
+                        //stupid jquery calling this 'success', it's
+                        //network unavailable.
+                        self._displayFailure(url, xhr, status);
+                    }
+                },
+                error: function(xhr, msg) {
+                    self._displayFailure(actionUri, xhr, msg);
+                }
+            });
+        },
+
+        _loadToDialog: function(html_content) {
+            var self = this;
+            var dialog = self.dialogContainer();
+            //Cheesy way to restore it to it's default options, plus
+            //our own local options, since its' a reuseable dialog.
+            //for now we insist on modal:true.
+            dialog.dialog($.extend({},
+                $.ui.dialog.prototype.options,
+                self.options,
+                {
+                    autoOpen:false,
+                    modal:true,
+                    width:'auto'
+                }
+                ));
+
+            if (self._trigger('beforeDisplay', 0, html_content) !== false) {
+                dialog.html( html_content );
+
+                //extract and set title
+                var title;
+                self.options.extractTitleSelector &&
+                (title = dialog.find(self.options.extractTitleSelector).first().remove().text());
+                title = title ||
+                self.element.attr("title")
+                title && dialog.dialog("option", "title", title);
+
+                //Make any hyperlinks or forms ajaxified, by applying
+                //this very same plugin to em, and passing on our options.
+                if (self.options.chainAjaxySelector) {
+                    dialog.find(self.options.chainAjaxySelector).ajaxyDialog(self.options);
+                }
+
+                //Make any links marked dialog-close do so
+                if ( self.options.closeDialogSelector ) {
+                    dialog.find(self.options.closeDialogSelector).unbind("click." + widgetName);
+                    dialog.find(self.options.closeDialogSelector).bind("click." + widgetName, function() {
+                        dialog.dialog("close");
+                        return false;
+                    });
+                }
+
+                dialog.dialog("open");
+            }
+            $("body").css("cursor", "auto");
+        },
+
+        _displayFailure: function(uri, xhr, serverMsg) {
+            if (  this._trigger("error", 0, {
+                uri:uri,
+                xhr: xhr,
+                serverMsg: serverMsg
+            }) !== false) {
+                var dialog = this.dialogContainer();
+
+                dialog.html("<div class='ui-state-error' style='padding: 1em;'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + uri + ": " + xhr.status + " "  + serverMsg+"</p></div>");
+                dialog.dialog("option", "title", "Sorry, an error has occured.");
+                dialog.dialog("option", "buttons", {
+                    "OK": function() {
+                        dialog.dialog("close");
+                    }
+                });
+                dialog.dialog("open");
+            }
+            $("body").css("cursor", "auto");
+        },
+
+        // The DOM element which has a ui dialog() called on it.
+        // Right now we insist upon modal dialogs, and re-use the same
+        // <div>.dialog() for all of them. It's lazily created here.
+        // If client calls dialog("destroy") on it, no problem, it'll
+        // be lazily created if it's needed again.
+        dialogContainer: function() {
+            var existing = $("#reusableModalDialog");
+            if ( existing.size() > 0) {
+                return existing.first();
+            }
+            else {
+                //single shared element for modal dialogs
+                var requestDialog = $('<div id="reusableModalDialog" style="display:none"></div>').appendTo('body').
+                dialog({
+                    autoOpen: false
+                });
+                return requestDialog;
+            }
+        }
+
+    });
+}(jQuery));

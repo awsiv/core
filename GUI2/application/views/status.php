@@ -150,8 +150,8 @@
     $barChart = new $jit.BarChart(barChartOptions);
     $barChart.loadJSON(json);
     $('.updateComplianceGraph').click(function(){
-
-        $.getJSON(this.href, function(data) {
+    var url = $(this).attr('href');
+        $.getJSON(url, function(data) {
 
             var json = data.graphdata[0];
             // update count and start track as well

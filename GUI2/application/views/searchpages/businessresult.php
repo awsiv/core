@@ -12,7 +12,7 @@
             <?php
             $result = json_decode($report_result, true);
             if (count($result['data']) > 0) {
-                echo $this->cf_table->generateReportTable($result,$report_title);
+                echo $this->cf_table->generateReportTable($result, $report_title);
                 $pg = paging($current, $number_of_rows, $result['meta']['count'], 100);
             ?>
                 <div class="Paging">
@@ -111,7 +111,7 @@
                         url: $('#parameters',$dialog).val(),
                         data:({'to':$('#to_contacts',$dialog).val(),'subject':$('#mail_subject',$dialog).val(),'message':$('#mail_desc',$dialog).val(),'from':$('#from_contacts',$dialog).val()}),
                         dataType:'json',
-                        async: false,                      
+                        async: false,
                         success: function(data){
                             alert(data.message);
                             $dialog.dialog('close');
@@ -146,7 +146,12 @@
 
 
 
-        $('.note').notes();
+        $('.note').ajaxyDialog({change:function(nid,element) {
+
+                // change the url
+               $(element).attr('href', '/notes/index/action/show/nid/' + nid);
+               // console.log(nid,element);
+        }});
 
 
 

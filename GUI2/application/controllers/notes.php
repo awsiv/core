@@ -13,7 +13,6 @@ class Notes extends Cf_Controller {
         $params = $this->uri->uri_to_assoc(3);
         $action = isset($params['action']) ? $params['action'] : "";
         $hostkey = isset($params['hostkey']) ? $params['hostkey'] : NULL;
-        ;
         $this->data = array();
         $rid = isset($params['rid']) ? urldecode(base64_decode($params['rid'])) : "";
         $reportType = isset($params['reporttype']) ? $params['reporttype'] : "";
@@ -62,7 +61,19 @@ class Notes extends Cf_Controller {
         $jsonResult = array('nid' => $ret,
             'html' => $result);
         $returnData = json_encode($jsonResult);
-        echo $returnData;
+
+        // return the same view with comments
+        $comments = (cfpr_query_note(NULL, $nid, '', -1, -1));
+        $comments = utf8_encode($comments);
+
+        $this->data['nid'] = $nid;
+        $this->data['rid'] = '';
+        $this->data['hostkey'] = '';
+        $this->data['reporttype'] = '';
+
+        $this->data['form_url'] = '/notes/addnote';
+        $this->data['data'] = json_decode($comments, TRUE);
+        $this->load->view('/notes/view_notes', $this->data);
     }
 
     function addnewnote() {
@@ -92,7 +103,24 @@ class Notes extends Cf_Controller {
         $jsonResult = array('nid' => $ret,
             'html' => $result);
         $returnData = json_encode($jsonResult);
-        echo $returnData;
+    
+           $this->data['nid'] = $ret;
+        $this->data['rid'] = $rid;
+        $this->data['hostkey'] = $keyhash;
+        $this->data['reporttype'] = $rid;
+
+        $this->data['form_url'] = '/notes/addnote';
+
+          $comments = (cfpr_query_note(NULL, $ret, '', -1, -1));
+        $comments = utf8_encode($comments);
+
+        $this->data['data'] = json_decode($comments, TRUE);
+        $this->load->view('/notes/view_notes', $this->data);
+    
+
+
+
+        //echo $returnData;
     }
 
 }
