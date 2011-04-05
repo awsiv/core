@@ -1,72 +1,139 @@
 var hostfinder={
  _create: function() {
     // alert('notes created')
+     var self = this;
+     self.createhostfinder();
     },
- areas:{
+ cfui:{
     categories:"",
     resultpane:"",
     searchform:""
  },
  options: {
-        url: "/widgets/hostfinder"
+        url: "/widget/hostfinder",
+        classhandler:"/widget/cfclasses",
+        height:'600',
+        width:'700'
     },
  _init: function() {
-        var self = this;
-        this.element.click(function(event){
-            event.preventDefault();
-            self.createhostfinder();
-            return false;
-        });
     },
    createhostfinder:function()
     {
-      self = this;
+      var self = this;
         // load the view and then save make a dialog out of it
         self.temp = $('<div style="display:hidden" title="Find Host" id="hostfinderctrl"></div>').appendTo('body');
-         self.temp.load(self.options.url, {}, function(){
-            self.areas.categories=self.temp.find('#searchby');
-            self.areas.resultpane=self.temp.find('#result');
-            self.areas.searchform=self.temp.find('#searchhost');
-            self.temp.dialog({
-                height: 'auto',
-                width: 'auto',
-                modal: true
+        $.ajax({
+              type: "POST",
+              url: self.options.url,
+              data: {},
+              dataType:"html",
+              async:false,
+              success: function(data) {
+                  self.temp.html(data);
+                  self.cfui.categories=self.temp.find('#searchby');
+                  self.cfui.resultpane=self.temp.find('#searchresult');
+                  self.cfui.searchform=self.temp.find('#searchhost');
+                  self.$filter=$('#filters').find('ul');
+                  self.temp.dialog({
+                     height: self.options.height,
+                     width: 'auto',
+                     autoOpen: false,
+                     modal: true
+                     });
+                  
+              }
             });
-         });
 
-         self.categories.find('li','click',self.categoryselected)
-         self.temp.searchform.live('submit',searchsubmit());
+          //console.log( self.areas.categories);
+         self.cfui.categories.delegate('li','click',{ui:self},self.categoryselected)
+         self.temp.delegate('form','submit',{ui:self},self.searchsubmit);
+         self.element.bind('click',function(event){event.preventDefault();self.temp.dialog('open')});
     },
     categoryselected:function(event)
     {
-        self = this;
-        var selected_category=event.currentTarget.innerHTML;
-        self.areas.searchform.attr("action","/widget/"+selected_category);
-        self.aread.searchform.find("#searchinput").text('search by '+selected_category);
-        if(selected_caterory=='class')
+        var selected_category=$(this).text();
+        var self=event.data.ui;
+        self.cfui.searchform.attr("action","/widget/search_by_"+selected_category.replace(/\s+/g, "").toLowerCase());
+        self.cfui.searchform.find('input[type="text"]').val('search by '+selected_category);
+        if( $(this).attr('id')=='search_class')
             {
-                alert('selected');
+              self.createclasstagcloud(self);
             }
+       
     },
    searchsubmit:function(event){
        event.preventDefault();
-       self =this;
-       var submit_url=self.temp.searchform.attr('action');
-       var searchval=self.temp.searchform.find('input').val();
+       var submit_url=$(this).attr('action');
+       var searchval=$(this).find('input').val();
+       var self=event.data.ui;
        $.ajax({
               type: "POST",
               url: submit_url,
               data: {value:searchval},
               dataType:"html",
               success: function(data) {
-                self.updatesearchresult(data);
+                //self.updatesearchresult(data);
+                self.cfui.resultpane.html(data);
               }
-            });
+       });
    },
+   
    updatesearchresult:function(data){
-     self=this;
-     self.areas.resultpane.html(data);
-   }
+     //self.cfui.resultpane.html(data);
+   },
+
+   createclasstagcloud:function(ui){
+       var self=ui;
+        self.classdlg = $('<div style="display:hidden" title="classes"></div>').appendTo(self);
+        $.getJSON(self.options.classhandler, function(data) {
+               $("<ul>").attr("id", "tagList").appendTo(self.classdlg);
+                  $.each(data, function(i, val) {
+                        var li = $("<li>");
+                        $("<a>").text(val[0]).attr({title:val[0], href:"#"}).appendTo(li);
+                        li.appendTo("#tagList");
+                     });
+        });
+        self.classdlg.dialog({
+                     height: self.options.height,
+                     width: 'auto',
+                     modal: true,
+                     close: function(event, ui) {
+                    self.classdlg.remove();
+                     }
+                     });
+        self.classdlg.delegate('a', 'click',{ui:self},self.addclassfilter);
+   },
+
+    addclassfilter:function(event)
+    {
+     event.preventDefault();
+     var self=event.data.ui
+     var selectedclass= $(this).text();
+     //self._trigger("complete",null,{selectedclass:curclass});
+     
+     self.classdlg.dialog('close');
+      var li = $("<li>");
+      li.text(selectedclass).data('filter',selectedclass).appendTo(self.$filter);
+                       $("<a>").text("X").appendTo(li)
+                       var filters=new Array();
+                               self.$filter.find('li').each(function(index) {
+                                    filters.push($(this).data('filter'));
+                               });
+     self.cfui.resultpane.load('/widget/ajaxlisthost/',{'filter':filters},function(){});
+     self.$filter.find('li').delegate('a','click',{ui:self},self.removeclassfilter);
+    },
+
+    removeclassfilter:function(event)
+    {
+        event.preventDefault();
+        var self=event.data.ui
+         $(this).parent().remove();
+                              var filters=new Array();
+                               self.$filter.find('li').each(function(index) {
+                                    filters.push($(this).data('filter'));
+                               });
+        self.cfui.resultpane.load('/widget/ajaxlisthost/',{'filter':filters},function(){});
+    }
 
 }
 $.widget("ui.hostfinder", hostfinder);

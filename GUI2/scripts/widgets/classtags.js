@@ -3,7 +3,9 @@ var tags  = {
     // alert('notes created')
     },
     options: {
-        url: ""
+        url: "",
+        height:'600',
+        width:'700'
     },
 
     _init: function() {
@@ -17,7 +19,7 @@ var tags  = {
 
     createtagcloud:function()
     {
-      self = this;
+       var self = this
         self.url = this.element.attr('href');
         // load the view and then save make a dialog out of it
         self.temp = $('<div style="display:hidden" title="Classes" id="tagCloud"></div>').appendTo('body');
@@ -38,11 +40,12 @@ var tags  = {
                    });
                  });
          $(".ui-dialog-titlebar").hide();
-         self.temp.delegate('a', 'click',self.addclassfilter);
+         self.temp.delegate('a', 'click',{ui:self},self.addclassfilter);
     },
 
     addclassfilter:function(event)
     {
+     var self=event.data.ui
      var curclass= event.currentTarget.innerHTML
      self._trigger("complete",null,{selectedclass:curclass});
      self.temp.dialog('close');
