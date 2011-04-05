@@ -404,7 +404,7 @@ while(true)
       {
       for (i = 0; i < CF_OBSERVABLES;i++)
          {
-         fprintf(fp[i],"%d %.2lf %.2lf %.2lf\n",count,0,0,0);
+         fprintf(fp[i],"%d 0.00 0.00 0.00\n",count);
          }
       }
 
@@ -567,7 +567,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
 
    strncpy(buf,key,CF_MAXVARSIZE-1);
 
-   sscanf(buf,"%[^:]:%d",lval,&type);
+   sscanf(buf,"%[^:]:%d",lval,(int *)&type);
 
    if (stored != NULL)
       {
@@ -645,7 +645,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
 
    strncpy(buf,key,CF_MAXVARSIZE-1);
 
-   sscanf(buf,"%s:%d",lval,&type);
+   sscanf(buf,"%s:%d",lval,(int *)&type);
 
    if (stored != NULL)
       {
