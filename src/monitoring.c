@@ -1226,7 +1226,7 @@ if (real_val == CF_NODOUBLE)
    {
    cfPS(cf_inform,CF_FAIL,"",pp,a," !! Unable to extract a value from the matched line \"%\"",match->name);
    PromiseRef(cf_inform,pp);
-   real_val == 0.0;
+   real_val = 0.0;
    }
 
 CfOut(cf_inform,"","Extracted value \"%f\" for promise \"%s\"",real_val,handle);
