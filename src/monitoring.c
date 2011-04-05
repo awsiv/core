@@ -590,6 +590,9 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
          case cf_counter:
              NewScalar("mon",lval,rval,cf_str);
              break;
+
+         default:
+            CfOut(cf_error,"","Unexpected value type reading from database: %d\n",(int)type);
          }
       }
    }
@@ -1164,6 +1167,9 @@ for (ip = stream; ip != NULL; ip = ip-> next)
                 strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
                 real_val += Str2Double(value);
                 break;
+
+            default:
+               CfOut(cf_error,"","Unexpected data type in data_type attribute: %d\n",a.measure.data_type);
             }
          }
 
@@ -1211,6 +1217,9 @@ switch (a.measure.data_type)
           }
 
        break;
+
+   default:
+      CfOut(cf_error, "", "Unexpected data type in data_type attribute: %d", a.measure.data_type);
    }
 
 if (real_val == CF_NODOUBLE)
