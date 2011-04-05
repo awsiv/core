@@ -168,7 +168,7 @@ else
 
 void Nova_HistoryUpdate(char *timekey,struct Averages newvals)
 
-{ int err_no;
+{
   CF_DB *dbp;
   char filename[CF_BUFSIZE];
 
@@ -229,9 +229,9 @@ void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
 { char *handle = (char *)GetConstraint("handle",pp,CF_SCALAR);
   char filename[CF_BUFSIZE];
   struct Item *stream = NULL;
-  int i,slot,count = 0;
+  int i,slot = 0;
   double new_value;
-  FILE *fin,*fout;
+  FILE *fout;
 
 if (!handle)
    {
@@ -333,12 +333,11 @@ chmod(filename,0600);
 
 void Nova_LongHaul(char *day,char *month,char* lifecycle,char *shift)
 
-{ int its,i,j,k, count = 0,err,this_lifecycle,ago, this;
+{ int i, count = 0,this_lifecycle,ago, this;
   char timekey[CF_MAXVARSIZE],timekey_now[CF_MAXVARSIZE];
   char d[CF_TIME_SIZE],m[CF_TIME_SIZE],l[CF_TIME_SIZE],s[CF_TIME_SIZE];
   char filename[CF_BUFSIZE];
   struct Averages value;
-  time_t now;
   FILE *fp[CF_OBSERVABLES];
   CF_DB *dbp;
 
@@ -477,11 +476,9 @@ void Nova_SetMeasurementPromises(struct Item **classlist)
   CF_DBC *dbcp;
   char dbname[CF_MAXVARSIZE],eventname[CF_MAXVARSIZE],assignment[CF_BUFSIZE];
   struct Event entry;
-  struct Scope *ptr;
-  struct Rlist *rp;
   char *key;
   void *stored;
-  int i,ksize,vsize;
+  int ksize,vsize;
 
 snprintf(dbname,CF_MAXVARSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_MEASUREDB);
 MapName(dbname);
@@ -645,7 +642,6 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
    {
    char buf[CF_MAXVARSIZE],lval[CF_MAXVARSIZE],rval[CF_BUFSIZE];
    enum cfdatatype type;
-   struct Rlist *list = NULL;
 
    strncpy(buf,key,CF_MAXVARSIZE-1);
 
@@ -946,7 +942,7 @@ struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp)
 
 { struct CfLock thislock;
   char line[CF_BUFSIZE],eventname[CF_BUFSIZE];
-  char comm[20], *sp;
+  char comm[20];
   struct timespec start;
   FILE *fin = NULL;
   mode_t maskval = 0;
@@ -1131,7 +1127,7 @@ return NOVA_DATA[slot].output;
 
 double NovaExtractValueFromStream(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp)
 
-{ char *line,value[CF_MAXVARSIZE];
+{ char value[CF_MAXVARSIZE];
   int count = 1, found = false,match_count = 0;
   double real_val = 0;
   struct Item *ip,*match = NULL;
@@ -1237,8 +1233,6 @@ void NovaLogSymbolicValue(char *handle,struct Item *stream,struct Attributes a,s
   struct Item *ip,*match = NULL,*matches = NULL;
   time_t now = time(NULL);
   FILE *fout;
-  struct CfLock thislock;
-  struct timespec start;
 
 if (stream == NULL)
    {
