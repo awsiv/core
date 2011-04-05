@@ -37,7 +37,7 @@ class Test extends CI_Controller
          
          //$result = $this->mongo_db->select(array('uri','message'))->get('app_logs');
          //$this->mongo_db->where(array('group'=>'faculty'));
-         $result=$this->mongo_db->get('app_logs');
+         $result=$this->mongo_db->get('onlineusers');
          //$result=$this->mongo_db->select(array('username'))->get_where('users',array('group'=>'admin'));
          //print_r($result) ;
          foreach ($result as  $docs) {
@@ -83,6 +83,12 @@ class Test extends CI_Controller
            echo "Connected to MySQL<br>";
 
 	 }
+
+         function deleteonlineusers()
+         {
+             $this->load->library('mongo_db');
+             $this->mongo_db->delete('onlineusers');
+         }
 
          function logintest()
          {
@@ -350,5 +356,68 @@ class Test extends CI_Controller
             }
             print_r($allhosts);
         }
+
+      function newui()
+      {
+          //$this->view->load('testviews/indexnew');
+         $this->lang->load('cf_message');
+         $this->load->library(array('breadcrumb','breadcrumblist'));
+           $bc = array(
+            'title' => 'Cfengine mission Portal',
+            'url' => 'welcome/index',
+            'isRoot' => true
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
+        $this->data=array(
+                     'breadcrumbs' => $this->breadcrumblist->display()
+        );
+        $this->load->view('testviews/indexnew',$this->data);
+      }
+
+      function filterhost()
+      {
+          $this->load->view('testviews/test');
+      }
+
+      function cfclasses()
+      {
+         $this->load->library('session');
+         $arr=json_decode(cfpr_class_cloud($this->session->userdata('lastclasslist')));
+         echo json_encode($arr->classes);  
+      }
+
+
+      function listHost() {
+
+          var_dump($_POST);
+      }
+      function buildfilter($recentfilter)
+      {
+         //function call applying recent filter;
+          $this->load->library('session');
+          $listhost="sds";
+          $this->session->set_userdata('resulthostlist',$listhost);
+          if(is_set($this->session->userdata('resulthostlist')))
+          {
+           //function call
+           $classes="";
+          }
+          else
+          {
+          //function call
+           $classes="";
+          }
+          return $classes;
+          
+      }
+
+      function classCloud(){
+         echo base_url().'/logs/onlineusers.tmp';
+      }
+
+    function hostfinder()
+    {
+       $this->load->view('testviews/test');
+    }
         
 }

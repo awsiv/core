@@ -39,7 +39,7 @@ var tags  = {
                  }
                    });
                  });
-         $(".ui-dialog-titlebar").hide();
+         //$(".ui-dialog-titlebar").hide();
          self.temp.delegate('a', 'click',{ui:self},self.addclassfilter);
     },
 

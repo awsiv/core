@@ -1,7 +1,5 @@
 <html>
     <head>
-     <link href="<?php echo get_cssdir();?>resets.css" rel="stylesheet" media="screen" />
-     <link href="<?php echo get_cssdir();?>960.css" rel="stylesheet" media="screen" />
      <title>Host Finder</title>
      <style rel="stylesheet">
          

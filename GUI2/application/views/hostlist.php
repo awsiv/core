@@ -9,8 +9,9 @@
          <input class="btn" type="submit" value="Filter" class="grid_1">
          </form>
         <?php echo anchor('test/cfclasses','help',array('id'=>'getclass')) ?>
+         <?php echo anchor('#','hostfinder',array('id'=>'findhost')) ?>
         <div class="clear"></div>
-        <div id="filters"><span>Selected classes:</span><ul></ul></div>
+        <!--<div id="filters"><span>Selected classes:</span><ul></ul></div>-->
         <div id="hostlist" class="panelcontent tables">
         <?php
            echo $hoststable;
@@ -63,10 +64,11 @@
 					return false;
 				}
 		});
+            $('#findhost').hostfinder();
 
-           var $filter=$('#filters').find('ul');
+          // var $filter=$('#filters').find('ul');
 
-           $('#getclass').classtags({
+          /* $('#getclass').classtags({
                    url:"/test/cfclasses",
                    complete:function(event,data){
                        //console.log(data.selectedclass);
@@ -82,6 +84,8 @@
                    }
                });
 
+           
+
            $filter.delegate('a','click',function(event){
                               event.preventDefault();
                               $(this).parent().remove();
@@ -91,13 +95,13 @@
                               }
                               else{
                                 $('#hostlist').load('/welcome/listhost/NULL');
-                              }*/
+                              }
                                $filter.find('li').each(function(index) {
                                     filters.push($(this).data('filter'));
                                });
                                $('#hostlist').load('/welcome/ajaxlisthost/',{'filter':filters},function(){});
                                
 
-                       });
+                       });*/
     })
 </script>

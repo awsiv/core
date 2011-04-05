@@ -543,6 +543,7 @@ class Welcome extends Cf_Controller {
 
         $scripts = array('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery.form.js"> </script>',
             '<script  src="' . get_scriptdir() . 'widgets/classtags.js" type="text/javascript"></script>',
+            '<script  src="' . get_scriptdir() . 'widgets/hostfinder.js" type="text/javascript"></script>',
             '<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />');
 
         $this->template->set('injected_item', implode("", $scripts));

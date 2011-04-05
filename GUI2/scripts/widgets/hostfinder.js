@@ -16,6 +16,8 @@ var hostfinder={
         width:'700'
     },
  _init: function() {
+     var self=this;
+     self.cfui.searchform.find('input[type="text"]').focusout();
     },
    createhostfinder:function()
     {
@@ -48,19 +50,24 @@ var hostfinder={
          self.cfui.categories.delegate('li','click',{ui:self},self.categoryselected)
          self.temp.delegate('form','submit',{ui:self},self.searchsubmit);
          self.element.bind('click',function(event){event.preventDefault();self.temp.dialog('open')});
+         self.cfui.searchform.delegate('input[type="text"]','focusin',self.searchboxevent);
+         self.cfui.searchform.delegate('input[type="text"]','focusout',self.searchboxevent);
+         self.cfui.searchform.find('input[type="text"]').data('default',self.cfui.searchform.find('input[type="text"]').val());
     },
+
     categoryselected:function(event)
     {
-        var selected_category=$(this).text();
+        var selected_category=$(this).text().toLowerCase();
         var self=event.data.ui;
         self.cfui.searchform.attr("action","/widget/search_by_"+selected_category.replace(/\s+/g, "").toLowerCase());
-        self.cfui.searchform.find('input[type="text"]').val('search by '+selected_category);
+        self.cfui.searchform.find('input[type="text"]').val('search by '+selected_category).data('default','search by '+selected_category);
         if( $(this).attr('id')=='search_class')
             {
               self.createclasstagcloud(self);
             }
        
     },
+    
    searchsubmit:function(event){
        event.preventDefault();
        var submit_url=$(this).attr('action');
@@ -84,12 +91,13 @@ var hostfinder={
 
    createclasstagcloud:function(ui){
        var self=ui;
-        self.classdlg = $('<div style="display:hidden" title="classes"></div>').appendTo(self);
+        self.classdlg = $('<div style="display:hidden" title="classes" id="tagCloud"></div>').appendTo(self);
         $.getJSON(self.options.classhandler, function(data) {
                $("<ul>").attr("id", "tagList").appendTo(self.classdlg);
                   $.each(data, function(i, val) {
                         var li = $("<li>");
                         $("<a>").text(val[0]).attr({title:val[0], href:"#"}).appendTo(li);
+                        li.children().css("fontSize",  val[1] + "em");
                         li.appendTo("#tagList");
                      });
         });
@@ -133,7 +141,14 @@ var hostfinder={
                                     filters.push($(this).data('filter'));
                                });
         self.cfui.resultpane.load('/widget/ajaxlisthost/',{'filter':filters},function(){});
+    },
+
+    searchboxevent:function(event)
+    {
+      if(this.value==$(this).data('default') && event.type=='focusin')this.value='';
+      if(this.value=='' && event.type=='focusout')this.value=$(this).data('default');
     }
+
 
 }
 $.widget("ui.hostfinder", hostfinder);
