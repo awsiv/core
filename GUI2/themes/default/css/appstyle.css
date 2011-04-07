@@ -280,6 +280,125 @@ label#searchbox input
 #tagList li a { text-decoration:none; color:#ffffff; }
 #tagList li a:hover {text-decoration:underline; }
 
+.loading{
+   background: url("../images/ajax-loader.gif") no-repeat;
+   width:31px;
+   height:31px;
+   margin:auto auto;
+}
+
+/*
+styles for status page may be mergerd in the future
+*/
+
+body {
+                background: url("../images/icons/bg_tile.png") repeat-x scroll 0 0 #2B7B98;
+}
+ #bodystatus .left{
+    background: url("../images/icons/box_main_left.png") no-repeat;
+    min-width:7px;
+    height:594px;
+    float:left;
+}
+
+#bodystatus .middle{
+    background: url("../images/icons/box_main_mid_tile.png") repeat-x;
+    height: 594px;
+    float:left;
+}
+
+.minwidth80{
+    min-width: 73.4%;
+}
+
+.minwidth20{
+    min-width: 23%;
+}
+
+#bodystatus .right{
+     background: url("../images/icons/box_main_right.png") no-repeat;
+     min-width:11px;
+     height:594px;
+     float:left;
+}
+
+.innerdiv{
+
+    border: solid 1.5px #d4d5d0;
+    -moz-border-radius: 5px;
+    border-radius:5px;
+}
+
+.title
+{
+    font-size: 14px;
+    text-decoration: underline;
+    color:#4d4d4d;
+}
+
+#overall
+{
+     margin:15px 8px 5px 8px;
+     text-align: right;
+     height:200px;
+}
+
+#overall p span
+{
+     display:inline-block;
+     cursor: pointer;
+     
+}
+
+
+span#alltime
+{
+ background: url("../images/all_time.png") no-repeat;
+ width:61px;
+ height:21px;
+ margin:0 2px 0px 2px;
+}
+
+span#thisweek
+{
+    background: url("../images/this_week.png") no-repeat;
+    width:61px;
+    height:21px;
+    margin:0 2px 0px 2px;
+}
+
+span#today
+{
+  background: url("../images/today.png") no-repeat;
+  width:61px;
+  height:21px;
+  margin:0 15px 0px 2px;
+}
+
+#compliance
+{
+    margin:0 8px 22px 8px;
+}
+
+#compliance .title
+{
+    padding-top: 20px;
+    padding-left:20px
+}
+
+#compliancemeter{
+    background: #4d4d4d;
+    border:solid 1px #c8c8c8;
+     -moz-border-radius: 5px;
+    border-radius:5px;
+    width:90%;
+    margin:0 auto;
+    height:211px;
+}
+
+
+
+
 #footer p{
     color:#08a3c1;
 }

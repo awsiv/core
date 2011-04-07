@@ -24,6 +24,7 @@ var hostfinder={
       var self = this;
         // load the view and then save make a dialog out of it
         self.temp = $('<div style="display:hidden" title="Find Host" id="hostfinderctrl"></div>').appendTo('body');
+        self.ajaxloader=$('<div class="loading"></div>');
         $.ajax({
               type: "POST",
               url: self.options.url,
@@ -60,6 +61,7 @@ var hostfinder={
     {
         var selected_category=$(this).text().toLowerCase();
         var self=event.data.ui;
+        self.filtermethod=selected_category;
         self.cfui.searchform.attr("action","/widget/search_by_"+selected_category.replace(/\s+/g, "").toLowerCase());
         self.cfui.searchform.find('input[type="text"]').val('search by '+selected_category).data('default','search by '+selected_category);
         if( $(this).attr('id')=='search_class')
@@ -74,16 +76,21 @@ var hostfinder={
        var submit_url=$(this).attr('action');
        var searchval=$(this).find('input').val();
        var self=event.data.ui;
-       $.ajax({
-              type: "POST",
-              url: submit_url,
-              data: {value:searchval},
-              dataType:"html",
-              success: function(data) {
-                //self.updatesearchresult(data);
-                self.cfui.resultpane.html(data);
-              }
-       });
+      
+       if(self.filtermethod != "class"){
+           self.cfui.resultpane.html(self.ajaxloader);
+           $.ajax({
+                  type: "POST",
+                  url: submit_url,
+                  data: {value:searchval},
+                  dataType:"html",
+                  success: function(data) {
+                    //self.updatesearchresult(data);
+                    self.cfui.resultpane.html(data);
+                  }
+           });
+       }
+       
    },
    
    updatesearchresult:function(data){
@@ -93,21 +100,28 @@ var hostfinder={
    createclasstagcloud:function(ui){
        var self=ui;
         self.classdlg = $('<div style="display:hidden" title="classes" id="tagCloud"></div>').appendTo(self);
-        $.getJSON(self.options.classhandler, function(data) {
-               $("<ul>").attr("id", "tagList").appendTo(self.classdlg);
-                  $.each(data, function(i, val) {
-                        var li = $("<li>");
-                        $("<a>").text(val[0]).attr({title:val[0], href:"#"}).appendTo(li);
-                        li.children().css("fontSize",  val[1]/10+1 + "em");
-                        li.appendTo("#tagList");
-                     });
-        });
         self.classdlg.dialog({
                      height: self.options.height,
-                     width: 'auto',
+                     width: 700,
                      modal: true,
+                      position:'center',
                      close: function(event, ui) {
-                    self.classdlg.remove();
+                       self.classdlg.remove();
+                     },
+                     open:function(event,ui){
+                         $(this).html(self.ajaxloader.clone().css({'margin-top':$(this).height()/2}));
+                         
+                         $.getJSON(self.options.classhandler, function(data) {
+                             self.classdlg.html($("<ul>").attr("id", "tagList"));
+                               //$("<ul>").attr("id", "tagList").appendTo(self.classdlg);
+                                  $.each(data, function(i, val) {
+                                        var li = $("<li>");
+                                        $("<a>").text(val[0]).attr({title:val[0], href:"#"}).appendTo(li);
+                                        li.children().css("fontSize",  val[1]/10+1 + "em");
+                                        li.appendTo("#tagList");
+                                  });
+
+                        });
                      }
                      });
         self.classdlg.delegate('a', 'click',{ui:self},self.addclassfilter);
@@ -156,7 +170,6 @@ var hostfinder={
       //alert($(this).text());
       self.cfui.resultpane.load('/widget/search_by_hostname',{'value':$(this).text()},function(){});
     }
-
 
 }
 $.widget("ui.hostfinder", hostfinder);

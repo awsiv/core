@@ -1,16 +1,15 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Cf_Log extends CI_Log
 {
-     var $mongo;
+     protected $mongo;
 
      public function __construct()
        {
         parent::__construct();
 		//$this->load->library('mongo_db');
-         $this->mongo = new Mongo("localhost");
+         $this->mongo = new Mongo("mongodb://127.0.0.1:27017",array("persist" => "ci_mongo_persist"));
          $this->_enabled=true;
         }
-
 	function write_log($level = 'error', $msg, $php_error = FALSE)
 	{
             if ($this->_enabled === FALSE)
@@ -25,9 +24,9 @@ class Cf_Log extends CI_Log
                     
                     return FALSE;
 		}
-		$db = $this->mongo->phpcfengine->app_logs;
+      $db = $this->mongo->phpcfengine->app_logs;
 	   //$output=$this->mongo_db->insert('app_logs',array(
-         
+
         $output = $db->insert(array(
 		// Server Info
 		'server_name'	=> $_SERVER['SERVER_NAME'],
