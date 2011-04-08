@@ -821,6 +821,65 @@ while(CfFetchRow(&cfdb))
    from_pid = Str2Int(CfFetchColumn(&cfdb,6));
    to_pid = Str2Int(CfFetchColumn(&cfdb,7));
    PrependFullItem(&worklist,to_name,NULL,0,0);   
+    printf("bishwa: topicmap: %s\n",to_name);
+   }
+
+CfDeleteQuery(&cfdb);
+CfCloseDB(&cfdb);
+
+for (ip = worklist; ip !=  NULL; ip=ip->next)
+   {
+   Nova_FillInGoalComment(ip);
+   }
+
+return worklist;
+}
+    
+/*************************************************************************/
+struct Item *Nova_GetUniqueBusinessGoals()
+
+{ char from_name[CF_BUFSIZE],from_context[CF_BUFSIZE],to_name[CF_BUFSIZE],work[CF_BUFSIZE];
+  char query[CF_BUFSIZE],fassociation[CF_BUFSIZE],bassociation[CF_BUFSIZE],save[CF_BUFSIZE];
+  char to_context[CF_BUFSIZE],*sp;
+  struct Item *worklist = NULL, *ip;
+  enum representations locator_type;
+  int have_data = false;
+  CfdbConn cfdb;
+
+if (strlen(SQL_OWNER) == 0)
+   {
+   return NULL;
+   }
+
+CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
+    
+if (!cfdb.connected)
+   {
+   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
+   return NULL;
+   }
+
+/* Then associated topics */
+snprintf(query,CF_BUFSIZE,"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name,from_id,to_id from associations where from_assoc='%s'",NOVA_GOAL);
+
+CfNewQueryDB(&cfdb,query);
+
+if (cfdb.maxcolumns != 8)
+   {
+   CfOut(cf_error,""," !! The associations database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,8);
+   CfCloseDB(&cfdb);
+   return NULL;
+   }
+
+/* Look in both directions for associations - first into */
+
+while(CfFetchRow(&cfdb))
+   {
+   int from_pid,to_pid;
+   strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);   
+   from_pid = Str2Int(CfFetchColumn(&cfdb,6));
+   to_pid = Str2Int(CfFetchColumn(&cfdb,7));
+   PrependFullItem(&worklist,to_name,NULL,0,0);   
    }
 
 CfDeleteQuery(&cfdb);
@@ -994,7 +1053,6 @@ else
    snprintf(query,CF_MAXVARSIZE,"No description found for 'goals.%s'",CanonifyName(ip->name));
    ip->classes = strdup(query);
    }
-
 CfDeleteQuery(&cfdb);
 CfCloseDB(&cfdb);
 }

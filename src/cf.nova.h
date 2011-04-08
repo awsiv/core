@@ -903,6 +903,7 @@ char *Nova_AssocURL(char *s);
 char *Nova_URL(char *s,char *rep);
 
 struct Item *Nova_GetBusinessGoals(char *handle);
+struct Item *Nova_GetUniqueBusinessGoals();
 
 void Nova_SpecialQuote(char *name,char *type);
 void Nova_PlotTopicCosmos(int topic,char *view,char *buf,int size);

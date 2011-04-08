@@ -516,7 +516,7 @@ int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *c
 }
 
 /*****************************************************************************/
-int Nova2PHP_value_graph(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_get_value_graph(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize)
 
 { struct HubValue *hp;
  struct HubQuery *hq;
@@ -2359,6 +2359,38 @@ int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize)
     {
     CfOut(cf_verbose,"", "!! Could not close connection to report database");
     }
+
+ return true;
+}
+/*****************************************************************************/
+int Nova2PHP_list_all_goals(char *buffer,int bufsize)
+
+{ char work[CF_BUFSIZE];
+ struct Item *ip2,*glist;
+
+ Nova_WebTopicMap_Initialize();
+
+ glist = Nova_GetUniqueBusinessGoals();
+ 
+ snprintf(buffer,sizeof(buffer),"[");
+ if (glist)
+   {
+     for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
+       {
+	 snprintf(work,sizeof(work),"{\"pid\": %d,\"name\":\"%s\",\"desc\":\"%s\"},",ip2->counter,ip2->name,ip2->classes);
+	 if (!Join(buffer,work,bufsize))
+	   {
+	     break;
+	   }
+       }
+   
+     if(buffer[strlen(buffer)-1]==',')
+       {
+	 buffer[strlen(buffer)-1]='\0';
+       }
+   }
+
+ EndJoin(buffer,"]",bufsize);
 
  return true;
 }
