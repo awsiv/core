@@ -328,6 +328,7 @@ body {
     -moz-border-radius: 5px;
     border-radius:5px;
     background: #fff;
+    color:#4d4d4d;
 }
 
 .title
@@ -383,22 +384,49 @@ span#today
     margin:0 8px 22px 8px;
 }
 
+#compliance span{
+    text-align: center;
+}
+
 #compliance .title
 {
     padding-top: 20px;
     padding-left:20px
 }
-
-#announcement
+#environments
 {
-  margin:15px 8px 5px 8px;
-  height:241px
+   width: 40%;
+   margin:0 auto;
+}
+#environments li
+{
+float:left;
+padding:0 2px;
 }
 
-#goals
+#environments li span.front
 {
-   margin:0 8px 22px 8px;
-   height:311px;
+ background: url("../images/env_btn_front.png") no-repeat;
+ width:5px;
+ height:21px;
+ display:inline-block;
+float:left;
+}
+
+#environments li a
+{
+ background: url("../images/env_btn_middle.png") repeat-x;
+ display:inline-block;
+float:left;
+padding:3px 5px;
+}
+#environments li span.rear
+{
+background: url("../images/env_btn_rear.png") no-repeat;
+ width:5px;
+ height:21px;
+ display:inline-block;
+ float:left;
 }
 
 #compliancemeter{
@@ -411,6 +439,20 @@ span#today
     height:211px;
 }
 
+
+
+
+#announcement
+{
+  margin:15px 8px 5px 8px;
+  height:241px
+}
+
+#goals
+{
+   margin:0 8px 22px 8px;
+   height:311px;
+}
 
 
 

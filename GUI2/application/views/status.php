@@ -7,18 +7,17 @@
         </div>
         <div id="compliance" class="innerdiv">
             <p class="title">Compliance Summary</p>
-            <p id="environments"><span></span><span></span><span></span></p>
-            <div id="compliancemeter" class="">
-                <div>
-                    <ul>
-                         <li><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/">Default</a></li>
+       
+           <ul id="environments">
+                         <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/">Default</a><span class="rear"></span></li>
 
                         <?php foreach ($envList as $key => $env) {
                         ?>
-                            <li><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/<?php echo $env; ?>"><?php echo $env; ?></a></li>
+                            <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/<?php echo $env; ?>"><?php echo $env; ?></a><span class="rear"></span></li>
                         <?php } ?>
-                    </ul>
-                </div>
+            </ul>
+            <div class="clear"></div>
+            <div id="compliancemeter" class="">
                 <div id="compliance_summary_graph" style="height: 150px; width:95%;"></div>
                 <div class="clear"></div>
             </div>
@@ -139,8 +138,8 @@
 
 
 
-    reportcontrol(<?php echo $jsondata ?>,"overall");
-    reportcontrol2(<?php echo $jsondata2 ?>,"overall");
+    //reportcontrol(<?php echo $jsondata ?>,"overall");
+    //reportcontrol2(<?php echo $jsondata2 ?>,"overall");
 
     
 </script>
