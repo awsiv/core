@@ -18,7 +18,12 @@
 
               <div class="left"></div>
               <div class="middle minwidth20">
-
+                  <div id="announcement" class="innerdiv">
+                      <p class="title">Announcement</p>
+                  </div>
+                  <div id="goals" class="innerdiv">
+                       <p class="title">Services/goals</p>
+                  </div>
               </div>
               <div class="right"></div>
      <div class="clearboth"></div>
