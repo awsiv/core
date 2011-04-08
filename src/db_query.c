@@ -2883,7 +2883,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 	      {
 		if (strcmp(bson_iterator_key(&it3),cfr_day) == 0)
 		  {
-		    if ( strptime(bson_iterator_string(&it3), "%d %b %Y", &tm) != NULL )
+		    if ( strptime(bson_iterator_string(&it3), "%d %b %Y", &tm) != 0 )
 		      {
 			epoch = mktime(&tm);
 			snprintf(rday,CF_MAXVARSIZE-1,"%ld",epoch);
@@ -2935,7 +2935,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_day && match_month && match_year)
                {
                found = true;
-	       rp = PrependRlistAlien(&record_list,NewHubValue("",rday,rkept,rrepaired,rnotkept,"",""));
+	       rp = PrependRlistAlien(&record_list,NewHubValue(NULL,rday,rkept,rrepaired,rnotkept,"",""));
                }
             }
          }   
