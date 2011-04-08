@@ -28,7 +28,7 @@
 <br />
 <br />
 <div style="margin-left: 15px; margin-top: 5px;">
-    <div id="message-update"></div>
+    <div id="message-update"> <?php echo isset($updateMessage)?$updateMessage : '' ?>  </div>
     <form id="notes-form" action="<?php echo $form_url; ?>" method="post">
         <p><strong>Add a note :</strong></p>
         <textarea cols="60" rows="6" name="Message"></textarea>

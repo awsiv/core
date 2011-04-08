@@ -43,37 +43,34 @@ class Notes extends Cf_Controller {
         $message = $this->input->post('Message');
         $username = $this->session->userdata('username');
         $date = strtotime("now");
-        $ret = cfpr_add_note($nid, $username, $date, $message);
-
-        if (!$ret) {
-            // SOMETHING WENT WRONG WHILE ADDITION
-            $this->output->set_status_header('400', 'Cannot insert the note.');
-            echo $ret;
-            exit;
-        }
-
-        $result = sprintf(' <tr>
-                <td>%s</td>
-                <td>%s</td>
-                <td>%s</td>
-             </tr>', $username, date('D F d h:m:s Y', $date), $message);
-
-        $jsonResult = array('nid' => $ret,
-            'html' => $result);
-        $returnData = json_encode($jsonResult);
-
-        // return the same view with comments
-        $comments = (cfpr_query_note(NULL, $nid, '', -1, -1));
-        $comments = utf8_encode($comments);
-
+        $ret = false;
         $this->data['nid'] = $nid;
         $this->data['rid'] = '';
         $this->data['hostkey'] = '';
         $this->data['reporttype'] = '';
-
         $this->data['form_url'] = '/notes/addnote';
+
+
+        if (trim($message) != null) {
+            $ret = cfpr_add_note($nid, $username, $date, $message);
+
+            // return the same view with comments
+            if (!$ret) {
+                // SOMETHING WENT WRONG WHILE ADDITION
+                $this->output->set_status_header('400', 'Cannot insert the note.');
+                echo $ret;
+                exit;
+            }
+        } else {
+
+            $this->data['updateMessage'] = "Cannot insert empty message.";
+        }
+
+        $comments = (cfpr_query_note(NULL, $nid, '', -1, -1));
+        $comments = utf8_encode($comments);
         $this->data['data'] = json_decode($comments, TRUE);
         $this->load->view('/notes/view_notes', $this->data);
+        return;
     }
 
     function addnewnote() {
@@ -84,43 +81,34 @@ class Notes extends Cf_Controller {
         $keyhash = $this->input->post('hash');
         $username = $this->session->userdata('username');
         $date = strtotime("now");
+        $ret = false;
+        if (trim($message) != null) {
+            $ret = cfpr_new_note($keyhash, $rid, $report_type, $username, $date, $message);
+            if (!$ret) {
+                // SOMETHING WENT WRONG WHILE ADDITION
+                $this->output->set_status_header('400', 'Cannot insert the note.');
+                echo $ret;
+                exit;
+            }
+        } else {
 
-        $ret = cfpr_new_note($keyhash, $rid, $report_type, $username, $date, $message);
-        if (!$ret) {
-            // SOMETHING WENT WRONG WHILE ADDITION 
-            $this->output->set_status_header('400', 'Cannot insert the note.');
-            echo $ret;
-            exit;
+            $this->data['updateMessage'] = "Cannot insert empty message.";
         }
 
-        // send a row to append in result
-        $result = sprintf(' <tr>
-                <td>%s</td>
-                <td>%s</td>
-                <td>%s</td>
-             </tr>', $username, date('D F d h:m:s Y', $date), $message);
 
-        $jsonResult = array('nid' => $ret,
-            'html' => $result);
-        $returnData = json_encode($jsonResult);
-    
-           $this->data['nid'] = $ret;
+
+        $this->data['nid'] = $ret;
         $this->data['rid'] = $rid;
         $this->data['hostkey'] = $keyhash;
         $this->data['reporttype'] = $rid;
 
         $this->data['form_url'] = '/notes/addnote';
 
-          $comments = (cfpr_query_note(NULL, $ret, '', -1, -1));
+        $comments = (cfpr_query_note(NULL, $ret, '', -1, -1));
         $comments = utf8_encode($comments);
 
         $this->data['data'] = json_decode($comments, TRUE);
         $this->load->view('/notes/view_notes', $this->data);
-    
-
-
-
-        //echo $returnData;
     }
 
 }

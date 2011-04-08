@@ -134,7 +134,12 @@ $(document).ready(function() {
     $('.tables table').tableFilter();
     $('.tables table').tablesorter({widgets: ['zebra']});
 
-    $('.note').notes();
+    $('.note').ajaxyDialog({change:function(nid,element) {
+
+                // change the url
+               $(element).attr('href', '/notes/index/action/show/nid/' + nid);
+               // console.log(nid,element);
+        }});
 	
     reportcontrol(<?php echo $jsondata?>,"host");
 });
