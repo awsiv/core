@@ -6,7 +6,7 @@ class Welcome extends Cf_Controller {
         parent::__construct();
         parse_str($_SERVER['QUERY_STRING'], $_GET);
         $this->load->helper('form');
-        $this->load->library('table','cf_table');
+        $this->load->library('table', 'cf_table');
     }
 
     function index() {
@@ -63,7 +63,7 @@ class Welcome extends Cf_Controller {
             'isRoot' => false
         );
 
-        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
+        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/Extras/excanvas.js"></script><![endif]-->
             ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'graphs/host-meter.js"> </script>
@@ -71,7 +71,7 @@ class Welcome extends Cf_Controller {
             '<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />
              ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>',
-             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . '/widgets/popup.js"> </script>',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . '/widgets/notes.js"> </script>',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportcontrol2.js"> </script>');
 
         $this->template->set('injected_item', implode("", $scripts));
@@ -101,11 +101,11 @@ class Welcome extends Cf_Controller {
         $data = array_merge($data, $returnedData);
 
 
-// compliance summary meter
+        // compliance summary meter
         $envList = cfpr_environments_list();
 
         //$envListArray = json_decode($envList);
-        // add a default environment i.e NULL for every list
+
         $data['envList'] = $envList;
 
         $cdata = cfpr_compliance_summary_graph(NULL);
@@ -113,6 +113,32 @@ class Welcome extends Cf_Controller {
             $graphData['compliance_summary'] = $this->_convert_summary_compliance_graph($cdata);
             $data = array_merge($data, $graphData);
         }
+
+
+        $businessValuePieData = cfpr_get_value_graph(NULL, NULL, NULL, NULL, NULL);
+        $businessValuePieArray = json_decode($businessValuePieData);
+
+// make data ready for pie
+
+
+        if (is_array($businessValuePieArray)) {
+            $kept = 0;
+            $notkept = 0;
+            $repaired = 0;
+
+            foreach ($businessValuePieArray as $val) {
+
+
+                $kept+=$val[1];
+                $notkept+=$val[3];
+                $repaired+=$val[2];
+            }
+            $data['businessValuePie']['kept'] = $kept;
+            $data['businessValuePie']['notkept'] = $notkept;
+            $data['businessValuePie']['repaired'] = $repaired;
+
+        }
+
 
 
         $this->template->load('template', 'status', $data);
@@ -145,7 +171,7 @@ class Welcome extends Cf_Controller {
         $data['graphSeries']['labels'] = json_encode($labels);
         $data['graphSeries']['values'] = json_encode($values);
 
-         // these are two extra parameters that has to be accessible in the bar chart graph 
+        // these are two extra parameters that has to be accessible in the bar chart graph
         if (is_array($count) && !empty($count)) {
             $data['graphSeries']['count'] = json_encode($count);
         }
@@ -171,7 +197,7 @@ class Welcome extends Cf_Controller {
 
             // count data
             $jsonString .='"countData":' . $graphData['compliance_summary']['graphSeries']['count'] . ",";
-             $jsonString .='"startData":' . $graphData['compliance_summary']['graphSeries']['start'] . "}";
+            $jsonString .='"startData":' . $graphData['compliance_summary']['graphSeries']['start'] . "}";
 
 
             echo trim($jsonString);
@@ -287,7 +313,7 @@ class Welcome extends Cf_Controller {
 
 
         $data['graphdata'] = ($gdata);
-        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
+        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/Extras/excanvas.js"></script><![endif]-->
             ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>
             ',
@@ -555,11 +581,11 @@ class Welcome extends Cf_Controller {
         );
         $this->breadcrumb->setBreadCrumb($bc);
         $res = cfpr_class_cloud(NUll);
-        $arr=json_decode($res);
-        
+        $arr = json_decode($res);
+
         //for creating the initial table of hosts as cfpr_select_hosts return the json data
         //$result = json_decode(cfpr_select_hosts("none", ".*", 100), true);
-        $classes=cfpr_report_classes(NULL,NULL,true,NULL,NULL,NULL);
+        $classes = cfpr_report_classes(NULL, NULL, true, NULL, NULL, NULL);
         $data = array(
             'title' => "Cfengine Mission Portal - Filter",
             'title_header' => "Filter Host",
@@ -570,23 +596,19 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'hostlist', $data);
     }
 
-    function ajaxlisthost($currentclass=NULL)
-    {
-     $filters=$this->input->post('filter');
-         if($filters)
-         {
-            $classlist=implode(",",$filters);
-            $arr=json_decode(cfpr_class_cloud($classlist));
-            $this->session->set_userdata('lastclasslist',$classlist);
-            echo  host_only_table( $arr->hosts);
-         }
-         else
-         {
-           $arr=json_decode(cfpr_class_cloud(NULL));
-           $this->session->set_userdata('lastclasslist',NULL);
-           echo  host_only_table( $arr->hosts);
-         }
-   }
+    function ajaxlisthost($currentclass=NULL) {
+        $filters = $this->input->post('filter');
+        if ($filters) {
+            $classlist = implode(",", $filters);
+            $arr = json_decode(cfpr_class_cloud($classlist));
+            $this->session->set_userdata('lastclasslist', $classlist);
+            echo host_only_table($arr->hosts);
+        } else {
+            $arr = json_decode(cfpr_class_cloud(NULL));
+            $this->session->set_userdata('lastclasslist', NULL);
+            echo host_only_table($arr->hosts);
+        }
+    }
 
     function pulse_vitals() {
         $scripts = array('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery.form.js"> </script>');

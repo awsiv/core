@@ -3,22 +3,58 @@
     <div class="left"></div>
     <div class="middle minwidth80">
         <div id="overall" class="innerdiv">
-            <p><span id="alltime"></span><span id="thisweek"></span><span id="today"></span></p>
+            <p style="text-align: right;"><span id="alltime"></span><span id="thisweek"></span><span id="today"></span></p>
+
+
+            <div id="pie-charts">
+
+                <div id="business-value-pie-chart-container" class="grid_6">
+                    <p class="title">Business Value</p>
+                    <div id="business-value-pie-chart" style="height: 150px;width:200px;">
+
+
+                    </div>
+
+
+
+
+                </div>
+                <div id="business-value-pie-chart-container" class="grid_6">
+                    <p class="title">Compliance Now</p>
+                    <div id="compliance-now-pie-chart" style="height: 150px; width:200px;">
+
+
+                    </div>
+
+
+
+
+                </div>
+
+
+
+
+
+            </div>
+
+
+
+
         </div>
         <div id="compliance" class="innerdiv">
             <p class="title">Compliance Summary</p>
-       
-           <ul id="environments">
-                         <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/">Default</a><span class="rear"></span></li>
-
-                        <?php foreach ($envList as $key => $env) {
-                        ?>
-                            <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/<?php echo $env; ?>"><?php echo $env; ?></a><span class="rear"></span></li>
-                        <?php } ?>
-            </ul>
+            <div id="environment-list">
+                <ul>
+                    <li><!-- chrome fix --></li>
+                    <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/">Default</a><span class="rear"></span></li>
+                    <?php foreach ($envList as $key => $env) { ?>
+                        <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/<?php echo $env; ?>"><?php echo $env; ?></a><span class="rear"></span></li>
+                    <?php } ?>
+                </ul>
+            </div>
             <div class="clear"></div>
             <div id="compliancemeter" class="">
-                <div id="compliance_summary_graph" style="height: 150px; width:95%;"></div>
+                <div id="compliance_summary_graph" style="height: 200px; width:98%;"></div>
                 <div class="clear"></div>
             </div>
         </div>
@@ -28,12 +64,12 @@
 
     <div class="left"></div>
     <div class="middle minwidth20">
-                  <div id="announcement" class="innerdiv">
-                      <p class="title">Announcement</p>
-                  </div>
-                  <div id="goals" class="innerdiv">
-                       <p class="title">Services/goals</p>
-                  </div>
+        <div id="announcement" class="innerdiv">
+            <p class="title">Announcement</p>
+        </div>
+        <div id="goals" class="innerdiv">
+            <p class="title">Services/goals</p>
+        </div>
     </div>
     <div class="right"></div>
     <div class="clearboth"></div>
@@ -141,10 +177,55 @@
     })
 
 
-
-    //reportcontrol(<?php echo $jsondata ?>,"overall");
-    //reportcontrol2(<?php echo $jsondata2 ?>,"overall");
+    // business value pie chart
+    var piejson = {
+        'color': ["#90A316","#BFAA54","#C33D54"],
+        'label': 'label A',
+        'values': [
+            {
+                'label': 'kept',
+                'values': Math.abs(<?php echo $businessValuePie['kept']; ?>)
+            },
+            {
+                'label': 'repaired',
+                'values': Math.abs(<?php echo $businessValuePie['repaired']; ?>)
+            },
+            {
+                'label': 'not kept',
+                'values': Math.abs(<?php echo $businessValuePie['notkept']; ?>)
+            }]
+    };
 
     
+    //init PieChart
+    pie = new $jit.PieChart({
+        injectInto: 'business-value-pie-chart',
+        animate: true,
+        offset: 10,
+        sliceOffset: 2,
+        labelOffset: 0,
+        type:'stacked:gradient',
+        updateHeights:false,
+        showLabels:false,
+        Label: {
+            size: 18,
+            family: 'Arial',
+            color: 'black'
+        },
+        Tips: {
+            'enable': true,
+            'onShow': function(tip, elem) {
+                tip.innerHTML = "<span style='color:black;'><b>" + elem.label + "</b>: " + elem.value + "</span>";
+            }
+        }
+    });
+
+    //load JSON data.
+    pie.loadJSON(piejson);
+
+
+
+
+
 </script>
 
