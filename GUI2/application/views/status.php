@@ -125,6 +125,10 @@
     $barChart.loadJSON(json);
     $('.updateComplianceGraph').click(function(){
         var url = $(this).attr('href');
+        $(this).parent().siblings(".selected").removeClass("selected").find('.tip').remove();
+        $(this).parent().addClass('selected');
+        $('<div class="tip">').css({'top':25,'left':$(this).parent().width()/2 -6}).appendTo($(this).parent());
+
         $.getJSON(url, function(data) {
 
             var json = data.graphdata[0];
