@@ -52,7 +52,6 @@
                     <?php } ?>
                 </ul>
             </div>
-            <div class="clear"></div>
             <div id="compliancemeter" class="">
                 <div id="compliance_summary_graph" style="height: 200px; width:98%;"></div>
                 <div class="clear"></div>
@@ -161,9 +160,9 @@
     $barChart.loadJSON(json);
     $('.updateComplianceGraph').click(function(){
         var url = $(this).attr('href');
-        $(this).parent().siblings(".selected").removeClass("selected").find('.tip').remove();
+        $(this).parent().siblings(".selected").removeClass("selected").find('.tippointer').remove();
         $(this).parent().addClass('selected');
-        $('<div class="tip">').css({'top':25,'left':$(this).parent().width()/2 -6}).appendTo($(this).parent());
+        $('<div class="tippointer">').css({'top':25,'left':$(this).parent().width()/2 -6}).appendTo($(this).parent());
 
         $.getJSON(url, function(data) {
 

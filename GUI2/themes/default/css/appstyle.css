@@ -394,6 +394,10 @@ span#today
     padding-left:20px
 }
 
+#environment-list
+{
+    padding-bottom: 3px;
+}
 #environment-list ul, #environment-list ul li {
 	list-style: none;
 	margin:0px;
@@ -403,30 +407,31 @@ span#today
 	text-align: center;
 }
 #environment-list ul li {
-	display: inline;
+	display: inline;	
+}
+#environment-list ul li  span{
 	
+        width:5px;
+        height:21px;
+        padding-bottom:5px;
+        padding-top:1px;
+ 
 }
 #environment-list ul li a {
-	background: url("../images/env_btn_middle.png") repeat-x left top;
-
+	background: url("../images/env_btn_middle.png") repeat-x left center;
+        padding:5px;
 }
 
 #environment-list li span.front
 {
 background: url("../images/env_btn_front.png") no-repeat left top;
-width:5px;
-height:21px;
 padding-left: 5px;
-
- 
 }
 
 
 #environment-list li span.rear
 {
 background: url("../images/env_btn_rear.png") no-repeat right top;
- width:5px;
- height:21px;
  padding-right: 5px;
 
  
@@ -449,31 +454,35 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
 #environment-list  li.selected span{
   width:6px;
   height:25px;
+  padding-bottom:6px;
+  padding-top:3px;
 }
 
 #environment-list  li.selected span.front
 {
   background: url("../images/env_selected_front.png") no-repeat left top;
+  padding-left:6px;
 }
 
 #environment-list li.selected span.rear
 {
   background: url("../images/env_selected_rear.png") no-repeat left top;
+  padding-right:6px;
 }
 
 #environment-list li.selected a
 {
-  background: url("../images/env_selected_middle.png") repeat-x left top;
- 
+  background: url("../images/env_selected_middle.png") repeat-x left center;
+  padding:6px;
 }
 
-.tip{
+.tippointer{
     background: url("../images/select_arrow.png") no-repeat;
     position:absolute;
     width:12px;
     height:6px;
-    z-index: 1000;
-    margin-top:-8px;
+    z-index: 100;
+    margin-top:-4px;
 }
 
 

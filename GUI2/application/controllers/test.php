@@ -37,7 +37,7 @@ class Test extends CI_Controller
          
          //$result = $this->mongo_db->select(array('uri','message'))->get('app_logs');
          //$this->mongo_db->where(array('group'=>'faculty'));
-         $result=$this->mongo_db->get('onlineusers');
+         $result=$this->mongo_db->get('app_logs');
          //$result=$this->mongo_db->select(array('username'))->get_where('users',array('group'=>'admin'));
          //print_r($result) ;
          foreach ($result as  $docs) {
@@ -381,9 +381,10 @@ class Test extends CI_Controller
 
       function cfclasses()
       {
-         $this->load->library('session');
-         $arr=json_decode(cfpr_class_cloud($this->session->userdata('lastclasslist')));
-         echo json_encode($arr->classes);  
+         //$this->load->library('session');
+         //$arr=json_decode(cfpr_class_cloud($this->session->userdata('lastclasslist')));
+          echo cfpr_report_classes(NULL,NULL,true,NULL,NULL,NULL);
+         ///echo json_encode($arr->classes);
       }
 
 
