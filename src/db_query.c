@@ -22,7 +22,6 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #ifdef HAVE_LIBMONGOC
 
-
 /*****************************************************************************/
 
 int CFDB_GetValue(char *lval,char *rval,int size)
@@ -2744,6 +2743,199 @@ while (mongo_cursor_next(cursor))  // loops over documents
                {
                found = true;
                rp = PrependRlistAlien(&record_list,NewHubValue(CF_THIS_HH,rday,rkept,rrepaired,rnotkept,noteid,rhandle));
+               }
+            }
+         }   
+      }
+   
+   
+   if (found)
+      {
+      hh = NewHubHost(keyhash,addresses,hostnames);
+      PrependRlistAlien(&host_list,hh);
+      
+      // Now cache the host reference in all of the records to flatten the 2d list
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubValue *hs = (struct HubValue *)rp->item;
+         
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
+      }
+   }
+
+if (sort)
+   {
+   record_list = SortRlist(record_list,SortBusinessValue);
+   }
+
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,record_list);
+}
+
+/*****************************************************************************/
+
+struct HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex)
+
+{ bson_buffer bb,*sub1,*sub2,*sub3;
+  bson b,query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct HubHost *hh;
+  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+  double rkept,rnotkept,rrepaired;
+  char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
+  int match_day,match_month,match_year,found = false;
+  char classRegexAnch[CF_MAXVARSIZE];
+  int emptyQuery = true;
+  time_t rt;
+
+  struct tm tm;
+  time_t epoch;
+  
+/* BEGIN query document */
+ bson_buffer_init(&bb);
+
+if (!EMPTY(keyHash))
+   {
+   bson_append_string(&bb,cfr_keyhash,keyHash);
+   emptyQuery = false;
+   }
+
+if (!EMPTY(classRegex))
+   {
+   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+   emptyQuery = false;
+   }
+
+if (emptyQuery)
+   {
+   bson_empty(&query);
+   }
+else
+   {
+   bson_from_buffer(&query,&bb);
+   }
+
+ // Turn start_time into Day Month Year
+  
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,cfr_valuereport,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+hostnames[0] = '\0';
+addresses[0] = '\0';
+
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+bson_destroy(&field);
+
+if (!emptyQuery)
+   {
+   bson_destroy(&query);
+   }
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   found = false;
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
+      
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      
+      /* Query specific search/marshalling */
+      
+      if (strcmp(bson_iterator_key(&it1),cfr_valuereport) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+	 
+         while (bson_iterator_next(&it2))
+            {
+            snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
+            snprintf(rhandle,CF_MAXVARSIZE,"%s",bson_iterator_key(&it2));
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+	    
+            rday[0] = '\0';
+            rkept = 0;
+            rnotkept = 0;
+            rrepaired = 0;
+            
+            while (bson_iterator_next(&it3))
+	      {
+		if (strcmp(bson_iterator_key(&it3),cfr_day) == 0)
+		  {
+		    if ( strptime(bson_iterator_string(&it3), "%d %b %Y", &tm) != NULL )
+		      {
+			epoch = mktime(&tm);
+			snprintf(rday,CF_MAXVARSIZE-1,"%ld",epoch);
+		      }
+		    else
+		      {
+			strcpy(rday,"");
+		      }
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_kept) == 0)
+		 {
+                  rkept = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_notkept) == 0)
+                  {
+                  rnotkept = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_repaired) == 0)
+                  {
+                  rrepaired = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
+                  {
+                  snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
+                  }
+               else
+                  {
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in value report",bson_iterator_key(&it3));
+                  }
+               }
+            
+            match_day = match_month = match_year = true;
+            
+            if (lday && (strcmp(lday,rday) != 0))
+               {
+               match_day = false;
+               }
+            
+            if (lmonth && (strcmp(lmonth,rmonth) != 0))
+               {
+               match_month = false;
+               }
+            
+            if (lyear && (strcmp(lyear,ryear) != 0))
+               {
+               match_year = false;
+               }
+            
+            if (match_day && match_month && match_year)
+               {
+               found = true;
+	       rp = PrependRlistAlien(&record_list,NewHubValue("",rday,rkept,rrepaired,rnotkept,"",""));
                }
             }
          }   

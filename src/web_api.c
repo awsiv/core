@@ -469,7 +469,6 @@ int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *c
  snprintf(buffer,sizeof(buffer),
 	  "{\"meta\":{\"count\" : %d,"
 	  "\"header\":{\"Host\":0,\"Day\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,"
-	  /*if action=add:hostkey,reporttype,rid else if action==show:nid*/
 	  "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
 	  "}},\"data\":[", page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
@@ -505,6 +504,58 @@ int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *c
     returnval[strlen(returnval)-1]='\0';
     }
  EndJoin(returnval,"]}\n",bufsize);
+
+ DeleteHubQuery(hq,DeleteHubValue);
+
+ if (!CFDB_Close(&dbconn))
+    {
+    CfOut(cf_verbose,"", "!! Could not close connection to report database");
+    }
+
+ return true;
+}
+
+/*****************************************************************************/
+int Nova2PHP_value_graph(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize)
+
+{ struct HubValue *hp;
+ struct HubQuery *hq;
+ struct Rlist *rp,*result;
+ int count = 0, tmpsize,icmp;
+ mongo_connection dbconn;
+ char buffer[CF_BUFSIZE]={0};
+ char note_link[CF_MAXVARSIZE],note[CF_MAXVARSIZE];
+ 
+/* BEGIN query document */
+
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+ hq = CFDB_QueryValueGraph(&dbconn,hostkey,day,month,year,true,classreg);
+
+ strcpy(returnval,"[");
+
+ for (rp = hq->records; rp != NULL; rp=rp->next)
+    {
+    hp = (struct HubValue *)rp->item;
+    
+    snprintf(buffer,sizeof(buffer),
+	     "[%s,%.1lf,%.1lf,%.1lf],",
+	     hp->day,hp->kept,hp->repaired,hp->notkept);
+
+    if(!Join(returnval,buffer,bufsize))
+       {
+       break;
+       }
+    }
+ if(returnval[strlen(returnval)-1]==',')
+    {
+    returnval[strlen(returnval)-1]='\0';
+    }
+ EndJoin(returnval,"]\n",bufsize);
 
  DeleteHubQuery(hq,DeleteHubValue);
 

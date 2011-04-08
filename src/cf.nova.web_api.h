@@ -29,7 +29,7 @@ void Nova2PHP_get_magnified_analysis(char *keyhash,enum observables obs,char *bu
 void Nova2PHP_get_weekly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
 void Nova2PHP_get_yearly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
 void Nova2PHP_get_histogram_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
-
+int Nova2PHP_value_graph(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize);
 
 void Nova2PHP_get_knowledge_view(int pid,char *view,char *buffer,int bufsize);
 char *Nova_FormatDiff(char *s);
