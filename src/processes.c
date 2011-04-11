@@ -364,12 +364,12 @@ c2 = 0;
 
 while(!feof(fin1) || !feof(fin2))
    {
-   if (read1 = CfReadLine(line1,CF_BUFSIZE-1,fin1))
+   if ((read1 = CfReadLine(line1,CF_BUFSIZE-1,fin1)))
       {
       c1++;
       }
    
-   if (read2 = CfReadLine(line2,CF_BUFSIZE-1,fin2))
+   if ((read2 = CfReadLine(line2,CF_BUFSIZE-1,fin2)))
       {
       c2++;
       }

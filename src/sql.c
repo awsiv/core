@@ -56,19 +56,19 @@ int Nova_ValidateSQLTableName(char *table_path,char *db,char *table)
 
 /* Valid separators . / or \ only */ 
 
-if (sp = cf_strchr(table_path,'/'))
+if ((sp = cf_strchr(table_path,'/')))
    {
    fwd = true;
    *sp = '.';
    }
 
-if (sp = cf_strchr(table_path,'\\'))
+if ((sp = cf_strchr(table_path,'\\')))
    {
    back = true;
    *sp = '.';
    }
 
-if (sp = cf_strchr(table_path,'.'))
+if ((sp = cf_strchr(table_path,'.')))
    {
    dot = true;
    sp++;

@@ -2082,7 +2082,7 @@ MapName(name);
 clist = Nova_RankHosts(NULL,0,cfrank_compliance,200);
 #endif
 
-if (fout = fopen(name,"w"))
+if ((fout = fopen(name,"w")))
    {
    for (ip = clist; ip != NULL; ip=ip->next)
       {

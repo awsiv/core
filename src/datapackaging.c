@@ -876,7 +876,7 @@ while(true)
    snprintf(timekey,CF_MAXVARSIZE-1,"%s_%s_%s_%s",d,m,l,s);
    nodate = true;
    
-   if (slot = Nova_YearSlot(d,m,l))
+   if ((slot = Nova_YearSlot(d,m,l)))
       {
       if (ReadDB(dbp,timekey,&value,sizeof(struct Averages)))
          {

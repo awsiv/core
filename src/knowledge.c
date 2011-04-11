@@ -819,7 +819,7 @@ for (rp = potential; rp !=  NULL; rp=rp->next)
    IdempPrependRScalar(&dependency,rp->item,CF_SCALAR);
    }
 
-if (value = GetConstraint("expression",pp,CF_SCALAR))
+if ((value = GetConstraint("expression",pp,CF_SCALAR)))
    {
    IdempPrependRScalar(&dependency,value,CF_SCALAR);
    }
@@ -928,7 +928,7 @@ snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\
 
 PrependItemList(&NOVA_BUNDLEDEPENDENCE,assertion);
 
-if (handle = (char *)GetConstraint("handle",pp,CF_SCALAR))
+if ((handle = (char *)GetConstraint("handle",pp,CF_SCALAR)))
    {
    snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",name,NOVA_BUNDLE_DATA_INV_P,handle,NOVA_BUNDLE_DATA);
 

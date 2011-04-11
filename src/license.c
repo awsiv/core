@@ -107,7 +107,7 @@ if ((fp = fopen(name,"r")) != NULL)
    snprintf(serverkey,sizeof(name),"%s/ppkeys/%s-%s.pub",CFWORKDIR,"root",serverdig);
    CfOut(cf_verbose,""," -> Look for server %s's key file\n",policy_server);
 
-   if (serverrsa = HavePublicKey("root",policy_server,serverdig))
+   if ((serverrsa = HavePublicKey("root",policy_server,serverdig)))
       {
       RSA_free(serverrsa);
       }

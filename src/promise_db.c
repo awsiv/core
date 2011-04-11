@@ -230,7 +230,7 @@ for (bp = bundles; bp != NULL; bp=bp->next)
             bson_append_string(&bbuf, cfp_handle, sp);
             }
 	 
-         if (sp = GetConstraint("comment",pp,CF_SCALAR))
+         if ((sp = GetConstraint("comment",pp,CF_SCALAR)))
             {
             bson_append_string(&bbuf, cfp_comment, sp);
             }

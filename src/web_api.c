@@ -2496,7 +2496,7 @@ int Nova2PHP_search_topics(char *search,int regex,char *buffer,int bufsize)
 
  Nova_WebTopicMap_Initialize();
 
- if (pid = Nova_SearchTopicMap(search,buffer,bufsize))
+ if ((pid = Nova_SearchTopicMap(search,buffer,bufsize)))
     {
     // If there's only one match, just show it
     snprintf(buffer,bufsize,"<meta HTTP-EQUIV=\"REFRESH\" content=\"0; url=/welcome/knowledge/pid/%d\">",pid);

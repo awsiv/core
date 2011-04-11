@@ -39,7 +39,7 @@ if (a.output.level == NULL)
 
 if (a.output.promiser_type && (strcmp(a.output.promiser_type,"bundle") == 0))
    {
-   if (ip = ReturnItemIn(NOVA_BUNDLE_OUTPUTS,pp->promiser))
+   if ((ip = ReturnItemIn(NOVA_BUNDLE_OUTPUTS,pp->promiser)))
       {
       if (strcmp(ip->classes,a.output.level) != 0)
          {
@@ -58,7 +58,7 @@ if (a.output.promiser_type && (strcmp(a.output.promiser_type,"bundle") == 0))
    }
 else // promises
    {
-   if (ip = ReturnItemIn(NOVA_HANDLE_OUTPUTS,pp->promiser))
+   if ((ip = ReturnItemIn(NOVA_HANDLE_OUTPUTS,pp->promiser)))
       {
       if (strcmp(ip->classes,a.output.level) != 0)
          {
