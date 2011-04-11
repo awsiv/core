@@ -67,8 +67,6 @@ int CFDB_PutValue(char *lval,char *rval)
 { bson_buffer bb;
   bson_buffer *setObj;
   bson setOp,empty;
-  struct Item *ip;
-  char varName[CF_MAXVARSIZE];
   mongo_connection dbconn;
 
 if (!IsDefinedClass("am_policy_hub") && !IsDefinedClass("am_php_module"))
@@ -230,13 +228,11 @@ void CFDB_SaveMonitorData(mongo_connection *conn, char *keyhash, enum monitord_r
   char varNameIndex[64];
   bson_buffer *setObj;
   bson setOp;
-  int i, arrIndex;
   struct Item *ip;
   int observable,slot;
   double q,e,dev;
   char *dbOperation = {0};
   char t[CF_TIME_SIZE];
-  char timekey[CF_SMALLBUF];
   char *obsKey = {0};
 
 switch(rep_type)
@@ -535,7 +531,7 @@ void CFDB_SaveVariables(mongo_connection *conn, char *keyhash, struct Item *data
 /* Should be deprecated some time - was replaced after Nova 2.0.2 */
 
 { bson_buffer bb;
-  bson_buffer *unset, *setObj, *varObj, *keyArr, *keyAdd, *keyArrField, *arr;
+  bson_buffer *unset, *setObj, *arr;
   bson host_key;  // host description
   bson setOp,unsetOp;
   struct Item *ip;
@@ -625,7 +621,7 @@ bson_destroy(&host_key);
 void CFDB_SaveVariables2(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
-  bson_buffer *setObj, *varObj, *keyArr, *keyAdd, *keyArrField, *arr;
+  bson_buffer *setObj, *arr;
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
@@ -813,7 +809,6 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_
   bson_buffer *setObj;
   bson setOp;
   struct Item *ip;
-  int observable,slot;
   char timekey[CF_SMALLBUF];
   char handle[CF_MAXVARSIZE],reason[CF_BUFSIZE];
   char *collName;
@@ -1034,9 +1029,9 @@ bson_destroy(&host_key);
 void CFDB_SaveSetUid(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;
-  bson_buffer *keyArr, *set, *unset;
+  bson_buffer *keyArr, *set;
   bson host_key;  // host description
-  bson setOp,unsetOp;
+  bson setOp;
   struct Item *ip;
   char progName[CF_MAXVARSIZE];
   char iStr[32];
@@ -1187,7 +1182,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    then = (time_t)date;
 
    ReplaceChar(name,nameNoDot,sizeof(nameNoDot),'.','_');
-   snprintf(varName,sizeof(varName),"%s.%s@%d",cfr_filechanges,nameNoDot,date);
+   snprintf(varName,sizeof(varName),"%s.%s@%ld",cfr_filechanges,nameNoDot,date);
    
    sub = bson_append_start_object(setObj,varName);
    bson_append_int(sub,cfr_time,then);
@@ -1246,7 +1241,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    then = (time_t)t;
 
    ReplaceChar(name,nameNoDot,sizeof(nameNoDot),'.','_');
-   snprintf(varName, sizeof(varName),"%s.%s@%d",cfr_filediffs,nameNoDot,then);
+   snprintf(varName, sizeof(varName),"%s.%s@%ld",cfr_filediffs,nameNoDot,then);
    
    sub = bson_append_start_object(setObj, varName);
    bson_append_int(sub,cfr_time,then);
@@ -1275,7 +1270,7 @@ void CFDB_SaveBundles(mongo_connection *conn, char *keyhash, struct Item *data)
   bson setOp;
   struct Item *ip;
   char bundle[CF_MAXVARSIZE];
-  char hash[CF_MAXVARSIZE],varName[CF_MAXVARSIZE];
+  char varName[CF_MAXVARSIZE];
   double ago = 0,average = 0,dev = 0;
   long fthen = 0;
   time_t then = 0;
@@ -1329,7 +1324,7 @@ void CFDB_SaveValueReport(mongo_connection *conn, char *keyhash, struct Item *da
   bson setOp;
   struct Item *ip;
   bson_buffer *sub1, *sub2;
-  char name[CF_SMALLBUF],datestr[CF_SMALLBUF];
+  char datestr[CF_SMALLBUF];
   double kept,notkept,repaired;
 
   
@@ -1447,7 +1442,7 @@ bson_destroy(&host_key);
 
 int CFDB_AddNote(mongo_connection *conn, char *keyhash, char *nid, char *reportData, struct Item *data)
 {
-  bson_buffer bb,record;
+  bson_buffer bb;
   bson host_key;
   bson_buffer *setObj, *sub;
   bson setOp;
@@ -1458,7 +1453,6 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, char *nid, char *reportD
   long datetime;
   
   int options = MONGO_INDEX_UNIQUE |  MONGO_INDEX_DROP_DUPS;
-  int count=0;
 
   /* for getting object id */
   mongo_cursor *cursor;
@@ -1566,7 +1560,6 @@ static time_t rev_ctime(char *str_time)
 
 { struct tm tm;
   char buf[255];
-  time_t t;
 
 snprintf(buf,sizeof(buf),"%s",str_time);
 memset(&tm, 0, sizeof(tm));
@@ -1580,14 +1573,8 @@ void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_
 
 { bson_buffer bb;
   bson_buffer *setObj;
-  bson_buffer *sub;
-  bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
   char varName[CF_MAXVARSIZE];
-  long t;
-  char eventname[CF_MAXVARSIZE],eventnameKey[CF_MAXVARSIZE];
-  double measure = 0,average = 0,dev = 0;
 
   bson_buffer_init(&bb);
   setObj = bson_append_start_object(&bb, "$set");

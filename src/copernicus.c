@@ -33,11 +33,12 @@ PrependRScalar(semantics,NOVA_BUNDLE_DATA_INV_P,CF_SCALAR);
 
 void Nova_DrawTribe(int *tribe_id,struct CfGraphNode *tribe_node,double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,double *tribe_evc,int topic,char *buffer,int bufsize)
 
-{ int centre = Nova_GetMaxEvcNode(tribe_evc,tribe_size);
-  int i,j;
+{ int i,j;
   double radius;
   char work[CF_BUFSIZE],url[CF_MAXVARSIZE];
   char *colour;
+
+  Nova_GetMaxEvcNode(tribe_evc,tribe_size); /* FIXME: unused? */
 
 for (i = 0; i < tribe_size; i++)
    {

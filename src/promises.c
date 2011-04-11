@@ -160,7 +160,7 @@ for (p1 = PROMISER_REGEXES; p1 != NULL; p1=p1->next)
 
 void Nova_EnterpriseContext()
 
-{ char vbuff[CF_BUFSIZE];
+{
 #ifdef HAVE_GETZONEID
  zoneid_t zid;
  char zone[ZONENAME_MAX];
@@ -290,7 +290,7 @@ void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status sta
 
 { CF_DB *dbp;
   FILE *fp;
-  char name[CF_BUFSIZE],date[CF_MAXVARSIZE],id[CF_MAXVARSIZE];
+  char name[CF_BUFSIZE],id[CF_MAXVARSIZE];
   static char previous[CF_BUFSIZE];
   struct Event e,newe;
   time_t now = time(NULL);
@@ -555,7 +555,6 @@ void Nova_CheckAutoBootstrap()
 
 { struct stat sb;
   char name[CF_BUFSIZE];
-  FILE *pp;
   int repaired = false, have_policy = false, am_appliance = false;
 
 printf("\n ** Initiated the cfengine enterprise diagnostic bootstrap probe\n");

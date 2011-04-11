@@ -21,7 +21,6 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp)
 
 { struct Rlist *rp;
   int retval = true,commas = 0;
-  char *sp;
  
 if (a.database.type && cf_strcmp(a.database.type,"ms_registry") == 0)
    {
@@ -147,7 +146,6 @@ int Nova_VerifyTablePromise(CfdbConn *cfdb,char *table_path,struct Rlist *column
 { char name[CF_MAXVARSIZE],type[CF_MAXVARSIZE],query[CF_MAXVARSIZE],table[CF_MAXVARSIZE],db[CF_MAXVARSIZE];
   int i,count,size,no_of_cols,*size_table,*done,identified,retval = true;
   char **name_table,**type_table;
-  struct Rlist *rp, *cols;
 
 CfOut(cf_verbose,""," -> Verifying promised table structure for \"%s\"",table_path);
 
@@ -350,9 +348,8 @@ return match;
 int Nova_CreateTableColumns(CfdbConn *cfdb,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp)
 
 { char entry[CF_MAXVARSIZE],query[CF_BUFSIZE];
-  int i,count,size,*size_table,*done,identified,retval = true;
+  int i,*size_table,*done;
   char **name_table,**type_table;
-  struct Rlist *rp, *cols;
   int no_of_cols = RlistLen(columns);
 
 CfOut(cf_error,""," -> Trying to create table %s\n",table);

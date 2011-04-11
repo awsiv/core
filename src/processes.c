@@ -35,7 +35,6 @@ void Nova_LogFileChange(char *file,int change,struct Attributes a,struct Promise
 
 { char destination[CF_BUFSIZE];
   struct stat sb, dsb;
-  char *sp;
   
 CfOut(cf_verbose,""," -> Updating the difference engine with \"%s\"",file);
   
@@ -222,7 +221,7 @@ return pos;
 
 int Nova_FileIsBinary(char *name,int size,int maxsize)
 
-{ FILE *fp;
+{
   char *file_buffer,*sp;
   int hasbinary = false, hasnewline = 1;
  
@@ -311,7 +310,7 @@ for (flp1 = it1; flp1 != NULL; flp1=flp1->next)
    {
    if (EmptyString(flp1->text))
       {
-      fprintf(fp,"+,%d,(blanks/space)\n",flp1->counter,flp1->text);
+      fprintf(fp,"+,%d,(blanks/space)\n",flp1->counter);
       }
    else
       {
@@ -323,7 +322,7 @@ for (flp2 = it2; flp2 != NULL; flp2=flp2->next)
    {
    if (EmptyString(flp2->text))
       {
-      fprintf(fp,"+,%d,(blanks/space)\n",flp2->counter,flp2->text);
+      fprintf(fp,"+,%d,(blanks/space)\n",flp2->counter);
       }
    else
       {

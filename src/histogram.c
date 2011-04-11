@@ -17,8 +17,7 @@
 
 int Nova_ViewHisto(char *keyhash,enum observables obs,char *buffer,int bufsize)
     
-{ int i,y,hint;
-  double frac;
+{
   struct Item *spectrum;
   struct CfDataView cfv;
   
@@ -41,7 +40,7 @@ return true;
 
 int Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs)
 
-{ double rx,ry;
+{ double ry;
  int i,have_data = false;
   mongo_connection dbconn;
   double histo[CF_GRAINS];
@@ -102,8 +101,7 @@ return have_data;
 
 void Nova_PlotHistogram(struct CfDataView *cfv,char *buffer,int bufsize)
 
-{ int i,x,y,dev;
-  struct Item *ip;
+{ int i;
   char work[CF_MAXVARSIZE];
 
 for (i = 0; i < CF_GRAINS; i++)
@@ -127,7 +125,7 @@ struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observa
   int new_gradient = 0, past_gradient = 0, max = 0;
   int redshift = 0, blueshift = 0;
   int above_noise = false;
-  char fname[CF_BUFSIZE],img[CF_BUFSIZE],output[CF_BUFSIZE];
+  char output[CF_BUFSIZE];
   double sensitivity_factor = 1.2;
   struct Item *maxima = NULL;
 

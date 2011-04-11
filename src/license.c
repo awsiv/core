@@ -215,7 +215,6 @@ int Nova_HashKey(char *filename,char *buffer,unsigned char digest[EVP_MAX_MD_SIZ
 
 { EVP_MD_CTX context;
   const EVP_MD *md = NULL;
-  char *file_buffer;
   FILE *fp;
   int md_len,result = false;
   char fbuf[CF_BUFSIZE];

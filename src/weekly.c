@@ -38,12 +38,8 @@ return x;
 
 int Nova_ViewWeek(char *keyhash,enum observables obs,char *buffer,int bufsize)
     
-{ int i,y,hint;
-  FILE *fout;
-  struct stat sb;
-  char newfile[CF_BUFSIZE];
-  time_t now = time(NULL);
-  struct CfDataView cfv;
+{
+struct CfDataView cfv;
   
   /* Initialization */
 
@@ -66,9 +62,7 @@ return true;
 
 int Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs)
 
-{ double rx,ry,rs,rq;
-  FILE *fp;
-  char name[CF_BUFSIZE];
+{ double ry,rs,rq;
   int i,have_data = false;
   mongo_connection dbconn;
   double q[CF_TIMESERIESDATA],e[CF_TIMESERIESDATA],d[CF_TIMESERIESDATA];
@@ -206,10 +200,7 @@ else
 
 void Nova_PlotQFile(struct CfDataView *cfv,char *buffer,int bufsize)
 
-{ int i,x,y,lx = 0,ly = 0;
-  double rx,ry,rs,sx = 0,s;
-  double low,high,av;
-  time_t now = time(NULL);
+{ int i;
   char work[CF_MAXVARSIZE];
 
 // First plot average

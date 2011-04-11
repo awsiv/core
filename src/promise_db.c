@@ -24,16 +24,10 @@
 void Nova_StoreExpandedPromise(struct Promise *pp)
 
 { struct Constraint *cp;
-  struct Body *bp;
-  struct FnCall *fp;
-  struct Rlist *rp;
   char rval_buffer[CF_BUFSIZE];
   static int firstCall = true;
-  char *v,rettype,vbuff[CF_BUFSIZE],*sp,jStr[32];
+  char *sp,jStr[32];
   char con[CF_MAXVARSIZE];
-  void *retval;
-  time_t lastseen,last;
-  double val,av,var;
   mongo_connection dbconn = {0};
   bson_buffer bbuf,*cstr;
   bson b;
@@ -157,7 +151,7 @@ void Nova_StoreUnExpandedPromises(struct Bundle *bundles,struct Body *bodies)
   struct Constraint *cp;
   mongo_connection dbconn = {0};
   bson_buffer bbuf;
-  bson_buffer *sub, *args, *cstr;
+  bson_buffer *args, *cstr;
   bson b;
   int i,j;
   char iStr[32],jStr[32];

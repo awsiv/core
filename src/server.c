@@ -142,9 +142,7 @@ else
 
 int Nova_ReturnQueryData(struct cfd_connection *conn,char *menu,char *sendbuffer)
 
-{ char rsignal;
-  void *retval;
-  time_t date;
+{
   char buffer[CF_MAXVARSIZE],out[CF_BUFSIZE],menu_name[CF_MAXVARSIZE];
   char tbuf[CF_SMALLBUF];
   enum cfd_menu type;
@@ -236,7 +234,7 @@ switch (type)
 time2 = time(NULL);
 CfOut(cf_verbose,""," -> Assembled reply at %s",cf_ctime(&time2));
 
-snprintf(buffer,CF_MAXVARSIZE,"CFR: %ld %ld %ld",delta1,time2,ItemListSize(reply));
+snprintf(buffer,CF_MAXVARSIZE,"CFR: %ld %ld %d",delta1,time2,ItemListSize(reply));
 PrependItem(&reply,buffer,NULL);
 
 for (ip = reply; ip != NULL; ip=ip->next)
@@ -440,7 +438,6 @@ RSA *Nova_SelectKeyRing(char *name)
 
 { struct Rlist *rp;
   struct CfKeyBinding *kp;
-  RSA *newkey;
   
 CfOut(cf_verbose,""," -> Looking for key for \"%s\" in cache",name);
  

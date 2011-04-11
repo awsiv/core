@@ -196,10 +196,10 @@ void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *styleshee
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
-  char start[32],end[32],*sp;
+  char start[32],end[32];
   char version[CF_MAXVARSIZE];
   int kept,repaired,notrepaired;
-  int i = 0,today = false;
+  int i = 0;
   double av_day_kept = 0, av_day_repaired = 0;
   double av_week_kept = 0, av_week_repaired = 0;
   double av_hour_kept = 0, av_hour_repaired = 0;
@@ -406,12 +406,12 @@ fclose(fout);
 
 void Nova_SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
-{ FILE *fin,*fout;
+{ FILE *fout;
   char name[CF_BUFSIZE];
   double lsea = CF_WEEK * 52; /* expire after a year */
-  struct Event entry,e,newe;
+  struct Event entry;
   struct Item *ip,*htmlreport = NULL;
-  int i = 0,ksize,vsize;
+  int ksize,vsize;
   CF_DB *dbp;
   CF_DBC *dbcp;
   char *key;
@@ -1313,10 +1313,8 @@ void Nova_ReportPatches(struct CfPackageManager *list)
 { FILE *fout;
   struct CfPackageManager *mp = NULL;
   struct CfPackageItem *pi;
-  char name[CF_BUFSIZE],line[CF_BUFSIZE];
-  struct Item *ip,*file = NULL;
-  char start[32];
-  int i = 0,count = 0;
+  char name[CF_BUFSIZE];
+  int count = 0;
 
 snprintf(name,CF_BUFSIZE,"%s/state/%s",CFWORKDIR,NOVA_PATCHES_INSTALLED);
 MapName(name);
@@ -1772,8 +1770,10 @@ fclose(FREPORT_TXT);
 
 void Nova_SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
-{ FILE *fin,*fout;
-  char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
+{
+  char line[CF_BUFSIZE];
+  FILE *fin,*fout;
+  char name[CF_MAXVARSIZE];
 
 snprintf(name,sizeof(name),"%s/state/vars.out",CFWORKDIR);
 MapName(name);
@@ -1831,7 +1831,7 @@ void Nova_SummarizeComms()
 
 { CF_DB *dbp;
   CF_DBC *dbcp;
-  int ret,ksize,vsize;
+  int ksize,vsize;
   struct CfKeyHostSeen entry;
   double kept = 1,not_kept = 0,repaired = 0,var,average;
   char name[CF_BUFSIZE], *key;
@@ -1899,7 +1899,8 @@ METER_REPAIRED[meter_comms_hour] = 100.0*repaired/(kept+repaired+not_kept);
 
 void Nova_SummarizeValue(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
-{ char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],name[CF_BUFSIZE];
+{
+  char name[CF_BUFSIZE];
   CF_DB *dbp;
   CF_DBC *dbcp;
   int ksize,vsize;

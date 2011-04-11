@@ -52,7 +52,7 @@ Debug("Loaded values: db=%s,type=%d,owner=%s,passwd=%s,server=%s,connect=%s,docr
 int Nova_GetPidForTopic(char *typed_topic)
     
 { CfdbConn cfdb;
-  char *sp,query[CF_MAXVARSIZE],topic[CF_BUFSIZE],type[CF_BUFSIZE];
+  char query[CF_MAXVARSIZE],topic[CF_BUFSIZE],type[CF_BUFSIZE];
   int ret;
 
 Nova_WebTopicMap_Initialize();
@@ -112,7 +112,7 @@ return ret;
 int Nova_GetTopicByPid(int pid,char *topic_name,char *topic_id,char *topic_context)
 
 { CfdbConn cfdb;
-  char *sp,query[CF_MAXVARSIZE];
+  char query[CF_MAXVARSIZE];
   int ret;
  
 if (strlen(SQL_OWNER) == 0)
@@ -161,7 +161,7 @@ return ret;
 void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize)
 
 { char from_assoc[CF_BUFSIZE],to_assoc[CF_BUFSIZE],topic_context[CF_BUFSIZE],to_context[CF_BUFSIZE];
-  char work[CF_BUFSIZE],query[CF_MAXVARSIZE],from_name[CF_BUFSIZE],to_name[CF_BUFSIZE],from_id[CF_SMALLBUF];
+  char query[CF_MAXVARSIZE],from_name[CF_BUFSIZE],to_name[CF_BUFSIZE];
   CfdbConn cfdb;
   int from_pid,to_pid;  
 
@@ -207,9 +207,9 @@ int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
 
 { CfdbConn cfdb;  
   char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE],to_context[CF_BUFSIZE];
-  char topic_comment[CF_BUFSIZE],query[CF_BUFSIZE];
+  char query[CF_BUFSIZE];
   char from_name[CF_BUFSIZE],from_assoc[CF_BUFSIZE],to_assoc[CF_BUFSIZE],to_name[CF_BUFSIZE];
-  char work[CF_BUFSIZE],*sp;
+  char work[CF_BUFSIZE];
   int save_pid = 0,pid,s,e,count = 0;
   struct Item *list = NULL;
 
@@ -335,10 +335,9 @@ else
 
 void Nova_ScanTheRest(int pid,char *buffer, int bufsize)
 
-{ char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE],associate[CF_BUFSIZE],work[CF_BUFSIZE];
+{ char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE];
   char query[CF_MAXVARSIZE],buf[CF_BUFSIZE];
   char this_name[CF_BUFSIZE],this_id[CF_BUFSIZE],this_type[CF_BUFSIZE];
-  enum representations locator_type;
   CfdbConn cfdb;  
   int tpid,count = 0;
 
@@ -459,9 +458,7 @@ void Nova_ScanLeadsAssociations(int pid,char *buffer,int bufsize)
 
 { char from_name[CF_BUFSIZE],from_context[CF_BUFSIZE],to_name[CF_BUFSIZE],work[CF_BUFSIZE];
   char query[CF_BUFSIZE],fassociation[CF_BUFSIZE],bassociation[CF_BUFSIZE],save[CF_BUFSIZE];
-  char to_context[CF_BUFSIZE],*sp;
-  enum representations locator_type;
-  struct Rlist *rp;
+  char to_context[CF_BUFSIZE];
   CfdbConn cfdb;
   int have_data = false, any_data = false;
 
@@ -778,12 +775,9 @@ CfCloseDB(&cfdb);
 
 struct Item *Nova_GetBusinessGoals(char *handle)
 
-{ char from_name[CF_BUFSIZE],from_context[CF_BUFSIZE],to_name[CF_BUFSIZE],work[CF_BUFSIZE];
-  char query[CF_BUFSIZE],fassociation[CF_BUFSIZE],bassociation[CF_BUFSIZE],save[CF_BUFSIZE];
-  char to_context[CF_BUFSIZE],*sp;
+{ char to_name[CF_BUFSIZE];
+  char query[CF_BUFSIZE];
   struct Item *worklist = NULL, *ip;
-  enum representations locator_type;
-  int have_data = false;
   CfdbConn cfdb;
 
 if (strlen(SQL_OWNER) == 0)
@@ -838,12 +832,9 @@ return worklist;
 /*************************************************************************/
 struct Item *Nova_GetUniqueBusinessGoals()
 
-{ char from_name[CF_BUFSIZE],from_context[CF_BUFSIZE],to_name[CF_BUFSIZE],work[CF_BUFSIZE];
-  char query[CF_BUFSIZE],fassociation[CF_BUFSIZE],bassociation[CF_BUFSIZE],save[CF_BUFSIZE];
-  char to_context[CF_BUFSIZE],*sp;
+{ char to_name[CF_BUFSIZE];
+  char query[CF_BUFSIZE];
   struct Item *worklist = NULL, *ip;
-  enum representations locator_type;
-  int have_data = false;
   CfdbConn cfdb;
 
 if (strlen(SQL_OWNER) == 0)
@@ -995,8 +986,7 @@ return buf;
 void Nova_FillInGoalComment(struct Item *ip)
 
 { CfdbConn cfdb;
-  char *sp,query[CF_MAXVARSIZE];
-  int ret;
+  char query[CF_MAXVARSIZE];
  
 if (strlen(SQL_OWNER) == 0)
    {
@@ -1062,9 +1052,8 @@ CfCloseDB(&cfdb);
 char *Nova_GetBundleComment(char *bundle)
 
 { CfdbConn cfdb;
-  char *sp,query[CF_MAXVARSIZE];
+  char query[CF_MAXVARSIZE];
   static char buf[CF_BUFSIZE];
-  int ret;
  
 if (strlen(SQL_OWNER) == 0)
    {
@@ -1112,9 +1101,9 @@ void Nova_PlotTopicCosmos(int topic,char *view,char *buffer,int bufsize)
 
 /* This assumes that we have the whole graph in a matrix */
 
-{ char filename[CF_BUFSIZE], filenode[CF_MAXVARSIZE];
+{
   struct CfGraphNode tribe_nodes[CF_TRIBE_SIZE];
-  int i,tribe_id[CF_TRIBE_SIZE],tribe_size,tertiary_boundary = 0;
+  int tribe_id[CF_TRIBE_SIZE],tribe_size;
   double tribe_evc[CF_TRIBE_SIZE] = {0};
   double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
 
@@ -1144,7 +1133,7 @@ int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_ad
   char from_name[CF_BUFSIZE],from_context[CF_BUFSIZE],from_assoc[CF_BUFSIZE];
   char *a_name,*a_context,view[CF_MAXVARSIZE];
   int from_pid,to_pid,a_pid;
-  char inlist[CF_BUFSIZE],query[CF_BUFSIZE],work[CF_BUFSIZE];
+  char query[CF_BUFSIZE];
   struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE];
   int tribe_counter = 0,secondary_boundary,tertiary_boundary,i,j;
   CfdbConn cfdb;
@@ -1522,8 +1511,7 @@ return false;
 
 void Nova_InitVertex(struct CfGraphNode *tribe,int i)
 
-{ int j;
- 
+{
 tribe[i].real_id = 0;
 tribe[i].shortname = NULL;
 tribe[i].fullname = NULL;

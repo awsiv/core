@@ -350,7 +350,6 @@ int Nova_CheckDefaultEqualsAccessACL(char *file_path, struct Attributes a, struc
 { acl_t acl_access;
   acl_t acl_default;
   int equals;
-  int retv;
   int result = false;
 
 acl_access = NULL;
@@ -779,7 +778,6 @@ int Nova_ParseEntityPosixLinux(char **str, acl_entry_t ace, int *is_mask)
   id_t id;
   char *ids;
   char *id_end;
-  int retv;
   int result = true;
   int i;
 

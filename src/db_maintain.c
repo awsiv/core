@@ -101,7 +101,6 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
   bson_buffer bb,*unset;
   char keyHash[CF_MAXVARSIZE];
   time_t now;
-  int i;
   
   CfOut(cf_verbose,"", " -> Purge timestamped reports");
   
@@ -276,7 +275,6 @@ void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey,
 {
   bson_iterator it1,it2,it3;
   char var[CF_MAXVARSIZE], key[CF_MAXVARSIZE];
-  time_t then;
   int deep;
   int foundStamp;
   int emptyLev2 = true;

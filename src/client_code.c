@@ -71,9 +71,8 @@ void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
 
 int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t since)
 
-{ int done = false,tosend,cipherlen=0,value;
+{ int tosend,cipherlen=0;
  char in[CF_BUFSIZE],out[CF_BUFSIZE],workbuf[CF_BUFSIZE],cfchangedstr[265];
-  unsigned char iv[32] = {1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
   long n_read_total = 0,length = 0;
   int plainlen,more = true,header = true,current_report = -1;
   time_t now,then,time2 = 0,delta1 = 0,delta2 = 0;
@@ -192,8 +191,8 @@ return true;
 
 int Nova_StoreIncomingReports(char *reply,struct Item **reports,int current_report)
 
-{ struct Item *ip;
- int report;
+{
+int report;
 
 for (report = 0; CF_CODEBOOK[report] != NULL; report++)
    {
@@ -290,7 +289,6 @@ void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *c
 
   mongo_connection dbconn;
   mongo_cursor *cursor;
-  bson_iterator it1;
   bson_buffer bb, *setObj;
   bson query,field,update;
   struct Event e = {0},newe = {0};

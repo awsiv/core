@@ -18,7 +18,7 @@
 
 void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp)
 
-{ struct sockaddr_in addr;
+{
   int sd,err,rfc3164_len = 1024;
   char message[CF_BUFSIZE];
   time_t now = time(NULL);

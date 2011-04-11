@@ -17,7 +17,7 @@
 
 int Nova_ViewMag(char *keyhash,enum observables obs,char *buffer,int bufsize)
     
-{ int i,y,hint;
+{
   struct CfDataView cfv;
  
 strcpy(buffer,"[");
@@ -41,7 +41,7 @@ return true;
 
 int Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs)
 
-{ double range,rx,ry,rq,rs;
+{ double ry,rq,rs;
   double ly = 1,lq = 1,ls = 1;
   double q[CF_MAGDATA],e[CF_MAGDATA],d[CF_MAGDATA];
   int i,have_data = false;
@@ -141,8 +141,6 @@ void Nova_AnalyseMag(char *keyhash,enum observables obs,char *buffer,int bufsize
 
 { char work[CF_BUFSIZE];
   struct CfDataView cfv = {0};
-  char newfile[CF_BUFSIZE];
-  double y;
   
 *buffer = '\0';
 

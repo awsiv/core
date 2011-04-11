@@ -1427,8 +1427,6 @@ void CountMarginRecordsVars(struct Rlist **records_p, struct PageInfo *page,int 
 
   for (rp = *records_p; (rp != NULL && !last_scope); rp=rp->next)
     {
-      char typestr[CF_SMALLBUF];
-
       hv = (struct HubVariable *)rp->item;
       if (strcmp(lscope,hv->scope) != 0)
 	{

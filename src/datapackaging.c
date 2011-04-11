@@ -37,7 +37,7 @@ void Nova_PackPerformance(struct Item **reply,char *header,time_t from,enum cfd_
   double ticksperminute = 60.0,average = 0, var = 0;
   char name[CF_BUFSIZE],eventname[CF_BUFSIZE],buffer[CF_BUFSIZE];
   struct Event entry;
-  int ret,ksize,vsize,first = true,kept = 0, repaired = 0,not_kept = 0;
+  int ksize,vsize,first = true,kept = 0, repaired = 0,not_kept = 0;
 
 CfOut(cf_verbose,""," -> Packing performance data");
   
@@ -70,7 +70,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    {
    double measure;
    time_t then;
-   char tbuf[CF_BUFSIZE],addr[CF_BUFSIZE];
+   char tbuf[CF_BUFSIZE];
 
    memcpy(&then,value,sizeof(then));
    strncpy(eventname,(char *)key,ksize);
@@ -164,12 +164,11 @@ void Nova_PackClasses(struct Item **reply,char *header,time_t from,enum cfd_menu
   CF_DBC *dbcp;
   char *key;
   void *value;
-  struct Item *ip;
   double now = (double)time(NULL),average = 0, var = 0;
   char name[CF_BUFSIZE],eventname[CF_BUFSIZE],buffer[CF_MAXVARSIZE];
   struct Event entry;
   struct CEnt array[1024];
-  int ret,i,ksize,vsize,first = true;
+  int i,ksize,vsize,first = true;
 
 CfOut(cf_verbose,""," -> Packing class data");
   
@@ -268,7 +267,7 @@ CloseDB(dbp);
 
 void Nova_PackSetuid(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ FILE *fin,*fout;
+{ FILE *fin;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
   char start[32];
@@ -327,14 +326,12 @@ DeleteItemList(file);
 void Nova_PackFileChanges(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
-  char name[CF_BUFSIZE],line[CF_BUFSIZE],datestr[CF_MAXVARSIZE],size[CF_MAXVARSIZE];
-  char no[CF_SMALLBUF],change[CF_BUFSIZE],reformat[CF_BUFSIZE],output[2*CF_BUFSIZE],aggregate[CF_BUFSIZE];
-  char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],ref[CF_SMALLBUF],key[CF_SMALLBUF];
+  char name[CF_BUFSIZE],line[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
-  char pm,start[32];
+  char start[32];
   long lthen;
   time_t then, now = time(NULL);
-  int i = 0,truncate,first = true,kept = CF_CHANGE_HORIZON,repaired = 0,not_kept = 0;
+  int i = 0,first = true,kept = CF_CHANGE_HORIZON,repaired = 0,not_kept = 0;
 
 CfOut(cf_verbose,""," -> Packing file change data");
 snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,CF_FILECHANGE);
@@ -405,9 +402,8 @@ void Nova_PackDiffs(struct Item **reply,char *header,time_t from,enum cfd_menu t
 { FILE *fin;
   char name[CF_BUFSIZE],line[CF_BUFSIZE],size[CF_MAXVARSIZE];
   char no[CF_SMALLBUF],change[CF_BUFSIZE],reformat[CF_BUFSIZE],output[2*CF_BUFSIZE],aggregate[CF_BUFSIZE];
-  char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],ref[CF_SMALLBUF],key[CF_SMALLBUF];
   struct Item *ip,*file = NULL;
-  char pm,start[32];
+  char pm;
   int i = 0,truncate,first = true;
   time_t then;
   long lthen;
@@ -510,9 +506,8 @@ DeleteItemList(file);
 
 void Nova_PackMonitorWeek(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int its,i,j,k, count = 0,err,first = true,slot = 0;
+{ int its,i,j,count = 0,first = true,slot = 0;
   double kept = 0, not_kept = 0, repaired = 0, nonzero;
-  struct stat statbuf;
   struct Averages entry,det;
   char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
   time_t now;
@@ -629,7 +624,7 @@ CloseDB(dbp);
 
 void Nova_PackMonitorMag(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int its,i,j,k,err,ok[CF_OBSERVABLES],first = true,slot;
+{ int i,first = true,slot;
   struct Averages entry,det;
   time_t now,here_and_now;
   double nonzero;
@@ -721,7 +716,7 @@ void Nova_PackMonitorHist(struct Item **reply,char *header,time_t from,enum cfd_
 
 { int i,j,k,day,position;
   int ok[CF_OBSERVABLES];
-  char filename[CF_BUFSIZE],name[CF_MAXVARSIZE];
+  char filename[CF_BUFSIZE];
   char buffer[CF_BUFSIZE],val[CF_SMALLBUF];
   double weekly[CF_OBSERVABLES][CF_GRAINS];
   double histogram[CF_OBSERVABLES][7][CF_GRAINS],smoothhistogram[CF_OBSERVABLES][7][CF_GRAINS];
@@ -822,14 +817,13 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 void Nova_PackMonitorYear(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int its,i,j,k, count = 0,err,this_lifecycle,ago, this,first = true,nodate,showtime,slot,last_slot,now_slot;
+{ int i,count = 0,this_lifecycle,ago, this,first = true,nodate,showtime,slot,last_slot,now_slot;
   char timekey[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
   char d[CF_TIME_SIZE],m[CF_TIME_SIZE],l[CF_TIME_SIZE],s[CF_TIME_SIZE],om[CF_TIME_SIZE];
   char *day = VDAY,*month=VMONTH,*lifecycle=VLIFECYCLE,*shift=VSHIFT;
   double num[CF_OBSERVABLES],qav[CF_OBSERVABLES],varav[CF_OBSERVABLES],eav[CF_OBSERVABLES];
   char filename[CF_BUFSIZE];
   struct Averages value;
-  time_t now;
   CF_DB *dbp;
      
 CfOut(cf_verbose,""," -> Packing and compressing monitor 3 year data");
@@ -989,11 +983,11 @@ CloseDB(dbp);
 
 void Nova_PackCompliance(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ FILE *fin,*fout;
+{
   char name[CF_BUFSIZE];
   double lsea = CF_WEEK; /* expire after a week */
-  struct Event entry,e,newe;
-  int i = 0,ksize,vsize,first = true;
+  struct Event entry;
+  int ksize,vsize,first = true;
   CF_DB *dbp;
   CF_DBC *dbcp;
   char *key;
@@ -1026,7 +1020,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
    {
    double measure,av,var;
    time_t then,lastseen,now = time(NULL);
-   char tbuf[CF_BUFSIZE],eventname[CF_BUFSIZE];
+   char eventname[CF_BUFSIZE];
 
    name[0] = '\0';
    cf_strcpy(eventname,(char *)key);
@@ -1082,11 +1076,11 @@ CloseDB(dbp);
 
 void Nova_PackSoftware(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ FILE *fin,*fout;
+{ FILE *fin;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
   char buffer[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
-  int i = 0,first = true;
+  int first = true;
 
 CfOut(cf_verbose,""," -> Packing software data");
    
@@ -1145,7 +1139,7 @@ DeleteItemList(file);
 
 void Nova_PackAvailPatches(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int i = 0, first = true;
+{ int first = true;
   FILE *fin;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE];
   char buffer[CF_BUFSIZE],line[CF_BUFSIZE];
@@ -1208,7 +1202,7 @@ DeleteItemList(file);
 
 void Nova_PackPatchStatus(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int i = 0,first = true,count = 0;
+{ int first = true,count = 0;
   FILE *fin;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE];
   char buffer[CF_BUFSIZE],line[CF_BUFSIZE];
@@ -1289,10 +1283,7 @@ void Nova_PackValueReport(struct Item **reply,char *header,time_t from,enum cfd_
   int ksize,vsize,first = true;
   void *value;
   char *key;
-  FILE *fout;
-  time_t now = time(NULL);
   struct promise_value pt;
-  struct Item *ip;
   char ref[CF_SMALLBUF];
 
 // Strip out the date resolution so we keep only each day of the year
@@ -1485,9 +1476,7 @@ CF_DBC *dbcp;
 struct Variable *var;
 char *key;  // scope.lval
 void *val;
-int i, keySize, valSize;
-time_t varExpireAge = CF_MONTH;  // remove vars from DB after one month
-time_t now = time(NULL);
+int keySize, valSize;
 int first = true;
 char scope[CF_MAXVARSIZE], lval[CF_MAXVARSIZE], prevScope[CF_MAXVARSIZE] = {0};
 char *dtypeStr;
@@ -1571,7 +1560,7 @@ void Nova_PackLastSeen(struct Item **reply,char *header,time_t from,enum cfd_men
   double ticksperhr = (double)CF_TICKS_PER_HOUR;
   char name[CF_BUFSIZE],hostkey[CF_BUFSIZE],buffer[CF_BUFSIZE];
   struct CfKeyHostSeen entry;
-  int ret,ksize,vsize,first = true;
+  int ksize,vsize,first = true;
 
 CfOut(cf_verbose,""," -> Packing last-seen data");
   
@@ -1601,7 +1590,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    {
    double then;
    time_t fthen;
-   char tbuf[CF_BUFSIZE],addr[CF_BUFSIZE];
+   char addr[CF_BUFSIZE];
 
    strncpy(hostkey,(char *)key,ksize);
 
@@ -1654,18 +1643,17 @@ CloseDB(dbp);
 
 void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ FILE *fin,*fout;
+{ FILE *fin;
   char name[CF_BUFSIZE],line[CF_BUFSIZE],buffer[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
-  char *sp;
   time_t start,end;
   char version[CF_MAXVARSIZE];
   int kept,repaired,notrepaired;
-  int i = 0,today = false,first = true;
+  int i = 0,first = true;
   double av_day_kept = 100, av_day_repaired = 0;
   double av_week_kept = 100, av_week_repaired = 0;
   double av_hour_kept = 100, av_hour_repaired = 0;
-  char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],key[CF_SMALLBUF],ref[CF_SMALLBUF];
+  char key[CF_SMALLBUF],ref[CF_SMALLBUF];
   time_t then,now = time(NULL);
   long t;
   
@@ -1817,7 +1805,7 @@ METER_REPAIRED[meter_compliance_hour] = av_hour_repaired;
 
 void Nova_PackRepairLog(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ FILE *fin,*fout;
+{ FILE *fin;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
   struct Item *ip = NULL,*file = NULL;
   int i = 0,first = true;
@@ -1881,12 +1869,11 @@ DeleteItemList(file);
 
 void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ FILE *fin,*fout;
-  char name[CF_BUFSIZE],line[CF_BUFSIZE],handle[CF_MAXVARSIZE];
+{ FILE *fin;
+  char name[CF_BUFSIZE],line[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
   int i = 0,first = true;
   long then;
-  char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF];
 
 CfOut(cf_verbose,""," -> Packing promise not-kept data");
   
@@ -2001,15 +1988,14 @@ if (METER_KEPT[meter_anomalies_day] > 0 || METER_REPAIRED[meter_anomalies_day] >
 
 void Nova_PackBundles(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ FILE *fin,*fout;
+{
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
   char bundle[CF_MAXVARSIZE];
-  struct Item *ip,*file = NULL;
+  struct Item *file = NULL;
   int first = true,ksize,vsize;
   time_t tid = time(NULL);
   double now = (double)tid,average = 0, var = 0;
   double ticksperhr = (double)CF_TICKS_PER_HOUR;
-  time_t then;
   CF_DB *dbp;
   CF_DBC *dbcp;
   char *key;
@@ -2044,7 +2030,6 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    {
    double then;
    time_t fthen;
-   char tbuf[CF_BUFSIZE],addr[CF_BUFSIZE];
 
    memcpy(&then,value,sizeof(then));
    strncpy(bundle,(char *)key,ksize);

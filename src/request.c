@@ -21,24 +21,6 @@ void Nova_CfQueryCFDB(char *querystr)
 {
 #ifdef HAVE_LIBMONGOC
  mongo_connection dbconn;
- bson query,b;
- bson_buffer bb;
- struct Rlist *rp,*list;
- struct HubHost *hh;
- struct HubSoftware *hs;
- struct HubClass *hc;
- struct HubQuery *hq;
- struct HubTotalCompliance *ht;
- struct HubVariable *hv;
- struct HubPromiseCompliance *hp;
- struct HubLastSeen *hl;
- struct HubMeter *hm;
- struct HubPerformance *hP;
- struct HubSetUid *hS;
- struct HubBundleSeen *hb;
- struct HubFileChanges *hC;
- struct HubFileDiff *hd;
-char buffer[100000];
  
 if (!CFDB_Open(&dbconn, "127.0.0.1", 27017))
    {
@@ -372,7 +354,6 @@ for (ip = result; ip !=  NULL; ip=ip->next)
 //Nova_PerformancePage("MD5=4a37e48645122312daf7862f2a0f0ef7");
 */
 
-char buff[100000];
 //Nova2PHP_software_report(NULL,NULL,NULL,NULL,0,cfr_software,buff,100000);
 //printf("SW: %s\n",buff);
 

@@ -30,9 +30,7 @@ char *CF_SUSPENDED[CF_MAX_CONCURRENT_ENVIRONMENTS];
 
 void Nova_VerifyEnvironmentsPromise(struct Promise *pp)
 
-{ struct Attributes a = {0};
-  struct CfLock thislock;
-  struct Promise *pexp;
+{
 
 #ifdef HAVE_LIBVIRT
 a = GetEnvironmentsAttributes(pp);

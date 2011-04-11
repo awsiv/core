@@ -52,7 +52,6 @@ void Nova_SyntaxCompletion(char *s)
 { int i,j,k,l,m;
   struct SubTypeSyntax *ss;
   struct BodySyntax *bs,*bs2 = NULL;
-  char output[CF_BUFSIZE];
 
 if (EnterpriseExpiry(LIC_DAY,LIC_MONTH,LIC_YEAR,LIC_COMPANY))
    {
@@ -203,12 +202,13 @@ printf("   <syntax element>\n");
 
 void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version)
 
-{ struct Constraint *cp;
+{
   char promise_id[CF_BUFSIZE];
   struct Rlist *rp,*depends_on = GetListConstraint("depends_on",pp);
   struct Rlist *class_list = SplitRegexAsRList(pp->classes,"[.!()|&]+",100,false);
-  struct DefineClasses c = GetClassDefinitionConstraints(pp);
   char *bundlename = NULL;
+
+  GetClassDefinitionConstraints(pp); /* FIXME: unused? */
 
 if (LICENSES == 0)
    {
@@ -399,7 +399,7 @@ Nova_MapClassParameterAssociations(fp,pp,promise_id);
 
 void Nova_ShowTopicRepresentation(FILE *fp)
     
-{ int i,j,k,l,m;
+{ int i,j,k,l;
   struct SubTypeSyntax *ss;
   struct BodySyntax *bs,*bs2;
 
@@ -608,8 +608,6 @@ fprintf(fp,"functions::\n\n");
 
 for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
    {
-   char *type;
-   
    fprintf(fp," \"%s\" ",CF_FNCALL_TYPES[i].name);
    fprintf(fp,"    comment => \"%s\",\n",CF_FNCALL_TYPES[i].description);
    fprintf(fp,"    association => a(\"returns data-type\",\"%s\",\"is returned by function\");\n",CF_DATATYPES[CF_FNCALL_TYPES[i].dtype]);
@@ -637,7 +635,7 @@ for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
 
 void Nova_ListFunctions()
 
-{ int i,j;
+{ int i;
 
 printf("In-built functions:\n\n");
  
@@ -749,7 +747,6 @@ return id;
 void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promise_id)
 
 { struct Rlist *impacted = NULL, *dependency = NULL, *potential,*rp;
-  struct Item *ip;
   struct Bundle *bp;
   struct SubType *sp;
   struct Promise *pp2;
@@ -957,7 +954,6 @@ char *NovaEscape(char *s)
     
 { char *sp1,*sp2;
   static char buffer[CF_EXPANDSIZE];
-  int count = 0;
 
 memset(buffer,0,CF_EXPANDSIZE);
 

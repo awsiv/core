@@ -50,7 +50,7 @@ extern struct BodySyntax CFEX_CONTROLBODY[];
 
 void Nova_StartHub(int argc,char **argv)
 
-{ int pid,time_to_run = false;
+{ int time_to_run = false;
   time_t now = time(NULL);
   struct Promise *pp = NewPromise("hub_cfengine","the aggregator"); 
   struct Attributes a = {0};
@@ -300,11 +300,8 @@ void Nova_CacheTotalCompliance(bool allSlots)
  */
 {
 #ifdef HAVE_LIBMONGOC
-  char key[CF_MAXVARSIZE],value[CF_MAXVARSIZE];
   time_t start,now = time(NULL);
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
   struct EnvironmentsList *env, *ep;
   int slot;
   char envName[CF_SMALLBUF];
@@ -345,8 +342,7 @@ for(; start + (3600 * 6) < now; start += CF_SHIFT_INTERVAL) // in case of all sl
    start = GetShiftSlotStart(start);  // in case of daylight saving time
    slot = GetShiftSlot(start);
    
-   time_t tmp = start;
-   
+
    // first any environment, then environment-specific
    
    Nova_CacheTotalComplianceEnv(&dbconn,"any",NULL,slot,start,now);
@@ -418,15 +414,11 @@ void Nova_CountMonitoredClasses()
 {
 #ifdef HAVE_LIBMONGOC
 
-  char *report,work[CF_BUFSIZE];
-  struct HubHost *hh;
+  char work[CF_BUFSIZE];
   struct HubQuery *hq;
-  struct Rlist *rp,*result;
+  struct Rlist *rp;
   struct Item *order_results = NULL,*ip;
-  int count = 0, tmpsize;
   mongo_connection dbconn;
-  bson query,b;
-  bson_buffer bb;
 
 /* BEGIN query document */
  
@@ -474,7 +466,7 @@ struct Item *Nova_ScanClients()
   char *key,name[CF_BUFSIZE];
   void *value;
   struct CfKeyHostSeen entry;
-  int ret,ksize,vsize, ok = false;
+  int ksize,vsize;
   struct Item *list = NULL;
 
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
@@ -516,7 +508,7 @@ return list;
 
 void Nova_HubLog(char *s)
 
-{ char filename[CF_BUFSIZE],start[CF_BUFSIZE],end[CF_BUFSIZE];
+{ char filename[CF_BUFSIZE];
   time_t now = time(NULL);
   FILE *fout;
 
@@ -631,10 +623,8 @@ void CheckOpts(int argc,char **argv)
 
 { extern char *optarg;
   char arg[CF_BUFSIZE];
-  struct Item *actionList;
   int optindex = 0;
   int c;
-  char ld_library_path[CF_BUFSIZE];
 
 while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMa",OPTIONS,&optindex)) != EOF)
   {
@@ -729,8 +719,7 @@ if (argv[optind] != NULL)
 
 void ThisAgentInit()
 
-{ char vbuff[CF_BUFSIZE];
-
+{
 umask(077);
 
 if (CONTINUOUS)
@@ -759,7 +748,7 @@ else if (SCHEDULE == NULL)
 void KeepPromises()
 
 { struct Constraint *cp;
-  char rettype,splay[CF_BUFSIZE];
+  char rettype;
   void *retval;
 
 for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)

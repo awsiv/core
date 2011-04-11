@@ -72,11 +72,10 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
 // Read the cached compliance summary (either from Hub or
 // Constellation DB)
 
-{ char key[CF_MAXVARSIZE],value[CF_MAXVARSIZE],work[CF_BUFSIZE];
+{ char work[CF_BUFSIZE];
   mongo_connection dbconn;
   struct HubCacheTotalCompliance *tc;
   struct HubQuery *hq;
-  struct Rlist *rp;
   double kept, repaired, notkept, nodata;
   time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
   int i,slot,count;
@@ -168,9 +167,7 @@ void Nova_Meter(char *search_string,char *buffer,int bufsize)
  double kept_week = 0,kept_day = 0,kept_hour = 0,kept_comms = 0,kept_anom = 0,kept_perf = 0,kept_other = 0;
  double rep_week = 0,rep_day = 0,rep_hour = 0,rep_comms = 0,rep_anom = 0,rep_perf = 0,rep_other = 0;
  double num_week = 0,num_day = 0,num_hour = 0,num_comms = 0,num_anom = 0,num_perf = 0,num_other = 0;
- struct stat sb;
- struct utimbuf t;
- struct HubMeter *hm;
+   struct HubMeter *hm;
  struct HubQuery *hq;
  mongo_connection dbconn;
  struct Rlist *rp;
@@ -297,18 +294,15 @@ int Nova_GetHostColour(char *lkeyhash)
 
 /* note the similarities between this fn and ClassifyHostState() */
     
-{ bson_buffer b,bb,*sub1,*sub2,*sub3;
- bson qe,field,query;
+{ bson_buffer b,bb;
+ bson field,query;
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
- struct HubHost *hh;
- struct Rlist *rp,*record_list = NULL, *host_list = NULL;
  double akept[meter_endmark] = {0},arepaired[meter_endmark] = {0};
  double rkept,rrepaired;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
- int num = 0,found = false,result = -1,awol = false;
+ int found = false,result = -1,awol = false;
  mongo_connection conn;
- struct Item *list = NULL;
 
  if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
     {
@@ -592,12 +586,10 @@ struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_m
 
 /* note the similarities between this fn and GetHostColour() */
     
-{ bson_buffer b,bb,*sub1,*sub2,*sub3;
- bson qe,field,query;
+{ bson_buffer bb;
+ bson qe,field;
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
- struct HubHost *hh;
- struct Rlist *rp,*record_list = NULL, *host_list = NULL;
  double akept[meter_endmark],arepaired[meter_endmark];
  double rkept,rrepaired;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];

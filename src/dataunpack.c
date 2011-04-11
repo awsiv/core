@@ -235,7 +235,7 @@ void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, struct Item *dat
 
 { struct Item *ip;
   double weekly[CF_OBSERVABLES][CF_GRAINS];
-  int i = 0,j,k;
+  int i = 0,k;
   char *sp;
  
 CfOut(cf_verbose,""," -> Monitor histogram data.....................");
@@ -674,8 +674,6 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMeter(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  char handle[CF_SMALLBUF];
-  time_t then;
   char type;
   double kept,repaired;
   

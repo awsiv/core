@@ -197,7 +197,7 @@ snprintf(buffer,bufsize,
 
 void Nova_SpecialQuote(char *name,char *type)
 
-{ char filename[CF_BUFSIZE],rootpath[CF_BUFSIZE];
+{ char filename[CF_BUFSIZE];
   FILE *fin,*fout = stdout;
   struct Item *ip,*file = NULL;
   int have_title = false;
