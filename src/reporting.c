@@ -165,7 +165,7 @@ for (rp = list; rp != NULL; rp = rp->next)
           {
           if (NUMBER_TXT[i])
              {
-             fprintf(fout,"   <%s>%s</%s>\n",NUMBER_TXT[i],rl->item,NUMBER_TXT[i]);
+             fprintf(fout,"   <%s>%s</%s>\n",NUMBER_TXT[i],(char*)rl->item,NUMBER_TXT[i]);
              i++;
              }
           else
@@ -570,7 +570,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
             }
          else if (measure == 0.0)
             {
-            fprintf(fout,"%s,%,non-compliant,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
+            fprintf(fout,"%s,%s,non-compliant,%.1lf,%.1lf",tbuf,eventname,av*100.0,sqrt(var)*100.0);
             }
          
          }

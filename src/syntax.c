@@ -266,7 +266,7 @@ if (strlen(s) == 0)
 
 if (type == cf_opts || type == cf_olist)
    {
-   printf("\"",s);
+   printf("\"");
    for (sp = s; *sp != '\0'; sp++)
       {
       if (*sp == ',')
@@ -283,7 +283,7 @@ if (type == cf_opts || type == cf_olist)
    }
 else
    {
-   printf("\"",s);
+   printf("\"");
    for (sp = s; *sp != '\0'; sp++)
       {
       if (*sp == '\"')

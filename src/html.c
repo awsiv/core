@@ -100,7 +100,7 @@ snprintf(buffer,bufsize,
 "             <li><a href=\"services.php\">Enterprises goals</a></li>\n"
 "             <li><a href=\"Cfeditor.php\">Develop and work on policy</a></li>\n"
 "             <li><a href=\"knowledge.php?topic=security\">Security</a></li>\n"
-"             <li><a href=\"search.php?report=Business%20value%20report&manyhosts=1\">Cost and value</a></li>\n"
+"             <li><a href=\"search.php?report=Business%%20value%%20report&manyhosts=1\">Cost and value</a></li>\n"
 "             <li><a href=\"knowledge.php?topic=best.*practice\">Standards and practices</a></li>\n"
 "             <li><a href=\"knowledge.php?topic=policy.*\">Policy guidance</a></li>\n"
 "         </ul>\n"
