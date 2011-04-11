@@ -12,8 +12,8 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#ifndef CF_NOVA_WEB_API_H
-#define CF_NOVA_WEB_API_H
+#ifndef CFENGINE_CF_NOVA_WEB_API_H
+#define CFENGINE_CF_NOVA_WEB_API_H
 
 #include <stdbool.h>
 
@@ -201,4 +201,4 @@ char *Nova2PHP_get_host_environment(const char *keyhash);
 void FreeEnvironmentsList(struct EnvironmentsList *list);
 void FreeHostsList(struct HostsList *list);
 
-#endif // CF_NOVA_WEB_API_H
+#endif // CFENGINE_NOVA_WEB_API_H

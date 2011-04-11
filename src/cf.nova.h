@@ -4,6 +4,9 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#ifndef CFENGINE_NOVA_H
+#define CFENGINE_NOVA_H
+
 #ifndef NOVA
 #define NOVA 1
 
@@ -1541,4 +1544,6 @@ struct HubNoteInfo
 
 #ifdef HAVE_CONSTELLATION
 #include <cf.constellation.h>
+#endif
+
 #endif
