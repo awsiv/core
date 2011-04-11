@@ -58,7 +58,7 @@ class Welcome extends Cf_Controller {
 
     function status() {
         $bc = array(
-            'title' => 'All host',
+            'title' => 'engineering status',
             'url' => 'welcome/status',
             'isRoot' => false
         );
@@ -78,21 +78,23 @@ class Welcome extends Cf_Controller {
 
         $this->breadcrumb->setBreadCrumb($bc);
 //$reports = json_decode(cfpr_select_reports(".*", 100));
+        //$goals=cfpr_list_business_goals();
         $data = array(
-            'title' => "Cfengine Mission Portal - engineering status",
-            'title_header' => "engineering status",
-            'nav_text' => "Status : hosts",
-            'status' => "current",
-            'ret1' => cfpr_getlicense_owner(),
-            'all' => cfpr_count_all_hosts(),
-            'r' => cfpr_count_red_hosts(),
-            'y' => cfpr_count_yellow_hosts(),
-            'g' => cfpr_count_green_hosts(),
-            'jsondata' => $this->_get_jsondata_for_report_control(cfpr_select_reports(".*", 100)),
-            'jsondata2' => create_json_node_for_report_control(),
+            'title' => "Cfengine Mission Portal-engineering status",
+            //'title_header' => "engineering status",
+            //'nav_text' => "Status : hosts",
+            //'status' => "current",
+            //'ret1' => cfpr_getlicense_owner(),
+            //'all' => cfpr_count_all_hosts(),
+            //'r' => cfpr_count_red_hosts(),
+            //'y' => cfpr_count_yellow_hosts(),
+            //'g' => cfpr_count_green_hosts(),
+            //'jsondata' => $this->_get_jsondata_for_report_control(cfpr_select_reports(".*", 100)),
+            //'jsondata2' => create_json_node_for_report_control(),
             //'allreps' => array_combine($reports, $reports),
-            'allSppReps' => cfpr_cdp_reportnames(),
-            'breadcrumbs' => $this->breadcrumblist->display()
+            //'allSppReps' => cfpr_cdp_reportnames(),
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'goals'=> json_decode(cfpr_list_business_goals())
         );
 
 // Summary meter for host

@@ -308,11 +308,12 @@ body {
 }
 
 .minwidth80{
-    min-width: 73.4%;
+    min-width: 71.4%;
 }
 
 .minwidth20{
-    min-width: 23%;
+    min-width: 25%;
+    width:25%;
 }
 
 #bodystatus .right{
@@ -337,7 +338,7 @@ body {
     text-decoration: underline;
     color:#4d4d4d;
     padding-top: 20px;
-    padding-left:20px
+    padding-left:10px
 }
 
 #overall
@@ -419,7 +420,7 @@ span#today
 }
 #environment-list ul li a {
 	background: url("../images/env_btn_middle.png") repeat-x left center;
-        padding:5px;
+        padding:4px 5px 5px 5px;
 }
 
 #environment-list li span.front
@@ -482,7 +483,6 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
     width:12px;
     height:6px;
     z-index: 100;
-    margin-top:-4px;
 }
 
 
@@ -495,7 +495,42 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
 #goals
 {
    margin:0 8px 22px 8px;
-   height:311px;
+   min-height:311px;
+}
+
+#goals ul
+{
+    padding:20px 10px;
+}
+
+#goals li{
+ padding:8px 0 5px 0;
+ border-bottom:#4D4D4D 1px dashed;
+}
+
+#goals ul li:last-child {border:none}
+
+#goals li span{
+    word-wrap: break-word;
+}
+
+#goals ul li:first-letter
+{
+ text-transform:uppercase
+}
+
+#goals li span.goal{
+    color:#e41b5b;
+   
+}
+
+#goals li span.check
+{
+    float:right;
+    background:  url("../images/check.png") no-repeat;
+    width:10px;
+    height:17px;
+    display:inline-block
 }
 
 

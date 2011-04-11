@@ -68,6 +68,15 @@
         </div>
         <div id="goals" class="innerdiv">
             <p class="title">Services/goals</p>
+            <ul>
+            <?php
+            foreach($goals as $goal)
+             {
+               $words = explode("_",$goal->name);
+               echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>$goal->desc</span><span class=\"check\"></span></li>";
+             }
+            ?>
+            </ul>
         </div>
     </div>
     <div class="right"></div>
@@ -162,7 +171,7 @@
         var url = $(this).attr('href');
         $(this).parent().siblings(".selected").removeClass("selected").find('.tippointer').remove();
         $(this).parent().addClass('selected');
-        $('<div class="tippointer">').css({'top':25,'left':$(this).parent().width()/2 -6}).appendTo($(this).parent());
+        $('<div class="tippointer">').css({'margin-top':5,'left':$(this).parent().width()/2 -6}).appendTo($(this).parent());
 
         $.getJSON(url, function(data) {
 
