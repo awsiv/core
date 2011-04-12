@@ -70,8 +70,13 @@ class Welcome extends Cf_Controller {
                     ',
             '<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />
              ',
+              '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.js"> </script>
+                ',
+            'pie' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.pie.js"> </script>',
+           
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . '/widgets/notes.js"> </script>',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . '/jquery.curvycorners.packed.js"> </script>',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportcontrol2.js"> </script>');
 
         $this->template->set('injected_item', implode("", $scripts));
@@ -94,7 +99,7 @@ class Welcome extends Cf_Controller {
             //'allreps' => array_combine($reports, $reports),
             //'allSppReps' => cfpr_cdp_reportnames(),
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'goals'=> json_decode(cfpr_list_business_goals())
+            'goals' => json_decode(cfpr_list_business_goals())
         );
 
 // Summary meter for host
@@ -135,14 +140,16 @@ class Welcome extends Cf_Controller {
                 $notkept+=$val[3];
                 $repaired+=$val[2];
             }
-            $data['businessValuePie']['kept'] = $kept;
-            $data['businessValuePie']['notkept'] = $notkept;
-            $data['businessValuePie']['repaired'] = $repaired;
-
+            $data['businessValuePie']['kept'] = abs($kept);
+            $data['businessValuePie']['notkept'] = abs($notkept);
+            $data['businessValuePie']['repaired'] = abs($repaired);
         }
 
 
-
+        $data['allHost'] = cfpr_count_all_hosts();
+        $data['redhost'] = cfpr_count_red_hosts();
+        $data['yellowhost'] = cfpr_count_yellow_hosts();
+        $data['greenhost'] = cfpr_count_green_hosts();
         $this->template->load('template', 'status', $data);
     }
 

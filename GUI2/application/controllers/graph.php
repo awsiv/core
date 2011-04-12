@@ -1,6 +1,6 @@
 <?php
 
-class Graph extends CI_Controller {
+class Graph extends CF_Controller {
 
     function __construct() {
         parent::__construct();
@@ -321,7 +321,7 @@ class Graph extends CI_Controller {
 
             $hostData = cfpr_getlastupdate($hostKey);
             $lastUpdated = trim(strip_tags($hostData));
-         
+
 
             $this->data['graphLastUpdated'] = $lastUpdated;
             $this->data['graphdata'] = ($graphData);
@@ -381,70 +381,74 @@ class Graph extends CI_Controller {
 //$this->template->load('template', 'graph/histogram', $this->data);
     }
 
-    function knowledgeMap() {
-
-        $pid = 758;
-
-        $data = cfpr_get_knowledge_view($pid, '');
-        var_dump($data);
-        die();
-        $this->data['graphdata'] = ($data);
-        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>',
-            '<style type="text/css">
-            /*<![CDATA[*/
-
-
-            .node{
-                background-color: #ccccff;
-                border: 1px;
-                -moz-box-shadow: 3px 3px 5px #888;
-                -webkit-box-shadow: 3px 3px 5px #888;
-                box-shadow: 3px 3px 5px #888;
-
-            }
-
-
-            /*]]>*/
-        </style>
-');
-
-
-        $this->template->set('injected_item', implode('', $scripts));
-
-        $this->template->load('template', 'graph/knowledgemap', $this->data);
-    }
-
-    function accordian() {
-
-        $observables = 1;
-        $hostKey = 'SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e';
-        echo "12";
-        $graphData = cfpr_get_yearly_view($hostKey, $observables);
-        var_dump($graphData);
-        die();
-
-        $hostKey = 'SHA=38c5642ccb0dc74bc754aa1a63e81760869e1b3405bf9e43ad85c99822628e8e';
-        $data = cfpr_performance_analysis($hostKey);
-        $convertData = json_decode($data, true);
-
-
-        if (is_array($convertData)) {
-            var_dump($convertData);
-            die();
-            $this->data['performanceData'] = $convertData;
-            $this->template->load('template', 'graph/accordian', $this->data);
-        }
-    }
-
     function test() {
+        $bc = array(
+            'title' => 'All host',
+            'url' => 'welcome/status',
+            'isRoot' => false
+        );
 
-        $observables = 1;
-        $hostKey = 'SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e';
-        echo "12";
-        $graphData = cfpr_get_yearly_view($hostKey, $observables);
-        var_dump($graphData);
-        die();
+     
+        
+//$reports = json_decode(cfpr_select_reports(".*", 100));
+        $data = array(
+            'title' => "Cfengine Mission Portal - engineering status",
+            'title_header' => "engineering status",
+            'nav_text' => "Status : hosts",
+            'status' => "current",
+            'onlineusers' => '1'
+        );
+
+        $this->scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'flot/excanvas.min.js">  </script><![endif]-->
+            ',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.js"> </script>
+                ',
+            'mv' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.magnifiedview.js"> </script>
+             ','stack' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.stack.js"> </script>
+
+','fill' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.fillbetween.js"> </script>');
+
+
+        $this->template->set('injected_item', implode('', $this->scripts));
+
+        $key = 'SHA=ea623bad7e756bf0a39081ac22cfb572de1f7d8d970c026a529172f6c5f6fb98';
+        $data['gdata'] = cfpr_get_value_graph($key,NULL,NULL,NULL,NULL);
+
+        $this->template->load('template', 'graph/test', $data);
+
     }
+
+
+    function businessValueGraph() {
+
+$data = array(
+            'title' => "Cfengine Mission Portal - engineering status",
+            'title_header' => "engineering status",
+            'nav_text' => "Status : hosts",
+            'status' => "current",
+            'onlineusers' => '1'
+        );
+
+        $this->scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'flot/excanvas.min.js">  </script><![endif]-->
+            ',
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.js"> </script>
+                ',
+            'mv' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.magnifiedview.js"> </script>
+             ','stack' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.stack.js"> </script>
+
+',
+            'fill' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.fillbetween.js"> </script>',
+            'pie' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.pie.js"> </script>',
+            'jit' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit.js"> </script>');
+
+        $this->template->set('injected_item', implode('', $this->scripts));
+
+        $key = 'SHA=ea623bad7e756bf0a39081ac22cfb572de1f7d8d970c026a529172f6c5f6fb98';
+        $data['gdata'] = cfpr_get_value_graph(NULL,NULL,NULL,NULL,NULL);
+
+        $this->template->load('template', 'graph/pie', $data);
+    }
+
+
 
 }
