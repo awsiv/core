@@ -830,6 +830,7 @@ return worklist;
 }
     
 /*************************************************************************/
+
 struct Item *Nova_GetUniqueBusinessGoals()
 
 { char to_name[CF_BUFSIZE];

@@ -425,62 +425,47 @@ fprintf(fp,"  \"is a promise made by\";\n");
 // If no better solution in constellation, then do this...
 
 fprintf(fp,"system_reports::\n");
-fprintf(fp,"  \"classes report\" comment => \"User defined classes observed on the system\";\n");
-fprintf(fp,"  \"compliance report\" comment => \"Total summary of host compliance\";\n");
-fprintf(fp,"  \"file_changes report\" comment => \"Latest observed changes to system files\";\n");
-fprintf(fp,"  \"file_diffs report\" comment => \"Latest observed differences to system files\";\n");
-fprintf(fp,"  \"lastseen report\" comment => \"Time and frequency of communications with peers\";\n");
-fprintf(fp,"  \"license report\" comment => \"License utilization statistics\";\n");
-fprintf(fp,"  \"monitor summary report\" comment => \"Pseudo-real-time measurement\";\n");
-fprintf(fp,"  \"patches installed report\"  comment => \"Patches not yet installed, but published by vendor\";\n");
-fprintf(fp,"  \"patches available report\"  comment => \"Patches already installed on system\";\n");
-fprintf(fp,"  \"performance report\" comment => \"Time cost of verifying system promises\";\n");
-fprintf(fp,"  \"promise report\" comment => \"Per-promise average compliance report\";\n");
-fprintf(fp,"  \"promises repaired report\" comment => \"Promises that were recently repaired\";\n");
-fprintf(fp,"  \"promises not kept report\" comment => \"Promises that were recently unkept\";\n");
-fprintf(fp,"  \"software installed report\" comment => \"Software already installed on system\";\n");
-fprintf(fp,"  \"setuid report\" comment => \"Known setuid programs found on system\";\n");
-fprintf(fp,"  \"value report\" comment => \"Value estimate / ROI of cfengine configuration\";\n");
-fprintf(fp,"  \"variables report\" comment => \"Current variable values expanded on different hosts\";\n");
 
-
+for (i = 0; i < cfrep_unknown; i++)
+   {
+   fprintf(fp,"  \"%s\" comment => \"%s\";\n",BASIC_REPORTS[i][0],BASIC_REPORTS[i][1]);
+   }
 
 fprintf(fp,"  # New assocs\n");
 
-fprintf(fp,"  \"classes report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_classes][0]);
 fprintf(fp,"    association => a(\"is generated with\",\"promise_types::classes\",\"reported in\");\n");
-fprintf(fp,"  \"lastseen report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_lastseen][0]);
 fprintf(fp,"   association => a(\"is affected by\",\"body_constraints::copy_from\",\"reported in\");\n");
-fprintf(fp,"  \"lastseen report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_lastseen][0]);
 fprintf(fp,"   association => a(\"is affected by\",\"promise_types::access\",\"reported in\");\n");
 
-fprintf(fp,"  \"compliance report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_promise_compliance][0]);
 fprintf(fp,"    association => a(\"is based on\",\"promises\",\"reported in\");\n");
-fprintf(fp,"  \"compliance report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_promise_compliance][0]);
 fprintf(fp,"    association => a(\"see also\",\"promise report\",\"see also\");\n");
 
-fprintf(fp,"  \"performance report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_performance][0]);
 fprintf(fp,"    association => a(\"is based on\",\"promises\",\"reported in\");\n");
-fprintf(fp,"  \"setuid report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_setuid][0]);
 fprintf(fp,"    association => a(\"is generated with\",\"promise_types::files\",\"reported in\");\n");
 fprintf(fp,"  \"hashes report\"\n");
 fprintf(fp,"    association => a(\"is generated with\",\"promise_types::files\",\"reported in\");\n");
 fprintf(fp,"  \"hashes report\"\n");
 fprintf(fp,"    association => a(\"is generated with\",\"body_constraints::changes\",\"reported in\");\n");
-fprintf(fp,"  \"file_changes report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_change][0]);
 fprintf(fp,"    association => a(\"is generated with\",\"promise_types::files\",\"reported in\");\n");
-fprintf(fp,"  \"file_changes report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_change][0]);
 fprintf(fp,"    association => a(\"is generated with\",\"body_constraints::changes\",\"reported in\");\n");
-fprintf(fp,"  \"file_diffs report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_diff][0]);
 fprintf(fp,"    association => a(\"is generated with\",\"promise_types::files\",\"reported in\");\n");
-fprintf(fp,"  \"file_diffs report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_diff][0]);
 fprintf(fp,"    association => a(\"is generated with\",\"body_constraints::changes\",\"reported in\");\n");
-
-fprintf(fp,"  \"software installed report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_software_installed][0]);
 fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages\",\"reported in\");\n");
-fprintf(fp,"  \"patches installed report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_patch_status][0]);
 fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages\",\"reported in\");\n");
-fprintf(fp,"  \"patches available report\"\n");
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_patch_avail][0]);
 fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages\",\"reported in\");\n");
 
         
