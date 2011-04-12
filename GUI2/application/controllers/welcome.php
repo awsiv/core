@@ -413,7 +413,7 @@ class Welcome extends Cf_Controller {
 
             $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : "none";
         }
-        $reports = json_decode(cfpr_select_reports(".*", 100));
+        $reports = (array)json_decode(cfpr_select_reports(".*", 100));
         $hostname = cfpr_hostname($hostkey);
         $ipaddr = cfpr_ipaddr($hostkey);
         $username = isset($_POST['username']) ? $_POST['username'] : "";

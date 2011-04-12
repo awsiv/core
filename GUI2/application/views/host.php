@@ -74,7 +74,6 @@ $colour = cfpr_get_host_colour($hostkey);
                      </div>
                   </div>
              </div>
-          <?php cfpr_summary_meter(NULL);?>
           <div class="grid_8">
            	<div class="panel">
           		<div class="panelhead">Analysis</div>
@@ -121,7 +120,7 @@ $colour = cfpr_get_host_colour($hostkey);
                       <?php
                       $tableData = json_decode($report,true);
                       if (is_array($tableData)) {
-                      echo  $this->cf_table->generateReportTable(json_decode($tableData,true));
+                      echo  $this->cf_table->generateReportTable($tableData);
                       } else echo "No data found";
                       ?>
 

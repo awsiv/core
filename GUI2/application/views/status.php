@@ -48,9 +48,9 @@
                     <li><!-- chrome fix --></li>
                     <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/">Default</a><span class="rear"></span></li>
                     <?php foreach ($envList as $key => $env) {
- ?>
+                    ?>
                         <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/<?php echo $env; ?>"><?php echo $env; ?></a><span class="rear"></span></li>
-<?php } ?>
+                    <?php } ?>
                 </ul>
             </div>
             <div id="compliancemeter" class="">
@@ -220,11 +220,11 @@
                 {
                     'label': 'red',
                     'values': '<?php echo $redhost; ?>'
-            }]
-    };
-    
-    //init PieChart
-    /*
+                }]
+        };
+
+        //init PieChart
+        /*
     var pie = new $jit.PieChart({
         injectInto: 'business-value-pie-chart',
         animate: true,
@@ -273,50 +273,50 @@
     //load JSON data.
     pie.loadJSON(piejson);
     hostpie.loadJSON(hostpiejson);
-    */
+         */
 
-    var businessValueData =  [
-                { label: "kept",  data: <?php echo $businessValuePie['kept']; ?>,color:"#90A316"},
-                { label: "notkept",  data: <?php echo $businessValuePie['notkept']; ?>,color:"#C33D54"},
-                { label: "repaired",  data: <?php echo $businessValuePie['repaired']; ?>,color:"#BFAA54"}
+        var businessValueData =  [
+            { label: "kept",  data: <?php echo $businessValuePie['kept']; ?>,color:"#90A316"},
+            { label: "notkept",  data: <?php echo $businessValuePie['notkept']; ?>,color:"#C33D54"},
+            { label: "repaired",  data: <?php echo $businessValuePie['repaired']; ?>,color:"#BFAA54"}
         ];
 
-    $.plot($("#business-value-pie-chart"), businessValueData,
-    {
-        series: {
-            pie: {
-                show: true,
-                radius: 0.7,
-                tilt: 0.3,
-                label: {
-                    show: false,
-                    radius: 1,
-                    formatter: function(label, series){
-                        return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+        $.plot($("#business-value-pie-chart"), businessValueData,
+        {
+            series: {
+                pie: {
+                    show: true,
+                    radius: 0.7,
+                    tilt: 0.3,
+                    label: {
+                        show: false,
+                        radius: 1,
+                        formatter: function(label, series){
+                            return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                        },
+                        background: { opacity: 0.8 }
                     },
-                    background: { opacity: 0.8 }
-                },
-                highlight: {
-                    opacity: .5
+                    highlight: {
+                        opacity: .5
+                    }
                 }
+            },
+            legend: {
+                show: false
+            },grid: {
+                hoverable: true,
+                clickable: true
             }
-        },
-        legend: {
-            show: false
-        },grid: {
-            hoverable: true,
-            clickable: true
-        }
 
-    });
+        });
 
 
-var complianceNowData =  [
-                { label: "green",  data: <?php echo $greenhost;  ?>,color:"#90A316"},
-                { label: "yellow",  data: <?php echo $yellowhost; ?>,color:"#C33D54"},
-                { label: "red",  data: <?php echo $redhost; ?>,color:"#BFAA54"}
-        ];
-$.plot($("#compliance-now-pie-chart"), complianceNowData,
+        var complianceNowData =  [
+            { label: "green",  data: <?php echo $greenhost; ?>,color:"#90A316"},
+            { label: "yellow",  data: <?php echo $yellowhost; ?>,color:"#C33D54"},
+            { label: "red",  data: <?php echo $redhost; ?>,color:"#BFAA54"}
+    ];
+    $.plot($("#compliance-now-pie-chart"), complianceNowData,
     {
         series: {
             pie: {
