@@ -29,7 +29,7 @@ int Nova_EnterpriseExpiry(char *day,char *month,char *year, char *setcompany)
 /* This function is a convenience to commerical clients during testing */
     
 { struct stat sb;
-  char name[CF_MAXVARSIZE],hash[CF_MAXVARSIZE],serverkey[CF_MAXVARSIZE],policy_server[CF_MAXVARSIZE];
+  char name[CF_MAXVARSIZE],hash[CF_MAXVARSIZE],serverkey[CF_MAXVARSIZE],policy_server[CF_MAXVARSIZE], installed_time[CF_MAXVARSIZE];
   char company[CF_BUFSIZE],snumber[CF_SMALLBUF];
   int m_now,m_expire,d_now,d_expire,number = 1,am_policy_server = false;
   char f_day[16],f_month[16],f_year[16];
@@ -37,7 +37,7 @@ int Nova_EnterpriseExpiry(char *day,char *month,char *year, char *setcompany)
   unsigned char digest[EVP_MAX_MD_SIZE+1] = {0},serverdig[CF_MAXVARSIZE] = {0};
   FILE *fp;
   RSA * serverrsa;
-   
+
 if (THIS_AGENT_TYPE == cf_keygen)
    {
    return false;
@@ -184,12 +184,16 @@ NewScalar("sys","license_owner",company,cf_str);
 snprintf(snumber,CF_SMALLBUF,"%d",LICENSES);
 NewScalar("sys","licenses_granted",snumber,cf_int);
 
+snprintf(installed_time,1000,"%ld",sb.st_mtime);
+NewScalar("sys","licenses_installtime",installed_time,cf_str);
+
 #ifdef HAVE_LIBMONGOC
 if (am_policy_server && THIS_AGENT_TYPE == cf_agent)
    {
    CFDB_PutValue("license_owner",company);
    CFDB_PutValue("licenses_granted",snumber);
    CFDB_PutValue("license_expires",EXPIRY);
+   CFDB_PutValue("license_installtime",installed_time);   
    }
 #endif
 
