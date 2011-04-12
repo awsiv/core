@@ -204,7 +204,7 @@ void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version)
 
 {
   char promise_id[CF_BUFSIZE];
-  struct Rlist *rp,*depends_on = GetListConstraint("depends_on",pp);
+  struct Rlist *rp,*depends_on = GetListConstraint("depends_on",pp), *rp2;
   struct Rlist *class_list = SplitRegexAsRList(pp->classes,"[.!()|&]+",100,false);
   char *bundlename = NULL;
 
@@ -318,24 +318,25 @@ switch (pp->petype)
           fprintf(fp,"  \"%s\"\n",rp->item);
           fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
 
-          for (rp = GOALS; rp != NULL; rp = rp->next)
+          for (rp2 = GOALS; rp2 != NULL; rp2 = rp2->next)
              {
-             if (FullTextMatch(rp->item,pp->promisee))
+             if (FullTextMatch(rp2->item,pp->promisee))
                 {
                 fprintf(fp,"promises::\n\n");
                 fprintf(fp,"  \"%s\"\n",promise_id);
-                fprintf(fp,"      association => impacts(\"%s\");\n",rp->item);
+                fprintf(fp,"      association => impacts(\"%s\");\n",rp2->item);
                 
                 if (bundlename)
                    {
                    fprintf(fp,"bundles::\n\n");
                    fprintf(fp,"  \"%s\"\n",bundlename);
-                   fprintf(fp,"      association => impacts(\"%s\");\n",rp->item);
-                   fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,rp->item,NOVA_GOAL_INV);
+                   fprintf(fp,"      association => impacts(\"%s\");\n",rp2->item);
+                   fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,rp2->item,NOVA_GOAL_INV);
                    }
                 }
              }
-          }
+	  }
+
        break;
    default:
        break;
