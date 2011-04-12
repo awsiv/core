@@ -18,40 +18,6 @@ This file is (C) Cfengine AS. See LICENSE for details.
 
 #ifdef HAVE_LIBMONGOC
 
-char *BASIC_REPORTS[] =
-{
-    "Bundle profile",
-    "Business value report",
-    "Class profile",
-    "Compliance by promise",
-    "Compliance summary",
-    "File change log",
-    "File change diffs",
-    "Last saw hosts",
-    "Patches available",
-    "Patch status",
-    "Performance",
-    "Promises repaired log",
-    "Promises repaired summary",
-    "Promises not kept log",
-    "Promises not kept summary",
-    "Setuid/gid root programs",
-    "Software installed",
-    "Variables",
-    NULL
-};
-
-char *CDP_REPORTS[] =
-{
-    "ACLs",
-    "Commands",
-    "File Changes",
-    "File Diffs",
-    "Registry",
-    "Services",
-    NULL
-};
-
 /*****************************************************************************/
 
 void Nova_EnterpriseModuleTrick()
@@ -3144,22 +3110,22 @@ int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,i
 void Nova2PHP_select_reports(char *buffer,int bufsize)
 
 { char work[CF_MAXVARSIZE];
- int i;
+  int i;
 
- buffer[0] = '\0';
- strcat(buffer,"[");
+buffer[0] = '\0';
+strcat(buffer,"[");
 
- for (i = 0; BASIC_REPORTS[i] != NULL; i++)
-    {
-    snprintf(work,CF_MAXVARSIZE,"\"%s\"",BASIC_REPORTS[i]);
-    if (BASIC_REPORTS[i+1] != NULL)
-       {
-       strcat(work,",");
-       }
-    Join(buffer,work,bufsize);
-    }
+for (i = 0; BASIC_REPORTS[i][0] != NULL; i++)
+   {
+   snprintf(work,CF_MAXVARSIZE,"\"%s\"",BASIC_REPORTS[i][0]);
+   if (BASIC_REPORTS[i+1] != NULL)
+      {
+      strcat(work,",");
+      }
+   Join(buffer,work,bufsize);
+   }
 
- Join(buffer,"]",bufsize);
+Join(buffer,"]",bufsize);
 }
 
 /*****************************************************************************/
@@ -4344,7 +4310,9 @@ char *Nova_FormatDiff_pdf(char *s)
 
  return returnval;
 }
+
 /*****************************************************************************/
+
 int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
@@ -4398,62 +4366,45 @@ int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *classreg
 void Nova2PHP_cdp_reportnames(char *buf,int bufSz)
 
 { int i;
- char work[CF_SMALLBUF];
+  char work[CF_SMALLBUF];
 
- buf[0] = '\0';
- Join(buf,"<select name=\"cdp_report\">\n",bufSz);
+buf[0] = '\0';
+Join(buf,"<select name=\"cdp_report\">\n",bufSz);
 
- for (i = 0; CDP_REPORTS[i] != NULL; i++)
-    {
-    snprintf(work,sizeof(work),"<option value=\"%s\">%s</option>\n",CDP_REPORTS[i],CDP_REPORTS[i]);
+for (i = 0; CDP_REPORTS[i][0] != NULL; i++)
+   {
+   snprintf(work,sizeof(work),"<option value=\"%s\">%s</option>\n",CDP_REPORTS[i][0],CDP_REPORTS[i][0]);
+   
+   if (!Join(buf,work,bufSz))
+      {
+      break;
+      }
+   }
 
-    if(!Join(buf,work,bufSz))
-       {
-       break;
-       }
-    }
-
- EndJoin(buf,"\n</select>\n",bufSz);
+EndJoin(buf,"\n</select>\n",bufSz);
 }
 
 /*****************************************************************************/
 
 cdp_t CdpReportNameToType(char *reportName)
-{
-  
- if(strcmp(reportName,"ACLs") == 0)
-    {
-    return cdp_acls;
-    }
- else if(strcmp(reportName,"Commands") == 0)
-    {
-    return cdp_commands;
-    }
- else if(strcmp(reportName,"File Changes") == 0)
-    {
-    return cdp_filechanges;
-    }
- else if(strcmp(reportName,"File Diffs") == 0)
-    {
-    return cdp_filediffs;
-    }
- else if(strcmp(reportName,"Registry") == 0)
-    {
-    return cdp_registry;
-    }
- else if(strcmp(reportName,"Services") == 0)
-    {
-    return cdp_services;
-    }
- else
-    {
-    return cdp_unknown;
-    }
+
+{ int i;
+
+for (i = 0; i < cdp_unknown; i++)
+   {
+   if (strcmp(reportName,CDP_REPORTS[i][0]) == 0)
+      {
+      return (cdp_t)i;      
+      }
+   }
+
+return cdp_unknown;
 }
 
 /*****************************************************************************/
 
 int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
+
 {
  struct Item *promises = {0}, *hosts = {0};
  struct Item *ip = {0}, *ip2 = {0};
@@ -4618,238 +4569,236 @@ char *GetCdpTableHeader(cdp_t cdpType)
 }
 
 /*****************************************************************************/
+
 int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize)
 
-{
- char cmd[CF_BUFSIZE];
- char tmp[CF_MAXVARSIZE];
- int retVal;
- FILE *pp;
+{ char cmd[CF_BUFSIZE];
+  char tmp[CF_MAXVARSIZE];
+  int retVal;
+  FILE *pp;
 
  // NOTE: this is run as the web user
 
- snprintf(cmd,CF_BUFSIZE,"/var/cfengine/bin/cf-promises -n -f \"%s\"",file);
+snprintf(cmd,CF_BUFSIZE,"/var/cfengine/bin/cf-promises -n -f \"%s\"",file);
 
- if((pp = cf_popen(cmd,"r")) == NULL)
-    {
-    snprintf(buffer,bufsize,"Could not run command \"%s\": %s", cmd, GetErrorStr());
-    return -1;
-    }
+if ((pp = cf_popen(cmd,"r")) == NULL)
+   {
+   snprintf(buffer,bufsize,"Could not run command \"%s\": %s", cmd, GetErrorStr());
+   return -1;
+   }
 
- buffer[0] = '\0';
+buffer[0] = '\0';
 
- while(!feof(pp))
-    {
-    if(fgets(tmp,sizeof(tmp),pp))
-       {
-       Join(buffer,tmp,bufsize);
-       }
-    }
+while(!feof(pp))
+   {
+   if (fgets(tmp,sizeof(tmp),pp))
+      {
+      Join(buffer,tmp,bufsize);
+      }
+   }
 
- retVal = cf_pclose(pp);
-
- return retVal; // 0 on success
+retVal = cf_pclose(pp);
+return retVal; // 0 on success
 }
 
 /*****************************************************************************/
 
 int Nova2PHP_delete_host(char *keyHash)
-{
- mongo_connection dbconn;
+
+{ mongo_connection dbconn;
   
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-  
-  
- CFDB_PurgeHost(&dbconn, keyHash);
-
-
- CFDB_Close(&dbconn);
-
- return true;
+CFDB_PurgeHost(&dbconn, keyHash);
+CFDB_Close(&dbconn);
+return true;
 }
 
 /*****************************************************************************/
+/* Multiple policy environments                                              */
+/*****************************************************************************/
 
 bool Nova2PHP_environments_list(struct EnvironmentsList **out)
-{
- mongo_connection dbconn;
- bson_buffer bb;
- bson cmd;
- bson result;
- bson_iterator i;
- bson_iterator values;
 
- *out = NULL;
+{ mongo_connection dbconn;
+  bson_buffer bb;
+  bson cmd;
+  bson result;
+  bson_iterator i;
+  bson_iterator values;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose, "", " !! Could not open connection to report database");
-    return false;
-    }
+*out = NULL;
 
- /* { distinct: 'hosts', key: 'env' } */
- bson_buffer_init(&bb);
- bson_append_string(&bb, "distinct", "hosts");
- bson_append_string(&bb, "key", "env");
- bson_from_buffer(&cmd, &bb);
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose, "", " !! Could not open connection to report database");
+   return false;
+   }
 
- if (!mongo_run_command(&dbconn, MONGO_BASE, &cmd, &result))
-    {
-    MongoCheckForError(&dbconn,"Nova2PHP_environments_list", "");
-    bson_buffer_destroy(&bb);
-    bson_destroy(&cmd);
-    CFDB_Close(&dbconn);
-    return false;
-    }
+/* { distinct: 'hosts', key: 'env' } */
+bson_buffer_init(&bb);
+bson_append_string(&bb, "distinct", "hosts");
+bson_append_string(&bb, "key", "env");
+bson_from_buffer(&cmd, &bb);
 
- bson_destroy(&cmd);
+if (!mongo_run_command(&dbconn, MONGO_BASE, &cmd, &result))
+   {
+   MongoCheckForError(&dbconn,"Nova2PHP_environments_list", "");
+   bson_buffer_destroy(&bb);
+   bson_destroy(&cmd);
+   CFDB_Close(&dbconn);
+   return false;
+   }
 
- if (!bson_find(&i, &result, "values"))
-    {
-    CfOut(cf_verbose, "", " Malformed query result in Nova2PHP_environments_list");
-    bson_destroy(&result);
-    CFDB_Close(&dbconn);
-    return false;
-    }
+bson_destroy(&cmd);
 
- if (bson_iterator_type(&i) != bson_array)
-    {
-    CfOut(cf_verbose, "", " Malformed query result in Nova2PHP_environments_list");
-    bson_destroy(&result);
-    CFDB_Close(&dbconn);
-    return false;
-    }
+if (!bson_find(&i, &result, "values"))
+   {
+   CfOut(cf_verbose, "", " Malformed query result in Nova2PHP_environments_list");
+   bson_destroy(&result);
+   CFDB_Close(&dbconn);
+   return false;
+   }
 
- bson_iterator_subiterator(&i, &values);
+if (bson_iterator_type(&i) != bson_array)
+   {
+   CfOut(cf_verbose, "", " Malformed query result in Nova2PHP_environments_list");
+   bson_destroy(&result);
+   CFDB_Close(&dbconn);
+   return false;
+   }
 
- while (bson_iterator_next(&values))
-    {
-    struct EnvironmentsList *node = malloc(sizeof(struct EnvironmentsList));
-    node->next = *out;
-    node->name = strdup(bson_iterator_string(&values));
-    *out = node;
-    }
+bson_iterator_subiterator(&i, &values);
 
- bson_destroy(&result);
- CFDB_Close(&dbconn);
- return true;
+while (bson_iterator_next(&values))
+   {
+   struct EnvironmentsList *node = malloc(sizeof(struct EnvironmentsList));
+   node->next = *out;
+   node->name = strdup(bson_iterator_string(&values));
+   *out = node;
+   }
+
+bson_destroy(&result);
+CFDB_Close(&dbconn);
+return true;
 }
 
 /*****************************************************************************/
 
 bool Nova2PHP_environment_contents(const char *environment, struct HostsList **out)
-{
- mongo_connection dbconn;
- mongo_cursor *cursor;
- bson_buffer bb;
- bson query, fields;
 
- *out = NULL;
+{ mongo_connection dbconn;
+  mongo_cursor *cursor;
+  bson_buffer bb;
+  bson query, fields;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose, "", " !! Could not open connection to report database");
-    return false;
-    }
+*out = NULL;
 
- if (environment)
-    {
-    /* { env: $environment } */
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, "env", environment);
-    }
- else
-    {
-    /* { env: { $exists: 0 } } */
-    bson_buffer_init(&bb);
-    bson_append_start_object(&bb, "env");
-    bson_append_int(&bb, "$exists", 0);
-    bson_append_finish_object(&bb);
-    }
- bson_from_buffer(&query, &bb);
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose, "", " !! Could not open connection to report database");
+   return false;
+   }
 
- /* { kH: 1 } */
- bson_buffer_init(&bb);
- bson_append_int(&bb, "kH", 1);
- bson_from_buffer(&fields, &bb);
+if (environment)
+   {
+   /* { env: $environment } */
+   bson_buffer_init(&bb);
+   bson_append_string(&bb, "env", environment);
+   }
+else
+   {
+   /* { env: { $exists: 0 } } */
+   bson_buffer_init(&bb);
+   bson_append_start_object(&bb, "env");
+   bson_append_int(&bb, "$exists", 0);
+   bson_append_finish_object(&bb);
+   }
+bson_from_buffer(&query, &bb);
 
- cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &fields, 0, 0, 0);
+/* { kH: 1 } */
+bson_buffer_init(&bb);
+bson_append_int(&bb, "kH", 1);
+bson_from_buffer(&fields, &bb);
 
- bson_destroy(&query);
- bson_destroy(&fields);
+cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &fields, 0, 0, 0);
 
- while (mongo_cursor_next(cursor))
-    {
-    bson_iterator i;
+bson_destroy(&query);
+bson_destroy(&fields);
 
-    if (!bson_find(&i, &cursor->current, "kH"))
-       {
-       CfOut(cf_verbose, "", "Malformed query result in Nova2PHP_environment_contents");
-       mongo_cursor_destroy(cursor);
-       CFDB_Close(&dbconn);
-       return false;
-       }
+while (mongo_cursor_next(cursor))
+   {
+   bson_iterator i;
+   
+   if (!bson_find(&i, &cursor->current, "kH"))
+      {
+      CfOut(cf_verbose, "", "Malformed query result in Nova2PHP_environment_contents");
+      mongo_cursor_destroy(cursor);
+      CFDB_Close(&dbconn);
+      return false;
+      }
+   
+   struct HostsList *node = malloc(sizeof(struct HostsList));
+   node->next = *out;
+   node->keyhash = strdup(bson_iterator_string(&i));
+   *out = node;
+   }
 
-    struct HostsList *node = malloc(sizeof(struct HostsList));
-    node->next = *out;
-    node->keyhash = strdup(bson_iterator_string(&i));
-    *out = node;
-    }
-
- mongo_cursor_destroy(cursor);
- return true;
+mongo_cursor_destroy(cursor);
+return true;
 }
 
 /*****************************************************************************/
 
 char *Nova2PHP_get_host_environment(const char *hostkey)
-{
- mongo_connection dbconn;
- bson_buffer bb;
- bson query, fields;
- bson result;
- bool res;
- bson_iterator i;
- char *environment = NULL;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose, "", " !! Could not open connection to report database");
-    return false;
-    }
+{ mongo_connection dbconn;
+  bson_buffer bb;
+  bson query, fields;
+  bson result;
+  bool res;
+  bson_iterator i;
+  char *environment = NULL;
 
- /* { kH: $hostkey } */
- bson_buffer_init(&bb);
- bson_append_string(&bb, "kH", hostkey);
- bson_from_buffer(&query, &bb);
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose, "", " !! Could not open connection to report database");
+   return false;
+   }
 
- /* { env: 1 } */
- bson_buffer_init(&bb);
- bson_append_int(&bb, "env", 1);
- bson_from_buffer(&fields, &bb);
+/* { kH: $hostkey } */
+bson_buffer_init(&bb);
+bson_append_string(&bb, "kH", hostkey);
+bson_from_buffer(&query, &bb);
 
- res = mongo_find_one(&dbconn, MONGO_DATABASE, &query, &fields, &result);
+/* { env: 1 } */
+bson_buffer_init(&bb);
+bson_append_int(&bb, "env", 1);
+bson_from_buffer(&fields, &bb);
 
- bson_destroy(&query);
- bson_destroy(&fields);
+res = mongo_find_one(&dbconn, MONGO_DATABASE, &query, &fields, &result);
 
- if (res)
-    {
-    if (bson_find(&i, &result, "env"))
-       {
-       environment = strdup(bson_iterator_string(&i));
-       }
-    bson_destroy(&result);
-    }
+bson_destroy(&query);
+bson_destroy(&fields);
 
- CFDB_Close(&dbconn);
- return environment;
+if (res)
+   {
+   if (bson_find(&i, &result, "env"))
+      {
+      environment = strdup(bson_iterator_string(&i));
+      }
+   bson_destroy(&result);
+   }
+
+CFDB_Close(&dbconn);
+return environment;
 }
+
+/*****************************************************************************/
 
 void FreeEnvironmentsList(struct EnvironmentsList *list)
 {
@@ -4862,6 +4811,7 @@ void FreeEnvironmentsList(struct EnvironmentsList *list)
     }
 }
 
+/*****************************************************************************/
 
 void FreeHostsList(struct HostsList *list)
 {
@@ -4874,48 +4824,50 @@ void FreeHostsList(struct HostsList *list)
     }
 }
 
-
 /*****************************************************************************/
-/*for commenting functionality */
+/* for commenting functionality */
 /*****************************************************************************/
 
 int Nova2PHP_add_note(char *noteid,char *username, time_t datetime,char* note,char *returnval, int bufsize)
 
 { struct Item *data = NULL;
- char msg[CF_BUFSIZE] = {0}, nid[CF_MAXVARSIZE] = {0};
- mongo_connection dbconn;
- bson_buffer bb;
- int ret = 0;
+  char msg[CF_BUFSIZE] = {0}, nid[CF_MAXVARSIZE] = {0};
+  mongo_connection dbconn;
+  bson_buffer bb;
+  int ret = 0;
 
- if(!noteid || strlen(noteid) == 0)
-    {
-    CfOut(cf_verbose,"", "!! Noteid is empty");
-    return false;
-    }
-
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
- snprintf(nid, CF_MAXVARSIZE, "%s",noteid);
- snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,note,datetime);
- AppendItem(&data, msg, NULL);
-
- ret = CFDB_AddNote(&dbconn,NULL,nid,NULL,data);
- CFDB_Close(&dbconn);
- snprintf(returnval,bufsize,"%d",ret);
- if(ret)
+if (!noteid || strlen(noteid) == 0)
    {
-     snprintf(returnval,bufsize,"%s",nid);
+   CfOut(cf_verbose,"", "!! Noteid is empty");
+   return false;
    }
- return ret;
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+snprintf(nid, CF_MAXVARSIZE, "%s",noteid);
+snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,note,datetime);
+AppendItem(&data, msg, NULL);
+
+ret = CFDB_AddNote(&dbconn,NULL,nid,NULL,data);
+CFDB_Close(&dbconn);
+snprintf(returnval,bufsize,"%d",ret);
+
+if (ret)
+   {
+   snprintf(returnval,bufsize,"%s",nid);
+   }
+
+return ret;
 }
 
 /*****************************************************************************/
 /*for commenting functionality */
 /*****************************************************************************/
+
 int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *username, time_t datetime, char *note,char *returnval, int bufsize)
 
 { struct Item *data = NULL, *ip = NULL, *report = NULL;
@@ -5049,129 +5001,138 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
 }
 
 /*****************************************************************************/
-/*commenting*/
+/*  Commenting                                                               */
+/*****************************************************************************/
+
 int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, time_t to, char *returnval, int bufsize)
 
 { struct Item *data = NULL, *ip = NULL;
- char msg[CF_BUFSIZE] = {0};
- char buffer[CF_BUFSIZE] = {0};
- mongo_connection dbconn;
- struct HubNoteInfo *hni;
- struct HubNote *hn;
- struct Rlist *result, *rp;
+  char msg[CF_BUFSIZE] = {0};
+  char buffer[CF_BUFSIZE] = {0};
+  mongo_connection dbconn;
+  struct HubNoteInfo *hni;
+  struct HubNote *hn;
+  struct Rlist *result, *rp;
 
- char fuser[CF_MAXVARSIZE] = {0};
- char kh[CF_MAXVARSIZE] = {0};
- char noteId[CF_MAXVARSIZE] = {0};
- int count=0;
+  char fuser[CF_MAXVARSIZE] = {0};
+  char kh[CF_MAXVARSIZE] = {0};
+  char noteId[CF_MAXVARSIZE] = {0};
+  int count=0;
 
- if(username)
-    {
-    snprintf(fuser, CF_MAXVARSIZE,"%s", username);
-    }
- if(keyhash)
-    {
-    snprintf(kh, CF_MAXVARSIZE,"%s", keyhash);
-    }
- if(nid)
-    {
-    snprintf(noteId, CF_MAXVARSIZE,"%s", nid);
-    }
+if (username)
+   {
+   snprintf(fuser, CF_MAXVARSIZE,"%s", username);
+   }
 
- snprintf(msg, CF_BUFSIZE, "%s,%ld,%ld\n",fuser, from, to);
+if(keyhash)
+   {
+   snprintf(kh, CF_MAXVARSIZE,"%s", keyhash);
+   }
 
- AppendItem(&data, msg, NULL);
+if(nid)
+   {
+   snprintf(noteId, CF_MAXVARSIZE,"%s", nid);
+   }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+snprintf(msg, CF_BUFSIZE, "%s,%ld,%ld\n",fuser, from, to);
 
- result = CFDB_QueryNotes(&dbconn, kh, noteId, data);
+AppendItem(&data, msg, NULL);
 
- returnval[0] = '\0';
- StartJoin(returnval,"{\"data\":[",bufsize);
-  
- for (rp = result; rp != NULL; rp=rp->next)
-    {
-    hni = ( struct HubNoteInfo *) rp->item;
-    for(hn = hni->note; hn != NULL; hn=hn->next)
-       {
-       snprintf(buffer,sizeof(buffer),"{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\"},", hn->user, hn->t, hn->msg);
-       if(!Join(returnval,buffer,bufsize))
-          {
-          break;
-          }
-       count++;
-       }
-    hni = NULL;
-    }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0';
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- snprintf(buffer,sizeof(buffer),"],\"meta\":{\"count\":%d}}\n",count);
- EndJoin(returnval,buffer,bufsize);
+result = CFDB_QueryNotes(&dbconn, kh, noteId, data);
 
- DeleteRlist(result);
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+returnval[0] = '\0';
+StartJoin(returnval,"{\"data\":[",bufsize);
 
- return true;
+for (rp = result; rp != NULL; rp=rp->next)
+   {
+   hni = ( struct HubNoteInfo *) rp->item;
+   for(hn = hni->note; hn != NULL; hn=hn->next)
+      {
+      snprintf(buffer,sizeof(buffer),"{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\"},", hn->user, hn->t, hn->msg);
+      if(!Join(returnval,buffer,bufsize))
+         {
+         break;
+         }
+      count++;
+      }
+   hni = NULL;
+   }
+
+if (returnval[strlen(returnval)-1]==',')
+   {
+   returnval[strlen(returnval) - 1] = '\0';
+   }
+
+snprintf(buffer,sizeof(buffer),"],\"meta\":{\"count\":%d}}\n",count);
+EndJoin(returnval,buffer,bufsize);
+
+DeleteRlist(result);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
 }
+
 /*****************************************************************************/
+
 int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
-{
- char *report,buffer[CF_BUFSIZE];
- struct Rlist *rp,*result;
- mongo_connection dbconn;
- bson query,b;
- bson_buffer bb;
+
+{ char *report,buffer[CF_BUFSIZE];
+  struct Rlist *rp,*result;
+  mongo_connection dbconn;
+  bson query,b;
+  bson_buffer bb;
 
 /* BEGIN query document */
 
- if (hostkey && strlen(hostkey) != 0)
-    {
-    bson_buffer_init(&bb);
-    bson_append_string(&bb,cfr_keyhash,hostkey);
-    bson_from_buffer(&query,&bb);
-    }
- else
-    {
-    return false;
-    }
+if (hostkey && strlen(hostkey) != 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   }
+else
+   {
+   return false;
+   }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- result = CFDB_QueryNoteId(&dbconn,&query);
+result = CFDB_QueryNoteId(&dbconn,&query);
 
- bson_destroy(&query);
- returnval[0] = '\0';
- if(!result)
-    {
-    return false;
-    }
+bson_destroy(&query);
+returnval[0] = '\0';
 
- for (rp = result; rp != NULL; rp=rp->next)
-    {
-    snprintf(buffer,CF_MAXVARSIZE,"%s",(char *)rp->item);
-    snprintf(returnval,CF_MAXVARSIZE,"%s ",buffer);
-    }
+if(!result)
+   {
+   return false;
+   }
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+for (rp = result; rp != NULL; rp=rp->next)
+   {
+   snprintf(buffer,CF_MAXVARSIZE,"%s",(char *)rp->item);
+   snprintf(returnval,CF_MAXVARSIZE,"%s ",buffer);
+   }
 
- return true;
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
 }
 
 /*****************************************************************************/
@@ -5179,20 +5140,12 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
 int Nova2PHP_enterprise_version(char *buf, int bufsize)
 {
 #ifdef HAVE_CONSTELLATION
-
  snprintf(buf, bufsize, "Constellation %s", Constellation_GetVersion());
-
  return true;
-
 #else
-
  snprintf(buf, bufsize, "Nova %s", Nova_GetVersion());
- 
  return true;
-
 #endif
-
-
  return false;
 }
 
@@ -5221,10 +5174,7 @@ void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer
 int Con2PHP_count_hubs(char *classification, char *buf, int bufsize)
 
 {
-
 #ifdef HAVE_CONSTELLATION
-
-
  struct HubQuery *hq;
  mongo_connection dbconn;
  struct Rlist *rp;
@@ -5233,33 +5183,31 @@ int Con2PHP_count_hubs(char *classification, char *buf, int bufsize)
  int result = false;
  int count = 0;
 
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+hq = CFDB_QueryHubs(&dbconn);
 
- hq = CFDB_QueryHubs(&dbconn);
+CFDB_Close(&dbconn);
 
- CFDB_Close(&dbconn);
+count = RlistLen(hq->hosts);
 
- count = RlistLen(hq->hosts);
+snprintf(buf,bufsize,"{ hosts : %d}", count);
 
- snprintf(buf,bufsize,"{ hosts : %d}", count);
- 
- DeleteHubQuery(hq, NULL);
+DeleteHubQuery(hq, NULL);
 
- return true;
+return true;
 
 #else  /* NOT HAVE_CONSTELLATION */
 
- snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_count_hubs() in Nova-only environment\n");
- CfOut(cf_error, "", buf);
- return false;
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_count_hubs() in Nova-only environment\n");
+CfOut(cf_error, "", buf);
+return false;
 
 #endif
-
 }
 
 /*****************************************************************************/
@@ -5267,10 +5215,7 @@ int Con2PHP_count_hubs(char *classification, char *buf, int bufsize)
 int Con2PHP_show_hubs(char *classification, char *buf, int bufsize)
 
 {
-
 #ifdef HAVE_CONSTELLATION
-
-
  struct HubQuery *hq;
  mongo_connection dbconn;
  struct Rlist *rp;
@@ -5278,116 +5223,108 @@ int Con2PHP_show_hubs(char *classification, char *buf, int bufsize)
  char row[CF_MAXVARSIZE];
  int result = false;
 
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+hq = CFDB_QueryHubs(&dbconn);
 
- hq = CFDB_QueryHubs(&dbconn);
+CFDB_Close(&dbconn);
 
- CFDB_Close(&dbconn);
+StartJoin(buf,"<table>\n",bufsize);
 
- StartJoin(buf,"<table>\n",bufsize);
+if (hq)
+   {
+   for(rp = hq->hosts; rp != NULL; rp = rp->next)
+      {
+      hh = (struct HubHost *)rp->item;
+      
+      snprintf(row,sizeof(row),"<tr><td><a href=\"constellation.php?hkh=%s\">%s</a></td><td>%s</td></tr>\n",  // FIXME
+               hh->keyhash, hh->keyhash, hh->hostname);
+      
+      Join(buf,row,bufsize);
+      }
+   result = true;
+   }
+else
+   {
+   result = false;
+   }
 
- if(hq)
-    {
-    for(rp = hq->hosts; rp != NULL; rp = rp->next)
-       {
-       hh = (struct HubHost *)rp->item;
-       
-       snprintf(row,sizeof(row),"<tr><td><a href=\"constellation.php?hkh=%s\">%s</a></td><td>%s</td></tr>\n",  // FIXME
-                hh->keyhash, hh->keyhash, hh->hostname);
-       
-       Join(buf,row,bufsize);
-       }
-    result = true;
-    }
- else
-    {
-    result = false;
-    }
+EndJoin(buf,"</table>\n",bufsize);
 
- EndJoin(buf,"</table>\n",bufsize);
-  
- 
- DeleteHubQuery(hq,NULL);
 
- return result;
+DeleteHubQuery(hq,NULL);
+
+return result;
 
 #else  /* NOT HAVE_CONSTELLATION */
 
- snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_show_hubs() in Nova-only environment\n");
- CfOut(cf_error, "", buf);
- return false;
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_show_hubs() in Nova-only environment\n");
+CfOut(cf_error, "", buf);
+return false;
 
 #endif
-
 }
 
 /*****************************************************************************/
 
 int Con2PHP_summarize_promiselog(char *hubKeyHash, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize)
+
 {
-
 #ifdef HAVE_CONSTELLATION
-
-
  struct HubQuery *hq;
  mongo_connection dbconn;
  struct Rlist *rp;
  struct HubPromiseSum *hs;
  char buffer[CF_MAXVARSIZE];
 
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+hq = CFDB_QuerySumPromiseLog(&dbconn,hubKeyHash,NULL,log_type,tw);
 
- hq = CFDB_QuerySumPromiseLog(&dbconn,hubKeyHash,NULL,log_type,tw);
- 
- CFDB_Close(&dbconn);
+CFDB_Close(&dbconn);
 
- if(!hq)
-    {
-    buf[0] = '\0';
-    return false;
-    }
+if (!hq)
+   {
+   buf[0] = '\0';
+   return false;
+   }
 
- StartJoin(buf,"<table>\n",bufsize);
- 
+StartJoin(buf,"<table>\n",bufsize);
 
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    hs = (struct HubPromiseSum *)rp->item;
-
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hs = (struct HubPromiseSum *)rp->item;
    
-    snprintf(buffer,sizeof(buffer),"<tr><td><a href=\"/promise/details/%s\">%s</a></td><td>%d</td><td>%d</td></tr>\n",
-             hs->handle,hs->handle,hs->occurences,hs->hostOccurences);
+   snprintf(buffer,sizeof(buffer),"<tr><td><a href=\"/promise/details/%s\">%s</a></td><td>%d</td><td>%d</td></tr>\n",
+            hs->handle,hs->handle,hs->occurences,hs->hostOccurences);
    
-    if(!Join(buf,buffer,bufsize))
-       {
-       break;
-       }
-    }
+   if (!Join(buf,buffer,bufsize))
+      {
+      break;
+      }
+   }
 
- EndJoin(buf,"</table>\n",bufsize);
+EndJoin(buf,"</table>\n",bufsize);
 
- DeleteHubQuery(hq,DeleteHubPromiseSum);
+DeleteHubQuery(hq,DeleteHubPromiseSum);
 
- return true;
+return true;
 
 #else  /* NOT HAVE_CONSTELLATION */
 
- snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_summarize_promiselog() in Nova-only environment\n");
- CfOut(cf_error, "", buf);
- return false;
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_summarize_promiselog() in Nova-only environment\n");
+CfOut(cf_error, "", buf);
+return false;
 
 #endif
-
 }
 
 /*****************************************************************************/
@@ -5395,10 +5332,7 @@ int Con2PHP_summarize_promiselog(char *hubKeyHash, enum promiselog_rep log_type,
 int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize)
 
 {
-
 #ifdef HAVE_CONSTELLATION
-
-
  struct HubQuery *hq;
  mongo_connection dbconn;
  struct Rlist *rp;
@@ -5407,47 +5341,45 @@ int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promise
  int result = false;
  int count = 0, hostCount = 0;
 
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+hq = CFDB_QuerySumPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type,tw);
 
- hq = CFDB_QuerySumPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type,tw);
+CFDB_Close(&dbconn);
 
- CFDB_Close(&dbconn);
+if(hq)
+   {
+   for(rp = hq->records; rp != NULL; rp = rp->next)
+      {
+      // usually iterates once (a specific promise handle is supplied)
+      hs = (struct HubPromiseSum *)rp->item;
+      count += hs->occurences;
+      hostCount += hs->hostOccurences;
+      }
+   result = true;
+   }
+else
+   {
+   result = false;
+   }
 
- if(hq)
-    {
-    for(rp = hq->records; rp != NULL; rp = rp->next)
-       {
-       // usually iterates once (a specific promise handle is supplied)
-       hs = (struct HubPromiseSum *)rp->item;
-       count += hs->occurences;
-       hostCount += hs->hostOccurences;
-       }
-    result = true;
-    }
- else
-    {
-    result = false;
-    }
+snprintf(buf,bufsize,"{total : %d, hosts : %d}", count, hostCount);
 
- snprintf(buf,bufsize,"{total : %d, hosts : %d}", count, hostCount);
- 
- DeleteHubQuery(hq,DeleteHubPromiseSum);
+DeleteHubQuery(hq,DeleteHubPromiseSum);
 
- return result;
+return result;
 
 #else  /* NOT HAVE_CONSTELLATION */
 
- snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_count_notkept() in Nova-only environment\n");
- CfOut(cf_error, "", buf);
- return false;
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_count_notkept() in Nova-only environment\n");
+CfOut(cf_error, "", buf);
+return false;
 
 #endif
-
 }
 
 /*****************************************************************************/
@@ -5455,58 +5387,49 @@ int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promise
 int Con2PHP_reasons_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize)
 
 {
-
 #ifdef HAVE_CONSTELLATION
-
-
  struct HubQuery *hq;
  mongo_connection dbconn;
  struct Rlist *rp;
  struct HubPromiseSum *hs;
  char buffer[CF_MAXVARSIZE];
 
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+hq = CFDB_QueryReasonsPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type,tw);
 
- hq = CFDB_QueryReasonsPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type,tw);
+StartJoin(buf,"<table>\n",bufsize);
 
-
- StartJoin(buf,"<table>\n",bufsize);
-
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    hs = (struct HubPromiseSum *)rp->item;
-
-    snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%d</td></tr>\n",
-             hs->cause,hs->occurences);
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hs = (struct HubPromiseSum *)rp->item;
    
-    if(!Join(buf,buffer,bufsize))
-       {
-       break;
-       }
-    }
+   snprintf(buffer,sizeof(buffer),"<tr><td>%s</td><td>%d</td></tr>\n",
+            hs->cause,hs->occurences);
+   
+   if(!Join(buf,buffer,bufsize))
+      {
+      break;
+      }
+   }
 
- EndJoin(buf,"</table>\n",bufsize);
+EndJoin(buf,"</table>\n",bufsize);
  
+DeleteHubQuery(hq,DeleteHubPromiseSum);
 
- DeleteHubQuery(hq,DeleteHubPromiseSum);
-
- CFDB_Close(&dbconn);
-
- return true;
+CFDB_Close(&dbconn);
+return true;
 
 #else  /* NOT HAVE_CONSTELLATION */
 
- snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_reasons_promiselog() in Nova-only environment\n");
- CfOut(cf_error, "", buf);
- return false;
-
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_reasons_promiselog() in Nova-only environment\n");
+CfOut(cf_error, "", buf);
+return false;
 #endif
-
 }
 
 /*****************************************************************************/
@@ -5514,57 +5437,49 @@ int Con2PHP_reasons_promiselog(char *hubKeyHash, char *promiseHandle, enum promi
 int Con2PHP_environments_list(char *hubKeyHash, char *buf, int bufsize)
 
 {
-
 #ifdef HAVE_CONSTELLATION
-
  mongo_connection dbconn;
  char buffer[CF_MAXVARSIZE];
  struct Item *environments, *ip;
  char work[CF_MAXVARSIZE];
  bson query;
  
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+if(EMPTY(hubKeyHash))
+   {
+   environments = CFDB_QueryDistinct(&dbconn, CONST_MONGO_BASE, "sum_compliance_wk", cfl_polname, bson_empty(&query));
+   }
+else
+   {
+   environments = CFDB_QueryDistinctStr(&dbconn, CONST_MONGO_BASE, "sum_compliance_wk", cfl_polname, cfl_hubkeyhash, hubKeyHash);
+   }
 
- if(EMPTY(hubKeyHash))
-    {
-    environments = CFDB_QueryDistinct(&dbconn, CONST_MONGO_BASE, "sum_compliance_wk", cfl_polname, bson_empty(&query));
-    }
- else
-    {
-    environments = CFDB_QueryDistinctStr(&dbconn, CONST_MONGO_BASE, "sum_compliance_wk", cfl_polname, cfl_hubkeyhash, hubKeyHash);
-    }
- 
- CFDB_Close(&dbconn);
+CFDB_Close(&dbconn);
 
- StartJoin(buf, "[ ", bufsize);
+StartJoin(buf, "[ ", bufsize);
 
- for(ip = environments; ip != NULL; ip = ip->next)
-    {
-    snprintf(work, sizeof(work), "\"%s\",", ip->name);
-    Join(buf, work, bufsize);
-    }
+for (ip = environments; ip != NULL; ip = ip->next)
+   {
+   snprintf(work, sizeof(work), "\"%s\",", ip->name);
+   Join(buf, work, bufsize);
+   }
 
- ReplaceTrailingChar(buf, ',', '\0');
- 
- EndJoin(buf, " ]", bufsize);
- 
- DeleteItemList(environments);
- 
- return true;
+ReplaceTrailingChar(buf, ',', '\0');
+EndJoin(buf, " ]", bufsize);
+DeleteItemList(environments);
+return true;
 
 #else  /* NOT HAVE_CONSTELLATION */
 
- snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_environments_list() in Nova-only environment\n");
- CfOut(cf_error, "", buf);
- return false;
-
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_environments_list() in Nova-only environment\n");
+CfOut(cf_error, "", buf);
+return false;
 #endif
-
 }
 
 /*****************************************************************************/
@@ -5572,55 +5487,50 @@ int Con2PHP_environments_list(char *hubKeyHash, char *buf, int bufsize)
 int Con2PHP_promise_popularity(char *promiseHandle, char *buf, int bufsize)
 
 {
-
 #ifdef HAVE_CONSTELLATION
-
-
  mongo_connection dbconn;
  char buffer[CF_MAXVARSIZE];
  int hostCount;
  double popularity = 0;
  bool res;
 
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+hostCount = CFDB_QueryHostCount(&dbconn);
 
- hostCount = CFDB_QueryHostCount(&dbconn);
+if(hostCount < 0)
+   {
+   snprintf(buf,bufsize,"!! Error when couting hosts");
+   CfOut(cf_error, "", buf);
+   return false;
+   }
 
- if(hostCount < 0)
-    {
-    snprintf(buf,bufsize,"!! Error when couting hosts");
-    CfOut(cf_error, "", buf);
-    return false;
-    }
+res = CFDB_QueryPromisePopularity(&dbconn,promiseHandle,hostCount,&popularity);
 
- res = CFDB_QueryPromisePopularity(&dbconn,promiseHandle,hostCount,&popularity);
+CFDB_Close(&dbconn);
 
- CFDB_Close(&dbconn);
- 
- if(!res)
-    {
-    snprintf(buf,bufsize,"!! Error when couting promises");
-    CfOut(cf_error, "", buf);
-    return false;
-    }
- 
- snprintf(buf, bufsize, "{popularity : %f}", popularity);
+if(!res)
+   {
+   snprintf(buf,bufsize,"!! Error when couting promises");
+   CfOut(cf_error, "", buf);
+   return false;
+   }
 
- return true;
+snprintf(buf, bufsize, "{popularity : %f}", popularity);
+
+return true;
 
 #else  /* NOT HAVE_CONSTELLATION */
 
- snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_promise_popularity() in Nova-only environment\n");
- CfOut(cf_error, "", buf);
- return false;
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_promise_popularity() in Nova-only environment\n");
+CfOut(cf_error, "", buf);
+return false;
 
 #endif
-
 }
 
 /*****************************************************************************/

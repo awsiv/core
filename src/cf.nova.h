@@ -921,8 +921,6 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real);
 
 #include "cf.nova.web_api.h"
 
-
-
 /* weekly.c */
 
 double Num(double x);
