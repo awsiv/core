@@ -815,7 +815,6 @@ while(CfFetchRow(&cfdb))
    from_pid = Str2Int(CfFetchColumn(&cfdb,6));
    to_pid = Str2Int(CfFetchColumn(&cfdb,7));
    PrependFullItem(&worklist,to_name,NULL,0,0);   
-    printf("bishwa: topicmap: %s\n",to_name);
    }
 
 CfDeleteQuery(&cfdb);
