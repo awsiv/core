@@ -32,6 +32,9 @@ void Nova2PHP_get_histogram_analysis(char *keyhash,enum observables obs,char *bu
 int Nova2PHP_get_value_graph(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_list_all_goals(char *buffer,int bufsize);
 
+// class finder
+int Nova2PHP_listclasses_time(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize);
+
 void Nova2PHP_get_knowledge_view(int pid,char *view,char *buffer,int bufsize);
 char *Nova_FormatDiff(char *s);
 void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize);
