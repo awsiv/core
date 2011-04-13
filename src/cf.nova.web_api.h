@@ -34,6 +34,7 @@ int Nova2PHP_list_all_goals(char *buffer,int bufsize);
 
 // class finder
 int Nova2PHP_listclasses_time(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize);
+int Nova2PHP_listclasses_soft(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize);
 
 void Nova2PHP_get_knowledge_view(int pid,char *view,char *buffer,int bufsize);
 char *Nova_FormatDiff(char *s);

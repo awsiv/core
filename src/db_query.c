@@ -664,6 +664,91 @@ struct RList *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,cha
 }
 
 /*****************************************************************************/
+struct RList *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
+
+{ bson_buffer bb;
+ bson query,field;
+ mongo_cursor *cursor;
+ bson_iterator it1,it2,it3;
+ struct Rlist *classList = {0};
+ char rclass[CF_MAXVARSIZE];
+ char classRegexAnch[CF_MAXVARSIZE];
+ int emptyQuery = true;
+  
+/* BEGIN query document */
+
+ bson_buffer_init(&bb);
+
+ if (!EMPTY(keyHash))
+    {
+    bson_append_string(&bb,cfr_keyhash,keyHash);
+    emptyQuery = false;
+    }
+
+ if(!EMPTY(classRegex))
+    {
+    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+    emptyQuery = false;
+    }
+
+ if(emptyQuery)
+    {
+    bson_empty(&query);
+    }
+ else
+    {
+    bson_from_buffer(&query,&bb);
+    }
+  
+/* BEGIN RESULT DOCUMENT */
+
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_class,1);
+ bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+ bson_destroy(&field);
+
+ if(!emptyQuery)
+    {
+    bson_destroy(&query);
+    }
+
+ while (mongo_cursor_next(cursor))  // loops over documents
+    {
+
+    bson_iterator_init(&it1,cursor->current.data);
+
+    rclass[0] = '\0';
+   
+    while (bson_iterator_next(&it1))
+       {
+	 if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
+	   {
+	     bson_iterator_init(&it2,bson_iterator_value(&it1));
+	     
+	     while (bson_iterator_next(&it2))
+	       {
+		 bson_iterator_init(&it3, bson_iterator_value(&it2));
+		 strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+		 
+		 if(!IsHardClass(rclass))
+		   {
+		     IdempAppendRScalar(&classList,rclass,CF_SCALAR);
+		   }
+	       }
+	   }
+       }
+    }
+
+ mongo_cursor_destroy(cursor);
+ return classList;
+}
+
+/*****************************************************************************/
 
 struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
 /**
