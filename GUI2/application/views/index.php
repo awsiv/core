@@ -9,6 +9,7 @@
                       echo $this->lang->line('licese_to');
                       echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo'));?></p>
                   </div>
+                  <div class="clear"></div>
                   <div class ="grid_8 push_2 dash">
                       <ul>
                           <li><?php echo anchor('welcome/status','status',array('class'=>'status'));?></li>
@@ -18,8 +19,20 @@
                           <p class="clearleft"></p>
                       </ul>
                   </div>
+                 <div class="clear"></div>
+                  <div id="licensebar" class="grid_4 push_4">
+                      
+                  </div>
               </div>
               <div class="right"></div>
      <div class="clearboth"></div>
   </div>
+<script type="text/javascript">
+    $('#licensebar').licensemeter(
+             {
+                 value:<?php echo $pbarvalue?>,
+                 daysleft:<?php echo $daysleft?>
+             });
+
+ </script>
 

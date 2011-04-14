@@ -12,11 +12,13 @@ var hostfinder={
  options: {
         url: "/widget/hostfinder",
         classhandler:"/widget/cfclasses",
-        height:'600',
-        width:'700'
+        height:525,
+        width:700
     },
  _init: function() {
      var self=this;
+     //self.cfui.searchform.find('input[type="text"]').focusout();
+     self.cfui.categories.hide();
      self.cfui.searchform.find('input[type="text"]').focusout();
     },
    createhostfinder:function()
@@ -42,18 +44,25 @@ var hostfinder={
                      width: 'auto',
                      autoOpen: false,
                      modal: true
-                     });
-                  
+                     });   
               }
             });
 
           //console.log( self.areas.categories);
+         self.temp.parent().addClass('customdlg').removeClass('ui-widget-content');
+         self.titlebar=self.temp.siblings('div.ui-dialog-titlebar');
+         self.titlebar.append(self.cfui.searchform).delegate('form','submit',{ui:self},self.searchsubmit);
+
+         self.cfui.categories.addClass('categories').appendTo( self.titlebar).hide();
+
+         self.temp.siblings('div.ui-dialog-titlebar')
          self.cfui.categories.delegate('li','click',{ui:self},self.categoryselected)
-         self.temp.delegate('form','submit',{ui:self},self.searchsubmit);
+         //self.temp.delegate('form','submit',{ui:self},self.searchsubmit);
          self.element.bind('click',function(event){event.preventDefault();self.temp.dialog('open')});
          self.temp.find('#aplhaPaging').delegate('li','click',{ui:self},self.sortalphabetically);
-         self.cfui.searchform.delegate('input[type="text"]','focusin',self.searchboxevent);
-         self.cfui.searchform.delegate('input[type="text"]','focusout',self.searchboxevent);
+         self.cfui.searchform.delegate('input[type="text"]','click',function(){$(this).focus()});
+         self.cfui.searchform.delegate('input[type="text"]','focusin',{ui:self},self.searchboxevent);
+         self.cfui.searchform.delegate('input[type="text"]','focusout',{ui:self},self.searchboxevent);
          self.cfui.searchform.find('input[type="text"]').data('default',self.cfui.searchform.find('input[type="text"]').val());
     },
 
@@ -76,7 +85,7 @@ var hostfinder={
        var submit_url=$(this).attr('action');
        var searchval=$(this).find('input').val();
        var self=event.data.ui;
-      
+       self.cfui.categories.slideUp();
        if(self.filtermethod != "class"){
            self.cfui.resultpane.html(self.ajaxloader);
            $.ajax({
@@ -160,8 +169,16 @@ var hostfinder={
 
     searchboxevent:function(event)
     {
-      if(this.value==$(this).data('default') && event.type=='focusin')this.value='';
-      if(this.value=='' && event.type=='focusout')this.value=$(this).data('default');
+      var self=event.data.ui
+      if(this.value==$(this).data('default') && event.type=='focusin')
+          {
+              self.cfui.categories.slideDown();
+              this.value='';
+          }
+      if(this.value=='' && event.type=='focusout')
+          {
+              this.value=$(this).data('default');
+          }
     },
 
     sortalphabetically:function(event)

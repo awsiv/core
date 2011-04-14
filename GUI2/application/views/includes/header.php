@@ -14,6 +14,7 @@
 <script src="<?php echo get_scriptdir();?>jquery.tablesorter.pager.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir();?>jquery.qtip-1.0.min.js" type="text/javascript"></script>
 <?php $injected= isset($injected_item)?$injected_item:"" ;echo $injected;?>
+
 </head>
 
 <body>

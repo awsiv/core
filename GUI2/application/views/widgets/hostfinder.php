@@ -10,29 +10,29 @@
     </head>
     <body>
         <div id="container" class="container_12">
-        <div class="grid_12">
         <form id="searchhost" action="<?php echo site_url('widget/search_by_hostname');?>">
+            <span id="search">
             <input type="text" name="search" value="Search by hostname"/>
+            <input class="hidden" type="submit" value="" />
+            </span>
         </form>
-       </div>
-        <div class="clear"></div>
-    <div class="grid_12">
-        <ul id="searchby" class="grid_4">
+    
+        <ul id="searchby">
             <li id="search_hostname">Host Name</li>
             <li id="search_ip">Ip Address</li>
             <li id="search_class">Class</li>
         </ul>
-        <div id="searchresult" class="grid_7">
+        <div id="searchresult">
             <ul>
                 <?php
                 foreach($hostlist as $host)
                 {
-                   echo "<li>.$host->id</li>";
+                   echo "<li><a href=".site_url('welcome/host')."/".$host->key.">$host->id</a></li>";
                 }
                ?>
             </ul>
         </div>
-        <ul id="aplhaPaging" class="grid_1">
+        <ul id="aplhaPaging">
           <?php
            foreach(range('a','z') as $letter)
             {
@@ -41,8 +41,11 @@
           ?>
         </ul>
         <div class="clear"></div>
-    </div>
-      <div id="filters"><span>Selected classes:</span><ul></ul></div>
+        <div id="filters">
+            <ul>
+
+            </ul>
+        </div>
  </div>
     </body>
 </html>

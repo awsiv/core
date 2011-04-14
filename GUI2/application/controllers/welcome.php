@@ -28,10 +28,18 @@ class Welcome extends Cf_Controller {
             ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'graphs/host-meter.js"> </script>
                     ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'hostsummary.js"></script>
-            '
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'widgets/licensemeter.js"></script>
+            ',
+            '<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />'
         );
 
+        $expirydate=strtotime(cfpr_getlicense_expiry());
+        $startDate=cfpr_getlicense_installtime();
+        //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
+        $datediff = $expirydate - $startDate ;
+        $totaldays=floor($datediff/(60*60*24));
+        $dayspassed=floor((time()-$startDate)/(60*60*24));
+        $pbarvalue=floor(($dayspassed/$totaldays)*100);
 
         $data = array(
             'title' => "Cfengine Mission Portal - overview",
@@ -40,7 +48,9 @@ class Welcome extends Cf_Controller {
             'all' => $all,
             'r' => $r,
             'y' => $y,
-            'g' => $g
+            'g' => $g,
+            'pbarvalue'=>$pbarvalue,
+            'daysleft'=>$totaldays-$dayspassed,
         );
 
         $gdata = cfpr_compliance_summary_graph(null);
