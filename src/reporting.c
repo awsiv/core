@@ -1732,42 +1732,6 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_NoteVarUsage()
-
-/* DEPRECATED: Use NoteVarUsageDB() */
-
-{ char name[CF_BUFSIZE];
-
-if (MINUSF) /* Only do this for the default policy */
-   {
-   return;
-   }
-
-snprintf(name,CF_BUFSIZE-1,"%s/state/vars.out",CFWORKDIR);
-MapName(name);
-
-if ((FREPORT_HTML = fopen(name,"w")) == NULL)
-   {
-   CfOut(cf_error,"fopen","Cannot write to %s",name);
-   return;
-   }
-
-if ((FREPORT_TXT = fopen(NULLFILE,"w")) == NULL)
-   {
-   CfOut(cf_error,"fopen","Cannot write to NULL-file");
-   fclose(FREPORT_HTML);
-   return;
-   }
-
-ShowScopedVariables();
-
-fclose(FREPORT_HTML);
-fclose(FREPORT_TXT);
-}
-
-
-/*****************************************************************************/
-
 void Nova_SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
 {
@@ -2136,7 +2100,7 @@ if (!OpenDB(filename,&dbp))
 // NOTE: can extend to support avg and stddev in future
 var.e.t = now;  // all are last seen now
 
-for(ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
+for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
    {
    if (strcmp(ptr->scope,"this") == 0)
       {
@@ -2145,27 +2109,37 @@ for(ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
    
    for (i = 0; i < CF_HASHTABLESIZE; i++)
       {
-      if(ptr->hashtable[i] != NULL)
+      if (ptr->hashtable[i] != NULL)
 	 {
-         snprintf(key, sizeof(key), "%s.%s", ptr->scope, ptr->hashtable[i]->lval);
+         snprintf(key,sizeof(key),"%s.%s", ptr->scope, ptr->hashtable[i]->lval);
          var.dtype = ptr->hashtable[i]->dtype;
          var.rtype = ptr->hashtable[i]->rtype;
          var.rval[0] = '\0';
-         PrintRval(var.rval, sizeof(var.rval), ptr->hashtable[i]->rval, ptr->hashtable[i]->rtype);
-	 
+
+         if (strlen(ptr->hashtable[i]->rval) > 1000) // MAXVARSIZE == 1024
+            {
+            char limit_rval[CF_MAXVARSIZE];
+            snprintf(limit_rval,CF_MAXVARSIZE-1,"%1000s ... (truncated)",ptr->hashtable[i]->rval);
+            PrintRval(var.rval, sizeof(var.rval),limit_rval, ptr->hashtable[i]->rtype);
+            }
+         else
+            {
+            PrintRval(var.rval, sizeof(var.rval),ptr->hashtable[i]->rval, ptr->hashtable[i]->rtype);
+            }
+
          WriteDB(dbp,key,&var,VARSTRUCTUSAGE(var));
 	 }
       } 
    }
 
 /* purge old entries from DB */
+
 if (!NewDBCursor(dbp,&dbcp))
    {
    CfOut(cf_inform,""," !! Unable to purge variable db");
    CloseDB(dbp);
    return;
    }
-
 
 while(NextDB(dbp,dbcp,&keyDb,&keyDbSize,&val,&valSize))
    {
