@@ -242,6 +242,7 @@ ACCESS_MODE Nova_ParsePermTypeNt(char *ace);
 
 void Nova_Initialize(void);
 void Nova_CheckInstalledLibraries(void);
+void Nova_SaveDocumentRoot(void);
 
 /* client_code.c */
 
@@ -633,7 +634,7 @@ void Nova_ListFunctions(void);
 void Nova_ListFunction(struct FnCallType f,int full);
 void Nova_ListPromiseTypes(void);
 
-void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version);
+void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,const char *version);
 void Nova_ShowTopicRepresentation(FILE *fp);
 void Nova_BundleReference(FILE *fp,char *bundle);
 void Nova_TypeNode(FILE *fp,char *type);
@@ -783,6 +784,10 @@ void Nova_GrandSummary(void);
 void Nova_SummarizeComms(void);
 void Nova_SummarizeLicense(char *stylesheet,char *banner,char *footer,char *webdriver);
 void Nova_ZenossSummary(char *docroot);
+
+void Nova_OpenCompilationReportFiles(const char *fname);
+void Nova_ShowPromises(struct Bundle *bundles, struct Body *bodies);
+void Nova_ShowPromise(const char *version, struct Promise *pp, int indent);
 
 /* request.c */
 

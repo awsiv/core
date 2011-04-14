@@ -200,7 +200,7 @@ printf("   <syntax element>\n");
 
 /*****************************************************************************/
 
-void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,char *version)
+void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,const char *version)
 
 {
   char promise_id[CF_BUFSIZE];

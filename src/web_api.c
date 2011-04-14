@@ -16,13 +16,13 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef HAVE_LIBMONGOC
 
 /*****************************************************************************/
 
 void Nova_EnterpriseModuleTrick()
-
-{ char buffer[CF_MAXVARSIZE];
+{
+#ifdef HAVE_LIBMONGOC
+char buffer[CF_MAXVARSIZE];
 
 // Shared library linking requires these functions to appear in something linked to libpromises
 // use this for diagnostics? This is linked through enterprise_stubs.c
@@ -89,7 +89,10 @@ void Nova_EnterpriseModuleTrick()
 
     Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
     }
+#endif
 }
+
+#ifdef HAVE_LIBMONGOC
 
 /*****************************************************************************/
 /* Helper functions                                                          */

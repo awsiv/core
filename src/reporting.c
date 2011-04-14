@@ -2100,3 +2100,45 @@ if ((fout = fopen(name,"w")))
 
 chmod(name,0644);
 }
+
+/*****************************************************************************/
+
+void Nova_OpenCompilationReportFiles(const char *fname)
+{
+#if defined(HAVE_LIBMONGOC)
+if ((FREPORT_TXT = fopen(NULLFILE,"w")) == NULL)
+   {
+   FatalError("Could not write output log to %s",NULLFILE);
+   }
+
+if ((FREPORT_HTML = fopen(NULLFILE,"w")) == NULL)
+   {
+   FatalError("Could not write output log to %s",NULLFILE);
+   }
+#else
+OpenCompilationReportFiles(fname);
+#endif
+}
+
+/*****************************************************************************/
+
+void Nova_ShowPromises(struct Bundle *bundles, struct Body *bodies)
+{
+#if defined(HAVE_LIBMONGOC)
+Nova_StoreUnExpandedPromises(bundles, bodies);
+#else
+ShowPromisesInReport(bundles, bodies);
+#endif
+}
+
+/*****************************************************************************/
+
+void Nova_ShowPromise(const char *version, struct Promise *pp, int indent)
+{
+#if defined (HAVE_LIBMONGOC)
+Nova_StoreExpandedPromise(pp);
+MapPromiseToTopic(FKNOW,pp,version);
+#else
+ShowPromiseInReport(version, pp, indent);
+#endif
+}
