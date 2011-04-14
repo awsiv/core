@@ -37,13 +37,17 @@ if (FIPS_MODE)
 
 /*****************************************************************************/
 
-int Nova_HaveFIPS(void)
+void Nova_CheckInstalledLibraries(void)
 {
-#ifdef HAVE_FIPS_MODE_SET
-return true;
-#else
-return false;
+#ifndef HAVE_LIBLDAP
+printf("\t->LIBLDAP not found!!\n");
+#endif
+
+#ifndef HAVE_FIPS_MODE_SET
+printf("\t->FIPS OpenSSL canister not found!!\n");
+#endif
+
+#ifndef HAVE_LIBVIRT
+printf("\t->LIBVIRT not found!!\n");
 #endif
 }
-
-

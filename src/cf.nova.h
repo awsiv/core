@@ -241,8 +241,7 @@ ACCESS_MODE Nova_ParsePermTypeNt(char *ace);
 /* cfnova.c */
 
 void Nova_Initialize(void);
-int Nova_HaveFIPS(void);
-
+void Nova_CheckInstalledLibraries(void);
 
 /* client_code.c */
 
