@@ -59,8 +59,11 @@ for (i = 0; i < cfv_none; i++)
 void Nova_VerifyEnvironmentsPromise(struct Promise *pp)
 
 {
-
 #ifdef HAVE_LIBVIRT
+struct Attributes a = {0};
+struct CfLock thislock;
+struct Promise *pexp;
+
 a = GetEnvironmentsAttributes(pp);
 
 if (Nova_EnvironmentsSanityChecks(a,pp))
