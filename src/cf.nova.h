@@ -784,6 +784,7 @@ void Nova_GrandSummary(void);
 void Nova_SummarizeComms(void);
 void Nova_SummarizeLicense(char *stylesheet,char *banner,char *footer,char *webdriver);
 void Nova_ZenossSummary(char *docroot);
+void Nova_NoteVarUsageDB();
 
 void Nova_OpenCompilationReportFiles(const char *fname);
 void Nova_ShowPromises(struct Bundle *bundles, struct Body *bodies);
