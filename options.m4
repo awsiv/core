@@ -23,8 +23,8 @@ AC_SUBST([NOVA_LDADD])
 #
 
 AC_ARG_WITH(mongo,
-	AS_HELP_STRING(--with-mongo, [support client MongoDB report aggregation database]),with_mongo=yes,
-	with_mongo=no)
+	AS_HELP_STRING(--without-mongo, [disable MongoDB report aggregation database]),with_mongo=no,
+	with_mongo=yes)
 
 if test "x$with_mongo" = xyes; then
    AC_MSG_CHECKING(for libmongoc)
