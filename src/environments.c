@@ -18,13 +18,41 @@
 #include "cf.nova.h"
 
 #ifdef HAVE_LIBVIRT
-extern virConnectPtr CFVC[];
+virConnectPtr CFVC[cfv_none];
 #endif
 
 #define CF_MAX_CONCURRENT_ENVIRONMENTS 256
 
 int CF_RUNNING[CF_MAX_CONCURRENT_ENVIRONMENTS];
 char *CF_SUSPENDED[CF_MAX_CONCURRENT_ENVIRONMENTS];
+
+/*****************************************************************************/
+
+void Nova_NewEnvironmentsContext(void)
+{
+#if defined(HAVE_LIBVIRT)
+int i;
+for (i = 0; i < cfv_none; i++)
+   {
+   CFVC[i] = NULL;
+   }
+#endif
+}
+
+void Nova_DeleteEnvironmentsContext(void)
+{
+#if defined(HAVE_LIBVIRT)
+int i;
+for (i = 0; i < cfv_none; i++)
+   {
+   if (CFVC[i] != NULL)
+      {
+      virConnectClose(CFVC[i]);
+      CFVC[i] = NULL;
+      }
+   }
+#endif
+}
 
 /*****************************************************************************/
 
