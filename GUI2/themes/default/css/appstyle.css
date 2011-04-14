@@ -627,6 +627,10 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
     padding:0 0;
 }
 
+#searchby li.selected
+{
+    color: #ff9900;
+}
 #searchresult{
     width:98%;
     float:left;
@@ -663,7 +667,7 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
 }
 
 #filters ul li{
-    display:inline;
+    display:inline-block;
     padding:5px 15px 5px 5px;
     position:relative;
     border:solid 1px red;

@@ -13,13 +13,12 @@ var hostfinder={
         url: "/widget/hostfinder",
         classhandler:"/widget/cfclasses",
         height:525,
-        width:700
+        width:735
     },
  _init: function() {
      var self=this;
      //self.cfui.searchform.find('input[type="text"]').focusout();
      self.cfui.categories.hide();
-     self.cfui.searchform.find('input[type="text"]').focusout();
     },
    createhostfinder:function()
     {
@@ -41,7 +40,7 @@ var hostfinder={
                   self.$filter=$('#filters').find('ul');
                   self.temp.dialog({
                      height: self.options.height,
-                     width: 'auto',
+                     width: self.options.width,
                      autoOpen: false,
                      modal: true
                      });   
@@ -63,6 +62,7 @@ var hostfinder={
          self.cfui.searchform.delegate('input[type="text"]','click',function(){$(this).focus()});
          self.cfui.searchform.delegate('input[type="text"]','focusin',{ui:self},self.searchboxevent);
          self.cfui.searchform.delegate('input[type="text"]','focusout',{ui:self},self.searchboxevent);
+         self.cfui.searchform.delegate('input[type="text"]','keyup',{ui:self},self.searchboxkeyup);
          self.cfui.searchform.find('input[type="text"]').data('default',self.cfui.searchform.find('input[type="text"]').val());
     },
 
@@ -70,6 +70,7 @@ var hostfinder={
     {
         var selected_category=$(this).text().toLowerCase();
         var self=event.data.ui;
+        $(this).addClass('selected').siblings().removeClass('selected');
         self.filtermethod=selected_category;
         self.cfui.searchform.attr("action","/widget/search_by_"+selected_category.replace(/\s+/g, "").toLowerCase());
         self.cfui.searchform.find('input[type="text"]').val('search by '+selected_category).data('default','search by '+selected_category);
@@ -77,7 +78,7 @@ var hostfinder={
             {
               self.createclasstagcloud(self);
             }
-       
+        self.cfui.searchform.find('input[type="text"]').trigger('blur');
     },
     
    searchsubmit:function(event){
@@ -153,6 +154,7 @@ var hostfinder={
                                });
      self.cfui.resultpane.load('/widget/ajaxlisthost/',{'filter':filters},function(){});
      self.$filter.find('li').delegate('a','click',{ui:self},self.removeclassfilter);
+     self.cfui.categories.slideUp();
     },
 
     removeclassfilter:function(event)
@@ -186,6 +188,16 @@ var hostfinder={
       var self=event.data.ui
       //alert($(this).text());
       self.cfui.resultpane.load('/widget/search_by_hostname',{'value':$(this).text()},function(){});
+      self.cfui.categories.slideUp();
+    },
+
+    searchboxkeyup:function(event)
+    {
+      var self=event.data.ui
+      if(this.value==''&& event.keyCode == 8)
+          {
+              self.cfui.categories.slideDown();
+          }
     }
 
 }
