@@ -17,9 +17,17 @@
 
 #ifdef HAVE_LIBLDAP
 
+/* Prototypes */
+
+LDAP *NovaQueryLDAP(char *uri,char *sec);
+int NovaStr2Scope(char *scope);
+
+#endif
+
 /*****************************************************************************/
 
-void *Nova_LDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec)
+#ifdef HAVE_LIBLDAP
+void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -188,10 +196,18 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
 ldap_unbind(ld);
 return return_value;
 }
+#else /* HAVE_LIBLDAP */
+void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec)
+{
+CfOut(cf_error, "", "LDAP support is disabled");
+return NULL;
+}
+#endif /* HAVE_LIBLDAP */
 
 /*****************************************************************************/
 
-void *Nova_LDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec)
+#ifdef HAVE_LIBLDAP
+void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -349,9 +365,21 @@ ldap_unbind(ld);
 return return_value;
 }
 
+#else /* HAVE_LIBLDAP */
+
+void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec)
+{
+CfOut(cf_error, "", "LDAP support is disabled");
+return NULL;
+}
+
+#endif /* HAVE_LIBLDAP */
+
 /*****************************************************************************/
 
-void *Nova_LDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,char *sec)
+#ifdef HAVE_LIBLDAP
+
+void *CfLDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,char *sec)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -527,9 +555,21 @@ ldap_unbind(ld);
 return return_value;
 }
 
+#else /* HAVE_LIBLDAP */
+
+void *CfLDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,char *sec)
+{
+CfOut(cf_error, "", "LDAP support is disabled");
+return NULL;
+}
+
+#endif /* HAVE_LIBLDAP */
+
 /*****************************************************************************/
 
-void *Nova_RegLDAP(char *uri,char *basedn,char *filter,char *name,char *scopes,char *regex,char *sec)
+#ifdef HAVE_LIBLDAP
+
+void *CfRegLDAP(char *uri,char *basedn,char *filter,char *name,char *scopes,char *regex,char *sec)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -698,9 +738,21 @@ if (!return_value)
 return return_value;
 }
 
+#else /* HAVE_LIBLDAP */
+
+void *CfRegLDAP(char *uri,char *basedn,char *filter,char *name,char *scopes,char *regex,char *sec)
+{
+CfOut(cf_error, "", "LDAP support is disabled");
+return NULL;
+}
+
+#endif /* HAVE_LIBLDAP */
+
 /*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
+
+#ifdef HAVE_LIBLDAP
 
 LDAP *NovaQueryLDAP(char *uri,char *sec)
 

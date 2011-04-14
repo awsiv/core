@@ -653,17 +653,6 @@ void Nova_RegisterBundleDepedence(char *name,struct Promise *pp);
 char *NovaEscape(char *s);
 void NovaShowValues(FILE *fp,struct BodySyntax bs);
 
-/* ldap.c */
-
-#ifdef HAVE_LIBLDAP
-void *Nova_LDAPValue(char *uri,char *basedn,char *filter,char *name,char *scope,char *sec);
-void *Nova_LDAPList(char *uri,char *dn,char *filter,char *name,char *scope,char *sec);
-void *Nova_LDAPArray(char *array,char *uri,char *dn,char *filter,char *scope,char *sec);
-void *Nova_RegLDAP(char *uri,char *dn,char *filter,char *name,char *scope,char *regex,char *sec);
-LDAP *NovaQueryLDAP(char *uri,char *sec);
-int NovaStr2Scope(char *scope);
-#endif
-
 /* license.c */
 
 int Nova_HashKey(char *filename,char *buffer,unsigned char digest[EVP_MAX_MD_SIZE+1],char *hash);
