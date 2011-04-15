@@ -1288,7 +1288,7 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && secondary_boundary > 0)
             a_pid = from_pid;
             }
 
-         if (view && !(FullTextMatch(view,from_assoc)||FullTextMatch(view,to_assoc)))
+         if (!(FullTextMatch(view,from_assoc)||FullTextMatch(view,to_assoc)))
             {
             continue;
             }
@@ -1370,7 +1370,7 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && tertiary_boundary > 0)
                continue;
                }
 
-            if (view && !(FullTextMatch(view,from_assoc)||FullTextMatch(view,to_assoc)))
+            if (!(FullTextMatch(view,from_assoc)||FullTextMatch(view,to_assoc)))
                {
                continue;
                }
