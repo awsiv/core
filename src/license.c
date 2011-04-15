@@ -34,7 +34,8 @@ int Nova_EnterpriseExpiry(char *day,char *month,char *year, char *setcompany)
   int m_now,m_expire,d_now,d_expire,number = 1,am_policy_server = false;
   char f_day[16],f_month[16],f_year[16];
   char u_day[16],u_month[16],u_year[16];
-  unsigned char digest[EVP_MAX_MD_SIZE+1] = {0},serverdig[CF_MAXVARSIZE] = {0};
+  unsigned char digest[EVP_MAX_MD_SIZE+1] = {0};
+  char serverdig[CF_MAXVARSIZE] = "";
   FILE *fp;
   RSA * serverrsa;
 
@@ -219,7 +220,8 @@ int Nova_HashKey(char *filename,char *buffer,unsigned char digest[EVP_MAX_MD_SIZ
 { EVP_MD_CTX context;
   const EVP_MD *md = NULL;
   FILE *fp;
-  int md_len,result = false;
+  unsigned int md_len;
+  bool result = false;
   char fbuf[CF_BUFSIZE];
 
 md = EVP_get_digestbyname("sha256");       
