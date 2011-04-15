@@ -44,6 +44,11 @@ int CFH_ZENOSS = false;
 
 extern struct BodySyntax CFEX_CONTROLBODY[];
 
+/* Prototypes */
+
+void StartHub(int argc,char **argv);
+int ScheduleRun(void);
+
 /*****************************************************************************/
 
 #ifndef MINGW
@@ -546,9 +551,6 @@ else
 
 
 /*******************************************************************/
-
-void StartHub(int argc,char **argv);
-int ScheduleRun(void);
 
 /*******************************************************************/
 /* Command line options                                            */
