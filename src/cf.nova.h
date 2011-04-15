@@ -10,8 +10,6 @@
 #ifndef NOVA
 #define NOVA 1
 
-#define NOVA_REVISION "$Rev$"
-
 #ifdef HAVE_CONFIG_H
 #  include "conf.h"
 #endif
