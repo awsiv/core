@@ -130,10 +130,23 @@ var hostfinder={
                                         li.children().css("fontSize",  val[1]/10+1 + "em");
                                         li.appendTo("#tagList");
                                   });
-
+                        
                         });
                      }
                      });
+        self.classdlg.titlebar=self.classdlg.siblings('div.ui-dialog-titlebar');
+        self.classdlg.optionhandler=$('<span id="handle" class="operation">Options</span>');
+        self.classdlg.titlebar.append(self.classdlg.optionhandler).delegate('#handle','click',function(){self.classdlg.options.slideToggle();});
+
+        self.classdlg.options=$('<ul id="tgoptions"></ul>');
+        self.classdlg.options.append('<li>Sort asc</li><li>Sort desc</li><li>Search</li>');
+        self.classdlg.options.appendTo(self.classdlg.titlebar).hide();
+
+        self.classdlg.searchbar=$('<form id="searchclass"><span class="search"><input type="text" name="search"/></span></form>')
+        self.classdlg.searchbar.appendTo(self.classdlg.titlebar);
+        self.classdlg.searchbar.delegate('input[type="text"]','click',function(){$(this).focus()});
+        self.classdlg.searchbar.delegate('input[type="text"]','keyup',{ui:self},self.searchclassinlist);
+        self.classdlg.options.delegate('li','click',{ui:self},self.actionontagcloud);
         self.classdlg.delegate('a', 'click',{ui:self},self.addclassfilter);
    },
 
@@ -198,7 +211,49 @@ var hostfinder={
           {
               self.cfui.categories.slideDown();
           }
+    },
+    actionontagcloud:function(event)
+    {
+
+      var self=event.data.ui;
+      if($(this).text().toLowerCase() == 'sort asc')
+          {
+            var mylist = self.classdlg.find('#tagList');
+            $(this).addClass('selected').siblings().removeClass('selected');
+            var listitems = mylist.children('li').get();
+            listitems.sort(function(a, b) {
+            var compA = $(a).text().toUpperCase();
+            var compB = $(b).text().toUpperCase();
+            return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+            })
+            $.each(listitems, function(idx, itm) { mylist.append(itm); });
+          }
+     if($(this).text().toLowerCase() == 'search')
+         {
+          alert('search');
+         }
+
+    },
+    searchclassinlist:function(event)
+    {
+        //console.log($(this).val());
+        var self=event.data.ui;
+        var searchWord = $(this).val();
+            if (searchWord.length >= 3) {
+                self.classdlg.find("#tagList").find('li').each(function() {
+                    var text = $(this).text();
+                    if (text.match(RegExp(searchWord, 'i'))) {
+                        $(this).addClass('selected'); 
+                    }
+              }); }
+          if(this.value==''&& event.keyCode == 8)
+          {
+                self.classdlg.find("#tagList").find('li').each(function() {
+                        $(this).addClass('selected');
+              });
+          }
     }
+
 
 }
 $.widget("ui.hostfinder", hostfinder);

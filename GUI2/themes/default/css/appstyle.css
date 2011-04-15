@@ -280,6 +280,13 @@ label#searchbox input
 #tagList li a { text-decoration:none; color:#ffffff; }
 #tagList li a:hover {text-decoration:underline; }
 
+#tagList li.selected
+{
+    border:solid 2px red;
+     -moz-border-radius: 10px;
+    border-radius:10px;
+}
+
 .loading{
    background: url("../images/ajax-loader.gif") no-repeat;
    width:31px;
@@ -287,6 +294,78 @@ label#searchbox input
    margin:auto auto;
 }
 
+.operation{
+    background: none repeat scroll 0 0 #3D453A;
+    color: #FFFFFF;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: normal;
+    opacity: 0.9;
+    padding: 2px;
+    right: 0;
+    -moz-border-radius: 5px;
+    border-radius:5px;
+}
+
+#tgoptions{
+    display: block;
+    font-size: 11px;
+    font-weight: normal;
+    left: 12%;
+    opacity: 0.9;
+    padding: 1px 0;
+    position: absolute;
+    width: 140px;
+    z-index: 1;
+    -moz-border-radius: 5px;
+    border-radius:5px;
+}
+
+#tgoptions li:first-child
+{
+    -moz-border-radius: 5px;
+    border-radius:5px;
+}
+
+#tgoptions li:last-child
+{
+    -moz-border-radius: 5px;
+    border-radius:5px;
+}
+
+#tgoptions li:hover,#tgoptions li.selected
+{
+    color:#ff9900;
+}
+
+#tgoptions li{
+ background: none repeat scroll 0 0 #3D453A;
+ padding:4px;
+ color:#fff;
+ cursor:pointer;
+}
+
+
+#searchclass span.search
+{
+    background: url("../images/searchbar.png") no-repeat scroll 0 0 transparent;
+    position:absolute;
+    top:10%;
+    right:5%;
+    display:block;
+    width:220px;
+    height:25px;
+}
+#searchclass span.search input
+{
+    background: none repeat scroll 0 0 transparent;
+    font:9pt Helvetica,Arial,Tahoma,sans-serif;
+    border: medium none;
+    color: #666666;
+    outline: medium none;
+    padding: 4px;
+    width:220px;
+}
 /*
 styles for status page may be mergerd in the future
 */
@@ -617,7 +696,7 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
     cursor: pointer;
 }
 
-#searchby li:hover
+#searchby li:hover,#searchby li.selected
 {
     color:#ff9900;
 }
@@ -626,11 +705,6 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
     border:none;
     padding:0 0;
 }
-
-#searchby li.selected
-{
-    color: #ff9900;
-}
 #searchresult{
     width:98%;
     float:left;
@@ -638,7 +712,7 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
 
 #searchresult li
 {
-    border-bottom:solid 0.5px #3d453a;
+    border-bottom:solid 1px #3d453a;
     height:44px;
     margin-right: 20px;
 }
@@ -681,7 +755,7 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
 
 #filters ul li a{
     background: none repeat scroll 0 0 #D4D5D0;
-    color: white;
+    color: #4d4d4d;
     cursor: pointer;
     display: block;
     font-size: 7px;
