@@ -1111,7 +1111,7 @@ void Nova_PlotTopicCosmos(int topic,char *view,char *buffer,int bufsize)
 
 snprintf(buffer,bufsize,"[");
 
-if (tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,view))
+if ((tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,view)))
    {
    Nova_EigenvectorCentrality(tribe_adj,tribe_evc,CF_TRIBE_SIZE);
    Nova_DrawTribe(tribe_id,tribe_nodes,tribe_adj,tribe_size,tribe_evc,topic,buffer,bufsize);
