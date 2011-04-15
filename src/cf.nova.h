@@ -327,6 +327,7 @@ struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *l
 // class finder
 struct RList *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 struct RList *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+struct RList *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 
 int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
 int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
@@ -523,7 +524,6 @@ struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observa
 void Nova_AnalyseHistogram(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 /* html.c */
-
 void Nova_Footer(char *buffer, int bufsize);
 void Nova_Header(char *title,char *device_type, char *buffer, int bufsize);
 void Nova_TabMenu(char *s,char *buffer, int bufsize);
@@ -589,7 +589,7 @@ void DeleteHubBody(struct HubBody *hb);
 struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char *classContext);
 void DeleteHubBodyAttributes(struct HubBodyAttr *ha);
 struct HubNote *NewHubNote(char *user,char *msg,time_t t);
-struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t);
+struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData);
 void DeleteHubNote(struct HubNote *hc);
 void DeleteHubNoteInfo(struct HubNoteInfo *hci);
 
@@ -1522,6 +1522,7 @@ struct HubNoteInfo
   char *user;
   char *msg;
   time_t t;
+  char *report;
   struct HubNote *note;
 };
 

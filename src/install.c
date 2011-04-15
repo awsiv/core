@@ -962,7 +962,7 @@ free(hc);
 
 /*****************************************************************************/
 
-struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t)
+struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData)
 
 { struct HubNoteInfo *hci;
 
@@ -974,6 +974,7 @@ if ((hci = malloc(sizeof(struct HubNoteInfo))) == NULL)
 hci->hh = hh;
 hci->nid = strdup(nid);
 hci->note = NewHubNote(user,msg,t);
+hci->report = strdup(reportData);
 return hci;
 }
 
@@ -984,7 +985,7 @@ void DeleteHubNoteInfo(struct HubNoteInfo *hci)
 { struct HubNote *hc;
 
 free(hci->nid);
-
+free(hci->report);
 for (hc = hci->note; hc != NULL; hc=hc->next)
    {
    DeleteHubNote(hc);
