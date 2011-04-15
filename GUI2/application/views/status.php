@@ -11,30 +11,13 @@
                 <div id="business-value-pie-chart-container" class="grid_6">
                     <p class="title">Business Value</p>
                     <div id="business-value-pie-chart" style="height: 150px;width:300px;">
-
-
                     </div>
-
-
-
-
                 </div>
                 <div id="compliance-value-pie-chart-container" class="grid_6">
                     <p class="title">Compliance Now</p>
                     <div id="compliance-now-pie-chart" style="height: 150px; width:300px;">
-
-
                     </div>
-
-
-
-
                 </div>
-
-
-
-
-
             </div>
 
 
@@ -46,10 +29,10 @@
             <div id="environment-list">
                 <ul>
                     <li><!-- chrome fix --></li>
-                    <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/">Default</a><span class="rear"></span></li>
+                    <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/" title="">Default</a><span class="rear"></span></li>
                     <?php foreach ($envList as $key => $env) {
                     ?>
-                        <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/<?php echo $env; ?>"><?php echo $env; ?></a><span class="rear"></span></li>
+                        <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/<?php echo $env; ?>" title="environment_<?php echo $env; ?>"><?php echo $env; ?></a><span class="rear"></span></li>
                     <?php } ?>
                 </ul>
             </div>
@@ -90,6 +73,8 @@
     </div>
     <script type="text/javascript">
         // for summary compliance graph
+
+        var graphEnvironment = '';
         var json = {
             color: ['#A3DF00','#EEEE00','#D43030','#5C5858'],
             'label': <?php echo $compliance_summary['graphSeries']['labels']; ?>,
@@ -158,7 +143,7 @@
                 onClick: function(node, eventInfo, e) {
                     if ( startTrack[node.label]) {
                         //var option = {'url':'/widget/summaryCompliance/'+startTrack[node.label],'title':'Overview'};
-                        var element = $('<a href="/widget/summaryCompliance/'+startTrack[node.label]+ '" title="overview" />');
+                        var element = $('<a href="/widget/summaryCompliance/'+startTrack[node.label]+ '/' + graphEnvironment +'" title="overview" />');
                         element.ajaxyDialog().ajaxyDialog("open");
                     }
                 }
@@ -167,8 +152,11 @@
 
         $barChart = new $jit.BarChart(barChartOptions);
         $barChart.loadJSON(json);
+
+
         $('.updateComplianceGraph').click(function(){
             var url = $(this).attr('href');
+            var env = $(this).attr('title');
             $(this).parent().siblings(".selected").removeClass("selected").find('.tippointer').remove();
             $(this).parent().addClass('selected');
             $('<div class="tippointer">').css({'margin-top':5,'left':$(this).parent().width()/2 -6}).appendTo($(this).parent());
@@ -179,6 +167,10 @@
                 // update count and start track as well
                 countTrack =  data.countData;
                 startTrack =  data.startData;
+                //update the graph environment variable
+                graphEnvironment = env;
+
+
                 $barChart.updateJSON(json);
             });
             return false;

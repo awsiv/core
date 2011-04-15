@@ -11,13 +11,14 @@ class Widget extends CI_Controller {
         $this->load->view('widgets/hostfinder', $this->data);
     }
 
-    function summaryCompliance($startDate) {
+    function summaryCompliance($startDate,$env=NULL) {
 
         $this->load->library('cf_table');
         $startDateTimeStamp = $startDate;
         $stopDateTimeStamp = $startDate + (6 * 3600);
-        $this->data['notkept'] = json_decode(cfpr_summarize_notkept(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, NULL), true);
-        $this->data['repaired'] = json_decode(cfpr_summarize_repaired(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, NULL), true);
+        $environment = $env;
+        $this->data['notkept'] = json_decode(cfpr_summarize_notkept(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment), true);
+        $this->data['repaired'] = json_decode(cfpr_summarize_repaired(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment), true);
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
         $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);
 
