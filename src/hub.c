@@ -544,7 +544,6 @@ else
    }
 }
 
-#endif  /* NOT MINGW */
 
 /*******************************************************************/
 
@@ -594,6 +593,8 @@ int ScheduleRun(void);
 
 /*****************************************************************************/
 
+#endif  /* NOT MINGW */
+
 int main(int argc,char *argv[])
 
 {
@@ -614,6 +615,8 @@ StartHub(argc,argv);
 
 return 0;
 }
+
+#ifndef MINGW
 
 /*****************************************************************************/
 /* Level 1                                                                   */
@@ -888,5 +891,6 @@ for (ip = SCHEDULE; ip != NULL; ip = ip->next)
 return false;
 }
 
+#endif /* !MINGW */
 
 /* EOF */

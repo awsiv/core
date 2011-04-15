@@ -365,4 +365,10 @@ Debug("body %s type %s\n",body->name,body->type);
 
 }
 
+#else
+
+void Nova_StoreUnExpandedPromises(struct Bundle *bundles,struct Body *bodies)
+{
+}
+
 #endif
