@@ -203,9 +203,9 @@ int NovaCheckSQLDataType(char *type,char *ref_type,struct Promise *pp)
 
 { static char *aliases[3][2] =
      {
-     "varchar","character@varying",
-     "varchar","character varying",
-     NULL,NULL
+     {"varchar","character@varying"},
+     {"varchar","character varying"},
+     {NULL,NULL}
      };
 
  int i;

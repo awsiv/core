@@ -199,7 +199,7 @@ if (IsDefinedClass("debian"))
 
 void Nova_PreSanitizePromise(struct Promise *pp)
 
-{ struct Attributes a = {0};
+{ struct Attributes a = {{0}};
 
  /* Attempt run-time-like analysis here before execution if possible */
 

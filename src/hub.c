@@ -53,7 +53,7 @@ void Nova_StartHub(int argc,char **argv)
 { int time_to_run = false;
   time_t now = time(NULL);
   struct Promise *pp = NewPromise("hub_cfengine","the aggregator"); 
-  struct Attributes a = {0};
+  struct Attributes a = {{0}};
   struct CfLock thislock;
 
 Banner("Starting hub core");
@@ -221,7 +221,7 @@ int Nova_HailPeer(char *peer,struct Attributes a,struct Promise *pp)
   int long_time_no_see = false;
   struct CfLock thislock;
   struct Promise *ppp = NewPromise("hail","open"); 
-  struct Attributes aa = {0};
+  struct Attributes aa = {{0}};
 
 aa.restart_class = "nonce";
 aa.transaction.ifelapsed = 60*6;

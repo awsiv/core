@@ -830,18 +830,18 @@ int NovaGetNextDay(int day,char *month,int year)
 
 { static struct month_days md[12] =
      {
-     "January",31,
-     "February",28,
-     "March",31,
-     "April",30,
-     "May",31,
-     "June",30,
-     "July",31,
-     "August",31,
-     "September",30,
-     "October",31,
-     "November",30,
-     "December",31
+     {"January",31},
+     {"February",28},
+     {"March",31},
+     {"April",30},
+     {"May",31},
+     {"June",30},
+     {"July",31},
+     {"August",31},
+     {"September",30},
+     {"October",31},
+     {"November",30},
+     {"December",31}
      };
 
  int ndays = 0,this_month;
@@ -949,7 +949,7 @@ struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp)
   struct timespec start;
   FILE *fin = NULL;
   mode_t maskval = 0;
-  struct Attributes at = {0};
+  struct Attributes at = {{0}};
 
 if (LICENSES == 0)
    {

@@ -60,7 +60,7 @@ void Nova_VerifyEnvironmentsPromise(struct Promise *pp)
 
 {
 #ifdef HAVE_LIBVIRT
-struct Attributes a = {0};
+struct Attributes a = {{0}};
 struct CfLock thislock;
 struct Promise *pexp;
 

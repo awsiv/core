@@ -44,51 +44,51 @@ enum cf_format
 
 char *NRX[][2] =
    {
-    "<entry>\n","\n</entry>\n",
-    "<event>\n","\n</event>\n",
-    "<hostname>\n","\n</hostname>\n",
-    "<pm>\n","\n</pm>\n",
-    "<ip>\n","\n</ip>\n",
-    "<date>\n","\n</date>\n",
-    "<q>\n","\n</q>\n",
-    "<expect>\n","\n</expect>\n",
-    "<sigma>\n","\n</sigma>\n",
-    "<version>\n","\n</version>\n",
-    "<ref>\n","\n</ref>\n",
-    "<filename>\n","\n</filename>\n",
-    "<index>\n","\n</index>\n",
-    "<min>\n","\n</min>\n",
-    "<max>\n","\n</max>\n",
-    "<end>\n","\n</end>\n",
-    "<kept>\n","\n</kept>\n",
-    "<repaired>\n","\n</repaired>\n",
-    "<notrepaired>\n","\n</notrepaired>\n",
-    NULL,NULL
+    {"<entry>\n","\n</entry>\n"},
+    {"<event>\n","\n</event>\n"},
+    {"<hostname>\n","\n</hostname>\n"},
+    {"<pm>\n","\n</pm>\n"},
+    {"<ip>\n","\n</ip>\n"},
+    {"<date>\n","\n</date>\n"},
+    {"<q>\n","\n</q>\n"},
+    {"<expect>\n","\n</expect>\n"},
+    {"<sigma>\n","\n</sigma>\n"},
+    {"<version>\n","\n</version>\n"},
+    {"<ref>\n","\n</ref>\n"},
+    {"<filename>\n","\n</filename>\n"},
+    {"<index>\n","\n</index>\n"},
+    {"<min>\n","\n</min>\n"},
+    {"<max>\n","\n</max>\n"},
+    {"<end>\n","\n</end>\n"},
+    {"<kept>\n","\n</kept>\n"},
+    {"<repaired>\n","\n</repaired>\n"},
+    {"<notrepaired>\n","\n</notrepaired>\n"},
+    {NULL,NULL}
    };
 
 char *NRH[][2] =
    {
-    "<tr>","</tr>\n\n",
-    "<td>","</td>\n",
-    "<td>","</td>\n",
-    "<td bgcolor=#add8e6>","</td>\n",
-    "<td bgcolor=#e0ffff>","</td>\n",
-    "<td bgcolor=#f0f8ff>","</td>\n",
-    "<td bgcolor=#fafafa>","</td>\n",
-    "<td bgcolor=#ededed>","</td>\n",
-    "<td bgcolor=#e0e0e0>","</td>\n",
-    "<td bgcolor=#add8e6>","</td>\n",
-    "<td bgcolor=#e0ffff>","</td>\n",
-    "<td bgcolor=#fafafa><small>","</small></td>\n",
-    "<td bgcolor=#fafafa><small>","</small></td>\n",
-    "<td>","</td>\n",
-    "<td>","</td>\n",
-    "<td>","</td>\n",
-    "<td>","</td>\n",
-    "<td>","</td>\n",
-    "<td>","</td>\n",
-    "<td>","</td>\n",
-    NULL,NULL
+    {"<tr>","</tr>\n\n"},
+    {"<td>","</td>\n"},
+    {"<td>","</td>\n"},
+    {"<td bgcolor=#add8e6>","</td>\n"},
+    {"<td bgcolor=#e0ffff>","</td>\n"},
+    {"<td bgcolor=#f0f8ff>","</td>\n"},
+    {"<td bgcolor=#fafafa>","</td>\n"},
+    {"<td bgcolor=#ededed>","</td>\n"},
+    {"<td bgcolor=#e0e0e0>","</td>\n"},
+    {"<td bgcolor=#add8e6>","</td>\n"},
+    {"<td bgcolor=#e0ffff>","</td>\n"},
+    {"<td bgcolor=#fafafa><small>","</small></td>\n"},
+    {"<td bgcolor=#fafafa><small>","</small></td>\n"},
+    {"<td>","</td>\n"},
+    {"<td>","</td>\n"},
+    {"<td>","</td>\n"},
+    {"<td>","</td>\n"},
+    {"<td>","</td>\n"},
+    {"<td>","</td>\n"},
+    {"<td>","</td>\n"},
+    {NULL,NULL}
    };
 
 char *NUMBER_TXT[] =
@@ -2077,7 +2077,7 @@ void Nova_NoteVarUsageDB(void)
   CF_DBC *dbcp;
   char key[CF_MAXVARSIZE], *keyDb;  // scope.varname
   void *val;
-  struct Variable var = {0}, *varDb;
+  struct Variable var = {{0}}, *varDb;
   int i, keyDbSize, valSize;
   time_t varExpireAge = CF_MONTH;  // remove vars from DB after one month
   time_t now = time(NULL);
