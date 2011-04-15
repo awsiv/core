@@ -29,8 +29,7 @@ class Welcome extends Cf_Controller {
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'graphs/host-meter.js"> </script>
                     ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'widgets/licensemeter.js"></script>
-            ',
-            '<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />'
+            '
         );
 
         $expirydate=strtotime(cfpr_getlicense_expiry());

@@ -249,7 +249,7 @@ var hostfinder={
           if(this.value==''&& event.keyCode == 8)
           {
                 self.classdlg.find("#tagList").find('li').each(function() {
-                        $(this).addClass('selected');
+                        $(this).removeClass('selected');
               });
           }
     }
