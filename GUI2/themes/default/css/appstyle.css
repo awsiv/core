@@ -287,6 +287,29 @@ label#searchbox input
     border-radius:10px;
 }
 
+#tagList li.focused
+{
+    background: green;
+    color:#000000;
+}
+
+#tgmatchedresult
+{
+    background: none repeat scroll 0 0 #FFFFFF;
+    display: block;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: normal;
+    margin-top: 2px;
+    opacity: 0.9;
+    padding: 4px;
+    position: absolute;
+    right: 10.5%;
+    text-align: center;
+    width: 167px;
+    z-index: 1;
+}
+
 .loading{
    background: url("../images/ajax-loader.gif") no-repeat;
    width:31px;
@@ -337,6 +360,8 @@ label#searchbox input
 {
     color:#ff9900;
 }
+
+
 
 #tgoptions li{
  background: none repeat scroll 0 0 #3D453A;

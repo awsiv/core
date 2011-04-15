@@ -110,6 +110,7 @@ var hostfinder={
    createclasstagcloud:function(ui){
        var self=ui;
         self.classdlg = $('<div style="display:hidden" title="classes" id="tagCloud"></div>').appendTo(self);
+        self.classdlg.focused='';
         self.classdlg.dialog({
                      height: self.options.height,
                      width: 700,
@@ -143,11 +144,17 @@ var hostfinder={
         self.classdlg.options.appendTo(self.classdlg.titlebar).hide();
 
         self.classdlg.searchbar=$('<form id="searchclass"><span class="search"><input type="text" name="search"/></span></form>')
-        self.classdlg.searchbar.appendTo(self.classdlg.titlebar);
+        self.classdlg.titlebar.append(self.classdlg.searchbar).delegate('form','submit',{ui:self},function(event){event.preventDefault();});
+
+        self.classdlg.matchedresult=$('<span id="tgmatchedresult">');
+        self.classdlg.matchedresult.appendTo(self.classdlg.titlebar).hide();
         self.classdlg.searchbar.delegate('input[type="text"]','click',function(){$(this).focus()});
         self.classdlg.searchbar.delegate('input[type="text"]','keyup',{ui:self},self.searchclassinlist);
         self.classdlg.options.delegate('li','click',{ui:self},self.actionontagcloud);
         self.classdlg.delegate('a', 'click',{ui:self},self.addclassfilter);
+        self.classdlg.delegate('li', 'focusin',{ui:self},self.tagfocusevent);
+        self.classdlg.delegate('li', 'focusout',{ui:self},self.tagfocusevent);
+        self.classdlg.delegate('li', 'keydown',{ui:self},self.tagcloudkeydown);
    },
 
     addclassfilter:function(event)
@@ -187,7 +194,7 @@ var hostfinder={
       var self=event.data.ui
       if(this.value==$(this).data('default') && event.type=='focusin')
           {
-              self.cfui.categories.slideDown();
+              self.cfui.categories.slideDown().delay(8000).fadeOut(400);
               this.value='';
           }
       if(this.value=='' && event.type=='focusout')
@@ -226,7 +233,7 @@ var hostfinder={
             var compB = $(b).text().toUpperCase();
             return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
             })
-            $.each(listitems, function(idx, itm) { mylist.append(itm); });
+            $.each(listitems, function(idx, itm) {mylist.append(itm);});
           }
      if($(this).text().toLowerCase() == 'search')
          {
@@ -240,21 +247,65 @@ var hostfinder={
         var self=event.data.ui;
         var searchWord = $(this).val();
             if (searchWord.length >= 3) {
+                var matched=0;
                 self.classdlg.find("#tagList").find('li').each(function() {
                     var text = $(this).text();
+                     $(this).removeClass('selected');
                     if (text.match(RegExp(searchWord, 'i'))) {
-                        $(this).addClass('selected'); 
+                        $(this).addClass('selected');
+                        matched++;
                     }
-              }); }
+              });
+              if(self.classdlg.matchedresult.css('display')=='none')
+                  {
+                  self.classdlg.matchedresult.text(matched + " classes found").slideDown().delay(8000).fadeOut(400);
+                  }
+             }
+          else
+              {
+            self.classdlg.matchedresult.text(matched + " classes found").slideUp();
+              }
+
+          //on backspace key pressed;
           if(this.value==''&& event.keyCode == 8)
           {
                 self.classdlg.find("#tagList").find('li').each(function() {
                         $(this).removeClass('selected');
               });
           }
+          //on enter key pressed
+         if(event.keyCode == 13)
+              {
+             self.tagselectanothertag(self);
+              }
+    },
+    tagselectanothertag:function(ui){
+        var self=ui;
+        var total=self.classdlg.find("#tagList").find('li.selected').length;
+               if(self.classdlg.focused==''||self.classdlg.focused==total)
+                   {
+                     self.classdlg.focused=0;
+                   }
+        self.classdlg.find("#tagList").find('li.selected').eq(self.classdlg.focused).attr("tabindex",-1).focus();
+        console.log(self.classdlg.focused++);
+    },
+    tagcloudkeydown:function(event){
+        var self=event.data.ui;
+       if(event.keyCode == 13)
+              {
+             self.tagselectanothertag(self);
+              }
+    },
+    tagfocusevent:function(event){
+       if(event.type =='focusin')
+            {
+            $(this).addClass('focused');
+            }
+        if(event.type =='focusout')
+            {
+            $(this).removeClass('focused');
+            }
     }
-
-
 }
 $.widget("ui.hostfinder", hostfinder);
 

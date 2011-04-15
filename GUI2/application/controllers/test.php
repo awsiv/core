@@ -415,10 +415,28 @@ class Test extends CI_Controller
       function classCloud(){
          echo base_url().'/logs/onlineusers.tmp';
       }
+function goals()
+{
+   $goals=json_decode(cfpr_list_business_goals());
+   foreach ($goals as $goal)
+   {
+       echo $goal->desc;
+   }
+}
 
-    function hostfinder()
-    {
-       $this->load->view('testviews/test');
+function license() {
+        $expirydate=strtotime(cfpr_getlicense_expiry());
+        $startDate=cfpr_getlicense_installtime();
+        //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
+        $datediff = $expirydate - $startDate ;
+        $totaldays=floor($datediff/(60*60*24));
+        echo $totaldays."<br />";
+        echo time() ."<br/>";
+        echo date('D F d h:m:s Y',time());
+        $dayspassed=floor((time()-$startDate)/(60*60*24));
+        //echo $dayspassed;
+        //$pbarvalue=floor(($dayspassed/$totaldays)*100);
+        //echo $pbarvalue;
     }
         
 }
