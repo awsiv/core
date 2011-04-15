@@ -51,7 +51,6 @@ libcfnova_la_SOURCES =						\
 	knowledge.c						\
 	syntax.c						\
 	scorecards.c						\
-	graphics_core.c						\
 	copernicus.c						\
 	histogram.c						\
 	yearly.c						\

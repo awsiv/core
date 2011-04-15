@@ -513,18 +513,6 @@ int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,
 #endif
 
 
-/* graphics_core.c */
-
-void Nova_BuildGraphs(struct CfDataView *cfv);
-void Nova_Title(struct CfDataView *cfv,int col);
-void Nova_MakePalette(struct CfDataView *cfv);
-void Nova_MakeCosmosPalette(struct CfDataView *cfv);
-void Nova_GraphMagLegend(FILE *fout);
-void Nova_GraphLegend(FILE *fout);
-double Nova_GetNowPosition(time_t now);
-void Nova_Font(struct CfDataView *cfv,double x,double y,char *s,int colour);
-
-
 /* histogram.c */
 
 int Nova_ViewHisto(char *keyhash,enum observables obs,char *buffer,int bufsize);
