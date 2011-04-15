@@ -27,7 +27,6 @@ class Notes extends Cf_Controller {
         if ($action == "show") {
             $comments = (cfpr_query_note($hostkey, $nid, '', -1, -1));
             $comments = utf8_encode($comments);
-
             $this->data['data'] = json_decode($comments, TRUE);
             $this->data['form_url'] = '/notes/addnote';
         } else if ($action == "add") {
@@ -62,7 +61,6 @@ class Notes extends Cf_Controller {
                 exit;
             }
         } else {
-
             $this->data['updateMessage'] = "Cannot insert empty message.";
         }
 
@@ -91,7 +89,6 @@ class Notes extends Cf_Controller {
                 exit;
             }
         } else {
-
             $this->data['updateMessage'] = "Cannot insert empty message.";
         }
 
@@ -109,6 +106,47 @@ class Notes extends Cf_Controller {
 
         $this->data['data'] = json_decode($comments, TRUE);
         $this->load->view('/notes/view_notes', $this->data);
+    }
+
+    function showNotes() {
+
+        $this->load->helper(array('form', 'url'));
+        $this->load->library('form_validation');
+
+
+        $hostFilter = $this->input->post('hostname', TRUE);
+        $noteId = '';
+        $userId = $this->input->post('username', TRUE);
+        $dateFrom = $this->input->post('date_from', TRUE) ? strtotime($this->input->post('date_from', TRUE)) : -1;
+        $dateTo = $this->input->post('date_to', TRUE) ? strtotime($this->input->post('date_to', TRUE)) : -1;
+
+
+        if ($dateFrom && $dateFrom != -1) {
+            //we have a start date so set the end date as well
+            if ($dateTo == -1) {
+                $dateTo = time();
+            }
+        }
+
+
+        $bc = array(
+            'title' => 'Notes',
+            'url' => 'notes/shownotes',
+            'isRoot' => false
+        );
+
+        $this->breadcrumb->setBreadCrumb($bc);
+
+        $data = array(
+            'title' => "Cfengine Mission Portal - overview",
+            'title_header' => "Notes overview",
+            'breadcrumbs' => $this->breadcrumblist->display()
+        );
+
+        $comments = cfpr_query_note($hostFilter, $noteId, $userId, $dateFrom, $dateTo);
+        $comments = utf8_encode($comments);
+        $data['data'] = json_decode($comments, TRUE);
+        $this->template->load('template', '/notes/show_notes', $data);
     }
 
 }
