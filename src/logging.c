@@ -65,8 +65,8 @@ for (ap = response; ap != NULL; ap = ap->ai_next)
    }
 
 #else
-memset((char *) &addr, 0, sizeof(addr));
-memcpy(&addr,(struct sockaddr_in *) sockaddr_pton(AF_INET,SYSLOGHOST),sizeof(struct sockaddr_in));
+struct sockaddr_in addr;
+sockaddr_pton(AF_INET,SYSLOGHOST,&addr);
 addr.sin_port = htons(SYSLOGPORT);
 
 if ((sd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
