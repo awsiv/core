@@ -2442,6 +2442,7 @@ int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize)
  return true;
 }
 /*****************************************************************************/
+
 int Nova2PHP_list_all_goals(char *buffer,int bufsize)
 
 { char work[CF_BUFSIZE];

@@ -156,179 +156,110 @@ CfCloseDB(&cfdb);
 return ret;
 }
 
-/******************************************************************************/
-
-void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize)
-
-{ char from_assoc[CF_BUFSIZE],to_assoc[CF_BUFSIZE],topic_context[CF_BUFSIZE],to_context[CF_BUFSIZE];
-  char query[CF_MAXVARSIZE],from_name[CF_BUFSIZE],to_name[CF_BUFSIZE];
-  CfdbConn cfdb;
-  int from_pid,to_pid;  
-
-snprintf(query,sizeof(query),"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name,from_id,to_id from associations where from_id='%d'",pid);
-
-CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
-Debugcfdb(&cfdb);
-
-CfNewQueryDB(&cfdb,query);
-
-if (cfdb.maxcolumns != 8)
-   {
-   CfOut(cf_error,""," !! The associations database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,8);
-   CfCloseDB(&cfdb);
-   return;
-   }
-
-while (CfFetchRow(&cfdb))
-   {
-   strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
-   strncpy(topic_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-   strncpy(from_assoc,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
-   strncpy(to_assoc,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
-   strncpy(to_context,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
-   strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
-   from_pid = Str2Int(CfFetchColumn(&cfdb,6));
-   to_pid = Str2Int(CfFetchColumn(&cfdb,7));
-
-   snprintf(buffer,CF_BUFSIZE,"Association \"%s\" (with inverse \"%s\"), ",from_assoc,to_assoc);
-
-//format directly
-
-//      Nova_ShowAssociation(&cfdb,cfrom_assoc,cto_assoc,ctopic_context,cto_context);
-   }
-
-CfDeleteQuery(&cfdb);
-CfCloseDB(&cfdb);
-}
-
 /*********************************************************************/
 
 int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
 
-{ CfdbConn cfdb;  
-  char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE],to_context[CF_BUFSIZE];
-  char query[CF_BUFSIZE];
-  char from_name[CF_BUFSIZE],from_assoc[CF_BUFSIZE],to_assoc[CF_BUFSIZE],to_name[CF_BUFSIZE];
-  char work[CF_BUFSIZE];
-  int save_pid = 0,pid,s,e,count = 0;
-  struct Item *list = NULL;
+{ bson_buffer bb;
+  bson query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  mongo_connection conn;
 
-strcpy(buffer,"<div id=\"disambig\">\n<h2>The search suggests these topics:</h2>\n<ul>\n");
+  char topic_name[CF_BUFSIZE];
+  char topic_context[CF_BUFSIZE];
+  int topic_id;
+  char assoc_name[CF_BUFSIZE];
+  char assoc_context[CF_BUFSIZE];
+  int assoc_id;
 
-// Handle search strings context::topics
-
-if (strlen(SQL_OWNER) == 0)
+if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
-   snprintf(buffer,bufsize,"No knowledge database has yet formed ... please wait");
-   return 0;
+   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
+   return false;
    }
 
-CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
-    
-if (!cfdb.connected)
+/* BEGIN query document */
+
+bson_buffer_init(&bb);
+bson_empty(&query);
+
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfk_topicname,1);
+bson_append_int(&bb,cfk_topicid,1);
+bson_append_int(&bb,cfk_topiccontext,1);
+bson_append_int(&bb,cfk_associations,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+bson_destroy(&field);
+
+while (mongo_cursor_next(cursor))  // loops over documents
    {
-   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
-   return 0;
-   }
-
-snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_name,topic_id,topic_context,pid from topics");
-
-CfNewQueryDB(&cfdb,query);
-
-if (cfdb.maxcolumns != 4)
-   {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,4);
-   CfCloseDB(&cfdb);
-   return 0;
-   }
-
-work[0] = '\0';
-
-while(CfFetchRow(&cfdb))
-   {
-   strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
-   strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-   strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);   
-   pid = Str2Int(CfFetchColumn(&cfdb,3));
-
-   if (BlockTextCaseMatch(search_topic,topic_name,&s,&e))
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   topic_name[0] = '\0';
+   topic_context[0] = '\0';
+   topic_id = 0;
+   
+   while (bson_iterator_next(&it1))
       {
-      // Ignore multiple contexts
+      /* Query specific search/marshalling */
       
-      if (strlen(work) == 0 || strlen(work) == 0 && strcmp(work,topic_name) != 0)
+      if (strcmp(bson_iterator_key(&it1),cfk_topicname) == 0)
          {
-         if (IsItemIn(list,topic_name))
-            {
-            continue;
-            }
+         strncpy(topic_name,bson_iterator_string(&it1),CF_BUFSIZE-1);
+         }   
+
+      if (strcmp(bson_iterator_key(&it1),cfk_topiccontext) == 0)
+         {
+         strncpy(topic_context,bson_iterator_string(&it1),CF_BUFSIZE-1);
+         }
+      
+      if (strcmp(bson_iterator_key(&it1),cfk_topicid) == 0)
+         {
+         topic_id = (int)bson_iterator_int(&it1);
+         }
+
+      if (strcmp(bson_iterator_key(&it1),cfk_associations) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         assoc_id = 0;
+         assoc_name[0] = '\0';
+         assoc_context[0] = '\0';
          
-         count++;
-         Nova_AddTopicSearchBuffer(pid,topic_name,topic_context,buffer,bufsize);
-         save_pid = pid;
-         PrependItem(&list,topic_name,NULL);
+         while (bson_iterator_next(&it2))
+             {
+             if (strcmp(bson_iterator_key(&it1),cfk_associd) == 0)
+                {
+                assoc_id = bson_iterator_int(&it2);
+                }   
+
+             if (strcmp(bson_iterator_key(&it1),cfk_assocname) == 0)
+                {
+                strncpy(assoc_name,bson_iterator_string(&it2),CF_BUFSIZE-1);
+                }   
+
+             if (strcmp(bson_iterator_key(&it1),cfk_assoccontext) == 0)
+                {
+                strncpy(assoc_context,bson_iterator_string(&it2),CF_BUFSIZE-1);
+                }   
+             }
+
+         printf(" - associate %::%s (%d)\n",assoc_context,assoc_name,assoc_id);
          }
       }
+   
+   printf("SUMMARY - FOUND TOPIC %s::%s with id %d\n",topic_context,topic_name,topic_id);
    }
 
-CfDeleteQuery(&cfdb);
-
-/* Then matching associations */
-
-snprintf(query,CF_BUFSIZE,"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name from associations");
-
-/* Expect multiple matches always with associations */
-
-CfNewQueryDB(&cfdb,query);
-
-if (cfdb.maxcolumns != 6)
-   {
-   CfOut(cf_error,""," !! The associations database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,6);
-   CfCloseDB(&cfdb);
-   strcat(buffer,"</ul></div>\n");
-   return 0;
-   }
-
-while(CfFetchRow(&cfdb))
-   {
-   strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
-   strncpy(topic_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-   strncpy(from_assoc,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
-   strncpy(to_assoc,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
-   strncpy(to_context,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
-   strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
-
-   if (BlockTextCaseMatch(search_topic,from_assoc,&s,&e)||BlockTextCaseMatch(search_topic,to_assoc,&s,&e))
-      {
-      if (IsItemIn(list,from_assoc))
-         {
-         continue;
-         }
-      count++;
-      Nova_AddAssocSearchBuffer(from_assoc,to_assoc,buffer,bufsize);
-
-      PrependItem(&list,from_assoc,NULL);
-      }
-   }
-
-if (count == 0)
-   {
-   snprintf(work,CF_MAXVARSIZE,"(no suitable results determined for %s)",search_topic);
-   Join(buffer,work,bufsize);
-   }
-
-strcat(buffer,"</ul></div>\n");
-CfDeleteQuery(&cfdb);
-CfCloseDB(&cfdb);
-DeleteItemList(list);
-
-if (count == 1)
-   {
-   return save_pid;
-   }
-else
-   {
-   return 0;
-   }
+mongo_cursor_destroy(cursor);
+CFDB_Close(&conn);
 }
 
 /*****************************************************************************/

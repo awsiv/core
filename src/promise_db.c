@@ -40,41 +40,39 @@ if (!SHOWREPORTS)
  
 // NOTE: Inefficient to Open/Close DB for each promise,
 // but call is coming from community which may not have DB
+
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_error, "", "!! Could not open connection to promise database to store expanded promises");
    return;
    }
 
- if(firstCall)
+if (firstCall)
    {
-     // clear existing data first
-     mongo_remove(&dbconn, MONGO_PROMISES_EXP, bson_empty(&b));
-     firstCall = false;
+   // clear existing data first
+   mongo_remove(&dbconn, MONGO_PROMISES_EXP, bson_empty(&b));
+   firstCall = false;
    }
 
- bson_buffer_init(&bbuf);
- bson_append_new_oid(&bbuf, "_id" );
+bson_buffer_init(&bbuf);
+bson_append_new_oid(&bbuf, "_id" );
 
 Debug("PROMISE: \n");
-//MapPromiseToTopic(FKNOW,pp,v);
-
 Debug("\nPromise type is %s, ",pp->agentsubtype);
 Debug("class context %s \n",pp->classes);
 
- bson_append_string(&bbuf,cfp_promisetype,pp->agentsubtype);
- bson_append_string(&bbuf, cfp_classcontext, pp->classes);
+bson_append_string(&bbuf,cfp_promisetype,pp->agentsubtype);
+bson_append_string(&bbuf,cfp_classcontext,pp->classes);
 
 Debug("promiser is %s\n",pp->promiser);
 
- bson_append_string(&bbuf,cfp_promiser_exp,pp->promiser);
-
+bson_append_string(&bbuf,cfp_promiser_exp,pp->promiser);
 
 Debug("Bundle %s\n",pp->bundle);
- Debug("Bundle of type %s\n",pp->bundletype);
+Debug("Bundle of type %s\n",pp->bundletype);
 
- bson_append_string(&bbuf,cfp_bundlename,pp->bundle);
- bson_append_string(&bbuf,cfp_bundletype,pp->bundletype);
+bson_append_string(&bbuf,cfp_bundlename,pp->bundle);
+bson_append_string(&bbuf,cfp_bundletype,pp->bundletype);
 
 if (pp->audit)
    {
@@ -83,16 +81,13 @@ if (pp->audit)
    bson_append_int(&bbuf, cfp_lineno, pp->lineno);
    }
 
-
 // The promise body
 
 if (pp->promisee)
    {
    memset(rval_buffer, 0, sizeof(rval_buffer));
    PrintRval(rval_buffer,CF_BUFSIZE,pp->promisee,pp->petype);
-
    Debug(" -> %s\n",rval_buffer);
-
    bson_append_string(&bbuf,cfp_promisee_exp,rval_buffer);
    }
 
@@ -102,12 +97,13 @@ if (pp->ref)
    bson_append_string(&bbuf,cfp_comment_exp,pp->ref);
    }
  
- if ((sp = GetConstraint("handle",pp,CF_SCALAR)) || (sp = PromiseID(pp)))
+if ((sp = GetConstraint("handle",pp,CF_SCALAR)) || (sp = PromiseID(pp)))
    {
-     bson_append_string(&bbuf, cfp_handle_exp, sp);
+   bson_append_string(&bbuf, cfp_handle_exp, sp);
    }
 
- cstr = bson_append_start_array(&bbuf, cfp_constraints_exp);
+cstr = bson_append_start_array(&bbuf, cfp_constraints_exp);
+
 for (cp = pp->conlist, j = 0; cp != NULL; cp = cp->next)
    {
    // comments and handles have their own fields
@@ -116,27 +112,22 @@ for (cp = pp->conlist, j = 0; cp != NULL; cp = cp->next)
      continue;
      }
 
-
    memset(rval_buffer, 0, sizeof(rval_buffer));
    PrintRval(rval_buffer,CF_BUFSIZE,cp->rval,cp->type);
    Debug("  %s => %s\n",cp->lval,rval_buffer);
-   
    snprintf(con, sizeof(con), "%s => %s", cp->lval, rval_buffer);
-	    
    snprintf(jStr, sizeof(jStr), "%d", j);
    bson_append_string(cstr, jStr, con);
    j++;
    }
- bson_append_finish_object(cstr);
 
-	 
- bson_from_buffer(&b, &bbuf);
- mongo_insert(&dbconn, MONGO_PROMISES_EXP, &b);
- bson_destroy(&b);
+bson_append_finish_object(cstr);
 
+bson_from_buffer(&b, &bbuf);
+mongo_insert(&dbconn, MONGO_PROMISES_EXP, &b);
+bson_destroy(&b);
 
- CFDB_Close(&dbconn);
-
+CFDB_Close(&dbconn);
 }
 
 /*****************************************************************************/
@@ -171,7 +162,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
  
 // remove existing data first
- mongo_remove(&dbconn, MONGO_PROMISES_UNEXP, bson_empty(&b));
+mongo_remove(&dbconn, MONGO_PROMISES_UNEXP, bson_empty(&b));
 
 for (bp = bundles; bp != NULL; bp=bp->next)
    {   
@@ -199,6 +190,7 @@ for (bp = bundles; bp != NULL; bp=bp->next)
             snprintf(iStr, sizeof(iStr), "%d", i);
             bson_append_string(args, iStr, (char *)rp->item);
             }
+
          bson_append_finish_object(args);
          
          snprintf(iStr, sizeof(iStr), "%d", i);
@@ -261,16 +253,13 @@ for (bp = bundles; bp != NULL; bp=bp->next)
          
          mongo_insert(&dbconn, MONGO_PROMISES_UNEXP, &b);
 	 bson_destroy(&b);
-		     
-         	 
          }      
       }   
    }
 
  /* Now summarize all bodies */
-
-
  // clear existing bodies first
+
 mongo_remove(&dbconn, MONGO_BODIES, bson_empty(&b));
 
 for (bdp = bodies; bdp != NULL; bdp=bdp->next)
@@ -278,9 +267,7 @@ for (bdp = bodies; bdp != NULL; bdp=bdp->next)
    Nova_StoreBody(&dbconn, bdp);
    }
 
-
- CFDB_Close(&dbconn);
-
+CFDB_Close(&dbconn);
 }
 
 /*****************************************************************************/
@@ -296,73 +283,67 @@ void Nova_StoreBody(mongo_connection *dbconn, struct Body *body)
   int i;
   bson b,query;
 
-  bson_buffer_init(&bbuf);
-  bson_append_new_oid(&bbuf, "_id" );
+bson_buffer_init(&bbuf);
+bson_append_new_oid(&bbuf, "_id" );
 
 Debug("body %s type %s\n",body->name,body->type);
- 
- bson_append_string(&bbuf, cfb_bodyname, body->name);
- bson_append_string(&bbuf, cfb_bodytype, body->type);
 
+bson_append_string(&bbuf, cfb_bodyname, body->name);
+bson_append_string(&bbuf, cfb_bodytype, body->type);
 
- args = bson_append_start_array(&bbuf, cfb_bodyargs);
- for (rp = body->args, i = 0; rp != NULL; rp=rp->next,i++)
+args = bson_append_start_array(&bbuf, cfb_bodyargs);
+
+for (rp = body->args, i = 0; rp != NULL; rp=rp->next,i++)
    {   
-     Debug("%s\n",(char *)rp->item);
-     snprintf(iStr, sizeof(iStr), "%d", i);
-     bson_append_string(args, iStr, (char *)rp->item);
+   Debug("%s\n",(char *)rp->item);
+   snprintf(iStr, sizeof(iStr), "%d", i);
+   bson_append_string(args, iStr, (char *)rp->item);
    }
- bson_append_finish_object(args);
- 
- bson_from_buffer(&b, &bbuf);
- 
- mongo_insert(dbconn, MONGO_BODIES, &b);
 
- bson_destroy(&b);
+bson_append_finish_object(args);
+bson_from_buffer(&b, &bbuf);
+mongo_insert(dbconn, MONGO_BODIES, &b);
+bson_destroy(&b);
+
+// do update with the lval - rval attribs
+bson_buffer_init(&bb);
+bson_append_string(&bb,cfb_bodyname,body->name);
+bson_append_string(&bb,cfb_bodytype,body->type);
+bson_from_buffer(&query,&bb);
 
 
- // do update with the lval - rval attribs
- bson_buffer_init(&bb);
- bson_append_string(&bb,cfb_bodyname,body->name);
- bson_append_string(&bb,cfb_bodytype,body->type);
- bson_from_buffer(&query,&bb);
- 
- 
- bson_buffer_init(&bbuf);
+bson_buffer_init(&bbuf);
 
- setObj = bson_append_start_object(&bbuf, "$set");
-   for (cp = body->conlist; cp != NULL; cp=cp->next)
-     {
-       if (cp->classes != NULL)
-	 {
-	   // replace illegal key char '.' with  '&'
-	   ReplaceChar(cp->classes,classContext,sizeof(classContext),'.','&');
-	   Debug(" if class context %s\n",cp->classes);
-	 }
-       else
-       {
-	 snprintf(classContext,sizeof(classContext),"any");
-       }
+setObj = bson_append_start_object(&bbuf, "$set");
 
-     memset(rval_buffer,0,sizeof(rval_buffer));
-     
-     PrintRval(rval_buffer,sizeof(rval_buffer),cp->rval,cp->type);
-     
-     Debug("  %s => %s\n",cp->lval,rval_buffer);
-
-     snprintf(varName,sizeof(varName),"%s.%s.%s",cfb_classcontext,classContext,cp->lval);
-     
-     bson_append_string(&bbuf,varName,rval_buffer);
-
-     }
-   bson_append_finish_object(setObj);
+for (cp = body->conlist; cp != NULL; cp=cp->next)
+   {
+   if (cp->classes != NULL)
+      {
+      // replace illegal key char '.' with  '&'
+      ReplaceChar(cp->classes,classContext,sizeof(classContext),'.','&');
+      Debug(" if class context %s\n",cp->classes);
+      }
+   else
+      {
+      snprintf(classContext,sizeof(classContext),"any");
+      }
    
-   bson_from_buffer(&b, &bbuf);
-   mongo_update(dbconn,MONGO_BODIES,&query,&b,MONGO_UPDATE_UPSERT);
+   memset(rval_buffer,0,sizeof(rval_buffer));
+   PrintRval(rval_buffer,sizeof(rval_buffer),cp->rval,cp->type);
+   Debug("  %s => %s\n",cp->lval,rval_buffer);
+   
+   snprintf(varName,sizeof(varName),"%s.%s.%s",cfb_classcontext,classContext,cp->lval);
+   bson_append_string(&bbuf,varName,rval_buffer);   
+   }
 
-   bson_destroy(&query);
-   bson_destroy(&b);
+bson_append_finish_object(setObj);
 
+bson_from_buffer(&b, &bbuf);
+mongo_update(dbconn,MONGO_BODIES,&query,&b,MONGO_UPDATE_UPSERT);
+
+bson_destroy(&query);
+bson_destroy(&b);
 }
 
 #else

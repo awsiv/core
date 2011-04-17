@@ -41,10 +41,133 @@ static char *CF_VALUETYPES[18][3] =
  {".*","an arbitrary string","unspecified characters"},
  {NULL,NULL,NULL}
  };
-    
 
 /*****************************************************************************/
 /* Level                                                                     */
+/*****************************************************************************/
+
+void Nova_StoreKMDB(struct Topic **topichash,struct Occurrence *occurrences,struct Inference *inferences)
+    
+{ struct Topic *tp;
+  struct TopicAssociation *ta;
+  struct Occurrence *op;
+  struct Inference *ip;
+  struct Item *itp;
+  char packNumStr[CF_MAXVARSIZE];
+  mongo_connection dbconn = {0};
+  bson_buffer bb,bbuf,*sub,*assocs,*setObj;
+  bson b;
+  int slot,assoc_id = 0;
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_error, "", "!! Could not open connection to database to store Knowledge Map");
+   return;
+   }
+ 
+// remove existing data first
+
+mongo_remove(&dbconn,MONGO_KM_TOPICS, bson_empty(&b));
+
+/* Class types and topics */
+
+for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
+   {
+   for (tp = topichash[slot]; tp != NULL; tp=tp->next)
+      {
+      bson_buffer_init(&bbuf);
+      bson_append_new_oid(&bbuf, "_id" );
+      bson_append_string(&bbuf,cfk_topicname,tp->topic_name);
+      bson_append_string(&bbuf,cfk_topiccontext,tp->topic_context);
+      bson_append_string(&bbuf,cfk_topiccontext,tp->topic_context);
+      bson_append_int(&bbuf,cfk_topicid,tp->id);
+
+      Debug("Add Topic(topic_name,topic_context,pid) values ('%s','%s','%d')\n",tp->topic_name,tp->topic_context,tp->id);
+      
+      // Associations
+
+      bson_buffer_init(&bb);
+      setObj = bson_append_start_object(&bb,"$set");
+      assocs = bson_append_start_array(setObj,cfk_associations);
+
+      for (ta = tp->associations; ta != NULL; ta=ta->next)
+         {
+         for (itp = ta->associates; itp != NULL; itp=itp->next)
+            {
+            char to_context[CF_MAXVARSIZE],to_topic[CF_MAXVARSIZE];
+            char tcontext[CF_MAXVARSIZE],ttype[CF_MAXVARSIZE],ttopic[CF_MAXVARSIZE];
+            int to_id = GetTopicPid(itp->name);
+
+            DeClassifyTopic(itp->name,to_topic,to_context);
+
+            Debug(" - Association: '%s::%s' (%d) %s '%s:%s' (%d)\n",tp->topic_context,tp->topic_name,tp->id,ta->fwd_name,to_context,to_topic,to_id);
+            Debug(" - Hence  by implication : '%s::%s' (%d) %s '%s::%s' (%d)\n",to_context,to_topic,to_id,ta->bwd_name,tp->topic_context,tp->topic_name,tp->id);
+
+            // Append variable list item to assocs
+            snprintf(packNumStr,sizeof(packNumStr),"%d",assoc_id++);
+            sub = bson_append_start_object(assocs,packNumStr);
+            bson_append_string(sub,cfk_fwd,ta->fwd_name);
+            bson_append_string(sub,cfk_bwd,ta->bwd_name);
+            bson_append_string(sub,cfk_assocname,to_topic);
+            bson_append_string(sub,cfk_assoccontext,to_context);
+            bson_append_int(sub,cfk_associd,to_id);
+            bson_append_finish_object(sub);   
+            }
+         }
+      
+      for (itp = tp->synonyms; itp != NULL; itp=itp->next)
+         {
+         char to_context[CF_MAXVARSIZE],to_topic[CF_MAXVARSIZE];
+         int to_id = GetTopicPid(itp->name);
+         
+         DeClassifyTopic(itp->name,to_topic,to_context);
+         
+         Debug(" - Synonym: '%s::%s' (%d) is synonymous with '%s:%s' (%d)\n",tp->topic_context,tp->topic_name,tp->id,to_context,to_topic,to_id);
+
+         // Append fixed list item to assocs
+         snprintf(packNumStr,sizeof(packNumStr),"%d",assoc_id++);
+         sub = bson_append_start_object(assocs,packNumStr);
+         bson_append_string(sub,cfk_fwd,NOVA_SYNONYM);
+         bson_append_string(sub,cfk_bwd,NOVA_SYNONYM);
+         bson_append_string(sub,cfk_assocname,to_topic);
+         bson_append_string(sub,cfk_assoccontext,to_context);
+         bson_append_int(sub,cfk_associd,to_id);
+         bson_append_finish_object(sub);   
+         }
+
+      bson_append_finish_object(assocs);
+      bson_append_finish_object(setObj);
+      
+      bson_from_buffer(&b,&bbuf);
+      mongo_insert(&dbconn,MONGO_KM_TOPICS,&b);
+      bson_destroy(&b);
+      }
+   }
+
+// Occurrences
+
+for (op = occurrences; op != NULL; op=op->next)
+   {
+   struct Rlist *rp;
+   
+   for (rp = op->represents; rp != NULL; rp=rp->next)
+      {
+      char safeexpr[CF_BUFSIZE];
+      
+      printf("Add occurrence (context,locator,locator_type,subtype) values ('%s','%s','%d','%s')\n",op->occurrence_context,op->locator,op->rep_type,rp->item);
+      }
+   }
+
+//
+
+for (ip = inferences; ip != NULL; ip=ip->next)
+   {
+   Debug("Add inferences (precedent,qualifier,inference) values ('%s','%s','%s')\n",ip->precedent,ip->qualifier,ip->inference);
+   }
+
+//CFDB_Close(&dbconn);
+}
+
 /*****************************************************************************/
 
 void Nova_SyntaxCompletion(char *s)
@@ -1016,3 +1139,29 @@ if (CF_VALUETYPES[i][0] != NULL)
    fprintf(fp,"    association => a(\"are used in constraint parameters\",\"body_constraints::%s\",\"takes value\");\n",bs.lval);
    }
 }
+
+/*********************************************************************/
+
+char *Name2Id(char *s)
+
+{ static char ret[CF_BUFSIZE],detox[CF_BUFSIZE];
+  char *sp;
+
+strncpy(ret,s,CF_BUFSIZE-1);
+
+for (sp = ret; *sp != '\0'; sp++)
+   {
+   if (!isalnum(*sp) && *sp != '_')
+      {
+      if (isalnum(*sp & 127))
+         {
+         *sp &= 127;
+         }
+      }
+   }
+  
+strncpy(detox,CanonifyName(ret),CF_BUFSIZE-1);
+return detox;
+}
+
+

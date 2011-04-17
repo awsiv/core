@@ -423,6 +423,8 @@ static void CFDB_PutEnvironmentForHost(mongo_connection *conn, const char *keyha
     bson_destroy(&host_key);
 }
 
+/*****************************************************************************/
+
 #define ENV_NAME_PREFIX "environment_"
 #define ENV_NAME_LEN (sizeof(ENV_NAME_PREFIX) / sizeof(char) - 1)
 
@@ -453,6 +455,8 @@ static void CFDB_SaveEnvironment(mongo_connection *conn, const char *keyhash,
 
     free(environment);
 }
+
+/*****************************************************************************/
 
 void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, struct Item *data)
 

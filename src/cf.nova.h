@@ -40,11 +40,15 @@
 // WARNING: If changing collection names: grep through source
 # define MONGO_HAVE_STDINT
 # define MONGO_BASE "cfreport"
+# define MONGO_KMBASE "cfknow"
 # define MONGO_DATABASE MONGO_BASE ".hosts"
 # define MONGO_DATABASE_MON MONGO_BASE ".monitoring"
 # define MONGO_PROMISES_EXP MONGO_BASE ".promises_exp"
 # define MONGO_PROMISES_UNEXP_COLLECTION "promises_unexp"
 # define MONGO_PROMISES_UNEXP MONGO_BASE "." MONGO_PROMISES_UNEXP_COLLECTION
+# define MONGO_KM_TOPICS MONGO_KMBASE ".""KT"
+# define MONGO_KM_OCCURRENCES MONGO_KMBASE ".""KO"
+# define MONGO_KM_INFERENCES MONGO_KMBASE ".""KI"
 # define MONGO_BODIES   MONGO_BASE ".bodies"
 # define MONGO_SCRATCH MONGO_BASE ".scratch"
 # define MONGO_CACHE MONGO_BASE ".cache"
@@ -612,8 +616,11 @@ struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(struct Rlist *rec
 
 int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)());
 void CountMarginRecordsVars(struct Rlist **records_p, struct PageInfo *page,int *start_count,int *end_count);
+
 /* knowledge.c */
 
+char *Name2Id(char *s);
+void Nova_StoreKMDB(struct Topic **topichash,struct Occurrence *occurrences,struct Inference *inferences);
 void Nova_SyntaxCompletion(char *s);
 void Nova_ListAgents(void);
 void Nova_ListFunctions(void);
@@ -1059,6 +1066,8 @@ void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int
 #define NOVA_HANDLE "is the handle for"
 #define NOVA_HANDLE_INV "has a promise with handle"
 
+#define NOVA_SYNONYM "is a synonym for"
+
 #define NOVA_GOAL "contributes to business goal"
 #define NOVA_GOAL_INV "is supported by a promise"
 
@@ -1256,6 +1265,26 @@ struct cf_pscalar
 #define cfc_count "cn"
 #define cfc_timegen "tg"
 
+/* knowlegde/topic map collection */
+
+#define cfk_topicname "n"
+#define cfk_topiccontext "c"
+#define cfk_topicid "id"
+
+#define cfk_associations "a"
+#define cfk_fwd "f"
+#define cfk_bwd "b"
+#define cfk_assocname "an"
+#define cfk_assoccontext "ac"
+#define cfk_associd "ai"
+
+#define cfk_occurcontext "oc"
+#define cfk_occurlocator "ol"
+#define cfk_occurtype "ot"
+#define cfk_occurrep "or"
+
+// Report types
+
 #define CFREPORT_HOSTS 1
 #define CFREPORT_REPAIRED 2
 #define CFREPORT_PRSUMMARY 3
@@ -1265,7 +1294,6 @@ struct cf_pscalar
 #define CFREPORT_FILEDIFFS 7
 #define CFREPORT_BUNDLE 8
 #define CFREPORT_NOTKEPT 9
-
 
 #define CF_NONOTE "NO_NOTE"
 #define CF_SHOWNOTE "Show Note"

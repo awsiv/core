@@ -31,54 +31,51 @@ int CFDB_GetValue(char *lval,char *rval,int size)
   
  // clients do not run mongo server -- will fail to connect
 
- if (!IsDefinedClass("am_policy_hub") && !IsDefinedClass("am_php_module"))
-    {
-    CfOut(cf_verbose,"","Ignoring DB get of (%s) - we are not a policy server",lval);
-    return false;
-    }
-  
- if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database to get value %s", lval);
-    return false;
-    }
-    
- CFDB_HandleGetValue(lval,rval,size,&conn);
+if (!IsDefinedClass("am_policy_hub") && !IsDefinedClass("am_php_module"))
+   {
+   CfOut(cf_verbose,"","Ignoring DB get of (%s) - we are not a policy server",lval);
+   return false;
+   }
 
+if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database to get value %s", lval);
+   return false;
+   }
 
- CFDB_Close(&conn);
+CFDB_HandleGetValue(lval,rval,size,&conn);
 
- return true;
+CFDB_Close(&conn);
+return true;
 }
 
 /*****************************************************************************/
 
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn)
-{
- bson query;
- bson_iterator it1;
- mongo_cursor *cursor;
 
- rval[0] = '\0';
+{ bson query;
+  bson_iterator it1;
+  mongo_cursor *cursor;
 
- cursor = mongo_find(conn,MONGO_SCRATCH,bson_empty(&query),0,0,0,0);
+rval[0] = '\0';
 
- while (mongo_cursor_next(cursor))  // loops over documents
-    {
-    bson_iterator_init(&it1,cursor->current.data);
+cursor = mongo_find(conn,MONGO_SCRATCH,bson_empty(&query),0,0,0,0);
 
-    while(bson_iterator_next(&it1))
-       {
-       if (strcmp(bson_iterator_key(&it1),lval) == 0)
-          {
-          snprintf(rval,size,"%s",bson_iterator_string(&it1));
-          break;
-          }
-       }    
-    }
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while(bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1),lval) == 0)
+         {
+         snprintf(rval,size,"%s",bson_iterator_string(&it1));
+         break;
+         }
+      }    
+   }
 
- mongo_cursor_destroy(cursor);
-
+mongo_cursor_destroy(cursor);
 }
 
 /*****************************************************************************/
@@ -88,24 +85,24 @@ void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *con
 void CFDB_ListEverything(mongo_connection *conn)
 
 { mongo_cursor *cursor;
- bson_iterator it;
- bson b,*query;
+  bson_iterator it;
+  bson b,*query;
 
- query = bson_empty(&b);
+query = bson_empty(&b);
  
- cursor = mongo_find(conn,MONGO_DATABASE,query,0,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,query,0,0,0,0);
 
- while(mongo_cursor_next(cursor))  // loops over documents
-    {
-    bson_iterator_init(&it,cursor->current.data);
+while(mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it,cursor->current.data);
+   
+   while(bson_iterator_next(&it))
+      {
+      PrintCFDBKey(&it,1);   
+      }
+   }
 
-    while(bson_iterator_next(&it))
-       {
-       PrintCFDBKey(&it,1);   
-       }
-    }
-
- mongo_cursor_destroy(cursor);
+mongo_cursor_destroy(cursor);
 }
 
 /*****************************************************************************/
@@ -162,246 +159,244 @@ struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query)
 /*****************************************************************************/
 
 struct HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, char *classRegex)
+
 { bson_buffer bb;
- bson query;
- struct HubQuery *hq;
- char classRegexAnch[CF_MAXVARSIZE];
- int emptyQuery = true;
+  bson query;
+  struct HubQuery *hq;
+  char classRegexAnch[CF_MAXVARSIZE];
+  int emptyQuery = true;
   
 /* BEGIN query document */
- bson_buffer_init(&bb);
+bson_buffer_init(&bb);
 
- if (!EMPTY(hostNameRegex))
-    {
-    bson_append_regex(&bb,cfr_host_array,hostNameRegex,"");
-    emptyQuery = false;
-    }
+if (!EMPTY(hostNameRegex))
+   {
+   bson_append_regex(&bb,cfr_host_array,hostNameRegex,"");
+   emptyQuery = false;
+   }
 
- if (!EMPTY(ipRegex))
-    {
-    bson_append_regex(&bb,cfr_ip_array,ipRegex,"");
-    emptyQuery = false;
-    }
+if (!EMPTY(ipRegex))
+   {
+   bson_append_regex(&bb,cfr_ip_array,ipRegex,"");
+   emptyQuery = false;
+   }
 
- if(!EMPTY(classRegex))
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
-    }
+if (!EMPTY(classRegex))
+   {
+   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+   emptyQuery = false;
+   }
 
- if(emptyQuery)
-    {
-    bson_empty(&query);
-    }
- else
-    {
-    bson_from_buffer(&query,&bb);
-    }
+if(emptyQuery)
+   {
+   bson_empty(&query);
+   }
+else
+   {
+   bson_from_buffer(&query,&bb);
+   }
 
- hq = CFDB_QueryHosts(conn,&query);
+hq = CFDB_QueryHosts(conn,&query);
 
- if(!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
- 
- return hq;
+if (!emptyQuery)
+   {
+   bson_destroy(&query);
+   }
+
+return hq;
 }
 
 /*****************************************************************************/
 
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex, int sort)
-{ bson_buffer bb;
- bson query,field;
- mongo_cursor *cursor;
- bson_iterator it1,it2,it3;
- struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
- char rname[CF_MAXVARSIZE] = {0},rversion[CF_MAXVARSIZE] = {0},rarch[3] = {0},arch[3] = {0};
- char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
- char classRegexAnch[CF_MAXVARSIZE];
- int emptyQuery = true;
- int found = false;
 
- if(!EMPTY(larch))
+{ bson_buffer bb;
+  bson query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct HubHost *hh;
+  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+  char rname[CF_MAXVARSIZE] = {0},rversion[CF_MAXVARSIZE] = {0},rarch[3] = {0},arch[3] = {0};
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  char classRegexAnch[CF_MAXVARSIZE];
+  int emptyQuery = true;
+  int found = false;
+
+if (!EMPTY(larch))
    {
-     snprintf(arch,2,"%c",larch[0]);
+   snprintf(arch,2,"%c",larch[0]);
    }
 /* BEGIN query document */
 
- bson_buffer_init(&bb);
+bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
-    {
-    bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
-    }
+if (!EMPTY(keyHash))
+   {
+   bson_append_string(&bb,cfr_keyhash,keyHash);
+   emptyQuery = false;
+   }
 
- if(!EMPTY(classRegex))
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
-    }
+if (!EMPTY(classRegex))
+   {
+   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+   emptyQuery = false;
+   }
 
- if(emptyQuery)
-    {
-    bson_empty(&query);
-    }
- else
-    {
-    bson_from_buffer(&query,&bb);
-    }
+if (emptyQuery)
+   {
+   bson_empty(&query);
+   }
+else
+   {
+   bson_from_buffer(&query,&bb);
+   }
 
-  
 /* BEGIN RESULT DOCUMENT */
 
- bson_buffer_init(&bb);
- bson_append_int(&bb,cfr_keyhash,1);
- bson_append_int(&bb,cfr_ip_array,1);
- bson_append_int(&bb,cfr_host_array,1);
- bson_append_int(&bb,type,1);
- bson_from_buffer(&field, &bb);
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,type,1);
+bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
- hostnames[0] = '\0';
- addresses[0] = '\0';
+hostnames[0] = '\0';
+addresses[0] = '\0';
 
- cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
 
- bson_destroy(&field);
+bson_destroy(&field);
 
- if(!emptyQuery)
-    {
-    bson_empty(&query);
-    }
+if(!emptyQuery)
+   {
+   bson_empty(&query);
+   }
 
-
- while (mongo_cursor_next(cursor))  // loops over documents
-    {
-    bson_iterator_init(&it1,cursor->current.data);
-
-    keyhash[0] = '\0';
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
    
-    while (bson_iterator_next(&it1))
-       {
-       /* Extract the common HubHost data */
-
-       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-       found = false;
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
       
-       /* Query specific search/marshalling */
-
-       if (strcmp(bson_iterator_key(&it1),type) == 0)
-          {
-          bson_iterator_init(&it2,bson_iterator_value(&it1));
-
-          while (bson_iterator_next(&it2))
-             {
-             bson_iterator_init(&it3, bson_iterator_value(&it2));
-
-             rname[0] = '\0';
-             rversion[0] = '\0';
-             rarch[0] = '\0';
- 
-             while (bson_iterator_next(&it3))
-                {
-                if (strcmp(bson_iterator_key(&it3),cfr_name) == 0)
-                   {
-                   strncpy(rname,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_version) == 0)
-                   {
-                   strncpy(rversion,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_arch) == 0)
-                   {
-                   strncpy(rarch,bson_iterator_string(&it3),2);
-                   }
-                else
-                   {
-                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in software packages",bson_iterator_key(&it3));
-                   }
-                }
-
-             if (strlen(rname) > 0)
-                {
-                int match_name = true, match_version = true, match_arch = true;
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      found = false;
+      
+      /* Query specific search/marshalling */
+      
+      if (strcmp(bson_iterator_key(&it1),type) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+            
+            rname[0] = '\0';
+            rversion[0] = '\0';
+            rarch[0] = '\0';
+            
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_name) == 0)
+                  {
+                  strncpy(rname,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_version) == 0)
+                  {
+                  strncpy(rversion,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_arch) == 0)
+                  {
+                  strncpy(rarch,bson_iterator_string(&it3),2);
+                  }
+               else
+                  {
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in software packages",bson_iterator_key(&it3));
+                  }
+               }
+            
+            if (strlen(rname) > 0)
+               {
+               int match_name = true, match_version = true, match_arch = true;
                
-                if (regex)
-                   {
-                   if (!EMPTY(lname) && !FullTextMatch(lname,rname))
-                      {
-                      match_name = false;
-                      }
-
-                   if (!EMPTY(lver) && !FullTextMatch(lver,rversion))
-                      {
-                      match_version = false;
-                      }
-                   if (!EMPTY(larch) && !FullTextMatch(arch,rarch))
-                      {
-                      match_arch = false;
-                      }
-                   }
-                else
-                   {
-                   if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
-                      {
-                      match_name = false;
-                      }
+               if (regex)
+                  {
+                  if (!EMPTY(lname) && !FullTextMatch(lname,rname))
+                     {
+                     match_name = false;
+                     }
                   
-                   if (!EMPTY(lver) && (strcmp(lver,rversion) != 0))
-                      {
-                      match_version = false;
-                      }
+                  if (!EMPTY(lver) && !FullTextMatch(lver,rversion))
+                     {
+                     match_version = false;
+                     }
+                  if (!EMPTY(larch) && !FullTextMatch(arch,rarch))
+                     {
+                     match_arch = false;
+                     }
+                  }
+               else
+                  {
+                  if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
+                     {
+                     match_name = false;
+                     }
                   
-                   if (!EMPTY(larch) && (strcmp(arch,rarch) != 0))
-                      {
-                      match_arch = false;
-                      }                  
-                   }
-                if (match_name && match_version && match_arch)
-                   {
-                   found = true;
-                   rp = PrependRlistAlien(&record_list,NewHubSoftware(CF_THIS_HH,rname,rversion,rarch));
-                   }
-                }               
-             }
-          }   
-       }
-
-    if (found)
-       {
-       hh = NewHubHost(keyhash,addresses,hostnames);
-       PrependRlistAlien(&host_list,hh);
+                  if (!EMPTY(lver) && (strcmp(lver,rversion) != 0))
+                     {
+                     match_version = false;
+                     }
+                  
+                  if (!EMPTY(larch) && (strcmp(arch,rarch) != 0))
+                     {
+                     match_arch = false;
+                     }                  
+                  }
+               if (match_name && match_version && match_arch)
+                  {
+                  found = true;
+                  rp = PrependRlistAlien(&record_list,NewHubSoftware(CF_THIS_HH,rname,rversion,rarch));
+                  }
+               }               
+            }
+         }   
+      }
+   
+   if (found)
+      {
+      hh = NewHubHost(keyhash,addresses,hostnames);
+      PrependRlistAlien(&host_list,hh);
       
-       // Now cache the host reference in all of the records to flatten the 2d list
+      // Now cache the host reference in all of the records to flatten the 2d list
       
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubSoftware *hs = (struct HubSoftware *)rp->item;
-          if (hs->hh == CF_THIS_HH)
-             {
-             hs->hh = hh;
-             }
-          }
-       }
-    }
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubSoftware *hs = (struct HubSoftware *)rp->item;
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
+      }
+   }
 
- if (sort)
-    {
-    record_list = SortRlist(record_list,SortSoftware);
-    }
+if (sort)
+   {
+   record_list = SortRlist(record_list,SortSoftware);
+   }
 
-
-
- mongo_cursor_destroy(cursor);
- return NewHubQuery(host_list,record_list);
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/
@@ -580,6 +575,7 @@ struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lc
 }
 
 /*****************************************************************************/
+
 struct RList *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
 
 { bson_buffer bb;
@@ -593,78 +589,78 @@ struct RList *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,cha
   
 /* BEGIN query document */
 
- bson_buffer_init(&bb);
+bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
-    {
-    bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
-    }
+if (!EMPTY(keyHash))
+   {
+   bson_append_string(&bb,cfr_keyhash,keyHash);
+   emptyQuery = false;
+   }
 
- if(!EMPTY(classRegex))
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
-    }
+if (!EMPTY(classRegex))
+   {
+   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+   emptyQuery = false;
+   }
 
- if(emptyQuery)
-    {
-    bson_empty(&query);
-    }
- else
-    {
-    bson_from_buffer(&query,&bb);
-    }
-  
+if (emptyQuery)
+   {
+   bson_empty(&query);
+   }
+else
+   {
+   bson_from_buffer(&query,&bb);
+   }
+
 /* BEGIN RESULT DOCUMENT */
 
- bson_buffer_init(&bb);
- bson_append_int(&bb,cfr_class,1);
- bson_from_buffer(&field, &bb);
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_class,1);
+bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
- cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
- bson_destroy(&field);
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+bson_destroy(&field);
 
- if(!emptyQuery)
+if (!emptyQuery)
+   {
+   bson_destroy(&query);
+   }
+
+while (mongo_cursor_next(cursor))  // loops over documents
     {
-    bson_destroy(&query);
-    }
-
- while (mongo_cursor_next(cursor))  // loops over documents
-    {
-
     bson_iterator_init(&it1,cursor->current.data);
-
+    
     rclass[0] = '\0';
-   
+    
     while (bson_iterator_next(&it1))
        {
-	 if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
-	   {
-	     bson_iterator_init(&it2,bson_iterator_value(&it1));
-	     
-	     while (bson_iterator_next(&it2))
-	       {
-		 bson_iterator_init(&it3, bson_iterator_value(&it2));
-		 strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
-		 
-		 if(ISCLASS_DATETIME(rclass))
-		   {
-		     IdempAppendRScalar(&classList,rclass,CF_SCALAR);
-		   }
-	       }
-	   }
+       if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
+	  
+          while (bson_iterator_next(&it2))
+             {
+             bson_iterator_init(&it3, bson_iterator_value(&it2));
+             strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+             
+             if (ISCLASS_DATETIME(rclass))
+                {
+                IdempAppendRScalar(&classList,rclass,CF_SCALAR);
+                }
+             }
+          }
        }
     }
 
- mongo_cursor_destroy(cursor);
- return (struct RList *) classList;
+mongo_cursor_destroy(cursor);
+return (struct RList *) classList;
 }
 
 /*****************************************************************************/
+
 struct RList *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
 
 { bson_buffer bb;
@@ -727,24 +723,24 @@ struct RList *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *l
    
     while (bson_iterator_next(&it1))
        {
-	 if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
-	   {
-	     bson_iterator_init(&it2,bson_iterator_value(&it1));
-	     
-	     while (bson_iterator_next(&it2))
-	       {
-		 bson_iterator_init(&it3, bson_iterator_value(&it2));
-		 strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
-		 
-		 if(!IsHardClass(rclass))
-		   {
-		     IdempAppendRScalar(&classList,rclass,CF_SCALAR);
-		   }
-	       }
-	   }
+       if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
+	  
+          while (bson_iterator_next(&it2))
+             {
+             bson_iterator_init(&it3, bson_iterator_value(&it2));
+             strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+             
+             if (!IsHardClass(rclass))
+                {
+                IdempAppendRScalar(&classList,rclass,CF_SCALAR);
+                }
+             }
+          }
        }
     }
-
+ 
  mongo_cursor_destroy(cursor);
  return (struct RList *)classList;
 }
@@ -3922,220 +3918,213 @@ struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char 
  * Returns all attribs of one promise by its handle XOR (file,lineno).
  */
 { bson_buffer bb;
- bson query,result;
- mongo_cursor *cursor,*cursor2;
- bson_iterator it1,it2;
- char bn[CF_MAXVARSIZE] = {0}, bt[CF_MAXVARSIZE] = {0},ba[CF_MAXVARSIZE] = {0},
-                                                           pt[CF_MAXVARSIZE] = {0}, pr[CF_MAXVARSIZE] = {0}, pe[CF_MAXVARSIZE] = {0},
-                                                                                                                 cl[CF_MAXVARSIZE] = {0}, ha[CF_MAXVARSIZE] = {0}, co[CF_MAXVARSIZE] = {0},
-                                                                                                                                                                       fn[CF_MAXVARSIZE] = {0}, **cons = {0};
-                                                                                                                                                                       char fileExp[CF_MAXVARSIZE] = {0};
-                                                                                                                                                                       int lineExp = 0;
-                                                                                                                                                                       int lno = -1;
-                                                                                                                                                                       int i,constCount;
-                                                                                                                                                                       int fileLineSearch = false;
+  bson query,result;
+  mongo_cursor *cursor,*cursor2;
+  bson_iterator it1,it2;
+  char bn[CF_MAXVARSIZE] = {0}, bt[CF_MAXVARSIZE] = {0},ba[CF_MAXVARSIZE] = {0};
+  char pt[CF_MAXVARSIZE] = {0}, pr[CF_MAXVARSIZE] = {0}, pe[CF_MAXVARSIZE] = {0};
+  char cl[CF_MAXVARSIZE] = {0}, ha[CF_MAXVARSIZE] = {0}, co[CF_MAXVARSIZE] = {0};
+  char fn[CF_MAXVARSIZE] = {0}, **cons = {0};
+  char fileExp[CF_MAXVARSIZE] = {0};
+  int lineExp = 0;
+  int lno = -1;
+  int i,constCount;
+  int fileLineSearch = false;
 
-  
-                                                                                                                                                                       if(EMPTY(file))  // use handle by default, (file,lineNo) if handle is not found
-                                                                                                                                                                          {
-                                                                                                                                                                          fileLineSearch = false;
-                                                                                                                                                                          }
-                                                                                                                                                                       else
-                                                                                                                                                                          {
-                                                                                                                                                                          fileLineSearch = true;
-                                                                                                                                                                          }  
-  
+if(EMPTY(file))  // use handle by default, (file,lineNo) if handle is not found
+   {
+   fileLineSearch = false;
+   }
+else
+   {
+   fileLineSearch = true;
+   }  
+
 
 /* BEGIN query document */
 
-                                                                                                                                                                       bson_buffer_init(&bb);
+bson_buffer_init(&bb);
 
-                                                                                                                                                                       if(fileLineSearch)
-                                                                                                                                                                          {
-                                                                                                                                                                          bson_append_string(&bb,cfp_file,file);
-                                                                                                                                                                          bson_append_int(&bb,cfp_lineno,lineNo);
-                                                                                                                                                                          }
-                                                                                                                                                                       else
-                                                                                                                                                                          {
-                                                                                                                                                                          bson_append_string(&bb,cfp_handle,handle);
-                                                                                                                                                                          }
+if (fileLineSearch)
+   {
+   bson_append_string(&bb,cfp_file,file);
+   bson_append_int(&bb,cfp_lineno,lineNo);
+   }
+else
+   {
+   bson_append_string(&bb,cfp_handle,handle);
+   }
 
-                                                                                                                                                                       bson_from_buffer(&query,&bb);
+bson_from_buffer(&query,&bb);
 
 
 /* BEGIN SEARCH */
-                                                                                                                                                                       cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,NULL,0,0,0);
-                                                                                                                                                                       bson_destroy(&query);
+cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,NULL,0,0,0);
+bson_destroy(&query);
 
-
-                                                                                                                                                                       if (mongo_cursor_next(cursor))  // loops over documents
-                                                                                                                                                                          {
-                                                                                                                                                                          bson_iterator_init(&it1,cursor->current.data);
+if (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
    
-                                                                                                                                                                          while (bson_iterator_next(&it1))
-                                                                                                                                                                             {
-                                                                                                                                                                             if(strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
-                                                                                                                                                                                {
-                                                                                                                                                                                snprintf(bn, sizeof(bn), "%s", bson_iterator_string(&it1));
-                                                                                                                                                                                }
-                                                                                                                                                                             else if(strcmp(bson_iterator_key(&it1), cfp_bundletype) == 0)
-                                                                                                                                                                                {
-                                                                                                                                                                                snprintf(bt, sizeof(bt), "%s", bson_iterator_string(&it1));
-                                                                                                                                                                                }
-                                                                                                                                                                             else if(strcmp(bson_iterator_key(&it1), cfp_bundleargs) == 0)
-                                                                                                                                                                                {
-                                                                                                                                                                                bson_iterator_init(&it2,bson_iterator_value(&it1));
+   while (bson_iterator_next(&it1))
+      {
+      if(strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
+         {
+         snprintf(bn, sizeof(bn), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_bundletype) == 0)
+         {
+         snprintf(bt, sizeof(bt), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_bundleargs) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));         
+         memset(ba,0,sizeof(ba));         
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
          
-                                                                                                                                                                                memset(ba,0,sizeof(ba));
+         while(bson_iterator_next(&it2))
+            {
+            if(strlen(ba) + strlen(bson_iterator_string(&it2)) < sizeof(ba))
+               {
+               strcat(ba,bson_iterator_string(&it2));
+               strcat(ba, ",");
+               }
+            else
+               {
+               break;
+               }
+            }
          
-                                                                                                                                                                                bson_iterator_init(&it2,bson_iterator_value(&it1));
+         if(ba[0] != '\0')
+            {
+            ba[strlen(ba)-1] = '\0';  // remove last comma
+            }
          
-                                                                                                                                                                                while(bson_iterator_next(&it2))
-                                                                                                                                                                                   {
-                                                                                                                                                                                   if(strlen(ba) + strlen(bson_iterator_string(&it2)) < sizeof(ba))
-                                                                                                                                                                                      {
-                                                                                                                                                                                      strcat(ba,bson_iterator_string(&it2));
-                                                                                                                                                                                      strcat(ba, ",");
-                                                                                                                                                                                      }
-                                                                                                                                                                                   else
-                                                                                                                                                                                      {
-                                                                                                                                                                                      break;
-                                                                                                                                                                                      }
-                                                                                                                                                                                   }
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_promisetype) == 0)
+         {
+         snprintf(pt, sizeof(pt), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_promiser) == 0)
+         {
+         snprintf(pr, sizeof(pr), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_promisee) == 0)
+         {
+         snprintf(pe, sizeof(pe), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_classcontext) == 0)
+         {
+         snprintf(cl, sizeof(cl), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_comment) == 0)
+         {
+         snprintf(co, sizeof(co), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
+         {
+         snprintf(ha, sizeof(ha), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
+         {
+         snprintf(fn, sizeof(fn), "%s", bson_iterator_string(&it1));
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
+         {
+         lno = bson_iterator_int(&it1);
+         }
+      else if(strcmp(bson_iterator_key(&it1), cfp_constraints) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
          
-                                                                                                                                                                                if(ba[0] != '\0')
-                                                                                                                                                                                   {
-                                                                                                                                                                                   ba[strlen(ba)-1] = '\0';  // remove last comma
-                                                                                                                                                                                   }
+         // count constraints
+         constCount = 0;
          
-                                                                                                                                                                                }
-                                                                                                                                                                             else if(strcmp(bson_iterator_key(&it1), cfp_promisetype) == 0)
-                                                                                                                                                                                {
-                                                                                                                                                                                snprintf(pt, sizeof(pt), "%s", bson_iterator_string(&it1));
-                                                                                                                                                                                }
-                                                                                                                                                                             else if(strcmp(bson_iterator_key(&it1), cfp_promiser) == 0)
-                                                                                                                                                                                {
-                                                                                                                                                                                snprintf(pr, sizeof(pr), "%s", bson_iterator_string(&it1));
-                                                                                                                                                                                }
-                                                                                                                                                                             else if(strcmp(bson_iterator_key(&it1), cfp_promisee) == 0)
-                                                                                                                                                                                {
-                                                                                                                                                                                snprintf(pe, sizeof(pe), "%s", bson_iterator_string(&it1));
-                                                                                                                                                                                }
-                                                                                                                                                                             else if(strcmp(bson_iterator_key(&it1), cfp_classcontext) == 0)
-                                                                                                                                                                                {
-                                                                                                                                                                                snprintf(cl, sizeof(cl), "%s", bson_iterator_string(&it1));
-                                                                                                                                                                                }
-                                                                                                                                                                             else if(strcmp(bson_iterator_key(&it1), cfp_comment) == 0)
-                                                                                                                                                                                {
-                                                                                                                                                                                snprintf(co, sizeof(co), "%s", bson_iterator_string(&it1));
-                                                                                                                                                                                }
-                                                                                                                                                                             else if(strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
-                                                                                                                                                                                {
-                                                                                                                                                                                snprintf(ha, sizeof(ha), "%s", bson_iterator_string(&it1));
-                                                                                                                                                                                }
-                                                                                                                                                                             else if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
-                                                                                                                                                                                {
-                                                                                                                                                                                snprintf(fn, sizeof(fn), "%s", bson_iterator_string(&it1));
-                                                                                                                                                                                }
-                                                                                                                                                                             else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
-                                                                                                                                                                                {
-                                                                                                                                                                                lno = bson_iterator_int(&it1);
-                                                                                                                                                                                }
-                                                                                                                                                                             else if(strcmp(bson_iterator_key(&it1), cfp_constraints) == 0)
-                                                                                                                                                                                {
-                                                                                                                                                                                bson_iterator_init(&it2,bson_iterator_value(&it1));
+         while(bson_iterator_next(&it2))
+            {
+            constCount++;
+            }
          
-                                                                                                                                                                                // count constraints
-                                                                                                                                                                                constCount = 0;
+         if(constCount == 0)
+            {
+            cons = NULL;
+            continue;
+            }
          
-                                                                                                                                                                                while(bson_iterator_next(&it2))
-                                                                                                                                                                                   {
-                                                                                                                                                                                   constCount++;
-                                                                                                                                                                                   }
+         // save constraints (freed in DeleteHubPromise)
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         cons = malloc(sizeof(char *) * (constCount + 1));
          
-                                                                                                                                                                                if(constCount == 0)
-                                                                                                                                                                                   {
-                                                                                                                                                                                   cons = NULL;
-                                                                                                                                                                                   continue;
-                                                                                                                                                                                   }
+         i = 0;  // race-safe check
          
-                                                                                                                                                                                // save constraints (freed in DeleteHubPromise)
-                                                                                                                                                                                bson_iterator_init(&it2,bson_iterator_value(&it1));
-                                                                                                                                                                                cons = malloc(sizeof(char *) * (constCount + 1));
+         while(bson_iterator_next(&it2) && (i < constCount))
+            {
+            cons[i] = strdup(bson_iterator_string(&it2));
+            i++;
+            }
          
-                                                                                                                                                                                i = 0;  // race-safe check
-         
-                                                                                                                                                                                while(bson_iterator_next(&it2) && (i < constCount))
-                                                                                                                                                                                   {
-                                                                                                                                                                                   cons[i] = strdup(bson_iterator_string(&it2));
-                                                                                                                                                                                   i++;
-                                                                                                                                                                                   }
-         
-                                                                                                                                                                                cons[i] = NULL;           
-                                                                                                                                                                                }
-                                                                                                                                                                             }
-                                                                                                                                                                          }
-                                                                                                                                                                       else if(!fileLineSearch)  // if not found in unexpanded promise DB, try expanded
-                                                                                                                                                                          {
-                                                                                                                                                                          mongo_cursor_destroy(cursor);
-
-                                                                                                                                                                          /* query */
-                                                                                                                                                                          bson_buffer_init(&bb);
-                                                                                                                                                                          bson_append_string(&bb,cfp_handle_exp,handle);
-                                                                                                                                                                          bson_from_buffer(&query,&bb);   
-
-                                                                                                                                                                          /* result */
-                                                                                                                                                                          bson_buffer_init(&bb);
-                                                                                                                                                                          bson_append_int(&bb,cfp_file,1);
-                                                                                                                                                                          bson_append_int(&bb,cfp_lineno,1);
-                                                                                                                                                                          bson_from_buffer(&result,&bb);   
-
-
-                                                                                                                                                                          cursor2 = mongo_find(conn,MONGO_PROMISES_EXP,&query,&result,0,0,0);
-
-                                                                                                                                                                          bson_destroy(&query);
-                                                                                                                                                                          bson_destroy(&result);
-
-
-                                                                                                                                                                          if (mongo_cursor_next(cursor2))  // loops over documents
-                                                                                                                                                                             {
-                                                                                                                                                                             bson_iterator_init(&it1,cursor2->current.data);
+         cons[i] = NULL;           
+         }
+      }
+   }
+else if(!fileLineSearch)  // if not found in unexpanded promise DB, try expanded
+   {
+   mongo_cursor_destroy(cursor);
    
-                                                                                                                                                                             while (bson_iterator_next(&it1))
-                                                                                                                                                                                {
-                                                                                                                                                                                if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
-                                                                                                                                                                                   {
-                                                                                                                                                                                   snprintf(fileExp, sizeof(fileExp), "%s", bson_iterator_string(&it1));
-                                                                                                                                                                                   }
-                                                                                                                                                                                else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
-                                                                                                                                                                                   {
-                                                                                                                                                                                   lineExp = bson_iterator_int(&it1);
-                                                                                                                                                                                   }
-                                                                                                                                                                                }
-                                                                                                                                                                             }
-
-                                                                                                                                                                          mongo_cursor_destroy(cursor2);
+   /* query */
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfp_handle_exp,handle);
+   bson_from_buffer(&query,&bb);   
    
-                                                                                                                                                                          if(*fileExp != '\0' && lineExp != 0)
-                                                                                                                                                                             {
-                                                                                                                                                                             return CFDB_QueryPromise(conn,NULL,fileExp,lineExp);
-                                                                                                                                                                             }
-                                                                                                                                                                          else  // not found in expanded promise DB either
-                                                                                                                                                                             {
-                                                                                                                                                                             Debug("Promise handle \"%s\" not found in expanded promise DB", handle);
-                                                                                                                                                                             return NULL;
-                                                                                                                                                                             }
+   /* result */
+   bson_buffer_init(&bb);
+   bson_append_int(&bb,cfp_file,1);
+   bson_append_int(&bb,cfp_lineno,1);
+   bson_from_buffer(&result,&bb);   
+   
+   cursor2 = mongo_find(conn,MONGO_PROMISES_EXP,&query,&result,0,0,0);
+   
+   bson_destroy(&query);
+   bson_destroy(&result);
+   
+   if (mongo_cursor_next(cursor2))  // loops over documents
+      {
+      bson_iterator_init(&it1,cursor2->current.data);
+      
+      while (bson_iterator_next(&it1))
+         {
+         if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
+            {
+            snprintf(fileExp, sizeof(fileExp), "%s", bson_iterator_string(&it1));
+            }
+         else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
+            {
+            lineExp = bson_iterator_int(&it1);
+            }
+         }
+      }
+   
+   mongo_cursor_destroy(cursor2);
+   
+   if(*fileExp != '\0' && lineExp != 0)
+      {
+      return CFDB_QueryPromise(conn,NULL,fileExp,lineExp);
+      }
+   else  // not found in expanded promise DB either
+      {
+      Debug("Promise handle \"%s\" not found in expanded promise DB", handle);
+      return NULL;
+      }
+   
+   }
+else  // not found in unexpanded DB by file and line either
+   {
+   mongo_cursor_destroy(cursor);
+   return NULL;
+   }
 
-                                                                                                                                                                          }
-                                                                                                                                                                       else  // not found in unexpanded DB by file and line either
-                                                                                                                                                                          {
-                                                                                                                                                                          mongo_cursor_destroy(cursor);
-                                                                                                                                                                          return NULL;
-                                                                                                                                                                          }
-
-                                                                                                                                                                       mongo_cursor_destroy(cursor);
-
-                                                                                                                                                                       return NewHubPromise(bn,bt,ba,pt,pr,pe,cl,ha,co,fn,lno,cons);
+mongo_cursor_destroy(cursor);
+return NewHubPromise(bn,bt,ba,pt,pr,pe,cl,ha,co,fn,lno,cons);
 }
 
 /*****************************************************************************/
@@ -5489,7 +5478,7 @@ struct Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle)
           {
           bson_iterator_init(&it2,bson_iterator_value(&it1));
 
-          if(bson_iterator_next(&it2))  // just pick first hostname
+          if (bson_iterator_next(&it2))  // just pick first hostname
              {
 	     snprintf(host,sizeof(host),"%s",bson_iterator_string(&it2));
              }
@@ -5508,7 +5497,6 @@ struct Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle)
  mongo_cursor_destroy(cursor);
  return retList;
 }
-
 
 /*****************************************************************************/
 /* Level                                                                     */
