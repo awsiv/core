@@ -171,8 +171,7 @@ for (bp = bundles; bp != NULL; bp=bp->next)
       Debug("PROMISE-TYPE: %s\n",st->name);
       
       for (pp = st->promiselist, i = 0; pp != NULL; pp = pp->next, i++)
-         {	 
-         
+         {	          
          bson_buffer_init(&bbuf);
 	 bson_append_new_oid(&bbuf, "_id" );
          
@@ -183,20 +182,18 @@ for (bp = bundles; bp != NULL; bp=bp->next)
 	 bson_append_string(&bbuf,cfp_bundletype,bp->type);         
 
          args = bson_append_start_array(&bbuf, cfp_bundleargs);
+
          for (rp = bp->args, i = 0; rp != NULL; rp=rp->next, i++)
             {   
-            Debug("   scalar arg %s\n",(char *)rp->item);
-            
+            Debug("   scalar arg %s\n",(char *)rp->item);            
             snprintf(iStr, sizeof(iStr), "%d", i);
             bson_append_string(args, iStr, (char *)rp->item);
             }
 
          bson_append_finish_object(args);
          
-         snprintf(iStr, sizeof(iStr), "%d", i);
-         
+         snprintf(iStr, sizeof(iStr), "%d", i);         
          bson_append_string(&bbuf, cfp_promiser, pp->promiser);
-
 	 bson_append_string(&bbuf,cfp_promisetype,pp->agentsubtype);
 	 bson_append_string(&bbuf, cfp_classcontext, pp->classes);
 
@@ -241,16 +238,14 @@ for (bp = bundles; bp != NULL; bp=bp->next)
             PrintRval(rval_buffer,CF_BUFSIZE,cp->rval,cp->type);
             Debug("  %s => %s\n",cp->lval,rval_buffer);
             
-            snprintf(con, sizeof(con), "%s => %s", cp->lval, rval_buffer);
-	    
+            snprintf(con, sizeof(con), "%s => %s", cp->lval, rval_buffer);	    
             snprintf(jStr, sizeof(jStr), "%d", j);
             bson_append_string(cstr, jStr, con);
             j++;
             }
 	 bson_append_finish_object(cstr);
 	 
-         bson_from_buffer(&b, &bbuf);
-         
+         bson_from_buffer(&b, &bbuf);         
          mongo_insert(&dbconn, MONGO_PROMISES_UNEXP, &b);
 	 bson_destroy(&b);
          }      

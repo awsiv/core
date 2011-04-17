@@ -5509,56 +5509,55 @@ void CFDB_ScanHubHost(bson_iterator *it1,char *keyhash,char *ipaddr,char *hostna
  int ipFound = false;
  int hostFound = false;
 
- if (bson_iterator_type(it1) == bson_string && strcmp(bson_iterator_key(it1),cfr_keyhash) == 0)
-    {         
-    strncpy(keyhash,bson_iterator_string(it1),CF_MAXVARSIZE-1);
-    }
+if (bson_iterator_type(it1) == bson_string && strcmp(bson_iterator_key(it1),cfr_keyhash) == 0)
+   {         
+   strncpy(keyhash,bson_iterator_string(it1),CF_MAXVARSIZE-1);
+   }
 
- if (strcmp(bson_iterator_key(it1),cfr_ip_array) == 0)
-    {         
-    bson_iterator_init(&it2, bson_iterator_value(it1));
+if (strcmp(bson_iterator_key(it1),cfr_ip_array) == 0)
+   {         
+   bson_iterator_init(&it2, bson_iterator_value(it1));
    
-    while (bson_iterator_next(&it2))
-       {
-       ipFound = true;
-       Join(ipaddr,(char *)bson_iterator_string(&it2),CF_MAXVARSIZE);
-       Join(ipaddr,", ",CF_MAXVARSIZE);
-       }
-    }
+   while (bson_iterator_next(&it2))
+      {
+      ipFound = true;
+      Join(ipaddr,(char *)bson_iterator_string(&it2),CF_MAXVARSIZE);
+      Join(ipaddr,", ",CF_MAXVARSIZE);
+      }
+   }
 
- if (strcmp(bson_iterator_key(it1),cfr_host_array) == 0)
-    {         
-    bson_iterator_init(&it2, bson_iterator_value(it1));
+if (strcmp(bson_iterator_key(it1),cfr_host_array) == 0)
+   {         
+   bson_iterator_init(&it2, bson_iterator_value(it1));
    
-    while (bson_iterator_next(&it2))
-       {
-       hostFound = true;
-       Join(hostnames,(char *)bson_iterator_string(&it2),CF_MAXVARSIZE);
-       Join(hostnames,", ",CF_MAXVARSIZE);
-       }
-    }
+   while (bson_iterator_next(&it2))
+      {
+      hostFound = true;
+      Join(hostnames,(char *)bson_iterator_string(&it2),CF_MAXVARSIZE);
+      Join(hostnames,", ",CF_MAXVARSIZE);
+      }
+   }
 
 // remove any trailing ", "
 
- if(ipFound)
-    {
-    if(ipaddr[strlen(ipaddr) - 2] == ',' &&
-       ipaddr[strlen(ipaddr) - 1] == ' ')
-       {
-       ipaddr[strlen(ipaddr) - 2] = '\0';
-       }
-    }
+if (ipFound)
+   {
+   if(ipaddr[strlen(ipaddr) - 2] == ',' &&
+      ipaddr[strlen(ipaddr) - 1] == ' ')
+      {
+      ipaddr[strlen(ipaddr) - 2] = '\0';
+      }
+   }
 
 
- if(hostFound)
-    {
-    if(hostnames[strlen(hostnames) - 2] == ',' &&
-       hostnames[strlen(hostnames) - 1] == ' ')
-       {
-       hostnames[strlen(hostnames) - 2] = '\0';
-       }
-    }
-
+if (hostFound)
+   {
+   if(hostnames[strlen(hostnames) - 2] == ',' &&
+      hostnames[strlen(hostnames) - 1] == ' ')
+      {
+      hostnames[strlen(hostnames) - 2] = '\0';
+      }
+   }
 }
 
 /*****************************************************************************/
@@ -6324,52 +6323,51 @@ struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *co
  bson_iterator it1,values;
  struct Item *ret = NULL;
  
- bson_buffer_init(&bb);
- bson_append_string(&bb, "distinct", collection);
- bson_append_string(&bb, "key", dKey);
- 
+bson_buffer_init(&bb);
+bson_append_string(&bb, "distinct", collection);
+bson_append_string(&bb, "key", dKey);
 
- if(queryBson)
-    {
-    bson_append_bson(&bb, "query", queryBson);
-    }
- 
- bson_from_buffer(&cmd, &bb);
+if (queryBson)
+   {
+   bson_append_bson(&bb, "query", queryBson);
+   }
 
- if (!mongo_run_command(conn, database, &cmd, &result))
-    {
-    MongoCheckForError(conn,"CFDB_QueryDistinct()", "");
-    bson_buffer_destroy(&bb);
-    bson_destroy(&cmd);
-    return false;
-    }
+bson_from_buffer(&cmd, &bb);
 
- bson_destroy(&cmd);
+if (!mongo_run_command(conn, database, &cmd, &result))
+   {
+   MongoCheckForError(conn,"CFDB_QueryDistinct()", "");
+   bson_buffer_destroy(&bb);
+   bson_destroy(&cmd);
+   return false;
+   }
 
- if (!bson_find(&it1, &result, "values"))
-    {
-    CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
-    bson_destroy(&result);
-    return false;
-    }
+bson_destroy(&cmd);
 
- if (bson_iterator_type(&it1) != bson_array)
-    {
-    CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
-    bson_destroy(&result);
-    return false;
-    }
+if (!bson_find(&it1, &result, "values"))
+   {
+   CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
+   bson_destroy(&result);
+   return false;
+   }
 
- bson_iterator_subiterator(&it1, &values);
+if (bson_iterator_type(&it1) != bson_array)
+   {
+   CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
+   bson_destroy(&result);
+   return false;
+   }
 
- while (bson_iterator_next(&values))
-    {
-    PrependItem(&ret,(char *)bson_iterator_string(&values),NULL);
-    }
+bson_iterator_subiterator(&it1, &values);
 
- bson_destroy(&result);
- 
- return ret;
+while (bson_iterator_next(&values))
+   {
+   PrependItem(&ret,(char *)bson_iterator_string(&values),NULL);
+   }
+
+bson_destroy(&result);
+
+return ret;
 }
 
 /******************************************************************/

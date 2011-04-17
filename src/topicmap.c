@@ -24,19 +24,6 @@ void Nova_WebTopicMap_Initialize()
 NewClass("am_php_module");
 
 #ifdef HAVE_LIBMONGOC 
-CFDB_GetValue("SQL_TYPE",retval,CF_MAXVARSIZE);
-SQL_TYPE = Str2dbType(retval);
-
-CFDB_GetValue("SQL_DATABASE",retval,CF_MAXVARSIZE);
-strcpy(SQL_DATABASE,retval);
-CFDB_GetValue("SQL_OWNER",retval,CF_MAXVARSIZE);
-strcpy(SQL_OWNER,retval);
-CFDB_GetValue("SQL_PASSWD",retval,CF_MAXVARSIZE);
-strcpy(SQL_PASSWD,retval);
-CFDB_GetValue("SQL_SERVER",retval,CF_MAXVARSIZE);
-strcpy(SQL_SERVER,retval);
-CFDB_GetValue("SQL_CONNECT_NAME",retval,CF_MAXVARSIZE);
-strcpy(SQL_CONNECT_NAME,retval);
 CFDB_GetValue("document_root",retval,CF_MAXVARSIZE);
 strncpy(DOCROOT,retval,CF_MAXVARSIZE);
 snprintf(GRAPHDIR,CF_MAXVARSIZE,"%s/graphs",DOCROOT);
@@ -49,111 +36,130 @@ Debug("Loaded values: db=%s,type=%d,owner=%s,passwd=%s,server=%s,connect=%s,docr
 /* The main panels                                                           */
 /*****************************************************************************/
 
-int Nova_GetPidForTopic(char *typed_topic)
+int Nova_GetTopicIdForTopic(char *typed_topic)
     
-{ CfdbConn cfdb;
-  char query[CF_MAXVARSIZE],topic[CF_BUFSIZE],type[CF_BUFSIZE];
-  int ret;
-
-Nova_WebTopicMap_Initialize();
+{ char topic[CF_BUFSIZE],type[CF_BUFSIZE];
+  bson_buffer bb;
+  bson query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  mongo_connection conn;
+  int topic_id = 0;
   
-if (strlen(SQL_OWNER) == 0 || typed_topic == NULL)
-   {
-   return 0;
-   }
-
 Nova_DeClassifyTopic(typed_topic,topic,type); // Linker trouble - copy this from core
 
-//strcpy(topic,typed_topic);
-
-CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
-    
-if (!cfdb.connected)
+if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
-   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
+   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return false;
    }
 
-if (strlen(type) > 0)
+/* BEGIN query document */
+
+bson_buffer_init(&bb);
+bson_append_string(&bb,cfk_topicname,topic);
+bson_append_string(&bb,cfk_topiccontext,type);
+bson_from_buffer(&query,&bb);
+
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfk_topicname,1);
+bson_append_int(&bb,cfk_topicid,1);
+bson_append_int(&bb,cfk_topiccontext,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+bson_destroy(&field);
+
+while (mongo_cursor_next(cursor))  // loops over documents
    {
-   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s' and topic_context like '%%%s%%'",EscapeSQL(&cfdb,topic),type);
-   }
-else
-   {
-   snprintf(query,CF_MAXVARSIZE-1,"SELECT pid from topics where topic_name = '%s'",EscapeSQL(&cfdb,topic));
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while (bson_iterator_next(&it1))
+      {      
+      if (strcmp(bson_iterator_key(&it1),cfk_topicid) == 0)
+         {
+         topic_id = (int)bson_iterator_int(&it1);
+         }
+      }
    }
 
-CfNewQueryDB(&cfdb,query);
+mongo_cursor_destroy(cursor);
+CFDB_Close(&conn);
 
-if (cfdb.maxcolumns != 1)
-   {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,1);
-   CfCloseDB(&cfdb);
-   return false;
-   }
-
-// Pick a representative if there are several
-
-if (CfFetchRow(&cfdb))
-   {
-   ret = Str2Int(CfFetchColumn(&cfdb,0));
-   }
-else
-   {
-   ret = 0;
-   }
-
-CfDeleteQuery(&cfdb);
-return ret;
+return topic_id;
 }
 
 /*****************************************************************************/
 
-int Nova_GetTopicByPid(int pid,char *topic_name,char *topic_id,char *topic_context)
+int Nova_GetTopicByTopicId(int search_id,char *topic_name,char *topic_id,char *topic_context)
 
-{ CfdbConn cfdb;
-  char query[CF_MAXVARSIZE];
-  int ret;
- 
-if (strlen(SQL_OWNER) == 0)
+{ bson_buffer bb;
+  bson query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  mongo_connection conn;
+  int topicid = 0;
+
+if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
+   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return false;
    }
 
-CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
-    
-if (!cfdb.connected)
+/* BEGIN query document */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfk_topicid,search_id);
+bson_from_buffer(&query,&bb);
+
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfk_topicname,1);
+bson_append_int(&bb,cfk_topicid,1);
+bson_append_int(&bb,cfk_topiccontext,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+bson_destroy(&field);
+
+while (mongo_cursor_next(cursor))  // loops over documents
    {
-   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
-   return false;
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   topic_name[0] = '\0';
+   topic_context[0] = '\0';
+   topicid = 0;
+   
+   while (bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1),cfk_topicname) == 0)
+         {
+         strncpy(topic_name,bson_iterator_string(&it1),CF_BUFSIZE-1);
+         strncpy(topic_id,Name2Id((char *)bson_iterator_string(&it1)),CF_BUFSIZE-1);
+         }   
+
+      if (strcmp(bson_iterator_key(&it1),cfk_topiccontext) == 0)
+         {
+         strncpy(topic_context,bson_iterator_string(&it1),CF_BUFSIZE-1);
+         }
+      
+      if (strcmp(bson_iterator_key(&it1),cfk_topicid) == 0)
+         {
+         topicid = (int)bson_iterator_int(&it1);
+         }
+      }
    }
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT topic_name,topic_id,topic_context from topics where pid = '%d'",pid);
-
-CfNewQueryDB(&cfdb,query);
-
-if (cfdb.maxcolumns != 3)
-   {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,3);
-   CfCloseDB(&cfdb);
-   return false;
-   }
-
-if (CfFetchRow(&cfdb))
-   {
-   strncpy(topic_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
-   strncpy(topic_id,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-   strncpy(topic_context,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
-   ret = true;
-   }
-else
-   {
-   ret = false;
-   }
-
-CfDeleteQuery(&cfdb);
-CfCloseDB(&cfdb);
-return ret;
+mongo_cursor_destroy(cursor);
+CFDB_Close(&conn);
+return topicid;
 }
 
 /*********************************************************************/
@@ -170,6 +176,7 @@ int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
   char topic_context[CF_BUFSIZE];
   int topic_id;
   char assoc_name[CF_BUFSIZE];
+  char afwd[CF_BUFSIZE],abwd[CF_BUFSIZE];
   char assoc_context[CF_BUFSIZE];
   int assoc_id;
 
@@ -191,6 +198,9 @@ bson_append_int(&bb,cfk_topicname,1);
 bson_append_int(&bb,cfk_topicid,1);
 bson_append_int(&bb,cfk_topiccontext,1);
 bson_append_int(&bb,cfk_associations,1);
+bson_append_int(&bb,cfk_associd,1);
+bson_append_int(&bb,cfk_assoccontext,1);
+bson_append_int(&bb,cfk_assocname,1);
 bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -229,29 +239,46 @@ while (mongo_cursor_next(cursor))  // loops over documents
          {
          bson_iterator_init(&it2,bson_iterator_value(&it1));
 
-         assoc_id = 0;
-         assoc_name[0] = '\0';
-         assoc_context[0] = '\0';
-         
          while (bson_iterator_next(&it2))
              {
-             if (strcmp(bson_iterator_key(&it1),cfk_associd) == 0)
-                {
-                assoc_id = bson_iterator_int(&it2);
-                }   
+             bson_iterator_init(&it3,bson_iterator_value(&it2));
 
-             if (strcmp(bson_iterator_key(&it1),cfk_assocname) == 0)
-                {
-                strncpy(assoc_name,bson_iterator_string(&it2),CF_BUFSIZE-1);
-                }   
+             assoc_id = 0;
+             assoc_name[0] = '\0';
+             assoc_context[0] = '\0';
+             afwd[0] = '\0';
+             abwd[0] = '\0';
 
-             if (strcmp(bson_iterator_key(&it1),cfk_assoccontext) == 0)
+             while (bson_iterator_next(&it3))
                 {
-                strncpy(assoc_context,bson_iterator_string(&it2),CF_BUFSIZE-1);
-                }   
+                if (strcmp(bson_iterator_key(&it3),cfk_associd) == 0)
+                   {
+                   assoc_id = bson_iterator_int(&it3);
+                   }   
+                
+                if (strcmp(bson_iterator_key(&it3),cfk_assocname) == 0)
+                   {
+                   strncpy(assoc_name,bson_iterator_string(&it3),CF_BUFSIZE-1);
+                   }   
+
+                if (strcmp(bson_iterator_key(&it3),cfk_fwd) == 0)
+                   {
+                   strncpy(afwd,bson_iterator_string(&it3),CF_BUFSIZE-1);
+                   }   
+
+                if (strcmp(bson_iterator_key(&it3),cfk_bwd) == 0)
+                   {
+                   strncpy(abwd,bson_iterator_string(&it3),CF_BUFSIZE-1);
+                   }   
+                
+                if (strcmp(bson_iterator_key(&it3),cfk_assoccontext) == 0)
+                   {
+                   strncpy(assoc_context,bson_iterator_string(&it3),CF_BUFSIZE-1);
+                   }   
+                }
+             
+             printf(" - %s associate %s::%s (%d)\n",afwd,assoc_context,assoc_name,assoc_id);
              }
-
-         printf(" - associate %::%s (%d)\n",assoc_context,assoc_name,assoc_id);
          }
       }
    
@@ -260,6 +287,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
+return true;
 }
 
 /*****************************************************************************/
@@ -278,7 +306,7 @@ if (strlen(SQL_OWNER) == 0)
    return;
    }
 
-if (!Nova_GetTopicByPid(pid,this_name,this_id,this_type))
+if (!Nova_GetTopicByTopicId(pid,this_name,this_id,this_type))
    {
    snprintf(buffer,bufsize,"No such topic was found (db %s)",SQL_DATABASE);
    return;
@@ -297,7 +325,7 @@ snprintf(buffer,CF_MAXVARSIZE,"<div id=\"others\"><h2>Other topics mentioned in 
 /* sub-topics of this topic-type */
 
 strcat(buffer,"<ul>\n"); // outer list
-snprintf(buf,CF_BUFSIZE-1,"<li>%s</li><ul>\n",Nova_PidURL(pid,this_name)); // Start sublist
+snprintf(buf,CF_BUFSIZE-1,"<li>%s</li><ul>\n",Nova_TopicIdURL(pid,this_name)); // Start sublist
 Join(buffer,buf,bufsize);
 
 snprintf(query,sizeof(query),"SELECT topic_name,topic_id,topic_context,pid from topics where topic_context='%s' order by topic_name asc",EscapeSQL(&cfdb,this_id));
@@ -323,7 +351,7 @@ while(CfFetchRow(&cfdb))
 
    tpid = Str2Int(CfFetchColumn(&cfdb,3));
 
-   snprintf(buf,CF_BUFSIZE-1,"<li>%s</li>\n",Nova_PidURL(tpid,topic_name));
+   snprintf(buf,CF_BUFSIZE-1,"<li>%s</li>\n",Nova_TopicIdURL(tpid,topic_name));
    Join(buffer,buf,bufsize);
    count++;
    }
@@ -367,7 +395,7 @@ if (strcmp(this_type,"any") != 0)
       
       tpid = Str2Int(CfFetchColumn(&cfdb,3));
       
-      snprintf(buf,CF_BUFSIZE-1,"<li>%s</li>\n",Nova_PidURL(tpid,topic_name));
+      snprintf(buf,CF_BUFSIZE-1,"<li>%s</li>\n",Nova_TopicIdURL(tpid,topic_name));
       Join(buffer,buf,bufsize);   
       }
    }
@@ -456,11 +484,11 @@ while(CfFetchRow(&cfdb))
 
    if (strlen(to_context) > 0)
       {
-      snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s)</li>\n",Nova_PidURL(to_pid,to_name),to_context);
+      snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s)</li>\n",Nova_TopicIdURL(to_pid,to_name),to_context);
       }
    else
       {
-      snprintf(work,CF_MAXVARSIZE,"<li>  %s </li>\n",Nova_PidURL(to_pid,to_name));
+      snprintf(work,CF_MAXVARSIZE,"<li>  %s </li>\n",Nova_TopicIdURL(to_pid,to_name));
       }
    Join(buffer,work,bufsize);
    }
@@ -517,7 +545,7 @@ while(CfFetchRow(&cfdb))
       Join(buffer,work,bufsize);
       }
    
-   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s)<li> \n",Nova_PidURL(from_pid,from_name),from_context);
+   snprintf(work,CF_MAXVARSIZE,"<li>  %s (in %s)<li> \n",Nova_TopicIdURL(from_pid,from_name),from_context);
    Join(buffer,work,bufsize);
    }
 
@@ -823,7 +851,7 @@ int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_context,char 
 
 { char buf[CF_BUFSIZE];
 
-snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in the context of %s</li>\n",Nova_PidURL(pid,topic_name),topic_context);
+snprintf(buf,CF_BUFSIZE-1,"<li>\"%s\" is mentioned in the context of %s</li>\n",Nova_TopicIdURL(pid,topic_name),topic_context);
 Join(buffer,buf,bufsize);
 return true;
 }
@@ -885,7 +913,7 @@ Join(buffer,work,bufsize);
 
 /*************************************************************************/
 
-char *Nova_PidURL(int pid,char *s)
+char *Nova_TopicIdURL(int pid,char *s)
 
 { static char buf[CF_MAXVARSIZE];
 
@@ -1060,19 +1088,13 @@ int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_ad
 /* This function generates a breadth-first connected sub-graph of the full graph
    and identifies the orbits and distances, up to a maximum of Dunbar's tribe-size */
 
-{ char to_name[CF_BUFSIZE],to_context[CF_BUFSIZE],to_assoc[CF_BUFSIZE];
-  char from_name[CF_BUFSIZE],from_context[CF_BUFSIZE],from_assoc[CF_BUFSIZE];
+{ char topic_name[CF_BUFSIZE],topic_context[CF_BUFSIZE];
   char *a_name,*a_context,view[CF_MAXVARSIZE];
   int from_pid,to_pid,a_pid;
   char query[CF_BUFSIZE];
   struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE];
   int tribe_counter = 0,secondary_boundary,tertiary_boundary,i,j;
-  CfdbConn cfdb;
-
-if (strlen(SQL_OWNER) == 0)
-   {
-   return false;
-   }
+  struct Item *ip,*nn = NULL;
 
 for (i = 0; i < CF_TRIBE_SIZE; i++)
    {
@@ -1094,18 +1116,10 @@ else
    snprintf(view,CF_MAXVARSIZE,".*");
    }
 
-// Open DB dialogue
-
-CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
-    
-if (!cfdb.connected)
-   {
-   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
-   return false;
-   }
-
 tribe_id[0] = pid;
-Nova_NewVertex(tribe_nodes,0,0,pid);
+topic_name[0] = '\0';
+topic_context[0] = '\0';
+Nova_NewVertex(tribe_nodes,0,0,pid,topic_name,topic_context);
 
 /* Probe sub-graph */
     
@@ -1113,57 +1127,20 @@ tribe_counter = 1;
 
 // Nearest neighbours
 
-snprintf(query,sizeof(query),"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name,from_id,to_id from associations where from_id='%d' or to_id='%d'",pid,pid);
+nn = Nova_NearestNeighbours(pid,view);
 
-CfNewQueryDB(&cfdb,query);
-
-if (cfdb.maxcolumns != 8)
+for (ip = nn; ip != NULL; ip = ip->next)
    {
-   CfOut(cf_error,""," !! The associations database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,8);
-   CfCloseDB(&cfdb);
-   return false;
-   }
+   a_name = ip->name;
+   a_context = ip->classes;
+   a_pid = ip->counter;
 
-while (CfFetchRow(&cfdb))
-   {
-   strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
-   strncpy(from_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-   strncpy(from_assoc,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
-   strncpy(to_assoc,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
-   strncpy(to_context,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
-   strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
-   from_pid = Str2Int(CfFetchColumn(&cfdb,6));
-   to_pid = Str2Int(CfFetchColumn(&cfdb,7));
-
-   if (from_pid == pid)
-      {
-      a_name = to_name;
-      a_context = to_context;
-      a_pid = to_pid;
-      }
-   else
-      {
-      a_name = from_name;
-      a_context = from_context;
-      a_pid = from_pid;
-      }
-
-   Debug("NEAREST NEIGHOUR: %s::%s at %d\n",a_context,a_name,a_pid);
-
-   if (FullTextMatch(view,from_assoc)||FullTextMatch(view,to_assoc))
-      {
-      }
-   else
-      {
-      continue;
-      }
-   
    if (Nova_AlreadyInTribe(a_pid,tribe_id))
       {
       continue;
       }
 
-   if (Nova_NewVertex(tribe_nodes,tribe_counter,1,a_pid))
+   if (Nova_NewVertex(tribe_nodes,tribe_counter,1,a_pid,a_name,a_context))
       {
       neighbours1[tribe_counter].real_id = a_pid;
       tribe_id[tribe_counter] = a_pid;
@@ -1171,58 +1148,35 @@ while (CfFetchRow(&cfdb))
       tribe_adj[0][tribe_counter] = 1;
       tribe_counter++;
       }
-   
+
+   Debug("NEAREST NEIGHOUR: %s::%s at %d\n",a_context,a_name,a_pid);
+
    if (tribe_counter >= CF_TRIBE_SIZE-1)
       {
       break;
       }   
    }
 
-secondary_boundary = tribe_counter;
+DeleteItemList(nn);
 
-CfDeleteQuery(&cfdb);
+secondary_boundary = tribe_counter;
 
 if (tribe_counter < CF_TRIBE_SIZE-1 && secondary_boundary > 0)
    {
    for (i = 0; i < secondary_boundary; i++)
       {
-      snprintf(query,sizeof(query),"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name,from_id,to_id from associations where from_id='%d' or to_id='%d'",neighbours1[i].real_id,neighbours1[i].real_id);
+      nn = Nova_NearestNeighbours(neighbours1[i].real_id,view);
 
-      CfNewQueryDB(&cfdb,query);
-      
-      while (CfFetchRow(&cfdb))
+      for (ip = nn; ip != NULL; ip=ip->next)
          {
          if (tribe_counter >= CF_TRIBE_SIZE-1)
             {
             break;
             }
          
-         strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
-         strncpy(from_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-         strncpy(from_assoc,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
-         strncpy(to_assoc,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
-         strncpy(to_context,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
-         strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
-         from_pid = Str2Int(CfFetchColumn(&cfdb,6));
-         to_pid = Str2Int(CfFetchColumn(&cfdb,7));
-         
-         if (from_pid == neighbours1[i].real_id)
-            {
-            a_name = to_name;
-            a_context = to_context;
-            a_pid = to_pid;
-            }
-         else
-            {
-            a_name = from_name;
-            a_context = from_context;
-            a_pid = from_pid;
-            }
-
-         if (!(FullTextMatch(view,from_assoc)||FullTextMatch(view,to_assoc)))
-            {
-            continue;
-            }
+         a_name = ip->name;
+         a_context = ip->classes;
+         a_pid = ip->counter;
 
          if (Nova_AlreadyInTribe(a_pid,tribe_id))
             {
@@ -1231,7 +1185,7 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && secondary_boundary > 0)
          
          Debug("  2nd NEIGHOUR: %s::%s at %d\n",a_context,a_name,a_pid);
 
-         if (Nova_NewVertex(tribe_nodes,tribe_counter,2,a_pid))
+         if (Nova_NewVertex(tribe_nodes,tribe_counter,2,a_pid,a_name,a_context))
             {            
             neighbours2[i][tribe_counter].real_id = a_pid;
             tribe_id[tribe_counter] = a_pid;
@@ -1251,7 +1205,7 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && secondary_boundary > 0)
          break;
          }                     
       
-      CfDeleteQuery(&cfdb);
+      DeleteItemList(nn);
       }
    }
 
@@ -1267,45 +1221,20 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && tertiary_boundary > 0)
             {
             break;
             }               
+
+         nn = Nova_NearestNeighbours(neighbours2[i][j].real_id,view);
          
-         snprintf(query,sizeof(query),"SELECT from_name,from_context,from_assoc,to_assoc,to_context,to_name,from_id,to_id from associations where from_id='%d' or to_id='%d'",neighbours2[i][j].real_id,neighbours2[i][j].real_id);
-         
-         CfNewQueryDB(&cfdb,query);
-         
-         while (CfFetchRow(&cfdb))
-            {
-            strncpy(from_name,CfFetchColumn(&cfdb,0),CF_BUFSIZE-1);
-            strncpy(from_context,CfFetchColumn(&cfdb,1),CF_BUFSIZE-1);
-            strncpy(from_assoc,CfFetchColumn(&cfdb,2),CF_BUFSIZE-1);
-            strncpy(to_assoc,CfFetchColumn(&cfdb,3),CF_BUFSIZE-1);
-            strncpy(to_context,CfFetchColumn(&cfdb,4),CF_BUFSIZE-1);
-            strncpy(to_name,CfFetchColumn(&cfdb,5),CF_BUFSIZE-1);
-            from_pid = Str2Int(CfFetchColumn(&cfdb,6));
-            to_pid = Str2Int(CfFetchColumn(&cfdb,7));
-            
-            if (from_pid == neighbours2[i][j].real_id)
-               {
-               a_name = to_name;
-               a_context = to_context;
-               a_pid = to_pid;
-               }
-            else
-               {
-               a_name = from_name;
-               a_context = from_context;
-               a_pid = from_pid;
-               }
+         for (ip = nn; ip != NULL; ip=ip->next)
+            {         
+            a_name = ip->name;
+            a_context = ip->classes;
+            a_pid = ip->counter;
 
             if (a_pid == neighbours1[i].real_id)
                {
                continue;
                }
 
-            if (!(FullTextMatch(view,from_assoc)||FullTextMatch(view,to_assoc)))
-               {
-               continue;
-               }
-            
             if (Nova_AlreadyInTribe(a_pid,tribe_id))
                {
                continue;
@@ -1313,7 +1242,7 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && tertiary_boundary > 0)
 
             Debug("     3rd NEIGHBOUR (%d): %s::%s at %d\n",tribe_counter,a_context,a_name,a_pid);
             
-            if (Nova_NewVertex(tribe_nodes,tribe_counter,3,a_pid))
+            if (Nova_NewVertex(tribe_nodes,tribe_counter,3,a_pid,a_name,a_context))
                {            
                neighbours3[i][j][tribe_counter].real_id = a_pid;
                tribe_id[tribe_counter] = a_pid;
@@ -1333,7 +1262,7 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && tertiary_boundary > 0)
             break;
             }               
          
-         CfDeleteQuery(&cfdb);
+         DeleteItemList(nn);
          }
       
       if (tribe_counter >= CF_TRIBE_SIZE-1)
@@ -1343,9 +1272,9 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && tertiary_boundary > 0)
       }
    }
 
-CfCloseDB(&cfdb);
 return tribe_counter;
 }
+
 
 /*************************************************************************/
 /* Level                                                                 */
@@ -1450,23 +1379,18 @@ tribe[i].distance_from_centre = 0;
 
 /*************************************************************************/
 
-int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real)
+int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char *topic_name,char *topic_context)
 
 { char sshort[CF_BUFSIZE],name[CF_BUFSIZE];
-  char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE];
+  char topic_id[CF_BUFSIZE];
   int j;
 
-sshort[0] = '\0';
-
-if (!Nova_GetTopicByPid(real,topic_name,topic_id,topic_context))
-   {
-   return false;
-   }
-
-sscanf(topic_name,"%32[^\n]",sshort);
-snprintf(name,CF_MAXVARSIZE,"%s::%s",topic_context,topic_name);
-
 /* If more than a few nodes, don't waste visual space on repeated topics */
+
+if (strlen(topic_name) == 0)
+   {
+   Nova_GetTopicByTopicId(real,topic_name,topic_id,topic_context);
+   }
 
 if (node > 5)
    {
@@ -1480,6 +1404,8 @@ if (node > 5)
       }
    }
 
+sscanf(topic_name,"%32[^\n]",sshort);
+
 if (strlen(sshort) == 0)
    {
    return false;
@@ -1490,6 +1416,118 @@ tribe[node].shortname = strdup(sshort);
 tribe[node].fullname = strdup(name);
 tribe[node].distance_from_centre = distance;
 return true;
+}
+
+/*********************************************************************/
+
+struct Item *Nova_NearestNeighbours(int search_id,char *assoc_mask)
+
+{ bson_buffer bb;
+  bson query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  mongo_connection conn;
+  struct Item *list = NULL;
+  char topic_name[CF_BUFSIZE];
+  char topic_context[CF_BUFSIZE];
+  int topic_id;
+  char assoc_name[CF_BUFSIZE];
+  char afwd[CF_BUFSIZE],abwd[CF_BUFSIZE];
+  char assoc_context[CF_BUFSIZE];
+  int assoc_id;
+
+if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
+   return false;
+   }
+
+/* BEGIN query document */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfk_topicid,search_id);
+bson_from_buffer(&query,&bb);
+
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfk_topicname,1);
+bson_append_int(&bb,cfk_topicid,1);
+bson_append_int(&bb,cfk_topiccontext,1);
+bson_append_int(&bb,cfk_associations,1);
+bson_append_int(&bb,cfk_associd,1);
+bson_append_int(&bb,cfk_assoccontext,1);
+bson_append_int(&bb,cfk_assocname,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+bson_destroy(&field);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   topic_name[0] = '\0';
+   topic_context[0] = '\0';
+   topic_id = 0;
+   
+   while (bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1),cfk_associations) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+         while (bson_iterator_next(&it2))
+             {
+             bson_iterator_init(&it3,bson_iterator_value(&it2));
+
+             assoc_id = 0;
+             assoc_name[0] = '\0';
+             assoc_context[0] = '\0';
+             afwd[0] = '\0';
+             abwd[0] = '\0';
+
+             while (bson_iterator_next(&it3))
+                {
+                if (strcmp(bson_iterator_key(&it3),cfk_associd) == 0)
+                   {
+                   assoc_id = bson_iterator_int(&it3);
+                   }   
+                
+                if (strcmp(bson_iterator_key(&it3),cfk_assocname) == 0)
+                   {
+                   strncpy(assoc_name,bson_iterator_string(&it3),CF_BUFSIZE-1);
+                   }   
+
+                if (strcmp(bson_iterator_key(&it3),cfk_fwd) == 0)
+                   {
+                   strncpy(afwd,bson_iterator_string(&it3),CF_BUFSIZE-1);
+                   }   
+
+                if (strcmp(bson_iterator_key(&it3),cfk_bwd) == 0)
+                   {
+                   strncpy(abwd,bson_iterator_string(&it3),CF_BUFSIZE-1);
+                   }   
+                
+                if (strcmp(bson_iterator_key(&it3),cfk_assoccontext) == 0)
+                   {
+                   strncpy(assoc_context,bson_iterator_string(&it3),CF_BUFSIZE-1);
+                   }   
+                }
+             
+             Debug(" - topic %d has associate %s::%s (%d)\n",topic_id,afwd,assoc_context,assoc_name,assoc_id);
+
+             PrependFullItem(&list,assoc_name,assoc_context,assoc_id,0);
+             }
+         }
+      }
+   }
+
+mongo_cursor_destroy(cursor);
+CFDB_Close(&conn);
+return list;
 }
 
 /*********************************************************************/

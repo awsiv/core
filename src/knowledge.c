@@ -87,8 +87,7 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
       // Associations
 
       bson_buffer_init(&bb);
-      setObj = bson_append_start_object(&bb,"$set");
-      assocs = bson_append_start_array(setObj,cfk_associations);
+      assocs = bson_append_start_array(&bbuf,cfk_associations);
 
       for (ta = tp->associations; ta != NULL; ta=ta->next)
          {
@@ -104,6 +103,7 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
             Debug(" - Hence  by implication : '%s::%s' (%d) %s '%s::%s' (%d)\n",to_context,to_topic,to_id,ta->bwd_name,tp->topic_context,tp->topic_name,tp->id);
 
             // Append variable list item to assocs
+
             snprintf(packNumStr,sizeof(packNumStr),"%d",assoc_id++);
             sub = bson_append_start_object(assocs,packNumStr);
             bson_append_string(sub,cfk_fwd,ta->fwd_name);
@@ -111,7 +111,7 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
             bson_append_string(sub,cfk_assocname,to_topic);
             bson_append_string(sub,cfk_assoccontext,to_context);
             bson_append_int(sub,cfk_associd,to_id);
-            bson_append_finish_object(sub);   
+            bson_append_finish_object(sub);
             }
          }
       
@@ -136,7 +136,6 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
          }
 
       bson_append_finish_object(assocs);
-      bson_append_finish_object(setObj);
       
       bson_from_buffer(&b,&bbuf);
       mongo_insert(&dbconn,MONGO_KM_TOPICS,&b);

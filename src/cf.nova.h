@@ -883,21 +883,22 @@ void Nova_Indent(int i);
 void Nova_FillInGoalComment(struct Item *ip);
 char *Nova_GetBundleComment(char *bundle);
 void Nova_WebTopicMap_Initialize(void);
-int Nova_GetPidForTopic(char *typed_topic);
+int Nova_GetTopicIdForTopic(char *typed_topic);
 void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize);
 void Nova_ScanTheRest(int pid,char *buffer, int bufsize);
 int Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize);
 void Nova_ScanLeadsAssociations(int pid,char *buffer, int bufsize);
 void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize);
 
-int Nova_GetTopicByPid(int pid,char *topic_name,char *topic_id,char *topic_type);
+int Nova_GetTopicByTopicId(int pid,char *topic_name,char *topic_id,char *topic_type);
 int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_type,char *buffer,int bufsize);
 int Nova_AddAssocSearchBuffer(char *from_assoc,char *to_assoc,char *buffer,int bufsize);
 void Nova_AddOccurrenceBuffer(char *context,char *locator,enum representations locator_type,char *represents,char *buffer,int bufsize);
 void AtomizeTopicContext(struct AlphaList *context_list,char *topic_context);
-char *Nova_PidURL(int pid,char *s);
+char *Nova_TopicIdURL(int pid,char *s);
 char *Nova_AssocURL(char *s);
 char *Nova_URL(char *s,char *rep);
+struct Item *Nova_NearestNeighbours(int topic_id,char *assoc_mask);
 
 struct Item *Nova_GetBusinessGoals(char *handle);
 struct Item *Nova_GetUniqueBusinessGoals(void);
@@ -909,7 +910,7 @@ void Nova_EigenvectorCentrality(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v
 void Nova_MatrixOperation(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim);
 int Nova_AlreadyInTribe(int node, int *tribe_id);
 void Nova_InitVertex(struct CfGraphNode *tribe,int i);
-int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real);
+int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char *name,char *context);
 
 /* web_api.c */
 

@@ -38,7 +38,7 @@ void Nova_DrawTribe(int *tribe_id,struct CfGraphNode *tribe_node,double tribe_ad
   char work[CF_BUFSIZE],url[CF_MAXVARSIZE];
   char *colour;
 
-  Nova_GetMaxEvcNode(tribe_evc,tribe_size); /* FIXME: unused? */
+Nova_GetMaxEvcNode(tribe_evc,tribe_size); /* FIXME: unused? */
 
 for (i = 0; i < tribe_size; i++)
    {

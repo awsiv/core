@@ -2282,7 +2282,7 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
     for (ip = list; ip != NULL; ip=ip->next)
        {
        snprintf(context,CF_MAXVARSIZE,"class_contexts::%s",ip->name);
-       pid = Nova_GetPidForTopic(context);
+       pid = Nova_GetTopicIdForTopic(context);
 
        snprintf(work,CF_MAXVARSIZE,"<li><a href=\"/welcome/knowledge/pid/%d\"><span class=\"classcontext\">%s</span></a></li>",pid,ip->name);
 
@@ -2610,7 +2610,7 @@ void Nova2PHP_show_topic(int id,char *buffer,int bufsize)
  buffer[0] = '\0';
  Nova_WebTopicMap_Initialize();
 
- if (Nova_GetTopicByPid(id,topic_name,topic_id,topic_context))
+ if (Nova_GetTopicByTopicId(id,topic_name,topic_id,topic_context))
     {
     snprintf(buffer,bufsize,"<div id=\"topic\">\n'<span class=\"subject\">%s</span>' in section `<span class=\"category\">%s</span>:</div>",topic_name,topic_context);
     }
@@ -4276,9 +4276,9 @@ int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize)
 
  snprintf(typedName,sizeof(typedName),"system_reports::%s",reportName);
 
-/*pid = Nova_GetPidForTopic(typedName);
+/*pid = Nova_GetTopicIdForTopic(typedName);
 
-if (pid && Nova_GetTopicByPid(pid,topic_name,topic_id,topic_context))
+if (pid && Nova_GetTopicByTopicId(pid,topic_name,topic_id,topic_context))
 {
 if (EMPTY(topic_comment))
 {
