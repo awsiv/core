@@ -641,125 +641,47 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,st
 int Nova2PHP_listclasses_time(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE]={0};
- struct HubClass *hc;
- struct HubQuery *hq;
- struct Rlist *rp, *rp2;
- mongo_connection dbconn;
+  struct HubClass *hc;
+  struct HubQuery *hq;
+  struct Rlist *rp, *rp2;
+  mongo_connection dbconn;
 
 /* BEGIN query document */
  
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
     }
 
+rp = CFDB_QueryDateTimeClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
 
- rp = CFDB_QueryDateTimeClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+StartJoin(returnval,"[",bufsize);
 
- StartJoin(returnval,"[",bufsize);
- for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
-    {
-      snprintf(buffer,sizeof(buffer),"\"%s\",",rp2->item);
-      
-      if(!Join(returnval,buffer,bufsize))
-	{
-	  break;
-	}
-    }
- if(returnval[strlen(returnval)-1]==',')
+for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
    {
-     returnval[strlen(returnval)-1]='\0';
+   snprintf(buffer,sizeof(buffer),"\"%s\",",rp2->item);
+   
+   if(!Join(returnval,buffer,bufsize))
+      {
+      break;
+      }
    }
- EndJoin(returnval,"]\n",bufsize);
 
- CFDB_Close(&dbconn);
-
- return true;
-}
-/*****************************************************************************/
-int Nova2PHP_listclasses_host(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
-
-{ char buffer[CF_BUFSIZE]={0};
- struct HubClass *hc;
- struct HubQuery *hq;
- struct Rlist *rp, *rp2;
- mongo_connection dbconn;
-
-/* BEGIN query document */
- 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
-
- rp = CFDB_QueryHostClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
-
- StartJoin(returnval,"[",bufsize);
- for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
-    {
-      snprintf(buffer,sizeof(buffer),"\"%s\",",rp2->item);
-      
-      if(!Join(returnval,buffer,bufsize))
-	{
-	  break;
-	}
-    }
- if(returnval[strlen(returnval)-1]==',')
+if (returnval[strlen(returnval)-1]==',')
    {
-     returnval[strlen(returnval)-1]='\0';
+   returnval[strlen(returnval)-1]='\0';
    }
- EndJoin(returnval,"]\n",bufsize);
 
- CFDB_Close(&dbconn);
+EndJoin(returnval,"]\n",bufsize);
 
- return true;
-}
-/*****************************************************************************/
+CFDB_Close(&dbconn);
 
-int Nova2PHP_listclasses_all(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
-
-{ char buffer[CF_BUFSIZE]={0};
- struct HubClass *hc;
- struct HubQuery *hq;
- struct Rlist *rp, *rp2;
- mongo_connection dbconn;
-
-/* BEGIN query document */
- 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
-
- rp = CFDB_QueryAllClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
-
- StartJoin(returnval,"[",bufsize);
- for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
-    {
-      snprintf(buffer,sizeof(buffer),"\"%s\",",rp2->item);
-      
-      if(!Join(returnval,buffer,bufsize))
-	{
-	  break;
-	}
-    }
- if(returnval[strlen(returnval)-1]==',')
-   {
-     returnval[strlen(returnval)-1]='\0';
-   }
- EndJoin(returnval,"]\n",bufsize);
-
- CFDB_Close(&dbconn);
-
- return true;
+return true;
 }
 
 /*****************************************************************************/
+
 int Nova2PHP_listclasses_soft(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE]={0};
@@ -776,27 +698,30 @@ int Nova2PHP_listclasses_soft(char *hostkey,char *name,int regex,char *classreg,
     return false;
     }
 
-  rp = CFDB_QuerySoftClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+rp = CFDB_QuerySoftClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
 
- StartJoin(returnval,"[",bufsize);
- for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
-    {
-      snprintf(buffer,sizeof(buffer),"\"%s\",",rp2->item);
-      
-      if(!Join(returnval,buffer,bufsize))
-	{
-	  break;
-	}
-    }
- if(returnval[strlen(returnval)-1]==',')
+StartJoin(returnval,"[",bufsize);
+
+for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
    {
-     returnval[strlen(returnval)-1]='\0';
+   snprintf(buffer,sizeof(buffer),"\"%s\",",rp2->item);
+   
+   if(!Join(returnval,buffer,bufsize))
+      {
+      break;
+      }
    }
- EndJoin(returnval,"]\n",bufsize);
 
- CFDB_Close(&dbconn);
+if (returnval[strlen(returnval)-1]==',')
+   {
+   returnval[strlen(returnval)-1]='\0';
+   }
 
- return true;
+EndJoin(returnval,"]\n",bufsize);
+
+CFDB_Close(&dbconn);
+
+return true;
 }
 
 /*****************************************************************************/
@@ -804,47 +729,50 @@ int Nova2PHP_listclasses_soft(char *hostkey,char *name,int regex,char *classreg,
 int Nova2PHP_listclasses_ip(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE]={0};
- struct HubClass *hc;
- struct HubQuery *hq;
- struct Rlist *rp, *rp2;
- mongo_connection dbconn;
+  struct HubClass *hc;
+  struct HubQuery *hq;
+  struct Rlist *rp, *rp2;
+  mongo_connection dbconn;
 
 /* BEGIN query document */
  
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
-
- rp = CFDB_QueryIpClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
-
- StartJoin(returnval,"[",bufsize);
- for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
-    {
-      snprintf(buffer,sizeof(buffer),"\"%s\",",rp2->item);
-      
-      if(!Join(returnval,buffer,bufsize))
-	{
-	  break;
-	}
-    }
- if(returnval[strlen(returnval)-1]==',')
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
-     returnval[strlen(returnval)-1]='\0';
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
    }
- EndJoin(returnval,"]\n",bufsize);
 
- CFDB_Close(&dbconn);
 
- return true;
+rp = CFDB_QueryIpClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+ 
+StartJoin(returnval,"[",bufsize);
+
+for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
+   {
+   snprintf(buffer,sizeof(buffer),"\"%s\",",rp2->item);
+   
+   if(!Join(returnval,buffer,bufsize))
+      {
+      break;
+      }
+   }
+
+if(returnval[strlen(returnval)-1]==',')
+   {
+   returnval[strlen(returnval)-1]='\0';
+   }
+
+EndJoin(returnval,"]\n",bufsize);
+
+CFDB_Close(&dbconn);
+
+return true;
 }
 
 /*****************************************************************************/
 int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
-{
- mongo_connection dbconn;
+
+{ mongo_connection dbconn;
  struct HubQuery *hq;
  struct HubClassSum *hc;
  struct HubHost *hh;
@@ -2446,7 +2374,7 @@ int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize)
 
  matched = CFDB_QueryBundles(&dbconn,type,NULL);
  matched = SortItemListClasses(matched);
-
+ 
  if (matched)
     {
     if (type)
@@ -2529,31 +2457,30 @@ int Nova2PHP_list_all_goals(char *buffer,int bufsize)
 { char work[CF_BUFSIZE];
  struct Item *ip2,*glist;
 
- Nova_WebTopicMap_Initialize();
-
- glist = Nova_GetUniqueBusinessGoals();
+glist = Nova_GetUniqueBusinessGoals();
  
- snprintf(buffer,sizeof(buffer),"[");
- if (glist)
+snprintf(buffer,sizeof(buffer),"[");
+
+if (glist)
    {
-     for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
-       {
-	 snprintf(work,sizeof(work),"{\"pid\": %d,\"name\":\"%s\",\"desc\":\"%s\"},",ip2->counter,ip2->name,ip2->classes);
-	 if (!Join(buffer,work,bufsize))
-	   {
-	     break;
-	   }
-       }
+   for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
+      {
+      snprintf(work,sizeof(work),"{\"pid\": %d,\"name\":\"%s\",\"desc\":\"%s\"},",ip2->counter,ip2->name,ip2->classes);
+      if (!Join(buffer,work,bufsize))
+         {
+         break;
+         }
+      }
    
-     if(buffer[strlen(buffer)-1]==',')
-       {
-	 buffer[strlen(buffer)-1]='\0';
-       }
+   if(buffer[strlen(buffer)-1]==',')
+      {
+      buffer[strlen(buffer)-1]='\0';
+      }
    }
 
- EndJoin(buffer,"]",bufsize);
+EndJoin(buffer,"]",bufsize);
 
- return true;
+return true;
 }
 
 /*****************************************************************************/
@@ -2668,18 +2595,16 @@ int Nova2PHP_search_topics(char *search,int regex,char *buffer,int bufsize)
 
 { int pid;
 
- Nova_WebTopicMap_Initialize();
-
- if ((pid = Nova_SearchTopicMap(search,buffer,bufsize)))
-    {
-    // If there's only one match, just show it
-    snprintf(buffer,bufsize,"<meta HTTP-EQUIV=\"REFRESH\" content=\"0; url=/welcome/knowledge/pid/%d\">",pid);
-    return true;
-    }
- else
-    {
-    return true;
-    }
+if ((pid = Nova_SearchTopicMap(search,buffer,bufsize)))
+   {
+   // If there's only one match, just show it
+   snprintf(buffer,bufsize,"<meta HTTP-EQUIV=\"REFRESH\" content=\"0; url=/welcome/knowledge/pid/%d\">",pid);
+   return true;
+   }
+else
+   {
+   return true;
+   }
 }
 
 /*****************************************************************************/
@@ -2688,27 +2613,55 @@ void Nova2PHP_show_topic(int id,char *buffer,int bufsize)
 
 { char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE],topic_comment[CF_BUFSIZE];
 
- buffer[0] = '\0';
- Nova_WebTopicMap_Initialize();
+buffer[0] = '\0';
 
- if (Nova_GetTopicByTopicId(id,topic_name,topic_id,topic_context))
-    {
-    snprintf(buffer,bufsize,"<div id=\"topic\">\n'<span class=\"subject\">%s</span>' in section `<span class=\"category\">%s</span>:</div>",topic_name,topic_context);
-    }
- else
-    {
-    snprintf(buffer,bufsize,"No such topic\n");
-    }
+if (Nova_GetTopicByTopicId(id,topic_name,topic_id,topic_context))
+   {
+   snprintf(buffer,bufsize,"<div id=\"topic\">\n'<span class=\"subject\">%s</span>' in section `<span class=\"category\">%s</span>:</div>",topic_name,topic_context);
+   }
+else
+   {
+   snprintf(buffer,bufsize,"No such topic\n");
+   }
 }
 
 /*****************************************************************************/
 
 void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize)
 
-{
- Nova_WebTopicMap_Initialize();
- buffer[0] = '\0';
- Nova_ScanLeadsAssociations(id,buffer,bufsize);
+{ struct Item *lastp,*ip;
+  struct Item *list = Nova_ScanLeadsAssociations(id,buffer,bufsize);
+  char work[CF_BUFSIZE];
+  
+buffer[0] = '\0';
+strcpy(buffer,"[ ");
+
+lastp = list;
+
+for (ip = list; ip != NULL; ip=ip->next)
+   {
+   if (ip == list)
+      {
+      snprintf(work,CF_BUFSIZE,"{ assoc: \"%s\", topics: [",ip->name);
+      Join(buffer,work,bufsize);
+      }
+
+   snprintf(work,CF_BUFSIZE,"{ topic: \"%s\", id: %d },",ip->classes,ip->counter);
+   Join(buffer,work,bufsize);
+   
+   if (ip->next && strcmp(ip->name,ip->next->name) != 0)
+      {
+      strcpy(buffer+strlen(buffer)-1,"]},");
+
+      snprintf(work,CF_BUFSIZE,"{ assoc: \"%s\", topics: [",ip->name);
+      Join(buffer,work,bufsize);
+      }
+
+   lastp = ip;
+   }
+
+strcpy(buffer+strlen(buffer)-1,"]} ]");
+ 
 }
 
 /*****************************************************************************/
@@ -2716,9 +2669,8 @@ void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize)
 void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize)
 
 {
- Nova_WebTopicMap_Initialize();
- buffer[0] = '\0';
- Nova_ScanOccurrences(id,buffer,bufsize);
+buffer[0] = '\0';
+Nova_ScanOccurrences(id,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -2726,9 +2678,8 @@ void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize)
 void Nova2PHP_show_topic_category(int id,char *buffer,int bufsize)
 
 {
- Nova_WebTopicMap_Initialize();
- buffer[0] = '\0';
- Nova_ScanTheRest(id,buffer,bufsize);
+buffer[0] = '\0';
+Nova_ScanTheRest(id,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -2742,53 +2693,53 @@ void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize)
  static char *policies[] = { "compliance", "anomaly", "performance", "lastseen", NULL};
  enum cf_rank_method pol;
 
- Nova_WebTopicMap_Initialize();
-  
- for (pol = 0; policies[pol] != NULL; pol++)
-    {
-    if (strcmp(policy,policies[pol]) == 0)
-       {
-       break;
-       }
-    }
+Nova_WebTopicMap_Initialize();
 
- clist = Nova_RankHosts(NULL,0,pol,n);
+for (pol = 0; policies[pol] != NULL; pol++)
+   {
+   if (strcmp(policy,policies[pol]) == 0)
+      {
+      break;
+      }
+   }
 
- buffer[0] = '\0';
- strcat(buffer,"[");
+clist = Nova_RankHosts(NULL,0,pol,n);
 
- for (ip = clist; ip !=  NULL; ip=ip->next)
-    {
-    if (Nova_IsGreen(ip->counter))
-       {
-       snprintf(work,sizeof(work),"{ \"colour\": \"green\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
-       }
-    else if (Nova_IsYellow(ip->counter))
-       {
-       snprintf(work,sizeof(work),"{ \"colour\": \"yellow\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
-       }
-    else if (Nova_IsRed(ip->counter))
-       {
-       snprintf(work,sizeof(work),"{ \"colour\": \"red\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
-       }
-    else
-       {
-       snprintf(work,sizeof(work),"{ \"colour\": \"blue\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);      
-       }
+buffer[0] = '\0';
+strcat(buffer,"[");
+
+for (ip = clist; ip !=  NULL; ip=ip->next)
+   {
+   if (Nova_IsGreen(ip->counter))
+      {
+      snprintf(work,sizeof(work),"{ \"colour\": \"green\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
+      }
+   else if (Nova_IsYellow(ip->counter))
+      {
+      snprintf(work,sizeof(work),"{ \"colour\": \"yellow\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
+      }
+   else if (Nova_IsRed(ip->counter))
+      {
+      snprintf(work,sizeof(work),"{ \"colour\": \"red\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
+      }
+   else
+      {
+      snprintf(work,sizeof(work),"{ \"colour\": \"blue\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);      
+      }
    
-    if (!Join(buffer,work,bufsize))
-       {
-       break;
-       }
-    }
+   if (!Join(buffer,work,bufsize))
+      {
+      break;
+      }
+   }
 
- if (clist)
-    {
-    buffer[strlen(buffer)-1] = '\0';
-    }
+if (clist)
+   {
+   buffer[strlen(buffer)-1] = '\0';
+   }
 
- EndJoin(buffer,"]",bufsize);
- DeleteItemList(clist);
+EndJoin(buffer,"]",bufsize);
+DeleteItemList(clist);
 }
 
 /*****************************************************************************/
@@ -3497,7 +3448,6 @@ int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
     for (rp = hq->records; rp != NULL; rp=rp->next)
        {
        hp = (struct HubPromise *)rp->item;
-
        snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"/promise/details/%s\">%s</a></li>",(char*)hp->handle,(char*)hp->handle);
        Join(returnval,work,bufsize);
        }
@@ -3510,71 +3460,6 @@ int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
     }
  else  // no result
     {
-    return false;
-    }
-
-}
-
-/*****************************************************************************/
-int Nova2PHP_list_handles_policy_finder(char *promiser,char *ptype,char *bundle,char *btype,int regex,char *returnval,int bufsize)
-
-{ mongo_connection dbconn;
- char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
- char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
- char work[CF_MAXVARSIZE];
- char bundleName[CF_BUFSIZE],promiserName[CF_BUFSIZE];
- struct Rlist *rp;
- struct HubQuery *hq;
- struct HubPromise *hp;
- int i,count;
-  
-/* BEGIN query document */
-
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
- hq = CFDB_QueryPromiseHandles(&dbconn,promiser,ptype,btype,bundle,regex,false);
- 
- returnval[0] = '\0';
-
- if(hq)
-    {
-    StartJoin(returnval, "[", bufsize);
-        
-    for (rp = hq->records; rp != NULL; rp=rp->next)
-       {
-       hp = (struct HubPromise *)rp->item;
-       if (!CFDB_QueryPromiseAttr(&dbconn,hp->handle,cfp_promiser,promiserName,CF_BUFSIZE))
-	 {
-	   continue;
-	 }
-       if (!CFDB_QueryPromiseAttr(&dbconn,hp->handle,cfp_bundlename,bundleName,CF_BUFSIZE))
-	 {
-	   continue;
-	 }
-
-       snprintf(work,CF_MAXVARSIZE-1,"[\"%s\",\"%s\",\"%s\"],",bundleName,(char*)hp->handle,promiserName);
-       Join(returnval,work,bufsize);
-       }
-    
-    CFDB_Close(&dbconn);
-
-    if(returnval[strlen(returnval)-1] == ',')
-      {
-	returnval[strlen(returnval)-1] = '\0';
-      }
-    EndJoin(returnval, "]", bufsize);
-    
-    DeleteHubQuery(hq,DeleteHubPromise);
-
-    return true;
-    }
- else  // no result
-    {
-    CFDB_Close(&dbconn);
     return false;
     }
 

@@ -145,26 +145,51 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
 
 // Occurrences
 
+mongo_remove(&dbconn,MONGO_KM_OCCURRENCES,bson_empty(&b));
+
 for (op = occurrences; op != NULL; op=op->next)
    {
    struct Rlist *rp;
    
    for (rp = op->represents; rp != NULL; rp=rp->next)
       {
-      char safeexpr[CF_BUFSIZE];
-      
-      printf("Add occurrence (context,locator,locator_type,subtype) values ('%s','%s','%d','%s')\n",op->occurrence_context,op->locator,op->rep_type,rp->item);
+      Debug("Add occurrence (context,locator,locator_type,subtype) values ('%s','%s','%d','%s')\n",op->occurrence_context,op->locator,op->rep_type,rp->item);
+
+      bson_buffer_init(&bbuf);
+      bson_append_new_oid(&bbuf, "_id" );
+      bson_append_string(&bbuf,cfk_occurlocator,op->locator);
+      bson_append_string(&bbuf,cfk_occurcontext,op->occurrence_context);
+      bson_append_int(&bbuf,cfk_occurtype,op->rep_type);
+      bson_append_string(&bbuf,cfk_occurrep,rp->item);
+
+      bson_from_buffer(&b,&bbuf);
+      mongo_insert(&dbconn,MONGO_KM_OCCURRENCES,&b);
+      bson_destroy(&b);
       }
    }
 
 //
 
+// Occurrences
+
+mongo_remove(&dbconn,MONGO_KM_INFERENCES,bson_empty(&b));
+
 for (ip = inferences; ip != NULL; ip=ip->next)
    {
    Debug("Add inferences (precedent,qualifier,inference) values ('%s','%s','%s')\n",ip->precedent,ip->qualifier,ip->inference);
+
+   bson_buffer_init(&bbuf);
+   bson_append_new_oid(&bbuf, "_id" );
+   bson_append_string(&bbuf,cfk_precedent,ip->precedent);
+   bson_append_string(&bbuf,cfk_qualifier,ip->qualifier);
+   bson_append_string(&bbuf,cfk_inference,ip->inference);
+   
+   bson_from_buffer(&b,&bbuf);
+   mongo_insert(&dbconn,MONGO_KM_INFERENCES,&b);
+   bson_destroy(&b);
    }
 
-//CFDB_Close(&dbconn);
+CFDB_Close(&dbconn);
 }
 
 /*****************************************************************************/

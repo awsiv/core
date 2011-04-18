@@ -327,9 +327,9 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
 struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, char *classRegex);
 
 // class finder
-struct RList *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
-struct RList *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
-struct RList *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+struct Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+struct Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+struct Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 struct RList *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 struct RList *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 
@@ -889,7 +889,7 @@ int Nova_GetTopicIdForTopic(char *typed_topic);
 void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize);
 void Nova_ScanTheRest(int pid,char *buffer, int bufsize);
 int Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize);
-void Nova_ScanLeadsAssociations(int pid,char *buffer, int bufsize);
+struct Item *Nova_ScanLeadsAssociations(int pid,char *buffer, int bufsize);
 void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize);
 
 int Nova_GetTopicByTopicId(int pid,char *topic_name,char *topic_id,char *topic_type);
@@ -901,7 +901,7 @@ char *Nova_TopicIdURL(int pid,char *s);
 char *Nova_AssocURL(char *s);
 char *Nova_URL(char *s,char *rep);
 struct Item *Nova_NearestNeighbours(int topic_id,char *assoc_mask);
-
+struct Item *Nova_GetTopicsInContext(char *context);
 struct Item *Nova_GetBusinessGoals(char *handle);
 struct Item *Nova_GetUniqueBusinessGoals(void);
 
@@ -1281,10 +1281,16 @@ struct cf_pscalar
 #define cfk_assoccontext "ac"
 #define cfk_associd "ai"
 
+#define cfk_fwdsearch "a.f"
+
 #define cfk_occurcontext "oc"
 #define cfk_occurlocator "ol"
 #define cfk_occurtype "ot"
 #define cfk_occurrep "or"
+
+#define cfk_precedent "p"
+#define cfk_qualifier "q"
+#define cfk_inference "i"
 
 // Report types
 
