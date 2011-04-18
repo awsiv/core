@@ -678,6 +678,46 @@ int Nova2PHP_listclasses_time(char *hostkey,char *name,int regex,char *classreg,
  return true;
 }
 /*****************************************************************************/
+int Nova2PHP_listclasses_host(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
+
+{ char buffer[CF_BUFSIZE]={0};
+ struct HubClass *hc;
+ struct HubQuery *hq;
+ struct Rlist *rp, *rp2;
+ mongo_connection dbconn;
+
+/* BEGIN query document */
+ 
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+
+ rp = CFDB_QueryHostClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+
+ StartJoin(returnval,"[",bufsize);
+ for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
+    {
+      snprintf(buffer,sizeof(buffer),"\"%s\",",rp2->item);
+      
+      if(!Join(returnval,buffer,bufsize))
+	{
+	  break;
+	}
+    }
+ if(returnval[strlen(returnval)-1]==',')
+   {
+     returnval[strlen(returnval)-1]='\0';
+   }
+ EndJoin(returnval,"]\n",bufsize);
+
+ CFDB_Close(&dbconn);
+
+ return true;
+}
+/*****************************************************************************/
 
 int Nova2PHP_listclasses_all(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
 

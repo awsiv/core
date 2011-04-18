@@ -1,4 +1,3 @@
-
 /*
 
 This file is (C) Cfengine AS. See COSL LICENSE for details.
@@ -909,6 +908,92 @@ struct RList *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lcl
        }
     }
 
+ mongo_cursor_destroy(cursor);
+ return (struct RList *)classList;
+}
+
+/*****************************************************************************/
+struct RList *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
+
+{ bson_buffer bb;
+ bson query,field;
+ mongo_cursor *cursor;
+ bson_iterator it1,it2,it3;
+ struct Rlist *classList = {0};
+ char rclass[CF_MAXVARSIZE];
+ char classRegexAnch[CF_MAXVARSIZE];
+  char ipAddress[CF_MAXVARSIZE];
+ int emptyQuery = true;
+ char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+ char hostclass[CF_BUFSIZE];
+  
+/* BEGIN query document */
+
+ bson_buffer_init(&bb);
+
+ if (!EMPTY(keyHash))
+    {
+    bson_append_string(&bb,cfr_keyhash,keyHash);
+    emptyQuery = false;
+    }
+
+ if(!EMPTY(classRegex))
+    {
+    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+    emptyQuery = false;
+    }
+
+ if(emptyQuery)
+    {
+    bson_empty(&query);
+    }
+ else
+    {
+    bson_from_buffer(&query,&bb);
+    }
+  
+/* BEGIN RESULT DOCUMENT */
+
+ bson_buffer_init(&bb);
+ // bson_append_int(&bb,cfr_class,1);
+ bson_append_int(&bb,cfr_keyhash,1);
+ bson_append_int(&bb,cfr_ip_array,1);
+ bson_append_int(&bb,cfr_host_array,1);
+ bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+ bson_destroy(&field);
+
+ if(!emptyQuery)
+    {
+    bson_destroy(&query);
+    }
+
+ while (mongo_cursor_next(cursor))  // loops over documents
+    {
+
+    bson_iterator_init(&it1,cursor->current.data);
+
+    keyhash[0] = '\0';
+    hostnames[0] = '\0';
+    addresses[0] = '\0';
+   
+    while (bson_iterator_next(&it1))
+       {
+	 CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+	 if(strlen(hostnames) > 0)
+	   {
+	     ReplaceChar(hostnames,hostclass,CF_BUFSIZE,'.','_');
+	     ReplaceChar(hostclass,hostnames,CF_BUFSIZE,'-','_');
+	     ReplaceChar(hostnames,hostclass,CF_BUFSIZE,' ','_');
+	     IdempAppendRScalar(&classList,hostclass,CF_SCALAR);
+	   }
+       }
+    }
+ 
  mongo_cursor_destroy(cursor);
  return (struct RList *)classList;
 }
