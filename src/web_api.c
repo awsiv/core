@@ -3497,6 +3497,7 @@ int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
     for (rp = hq->records; rp != NULL; rp=rp->next)
        {
        hp = (struct HubPromise *)rp->item;
+
        snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"/promise/details/%s\">%s</a></li>",(char*)hp->handle,(char*)hp->handle);
        Join(returnval,work,bufsize);
        }
@@ -3509,6 +3510,71 @@ int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
     }
  else  // no result
     {
+    return false;
+    }
+
+}
+
+/*****************************************************************************/
+int Nova2PHP_list_handles_policy_finder(char *promiser,char *ptype,char *bundle,char *btype,int regex,char *returnval,int bufsize)
+
+{ mongo_connection dbconn;
+ char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
+ char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
+ char work[CF_MAXVARSIZE];
+ char bundleName[CF_BUFSIZE],promiserName[CF_BUFSIZE];
+ struct Rlist *rp;
+ struct HubQuery *hq;
+ struct HubPromise *hp;
+ int i,count;
+  
+/* BEGIN query document */
+
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+ hq = CFDB_QueryPromiseHandles(&dbconn,promiser,ptype,btype,bundle,regex,false);
+ 
+ returnval[0] = '\0';
+
+ if(hq)
+    {
+    StartJoin(returnval, "[", bufsize);
+        
+    for (rp = hq->records; rp != NULL; rp=rp->next)
+       {
+       hp = (struct HubPromise *)rp->item;
+       if (!CFDB_QueryPromiseAttr(&dbconn,hp->handle,cfp_promiser,promiserName,CF_BUFSIZE))
+	 {
+	   continue;
+	 }
+       if (!CFDB_QueryPromiseAttr(&dbconn,hp->handle,cfp_bundlename,bundleName,CF_BUFSIZE))
+	 {
+	   continue;
+	 }
+
+       snprintf(work,CF_MAXVARSIZE-1,"[\"%s\",\"%s\",\"%s\"],",bundleName,(char*)hp->handle,promiserName);
+       Join(returnval,work,bufsize);
+       }
+    
+    CFDB_Close(&dbconn);
+
+    if(returnval[strlen(returnval)-1] == ',')
+      {
+	returnval[strlen(returnval)-1] = '\0';
+      }
+    EndJoin(returnval, "]", bufsize);
+    
+    DeleteHubQuery(hq,DeleteHubPromise);
+
+    return true;
+    }
+ else  // no result
+    {
+    CFDB_Close(&dbconn);
     return false;
     }
 
