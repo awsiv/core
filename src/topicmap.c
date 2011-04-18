@@ -77,7 +77,7 @@ bson_destroy(&field);
 while (mongo_cursor_next(cursor))  // loops over documents
    {
    bson_iterator_init(&it1,cursor->current.data);
-   
+
    while (bson_iterator_next(&it1))
       {      
       if (strcmp(bson_iterator_key(&it1),cfk_topicid) == 0)
@@ -512,8 +512,8 @@ struct Item *Nova_GetBusinessGoals(char *handle)
 { char querytopic[CF_BUFSIZE];
   struct Item *worklist = NULL, *ip;
   int pid;
-  
-snprintf(querytopic,CF_BUFSIZE,"handle::%s",handle);
+
+snprintf(querytopic,CF_BUFSIZE,"handles::%s",handle);
 pid = Nova_GetTopicIdForTopic(querytopic);
 
 worklist = Nova_NearestNeighbours(pid,NOVA_GOAL);
@@ -665,10 +665,10 @@ void Nova_FillInGoalComment(struct Item *ip)
   bson_iterator it1,it2,it3;
   mongo_connection conn;
 
-ip->counter = Nova_GetTopicIdForTopic(ip->name);
-
 // Get comment goals.* or targets.%s etc
 
+searchstring[0] = '\0';
+  
 for (rp = GOALCATEGORIES; rp != NULL; rp=rp->next)
    {
    snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",rp->item,CanonifyName(ip->name));
@@ -724,46 +724,56 @@ ip->classes = strdup("No description available");
 
 char *Nova_GetBundleComment(char *bundle)
 
-{ CfdbConn cfdb;
-  char query[CF_MAXVARSIZE];
-  static char buf[CF_BUFSIZE];
- 
-if (strlen(SQL_OWNER) == 0)
+{ static char buf[CF_BUFSIZE];
+  struct Rlist *rp;
+  char searchstring[CF_MAXVARSIZE],work[CF_MAXVARSIZE];
+  bson_buffer bb;
+  bson query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  mongo_connection conn;
+
+// Get comment goals.* or targets.%s etc
+
+if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
-   return "";
+   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
+   return NULL;
    }
 
-CfConnectDB(&cfdb,SQL_TYPE,SQL_SERVER,SQL_OWNER,SQL_PASSWD,SQL_DATABASE);
-    
-if (!cfdb.connected)
+bson_buffer_init(&bb);
+bson_append_string(&bb,cfk_occurrep,"description");
+bson_append_string(&bb,cfk_occurcontext,"bundle");
+bson_from_buffer(&query,&bb);
+
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfk_occurlocator,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,0);
+bson_destroy(&field);
+
+while (mongo_cursor_next(cursor))  // loops over documents
    {
-   CfOut(cf_error,""," !! Could not open sql_db %s\n",SQL_DATABASE);
-   return "";
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Query specific search/marshalling */
+      
+      if (strcmp(bson_iterator_key(&it1),cfk_occurlocator) == 0)
+         {
+         strncpy(buf,bson_iterator_string(&it1),CF_BUFSIZE-1);
+         return buf;
+         }   
+      }
    }
 
-snprintf(query,CF_MAXVARSIZE-1,"SELECT locator from occurrences where subtype = 'description' and context='%s'",bundle);
-
-CfNewQueryDB(&cfdb,query);
-
-if (cfdb.maxcolumns != 1)
-   {
-   CfOut(cf_error,""," !! The topics database table did not promise the expected number of fields - got %d expected %d\n",cfdb.maxcolumns,1);
-   CfCloseDB(&cfdb);
-   return "";
-   }
-
-if (CfFetchRow(&cfdb))
-   {
-   strncpy(buf,CfFetchColumn(&cfdb,0),CF_BUFSIZE);
-   }
-else
-   {
-   buf[0] = '\0';
-   }
-
-CfDeleteQuery(&cfdb);
-CfCloseDB(&cfdb);
-return buf;
+return NULL;
 }
 
 /*****************************************************************************/
