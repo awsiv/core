@@ -12,8 +12,8 @@ _create:function(){
 
 },
 displaytext:function(){
-   console.log(this.value());
-   console.log(this);
+   //console.log(this.value());
+   //console.log(this);
    var value=$('<span>');
    //var startdate=$('<span class="startdate">');
    //var expirydate=$('<span class="enddate">');

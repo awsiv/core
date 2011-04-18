@@ -110,6 +110,34 @@ class Widget extends CI_Controller {
              }
        }
 
+      function allclasses()
+      {
+          echo cfpr_list_all_classes(NULL,NULL,NULL,NULL);
+      }
+
+      function filterclass()
+      {
+          $filter =$this->input->post('filter');
+          switch($filter)
+          {
+              case "time":
+                    echo cfpr_list_time_classes(NULL,NULL,NULL,NULL);
+                    break;
+              case "ip":
+                    echo cfpr_list_ip_classes(NULL,NULL,NULL,NULL);
+                    break;
+              case "soft":
+                    echo cfpr_list_soft_classes(NULL,NULL,NULL,NULL);
+                    break;
+              case "all":
+                    echo cfpr_list_all_classes(NULL,NULL,NULL,NULL);
+                    break;
+              case "host":
+                    echo cfpr_list_host_classes(NULL,NULL,NULL,NULL);
+                    break;
+          }
+      }
+
        function __format_to_html2($result)
         {
           $html="";

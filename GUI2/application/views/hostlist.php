@@ -9,7 +9,8 @@
          <input class="btn" type="submit" value="Filter" class="grid_1">
          </form>
         <?php echo anchor('test/cfclasses','help',array('id'=>'getclass')) ?>
-         <?php echo anchor('#','hostfinder',array('id'=>'findhost')) ?>
+        <?php echo anchor('#','hostfinder',array('id'=>'findhost')) ?>
+        <?php echo anchor('widget/allclasses','classfinder',array('id'=>'findclass')) ?>
         <div class="clear"></div>
         <!--<div id="filters"><span>Selected classes:</span><ul></ul></div>-->
         <div id="hostlist" class="panelcontent tables">
@@ -65,6 +66,8 @@
 				}
 		});
             $('#findhost').hostfinder();
+
+            $('#findclass').classfinder();
 
           // var $filter=$('#filters').find('ul');
 

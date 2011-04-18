@@ -148,10 +148,14 @@ var hostfinder={
 
         self.classdlg.matchedresult=$('<span id="tgmatchedresult">');
         self.classdlg.matchedresult.appendTo(self.classdlg.titlebar).hide();
+        //search the tag cloud when user starts typing in the class
         self.classdlg.searchbar.delegate('input[type="text"]','click',function(){$(this).focus()});
         self.classdlg.searchbar.delegate('input[type="text"]','keyup',{ui:self},self.searchclassinlist);
+        //delegate the options click event in classdialog title bar
         self.classdlg.options.delegate('li','click',{ui:self},self.actionontagcloud);
+        //add a filter when a class is clicked in tag cloud
         self.classdlg.delegate('a', 'click',{ui:self},self.addclassfilter);
+        //apply css in class tag item focys event and handle enter key events
         self.classdlg.delegate('li', 'focusin',{ui:self},self.tagfocusevent);
         self.classdlg.delegate('li', 'focusout',{ui:self},self.tagfocusevent);
         self.classdlg.delegate('li', 'keydown',{ui:self},self.tagcloudkeydown);
