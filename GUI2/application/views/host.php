@@ -139,7 +139,6 @@ $(document).ready(function() {
                $(element).attr('href', '/notes/index/action/show/nid/' + nid);
                // console.log(nid,element);
         }});
-	
     reportcontrol(<?php echo $jsondata?>,"host");
 });
 </script>

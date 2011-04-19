@@ -32,13 +32,13 @@ class Welcome extends Cf_Controller {
             '
         );
 
-        $expirydate=strtotime(cfpr_getlicense_expiry());
-        $startDate=cfpr_getlicense_installtime();
+        $expirydate = strtotime(cfpr_getlicense_expiry());
+        $startDate = cfpr_getlicense_installtime();
         //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
-        $datediff = $expirydate - $startDate ;
-        $totaldays=floor($datediff/(60*60*24));
-        $dayspassed=floor((time()-$startDate)/(60*60*24));
-        $pbarvalue=floor(($dayspassed/$totaldays)*100);
+        $datediff = $expirydate - $startDate;
+        $totaldays = floor($datediff / (60 * 60 * 24));
+        $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
+        $pbarvalue = floor(($dayspassed / $totaldays) * 100);
 
         $data = array(
             'title' => "Cfengine Mission Portal - overview",
@@ -48,8 +48,8 @@ class Welcome extends Cf_Controller {
             'r' => $r,
             'y' => $y,
             'g' => $g,
-            'pbarvalue'=>$pbarvalue,
-            'daysleft'=>$totaldays-$dayspassed,
+            'pbarvalue' => $pbarvalue,
+            'daysleft' => $totaldays - $dayspassed,
         );
 
         $gdata = cfpr_compliance_summary_graph(null);
@@ -79,10 +79,9 @@ class Welcome extends Cf_Controller {
                     ',
             '<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />
              ',
-              '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.js"> </script>
+            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.js"> </script>
                 ',
             'pie' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.pie.js"> </script>',
-           
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . '/widgets/notes.js"> </script>',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . '/jquery.curvycorners.packed.js"> </script>',
@@ -91,7 +90,7 @@ class Welcome extends Cf_Controller {
         $this->template->set('injected_item', implode("", $scripts));
 
         $this->breadcrumb->setBreadCrumb($bc);
-//$reports = json_decode(cfpr_select_reports(".*", 100));
+        //$reports = json_decode(cfpr_select_reports(".*", 100));
         //$goals=cfpr_list_business_goals();
         $data = array(
             'title' => "Cfengine Mission Portal-engineering status",
@@ -134,10 +133,11 @@ class Welcome extends Cf_Controller {
         $businessValuePieData = cfpr_get_value_graph(NULL, NULL, NULL, NULL, NULL);
         $businessValuePieArray = json_decode($businessValuePieData);
 
+
 // make data ready for pie
 
 
-        if (is_array($businessValuePieArray)) {
+        if (is_array($businessValuePieArray) && !empty($businessValuePieArray)) {
             $kept = 0;
             $notkept = 0;
             $repaired = 0;
@@ -152,6 +152,12 @@ class Welcome extends Cf_Controller {
             $data['businessValuePie']['kept'] = abs($kept);
             $data['businessValuePie']['notkept'] = abs($notkept);
             $data['businessValuePie']['repaired'] = abs($repaired);
+            $data['businessValuePie']['nodata'] = 0;
+        } else {
+            $data['businessValuePie']['kept'] = 0;
+            $data['businessValuePie']['notkept'] = 0;
+            $data['businessValuePie']['repaired'] = 0;
+            $data['businessValuePie']['nodata'] = 100;
         }
 
 
@@ -159,6 +165,7 @@ class Welcome extends Cf_Controller {
         $data['redhost'] = cfpr_count_red_hosts();
         $data['yellowhost'] = cfpr_count_yellow_hosts();
         $data['greenhost'] = cfpr_count_green_hosts();
+
         $this->template->load('template', 'status', $data);
     }
 
@@ -422,7 +429,7 @@ class Welcome extends Cf_Controller {
 
             $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : "none";
         }
-        $reports = (array)json_decode(cfpr_select_reports(".*", 100));
+        $reports = (array) json_decode(cfpr_select_reports(".*", 100));
         $hostname = cfpr_hostname($hostkey);
         $ipaddr = cfpr_ipaddr($hostkey);
         $username = isset($_POST['username']) ? $_POST['username'] : "";

@@ -1,8 +1,8 @@
 <?php
-class Test extends CI_Controller
+class Testing extends CI_Controller
 {
 	
-	function Test()
+	function Testing()
 	 {
 		 parent::__construct();
      

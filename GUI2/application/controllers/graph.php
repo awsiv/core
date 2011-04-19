@@ -388,8 +388,7 @@ class Graph extends CF_Controller {
             'isRoot' => false
         );
 
-     
-        
+
 //$reports = json_decode(cfpr_select_reports(".*", 100));
         $data = array(
             'title' => "Cfengine Mission Portal - engineering status",
@@ -404,24 +403,22 @@ class Graph extends CF_Controller {
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.js"> </script>
                 ',
             'mv' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.magnifiedview.js"> </script>
-             ','stack' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.stack.js"> </script>
+             ', 'stack' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.stack.js"> </script>
 
-','fill' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.fillbetween.js"> </script>');
+', 'fill' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.fillbetween.js"> </script>');
 
 
         $this->template->set('injected_item', implode('', $this->scripts));
 
         $key = 'SHA=ea623bad7e756bf0a39081ac22cfb572de1f7d8d970c026a529172f6c5f6fb98';
-        $data['gdata'] = cfpr_get_value_graph($key,NULL,NULL,NULL,NULL);
+        $data['gdata'] = cfpr_get_value_graph($key, NULL, NULL, NULL, NULL);
 
         $this->template->load('template', 'graph/test', $data);
-
     }
-
 
     function businessValueGraph() {
 
-$data = array(
+        $data = array(
             'title' => "Cfengine Mission Portal - engineering status",
             'title_header' => "engineering status",
             'nav_text' => "Status : hosts",
@@ -434,7 +431,7 @@ $data = array(
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.js"> </script>
                 ',
             'mv' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.magnifiedview.js"> </script>
-             ','stack' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.stack.js"> </script>
+             ', 'stack' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.stack.js"> </script>
 
 ',
             'fill' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.fillbetween.js"> </script>',
@@ -444,11 +441,9 @@ $data = array(
         $this->template->set('injected_item', implode('', $this->scripts));
 
         $key = 'SHA=ea623bad7e756bf0a39081ac22cfb572de1f7d8d970c026a529172f6c5f6fb98';
-        $data['gdata'] = cfpr_get_value_graph(NULL,NULL,NULL,NULL,NULL);
+        $data['gdata'] = cfpr_get_value_graph(NULL, NULL, NULL, NULL, NULL);
 
         $this->template->load('template', 'graph/pie', $data);
     }
-
-
 
 }

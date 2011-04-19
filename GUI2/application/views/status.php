@@ -267,10 +267,13 @@
     hostpie.loadJSON(hostpiejson);
          */
 
+
+
         var businessValueData =  [
             { label: "kept",  data: <?php echo $businessValuePie['kept']; ?>,color:"#90A316"},
             { label: "notkept",  data: <?php echo $businessValuePie['notkept']; ?>,color:"#C33D54"},
-            { label: "repaired",  data: <?php echo $businessValuePie['repaired']; ?>,color:"#BFAA54"}
+            { label: "repaired",  data: <?php echo $businessValuePie['repaired']; ?>,color:"#BFAA54"},
+            { label: "No Data",  data: <?php echo $businessValuePie['nodata']; ?>,color:"#000000"}
         ];
 
         $.plot($("#business-value-pie-chart"), businessValueData,

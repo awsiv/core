@@ -1,11 +1,12 @@
 <?php
-
 class Notes extends Cf_Controller {
 
     function __construct() {
         parent::__construct();
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
+        
+        
     }
 
     function index() {
@@ -92,8 +93,6 @@ class Notes extends Cf_Controller {
             $this->data['updateMessage'] = "Cannot insert empty message.";
         }
 
-
-
         $this->data['nid'] = $ret;
         $this->data['rid'] = $rid;
         $this->data['hostkey'] = $keyhash;
@@ -106,6 +105,9 @@ class Notes extends Cf_Controller {
 
         $this->data['data'] = json_decode($comments, TRUE);
         $this->load->view('/notes/view_notes', $this->data);
+
+        
+
     }
 
     function showNotes() {
