@@ -89,8 +89,8 @@ for (i = 0; i < tribe_size; i++)
             "\"name\": \"%s\",\n"
             " \"data\": "
 	              "{ " 
-	              "'$color':'%s', "
-	              "'$dim': %.1lf, "
+	              "\"$color\":\"%s\", "
+	              "\"$dim\": %.1lf, "
 	              "\"$type\": \"gradientCircle\","
 	              "\"link\": \"%s\""
 	              "},\n"
@@ -108,9 +108,11 @@ for (i = 0; i < tribe_size; i++)
          Join(buffer,work,bufsize);
          }
       }
+   buffer[strlen(buffer)-1] = ']';
    
-   Join(buffer,"],\n},\n",bufsize);
+   Join(buffer,"\n},",bufsize);
    }
+ buffer[strlen(buffer)-1] = '\0';
 
 // Cleanup
 
