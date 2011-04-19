@@ -11,7 +11,7 @@
     <body>
         <div id="container" class="container_12">
         <form id="searchhost" action="<?php echo site_url('widget/search_by_hostname');?>">
-            <span id="search">
+            <span class="search">
             <input type="text" name="search" value="Search by hostname"/>
             <input class="hidden" type="submit" value="" />
             </span>

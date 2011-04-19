@@ -639,7 +639,7 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
 
 
 /* host finder control*/
-#searchhost span#search
+span.search
 {
     background: url("../images/searchbar.png") no-repeat scroll 0 0 transparent;
     position:absolute;
@@ -649,7 +649,7 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
     width:220px;
     height:25px;
 }
-#searchhost span#search input
+span.search input
 {
     background: none repeat scroll 0 0 transparent;
     font:9pt Helvetica,Arial,Tahoma,sans-serif;
@@ -666,6 +666,11 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
     /*background: url("images/ui-bg_glass_75_ffffff_1x400.png") repeat-x scroll 50% 50% #FFFFFF;*/
     border: 1px solid #3d453a;
     color: #222222;
+}
+
+.customdlg #classlistcontainer
+{
+    background: #fff;
 }
 .customdlg #hostfinderctrl
 {
@@ -700,7 +705,7 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
     padding:12px 0;
 }
 
-#searchby
+.categories
 {
   position:absolute;
   top:80%;
@@ -711,9 +716,10 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
   background:#3d453a;
   padding:20px 0;
   font-size: 11px;
+  border-radius:0 0 5px 5px;
 }
 
-#searchby li
+.categories li
 {
     padding:5px 0;
     margin:0 10px;
@@ -721,15 +727,47 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
     cursor: pointer;
 }
 
-#searchby li:hover,#searchby li.selected
+.categories li:hover,#categories li.selected
 {
     color:#ff9900;
 }
-#searchby li:last-child
+.categories li:last-child
 {
     border:none;
     padding:0 0;
 }
+
+.alphasearch{
+    position:absolute;
+    right:25px;
+    top:80px;
+    text-align: center;
+}
+
+.alphasearch li
+{
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.alphasearch li:hover
+{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.alphasearch li.selected
+{
+    background: none repeat scroll 0 0 #4D4D4D;
+    border-radius: 2px 2px 2px 2px;
+    color: #FFFFFF;
+}
+
+.unmatched
+{
+  display:none;
+}
+
 
 #searchresult{
     width:98%;
@@ -858,7 +896,7 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
 {
     border-bottom:solid 1px #3d453a;
     height:44px;
-    margin-right: 20px;
+    width:96.5%;
 }
 
 .result li a
@@ -866,13 +904,6 @@ background: url("../images/env_btn_rear.png") no-repeat right top;
     display:block;
     padding-top:15px;
 }
-
-#alphasearch{
-    position:absolute;
-    right:10px;
-    top:50px;
-}
-
 
 /****************************/
 .alert{
