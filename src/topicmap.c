@@ -58,7 +58,10 @@ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
 
 bson_buffer_init(&bb);
 bson_append_string(&bb,cfk_topicname,topic);
-bson_append_string(&bb,cfk_topiccontext,type);
+ if(strlen(type)>0)
+   {
+     bson_append_string(&bb,cfk_topiccontext,type);
+   }
 bson_from_buffer(&query,&bb);
 
 /* BEGIN RESULT DOCUMENT */
@@ -639,7 +642,7 @@ void Nova_AddOccurrenceBuffer(char *context,char *locator,enum representations l
 
 { char work[CF_BUFSIZE];
  
-snprintf(work,CF_BUFSIZE-1,"{ context: \"%s\", ref: \"%s\", represents: \"%s\", type: %d},",context,locator,represents,locator_type);
+snprintf(work,CF_BUFSIZE-1,"{ \"context\": \"%s\", \"ref\": \"%s\", \"represents\": \"%s\", \"type\": %d},",context,locator,represents,locator_type);
 Join(buffer,work,bufsize);
 }
 
@@ -671,7 +674,7 @@ searchstring[0] = '\0';
   
 for (rp = GOALCATEGORIES; rp != NULL; rp=rp->next)
    {
-   snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",rp->item,CanonifyName(ip->name));
+     snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",rp->item,CanonifyName(ip->name));
    strcat(searchstring,work);
    }
 

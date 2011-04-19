@@ -2715,18 +2715,18 @@ for (ip = list; ip != NULL; ip=ip->next)
    {
    if (ip == list)
       {
-      snprintf(work,CF_BUFSIZE,"{ assoc: \"%s\", topics: [",ip->name);
+      snprintf(work,CF_BUFSIZE,"{ \"assoc\": \"%s\", \"topics\": [",ip->name);
       Join(buffer,work,bufsize);
       }
 
-   snprintf(work,CF_BUFSIZE,"{ topic: \"%s\", id: %d },",ip->classes,ip->counter);
+   snprintf(work,CF_BUFSIZE,"{ \"topic\": \"%s\", \"id\": %d },",ip->classes,ip->counter);
    Join(buffer,work,bufsize);
    
    if (ip->next && strcmp(ip->name,ip->next->name) != 0)
       {
       strcpy(buffer+strlen(buffer)-1,"]},");
 
-      snprintf(work,CF_BUFSIZE,"{ assoc: \"%s\", topics: [",ip->name);
+      snprintf(work,CF_BUFSIZE,"{ \"assoc\": \"%s\", \"topics\": [",ip->name);
       Join(buffer,work,bufsize);
       }
 
