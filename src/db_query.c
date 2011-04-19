@@ -577,7 +577,10 @@ struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lc
 /*****************************************************************************/
 
 struct Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
-
+/*
+ * Returns a list of classes related to Date and Time; NULL if none
+ * MEMORY NOTE: Caller must free returned value with DeleteRlist()
+ */
 { bson_buffer bb;
  bson query,field;
  mongo_cursor *cursor;
@@ -656,13 +659,16 @@ while (mongo_cursor_next(cursor))  // loops over documents
     }
 
 mongo_cursor_destroy(cursor);
-return (struct Rlist *) classList;
+return classList;
 }
 
 /*****************************************************************************/
 
 struct Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
-
+/*
+ * Returns a list of Soft classes; NULL if none
+ * MEMORY NOTE: Caller must free returned value with DeleteRlist()
+ */
 { bson_buffer bb;
  bson query,field;
  mongo_cursor *cursor;
@@ -742,13 +748,16 @@ struct Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *l
     }
  
  mongo_cursor_destroy(cursor);
- return (struct Rlist *)classList;
+ return classList;
 }
 
 /*****************************************************************************/
 
 struct Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
-
+/*
+ * Returns a list of classes related to IP addresses; NULL if none
+ * MEMORY NOTE: Caller must free returned value with DeleteRlist()
+ */
 { bson_buffer bb;
  bson query,field;
  mongo_cursor *cursor;
@@ -822,7 +831,7 @@ struct Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lcl
 		 ReplaceChar(rclass,ipAddress,CF_MAXVARSIZE,'_','.');
 		 if(IsIPV4Address(ipAddress) || IsIPV6Address(ipAddress))
 		   {
-		     IdempAppendRScalar(&classList,ipAddress,CF_SCALAR);
+		     IdempAppendRScalar(&classList,rclass,CF_SCALAR);
 		   }
 	       }
 	   }
@@ -830,7 +839,7 @@ struct Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lcl
     }
 
  mongo_cursor_destroy(cursor);
- return (struct Rlist *)classList;
+ return classList;
 }
 
 /*****************************************************************************/
@@ -6445,6 +6454,167 @@ void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int dept
  retBuf[strlen(retBuf)-2] = 0;  // clear last comma
 }
 /*************************************************/
+struct Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
+
+{ bson_buffer bb;
+  bson query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct Rlist *classList = {0};
+  char rclass[CF_MAXVARSIZE];
+  char classRegexAnch[CF_MAXVARSIZE];
+  char ipAddress[CF_MAXVARSIZE];
+  int emptyQuery = true;
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  char hostclass[CF_BUFSIZE];
+
+  /* BEGIN query document */
+
+  bson_buffer_init(&bb);
+
+  if (!EMPTY(keyHash))
+    {
+      bson_append_string(&bb,cfr_keyhash,keyHash);
+      emptyQuery = false;
+    }
+  if(!EMPTY(classRegex))
+    {
+      AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+      bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+      emptyQuery = false;
+    }
+
+  if(emptyQuery)
+    {
+      bson_empty(&query);
+    }
+  else
+    {
+      bson_from_buffer(&query,&bb);
+    }
+
+  /* BEGIN RESULT DOCUMENT */
+  bson_buffer_init(&bb);
+  bson_append_int(&bb,cfr_keyhash,1);
+  bson_append_int(&bb,cfr_ip_array,1);
+  bson_append_int(&bb,cfr_host_array,1);
+  bson_from_buffer(&field, &bb);
+  /* BEGIN SEARCH */
+  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+  bson_destroy(&field);
+  if(!emptyQuery)
+    {
+      bson_destroy(&query);
+    }
+  while (mongo_cursor_next(cursor))  // loops over documents
+    {
+      bson_iterator_init(&it1,cursor->current.data);
+      keyhash[0] = '\0';
+      hostnames[0] = '\0';
+      addresses[0] = '\0';
+      while (bson_iterator_next(&it1))
+	{
+	  CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+	  if(strlen(hostnames) > 0)
+	    {
+	      ReplaceChar(hostnames,hostclass,CF_BUFSIZE,'.','_');
+	      ReplaceChar(hostclass,hostnames,CF_BUFSIZE,'-','_');
+	      ReplaceChar(hostnames,hostclass,CF_BUFSIZE,' ','_');
+	      IdempAppendRScalar(&classList,hostclass,CF_SCALAR);
+	    }
+	}
+    }
+
+  mongo_cursor_destroy(cursor);
+  return (struct RList *)classList;
+}
+
+/*************************************************/
+struct Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
+
+{ bson_buffer bb;
+  bson query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct Rlist *classList = {0};
+  char rclass[CF_MAXVARSIZE];
+  char classRegexAnch[CF_MAXVARSIZE];
+  char ipAddress[CF_MAXVARSIZE];
+  int emptyQuery = true;
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  char hostclass[CF_BUFSIZE];
+
+    /* BEGIN query document */
+
+    bson_buffer_init(&bb);
+
+  if (!EMPTY(keyHash))
+    {
+      bson_append_string(&bb,cfr_keyhash,keyHash);
+      emptyQuery = false;
+    }
+
+  if (!EMPTY(classRegex))
+    {
+      AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+      bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+      emptyQuery = false;
+    }
+
+  if (emptyQuery)
+    {
+      bson_empty(&query);
+    }
+  else
+    {
+      bson_from_buffer(&query,&bb);
+    }
+
+  /* BEGIN RESULT DOCUMENT */
+
+  bson_buffer_init(&bb);
+  bson_append_int(&bb,cfr_class,1);
+  bson_from_buffer(&field, &bb);
+
+  /* BEGIN SEARCH */
+
+  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+  bson_destroy(&field);
+
+  if (!emptyQuery)
+    {
+      bson_destroy(&query);
+    }
+
+  while (mongo_cursor_next(cursor))  // loops over documents
+    {
+      bson_iterator_init(&it1,cursor->current.data);
+
+      rclass[0] = '\0';
+
+      while (bson_iterator_next(&it1))
+	{
+	  if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
+	    {
+	      bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+	      while (bson_iterator_next(&it2))
+		{
+		  bson_iterator_init(&it3, bson_iterator_value(&it2));
+		  strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+
+		  IdempAppendRScalar(&classList,rclass,CF_SCALAR);
+		}
+	    }
+	}
+    }   
+
+  mongo_cursor_destroy(cursor);
+  return classList;
+}
+/*************************************************/
+
+
 #endif  /* HAVE LIB_MONGOC */
 
 

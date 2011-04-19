@@ -641,8 +641,6 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,st
 int Nova2PHP_listclasses_time(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE]={0};
-  struct HubClass *hc;
-  struct HubQuery *hq;
   struct Rlist *rp, *rp2;
   mongo_connection dbconn;
 
@@ -660,7 +658,7 @@ StartJoin(returnval,"[",bufsize);
 
 for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
    {
-   snprintf(buffer,sizeof(buffer),"\"%s\",",rp2->item);
+     snprintf(buffer,sizeof(buffer),"\"%s\",",(char*)rp2->item);
    
    if(!Join(returnval,buffer,bufsize))
       {
@@ -675,6 +673,7 @@ if (returnval[strlen(returnval)-1]==',')
 
 EndJoin(returnval,"]\n",bufsize);
 
+ DeleteRlist(rp);
 CFDB_Close(&dbconn);
 
 return true;
@@ -685,8 +684,6 @@ return true;
 int Nova2PHP_listclasses_soft(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE]={0};
- struct HubClass *hc;
- struct HubQuery *hq;
  struct Rlist *rp, *rp2;
  mongo_connection dbconn;
 
@@ -704,7 +701,7 @@ StartJoin(returnval,"[",bufsize);
 
 for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
    {
-   snprintf(buffer,sizeof(buffer),"\"%s\",",rp2->item);
+     snprintf(buffer,sizeof(buffer),"\"%s\",",(char *)rp2->item);
    
    if(!Join(returnval,buffer,bufsize))
       {
@@ -719,6 +716,7 @@ if (returnval[strlen(returnval)-1]==',')
 
 EndJoin(returnval,"]\n",bufsize);
 
+ DeleteRlist(rp);
 CFDB_Close(&dbconn);
 
 return true;
@@ -729,8 +727,6 @@ return true;
 int Nova2PHP_listclasses_ip(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE]={0};
-  struct HubClass *hc;
-  struct HubQuery *hq;
   struct Rlist *rp, *rp2;
   mongo_connection dbconn;
 
@@ -749,7 +745,7 @@ StartJoin(returnval,"[",bufsize);
 
 for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
    {
-   snprintf(buffer,sizeof(buffer),"\"%s\",",rp2->item);
+     snprintf(buffer,sizeof(buffer),"\"%s\",",(char *)rp2->item);
    
    if(!Join(returnval,buffer,bufsize))
       {
@@ -764,12 +760,89 @@ if(returnval[strlen(returnval)-1]==',')
 
 EndJoin(returnval,"]\n",bufsize);
 
+ DeleteRlist(rp);
 CFDB_Close(&dbconn);
 
 return true;
 }
 
 /*****************************************************************************/
+int Nova2PHP_listclasses_host(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
+
+{ char buffer[CF_BUFSIZE]={0};
+  struct Rlist *rp, *rp2;
+  mongo_connection dbconn;
+
+  /* BEGIN query document */
+  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+      CfOut(cf_verbose,"", "!! Could not open connection to report database");
+      return false;
+    }
+
+  rp = (void*)CFDB_QueryHostClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+  StartJoin(returnval,"[",bufsize);
+  for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
+    {
+      snprintf(buffer,sizeof(buffer),"\"%s\",",(char *)rp2->item);
+
+      if(!Join(returnval,buffer,bufsize))
+        {
+          break;
+        }
+    }
+  if (returnval[strlen(returnval)-1]==',')
+    {
+      returnval[strlen(returnval)-1]='\0';
+    }
+  EndJoin(returnval,"]\n",bufsize);
+
+  DeleteRlist(rp);
+  CFDB_Close(&dbconn);
+  return true;
+}
+/*****************************************************************************/
+int Nova2PHP_listclasses_all(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
+
+{ char buffer[CF_BUFSIZE]={0};
+  struct Rlist *rp, *rp2;
+  mongo_connection dbconn;
+  /* BEGIN query document */
+
+  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+      CfOut(cf_verbose,"", "!! Could not open connection to report database");
+      return false;
+    }
+  
+  rp = CFDB_QueryAllClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+  
+  StartJoin(returnval,"[",bufsize);
+  
+  for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
+    {
+      snprintf(buffer,sizeof(buffer),"\"%s\",",(char*)rp2->item);
+
+      if(!Join(returnval,buffer,bufsize))
+        {
+          break;
+        }
+    }
+
+  if (returnval[strlen(returnval)-1]==',')
+    {
+      returnval[strlen(returnval)-1]='\0';
+    }
+  EndJoin(returnval,"]\n",bufsize);
+
+  DeleteRlist(rp);
+  CFDB_Close(&dbconn);
+
+  return true;
+}
+
+/*****************************************************************************/
+
 int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
 
 { mongo_connection dbconn;
@@ -5766,8 +5839,71 @@ int Con2PHP_rank_promise_popularity(bool sortAscending, char *buf, int bufsize)
 #endif
 
 }
+/*****************************************************************************/
+int Nova2PHP_list_handles_policy_finder(char *promiser,char *ptype,char *bundle,char *btype,int regex,char *returnval,int bufsize)
 
+{ mongo_connection dbconn;
+  char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
+  char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
+  char work[CF_MAXVARSIZE];
+  char bundleName[CF_BUFSIZE],promiserName[CF_BUFSIZE];
+  struct Rlist *rp;
+  struct HubPromise *hp;
+  struct HubQuery *hq;
+  int i,count;
 
+  /* BEGIN query document */
+
+  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+      CfOut(cf_verbose,"", "!! Could not open connection to report database");
+      return false;
+    }
+
+  hq = CFDB_QueryPromiseHandles(&dbconn,promiser,ptype,btype,bundle,regex,false);
+
+  returnval[0] = '\0';
+
+  if(hq)
+    {
+      StartJoin(returnval, "[", bufsize);
+
+      for (rp = hq->records; rp != NULL; rp=rp->next)
+	{
+	  hp = (struct HubPromise *)rp->item;
+	  if (!CFDB_QueryPromiseAttr(&dbconn,hp->handle,cfp_promiser,promiserName,CF_BUFSIZE))
+	    {
+	      continue;
+	    }
+	  if (!CFDB_QueryPromiseAttr(&dbconn,hp->handle,cfp_bundlename,bundleName,CF_BUFSIZE))
+	    {
+	      continue;
+	    }
+
+	  snprintf(work,CF_MAXVARSIZE-1,"[\"%s\",\"%s\",\"%s\"],",bundleName,(char*)hp->handle,promiserName);
+	  Join(returnval,work,bufsize);
+	}
+
+      CFDB_Close(&dbconn);
+
+      if(returnval[strlen(returnval)-1] == ',')
+	{
+	  returnval[strlen(returnval)-1] = '\0';
+	}
+      EndJoin(returnval, "]", bufsize);
+
+      DeleteHubQuery(hq,DeleteHubPromise);
+
+      return true;
+    }
+  else  // no result
+    {
+      CFDB_Close(&dbconn);
+      return false;
+    }
+}
+
+/*****************************************************************************/
 
 #endif  /* HAVE_LIBMONGOC */
 
