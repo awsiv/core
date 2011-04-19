@@ -8,23 +8,19 @@ if ($search == "") {
         echo "$ret";
         return;
     }
-?>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('div#disambig').addClass('pagepanel');
-            $('div#disambig').find('h2').addClass('panelhead');
-            $('div#disambig').find('ul').addClass('panelcontent');
-        });
-    </script>
+?>   
     <div class="grid_7">
         <div class="panel">
             <div class="panelhead">Copernicus local cluster view</div>
             <div class="panelcontent">
                 <div class="imageviewer"><div id="knowledge_pic">
-                        <div id="infovis" style="height: 600px;"></div>
+                        <div id="infovis" style="width:100%;height: 600px;"></div>
                         <div id="log"></div>
-
-                    </div></div></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="grid_5">
     <?php
     $hits = cfpr_show_topic_hits($pid);
@@ -47,12 +43,15 @@ if ($search == "") {
     echo "$ret";
 }
 ?>
-<script type="text/javascript" src="<?php echo get_scriptdir() ?>jquery.fancybox-1.3.1.js"></script>
 <script id="source" language="javascript" type="text/javascript">
     //<![CDATA[
 
-    //jQuery.noConflict();
-    // Use jQuery via jQuery(...)
+    $(document).ready(function() {
+        $('div#disambig').addClass('pagepanel');
+        $('div#disambig').find('h2').addClass('panelhead');
+        $('div#disambig').find('ul').addClass('panelcontent');
+    });
+
     var labelType, useGradients, nativeTextSupport, animate;
 
     jQuery(document).ready(function(){
