@@ -6526,7 +6526,7 @@ struct Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *l
     }
 
   mongo_cursor_destroy(cursor);
-  return (struct RList *)classList;
+  return classList;
 }
 
 /*************************************************/
