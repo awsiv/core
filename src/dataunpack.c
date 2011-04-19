@@ -782,7 +782,7 @@ if (strcmp(arch,"6") == 0)
 
 if (strcmp(arch,"") == 0)
    {
-   return "*";
+   return "noarch";
    }
 
 if (strcmp(arch,"\n") == 0)
