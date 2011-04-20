@@ -113,8 +113,6 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
             bson_append_int(sub,cfk_associd,to_id);
             bson_append_finish_object(sub);
             }
-
-         bson_append_finish_object(assocs);
          }
       
       for (itp = tp->synonyms; itp != NULL; itp=itp->next)
