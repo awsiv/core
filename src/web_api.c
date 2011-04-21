@@ -2670,14 +2670,10 @@ int Nova2PHP_search_topics(char *search,int regex,char *buffer,int bufsize)
 
 if ((pid = Nova_SearchTopicMap(search,buffer,bufsize)))
    {
-   // If there's only one match, just show it
-   snprintf(buffer,bufsize,"<meta HTTP-EQUIV=\"REFRESH\" content=\"0; url=/welcome/knowledge/pid/%d\">",pid);
    return true;
    }
-else
-   {
-   return true;
-   }
+
+return false;
 }
 
 /*****************************************************************************/
@@ -2690,7 +2686,7 @@ buffer[0] = '\0';
 
 if (Nova_GetTopicByTopicId(id,topic_name,topic_id,topic_context))
    {
-     snprintf(buffer,bufsize,"{\"topic\":\"%s\",\"context\":\"%s\"}",topic_name,topic_context);
+   snprintf(buffer,bufsize,"{\"topic\":\"%s\",\"context\":\"%s\"}",topic_name,topic_context);
    }
 else
    {
