@@ -312,6 +312,13 @@ class Welcome extends Cf_Controller {
     }
 
     function knowledge() {
+
+        // add a js file
+        $this->carabiner->js('jit/jit-yc.js');
+        $jsIE = array('jit/Extras/excanvas.js');
+        $this->carabiner->group('iefix', array('js'=>$jsIE) );
+
+
         $bc = array(
             'title' => 'Knowledge Map',
             'url' => 'welcome/knowledge',
@@ -338,31 +345,13 @@ class Welcome extends Cf_Controller {
 
 
         $data['graphdata'] = ($gdata);
-        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/Extras/excanvas.js"></script><![endif]-->
-            ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>
-            ',
-            '<style type="text/css">
-            /*<![CDATA[*/
+        
+        
+        
+        $topicsData = array();
+        $topicLeads = array();
 
-
-            .node{
-                background-color: #ccccff;
-                border: 1px;
-                -moz-box-shadow: 3px 3px 5px #888;
-                -webkit-box-shadow: 3px 3px 5px #888;
-                box-shadow: 3px 3px 5px #888;
-
-            }
-
-
-            /*]]>*/
-        </style>
-',
-            '<link href="' . get_cssdir() . 'jquery.fancybox-1.3.1.css" rel="stylesheet" media="screen" />');
-
-
-        $this->template->set('injected_item', implode("", $scripts));
+        //$this->template->set('injected_item', implode("", $scripts));
         $this->template->load('template', 'knowledge', $data);
     }
 
@@ -648,7 +637,7 @@ class Welcome extends Cf_Controller {
         );
         $this->breadcrumb->setBreadCrumb($bc);
 
-//for creating the initial table of hosts as cfpr_select_hosts return the json data
+        //for creating the initial table of hosts as cfpr_select_hosts return the json data
         $cells = array();
         $result = json_decode(cfpr_select_hosts("none", ".*", 100), true);
         if (count($result) > 0) {

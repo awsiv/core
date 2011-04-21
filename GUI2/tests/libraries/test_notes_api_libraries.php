@@ -22,6 +22,12 @@ class test_notes_api_libraries extends CodeIgniterUnitTestCase {
         $this->assertTrue(is_array($data));
     }
 
+    public function test_getData(){
+        
+        $this->assertTrue(true);
+    }
+
+    
     
 
 }
