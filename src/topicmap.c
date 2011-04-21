@@ -147,9 +147,9 @@ bson_buffer_init(&bb);
 bson_append_string(&bb,cfk_topicname,topic);
 
 if (strlen(type) > 0)
-   {
-   bson_append_string(&bb,cfk_topiccontext,type);
-   }
+  {
+    bson_append_string(&bb,cfk_topiccontext,type);
+  }
 
 bson_from_buffer(&query,&bb);
 
@@ -344,7 +344,7 @@ void Nova_ScanTheRest(int pid,char *buffer, int bufsize)
 /* Find other topics in the same context */
     
 { char this_name[CF_BUFSIZE],this_id[CF_BUFSIZE],this_context[CF_BUFSIZE];
-  struct Item *worklist;
+  struct Item *worklist, *ip;
  
 if (!Nova_GetTopicByTopicId(pid,this_name,this_id,this_context))
    {
@@ -355,10 +355,23 @@ if (!Nova_GetTopicByTopicId(pid,this_name,this_id,this_context))
 // Find other topics that have this topic as their category (sub topics)
 
 worklist = Nova_GetTopicsInContext(this_id);
+ for (ip = worklist; ip != NULL; ip = ip->next)
+   {
+     printf("bishwa: name = %s\n", ip->name);
+     printf("bishwa: classes = %s\n", ip->classes);
+     printf("bishwa: counter = %d\n", ip->counter);
+   }
+
 
 // Find other topics in the same context
 
 worklist = Nova_GetTopicsInContext(this_context);
+ for (ip = worklist; ip != NULL; ip = ip->next)
+   {
+     printf("bishwa: name = %s\n", ip->name);
+     printf("bishwa: classes = %s\n", ip->classes);
+     printf("bishwa: counter = %d\n", ip->counter);
+   }
 }
 
 /*****************************************************************************/
@@ -673,6 +686,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    bson_iterator_init(&it1,cursor->current.data);
    
    topic_name[0] = '\0';
+
    topic_context[0] = '\0';
    topic_id = 0;
    
