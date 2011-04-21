@@ -1057,12 +1057,16 @@ void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int
 #define CF_METER_WIDTH  500
 #define CF_METER_MARGIN 5
 
+/***************************************************************************/
+/* Knowledge relationships                                                 */
+/***************************************************************************/
+
+// See also similar in cf3.defs.h
+
 #define NOVA_USES "relies on promise from"
 #define NOVA_GIVES "makes promise to"
-
 #define NOVA_ACTIVATED "is activated by class context"
 #define NOVA_ACTIVATES "activates promises"
-
 #define NOVA_IMPACTS "has direct influence on"
 #define NOVA_ISIMPACTED "is directly influenced by"
 #define NOVA_BUNDLE_DATA "uses variables defined in"
@@ -1070,11 +1074,16 @@ void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int
 #define NOVA_BUNDLE_DATA_INV_P "promises variables used by promise"
 #define NOVA_HANDLE "is the handle for"
 #define NOVA_HANDLE_INV "has a promise with handle"
-
 #define NOVA_SYNONYM "is a synonym for"
-
 #define NOVA_GOAL "contributes to business goal"
 #define NOVA_GOAL_INV "is supported by a promise"
+#define NOVA_GEN "is derived from"
+#define NOVA_REPORTED "are reported in"
+#define NOVA_SEEALSO "see also"
+
+/***************************************************************************/
+/* DBs                                                                     */
+/***************************************************************************/
 
 #define NOVA_HISTORYDB "history" "." DB_FEXT
 #define NOVA_MEASUREDB "nova_measures" "." DB_FEXT

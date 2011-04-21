@@ -376,7 +376,7 @@ fprintf(fp,"  \"%s\";\n",pp->classes);
 
 fprintf(fp,"promisers::\n\n");
 fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
-fprintf(fp,"      association => a(\"occurs in bundle\",\"bundles::%s\",\"bundle contains promiser\");\n",pp->bundle);
+fprintf(fp,"      association => a(\"%s\",\"bundles::%s\",\"%s\");\n",KM_PARTOF_CERT_F,pp->bundle,"has promiser");
 fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
 fprintf(fp,"      association => a(\"makes promise of type\",\"promise_types::%s\",\"promises have been made by\");\n",pp->agentsubtype);
 fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
@@ -384,7 +384,7 @@ fprintf(fp,"      association => a(\"makes promises\",\"%s\",\"is a promise made
 
 
 fprintf(fp,"promise_types::\n");
-fprintf(fp,"  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype,"is promised in bundle",pp->bundle,"is a bundle with promises of type");
+fprintf(fp,"  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype,"is promised in",pp->bundle,"has promises of type");
 
 /* Look for bundles used as promises through methods  -- these are service bundles */
 
@@ -432,9 +432,9 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
             char *handle = GetConstraint("handle",pp,CF_SCALAR);
 
             snprintf(bodyref,CF_MAXVARSIZE,"bodies::%s",bodyname);
-            fprintf(fp,"promise_types::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype,"can use",bodyref,"can be used by");
-            fprintf(fp,"handles::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",handle,"uses",bodyref,"is used by");
-            fprintf(fp,"body_constraints::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",cp->lval,"can use",bodyref,"has body type");
+            fprintf(fp,"promise_types::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype,KM_USES_POSS_F,bodyref,KM_USES_POSS_B);
+            fprintf(fp,"handles::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",handle,KM_USES_CERT_F,bodyref,KM_USES_CERT_B);
+            fprintf(fp,"body_constraints::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",cp->lval,KM_USES_POSS_F,bodyref,"has a body constraint of type");
             }
          }
 
@@ -468,13 +468,13 @@ switch (pp->petype)
              {
              fprintf(fp,"promises::\n\n");
              fprintf(fp,"  \"%s\"\n",promise_id);
-             fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);
+             fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,pp->promisee,NOVA_ISIMPACTED);
              
              if (bundlename)
                 {
                 fprintf(fp,"bundles::\n\n");
                 fprintf(fp,"  \"%s\"\n",bundlename);
-                fprintf(fp,"      association => impacts(\"%s\");\n",pp->promisee);             
+                fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,pp->promisee,NOVA_ISIMPACTED);
                 fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,pp->promisee,NOVA_GOAL_INV);
                 }
              }
@@ -497,13 +497,13 @@ switch (pp->petype)
                 {
                 fprintf(fp,"promises::\n\n");
                 fprintf(fp,"  \"%s\"\n",promise_id);
-                fprintf(fp,"      association => impacts(\"%s\");\n",rp2->item);
+                fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,rp2->item,NOVA_ISIMPACTED);
                 
                 if (bundlename)
                    {
                    fprintf(fp,"bundles::\n\n");
                    fprintf(fp,"  \"%s\"\n",bundlename);
-                   fprintf(fp,"      association => impacts(\"%s\");\n",rp2->item);
+                   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,rp2->item,NOVA_ISIMPACTED);
                    fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,rp2->item,NOVA_GOAL_INV);
                    }
                 }
@@ -608,39 +608,39 @@ for (i = 0; i < cfrep_unknown; i++)
 fprintf(fp,"  # New assocs\n");
 
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_classes][0]);
-fprintf(fp,"    association => a(\"is generated with\",\"promise_types::classes\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"%s\",\"promise_types::classes\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_lastseen][0]);
-fprintf(fp,"   association => a(\"is affected by\",\"body_constraints::copy_from\",\"reported in\");\n");
+fprintf(fp,"   association => a(\"is affected by\",\"body_constraints::copy_from\",\"%s\");\n",NOVA_REPORTED);
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_lastseen][0]);
-fprintf(fp,"   association => a(\"is affected by\",\"promise_types::access\",\"reported in\");\n");
+fprintf(fp,"   association => a(\"is affected by\",\"promise_types::access\",\"%s\");\n",NOVA_REPORTED);
 
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_promise_compliance][0]);
-fprintf(fp,"    association => a(\"is based on\",\"promises\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"is based on\",\"promises\",\"%s\");\n",NOVA_REPORTED);
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_promise_compliance][0]);
-fprintf(fp,"    association => a(\"see also\",\"promise report\",\"see also\");\n");
+fprintf(fp,"    association => a(\"%s\",\"promise report\",\"%s\");\n",NOVA_SEEALSO,NOVA_SEEALSO);
 
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_performance][0]);
-fprintf(fp,"    association => a(\"is based on\",\"promises\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"is based on\",\"promises\",\"%s\");\n",NOVA_REPORTED);
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_setuid][0]);
-fprintf(fp,"    association => a(\"is generated with\",\"promise_types::files\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"%s\",\"promise_types::files\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 fprintf(fp,"  \"hashes report\"\n");
-fprintf(fp,"    association => a(\"is generated with\",\"promise_types::files\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"%s\",\"promise_types::files\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 fprintf(fp,"  \"hashes report\"\n");
-fprintf(fp,"    association => a(\"is generated with\",\"body_constraints::changes\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"%s\",\"body_constraints::changes\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_change][0]);
-fprintf(fp,"    association => a(\"is generated with\",\"promise_types::files\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"%s\",\"promise_types::files\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_change][0]);
-fprintf(fp,"    association => a(\"is generated with\",\"body_constraints::changes\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"%s\",\"body_constraints::changes\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_diff][0]);
-fprintf(fp,"    association => a(\"is generated with\",\"promise_types::files\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"%s\",\"promise_types::files\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_diff][0]);
-fprintf(fp,"    association => a(\"is generated with\",\"body_constraints::changes\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"%s\",\"body_constraints::changes\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_software_installed][0]);
-fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"%s\",\"promise_types::packages\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_patch_status][0]);
-fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"%s\",\"promise_types::packages\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_patch_avail][0]);
-fprintf(fp,"    association => a(\"is generated with\",\"promise_types::packages\",\"reported in\");\n");
+fprintf(fp,"    association => a(\"%s\",\"promise_types::packages\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 
         
 fprintf(fp,"system_policy::\n");
@@ -668,18 +668,18 @@ for (i = 0; CF_VALUETYPES[i][0] != NULL; i++)
            CF_VALUETYPES[i][2]);
    }
 
-fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[1][1],CF_DATATYPES[cf_int]);
-fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[3][1],CF_DATATYPES[cf_int]);
-fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[4][1],CF_DATATYPES[cf_int]);
-fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[5][1],CF_DATATYPES[cf_int]);
-fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[6][1],CF_DATATYPES[cf_real]);
-fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[9][1],CF_DATATYPES[cf_class]);
-fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[10][1],CF_DATATYPES[cf_str]);
-fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[11][1],CF_DATATYPES[cf_str]);
-fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[12][1],CF_DATATYPES[cf_str]);
-fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[13][1],CF_DATATYPES[cf_str]);
-fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[14][1],CF_DATATYPES[cf_str]);
-fprintf(fp,"\"%s\"   association => a(\"is a special case of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[15][1],CF_DATATYPES[cf_str]);
+fprintf(fp,"\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[1][1],CF_DATATYPES[cf_int]);
+fprintf(fp,"\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[3][1],CF_DATATYPES[cf_int]);
+fprintf(fp,"\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[4][1],CF_DATATYPES[cf_int]);
+fprintf(fp,"\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[5][1],CF_DATATYPES[cf_int]);
+fprintf(fp,"\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[6][1],CF_DATATYPES[cf_real]);
+fprintf(fp,"\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[9][1],CF_DATATYPES[cf_class]);
+fprintf(fp,"\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[10][1],CF_DATATYPES[cf_str]);
+fprintf(fp,"\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[11][1],CF_DATATYPES[cf_str]);
+fprintf(fp,"\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[12][1],CF_DATATYPES[cf_str]);
+fprintf(fp,"\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[13][1],CF_DATATYPES[cf_str]);
+fprintf(fp,"\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[14][1],CF_DATATYPES[cf_str]);
+fprintf(fp,"\"%s\"   association => a(\"is an instance of\",\"%s\",\"is the generic type for\");\n",CF_VALUETYPES[15][1],CF_DATATYPES[cf_str]);
 
 
 fprintf(fp,"bundles::\n");
@@ -709,7 +709,7 @@ for (i = 0; i < CF3_MODULES; i++)
             fprintf(fp,"body_constraints::\n");
             fprintf(fp,"   \"%s\"\n",bs[l].lval);
             fprintf(fp,"   comment => \"%s\",\n",NovaEscape(bs[l].description));
-            fprintf(fp,"   association => a(\"is a possible body constraint for\",\"promise_types::%s\",\"can have body constraint\");\n",ss[j].subtype);
+            fprintf(fp,"   association => a(\"%s\",\"promise_types::%s\",\"%s\");\n",KM_PARTOF_POSS_F,ss[j].subtype,KM_PARTOF_POSS_B);
             
             if (bs[l].dtype == cf_body)
                {
@@ -719,12 +719,15 @@ for (i = 0; i < CF3_MODULES; i++)
                   {
                   continue;
                   }
+
+
+               // Certain lvals can be parts of body templates
                
                for (k = 0; bs2[k].lval != NULL; k++)
                   {
                   fprintf(fp,"   \"%s\"\n",bs2[k].lval);
                   fprintf(fp,"   comment => \"%s\",\n",NovaEscape(bs2[k].description));
-                  fprintf(fp,"   association => a(\"is a possible body template constraint for\",\"%s\",\"might have sub-body constraint\");\n",bs[l].lval);
+                  fprintf(fp,"   association => a(\"%s\",\"%s\",\"%s\");\n",KM_PARTOF_POSS_F,bs[l].lval,KM_PARTOF_POSS_F);
                   
                   NovaShowValues(fp,bs2[k]);
                   }
