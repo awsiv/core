@@ -36,6 +36,93 @@ Debug("Loaded values: docroot=%s\n",DOCROOT);
 /* The main panels                                                           */
 /*****************************************************************************/
 
+void Nova_DumpTopics()
+
+{ bson_buffer bb;
+  bson query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  mongo_connection conn;
+  char topic_name[CF_BUFSIZE];
+  char topic_context[CF_BUFSIZE];
+  int topic_id;
+  char work[CF_BUFSIZE];
+  struct Item *ip,*nn;
+
+if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
+   return;
+   }
+
+/* BEGIN query document */
+
+bson_buffer_init(&bb);
+bson_empty(&query);
+
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfk_topicname,1);
+bson_append_int(&bb,cfk_topicid,1);
+bson_append_int(&bb,cfk_topiccontext,1);
+bson_append_int(&bb,cfk_associations,1);
+bson_append_int(&bb,cfk_associd,1);
+bson_append_int(&bb,cfk_assoccontext,1);
+bson_append_int(&bb,cfk_assocname,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+bson_destroy(&field);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   topic_name[0] = '\0';
+   topic_context[0] = '\0';
+   topic_id = 0;
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Query specific search/marshalling */
+      
+      if (strcmp(bson_iterator_key(&it1),cfk_topicname) == 0)
+         {
+         strncpy(topic_name,bson_iterator_string(&it1),CF_BUFSIZE-1);
+         }   
+
+      if (strcmp(bson_iterator_key(&it1),cfk_topiccontext) == 0)
+         {
+         strncpy(topic_context,bson_iterator_string(&it1),CF_BUFSIZE-1);
+         }
+      
+      if (strcmp(bson_iterator_key(&it1),cfk_topicid) == 0)
+         {
+         topic_id = (int)bson_iterator_int(&it1);
+         }
+      }
+   
+   printf("Topic: %s::%s, id: %d \n",topic_context,topic_name,topic_id);
+
+   nn = Nova_ScanLeadsAssociations(topic_id,NULL);
+
+   printf("   {\n");
+   for (ip = nn; ip != NULL; ip=ip->next)
+      {
+      printf("   (%s) \"%s\"\n",ip->name,ip->classes);
+      }
+   printf("   }\n");
+   }
+
+mongo_cursor_destroy(cursor);
+CFDB_Close(&conn);
+}
+
+/*****************************************************************************/
+
 int Nova_GetTopicIdForTopic(char *typed_topic)
     
 { char topic[CF_BUFSIZE],type[CF_BUFSIZE];
@@ -58,10 +145,12 @@ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
 
 bson_buffer_init(&bb);
 bson_append_string(&bb,cfk_topicname,topic);
- if(strlen(type)>0)
+
+if (strlen(type) > 0)
    {
-     bson_append_string(&bb,cfk_topiccontext,type);
+   bson_append_string(&bb,cfk_topiccontext,type);
    }
+
 bson_from_buffer(&query,&bb);
 
 /* BEGIN RESULT DOCUMENT */
@@ -237,7 +326,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
          }
       }
    
-   snprintf(work,CF_BUFSIZE,"{ topic: \"%s\", context: \"%s\", id: %d },",topic_context,topic_name,topic_id);
+   snprintf(work,CF_BUFSIZE,"{ context: \"%s\", topic: \"%s\", id: %d },",topic_context,topic_name,topic_id);
    Join(buffer,work,CF_BUFSIZE);
    }
 
@@ -274,7 +363,7 @@ worklist = Nova_GetTopicsInContext(this_context);
 
 /*****************************************************************************/
 
-struct Item *Nova_ScanLeadsAssociations(int search_id,char *buffer,int bufsize)
+struct Item *Nova_ScanLeadsAssociations(int search_id,char *assoc_mask)
 
 /* Look for neighbours and retain/sort link names - return JSON array
 
@@ -365,8 +454,13 @@ while (mongo_cursor_next(cursor))  // loops over documents
                    strncpy(assoc_context,bson_iterator_string(&it3),CF_BUFSIZE-1);
                    }   
                 }
-             
-             PrependFullItem(&list,afwd,assoc_name,assoc_id,0);
+
+             if (assoc_mask == NULL || FullTextMatch(assoc_mask,afwd))
+                {
+                char qualified[CF_BUFSIZE];
+                snprintf(qualified,CF_BUFSIZE,"%s::%s",assoc_context,assoc_name);
+                PrependFullItem(&list,afwd,qualified,assoc_id,0);
+                }
              }
          }
       }
@@ -674,7 +768,7 @@ searchstring[0] = '\0';
   
 for (rp = GOALCATEGORIES; rp != NULL; rp=rp->next)
    {
-     snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",rp->item,CanonifyName(ip->name));
+   snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",rp->item,CanonifyName(ip->name));
    strcat(searchstring,work);
    }
 

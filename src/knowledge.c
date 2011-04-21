@@ -69,7 +69,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 mongo_remove(&dbconn,MONGO_KM_TOPICS, bson_empty(&b));
 
-/* Class types and topics */
+ /* Class types and topics */
 
 for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
    {
@@ -349,11 +349,10 @@ printf("   <syntax element>\n");
 
 void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,const char *version)
 
-{
-  char promise_id[CF_BUFSIZE];
+{ char promise_id[CF_BUFSIZE];
   struct Rlist *rp,*depends_on = GetListConstraint("depends_on",pp), *rp2;
   struct Rlist *class_list = SplitRegexAsRList(pp->classes,"[.!()|&]+",100,false);
-  char *bundlename = NULL;
+  char *bundlename = NULL, *bodyname = NULL;
 
   GetClassDefinitionConstraints(pp); /* FIXME: unused? */
 
@@ -409,6 +408,33 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
                 break;
             default:
                 break;
+            }
+         }
+      else
+         {
+         switch(cp->type)
+            {
+            case CF_SCALAR:
+                if (cp->isbody)
+                   {
+                   bodyname = (char *)cp->rval;
+                   }
+                break;   
+            case CF_FNCALL:
+                fnp = (struct FnCall *)cp->rval;
+                bodyname = fnp->name;                
+                break;
+            }
+
+         if (bodyname)
+            {
+            char bodyref[CF_MAXVARSIZE];
+            char *handle = GetConstraint("handle",pp,CF_SCALAR);
+
+            snprintf(bodyref,CF_MAXVARSIZE,"bodies::%s",bodyname);
+            fprintf(fp,"promise_types::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype,"can use",bodyref,"can be used by");
+            fprintf(fp,"handles::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",handle,"uses",bodyref,"is used by");
+            fprintf(fp,"body_constraints::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",cp->lval,"can use",bodyref,"has body type");
             }
          }
 
@@ -683,7 +709,7 @@ for (i = 0; i < CF3_MODULES; i++)
             fprintf(fp,"body_constraints::\n");
             fprintf(fp,"   \"%s\"\n",bs[l].lval);
             fprintf(fp,"   comment => \"%s\",\n",NovaEscape(bs[l].description));
-            fprintf(fp,"   association => a(\"is a possible body constraint for\",\"promise_types::%s\",\"can have body constraints\");\n",ss[j].subtype);
+            fprintf(fp,"   association => a(\"is a possible body constraint for\",\"promise_types::%s\",\"can have body constraint\");\n",ss[j].subtype);
             
             if (bs[l].dtype == cf_body)
                {
@@ -698,7 +724,7 @@ for (i = 0; i < CF3_MODULES; i++)
                   {
                   fprintf(fp,"   \"%s\"\n",bs2[k].lval);
                   fprintf(fp,"   comment => \"%s\",\n",NovaEscape(bs2[k].description));
-                  fprintf(fp,"   association => a(\"is a possible sub-body constraint for\",\"%s\",\"may have sub-body constraints\");\n",bs[l].lval);
+                  fprintf(fp,"   association => a(\"is a possible body template constraint for\",\"%s\",\"might have sub-body constraint\");\n",bs[l].lval);
                   
                   NovaShowValues(fp,bs2[k]);
                   }
@@ -1143,7 +1169,7 @@ if (range == NULL)
    }
 
 fprintf(fp,"body_constraints::\n");
-fprintf(fp,"   \"%s\" association => a(\"is a body constraint of type\",\"values::%s\",\"has possible body constraints\"),\n",bs.lval,range);
+fprintf(fp,"   \"%s\" association => a(\"is a body constraint of type\",\"values::%s\",\"can be used in body constraints\"),\n",bs.lval,range);
 fprintf(fp,"          comment => \"%s\";\n",NovaEscape(bs.description));
 
 switch(bs.dtype)

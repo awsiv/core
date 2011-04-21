@@ -2703,7 +2703,7 @@ else
 void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize)
 
 { struct Item *lastp,*ip;
-  struct Item *list = Nova_ScanLeadsAssociations(id,buffer,bufsize);
+ struct Item *list = Nova_ScanLeadsAssociations(id,NULL);
   char work[CF_BUFSIZE];
   
 buffer[0] = '\0';
