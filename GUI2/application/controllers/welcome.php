@@ -316,7 +316,7 @@ class Welcome extends Cf_Controller {
         // add a js file
         $this->carabiner->js('jit/jit-yc.js');
         $jsIE = array('jit/Extras/excanvas.js');
-        $this->carabiner->group('iefix', array('js'=>$jsIE) );
+        $this->carabiner->group('iefix', array('js' => $jsIE));
 
 
         $bc = array(
@@ -324,11 +324,14 @@ class Welcome extends Cf_Controller {
             'url' => 'welcome/knowledge',
             'isRoot' => false
         );
+
         $this->breadcrumb->setBreadCrumb($bc);
+
         $getparams = $this->uri->uri_to_assoc(3);
         $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
         $topic = isset($getparams['topic']) ? $getparams['topic'] : $this->input->post('topic');
         $pid = isset($getparams['pid']) ? $getparams['pid'] : $this->input->post('pid');
+
         if (!$pid)
             $pid = cfpr_get_pid_for_topic("", "system policy");
 
@@ -341,16 +344,24 @@ class Welcome extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display(),
         );
 
-        $gdata = cfpr_get_knowledge_view($pid, '');
+        $graphdata = cfpr_get_knowledge_view($pid, '');
+        $data['graphdata'] = ($graphdata);
 
 
-        $data['graphdata'] = ($gdata);
-        
-        
-        
-        $topicsData = array();
-        $topicLeads = array();
+        $topic = cfpr_show_topic($pid);
+        $topicsData = cfpr_show_topic_hits($pid);
+        $topicLeads = cfpr_show_topic_leads($pid);
 
+        // json encode the datas
+        $data['topicDetail'] = json_decode(utf8_encode($topic),true);
+        $data['topicHits'] = json_decode(utf8_encode($topicsData),true);
+        $data['topicLeads'] = json_decode(utf8_encode($topicLeads),true);
+
+
+
+
+
+        
         //$this->template->set('injected_item', implode("", $scripts));
         $this->template->load('template', 'knowledge', $data);
     }

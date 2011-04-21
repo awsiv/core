@@ -1,5 +1,5 @@
 <?php
-if ($search == "") {
+if ($search == "") {    
     if ($topic) {
         $pid = cfpr_get_pid_for_topic("body_constraints", $topic);
     }
@@ -22,18 +22,25 @@ if ($search == "") {
         </div>
     </div>
     <div class="grid_5">
+    
+    
+    
+    
     <?php
-    $hits = cfpr_show_topic_hits($pid);
+    require_once('knowledge/topics.php');
+    require_once('knowledge/leads.php');
 
-    echo "<p>$hits</p>";
+    //$hits = cfpr_show_topic_hits($pid);
 
-    $leads = cfpr_show_topic_leads($pid);
+    //echo "<p>$hits</p>";
 
-    echo "<p>$leads</p>";
+    //$leads = cfpr_show_topic_leads($pid);
 
-    $cat = cfpr_show_topic_category($pid);
+    //echo "<p>$leads</p>";
 
-    echo "<p>$cat</p>";
+    //$cat = cfpr_show_topic_category($pid);
+
+    //echo "<p>$cat</p>";
     ?>
 </div>
 <div class="clear"></div>
@@ -236,7 +243,5 @@ if ($search == "") {
         // end
 
     }
-
-
     //]]>
 </script>
