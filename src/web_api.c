@@ -5840,7 +5840,7 @@ int Con2PHP_rank_promise_popularity(bool sortAscending, char *buf, int bufsize)
 
 }
 /*****************************************************************************/
-int Nova2PHP_list_handles_policy_finder(char *promiser,char *ptype,char *bundle,char *btype,int regex,char *returnval,int bufsize)
+int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle,int regex,char *returnval,int bufsize)
 
 { mongo_connection dbconn;
   char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
@@ -5860,7 +5860,7 @@ int Nova2PHP_list_handles_policy_finder(char *promiser,char *ptype,char *bundle,
       return false;
     }
 
-  hq = CFDB_QueryPromiseHandles(&dbconn,promiser,ptype,btype,bundle,regex,false);
+  hq = CFDB_QueryPolicyFinderData(&dbconn,handle,promiser,bundle,regex);
 
   returnval[0] = '\0';
 
@@ -5871,16 +5871,7 @@ int Nova2PHP_list_handles_policy_finder(char *promiser,char *ptype,char *bundle,
       for (rp = hq->records; rp != NULL; rp=rp->next)
 	{
 	  hp = (struct HubPromise *)rp->item;
-	  if (!CFDB_QueryPromiseAttr(&dbconn,hp->handle,cfp_promiser,promiserName,CF_BUFSIZE))
-	    {
-	      continue;
-	    }
-	  if (!CFDB_QueryPromiseAttr(&dbconn,hp->handle,cfp_bundlename,bundleName,CF_BUFSIZE))
-	    {
-	      continue;
-	    }
-
-	  snprintf(work,CF_MAXVARSIZE-1,"[\"%s\",\"%s\",\"%s\"],",bundleName,(char*)hp->handle,promiserName);
+	  snprintf(work,CF_MAXVARSIZE-1,"[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",(char*)hp->handle,(char*)hp->promiseType,(char *)hp->bundleName,(char*)hp->bundleType,(char*)hp->promiser);
 	  Join(returnval,work,bufsize);
 	}
 

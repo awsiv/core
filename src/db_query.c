@@ -4342,7 +4342,6 @@ struct HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser
     bson_from_buffer(&query,&bb);
     }
 
-
 // returned attribute
  bson_buffer_init(&bb);
  bson_append_int(&bb,cfp_handle,1);
@@ -4364,6 +4363,109 @@ struct HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser
           PrependRlistAlien(&recordList,NewHubPromise(NULL,NULL,NULL,NULL,NULL,NULL,NULL,(char *)bson_iterator_string(&it1),NULL,NULL,0,NULL));
           }
        }
+    }
+
+ mongo_cursor_destroy(cursor);
+
+ return NewHubQuery(NULL, recordList);
+}
+
+/*****************************************************************************/
+
+struct HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char *promiser, char *bundleName, int regex)
+/*
+ * Returns a set of handles of promises matching given promiser regex
+ * XOR promise type XOR (bundle type, bundle name) XOR all.  All
+ * promiser types of vars and classes, and bundle types of edit_line
+ * and server may optinally be excluded since they often only lead to
+ * mess in Knowledge Management. 
+ */
+{ bson_buffer bb, *obj, *arr;
+ bson_iterator it1;
+ bson query,field;
+ mongo_cursor *cursor;
+ struct Rlist *recordList = NULL;
+ bool emptyQuery = true;
+
+ char h[CF_MAXVARSIZE],pType[CF_MAXVARSIZE],bName[CF_MAXVARSIZE],bType[CF_MAXVARSIZE],p[CF_MAXVARSIZE];
+
+ // query
+ bson_empty(&query);
+ bson_buffer_init(&bb);
+
+ if(regex)
+    {
+    if (!EMPTY(promiser))
+       {
+       bson_append_regex(&bb, cfp_promiser, promiser,"");
+       emptyQuery = false;
+       }
+    else if(!EMPTY(bundleName))
+       {
+       bson_append_regex(&bb,cfp_bundlename,bundleName,"");
+       emptyQuery = false;
+       }
+    else if(!EMPTY(handle))
+       {
+       bson_append_regex(&bb,cfp_handle,handle,"");
+       emptyQuery = false;
+       }
+    }
+
+ if(!emptyQuery)
+    {
+    bson_from_buffer(&query,&bb);
+    }
+
+// returned attribute
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfp_bundlename,1);
+ bson_append_int(&bb,cfp_bundletype,1);
+ bson_append_int(&bb,cfp_handle,1);
+ bson_append_int(&bb,cfp_promisetype,1);
+ bson_append_int(&bb,cfp_promiser,1);
+
+ bson_from_buffer(&field,&bb);
+
+ cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,0);
+
+ bson_destroy(&query);  // ok for empty as well
+ bson_destroy(&field);
+
+ while(mongo_cursor_next(cursor))  // iterate over docs
+   {    
+    h[0]='\0';
+    pType[0]='\0';
+    bName[0]='\0';
+    bType[0]='\0';
+    p[0]='\0';
+   
+    bson_iterator_init(&it1,cursor->current.data);
+    
+    while(bson_iterator_next(&it1))
+      {
+       if (strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
+          {
+            snprintf(h,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
+          }
+       else if (strcmp(bson_iterator_key(&it1), cfp_promisetype) == 0)
+          {
+            snprintf(pType,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
+          }
+       else if (strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
+          {
+            snprintf(bName,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
+          }
+       else if (strcmp(bson_iterator_key(&it1), cfp_bundletype) == 0)
+          {
+            snprintf(bType,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
+          }
+       else if (strcmp(bson_iterator_key(&it1), cfp_promiser) == 0)
+          {
+            snprintf(p,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
+          }
+       }
+    PrependRlistAlien(&recordList,NewHubPromise(bName,bType,NULL,NULL,pType,p,NULL,h,NULL,NULL,0,NULL));
     }
 
  mongo_cursor_destroy(cursor);
