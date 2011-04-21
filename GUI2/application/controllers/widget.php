@@ -155,6 +155,72 @@ class Widget extends CI_Controller {
           }
           return $html;
         }
+
+
+        function allpolicies()
+        {
+            echo cfpr_policy_finder_by_handle(NULL);
+        }
+
+        function search_by_handle()
+        {
+           $handle=$this->input->post('filter');
+            $data="";
+            if($handle)
+            {
+               echo cfpr_policy_finder_by_handle($handle);
+            }
+            else
+            {
+               echo cfpr_policy_finder_by_handle(NULL);
+            }  
+        }
+
+
+        function search_by_bundle()
+        {
+            $bundle=$this->input->post('filter');
+            if($bundle)
+            {
+               echo cfpr_policy_finder_by_handle($bundle);
+            }
+            else
+            {
+               echo cfpr_policy_finder_by_handle(NULL);
+            }
+        }
+
+        function search_by_promiser()
+        {
+          $promiser=$this->input->post('filter');
+            if($promiser)
+            {
+               echo cfpr_policy_finder_by_promiser($promiser);
+            }
+            else
+            {
+               echo cfpr_policy_finder_by_promiser(NULL);
+            }
+        }
+        
+        function filterpolicy()
+        {
+            $filter =$this->input->post('filter');
+            switch($filter)
+          {
+              case "handle":
+                    echo cfpr_policy_finder_by_handle(NULL);
+                    break;
+              case "bundle":
+                    echo cfpr_list_ip_classes(NULL,NULL,NULL,NULL);
+                    break;
+              case "promiser":
+                    echo cfpr_list_soft_classes(NULL,NULL,NULL,NULL);
+                    break;
+              
+          }
+
+        }
 }
 
 ?>

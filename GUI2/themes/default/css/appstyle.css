@@ -677,6 +677,10 @@ span.search input
     background:#fff;
 }
 
+.customdlg #policylistcontainer
+{
+    background:#fff;
+}
 .customdlg .ui-widget-header{
     color:#FFF;
     background: #3d453a;
@@ -904,6 +908,40 @@ span.search input
     display:block;
     padding-top:15px;
 }
+/**for policy finder**/
+#policyList li a
+{
+    padding-top: 0;
+    
+}
+#policyList li a p
+{
+   margin-top:10px;
+  float:left;
+  margin-left: 3px;
+}
+#policyList li a
+{
+    padding-top: 0;
+
+}
+#policyList .type{
+ background: none repeat scroll 0 0 #F0F0F0;
+ display: block;
+ float: left;
+ padding: 14px 5px;
+}
+#policyList .promiser{
+  display:block;
+}
+
+#policyList .handle{
+}
+
+#policyList .bundle{
+  
+}
+
 
 /****************************/
 .alert{

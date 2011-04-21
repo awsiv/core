@@ -22,11 +22,13 @@ class test_notes_api_libraries extends CodeIgniterUnitTestCase {
         $this->assertTrue(is_array($data));
     }
 
-    public function test_getData(){
-        
-        $this->assertTrue(true);
-    }
 
+    public function test_getReportNode(){
+        $this->_ci->load->library('reportnode');
+        $node=$this->_ci->reportnode->createnode(array("id"=>"1","name"=>"node1","data"=>"hello","children"=>array()));
+        $ret =  $node->getId();
+        $this->assertEqual($ret,1, "Should return 1, returns :: $ret");
+    }
     
     
 

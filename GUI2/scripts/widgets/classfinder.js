@@ -137,6 +137,8 @@ dialogContainer: function() {
                     }
               });
          }
+
+         //on backspace key pressed event
           if(searchWord==''&& event.keyCode == 8)
           {
                self.dialogcontent.find("#classList").find('li').each(function() {

@@ -11,6 +11,7 @@
         <?php echo anchor('test/cfclasses','help',array('id'=>'getclass')) ?>
         <?php echo anchor('#','hostfinder',array('id'=>'findhost')) ?>
         <?php echo anchor('widget/allclasses','classfinder',array('id'=>'findclass')) ?>
+        <?php echo anchor('widget/allpolicies','policyfinder',array('id'=>'findpolicy')) ?>
         <div class="clear"></div>
         <!--<div id="filters"><span>Selected classes:</span><ul></ul></div>-->
         <div id="hostlist" class="panelcontent tables">
@@ -68,6 +69,8 @@
             $('#findhost').hostfinder();
 
             $('#findclass').classfinder();
+
+            $('#findpolicy').policyfinder();
 
           // var $filter=$('#filters').find('ul');
 

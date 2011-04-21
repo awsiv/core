@@ -592,13 +592,16 @@ class Welcome extends Cf_Controller {
      */
     function listhost() {
 
-        $scripts = array('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery.form.js"> </script>',
-            '<script  src="' . get_scriptdir() . 'widgets/classtags.js" type="text/javascript"></script>',
-            '<script  src="' . get_scriptdir() . 'widgets/hostfinder.js" type="text/javascript"></script>',
-            '<script  src="' . get_scriptdir() . 'widgets/classfinder.js" type="text/javascript"></script>',
-            '<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />');
+        $requiredjs = array(
+                            array('jquery.form.js'),
+                            array('widgets/classtags.js'),
+                            array('widgets/hostfinder.js'),
+                            array('widgets/classfinder.js'),
+                            array('widgets/policyfinder.js')
+                           );
+        $this->carabiner->js($requiredjs);
 
-        $this->template->set('injected_item', implode("", $scripts));
+        // $this->template->set('injected_item', implode("", $scripts));
 
         $bc = array(
             'title' => 'Host List',
