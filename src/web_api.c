@@ -2690,7 +2690,7 @@ buffer[0] = '\0';
 
 if (Nova_GetTopicByTopicId(id,topic_name,topic_id,topic_context))
    {
-   snprintf(buffer,bufsize,"<div id=\"topic\">\n'<span class=\"subject\">%s</span>' in section `<span class=\"category\">%s</span>:</div>",topic_name,topic_context);
+     snprintf(buffer,bufsize,"{\"topic\":\"%s\",\"context\":\"%s\"}",topic_name,topic_context);
    }
 else
    {
