@@ -23,7 +23,7 @@
             <li id="search_class">Class</li>
         </ul>
         <div id="searchresult">
-            <ul>
+            <ul class="result">
                 <?php
                 foreach($hostlist as $host)
                 {
@@ -32,7 +32,7 @@
                ?>
             </ul>
         </div>
-        <ul id="aplhaPaging">
+        <ul id="aplhaPaging" class="alphasearch">
           <?php
            foreach(range('a','z') as $letter)
             {

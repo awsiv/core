@@ -46,7 +46,7 @@ class Widget extends CI_Controller {
           $html="";
 
           if (key_exists('data', $result) && count($result['data']) > 0) {
-              $html.="<ul>";
+              $html.="<ul class=\"result\">";
                 foreach ($result['data'] as $row) {
                      if($display=='hostname')
                     $html.="<li><a href=".site_url('welcome/host')."/".$row[2].">$row[0] ($row[1])</a></li>";
@@ -143,7 +143,7 @@ class Widget extends CI_Controller {
           $html="";
 
           if (count($result) > 0) {
-              $html.="<ul>";
+              $html.="<ul class=\"result\">";
                 foreach ($result as $row) {
                     $html.="<li><a href=".site_url('welcome/host')."/".$row[1].">$row[0]</a></li>";
                 }

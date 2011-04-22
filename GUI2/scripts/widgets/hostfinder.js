@@ -37,6 +37,7 @@ var hostfinder={
                   self.cfui.categories=self.temp.find('#searchby');
                   self.cfui.resultpane=self.temp.find('#searchresult');
                   self.cfui.searchform=self.temp.find('#searchhost');
+                  self.cfui.alphapaging=self.temp.find('#aplhaPaging')
                   self.$filter=$('#filters').find('ul');
                   self.temp.dialog({
                      height: self.options.height,
@@ -58,7 +59,7 @@ var hostfinder={
          self.cfui.categories.delegate('li','click',{ui:self},self.categoryselected)
          //self.temp.delegate('form','submit',{ui:self},self.searchsubmit);
          self.element.bind('click',function(event){event.preventDefault();self.temp.dialog('open')});
-         self.temp.find('#aplhaPaging').delegate('li','click',{ui:self},self.sortalphabetically);
+         self.cfui.alphapaging.appendTo(self.temp.parent()).delegate('li','click',{ui:self},self.sortalphabetically);
          self.cfui.searchform.delegate('input[type="text"]','click',function(){$(this).focus()});
          self.cfui.searchform.delegate('input[type="text"]','focusin',{ui:self},self.searchboxevent);
          self.cfui.searchform.delegate('input[type="text"]','focusout',{ui:self},self.searchboxevent);
