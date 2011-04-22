@@ -576,7 +576,10 @@ if (LICENSES == 0)
   
 fprintf(fp,"\ntopics:\n");
 
+fprintf(fp,"any:: \"system_reports\" comment => \"Reports collected from Cfengine managed systems by a reporting hub\";\n");
+fprintf(fp,"\"remote_scalars\" comment => \"Scalar variable values that are made accessible to remote agents through cf-serverd\";\n");
 fprintf(fp,"system_reports::\n");
+
 
 for (i = 0; i < cfrep_unknown; i++)
    {
