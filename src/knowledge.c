@@ -115,26 +115,6 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
             }
          }
       
-      for (itp = tp->synonyms; itp != NULL; itp=itp->next)
-         {
-         char to_context[CF_MAXVARSIZE],to_topic[CF_MAXVARSIZE];
-         int to_id = GetTopicPid(itp->name);
-         
-         DeClassifyTopic(itp->name,to_topic,to_context);
-         
-         Debug(" - Synonym: '%s::%s' (%d) is synonymous with '%s:%s' (%d)\n",tp->topic_context,tp->topic_name,tp->id,to_context,to_topic,to_id);
-
-         // Append fixed list item to assocs
-         snprintf(packNumStr,sizeof(packNumStr),"%d",assoc_id++);
-         sub = bson_append_start_object(assocs,packNumStr);
-         bson_append_string(sub,cfk_fwd,NOVA_SYNONYM);
-         bson_append_string(sub,cfk_bwd,NOVA_SYNONYM);
-         bson_append_string(sub,cfk_assocname,to_topic);
-         bson_append_string(sub,cfk_assoccontext,to_context);
-         bson_append_int(sub,cfk_associd,to_id);
-         bson_append_finish_object(sub);   
-         }
-
       bson_append_finish_object(assocs);
       
       bson_from_buffer(&b,&bbuf);
@@ -354,8 +334,6 @@ void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,const char *version)
   struct Rlist *class_list = SplitRegexAsRList(pp->classes,"[.!()|&]+",100,false);
   char *bundlename = NULL, *bodyname = NULL;
 
-  GetClassDefinitionConstraints(pp); /* FIXME: unused? */
-
 if (LICENSES == 0)
    {
    fprintf(fp,"license expired or no license");
@@ -429,11 +407,10 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
          if (bodyname)
             {
             char bodyref[CF_MAXVARSIZE];
-            char *handle = GetConstraint("handle",pp,CF_SCALAR);
 
             snprintf(bodyref,CF_MAXVARSIZE,"bodies::%s",bodyname);
             fprintf(fp,"promise_types::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype,KM_USES_POSS_F,bodyref,KM_USES_POSS_B);
-            fprintf(fp,"handles::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",handle,KM_USES_CERT_F,bodyref,KM_USES_CERT_B);
+            fprintf(fp,"handles::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",promise_id,KM_USES_CERT_F,bodyref,KM_USES_CERT_B);
             fprintf(fp,"body_constraints::  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",cp->lval,KM_USES_POSS_F,bodyref,"has a body constraint of type");
             }
          }
@@ -461,7 +438,12 @@ switch (pp->petype)
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);
        fprintf(fp,"  \"%s\"\n",pp->promisee);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
+       fprintf(fp,"  \"%s\"\n",pp->promisee);
+       fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B,promise_id,KM_AFFECTS_CERT_F);          
+       fprintf(fp,"  \"%s\"\n",pp->promisee);
+       fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B,NovaEscape(pp->promiser),KM_AFFECTS_CERT_F);          
 
+       
        for (rp = GOALS; rp != NULL; rp = rp->next)
           {
           if (FullTextMatch(rp->item,pp->promisee))
@@ -539,6 +521,10 @@ for (rp = depends_on; rp != NULL; rp=rp->next)
    {
    fprintf(fp,"  \"%s\"\n",promise_id);
    fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,rp->item,NOVA_GIVES);
+   fprintf(fp,"  \"%s\"\n",promise_id);
+   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B,rp->item,KM_AFFECTS_CERT_F);
+   fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
+   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B,rp->item,KM_AFFECTS_CERT_F);
    }
 
 //DeleteRlist(depends_on);
@@ -567,6 +553,12 @@ fprintf(fp,"   represents => { \"parent bundle\" };\n\n");
 /*  Now we should analyze the classes to look for dependents and dependencies */
 
 Nova_MapClassParameterAssociations(fp,pp,promise_id);
+
+// Look for any networks mentioned
+
+#ifdef HAVE_CONSTELLATION
+Constellation_ScanAccessRelationships(fp,pp,promise_id);
+#endif
 }
 
 /*****************************************************************************/
@@ -583,20 +575,6 @@ if (LICENSES == 0)
    }
   
 fprintf(fp,"\ntopics:\n");
-
-fprintf(fp,"references::\n");
-fprintf(fp,"  \"bundle reference\";\n");
-fprintf(fp,"  \"used in promise\";\n");
-fprintf(fp,"  \"has current exemplars\";\n");
-fprintf(fp,"  \"is a promise of type\";\n");
-fprintf(fp,"  \"occurs in bundle\";\n");
-fprintf(fp,"  \"bundle contains promiser\";\n");
-fprintf(fp,"  \"makes promise of type\";\n");
-fprintf(fp,"  \"promises have been made by\";\n");
-fprintf(fp,"  \"makes promises\";\n");
-fprintf(fp,"  \"is a promise made by\";\n");
-
-// If no better solution in constellation, then do this...
 
 fprintf(fp,"system_reports::\n");
 
@@ -912,22 +890,22 @@ void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promi
   struct Bundle *bp;
   struct SubType *sp;
   struct Promise *pp2;
-  char *value,*handle = (char *)GetConstraint("handle",pp,CF_SCALAR);
+  char *value;
   int found = false;
-  
-if (handle && pp->ref)
+
+if (promise_id && pp->ref)
    {
-   fprintf(fp,"topics: handles:: \"%s\"  comment => \"%s\", ",handle,pp->ref);
-   fprintf(fp,"association => a(\"is the handle for\",\"%s\",\"has a promise with handle\");\n",NovaEscape(pp->promiser));
+   fprintf(fp,"topics: handless:: \"%s\"  comment => \"%s\", ",promise_id,pp->ref);
+   fprintf(fp,"association => a(\"is the promise_id for\",\"%s\",\"has a promise with promise_id\");\n",NovaEscape(pp->promiser));
    }
-else if (handle)
+else if (promise_id)
    {
-   fprintf(fp,"topics: handles:: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",handle,NOVA_HANDLE,NovaEscape(pp->promiser),NOVA_HANDLE_INV);
+   fprintf(fp,"topics: handles:: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",promise_id,NOVA_HANDLE,NovaEscape(pp->promiser),NOVA_HANDLE_INV);
    }
 
-if (handle)
+if (promise_id)
    {
-   fprintf(fp,"occurrences: %s::  \"/promise/details/handle/%s\", represents => { \"declaration\" }; \n",CanonifyName(handle),handle);
+   fprintf(fp,"occurrences: %s::  \"/promise/details/promise_id/%s\", represents => { \"declaration\" }; \n",CanonifyName(promise_id),promise_id);
    }
 
 /* For activated classes we can assume that no one will */
