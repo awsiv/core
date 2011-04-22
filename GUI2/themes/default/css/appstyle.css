@@ -902,9 +902,8 @@ span.search input
 }
 #policyList li a p
 {
-   margin-top:10px;
+  margin:10px 0 0 3px;
   float:left;
-  margin-left: 3px;
 }
 #policyList li a
 {

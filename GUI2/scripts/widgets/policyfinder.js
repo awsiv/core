@@ -88,7 +88,7 @@ loadpagebody:function(url,val){
                   self.dialogcontent.html($("<ul>").attr("id", "policyList")); //repeated can be merged with loadpagebody
                   $.each(data, function(i, val) {
                                         var li = $("<li>");
-                                        $("<a>").attr({title:val, href:"#"})
+                                        $("<a>").attr({title:val, href:"/promise/details/"+val[0]})
                                         .append('<span class="type">'+val[3]+'</span><p><span class="promiser">'+val[4]+'</span><span class="handle">'+val[0]+'</span> / <span class="bundle">'+val[2]+'</span></p><p class="clearleft"></p>')
                                         .appendTo(li);
                                         li.appendTo("#policyList");

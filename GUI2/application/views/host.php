@@ -130,8 +130,8 @@ $colour = cfpr_get_host_colour($hostkey);
  
 <script type="text/javascript">
 $(document).ready(function() { 
-    $('.tables table').tableFilter();
-    $('.tables table').tablesorter({widgets: ['zebra']});
+   // $('.tables table').tableFilter();
+    //$('.tables table').tablesorter({widgets: ['zebra']});
 
     $('.note').ajaxyDialog({change:function(nid,element) {
 
