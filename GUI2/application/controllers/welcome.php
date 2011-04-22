@@ -348,12 +348,12 @@ class Welcome extends Cf_Controller {
         $data['graphdata'] = ($graphdata);
 
 
-        $topic = cfpr_show_topic($pid);
+        $topicDetail = cfpr_show_topic($pid);
         $topicsData = cfpr_show_topic_hits($pid);
         $topicLeads = cfpr_show_topic_leads($pid);
 
         // json encode the datas
-        $data['topicDetail'] = json_decode(utf8_encode($topic),true);
+        $data['topicDetail'] = json_decode(utf8_encode($topicDetail),true);
         $data['topicHits'] = json_decode(utf8_encode($topicsData),true);
         $data['topicLeads'] = json_decode(utf8_encode($topicLeads),true);
 
