@@ -7,6 +7,10 @@ class Testing extends CI_Controller
 		 parent::__construct();
      
 	 }
+
+         function index(){
+             
+         }
 	
 	function mongodbtest()
 	 {

@@ -44,10 +44,9 @@ $this->carabiner->display(); ?>
                       <div id="webadmin">
 
                           <div id="searcharea">
-                          <form action="<?php echo site_url('welcome/knowledge')?>" method="post">
+                          <form action="<?php echo site_url('welcome/knowledgeSearch')?>" method="post">
                               <label id="searchbox">
                                   <input type="text" name="search" value="Search in knowledge map" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"/>
-                                  <input type="submit" class="hidden" value=""/>
                               </label>
                           </form>
                           </div>

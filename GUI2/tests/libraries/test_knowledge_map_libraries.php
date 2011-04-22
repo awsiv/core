@@ -27,7 +27,7 @@ class test_knowledge_map_libraries extends CodeIgniterUnitTestCase {
         $retValue = json_last_error();
 
         $this->assertTrue(is_array($array), "Should Return a valid array");
-     //   $this->dump($gdata);
+        //   $this->dump($gdata);
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
     }
 
@@ -47,6 +47,30 @@ class test_knowledge_map_libraries extends CodeIgniterUnitTestCase {
         $pid = cfpr_get_pid_for_topic("", "system policy");
         $gdata = cfpr_show_topic_leads($pid);
         $array = json_decode(utf8_encode($gdata), true);
+
+        $retValue = json_last_error();
+
+        $this->assertTrue(is_array($array), "Should Return a valid array");
+        //$this->dump($gdata);
+        $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
+    }
+
+     public function test_getValidJsonforTopicCategory() {
+        $pid = cfpr_get_pid_for_topic("", "system policy");
+        $gdata = cfpr_show_topic_category($pid);
+        $array = json_decode(utf8_encode($gdata), true);
+
+        $retValue = json_last_error();
+
+        $this->assertTrue(is_array($array), "Should Return a valid array");
+        //$this->dump($gdata);
+        $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
+    }
+
+    public function test_getValidJsonForKnowledgeSearch() {
+        $search = 'update'; //test string
+        $data = cfpr_search_topics($search, true);
+        $array = json_decode(utf8_encode($data), true);
 
         $retValue = json_last_error();
 
