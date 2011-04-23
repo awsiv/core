@@ -574,7 +574,7 @@ if (LICENSES == 0)
    return;
    }
   
-fprintf(fp,"\ntopics:\n");
+fprintf(fp,"\n# This information is jointly Copyrighted by (C) Cfengine and the Licensee may not be redistributed without the permission of both parties\ntopics:\n");
 
 fprintf(fp,"any:: \"system_reports\" comment => \"Reports collected from Cfengine managed systems by a reporting hub\";\n");
 fprintf(fp,"\"remote_scalars\" comment => \"Scalar variable values that are made accessible to remote agents through cf-serverd\";\n");
@@ -754,6 +754,24 @@ for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
    fprintf(fp," \"%s\" ",CF_FNCALL_TYPES[i].name);
    fprintf(fp,"    comment => \"%s\",\n",CF_FNCALL_TYPES[i].description);
    fprintf(fp,"    association => a(\"returns data-type\",\"%s\",\"is returned by function\");\n",CF_DATATYPES[CF_FNCALL_TYPES[i].dtype]);
+   }
+
+// Things for monitoring system state
+
+fprintf(fp,"things:\n");
+
+fprintf(fp,"  \"monitoring classes\" comment => \"Classes set by cf-monitord based on the observed system state.\"; \n");
+
+for (i = 0; i < CF_OBSERVABLES; i++)
+   {
+   if (strcmp(OBS[i][0],"spare") == 0)
+      {
+      continue;
+      }
+   
+   fprintf(fp," \"%s\" comment => \"%s\",",OBS[i][0],OBS[i][1]);   
+   fprintf(fp,"      generalizations => { \"vital signs\", \"observables\" },",OBS[i][0],OBS[i][1]);
+   fprintf(fp,"      determines => { \"actual state\" , \"monitoring classes\" };");
    }
 
 }

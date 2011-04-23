@@ -764,7 +764,7 @@ struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_m
 int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
 
 { int result = CF_GREEN;
- double kav,rav; 
+  double kav,rav; 
 
  switch (method)
     {
@@ -842,7 +842,7 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
         break;
     }
 
- return result;
+return result;
 }
 
 /*****************************************************************************/
