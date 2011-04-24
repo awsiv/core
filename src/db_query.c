@@ -4424,7 +4424,6 @@ struct HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle
  bson_append_int(&bb,cfp_handle,1);
  bson_append_int(&bb,cfp_promisetype,1);
  bson_append_int(&bb,cfp_promiser,1);
-
  bson_from_buffer(&field,&bb);
 
  cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,0);
@@ -4465,7 +4464,7 @@ struct HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle
             snprintf(p,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
           }
        }
-    PrependRlistAlien(&recordList,NewHubPromise(bName,bType,NULL,NULL,pType,p,NULL,h,NULL,NULL,0,NULL));
+    PrependRlistAlien(&recordList,NewHubPromise(bName,bType,NULL,pType,p,NULL,NULL,h,NULL,NULL,0,NULL));
     }
 
  mongo_cursor_destroy(cursor);
