@@ -326,7 +326,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
          }
       }
    
-   snprintf(work,CF_BUFSIZE,"{ context: \"%s\", topic: \"%s\", id: %d },",topic_context,topic_name,topic_id);
+   snprintf(work,CF_BUFSIZE,"{ \"context\": \"%s\", \"topic\": \"%s\", \"id\": %d },",topic_context,topic_name,topic_id);
    Join(buffer,work,CF_BUFSIZE);
    }
 
@@ -345,20 +345,45 @@ void Nova_ScanTheRest(int pid,char *buffer, int bufsize)
     
 { char this_name[CF_BUFSIZE],this_id[CF_BUFSIZE],this_context[CF_BUFSIZE];
   struct Item *worklist, *ip;
- 
-if (!Nova_GetTopicByTopicId(pid,this_name,this_id,this_context))
+  char work[CF_BUFSIZE];
+  char name[CF_BUFSIZE] = {0},*a_context;
+  int id=0;
+  id= Nova_GetTopicByTopicId(pid,this_name,this_id,this_context);
+if (!id)
    {
    snprintf(buffer,bufsize,"No such topic was found");
    return;
    }
 
 // Find other topics that have this topic as their category (sub topics)
-
 worklist = Nova_GetTopicsInContext(this_id);
+snprintf(buffer,CF_BUFSIZE,"{\"topic\":{\"context\":\"%s\",\"name\":\"%s\",\"id\":%d,\"sub_topics\":[",this_context,this_name,id);
+for(ip=worklist;ip!=NULL;ip=ip->next)
+  {
+  EscapeQuotes(ip->name,name,CF_BUFSIZE);
+  snprintf(work,CF_BUFSIZE,"{\"context\":\"%s\",\"topic\":\"%s\",\"id\":%d},", ip->classes, name, ip->counter);
+  Join(buffer,work,bufsize);
+  }
 
+if(buffer[strlen(buffer)-1]==',')
+  {
+  buffer[strlen(buffer)-1]='\0';  
+  }
+Join(buffer,"]},\"other_topics\":[",bufsize);
+name[0]='\0';
 // Find other topics in the same context
-
 worklist = Nova_GetTopicsInContext(this_context);
+for(ip=worklist;ip!=NULL;ip=ip->next)
+  {
+  EscapeQuotes(ip->name,name,CF_BUFSIZE);
+  snprintf(work,CF_BUFSIZE,"{\"context\":\"%s\",\"topic\":\"%s\",\"id\":%d},", ip->classes, name, ip->counter);
+  Join(buffer,work,bufsize);
+  }
+if(buffer[strlen(buffer)-1]==',')
+  {
+  buffer[strlen(buffer)-1]='\0';  
+  }
+Join(buffer,"]}",bufsize);
 }
 
 /*****************************************************************************/
