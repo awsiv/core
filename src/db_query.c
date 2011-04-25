@@ -4391,28 +4391,44 @@ struct HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle
  bson_empty(&query);
  bson_buffer_init(&bb);
 
- if (!EMPTY(promiser))
-   {  
-   if(escapeRegex)
-     {
+ if(escapeRegex)
+   {
+   if (!EMPTY(promiser))
+     {  
      EscapeRegex(promiser,regexEscapedStr,CF_BUFSIZE-1);  
      bson_append_regex(&bb, cfp_promiser,regexEscapedStr,"i");
+     emptyQuery = false;
      }
-   else
+   else if(!EMPTY(bundleName))
+     {
+     EscapeRegex(bundleName,regexEscapedStr,CF_BUFSIZE-1);  
+     bson_append_regex(&bb,cfp_bundlename,regexEscapedStr,"i");
+     emptyQuery = false;
+     }
+   else if(!EMPTY(handle))
+     {
+     EscapeRegex(handle,regexEscapedStr,CF_BUFSIZE-1);
+     bson_append_regex(&bb,cfp_handle,regexEscapedStr,"i");
+     emptyQuery = false;
+     }
+   }
+ else
+   {
+   if (!EMPTY(promiser))
      {
      bson_append_regex(&bb, cfp_promiser,promiser,"i");
-     }       
-   emptyQuery = false;
-   }
- else if(!EMPTY(bundleName))
-   {
-   bson_append_regex(&bb,cfp_bundlename,bundleName,"i");
-   emptyQuery = false;
-   }
- else if(!EMPTY(handle))
-   {
-   bson_append_regex(&bb,cfp_handle,handle,"i");
-   emptyQuery = false;
+     emptyQuery = false;
+     }
+   else if(!EMPTY(bundleName))
+     {
+     bson_append_regex(&bb,cfp_bundlename,bundleName,"i");
+     emptyQuery = false;
+     }
+   else if(!EMPTY(handle))
+     {
+     bson_append_regex(&bb,cfp_handle,handle,"i");
+     emptyQuery = false;
+     }
    }
  
  if(!emptyQuery)
