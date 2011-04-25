@@ -1,4 +1,3 @@
-
 /*
 
 This file is (C) Cfengine AS. See COSL LICENSE for details.
@@ -2189,7 +2188,6 @@ struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lna
     bson_from_buffer(&query,&bb);
     }
 
-
 /* BEGIN RESULT DOCUMENT */
 
  bson_buffer_init(&bb);
@@ -4372,7 +4370,7 @@ struct HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char *promiser, char *bundleName, int regex)
+struct HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char *promiser, char *bundleName, int escapeRegex)
 /*
  * Returns a set of handles of promises matching given promiser regex
  * XOR promise type XOR (bundle type, bundle name) XOR all.  All
@@ -4386,36 +4384,41 @@ struct HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle
  mongo_cursor *cursor;
  struct Rlist *recordList = NULL;
  bool emptyQuery = true;
-
+ char regexEscapedStr[CF_BUFSIZE] = {0};
  char h[CF_MAXVARSIZE],pType[CF_MAXVARSIZE],bName[CF_MAXVARSIZE],bType[CF_MAXVARSIZE],p[CF_MAXVARSIZE];
 
  // query
  bson_empty(&query);
  bson_buffer_init(&bb);
 
- if(regex)
-    {
-    if (!EMPTY(promiser))
-       {
-       bson_append_regex(&bb, cfp_promiser, promiser,"");
-       emptyQuery = false;
-       }
-    else if(!EMPTY(bundleName))
-       {
-       bson_append_regex(&bb,cfp_bundlename,bundleName,"");
-       emptyQuery = false;
-       }
-    else if(!EMPTY(handle))
-       {
-       bson_append_regex(&bb,cfp_handle,handle,"");
-       emptyQuery = false;
-       }
-    }
-
+ if (!EMPTY(promiser))
+   {  
+   if(escapeRegex)
+     {
+     EscapeRegex(promiser,regexEscapedStr,CF_BUFSIZE-1);  
+     bson_append_regex(&bb, cfp_promiser,regexEscapedStr,"i");
+     }
+   else
+     {
+     bson_append_regex(&bb, cfp_promiser,promiser,"i");
+     }       
+   emptyQuery = false;
+   }
+ else if(!EMPTY(bundleName))
+   {
+   bson_append_regex(&bb,cfp_bundlename,bundleName,"i");
+   emptyQuery = false;
+   }
+ else if(!EMPTY(handle))
+   {
+   bson_append_regex(&bb,cfp_handle,handle,"i");
+   emptyQuery = false;
+   }
+ 
  if(!emptyQuery)
-    {
-    bson_from_buffer(&query,&bb);
-    }
+   {
+   bson_from_buffer(&query,&bb);
+   }
 
 // returned attribute
  bson_buffer_init(&bb);

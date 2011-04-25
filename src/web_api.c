@@ -5836,13 +5836,13 @@ int Con2PHP_rank_promise_popularity(bool sortAscending, char *buf, int bufsize)
 
 }
 /*****************************************************************************/
-int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle,int regex,char *returnval,int bufsize)
+int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle,int escRegex,char *returnval,int bufsize)
 
 { mongo_connection dbconn;
   char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
   char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
-  char work[CF_MAXVARSIZE];
-  char bundleName[CF_BUFSIZE],promiserName[CF_BUFSIZE];
+  char work[CF_MAXVARSIZE] = {0};
+  char bundleName[CF_BUFSIZE],promiserJson[CF_BUFSIZE];
   struct Rlist *rp;
   struct HubPromise *hp;
   struct HubQuery *hq;
@@ -5856,37 +5856,34 @@ int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle
       return false;
     }
 
-  hq = CFDB_QueryPolicyFinderData(&dbconn,handle,promiser,bundle,regex);
-
+  hq = CFDB_QueryPolicyFinderData(&dbconn,handle,promiser,bundle,escRegex);
   returnval[0] = '\0';
 
   if(hq)
     {
-      StartJoin(returnval, "[", bufsize);
+    StartJoin(returnval, "[", bufsize);
+    for (rp = hq->records; rp != NULL; rp=rp->next)
+      {
+      hp = (struct HubPromise *)rp->item;
+      snprintf(work,sizeof(work),"[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",
+               (char*)hp->handle,
+               (char*)hp->promiseType,
+               (char *)hp->bundleName,
+               (char*)hp->bundleType,
+               (char*)EscapeJson(hp->promiser,promiserJson,CF_BUFSIZE-1));
+      Join(returnval,work,bufsize);
+      }
 
-      for (rp = hq->records; rp != NULL; rp=rp->next)
-	{
-	  hp = (struct HubPromise *)rp->item;
-	  snprintf(work,CF_MAXVARSIZE-1,"[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",(char*)hp->handle,(char*)hp->promiseType,(char *)hp->bundleName,(char*)hp->bundleType,(char*)hp->promiser);
-	  Join(returnval,work,bufsize);
-	}
-
-      CFDB_Close(&dbconn);
-
-      if(returnval[strlen(returnval)-1] == ',')
-	{
-	  returnval[strlen(returnval)-1] = '\0';
-	}
-      EndJoin(returnval, "]", bufsize);
-
-      DeleteHubQuery(hq,DeleteHubPromise);
-
-      return true;
+    CFDB_Close(&dbconn);
+    ReplaceTrailingChar(returnval, ',', '\0');
+    EndJoin(returnval, "]", bufsize);
+    DeleteHubQuery(hq,DeleteHubPromise);
+    return true;
     }
   else  // no result
     {
-      CFDB_Close(&dbconn);
-      return false;
+    CFDB_Close(&dbconn);
+    return false;
     }
 }
 
