@@ -688,6 +688,11 @@ span.search input
 {
     background:#fff;
 }
+
+.customdlg #reportlistcontainer
+{
+    background:#fff;
+}
 .customdlg .ui-widget-header{
     color:#FFF;
     background: #3d453a;
@@ -918,6 +923,9 @@ span.search input
 }
 #policyList .promiser{
   display:block;
+  max-height: 16px;
+  max-width: 550px;
+  overflow: hidden;
 }
 
 #policyList .handle{
@@ -927,7 +935,42 @@ span.search input
   
 }
 
+/*reportdialog*/
+#repdialog
+{
+    background: #3d453a;
+    color:#fff;
+    opacity:0.9;
+    z-index:1500;
+    position:absolute;
+    top:0;
+    left:0;
+    -moz-border-radius:5px 5px 5px 5px;
+    border-radius:5px 5px 5px 5px;
+    width:100%;
+}
 
+.panelhead{
+  padding:10px;
+  position:relative;
+}
+
+
+.panelcontent p
+{
+    margin: 0;
+    padding: 5px 10px;
+}
+
+.panelcontent input.searchfield
+{
+    display:block;
+    width:90%;
+    border:solid 1px #cecece;
+    padding-top:4px;
+    margin-top:2px;
+    z-index: auto !important
+}
 /****************************/
 .alert{
     background: #D8000C;

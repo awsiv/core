@@ -451,7 +451,8 @@ class Welcome extends Cf_Controller {
                             array('jit/jit-yc.js'),
                             array('jquery.form.js'),
                             array('reportscontrol.js'),
-                            array('widgets/notes.js')
+                            array('widgets/notes.js'),
+                            array('widgets/reportfinder.js')
                            );
         $this->carabiner->js($requiredjs);
         $jsIE = array('jit/Extras/excanvas.js');
@@ -483,10 +484,10 @@ class Welcome extends Cf_Controller {
 
         $data = array(
             'hostkey' => $hostkey,
-            'title_header' => "host " . $hostname,
-            'title' => "Cfengine Mission Portal - host " . $ipaddr,
-            'nav_text' => "Status : host",
-            'status' => "current",
+            //'title_header' => "host " . $hostname,
+            //'title' => "Cfengine Mission Portal - host " . $ipaddr,
+            //'nav_text' => "Status : host",
+            //'status' => "current",
             'hostname' => $hostname,
             'ipaddr' => $ipaddr,
             'is_commented' => $is_commented,
@@ -635,7 +636,8 @@ class Welcome extends Cf_Controller {
                             array('widgets/classtags.js'),
                             array('widgets/hostfinder.js'),
                             array('widgets/classfinder.js'),
-                            array('widgets/policyfinder.js')
+                            array('widgets/policyfinder.js'),
+                            array('widgets/reportfinder.js')
                            );
         $this->carabiner->js($requiredjs);
 

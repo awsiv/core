@@ -15,6 +15,7 @@ $colour = cfpr_get_host_colour($hostkey);
                           <input type="hidden" name="hostkey" value="<?php echo $hostkey?>">
                     </form>
                     </div>
+                     <h2><?php echo anchor('widget/allreports','reports',array('id'=>'findreport')) ?></h2>
                </div>
               <?php
 				$last = cfpr_getlastupdate($hostkey);
@@ -140,5 +141,6 @@ $(document).ready(function() {
                // console.log(nid,element);
         }});
     reportcontrol(<?php echo $jsondata?>,"host");
+    $('#findreport').reportfinder({allhost:false,hostkey:"<?php echo $hostkey;?>"});
 });
 </script>

@@ -165,14 +165,14 @@ class Widget extends CI_Controller {
         function search_by_handle()
         {
            $handle=$this->input->post('filter');
-            $data="";
+           $reg=$this->input->post('reg');
             if($handle)
             {
-               echo cfpr_policy_finder_by_handle($handle);
+               echo cfpr_policy_finder_by_handle($handle,$reg);
             }
             else
             {
-               echo cfpr_policy_finder_by_handle(NULL);
+               echo cfpr_policy_finder_by_handle(NULL,$reg);
             }  
         }
 
@@ -180,26 +180,28 @@ class Widget extends CI_Controller {
         function search_by_bundle()
         {
             $bundle=$this->input->post('filter');
+            $reg=$this->input->post('reg');
             if($bundle)
             {
-               echo cfpr_policy_finder_by_handle($bundle);
+               echo cfpr_policy_finder_by_handle($bundle,$reg);
             }
             else
             {
-               echo cfpr_policy_finder_by_handle(NULL);
+               echo cfpr_policy_finder_by_handle(NULL,$reg);
             }
         }
 
         function search_by_promiser()
         {
           $promiser=$this->input->post('filter');
+          $reg=$this->input->post('reg');
             if($promiser)
             {
-               echo cfpr_policy_finder_by_promiser($promiser);
+               echo cfpr_policy_finder_by_promiser($promiser,$reg);
             }
             else
             {
-               echo cfpr_policy_finder_by_promiser(NULL);
+               echo cfpr_policy_finder_by_promiser(NULL,$reg);
             }
         }
         
@@ -221,6 +223,11 @@ class Widget extends CI_Controller {
           }
 
         }
+
+       function allreports()
+       {
+          echo cfpr_select_reports(".*", 100);
+       }
 }
 
 ?>

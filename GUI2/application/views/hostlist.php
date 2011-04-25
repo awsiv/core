@@ -12,6 +12,7 @@
         <?php echo anchor('#','hostfinder',array('id'=>'findhost')) ?>
         <?php echo anchor('widget/allclasses','classfinder',array('id'=>'findclass')) ?>
         <?php echo anchor('widget/allpolicies','policyfinder',array('id'=>'findpolicy')) ?>
+        <?php echo anchor('widget/allreports','reports',array('id'=>'findreport')) ?>
         <div class="clear"></div>
         <!--<div id="filters"><span>Selected classes:</span><ul></ul></div>-->
         <div id="hostlist" class="panelcontent tables">
@@ -71,6 +72,8 @@
             $('#findclass').classfinder();
 
             $('#findpolicy').policyfinder();
+
+            $('#findreport').reportfinder();
 
           // var $filter=$('#filters').find('ul');
 

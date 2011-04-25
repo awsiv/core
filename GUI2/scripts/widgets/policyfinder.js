@@ -13,7 +13,7 @@ _init: function(){
 _create:function(){
         var self=this;
         self.addsearchbar();
-        self.loadpagebody(self.element.attr('href'),"");
+        self.loadpagebody(self.element.attr('href'),"",false);
         self.addalphapager();
         $.ui.policyfinder.instances.push(this.element);
 },
@@ -69,23 +69,23 @@ menuitemclicked:function(event){
   self.searchbar.find('input[type="text"]').val('search '+sender.text().toLowerCase()).data('default','search '+sender.text().toLowerCase())
   self.searchbar.attr("action","/widget/search_"+selected_category.replace(/\s+/g, "_").toLowerCase());
   self.dialogcontent.html(self.ajaxloader);
-  self.loadpagebody(self.searchbar.attr('action'),"") ;
+  self.loadpagebody(self.searchbar.attr('action'),"",false) ;
   self.searchbar.find('input[type="text"]').trigger('blur');
   self.alphasearch.find('li').removeClass('selected');
   self.menu.fadeOut();
 },
 
-loadpagebody:function(url,val){
+loadpagebody:function(url,val,escreg){
   var self=this,
       submit_url=url,
       searchval=val;
       $.ajax({
                   type: "POST",
                   url: submit_url,
-                  data: {filter:searchval},
+                  data: {filter:searchval,reg:escreg},
                   dataType:"json",
                   success: function(data) {
-                  self.dialogcontent.html($("<ul>").attr("id", "policyList")); //repeated can be merged with loadpagebody
+                  self.dialogcontent.html($("<ul>").attr("id", "policyList"));
                   $.each(data, function(i, val) {
                                         var li = $("<li>");
                                         $("<a>").attr({title:val, href:"/promise/details/"+val[0]})
@@ -118,7 +118,7 @@ searchboxevent:function(event)
            sender=$(event.target),
            submit_url=sender.attr('action'),
            searchval=sender.find('input').val();
-           self.loadpagebody(submit_url,searchval);
+           self.loadpagebody(submit_url,searchval,false);
            self.menu.fadeOut();
      },
 
@@ -142,13 +142,7 @@ searchboxevent:function(event)
    var self=this;
    var sender=$(event.target).parent();
    sender.addClass('selected').siblings().removeClass('selected');
-   //console.log(RegExp("/^"+$(event.target).text()+"/", 'i'));
-   self.dialogcontent.find("#policyList").find('li').addClass('unmatched').each(function() {
-                    var text = $(this).text();
-                    if (text.match(RegExp("^"+sender.text().toLowerCase(), 'i'))) {
-                        $(this).removeClass('unmatched');
-                    }
-    });
+   self.loadpagebody(self.searchbar.attr('action'),"^"+$(event.target).text(),true);
    if(self.menu.css('display')=='block')
                   {
                   self.menu.fadeOut(400);
