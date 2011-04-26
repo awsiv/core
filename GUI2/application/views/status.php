@@ -1,5 +1,5 @@
 
-<div id="bodystatus">
+<div id="body">
     <div class="left"></div>
     <div class="middle minwidth80">
         <div id="overall" class="innerdiv">

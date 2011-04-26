@@ -294,6 +294,20 @@ class Welcome extends Cf_Controller {
         return '#' . $rgb;
     }
 
+    function engg(){
+      $bc = array(
+            'title' => 'Engineering',
+            'url' => 'welcome/engg',
+            'isRoot' => false
+        );
+      $this->breadcrumb->setBreadCrumb($bc);
+       $data = array(
+            'title' => "Cfengine Mission Portal - engineering",
+            'breadcrumbs' => $this->breadcrumblist->display()
+        );
+        $this->template->load('template', 'engineering', $data);
+    }
+
     function helm() {
         $bc = array(
             'title' => 'Configure',

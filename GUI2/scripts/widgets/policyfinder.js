@@ -13,7 +13,7 @@ _init: function(){
 _create:function(){
         var self=this;
         self.addsearchbar();
-        self.loadpagebody(self.element.attr('href'),"",false);
+        self.loadpagebody(self.element.attr('href'),"",true);
         self.addalphapager();
         $.ui.policyfinder.instances.push(this.element);
 },
@@ -118,7 +118,7 @@ searchboxevent:function(event)
            sender=$(event.target),
            submit_url=sender.attr('action'),
            searchval=sender.find('input').val();
-           self.loadpagebody(submit_url,searchval,false);
+           self.loadpagebody(submit_url,searchval,true);
            self.menu.fadeOut();
      },
 
@@ -142,7 +142,7 @@ searchboxevent:function(event)
    var self=this;
    var sender=$(event.target).parent();
    sender.addClass('selected').siblings().removeClass('selected');
-   self.loadpagebody(self.searchbar.attr('action'),"^"+$(event.target).text(),true);
+   self.loadpagebody(self.searchbar.attr('action'),"^"+$(event.target).text(),false);
    if(self.menu.css('display')=='block')
                   {
                   self.menu.fadeOut(400);

@@ -183,17 +183,17 @@ label#searchbox input
     width:220px;
 }
 
-#body{
+#bodyindex{
     color: #000000;
 }
-#body .left{
+#bodyindex .left{
     background: url("../images/box_main_left.png") no-repeat;
     min-width:11px;
     height:511px;
     float:left;
 }
 
-#body .middle{
+#bodyindex .middle{
     background: url("../images/box_main_mid_tile.png") repeat-x;
     height: 511px;
     float:left;
@@ -204,7 +204,7 @@ label#searchbox input
     text-decoration: underline;
 }
 
-#body .right{
+#bodyindex .right{
     background: url("../images/box_main_right.png") no-repeat;
     min-width:11px;
     height:511px;
@@ -215,7 +215,7 @@ label#searchbox input
 #work {
 
     margin-bottom: 10px;
-    min-width: 960px;
+    
 }
 
 #work .header{
@@ -238,21 +238,23 @@ label#searchbox input
 #work .dash{
     margin-top: 85px;
 }
-
-#work .dash ul{
-    list-style: none;
-    margin: 0 auto;
-    width: 500px;
+#work .dash{
+    width:500px;
 }
 
-#work .dash ul li{
+.dash ul{
+    list-style: none;
+    margin: 0 auto;
+}
+
+.dash ul li{
     float:left;
     margin:20px;
     text-align: center;
     list-style: none;
 }
 
-#work .dash ul li a{
+.dash ul li a{
     width:85px;
     display:block;
     padding-top: 85px;
@@ -260,19 +262,17 @@ label#searchbox input
     color:#717171;
 }
 
-#work .dash a.status{
+.dash a.status{
     background: url("../images/status.png") no-repeat;
 }
-
-#work .dash a.library{
+.dash a.library{
     background: url("../images/library.png") no-repeat;
 }
-
-#work .dash a.engineering{
+.dash a.engineering{
     background: url("../images/engineering.png") no-repeat;
 }
 
-#work .dash a.planning{
+.dash a.planning{
     background: url("../images/planning.png") no-repeat;
 }
 
@@ -405,14 +405,15 @@ styles for status page may be mergerd in the future
 body {
     background: url("../images/icons/bg_tile.png") repeat-x scroll 0 0 #2B7B98;
 }
-#bodystatus .left{
+
+#body .left{
     background: url("../images/icons/box_main_left.png") no-repeat;
     min-width:7px;
     height:594px;
     float:left;
 }
 
-#bodystatus .middle{
+#body .middle{
     background: url("../images/icons/box_main_mid_tile.png") repeat-x;
     height: 594px;
     float:left;
@@ -427,7 +428,10 @@ body {
     width:25%;
 }
 
-#bodystatus .right{
+.minwidth98{
+   min-width: 98.7%;
+}
+#body .right{
     background: url("../images/icons/box_main_right.png") no-repeat;
     min-width:11px;
     height:594px;
@@ -972,6 +976,28 @@ span.search input
     z-index: auto !important
 }
 /****************************/
+
+/*engineering page */
+
+
+
+
+li.hubs{
+ background: url("../images/hub.png")  no-repeat;
+}
+li.hosts{
+ background: url("../images/host.png")  no-repeat;
+}
+li.classes{
+ background: url("../images/class.png")  no-repeat;
+}
+li.policies{
+ background: url("../images/bundle.png")  no-repeat;
+}
+
+li.reports{
+ background: url("../images/report.png") no-repeat;
+}
 .alert{
     background: #D8000C;
     border: solid 1px red;

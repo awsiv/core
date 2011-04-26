@@ -1,4 +1,4 @@
-<div id="body">
+<div id="bodyindex">
               <div class="left"></div>
               <div id="work" class="middle">
                   <div class="grid_8 push_2 header">
@@ -10,7 +10,7 @@
                       echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo'));?></p>
                   </div>
                   <div class="clear"></div>
-                  <div class ="grid_8 push_2 dash">
+                  <div class ="grid_8 push_4 dash">
                       <ul>
                           <li><?php echo anchor('welcome/status','status',array('class'=>'status'));?></li>
                           <li><?php echo anchor('welcome/knowledge','library',array('class'=>'library'));?></li>

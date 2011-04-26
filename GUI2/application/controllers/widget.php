@@ -166,6 +166,12 @@ class Widget extends CI_Controller {
         {
            $handle=$this->input->post('filter');
            $reg=$this->input->post('reg');
+           if($reg=="true"){
+              $reg=true;
+          }
+          if($reg=="false"){
+              $reg=false;
+          }
             if($handle)
             {
                echo cfpr_policy_finder_by_handle($handle,$reg);
@@ -181,13 +187,19 @@ class Widget extends CI_Controller {
         {
             $bundle=$this->input->post('filter');
             $reg=$this->input->post('reg');
+            if($reg=="true"){
+              $reg=true;
+              }
+            if($reg=="false"){
+              $reg=false;
+             }
             if($bundle)
             {
-               echo cfpr_policy_finder_by_handle($bundle,$reg);
+               echo cfpr_policy_finder_by_bundle($bundle,$reg);
             }
             else
             {
-               echo cfpr_policy_finder_by_handle(NULL,$reg);
+               echo cfpr_policy_finder_by_bundle(NULL,$reg);
             }
         }
 
@@ -195,9 +207,16 @@ class Widget extends CI_Controller {
         {
           $promiser=$this->input->post('filter');
           $reg=$this->input->post('reg');
+          if($reg=="true"){
+              $reg=true;
+          }
+          if($reg=="false"){
+              $reg=false;
+          }
             if($promiser)
             {
                echo cfpr_policy_finder_by_promiser($promiser,$reg);
+                
             }
             else
             {
@@ -205,24 +224,6 @@ class Widget extends CI_Controller {
             }
         }
         
-        function filterpolicy()
-        {
-            $filter =$this->input->post('filter');
-            switch($filter)
-          {
-              case "handle":
-                    echo cfpr_policy_finder_by_handle(NULL);
-                    break;
-              case "bundle":
-                    echo cfpr_list_ip_classes(NULL,NULL,NULL,NULL);
-                    break;
-              case "promiser":
-                    echo cfpr_list_soft_classes(NULL,NULL,NULL,NULL);
-                    break;
-              
-          }
-
-        }
 
        function allreports()
        {
