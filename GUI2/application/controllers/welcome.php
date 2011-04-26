@@ -295,6 +295,13 @@ class Welcome extends Cf_Controller {
     }
 
     function engg(){
+       $requiredjs = array(
+                            array('widgets/hostfinder.js'),
+                            array('widgets/classfinder.js'),
+                            array('widgets/policyfinder.js'),
+                            array('widgets/reportfinder.js')
+                           );
+      $this->carabiner->js($requiredjs);
       $bc = array(
             'title' => 'Engineering',
             'url' => 'welcome/engg',

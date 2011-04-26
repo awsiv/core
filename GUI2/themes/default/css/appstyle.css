@@ -276,6 +276,23 @@ label#searchbox input
     background: url("../images/planning.png") no-repeat;
 }
 
+.dash a.host{
+   background: url("../images/host.png") no-repeat;
+}
+
+.dash a.classes{
+   background: url("../images/class.png") no-repeat;
+}
+
+.dash a.policies{
+   background: url("../images/bundle.png") no-repeat;
+}
+
+.dash a.report{
+   background: url("../images/report.png") no-repeat;
+}
+
+
 #tagCloud {
     width:290px; background-color:#575454; text-align:center; padding:5px;
     overflow:auto; font-size:70%; font-family:arial;
@@ -978,29 +995,20 @@ span.search input
 /****************************/
 
 /*engineering page */
-
-
-
-
-li.hubs{
- background: url("../images/hub.png")  no-repeat;
-}
-li.hosts{
- background: url("../images/host.png")  no-repeat;
-}
-li.classes{
- background: url("../images/class.png")  no-repeat;
-}
-li.policies{
- background: url("../images/bundle.png")  no-repeat;
+#finder
+{
+    margin:15px 15px 22px 15px;
 }
 
-li.reports{
- background: url("../images/report.png") no-repeat;
-}
 .alert{
     background: #D8000C;
     border: solid 1px red;
+}
+
+#finder ul
+{
+    margin-left:91px;
+    margin-bottom:50px;
 }
 
 #footer p{

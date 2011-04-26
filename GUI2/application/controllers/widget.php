@@ -159,7 +159,7 @@ class Widget extends CI_Controller {
 
         function allpolicies()
         {
-            echo cfpr_policy_finder_by_handle(NULL);
+            echo cfpr_policy_finder_by_handle(NULL,true);
         }
 
         function search_by_handle()
