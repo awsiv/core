@@ -1325,6 +1325,8 @@ if (NewDBCursor(dbp,&dbcp))
 
       AppendItem(reply,name,NULL);
       }
+
+   DeleteDBCursor(dbp,dbcp);
    }
 
 CloseDB(dbp);
@@ -2072,6 +2074,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    AppendItem(reply,line,NULL);
    }
 
+DeleteDBCursor(dbp,dbcp);
 DeleteItemList(file);
 CloseDB(dbp);
 }

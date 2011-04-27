@@ -140,7 +140,7 @@ else
 
 /*****************************************************************************/
 
-int Nova_ReturnQueryData(struct cfd_connection *conn,char *menu,char *sendbuffer)
+int Nova_ReturnQueryData(struct cfd_connection *conn,char *menu)
 
 {
   char buffer[CF_MAXVARSIZE],out[CF_BUFSIZE],menu_name[CF_MAXVARSIZE];
@@ -183,59 +183,10 @@ if ((type = String2Menu(menu_name)) == cfd_menu_error)
 
 // Promise: use menu data and start-time
 
-switch (type)
-   {
-   case cfd_menu_delta:
-       Nova_PackPerformance(&reply,CFR_PERF,from,type);
-       Nova_PackClasses(&reply,CFR_CLASS,from,type);
-       Nova_PackFileChanges(&reply,CFR_FCHANGE,from,type);
-       Nova_PackDiffs(&reply,CFR_FDIFF,from,type);
-       Nova_PackMonitorMag(&reply,CFR_MONITOR_MAG,from,type);
-       Nova_PackCompliance(&reply,CFR_PCOMPLIANCE,from,type);
-       Nova_PackTotalCompliance(&reply,CFR_TCOMPLIANCE,from,type);
-       Nova_PackLastSeen(&reply,CFR_LASTSEEN,from,type);
-       Nova_PackRepairLog(&reply,CFR_REPAIRLOG,from,type);
-       Nova_PackNotKeptLog(&reply,CFR_NOTKEPTLOG,from,type);
-       Nova_PackMeter(&reply,CFR_METER,from,type);
-       Nova_PackBundles(&reply,CFR_BUNDLES,from,type);
-       break;
-       
-   case cfd_menu_full:
-
-       Nova_PackPerformance(&reply,CFR_PERF,from,type);
-       Nova_PackClasses(&reply,CFR_CLASS,from,type);
-       Nova_PackSetuid(&reply,CFR_SETUID,from,type);
-       Nova_PackFileChanges(&reply,CFR_FCHANGE,from,type);
-       Nova_PackDiffs(&reply,CFR_FDIFF,from,type);
-       Nova_PackMonitorWeek(&reply,CFR_MONITOR_WEEK,from,type);
-       Nova_PackMonitorMag(&reply,CFR_MONITOR_MAG,from,type);
-       Nova_PackMonitorHist(&reply,CFR_MONITOR_HIST,from,type);
-       Nova_PackMonitorYear(&reply,CFR_MONITOR_YEAR,from,type);
-       Nova_PackCompliance(&reply,CFR_PCOMPLIANCE,from,type);
-       Nova_PackTotalCompliance(&reply,CFR_TCOMPLIANCE,from,type);
-       Nova_PackSoftware(&reply,CFR_SOFTWARE,from,type);
-       Nova_PackAvailPatches(&reply,CFR_AVAILPATCH,from,type);
-       Nova_PackPatchStatus(&reply,CFR_PATCHSTATUS,from,type);
-       Nova_Pack_promise_output_common(&reply,CFR_PROMISEOUT,from,type);
-       Nova_PackValueReport(&reply,CFR_VALUE,from,type);
-       Nova_PackVariables2(&reply,CFR_VARD,from,type);
-       //Nova_PackVariables(&reply,CFR_VARS,from,type);  //DEPRECATED
-       Nova_PackLastSeen(&reply,CFR_LASTSEEN,from,type);
-       Nova_PackRepairLog(&reply,CFR_REPAIRLOG,from,type);
-       Nova_PackNotKeptLog(&reply,CFR_NOTKEPTLOG,from,type);
-       Nova_PackMeter(&reply,CFR_METER,from,type);
-       Nova_PackBundles(&reply,CFR_BUNDLES,from,type);
-       break;
-   }
+Nova_PackAllReports(&reply,from,delta1,type);
 
 // Promise: get time2 and return for delta
 // Promise: return size as a service
-
-time2 = time(NULL);
-CfOut(cf_verbose,""," -> Assembled reply at %s",cf_ctime(&time2));
-
-snprintf(buffer,CF_MAXVARSIZE,"CFR: %ld %ld %d",delta1,time2,ItemListSize(reply));
-PrependItem(&reply,buffer,NULL);
 
 for (ip = reply; ip != NULL; ip=ip->next)
    {
@@ -260,6 +211,69 @@ if (SendTransaction(conn->sd_reply,out,cipherlen,CF_DONE) == -1)
 
 DeleteItemList(reply);
 return true;
+}
+
+/*****************************************************************************/
+
+void Nova_PackAllReports(struct Item **reply, time_t from, time_t delta1, enum cfd_menu type)
+/**
+ * Creates the reply item list from all available reports on this host.
+ */
+{
+ time_t tReply;
+ char buffer[CF_MAXVARSIZE];
+ 
+switch (type)
+   {
+   case cfd_menu_delta:
+       Nova_PackPerformance(reply,CFR_PERF,from,type);
+       Nova_PackClasses(reply,CFR_CLASS,from,type);
+       Nova_PackFileChanges(reply,CFR_FCHANGE,from,type);
+       Nova_PackDiffs(reply,CFR_FDIFF,from,type);
+       Nova_PackMonitorMag(reply,CFR_MONITOR_MAG,from,type);
+       Nova_PackCompliance(reply,CFR_PCOMPLIANCE,from,type);
+       Nova_PackTotalCompliance(reply,CFR_TCOMPLIANCE,from,type);
+       Nova_PackLastSeen(reply,CFR_LASTSEEN,from,type);
+       Nova_PackRepairLog(reply,CFR_REPAIRLOG,from,type);
+       Nova_PackNotKeptLog(reply,CFR_NOTKEPTLOG,from,type);
+       Nova_PackMeter(reply,CFR_METER,from,type);
+       Nova_PackBundles(reply,CFR_BUNDLES,from,type);
+       break;
+       
+   case cfd_menu_full:
+
+       Nova_PackPerformance(reply,CFR_PERF,from,type);
+       Nova_PackClasses(reply,CFR_CLASS,from,type);
+       Nova_PackSetuid(reply,CFR_SETUID,from,type);
+       Nova_PackFileChanges(reply,CFR_FCHANGE,from,type);
+       Nova_PackDiffs(reply,CFR_FDIFF,from,type);
+       Nova_PackMonitorWeek(reply,CFR_MONITOR_WEEK,from,type);
+       Nova_PackMonitorMag(reply,CFR_MONITOR_MAG,from,type);
+       Nova_PackMonitorHist(reply,CFR_MONITOR_HIST,from,type);
+       Nova_PackMonitorYear(reply,CFR_MONITOR_YEAR,from,type);
+       Nova_PackCompliance(reply,CFR_PCOMPLIANCE,from,type);
+       Nova_PackTotalCompliance(reply,CFR_TCOMPLIANCE,from,type);
+       Nova_PackSoftware(reply,CFR_SOFTWARE,from,type);
+       Nova_PackAvailPatches(reply,CFR_AVAILPATCH,from,type);
+       Nova_PackPatchStatus(reply,CFR_PATCHSTATUS,from,type);
+       Nova_Pack_promise_output_common(reply,CFR_PROMISEOUT,from,type);
+       Nova_PackValueReport(reply,CFR_VALUE,from,type);
+       Nova_PackVariables2(reply,CFR_VARD,from,type);
+       //Nova_PackVariables(reply,CFR_VARS,from,type);  //DEPRECATED
+       Nova_PackLastSeen(reply,CFR_LASTSEEN,from,type);
+       Nova_PackRepairLog(reply,CFR_REPAIRLOG,from,type);
+       Nova_PackNotKeptLog(reply,CFR_NOTKEPTLOG,from,type);
+       Nova_PackMeter(reply,CFR_METER,from,type);
+       Nova_PackBundles(reply,CFR_BUNDLES,from,type);
+       break;
+   }
+
+tReply = time(NULL);
+CfOut(cf_verbose,""," -> Assembled reply at %s",cf_ctime(&tReply));
+
+snprintf(buffer,sizeof(buffer),"CFR: %ld %ld %d",delta1,tReply,ItemListSize(*reply));
+PrependItem(reply,buffer,NULL);
+
 }
 
 /*****************************************************************************/

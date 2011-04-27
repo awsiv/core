@@ -1258,7 +1258,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    if (xml)
       {
       fprintf(fout,"%s",NRX[cfx_entry][cfb]);
-      fprintf(fout,"%s %s %s",NRX[cfx_date][cfb],date,NRX[cfx_date][cfe]);
+      fprintf(fout,"%s %ld %s",NRX[cfx_date][cfb],date,NRX[cfx_date][cfe]);
       fprintf(fout,"%s %s %s",NRX[cfx_event][cfb],handle,NRX[cfx_event][cfe]);
       fprintf(fout,"%s",NRX[cfx_entry][cfe]);
       }
@@ -2199,4 +2199,52 @@ MapPromiseToTopic(FKNOW,pp,version);
 #else
 ShowPromiseInReport(version, pp, indent);
 #endif
+}
+
+
+/*********************************************************************/
+
+int Nova_ExportReports(enum cfd_menu type)
+{
+ struct Item *reports = NULL, *ip;
+ time_t from;
+ char filePath[CF_MAXVARSIZE];
+ FILE *fout;
+
+ switch(type)
+    {
+    case cfd_menu_delta:
+        from = time(NULL) - 60*10; // delta = last 10 minutes
+        break;
+    case cfd_menu_full:
+        from = time(NULL) - CF_WEEK; // full = last week
+        break;
+    default:
+        CfOut(cf_error, "", "!! Nova_ExportReports: type is not delta or full but %d", type);
+        return false;
+    }
+ 
+ snprintf(filePath, sizeof(filePath), "%s/reports/report_export.nov", CFWORKDIR);
+ MapName(filePath);
+
+ if ((fout = fopen(filePath,"w")) == NULL)
+    {
+    CfOut(cf_error,"fopen","!! Cannot open export file path %s", filePath);
+    return false;
+    }
+
+ CfOut(cf_inform, "", " -> Saving all Nova reports to %s", filePath);
+ 
+ Nova_PackAllReports(&reports,from,0,type);
+
+ for(ip = reports; ip != NULL; ip = ip->next)
+    {
+    ReplaceTrailingChar(ip->name, '\n', '\0');
+    fprintf(fout, "%s\n", ip->name);
+    }
+
+ DeleteItemList(reports);
+ fclose(fout);
+ 
+ return true;
 }
