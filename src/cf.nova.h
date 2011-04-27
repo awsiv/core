@@ -80,6 +80,7 @@
 #define CFDB_PORT 27017
 #define MONITOR_CLASS_PREFIX "mXC_"
 #define CF_CHANGE_HORIZON 10
+#define NOVA_EXPORT_HEADER "NOVA_EXPORT"
 
 /*****************************************************************************/
 
@@ -785,8 +786,10 @@ void Nova_NoteVarUsageDB(void);
 void Nova_OpenCompilationReportFiles(const char *fname);
 void Nova_ShowPromises(struct Bundle *bundles, struct Body *bodies);
 void Nova_ShowPromise(const char *version, struct Promise *pp, int indent);
-int Nova_ExportReports(enum cfd_menu type);
-    
+int Nova_ExportReports(char *reportName);
+int Nova_ImportHostReports(char *filePath);
+
+
 /* request.c */
 
 void Nova_CfQueryCFDB(char *query);
@@ -822,7 +825,6 @@ int Nova_ReturnQueryData(struct cfd_connection *conn,char *menu);
 void Nova_PackAllReports(struct Item **reply, time_t from, time_t delta1, enum cfd_menu type);
 char *Nova_GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,char *rcv);
 int Nova_ParseHostname(char *name,char *hostname);
-enum cfd_menu String2Menu(char *s);
 
 int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer);
 void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer);

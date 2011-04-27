@@ -2201,17 +2201,22 @@ ShowPromiseInReport(version, pp, indent);
 #endif
 }
 
-
 /*********************************************************************/
 
-int Nova_ExportReports(enum cfd_menu type)
+int Nova_ExportReports(char *reportName)
+/*
+ * Export from dbm files to one text file.
+ */
 {
  struct Item *reports = NULL, *ip;
+ enum cfd_menu reportType;
  time_t from;
  char filePath[CF_MAXVARSIZE];
  FILE *fout;
 
- switch(type)
+ reportType = String2Menu(reportName);
+
+ switch(reportType)
     {
     case cfd_menu_delta:
         from = time(NULL) - 60*10; // delta = last 10 minutes
@@ -2220,7 +2225,7 @@ int Nova_ExportReports(enum cfd_menu type)
         from = time(NULL) - CF_WEEK; // full = last week
         break;
     default:
-        CfOut(cf_error, "", "!! Nova_ExportReports: type is not delta or full but %d", type);
+        CfOut(cf_error, "", "!! Nova_ExportReports: reportType is not delta or full but %d", reportType);
         return false;
     }
  
@@ -2234,8 +2239,10 @@ int Nova_ExportReports(enum cfd_menu type)
     }
 
  CfOut(cf_inform, "", " -> Saving all Nova reports to %s", filePath);
+
+ fprintf(fout, "%s %s %s\n", NOVA_EXPORT_HEADER, reportName, PUBKEY_DIGEST);
  
- Nova_PackAllReports(&reports,from,0,type);
+ Nova_PackAllReports(&reports,from,0,reportType);
 
  for(ip = reports; ip != NULL; ip = ip->next)
     {
@@ -2245,6 +2252,54 @@ int Nova_ExportReports(enum cfd_menu type)
 
  DeleteItemList(reports);
  fclose(fout);
+ 
+ return true;
+}
+
+/*********************************************************************/
+
+int Nova_ImportHostReports(char *filePath)
+/*
+ * Import from text file to Mongo database.
+ * NOTE: Should only be called on Nova hub.
+ */
+{
+ char keyHash[CF_MAXVARSIZE];
+ char buf[CF_BUFSIZE];
+ char headerText[CF_SMALLBUF], reportType[CF_SMALLBUF];
+ char validate[5];
+ time_t delta1, genTime;
+ long length;
+ FILE *fin;
+
+ if ((fin = fopen(filePath,"r")) == NULL)
+    {
+    CfOut(cf_error,"fopen","!! Cannot open import file %s", filePath);
+    return false;
+    }
+
+ CfReadLine(buf, sizeof(buf), fin);
+ sscanf(buf,"%32s %32s %255s",headerText, reportType, keyHash);
+
+ CfReadLine(buf, sizeof(buf), fin);
+ sscanf(buf,"%4s %ld %ld %ld",validate,&delta1,&genTime,&length);
+ 
+ if (strcmp(validate,"CFR:") != 0)
+    {
+    CfOut(cf_error,""," !! Invalid report format in %s - second line is %s not CFR:", filePath, validate);
+    fclose(fin);
+    return false;
+    }
+
+ printf("got: \"%s\" \"%s\" \"%s\" \"%s\" %ld %ld %ld\n", headerText, reportType, keyHash, validate, delta1, genTime, length);
+
+ ctime_r(&genTime, buf);
+ 
+ CfOut(cf_inform, "", " -> Importing Nova %s reports from host %s with timestamp %s", reportType, keyHash, buf);
+
+ // FIXME: Import reports!
+
+ fclose(fin);
  
  return true;
 }

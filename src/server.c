@@ -593,23 +593,6 @@ CfOut(cf_verbose,"","----");
 /* Level                                                            */
 /********************************************************************/
 
-enum cfd_menu String2Menu(char *s)
-
-{ static char *menus[] = { "delta", "full", "relay", NULL };
-  int i;
- 
-for (i = 0; menus[i] != NULL; i++)
-   {
-   if (strcmp(s,menus[i]) == 0)
-      {
-      return i;
-      }
-   }
-
-return cfd_menu_error;
-}
-
-/********************************************************************/
 
 int Nova_ParseHostname(char *name,char *hostname)
 
