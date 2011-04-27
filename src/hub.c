@@ -107,6 +107,10 @@ while (true)
       
       Nova_ParallelizeScan(masterhostlist,a,pp);      
       DeleteItemList(masterhostlist);
+
+#ifdef HAVE_CONSTELLATION
+      Constellation_ScanHubs(FEDERATION);  // query reports from hubs
+#endif
       }
 
    if (Nova_ShiftChange())
@@ -257,6 +261,12 @@ DeletePromise(ppp);
 if (conn == NULL)
    {
    CfOut(cf_verbose,""," !! Peer \"%s\" did not respond to hail\n",peer);
+
+   if(thislock.lock != NULL)
+      {
+      YieldCurrentLock(thislock);
+      }
+   
    return false;
    }
 
@@ -291,7 +301,7 @@ else
    }
 
 ServerDisconnection(conn);
-DeleteRlist(a.copy.servers);
+DeleteRlist(aa.copy.servers);
 return true;
 }
 
@@ -790,7 +800,7 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
       struct Rlist *rp;
       Debug("federation ...\n");
       DeleteItemList(FEDERATION);
-      SCHEDULE = NULL;
+      FEDERATION = NULL;
       
       for (rp  = (struct Rlist *) retval; rp != NULL; rp = rp->next)
          {
