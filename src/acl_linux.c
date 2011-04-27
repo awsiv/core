@@ -980,7 +980,7 @@ while (more_entries)
 
    // parse generic perms (they are 1-1 on Posix)
 
-   while(IsIn(*mode,CF_VALID_GPERMS))
+   while(strchr(CF_VALID_GPERMS,*mode))
       {
       switch(*mode)
          {
@@ -1024,7 +1024,7 @@ while (more_entries)
       {
       mode++;
 
-      while(IsIn(*mode,CF_VALID_NPERMS_POSIX))
+      while(strchr(CF_VALID_NPERMS_POSIX,*mode))
          {
          switch(*mode)
             {

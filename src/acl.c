@@ -391,13 +391,13 @@ if (*mode == '\0' || *mode == ':')
 
 while(true)
    {
-   if (IsIn(*mode,valid_ops))
+   if (strchr(valid_ops,*mode))
       {
       mode++;
       }
 
    // scan past any generic perms
-   while (IsIn(*mode,CF_VALID_GPERMS))
+   while (strchr(CF_VALID_GPERMS,*mode))
       {
       mode++;
       }
@@ -406,7 +406,7 @@ while(true)
       {
       mode++;
 
-      while (IsIn(*mode, valid_nperms))
+      while (strchr(valid_nperms,*mode))
          {
          mode++;
          }
