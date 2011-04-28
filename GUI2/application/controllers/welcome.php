@@ -310,7 +310,11 @@ class Welcome extends Cf_Controller {
       $this->breadcrumb->setBreadCrumb($bc);
        $data = array(
             'title' => "Cfengine Mission Portal - engineering",
-            'breadcrumbs' => $this->breadcrumblist->display()
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'all' => cfpr_count_all_hosts(),
+            'r' => cfpr_count_red_hosts(),
+            'y' => cfpr_count_yellow_hosts(),
+            'g' => cfpr_count_green_hosts(),
         );
         $this->template->load('template', 'engineering', $data);
     }

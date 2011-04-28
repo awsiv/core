@@ -446,7 +446,16 @@ body {
 }
 
 .minwidth98{
-   min-width: 98.7%;
+   min-width: 98%;
+}
+
+.minwidth30{
+ min-width: 30%;
+ width:30%;
+}
+
+.minwidth70{
+ min-width: 67.5%;
 }
 #body .right{
     background: url("../images/icons/box_main_right.png") no-repeat;
@@ -462,6 +471,10 @@ body {
     border-radius:5px;
     background: #fff;
     color:#4d4d4d;
+}
+
+.innerdiv ul li{
+    list-style: none;
 }
 
 .title
@@ -997,7 +1010,7 @@ span.search input
 /*engineering page */
 #finder
 {
-    margin:15px 15px 22px 15px;
+    margin:0 4px 22px 6px;
 }
 
 .alert{
@@ -1010,6 +1023,54 @@ span.search input
     margin-left:91px;
     margin-bottom:50px;
 }
+
+#hoststatus
+{
+    margin: 15px 8px 5px 5px;
+    float:left;
+}
+
+#hoststatus ul{
+    padding:0px 10px 10px 10px;
+}
+
+#hoststatus ul a
+{
+    color:#08A3C1;
+}
+
+#summarymetereng
+{
+    margin:15px 4px 5px 0px;
+    float:left;
+}
+
+.redhost
+{
+ background: url("../images/red_square.png") no-repeat left center;
+}
+.yellowhost
+{
+ background: url("../images/yellow_square.png") no-repeat left center;
+}
+
+.greenhost
+{
+  background: url("../images/green_square.png") no-repeat left center;
+}
+
+.bluehost
+{
+   background: url("../images/blue_square.png") no-repeat left center;
+}
+.hoststatuslist
+{
+    display:block;
+    padding:5px 25px;
+}
+
+
+/**********************/
 
 #footer p{
     color:#08a3c1;
