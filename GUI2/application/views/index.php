@@ -1,8 +1,7 @@
-<div id="bodyindex ">
+<div id="bodyindex">
               <div class="left"></div>
               <div id="work" class="middle">
-                  <div class="grid_12">
-                  <div class="grid_8 push_4 header">
+                  <div class="grid_8 push_2 header">
                       <h1>
                           <?php echo  $this->lang->line('front_greeting');?>
                       </h1>
@@ -19,8 +18,7 @@
                           <li><?php echo anchor('welcome/helm','planning',array('class'=>'planning'));?></li>
                           <p class="clearleft"></p>
                       </ul>
-                  </div>
-                  </div>
+                  </div>                  
                  <div class="clear"></div>
                   <div id="licensebar" class="grid_4 push_4">
                       
