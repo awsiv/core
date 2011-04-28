@@ -16,6 +16,8 @@
 /*                                                                           */
 /*****************************************************************************/
 
+static int FACILITY;
+
 void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp)
 
 {

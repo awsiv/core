@@ -20,7 +20,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 
 static HANDLE logHandle = NULL;
 
-
+extern int FACILITY;
 
 /* We use Event Logging on widows. */
 void NovaWin_MakeLog(struct Item *mess, enum cfreport level)
@@ -95,7 +95,7 @@ void NovaWin_MakeLog(struct Item *mess, enum cfreport level)
 
 /*****************************************************************************/
 
-void NovaWin_OpenLog(void)
+void NovaWin_OpenLog(int facility)
 {
   
  if(!NovaWin_CheckRegistryLogKey())
@@ -109,7 +109,9 @@ void NovaWin_OpenLog(void)
  if(logHandle == NULL)
     {
     CfOut(cf_error, "RegisterEventSource", "!! Could not open log");
-    }  
+    }
+
+FACILITY = facility;
 }
 
 /*****************************************************************************/
