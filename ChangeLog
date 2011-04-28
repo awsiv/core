@@ -7,6 +7,9 @@
 
 	Support for policy staging environments.
 
+	Nova reports can be exported to file and imported manually
+	using cf-report -x and cf-report -i.
+
 	The variables report got a last-seen column. Now variables
 	are stored in the hub for a longer time like classes, 
 	and not overwritten on every update.
