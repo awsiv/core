@@ -1,23 +1,25 @@
-<div id="bodyindex">
+<div id="bodyindex ">
               <div class="left"></div>
               <div id="work" class="middle">
-                  <div class="grid_8 push_2 header">
+                  <div class="grid_12">
+                  <div class="grid_8 push_4 header">
                       <h1>
                           <?php echo  $this->lang->line('front_greeting');?>
                       </h1>
                       <p><?php
-                      echo $this->lang->line('licese_to');
+                      echo $this->lang->line('license_to');
                       echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo'));?></p>
                   </div>
                   <div class="clear"></div>
                   <div class ="grid_8 push_3 dash">
                       <ul>
                           <li><?php echo anchor('welcome/status','status',array('class'=>'status'));?></li>
-                          <li><?php echo anchor('welcome/knowledge','library',array('class'=>'library'));?></li>
+                          <li><?php echo anchor('knowledge/index','library',array('class'=>'library'));?></li>
                           <li><?php echo anchor('welcome/engg','engineering',array('class'=>'engineering'));?></li>
                           <li><?php echo anchor('welcome/helm','planning',array('class'=>'planning'));?></li>
                           <p class="clearleft"></p>
                       </ul>
+                  </div>
                   </div>
                  <div class="clear"></div>
                   <div id="licensebar" class="grid_4 push_4">

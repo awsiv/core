@@ -10,9 +10,9 @@
                 <?php
                 $split = explode('::', $l['topic']);
                 if (is_array($split) && !empty($split) && $split[0] != 'any') {
-                    $output = sprintf("<a href='/welcome/knowledge/pid/%s'>%s </a> ( in %s )", $l['id'], $split[1], $split[0]);
+                    $output = sprintf("<a href='/knowledge/knowledgemap/pid/%s'>%s </a> ( in %s )", $l['id'], $split[1], $split[0]);
                 } else if (is_array($split) && !empty($split) && $split[0] == 'any') {
-                    $output = sprintf("<a href='/welcome/knowledge/pid/%s'>%s </a>", $l['id'], $split['1']);
+                    $output = sprintf("<a href='/knowledge/knowledgemap/pid/%s'>%s </a>", $l['id'], $split['1']);
                 }
                 echo $output;
                 ?>

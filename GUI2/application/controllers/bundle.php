@@ -35,7 +35,7 @@ class Bundle extends Cf_Controller {
 
     function details() {
         $params = $this->uri->uri_to_assoc(3);
-        $bundle = isset($params['bundle']) ? $params['bundle'] : "";
+        $bundle = isset($params['bundle']) ? urldecode($params['bundle']) : "";
         $type = isset($params['type']) ? $params['type'] : "";
         $bc = array(
             'title' => 'Bundle',

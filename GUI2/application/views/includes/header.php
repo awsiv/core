@@ -45,7 +45,7 @@ $this->carabiner->display(); ?>
                       <div id="webadmin">
 
                           <div id="searcharea">
-                          <form action="<?php echo site_url('welcome/knowledgeSearch')?>" method="post">
+                          <form action="<?php echo site_url('knowledge/knowledgeSearch')?>" method="post">
                               <label id="searchbox">
                                   <input type="text" name="search" value="Search in knowledge map" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"/>
                               </label>
@@ -53,7 +53,7 @@ $this->carabiner->display(); ?>
                           </div>
 
                              <?php echo anchor('admin/index',' ',array('class'=>'adminbtn'));?>
-                              <?php echo anchor('admin/setting',' ',array('class'=>'settingbtn'));?>
+                             <?php echo anchor('admin/setting',' ',array('class'=>'settingbtn'));?>
 
                       </div>
                       <p class="clearright"></p>

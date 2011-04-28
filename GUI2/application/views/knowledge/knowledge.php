@@ -24,9 +24,9 @@ if ($search == "") {
     <div class="grid_3">
 
             <?php
-            require_once('knowledge/topics.php');
-            require_once('knowledge/leads.php');
-            require_once('knowledge/category.php');
+            require_once('topics.php');
+            require_once('leads.php');
+            require_once('category.php');
 
 
             //$hits = cfpr_show_topic_hits($pid);

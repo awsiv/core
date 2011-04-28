@@ -49,9 +49,9 @@ class test_knowledge_map_libraries extends CodeIgniterUnitTestCase {
         $array = json_decode(utf8_encode($gdata), true);
 
         $retValue = json_last_error();
-
+        
+        $this->dump($gdata);
         $this->assertTrue(is_array($array), "Should Return a valid array");
-        //$this->dump($gdata);
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
     }
 
@@ -61,9 +61,8 @@ class test_knowledge_map_libraries extends CodeIgniterUnitTestCase {
         $array = json_decode(utf8_encode($gdata), true);
 
         $retValue = json_last_error();
-
+        $this->dump($gdata);
         $this->assertTrue(is_array($array), "Should Return a valid array");
-        //$this->dump($gdata);
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
     }
 
@@ -73,9 +72,9 @@ class test_knowledge_map_libraries extends CodeIgniterUnitTestCase {
         $array = json_decode(utf8_encode($data), true);
 
         $retValue = json_last_error();
+        $this->dump($data);
 
-        $this->assertTrue(is_array($array), "Should Return a valid array");
-        //$this->dump($gdata);
+        $this->assertTrue(is_array($array), "Should Return a valid array, Function called is: cfpr_search_topics");
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
     }
 

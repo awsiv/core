@@ -33,7 +33,10 @@ class Promise extends Cf_Controller {
     function details($handle=NULL) {
         if (is_null($handle)) {
             $handle = isset($_POST['handle']) ? $_POST['handle'] : NULL;
+        } else {
+            $handle = urldecode($handle);
         }
+
         $mybundle = cfpr_get_promise_bundle($handle);
         $promiser = cfpr_get_promiser($handle);
         $type = cfpr_get_promise_type($handle);
@@ -42,6 +45,7 @@ class Promise extends Cf_Controller {
             'url' => 'promise/details',
             'isRoot' => false
         );
+        
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
             'handle' => $handle,

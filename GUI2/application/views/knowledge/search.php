@@ -9,7 +9,7 @@
     <ul>
     <?php foreach ((array) $searchData as $item) { ?>
         <?php if (trim($item['topic'])) { ?>
-        <li><?php echo sprintf('"<a href="/welcome/knowledge/pid/%s">%s</a>" is mentioned in the context of %s',$item['id'],$item['topic'],$item['context']); ?></li>
+        <li><?php echo sprintf('"<a href="/knowledge/knowledgemap/pid/%s">%s</a>" is mentioned in the context of %s',$item['id'],$item['topic'],$item['context']); ?></li>
         <?php } ?>
     <?php } ?>
     </ul>

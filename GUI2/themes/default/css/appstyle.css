@@ -226,20 +226,17 @@ label#searchbox input
     font-size: 42px;
     font-weight: normal;
     margin: 0;
-    text-align: center;
+/*    text-align: center;*/
 }
 
 #work .header p{
     font-size: 15px;
-    text-align:center;
+    /*text-align:center;*/
     margin: 25px 0 0 0;
 }
 
 #work .dash{
     margin-top: 85px;
-}
-#work .dash{
-    width:500px;
 }
 
 .dash ul{

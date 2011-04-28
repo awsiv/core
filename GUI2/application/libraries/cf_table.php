@@ -6,6 +6,7 @@
 class cf_table {
 
     var $dateTimeFields = array();
+    var $ignoreDateColor = array();
 
     public function __construct() {
         $this->CI = &get_instance();
@@ -33,7 +34,17 @@ class cf_table {
                                 array_push($temp, getDateStatus($row[$value],$color));
                             }
                             else{
-                                array_push($temp, $row[$value]);
+
+                                $tempValue = $row[$value];
+                                // make link to bundle and promises
+                                if (strtolower($key) == 'promise handle') {
+                                    $tempValue = sprintf('<a href="/promise/details/%s">%s</a>',urlencode($tempValue),$tempValue);
+                                }
+                                if (strtolower($key) == 'bundle') {
+                                    $tempValue = sprintf('<a href="/bundle/details/%s">%s</a>',urlencode($tempValue),$tempValue);
+                                }
+
+                                array_push($temp, $tempValue);
                             }
 
                         }
