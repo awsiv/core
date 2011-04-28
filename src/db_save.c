@@ -1289,7 +1289,7 @@ bson_buffer_init(&bb);
 setObj = bson_append_start_object(&bb, "$set");
 
 for (ip = data; ip != NULL; ip=ip->next)
-  {// TODO: ISBUG %250s?
+  {
    sscanf(ip->name,"%250s %ld %lf %lf %lf\n",
           bundle,
           &fthen,

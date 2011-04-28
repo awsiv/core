@@ -81,6 +81,8 @@
 #define MONITOR_CLASS_PREFIX "mXC_"
 #define CF_CHANGE_HORIZON 10
 #define NOVA_EXPORT_HEADER "NOVA_EXPORT"
+#define CF_CODEBOOK_SIZE 24
+
 
 /*****************************************************************************/
 

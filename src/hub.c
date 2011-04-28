@@ -115,9 +115,9 @@ while (true)
 
    if (Nova_ShiftChange())
       {
-      CfOut(cf_verbose,""," -> Scanning to compliance cache");
+      CfOut(cf_verbose,""," -> Scanning all total compliance cache");
       NewClass("am_policy_hub");
-      Nova_CacheTotalCompliance(false);
+      Nova_CacheTotalCompliance(true);
       CFDB_Maintenance();
       }
 
@@ -310,7 +310,7 @@ return true;
 void Nova_CacheTotalCompliance(bool allSlots)
 /*
  * Caches the current slot of total compliance.
- * WARNING: Must be run every 5 mins (otherwise no data is show in the
+ * WARNING: Must be run every 6 hrs (otherwise no data is show in the
  * graph slot).
  */
 {

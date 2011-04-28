@@ -10,9 +10,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#define cf_codebook_size 24
 
-char *CF_CODEBOOK[cf_codebook_size] =
+char *CF_CODEBOOK[CF_CODEBOOK_SIZE] =
    {
    CFR_PERF,
    CFR_CLASS,
@@ -40,7 +39,7 @@ char *CF_CODEBOOK[cf_codebook_size] =
    NULL
    };
 
-void *CF_CODEBOOK_HANDLER[cf_codebook_size] =
+void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
    {
    Nova_UnPackPerformance,  // DBOK
    Nova_UnPackClasses,      // DBOK (nopurge)
@@ -76,7 +75,7 @@ int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t 
   long n_read_total = 0,length = 0;
   int plainlen,more = true,header = true,current_report = -1;
   time_t now,then,time2 = 0,delta1 = 0,delta2 = 0;
-  struct Item *reports[cf_codebook_size] = {0};
+  struct Item *reports[CF_CODEBOOK_SIZE] = {0};
   char keyHash[EVP_MAX_MD_SIZE*4];
   double datarate;
 

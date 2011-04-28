@@ -2229,7 +2229,7 @@ int Nova_ExportReports(char *reportName)
         return false;
     }
  
- snprintf(filePath, sizeof(filePath), "%s/reports/report_export.nov", CFWORKDIR);
+ snprintf(filePath, sizeof(filePath), "%s/reports/nova_export.nov", CFWORKDIR);
  MapName(filePath);
 
  if ((fout = fopen(filePath,"w")) == NULL)
@@ -2240,7 +2240,7 @@ int Nova_ExportReports(char *reportName)
 
  CfOut(cf_inform, "", " -> Saving all Nova reports to %s", filePath);
 
- fprintf(fout, "%s %s %s\n", NOVA_EXPORT_HEADER, reportName, PUBKEY_DIGEST);
+ fprintf(fout, "%s %s %s %s\n", NOVA_EXPORT_HEADER, reportName, PUBKEY_DIGEST, VIPADDRESS);
  
  Nova_PackAllReports(&reports,from,0,reportType);
 
@@ -2264,12 +2264,14 @@ int Nova_ImportHostReports(char *filePath)
  * NOTE: Should only be called on Nova hub.
  */
 {
- char keyHash[CF_MAXVARSIZE];
+ char keyHash[CF_MAXVARSIZE], ipAddr[CF_SMALLBUF];
  char buf[CF_BUFSIZE];
  char headerText[CF_SMALLBUF], reportType[CF_SMALLBUF];
+ struct Item *reports[CF_CODEBOOK_SIZE] = {0};
  char validate[5];
  time_t delta1, genTime;
  long length;
+ int currReport = -1;
  FILE *fin;
 
  if ((fin = fopen(filePath,"r")) == NULL)
@@ -2279,7 +2281,7 @@ int Nova_ImportHostReports(char *filePath)
     }
 
  CfReadLine(buf, sizeof(buf), fin);
- sscanf(buf,"%32s %32s %255s",headerText, reportType, keyHash);
+ sscanf(buf,"%32s %32s %255s %255s",headerText, reportType, keyHash, ipAddr);
 
  CfReadLine(buf, sizeof(buf), fin);
  sscanf(buf,"%4s %ld %ld %ld",validate,&delta1,&genTime,&length);
@@ -2297,9 +2299,23 @@ int Nova_ImportHostReports(char *filePath)
  
  CfOut(cf_inform, "", " -> Importing Nova %s reports from host %s with timestamp %s", reportType, keyHash, buf);
 
- // FIXME: Import reports!
+ NewReportBook(reports);
+
+ while (CfReadLine(buf, sizeof(buf), fin))
+    {
+    Debug("%s\n", buf);
+    currReport = Nova_StoreIncomingReports(buf,reports,currReport);
+    }
 
  fclose(fin);
+
+ if (reports == NULL)
+    {
+    return false;
+    }
+
+ UnpackReportBook(keyHash,ipAddr,reports);
+ DeleteReportBook(reports);
  
  return true;
 }
