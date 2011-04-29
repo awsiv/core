@@ -10,7 +10,7 @@ class Knowledge extends Cf_Controller {
 
     function index() {
         $bc = array(
-            'title' => 'cfengine mission portal',
+            'title' => 'Library',
             'url' => 'knowledge/index',
             'isRoot' => true
         );
@@ -34,11 +34,11 @@ class Knowledge extends Cf_Controller {
         $this->carabiner->js('jit/jit-yc.js');
         $jsIE = array('jit/Extras/excanvas.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
-
+        $this->carabiner->css('tabs-bottom.css');
 
         $bc = array(
             'title' => 'Knowledge Map',
-            'url' => 'welcome/knowledge',
+            'url' => 'knowledge/knowledgemap',
             'isRoot' => false
         );
 
@@ -90,7 +90,7 @@ class Knowledge extends Cf_Controller {
 
         $bc = array(
             'title' => 'Knowledge Map',
-            'url' => 'welcome/knowledge',
+           'url' => 'knowledge/knowledgemap',
             'isRoot' => false
         );
 

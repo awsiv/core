@@ -34,7 +34,7 @@ class Search extends Cf_Controller {
         $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
 
         $hostkey = isset($getparams['hostkey']) ? $getparams['hostkey'] : $this->input->post('hostkey'); //shoud be read from param
-        $report_type = isset($getparams['report']) ? urldecode($getparams['report']) : $this->input->post('report');
+        $report_type = isset($getparams['report']) ? urldecode($getparams['report']) : urldecode($this->input->post('report'));
         $many = isset($getparams['manyhosts']) ? $getparams['manyhosts'] : $this->input->post('manyhosts'); //shoud be read from param
 
         
@@ -98,6 +98,7 @@ class Search extends Cf_Controller {
                 // $params.='rows/20/page/1';
                 //$params=$this->uri->assoc_to_uri($_POST);
             }
+            
             $bc = array(
                 'title' => 'Reports',
                 'url' => site_url("$breadcrumbs_url"),
