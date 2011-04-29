@@ -34,9 +34,10 @@ class Search extends Cf_Controller {
         $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
 
         $hostkey = isset($getparams['hostkey']) ? $getparams['hostkey'] : $this->input->post('hostkey'); //shoud be read from param
-        $report_type = isset($getparams['report']) ? $getparams['report'] : $this->input->post('report');
+        $report_type = isset($getparams['report']) ? urldecode($getparams['report']) : $this->input->post('report');
         $many = isset($getparams['manyhosts']) ? $getparams['manyhosts'] : $this->input->post('manyhosts'); //shoud be read from param
 
+        
         $host = isset($getparams['host']) ? $getparams['host'] : $this->input->post('host');
         $hours_deltafrom = isset($getparams['hours_deltafrom']) ? $getparams['hours_deltafrom'] : $this->input->post('hours_deltafrom');
         $hours_deltato = isset($getparams['hours_deltato']) ? $getparams['hours_deltato'] : $this->input->post('hours_deltato');
@@ -82,13 +83,15 @@ class Search extends Cf_Controller {
                     }
                 }
             } else {
+                
                 foreach ($_POST as $key => $value) {
                     if (empty($value)) {
                         //$params.=$key.'/';
                     } else {
                         $params.=$key . '/' . $value . '/';
                         if ($key == "host" || $key == "report") {
-                            $breadcrumbs_url.=$key . '/' . $value . '/';
+                            $breadcrumbs_url .= $key . '/' . $value . '/';
+                            
                         }
                     }
                 }
@@ -123,9 +126,10 @@ class Search extends Cf_Controller {
         if ($search == "") {
             $search = ".*";
         }
-
+        
         switch ($report_type) {
             case "Bundle profile":
+               
                 if ($many) {
                     $name = isset($_POST['name']) ? $_POST['name'] : "";
 
