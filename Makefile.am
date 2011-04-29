@@ -1,3 +1,5 @@
+abs_srcdir=@abs_srcdir@
+
 top_srcdir = $(abs_srcdir)/../core
 top_builddir = $(abs_srcdir)/../core
 top_build_prefix = $(abs_srcdir)/../core/
