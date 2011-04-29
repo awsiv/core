@@ -76,7 +76,7 @@
 
         var graphEnvironment = '';
         var json = {
-            color: ['#A3DF00','#EEEE00','#D43030','#5C5858'],
+            color: ['#6c9053','#cfb93f','#D43030','#5C5858'],
             'label': <?php echo $compliance_summary['graphSeries']['labels']; ?>,
             'values':  <?php echo $compliance_summary['graphSeries']['values']; ?>
         };
@@ -101,7 +101,7 @@
             injectInto: 'compliance_summary_graph',
             //whether to add animations
             animate: true,
-            type: useGradients? 'stacked:gradient' : 'stacked',
+            type: 'stacked',//useGradients? 'stacked:gradient' : 'stacked',
             //labels style
             Label: {
                 type: labelType, //Native or HTML
@@ -110,7 +110,7 @@
                 color: 'black'
             },
             showLabels:false,
-            barsOffset:0,
+            barsOffset:2,
             useGradient: useGradients? 'stacked:gradient' : 'stacked',
             orientation: 'vertical',
             //bars separation

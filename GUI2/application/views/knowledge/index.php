@@ -29,8 +29,6 @@
 
         </div>
     </div>
-    </div>
-    
     <div class="right"></div>
     <div class="clearboth"></div>
 </div>

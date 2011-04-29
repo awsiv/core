@@ -12,7 +12,7 @@ class Knowledge extends Cf_Controller {
         $bc = array(
             'title' => 'Library',
             'url' => 'knowledge/index',
-            'isRoot' => true
+            'isRoot' => false
         );
 
         $this->breadcrumb->setBreadCrumb($bc);

@@ -1,4 +1,4 @@
-<div id="compliance_summary" style="height:150px;width: 60%;"></div>
+<div id="compliance_summary" style="height:120px;width: 85%;"></div>
 <script type="text/javascript">
     //<![CDATA[
 var labelType, useGradients, nativeTextSupport, animate;
@@ -32,7 +32,7 @@ var Log = {
 function init(){
   //init data
   var json = {
-      color: ['#A3DF00','#EEEE00','#D43030'],
+      color: ['#6c9053','#cfb93f','#D43030'],
       'label': <?php echo $graphSeries['labels']; ?>,
       'values':  <?php echo $graphSeries['values']; ?>
 
@@ -59,7 +59,8 @@ function init(){
       //labels offset position
       labelOffset: 5,
       //bars style
-      type: useGradients? 'stacked:gradient' : 'stacked',
+      type:  'stacked',// useGradients? 'stacked:gradient' : 'stacked',
+         
       //whether to show the aggregation of the values
       showAggregates:false,
       //whether to show the labels for the bars
@@ -69,7 +70,7 @@ function init(){
         type: labelType, //Native or HTML
         size: 13,
         family: 'Arial',
-        color: 'black'
+        color: 'white'
       },
       //add tooltips
       Tips: {
