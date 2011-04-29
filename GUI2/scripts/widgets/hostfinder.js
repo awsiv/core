@@ -12,6 +12,7 @@ var hostfinder={
  options: {
         url: "/widget/hostfinder",
         classhandler:"/widget/cfclasses",
+        defaultbehaviour:true,
         height:525,
         width:735
     },
@@ -65,6 +66,8 @@ var hostfinder={
          self.cfui.searchform.delegate('input[type="text"]','focusout',{ui:self},self.searchboxevent);
          self.cfui.searchform.delegate('input[type="text"]','keyup',{ui:self},self.searchboxkeyup);
          self.cfui.searchform.find('input[type="text"]').data('default',self.cfui.searchform.find('input[type="text"]').val());
+
+         self.cfui.resultpane.delegate('a','click',$.proxy(self.hostselected,self));
     },
 
     categoryselected:function(event)
@@ -80,6 +83,18 @@ var hostfinder={
               self.createclasstagcloud(self);
             }
         self.cfui.searchform.find('input[type="text"]').trigger('blur');
+    },
+
+    hostselected:function(event)
+    {
+      var self=this,
+          sender=$(event.target);
+      if(!self.options.defaultbehaviour)
+          {
+             event.preventDefault();
+            // self._trigger("complete",null,{selectedhost:sender.attr('title')})
+            console.log(sender.attr('title'));
+          }
     },
     
    searchsubmit:function(event){

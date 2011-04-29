@@ -3,7 +3,8 @@
           <p>File name: (.*+[])<input class="searchfield" type="text" name="name"></p>
           <p>Match content: (.*+[])<input class="searchfield" type="text" name="diff" size="80"></p>
           <p>Host group: (.*+[])<input class="searchfield" type="text" name="class_regex" size="80"></p>
-          <input type="hidden" name="manyhosts" value="true">
+          <!--<input type="hidden" name="manyhosts" value="true">-->
+          <input type="hidden" name="host" value="All">
           <input type="hidden" name="report" value="<?php echo $report_type?>">
           <p>Return hostnames only: <input type="checkbox" name="hosts_only" value="true"></p>
           <p><input class="btn" type="submit" value="Generate report"></p>

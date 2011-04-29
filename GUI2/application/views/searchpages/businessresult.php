@@ -1,7 +1,8 @@
 <div class="pagepanel">
     <div class="panelhead withpdfbtn">
         <span class="text"><?php echo $report_title ?></span>
-        <a href="<?php echo site_url('search/index/report/' . $report_title) ?>" id="advsearch">Advance search</a>
+        <!--<a href="<?php echo site_url('search/index/report/' . $report_title) ?>" id="advsearch">Advance search</a>-->
+        <?php echo anchor('#',$report_title.' For host',array('id'=>'findhost')) ?>
         <a href="<?php echo $report_link ?>"><img src="<?php echo get_imagedir() ?>icon_pdf.png" class="floatRight"></a>
         <a href="<?php echo $email_link ?>" id="send_mail"><img src="<?php echo get_imagedir() ?>emailsend.png" class="floatRight lnsendmail"></a>
         <div class="clearboth"></div>
@@ -96,6 +97,14 @@
             });
         });
 
+     $('#findhost').hostfinder({
+           'defaultbehaviour':false,
+             complete:function(event,data){
+                 console.log(data.selectedhost)
+             }
+
+     });
+     
         var $dialog = $('#dialog');
         
         $dialog.dialog({

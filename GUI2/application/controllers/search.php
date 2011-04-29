@@ -10,6 +10,7 @@ class Search extends Cf_Controller {
         $this->carabiner->js('picnet.jquery.tablefilter.js');
         $this->carabiner->js('jquery.tablesorter.pager.js');
         $this->carabiner->js('jquery.qtip-1.0.min.js');
+        $this->carabiner->js('widgets/hostfinder.js');
 
     }
 
@@ -32,13 +33,14 @@ class Search extends Cf_Controller {
 
         $getparams = $this->uri->uri_to_assoc(3);
         $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
-
-        $hostkey = isset($getparams['hostkey']) ? $getparams['hostkey'] : $this->input->post('hostkey'); //shoud be read from param
+        $hostkey="";
+        $many="";
+       // $hostkey = isset($getparams['hostkey']) ? $getparams['hostkey'] : $this->input->post('hostkey'); //shoud be read from param
         $report_type = isset($getparams['report']) ? urldecode($getparams['report']) : urldecode($this->input->post('report'));
-        $many = isset($getparams['manyhosts']) ? $getparams['manyhosts'] : $this->input->post('manyhosts'); //shoud be read from param
+        //$many = isset($getparams['manyhosts']) ? $getparams['manyhosts'] : $this->input->post('manyhosts'); //shoud be read from param
 
         
-        $host = isset($getparams['host']) ? $getparams['host'] : $this->input->post('host');
+        $host = isset($getparams['host']) ? urldecode($getparams['host']): $this->input->post('host');
         $hours_deltafrom = isset($getparams['hours_deltafrom']) ? $getparams['hours_deltafrom'] : $this->input->post('hours_deltafrom');
         $hours_deltato = isset($getparams['hours_deltato']) ? $getparams['hours_deltato'] : $this->input->post('hours_deltato');
         $class_regex = isset($getparams['class_regex']) ? $getparams['class_regex'] : $this->input->post('class_regex');
@@ -88,9 +90,9 @@ class Search extends Cf_Controller {
                     if (empty($value)) {
                         //$params.=$key.'/';
                     } else {
-                        $params.=$key . '/' . $value . '/';
+                        $params.=$key . '/' . urlencode($value) . '/';
                         if ($key == "host" || $key == "report") {
-                            $breadcrumbs_url .= $key . '/' . $value . '/';
+                            $breadcrumbs_url .= $key . '/' .urlencode($value). '/';
                             
                         }
                     }
@@ -98,7 +100,7 @@ class Search extends Cf_Controller {
                 // $params.='rows/20/page/1';
                 //$params=$this->uri->assoc_to_uri($_POST);
             }
-            
+          
             $bc = array(
                 'title' => 'Reports',
                 'url' => site_url("$breadcrumbs_url"),
@@ -116,7 +118,7 @@ class Search extends Cf_Controller {
         $data = array(
             'report_type' => $report_type,
             'title' => "Cfengine Mission Portal - search results",
-            'title_header' => "search results",
+            //'title_header' => "search results",
             'report_title' => $report_type,
             'breadcrumbs' => $this->breadcrumblist->display(),
             'current' => $page_number,

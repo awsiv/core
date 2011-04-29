@@ -71,9 +71,8 @@ if(self.options.allhost)
   else
       {
           self.repform.html('<input type="hidden" name="report" value="'+sender.text()+'" />');
-          self.repform.append('<input type="hidden" name="hostkey" value="'+self.options.hostkey+'" />');
+          self.repform.append('<input type="hidden" name="host" value="'+self.options.hostkey+'" />');
           self.repform.submit();
-            
       }
  
 },
