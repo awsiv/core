@@ -10,7 +10,7 @@
                       echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo'));?></p>
                   </div>
                   <div class="clear"></div>
-                  <div class ="grid_8 push_3 dash">
+                  <div class ="grid_8 push_2 dash">
                       <ul>
                           <li><?php echo anchor('welcome/status','status',array('class'=>'status'));?></li>
                           <li><?php echo anchor('knowledge/index','library',array('class'=>'library'));?></li>

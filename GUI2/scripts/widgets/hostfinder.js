@@ -92,8 +92,8 @@ var hostfinder={
       if(!self.options.defaultbehaviour)
           {
              event.preventDefault();
-            // self._trigger("complete",null,{selectedhost:sender.attr('title')})
-            console.log(sender.attr('title'));
+             self._trigger("complete",null,{selectedhost:sender.attr('title'),report:self.options.report})
+            //console.log(sender.attr('title'));
           }
     },
     

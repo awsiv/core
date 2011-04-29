@@ -99,8 +99,10 @@
 
      $('#findhost').hostfinder({
            'defaultbehaviour':false,
+           'report':'<?php echo $report_title?>',
              complete:function(event,data){
-                 console.log(data.selectedhost)
+                 //console.log('/search/index/host/'+data.selectedhost+'/report/'+data.report)
+                  location.replace('/search/index/host/'+data.selectedhost+'/report/'+data.report);
              }
 
      });
