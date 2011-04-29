@@ -3,11 +3,12 @@
 # This file is (C) Cfengine AS. All rights reserved
 #
 ?>
-<div id="tabpane">
-    <div class="pagepanel">
-        <div class="panelhead">Weakest host</div>
-        <div class="panelcontent">
-            <div class="tables">
+
+<div id="body">
+    <div class="left"></div>
+    <div class="middle minwidth98">
+            <div id="topn" class="innerdiv tables">
+                <p class="title">Weakest Hosts</p>
                 <table>
                     <?php foreach ($ret as $index => $val) {
                     ?>
@@ -38,9 +39,11 @@
                     <?php } ?>
                 </table>
             </div>
-        </div>
     </div>
+<div class="right"></div>
+    <div class="clearboth"></div>
 </div>
+<div class="clear"></div>
 <script type="text/javascript">
     // generate the graph script
 <?php foreach ($ret as $index => $val) { ?>

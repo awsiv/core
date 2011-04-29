@@ -187,6 +187,7 @@ label#searchbox input
 #bodyindex {
     color: #000000;
 }
+
 #bodyindex .left{
     background: url("../images/box_main_left.png") no-repeat;
     min-width:11px;
@@ -478,6 +479,14 @@ body {
 
 .innerdiv ul li{
     list-style: none;
+}
+
+.innerdiv a{
+    color:#08A3C1;
+}
+
+.tables table{
+  width:100%;
 }
 
 .title
@@ -1034,7 +1043,7 @@ span.search input
 }
 
 #hoststatus ul{
-    padding:0px 10px 10px 10px;
+   margin:0 10px 17px
 }
 
 #hoststatus ul a
@@ -1072,9 +1081,21 @@ span.search input
     padding:5px 25px;
 }
 
+.graphcontainer{
+    background: #4d4d4d;
+    -moz-border-radius: 5px;
+    border-radius:5px;
+    margin: 5px 15px 20px;
+    padding: 0 40px;
+}
 
 /**********************/
+#topn{
+   margin:15px;
+   padding:10px;
+}
 
+/**************/
 #footer p{
     color:#08a3c1;
 }

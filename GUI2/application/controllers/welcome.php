@@ -375,7 +375,6 @@ class Welcome extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
             'type' => $type,
-            'title_header' => "engineering status",
             'title' => "Cfengine Mission Portal - " . $type . " hosts",
             'tabledata' => $columns,
             'breadcrumbs' => $this->breadcrumblist->display(),
@@ -425,7 +424,7 @@ class Welcome extends Cf_Controller {
         $data = array(
             'hostkey' => $hostkey,
             //'title_header' => "host " . $hostname,
-            //'title' => "Cfengine Mission Portal - host " . $ipaddr,
+            'title' => "Cfengine Mission Portal - host " . $ipaddr,
             //'nav_text' => "Status : host",
             //'status' => "current",
             'hostname' => $hostname,
@@ -448,16 +447,15 @@ class Welcome extends Cf_Controller {
     }
 
     function weakest_host() {
-        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
-            ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>
-                ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery-ui-1.8.9.custom.min.js"> </script>
-                ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'graphs/host-meter.js"> </script>'
+       
+        $requiredjs = array(
+            array('jit/jit-yc.js'),
+            array('graphs/host-meter.js'),
+            
         );
-        $this->template->set('injected_item', implode("", $scripts));
+        $this->carabiner->js($requiredjs);
+        $jsIE = array('jit/Extras/excanvas.js');
+        $this->carabiner->group('iefix', array('js' => $jsIE));
 
         $bc = array(
             'title' => 'Weakest Host',
@@ -480,10 +478,7 @@ class Welcome extends Cf_Controller {
         }
 
         $data = array(
-            'title_header' => "weakest hosts",
             'title' => "Cfengine Mission Portal - weakest hosts ",
-            'nav_text' => "Status : weakest hosts",
-            'status' => "current",
             'ret' => $ret,
             'breadcrumbs' => $this->breadcrumblist->display()
         );
