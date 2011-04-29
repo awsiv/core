@@ -320,6 +320,7 @@ class Welcome extends Cf_Controller {
             'r' => cfpr_count_red_hosts(),
             'y' => cfpr_count_yellow_hosts(),
             'g' => cfpr_count_green_hosts(),
+            'b' => cfpr_count_blue_hosts() 
         );
 
         // Summary meter for host

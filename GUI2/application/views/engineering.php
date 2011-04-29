@@ -9,7 +9,7 @@
             <li> <a href="<?php echo site_url('welcome/hosts/red')?>" class="redhost hoststatuslist"><?php echo $r ?> hosts known</a> </li>
             <li> <a href="<?php echo site_url('welcome/hosts/yellow')?>" class="yellowhost hoststatuslist"><?php echo $y ?> hosts </a> </li>
             <li> <a href="<?php echo site_url('welcome/hosts/green')?>" class="greenhost hoststatuslist"><?php echo $g ?> hosts known</a> </li>
-            <li> <a href="<?php echo site_url('welcome/hosts/blue')?>" class="bluehost hoststatuslist"><?php echo $g ?> hosts known</a> </li>
+            <li> <a href="<?php echo site_url('welcome/hosts/blue')?>" class="bluehost hoststatuslist"><?php echo $b ?> hosts known</a> </li>
         </ul>
 
             <ul>

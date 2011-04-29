@@ -578,6 +578,7 @@ span#today
 #environment-list ul li a {
     background: url("../images/env_btn_middle.png") repeat-x left center;
     padding:4px 5px 5px 5px;
+    color:#4D4D4D;
 }
 
 #environment-list li span.front
@@ -790,7 +791,7 @@ span.search input
     list-style: none;
 }
 
-.categories li:hover,#categories li.selected
+.categories li:hover,.categories li.selected
 {
     color:#ff9900;
 }
@@ -1086,7 +1087,7 @@ span.search input
     -moz-border-radius: 5px;
     border-radius:5px;
     margin: 5px 15px 20px;
-    padding: 0 40px;
+    padding: 15px 40px;
 }
 
 /**********************/

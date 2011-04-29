@@ -1,4 +1,4 @@
-<div id="compliance_summary" style="height:120px;width: 85%;"></div>
+<div id="compliance_summary" style="height:120px;width:550px;"></div>
 <script type="text/javascript">
     //<![CDATA[
 var labelType, useGradients, nativeTextSupport, animate;

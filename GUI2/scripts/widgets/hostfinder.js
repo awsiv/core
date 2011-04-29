@@ -82,7 +82,10 @@ var hostfinder={
             {
               self.createclasstagcloud(self);
             }
+        else{
         self.cfui.searchform.find('input[type="text"]').trigger('blur');
+        self.cfui.searchform.find('input[type="text"]').trigger('focus');
+        }
     },
 
     hostselected:function(event)
@@ -214,12 +217,13 @@ var hostfinder={
       var self=event.data.ui
       if(this.value==$(this).data('default') && event.type=='focusin')
           {
-              self.cfui.categories.slideDown().delay(8000).fadeOut(400);
+              self.cfui.categories.slideDown();
               this.value='';
           }
       if(this.value=='' && event.type=='focusout')
           {
               this.value=$(this).data('default');
+              self.cfui.categories.slideUp();
           }
     },
 
