@@ -771,9 +771,40 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    
    fprintf(fp," \"%s\" comment => \"%s\",",OBS[i][0],OBS[i][1]);   
    fprintf(fp,"      generalizations => { \"vital signs\", \"observables\" },",OBS[i][0],OBS[i][1]);
-   fprintf(fp,"      determines => { \"actual state\" , \"monitoring classes\" };");
+   fprintf(fp,"      determines => { \"actual state\" , \"monitoring classes\" };\n");
    }
 
+// Operating system classes
+
+fprintf(fp,"operating_systems::");
+
+for (i = 2; CLASSTEXT[i] != NULL; i++)
+   {
+   fprintf(fp," \"%s\" generalizations => { \"operating systems\" };  ", CLASSTEXT[i]);
+   }
+
+
+fprintf(fp," \"debian\"generalizations => { \"linux\"};");
+fprintf(fp," \"ubuntu\"generalizations => { \"linux\", \"debian\" };");
+fprintf(fp," \"redhat\"generalizations => { \"linux\"};");
+fprintf(fp," \"sles\"generalizations => { \"suse\", \"linux\"};");
+fprintf(fp," \"suse\"generalizations => { \"linux\"};");
+fprintf(fp," \"slackware\"generalizations => { \"linux\"};");
+fprintf(fp," \"fedora\"generalizations => { \"linux\"};");
+fprintf(fp," \"mandrake\"generalizations => { \"linux\"};");
+fprintf(fp," \"mandriva\"generalizations => { \"linux\"};");
+fprintf(fp," \"gentoo\"generalizations => { \"linux\"};");
+fprintf(fp," \"unitedlinux\"generalizations => { \"linux\"};");
+fprintf(fp," \"suncobalt\"generalizations => { \"linux\"};");
+fprintf(fp," \"Win2000\"generalizations => { \"windows\"};");
+fprintf(fp," \"WinXP\"generalizations => { \"windows\"};");
+fprintf(fp," \"WinServer2003\"generalizations => { \"windows\"};");
+fprintf(fp," \"WinVista\"generalizations => { \"windows\"};");
+fprintf(fp," \"WinServer2008\"generalizations => { \"windows\"};");
+
+fprintf(fp,"locations::");
+
+fprintf(fp,"  \"all locations\"; ");
 }
 
 /*****************************************************************************/

@@ -76,10 +76,6 @@ for (i = 0; st[i].btype != NULL; i++)
 
 printf("},\n");
 Nova_ShowPromiseTypesFor("*", commonEditLine);
-
-
-
-
 printf("};\n\n\n");
 
 
