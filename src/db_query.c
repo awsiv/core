@@ -157,6 +157,103 @@ struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query)
 
 /*****************************************************************************/
 
+struct HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn,char *expression,time_t horizon,int sort)
+
+{ bson_buffer bb;
+  bson query,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  struct Rlist *rp = NULL,*host_list = NULL;
+  time_t rtime, now = time(NULL);
+  char rclass[CF_MAXVARSIZE];
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+  int match_class,found = false;
+  char classRegexAnch[CF_MAXVARSIZE];
+  int emptyQuery = true;
+  
+/* BEGIN query document */
+
+bson_buffer_init(&bb);
+bson_empty(&query);
+
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,cfr_class,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+DeleteEntireHeap();
+
+hostnames[0] = '\0';
+addresses[0] = '\0';
+
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+
+bson_destroy(&field);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   rclass[0] = '\0';
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
+      
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      
+      /* Query specific search/marshalling */
+      
+      if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+            strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+
+            rtime = 0;
+            
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
+                  {
+                  rtime = bson_iterator_int(&it3);
+                  }
+               }
+            
+            if (now - rtime < horizon)
+               {
+               NewClass(rclass);
+               }            
+            }
+         }
+
+      if (IsDefinedClass(expression))
+         {
+         PrependRlistAlien(&host_list,NewHubHost(keyhash,addresses,hostnames));
+         }
+      
+      DeleteEntireHeap();      
+      }   
+   }
+
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,NULL);
+}
+
+/*****************************************************************************/
+
 struct HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, char *classRegex)
 
 { bson_buffer bb;
@@ -420,157 +517,154 @@ struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lc
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
-    {
-    bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
-    }
+if (!EMPTY(keyHash))
+   {
+   bson_append_string(&bb,cfr_keyhash,keyHash);
+   emptyQuery = false;
+   }
 
- if(!EMPTY(classRegex))
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
-    }
+if (!EMPTY(classRegex))
+   {
+   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+   emptyQuery = false;
+   }
 
- if(emptyQuery)
-    {
-    bson_empty(&query);
-    }
- else
-    {
-    bson_from_buffer(&query,&bb);
-    }
+if(emptyQuery)
+   {
+   bson_empty(&query);
+   }
+else
+   {
+   bson_from_buffer(&query,&bb);
+   }
 
-  
+
 /* BEGIN RESULT DOCUMENT */
 
- bson_buffer_init(&bb);
- bson_append_int(&bb,cfr_keyhash,1);
- bson_append_int(&bb,cfr_ip_array,1);
- bson_append_int(&bb,cfr_host_array,1);
- bson_append_int(&bb,cfr_class,1);
- bson_from_buffer(&field, &bb);
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,cfr_class,1);
+bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
- hostnames[0] = '\0';
- addresses[0] = '\0';
+hostnames[0] = '\0';
+addresses[0] = '\0';
 
- cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
 
- bson_destroy(&field);
+bson_destroy(&field);
 
- if(!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
+if (!emptyQuery)
+   {
+   bson_destroy(&query);
+   }
 
 
- while (mongo_cursor_next(cursor))  // loops over documents
-    {
-
-    bson_iterator_init(&it1,cursor->current.data);
-
-    keyhash[0] = '\0';
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
-    rclass[0] = '\0';
-    found = false;
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
    
-    while (bson_iterator_next(&it1))
-       {
-       /* Extract the common HubHost data */
-
-       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   rclass[0] = '\0';
+   found = false;
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
       
-       /* Query specific search/marshalling */
-
-       if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
-          {
-          bson_iterator_init(&it2,bson_iterator_value(&it1));
-
-          while (bson_iterator_next(&it2))
-             {
-             bson_iterator_init(&it3, bson_iterator_value(&it2));
-             strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
-
-             rex = 0;
-             rsigma = 0;
-             rtime = 0;
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      
+      /* Query specific search/marshalling */
+      
+      if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+            strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
             
-             while (bson_iterator_next(&it3))
-                {
-                if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
-                   {
-                   rex = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
-                   {
-                   rsigma = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
-                   {
-                   rtime = bson_iterator_int(&it3);
-                   }
-                else
-                   {
-                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in classes",bson_iterator_key(&it3));
-                   }
-                }
-
-             match_class = true;
+            rex = 0;
+            rsigma = 0;
+            rtime = 0;
             
-             if (regex)
-                {
-                if (!EMPTY(lclass) && !FullTextMatch(lclass,rclass))
-                   {
-                   match_class = false;
-                   }
-                }
-             else
-                {
-                if (!EMPTY(lclass) && (strcmp(lclass,rclass) != 0))
-                   {
-                   match_class = false;
-                   }
-                }
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
+                  {
+                  rex = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
+                  {
+                  rsigma = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
+                  {
+                  rtime = bson_iterator_int(&it3);
+                  }
+               else
+                  {
+                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in classes",bson_iterator_key(&it3));
+                  }
+               }
             
-             if (match_class && (now - rtime < horizon))
-                {
-                found = true;
-                rp = PrependRlistAlien(&record_list,NewHubClass(CF_THIS_HH,rclass,rex,rsigma,rtime));
-                }            
-             }
-          }   
-       }
+            match_class = true;
+            
+            if (regex)
+               {
+               if (!EMPTY(lclass) && !FullTextMatch(lclass,rclass))
+                  {
+                  match_class = false;
+                  }
+               }
+            else
+               {
+               if (!EMPTY(lclass) && (strcmp(lclass,rclass) != 0))
+                  {
+                  match_class = false;
+                  }
+               }
+            
+            if (match_class && (now - rtime < horizon))
+               {
+               found = true;
+               rp = PrependRlistAlien(&record_list,NewHubClass(CF_THIS_HH,rclass,rex,rsigma,rtime));
+               }            
+            }
+         }   
+      }
+   
+   if (found)
+      {
+      hh = NewHubHost(keyhash,addresses,hostnames);
+      PrependRlistAlien(&host_list,hh);
+      
+      // Now cache the host reference in all of the records to flatten the 2d list
+      for (rp = record_list; rp != NULL; rp=rp->next)
+         {
+         struct HubClass *hs = (struct HubClass *)rp->item;
+         if (hs->hh == CF_THIS_HH)
+            {
+            hs->hh = hh;
+            }
+         }
+      }
+   }
 
-    if (found)
-       {
-       hh = NewHubHost(keyhash,addresses,hostnames);
-       PrependRlistAlien(&host_list,hh);
+if (sort)
+   {
+   record_list = SortRlist(record_list,SortClasses);
+   }
 
-       // Now cache the host reference in all of the records to flatten the 2d list
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubClass *hs = (struct HubClass *)rp->item;
-          if (hs->hh == CF_THIS_HH)
-             {
-             hs->hh = hh;
-             }
-          }
-       }
-    }
- 
-
- if (sort)
-    {
-    record_list = SortRlist(record_list,SortClasses);
-    }
-
-
- mongo_cursor_destroy(cursor);
- return NewHubQuery(host_list,record_list);
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/

@@ -101,8 +101,7 @@ char buffer[CF_MAXVARSIZE];
 void Nova2PHP_get_knowledge_view(int pid,char *view,char *buffer,int bufsize)
 
 {
- Nova_WebTopicMap_Initialize();
- Nova_PlotTopicCosmos(pid,view,buffer,bufsize);
+Nova_PlotTopicCosmos(pid,view,buffer,bufsize);
 }
 
 /****************************************************************************/
