@@ -81,7 +81,8 @@ for (i = 0; i < tribe_size; i++)
       },
    */
 
-   snprintf(url,CF_MAXVARSIZE,"/welcome/knowledge/pid/%d",tribe_node[i].real_id);
+   snprintf(url,CF_MAXVARSIZE,"/knowledge/knowledgemap/pid/%d",tribe_node[i].real_id);
+//   snprintf(url,CF_MAXVARSIZE,"/welcome/knowledge/pid/%d",tribe_node[i].real_id);
    
    snprintf(work,CF_BUFSIZE,
             "{ "

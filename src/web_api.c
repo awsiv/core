@@ -27,68 +27,68 @@ char buffer[CF_MAXVARSIZE];
 // Shared library linking requires these functions to appear in something linked to libpromises
 // use this for diagnostics? This is linked through enterprise_stubs.c
  
- if (false)
-    {
-    //   Nova2PHP_software_report(0,0,0,0,0,cfr_software,NULL,buffer,20);
-    //   Nova2PHP_classes_report(NULL,NULL,0,NULL,buffer,1000);
-    //   Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,NULL,buffer,1000);
-    //   Nova2PHP_compliance_promises(NULL,NULL,"x",0,NULL,buffer,10000);
-    //   Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,NULL,buffer,10000);
-    //   Nova2PHP_bundles_report(NULL,NULL,0,NULL,buffer,10000);
-    //   Nova2PHP_performance_report(NULL,NULL,0,NULL,buffer,10000);
-    //   Nova2PHP_setuid_report(NULL,NULL,0,NULL,buffer,10000);
-    //   Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",NULL,buffer,10000);
-    //   Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",NULL,buffer,10000);
-    //   Nova2PHP_value_report(NULL,NULL,NULL,NULL,NULL,buffer,1000);
-    //   Nova2PHP_promiselog(NULL,NULL,1,0,0,NULL,buffer,1000);
-    Nova2PHP_promises(NULL, NULL, NULL, 0);
-    //   Nova2PHP_getlastupdate(NULL,buffer,10);
+if (false)
+   {
+   //   Nova2PHP_software_report(0,0,0,0,0,cfr_software,NULL,buffer,20);
+   //   Nova2PHP_classes_report(NULL,NULL,0,NULL,buffer,1000);
+   //   Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,NULL,buffer,1000);
+   //   Nova2PHP_compliance_promises(NULL,NULL,"x",0,NULL,buffer,10000);
+   //   Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,NULL,buffer,10000);
+   //   Nova2PHP_bundles_report(NULL,NULL,0,NULL,buffer,10000);
+   //   Nova2PHP_performance_report(NULL,NULL,0,NULL,buffer,10000);
+   //   Nova2PHP_setuid_report(NULL,NULL,0,NULL,buffer,10000);
+   //   Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",NULL,buffer,10000);
+   //   Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",NULL,buffer,10000);
+   //   Nova2PHP_value_report(NULL,NULL,NULL,NULL,NULL,buffer,1000);
+   //   Nova2PHP_promiselog(NULL,NULL,1,0,0,NULL,buffer,1000);
+   Nova2PHP_promises(NULL, NULL, NULL, 0);
+   //   Nova2PHP_getlastupdate(NULL,buffer,10);
 
-    Nova2PHP_AnalyseMag(NULL,5,buffer,10);
-    Nova2PHP_AnalyseWeek(NULL,5,buffer,10);
-    Nova_AnalyseHist(NULL,NULL,5,buffer,10);
+   Nova2PHP_AnalyseMag(NULL,5,buffer,10);
+   Nova2PHP_AnalyseWeek(NULL,5,buffer,10);
+   Nova_AnalyseHist(NULL,NULL,5,buffer,10);
    
-    CFDB_PutValue("one_two","three");
-    CFDB_GetValue("newvar",buffer,120);
-    Nova2PHP_count_hosts();
-    Nova2PHP_count_red_hosts();
-    Nova2PHP_count_yellow_hosts();
-    Nova2PHP_count_green_hosts();
-    Nova_Header("123","123",buffer,1000);
-    Nova_Footer(buffer,1000);
-    Nova2PHP_choose_hosts("123",2,buffer,1000);
-    NovaInitMeasurements();
-    Nova2PHP_get_host_colour(NULL,buffer,3);
-    Nova_Header("sd","we",buffer,3); 
-    Nova2PHP_get_network_speed("","",3);
-    Nova2PHP_meter(NULL,NULL,0);
-    /* pdf functions */
-    Nova2PHP_compliance_report_pdf(NULL,NULL,0,0,0,0,0,NULL,buffer,10000);
-    Nova2PHP_promiselog_pdf(NULL,NULL,1,0,0,NULL,buffer,1000); 
-    Nova2PHP_bundle_report_pdf(NULL,NULL,0,NULL,buffer,10000);
-    Nova2PHP_value_report_pdf(NULL,NULL,NULL,NULL,NULL,buffer,1000);
-    Nova2PHP_classes_report_pdf(NULL,NULL,0,NULL, buffer,1000);
-    Nova2PHP_compliance_promises_pdf(NULL,NULL,"x",0,NULL, buffer,10000);
-    Nova2PHP_filechanges_report_pdf(NULL,NULL,false,-1,">",NULL, buffer,10000);
-    Nova2PHP_lastseen_report_pdf(NULL,NULL,NULL,NULL,-1,0,NULL, buffer,10000);
-    Nova2PHP_software_report_pdf(0,0,0,0,0,cfr_software,NULL, buffer,20);
-    Nova2PHP_performance_report_pdf(NULL,NULL,0,NULL, buffer,10000);
-    Nova2PHP_vars_report_pdf(NULL,NULL,NULL,NULL,NULL,0,NULL, buffer,1000);
-    Nova2PHP_filediffs_report_pdf(NULL,NULL,NULL,false,-1,">",NULL, buffer,10000);
-    Nova2PHP_setuid_report_pdf(NULL,NULL,0,NULL, buffer,10000);
+   CFDB_PutValue("one_two","three");
+   CFDB_GetValue("newvar",buffer,120);
+   Nova2PHP_count_hosts();
+   Nova2PHP_count_red_hosts();
+   Nova2PHP_count_yellow_hosts();
+   Nova2PHP_count_green_hosts();
+   Nova_Header("123","123",buffer,1000);
+   Nova_Footer(buffer,1000);
+   Nova2PHP_choose_hosts("123",2,buffer,1000);
+   NovaInitMeasurements();
+   Nova2PHP_get_host_colour(NULL,buffer,3);
+   Nova_Header("sd","we",buffer,3); 
+   Nova2PHP_get_network_speed("","",3);
+   Nova2PHP_meter(NULL,NULL,0);
+   /* pdf functions */
+   Nova2PHP_compliance_report_pdf(NULL,NULL,0,0,0,0,0,NULL,buffer,10000);
+   Nova2PHP_promiselog_pdf(NULL,NULL,1,0,0,NULL,buffer,1000); 
+   Nova2PHP_bundle_report_pdf(NULL,NULL,0,NULL,buffer,10000);
+   Nova2PHP_value_report_pdf(NULL,NULL,NULL,NULL,NULL,buffer,1000);
+   Nova2PHP_classes_report_pdf(NULL,NULL,0,NULL, buffer,1000);
+   Nova2PHP_compliance_promises_pdf(NULL,NULL,"x",0,NULL, buffer,10000);
+   Nova2PHP_filechanges_report_pdf(NULL,NULL,false,-1,">",NULL, buffer,10000);
+   Nova2PHP_lastseen_report_pdf(NULL,NULL,NULL,NULL,-1,0,NULL, buffer,10000);
+   Nova2PHP_software_report_pdf(0,0,0,0,0,cfr_software,NULL, buffer,20);
+   Nova2PHP_performance_report_pdf(NULL,NULL,0,NULL, buffer,10000);
+   Nova2PHP_vars_report_pdf(NULL,NULL,NULL,NULL,NULL,0,NULL, buffer,1000);
+   Nova2PHP_filediffs_report_pdf(NULL,NULL,NULL,false,-1,">",NULL, buffer,10000);
+   Nova2PHP_setuid_report_pdf(NULL,NULL,0,NULL, buffer,10000);
    
-    /* svn helper */
-    Nova2PHP_validate_policy(NULL,NULL,10000);
-    /*
-     * commenting
-     */
-    Nova2PHP_add_new_note(NULL,NULL, -1,NULL, -1, NULL,NULL,100);
-    Nova2PHP_add_note(NULL,NULL,-1,NULL,NULL,100);
-    Nova2PHP_get_notes(NULL,NULL, NULL,-1,-1,NULL,1000000);
-    Nova2PHP_get_host_noteid(NULL,NULL,4096);
-
-    Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
-    }
+   /* svn helper */
+   Nova2PHP_validate_policy(NULL,NULL,10000);
+   /*
+    * commenting
+    */
+   Nova2PHP_add_new_note(NULL,NULL, -1,NULL, -1, NULL,NULL,100);
+   Nova2PHP_add_note(NULL,NULL,-1,NULL,NULL,100);
+   Nova2PHP_get_notes(NULL,NULL, NULL,-1,-1,NULL,1000000);
+   Nova2PHP_get_host_noteid(NULL,NULL,4096);
+   
+   Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
+   }
 #endif
 }
 
@@ -99,7 +99,7 @@ char buffer[CF_MAXVARSIZE];
 /****************************************************************************/
 
 void Nova2PHP_get_knowledge_view(int pid,char *view,char *buffer,int bufsize)
-
+    
 {
 Nova_PlotTopicCosmos(pid,view,buffer,bufsize);
 }
@@ -109,39 +109,39 @@ Nova_PlotTopicCosmos(pid,view,buffer,bufsize);
 void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize)
 
 { time_t then;
- mongo_connection dbconn;
+  mongo_connection dbconn;
 
 /* BEGIN query document */
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return;
+   }
 
- if (hostkey && strlen(hostkey) > 0)
-    {
-    then = 0;
-    CFDB_QueryLastUpdate(&dbconn,hostkey,&then);
+if (hostkey && strlen(hostkey) > 0)
+   {
+   then = 0;
+   CFDB_QueryLastUpdate(&dbconn,hostkey,&then);
+   
+   if (then > 0)
+      {
+      snprintf(buffer,bufsize,"%ld",then);
+      }
+   else
+      {
+      snprintf(buffer,bufsize,"never");
+      }
+   }
+else
+   {
+   snprintf(buffer,bufsize,"never");
+   }
 
-    if (then > 0)
-       {
-       snprintf(buffer,bufsize,"%ld",then);
-       }
-    else
-       {
-       snprintf(buffer,bufsize,"never");
-       }
-    }
- else
-    {
-    snprintf(buffer,bufsize,"never");
-    }
-
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
 }
 
 /*****************************************************************************/
@@ -2365,7 +2365,7 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
        snprintf(context,CF_MAXVARSIZE,"class_contexts::%s",ip->name);
        pid = Nova_GetTopicIdForTopic(context);
 
-       snprintf(work,CF_MAXVARSIZE,"<li><a href=\"/welcome/knowledge/pid/%d\"><span class=\"classcontext\">%s</span></a></li>",pid,ip->name);
+       snprintf(work,CF_MAXVARSIZE,"<li><a href=\"/knowledge/knowledgemap/pid/%d\"><span class=\"classcontext\">%s</span></a></li>",pid,ip->name);
 
        if(!Join(buffer,work,bufsize))
           {
@@ -2470,7 +2470,7 @@ int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize)
 
           for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
              {
-             snprintf(work,sizeof(work),"<tr><td><a href=\"/welcome/knowledge/pid/%d\">%s</a> </td><td> %s</td></tr>",ip2->counter,ip2->name,ip2->classes);
+             snprintf(work,sizeof(work),"<tr><td><a href=\"/knowledge/knowledgemap/pid/%d\">%s</a> </td><td> %s</td></tr>",ip2->counter,ip2->name,ip2->classes);
             
              if (!Join(goals,work,CF_BUFSIZE))
                 {
@@ -3147,10 +3147,10 @@ void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
     {
     snprintf(returnval,CF_MAXVARSIZE-1,"<div id=\"showbody\"><table>\n");
    
-    snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Type</td><td>:</td><td><a href=\"/welcome/knowledge/topic/%s\">%s</a></td><td></td></tr>\n",hb->bodyType,hb->bodyType);
+    snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Type</td><td>:</td><td><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a></td><td></td></tr>\n",hb->bodyType,hb->bodyType);
     Join(returnval,work,bufsize);
 
-    snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Name</td><td>:</td><td><a href=\"/welcome/knowledge/topic/%s\">%s</a></td><td></td></tr>\n",hb->bodyName,hb->bodyName);
+    snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Name</td><td>:</td><td><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a></td><td></td></tr>\n",hb->bodyName,hb->bodyName);
     Join(returnval,work,bufsize);
          
     if (hb->bodyArgs)
@@ -3165,7 +3165,7 @@ void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
       
        for (ha = hb->attr; ha != NULL; ha = ha->next)
           {
-          snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"/welcome/knowledge/topic/%s\">%s</a></span></td><td>=></td><td><span class=\"rval\">%s</span></td><td><a href=\"/welcome/knowledge/topic/%s\">%s</a></td></tr>",ha->lval,ha->lval,ha->rval,ha->classContext,ha->classContext);
+          snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a></span></td><td>=></td><td><span class=\"rval\">%s</span></td><td><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a></td></tr>",ha->lval,ha->lval,ha->rval,ha->classContext,ha->classContext);
           Join(returnval,work,bufsize);
           }
 
@@ -3204,7 +3204,7 @@ int Nova2PHP_list_bodies(char *name,char *type,char *returnval,int bufsize)
       
     for (ip = all_bodies; ip != NULL; ip=ip->next)
        {
-       snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"/welcome/knowledge/topic/%s\">%s</a> ",ip->classes,ip->classes);
+       snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a> ",ip->classes,ip->classes);
        Join(returnval,work,bufsize);
       
        snprintf(work,CF_MAXVARSIZE-1,"<a href=\"/welcome/body/body/%s/type/%s\">%s</a></li>\n",ip->name,ip->classes,ip->name);
@@ -3398,10 +3398,10 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
  snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\" width=\"20%%\">Belonging to <span class=\"bundletype\">%s</span> bundle</td><td>:</td><td><a href=\"/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a><td></tr>",hp->bundleType,hp->bundleName,hp->bundleType,hp->bundleName);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Reference handle</td><td>:</td><td><a href=\"/welcome/knowledge/topic/%s\"><span class=\"handle\">%s</span></a></td></tr>",hp->handle,hp->handle);
+ snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Reference handle</td><td>:</td><td><a href=\"/knowledge/knowledgesearch/search/%s\"><span class=\"handle\">%s</span></a></td></tr>",hp->handle,hp->handle);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Affected object (promiser)</td><td>:</td><td><a href=\"/welcome/knowledge/topic/%s\"><span class=\"promiser\">%s</span></a></td></tr>",hp->promiser,hp->promiser);
+ snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Affected object (promiser)</td><td>:</td><td><a href=\"/knowledge/knowledgesearch/search/%s\"><span class=\"promiser\">%s</span></a></td></tr>",hp->promiser,hp->promiser);
  Join(returnval,work,bufsize);
 
  if (EMPTY(hp->promisee))
@@ -3410,7 +3410,7 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
     }
  else
     {
-    snprintf(promiseeText,sizeof(promiseeText),"<a href=\"/welcome/knowledge/topic/%s\">%s</a>",hp->promisee,hp->promisee);     
+    snprintf(promiseeText,sizeof(promiseeText),"<a href=\"/knowledge/knowledgesearch/search/%s\">%s</a>",hp->promisee,hp->promisee);     
     }
 
  snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Stakeholders (promisees)</td><td>:</td><td><span class=\"promisee\">%s</span></td></tr>",promiseeText);
@@ -3428,10 +3428,10 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
  snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Comment on original intention</td><td>:</td><td><span class=\"promiser\">%s</span></td></tr>",commentText);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Promise is about</td><td>:</td><td><a href=\"/welcome/knowledge/topic/%s\"><span class=\"subtype\">%s</span></a></td></tr>",hp->promiseType,hp->promiseType);
+ snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Promise is about</td><td>:</td><td><a href=\"/knowledge/knowledgesearch/search/%s\"><span class=\"subtype\">%s</span></a></td></tr>",hp->promiseType,hp->promiseType);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applies in the class context</td><td>:</td><td><a href=\"/welcome/knowledge/topic/%s\"><span class=\"classcontext\">%s</span></a></td></tr>",hp->classContext,hp->classContext);
+ snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applies in the class context</td><td>:</td><td><a href=\"/knowledge/knowledgesearch/search/%s\"><span class=\"classcontext\">%s</span></a></td></tr>",hp->classContext,hp->classContext);
  Join(returnval,work,bufsize);
 
  snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Defined in file</td><td>:</td><td><span class=\"file\">%s</span> near line %d</td></tr>",hp->file,hp->lineNo);
@@ -3453,11 +3453,11 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
 
        if (strcmp(lval,"usebundle") == 0)
           {
-          snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"/welcome/knowledge/topic/%s\">%s</a></span></td><td>=></td><td><a href=\"/bundle/details/bundle/%s/type/%s\"><span class=\"bundlename\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
+          snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a></span></td><td>=></td><td><a href=\"/bundle/details/bundle/%s/type/%s\"><span class=\"bundlename\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
           }
        else
           {
-          snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"/welcome/knowledge/topic/%s\">%s</a></span></td><td>=></td><td><a href=\"/welcome/body/body/%s/type/%s\"><span class=\"bodyname\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
+          snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a></span></td><td>=></td><td><a href=\"/welcome/body/body/%s/type/%s\"><span class=\"bodyname\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
           }
       
        Join(returnval,work,bufsize);   
