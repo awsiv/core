@@ -191,7 +191,7 @@ label#searchbox input
 #bodyindex .left{
     background: url("../images/box_main_left.png") no-repeat;
     min-width:11px;
-    height:511px;
+    min-height:511px;
     float:left;
 }
 
@@ -485,9 +485,7 @@ body {
     color:#08A3C1;
 }
 
-.tables table{
-  width:100%;
-}
+
 
 .title
 {
@@ -1100,6 +1098,69 @@ span.search input
 #footer p{
     color:#08a3c1;
 }
+
+.tables table{
+  width:100%;
+}
+.tables th
+{
+    text-align:left;
+    padding:11px 0px 16px 10px;
+    background-color:#3d4439;
+    color:#ffffff;
+    cursor:pointer;
+    text-transform: uppercase;
+}
+
+.tables tr td
+{
+   border-left: 1px solid #757575;
+   border-right: 1px solid #757575;
+   border-top: 1px solid #cbcdca;
+   border-bottom: 1px solid #cbcdca;
+   padding-left:10px;
+   color:#3d453a;
+}
+
+.tables tr.odd td
+{
+    background:#e6eee3;
+}
+
+
+.tables td a
+{
+    word-wrap:break-word;
+}
+
+
+.tables tr:last-child td
+{
+  border-bottom:1px solid #757575;
+}
+
+.pages{
+    margin-bottom: 15px;
+}
+.pages a
+{
+   background: #e6eee3;
+   color:#3D453A;
+   padding:2px 7px;
+
+}
+.pages a.current
+{
+   background: #3d4439;
+   color:#fff;
+}
+
+
+#reportpanel{
+    margin:15px 5px 15px 5px;
+    padding:10px;
+}
+
 
 
 /* FOR KNOWLEDGE MAP */

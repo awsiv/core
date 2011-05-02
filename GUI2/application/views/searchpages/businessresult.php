@@ -1,6 +1,9 @@
-<div class="pagepanel">
-    <div class="panelhead withpdfbtn">
-        <span class="text"><?php echo $report_title ?></span>
+<div id="body">
+    <div class="left"></div>
+    <div class="middle minwidth98">
+              <div id="reportpanel" class="innerdiv">
+                  <p class="title"><?php echo $report_title ?></p>
+    <div class="">
         <!--<a href="<?php echo site_url('search/index/report/' . $report_title) ?>" id="advsearch">Advance search</a>-->
         <?php echo anchor('#',$report_title.' For host',array('id'=>'findhost')) ?>
         <a href="<?php echo $report_link ?>"><img src="<?php echo get_imagedir() ?>icon_pdf.png" class="floatRight"></a>
@@ -17,17 +20,9 @@
                 $pg = paging($current, $number_of_rows, $result['meta']['count'], 100);
             ?>
                 <div class="Paging">
-                    <div>
-                    <?php
-                    echo form_open('search/index/' . $params);
-                    echo form_input('rows', $number_of_rows);
-                    echo "Rows/Page";
-                    echo form_close();
-                    ?>
-                </div>
                 <div class="pages">
                     <div class="inside">
-                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['first']) ?>" title="Go to First Page" class="first"><span>&laquo;</span></a>
+                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['first']) ?>" title="Go to First Page" class="first"><span>&laquo;First</span></a>
                         <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['prev']) ?>" title="Go to Previous Page" class="prev"><span>&lsaquo;</span></a>
 
                         <?
@@ -42,8 +37,16 @@
                         <? } ?>
 
                         <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['next']) ?>" title="Go to Next Page" class="next"><span>&rsaquo;</span></a>
-                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>&raquo;</span></a>
+                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>Last&raquo;</span></a>
                     </div>
+                </div>
+                <div>
+                    <?php
+                    echo form_open('search/index/' . $params);
+                    echo form_input('rows', $number_of_rows);
+                    echo "Rows/Page";
+                    echo form_close();
+                    ?>
                 </div>
             </div>
             <?php
@@ -51,10 +54,15 @@
                     else {
                         echo"<table><tr><td>" . $this->lang->line("no_data") . "</td></tr></table>";
                     }
-            ?>
-                </div>
+            ?> 
             </div>
         </div>
+ </div>
+    </div>
+<div class="right"></div>
+    <div class="clearboth"></div>
+</div>
+<div class="clear"></div>
         <div title="Send mail" id="dialog" style="width:400px;display:none">
             <form>
                 <fieldset class="ui-helper-reset">
@@ -75,7 +83,7 @@
                 //$('.tables table:first').prepend(
                 //$('<thead></thead>').append($('.tables tr:first').remove())
                 //);
-                $('.tables table').tableFilter();
+               // $('.tables table').tableFilter();
                 $('.tables table').tablesorter({widgets: ['zebra']});
 
                 $('#advsearch').click(function(event){

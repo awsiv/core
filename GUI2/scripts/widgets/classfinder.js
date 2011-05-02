@@ -3,6 +3,7 @@ $.widget('ui.classfinder',
 {
  options: {
             filterhandlerurl: "/widget/filterclass",
+            defaultbehaviour:true,
             width:700,
             height:600
 
@@ -12,8 +13,8 @@ _init: function(){
 },
 _create:function(){
         var self=this;
-        self.loadpagebody();
         self.addsearchbar();
+        self.loadpagebody();
         self.addalphapager();
         $.ui.classfinder.instances.push(this.element);
 },
@@ -84,7 +85,22 @@ loadpagebody:function(){
                                         $("<a>").text(val).attr({title:val, href:"#"}).appendTo(li);
                                         li.appendTo("#classList");
                                   });
+          self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
      });
+},
+
+classSelected:function(event){
+   var self=this,
+       sender=$(event.target);
+       if(!self.options.defaultbehaviour)
+          {
+             event.preventDefault();
+             self._trigger("complete",null,{selectedclass:sender.text()})
+          }
+       else{
+           event.preventDefault();
+           console.log(sender.text());
+       }
 },
 
 dialogContainer: function() {

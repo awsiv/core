@@ -49,10 +49,10 @@ class Widget extends CI_Controller {
               $html.="<ul class=\"result\">";
                 foreach ($result['data'] as $row) {
                      if($display=='hostname')
-                    $html.="<li><a href=".site_url('welcome/host')."/".$row[2].">$row[0] ($row[1])</a></li>";
+                    $html.="<li><a href=".site_url('welcome/host')."/".$row[2]." title=".$row[2].">$row[0] ($row[1])</a></li>";
 
                      if($display=='ipaddress')
-                          $html.="<li><a href=".site_url('welcome/host')."/".$row[2].">$row[1] ($row[0])</a></li>";
+                          $html.="<li><a href=".site_url('welcome/host')."/".$row[2]." title=".$row[2].">$row[1] ($row[0])</a></li>";
                 }
                $html.="</ul>";
             }
@@ -138,6 +138,7 @@ class Widget extends CI_Controller {
           }
       }
 
+      /*used by host finder */
        function __format_to_html2($result)
         {
           $html="";
@@ -145,7 +146,7 @@ class Widget extends CI_Controller {
           if (count($result) > 0) {
               $html.="<ul class=\"result\">";
                 foreach ($result as $row) {
-                    $html.="<li><a href=".site_url('welcome/host')."/".$row[1].">$row[0]</a></li>";
+                    $html.="<li><a href=".site_url('welcome/host')."/".$row[1]." title=".$row[1].">$row[0]</a></li>";
                 }
                $html.="</ul>";
             }
