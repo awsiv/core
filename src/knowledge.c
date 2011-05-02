@@ -543,7 +543,7 @@ fprintf(fp,"\n occurrences:\n");
 
 fprintf(fp,"%s::\n",promise_id);
 
-fprintf(fp,"\"/promise/details/handle/%s\",\n",promise_id);
+fprintf(fp,"\"/promise/details/%s\",\n",promise_id);
 fprintf(fp,"   represents => { \"definition\" };\n\n");
 
 fprintf(fp,"system_policy.bundles.%s::\n",pp->bundle);
@@ -969,7 +969,7 @@ else if (promise_id)
 
 if (promise_id)
    {
-   fprintf(fp,"occurrences: %s::  \"/promise/details/promise_id/%s\", represents => { \"declaration\" }; \n",CanonifyName(promise_id),promise_id);
+   fprintf(fp,"occurrences: %s::  \"/promise/details/%s\", represents => { \"declaration\" }; \n",CanonifyName(promise_id),promise_id);
    }
 
 /* For activated classes we can assume that no one will */

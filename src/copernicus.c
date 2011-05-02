@@ -67,7 +67,7 @@ for (i = 0; i < tribe_size; i++)
              break;
          }
       }
-
+   
    /* FORMAT
       {
       "id": "graphnode0",
@@ -80,27 +80,26 @@ for (i = 0; i < tribe_size; i++)
       }
       },
    */
-
+   
    snprintf(url,CF_MAXVARSIZE,"/knowledge/knowledgemap/pid/%d",tribe_node[i].real_id);
-//   snprintf(url,CF_MAXVARSIZE,"/welcome/knowledge/pid/%d",tribe_node[i].real_id);
    
    snprintf(work,CF_BUFSIZE,
             "{ "
             "\"id\": \"g%d\",\n"
             "\"name\": \"%s\",\n"
             " \"data\": "
-	              "{ " 
-	              "\"$color\":\"%s\", "
-	              "\"$dim\": %.1lf, "
-	              "\"$type\": \"gradientCircle\","
-	              "\"link\": \"%s\""
-	              "},\n"
+            "{ " 
+            "\"$color\":\"%s\", "
+            "\"$dim\": %.1lf, "
+            "\"$type\": \"gradientCircle\","
+            "\"link\": \"%s\""
+            "},\n"
             "\"adjacencies\": [ ",
             i,tribe_node[i].shortname,colour,radius,url
             );
-
+   
    Join(buffer,work,bufsize);
-
+   
    for (j = 0; j < tribe_size; j++)
       {
       if (tribe_adj[i][j])
@@ -113,7 +112,7 @@ for (i = 0; i < tribe_size; i++)
    
    Join(buffer,"\n},",bufsize);
    }
- buffer[strlen(buffer)-1] = '\0';
+buffer[strlen(buffer)-1] = '\0';
 
 // Cleanup
 
@@ -133,10 +132,10 @@ for (i = 0; i < tribe_size; i++)
 /*****************************************************************************/
 
 int Nova_GetMaxEvcNode(double *evc,int tribe_size)
-
+    
 { int i, imax = 0;
   double max = 0;
-
+ 
 for (i = 0; i < tribe_size; i++)
    {
    if (evc[i] > max)
