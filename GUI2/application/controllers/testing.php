@@ -41,7 +41,7 @@ class Testing extends CI_Controller
          
          //$result = $this->mongo_db->select(array('uri','message'))->get('app_logs');
          //$this->mongo_db->where(array('group'=>'faculty'));
-         $result=$this->mongo_db->get('app_logs');
+         $result=$this->mongo_db->get('onlineusers');
          //$result=$this->mongo_db->select(array('username'))->get_where('users',array('group'=>'admin'));
          //print_r($result) ;
          foreach ($result as  $docs) {
@@ -442,5 +442,16 @@ function license() {
         //$pbarvalue=floor(($dayspassed/$totaldays)*100);
         //echo $pbarvalue;
     }
+
+ function byhandle()
+ {
+     echo cfpr_policy_finder_by_promiser(NULL,false);
+ }
+
+
+ function reports()
+ {
+     echo cfpr_select_reports(".*", 100);
+ }
         
 }
