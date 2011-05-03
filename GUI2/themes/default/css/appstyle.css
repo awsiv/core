@@ -456,8 +456,8 @@ body {
     float:left;
 }
 
-.minwidth80{
-    min-width: 71.4%;
+.width80{
+    width:80%;
 }
 
 .minwidth20{
@@ -484,6 +484,17 @@ body {
     float:left;
 }
 
+.outerdiv
+{
+background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F7F7F0), to(#Cfcfc8));
+border: 1px solid #fff;
+-moz-border-radius: 6px;
+-opera-border-radius:6px;
+-khtml-border-radius:6px;
+-webkit-border-radius:6px;
+border-radius:5px;
+background: -moz-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 transparent;
+}
 .innerdiv{
 
     border: solid 1.5px #d4d5d0;
@@ -1260,15 +1271,7 @@ span.search input
 }
 
 #bodyreport{
-background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F7F7F0), to(#Cfcfc8));
-border: 1px solid #fff;
--moz-border-radius: 6px;
--opera-border-radius:6px;
--khtml-border-radius:6px;
--webkit-border-radius:6px;
-border-radius:5px;
 
-background: -moz-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 transparent;
 }
 
 

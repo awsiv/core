@@ -1,6 +1,5 @@
-<div id="body">
-    <div class="left"></div>
-    <div class="middle minwidth98">
+<div id="body" class="grid_12">
+    <div class="outerdiv">
         <div id="hoststatus" class="minwidth30 innerdiv">
          <p class="title">Host Status</p>
         <ul>
@@ -38,8 +37,6 @@
 
         </div>
     </div>
-    <div class="right"></div>
-    <div class="clearboth"></div>
 </div>
 <div class="clear"></div>
 

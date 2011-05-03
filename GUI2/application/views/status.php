@@ -1,27 +1,24 @@
 
-<div id="body">
-    <div class="left"></div>
-    <div class="middle minwidth80">
+<div id="body" class="">
+    <div class=" grid_10">
+        <div class="outerdiv">
         <div id="overall" class="innerdiv">
             <p style="text-align: right;"><span id="alltime"></span><span id="thisweek"></span><span id="today"></span></p>
 
 
             <div id="pie-charts">
 
-                <div id="business-value-pie-chart-container" class="grid_6">
+                <div id="business-value-pie-chart-container" class="grid_5">
                     <p class="title">Business Value</p>
                     <div id="business-value-pie-chart" style="height: 150px;width:300px;">
                     </div>
                 </div>
-                <div id="compliance-value-pie-chart-container" class="grid_6">
+                <div id="compliance-value-pie-chart-container" class="grid_5">
                     <p class="title">Compliance Now</p>
                     <div id="compliance-now-pie-chart" style="height: 150px; width:300px;">
                     </div>
                 </div>
             </div>
-
-
-
 
         </div>
         <div id="compliance" class="innerdiv">
@@ -41,36 +38,27 @@
                 <div class="clear"></div>
             </div>
         </div>
-
-    </div>
-    <div class="right"></div>
-
-    <div class="left"></div>
-    <div class="middle minwidth20">
-        <div id="announcement" class="innerdiv">
-            <p class="title">Announcement</p>
         </div>
-        <div id="goals" class="innerdiv">
-            <p class="title">Services/goals</p>
-            <ul>
-                <?php
-                    foreach ($goals as $goal) {
-                        $words = explode("_", $goal->name);
-                        echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>$goal->desc</span><span class=\"check\"></span></li>";
-                    }
-                ?>
-                </ul>
+     </div>
+    <div class="grid_2">
+        <div class="outerdiv ">
+            <div id="announcement" class="innerdiv">
+                <p class="title">Announcement</p>
             </div>
+            <div id="goals" class="innerdiv">
+                <p class="title">Services/goals</p>
+                <ul>
+                    <?php
+                        foreach ($goals as $goal) {
+                            $words = explode("_", $goal->name);
+                            echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>$goal->desc</span><span class=\"check\"></span></li>";
+                        }
+                    ?>
+                    </ul>
+                </div>
         </div>
-        <div class="right"></div>
-        <div class="clearboth"></div>
     </div>
-
-    <div class="clear"></div>
-
-    <div id="controltest">
-
-    </div>
+</div>
     <script type="text/javascript">
         // for summary compliance graph
 
