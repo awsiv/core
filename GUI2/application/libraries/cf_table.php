@@ -41,7 +41,7 @@ class cf_table {
                                     $tempValue = sprintf('<a href="/promise/details/%s">%s</a>',urlencode($tempValue),$tempValue);
                                 }
                                 if (strtolower($key) == 'bundle') {
-                                    $tempValue = sprintf('<a href="/bundle/details/%s">%s</a>',urlencode($tempValue),$tempValue);
+                                    $tempValue = sprintf('<a href="/bundle/details/bundle/%s">%s</a>',urlencode($tempValue),$tempValue);
                                 }
 
                                 array_push($temp, $tempValue);
