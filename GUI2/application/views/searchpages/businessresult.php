@@ -1,29 +1,27 @@
-<div id="body">
-    <div class="left"></div>
-    <div class="middle minwidth98">
+<div id="bodyreport">
+    
               <div id="reportpanel" class="innerdiv">
                   <p class="title"><?php echo $report_title ?></p>
-    <div class="">
+    <div class="reporthead">
+        <a href="<?php echo $report_link ?>" class="icons pdf"></a>
+        <a href="<?php echo $email_link ?>" id="send_mail" class="icons email"></a>
         <!--<a href="<?php echo site_url('search/index/report/' . $report_title) ?>" id="advsearch">Advance search</a>-->
-        <?php echo anchor('#',$report_title.' For host',array('id'=>'findhost')) ?>
-        <a href="<?php echo $report_link ?>"><img src="<?php echo get_imagedir() ?>icon_pdf.png" class="floatRight"></a>
-        <a href="<?php echo $email_link ?>" id="send_mail"><img src="<?php echo get_imagedir() ?>emailsend.png" class="floatRight lnsendmail"></a>
-        <div class="clearboth"></div>
+        <?php echo anchor('#','Host only',array('id'=>'findhost')) ?>
     </div>
-    <div class="panelcontent">
+    <div class="reportpanelcontent">
         <div id="filterdialog" class="hidden"></div>
         <div class="tables">
             <?php
             $result = json_decode($report_result, true);
             if (count($result['data']) > 0) {
                 echo $this->cf_table->generateReportTable($result, $report_title);
-                $pg = paging($current, $number_of_rows, $result['meta']['count'], 100);
+                $pg = paging($current, $number_of_rows, $result['meta']['count'], 10);
             ?>
                 <div class="Paging">
                 <div class="pages">
                     <div class="inside">
-                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['first']) ?>" title="Go to First Page" class="first"><span>&laquo;First</span></a>
-                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['prev']) ?>" title="Go to Previous Page" class="prev"><span>&lsaquo;</span></a>
+                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['first']) ?>" title="Go to First Page" class="first"><span>First</span></a>
+                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['prev']) ?>" title="Go to Previous Page" class="prev"><span><</span></a>
 
                         <?
                         for ($i = $pg['start']; $i <= $pg['end']; $i++) {
@@ -36,8 +34,8 @@
 
                         <? } ?>
 
-                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['next']) ?>" title="Go to Next Page" class="next"><span>&rsaquo;</span></a>
-                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>Last&raquo;</span></a>
+                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['next']) ?>" title="Go to Next Page" class="next"><span>></span></a>
+                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>Last</span></a>
                     </div>
                 </div>
                 <div>
@@ -59,9 +57,6 @@
         </div>
  </div>
     </div>
-<div class="right"></div>
-    <div class="clearboth"></div>
-</div>
 <div class="clear"></div>
         <div title="Send mail" id="dialog" style="width:400px;display:none">
             <form>
@@ -82,8 +77,8 @@
             $(document).ready(function() {
                 //$('.tables table:first').prepend(
                 //$('<thead></thead>').append($('.tables tr:first').remove())
-                //);
-               // $('.tables table').tableFilter();
+               // );
+                $('.tables table').tableFilter();
                 $('.tables table').tablesorter({widgets: ['zebra']});
 
                 $('#advsearch').click(function(event){
