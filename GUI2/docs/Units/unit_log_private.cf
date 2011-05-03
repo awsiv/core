@@ -1,0 +1,37 @@
+#cop logging,custom
+#cop log_kept,example
+#cop log_failed,example
+#cop log_repaired,example
+#cop log_string,example
+
+body common control
+{
+bundlesequence => { "test" };
+}
+
+#
+
+bundle agent test
+{
+vars:
+
+  "software" slist => { "/root/xyz", "/tmp/xyz" };
+
+files:
+
+  "$(software)"
+
+    create => "true",
+     action => logme("$(software)");
+
+}
+
+#
+
+body action logme(x)
+{
+log_kept => "/tmp/private_keptlog.log";
+log_failed => "/tmp/private_faillog.log";
+log_repaired => "/tmp/private_replog.log";
+log_string => "$(sys.date) $(x) promise status";
+}

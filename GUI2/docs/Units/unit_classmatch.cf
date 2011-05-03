@@ -1,0 +1,28 @@
+#cop functions::classmatch,example
+#cop classes,example
+
+###########################################################
+
+body common control
+
+{
+bundlesequence  => { "example" };
+}
+
+###########################################################
+
+bundle agent example
+
+{     
+classes:
+
+  "do_it" and => { classmatch(".*_cfengine_com"), "linux" }; 
+
+reports:
+
+  do_it::
+
+    "Host matches pattern";
+
+}
+

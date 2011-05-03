@@ -1,0 +1,36 @@
+
+Install Omnigator on Linux/Unix
+--------------------------------
+
+Make sure java run-time is installed. Nothing else is required.
+
+unpack oks_samplers in /home/USER (default) using 
+-------------------------------------------------
+
+java -jar oks-samplers.jar
+
+edit startup.sh
+===============
+
+cd /home/USER/oks-samplers/apache-tomcat/bin
+
+add:
+export BASEDIR=/home/USER/oks-samplers/apache-tomcat
+
+execute
+========
+
+./startup.sh
+ps waux | grep java should show a java/tomcat process
+
+firefox http://localhost:8080
+
+
+install your topic map ltm
+==========================
+
+put cfengine.ltm in
+
+/home/USER/oks-samplers/apache-tomcat/webapps/omnigator/WEB-INF/topicmaps/cfengine_map.ltm
+
+

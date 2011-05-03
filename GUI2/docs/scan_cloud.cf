@@ -1,0 +1,63 @@
+
+bundle knowledge st_cloud
+
+{
+topics:
+
+"st-cloud";
+Federation::
+    "The future - molecular computing" ;
+Federation::
+    "What if I change my mind about Cloud Computing?" ;
+Federation::
+    "Challenges for Cloud Computing" ;
+Federation::
+    "Isnt virtualization inefficient?" ;
+Federation::
+    "How does Cloud relate to virtualization?" ;
+Federation::
+    "Permanent infra-structure with vibrant change" ;
+Federation::
+    "How does Cfengine enable Cloud Computing?" ;
+Federation::
+    "Is Cloud Computing for everything and everyone?" ;
+Federation::
+    "What is Cloud Computing?" ;
+Special_Topics_Guide::
+    "Federation"  association => a("discussed in","Federation","discusses");
+
+
+occurrences:
+
+Federation::
+ "/docs/st-cloud.html#Top"
+  represents => { "Short note" };
+What_is_Cloud_Computing_::
+ "/docs/st-cloud.html#What-is-Cloud-Computing_003f"
+  represents => { "Short note" };
+Is_Cloud_Computing_for_everything_and_everyone_::
+ "/docs/st-cloud.html#Is-Cloud-Computing-for-everything-and-everyone_003f"
+  represents => { "Short note" };
+How_does_Cfengine_enable_Cloud_Computing_::
+ "/docs/st-cloud.html#How-does-Cfengine-enable-Cloud-Computing_003f"
+  represents => { "Short note" };
+Permanent_infra_structure_with_vibrant_change::
+ "/docs/st-cloud.html#Permanent-infra_002dstructure-with-vibrant-change"
+  represents => { "Short note" };
+How_does_Cloud_relate_to_virtualization_::
+ "/docs/st-cloud.html#How-does-Cloud-relate-to-virtualization_003f"
+  represents => { "Short note" };
+Isnt_virtualization_inefficient_::
+ "/docs/st-cloud.html#Isn_0027t-virtualization-inefficient_003f"
+  represents => { "Short note" };
+Challenges_for_Cloud_Computing::
+ "/docs/st-cloud.html#Challenges-for-Cloud-Computing"
+  represents => { "Short note" };
+What_if_I_change_my_mind_about_Cloud_Computing_::
+ "/docs/st-cloud.html#What-if-I-change-my-mind-about-Cloud-Computing_003f"
+  represents => { "Short note" };
+The_future___molecular_computing::
+ "/docs/st-cloud.html#The-future-_002d-molecular-computing"
+  represents => { "Short note" };
+}
+

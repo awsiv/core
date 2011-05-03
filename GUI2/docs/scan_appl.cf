@@ -1,0 +1,78 @@
+
+bundle knowledge st_appmgt
+
+{
+topics:
+
+"st-appmgt";
+Application_Management::
+    "Auditing software applications" ;
+Application_Management::
+    "Starting and stopping software" ;
+Application_Management::
+    "Customizing applications" ;
+Application_Management::
+    "Notes on Windows systems" ;
+Application_Management::
+    "Adapting to Windows" ;
+Application_Management::
+    "Stopping and restarting an application for update" ;
+Application_Management::
+    "Distributing software packages to client hosts" ;
+Application_Management::
+    "Integrated software installation" ;
+Application_Management::
+    "Enterprise Software Reporting" ;
+Application_Management::
+    "Package management" ;
+Application_Management::
+    "How can Cfengine help?" ;
+Application_Management::
+    "What is Application Management?" ;
+Special_Topics_Guide::
+    "Application Management"  association => a("discussed in","Application Management","discusses");
+
+
+occurrences:
+
+Application_Management::
+ "/docs/st-appmgt.html#Top"
+  represents => { "Short note" };
+What_is_Application_Management_::
+ "/docs/st-appmgt.html#What-is-Application-Management_003f"
+  represents => { "Short note" };
+How_can_Cfengine_help_::
+ "/docs/st-appmgt.html#How-can-Cfengine-help_003f"
+  represents => { "Short note" };
+Package_management::
+ "/docs/st-appmgt.html#Package-management"
+  represents => { "Short note" };
+Enterprise_Software_Reporting::
+ "/docs/st-appmgt.html#Enterprise-Software-Reporting"
+  represents => { "Short note" };
+Integrated_software_installation::
+ "/docs/st-appmgt.html#Integrated-software-installation"
+  represents => { "Short note" };
+Distributing_software_packages_to_client_hosts::
+ "/docs/st-appmgt.html#Distributing-software-packages-to-client-hosts"
+  represents => { "Short note" };
+Stopping_and_restarting_an_application_for_update::
+ "/docs/st-appmgt.html#Stopping-and-restarting-an-application-for-update"
+  represents => { "Short note" };
+Adapting_to_Windows::
+ "/docs/st-appmgt.html#Adapting-to-Windows"
+  represents => { "Short note" };
+Notes_on_Windows_systems::
+ "/docs/st-appmgt.html#Notes-on-Windows-systems"
+  represents => { "Short note" };
+Customizing_applications::
+ "/docs/st-appmgt.html#Customizing-applications"
+  represents => { "Short note" };
+Starting_and_stopping_software::
+ "/docs/st-appmgt.html#Starting-and-stopping-software"
+  represents => { "Short note" };
+Auditing_software_applications::
+ "/docs/st-appmgt.html#Auditing-software-applications"
+  represents => { "Short note" };
+}
+

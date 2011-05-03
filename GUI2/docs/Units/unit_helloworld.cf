@@ -1,0 +1,21 @@
+#cop hello world,example
+#cop cfengine 3,example script
+# Hard promises
+
+body common control
+{
+bundlesequence => { "hello" };
+}
+
+# soft promises
+
+bundle agent hello
+{
+reports:
+
+ # Reports may not be in class "any", so pick some class here..
+
+ cfengine_3::
+
+   "Hello world!";
+}

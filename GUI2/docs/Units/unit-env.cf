@@ -1,0 +1,26 @@
+#cop environment variables,setting
+
+body common control
+{
+bundlesequence => { "one" };
+}
+
+#
+# Set environment for child commands of cfengine to inherit
+#
+
+body agent control
+{
+environment => { "A=123", "B=456", "PGK_PATH=/tmp"};
+}
+
+#
+# Print for verification
+#
+
+bundle agent one
+{
+commands:
+
+  "/usr/bin/env";
+}

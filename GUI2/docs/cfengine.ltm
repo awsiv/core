@@ -1,0 +1,97 @@
+/* prototype topic map for cfengine etc.
+   contains data of various types and from various sources:
+
+   1. general purpose (OS, distribution, etc.)
+   2. data derived from configuration files (install command, etc.)
+   3. data derivable by cfengine from environment (runs_OS, etc.)
+   4. user supplied data (e.g. host owned_by person)
+   5. data derived from cfengine documentation
+
+*/
+
+/* ---- ontology ---- */
+
+/* topic types */
+[os = "Operating system"]
+[distribution = "Distribution"]
+[promise_type = "Promise type"]
+[host = "Host"]
+[person = "Person"]
+
+/* association types */
+[distribution_of = "Distribution of"
+                 = "Distribution" / os ]
+[runs_os = "Runs OS"
+         = "Runs on" / os ]
+[owned_by = "Owned by"
+          = "Owner of" / owner]
+
+/* association role types */
+[owner = "Owner"]
+[ownee = "Ownee"]
+
+/* occurrence types */
+[documentation = "Documentation"]
+[syntax = "Syntax"]
+
+[web_site = "Web site"]
+[install_command = "Install command"]
+
+/* ---- topics ---- */
+
+/* hosts */
+[atlas : host = "atlas"]
+
+/* operating systems */
+[linux : os = "Linux"]
+
+/* distributions */
+[suse : distribution = "SuSE"]
+[redhat : distribution = "Red Hat"]
+[ubuntu : distribution = "Ubuntu"]
+
+/* promise type */
+[files : promise_type = "Files"]
+{files, documentation, "http://www.cfengine.org/docs/cfengine-Reference.html#files"}
+{files, syntax, "http://www.cfengine.org/docs/cfengine-Reference.html#Syntax"}
+[control : promise_type = "Control"]
+[tidy : promise_type = "Tidy"]
+[copy : promise_type = "Copy"]
+[interfaces : promise_type = "Interfaces"]
+[resolve : promise_type = "Resolve"]
+[shell_commands : promise_type = "Shell commands"]
+[mount : promise_type = "Mount"]
+[packages : promise_type = "Packages"]
+[processes : promise_type = "Processes"]
+
+/* person */
+[mark : person = "Mark"]
+
+/* ---- associations ---- */
+
+/* distribution of */
+distribution_of( suse : distribution, linux : os )
+distribution_of( redhat : distribution, linux : os )
+distribution_of( ubuntu : distribution, linux : os )
+
+/* runs OS */
+runs_os ( atlas : host, suse : os )
+
+/* owned_by */
+owned_by( atlas : ownee, mark : owner )
+
+/* ---- occurrences ---- */
+
+/* web_site */
+{redhat, web_site, "http://www.redhat.com/"}
+{suse, web_site, "http://en.opensuse.org/"}
+{ubuntu, web_site, "http://www.ubuntu.com/"}
+
+/* install_command */
+{redhat, install_command, [[/usr/bin/up2date %s]]}
+{suse, install_command, [[/usr/bin/yast2 -i %s]]}
+{ubuntu, install_command, [[/usr/bin/apt-get %s]]}
+
+
+
+

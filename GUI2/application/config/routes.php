@@ -43,7 +43,7 @@
 $route['default_controller'] = "welcome";
 $route['scaffolding_trigger'] = "";
 $route['welcome/bundle/(:any)']="/bundle/$1";
-$route['welcome/knowledge/topic/(:any)'] = "knowledge/knowledgesearch/$1";
+$route['welcome/knowledge/topic/(:any)'] = "knowledge/knowledgesearch/topic/$1";
 
 
 /* End of file routes.php */

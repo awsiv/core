@@ -1,0 +1,8 @@
+#cop service_policy,example
+#cop service_dependencies,example
+#cop service_method,example
+#cop service_type,example
+#cop service_args,example
+#cop service_autostart_policy,example
+#cop service_dependence_chain,example
+#cop windows services,example

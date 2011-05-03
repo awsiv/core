@@ -1,0 +1,68 @@
+
+bundle knowledge st_knowledge
+
+{
+topics:
+
+"st-knowledge";
+Knowledge::
+    "How does Cfengine Nova help?" ;
+Knowledge::
+    "Knowledge transfer" ;
+Knowledge::
+    "What other special documents should an organization have?" ;
+Knowledge::
+    "Creating the map" ;
+Knowledge::
+    "Types of information" ;
+Knowledge::
+    "Pitfalls to avoid" ;
+Knowledge::
+    "The Copernicus Knowledge map" ;
+Knowledge::
+    "How should you begin?" ;
+Knowledge::
+    "Risk and uncertainty" ;
+Knowledge::
+    "What is knowledge management?" ;
+Special_Topics_Guide::
+    "Knowledge"  association => a("discussed in","Knowledge","discusses");
+
+
+occurrences:
+
+Knowledge::
+ "/docs/st-knowledge.html#Top"
+  represents => { "Short note" };
+What_is_knowledge_management_::
+ "/docs/st-knowledge.html#What-is-knowledge-management_003f"
+  represents => { "Short note" };
+Risk_and_uncertainty::
+ "/docs/st-knowledge.html#Risk-and-uncertainty"
+  represents => { "Short note" };
+How_should_you_begin_::
+ "/docs/st-knowledge.html#How-should-you-begin_003f"
+  represents => { "Short note" };
+The_Copernicus_Knowledge_map::
+ "/docs/st-knowledge.html#The-Copernicus-Knowledge-map"
+  represents => { "Short note" };
+Pitfalls_to_avoid::
+ "/docs/st-knowledge.html#Pitfalls-to-avoid"
+  represents => { "Short note" };
+Types_of_information::
+ "/docs/st-knowledge.html#Types-of-information"
+  represents => { "Short note" };
+Creating_the_map::
+ "/docs/st-knowledge.html#Types-of-information"
+  represents => { "Short note" };
+What_other_special_documents_should_an_organization_have_::
+ "/docs/st-knowledge.html#Types-of-information"
+  represents => { "Short note" };
+Knowledge_transfer::
+ "/docs/st-knowledge.html#Knowledge-transfer"
+  represents => { "Short note" };
+How_does_Cfengine_Nova_help_::
+ "/docs/st-knowledge.html#How-does-Cfengine-Nova-help_003f"
+  represents => { "Short note" };
+}
+

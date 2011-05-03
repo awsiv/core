@@ -1,0 +1,2 @@
+#cop expand_scalars,example
+#cop expand_template,similar example

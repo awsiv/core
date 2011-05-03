@@ -1,0 +1,31 @@
+#cop functions::accessedbefore,example
+#cop file comparisons,access time
+###########################################################
+#
+# Definition of classes by comparing timestamps
+#
+###########################################################
+
+body common control
+
+{
+bundlesequence  => { "example" };
+}
+
+###########################################################
+
+bundle agent example
+
+{     
+classes:
+
+  "do_it" expression => accessedbefore("/tmp/earlier","/tmp/later"); 
+
+reports:
+
+  do_it::
+
+    "The secret changes have been accessed after the reference time";
+
+}
+

@@ -1282,3 +1282,9 @@ background: -moz-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 tran
     -webkit-box-shadow: 3px 3px 5px #888;
     box-shadow: 3px 3px 5px #888;
 }
+
+/* for infovis tip */
+.tip {
+    background-color: #4D4D4D;
+    padding:5px;
+}

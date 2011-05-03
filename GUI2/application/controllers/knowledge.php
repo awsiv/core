@@ -79,7 +79,8 @@ class Knowledge extends Cf_Controller {
         $this->template->load('template', 'knowledge/knowledge', $data);
     }
 
-    function knowledgeSearch($topic='') {
+    function knowledgeSearch() {
+
 
 
         // add a js file
@@ -90,7 +91,7 @@ class Knowledge extends Cf_Controller {
 
         $bc = array(
             'title' => 'Knowledge Map',
-           'url' => 'knowledge/knowledgemap',
+            'url' => 'knowledge/knowledgemap',
             'isRoot' => false
         );
 
@@ -100,15 +101,17 @@ class Knowledge extends Cf_Controller {
         $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
         $topic = isset($getparams['topic']) ? urldecode($getparams['topic']) : $this->input->post('topic');
 
-        if ($topic) {
-            $search = $topic;
-            // temp pid
-            // have to redirect to knowledge Map ??
-            $pid = cfpr_get_pid_for_topic("body_constraints", $topic);
-            if ($pid) {
-                redirect('welcome/knowledge/pid/' . $pid);
-            }
-        }
+        /*
+          if ($topic) {
+          $search = $topic;
+          // temp pid
+          // have to redirect to knowledge Map ??
+          $pid = cfpr_get_pid_for_topic("body_constraints", $topic);
+
+          if ($pid) {
+          //redirect('/knowledge/knowledgemap/pid/' . $pid);
+          }
+          } */
 
 
         $data = array(
@@ -122,8 +125,18 @@ class Knowledge extends Cf_Controller {
         $searchJson = cfpr_search_topics($search, true);
         $data['searchJson'] = $searchJson;
         $data['searchData'] = json_decode(utf8_encode($searchJson), TRUE);
+
+        // if only one result is found with id redirect to knowledge map else show list
+        if (is_array($data['searchData']) && count($data['searchData']) == 1 && isset($data['searchData'][0]['id'])) {
+            $pid = $data['searchData'][0]['id'];
+            redirect('/knowledge/knowledgemap/pid/' . $pid);
+            exit;
+        }
+
         $this->template->load('template', 'knowledge/search', $data);
     }
+
 }
+
 /* End of file welcome.php */
 /* Location: ./system/application/controllers/welcome.php */

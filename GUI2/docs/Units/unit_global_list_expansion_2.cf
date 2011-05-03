@@ -1,0 +1,42 @@
+#cop List variable substitution and expansion,global
+#cop Variable expansion in cfengine 3,example
+
+#
+# Reference external lists.
+#
+
+body common control
+{
+bundlesequence => { hardening };
+}
+
+#########################################################
+
+bundle common va 
+{
+vars:
+ 
+ "tmpdirs"  slist => { "/tmp", "/var/tmp", "/usr/tmp"  };
+
+} 
+
+##########################################################
+
+bundle agent hardening
+{
+classes:
+
+  "ok" expression => "any";
+
+vars:
+
+ "other"    slist => { "/tmp", "/var/tmp" };
+ "x"        slist => { @(va.tmpdirs) };
+
+reports:
+
+  ok::
+
+    "Do $(x)";
+    "Other: $(other)";
+} 

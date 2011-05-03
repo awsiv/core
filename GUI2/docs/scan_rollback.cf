@@ -1,0 +1,77 @@
+
+bundle knowledge st_rollback
+
+{
+topics:
+
+"st-rollback";
+Cfengine_Tutorial::
+    "Appendix - Did you know?" ;
+Cfengine_Tutorial::
+    "Resetting  a case where rollback works?" ;
+Cfengine_Tutorial::
+    "How does cfengine convergence help?" ;
+Cfengine_Tutorial::
+    "An alternative way to plan changes" ;
+Cfengine_Tutorial::
+    "Dont shoot the messenger" ;
+Cfengine_Tutorial::
+    "Why is relying on rollback not a good strategy?" ;
+Cfengine_Tutorial::
+    "ITIL release management" ;
+Cfengine_Tutorial::
+    "Limitations of rollback in system administration" ;
+Cfengine_Tutorial::
+    "Like revision control?" ;
+Cfengine_Tutorial::
+    "What is rollback?" ;
+Special_Topics_Guide::
+    "Cfengine-Tutorial"  association => a("discussed in","Cfengine-Tutorial","discusses");
+
+
+occurrences:
+
+Cfengine_Tutorial::
+ "/docs/st-rollback.html#Top"
+  represents => { "Short note" };
+What_is_rollback_::
+ "/docs/st-rollback.html#What-is-rollback_003f"
+  represents => { "Short note" };
+Like_revision_control_::
+ "/docs/st-rollback.html#Like-revision-control_003f"
+  represents => { "Short note" };
+Like_revision_control_::
+ "/docs/st-rollback.html#Like-revision-control_003f"
+  represents => { "code example" };
+Like_revision_control_::
+ "/docs/st-rollback.html#Like-revision-control_003f"
+  represents => { "code example" };
+Like_revision_control_::
+ "/docs/st-rollback.html#Like-revision-control_003f"
+  represents => { "code example" };
+Limitations_of_rollback_in_system_administration::
+ "/docs/st-rollback.html#Limitations-of-rollback-in-system-administration"
+  represents => { "Short note" };
+ITIL_release_management::
+ "/docs/st-rollback.html#ITIL-release-management"
+  represents => { "Short note" };
+Why_is_relying_on_rollback_not_a_good_strategy_::
+ "/docs/st-rollback.html#Why-is-relying-on-rollback-not-a-good-strategy_003f"
+  represents => { "Short note" };
+Dont_shoot_the_messenger::
+ "/docs/st-rollback.html#Don_0027t-shoot-the-messenger"
+  represents => { "Short note" };
+An_alternative_way_to_plan_changes::
+ "/docs/st-rollback.html#An-alternative-way-to-plan-changes"
+  represents => { "Short note" };
+How_does_cfengine_convergence_help_::
+ "/docs/st-rollback.html#How-does-cfengine-convergence-help_003f"
+  represents => { "Short note" };
+Resetting__a_case_where_rollback_works_::
+ "/docs/st-rollback.html#g_t_0060Resetting_0027-_002d_002d-a-case-where-rollback-works_003f"
+  represents => { "Short note" };
+Appendix___Did_you_know_::
+ "/docs/st-rollback.html#Appendix-_002d-Did-you-know_003f"
+  represents => { "Short note" };
+}
+

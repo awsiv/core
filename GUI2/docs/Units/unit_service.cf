@@ -1,0 +1,57 @@
+#cop Service Management,example
+
+
+#
+# We can use methods to collect multiple parameters into a convenient bundle
+# for managing compound configuration issues like services
+#
+
+bundle agent services
+
+{
+methods:
+         
+"any" usebundle => fixservice
+             (
+             "dhcp",
+             "/etc/dhcp3/dhcpd.conf",
+             "dhcp/dhcpd.conf",
+             "dhcpd3 -q eth1",
+             "/etc/init.d/dhcp3-server restart"
+             );
+         
+"any" usebundle => fixservice
+             (
+             "ntp",
+             "/etc/ntp.conf",
+             "ntp/ntp.conf",
+             "ntpd -p /var/run/ntpd.pid",
+             "/etc/init.d/ntp restart"
+             );
+}
+
+#
+#
+#
+
+bundle agent fixservice(service,tfiles,mfiles,procs,restart)
+{
+files:
+    
+   "${tfiles}"
+       perms => system("0600","root","root"),
+       copy_from => mycopy("${g.masterfiles}/config/${mfiles}","${g.phost}"),
+       classes => cdefine( "${service}_restart", "failed");
+
+processes:
+
+   "${procs}"
+
+       restart_class => canonify("${service}_restart");
+
+commands:
+
+   "${restart}" 
+
+       ifvarclass => canonify("${service}_restart");
+}

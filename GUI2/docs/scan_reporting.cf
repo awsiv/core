@@ -1,0 +1,93 @@
+
+bundle knowledge st_reporting
+
+{
+topics:
+
+"st-reporting";
+Reporting::
+    "Cheaper options - tripwires" ;
+Reporting::
+    "Change auditing - the all seeing eye" ;
+Reporting::
+    "Nova measurements" ;
+Reporting::
+    "Redirecting output to logs" ;
+Reporting::
+    "Creating custom logs" ;
+Reporting::
+    "Including data in reports" ;
+Reporting::
+    "Creating custom reports  all versions" ;
+Reporting::
+    "Cfengine output levels" ;
+Reporting::
+    "Standard reports in Cfengine Nova" ;
+Reporting::
+    "Reporting in Cfengine" ;
+Reporting::
+    "Decentralized data collection in Cfengine" ;
+Reporting::
+    "CMDB and Cfengine" ;
+Reporting::
+    "What is a CMDB?" ;
+Reporting::
+    "Should monitoring and configuration be separate?" ;
+Reporting::
+    "What are monitoring and reporting?" ;
+Special_Topics_Guide::
+    "Reporting"  association => a("discussed in","Reporting","discusses");
+
+
+occurrences:
+
+Reporting::
+ "/docs/st-reporting.html#Top"
+  represents => { "Short note" };
+What_are_monitoring_and_reporting_::
+ "/docs/st-reporting.html#What-are-monitoring-and-reporting_003f"
+  represents => { "Short note" };
+Should_monitoring_and_configuration_be_separate_::
+ "/docs/st-reporting.html#Should-monitoring-and-configuration-be-separate_003f"
+  represents => { "Short note" };
+What_is_a_CMDB_::
+ "/docs/st-reporting.html#What-is-a-CMDB_003f"
+  represents => { "Short note" };
+CMDB_and_Cfengine::
+ "/docs/st-reporting.html#CMDB-and-Cfengine"
+  represents => { "Short note" };
+Decentralized_data_collection_in_Cfengine::
+ "/docs/st-reporting.html#Decentralized-data-collection-in-Cfengine"
+  represents => { "Short note" };
+Reporting_in_Cfengine::
+ "/docs/st-reporting.html#Reporting-in-Cfengine"
+  represents => { "Short note" };
+Standard_reports_in_Cfengine_Nova::
+ "/docs/st-reporting.html#Standard-reports-in-Cfengine-Nova"
+  represents => { "Short note" };
+Cfengine_output_levels::
+ "/docs/st-reporting.html#Cfengine-output-levels"
+  represents => { "Short note" };
+Creating_custom_reports__all_versions::
+ "/docs/st-reporting.html#Creating-custom-reports-_002d_002d-all-versions"
+  represents => { "Short note" };
+Including_data_in_reports::
+ "/docs/st-reporting.html#Including-data-in-reports"
+  represents => { "Short note" };
+Creating_custom_logs::
+ "/docs/st-reporting.html#Creating-custom-logs"
+  represents => { "Short note" };
+Redirecting_output_to_logs::
+ "/docs/st-reporting.html#Redirecting-output-to-logs"
+  represents => { "Short note" };
+Nova_measurements::
+ "/docs/st-reporting.html#Nova-measurements"
+  represents => { "Short note" };
+Change_auditing___the_all_seeing_eye::
+ "/docs/st-reporting.html#Change-auditing-_002d-the-all-seeing-eye"
+  represents => { "Short note" };
+Cheaper_options___tripwires::
+ "/docs/st-reporting.html#Cheaper-options-_002d-tripwires"
+  represents => { "Short note" };
+}
+

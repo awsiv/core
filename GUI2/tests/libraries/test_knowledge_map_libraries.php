@@ -20,6 +20,17 @@ class test_knowledge_map_libraries extends CodeIgniterUnitTestCase {
         $this->assertTrue($pid, "There must be some pid returned, pid returned is :: $pid");
     }
 
+     public function test_getValidJsonforKnowledgeMapPid212() {
+        $pid = 212;
+        $gdata = cfpr_get_knowledge_view($pid, '');
+        $array = json_decode(utf8_encode($gdata), true);
+        $retValue = json_last_error();
+        $this->dump($gdata);
+
+        $this->assertTrue(is_array($array), "Should Return a valid array");
+        $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
+    }
+
     public function test_getValidJsonforKnowledgeMap() {
         $pid = cfpr_get_pid_for_topic("", "system policy");
         $gdata = cfpr_get_knowledge_view($pid, '');

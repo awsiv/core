@@ -1,0 +1,86 @@
+#cop ftpusers,example
+#cop /etc/ftpusers,example
+#cop system hardening,example
+
+#
+# Extract users below UID 500 and put them in ftpusers
+#
+
+body common control
+{
+bundlesequence => { "harden" };
+}
+
+#################################################
+
+bundle agent harden
+{
+files:
+
+   "/etc/ftpusers"
+
+           comment => "Put UIDs < 500 in /etc/ftpusers",
+            create => "true",
+     edit_defaults => Empty,
+         edit_line => ftpusers;
+}
+
+#################################################
+
+bundle edit_line ftpusers
+{
+insert_lines:
+
+  "/etc/passwd"
+
+      insert_type => "file",
+      insert_select => FtpOkRange,
+      classes => Define("pw_loaded");
+
+replace_patterns:
+
+  pw_loaded::
+  
+    ":.*" replace_with => With("");
+
+}
+
+#################################################
+
+body insert_select FtpOkRange
+
+{
+insert_if_match_from_list => 
+   { 
+   "[^:]+:[^:]+:[0-4][0-9][0-9]:.*",
+   "[^:]+:[^:]+:[0-9][0-9]:.*",
+   "[^:]+:[^:]+:[0-9]:.*"
+   };
+}
+
+
+#################################################
+
+body replace_with With(x)
+
+{
+replace_value => "$(x)";
+occurrences => "all";
+}
+
+#################################################
+
+body classes Define(a)
+{
+promise_repaired => { "$(a)" };
+}
+
+#################################################
+
+body edit_defaults Empty
+{
+empty_file_before_editing => "true";
+edit_backup => "false";
+max_file_size => "100000";
+}
+

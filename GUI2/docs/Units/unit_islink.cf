@@ -1,0 +1,26 @@
+#cop islink,example
+#cop Function islink,example
+
+body common control
+
+{
+bundlesequence  => { "example" };
+}
+
+###########################################################
+
+bundle agent example
+
+{     
+classes:
+
+  "islnk" expression => islink("/tmp/link");
+
+reports:
+
+  islnk::
+
+    "link exists..and is a link";
+
+}
+

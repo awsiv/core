@@ -1,0 +1,58 @@
+
+bundle knowledge st_hierarchy
+
+{
+topics:
+
+"st-hierarchy";
+Hierarchies::
+    "Applications of hierarchy" ;
+Hierarchies::
+    "How to organize your organization" ;
+Hierarchies::
+    "Expressing is a or has a" ;
+Hierarchies::
+    "Inheritance and its forms" ;
+Hierarchies::
+    "For and against hierarchies" ;
+Hierarchies::
+    "Classes are sets" ;
+Hierarchies::
+    "How hierarchy compares to sets" ;
+Hierarchies::
+    "What is a hierarchy?" ;
+Special_Topics_Guide::
+    "Hierarchies"  association => a("discussed in","Hierarchies","discusses");
+
+
+occurrences:
+
+Hierarchies::
+ "/docs/st-hierarchy.html#Top"
+  represents => { "Short note" };
+What_is_a_hierarchy_::
+ "/docs/st-hierarchy.html#What-is-a-hierarchy_003f"
+  represents => { "Short note" };
+How_hierarchy_compares_to_sets::
+ "/docs/st-hierarchy.html#How-hierarchy-compares-to-sets"
+  represents => { "Short note" };
+Classes_are_sets::
+ "/docs/st-hierarchy.html#Classes-are-sets"
+  represents => { "Short note" };
+For_and_against_hierarchies::
+ "/docs/st-hierarchy.html#For-and-against-hierarchies"
+  represents => { "Short note" };
+Inheritance_and_its_forms::
+ "/docs/st-hierarchy.html#Inheritance-and-its-forms"
+  represents => { "Short note" };
+Expressing_is_a_or_has_a::
+ "/docs/st-hierarchy.html#Expressing-is_002da-or-has_002da"
+  represents => { "Short note" };
+How_to_organize_your_organization::
+ "/docs/st-hierarchy.html#How-to-organize-your-organization"
+  represents => { "Short note" };
+Applications_of_hierarchy::
+ "/docs/st-hierarchy.html#Applications-of-hierarchy"
+  represents => { "Short note" };
+}
+

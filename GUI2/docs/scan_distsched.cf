@@ -1,0 +1,78 @@
+
+bundle knowledge st_distsched
+
+{
+topics:
+
+"st-distsched";
+Cfengine_Tutorial::
+    "Summary of Distributed Scheduling" ;
+Cfengine_Tutorial::
+    "Long workflow chains" ;
+Cfengine_Tutorial::
+    "Self-healing workflows" ;
+Cfengine_Tutorial::
+    "Triggering multiple follow-ups" ;
+Cfengine_Tutorial::
+    "Aggregation of multiple jobs" ;
+Cfengine_Tutorial::
+    "More links in the chain" ;
+Cfengine_Tutorial::
+    "Fancy distributed encapsulation" ;
+Cfengine_Tutorial::
+    "Regular workflows" ;
+Cfengine_Tutorial::
+    "One-off workflows" ;
+Cfengine_Tutorial::
+    "Job scheduling and periodic maintenance" ;
+Cfengine_Tutorial::
+    "Coordinating dispatch" ;
+Cfengine_Tutorial::
+    "What is distributed scheduling?" ;
+Special_Topics_Guide::
+    "Cfengine-Tutorial"  association => a("discussed in","Cfengine-Tutorial","discusses");
+
+
+occurrences:
+
+Cfengine_Tutorial::
+ "/docs/st-distsched.html#Top"
+  represents => { "Short note" };
+What_is_distributed_scheduling_::
+ "/docs/st-distsched.html#What-is-distributed-scheduling_003f"
+  represents => { "Short note" };
+Coordinating_dispatch::
+ "/docs/st-distsched.html#Coordinating-dispatch"
+  represents => { "Short note" };
+Job_scheduling_and_periodic_maintenance::
+ "/docs/st-distsched.html#Job-scheduling-and-periodic-maintenance"
+  represents => { "Short note" };
+One_off_workflows::
+ "/docs/st-distsched.html#One_002doff-workflows"
+  represents => { "Short note" };
+Regular_workflows::
+ "/docs/st-distsched.html#Regular-workflows"
+  represents => { "Short note" };
+Fancy_distributed_encapsulation::
+ "/docs/st-distsched.html#Fancy-distributed-encapsulation"
+  represents => { "Short note" };
+More_links_in_the_chain::
+ "/docs/st-distsched.html#More-links-in-the-chain"
+  represents => { "Short note" };
+Aggregation_of_multiple_jobs::
+ "/docs/st-distsched.html#Aggregation-of-multiple-jobs"
+  represents => { "Short note" };
+Triggering_multiple_follow_ups::
+ "/docs/st-distsched.html#Triggering-multiple-follow_002dups"
+  represents => { "Short note" };
+Self_healing_workflows::
+ "/docs/st-distsched.html#Self_002dhealing-workflows"
+  represents => { "Short note" };
+Long_workflow_chains::
+ "/docs/st-distsched.html#Long-workflow-chains"
+  represents => { "Short note" };
+Summary_of_Distributed_Scheduling::
+ "/docs/st-distsched.html#Summary-of-Distributed-Scheduling"
+  represents => { "Short note" };
+}
+

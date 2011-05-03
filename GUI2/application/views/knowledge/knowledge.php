@@ -5,7 +5,6 @@
         <li><a href="#tabs-3">Semantics</a></li>
     </ul>
     <div id="tabs-1">
-
         <div class="panel">
             <div class="panelhead">Copernicus local cluster view</div>
             <div class="panelcontent">
@@ -14,7 +13,6 @@
 
             </div>
         </div>
-
     </div>
     <div id="tabs-2">
         <?php

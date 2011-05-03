@@ -1,0 +1,26 @@
+#cop getuid,example
+#cop Function getuid,example
+
+body common control
+
+{
+bundlesequence  => { "example" };
+}
+
+###########################################################
+
+bundle agent example
+
+{     
+vars:
+
+  "uid" int => getuid("mark");
+
+reports:
+
+  Yr2008::
+
+    "Users gid is $(uid)";
+
+}
+

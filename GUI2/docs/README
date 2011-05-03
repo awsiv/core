@@ -1,0 +1,8 @@
+
+To build the topic map
+
+1. make html from all the texinfo documentation
+2. Copy the html files to this directory
+3. gcc -o scan_texinfo scan_texinfo.c
+4. scanf_texinfo cfengine_Reference.html > scan_reference.cf  .. etc
+

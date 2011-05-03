@@ -1,0 +1,198 @@
+#cop application management,example
+#cop patch management,example
+#cop windows,example
+#cop software,installing
+
+#########################################################
+#
+# Alternative approach to app mgt 1, using more complex class ordering
+#
+#########################################################
+
+bundle agent Trial2
+
+{
+vars:
+
+  "software_repository" string => "c:\Software_Repository";
+
+  "all_applications"     slist => {
+                                  "cf_dummy1.msi",
+                                  "cf_dummy2.msi",
+                                  "cf_dummy3.msi" 
+                                  };
+ classes:
+
+  "policy_machine" expression => "ipv4_172_16_12_176";
+
+  "domain_01" expression => iprange("172.16.12.174-175");
+  
+  "domain_02" or => { 
+	            "ipv4_172_16_12_100",
+	            "ipv4_172_16_12_200" 
+	            };
+
+  "domain_03" expression => iprange("172.16.12.200-230");
+  
+  "domain_04" expression => "test4_cfengine_com";
+
+  "dummy1_installed" expression => fileexists("c:\Program Files\cf_dummy1");
+  "dummy2_installed" expression => fileexists("c:\Program Files\cf_dummy2");
+  "dummy3_installed" expression => fileexists("c:\Program Files\cf_dummy3");
+
+ ##################################################################################
+
+ files:
+
+  domain_01|domain_02|domain_04::
+
+   "c:\tmp\."
+
+     create => "true",
+     copy_from => mycopy("$(software_repository)","$(update.policy_host)"),
+     depth_search => recurse("inf"),
+     file_select => all_msi,
+     action => immediate,
+     classes => satisfied("copied");
+
+  domain_03::
+
+   "c:\tmp\."
+
+     create => "true",
+     copy_from => mycopy("$(software_repository)","$(update.policy_host)"),
+     depth_search => recurse("inf"),
+     file_select => selected_msi("cf.dummy1.msi"),
+     action => immediate;
+
+ ##################################################################################
+
+ commands:
+
+  # Domain 1 
+
+  copied.domain_01.!dummy1_installed::
+
+   "c:\WINDOWS\system32\msiexec.exe /qn /i c:\tmp\cf_dummy1.msi",
+
+      comment => "install cf.dummy1.msi to Domain 1",
+         classes => satisfied("domain_01_done_dummy1");
+
+  copied.domain_01.dummy1_installed::
+
+      "c:\WINDOWS\system32\msiexec.exe /qn /i c:\tmp\cf_dummy2.msi",
+         classes => satisfied("domain_01_done_dummy2");
+  
+  copied.domain_01.dummy2_installed::
+
+      "c:\WINDOWS\system32\msiexec.exe /qn /i c:\tmp\cf_dummy3.msi",
+         classes => satisfied("domain_01_done_dummy3");
+
+ # Domain 2
+
+  copied.domain_02.!dummy2_installed::
+
+   "c:\WINDOWS\system32\msiexec.exe /qn /i c:\tmp\cf_dummy2.msi",
+      classes => satisfied("domain_02_done_dummy2");
+
+  copied.domain_02.dummy2_installed::
+
+   "c:\WINDOWS\system32\msiexec.exe /qn /i c:\tmp\cf_dummy1.msi",
+      classes => satisfied("domain_02_done_dummy1");
+
+ # Domain 3 
+
+  domain_03::
+
+   "c:\WINDOWS\system32\msiexec.exe /qn /i c:\tmp\cf_dummy1.msi",
+      classes => satisfied("domain_03_done_dummy1");
+ 
+ # Domain 4
+
+  copied.domain_04.!dummy3_installed::
+
+   "c:\WINDOWS\system32\msiexec.exe /qn /i c:\tmp\cf_dummy3.msi",
+      classes => satisfied("domain_04_done_dummy3");
+
+  copied.domain_02.dummy3_installed::
+
+   "c:\WINDOWS\system32\msiexec.exe /qn /i c:\tmp\cf_dummy2.msi",
+      classes => satisfied("domain_04_done_dummy2");
+
+ reports:
+  domain_01_done_dummy1::
+   "cf.dummy1.msi has been installed on $(sys.host) Domain 1.";
+
+  domain_01_done_dummy2::
+   "cf.dummy2.msi has been installed on $(sys.host) Domain 1.";
+
+  domain_01_done_dummy3::
+   "cf.dummy3.msi has been installed on $(sys.host) Domain 1.";
+
+  domain_02_done_dummy1::
+   "cf.dummy1.msi has been installed on $(sys.host) Domain 2.";
+
+  domain_02_done_dummy2::
+   "cf.dummy2.msi has been installed on $(sys.host) Domain 2.";
+
+  domain_02_done_dummy3::
+   "cf.dummy3.msi has been installed on $(sys.host) Domain 2.";
+
+  domain_03_done_dummy1::
+   "cf.dummy1.msi has been installed on $(sys.host) Domain 3.";
+
+  domain_03_done_dummy2::
+   "cf.dummy2.msi has been installed on $(sys.host) Domain 3.";
+
+  domain_03_done_dummy3::
+   "cf.dummy3.msi has been installed on $(sys.host) Domain 3.";
+
+  domain_04_done_dummy1::
+   "cf.dummy1.msi has been installed on $(sys.host) Domain 4.";
+
+  domain_04_done_dummy2::
+   "cf.dummy2.msi has been installed on $(sys.host) Domain 4.";
+
+  domain_04_done_dummy3::
+   "cf.dummy3.msi has been installed on $(sys.host) Domain 4.";
+  
+  dummy1_installed::
+   "cf.dummy1.msi has already been installed on $(sys.host). Don't need to reinstall.";
+
+  dummy2_installed::
+   "cf.dummy2.msi has already been installed on $(sys.host). Don't need to reinstall.";
+
+  dummy3_installed::
+   "cf.dummy3.msi has already been installed on $(sys.host). Don't need to reinstall.";
+
+}
+
+#########################################################
+
+body file_select all_msi
+
+{
+leaf_name => { ".*.msi" };
+file_result => "leaf_name";	
+}
+
+#########################################################
+
+body file_select selected_msi(software)
+
+{
+leaf_name => { "$(software)" };
+file_result => "leaf_name";	
+}
+
+#########################################################
+
+body classes satisfied(new_class)
+
+{
+promise_kept => { "$(new_class)"};
+promise_repaired => { "$(new_class)"};
+persist_time => "0";
+}
+
+#########################################################

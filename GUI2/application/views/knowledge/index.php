@@ -14,8 +14,6 @@
 
         </div>
 
-       
-
         <div class="innerdiv" style="margin:15px 8px 5px 5px;">
             <p class="title">Useful Links </p>
             <div style="padding:10px;">
@@ -23,7 +21,6 @@
                     <li>Docs links</li>
                     <li>Online links</li>
                     <li>more links..</li>
-
                 </ul>
             </div>
 

@@ -1,0 +1,23 @@
+
+#cop readintarray,example
+#cop Function readintarray,example
+
+body common control
+
+{
+bundlesequence  => { "example" };
+}
+
+###########################################################
+
+bundle agent example
+
+{     
+vars:
+
+  "dim_array" 
+
+     int =>  readintarray("array_name","/tmp/array","#[^\n]*",":",10,4000);
+
+}
+

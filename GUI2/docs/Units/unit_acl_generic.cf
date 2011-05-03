@@ -1,0 +1,36 @@
+#cop File Access Control Lists,example
+
+body common control
+{
+bundlesequence => { "acls" };
+}
+
+#########################################
+
+bundle agent acls
+
+{
+files:
+
+  "/media/flash/acl/test_dir"
+
+    acl => test;
+}
+
+#########################################
+
+body acl test
+
+{
+acl_method => "overwrite";
+acl_type => "posix";
+aces => {"user:*:rwx", "group:*:rx", "all:r"};
+}
+
+body acl emptyall
+
+{
+aces => { "user:*:rwx", "group:*:rx", "all:"};
+}
+
+

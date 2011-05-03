@@ -1,0 +1,27 @@
+#cop file copying,example
+
+#
+# File copying local
+#
+
+body common control
+{
+bundlesequence  => { "copy" };
+}
+
+###########################################
+
+bundle agent copy
+{
+files:
+    "/tmp/testfile1-cop" copy_from => cp("/tmp/testfile1", "gudea");
+    "/tmp/testfile2-cop" copy_from => cp("/tmp/testfile2", "gudea");
+}
+
+###########################################
+
+body copy_from cp(from,server)
+{
+source => "$(from)";
+}
+

@@ -1,0 +1,18 @@
+
+bundle knowledge cf3_glossary
+
+{
+topics:
+
+"cf3-glossary";
+Special_Topics_Guide::
+    "Cfengine-Best-Practices"  association => a("discussed in","Cfengine-Best-Practices","discusses");
+
+
+occurrences:
+
+Cfengine_Best_Practices::
+ "/docs/cf3-glossary.html#Top"
+  represents => { "Short note" };
+}
+

@@ -1,0 +1,84 @@
+
+bundle knowledge st_schedule
+
+{
+topics:
+
+"st-schedule";
+Scheduling::
+    "Appendix - Did you know?" ;
+Scheduling::
+    "Choosing a scheduling interval" ;
+Scheduling::
+    "Splaying host times" ;
+Scheduling::
+    "Commands promises" ;
+Scheduling::
+    "Working with Unix cron." ;
+Scheduling::
+    "Scheduling by Sensing Events and Patterns" ;
+Scheduling::
+    "Logging execution" ;
+Scheduling::
+    "Calendars" ;
+Scheduling::
+    "Chaining jobs together" ;
+Scheduling::
+    "Define jobs with basic profile information" ;
+Scheduling::
+    "How can Cfengine help?" ;
+Scheduling::
+    "What is scheduling?" ;
+Special_Topics_Guide::
+    "Scheduling"  association => a("discussed in","Scheduling","discusses");
+
+
+occurrences:
+
+Scheduling::
+ "/docs/st-schedule.html#Top"
+  represents => { "Short note" };
+What_is_scheduling_::
+ "/docs/st-schedule.html#What-is-scheduling_003f"
+  represents => { "Short note" };
+How_can_Cfengine_help_::
+ "/docs/st-schedule.html#How-can-Cfengine-help_003f"
+  represents => { "Short note" };
+Define_jobs_with_basic_profile_information::
+ "/docs/st-schedule.html#Define-jobs-with-basic-profile-information"
+  represents => { "Short note" };
+Chaining_jobs_together::
+ "/docs/st-schedule.html#Chaining-jobs-together"
+  represents => { "Short note" };
+Calendars::
+ "/docs/st-schedule.html#Calendars"
+  represents => { "Short note" };
+Logging_execution::
+ "/docs/st-schedule.html#Logging-execution"
+  represents => { "Short note" };
+Logging_execution::
+ "/docs/st-schedule.html#Logging-execution"
+  represents => { "code example" };
+Scheduling_by_Sensing_Events_and_Patterns::
+ "/docs/st-schedule.html#Scheduling-by-Sensing-Events-and-Patterns"
+  represents => { "Short note" };
+Working_with_Unix_cron_::
+ "/docs/st-schedule.html#Working-with-Unix-cron"
+  represents => { "Short note" };
+Commands_promises::
+ "/docs/st-schedule.html#Commands-promises"
+  represents => { "Short note" };
+Commands_promises::
+ "/docs/st-schedule.html#Commands-promises"
+  represents => { "code example" };
+Splaying_host_times::
+ "/docs/st-schedule.html#Splaying-host-times"
+  represents => { "Short note" };
+Choosing_a_scheduling_interval::
+ "/docs/st-schedule.html#Choosing-a-scheduling-interval"
+  represents => { "Short note" };
+Appendix___Did_you_know_::
+ "/docs/st-schedule.html#Appendix-_002d-Did-you-know_003f"
+  represents => { "Short note" };
+}
+

@@ -129,6 +129,7 @@
             showAggregates:false,
             //whether to show the labels for the bars
             showLabels:false,
+            hoveredColor:false,
             Tips: {
                 enable: true,
                 onShow: function(tip, elem) {
