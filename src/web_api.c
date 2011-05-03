@@ -2390,21 +2390,21 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
 int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize)
 
 { mongo_connection dbconn;
- struct Rlist *classList;
- struct Item *matched,*ip;
- char work[CF_MAXVARSIZE];
+  struct Rlist *classList;
+  struct Item *matched,*ip;
+  char work[CF_MAXVARSIZE];
   
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return -1;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return -1;
+   }
 
- matched = CFDB_QueryBundleArgs(&dbconn,type,name);
+matched = CFDB_QueryBundleArgs(&dbconn,type,name);
 
- if (matched)
-    {
-    snprintf(buffer,bufsize,"<ul>\n");
+if (matched)
+   {
+   snprintf(buffer,bufsize,"<ul>\n");
    
     for (ip = matched; ip != NULL; ip=ip->next)
        {
@@ -2433,94 +2433,97 @@ int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize)
 int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize)
 
 { mongo_connection dbconn;
- char work[CF_BUFSIZE];
- struct Item *matched,*ip;
+  char work[CF_BUFSIZE];
+  struct Item *matched,*ip;
 
- Nova_WebTopicMap_Initialize();
+Nova_WebTopicMap_Initialize();
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return -1;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return -1;
+   }
 
- matched = CFDB_QueryBundles(&dbconn,type,NULL);
- matched = SortItemListClasses(matched);
+matched = CFDB_QueryBundles(&dbconn,type,NULL);
+matched = SortItemListClasses(matched);
  
- if (matched)
-    {
-    if (type)
-       {
-       snprintf(buffer,bufsize,"<div id=\"bundles\"><table>\n<tr><th>Type</th><th>Service bundle name</th><th>Description</th><th>Contributing to goals</th><th></th></tr>\n");
-       }
-    else
-       {
-       snprintf(buffer,bufsize,"<div id=\"bundles\"><ul>\n");
-       }
+if (matched)
+   {
+   if (type)
+      {
+      snprintf(buffer,bufsize,
+               "{\"meta\":{\"header\": [\"Type\",\"Service bundle name\",\"Description\", \"Contributing to Goals\""
+               "]},\"data\":[");
+      }
+   else
+      {
+      snprintf(buffer,bufsize,"[");
+      }
    
-    for (ip = matched; ip != NULL; ip=ip->next)
-       {
-       struct Item *ip2,*glist = Nova_GetBusinessGoals(ip->name);
-       char goals[CF_BUFSIZE];
-       char colour[CF_SMALLBUF];
+   for (ip = matched; ip != NULL; ip=ip->next)
+      {
+      struct Item *ip2,*glist = Nova_GetBusinessGoals(ip->name);
+      char goals[CF_BUFSIZE];
+      char colour[CF_SMALLBUF];
       
-       if (type && glist)
-          {
-          snprintf(goals,sizeof(goals),"<table>");
+      if (type && glist)
+         {
+         snprintf(goals,sizeof(goals),"[");
 
-          for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
-             {
-             snprintf(work,sizeof(work),"<tr><td><a href=\"/knowledge/knowledgemap/pid/%d\">%s</a> </td><td> %s</td></tr>",ip2->counter,ip2->name,ip2->classes);
+         for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
+            {
+            snprintf(work,sizeof(work),"{\"pid\" : %d, \"name\" : \"%s\", \"description\" : \"%s\"},",ip2->counter,ip2->name,ip2->classes);
             
-             if (!Join(goals,work,CF_BUFSIZE))
-                {
-                break;
-                }
-             }
+            if (!Join(goals,work,CF_BUFSIZE))
+               {
+               break;
+               }
+            }
          
-          strcat(goals,"</table>");
-          snprintf(colour,CF_SMALLBUF,"/images/green.png");
-          }
-       else if (type)
-          {
-          snprintf(goals,CF_MAXVARSIZE,"Unknown");
-          snprintf(colour,CF_SMALLBUF,"/images/yellow.png");
-          }
+         ReplaceTrailingChar(goals, ',', '\0');
+         strcat(goals,"]");
+         snprintf(colour,CF_SMALLBUF,"green");
+         }
+      else if (type)
+         {
+         snprintf(goals,CF_MAXVARSIZE,"Unknown");
+         snprintf(colour,CF_SMALLBUF,"yellow");
+         }
 
-       if (type)
-          {
-          snprintf(work,CF_BUFSIZE,"<tr><td><a href=\"/bundle/details/type/%s\"><span class=\"bundletype\">%s</span></a></td><td><a href=\"/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a></td><td>%s</td><td>%s</td><td><img src=\"%s\"></td></tr>",ip->classes,ip->classes,ip->name,ip->classes,ip->name,Nova_GetBundleComment(ip->name),goals,colour);
-          }
-       else
-          {
-          snprintf(work,CF_BUFSIZE,"<li><a href=\"/bundle/details/type/%s\"><span class=\"bundletype\">%s</span></a> <a href=\"/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->classes,ip->name);
-          }
+      if (type)
+         {
+         snprintf(work,CF_BUFSIZE,"{\"bundletype\":\"%s\",\"bundlename\":\"%s\",\"description\":\"%s\",\"goals\":\"%s\",\"colour\":\"%s\"},",ip->classes,ip->name,Nova_GetBundleComment(ip->name),goals,colour);
+         }
+      else
+         {
+         snprintf(work,CF_BUFSIZE,"{\"bundletype\":\"%s\",\"bundlename\":\"%s\"},",ip->classes,ip->name);
+         }
       
-       if(!Join(buffer,work,bufsize))
-          {
-          break;
-          }
+      if(!Join(buffer,work,bufsize))
+         {
+         break;
+         }
+      DeleteItemList(glist);
+      }
 
-       DeleteItemList(glist);
-       }
+   ReplaceTrailingChar(buffer, ',', '\0');
+   if (type)
+      {
+      strcat(buffer,"]}\n");
+      }
+   else
+      {
+      strcat(buffer,"]\n");
+      }
+   DeleteItemList(matched);
+   }
 
-    if (type)
-       {
-       strcat(buffer,"</table></div>\n");
-       }
-    else
-       {
-       strcat(buffer,"</ul></div>\n");
-       }
-    DeleteItemList(matched);
-    }
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- return true;
+return true;
 }
 /*****************************************************************************/
 
@@ -2560,43 +2563,43 @@ return true;
 int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize)
 
 { mongo_connection dbconn;
- char work[CF_MAXVARSIZE];
- struct Item *matched,*ip;
+  char work[CF_MAXVARSIZE];
+  struct Item *matched,*ip;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return -1;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return -1;
+   }
 
- matched = CFDB_QueryBundlesUsing(&dbconn,name);
+matched = CFDB_QueryBundlesUsing(&dbconn,name);
 
- matched = SortItemListClasses(matched);
+matched = SortItemListClasses(matched);
 
- if (matched)
-    {
-    snprintf(buffer,bufsize,"<div id=\"bundles\"><ul>\n");
+if (matched)
+   {
+   snprintf(buffer,bufsize,"[");
    
-    for (ip = matched; ip != NULL; ip=ip->next)
-       {
-       snprintf(work,CF_MAXVARSIZE,"<li><a href=\"/bundle/details/type/%s\"><span class=\"bundletype\">%s</span></a> <a href=\"/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a></li>",ip->classes,ip->classes,ip->name,ip->classes,ip->name);
+   for (ip = matched; ip != NULL; ip=ip->next)
+      {
+      snprintf(work,CF_MAXVARSIZE,"{\"bundletype\":\"%s\",\"bundlename\":\"%s\"},",ip->classes,ip->name);
       
-       if(!Join(buffer,work,bufsize))
-          {
-          break;
-          }
-       }
-   
-    strcat(buffer,"</ul></div>\n");
-    DeleteItemList(matched);
-    }
+      if(!Join(buffer,work,bufsize))
+         {
+         break;
+         }
+      }
+   ReplaceTrailingChar(buffer, ',', '\0');
+   strcat(buffer,"]\n");
+   DeleteItemList(matched);
+   }
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
 
- return true;
+return true;
 }
 
 /*****************************************************************************/
@@ -3065,11 +3068,14 @@ void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize)
 char *Nova_HostProfile(char *key)
 
 { static char buffer[CF_BUFSIZE];
-
+/*
  snprintf(buffer,CF_BUFSIZE,
           "<table><tr><td><a href=\"/bundle/index/%s\">Bundles</a></td><td><a href=\"/welcome/classes/host/%s\">Classes</a></td></tr>"
           "<tr><td><a href=\"/welcome/knowledge/topic/goals\">Goals</a></td><td><a href=\"/promise/index/%s\">Promises</a></td></tr></table>",key,key,key);
+*/
 
+ snprintf(buffer,CF_BUFSIZE,
+          "{\"hostkey\" : \"%s\", \"profiles\":[\"Bundles\",\"Classes\",\"Goals\",\"Promises\"]}",key);
  return buffer;
 }
 
@@ -3145,34 +3151,34 @@ void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
 
  if (hb)
     {
-    snprintf(returnval,CF_MAXVARSIZE-1,"<div id=\"showbody\"><table>\n");
+    snprintf(returnval,CF_MAXVARSIZE-1,"{");
    
-    snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Type</td><td>:</td><td><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a></td><td></td></tr>\n",hb->bodyType,hb->bodyType);
+    snprintf(work,CF_MAXVARSIZE-1,"\"Type\":\"%s\",",hb->bodyType);
     Join(returnval,work,bufsize);
 
-    snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Name</td><td>:</td><td><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a></td><td></td></tr>\n",hb->bodyName,hb->bodyName);
+    snprintf(work,CF_MAXVARSIZE-1,"\"Name\":\"%s\",",hb->bodyName);
     Join(returnval,work,bufsize);
          
     if (hb->bodyArgs)
        {
-       snprintf(work,CF_MAXVARSIZE-1,"<tr><td>Arguments</td><td>:</td><td>%s</td><td></td></tr>\n",hb->bodyArgs);
+       snprintf(work,CF_MAXVARSIZE-1,"\"Arguments\":\"%s\",",hb->bodyArgs);
        Join(returnval,work,bufsize);
        }
    
     if (hb->attr)
        {
        struct HubBodyAttr *ha; 
-      
+       Join(returnval,"\"attributes\":[",bufsize);
        for (ha = hb->attr; ha != NULL; ha = ha->next)
           {
-          snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a></span></td><td>=></td><td><span class=\"rval\">%s</span></td><td><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a></td></tr>",ha->lval,ha->lval,ha->rval,ha->classContext,ha->classContext);
+          snprintf(work,CF_MAXVARSIZE-1,"{\"lval\":\"%s\",\"rval\":\"%s\",\"class_context\":\"%s\"},",ha->lval,ha->rval,ha->classContext);
           Join(returnval,work,bufsize);
           }
-
+       ReplaceTrailingChar(returnval, ',', ']');
        }
    
     DeleteHubBody(hb);
-    EndJoin(returnval,"</table></div>\n",bufsize);
+    EndJoin(returnval,"}",bufsize);
     }
 
  if (!CFDB_Close(&dbconn))
@@ -3200,18 +3206,14 @@ int Nova2PHP_list_bodies(char *name,char *type,char *returnval,int bufsize)
 
  if (all_bodies)
     {
-    snprintf(returnval,CF_MAXVARSIZE-1,"<div id=\"bodies\"><ul>\n");
-      
+    snprintf(returnval,CF_MAXVARSIZE-1,"[");
     for (ip = all_bodies; ip != NULL; ip=ip->next)
        {
-       snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a> ",ip->classes,ip->classes);
-       Join(returnval,work,bufsize);
-      
-       snprintf(work,CF_MAXVARSIZE-1,"<a href=\"/welcome/body/body/%s/type/%s\">%s</a></li>\n",ip->name,ip->classes,ip->name);
+       snprintf(work,CF_MAXVARSIZE-1,"{\"body\":\"%s\",\"type\":\"%s\"},",ip->name,ip->classes);
        Join(returnval,work,bufsize);
        }
-   
-    strcat(returnval,"</ul></div>\n");
+    
+    ReplaceTrailingChar(returnval, ',', ']');
     }
 
  if (!CFDB_Close(&dbconn))
@@ -3371,7 +3373,7 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
   
  if(strcmp(handle,"internal_promise") == 0)
     {
-    snprintf(returnval, bufsize, "<br> This is a promise made internally by Cfengine, and is thus not part of your policy.");
+    snprintf(returnval, bufsize, "This is a promise made internally by Cfengine, and is thus not part of your policy.");
     return true;
     }
 
@@ -3386,22 +3388,22 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
 
  if (!hp)
     {
-    snprintf(returnval, bufsize, "<br> Promise '%s' was not found in the database.", handle);
+    snprintf(returnval, bufsize, " Promise '%s' was not found in the database.", handle);
     CFDB_Close(&dbconn);
     return false;
     }
 
  returnval[0] = '\0';
 
- strcat(returnval,"<div id=\"promise\"><table>\n");
+ strcat(returnval,"{");
 
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\" width=\"20%%\">Belonging to <span class=\"bundletype\">%s</span> bundle</td><td>:</td><td><a href=\"/bundle/details/bundle/%s/type/%s\"><span class=\"bundle\">%s</span></a><td></tr>",hp->bundleType,hp->bundleName,hp->bundleType,hp->bundleName);
+ snprintf(work,CF_MAXVARSIZE-1,"\"bundletype\":\"%s\",\"bundlename\":\"%s\",",hp->bundleType,hp->bundleName);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Reference handle</td><td>:</td><td><a href=\"/knowledge/knowledgesearch/search/%s\"><span class=\"handle\">%s</span></a></td></tr>",hp->handle,hp->handle);
+ snprintf(work,CF_MAXVARSIZE-1,"\"handle\":\"%s\",",hp->handle);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Affected object (promiser)</td><td>:</td><td><a href=\"/knowledge/knowledgesearch/search/%s\"><span class=\"promiser\">%s</span></a></td></tr>",hp->promiser,hp->promiser);
+ snprintf(work,CF_MAXVARSIZE-1,"\"promiser\":\"%s\",",hp->promiser);
  Join(returnval,work,bufsize);
 
  if (EMPTY(hp->promisee))
@@ -3410,10 +3412,10 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
     }
  else
     {
-    snprintf(promiseeText,sizeof(promiseeText),"<a href=\"/knowledge/knowledgesearch/search/%s\">%s</a>",hp->promisee,hp->promisee);     
+    snprintf(promiseeText,sizeof(promiseeText),"%s",hp->promisee);     
     }
 
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Stakeholders (promisees)</td><td>:</td><td><span class=\"promisee\">%s</span></td></tr>",promiseeText);
+ snprintf(work,CF_MAXVARSIZE-1,"\"promisee\":\"%s\",",promiseeText);
  Join(returnval,work,bufsize);
 
  if (EMPTY(hp->comment))
@@ -3425,25 +3427,24 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
     snprintf(commentText, sizeof(commentText),"%s",hp->comment);
     }
 
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Comment on original intention</td><td>:</td><td><span class=\"promiser\">%s</span></td></tr>",commentText);
+ snprintf(work,CF_MAXVARSIZE-1,"\"comment\":\"%s\",",commentText);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Promise is about</td><td>:</td><td><a href=\"/knowledge/knowledgesearch/search/%s\"><span class=\"subtype\">%s</span></a></td></tr>",hp->promiseType,hp->promiseType);
+ snprintf(work,CF_MAXVARSIZE-1,"\"promise_type\":\"%s\",",hp->promiseType);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Applies in the class context</td><td>:</td><td><a href=\"/knowledge/knowledgesearch/search/%s\"><span class=\"classcontext\">%s</span></a></td></tr>",hp->classContext,hp->classContext);
+ snprintf(work,CF_MAXVARSIZE-1,"\"class_context\":\"%s\",",hp->classContext);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Defined in file</td><td>:</td><td><span class=\"file\">%s</span> near line %d</td></tr>",hp->file,hp->lineNo);
- Join(returnval,work,bufsize);
-
- snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"left\">Body of the promise</td><td>:</td><td></td></tr>");
+ snprintf(work,CF_MAXVARSIZE-1,"\"file\":\"%s\",\"line_num\":%d,",hp->file,hp->lineNo);
  Join(returnval,work,bufsize);
 
  constText[0] = '\0';
 
  if (hp->constraints)
     {
+    snprintf(work,CF_MAXVARSIZE-1,"\"body\":[");
+    Join(returnval,work,bufsize);
     for(i = 0; hp->constraints[i] != NULL; i++)
        {
        char lval[CF_MAXVARSIZE],rval[CF_MAXVARSIZE],args[CF_MAXVARSIZE];
@@ -3453,23 +3454,22 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
 
        if (strcmp(lval,"usebundle") == 0)
           {
-          snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a></span></td><td>=></td><td><a href=\"/bundle/details/bundle/%s/type/%s\"><span class=\"bundlename\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
+          snprintf(work,CF_MAXVARSIZE-1,"{\"constraint_type\":\"bundle\",\"type\":\"%s\",\"name\":\"%s\",\"args\":\"%s\"},",lval,rval,args);
           }
        else
           {
-          snprintf(work,CF_MAXVARSIZE-1,"<tr><td align=\"right\"><span class=\"lval\"><a href=\"/knowledge/knowledgesearch/search/%s\">%s</a></span></td><td>=></td><td><a href=\"/welcome/body/body/%s/type/%s\"><span class=\"bodyname\">%s</span>%s</a></td></tr>",lval,lval,rval,lval,rval,args);
+          snprintf(work,CF_MAXVARSIZE-1,"{\"constraint_type\":\"body\",\"type\":\"%s\",\"name\":\"%s\",\"args\":\"%s\"},",lval,rval,args);
           }
       
        Join(returnval,work,bufsize);   
        }
-
     if (i == 0)
        {
        Join(returnval,"body content is implicit, no futher details",bufsize);
        }
     }
-
- strcat(returnval,"</table></div>\n");
+ ReplaceTrailingChar(returnval, ',', '\0');
+ strcat(returnval,"}");
     
  DeleteHubPromise(hp);
 
@@ -3511,16 +3511,18 @@ int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
 
  if(hq)
     {
-    StartJoin(returnval, "<div id=\"promise\"><ul>\n", bufsize);
+    StartJoin(returnval, "[", bufsize);
         
     for (rp = hq->records; rp != NULL; rp=rp->next)
        {
        hp = (struct HubPromise *)rp->item;
-       snprintf(work,CF_MAXVARSIZE-1,"<li><a href=\"/promise/details/%s\">%s</a></li>",(char*)hp->handle,(char*)hp->handle);
+       snprintf(work,CF_MAXVARSIZE-1,"\"%s\",",(char*)hp->handle);
        Join(returnval,work,bufsize);
        }
+
+    ReplaceTrailingChar(returnval, ',', '\0');
     
-    EndJoin(returnval, "</ul></div>\n", bufsize);
+    EndJoin(returnval, "]", bufsize);
     
     DeleteHubQuery(hq,DeleteHubPromise);
 
@@ -3636,7 +3638,7 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
     IdempItemCount(&order_results,hc->class,NULL);
     }
 
- snprintf(returnval,bufsize,"<table>");
+ snprintf(returnval,bufsize,"[");
 
 /* Make a histogram of job vs number of hosts */
 
@@ -3644,18 +3646,20 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
 
  for (ip = order_results; ip != NULL; ip = ip->next)
     {   
-    snprintf(work,CF_BUFSIZE,"<tr><td>%s</td><td>%d</td></tr>",ip->name+strlen(MONITOR_CLASS_PREFIX),ip->counter+1);
+    snprintf(work,CF_BUFSIZE,"{\"name\":\"%s\",\"count\":%d},",ip->name+strlen(MONITOR_CLASS_PREFIX),ip->counter+1);
     Join(returnval,work,bufsize);
     count += ip->counter+1;
     }
 
  if (count == 0)
     {
-    snprintf(work,CF_BUFSIZE,"<tr><td>No occurrences</td></tr>");
+    snprintf(work,CF_BUFSIZE,"\"count\":0");
     Join(returnval,work,bufsize);
     }
+ 
+ ReplaceTrailingChar(returnval, ',', '\0');
 
- strcat(returnval,"</table>");
+ strcat(returnval,"]");
  DeleteHubQuery(hq,DeleteHubClass);
 
  if (!CFDB_Close(&dbconn))
