@@ -570,6 +570,8 @@ void Nova_ShowTopicRepresentation(FILE *fp)
   struct BodySyntax *bs,*bs2;
   void *retval;
   char rettype;
+  static char *level[] = { "high", "low", NULL };
+  static char *dev[] = { "dev1", "dev2", "microanomaly", "anomaly", NULL };
 
 if (LICENSES == 0)
    {
@@ -786,23 +788,23 @@ for (i = 2; CLASSTEXT[i] != NULL; i++)
    }
 
 
-fprintf(fp," \"debian\"generalizations => { \"linux\"};");
-fprintf(fp," \"ubuntu\"generalizations => { \"linux\", \"debian\" };");
-fprintf(fp," \"redhat\"generalizations => { \"linux\"};");
-fprintf(fp," \"sles\"generalizations => { \"suse\", \"linux\"};");
-fprintf(fp," \"suse\"generalizations => { \"linux\"};");
-fprintf(fp," \"slackware\"generalizations => { \"linux\"};");
-fprintf(fp," \"fedora\"generalizations => { \"linux\"};");
-fprintf(fp," \"mandrake\"generalizations => { \"linux\"};");
-fprintf(fp," \"mandriva\"generalizations => { \"linux\"};");
-fprintf(fp," \"gentoo\"generalizations => { \"linux\"};");
-fprintf(fp," \"unitedlinux\"generalizations => { \"linux\"};");
-fprintf(fp," \"suncobalt\"generalizations => { \"linux\"};");
-fprintf(fp," \"Win2000\"generalizations => { \"windows\"};");
-fprintf(fp," \"WinXP\"generalizations => { \"windows\"};");
-fprintf(fp," \"WinServer2003\"generalizations => { \"windows\"};");
-fprintf(fp," \"WinVista\"generalizations => { \"windows\"};");
-fprintf(fp," \"WinServer2008\"generalizations => { \"windows\"};");
+fprintf(fp," \"debian\" generalizations => { \"linux\"};");
+fprintf(fp," \"ubuntu\" generalizations => { \"linux\", \"debian\" };");
+fprintf(fp," \"redhat\" generalizations => { \"linux\"};");
+fprintf(fp," \"sles\" generalizations => { \"suse\", \"linux\"};");
+fprintf(fp," \"suse\" generalizations => { \"linux\"};");
+fprintf(fp," \"slackware\" generalizations => { \"linux\"};");
+fprintf(fp," \"fedora\" generalizations => { \"linux\"};");
+fprintf(fp," \"mandrake\" generalizations => { \"linux\"};");
+fprintf(fp," \"mandriva\" generalizations => { \"linux\"};");
+fprintf(fp," \"gentoo\" generalizations => { \"linux\"};");
+fprintf(fp," \"unitedlinux\" generalizations => { \"linux\"};");
+fprintf(fp," \"suncobalt\" generalizations => { \"linux\"};");
+fprintf(fp," \"Win2000\" generalizations => { \"windows\"};");
+fprintf(fp," \"WinXP\" generalizations => { \"windows\"};");
+fprintf(fp," \"WinServer2003\" generalizations => { \"windows\"};");
+fprintf(fp," \"WinVista\" generalizations => { \"windows\"};");
+fprintf(fp," \"WinServer2008\" generalizations => { \"windows\"};");
 
 // Check for location descriptors - we need this categorization for hierarchy view / spanning tree
 
@@ -815,6 +817,19 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_site_classes].lval,&retval,
    for (rp = retval; rp != NULL; rp=rp->next)
       {
       fprintf(fp,"  \"%s\" comment => { \"A hosting location for computers.\" }, generalizations => { \"locations\" }; ");
+      }
+   }
+
+// Monitoring
+
+for (i = 0; OBS[i] != NULL; i++)
+   {
+   for (j = 0; level[j] != NULL; j++)
+      {
+      for (k = 0; dev[k] != NULL; k++)
+         {
+         fprintf(fp," \"%s_%s_%s\" comment => \"%s is %s relative to the learned normal average\", generalizations => { \"vital signs\", \"performance\", \"measurements\" };",OBS[i][0],level[j],dev[k],OBS[i][1],level[j]);
+         }
       }
    }
 }
