@@ -258,13 +258,6 @@ void DeleteReportBook(struct Item **reports);
 void UnpackReportBook(char *id,char *ipaddr,struct Item **reports);
 void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *conn);
 
-/* coordinates.c */
-
-int Nova_ViewPortY(struct CfDataView *cfv,double y,double offset);
-int Nova_ViewPortX(struct CfDataView *cfv,double x);
-int Nova_ViewScaleX(struct CfDataView *cfv,double x);
-int Nova_ViewScaleY(struct CfDataView *cfv,double y);
-
 /* copernicus.c */
 
 void Nova_PrimeGraph(struct Rlist **semantic);

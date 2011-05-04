@@ -58,7 +58,6 @@ libcfnova_la_SOURCES =						\
 	yearly.c						\
 	weekly.c						\
 	magnify.c						\
-	coordinates.c						\
 	topicmap.c                                              \
 	install.c						\
 	web_api.c						\
