@@ -2757,13 +2757,14 @@ Nova_ScanTheRest(id,buffer,bufsize);
 /* Hosts stats                                                               */
 /*****************************************************************************/
 
-void Nova2PHP_show_topN(char *policy,int n,char *buffer,int bufsize)
+void Nova2PHP_show_topN(char *policy,int n,struct PageInfo *page,char *buffer,int bufsize)
 
 { struct Item *ip,*clist;
  char work[CF_BUFSIZE] = {0};
  static char *policies[] = { "compliance", "anomaly", "performance", "lastseen", NULL};
  enum cf_rank_method pol;
-
+ int startIndex=0,endIndex=0, i=0;
+ 
 Nova_WebTopicMap_Initialize();
 
 for (pol = 0; policies[pol] != NULL; pol++)
@@ -2777,39 +2778,45 @@ for (pol = 0; policies[pol] != NULL; pol++)
 clist = Nova_RankHosts(NULL,0,pol,n);
 
 buffer[0] = '\0';
-strcat(buffer,"[");
+strcat(buffer,"{\"data\":[");
 
-for (ip = clist; ip !=  NULL; ip=ip->next)
+startIndex = page->resultsPerPage*(page->pageNum - 1);
+endIndex = (page->resultsPerPage*page->pageNum) - 1;
+
+for (ip = clist, i=0; (ip !=  NULL); ip=ip->next,i++)
    {
-   if (Nova_IsGreen(ip->counter))
+
+   if(i>=startIndex && (i<=endIndex || endIndex < 0))
       {
-      snprintf(work,sizeof(work),"{ \"colour\": \"green\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
-      }
-   else if (Nova_IsYellow(ip->counter))
-      {
-      snprintf(work,sizeof(work),"{ \"colour\": \"yellow\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
-      }
-   else if (Nova_IsRed(ip->counter))
-      {
-      snprintf(work,sizeof(work),"{ \"colour\": \"red\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
-      }
-   else
-      {
-      snprintf(work,sizeof(work),"{ \"colour\": \"blue\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);      
-      }
+      if (Nova_IsGreen(ip->counter))
+         {
+         snprintf(work,sizeof(work),"{ \"colour\": \"green\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
+         }
+      else if (Nova_IsYellow(ip->counter))
+         {
+         snprintf(work,sizeof(work),"{ \"colour\": \"yellow\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
+         }
+      else if (Nova_IsRed(ip->counter))
+         {
+         snprintf(work,sizeof(work),"{ \"colour\": \"red\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
+         }
+      else
+         {
+         snprintf(work,sizeof(work),"{ \"colour\": \"blue\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);      
+         }
    
-   if (!Join(buffer,work,bufsize))
-      {
-      break;
+      if (!Join(buffer,work,bufsize))
+         {
+         break;
+         }      
       }
    }
 
-if (clist)
-   {
-   buffer[strlen(buffer)-1] = '\0';
-   }
+ReplaceTrailingChar(buffer, ',', '\0');
 
-EndJoin(buffer,"]",bufsize);
+snprintf(work,sizeof(work),"],\"meta\":{\"count\":%d}",i);
+EndJoin(buffer,work,bufsize);
+
 DeleteItemList(clist);
 }
 
@@ -2897,7 +2904,6 @@ int Nova2PHP_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,struc
     
  DeleteHubQuery(hq,NULL);
     
- 
  ReplaceTrailingChar(buf, ',', '\0');
 
  EndJoin(buf,"]}",bufsize);
@@ -3859,7 +3865,7 @@ int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,
 
 int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char *report,buffer[CF_BUFSIZE], date[CF_MAXVARSIZE];
  struct HubBundleSeen *hb;   
  struct HubQuery *hq;
  struct Rlist *rp,*result;
@@ -3887,8 +3893,11 @@ int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *classr
        continue;
        }
 
+    strncpy(date,cf_ctime(&(hb->t)),CF_MAXVARSIZE - 1);
+    StripTrailingNewline(date);
+    
     snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%.2lf<nc>%.2lf<nc>%.2lf<nova_nl>",
-             hb->hh->hostname,hb->bundle,cf_ctime(&(hb->t)),
+             hb->hh->hostname,hb->bundle,date,
              hb->hrsago,hb->hrsavg,hb->hrsdev);
 
     if(!Join(returnval,buffer,bufsize))
