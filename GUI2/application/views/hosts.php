@@ -6,10 +6,10 @@
 //cfpr_header("$type hosts","normal");
 //cfpr_menu("Status : hosts");
 ?>
-         <div class="pagepanel">
-          		<div class="panelhead"><?php echo $type?> hosts</div>
-                <div class="panelcontent">
-                <div class="tables">
+         
+     <div id="body" class="outerdiv grid_12">
+                <div class="innerdiv tables">
+                    <p class="title"><?php echo $type?> hosts</p>
 <?php
 
 if (count($tabledata)>0)
@@ -35,6 +35,5 @@ else
    }
 ?>
 
-</div>
 </div>
 </div>

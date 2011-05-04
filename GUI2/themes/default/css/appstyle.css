@@ -470,8 +470,8 @@ body {
 }
 
 .minwidth30{
- min-width: 30%;
- width:30%;
+ min-width: 28%;
+ width:28%;
 }
 
 .minwidth70{
@@ -505,6 +505,8 @@ background: -moz-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 tran
     -webkit-border-radius:5px;
     background: #fff;
     color:#4d4d4d;
+    margin:15px;
+    padding: 10px;
 }
 
 .innerdiv ul li{
@@ -1075,7 +1077,7 @@ span.search input
 /*engineering page */
 #finder
 {
-    margin:0 4px 22px 6px;
+    margin:0 15px 22px 15px;
 }
 
 .alert{
@@ -1091,8 +1093,9 @@ span.search input
 
 #hoststatus
 {
-    margin: 15px 8px 5px 5px;
+    margin: 15px 8px 5px 15px;
     float:left;
+    padding: 0;
 }
 
 #hoststatus ul{
@@ -1108,6 +1111,7 @@ span.search input
 {
     margin:15px 4px 5px 0px;
     float:left;
+    padding:0px;
 }
 
 .redhost
@@ -1178,6 +1182,7 @@ span.search input
    border-bottom: 1px solid #cbcdca;
    padding-left:10px;
    color:#3d453a;
+   vertical-align: middle;
 }
 
 .tables tr.odd td
@@ -1197,6 +1202,11 @@ span.search input
   border-bottom:1px solid #757575;
 }
 
+.tables tr:first-child td
+{
+  border-top:1px solid #757575;
+}
+
 .tables tr.filters td
 {
     padding:5px;
@@ -1213,6 +1223,13 @@ span.search input
     -khtml-border-radius:3px;
     -webkit-border-radius:3px;
     border-radius:5px;
+}
+
+.coloricon
+{
+ width:20px;
+ height:20px;
+ display: inline-block;
 }
 
 .pages{

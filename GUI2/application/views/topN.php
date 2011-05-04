@@ -4,23 +4,24 @@
 #
 ?>
 
-<div id="body">
-    <div class="left"></div>
-    <div class="middle minwidth98">
+<div id="body" class="outerdiv grid_12">
             <div id="topn" class="innerdiv tables">
                 <p class="title">Weakest Hosts</p>
                 <table>
+                    <thead></thead>
                     <?php foreach ($ret as $index => $val) {
                     ?>
                         <tr>
-                            <td><?php echo ($val['colour']); ?></td>
+                            <td>
+               <a href="<?php echo site_url('welcome/hosts/'.$val['colour'])?>" class="<?php echo($val['colour']."host")?> coloricon"></a>
+                        </td>
                             <td><a href="<?php echo site_url("/welcome/host/$val[key]"); ?>"><?php echo $val['id']; ?></a></td>
                             <td>
                                 <div id="<?php echo($index); ?>" style="height: 100px;width:300px;margin:5px;">
                                 </div>
                             </td>
                             <td>
-                                <table>
+                               <!-- <table>
                                     <tr>
                                         <td><a href="<?php echo site_url("/bundle/blist/$val[key]"); ?>">Bundles</a></td>
                                         <td><a href="<?php echo site_url("/welcome/classes/$val[key]"); ?>">Classes</a></td>
@@ -30,18 +31,18 @@
                                         <td><a href="<?php echo site_url("/welcome/knowledge/topic/goals"); ?>">Goals</a></td>
                                         <td><a href="<?php echo site_url("/promise/plist/$val[key]"); ?>">Promises</a></td>
                                     </tr>
-                                </table>
-
+                                </table>-->
+                              <a href="<?php echo site_url("/welcome/knowledge/topic/goals"); ?>">Goals</a>
+                            </td>
+                            <td>
+                               <a href="<?php echo site_url("/welcome/classes/$val[key]"); ?>">Classes</a>
                             </td>
 
                         </tr>
 
                     <?php } ?>
                 </table>
-            </div>
-    </div>
-<div class="right"></div>
-    <div class="clearboth"></div>
+            </div> 
 </div>
 <div class="clear"></div>
 <script type="text/javascript">
@@ -54,4 +55,7 @@
         };
         $('#<?php echo $index ?>').hostMeter({data:json<?php echo $index ?>});
 <?php } ?>
+ $(document).ready(function() {
+    $('#topn').find('table').tablesorter({widgets: ['zebra']});
+ });
 </script>

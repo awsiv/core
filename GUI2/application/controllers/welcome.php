@@ -454,6 +454,9 @@ class Welcome extends Cf_Controller {
             array('graphs/host-meter.js'),
             
         );
+        $this->carabiner->js('jquery.tablesorter.min.js');
+        $this->carabiner->js('picnet.jquery.tablefilter.js');
+        $this->carabiner->js('jquery.tablesorter.pager.js');
         $this->carabiner->js($requiredjs);
         $jsIE = array('jit/Extras/excanvas.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));

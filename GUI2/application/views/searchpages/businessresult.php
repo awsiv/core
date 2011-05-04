@@ -1,4 +1,4 @@
-<div id="bodyreport">
+<div id="bodyreport" class="outerdiv">
     
               <div id="reportpanel" class="innerdiv">
                   <p class="title"><?php echo $report_title ?></p>

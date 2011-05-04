@@ -1,6 +1,6 @@
 
 <div id="body" class="">
-    <div class=" grid_10">
+    <div class=" grid_9">
         <div class="outerdiv">
         <div id="overall" class="innerdiv">
             <p style="text-align: right;"><span id="alltime"></span><span id="thisweek"></span><span id="today"></span></p>
@@ -8,12 +8,12 @@
 
             <div id="pie-charts">
 
-                <div id="business-value-pie-chart-container" class="grid_5">
+                <div id="business-value-pie-chart-container" class="grid_4">
                     <p class="title">Business Value</p>
                     <div id="business-value-pie-chart" style="height: 150px;width:300px;">
                     </div>
                 </div>
-                <div id="compliance-value-pie-chart-container" class="grid_5">
+                <div id="compliance-value-pie-chart-container" class="grid_4 push_1">
                     <p class="title">Compliance Now</p>
                     <div id="compliance-now-pie-chart" style="height: 150px; width:300px;">
                     </div>
@@ -40,7 +40,7 @@
         </div>
         </div>
      </div>
-    <div class="grid_2">
+    <div class="grid_3">
         <div class="outerdiv ">
             <div id="announcement" class="innerdiv">
                 <p class="title">Announcement</p>
