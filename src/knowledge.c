@@ -835,6 +835,11 @@ fprintf(fp,"anomalies::");
 
 for (i = 0; OBS[i] != NULL; i++)
    {
+   if (strcmp(OBS[i][0],"spare") == 0)
+      {
+      break;
+      }
+   
    for (j = 0; level[j] != NULL; j++)
       {
       for (k = 0; dev[k] != NULL; k++)
@@ -843,22 +848,22 @@ for (i = 0; OBS[i] != NULL; i++)
 
          if (strstr(OBS[i][0],"_in"))
             {
-            if (strstr(OBS[i][0],"low"))
+            if (strstr(OBS[i][0],"_low"))
                {
                fprintf(fp," \"%s_%s_%s\" caused_by => { \"Reduced incoming traffic\" };",OBS[i][0],level[j],dev[k]);
                }
-            else if (strstr(OBS[i][0],"high"))
+            else if (strstr(OBS[i][0],"_high"))
                {
                fprintf(fp," \"%s_%s_%s\" caused_by => { \"Increased incoming traffic\" };",OBS[i][0],level[j],dev[k]);
                }
             }
          else if (strstr(OBS[i][0],"_out"))
             {
-            if (strstr(OBS[i][0],"low"))
+            if (strstr(OBS[i][0],"_low"))
                {
                fprintf(fp," \"%s_%s_%s\" caused_by => { \"Reduced outgoing traffic\" };",OBS[i][0],level[j],dev[k]);
                }
-            else if (strstr(OBS[i][0],"high"))
+            else if (strstr(OBS[i][0],"_high"))
                {
                fprintf(fp," \"%s_%s_%s\" caused_by => { \"Increased outgoing traffic\" };",OBS[i][0],level[j],dev[k]);
                }            
