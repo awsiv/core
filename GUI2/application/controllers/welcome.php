@@ -461,7 +461,7 @@ class Welcome extends Cf_Controller {
         $jsIE = array('jit/Extras/excanvas.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
 
-        $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : 20);
+        $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : 5);
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         $bc = array(
             'title' => 'Weakest Host',
@@ -478,8 +478,7 @@ class Welcome extends Cf_Controller {
             foreach ($ret['data'] as $index=>$val) {
                 $rawData = cfpr_host_meter($val['key']);
                 $graphData = $this->_convert_summary_compliance_graph($rawData);
-                //$ret[$index] = array_merge($ret[$index], $graphData);
-                $val[$index]= $graphData;
+                $ret['data'][$index] = array_merge($ret['data'][$index], $graphData);
                 }
         }
 
