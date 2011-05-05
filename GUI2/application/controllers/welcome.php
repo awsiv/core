@@ -461,30 +461,34 @@ class Welcome extends Cf_Controller {
         $jsIE = array('jit/Extras/excanvas.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
 
+        $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : 20);
+        $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         $bc = array(
             'title' => 'Weakest Host',
             'url' => 'welcome/weakest_host',
-            'isRoot' => false
+            'isRoot' => false,
         );
         $this->breadcrumb->setBreadCrumb($bc);
+       
 
-
-        $gdata = cfpr_top_n_hosts("compliance", 1000);
+        $gdata = cfpr_top_n_hosts("compliance", 1000,$rows,$page_number);
         $ret = array();
         if ($gdata) {
-
             $ret = json_decode($gdata, TRUE);
-            foreach ($ret as $index => $val) {
+            foreach ($ret['data'] as $index=>$val) {
                 $rawData = cfpr_host_meter($val['key']);
                 $graphData = $this->_convert_summary_compliance_graph($rawData);
-                $ret[$index] = array_merge($ret[$index], $graphData);
-            }
+                //$ret[$index] = array_merge($ret[$index], $graphData);
+                $val[$index]= $graphData;
+                }
         }
 
         $data = array(
             'title' => "Cfengine Mission Portal - weakest hosts ",
             'ret' => $ret,
-            'breadcrumbs' => $this->breadcrumblist->display()
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'current' =>  $page_number,
+            'number_of_rows'=>$rows
         );
         $this->template->load('template', 'topN', $data);
     }

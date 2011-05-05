@@ -443,15 +443,11 @@ function license() {
         //echo $pbarvalue;
     }
 
- function byhandle()
- {
-     echo cfpr_policy_finder_by_promiser(NULL,false);
- }
+    function topn()
+    {
+         print_r(json_decode(cfpr_top_n_hosts("compliance", 1000,10,1),true));
+        
 
-
- function reports()
- {
-     echo cfpr_select_reports(".*", 100);
- }
+    }
         
 }
