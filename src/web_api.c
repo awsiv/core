@@ -3035,10 +3035,10 @@ long Nova2PHP_count_yellow_hosts()
 long Nova2PHP_count_green_hosts()
 
 { struct Item *all = Nova_GreenHosts();
- int len = ListLen(all);
+  int len = ListLen(all);
 
- DeleteItemList(all);
- return (long)len;
+DeleteItemList(all);
+return (long)len;
 }
 
 /*****************************************************************************/
@@ -3046,10 +3046,10 @@ long Nova2PHP_count_green_hosts()
 long Nova2PHP_count_blue_hosts()
 
 { struct Item *all = Nova_BlueHosts();
- int len = ListLen(all);
+  int len = ListLen(all);
 
- DeleteItemList(all);
- return (long)len;
+DeleteItemList(all);
+return (long)len;
 }
 
 /*****************************************************************************/

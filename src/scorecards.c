@@ -563,19 +563,19 @@ struct Item *Nova_BlueHosts()
 
 { struct Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,1000);
+hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,1000);
 
- for (ip = hosts; ip != NULL; ip=ip->next)
-    {
-    if (Nova_IsBlue(ip->counter))
-       {
-       AppendItem(&sorted,ip->name,ip->classes);
-       }
-    }
+for (ip = hosts; ip != NULL; ip=ip->next)
+   {
+   if (Nova_IsBlue(ip->counter))
+      {
+      AppendItem(&sorted,ip->name,ip->classes);
+      }
+   }
 
- DeleteItemList(hosts);
- sorted = SortItemListNames(sorted);
- return sorted;
+DeleteItemList(hosts);
+sorted = SortItemListNames(sorted);
+return sorted;
 }
 
 /*****************************************************************************/
@@ -587,176 +587,176 @@ struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_m
 /* note the similarities between this fn and GetHostColour() */
     
 { bson_buffer bb;
- bson qe,field;
- mongo_cursor *cursor;
- bson_iterator it1,it2,it3;
- double akept[meter_endmark],arepaired[meter_endmark];
- double rkept,rrepaired;
- char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
- int num = 0,found = false,awol;
- mongo_connection conn;
- struct Item *list = NULL;
+  bson qe,field;
+  mongo_cursor *cursor;
+  bson_iterator it1,it2,it3;
+  double akept[meter_endmark],arepaired[meter_endmark];
+  double rkept,rrepaired;
+  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
+  int num = 0,found = false,awol;
+  mongo_connection conn;
+  struct Item *list = NULL;
 
- if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_error,"", "!! Could not open connection to report database on classify host state");
-    return NULL;
-    }
+if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_error,"", "!! Could not open connection to report database on classify host state");
+   return NULL;
+   }
 
 /* BEGIN RESULT DOCUMENT */
 
- bson_buffer_init(&bb);
- bson_append_int(&bb,cfr_keyhash,1);
- bson_append_int(&bb,cfr_ip_array,1);
- bson_append_int(&bb,cfr_host_array,1);
- bson_append_int(&bb,cfr_meter,1);
- bson_append_int(&bb,cfr_day,1);
- bson_from_buffer(&field, &bb);
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_keyhash,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_append_int(&bb,cfr_meter,1);
+bson_append_int(&bb,cfr_day,1);
+bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
- hostnames[0] = '\0';
- addresses[0] = '\0';
+hostnames[0] = '\0';
+addresses[0] = '\0';
 
- cursor = mongo_find(&conn,MONGO_DATABASE,bson_empty(&qe),&field,0,0,0);
- bson_destroy(&field);
+cursor = mongo_find(&conn,MONGO_DATABASE,bson_empty(&qe),&field,0,0,0);
+bson_destroy(&field);
 
 
- while (mongo_cursor_next(cursor))  // loops over documents
-    {
-    bson_iterator_init(&it1,cursor->current.data);
-
-    keyhash[0] = '\0';
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
-    found = false;
-    awol = false;
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
    
-    while (bson_iterator_next(&it1))
-       {
-       /* Extract the common HubHost data */
-
-       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-
-       if (strcmp(bson_iterator_key(&it1),cfr_day) == 0)
-          {
-          time_t then,now = time(NULL);
-          then = (time_t)bson_iterator_int(&it1);
-
-          if (now > then + CF_HUB_HORIZON)
-             {
-             awol = true;
-             break; // Machine is officially AWOL
-             }
-          }
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   found = false;
+   awol = false;
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
       
-       /* Query specific search/marshalling */
-
-       if (strcmp(bson_iterator_key(&it1),cfr_meter) == 0)
-          {
-          bson_iterator_init(&it2,bson_iterator_value(&it1));
-
-          while (bson_iterator_next(&it2))
-             {
-             bson_iterator_init(&it3, bson_iterator_value(&it2));
-             strncpy(rcolumn,bson_iterator_key(&it2),CF_SMALLBUF-1);
-
-             rkept = 0;
-             rrepaired = 0;
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      
+      if (strcmp(bson_iterator_key(&it1),cfr_day) == 0)
+         {
+         time_t then,now = time(NULL);
+         then = (time_t)bson_iterator_int(&it1);
+         
+         if (now > then + CF_HUB_HORIZON)
+            {
+            awol = true;
+            break; // Machine is officially AWOL
+            }
+         }
+      
+      /* Query specific search/marshalling */
+      
+      if (strcmp(bson_iterator_key(&it1),cfr_meter) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+         
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+            strncpy(rcolumn,bson_iterator_key(&it2),CF_SMALLBUF-1);
             
-             while (bson_iterator_next(&it3))
-                {
-                if (strcmp(bson_iterator_key(&it3),cfr_meterkept) == 0)
-                   {
-                   rkept = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_meterrepaired) == 0)
-                   {
-                   rrepaired = bson_iterator_double(&it3);
-                   }
-                else
-                   {
-                   CfOut(cf_error,"", " !! Unknown key \"%s\" in last seen",bson_iterator_key(&it3));
-                   }
-                }
-
-             switch (*rcolumn)
-                {
-                case cfmeter_week:
-                    akept[meter_compliance_week]= rkept;
-                    arepaired[meter_compliance_week] = rrepaired;
-                    break;
-
-                case cfmeter_hour:
-                    akept[meter_compliance_hour] = rkept;
-                    arepaired[meter_compliance_hour] = rrepaired;
-                    break;
-                   
-                case cfmeter_day:
-                    akept[meter_compliance_day]= rkept;
-                    arepaired[meter_compliance_day] = rrepaired;
-                    break;
-                   
-                case cfmeter_perf:
-                    akept[meter_compliance_week]= rkept;
-                    arepaired[meter_compliance_week] = rrepaired;
-                    break;
-
-                case cfmeter_comms:
-                    akept[meter_comms_hour]= rkept;
-                    arepaired[meter_comms_hour] = rrepaired;
-                    break;
-                   
-                case cfmeter_anomaly:
-                    akept[meter_anomalies_day] = rkept;
-                    arepaired[meter_anomalies_day] = rrepaired;
-                    break;
-                   
-                case cfmeter_other:
-                    akept[meter_other_day]= rkept;
-                    arepaired[meter_other_day] = rrepaired;
-                    break;
-                }
+            rkept = 0;
+            rrepaired = 0;
             
-             found = true;           
-             }
-          }   
-       }
+            while (bson_iterator_next(&it3))
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_meterkept) == 0)
+                  {
+                  rkept = bson_iterator_double(&it3);
+                  }
+               else if (strcmp(bson_iterator_key(&it3),cfr_meterrepaired) == 0)
+                  {
+                  rrepaired = bson_iterator_double(&it3);
+                  }
+               else
+                  {
+                  CfOut(cf_error,"", " !! Unknown key \"%s\" in last seen",bson_iterator_key(&it3));
+                  }
+               }
+            
+            switch (*rcolumn)
+               {
+               case cfmeter_week:
+                   akept[meter_compliance_week]= rkept;
+                   arepaired[meter_compliance_week] = rrepaired;
+                   break;
+                   
+               case cfmeter_hour:
+                   akept[meter_compliance_hour] = rkept;
+                   arepaired[meter_compliance_hour] = rrepaired;
+                   break;
+                   
+               case cfmeter_day:
+                   akept[meter_compliance_day]= rkept;
+                   arepaired[meter_compliance_day] = rrepaired;
+                   break;
+                   
+               case cfmeter_perf:
+                   akept[meter_compliance_week]= rkept;
+                   arepaired[meter_compliance_week] = rrepaired;
+                   break;
+                   
+               case cfmeter_comms:
+                   akept[meter_comms_hour]= rkept;
+                   arepaired[meter_comms_hour] = rrepaired;
+                   break;
+                   
+               case cfmeter_anomaly:
+                   akept[meter_anomalies_day] = rkept;
+                   arepaired[meter_anomalies_day] = rrepaired;
+                   break;
+                   
+               case cfmeter_other:
+                   akept[meter_other_day]= rkept;
+                   arepaired[meter_other_day] = rrepaired;
+                    break;
+               }
+            
+            found = true;           
+            }
+         }   
+      }
    
-    if (found)
-       {
-       if (search_string == NULL || FullTextMatch(search_string,hostnames))
-          {
-          int score;
+   if (found)
+      {
+      if (search_string == NULL || FullTextMatch(search_string,hostnames))
+         {
+         int score;
          
-          if (awol)
-             {
-             score = CF_CODE_BLUE;
-             }
-          else
-             {
-             score = Nova_GetComplianceScore(method,akept,arepaired);
-             }
+         if (awol)
+            {
+            score = CF_CODE_BLUE;
+            }
+         else
+            {
+            score = Nova_GetComplianceScore(method,akept,arepaired);
+            }
          
-          PrependItem(&list,keyhash,hostnames);
-          SetItemListCounter(list,keyhash,score);
+         PrependItem(&list,keyhash,hostnames);
+         SetItemListCounter(list,keyhash,score);
          
-          if (max_return && (num++ >= max_return))
-             {
-             break;
-             }
-          }
-       }
-    }
+         if (max_return && (num++ >= max_return))
+            {
+            break;
+            }
+         }
+      }
+   }
 
- mongo_cursor_destroy(cursor);
+mongo_cursor_destroy(cursor);
 
- if (!CFDB_Close(&conn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    } 
+if (!CFDB_Close(&conn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   } 
 
- return list;
+return list;
 }
 
 /*****************************************************************************/
@@ -850,14 +850,14 @@ return result;
 int Nova_IsGreen(int level)
 
 {
- if (level < CF_AMBER_THRESHOLD)
-    {
-    return true;
-    }
- else
-    {
-    return false;
-    }
+if (level < CF_AMBER_THRESHOLD && level != CF_CODE_BLUE)
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
 }
 
 /*****************************************************************************/
@@ -865,14 +865,14 @@ int Nova_IsGreen(int level)
 int Nova_IsYellow(int level)
 
 {
- if (level >= CF_AMBER_THRESHOLD && level < CF_RED_THRESHOLD)
-    {
-    return true;
-    }
- else
-    {
-    return false;
-    }
+if (level >= CF_AMBER_THRESHOLD && level < CF_RED_THRESHOLD)
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
 }
 
 /*****************************************************************************/
@@ -880,14 +880,14 @@ int Nova_IsYellow(int level)
 int Nova_IsRed(int level)
 
 {
- if (level >= CF_RED_THRESHOLD)
-    {
-    return true;
-    }
- else
-    {
-    return false;
-    }
+if (level >= CF_RED_THRESHOLD)
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
 }
 
 /*****************************************************************************/
@@ -895,14 +895,14 @@ int Nova_IsRed(int level)
 int Nova_IsBlue(int level)
 
 {
- if (level == CF_CODE_BLUE)
-    {
-    return true;
-    }
- else
-    {
-    return false;
-    }
+if (level == CF_CODE_BLUE)
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
 }
 
 /*****************************************************************************/
@@ -911,8 +911,8 @@ void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bu
 
 { char work[CF_BUFSIZE];
  
- snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf }",name,pos,kept,rep,100-kept-rep);
- Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf }",name,pos,kept,rep,100-kept-rep);
+Join(buffer,work,bufsize);
 }
 
 #endif
