@@ -3475,7 +3475,7 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
        }
     }
  ReplaceTrailingChar(returnval, ',', '\0');
- strcat(returnval,"}");
+ strcat(returnval,"]}");
     
  DeleteHubPromise(hp);
 
