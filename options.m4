@@ -33,10 +33,12 @@ else
 fi
 
 if test $WITH_MONGO = 1; then
+  AC_DEFINE([MONGO_HAVE_STDINT], [], [Inform mongo header about stdint support])
   AC_CHECK_HEADERS(mongo.h)
   AC_CHECK_HEADERS(mongo_except.h)
   AC_CHECK_HEADERS(bson.h)
   AC_CHECK_HEADERS(platform_hacks.h)
+  AC_CHECK_MEMBER([mongo_connection_options.host], AC_DEFINE([MONGO_OLD_CONNECT], [], [Use deprecated MongoDB client API]),[],[[#include <mongo.h>]])
   AC_CHECK_LIB(mongoc,main)
 fi
 

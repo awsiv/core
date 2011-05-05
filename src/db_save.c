@@ -19,14 +19,23 @@
 int CFDB_Open(mongo_connection *conn, char *host, int port)
 
 {
- mongo_connection_options connOpts;
  int result;
 
- snprintf(connOpts.host, sizeof(connOpts.host), "%s", host);
- connOpts.port = port;
+#ifdef MONGO_OLD_CONNECT
+mongo_connection_options connOpts;
 
- result = mongo_connect(conn,&connOpts);
+snprintf(connOpts.host, sizeof(connOpts.host), "%s", host);
+connOpts.port = port;
 
+result = mongo_connect(conn,&connOpts);
+
+#else
+ 
+ result = mongo_connect(conn, host, port);
+
+#endif
+
+ 
  if (result != 0)
     {
     CfOut(cf_verbose, "mongo_connect", "!! Could not connect to mongo server (got %d)", result);
