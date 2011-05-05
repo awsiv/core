@@ -461,6 +461,7 @@ class Welcome extends Cf_Controller {
         $jsIE = array('jit/Extras/excanvas.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
 
+        $getparams = $this->uri->uri_to_assoc(3);
         $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : 5);
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         $bc = array(

@@ -42,7 +42,8 @@
 
                     <?php } ?>
                 </table>
-                <?php $pg = paging($current, $number_of_rows, $ret['meta']['count'], 10);?>
+                <?php 
+                $pg = paging($current, $number_of_rows, $ret['meta']['count'], 10);?>
                 <div class="Paging">
                 <div class="pages">
                     <div class="inside">
@@ -52,11 +53,11 @@
                         <?
                         for ($i = $pg['start']; $i <= $pg['end']; $i++) {
                             if ($i == $pg['page'])
-                                $current = 'current'; else
-                                $current="";
+                                $selected = 'current'; else
+                                $selected="";
                         ?>
 
-                            <a href="<?= site_url("welcome/weakest_host/rows/$number_of_rows/page/$i") ?>" title="Go to Page <?= $i ?>" class="page <?= $current ?>"><span><?= $i ?></span></a>
+                            <a href="<?= site_url("welcome/weakest_host/rows/$number_of_rows/page/$i") ?>" title="Go to Page <?= $i ?>" class="page <?= $selected ?>"><span><?= $i ?></span></a>
 
                         <? } ?>
 
