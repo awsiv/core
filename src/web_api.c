@@ -260,7 +260,7 @@ int Nova2PHP_get_observable_id(char *name)
 
 int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE], canonifiedCause[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE], canonifiedCause[CF_BUFSIZE]={0};
  struct HubPromiseLog *hp;  struct HubQuery *hq;
  struct Rlist *rp;
  int reportType;
@@ -285,7 +285,7 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hp = (struct HubPromiseLog *)rp->item;
-    ReplaceChar(hp->cause,canonifiedCause,sizeof(canonifiedCause),'\"','\'');
+    EscapeJson(hp->cause,canonifiedCause,sizeof(canonifiedCause));
     if (strcmp(hp->nid,CF_NONOTE) == 0)
        {
        switch (type)
@@ -338,7 +338,7 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
 
 int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE],hostname[CF_MAXVARSIZE],report[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE],hostname[CF_MAXVARSIZE],report[CF_BUFSIZE]={0};
  struct HubPromiseLog *hp;
  struct HubQuery *hq;
  struct Rlist *rp;
@@ -389,7 +389,7 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
    
     for (ip = summary; ip != NULL; ip=ip->next)
        {
-       ReplaceChar(ip->classes,report,sizeof(report),'\"','\'');
+       EscapeJson(ip->classes,report,sizeof(report));
        snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",\"%s\",%d],",
 		hostname,ip->name,report,ip->counter);
        
@@ -912,7 +912,7 @@ int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
 
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE],canonifiedValue[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE],canonifiedValue[CF_BUFSIZE]={0};
  char rvalBuf[CF_MAXVARSIZE];
  struct HubVariable *hv;
  struct HubQuery *hq;
@@ -994,8 +994,9 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
        {
        snprintf(rvalBuf,sizeof(rvalBuf),"%s",(char *)hv->rval);
        }
-   
-    ReplaceChar(rvalBuf,canonifiedValue,sizeof(canonifiedValue),'\"','\'');
+
+    EscapeJson(rvalBuf,canonifiedValue,sizeof(canonifiedValue));
+
     snprintf(buffer,CF_BUFSIZE,
              "[\"%s\",\"%s\",\"%s\",\"%s\",%ld],",
              hv->hh->hostname,typestr,hv->lval,canonifiedValue,hv->t);
@@ -2452,8 +2453,10 @@ if (matched)
    if (type)
       {
       snprintf(buffer,bufsize,
-               "{\"meta\":{\"header\": [\"Type\",\"Service bundle name\",\"Description\", \"Contributing to Goals\""
-               "]},\"data\":[");
+               "{\"meta\":{\"header\": {\"Type\":0,\"Service bundle name\":1,\"Description\":2,"
+               "\"Contributing to Goals\":{\"index\":3,\"subkeys\":{\"pid\":0,\"name\":1,\"description\":2}},"
+               "\"\":4"
+               "}},\"data\":[");
       }
    else
       {
@@ -2472,7 +2475,7 @@ if (matched)
 
          for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
             {
-            snprintf(work,sizeof(work),"{\"pid\" : %d, \"name\" : \"%s\", \"description\" : \"%s\"},",ip2->counter,ip2->name,ip2->classes);
+            snprintf(work,sizeof(work),"[%d,\"%s\",\"%s\"],",ip2->counter,ip2->name,ip2->classes);
             
             if (!Join(goals,work,CF_BUFSIZE))
                {
@@ -2486,17 +2489,17 @@ if (matched)
          }
       else if (type)
          {
-         snprintf(goals,CF_MAXVARSIZE,"Unknown");
+         snprintf(goals,CF_MAXVARSIZE,"[-1,\"Unknown\",\"Unknown\"]");
          snprintf(colour,CF_SMALLBUF,"yellow");
          }
 
       if (type)
          {
-         snprintf(work,CF_BUFSIZE,"{\"bundletype\":\"%s\",\"bundlename\":\"%s\",\"description\":\"%s\",\"goals\":\"%s\",\"colour\":\"%s\"},",ip->classes,ip->name,Nova_GetBundleComment(ip->name),goals,colour);
+         snprintf(work,CF_BUFSIZE,"[\"%s\",\"%s\",\"%s\",%s,\"%s\"],",ip->classes,ip->name,Nova_GetBundleComment(ip->name),goals,colour);
          }
       else
          {
-         snprintf(work,CF_BUFSIZE,"{\"bundletype\":\"%s\",\"bundlename\":\"%s\"},",ip->classes,ip->name);
+         snprintf(work,CF_BUFSIZE,"[\"%s\",\"%s\"],",ip->classes,ip->name);
          }
       
       if(!Join(buffer,work,bufsize))
