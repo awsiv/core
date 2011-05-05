@@ -570,7 +570,7 @@ void Nova_ShowTopicRepresentation(FILE *fp)
   struct BodySyntax *bs,*bs2;
   void *retval;
   char rettype;
-  static char *level[] = { "high", "low", NULL };
+  static char *level[] = { "high", "low", "normal", NULL };
   static char *dev[] = { "dev1", "dev2", "microanomaly", "anomaly", NULL };
 
 if (LICENSES == 0)
@@ -822,13 +822,47 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_site_classes].lval,&retval,
 
 // Monitoring
 
+fprintf(fp,"ports::");
+
+for (i = 0; i < ATTR; i++)
+   {
+   fprintf(fp,"  \"port %s\" comment => { \"The standard reserved port for %s\" }, generalizations => { \"ports\" }, synonyms => {\"%s\"}; ",ECGSOCKS[i].portnr,ECGSOCKS[i].name,ECGSOCKS[i].name);
+   }
+
+fprintf(fp,"measurements:: \"anomalies\" comment => \"Measurements that exceed the boundaries of normal behaviour, as learned by cf-monitord\";");
+
+fprintf(fp,"anomalies::");
+
 for (i = 0; OBS[i] != NULL; i++)
    {
    for (j = 0; level[j] != NULL; j++)
       {
       for (k = 0; dev[k] != NULL; k++)
          {
-         fprintf(fp," \"%s_%s_%s\" comment => \"%s is %s relative to the learned normal average\", generalizations => { \"vital signs\", \"performance\", \"measurements\" };",OBS[i][0],level[j],dev[k],OBS[i][1],level[j]);
+         fprintf(fp," \"%s_%s_%s\" comment => \"%s is %s relative to the learned normal average\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };",OBS[i][0],level[j],dev[k],OBS[i][1],level[j]);
+
+         if (strstr(OBS[i][0],"_in"))
+            {
+            if (strstr(OBS[i][0],"low"))
+               {
+               fprintf(fp," \"%s_%s_%s\" caused_by => { \"Reduced incoming traffic\" };",OBS[i][0],level[j],dev[k]);
+               }
+            else if (strstr(OBS[i][0],"high"))
+               {
+               fprintf(fp," \"%s_%s_%s\" caused_by => { \"Increased incoming traffic\" };",OBS[i][0],level[j],dev[k]);
+               }
+            }
+         else if (strstr(OBS[i][0],"_out"))
+            {
+            if (strstr(OBS[i][0],"low"))
+               {
+               fprintf(fp," \"%s_%s_%s\" caused_by => { \"Reduced outgoing traffic\" };",OBS[i][0],level[j],dev[k]);
+               }
+            else if (strstr(OBS[i][0],"high"))
+               {
+               fprintf(fp," \"%s_%s_%s\" caused_by => { \"Increased outgoing traffic\" };",OBS[i][0],level[j],dev[k]);
+               }            
+            }
          }
       }
    }
