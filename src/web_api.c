@@ -2814,7 +2814,7 @@ for (ip = clist, i=0; (ip !=  NULL); ip=ip->next,i++)
 
 ReplaceTrailingChar(buffer, ',', '\0');
 
-snprintf(work,sizeof(work),"],\"meta\":{\"count\":%d}",i);
+snprintf(work,sizeof(work),"],\"meta\":{\"count\":%d}}",i);
 EndJoin(buffer,work,bufsize);
 
 DeleteItemList(clist);
