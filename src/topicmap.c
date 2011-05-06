@@ -274,13 +274,19 @@ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    }
 
 /* BEGIN query document */
-bson_buffer_init(&bb);
-bson_append_string(&bb,cfk_topicname,search_topic);
-bson_from_buffer(&query,&bb);
-/*
-bson_buffer_init(&bb);
-bson_empty(&query);
-*/
+
+if (!EMPTY(search_topic))
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfk_topicname,search_topic);
+   bson_from_buffer(&query,&bb);
+   }
+else
+   {
+   bson_buffer_init(&bb);
+   bson_empty(&query);
+   }
+
 /* BEGIN RESULT DOCUMENT */
 
 bson_buffer_init(&bb);
