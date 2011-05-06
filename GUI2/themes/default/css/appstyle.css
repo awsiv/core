@@ -298,6 +298,23 @@ label#searchbox input
 }
 
 
+#library  a.docs{
+   background: url("../images/docs.png") no-repeat;
+}
+
+#library  a.topic{
+   background: url("../images/find_topic.png") no-repeat;
+}
+
+#library  a.message{
+   background: url("../images/message_archive.png") no-repeat;
+}
+
+#library  a.forum{
+   background: url("../images/forum.png") no-repeat;
+}
+
+
 #tagCloud {
     width:290px; background-color:#575454; text-align:center; padding:5px;
     overflow:auto; font-size:70%; font-family:arial;

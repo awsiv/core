@@ -1,34 +1,22 @@
-<div id="body">
-    <div class="left"></div>
-    <div class="middle minwidth98">
-
-        <div class="innerdiv" style="margin:15px 8px 5px 5px;">
-            <p class="title">Search for any topic below : </p>
-            <div style="padding:10px;text-align: center;">
-                <form action="<?php echo site_url('knowledge/knowledgeSearch') ?>" method="post">
-                    <label id="searchbox">
-                        <input type="text" name="search" value="Search in knowledge map" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"/>
-                    </label>
-                </form>
+<div id="body" class="grid_12 outerdiv">
+    <div class="innerdiv">
+        <div class="push_3 grid_9" style="margin-top:20px;margin-bottom:20px;">
+            <div style="margin:20px;">    
+            <h2>Welcome to the Library!</h2> 
+            <div>Todays message is that this library page is in construction. May need more modifications. Stay tuned.</div>   
             </div>
-
-        </div>
-
-        <div class="innerdiv" style="margin:15px 8px 5px 5px;">
-            <p class="title">Useful Links </p>
-            <div style="padding:10px;">
+            <div id="library" class="dash" style="margin-top:40px;">
                 <ul>
-                    <li>Docs links</li>
-                    <li>Online links</li>
-                    <li>more links..</li>
+                    <li><?php echo anchor('#', 'docs', array('class' => 'docs', 'id' => 'docs')); ?></li>
+                    <li><?php echo anchor('#', 'Find Topic', array('class' => 'topic', 'id' => 'topic')); ?></li>
+                    <li><?php echo anchor('#', 'Message Archieve', array('class' => 'message', 'id' => 'message')); ?></li>
+                    <li><?php echo anchor('#', 'Forum', array('class' => 'forum', 'id' => 'forum')); ?></li>
                 </ul>
             </div>
-
-        </div>
+             <div class="clearboth"></div>
+        </div>   
+        <div class="clearboth"></div>        
     </div>
-    <div class="right"></div>
-    <div class="clearboth"></div>
 </div>
-<div class="clear"></div>
 
 
