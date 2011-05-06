@@ -278,7 +278,7 @@ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
 if (!EMPTY(search_topic))
    {
    bson_buffer_init(&bb);
-   bson_append_string(&bb,cfk_topicname,search_topic);
+   bson_append_regex(&bb,cfk_occurcontext,search_topic,"");
    bson_from_buffer(&query,&bb);
    }
 else
