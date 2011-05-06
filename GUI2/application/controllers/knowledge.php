@@ -98,20 +98,12 @@ class Knowledge extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $getparams = $this->uri->uri_to_assoc(3);
-        $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
+        $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search');
         $topic = isset($getparams['topic']) ? urldecode($getparams['topic']) : $this->input->post('topic');
 
-        /*
-          if ($topic) {
-          $search = $topic;
-          // temp pid
-          // have to redirect to knowledge Map ??
-          $pid = cfpr_get_pid_for_topic("body_constraints", $topic);
-
-          if ($pid) {
-          //redirect('/knowledge/knowledgemap/pid/' . $pid);
-          }
-          } */
+        if ($topic) {
+            $search = $topic;
+        }
 
 
         $data = array(

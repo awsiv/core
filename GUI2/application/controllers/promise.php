@@ -40,6 +40,9 @@ class Promise extends Cf_Controller {
         $mybundle = cfpr_get_promise_bundle($handle);
         $promiser = cfpr_get_promiser($handle);
         $type = cfpr_get_promise_type($handle);
+        $pid = cfpr_get_pid_for_topic("promises", $handle);
+        $topicDetail = cfpr_show_topic($pid);
+        
         $bc = array(
             'title' => 'Promise',
             'url' => 'promise/details',
@@ -53,13 +56,15 @@ class Promise extends Cf_Controller {
             'title' => "Cfengine Mission Portal - promise $handle",
             'nav_text' => "Show : Promise",
             'status' => "current",
-            'pid' => cfpr_get_pid_for_topic("promises", $handle),
+            'pid' => $pid,
             'mybundle' => cfpr_get_promise_bundle($handle),
-            'allhandles' => cfpr_list_handles_for_bundle($mybundle, "agent", false),
-            'allhandlespromiser' => cfpr_list_handles($promiser, "", false),
+            'allhandles' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($mybundle, "agent", false)),TRUE),
+            'allhandlespromiser' => json_decode(utf8_encode(cfpr_list_handles($promiser, "", false)),TRUE),
             'type' => $type,
-            'allhandlesbytype' => cfpr_list_handles("", $type, false),
-            'promise' => cfpr_summarize_promise($handle),
+            'allhandlesbytype' =>json_decode(utf8_encode(cfpr_list_handles("", $type, false)),TRUE),
+            'topicLeads' => json_decode(utf8_encode(cfpr_show_topic_leads($pid)),TRUE),
+            'topicDetail' => json_decode(utf8_encode($topicDetail), true),
+            'promise' => json_decode(utf8_encode(cfpr_summarize_promise($handle)),TRUE),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'promise/promise', $data);

@@ -240,7 +240,7 @@ function create_json_node_for_report_control() {
  */
 function getDateStatus($timestamp,$noColor=false) {
     
-    $timestamp = trim($timestamp);
+    $timestamp = intval($timestamp,10);
     $colorClass = '';
     $now = time();
     // 6 hours

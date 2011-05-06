@@ -48,6 +48,11 @@ dl dd {
 	/*giving UL's LIs generated numbers*/
 	margin-left:1em;
 }
+ul ul {
+    padding:5px;
+    margin-left: 8px;
+}
+
 th,td {
 	/*borders and padding to make the table readable*/
 	border:1px solid #000;

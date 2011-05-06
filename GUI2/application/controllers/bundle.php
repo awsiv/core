@@ -49,11 +49,11 @@ class Bundle extends Cf_Controller {
             'nav_text' => "Show : Bundle definition",
             'status' => "current",
             'bundle' => $bundle,
-            'allbundles' => cfpr_list_all_bundles(NULL),
+            'allbundles' => json_decode(utf8_encode(cfpr_list_all_bundles(NULL)),TRUE),
             'args' => cfpr_get_args_for_bundle($bundle, $type),
             'classes' => cfpr_get_classes_for_bundle($bundle, $type),
-            'list' => cfpr_list_handles_for_bundle($bundle, $type, False),
-            'others' => cfpr_list_bundles_using($bundle),
+            'list' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($bundle, $type, False)),TRUE),
+            'others' => json_decode(utf8_encode(cfpr_list_bundles_using($bundle)),TRUE),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'bundle/bundle_detail', $data);
