@@ -865,15 +865,43 @@ span.search input
 .result li
 {
     border-bottom:solid 1px #3d453a;
-    height:44px;
+   /* height:44px;*/
+   padding:12px 0;
     width:96.5%;
     list-style: none;
 }
 
 .result li a
 {
-    display:block;
-    padding-top:15px;
+    display:inline-block;
+}
+
+#policyList li
+{
+    padding:0;
+}
+
+#policyList li a
+{
+    display: inline;
+}
+
+#classList a.name
+{
+     width:70%;
+     overflow:hidden;
+}
+
+#classList .action
+{
+    margin-left: 10px;
+}
+
+#findmatchedhost
+{
+    position: absolute;
+    right:50px;
+    bottom:10px;
 }
 
 .alphasearch li
@@ -910,13 +938,14 @@ span.search input
     float:left;
 }
 
-#filters ul{
-    text-align: left;
-    padding:3px;
+.classfilters
+{
+ text-align: left;
+ padding:3px;
 }
 
-#filters ul li{
-    display:inline-block;
+.classfilters li{
+   display:inline-block;
     padding:5px 15px 5px 5px;
     position:relative;
     border:solid 1px red;
@@ -931,7 +960,7 @@ span.search input
     font-size: 11px;
 }
 
-#filters ul li a{
+.classfilters li a{
     background: none repeat scroll 0 0 #D4D5D0;
     color: #4d4d4d;
     cursor: pointer;
@@ -947,10 +976,11 @@ span.search input
 
 }
 
-#filters ul li a:hover{
+.classfilter li a:hover{
     background: none repeat scroll 0 0 #fff;
     color: #D4D5D0;
 }
+
 
 
 /* licensemeter */

@@ -79,7 +79,7 @@ class Search extends Cf_Controller {
                         if ($key <> "page" && $key <> "rows") {
                             $params.=$key . '/' . $value . '/';
                         }
-                        if ($key == "host" || $key == "report") {
+                        if ($key <> "page" && $key <> "rows") {
                             $breadcrumbs_url.=$key . '/' . $value . '/';
                         }
                     }
@@ -91,7 +91,9 @@ class Search extends Cf_Controller {
                         //$params.=$key.'/';
                     } else {
                         $params.=$key . '/' . urlencode($value) . '/';
-                        if ($key == "host" || $key == "report") {
+
+                        /*$key == "host" || $key == "report" old condition */
+                        if ($key <> "page" && $key <> "rows") {
                             $breadcrumbs_url .= $key . '/' .urlencode($value). '/';
                             
                         }
@@ -100,7 +102,7 @@ class Search extends Cf_Controller {
                 // $params.='rows/20/page/1';
                 //$params=$this->uri->assoc_to_uri($_POST);
             }
-          
+         
             $bc = array(
                 'title' => 'Reports',
                 'url' => site_url("$breadcrumbs_url"),
@@ -208,7 +210,7 @@ class Search extends Cf_Controller {
                 break;
             case "Class profile":
                 if ($many) {
-                    $name = isset($_POST['name']) ? $_POST['name'] : "";
+                    $name =isset($getparams['name']) ? urldecode($getparams['name']) : $this->input->post('name');
                     if ($hosts_only) {
                         $data['report_result'] = host_only_table(json_decode(cfpr_hosts_with_classes(NULL, $name, true, $class_regex), true));
                         is_ajax() ? $this->load->view('searchpages/search_result_group', $data) : $this->template->load('template', 'searchpages/search_result_group', $data);

@@ -46,5 +46,7 @@
         $('#findclass').classfinder();
         $('#findpolicy').policyfinder();
         $('#findreport').reportfinder();
+        //fix for manintaining the layout of the page when window is resized.
+        $('#compliance_summary').css('width','50px');
     });
 </script>

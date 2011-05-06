@@ -88,9 +88,16 @@ loadpagebody:function(url,val,escreg){
                   self.dialogcontent.html($("<ul>").attr("id", "policyList"));
                   $.each(data, function(i, val) {
                                         var li = $("<li>");
-                                        $("<a>").attr({title:val, href:"/promise/details/"+val[0]})
-                                        .append('<span class="type">'+val[3]+'</span><p><span class="promiser">'+val[4]+'</span><span class="handle">'+val[0]+'</span> / <span class="bundle">'+val[2]+'</span></p><p class="clearleft"></p>')
-                                        .appendTo(li);
+                                        //$("<a>").attr({title:val, href:"/promise/details/"+val[0]})
+                                        //.append('<span class="type">'+val[3]+'</span><p><span class="promiser">'+val[4]+'</span><span class="handle">'+val[0]+'</span> / <span class="bundle">'+val[2]+'</span></p><p class="clearleft"></p>')
+                                        //.appendTo(li);
+                                        
+                                        li.append('<span class="type">'+val[3]+'</span>');
+                                        var p =$("<p>")
+                                        $("<a>").attr({title:val, href:"/promise/details/"+escape(val[0])}).append('<span class="promiser">'+val[4]+'</span>').appendTo(p);
+                                        $("<a>").attr({title:val, href:"/promise/details/"+escape(val[0])}).append('<span class="handle">'+val[0]+'</span>').appendTo(p);
+                                        $("<a>").attr({title:val, href:"/bundle/details/bundle/"+escape(val[2])+"/type/"+val[3]}).append('<span class="bundle">'+val[2]+'</span>').appendTo(p);
+                                        p.appendTo(li);
                                         li.appendTo("#policyList");
                                   });
                   }

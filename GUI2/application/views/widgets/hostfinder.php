@@ -34,7 +34,7 @@
         </div>
         <ul id="aplhaPaging" class="alphasearch">
           <?php
-           foreach(range('a','z') as $letter)
+           foreach(range('A','Z') as $letter)
             {
                echo "<li>$letter</li>";
             }
@@ -42,7 +42,7 @@
         </ul>
         <div class="clear"></div>
         <div id="filters">
-            <ul>
+            <ul class="classfilters">
 
             </ul>
         </div>

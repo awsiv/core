@@ -14,7 +14,6 @@ _init: function(){
 _create:function(){
         var self=this;
         self.addsearchbar();
-        self.loadpagebody();
         self.addalphapager();
         $.ui.classfinder.instances.push(this.element);
 },
@@ -31,6 +30,10 @@ addsearchbar:function(){
    });
   self.dialogcontent.parent().addClass('customdlg').removeClass('ui-widget-content');
   self.titlebar=self.dialogcontent.siblings('div.ui-dialog-titlebar');
+  self.filter=$('<ul>');
+  self.filter.attr('id',"cfinderfilter").addClass('classfilters').appendTo(self.dialogcontent.parent());
+  self.gethostbtn=$('<span>').attr('id','findmatchedhost');
+  self.gethostbtn.appendTo(self.dialogcontent.parent()).hide();
   //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
   //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
 
@@ -41,13 +44,16 @@ addsearchbar:function(){
   self.searchbar.delegate('input[type="text"]','focusout',$.proxy(self.searchboxevent,self));
   self.searchbar.find('input[type="text"]').data('default',self.searchbar.find('input[type="text"]').val());
   self.searchbar.delegate('input[type="text"]','keyup',$.proxy(self.searchclassinlist,self));
-
   
         self.menu=$('<ul id="classoptions" class="categories"></ul>');
         self.menu.append('<li>All classes</li><li>Time classes</li><li>Soft classes</li><li>Ip classes</li>');
         self.menu.appendTo(self.titlebar).hide();
         self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
-        self.element.bind('click',function(event){event.preventDefault();self.dialogcontent.dialog('open')});
+        self.element.bind('click',function(event){
+            event.preventDefault();
+            self.loadpagebody();
+            self.dialogcontent.dialog('open')
+        });
 
 },
 
@@ -66,6 +72,7 @@ menuitemclicked:function(event){
                     $.each(data, function(i, val) {
                                         var li = $("<li>");
                                         $("<a>").text(val).attr({title:val, href:"#"}).appendTo(li);
+                                        $("<a>").text('View hosts').attr('href','/welcome/listhost').appendTo(li);
                                         li.appendTo("#classList");
                                   });
                   }
@@ -75,6 +82,31 @@ menuitemclicked:function(event){
   self.menu.fadeOut();
 },
 
+ addclassfilter:function(event)
+    {
+     event.preventDefault();
+     var self=this,
+         sender=$(event.target),
+         selectedclass= sender.data('val');
+     
+      var li = $("<li>");
+      li.text(selectedclass).data('filter',selectedclass).appendTo(self.filter);
+      $("<a>").text("X").appendTo(li)
+      self.filter.find('li').delegate('a','click',$.proxy(self.removeclassfilter,self));
+      self.gethostbtn.show();
+    },
+    
+  removeclassfilter:function(event)
+    {
+        event.preventDefault();
+        var self = this;
+         $(event.target).parent().remove();
+         if(self.filter.find('li').length ==0)
+             {
+               self.gethostbtn.hide()
+             }
+    },
+
 loadpagebody:function(){
   var self=this;
   $.getJSON(self.element.attr('href'), function(data) {
@@ -82,10 +114,13 @@ loadpagebody:function(){
                                //$("<ul>").attr("id", "tagList").appendTo(self.classdlg);
                                   $.each(data, function(i, val) {
                                         var li = $("<li>");
-                                        $("<a>").text(val).attr({title:val, href:"#"}).appendTo(li);
+                                        $("<a>").text(val).attr({title:val, href:"/search/index/host/All/report/Class+profile/name/"+val}).addClass('name').appendTo(li);
+                                        $("<a>").text('View hosts').attr('href',"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').appendTo(li);
+                                         $("<a>").text('add to list').data('val',val).addClass('classadd').appendTo(li);
                                         li.appendTo("#classList");
                                   });
           self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
+          self.dialogcontent.find("#classList").delegate('a.classadd','click',$.proxy(self.addclassfilter,self));
      });
 },
 
@@ -98,8 +133,8 @@ classSelected:function(event){
              self._trigger("complete",null,{selectedclass:sender.text()})
           }
        else{
-           event.preventDefault();
-           console.log(sender.text());
+           //event.preventDefault();
+           //console.log(sender.text());
        }
 },
 
