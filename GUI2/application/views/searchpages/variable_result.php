@@ -1,12 +1,11 @@
-<link href="<?php echo get_cssdir()?>jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />
-<div class="pagepanel">
- <div class="panelhead withpdfbtn">
-   <span class="text"><?php echo $report_title?></span>
-  <a href="<?php echo $report_link?>"><img src="<?php echo get_imagedir()?>icon_pdf.png" class="floatRight"></a>
-   <a href="<?php echo $email_link?>" id="send_mail"><img src="<?php echo get_imagedir()?>emailsend.png" class="floatRight lnsendmail"></a>
-   <div class="clearboth"></div>
- </div>
-   <div class="panelcontent">
+
+<div id="bodyreport" class="outerdiv">
+    <div id="reportpanel" class="innerdiv">
+                      <p class="title"><?php echo $report_title ?></p>
+     <div class="reporthead">
+       <a href="<?php echo $report_link ?>" class="icons pdf"></a>
+       <a href="<?php echo $email_link ?>" id="send_mail" class="icons email"></a>
+     </div>
      <div class="tables">
       <?php
        $result = json_decode($report_result,true);
@@ -15,7 +14,7 @@
        {
            if($bundles !="meta")
            {
-             echo "<br/><h2> bundle $bundles: <i>total".$variables['count']." variables</i></h2>";
+             echo "<h2> bundle $bundles: <i>total".$variables['count']." variables</i></h2>";
              $this->table->set_heading(array_keys($variables['header']));
              foreach ($variables['data'] as $row)
               {
@@ -37,26 +36,18 @@
              }
              $this->table->clear();
        }
-      $pg = paging($current,$number_of_rows,$result['meta']['count'],100);
-     echo $report_result .'<br />';
+      $pg = paging($current,$number_of_rows,$result['meta']['count'],10);
+      echo $report_result .'<br />';
       //echo json_last_error();
      // print_r($result);
       //print_r($heading);
       ?>
      </div>
        <div class="Paging">
-           <div>
-               <?
-               echo form_open('search/index/'.$params);
-                echo   form_input('rows', $number_of_rows);
-                echo "Rows/Page";
-                 echo form_close();
-                ?>
-           </div>
            <div class="pages">
                                    <div class="inside">
-                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['first'])?>" title="Go to First Page" class="first"><span>&laquo;</span></a>
-                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['prev'])?>" title="Go to Previous Page" class="prev"><span>&lsaquo;</span></a>
+                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['first'])?>" title="Go to First Page" class="first"><span>First</span></a>
+                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['prev'])?>" title="Go to Previous Page" class="prev"><span><</span></a>
 
                                     <? for ($i=$pg['start'];$i<=$pg['end'];$i++) {
                                        if ($i==$pg['page']) $current = 'current'; else $current="";
@@ -66,12 +57,20 @@
 
                                     <? } ?>
 
-                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['next'])?>" title="Go to Next Page" class="next"><span>&rsaquo;</span></a>
-                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['last'])?>" title="Go to Last Page" class="last"><span>&raquo;</span></a>
+                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['next'])?>" title="Go to Next Page" class="next"><span>></span></a>
+                                    <a href="<?=site_url('search/index/'.$params.'page/'.$pg['last'])?>" title="Go to Last Page" class="last"><span>Last</span></a>
                                     </div>
            </div>
+           <div>
+               <?
+               echo form_open('search/index/'.$params);
+                echo   form_input('rows', $number_of_rows);
+                echo "Rows/Page";
+                 echo form_close();
+                ?>
+           </div>
     </div>
-  </div>
+</div>
 </div>
 <div title="Send mail" id="dialog" style="display:none">
             <form>
@@ -93,7 +92,7 @@ $(document).ready(function() {
 	//$('.tables table:first').prepend(
        //$('<thead></thead>').append($('.tables tr:first').remove())
        //);
-  $('.tables table').tableFilter();
+  //$('.tables table').tableFilter();
     $('.tables table').tablesorter({widgets: ['zebra']});
 
 	var $dialog = $('#dialog').dialog({

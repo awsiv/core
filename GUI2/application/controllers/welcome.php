@@ -360,6 +360,9 @@ class Welcome extends Cf_Controller {
             case "yellow":
                 $result = json_decode(cfpr_show_yellow_hosts(), true);
                 break;
+            case "blue":
+                $result = json_decode(cfpr_show_blue_hosts(), true);
+                break;
         }
 
         $columns = array();
@@ -499,6 +502,7 @@ class Welcome extends Cf_Controller {
             'url' => 'welcome/services',
             'isRoot' => false
         );
+        $this->load->library('cf_table');
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
             'title_header' => "service catalogue",

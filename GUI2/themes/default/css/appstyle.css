@@ -1183,6 +1183,8 @@ span.search input
    padding-left:10px;
    color:#3d453a;
    vertical-align: middle;
+   overflow:hidden;
+   max-width: 600px;
 }
 
 .tables tr.odd td
@@ -1290,9 +1292,6 @@ span.search input
 #bodyreport{
 
 }
-
-
-
 
 /* FOR KNOWLEDGE MAP */
 .node{

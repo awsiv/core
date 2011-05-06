@@ -5,10 +5,10 @@
 
 $colour = cfpr_get_host_colour($hostkey);
   ?>
-        
+<div class="outerdiv">
          <div class="grid_4">
                 
-             <div class="panel">
+             <div class="panel innerdiv ">
                     <div class="panelhead"> View Reports </div>
                     <div id="reportcontrol" class="panelcontent">
                      <form method="post" action="<?php echo site_url('search/')?>">
@@ -28,7 +28,7 @@ $colour = cfpr_get_host_colour($hostkey);
 			  ?>
                   
 
-                 <div class="panel">
+                 <div class="panel innerdiv ">
                      <div class="panelhead">Comments</div>
                      <div class="panelcontent">
                      <p><label class="width_20">host Key:</label><label ><?php echo $hostname?></label></p>
@@ -55,7 +55,7 @@ $colour = cfpr_get_host_colour($hostkey);
 		     </div>
 		   </div>
 
-                 <div class="panel">
+                 <div class="panel innerdiv ">
                    <div class="panelhead">Status (measured)</div>
                      <div class="panelcontent">
                <div class="width_80 floatLeft">
@@ -76,7 +76,7 @@ $colour = cfpr_get_host_colour($hostkey);
                   </div>
              </div>
           <div class="grid_8">
-           	<div class="panel">
+           	<div class="panel innerdiv">
           		<div class="panelhead">Analysis</div>
                 <div class="panelcontent">
                 <p><?php include_once('graph/summaryCompliance.php'); ?></p>
@@ -84,7 +84,7 @@ $colour = cfpr_get_host_colour($hostkey);
                  </div>
           	</div>
          
-                 <div class="panel">
+                 <div class="panel innerdiv">
                      <div class="panelhead">Host Details (discovered)</div>
                      <div class="panelcontent">
        <p><label class="width_20">Alias:</label><label ><?php echo $hostname?></label></p>
@@ -97,7 +97,7 @@ $colour = cfpr_get_host_colour($hostkey);
                       </div>
                  </div>
              
-              <div class="panel">
+              <div class="panel innerdiv">
           		<div class="panelhead">Monitored jobs</div>
                 <div class="panelcontent">
                 <?php
@@ -112,7 +112,7 @@ $colour = cfpr_get_host_colour($hostkey);
           <div class="clear"></div>
           
           
-			<div class="panel">
+  <div class="panel innerdiv">
 			<?php $report = cfpr_summarize_notkept($hostkey,NULL,NULL,NULL,NULL);?>
 			<div class="panelhead">Promises not kept in the past week</div>
                 <div class="panelcontent">
@@ -128,7 +128,7 @@ $colour = cfpr_get_host_colour($hostkey);
                       </div>
                 </div>
             </div>
- 
+</div>
 <script type="text/javascript">
 $(document).ready(function() { 
    // $('.tables table').tableFilter();

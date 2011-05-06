@@ -74,6 +74,72 @@ class cf_table {
         return  $return;
     }
 
+    function generate_nested_table($result,$title='')
+    {
+        foreach ($result['data'] as $row)
+       {
+        //$this->table->add_row($row);
+           $temp=array();
+           $this->CI->table->set_heading(array_keys($result['meta']['header']));
+           $heading="";
+           foreach($result['meta']['header'] as $key=>$value)
+           {
+              if(!is_array($value))
+              {
+                 if(in_array(strtolower($key), $this->dateTimeField))
+                      array_push($temp,  date('D F d h:m:s Y',$row[$value]));
+                  else if(strtolower($key)=="")
+                  {
+                     $content="<span class=\"$row[$value]host coloricon\"></span>";
+                     array_push($temp, $content);
+                  }
+                  else if(strtolower($key) == 'service bundle name')
+                  {
+                   $content=sprintf('<a href="/bundle/details/bundle/%s/type/%s">%s</a>',urlencode($row[$value]),$row[$result['meta']['header']['Type']],$row[$value]);
+                     array_push($temp, $content);
+                  }
+                  else
+                  {
+                    array_push($temp, $row[$value]);
+                  }
+              }
+             else
+             {
+                    if(is_array($row[$value['index']]))
+                    {
+                    $table="<table><tr>";
+                    $goal_link="";
+                          $subindexs=  array_values($value['subkeys']);
+                          $index=$value['index'];
+                          if($row[$index][$value['subkeys']['name']]=="Unknown")
+                          {
+                              $cell="unknown";
+                              $table.="<td>$cell</td>";
+                          }
+                          else
+                          {
+                               foreach($subindexs as $subindex)
+                                {
+                                 if($subindex ==0)continue;
+                                //pid=0 name=1 and description=2
+                                 $cell=$row[$index][$subindex];
+                                 if($subindex !=2 )
+                                    {
+                                     $cell="<a href=".site_url ("knowlege/pid/").$row[$index][0].">".$row[$index][1]."</a>";
+                                    }
+                                  $table.="<td>$cell</td>";
+                                }
+                          }     
+                      $table.="</tr></table>";
+                      array_push($temp, $table);
+                    }
+              }
+           }
+          $this->CI->table->add_row($temp);
+       }
+      return $this->CI->table->generate();
+    }
+
 }
 
 ?>
