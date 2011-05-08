@@ -358,7 +358,7 @@ fprintf(fp,"      association => a(\"%s\",\"bundles::%s\",\"%s\");\n",KM_PARTOF_
 fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
 fprintf(fp,"      association => a(\"makes promise of type\",\"promise_types::%s\",\"promises have been made by\");\n",pp->agentsubtype);
 fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
-fprintf(fp,"      association => a(\"makes promises\",\"%s\",\"is a promise made by\");\n",promise_id);
+fprintf(fp,"      association => a(\"has alias\",\"%s\",\"is a promise handle for\");\n",promise_id);
 
 
 fprintf(fp,"promise_types::\n");
