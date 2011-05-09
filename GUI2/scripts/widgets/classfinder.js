@@ -32,8 +32,15 @@ addsearchbar:function(){
   self.titlebar=self.dialogcontent.siblings('div.ui-dialog-titlebar');
   self.filter=$('<ul>');
   self.filter.attr('id',"cfinderfilter").addClass('classfilters').appendTo(self.dialogcontent.parent());
-  self.gethostbtn=$('<span>').attr('id','findmatchedhost');
+
+  self.gethostbtn=$('<span>').attr('id','findmatchedhost').text('view host');
   self.gethostbtn.appendTo(self.dialogcontent.parent()).hide();
+  self.matchhostfinder=$('<form>').attr({id:"finderform",action:"/search/index",method:"post"}).hide();
+  $('<input>').attr({id:'name',name:'name',type:'hidden'}).appendTo(self.matchhostfinder);
+  $('<input>').attr({name:'hosts_only',type:'hidden'}).val(true).appendTo(self.matchhostfinder);
+  $('<input>').attr({name:'host',type:'hidden'}).val('All').appendTo(self.matchhostfinder);
+  $('<input>').attr({name:'report',type:'hidden'}).val('Class profile').appendTo(self.matchhostfinder);
+  self.matchhostfinder.appendTo(self.dialogcontent.parent());
   //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
   //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
 
@@ -44,7 +51,8 @@ addsearchbar:function(){
   self.searchbar.delegate('input[type="text"]','focusout',$.proxy(self.searchboxevent,self));
   self.searchbar.find('input[type="text"]').data('default',self.searchbar.find('input[type="text"]').val());
   self.searchbar.delegate('input[type="text"]','keyup',$.proxy(self.searchclassinlist,self));
-  
+
+  self.dialogcontent.parent().delegate('#findmatchedhost','click',$.proxy(self.findmatchedhost,self));
         self.menu=$('<ul id="classoptions" class="categories"></ul>');
         self.menu.append('<li>All classes</li><li>Time classes</li><li>Soft classes</li><li>Ip classes</li>');
         self.menu.appendTo(self.titlebar).hide();
@@ -105,6 +113,19 @@ menuitemclicked:function(event){
              {
                self.gethostbtn.hide()
              }
+    },
+    findmatchedhost:function(event)
+    {
+        event.preventDefault();
+        var self=this;
+        var searchval=""
+        //var filters=new Array();
+                               self.filter.find('li').each(function(index) {
+                                    searchval+=$(this).data('filter')+'|';
+                               });
+        searchval=searchval.substring(0, searchval.length-1);
+        self.matchhostfinder.find('#name').val(searchval);
+        self.matchhostfinder.submit();
     },
 
 loadpagebody:function(){

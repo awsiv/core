@@ -94,9 +94,9 @@ loadpagebody:function(url,val,escreg){
                                         
                                         li.append('<span class="type">'+val[3]+'</span>');
                                         var p =$("<p>")
-                                        $("<a>").attr({title:val, href:"/promise/details/"+escape(val[0])}).append('<span class="promiser">'+val[4]+'</span>').appendTo(p);
-                                        $("<a>").attr({title:val, href:"/promise/details/"+escape(val[0])}).append('<span class="handle">'+val[0]+'</span>').appendTo(p);
-                                        $("<a>").attr({title:val, href:"/bundle/details/bundle/"+escape(val[2])+"/type/"+val[3]}).append('<span class="bundle">'+val[2]+'</span>').appendTo(p);
+                                        $("<a>").attr({title:"promise : "+val, href:"/promise/details/"+escape(val[0])}).addClass('promiselnk').append('<span class="promiser">'+val[4]+'</span>').appendTo(p);
+                                        $("<a>").attr({title:"handle : "+val, href:"/promise/details/"+escape(val[0])}).append('<span class="handle">'+val[0]+'</span>').appendTo(p);
+                                        $("<a>").attr({title:"bundle : "+val, href:"/bundle/details/bundle/"+escape(val[2])+"/type/"+val[3]}).append('<span class="bundle">'+val[2]+'</span>').appendTo(p);
                                         p.appendTo(li);
                                         li.appendTo("#policyList");
                                   });

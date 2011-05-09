@@ -866,7 +866,7 @@ span.search input
 {
     border-bottom:solid 1px #3d453a;
    /* height:44px;*/
-   padding:12px 0;
+    padding:12px 0;
     width:96.5%;
     list-style: none;
 }
@@ -886,6 +886,13 @@ span.search input
     display: inline;
 }
 
+#policyList li p
+{
+    display:inline-block;
+    margin: 0;
+    padding: 6px;
+}
+
 #classList a.name
 {
      width:70%;
@@ -902,6 +909,9 @@ span.search input
     position: absolute;
     right:50px;
     bottom:10px;
+    background: #fff;
+    color:#000;
+    z-index:1;
 }
 
 .alphasearch li
@@ -1060,24 +1070,42 @@ span.search input
     padding-top: 0;
 
 }
+
+#policyList li a span
+{
+     font-size: 10px;
+     padding:3px;
+    -moz-border-radius:10px;
+    -opera-border-radius:10px;
+    -khtml-border-radius:10px;
+    -webkit-border-radius:10px;
+    border-radius:10px;
+}
 #policyList .type{
  background: none repeat scroll 0 0 #F0F0F0;
  display: block;
  float: left;
  padding: 14px 5px;
 }
+
+#policyList .promiselnk
+{
+    display:block;
+    margin-bottom: 3px;
+}
 #policyList .promiser{
-  display:block;
   max-height: 16px;
   max-width: 550px;
   overflow: hidden;
+  background: none repeat scroll 0 0 #D2E147;
 }
 
 #policyList .handle{
+  background: none repeat scroll 0 0 #CEC2E3;
 }
 
 #policyList .bundle{
-  
+  background: none repeat scroll 0 0 #F7BB3F;
 }
 
 /*reportdialog*/
