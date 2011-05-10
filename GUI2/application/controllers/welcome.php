@@ -555,6 +555,7 @@ class Welcome extends Cf_Controller {
     }
 
     function body() {
+        $this->carabiner->css('tabs-custom.css');
         $getparams = $this->uri->uri_to_assoc(3);
         $body = isset($getparams['body']) ? $getparams['body'] : $this->input->post('search');
         $type = isset($getparams['type']) ? $getparams['type'] : $this->input->post('type');

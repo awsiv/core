@@ -1,5 +1,5 @@
 <div>
-<h2>References to <?php echo $topicDetail['topic']; ?> in the context of <?php echo $topicDetail['context']; ?></h2>
+<h2>References to "<?php echo $topicDetail['topic']; ?>" in the context of "<?php echo $topicDetail['context']; ?>"</h2>
 <ul>
     <?php foreach ((array)$topicHits as $topic) {
     ?>

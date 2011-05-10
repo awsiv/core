@@ -9,7 +9,7 @@
                 <ul>
                     <li><?php echo anchor('#', 'docs', array('class' => 'docs', 'id' => 'docs')); ?></li>
                     <li><?php echo anchor('/knowledge/topicFinder/', 'Find Topic', array('class' => 'topic' ,'title'=>'Topic Finder','id' => 'topic')); ?></li>
-                    <li><?php echo anchor('#', 'Message Archieve', array('class' => 'message', 'id' => 'message')); ?></li>
+                    <li><?php echo anchor('/notes/shownotes/', 'Message Archieve', array('class' => 'message', 'id' => 'message')); ?></li>
                     <li><?php echo anchor('#', 'Forum', array('class' => 'forum', 'id' => 'forum')); ?></li>
                 </ul>
             </div>

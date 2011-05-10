@@ -66,7 +66,8 @@ class Knowledge extends Cf_Controller {
         $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
         $topic = isset($getparams['topic']) ? $getparams['topic'] : $this->input->post('topic');
         $pid = isset($getparams['pid']) ? $getparams['pid'] : $this->input->post('pid');
-
+        // chech for integer
+        $pid = intval($pid,10);
         if (!$pid)
             $pid = cfpr_get_pid_for_topic("", "system policy");
 
