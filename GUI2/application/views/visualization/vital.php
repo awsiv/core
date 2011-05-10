@@ -1,37 +1,38 @@
-<?php
-#
-# This file is (C) Cfengine AS. All rights reserved
-?>
-<div id="tabpane">
-    <div class="pagepanel">
-        <div class="panelhead">Vital signals </div>
-        <div class="panelcontent">
-            <div class="vitaltable">
-                <div id="graph-pulses-vital-sign">
-                    <?php foreach ($performanceData['obs'] as $index => $fetchData) {
-                    ?>
+<div id="body">
+    <div class="outerdiv">
+        <div class="innerdiv">
+            <div id="tabpane">
+                <div class="pagepanel">
+                    <div class="panelhead">Vital signals</div>
+                    <div class="panelcontent">
+                        <div class="vitaltable">
+                            <div id="graph-pulses-vital-sign">
+                                <?php foreach ($performanceData['obs'] as $index => $fetchData) {
+                                    ?>
 
-                    <h3><a href="#"><?php echo $fetchData['id']; ?> (<?php echo $fetchData['desc']; ?>)<br/>
-                        <?php echo date('D F d h:m:s Y', $performanceData['ls']); ?></a>
-                        </h3>
-                        <div>
+                                    <h3><a href="#"><?php echo $fetchData['id']; ?> (<?php echo $fetchData['desc']; ?>)<br/>
+                                            <?php echo date('D F d h:m:s Y', $performanceData['ls']); ?></a>
+                                    </h3>
+                                    <div>
 
-                            <div class="tabs">
-                                <ul>
-                                    <li><a href="/graph/magnifiedView/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Past 4 hours</span></a></li>
-                                    <li><a href="/graph/weekview/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Past Week</span></a></li>
-                                    <li><a href="/graph/yearview/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Year View</span></a></li>
-                                    <li><a href="/graph/histogramView/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Statistical complete history</span></a></li>
-                                </ul>
+                                        <div class="tabs">
+                                            <ul>
+                                                <li><a href="/graph/magnifiedView/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Past 4 hours</span></a></li>
+                                                <li><a href="/graph/weekview/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Past Week</span></a></li>
+                                                <li><a href="/graph/yearview/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Year View</span></a></li>
+                                                <li><a href="/graph/histogramView/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Statistical complete history</span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                <?php } ?>
                             </div>
                         </div>
-                    <?php } ?>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 
 <script type="text/javascript">

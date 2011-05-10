@@ -4,30 +4,26 @@ class Visual extends Cf_Controller {
 
     function Visual() {
         parent::__construct();
+          // inject the required js files
+        $this->carabiner->js('flot/jquery.flot.js');
+        $this->carabiner->js('flot/jquery.flot.magnifiedview.js');
+        $jsIE = array('flot/excanvas.min.js');
+        $this->carabiner->group('iefix', array('js' => $jsIE));
+        $this->carabiner->css('tabs-custom.css');
 
-        // inject the required js files
-        $scripts = array('<!--[if lte IE 8]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'flot/excanvas.min.js">  </script><![endif]-->
-            ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.js"> </script>
-                ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.magnifiedview.js"> </script>
-                ',
-            '<link href="' . get_cssdir() . 'jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />
-                ');
-
-
-        $this->template->set('injected_item', implode('', $scripts));
+      
+     
     }
 
     function vital($hostkey=NULL) {
 
-        
+
 
         $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : $hostkey;
 
         $bc = array(
             'title' => 'Vitals',
-            'url' => 'visual/vital/'.$hostkey,
+            'url' => 'visual/vital/' . $hostkey,
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);

@@ -78,7 +78,7 @@ class pdfreports extends Cf_Controller {
         $params = $this->uri->uri_to_assoc(3, $this->predefinedKeys);
 
         //$params = $this->populateParamsWithDefault($params);
-        $report_type = isset($params['type']) ? $params['type'] : "";
+        $report_type = isset($params['type']) ? urldecode($params['type']) : "";
 
 
         $pdf_filename = 'Nova_' . preg_replace('/ /', '_', $report_type) . '.pdf';
@@ -88,6 +88,7 @@ class pdfreports extends Cf_Controller {
         $pdf->AliasNbPages();
         $pdf->SetFont('Arial', '', 14);
         $pdf->AddPage();
+        
 
         switch ($report_type) {
             case "Bundle profile":
