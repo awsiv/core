@@ -962,7 +962,7 @@ free(hc);
 
 /*****************************************************************************/
 
-struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData)
+struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData, int reportType)
 
 { struct HubNoteInfo *hci;
 
@@ -975,6 +975,7 @@ hci->hh = hh;
 hci->nid = strdup(nid);
 hci->note = NewHubNote(user,msg,t);
 hci->report = strdup(reportData);
+hci->reportType = reportType;
 return hci;
 }
 

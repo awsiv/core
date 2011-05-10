@@ -407,7 +407,7 @@ void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int sl
 /*
  * commenting
  */
-int CFDB_AddNote(mongo_connection *conn, char *keyhash, char *nid, char *reportData, struct Item *data);
+int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *nid, char *reportData, struct Item *data);
 struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid, struct Item *data);
 struct Rlist *CFDB_QueryNoteId(mongo_connection *conn,bson *query);
 void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid);
@@ -591,7 +591,7 @@ void DeleteHubBody(struct HubBody *hb);
 struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char *classContext);
 void DeleteHubBodyAttributes(struct HubBodyAttr *ha);
 struct HubNote *NewHubNote(char *user,char *msg,time_t t);
-struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData);
+struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData, int reportType);
 void DeleteHubNote(struct HubNote *hc);
 void DeleteHubNoteInfo(struct HubNoteInfo *hci);
 
@@ -1271,7 +1271,8 @@ struct cf_pscalar
 #define cfn_note "n"
 #define cfn_username "u"
 #define cfn_datetime "d"
-#define cfn_message "m" 
+#define cfn_message "m"
+#define cfn_reporttype "t"
 
 /* cache collection */
 #define cfc_cachetype "ct"
@@ -1569,6 +1570,7 @@ struct HubNoteInfo
   char *msg;
   time_t t;
   char *report;
+  int reportType;
   struct HubNote *note;
 };
 

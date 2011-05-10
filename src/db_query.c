@@ -6196,6 +6196,7 @@ struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  
  bson_oid_t bsonid;
  bson_type t;
  int emptyQuery = true, firstComment=false, specificQuery = false;
+ int reportType = -1;
 
  if(BEGINSWITH(data->name,","))
     {
@@ -6249,6 +6250,7 @@ struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  
  bson_append_int(&bb,cfn_keyhash,1);
  bson_append_int(&bb,cfn_reportdata,1);
  bson_append_int(&bb,cfn_note,1);
+ bson_append_int(&bb,cfn_reporttype,1);
  bson_from_buffer(&field, &bb);
 
  cursor = mongo_find(conn,MONGO_NOTEBOOK,&query,&field,0,0,0);
@@ -6282,6 +6284,14 @@ struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  
                  strncpy(rptData, bson_iterator_string(&it1),CF_BUFSIZE - 1);
                  }
 	      break;
+              
+          case bson_int:
+              if (strcmp(bson_iterator_key(&it1),cfn_reporttype) == 0)
+                 {
+                 reportType = bson_iterator_int(&it1);
+                 }
+              break;
+              
           case bson_object:
           case bson_array:
               bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -6338,7 +6348,7 @@ struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  
                     hh = NewHubHost(kh,NULL,NULL);
                     PrependRlistAlien(&host_list,hh);		      
                     QueryInsertHostInfo(conn,host_list);
-                    hci = NewHubNoteInfo(hh,noteId,username,note,datetime,rptData);
+                    hci = NewHubNoteInfo(hh,noteId,username,note,datetime,rptData,reportType);
                     firstComment = true;
 		    }
                  else 
@@ -6594,7 +6604,6 @@ return ret;
 }
 
 /******************************************************************/
-
 void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int depth)
 /* NOTE: Only depth 1 is implemented */
 {

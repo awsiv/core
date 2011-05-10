@@ -1453,7 +1453,7 @@ bson_destroy(&host_key);
  */
 /*****************************************************************************/
 
-int CFDB_AddNote(mongo_connection *conn, char *keyhash, char *nid, char *reportData, struct Item *data)
+int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *nid, char *reportData, struct Item *data)
 {
   bson_buffer bb;
   bson host_key;
@@ -1501,8 +1501,9 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, char *nid, char *reportD
       
       if (!EMPTY(reportData))
 	 {
-         bson_append_string(&bb,cfn_reportdata,reportData);
+         bson_append_string(&bb,cfn_reportdata,reportData);         
 	 }
+      bson_append_int(&bb,cfn_reporttype,reportType);
       }   
    bson_from_buffer(&host_key, &bb);
   
@@ -1522,7 +1523,7 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, char *nid, char *reportD
    bson_from_buffer(&setOp,&bb);
 
    mongo_update(conn, MONGO_NOTEBOOK, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-   MongoCheckForError(conn,"AddComments",keyhash);
+   MongoCheckForError(conn,"AddNote",keyhash);
    bson_destroy(&setOp);
   
    if(newnote)
@@ -1533,7 +1534,7 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, char *nid, char *reportD
        bson_from_buffer(&field, &bb);
        
        cursor = mongo_find(conn, MONGO_NOTEBOOK, &host_key, &field,0,0,0);
-       MongoCheckForError(conn,"GetCommentID",keyhash);
+       MongoCheckForError(conn,"GetNoteID",keyhash);
        bson_destroy(&field);
        
        while(mongo_cursor_next(cursor) && !found)

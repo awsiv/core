@@ -5106,7 +5106,7 @@ snprintf(nid, CF_MAXVARSIZE, "%s",noteid);
 snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,note,datetime);
 AppendItem(&data, msg, NULL);
 
-ret = CFDB_AddNote(&dbconn,NULL,nid,NULL,data);
+ret = CFDB_AddNote(&dbconn,NULL,0,nid,NULL,data);
 CFDB_Close(&dbconn);
 snprintf(returnval,bufsize,"%d",ret);
 
@@ -5240,7 +5240,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
     return false;
     }
  // add note
- ret = CFDB_AddNote(&dbconn,keyhash, noteId, row, data);
+ ret = CFDB_AddNote(&dbconn,keyhash, reportType, noteId, row, data);
  //add DBRef
  snprintf(returnval,bufsize,"%d",ret);
  if(strlen(noteId)>0 && ret)
@@ -5272,6 +5272,9 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
   char kh[CF_MAXVARSIZE] = {0};
   char noteId[CF_MAXVARSIZE] = {0};
   int count=0;
+
+  char jsonEscapedReport[CF_BUFSIZE]={0};
+  char jsonEscapedMsg[CF_BUFSIZE]={0};
 
 if (username)
    {
@@ -5306,9 +5309,17 @@ StartJoin(returnval,"{\"data\":[",bufsize);
 for (rp = result; rp != NULL; rp=rp->next)
    {
    hni = ( struct HubNoteInfo *) rp->item;
+   
+   EscapeJson(hni->report,jsonEscapedReport,sizeof(jsonEscapedReport));
+   
    for(hn = hni->note; hn != NULL; hn=hn->next)
       {
-	snprintf(buffer,sizeof(buffer),"{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\",\"report\":\"%s\"},", hn->user, hn->t, hn->msg,hni->report);
+      EscapeJson(hn->msg,jsonEscapedMsg,sizeof(jsonEscapedMsg));
+
+      ReplaceTrailingChar(jsonEscapedMsg, '\n', '\0');
+      
+      snprintf(buffer,sizeof(buffer),"{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\",\"report\":\"%s\",\"report_type\":%d},",
+               hn->user, hn->t, jsonEscapedMsg, jsonEscapedReport, hni->reportType);
       if(!Join(returnval,buffer,bufsize))
          {
          break;
