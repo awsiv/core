@@ -22,10 +22,28 @@ class Knowledge extends Cf_Controller {
             'title_header' => "Library",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
+        $requiredjs = array(
+            array('widgets/notes.js'),
+            array('widgets/topicfinder.js'),
+        );
+        $this->carabiner->js($requiredjs);
 
 
 
         $this->template->load('template', 'knowledge/index', $data);
+    }
+
+    function topicFinder() {
+
+
+        $data = array();
+        $data['searchData'] = array();
+        
+        $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search');
+        $data['search'] = trim($search);
+        $searchJson = cfpr_search_topics($search, true);
+        $data['searchData'] = json_decode(utf8_encode($searchJson), TRUE);
+        $this->load->view('/knowledge/search', $data);
     }
 
     function knowledgemap() {
@@ -34,7 +52,7 @@ class Knowledge extends Cf_Controller {
         $this->carabiner->js('jit/jit-yc.js');
         $jsIE = array('jit/Extras/excanvas.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
-        $this->carabiner->css('tabs-bottom.css');
+         $this->carabiner->css('tabs-custom.css');
 
         $bc = array(
             'title' => 'Knowledge Map',

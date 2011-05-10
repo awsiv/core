@@ -534,7 +534,9 @@ background: -moz-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 tran
     color:#08A3C1;
 }
 
-
+.outerdiv a{
+    color:#08A3C1;
+}
 
 .title
 {
@@ -790,6 +792,12 @@ span.search input
 {
     background:#fff;
 }
+
+.customdlg #topiclistcontainer
+{
+    background:#fff;
+}
+
 .customdlg .ui-widget-header{
     color:#FFF;
     background: #3d453a;

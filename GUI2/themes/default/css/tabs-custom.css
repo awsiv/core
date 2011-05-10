@@ -1,0 +1,37 @@
+/*
+* jQuery UI CSS Framework
+* Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+* Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
+*/
+
+
+
+
+
+/*
+* jQuery UI CSS Framework
+* Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+* Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
+* To view and modify this theme, visit http://jqueryui.com/themeroller/?ffDefault=Verdana,Arial,sans-serif&fwDefault=normal&fsDefault=1.1em&cornerRadius=0px&bgColorHeader=4b4b41&bgTextureHeader=01_flat.png&bgImgOpacityHeader=0&borderColorHeader=ECECEE&fcHeader=676765&iconColorHeader=222222&bgColorContent=ffffff&bgTextureContent=01_flat.png&bgImgOpacityContent=75&borderColorContent=aaaaaa&fcContent=222222&iconColorContent=222222&bgColorDefault=e6e6e6&bgTextureDefault=02_glass.png&bgImgOpacityDefault=75&borderColorDefault=d3d3d3&fcDefault=555555&iconColorDefault=888888&bgColorHover=FEFEFC&bgTextureHover=02_glass.png&bgImgOpacityHover=75&borderColorHover=999999&fcHover=212121&iconColorHover=454545&bgColorActive=FEFEFC&bgTextureActive=01_flat.png&bgImgOpacityActive=&borderColorActive=aaaaaa&fcActive=212121&iconColorActive=454545&bgColorHighlight=fbf9ee&bgTextureHighlight=02_glass.png&bgImgOpacityHighlight=55&borderColorHighlight=fcefa1&fcHighlight=363636&iconColorHighlight=2e83ff&bgColorError=fef1ec&bgTextureError=05_inset_soft.png&bgImgOpacityError=95&borderColorError=cd0a0a&fcError=cd0a0a&iconColorError=cd0a0a&bgColorOverlay=aaaaaa&bgTextureOverlay=01_flat.png&bgImgOpacityOverlay=0&opacityOverlay=30&bgColorShadow=aaaaaa&bgTextureShadow=01_flat.png&bgImgOpacityShadow=0&opacityShadow=30&thicknessShadow=8px&offsetTopShadow=-8px&offsetLeftShadow=-8px&cornerRadiusShadow=8px
+*/
+
+
+
+#custom-tabs  .ui-tab .ui-widget-content{ border: 0px; }
+#custom-tabs .ui-widget-header { border: 0px; background: none; font-weight: bold; }
+
+
+
+#custom-tabs {
+    border: 0px;
+    background: none;
+}
+
+#custom-tabs  .ui-tabs-nav { margin-left: 10px; padding: .2em .2em 0; }
+#custom-tabs .ui-tabs-nav li a { float: left; padding: 2px 8px 1px 8px; text-decoration: none; }
+#custom-tabs .ui-tabs-panel { display: block; border-width: 1px; padding: 1em 1.4em; background: #FFFFFF }
+#custom-tabs .ui-tabs .ui-tabs-hide { display: none !important; }
+#custom-tabs .ui-tabs-panel a {color:#08A3C1;}
+
+
+

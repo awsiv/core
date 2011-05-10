@@ -563,8 +563,8 @@ class Welcome extends Cf_Controller {
             'title' => "Cfengine Mission Portal - classes ",
             'nav_text' => "show : body",
             'status' => "current",
-            'allbodies' => cfpr_list_bodies(".*", $type),
-            'def' => cfpr_get_promise_body($body, $type),
+            'allbodies' => json_decode(utf8_encode(cfpr_list_bodies(".*", $type)),TRUE),
+            'def' => json_decode(utf8_encode(cfpr_get_promise_body($body, $type)),TRUE),
             'type' => $type
         );
         $this->template->load('template', 'body', $data);

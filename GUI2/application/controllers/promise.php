@@ -31,6 +31,8 @@ class Promise extends Cf_Controller {
     }
 
     function details($handle=NULL) {
+         $this->carabiner->css('tabs-custom.css');
+
         if (is_null($handle)) {
             $handle = isset($_POST['handle']) ? $_POST['handle'] : NULL;
         } else {

@@ -1,38 +1,44 @@
-<div id="tabs" class="tabs-bottom">
-    <ul>
-        <li><a href="#tabs-1">Map</a></li>
-        <li><a href="#tabs-2">Text</a></li>
-        <li><a href="#tabs-3">Semantics</a></li>
-    </ul>
-    <div id="tabs-1">
-        <div class="panel">
-            <div class="panelhead">Copernicus local cluster view</div>
-            <div class="panelcontent">
-                <div id="infovis" style="width:90%;height: 350px;"></div>
-                <div id="log"></div>
+<div id="body" class="grid_12">
+    <div class="outerdiv">
 
+        <div id="custom-tabs" style="margin:15px;">
+            <ul>
+                <li><a href="#tabs-1">Map</a></li>
+                <li><a href="#tabs-2">Leads</a></li>
+                <li><a href="#tabs-3">Same context</a></li>
+                <li><a href="#tabs-4">Sub topic</a></li>
+            </ul>
+
+            <div id="tabs-1" class="ui-corner-all">
+                <div class="panel">
+                    <div class="panelhead">Copernicus local cluster view</div>
+                    <div class="panelcontent">
+                        <div id="infovis" style="width:90%;height: 95%;min-height:330px"></div>
+                        <div id="log"></div>
+
+                    </div>
+                </div>
             </div>
+            <div id="tabs-2" class="ui-corner-all">
+                <?php
+                require_once('topics.php');
+                require_once('leads.php');
+                ?>
+            </div>
+            <div id="tabs-3" class="ui-corner-all">
+                <?php
+                require_once('category.php');
+                ?>
+            </div>
+            <div id="tabs-4" class="ui-corner-all">
+                <?php
+                require_once('subcategory.php');
+                ?>
+            </div>
+
         </div>
     </div>
-    <div id="tabs-2">
-        <?php
-        require_once('topics.php');
-        require_once('leads.php');
-        ?>
-    </div>
-    <div id="tabs-3">
-        <?php
-        require_once('category.php');
 
-
-        //$hits = cfpr_show_topic_hits($pid);
-        //echo "<p>$hits</p>";
-        //$leads = cfpr_show_topic_leads($pid);
-        //echo "<p>$leads</p>";
-        //$cat = cfpr_show_topic_category($pid);
-        //echo "<p>$cat</p>";
-        ?>
-    </div>
 </div>
 <div class="clear"></div>
 <script id="source" language="javascript" type="text/javascript">
@@ -64,10 +70,9 @@
 
         init();
 
-        $( "#tabs" ).tabs();
-        $( ".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *" )
-        .removeClass( "ui-corner-all ui-corner-top" )
-        .addClass( "ui-corner-bottom" )
+        $( "#custom-tabs" ).tabs();
+       
+     
 
     });
     var Log = {

@@ -6,15 +6,10 @@
 <link href="<?php echo get_cssdir();?>resets.css" rel="stylesheet" media="screen" />
 <link href="<?php echo get_cssdir();?>960.css" rel="stylesheet" media="screen" />
 <link href="<?php echo get_cssdir();?>Base.css" rel="stylesheet" media="screen" />
-<!--<link href="<?php echo get_cssdir();?>style.css" rel="stylesheet" media="screen" />-->
 <link href="<?php echo get_cssdir();?>appstyle.css" rel="stylesheet" media="screen" />
 <link href="<?php echo get_cssdir();?>jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />
 <script src="<?php echo get_scriptdir();?>jquery-1.4.2.min.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir();?>jquery-ui-1.8.9.custom.min.js" type="text/javascript"></script>
-<!--<script src="<?php echo get_scriptdir();?>jquery.tablesorter.min.js" type="text/javascript"></script>
-<script src="<?php echo get_scriptdir();?>picnet.jquery.tablefilter.js" type="text/javascript"></script>
-<script src="<?php echo get_scriptdir();?>jquery.tablesorter.pager.js" type="text/javascript"></script>
-<script src="<?php echo get_scriptdir();?>jquery.qtip-1.0.min.js" type="text/javascript"></script>-->
 <!--[if IE]><?php echo $this->carabiner->display('iefix'); ?><![endif]-->
 <?php
 $injected= isset($injected_item)?$injected_item:"" ;echo $injected;
@@ -47,7 +42,7 @@ $this->carabiner->display(); ?>
                           <div id="searcharea">
                           <form action="<?php echo site_url('knowledge/knowledgeSearch')?>" method="post">
                               <label id="searchbox">
-                                  <input type="text" name="search" value="Search in knowledge map" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"/>
+                                  <input type="text" name="search" value="<?php echo  !isset($search) ? "Search in knowledge map":$search ?>" />
                               </label>
                           </form>
                           </div>
