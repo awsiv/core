@@ -508,14 +508,21 @@ body {
 
 .outerdiv
 {
-background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F7F7F0), to(#Cfcfc8));
 border: 1px solid #fff;
 -moz-border-radius: 6px;
 -opera-border-radius:6px;
 -khtml-border-radius:6px;
 -webkit-border-radius:6px;
 border-radius:5px;
+
+background: #D4D4D4; /* for non-css3 browsers */
+
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F7F7F0', endColorstr='#Cfcfc8'); /* for IE */
+background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F7F7F0), to(#Cfcfc8));
 background: -moz-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 transparent;
+background: -o-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 transparent;
+
+
 }
 .innerdiv{
 

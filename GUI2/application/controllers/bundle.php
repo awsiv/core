@@ -41,7 +41,7 @@ class Bundle extends Cf_Controller {
         $type = isset($params['type']) ? $params['type'] : "";
         $bc = array(
             'title' => 'Bundle',
-            'url' => 'bundle/details/',
+            'url' => 'bundle/details/bundle/'.$bundle.'/type/'.$type,
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);

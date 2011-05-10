@@ -42,7 +42,7 @@ $this->carabiner->display(); ?>
                           <div id="searcharea">
                           <form action="<?php echo site_url('knowledge/knowledgeSearch')?>" method="post">
                               <label id="searchbox">
-                                  <input type="text" name="search" value="<?php echo  !isset($search) ? "Search in knowledge map":$search ?>" />
+                                  <input type="text" name="search" placeholder="Search in knowledge map" value="<?php echo  !isset($search) ? "Search in knowledge map":$search ?>" />
                               </label>
                           </form>
                           </div>

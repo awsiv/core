@@ -47,7 +47,7 @@ class Promise extends Cf_Controller {
         
         $bc = array(
             'title' => 'Promise',
-            'url' => 'promise/details',
+            'url' => 'promise/details/'.$handle,
             'isRoot' => false
         );
         

@@ -56,7 +56,7 @@ class cf_table {
                                 foreach ($value['subkeys'] as $subkey => $subval) {
                                     $data = trim($row[$data_index][$subval]);
                                     if ($subkey == 'rid') {
-                                        $data = urlencode(base64_encode(utf8_encode($data)));
+                                        $data = urlencode((utf8_encode($data)));
                                     }
                                     if ($data != '') {
                                         $link.="$subkey/$data/";

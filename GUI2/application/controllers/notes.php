@@ -15,7 +15,7 @@ class Notes extends Cf_Controller {
         $action = isset($params['action']) ? $params['action'] : "";
         $hostkey = isset($params['hostkey']) ? $params['hostkey'] : NULL;
         $this->data = array();
-        $rid = isset($params['rid']) ? urldecode(base64_decode($params['rid'])) : "";
+        $rid = isset($params['rid']) ? urldecode(($params['rid'])) : "";
         $reportType = isset($params['reporttype']) ? $params['reporttype'] : "";
         $hostKey = isset($params['hostkey']) ? $params['hostkey'] : "";
         $nid = isset($params['nid']) ? $params['nid'] : "";
@@ -40,7 +40,7 @@ class Notes extends Cf_Controller {
     function addnote() {
 
         $nid = $this->input->post('nid');
-        $message = $this->input->post('Message');
+        $message = trim($this->input->post('Message'));
         $username = $this->session->userdata('username');
         $date = strtotime("now");
         $ret = false;
@@ -75,7 +75,7 @@ class Notes extends Cf_Controller {
     function addnewnote() {
 
         $rid = trim($this->input->post('rid')) ? $this->input->post('rid') : "none";
-        $message = $this->input->post('Message');
+        $message = trim($this->input->post('Message'));
         $report_type = trim($this->input->post('reporttype')) ? $this->input->post('reporttype') : 1;
         $keyhash = $this->input->post('hash');
         $username = $this->session->userdata('username');

@@ -7,7 +7,7 @@
             </div>
             <div id="library" class="dash" style="margin-top:40px;">
                 <ul>
-                    <li><?php echo anchor('#', 'docs', array('class' => 'docs', 'id' => 'docs')); ?></li>
+                    <li><a href="/docs/cf3-reference.html" class="docs" id="docs">docs</a></li>
                     <li><?php echo anchor('/knowledge/topicFinder/', 'Find Topic', array('class' => 'topic' ,'title'=>'Topic Finder','id' => 'topic')); ?></li>
                     <li><?php echo anchor('/notes/shownotes/', 'Message Archieve', array('class' => 'message', 'id' => 'message')); ?></li>
                     <li><?php echo anchor('#', 'Forum', array('class' => 'forum', 'id' => 'forum')); ?></li>
