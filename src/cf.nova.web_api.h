@@ -100,7 +100,7 @@ long Nova2PHP_count_blue_hosts(void);
 long Nova2PHP_count_red_hosts(void);
 long Nova2PHP_count_yellow_hosts(void);
 long Nova2PHP_count_green_hosts(void);
-void Nova2PHP_show_col_hosts(char *colour,int n,char *buffer,int bufsize);
+void Nova2PHP_show_col_hosts(char *colour,int n,struct PageInfo *page,char *buffer,int bufsize);
 int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *btype,int regex,char *returnval,int bufsize);
 int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle,int regex,char *returnval,int bufsize);
 

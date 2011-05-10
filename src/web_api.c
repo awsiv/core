@@ -2917,11 +2917,11 @@ int Nova2PHP_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,struc
 
 /*****************************************************************************/
 
-void Nova2PHP_show_col_hosts(char *colour,int n,char *buffer,int bufsize)
+void Nova2PHP_show_col_hosts(char *colour,int n,struct PageInfo *page,char *buffer,int bufsize)
 
 { struct Item *ip,*clist;
- char work[CF_MAXVARSIZE];
- int counter = 0;
+ char work[CF_MAXVARSIZE],lastseen[CF_MAXVARSIZE]={0};
+ int counter = 0, startIndex, endIndex;
   
  if (strcmp(colour,"green") == 0)
     {
@@ -2942,25 +2942,38 @@ void Nova2PHP_show_col_hosts(char *colour,int n,char *buffer,int bufsize)
 
  if (clist)
     {
+    startIndex = page->resultsPerPage*(page->pageNum - 1);
+    endIndex = (page->resultsPerPage*page->pageNum) - 1;
+    
     buffer[0] = '\0';
-    strcat(buffer,"[");
-   
-    for (ip = clist; ip !=  NULL; ip=ip->next, counter++)
-       {      
-       snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\", \"id\": \"%s\"}",ip->name,ip->classes);
-      
-       if (ip && ip->next != NULL)
+    strcat(buffer,"{ \"data\":[");
+
+    for (ip = clist,counter=0; ip !=  NULL; ip=ip->next, counter++)
+       {
+       if(counter>=startIndex && (counter<=endIndex || endIndex < 0))
           {
-          strcat(work,",");
-          }
-      
-       if (!Join(buffer,work,bufsize))
-          {
-          break;
+          if (strcmp(colour,"blue") == 0)
+             {
+             Nova2PHP_getlastupdate(ip->name,lastseen,sizeof(lastseen));
+             snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\", \"id\": \"%s\",\"lastseen\": \"%s\"},",ip->name,ip->classes,lastseen);
+             }
+          else
+             {
+             snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
+             }
+
+          if (!Join(buffer,work,bufsize))
+             {
+             break;
+             }
           }
        }
+    
+    ReplaceTrailingChar(buffer, ',', '\0');
 
-    EndJoin(buffer,"]",bufsize);
+    snprintf(work,sizeof(work),"],\"meta\":{\"count\":%d}}",counter);
+    Join(buffer,work,bufsize);
+    
     DeleteItemList(clist);
     }
 }
@@ -3077,11 +3090,6 @@ void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize)
 char *Nova_HostProfile(char *key)
 
 { static char buffer[CF_BUFSIZE];
-/*
- snprintf(buffer,CF_BUFSIZE,
-          "<table><tr><td><a href=\"/bundle/index/%s\">Bundles</a></td><td><a href=\"/welcome/classes/host/%s\">Classes</a></td></tr>"
-          "<tr><td><a href=\"/welcome/knowledge/topic/goals\">Goals</a></td><td><a href=\"/promise/index/%s\">Promises</a></td></tr></table>",key,key,key);
-*/
 
  snprintf(buffer,CF_BUFSIZE,
           "{\"hostkey\" : \"%s\", \"profiles\":[\"Bundles\",\"Classes\",\"Goals\",\"Promises\"]}",key);
