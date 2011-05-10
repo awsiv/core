@@ -37,7 +37,7 @@
                          }
                       ?>
                 <li><a href="<?php echo $noteUrl ?>" class="note" id="add_cmt">Notes</a></li>
-                <li> <?php echo anchor('visual/vitals/'.$hostkey,'vitals',array('id'=>'pulseNvitals')) ?></li>
+                <li> <?php echo anchor('visual/vital/'.$hostkey,'vitals',array('id'=>'pulseNvitals')) ?></li>
                 <p class="clearleft"></p>
             </ul>
         </div>

@@ -42,7 +42,8 @@ body {
 }
 
 .red {
-    background-color: #AA0000;
+    /*background-color: #AA0000;*/
+    background-color:#FF475B
 }
 
 
@@ -1337,6 +1338,11 @@ span.search input
  display: inline-block;
 }
 
+.coloriconinline
+{
+    padding:10px;
+}
+
 .pages{
     margin-bottom: 15px;
 }
@@ -1526,4 +1532,9 @@ span.search input
 
 #stylized form br {
 	clear:left; /* setting clear on inputs didn't work consistently, so brs added for degrade */
+}
+
+/*For coloured hoslist page */
+.hostlisttitle{
+    margin-bottom: 15px;
 }

@@ -140,6 +140,29 @@ class cf_table {
       return $this->CI->table->generate();
     }
 
+    function generateSingleColourHostTable($data,$type) {
+
+       $lnk="";
+       if($type=='blue'){
+         $this->CI->table->set_heading('hostname','last seen','pulse and vitals');
+       }else{
+          $this->CI->table->set_heading('hostname','promise not kept','pulse and vitals');
+       }
+ foreach ($data as $cols) {
+                //array_push($columns, img(array('src' => 'images/' . $type . '.png', 'class' => 'align')) . anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
+       if($type=='blue'){
+         $lnk=date('D F d h:m:s Y',$cols['lastseen']);
+       }else{
+          $lnk=anchor('search/index/report/Promises+not+kept+summary/host/'.$cols['key'],'view');
+       }
+           $this->CI->table->add_row(array(
+                  anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'),
+                  $lnk,
+                  anchor('visual/vital/' . $cols['key'], 'view', 'class="imglabel"'),
+                  ));
+         }
+     return $this->CI->table->generate();
+    }
 }
 
 ?>

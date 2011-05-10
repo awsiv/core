@@ -350,26 +350,34 @@ class Welcome extends Cf_Controller {
 
     function hosts($type) {
         $result = array();
+        $this->load->library('cf_table');
+        $getparams = $this->uri->uri_to_assoc(4);
+        $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : 20);
+        $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         switch ($type) {
             case "red":
-                $result = json_decode(cfpr_show_red_hosts(), true);
+                $result = json_decode(cfpr_show_red_hosts($rows,$page_number), true);
                 break;
             case "green":
-                $result = json_decode(cfpr_show_green_hosts(), true);
+                $result = json_decode(cfpr_show_green_hosts($rows,$page_number), true);
                 break;
             case "yellow":
-                $result = json_decode(cfpr_show_yellow_hosts(), true);
+                $result = json_decode(cfpr_show_yellow_hosts($rows,$page_number), true);
                 break;
             case "blue":
-                $result = json_decode(cfpr_show_blue_hosts(), true);
+                $result = json_decode(cfpr_show_blue_hosts($rows,$page_number), true);
                 break;
         }
 
-        $columns = array();
-        if (count($result) > 0) {
-            foreach ($result as $cols) {
-                array_push($columns, img(array('src' => 'images/' . $type . '.png', 'class' => 'align')) . anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
-            }
+       $table = "";
+       $count=$result['meta']['count'];
+        if ($count > 0) {
+            //foreach ($result as $cols) {
+                //array_push($columns, img(array('src' => 'images/' . $type . '.png', 'class' => 'align')) . anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
+            //array_push($columns,anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
+           // }
+          
+           $table= $this->cf_table->generateSingleColourHostTable($result['data'],$type);
         }
         $bc = array(
             'title' => "$type hosts",
@@ -380,8 +388,11 @@ class Welcome extends Cf_Controller {
         $data = array(
             'type' => $type,
             'title' => "Cfengine Mission Portal - " . $type . " hosts",
-            'tabledata' => $columns,
+            'tabledata' => $table,
             'breadcrumbs' => $this->breadcrumblist->display(),
+            'current' => $page_number,
+            'number_of_rows' => $rows,
+            'count'=>$count
         );
         $this->template->load('template', 'hosts', $data);
     }
