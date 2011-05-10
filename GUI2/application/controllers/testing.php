@@ -446,8 +446,6 @@ function license() {
     function topn()
     {
          print_r(json_decode(cfpr_top_n_hosts("compliance", 1000,10,1),true));
-        
-
     }
         
 }

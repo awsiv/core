@@ -153,6 +153,10 @@ p#userbox a{
     clear:both;
 }
 
+.floatleft
+{
+    float:left;
+}
 
 
 
@@ -903,23 +907,35 @@ span.search input
 
 #classList a.name
 {
-     width:70%;
+     width:75%;
      overflow:hidden;
 }
 
 #classList .action
 {
-    margin-left: 10px;
+    margin: 0 10px; 
+}
+
+#classList .btn
+{
+    background: none repeat scroll 0 0 #E7EED9;
+    border-radius: 10px 10px 10px 10px;
+    font-size: 10px;
+    padding: 2px 5px;
+    cursor: pointer;
 }
 
 #findmatchedhost
 {
+    background: none repeat scroll 0 0 #E7EED9;
+    border-radius: 3px 3px 3px 3px;
+    bottom: 5px;
+    color: #000000;
+    cursor: pointer;
+    padding: 5px;
     position: absolute;
-    right:50px;
-    bottom:10px;
-    background: #fff;
-    color:#000;
-    z-index:1;
+    right: 20px;
+    z-index: 1;
 }
 
 .alphasearch li
@@ -1374,6 +1390,54 @@ span.search input
 
 #bodyreport{
 
+}
+/*For host Viewer*/
+#hostviewgraph.graphcontainer
+{
+    padding:15px 10px;
+}
+
+
+#hostviewerbtn
+{
+    margin:0 auto;
+}
+#hostviewerbtn ul li
+{
+   margin:2%;
+}
+#hostviewerbtn.innerdiv,#monitoredjob.innerdiv,#statusmeasured.innerdiv
+{
+   margin:5px 5px 5px 15px;
+}
+#hostviewerbtn.innerdiv{
+   padding:0.4em
+}
+
+#hostviewerbtn .title
+{
+  padding-left: 1px;
+  margin-bottom: 40px;
+}
+
+#hostviewerrightpanes .innerdiv
+{
+    margin: 5px 10px 5px 0;
+}
+
+#findreport
+{
+    background: url("../images/report.png") no-repeat scroll 0 0 transparent;
+}
+
+#add_cmt
+{
+    background: url("../images/notes.png") no-repeat scroll 0 0 transparent;
+}
+
+#pulseNvitals
+{
+    background: url("../images/analysis.png") no-repeat scroll 0 0 transparent;
 }
 
 /* FOR KNOWLEDGE MAP */

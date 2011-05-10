@@ -136,8 +136,8 @@ loadpagebody:function(){
                                   $.each(data, function(i, val) {
                                         var li = $("<li>");
                                         $("<a>").text(val).attr({title:val, href:"/search/index/host/All/report/Class+profile/name/"+val}).addClass('name').appendTo(li);
-                                        $("<a>").text('View hosts').attr('href',"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').appendTo(li);
-                                         $("<a>").text('add to list').data('val',val).addClass('classadd').appendTo(li);
+                                        $("<a>").text('View hosts').attr('href',"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').addClass('btn').appendTo(li);
+                                         $("<a>").text('add to list').data('val',val).addClass('classadd').addClass('btn').appendTo(li);
                                         li.appendTo("#classList");
                                   });
           self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
