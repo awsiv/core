@@ -2293,8 +2293,6 @@ int Nova_ImportHostReports(char *filePath)
     return false;
     }
 
- printf("got: \"%s\" \"%s\" \"%s\" \"%s\" %ld %ld %ld\n", headerText, reportType, keyHash, validate, delta1, genTime, length);
-
  ctime_r(&genTime, buf);
  
  CfOut(cf_inform, "", " -> Importing Nova %s reports from host %s with timestamp %s", reportType, keyHash, buf);
