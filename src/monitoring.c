@@ -172,11 +172,10 @@ else
 
 /*****************************************************************************/
 
-void Nova_HistoryUpdate(char *timekey,struct Averages newvals)
-
+void Nova_HistoryUpdate(time_t time, const struct Averages *newvals)
 {
-  CF_DB *dbp;
-  char filename[CF_BUFSIZE];
+CF_DB *dbp;
+char filename[CF_BUFSIZE];
 
 if (LICENSES == 0)
    {
@@ -190,9 +189,9 @@ if (!OpenDB(filename,&dbp))
    return;
    }
 
-CfOut(cf_verbose,"","Storing %s values\n",timekey);
+//CfOut(cf_verbose,"","Storing %s values\n",);
 
-WriteDB(dbp,timekey,&newvals,sizeof(newvals));
+PutRecordForTime(dbp, time, newvals);
 
 CloseDB(dbp);
 }
@@ -1320,8 +1319,7 @@ return time + SECONDS_PER_SHIFT;
 
 /****************************************************************************/
 
-/* Returns true if entry was found, false otherwise */
-bool GetRecordForTime(CF_DB *db, time_t time, struct Averages *result)
+static void MakeTimekey(time_t time, char *result)
 {
 /* Generate timekey for database */
 struct tm tm;
@@ -1333,8 +1331,23 @@ snprintf(timekey, CF_MAXVARSIZE, "%d_%.3s_Lcycle_%d_%s",
          MONTH_TEXT[tm.tm_mon],
          (tm.tm_year + 1900) % 3,
          SHIFT_TEXT[tm.tm_hour / 6]);
+}
+
+/* Returns true if entry was found, false otherwise */
+bool GetRecordForTime(CF_DB *db, time_t time, struct Averages *result)
+{
+char timekey[CF_MAXVARSIZE];
+MakeTimekey(time, timekey);
 
 return ReadDB(db, timekey, result, sizeof(struct Averages));
+}
+
+void PutRecordForTime(CF_DB *db, time_t time, const struct Averages *values)
+{
+char timekey[CF_MAXVARSIZE];
+MakeTimekey(time, timekey);
+
+WriteDB(db, timekey, values, sizeof(struct Averages));
 }
 
 /****************************************************************************/

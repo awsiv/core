@@ -672,7 +672,7 @@ void Nova_AnalyseMag(char *keyhash,enum observables obs,char *buffer,int bufsize
 
 void Nova_GetClassName(int i,char *name,char *desc);
 void NovaInitMeasurements(void);
-void Nova_HistoryUpdate(char *key,struct Averages newvals);
+void Nova_HistoryUpdate(time_t time, const struct Averages *newvals);
 void Nova_UpdateShiftAverage(struct Averages *shift_value,struct Averages *newvals);
 void Nova_ResetShiftAverage(struct Averages *shift_value);
 double ShiftAverage(double new,double old);
@@ -696,6 +696,7 @@ time_t WeekBegin(time_t time);
 time_t SubtractWeeks(time_t time, int weeks);
 time_t NextShift(time_t time);
 bool GetRecordForTime(CF_DB *db, time_t time, struct Averages *result);
+void PutRecordForTime(CF_DB *db, time_t time, const struct Averages *values);
 double BoundedValue(double value, double defval);
 
 /* outputs.c */
