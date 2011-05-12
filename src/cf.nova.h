@@ -677,12 +677,7 @@ void Nova_UpdateShiftAverage(struct Averages *shift_value,struct Averages *newva
 void Nova_ResetShiftAverage(struct Averages *shift_value);
 double ShiftAverage(double new,double old);
 void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp);
-void Nova_LongHaul(char *day,char *month,char* lifecycle,char *shift);
-void NovaOpenNewLifeCycle(int age,FILE **fp);
-void NovaCloseLifeCycle(int age,FILE **fp);
-void NovaIncrementShift(char *day,char *month,char* lifecycle,char *shift);
-int NovaLifeCyclePassesGo(char *d,char *m,char *l,char *s,char *day,char *month,char* lifecycle,char *shift);
-int NovaGetNextDay(int day,char *month,int year);
+void Nova_LongHaul(time_t starttime);
 int NovaGetSlotHash(char *name);
 struct Item *NovaGetMeasurementStream(struct Attributes a,struct Promise *pp);
 struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp);
@@ -694,6 +689,14 @@ void Nova_LookupClassName(int n,char *name, char *desc);
 void Nova_SaveFilePosition(char *filename,long fileptr);
 long Nova_RestoreFilePosition(char *filename);
 void Nova_LookupAggregateClassName(int n,char *name,char *desc);
+
+/* - date-related functions - */
+
+time_t WeekBegin(time_t time);
+time_t SubtractWeeks(time_t time, int weeks);
+time_t NextShift(time_t time);
+bool GetRecordForTime(CF_DB *db, time_t time, struct Averages *result);
+double BoundedValue(double value, double defval);
 
 /* outputs.c */
 
@@ -1113,6 +1116,24 @@ void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int
 #define CF_HUB_HORIZON 900 // 15 mins
 #define CF_HUB_PURGESECS 604800  // one week
 
+/* Long-term monitoring constants */
+
+#define HOURS_PER_SHIFT 6
+
+#define SECONDS_PER_MINUTE 60
+#define SECONDS_PER_HOUR (60 * SECONDS_PER_MINUTE)
+#define SECONDS_PER_SHIFT (HOURS_PER_SHIFT * SECONDS_PER_HOUR)
+#define SECONDS_PER_DAY (24 * SECONDS_PER_HOUR)
+#define SECONDS_PER_WEEK (7 * SECONDS_PER_DAY)
+
+#define SHIFTS_PER_DAY 4
+
+#define SHIFTS_PER_WEEK (4*7)
+
+#define MONITORING_HISTORY_LENGTH_YEARS 3
+#define MONITORING_HISTORY_LENGTH_WEEKS (3*52)
+/* Not a real year, but a "monitoring year" */
+#define MONITORING_WEEKS_PER_YEAR 52
 
 /***************************************************************************/
 

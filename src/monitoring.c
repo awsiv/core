@@ -15,6 +15,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+/* Structs */
+
 struct CfMeasurement
    {
    char *path;
@@ -25,6 +27,10 @@ int MONITOR_RESTARTED = true;
 char *MEASUREMENTS[CF_DUNBAR_WORK];
 struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
 static char SLOTS[CF_OBSERVABLES-ob_spare][2][CF_MAXVARSIZE];
+
+/* Prototypes */
+
+static int NovaGetNextDay(int day, int month, int year);
 
 /*****************************************************************************/
 
@@ -331,15 +337,46 @@ chmod(filename,0600);
 
 /*****************************************************************************/
 
-void Nova_LongHaul(char *day,char *month,char* lifecycle,char *shift)
+static void NovaOpenNewLifeCycle(int age, FILE **fp)
+{
+int i;
+char filename[CF_MAXVARSIZE];
 
-{ int i, count = 0,this_lifecycle,ago, this;
-  char timekey[CF_MAXVARSIZE],timekey_now[CF_MAXVARSIZE];
-  char d[CF_TIME_SIZE],m[CF_TIME_SIZE],l[CF_TIME_SIZE],s[CF_TIME_SIZE];
-  char filename[CF_BUFSIZE];
-  struct Averages value;
-  FILE *fp[CF_OBSERVABLES];
-  CF_DB *dbp;
+Debug("OPEN YEAR %d\n",age);
+
+for (i = 0; i < CF_OBSERVABLES; i++)
+   {
+   sprintf(filename, "%s_%d.yr", OBS[i][0], age);
+
+   if ((fp[i] = fopen(filename,"w")) == NULL)
+      {
+      CfOut(cf_error,"fopen","Could not open %s\n",filename);
+      exit(1);
+      }
+   }
+}
+
+/*****************************************************************************/
+
+static void NovaCloseLifeCycle(int age, FILE **fp)
+{
+int i;
+
+Debug("CLOSE YEAR %d\n",age);
+
+for (i = 0; i < CF_OBSERVABLES; i++)
+   {
+   fclose(fp[i]);
+   }
+}
+
+/*****************************************************************************/
+
+void Nova_LongHaul(time_t current)
+{
+int y,i,j,k;
+char filename[CF_BUFSIZE];
+CF_DB *dbp;
 
 if (LICENSES == 0)
    {
@@ -353,119 +390,46 @@ if (!OpenDB(filename,&dbp))
    return;
    }
 
-snprintf(timekey_now,CF_MAXVARSIZE-1,"%s_%.3s_%s_%s",day,month,lifecycle,shift);
+time_t now = CFSTARTTIME;
+time_t w = SubtractWeeks(WeekBegin(now), MONITORING_HISTORY_LENGTH_WEEKS - 1);
 
-/* Graphs of the past 3 years, in order from 2 years ago */
+/* Graphs of the past MONITORING_HISTORY_LENGTH_YEARS */
 
-ago = 2;
-
-NovaOpenNewLifeCycle(ago,fp);
-strncpy(l,lifecycle,31);
-
-this_lifecycle = Str2Int(l+strlen("Lcycle_"));
-this = (this_lifecycle + 2 - ago) %3;
-snprintf(l,CF_TIME_SIZE-1,"Lcycle_%d",this);
-
-strncpy(s,shift,31);
-strncpy(d,day,31);
-strncpy(m,month,31);
-
-NovaIncrementShift(d,m,l,s);
-
-while(true)
+for (y = 0; y < MONITORING_HISTORY_LENGTH_YEARS; ++y)
    {
-   snprintf(timekey,CF_MAXVARSIZE-1,"%s_%s_%s_%s",d,m,l,s);
+   FILE *fp[CF_OBSERVABLES];
+   NovaOpenNewLifeCycle(MONITORING_HISTORY_LENGTH_YEARS - 1 - y, fp);
 
-   if (ReadDB(dbp,timekey,&value,sizeof(struct Averages)))
+   for (i = 0; i < MONITORING_WEEKS_PER_YEAR; ++i)
       {
-      for (i = 0; i < CF_OBSERVABLES;i++)
+      for (j = 0; j < SHIFTS_PER_WEEK && w <= now; ++j, w = NextShift(w))
          {
-         /* Check for out of bounds data */
-
-         if (value.Q[i].q < 0 && value.Q[i].q > CF_BIGNUMBER)
+         struct Averages av;
+         if (GetRecordForTime(dbp, w, &av))
             {
-            value.Q[i].q = 0;
+            for (k = 0; k < CF_OBSERVABLES; ++k)
+               {
+               double q = BoundedValue(av.Q[k].q, 0);
+               double var = BoundedValue(av.Q[k].var, q*q);
+               double expect = BoundedValue(av.Q[k].expect, q);
+               fprintf(fp[k], "%d %.2lf %.2lf %.2lf\n", j + SHIFTS_PER_WEEK*i,
+                       expect, sqrt(var), q);
+               }
             }
-
-         if (value.Q[i].var < 0 && value.Q[i].var > CF_BIGNUMBER)
+         else
             {
-            value.Q[i].var = value.Q[i].q;
+            for (k = 0; k < CF_OBSERVABLES; ++k)
+               {
+               fprintf(fp[k], "%d 0.00 0.00 0.00\n", j + SHIFTS_PER_WEEK*i);
+               }
             }
-
-         if (value.Q[i].expect < 0 && value.Q[i].expect > CF_BIGNUMBER)
-            {
-            value.Q[i].expect = value.Q[i].q;
-            }
-
-         fprintf(fp[i],"%d %.2lf %.2lf %.2lf\n",count,value.Q[i].expect,sqrt(value.Q[i].var),value.Q[i].q);
-         }
-      }
-   else
-      {
-      for (i = 0; i < CF_OBSERVABLES;i++)
-         {
-         fprintf(fp[i],"%d 0.00 0.00 0.00\n",count);
          }
       }
 
-   count++;
-
-   NovaIncrementShift(d,m,l,s);
-
-   Debug("TIMEKEY (%s)\n",timekey);
-
-   if (NovaLifeCyclePassesGo(d,m,l,s,day,month,lifecycle,shift))
-      {
-      NovaCloseLifeCycle(ago,fp);
-
-      if (ago--)
-         {
-         count = 0;
-         NovaOpenNewLifeCycle(ago,fp);
-         }
-      else
-         {
-         break;
-         }
-      }
+   NovaCloseLifeCycle(MONITORING_WEEKS_PER_YEAR - 1 - y, fp);
    }
 
 CloseDB(dbp);
-}
-
-/*****************************************************************************/
-
-void NovaOpenNewLifeCycle(int age,FILE **fp)
-
-{ int i;
-  char filename[CF_MAXVARSIZE];
-
-Debug("OPEN YEAR %d\n",age);
-
-for (i = 0; i < CF_OBSERVABLES; i++)
-   {
-   sprintf(filename,"%s_%d.yr",OBS[i][0],age);
-
-   if ((fp[i] = fopen(filename,"w")) == NULL)
-      {
-      CfOut(cf_error,"fopen","Could not open %s\n",filename);
-      exit(1);
-      }
-   }
-}
-
-/*****************************************************************************/
-
-void NovaCloseLifeCycle(int age,FILE **fp)
-
-{ int i;
-
-Debug("CLOSE YEAR %d\n",age);
-
-for (i = 0; i < CF_OBSERVABLES; i++)
-   {
-   fclose(fp[i]);
-   }
 }
 
 /*****************************************************************************/
@@ -717,162 +681,30 @@ return av;
 }
 
 /*****************************************************************************/
-
-void NovaIncrementShift(char *day,char *month,char* lifecycle,char *shift)
-
-{ int i,new;
-  int nday = 0, next_day, nyear = 0, lc = -1;
-
-sscanf(day,"%d",&nday);
-
-if (nday == 0)
-   {
-   CfOut(cf_error,"","Nova: Could not parse day string \"%s\"",day);
-   exit(1);
-   }
-
-sscanf(VYEAR,"%d",&nyear);
-
-if (nyear == 0)
-   {
-   CfOut(cf_error,"","Nova: Could not parse year \"%s\"",nyear);
-   exit(1);
-   }
-
-sscanf(lifecycle,"Lcycle_%d",&lc);
-
-if (lc == -1)
-   {
-   CfOut(cf_error,"","Nova: Could not parse lifecycle string \"%s\"",lifecycle);
-   exit(1);
-   }
-
-/* Start with fastest changing first */
-
-for (i = 0; true; i = (i+1)%4)
-   {
-   if (cf_strcmp(SHIFT_TEXT[i],shift) == 0)
-      {
-      new = (i+1)%4;
-
-      strncpy(shift,SHIFT_TEXT[new],CF_TIME_SIZE-1);
-
-      if (new >= i)
-         {
-         return;
-         }
-      else
-         {
-         break;
-         }
-      }
-   }
-
-next_day = NovaGetNextDay(nday,month,nyear);
-
-snprintf(day,CF_TIME_SIZE-1,"%d",next_day);
-
-if (next_day > nday)
-   {
-   return;
-   }
-
-for (i = 0; true; i = (i+1)%12)
-   {
-   if (cf_strncmp(MONTH_TEXT[i],month,strlen(month)) == 0)
-      {
-      new = (i+1)%12;
-
-      snprintf(month,CF_TIME_SIZE,"%.3s",MONTH_TEXT[new]);
-
-      if (new >= i)
-         {
-         return;
-         }
-      else
-         {
-         break;
-         }
-      }
-   }
-
-snprintf(lifecycle,CF_TIME_SIZE-1,"Lcycle_%d",(lc+1)%3);
-}
-
-/*****************************************************************************/
-
-int NovaLifeCyclePassesGo(char *d,char *m,char *l,char *s,char *day,char *month,char* lifecycle,char *shift)
-
-{
-if (cf_strcmp(d,day) != 0)
-   {
-   return false;
-   }
-
-if (cf_strcmp(m,month) != 0)
-   {
-   return false;
-   }
-
-if (cf_strcmp(s,shift) != 0)
-   {
-   return false;
-   }
-
-return true;
-}
-
-/*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
 
-int NovaGetNextDay(int day,char *month,int year)
+static int NovaGetNextDay(int day, int month, int year)
+{
+struct tm curday = { 0, 0, 0, day, month, year };
+struct tm nextday;
+time_t curtimestamp;
 
-{ static struct month_days md[12] =
-     {
-     {"January",31},
-     {"February",28},
-     {"March",31},
-     {"April",30},
-     {"May",31},
-     {"June",30},
-     {"July",31},
-     {"August",31},
-     {"September",30},
-     {"October",31},
-     {"November",30},
-     {"December",31}
-     };
-
- int ndays = 0,this_month;
-
-for (this_month = 0; this_month < 12; this_month++)
+if ((curtimestamp = mktime(&curday)) == (time_t)-1)
    {
-   if (cf_strncmp(md[this_month].m,month,strlen(month)) == 0)
-      {
-      ndays = md[this_month].d;
-      break;
-      }
+   FatalError("Nova: Internal error. Unable to convert date %02d.%02d.%04d to time_t.",
+              day, month, year);
    }
 
-if (ndays == 0)
+curtimestamp += SECONDS_PER_DAY; /* Next day */
+
+if (gmtime_r(&curtimestamp, &nextday) == NULL)
    {
-   FatalError("Nova - unrecognizable month");
+   FatalError("Nova: Internal error. Unable to convert time_t %ld to struct tm.",
+              (long)curtimestamp);
    }
 
-if ((cf_strcmp(md[this_month].m,"February") == 0) && (year % 4 == 0))
-   {
-   ndays++; /* leap years */
-   }
-
-if (day < ndays)
-   {
-   return day+1;
-   }
-else
-   {
-   return 1;
-   }
+return nextday.tm_mday;
 }
 
 /*****************************************************************************/
@@ -1448,3 +1280,73 @@ CloseDB(dbp);
 return fileptr;
 }
 
+/****************************************************************************/
+
+/*
+ * This function returns beginning of last Monday relative to 'time'. If 'time'
+ * is Monday, beginning of the same day is returned.
+ */
+time_t WeekBegin(time_t time)
+{
+struct tm tm;
+gmtime_r(&time, &tm);
+
+/* Move back in time to reach Monday. */
+
+time -= ((tm.tm_wday == 0 ? 6 : tm.tm_wday - 1) * SECONDS_PER_DAY);
+
+/* Move to the beginning of day */
+
+time -= tm.tm_hour * SECONDS_PER_HOUR;
+time -= tm.tm_min * SECONDS_PER_MINUTE;
+time -= tm.tm_sec;
+
+return time;
+}
+
+/****************************************************************************/
+
+time_t SubtractWeeks(time_t time, int weeks)
+{
+return time - weeks * SECONDS_PER_WEEK;
+}
+
+/****************************************************************************/
+
+time_t NextShift(time_t time)
+{
+return time + SECONDS_PER_SHIFT;
+}
+
+/****************************************************************************/
+
+/* Returns true if entry was found, false otherwise */
+bool GetRecordForTime(CF_DB *db, time_t time, struct Averages *result)
+{
+/* Generate timekey for database */
+struct tm tm;
+gmtime_r(&time, &tm);
+
+char timekey[CF_MAXVARSIZE];
+snprintf(timekey, CF_MAXVARSIZE, "%d_%.3s_Lcycle_%d_%s",
+         tm.tm_mday,
+         MONTH_TEXT[tm.tm_mon],
+         (tm.tm_year + 1900) % 3,
+         SHIFT_TEXT[tm.tm_hour / 6]);
+
+return ReadDB(db, timekey, result, sizeof(struct Averages));
+}
+
+/****************************************************************************/
+
+double BoundedValue(double value, double defval)
+{
+if (value < 0 || value > CF_BIGNUMBER)
+   {
+   return defval;
+   }
+else
+   {
+   return value;
+   }
+}

@@ -816,16 +816,15 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 /*****************************************************************************/
 
 void Nova_PackMonitorYear(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+{
+int i,j,k;
+char filename[CF_BUFSIZE];
+CF_DB *dbp;
+time_t now = CFSTARTTIME;
+bool header_displayed = false;
+/* Start with 3*52 - 1 weeks ago, so the 3*52th week is the current one */
+time_t w = SubtractWeeks(WeekBegin(now), 3*52-1);
 
-{ int i,count = 0,this_lifecycle,ago, this,first = true,nodate,showtime,slot,last_slot,now_slot;
-  char timekey[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
-  char d[CF_TIME_SIZE],m[CF_TIME_SIZE],l[CF_TIME_SIZE],s[CF_TIME_SIZE],om[CF_TIME_SIZE];
-  char *day = VDAY,*month=VMONTH,*lifecycle=VLIFECYCLE,*shift=VSHIFT;
-  double num[CF_OBSERVABLES],qav[CF_OBSERVABLES],varav[CF_OBSERVABLES],eav[CF_OBSERVABLES];
-  char filename[CF_BUFSIZE];
-  struct Averages value;
-  CF_DB *dbp;
-     
 CfOut(cf_verbose,""," -> Packing and compressing monitor 3 year data");
 
 snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_HISTORYDB);
@@ -836,142 +835,57 @@ if (!OpenDB(filename,&dbp))
    return;
    }
 
-/* Now we graphs of the past 3 years, in order from 2 years ago to now */
-
-ago = 2;
-
-// Data are stored in a modulo 3 year clock. When we collect data for presentation,
-// we always start from slot "now + 1" - 3 years and run to now. Each slot is a week
-// so 3 x 52 slots in total.
-
-// Data should be marshalled so that "now" is the last slot = 3x52-1
-
-strncpy(l,lifecycle,31);
-
-this_lifecycle = Str2Int(l+strlen("Lcycle_"));
-this = (this_lifecycle + 2 - ago) %3;
-snprintf(l,CF_TIME_SIZE-1,"Lcycle_%d",this);
-
-strncpy(s,shift,31);
-strncpy(d,day,31);
-strncpy(m,month,31);
-strncpy(om,month,31);
-
-NovaIncrementShift(d,m,l,s);
-
-for (i = 0; i < CF_OBSERVABLES;i++)
+for (i = 0; i < 3*52; ++i)
    {
-   num[i] = 0;
-   qav[i] = 0;
-   eav[i] = 0;
-   varav[i] = 0;
-   }
+   /* Collect data for a week */
 
-// Record now slot so we can offset now as time (0-- mod CF_YEAR_SLOTS)
+   bool have_data = false;
+   int num[CF_OBSERVABLES] = { 0 };
+   double q[CF_OBSERVABLES] = { 0.0 };
+   double var[CF_OBSERVABLES] = { 0.0 };
+   double e[CF_OBSERVABLES] = { 0.0 };
 
-last_slot = now_slot = Nova_YearSlot(d,m,l);
-
-while(true)
-   {
-   snprintf(timekey,CF_MAXVARSIZE-1,"%s_%s_%s_%s",d,m,l,s);
-   nodate = true;
-   
-   if ((slot = Nova_YearSlot(d,m,l)))
+   for (j = 0; j < 4*7 && w <= now; ++j, w = NextShift(w))
       {
-      if (ReadDB(dbp,timekey,&value,sizeof(struct Averages)))
-         {
-         if (slot != last_slot)
-            {
-            showtime = true;
-            
-            // Only print header if there are data and we have not already done it
-            
-            if (first)
-               {
-               first = false;
-               AppendItem(reply,header,NULL);
-               }
-            
-            if (nodate)
-               {
-               // Offset time so that "now" is the last element in the array
-               snprintf(buffer,CF_BUFSIZE,"T: %d\n",(slot-now_slot+CF_YEAR_SLOTS-1)%CF_YEAR_SLOTS);
-               AppendItem(reply,buffer,NULL);
-               nodate = false;
-               }  
-            }
-         else
-            {
-            showtime = false;
-            }
-         
-         for (i = 0; i < CF_OBSERVABLES;i++)
-            {
-            /* Check for out of bounds data */
-            
-            if (value.Q[i].q < 0 || value.Q[i].q > CF_BIGNUMBER)
-               {
-               value.Q[i].q = 0;
-               }
-            
-            if (value.Q[i].var < 0 || value.Q[i].var > CF_BIGNUMBER)
-               {
-               value.Q[i].var = value.Q[i].q;
-               }
-            
-            if (value.Q[i].expect < 0 || value.Q[i].expect > CF_BIGNUMBER)
-               {
-               value.Q[i].expect = value.Q[i].q;
-               }
-            
-            if (showtime)
-               {
-               num[i]++;
-               qav[i] += value.Q[i].q;
-               eav[i] += value.Q[i].expect;
-               varav[i] += value.Q[i].var;
-               
-               qav[i] /= num[i];
-               eav[i] /= num[i];
-               varav[i] /= num[i];
-               
-               if (value.Q[i].q > 0 && value.Q[i].expect > 0 && value.Q[i].var > 0)
-                  {
-                  snprintf(buffer,CF_BUFSIZE-1,"%d %.2lf %.2lf %.2lf\n",i,qav[i],eav[i],sqrt(varav[i]));
-                  AppendItem(reply,buffer,NULL);
-                  }
-               
-               last_slot = slot;
+      struct Averages av;
 
-               qav[i] = 0;
-               eav[i] = 0;
-               varav[i] = 0;
-               num[i] = 0;
-               }
-            else
-               {
-               qav[i] += value.Q[i].q;
-               eav[i] += value.Q[i].expect;
-               varav[i] += value.Q[i].var;
-               num[i]++;
-               }         
+      if (GetRecordForTime(dbp, w, &av))
+         {
+         have_data = true;
+         for (k = 0; k < CF_OBSERVABLES; ++k)
+            {
+            num[k]++;
+            q[k] += BoundedValue(av.Q[k].q, 0);
+            var[k] += BoundedValue(av.Q[k].var, q[k]*q[k]);
+            e[k] += BoundedValue(av.Q[k].expect, q[k]);
             }
          }
-      
-      count++;
+
+      w = NextShift(w);
       }
-   
-   NovaIncrementShift(d,m,l,s);
 
-   if (NovaLifeCyclePassesGo(d,m,l,s,day,month,lifecycle,shift))
+   /* Output it */
+
+   if (have_data && !header_displayed)
       {
-      if (ago--)
+      header_displayed = true;
+      AppendItem(reply, header, NULL);
+      }
+
+   if (have_data)
+      {
+      char buffer[CF_BUFSIZE];
+      snprintf(buffer, CF_BUFSIZE -1, "T: %d\n", i);
+      AppendItem(reply, buffer, NULL);
+
+      for (k = 0; k < CF_OBSERVABLES; ++k)
          {
-         count = 0;
-         }
-      else
-         {
-         break;
+         if (q[k] > 0 && var[k] > 0 && e[k] > 0)
+            {
+            snprintf(buffer, CF_BUFSIZE - 1, "%d %.2lf %.2lf %.2lf\n", k,
+                     q[k] / num[k], e[k] / num[k], sqrt(var[k] / num[k]));
+            AppendItem(reply, buffer, NULL);
+            }
          }
       }
    }
@@ -2160,32 +2074,6 @@ if (min_big < min_small && hour_big == hour_small && day_big == day_small
    }
 
 return true;
-}
-
-/*****************************************************************************/
-
-int Nova_YearSlot(char *day,char *month, char *lifecycle)
-
-{ static long days[] = {31,28,31,30,31,30,31,31,30,31,30,31};
-  int d = 0,m = 0,l = 0,weeks = 0, ds;
-
-// Year days up to the end of last month + day
- 
-sscanf(day,"%d",&d);
-l = Str2Int(lifecycle+strlen("Lcycle_"));
-  
-if ((m = (int)Month2Int(month)) < 1)
-   {
-   ds = 0 + d;
-   }
-else
-   {
-   ds = days[m-1] + d;
-   }
-
-weeks = ds / 7;
-
-return l*52 + weeks; // mod 3*52
 }
 
 /*****************************************************************************/
