@@ -849,11 +849,8 @@ CfOut(cf_error,"","This component is only used in commercial editions of the Cfe
 
 int ScheduleRun()
 
-{ time_t now;
-  char timekey[64];
-  struct Item *ip;
-  
-now = time(NULL);
+{
+struct Item *ip;
 
 if (EnterpriseExpiry(LIC_DAY,LIC_MONTH,LIC_YEAR,LIC_COMPANY)) 
   {
@@ -882,8 +879,6 @@ CfGetInterfaceInfo(cf_executor);
 Get3Environment();
 OSClasses();
 SetReferenceTime(true);
-snprintf(timekey,63,"%s",cf_ctime(&now)); 
-AddTimeClass(timekey); 
 ThreadUnlock(cft_system);
 
 for (ip = SCHEDULE; ip != NULL; ip = ip->next)
@@ -892,7 +887,7 @@ for (ip = SCHEDULE; ip != NULL; ip = ip->next)
 
    if (IsDefinedClass(ip->name))
       {
-      CfOut(cf_verbose,"","Waking up the agent at %s ~ %s \n",timekey,ip->name);
+      CfOut(cf_verbose,"","Waking up the agent at %s ~ %s \n",cf_ctime(&CFSTARTTIME),ip->name);
       return true;
       }
    }
