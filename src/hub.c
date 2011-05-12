@@ -563,12 +563,12 @@ else
 /* Command line options                                            */
 /*******************************************************************/
 
- char *ID = "The hub is a scheduler and aggregator for the CFDB knowledge\n"
-            "repository. It automatically schedules updates from clients\n"
-            "that have registered by previous connection.";
+const char *ID = "The hub is a scheduler and aggregator for the CFDB knowledge\n"
+                 "repository. It automatically schedules updates from clients\n"
+                 "that have registered by previous connection.";
 
  
- struct option OPTIONS[15] =
+const struct option OPTIONS[15] =
       {
       { "help",no_argument,0,'h' },
       { "debug",optional_argument,0,'d' },
@@ -584,7 +584,7 @@ else
       { NULL,0,0,'\0' }
       };
 
- char *HINTS[15] =
+const char *HINTS[15] =
       {
       "Print the help message",
       "Set debugging level 0,1,2,3",

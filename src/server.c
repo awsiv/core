@@ -18,7 +18,7 @@ struct Rlist *SERVER_KEYRING = NULL;
 
 /*****************************************************************************/
 
-void Nova_TranslatePath(char *new,char *old)
+void Nova_TranslatePath(char *new, const char *old)
 
 {
 if (strncmp(old,"/var/cfengine",strlen("/var/cfengine")) == 0)
