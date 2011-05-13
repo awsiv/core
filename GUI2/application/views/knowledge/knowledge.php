@@ -5,8 +5,10 @@
             <ul>
                 <li><a href="#tabs-1">Map</a></li>
                 <li><a href="#tabs-2">Leads</a></li>
-                <li><a href="#tabs-3">Same context</a></li>
-                <li><a href="#tabs-4">Sub topic</a></li>
+                <li><a href="#tabs-3">References</a></li>
+
+                <li><a href="#tabs-4">Same context</a></li>
+                <li><a href="#tabs-5">Sub topic</a></li>
             </ul>
 
             <div id="tabs-1" class="ui-corner-all">
@@ -21,16 +23,21 @@
             </div>
             <div id="tabs-2" class="ui-corner-all">
                 <?php
-                require_once('topics.php');
                 require_once('leads.php');
                 ?>
             </div>
             <div id="tabs-3" class="ui-corner-all">
                 <?php
+                require_once('topics.php');
+                ?>
+            </div>
+            
+            <div id="tabs-4" class="ui-corner-all">
+                <?php
                 require_once('category.php');
                 ?>
             </div>
-            <div id="tabs-4" class="ui-corner-all">
+            <div id="tabs-5" class="ui-corner-all">
                 <?php
                 require_once('subcategory.php');
                 ?>
