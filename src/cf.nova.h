@@ -1294,7 +1294,7 @@ struct cf_pscalar
 #define cfn_username "u"
 #define cfn_datetime "d"
 #define cfn_message "m"
-#define cfn_reporttype "t"
+#define cfn_reporttype "_t"
 
 /* cache collection */
 #define cfc_cachetype "ct"
