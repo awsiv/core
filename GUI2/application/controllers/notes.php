@@ -1,12 +1,13 @@
 <?php
+
 class Notes extends Cf_Controller {
+    
 
     function __construct() {
         parent::__construct();
+        $this->load->model('note_model');
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
-        
-        
     }
 
     function index() {
@@ -26,9 +27,14 @@ class Notes extends Cf_Controller {
         $this->data['reporttype'] = $reportType;
 
         if ($action == "show") {
-            $comments = (cfpr_query_note($hostkey, $nid, '', -1, -1));
-            $comments = utf8_encode($comments);
-            $this->data['data'] = json_decode($comments, TRUE);
+
+            $filter = array('hostname' => $hostkey,
+                'noteId' => $nid,
+                'userId' => NULL,
+                'dateFrom' => -1,
+                'dateTo' => -1
+            );
+            $this->data['data'] = $this->note_model->getAllNotes($filter);
             $this->data['form_url'] = '/notes/addnote';
         } else if ($action == "add") {
             $this->data['data'] = array();
@@ -52,11 +58,11 @@ class Notes extends Cf_Controller {
 
 
         if (trim($message) != null) {
-            $ret = cfpr_add_note($nid, $username, $date, $message);
+            $ret = $this->note_model->addNote($nid, $username, $date, $message);
 
-            // return the same view with comments
+// return the same view with comments
             if (!$ret) {
-                // SOMETHING WENT WRONG WHILE ADDITION
+// SOMETHING WENT WRONG WHILE ADDITION
                 $this->output->set_status_header('400', 'Cannot insert the note.');
                 echo $ret;
                 exit;
@@ -65,9 +71,14 @@ class Notes extends Cf_Controller {
             $this->data['updateMessage'] = "Cannot insert empty message.";
         }
 
-        $comments = (cfpr_query_note(NULL, $nid, '', -1, -1));
-        $comments = utf8_encode($comments);
-        $this->data['data'] = json_decode($comments, TRUE);
+        $filter = array('hostname' => NULL,
+            'noteId' => $nid,
+            'userId' => NULL,
+            'dateFrom' => -1,
+            'dateTo' => -1
+        );
+
+        $this->data['data'] = $this->note_model->getAllNotes($filter);
         $this->load->view('/notes/view_notes', $this->data);
         return;
     }
@@ -82,9 +93,9 @@ class Notes extends Cf_Controller {
         $date = strtotime("now");
         $ret = false;
         if (trim($message) != null) {
-            $ret = cfpr_new_note($keyhash, $rid, $report_type, $username, $date, $message);
+            $ret = $this->note_model->addNewNote($keyhash, $rid, $report_type, $username, $date, $message);
             if (!$ret) {
-                // SOMETHING WENT WRONG WHILE ADDITION
+// SOMETHING WENT WRONG WHILE ADDITION
                 $this->output->set_status_header('400', 'Cannot insert the note.');
                 echo $ret;
                 exit;
@@ -100,14 +111,17 @@ class Notes extends Cf_Controller {
 
         $this->data['form_url'] = '/notes/addnote';
 
-        $comments = (cfpr_query_note(NULL, $ret, '', -1, -1));
-        $comments = utf8_encode($comments);
+         $filter = array('hostname' => NULL,
+             'noteId'=>$ret,
+            'userId' => NULL,
+            'dateFrom' => -1,
+            'dateTo' => -1
+        );
 
-        $this->data['data'] = json_decode($comments, TRUE);
-        $this->load->view('/notes/view_notes', $this->data);
+        $this->data['data'] = $this->note_model->getAllNotes($filter);
 
         
-
+        $this->load->view('/notes/view_notes', $this->data);
     }
 
     function showNotes() {
@@ -124,12 +138,11 @@ class Notes extends Cf_Controller {
 
 
         if ($dateFrom && $dateFrom != -1) {
-            //we have a start date so set the end date as well
+//we have a start date so set the end date as well
             if ($dateTo == -1) {
                 $dateTo = time();
             }
         }
-
 
         $bc = array(
             'title' => 'Notes',
@@ -145,9 +158,14 @@ class Notes extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display()
         );
 
-        $comments = cfpr_query_note($hostFilter, $noteId, $userId, $dateFrom, $dateTo);
-        $comments = utf8_encode($comments);
-        $data['data'] = json_decode($comments, TRUE);
+        $filter = array('hostname' => $hostFilter,
+            'userId' => $userId,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo
+        );
+
+        $comments = $this->note_model->getAllNotes($filter);
+        $data['data'] = $comments;
         $this->template->load('template', '/notes/show_notes', $data);
     }
 

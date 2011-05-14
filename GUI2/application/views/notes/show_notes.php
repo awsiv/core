@@ -24,24 +24,26 @@
                     </form>
                 </div>
             </div>
-            <div class="tables" style="overflow:auto; height: 250px;">
+            <div class="tables" style="overflow:auto; height: 350px;">
                 <table id="notes-table">
                     <thead>
                         <tr>
                             <th>User</th>
                             <th>Date</th>
                             <th>Message</th>
+                            <th>Report Type</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($data)) {
                             ?>
-                            <?php foreach ($data['data'] as $index => $d) {
+                            <?php foreach ($data as $notes) {
                                 ?>
                                 <tr>
-                                    <td><?php echo $d['user']; ?></td>
-                                    <td><?php echo date('D F d h:m:s Y', $d['date']); ?></td>
-                                    <td><?php echo $d['message']; ?></td>
+                                    <td><?php echo $notes->getuserId(); ?></td>
+                                    <td><?php echo $notes->getDate(); ?></td>
+                                    <td><?php echo $notes->getMessage(); ?></td>
+                                    <td><?php echo $notes->getReportType(); ?></td>
                                 </tr>
                             <?php } ?>
                         <?php } else {
