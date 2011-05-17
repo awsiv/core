@@ -90,14 +90,26 @@ $(document).ready(function() {
 	   
 	   
 	   //load policies from database into left hand side panel on list with id Policies_list
-	var path = "cfeditor/get_list";
+	/*var path = "cfeditor/get_list";
 	$("#container_policies_id").load(path,{dir: 'policies'}, function(data){	
 	});
 	
 	$('ul#policies_list_new li a').live('click',function(){
         openfile($(this).attr('rel'),$(this).attr('id'));
         $('#'+$(this).attr('id')).hide('slow');
-	});
+	});*/
+
+        $('#container_policies_id').fileTree({
+        root: '',
+        script: '/cfeditor/get_list',
+        expandSpeed: 1000,
+        collapseSpeed: 1000,
+        multiFolder: false
+        }, function(node) {
+            openfile(node.path,node.id);
+            $('#'+node.id).hide('slow');
+           // alert(node.path+" "+node.id);
+        });
 	
 	function addTab(op) {
 		var tab_title = tab_title_input || 'Tab '+tab_counter;
@@ -175,8 +187,8 @@ $(document).ready(function() {
 	 var tabtype=$("input[name='tabtype']",tab_id).val();
 	 var link=$("input[name='link']",tab_id).val();
 	 var agent=jQuery.uaMatch(navigator.userAgent).browser;
-     var tab_title=$('a',$(this).parent()).html();
-     var presrevelinespace;
+        var tab_title=$('a',$(this).parent()).html();
+        var presrevelinespace;
 	 var newcontents;
 	 if(tabtype=='codeEditor')//if the tab is of type editor and it should complete couple of things befor closing.
 	 {
@@ -197,10 +209,11 @@ $(document).ready(function() {
 		 }
 		 if(file_type!=undefined)//tab is old so update necessary things
 		 {
+                     var filepath=$('#'+link).attr('rel');
 			 $.ajax({
 			        type: "POST",
 			        url: "cfeditor/compare_contents",
-			        data:({'file':tab_title,'newcontents':newcontents,'agent':agent}),
+			        data:({'file':filepath,'newcontents':newcontents,'agent':agent}),
 			        dataType:'json',
 			        global: false,
 			        success: function(data){
@@ -221,8 +234,7 @@ $(document).ready(function() {
 				        
 			        }
 			 });
-			 $('#'+link).show('fast');
-			
+			 $('#'+link).show('fast');	
 		 }
 		 else//tab is new so dispay dialog before closing
 		 {

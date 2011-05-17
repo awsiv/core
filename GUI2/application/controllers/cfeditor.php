@@ -16,6 +16,7 @@
 	// 'injected_item'=>'<link href="'.get_cssdir().'jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />'
 		 );
    $this->carabiner->css('cfeditor.css');
+    $this->carabiner->js('jqueryFileTree.js');
    $this->load->view('cfeditor/Cfeditor',$data);
    }
    
@@ -36,17 +37,26 @@
    
    function get_list()
    {
-    echo "<ul id=\"policies_list_new\" class=\"jqueryFileTree\">";
-	    if(file_exists(get_policiesdir().$this->session->userdata('username').'/') ) {
-	    $files = scandir(get_policiesdir().$this->session->userdata('username').'/');
+      $path=$this->input->post('dir')?$this->input->post('dir'): get_policiesdir().$this->session->userdata('username').'/';
+      $inconttext=basename($path);
+      echo "<ul id=\"policies_list_new\" class=\"jqueryFileTree\">";
+	    if(file_exists( $path) ) {
+	    $files = scandir( $path);
 	    natcasesort($files);
-		if( count($files) > 2 ) { 
+		if( count($files) > 2 ) {
+                 // All dirs
+		foreach( $files as $file ) {
+			if( file_exists( $path . $file) && $file != '.' && $file != '..'&&$file != '.svn' && is_dir( $path. $file) ) {
+				echo "<li class=\"directory collapsed\"><a href=\"#\" rel=\"" . htmlentities( $path.$file) . "/\">" . htmlentities($file) . "</a></li>";
+			}
+		}
+		// All files
 			// All files
 			$i=1;
 			foreach( $files as $file ) {
-				if( file_exists(get_policiesdir().$this->session->userdata('username').'/' . $file) && $file != '.' && $file != '..' && !is_dir(get_policiesdir() . $this->session->userdata('username').'/'.$file) ) {
+				if( file_exists( $path.$file) && $file != '.' && $file != '..' && !is_dir( $path.$file) ) {
 					$ext = preg_replace('/^.*\./', '', $file);
-					echo "<li class=\"file ext_$ext\"><a href=\"#\" rel=\"".htmlentities(get_policiesdir().$this->session->userdata('username').'/' . $file) . "\" id=\"policy_".$i."\">" . htmlentities($file) .  "</a></li>";
+					echo "<li class=\"file ext_$ext\"><a href=\"#\" rel=\"".htmlentities( $path.$file) . "\" id=\"$inconttext"."_policy_".$i."\">" . htmlentities($file) .  "</a></li>";
 					$i++;
 				}
 			}
@@ -155,7 +165,8 @@
    function compare_contents()
    {
    	    $status="unchanged";
-  		$file_path=get_policiesdir().$this->session->userdata('username').'/'.$this->input->post('file');
+  		//$file_path=get_policiesdir().$this->session->userdata('username').'/'.$this->input->post('file');
+               $file_path=$this->input->post('file');
 		$contents = file_get_contents($file_path);
 
                 $newcontents=str_replace('\\\\', '\\' , $_POST['newcontents']);
