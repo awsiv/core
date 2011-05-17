@@ -5,7 +5,7 @@
 ?>
          
      <div id="body" class="outerdiv grid_12">
-                <div class="innerdiv tables">
+                <div id="colorhostlist"class="innerdiv tables">
                     <p class="hostlisttitle">
                     <span class="<?php echo $type.'host'?> coloriconinline"></span><span class="title"><?php echo $type?> hosts</span>
                     </p>

@@ -1,0 +1,479 @@
+/* 
+    Document   : cfeditor
+    Created on : May 17, 2011, 4:54:22 PM
+    Author     : user
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+body {
+    background: url("../images/icons/bg_tile.png") repeat-x scroll 0 0 #A5ACA2;
+    font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    line-height: 16px;
+    /*text-shadow: white 0px 1px 0px;*/
+}
+
+#header
+{
+    color:#fff;
+}
+#header p,ul
+{
+margin:0
+}
+
+#header_left .sitetitle
+{
+    font-size: 21px;
+    text-transform: uppercase;
+    margin-top: 20px;
+}
+
+p#userbox{
+    background: url("../images/logged_in_as.png") no-repeat scroll 0 7px transparent;
+    float: right;
+    margin-top:10px;
+    padding: 5px 0 0 18px;
+    font-size: 14px;
+
+}
+
+p#userbox a{
+    color: #CEAC0F;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.completions {
+        border: 1px solid black;
+        z-index: 10;
+        overflow: hidden;
+      }
+      .completions select {
+        outline: none;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        background-color: white;
+        font-family: monospace;
+        font-size: 80%;
+      }
+      .CodeMirror-wrapping {
+        border-top: 1px solid #911;
+        border-bottom: 1px solid #911;
+        padding: 3px;
+      }
+      .CodeMirror-line-numbers {
+        margin: 0;
+        padding: 0;
+        padding-top: 3px;
+        margin-right: .4em;
+        width: 2.2em;
+        color: #aaa;
+        text-align: right;
+        padding-right: .3em;
+        font-size: 10pt;
+        font-family: monospace;
+	  }
+
+	  .CodeMirror-line-numbers div
+	  {
+		 font-size: 10pt;
+		 line-height:normal;
+	  }
+
+
+	  #leftPanel
+{
+	height:400px;
+	width:250px;
+}
+
+.ui-layout-toggler-west-open { background: url(/images/toggle-lt.gif) no-repeat center right; }
+.ui-layout-toggler-west-closed {background: url(/images/toggle-lt-open.gif) no-repeat center right;}
+
+#rightPanel
+{
+	
+}
+
+#syntax_check_area
+{
+	background:#ffffff;
+	width:95%;
+	height:200px;
+	margin-top:50px;
+}
+
+
+
+#Policies
+{
+	background:#e8eaf9;
+	margin-left:15px;
+	width:225px;
+	margin-top:25px;
+	-moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+
+}
+
+#Policies .title
+{
+  color:#333331;
+  text-align:center;
+  font-size:16px;
+  font-family:Verdana, Geneva, sans-serif;
+  padding:5px 5px 5px 5px;
+}
+
+#menu
+{
+	background:#fff;
+	margin-left:15px;
+	width:225px;
+	margin-top:25px;
+	-moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+	padding-top:10px;
+}
+.menuitem
+{
+ font-size:14px;
+ font-family:Verdana, Geneva, sans-serif;
+ padding:1px 5px 1px 10px;
+ display:block;
+}
+
+.icontext
+{
+vertical-align:middle;
+}
+
+#menu a
+{
+  font-size:16px;
+  font-family:Verdana, Geneva, sans-serif;
+  padding:1px 5px 1px 10px;
+  display:block;
+}
+#help-panel .links
+{
+	margin-top:5px;
+}
+
+#menu .shortcuts
+{
+	margin-top:10px;
+}
+#help-panel .results
+{
+	padding:5px;
+	border:solid 1px #a7a7a7;
+}
+
+#menu .shortcuts span
+{
+	display:block;
+	font:11px Verdana, Geneva, sans-serif;
+	padding:2px;
+	margin-left:5px;
+}
+#menu .links span
+{
+	display:block;
+	color:#176ba9;
+	font:12px Verdana, Geneva, sans-serif;
+	padding:2px;
+	margin-left:5px;
+}
+
+#help-panel .results span
+{
+	text-decoration:none;
+	display:block;
+	font:11px Verdana, Geneva, sans-serif;
+	padding:2px;
+}
+
+.ui-icon-close {
+cursor:pointer;
+float:left;
+margin:0.4em 0.2em 0 0;
+}
+
+.ui-corner-bottom
+{
+	-moz-border-radius: 0px 8px 8px 8px;
+    -webkit-border-radius: 0px 8px 8px 8px;
+}
+
+#tabs
+{
+	font-size:11px;
+	border:none;
+	padding:0;
+	width:95%;
+	-moz-border-radius: 8px;
+       -webkit-border-radius: 8px;
+       background: transparent;
+}
+
+#tabs ul
+{
+	border:none;
+	padding:0;
+}
+
+#tabs ul.ui-widget-header
+{
+    background:none;
+}
+
+#tabs div
+{
+	background:#ffffff;
+}
+
+/*for save dialog*/
+#dialog,.dialog
+{
+	font-size:12px;
+}
+div.ui-dialog-buttonpane,.dialog.ui-dialog-buttonpane
+{
+	font-size:12px;
+}
+#dialog label, #dialog input,.dialog label,.dialog input { display:block; }
+#dialog label,.dialog label { margin-top: 0.5em; }
+#dialog input, #dialog textarea,.dialog input,.dialog textarea { width: 95%; }
+
+/*for left side pane list*/
+#policies_list
+{
+	margin:5px 0 0 20px;
+	padding:0;
+	list-style:none;
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:12px;
+	color:#333331;
+
+}
+
+#policies_list li
+{
+	padding:2px 2px;
+}
+
+#policies_list li a
+{
+	text-decoration:none;
+}
+
+#sfdialog
+{
+	font-size:14px;
+}
+
+#confirmation
+{
+	font-size:14px;
+}
+
+#footer
+{
+	color:#9AD38F;
+	text-align:center;
+	font-family:Verdana, Geneva, sans-serif;
+}
+
+#spinner
+{
+	z-index:10;
+}
+
+#repoText
+{
+	z-index:5;
+	color:#fff;
+	cursor:pointer;
+
+	text-align:center;
+}
+
+#repoText span
+{
+ color:#fff;
+ padding-left:2px;
+ padding-right:2px;
+ padding-bottom:1px;
+}
+
+
+#usedRepo
+{
+	text-align:center;
+}
+
+#usedRepo span
+{
+	color:#000;
+	font:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+    padding:4px;
+	background:#E8EAF9;
+
+}
+
+/* file list browser css*/
+UL.jqueryFileTree {
+	font-family: Verdana, sans-serif;
+	font-size: 11px;
+	line-height: 18px;
+	padding: 0px;
+	margin: 0px;
+}
+
+UL.jqueryFileTree LI {
+	list-style: none;
+	padding: 0px;
+	padding-left: 20px;
+	margin: 0px;
+	white-space: nowrap;
+}
+
+UL.jqueryFileTree A {
+	color: #333;
+	text-decoration: none;
+	display: block;
+	padding: 0px 2px;
+}
+
+UL.jqueryFileTree A:hover {
+	background: #BDF;
+}
+
+/* Core Styles */
+.jqueryFileTree LI.directory { background: url(../Images/directory.png) left top no-repeat; }
+.jqueryFileTree LI.expanded { background: url(../Images/folder_open.png) left top no-repeat; }
+.jqueryFileTree LI.file { background: url(../images/file.png) left top no-repeat; }
+.jqueryFileTree LI.wait { background: url(../Images/spinner.gif) left top no-repeat; }
+/* File Extensions*/
+.jqueryFileTree LI.ext_3gp { background: url(../Images/film.png) left top no-repeat; }
+.jqueryFileTree LI.ext_afp { background: url(../Images/code.png) left top no-repeat; }
+.jqueryFileTree LI.ext_afpa { background: url(../Images/code.png) left top no-repeat; }
+.jqueryFileTree LI.ext_asp { background: url(../Images/code.png) left top no-repeat; }
+.jqueryFileTree LI.ext_aspx { background: url(../Images/code.png) left top no-repeat; }
+.jqueryFileTree LI.ext_avi { background: url(../Images/film.png) left top no-repeat; }
+.jqueryFileTree LI.ext_bat { background: url(../Images/application.png) left top no-repeat; }
+.jqueryFileTree LI.ext_bmp { background: url(../Images/picture.png) left top no-repeat; }
+.jqueryFileTree LI.ext_c { background: url(../Images/code.png) left top no-repeat; }
+.jqueryFileTree LI.ext_cfm { background: url(../Images/code.png) left top no-repeat; }
+.jqueryFileTree LI.ext_cgi { background: url(../Images/code.png) left top no-repeat; }
+.jqueryFileTree LI.ext_com { background: url(../Images/application.png) left top no-repeat; }
+.jqueryFileTree LI.ext_cpp { background: url(../Images/code.png) left top no-repeat; }
+.jqueryFileTree LI.ext_css { background: url(../Images/css.png) left top no-repeat; }
+.jqueryFileTree LI.ext_doc { background: url(../Images/doc.png) left top no-repeat; }
+.jqueryFileTree LI.ext_exe { background: url(../Images/application.png) left top no-repeat; }
+.jqueryFileTree LI.ext_gif { background: url(../Images/picture.png) left top no-repeat; }
+.jqueryFileTree LI.ext_fla { background: url(../Images/flash.png) left top no-repeat; }
+.jqueryFileTree LI.ext_h { background: url(../Images/code.png) left top no-repeat; }
+.jqueryFileTree LI.ext_htm { background: url(../Images/html.png) left top no-repeat; }
+.jqueryFileTree LI.ext_html { background: url(../Images/html.png) left top no-repeat; }
+.jqueryFileTree LI.ext_jar { background: url(../Images/java.png) left top no-repeat; }
+.jqueryFileTree LI.ext_jpg { background: url(../Images/picture.png) left top no-repeat; }
+.jqueryFileTree LI.ext_jpeg { background: url(../Images/picture.png) left top no-repeat; }
+.jqueryFileTree LI.ext_js { background: url(../Images/script.png) left top no-repeat; }
+.jqueryFileTree LI.ext_lasso { background: url(../Images/code.png) left top no-repeat; }
+.jqueryFileTree LI.ext_log { background: url(../images/txt.png) left top no-repeat; }
+.jqueryFileTree LI.ext_m4p { background: url(../Images/music.png) left top no-repeat; }
+.jqueryFileTree LI.ext_mov { background: url(../Images/film.png) left top no-repeat; }
+.jqueryFileTree LI.ext_mp3 { background: url(../Images/music.png) left top no-repeat; }
+.jqueryFileTree LI.ext_mp4 { background: url(../Images/film.png) left top no-repeat; }
+.jqueryFileTree LI.ext_mpg { background: url(../Images/film.png) left top no-repeat; }
+.jqueryFileTree LI.ext_mpeg { background: url(../Images/film.png) left top no-repeat; }
+.jqueryFileTree LI.ext_ogg { background: url(../Images/music.png) left top no-repeat; }
+.jqueryFileTree LI.ext_pcx { background: url(../Images/picture.png) left top no-repeat; }
+.jqueryFileTree LI.ext_pdf { background: url(../Images/pdf.png) left top no-repeat; }
+.jqueryFileTree LI.ext_php { background: url(../Images/php.png) left top no-repeat; }
+.jqueryFileTree LI.ext_png { background: url(../Images/picture.png) left top no-repeat; }
+.jqueryFileTree LI.ext_ppt { background: url(../Images/ppt.png) left top no-repeat; }
+.jqueryFileTree LI.ext_psd { background: url(../Images/psd.png) left top no-repeat; }
+.jqueryFileTree LI.ext_pl { background: url(../Images/script.png) left top no-repeat; }
+.jqueryFileTree LI.ext_py { background: url(../Images/script.png) left top no-repeat; }
+.jqueryFileTree LI.ext_rb { background: url(../Images/ruby.png) left top no-repeat; }
+.jqueryFileTree LI.ext_rbx { background: url(../Images/ruby.png) left top no-repeat; }
+.jqueryFileTree LI.ext_rhtml { background: url(../Images/ruby.png) left top no-repeat; }
+.jqueryFileTree LI.ext_rpm { background: url(../Images/linux.png) left top no-repeat; }
+.jqueryFileTree LI.ext_ruby { background: url(../Images/ruby.png) left top no-repeat; }
+.jqueryFileTree LI.ext_sql { background: url(../Images/db.png) left top no-repeat; }
+.jqueryFileTree LI.ext_swf { background: url(../Images/flash.png) left top no-repeat; }
+.jqueryFileTree LI.ext_tif { background: url(../Images/picture.png) left top no-repeat; }
+.jqueryFileTree LI.ext_tiff { background: url(../Images/picture.png) left top no-repeat; }
+.jqueryFileTree LI.ext_txt { background: url(../Images/txt.png) left top no-repeat; }
+.jqueryFileTree LI.ext_vb { background: url(../Images/code.png) left top no-repeat; }
+.jqueryFileTree LI.ext_wav { background: url(../Images/music.png) left top no-repeat; }
+.jqueryFileTree LI.ext_wmv { background: url(../Images/film.png) left top no-repeat; }
+.jqueryFileTree LI.ext_xls { background: url(../Images/xls.png) left top no-repeat; }
+.jqueryFileTree LI.ext_xml { background: url(../Images/code.png) left top no-repeat; }
+.jqueryFileTree LI.ext_zip { background: url(../Images/zip.png) left top no-repeat; }
+
+small
+{
+	font-size:10px;
+}
+#drilldown
+{
+	background:url(../images/drilldown.png) center no-repeat;
+	text-align:center;
+	color:#fff;
+	font-family:DejaVuSans,Arial, Helvetica, sans-serif;
+	width:191;
+	margin:0 auto;
+	display:block;
+	width:191px;
+	padding-bottom:5px;
+    padding-top:2px;
+	cursor:pointer;
+}
+
+/* cfengine speicfic keywords */
+#bundle,#classcontext,#bodyname
+{
+	color:#3000ff;
+	font-weight:bold;
+}
+
+#handle,#promiser,#promisee
+{
+	color:#AA0000;
+	font-weight:bold;
+}
+
+#file
+{
+	color:#008F0A;
+}
+
+.lnsendmail
+{
+	margin-top:-5px;
+	margin-right:5px;
+}
+
+#subheading
+{
+color:#73B169;
+}
+#subheading b
+{
+font-weight:bold;
+}
+

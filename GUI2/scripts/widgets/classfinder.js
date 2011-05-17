@@ -6,7 +6,6 @@ $.widget('ui.classfinder',
             defaultbehaviour:true,
             width:700,
             height:600
-
           },
 _init: function(){
 		
@@ -136,9 +135,11 @@ loadpagebody:function(){
                                   $.each(data, function(i, val) {
                                         var li = $("<li>");
                                         $("<a>").text(val).attr({title:val, href:"/search/index/host/All/report/Class+profile/name/"+val}).addClass('name').appendTo(li);
+                                        if(self.options.defaultbehaviour){
                                         $("<a>").text('View hosts').attr('href',"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').addClass('btn').appendTo(li);
                                          $("<a>").text('add to list').data('val',val).addClass('classadd').addClass('btn').appendTo(li);
-                                        li.appendTo("#classList");
+                                        }
+                                       li.appendTo("#classList");
                                   });
           self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
           self.dialogcontent.find("#classList").delegate('a.classadd','click',$.proxy(self.addclassfilter,self));
@@ -151,7 +152,8 @@ classSelected:function(event){
        if(!self.options.defaultbehaviour)
           {
              event.preventDefault();
-             self._trigger("complete",null,{selectedclass:sender.text()})
+             self.dialogcontent.dialog('close')
+             self._trigger("complete",null,{selectedclass:sender.text()});
           }
        else{
            //event.preventDefault();

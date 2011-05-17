@@ -37,7 +37,7 @@
              $this->table->clear();
        }
       $pg = paging($current,$number_of_rows,$result['meta']['count'],10);
-      echo $report_result .'<br />';
+     // echo $report_result .'<br />';
       //echo json_last_error();
      // print_r($result);
       //print_r($heading);

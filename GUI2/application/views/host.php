@@ -7,7 +7,7 @@
 				$free = cfpr_get_variable($hostkey,"mon","av_diskfree");
 				$speed = cfpr_get_network_rate($hostkey);
 			  ?>
-<div class="outerdiv">
+<div id="hostview" class="outerdiv">
     <div class="innerdiv">
 			<?php $report = cfpr_summarize_notkept($hostkey,NULL,NULL,NULL,NULL);?>
               <p class="title">Promises not kept in the past week</p>
@@ -17,7 +17,10 @@
                       $tableData = json_decode($report,true);
                       if (is_array($tableData)) {
                       echo  $this->cf_table->generateReportTable($tableData);
-                      } else echo "No data found";
+                      } else
+                      {
+                          echo "<span class=\"nodata\">No Data Found</span>";
+                      }
                       ?>
                       </div>
      </div>
@@ -48,7 +51,7 @@
                 $nlist = cfpr_report_class_frequency($hostkey,"mXC.*");
                 ?>
                 <p>Total number under surveillance:<?php echo $number?><p>
-                <p>On this host: <?php echo $nlist?></p> <!--proble, with varaibale nlist--> 
+                <p>On this host: <?php echo $nlist?></p> <!--proble, with varaibale nlist-->
        </div>
 
          <div id="statusmeasured" class="innerdiv ">

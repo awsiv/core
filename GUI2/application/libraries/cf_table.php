@@ -144,22 +144,31 @@ class cf_table {
 
        $lnk="";
        if($type=='blue'){
-         $this->CI->table->set_heading('hostname','last seen','pulse and vitals');
+         $this->CI->table->set_heading('hostname','last seen','vitals');
        }else{
-          $this->CI->table->set_heading('hostname','promise not kept','pulse and vitals');
+          $this->CI->table->set_heading('hostname','Action');
        }
  foreach ($data as $cols) {
                 //array_push($columns, img(array('src' => 'images/' . $type . '.png', 'class' => 'align')) . anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
        if($type=='blue'){
          $lnk=date('D F d h:m:s Y',$cols['lastseen']);
-       }else{
-          $lnk=anchor('search/index/report/Promises+not+kept+summary/host/'.$cols['key'],'view');
-       }
-           $this->CI->table->add_row(array(
+         $cell2=array('data' => $lnk, 'class' => 'datecol');
+         $cell3=array('data' => anchor('visual/vital/' . $cols['key'], ' ', array('title' => 'pulse and vitals','class'=>'vitalsbtn')), 'class' => 'actioncol');
+         $this->CI->table->add_row(array(
                   anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'),
-                  $lnk,
-                  anchor('visual/vital/' . $cols['key'], 'view', 'class="imglabel"'),
+                  $cell2,
+                  $cell3
                   ));
+       }else{
+          $lnk=anchor('search/index/report/Promises+not+kept+summary/host/'.$cols['key'],' ',array('title' => 'promises not kept','class'=>'promisesnotkeptbtn'))
+               .anchor('visual/vital/' . $cols['key'], ' ', array('title' => 'pulse and vitals','class'=>'vitalsbtn'));
+          $cell = array('data' => $lnk, 'class' => 'actioncol');
+          $this->CI->table->add_row(array(
+                  anchor('welcome/host/' . $cols['key'], $cols['id'], 'class=""'),
+                  $cell,
+                  ));
+          
+       }
          }
      return $this->CI->table->generate();
     }

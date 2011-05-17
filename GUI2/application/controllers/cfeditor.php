@@ -12,9 +12,10 @@
    {
    $data=array(
          'title'=>"Cfengine Mission Portal - Policy editor",
-         'title_header'=>"Policy editor",
-		 'injected_item'=>'<link href="'.get_cssdir().'jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />'
+        // 'title_header'=>"Policy editor",
+	// 'injected_item'=>'<link href="'.get_cssdir().'jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />'
 		 );
+   $this->carabiner->css('cfeditor.css');
    $this->load->view('cfeditor/Cfeditor',$data);
    }
    
@@ -22,8 +23,8 @@
    //controller function to see if the session have been previously checked out or not
    function is_checked_out()
    {
-    if(file_exists(get_policiesdir().session_id().'/') ) {
-			$files = scandir(get_policiesdir().session_id().'/');
+    if(file_exists(get_policiesdir().$this->session->userdata('username').'/') ) {
+			$files = scandir(get_policiesdir().$this->session->userdata('username').'/');
 			natcasesort($files);
 		    if( count($files) > 2 ) {
 			 $checked = true;	
@@ -36,16 +37,16 @@
    function get_list()
    {
     echo "<ul id=\"policies_list_new\" class=\"jqueryFileTree\">";
-	    if(file_exists(get_policiesdir().session_id().'/') ) {
-	    $files = scandir(get_policiesdir().session_id().'/');
+	    if(file_exists(get_policiesdir().$this->session->userdata('username').'/') ) {
+	    $files = scandir(get_policiesdir().$this->session->userdata('username').'/');
 	    natcasesort($files);
 		if( count($files) > 2 ) { 
 			// All files
 			$i=1;
 			foreach( $files as $file ) {
-				if( file_exists(get_policiesdir().session_id().'/' . $file) && $file != '.' && $file != '..' && !is_dir(get_policiesdir() . session_id().'/'.$file) ) {
+				if( file_exists(get_policiesdir().$this->session->userdata('username').'/' . $file) && $file != '.' && $file != '..' && !is_dir(get_policiesdir() . $this->session->userdata('username').'/'.$file) ) {
 					$ext = preg_replace('/^.*\./', '', $file);
-					echo "<li class=\"file ext_$ext\"><a href=\"#\" rel=\"".htmlentities(get_policiesdir().session_id().'/' . $file) . "\" id=\"policy_".$i."\">" . htmlentities($file) .  "</a></li>";
+					echo "<li class=\"file ext_$ext\"><a href=\"#\" rel=\"".htmlentities(get_policiesdir().$this->session->userdata('username').'/' . $file) . "\" id=\"policy_".$i."\">" . htmlentities($file) .  "</a></li>";
 					$i++;
 				}
 			}
@@ -58,7 +59,7 @@
    function clear_dir()
    {
 	   $this->load->helper('directory');
-	   $ret=deleteAll(get_policiesdir().session_id().'/',true);
+	   $ret=deleteAll(get_policiesdir().$this->session->userdata('username').'/',true);
 	   echo $ret;
    }
    
@@ -81,7 +82,7 @@
 	        'username' =>  $this->input->post('user'),
 			'password' => $password,
 			'repository' => $this->input->post('repo'),
-			'workingdir' => get_policiesdir().session_id()
+			'workingdir' => get_policiesdir().$this->session->userdata('username')
 			);
 	$this->load->library('cfsvn',$params);
     $data=$this->cfsvn->cfsvn_checkout();
@@ -90,7 +91,7 @@
    
    function commit()
    {
-     $working_dir=get_policiesdir().session_id();
+     $working_dir=get_policiesdir().$this->session->userdata('username');
      if(!$this->input->post('file'))
 		 {
          $working_dir=$working_dir.'/'.$this->input->post('file');
@@ -113,7 +114,7 @@
      $params=array(
 	        'username' =>  $this->input->post('user'),
 			'password' => $password,
-			'workingdir' => get_policiesdir().session_id()
+			'workingdir' => get_policiesdir().$this->session->userdata('username')
 			);   
 	 $this->load->library('cfsvn',$params);
      $cdetails=$this->cfsvn->cfsvn_update();
@@ -154,7 +155,7 @@
    function compare_contents()
    {
    	    $status="unchanged";
-  		$file_path=get_policiesdir().session_id().'/'.$this->input->post('file');
+  		$file_path=get_policiesdir().$this->session->userdata('username').'/'.$this->input->post('file');
 		$contents = file_get_contents($file_path);
 
                 $newcontents=str_replace('\\\\', '\\' , $_POST['newcontents']);
@@ -180,7 +181,7 @@
  
    function save_contents()
    {
-		$working_dir = get_policiesdir().session_id();
+		$working_dir = get_policiesdir().$this->session->userdata('username');
 		if(!file_exists($working_dir))
 		  {
 			mkdir($working_dir,0700);
@@ -244,7 +245,7 @@
    
    function check_syntax()
    {
-	$path=get_policiesdir().session_id().'/promises.cf';
+	$path=get_policiesdir().$this->session->userdata('username').'/promises.cf';
 	if(file_exists($path))
 		 $result=cfpr_validate_policy($path);
 	else

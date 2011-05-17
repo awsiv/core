@@ -1,12 +1,11 @@
-<link href="<?php echo get_cssdir()?>jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />
-<div class="pagepanel">
- <div class="panelhead withpdfbtn">
-   <span class="text"><?php echo $report_title?></span>
-  <a href="<?php echo $report_link?>"><img src="<?php echo get_imagedir()?>icon_pdf.png" class="floatRight"></a>
-   <a href="<?php echo $email_link?>" id="send_mail"><img src="<?php echo get_imagedir()?>emailsend.png" class="floatRight lnsendmail"></a>
-   <div class="clearboth"></div>
- </div>
-   <div class="panelcontent">
+
+<div id="bodyreport" class="outerdiv">
+    <div id="reportpanel" class="innerdiv">
+                      <p class="title"><?php echo $report_title ?></p>
+     <div class="reporthead">
+       <a href="<?php echo $report_link ?>" class="icons pdf"></a>
+       <a href="<?php echo $email_link ?>" id="send_mail" class="icons email"></a>
+     </div>
      <div class="tables">
       <?php
        $result = json_decode($report_result,true);

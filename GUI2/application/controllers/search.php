@@ -43,7 +43,7 @@ class Search extends Cf_Controller {
         $host = isset($getparams['host']) ? urldecode($getparams['host']): $this->input->post('host');
         $hours_deltafrom = isset($getparams['hours_deltafrom']) ? $getparams['hours_deltafrom'] : $this->input->post('hours_deltafrom');
         $hours_deltato = isset($getparams['hours_deltato']) ? $getparams['hours_deltato'] : $this->input->post('hours_deltato');
-        $class_regex = isset($getparams['class_regex']) ? $getparams['class_regex'] : $this->input->post('class_regex');
+        $class_regex = isset($getparams['class_regex']) ? urldecode($getparams['class_regex']) : $this->input->post('class_regex');
         $hosts_only = isset($getparams['hosts_only']) ? $getparams['hosts_only'] : $this->input->post('hosts_only');
         $state = isset($getparams['state']) ? $getparams['state'] : $this->input->post('state');
 

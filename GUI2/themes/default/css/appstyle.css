@@ -1,7 +1,7 @@
 /* 
     Document   : appstyle
     Created on : Mar 17, 2011, 5:44:51 PM
-    Author     : user
+    Author     : cfengine
     Description:
         Purpose of the stylesheet follows.
 */
@@ -895,6 +895,23 @@ span.search input
     list-style: none;
 }
 
+.result li.smartTextBox-elem
+{
+  border:none;
+  padding:0;
+  width:auto;
+}
+.result li.smartTextBox-box-elem
+{
+    padding:0 5px;
+    background:#50574d;
+}
+
+.result li.smartTextBox-elem-box-focus
+{
+    background:#3d453a;
+}
+
 .result li a
 {
     display:inline-block;
@@ -1409,6 +1426,9 @@ span.search input
 
 }
 /*For host Viewer*/
+#hostview .innerdiv p{
+    padding-left: 10px;
+}
 #hostviewgraph.graphcontainer
 {
     padding:15px 10px;
@@ -1425,7 +1445,7 @@ span.search input
 }
 #hostviewerbtn.innerdiv,#monitoredjob.innerdiv,#statusmeasured.innerdiv
 {
-   margin:5px 5px 5px 15px;
+   margin:5px 5px 5px 10px;
 }
 #hostviewerbtn.innerdiv{
    padding:0.4em
@@ -1455,6 +1475,15 @@ span.search input
 #pulseNvitals
 {
     background: url("../images/analysis.png") no-repeat scroll 0 0 transparent;
+}
+.nodata
+{
+   background: url("../images/no_data_button.png") no-repeat scroll 0 0 transparent;
+   padding:40px;
+   display: inline-block;
+   font-size: 2em;
+   margin-left: 10px;
+   padding: 19px 0 19px 60px;
 }
 
 /* FOR KNOWLEDGE MAP */
@@ -1544,4 +1573,188 @@ span.search input
 /*For coloured hoslist page */
 .hostlisttitle{
     margin-bottom: 15px;
+}
+
+.promisesnotkeptbtn
+{
+    background: url("../images/not_kept_button.png") no-repeat scroll 0 0 transparent;
+    padding:10px;
+    padding:10px 15px;
+    display:inline-block;
+}
+
+.vitalsbtn
+{
+   background: url("../images/vitals_button.png") no-repeat scroll 0 0 transparent;
+   padding:10px 15px;
+   display:inline-block;
+}
+
+.actioncol
+{
+  width:60px;
+}
+.datecol
+{
+  width:190px;
+}
+
+#colorhostlist th,td
+{
+    border:none;
+}
+#colorhostlist.tables tr td
+{
+    border-left: none;
+    border-right:none;
+}
+
+.ui-widget-content a.help
+{
+    color:#fff;
+}
+/*
+ * SmartTextBox.css
+ *
+ * SmartTextBox default styles
+ * 
+ */
+
+.smartTextBox{
+	font: 12px "Lucida Grande",
+	Verdana;
+	cursor: text;
+        background: #fff;
+}
+
+.smartTextBox-items{
+	zoom: 1;
+	overflow: hidden;
+	margin: 0;
+	padding: 3px 4px 0;
+	border: 1px solid #999;
+	*padding-bottom: 3px;
+}
+
+.smartTextBox-elem{
+	list-style-type: none;
+	line-height: 18px;
+	float: left;
+	display: block;
+	padding: 0;
+	margin: 0 5px 3px 0;
+	cursor: default;
+}
+
+.smartTextBox-box-elem{
+	position: relative;
+	padding: 0 5px;
+	border: 1px solid #CAD8F3;
+	background: #DEE7F8;
+	cursor: default;
+	-moz-border-radius: 9px;
+	-webkit-border-radius: 9px;
+	border-radius: 9px;
+}
+
+.smartTextBox-input-elem{
+	backgound-color : transparent;
+}
+
+.smartTextBox-input-elem-valueInput{
+	border: none;
+}
+
+.smartTextBox-elem-hover{
+
+}
+
+.smartTextBox-elem-box-hover{
+	background-color: #BBCEF1;
+}
+
+.smartTextBox-elem-input-hover{
+
+}
+
+.smartTextBox-elem-focus{
+
+}
+
+.smartTextBox-elem-box-focus{
+	background-color: #598BEC;
+}
+
+.smartTextBox-elem-input-focus{
+
+}
+
+.smartTextBox-elem-valueContainer{
+	margin-right: 8px;
+	white-space: nowrap;
+}
+
+.smartTextBox-elem-deleteButton{
+	position: absolute;
+	right: 4px;
+	top: 6px;
+	display: block;
+	width: 7px;
+	height: 7px;
+	font-size: 1px;
+	background: url('images/close.gif');
+}
+
+.smartTextBox-elem-deleteButton:hover{
+	border: none;
+	background-position: 7px;
+	text-decoration: none;
+}
+
+
+
+/* AutoComplete */
+.smartTextBox-autocomplete{
+	position: absolute;
+	z-index: 10;
+}
+
+.smartTextBox-autocomplete-placeholder{
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+	background: #eee;
+	border: 1px solid #999;
+	border-top: none;
+	padding: 5px 7px;
+}
+
+.smartTextBox-autocomplete-results{
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+	background: #eee;
+	border: 1px solid #999;
+	border-top: none;
+	margin: 0;
+	padding: 0;
+}
+
+.smartTextBox-autocomplete-result{
+	margin: 0;
+	padding: 5px;
+	list-style-type: none;
+	background: #eee;
+	cursor: pointer;
+	.width: 100%;
+}
+
+.smartTextBox-autocomplete-value {
+	display: none;
+}
+
+.smartTextBox-autocomplete-highligh {
+	font-weight: bold;
+}
+
+.smartTextBox-autocomplete-result-focus{
+	background: #C6D9E4;
 }

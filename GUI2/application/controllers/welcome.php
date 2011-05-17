@@ -300,7 +300,8 @@ class Welcome extends Cf_Controller {
             array('widgets/hostfinder.js'),
             array('widgets/classfinder.js'),
             array('widgets/policyfinder.js'),
-            array('widgets/reportfinder.js')
+            array('widgets/reportfinder.js'),
+            array('SmartTextBox.js')
         );
 
         $jsIE = array('jit/Extras/excanvas.js');

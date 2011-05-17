@@ -1,18 +1,18 @@
-<div class="pagepanel">
+<div class="outerdiv">
           		
-
+    <div class="innerdiv">
 <!--<p><?php  echo "Logged in: $username" ; ?>&nbsp;<a href="<?php echo site_url('auth/logout'); ?>">Logout</a></p>-->
-    <ul class="admin_menu">
-        <li class="current"><a href="<?php echo site_url('auth/index');?>">Users</a></li>
-        <li><a href="<?php echo site_url('auth/manage_group');?>">Groups</a></li>
-        <li>Settings</li>
-    </ul>
-    <div class="holder">
-        <div id="admin_content" class="tables">
-        <?php  include 'user_list.php';?>
+        <ul class="admin_menu">
+            <li class="current"><a href="<?php echo site_url('auth/index');?>">Users</a></li>
+            <li><a href="<?php echo site_url('auth/manage_group');?>">Groups</a></li>
+            <li>Settings</li>
+        </ul>
+        <div class="holder">
+            <div id="admin_content" class="tables">
+            <?php  include 'user_list.php';?>
+            </div>
         </div>
-    </div>
-    <div class="clearleft"> </div>
+     </div>
 </div>
 <script src="<?php echo get_scriptdir()?>jquery.form.js" type="text/javascript"></script>
 <script type="text/javascript">

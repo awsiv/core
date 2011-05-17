@@ -10,7 +10,7 @@ class Auth extends Controller {
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->library(array('ion_auth','ion_auth','form_validation','breadcrumb','breadcrumblist'));
+		$this->load->library(array('ion_auth','ion_auth','form_validation','breadcrumb','breadcrumblist','carabiner','onlineUsers'));
                 //list of errors wrapped in <p> class of errors
                 $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
 		//$this->load->database();
@@ -37,8 +37,8 @@ class Auth extends Controller {
 			//$identifier=$this->config->item('identity','ion_auth');
  
                         $this->data['title']="Cfengine Mission Portal - Admin";
-                        $this->data['title_header']="Admin";
-                        $this->data['admin']="current";
+                        //$this->data['title_header']="Admin";
+                        //$this->data['admin']="current";
 			$this->data['username'] = $this->session->userdata('username');
 			$this->data['message'] = (validation_errors()) ? '<p class="error">'.validation_errors().'</p>' : $this->session->flashdata('message');
 			//list the users
@@ -51,7 +51,7 @@ class Auth extends Controller {
                         }
                         else
                         {
-                        //$this->template->load('template', 'auth/index',$this->data);
+                       // $this->template->load('template', 'auth/index',$this->data);
                         redirect($this->config->item('base_url'), 'refresh');
                         }
 		}

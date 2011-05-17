@@ -112,124 +112,21 @@ function autocomplete($report_data, $column) {
  * @return string html
  * @author sudhir
  */
-function host_only_table($data_array) {
-    $table = "";
-    $cells = array();
 
-    if (count($data_array) > 0) {
-        foreach ($data_array as $cols) {
-            //$keys = array_keys($cols); if key valuesupplied in format{"key":"","id":""}
-            array_push($cells, anchor('welcome/host/' . $cols['hostkey'], $cols['hostname'], 'class="imglabel"'));
-            //use first key as param and second key as text as keys tend to change like key or hostkey, hostname or id etc
-           // array_push($cells, anchor('welcome/host/' . $cols[1], $cols[0], 'class="imglabel"') . anchor('visual/vital/' . $cols[1], "View vitals", 'class="viewvitalslnk"'));
-        }
+function getonlineusernames()
+    {
+       $onlineuser=array();
+        $CI = get_instance();
+        $CI->load->library(array('mongo_db','ion_auth'));
+        $result=$CI->mongo_db->get('onlineusers');
+         foreach ($result as  $docs) {
+            $obj=(object)$docs;
+            $user=$CI->ion_auth->get_user($obj->user_id);
+            array_push($onlineuser, $user->username);
+           //var_dump($user);
+         }
+       return $onlineuser;
     }
-    if (count($cells) > 0) {
-        $table.="<table><tr>";
-        for ($i = 0; $i < count($cells); $i++) {
-            if ($i % 6 == 0 && $i != 0) {
-                $table.='</tr><tr>';
-            }
-            $table.='<td>' . $cells[$i] . '</td>';
-        }
-        $table.="</tr></table>";
-    } else {
-        $table.="<table><tr><td>No Host Found !!!</td></tr></table>";
-    }
-    return $table;
-}
-
-function object_to_array($object) {
-    if (!is_object($object) && !is_array($object)) {
-        return $object;
-    }
-    if (is_object($object)) {
-        $object = get_object_vars($object);
-    }
-    return array_map('object_to_array', $object);
-}
-
-function create_json_node_for_report_control() {
-    $CI = get_instance();
-    $CI->load->library('reportnode');
-    $node = array(
-        'id' => 'node0',
-        'name' => 'report name',
-        'data' => array(),
-        'children' => array()
-    );
-
-    $reportcategories = array("compliance" => array(), "profile" => array(), "software" => array(), "promise logs" => array(), "file logs" => array());
-    $reports = json_decode(cfpr_select_reports(".*", 100));
-
-    foreach ($reports as $report) {
-        switch ($report) {
-            case "Bundle profile":
-            case "Business value report":
-            case "Compliance by promise":
-                array_push($reportcategories['compliance'], $report);
-                break;
-
-            case "Variables":
-            case "Class profile":
-            case "Last saw hosts":
-            case "Performance":
-                array_push($reportcategories['profile'], $report);
-                break;
-
-            case "Software installed":
-            case "Patches available":
-            case "Patch status":
-                array_push($reportcategories['software'], $report);
-
-                break;
-            case "Promises repaired log":
-            case "Promises repaired summary":
-            case "Promises not kept log":
-            case "Promises not kept summary":
-            case "Compliance summary":
-                array_push($reportcategories['promise logs'], $report);
-                break;
-
-            case "File change log":
-            case "File change diffs":
-            case "Setuid/gid root programs":
-                array_push($reportcategories['file logs'], $report);
-                break;
-        }
-    }
-
-    //print_r($reportcategories);
-    $node['id'] = 'reports';
-    $node['name'] = 'reports';
-    $node['data'] = array('$type' => 'none');
-    $rootnode = $CI->reportnode->createnode($node);
-    $i = 0;
-    foreach ($reportcategories as $category => $reports) {
-        $node['name'] = $category;
-        $node['id'] = $category;
-
-        $node['data'] = array(
-            'description' => 'bla bla',
-            'color' => '#fefefe',
-            'hover-in' => '#dd3333',
-        );
-        $parent = $CI->reportnode->createnode($node);
-        foreach ($reports as $report) {
-
-            $node['id'] = 'node' . $i;
-            $node['name'] = $report;
-            $child = $CI->reportnode->createnode($node);
-            array_push($parent->children, $child);
-            $i++;
-        }
-        array_push($rootnode->children, $parent);
-    }
-    // var_dump($rootnode);
-    $array = object_to_array($rootnode);
-    //print_r($array);
-    return json_encode($array);
-}
 
 /**
  * Formats a timestamp and then gives it a color code
