@@ -72,40 +72,25 @@ class Welcome extends Cf_Controller {
             'isRoot' => false
         );
 
-        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/Extras/excanvas.js"></script><![endif]-->
-            ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'graphs/host-meter.js"> </script>
-                    ',
-            '<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />
-             ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.js"> </script>
-                ',
-            'pie' => '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'flot/jquery.flot.pie.js"> </script>',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportscontrol.js"> </script>',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . '/widgets/notes.js"> </script>',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . '/jquery.curvycorners.packed.js"> </script>',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'reportcontrol2.js"> </script>');
 
-        $this->template->set('injected_item', implode("", $scripts));
+        $requiredjs = array(
+            array('jit/jit-yc.js'),
+            array('flot/jquery.flot.js'),
+            array('flot/jquery.flot.pie.js'),
+            array('/widgets/notes.js')
+        );
+
+        $jsIE = array('jit/Extras/excanvas.js');
+        $this->carabiner->group('iefix', array('js' => $jsIE));
+        $this->carabiner->js($requiredjs);
+
+
 
         $this->breadcrumb->setBreadCrumb($bc);
-        //$reports = json_decode(cfpr_select_reports(".*", 100));
-        //$goals=cfpr_list_business_goals();
+        $reports = json_decode(cfpr_select_reports(".*", 100));
+        
         $data = array(
             'title' => "Cfengine Mission Portal-engineering status",
-            //'title_header' => "engineering status",
-            //'nav_text' => "Status : hosts",
-            //'status' => "current",
-            //'ret1' => cfpr_getlicense_owner(),
-            //'all' => cfpr_count_all_hosts(),
-            //'r' => cfpr_count_red_hosts(),
-            //'y' => cfpr_count_yellow_hosts(),
-            //'g' => cfpr_count_green_hosts(),
-            //'jsondata' => $this->_get_jsondata_for_report_control(cfpr_select_reports(".*", 100)),
-            //'jsondata2' => create_json_node_for_report_control(),
-            //'allreps' => array_combine($reports, $reports),
-            //'allSppReps' => cfpr_cdp_reportnames(),
             'breadcrumbs' => $this->breadcrumblist->display(),
             'goals' => json_decode(cfpr_list_business_goals())
         );
@@ -118,7 +103,7 @@ class Welcome extends Cf_Controller {
 
         // compliance summary meter
         $envList = cfpr_environments_list();
-
+        
         //$envListArray = json_decode($envList);
 
         $data['envList'] = $envList;
@@ -321,7 +306,7 @@ class Welcome extends Cf_Controller {
             'r' => cfpr_count_red_hosts(),
             'y' => cfpr_count_yellow_hosts(),
             'g' => cfpr_count_green_hosts(),
-            'b' => cfpr_count_blue_hosts() 
+            'b' => cfpr_count_blue_hosts()
         );
 
         // Summary meter for host
@@ -357,28 +342,28 @@ class Welcome extends Cf_Controller {
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         switch ($type) {
             case "red":
-                $result = json_decode(cfpr_show_red_hosts($rows,$page_number), true);
+                $result = json_decode(cfpr_show_red_hosts($rows, $page_number), true);
                 break;
             case "green":
-                $result = json_decode(cfpr_show_green_hosts($rows,$page_number), true);
+                $result = json_decode(cfpr_show_green_hosts($rows, $page_number), true);
                 break;
             case "yellow":
-                $result = json_decode(cfpr_show_yellow_hosts($rows,$page_number), true);
+                $result = json_decode(cfpr_show_yellow_hosts($rows, $page_number), true);
                 break;
             case "blue":
-                $result = json_decode(cfpr_show_blue_hosts($rows,$page_number), true);
+                $result = json_decode(cfpr_show_blue_hosts($rows, $page_number), true);
                 break;
         }
 
-       $table = "";
-       $count=$result['meta']['count'];
+        $table = "";
+        $count = $result['meta']['count'];
         if ($count > 0) {
             //foreach ($result as $cols) {
-                //array_push($columns, img(array('src' => 'images/' . $type . '.png', 'class' => 'align')) . anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
+            //array_push($columns, img(array('src' => 'images/' . $type . '.png', 'class' => 'align')) . anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
             //array_push($columns,anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
-           // }
-          
-           $table= $this->cf_table->generateSingleColourHostTable($result['data'],$type);
+            // }
+
+            $table = $this->cf_table->generateSingleColourHostTable($result['data'], $type);
         }
         $bc = array(
             'title' => "$type hosts",
@@ -393,7 +378,7 @@ class Welcome extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display(),
             'current' => $page_number,
             'number_of_rows' => $rows,
-            'count'=>$count
+            'count' => $count
         );
         $this->template->load('template', 'hosts', $data);
     }
@@ -463,11 +448,10 @@ class Welcome extends Cf_Controller {
     }
 
     function weakest_host() {
-       
+
         $requiredjs = array(
             array('jit/jit-yc.js'),
             array('graphs/host-meter.js'),
-            
         );
         $this->carabiner->js('jquery.tablesorter.min.js');
         $this->carabiner->js('picnet.jquery.tablefilter.js');
@@ -485,25 +469,25 @@ class Welcome extends Cf_Controller {
             'isRoot' => false,
         );
         $this->breadcrumb->setBreadCrumb($bc);
-       
 
-        $gdata = cfpr_top_n_hosts("compliance", 1000,$rows,$page_number);
+
+        $gdata = cfpr_top_n_hosts("compliance", 1000, $rows, $page_number);
         $ret = array();
         if ($gdata) {
             $ret = json_decode($gdata, TRUE);
-            foreach ($ret['data'] as $index=>$val) {
+            foreach ($ret['data'] as $index => $val) {
                 $rawData = cfpr_host_meter($val['key']);
                 $graphData = $this->_convert_summary_compliance_graph($rawData);
                 $ret['data'][$index] = array_merge($ret['data'][$index], $graphData);
-                }
+            }
         }
 
         $data = array(
             'title' => "Cfengine Mission Portal - weakest hosts ",
             'ret' => $ret,
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'current' =>  $page_number,
-            'number_of_rows'=>$rows
+            'current' => $page_number,
+            'number_of_rows' => $rows
         );
         $this->template->load('template', 'topN', $data);
     }
@@ -540,6 +524,7 @@ class Welcome extends Cf_Controller {
     }
 
     function classes($key = NULL) {
+        $this->carabiner->js('jquery.tablesorter.min.js');
         $hostkey = $key;
         $name = ".*";
         $regex = 1;
@@ -576,8 +561,8 @@ class Welcome extends Cf_Controller {
             'title' => "Cfengine Mission Portal - classes ",
             'nav_text' => "show : body",
             'status' => "current",
-            'allbodies' => json_decode(utf8_encode(cfpr_list_bodies(".*", $type)),TRUE),
-            'def' => json_decode(utf8_encode(cfpr_get_promise_body($body, $type)),TRUE),
+            'allbodies' => json_decode(utf8_encode(cfpr_list_bodies(".*", $type)), TRUE),
+            'def' => json_decode(utf8_encode(cfpr_get_promise_body($body, $type)), TRUE),
             'type' => $type
         );
         $this->template->load('template', 'body', $data);

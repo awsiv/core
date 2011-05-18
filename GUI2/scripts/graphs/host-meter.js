@@ -11,7 +11,6 @@ var hostMeter  = {
         //and that as of today iPhone/iPad current text support is lame
         this.options.labelType = (!nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
         this.options.nativeTextSupport = this.options.labelType == 'Native';
-        this.options.useGradients = nativeCanvasSupport;
         this.options.animate = !(iStuff || !nativeCanvasSupport);
     },
     _init: function() {
@@ -44,7 +43,7 @@ var hostMeter  = {
     options: { // initial values are stored in the widget's prototype
         data: '',
         labelType:'',
-        useGradients:'',
+        useGradients:false,
         nativeTextSupport:'',
         animate:'',        
         barChartOptions : {

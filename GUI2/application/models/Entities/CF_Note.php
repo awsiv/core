@@ -1,6 +1,6 @@
 <?php
 class CF_Note {
-    
+
     var $host;
     var $noteId;
     var $userId;
@@ -8,16 +8,15 @@ class CF_Note {
     var $message;
     var $report;
     var $date;
-
-     var $reportTypeMap = array(
-        '1' => 'CFREPORT_HOST',
-        '2' => 'CFREPORT_REPAIRED',
-        '3' => 'CFREPORT_PRSUMMARY',
-        '4' => 'CFREPORT_PERFORMANCE',
-        '5' => 'CFREPORT_VALUE',
-        '6' => 'CFREPORT_FILECHANGES',
-        '7' => 'CFREPORT_BUNDLE',
-        '8' => 'CFREPORT_NOTKEPT'
+    var $reportTypeMap = array(
+        '1' => 'Hosts',
+        '2' => 'Promise repaired log',
+        '3' => 'Promises repaired summary',
+        '4' => 'Performance',
+        '5' => 'Business Value Report',
+        '6' => 'File Change Log',
+        '7' => 'Bundle Profile',
+        '8' => 'Promise Not Kept Log'
     );
 
     function __construct($params=array()) {
@@ -45,5 +44,7 @@ class CF_Note {
     function getReportType() {
         return $this->reportTypeMap[$this->reportType];
     }
+
 }
+
 ?>
