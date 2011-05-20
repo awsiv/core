@@ -43,11 +43,11 @@ $(document).ready(function() {
 		var code_editor_counter=0;//previously 1
 		var tab_title_input="Untitled-";
 		var tab_content_input="";
-		var current_tab_content="";
+		
 		var current_tab_title="";
 		var current_tab_index="";
 		var current_tab_id="tabs-1";
-		var cur_file_path="";
+	
 		$title_element="";
 		var closetabs=false;
 		var closetabindex="";
@@ -106,8 +106,26 @@ $(document).ready(function() {
         collapseSpeed: 1000,
         multiFolder: false
         }, function(node) {
-            openfile(node.path,node.id);
-            $('#'+node.id).hide('slow');
+
+      var alreadyloaded=false;
+           //check to see the file is already open in the tab
+        $('#tabs').find('ul').find('li').each(function(){
+            var tab=$(this).find('a').attr('href');
+            //console.log($(tab).find('input[name="link"]').val())
+              if($(tab).find('input[name="link"]').val()==node.id)
+               {
+                alreadyloaded=true;
+                $(this).find('a').trigger('click')
+                return false; //similar to break
+               }
+            });
+
+        //if not open load the files into the tab
+            if(!alreadyloaded)
+                {
+                     openfile(node.path,node.id);
+                     $('#'+node.id).hide('slow');
+                }
            // alert(node.path+" "+node.id);
         });
 	
@@ -220,7 +238,8 @@ $(document).ready(function() {
 				        var status=data.status;
 				        if(status=='changed')
 				        { 
-					       $('#tobesaved_name',$sfd).val(tab_title);
+					      // $('#tobesaved_name',$sfd).val(tab_title);
+                                               $('#tobesaved_name',$sfd).val(filepath);
 					       $('#tobesaved',$sfd).val(newcontents);
 					       $('span',$sfd).html('The contents of '+tab_title+' has been modified. Do you want to save the changes?');
 				           $sfd.dialog('open');   
@@ -229,7 +248,7 @@ $(document).ready(function() {
 						{
 							$tabs.tabs('remove', closetabindex);
 							closetabindex="";
-			                closetabs=false;
+			                               closetabs=false;
 						}
 				        
 			        }
@@ -260,39 +279,31 @@ $(document).ready(function() {
 		 'Save': function() {
 		var agent=jQuery.uaMatch(navigator.userAgent).browser;
 		 $.ajax({
-           type: "POST",
-           url: "cfeditor/save_contents",
-           data:({'file':$('#tab_title').val(), 'content':$('#tab_content').html(), 'filestats':'new', 'agent':agent}),
-           dataType:'json',
-           success: function(data){
+                           type: "POST",
+                           url: "cfeditor/save_contents",
+                           data:({'file':$('#tab_title').val(), 'content':$('#tab_content').html(), 'filestats':'new', 'agent':agent}),
+                           dataType:'json',
+                           success: function(data){
 			   if(data.status)
 			   {
-        	   var id= $('ul#policies_list_new li').length+1;
-               var append_html='<li class="file ext_txt"><a href="#" rel="'+data.path+'" id="policy_'+id+'">'+data.title+'</a></li>';
-               $('#policies_list_new').append(append_html);
-			    
-					 if(fileevent!= "closing")
-					 {
-					   var append_html_tab='<input type="hidden" name="link" value="policy_'+id+'" />';
-					   $(current_tab_id).append(append_html_tab);
-					   $('a[href="'+current_tab_id+'"]',$tabs).html(data.title);
-					   $('#policy_'+id).hide('slow');
-					 }
-					 else
-					 {
-						$('#policy_'+id).show('slow');
-					 }
-                }
+                                 $('#container_policies_id').find('a[rel="'+data.path+'/"]').trigger('click');
+                                  if(fileevent!= "closing")
+                                                         {
+                                                          $('#container_policies_id').find('a[rel="'+data.path+'/'+data.title+'"]').trigger('click');
+                                                          //$tabs.tabs('remove',current_tab_index);
+                                                         }
+              
+                              }
 				else
-			  {
+			       {
 				closetabs=false; 
 				$confirmation.dialog({title: "Error", width:default_dialog_width});
-	            $confirmation.html('<span>An error occured: '+data.msg+'.</span>'); 
-	            $confirmation.dialog('open'); 
-			  }
-		      }
-            });
-		 $(this).dialog('close');
+	                        $confirmation.html('<span>An error occured: '+data.msg+'.</span>');
+	                        $confirmation.dialog('open');
+			      }
+		            }
+                         });
+		      $(this).dialog('close');
 		 },
 		 'Cancel': function() {
 		 $(this).dialog('close');
@@ -344,10 +355,11 @@ $(document).ready(function() {
 
 		 if(file_type!=undefined)//decide if its not the new file
 		 {
+                  var filepath=$('#'+file_type).attr('rel');
 		 $.ajax({
 	           type: "POST",
 	           url: "cfeditor/save_contents",
-	           data:({'file':current_tab_title, 'content':newcontents,'filestats':'old', 'agent':agent}),
+	           data:({'file':filepath, 'content':newcontents,'filestats':'old', 'agent':agent}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
 	           success: function(data){
 		           $confirmation.dialog({title: "Saved", width:default_dialog_width});

@@ -79,8 +79,8 @@ $this->carabiner->display(); ?>
                 <fieldset class="ui-helper-reset">
                     <label for="tab_title">File Name</label>
                     <input type="text" class="ui-widget-content ui-corner-all" value="" id="tab_title" name="tab_title" />
-         
                     <textarea class="ui-widget-content ui-corner-all" id="tab_content" name="tab_content"></textarea>
+                    <p class="dlgnotes"><strong>Notes:</strong> Relative path with filename should be given to create files inside sub directories</p>
                     <input type="hidden" id="event"></input>
                 </fieldset>
             </form>

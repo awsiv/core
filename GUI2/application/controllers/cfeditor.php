@@ -39,7 +39,7 @@
    {
       $path=$this->input->post('dir')?$this->input->post('dir'): get_policiesdir().$this->session->userdata('username').'/';
       $inconttext=basename($path);
-      echo "<ul id=\"policies_list_new\" class=\"jqueryFileTree\">";
+      echo "<ul class=\"jqueryFileTree\">";
 	    if(file_exists( $path) ) {
 	    $files = scandir( $path);
 	    natcasesort($files);
@@ -47,7 +47,7 @@
                  // All dirs
 		foreach( $files as $file ) {
 			if( file_exists( $path . $file) && $file != '.' && $file != '..'&&$file != '.svn' && is_dir( $path. $file) ) {
-				echo "<li class=\"directory collapsed\"><a href=\"#\" rel=\"" . htmlentities( $path.$file) . "/\">" . htmlentities($file) . "</a></li>";
+				echo "<li id=\"$inconttext\" class=\"directory collapsed\"><a href=\"#\" rel=\"" . htmlentities( $path.$file) . "/\">" . htmlentities($file) . "</a></li>";
 			}
 		}
 		// All files
@@ -197,7 +197,12 @@
 		  {
 			mkdir($working_dir,0700);
 		  }
-		$filetobesaved=$working_dir.'/'.$this->input->post('file');
+		//$filetobesaved=$working_dir.'/'.$this->input->post('file');
+                  $filetobesaved=$this->input->post('file');
+                 if($this->input->post('filestats')=='new')
+                     {
+                    $filetobesaved=$working_dir.'/'.$this->input->post('file');
+                     }
 		$msg="";
 		$written=false;
 		if(file_exists($filetobesaved)&&$this->input->post('filestats')=='old')
@@ -246,9 +251,10 @@
 			
 			$details=array(
 			'status'=>$written,
-		    'title'=>$this->input->post('file'),
-		    'path'=>$filetobesaved,
-		    'msg'=>$msg
+		        'dir'=>  basename (dirname($filetobesaved),"/"),
+                        'title'=>basename($filetobesaved),
+		        'path'=>dirname($filetobesaved),
+		        'msg'=>$msg
 	        );		
 	       echo json_encode($details);
    

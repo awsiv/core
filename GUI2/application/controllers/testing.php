@@ -41,7 +41,7 @@ class Testing extends CI_Controller
          
          //$result = $this->mongo_db->select(array('uri','message'))->get('app_logs');
          //$this->mongo_db->where(array('group'=>'faculty'));
-         $result=$this->mongo_db->get('onlineusers');
+         $result=$this->mongo_db->get('work_logs');
          //$result=$this->mongo_db->select(array('username'))->get_where('users',array('group'=>'admin'));
          //print_r($result) ;
          foreach ($result as  $docs) {
@@ -55,6 +55,7 @@ class Testing extends CI_Controller
 
              */
            // echo $obj->user_name.' ' ;
+
              print_r ($docs);
             /* foreach ($obj->group as $group )
              {
@@ -447,5 +448,28 @@ function license() {
     {
          print_r(json_decode(cfpr_top_n_hosts("compliance", 1000,10,1),true));
     }
-        
+
+    function bluehost()
+    {
+       echo cfpr_show_blue_hosts(20,1);
+    }
+
+    function getonlineuserwork()
+    {
+        $this->load->library('userdata');
+        $users=getonlineusernames();
+        foreach ($users as $user)
+        {
+          echo $user.' : '.$this->userdata->get_personal_working_log_latest($user).'<br/>' ;
+        }
+    }
+
+    function insert_work()
+    {
+        $this->load->library('userdata');
+        //$this->userdata->insert_personal_working_log("working on test");
+        //var_dump($this->userdata->get_personal_working_log_latest('sudhir'));
+        $workinon=$this->userdata->get_personal_working_log_latest('mark');
+        echo $workinon;
+    }
 }
