@@ -5,6 +5,9 @@
    {
    parent::__construct();
    $this->load->library('jcryption');
+    $this->carabiner->js('jquery.tablesorter.min.js');
+    $this->carabiner->js('picnet.jquery.tablefilter.js');
+    $this->carabiner->js('jquery.tablesorter.pager.js');
    //session_start();
    }
   

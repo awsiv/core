@@ -41,9 +41,19 @@ class Cfsvn
   function cfsvn_checkout()
   {
         $status=svn_checkout($this->repository, $this->working_dir);
+        $rev=0;
+        if($status)
+        {
+            //gives an array back with a long list of key value pair for each file in repo
+               $repostatus=svn_status($this->working_dir,SVN_ALL);
+               for ($i=0;$i<1;$i++) {
+                $rev=$repostatus[$i]['revision'];
+                }
+        }
         $data=array(
 		'status'=>$status,
-        'working'=>$this->working_dir,
+               'working'=>$this->working_dir,
+               'rev'=>$rev,
 		'session'=>session_id()
 	     );
         return $data;

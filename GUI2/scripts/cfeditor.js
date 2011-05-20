@@ -683,9 +683,10 @@ $(document).ready(function() {
 							  {
 								  if(data.status)
 								  {
-								   var path = "cfeditor/get_list";
-									$("#container_policies_id").load(path,{dir: 'policies'}, function(data){	
-									});
+								   //var path = "cfeditor/get_list";
+									//$("#container_policies_id").load(path,{dir: 'policies'}, function(data){
+									//});
+                                                                  loadfiletree();
 								  //$('#Checkout').hide();
 					                          $('<div id="repoText"><span>Subversion repository path</span></div>').css({position: 'absolute' , width:'100%'}).hide().appendTo('body');
 								  $('#usedRepo').html('<span>'+$("#repo").val()+'</span>');
@@ -703,8 +704,8 @@ $(document).ready(function() {
 						  else if($("#operation").val()=='svnlogs')
 							  { 
 								$('#svnlogtable').html(data.table);
-								$('#svnlogtable table').tableFilter();
-                                $('#svnlogtable table').tablesorter({widgets: ['zebra']}); 
+								//$('#svnlogtable table').tableFilter();
+                                                                $('#svnlogtable table').tablesorter({widgets: ['zebra']});
 								/* $.fancybox({
 								 //'orig' : $(this),
 								 'padding' : 0,
@@ -716,8 +717,9 @@ $(document).ready(function() {
 							  }
 						else if($("#operation").val()=='update')
 							{
-								var path = "cfeditor/get_list";
-							    $("#container_policies_id").load(path,{dir: 'policies/'}, function(data){});
+								//var path = "cfeditor/get_list";
+							        //$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){});
+                                                                loadfiletree();
 								 $confirmation.dialog({title: $('#operation').val(), width:default_dialog_width});
 								 $confirmation.html('<span>Sucessfully updated. </span>'); 
 								 $confirmation.dialog('open');
