@@ -1,0 +1,7 @@
+Required PHP modules
+---------------------------------
+1) mongo
+2) mcrypt
+3) curl
+4) svn
+5) cfmod
