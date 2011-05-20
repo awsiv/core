@@ -4,6 +4,7 @@ class Repository_model extends CI_Model {
 
     var $collectionName = 'svnrepository';
     var $svn_log_collection_name='svnlogs';
+    var $approved_policies_collection='approvedpolicies';
     var $errors;
 
     public function __construct() {
@@ -163,6 +164,27 @@ class Repository_model extends CI_Model {
     {
         $revs=$this->mongo_db->select(array('version'))->where(array('repo'=>$repository))->get($this->svn_log_collection_name);
         return array_unique($revs);
+    }
+
+    /**
+     *inserting a record for keeping track of accepeted policies on revision number
+     * @param <type> $username
+     * @param <type> $repo
+     * @param <type> $revision
+     * @param <type> $comment
+     */
+    function approve_policies($username,$svnrepo,$revision,$comment)
+    {
+         $id=$this->mongo_db->insert($this->approved_policies_collection,array('username'=>$username,'repo'=>$svnrepo,'version'=>$revision,'comment'=>$comment,'date'=>now()));
+    }
+
+    /**
+     *get a list of revision numbers with username and time and comment for a given repository
+     * @param <type> $repo 
+     */
+    function get_all_approved_policies($repo)
+    {
+        return $this->mongodb->get($this->approved_policies_collection);
     }
 
 }
