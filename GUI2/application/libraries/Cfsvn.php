@@ -95,5 +95,20 @@ class Cfsvn
    return $logs;
   }
 
+   function cfsvn_working_copy_status()
+    {
+        $status=svn_status('./policies/sudhir',SVN_ALL);
+        $modified_files=array();
+        foreach($status as $file)
+        {
+           //SVN_WC_STATUS_MODIFIED=8
+          if($file['text_status']==8)
+          {
+            array_push($modified_files,$file['name']) ;
+          }
+        }
+        return $modifiled_files;
+    }
+
 
 }

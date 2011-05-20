@@ -7,5 +7,7 @@ RewriteRule ^(.*)$ /index.php/$1 [NC,L]
 RewriteRule /showexample/example/(.*)$ /docs/$1  [NC,L]
 RewriteRule ^.*$ - [NC,L]
 
+Options -Indexes
+
 
 

@@ -3,11 +3,13 @@
 class Repository_model extends CI_Model {
 
     var $collectionName = 'svnrepository';
+    var $svn_log_collection_name='svnlogs';
     var $errors;
 
     public function __construct() {
         parent::__construct();
         $this->load->library('mongo_db');
+        $this->ci->load->helper('date');
         $this->errors = array();
     }
 
@@ -127,6 +129,40 @@ class Repository_model extends CI_Model {
 
     function get_errors() {
         return $this->errors;
+    }
+    /**
+     *for tracking user activitiy on various svn repositories
+     * @param <type> $username
+     * @param <type> $svnrepo
+     * @param <type> $file_version
+     * @param <type> $operation
+     */
+    function insert_svn_log($username,$svnrepo,$file_version,$operation)
+    {
+      $id=$this->mongo_db->insert($this->svn_log_collection_name,array('username'=>$username,'repo'=>$svnrepo,'version'=>$file_version,'date'=>now()));
+    }
+
+
+
+    /**
+     *get all the activities of all user on repositories
+     * @return <type>
+     */
+    function get_svn_logs()
+    {
+       return $this->mongo_db->get($this->svn_log_collection_name);
+    }
+
+
+    
+   /**
+    *get unique revision no for a particlular repository
+    * @param <type> $repository
+    */
+    function get_revisions($repository='')
+    {
+        $revs=$this->mongo_db->select(array('version'))->where(array('repo'=>$repository))->get($this->svn_log_collection_name);
+        return array_unique($revs);
     }
 
 }
