@@ -98,7 +98,10 @@ $(document).ready(function() {
         openfile($(this).attr('rel'),$(this).attr('id'));
         $('#'+$(this).attr('id')).hide('slow');
 	});*/
+        loadfiletree();
 
+        function loadfiletree()
+        {
         $('#container_policies_id').fileTree({
         root: '',
         script: '/cfeditor/get_list',
@@ -128,6 +131,7 @@ $(document).ready(function() {
                 }
            // alert(node.path+" "+node.id);
         });
+        }
 	
 	function addTab(op) {
 		var tab_title = tab_title_input || 'Tab '+tab_counter;
@@ -286,12 +290,25 @@ $(document).ready(function() {
                            success: function(data){
 			   if(data.status)
 			   {
-                                 $('#container_policies_id').find('a[rel="'+data.path+'/"]').trigger('click');
+                               //reload the folder in the file tree
+                               if(  $('#container_policies_id').find('a[rel="'+data.path+'/"]').length>0)
+                                   {
+                                       $('#container_policies_id').find('a[rel="'+data.path+'/"]').trigger('click');
+                                   }
+                                else
+                                    {
+                                         loadfiletree();
+                                    }
+                                
                                   if(fileevent!= "closing")
                                                          {
-                                                          $('#container_policies_id').find('a[rel="'+data.path+'/'+data.title+'"]').trigger('click');
-                                                          //$tabs.tabs('remove',current_tab_index);
+                                                             if( $('#container_policies_id').find('a[rel="'+data.path+'/'+data.title+'"]').length>0)
+                                                                 {
+                                                                      $('#container_policies_id').find('a[rel="'+data.path+'/'+data.title+'"]').trigger('click');
+                                                                 }
+                                                          $tabs.tabs('remove',current_tab_index);
                                                          }
+                                                         
               
                               }
 				else
@@ -422,7 +439,7 @@ $(document).ready(function() {
 							$cfd.dialog('open');
 							
 						 },
-					error:function(data){
+					  error:function(data){
 							 $confirmation.dialog({title: "Error", width:default_dialog_width});
 							 $confirmation.html('<span>An error occured: '+data.msg+'.</span>'); 
 							 $confirmation.dialog('open');   
@@ -670,7 +687,7 @@ $(document).ready(function() {
 									$("#container_policies_id").load(path,{dir: 'policies'}, function(data){	
 									});
 								  //$('#Checkout').hide();
-					$('<div id="repoText"><span>Subversion repository path</span></div>').css({position: 'absolute' , width:'100%'}).hide().appendTo('body');
+					                          $('<div id="repoText"><span>Subversion repository path</span></div>').css({position: 'absolute' , width:'100%'}).hide().appendTo('body');
 								  $('#usedRepo').html('<span>'+$("#repo").val()+'</span>');
 								  $confirmation.dialog({title: $("#operation").val(), width:default_dialog_width});
 								  $confirmation.html('<span>Sucessfully checked out.</span>');
@@ -707,9 +724,16 @@ $(document).ready(function() {
 							}
 						else if($("#operation").val()=='commit')
 							{
-								 $confirmation.dialog({title: $("#operation").val(), width:default_dialog_width});
-								 $confirmation.html('<span>'+$('#cmtfile').val()+' Sucessfully committed. </span>'); 
-								 $confirmation.dialog('open');
+                                                              $confirmation.dialog({title: $("#operation").val(), width:default_dialog_width});
+								 if(data.error)
+                                                                     {
+                                                                          $confirmation.html('<span>'+data.message+'</span>');
+                                                                     }
+                                                                  else
+                                                                      {
+								           $confirmation.html('<span>'+$('#cmtfile').val()+' Sucessfully committed. </span>');
+                                                                      }
+                                                                     $confirmation.dialog('open');
 							}
 							$('#cmtfile').val('');
 						},

@@ -1,5 +1,14 @@
 <? if (!defined('BASEPATH')) exit('No direct script access allowed');
-//for this class to work we have to install the php svn module support in php engine 
+//for this class to work we have to install the php svn module support in php engine
+function handleError($errno, $errstr, $errfile, $errline)
+{
+    // error was suppressed with the @-operator
+    if (0 === error_reporting()) {
+        return false;
+    }
+
+    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+}
 class Cfsvn
 {
   private $working_dir;
@@ -51,8 +60,17 @@ class Cfsvn
 			svn_add($eachfile['path']);  
 		  }
 		}
-      $cdetails=svn_commit($comment,array($this->working_dir));
-	  return $cdetails;
+
+             set_error_handler("handleError");
+             try
+              {
+             $cdetails=svn_commit($comment,array($this->working_dir));
+              return $cdetails;
+              }
+             catch(Exception $e)
+              {
+                return array('error'=>'true','message'=>$e->getMessage());
+              }
   }
   
   function cfsvn_update()
@@ -66,5 +84,6 @@ class Cfsvn
    $logs=svn_log($this->repository,SVN_REVISION_HEAD,0,$limit);
    return $logs;
   }
+
 
 }
