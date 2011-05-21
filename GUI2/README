@@ -5,3 +5,26 @@ Required PHP modules
 3) curl
 4) svn
 5) cfmod
+
+
+Apache configuration
+---------------------------------
+
+*) Copy Apache-htaccess to DOCROOT/.htaccess (e.g. /var/www/.htaccess on Ubunut)
+
+*) Make sure AllowOverride is set to All for this directory in main apache config.
+e.g. on Ubuntu /etc/apache2/sites-enabled/000-default, 
+  ---
+  ...
+       <Directory />
+                Options FollowSymLinks
+                AllowOverride All
+        </Directory>
+        <Directory /var/www/>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+  ...
+  --- 
+
+You may instead incorporate the Apache-htaccess file into your main Apache configuration.
+
