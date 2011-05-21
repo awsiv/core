@@ -28,3 +28,11 @@ e.g. on Ubuntu /etc/apache2/sites-enabled/000-default,
 
 You may instead incorporate the Apache-htaccess file into your main Apache configuration.
 
+
+Creating inital user
+---------------------------------
+
+To create a admin/admin user, point your browser to 
+
+http://localhost/testing/mongodbinput on the hub
+
