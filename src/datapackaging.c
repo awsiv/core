@@ -401,7 +401,8 @@ void Nova_PackDiffs(struct Item **reply,char *header,time_t from,enum cfd_menu t
 
 { FILE *fin;
   char name[CF_BUFSIZE],line[CF_BUFSIZE],size[CF_MAXVARSIZE];
-  char no[CF_SMALLBUF],change[CF_BUFSIZE],reformat[CF_BUFSIZE],output[2*CF_BUFSIZE],aggregate[CF_BUFSIZE];
+  char no[CF_SMALLBUF],change[CF_BUFSIZE],changeNoTab[CF_BUFSIZE],reformat[CF_BUFSIZE],
+      output[2*CF_BUFSIZE],aggregate[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
   char pm;
   int i = 0,truncate,first = true;
@@ -463,10 +464,14 @@ while (!feof(fin))
       change[0] = '\0';
       sscanf(line,"%c,%[^,],%1024[^\n]",&pm,no,change);
 
+      // the web interface doesn't handle TABs
+      changeNoTab[0] = '\0';
+      ReplaceStr(change,changeNoTab,sizeof(changeNoTab),"\t","(TAB)");
+
       if (!truncate)
          {
          Chop(line);
-         snprintf(reformat,CF_BUFSIZE-1,"%c,%s,%s%c",pm,no,change,CF_N_CODE);
+         snprintf(reformat,CF_BUFSIZE-1,"%c,%s,%s%c",pm,no,changeNoTab,CF_N_CODE);
 
          Join(aggregate,reformat,CF_BUFSIZE);
          }

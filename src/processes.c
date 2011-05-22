@@ -244,7 +244,7 @@ if (file_buffer == NULL)
 
 for (sp = file_buffer; *sp != '\0' && sp < sp+maxsize; sp++)
    {
-   if ((*sp > 0 && *sp < 10) || *sp == 11 || *sp == 12 || (*sp > 13 && *sp < 32) || *sp == 127)
+   if ((*sp > 0 && *sp < 9) || *sp == 11 || *sp == 12 || (*sp > 13 && *sp < 32) || *sp == 127)
       {
       hasbinary = true;
       break;
