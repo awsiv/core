@@ -3,6 +3,8 @@
 
 	User management on hub.
 
+	Allowing TAB in file diff report.
+
 	Support for adding notes to all hosts and reports.
 
 	Support for policy staging environments.
