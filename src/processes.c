@@ -37,10 +37,22 @@ void Nova_LogFileChange(char *file,int change,struct Attributes a,struct Promise
   struct stat sb, dsb;
   
 CfOut(cf_verbose,""," -> Updating the difference engine with \"%s\"",file);
-  
+
+if (cfstat(file,&sb) == -1)
+   {
+   CfOut(cf_verbose, "", "!! Cannot stat file \"%s\" - skipping", file);
+   return;
+   }
+
+if(Nova_FileIsBinary(file,sb.st_size,NOVA_MAXDIFFSIZE))
+   {
+   cfPS(cf_error,CF_FAIL,"",pp,a,"!! File \"%s\" is either too large to diff or contains binary chars -- skipping", file);
+   return;
+   }
+   
 if (a.havedepthsearch)
    {
-   CfOut(cf_error,""," ! you may not use change detail logging on depth searches");
+   CfOut(cf_error,"","!! You may not use change detail logging on depth searches");
    PromiseRef(cf_error,pp);
    return;
    }
@@ -83,10 +95,6 @@ if (!MakeParentDirectory(destination,a.move_obstructions))
    {
    }
 
-if (cfstat(file,&sb) == -1)
-   {
-   return;
-   }
 
 /* Check if the file already exists, if so do a diff */
 
@@ -130,7 +138,6 @@ void Nova_DoFileDiff(char *file,char *destination,struct stat sb,struct stat dsb
 { int pos;
   time_t now = time(NULL);
   char datestr[CF_MAXVARSIZE];
-  int maxsize = 80 * 1024 * 1024;
   FILE *fout;
   char logname[CF_BUFSIZE];
 
@@ -158,13 +165,16 @@ pos = Nova_GetFirstChangePosition(file,destination);
 
 fprintf(fout,"%ld;File changed size from %d to %d, first difference at byte position %d/%d of old\n",(long)now,sb.st_size,dsb.st_size,pos,dsb.st_size);
  
-if (Nova_FileIsBinary(file,sb.st_size,maxsize)||Nova_FileIsBinary(destination,dsb.st_size,maxsize))
+if (Nova_FileIsBinary(destination,dsb.st_size,NOVA_MAXDIFFSIZE))
    {
-   fprintf(fout,"%s: Cannot view content differences on a binary or huge files, you may inspect the changes manually from original at \"%s%s\" until the next change detection\n",datestr,destination,CF_SAVED);
+   // shouldn't happen, we test for this in calling function
+   fprintf(fout, "+,0,(binary file)\n");
+   CfOut(cf_error, "", "!! Cannot view content differences on a binary or huge files, you may inspect %s and %s manually",
+         file, destination);
    }
 else
    {
-   Nova_ReportFileChange(fout,file,destination,maxsize);
+   Nova_ReportFileChange(fout,file,destination,NOVA_MAXDIFFSIZE);
    }
 
 fprintf(fout,"END\n");
