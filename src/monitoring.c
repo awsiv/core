@@ -1333,6 +1333,8 @@ snprintf(timekey, CF_MAXVARSIZE, "%d_%.3s_Lcycle_%d_%s",
          SHIFT_TEXT[tm.tm_hour / 6]);
 }
 
+/****************************************************************************/
+
 /* Returns true if entry was found, false otherwise */
 bool GetRecordForTime(CF_DB *db, time_t time, struct Averages *result)
 {
@@ -1342,6 +1344,8 @@ MakeTimekey(time, timekey);
 return ReadDB(db, timekey, result, sizeof(struct Averages));
 }
 
+
+/****************************************************************************/
 void PutRecordForTime(CF_DB *db, time_t time, const struct Averages *values)
 {
 char timekey[CF_MAXVARSIZE];
