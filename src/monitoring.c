@@ -125,6 +125,42 @@ fclose(f);
 
 /*****************************************************************************/
 
+static void Nova_DumpSlots(void)
+{
+FILE *fout;
+char filename[CF_BUFSIZE];
+int i;
+
+snprintf(filename,CF_BUFSIZE-1,"%s%cstate%cts_key",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
+
+if ((fout = fopen(filename,"w")) == NULL)
+   {
+   return;
+   }
+
+for (i = 0; i < ob_spare; i++)
+   {
+   fprintf(fout,"%d,%s,%s\n",i,OBS[i][0],OBS[i][1]);
+   }
+
+for (i = 0; i < CF_OBSERVABLES-ob_spare; i++)
+   {
+   if (strlen(SLOTS[i][0]) > 0)
+      {
+      fprintf(fout,"%d,%s,%s\n",i+ob_spare,SLOTS[i][0],SLOTS[i][1]);
+      }
+   else
+      {
+      fprintf(fout,"%d,spare,unused\n",i+ob_spare);
+      }
+   }
+
+fclose(fout);
+chmod(filename,0600);
+}
+
+/*****************************************************************************/
+
 void Nova_LookupClassName(int n,char *name,char *desc)
 
 {
@@ -228,11 +264,9 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
 
 { char *handle = (char *)GetConstraint("handle",pp,CF_SCALAR);
-  char filename[CF_BUFSIZE];
   struct Item *stream = NULL;
-  int i,slot = 0;
+  int slot = 0;
   double new_value;
-  FILE *fout;
 
 if (!handle)
    {
@@ -300,34 +334,7 @@ switch (a.measure.data_type)
 
 // stream gets de-allocated in ReSample
 
-/* Dump the slot overview */
-
-snprintf(filename,CF_BUFSIZE-1,"%s%cstate%cts_key",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
-
-if ((fout = fopen(filename,"w")) == NULL)
-   {
-   return;
-   }
-
-for (i = 0; i < ob_spare; i++)
-   {
-   fprintf(fout,"%d,%s,%s\n",i,OBS[i][0],OBS[i][1]);
-   }
-
-for (i = 0; i < CF_OBSERVABLES-ob_spare; i++)
-   {
-   if (strlen(SLOTS[i][0]) > 0)
-      {
-      fprintf(fout,"%d,%s,%s\n",i+ob_spare,SLOTS[i][0],SLOTS[i][1]);
-      }
-   else
-      {
-      fprintf(fout,"%d,spare,unused\n",i+ob_spare);
-      }
-   }
-
-fclose(fout);
-chmod(filename,0600);
+Nova_DumpSlots();
 }
 
 /*****************************************************************************/
