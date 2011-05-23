@@ -23,6 +23,8 @@ struct CfMeasurement
    struct Item *output;
    };
 
+/* Constants */
+
 int MONITOR_RESTARTED = true;
 char *MEASUREMENTS[CF_DUNBAR_WORK];
 struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
