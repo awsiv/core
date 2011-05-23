@@ -28,6 +28,10 @@ char *MEASUREMENTS[CF_DUNBAR_WORK];
 struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
 static char SLOTS[CF_OBSERVABLES-ob_spare][2][CF_MAXVARSIZE];
 
+/* Prototypes */
+
+int NovaGetSlot(const char *name);
+
 /*****************************************************************************/
 
 void NovaInitMeasurements()
@@ -278,6 +282,8 @@ else
    CfOut(cf_verbose,""," -> Considering promise \"%s\"",handle);
    }
 
+Nova_LoadSlots();
+
 switch (a.measure.data_type)
    {
    case cf_counter:
@@ -292,7 +298,7 @@ switch (a.measure.data_type)
 
        if (cf_strcmp(a.measure.history_type,"weekly") == 0)
           {
-          if ((slot = NovaGetSlotHash(handle)) < 0)
+          if ((slot = NovaGetSlot(handle)) < 0)
              {
              return;
              }
@@ -686,41 +692,37 @@ return av;
 /* Level                                                                     */
 /*****************************************************************************/
 
-int NovaGetSlotHash(char *name)
+int NovaGetSlot(const char *name)
+{
+int i;
 
-{ int i, slot = 0, count = 0;
-  static int hashtablesize = 29; /* must be prime <= CF_DUNBAR_WORK */
+Nova_LoadSlots();
 
-for (i = 0; name[i] != '\0'; i++)
+/* First try to find existing slot */
+for (i = 0; i < CF_OBSERVABLES - ob_spare; ++i)
    {
-   slot = (CF_MACROALPHABET * slot + name[i]) % hashtablesize;
-   }
+   CfOut(cf_verbose, "", "%s <-> %s", SLOTS[i][0], name);
 
-for (i = 0; i < CF_DUNBAR_WORK; i++)
-   {
-   if (MEASUREMENTS[i] != NULL)
+   if (!strcmp(SLOTS[i][0], name))
       {
-      count++;
+      CfOut(cf_verbose, "", " -> Using slot ob_spare+%d for %s\n", i, name);
+      return i;
       }
    }
 
-if (MEASUREMENTS[slot] != NULL)
+/* Then find the spare one */
+for (i = 0; i < CF_OBSERVABLES - ob_spare; ++i)
    {
-   if (count >= CF_DUNBAR_WORK)
+   if (!SLOTS[i][0][0])
       {
-      CfOut(cf_error,"","Measurement slots are all in use - it is not helpful to measure too much, you can't usefully follow this many variables");
-      return -1;
-      }
-   else if (cf_strcmp(name,MEASUREMENTS[slot]) != 0)
-      {
-      CfOut(cf_error,"","Measurement slot is already in use");
-      return -1;
+      CfOut(cf_verbose, "", " -> Using empty slot ob_spare+%d for %s\n", i, name);
+      return i;
       }
    }
 
-CfOut(cf_verbose,""," -> Using slot spare+%d for %s\n",slot,name);
+CfOut(cf_error, "", "Measurement slots are all in use - it is not helpful to measure too much, you can't usefully follow this many variables");
 
-return slot;
+return -1;
 }
 
 /*****************************************************************************/
