@@ -860,7 +860,6 @@ void NovaWin_AllocSplitServiceArgs(char *argStr, int *argcp, char ***argvp);
 
 /* sql.c */
 
-int Nova_SizeCfSQLContainer(void);
 int Nova_ValidateSQLTableName(char *table_path,char *db,char *table);
 int Nova_VerifyTablePromise(CfdbConn *cfdb,char *table_path,struct Rlist *columns,struct Attributes a,struct Promise *pp);
 int Nova_ValidateSQLTableName(char *table_path,char *db,char *table);

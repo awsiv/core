@@ -19,13 +19,6 @@
 /* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_SizeCfSQLContainer()
-{
-return sizeof(CfdbConn);
-}
-
-/*****************************************************************************/
-
 void Nova_CreateDBQuery(enum cfdbtype type,char *query)
 
 { 
