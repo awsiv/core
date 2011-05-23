@@ -28,10 +28,6 @@ char *MEASUREMENTS[CF_DUNBAR_WORK];
 struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
 static char SLOTS[CF_OBSERVABLES-ob_spare][2][CF_MAXVARSIZE];
 
-/* Prototypes */
-
-static int NovaGetNextDay(int day, int month, int year);
-
 /*****************************************************************************/
 
 void NovaInitMeasurements()
@@ -681,31 +677,6 @@ return av;
 
 /*****************************************************************************/
 /* Level                                                                     */
-/*****************************************************************************/
-
-static int NovaGetNextDay(int day, int month, int year)
-{
-struct tm curday = { 0, 0, 0, day, month, year };
-struct tm nextday;
-time_t curtimestamp;
-
-if ((curtimestamp = mktime(&curday)) == (time_t)-1)
-   {
-   FatalError("Nova: Internal error. Unable to convert date %02d.%02d.%04d to time_t.",
-              day, month, year);
-   }
-
-curtimestamp += SECONDS_PER_DAY; /* Next day */
-
-if (gmtime_r(&curtimestamp, &nextday) == NULL)
-   {
-   FatalError("Nova: Internal error. Unable to convert time_t %ld to struct tm.",
-              (long)curtimestamp);
-   }
-
-return nextday.tm_mday;
-}
-
 /*****************************************************************************/
 
 int NovaGetSlotHash(char *name)
