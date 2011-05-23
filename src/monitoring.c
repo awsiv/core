@@ -30,10 +30,6 @@ char *MEASUREMENTS[CF_DUNBAR_WORK];
 struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
 static char SLOTS[CF_OBSERVABLES-ob_spare][2][CF_MAXVARSIZE];
 
-/* Prototypes */
-
-int NovaGetSlot(const char *name);
-
 /*****************************************************************************/
 
 void NovaInitMeasurements()
