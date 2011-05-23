@@ -608,6 +608,10 @@ while (now < CF_MONDAY_MORNING + CF_WEEK)
      {
        if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
 	 {
+         /* Pending protocol / DB schema change */
+         Debug("Sending data: %s %.4lf %.4lf %.4lf\n", NovaGetSlotName(i),
+               entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
+
 	   /* Promise: Keep the integer observable label so that we can eliminate zero entries */
          
 	   snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
@@ -700,6 +704,10 @@ while (here_and_now < now)
 	 {
 	   if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
 	     {
+             /* Pending protocol / DB schema change */
+             Debug("Sending data: %s %.4lf %.4lf %.4lf\n", NovaGetSlotName(i),
+                   entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
+
 	       /* Promise: Keep the integer observable label so that we can eliminate zero entries */      
 	       snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
 	       AppendItem(reply,buffer,NULL);
@@ -887,6 +895,10 @@ for (i = 0; i < MONITORING_HISTORY_LENGTH_WEEKS; ++i)
          {
          if (q[k] > 0 && var[k] > 0 && e[k] > 0)
             {
+            /* Pending protocol / DB schema change */
+            Debug("Sending data: %s %.2lf %.2lf %.2lf\n", NovaGetSlotName(k),
+                  q[k] / num[k], e[k] / num[k], sqrt(var[k] / num[k]));
+
             snprintf(buffer, CF_BUFSIZE - 1, "%d %.2lf %.2lf %.2lf\n", k,
                      q[k] / num[k], e[k] / num[k], sqrt(var[k] / num[k]));
             AppendItem(reply, buffer, NULL);

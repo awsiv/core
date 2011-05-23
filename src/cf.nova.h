@@ -679,6 +679,7 @@ double ShiftAverage(double new,double old);
 void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp);
 void Nova_LongHaul(time_t starttime);
 int NovaGetSlot(const char *name);
+const char *NovaGetSlotName(int idx);
 struct Item *NovaGetMeasurementStream(struct Attributes a,struct Promise *pp);
 struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp);
 void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Promise *pp);

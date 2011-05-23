@@ -723,6 +723,11 @@ CfOut(cf_error, "", "Measurement slots are all in use - it is not helpful to mea
 return -1;
 }
 
+const char *NovaGetSlotName(int idx)
+{
+return idx < ob_spare ? OBS[idx][0] : SLOTS[idx - ob_spare][0];
+}
+
 /*****************************************************************************/
 
 struct Item *NovaGetMeasurementStream(struct Attributes a,struct Promise *pp)
