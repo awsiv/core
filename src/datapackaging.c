@@ -828,7 +828,7 @@ CF_DB *dbp;
 time_t now = CFSTARTTIME;
 bool header_displayed = false;
 /* Start with 3*52 - 1 weeks ago, so the 3*52th week is the current one */
-time_t w = SubtractWeeks(WeekBegin(now), 3*52-1);
+time_t w = SubtractWeeks(WeekBegin(now), MONITORING_HISTORY_LENGTH_WEEKS-1);
 
 CfOut(cf_verbose,""," -> Packing and compressing monitor 3 year data");
 
@@ -840,7 +840,7 @@ if (!OpenDB(filename,&dbp))
    return;
    }
 
-for (i = 0; i < 3*52; ++i)
+for (i = 0; i < MONITORING_HISTORY_LENGTH_WEEKS; ++i)
    {
    /* Collect data for a week */
 
@@ -850,7 +850,7 @@ for (i = 0; i < 3*52; ++i)
    double var[CF_OBSERVABLES] = { 0.0 };
    double e[CF_OBSERVABLES] = { 0.0 };
 
-   for (j = 0; j < 4*7 && w <= now; ++j, w = NextShift(w))
+   for (j = 0; j < SHIFTS_PER_WEEK && w <= now; ++j, w = NextShift(w))
       {
       struct Averages av;
 
