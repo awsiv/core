@@ -5,6 +5,7 @@
    {
    parent::__construct();
    $this->load->library('jcryption');
+   $this->load->model('repository_model');
     $this->carabiner->js('jquery.tablesorter.min.js');
     $this->carabiner->js('picnet.jquery.tablefilter.js');
     $this->carabiner->js('jquery.tablesorter.pager.js');
@@ -15,8 +16,6 @@
    {
    $data=array(
          'title'=>"Cfengine Mission Portal - Policy editor",
-        // 'title_header'=>"Policy editor",
-	// 'injected_item'=>'<link href="'.get_cssdir().'jquery-ui-1.8.2.custom.css" rel="stylesheet" media="screen" />'
 		 );
    $this->carabiner->css('cfeditor.css');
     $this->carabiner->js('jqueryFileTree.js');
@@ -92,13 +91,18 @@
    {
    $password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
    $params=array(
-	        'username' =>  $this->input->post('user'),
+	                 'username' =>  $this->input->post('user'),
 			'password' => $password,
 			'repository' => $this->input->post('repo'),
 			'workingdir' => get_policiesdir().$this->session->userdata('username')
 			);
-	$this->load->library('cfsvn',$params);
+    $this->load->library('cfsvn',$params);
     $data=$this->cfsvn->cfsvn_checkout();
+   //if check out was sucessfull
+    if($data['status'])
+    {
+     $this->repository_model->insert_svn_log($this->session->userdata('username'),$this->input->post('repo'), $data['rev'] ,'checkout');
+    }
     echo json_encode($data);	
    }
    
@@ -107,7 +111,7 @@
      $working_dir=get_policiesdir().$this->session->userdata('username');
      if(!$this->input->post('file'))
 		 {
-         $working_dir=$working_dir.'/'.$this->input->post('file');
+                 $working_dir=$working_dir.'/'.$this->input->post('file');
 		 }
      $password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
      $params=array(
@@ -116,8 +120,13 @@
 			'repository' => $this->input->post('repo'),
 			'workingdir' => $working_dir
 			);   
-	 $this->load->library('cfsvn',$params);
-     $cdetails=$this->cfsvn->cfsvn_commit($this->input->post('comments'));	
+     $this->load->library('cfsvn',$params);
+     $cdetails=$this->cfsvn->cfsvn_commit($this->input->post('comments'));
+    //on sucessfull commit of files make a record in data base svnlogs [revision,date,username] in cdetails
+     if(is_array($cdetails))
+     {
+        $this->repository_model->insert_svn_log($this->session->userdata('username'),$this->input->post('repo'), $cdetails[0] ,'commit');
+     }
      echo json_encode ($cdetails);
    }
    
@@ -125,12 +134,18 @@
    {
      $password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
      $params=array(
-	        'username' =>  $this->input->post('user'),
+	                'username' =>  $this->input->post('user'),
 			'password' => $password,
 			'workingdir' => get_policiesdir().$this->session->userdata('username')
-			);   
-	 $this->load->library('cfsvn',$params);
+			);
+     $this->load->library('cfsvn',$params);
+     //gets the revision number
      $cdetails=$this->cfsvn->cfsvn_update();
+     //make a entry in svn log records in our db 
+     if($cdetails)
+     {
+       $this->repository_model->insert_svn_log($this->session->userdata('username'),$this->cfsvn->get_current_repository(), $cdetails ,'update');
+     }
      echo $cdetails;
    }
    

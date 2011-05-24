@@ -10,7 +10,7 @@ class Repository_model extends CI_Model {
     public function __construct() {
         parent::__construct();
         $this->load->library('mongo_db');
-        $this->ci->load->helper('date');
+        $this->load->helper('date');
         $this->errors = array();
     }
 
@@ -140,7 +140,7 @@ class Repository_model extends CI_Model {
      */
     function insert_svn_log($username,$svnrepo,$file_version,$operation)
     {
-      $id=$this->mongo_db->insert($this->svn_log_collection_name,array('username'=>$username,'repo'=>$svnrepo,'version'=>$file_version,'date'=>now()));
+      $id=$this->mongo_db->insert($this->svn_log_collection_name,array('username'=>$username,'repo'=>$svnrepo,'version'=>$file_version,'operation'=>$operation,'date'=>now()));
     }
 
 
@@ -149,8 +149,12 @@ class Repository_model extends CI_Model {
      *get all the activities of all user on repositories
      * @return <type>
      */
-    function get_svn_logs()
+    function get_svn_logs($repository='')
     {
+        if($repository!='')
+        {
+          return $this->mongo_db->where(array('repo'=>$repository))->get($this->svn_log_collection_name);
+        }
        return $this->mongo_db->get($this->svn_log_collection_name);
     }
 
@@ -162,8 +166,12 @@ class Repository_model extends CI_Model {
     */
     function get_revisions($repository='')
     {
+        $uniqrevs=array();
         $revs=$this->mongo_db->select(array('version'))->where(array('repo'=>$repository))->get($this->svn_log_collection_name);
-        return array_unique($revs);
+        foreach ($revs as $rev){
+            array_push($uniqrevs, $rev['version']);
+        }
+        return array_unique($uniqrevs);
     }
 
     /**

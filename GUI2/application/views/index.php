@@ -14,7 +14,7 @@
                       <ul>
                           <li><?php echo anchor('welcome/status','status',array('class'=>'status'));?></li>
                           <li><?php echo anchor('welcome/engg','engineering',array('class'=>'engineering'));?></li>
-                          <li><?php echo anchor('welcome/helm','planning',array('class'=>'planning'));?></li>
+                          <li><?php echo anchor('welcome/planning','planning',array('class'=>'planning'));?></li>
                           <li><?php echo anchor('knowledge/index','library',array('class'=>'library'));?></li>
                           <p class="clearleft"></p>
                       </ul>

@@ -230,6 +230,33 @@ class Widget extends CI_Controller {
        {
           echo cfpr_select_reports(".*", 100);
        }
+
+       function insertworkinglogs()
+       {
+           $this->load->library('userdata');
+          $message=$this->input->post('message');
+          $id=$this->userdata->insert_personal_working_log($message);
+           $noteshtml="";
+           $working_notes=$this->userdata->get_personal_working_notes($this->session->userdata('username'));
+            foreach ($working_notes as $note)
+                  {
+                     $note=$note['working_on'] ;
+                     $noteshtml.= "<li><span class=\"wrknoteslblorg\">Me:</span> $note </li>";
+                  }
+            echo $noteshtml;
+       }
+
+       function getworkinglatestlogs()
+       {
+           $this->load->library('userdata');
+           $users= getonlineusernames();
+           $html="";
+           foreach ($users as $user)
+                  {
+                  $html.='<li>'.$user.' : '.$this->userdata->get_personal_working_log_latest($user).'</li>' ;
+                  }
+           echo $html;
+       }
 }
 
 ?>

@@ -19,8 +19,8 @@ class Cfsvn
   
   function Cfsvn($params)
   {
-  $this->username=$params['username'];
-  $this->password=$params['password'];
+  $this->username=isset($params['username'])?$params['username']:NULL;
+  $this->password=isset($params['password'])?$params['password']:NULL;
   $this->working_dir=isset($params['workingdir'])?$params['workingdir']:NULL;
   svn_auth_set_parameter(SVN_AUTH_PARAM_DEFAULT_USERNAME,$this->username);
   svn_auth_set_parameter(SVN_AUTH_PARAM_DEFAULT_PASSWORD, $this->password);
@@ -97,7 +97,7 @@ class Cfsvn
 
    function cfsvn_working_copy_status()
     {
-        $status=svn_status('./policies/sudhir',SVN_ALL);
+        $status=svn_status($this->working_dir,SVN_ALL);
         $modified_files=array();
         foreach($status as $file)
         {
@@ -108,6 +108,18 @@ class Cfsvn
           }
         }
         return $modifiled_files;
+    }
+
+    function get_current_repository()
+    {
+         $status=svn_status($this->working_dir,SVN_ALL);
+         $report="";
+        $i=0;
+        for($i=0;$i<1;$i++)
+        {
+              $repo= $status[$i]['repos'];
+        }
+        return $repo;
     }
 
 

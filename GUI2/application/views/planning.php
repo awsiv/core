@@ -1,0 +1,89 @@
+<div id="body" class="grid_12">
+    <div class="outerdiv">
+        <div id="" class="grid_7 innerdiv">
+          <p class="title">Goals </p>
+        </div>
+        <div id="loggedon" class="grid_5 innerdiv">
+          <p class="title">Logged on </p>
+              <ul id="users">
+               <?php  foreach ($users as $user)
+                  {
+                  echo '<li>'.$user.' : '.$this->userdata->get_personal_working_log_latest($user).'</li>' ;
+                  }
+               ?>
+              </ul>
+          <p class="morebtnpane"><span class="morebtn">More...</span></p>
+        </div>
+        <div class="clearboth"></div>
+
+        <div id="plandash" class="grid_7 dash innerdiv">
+            <ul>
+                <li><?php echo anchor('cfeditor', 'repository', array('class' => 'repolink', 'id' => 'repobrowser')); ?></li>
+                <li><?php echo anchor('widget/allclasses', 'track records', array('class' => 'trackrecord', 'id' => 'trkrec')); ?></li>
+                <li><?php echo anchor('widget/allclasses', 'approve policies', array('class' => 'approve ', 'id' => 'aprvpolicy')); ?></li>
+                 <p class="clearleft"></p>
+            </ul>
+        </div>
+        <div id="personallog" class="grid_5 innerdiv">
+              <p class="title">Personal log</p>
+              <div id="messageinput_container">
+                  <form method="post" action="/widget/insertworkinglogs">
+                    <textarea  id="message" name="message" placeholder="Working on...."></textarea>
+                     <div id="button_block">
+                     <input type="submit" id="button" value=" Share "/>
+                     <input type="button" id='cancel' value=" cancel" />
+                  </div>
+                </form>
+              </div>
+              <ul id="personalnotes">
+                <?php
+                  foreach ($working_notes as $note)
+                  {
+                      $note=$note['working_on'] ;
+                     echo "<li><span class=\"wrknoteslblorg\">Me:</span> $note </li>";
+                  }
+              ?>
+              </ul>
+        </div>
+        <div class="clearboth"></div>
+    </div>
+</div>
+<div class="clear"></div>
+<script type="text/javascript">
+ $(document).ready(function(){
+        $("#message").focus(function()
+        {
+        $(this).animate({"height": "85px",}, "fast" );
+        $("#button_block").slideDown("fast");
+        return false;
+        });
+
+        $("#cancel").click(function()
+        {
+        $("#message").val('').animate({"height": "30px",}, "fast" );
+        $("#button_block").slideUp("fast");
+        return false;
+       });
+
+    $('#messageinput_container').find('form').submit(function(e){
+       e.preventDefault();
+      // return false;
+      $.ajax({
+	           type: "POST",
+	           async:false,
+	           url: $(this).attr('action'),
+	           data:$(this).serialize(),
+	           success: function(data){
+                      $('#personalnotes').html(data);
+                      $('#users').load('/widget/getworkinglatestlogs')
+                      $("#message").val('').animate({"height": "30px",}, "fast" );
+                      $("#button_block").slideUp("fast");
+	             },
+                  error:function(data){
+	            	
+	             }
+	       });
+       });
+
+    });
+</script>

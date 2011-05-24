@@ -216,68 +216,6 @@ class Welcome extends Cf_Controller {
         return;
     }
 
-    /**
-     * For getting json data for report report control using info vis sunbrust
-     * @return <json>
-     * @author sudhir
-     * @param <array>
-     *
-     */
-    function _get_jsondata_for_report_control($reportlist) {
-        $reports = json_decode($reportlist);
-        $adjacencies = array();
-        $rootnode = array("id" => "node0", "name" => "", "data" => array("\$type" => "none"));
-        $control = array();
-
-        $i = 1;
-        foreach ($reports as $report) {
-            $node = array(
-                'nodeTo' => 'node' . $i,
-                'data' => array("\$type" => 'none')
-            );
-            $adjacencies[$i - 1] = $node;
-            $i++;
-        }
-        $rootnode['adjacencies'] = $adjacencies;
-        array_push($control, $rootnode);
-
-        $i = 1;
-        foreach ($reports as $report) {
-            $node_property = array(
-                'id' => 'node' . $i,
-                'name' => $report,
-                'data' => array("\$angularwidth" => "20", "\$color" => $this->_rand_colorCode(), "\$height" => 90 + $i),
-                'adjacencies' => array()
-            );
-            array_push($control, $node_property);
-            $i++;
-        }
-//print_r($nodelist);
-//print_r(json_encode($control));
-        return json_encode($control);
-    }
-
-    /**
-     * For generating random color
-     * @author sudhir pandey
-     * @return <string>
-     *
-     */
-    function _rand_colorCode() {
-        $r = dechex(mt_rand(0, 255)); // generate the red component
-        $g = dechex(mt_rand(0, 255)); // generate the green component
-        $b = dechex(mt_rand(0, 255)); // generate the blue component
-        $rgb = $r . $g . $b;
-        if ($r == $g && $g == $b) {
-            $rgb = substr($rgb, 0, 3); // shorter version
-        }
-        if (strlen($rgb) == 4) {
-            $rgb = $rgb . rand(10, 99);
-        } else if (strlen($rgb) == 5) {
-            $rgb = $rgb . rand(0, 9);
-        }
-        return '#' . $rgb;
-    }
 
     function engg() {
         $requiredjs = array(
@@ -332,6 +270,25 @@ class Welcome extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'helm', $data);
+    }
+
+    function planning()
+    {
+         $bc = array(
+            'title' => 'Planning',
+            'url' => 'welcome/planning',
+            'isRoot' => false
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
+         $this->load->library('userdata');
+
+        $data = array(
+            'title' => "Cfengine Mission Portal - planning",
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'users'=>  getonlineusernames(),
+            'working_notes'=>$this->userdata->get_personal_working_notes($this->session->userdata('username'))
+        );
+         $this->template->load('template', 'planning', $data);
     }
 
     function hosts($type) {
@@ -434,7 +391,6 @@ class Welcome extends Cf_Controller {
             'op' => $op,
             'allreps' => array_combine($reports, $reports),
             'allhosts' => $allhosts,
-            'jsondata' => $this->_get_jsondata_for_report_control(cfpr_select_reports(".*", 100)),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
 
