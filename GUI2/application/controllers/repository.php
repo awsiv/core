@@ -65,7 +65,7 @@ class Repository extends Cf_Controller {
 
     function checkOutUrl($url='') {
 
-        $url = $url ? $url : $this->input->post('repourl');
+        $url = $url ? urldecode($url) : $this->input->post('repourl');
         $currentUser = $this->session->userdata('username');
         $obj = $this->repository_model->get_specific_repository($currentUser, $url);
 
@@ -148,7 +148,7 @@ class Repository extends Cf_Controller {
                 if (!$return) {
                     $this->form_validation->_error_array = array_merge($this->form_validation->_error_array, $this->repository_model->get_errors());
                 } else {
-                    $successMessage = sprintf ('Repository added sucessfully. <a href="/repository/checkouturl/%s" target="_self">Go to policy editor</a>',$this->input->post('repoPath'));
+                    $successMessage = sprintf ('Repository added sucessfully. <a href="/repository/checkOutUrl/%s" target="_self">Go to policy editor</a>',  urlencode($this->input->post('repoPath')));
                     $this->session->set_flashdata(array('success' =>$successMessage ));
                     redirect(current_url());
                     exit();
