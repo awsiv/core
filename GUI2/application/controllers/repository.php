@@ -148,7 +148,8 @@ class Repository extends Cf_Controller {
                 if (!$return) {
                     $this->form_validation->_error_array = array_merge($this->form_validation->_error_array, $this->repository_model->get_errors());
                 } else {
-                    $this->session->set_flashdata(array('success' => 'Repository added sucessfully. <a href="/repository/" target="_self">Go to policy editor</a>'));
+                    $successMessage = sprintf ('Repository added sucessfully. <a href="/repository/checkouturl/%s" target="_self">Go to policy editor</a>',$this->input->post('repoPath'));
+                    $this->session->set_flashdata(array('success' =>$successMessage ));
                     redirect(current_url());
                     exit();
                 }

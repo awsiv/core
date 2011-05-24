@@ -18,7 +18,7 @@
 
         <div id="plandash" class="grid_7 dash innerdiv">
             <ul>
-                <li><?php echo anchor('cfeditor', 'repository', array('class' => 'repolink', 'id' => 'repobrowser')); ?></li>
+                <li><?php echo anchor('/repository/checkout', 'repository', array('class' => 'repolink', 'id' => 'repobrowser')); ?></li>
                 <li><?php echo anchor('widget/allclasses', 'track records', array('class' => 'trackrecord', 'id' => 'trkrec')); ?></li>
                 <li><?php echo anchor('widget/allclasses', 'approve policies', array('class' => 'approve ', 'id' => 'aprvpolicy')); ?></li>
                  <p class="clearleft"></p>
@@ -84,6 +84,9 @@
 	             }
 	       });
        });
+       
+       
+         $('#repobrowser').ajaxyDialog({title:'SVN Checkout'});
 
     });
 </script>

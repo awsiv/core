@@ -88,7 +88,7 @@ class Welcome extends Cf_Controller {
 
         $this->breadcrumb->setBreadCrumb($bc);
         $reports = json_decode(cfpr_select_reports(".*", 100));
-        
+
         $data = array(
             'title' => "Cfengine Mission Portal-engineering status",
             'breadcrumbs' => $this->breadcrumblist->display(),
@@ -103,7 +103,7 @@ class Welcome extends Cf_Controller {
 
         // compliance summary meter
         $envList = cfpr_environments_list();
-        
+
         //$envListArray = json_decode($envList);
 
         $data['envList'] = $envList;
@@ -216,7 +216,6 @@ class Welcome extends Cf_Controller {
         return;
     }
 
-
     function engg() {
         $requiredjs = array(
             array('jit/jit-yc.js'),
@@ -272,23 +271,25 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'helm', $data);
     }
 
-    function planning()
-    {
-         $bc = array(
+    function planning() {
+        $bc = array(
             'title' => 'Planning',
             'url' => 'welcome/planning',
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
-         $this->load->library('userdata');
-
+        $this->load->library('userdata');
+        $requiredjs = array(
+            array('widgets/notes.js'),            
+        );
+        $this->carabiner->js($requiredjs);
         $data = array(
             'title' => "Cfengine Mission Portal - planning",
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'users'=>  getonlineusernames(),
-            'working_notes'=>$this->userdata->get_personal_working_notes($this->session->userdata('username'))
+            'users' => getonlineusernames(),
+            'working_notes' => $this->userdata->get_personal_working_notes($this->session->userdata('username'))
         );
-         $this->template->load('template', 'planning', $data);
+        $this->template->load('template', 'planning', $data);
     }
 
     function hosts($type) {
