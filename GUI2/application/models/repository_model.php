@@ -3,8 +3,8 @@
 class Repository_model extends CI_Model {
 
     var $collectionName = 'svnrepository';
-    var $svn_log_collection_name='svnlogs';
-    var $approved_policies_collection='approvedpolicies';
+    var $svn_log_collection_name = 'svnlogs';
+    var $approved_policies_collection = 'approvedpolicies';
     var $errors;
 
     public function __construct() {
@@ -19,9 +19,16 @@ class Repository_model extends CI_Model {
      * @param <type> $userId 
      */
     function get_all_repository($userId = '') {
-
-        if (trim($userId)) $this->mongo_db->where(array('username'=>$userId));
+        if (trim($userId))
+            $this->mongo_db->where(array('userId' => $userId));
         return $this->mongo_db->get($this->collectionName);
+    }
+
+    function get_specific_repository($userId, $repoPath) {
+        $this->mongo_db->where(array('userId' => $userId, 'repoPath' => $repoPath))->limit(1);
+        $obj = $this->mongo_db->get_object($this->collectionName);
+        $this->mongo_db->clear();
+        return $obj;
     }
 
     /**
@@ -45,6 +52,7 @@ class Repository_model extends CI_Model {
         $repoInfo['password'] = $this->encrypt_password($repoInfo);
 
         $id = $this->mongo_db->insert($this->collectionName, $repoInfo);
+        return $id;
     }
 
     /**
@@ -76,7 +84,9 @@ class Repository_model extends CI_Model {
      * @return bool
      */
     function delete_repository($repoInfo = array()) {
-        return $this->mongo_db->where($repoInfo)->delete_all($this->collectionName);
+        $return = $this->mongo_db->where($repoInfo)->delete_all($this->collectionName);
+        $this->mongo_db->clear();
+        return $return;
     }
 
     /**
@@ -86,7 +96,9 @@ class Repository_model extends CI_Model {
      */
     function check_duplicate_entries($repoInfo) {
 
-        return $this->mongo_db->where(array('userId' => $repoInfo['userId'], 'repoPath' => $repoInfo['repoPath']))->count($this->collectionName) > 0;
+        $count = $this->mongo_db->where(array('userId' => $repoInfo['userId'], 'repoPath' => $repoInfo['repoPath']))->count($this->collectionName) > 0;
+        $this->mongo_db->clear();
+        return $count;
     }
 
     /**
@@ -95,10 +107,10 @@ class Repository_model extends CI_Model {
      */
     function get_key($userInfo) {
         $obj = $this->mongo_db->select(array('username', 'id', 'password', 'group'))
-                        ->where(array('username' => $userInfo['userId'], 'active' => 1))
-                        ->limit(1)
-                        ->get_object('users');
-
+                ->where(array('username' => $userInfo['userId'], 'active' => 1))
+                ->limit(1)
+                ->get_object('users');
+        $this->mongo_db->clear();
         return hash('sha256', $obj->_id, TRUE);
     }
 
@@ -119,9 +131,7 @@ class Repository_model extends CI_Model {
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
         $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
         return trim(
-                mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->get_key($userInfo), base64_decode($userInfo['password']),
-                        MCRYPT_MODE_ECB,
-                        $iv));
+                mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->get_key($userInfo), base64_decode($userInfo['password']), MCRYPT_MODE_ECB, $iv));
     }
 
     function set_error($msg) {
@@ -131,8 +141,9 @@ class Repository_model extends CI_Model {
     function get_errors() {
         return $this->errors;
     }
+
     /**
-     *for tracking user activitiy on various svn repositories
+     * for tracking user activitiy on various svn repositories
      * @param <type> $username
      * @param <type> $svnrepo
      * @param <type> $file_version
@@ -143,10 +154,8 @@ class Repository_model extends CI_Model {
       $id=$this->mongo_db->insert($this->svn_log_collection_name,array('username'=>$username,'repo'=>$svnrepo,'version'=>$file_version,'operation'=>$operation,'date'=>now()));
     }
 
-
-
     /**
-     *get all the activities of all user on repositories
+     * get all the activities of all user on repositories
      * @return <type>
      */
     function get_svn_logs($repository='')
@@ -175,23 +184,21 @@ class Repository_model extends CI_Model {
     }
 
     /**
-     *inserting a record for keeping track of accepeted policies on revision number
+     * inserting a record for keeping track of accepeted policies on revision number
      * @param <type> $username
      * @param <type> $repo
      * @param <type> $revision
      * @param <type> $comment
      */
-    function approve_policies($username,$svnrepo,$revision,$comment)
-    {
-         $id=$this->mongo_db->insert($this->approved_policies_collection,array('username'=>$username,'repo'=>$svnrepo,'version'=>$revision,'comment'=>$comment,'date'=>now()));
+    function approve_policies($username, $svnrepo, $revision, $comment) {
+        $id = $this->mongo_db->insert($this->approved_policies_collection, array('username' => $username, 'repo' => $svnrepo, 'version' => $revision, 'comment' => $comment, 'date' => now()));
     }
 
     /**
-     *get a list of revision numbers with username and time and comment for a given repository
+     * get a list of revision numbers with username and time and comment for a given repository
      * @param <type> $repo 
      */
-    function get_all_approved_policies($repo)
-    {
+    function get_all_approved_policies($repo) {
         return $this->mongodb->get($this->approved_policies_collection);
     }
 
