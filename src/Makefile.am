@@ -82,9 +82,7 @@ libcfhub_la_SOURCES =	                                        \
 #
 
 noinst_HEADERS =							\
-        win_disphelper.h
-
-include_HEADERS = cf.nova.h cf.nova.web_api.h
+        win_disphelper.h cf.nova.h cf.nova.web_api.h
 
 #
 # Some basic clean ups
