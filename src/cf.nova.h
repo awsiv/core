@@ -686,6 +686,8 @@ void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Prom
 void Nova_SetMeasurementPromises(struct Item **classlist);
 void Nova_LoadSlowlyVaryingObservations(void);
 void Nova_DumpSlowlyVaryingObservations(void);
+void Nova_MonOtherInit(void);
+void Nova_MonOtherGatherData(double *cf_this);
 void Nova_LookupClassName(int n,char *name, char *desc);
 void Nova_SaveFilePosition(char *filename,long fileptr);
 long Nova_RestoreFilePosition(char *filename);
@@ -699,6 +701,10 @@ time_t NextShift(time_t time);
 bool GetRecordForTime(CF_DB *db, time_t time, struct Averages *result);
 void PutRecordForTime(CF_DB *db, time_t time, const struct Averages *values);
 double BoundedValue(double value, double defval);
+
+/* mon_cumulative.c */
+
+unsigned GetInstantUint32Value(const char *name, const char *subname, unsigned value, time_t timestamp);
 
 /* outputs.c */
 

@@ -13,7 +13,7 @@ AM_LDFLAGS = $(BERKELEY_DB_LDFLAGS) $(OPENSSL_LIB_LDFLAGS) @LDFLAGS@
 
 AM_CPPFLAGS = -I$(srcdir)/../../core/src $(CONSTELLATION_CFLAGS)
 
-noinst_LTLIBRARIES = libcfnova.la libcfhub.la
+noinst_LTLIBRARIES = libcfnova.la libcfhub.la libcfmonitord.la
 
 libcfnova_la_LDFLAGS = -no-undefined
 
@@ -74,6 +74,21 @@ libcfnova_la_SOURCES =						\
 	win_sysinfo.c                                           \
 	win_user.c                                              \
         win_wmi.c
+
+libcfmonitord_la_LDFLAGS = -no-undefined
+
+libcfmonitord_la_SOURCES = probes.c \
+	mon_cumulative.c
+
+if LINUX
+libcfmonitord_la_SOURCES += mon_io_linux.c
+libcfmonitord_la_SOURCES += mon_mem_linux.c
+endif
+
+if !LINUX
+libcfmonitord_la_SOURCES += mon_io_stub.c
+libcfmonitord_la_SOURCES += mon_mem_stub.c
+endif
 
 libcfhub_la_SOURCES =	                                        \
 	hub.c
