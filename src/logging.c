@@ -52,7 +52,8 @@ for (ap = response; ap != NULL; ap = ap->ai_next)
       }
    else
       {
-      snprintf(message,rfc3164_len,"<%u>%.15s %s %s",pri,ctime(&now)+4,VFQNAME,a.transaction.log_string);
+      char timebuffer[26];
+      snprintf(message,rfc3164_len,"<%u>%.15s %s %s",pri,cf_strtimestamp(now,timebuffer)+4,VFQNAME,a.transaction.log_string);
       if (sendto(sd,message,strlen(message),0,ap->ai_addr,ap->ai_addrlen) == -1)
          {
          CfOut(cf_verbose,"sendto"," -> Couldn't send \"%s\" to syslog server \"%s\"\n",message,SYSLOGHOST);
@@ -68,6 +69,7 @@ for (ap = response; ap != NULL; ap = ap->ai_next)
 
 #else
 struct sockaddr_in addr;
+char timebuffer[26];
 sockaddr_pton(AF_INET,SYSLOGHOST,&addr);
 addr.sin_port = htons(SYSLOGPORT);
 
@@ -77,7 +79,7 @@ if ((sd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
    return;
    }
 
-snprintf(message,rfc3164_len,"<%u>%.15s %s %s",pri,ctime(&now)+4,VFQNAME,a.transaction.log_string);
+snprintf(message,rfc3164_len,"<%u>%.15s %s %s",pri,cf_strtimestamp(now,timebuffer)+4,VFQNAME,a.transaction.log_string);
 
 if (sendto(sd,message,strlen(message),0,(struct sockaddr *)&addr, sizeof(addr)) == -1)
    {

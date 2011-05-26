@@ -367,6 +367,7 @@ void Nova_LogLicenseStatus()
   char *key;
   void *value;
   long ltime;
+  char timebuffer[26];
   
 dummyattr.transaction.ifelapsed = 1440; // 1 day
 dummyattr.transaction.expireafter = 1440; // 1 day
@@ -498,7 +499,7 @@ CloseDB(dbp);
 
 now = time(NULL);
 snprintf(buffer,sizeof(buffer),"{");
-snprintf(work,sizeof(work),"\"Last measured on\":\"%s\", \"samples\":%d,",ctime(&now),i);
+snprintf(work,sizeof(work),"\"Last measured on\":\"%s\", \"samples\":%d,",cf_strtimestamp(now,timebuffer),i);
 Join(buffer,work,sizeof(buffer));
 //snprintf(work,sizeof(work),"<table class=\"border\">\n");
 //Join(buffer,work,sizeof(buffer));

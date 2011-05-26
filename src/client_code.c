@@ -130,6 +130,7 @@ while (more)
    if (header)
       {
       char validate[5];
+      char timebuffer[26];
       
       header = false; // First one is special
       sscanf(out,"%4s %ld %ld %ld",validate,&delta1,&time2,&length);
@@ -144,7 +145,7 @@ while (more)
       now = time(NULL);
       delta2 = now - time2;
       
-      CfOut(cf_verbose,""," -> Received reply of %d bytes at %s -> Xfer time %d seconds (processing time %d seconds)",length,ctime(&now),delta2,now-then);
+      CfOut(cf_verbose,""," -> Received reply of %d bytes at %s -> Xfer time %d seconds (processing time %d seconds)",length,cf_strtimestamp(now,timebuffer),delta2,now-then);
 
       if (delta2 > 0)
          {

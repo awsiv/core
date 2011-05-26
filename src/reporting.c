@@ -271,6 +271,8 @@ for (ip = file; ip != NULL; ip = ip->next)
    {
    long startt,endt;
    time_t st,et;
+   char timebuffer[26];
+
    kept = repaired = notrepaired = 0;
    memset(start,0,32);
    memset(end,0,32);
@@ -286,8 +288,8 @@ for (ip = file; ip != NULL; ip = ip->next)
    sscanf(ip->name,"%ld,%ld",&startt,&endt);
    st = (time_t)startt;
    et = (time_t)endt;
-   snprintf(start,31,"%s",ctime(&st));
-   snprintf(end,31,"%s",ctime(&et));
+   snprintf(start,31,"%s",cf_strtimestamp(st,timebuffer));
+   snprintf(end,31,"%s",cf_strtimestamp(et,timebuffer));
 
    if (!strstr(ip->name,"Outcome of version"))
       {
@@ -788,6 +790,7 @@ else if (XML)
 
 for (ip = file; ip != NULL; ip = ip->next)
    {
+   char timebuffer[26];
    memset(name,0,255);
 
    if (cf_strlen(ip->name) == 0)
@@ -797,7 +800,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    sscanf(ip->name,"%ld,%1023[^\n]",&start,name);
    now = (time_t)start;
-   snprintf(datestr,CF_MAXVARSIZE-1,"%s",ctime(&now));
+   snprintf(datestr,CF_MAXVARSIZE-1,"%s",cf_strtimestamp(now,timebuffer));
    Chop(datestr);
    
    if (xml)
@@ -1874,6 +1877,7 @@ void Nova_SummarizeValue(int xml,int html,int csv,int embed,char *stylesheet,cha
   time_t now = time(NULL);
   struct promise_value pt;
   struct Item *ip,*data = NULL;
+  char timebuffer[26];
 
 // Strip out the date resolution so we keep only each day of the year
   
@@ -1910,7 +1914,7 @@ if ((fout = fopen("value_report.html","w")) == NULL)
 
 snprintf(name,sizeof(name),"Value return from Cfengine on %s",VFQNAME);
 fprintf(fout,"<div id=\"reporttext\">");
-fprintf(fout,"<p>Last measured on %s",ctime(&now));
+fprintf(fout,"<p>Last measured on %s",cf_strtimestamp(now,timebuffer));
 fprintf(fout,"<table class=\"border\">\n");
 
 fprintf(fout,"<tr><th>Day</th><th>Promises Kept</th><th>Repairs</th><th>Not kept</th></tr>\n");
@@ -1941,6 +1945,7 @@ void Nova_SummarizeLicense(char *stylesheet,char *header,char *footer,char *webd
   time_t now,dt,then;
   double average,granted,sum_t = 0,ex_t = 0,lic_t = 0;
   FILE *fout = stdout;
+  char timebuffer[26];
   
 CfOut(cf_verbose,""," -> Writing license summary");
 
@@ -2007,7 +2012,7 @@ if (OpenDB(name,&dbp))
 now = time(NULL);
 snprintf(name,sizeof(name),"Mean observable license usage");
 fprintf(fout,"<div id=\"reporttext\">");
-fprintf(fout,"<h4>Last measured on %s based on %d samples</h4>",ctime(&now),i);
+fprintf(fout,"<h4>Last measured on %s based on %d samples</h4>",cf_strtimestamp(now,timebuffer),i);
 fprintf(fout,"<table class=\"border\">\n");
 
 if (sum_t > 0)
@@ -2293,8 +2298,8 @@ int Nova_ImportHostReports(char *filePath)
     return false;
     }
 
- ctime_r(&genTime, buf);
- 
+ cf_strtimestamp(genTime, buf);
+
  CfOut(cf_inform, "", " -> Importing Nova %s reports from host %s with timestamp %s", reportType, keyHash, buf);
 
  NewReportBook(reports);
