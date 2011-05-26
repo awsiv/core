@@ -37,7 +37,9 @@ Debug("Loaded values: docroot=%s\n",DOCROOT);
 
 void Nova_DumpTopics()
 
-{ bson_buffer bb;
+{
+#ifdef HAVE_LIBMONGOC
+  bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
@@ -118,13 +120,16 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
+#endif
 }
 
 /*****************************************************************************/
 
 int Nova_GetTopicIdForTopic(char *typed_topic)
     
-{ char topic[CF_BUFSIZE],type[CF_BUFSIZE];
+{
+#ifdef HAVE_LIBMONGOC
+  char topic[CF_BUFSIZE],type[CF_BUFSIZE];
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
@@ -182,13 +187,16 @@ mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 
 return topic_id;
+#endif
 }
 
 /*****************************************************************************/
 
 int Nova_GetTopicByTopicId(int search_id,char *topic_name,char *topic_id,char *topic_context)
 
-{ bson_buffer bb;
+{
+#ifdef HAVE_LIBMONGOC
+  bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
@@ -251,13 +259,16 @@ while (mongo_cursor_next(cursor))  // loops over documents
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 return topicid;
+#endif
 }
 
 /*********************************************************************/
 
 int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
 
-{ bson_buffer bb;
+{
+#ifdef HAVE_LIBMONGOC
+  bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
@@ -344,6 +355,7 @@ buffer[strlen(buffer)-1] = ']';
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 return true;
+#endif
 }
 
 /*****************************************************************************/
@@ -352,7 +364,9 @@ void Nova_ScanTheRest(int pid,char *buffer, int bufsize)
 
 /* Find other topics in the same context */
     
-{ char this_name[CF_BUFSIZE],this_id[CF_BUFSIZE],this_context[CF_BUFSIZE];
+{
+#ifdef HAVE_LIBMONGOC
+  char this_name[CF_BUFSIZE],this_id[CF_BUFSIZE],this_context[CF_BUFSIZE];
   struct Item *worklist, *ip;
   char work[CF_BUFSIZE];
   char name[CF_BUFSIZE] = {0},*a_context;
@@ -405,6 +419,7 @@ for(ip=worklist;ip!=NULL;ip=ip->next)
 
 ReplaceTrailingChar(buffer, ',', '\0');
 EndJoin(buffer,"]}",bufsize);
+#endif
 }
 
 /*****************************************************************************/
@@ -422,7 +437,9 @@ struct Item *Nova_ScanLeadsAssociations(int search_id,char *assoc_mask)
 
 */
     
-{ bson_buffer bb;
+{
+#ifdef HAVE_LIBMONGOC
+  bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
@@ -517,13 +534,16 @@ list = SortItemListNames(list);
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 return list;
+#endif
 }
 
 /*****************************************************************************/
 
 void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
 
-{ enum representations locator_type;
+{
+#ifdef HAVE_LIBMONGOC
+  enum representations locator_type;
   struct Rlist *rp,*frags,*atoms,*rrp;
   char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE];
   char locator[CF_BUFSIZE],context[CF_BUFSIZE],represents[CF_BUFSIZE],searchstring[CF_BUFSIZE];
@@ -646,6 +666,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    }
 
 buffer[strlen(buffer)-1] = ']';
+#endif
 }
 
 /*************************************************************************/
@@ -673,7 +694,9 @@ return worklist;
 
 struct Item *Nova_GetUniqueBusinessGoals()
 
-{ struct Item *worklist = NULL, *ip;
+{
+#ifdef HAVE_LIBMONGOC
+  struct Item *worklist = NULL, *ip;
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
@@ -773,6 +796,7 @@ for (ip = worklist; ip !=  NULL; ip=ip->next)
    }
 
 return worklist;
+#endif
 }
     
 /*************************************************************************/
@@ -801,7 +825,9 @@ return buf;
 
 void Nova_FillInGoalComment(struct Item *ip)
 
-{ struct Rlist *rp;
+{
+#ifdef HAVE_LIBMONGOC
+  struct Rlist *rp;
   char searchstring[CF_MAXVARSIZE],work[CF_MAXVARSIZE];
   bson_buffer bb;
   bson query,field;
@@ -862,13 +888,16 @@ while (mongo_cursor_next(cursor))  // loops over documents
    }
 
 ip->classes = strdup("No description available");
+#endif
 }
 
 /*************************************************************************/
 
 char *Nova_GetBundleComment(char *bundle)
 
-{ static char buf[CF_BUFSIZE];
+{
+#ifdef HAVE_LIBMONGOC
+  static char buf[CF_BUFSIZE];
   struct Rlist *rp;
   char searchstring[CF_MAXVARSIZE],work[CF_MAXVARSIZE];
   bson_buffer bb;
@@ -918,6 +947,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    }
 
 return NULL;
+#endif
 }
 
 /*****************************************************************************/
@@ -1290,7 +1320,9 @@ return true;
 
 struct Item *Nova_NearestNeighbours(int search_id,char *assoc_mask)
 
-{ bson_buffer bb;
+{
+#ifdef HAVE_LIBMONGOC
+  bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
@@ -1399,13 +1431,16 @@ while (mongo_cursor_next(cursor))  // loops over documents
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 return list;
+#endif
 }
 
 /*********************************************************************/
 
 struct Item *Nova_GetTopicsInContext(char *context)
     
-{ bson_buffer bb;
+{
+#ifdef HAVE_LIBMONGOC
+  bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
@@ -1476,6 +1511,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 return list;
+#endif
 }
 
 /*********************************************************************/

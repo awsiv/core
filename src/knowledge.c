@@ -48,7 +48,10 @@ static char *CF_VALUETYPES[18][3] =
 
 void Nova_StoreKMDB(struct Topic **topichash,struct Occurrence *occurrences,struct Inference *inferences)
     
-{ struct Topic *tp;
+{
+#ifdef HAVE_LIBMONGOC
+
+  struct Topic *tp;
   struct TopicAssociation *ta;
   struct Occurrence *op;
   struct Inference *ip;
@@ -170,6 +173,7 @@ for (ip = inferences; ip != NULL; ip=ip->next)
    }
 
 CFDB_Close(&dbconn);
+#endif
 }
 
 /*****************************************************************************/
