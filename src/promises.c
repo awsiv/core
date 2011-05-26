@@ -164,6 +164,7 @@ void Nova_EnterpriseContext()
 #ifdef HAVE_GETZONEID
  zoneid_t zid;
  char zone[ZONENAME_MAX];
+ char vbuff[CF_BUFSIZE];
 
 zid = getzoneid();
 getzonenamebyid(zid,zone,ZONENAME_MAX);
