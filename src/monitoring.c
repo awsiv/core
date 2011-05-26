@@ -29,7 +29,10 @@ struct CfMeasurement
 int MONITOR_RESTARTED = true;
 char *MEASUREMENTS[CF_DUNBAR_WORK];
 struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
+
+static bool slots_loaded;
 static char SLOTS[CF_OBSERVABLES-ob_spare][2][CF_MAXVARSIZE];
+
 
 /*****************************************************************************/
 
@@ -100,10 +103,12 @@ FILE *f;
 char filename[CF_BUFSIZE];
 int i;
 
-if (SLOTS[0][0][0] != 0)
+if (slots_loaded)
    {
    return;
    }
+
+slots_loaded = true;
 
 snprintf(filename,CF_BUFSIZE-1,"%s%cstate%cts_key",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR);
 
@@ -120,7 +125,13 @@ for (i = 0; i < CF_OBSERVABLES; ++i)
       }
    else
       {
-      fscanf(f, "%*d,%[^,],%[^\n]", SLOTS[i - ob_spare][0], SLOTS[i - ob_spare][1]);
+      char name[CF_MAXVARSIZE], desc[CF_MAXVARSIZE];
+      fscanf(f, "%*d,%1023[^,],%1023[^\n]", name, desc);
+      if (strcmp(name, "spare"))
+         {
+         strcpy(SLOTS[i - ob_spare][0], name);
+         strcpy(SLOTS[i - ob_spare][1], desc);
+         }
       }
    }
 fclose(f);
@@ -297,24 +308,13 @@ switch (a.measure.data_type)
 
        if (cf_strcmp(a.measure.history_type,"weekly") == 0)
           {
-          if ((slot = NovaGetSlot(handle)) < 0)
+          if ((slot = NovaRegisterSlot(handle, pp->ref ? pp->ref : "User defined measure")) < 0)
              {
              return;
              }
 
-          snprintf(SLOTS[slot][0],CF_MAXVARSIZE-1,"%s",handle);
-
-          if (pp->ref)
-             {
-             snprintf(SLOTS[slot][1],CF_MAXVARSIZE-1,"%s",pp->ref);
-             }
-          else
-             {
-             snprintf(SLOTS[slot][1],CF_MAXVARSIZE-1,"User defined measure");
-             }
-
-          this[ob_spare+slot] = NovaExtractValueFromStream(handle,stream,a,pp);
-          CfOut(cf_verbose,""," -> Setting Nova slot %d=%s to %lf\n",ob_spare+slot,handle,this[ob_spare+slot]);
+          this[slot] = NovaExtractValueFromStream(handle,stream,a,pp);
+          CfOut(cf_verbose,""," -> Setting Nova slot %d=%s to %lf\n",slot,handle,this[slot]);
           }
        else if (cf_strcmp(a.measure.history_type,"log") == 0)
           {
@@ -691,7 +691,7 @@ return av;
 /* Level                                                                     */
 /*****************************************************************************/
 
-int NovaGetSlot(const char *name)
+static int NovaGetSlot(const char *name)
 {
 int i;
 
@@ -700,12 +700,10 @@ Nova_LoadSlots();
 /* First try to find existing slot */
 for (i = 0; i < CF_OBSERVABLES - ob_spare; ++i)
    {
-   CfOut(cf_verbose, "", "%s <-> %s", SLOTS[i][0], name);
-
    if (!strcmp(SLOTS[i][0], name))
       {
-      CfOut(cf_verbose, "", " -> Using slot ob_spare+%d for %s\n", i, name);
-      return i;
+      CfOut(cf_verbose, "", " -> Using slot ob_spare+%d (%d) for %s\n", i, i + ob_spare, name);
+      return i + ob_spare;
       }
    }
 
@@ -714,14 +712,39 @@ for (i = 0; i < CF_OBSERVABLES - ob_spare; ++i)
    {
    if (!SLOTS[i][0][0])
       {
-      CfOut(cf_verbose, "", " -> Using empty slot ob_spare+%d for %s\n", i, name);
-      return i;
+      CfOut(cf_verbose, "", " -> Using empty slot ob_spare+%d (%d) for %s\n", i, i + ob_spare, name);
+      return i + ob_spare;
       }
    }
 
 CfOut(cf_error, "", "Measurement slots are all in use - it is not helpful to measure too much, you can't usefully follow this many variables");
 
 return -1;
+}
+
+int NovaRegisterSlot(const char *name, const char *description)
+{
+int slot = NovaGetSlot(name);
+if (slot == -1)
+   {
+   return -1;
+   }
+
+if (strlcpy(SLOTS[slot - ob_spare][0], name, CF_MAXVARSIZE) >= CF_MAXVARSIZE)
+   {
+   SLOTS[slot - ob_spare][0][0] = '\0';
+   CfOut(cf_error, "", "Slot name '%s' is too long, refusing to register.", name);
+   return -1;
+   }
+
+if (strlcpy(SLOTS[slot - ob_spare][1], description, CF_MAXVARSIZE) >= CF_MAXVARSIZE)
+   {
+   CfOut(cf_verbose, "", "Description of slot '%s' is truncated");
+   }
+
+Nova_DumpSlots();
+
+return slot;
 }
 
 const char *NovaGetSlotName(int idx)
