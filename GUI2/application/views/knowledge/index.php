@@ -9,8 +9,8 @@
                 <ul>
                     <li><a href="/docs/cf3-reference.html" class="docs" id="docs">docs</a></li>
                     <li><?php echo anchor('/knowledge/topicFinder/', 'Find Topic', array('class' => 'topic' ,'title'=>'Topic Finder','id' => 'topic')); ?></li>
-                    <li><?php echo anchor('/notes/shownotes/', 'Message Archieve', array('class' => 'message', 'id' => 'message')); ?></li>
-                    <li><?php echo anchor('/repository/checkOut', 'Forum', array('class' => 'forum', 'id' => 'forum')); ?></li>
+                    <li><?php echo anchor('/notes/shownotes/', 'Message Archieve', array('class' => 'knowledge-message', 'id' => 'knowledge-message')); ?></li>
+                    <li><?php echo anchor('#', 'Forum', array('class' => 'forum', 'id' => 'forum')); ?></li>
                 </ul>
             </div>
             <div class="clearboth"></div>
@@ -21,8 +21,7 @@
 <script type="text/javascript">
     jQuery(document).ready(function(){
       
-       $('#topic').topicfinder();
-       $('#forum').ajaxyDialog({title:'SVN Checkout'});
+       $('#topic').topicfinder();       
 
     });
 </script>
