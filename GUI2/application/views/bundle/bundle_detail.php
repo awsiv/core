@@ -24,18 +24,23 @@
                                     <th scope="col">COMMENT</th>
                                 </tr>
                                 <tr>
-                                    <th scope="host-class">Host classes using this bundle </td>
-                                    <th scope="host-class"></td>
+                                    <th scope="host-class">Host classes using this bundle </th>
+                                    <th scope="host-class"></th>
                                 </tr>
 
-                                <?php foreach ((array) $classes as $c) {
-                                    ?>
+                                <?php if (is_array($classes) && !empty($classes)) {
+                                    foreach ((array) $classes as $c) { ?>
+                                        <tr>
+                                            <td><?php echo sprintf("<a href='/knowledge/knowledgemap/pid/%s'>%s</a>", $c[0], $c[1]); ?></td>
+                                            <td></td>
+                                        </tr>
+                                    <?php }
+                                } else { ?>
                                     <tr>
-                                        <td><?php echo sprintf("<a href='/knowledge/knowledgemap/pid/%s'>%s</a>", $c[0], $c[1]); ?></td>
+                                        <td>None</td>
                                         <td></td>
                                     </tr>
                                 <?php } ?>
-
 
 
 
@@ -48,14 +53,19 @@
                                     <th scope="promise"></td>
                                 </tr>
 
-                                <?php foreach ((array) $list as $promise) {
-                                    ?>
+                                <?php if (is_array($list) && !empty($list)) {
+                                    foreach ((array) $list as $promise) { ?>
+                                        <tr>
+                                            <td><?php echo sprintf("<a href='/promise/details/%s'>%s</a>", $promise, $promise); ?></td>
+                                            <td></td>
+                                        </tr>
+                                    <?php }
+                                } else { ?>
                                     <tr>
-                                        <td><?php echo sprintf("<a href='/promise/details/%s'>%s</a>", $promise, $promise); ?></td>
+                                        <td>None</td>
                                         <td></td>
                                     </tr>
                                 <?php } ?>
-
 
                             </table>
 
@@ -76,12 +86,17 @@
                         <th scope="col">Bundles</th>
                     </tr>
 
-                    <?php foreach ((array) $others as $o) {
-                        ?>
+                    <?php if (is_array($others) && !empty($others)) {
+                        foreach ((array) $others as $o) { ?>
+                            <tr>
+                                <td><?php echo sprintf("<a href='/bundle/details/bundle/%s/type/%s'>%s</a>", $o['bundlename'], $o['bundletype'], $o['bundlename']); ?></td>
+                            </tr>
+                        <?php }
+                    } else { ?>
                         <tr>
-                            <td><?php echo sprintf("<a href='/bundle/details/bundle/%s/type/%s'>%s</a>", $o['bundlename'], $o['bundletype'], $o['bundlename']); ?></td>
-                        <?php } ?>
-                    </tr>
+                            <td>None</td>                            
+                        </tr>
+                    <?php } ?>
                 </table>
             </div>
 
@@ -93,9 +108,15 @@
                     </tr>
 
 
-                    <?php foreach ((array) $allbundles as $bundles) { ?>
-                        <tr>       
-                            <td><?php echo sprintf("<a href='/bundle/details/bundle/%s/type/%s'>%s</a>", $bundles[1], $bundles[0], $bundles[1]); ?></td>
+                    <?php if (is_array($allbundles) && !empty($allbundles)) {
+                        foreach ((array) $allbundles as $bundles) { ?>
+                            <tr>       
+                                <td><?php echo sprintf("<a href='/bundle/details/bundle/%s/type/%s'>%s</a>", $bundles[1], $bundles[0], $bundles[1]); ?></td>
+                            </tr>
+                        <?php }
+                    } else { ?>
+                        <tr>
+                            <td>None</td>                            
                         </tr>
                     <?php } ?>
                 </table>     

@@ -94,7 +94,7 @@ $(document).ready(function() {
                $(element).attr('href', '/notes/index/action/show/nid/' + nid);
                // console.log(nid,element);
         }});
-    //reportcontrol(<?php echo $jsondata?>,"host");
+    
     $('#findreport').reportfinder({allhost:false,hostkey:"<?php echo $hostkey;?>"});
 });
 </script>

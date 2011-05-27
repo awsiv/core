@@ -45,13 +45,7 @@ class Promise extends Cf_Controller {
         $pid = cfpr_get_pid_for_topic("promises", $handle);
         $topicDetail = cfpr_show_topic($pid);
         
-        $bc = array(
-            'title' => 'Promise',
-            'url' => 'promise/details/'.$handle,
-            'isRoot' => false
-        );
         
-        $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
             'handle' => $handle,
             'title_header' => "promise $handle",

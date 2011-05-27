@@ -1920,6 +1920,14 @@ span.search input
     border-top: 1px solid #666;
 }
 
+.bundlelist-table th[scope=blue]
+{
+    background-color: #009193; 
+    color: #FFF;
+    border-bottom: 1px solid #666;
+    border-top: 1px solid #666;
+}
+
 .bundlelist-table th[scope=promise]
 {
     background-color: #a58d73;
@@ -1936,6 +1944,6 @@ span.search input
 
 .bundlelist-table tr:hover th[scope=row], .bundlelist-table tr:hover td
 {
-    background-color: #632a2a;
+    background-color: #cccccc;
     color: #fff;
 }

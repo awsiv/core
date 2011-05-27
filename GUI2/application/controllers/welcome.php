@@ -509,10 +509,20 @@ class Welcome extends Cf_Controller {
     }
 
     function body() {
+        
+         
+        
         $this->carabiner->css('tabs-custom.css');
         $getparams = $this->uri->uri_to_assoc(3);
         $body = isset($getparams['body']) ? $getparams['body'] : $this->input->post('search');
         $type = isset($getparams['type']) ? $getparams['type'] : $this->input->post('type');
+        
+        
+        
+        $this->load->library('cf_table');
+        
+        
+        
         $data = array(
             'title_header' => "body " . $body,
             'title' => "Cfengine Mission Portal - classes ",
@@ -520,7 +530,8 @@ class Welcome extends Cf_Controller {
             'status' => "current",
             'allbodies' => json_decode(utf8_encode(cfpr_list_bodies(".*", $type)), TRUE),
             'def' => json_decode(utf8_encode(cfpr_get_promise_body($body, $type)), TRUE),
-            'type' => $type
+            'type' => $type,
+             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'body', $data);
     }

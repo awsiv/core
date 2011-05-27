@@ -7,16 +7,37 @@
             </ul>
             <div id="tabs-1" class="ui-corner-all">
 
-                <div class="panel"><div class="panelhead">Body definition:</div>
+                <div class="panel">
                     <div class="panelcontent">
-                        <ul>
-                            <li>Type : <a href="/knowledge/knowledgeSearch/topic/<?php echo $def['Type']; ?>"><?php echo $def['Type']; ?></a></li>
-                            <li>Name : <a href="/knowledge/knowledgeSearch/topic/<?php echo $def['Name']; ?>"> <?php echo $def['Name']; ?></a></li>
-                            <li>Arguments :  <?php echo $def['Arguments']; ?></li>
+
+                        <table class="bundlelist-table">
+                            <tr>
+                                <th scope="col">Body Definition</th>
+                                <th scope="col"></th>
+                            </tr>
+                            <tr>
+                                <td>Type</td>
+                                <td><a href="/knowledge/knowledgeSearch/topic/<?php echo $def['Type']; ?>"><?php echo $def['Type']; ?></a></td>
+                            </tr>
+                            <tr>
+                                <td>Name</td>
+                                <td><a href="/knowledge/knowledgeSearch/topic/<?php echo $def['Name']; ?>"> <?php echo $def['Name']; ?></a></td>
+                            </tr>
+                            <tr>
+                                <td>Arguments</th>
+                                <td><?php echo $def['Arguments']; ?></td>
+                            </tr>
+
+
+
+
                             <?php foreach ((array) $def['attributes'] as $att) { ?>
-                                <li><a href="/knowledge/knowledgeSearch/topic/<?php echo $att['lval']; ?>"><?php echo $att['lval']; ?></a> => <?php echo $att['rval']; ?> (<a href="/knowledge/knowledgeSearch/topic/<?php echo $att['class_context']; ?>"><?php echo $att['class_context']; ?></a>)</li>
+                                <tr>
+                                    <td><a href="/knowledge/knowledgeSearch/topic/<?php echo $att['lval']; ?>"><?php echo $att['lval']; ?></a> => </td><td><?php echo $att['rval']; ?> (<a href="/knowledge/knowledgeSearch/topic/<?php echo $att['class_context']; ?>"><?php echo $att['class_context']; ?></a>)</td>
+                                </tr>
                             <?php } ?>
-                        </ul>
+                        </table>    
+
                     </div>
                 </div>
             </div>
@@ -25,12 +46,11 @@
 
                 <div class="panel"><div class="panelhead">Other bodies of type <?php echo $type ?></div>
                     <div class="panelcontent">
-                        <ul>
+                        <ul style="margin-left: 15px;">
                             <?php foreach ((array) $allbodies as $b) { ?>
                                 <li><?php echo sprintf("<a href='/welcome/body/body/%s/type/%s'>%s %s</a>", $b['body'], $b['type'], $b['body'], $b['type']); ?> </a></li>
                             <?php } ?>                    
                         </ul>
-
                     </div>
                 </div>
             </div>
