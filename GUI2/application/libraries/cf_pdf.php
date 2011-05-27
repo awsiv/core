@@ -9,7 +9,7 @@ class cf_pdf extends FPDF
     var $reportname;
     var $tabletitle;
     var $description;
-    var $max_col_height=2;
+    var $max_col_height=4;
 
     #******************************
     function cf_pdf($orientation='p', $unit='mm', $format='A4')
@@ -258,32 +258,37 @@ class cf_pdf extends FPDF
 	    $tmp_font = $font_size;
 
 	    $multi_col = array();
+            $fonts_array = array();
 	    $nb = 0;
 	    for($j=0; $j<$cols; $j++)
 	    {
 		$f[$j] = $ar1[$i][$j];
-		$this->SetFont('Arial', '', $tmp_font);
+#		$this->SetFont('Arial', '', $tmp_font);
+		$this->SetFont('Arial', '', $font_size);
 		$width = ($col_len[$j] * ($this->pagewidth - $this->left - $this->right))/100;
 		$tmp = $this->NbLines($width,$f[$j]);
 
-		if($tmp > $nb)
+                while($tmp > $max_col_height)
 		{
-		    $nb = $tmp;
+                  $tmp_font--;
+                  $this->SetFont('Arial', '', $tmp_font);
+                  $tmp = $this->NbLines($width,$f[$j]);
+                  #$j--;
 		}
-		if($tmp > $max_col_height)
+
+                if($tmp > 1 && $tmp > $nb)
 		{
-		  $j--;
-		  $tmp_font--;
-		  $nb = $max_col_height;
-		}
-		else if($tmp > 1)
-		{
-		  $multi_col[$j] = true;
-		  $tmp_multi = $j;
+                   $multi_col[$j] = true;
 		}
 		else
 		{
-		  $multi_col[$j] = false;
+                   $multi_col[$j] = false;
+		}
+
+		if(($tmp > $nb) && ($tmp <= $max_col_height))
+		{
+		   $nb = $tmp;
+     		   $tmp_multi = $j;     
 		}
 	    }
 
@@ -307,31 +312,29 @@ class cf_pdf extends FPDF
 		    $newpage = true;
                     $this->DrawTableHeader($header, $cols, $col_len, $header_font);
 		    $starty = $this->GetY();
+                    $rowmaxy=$starty + $hx;
 		}
 
 		$this->SetXY($startx, $starty);
 		$width = ($col_len[$j] * ($this->pagewidth - $this->left - $this->right))/100;
+                $this->Rect($startx, $starty, $width, $hx);
 		if($multi_col[$j] == true)
 		{
-      		    $this->SetFont('Arial', '', $tmp_font);
-		    if($j != $tmp_multi && $tmp_multi != -1)
-		    	  $this->MultiCell($width,$hx,$f[$j],1,$align,0);
-		    else if($j == $tmp_multi)
-		    	 $this->MultiCell($width,$tmp_font,$f[$j],1,$align,0);
+      		 $this->SetFont('Arial', '', $tmp_font);
+ 	    	 $this->MultiCell($width,$tmp_font,$f[$j],0,$align,0);
+                   
+                 $rowmaxy = $this->GetY();
 		}
 		else
 		{
-		    $this->SetFont('Arial', '', $font_size);
-		    $this->MultiCell($width,$hx,$f[$j],1,$align,0);
-		}
+		 $this->SetFont('Arial', '', $font_size);
+		 $this->MultiCell($width,$tmp_font,$f[$j],0,$align,0);
+		}                     	        
 
 		$startx+= $width;
-		$this->Ln(0);
 	    }
-	    if(!$newpage)
-	    {
-		$this->SetY($rowmaxy);
-	    }
+
+	$this->SetY($rowmaxy);
 	}
     }
 
