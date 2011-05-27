@@ -26,9 +26,9 @@ class OnlineUsers{
 
         }
 	function OnlineUsers(){
-                $this->CI->mongo_db->clear();
-                $this->data=$this->CI->mongo_db->where(array('user_id'=>$this->CI->session->userdata('user_id')))->get('onlineusers');
-                //echo json_encode($this->data);
+                
+               $this->data=$this->CI->mongo_db->where(array('user_id'=>$this->CI->session->userdata('user_id')))->get('onlineusers');
+               
 		
 		$timeout = time()-120;
 		

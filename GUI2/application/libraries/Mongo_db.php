@@ -408,7 +408,7 @@ class Mongo_db {
 	 	foreach($documents as $doc):
 	 		$returns[] = $doc;
 	 	endforeach;
-	 	
+	 	$this->clear();
 	 	return($returns);
 	 	
 	 	//return(iterator_to_array($documents));
@@ -476,10 +476,14 @@ class Mongo_db {
 	 	try {
 		    $insert=$data;
 	 		$this->db->{$collection}->insert($insert, array('safe' => TRUE));
-	 		if(isset($insert['_id']))
-	 			return($insert['_id']);
-	 		else
+	 		$this->clear();
+                        if(isset($insert['_id'])) {
+                           	return($insert['_id']);
+                        }
+	 		else {
+                           
 	 			return(FALSE);
+                        }
 	 	} catch(MongoCursorException $e) {
 	 		show_error("Insert of data into MongoDB failed: {$e->getMessage()}", 500);
 	 	}
@@ -504,7 +508,7 @@ class Mongo_db {
 	 	
 	 	try {
 	 		$result=$this->db->{$collection}->update($this->wheres, array('$set' => $data), array('safe' => TRUE, 'multiple' => FALSE));
-	 		//return(TRUE);
+	 		$this->clear();
                         return $result;
 	 	} catch(MongoCursorException $e) {
 	 		show_error("Update of data into MongoDB failed: {$e->getMessage()}", 500);
@@ -521,7 +525,7 @@ class Mongo_db {
 
 	 	try {
 	 		$result=$this->db->{$collection}->update($this->wheres, array('$unset' => $data), array('safe' => TRUE, 'multiple' => FALSE, '$type'=>0));
-	 		//return(TRUE);
+	 		$this->clear();
                         return $result;
 	 	} catch(MongoCursorException $e) {
 	 		show_error("Update of data into MongoDB failed: {$e->getMessage()}", 500);
@@ -546,10 +550,13 @@ class Mongo_db {
 	 		show_error("Nothing to update in Mongo collection or update is not an array", 500);
 	 	try {
 	 		$result=$this->db->{$collection}->update($this->wheres, array('$set' => $data), array('safe' => TRUE, 'multiple' => TRUE));
-	 		if($result['n']>=1)
+	 		$this->clear();
+                        if($result['n']>=1) {
                            return (TRUE);
-                        else
+                        }
+                        else {
                            return (FALSE);
+                        }
 	 	} catch(MongoCursorException $e) {
 	 		show_error("Update of data into MongoDB failed: {$e->getMessage()}", 500);
 	 	}
@@ -595,7 +602,8 @@ class Mongo_db {
 	 	
 	 	try {
 	 		$this->db->{$collection}->remove($this->wheres, array('safe' => TRUE, 'justOne' => FALSE));
-	 		return(TRUE);
+	 		$this->clear();
+                        return(TRUE);
 	 	} catch(MongoCursorException $e) {
 	 		show_error("Delete of data into MongoDB failed: {$e->getMessage()}", 500);
 	 	}
@@ -791,4 +799,9 @@ class Mongo_db {
 		if(!isset($this->wheres[$param]))
 			$this->wheres[$param] = array();
 	}	
+        
+        
+        public function where_debug() {
+            return $this->wheres;
+        }
 }
