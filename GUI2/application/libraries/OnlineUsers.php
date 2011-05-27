@@ -26,7 +26,8 @@ class OnlineUsers{
 
         }
 	function OnlineUsers(){
-                $this->data=$this->CI->mongo_db->where(array('user_id'=>$this->CI->session->userdata('id')))->get('onlineusers');
+                $this->CI->mongo_db->clear();
+                $this->data=$this->CI->mongo_db->where(array('user_id'=>$this->CI->session->userdata('user_id')))->get('onlineusers');
                 //echo json_encode($this->data);
 		
 		$timeout = time()-120;
@@ -34,6 +35,7 @@ class OnlineUsers{
 		//If it's the first hit, add the information to database
                if(!$this->data)
                         {
+                        
                         $this->data=array();
                         $this->data['ip']=$this->ip;
                         $this->data['user_id']=$this->CI->session->userdata('user_id');
