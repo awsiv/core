@@ -191,8 +191,6 @@ if (NO_FORK)
       {
       Nova_HailPeer(ip->classes,a,pp);
       }
-
-   UpdateLastSeen();
    }
 else
    {
@@ -209,7 +207,6 @@ else
          Nova_HailPeer(ip->classes,a,pp);
          }
 
-      UpdateLastSeen();
       exit(0);
       }
    else
@@ -509,6 +506,11 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    {
    if (value != NULL)
       {
+      if (strcmp(value,CF_UNKNOWN_IP) == 0)
+         {
+         continue;
+         }
+      
       memcpy(&entry,value,sizeof(entry));
       IdempPrependItem(&list,key+1,entry.address);
       }
