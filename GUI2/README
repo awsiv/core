@@ -3,15 +3,16 @@ Required PHP modules
 1) mongo
 2) mcrypt
 3) curl
-4) svn
+4) phpsvn module ver 1.6.6
 5) cfmod
+
 
 
 Apache configuration
 ---------------------------------
 
 *) Copy Apache-htaccess to DOCROOT/.htaccess (e.g. /var/www/.htaccess on Ubunut)
-
+*) apache directive AllowEncodedSlashes On should be present (MUST)
 *) Make sure AllowOverride is set to All for this directory in main apache config.
 e.g. on Ubuntu /etc/apache2/sites-enabled/000-default, 
   ---

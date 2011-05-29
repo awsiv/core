@@ -20,7 +20,7 @@
             <ul>
                 <li><?php echo anchor('/repository/checkout', 'repository', array('class' => 'repolink', 'id' => 'repobrowser')); ?></li>
                 <li><?php echo anchor('widget/allclasses', 'track records', array('class' => 'trackrecord', 'id' => 'trkrec')); ?></li>
-                <li><?php echo anchor('widget/allclasses', 'approve policies', array('class' => 'approve ', 'id' => 'aprvpolicy')); ?></li>
+                <li><?php echo anchor('/repository/policyApprover', 'approve policies', array('class' => 'approve ', 'id' => 'aprvpolicy')); ?></li>
                  <p class="clearleft"></p>
             </ul>
         </div>
@@ -51,7 +51,7 @@
 <div class="clear"></div>
 <script type="text/javascript">
  $(document).ready(function(){
-        $("#message").focus(function()
+       $("#message").focus(function()
         {
         $(this).animate({"height": "85px",}, "fast" );
         $("#button_block").slideDown("fast");
@@ -85,8 +85,7 @@
 	       });
        });
        
-       
-         $('#repobrowser').ajaxyDialog({title:'SVN Checkout'});
-
+          $('#repobrowser').ajaxyDialog({title:'SVN Checkout'});
+          $('#aprvpolicy').ajaxyDialog({title:'Approve Poilicices'});
     });
 </script>

@@ -35,6 +35,13 @@ margin:0
     margin-top: 20px;
 }
 
+p#repoinfo
+{
+    margin-top:15px;
+    padding: 5px;
+    font-size: 14px;
+    text-align: center
+}
 p#userbox{
     background: url("images/logged_in_as.png") no-repeat scroll 0 7px transparent;
     float: right;
@@ -91,18 +98,23 @@ p#userbox a{
 
 	  #leftPanel
 {
-	height:400px;
-	width:250px;
+	background: #fff;
+        -moz-border-radius: 8px;
+       -webkit-border-radius: 8px;
 }
 
-.ui-layout-toggler-west-open { background: url(/images/toggle-lt.gif) no-repeat center right; }
-.ui-layout-toggler-west-closed {background: url(/images/toggle-lt-open.gif) no-repeat center right;}
+.ui-layout-toggler-west-open , .ui-layout-toggler-east-closed { background: url(/images/toggle-lt.gif) no-repeat center right; }
+.ui-layout-toggler-west-closed , .ui-layout-toggler-east-open {background: url(/images/toggle-lt-open.gif) no-repeat center right;}
 
 #rightPanel
 {
-	
+	overflow: hidden
 }
 
+#buttonpanel-resizer
+{
+    width:5px;
+}
 #syntax_check_area
 {
 	background:#ffffff;
@@ -115,12 +127,10 @@ p#userbox a{
 
 #Policies
 {
-	background:#e8eaf9;
-	margin-left:15px;
-	width:225px;
-	margin-top:25px;
+	background:#fff;
+	margin-left:5px;
 	-moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
+       -webkit-border-radius: 8px;
 
 }
 
@@ -133,65 +143,70 @@ p#userbox a{
   padding:5px 5px 5px 5px;
 }
 
-#menu
+#buttonpanel ul
 {
-	background:#fff;
-	margin-left:15px;
-	width:225px;
-	margin-top:25px;
-	-moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
-	padding-top:10px;
-}
-.menuitem
-{
- font-size:14px;
- font-family:Verdana, Geneva, sans-serif;
- padding:1px 5px 1px 10px;
- display:block;
+ margin-top: 28px;
+  -moz-border-radius: 6px;
+    -opera-border-radius:6px;
+    -khtml-border-radius:6px;
+    -webkit-border-radius:6px;
+   border-radius:5px;
+  background:#fff;
 }
 
-.icontext
-{
-vertical-align:middle;
+#buttonpanel-resizer{
+  width:5px;
+}
+     
+.dash ul{
+    list-style: none;
+    margin: 0 auto;
 }
 
-#menu a
-{
-  font-size:16px;
-  font-family:Verdana, Geneva, sans-serif;
-  padding:1px 5px 1px 10px;
-  display:block;
-}
-#help-panel .links
-{
-	margin-top:5px;
+.dash ul li{
+    text-align: center;
+    list-style: none;
+    padding:10px 10px;
 }
 
-#menu .shortcuts
-{
-	margin-top:10px;
-}
-#help-panel .results
-{
-	padding:5px;
-	border:solid 1px #a7a7a7;
+.dash ul li a{
+    min-width:35px;
+    display:block;
+    padding-top: 35px;
+    font-size: 11px;
+    color:#717171;
 }
 
-#menu .shortcuts span
-{
-	display:block;
-	font:11px Verdana, Geneva, sans-serif;
-	padding:2px;
-	margin-left:5px;
+.dash a#new{
+    background: url("../images/new.png") no-repeat scroll center top transparent;
 }
-#menu .links span
-{
-	display:block;
-	color:#176ba9;
-	font:12px Verdana, Geneva, sans-serif;
-	padding:2px;
-	margin-left:5px;
+.dash a#save{
+    background: url("../images/save.png") no-repeat center top transparent;
+}
+.dash a#update{
+    background: url("../images/update.png") no-repeat center top transparent;
+}
+
+.dash a#svnlogs{
+    background: url("../images/log.png") no-repeat center top transparent;
+}
+
+.dash a#Checkout{
+    background: url("../images/checkout.png") no-repeat center top transparent;
+}
+
+.dash a#Commit{
+    background: url("../images/commit.png") no-repeat center top transparent;
+}
+
+.dash a#checksyntax{
+     background: url("../images/check_syntax.png") no-repeat scroll center top transparent;
+}
+
+.dash ul li.clearleft , .clearleft{
+    clear:left;
+    padding:0;
+    margin:0;
 }
 
 #help-panel .results span
@@ -219,7 +234,7 @@ margin:0.4em 0.2em 0 0;
 	font-size:11px;
 	border:none;
 	padding:0;
-	width:95%;
+	width:100%;
 	-moz-border-radius: 8px;
        -webkit-border-radius: 8px;
        background: transparent;
@@ -327,7 +342,7 @@ div.ui-dialog-buttonpane,.dialog.ui-dialog-buttonpane
 	font:Arial, Helvetica, sans-serif;
 	font-size:14px;
 	font-weight:bold;
-    padding:4px;
+        padding:4px;
 	background:#E8EAF9;
 
 }
@@ -337,7 +352,7 @@ UL.jqueryFileTree {
 	font-family: Verdana, sans-serif;
 	font-size: 11px;
 	line-height: 18px;
-	padding: 0px;
+	padding: 0 0 0 5px;
 	margin: 0px;
 }
 

@@ -22,20 +22,22 @@ $this->carabiner->display(); ?>
 <body>
   <div id="wrapper" class="container_12">
      <div id="header">
-              <div id="header_left"class="grid_7">
+              <div id="header_left"class="grid_3">
                <p class="sitetitle"><?php echo anchor("welcome/index",'cfengine mission portal') ?></p>
                </div>
-
-              <div id="header_right"class="grid_5">
+         <div class="grid_6">
+         <p id="repoinfo"> Working on :: <strong><?php echo $curreny_repo ?></strong></p>
+         </div>
+           
+         <div id="header_right" class="grid_3">
                        <p id="userbox">
-	                Hello  <strong><?php echo $this->session->userdata('username');?></strong>
-                        &nbsp;| &nbsp;
-                        <a href="<?php echo site_url('auth/logout'); ?>" title="logout">logout</a>
+	                 revision:<strong><?php echo $revision ;?></strong>  &  Approvals:<strong><?php echo $total_approvals ?></strong>
                        </p>
-             </div>
+                      <p class="clearright"></p>
              <div class="clear"></div>
-          </div><!--end of header-->
-    <div id="editor">
+          </div>
+     </div><!--end of header-->
+
 	<div id="leftPanel">
 	 	<div class="ui-layout-content">
         <div id="Policies">
@@ -43,15 +45,6 @@ $this->carabiner->display(); ?>
 		    <div id="container_policies_id">
 		    
 		    </div>
-		  </div>
-		  <div id="menu">
-			<a href="#" class="menuitem" id="new"><img class="icontext" src="<?php echo get_imagedir() ?>new.png"/>New</a>
-			  <a href="#" class="menuitem" id="save"><img class="icontext" src="<?php echo get_imagedir() ?>save.png">Save</a>
-			  <a href="#" class="menuitem" id="checksyntax"><img class="icontext" src="<?php echo get_imagedir() ?>check_syntax.png"/>Check syntax</a>
-              <a href="#" class="menuitem" id="Checkout"><img class="icontext" src="<?php echo get_imagedir() ?>checkout.png"/>Checkout</span></a>
-			  <a href="#" class="menuitem" id="update"><img class="icontext" src="<?php echo get_imagedir() ?>update.png"/>Update</span></a>
-			  <a href="#" class="menuitem" id="Commit"><img class="icontext" src="<?php echo get_imagedir() ?>commit.png"/>Commit</span></a>
-              <a href="#" class="menuitem" id="svnlogs"><img class="icontext" src="<?php echo get_imagedir() ?>log.png"/>Log</span></a>
 		  </div>
 		</div>
 	</div>
@@ -72,7 +65,18 @@ $this->carabiner->display(); ?>
 
 	</div>
 </div>
-</div> <!--hello-->
+          <div id="buttonpanel" class="dash">
+                      <ul>
+                          <li> <a href="#"  id="new">New</a></li>
+                          <li> <a href="#"  id="save">Save</a></li>
+                          <li> <a href="#"  id="checksyntax">Check syntax</a></li>
+                          <li><a href="#"  id="Checkout">Checkout</a></li>
+                          <li><a href="#"  id="update">Update</a></li>
+                          <li> <a href="#" id="Commit">Commit</a></li>
+                          <li> <a href="#"  id="svnlogs">Log</a></li>
+                      </ul>
+                  </div>
+
 
     <div title="Tab data" id="dialog" style="display:none" class="dialog">
             <form>

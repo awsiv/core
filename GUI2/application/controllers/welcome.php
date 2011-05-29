@@ -280,7 +280,8 @@ class Welcome extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
         $this->load->library('userdata');
         $requiredjs = array(
-            array('widgets/notes.js'),            
+            array('widgets/notes.js'),
+            array('jquery.autogrowtextarea.js')
         );
         $this->carabiner->js($requiredjs);
         $data = array(

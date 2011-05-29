@@ -5,13 +5,25 @@ $(document).ready(function() {
 	      fxName:               "slide"
 	   ,  fxSpeed:               "slow"
 	   ,  spacing_open:          14
-	   }
+	   },
+           east:{
+              fxName:                "slide"
+	    ,  size:                 60
+	    ,togglerLength_closed:    14
+	    ,togglerAlign_closed:     "top"
+            ,spacing_open:6
+	   ,  spacing_closed:        6
+	   ,  togglerLength_closed:  "100%"
+	   ,  paneSelector:          "#buttonpanel"
+	   ,  fxSettings:             {easing:""}
+           }
 	,  west: {
 	      fxName:                "slide"
-	   ,  size:                  270
+	   ,  size:                  240
 	   ,togglerLength_closed:    21
 	   ,togglerAlign_closed:     "top"
-	   ,  spacing_closed:        8
+           ,spacing_open:6
+	   ,  spacing_closed:      6
 	   ,  togglerLength_closed:  "100%"
 	   ,  paneSelector:          "#leftPanel"
 	   ,  fxSettings:             {easing:""}
@@ -22,7 +34,7 @@ $(document).ready(function() {
 	,  north: {
 		   
 		   paneSelector:         "#header"
-	   ,  size:                  40
+	   ,  size:                  60
 	   ,  spacing_open:          0
 	   ,  resizable:             false
 	   ,  closeable:             false
@@ -38,7 +50,7 @@ $(document).ready(function() {
 	});
 
 	var default_dialog_width = 400;
-	
+	$('#buttonpanel-resizer').css('width', '5px');
 	var tab_counter = 2;
 		var code_editor_counter=0;//previously 1
 		var tab_title_input="Untitled-";
@@ -155,7 +167,7 @@ $(document).ready(function() {
     		    path: "../scripts/Cfeditor/",
     		    lineNumbers: true,
     		    styleNumbers: styleLineNum,
-    		    initCallback: function(e){initComplete(e); initResize(e); initChangeTracker(e);},
+    		    initCallback: function(e){initComplete(e);initResize(e);initChangeTracker(e);},
     		    onChange: contentChanged,
     		    continuousScanning: 500
     		  });
@@ -184,7 +196,7 @@ $(document).ready(function() {
 			       		    path: "../scripts/Cfeditor/",
 			       		    lineNumbers: true,
 			       		    styleNumbers: styleLineNum,
-			       		    initCallback: function(e){initComplete(e); initResize(e); initChangeTracker(e);},
+			       		    initCallback: function(e){initComplete(e);initResize(e);initChangeTracker(e);},
 			       		    onChange: contentChanged,
 			       		    continuousScanning: 500
 			       		  });
@@ -193,9 +205,8 @@ $(document).ready(function() {
 		   		//addcontextmenu();//adding the context menu to the tab newly added
 	             },
           error:function(data){
-	            	 $confirmation.dialog({title: "Error", width:default_dialog_width});
-	            	 $confirmation.html('<span>An error occured while performing request</span>'); 
-	            	 $confirmation.dialog('open');   
+	            	
+                        $.jnotify('An error occured while performing request','error');
 	             }
 	       }); 
 	 }
@@ -314,9 +325,10 @@ $(document).ready(function() {
 				else
 			       {
 				closetabs=false; 
-				$confirmation.dialog({title: "Error", width:default_dialog_width});
+				/*$confirmation.dialog({title: "Error", width:default_dialog_width});
 	                        $confirmation.html('<span>An error occured: '+data.msg+'.</span>');
-	                        $confirmation.dialog('open');
+	                        $confirmation.dialog('open');*/
+                                $.jnotify('An error occured while performing request'+data.msg,'error');
 			      }
 		            }
                          });
@@ -347,7 +359,7 @@ $(document).ready(function() {
 		 var tabtype=$("input[name='tabtype']",current_tab_id).val();
 		 if(tabtype==undefined)
 		 {
-			 alert("This tab can not be saved.");
+                         $.jnotify('Current tab cannot be saved',"error",5000);
 			 return;
 		 }
 		var file_type=$("input[name='link']",current_tab_id).val();
@@ -379,15 +391,10 @@ $(document).ready(function() {
 	           data:({'file':filepath, 'content':newcontents,'filestats':'old', 'agent':agent}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
 	           success: function(data){
-		           $confirmation.dialog({title: "Saved", width:default_dialog_width});
-	        	   $confirmation.html('<span>The current tab was successfully saved.</span>'); 
-	        	   $confirmation.dialog('open');
-	        	   
+                           $.jnotify('Current tab contents was saved');
 	             },
             error:function(data){
-	            	 $confirmation.dialog({title: "Error", width:default_dialog_width});
-	            	 $confirmation.html('<span>An error occured: '+data.msg+'.</span>'); 
-	            	 $confirmation.dialog('open');   
+                          $.jnotify('An error occured'+data.msg,'error');
 	             }
 	       });
 		 }
@@ -440,9 +447,7 @@ $(document).ready(function() {
 							
 						 },
 					  error:function(data){
-							 $confirmation.dialog({title: "Error", width:default_dialog_width});
-							 $confirmation.html('<span>An error occured: '+data.msg+'.</span>'); 
-							 $confirmation.dialog('open');   
+                                                          $.jnotify('An error occured'+data.msg,'error');
 						 }
 				   });
 			 $(this).dialog('close');
@@ -492,18 +497,16 @@ $(document).ready(function() {
 	           
 	           success: function(data){
 				    $("#comments").show();
-		            $("#commentlbl").show();
-		            $("#repo").hide();
-		            $("#repolbl").hide();
-		            $("#operation").val('commit');
-		            $("#datatype").val('json');
+		                    $("#commentlbl").show();
+		                    $("#repo").hide();
+		                    $("#repolbl").hide();
+		                    $("#operation").val('commit');
+		                    $("#datatype").val('json');
 					$('#cmtfile').val(file);
 					$cfd.dialog('open');
 	             },
               error:function(data){
-	            	 $confirmation.dialog({title: "Error", width:default_dialog_width});
-	            	 $confirmation.html('<span>An error occured.</span>'); 
-	            	 $confirmation.dialog('open');   
+                          $.jnotify('An error occured','error');
 	             }
 	       }); 
 		    $(this).dialog('close');
@@ -517,14 +520,11 @@ $(document).ready(function() {
 	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(),'filestats':'old', 'agent':agent}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
 	           success: function(data){
-                     $confirmation.dialog({title: "Saved", width:default_dialog_width});
-	        	   $confirmation.html('<span>File successfully saved.</span>'); 
-	        	   $confirmation.dialog('open');
+                       $.jnotify("File successfully saved");
 	             },
               error:function(data){
-	            	 $confirmation.dialog({title: "Error", width:default_dialog_width});
-	            	 $confirmation.html('<span>An error occured.</span>'); 
-	            	 $confirmation.dialog('open');   
+	            	
+                          $.jnotify("Error Occured ","error");
 	             }
 	       }); 
 		 $(this).dialog('close');
@@ -547,9 +547,8 @@ $(document).ready(function() {
 	 $('#Checkout')
 	   .click(function() {
 			 if(code_editor_counter > 0)
-		     {
-				 alert("Please close all open tabs first.");
-				 
+		        {
+				 alert("Please close all open tabs first.");	 
 			 }
 			 else
 			 {
@@ -575,9 +574,7 @@ $(document).ready(function() {
 					}
 	             },
               error:function(data){
-	            	 $confirmation.dialog({title: "Error", width:default_dialog_width});
-	            	 $confirmation.html('<span>An error occured.</span>'); 
-	            	 $confirmation.dialog('open');   
+                          $.jnotify('An error occured','error');
 	             }
 	           });
 			 }
@@ -612,9 +609,8 @@ $(document).ready(function() {
 			 }
            
          });
-	   
-	    $('#svnlogs')
-	   .click(function() {
+
+$('#svnlogs').click(function() {
            $("#operation").val('svnlogs');
 		   $("#commentlbl").hide();
 		   $("#comments").hide();
@@ -634,21 +630,15 @@ $(document).ready(function() {
 			success: function(data){
 				if(data.result=="SUCCESS")
 				{
-				$confirmation.dialog({title: "Inputs are valid", width:default_dialog_width});
-				$confirmation.html('<span>The policy promises.cf has correct syntax.</span>'); 
-				$confirmation.dialog('open');
+                                 $.jnotify("The policy promises.cf has correct syntax");
 				}
 				else
 				{
-				$confirmation.dialog({title: "Errors in policy", width:960});
-				$confirmation.html('<span>'+data.result.replace(/\n/g, "<br>")+'</span>');
-				$confirmation.dialog('open');
+                                 $.jnotify(data.result.replace(/\n/g, "<br>"),"error");
 				}
 			},
 		    error:function(data){
-				$confirmation.dialog({title: "Error", width:default_dialog_width});
-				$confirmation.html('<span>An error occured.</span>'); 
-				$confirmation.dialog('open');   
+                              $.jnotify("An error occured.","error");
 			}
 
 		}); 	   
@@ -683,66 +673,53 @@ $(document).ready(function() {
 							  {
 								  if(data.status)
 								  {
-								   //var path = "cfeditor/get_list";
-									//$("#container_policies_id").load(path,{dir: 'policies'}, function(data){
-									//});
-                                                                  loadfiletree();
-								  //$('#Checkout').hide();
-					                          $('<div id="repoText"><span>Subversion repository path</span></div>').css({position: 'absolute' , width:'100%'}).hide().appendTo('body');
-								  $('#usedRepo').html('<span>'+$("#repo").val()+'</span>');
-								  $confirmation.dialog({title: $("#operation").val(), width:default_dialog_width});
-								  $confirmation.html('<span>Sucessfully checked out.</span>');
+                                                                   loadfiletree();
+                                                                   $('#repoinfo').html("working on :: "+$("#repo").val());
+                                                                   $('#userbox').html('revision :: <strong> '+data.rev+'</strong> & Approvals :: <strong>'+data.total_approvals+'</strong>');
+                                                                   $.jnotify("Checked out sucessfully.");
 								  }
 								  else
 								  {
-								  $confirmation.dialog({title: $("#operation").val(), width:default_dialog_width});
-								  $confirmation.html('<span>Checkout failed. </span>'); 
-								  }
-								  $confirmation.dialog('open');
-								  
+                                                                   $.jnotify("Checkout failed :: "+data.message,"error");
+								  }  
 							  }
 						  else if($("#operation").val()=='svnlogs')
 							  { 
 								$('#svnlogtable').html(data.table);
 								//$('#svnlogtable table').tableFilter();
                                                                 $('#svnlogtable table').tablesorter({widgets: ['zebra']});
-								/* $.fancybox({
-								 //'orig' : $(this),
-								 'padding' : 0,
-								 'href' : '#svnlogtable', 'title' : 'ChangeLogs',
-								 'transitionIn' : 'elastic',
-								 'transitionOut' : 'elastic'
-								});*/ 
 								$svnlogdlg.dialog('open');
 							  }
 						else if($("#operation").val()=='update')
 							{
-								//var path = "cfeditor/get_list";
-							        //$("#container_policies_id").load(path,{dir: 'policies/'}, function(data){});
-                                                                loadfiletree();
-								 $confirmation.dialog({title: $('#operation').val(), width:default_dialog_width});
-								 $confirmation.html('<span>Sucessfully updated. </span>'); 
-								 $confirmation.dialog('open');
+                                                              if(data.status)
+                                                                  {
+                                                                     loadfiletree();
+                                                                     $('#userbox').html('revision :: <strong> '+data.rev+'</strong> & Approvals :: <strong>'+data.total_approvals+'</strong>');
+                                                                     $.jnotify("Sucessfully updated at revision "+ data.rev);
+                                                                  }
+                                                               else
+                                                                   {
+                                                                       $.jnotify("Update Failed : "+data.message,"error",5000);
+                                                                   }
+                                                               
 							}
 						else if($("#operation").val()=='commit')
 							{
-                                                              $confirmation.dialog({title: $("#operation").val(), width:default_dialog_width});
-								 if(data.error)
+                                                            //  $confirmation.dialog({title: $("#operation").val(), width:default_dialog_width});
+								 if(data.status)
                                                                      {
-                                                                          $confirmation.html('<span>'+data.message+'</span>');
+                                                                         $.jnotify($('#cmtfile').val()+' Sucessfully committed');
                                                                      }
                                                                   else
                                                                       {
-								           $confirmation.html('<span>'+$('#cmtfile').val()+' Sucessfully committed. </span>');
-                                                                      }
-                                                                     $confirmation.dialog('open');
+                                                                         $.jnotify(data.message,"error",5000);
+                                                                      }              
 							}
 							$('#cmtfile').val('');
 						},
 					error:function(data){
-						$confirmation.dialog({title: "Error", width:default_dialog_width});
-						$confirmation.html('<span>Cannot Process the request '+data.status+'</span>');
-						$confirmation.dialog('open');
+                                                 $.jnotify('Cannot Process the request '+data.status,'error');
 						   $('#cmtfile').val('')
 						}
 					});
@@ -779,18 +756,18 @@ $('.dialog').find('input').keypress(function(e) {
 	 });
 	
 	jQuery(document).ajaxStart(function(){
-		 $('#spinner').css({top: '0' , left:$('body').width()/2 }).fadeIn();
+		 $('#spinner').css({top: '0' , left:$('body').width()/2}).fadeIn();
 		 $('#repoText').css({top: '0' , left:'0'}).fadeOut();
 		 });
 	 jQuery(document).ajaxStop(function(){
-		 $('#spinner').css({top: '0' , left:$('body').width()/2 }).fadeOut();
+		 $('#spinner').css({top: '0' , left:$('body').width()/2}).fadeOut();
 		 if(closetabs)
 		   {
 			  $tabs.tabs('remove', closetabindex);
 			  closetabindex="";
 			  closetabs=false;
 		   }
-		 $('#repoText').css({top: '0' , left:'0' }).fadeIn();
+		 $('#repoText').css({top: '0' , left:'0'}).fadeIn();
 		 });
 	   
 						   

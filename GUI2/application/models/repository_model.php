@@ -20,8 +20,9 @@ class Repository_model extends CI_Model {
      */
     function get_all_repository($userId = '') {
         if (trim($userId))
-            $this->mongo_db->where(array('userId' => $userId));
-        return $this->mongo_db->get($this->collectionName);
+             $repos=$this->mongo_db->where(array('userId' => $userId))->get($this->collectionName);
+             $this->mongo_db->clear();
+         return $repos;
     }
 
     function get_specific_repository($userId, $repoPath) {
@@ -176,7 +177,7 @@ class Repository_model extends CI_Model {
     function get_revisions($repository='')
     {
         $uniqrevs=array();
-        $revs=$this->mongo_db->select(array('version'))->where(array('repo'=>$repository))->get($this->svn_log_collection_name);
+        $revs=$this->mongo_db->select(array('version'))->where(array('repo'=>$repository))->order_by(array('version'=>'desc'))->get($this->svn_log_collection_name);
         foreach ($revs as $rev){
             array_push($uniqrevs, $rev['version']);
         }
@@ -192,14 +193,31 @@ class Repository_model extends CI_Model {
      */
     function approve_policies($username, $svnrepo, $revision, $comment) {
         $id = $this->mongo_db->insert($this->approved_policies_collection, array('username' => $username, 'repo' => $svnrepo, 'version' => $revision, 'comment' => $comment, 'date' => now()));
+        return $id;
     }
 
     /**
-     * get a list of revision numbers with username and time and comment for a given repository
+     * get a list of revision numbers with username and time and comment for depending on the parameters
      * @param <type> $repo 
      */
-    function get_all_approved_policies($repo) {
-        return $this->mongodb->get($this->approved_policies_collection);
+    function get_all_approved_policies($repo='',$limit='') {
+        if($repo !='' && $limit !='')
+        {
+         return $this->mongo_db->where(array('repo'=>$repo))->order_by(array('date'=>'desc'))->limit($limit)->get($this->approved_policies_collection);
+        }
+        elseif($limit=='' && $repo !='')
+        {
+            return $this->mongo_db->where(array('repo'=>$repo))->order_by(array('date'=>'desc'))->get($this->approved_policies_collection);
+        }
+        elseif($repo=='')
+        {
+            return $this->mongo_db->get($this->approved_policies_collection);
+        }
+    }
+
+    function get_total_approval_count($repo)
+    {
+        return $this->mongo_db->where(array('repo'=>$repo))->count($this->approved_policies_collection);
     }
 
 }

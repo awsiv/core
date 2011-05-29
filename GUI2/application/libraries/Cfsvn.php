@@ -70,13 +70,12 @@ class Cfsvn {
                 svn_add($eachfile['path']);
             }
         }
-
-      
+        
         try {
             $cdetails = svn_commit($comment, array($this->working_dir));
             return $cdetails;
-        } catch (Exception $e) {
-            return array('error' => 'true', 'message' => $e->getMessage());
+            } catch (Exception $e) {
+            throw $e;
         }
     }
 
@@ -104,12 +103,22 @@ class Cfsvn {
 
     function get_current_repository() {
         $status = svn_status($this->working_dir, SVN_ALL);
-        $report = "";
+        $repo = "";
         $i = 0;
         for ($i = 0; $i < 1; $i++) {
             $repo = $status[$i]['repos'];
         }
         return $repo;
+    }
+
+    function get_working_revision(){
+        $status = svn_status($this->working_dir, SVN_ALL);
+        $rev = "";
+        $i = 0;
+        for ($i = 0; $i < 1; $i++) {
+            $rev = $status[$i]['revision'];
+        }
+        return  $rev;
     }
 
 }

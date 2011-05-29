@@ -1,6 +1,6 @@
 <div>
     <div class="innerdiv">
-        <div id=" stylized">
+        <div class=" stylized">
             <form action="/repository/checkOutUrl" target="_self" method="POST">
                 <fieldset>
                     <legend>Checkout</legend>
@@ -30,7 +30,7 @@
 if ($this->session->flashdata('success')) { ?>
     <div class="success"><?php echo $this->session->flashdata('success'); ?></div> 
 <?php } ?>
-<div id="stylized">
+<div class="stylized">
 
     <form action="/repository/checkout/force" method="POST">
         <fieldset>

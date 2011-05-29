@@ -14,11 +14,37 @@
   
    function index()
    {
-   $data=array(
+    $working_dir = get_policiesdir().$this->session->userdata('username');
+     $params=array(
+			'workingdir' => $working_dir
+			);
+     $this->load->model('repository_model');
+     $this->load->library('cfsvn',$params);
+     try{
+       $rev=$this->cfsvn->get_working_revision();
+       $current_repo=$this->cfsvn->get_current_repository();
+       $total_approvals=$this->repository_model->get_total_approval_count($current_repo);
+        $data=array(
          'title'=>"Cfengine Mission Portal - Policy editor",
+         'revision'=>$rev,
+         'total_approvals'=>$total_approvals,
+         'curreny_repo'=>$current_repo
 		 );
+     }catch(Exception $e)
+     {
+        $data=array(
+         'title'=>"Cfengine Mission Portal - Policy editor",
+         'revision'=>'Unknown',
+         'total_approvals'=>"Unknown",
+         'curreny_repo'=>'Empty Working Directory'
+	 );
+     }
+     
    $this->carabiner->css('cfeditor.css');
+   $this->carabiner->css('jquery.jnotify.css');
     $this->carabiner->js('jqueryFileTree.js');
+    $this->carabiner->js('jquery.jnotify.min.js');
+    
    $this->load->view('cfeditor/Cfeditor',$data);
    }
    
@@ -97,12 +123,21 @@
 			'workingdir' => get_policiesdir().$this->session->userdata('username')
 			);
     $this->load->library('cfsvn',$params);
-    $data=$this->cfsvn->cfsvn_checkout();
-   //if check out was sucessfull
-    if($data['status'])
-    {
-     $this->repository_model->insert_svn_log($this->session->userdata('username'),$this->input->post('repo'), $data['rev'] ,'checkout');
+    $data=array();
+    try{
+         $data=$this->cfsvn->cfsvn_checkout();
+       //if check out was sucessfull
+        if($data['status'])
+        {
+         $data['total_approvals']=$this->repository_model->get_total_approval_count($this->input->post('repo'));
+         $this->repository_model->insert_svn_log($this->session->userdata('username'),$this->input->post('repo'), $data['rev'] ,'checkout');
+        }
     }
+    catch(Exception $e) {
+        $data['status']=false;
+        $data['message']=$e->getMessage();
+    }
+    
     echo json_encode($data);	
    }
    
@@ -115,19 +150,30 @@
 		 }
      $password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
      $params=array(
-	        'username' =>  $this->input->post('user'),
+	                'username' =>  $this->input->post('user'),
 			'password' => $password,
 			'repository' => $this->input->post('repo'),
 			'workingdir' => $working_dir
 			);   
      $this->load->library('cfsvn',$params);
-     $cdetails=$this->cfsvn->cfsvn_commit($this->input->post('comments'));
-    //on sucessfull commit of files make a record in data base svnlogs [revision,date,username] in cdetails
-     if(is_array($cdetails))
-     {
-        $this->repository_model->insert_svn_log($this->session->userdata('username'),$this->input->post('repo'), $cdetails[0] ,'commit');
+     $data="";
+     try{
+                $cdetails=$this->cfsvn->cfsvn_commit($this->input->post('comments'));
+                //on sucessfull commit of files make a record in data base svnlogs [revision,date,username] in cdetails
+                 if(is_array($cdetails) && $cdetails[0] > 0 )
+                 {
+                    $this->repository_model->insert_svn_log($this->session->userdata('username'),$this->input->post('repo'), $cdetails[0] ,'commit');
+                    $data=array('status'=>true,'rev'=>$cdetails[0]);
+                 }
+                else
+                {
+                   $data=array('status'=>false,'message'=>"Not Committed as no changes detected");
+                }
+     }catch(Exception $e){
+         $data=array('status'=>false,'message'=>$e->getMessage());
      }
-     echo json_encode ($cdetails);
+    // echo json_encode ($cdetails);
+     echo json_encode ($data);
    }
    
    function update()
@@ -139,14 +185,23 @@
 			'workingdir' => get_policiesdir().$this->session->userdata('username')
 			);
      $this->load->library('cfsvn',$params);
-     //gets the revision number
+     $data="";
+     try{
+        //gets the revision number
      $cdetails=$this->cfsvn->cfsvn_update();
-     //make a entry in svn log records in our db 
+     $current_repo=$this->cfsvn->get_current_repository();
+     $total_approvals=$this->repository_model->get_total_approval_count($current_repo);
+     //make a entry in svn log records in our db
      if($cdetails)
+         {
+           $this->repository_model->insert_svn_log($this->session->userdata('username'),$current_repo, $cdetails ,'update');
+         }
+       $data=array('status'=>true,'rev'=>$cdetails,'total_approvals'=>$total_approvals);
+     }catch(Exception $e)
      {
-       $this->repository_model->insert_svn_log($this->session->userdata('username'),$this->cfsvn->get_current_repository(), $cdetails ,'update');
+       $data=array('status'=>false,'message'=>$e->getMessage());
      }
-     echo $cdetails;
+     echo json_encode($data);
    }
    
    function svnlogs()
@@ -290,4 +345,5 @@
 			);
 	echo json_encode($details);
    }
+
  }

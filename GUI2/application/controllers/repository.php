@@ -7,6 +7,7 @@ class Repository extends Cf_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('repository_model');
+        $this->load->helper('form');
         $this->username = $this->session->userdata('username');
     }
 
@@ -211,6 +212,77 @@ class Repository extends Cf_Controller {
         $data['repoData'] = $repo;
         $data['errors'] = $this->form_validation->_error_array;
         $this->template->load('template', '/repository/manage_repository', $data);
+    }
+
+    function policyApprover()
+    {
+         $repos = $this->repository_model->get_all_repository($this->username);
+         $repo_url=array();
+         foreach($repos as $repo)
+         {
+             array_push($repo_url,$repo['repoPath']);
+         }
+         //by default first option is selected and populate a list of revs for it
+         $revs=$this->repository_model->get_revisions($repo_url[0]);
+         $data=array(
+                  'reposoptions'=> $repo_url,
+                  'revs'=>$revs
+             );
+          $requiredjs = array(
+            array('jquery.autogrowtextarea.js')
+        );
+        $this->carabiner->js($requiredjs);
+        // $this->template->load('template','repository/approver',$data);
+        $this->load->view('repository/approver',$data);
+    }
+
+    function getListofRev()
+    {
+      $repo=$this->input->post('repo');
+      $revs=$this->repository_model->get_revisions($repo);
+      if(count($revs)>0)
+      {
+      echo form_dropdown('rev', array_combine($revs, $revs), $revs[0]);
+      }
+     else{
+         echo " ";
+     }
+    }
+
+    function approveRepoAction()
+    {
+        $this->load->library('table');
+        $username=$this->session->userdata('username');
+        $repo=$this->input->post('repository');
+        $rev=$this->input->post('revision');
+        $comments=$this->input->post('comments');
+        try{
+            $id=$this->repository_model->approve_policies($username,$repo,$rev,$comments);
+            $rev_table=$this->repository_model->get_all_approved_policies($repo,10);
+            $data=array('table'=>$rev_table);
+        }catch(Exception $e)
+        {
+           $data=array("error"=>$e->getMessage());
+        }
+         $this->load->view('repository/approved_policies',$data);
+    }
+
+    function approvedPolicies()
+    {
+         $this->load->library('table');
+         $rev_table=$this->repository_model->get_all_approved_policies();
+          $bc = array(
+            'title' => 'Approved Policies',
+            'url' => 'repository/approvedPolicies',
+            'isRoot' => false
+        );
+        $data=array(
+            'title' => "Cfengine Mission Portal - approved policies",
+            'title_header' => "policies approved",
+            'table'=>$rev_table,
+             'breadcrumbs' => $this->breadcrumblist->display()
+        );
+        $this->template->load('template','repository/approved_policies_fullview',$data);
     }
 
 }
