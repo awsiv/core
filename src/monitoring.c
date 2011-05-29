@@ -722,6 +722,8 @@ CfOut(cf_error, "", "Measurement slots are all in use - it is not helpful to mea
 return -1;
 }
 
+/*****************************************************************************/
+
 int NovaRegisterSlot(const char *name, const char *description)
 {
 int slot = NovaGetSlot(name);
@@ -1353,6 +1355,7 @@ return ReadDB(db, timekey, result, sizeof(struct Averages));
 
 
 /****************************************************************************/
+
 void PutRecordForTime(CF_DB *db, time_t time, const struct Averages *values)
 {
 char timekey[CF_MAXVARSIZE];
