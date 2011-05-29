@@ -14,83 +14,83 @@
 typedef void (*MemoryFieldCallback)(const char *field, off_t value, void *param);
 
 static bool ParseKeyNumericValue(FILE *fd, MemoryFieldCallback callback, void *param)
-{
-    char buf[1024];
 
-    while (fgets(buf, 1024, fd))
-    {
-        char *s = strchr(buf, ':');
-        unsigned long long value;
+{ char buf[1024];
 
-        if (!s)
-        {
-            /* Malformed file */
-            return false;
-        }
+while (fgets(buf, 1024, fd))
+   {
+   char *s = strchr(buf, ':');
+   unsigned long long value;
+   
+   if (!s)
+      {
+      /* Malformed file */
+      return false;
+      }
+   
+   *s = 0;
+   
+   if (1 == sscanf(s + 1, "%llu", &value) != 1)
+      {
+      /* Malformed file */
+      return false;
+      }
+   
+   (*callback)(buf, value, param);
+   }
 
-        *s = 0;
-
-        if (1 == sscanf(s + 1, "%llu", &value) != 1)
-        {
-            /* Malformed file */
-            return false;
-        }
-
-        (*callback)(buf, value, param);
-    }
-
-    return !ferror(fd);
+return !ferror(fd);
 }
 
 /************************************************************************/
 
-/* Getting data from /proc/meminfo */
+/* Getting data from /proc/meminfo -  All values are in bytes */
 
-/* All values are in bytes */
 typedef struct MemoryInfo
-{
-    off_t total;
-    off_t free;
-    off_t cached;
-    off_t swap;
-    off_t free_swap;
-} MemoryInfo;
+   {
+   off_t total;
+   off_t free;
+   off_t cached;
+   off_t swap;
+   off_t free_swap;
+   } MemoryInfo;
 
 #define KB 1024
 
 static void AcceptMemoryField(const char *field, off_t value, void *param)
-{
-    MemoryInfo *info = param;
-    value *= KB;
 
-    if (!strcmp(field, "MemTotal"))
-    {
-        info->total = value;
-    }
-    else if (!strcmp(field, "MemFree"))
-    {
-        info->free = value;
-    }
-    else if (!strcmp(field, "Cached"))
-    {
-        info->cached = value;
-    }
-    else if (!strcmp(field, "SwapTotal"))
-    {
-        info->swap = value;
-    }
-    else if (!strcmp(field, "SwapFree"))
-    {
-        info->free_swap = value;
-    }
+{ MemoryInfo *info = param;
+
+value *= KB;
+
+if (!strcmp(field, "MemTotal"))
+   {
+   info->total = value;
+   }
+else if (!strcmp(field, "MemFree"))
+   {
+   info->free = value;
+   }
+else if (!strcmp(field, "Cached"))
+   {
+   info->cached = value;
+   }
+else if (!strcmp(field, "SwapTotal"))
+   {
+   info->swap = value;
+   }
+else if (!strcmp(field, "SwapFree"))
+   {
+   info->free_swap = value;
+   }
 }
 
 /************************************************************************/
 
 static void MonMeminfoGatherData(double *cf_this)
-{
-FILE *fh;
-MemoryInfo info = { 0 };
+
+{ FILE *fh;
+  MemoryInfo info = { 0 };
 
 if (!(fh = fopen("/proc/meminfo", "r")))
    {
