@@ -104,7 +104,7 @@ GetKstatInfo(cf_this);
 
 ProbeGatherData MonMemoryInit(const char **name, const char **error)
 {
-*name = "Solaris system information";
+*name = "Solaris kstat subsystem";
 *error = NULL;
 return &MonMemoryGatherData;
 }
