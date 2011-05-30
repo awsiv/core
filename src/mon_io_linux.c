@@ -218,11 +218,11 @@ if (writes_slot != -1 && totalwrites != 0)
    }
 if (readdata_slot != -1 && totalreadbytes != 0)
    {
-   cf_this[readdata_slot] = totalreadbytes / KB / KB;
+   cf_this[readdata_slot] = ((double)totalreadbytes) / KB / KB;
    }
 if (writtendata_slot != -1 && totalwrittenbytes != 0)
    {
-   cf_this[writtendata_slot] = totalwrittenbytes / KB / KB;
+   cf_this[writtendata_slot] = ((double)totalwrittenbytes) / KB / KB;
    }
 
 err:

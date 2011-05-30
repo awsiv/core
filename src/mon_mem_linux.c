@@ -108,23 +108,23 @@ if (ParseKeyNumericValue(fh, &AcceptMemoryField, &info))
 
    if (total_slot != -1)
       {
-      cf_this[total_slot] = info.total / KB / KB;
+      cf_this[total_slot] = ((double)info.total) / KB / KB;
       }
    if (free_slot != -1)
       {
-      cf_this[free_slot] = info.free / KB / KB;
+      cf_this[free_slot] = ((double)info.free) / KB / KB;
       }
    if (cached_slot != -1)
       {
-      cf_this[cached_slot] = info.cached / KB / KB;
+      cf_this[cached_slot] = ((double)info.cached) / KB / KB;
       }
    if (swap_slot != -1)
       {
-      cf_this[swap_slot] = info.swap / KB / KB;
+      cf_this[swap_slot] = ((double)info.swap) / KB / KB;
       }
    if (free_swap_slot != -1)
       {
-      cf_this[free_swap_slot] = info.free_swap / KB / KB;
+      cf_this[free_swap_slot] = ((double)info.free_swap) / KB / KB;
       }
    }
 else
