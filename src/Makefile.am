@@ -77,7 +77,8 @@ libcfnova_la_SOURCES =						\
 
 libcfmonitord_la_LDFLAGS = -no-undefined
 
-libcfmonitord_la_SOURCES = probes.c \
+libcfmonitord_la_SOURCES = \
+	probes.c \
 	mon_cumulative.c
 
 if LINUX
