@@ -705,6 +705,7 @@ double BoundedValue(double value, double defval);
 /* mon_cumulative.c */
 
 unsigned GetInstantUint32Value(const char *name, const char *subname, unsigned value, time_t timestamp);
+unsigned long long GetInstantUint64Value(const char *name, const char *subname, unsigned long long value, time_t timestamp);
 
 /* outputs.c */
 

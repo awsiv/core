@@ -85,9 +85,16 @@ libcfmonitord_la_SOURCES += mon_io_linux.c
 libcfmonitord_la_SOURCES += mon_mem_linux.c
 endif
 
+if SOLARIS
+libcfmonitord_la_SOURCES += mon_mem_solaris.c
+libcfmonitord_la_SOURCES += shared_kstat.c
+endif
+
 if !LINUX
 libcfmonitord_la_SOURCES += mon_io_stub.c
+if !SOLARIS
 libcfmonitord_la_SOURCES += mon_mem_stub.c
+endif
 endif
 
 libcfhub_la_SOURCES =	                                        \

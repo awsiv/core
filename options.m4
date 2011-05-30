@@ -54,3 +54,7 @@ if test $WITH_VIRT = 1; then
   AC_MSG_CHECKING(for libvirt)
   AC_CHECK_LIB(virt,main, [], [AC_MSG_ERROR(Cannot find libvirt)])
 fi
+
+AC_SEARCH_LIBS(kstat_open,kstat,[
+        AC_DEFINE(HAVE_KSTAT,1,[We have Solaris kstat library])
+        LDFLAGS="-lkstat $LDFLAGS"])
