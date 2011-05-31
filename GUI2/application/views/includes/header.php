@@ -42,7 +42,7 @@ $this->carabiner->display(); ?>
                           <span class="online_users"> Online users: <strong><?php echo $this->onlineusers->total_users()?></strong></span>
                           <form action="<?php echo site_url('knowledge/knowledgeSearch')?>" method="post">
                               <label id="searchbox">
-                                  <input type="text" name="search" placeholder="Search in knowledge map" value="<?php echo  !isset($search) ? "Search in knowledge map":$search ?>" />
+                                  <input type="text" name="search" placeholder="Search in knowledge map" value="<?php echo  !isset($search) ? "":$search ?>" />
                               </label>
                           </form>
                           </div>
