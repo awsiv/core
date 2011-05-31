@@ -16,7 +16,7 @@ class Note_model extends CI_Model {
         $dateFrom = isset($filter['dateFrom']) ? $filter['dateFrom'] : -1;
         $dateTo = isset($filter['dateTo']) ? $filter['dateTo'] : -1;
         $commentsJson = cfpr_query_note($hostFilter, $noteId, $userId, $dateFrom, $dateTo);
-        $commentsJson = utf8_encode($commentsJson);
+        $commentsJson = str_replace(array("\r\n", "\n", "\r"), '<br />', utf8_encode(trim($commentsJson)));
         $comments = json_decode($commentsJson, TRUE);
         $note = array();
         foreach ((array)$comments['data'] as $comment) {
