@@ -6,6 +6,7 @@ class Repository extends Cf_Controller {
 
     function __construct() {
         parent::__construct();
+        $this->load->library('jcryption');
         $this->load->model('repository_model');
         $this->load->helper('form');
         $this->username = $this->session->userdata('username');
@@ -62,6 +63,16 @@ class Repository extends Cf_Controller {
             redirect('/repository/manageRepository');
             exit;
         }
+    }
+
+    function get_keys() {
+        $keyLength = 256;
+        $keys = $this->jcryption->generateKeypair($keyLength);
+        $_SESSION["e"] = array("int" => $keys["e"], "hex" => $this->jcryption->dec2string($keys["e"], 16));
+        $_SESSION["d"] = array("int" => $keys["d"], "hex" => $this->jcryption->dec2string($keys["d"], 16));
+        $_SESSION["n"] = array("int" => $keys["n"], "hex" => $this->jcryption->dec2string($keys["n"], 16));
+
+        echo '{"e":"' . $_SESSION["e"]["hex"] . '","n":"' . $_SESSION["n"]["hex"] . '","maxdigits":"' . intval($keyLength * 2 / 16 + 3) . '"}';
     }
 
     function checkOutUrl($url='') {
@@ -144,13 +155,13 @@ class Repository extends Cf_Controller {
                     'repoPath' => $this->input->post('repoPath'),
                     'username' => $this->input->post('username'),
                     'password' => $this->input->post('password'));
-                $return = $this->repository_model->insert_repository($info);
+                $return = $this->_insert_repository($info);
 
                 if (!$return) {
                     $this->form_validation->_error_array = array_merge($this->form_validation->_error_array, $this->repository_model->get_errors());
                 } else {
-                    $successMessage = sprintf ('Repository added sucessfully. <a href="/repository/checkOutUrl/%s" target="_self">Go to policy editor</a>',  urlencode($this->input->post('repoPath')));
-                    $this->session->set_flashdata(array('success' =>$successMessage ));
+                    $successMessage = sprintf('Repository added sucessfully. <a href="/repository/checkOutUrl/%s" target="_self">Go to policy editor</a>', urlencode($this->input->post('repoPath')));
+                    $this->session->set_flashdata(array('success' => $successMessage));
                     redirect(current_url());
                     exit();
                 }
@@ -159,7 +170,7 @@ class Repository extends Cf_Controller {
         $repo = $this->repository_model->get_all_repository($this->username);
         $data['repoData'] = $repo;
         $data['errors'] = $this->form_validation->_error_array;
-
+        $data['addFormPath'] = '/repository/checkout/force';
 
         $this->load->view('/repository/checkout_repository', $data);
     }
@@ -167,6 +178,18 @@ class Repository extends Cf_Controller {
     function addSuccess() {
 
         $this->loadView('/repository/addSuccess');
+    }
+
+    function _insert_repository($info) {
+
+
+
+         //password is jencrypted before so decrypt to clear one .
+        
+        $info['password']=$this->jcryption->decrypt($info['password'],$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
+        
+        $return = $this->repository_model->insert_repository($info);
+        return $return;
     }
 
     function manageRepository() {
@@ -179,6 +202,12 @@ class Repository extends Cf_Controller {
             'url' => 'repository/manageRepository',
             'isRoot' => false
         );
+        
+         $requiredjs = array(
+            array('widgets/notes.js'),
+            array('jquery.jcryption-1.1.min.js')
+        );
+        $this->carabiner->js($requiredjs);
 
         $this->breadcrumb->setBreadCrumb($bc);
 
@@ -189,7 +218,7 @@ class Repository extends Cf_Controller {
         );
 
 
-        if ($this->input->post('submit')) {
+        if ($this->input->post('addnew')) {
             $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
             $this->form_validation->set_rules('repoPath', 'Repository path', 'required');
             $this->form_validation->set_rules('username', 'Username', 'required');
@@ -198,7 +227,7 @@ class Repository extends Cf_Controller {
                     'repoPath' => $this->input->post('repoPath'),
                     'username' => $this->input->post('username'),
                     'password' => $this->input->post('password'));
-                $return = $this->repository_model->insert_repository($info);
+                $return = $this->_insert_repository($info);
                 if (!$return) {
                     $this->form_validation->_error_array = array_merge($this->form_validation->_error_array, $this->repository_model->get_errors());
                 } else {

@@ -272,6 +272,7 @@ class Welcome extends Cf_Controller {
     }
 
     function planning() {
+        
         $bc = array(
             'title' => 'Planning',
             'url' => 'welcome/planning',
@@ -281,6 +282,7 @@ class Welcome extends Cf_Controller {
         $this->load->library('userdata');
         $requiredjs = array(
             array('widgets/notes.js'),
+            array('jquery.jcryption-1.1.min.js'),            
             array('jquery.autogrowtextarea.js')
         );
         $this->carabiner->js($requiredjs);
