@@ -51,6 +51,7 @@ border-top-right-radius: 10px 10px;
 -moz-border-radius: 10px 10px 10px 10px;
 -moz-box-shadow: 0 0 15px #AAAAAA;
 background: -moz-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 transparent;
+background: -o-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 transparent;
 margin: 40px auto 0px;
 padding: 20px;
 width: 300px;
@@ -101,6 +102,7 @@ input[type="submit"], a.submit {
 background: -moz-linear-gradient(90deg, #AAAAAA, #EEEEEE) repeat scroll 0 0 transparent;
 -webkit-box-shadow: #666 0px 0px 3px;
 background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#BBB));
+background: -o-linear-gradient(90deg, #EEE #FFFFFF) repeat scroll 0 0 transparent;
 border: 1px solid #555;
 border-bottom-left-radius: 3px 3px;
 border-bottom-right-radius: 3px 3px;
@@ -120,6 +122,7 @@ text-transform: uppercase;
 
 input[type="submit"]:hover, a.submit:hover {
 background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), to(#CCC));
+background: -o-linear-gradient(90deg, #EEE, #FFFFFF) repeat scroll 0 0 transparent;
 border-color: #333;
 text-decoration: none;
 }

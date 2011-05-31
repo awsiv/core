@@ -5,9 +5,6 @@
                       <h1>
                           <?php echo  $this->lang->line('front_greeting');?>
                       </h1>
-                      <p><?php
-                      echo $this->lang->line('license_to');
-                      echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo'));?></p>
                   </div>
                   <div class="clear"></div>
                   <div class ="grid_8 push_2 dash">
@@ -20,8 +17,12 @@
                       </ul>
                   </div>                  
                  <div class="clear"></div>
+
+                  <div id="licenseinfo"class="grid_4 push_4"><?php
+                      echo $this->lang->line('license_to');
+                      echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo'));?></div>
+                  <div class="clearboth"></div>
                   <div id="licensebar" class="grid_4 push_4">
-                      
                   </div>
               </div>
               <div class="right"></div>

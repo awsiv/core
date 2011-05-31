@@ -49,7 +49,7 @@ $(document).ready(function() {
 	   }
 	});
 
-	var default_dialog_width = 400;
+	//var default_dialog_width = 400;
 	$('#buttonpanel-resizer').css('width', '5px');
 	var tab_counter = 2;
 		var code_editor_counter=0;//previously 1
@@ -65,7 +65,7 @@ $(document).ready(function() {
 		var closetabindex="";
 		var fileevent="";
 		
-	var $tabs = $('#tabs').tabs({
+var $tabs = $('#tabs').tabs({
 	   tabTemplate: '<li><a href="#{href}">#{label}</a> <span class="ui-icon ui-icon-close">Remove Tab</span></li>',
 	   add: function(event, ui) {
 	   var tab_content =tab_content_input||'Tab '+tab_counter+' content.';
@@ -155,8 +155,8 @@ $(document).ready(function() {
 		tab_counter++;
 		tab_title_input="Untitled-";
 	   }
-	   
-	$('#new')
+
+      $('#new')
      .click(function() {
       tab_content_input='<textarea id="code'+code_editor_counter+'" cols="120" rows="30"></textarea>'+
     	                  '<input type="hidden" name="tabtype" value="codeEditor" />';              
@@ -189,7 +189,8 @@ $(document).ready(function() {
 		           tab_content_input='<input type="hidden" name="tabtype" value="codeEditor" /><input type="hidden" name="link" value="'+link_id+'" />'+
 		                             '<textarea id="code'+code_editor_counter+'" cols="120" rows="30">'+data.content+'</textarea>';
 		                
-		       	    addTab('existing');//adding the new tab
+		       	    //adding the new tab
+                             addTab('existing');
 			       	 var editor = CodeMirror.fromTextArea('code'+code_editor_counter, {
 			       		    parserfile: ["cfsyntax.js", "parsecf.js"],
 			       		    stylesheet: "../css/cfcolors.css", // you may have to adjust the path
@@ -200,8 +201,9 @@ $(document).ready(function() {
 			       		    onChange: contentChanged,
 			       		    continuousScanning: 500
 			       		  });
+                               
 		   		code_editor_counter++;
-		   		$('.CodeMirror-wrapping',current_tab_id).get(0).style.height=$(current_tab_id).get(0).style.height;
+                                $('.CodeMirror-wrapping',current_tab_id).get(0).style.height=$(current_tab_id).get(0).style.height;
 		   		//addcontextmenu();//adding the context menu to the tab newly added
 	             },
           error:function(data){
@@ -390,8 +392,9 @@ $(document).ready(function() {
 	           url: "cfeditor/save_contents",
 	           data:({'file':filepath, 'content':newcontents,'filestats':'old', 'agent':agent}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
+                    dataType:'json',
 	           success: function(data){
-                           $.jnotify('Current tab contents was saved');
+                           $.jnotify(data.title+' was saved');
 	             },
             error:function(data){
                           $.jnotify('An error occured'+data.msg,'error');
@@ -511,7 +514,7 @@ $(document).ready(function() {
 	       }); 
 		    $(this).dialog('close');
 	       },
-		 'Save': function() {
+       'Save': function() {
 		 var agent=jQuery.uaMatch(navigator.userAgent).browser;
 		 $.ajax({
 	           type: "POST",
@@ -519,12 +522,12 @@ $(document).ready(function() {
 	           url: "cfeditor/save_contents",
 	           data:({'file':$('#tobesaved_name',this).val(),'content':$('#tobesaved',this).val(),'filestats':'old', 'agent':agent}),
 	           //data: "name="+current_tab_title+"&content="+html_stripped,
+                   dataType:'json',
 	           success: function(data){
-                       $.jnotify("File successfully saved");
+                       $.jnotify(data.title+" was saved");
 	             },
               error:function(data){
-	            	
-                          $.jnotify("Error Occured ","error");
+                          $.jnotify("Error :: "+data.title+"was not saved","error");
 	             }
 	       }); 
 		 $(this).dialog('close');

@@ -12,7 +12,7 @@
 <link href="<?php echo get_cssdir();?>960.css" rel="stylesheet" media="screen" />
 <link href="<?php echo get_cssdir();?>Base.css" rel="stylesheet" media="screen" />
 <link href="<?php echo get_cssdir();?>jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />
-<script src="<?php echo get_scriptdir();?>jquery-1.4.2.min.js" type="text/javascript"></script>
+<script src="<?php echo get_scriptdir();?>jquery-1.6.1.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir();?>jquery-ui-1.8.9.custom.min.js" type="text/javascript"></script>
 <!--[if IE]><?php echo $this->carabiner->display('iefix'); ?><![endif]-->
 <?php
@@ -127,7 +127,6 @@ $this->carabiner->display(); ?>
 <script src="<?php echo get_scriptdir()?>Cfeditor/codemirror.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir()?>Cfeditor/cf.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir()?>jquery.jcryption-1.1.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.fancybox-1.3.1.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>cfeditor.js"></script>
 </body>
 </html>

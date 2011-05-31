@@ -3,7 +3,7 @@
      <fieldset>
                     <legend>Approve Policy</legend>
       <p>
-    <label  for="repolist">Repository Path :: </label>
+     <label  for="repolist">Repository :: </label>
      <?php
       echo form_dropdown('repository', array_combine($reposoptions,$reposoptions), $reposoptions[0],'id="repolist"');
       ?>

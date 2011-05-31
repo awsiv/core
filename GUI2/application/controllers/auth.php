@@ -634,4 +634,19 @@ class Auth extends Controller {
             }
         }
 
+        function setting()
+        {
+             $bc = array(
+            'title' => 'Admin',
+            'url' => 'auth/admin_page',
+            'isRoot' => false
+             );
+            $this->breadcrumb->setBreadCrumb($bc);
+            $data = array(
+            'title' => "Cfengine Mission Portal - authentication",
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            );
+             $this->template->load('template', 'auth/usersettings',$data);
+        }
+
 }

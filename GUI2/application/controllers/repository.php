@@ -246,23 +246,30 @@ class Repository extends Cf_Controller {
     function policyApprover()
     {
          $repos = $this->repository_model->get_all_repository($this->username);
-         $repo_url=array();
-         foreach($repos as $repo)
+         if(count($repos)>0)
          {
-             array_push($repo_url,$repo['repoPath']);
+             $repo_url=array();
+             foreach($repos as $repo)
+             {
+                 array_push($repo_url,$repo['repoPath']);
+             }
+             //by default first option is selected and populate a list of revs for it
+             $revs=$this->repository_model->get_revisions($repo_url[0]);
+             $data=array(
+                      'reposoptions'=> $repo_url,
+                      'revs'=>$revs
+                 );
+              $requiredjs = array(
+                array('jquery.autogrowtextarea.js')
+            );
+            $this->carabiner->js($requiredjs);
+            // $this->template->load('template','repository/approver',$data);
+            $this->load->view('repository/approver',$data);
          }
-         //by default first option is selected and populate a list of revs for it
-         $revs=$this->repository_model->get_revisions($repo_url[0]);
-         $data=array(
-                  'reposoptions'=> $repo_url,
-                  'revs'=>$revs
-             );
-          $requiredjs = array(
-            array('jquery.autogrowtextarea.js')
-        );
-        $this->carabiner->js($requiredjs);
-        // $this->template->load('template','repository/approver',$data);
-        $this->load->view('repository/approver',$data);
+       else
+       {
+           echo "Cannot find information about any repositories for you <br/> Use <strong class=\"underline\">".  anchor('repository/manageRepository/','Manage Repository','target=_self') .'</strong> to add a repository ';
+       }
     }
 
     function getListofRev()

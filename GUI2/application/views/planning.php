@@ -39,11 +39,11 @@
                 <?php
                   foreach ($working_notes as $note)
                   {
-                      $note=$note['working_on'] ;
-                     echo "<li><span class=\"wrknoteslblorg\">Me:</span> $note </li>";
+                     echo "<li><span class=\"wrknoteslblorg\">Me:</span> ".$note['working_on'] ."<span class=\"note_date\">".date('D F d h:i:s Y',$note['date'])."</span> </li>";
                   }
               ?>
               </ul>
+               <p class="morebtnpane"><span class="morebtn"><?php echo anchor('welcome/workingNotes','More...')?></span></p>
         </div>
         <div class="clearboth"></div>
     </div>
@@ -64,6 +64,15 @@
         $("#button_block").slideUp("fast");
         return false;
        });
+
+       $("#personalnotes").find('li').hover(
+          function () {
+            $(this).find('span:last').addClass('display')
+          },
+          function () {
+              $(this).find('span:last').removeClass('display')
+          }
+      );
 
     $('#messageinput_container').find('form').submit(function(e){
        e.preventDefault();

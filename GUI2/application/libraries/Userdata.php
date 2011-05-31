@@ -32,11 +32,16 @@ class Userdata{
         }
     }
 
-    public function get_personal_working_notes($username)
+    public function get_personal_working_notes($username='',$limit=7)
     {
+        if($username==''){
+            $username=$this->user
+           ;}
+    
         $worklog=$this->ci->mongo_db->select()
                            ->where(array('username' => $username))
                            ->order_by(array('date'=>'desc'))
+                           ->limit($limit)
                            ->get('work_logs');
         if(is_array($worklog))
         {

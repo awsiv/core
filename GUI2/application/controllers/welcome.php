@@ -254,7 +254,7 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'engineering', $data);
     }
 
-    function helm() {
+    /*function helm() {
         $bc = array(
             'title' => 'Configure',
             'url' => 'welcome/helm',
@@ -269,6 +269,17 @@ class Welcome extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'helm', $data);
+    }*/
+    function workingNotes()
+    {
+        $this->load->library('userdata');
+        $data = array(
+            'title' => "Cfengine Mission Portal - planning",
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'users' => getonlineusernames(),
+            'table' => $this->userdata->get_personal_working_notes('',9999)
+        );
+        $this->template->load('template', 'notes/view_working_on_notes', $data);
     }
 
     function planning() {
@@ -290,7 +301,7 @@ class Welcome extends Cf_Controller {
             'title' => "Cfengine Mission Portal - planning",
             'breadcrumbs' => $this->breadcrumblist->display(),
             'users' => getonlineusernames(),
-            'working_notes' => $this->userdata->get_personal_working_notes($this->session->userdata('username'))
+            'working_notes' => $this->userdata->get_personal_working_notes()
         );
         $this->template->load('template', 'planning', $data);
     }

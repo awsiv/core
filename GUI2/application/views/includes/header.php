@@ -35,11 +35,11 @@ $this->carabiner->display(); ?>
                         &nbsp;| &nbsp;
                         <a href="<?php echo site_url('auth/logout'); ?>" title="logout">logout</a>
                        </p>
-                       <p>Online users:<?php echo $this->onlineusers->total_users()?></p>
                       <p class="clearright"></p>
                       <div id="webadmin">
 
                           <div id="searcharea">
+                          <span class="online_users"> Online users: <strong><?php echo $this->onlineusers->total_users()?></strong></span>
                           <form action="<?php echo site_url('knowledge/knowledgeSearch')?>" method="post">
                               <label id="searchbox">
                                   <input type="text" name="search" placeholder="Search in knowledge map" value="<?php echo  !isset($search) ? "Search in knowledge map":$search ?>" />
