@@ -65,7 +65,7 @@ static bool IsPartition(const char *sysfsname)
 {
 char sysfspath[CF_BUFSIZE];
 
-if (snprintf(sysfspath, CF_BUFSIZE, SYSFSBLOCK "%s/partition") >= CF_BUFSIZE)
+if (snprintf(sysfspath, CF_BUFSIZE, "%s/partition", SYSFSBLOCK) >= CF_BUFSIZE)
    {
    /* FIXME: report overlong string */
    return false;
@@ -91,7 +91,7 @@ char sysfspath[CF_BUFSIZE];
 DIR *dir;
 struct dirent *dirent;
 
-if (snprintf(sysfspath, CF_BUFSIZE, SYSFSBLOCK "%s/slaves") >= CF_BUFSIZE)
+if (snprintf(sysfspath, CF_BUFSIZE, "%s/slaves", SYSFSBLOCK ) >= CF_BUFSIZE)
    {
    /* FIXME: report overlong string */
    return false;
