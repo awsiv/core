@@ -1,19 +1,26 @@
-<?php if (isset($errors) && is_array($errors) && !empty($errors)) { ?>
-    <ul>
-        <?php foreach ($errors as $error) { ?>
-            <li> <?php echo $error ?> </li>
-        <?php } ?>
-    </ul>
-<?php } ?>
-<?php if ($this->session->flashdata('success')) { ?>
-    <div class="success"><?php echo $this->session->flashdata('success'); ?></div> 
-<?php } ?>
-<div id="stylized">
-    <form action="<?php echo isset($addFormPath) ? $addFormPath : '' ?>" method="POST" id="repo-add-form">
-        <fieldset>
 
+<div class="stylized">
+    <form action="<?php echo isset($addFormPath) ? $addFormPath : '' ?>" method="POST" id="repo-add-form">
+
+
+        <?php if (isset($errors) && is_array($errors) && !empty($errors)) { ?>
+            <fieldset>
+                <legend>Error</legend>
+                <ul>
+                    <?php foreach ($errors as $error) { ?>
+                        <li> <?php echo $error ?> </li>
+                    <?php } ?>
+                </ul>
+            </fieldset>
+        <?php } ?>
+        <?php if ($this->session->flashdata('success')) { ?>
+            <fieldset>
+                <div class="success"><?php echo $this->session->flashdata('success'); ?></div> 
+            </fieldset>
+        <?php } ?>
+        <fieldset>
             <legend>Add new repository information</legend>
-            <label id="repoPath" for="repoPath">Repository Path :: </label>
+            <label id="repoPath" for="repoPath">Path :: </label>
             <input type="text" name="repoPath" value="<?php echo set_value('repoPath'); ?>" size="50" />
 
             <label for="username"> Username :: </label>
@@ -38,8 +45,8 @@
     
     $('#submit-form').click(function(){
         
-       $('#submit-form').hide();
-       $('#ajax-loader').show();
+        $('#submit-form').hide();
+        $('#ajax-loader').show();
         
         $.jCryption.getKeys("/repository/get_keys",function(receivedKeys) {
             keys = receivedKeys;           
@@ -50,8 +57,8 @@
                 $('#submit').removeAttr('disabled');             
                 $('#repo-add-form').submit();
                 $('#ajax-loader').hide();
-                 $('#submit-form').show();
-        });
+                $('#submit-form').show();
+            });
         });     
     });
     

@@ -29,7 +29,7 @@
 </div>
 <br />
 <br />
-<div   id="stylized" style="margin-left: 15px; margin-top: 5px;">
+<div   class="stylized" style="margin-left: 15px; margin-top: 5px;">
     <div id="message-update"> <?php echo isset($updateMessage) ? $updateMessage : '' ?>  </div>
     <form id="notes-form" action="<?php echo $form_url; ?>" method="post">
         <fieldset>

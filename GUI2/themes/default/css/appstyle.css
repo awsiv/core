@@ -1544,9 +1544,9 @@ span.search input
 .stylized form label {
     display: block;  /* block float the labels to left column, set a width */
     float: left; 
-    width: 150px; 
+    width: 120px; 
     padding: 0; 
-    margin: 5px 0 0; /* set top margin same as form input - textarea etc. elements */
+    margin: 3px 0 0; /* set top margin same as form input - textarea etc. elements */
     text-align: right; 
 }
 

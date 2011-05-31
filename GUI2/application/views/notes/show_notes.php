@@ -2,7 +2,7 @@
     <div class="outerdiv">
         <div class="innerdiv">
             <div id="notes-filter">
-                <div id="stylized">
+                <div class="stylized">
 
                     <form action="/notes/shownotes" method="POST">
                         <fieldset>

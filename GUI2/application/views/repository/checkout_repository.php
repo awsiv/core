@@ -1,9 +1,10 @@
 <div>
-    <div class="innerdiv">
-        <div class=" stylized">
+    
+        <div class="stylized">
             <form action="/repository/checkOutUrl" target="_self" method="POST">
                 <fieldset>
                     <legend>Checkout</legend>
+                    <label for="repourl">url :: </label>
                     <select name="repourl"> <?php if (!empty($repoData)) {
                         ?>
                         <?php foreach ($repoData as $repository) {
@@ -17,9 +18,8 @@
                 <br />
             </form>
         </div>
-    </div>
-    <div class="innerdiv">
+    
          <?php require_once('add_new_repository.php'); ?>
-    </div>  
+   
 </div>
 
