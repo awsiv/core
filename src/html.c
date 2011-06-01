@@ -109,7 +109,7 @@ snprintf(buffer,bufsize,
 "             <li><a href=\"knowledge.php?topic=copernicus knowledge\">Copernicus</a></li>\n"
 "             <li><a href=\"knowledge.php?topic=software components\">Cfengine components</a></span></li>\n"
 "             <li><a href=\"knowledge.php?topic=example\">Examples</a></li>\n"
-"             <li><a href=\"http://demo.cfengine.com/docs/cf3-reference.html\">User manual</a></li>\n"
+"             <li><a href=\"/docs/cf3-reference.html\">User manual</a></li>\n"
 "             <li><a href=\"knowledge.php?topic=promise theory\">Promise theory</a></li>\n"
 "         </ul>\n"
 "         <div class=\"grid_4\">\n"
