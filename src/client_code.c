@@ -18,10 +18,13 @@ char *CF_CODEBOOK[CF_CODEBOOK_SIZE] =
    CFR_SETUID,
    CFR_FCHANGE,
    CFR_FDIFF,
-   CFR_MONITOR_WEEK,
    CFR_MONITOR_MAG,
-   CFR_MONITOR_HIST,
+   CFR_MONITOR_WEEK,
    CFR_MONITOR_YEAR,
+   CFR_MONITOR_MG,
+   CFR_MONITOR_WK,
+   CFR_MONITOR_YR,   
+   CFR_MONITOR_HIST,
    CFR_PCOMPLIANCE,
    CFR_TCOMPLIANCE,
    CFR_SOFTWARE,
@@ -46,10 +49,13 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
    Nova_UnPackSetuid,       // DBOK (nopurge)
    Nova_UnPackFileChanges,  // DBOK
    Nova_UnPackDiffs,        // DBOK
-   Nova_UnPackMonitorWeek,  // DBOK
-   Nova_UnPackMonitorMag,   // DBOK
-   Nova_UnPackMonitorHist,  // DBOK
-   Nova_UnPackMonitorYear,  // nodata
+   Nova_UnPackMonitorMag,   // DBOK   - DEPRECATED
+   Nova_UnPackMonitorWeek,  // DBOK   - DEPRECATED
+   Nova_UnPackMonitorYear,  // nodata - DEPRECATED
+   Nova_UnPackMonitorMg,
+   Nova_UnPackMonitorWk,
+   Nova_UnPackMonitorYr,
+   Nova_UnPackMonitorHist,  // DBOK   
    Nova_UnPackCompliance,   // DBOK
    Nova_UnPackTotalCompliance, // DBOK
    Nova_UnPackSoftware,     // DBOK
@@ -58,7 +64,7 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
    Nova_UnPack_promise_output_common,  // nodata
    Nova_UnPackValueReport,  //  (append) LOG
    Nova_UnPackVariables2,    // DBOK
-   Nova_UnPackVariables,    // DBOK
+   Nova_UnPackVariables,    // DBOK  - DEPRECATED
    Nova_UnPackLastSeen,     // DBOK
    Nova_UnPackRepairLog,    // DBOK (nopurge)
    Nova_UnPackNotKeptLog,   // DBOK (nopurge)

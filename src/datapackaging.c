@@ -509,7 +509,101 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_PackMonitorWeek(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+
+{ int i,first = true,slot;
+  struct Averages entry,det;
+  time_t now,here_and_now;
+  double nonzero;
+  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
+  CF_DB *dbp;
+
+CfOut(cf_verbose,""," -> Packing monitor magnified data");
+  
+snprintf(filename,CF_MAXVARSIZE,"%s/state/%s",CFWORKDIR,CF_AVDB_FILE);
+MapName(filename);
+  
+if (!OpenDB(filename,&dbp))
+   {
+   CfOut(cf_verbose,"","Couldn't open average database %s\n",filename);
+   return;
+   }
+
+now = time(NULL);
+here_and_now = now - (time_t)(4 * CF_TICKS_PER_HOUR);
+
+strcpy(timekey,GenTimeKey(here_and_now));
+slot = GetTimeSlot(here_and_now);
+
+// if from > here_and_now just send the delta
+
+while (here_and_now < now)
+   {
+   nonzero = 0;   
+   memset(&entry,0,sizeof(entry));
+
+   if (from > here_and_now)
+      {
+      here_and_now += CF_MEASURE_INTERVAL;
+      strcpy(timekey,GenTimeKey(here_and_now));
+      slot++;
+      continue;
+      }
+   
+   if (ReadDB(dbp,timekey,&det,sizeof(struct Averages)))
+      {
+      for (i = 0; i < CF_OBSERVABLES; i++)
+         {
+         entry.Q[i].expect += det.Q[i].expect;
+         entry.Q[i].var += det.Q[i].var;
+         entry.Q[i].q += det.Q[i].q;
+         nonzero += entry.Q[i].expect;
+         nonzero += entry.Q[i].var;
+         nonzero += entry.Q[i].q;
+         }
+      }
+   
+   /* Promise: only print header if we intend to transmit some data */
+
+   if(nonzero != 0)
+     {
+       if (first)
+	 {
+	   first = false;
+	   AppendItem(reply,header,NULL);
+	 }
+
+       /* Promise: Keep a small time-key enabling further compression by delta elimination */
+
+       snprintf(buffer,CF_BUFSIZE,"T: %d\n",slot);
+       AppendItem(reply,buffer,NULL);
+   
+       for (i = 0; i < CF_OBSERVABLES; i++)
+	 {
+	   if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
+	     {
+             /* Pending protocol / DB schema change */
+             Debug("Sending data: %s %.4lf %.4lf %.4lf\n", NovaGetSlotName(i),
+                   entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
+
+	       /* Promise: Keep the integer observable label so that we can eliminate zero entries */      
+	       snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
+	       AppendItem(reply,buffer,NULL);
+	     }
+	 }
+     }
+
+   here_and_now += CF_MEASURE_INTERVAL;
+   strcpy(timekey,GenTimeKey(here_and_now));
+   slot++;
+   }
+
+CloseDB(dbp);
+}
+
+/*****************************************************************************/
+
+void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { int its,i,j,count = 0,first = true,slot = 0;
   double kept = 0, not_kept = 0, repaired = 0, nonzero;
@@ -631,93 +725,83 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-void Nova_PackMonitorMag(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackMonitorYr(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+{
+int i,j,k;
+char filename[CF_BUFSIZE];
+CF_DB *dbp;
+time_t now = CFSTARTTIME;
+bool header_displayed = false;
+/* Start with 3*52 - 1 weeks ago, so the 3*52th week is the current one */
+time_t w = SubtractWeeks(WeekBegin(now), MONITORING_HISTORY_LENGTH_WEEKS-1);
 
-{ int i,first = true,slot;
-  struct Averages entry,det;
-  time_t now,here_and_now;
-  double nonzero;
-  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
-  CF_DB *dbp;
+CfOut(cf_verbose,""," -> Packing and compressing monitor 3 year data");
 
-CfOut(cf_verbose,""," -> Packing monitor magnified data");
-  
-snprintf(filename,CF_MAXVARSIZE,"%s/state/%s",CFWORKDIR,CF_AVDB_FILE);
+snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_HISTORYDB);
 MapName(filename);
-  
+
 if (!OpenDB(filename,&dbp))
    {
-   CfOut(cf_verbose,"","Couldn't open average database %s\n",filename);
    return;
    }
 
-now = time(NULL);
-here_and_now = now - (time_t)(4 * CF_TICKS_PER_HOUR);
-
-strcpy(timekey,GenTimeKey(here_and_now));
-slot = GetTimeSlot(here_and_now);
-
-// if from > here_and_now just send the delta
-
-while (here_and_now < now)
+for (i = 0; i < MONITORING_HISTORY_LENGTH_WEEKS; ++i)
    {
-   nonzero = 0;   
-   memset(&entry,0,sizeof(entry));
+   /* Collect data for a week */
 
-   if (from > here_and_now)
+   bool have_data = false;
+   int num[CF_OBSERVABLES] = { 0 };
+   double q[CF_OBSERVABLES] = { 0.0 };
+   double var[CF_OBSERVABLES] = { 0.0 };
+   double e[CF_OBSERVABLES] = { 0.0 };
+
+   for (j = 0; j < SHIFTS_PER_WEEK && w <= now; ++j, w = NextShift(w))
       {
-      here_and_now += CF_MEASURE_INTERVAL;
-      strcpy(timekey,GenTimeKey(here_and_now));
-      slot++;
-      continue;
-      }
-   
-   if (ReadDB(dbp,timekey,&det,sizeof(struct Averages)))
-      {
-      for (i = 0; i < CF_OBSERVABLES; i++)
+      struct Averages av;
+
+      if (GetRecordForTime(dbp, w, &av))
          {
-         entry.Q[i].expect += det.Q[i].expect;
-         entry.Q[i].var += det.Q[i].var;
-         entry.Q[i].q += det.Q[i].q;
-         nonzero += entry.Q[i].expect;
-         nonzero += entry.Q[i].var;
-         nonzero += entry.Q[i].q;
+         have_data = true;
+         for (k = 0; k < CF_OBSERVABLES; ++k)
+            {
+            num[k]++;
+            q[k] += BoundedValue(av.Q[k].q, 0);
+            var[k] += BoundedValue(av.Q[k].var, q[k]*q[k]);
+            e[k] += BoundedValue(av.Q[k].expect, q[k]);
+            }
+         }
+
+      w = NextShift(w);
+      }
+
+   /* Output it */
+
+   if (have_data && !header_displayed)
+      {
+      header_displayed = true;
+      AppendItem(reply, header, NULL);
+      }
+
+   if (have_data)
+      {
+      char buffer[CF_BUFSIZE];
+      snprintf(buffer, CF_BUFSIZE -1, "T: %d\n", i);
+      AppendItem(reply, buffer, NULL);
+
+      for (k = 0; k < CF_OBSERVABLES; ++k)
+         {
+         if (q[k] > 0 && var[k] > 0 && e[k] > 0)
+            {
+            /* Pending protocol / DB schema change */
+            Debug("Sending data: %s %.2lf %.2lf %.2lf\n", NovaGetSlotName(k),
+                  q[k] / num[k], e[k] / num[k], sqrt(var[k] / num[k]));
+
+            snprintf(buffer, CF_BUFSIZE - 1, "%d %.2lf %.2lf %.2lf\n", k,
+                     q[k] / num[k], e[k] / num[k], sqrt(var[k] / num[k]));
+            AppendItem(reply, buffer, NULL);
+            }
          }
       }
-   
-   /* Promise: only print header if we intend to transmit some data */
-
-   if(nonzero != 0)
-     {
-       if (first)
-	 {
-	   first = false;
-	   AppendItem(reply,header,NULL);
-	 }
-
-       /* Promise: Keep a small time-key enabling further compression by delta elimination */
-
-       snprintf(buffer,CF_BUFSIZE,"T: %d\n",slot);
-       AppendItem(reply,buffer,NULL);
-   
-       for (i = 0; i < CF_OBSERVABLES; i++)
-	 {
-	   if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
-	     {
-             /* Pending protocol / DB schema change */
-             Debug("Sending data: %s %.4lf %.4lf %.4lf\n", NovaGetSlotName(i),
-                   entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
-
-	       /* Promise: Keep the integer observable label so that we can eliminate zero entries */      
-	       snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
-	       AppendItem(reply,buffer,NULL);
-	     }
-	 }
-     }
-
-   here_and_now += CF_MEASURE_INTERVAL;
-   strcpy(timekey,GenTimeKey(here_and_now));
-   slot++;
    }
 
 CloseDB(dbp);
@@ -824,90 +908,6 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       AppendItem(reply,buffer,NULL);
       }
    }
-}
-
-/*****************************************************************************/
-
-void Nova_PackMonitorYear(struct Item **reply,char *header,time_t from,enum cfd_menu type)
-{
-int i,j,k;
-char filename[CF_BUFSIZE];
-CF_DB *dbp;
-time_t now = CFSTARTTIME;
-bool header_displayed = false;
-/* Start with 3*52 - 1 weeks ago, so the 3*52th week is the current one */
-time_t w = SubtractWeeks(WeekBegin(now), MONITORING_HISTORY_LENGTH_WEEKS-1);
-
-CfOut(cf_verbose,""," -> Packing and compressing monitor 3 year data");
-
-snprintf(filename,CF_BUFSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_HISTORYDB);
-MapName(filename);
-
-if (!OpenDB(filename,&dbp))
-   {
-   return;
-   }
-
-for (i = 0; i < MONITORING_HISTORY_LENGTH_WEEKS; ++i)
-   {
-   /* Collect data for a week */
-
-   bool have_data = false;
-   int num[CF_OBSERVABLES] = { 0 };
-   double q[CF_OBSERVABLES] = { 0.0 };
-   double var[CF_OBSERVABLES] = { 0.0 };
-   double e[CF_OBSERVABLES] = { 0.0 };
-
-   for (j = 0; j < SHIFTS_PER_WEEK && w <= now; ++j, w = NextShift(w))
-      {
-      struct Averages av;
-
-      if (GetRecordForTime(dbp, w, &av))
-         {
-         have_data = true;
-         for (k = 0; k < CF_OBSERVABLES; ++k)
-            {
-            num[k]++;
-            q[k] += BoundedValue(av.Q[k].q, 0);
-            var[k] += BoundedValue(av.Q[k].var, q[k]*q[k]);
-            e[k] += BoundedValue(av.Q[k].expect, q[k]);
-            }
-         }
-
-      w = NextShift(w);
-      }
-
-   /* Output it */
-
-   if (have_data && !header_displayed)
-      {
-      header_displayed = true;
-      AppendItem(reply, header, NULL);
-      }
-
-   if (have_data)
-      {
-      char buffer[CF_BUFSIZE];
-      snprintf(buffer, CF_BUFSIZE -1, "T: %d\n", i);
-      AppendItem(reply, buffer, NULL);
-
-      for (k = 0; k < CF_OBSERVABLES; ++k)
-         {
-         if (q[k] > 0 && var[k] > 0 && e[k] > 0)
-            {
-            /* Pending protocol / DB schema change */
-            Debug("Sending data: %s %.2lf %.2lf %.2lf\n", NovaGetSlotName(k),
-                  q[k] / num[k], e[k] / num[k], sqrt(var[k] / num[k]));
-
-            snprintf(buffer, CF_BUFSIZE - 1, "%d %.2lf %.2lf %.2lf\n", k,
-                     q[k] / num[k], e[k] / num[k], sqrt(var[k] / num[k]));
-            AppendItem(reply, buffer, NULL);
-            }
-         }
-      }
-   }
-
-CloseDB(dbp);
 }
 
 /*****************************************************************************/

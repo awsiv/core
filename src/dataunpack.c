@@ -164,6 +164,7 @@ void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, struct Item *dat
   char t[CF_TIME_SIZE];
 
 CfOut(cf_verbose,""," -> Monitor weekly data.....................");
+CfOut(cf_inform, "", "!! Deprecated monitor weekly format - response from Nova 2.0.3 or earlier (some features unavailible)");
 
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
@@ -201,6 +202,8 @@ void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data
   double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
+CfOut(cf_inform, "", "!! Deprecated monitor magnified format - response from Nova 2.0.3 or earlier (some features unavailible)");
+
 
 #ifdef HAVE_LIBMONGOC
 
@@ -226,6 +229,41 @@ for (ip = data; ip != NULL; ip=ip->next)
    q = e = dev = 0;
    sscanf(ip->name,"%d %lf %lf %lf",&observable,&q,&e,&dev);
    Debug("Mag-obs %d: %.2lf,%.2lf,%.2lf measured for slot %d\n",observable,q,e,dev,slot);
+   }
+}
+
+/*****************************************************************************/
+
+void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *data)
+
+{ struct Item *ip;
+ int observable,slot = 0;
+  double q,e,dev;
+
+CfOut(cf_verbose,""," -> Monitor year data.....................");
+CfOut(cf_inform, "", "!! Deprecated monitor year format - response from Nova 2.0.3 or earlier (some features unavailible)");
+
+
+#ifdef HAVE_LIBMONGOC
+if (dbconn)
+   {
+   CFDB_SaveMonitorData(dbconn, id, mon_rep_yr, data);
+   }
+#endif
+
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   // Extract time stamp
+   if (strncmp(ip->name,"T: ", 3) == 0)
+      {
+      sscanf(ip->name+3,"%d",&slot); // 3*12
+      continue;
+      }
+
+   // Extract records
+   q = e = dev = 0;
+   sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
+   Debug("Year-obs %d: %.2lf,%.2lf,%.2lf measured at slot %d\n",observable,q,e,dev,slot);
    }
 }
 
@@ -284,13 +322,90 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackMonitorMg(mongo_connection *dbconn, char *id, struct Item *data)
+
+{ struct Item *ip;
+  int observable,slot;
+  double q,e,dev;
+
+CfOut(cf_verbose,""," -> Monitor magnified data.....................");
+
+
+#ifdef HAVE_LIBMONGOC
+
+if (dbconn)
+   {
+   // monitor mag is always run during update
+   CFDB_SaveLastUpdate(dbconn,id);
+
+   CFDB_SaveMonitorData(dbconn,id,mon_rep_mag,data);
+   }
+#endif
+
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   // Extract time stamp
+   if (strncmp(ip->name,"T: ", 3) == 0)
+      {
+      sscanf(ip->name+3,"%d",&slot);
+      continue;
+      }
+
+   // Extract records
+   q = e = dev = 0;
+   sscanf(ip->name,"%d %lf %lf %lf",&observable,&q,&e,&dev);
+   Debug("Mag-obs %d: %.2lf,%.2lf,%.2lf measured for slot %d\n",observable,q,e,dev,slot);
+   }
+}
+
+/*****************************************************************************/
+
+void Nova_UnPackMonitorWk(mongo_connection *dbconn, char *id, struct Item *data)
+
+{ struct Item *ip;
+  int observable,slot;
+  double q,e,dev;
+  char t[CF_TIME_SIZE];
+
+CfOut(cf_verbose,""," -> Monitor weekly data.....................");
+
+#ifdef HAVE_LIBMONGOC
+if (dbconn)
+   {
+   CFDB_SaveMonitorData(dbconn, id, mon_rep_week, data);
+   }
+#endif
+
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   // Extract time stamp
+   
+   if (strncmp(ip->name,"T: ", 3) == 0)
+      {
+      memset(t,0,CF_TIME_SIZE);
+      sscanf(ip->name+3,"%31[^,],%d",t,&slot);
+      continue;
+      }
+
+   // Extract records
+   
+   q = e = dev = 0;
+   sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
+   Debug("Week-obs %d in slot %d: %.2lf,%.2lf,%.2lf\n",observable,slot,q,e,dev);
+   }
+
+}
+
+/*****************************************************************************/
+
+void Nova_UnPackMonitorYr(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
  int observable,slot = 0;
   double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor year data.....................");
+
 
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
@@ -481,6 +596,8 @@ void Nova_UnPackVariables(mongo_connection *dbconn, char *id, struct Item *data)
   char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],scope[CF_MAXVARSIZE];
 
 CfOut(cf_verbose,""," -> Variable data...........................");
+CfOut(cf_inform, "", "!! Deprecated variable data format - response from Nova 2.0.2 or earlier (some features unavailible)");
+
 
 #ifdef HAVE_LIBMONGOC
 if (dbconn)

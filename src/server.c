@@ -230,7 +230,8 @@ switch (type)
        Nova_PackClasses(reply,CFR_CLASS,from,type);
        Nova_PackFileChanges(reply,CFR_FCHANGE,from,type);
        Nova_PackDiffs(reply,CFR_FDIFF,from,type);
-       Nova_PackMonitorMag(reply,CFR_MONITOR_MAG,from,type);
+       //Nova_PackMonitorMg(reply,CFR_MONITOR_MAG,from,type);  // DEPRECATED
+       Nova_PackMonitorMg(reply,CFR_MONITOR_MG,from,type);
        Nova_PackCompliance(reply,CFR_PCOMPLIANCE,from,type);
        Nova_PackTotalCompliance(reply,CFR_TCOMPLIANCE,from,type);
        Nova_PackLastSeen(reply,CFR_LASTSEEN,from,type);
@@ -247,10 +248,13 @@ switch (type)
        Nova_PackSetuid(reply,CFR_SETUID,from,type);
        Nova_PackFileChanges(reply,CFR_FCHANGE,from,type);
        Nova_PackDiffs(reply,CFR_FDIFF,from,type);
-       Nova_PackMonitorWeek(reply,CFR_MONITOR_WEEK,from,type);
-       Nova_PackMonitorMag(reply,CFR_MONITOR_MAG,from,type);
+       //Nova_PackMonitorMg(reply,CFR_MONITOR_MAG,from,type);  // DEPRECATED
+       //Nova_PackMonitorWk(reply,CFR_MONITOR_WEEK,from,type); // DEPRECATED
+       //Nova_PackMonitorYr(reply,CFR_MONITOR_YEAR,from,type); // DEPRECATED
+       Nova_PackMonitorMg(reply,CFR_MONITOR_MG,from,type);
+       Nova_PackMonitorWk(reply,CFR_MONITOR_WK,from,type);
+       Nova_PackMonitorYr(reply,CFR_MONITOR_YR,from,type);
        Nova_PackMonitorHist(reply,CFR_MONITOR_HIST,from,type);
-       Nova_PackMonitorYear(reply,CFR_MONITOR_YEAR,from,type);
        Nova_PackCompliance(reply,CFR_PCOMPLIANCE,from,type);
        Nova_PackTotalCompliance(reply,CFR_TCOMPLIANCE,from,type);
        Nova_PackSoftware(reply,CFR_SOFTWARE,from,type);
@@ -258,8 +262,8 @@ switch (type)
        Nova_PackPatchStatus(reply,CFR_PATCHSTATUS,from,type);
        Nova_Pack_promise_output_common(reply,CFR_PROMISEOUT,from,type);
        Nova_PackValueReport(reply,CFR_VALUE,from,type);
-       Nova_PackVariables2(reply,CFR_VARD,from,type);
        //Nova_PackVariables(reply,CFR_VARS,from,type);  //DEPRECATED
+       Nova_PackVariables2(reply,CFR_VARD,from,type);
        Nova_PackLastSeen(reply,CFR_LASTSEEN,from,type);
        Nova_PackRepairLog(reply,CFR_REPAIRLOG,from,type);
        Nova_PackNotKeptLog(reply,CFR_NOTKEPTLOG,from,type);

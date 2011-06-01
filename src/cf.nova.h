@@ -81,7 +81,7 @@
 #define MONITOR_CLASS_PREFIX "mXC_"
 #define CF_CHANGE_HORIZON 10
 #define NOVA_EXPORT_HEADER "NOVA_EXPORT"
-#define CF_CODEBOOK_SIZE 24
+#define CF_CODEBOOK_SIZE 27
 #define NOVA_MAXDIFFSIZE (80 * 1024 * 1024)
 
 /*****************************************************************************/
@@ -440,10 +440,10 @@ void Nova_PackClasses(struct Item **reply,char *header,time_t date,enum cfd_menu
 void Nova_PackSetuid(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackFileChanges(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackDiffs(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackMonitorWeek(struct Item **reply,char *header,time_t from,enum cfd_menu type);
-void Nova_PackMonitorMag(struct Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_PackMonitorYr(struct Item **reply,char *header,time_t from,enum cfd_menu type);
 void Nova_PackMonitorHist(struct Item **reply,char *header,time_t from,enum cfd_menu type);
-void Nova_PackMonitorYear(struct Item **reply,char *header,time_t from,enum cfd_menu type);
 void Nova_PackCompliance(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackSoftware(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackAvailPatches(struct Item **reply,char *header,time_t date,enum cfd_menu type);
@@ -474,6 +474,9 @@ void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, struct Item *dat
 void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackMonitorMg(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackMonitorWk(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackMonitorYr(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, struct Item *data);
@@ -1175,11 +1178,16 @@ struct cf_pscalar
 #define CFR_CLASS "CLS"
 #define CFR_SETUID "SUI"
 #define CFR_FCHANGE "CHG"
-#define CFR_MONITOR_WEEK "MNW"
 #define CFR_FDIFF "DIF"
-#define CFR_MONITOR_MAG "MNM"
+#define CFR_MONITOR_MAG "MNM"  // DEPRECATED from Nova 2.1.0 onwards
+#define CFR_MONITOR_WEEK "MNW" // DEPRECATED from Nova 2.1.0 onwards
+#define CFR_MONITOR_YEAR "MNY" // DEPRECATED from Nova 2.1.0 onwards
+
+#define CFR_MONITOR_MG "MOM"
+#define CFR_MONITOR_WK "MOW"
+#define CFR_MONITOR_YR "MOY"
+
 #define CFR_MONITOR_HIST "MNH"
-#define CFR_MONITOR_YEAR "MNY"
 #define CFR_PCOMPLIANCE "PCP"
 #define CFR_TCOMPLIANCE "TCP"
 #define CFR_SOFTWARE "SOF"
@@ -1187,7 +1195,7 @@ struct cf_pscalar
 #define CFR_PATCHSTATUS "PST"
 #define CFR_PROMISEOUT "POT"
 #define CFR_VALUE "VAL"
-#define CFR_VARS "VAR"
+#define CFR_VARS "VAR"  // DEPRECATED from Nova 2.0.3 onwards
 #define CFR_VARD "VRD"  // with date stamp
 #define CFR_LASTSEEN "SEN"
 #define CFR_REPAIRLOG "PRL"
