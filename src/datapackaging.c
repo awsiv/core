@@ -405,7 +405,7 @@ void Nova_PackDiffs(struct Item **reply,char *header,time_t from,enum cfd_menu t
       output[CF_MAXTRANSSIZE],aggregate[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
   char pm;
-  int i = 0,truncate,first = true;
+  int i = 0,first = true;
   time_t then;
   long lthen;
 
@@ -448,8 +448,6 @@ while (!feof(fin))
    memset(aggregate,0,CF_BUFSIZE);
    output[0] = '\0';
 
-   truncate = false;
-
    while (!feof(fin))
       {
       line[0] = '\0';
@@ -468,17 +466,24 @@ while (!feof(fin))
       changeNoTab[0] = '\0';
       ReplaceStr(change,changeNoTab,sizeof(changeNoTab),"\t","(TAB)");
 
-      if (!truncate)
-         {
-         Chop(line);
-         snprintf(reformat,CF_BUFSIZE-1,"%c,%s,%s%c",pm,no,changeNoTab,CF_N_CODE);
+      Chop(line);
+      snprintf(reformat,CF_BUFSIZE-1,"%c,%s,%s%c",pm,no,changeNoTab,CF_N_CODE);
 
-         Join(aggregate,reformat,CF_BUFSIZE);
+      if(strlen(aggregate) + strlen(name) < 800)  // truncate output if too large
+         {
+         Join(aggregate,reformat,sizeof(aggregate));
+         }
+      else
+         {
+         CfOut(cf_inform, "", "!! Diff of file \"%s\" is too large be transmitted - truncating", name);
+         snprintf(reformat, sizeof(reformat), "%c,%s,%s%c", pm,no,"(TRUNCATED)", CF_N_CODE);
+         Join(aggregate,reformat,sizeof(aggregate));
+         break;
          }
       }
-   
-   snprintf(output,sizeof(output),"%ld|%s|%s\n",then,name,aggregate);
 
+   snprintf(output,sizeof(output),"%ld|%s|%s\n",then,name,aggregate);
+   
    if (from > then)
       {
       continue;
