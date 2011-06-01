@@ -268,7 +268,7 @@ CloseDB(dbp);
 void Nova_PackSetuid(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
-  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  char name[CF_BUFSIZE],line[CF_MAXTRANSSIZE];
   struct Item *ip,*file = NULL;
   char start[32];
   int first = true;
@@ -289,7 +289,7 @@ if ((fin = fopen(name,"r")) == NULL)
 while (!feof(fin))
    {
    line[0] = '\0';
-   fgets(line,CF_BUFSIZE-1,fin);
+   fgets(line,sizeof(line),fin);
    PrependItem(&file,line,NULL);
    }
 
@@ -326,7 +326,7 @@ DeleteItemList(file);
 void Nova_PackFileChanges(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
-  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  char name[CF_BUFSIZE],line[CF_MAXTRANSSIZE];
   struct Item *ip,*file = NULL;
   char start[32];
   long lthen;
@@ -346,7 +346,7 @@ if ((fin = fopen(name,"r")) == NULL)
 while (!feof(fin))
    {
    line[0] = '\0';
-   fgets(line,CF_BUFSIZE-1,fin);
+   fgets(line,sizeof(line),fin);
 
    sscanf(line,"%ld",&lthen);
    then = (time_t)lthen;
@@ -402,7 +402,7 @@ void Nova_PackDiffs(struct Item **reply,char *header,time_t from,enum cfd_menu t
 { FILE *fin;
   char name[CF_BUFSIZE],line[CF_BUFSIZE],size[CF_MAXVARSIZE];
   char no[CF_SMALLBUF],change[CF_BUFSIZE],changeNoTab[CF_BUFSIZE],reformat[CF_BUFSIZE],
-      output[2*CF_BUFSIZE],aggregate[CF_BUFSIZE];
+      output[CF_MAXTRANSSIZE],aggregate[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
   char pm;
   int i = 0,truncate,first = true;
@@ -477,7 +477,7 @@ while (!feof(fin))
          }
       }
    
-   snprintf(output,CF_BUFSIZE-1,"%ld|%s|%s\n",then,name,aggregate);
+   snprintf(output,sizeof(output),"%ld|%s|%s\n",then,name,aggregate);
 
    if (from > then)
       {
@@ -515,7 +515,7 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
   struct Averages entry,det;
   time_t now,here_and_now;
   double nonzero;
-  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
+  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_MAXTRANSSIZE];
   CF_DB *dbp;
 
 CfOut(cf_verbose,""," -> Packing monitor magnified data");
@@ -575,7 +575,7 @@ while (here_and_now < now)
 
        /* Promise: Keep a small time-key enabling further compression by delta elimination */
 
-       snprintf(buffer,CF_BUFSIZE,"T: %d\n",slot);
+       snprintf(buffer,sizeof(buffer),"T: %d\n",slot);
        AppendItem(reply,buffer,NULL);
    
        for (i = 0; i < CF_OBSERVABLES; i++)
@@ -587,8 +587,8 @@ while (here_and_now < now)
                    entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
 
 	       /* Promise: Keep the integer observable label so that we can eliminate zero entries */      
-	       snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
-	       AppendItem(reply,buffer,NULL);
+             snprintf(buffer,sizeof(buffer),"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
+             AppendItem(reply,buffer,NULL);
 	     }
 	 }
      }
@@ -608,7 +608,7 @@ void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_me
 { int its,i,j,count = 0,first = true,slot = 0;
   double kept = 0, not_kept = 0, repaired = 0, nonzero;
   struct Averages entry,det;
-  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_BUFSIZE];
+  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_MAXTRANSSIZE];
   time_t now;
   CF_DB *dbp;
 
@@ -695,7 +695,7 @@ while (now < CF_MONDAY_MORNING + CF_WEEK)
 
    /* Promise: Keep a small time-key enabling further compression by delta elimination */
 
-   snprintf(buffer,CF_BUFSIZE,"T: %s,%d\n",timekey,slot);
+   snprintf(buffer,sizeof(buffer),"T: %s,%d\n",timekey,slot);
    AppendItem(reply,buffer,NULL);
    
    for (i = 0; i < CF_OBSERVABLES; i++)
@@ -708,8 +708,8 @@ while (now < CF_MONDAY_MORNING + CF_WEEK)
 
 	   /* Promise: Keep the integer observable label so that we can eliminate zero entries */
          
-	   snprintf(buffer,CF_BUFSIZE-1,"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
-	   AppendItem(reply,buffer,NULL);
+         snprintf(buffer,sizeof(buffer),"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
+         AppendItem(reply,buffer,NULL);
 	 }
      }
      
@@ -784,8 +784,8 @@ for (i = 0; i < MONITORING_HISTORY_LENGTH_WEEKS; ++i)
 
    if (have_data)
       {
-      char buffer[CF_BUFSIZE];
-      snprintf(buffer, CF_BUFSIZE -1, "T: %d\n", i);
+      char buffer[CF_MAXTRANSSIZE];
+      snprintf(buffer, sizeof(buffer), "T: %d\n", i);
       AppendItem(reply, buffer, NULL);
 
       for (k = 0; k < CF_OBSERVABLES; ++k)
@@ -796,7 +796,7 @@ for (i = 0; i < MONITORING_HISTORY_LENGTH_WEEKS; ++i)
             Debug("Sending data: %s %.2lf %.2lf %.2lf\n", NovaGetSlotName(k),
                   q[k] / num[k], e[k] / num[k], sqrt(var[k] / num[k]));
 
-            snprintf(buffer, CF_BUFSIZE - 1, "%d %.2lf %.2lf %.2lf\n", k,
+            snprintf(buffer, sizeof(buffer), "%d %.2lf %.2lf %.2lf\n", k,
                      q[k] / num[k], e[k] / num[k], sqrt(var[k] / num[k]));
             AppendItem(reply, buffer, NULL);
             }
@@ -814,7 +814,7 @@ void Nova_PackMonitorHist(struct Item **reply,char *header,time_t from,enum cfd_
 { int i,j,k,day,position;
   int ok[CF_OBSERVABLES];
   char filename[CF_BUFSIZE];
-  char buffer[CF_BUFSIZE],val[CF_SMALLBUF];
+  char buffer[CF_MAXTRANSSIZE],val[CF_SMALLBUF];
   double weekly[CF_OBSERVABLES][CF_GRAINS];
   double histogram[CF_OBSERVABLES][7][CF_GRAINS],smoothhistogram[CF_OBSERVABLES][7][CF_GRAINS];
   FILE *fp;
@@ -897,12 +897,12 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    {
    if (ok[i])
       {
-      snprintf(buffer,CF_BUFSIZE,"%d:",i);
+      snprintf(buffer,sizeof(buffer),"%d:",i);
       
       for (k = 0; k < CF_GRAINS; k++)
          {      
          snprintf(val,CF_SMALLBUF,"%.0lf:",weekly[i][k]);
-         strcat(buffer,val);
+         Join(buffer,val,sizeof(buffer));
          }
 
       AppendItem(reply,buffer,NULL);
@@ -915,7 +915,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 void Nova_PackCompliance(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 {
-  char name[CF_BUFSIZE];
+  char name[CF_MAXTRANSSIZE];
   double lsea = CF_WEEK; /* expire after a week */
   struct Event entry;
   int ksize,vsize,first = true;
@@ -928,7 +928,7 @@ CfOut(cf_verbose,""," -> Packing sum compliance data");
 
 /* Open the db */
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_COMPLIANCE);
+snprintf(name,sizeof(name),"%s/state/%s",CFWORKDIR,NOVA_COMPLIANCE);
 MapName(name);
 
 if (!OpenDB(name,&dbp))
@@ -973,17 +973,17 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
       if (measure > 0.9)  // avoid rounding errors
          {
          // Compliant
-         snprintf(name,CF_BUFSIZE-1,"%ld,%s,c,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
+         snprintf(name,sizeof(name),"%ld,%s,c,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
          }
       else if (measure > 0.4 && measure < 0.6)
          {
          // Repaired
-         snprintf(name,CF_BUFSIZE-1,"%ld,%s,r,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
+         snprintf(name,sizeof(name),"%ld,%s,r,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
          }
       else if (measure < 0.1)
          {
          // Non-compliant
-         snprintf(name,CF_BUFSIZE-1,"%ld,%s,n,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
+         snprintf(name,sizeof(name),"%ld,%s,n,%.1lf,%.1lf\n",then,eventname,av*100.0,sqrt(var)*100.0);
          }
 
       if (first && strlen(name) > 0)
@@ -1009,7 +1009,7 @@ void Nova_PackSoftware(struct Item **reply,char *header,time_t from,enum cfd_men
 
 { FILE *fin;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
-  char buffer[CF_BUFSIZE];
+  char buffer[CF_MAXTRANSSIZE];
   struct Item *ip,*file = NULL;
   int first = true;
 
@@ -1052,7 +1052,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    sscanf(ip->name,"%250[^,],%250[^,],%250[^,],%250[^\n]",name,version,arch,mgr);
 
-   snprintf(buffer,CF_BUFSIZE-1,"%s,%s,%s\n",name,version,Nova_ShortArch(arch));
+   snprintf(buffer,sizeof(buffer),"%s,%s,%s\n",name,version,Nova_ShortArch(arch));
 
    if (first)
       {
@@ -1073,7 +1073,7 @@ void Nova_PackAvailPatches(struct Item **reply,char *header,time_t from,enum cfd
 { int first = true;
   FILE *fin;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE];
-  char buffer[CF_BUFSIZE],line[CF_BUFSIZE];
+  char buffer[CF_MAXTRANSSIZE],line[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
 
 CfOut(cf_verbose,""," -> Packing available patch report...\n");
@@ -1115,7 +1115,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    sscanf(ip->name,"%250[^,],%250[^,],%250[^,],%250[^\n]",name,version,arch,mgr);
 
-   snprintf(buffer,CF_BUFSIZE-1,"%s,%s,%s\n",name,version,Nova_ShortArch(arch));
+   snprintf(buffer,sizeof(buffer),"%s,%s,%s\n",name,version,Nova_ShortArch(arch));
 
    if (first)
       {
@@ -1136,7 +1136,7 @@ void Nova_PackPatchStatus(struct Item **reply,char *header,time_t from,enum cfd_
 { int first = true,count = 0;
   FILE *fin;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE];
-  char buffer[CF_BUFSIZE],line[CF_BUFSIZE];
+  char buffer[CF_MAXTRANSSIZE],line[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
 
 CfOut(cf_verbose,""," -> Packing patch installed data");
@@ -1180,7 +1180,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    sscanf(ip->name,"%250[^,],%250[^,],%250[^,],%250[^\n]",name,version,arch,mgr);
 
-   snprintf(buffer,CF_BUFSIZE-1,"%s,%s,%s\n",name,version,Nova_ShortArch(arch));
+   snprintf(buffer,sizeof(buffer),"%s,%s,%s\n",name,version,Nova_ShortArch(arch));
 
    if (first)
       {
@@ -1208,7 +1208,7 @@ CfOut(cf_verbose,""," -> Packing promise data (deprecated)");
 
 void Nova_PackValueReport(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ char name[CF_BUFSIZE];
+{ char name[CF_MAXTRANSSIZE];
   CF_DB *dbp;
   CF_DBC *dbcp;
   int ksize,vsize,first = true;
@@ -1221,7 +1221,7 @@ void Nova_PackValueReport(struct Item **reply,char *header,time_t from,enum cfd_
 
 CfOut(cf_verbose,""," -> Packing value data");
   
-snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_VALUE);
+snprintf(name,sizeof(name),"%s/state/%s",CFWORKDIR,NOVA_VALUE);
 MapName(name);
 
 if (!OpenDB(name,&dbp))
@@ -1246,7 +1246,7 @@ if (NewDBCursor(dbp,&dbcp))
          }
 
       memcpy(&pt,value,sizeof(pt));
-      snprintf(name,CF_BUFSIZE,"%s,%.4lf,%.4lf,%.4lf\n",key,pt.kept,pt.repaired,pt.notkept);
+      snprintf(name,sizeof(name),"%s,%.4lf,%.4lf,%.4lf\n",key,pt.kept,pt.repaired,pt.notkept);
 
       if (first)
          {
@@ -1269,7 +1269,7 @@ void Nova_PackVariables(struct Item **reply,char *header,time_t from,enum cfd_me
 
 /* Should be deprecated some time - was replaced after Nova 2.0.2 */
 
-{ char name[CF_BUFSIZE],line[CF_BUFSIZE],scope[CF_MAXVARSIZE],cache[CF_MAXVARSIZE];
+{ char name[CF_MAXTRANSSIZE],line[CF_BUFSIZE],scope[CF_MAXVARSIZE],cache[CF_MAXVARSIZE];
   FILE *fin;
   int first = true;
 
@@ -1278,7 +1278,7 @@ CfOut(cf_verbose,""," -> Packing variable data");
 snprintf(cache,CF_MAXVARSIZE-1,"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_STATICDB);
 MapName(cache);
 
-snprintf(name,CF_BUFSIZE-1,"%s/state/vars.out",CFWORKDIR);
+snprintf(name,sizeof(name),"%s/state/vars.out",CFWORKDIR);
 MapName(name);
 
 if ((fin = fopen(name,"r")) == NULL)
@@ -1328,7 +1328,7 @@ while (!feof(fin))
          }
 
       sscanf(line+strlen("scope "),"%254[^:]",scope);
-      snprintf(name,CF_BUFSIZE-1,"S: %s",scope);
+      snprintf(name,sizeof(name),"S: %s",scope);
       AppendItem(reply,name,NULL);
       continue;                              
       }
@@ -1356,39 +1356,39 @@ while (!feof(fin))
       {
       if (strstr(type,"string"))
          {
-         snprintf(name,CF_BUFSIZE,"s,%s,%s\n",lval,rval);
+         snprintf(name,sizeof(name),"s,%s,%s\n",lval,rval);
          }
       else if (strstr(type,"slist"))
          {
-         snprintf(name,CF_BUFSIZE,"sl,%s,%s\n",lval,rval);
+         snprintf(name,sizeof(name),"sl,%s,%s\n",lval,rval);
          }
       else if (strstr(type,"int"))
          {
-         snprintf(name,CF_BUFSIZE,"i,%s,%s\n",lval,rval);
+         snprintf(name,sizeof(name),"i,%s,%s\n",lval,rval);
          }
       else if (strstr(type,"ilist"))
          {
-         snprintf(name,CF_BUFSIZE,"il,%s,%s\n",lval,rval);
+         snprintf(name,sizeof(name),"il,%s,%s\n",lval,rval);
          }
       else if (strstr(type,"real"))
          {
-         snprintf(name,CF_BUFSIZE,"r,%s,%s\n",lval,rval);
+         snprintf(name,sizeof(name),"r,%s,%s\n",lval,rval);
          }
       else if (strstr(type,"rlist"))
          {
-         snprintf(name,CF_BUFSIZE,"rl,%s,%s\n",lval,rval);
+         snprintf(name,sizeof(name),"rl,%s,%s\n",lval,rval);
          }
       else if (strstr(type,"(menu option)"))
          {
-         snprintf(name,CF_BUFSIZE,"m,%s,%s\n",lval,rval);
+         snprintf(name,sizeof(name),"m,%s,%s\n",lval,rval);
          }
       else if (strstr(type,"(option list)"))
          {
-         snprintf(name,CF_BUFSIZE,"ml,%s,%s\n",lval,rval);
+         snprintf(name,sizeof(name),"ml,%s,%s\n",lval,rval);
          }
       else
          {
-         snprintf(name,CF_BUFSIZE,"%s,%s,%s\n",type,lval,rval);
+         snprintf(name,sizeof(name),"%s,%s,%s\n",type,lval,rval);
          }
       AppendItem(reply,name,NULL);
       }
@@ -1403,7 +1403,7 @@ void Nova_PackVariables2(struct Item **reply,char *header,time_t from,enum cfd_m
 /* Includes date-stamp of variable (but not avg and stddev). */
 {
 char filename[CF_MAXVARSIZE];
-char buf[CF_BUFSIZE];
+char buf[CF_MAXTRANSSIZE];
 CF_DB *dbp;
 CF_DBC *dbcp;
 struct Variable *var;
@@ -1491,7 +1491,7 @@ void Nova_PackLastSeen(struct Item **reply,char *header,time_t from,enum cfd_men
   time_t tid = time(NULL);
   double now = (double)tid,average = 0, var = 0;
   double ticksperhr = (double)CF_TICKS_PER_HOUR;
-  char name[CF_BUFSIZE],hostkey[CF_BUFSIZE],buffer[CF_BUFSIZE];
+  char name[CF_BUFSIZE],hostkey[CF_BUFSIZE],buffer[CF_MAXTRANSSIZE];
   struct CfKeyHostSeen entry;
   int ksize,vsize,first = true;
 
@@ -1556,7 +1556,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       AppendItem(reply,header,NULL);
       }
 
-   snprintf(buffer,CF_BUFSIZE-1,"%c %s %s %ld %.2lf %.2lf %.2lf\n",
+   snprintf(buffer,sizeof(buffer),"%c %s %s %ld %.2lf %.2lf %.2lf\n",
            *hostkey,
            hostkey+1,
            addr,
@@ -1577,7 +1577,7 @@ CloseDB(dbp);
 void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
-  char name[CF_BUFSIZE],line[CF_BUFSIZE],buffer[CF_BUFSIZE];
+  char name[CF_BUFSIZE],line[CF_BUFSIZE],buffer[CF_MAXTRANSSIZE];
   struct Item *ip,*file = NULL;
   time_t start,end;
   char version[CF_MAXVARSIZE];
@@ -1708,7 +1708,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    // Now store
    
-   snprintf(buffer,CF_BUFSIZE-1,"%ld,%s,%d,%d,%d\n",start,version,kept,repaired,notrepaired);
+   snprintf(buffer,sizeof(buffer),"%ld,%s,%d,%d,%d\n",start,version,kept,repaired,notrepaired);
    
    if (first)
       {
@@ -1739,7 +1739,7 @@ METER_REPAIRED[meter_compliance_hour] = av_hour_repaired;
 void Nova_PackRepairLog(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
-  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  char name[CF_BUFSIZE],line[CF_MAXTRANSSIZE];
   struct Item *ip = NULL,*file = NULL;
   int i = 0,first = true;
   long then;
@@ -1760,7 +1760,7 @@ if ((fin = fopen(name,"r")) == NULL)
 while (!feof(fin))
    {
    line[0] = '\0';
-   fgets(line,CF_BUFSIZE-1,fin);
+   fgets(line,sizeof(line),fin);
 
    sscanf(line,"%ld",&then);
    
@@ -1803,7 +1803,7 @@ DeleteItemList(file);
 void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
-  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  char name[CF_BUFSIZE],line[CF_MAXTRANSSIZE];
   struct Item *ip,*file = NULL;
   int i = 0,first = true;
   long then;
@@ -1824,7 +1824,7 @@ if ((fin = fopen(name,"r")) == NULL)
 while (!feof(fin))
    {
    line[0] = '\0';
-   fgets(line,CF_BUFSIZE-1,fin);
+   fgets(line,sizeof(line),fin);
    
    sscanf(line,"%ld",&then);
    
@@ -1866,7 +1866,7 @@ DeleteItemList(file);
 
 void Nova_PackMeter(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ char line[CF_BUFSIZE];
+{ char line[CF_MAXTRANSSIZE];
 
 CfOut(cf_verbose,""," -> Packing meter");
 
@@ -1874,31 +1874,31 @@ AppendItem(reply,header,NULL);
 
 if (METER_KEPT[meter_compliance_week] > 0 || METER_REPAIRED[meter_compliance_week] > 0)
    {
-   snprintf(line,CF_BUFSIZE-1,"W: %.4lf %.4lf\n",METER_KEPT[meter_compliance_week],METER_REPAIRED[meter_compliance_week]);
+   snprintf(line,sizeof(line),"W: %.4lf %.4lf\n",METER_KEPT[meter_compliance_week],METER_REPAIRED[meter_compliance_week]);
    AppendItem(reply,line,NULL);
    }
 
 if (METER_KEPT[meter_compliance_day] > 0 || METER_REPAIRED[meter_compliance_day] > 0)
    {
-   snprintf(line,CF_BUFSIZE-1,"D: %.4lf %.4lf\n",METER_KEPT[meter_compliance_day],METER_REPAIRED[meter_compliance_day]);
+   snprintf(line,sizeof(line),"D: %.4lf %.4lf\n",METER_KEPT[meter_compliance_day],METER_REPAIRED[meter_compliance_day]);
    AppendItem(reply,line,NULL);
    }
 
 if (METER_KEPT[meter_compliance_hour] > 0 && METER_REPAIRED[meter_compliance_hour] > 0)
    {
-   snprintf(line,CF_BUFSIZE-1,"H: %.4lf %.4lf\n",METER_KEPT[meter_compliance_hour],METER_REPAIRED[meter_compliance_hour]);
+   snprintf(line,sizeof(line),"H: %.4lf %.4lf\n",METER_KEPT[meter_compliance_hour],METER_REPAIRED[meter_compliance_hour]);
    AppendItem(reply,line,NULL);
    }
 
 if (METER_KEPT[meter_perf_day] > 0 || METER_REPAIRED[meter_perf_day] > 0)
    {
-   snprintf(line,CF_BUFSIZE-1,"P: %.4lf %.4lf\n",METER_KEPT[meter_perf_day],METER_REPAIRED[meter_perf_day]);
+   snprintf(line,sizeof(line),"P: %.4lf %.4lf\n",METER_KEPT[meter_perf_day],METER_REPAIRED[meter_perf_day]);
    AppendItem(reply,line,NULL);
    }
 
 if (METER_KEPT[meter_other_day] > 0 || METER_REPAIRED[meter_other_day] > 0)
    {
-   snprintf(line,CF_BUFSIZE-1,"S: %.4lf %.4lf\n",METER_KEPT[meter_other_day],METER_REPAIRED[meter_other_day]);
+   snprintf(line,sizeof(line),"S: %.4lf %.4lf\n",METER_KEPT[meter_other_day],METER_REPAIRED[meter_other_day]);
    AppendItem(reply,line,NULL);
    }
 
@@ -1906,13 +1906,13 @@ Nova_SummarizeComms();
 
 if (METER_KEPT[meter_comms_hour] > 0 || METER_REPAIRED[meter_comms_hour] > 0)
    {
-   snprintf(line,CF_BUFSIZE-1,"C: %.4lf %.4lf\n",METER_KEPT[meter_comms_hour],METER_REPAIRED[meter_comms_hour]);
+   snprintf(line,sizeof(line),"C: %.4lf %.4lf\n",METER_KEPT[meter_comms_hour],METER_REPAIRED[meter_comms_hour]);
    AppendItem(reply,line,NULL);
    }
 
 if (METER_KEPT[meter_anomalies_day] > 0 || METER_REPAIRED[meter_anomalies_day] > 0)
    {
-   snprintf(line,CF_BUFSIZE-1,"A: %.4lf %.4lf\n",METER_KEPT[meter_anomalies_day],METER_REPAIRED[meter_anomalies_day]);
+   snprintf(line,sizeof(line),"A: %.4lf %.4lf\n",METER_KEPT[meter_anomalies_day],METER_REPAIRED[meter_anomalies_day]);
    AppendItem(reply,line,NULL);
    }
 }
@@ -1922,7 +1922,7 @@ if (METER_KEPT[meter_anomalies_day] > 0 || METER_REPAIRED[meter_anomalies_day] >
 void Nova_PackBundles(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 {
-  char name[CF_BUFSIZE],line[CF_BUFSIZE];
+  char name[CF_BUFSIZE],line[CF_MAXTRANSSIZE];
   char bundle[CF_MAXVARSIZE];
   struct Item *file = NULL;
   int first = true,ksize,vsize;
@@ -1995,11 +1995,11 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       AppendItem(reply,header,NULL);
       }
 
-   snprintf(line,CF_BUFSIZE-1,"%s %ld %.2lf %.2lf %.2lf\n",
-           bundle,
-           (long)fthen,
-           ((double)(now-then))/ticksperhr,
-           average/ticksperhr,
+   snprintf(line,sizeof(line),"%s %ld %.2lf %.2lf %.2lf\n",
+            bundle,
+            (long)fthen,
+            ((double)(now-then))/ticksperhr,
+            average/ticksperhr,
             sqrt(var)/ticksperhr);
 
    AppendItem(reply,line,NULL);
