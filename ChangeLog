@@ -3,7 +3,8 @@
 
 	User management on hub.
 
-	Allowing TAB in file diff report.
+	Allowing TAB in file diff report. Better handling
+	of large diffs and attempts to diff binaries.
 
 	Support for adding notes to all hosts and reports.
 
