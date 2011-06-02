@@ -1,10 +1,10 @@
+<div>
 <table>
     <tr>
-     <td bgcolor="red">Promise Not Kept <?php echo $startDate; ?> - <?php echo $stopDate; ?></td>
+     <th scope="red">Promise Not Kept</th>
     </tr>
-    <tr>
-       
-        <td>
+    <tr>       
+        <td id="promise-not-kept" class="bundlelist-table">
             <?php
             if (is_array($notkept)) {
                 echo $this->cf_table->generateReportTable($notkept);
@@ -14,11 +14,9 @@
         </td>
     </tr>
 
-    <tr> <td bgcolor="yellow">Promise Repaired</td></tr>
+    <tr> <th scope="yellow">Promise Repaired</th></tr>
     <tr>
-       
-
-        <td>
+        <td id ="promise-repaired" class="bundlelist-table">
             <?php
             if (is_array($repaired)) {
                 echo $this->cf_table->generateReportTable($repaired);
@@ -28,3 +26,7 @@
         </td>
     </tr>
 </table>
+</div>
+<script type="text/javascript">
+
+</script>

@@ -8,7 +8,9 @@
             extractTitleSelector: "h1, h2, h3, h4, h5",
             chainAjaxySelector: "a:not([target]), form:not([target])",
             closeDialogSelector: "a.dialog-close",
+            width:'auto',
             originalElement: null // store a refrence to the originally called element
+            
         },
         
         _create: function() {
@@ -117,15 +119,12 @@
             //Cheesy way to restore it to it's default options, plus
             //our own local options, since its' a reuseable dialog.
             //for now we insist on modal:true.
-            dialog.dialog($.extend({},
-                $.ui.dialog.prototype.options,
-                self.options,
-                {
-                    autoOpen:false,
-                    modal:true,
-                    width:'auto'
-                }
-                ));
+            dialog.dialog($.extend({}, 
+                                  $.ui.dialog.prototype.options, 
+                                  self.options, 
+                                  {autoOpen:false, modal:true}
+                                ));
+                    
 
             if (self._trigger('beforeDisplay', 0, html_content) !== false) {
                 dialog.html( html_content );

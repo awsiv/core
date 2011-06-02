@@ -132,7 +132,7 @@
                 onClick: function(node, eventInfo, e) {
                     if ( startTrack[node.label]) {
                         //var option = {'url':'/widget/summaryCompliance/'+startTrack[node.label],'title':'Overview'};
-                        var element = $('<a href="/widget/summaryCompliance/'+startTrack[node.label]+ '/' + graphEnvironment +'" title="overview" />');
+                        var element = $('<a href="/widget/summaryCompliance/start/'+startTrack[node.label]+ '/env/' + graphEnvironment+ '" title="overview" />');
                         element.ajaxyDialog().ajaxyDialog("open");
                     }
                 }

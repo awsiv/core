@@ -1970,6 +1970,23 @@ span.search input
     border-top: 1px solid #666;
 }
 
+table th[scope=red]
+{
+    background-color: #D43030; 
+    color: #FFF;
+    border-bottom: 1px solid #666;
+    border-top: 1px solid #666;
+}
+
+table th[scope=yellow]
+{
+    background-color: #cfb93f; 
+    color: #FFF;
+    border-bottom: 1px solid #666;
+    border-top: 1px solid #666;
+}
+
+
 .bundlelist-table th[scope=blue]
 {
     background-color: #009193; 
