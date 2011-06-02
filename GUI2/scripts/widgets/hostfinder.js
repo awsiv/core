@@ -231,6 +231,7 @@ var hostfinder={
     {
       var self=event.data.ui
       //alert($(this).text());
+     $(this).addClass('selected').siblings().removeClass('selected');
       self.cfui.resultpane.load('/widget/search_by_hostname',{'value':$(this).text()},function(){});
       self.cfui.categories.slideUp();
     },

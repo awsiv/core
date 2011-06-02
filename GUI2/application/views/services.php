@@ -7,7 +7,6 @@
         <div id="body" class="outerdiv">
          <div class="innerdiv">
           		<p class="title">Services and methods</p>
-                
                 <div class="tables">
                 <?php
                //echo $services;

@@ -45,7 +45,7 @@
             <div id="announcement" class="innerdiv">
                 <p class="title">Announcement</p>
             </div>
-            <div id="goals" class="innerdiv">
+            <div id="goals" class="innerdiv statusgoal">
                 <p class="title">Services/goals</p>
                 <ul>
                     <?php

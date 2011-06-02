@@ -223,7 +223,8 @@ class Welcome extends Cf_Controller {
             array('widgets/classfinder.js'),
             array('widgets/policyfinder.js'),
             array('widgets/reportfinder.js'),
-            array('SmartTextBox.js')
+            array('SmartTextBox.js'),
+            array('jquery.qtip-1.0.min.js')
         );
 
         $jsIE = array('jit/Extras/excanvas.js');
@@ -301,7 +302,8 @@ class Welcome extends Cf_Controller {
             'title' => "Cfengine Mission Portal - planning",
             'breadcrumbs' => $this->breadcrumblist->display(),
             'users' => getonlineusernames(),
-            'working_notes' => $this->userdata->get_personal_working_notes()
+            'working_notes' => $this->userdata->get_personal_working_notes(),
+             'goals' => json_decode(cfpr_list_business_goals())
         );
         $this->template->load('template', 'planning', $data);
     }

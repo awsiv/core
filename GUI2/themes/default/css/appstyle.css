@@ -230,7 +230,10 @@ label#searchbox input
 }
 
 .licenseinfo{
-    text-decoration: underline;
+      background: none repeat scroll 0 0 #3D4439;
+     border-radius: 3px 3px 3px 3px;
+    color: #FFFFFF;
+    padding: 0 4px;
 }
 
 #bodyindex .right{
@@ -293,6 +296,7 @@ label#searchbox input
     font-size: 11px;
     color:#717171;
 }
+
 
 .dash a.status{
     background: url("../images/status.png") no-repeat;
@@ -751,13 +755,17 @@ span#today
 
 #goals
 {
-    margin:0 8px 22px 8px;
-    min-height:311px;
+   
+}
+.statusgoal
+{
+  margin:0 8px 22px 8px;
+  min-height:311px;
 }
 
 #goals ul
 {
-    padding:20px 10px;
+    padding:0 10px 20px;
 }
 
 #goals li{
@@ -1235,7 +1243,7 @@ span.search input
 .panelcontent input.searchfield
 {
     display:block;
-    width:90%;
+    width:100%;
     border:solid 1px #cecece;
     padding-top:4px;
     margin-top:2px;
@@ -1661,6 +1669,8 @@ span.search input
 .ui-widget-content a.help
 {
     color:#fff;
+    float:right;
+    font-size:11px;
 }
 /*
  * SmartTextBox.css
@@ -1670,8 +1680,7 @@ span.search input
 */
 
 .smartTextBox{
-    font: 12px "Lucida Grande",
-        Verdana;
+    font: 12px "Lucida Grande",Verdana;
     cursor: text;
     background: #fff;
 }
@@ -1682,7 +1691,7 @@ span.search input
     margin: 0;
     padding: 3px 4px 0;
     border: 1px solid #999;
-    *padding-bottom: 3px;
+    padding-bottom: 3px;
 }
 
 .smartTextBox-elem{

@@ -1,4 +1,4 @@
-<div class="outerdiv">
+<div class="outerdiv grid_12">
           		
     <div class="innerdiv">
 <!--<p><?php  echo "Logged in: $username" ; ?>&nbsp;<a href="<?php echo site_url('auth/logout'); ?>">Logout</a></p>-->

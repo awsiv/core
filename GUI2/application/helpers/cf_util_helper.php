@@ -106,12 +106,32 @@ function autocomplete($report_data, $column) {
     }
 }
 
-/**
- * For drawing the table of hosts from the array of data supplied
- * @param <type> $data_array
- * @return string html
- * @author sudhir
- */
+function host_only_table($data_array) {
+    $table = "";
+    $cells = array();
+
+    if (count($data_array) > 0) {
+        foreach ($data_array as $cols) {
+            //$keys = array_keys($cols); if key valuesupplied in format{"key":"","id":""}
+            array_push($cells, anchor('welcome/host/' . $cols['hostkey'], $cols['hostname'], 'class="imglabel"'));
+            //use first key as param and second key as text as keys tend to change like key or hostkey, hostname or id etc
+           // array_push($cells, anchor('welcome/host/' . $cols[1], $cols[0], 'class="imglabel"') . anchor('visual/vital/' . $cols[1], "View vitals", 'class="viewvitalslnk"'));
+        }
+    }
+    if (count($cells) > 0) {
+        $table.="<table><tr>";
+        for ($i = 0; $i < count($cells); $i++) {
+            if ($i % 6 == 0 && $i != 0) {
+                $table.='</tr><tr>';
+            }
+            $table.='<td>' . $cells[$i] . '</td>';
+        }
+        $table.="</tr></table>";
+    } else {
+        $table.="<table><tr><td>No Host Found !!!</td></tr></table>";
+    }
+    return $table;
+}
 
 function getonlineusernames()
     {

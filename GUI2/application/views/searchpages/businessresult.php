@@ -1,4 +1,4 @@
-<div id="bodyreport" class="outerdiv">
+<div id="bodyreport" class="outerdiv grid_12">
     
               <div id="reportpanel" class="innerdiv">
                   <p class="title"><?php echo $report_title ?></p>
@@ -58,19 +58,20 @@
  </div>
     </div>
 <div class="clear"></div>
-        <div title="Send mail" id="dialog" style="width:400px;display:none">
+        <div title="Send mail" id="dialog" class="stylized" style="width:400px;display:none">
             <form>
                 <fieldset class="ui-helper-reset">
                     <label for="to_contacts">To:</label>
-                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="to_contacts" name="to_contacts" />
+                    <input type="text"  value="" id="to_contacts" name="to_contacts"  size="50"/>
                     <label for="from_contacts">From:</label>
-                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="from_contacts" name="from_contacts" />
+                    <input type="text" class="" value="" id="from_contacts" name="from_contacts" size="50" />
                     <label for="mail_subject">Subject:</label>
-                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="mail_subject" name="mail_subject" />
+                    <input type="text" class="" value="" id="mail_subject" name="mail_subject"  size="50" />
                     <label for="mail_desc">Message:</label>
-                    <textarea class="ui-widget-content ui-corner-all" id="mail_desc" name="mail_desc"></textarea>
+                    <textarea class="" id="mail_desc" name="mail_desc" rows="4" cols="48"></textarea>
                     <input type="hidden" id="parameters" />
                 </fieldset>
+                <br />
             </form>
         </div>
         <script type="text/javascript">

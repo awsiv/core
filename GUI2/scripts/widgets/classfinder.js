@@ -78,8 +78,11 @@ menuitemclicked:function(event){
                   self.dialogcontent.html($("<ul>").attr("id", "classList")); //repeated can be merged with loadpagebody
                     $.each(data, function(i, val) {
                                         var li = $("<li>");
-                                        $("<a>").text(val).attr({title:val, href:"#"}).appendTo(li);
-                                        $("<a>").text('View hosts').attr('href','/welcome/listhost').appendTo(li);
+                                        $("<a>").text(val).attr({title:val, href:"/search/index/host/All/report/Class+profile/name/"+val}).addClass('name').appendTo(li);
+                                        if(self.options.defaultbehaviour){
+                                        $("<a>").text('View hosts').attr('href',"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').addClass('btn').appendTo(li);
+                                         $("<a>").text('add to list').data('val',val).addClass('classadd').addClass('btn').appendTo(li);
+                                        }
                                         li.appendTo("#classList");
                                   });
                   }

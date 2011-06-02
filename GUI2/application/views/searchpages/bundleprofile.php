@@ -2,8 +2,10 @@
 <div id="searchform" class="panel">
    <div class="panelhead"><?php echo $report_type.' query'?></div><div class="panelcontent">
      <form method="post" action="<?php echo site_url('search')?>">
-         <p>Bundle pattern: (.*+[])<input class="searchfield" type="text" name="name" id="bp" > <a href="#"  id="bphelp">Help ?</a></p>
-         <p>Host group: (.*+[])<input class="searchfield" type="text" name="class_regex" size="80" id="hg"><a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help">Help ?</a></p>
+         <p>Bundle pattern: (.*+[])<input class="searchfield" type="text" name="name" id="bp" ></p>
+         <p>Host group: (.*+[]) 
+         <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help" title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
+         <input class="searchfield" type="text" name="class_regex" size="80" id="hg"></p>
          <p>Return hostnames only: <input type="checkbox" name="hosts_only" value="true"></p>
          <p><input class="btn" type="submit" value="Generate report"></p>
          <input type="hidden" name="host" value="All">
@@ -20,4 +22,39 @@ $('#bphghelp').classfinder({
         $('#hg') .smartTextBox('add', data.selectedclass);
     }
 });
+$('#bphghelp').qtip({
+            style: {
+                background:'#454545',
+                opacity:0.9,
+                name: 'dark',
+                width:{
+                    min:0,
+                    max:150
+                },
+                border: {
+                    width: 1,
+                    radius: 4
+                },
+                tip:{
+                    corner:'topMiddle',
+                    size:{
+                        x:10,
+                        y:10
+                    }
+                }
+            },
+            show:{
+                effect:{
+                    type:'fade',
+                    lenght:200
+                }
+            },
+
+            position: {
+                corner: {
+                    target: 'bottomMiddle',
+                    tooltip: 'topMiddle'
+                }
+            }
+        });
 </script>

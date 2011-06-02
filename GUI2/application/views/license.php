@@ -14,10 +14,14 @@
 		  </ul>
                <div class="tables">
                    
-		     <?php 
-                     $data=json_decode($txt,true);
-                     var_dump($txt);
-                     foreach ($data as $key->$value)
+		     <?php
+  
+                     //echo $txt; remove the newline character
+                     $txt = str_replace(array("\r\n", "\n", "\r"), '', $txt);
+                     $data=json_decode(utf8_encode(trim($txt)));
+                     //var_dump($data);
+                    // echo json_last_error();
+                     foreach ($data as $key=>$value)
                       {
                          $this->table->add_row($key, $value);
                       }

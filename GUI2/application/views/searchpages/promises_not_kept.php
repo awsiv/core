@@ -3,7 +3,10 @@
      <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
           <p>Promise handles: (.*+[])<input class="searchfield" type="text" name="name"></p>
-          <p>Host group: (.*+[])<input class="searchfield" type="text" name="class_regex" size="80"></p>
+          <p>Host group: (.*+[])
+            <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help"
+             title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
+          <input class="searchfield" type="text" name="class_regex" size="80" id="hg"></p>
           <p>From minimum age <input type="text" name="hours_deltafrom" size="2"> hours to maximum age <input type="text" name="hours_deltato" size="2"> hours old. </p>
           <input type="hidden" name="host" value="All">
           <input type="hidden" name="report" value="<?php echo $report_type ?>">
@@ -12,3 +15,48 @@
           </form>
       </div>
   </div>
+<script type="text/javascript">
+ $('#hg').smartTextBox({separator : "|"});
+$('#bphghelp').classfinder({
+    defaultbehaviour:false,
+    complete:function(event,data){
+        //console.log(data.selectedclass);
+        $('#hg') .smartTextBox('add', data.selectedclass);
+    }
+});
+$('#bphghelp').qtip({
+            style: {
+                background:'#454545',
+                opacity:0.9,
+                name: 'dark',
+                width:{
+                    min:0,
+                    max:150
+                },
+                border: {
+                    width: 1,
+                    radius: 4
+                },
+                tip:{
+                    corner:'topMiddle',
+                    size:{
+                        x:10,
+                        y:10
+                    }
+                }
+            },
+            show:{
+                effect:{
+                    type:'fade',
+                    lenght:200
+                }
+            },
+
+            position: {
+                corner: {
+                    target: 'bottomMiddle',
+                    tooltip: 'topMiddle'
+                }
+            }
+        });
+</script>
