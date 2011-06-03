@@ -133,7 +133,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, database,&host_key,&setOp,MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveHostID",keyhash);
+MongoCheckForError(conn,"SaveHostID",keyhash,NULL);
 
 bson_destroy(&setOp);
 
@@ -148,7 +148,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, database,&host_key,&setOp,MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveHostID",keyhash);
+MongoCheckForError(conn,"SaveHostID",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -222,7 +222,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,dbOp,keyhash);
+MongoCheckForError(conn,dbOp,keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -231,7 +231,7 @@ bson_destroy(&host_key);
 /*****************************************************************************/
 
 void CFDB_SaveMonitorData(mongo_connection *conn, char *keyhash, enum monitord_rep rep_type, struct Item *data)
-
+/* DEPRECATED from Nova 2.1.0 onwards */
 { bson_buffer bb,record;
   bson host_key;  // host description
   char varNameIndex[64];
@@ -310,11 +310,200 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    mongo_update(conn, MONGO_DATABASE_MON, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
-   MongoCheckForError(conn,dbOperation,keyhash);
+   MongoCheckForError(conn,dbOperation,keyhash,NULL);
 
    bson_destroy(&setOp);
    bson_destroy(&host_key);
    }
+ 
+}
+
+/*****************************************************************************/
+
+void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_rep rep_type, struct Item *data)
+{
+ bson_buffer bb;
+ bson_buffer *setObj, *arr;
+ bson keys;
+ bson setOp;
+ bson insertOp;
+ char monId[CF_SMALLBUF] = {0}, monDesc[CF_MAXVARSIZE] = {0}, monUnits[CF_SMALLBUF] = {0};
+ char varName[CF_SMALLBUF], iStr[CF_SMALLBUF];
+ bool didUpdate, haveAllMeta;
+ char *db;
+ char *dbOp;
+ struct Item *ip, *ip2, *slotStart;
+ int monGlobal,monExpMin,monExpMax;
+
+ int slot;
+ double q, e, d;
+
+ switch(rep_type)
+    {
+    case mon_rep_mag:
+        db = MONGO_DATABASE_MON_MG;
+        dbOp = "Update monitord mag";
+        break;
+    case mon_rep_week:
+        db = MONGO_DATABASE_MON_WK;
+        dbOp = "Update monitord week";
+        break;
+    case mon_rep_yr:
+        db = MONGO_DATABASE_MON_YR;
+        dbOp = "Update monitord year";
+        break;
+    default:
+        CfOut(cf_error, "", "!! Undefined monitord type in save (%d)", rep_type);
+        FatalError("Software error");
+    }
+ 
+ ip = data;
+ while(ip != NULL)
+    {
+    if (strncmp(ip->name,"M:",2) == 0)
+       {
+       monId[0] = '\0';
+       monGlobal = 0;
+       monExpMin = 0;
+       monExpMax = 0;
+       monUnits[0] = '\0';
+       monDesc[0] = '\0';
+       haveAllMeta = false;
+       
+       if(sscanf(ip->name+2,"%64[^,],%d,%d,%d,%32[^,],%128[^\n]",
+                 monId, &monGlobal, &monExpMin, &monExpMax, monUnits, monDesc) == 6)
+          {
+          haveAllMeta = true;
+          }
+
+       Debug("Found new monitoring probe \"%s\" \"%s\" \"%s\" %d %d %d\n", monId, monDesc, monUnits, monGlobal, monExpMin, monExpMax);
+       ip = ip->next;
+       continue;
+       }
+
+    if(monId[0] == '\0')
+       {
+       CfOut(cf_verbose, "", "!! Missing monitoring probe id - skipping");
+       ip = ip->next;
+       continue;
+       }
+    
+    // key - identify the record object
+    bson_buffer_init(&bb);
+    bson_append_string(&bb,cfr_keyhash,keyHash);
+    bson_append_string(&bb,cfm_id,monId);
+    bson_from_buffer(&keys, &bb);
+    
+    
+    // create object to insert
+    bson_buffer_init(&bb);
+    setObj = bson_append_start_object(&bb, "$set");
+
+    if(haveAllMeta)  // full query only
+       {
+       bson_append_string(setObj, cfm_description, monDesc);
+       bson_append_string(setObj, cfm_units, monUnits);
+       bson_append_bool(setObj, cfm_global, monGlobal);
+       bson_append_int(setObj, cfm_expmin, monExpMin);
+       bson_append_int(setObj, cfm_expmax, monExpMax);       
+       }
+
+    slotStart = ip;
+    
+    while(ip && (strncmp(ip->name,"M:", 2) != 0) )
+       {
+       sscanf(ip->name,"%d %lf %lf %lf", &slot, &q, &e, &d);
+       snprintf(varName, sizeof(varName), "%s.%d", cfm_q_arr, slot);
+       bson_append_double(setObj, varName, q);
+
+       snprintf(varName, sizeof(varName), "%s.%d", cfm_expect_arr, slot);
+       bson_append_double(setObj, varName, e);
+
+       snprintf(varName, sizeof(varName), "%s.%d", cfm_deviance_arr, slot);
+       bson_append_double(setObj, varName, d);
+
+       ip = ip->next;
+       }
+    
+    bson_append_finish_object(setObj);
+
+    bson_from_buffer(&setOp,&bb);
+    mongo_update(conn, db, &keys, &setOp, 0);  // no upsert
+
+    bson_destroy(&setOp);
+
+
+    if(!MongoCheckForError(conn,dbOp,keyHash,&didUpdate))
+       {
+       CfOut(cf_error, "", "!! Will not insert monitoring data");
+       bson_destroy(&keys);
+       return;
+       }
+
+    if(!didUpdate)
+       {
+       // no previously existing object with given key - insert
+       // note that this happens only once per object (~0.000001% of the time)
+   
+       CfOut(cf_verbose, "", " -> Inserting new monitoring object for %s,%s",
+             keyHash, monId);
+
+       bson_buffer_init(&bb);
+   
+       bson_append_string(&bb,cfr_keyhash,keyHash);
+       bson_append_string(&bb,cfm_id,monId);
+
+       if(haveAllMeta)
+          {
+          bson_append_string(&bb, cfm_description, monDesc);
+          bson_append_string(&bb, cfm_units, monUnits);
+          bson_append_bool(&bb, cfm_global, monGlobal);
+          bson_append_int(&bb, cfm_expmin, monExpMin);
+          bson_append_int(&bb, cfm_expmax, monExpMax);
+          }
+   
+       arr = bson_append_start_array(&bb, cfm_q_arr);
+       for(ip2 = slotStart; ip2 && (strncmp(ip2->name,"M:", 2) != 0); ip2 = ip2->next)
+          {
+          sscanf(ip2->name,"%d %lf %lf %lf", &slot, &q, &e, &d);
+
+          snprintf(iStr, sizeof(iStr), "%d", slot);
+          bson_append_double(arr, iStr, q);
+          }
+       bson_append_finish_object(arr);
+
+       arr = bson_append_start_array(&bb, cfm_expect_arr);
+       for(ip2 = slotStart; ip2 && (strncmp(ip2->name,"M:", 2) != 0); ip2 = ip2->next)
+          {
+          sscanf(ip2->name,"%d %lf %lf %lf", &slot, &q, &e, &d);
+
+          snprintf(iStr, sizeof(iStr), "%d", slot);
+          bson_append_double(arr, iStr, e);
+          }
+       bson_append_finish_object(arr);
+
+       arr = bson_append_start_array(&bb, cfm_deviance_arr);
+       for(ip2 = slotStart; ip2 && (strncmp(ip2->name,"M:", 2) != 0); ip2 = ip2->next)
+          {
+          sscanf(ip2->name,"%d %lf %lf %lf", &slot, &q, &e, &d);
+
+          snprintf(iStr, sizeof(iStr), "%d", slot);
+          bson_append_double(arr, iStr, d);
+          }
+       bson_append_finish_object(arr);
+       
+       bson_from_buffer(&insertOp, &bb);
+
+       // upsert instead of insert avoids duplicates (if race conditions occur)
+       mongo_update(conn, db, &keys, &insertOp, MONGO_UPDATE_UPSERT);
+
+       MongoCheckForError(conn,dbOp,keyHash,NULL);
+
+       bson_destroy(&insertOp);
+       }
+    
+    bson_destroy(&keys);
+    }
  
 }
 
@@ -382,7 +571,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn,MONGO_DATABASE,&host_key,&setOp,MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveMonitorHistograms",keyhash);
+MongoCheckForError(conn,"SaveMonitorHistograms",keyhash,NULL);
  
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -426,7 +615,7 @@ static void CFDB_PutEnvironmentForHost(mongo_connection *conn, const char *keyha
 
     mongo_update(conn, MONGO_DATABASE, &host_key, &op, MONGO_UPDATE_UPSERT);
 
-    MongoCheckForError(conn, "PutEnvironmentForHost", keyhash);
+    MongoCheckForError(conn, "PutEnvironmentForHost", keyhash,NULL);
 
     bson_destroy(&op);
     bson_destroy(&host_key);
@@ -529,7 +718,7 @@ bson_append_finish_object(keyAdd);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveClasses",keyhash);
+MongoCheckForError(conn,"SaveClasses",keyhash,NULL);
 
 CFDB_SaveEnvironment(conn, keyhash, data);
 
@@ -568,7 +757,7 @@ bson_append_int(unset,cfr_vars,1);
 bson_append_finish_object(unset);
 bson_from_buffer(&unsetOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &unsetOp, 0);
-MongoCheckForError(conn,"SaveVariables-DeleteOld",keyhash);
+MongoCheckForError(conn,"SaveVariables-DeleteOld",keyhash,NULL);
 bson_destroy(&unsetOp);
 
 
@@ -623,7 +812,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveVariables",keyhash);
+MongoCheckForError(conn,"SaveVariables",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -737,7 +926,7 @@ bson_append_finish_object(keyAdd);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveVariables2",keyhash);
+MongoCheckForError(conn,"SaveVariables2",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -806,7 +995,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveTotalCompliance",keyhash);
+MongoCheckForError(conn,"SaveTotalCompliance",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -877,7 +1066,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    }
 
 // should do this in loop, but not efficient...
- MongoCheckForError(conn,dbOp,keyhash);
+ MongoCheckForError(conn,dbOp,keyhash,NULL);
  
 }
 
@@ -934,7 +1123,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveLastSeen",keyhash);
+MongoCheckForError(conn,"SaveLastSeen",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -978,7 +1167,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveMeter",keyhash);
+MongoCheckForError(conn,"SaveMeter",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -1031,7 +1220,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SavePerformance",keyhash);
+MongoCheckForError(conn,"SavePerformance",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -1076,7 +1265,7 @@ bson_append_finish_object(set);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveSetUid",keyhash);
+MongoCheckForError(conn,"SaveSetUid",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -1159,7 +1348,7 @@ DeleteItemList(keys);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SavePromiseCompliance",keyhash);
+MongoCheckForError(conn,"SavePromiseCompliance",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -1207,7 +1396,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveFileChanges",keyhash);
+MongoCheckForError(conn,"SaveFileChanges",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -1267,7 +1456,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveFileDiffs",keyhash);
+MongoCheckForError(conn,"SaveFileDiffs",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -1321,7 +1510,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveBundles",keyhash);
+MongoCheckForError(conn,"SaveBundles",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -1371,7 +1560,7 @@ bson_append_finish_object(set);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveValueReport",keyhash);
+MongoCheckForError(conn,"SaveValueReport",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
@@ -1412,7 +1601,7 @@ bson_append_finish_object(set);
 bson_from_buffer(&setOp,&bb);
 
 mongo_update(conn, MONGO_CACHE, &cacheType, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn, "SaveCachedTotalCompliance", policy);
+MongoCheckForError(conn, "SaveCachedTotalCompliance", policy,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&cacheType);  
@@ -1442,7 +1631,7 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveLastUpdate",keyhash);
+MongoCheckForError(conn,"SaveLastUpdate",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);
@@ -1482,7 +1671,7 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *ni
   bson_append_int(&buf_key,cfn_reportdata,1);
   bson_from_buffer( &b_key, &buf_key );
   mongo_create_index(conn, MONGO_NOTEBOOK, &b_key, options, NULL);
-  MongoCheckForError(conn,"CreateIndex",keyhash);
+  MongoCheckForError(conn,"CreateIndex",keyhash,NULL);
   bson_destroy(&b_key);
   
    // find right host
@@ -1523,7 +1712,7 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *ni
    bson_from_buffer(&setOp,&bb);
 
    mongo_update(conn, MONGO_NOTEBOOK, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-   MongoCheckForError(conn,"AddNote",keyhash);
+   MongoCheckForError(conn,"AddNote",keyhash,NULL);
    bson_destroy(&setOp);
   
    if(newnote)
@@ -1534,7 +1723,7 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *ni
        bson_from_buffer(&field, &bb);
        
        cursor = mongo_find(conn, MONGO_NOTEBOOK, &host_key, &field,0,0,0);
-       MongoCheckForError(conn,"GetNoteID",keyhash);
+       MongoCheckForError(conn,"GetNoteID",keyhash,NULL);
        bson_destroy(&field);
        
        while(mongo_cursor_next(cursor) && !found)
@@ -1598,7 +1787,7 @@ void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_
   bson_from_buffer(&setOp,&bb);
   
   mongo_update(conn, coll, query, &setOp, 0);
-  MongoCheckForError(conn,row_name,nid);
+  MongoCheckForError(conn,row_name,nid,NULL);
   bson_destroy(&setOp);
 }
 

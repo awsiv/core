@@ -4901,7 +4901,7 @@ bson_from_buffer(&cmd, &bb);
 
 if (!mongo_run_command(&dbconn, MONGO_BASE, &cmd, &result))
    {
-   MongoCheckForError(&dbconn,"Nova2PHP_environments_list", "");
+   MongoCheckForError(&dbconn,"Nova2PHP_environments_list", "", NULL);
    bson_buffer_destroy(&bb);
    bson_destroy(&cmd);
    CFDB_Close(&dbconn);

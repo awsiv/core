@@ -5985,6 +5985,34 @@ void PrintCFDBKey(bson_iterator *it1, int depth)
 
 /*****************************************************************************/
 
+bool GetBsonBool(char *data, char *boolKey, bool *val)
+/* Returns true if the bson object has the correct structure (contains
+ * key and key is bool), false otherwise.
+ * If true is returned, the value of the boolean is written to val.
+ * data = (bson *)b->data
+ */
+{
+ bson_iterator i;
+ bson_iterator_init( &i , data );
+ bool found = false;
+
+ while ( bson_iterator_next( &i ) )
+    {
+    if((bson_iterator_type(&i) == bson_bool) &&
+       (strcmp(bson_iterator_key(&i), boolKey) == 0))
+       {
+       
+       *val = bson_iterator_bool(&i);
+       found = true;
+       break;
+       }
+    }
+
+ return found;
+} 
+ 
+/*****************************************************************************/
+
 void BsonToString(char *retBuf, int retBufSz, char *data)
 /* data = (bson *)b->data*/
 {
@@ -6064,7 +6092,7 @@ void BsonToString(char *retBuf, int retBufSz, char *data)
 
 /*****************************************************************************/
 
-void MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra)
+bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate)
 {
  char dbErr[CF_MAXVARSIZE];
  bson b;
@@ -6074,14 +6102,30 @@ void MongoCheckForError(mongo_connection *conn, const char *operation, const cha
     extra = "";
     }
 
+ bson_empty(&b);
+
  if(mongo_cmd_get_last_error(conn, MONGO_BASE, &b))
     {
     BsonToString(dbErr,sizeof(dbErr),b.data);
     CfOut(cf_error, "", "!! Database error on %s (%s): %s", operation,extra,dbErr);
+    bson_destroy(&b);
+    return false;
+    }
+
+ if(checkUpdate)
+    {
+    if(!GetBsonBool(b.data, "updatedExisting", checkUpdate))
+       {
+       CfOut(cf_error, "", "!! Unable to determine if update happened on %s (%s)",
+             operation, extra);
+       bson_destroy(&b);
+       return false;
+       }
     }
  
  bson_destroy(&b);
 
+ return true;
 }
 
 /*****************************************************************************/
@@ -6569,7 +6613,7 @@ bson_from_buffer(&cmd, &bb);
 
 if (!mongo_run_command(conn, database, &cmd, &result))
    {
-   MongoCheckForError(conn,"CFDB_QueryDistinct()", "");
+   MongoCheckForError(conn,"CFDB_QueryDistinct()", "", NULL);
    bson_buffer_destroy(&bb);
    bson_destroy(&cmd);
    return false;

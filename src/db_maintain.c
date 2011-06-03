@@ -176,7 +176,7 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
       bson_from_buffer(&op,&bb);
 
       mongo_update(conn,MONGO_DATABASE,&hostQuery, &op, 0);
-      MongoCheckForError(conn,"PurgeTimestampedReports",keyHash);
+      MongoCheckForError(conn,"PurgeTimestampedReports",keyHash,NULL);
       
       DeleteItemList(purgeClassNames);
       purgeClassNames = NULL;
@@ -218,12 +218,12 @@ void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t n
 
   mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
 
-  MongoCheckForError(conn,"timed delete host from repair logs collection",NULL);
+  MongoCheckForError(conn,"timed delete host from repair logs collection",NULL,NULL);
 
 
   mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
 
-  MongoCheckForError(conn,"timed delete host from not kept logs collection",NULL);
+  MongoCheckForError(conn,"timed delete host from not kept logs collection",NULL,NULL);
 
 
   bson_destroy(&cond);
@@ -263,7 +263,7 @@ void CFDB_PurgeDropReports(mongo_connection *conn)
 
   // run update
   mongo_update(conn,MONGO_DATABASE,&empty,&op,MONGO_UPDATE_MULTI);
-  MongoCheckForError(conn,"PurgeDropReports",NULL);
+  MongoCheckForError(conn,"PurgeDropReports",NULL,NULL);
     
   bson_destroy(&op);
 }
@@ -480,22 +480,22 @@ void CFDB_PurgeHost(mongo_connection *conn, char *keyHash)
   
   mongo_remove(conn, MONGO_DATABASE, &cond);
 
-  MongoCheckForError(conn,"delete host from main collection",keyHash);
+  MongoCheckForError(conn,"delete host from main collection",keyHash,NULL);
 
   
   mongo_remove(conn, MONGO_DATABASE_MON, &cond);
 
-  MongoCheckForError(conn,"delete host from monitord collection",keyHash);
+  MongoCheckForError(conn,"delete host from monitord collection",keyHash,NULL);
 
 
   mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
 
-  MongoCheckForError(conn,"delete host from repair logs collection",keyHash);
+  MongoCheckForError(conn,"delete host from repair logs collection",keyHash,NULL);
 
 
   mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
 
-  MongoCheckForError(conn,"delete host from not kept logs collection",keyHash);
+  MongoCheckForError(conn,"delete host from not kept logs collection",keyHash,NULL);
 
 
   bson_destroy(&cond);  

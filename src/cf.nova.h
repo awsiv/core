@@ -42,7 +42,10 @@
 # define MONGO_BASE "cfreport"
 # define MONGO_KMBASE "cfknow"
 # define MONGO_DATABASE MONGO_BASE ".hosts"
-# define MONGO_DATABASE_MON MONGO_BASE ".monitoring"
+# define MONGO_DATABASE_MON MONGO_BASE ".monitoring"  // DEPRECATED
+# define MONGO_DATABASE_MON_MG MONGO_BASE ".monitoring_mg"
+# define MONGO_DATABASE_MON_WK MONGO_BASE ".monitoring_wk"
+# define MONGO_DATABASE_MON_YR MONGO_BASE ".monitoring_yr"
 # define MONGO_PROMISES_EXP MONGO_BASE ".promises_exp"
 # define MONGO_PROMISES_UNEXP_COLLECTION "promises_unexp"
 # define MONGO_PROMISES_UNEXP MONGO_BASE "." MONGO_PROMISES_UNEXP_COLLECTION
@@ -366,8 +369,7 @@ int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
 int Nova_MagViewOffset(int start_slot,int dbslot,int wrap);
 int CFDB_QueryHostCount(mongo_connection *conn);
 int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
-void MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra);
-
+bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate);
 #endif
 
 /* db_save.c */
@@ -382,6 +384,7 @@ int CFDB_PutValue(char *lval,char *rval);
 
 void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, struct Item *data);
 void CFDB_SaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep rep_type, struct Item *data);
+void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_rep rep_type, struct Item *data);
 void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveClasses(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveVariables(mongo_connection *conn, char *kH, struct Item *data);
@@ -399,6 +402,7 @@ void CFDB_SaveBundles(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveValueReport(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char *ipaddr);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
+bool GetBsonBool(char *data, char *boolKey, bool *val);
 void BsonToString(char *retBuf, int retBufSz, char *data);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 
@@ -443,6 +447,7 @@ void Nova_PackDiffs(struct Item **reply,char *header,time_t date,enum cfd_menu t
 void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_menu type);
 void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_menu type);
 void Nova_PackMonitorYr(struct Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_FormatMonitoringReply(struct Item **datap, struct Item **reply, enum cfd_menu type);
 void Nova_PackMonitorHist(struct Item **reply,char *header,time_t from,enum cfd_menu type);
 void Nova_PackCompliance(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackSoftware(struct Item **reply,char *header,time_t date,enum cfd_menu type);
@@ -844,9 +849,6 @@ void Nova_SignalTwin(void);
 void Nova_SignalOther(void);
 void Nova_ReviveOther(int argc,char **argv);
 void Nova_TranslatePath(char *new, const char *old);
-RSA *Nova_SelectKeyRing(char *name);
-void Nova_IdempAddToKeyRing(char *name,char *ip,RSA *key);
-void Nova_PurgeKeyRing(void);
 
 /* services.c */
 
@@ -1296,10 +1298,20 @@ struct cf_pscalar
 
 /* monitoring (vital sign) DB */
 
-#define cfm_magobs        "mo"
-#define cfm_weekobs       "wo"
-#define cfm_yearobs       "yo"
-#define cfm_data          "dt"
+#define cfm_magobs        "mo"  // DEPRECATED
+#define cfm_weekobs       "wo"  // DEPRECATED
+#define cfm_yearobs       "yo"  // DEPRECATED
+#define cfm_data          "dt"  // DEPRECATED
+#define cfm_id            "id"
+#define cfm_description   "ds"
+#define cfm_units         "us"
+#define cfm_global        "gl"
+#define cfm_expmin        "en"
+#define cfm_expmax        "ex"
+#define cfm_q_arr         "q"
+#define cfm_expect_arr    "e"
+#define cfm_deviance_arr  "d"
+
 
 /*commenting*/
 #define cfn_keyhash "_kh"

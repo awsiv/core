@@ -338,23 +338,13 @@ if (dbconn)
    // monitor mag is always run during update
    CFDB_SaveLastUpdate(dbconn,id);
 
-   CFDB_SaveMonitorData(dbconn,id,mon_rep_mag,data);
+   CFDB_SaveMonitorData2(dbconn,id,mon_rep_mag,data);
    }
 #endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   // Extract time stamp
-   if (strncmp(ip->name,"T: ", 3) == 0)
-      {
-      sscanf(ip->name+3,"%d",&slot);
-      continue;
-      }
-
-   // Extract records
-   q = e = dev = 0;
-   sscanf(ip->name,"%d %lf %lf %lf",&observable,&q,&e,&dev);
-   Debug("Mag-obs %d: %.2lf,%.2lf,%.2lf measured for slot %d\n",observable,q,e,dev,slot);
+   Debug("Mag-obs %s\n",ip->name);
    }
 }
 
@@ -372,26 +362,13 @@ CfOut(cf_verbose,""," -> Monitor weekly data.....................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   CFDB_SaveMonitorData(dbconn, id, mon_rep_week, data);
+   CFDB_SaveMonitorData2(dbconn, id, mon_rep_week, data);
    }
 #endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   // Extract time stamp
-   
-   if (strncmp(ip->name,"T: ", 3) == 0)
-      {
-      memset(t,0,CF_TIME_SIZE);
-      sscanf(ip->name+3,"%31[^,],%d",t,&slot);
-      continue;
-      }
-
-   // Extract records
-   
-   q = e = dev = 0;
-   sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
-   Debug("Week-obs %d in slot %d: %.2lf,%.2lf,%.2lf\n",observable,slot,q,e,dev);
+   Debug("Week-obs %s\n",ip->name);
    }
 
 }
@@ -410,23 +387,13 @@ CfOut(cf_verbose,""," -> Monitor year data.....................");
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
    {
-   CFDB_SaveMonitorData(dbconn, id, mon_rep_yr, data);
+   CFDB_SaveMonitorData2(dbconn, id, mon_rep_yr, data);
    }
 #endif
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   // Extract time stamp
-   if (strncmp(ip->name,"T: ", 3) == 0)
-      {
-      sscanf(ip->name+3,"%d",&slot); // 3*12
-      continue;
-      }
-
-   // Extract records
-   q = e = dev = 0;
-   sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
-   Debug("Year-obs %d: %.2lf,%.2lf,%.2lf measured at slot %d\n",observable,q,e,dev,slot);
+   Debug("Year-obs %s\n",ip->name);
    }
 }
 

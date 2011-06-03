@@ -516,216 +516,201 @@ DeleteItemList(file);
 
 void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int i,first = true,slot;
-  struct Averages entry,det;
-  time_t now,here_and_now;
-  double nonzero;
-  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_MAXTRANSSIZE];
-  CF_DB *dbp;
+{ int i,slot;
+ struct Averages entry,det;
+ time_t now,here_and_now;
+ double nonzero;
+ char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_MAXTRANSSIZE];
+ struct Item *data = {0};
+ CF_DB *dbp;
 
-CfOut(cf_verbose,""," -> Packing monitor magnified data");
+ CfOut(cf_verbose,""," -> Packing monitor magnified data");
   
-snprintf(filename,CF_MAXVARSIZE,"%s/state/%s",CFWORKDIR,CF_AVDB_FILE);
-MapName(filename);
+ snprintf(filename,CF_MAXVARSIZE,"%s/state/%s",CFWORKDIR,CF_AVDB_FILE);
+ MapName(filename);
   
-if (!OpenDB(filename,&dbp))
-   {
-   CfOut(cf_verbose,"","Couldn't open average database %s\n",filename);
-   return;
-   }
+ if (!OpenDB(filename,&dbp))
+    {
+    CfOut(cf_verbose,"","Couldn't open average database %s\n",filename);
+    return;
+    }
 
-now = time(NULL);
-here_and_now = now - (time_t)(4 * CF_TICKS_PER_HOUR);
+ now = time(NULL);
+ here_and_now = now - (time_t)(4 * CF_TICKS_PER_HOUR);
 
-strcpy(timekey,GenTimeKey(here_and_now));
-slot = GetTimeSlot(here_and_now);
+ strcpy(timekey,GenTimeKey(here_and_now));
+ slot = GetTimeSlot(here_and_now);
 
 // if from > here_and_now just send the delta
 
-while (here_and_now < now)
-   {
-   nonzero = 0;   
-   memset(&entry,0,sizeof(entry));
-
-   if (from > here_and_now)
-      {
-      here_and_now += CF_MEASURE_INTERVAL;
-      strcpy(timekey,GenTimeKey(here_and_now));
-      slot++;
-      continue;
-      }
+ while (here_and_now < now)
+    {
+    nonzero = 0;   
+    memset(&entry,0,sizeof(entry));
    
-   if (ReadDB(dbp,timekey,&det,sizeof(struct Averages)))
-      {
-      for (i = 0; i < CF_OBSERVABLES; i++)
-         {
-         entry.Q[i].expect += det.Q[i].expect;
-         entry.Q[i].var += det.Q[i].var;
-         entry.Q[i].q += det.Q[i].q;
-         nonzero += entry.Q[i].expect;
-         nonzero += entry.Q[i].var;
-         nonzero += entry.Q[i].q;
-         }
-      }
+    if (from > here_and_now)
+       {
+       here_and_now += CF_MEASURE_INTERVAL;
+       strcpy(timekey,GenTimeKey(here_and_now));
+       slot++;
+       continue;
+       }
    
-   /* Promise: only print header if we intend to transmit some data */
-
-   if(nonzero != 0)
-     {
-       if (first)
-	 {
-	   first = false;
-	   AppendItem(reply,header,NULL);
-	 }
-
-       /* Promise: Keep a small time-key enabling further compression by delta elimination */
-
-       snprintf(buffer,sizeof(buffer),"T: %d\n",slot);
-       AppendItem(reply,buffer,NULL);
-   
+    if (ReadDB(dbp,timekey,&det,sizeof(struct Averages)))
+       {
        for (i = 0; i < CF_OBSERVABLES; i++)
-	 {
-	   if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
-	     {
-             /* Pending protocol / DB schema change */
-             Debug("Sending data: %s %.4lf %.4lf %.4lf\n", NovaGetSlotName(i),
-                   entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
+          {
+          entry.Q[i].expect += det.Q[i].expect;
+          entry.Q[i].var += det.Q[i].var;
+          entry.Q[i].q += det.Q[i].q;
+          nonzero += entry.Q[i].expect;
+          nonzero += entry.Q[i].var;
+          nonzero += entry.Q[i].q;
+          }
+       }
+   
+    if(nonzero != 0)
+       {
+       for (i = 0; i < CF_OBSERVABLES; i++)
+          {
+          if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
+             {
+             snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf", slot, entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
+             PrependItem(&data, buffer, NULL);
+             data->counter = i;  // OBS index - sorted on later
+             }
+          }
+       }
+   
+    here_and_now += CF_MEASURE_INTERVAL;
+    strcpy(timekey,GenTimeKey(here_and_now));
+    slot++;
+    }
 
-	       /* Promise: Keep the integer observable label so that we can eliminate zero entries */      
-             snprintf(buffer,sizeof(buffer),"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
-             AppendItem(reply,buffer,NULL);
-	     }
-	 }
-     }
+ CloseDB(dbp);
 
-   here_and_now += CF_MEASURE_INTERVAL;
-   strcpy(timekey,GenTimeKey(here_and_now));
-   slot++;
-   }
+ if(data)
+    {
+    AppendItem(reply,header,NULL);
+    Nova_FormatMonitoringReply(&data,reply,type);
+    DeleteItemList(data);
+    }
 
-CloseDB(dbp);
 }
 
 /*****************************************************************************/
 
 void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int its,i,j,count = 0,first = true,slot = 0;
-  double kept = 0, not_kept = 0, repaired = 0, nonzero;
-  struct Averages entry,det;
-  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_MAXTRANSSIZE];
-  time_t now;
-  CF_DB *dbp;
+{ int its,i,j,count = 0,slot = 0;
+ double kept = 0, not_kept = 0, repaired = 0, nonzero;
+ struct Averages entry,det;
+ char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_MAXTRANSSIZE];
+ struct Item *data = {0};
+ time_t now;
+ CF_DB *dbp;
 
-CfOut(cf_verbose,""," -> Monitor week data");
+ CfOut(cf_verbose,""," -> Packing monitor weekly data");
   
-snprintf(filename,CF_MAXVARSIZE,"%s/state/%s",CFWORKDIR,CF_AVDB_FILE);
-MapName(filename);
+ snprintf(filename,CF_MAXVARSIZE,"%s/state/%s",CFWORKDIR,CF_AVDB_FILE);
+ MapName(filename);
   
-if (!OpenDB(filename,&dbp))
-   {
-   CfOut(cf_verbose,"","Couldn't open average database %s\n",filename);
-   return;
-   }
+ if (!OpenDB(filename,&dbp))
+    {
+    CfOut(cf_verbose,"","Couldn't open average database %s\n",filename);
+    return;
+    }
 
-its = 12; // 1 hour coarse graining resolution
+ its = 12; // 1 hour coarse graining resolution
 
-now = CF_MONDAY_MORNING;
+ now = CF_MONDAY_MORNING;
 
-while (now < CF_MONDAY_MORNING + CF_WEEK)
-   {
-   memset(&entry,0,sizeof(entry));
+ while (now < CF_MONDAY_MORNING + CF_WEEK)
+    {
+    memset(&entry,0,sizeof(entry));
 
-   for (j = 0; j < its; j++)
-      {
-      strcpy(timekey,GenTimeKey(now));
+    for (j = 0; j < its; j++)
+       {
+       strcpy(timekey,GenTimeKey(now));
 
-      if (ReadDB(dbp,timekey,&det,sizeof(struct Averages)))
-         {
-         for (i = 0; i < CF_OBSERVABLES; i++)
-            {
-            entry.Q[i].expect += det.Q[i].expect/(double)its;
-            entry.Q[i].var += det.Q[i].var/(double)its;
-            entry.Q[i].q += det.Q[i].q/(double)its;
-            }
-         }
+       if (ReadDB(dbp,timekey,&det,sizeof(struct Averages)))
+          {
+          for (i = 0; i < CF_OBSERVABLES; i++)
+             {
+             entry.Q[i].expect += det.Q[i].expect/(double)its;
+             entry.Q[i].var += det.Q[i].var/(double)its;
+             entry.Q[i].q += det.Q[i].q/(double)its;
+             }
+          }
 
-      now += CF_MEASURE_INTERVAL;
-      slot++;
-      count++;
-      }
+       now += CF_MEASURE_INTERVAL;
+       slot++;
+       count++;
+       }
 
-   for (i = 0; i < CF_OBSERVABLES; i++)
-      {
-      nonzero = 0;
+    for (i = 0; i < CF_OBSERVABLES; i++)
+       {
+       nonzero = 0;
       
-      if (entry.Q[i].q > entry.Q[i].expect + 2.0*sqrt(entry.Q[i].var))
-         {
-         not_kept++;
-         nonzero++;
-         continue;
-         }
+       if (entry.Q[i].q > entry.Q[i].expect + 2.0*sqrt(entry.Q[i].var))
+          {
+          not_kept++;
+          nonzero++;
+          continue;
+          }
 
-      if (entry.Q[i].q > entry.Q[i].expect + sqrt(entry.Q[i].var))
-         {
-         repaired++;
-         nonzero++;
-         continue;
-         }
+       if (entry.Q[i].q > entry.Q[i].expect + sqrt(entry.Q[i].var))
+          {
+          repaired++;
+          nonzero++;
+          continue;
+          }
 
-      if (entry.Q[i].q < entry.Q[i].expect - 2.0*sqrt(entry.Q[i].var))
-         {
-         not_kept++;
-         nonzero++;
-         continue;
-         }
+       if (entry.Q[i].q < entry.Q[i].expect - 2.0*sqrt(entry.Q[i].var))
+          {
+          not_kept++;
+          nonzero++;
+          continue;
+          }
 
-      if (entry.Q[i].q < entry.Q[i].expect - sqrt(entry.Q[i].var))
-         {
-         repaired++;
-         nonzero++;
-         continue;
-         }
+       if (entry.Q[i].q < entry.Q[i].expect - sqrt(entry.Q[i].var))
+          {
+          repaired++;
+          nonzero++;
+          continue;
+          }
 
-      kept++;
-      }
+       kept++;
+       }
 
-   /* Promise: only print header if we intend to transmit some data */
-
-   if (first)
-     {
-       first = false;
-       AppendItem(reply,header,NULL);
-     }
-
-   /* Promise: Keep a small time-key enabling further compression by delta elimination */
-
-   snprintf(buffer,sizeof(buffer),"T: %s,%d\n",timekey,slot);
-   AppendItem(reply,buffer,NULL);
-   
-   for (i = 0; i < CF_OBSERVABLES; i++)
-     {
+    for (i = 0; i < CF_OBSERVABLES; i++)
+       {
        if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
-	 {
-         /* Pending protocol / DB schema change */
-         Debug("Sending data: %s %.4lf %.4lf %.4lf\n", NovaGetSlotName(i),
-               entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
-
-	   /* Promise: Keep the integer observable label so that we can eliminate zero entries */
-         
-         snprintf(buffer,sizeof(buffer),"%d %.4lf %.4lf %.4lf\n",i,entry.Q[i].q,entry.Q[i].expect,sqrt(entry.Q[i].var));
-         AppendItem(reply,buffer,NULL);
-	 }
-     }
+          {
+          snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf", slot, entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
+          PrependItem(&data, buffer, NULL);
+          data->counter = i;  // OBS index - sorted on later
+          }
+       }
      
-   }
+    }
+
+ CloseDB(dbp);
+
 
 // Promise: need to reproduce this for the monitoring, possibly on the far side
 
-METER_KEPT[meter_anomalies_day] = 100.0*kept/(kept+repaired+not_kept);
-METER_REPAIRED[meter_anomalies_day] = 100.0*repaired/(kept+repaired+not_kept);
+ METER_KEPT[meter_anomalies_day] = 100.0*kept/(kept+repaired+not_kept);
+ METER_REPAIRED[meter_anomalies_day] = 100.0*repaired/(kept+repaired+not_kept);
 
-CloseDB(dbp);
+
+ if(data)
+    {
+    AppendItem(reply,header,NULL);
+    Nova_FormatMonitoringReply(&data,reply,type);
+    DeleteItemList(data);
+    }
+
 }
 
 /*****************************************************************************/
@@ -736,9 +721,9 @@ int i,j,k;
 char filename[CF_BUFSIZE];
 CF_DB *dbp;
 time_t now = CFSTARTTIME;
-bool header_displayed = false;
 /* Start with 3*52 - 1 weeks ago, so the 3*52th week is the current one */
 time_t w = SubtractWeeks(WeekBegin(now), MONITORING_HISTORY_LENGTH_WEEKS-1);
+struct Item *data = {0};
 
 CfOut(cf_verbose,""," -> Packing and compressing monitor 3 year data");
 
@@ -779,14 +764,6 @@ for (i = 0; i < MONITORING_HISTORY_LENGTH_WEEKS; ++i)
       w = NextShift(w);
       }
 
-   /* Output it */
-
-   if (have_data && !header_displayed)
-      {
-      header_displayed = true;
-      AppendItem(reply, header, NULL);
-      }
-
    if (have_data)
       {
       char buffer[CF_MAXTRANSSIZE];
@@ -797,19 +774,67 @@ for (i = 0; i < MONITORING_HISTORY_LENGTH_WEEKS; ++i)
          {
          if (q[k] > 0 && var[k] > 0 && e[k] > 0)
             {
-            /* Pending protocol / DB schema change */
-            Debug("Sending data: %s %.2lf %.2lf %.2lf\n", NovaGetSlotName(k),
-                  q[k] / num[k], e[k] / num[k], sqrt(var[k] / num[k]));
-
-            snprintf(buffer, sizeof(buffer), "%d %.2lf %.2lf %.2lf\n", k,
-                     q[k] / num[k], e[k] / num[k], sqrt(var[k] / num[k]));
-            AppendItem(reply, buffer, NULL);
+            snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf", i, q[k]/num[k], e[k]/num[k], sqrt(var[k]/num[k]));
+            PrependItem(&data, buffer, NULL);
+            data->counter = k;  // OBS index - sorted on later
             }
          }
       }
    }
 
 CloseDB(dbp);
+
+ if(data)
+    {
+    AppendItem(reply,header,NULL);
+    Nova_FormatMonitoringReply(&data,reply,type);
+    DeleteItemList(data);
+    }
+}
+
+/*****************************************************************************/
+
+void Nova_FormatMonitoringReply(struct Item **datap, struct Item **reply, enum cfd_menu type)
+{
+ struct Item *ip;
+ int currId = -1;
+ char buffer[CF_MAXTRANSSIZE];
+ 
+ // sort by observable id
+ *datap = SortItemListCounters(*datap);
+ 
+ for(ip = *datap; ip != NULL; ip = ip->next)
+    {
+    if(currId != ip->counter)
+       {
+       if(type == cfd_menu_full)  // include more meta-data in full query
+          {
+          // FIXME: Get these from somewhere based on ip->counter (OBS index)
+            int monGlobal = 1;
+            int monExpMin = 0;
+            int monExpMax = 10000;
+            char *monUnits = "kb";  // WARNING: no commas in this one
+            char *monDesc = "Description 123";
+            
+            snprintf(buffer, sizeof(buffer), "M:%s,%d,%d,%d,%s,%s",
+                     NovaGetSlotName(ip->counter),
+                     monGlobal,
+                     monExpMin,
+                     monExpMax,
+                     monUnits,
+                     monDesc);
+            }
+         else
+            {
+            snprintf(buffer, sizeof(buffer), "M:%s", NovaGetSlotName(ip->counter));
+            }
+
+         AppendItem(reply, buffer, NULL);
+         currId = ip->counter;
+         }
+
+      AppendItem(reply, ip->name, NULL);
+      }
 }
 
 /*****************************************************************************/
@@ -2150,3 +2175,6 @@ if (strcmp(arch,"default") == 0)
 
 return arch;
 }
+
+/*****************************************************************************/
+
