@@ -10,7 +10,7 @@
     </div>
     <div class="reportpanelcontent">
         <div id="filterdialog" class="hidden"></div>
-        <div class="tables">
+        <div class="tables tablesfixed">
             <?php
             $result = json_decode($report_result, true);
             if (count($result['data']) > 0) {

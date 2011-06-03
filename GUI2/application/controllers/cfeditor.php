@@ -44,6 +44,7 @@
    $this->carabiner->css('jquery.jnotify.css');
     $this->carabiner->js('jqueryFileTree.js');
     $this->carabiner->js('jquery.jnotify.min.js');
+    $this->carabiner->js('widgets/notes.js');
     
    $this->load->view('cfeditor/Cfeditor',$data);
    }
@@ -143,83 +144,121 @@
    
    function commit()
    {
+     $data="";
+     $currentUser = $this->session->userdata('username');
      $working_dir=get_policiesdir().$this->session->userdata('username');
-     if(!$this->input->post('file'))
+     $this->load->library('cfsvn', array('workingdir' =>$working_dir));
+
+      try{
+     $current_repo=$this->cfsvn->get_current_repository();
+     $obj = $this->repository_model->get_specific_repository($currentUser, $current_repo);
+     if ($obj != NULL) {
+            $info = array('userId' => $obj->userId, 'password' => $obj->password);
+            $username = $obj->username;
+            $password = $this->repository_model->decrypt_password($info);
+            if(!$this->input->post('file'))
 		 {
                  $working_dir=$working_dir.'/'.$this->input->post('file');
 		 }
-     $password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
-     $params=array(
-	                'username' =>  $this->input->post('user'),
+             $params=array(
+	                'username' => $username,
 			'password' => $password,
-			'repository' => $this->input->post('repo'),
 			'workingdir' => $working_dir
-			);   
-     $this->load->library('cfsvn',$params);
-     $data="";
-     try{
+			);
+                $this->cfsvn->addcredentials($params);
                 $cdetails=$this->cfsvn->cfsvn_commit($this->input->post('comments'));
                 //on sucessfull commit of files make a record in data base svnlogs [revision,date,username] in cdetails
                  if(is_array($cdetails) && $cdetails[0] > 0 )
                  {
-                    $this->repository_model->insert_svn_log($this->session->userdata('username'),$this->input->post('repo'), $cdetails[0] ,'commit');
+                    $this->repository_model->insert_svn_log($this->session->userdata('username'),$current_repo, $cdetails[0] ,'commit');
                     $data=array('status'=>true,'rev'=>$cdetails[0]);
                  }
                 else
                 {
                    $data=array('status'=>false,'message'=>"Not Committed as no changes detected");
                 }
+          }
      }catch(Exception $e){
-         $data=array('status'=>false,'message'=>$e->getMessage());
-     }
+                 $data=array('status'=>false,'message'=>$e->getMessage());
+             }
+     //$password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
     // echo json_encode ($cdetails);
      echo json_encode ($data);
    }
    
    function update()
    {
-     $password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
-     $params=array(
-	                'username' =>  $this->input->post('user'),
-			'password' => $password,
-			'workingdir' => get_policiesdir().$this->session->userdata('username')
-			);
-     $this->load->library('cfsvn',$params);
      $data="";
+     $currentUser = $this->session->userdata('username');
+     $this->load->library('cfsvn', array('workingdir' => get_policiesdir().$this->session->userdata('username')));
      try{
-        //gets the revision number
-     $cdetails=$this->cfsvn->cfsvn_update();
      $current_repo=$this->cfsvn->get_current_repository();
-     $total_approvals=$this->repository_model->get_total_approval_count($current_repo);
-     //make a entry in svn log records in our db
-     if($cdetails)
-         {
-           $this->repository_model->insert_svn_log($this->session->userdata('username'),$current_repo, $cdetails ,'update');
-         }
-       $data=array('status'=>true,'rev'=>$cdetails,'total_approvals'=>$total_approvals);
-     }catch(Exception $e)
-     {
-       $data=array('status'=>false,'message'=>$e->getMessage());
-     }
+     $obj = $this->repository_model->get_specific_repository($currentUser, $current_repo);
+      if ($obj != NULL) {
+
+            $info = array('userId' => $obj->userId, 'password' => $obj->password);
+            $username = $obj->username;
+            $password = $this->repository_model->decrypt_password($info);
+             $params=array(
+	                'username' => $username,
+			'password' =>  $password,
+			);
+             $this->cfsvn->addcredentials($params);
+         
+                //gets the revision number
+             $cdetails=$this->cfsvn->cfsvn_update();
+             $current_repo=$this->cfsvn->get_current_repository();
+             $total_approvals=$this->repository_model->get_total_approval_count($current_repo);
+             //make a entry in svn log records in our db
+             if($cdetails)
+                 {
+                   $this->repository_model->insert_svn_log($this->session->userdata('username'),$current_repo, $cdetails ,'update');
+                 }
+               $data=array('status'=>true,'rev'=>$cdetails,'total_approvals'=>$total_approvals);
+             }
+        }
+        catch(Exception $e)
+             {
+               $data=array('status'=>false,'message'=>$e->getMessage());
+             }
      echo json_encode($data);
    }
    
    function svnlogs()
    {
    $no_of_records=50;
-   $password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
-   $params=array(
-	        'username' =>  $this->input->post('user'),
+   //$password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
+    $data="";
+    $currentUser = $this->session->userdata('username');
+    $this->load->library('cfsvn', array('workingdir' => get_policiesdir().$this->session->userdata('username')));
+
+    try{
+        $current_repo=$this->cfsvn->get_current_repository();
+        $obj = $this->repository_model->get_specific_repository($currentUser, $current_repo);
+        if ($obj != NULL) {
+            $info = array('userId' => $obj->userId, 'password' => $obj->password);
+            $username = $obj->username;
+            $password = $this->repository_model->decrypt_password($info);
+            $params=array(
+	                'username' => $username,
 			'password' => $password,
-			'repository' => $this->input->post('repo'),
-			);
-	$this->load->library('cfsvn',$params);
-	$data=array('logs'=>$this->cfsvn->cfsvn_log($no_of_records));
-	$logs=array(
+                        'repository'=> $current_repo
+			);    
+           $this->cfsvn->addcredentials($params);
+           $data=array('logs'=>$this->cfsvn->cfsvn_log($no_of_records));
+            $this->load->view('cfeditor/svnlogs',$data);
+      }
+    }catch(Exception $e)
+    {
+        echo $e->getMessage();
+    }
+     
+	
+	/*$logs=array(
 			'status'=>'success',
 			'table'=>$this->load->view('cfeditor/svnlogs',$data,true)
-			 );
-	echo json_encode ($logs);
+			 );*/
+	//echo json_encode ($logs);
    }
    
    function get_contents()

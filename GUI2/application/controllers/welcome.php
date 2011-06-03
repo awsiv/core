@@ -484,15 +484,19 @@ class Welcome extends Cf_Controller {
     }
 
     function license() {
+         $bc = array(
+            'title' => 'License',
+            'url' => 'welcome/license',
+            'isRoot' => false
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
-            'title_header' => "license usage status",
             'title' => "Cfengine Mission Portal - license usage status ",
-            'nav_text' => "License : status",
-            'planning' => "current",
             'ret2' => cfpr_getlicenses_promised(),
             'ret3' => cfpr_getlicenses_granted(),
             'expiry' => cfpr_getlicense_expiry(),
-            'txt' => cfpr_getlicense_summary()
+            'txt' => cfpr_getlicense_summary(),
+            'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'license', $data);
     }

@@ -1,3 +1,4 @@
+<div id="svnlogtable">
 <div class="tables">
    <table><thead><th>Revision</th><th>Author</th><th>Message</th><th>Date</th><th>File</th></thead><tbody>
 	<?php
@@ -39,3 +40,4 @@
    </tbody>
  </table>
 <div>
+  </div>

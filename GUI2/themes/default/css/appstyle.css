@@ -559,6 +559,7 @@ body {
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F7F7F0), to(#Cfcfc8));
     background: -moz-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 transparent;
     background: -o-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 transparent;
+    margin-bottom:10px
 
 }
 .innerdiv{
@@ -1334,9 +1335,12 @@ span.search input
 
 /**************/
 #footer p{
-    color:#08a3c1;
+    color:#A3C380;
 }
-
+.tablesfixed table
+{
+     table-layout: fixed;
+}
 .tables table{
     width:100%;
 }
@@ -1360,8 +1364,16 @@ span.search input
     padding-left:10px;
     color:#3d453a;
     vertical-align: middle;
-    overflow:hidden;
+    overflow:auto;
     max-width: 600px;
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+    white-space: pre;
+    white-space: -hp-pre-wrap; /* HP Printers */
+    white-space: pre-line;
 }
 
 .tables tr.odd td
@@ -1836,6 +1848,11 @@ span.search input
     color:#ffffff;
     text-transform: uppercase;
     cursor:pointer
+}
+
+#button.disabled
+{
+    background:#f0f0f0;
 }
 #cancel
 {

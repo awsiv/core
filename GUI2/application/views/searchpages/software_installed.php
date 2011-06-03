@@ -2,7 +2,6 @@
   <div class="panelhead"><?php echo $report_type?> query</div>
     <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
-          <p>On Host:<?php echo form_dropdown('host', $options,'All','id="host"');?></p>
           <p>Name: <input class="searchfield" type="text" name="name" id="packagename"></p>
           <p>Version:<input class="searchfield" type="text" name="version" size="80" id="version"></p>
           <p>Architecture:<input class="searchfield" type="text" name="arch" size="80" id="arc"></p>

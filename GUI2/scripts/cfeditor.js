@@ -548,38 +548,16 @@ var $tabs = $('#tabs').tabs({
 	 });
 
 	 $('#Checkout')
-	   .click(function() {
+	   .click(function(event) {
+                 event.preventDefault();
 			 if(code_editor_counter > 0)
 		        {
-				 alert("Please close all open tabs first.");	 
+				 alert("Please close all open tabs first.");
+                                 return;
 			 }
 			 else
 			 {
-			   $.ajax({
-	           type: "POST",
-	           async:false,
-	           url: "cfeditor/is_checked_out",
-	           success: function(data){
-				   if(data=='1')
-				     {
-	            	 $chkcnf.html('<span>Working directory is not empty. Do you want to replace its contents? </span>'); 
-	            	 $chkcnf.dialog('open');
-					 }
-					else
-					{
-					        $("#operation").val('checkout');
-							$("#commentlbl").hide();
-							$("#comments").hide();
-							$("#datatype").val('json');
-							$("#repo").show();
-							$("#repolbl").show();
-							$cfd.dialog('open');
-					}
-	             },
-              error:function(data){
-                          $.jnotify('An error occured','error');
-	             }
-	           });
+                          $(this).ajaxyDialog({title:'SVN Checkout'}).ajaxyDialog('open');
 			 }
          });
 
@@ -594,34 +572,39 @@ var $tabs = $('#tabs').tabs({
 		 $cfd.dialog('open');
           });
 
-          $('#update')
-	   .click(function() {
-           $("#operation").val('update');
-		   $("#commentlbl").hide();
-		   $("#comments").hide();
-		   $("#repo").hide();
-		   $("#repolbl").hide();
-		   $("#datatype").val('json');
+          $('#update').click(function() {
 		   if(code_editor_counter > 0)
 		     {
 				 alert("Please close all open tabs first.");
 			 }
 			 else
 			 {
-				 $cfd.dialog('open');
+				 $.ajax({
+						type: 'POST',
+						url: "cfeditor/update",
+                                                dataType:'json',
+						success: function(data) {
+                                                 if(data.status)
+                                                                  {
+                                                                     loadfiletree();
+                                                                     $('#userbox').html('revision :: <strong> '+data.rev+'</strong> & Approvals :: <strong>'+data.total_approvals+'</strong>');
+                                                                     $.jnotify("Sucessfully updated at revision "+ data.rev);
+                                                                  }
+                                                               else
+                                                                   {
+                                                                       $.jnotify("Update Failed : "+data.message,"error",5000);
+                                                                   }
+                                                },
+					      error:function(data){
+                                                 $.jnotify('Cannot Process the request '+data.status,'error');
+						}
+					});
+                              
 			 }
-           
          });
 
-$('#svnlogs').click(function() {
-           $("#operation").val('svnlogs');
-		   $("#commentlbl").hide();
-		   $("#comments").hide();
-		   $("#repo").show();
-		   $("#repolbl").show();
-		   $("#datatype").val('json');
-           $cfd.dialog('open');
-         });
+
+ $('#svnlogs').ajaxyDialog({title:'SVN Logs', height:500});
        
 	   $('#checksyntax')
 	   .click(function() {
@@ -660,21 +643,15 @@ $('#svnlogs').click(function() {
 		 closeText: 'hide',
 		 buttons: {
 		 'Ok': function() {
-                        var keys;
-			var passwd;
-			$.jCryption.getKeys("cfeditor/get_keys",function(receivedKeys) {
-				keys = receivedKeys;
-				$.jCryption.encrypt($("#password").val(),keys,function(encrypted) {
-					passwd=encrypted;
                         $.ajax({
 						type: 'POST',
 						url: "cfeditor/"+$("#operation").val(),
-						data: {'passwd':passwd, 'op':$("#operation").val(),'file':$('#cmtfile').val(),'comments':$("#comments").val(),'user':$("#username").val(),'repo':$("#repo").val()},
-                        dataType:$("#datatype").val(),
+						data: {'op':$("#operation").val(),'file':$('#cmtfile').val(),'comments':$("#comments").val()},
+                                                dataType:$("#datatype").val(),
 						success: function(data) {
 							if($("#operation").val()=='checkout')
 							  {
-								  if(data.status)
+								/*  if(data.status)
 								  {
                                                                    loadfiletree();
                                                                    $('#repoinfo').html("working on :: "+$("#repo").val());
@@ -684,31 +661,10 @@ $('#svnlogs').click(function() {
 								  else
 								  {
                                                                    $.jnotify("Checkout failed :: "+data.message,"error");
-								  }  
+								  } */
 							  }
-						  else if($("#operation").val()=='svnlogs')
-							  { 
-								$('#svnlogtable').html(data.table);
-								//$('#svnlogtable table').tableFilter();
-                                                                $('#svnlogtable table').tablesorter({widgets: ['zebra']});
-								$svnlogdlg.dialog('open');
-							  }
-						else if($("#operation").val()=='update')
-							{
-                                                              if(data.status)
-                                                                  {
-                                                                     loadfiletree();
-                                                                     $('#userbox').html('revision :: <strong> '+data.rev+'</strong> & Approvals :: <strong>'+data.total_approvals+'</strong>');
-                                                                     $.jnotify("Sucessfully updated at revision "+ data.rev);
-                                                                  }
-                                                               else
-                                                                   {
-                                                                       $.jnotify("Update Failed : "+data.message,"error",5000);
-                                                                   }
-                                                               
-							}
-						else if($("#operation").val()=='commit')
-							{
+						      else if($("#operation").val()=='commit')
+							  {
                                                             //  $confirmation.dialog({title: $("#operation").val(), width:default_dialog_width});
 								 if(data.status)
                                                                      {
@@ -726,8 +682,6 @@ $('#svnlogs').click(function() {
 						   $('#cmtfile').val('')
 						}
 					});
-				   });
-			});
 			$(this).dialog('close');
 	       },
 		'Cancel': function() {

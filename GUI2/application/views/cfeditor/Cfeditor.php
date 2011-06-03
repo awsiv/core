@@ -70,10 +70,10 @@ $this->carabiner->display(); ?>
                           <li> <a href="#"  id="new">New</a></li>
                           <li> <a href="#"  id="save">Save</a></li>
                           <li> <a href="#"  id="checksyntax">Check syntax</a></li>
-                          <li><a href="#"  id="Checkout">Checkout</a></li>
+                          <li><a href="<?php echo site_url('repository/checkout')?>"  id="Checkout">Checkout</a></li>
                           <li><a href="#"  id="update">Update</a></li>
                           <li> <a href="#" id="Commit">Commit</a></li>
-                          <li> <a href="#"  id="svnlogs">Log</a></li>
+                          <li> <a href="<?php echo site_url('cfeditor/svnlogs')?>"  id="svnlogs">Log</a></li>
                       </ul>
                   </div>
 
@@ -98,12 +98,12 @@ $this->carabiner->display(); ?>
 <div id="commitdlg" style="display:none;" title="Commit file" class="dialog">
             <form>
                 <fieldset class="ui-helper-reset">
-                    <label for="tab_title">User name:</label>
+                   <!-- <label for="tab_title">User name:</label>
                     <input type="text" class="ui-widget-content ui-corner-all" value="" id="username" />
                     <label for="tab_title">Password:</label>
                     <input type="password" class="ui-widget-content ui-corner-all" value="" id="password" />
                     <label for="tab_title" id="repolbl">Repository</label>
-                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="repo" />
+                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="repo" />-->
                     <label for="tab_title" id="commentlbl">Comment</label>
                     <textarea class="ui-widget-content ui-corner-all" id="comments" name="comments"></textarea>
                     <input type="hidden" id="event"></input>

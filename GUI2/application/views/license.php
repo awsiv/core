@@ -5,7 +5,7 @@
 
 ?>
         
-        <div class="outerdiv">
+        <div class="outerdiv grid_12">
         <div class="innerdiv">
          <p class="title">License summary</p>
 		  <ul>

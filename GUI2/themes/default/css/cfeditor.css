@@ -500,3 +500,158 @@ font-weight:bold;
     border:solid 1px #AAAAAA
 }
 
+/* generic forms */
+.stylized form {  /* set width in form, not fieldset (still takes up more room w/ fieldset width */
+    font:100% verdana,arial,sans-serif;
+    margin: 0;
+    padding: 0;
+    min-width: 500px;
+    max-width: 600px;
+    width: 560px;
+}
+
+.stylized form fieldset {
+    /* clear: both; note that this clear causes inputs to break to left in ie5.x mac, commented out */
+
+    border-width: 1px;
+    border-style: solid;
+    padding: 10px;        /* padding in fieldset support spotty in IE */
+    margin: 0;
+    border-color: #D4D5D0;
+    border-radius: 5px 5px 5px 5px;
+}
+
+.stylized form fieldset legend {
+    font-size:1.1em; /* bump up legend font size, not too large or it'll overwrite border on left */
+    /* be careful with padding, it'll shift the nice offset on top of border  */
+}
+
+.stylized form label {
+    display: block;  /* block float the labels to left column, set a width */
+    float: left;
+    width: 120px;
+    padding: 0;
+    margin: 3px 0 0; /* set top margin same as form input - textarea etc. elements */
+    text-align: right;
+}
+
+.stylized form fieldset label:first-letter { /* use first-letter pseudo-class to underline accesskey, note that */
+    text-decoration:underline;    /* Firefox 1.07 WIN and Explorer 5.2 Mac don't support first-letter */
+    /* pseudo-class on legend elements, but do support it on label elements */
+    /* we instead underline first letter on each label element and accesskey */
+    /* each input. doing only legends would  lessens cognitive load */
+    /* opera breaks after first letter underlined legends but not labels */
+}
+
+.stylized form input, form textarea, form select {
+    /* display: inline; inline display must not be set or will hide submit buttons in IE 5x mac */
+    width:auto;      /* set width of form elements to auto-size, otherwise watch for wrap on resize */
+    margin:5px 0 0 10px; /* set margin on left of form elements rather than right of
+                          label aligns textarea better in IE */
+        border: 1px solid #D4D5D0;
+       font-size: 14px;
+       padding:2px;
+
+}
+
+.stylized form input#reset {
+    margin-left:0px; /* set margin-left back to zero on reset button (set above) */
+}
+
+.stylized textarea {
+   /* overflow: auto;
+    height: 50px;
+    width:50%;*/
+}
+
+.stylized form small {
+    display: block;
+    margin: 0 0 5px 160px; /* instructions/comments left margin set to align w/ right column inputs */
+    padding: 1px 3px;
+    font-size: 88%;
+}
+
+.stylized form .required{font-weight:bold;} /* uses class instead of div, more efficient */
+
+.stylized form br {
+    clear:left; /* setting clear on inputs didn't work consistently, so brs added for degrade */
+}
+
+.tables table{
+    width:100%;
+    margin-bottom: 0px;
+    font-size: 11px;
+}
+.tables th
+{
+    text-align:left;
+    padding:11px 0px 16px 10px;
+    background-color:#3d4439;
+    color:#ffffff;
+    cursor:pointer;
+    text-transform: uppercase;
+    border:solid 1px #3d4439;
+}
+
+.tables tr td
+{
+    border-left: 1px solid #757575;
+    border-right: 1px solid #757575;
+    border-top: 1px solid #cbcdca;
+    border-bottom: 1px solid #cbcdca;
+    padding-left:10px;
+    color:#3d453a;
+    vertical-align: middle;
+    overflow:auto;
+    max-width: 600px;
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+    white-space: pre;
+    white-space: -hp-pre-wrap; /* HP Printers */
+    white-space: pre-line;
+}
+
+.tables tr.odd td
+{
+    background:#e6eee3;
+}
+
+
+.tables td a
+{
+    word-wrap:break-word;
+}
+
+
+.tables tr:last-child td
+{
+    border-bottom:1px solid #757575;
+}
+
+.tables tr:first-child td
+{
+    border-top:1px solid #757575;
+}
+
+.tables tr.filters td
+{
+    padding:5px;
+    background-color:#3d4439;
+    border:solid 1px #3d4439;
+}
+
+.tables tr.filters  input[type='text']
+{
+    background-color:#fff;
+    border:none;
+    -moz-border-radius: 3px;
+    -opera-border-radius:3px;
+    -khtml-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:5px;
+}
+
+

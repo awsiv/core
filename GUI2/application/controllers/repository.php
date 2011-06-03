@@ -87,10 +87,7 @@ class Repository extends Cf_Controller {
 
             $info = array('userId' => $obj->userId, 'password' => $obj->password);
             $username = $obj->username;
-
             $password = $this->repository_model->decrypt_password($info);
-
-
             $params = array(
                 'username' => $username,
                 'password' => $password,

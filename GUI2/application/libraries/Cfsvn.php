@@ -20,7 +20,7 @@ class Cfsvn {
     private $username;
     private $password;
 
-    function Cfsvn($params) {
+   function Cfsvn($params) {
           set_error_handler("handleError");
         $this->username = isset($params['username']) ? $params['username'] : NULL;
         $this->password = isset($params['password']) ? $params['password'] : NULL;
@@ -39,6 +39,16 @@ class Cfsvn {
         $this->repository = isset($params['repository']) ? $params['repository'] : NULL;
     }
 
+    public function addcredentials($params){
+        $this->username = isset($params['username']) ? $params['username'] :  $this->username;
+        $this->password = isset($params['password']) ? $params['password'] :  $this->password;
+        $this->working_dir = isset($params['workingdir']) ? $params['workingdir'] : $this->working_dir;
+        $this->repository = isset($params['repository']) ? $params['repository'] : $this->repository;
+        svn_auth_set_parameter(SVN_AUTH_PARAM_DEFAULT_USERNAME, $this->username);
+        svn_auth_set_parameter(SVN_AUTH_PARAM_DEFAULT_PASSWORD, $this->password);;
+    }
+
+    
     function cfsvn_checkout() {
         try {
         $status = svn_checkout($this->repository, $this->working_dir);
@@ -108,6 +118,7 @@ class Cfsvn {
         for ($i = 0; $i < 1; $i++) {
             $repo = $status[$i]['repos'];
         }
+        //$this->repository=$repo;
         return $repo;
     }
 
