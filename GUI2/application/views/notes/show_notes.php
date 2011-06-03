@@ -1,9 +1,39 @@
 <div id="body">
     <div class="outerdiv">
-        <div class="innerdiv">
-            <div id="notes-filter">
+        <div class="innerdiv">              
+            <div style="max-height: 400px;overflow: auto;">
+                <table id="notes-table" class="bundlelist-table">                   
+                        <tr>
+                            <th scope="col">User</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Message</th>
+                            <th scope="col">Report Type</th>
+                        </tr>
+                    
+                    <tbody>
+                        <?php if (!empty($data)) {
+                            ?>
+                            <?php foreach ($data as $notes) {
+                                ?>
+                                <tr>
+                                    <td><?php echo $notes->getuserId(); ?></td>
+                                    <td><?php echo $notes->getDate(); ?></td>
+                                    <td><?php echo $notes->getMessage(); ?></td>
+                                    <td><?php echo $notes->getReportType(); ?></td>
+                                </tr>
+                            <?php } ?>
+                        <?php } else {
+                            ?>
+                            <tr id="no-data-row">
+                                <td colspan="4">No notes available</td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="notes-filter" style="padding:5px;">
                 <div class="stylized">
-
                     <form action="/notes/shownotes" method="POST">
                         <fieldset>
 
@@ -24,37 +54,7 @@
                     </form>
                 </div>
             </div>
-            <div class="tables" style="overflow:auto; height: 350px;">
-                <table id="notes-table">
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Date</th>
-                            <th>Message</th>
-                            <th>Report Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($data)) {
-                            ?>
-                            <?php foreach ($data as $notes) {
-                                ?>
-                                <tr>
-                                    <td><?php echo $notes->getuserId(); ?></td>
-                                    <td><?php echo $notes->getDate(); ?></td>
-                                    <td><?php echo $notes->getMessage(); ?></td>
-                                    <td><?php echo $notes->getReportType(); ?></td>
-                                </tr>
-                            <?php } ?>
-                        <?php } else {
-                            ?>
-                            <tr id="no-data-row">
-                                <td colspan="3">No new notes</td>
-                            </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
-            </div>
+            
         </div>
     </div>
 </div>

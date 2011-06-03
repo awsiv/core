@@ -106,6 +106,7 @@
         $('#aprvpolicy').ajaxyDialog({title:'Approve Policices'});
         $('#trackrecord').ajaxyDialog({
             title:'Track Record'
+           
         });
           
     });

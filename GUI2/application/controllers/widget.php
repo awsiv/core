@@ -226,14 +226,7 @@ class Widget extends CI_Controller {
         // compliance summary meter
         $envList = cfpr_environments_list();
         //$envListArray = json_decode($envList);
-        $data['envList'] = $envList;
-        
-        foreach($envList as $environment) {
-        $e = 'environment_'.$environment;
-        $data['notkept'][$environment] = json_decode(cfpr_summarize_notkept(NULL, NULL, -1, time(), $e), true);
-        $data['repaired'][$environment] = json_decode(cfpr_summarize_repaired(NULL, NULL, -1, time(), $e), true);
-        }
-        
+        $data['envList'] = $envList;       
         $this->load->view('widgets/tracker',$data);
     }
 
