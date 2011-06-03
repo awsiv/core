@@ -108,7 +108,7 @@ class Cfsvn {
                 array_push($modified_files, $file['name']);
             }
         }
-        return $modifiled_files;
+        return $modified_files;
     }
 
     function get_current_repository() {

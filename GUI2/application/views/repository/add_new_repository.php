@@ -3,22 +3,25 @@
     <form action="<?php echo isset($addFormPath) ? $addFormPath : '' ?>" method="POST" id="repo-add-form">
 
 
-        <?php if (isset($errors) && is_array($errors) && !empty($errors)) { ?>
-            <fieldset>
-                <legend>Error</legend>
-                <ul>
-                    <?php foreach ($errors as $error) { ?>
-                        <li> <?php echo $error ?> </li>
-                    <?php } ?>
-                </ul>
-            </fieldset>
+       
+        <fieldset>
+             <?php if (isset($errors) && is_array($errors) && !empty($errors)) { ?>
+           
+                <div class="error">
+                    <ul>
+                        <?php foreach ($errors as $error) { ?>
+                            <li> <?php echo $error ?> </li>
+                        <?php } ?>
+                    </ul>
+                </div>
+           
         <?php } ?>
         <?php if ($this->session->flashdata('success')) { ?>
-            <fieldset>
+          
                 <div class="success"><?php echo $this->session->flashdata('success'); ?></div> 
-            </fieldset>
+           
         <?php } ?>
-        <fieldset>
+            
             <legend>Add new repository information</legend>
             <label id="repoPath" for="repoPath">Path :: </label>
             <input type="text" name="repoPath" value="<?php echo set_value('repoPath'); ?>" size="50" />
@@ -34,7 +37,6 @@
             <label for="submit"></label>
             <input type="button" value="Add" name="test" id="submit-form" />
             <div id="ajax-loader" style="display: none;"><img src="<?php echo get_imagedir(); ?>ajax-loader.gif" /></div>
-            <input type="submit" value='' name="" id="" style="display: none;" />
         </fieldset>
         <br />
     </form>

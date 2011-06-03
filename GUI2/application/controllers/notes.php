@@ -1,7 +1,6 @@
 <?php
 
 class Notes extends Cf_Controller {
-    
 
     function __construct() {
         parent::__construct();
@@ -95,7 +94,7 @@ class Notes extends Cf_Controller {
         if (trim($message) != null) {
             $ret = $this->note_model->addNewNote($keyhash, $rid, $report_type, $username, $date, $message);
             if (!$ret) {
-// SOMETHING WENT WRONG WHILE ADDITION
+                // SOMETHING WENT WRONG WHILE ADDITION
                 $this->output->set_status_header('400', 'Cannot insert the note.');
                 echo $ret;
                 exit;
@@ -107,20 +106,26 @@ class Notes extends Cf_Controller {
         $this->data['nid'] = $ret;
         $this->data['rid'] = $rid;
         $this->data['hostkey'] = $keyhash;
-        $this->data['reporttype'] = $rid;
+        $this->data['reporttype'] = $report_type;
 
-        $this->data['form_url'] = '/notes/addnote';
+        $this->data['form_url'] = '/notes/addnewnote';
 
-         $filter = array('hostname' => NULL,
-             'noteId'=>$ret,
+
+        $filter = array('hostname' => NULL,
+            'noteId' => $ret,
             'userId' => NULL,
             'dateFrom' => -1,
             'dateTo' => -1
         );
 
-        $this->data['data'] = $this->note_model->getAllNotes($filter);
+        // if we have valid insert get that notes else leave it blank 
+        if ($ret) {
+            $this->data['form_url'] = '/notes/addnote';
+            $this->data['data'] = $this->note_model->getAllNotes($filter);
+        } else {
+            $this->data['data'] = array();
+        }
 
-        
         $this->load->view('/notes/view_notes', $this->data);
     }
 

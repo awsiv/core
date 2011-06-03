@@ -30,9 +30,12 @@
 <br />
 <br />
 <div   class="stylized" style="margin-left: 15px; margin-top: 5px;">
-    <div id="message-update"> <?php echo isset($updateMessage) ? $updateMessage : '' ?>  </div>
     <form id="notes-form" action="<?php echo $form_url; ?>" method="post">
         <fieldset>
+            <?php if ( isset($updateMessage)) { ?>
+           <div id="message-update" class="error"> <?php echo  $updateMessage; ?>  </div>
+           <?php } ?>
+  
             <legend> Add a note </legend>
             <textarea cols="70" rows="6" name="Message"></textarea>
             <input type="hidden" name="rid" value="<?php echo $rid; ?>"/>

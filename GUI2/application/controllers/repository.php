@@ -138,6 +138,19 @@ class Repository extends Cf_Controller {
 
         // check if it is already checked out  checked out 
         if ($alreadyCheckedOut && !$force) {
+            
+            $params = array(                
+                'workingdir' => get_policiesdir() . $this->session->userdata('username')
+            );
+
+            $this->load->library('cfsvn', $params);
+            $hasChanges = array();
+            try {
+            $hasChanges = $this->cfsvn->cfsvn_working_copy_status();
+            } catch (Exception $e) {
+                 $this->log($e->__toString());                
+            }
+            $data['hasChanges'] = $hasChanges;            
             $this->load->view('/repository/already_checked_out', $data);
             return;
         }
