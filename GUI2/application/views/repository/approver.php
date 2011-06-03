@@ -19,7 +19,7 @@
       echo form_dropdown('revision', array_combine( $revs,$revs), $revs[0]);
      }
      else{
-         echo "No revisions recorded yet for selected repository";
+         echo "";
      }
       ?>
     </span>
@@ -32,7 +32,7 @@
      <br />
      </p>
         <label for="submit"></label>
-        <input type="submit" id="button" value=" Approve " <?php if(!count($revs)>0) { echo "disabled class=\"disabled\" ";}?>/>
+        <input type="submit" id="button" value=" Approve "/>
      </fieldset>
      <br />
  </form>

@@ -552,7 +552,7 @@ var $tabs = $('#tabs').tabs({
                  event.preventDefault();
 			 if(code_editor_counter > 0)
 		        {
-				 alert("Please close all open tabs first.");
+                                 $.jnotify("Please close all open tabs first","error",5000);
                                  return;
 			 }
 			 else
@@ -575,7 +575,8 @@ var $tabs = $('#tabs').tabs({
           $('#update').click(function() {
 		   if(code_editor_counter > 0)
 		     {
-				 alert("Please close all open tabs first.");
+				 $.jnotify("Please close all open tabs first","error",5000);
+                                 return;
 			 }
 			 else
 			 {

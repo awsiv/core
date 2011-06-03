@@ -211,7 +211,7 @@ class Repository_model extends CI_Model {
         }
         elseif($repo=='')
         {
-            return $this->mongo_db->get($this->approved_policies_collection);
+            return $this->mongo_db->order_by(array('date'=>'desc'))->get($this->approved_policies_collection);
         }
     }
 

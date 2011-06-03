@@ -289,6 +289,12 @@ class Repository extends Cf_Controller {
         $repo=$this->input->post('repository');
         $rev=$this->input->post('revision');
         $comments=$this->input->post('comments');
+        if(!$rev)
+        {
+            echo "<span class=\"info maxwidth400\">No revisions exist for the selected repository ,operation was halted,
+                    Please checkout/update or commit using the system for selected repository</span>";
+            return;
+        }
         try{
             $id=$this->repository_model->approve_policies($username,$repo,$rev,$comments);
             $rev_table=$this->repository_model->get_all_approved_policies($repo,10);
