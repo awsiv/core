@@ -288,15 +288,15 @@ class Auth extends Controller {
 	//deactivate the user
 	function deactivate($id = NULL)
 	{
-		// no funny business, force to integer
-		$id = (int) $id;
+		
 
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('confirm', 'confirmation', 'required');
-		$this->form_validation->set_rules('id', 'user ID', 'required|is_natural');
+		$this->form_validation->set_rules('id', 'user ID', 'required');
 
 		if ($this->form_validation->run() == FALSE)
 		{
+                      
 			// insert csrf check
 			$this->data['csrf'] = $this->_get_csrf_nonce();
 			$this->data['user'] = $this->ion_auth->get_user($id);
