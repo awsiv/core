@@ -298,6 +298,7 @@ class Welcome extends Cf_Controller {
             array('jquery.autogrowtextarea.js')
         );
         $this->carabiner->js($requiredjs);
+        $this->carabiner->css('tabs-custom.css');
         $data = array(
             'title' => "Cfengine Mission Portal - planning",
             'breadcrumbs' => $this->breadcrumblist->display(),

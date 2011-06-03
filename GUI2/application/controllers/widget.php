@@ -30,7 +30,6 @@ class Widget extends CI_Controller {
         
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
         $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);
-
         $this->load->view('widgets/summaryCompliance', $this->data);
     }
 
@@ -228,6 +227,13 @@ class Widget extends CI_Controller {
         $envList = cfpr_environments_list();
         //$envListArray = json_decode($envList);
         $data['envList'] = $envList;
+        
+        foreach($envList as $environment) {
+        $e = 'environment_'.$environment;
+        $data['notkept'][$environment] = json_decode(cfpr_summarize_notkept(NULL, NULL, -1, time(), $e), true);
+        $data['repaired'][$environment] = json_decode(cfpr_summarize_repaired(NULL, NULL, -1, time(), $e), true);
+        }
+        
         $this->load->view('widgets/tracker',$data);
     }
 
