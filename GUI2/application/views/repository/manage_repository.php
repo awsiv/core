@@ -1,5 +1,5 @@
 <div id="body">
-    <div class="outerdiv">
+    <div class="outerdiv grid_12">
         <div class="innerdiv">
             <div class="tables" style="overflow:auto; height: 350px;">
                 <table id="repository-table">

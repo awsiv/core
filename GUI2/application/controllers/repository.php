@@ -278,7 +278,8 @@ class Repository extends Cf_Controller {
          }
        else
        {
-           echo "Cannot find information about any repositories for you <br/> Use <strong class=\"underline\">".  anchor('repository/manageRepository/','Manage Repository','target=_self') .'</strong> to add a repository ';
+           echo "<span class=\"info maxwidth400\">".$this->lang->line('no_repos') ." Use <strong class=\"underline\">".
+           anchor('repository/manageRepository/','Manage Repository','target=_self') .'</strong> to add a repository</span> ';
        }
     }
 
@@ -304,8 +305,7 @@ class Repository extends Cf_Controller {
         $comments=$this->input->post('comments');
         if(!$rev)
         {
-            echo "<span class=\"info maxwidth400\">No revisions exist for the selected repository ,operation was halted,
-                    Please checkout/update or commit using the system for selected repository</span>";
+            echo "<span class=\"info maxwidth400\">".$this->lang->line('no_revisions')."</span>";
             return;
         }
         try{

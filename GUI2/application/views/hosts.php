@@ -6,13 +6,16 @@
          
      <div id="body" class="outerdiv grid_12">
                 <div id="colorhostlist"class="innerdiv tables">
-                    <p class="hostlisttitle">
-                    <span class="<?php echo $type.'host'?> coloriconinline"></span><span class="title"><?php echo $type?> hosts</span>
-                    </p>
+                   
 
       <?php
       if($count>0)
       {
+          ?>
+                     <p class="hostlisttitle">
+                    <span class="<?php echo $type.'host'?> coloriconinline"></span><span class="title"><?php echo $type?> hosts</span>
+                    </p>
+       <?php
       echo $tabledata;
                 $pg = paging($current, $number_of_rows, $count, 10);?>
                 <div class="Paging">
@@ -49,8 +52,47 @@
 
        else
        {
-         echo "No data Found";
+         echo "<span class=\"nodata\">".$this->lang->line('no_data')."</span>";
        }
        ?>
 </div>
 </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+       $('td.actioncol').find('a').qtip({
+            style: {
+                background:'#454545',
+                opacity:0.9,
+                name: 'dark',
+                width:{
+                    min:0,
+                    max:150
+                },
+                border: {
+                    width: 1,
+                    radius: 1
+                },
+                tip:{
+                    corner:'topMiddle',
+                    size:{
+                        x:10,
+                        y:10
+                    }
+                }
+            },
+            show:{
+                effect:{
+                    type:'fade',
+                    lenght:200
+                }
+            },
+
+            position: {
+                corner: {
+                    target: 'bottomMiddle',
+                    tooltip: 'topMiddle'
+                }
+            }
+        });
+    }); 
+</script>

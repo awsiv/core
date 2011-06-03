@@ -1642,6 +1642,7 @@ span.search input
 /*For coloured hoslist page */
 .hostlisttitle{
     margin-bottom: 15px;
+    margin-top: 10px;
 }
 
 .promisesnotkeptbtn
@@ -1676,6 +1677,21 @@ span.search input
 {
     border-left: none;
     border-right:none;
+}
+
+#admin_content th,td
+{
+    border:none;
+}
+#admin_content.tables tr td
+{
+    border-left: none;
+    border-right:none;
+}
+
+#admin_content .actioncol{
+    width:100px;
+    padding-bottom: 2px;
 }
 
 .ui-widget-content a.help
@@ -2063,3 +2079,114 @@ color: #D8000C;
 background-color: #FFBABA;
 background-image: url(../images/error.png);
 }
+
+.errorlist
+{
+    width:100%;
+    display:block;
+}
+
+/*for usermanagement*/
+.changepassword
+{
+    background: url("../images/button_change_password.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+    padding: 12px 14px;
+}
+
+.edituser
+{
+     background: url("../images/button_edit.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+   padding: 12px 14px;
+}
+
+.deleteuser
+{
+    background: url("../images/button_delete.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+   padding: 12px 14px;
+}
+
+.form
+{
+    padding:5px;
+}
+.form input[type='text'],.form input[type='password']
+{
+    border:solid 1px #CECECE;
+    padding:3px;
+    width:20%;
+}
+
+.form input[type="checkbox"]
+{
+  padding:2px;
+}
+.form p label
+{
+    padding:5px 4px 0;
+    width:15%;
+    display:inline-block;
+}
+
+.aligntop
+{
+    vertical-align: top;
+}
+
+.form p label.group
+{
+    width:10%;
+}
+.form p
+{
+    margin:4px 0;
+}
+.form select
+{
+    border:solid 1px #CECECE;
+    padding:3px;
+}
+
+.form textarea
+{
+   border:solid 1px #CECECE;
+    padding:3px;
+    width:20%;
+}
+
+.btn a, .btn
+{
+    background: #3D4439;
+    color:#fff;
+    font-size: 13px;
+    padding:3px
+}
+.btn a:hover{
+    color:#08A3C1
+}
+
+ul.admin_menu{
+margin:10px 10px 15px 10px;
+border-bottom: solid 1px #3D4439;
+}
+ul.admin_menu li{
+    display:inline-block;
+    padding:4px;
+    font-size: 14px;
+    background: #e6eee3;
+}
+ul.admin_menu li:first-child{
+    margin-left:10px;
+}
+ul.admin_menu li a{
+    color:#3D4439;
+}
+ul.admin_menu li.current{
+    background:#3D4439;
+}
+ul.admin_menu li.current a{
+   color:#fff;
+}
+
