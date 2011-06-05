@@ -3002,11 +3002,21 @@ void Nova2PHP_select_hosts(char *match,char *selected,int n,char *buffer,int buf
 
 long Nova2PHP_count_hosts()
 
-{ struct Item *all = Nova_ClassifyHostState(NULL,false,-1,0);
- int len = ListLen(all);
+{
+ mongo_connection dbconn;
+ int count;
 
- DeleteItemList(all);
- return (long)len;
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return 0;
+    }
+
+ count = CFDB_QueryHostCount(&dbconn);
+
+ CFDB_Close(&dbconn);
+ 
+ return count;
 }
 
 /*****************************************************************************/
