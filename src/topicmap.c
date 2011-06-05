@@ -388,7 +388,7 @@ snprintf(buffer,CF_BUFSIZE,
          "{ \"topic\" : { \"context\" : \"%s\", \"name\" : \"%s\", \"id\" : %d, \"sub_topics\" : [",
          this_context,this_name,id);
 
-for(ip=worklist;ip!=NULL;ip=ip->next)
+for (ip=worklist; ip != NULL; ip=ip->next)
   {
   EscapeJson(ip->name,name,CF_BUFSIZE);
 

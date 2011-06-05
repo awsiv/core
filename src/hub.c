@@ -259,7 +259,7 @@ if (conn == NULL)
    {
    CfOut(cf_verbose,""," !! Peer \"%s\" did not respond to hail\n",peer);
 
-   if(thislock.lock != NULL)
+   if (thislock.lock != NULL)
       {
       YieldCurrentLock(thislock);
       }
@@ -295,6 +295,8 @@ else
       snprintf(msg,CF_MAXVARSIZE,"HUB delta sensor sweep of peer %s",peer);
       Nova_HubLog(msg);
       }
+
+   YieldCurrentLock(thislock);
    }
 
 ServerDisconnection(conn);
