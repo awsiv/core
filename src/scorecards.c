@@ -590,7 +590,7 @@ struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_m
   bson qe,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
-  double akept[meter_endmark],arepaired[meter_endmark];
+  double akept[meter_endmark] = {0},arepaired[meter_endmark] = {0};
   double rkept,rrepaired;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
   int num = 0,found = false,awol;
