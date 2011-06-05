@@ -2336,6 +2336,7 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
  struct Item *ip,*list = NULL;
  char work[CF_MAXVARSIZE],context[CF_MAXVARSIZE];
  int pid;
+ char jsonEscapedStr[CF_MAXVARSIZE] = {0};
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -2359,22 +2360,25 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
     {
     list = SortItemListNames(list);
    
-    snprintf(buffer,bufsize,"<ul>\n");
+    snprintf(buffer,bufsize,"[");
    
     for (ip = list; ip != NULL; ip=ip->next)
        {
        snprintf(context,CF_MAXVARSIZE,"class_contexts::%s",ip->name);
        pid = Nova_GetTopicIdForTopic(context);
 
-       snprintf(work,CF_MAXVARSIZE,"<li><a href=\"/knowledge/knowledgemap/pid/%d\"><span class=\"classcontext\">%s</span></a></li>",pid,ip->name);
+       EscapeJson(ip->name,jsonEscapedStr,sizeof(jsonEscapedStr));
+       snprintf(work,CF_MAXVARSIZE,"[%d,\"%s\"],",pid,jsonEscapedStr);
 
        if(!Join(buffer,work,bufsize))
           {
           break;
           }
        }
+    
+    ReplaceTrailingChar(buffer, ',', '\0');
+    strcat(buffer,"]");
 
-    strcat(buffer,"</ul>");
     DeleteItemList(list);
     }
 
@@ -2535,30 +2539,14 @@ int Nova2PHP_list_all_goals(char *buffer,int bufsize)
 { char work[CF_BUFSIZE];
  struct Item *ip2,*glist;
 
-glist = Nova_GetUniqueBusinessGoals();
- 
-snprintf(buffer,sizeof(buffer),"[");
-
-if (glist)
-   {
-   for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
-      {
-      snprintf(work,sizeof(work),"{\"pid\": %d,\"name\":\"%s\",\"desc\":\"%s\"},",ip2->counter,ip2->name,ip2->classes);
-      if (!Join(buffer,work,bufsize))
-         {
-         break;
-         }
-      }
-   
-   if(buffer[strlen(buffer)-1]==',')
-      {
-      buffer[strlen(buffer)-1]='\0';
-      }
-   }
-
-EndJoin(buffer,"]",bufsize);
-
-return true;
+ if (Nova_GetUniqueBusinessGoals(buffer,bufsize))
+    {
+    return true;
+    }
+ else
+    {
+    return false;
+    }
 }
 
 /*****************************************************************************/
@@ -3906,7 +3894,7 @@ int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *classr
 
     strncpy(date,cf_ctime(&(hb->t)),CF_MAXVARSIZE - 1);
     StripTrailingNewline(date);
-    
+
     snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%.2lf<nc>%.2lf<nc>%.2lf<nova_nl>",
              hb->hh->hostname,hb->bundle,date,
              hb->hrsago,hb->hrsavg,hb->hrsdev);

@@ -691,25 +691,20 @@ return worklist;
 }
     
 /*************************************************************************/
-
-struct Item *Nova_GetUniqueBusinessGoals()
+int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
 {
 #ifdef HAVE_LIBMONGOC
-  struct Item *worklist = NULL, *ip;
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   mongo_connection conn;
-  struct Item *list = NULL;
+
   char topic_name[CF_BUFSIZE];
-  char topic_context[CF_BUFSIZE];
   int topic_id;
-  char assoc_name[CF_BUFSIZE];
-  char afwd[CF_BUFSIZE],abwd[CF_BUFSIZE];
-  char assoc_context[CF_BUFSIZE];
-  int assoc_id;
+  char work[CF_BUFSIZE];
+  char goals[CF_BUFSIZE];
 
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
@@ -720,82 +715,53 @@ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
 /* BEGIN query document */
 
 bson_buffer_init(&bb);
-bson_append_string(&bb,cfk_fwdsearch,NOVA_GOAL);
+bson_append_regex(&bb,cfk_occurcontext,"goals\.goal_.*","");
 bson_from_buffer(&query,&bb);
 
 /* BEGIN RESULT DOCUMENT */
-
 bson_buffer_init(&bb);
-bson_append_int(&bb,cfk_associations,1);
-bson_append_int(&bb,cfk_associd,1);
-bson_append_int(&bb,cfk_assoccontext,1);
-bson_append_int(&bb,cfk_assocname,1);
+bson_append_int(&bb,cfk_occurcontext,1);
+bson_append_int(&bb,cfk_occurlocator,1);
+bson_append_int(&bb,cfk_occurtype,1);
+bson_append_int(&bb,cfk_occurrep,1);
 bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,0);
 bson_destroy(&field);
+
+strcpy(buffer,"[");
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
    bson_iterator_init(&it1,cursor->current.data);
-   
-   topic_name[0] = '\0';
-
-   topic_context[0] = '\0';
-   topic_id = 0;
-   
    while (bson_iterator_next(&it1))
       {
-      if (strcmp(bson_iterator_key(&it1),cfk_associations) == 0)
+      /* Query specific search/marshalling */
+      if (strcmp(bson_iterator_key(&it1),cfk_occurlocator) == 0)
          {
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
-
-         while (bson_iterator_next(&it2))
-             {
-             bson_iterator_init(&it3,bson_iterator_value(&it2));
-
-             assoc_id = 0;
-             assoc_name[0] = '\0';
-             assoc_context[0] = '\0';
-             afwd[0] = '\0';
-             abwd[0] = '\0';
-
-             while (bson_iterator_next(&it3))
-                {
-                if (strcmp(bson_iterator_key(&it3),cfk_associd) == 0)
-                   {
-                   assoc_id = bson_iterator_int(&it3);
-                   }   
-                
-                if (strcmp(bson_iterator_key(&it3),cfk_assocname) == 0)
-                   {
-                   strncpy(assoc_name,bson_iterator_string(&it3),CF_BUFSIZE-1);
-                   }   
-
-                if (strcmp(bson_iterator_key(&it3),cfk_fwd) == 0)
-                   {
-                   strncpy(afwd,bson_iterator_string(&it3),CF_BUFSIZE-1);
-                   }   
-                }
-             
-             // Record the topics that represent goals
-             PrependFullItem(&worklist,assoc_name,NULL,assoc_id,0);
-             }
+         snprintf(work,CF_BUFSIZE,"{\"desc\": \"%s\",",bson_iterator_string(&it1));
+         Join(buffer,work,CF_BUFSIZE);
          }
+      if (strcmp(bson_iterator_key(&it1),cfk_occurcontext) == 0)
+         {
+         snprintf(goals,CF_BUFSIZE,"%s",bson_iterator_string(&it1));
+         strncpy(topic_name,goals+6,strlen(goals));
+         topic_id = Nova_GetTopicIdForTopic(topic_name);
+         snprintf(goals,CF_BUFSIZE,"\"name\":\"%s\",\"pid\":%d},",topic_name,topic_id);
+         Join(buffer,goals,CF_BUFSIZE);
+         }       
       }
    }
 
+ReplaceTrailingChar(buffer, ',', '\0');
+
+EndJoin(buffer,"]",CF_BUFSIZE);
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 
-for (ip = worklist; ip !=  NULL; ip=ip->next)
-   {
-   Nova_FillInGoalComment(ip);
-   }
-
-return worklist;
+return true;
 #endif
 }
     
