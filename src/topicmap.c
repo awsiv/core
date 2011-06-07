@@ -715,7 +715,7 @@ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
 /* BEGIN query document */
 
 bson_buffer_init(&bb);
-bson_append_regex(&bb,cfk_occurcontext,"goals\.goal_.*","");
+bson_append_regex(&bb,cfk_occurcontext,"goals\\.goal_.*","");
 bson_from_buffer(&query,&bb);
 
 /* BEGIN RESULT DOCUMENT */
