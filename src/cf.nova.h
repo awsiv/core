@@ -71,7 +71,8 @@
 #define CF_MAGDATA 48         /* (4*12) */
 #define CF_MAX_SLOTS 2016     /* (24*7*12) */
 #define CF_LHISTORYDATA 1464
-#define CF_YEAR_SLOTS 3*52
+#define CF_MAG_SLOTS (12*24*7)
+#define CF_YEAR_SLOTS (3*52)
 #define CF_MAGMARGIN 0
 #define CF_LHISTORYMARGIN 0
 #define CF_TRIBE_SIZE 25
@@ -334,6 +335,8 @@ struct Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lc
 struct Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 
 int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
+struct Item *CFDB_QueryProbeIds(mongo_connection *conn, char *keyHash);
+int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t start_time,double *qa,double *ea,double *da);
 int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
 int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
 int CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,enum observables obs,double *histo);

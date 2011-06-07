@@ -3564,14 +3564,14 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
           int st = 0;
           slot = 0;
           bson_iterator_init(&it2,bson_iterator_value(&it1));
-
+          
           while (bson_iterator_next(&it2))
              {
              bson_iterator_init(&it3,bson_iterator_value(&it2));
              sscanf(bson_iterator_key(&it2),"%d",&st);
 
              // Select the past 4 hours
-            
+             /*
              if (wrap_around >= 0)
                 {
                 if (st >= wrap_around || st < start_slot)
@@ -3586,7 +3586,7 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
                    continue;
                    }
                 }
-
+             */
              ok = true; // Have some relevant data
              q = e = d = 0;
 
@@ -3595,6 +3595,10 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
                 if (strcmp(bson_iterator_key(&it3),cfr_obs_q) == 0)
                    {
                    q = bson_iterator_double(&it3);
+                   if(bson_iterator_double(&it3) != 0)
+                      {
+                      printf("index=%d, val=%f\n", st, bson_iterator_double(&it3));
+                      }
                    }
                 else if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
                    {
@@ -3606,11 +3610,153 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
                    }
                 }
 
-             qa[Nova_MagViewOffset(start_slot,st,wrap_around)] = q;
-             ea[Nova_MagViewOffset(start_slot,st,wrap_around)] = e;
-             da[Nova_MagViewOffset(start_slot,st,wrap_around)] = d;
+             //qa[Nova_MagViewOffset(start_slot,st,wrap_around)] = q;
+             //ea[Nova_MagViewOffset(start_slot,st,wrap_around)] = e;
+             //da[Nova_MagViewOffset(start_slot,st,wrap_around)] = d;
              }
           }
+       }
+    }
+
+// Now we should transform the data to re-order during wrap-around,
+// since at the boundary the data come in the wrong order
+
+ mongo_cursor_destroy(cursor);
+ return ok;
+}
+
+/*****************************************************************************/
+
+struct Item *CFDB_QueryProbeIds(mongo_connection *conn, char *keyHash)
+/**
+ * Return a list of mag probe ids, possibly restrict to one host.
+ * Can be extended to query for only global probes, etc.
+ */
+{
+ struct Item *retVal;
+ bson_buffer bb;
+ bson query;
+
+ bson_buffer_init(&bb);
+
+ if(keyHash != NULL)
+    {
+    bson_append_string(&bb, cfr_keyhash, keyHash);
+    bson_from_buffer(&query, &bb);
+    }
+ else
+    {
+    bson_empty(&query);
+    }
+
+ // we use the magnified collection as this is updated most often
+ retVal = CFDB_QueryDistinct(conn, MONGO_BASE, "monitoring_mg", cfm_id, &query);
+
+ bson_destroy(&query);
+
+ return retVal;
+}
+
+/*****************************************************************************/
+
+int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t start_time,double *qa,double *ea,double *da)
+
+{ bson_buffer bb;
+ bson query,field;
+ mongo_cursor *cursor;
+ bson_iterator it1,it2;
+ int ok = false,i,start_slot,wrap_around;
+ double *monArr = NULL;
+  
+/* BEGIN query document */
+
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, cfr_keyhash, keyhash);
+ bson_append_string(&bb, cfm_id, monId);
+ bson_from_buffer(&query, &bb);
+  
+/* BEGIN RESULT DOCUMENT */
+ bson_buffer_init(&bb);
+ bson_append_int(&bb, cfm_q_arr, 1);
+ bson_append_int(&bb, cfm_expect_arr, 1);
+ bson_append_int(&bb, cfm_deviance_arr, 1);
+ bson_from_buffer(&field, &bb);
+
+/* Check from wrap around */
+
+ start_slot = GetTimeSlot(start_time);
+
+// Check that start + 4 hours is not greater than the week buffer
+
+ wrap_around = (int)start_slot + CF_MAGDATA - CF_MAX_SLOTS;
+
+// Initialize as there might be missing values
+
+ for (i = 0; i < CF_MAGDATA; i++)
+    {
+    qa[i] = -1;
+    ea[i] = 0;
+    da[i] = 0;
+    }
+
+/* BEGIN SEARCH */
+
+ cursor = mongo_find(conn,MONGO_DATABASE_MON_MG,&query,&field,0,0,0);
+ bson_destroy(&query);
+ bson_destroy(&field);
+
+ if (mongo_cursor_next(cursor))  // max one document
+    {
+    bson_iterator_init(&it1,cursor->current.data);
+
+    while (bson_iterator_next(&it1)) // q, e, or d array
+       {
+       /* Query specific search/marshalling */
+
+       if (strcmp(bson_iterator_key(&it1),cfm_q_arr) == 0)
+          {
+          monArr = qa;
+          }
+       else if (strcmp(bson_iterator_key(&it1),cfm_expect_arr) == 0)
+          {
+          monArr = ea;
+          }
+       else if (strcmp(bson_iterator_key(&it1),cfm_deviance_arr) == 0)
+          {
+          monArr = da;
+          }
+       else
+          {
+          monArr = NULL;
+          continue;
+          }
+       
+       bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+       for (i = 0; bson_iterator_next(&it2); i++)  // array elements
+          {
+          // Select the past 4 hours
+          
+          if (wrap_around >= 0)
+             {
+             if (i >= wrap_around || i < start_slot)
+                {
+                continue;
+                }
+             }
+          else
+             {
+             if (i < start_slot || i >= start_slot + CF_MAGDATA)
+                {
+                continue;
+                }
+             }
+
+          ok = true; // Have some relevant data
+
+          monArr[Nova_MagViewOffset(start_slot,i,wrap_around)] = bson_iterator_double(&it2);
+          }
+       
        }
     }
 

@@ -334,8 +334,7 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
  char *dbOp;
  struct Item *ip, *ip2, *slotStart;
  int monGlobal,monExpMin,monExpMax;
-
- int slot;
+ int i,slot, numSlots, iterations;
  double q, e, d;
 
  switch(rep_type)
@@ -343,20 +342,24 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
     case mon_rep_mag:
         db = MONGO_DATABASE_MON_MG;
         dbOp = "Update monitord mag";
+        numSlots = CF_MAG_SLOTS;  // every five mins
         break;
     case mon_rep_week:
         db = MONGO_DATABASE_MON_WK;
         dbOp = "Update monitord week";
+        numSlots = CF_TIMESERIESDATA;  // every hour
         break;
     case mon_rep_yr:
         db = MONGO_DATABASE_MON_YR;
         dbOp = "Update monitord year";
+        numSlots = CF_YEAR_SLOTS;  // every week
         break;
     default:
         CfOut(cf_error, "", "!! Undefined monitord type in save (%d)", rep_type);
         FatalError("Software error");
     }
- 
+
+ iterations = 0;
  ip = data;
  while(ip != NULL)
     {
@@ -413,6 +416,15 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
     while(ip && (strncmp(ip->name,"M:", 2) != 0) )
        {
        sscanf(ip->name,"%d %lf %lf %lf", &slot, &q, &e, &d);
+
+       if(slot < 0 || slot >= numSlots)
+          {
+          CfOut(cf_error, "", "Slot %d out of range (max=%d) on %s - skipping",
+                slot, numSlots, dbOp);
+          ip = ip->next;
+          continue;
+          }
+       
        snprintf(varName, sizeof(varName), "%s.%d", cfm_q_arr, slot);
        bson_append_double(setObj, varName, q);
 
@@ -453,42 +465,27 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
        bson_append_string(&bb,cfr_keyhash,keyHash);
        bson_append_string(&bb,cfm_id,monId);
 
-       if(haveAllMeta)
-          {
-          bson_append_string(&bb, cfm_description, monDesc);
-          bson_append_string(&bb, cfm_units, monUnits);
-          bson_append_bool(&bb, cfm_global, monGlobal);
-          bson_append_int(&bb, cfm_expmin, monExpMin);
-          bson_append_int(&bb, cfm_expmax, monExpMax);
-          }
-   
        arr = bson_append_start_array(&bb, cfm_q_arr);
-       for(ip2 = slotStart; ip2 && (strncmp(ip2->name,"M:", 2) != 0); ip2 = ip2->next)
+       for(i = 0; i < numSlots; i++)
           {
-          sscanf(ip2->name,"%d %lf %lf %lf", &slot, &q, &e, &d);
-
-          snprintf(iStr, sizeof(iStr), "%d", slot);
-          bson_append_double(arr, iStr, q);
+          snprintf(iStr, sizeof(iStr), "%d", i);
+          bson_append_double(arr, iStr, 0.0);
           }
        bson_append_finish_object(arr);
 
        arr = bson_append_start_array(&bb, cfm_expect_arr);
-       for(ip2 = slotStart; ip2 && (strncmp(ip2->name,"M:", 2) != 0); ip2 = ip2->next)
+       for(i = 0; i < numSlots; i++)
           {
-          sscanf(ip2->name,"%d %lf %lf %lf", &slot, &q, &e, &d);
-
-          snprintf(iStr, sizeof(iStr), "%d", slot);
-          bson_append_double(arr, iStr, e);
+          snprintf(iStr, sizeof(iStr), "%d", i);
+          bson_append_double(arr, iStr, 0.0);
           }
        bson_append_finish_object(arr);
 
        arr = bson_append_start_array(&bb, cfm_deviance_arr);
-       for(ip2 = slotStart; ip2 && (strncmp(ip2->name,"M:", 2) != 0); ip2 = ip2->next)
+       for(i = 0; i < numSlots; i++)
           {
-          sscanf(ip2->name,"%d %lf %lf %lf", &slot, &q, &e, &d);
-
-          snprintf(iStr, sizeof(iStr), "%d", slot);
-          bson_append_double(arr, iStr, d);
+          snprintf(iStr, sizeof(iStr), "%d", i);
+          bson_append_double(arr, iStr, 0.0);
           }
        bson_append_finish_object(arr);
        
@@ -500,9 +497,18 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
        MongoCheckForError(conn,dbOp,keyHash,NULL);
 
        bson_destroy(&insertOp);
+
+       ip = slotStart;  // go back to update into empty object
        }
     
     bson_destroy(&keys);
+
+    if(++iterations > 5000)
+       {
+       CfOut(cf_error, "", "!! Anomaly: More than 5000 iterations when saving monitor data (%s) - check DB consistency",
+             dbOp);
+       break;
+       }
     }
  
 }
