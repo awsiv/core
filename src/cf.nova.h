@@ -1491,7 +1491,7 @@ struct HubBundleSeen
 struct HubValue
    {
    struct HubHost *hh;      
-   char* day;
+   char* day; /* 'DD Month YYYY' */
    double kept;
    double repaired;
    double notkept;
