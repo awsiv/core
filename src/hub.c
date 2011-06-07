@@ -856,7 +856,7 @@ int ScheduleRun()
 {
 struct Item *ip;
 
-if (EnterpriseExpiry(LIC_DAY,LIC_MONTH,LIC_YEAR,LIC_COMPANY)) 
+if (EnterpriseExpiry())
   {
   CfOut(cf_error,"","Cfengine - autonomous configuration engine. This enterprise license is invalid.\n");
   exit(1);
