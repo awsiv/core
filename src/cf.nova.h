@@ -658,7 +658,7 @@ void NovaShowValues(FILE *fp,struct BodySyntax bs);
 /* license.c */
 
 int Nova_HashKey(char *filename,char *buffer,unsigned char digest[EVP_MAX_MD_SIZE+1],char *hash);
-int Nova_EnterpriseExpiry(char *day,char *month,char *year,char *company);
+int Nova_EnterpriseExpiry(void);
 int Nova_EnterpriseModuleExpiry(char *day,char *month,char *year);
 void Nova_CheckLicensePromise(void);
 void Nova_LogLicenseStatus(void);

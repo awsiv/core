@@ -15,6 +15,11 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#define LIC_DAY "15"
+#define LIC_MONTH "December"
+#define LIC_YEAR "2001"
+#define LIC_COMPANY "PARTNER TEST LICENSE - NOT FOR PRODUCTION"
+
 /*****************************************************************************/
 
 int Nova_EnterpriseModuleExpiry(char *day,char *month,char *year)
@@ -24,7 +29,7 @@ return false;
 
 /*****************************************************************************/
 
-int Nova_EnterpriseExpiry(char *day,char *month,char *year, char *setcompany)
+int Nova_EnterpriseExpiry(void)
 
 /* This function is a convenience to commerical clients during testing */
     
@@ -44,9 +49,9 @@ if (THIS_AGENT_TYPE == cf_keygen)
    return false;
    }
   
-strcpy(u_day,day);
-strcpy(u_month,month);
-strcpy(u_year,year);
+strcpy(u_day,LIC_DAY);
+strcpy(u_month,LIC_MONTH);
+strcpy(u_year,LIC_YEAR);
 policy_server[0] = '\0';
 company[0] = '\0';
 
@@ -150,7 +155,7 @@ else
    {
    CfOut(cf_inform,""," !! No commercial license file found - falling back on internal expiry\n");
    LICENSES = 1;
-   snprintf(company,sizeof(company),"%s",setcompany);
+   snprintf(company,sizeof(company),"%s",LIC_COMPANY);
    snprintf(name,sizeof(name),"%s/state/am_policy_hub",CFWORKDIR);
    MapName(name);
    
@@ -173,8 +178,8 @@ d_now = Str2Int(VDAY);
 m_expire = Month2Int(u_month);
 d_expire = Str2Int(u_day);
 
-Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s = %d\n",VYEAR,year,VMONTH,month,VDAY,day,cf_strcmp(VDAY,day));
-Debug("Y. %s > %s\nM. %d > %d\nD: %d > %d = %d\n",VYEAR,year,m_now,m_expire,d_now,d_expire,cf_strcmp(VDAY,day));
+Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s\n",VYEAR,LIC_YEAR,VMONTH,LIC_MONTH,VDAY,LIC_DAY);
+Debug("Y. %s > %s\nM. %d > %d\nD: %d > %d\n",VYEAR,LIC_YEAR,m_now,m_expire,d_now,d_expire);
 
 snprintf(EXPIRY,sizeof(EXPIRY),"%s %s %s",u_day,u_month,u_year);
 strncpy(LICENSE_COMPANY,company,CF_SMALLBUF-1);
@@ -200,7 +205,7 @@ if (am_policy_server && THIS_AGENT_TYPE == cf_agent)
 if ((cf_strcmp(VYEAR,u_year) > 0) || ((cf_strcmp(VYEAR,u_year) == 0) && (m_now > m_expire))
     || ((cf_strcmp(VYEAR,u_year) == 0) && (m_now == m_expire) && (d_now > d_expire)))
    {
-   CfOut(cf_error,""," !! %d licenses expired on %s %s %s -- reverting to Community Edition",LICENSES,u_day,u_month,u_year,VDAY,VMONTH,VYEAR);
+   CfOut(cf_error,""," !! %d licenses expired on %s %s %s -- reverting to Community Edition",LICENSES,u_day,u_month,u_year);
    LICENSES = 0;
    return false; // return true if we want to stop everything
    }
