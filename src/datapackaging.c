@@ -687,7 +687,8 @@ void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_me
        {
        if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
           {
-          snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf", slot, entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
+          // Slot starts at 1 due to coarse graining loop
+          snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf", (slot/12) - 1, entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
           PrependItem(&data, buffer, NULL);
           data->counter = i;  // OBS index - sorted on later
           }
@@ -2176,5 +2177,4 @@ if (strcmp(arch,"default") == 0)
 return arch;
 }
 
-/*****************************************************************************/
 

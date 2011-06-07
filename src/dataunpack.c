@@ -164,7 +164,7 @@ void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, struct Item *dat
   char t[CF_TIME_SIZE];
 
 CfOut(cf_verbose,""," -> Monitor weekly data.....................");
-CfOut(cf_inform, "", "!! Deprecated monitor weekly format - response from Nova 2.0.3 or earlier (some features unavailible)");
+CfOut(cf_inform, "", "!! Deprecated monitor weekly format - response from Nova 2.0.4 or earlier (some features unavailible)");
 
 #ifdef HAVE_LIBMONGOC
 if (dbconn)
@@ -202,7 +202,7 @@ void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data
   double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
-CfOut(cf_inform, "", "!! Deprecated monitor magnified format - response from Nova 2.0.3 or earlier (some features unavailible)");
+CfOut(cf_inform, "", "!! Deprecated monitor magnified format - response from Nova 2.0.4 or earlier (some features unavailible)");
 
 
 #ifdef HAVE_LIBMONGOC
@@ -241,7 +241,7 @@ void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *dat
   double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor year data.....................");
-CfOut(cf_inform, "", "!! Deprecated monitor year format - response from Nova 2.0.3 or earlier (some features unavailible)");
+CfOut(cf_inform, "", "!! Deprecated monitor year format - response from Nova 2.0.4 or earlier (some features unavailible)");
 
 
 #ifdef HAVE_LIBMONGOC
