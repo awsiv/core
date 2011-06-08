@@ -629,7 +629,7 @@ int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int
     if(depHandle == NULL)
        {
 
-       if(IsStrIn(depName, PROTECTED_SERVICES, true))
+       if(IsStrCaseIn(depName, PROTECTED_SERVICES))
          {
          CfOut(cf_inform, "", "Service \"%s\" is protected, assuming it is running", depName);
          }
@@ -912,7 +912,7 @@ int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHandle, DW
     
     if(depHandle == NULL)
        {
-	 if(IsStrIn(depName, PROTECTED_SERVICES, true))
+	 if(IsStrCaseIn(depName, PROTECTED_SERVICES))
            {
            CfOut(cf_inform, "", "Service \"%s\" is protected, assuming start time is correct", depName);
            }
