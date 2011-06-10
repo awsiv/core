@@ -337,6 +337,7 @@ struct Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *l
 int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
 struct Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
 int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t start_time,double *qa,double *ea,double *da);
+int CFDB_QueryWeekView2(mongo_connection *conn,char *keyhash,char *monId,double *qa,double *ea,double *da);
 int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
 int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
 int CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,enum observables obs,double *histo);
@@ -676,6 +677,7 @@ void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp);
 
 int Nova_ViewMag(char *keyhash,enum observables obs,char *buffer,int bufsize);
 int Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs);
+bool Nova_ReadMagTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,char *hostkey,char *vitalId);
 void Nova_PlotMagQFile(struct CfDataView *cfv,char *buffer,int bufsize);
 void Nova_AnalyseMag(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
@@ -944,6 +946,7 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char
 double Num(double x);
 int Nova_ViewWeek(char *keyhash,enum observables obs,char *buffer,int bufsize);
 int Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs);
+bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,char *keyhash, char *vitalId);
 void Nova_DrawQAxes(struct CfDataView *cfv,int col);
 void Nova_PlotQFile(struct CfDataView *cfv,char *buffer,int bufsze);
 void Nova_AnalyseWeek(char *keyhash,enum observables obs,char *buffer,int bufsize);
