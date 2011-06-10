@@ -255,6 +255,43 @@ int Nova2PHP_get_observable_id(char *name)
 }
 
 /*****************************************************************************/
+/* New vitals functions (new db/protocol)                                    */
+/*****************************************************************************/
+
+bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
+{
+ mongo_connection dbconn;
+ struct Item *res, *ip;
+ bool ret = false;
+
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+ res = CFDB_QueryVitalIds(&dbconn, keyHash);
+
+ CFDB_Close(&dbconn);
+
+ strcpy(buffer, "[");
+ 
+ for(ip = res; ip != NULL; ip = ip->next)
+    {
+    Join(buffer, ip->name, bufsize);
+    Join(buffer, ",", bufsize);
+    ret = true;
+    }
+
+ ReplaceTrailingChar(buffer, ',', '\0');
+ 
+ Join(buffer, "]", bufsize);
+ 
+ return ret;
+}
+
+
+/*****************************************************************************/
 /* Search for answers                                                        */
 /*****************************************************************************/
 

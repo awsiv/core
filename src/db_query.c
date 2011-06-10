@@ -3627,7 +3627,7 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
 
 /*****************************************************************************/
 
-struct Item *CFDB_QueryProbeIds(mongo_connection *conn, char *keyHash)
+struct Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash)
 /**
  * Return a list of mag probe ids, possibly restrict to one host.
  * Can be extended to query for only global probes, etc.
@@ -3711,7 +3711,6 @@ int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t s
 
     while (bson_iterator_next(&it1)) // q, e, or d array
        {
-       /* Query specific search/marshalling */
 
        if (strcmp(bson_iterator_key(&it1),cfm_q_arr) == 0)
           {
