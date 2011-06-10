@@ -830,7 +830,7 @@ fprintf(fp,"ports::");
 
 for (i = 0; i < ATTR; i++)
    {
-   fprintf(fp,"  \"port %s\" comment => { \"The standard reserved port for %s\" }, generalizations => { \"ports\" }, synonyms => {\"%s\"}; ",ECGSOCKS[i].portnr,ECGSOCKS[i].name,ECGSOCKS[i].name);
+   fprintf(fp,"  \"port %s\" comment => \"The standard reserved port for %s\", generalizations => { \"ports\" }, synonyms => {\"%s\"}; ",ECGSOCKS[i].portnr,ECGSOCKS[i].name,ECGSOCKS[i].name);
    }
 
 fprintf(fp,"measurements:: \"anomalies\" comment => \"Measurements that exceed the boundaries of normal behaviour, as learned by cf-monitord\";");
@@ -848,7 +848,7 @@ for (i = 0; OBS[i] != NULL; i++)
       {
       for (k = 0; dev[k] != NULL; k++)
          {
-         fprintf(fp," \"%s_%s_%s\" comment => \"%s is %s relative to the learned normal average\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };",OBS[i][0],level[j],dev[k],OBS[i][1],level[j]);
+         fprintf(fp," \"%s_%s_%s\" comment => \"%s is %s relative to the learned normal average\", generalizations => { \"vital signs\", \"performance\", \"anomalies\" };\n",OBS[i][0],level[j],dev[k],OBS[i][1],level[j]);
 
          if (strstr(OBS[i][0],"_in"))
             {
