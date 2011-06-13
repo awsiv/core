@@ -685,7 +685,16 @@ else
       }
    }
 
-NewScalar("sys","policy_hub",name,cf_str);
+if(EMPTY(name))
+  {
+  // avoids "Scalar item in servers => {  } in rvalue is out of bounds ..."
+  // when NovaBase is checked with unprivileged (not bootstrapped) cf-promises 
+  NewScalar("sys","policy_hub","undefined",cf_str);
+  }
+else
+  {
+  NewScalar("sys","policy_hub",name,cf_str);
+  }
 }
 
 /********************************************************************/
