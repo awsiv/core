@@ -997,15 +997,18 @@ for (ip = stream; ip != NULL; ip = ip-> next)
          switch (a.measure.data_type)
             {
             case cf_int:
-
-                strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
-                real_val += Str2Double(value);
-                break;
-
             case cf_real:
-
+                
                 strncpy(value,ExtractFirstReference(a.measure.extraction_regex,match->name),CF_MAXVARSIZE-1);
-                real_val += Str2Double(value);
+                
+                if(strcmp(value, "CF_NOMATCH") == 0)
+                   {
+                   real_val = CF_NODOUBLE;
+                   }
+                else
+                   {
+                   real_val += Str2Double(value);
+                   }
                 break;
 
             default:
