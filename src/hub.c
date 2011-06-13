@@ -295,8 +295,7 @@ else
       snprintf(msg,CF_MAXVARSIZE,"HUB delta sensor sweep of peer %s",peer);
       Nova_HubLog(msg);
       }
-
-   YieldCurrentLock(thislock);
+   // don't yield lock here - we never got it
    }
 
 ServerDisconnection(conn);
