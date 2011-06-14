@@ -1,7 +1,7 @@
 <div class="info">
     <p> You have already checked out the repository before. What do you want to do ? </p>
 </div>
-<?php if (is_array($hasChanges) && !empty($hasChanges)) { ?>
+<?php if (isset($hasChanges) && is_array($hasChanges) && !empty($hasChanges)) { ?>
     <div class="warning">
         <p>Some files modified and not committed.</p>
         <ul>
