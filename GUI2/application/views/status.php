@@ -188,7 +188,7 @@
 
         // host count pie chart
         var hostpiejson = {
-            'color': ["#90A316","#BFAA54","#C33D54"],
+            'color': ["#90A316","#C33D54","#BFAA54"],
             'values': [
                 {
                     'label': 'green',
@@ -297,8 +297,8 @@
 
         var complianceNowData =  [
             { label: "green",  data: <?php echo $greenhost; ?>,color:"#90A316"},
-            { label: "yellow",  data: <?php echo $yellowhost; ?>,color:"#C33D54"},
-            { label: "red",  data: <?php echo $redhost; ?>,color:"#BFAA54"}
+            { label: "yellow",  data: <?php echo $yellowhost; ?>,color:"#BFAA54"},
+            { label: "red",  data: <?php echo $redhost; ?>,color:"#D43030"}
     ];
     $.plot($("#compliance-now-pie-chart"), complianceNowData,
     {

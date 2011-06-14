@@ -12,9 +12,8 @@
     </div>
 
 <?php } ?>
-<div class="">
-    <ul>
-        <li><a href="/repository/checkout/force" class="btn">Force checkout</a></li>
-        <li><a href="/cfeditor" target="_self" class="btn">Continue to policy editor</a></li>
-    </ul> 
+<div>
+    <span class="btn"><a href="/repository/checkout/force" class="btn">Force checkout</a></span>
+        <span class="btn"><a href="/cfeditor" target="_self" class="btn">Continue to policy editor</a></span>
+    
 </div>    

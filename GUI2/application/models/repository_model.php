@@ -111,8 +111,8 @@ class Repository_model extends CI_Model {
                 ->where(array('username' => $userInfo['userId'], 'active' => 1))
                 ->limit(1)
                 ->get_object('users');
-        $this->mongo_db->clear();
-        return hash('sha256', $obj->_id, TRUE);
+        $this->mongo_db->clear();        
+        return hash('sha256', $obj->password, TRUE);
     }
 
     /**
