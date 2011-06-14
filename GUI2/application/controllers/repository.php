@@ -148,8 +148,7 @@ class Repository extends Cf_Controller {
             try {
                 $hasChanges = $this->cfsvn->cfsvn_working_copy_status();
             } catch (Exception $e) {
-                //$this->log($e->__toString());
-                var_dump($e->__toString());
+                log_message('', $e->__toString());                
             }
             $data['hasChanges'] = $hasChanges;
             $this->load->view('/repository/already_checked_out', $data);
