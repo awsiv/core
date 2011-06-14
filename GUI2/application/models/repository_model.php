@@ -16,13 +16,13 @@ class Repository_model extends CI_Model {
 
     /**
      * Get all added repository for the user
-     * @param <type> $userId 
+     * @param <type> $userId : username of the logged in user or system users
      */
-    function get_all_repository($userId = '') {
+    function get_all_repository($userId) {
         if (trim($userId))
-             $repos=$this->mongo_db->where(array('userId' => $userId))->get($this->collectionName);
-             $this->mongo_db->clear();
-         return $repos;
+            $repos = $this->mongo_db->where(array('userId' => $userId))->get($this->collectionName);
+        $this->mongo_db->clear();
+        return $repos;
     }
 
     function get_specific_repository($userId, $repoPath) {
@@ -72,7 +72,12 @@ class Repository_model extends CI_Model {
             $this->set_error('Cannot find existing repository information to update');
             return FALSE;
         }
-
+        if (isset($newRepoInfo['password'])) {
+            $newRepoInfo['password'] = $this->encrypt_password($newRepoInfo);
+        }
+        
+       
+        
         $this->mongo_db->where($repoInfo);
         $this->mongo_db->update($this->collectionName, $newRepoInfo);
         $this->mongo_db->clear();
@@ -111,7 +116,7 @@ class Repository_model extends CI_Model {
                 ->where(array('username' => $userInfo['userId'], 'active' => 1))
                 ->limit(1)
                 ->get_object('users');
-        $this->mongo_db->clear();        
+        $this->mongo_db->clear();
         return hash('sha256', $obj->password, TRUE);
     }
 
@@ -128,11 +133,12 @@ class Repository_model extends CI_Model {
         return base64_encode($cryptpass);
     }
 
-    function decrypt_password($userInfo) {
+    function decrypt_password($userInfo,$key='') {
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
         $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        $dkey = isset($key) ? $key : $this->get_key($userInfo);
         return trim(
-                mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->get_key($userInfo), base64_decode($userInfo['password']), MCRYPT_MODE_ECB, $iv));
+                mcrypt_decrypt(MCRYPT_RIJNDAEL_256,$dkey, base64_decode($userInfo['password']), MCRYPT_MODE_ECB, $iv));
     }
 
     function set_error($msg) {
@@ -150,35 +156,29 @@ class Repository_model extends CI_Model {
      * @param <type> $file_version
      * @param <type> $operation
      */
-    function insert_svn_log($username,$svnrepo,$file_version,$operation)
-    {
-      $id=$this->mongo_db->insert($this->svn_log_collection_name,array('username'=>$username,'repo'=>$svnrepo,'version'=>$file_version,'operation'=>$operation,'date'=>now()));
+    function insert_svn_log($username, $svnrepo, $file_version, $operation) {
+        $id = $this->mongo_db->insert($this->svn_log_collection_name, array('username' => $username, 'repo' => $svnrepo, 'version' => $file_version, 'operation' => $operation, 'date' => now()));
     }
 
     /**
      * get all the activities of all user on repositories
      * @return <type>
      */
-    function get_svn_logs($repository='')
-    {
-        if($repository!='')
-        {
-          return $this->mongo_db->where(array('repo'=>$repository))->get($this->svn_log_collection_name);
+    function get_svn_logs($repository='') {
+        if ($repository != '') {
+            return $this->mongo_db->where(array('repo' => $repository))->get($this->svn_log_collection_name);
         }
-       return $this->mongo_db->get($this->svn_log_collection_name);
+        return $this->mongo_db->get($this->svn_log_collection_name);
     }
 
-
-    
-   /**
-    *get unique revision no for a particlular repository
-    * @param <type> $repository
-    */
-    function get_revisions($repository='')
-    {
-        $uniqrevs=array();
-        $revs=$this->mongo_db->select(array('version'))->where(array('repo'=>$repository))->order_by(array('version'=>'desc'))->get($this->svn_log_collection_name);
-        foreach ($revs as $rev){
+    /**
+     * get unique revision no for a particlular repository
+     * @param <type> $repository
+     */
+    function get_revisions($repository='') {
+        $uniqrevs = array();
+        $revs = $this->mongo_db->select(array('version'))->where(array('repo' => $repository))->order_by(array('version' => 'desc'))->get($this->svn_log_collection_name);
+        foreach ($revs as $rev) {
             array_push($uniqrevs, $rev['version']);
         }
         return array_unique($uniqrevs);
@@ -200,24 +200,18 @@ class Repository_model extends CI_Model {
      * get a list of revision numbers with username and time and comment for depending on the parameters
      * @param <type> $repo 
      */
-    function get_all_approved_policies($repo='',$limit='') {
-        if($repo !='' && $limit !='')
-        {
-         return $this->mongo_db->where(array('repo'=>$repo))->order_by(array('date'=>'desc'))->limit($limit)->get($this->approved_policies_collection);
-        }
-        elseif($limit=='' && $repo !='')
-        {
-            return $this->mongo_db->where(array('repo'=>$repo))->order_by(array('date'=>'desc'))->get($this->approved_policies_collection);
-        }
-        elseif($repo=='')
-        {
-            return $this->mongo_db->order_by(array('date'=>'desc'))->get($this->approved_policies_collection);
+    function get_all_approved_policies($repo='', $limit='') {
+        if ($repo != '' && $limit != '') {
+            return $this->mongo_db->where(array('repo' => $repo))->order_by(array('date' => 'desc'))->limit($limit)->get($this->approved_policies_collection);
+        } elseif ($limit == '' && $repo != '') {
+            return $this->mongo_db->where(array('repo' => $repo))->order_by(array('date' => 'desc'))->get($this->approved_policies_collection);
+        } elseif ($repo == '') {
+            return $this->mongo_db->order_by(array('date' => 'desc'))->get($this->approved_policies_collection);
         }
     }
 
-    function get_total_approval_count($repo)
-    {
-        return $this->mongo_db->where(array('repo'=>$repo))->count($this->approved_policies_collection);
+    function get_total_approval_count($repo) {
+        return $this->mongo_db->where(array('repo' => $repo))->count($this->approved_policies_collection);
     }
 
 }
