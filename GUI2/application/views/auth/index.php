@@ -5,7 +5,7 @@
         <ul class="admin_menu">
             <li class="current"><a href="<?php echo site_url('auth/index');?>">Users</a></li>
             <li><a href="<?php echo site_url('auth/manage_group');?>">Groups</a></li>
-            <li>Settings</li>
+            <!--<li>Settings</li>-->
         </ul>
         <div class="holder">
             <div id="admin_content" class="tables">
