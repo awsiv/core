@@ -32,8 +32,8 @@
 				<td><?php echo ($user['active']) ? anchor("auth/deactivate/".$user['_id'], 'Active') : anchor("auth/activate/". $user['_id'], 'Inactive');?></td>
                 <td class="actioncol">
                 <?php echo anchor("auth/change_password/".$user['_id'], ' ',array('class'=>'changepassword','title'=>'change password'))?>
-                <?php echo anchor("auth/edit_user/".$user['_id'], ' ',array('class'=>'edituser','title'=>'edit user'))?>
-               <?php echo anchor("auth/delete_user/".$user['_id'], ' ', array('class' => 'deleteuser','title'=>'delete user'))?>
+                <?php echo anchor("auth/edit_user/".$user['_id'], ' ',array('class'=>'edit','title'=>'edit user'))?>
+               <?php echo anchor("auth/delete_user/".$user['_id'], ' ', array('class' => 'delete','title'=>'delete user'))?>
                 </td>
 			</tr>
 		<?php endforeach;?>

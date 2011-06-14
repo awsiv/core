@@ -1,6 +1,4 @@
 
-<div class="panelhead">Edit User</div>
-
 <div id="infoMessage"><?php echo $message;?></div>
     <div class="form">
     <?php echo form_open("auth/edit_user/".$this->uri->segment(3),array('id'=>'edit_user'));?>
@@ -18,12 +16,13 @@
       </p>
       
       
-      <p>Group<br />
+      <p>
       <?php //echo form_dropdown($group['name'],$group['options'],$group['default']);
+       echo form_label('Group');
        foreach($groups as $group)
         {
           echo form_checkbox($group);
-          echo form_label($group['id'], $group['id']);
+          echo form_label($group['id'], $group['id'],array('class'=>'group'));
         }
       ?>
       </p>

@@ -2094,14 +2094,14 @@ background-image: url(../images/error.png);
     padding: 12px 14px;
 }
 
-.edituser
+.edit
 {
      background: url("../images/button_edit.png") no-repeat scroll 0 0 transparent;
     display: inline-block;
    padding: 12px 14px;
 }
 
-.deleteuser
+.delete
 {
     background: url("../images/button_delete.png") no-repeat scroll 0 0 transparent;
     display: inline-block;
@@ -2154,6 +2154,7 @@ background-image: url(../images/error.png);
    border:solid 1px #CECECE;
     padding:3px;
     width:20%;
+    margin:0;
 }
 
 .btn a, .btn

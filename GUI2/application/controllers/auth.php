@@ -205,14 +205,41 @@ class Auth extends Controller {
 
 			if ($change)
 			{ //if the password was successfully changed
-				$this->session->set_flashdata('message', $this->ion_auth->messages());
+				//$this->session->set_flashdata('message', $this->ion_auth->messages());
 				//$this->logout();
-                                redirect('auth/index', 'refresh');
+                                  if(is_ajax ())
+                                        {
+                                        $this->data['message'] =$this->ion_auth->messages();
+                                        $this->data['users'] = $this->ion_auth->get_users_array();
+                                        $this->load->view('auth/user_list',$this->data);
+                                        }
+                                        else
+                                        {
+                                        $this->session->set_flashdata('message',  $this->ion_auth->messages());
+                                         redirect('auth/index', 'refresh');
+                                        } 
 			}
 			else
 			{
-				$this->session->set_flashdata('message', $this->ion_auth->errors());
-				redirect('auth/change_password', 'refresh');
+				//$this->session->set_flashdata('message', $this->ion_auth->errors());
+                                $this->ion_auth-> set_info("org_passwd_valid");
+                                $this->data['message']=$this->ion_auth->infos().$this->ion_auth->errors();
+                                $this->data['old_password'] = array('name' => 'old',
+				'id' => 'old',
+				'type' => 'password',
+                                'value' => $this->form_validation->set_value('old')
+                                );
+                                $this->data['new_password'] = array('name' => 'new',
+                                        'id' => 'new',
+                                        'type' => 'password',
+                                        'value' => $this->form_validation->set_value('new')
+                                );
+                                $this->data['new_password_confirm'] = array('name' => 'new_confirm',
+                                        'id' => 'new_confirm',
+                                        'type' => 'password',
+                                        'value' => $this->form_validation->set_value('new_confirm')
+                                );
+				$this->load->view('auth/change_password', $this->data);       
 			}
 		}
 	}

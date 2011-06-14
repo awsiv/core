@@ -1,5 +1,4 @@
-<div class="panelhead"><?php echo $operation ;?> Group</div>
-	
+
 	<div id="infoMessage"><?php echo $message;?></div>
 <div class="form">
     <?php echo form_open("auth/manage_group/".$this->uri->segment(3).'/'.$this->uri->segment(4),array('id'=>$operation.'_group'));?>

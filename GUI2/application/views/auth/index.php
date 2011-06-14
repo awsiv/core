@@ -45,12 +45,23 @@ $(document).ready(function() {
   $('a.edit').live('click',function(event){
       event.preventDefault();
       var path=$(this).attr('href');
-      $("#admin_content").load(path);
-           
+      $("#admin_content").load(path);  
   });
 
+//loading the change password in admin_content
+  $('a.changepassword').live('click',function(event){
+      event.preventDefault();
+      var path=$(this).attr('href');
+      $("#admin_content").load(path);
+  });
 //submitting the form ajaxically to the page in form action and loading the result in admin_content
   $('#edit_user').live('submit',function(event){
+      event.preventDefault();
+      $(this).ajaxSubmit(options);
+  });
+
+ //submitting the form ajaxically to the page in form action and loading the result in admin_content
+  $('#change_password').live('submit',function(event){
       event.preventDefault();
       $(this).ajaxSubmit(options);
   });
@@ -86,6 +97,12 @@ $(document).ready(function() {
       event.preventDefault();
       $(this).ajaxSubmit(options);
   });
+  
+ $(document).ajaxStop(function(){
+	setTimeout(function() {
+        $("#infoMessage").fadeOut(500)
+      }, 10000);
+ });
 
 });
 </script>

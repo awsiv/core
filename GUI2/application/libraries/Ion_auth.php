@@ -95,11 +95,13 @@ class Ion_auth
 
 		$this->messages = array();
 		$this->errors = array();
+                $this->infos=array();
 		$this->message_start_delimiter = $this->ci->config->item('message_start_delimiter', 'ion_auth');
 		$this->message_end_delimiter   = $this->ci->config->item('message_end_delimiter', 'ion_auth');
 		$this->error_start_delimiter   = $this->ci->config->item('error_start_delimiter', 'ion_auth');
 		$this->error_end_delimiter     = $this->ci->config->item('error_end_delimiter', 'ion_auth');
-
+                $this->info_start_delimiter =$this->ci->config->item('info_start_delimiter', 'ion_auth');
+                $this->info_end_delimiter =$this->ci->config->item('info_end_delimiter', 'ion_auth');
 		//auto-login the user if they are remembered
 		if (!$this->logged_in() && get_cookie('identity') && get_cookie('remember_code'))
 		{
@@ -686,6 +688,16 @@ class Ion_auth
 		return TRUE;
 	}
 
+        /**
+         * set_info_delimiters
+         */
+        public function set_info_delimiters($start_delimiter, $end_delimiter)
+	{
+		$this->info_start_delimiter = $start_delimiter;
+		$this->info_end_delimiter   = $end_delimiter;
+		return TRUE;
+	}
+
 	/**
 	 * set_error_delimiters
 	 *
@@ -769,7 +781,30 @@ class Ion_auth
 
 		return $_output;
 	}
-	
+      /**
+       *To set the information to be displayed to user
+       * @param <type> $info
+       * @return <type>
+       */
+        public function set_info($info)
+        {
+            $this->infos[] = $info;
+           return $info;
+        }
+
+      /**
+       *get all the information to be displayed
+       * @return string
+       */
+        public function infos()
+	{
+		$_output = '';
+		foreach ($this->infos as $info)
+		{
+			$_output .= $this->info_start_delimiter . $this->ci->lang->line($info) . $this->info_end_delimiter;
+		}
+		return $_output;
+	}
 	/**
 	 *get_groups
 	 *get groups in the system
