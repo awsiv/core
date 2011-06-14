@@ -120,7 +120,7 @@
             width: 'auto',
             buttons: {
                 'Send': function() {
-                    $dialog.append("<div id='tempdiv' class='amber'>sending mail please wait a while...</div>");
+                    $dialog.append("<div id='tempdiv' class='info'><img src='<?php echo get_imagedir(); ?>ajax-loader.gif' /> sending mail please wait a while...</div>");
                     $.ajax({
                         type: "POST",
                         url: $('#parameters',$dialog).val(),

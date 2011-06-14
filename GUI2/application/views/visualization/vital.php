@@ -61,7 +61,7 @@
         $(this)
         .toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom")
         .find("> .ui-icon").toggleClass("ui-icon-triangle-1-e ui-icon-triangle-1-s").end()
-        .next().toggleClass("ui-accordion-content-active").slideToggle();
+        .next().slideToggle().toggleClass("ui-accordion-content-active");
         var $link = $('.ui-tabs-nav li:eq(1) a',$(this).next());       
         $link.trigger('click');
         return false;

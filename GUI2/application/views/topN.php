@@ -28,11 +28,11 @@
 
                                     </tr>
                                     <tr>
-                                        <td><a href="<?php echo site_url("/welcome/knowledge/topic/goals"); ?>">Goals</a></td>
+                                        <td><a href="<?php echo site_url("/knowledge/knowledgeSearch/topic/goals"); ?>">Goals</a></td>
                                         <td><a href="<?php echo site_url("/promise/plist/$val[key]"); ?>">Promises</a></td>
                                     </tr>
                                 </table>-->
-                              <a href="<?php echo site_url("/welcome/knowledge/topic/goals"); ?>">Goals</a>
+                              <a href="<?php echo site_url("/knowledge/knowledgeSearch/topic/goals"); ?>">Goals</a>
                             </td>
                             <td>
                                <a href="<?php echo site_url("/welcome/classes/$val[key]"); ?>">Classes</a>
