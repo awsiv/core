@@ -61,7 +61,7 @@ var hostfinder={
          //self.temp.delegate('form','submit',{ui:self},self.searchsubmit);
          self.element.bind('click',function(event){event.preventDefault();self.temp.dialog('open')});
          self.cfui.alphapaging.appendTo(self.temp.parent()).delegate('li','click',{ui:self},self.sortalphabetically);
-         self.cfui.searchform.delegate('input[type="text"]','click',function(){$(this).focus()});
+         self.cfui.searchform.delegate('input[type="text"]','click',function(){$(this).focus().select()});
          self.cfui.searchform.delegate('input[type="text"]','focusin',{ui:self},self.searchboxevent);
          self.cfui.searchform.delegate('input[type="text"]','focusout',{ui:self},self.searchboxevent);
          self.cfui.searchform.delegate('input[type="text"]','keyup',{ui:self},self.searchboxkeyup);

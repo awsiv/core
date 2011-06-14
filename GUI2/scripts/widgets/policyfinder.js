@@ -48,7 +48,7 @@ addsearchbar:function(){
 
   self.searchbar=$('<form id="policyfindersearch" action="/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="search by bundle"/></span></form>')
   self.titlebar.append(self.searchbar).delegate('form','submit',$.proxy(self.searchpolicyfile,self));
-  self.searchbar.delegate('input[type="text"]','click',function(){$(this).focus()});
+  self.searchbar.delegate('input[type="text"]','click',function(){$(this).focus().select()});
   self.searchbar.delegate('input[type="text"]','focusin',$.proxy(self.searchboxevent,self));
   self.searchbar.delegate('input[type="text"]','focusout',$.proxy(self.searchboxevent,self));
   self.searchbar.find('input[type="text"]').data('default',self.searchbar.find('input[type="text"]').val());

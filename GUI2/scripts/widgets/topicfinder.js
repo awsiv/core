@@ -52,7 +52,8 @@
                 event.preventDefault();
             });
             self.searchbar.delegate('input[type="text"]','click',function(){
-                $(this).focus()
+                $(this).focus().select();
+                
             });
             self.searchbar.delegate('input[type="text"]','focusin',$.proxy(self.searchboxevent,self));
             self.searchbar.delegate('input[type="text"]','focusout',$.proxy(self.searchboxevent,self));
