@@ -150,7 +150,8 @@ class Auth extends Controller {
         $this->form_validation->set_rules('old', 'Old password', 'required');
         $this->form_validation->set_rules('new', 'New Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[new_confirm]');
         $this->form_validation->set_rules('new_confirm', 'Confirm New Password', 'required');
-
+        $this->data['usergroup'] = $this->session->userdata('group');
+        $this->data['is_admin'] = $this->ion_auth->is_admin();
         if (!$this->ion_auth->logged_in()) {
             redirect('auth/login', 'refresh');
         }
@@ -196,6 +197,7 @@ class Auth extends Controller {
                 if (is_ajax ()) {
                     $this->data['message'] = $this->ion_auth->messages();
                     $this->data['users'] = $this->ion_auth->get_users_array();
+
                     $this->load->view('auth/user_list', $this->data);
                 } else {
                     $this->session->set_flashdata('message', $this->ion_auth->messages());

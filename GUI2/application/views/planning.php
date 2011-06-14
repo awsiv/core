@@ -2,15 +2,15 @@
     <div class="outerdiv">
         <div id="goals" class="grid_7 innerdiv">
             <p class="title">Goals </p>
-          <ul>
-              <?php
-                        foreach ($goals as $goal) {
-                            $words = explode("_", $goal->name);
-                            echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>$goal->desc</span><span class=\"check\"></span></li>";
-                        }
-                 ?>
-          </ul>
-           <p class="morebtnpane"><span class="morebtn"><?php echo anchor('welcome/services','More...')?></span></p>
+            <ul>
+                <?php
+                foreach ($goals as $goal) {
+                    $words = explode("_", $goal->name);
+                    echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>$goal->desc</span><span class=\"check\"></span></li>";
+                }
+                ?>
+            </ul>
+            <p class="morebtnpane"><span class="morebtn"><?php echo anchor('welcome/services', 'More...') ?></span></p>
         </div>
         <div id="loggedon" class="grid_5 innerdiv">
             <p class="title">Logged on </p>

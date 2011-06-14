@@ -138,19 +138,20 @@ class Repository extends Cf_Controller {
 
         // check if it is already checked out  checked out 
         if ($alreadyCheckedOut && !$force) {
-            
-            $params = array(                
+
+            $params = array(
                 'workingdir' => get_policiesdir() . $this->session->userdata('username')
             );
 
             $this->load->library('cfsvn', $params);
             $hasChanges = array();
             try {
-            $hasChanges = $this->cfsvn->cfsvn_working_copy_status();
+                $hasChanges = $this->cfsvn->cfsvn_working_copy_status();
             } catch (Exception $e) {
-                 $this->log($e->__toString());                
+                //$this->log($e->__toString());
+                var_dump($e->__toString());
             }
-            $data['hasChanges'] = $hasChanges;            
+            $data['hasChanges'] = $hasChanges;
             $this->load->view('/repository/already_checked_out', $data);
             return;
         }
@@ -194,10 +195,10 @@ class Repository extends Cf_Controller {
 
 
 
-         //password is jencrypted before so decrypt to clear one .
-        
-        $info['password']=$this->jcryption->decrypt($info['password'],$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
-        
+        //password is jencrypted before so decrypt to clear one .
+
+        $info['password'] = $this->jcryption->decrypt($info['password'], $_SESSION["d"]["int"], $_SESSION["n"]["int"]);
+
         $return = $this->repository_model->insert_repository($info);
         return $return;
     }
@@ -212,8 +213,8 @@ class Repository extends Cf_Controller {
             'url' => 'repository/manageRepository',
             'isRoot' => false
         );
-        
-         $requiredjs = array(
+
+        $requiredjs = array(
             array('widgets/notes.js'),
             array('jquery.jcryption-1.1.min.js')
         );
@@ -253,88 +254,76 @@ class Repository extends Cf_Controller {
         $this->template->load('template', '/repository/manage_repository', $data);
     }
 
-    function policyApprover()
-    {
-         $repos = $this->repository_model->get_all_repository($this->username);
-         if(count($repos)>0)
-         {
-             $repo_url=array();
-             foreach($repos as $repo)
-             {
-                 array_push($repo_url,$repo['repoPath']);
-             }
-             //by default first option is selected and populate a list of revs for it
-             $revs=$this->repository_model->get_revisions($repo_url[0]);
-             $data=array(
-                      'reposoptions'=> $repo_url,
-                      'revs'=>$revs
-                 );
-              $requiredjs = array(
+    function policyApprover() {
+        $repos = $this->repository_model->get_all_repository($this->username);
+        if (count($repos) > 0) {
+            $repo_url = array();
+            foreach ($repos as $repo) {
+                array_push($repo_url, $repo['repoPath']);
+            }
+            //by default first option is selected and populate a list of revs for it
+            $revs = $this->repository_model->get_revisions($repo_url[0]);
+            $data = array(
+                'reposoptions' => $repo_url,
+                'revs' => $revs
+            );
+            $requiredjs = array(
                 array('jquery.autogrowtextarea.js')
             );
             $this->carabiner->js($requiredjs);
             // $this->template->load('template','repository/approver',$data);
-            $this->load->view('repository/approver',$data);
-         }
-       else
-       {
-           echo "<span class=\"info maxwidth400\">".$this->lang->line('no_repos') ." Use <strong class=\"underline\">".
-           anchor('repository/manageRepository/','Manage Repository','target=_self') .'</strong> to add a repository</span> ';
-       }
+            $this->load->view('repository/approver', $data);
+        } else {
+            echo "<span class=\"info maxwidth400\">" . $this->lang->line('no_repos') . " Use <strong class=\"underline\">" .
+            anchor('repository/manageRepository/', 'Manage Repository', 'target=_self') . '</strong> to add a repository</span> ';
+        }
     }
 
-    function getListofRev()
-    {
-      $repo=$this->input->post('repo');
-      $revs=$this->repository_model->get_revisions($repo);
-      if(count($revs)>0)
-      {
-      echo form_dropdown('rev', array_combine($revs, $revs), $revs[0]);
-      }
-     else{
-         echo " ";
-     }
+    function getListofRev() {
+        $repo = $this->input->post('repo');
+        $revs = $this->repository_model->get_revisions($repo);
+        if (count($revs) > 0) {
+            echo form_dropdown('rev', array_combine($revs, $revs), $revs[0]);
+        } else {
+            echo " ";
+        }
     }
 
-    function approveRepoAction()
-    {
+    function approveRepoAction() {
         $this->load->library('table');
-        $username=$this->session->userdata('username');
-        $repo=$this->input->post('repository');
-        $rev=$this->input->post('revision');
-        $comments=$this->input->post('comments');
-        if(!$rev)
-        {
-            echo "<span class=\"info maxwidth400\">".$this->lang->line('no_revisions')."</span>";
+        $username = $this->session->userdata('username');
+        $repo = $this->input->post('repository');
+        $rev = $this->input->post('revision');
+        $comments = $this->input->post('comments');
+        if (!$rev) {
+            echo "<span class=\"info maxwidth400\">" . $this->lang->line('no_revisions') . "</span>";
             return;
         }
-        try{
-            $id=$this->repository_model->approve_policies($username,$repo,$rev,$comments);
-            $rev_table=$this->repository_model->get_all_approved_policies($repo,10);
-            $data=array('table'=>$rev_table);
-        }catch(Exception $e)
-        {
-           $data=array("error"=>$e->getMessage());
+        try {
+            $id = $this->repository_model->approve_policies($username, $repo, $rev, $comments);
+            $rev_table = $this->repository_model->get_all_approved_policies($repo, 10);
+            $data = array('table' => $rev_table);
+        } catch (Exception $e) {
+            $data = array("error" => $e->getMessage());
         }
-         $this->load->view('repository/approved_policies',$data);
+        $this->load->view('repository/approved_policies', $data);
     }
 
-    function approvedPolicies()
-    {
-         $this->load->library('table');
-         $rev_table=$this->repository_model->get_all_approved_policies();
-          $bc = array(
+    function approvedPolicies() {
+        $this->load->library('table');
+        $rev_table = $this->repository_model->get_all_approved_policies();
+        $bc = array(
             'title' => 'Approved Policies',
             'url' => 'repository/approvedPolicies',
             'isRoot' => false
         );
-        $data=array(
+        $data = array(
             'title' => "Cfengine Mission Portal - approved policies",
             'title_header' => "policies approved",
-            'table'=>$rev_table,
-             'breadcrumbs' => $this->breadcrumblist->display()
+            'table' => $rev_table,
+            'breadcrumbs' => $this->breadcrumblist->display()
         );
-        $this->template->load('template','repository/approved_policies_fullview',$data);
+        $this->template->load('template', 'repository/approved_policies_fullview', $data);
     }
 
 }
