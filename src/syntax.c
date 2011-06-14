@@ -45,23 +45,23 @@ for (i = 0; st[i].btype != NULL; i++)
    {
    if (strcmp("edit_line",st[i].btype) == 0)
       {
-	if(closeBrack)
-	  {
-	    printf("},\n");
-	  }
-	
-	// merge the "*" subtype with the common one
-	if(strcmp(st[i].subtype, "*") == 0)
-	  {
-	    commonEditLine = &st[i];
-	    continue;
-	  }
-
+      if(closeBrack)
+         {
+         printf("},\n");
+         }
+      
+      // merge the "*" subtype with the common one
+      if(strcmp(st[i].subtype, "*") == 0)
+         {
+         commonEditLine = &st[i];
+         continue;
+         }
+      
       Nova_Indent(3);
       printf("\"%s\":\n",st[i].subtype);
       Nova_Indent(6);
       printf("{\n");
-
+      
       //if(strcmp(st[i].subtype, "*") == 0)
       //	{
       //	  Nova_ShowBodyParts(CF_COMMON_BODIES,6);
@@ -79,23 +79,23 @@ Nova_ShowPromiseTypesFor("*", commonEditLine);
 printf("};\n\n\n");
 
 
-  printf("var bundle_syntax = {\n");
-  
-  // first make a reference to the edit_line bundle syntax (seperate var)
+printf("var bundle_syntax = {\n");
 
-  printf("  edit_line: edit_line_bundle_syntax,\n");
- 
+// first make a reference to the edit_line bundle syntax (seperate var)
+
+printf("  edit_line: edit_line_bundle_syntax,\n");
+
 
 for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
    {
    printf("  %s:\n", CF_ALL_BODIES[i].btype);
    printf("   {\n");
    Nova_ShowPromiseTypesFor(CF_ALL_BODIES[i].btype, NULL);
-
-   if(CF_ALL_BODIES[i+1].btype != NULL)
-     {
-       printf("   },\n");
-     }
+   
+   if (CF_ALL_BODIES[i+1].btype != NULL)
+      {
+      printf("   },\n");
+      }
    }
 
 printf("   }\n};\n");
@@ -188,28 +188,28 @@ if (bs == NULL)
 
 for (i = 0; bs[i].lval != NULL; i++)
    {
-     
-     if(closeBrack)
-       {
-	 printf("},\n");	 
-       }
-     
-     closeBrack = true;
-
+   
+   if(closeBrack)
+      {
+      printf("},\n");	 
+      }
+   
+   closeBrack = true;
+   
    Nova_Indent(indent);
-
+   
    if (bs[i].range == (void *)CF_BUNDLE)
       {
-	printf("\"%s\" : edit_line_bundle_syntax",bs[i].lval);
-
-	if(strcmp(bs[i].lval, "usebundle")) // no comma in "methods"
-	  {
-	    printf(",");
-	  }
-
-	printf("\n");
-
-	closeBrack = false;
+      printf("\"%s\" : edit_line_bundle_syntax",bs[i].lval);
+      
+      if(strcmp(bs[i].lval, "usebundle")) // no comma in "methods"
+         {
+         printf(",");
+         }
+      
+      printf("\n");
+      
+      closeBrack = false;
       }
    else if (bs[i].dtype == cf_body)
       {
@@ -320,7 +320,6 @@ for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
    }
 
 printf("\";\n");
-
 
 for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
    {
