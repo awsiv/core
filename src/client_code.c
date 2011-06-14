@@ -123,7 +123,7 @@ while (more)
 
    if (strncmp(in,"BAD:",4) == 0)
       {
-      CfOut(cf_error,""," !! Abort transmission %s",in+4);
+      CfOut(cf_error,""," !! Abort transmission: got \"%s\" from %s",in+4,conn->remoteip);
       break;;
       }   
 
