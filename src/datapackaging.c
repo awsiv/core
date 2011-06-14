@@ -1528,12 +1528,19 @@ void Nova_PackLastSeen(struct Item **reply,char *header,time_t from,enum cfd_men
   int ksize,vsize,first = true;
 
 CfOut(cf_verbose,""," -> Packing last-seen data");
-  
+
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
 MapName(name);
 
+if (!ThreadLock(cft_db_lastseen))
+   {
+   CfOut(cf_error, "", "!! Could not lock last-seen DB");
+   return;
+   }
+
 if (!OpenDB(name,&dbp))
    {
+   ThreadUnlock(cft_db_lastseen);
    return;
    }
 
@@ -1542,6 +1549,8 @@ if (!OpenDB(name,&dbp))
 if (!NewDBCursor(dbp,&dbcp))
    {
    CfOut(cf_inform,""," !! Unable to scan last-seen database");
+   CloseDB(dbp);
+   ThreadUnlock(cft_db_lastseen);
    return;
    }
 
@@ -1602,6 +1611,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
 
 DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
+ThreadUnlock(cft_db_lastseen);
 }
 
 /*****************************************************************************/
