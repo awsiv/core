@@ -333,7 +333,8 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
  char *db;
  char *dbOp;
  struct Item *ip, *ip2, *slotStart;
- int monGlobal,monExpMin,monExpMax;
+ int monGlobal;
+ double monExpMin, monExpMax;
  int i,slot, numSlots, iterations;
  double q, e, d;
 
@@ -367,19 +368,19 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
        {
        monId[0] = '\0';
        monGlobal = 0;
-       monExpMin = 0;
-       monExpMax = 0;
+       monExpMin = 0.0f;
+       monExpMax = 0.0f;
        monUnits[0] = '\0';
        monDesc[0] = '\0';
        haveAllMeta = false;
        
-       if(sscanf(ip->name+2,"%64[^,],%d,%d,%d,%32[^,],%128[^\n]",
+       if(sscanf(ip->name+2,"%64[^,],%lf,%lf,%d,%32[^,],%128[^\n]",
                  monId, &monGlobal, &monExpMin, &monExpMax, monUnits, monDesc) == 6)
           {
           haveAllMeta = true;
           }
 
-       Debug("Found new monitoring probe \"%s\" \"%s\" \"%s\" %d %d %d\n", monId, monDesc, monUnits, monGlobal, monExpMin, monExpMax);
+       Debug("Found new monitoring probe \"%s\" \"%s\" \"%s\" %d %lf %lf\n", monId, monDesc, monUnits, monGlobal, monExpMin, monExpMax);
        ip = ip->next;
        continue;
        }
@@ -407,8 +408,8 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
        bson_append_string(setObj, cfm_description, monDesc);
        bson_append_string(setObj, cfm_units, monUnits);
        bson_append_bool(setObj, cfm_global, monGlobal);
-       bson_append_int(setObj, cfm_expmin, monExpMin);
-       bson_append_int(setObj, cfm_expmax, monExpMax);       
+       bson_append_double(setObj, cfm_expmin, monExpMin);
+       bson_append_double(setObj, cfm_expmax, monExpMax);       
        }
 
     slotStart = ip;
