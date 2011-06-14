@@ -72,7 +72,7 @@ if (strlen(policy_server) == 0)
       CfOut(cf_inform,""," !! This host has not been bootstrapped, so a license cannot be verified (file \"%s\" is empty)", name);
       }
    
-   LICENSES = 0;
+   LICENSES = 500;
    return false;
    }
 

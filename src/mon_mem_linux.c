@@ -100,11 +100,16 @@ if (!(fh = fopen("/proc/meminfo", "r")))
 
 if (ParseKeyNumericValue(fh, &AcceptMemoryField, &info))
    {
-   int total_slot = NovaRegisterSlot(MON_MEM_TOTAL, "Total system memory (megabytes)");
-   int free_slot = NovaRegisterSlot(MON_MEM_FREE, "Free system memory (megabytes)");
-   int cached_slot = NovaRegisterSlot(MON_MEM_CACHED, "Size of disk cache (megabytes)");
-   int swap_slot = NovaRegisterSlot(MON_MEM_SWAP, "Total swap size (megabytes)");
-   int free_swap_slot = NovaRegisterSlot(MON_MEM_FREE_SWAP, "Free swap size (megabytes)");
+   int total_slot = NovaRegisterSlot(MON_MEM_TOTAL, "Total system memory", "megabytes",
+                                     512.0f, 4096.0f, true);
+   int free_slot = NovaRegisterSlot(MON_MEM_FREE, "Free system memory", "megabytes",
+                                    0.0f, 4096.0f, true);
+   int cached_slot = NovaRegisterSlot(MON_MEM_CACHED, "Size of disk cache", "megabytes",
+                                      0.0f, 4096.0f, true);
+   int swap_slot = NovaRegisterSlot(MON_MEM_SWAP, "Total swap size", "megabytes",
+                                    0.0f, 4096.0f, true);
+   int free_swap_slot = NovaRegisterSlot(MON_MEM_FREE_SWAP, "Free swap size", "megabytes",
+                                         0.0f, 8192.0f, true);
 
    if (total_slot != -1)
       {

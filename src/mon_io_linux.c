@@ -203,10 +203,14 @@ if (ferror(fh))
    }
 
 /* Summarize */
-int reads_slot = NovaRegisterSlot(MON_IO_READS, "Number of I/O reads (per second)");
-int writes_slot = NovaRegisterSlot(MON_IO_WRITES, "Number of I/O writes (per second)");
-int readdata_slot = NovaRegisterSlot(MON_IO_READDATA, "Amount of data read (megabytes/s)");
-int writtendata_slot = NovaRegisterSlot(MON_IO_WRITTENDATA, "Amount of data written (megabytes/s)");
+int reads_slot = NovaRegisterSlot(MON_IO_READS, "Number of I/O reads", "reads per second",
+                                  0.0, 1000.0, true);
+int writes_slot = NovaRegisterSlot(MON_IO_WRITES, "Number of I/O writes", "writes per second",
+                                   0.0f, 1000.0f, true);
+int readdata_slot = NovaRegisterSlot(MON_IO_READDATA, "Amount of data read", "megabytes/s",
+                                     0.0, 1000.0, true);
+int writtendata_slot = NovaRegisterSlot(MON_IO_WRITTENDATA, "Amount of data written", "megabytes",
+                                        0.0, 1000.0, true);
 
 if (reads_slot != -1 && totalreads != 0)
    {

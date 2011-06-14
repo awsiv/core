@@ -806,36 +806,37 @@ void Nova_FormatMonitoringReply(struct Item **datap, struct Item **reply, enum c
  
  for(ip = *datap; ip != NULL; ip = ip->next)
     {
-    if(currId != ip->counter)
+    int slot = ip->counter;
+    if (!NovaHasSlot(slot))
+       {
+       continue;
+       }
+
+    if(currId != slot)
        {
        if(type == cfd_menu_full)  // include more meta-data in full query
           {
-          // FIXME: Get these from somewhere based on ip->counter (OBS index)
-            int monGlobal = 1;
-            int monExpMin = 0;
-            int monExpMax = 10000;
-            char *monUnits = "kb";  // WARNING: no commas in this one
-            char *monDesc = "Description 123";
-            
-            snprintf(buffer, sizeof(buffer), "M:%s,%d,%d,%d,%s,%s",
-                     NovaGetSlotName(ip->counter),
-                     monGlobal,
-                     monExpMin,
-                     monExpMax,
-                     monUnits,
-                     monDesc);
-            }
-         else
-            {
-            snprintf(buffer, sizeof(buffer), "M:%s", NovaGetSlotName(ip->counter));
-            }
+          bool consolidable = NovaIsSlotConsolidable(slot);
+          int exp_min = NovaGetSlotExpectedMinimum(slot);
+          int exp_max = NovaGetSlotExpectedMaximum(slot);
+          const char *name = NovaGetSlotName(slot);
+          const char *desc = NovaGetSlotDescription(slot);
+          const char *units = NovaGetSlotUnits(slot);
 
-         AppendItem(reply, buffer, NULL);
-         currId = ip->counter;
-         }
+          snprintf(buffer, sizeof(buffer), "M:%s,%d,%d,%d,%s,%s",
+                   name, consolidable, exp_min, exp_max, units, desc);
+          }
+       else
+          {
+          snprintf(buffer, sizeof(buffer), "M:%s", NovaGetSlotName(slot));
+          }
 
-      AppendItem(reply, ip->name, NULL);
-      }
+       AppendItem(reply, buffer, NULL);
+       currId = slot;
+       }
+
+    AppendItem(reply, ip->name, NULL);
+    }
 }
 
 /*****************************************************************************/
@@ -2176,5 +2177,4 @@ if (strcmp(arch,"default") == 0)
 
 return arch;
 }
-
 

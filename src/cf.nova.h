@@ -691,8 +691,15 @@ void Nova_ResetShiftAverage(struct Averages *shift_value);
 double ShiftAverage(double new,double old);
 void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp);
 void Nova_LongHaul(time_t starttime);
-int NovaRegisterSlot(const char *name, const char *description);
+int NovaRegisterSlot(const char *name, const char *description,const char *units,
+                     double expected_minimum, double expected_maximum, bool consolidable);
+bool NovaHasSlot(int idx);
 const char *NovaGetSlotName(int idx);
+const char *NovaGetSlotDescription(int index);
+const char *NovaGetSlotUnits(int index);
+double NovaGetSlotExpectedMinimum(int index);
+double NovaGetSlotExpectedMaximum(int index);
+bool NovaIsSlotConsolidable(int index);
 struct Item *NovaGetMeasurementStream(struct Attributes a,struct Promise *pp);
 struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp);
 void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Promise *pp);

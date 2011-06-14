@@ -24,6 +24,16 @@ struct CfMeasurement
    struct Item *output;
    };
 
+typedef struct MonitoringSlot
+   {
+   char *name;
+   char *description;
+   char *units;
+   double expected_minimum;
+   double expected_maximum;
+   bool consolidable;
+   } MonitoringSlot;
+
 /* Constants */
 
 int MONITOR_RESTARTED = true;
@@ -31,8 +41,7 @@ char *MEASUREMENTS[CF_DUNBAR_WORK];
 struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
 
 static bool slots_loaded;
-static char SLOTS[CF_OBSERVABLES-ob_spare][2][CF_MAXVARSIZE];
-
+static MonitoringSlot *SLOTS[CF_OBSERVABLES - ob_spare];
 
 /*****************************************************************************/
 
@@ -97,6 +106,32 @@ UNITS[ob_cpu3] = "percent";
 
 /*****************************************************************************/
 
+static void Nova_FreeSlot(MonitoringSlot *slot)
+{
+if (slot)
+   {
+   free(slot->name);
+   free(slot->description);
+   free(slot->units);
+   free(slot);
+   }
+}
+
+static MonitoringSlot *Nova_MakeSlot(const char *name, const char *description,
+                                     const char *units,
+                                     double expected_minimum, double expected_maximum,
+                                     bool consolidable)
+{
+MonitoringSlot *slot = malloc(sizeof(MonitoringSlot));
+slot->name = strdup(name);
+slot->description = strdup(description);
+slot->units = strdup(units);
+slot->expected_minimum = expected_minimum;
+slot->expected_maximum = expected_maximum;
+slot->consolidable = consolidable;
+return slot;
+}
+
 static void Nova_LoadSlots(void)
 {
 FILE *f;
@@ -125,12 +160,40 @@ for (i = 0; i < CF_OBSERVABLES; ++i)
       }
    else
       {
+      char line[CF_MAXVARSIZE];
+
       char name[CF_MAXVARSIZE], desc[CF_MAXVARSIZE];
-      fscanf(f, "%*d,%1023[^,],%1023[^\n]", name, desc);
-      if (strcmp(name, "spare"))
+      char units[CF_MAXVARSIZE] = "unknown";
+      double expected_min = 0.0;
+      double expected_max = 100.0;
+      int consolidable = true;
+
+      if (fgets(line, CF_MAXVARSIZE, f) == NULL)
          {
-         strcpy(SLOTS[i - ob_spare][0], name);
-         strcpy(SLOTS[i - ob_spare][1], desc);
+         CfOut(cf_error, "fgets", "Error trying to read ts_key");
+         }
+
+      int fields = sscanf(line, "%*d,%1023[^,],%1023[^\n],%1023[^\n],%lf,%lf,%d",
+                          name, desc, units, &expected_min, &expected_max, &consolidable);
+      if (fields == 2)
+         {
+         /* Old-style ts_key with name and description */
+         }
+      else if(fields == 6)
+         {
+         /* New-style ts_key with additional parameters */
+         }
+      else
+         {
+         CfOut(cf_error, "", "Wrong line format in ts_key: %s", line);
+         }
+
+      if (strcmp(name, "spare") != 0)
+         {
+         Nova_FreeSlot(SLOTS[i - ob_spare]);
+         SLOTS[i - ob_spare] = Nova_MakeSlot(name, desc, units,
+                                             expected_min, expected_max,
+                                             consolidable);
          }
       }
    }
@@ -152,20 +215,22 @@ if ((fout = fopen(filename,"w")) == NULL)
    return;
    }
 
-for (i = 0; i < ob_spare; i++)
+for (i = 0; i < CF_OBSERVABLES; i++)
    {
-   fprintf(fout,"%d,%s,%s\n",i,OBS[i][0],OBS[i][1]);
-   }
-
-for (i = 0; i < CF_OBSERVABLES-ob_spare; i++)
-   {
-   if (strlen(SLOTS[i][0]) > 0)
+   if (NovaHasSlot(i))
       {
-      fprintf(fout,"%d,%s,%s\n",i+ob_spare,SLOTS[i][0],SLOTS[i][1]);
+      fprintf(fout, "%d,%s,%s,%s,%.3lf,%.3lf,%d\n",
+              i,
+              NovaGetSlotName(i),
+              NovaGetSlotDescription(i),
+              NovaGetSlotUnits(i),
+              NovaGetSlotExpectedMinimum(i),
+              NovaGetSlotExpectedMaximum(i),
+              NovaIsSlotConsolidable(i) ? 1 : 0);
       }
    else
       {
-      fprintf(fout,"%d,spare,unused\n",i+ob_spare);
+      fprintf(fout, "%d,spare,unused\n", i);
       }
    }
 
@@ -203,10 +268,10 @@ if (i < ob_spare)
    }
 else
    {
-   if (strlen(SLOTS[i-ob_spare][0]) > 0)
+   if (SLOTS[i - ob_spare])
       {
-      strncpy(name,SLOTS[i-ob_spare][0],CF_MAXVARSIZE-1);
-      strncpy(desc,SLOTS[i-ob_spare][1],CF_MAXVARSIZE-1);
+      strncpy(name,SLOTS[i-ob_spare]->name,CF_MAXVARSIZE-1);
+      strncpy(desc,SLOTS[i-ob_spare]->description,CF_MAXVARSIZE-1);
       }
    else
       {
@@ -308,7 +373,9 @@ switch (a.measure.data_type)
 
        if (cf_strcmp(a.measure.history_type,"weekly") == 0)
           {
-          if ((slot = NovaRegisterSlot(handle, pp->ref ? pp->ref : "User defined measure")) < 0)
+          if ((slot = NovaRegisterSlot(handle, pp->ref ? pp->ref : "User defined measure",
+                                       a.measure.units ? a.measure.units : "unknown",
+                                       0.0f, 100.0f, true)) < 0)
              {
              return;
              }
@@ -700,7 +767,7 @@ Nova_LoadSlots();
 /* First try to find existing slot */
 for (i = 0; i < CF_OBSERVABLES - ob_spare; ++i)
    {
-   if (!strcmp(SLOTS[i][0], name))
+   if (SLOTS[i] && !strcmp(SLOTS[i]->name, name))
       {
       CfOut(cf_verbose, "", " -> Using slot ob_spare+%d (%d) for %s\n", i, i + ob_spare, name);
       return i + ob_spare;
@@ -710,7 +777,7 @@ for (i = 0; i < CF_OBSERVABLES - ob_spare; ++i)
 /* Then find the spare one */
 for (i = 0; i < CF_OBSERVABLES - ob_spare; ++i)
    {
-   if (!SLOTS[i][0][0])
+   if (!SLOTS[i])
       {
       CfOut(cf_verbose, "", " -> Using empty slot ob_spare+%d (%d) for %s\n", i, i + ob_spare, name);
       return i + ob_spare;
@@ -724,7 +791,9 @@ return -1;
 
 /*****************************************************************************/
 
-int NovaRegisterSlot(const char *name, const char *description)
+int NovaRegisterSlot(const char *name, const char *description,
+                     const char *units, double expected_minimum, double expected_maximum,
+                     bool consolidable)
 {
 int slot = NovaGetSlot(name);
 if (slot == -1)
@@ -732,26 +801,50 @@ if (slot == -1)
    return -1;
    }
 
-if (strlcpy(SLOTS[slot - ob_spare][0], name, CF_MAXVARSIZE) >= CF_MAXVARSIZE)
-   {
-   SLOTS[slot - ob_spare][0][0] = '\0';
-   CfOut(cf_error, "", "Slot name '%s' is too long, refusing to register.", name);
-   return -1;
-   }
-
-if (strlcpy(SLOTS[slot - ob_spare][1], description, CF_MAXVARSIZE) >= CF_MAXVARSIZE)
-   {
-   CfOut(cf_verbose, "", "Description of slot '%s' is truncated");
-   }
-
+Nova_FreeSlot(SLOTS[slot - ob_spare]);
+SLOTS[slot - ob_spare] = Nova_MakeSlot(name, description, units,
+                                       expected_minimum, expected_maximum,
+                                       consolidable);
 Nova_DumpSlots();
 
 return slot;
 }
 
+bool NovaHasSlot(int idx)
+{
+return idx < ob_spare || SLOTS[idx - ob_spare];
+}
+
 const char *NovaGetSlotName(int idx)
 {
-return idx < ob_spare ? OBS[idx][0] : SLOTS[idx - ob_spare][0];
+return idx < ob_spare ? OBS[idx][0] : SLOTS[idx - ob_spare]->name;
+}
+
+const char *NovaGetSlotDescription(int idx)
+{
+return idx < ob_spare ? OBS[idx][1] : SLOTS[idx - ob_spare]->description;
+}
+
+const char *NovaGetSlotUnits(int idx)
+{
+return idx < ob_spare ? UNITS[idx] : SLOTS[idx - ob_spare]->units;
+}
+
+// TODO: real expected minimum/maximum/consolidable for core slots
+
+double NovaGetSlotExpectedMinimum(int idx)
+{
+return idx < ob_spare ? 0.0f : SLOTS[idx - ob_spare]->expected_minimum;
+}
+
+double NovaGetSlotExpectedMaximum(int idx)
+{
+return idx < ob_spare ? 100.0f : SLOTS[idx - ob_spare]->expected_maximum;
+}
+
+bool NovaIsSlotConsolidable(int idx)
+{
+return idx < ob_spare ? true : SLOTS[idx - ob_spare]->consolidable;
 }
 
 /*****************************************************************************/
