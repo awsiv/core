@@ -128,7 +128,7 @@ var hostfinder={
 
    createclasstagcloud:function(ui){
        var self=ui;
-        self.classdlg = $('<div style="display:hidden" title="classes" id="tagCloud"></div>').appendTo(self);
+        self.classdlg = $('<div style="display:hidden" title="classes" id="tagCloud"></div>').appendTo('<body>');
         self.classdlg.focused='';
         self.classdlg.dialog({
                      height: self.options.height,
@@ -159,7 +159,7 @@ var hostfinder={
         self.classdlg.titlebar.append(self.classdlg.optionhandler).delegate('#handle','click',function(){self.classdlg.options.slideToggle();});
 
         self.classdlg.options=$('<ul id="tgoptions"></ul>');
-        self.classdlg.options.append('<li>Sort asc</li><li>Sort desc</li><li>Search</li>');
+        self.classdlg.options.append('<li>Sort asc</li><li>Sort desc</li>');
         self.classdlg.options.appendTo(self.classdlg.titlebar).hide();
 
         self.classdlg.searchbar=$('<form id="searchclass"><span class="search"><input type="text" name="search"/></span></form>')
@@ -168,7 +168,7 @@ var hostfinder={
         self.classdlg.matchedresult=$('<span id="tgmatchedresult">');
         self.classdlg.matchedresult.appendTo(self.classdlg.titlebar).hide();
         //search the tag cloud when user starts typing in the class
-        self.classdlg.searchbar.delegate('input[type="text"]','click',function(){$(this).focus()});
+        self.classdlg.searchbar.delegate('input[type="text"]','click',function(){$(this).focus().select()});
         self.classdlg.searchbar.delegate('input[type="text"]','keyup',{ui:self},self.searchclassinlist);
         //delegate the options click event in classdialog title bar
         self.classdlg.options.delegate('li','click',{ui:self},self.actionontagcloud);
@@ -217,7 +217,11 @@ var hostfinder={
       var self=event.data.ui
       if(this.value==$(this).data('default') && event.type=='focusin')
           {
-              self.cfui.categories.slideDown();
+             self.cfui.categories.slideDown();
+             if(this.value=="search by class")
+                 {
+                  self.createclasstagcloud(self);
+                 }
               this.value='';
           }
       if(this.value=='' && event.type=='focusout')

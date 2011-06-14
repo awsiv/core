@@ -32,7 +32,8 @@
      <br />
      </p>
         <label for="submit"></label>
-        <input type="submit" id="button" value=" Approve "/>
+        <input type="submit" id="button" value=" Approve " class="slvbutton"/>
+        <?php echo anchor('repository/approvedpolicies','View approved policies',array('target'=>"_self",'class'=>'slvbutton')) ?>
      </fieldset>
      <br />
  </form>

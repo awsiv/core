@@ -39,7 +39,7 @@
                 <form method="post" action="/widget/insertworkinglogs">
                     <textarea  id="message" name="message" placeholder="Working on...."></textarea>
                     <div id="button_block">
-                        <input type="submit" id="button" value=" Share "/>
+                        <input type="submit" id="button" value=" Share" class="slvbutton"/>
                         <input type="button" id='cancel' value=" cancel" />
                     </div>
                 </form>

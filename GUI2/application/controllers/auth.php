@@ -27,24 +27,25 @@ class Auth extends Controller {
         if (!$this->ion_auth->logged_in()) {
             //redirect them to the login page
             redirect('auth/login', 'refresh');
-        } elseif (!$this->ion_auth->is_admin()) {
-            //redirect them to the home page because they must be an administrator to view this
-            redirect($this->config->item('base_url'), 'refresh');
-        } else {
+        }
+        /* elseif (!$this->ion_auth->is_admin())
+          {
+          //redirect them to the home page because they must be an administrator to view this
+          redirect($this->config->item('base_url'), 'refresh');
+          } */ else {
             //set the flash data error message if there is one
             //$identifier=$this->config->item('identity','ion_auth');
 
             $this->data['title'] = "Cfengine Mission Portal - Admin";
-            //$this->data['title_header']="Admin";
-            //$this->data['admin']="current";
             $this->data['username'] = $this->session->userdata('username');
             $this->data['message'] = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : $this->session->flashdata('message');
             //list the users
             $this->data['users'] = $this->ion_auth->get_users_array();
-            //$this->load->view('auth/index', $this->data);
-            if (is_ajax()) {
+            $this->data['usergroup'] = $this->session->userdata('group');
+            $this->data['is_admin'] = $this->ion_auth->is_admin();
+
+            if (is_ajax ()) {
                 $this->load->view('auth/user_list', $this->data);
-                //$this->load->view('welcome/index',$this->data);
             } else {
                 // $this->template->load('template', 'auth/index',$this->data);
                 redirect($this->config->item('base_url'), 'refresh');
@@ -61,14 +62,15 @@ class Auth extends Controller {
         $this->breadcrumb->setBreadCrumb($bc);
         $this->data['title'] = "Cfengine Mission Portal - Admin";
         $this->data['title_header'] = "Admin";
-        $this->data['admin'] = "current";
         $this->data['username'] = $this->session->userdata('username');
         $this->data['message'] = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : $this->session->flashdata('message');
         //list the users
         $this->data['users'] = $this->ion_auth->get_users_array();
         //$this->load->view('auth/index', $this->data);
         $this->data['breadcrumbs'] = $this->breadcrumblist->display();
-        if (is_ajax()) {
+        $this->data['usergroup'] = $this->session->userdata('group');
+        $this->data['is_admin'] = $this->ion_auth->is_admin();
+        if (is_ajax ()) {
             $this->load->view('auth/user_list', $this->data);
             //$this->load->view('welcome/index',$this->data);
         } else {
@@ -177,17 +179,13 @@ class Auth extends Controller {
             $this->load->view('auth/change_password', $this->data);
         } else {
             $identity = isset($id) ? $id : $this->session->userdata($this->session->userdata('user_id'));
-
-
             $result = $this->mongo_db->select(array('password', 'username'))
-                    ->where(array('_id' => new MongoId($identity)))
-                    ->limit(1)
-                    ->get_object('users');
+                            ->where(array('_id' => new MongoId($identity)))
+                            ->limit(1)
+                            ->get_object('users');
 
             $username = $result->username;
             $oldPass = $result->password;
-
-
             $change = $this->ion_auth->change_password($identity, $this->input->post('old'), $this->input->post('new'));
 
             if ($change) { //if the password was successfully changed
@@ -195,8 +193,7 @@ class Auth extends Controller {
                 //$this->logout();
                 // change the svn password as well here
                 $this->change_svn_password_entries($username, $oldPass);
-
-                if (is_ajax()) {
+                if (is_ajax ()) {
                     $this->data['message'] = $this->ion_auth->messages();
                     $this->data['users'] = $this->ion_auth->get_users_array();
                     $this->load->view('auth/user_list', $this->data);
@@ -230,7 +227,7 @@ class Auth extends Controller {
 
     /**
      * Changes the managed svn repository password.
-     * @param type $identity 
+     * @param type $identity
      */
     function change_svn_password_entries($username, $oldpass) {
 
@@ -244,9 +241,8 @@ class Auth extends Controller {
             $password = $this->repository_model->decrypt_password($info, $key);
             $newInfo = $info;
             $newInfo['password'] = $password;
-            
+
             $ret = $this->repository_model->update_repository($info, $newInfo); // update the password with re-encryption by new hash
-            
         }
     }
 
@@ -365,9 +361,11 @@ class Auth extends Controller {
         }
         if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $group)) { //check to see if we are creating the user
             //redirect them back to the admin page
-            if (is_ajax()) {
+            if (is_ajax ()) {
                 $this->data['message'] = $this->ion_auth->messages();
                 $this->data['users'] = $this->ion_auth->get_users_array();
+                $this->data['usergroup'] = $this->session->userdata('group');
+                $this->data['is_admin'] = $this->ion_auth->is_admin();
                 $this->load->view('auth/user_list', $this->data);
             } else {
                 $this->session->set_flashdata('message', "User Created");
@@ -461,9 +459,11 @@ class Auth extends Controller {
         }
         if ($this->form_validation->run() == true && $this->ion_auth->update_user($id, $data)) { //check to see if we are creating the user
             //redirect them back to the admin page
-            if (is_ajax()) {
+            if (is_ajax ()) {
                 $this->data['message'] = $this->ion_auth->messages();
                 $this->data['users'] = $this->ion_auth->get_users_array();
+                $this->data['usergroup'] = $this->session->userdata('group');
+                $this->data['is_admin'] = $this->ion_auth->is_admin();
                 $this->load->view('auth/user_list', $this->data);
             } else {
                 $this->session->set_flashdata('message', "User Updated");
@@ -501,9 +501,10 @@ class Auth extends Controller {
     }
 
     function manage_group($op=false, $id=false) {
-        if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+        if (!$this->ion_auth->logged_in()) {
             redirect('auth', 'refresh');
         }
+        $this->data['is_admin'] = $this->ion_auth->is_admin();
         if (!empty($op)) {
             $this->data['title'] = "Create Group";
             $this->data['operation'] = "Create";
@@ -522,7 +523,7 @@ class Auth extends Controller {
                     $this->__load_group_add_edit($op, $id);
                     return;
                 }
-                if (is_ajax()) {
+                if (is_ajax ()) {
                     $this->data['message'] = $this->ion_auth->messages();
                     $this->data['groups'] = $this->ion_auth->get_groups();
                     $this->load->view('auth/list_group', $this->data);
@@ -571,9 +572,11 @@ class Auth extends Controller {
 
     function delete_user($id) {
         $this->ion_auth->delete_user($id);
-        if (is_ajax()) {
+        if (is_ajax ()) {
             $this->data['message'] = $this->ion_auth->messages();
             $this->data['users'] = $this->ion_auth->get_users_array();
+            $this->data['usergroup'] = $this->session->userdata('group');
+            $this->data['is_admin'] = $this->ion_auth->is_admin();
             $this->load->view('auth/user_list', $this->data);
         } else {
             $this->session->set_flashdata('message', $this->ion_auth->messages());
@@ -583,7 +586,7 @@ class Auth extends Controller {
 
     function delete_group($id) {
         $this->ion_auth->delete_group($id);
-        if (is_ajax()) {
+        if (is_ajax ()) {
             $this->data['message'] = $this->ion_auth->messages();
             $this->data['groups'] = $this->ion_auth->get_groups();
             $this->load->view('auth/list_group', $this->data);

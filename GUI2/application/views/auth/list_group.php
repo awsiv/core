@@ -11,13 +11,19 @@
           <td><?php echo $group['name']?></td>
           <td><?php if(array_key_exists('description', $group))  echo $group['description']?></td>
           <td class="actioncol">
-             <?php echo anchor("auth/manage_group/edit/".$group['_id'], ' ',array('class'=>'edit','title'=>'edit group'))?>
-             <?php echo anchor("auth/delete_group/".$group['_id'], ' ',array('class'=>'delete','title'=>'delete group'))?>
+             <?php
+             if($is_admin)
+             {
+             echo anchor("auth/manage_group/edit/".$group['_id'], ' ',array('class'=>'edit','title'=>'edit group'));
+              echo anchor("auth/delete_group/".$group['_id'], ' ',array('class'=>'delete','title'=>'delete group'));
+             }
+             ?>
           </td>
         </tr>
 		<?php }?>
   </table>
-
+<?php if($is_admin){?>
 <p id="btnholder">
   <span class="btn"><?php echo anchor("auth/manage_group/create", 'Add Group',array('id'=>'add_group'))?></span>
 </p>
+<?}?>

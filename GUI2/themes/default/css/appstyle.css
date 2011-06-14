@@ -1857,7 +1857,7 @@ span.search input
     border:solid 1px #D4D5D0;
     font-size:14px;
 }
-#button
+.slvbutton
 {
     background-color:#959595;
     border:solid 1px #707070;
@@ -1866,7 +1866,7 @@ span.search input
     cursor:pointer
 }
 
-#button.disabled
+.slvbutton.disabled
 {
     background:#f0f0f0;
 }
@@ -2157,14 +2157,14 @@ background-image: url(../images/error.png);
     margin:0;
 }
 
-.btn a, .btn
+.ui-widget-content .btn a, .btn a, .btn
 {
     background: #3D4439;
     color:#fff;
     font-size: 13px;
     padding:3px
 }
-.btn a:hover{
+.ui-widget-content .btn a:hover, .btn a:hover{
     color:#08A3C1
 }
 
