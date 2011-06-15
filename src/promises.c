@@ -515,7 +515,7 @@ if (lastseen > (double)lsea)
 else
    {
    char timebuffer[26];
-   CfOut(cf_verbose,""," -> Bundle \"%s\" promise kept at %s\n",name,cf_strtimestamp(now,timebuffer));
+   CfOut(cf_verbose,""," -> Bundle \"%s\" promise kept at %s\n",name,cf_strtimestamp_local(now,timebuffer));
    WriteDB(dbp,name,&newq,sizeof(newq));
    }
 

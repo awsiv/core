@@ -168,10 +168,10 @@ if (delta1 >= 30)
 
 // Promise: use valid menu request
 
-cf_strtimestamp(time1, tbuf);
+cf_strtimestamp_local(time1, tbuf);
 Chop(tbuf);
 CfOut(cf_verbose,""," -> Menu request \"%s\" at %s, clock error %d",menu_name,tbuf,delta1);
-cf_strtimestamp(from, tbuf);
+cf_strtimestamp_local(from, tbuf);
 Chop(tbuf);
 CfOut(cf_verbose,""," -> Menu request starting from %s",tbuf);
 

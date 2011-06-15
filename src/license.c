@@ -504,7 +504,7 @@ CloseDB(dbp);
 
 now = time(NULL);
 snprintf(buffer,sizeof(buffer),"{");
-snprintf(work,sizeof(work),"\"Last measured on\":\"%s\", \"samples\":%d,",cf_strtimestamp(now,timebuffer),i);
+snprintf(work,sizeof(work),"\"Last measured on\":\"%s\", \"samples\":%d,",cf_strtimestamp_local(now,timebuffer),i);
 Join(buffer,work,sizeof(buffer));
 //snprintf(work,sizeof(work),"<table class=\"border\">\n");
 //Join(buffer,work,sizeof(buffer));

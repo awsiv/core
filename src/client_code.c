@@ -151,7 +151,8 @@ while (more)
       now = time(NULL);
       delta2 = now - time2;
       
-      CfOut(cf_verbose,""," -> Received reply of %d bytes at %s -> Xfer time %d seconds (processing time %d seconds)",length,cf_strtimestamp(now,timebuffer),delta2,now-then);
+      CfOut(cf_verbose,""," -> Received reply of %d bytes at %s -> Xfer time %d seconds (processing time %d seconds)",
+            length, cf_strtimestamp_local(now,timebuffer), delta2, now-then);
 
       if (delta2 > 0)
          {

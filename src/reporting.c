@@ -288,8 +288,8 @@ for (ip = file; ip != NULL; ip = ip->next)
    sscanf(ip->name,"%ld,%ld",&startt,&endt);
    st = (time_t)startt;
    et = (time_t)endt;
-   snprintf(start,31,"%s",cf_strtimestamp(st,timebuffer));
-   snprintf(end,31,"%s",cf_strtimestamp(et,timebuffer));
+   snprintf(start,31,"%s",cf_strtimestamp_local(st,timebuffer));
+   snprintf(end,31,"%s",cf_strtimestamp_local(et,timebuffer));
 
    if (!strstr(ip->name,"Outcome of version"))
       {
@@ -800,7 +800,7 @@ for (ip = file; ip != NULL; ip = ip->next)
 
    sscanf(ip->name,"%ld,%1023[^\n]",&start,name);
    now = (time_t)start;
-   snprintf(datestr,CF_MAXVARSIZE-1,"%s",cf_strtimestamp(now,timebuffer));
+   snprintf(datestr,CF_MAXVARSIZE-1,"%s",cf_strtimestamp_local(now,timebuffer));
    Chop(datestr);
    
    if (xml)
@@ -1914,7 +1914,7 @@ if ((fout = fopen("value_report.html","w")) == NULL)
 
 snprintf(name,sizeof(name),"Value return from Cfengine on %s",VFQNAME);
 fprintf(fout,"<div id=\"reporttext\">");
-fprintf(fout,"<p>Last measured on %s",cf_strtimestamp(now,timebuffer));
+fprintf(fout,"<p>Last measured on %s",cf_strtimestamp_local(now,timebuffer));
 fprintf(fout,"<table class=\"border\">\n");
 
 fprintf(fout,"<tr><th>Day</th><th>Promises Kept</th><th>Repairs</th><th>Not kept</th></tr>\n");
@@ -2012,7 +2012,7 @@ if (OpenDB(name,&dbp))
 now = time(NULL);
 snprintf(name,sizeof(name),"Mean observable license usage");
 fprintf(fout,"<div id=\"reporttext\">");
-fprintf(fout,"<h4>Last measured on %s based on %d samples</h4>",cf_strtimestamp(now,timebuffer),i);
+fprintf(fout,"<h4>Last measured on %s based on %d samples</h4>",cf_strtimestamp_local(now,timebuffer),i);
 fprintf(fout,"<table class=\"border\">\n");
 
 if (sum_t > 0)
@@ -2298,7 +2298,7 @@ int Nova_ImportHostReports(char *filePath)
     return false;
     }
 
- cf_strtimestamp(genTime, buf);
+ cf_strtimestamp_local(genTime, buf);
 
  CfOut(cf_inform, "", " -> Importing Nova %s reports from host %s with timestamp %s", reportType, keyHash, buf);
 
