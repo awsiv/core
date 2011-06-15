@@ -55,7 +55,12 @@ void NovaWin_GetInterfaceInfo()
  
  do
     {
-    pAddresses = (IP_ADAPTER_ADDRESSES *)cf_malloc(outBufLen, "NovaWin_GetInterfaceInfo3");
+    pAddresses = (IP_ADAPTER_ADDRESSES *)malloc(outBufLen);
+    if (!pAddresses)
+       {
+       CfOut(cf_error, "malloc", "!! Could not allocate memory in NovaWin_GetIntefaceInfo3");
+       FatalError("Memory allocation\n");
+       }
 
     // get both ipv4 and ipv6 addresses
     retVal = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, pAddresses, &outBufLen);
