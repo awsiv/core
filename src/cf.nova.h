@@ -1114,19 +1114,6 @@ void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int
 /* DBs                                                                     */
 /***************************************************************************/
 
-#define NOVA_HISTORYDB "history" "." DB_FEXT
-#define NOVA_MEASUREDB "nova_measures" "." DB_FEXT
-#define NOVA_STATICDB  "nova_static" "." DB_FEXT
-#define NOVA_PSCALARDB  "nova_pscalar" "." DB_FEXT
-#define NOVA_COMPLIANCE "promise_compliance" "." DB_FEXT
-#define NOVA_REGISTRY "mswin" "." DB_FEXT
-#define NOVA_CACHE "nova_cache" "." DB_FEXT
-#define NOVA_LICENSE "nova_track" "." DB_FEXT
-#define NOVA_VALUE "nova_value" "." DB_FEXT
-#define NOVA_NETWORK "nova_network" "." DB_FEXT
-#define NOVA_GLOBALCOUNTERS "nova_counters" "." DB_FEXT
-
-#define NOVA_BUNDLE_LOG "bundles" "." DB_FEXT
 #define NOVA_DIFF_LOG "nova_diff.log"
 #define NOVA_PATCHES_INSTALLED "software_patch_status.csv"
 #define NOVA_PATCHES_AVAIL "software_patches_avail.csv"
