@@ -536,7 +536,7 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
     }
 
  now = time(NULL);
- here_and_now = from;  // could be a lot of data...
+ here_and_now = now - (SECONDS_PER_HOUR * 4);  // we only display last 4hrs in mag graph
 
  strcpy(timekey,GenTimeKey(here_and_now));
  slot = GetTimeSlot(here_and_now);
@@ -548,7 +548,7 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
     
     Debug("timekey=%s\n", timekey);
 
-    if (from > here_and_now)
+    if (from > here_and_now)  // skip if client wants newer data
        {
        here_and_now += CF_MEASURE_INTERVAL;
        strcpy(timekey,GenTimeKey(here_and_now));
@@ -602,7 +602,7 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
 
 void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int its,i,j,count = 0,slot = 0;
+{ int its,i,j,slot = 0;
  double kept = 0, not_kept = 0, repaired = 0, nonzero;
  struct Averages entry,det;
  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_MAXTRANSSIZE];
@@ -645,7 +645,6 @@ void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_me
 
        now += CF_MEASURE_INTERVAL;
        slot++;
-       count++;
        }
 
     for (i = 0; i < CF_OBSERVABLES; i++)
