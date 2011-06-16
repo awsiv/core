@@ -209,9 +209,6 @@ CfOut(cf_inform, "", "!! Deprecated monitor magnified format - response from Nov
 
 if (dbconn)
    {
-   // monitor mag is always run during update
-   CFDB_SaveLastUpdate(dbconn,id);
-
    CFDB_SaveMonitorData(dbconn,id,mon_rep_mag,data);
    }
 #endif
@@ -335,9 +332,6 @@ CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 
 if (dbconn)
    {
-   // monitor mag is always run during update
-   CFDB_SaveLastUpdate(dbconn,id);
-
    CFDB_SaveMonitorData2(dbconn,id,mon_rep_mag,data);
    }
 #endif

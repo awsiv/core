@@ -106,15 +106,25 @@ return true;
 }
 
 /*****************************************************************************/
-/* Monitor data                                                              */
-/*****************************************************************************/
 
-void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char *ipaddr)
-
+void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char *ipaddr, char *hostname)
+/**
+ *  hostname is optional, reverse lookup if not specified
+ **/
 { bson_buffer bb;
  bson_buffer *setObj, *arr;
  bson host_key;  // host description
  bson setOp;
+ char foundHostName[CF_MAXVARSIZE];
+
+ if(!EMPTY(hostname))
+    {
+    snprintf(foundHostName, sizeof(foundHostName), "%s", hostname);
+    }
+ else
+    {
+    snprintf(foundHostName, sizeof(foundHostName), "%s", IPString2Hostname(ipaddr));
+    }
  
 // locate right host key
 
@@ -142,7 +152,7 @@ bson_destroy(&setOp);
 bson_buffer_init(&bb);
 setObj = bson_append_start_object(&bb,"$set");
 arr = bson_append_start_array(setObj,cfr_host_array);
-bson_append_string(setObj,"0",IPString2Hostname(ipaddr));
+bson_append_string(setObj,"0",foundHostName);
 bson_append_finish_object(arr);
 bson_append_finish_object(setObj);
 
@@ -228,6 +238,8 @@ bson_destroy(&setOp);
 bson_destroy(&host_key);
 }
 
+/*****************************************************************************/
+/* Monitor data                                                              */
 /*****************************************************************************/
 
 void CFDB_SaveMonitorData(mongo_connection *conn, char *keyhash, enum monitord_rep rep_type, struct Item *data)

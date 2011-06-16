@@ -259,7 +259,7 @@ int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t 
 int Nova_StoreIncomingReports(char *reply,struct Item **reports,int current_report);
 void NewReportBook(struct Item **reports);
 void DeleteReportBook(struct Item **reports);
-void UnpackReportBook(char *id,char *ipaddr,struct Item **reports);
+void UnpackReportBook(char *id,char *ipaddr,char *hostname,struct Item **reports);
 void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *conn);
 
 /* copernicus.c */
@@ -404,7 +404,7 @@ void CFDB_SaveFileChanges(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveFileDiffs(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveBundles(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveValueReport(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char *ipaddr);
+void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char *ipaddr, char *hostname);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
 bool GetBsonBool(char *data, char *boolKey, bool *val);
 void BsonToString(char *retBuf, int retBufSz, char *data);

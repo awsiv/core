@@ -2222,7 +2222,7 @@ int Nova_ExportReports(char *reportName)
  if (LICENSES == 0)
    {
    CfOut(cf_error,""," !! The license has expired");
-   return;
+   return false;
    }
 
  reportType = String2Menu(reportName);
@@ -2251,7 +2251,7 @@ int Nova_ExportReports(char *reportName)
 
  CfOut(cf_inform, "", " -> Saving all Nova reports to %s", filePath);
 
- fprintf(fout, "%s %s %s %s\n", NOVA_EXPORT_HEADER, reportName, PUBKEY_DIGEST, VIPADDRESS);
+ fprintf(fout, "%s %s %s %s %s\n", NOVA_EXPORT_HEADER, reportName, PUBKEY_DIGEST, VIPADDRESS, VFQNAME);
  
  Nova_PackAllReports(&reports,from,0,reportType);
 
@@ -2275,7 +2275,7 @@ int Nova_ImportHostReports(char *filePath)
  * NOTE: Should only be called on Nova hub.
  */
 {
- char keyHash[CF_MAXVARSIZE], ipAddr[CF_SMALLBUF];
+ char keyHash[CF_MAXVARSIZE] = {0}, ipAddr[CF_MAXVARSIZE] = {0}, hostName[CF_MAXVARSIZE] = {0};
  char buf[CF_BUFSIZE];
  char headerText[CF_SMALLBUF], reportType[CF_SMALLBUF];
  struct Item *reports[CF_CODEBOOK_SIZE] = {0};
@@ -2288,7 +2288,7 @@ int Nova_ImportHostReports(char *filePath)
 if (LICENSES == 0)
    {
    CfOut(cf_error,""," !! The license has expired");
-   return;
+   return false;
    }
 
  if ((fin = fopen(filePath,"r")) == NULL)
@@ -2298,10 +2298,22 @@ if (LICENSES == 0)
     }
 
  CfReadLine(buf, sizeof(buf), fin);
- sscanf(buf,"%32s %32s %255s %255s",headerText, reportType, keyHash, ipAddr);
+
+ // OK to leave hostname blank - reverse lookup later
+ if(sscanf(buf,"%32s %32s %255s %255s %255s",headerText, reportType, keyHash, ipAddr, hostName) < 4)
+    {
+    CfOut(cf_error, "", "!! Error parsing first line of report header");
+    fclose(fin);
+    return false;
+    }
 
  CfReadLine(buf, sizeof(buf), fin);
- sscanf(buf,"%4s %ld %ld %ld",validate,&delta1,&genTime,&length);
+ if(sscanf(buf,"%4s %ld %ld %ld",validate,&delta1,&genTime,&length) != 4)
+    {
+    CfOut(cf_error, "", "!! Error parsing second line of report header");
+    fclose(fin);
+    return false;    
+    }
  
  if (strcmp(validate,"CFR:") != 0)
     {
@@ -2310,9 +2322,9 @@ if (LICENSES == 0)
     return false;
     }
 
- cf_strtimestamp_local(genTime, buf);
+ cf_strtimestamp_utc(genTime, buf);
 
- CfOut(cf_inform, "", " -> Importing Nova %s reports from host %s with timestamp %s", reportType, keyHash, buf);
+ CfOut(cf_inform, "", " -> Importing Nova %s reports from host %s with UTC timestamp %s", reportType, keyHash, buf);
 
  NewReportBook(reports);
 
@@ -2329,7 +2341,7 @@ if (LICENSES == 0)
     return false;
     }
 
- UnpackReportBook(keyHash,ipAddr,reports);
+ UnpackReportBook(keyHash,ipAddr,hostName,reports);
  DeleteReportBook(reports);
  
  return true;

@@ -189,7 +189,7 @@ if (reports == NULL)
    return false;
    }
 
-UnpackReportBook(HashPrintSafe(CF_DEFAULT_DIGEST,conn->digest,keyHash),conn->remoteip,reports);
+UnpackReportBook(HashPrintSafe(CF_DEFAULT_DIGEST,conn->digest,keyHash),conn->remoteip,NULL,reports);
 DeleteReportBook(reports);
 return true;
 }
@@ -235,7 +235,7 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 /*********************************************************************/
 
-void UnpackReportBook(char *id,char *ipaddr,struct Item **reports)
+void UnpackReportBook(char *id,char *ipaddr,char *hostname,struct Item **reports)
 
 { int i;
   mongo_connection dbconn = {0};
@@ -262,7 +262,8 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 #ifdef HAVE_LIBMONGOC
 
-CFDB_SaveHostID(&dbconn,MONGO_DATABASE,id,ipaddr);
+CFDB_SaveHostID(&dbconn,MONGO_DATABASE,id,ipaddr,hostname);
+CFDB_SaveLastUpdate(&dbconn,id);
 
 if (dbconnp)
    {

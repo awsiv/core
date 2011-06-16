@@ -3665,7 +3665,7 @@ int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t s
  bson query,field;
  mongo_cursor *cursor;
  bson_iterator it1,it2;
- int ok = false,i,start_slot,wrap_around;
+ int ok = false,i,start_slot,wrap_around, windowSlot;
  double *monArr = NULL;
   
  // query
@@ -3684,6 +3684,8 @@ int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t s
 /* Check from wrap around */
 
  start_slot = GetTimeSlot(start_time);
+
+ printf("start slot=%d, start_time=%s\n", start_slot, cf_ctime(&start_time));
 
 // Check that start + 4 hours is not greater than the week buffer
 
@@ -3752,7 +3754,12 @@ int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t s
 
           ok = true; // Have some relevant data
 
-          monArr[Nova_MagViewOffset(start_slot,i,wrap_around)] = bson_iterator_double(&it2);
+          // index 0 is 4 hrs ago, 71 is now (4 * 12 - 1)
+          windowSlot = Nova_MagViewOffset(start_slot,i,wrap_around);
+
+          printf("getting index %d <- %d\n", windowSlot, i);
+          
+          monArr[windowSlot] = bson_iterator_double(&it2);
           }
        
        }
@@ -3947,7 +3954,6 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date)
  bson qu,query,field;
  mongo_cursor *cursor;
  bson_iterator it1;
- char search_name[CF_MAXVARSIZE];
  int ok = false,slot,start_slot,wrap_around;
  double q,e,d;
   
@@ -3959,8 +3965,6 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date)
   
 /* BEGIN RESULT DOCUMENT */
 
- snprintf(search_name,CF_MAXVARSIZE-1,"%s",cfr_day);
-
  bson_buffer_init(&bb);
  bson_append_int(&bb,cfr_keyhash,1);
  bson_append_int(&bb,cfr_day,1);
@@ -3968,7 +3972,8 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date)
 
  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
  bson_destroy(&query);
-
+ bson_destroy(&field);
+ 
  while (mongo_cursor_next(cursor))  // loops over documents
     {
     bson_iterator_init(&it1,cursor->current.data);
@@ -3982,10 +3987,6 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date)
        }
     }
 
-// Now we should transform the data to re-order during wrap-around,
-// since at the boundary the data come in the wrong order
-
- bson_destroy(&field);
  mongo_cursor_destroy(cursor);
  return ok;
 }
