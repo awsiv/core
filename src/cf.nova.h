@@ -259,6 +259,7 @@ int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t 
 int Nova_StoreIncomingReports(char *reply,struct Item **reports,int current_report);
 void NewReportBook(struct Item **reports);
 void DeleteReportBook(struct Item **reports);
+
 void UnpackReportBook(char *id,char *ipaddr,char *hostname,struct Item **reports);
 void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *conn);
 
@@ -1132,13 +1133,7 @@ void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int
 /* Long-term monitoring constants */
 
 #define HOURS_PER_SHIFT 6
-
-#define SECONDS_PER_MINUTE 60
-#define SECONDS_PER_HOUR (60 * SECONDS_PER_MINUTE)
 #define SECONDS_PER_SHIFT (HOURS_PER_SHIFT * SECONDS_PER_HOUR)
-#define SECONDS_PER_DAY (24 * SECONDS_PER_HOUR)
-#define SECONDS_PER_WEEK (7 * SECONDS_PER_DAY)
-
 #define SHIFTS_PER_DAY 4
 
 #define SHIFTS_PER_WEEK (4*7)

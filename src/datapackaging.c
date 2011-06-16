@@ -536,23 +536,35 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
     }
 
  now = time(NULL);
- here_and_now = now - (time_t)(4 * CF_TICKS_PER_HOUR);
+ here_and_now = now - (time_t)(4 * SECONDS_PER_HOUR);
 
  strcpy(timekey,GenTimeKey(here_and_now));
  slot = GetTimeSlot(here_and_now);
 
-// if from > here_and_now just send the delta
+ printf("heretimekey is %s\n", timekey);
+ printf("hereslot is %d\n", slot);
+
+ // if from > here_and_now just send the delta
+
+ printf("from=%s,here=%s\n", cf_ctime(&from), cf_ctime(&here_and_now));
+ printf("now=%s\n", cf_ctime(&now));
 
  while (here_and_now < now)
     {
     nonzero = 0;   
     memset(&entry,0,sizeof(entry));
-   
+    printf("timekey=%s\n", timekey);
+
+    char buf1[CF_SMALLBUF], buf2[CF_SMALLBUF];
+
+    printf("here_and_now=%s,now=%s\n", cf_strtimestamp_local(here_and_now,buf1), cf_strtimestamp_local(now,buf2));
+
     if (from > here_and_now)
        {
        here_and_now += CF_MEASURE_INTERVAL;
        strcpy(timekey,GenTimeKey(here_and_now));
        slot++;
+       printf("current is too large! (here is %s)\n", cf_ctime(&here_and_now));
        continue;
        }
    
@@ -567,6 +579,7 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
           nonzero += entry.Q[i].var;
           nonzero += entry.Q[i].q;
           }
+       printf("read db!\n");
        }
    
     if(nonzero != 0)
@@ -1522,7 +1535,7 @@ void Nova_PackLastSeen(struct Item **reply,char *header,time_t from,enum cfd_men
   void *value;
   time_t tid = time(NULL);
   double now = (double)tid,average = 0, var = 0;
-  double ticksperhr = (double)CF_TICKS_PER_HOUR;
+  double ticksperhr = (double)SECONDS_PER_HOUR;
   char name[CF_BUFSIZE],hostkey[CF_BUFSIZE],buffer[CF_MAXTRANSSIZE];
   struct CfKeyHostSeen entry;
   int ksize,vsize,first = true;
@@ -1970,7 +1983,7 @@ void Nova_PackBundles(struct Item **reply,char *header,time_t from,enum cfd_menu
   int first = true,ksize,vsize;
   time_t tid = time(NULL);
   double now = (double)tid,average = 0, var = 0;
-  double ticksperhr = (double)CF_TICKS_PER_HOUR;
+  double ticksperhr = (double)SECONDS_PER_HOUR;
   CF_DB *dbp;
   CF_DBC *dbcp;
   char *key;
