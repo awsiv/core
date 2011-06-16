@@ -602,8 +602,8 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
 
 void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
-{ int its,i,j,slot = 0;
- double kept = 0, not_kept = 0, repaired = 0, nonzero;
+{ int its,i,j,slot;
+ double kept = 0, not_kept = 0, repaired = 0;
  struct Averages entry,det;
  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_MAXTRANSSIZE];
  struct Item *data = {0};
@@ -621,11 +621,11 @@ void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_me
     return;
     }
 
- its = 12; // 1 hour coarse graining resolution
+ its = 12; // 1 hour coarse graining resolution (12 5min slots)
 
  now = CF_MONDAY_MORNING;
 
- while (now < CF_MONDAY_MORNING + CF_WEEK)
+ for (slot = 0; now < CF_MONDAY_MORNING + CF_WEEK; slot++)
     {
     memset(&entry,0,sizeof(entry));
 
@@ -644,38 +644,31 @@ void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_me
           }
 
        now += CF_MEASURE_INTERVAL;
-       slot++;
        }
 
     for (i = 0; i < CF_OBSERVABLES; i++)
        {
-       nonzero = 0;
-      
        if (entry.Q[i].q > entry.Q[i].expect + 2.0*sqrt(entry.Q[i].var))
           {
           not_kept++;
-          nonzero++;
           continue;
           }
 
        if (entry.Q[i].q > entry.Q[i].expect + sqrt(entry.Q[i].var))
           {
           repaired++;
-          nonzero++;
           continue;
           }
 
        if (entry.Q[i].q < entry.Q[i].expect - 2.0*sqrt(entry.Q[i].var))
           {
           not_kept++;
-          nonzero++;
           continue;
           }
 
        if (entry.Q[i].q < entry.Q[i].expect - sqrt(entry.Q[i].var))
           {
           repaired++;
-          nonzero++;
           continue;
           }
 
@@ -686,13 +679,12 @@ void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_me
        {
        if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
           {
-          // Slot starts at 1 due to coarse graining loop
-          snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf", (slot/12) - 1, entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
+          snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf", slot, entry.Q[i].q,entry.Q[i].expect, sqrt(entry.Q[i].var));
           PrependItem(&data, buffer, NULL);
           data->counter = i;  // OBS index - sorted on later
           }
        }
-     
+    
     }
 
  CloseDB(dbp);
