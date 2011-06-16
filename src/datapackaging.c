@@ -519,7 +519,7 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
 { int i,slot;
  struct Averages entry,det;
  time_t now,here_and_now;
- double nonzero;
+ double havedata;
  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_MAXTRANSSIZE];
  struct Item *data = {0};
  CF_DB *dbp;
@@ -536,35 +536,23 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
     }
 
  now = time(NULL);
- here_and_now = now - (time_t)(4 * SECONDS_PER_HOUR);
+ here_and_now = from;  // could be a lot of data...
 
  strcpy(timekey,GenTimeKey(here_and_now));
  slot = GetTimeSlot(here_and_now);
 
- printf("heretimekey is %s\n", timekey);
- printf("hereslot is %d\n", slot);
-
- // if from > here_and_now just send the delta
-
- printf("from=%s,here=%s\n", cf_ctime(&from), cf_ctime(&here_and_now));
- printf("now=%s\n", cf_ctime(&now));
-
  while (here_and_now < now)
     {
-    nonzero = 0;   
+    havedata = 0;   
     memset(&entry,0,sizeof(entry));
-    printf("timekey=%s\n", timekey);
-
-    char buf1[CF_SMALLBUF], buf2[CF_SMALLBUF];
-
-    printf("here_and_now=%s,now=%s\n", cf_strtimestamp_local(here_and_now,buf1), cf_strtimestamp_local(now,buf2));
+    
+    Debug("timekey=%s\n", timekey);
 
     if (from > here_and_now)
        {
        here_and_now += CF_MEASURE_INTERVAL;
        strcpy(timekey,GenTimeKey(here_and_now));
-       slot++;
-       printf("current is too large! (here is %s)\n", cf_ctime(&here_and_now));
+       slot = (slot + 1) % CF_MAG_SLOTS;
        continue;
        }
    
@@ -575,14 +563,13 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
           entry.Q[i].expect += det.Q[i].expect;
           entry.Q[i].var += det.Q[i].var;
           entry.Q[i].q += det.Q[i].q;
-          nonzero += entry.Q[i].expect;
-          nonzero += entry.Q[i].var;
-          nonzero += entry.Q[i].q;
+          havedata += entry.Q[i].expect;
+          havedata += entry.Q[i].var;
+          havedata += entry.Q[i].q;
           }
-       printf("read db!\n");
        }
    
-    if(nonzero != 0)
+    if(havedata != 0)
        {
        for (i = 0; i < CF_OBSERVABLES; i++)
           {
@@ -597,7 +584,7 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
    
     here_and_now += CF_MEASURE_INTERVAL;
     strcpy(timekey,GenTimeKey(here_and_now));
-    slot++;
+    slot = (slot + 1) % CF_MAG_SLOTS;
     }
 
  CloseDB(dbp);
