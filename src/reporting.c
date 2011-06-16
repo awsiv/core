@@ -2219,6 +2219,12 @@ int Nova_ExportReports(char *reportName)
  char filePath[CF_MAXVARSIZE];
  FILE *fout;
 
+ if (LICENSES == 0)
+   {
+   CfOut(cf_error,""," !! The license has expired");
+   return;
+   }
+
  reportType = String2Menu(reportName);
 
  switch(reportType)
@@ -2278,6 +2284,12 @@ int Nova_ImportHostReports(char *filePath)
  long length;
  int currReport = -1;
  FILE *fin;
+ 
+if (LICENSES == 0)
+   {
+   CfOut(cf_error,""," !! The license has expired");
+   return;
+   }
 
  if ((fin = fopen(filePath,"r")) == NULL)
     {
