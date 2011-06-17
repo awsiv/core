@@ -307,19 +307,18 @@ bool Nova2PHP_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, 
     return false;
     }
 
- strcpy(buffer,"[");
- 
  haveData = Nova_ReadWeekTimeSeries2(&dbconn, &cfv, keyHash, vitalId);
 
  CFDB_Close(&dbconn);
+
+ strcpy(buffer,"[");
  
 if (haveData)
    {
    for (i = 0; i < CF_TIMESERIESDATA; i++)
       {
-      snprintf(work,sizeof(work)," [%d,%lf,%lf,%lf]",i, cfv.data_q[i], cfv.data_E[i],cfv.bars[i]);
+      snprintf(work,sizeof(work)," [%d,%lf,%lf,%lf],",i, cfv.data_q[i], cfv.data_E[i],cfv.bars[i]);
       Join(buffer, work, bufsize);
-      Join(buffer, ",", bufsize);
       }
    }
 
@@ -345,19 +344,55 @@ bool Nova2PHP_vitals_view_week(char *keyHash, char *vitalId, char *buffer, int b
     return false;
     }
 
- strcpy(buffer,"[");
- 
  haveData = Nova_ReadMagTimeSeries2(&dbconn, &cfv, keyHash, vitalId);
 
  CFDB_Close(&dbconn);
+ 
+ strcpy(buffer,"[");
  
 if (haveData)
    {
    for (i = 0; i < CF_MAGDATA; i++)
       {
-      snprintf(work,sizeof(work)," [%d,%lf,%lf,%lf]",i, cfv.data_q[i], cfv.data_E[i],cfv.bars[i]);
+      snprintf(work,sizeof(work)," [%d,%lf,%lf,%lf],",i, cfv.data_q[i], cfv.data_E[i],cfv.bars[i]);
       Join(buffer, work, bufsize);
-      Join(buffer, ",", bufsize);
+      }
+   }
+
+ReplaceTrailingChar(buffer, ',', '\0');
+Join(buffer,"]",bufsize);
+
+return haveData;
+}
+
+/*****************************************************************************/
+
+bool Nova2PHP_vitals_view_histogram(char *keyHash, char *vitalId, char *buffer, int bufsize)
+{
+ mongo_connection dbconn;
+ struct CfDataView cfv = {0};
+ char work[CF_MAXVARSIZE];
+ bool haveData = false;
+ int i;
+ 
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+ 
+ haveData = Nova_ReadHistogram2(&dbconn, &cfv, keyHash, vitalId);
+
+ CFDB_Close(&dbconn);
+
+ strcpy(buffer,"[");
+
+if (haveData)
+   {
+   for (i = 0; i < CF_GRAINS; i++)
+      {
+      snprintf(work,sizeof(work)," [%d,%d],", i, (int)round(cfv.data_E[i]));
+      Join(buffer, work, bufsize);
       }
    }
 

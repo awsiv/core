@@ -22,7 +22,8 @@
 bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_week(char *keyHash, char *vitalId, char *buffer, int bufsize);
-
+bool Nova2PHP_vitals_view_histogram(char *keyHash, char *vitalId, char *buffer, int bufsize);
+    
 char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize);
 int Nova2PHP_get_observable_id(char *name);
 void Nova2PHP_get_magnified_view(char *keyhash,enum observables obs,char *buffer,int bufsize);

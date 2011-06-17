@@ -284,36 +284,7 @@ if (dbconn)
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   sp = ip->name;
-   
-   sscanf(ip->name,"%d",&i);
-   
-   while (*(++sp) != ':')
-      {
-      }
-
-   sp++;
-   
-   Debug(" - Observable %d: ",i);
-       
-   for (k = 0; k < CF_GRAINS; k++)
-      {
-      sscanf(sp,"%lf",&(weekly[i][k]));
-      
-      while (*(++sp) != ':')
-         {
-         }
-
-      if (weekly[i][k] < 0)
-         {
-         weekly[i][k] = 1;
-         }
-
-      sp++;
-      Debug("%lf,",weekly[i][k]);
-      }
-   
-   Debug("\n");
+   Debug("Hist-obs %s\n",ip->name);
    }
 }
 

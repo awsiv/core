@@ -39,24 +39,76 @@ return true;
 /**********************************************************************/
 
 int Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs)
-
+/* DEPRECATED */
 { double ry;
  int i,have_data = false;
   mongo_connection dbconn;
   double histo[CF_GRAINS];
 
+  CfOut(cf_error, "", "!! Nova_ReadHistogram: DEPRECATED");
+  return false;
+  
 if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
-CFDB_QueryHistogram(&dbconn,hostkey,obs,histo);
+//CFDB_QueryHistogram(&dbconn,hostkey,obs,histo);
 
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
    } 
+
+cfv->max = 0;
+cfv->min = 99999;
+cfv->error_scale = 0;      
+
+for (i = 0; i < CF_GRAINS; i++)
+   {
+   ry = histo[i];
+
+   if (ry > 1)
+      {
+      have_data = true;
+      }
+   
+   if (ry > cfv->max)
+      {
+      cfv->max = ry;
+      }
+
+   if (ry < cfv->min)
+      {
+      cfv->min = ry;
+      }
+
+   cfv->data_E[i] = ry;
+   }
+
+if (cfv->max == cfv->min)
+   {
+   have_data = false;
+   }
+
+if (cfv->max > CF_MAX_LIMIT)
+   {
+   cfv->max = CF_MAX_LIMIT;
+   }
+
+return have_data;
+}
+
+/*******************************************************************/
+
+int Nova_ReadHistogram2(mongo_connection *conn, struct CfDataView *cfv,char *hostkey,char *monId)
+
+{ double ry;
+ int i,have_data = false;
+  double histo[CF_GRAINS];
+
+CFDB_QueryHistogram(conn,hostkey,monId,histo);
 
 cfv->max = 0;
 cfv->min = 99999;

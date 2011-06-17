@@ -3778,7 +3778,7 @@ int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t s
           // index 0 is 4 hrs ago, 71 is now (4 * 12 - 1)
           windowSlot = Nova_MagViewOffset(start_slot,i,wrap_around);
 
-          printf("getting index %d <- %d\n", windowSlot, i);
+          //printf("getting index %d <- %d\n", windowSlot, i); 
           
           monArr[windowSlot] = bson_iterator_double(&it2);
           }
@@ -4194,40 +4194,34 @@ int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs
 
 /*****************************************************************************/
 
-int CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,enum observables obs,double *histo)
+bool CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,char *monId,double *histo)
 
-{ bson_buffer b,bb,*sub1,*sub2,*sub3;
- bson qu,query,field;
+{ bson_buffer bb;
+ bson query,field;
  mongo_cursor *cursor;
- bson_iterator it1,it2,it3;
- char search_name[CF_MAXVARSIZE];
- double q,e,d;
- int ok = false;
- time_t start_time = CF_MONDAY_MORNING;
+ bson_iterator it1,it2;
+ bool found = false;
   
 /* BEGIN query document */
 
- bson_buffer_init(&b);
- bson_append_string(&b,cfr_keyhash,keyhash);
- bson_from_buffer(&query,&b);
+ bson_buffer_init(&bb);
+ bson_append_string(&bb,cfr_keyhash,keyhash);
+ bson_append_string(&bb,cfm_id,monId);
+ bson_from_buffer(&query,&bb);
   
 /* BEGIN RESULT DOCUMENT */
 
- snprintf(search_name,CF_MAXVARSIZE-1,"%s%d",cfr_histo,obs);
-
  bson_buffer_init(&bb);
- bson_append_int(&bb,cfr_keyhash,1);
- bson_append_int(&bb,cfr_ip_array,1);
- bson_append_int(&bb,cfr_host_array,1);
- bson_append_int(&bb,search_name,1);
+ bson_append_int(&bb,cfr_histo,1);
  bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
- cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+ cursor = mongo_find(conn,MONGO_DATABASE_MON_MG,&query,&field,0,0,0);
  bson_destroy(&query);
+ bson_destroy(&field);
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ if (mongo_cursor_next(cursor))  // only one doc
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -4235,23 +4229,29 @@ int CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,enum observables ob
        {
        /* Query specific search/marshalling */
 
-       if (strcmp(bson_iterator_key(&it1),search_name) == 0)
+       if (strcmp(bson_iterator_key(&it1),cfr_histo) == 0)
           {
           int st = 0, index = 0;
           bson_iterator_init(&it2,bson_iterator_value(&it1));
 
           while (bson_iterator_next(&it2))
              {
+             if(index >= CF_GRAINS)
+                {
+                CfOut(cf_error, "", "!! Index %d out of bounds when querying histograms", index);
+                break;
+                }
+             
              histo[index] = bson_iterator_double(&it2);
              index++;
+             found = true;
              }
           }
        }
     }
 
- bson_destroy(&field);
  mongo_cursor_destroy(cursor);
- return ok;
+ return found;
 }
 
 /*****************************************************************************/

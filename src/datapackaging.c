@@ -625,11 +625,11 @@ void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_me
 
  now = CF_MONDAY_MORNING;
 
- for (slot = 0; now < CF_MONDAY_MORNING + CF_WEEK; slot++)
+ for (slot = 0; now < CF_MONDAY_MORNING + CF_WEEK; slot++)  // one-hour slots
     {
     memset(&entry,0,sizeof(entry));
 
-    for (j = 0; j < its; j++)
+    for (j = 0; j < its; j++)  // average into one-hour slots
        {
        strcpy(timekey,GenTimeKey(now));
 
@@ -759,8 +759,6 @@ for (i = 0; i < MONITORING_HISTORY_LENGTH_WEEKS; ++i)
    if (have_data)
       {
       char buffer[CF_MAXTRANSSIZE];
-      snprintf(buffer, sizeof(buffer), "T: %d\n", i);
-      AppendItem(reply, buffer, NULL);
 
       for (k = 0; k < CF_OBSERVABLES; ++k)
          {
@@ -798,7 +796,7 @@ void Nova_FormatMonitoringReply(struct Item **datap, struct Item **reply, enum c
  for(ip = *datap; ip != NULL; ip = ip->next)
     {
     int slot = ip->counter;
-    if (!NovaHasSlot(slot))
+    if (!NovaHasSlot(slot) && slot != 65)
        {
        continue;
        }
@@ -813,9 +811,10 @@ void Nova_FormatMonitoringReply(struct Item **datap, struct Item **reply, enum c
           const char *name = NovaGetSlotName(slot);
           const char *desc = NovaGetSlotDescription(slot);
           const char *units = NovaGetSlotUnits(slot);
-
+          
           snprintf(buffer, sizeof(buffer), "M:%s,%d,%d,%d,%s,%s",
                    name, consolidable, exp_min, exp_max, units, desc);
+
           }
        else
           {
@@ -838,23 +837,13 @@ void Nova_PackMonitorHist(struct Item **reply,char *header,time_t from,enum cfd_
   int ok[CF_OBSERVABLES];
   char filename[CF_BUFSIZE];
   char buffer[CF_MAXTRANSSIZE],val[CF_SMALLBUF];
-  double weekly[CF_OBSERVABLES][CF_GRAINS];
-  double histogram[CF_OBSERVABLES][7][CF_GRAINS],smoothhistogram[CF_OBSERVABLES][7][CF_GRAINS];
+  double weekly[CF_OBSERVABLES][CF_GRAINS] = {0};
+  double histogram[CF_OBSERVABLES][7][CF_GRAINS] = {0};
+  double smoothhistogram[CF_OBSERVABLES][7][CF_GRAINS] = {0};
   FILE *fp;
 
 CfOut(cf_verbose,""," -> Packing histograms");
   
-for (i = 0; i < 7; i++)
-   {
-   for (j = 0; j < CF_OBSERVABLES; j++)
-      {
-      for (k = 0; k < CF_GRAINS; k++)
-         {
-         histogram[j][i][k] = 0;
-         }
-      }
-    }
-
 snprintf(filename,CF_BUFSIZE,"%s/state/histograms",CFWORKDIR);
 
 if ((fp = fopen(filename,"r")) == NULL)
@@ -871,10 +860,13 @@ for (position = 0; position < CF_GRAINS; position++)
       {
       for (day = 0; day < 7; day++)
          {
-         fscanf(fp,"%lf ",&(histogram[i][day][position]));
+         if(fscanf(fp,"%lf ",&(histogram[i][day][position])) != 1)
+            {
+            CfOut(cf_verbose, "", "!! Could not load histogram data for i=%d,day=%d,position=%d\n",
+                  i, day, position);
+            histogram[i][day][position] = 0;
+            }
          }
-
-      weekly[i][position] = 0;
       }
    }
 
@@ -920,14 +912,21 @@ for (i = 0; i < CF_OBSERVABLES; i++)
    {
    if (ok[i])
       {
-      snprintf(buffer,sizeof(buffer),"%d:",i);
+      if(!NovaHasSlot(i))
+         {
+         Debug("Could not find slot %d when packing monitoring histograms - skipping", i);
+         continue;
+         }
+      
+      snprintf(buffer,sizeof(buffer),"%s,", NovaGetSlotName(i));
       
       for (k = 0; k < CF_GRAINS; k++)
          {      
-         snprintf(val,CF_SMALLBUF,"%.0lf:",weekly[i][k]);
+         snprintf(val,CF_SMALLBUF,"%d,", (int)round(weekly[i][k]));
          Join(buffer,val,sizeof(buffer));
          }
-
+      ReplaceTrailingChar(buffer, ',', '\0');
+      
       AppendItem(reply,buffer,NULL);
       }
    }

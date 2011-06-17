@@ -386,7 +386,7 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
        monDesc[0] = '\0';
        haveAllMeta = false;
        
-       if(sscanf(ip->name+2,"%64[^,],%lf,%lf,%d,%32[^,],%128[^\n]",
+       if(sscanf(ip->name+2,"%64[^,],%d,%lf,%lf,%32[^,],%128[^\n]",
                  monId, &monGlobal, &monExpMin, &monExpMax, monUnits, monDesc) == 6)
           {
           haveAllMeta = true;
@@ -535,41 +535,46 @@ void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *keyhash, struct It
   bson_buffer *arr;
   bson host_key;  // host description
   bson setOp;
-  char arrName[64], kStr[32];
+  char monId[128], kStr[32];
   struct Item *ip;
   int i,k;
   double currHist;
   char *sp;
-
-// find right host
-bson_buffer_init(&bb);
-bson_append_string(&bb, cfr_keyhash, keyhash);
-bson_from_buffer(&host_key, &bb);
-
-bson_buffer_init(&bb);
-
-setObj = bson_append_start_object(&bb, "$set");
   
-for (ip = data; ip != NULL; ip=ip->next)
+for (ip = data; ip != NULL; ip=ip->next)  // each line is a monitoring histogram array
    {
+   
+   if(sscanf(ip->name, "%127[^,]", monId) != 1)
+      {
+      CfOut(cf_error, "", "!! Could not find monitoring id when saving histograms");
+      continue;
+      }
+   
+   // find right host and monitoring id
+   bson_buffer_init(&bb);
+   bson_append_string(&bb, cfr_keyhash, keyhash);
+   bson_append_string(&bb, cfm_id, monId);
+   bson_from_buffer(&host_key, &bb);
+
+   
+   bson_buffer_init(&bb);
+   setObj = bson_append_start_object(&bb, "$set");
+   
    sp = ip->name;
    
-   sscanf(ip->name,"%d",&i);
-   
-   while (*(++sp) != ':')
+   while (*(++sp) != ',')
       {
       }
 
    sp++;
 
-   snprintf(arrName, sizeof(arrName), "%s%d", cfr_histo, i);
-   arr = bson_append_start_array(setObj , arrName);
+   arr = bson_append_start_array(setObj , cfr_histo);
    
    for (k = 0; k < CF_GRAINS; k++)
       {
       sscanf(sp,"%lf",&currHist);
       
-      while (*(++sp) != ':')
+      while (*(++sp) != ',')
          {
          }
 
@@ -584,16 +589,16 @@ for (ip = data; ip != NULL; ip=ip->next)
       }
 
    bson_append_finish_object(arr);
+   bson_append_finish_object(setObj);
+   bson_from_buffer(&setOp,&bb);
+   
+   mongo_update(conn,MONGO_DATABASE_MON_MG,&host_key,&setOp,MONGO_UPDATE_UPSERT);
+   MongoCheckForError(conn,"SaveMonitorHistograms",keyhash,NULL);
+
+   bson_destroy(&setOp);
+   bson_destroy(&host_key);
    }
-
-bson_append_finish_object(setObj);
-
-bson_from_buffer(&setOp,&bb);
-mongo_update(conn,MONGO_DATABASE,&host_key,&setOp,MONGO_UPDATE_UPSERT);
-MongoCheckForError(conn,"SaveMonitorHistograms",keyhash,NULL);
  
-bson_destroy(&setOp);
-bson_destroy(&host_key);
 }
 
 /*****************************************************************************/

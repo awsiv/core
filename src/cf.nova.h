@@ -342,7 +342,7 @@ int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t s
 int CFDB_QueryWeekView2(mongo_connection *conn,char *keyhash,char *monId,double *qa,double *ea,double *da);
 int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
 int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
-int CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,enum observables obs,double *histo);
+bool CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,char *monId,double *histo);
 int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date);
 
 struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char *file, int lineNo);
@@ -535,6 +535,7 @@ int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,
 
 int Nova_ViewHisto(char *keyhash,enum observables obs,char *buffer,int bufsize);
 int Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs);
+int Nova_ReadHistogram2(mongo_connection *conn, struct CfDataView *cfv,char *hostkey,char *monId);
 void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
 void Nova_PlotHistogram(struct CfDataView *cfv,char *buffer,int bufsize);
 struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observables obs);
