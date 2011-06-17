@@ -139,7 +139,7 @@ text-shadow:none;
 
 <body>
 <h1 class="logo">
- Cfengine
+ CFEngine
   <span class="grey">Nova</span>
 </h1>
 <div id="login" class="grey">

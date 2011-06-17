@@ -7,7 +7,7 @@
 				$free = cfpr_get_variable($hostkey,"mon","av_diskfree");
 				$speed = cfpr_get_network_rate($hostkey);
 			  ?>
-<div id="hostview" class="outerdiv">
+<div id="hostview" class="outerdiv grid_12">
     <div class="innerdiv">
 			<?php $report = cfpr_summarize_notkept($hostkey,NULL,NULL,NULL,NULL);?>
               <p class="title">Promises not kept in the past week</p>
@@ -48,11 +48,25 @@
          <p class="title">Monitored jobs</p>
                 <?php
                 $number = cfpr_get_class_frequency(NULL,"mXC.*");
+                $count=0;
                 $nlist =json_decode(cfpr_report_class_frequency($hostkey,"mXC.*"),true) ;
-                echo cfpr_report_class_frequency($hostkey,"mXC.*");
+               
+              //  echo cfpr_report_class_frequency($hostkey,"mXC.*");
                 ?>
                 <p>Total number under surveillance:<?php echo $number?><p>
-                <p>On this host: <?php echo $nlist['count']?></p> <!--proble, with varaibale nlist-->
+                <p>On this host: <?php
+                foreach($nlist as $list)
+                {
+                   if($list['count']>0)
+                   {
+                   echo "<p>".$list['name'].":".$list['count']."</p>";
+                   }
+                   else
+                   {
+                       echo $count;
+                       break;
+                   }
+                }?></p> <!--proble, with varaibale nlist-->
        </div>
 
          <div id="statusmeasured" class="innerdiv ">

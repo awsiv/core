@@ -255,36 +255,19 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'engineering', $data);
     }
 
-    /*function helm() {
-        $bc = array(
-            'title' => 'Configure',
-            'url' => 'welcome/helm',
-            'isRoot' => false
-        );
-        $this->breadcrumb->setBreadCrumb($bc);
-        $data = array(
-            'title' => "Cfengine Mission Portal - control",
-            'title_header' => "control",
-            'nav_text' => "Planning : menu",
-            'planning' => "current",
-            'breadcrumbs' => $this->breadcrumblist->display()
-        );
-        $this->template->load('template', 'helm', $data);
-    }*/
-    function workingNotes()
-    {
+    function workingNotes() {
         $this->load->library('userdata');
         $data = array(
             'title' => "Cfengine Mission Portal - planning",
             'breadcrumbs' => $this->breadcrumblist->display(),
             'users' => getonlineusernames(),
-            'table' => $this->userdata->get_personal_working_notes('',9999)
+            'table' => $this->userdata->get_personal_working_notes('', 9999)
         );
         $this->template->load('template', 'notes/view_working_on_notes', $data);
     }
 
     function planning() {
-        
+
         $bc = array(
             'title' => 'Planning',
             'url' => 'welcome/planning',
@@ -294,7 +277,7 @@ class Welcome extends Cf_Controller {
         $this->load->library('userdata');
         $requiredjs = array(
             array('widgets/notes.js'),
-            array('jquery.jcryption-1.1.min.js'),            
+            array('jquery.jcryption-1.1.min.js'),
             array('jquery.autogrowtextarea.js')
         );
         $this->carabiner->js($requiredjs);
@@ -304,7 +287,7 @@ class Welcome extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display(),
             'users' => getonlineusernames(),
             'working_notes' => $this->userdata->get_personal_working_notes(),
-             'goals' => json_decode(cfpr_list_business_goals())
+            'goals' => json_decode(cfpr_list_business_goals())
         );
         $this->template->load('template', 'planning', $data);
     }
@@ -346,7 +329,7 @@ class Welcome extends Cf_Controller {
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
-         $this->carabiner->js('jquery.qtip-1.0.min.js');
+        $this->carabiner->js('jquery.qtip-1.0.min.js');
 
         $data = array(
             'type' => $type,
@@ -401,10 +384,7 @@ class Welcome extends Cf_Controller {
 
         $data = array(
             'hostkey' => $hostkey,
-            //'title_header' => "host " . $hostname,
             'title' => "Cfengine Mission Portal - host " . $ipaddr,
-            //'nav_text' => "Status : host",
-            //'status' => "current",
             'hostname' => $hostname,
             'ipaddr' => $ipaddr,
             'is_commented' => $is_commented,
@@ -486,7 +466,7 @@ class Welcome extends Cf_Controller {
     }
 
     function license() {
-         $bc = array(
+        $bc = array(
             'title' => 'License',
             'url' => 'welcome/license',
             'isRoot' => false
@@ -532,20 +512,20 @@ class Welcome extends Cf_Controller {
     }
 
     function body() {
-        
-         
-        
+
+
+
         $this->carabiner->css('tabs-custom.css');
         $getparams = $this->uri->uri_to_assoc(3);
         $body = isset($getparams['body']) ? $getparams['body'] : $this->input->post('search');
         $type = isset($getparams['type']) ? $getparams['type'] : $this->input->post('type');
-        
-        
-        
+
+
+
         $this->load->library('cf_table');
-        
-        
-        
+
+
+
         $data = array(
             'title_header' => "body " . $body,
             'title' => "Cfengine Mission Portal - classes ",
@@ -554,7 +534,7 @@ class Welcome extends Cf_Controller {
             'allbodies' => json_decode(utf8_encode(cfpr_list_bodies(".*", $type)), TRUE),
             'def' => json_decode(utf8_encode(cfpr_get_promise_body($body, $type)), TRUE),
             'type' => $type,
-             'breadcrumbs' => $this->breadcrumblist->display()
+            'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'body', $data);
     }

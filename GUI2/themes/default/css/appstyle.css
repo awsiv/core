@@ -2066,6 +2066,12 @@ table th[scope=yellow]
     display:inline-block;
     max-width: 400px;
 }
+
+#infoMessage
+{
+    padding:5px 10px;
+}
+
 .info, .success, .warning, .error, .validation {
 border: 1px solid;
 margin: 10px 0px;
@@ -2083,11 +2089,14 @@ color: #4F8A10;
 background-color: #DFF2BF;
 background-image:url(../images/success.png);
 }
+
 .warning {
 color: #9F6000;
 background-color: #FEEFB3;
 background-image: url('warning.png');
 }
+
+
 .error {
 color: #D8000C;
 background-color: #FFBABA;

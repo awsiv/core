@@ -35,6 +35,7 @@ final class BreadCrumbList{
 				$this->reset();
 			}
 			if(!in_array($bc, $this->breadCrumbs)){
+                               
 				$this->breadCrumbs[] = $bc;
 				$_SESSION['breadCrumbList']=$this->breadCrumbs;
 			}else{
