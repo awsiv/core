@@ -205,7 +205,7 @@ bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,cha
   mongo_connection dbconn;
   double q[CF_TIMESERIESDATA],e[CF_TIMESERIESDATA],d[CF_TIMESERIESDATA];
 
-CFDB_QueryWeekView2(conn,keyhash,vitalId,q,e,d);
+  CFDB_QueryMonView(conn, keyhash, vitalId, mon_rep_week, q, e, d);
 
 cfv->over = 0;
 cfv->under = 0;

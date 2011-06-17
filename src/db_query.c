@@ -3813,7 +3813,7 @@ int Nova_MagViewOffset(int start_slot,int db_slot,int wrap)
 
 /*****************************************************************************/
 
-int CFDB_QueryWeekView2(mongo_connection *conn,char *keyhash,char *monId,double *qa,double *ea,double *da)
+int CFDB_QueryMonView(mongo_connection *conn, char *keyhash,char *monId, enum monitord_rep rep_type,double *qa,double *ea,double *da)
 
 { bson_buffer bb;
  bson query,field;
@@ -3821,11 +3821,29 @@ int CFDB_QueryWeekView2(mongo_connection *conn,char *keyhash,char *monId,double 
  bson_iterator it1,it2,it3;
  double *monArr = NULL;
  int ok = false;
+ char *db;
+ int numSlots = 0;
  int i;
+
+ switch(rep_type)
+    {  // mag handled by separate function
+    case mon_rep_week:
+        db = MONGO_DATABASE_MON_WK;
+        numSlots = CF_TIMESERIESDATA;  // every hour
+        break;
+    case mon_rep_yr:
+        db = MONGO_DATABASE_MON_YR;
+        numSlots = CF_YEAR_SLOTS;  // every week
+        break;
+    default:
+        CfOut(cf_error, "", "!! Undefined monitord type in query (%d)", rep_type);
+        FatalError("Software error");
+    }
+ 
 
 // Initialize as there might be missing values
 
- for (i = 0; i < CF_TIMESERIESDATA; i++)
+ for (i = 0; i < numSlots; i++)
     {
     qa[i] = -1;
     ea[i] = 0;
@@ -3845,7 +3863,7 @@ int CFDB_QueryWeekView2(mongo_connection *conn,char *keyhash,char *monId,double 
  bson_append_int(&bb, cfm_deviance_arr, 1);
  bson_from_buffer(&field, &bb);
  
- cursor = mongo_find(conn,MONGO_DATABASE_MON_WK,&query,&field,0,0,0);
+ cursor = mongo_find(conn, db, &query, &field, 0, 0, 0);
  bson_destroy(&query);
  bson_destroy(&field);
  
@@ -3878,6 +3896,12 @@ int CFDB_QueryWeekView2(mongo_connection *conn,char *keyhash,char *monId,double 
 
        for (i = 0; bson_iterator_next(&it2); i++)  // array elements
           {
+          if(i >= numSlots)
+             {
+             CfOut(cf_error, "", "!! Index %d out of bounds when querying monitoring data", i);
+             break;
+             }
+          
           ok = true; // Have some relevant data
 
           monArr[i] = bson_iterator_double(&it2);
@@ -4095,89 +4119,6 @@ int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs
              // Slot starts at 1 due to coarse graining loop
             
              index = st/12 - 1;
-
-             qa[index] = q;
-             ea[index] = e;
-             da[index] = d;
-             }
-          }
-       }
-    }
-
- bson_destroy(&field);
- mongo_cursor_destroy(cursor);
- return ok;
-}
-
-/*****************************************************************************/
-
-int CFDB_QueryYearView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da)
-
-{ bson_buffer b,bb,*sub1,*sub2,*sub3;
- bson qu,query,field;
- mongo_cursor *cursor;
- bson_iterator it1,it2,it3;
- double q,e,d;
- int ok = false;
-  
-/* BEGIN query document */
-
- bson_buffer_init(&b);
- bson_append_string(&b,cfr_keyhash,keyhash);
- bson_append_int(&b,cfm_yearobs,obs);
- bson_from_buffer(&query,&b);
-  
-/* BEGIN RESULT DOCUMENT */
- bson_buffer_init(&bb);
- bson_append_int(&bb,cfm_data,1);
- bson_from_buffer(&field, &bb);
-
-/* BEGIN SEARCH */
-
- cursor = mongo_find(conn,MONGO_DATABASE_MON,&query,&field,0,0,0);
- bson_destroy(&query);
-
- while (mongo_cursor_next(cursor))  // loops over documents
-    {
-    bson_iterator_init(&it1,cursor->current.data);
-   
-    while (bson_iterator_next(&it1))
-       {
-       /* Query specific search/marshalling */
-
-       if (strcmp(bson_iterator_key(&it1),cfm_data) == 0)
-          {
-          int st = 0, index = 0;
-          bson_iterator_init(&it2,bson_iterator_value(&it1));
-
-          while (bson_iterator_next(&it2))
-             {
-             bson_iterator_init(&it3,bson_iterator_value(&it2));
-             sscanf(bson_iterator_key(&it3),"%d",&st);
-
-             // Select the past 4 hours
-            
-             q = e = d = 0;
-
-             while (bson_iterator_next(&it3))
-                {
-                if (strcmp(bson_iterator_key(&it3),cfr_obs_q) == 0)
-                   {
-                   q = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
-                   {
-                   e = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
-                   {
-                   d = bson_iterator_double(&it3);
-                   }
-                }
-
-             // Store 
-            
-             index = st;
 
              qa[index] = q;
              ea[index] = e;
