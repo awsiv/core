@@ -1364,7 +1364,7 @@ span.search input
     padding-left:10px;
     color:#3d453a;
     vertical-align: middle;
-    overflow:auto;
+    overflow:hidden;
     max-width: 600px;
     white-space: pre-wrap; /* css-3 */
     white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
@@ -2205,3 +2205,7 @@ ul.admin_menu li.current a{
    color:#fff;
 }
 
+.tables .minus
+{
+   color:#FF475B;
+}

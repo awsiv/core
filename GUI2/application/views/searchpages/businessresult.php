@@ -16,38 +16,7 @@
             if (count($result['data']) > 0) {
                 echo $this->cf_table->generateReportTable($result, $report_title);
                 $pg = paging($current, $number_of_rows, $result['meta']['count'], 10);
-            ?>
-                <div class="Paging">
-                <div class="pages">
-                    <div class="inside">
-                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['first']) ?>" title="Go to First Page" class="first"><span>First</span></a>
-                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['prev']) ?>" title="Go to Previous Page" class="prev"><span><</span></a>
-
-                        <?
-                        for ($i = $pg['start']; $i <= $pg['end']; $i++) {
-                            if ($i == $pg['page'])
-                                $current = 'current'; else
-                                $current="";
-                        ?>
-
-                            <a href="<?= site_url("search/index/" . $params . "rows/$number_of_rows/page/$i") ?>" title="Go to Page <?= $i ?>" class="page <?= $current ?>"><span><?= $i ?></span></a>
-
-                        <? } ?>
-
-                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['next']) ?>" title="Go to Next Page" class="next"><span>></span></a>
-                        <a href="<?= site_url('search/index/' . $params . 'page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>Last</span></a>
-                    </div>
-                </div>
-                <div>
-                    <?php
-                    echo form_open('search/index/' . $params);
-                    echo form_input('rows', $number_of_rows);
-                    echo "Rows/Page";
-                    echo form_close();
-                    ?>
-                </div>
-            </div>
-            <?php
+                include 'paging_footer.php';
                     }
                     else {
                         echo"<table><tr><td>" . $this->lang->line("no_data") . "</td></tr></table>";
@@ -82,24 +51,6 @@
                 $('.tables table').tableFilter();
                 $('.tables table').tablesorter({widgets: ['zebra']});
 
-                $('#advsearch').click(function(event){
-                    event.preventDefault();
-                    $('#filterdialog').load('/search/index', {'report':'<?php echo $report_title ?>'}, function() {
-                var $dialog=$(this);
-                var $closebtn=$("<a class='ui-panel-close'><span class='ui-icon ui-icon-closethick'></span></a>");
-                $(this).slideDown('slow');
-                $(this).find('.panelhead').append($closebtn);
-                $closebtn.hover(function () {
-                    $(this).addClass("ui-state-hover");
-                },
-                function () {
-                    $(this).removeClass("ui-state-hover");
-                });
-                $closebtn.click(function(){
-                    $dialog.fadeOut();
-                });
-            });
-        });
 
      $('#findhost').hostfinder({
            'defaultbehaviour':false,

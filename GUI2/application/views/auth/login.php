@@ -126,6 +126,14 @@ background: -o-linear-gradient(90deg, #EEE, #FFFFFF) repeat scroll 0 0 transpare
 border-color: #333;
 text-decoration: none;
 }
+
+.error{
+color: #D8000C;
+background-color: #FFBABA;
+padding:5px 10px;
+border:solid 1px;
+text-shadow:none;
+}
 </style>
 </head>
 
@@ -133,7 +141,7 @@ text-decoration: none;
 <h1 class="logo">
  Cfengine
   <span class="grey">Nova</span>
-</h1> 
+</h1>
 <div id="login" class="grey">
     <script type="text/javascript">
    /* $(document).ready(function(){
@@ -151,7 +159,7 @@ text-decoration: none;
     });*/
     </script>
 
-    
+    <?php echo $message; ?>
             
      <?php echo form_open("auth/login");?>
             <input type="hidden" id="type_form" name="type_form" value="login">
