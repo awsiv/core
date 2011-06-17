@@ -261,6 +261,8 @@ Nova_GetClassName(n,name,desc);
 void Nova_GetClassName(int i,char *name,char *desc)
 
 {
+Nova_LoadSlots();
+
 if (i < ob_spare)
    {
    strncpy(name,OBS[i][0],CF_MAXVARSIZE-1);
@@ -812,21 +814,29 @@ return slot;
 
 bool NovaHasSlot(int idx)
 {
+Nova_LoadSlots();
+
 return idx < ob_spare || SLOTS[idx - ob_spare];
 }
 
 const char *NovaGetSlotName(int idx)
 {
+Nova_LoadSlots();
+
 return idx < ob_spare ? OBS[idx][0] : SLOTS[idx - ob_spare]->name;
 }
 
 const char *NovaGetSlotDescription(int idx)
 {
+Nova_LoadSlots();
+
 return idx < ob_spare ? OBS[idx][1] : SLOTS[idx - ob_spare]->description;
 }
 
 const char *NovaGetSlotUnits(int idx)
 {
+Nova_LoadSlots();
+
 return idx < ob_spare ? UNITS[idx] : SLOTS[idx - ob_spare]->units;
 }
 
@@ -834,16 +844,22 @@ return idx < ob_spare ? UNITS[idx] : SLOTS[idx - ob_spare]->units;
 
 double NovaGetSlotExpectedMinimum(int idx)
 {
+Nova_LoadSlots();
+
 return idx < ob_spare ? 0.0f : SLOTS[idx - ob_spare]->expected_minimum;
 }
 
 double NovaGetSlotExpectedMaximum(int idx)
 {
+Nova_LoadSlots();
+
 return idx < ob_spare ? 100.0f : SLOTS[idx - ob_spare]->expected_maximum;
 }
 
 bool NovaIsSlotConsolidable(int idx)
 {
+Nova_LoadSlots();
+
 return idx < ob_spare ? true : SLOTS[idx - ob_spare]->consolidable;
 }
 
