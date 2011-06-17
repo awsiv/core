@@ -263,6 +263,7 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 #ifdef HAVE_LIBMONGOC
 
 CFDB_SaveHostID(&dbconn,MONGO_DATABASE,id,ipaddr,hostname);
+CFDB_SaveHostID(&dbconn,MONGO_ARCHIVE,id,ipaddr,hostname);
 CFDB_SaveLastUpdate(&dbconn,id);
 
 if (dbconnp)
