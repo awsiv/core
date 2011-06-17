@@ -58,6 +58,7 @@
 # define MONGO_LOGS_REPAIRED MONGO_BASE ".logs_rep"
 # define MONGO_LOGS_NOTKEPT MONGO_BASE ".logs_nk"
 # define MONGO_NOTEBOOK MONGO_BASE ".notebook"
+#define MONGO_ARCHIVE MONGO_BASE ".archive"
 # include <mongo.h>
 #else
 # define mongo_connection char
@@ -325,8 +326,8 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *hostkey);
 struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname,int regex,int sort,char *classRegex);
 struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lname,int regex, char *classRegex);
 struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, char *classRegex, int sort);
-struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname,int regex,time_t lt,int cmp, int sort, char *classRegex);
-struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, char *classRegex);
+struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname,int regex,time_t lt,int cmp, int sort, char *classRegex, int lookInArchive);
+struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, char *classRegex, int lookInArchive);
 
 // class finder
 struct Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
@@ -428,11 +429,12 @@ void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int dept
 
 /* db_maintain.c */
 
-void CFDB_Maintenance(void);
+void CFDB_Maintenance(int purgeArchive);
 #ifdef HAVE_LIBMONGOC
 void CFDB_EnsureIndeces(mongo_connection *conn);
 void CFDB_PurgeDropReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedReports(mongo_connection *conn);
+void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn);
 void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t now);
 void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr);
 int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t oldThreshold, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr);

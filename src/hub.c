@@ -118,9 +118,15 @@ while (true)
       CfOut(cf_verbose,""," -> Scanning all total compliance cache");
       NewClass("am_policy_hub");
       Nova_CacheTotalCompliance(true);
-      CFDB_Maintenance();
+      CFDB_Maintenance(false);
       }
 
+   // Longterm reports cleanup everyday
+   if(IsDefinedClass("Hr10.Min00_05"))
+      {
+      CFDB_Maintenance(true);
+      }
+   
    if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
       {
       Nova_ZenossSummary(DOCROOT);
@@ -369,7 +375,6 @@ for(; start + (3600 * 6) < now; start += CF_SHIFT_INTERVAL) // in case of all sl
       }
    }
 
-
 FreeEnvironmentsList(env);
 CFDB_Close(&dbconn);
 
@@ -552,7 +557,7 @@ fclose(fout);
 int Nova_ShiftChange()
 
 {
-if (IsDefinedClass("(Hr00|Hr06|Hr12|Hr18).Min00_05"))
+ if (IsDefinedClass("(Hr00|Hr06|Hr12|Hr16|Hr18).Min00_05"))
    {
    return true;
    }

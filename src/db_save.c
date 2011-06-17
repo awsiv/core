@@ -1417,11 +1417,15 @@ bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 MongoCheckForError(conn,"SaveFileChanges",keyhash,NULL);
 
+// Add to longterm db
+mongo_update(conn, MONGO_ARCHIVE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveFileChangesLongterm",keyhash,NULL);
+
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
 }
 
-/*****************************************************************************/
+/*****************************************************************************/ 
 
 void CFDB_SaveFileDiffs(mongo_connection *conn, char *keyhash, struct Item *data)
 
@@ -1476,6 +1480,10 @@ bson_append_finish_object(setObj);
 bson_from_buffer(&setOp,&bb);
 mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 MongoCheckForError(conn,"SaveFileDiffs",keyhash,NULL);
+
+// Add to archive
+mongo_update(conn, MONGO_ARCHIVE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(conn,"SaveFileDiffsLongterm",keyhash,NULL);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  

@@ -12,15 +12,13 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-
 /*****************************************************************************/
 
-void CFDB_Maintenance(void)
+void CFDB_Maintenance(int purgeArchive)
 {
 #ifdef HAVE_LIBMONGOC
 
   mongo_connection dbconn;
-
 
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -28,9 +26,16 @@ void CFDB_Maintenance(void)
       return;
     }
 
-  CFDB_EnsureIndeces(&dbconn);
-  CFDB_PurgeTimestampedReports(&dbconn);
-  CFDB_PurgePromiseLogs(&dbconn,CF_HUB_PURGESECS,time(NULL));
+  if(purgeArchive)
+     {
+     CFDB_PurgeTimestampedLongtermReports(&dbconn); 
+     }
+  else
+     {
+     CFDB_EnsureIndeces(&dbconn);
+     CFDB_PurgeTimestampedReports(&dbconn);
+     CFDB_PurgePromiseLogs(&dbconn,CF_HUB_PURGESECS,time(NULL));
+     }
   CFDB_Close(&dbconn);
 
 #endif  /* HAVE_LIBMONGOC */
@@ -61,7 +66,6 @@ void CFDB_EnsureIndeces(mongo_connection *conn)
     }
 
   bson_destroy(&b);
-
   
   // log collections
   bson_buffer_init(&bb);
@@ -81,7 +85,6 @@ void CFDB_EnsureIndeces(mongo_connection *conn)
     }
 
   bson_destroy(&b);
-  
 }
 
 /*****************************************************************************/
@@ -140,7 +143,6 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
 	    snprintf(keyHash,sizeof(keyHash),"%s",bson_iterator_string(&it1));
 	    }
 
-
 	  CFDB_PurgeScan(conn,&it1,cfr_class,CF_HUB_PURGESECS,now,&purgeKeys,&purgeClassNames);
 	  CFDB_PurgeScan(conn,&it1,cfr_vars,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
 	  CFDB_PurgeScan(conn,&it1,cfr_performance,CF_HUB_PURGESECS,now,&purgeKeys,NULL);
@@ -167,11 +169,9 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
 
       bson_append_finish_object(unset);
 
-
       // key array elements
       DeleteFromBsonArray(&bb,cfr_class_keys,purgeClassNames);
       DeleteFromBsonArray(&bb,cfr_promisecompl_keys,purgePcNames);
-      
 
       bson_from_buffer(&op,&bb);
 
@@ -191,6 +191,95 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
       bson_destroy(&op);
     }
   
+  mongo_cursor_destroy(cursor);  
+}
+
+/*****************************************************************************/
+
+void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn)
+/**
+ * Remove old data from reports with timestamp Usually "old" means one week.
+ * For each host: collect keys to delete in a list, and call update once.
+ *
+ **/
+{
+  struct Item *purgeKeys = NULL, *ip;
+  struct Item *purgePcNames = NULL, *purgeClassNames = NULL;
+  mongo_cursor *cursor;
+  bson query,field,hostQuery,op;
+  bson_iterator it1;
+  bson_buffer bb,*unset;
+  char keyHash[CF_MAXVARSIZE];
+  time_t now;
+
+  long threshold = 365*24*3600;
+
+  CfOut(cf_verbose,"", " -> Purge timestamped reports (longterm archive)");
+  
+  // query all hosts
+  bson_empty(&query);
+  
+  // only retrieve the purgable reports
+  bson_buffer_init(&bb);
+  bson_append_int(&bb,cfr_keyhash,1);
+  bson_append_int(&bb,cfr_filechanges,1);
+  bson_append_int(&bb,cfr_filediffs,1);
+  bson_from_buffer(&field, &bb);
+
+  cursor = mongo_find(conn,MONGO_ARCHIVE,&query,&field,0,0,0);
+  bson_destroy(&field);
+
+  now = time(NULL);
+
+  while(mongo_cursor_next(cursor))  // iterate over docs
+    {
+      bson_iterator_init(&it1,cursor->current.data);
+
+      memset(keyHash,0,sizeof(keyHash));
+      
+      while(bson_iterator_next(&it1))
+	{
+
+	  if (strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)
+	    {
+	    snprintf(keyHash,sizeof(keyHash),"%s",bson_iterator_string(&it1));
+	    }
+
+	  CFDB_PurgeScan(conn,&it1,cfr_filechanges,threshold,now,&purgeKeys,NULL);
+	  CFDB_PurgeScan(conn,&it1,cfr_filediffs,threshold,now,&purgeKeys,NULL);
+	}
+
+      bson_buffer_init(&bb);
+      bson_append_string(&bb,cfr_keyhash,keyHash);
+      bson_from_buffer(&hostQuery,&bb);
+
+      // keys
+      bson_buffer_init(&bb);
+      unset = bson_append_start_object(&bb, "$unset");
+
+      for (ip = purgeKeys; ip != NULL; ip=ip->next)
+	{
+	bson_append_int(unset, ip->name, 1);
+	}
+
+      bson_append_finish_object(unset);
+      bson_from_buffer(&op,&bb);
+
+      mongo_update(conn,MONGO_ARCHIVE,&hostQuery, &op, 0);
+      MongoCheckForError(conn,"PurgeTimestampedLongtermReports",keyHash,NULL);
+      
+      DeleteItemList(purgeClassNames);
+      purgeClassNames = NULL;
+      
+      DeleteItemList(purgePcNames);
+      purgePcNames = NULL;
+      
+      DeleteItemList(purgeKeys);
+      purgeKeys = NULL;
+
+      bson_destroy(&hostQuery);
+      bson_destroy(&op);
+    }
 
   mongo_cursor_destroy(cursor);  
 }
@@ -220,14 +309,11 @@ void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t n
 
   MongoCheckForError(conn,"timed delete host from repair logs collection",NULL,NULL);
 
-
   mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
 
   MongoCheckForError(conn,"timed delete host from not kept logs collection",NULL,NULL);
 
-
   bson_destroy(&cond);
-  
 }
 
 /*****************************************************************************/
@@ -245,10 +331,8 @@ void CFDB_PurgeDropReports(mongo_connection *conn)
   
   CfOut(cf_verbose,"", " -> Purge droppable reports");
 
-
   // query all hosts
   bson_empty(&empty);
-
   
   // define reports to drop (unset)
   bson_buffer_init(&bb);
@@ -278,7 +362,6 @@ void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey,
   int deep;
   int foundStamp;
   int emptyLev2 = true;
-
 
   if (strcmp(bson_iterator_key(itp), reportKey) != 0)
     {
@@ -431,10 +514,8 @@ void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *rep
 		  
 		  Debug("Report key \"%s\" needs to be purged (date is %s)\n", purgeKey, thenStr);
 		}
-
 	    }
 	}
-
     }
 }
 
