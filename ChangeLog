@@ -13,6 +13,11 @@
 	Nova reports can be exported to file and imported manually
 	using cf-report -x and cf-report -i.
 
+	Faster collection of monitoring (vitals) data due to 
+	new protocol and data structure.
+
+	Long-term storage (one year) of diff and changes reports.
+
 	The variables report got a last-seen column. Now variables
 	are stored in the hub for a longer time like classes, 
 	and not overwritten on every update.
