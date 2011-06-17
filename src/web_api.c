@@ -3781,7 +3781,7 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
 
  if (count == 0)
     {
-    snprintf(work,CF_BUFSIZE,"\"count\":0");
+    snprintf(work,CF_BUFSIZE,"{\"count\":0}");
     Join(returnval,work,bufsize);
     }
  
