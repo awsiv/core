@@ -33,7 +33,17 @@ You may instead incorporate the Apache-htaccess file into your main Apache confi
 Creating inital user
 ---------------------------------
 
-To create a admin/admin user, point your browser to 
+To create a admin/admin user, point your browser to
+http://localhost/testing/mongodbinput on the hub  ...only for development
 
-http://localhost/testing/mongodbinput on the hub
+For production we have to do mongorestore of the directory name "phpcfenginenova" with in the package
+./mongorestore -d phpcfengine phpcfenginenova
+
+default username:admin     password:admin
+
+after creating restoring the database from dumpfiles inside phpcfenginenova we can remove the directory phpcfenginenova directory
+
+
+There should also be a policies directories inside the www root folder of application where it can make  the working directory for various users.
+Also we need directory named temp to make temporary storage to do a pdf calculation and emailing that pdf file.
 
