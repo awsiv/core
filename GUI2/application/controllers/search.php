@@ -45,7 +45,7 @@ class Search extends Cf_Controller {
         $class_regex = isset($getparams['class_regex']) ? urldecode($getparams['class_regex']) : $this->input->post('class_regex');
         $hosts_only = isset($getparams['hosts_only']) ? $getparams['hosts_only'] : $this->input->post('hosts_only');
         $state = isset($getparams['state']) ? $getparams['state'] : $this->input->post('state');
-
+        $longterm_data=isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
         $hostname = cfpr_hostname($hostkey);
 
         $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : 20);
@@ -331,7 +331,11 @@ class Search extends Cf_Controller {
                         );
                         $data['report_link'] = site_url('/pdfreports/index' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $data['report_result'] = cfpr_report_filechanges(NULL, $name, true, -1, ">", $class_regex, $rows, $page_number);
+                        if ($longterm_data) {
+                            $data['report_result'] = cfpr_report_filechanges_longterm(NULL, $name, true, -1, ">", $class_regex, $rows, $page_number);
+                        } else {
+                            $data['report_result'] = cfpr_report_filechanges(NULL, $name, true, -1, ">", $class_regex, $rows, $page_number);
+                        }
                         $this->template->load('template', 'searchpages/businessresult', $data);
                     }
                 } elseif ($hostkey != "") {
@@ -365,7 +369,11 @@ class Search extends Cf_Controller {
                         );
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $data['report_result'] = cfpr_report_filediffs(NULL, $name, $diff, true, $cal, ">", $class_regex, $rows, $page_number);
+                       if ($longterm_data) {
+                            $data['report_result'] = cfpr_report_filediffs_longterm(NULL, $name, $diff, true, $cal, ">", $class_regex, $rows, $page_number);
+                        } else {
+                            $data['report_result'] = cfpr_report_filediffs(NULL, $name, $diff, true, $cal, ">", $class_regex, $rows, $page_number);
+                        }
                         $this->template->load('template', 'searchpages/filechangediff_result', $data);
                     }
                 } elseif ($hostkey != "") {

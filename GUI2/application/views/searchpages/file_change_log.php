@@ -9,6 +9,7 @@
           <p><input type="hidden" name="host" value="All"></p>
           <p><input type="hidden" name="report" value="<?php echo $report_type?>"></p>
           <p>Return hostnames only: <input type="checkbox" name="hosts_only" value="true"></p>
+          <p>Show long term data:<input type="checkbox" name="long_term" value="true" /></p>
           <p><input class="btn" type="submit" value="Generate report"></p>
           </form>
     </div>
