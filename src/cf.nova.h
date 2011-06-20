@@ -1182,12 +1182,13 @@ struct cf_pscalar
 #define CFR_MONITOR_MAG "MNM"  // DEPRECATED from Nova 2.1.0 onwards
 #define CFR_MONITOR_WEEK "MNW" // DEPRECATED from Nova 2.1.0 onwards
 #define CFR_MONITOR_YEAR "MNY" // DEPRECATED from Nova 2.1.0 onwards
+#define CFR_MONITOR_HIST "MNH" // DEPRECATED from Nova 2.1.0 onwards
 
 #define CFR_MONITOR_MG "MOM"
 #define CFR_MONITOR_WK "MOW"
 #define CFR_MONITOR_YR "MOY"
+#define CFR_MONITOR_HG "MOH"
 
-#define CFR_MONITOR_HIST "MNH"
 #define CFR_PCOMPLIANCE "PCP"
 #define CFR_TCOMPLIANCE "TCP"
 #define CFR_SOFTWARE "SOF"

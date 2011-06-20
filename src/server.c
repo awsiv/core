@@ -254,7 +254,7 @@ switch (type)
        Nova_PackMonitorMg(reply,CFR_MONITOR_MG,from,type);
        Nova_PackMonitorWk(reply,CFR_MONITOR_WK,from,type);
        Nova_PackMonitorYr(reply,CFR_MONITOR_YR,from,type);
-       Nova_PackMonitorHist(reply,CFR_MONITOR_HIST,from,type);
+       Nova_PackMonitorHist(reply,CFR_MONITOR_HG,from,type);
        Nova_PackCompliance(reply,CFR_PCOMPLIANCE,from,type);
        Nova_PackTotalCompliance(reply,CFR_TCOMPLIANCE,from,type);
        Nova_PackSoftware(reply,CFR_SOFTWARE,from,type);
