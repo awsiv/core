@@ -263,6 +263,7 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
  mongo_connection dbconn;
  struct Item *res, *ip;
  bool ret = false;
+ char work[CF_MAXVARSIZE];
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -278,8 +279,8 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
  
  for(ip = res; ip != NULL; ip = ip->next)
     {
-    Join(buffer, ip->name, bufsize);
-    Join(buffer, ",", bufsize);
+    snprintf(work, sizeof(work), "\"%s\",", ip->name);
+    Join(buffer, work, bufsize);
     ret = true;
     }
 
