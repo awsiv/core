@@ -171,6 +171,7 @@ for (i = 0; i < CF_OBSERVABLES; ++i)
       if (fgets(line, CF_MAXVARSIZE, f) == NULL)
          {
          CfOut(cf_error, "fgets", "Error trying to read ts_key");
+         continue;
          }
 
       int fields = sscanf(line, "%*d,%1023[^,],%1023[^\n],%1023[^\n],%lf,%lf,%d",
