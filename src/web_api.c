@@ -1365,7 +1365,7 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
 
  snprintf(buffer,sizeof(buffer),
           "{\"meta\":{\"count\" : %d,"
-          "\"header\": {\"Host\":0,\"Initiated\":1,\"Remote Host\":2,\"IP Address\":3,\"Last seen\":4,\"Hours Ago\":5,\"Avg Interval\":6,\"Uncertainty\":7,\"Remote Host key\":8"
+          "\"header\": {\"Host\":0,\"Initiated\":1,\"Remote host name\":2,\"Remote IP address\":3,\"Last seen\":4,\"Hours ago\":5,\"Avg interval\":6,\"Uncertainty\":7,\"Remote host key\":8"
           "}},\"data\":[",page->totalResultCount);
  StartJoin(returnval,buffer,bufsize);
 
@@ -1399,18 +1399,13 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval)-1]='\0';
-    }
+
+ ReplaceTrailingChar(returnval, ',', '\0');
  EndJoin(returnval,"]}\n",bufsize);
 
  DeleteHubQuery(hq,DeleteHubLastSeen);
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+ CFDB_Close(&dbconn);
 
  return true;
 }
