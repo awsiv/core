@@ -532,7 +532,7 @@ struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rho
 
  hp->hh = hh;
  hp->io = io;  // '+' or '-'
- hp->rhost = NewHubHost(kh,rhost,ip);
+ hp->rhost = NewHubHost(kh,ip,rhost);
  hp->hrsago = ago;
  hp->hrsavg = avg;
  hp->hrsdev = dev;
