@@ -1737,7 +1737,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
  char classRegexAnch[CF_MAXVARSIZE];
  int emptyQuery = true;
  time_t rt;
-  
+
 /* BEGIN query document */
  bson_buffer_init(&bb);
 
@@ -1845,7 +1845,6 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
                    // try to find host name of IP from local DB
 
                    CFDB_QueryHostName(conn,raddr,rhost,sizeof(rhost));
-
                    }
                 else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
                    {
@@ -1867,7 +1866,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
                    }
 
                 // Doesn't make sense to do regex on a key
-                if (!EMPTY(lhash) && (strcmp(lhash,rhash) != 0))
+                if (!EMPTY(lhash) && (strcmp(lhash,rhash+1) != 0))
                    {
                    match_hash = false;
                    }
@@ -1884,7 +1883,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
                    match_host = false;
                    }
 
-                if (!EMPTY(lhash) && (strcmp(lhash,rhash) != 0))
+                if (!EMPTY(lhash) && (strcmp(lhash,rhash+1) != 0))
                    {
                    match_hash = false;
                    }
@@ -1904,7 +1903,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
                 {
                 found = true;
                 PrependRlistAlien(&record_list,NewHubLastSeen(CF_THIS_HH,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev,rt));
-                }            
+                }
              }
           }   
        }
