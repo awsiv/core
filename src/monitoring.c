@@ -174,7 +174,7 @@ for (i = 0; i < CF_OBSERVABLES; ++i)
          continue;
          }
 
-      int fields = sscanf(line, "%*d,%1023[^,],%1023[^\n],%1023[^\n],%lf,%lf,%d",
+      int fields = sscanf(line, "%*d,%1023[^,],%1023[^,],%1023[^,],%lf,%lf,%d",
                           name, desc, units, &expected_min, &expected_max, &consolidable);
       if (fields == 2)
          {
