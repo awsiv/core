@@ -597,6 +597,12 @@ void CFDB_PurgeDeprecatedVitals(mongo_connection *conn)
  * DEPRECATED
  */
 {
+ bson_buffer bb;
+ bson empty, unsetOp;
+ bson_buffer *obj;
+ char var[16];
+ int i;
+ 
  if (mongo_cmd_drop_collection(conn, MONGO_BASE, "monitoring", NULL))
     {
     CfOut(cf_verbose, "", " -> Removed old monitoring collection");
@@ -604,7 +610,25 @@ void CFDB_PurgeDeprecatedVitals(mongo_connection *conn)
 
  // remove all hisograms from main collection
  
+ bson_buffer_init(&bb);
+ obj = bson_append_start_object(&bb, "$unset");
  
+ for(i = 0; i < CF_OBSERVABLES; i++)
+    {
+    snprintf(var, sizeof(var), "hs%d", i);
+    bson_append_int(obj, var, 1);
+    }
+  
+ bson_append_finish_object(obj);
+
+ bson_from_buffer(&unsetOp,&bb);
+ 
+ mongo_update(conn, MONGO_DATABASE, bson_empty(&empty), &unsetOp, MONGO_UPDATE_MULTI);
+
+ MongoCheckForError(conn,"purge deprecated monitoring data",NULL,NULL);
+
+ 
+ bson_destroy(&unsetOp);
  
 }
 
