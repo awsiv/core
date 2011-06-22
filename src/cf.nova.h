@@ -42,7 +42,7 @@
 # define MONGO_BASE "cfreport"
 # define MONGO_KMBASE "cfknow"
 # define MONGO_DATABASE MONGO_BASE ".hosts"
-# define MONGO_DATABASE_MON MONGO_BASE ".monitoring"  // DEPRECATED
+//# define MONGO_DATABASE_MON MONGO_BASE ".monitoring"  // DEPRECATED
 # define MONGO_DATABASE_MON_MG MONGO_BASE ".monitoring_mg"
 # define MONGO_DATABASE_MON_WK MONGO_BASE ".monitoring_wk"
 # define MONGO_DATABASE_MON_YR MONGO_BASE ".monitoring_yr"
@@ -336,7 +336,7 @@ struct Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lcl
 struct Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 struct Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 
-int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
+//int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
 struct Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
 int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t start_time,double *qa,double *ea,double *da);
 int CFDB_QueryMonView(mongo_connection *conn, char *keyhash,char *monId, enum monitord_rep rep_type,double *qa,double *ea,double *da);
@@ -388,7 +388,7 @@ void CFDB_Initialize(void);
 int CFDB_PutValue(char *lval,char *rval);
 
 void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, struct Item *data);
-void CFDB_SaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep rep_type, struct Item *data);
+//void CFDB_SaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep rep_type, struct Item *data);
 void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_rep rep_type, struct Item *data);
 void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveClasses(mongo_connection *conn, char *kH, struct Item *data);
@@ -440,6 +440,7 @@ int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t ol
 void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr);
 void DeleteFromBsonArray(bson_buffer *bb, char *arrName, struct Item *elements);
 void CFDB_PurgeHost(mongo_connection *conn, char *keyHash);
+void CFDB_PurgeDeprecatedVitals(mongo_connection *conn);
 #endif /* HAVE_LIBMONGOC */
 
 

@@ -242,8 +242,9 @@ bson_destroy(&host_key);
 /* Monitor data                                                              */
 /*****************************************************************************/
 
+/* DEPRECATED from Nova 2.1.0 onwards
 void CFDB_SaveMonitorData(mongo_connection *conn, char *keyhash, enum monitord_rep rep_type, struct Item *data)
-/* DEPRECATED from Nova 2.1.0 onwards */
+
 { bson_buffer bb,record;
   bson host_key;  // host description
   char varNameIndex[64];
@@ -329,7 +330,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    }
  
 }
-
+*/
 /*****************************************************************************/
 
 void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_rep rep_type, struct Item *data)

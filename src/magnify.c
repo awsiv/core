@@ -19,7 +19,10 @@ int Nova_ViewMag(char *keyhash,enum observables obs,char *buffer,int bufsize)
 /* DEPRECATED */
 {
   struct CfDataView cfv;
- 
+
+  strcpy(buffer, "DEPRECATED");
+  return false;
+  
 strcpy(buffer,"[");
 
 /* Done initialization */
@@ -53,7 +56,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    return false;
    }
 
-CFDB_QueryMagView(&dbconn,hostkey,obs,time(NULL) - 4*3600,q,e,d);
+//CFDB_QueryMagView(&dbconn,hostkey,obs,time(NULL) - 4*3600,q,e,d);
 
 CFDB_Close(&dbconn);
 

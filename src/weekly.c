@@ -40,7 +40,10 @@ int Nova_ViewWeek(char *keyhash,enum observables obs,char *buffer,int bufsize)
 /* DEPRECATED */    
 {
 struct CfDataView cfv;
-  
+
+strcpy(buffer, "DEPRECATED");
+return false;
+
   /* Initialization */
 
   strcpy(buffer,"[");
@@ -73,7 +76,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    return false;
    }
 
-CFDB_QueryWeekView(&dbconn,keyhash,obs,q,e,d);
+//CFDB_QueryWeekView(&dbconn,keyhash,obs,q,e,d);
 CFDB_Close(&dbconn);
 
 cfv->over = 0;

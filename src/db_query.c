@@ -3527,8 +3527,9 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
+/* DEPRECATED from Nova 2.1.0 onwards
 int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da)
-/* DEPRECATED */
+
 { bson_buffer b,bb,*sub1,*sub2,*sub3;
  bson qu,query,field;
  mongo_cursor *cursor;
@@ -3536,19 +3537,14 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
  int ok = false,slot,start_slot,wrap_around;
  double q,e,d;
   
-/* BEGIN query document */
-
  bson_buffer_init(&b);
  bson_append_string(&b,cfr_keyhash,keyhash);
  bson_append_int(&b,cfm_magobs,obs);
  bson_from_buffer(&query,&b);
   
-/* BEGIN RESULT DOCUMENT */
  bson_buffer_init(&bb);
  bson_append_int(&bb,cfm_data,1);
  bson_from_buffer(&field, &bb);
-
-/* Check from wrap around */
 
  start_slot = GetTimeSlot(start_time);
 
@@ -3565,7 +3561,6 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
     da[slot] = 0;
     }
 
-/* BEGIN SEARCH */
 
  cursor = mongo_find(conn,MONGO_DATABASE_MON,&query,&field,0,0,0);
  bson_destroy(&query);
@@ -3577,7 +3572,7 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
 
     while (bson_iterator_next(&it1))
        {
-       /* Query specific search/marshalling */
+
 
        if (strcmp(bson_iterator_key(&it1),cfm_data) == 0)
           {
@@ -3644,6 +3639,7 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
  mongo_cursor_destroy(cursor);
  return ok;
 }
+*/
 
 /*****************************************************************************/
 
@@ -4035,8 +4031,8 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date)
 
 /*****************************************************************************/
 
+/* DEPRECATED from Nova 2.1.0 onwards
 int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da)
-/* DEPRECATED */
 { bson_buffer b,bb,*sub1,*sub2,*sub3;
  bson qu,query,field;
  mongo_cursor *cursor;
@@ -4057,19 +4053,19 @@ int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs
     }
 
   
-/* BEGIN query document */
+
 
  bson_buffer_init(&b);
  bson_append_string(&b,cfr_keyhash,keyhash);
  bson_append_int(&b,cfm_weekobs,obs);
  bson_from_buffer(&query,&b);
   
-/* BEGIN RESULT DOCUMENT */
+
  bson_buffer_init(&bb);
  bson_append_int(&bb,cfm_data,1);
  bson_from_buffer(&field, &bb);
 
-/* BEGIN SEARCH */
+
 
  cursor = mongo_find(conn,MONGO_DATABASE_MON,&query,&field,0,0,0);
  bson_destroy(&query);
@@ -4080,7 +4076,7 @@ int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs
    
     while (bson_iterator_next(&it1))
        {
-       /* Query specific search/marshalling */
+
 
        if (strcmp(bson_iterator_key(&it1),cfm_data) == 0)
           {
@@ -4129,7 +4125,7 @@ int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs
  mongo_cursor_destroy(cursor);
  return ok;
 }
-
+*/
 /*****************************************************************************/
 
 bool CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,char *monId,double *histo)

@@ -28,7 +28,8 @@ void CFDB_Maintenance(int purgeArchive)
 
   if(purgeArchive)
      {
-     CFDB_PurgeTimestampedLongtermReports(&dbconn); 
+     CFDB_PurgeTimestampedLongtermReports(&dbconn);
+     CFDB_PurgeDeprecatedVitals(&dbconn);
      }
   else
      {
@@ -563,24 +564,48 @@ void CFDB_PurgeHost(mongo_connection *conn, char *keyHash)
 
   MongoCheckForError(conn,"delete host from main collection",keyHash,NULL);
 
-  
-  mongo_remove(conn, MONGO_DATABASE_MON, &cond);
+  mongo_remove(conn, MONGO_DATABASE_MON_MG, &cond);
 
-  MongoCheckForError(conn,"delete host from monitord collection",keyHash,NULL);
+  MongoCheckForError(conn,"delete host from mag monitord collection",keyHash,NULL);
 
+  mongo_remove(conn, MONGO_DATABASE_MON_WK, &cond);
+
+  MongoCheckForError(conn,"delete host from week monitord collection",keyHash,NULL);
+
+  mongo_remove(conn, MONGO_DATABASE_MON_YR, &cond);
+
+  MongoCheckForError(conn,"delete host from year monitord collection",keyHash,NULL);
 
   mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
 
   MongoCheckForError(conn,"delete host from repair logs collection",keyHash,NULL);
 
-
   mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
 
   MongoCheckForError(conn,"delete host from not kept logs collection",keyHash,NULL);
 
-
-  bson_destroy(&cond);  
   
+  bson_destroy(&cond);  
+}
+
+/*****************************************************************************/
+
+void CFDB_PurgeDeprecatedVitals(mongo_connection *conn)
+/*
+ * Remove pre-Nova 2.1.0 vitals (cf-monitord) structures.
+ * Can be taken out when everyone has upgraded to 2.1.0 or newer.
+ * DEPRECATED
+ */
+{
+ if (mongo_cmd_drop_collection(conn, MONGO_BASE, "monitoring", NULL))
+    {
+    CfOut(cf_verbose, "", " -> Removed old monitoring collection");
+    }
+
+ // remove all hisograms from main collection
+ 
+ 
+ 
 }
 
 #endif  /* HAVE_LIBMONGOC */
