@@ -895,7 +895,7 @@ for (j = 0; j < CF_OBSERVABLES; j++)
          {
          weekly[j][k] += (smoothhistogram[j][i][k]+0.5);
 
-         if (weekly[j][k] > 0)
+         if (weekly[j][k] > 0 && smoothhistogram[j][i][k] != 0)  // all smoothhistogram entries zero
             {
             ok[j] = true;
             }
@@ -904,12 +904,6 @@ for (j = 0; j < CF_OBSERVABLES; j++)
             {
             weekly[j][k] = 0;
             }
-         }
-      
-      if(weekly[j][k] == 3.5) // all smoothhistogram entries zero
-         {
-         weekly[j][k] = 0;
-         ok[j] = false;
          }
       }
    }

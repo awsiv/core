@@ -3705,8 +3705,6 @@ int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t s
 
  start_slot = GetTimeSlot(start_time);
 
- printf("start slot=%d, start_time=%s\n", start_slot, cf_ctime(&start_time));
-
 // Check that start + 4 hours is not greater than the week buffer
 
  wrap_around = (int)start_slot + CF_MAGDATA - CF_MAX_SLOTS;
@@ -4141,6 +4139,12 @@ bool CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,char *monId,double
  mongo_cursor *cursor;
  bson_iterator it1,it2;
  bool found = false;
+ int i;
+
+ for(i = 0; i < CF_GRAINS; i++)
+    {
+    histo[i] = 0;
+    }
   
 /* BEGIN query document */
 
@@ -4148,7 +4152,7 @@ bool CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,char *monId,double
  bson_append_string(&bb,cfr_keyhash,keyhash);
  bson_append_string(&bb,cfm_id,monId);
  bson_from_buffer(&query,&bb);
-  
+
 /* BEGIN RESULT DOCUMENT */
 
  bson_buffer_init(&bb);
@@ -4169,21 +4173,21 @@ bool CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,char *monId,double
        {
        /* Query specific search/marshalling */
 
-       if (strcmp(bson_iterator_key(&it1),cfr_histo) == 0)
+       if (strcmp(bson_iterator_key(&it1), cfr_histo) == 0)
           {
-          int st = 0, index = 0;
+          i = 0;
           bson_iterator_init(&it2,bson_iterator_value(&it1));
 
           while (bson_iterator_next(&it2))
              {
-             if(index >= CF_GRAINS)
+             if(i >= CF_GRAINS)
                 {
-                CfOut(cf_error, "", "!! Index %d out of bounds when querying histograms", index);
+                CfOut(cf_error, "", "!! Index %d out of bounds when querying histograms", i);
                 break;
                 }
              
-             histo[index] = bson_iterator_double(&it2);
-             index++;
+             histo[i] = bson_iterator_double(&it2);
+             i++;
              found = true;
              }
           }
