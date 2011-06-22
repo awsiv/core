@@ -21,6 +21,7 @@ char *CF_CODEBOOK[CF_CODEBOOK_SIZE] =
    CFR_MONITOR_MAG,
    CFR_MONITOR_WEEK,
    CFR_MONITOR_YEAR,
+   CFR_MONITOR_HIST,
    CFR_MONITOR_MG,
    CFR_MONITOR_WK,
    CFR_MONITOR_YR,   
@@ -52,10 +53,11 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
    Nova_UnPackMonitorMag,   // DBOK   - DEPRECATED
    Nova_UnPackMonitorWeek,  // DBOK   - DEPRECATED
    Nova_UnPackMonitorYear,  // nodata - DEPRECATED
+   Nova_UnPackMonitorHist,  // DEPRECATED
    Nova_UnPackMonitorMg,
    Nova_UnPackMonitorWk,
    Nova_UnPackMonitorYr,
-   Nova_UnPackMonitorHist,  // DBOK   
+   Nova_UnPackMonitorHg,  // DBOK   
    Nova_UnPackCompliance,   // DBOK
    Nova_UnPackTotalCompliance, // DBOK
    Nova_UnPackSoftware,     // DBOK

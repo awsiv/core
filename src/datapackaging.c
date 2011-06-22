@@ -848,7 +848,7 @@ snprintf(filename,CF_BUFSIZE,"%s/state/histograms",CFWORKDIR);
 
 if ((fp = fopen(filename,"r")) == NULL)
    {
-   CfOut(cf_verbose,"","Unable to load histogram data\n");
+   CfOut(cf_verbose,"","!! Unable to load histogram data");
    return;
    }
 
@@ -905,6 +905,12 @@ for (j = 0; j < CF_OBSERVABLES; j++)
             weekly[j][k] = 0;
             }
          }
+      
+      if(weekly[j][k] == 3.5) // all smoothhistogram entries zero
+         {
+         weekly[j][k] = 0;
+         ok[j] = false;
+         }
       }
    }
 
@@ -914,12 +920,12 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       {
       if(!NovaHasSlot(i))
          {
-         Debug("Could not find slot %d when packing monitoring histograms - skipping", i);
+         Debug("Could not find slot %d when packing monitoring histograms - skipping\n", i);
          continue;
          }
       
       snprintf(buffer,sizeof(buffer),"%s,", NovaGetSlotName(i));
-      
+
       for (k = 0; k < CF_GRAINS; k++)
          {      
          snprintf(val,CF_SMALLBUF,"%d,", (int)round(weekly[i][k]));

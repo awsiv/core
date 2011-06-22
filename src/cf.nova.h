@@ -86,7 +86,7 @@
 #define MONITOR_CLASS_PREFIX "mXC_"
 #define CF_CHANGE_HORIZON 10
 #define NOVA_EXPORT_HEADER "NOVA_EXPORT"
-#define CF_CODEBOOK_SIZE 27
+#define CF_CODEBOOK_SIZE 28
 #define NOVA_MAXDIFFSIZE (80 * 1024 * 1024)
 
 /*****************************************************************************/
@@ -488,6 +488,7 @@ void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *dat
 void Nova_UnPackMonitorMg(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackMonitorWk(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackMonitorYr(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackMonitorHg(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, struct Item *data);

@@ -86,7 +86,6 @@ if (dbconn)
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   // Extract records
    Debug("Set-uid program: %s",ip->name);
    }
 }
@@ -164,9 +163,9 @@ void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, struct Item *dat
   char t[CF_TIME_SIZE];
 
 CfOut(cf_verbose,""," -> Monitor weekly data.....................");
-CfOut(cf_inform, "", "!! Deprecated monitor weekly format - response from Nova 2.0.4 or earlier (some features unavailible)");
+CfOut(cf_inform, "", "!! Deprecated monitor weekly format - response from Nova 2.0.4 or earlier -- skipped");
 
-#ifdef HAVE_LIBMONGOC
+#ifdef NEVERDEFINED //HAVE_LIBMONGOC
 if (dbconn)
    {
    CFDB_SaveMonitorData(dbconn, id, mon_rep_week, data);
@@ -202,11 +201,10 @@ void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data
   double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
-CfOut(cf_inform, "", "!! Deprecated monitor magnified format - response from Nova 2.0.4 or earlier (some features unavailible)");
+CfOut(cf_inform, "", "!! Deprecated monitor magnified format - response from Nova 2.0.4 or earlier -- skipped");
 
 
-#ifdef HAVE_LIBMONGOC
-
+#ifdef NEVERDEFINED //HAVE_LIBMONGOC
 if (dbconn)
    {
    CFDB_SaveMonitorData(dbconn,id,mon_rep_mag,data);
@@ -238,10 +236,10 @@ void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *dat
   double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor year data.....................");
-CfOut(cf_inform, "", "!! Deprecated monitor year format - response from Nova 2.0.4 or earlier (some features unavailible)");
+CfOut(cf_inform, "", "!! Deprecated monitor year format - response from Nova 2.0.4 or earlier -- skipped");
 
 
-#ifdef HAVE_LIBMONGOC
+#ifdef NEVERDEFINED //HAVE_LIBMONGOC
 if (dbconn)
    {
    CFDB_SaveMonitorData(dbconn, id, mon_rep_yr, data);
@@ -267,6 +265,31 @@ for (ip = data; ip != NULL; ip=ip->next)
 /*****************************************************************************/
 
 void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, struct Item *data)
+
+{ struct Item *ip;
+  double weekly[CF_OBSERVABLES][CF_GRAINS];
+  int i = 0,k;
+  char *sp;
+ 
+CfOut(cf_verbose,""," -> Monitor histogram data.....................");
+CfOut(cf_inform, "", "!! Deprecated monitor histogram format - response from Nova 2.0.4 or earlier -- skipped");
+
+#ifdef NEVERDEFINED // HAVE_LIBMONGOC
+if (dbconn)
+   {
+   CFDB_SaveMonitorHistograms(dbconn, id, data);
+   }
+#endif
+
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   Debug("OLDHist-obs %s\n",ip->name);
+   }
+}
+
+/*****************************************************************************/
+
+void Nova_UnPackMonitorHg(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
   double weekly[CF_OBSERVABLES][CF_GRAINS];
@@ -300,7 +323,6 @@ CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 
 
 #ifdef HAVE_LIBMONGOC
-
 if (dbconn)
    {
    CFDB_SaveMonitorData2(dbconn,id,mon_rep_mag,data);
@@ -522,13 +544,13 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 void Nova_UnPackVariables(mongo_connection *dbconn, char *id, struct Item *data)
 
-/* Should be deprecated some time - was replaced after Nova 2.0.2 */
+/* Should be deprecated some time - was replaced after Nova 2.0.4 */
 
 { struct Item *ip;
   char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],scope[CF_MAXVARSIZE];
 
 CfOut(cf_verbose,""," -> Variable data...........................");
-CfOut(cf_inform, "", "!! Deprecated variable data format - response from Nova 2.0.2 or earlier (some features unavailible)");
+CfOut(cf_inform, "", "!! Deprecated variable data format - response from Nova 2.0.4 or earlier (some features unavailible)");
 
 
 #ifdef HAVE_LIBMONGOC
