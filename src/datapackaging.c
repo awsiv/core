@@ -724,6 +724,7 @@ MapName(filename);
 
 if (!OpenDB(filename,&dbp))
    {
+   CfOut(cf_verbose,"","Couldn't open long history database %s",filename);
    return;
    }
 
@@ -752,8 +753,6 @@ for (i = 0; i < MONITORING_HISTORY_LENGTH_WEEKS; ++i)
             e[k] += BoundedValue(av.Q[k].expect, q[k]);
             }
          }
-
-      w = NextShift(w);
       }
 
    if (have_data)

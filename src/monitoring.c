@@ -1447,8 +1447,7 @@ static void MakeTimekey(time_t time, char *result)
 struct tm tm;
 gmtime_r(&time, &tm);
 
-char timekey[CF_MAXVARSIZE];
-snprintf(timekey, CF_MAXVARSIZE, "%d_%.3s_Lcycle_%d_%s",
+snprintf(result, 64, "%d_%.3s_Lcycle_%d_%s",
          tm.tm_mday,
          MONTH_TEXT[tm.tm_mon],
          (tm.tm_year + 1900) % 3,
