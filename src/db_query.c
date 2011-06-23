@@ -365,12 +365,8 @@ addresses[0] = '\0';
 
 cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
 
+bson_destroy(&query);
 bson_destroy(&field);
-
-if(!emptyQuery)
-   {
-   bson_empty(&query);
-   }
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
@@ -3675,6 +3671,73 @@ struct Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash)
 
 /*****************************************************************************/
 
+struct HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash)
+/**
+ * Return a list of mag vital ids and meta-data, restricted to one host.
+ */
+{
+ struct Item *retVal;
+ bson_buffer bb;
+ bson query, field;
+ mongo_cursor *cursor;
+ bson_iterator it1;
+ struct HubVital *hv = NULL;
+ char id[CF_MAXVARSIZE];
+ char units[CF_MAXVARSIZE];
+ char description[CF_MAXVARSIZE];
+ 
+ // query
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, cfr_keyhash, keyHash);
+ bson_from_buffer(&query, &bb);
+
+ // field
+ bson_buffer_init(&bb);
+ bson_append_int(&bb, cfm_id, 1);
+ bson_append_int(&bb, cfm_units, 1); 
+ bson_append_int(&bb, cfm_description, 1);
+ bson_from_buffer(&field, &bb);
+
+ // use mag collection since it is updated most frequently
+ cursor = mongo_find(conn, MONGO_DATABASE_MON_MG, &query, &field, 0, 0, 0);
+
+ bson_destroy(&query);
+ bson_destroy(&field);
+ 
+
+  while (mongo_cursor_next(cursor))  // loops over documents
+    {
+    bson_iterator_init(&it1,cursor->current.data);
+
+    id[0] = '\0';
+    units[0] = '\0';
+    description[0] = '\0';
+    
+    while (bson_iterator_next(&it1))
+       {
+       if (strcmp(bson_iterator_key(&it1),cfm_id) == 0)
+          {
+          snprintf(id,sizeof(id),"%s",bson_iterator_string(&it1));
+          }
+       else if (strcmp(bson_iterator_key(&it1),cfm_units) == 0)
+          {
+          snprintf(units,sizeof(units),"%s",bson_iterator_string(&it1));
+          }
+       else if (strcmp(bson_iterator_key(&it1),cfm_description) == 0)
+          {
+          snprintf(description,sizeof(description),"%s",bson_iterator_string(&it1));
+          }
+       }
+
+    hv = PrependHubVital(&hv, id, units, description);
+    }
+  
+  
+  return hv;
+}
+
+/*****************************************************************************/
+
 int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t start_time,double *qa,double *ea,double *da)
 
 { bson_buffer bb;
@@ -4021,6 +4084,7 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date)
        if (strcmp(bson_iterator_key(&it1),cfr_day) == 0)
           {
           *date = (time_t)bson_iterator_int(&it1);
+          ok = true;
           }
        }
     }

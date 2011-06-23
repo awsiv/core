@@ -998,6 +998,45 @@ free(hci);
 }
 
 /*****************************************************************************/
+
+struct HubVital *PrependHubVital(struct HubVital **first, char *id, char *units, char *description)
+
+{ struct HubVital *hv;
+
+if ((hv = malloc(sizeof(struct HubVital))) == NULL)
+   {
+   FatalError("Memory exhausted NewHubVital");
+   }
+
+hv->id = strdup(id);
+hv->units = strdup(units);
+hv->description = strdup(description);
+
+hv->next = *first;
+*first = hv;
+
+return hv;
+}
+
+/*****************************************************************************/
+
+void DeleteHubVital(struct HubVital *hv)
+
+{
+ struct HubVital *curr, *next;
+
+ for(curr = hv; curr != NULL; curr = next)
+    {
+    free(curr->id);
+    free(curr->units);
+    free(curr->description);
+    
+    next = curr->next;
+    free(curr->next);
+    }
+}
+
+/*****************************************************************************/
 /*                        REPORT SORTING FUNCTIONS                           */
 /*****************************************************************************/
 

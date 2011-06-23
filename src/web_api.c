@@ -261,9 +261,11 @@ int Nova2PHP_get_observable_id(char *name)
 bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
 {
  mongo_connection dbconn;
- struct Item *res, *ip;
  bool ret = false;
  char work[CF_MAXVARSIZE];
+ time_t lastUpdate = 0;
+ char hostName[CF_MAXVARSIZE], ipAddress[CF_MAXVARSIZE];
+ struct HubVital *res, *hv;
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -271,23 +273,39 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
     return false;
     }
 
- res = CFDB_QueryVitalIds(&dbconn, keyHash);
+ res = CFDB_QueryVitalsMeta(&dbconn, keyHash);
+
+ strcpy(buffer,"{");
+
+ Nova2PHP_hostinfo(keyHash, hostName, ipAddress, sizeof(hostName));
+ CFDB_QueryLastUpdate(&dbconn, keyHash, &lastUpdate);
 
  CFDB_Close(&dbconn);
-
- strcpy(buffer, "[");
  
- for(ip = res; ip != NULL; ip = ip->next)
+ 
+ snprintf(work, sizeof(work), "\"hostname\" : \"%s\", \"ip\" : \"%s\", \"ls\" : \"%ld\", \n\"obs\" : [",
+          hostName, ipAddress, lastUpdate);
+
+ Join(buffer,work,bufsize);
+
+ 
+ for(hv = res; hv != NULL; hv = hv->next)
     {
-    snprintf(work, sizeof(work), "\"%s\",", ip->name);
+    snprintf(work, sizeof(work), "{\"id\":\"%s\", \"units\":\"%s\", \"desc\":\"%s\"},\n",
+             hv->id, hv->units, hv->description);
     Join(buffer, work, bufsize);
+    
     ret = true;
     }
 
- DeleteItemList(res);
-
- ReplaceTrailingChar(buffer, ',', '\0');
- Join(buffer, "]", bufsize);
+// DeleteHubVital(res);  FIXME!!!
+ int buflen = strlen(buffer);
+ if(buffer[buflen - 2] == ',')
+    {
+    buffer[buflen - 2] = '\0';
+    }
+ 
+ Join(buffer, "]}", bufsize);
  
  return ret;
 }
@@ -1746,7 +1764,7 @@ int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,tim
 /* Search for hosts with property X,Y,Z                                      */
 /*****************************************************************************/
 
-int Nova2PHP_hostinfo(char *hostkey,char *returnval1,char *returnval2,int bufsize)
+int Nova2PHP_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsize)
 
 { char buffer1[CF_BUFSIZE],buffer2[CF_BUFSIZE];
  struct HubHost *hh;
@@ -1779,8 +1797,8 @@ int Nova2PHP_hostinfo(char *hostkey,char *returnval1,char *returnval2,int bufsiz
  hq = CFDB_QueryHosts(&dbconn,&query);
  bson_destroy(&query);
 
- returnval1[0] = '\0';
- returnval2[0] = '\0';
+ hostnameOut[0] = '\0';
+ ipaddrOut[0] = '\0';
 
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
     {
@@ -1794,13 +1812,13 @@ int Nova2PHP_hostinfo(char *hostkey,char *returnval1,char *returnval2,int bufsiz
    
     if (count1 + tmpsize1 <= bufsize - 1)
        {
-       strcat(returnval1,buffer1);
+       strcat(hostnameOut,buffer1);
        count1 += tmpsize1;
        }
 
     if (count2 + tmpsize2 <= bufsize - 1)
        {
-       strcat(returnval2,buffer2);
+       strcat(ipaddrOut,buffer2);
        count2 += tmpsize2;
        }
     }

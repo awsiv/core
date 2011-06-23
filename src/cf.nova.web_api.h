@@ -62,7 +62,7 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
 int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,struct PageInfo *page,char *buffer,int bufsize);
 void Nova2PHP_summary_meter(char *buffer,int bufsize);
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize);
-int Nova2PHP_hostinfo(char *hostkey,char *hostname,char *ipaddress,int bufsize);
+int Nova2PHP_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsize);
 void Nova2PHP_performance_analysis(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *classreg,struct PageInfo *page,char *returnval,int bufsize);
 int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,struct PageInfo *page,char *buffer,int bufsize);

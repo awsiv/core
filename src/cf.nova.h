@@ -338,6 +338,7 @@ struct Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *l
 
 //int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
 struct Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
+struct HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash);
 int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t start_time,double *qa,double *ea,double *da);
 int CFDB_QueryMonView(mongo_connection *conn, char *keyhash,char *monId, enum monitord_rep rep_type,double *qa,double *ea,double *da);
 int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
@@ -611,6 +612,8 @@ struct HubNote *NewHubNote(char *user,char *msg,time_t t);
 struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData, int reportType);
 void DeleteHubNote(struct HubNote *hc);
 void DeleteHubNoteInfo(struct HubNoteInfo *hci);
+struct HubVital *PrependHubVital(struct HubVital **first, char *id, char *units, char *description);
+void DeleteHubVital(struct HubVital *hv);
 
 struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int count, double kept, double repaired, double notkept, time_t genTime);
 void DeleteHubCacheTotalCompliance(struct HubCacheTotalCompliance *tc);
@@ -1622,6 +1625,15 @@ struct HubNoteInfo
   char *report;
   int reportType;
   struct HubNote *note;
+};
+
+
+struct HubVital
+{
+   char *id;
+   char *units;
+   char *description;
+   struct HubVital *next;
 };
 
 
