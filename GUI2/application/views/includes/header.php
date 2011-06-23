@@ -39,17 +39,15 @@ $this->carabiner->display(); ?>
                       <div id="webadmin">
 
                           <div id="searcharea">
-                          <span class="online_users"> Online users: <strong><?php echo $this->onlineusers->total_users()?></strong></span>
+                          <span class="online_users"> Online users: <strong id="ttlonlinenum"><?php echo $this->onlineusers->total_users()?></strong></span>
                           <form action="<?php echo site_url('knowledge/knowledgeSearch')?>" method="post">
                               <label id="searchbox">
                                   <input type="text" name="search" placeholder="Search in knowledge map" value="<?php echo  !isset($search) ? "":$search ?>" />
                               </label>
                           </form>
                           </div>
-
                              <?php echo anchor('auth/admin_page',' ',array('class'=>'adminbtn'));?>
                              <?php echo anchor('auth/setting',' ',array('class'=>'settingbtn'));?>
-
                       </div>
                       <p class="clearright"></p>
 

@@ -133,10 +133,10 @@ class Repository_model extends CI_Model {
         return base64_encode($cryptpass);
     }
 
-    function decrypt_password($userInfo,$key='') {
+    function decrypt_password($userInfo,$key=NULL) {
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
         $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-        $dkey = isset($key) ? $key : $this->get_key($userInfo);
+        $dkey =  is_null($key) ?$this->get_key($userInfo) :var_dump($key );
         return trim(
                 mcrypt_decrypt(MCRYPT_RIJNDAEL_256,$dkey, base64_decode($userInfo['password']), MCRYPT_MODE_ECB, $iv));
     }

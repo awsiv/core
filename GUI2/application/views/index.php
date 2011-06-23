@@ -18,7 +18,7 @@
                   </div>                  
                  <div class="clear"></div>
 
-                  <div id="licenseinfo"class="grid_4 push_4"><?php
+                  <div id="licenseinfo"class="push_4"><?php
                       echo $this->lang->line('license_to');
                       echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo'));?></div>
                   <div class="clearboth"></div>
@@ -35,5 +35,15 @@
                  daysleft:<?php echo $daysleft?>
              });
 
+ /* var socket = new io.Socket(null, {port: 8080});
+   socket.connect();
+	  socket.on('message', function(msg){
+          var data=JSON.parse(msg);
+          if(data.event_loggedin)
+              {
+                 console.log(data.ttlusr);
+                 $('#ttlonlinenum').html(data.ttlusr);
+              } 
+ });*/
  </script>
 

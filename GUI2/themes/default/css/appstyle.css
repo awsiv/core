@@ -1687,11 +1687,12 @@ span.search input
 {
     border-left: none;
     border-right:none;
+
 }
 
 #admin_content .actioncol{
     width:100px;
-    padding-bottom: 2px;
+    white-space: normal;
 }
 
 .ui-widget-content a.help
@@ -2214,6 +2215,9 @@ ul.admin_menu li.current a{
    color:#fff;
 }
 
+.ui-dialog-buttonpane{
+    font-size:10px;
+}
 .tables .minus
 {
    color:#FF475B;

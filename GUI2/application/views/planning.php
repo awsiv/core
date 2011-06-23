@@ -57,19 +57,28 @@
     </div>
 </div>
 <div class="clear"></div>
+<script src="<?php echo get_nodehost()?>/socket.io/socket.io.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(document).ready(function(){
+        /* var socket = new io.Socket(null, {port: 8080});
+            socket.connect();
+            socket.on('message', function(msg) {
+                   $('#users').load('/widget/getworkinglatestlogs')
+                   // console.log(msg);
+          });*/
+      
         $("#message").focus(function()
         {
-            $(this).animate({"height": "85px",}, "fast" );
+            $(this).animate({"height": "85px"}, "fast" );
             $("#button_block").slideDown("fast");
             return false;
         });
 
         $("#cancel").click(function()
         {
-            $("#message").val('').animate({"height": "30px",}, "fast" );
+            $("#message").val('').animate({"height": "30px"}, "fast" );
             $("#button_block").slideUp("fast");
+            socket.send("reload");
             return false;
         });
 
@@ -92,9 +101,10 @@
                 data:$(this).serialize(),
                 success: function(data){
                     $('#personalnotes').html(data);
-                    $('#users').load('/widget/getworkinglatestlogs')
-                    $("#message").val('').animate({"height": "30px",}, "fast" );
+                    //$('#users').load('/widget/getworkinglatestlogs')
+                    $("#message").val('').animate({"height": "30px"}, "fast" );
                     $("#button_block").slideUp("fast");
+                     socket.send("reload");
                 },
                 error:function(data){
 	            	
@@ -108,6 +118,6 @@
             title:'Track Record'
            
         });
-          
+     
     });
 </script>

@@ -14,6 +14,7 @@
         </div>
      </div>
 </div>
+<div id="confirmation" title="Are you sure"><span>Do you want to continue deleting..</span></div>
 <script src="<?php echo get_scriptdir()?>jquery.form.js" type="text/javascript"></script>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -35,11 +36,32 @@ $(document).ready(function() {
    });
 
 //load the result from the server after delete page is called
+
   $('a.delete').live('click',function(event){
      event.preventDefault();
      var path=$(this).attr('href');
-     $("#admin_content").load(path);
+     $confirmation.data('path',path).dialog("open");
   });
+
+
+ var $confirmation = $('#confirmation').dialog({
+		 autoOpen: false,
+		 modal: true,
+		 hide: 'puff',
+		 resizable: false,
+		 buttons: {
+                   'Cancel':function() {
+	            $(this).dialog('close');
+	            },
+		 'Confirm': function() {
+                       $("#admin_content").load($(this).data('path'));
+                       $(this).dialog('close');
+	             }
+		 },
+		 open: function() {
+		 $(this).parent().find('.ui-dialog-buttonpane').find('button:last').focus()
+	 }
+ });
 
 //loading the edit page in admin_content of the admin area
   $('a.edit').live('click',function(event){
@@ -103,6 +125,17 @@ $(document).ready(function() {
         $("#infoMessage").fadeOut(500)
       }, 10000);
  });
+
+ $('.activate').live('click',function(event){
+    event.preventDefault();
+    var path=$(this).attr('href');
+    $("#admin_content").load(path);
+ });
+ 
+  $('#deactivate_user').live('submit',function(event) {
+       event.preventDefault();
+      $(this).ajaxSubmit(options)
+   });
 
 });
 </script>

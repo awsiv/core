@@ -22,12 +22,9 @@ class Welcome extends Cf_Controller {
         $y = cfpr_count_yellow_hosts();
         $g = cfpr_count_green_hosts();
 
-        $scripts = array('<!--[if IE]><script language="javascript" type="text/javascript" src=="' . get_scriptdir() . 'jit/Extras/excanvas.js">  </script><![endif]-->
+        $scripts = array(
+            '<script language="javascript" type="text/javascript" src="' . get_nodehost() . '/socket.io/socket.io.js"> </script>
             ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jit/jit-yc.js"> </script>
-            ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'graphs/host-meter.js"> </script>
-                    ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'widgets/licensemeter.js"></script>
             '
         );

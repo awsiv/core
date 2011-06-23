@@ -7,7 +7,7 @@
 				$free = cfpr_get_variable($hostkey,"mon","av_diskfree");
 				$speed = cfpr_get_network_rate($hostkey);
 			  ?>
-<div id="hostview" class="outerdiv grid_12">
+<div id="hostview" class="outerdiv">
     <div class="innerdiv">
 			<?php $report = cfpr_summarize_notkept($hostkey,NULL,NULL,NULL,NULL);?>
               <p class="title">Promises not kept in the past week</p>

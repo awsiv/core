@@ -81,13 +81,12 @@ class Repository extends Cf_Controller {
         $currentUser = $this->session->userdata('username');
         $obj = $this->repository_model->get_specific_repository($currentUser, $url);
 
-
-
         if ($obj != NULL) {
-
+             var_dump($obj);
             $info = array('userId' => $obj->userId, 'password' => $obj->password);
             $username = $obj->username;
             $password = $this->repository_model->decrypt_password($info);
+            
             $params = array(
                 'username' => $username,
                 'password' => $password,
@@ -192,12 +191,9 @@ class Repository extends Cf_Controller {
 
     function _insert_repository($info) {
 
-
-
         //password is jencrypted before so decrypt to clear one .
-
         $info['password'] = $this->jcryption->decrypt($info['password'], $_SESSION["d"]["int"], $_SESSION["n"]["int"]);
-
+         var_dump($info);
         $return = $this->repository_model->insert_repository($info);
         return $return;
     }
@@ -242,7 +238,10 @@ class Repository extends Cf_Controller {
                     $this->form_validation->_error_array = array_merge($this->form_validation->_error_array, $this->repository_model->get_errors());
                 } else {
                     $this->session->set_flashdata(array('success' => 'Repository added sucessfully'));
-                    redirect(current_url());
+                   // redirect(current_url());
+                    $repo = $this->repository_model->get_all_repository($this->username);
+                     $data['repoData'] = $repo;
+                     $this->template->load('template', '/repository/manage_repository', $data);
                     exit();
                 }
             }

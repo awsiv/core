@@ -30,13 +30,13 @@
                                     ;?></td>
 
 				<td><?php if($is_admin) {
-                                    echo ($user['active']) ? anchor("auth/deactivate/".$user['_id'], 'Active') : anchor("auth/activate/". $user['_id'], 'Inactive');
+                                    echo ($user['active']) ? anchor("auth/deactivate/".$user['_id'], 'Active', array('class'=>'activate')) : anchor("auth/activate/". $user['_id'], 'Inactive',array('class'=>'inactivate'));
                                 }else{
                                  echo ($user['active']) ? 'Active' :  'Inactive';
                                 }
                                     ?></td>
 
-                <td class="actioncol">
+                <td class="actioncol"> 
                 <?php
                 if($is_admin)
                 {
