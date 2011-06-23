@@ -3733,6 +3733,8 @@ struct HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash)
     }
   
   
+  mongo_cursor_destroy(cursor);
+  
   return hv;
 }
 

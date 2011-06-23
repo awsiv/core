@@ -1032,7 +1032,7 @@ void DeleteHubVital(struct HubVital *hv)
     free(curr->description);
     
     next = curr->next;
-    free(curr->next);
+    free(curr);
     }
 }
 

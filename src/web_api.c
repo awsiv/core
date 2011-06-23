@@ -283,7 +283,7 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
  CFDB_Close(&dbconn);
  
  
- snprintf(work, sizeof(work), "\"hostname\" : \"%s\", \"ip\" : \"%s\", \"ls\" : \"%ld\", \n\"obs\" : [",
+ snprintf(work, sizeof(work), "\"hostname\" : \"%s\", \"ip\" : \"%s\", \"ls\" : %ld, \n\"obs\" : [",
           hostName, ipAddress, lastUpdate);
 
  Join(buffer,work,bufsize);
@@ -298,7 +298,8 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
     ret = true;
     }
 
-// DeleteHubVital(res);  FIXME!!!
+ DeleteHubVital(res);
+ 
  int buflen = strlen(buffer);
  if(buffer[buflen - 2] == ',')
     {
@@ -1825,10 +1826,10 @@ int Nova2PHP_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsiz
 
  DeleteHubQuery(hq,NULL);
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+ ReplaceTrailingChar(hostnameOut, ' ', '\0');
+ ReplaceTrailingChar(ipaddrOut, ' ', '\0');
+
+ CFDB_Close(&dbconn);
 
  return true;
 }
