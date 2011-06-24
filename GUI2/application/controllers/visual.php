@@ -16,9 +16,6 @@ class Visual extends Cf_Controller {
     }
 
     function vital($hostkey=NULL) {
-
-
-
         $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : $hostkey;
 
         $bc = array(
@@ -30,17 +27,14 @@ class Visual extends Cf_Controller {
 
         $data = array(
             'title' => "Cfengine Mission Portal - vital signs",
-            'title_header' => "vital signs",
-            'nav_text' => "Status : vital signs",
-            'status' => "current",
             'breadcrumbs' => $this->breadcrumblist->display(),
             'hostKey' => $hostkey
         );
 
 
         if ($hostkey != 'none') {
-            $graphdata = cfpr_performance_analysis($hostkey);
-
+            //$graphdata = cfpr_performance_analysis($hostkey);
+            $graphdata=cfpr_vitals_list($hostkey);
             $convertData = json_decode($graphdata, true);
             if (is_array($convertData) && !empty($convertData)) {
                 $data['performanceData'] = $convertData;

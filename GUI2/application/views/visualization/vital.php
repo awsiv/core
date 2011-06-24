@@ -7,37 +7,23 @@
                     <div class="panelcontent">
                         <div class="vitaltable">
                             <div id="graph-pulses-vital-sign">
-                                <?php //foreach ($performanceData['obs'] as $index => $fetchData) {
-                                foreach ($performanceData as $name){
+                                <?php foreach ($performanceData['obs'] as $index => $fetchData) {
+                               // foreach ($performanceData as $name){
                                     ?>
-
-                                    <!--<h3><a href="#"><?//php echo $fetchData['id']; ?> (<?//php echo $fetchData['desc']; ?>)<br/>
-                                            <?//php echo date('D F d h:m:s Y', $performanceData['ls']); ?></a>
+                                    <h3><a href="#"><?php echo $fetchData['id']; ?> (<?php echo $fetchData['desc']; ?>)<br/>
+                                            <?php echo date('D F d h:m:s Y', $performanceData['ls']); ?></a>
                                     </h3>
                                     <div>
 
                                         <div class="tabs">
                                             <ul>
-                                                <li><a href="/graph/magnifiedView/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Past 4 hours</span></a></li>
-                                                <li><a href="/graph/weekview/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Past Week</span></a></li>
-                                                <li><a href="/graph/yearview/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Year View</span></a></li>
-                                                <li><a href="/graph/histogramView/obs/<?php echo $fetchData['i']; ?>/host/<?php echo $hostKey; ?>"><span>Statistical complete history</span></a></li>
-                                            </ul>
-                                        </div>
-                                    </div>-->
-                                       <h3><a href="#"><?php echo $name ?><br/></a>
-                                    </h3>
-                                    <div>
-                                        <div class="tabs">
-                                            <ul>
-                                                <li><a href="/graph/magnifiedView/obs/<?php echo $name; ?>/host/<?php echo $hostKey; ?>"><span>Past 4 hours</span></a></li>
-                                                <li><a href="/graph/weekview/obs/<?php echo $name; ?>/host/<?php echo $hostKey; ?>"><span>Past Week</span></a></li>
-                                                <li><a href="/graph/yearview/obs/<?php echo $name; ?>/host/<?php echo $hostKey; ?>"><span>Year View</span></a></li>
-                                                <li><a href="/graph/histogramView/obs/<?php echo $name; ?>/host/<?php echo $hostKey; ?>"><span>Statistical complete history</span></a></li>
+                                                <li><a href="/graph/magnifiedView/obs/<?php echo $fetchData['id']; ?>/host/<?php echo $hostKey; ?>"><span>Past 4 hours</span></a></li>
+                                                <li><a href="/graph/weekview/obs/<?php echo $fetchData['id']; ?>/host/<?php echo $hostKey; ?>"><span>Past Week</span></a></li>
+                                                <li><a href="/graph/yearview/obs/<?php echo $fetchData['id']; ?>/host/<?php echo $hostKey; ?>"><span>Year View</span></a></li>
+                                                <li><a href="/graph/histogramView/obs/<?php echo $fetchData['id']; ?>/host/<?php echo $hostKey; ?>"><span>Statistical complete history</span></a></li>
                                             </ul>
                                         </div>
                                     </div>
-
                                 <?php } ?>
                             </div>
                         </div>

@@ -29,10 +29,7 @@ class Graph extends CF_Controller {
         );
         
         $this->carabiner->js($requiredjs);
-        
-
-
-
+       
         $this->template->set('injected_item', implode('', $this->scripts));
 
         $this->data = array(
@@ -84,7 +81,8 @@ class Graph extends CF_Controller {
         $observables = $getparams['obs'];
         $hostKey = $getparams['host'];
 
-        $graphData = cfpr_get_magnified_view($hostKey, $observables);
+       // $graphData = cfpr_get_magnified_view($hostKey, $observables);
+          $graphData= cfpr_vitals_view_magnified($hostKey,$observables);
         $convertData = json_decode($graphData, true);
         if (!empty($convertData)) {
 
@@ -132,7 +130,8 @@ class Graph extends CF_Controller {
         $hostKey = $getparams['host'];
 
 
-        $graphData = cfpr_get_weekly_view($hostKey, $observables);
+       // $graphData = cfpr_get_weekly_view($hostKey, $observables);
+        $graphData=cfpr_vitals_view_week($hostKey,$observables);
         $convertData = json_decode($graphData, true);
         if (!empty($convertData)) {
 
@@ -182,7 +181,8 @@ class Graph extends CF_Controller {
         $observables = $getparams['obs'];
         $hostKey = $getparams['host'];
 
-        $graphData = cfpr_get_yearly_view($hostKey, $observables);
+        //$graphData = cfpr_get_yearly_view($hostKey, $observables);
+        $graphData=cfpr_vitals_view_year($hostKey, $observables);
         // var_dump($graphData);
         $convertData = json_decode($graphData, true);
         if (!empty($convertData)) {
@@ -230,7 +230,8 @@ class Graph extends CF_Controller {
         $observables = $getparams['obs'];
         $hostKey = $getparams['host'];
 
-        $graphData = cfpr_get_histogram_view($hostKey, $observables);
+       // $graphData = cfpr_get_histogram_view($hostKey, $observables);
+        $graphData=cfpr_vitals_view_histogram($hostKey,$observables);
         $convertData = json_decode($graphData, true);
         if (!empty($convertData)) {
 
