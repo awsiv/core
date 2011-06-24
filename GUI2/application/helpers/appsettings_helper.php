@@ -45,4 +45,18 @@ function get_policiesdir()
 	 $CI=&get_instance();
 	 return $CI->config->item('policies_dir');
 	}
+        
+  function get_nodehost()
+     {
+          $CI=&get_instance();
+          $url=parse_url(site_url());
+          return "http://".$url['host'].':'.$CI->config->item('nodeport');
+     }
+
+   function get_nodehost_from_server()
+   {
+       $CI=&get_instance();
+        return "http://localhost:".$CI->config->item('nodeport');
+   }
+
 ?>

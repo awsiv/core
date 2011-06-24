@@ -28,7 +28,8 @@
       </p>
       
       <p>
-      	<input type=checkbox name="reset_password"> <label for="reset_password">Reset Password</label>
+        <label for="reset_password">Reset Password</label>
+      	<input type=checkbox name="reset_password"> 
       </p>
      
       <p id="btnholder"><?php echo form_submit(array('name'=>'submit','class'=>'btn','value'=>'Update'));?></p>

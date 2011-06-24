@@ -242,7 +242,8 @@ class Ion_auth
 			return FALSE;
 		}
 
-		$new_password = $this->ci->ion_auth_model_mongo->forgotten_password_complete($code, $profile->salt);
+		//$new_password = $this->ci->ion_auth_model_mongo->forgotten_password_complete($code, $profile->salt);
+                 $new_password = $this->ci->ion_auth_model_mongo->forgotten_password_complete($code);
 
 		if ($new_password)
 		{
@@ -574,7 +575,7 @@ class Ion_auth
 	 **/
 	public function get_user_by_email($email)
 	{
-		return (object)$this->ci->ion_auth_model_mongo->get_user_by_email($email);
+		return $this->ci->ion_auth_model_mongo->get_user_by_email($email);
 	}
 
 	/**

@@ -1,10 +1,9 @@
 
 <div id="infoMessage"><?php echo $message;?></div>
     <div class="form">
-<?php echo form_open("auth/change_password/".$this->uri->segment(3), array('id'=>'change_password'));?>
+   <?php echo form_open("auth/change_password/".$this->uri->segment(3), array('id'=>'change_password'));?>
 
       <p>
-
       <?php
       echo form_label('Old Password');
       echo form_input($old_password);?>

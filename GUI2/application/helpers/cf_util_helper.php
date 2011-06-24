@@ -174,4 +174,32 @@ function getDateStatus($timestamp,$noColor=false) {
     
 }
 
+/**
+ *
+ * @param <type> $url
+ * @param <type> $_data
+ *
+ */
+function notifier($url,$_data)
+{
+    //$_data=array("name"=>"sudhir","login"=>true);
+        $data = array();
+       while(list($n,$v) = each($_data)){
+        $data[] = urlencode($n)."=".urlencode($v);
+       }
+      $data = implode('&', $data);
+       $ch = curl_init();
+       
+        // set URL and other appropriate options
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt ($ch, CURLOPT_POST, true);
+        curl_setopt ($ch, CURLOPT_POSTFIELDS, $data);
+        // grab URL and pass it to the browser
+        curl_exec($ch);
+
+        // close cURL resource, and free up system resources
+        curl_close($ch);
+}
+
 ?>

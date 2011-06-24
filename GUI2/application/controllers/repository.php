@@ -193,7 +193,7 @@ class Repository extends Cf_Controller {
 
         //password is jencrypted before so decrypt to clear one .
         $info['password'] = $this->jcryption->decrypt($info['password'], $_SESSION["d"]["int"], $_SESSION["n"]["int"]);
-         var_dump($info);
+        // var_dump($info);
         $return = $this->repository_model->insert_repository($info);
         return $return;
     }

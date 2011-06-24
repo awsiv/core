@@ -15,6 +15,7 @@ $config['hub_dir']='/hub/';
 $config['graph_dir']='./graphs/';
 $config['policies_dir']='./policies/';
 $config['default']='themes/default/';
+$config['nodeport']='8080';
 
 /*
 |----------------------------------------------------------------------------

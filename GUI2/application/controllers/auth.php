@@ -42,7 +42,7 @@ class Auth extends Controller {
             $this->data['users'] = $this->ion_auth->get_users_array();
             $this->data['usergroup'] = $this->session->userdata('group');
             $this->data['is_admin'] = $this->ion_auth->is_admin();
-            $_data=array('event_loggedin'=>true,'ttlusr'=>$this->onlineusers->total_users());
+            $_data = array('event_loggedin' => true, 'ttlusr' => $this->onlineusers->total_users());
             //notifier( get_nodehost_from_server().'/userloggedin', $_data );
             if (is_ajax ()) {
                 $this->load->view('auth/user_list', $this->data);
@@ -291,15 +291,15 @@ class Auth extends Controller {
         $activation = $this->ion_auth->activate($id, $code);
 
         if ($activation) {
-             if (is_ajax ()) {
-                    $this->data['message'] = $this->ion_auth->messages();
-                    $this->data['users'] = $this->ion_auth->get_users_array();
-                    $this->data['is_admin'] = $this->ion_auth->is_admin();
-                    $this->load->view('auth/user_list', $this->data);
-                   } else {
-                    $this->session->set_flashdata('message', $this->ion_auth->messages());
-                    redirect('auth/index', 'refresh');
-             }
+            if (is_ajax ()) {
+                $this->data['message'] = $this->ion_auth->messages();
+                $this->data['users'] = $this->ion_auth->get_users_array();
+                $this->data['is_admin'] = $this->ion_auth->is_admin();
+                $this->load->view('auth/user_list', $this->data);
+            } else {
+                $this->session->set_flashdata('message', $this->ion_auth->messages());
+                redirect('auth/index', 'refresh');
+            }
         } else {
             //redirect them to the forgot password page
             $this->session->set_flashdata('message', $this->ion_auth->errors());
@@ -336,15 +336,15 @@ class Auth extends Controller {
             }
 
             //redirect them back to the auth page
-             if (is_ajax ()) {
-                    $this->data['message'] = $this->ion_auth->messages();
-                    $this->data['users'] = $this->ion_auth->get_users_array();
-                    $this->data['is_admin'] = $this->ion_auth->is_admin();
-                    $this->load->view('auth/user_list', $this->data);
-                   } else {
-                    $this->session->set_flashdata('message', $this->ion_auth->messages());
-                    redirect('auth/index', 'refresh');
-                }
+            if (is_ajax ()) {
+                $this->data['message'] = $this->ion_auth->messages();
+                $this->data['users'] = $this->ion_auth->get_users_array();
+                $this->data['is_admin'] = $this->ion_auth->is_admin();
+                $this->load->view('auth/user_list', $this->data);
+            } else {
+                $this->session->set_flashdata('message', $this->ion_auth->messages());
+                redirect('auth/index', 'refresh');
+            }
         }
     }
 
@@ -457,7 +457,6 @@ class Auth extends Controller {
 
     function edit_user($id) {
         $this->data['title'] = "Edit User";
-
         if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
             redirect('auth', 'refresh');
         }
@@ -475,6 +474,9 @@ class Auth extends Controller {
         }
         if ($this->form_validation->run() == true && $this->ion_auth->update_user($id, $data)) { //check to see if we are creating the user
             //redirect them back to the admin page
+              if ($this->input->post('reset_password')) {
+                $forgotten = $this->ion_auth->forgotten_password($this->input->post('email'));
+              }
             if (is_ajax ()) {
                 $this->data['message'] = $this->ion_auth->messages();
                 $this->data['users'] = $this->ion_auth->get_users_array();

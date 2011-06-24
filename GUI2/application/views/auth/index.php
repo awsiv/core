@@ -16,6 +16,7 @@
 </div>
 <div id="confirmation" title="Are you sure"><span>Do you want to continue deleting..</span></div>
 <script src="<?php echo get_scriptdir()?>jquery.form.js" type="text/javascript"></script>
+<script src="<?php echo get_scriptdir()?>jquery.blockUI.js" type="text/javascript"></script>
 <script type="text/javascript">
 $(document).ready(function() {
    var options = {
@@ -79,7 +80,22 @@ $(document).ready(function() {
 //submitting the form ajaxically to the page in form action and loading the result in admin_content
   $('#edit_user').live('submit',function(event){
       event.preventDefault();
-      $(this).ajaxSubmit(options);
+      $(this).ajaxSubmit({target:'#admin_content',beforeSubmit: function(arr, $form, options) {
+         $.blockUI({ css: {
+            border: 'none',
+            padding: '15px',
+            backgroundColor: '#000',
+            '-webkit-border-radius': '10px',
+            '-moz-border-radius': '10px',
+            opacity: .5,
+            color: '#fff'
+        },message: '<h1><img src="<?php echo get_imagedir()?>ajax_loader2.gif" />Please wait...</h1>'
+         });
+      },
+      success:function(responseText, statusText, xhr, $form){
+        $(document).unblock();
+      }
+     });
   });
 
  //submitting the form ajaxically to the page in form action and loading the result in admin_content
@@ -122,7 +138,7 @@ $(document).ready(function() {
   
  $(document).ajaxStop(function(){
 	setTimeout(function() {
-        $("#infoMessage").fadeOut(500)
+    $("#infoMessage").fadeOut(500)
       }, 10000);
  });
 
@@ -136,6 +152,7 @@ $(document).ready(function() {
        event.preventDefault();
       $(this).ajaxSubmit(options)
    });
+
 
 });
 </script>

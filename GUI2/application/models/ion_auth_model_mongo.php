@@ -354,21 +354,20 @@ class Ion_auth_model_mongo extends CI_Model
 		return FALSE;
 	    }
 
-	    $this->mongo_db->where('forgotten_password_code', $code);
+	    $this->mongo_db->where(array('forgotten_password_code'=>$code));
 
 	    if ($this->mongo_db->count('users') > 0)
 	    {
-		$password = $this->salt();
-
+		//$password = $this->salt();
+                $password=$this->salt();
 		$data = array(
 			    'password'			=> $this->hash_password($password, $salt),
 			    'forgotten_password_code'   => '0',
 			    'active'			=> 1,
 			     );
+		$this->mongo_db->where(array('forgotten_password_code'=>$code))->update('users', $data);
 
-		$this->mongo_db->update('users', $data);
-
-		return $password;
+		return $password ;
 	    }
 
 	    return FALSE;
@@ -421,11 +420,11 @@ class Ion_auth_model_mongo extends CI_Model
 	    return ($i->num_rows > 0) ? $i->row() : FALSE;*/
              if ($is_code)
 	    {
-                return (object)$this->mongo_db->where(array('forgotten_password_code'=>$identity))->get('users');
+                return $this->mongo_db->where(array('forgotten_password_code'=>$identity))->get_object('users');
 	    }
 	    else
 	    {
-		return (object)$this->mongo_db->where(array($this->identity_column=>$identity))->get('users');
+		return $this->mongo_db->where(array($this->identity_column=>$identity))->get_object('users');
 	    }
 
            
@@ -619,7 +618,7 @@ class Ion_auth_model_mongo extends CI_Model
 	 **/
 	public function get_user_by_email($email)
 	{
-	    return $this->mongo_db->get_where('users',array('email'=>$email),1);
+	    return $this->mongo_db->get_where_object('users',array('email'=>$email),1);
 	}
 
         public function get_user_by_col($col,$col_val)
@@ -915,5 +914,10 @@ class Ion_auth_model_mongo extends CI_Model
             $this->mongo_db->clear();
             return True;
 	}
+
+        function random_text($code_length = 10){
+	for($code_length, $newcode = ''; strlen($newcode) < $code_length; $newcode .= chr(!rand(0, 2) ? rand(48, 57) : (!rand(0, 1) ? rand(65, 90) : rand(97, 122))));
+	return $newcode;
+}
 
 }
