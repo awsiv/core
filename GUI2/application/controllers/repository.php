@@ -82,7 +82,7 @@ class Repository extends Cf_Controller {
         $obj = $this->repository_model->get_specific_repository($currentUser, $url);
 
         if ($obj != NULL) {
-             var_dump($obj);
+            // var_dump($obj);
             $info = array('userId' => $obj->userId, 'password' => $obj->password);
             $username = $obj->username;
             $password = $this->repository_model->decrypt_password($info);
@@ -238,11 +238,7 @@ class Repository extends Cf_Controller {
                     $this->form_validation->_error_array = array_merge($this->form_validation->_error_array, $this->repository_model->get_errors());
                 } else {
                     $this->session->set_flashdata(array('success' => 'Repository added sucessfully'));
-                   // redirect(current_url());
-                    $repo = $this->repository_model->get_all_repository($this->username);
-                     $data['repoData'] = $repo;
-                     $this->template->load('template', '/repository/manage_repository', $data);
-                    exit();
+                    redirect(current_url());
                 }
             }
         }

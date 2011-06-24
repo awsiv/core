@@ -2,6 +2,8 @@
 
     <div id="custom-tabs">
         <ul>
+             <li><a  target="_self" href="/widget/summaryCompliance/env/">Default</a></li>
+            
             <?php foreach ($envList as $env) { ?> 
                 <li><a  target="_self" href="/widget/summaryCompliance/env/environment_<?php echo $env; ?>"><?php echo $env ?></a></li>
             <?php } ?>

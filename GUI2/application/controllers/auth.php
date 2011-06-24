@@ -187,13 +187,17 @@ class Auth extends Controller {
 
             $username = $result->username;
             $oldPass = $result->password;
+            $this->load->model('repository_model');
+            $userInfo = array('userId'=>$username);
+            $oldKey = $this->repository_model->get_key($userInfo); // have to have old pass key before change
+            
             $change = $this->ion_auth->change_password($identity, $this->input->post('old'), $this->input->post('new'));
 
             if ($change) { //if the password was successfully changed
                 //$this->session->set_flashdata('message', $this->ion_auth->messages());
                 //$this->logout();
                 // change the svn password as well here
-                $this->change_svn_password_entries($username, $oldPass);
+                $this->change_svn_password_entries($username, $oldKey);
                 if (is_ajax ()) {
                     $this->data['message'] = $this->ion_auth->messages();
                     $this->data['users'] = $this->ion_auth->get_users_array();
@@ -231,10 +235,10 @@ class Auth extends Controller {
      * Changes the managed svn repository password.
      * @param type $identity
      */
-    function change_svn_password_entries($username, $oldpass) {
+    function change_svn_password_entries($username, $oldkey) {
 
         $this->load->model('repository_model');
-        $key = hash('sha256', $oldpass, TRUE);
+        $key = $oldkey;
 
         $repo = $this->repository_model->get_all_repository($username);
 
