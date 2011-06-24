@@ -179,11 +179,11 @@ if (!Nova_ReadTimeSeries(&cfv,keyhash,obs))
 
 strcpy(buffer,"[");
 
-snprintf(work,CF_BUFSIZE,"\"Maximum value: %.2lf %s\",",cfv.max,UNITS[obs]);
+snprintf(work,CF_BUFSIZE,"\"Maximum value: %.2lf %s\",",cfv.max,NovaGetSlotUnits(obs));
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"\"Minimum value: %.2lf %s\",",cfv.min,UNITS[obs]);
+snprintf(work,CF_BUFSIZE,"\"Minimum value: %.2lf %s\",",cfv.min,NovaGetSlotUnits(obs));
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"\"Average variability: %lf %s\"",cfv.error_scale,UNITS[obs]);
+snprintf(work,CF_BUFSIZE,"\"Average variability: %lf %s\"",cfv.error_scale,NovaGetSlotUnits(obs));
 Join(buffer,work,bufsize);
 Join(buffer,"]",bufsize);
 }

@@ -234,11 +234,11 @@ else
    Join(buffer,work,bufsize);
    }
 
-snprintf(work,CF_BUFSIZE,"\"Maximum value_ %lf %s\",",cfv.max,UNITS[obs]);
+snprintf(work,CF_BUFSIZE,"\"Maximum value_ %lf %s\",",cfv.max,NovaGetSlotUnits(obs));
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"\"Minimum value: %lf %s\",",cfv.min,UNITS[obs]);
+snprintf(work,CF_BUFSIZE,"\"Minimum value: %lf %s\",",cfv.min,NovaGetSlotUnits(obs));
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"\"Average variability: %lf %s\",",cfv.error_scale,UNITS[obs]);
+snprintf(work,CF_BUFSIZE,"\"Average variability: %lf %s\",",cfv.error_scale,NovaGetSlotUnits(obs));
 Join(buffer,work,bufsize);
 Join(buffer,"]",bufsize);
 }

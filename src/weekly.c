@@ -373,9 +373,9 @@ if (!Nova_ReadTimeSeries(&cfv,keyhash,obs))
 
 strcpy(buffer,"[");
 
-snprintf(work,CF_BUFSIZE-1,"\"Maximum value: %lf %s\",",cfv.max,UNITS[obs]);
+snprintf(work,CF_BUFSIZE-1,"\"Maximum value: %lf %s\",",cfv.max,NovaGetSlotUnits(obs));
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"\"Minimum value %lf %s\",",cfv.min,UNITS[obs]);
+snprintf(work,CF_BUFSIZE-1,"\"Minimum value %lf %s\",",cfv.min,NovaGetSlotUnits(obs));
 Join(buffer,work,bufsize);
 x = 100*(double)cfv.over/(double)CF_TIMESERIESDATA;
 snprintf(work,CF_BUFSIZE-1,"\"Percentage over average/normal: %lf%%\",",x);
