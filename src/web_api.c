@@ -2976,7 +2976,6 @@ endIndex = (page->resultsPerPage*page->pageNum) - 1;
 
 for (ip = clist, i=0; (ip !=  NULL); ip=ip->next,i++)
    {
-
    if(i>=startIndex && (i<=endIndex || endIndex < 0))
       {
       if (Nova_IsGreen(ip->counter))
@@ -5469,11 +5468,11 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
   char fuser[CF_MAXVARSIZE] = {0};
   char kh[CF_MAXVARSIZE] = {0};
   char noteId[CF_MAXVARSIZE] = {0};
-  int count=0;
 
   char jsonEscapedReport[CF_BUFSIZE]={0};
   char jsonEscapedMsg[CF_BUFSIZE]={0};
-
+  int startIndex=0,endIndex=0, count=0;
+   
 if (username)
    {
    snprintf(fuser, CF_MAXVARSIZE,"%s", username);
@@ -5501,30 +5500,30 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 result = CFDB_QueryNotes(&dbconn, kh, noteId, data);
 
-PageRecords(&result,page,DeleteHubNote);
-
 returnval[0] = '\0';
 StartJoin(returnval,"{\"data\":[",bufsize);
-
+startIndex = page->resultsPerPage*(page->pageNum - 1);
+endIndex = (page->resultsPerPage*page->pageNum) - 1;
 for (rp = result; rp != NULL; rp=rp->next)
    {
    hni = ( struct HubNoteInfo *) rp->item;
    
    EscapeJson(hni->report,jsonEscapedReport,sizeof(jsonEscapedReport));
    
-   for(hn = hni->note; hn != NULL; hn=hn->next)
+   for(hn = hni->note; hn != NULL; hn=hn->next, count++)
       {
-      EscapeJson(hn->msg,jsonEscapedMsg,sizeof(jsonEscapedMsg));
-
-      ReplaceTrailingChar(jsonEscapedMsg, '\n', '\0');
-      
-      snprintf(buffer,sizeof(buffer),"{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\",\"report\":\"%s\",\"report_type\":%d},",
-               hn->user, hn->t, jsonEscapedMsg, jsonEscapedReport, hni->reportType);
-      if(!Join(returnval,buffer,bufsize))
+      if(count>=startIndex && (count<=endIndex || endIndex < 0))
          {
-         break;
+         EscapeJson(hn->msg,jsonEscapedMsg,sizeof(jsonEscapedMsg));
+         ReplaceTrailingChar(jsonEscapedMsg, '\n', '\0');
+      
+         snprintf(buffer,sizeof(buffer),"{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\",\"report\":\"%s\",\"report_type\":%d},",
+                  hn->user, hn->t, jsonEscapedMsg, jsonEscapedReport, hni->reportType);
+         if(!Join(returnval,buffer,bufsize))
+            {
+            break;
+            }
          }
-      count++;
       }
    hni = NULL;
    }
@@ -5534,7 +5533,7 @@ if (returnval[strlen(returnval)-1]==',')
    returnval[strlen(returnval) - 1] = '\0';
    }
 
-snprintf(buffer,sizeof(buffer),"],\"meta\":{\"count\":%d}}\n",page->totalResultCount);
+snprintf(buffer,sizeof(buffer),"],\"meta\":{\"count\":%d}}\n",count);
 EndJoin(returnval,buffer,bufsize);
 
 DeleteRlist(result);
