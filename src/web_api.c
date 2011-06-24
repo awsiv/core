@@ -84,7 +84,7 @@ if (false)
     */
    Nova2PHP_add_new_note(NULL,NULL, -1,NULL, -1, NULL,NULL,100);
    Nova2PHP_add_note(NULL,NULL,-1,NULL,NULL,100);
-   Nova2PHP_get_notes(NULL,NULL, NULL,-1,-1,NULL,1000000);
+   Nova2PHP_get_notes(NULL,NULL, NULL,-1,-1,NULL,NULL,10000);
    Nova2PHP_get_host_noteid(NULL,NULL,4096);
    
    Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
@@ -5456,7 +5456,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
 /*  Commenting                                                               */
 /*****************************************************************************/
 
-int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, time_t to, char *returnval, int bufsize)
+int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, time_t to, struct PageInfo *page, char *returnval, int bufsize)
 
 { struct Item *data = NULL, *ip = NULL;
   char msg[CF_BUFSIZE] = {0};
@@ -5501,6 +5501,8 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 result = CFDB_QueryNotes(&dbconn, kh, noteId, data);
 
+PageRecords(&result,page,DeleteHubNote);
+
 returnval[0] = '\0';
 StartJoin(returnval,"{\"data\":[",bufsize);
 
@@ -5532,7 +5534,7 @@ if (returnval[strlen(returnval)-1]==',')
    returnval[strlen(returnval) - 1] = '\0';
    }
 
-snprintf(buffer,sizeof(buffer),"],\"meta\":{\"count\":%d}}\n",count);
+snprintf(buffer,sizeof(buffer),"],\"meta\":{\"count\":%d}}\n",page->totalResultCount);
 EndJoin(returnval,buffer,bufsize);
 
 DeleteRlist(result);
