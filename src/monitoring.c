@@ -36,73 +36,72 @@ typedef struct MonitoringSlot
 
 /* Constants */
 
+static const char *UNITS[CF_OBSERVABLES] =
+   {
+   "average users per 2.5 mins",
+   "processes",
+   "processes",
+   "percent",
+   "percent",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "connections",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "packets",
+   "entries",
+   "entries",
+   "Celcius",
+   "Celcius",
+   "Celcius",
+   "Celcius",
+   "percent",
+   "percent",
+   "percent",
+   "percent",
+   "percent",
+   };
+
+/* Variables */
+
 int MONITOR_RESTARTED = true;
 char *MEASUREMENTS[CF_DUNBAR_WORK];
 struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
 
 static bool slots_loaded;
 static MonitoringSlot *SLOTS[CF_OBSERVABLES - ob_spare];
-
-/*****************************************************************************/
-
-void NovaInitMeasurements()
-
-{
-UNITS[ob_users] = "average users per 2.5 mins";
-UNITS[ob_rootprocs] = "processes";
-UNITS[ob_otherprocs] = "processes";
-UNITS[ob_diskfree] = "percent";
-UNITS[ob_loadavg] = "percent";
-UNITS[ob_netbiosns_in] = "connections";
-UNITS[ob_netbiosns_out] = "connections";
-UNITS[ob_netbiosdgm_in] = "connections";
-UNITS[ob_netbiosdgm_out] = "connections";
-UNITS[ob_netbiosssn_in] = "connections";
-UNITS[ob_netbiosssn_out] = "connections";
-UNITS[ob_irc_in] = "connections";
-UNITS[ob_irc_out] = "connections";
-UNITS[ob_cfengine_in] = "connections";
-UNITS[ob_cfengine_out] = "connections";
-UNITS[ob_nfsd_in] = "connections";
-UNITS[ob_nfsd_out] = "connections";
-UNITS[ob_smtp_in] = "connections";
-UNITS[ob_smtp_out] = "connections";
-UNITS[ob_www_in] = "connections";
-UNITS[ob_www_out] = "connections";
-UNITS[ob_ftp_in] = "connections";
-UNITS[ob_ftp_out] = "connections";
-UNITS[ob_ssh_in] = "connections";
-UNITS[ob_ssh_out] = "connections";
-UNITS[ob_wwws_in] = "connections";
-UNITS[ob_wwws_out] = "connections";
-UNITS[ob_icmp_in] = "packets";
-UNITS[ob_icmp_out] = "packets";
-UNITS[ob_udp_in] = "packets";
-UNITS[ob_udp_out] = "packets";
-UNITS[ob_dns_in] = "packets";
-UNITS[ob_dns_out] = "packets";
-UNITS[ob_tcpsyn_in] = "packets";
-UNITS[ob_tcpsyn_out] = "packets";
-UNITS[ob_tcpack_in] = "packets";
-UNITS[ob_tcpack_out] = "packets";
-UNITS[ob_tcpfin_in] = "packets";
-UNITS[ob_tcpfin_out] = "packets";
-UNITS[ob_tcpmisc_in] = "packets";
-UNITS[ob_tcpmisc_out] = "packets";
-UNITS[ob_webaccess] = "packets";
-UNITS[ob_weberrors] = "packets";
-UNITS[ob_syslog] = "entries";
-UNITS[ob_messages] = "entries";
-UNITS[ob_temp0] = "Celcius";
-UNITS[ob_temp1] = "Celcius";
-UNITS[ob_temp2] = "Celcius";
-UNITS[ob_temp3] = "Celcius";
-UNITS[ob_cpuall] = "percent";
-UNITS[ob_cpu0] = "percent";
-UNITS[ob_cpu1] = "percent";
-UNITS[ob_cpu2] = "percent";
-UNITS[ob_cpu3] = "percent";
-}
 
 /*****************************************************************************/
 

@@ -692,7 +692,6 @@ void Nova_AnalyseMag(char *keyhash,enum observables obs,char *buffer,int bufsize
 /* monitoring.c */
 
 void Nova_GetClassName(int i,char *name,char *desc);
-void NovaInitMeasurements(void);
 void Nova_HistoryUpdate(time_t time, const struct Averages *newvals);
 void Nova_UpdateShiftAverage(struct Averages *shift_value,struct Averages *newvals);
 void Nova_ResetShiftAverage(struct Averages *shift_value);

@@ -57,7 +57,6 @@ if (false)
    Nova_Header("123","123",buffer,1000);
    Nova_Footer(buffer,1000);
    Nova2PHP_choose_hosts("123",2,buffer,1000);
-   NovaInitMeasurements();
    Nova2PHP_get_host_colour(NULL,buffer,3);
    Nova_Header("sd","we",buffer,3); 
    Nova2PHP_get_network_speed("","",3);
