@@ -39,7 +39,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    eventname[0] = '\0';
    sscanf(ip->name,"%ld,%lf,%lf,%lf,%255[^\n]\n",&t,&measure,&average,&dev,eventname);
-   Debug("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s",eventname,measure,average,dev,cf_ctime(&t));
+   Debug("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s\n",eventname,measure,average,dev,cf_ctime(&t));
    }
 }
 
@@ -65,7 +65,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
    sscanf(ip->name,"%[^,],%ld,%lf,%lf\n",name,&t,&q,&dev);
-   Debug("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s",name,q,dev,cf_ctime(&t));
+   Debug("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s\n",name,q,dev,cf_ctime(&t));
    }
 }
 

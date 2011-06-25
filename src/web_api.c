@@ -1679,19 +1679,13 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
        break;
        }
     }
-   
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0';
-    }
+
+ ReplaceTrailingChar(returnval, ',', '\0');
  EndJoin(returnval,"]}\n",bufsize);
    
  DeleteHubQuery(hq,DeleteHubFileChanges);
    
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+ CFDB_Close(&dbconn);
    
  return true;
 }
@@ -2396,20 +2390,14 @@ int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0';
-    }
 
+ ReplaceTrailingChar(returnval, ',', '\0');
  EndJoin(returnval,"]\n",bufsize);
 
  DeleteHubQuery(hq,DeleteHubFileChanges);
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
+ CFDB_Close(&dbconn);
+ 
  return true;
 }
 
