@@ -4,11 +4,11 @@
         <div class="innerdiv" style="min-width: 500px;">
             <h1>Results for search :  <?php echo $search; ?></h1>
             <?php if (is_array($searchData) && !empty($searchData)) { ?>    
-                <ul>
+            <ul style="padding: 5px;">
                     <?php foreach ((array) $searchData as $item) { ?>
                         <?php if (trim($item['topic'])) { ?>
 
-                            <li><?php echo sprintf('"<a target="_self" href="/knowledge/knowledgemap/pid/%s">%s</a>" is mentioned in the context of %s', $item['id'], $item['topic'], $item['context']); ?></li>
+                <li style="padding:5px;"><?php echo sprintf('"<a target="_self" href="/knowledge/knowledgemap/pid/%s">%s</a>" is mentioned in the context of %s', $item['id'], $item['topic'], $item['context']); ?></li>
 
                         <?php } ?>
                     <?php } ?>

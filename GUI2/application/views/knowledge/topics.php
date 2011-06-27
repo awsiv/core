@@ -1,6 +1,6 @@
-<div>
+<div style="margin-left: 12px;">
 <h2>References to "<?php echo $topicDetail['topic']; ?>" in the context of "<?php echo $topicDetail['context']; ?>"</h2>
-<ul>
+<ul  style="padding: 15px;">
     <?php foreach ((array)$topicHits as $topic) {
     ?>
 
