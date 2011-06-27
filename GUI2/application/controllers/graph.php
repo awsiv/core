@@ -15,6 +15,16 @@ class Graph extends CF_Controller {
         $this->carabiner->js($requiredjs);
         
    }
+   
+   /**
+    * replace special characters for javascript support such as ':'
+    * @param type $obs 
+    */
+   function canonifyObservables($obs) {
+       $replaceArray = array( '!','"','#','$','%','&','(',')','*','+',',','.','/',':',';','<','=','>','?','@','[','\\',']','^','`','{','|','}','~');
+       
+       return str_replace($replaceArray, '_',$obs);
+   }
 
 
     function summary($hostKey=null) {
@@ -92,7 +102,7 @@ class Graph extends CF_Controller {
 
             $this->data['graphLastUpdated'] = $lastUpdated;
             $this->data['graphdata'] = ($graphData);
-            $this->data['observable'] = $observables;
+            $this->data['observable'] = $this->canonifyObservables($observables);
             $manipulatedSeriesData = json_decode($graphData);
             $lineSeries1 = array();
             $lineSeries2 = array();
@@ -142,7 +152,7 @@ class Graph extends CF_Controller {
 
             $this->data['graphLastUpdated'] = $lastUpdated;
             $this->data['graphdata'] = ($graphData);
-            $this->data['observable'] = $observables;
+            $this->data['observable'] = $this->canonifyObservables($observables);
 
             $manipulatedSeriesData = json_decode($graphData);
 
@@ -193,7 +203,7 @@ class Graph extends CF_Controller {
 
             $this->data['graphLastUpdated'] = $lastUpdated;
             $this->data['graphdata'] = ($graphData);
-            $this->data['observable'] = $observables;
+            $this->data['observable'] = $this->canonifyObservables($observables);
             $manipulatedSeriesData = json_decode($graphData);
 
             $lineSeries1 = array();
@@ -243,11 +253,11 @@ class Graph extends CF_Controller {
 
             $this->data['graphLastUpdated'] = $lastUpdated;
             $this->data['graphdata'] = $graphData;
-            $this->data['observable'] = $observables;
+            $this->data['observable'] = $this->canonifyObservables($observables);
             $this->load->view('graph/histogram', $this->data);
         } else
             echo "No data available";
-//$this->template->load('template', 'graph/histogram', $this->data);
+            //$this->template->load('template', 'graph/histogram', $this->data);
     }
 
 
