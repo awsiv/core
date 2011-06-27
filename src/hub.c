@@ -319,7 +319,7 @@ void Nova_CacheTotalCompliance(bool allSlots)
  */
 {
 #ifdef HAVE_LIBMONGOC
-  time_t start,now = time(NULL);
+  time_t curr,now = time(NULL);
   mongo_connection dbconn;
   struct EnvironmentsList *env, *ep;
   int slot;
@@ -335,11 +335,11 @@ now = time(NULL);
 
 if (allSlots)
    {
-   start = GetShiftSlotStart(now - (3600 * 24 * 7));  // previous week
+   curr = GetShiftSlotStart(now - (3600 * 24 * 7));  // previous week
    }
 else
    {
-   start = GetShiftSlotStart(now - (3600 * 6));  // previous time slot   
+   curr = GetShiftSlotStart(now - (3600 * 6));  // previous time slot   
    }
 
 
@@ -353,25 +353,25 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 if (!Nova2PHP_environments_list(&env))
    {
    CfOut(cf_error, "", "!! Unable to query list of environments");
+   CFDB_Close(&dbconn);
    return;
    }
 
-for(; start + (3600 * 6) < now; start += CF_SHIFT_INTERVAL) // in case of all slots
+for(; curr + (3600 * 6) < now; curr += CF_SHIFT_INTERVAL) // in case of all slots
    {
-   start = GetShiftSlotStart(start);  // in case of daylight saving time
-   slot = GetShiftSlot(start);
+   slot = GetShiftSlot(curr);
    
 
    // first any environment, then environment-specific
    
-   Nova_CacheTotalComplianceEnv(&dbconn,"any",NULL,slot,start,now);
+   Nova_CacheTotalComplianceEnv(&dbconn,"any",NULL,slot,curr,now);
    
    for (ep = env; ep != NULL; ep = ep->next)
       {
       snprintf(envName, sizeof(envName), "%s", ep->name);
       snprintf(envClass, sizeof(envClass), "environment_%s", ep->name);
       
-      Nova_CacheTotalComplianceEnv(&dbconn,envName,envClass,slot,start,now);
+      Nova_CacheTotalComplianceEnv(&dbconn,envName,envClass,slot,curr,now);
       }
    }
 
