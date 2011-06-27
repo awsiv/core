@@ -122,6 +122,7 @@ int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,i
 int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsize);
 int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize);
 int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize);
+int Nova2PHP_get_bundle_type(char *name,char *buffer,int bufsize); 
 int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize);
 int Nova2PHP_get_bundle_count(char *buffer, int bufsize);
 int Nova2PHP_get_promise_count(char *buffer, int bufsize);

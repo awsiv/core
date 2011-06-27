@@ -355,6 +355,7 @@ struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char 
 struct Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
 struct Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
 int CFDB_QueryBundleCount(mongo_connection *conn);
+int CFDB_QueryBundleType(mongo_connection *conn,char *bName,char *buffer,int bufsize);
 int CFDB_QueryPromiseCount(mongo_connection *conn);
 struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
 struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
