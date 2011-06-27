@@ -90,9 +90,12 @@ menuitemclicked:function(event){
                                   });
                   }
            });
-  self.searchbar.find('input[type="text"]').trigger('blur');
-  self.alphasearch.find('li').removeClass('selected');
-  self.menu.fadeOut();
+ self.searchbar.find('input[type="text"]').trigger('blur');
+ self.alphasearch.find('li').removeClass('selected');
+ // self.menu.fadeOut();
+  self.searchbar.find('input[type="text"]').trigger('focus');
+   self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
+   self.dialogcontent.find("#classList").delegate('a.classadd','click',$.proxy(self.addclassfilter,self));
 },
 
  addclassfilter:function(event)
@@ -135,6 +138,7 @@ menuitemclicked:function(event){
 
 loadpagebody:function(){
   var self=this;
+  self.dialogcontent.html(self.ajaxloader);
   $.getJSON(self.element.attr('href'), function(data) {
                              self.dialogcontent.html($("<ul>").attr("id", "classList"));
                                //$("<ul>").attr("id", "tagList").appendTo(self.classdlg);

@@ -42,9 +42,9 @@
      </div>
     <div class="grid_3">
         <div class="outerdiv ">
-            <div id="announcement" class="innerdiv">
+           <!-- <div id="announcement" class="innerdiv">
                 <p class="title">Announcement</p>
-            </div>
+            </div>-->
             <div id="goals" class="innerdiv statusgoal">
                 <p class="title">Services/goals</p>
                 <ul>

@@ -760,7 +760,7 @@ span#today
 }
 .statusgoal
 {
-  margin:0 8px 22px 8px;
+  margin:10px 8px 22px 8px;
   min-height:311px;
 }
 
@@ -939,6 +939,11 @@ span.search input
     list-style: none;
 }
 
+.result li:hover
+{
+    background: #f1f1f1;
+}
+
 .result li.smartTextBox-elem
 {
     border:none;
@@ -996,6 +1001,11 @@ span.search input
     font-size: 10px;
     padding: 2px 5px;
     cursor: pointer;
+}
+
+#classList li:hover .btn
+{
+  border:  1px solid #3D453A
 }
 
 #findmatchedhost

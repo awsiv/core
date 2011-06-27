@@ -51,7 +51,7 @@ class Promise extends Cf_Controller {
             'title' => "Cfengine Mission Portal - promise $handle",
             'pid' => $pid,
             'mybundle' => cfpr_get_promise_bundle($handle),
-            'allhandles' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($mybundle, "agent", false)),TRUE),
+            'allhandles' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($mybundle, cfpr_get_bundle_type($mybundle), false)),TRUE),
             'allhandlespromiser' => json_decode(utf8_encode(cfpr_list_handles($promiser, "", false)),TRUE),
             'type' => $type,
             'allhandlesbytype' =>json_decode(utf8_encode(cfpr_list_handles("", $type, false)),TRUE),
