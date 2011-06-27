@@ -52,8 +52,9 @@ addsearchbar:function(){
   self.searchbar.delegate('input[type="text"]','keyup',$.proxy(self.searchclassinlist,self));
 
   self.dialogcontent.parent().delegate('#findmatchedhost','click',$.proxy(self.findmatchedhost,self));
-        self.menu=$('<ul id="classoptions" class="categories"></ul>');
-        self.menu.append('<li>All classes</li><li>Time classes</li><li>Soft classes</li><li>Ip classes</li>');
+        self.menu=$('<div class="categories"><ul id="classoptions"></ul></div>');
+        self.menu.find('ul').append('<li>All classes</li><li>Time classes</li><li>Soft classes</li><li>Ip classes</li>');
+        $('<span class="slider">X</span>').appendTo(self.menu).bind('click',function(event){ self.menu.slideUp();});
         self.menu.appendTo(self.titlebar).hide();
         self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
         self.element.bind('click',function(event){
@@ -72,6 +73,7 @@ menuitemclicked:function(event){
   var sender=$(event.target);
   self.searchbar.find('input[type="text"]').val('search on '+sender.text().toLowerCase()).data('default','search on '+sender.text().toLowerCase())
   self.dialogcontent.html(self.ajaxloader);
+  sender.addClass('selected').siblings().removeClass('selected');
            $.ajax({
                   type: "POST",
                   url: self.options.filterhandlerurl,
@@ -90,10 +92,10 @@ menuitemclicked:function(event){
                                   });
                   }
            });
- self.searchbar.find('input[type="text"]').trigger('blur');
- self.alphasearch.find('li').removeClass('selected');
- // self.menu.fadeOut();
-  self.searchbar.find('input[type="text"]').trigger('focus');
+   self.searchbar.find('input[type="text"]').trigger('blur');
+   self.alphasearch.find('li').removeClass('selected');
+  // self.menu.fadeOut();
+   self.searchbar.find('input[type="text"]').trigger('focus');
    self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
    self.dialogcontent.find("#classList").delegate('a.classadd','click',$.proxy(self.addclassfilter,self));
 },

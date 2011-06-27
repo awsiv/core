@@ -16,12 +16,15 @@
             <input class="hidden" type="submit" value="" />
             </span>
         </form>
-    
-        <ul id="searchby">
+
+     <div id="searchby">
+        <ul>
             <li id="search_hostname">Host Name</li>
             <li id="search_ip">Ip Address</li>
             <li id="search_class">Class</li>
         </ul>
+     </div>
+            
         <div id="searchresult">
             <ul class="result">
                 <?php

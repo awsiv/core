@@ -2250,3 +2250,13 @@ ul.admin_menu li.current a{
 {
     border:none;
 }
+
+.slider{
+    position:absolute;
+    right:7%;
+    bottom:5%;
+}
+.slider:hover{
+    color:#ff9900;
+    cursor: pointer;
+}
