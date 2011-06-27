@@ -160,7 +160,7 @@ while (fgets(buf, CF_BUFSIZE, fh))
       }
    StripTrailingNewline(buf);
 
-   if (sscanf(buf, "%*lu %*lu %s %lu %*lu %lu %*lu %lu %*lu %lu",
+   if (sscanf(buf, "%*u %*u %s %lu %*u %lu %*u %lu %*u %lu",
               diskname, &reads, &readsectors, &writes, &writtensectors) != 5)
       {
       CfOut(cf_error, "", "Wrong /proc/diskstats line format: %s", buf);
