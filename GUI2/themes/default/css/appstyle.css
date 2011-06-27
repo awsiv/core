@@ -2222,3 +2222,21 @@ ul.admin_menu li.current a{
 {
    color:#FF475B;
 }
+
+.knowledgesearch
+{
+    padding:5px;
+}
+
+.knowledgesearch li
+{
+    list-style: none;
+    padding: 2px;
+   font-size: 14px;
+   border-bottom: #D4D5D0 1px dashed;
+}
+
+.knowledgesearch li:last-child
+{
+    border:none;
+}

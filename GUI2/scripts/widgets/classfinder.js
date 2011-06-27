@@ -58,8 +58,11 @@ addsearchbar:function(){
         self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
         self.element.bind('click',function(event){
             event.preventDefault();
-            self.loadpagebody();
-            self.dialogcontent.dialog('open')
+          self.dialogcontent.dialog('open');
+          if(!$("#classList").size()>0)
+              {
+                 self.loadpagebody();
+              }
         });
 
 },

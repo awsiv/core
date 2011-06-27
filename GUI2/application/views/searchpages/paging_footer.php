@@ -12,7 +12,7 @@
                         $current="";
             ?>
 
-                        <a href="<?= site_url("search/index/" . $params . "page/$i") ?>" title="Go to Page <?= $i ?>" class="page <?= $current ?>"><span><?= $i ?></span></a>
+                        <a href="<?= site_url("search/index/" . $params .'rows/' . $number_of_rows . "/page/$i") ?>" title="Go to Page <?= $i ?>" class="page <?= $current ?>"><span><?= $i ?></span></a>
 
                     <? } ?>
 
@@ -26,7 +26,7 @@
             <?
                 echo form_open('search/index/' . $params);
                 echo form_input('rows', $number_of_rows);
-                echo "Rows/Page";
+                echo "  Rows/Page";
                 echo form_close();
             ?>
        </div>

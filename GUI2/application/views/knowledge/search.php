@@ -4,7 +4,7 @@
         <div class="innerdiv" style="min-width: 500px;">
             <h1>Results for search :  <?php echo $search; ?></h1>
             <?php if (is_array($searchData) && !empty($searchData)) { ?>    
-            <ul style="padding: 5px;">
+            <ul style="padding: 5px;" class="knowledgesearch">
                     <?php foreach ((array) $searchData as $item) { ?>
                         <?php if (trim($item['topic'])) { ?>
 

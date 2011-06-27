@@ -222,7 +222,7 @@ class Search extends Cf_Controller {
                 if ($many) {
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : $this->input->post('name');
                     if ($hosts_only) {
-                        $data['report_result'] = host_only_table(json_decode(cfpr_hosts_with_classes(NULL, $name, true, $class_regex), true));
+                        $data['report_result'] = cfpr_hosts_with_classes(NULL, $name, true, $class_regex);
                         is_ajax() ? $this->load->view('searchpages/search_result_group', $data) : $this->template->load('template', 'searchpages/search_result_group', $data);
                     } else {
 
@@ -292,9 +292,6 @@ class Search extends Cf_Controller {
                         $data['report_result'] = cfpr_hosts_with_compliance_summary($hostkey, NULL, -1, -1, -1, -1, ">", $class_regex);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     } else {
-
-
-
                         $pdfurlParams = array('type' => $report_type,
                             'class_regex' => $class_regex,
                             'hostkey' => $hostkey

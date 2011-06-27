@@ -14,8 +14,7 @@
                 <div class="panelcontent">
                     <table class="bundlelist-table">
                         <tr>
-                            <th scope="col">Promise definition</th>
-                            <th scope="col"></th>
+                            <th scope="col" colspan="2">Promise definition</th>
                         </tr>
                         <tr>
                             <td>Belonging to agent bundle</td>
@@ -54,17 +53,11 @@
 
                         <tr>
                             <td>Defined in file</td>
-                            <td><a href="/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['class_context']); ?>"><?php echo $promise['class_context']; ?></a></td>
-                        </tr>
-
-                        <tr>
-                            <td>Defined in file</td>
-                            <td><?php echo $promise['file']; ?> near line <?php echo $promise['line_num']; ?></td>
+                            <td><?php echo $promise['file']; ?></td>
                         </tr>
 
                         <tr >
-                            <th scope="blue">Body of the promise</td>
-                            <th scope="blue"></td>
+                            <th scope="blue" colspan="2">Body of the promise</th>
                         </tr>
 
                         <?php foreach ((array) $promise['body'] as $body) { ?>

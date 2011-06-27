@@ -100,8 +100,6 @@ class Knowledge extends Cf_Controller {
 
     function knowledgeSearch() {
 
-
-
         // add a js file
         $this->carabiner->js('jit/jit-yc.js');
         $jsIE = array('jit/Extras/excanvas.js');

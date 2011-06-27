@@ -16,7 +16,7 @@ class cf_table {
         $this->ignoreDateColor = array('Promises not kept log','Promises repaired log');
 
         // these are the table fields that should be formatted as date and time
-        $this->dateTimeField = array('lastseen', 'last seen', 'time', 'last verified', 'change detected at');
+        $this->dateTimeField = array('lastseen', 'last seen', 'time', 'last verified', 'change detected at','last performed');
     }
 
     function generateReportTable($result,$report_title = '') {

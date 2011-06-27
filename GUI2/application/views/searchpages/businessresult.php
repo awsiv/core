@@ -3,10 +3,10 @@
               <div id="reportpanel" class="innerdiv">
                   <p class="title"><?php echo $report_title ?></p>
     <div class="reporthead">
-        <a href="<?php echo $report_link ?>" class="icons pdf"></a>
-        <a href="<?php echo $email_link ?>" id="send_mail" class="icons email"></a>
+        <a href="<?php echo $report_link ?>" class="icons pdf" title="Generate pdf report"></a>
+        <a href="<?php echo $email_link ?>" id="send_mail" class="icons email" title="Send this report as email"></a>
         <!--<a href="<?php echo site_url('search/index/report/' . $report_title) ?>" id="advsearch">Advance search</a>-->
-        <?php echo anchor('#','Host only',array('id'=>'findhost')) ?>
+        <?php echo anchor('#','Host only',array('id'=>'findhost','title'=>'Report for another host')) ?>
     </div>
     <div class="reportpanelcontent">
         <div id="filterdialog" class="hidden"></div>
@@ -17,6 +17,7 @@
                 echo $this->cf_table->generateReportTable($result, $report_title);
                 $pg = paging($current, $number_of_rows, $result['meta']['count'], 10);
                 include 'paging_footer.php';
+                //echo $report_result;
                     }
                     else {
                         echo"<table><tr><td>" . $this->lang->line("no_data") . "</td></tr></table>";
@@ -120,6 +121,40 @@
         }});
 
 
+    $('.reporthead').find('a').qtip({
+            style: {
+                background:'#454545',
+                opacity:0.9,
+                name: 'dark',
+                width:{
+                    min:0,
+                    max:150
+                },
+                border: {
+                    width: 1,
+                    radius: 1
+                },
+                tip:{
+                    corner:'bottomMiddle',
+                    size:{
+                        x:5,
+                        y:5
+                    }
+                }
+            },
+            show:{
+                effect:{
+                    type:'fade',
+                    lenght:200
+                }
+            },
 
+            position: {
+                corner: {
+                    target: 'topMiddle',
+                    tooltip: 'bottomMiddle'
+                }
+            }
+        });
     });
 </script>

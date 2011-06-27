@@ -13,7 +13,6 @@ _init: function(){
 _create:function(){
         var self=this;
         self.addsearchbar();
-        self.loadpagebody(self.element.attr('href'),"",true);
         self.addalphapager();
         $.ui.policyfinder.instances.push(this.element);
 },
@@ -58,7 +57,14 @@ addsearchbar:function(){
         self.menu.append('<li>by bundle</li><li>by handle</li><li>by promiser</li>');
         self.menu.appendTo(self.titlebar).hide();
         self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
-        self.element.bind('click',function(event){event.preventDefault();self.dialogcontent.dialog('open')});
+        self.element.bind('click',function(event){
+            event.preventDefault();
+            self.dialogcontent.dialog('open');
+            if(!$("#policyList").size()>0)
+                {
+                 self.loadpagebody(self.element.attr('href'),"",true);
+                }
+        });
 
 },
 

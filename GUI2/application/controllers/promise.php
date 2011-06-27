@@ -48,10 +48,7 @@ class Promise extends Cf_Controller {
         
         $data = array(
             'handle' => $handle,
-            'title_header' => "promise $handle",
             'title' => "Cfengine Mission Portal - promise $handle",
-            'nav_text' => "Show : Promise",
-            'status' => "current",
             'pid' => $pid,
             'mybundle' => cfpr_get_promise_bundle($handle),
             'allhandles' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($mybundle, "agent", false)),TRUE),
