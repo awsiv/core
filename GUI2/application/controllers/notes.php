@@ -133,21 +133,37 @@ class Notes extends Cf_Controller {
 
         $this->load->helper(array('form', 'url'));
         $this->load->library('form_validation');
+        $params = $this->uri->uri_to_assoc(3);
+        
+        
+        $userId = ($this->input->post('username', TRUE) !== FALSE) ? $this->input->post('username', TRUE) :  $this->session->userdata('search_username');
+        $dateFrom = ($this->input->post('date_from', TRUE)!== FALSE) ? strtotime($this->input->post('date_from', TRUE)) : $this->session->userdata('search_datefrom');
+        $dateTo = ($this->input->post('date_to', TRUE)!== FALSE) ? strtotime($this->input->post('date_to', TRUE)) : $this->session->userdata('search_dateto');
 
+        $searchSession = array(
+            'search_username' => $userId,
+            'search_dateFrom' => ($dateFrom  !== FALSE )? $dateFrom : -1,
+            'search_dateto' =>($dateTo  !== FALSE) ? $dateTo : -1
+        ); 
+         
+        $this->session->set_userdata($searchSession);
+        
+        
+        
 
-        $hostFilter = $this->input->post('hostname', TRUE);
-        $noteId = '';
-        $userId = $this->input->post('username', TRUE);
-        $dateFrom = $this->input->post('date_from', TRUE) ? strtotime($this->input->post('date_from', TRUE)) : -1;
-        $dateTo = $this->input->post('date_to', TRUE) ? strtotime($this->input->post('date_to', TRUE)) : -1;
-
-
-        if ($dateFrom && $dateFrom != -1) {
-//we have a start date so set the end date as well
-            if ($dateTo == -1) {
-                $dateTo = time();
+        if ($searchSession['search_dateFrom'] && $searchSession['search_dateFrom'] != -1) {
+        //we have a start date so set the end date as well
+            if ($searchSession['search_dateto'] == -1) {
+                $searchSession['search_dateto'] = time();
             }
         }
+        
+        
+         if ($searchSession['search_dateFrom'] == -1 && $searchSession['search_dateto'] != -1 ) {
+            $searchSession['search_dateFrom']= 0;
+        }
+        
+        
 
         $bc = array(
             'title' => 'Notes',
@@ -162,15 +178,22 @@ class Notes extends Cf_Controller {
             'title_header' => "Notes overview",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
-
-        $filter = array('hostname' => $hostFilter,
-            'userId' => $userId,
-            'dateFrom' => $dateFrom,
-            'dateTo' => $dateTo
+        
+        $data['currentPage'] = isset($params['page']) ? intval($params['page'], 10) : 1;
+        $filter = array(
+            'userId' =>  $searchSession['search_username'],
+            'dateFrom' => $searchSession['search_dateFrom'],
+            'dateTo' => $searchSession['search_dateto'],
+            'noOfRows' => 10,
+            'pageNo' => $data['currentPage']
         );
+
 
         $comments = $this->note_model->getAllNotes($filter);
         $data['data'] = $comments;
+        $data['totalNotes'] = $this->note_model->getTotalNoteCount();
+
+
         $this->template->load('template', '/notes/show_notes', $data);
     }
 
