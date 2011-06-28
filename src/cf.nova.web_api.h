@@ -27,10 +27,6 @@ bool Nova2PHP_vitals_view_histogram(char *keyHash, char *vitalId, char *buffer, 
     
 char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize);
 int Nova2PHP_get_observable_id(char *name);
-void Nova2PHP_get_magnified_view(char *keyhash,enum observables obs,char *buffer,int bufsize);
-void Nova2PHP_get_weekly_view(char *keyhash,enum observables obs,char *buffer,int bufsize);
-void Nova2PHP_get_yearly_view(char *keyhash,enum observables obs,char *buffer,int bufsize);
-void Nova2PHP_get_histogram_view(char *keyhash,enum observables obs,char *buffer,int bufsize);
 void Nova2PHP_get_magnified_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
 void Nova2PHP_get_weekly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
 void Nova2PHP_get_yearly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
@@ -63,7 +59,6 @@ int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *c
 void Nova2PHP_summary_meter(char *buffer,int bufsize);
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsize);
-void Nova2PHP_performance_analysis(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *classreg,struct PageInfo *page,char *returnval,int bufsize);
 int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,struct PageInfo *page,char *buffer,int bufsize);
 int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize);

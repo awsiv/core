@@ -23,18 +23,18 @@ typedef ProbeGatherData (*ProbeInit)(const char **name, const char **error);
  * Existing probes and their identifiers
  */
 
-#define MON_IO_READS "io:reads"
-#define MON_IO_WRITES "io:writes"
-#define MON_IO_READDATA "io:readdata"
-#define MON_IO_WRITTENDATA "io:writtendata"
+#define MON_IO_READS "io_reads"
+#define MON_IO_WRITES "io_writes"
+#define MON_IO_READDATA "io_readdata"
+#define MON_IO_WRITTENDATA "io_writtendata"
 
 ProbeGatherData MonIoInit(const char **name, const char **error);
 
-#define MON_MEM_TOTAL "mem:total"
-#define MON_MEM_FREE "mem:free"
-#define MON_MEM_CACHED "mem:cached"
-#define MON_MEM_SWAP "mem:swap"
-#define MON_MEM_FREE_SWAP "mem:freeswap"
+#define MON_MEM_TOTAL "mem_total"
+#define MON_MEM_FREE "mem_free"
+#define MON_MEM_CACHED "mem_cached"
+#define MON_MEM_SWAP "mem_swap"
+#define MON_MEM_FREE_SWAP "mem_freeswap"
 
 ProbeGatherData MonMemoryInit(const char **name, const char **error);
 

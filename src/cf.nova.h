@@ -537,11 +537,7 @@ int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,
 
 /* histogram.c */
 
-int Nova_ViewHisto(char *keyhash,enum observables obs,char *buffer,int bufsize);
-int Nova_ReadHistogram(struct CfDataView *cfv,char *hostkey,enum observables obs);
 int Nova_ReadHistogram2(mongo_connection *conn, struct CfDataView *cfv,char *hostkey,char *monId);
-void Nova_DrawHistoAxes(struct CfDataView *cfv,int col);
-void Nova_PlotHistogram(struct CfDataView *cfv,char *buffer,int bufsize);
 struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observables obs);
 void Nova_AnalyseHistogram(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
@@ -685,10 +681,7 @@ void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp);
 
 /* magnify.c */
 
-int Nova_ViewMag(char *keyhash,enum observables obs,char *buffer,int bufsize);
-int Nova_ReadMagTimeSeries(struct CfDataView *cfv,char *hostkey,enum observables obs);
 bool Nova_ReadMagTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,char *hostkey,char *vitalId);
-void Nova_PlotMagQFile(struct CfDataView *cfv,char *buffer,int bufsize);
 void Nova_AnalyseMag(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 /* monitoring.c */
@@ -827,14 +820,9 @@ int Nova_ExportReports(char *reportName);
 int Nova_ImportHostReports(char *filePath);
 
 
-/* request.c */
-
-void Nova_CfQueryCFDB(char *query);
-
 /* scorecards.c */
 
 void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize);
-void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize);
 void Nova_Meter(char *hostkey,char *buffer,int bufsize);
 struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
 struct Item *Nova_GreenHosts(void);
@@ -960,11 +948,7 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char
 /* weekly.c */
 
 double Num(double x);
-int Nova_ViewWeek(char *keyhash,enum observables obs,char *buffer,int bufsize);
-int Nova_ReadTimeSeries(struct CfDataView *cfv,char *keyhash,enum observables obs);
 bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,char *keyhash, char *vitalId);
-void Nova_DrawQAxes(struct CfDataView *cfv,int col);
-void Nova_PlotQFile(struct CfDataView *cfv,char *buffer,int bufsze);
 void Nova_AnalyseWeek(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 #ifdef MINGW
@@ -1083,11 +1067,8 @@ int NovaWin_WmiDeInitialize(void);
 
 /* yearly.c */
 
-int Nova_ViewLongHistory(char *keyhash,enum observables obs,char *buffer,int bufsize);
-int Nova_ReadLongHistory(struct CfDataView *cfv,char *keyhash,enum observables obs);
 int Nova_ReadYearTimeSeries(mongo_connection *conn, struct CfDataView *cfv,char *keyhash,char *monId);
 void Nova_DrawLongHAxes(struct CfDataView *cfv,int col);
-void Nova_PlotLongHFile(struct CfDataView *cfv,char *buffer,int bufsize);
 void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int bufsize);
 
 /***************************************************************************/

@@ -145,37 +145,6 @@ if (!CFDB_Close(&dbconn))
 
 /*****************************************************************************/
 
-void Nova2PHP_get_magnified_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
-
-{
-Nova_ViewMag(keyhash,obs,buffer,bufsize);
-}
-
-/*****************************************************************************/
-
-void Nova2PHP_get_weekly_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
-{
-Nova_ViewWeek(keyhash,obs,buffer,bufsize);
-}
-
-/*****************************************************************************/
-
-void Nova2PHP_get_yearly_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
-
-{
-Nova_ViewLongHistory(keyhash,obs,buffer,bufsize);
-}
-
-/*****************************************************************************/
-
-void Nova2PHP_get_histogram_view(char *keyhash,enum observables obs,char *buffer,int bufsize)
-
-{
-Nova_ViewHisto(keyhash,obs,buffer,bufsize);
-}
-
-/*****************************************************************************/
-
 void Nova2PHP_get_magnified_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
 {
 Nova_AnalyseMag(keyhash,obs,buffer,bufsize);
@@ -218,14 +187,6 @@ void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize)
 
 {
  Nova_Meter(hostkey,buffer,bufsize);
-}
-
-/*****************************************************************************/
-
-void Nova2PHP_performance_analysis(char *hostkey,char *buffer,int bufsize)
-
-{
- Nova_PerformancePage(DOCROOT,hostkey,buffer,bufsize);
 }
 
 /*****************************************************************************/

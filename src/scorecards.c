@@ -15,58 +15,6 @@ This file is (C) Cfengine AS. See LICENSE for details.
 /*                                                                           */
 /*****************************************************************************/
 
-void Nova_PerformancePage(char *docroot,char *hostkey,char *buffer,int bufsize)
-    
-{ char work[CF_BUFSIZE],lastsaw[CF_SMALLBUF], hostname[CF_SMALLBUF],ipaddress[CF_SMALLBUF];
- char desc[CF_BUFSIZE],id[CF_BUFSIZE];
-  
- int i, havedata=false;
- struct CfDataView cfv;
-
- strcpy(buffer,"{ ");
-
- Nova2PHP_hostinfo(hostkey,hostname,ipaddress,CF_MAXVARSIZE);
- Nova2PHP_getlastupdate(hostkey,lastsaw,CF_SMALLBUF);
-
- snprintf(work,CF_BUFSIZE, "\"hostname\" : \"%s\", \"ip\" : \"%s\", \"ls\" : \"%s\", \"obs\" : [",
-          hostname,ipaddress,lastsaw);
-
- Join(buffer,work,bufsize);
-
- for (i = 0; i < CF_OBSERVABLES; i++)
-    {     
-    Nova_LookupAggregateClassName(i,id,desc);
-     
-    if (strcmp(id,"spare") == 0)
-       {
-       continue;
-       }
-     
-    if (!Nova_ReadMagTimeSeries(&cfv,hostkey,i))
-       {
-       continue;
-       }   
-     
-    snprintf(work,CF_BUFSIZE, "{ \"id\" : \"%s\", \"desc\" : \"%s\", \"i\" : %d },",
-             id,desc,i);
-
-    Join(buffer,work,bufsize);
-    havedata=true;
-    }
-
- if(havedata)
-    {
-    buffer[strlen(buffer)-1] = ']';
-    }
- else
-    {
-    strcpy(buffer,"{");
-    }
- Join(buffer,"}",bufsize);
-}
-
-/*****************************************************************************/
-
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize)
 
 // Read the cached compliance summary (either from Hub or
