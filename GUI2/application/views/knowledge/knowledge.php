@@ -34,12 +34,14 @@
             
             <div id="tabs-4" class="ui-corner-all">
                 <?php
-                require_once('category.php');
+                require_once('subcategory.php');
                 ?>
+                
             </div>
             <div id="tabs-5" class="ui-corner-all">
+                
                 <?php
-                require_once('subcategory.php');
+                require_once('category.php');
                 ?>
             </div>
 
