@@ -1118,14 +1118,6 @@ void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int
 #define CF_HUB_HORIZON 900 // 15 mins
 #define CF_HUB_PURGESECS 604800  // one week
 
-/* Long-term monitoring constants */
-
-#define HOURS_PER_SHIFT 6
-#define SECONDS_PER_SHIFT (HOURS_PER_SHIFT * SECONDS_PER_HOUR)
-#define SHIFTS_PER_DAY 4
-
-#define SHIFTS_PER_WEEK (4*7)
-
 #define MONITORING_HISTORY_LENGTH_YEARS 3
 #define MONITORING_HISTORY_LENGTH_WEEKS (3*52)
 /* Not a real year, but a "monitoring year" */
