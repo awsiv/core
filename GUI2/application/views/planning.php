@@ -1,5 +1,5 @@
-<div id="body" class="grid_12">
-    <div class="outerdiv">
+
+    <div class="outerdiv grid_12">
         <div id="goals" class="grid_7 innerdiv">
             <p class="title">Goals </p>
             <ul>
@@ -55,7 +55,6 @@
         </div>
         <div class="clearboth"></div>
     </div>
-</div>
 <div class="clear"></div>
 <script src="<?php echo get_nodehost()?>/socket.io/socket.io.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -78,7 +77,7 @@
         {
             $("#message").val('').animate({"height": "30px"}, "fast" );
             $("#button_block").slideUp("fast");
-            socket.send("reload");
+            //socket.send("reload");
             return false;
         });
 
@@ -104,7 +103,7 @@
                     //$('#users').load('/widget/getworkinglatestlogs')
                     $("#message").val('').animate({"height": "30px"}, "fast" );
                     $("#button_block").slideUp("fast");
-                     socket.send("reload");
+                    // socket.send("reload");
                 },
                 error:function(data){
 	            	

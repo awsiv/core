@@ -497,7 +497,8 @@ font-weight:bold;
     padding:5px;
     margin-top: 20px;
     margin-bottom:1px;
-    border:solid 1px #AAAAAA
+    border:solid 1px #AAAAAA;
+    width:350px;
 }
 
 /* generic forms */

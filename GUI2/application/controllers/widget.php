@@ -14,20 +14,18 @@ class Widget extends CI_Controller {
     function summaryCompliance() {
 
         $getparams = $this->uri->uri_to_assoc(3);
-        $startDate  = isset($getparams['start']) ? $getparams['start'] : -1;
+        $startDate = isset($getparams['start']) ? $getparams['start'] : -1;
         $env = $getparams['env'];
         $stopDate = isset($getparams['stop']) ? $getparams['stop'] : null;
-        
-        
-        
+
         $this->load->library('cf_table');
         $startDateTimeStamp = $startDate;
         $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : time();
         $environment = $env;
-        
+
         $this->data['notkept'] = json_decode(cfpr_summarize_notkept(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment), true);
         $this->data['repaired'] = json_decode(cfpr_summarize_repaired(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment), true);
-        
+
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
         $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);
         $this->load->view('widgets/summaryCompliance', $this->data);
@@ -37,23 +35,23 @@ class Widget extends CI_Controller {
         $hostname = $this->input->post('value');
         $data = "";
         if ($hostname) {
-            $data = json_decode(cfpr_show_hosts_name('^' . $hostname, NULL, 10, 1), true);
+            $data = json_decode(cfpr_show_hosts_name('^' . $hostname, NULL, NULL,NULL), true);
         } else {
-            $data = json_decode(cfpr_show_hosts_name(NULL, NULL, 10, 1), true);
+            //last two arguments in the function call are for row no and column no
+            $data = json_decode(cfpr_show_hosts_name(NULL, NULL, NULL, NULL), true);
         }
         echo $this->__format_to_html($data, 'hostname');
     }
 
     function __format_to_html($result, $display) {
         $html = "";
-
         if (key_exists('data', $result) && count($result['data']) > 0) {
             $html.="<ul class=\"result\">";
             foreach ($result['data'] as $row) {
-                if ($display == 'hostname')
+                if ($display == 'hostname' && strlen($row[0])>0)
                     $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[0] ($row[1])</a></li>";
 
-                if ($display == 'ipaddress')
+                if ($display == 'ipaddress' && strlen($row[1])>0)
                     $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[1] ($row[0])</a></li>";
             }
             $html.="</ul>";
@@ -226,8 +224,8 @@ class Widget extends CI_Controller {
         // compliance summary meter
         $envList = cfpr_environments_list();
         //$envListArray = json_decode($envList);
-        $data['envList'] = $envList;       
-        $this->load->view('widgets/tracker',$data);
+        $data['envList'] = $envList;
+        $this->load->view('widgets/tracker', $data);
     }
 
 }

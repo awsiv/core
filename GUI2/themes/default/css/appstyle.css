@@ -564,7 +564,7 @@ body {
 }
 .innerdiv{
 
-    border: solid 1.5px #d4d5d0;
+    border: solid 1px #d4d5d0;
     -moz-border-radius: 5px;
     border-radius:5px;
     -opera-border-radius:5px;
