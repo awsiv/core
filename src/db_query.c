@@ -4575,7 +4575,6 @@ struct Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle,
                 {
                 IdempPrependItem(&matched,(char *)bson_iterator_string(&it2),NULL);
                 }
-
              }
           else
              {
@@ -4592,6 +4591,71 @@ struct Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle,
  return matched;
 }
 
+/*****************************************************************************/
+
+struct HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *bType, char *bName)
+{ bson_buffer bb, *obj, *arr;
+ bson_iterator it1;
+ bson query,field;
+ mongo_cursor *cursor;
+ struct Rlist *recordList = NULL;
+ bool emptyQuery = true;
+ char handle[CF_MAXVARSIZE] = {0}, comment[CF_BUFSIZE]={0};
+
+ // query
+ bson_empty(&query);
+ bson_buffer_init(&bb);
+
+ if(!EMPTY(bType))
+    {
+    bson_append_string(&bb,cfp_bundletype,bType);
+    bson_append_string(&bb,cfp_bundlename,bName);
+    emptyQuery = false;
+    }
+ 
+ if(!emptyQuery)
+    {
+    bson_from_buffer(&query,&bb);
+    }
+
+// returned attribute
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfp_handle,1);
+ bson_append_int(&bb,cfp_comment,1);
+ bson_from_buffer(&field,&bb);
+
+ cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,0);
+
+ bson_destroy(&query);  // ok for empty as well
+ bson_destroy(&field);
+
+ while(mongo_cursor_next(cursor))  // iterate over docs
+    {
+    bson_iterator_init(&it1,cursor->current.data);
+   
+    while(bson_iterator_next(&it1))
+       {
+       if (strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
+          {
+          snprintf(handle,sizeof(handle),"%s",(char *)bson_iterator_string(&it1));
+          }
+       else if (strcmp(bson_iterator_key(&it1), cfp_comment) == 0)
+          {
+          snprintf(comment,sizeof(comment),"%s",(char *)bson_iterator_string(&it1));
+          }
+       
+       }
+
+    if(handle || comment)
+       {
+       PrependRlistAlien(&recordList,NewHubPromise(NULL,NULL,NULL,NULL,NULL,NULL,NULL,handle,comment,NULL,0,NULL));
+       }
+    }
+
+ mongo_cursor_destroy(cursor);
+
+ return NewHubQuery(NULL, recordList);
+}    
 /*****************************************************************************/
 
 struct HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex, bool filter)
@@ -4651,7 +4715,6 @@ struct HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser
        emptyQuery = false;
        }
     }
-
  
  if(filter)
     {
@@ -4677,7 +4740,6 @@ struct HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser
 
     emptyQuery = false;
     }
-
  
  if(!emptyQuery)
     {

@@ -3711,7 +3711,54 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
 
  return true;
 }
+/*****************************************************************************/
+int Nova2PHP_list_promise_handles_with_comments(char *bundle,char *btype,char *returnval,int bufsize)
 
+{ mongo_connection dbconn;
+ char work[CF_BUFSIZE];
+ struct Rlist *rp;
+ struct HubQuery *hq;
+ struct HubPromise *hp;
+  
+/* BEGIN query document */
+
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+ hq = CFDB_QueryHandlesForBundlesWithComments(&dbconn,btype,bundle);
+
+ CFDB_Close(&dbconn);
+
+ returnval[0] = '\0';
+
+ if(hq)
+    {
+    StartJoin(returnval, "[", bufsize);
+        
+    for (rp = hq->records; rp != NULL; rp=rp->next)
+       {
+       hp = (struct HubPromise *)rp->item;
+       snprintf(work,CF_BUFSIZE-1,"[\"%s\", \"%s\"],",(char*)hp->handle, (char*)hp->comment);
+       Join(returnval,work,bufsize);
+       }
+
+    ReplaceTrailingChar(returnval, ',', '\0');
+    
+    EndJoin(returnval, "]", bufsize);
+    
+    DeleteHubQuery(hq,DeleteHubPromise);
+
+    return true;
+    }
+ else  // no result
+    {
+    return false;
+    }
+
+}
 /*****************************************************************************/
 
 int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *btype,int regex,char *returnval,int bufsize)
