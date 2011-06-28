@@ -69,7 +69,7 @@ var hostMeter  = {
             Tips: {
                 enable: true,
                 onShow: function(tip, elem) {
-                    tip.innerHTML =  elem.value;
+                    tip.innerHTML =  elem.name + " " + elem.value + "%";
                 }
             }
         }

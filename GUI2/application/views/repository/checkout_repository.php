@@ -19,10 +19,10 @@
                 <br />
             </form>
         <?php } else { ?>
-        
-        <div class="innerdiv">
-            You don't have any repository defined.  Manage you repositories. <a target="_self" href ="/repository/manageRepository/">Go</a>
-        </div>
+
+            <div class="innerdiv">
+                You don't have any repository defined.  Manage you repositories. <a target="_self" href ="/repository/manageRepository/">Go</a>
+            </div>
 
         <?php } ?>
     </div>
@@ -31,5 +31,8 @@
 
     <?php require_once('add_new_repository.php'); ?>
 
+    <div>
+        <a href="/repository/managerepository" target="_self" class="slvbutton">Manage Repository</a>
+    </div> 
 </div>
 

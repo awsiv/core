@@ -10,12 +10,12 @@
 
                 <div id="business-value-pie-chart-container" class="grid_4">
                     <p class="title">Business Value</p>
-                    <div id="business-value-pie-chart" style="height: 150px;width:300px;">
+                    <div id="business-value-pie-chart" style="height: 120px;width:300px;">
                     </div>
                 </div>
-                <div id="compliance-value-pie-chart-container" class="grid_4 push_1">
+                <div id="compliance-value-pie-chart-container" class="grid_4 push_1" style="margin-bottom: 15px">
                     <p class="title">Compliance Now</p>
-                    <div id="compliance-now-pie-chart" style="height: 150px; width:300px;">
+                    <div id="compliance-now-pie-chart" style="height: 120px; width:300px;">
                     </div>
                 </div>
             </div>
@@ -42,9 +42,7 @@
      </div>
     <div class="grid_3">
         <div class="outerdiv ">
-           <!-- <div id="announcement" class="innerdiv">
-                <p class="title">Announcement</p>
-            </div>-->
+           
             <div id="goals" class="innerdiv statusgoal">
                 <p class="title">Services/goals</p>
                 <ul>
@@ -163,101 +161,8 @@
                 $barChart.updateJSON(json);
             });
             return false;
-        })
-
-
-        // business value pie chart
-        var piejson = {
-            'color': ["#90A316","#BFAA54","#C33D54"],
-            'label': 'label A',
-            'values': [
-                {
-                    'label': 'kept',
-                    'values': '<?php echo $businessValuePie['kept']; ?>'
-                },
-                {
-                    'label': 'repaired',
-                    'values': '<?php echo $businessValuePie['repaired']; ?>'
-                },
-                {
-                    'label': 'not kept',
-                    'values': '<?php echo $businessValuePie['notkept']; ?>'
-                }]
-        };
-
-
-        // host count pie chart
-        var hostpiejson = {
-            'color': ["#90A316","#C33D54","#BFAA54"],
-            'values': [
-                {
-                    'label': 'green',
-                    'values': '<?php echo $greenhost; ?>'
-                },
-                {
-                    'label': 'yellow',
-                    'values': '<?php echo $yellowhost; ?>'
-                },
-                {
-                    'label': 'red',
-                    'values': '<?php echo $redhost; ?>'
-                }]
-        };
-
-        //init PieChart
-        /*
-    var pie = new $jit.PieChart({
-        injectInto: 'business-value-pie-chart',
-        animate: true,
-        offset: 10,
-        sliceOffset: 2,
-        labelOffset: 0,
-        type:'stacked:gradient',
-        updateHeights:false,
-        showLabels:false,
-        Label: {
-            size: 18,
-            family: 'Arial',
-            color: 'black'
-        },
-        Tips: {
-            'enable': true,
-            'onShow': function(tip, elem) {
-                tip.innerHTML = "<span style='color:black;'><b>" + elem.label + "</b>: " + elem.value + "</span>";
-            }
-        }
-    });
-
-
-    var hostpie = new $jit.PieChart({
-        injectInto: 'compliance-now-pie-chart',
-        animate: true,
-        offset: 10,
-        sliceOffset: 2,
-        labelOffset: 0,
-        type:'stacked:gradient',
-        updateHeights:false,
-        showLabels:false,
-        Label: {
-            size: 18,
-            family: 'Arial',
-            color: 'black'
-        },
-        Tips: {
-            'enable': true,
-            'onShow': function(tip, elem) {
-                tip.innerHTML = "<span style='color:black;'><b>" + elem.label + "</b>: " + elem.value + "</span>";
-            }
-        }
-    });
-
-    //load JSON data.
-    pie.loadJSON(piejson);
-    hostpie.loadJSON(hostpiejson);
-         */
-
-
-
+        });
+   
         var businessValueData =  [
             { label: "kept",  data: <?php echo $businessValuePie['kept']; ?>,color:"#90A316"},
             { label: "notkept",  data: <?php echo $businessValuePie['notkept']; ?>,color:"#C33D54"},

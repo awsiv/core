@@ -76,7 +76,7 @@ function init(){
       Tips: {
         enable: true,
         onShow: function(tip, elem) {
-          tip.innerHTML = "<b>" + elem.name + "</b>: " + elem.value;
+          tip.innerHTML = "<b>" + elem.name + "</b>: " + elem.value + "% ";
         }
       }
     });

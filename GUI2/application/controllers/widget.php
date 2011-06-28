@@ -23,8 +23,8 @@ class Widget extends CI_Controller {
         $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : time();
         $environment = $env;
 
-        $this->data['notkept'] = json_decode(cfpr_summarize_notkept(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment), true);
-        $this->data['repaired'] = json_decode(cfpr_summarize_repaired(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment), true);
+        $this->data['notkept'] = json_decode(cfpr_summarize_notkept(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment,0,0), true);
+        $this->data['repaired'] = json_decode(cfpr_summarize_repaired(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment,0,0), true);
 
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
         $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);

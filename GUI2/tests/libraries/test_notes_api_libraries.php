@@ -27,9 +27,9 @@ class test_notes_api_libraries extends CodeIgniterUnitTestCase {
 
         $comments = cfpr_query_note('', '', '', -1, -1, 0, 0);
         $comments = str_replace(array("\r\n", "\n", "\r"), '<br />', utf8_encode(trim($comments)));
-     
+
         $data = json_decode($comments, TRUE);
-           //$this->dump($data);
+        //$this->dump($data);
         $totalcount = $data['meta']['count'];
         $totaldata = count($data['data']);
         $this->assertTrue(is_array($data) && ($totalcount == $totaldata), "Data returned must be equal count Total Count :: $totalcount , Returned DataCount :: $totaldata");
@@ -45,8 +45,11 @@ class test_notes_api_libraries extends CodeIgniterUnitTestCase {
 
         $data = json_decode($comments, TRUE);
         $count = count($data['data']);
+        $totalcount = $data['meta']['count'];
         //$this->dump($data);
-        $this->assertTrue(is_array($data) && ($count == 1), "Should be 1 ,  coming $count");
+        if ($totalcount > 0) {
+            $this->assertTrue(is_array($data) && ($count == 1), "Should be 1 ,  coming $count");
+        }
     }
 
 }
