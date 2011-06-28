@@ -540,7 +540,7 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
 
 /*****************************************************************************/
 
-int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE],hostname[CF_MAXVARSIZE],report[CF_BUFSIZE]={0};
  struct HubPromiseLog *hp;
@@ -548,6 +548,7 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
  struct Rlist *rp;
  mongo_connection dbconn;
  struct Item *ip,*summary = NULL;
+ int startIndex = 0, endIndex=0, i = 0;
 
 /* BEGIN query document */
 
@@ -558,6 +559,7 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
     }
 
  hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,false,classreg);
+ 
  hostname[0] = '\0';
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -576,6 +578,8 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
 
  CFDB_Close(&dbconn);
 
+ startIndex = page->resultsPerPage*(page->pageNum - 1);
+ endIndex = (page->resultsPerPage*page->pageNum) - 1;
 
  if (summary == NULL)
     {
@@ -591,22 +595,23 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
      
     StartJoin(returnval,buffer,bufsize);
    
-    for (ip = summary; ip != NULL; ip=ip->next)
+    for (ip = summary; ip != NULL; ip=ip->next, i++)
        {
-       EscapeJson(ip->classes,report,sizeof(report));
-       snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",\"%s\",%d],",
-		hostname,ip->name,report,ip->counter);
-       
-       if(!Join(returnval,buffer,bufsize))
+       if(i>=startIndex && (i<=endIndex || endIndex < 0))
           {
-          break;
+          EscapeJson(ip->classes,report,sizeof(report));
+          snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",\"%s\",%d],",
+                   hostname,ip->name,report,ip->counter);
+       
+          if(!Join(returnval,buffer,bufsize))
+             {
+             break;
+             }
           }
        }
 
-    if(returnval[strlen(returnval)-1]==',')
-       {
-       returnval[strlen(returnval)-1]='\0';
-       }
+    ReplaceTrailingChar(returnval, ',', '\0');
+
     EndJoin(returnval,"]}\n",bufsize);
     DeleteItemList(summary);
     }
