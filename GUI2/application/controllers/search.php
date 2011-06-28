@@ -556,8 +556,11 @@ class Search extends Cf_Controller {
                             'hours_deltafrom' => $hours_deltafrom,
                             'hours_deltato' => $hours_deltato
                         );
-
-                        $data['report_result'] = cfpr_report_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+                      if ($report_type == "Promises repaired log")
+                        $data['report_result'] =cfpr_report_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+                    if ($report_type == "Promises repaired summary")
+                        $data['report_result'] = cfpr_summarize_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+                       // $data['report_result'] = cfpr_report_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
@@ -574,7 +577,7 @@ class Search extends Cf_Controller {
                     if ($report_type == "Promises repaired log")
                         $data['report_result'] = cfpr_report_repaired($hostkey, NULL, 0, 0, $class_regex, $rows, $page_number);
                     if ($report_type == "Promises repaired summary")
-                        $data['report_result'] = cfpr_summarize_repaired($hostkey, NULL, NULL, $rows, $page_number);
+                        $data['report_result'] = cfpr_summarize_repaired($hostkey, NULL, NULL,NULL,NULL, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 }
                 else {
@@ -590,7 +593,7 @@ class Search extends Cf_Controller {
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     } else {
                         if ($report_type == "Promises not kept summary")
-                            $data['report_result'] = cfpr_summarize_notkept(NULL, NULL, NULL, $rows, $page_number);
+                            $data['report_result'] = cfpr_summarize_notkept(NULL, NULL, NULL,NULL,NULL,$rows, $page_number);
                         if ($report_type == "Promises not kept log")
                             $data['report_result'] = cfpr_report_notkept(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
 
@@ -620,7 +623,7 @@ class Search extends Cf_Controller {
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     if ($report_type == "Promises not kept summary")
-                        $data['report_result'] = cfpr_summarize_notkept($hostkey, NULL, NULL, $rows, $page_number);
+                        $data['report_result'] = cfpr_summarize_notkept($hostkey, NULL, NULL,NULL,NULL,$rows, $page_number);
                     if ($report_type == "Promises not kept log")
                         $data['report_result'] = cfpr_report_notkept($hostkey, NULL, 0, 0, $class_regex, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
