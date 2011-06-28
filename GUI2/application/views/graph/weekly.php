@@ -1,3 +1,4 @@
+<div class="graphunit"><?php echo urldecode($units); ?></div>
 <div id="placeholder-weekly_<?php echo $observable; ?>" style="height: 300px; width: 95%; "></div>
 <script language="javascript" type="text/javascript">
     //<![CDATA[

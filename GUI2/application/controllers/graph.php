@@ -4,28 +4,26 @@ class Graph extends CF_Controller {
 
     function __construct() {
         parent::__construct();
-        
-        
+
+
         $requiredjs = array(
             array('flot/jquery.flot.js')
         );
-        $jsIE =       array('flot/excanvas.min.js');
+        $jsIE = array('flot/excanvas.min.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
-        
-        $this->carabiner->js($requiredjs);
-        
-   }
-   
-   /**
-    * replace special characters for javascript support such as ':'
-    * @param type $obs 
-    */
-   function canonifyObservables($obs) {
-       $replaceArray = array( '!','"','#','$','%','&','(',')','*','+',',','.','/',':',';','<','=','>','?','@','[','\\',']','^','`','{','|','}','~');
-       
-       return str_replace($replaceArray, '_',$obs);
-   }
 
+        $this->carabiner->js($requiredjs);
+    }
+
+    /**
+     * replace special characters for javascript support such as ':'
+     * @param type $obs 
+     */
+    function canonifyObservables($obs) {
+        $replaceArray = array('!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~');
+
+        return str_replace($replaceArray, '_', $obs);
+    }
 
     function summary($hostKey=null) {
 
@@ -35,11 +33,11 @@ class Graph extends CF_Controller {
             array('flot/jquery.flot.highlighter.js'),
             array('flot/jquery.flot.valuelabels.js'),
             array('flot/jquery.flot.stack.js'),
-            array('jit/jit-yc.js')           
+            array('jit/jit-yc.js')
         );
-        
+
         $this->carabiner->js($requiredjs);
-       
+
         $this->template->set('injected_item', implode('', $this->scripts));
 
         $this->data = array(
@@ -84,15 +82,15 @@ class Graph extends CF_Controller {
     }
 
     function magnifiedView($parameter) {
-       
-        
+
+
         $getparams = $this->uri->uri_to_assoc(3);
 
         $observables = $getparams['obs'];
         $hostKey = $getparams['host'];
-
-       // $graphData = cfpr_get_magnified_view($hostKey, $observables);
-          $graphData= cfpr_vitals_view_magnified($hostKey,$observables);
+        $units = $getparams['units'];
+        // $graphData = cfpr_get_magnified_view($hostKey, $observables);
+        $graphData = cfpr_vitals_view_magnified($hostKey, $observables);
         $convertData = json_decode($graphData, true);
         if (!empty($convertData)) {
 
@@ -103,6 +101,8 @@ class Graph extends CF_Controller {
             $this->data['graphLastUpdated'] = $lastUpdated;
             $this->data['graphdata'] = ($graphData);
             $this->data['observable'] = $this->canonifyObservables($observables);
+            $this->data['units'] = $units;
+
             $manipulatedSeriesData = json_decode($graphData);
             $lineSeries1 = array();
             $lineSeries2 = array();
@@ -133,15 +133,18 @@ class Graph extends CF_Controller {
     }
 
     function weekView() {
-       
+
         $getparams = $this->uri->uri_to_assoc(3);
 
         $observables = $getparams['obs'];
         $hostKey = $getparams['host'];
+        $units = $getparams['units'];
+        $this->data['units'] = $units;
 
 
-       // $graphData = cfpr_get_weekly_view($hostKey, $observables);
-        $graphData=cfpr_vitals_view_week($hostKey,$observables);
+
+        // $graphData = cfpr_get_weekly_view($hostKey, $observables);
+        $graphData = cfpr_vitals_view_week($hostKey, $observables);
         $convertData = json_decode($graphData, true);
         if (!empty($convertData)) {
 
@@ -185,14 +188,16 @@ class Graph extends CF_Controller {
     }
 
     function yearView() {
-        
+
         $getparams = $this->uri->uri_to_assoc(3);
 
         $observables = $getparams['obs'];
         $hostKey = $getparams['host'];
+        $units = $getparams['units'];
+        $this->data['units'] = $units;
 
         //$graphData = cfpr_get_yearly_view($hostKey, $observables);
-        $graphData=cfpr_vitals_view_year($hostKey, $observables);
+        $graphData = cfpr_vitals_view_year($hostKey, $observables);
         // var_dump($graphData);
         $convertData = json_decode($graphData, true);
         if (!empty($convertData)) {
@@ -239,9 +244,12 @@ class Graph extends CF_Controller {
 
         $observables = $getparams['obs'];
         $hostKey = $getparams['host'];
+        $units = $getparams['units'];
+        $this->data['units'] = $units;
 
-       // $graphData = cfpr_get_histogram_view($hostKey, $observables);
-        $graphData=cfpr_vitals_view_histogram($hostKey,$observables);
+
+        // $graphData = cfpr_get_histogram_view($hostKey, $observables);
+        $graphData = cfpr_vitals_view_histogram($hostKey, $observables);
         $convertData = json_decode($graphData, true);
         if (!empty($convertData)) {
 
@@ -257,8 +265,7 @@ class Graph extends CF_Controller {
             $this->load->view('graph/histogram', $this->data);
         } else
             echo "No data available";
-            //$this->template->load('template', 'graph/histogram', $this->data);
+        //$this->template->load('template', 'graph/histogram', $this->data);
     }
-
 
 }

@@ -17,10 +17,10 @@
 
                                         <div class="tabs">
                                             <ul>
-                                                <li><a href="/graph/magnifiedView/obs/<?php echo $fetchData['id']; ?>/host/<?php echo $hostKey; ?>"><span>Past 4 hours</span></a></li>
-                                                <li><a href="/graph/weekview/obs/<?php echo $fetchData['id']; ?>/host/<?php echo $hostKey; ?>"><span>Past Week</span></a></li>
-                                                <li><a href="/graph/yearview/obs/<?php echo $fetchData['id']; ?>/host/<?php echo $hostKey; ?>"><span>Year View</span></a></li>
-                                                <li><a href="/graph/histogramView/obs/<?php echo $fetchData['id']; ?>/host/<?php echo $hostKey; ?>"><span>Statistical complete history</span></a></li>
+                                                <li><a href="/graph/magnifiedView/obs/<?php echo $fetchData['id']; ?>/host/<?php echo $hostKey; ?>/units/<?php echo $fetchData['units']; ?>"><span>Past 4 hours</span></a></li>
+                                                <li><a href="/graph/weekview/obs/<?php echo $fetchData['id']; ?>/host/<?php echo $hostKey; ?>/units/<?php echo $fetchData['units']; ?>"><span>Past Week</span></a></li>
+                                                <li><a href="/graph/yearview/obs/<?php echo $fetchData['id']; ?>/host/<?php echo $hostKey; ?>/units/<?php echo $fetchData['units']; ?>"><span>Year View</span></a></li>
+                                                <li><a href="/graph/histogramView/obs/<?php echo $fetchData['id']; ?>/host/<?php echo $hostKey; ?>/units/<?php echo $fetchData['units']; ?>"><span>Statistical complete history</span></a></li>
                                             </ul>
                                         </div>
                                     </div>
