@@ -1017,7 +1017,7 @@ void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promi
 
 if (promise_id && pp->ref)
    {
-   fprintf(fp,"topics: handless:: \"%s\"  comment => \"%s\", ",promise_id,pp->ref);
+   fprintf(fp,"topics: handless:: \"%s\"  comment => \"%s\", ",promise_id,NovaEscape(pp->ref));
    fprintf(fp,"association => a(\"is the promise_id for\",\"%s\",\"has a promise with promise_id\");\n",NovaEscape(pp->promiser));
    }
 else if (promise_id)
