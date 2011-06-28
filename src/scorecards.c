@@ -69,12 +69,11 @@ if (start == -1)
   
 for (i = 0; i < 28; start += CF_SHIFT_INTERVAL,i++)
    {
-   start = GetShiftSlotStart(start);  // in case of daylight saving time
    slot = GetShiftSlot(start);
    
    tc = GetHubCacheTotalComplianceSlot(hq->records,slot);
    
-   if (tc)
+   if (tc && tc->count > 0)
       {
       kept = tc->kept;
       repaired = tc->repaired;
@@ -91,7 +90,7 @@ for (i = 0; i < 28; start += CF_SHIFT_INTERVAL,i++)
       count = 0;
       }
    
-   CtimeHourInterval(start, buf, sizeof(buf));
+   UtcShiftInterval(start, buf, sizeof(buf));
    
    snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"start\": %d, \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf, \"nodata\": %lf, \"count\": %d },",
             buf, start, i, kept, repaired, notkept, nodata, count);

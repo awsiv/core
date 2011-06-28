@@ -335,13 +335,12 @@ now = time(NULL);
 
 if (allSlots)
    {
-   curr = GetShiftSlotStart(now - (3600 * 24 * 7));  // previous week
+   curr = GetShiftSlotStart(now - SECONDS_PER_WEEK);
    }
 else
    {
-   curr = GetShiftSlotStart(now - (3600 * 6));  // previous time slot   
+   curr = GetShiftSlotStart(now - SECONDS_PER_SHIFT);
    }
-
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -357,15 +356,14 @@ if (!Nova2PHP_environments_list(&env))
    return;
    }
 
-for(; curr + (3600 * 6) < now; curr += CF_SHIFT_INTERVAL) // in case of all slots
+for(; curr + (3600 * 6) < now; curr += SECONDS_PER_SHIFT) // in case of all slots
    {
    slot = GetShiftSlot(curr);
-   
 
    // first any environment, then environment-specific
    
    Nova_CacheTotalComplianceEnv(&dbconn,"any",NULL,slot,curr,now);
-   
+
    for (ep = env; ep != NULL; ep = ep->next)
       {
       snprintf(envName, sizeof(envName), "%s", ep->name);
@@ -393,18 +391,26 @@ void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *e
   struct Rlist *rp;
   double kept,repaired,notkept;
   int count;
+  time_t end;
 
 kept = 0;
 repaired = 0;
 notkept = 0;
 count = 0;
 
+end = start + SECONDS_PER_SHIFT;
+
 hq = CFDB_QueryTotalCompliance(conn,NULL,NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ,false,envClass);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    ht = (struct HubTotalCompliance *)rp->item;
-   
+
+   if(ht->t >= end)
+      {
+      continue;
+      }
+
    kept += ht->kept;
    repaired += ht->repaired;
    notkept += ht->notkept;
