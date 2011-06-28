@@ -24,13 +24,11 @@ bool Nova2PHP_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, 
 bool Nova2PHP_vitals_view_week(char *keyHash, char *vitalId, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_year(char *keyHash, char *vitalId, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_histogram(char *keyHash, char *vitalId, char *buffer, int bufsize);
-    
-char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize);
-int Nova2PHP_get_observable_id(char *name);
-void Nova2PHP_get_magnified_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
-void Nova2PHP_get_weekly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
-void Nova2PHP_get_yearly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
-void Nova2PHP_get_histogram_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize);
+bool Nova2PHP_vitals_analyse_magnified(char *hostkey, char *vitalId, char *buffer, int bufsize);
+bool Nova2PHP_vitals_analyse_week(char *hostkey, char *vitalId, char *buffer, int bufsize);
+bool Nova2PHP_vitals_analyse_year(char *hostkey, char *vitalId, char *buffer, int bufsize);
+bool Nova2PHP_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffer, int bufsize);
+
 int Nova2PHP_get_value_graph(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_list_all_goals(char *buffer,int bufsize);
 
@@ -122,10 +120,7 @@ int Nova2PHP_get_bundle_type(char *name,char *buffer,int bufsize);
 int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize);
 int Nova2PHP_get_bundle_count(char *buffer, int bufsize);
 int Nova2PHP_get_promise_count(char *buffer, int bufsize);
-void Nova2PHP_AnalyseMag(char *hostkey,enum observables obs,char *buffer,int bufsize);
-void Nova2PHP_AnalyseWeek(char *hostkey,enum observables obs,char *buffer,int bufsize);
 void Nova2PHP_ComplianceSummaryGraph(char *policy,char *buffer,int bufsize);
-void Nova2PHP_AnalyseHistogram(char *keyhash,int obs,char *buffer,int bufsize);
 int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize);
 int Nova2PHP_enterprise_version(char *buf, int bufsize);
 

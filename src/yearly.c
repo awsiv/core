@@ -62,31 +62,6 @@ for (i = 0; i < CF_YEAR_SLOTS; i++)
 return have_data;
 }
 
-/***********************************************************/
-
-void Nova_AnalyseLongHistory(char *keyhash,enum observables obs,char *buffer,int bufsize)
-
-{ char work[CF_BUFSIZE];
-  struct CfDataView cfv = {0};
-
-*buffer = '\0';
-  
-if (1)//!Nova_ReadYearTimeSeries(&cfv,keyhash,obs))
-   {
-   return;
-   }
-
-strcpy(buffer,"[");
-
-snprintf(work,CF_BUFSIZE,"\"Maximum value: %.2lf %s\",",cfv.max,NovaGetSlotUnits(obs));
-Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"\"Minimum value: %.2lf %s\",",cfv.min,NovaGetSlotUnits(obs));
-Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"\"Average variability: %lf %s\"",cfv.error_scale,NovaGetSlotUnits(obs));
-Join(buffer,work,bufsize);
-Join(buffer,"]",bufsize);
-}
-
 
 #endif  /* HAVE_LIBMONGOC */
 

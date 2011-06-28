@@ -44,10 +44,6 @@ if (false)
    Nova2PHP_promises(NULL, NULL, NULL, 0);
    //   Nova2PHP_getlastupdate(NULL,buffer,10);
 
-   Nova2PHP_AnalyseMag(NULL,5,buffer,10);
-   Nova2PHP_AnalyseWeek(NULL,5,buffer,10);
-   Nova_AnalyseHist(NULL,NULL,5,buffer,10);
-   
    CFDB_PutValue("one_two","three");
    CFDB_GetValue("newvar",buffer,120);
    Nova2PHP_count_hosts();
@@ -145,36 +141,6 @@ if (!CFDB_Close(&dbconn))
 
 /*****************************************************************************/
 
-void Nova2PHP_get_magnified_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
-{
-Nova_AnalyseMag(keyhash,obs,buffer,bufsize);
-}
-
-/*****************************************************************************/
-
-void Nova2PHP_get_weekly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
-{
- Nova_AnalyseWeek(keyhash,obs,buffer,bufsize);
-}
-
-/*****************************************************************************/
-
-void Nova2PHP_get_yearly_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
-
-{
- Nova_AnalyseLongHistory(keyhash,obs,buffer,bufsize);
-}
-
-/*****************************************************************************/
-
-void Nova2PHP_get_histogram_analysis(char *keyhash,enum observables obs,char *buffer,int bufsize)
-
-{
- Nova_AnalyseHistogram(keyhash,obs,buffer,bufsize);
-}
-
-/*****************************************************************************/
-
 void Nova2PHP_summary_meter(char *buffer,int bufsize)
 
 {
@@ -190,32 +156,7 @@ void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize)
 }
 
 /*****************************************************************************/
-
-char *Nova2PHP_get_observable_name(int obs,char *buffer,int bufsize)
-{
- snprintf(buffer,bufsize,"[ \"%s\", \"%s\"]",OBS[obs][0],OBS[obs][1]);
- return buffer;
-}
-
-/*****************************************************************************/
-
-int Nova2PHP_get_observable_id(char *name)
-
-{ int i;
-
- for (i = 0; i < CF_OBSERVABLES; i++)
-    {
-    if (strcmp(name,OBS[i][0]) == 0)
-       {
-       return i;
-       }
-    }
-
- return -1;
-}
-
-/*****************************************************************************/
-/* New vitals functions (new db/protocol)                                    */
+/* Vitals functions                                                          */
 /*****************************************************************************/
 
 bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
@@ -418,6 +359,244 @@ Join(buffer,"]",bufsize);
 
 return haveData;
 }
+
+/*****************************************************************************/
+
+bool Nova2PHP_vitals_analyse_magnified(char *hostkey, char *vitalId, char *buffer, int bufsize)
+{
+ mongo_connection dbconn;
+ char work[CF_BUFSIZE];
+ struct CfDataView cfv = {0};
+  
+ buffer[0] = '\0';
+
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+ if (!Nova_ReadMagTimeSeries2(&dbconn,&cfv,hostkey,vitalId))
+    {
+    CFDB_Close(&dbconn);
+    return false;
+    }
+
+ CFDB_Close(&dbconn);
+  
+ strcpy(buffer,"[");
+  
+ if (cfv.max - cfv.min < cfv.error_scale * 2)
+    {
+    snprintf(work,sizeof(work),"\"No significant variations\",");
+    Join(buffer,work,bufsize);
+    }
+ else
+    {
+    snprintf(work,sizeof(work),"\"Significant variations\",");
+    Join(buffer,work,bufsize);
+    }
+  
+ snprintf(work,sizeof(work),"\"Maximum value: %lf\",", cfv.max);
+ Join(buffer,work,bufsize);
+ snprintf(work,sizeof(work),"\"Minimum value: %lf\",", cfv.min);
+ Join(buffer,work,bufsize);
+ snprintf(work,sizeof(work),"\"Average variability: %lf\",", cfv.error_scale);
+ Join(buffer,work,bufsize);
+ Join(buffer,"]",bufsize);
+ 
+ return true;
+}
+
+/*****************************************************************************/
+
+bool Nova2PHP_vitals_analyse_week(char *hostkey, char *vitalId, char *buffer, int bufsize)
+
+{ char work[CF_BUFSIZE];
+ double x;
+ struct CfDataView cfv = {0};
+ mongo_connection dbconn;
+
+ buffer[0] = '\0';
+
+  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+ if (!Nova_ReadWeekTimeSeries2(&dbconn,&cfv,hostkey,vitalId))
+    {
+    CFDB_Close(&dbconn);
+    return false;
+    }
+
+ CFDB_Close(&dbconn);
+ 
+ strcpy(buffer,"[");
+
+ snprintf(work,CF_BUFSIZE-1,"\"Maximum value: %lf\",",cfv.max);
+ Join(buffer,work,bufsize);
+ snprintf(work,CF_BUFSIZE-1,"\"Minimum value %lf\",",cfv.min);
+ Join(buffer,work,bufsize);
+ x = 100*(double)cfv.over/(double)CF_TIMESERIESDATA;
+ snprintf(work,CF_BUFSIZE-1,"\"Percentage over average/normal: %lf%%\",",x);
+ Join(buffer,work,bufsize);
+ x = 100*(double)cfv.under/(double)CF_TIMESERIESDATA;
+ snprintf(work,CF_BUFSIZE-1,"\"Percentage under average/normal: %lf%%\",",x);
+ Join(buffer,work,bufsize);
+ x = 100*(double)cfv.over_dev1/(double)CF_TIMESERIESDATA;
+ snprintf(work,CF_BUFSIZE-1,"\"Percentage 1 deviation over mean: %lf%%\",",x);
+ Join(buffer,work,bufsize);
+ x = 100*(double)cfv.under_dev1/(double)CF_TIMESERIESDATA;
+ snprintf(work,CF_BUFSIZE-1,"\"Percentage 1 deviation under mean: %lf%%\",",x);
+ Join(buffer,work,bufsize);
+ x = 100*(double)cfv.over_dev2/(double)CF_TIMESERIESDATA;
+ snprintf(work,CF_BUFSIZE-1,"\"Percentage 2 deviations over mean: %lf%%\",",x);
+ Join(buffer,work,bufsize);
+ x = 100*(double)cfv.under_dev2/(double)CF_TIMESERIESDATA;
+ snprintf(work,CF_BUFSIZE-1,"\"Percentage 2 deviations under mean: %lf%%\"",x);
+ Join(buffer,work,bufsize);
+ Join(buffer,"]",bufsize);
+
+ return true;
+}
+
+/*****************************************************************************/
+
+bool Nova2PHP_vitals_analyse_year(char *hostkey, char *vitalId, char *buffer, int bufsize)
+{
+ char work[CF_BUFSIZE];
+ struct CfDataView cfv = {0};
+ mongo_connection dbconn;
+
+ buffer[0] = '\0';
+
+  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+ 
+ if (!Nova_ReadYearTimeSeries(&dbconn,&cfv,hostkey,vitalId))
+    {
+    CFDB_Close(&dbconn);
+    return false;
+    }
+
+ CFDB_Close(&dbconn);
+
+ strcpy(buffer,"[");
+
+ snprintf(work,CF_BUFSIZE,"\"Maximum value: %.2lf\",",cfv.max);
+ Join(buffer,work,bufsize);
+ snprintf(work,CF_BUFSIZE,"\"Minimum value: %.2lf\",",cfv.min);
+ Join(buffer,work,bufsize);
+ snprintf(work,CF_BUFSIZE,"\"Average variability: %lf\"",cfv.error_scale);
+ Join(buffer,work,bufsize);
+ Join(buffer,"]",bufsize);
+
+
+ return true;
+}
+
+/*****************************************************************************/
+
+bool Nova2PHP_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffer, int bufsize)
+
+{ double sx, q, delta, sum = 0, sigma2;
+  int new_gradient = 0, past_gradient = 0, max = 0;
+  int redshift = 0, blueshift = 0;
+  int above_noise = false;
+  char work[CF_BUFSIZE];
+  double sensitivity_factor = 1.2;
+  struct CfDataView cfv = {0};
+  struct Item *spectrum;
+  mongo_connection dbconn;
+
+  buffer[0] = '\0';
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (!Nova_ReadHistogram2(&dbconn,&cfv,hostkey,vitalId))
+   {
+   CFDB_Close(&dbconn);
+   return false;
+   }
+
+CFDB_Close(&dbconn);
+
+spectrum = Nova_MapHistogram(&cfv,hostkey);
+
+strcpy(buffer,"[");
+
+for (sx = 1; sx < CF_GRAINS; sx++)
+   {
+   q = cfv.data_E[(int)sx];
+   delta = cfv.data_E[(int)sx] - cfv.data_E[(int)(sx-1)];
+   sum += delta*delta;
+   }
+
+sigma2 = sum / (double)CF_GRAINS;
+
+snprintf(work,CF_BUFSIZE-1,"Maximum observed %s = %.2lf\",",vitalId,cfv.max);
+Join(buffer,work,bufsize);
+snprintf(work,CF_BUFSIZE-1,"Minimum observed %s = %.2lf\",",vitalId,cfv.min);
+Join(buffer,work,bufsize);
+
+for (sx = 1; sx < CF_GRAINS; sx++)
+   {
+   q = cfv.data_E[(int)sx];
+   delta = cfv.data_E[(int)sx] - cfv.data_E[(int)(sx-1)];
+
+   above_noise = (delta*delta > sigma2) * sensitivity_factor;
+   
+   if (above_noise)
+      {
+      new_gradient = delta;
+
+      if (new_gradient < 0 && past_gradient >= 0)
+         {
+         max++;
+
+         snprintf(work,CF_BUFSIZE-1,"\"%d: Spectral mode with peak at %.0lf/%.0lf grains, ",max,sx-1,(double)CF_GRAINS);
+         Join(buffer,work,bufsize);
+
+         if (sx < ((double)CF_GRAINS)/2.0 - 1.0)
+            {
+            redshift++;
+            snprintf(work,CF_BUFSIZE-1,"red-shifted, e.g. a retardation process where usage is declining. "
+                     "If the distribution is skewed, it has a long ramp, indicating "
+                     "a possible resource ceiling, a well-utilized system. "
+                     "Or there could be outliers of low value, because data are incomplete.\",");
+            Join(buffer,work,bufsize);
+            }
+         else if (sx > ((double)CF_GRAINS)/2.0 + 1.0)
+            {
+            blueshift++;
+            snprintf(work,CF_BUFSIZE-1,"blue-shifted, e.g. an acceleration process where usage is increasing. "
+                     "If the distribution is skewed, it has a long tail, indicating "
+                    "plenty of resources, or an under-used system. "
+                    "Or there could be outliers of low value, because data are incomplete.\",");
+            Join(buffer,work,bufsize);            
+            }
+         }
+      }
+   
+   past_gradient = new_gradient;
+   }
+
+Join(buffer,work,bufsize);
+Join(buffer,"]",bufsize);
+DeleteItemList(spectrum);
+
+return true;
+}
+
 
 /*****************************************************************************/
 /* Search for answers                                                        */

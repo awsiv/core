@@ -538,7 +538,7 @@ int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,
 /* histogram.c */
 
 int Nova_ReadHistogram2(mongo_connection *conn, struct CfDataView *cfv,char *hostkey,char *monId);
-struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash,enum observables obs);
+struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash);
 void Nova_AnalyseHistogram(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 /* html.c */
@@ -682,7 +682,6 @@ void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp);
 /* magnify.c */
 
 bool Nova_ReadMagTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,char *hostkey,char *vitalId);
-void Nova_AnalyseMag(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 /* monitoring.c */
 
@@ -949,7 +948,6 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char
 
 double Num(double x);
 bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,char *keyhash, char *vitalId);
-void Nova_AnalyseWeek(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 #ifdef MINGW
 /* win_api.c */

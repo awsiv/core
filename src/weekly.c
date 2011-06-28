@@ -168,47 +168,5 @@ else
    }
 }
 
-/***********************************************************/
-
-void Nova_AnalyseWeek(char *keyhash,enum observables obs,char *buffer,int bufsize)
-/* TODO: adjust to new DB format? */
-{ char work[CF_BUFSIZE];
-  double x;
-  struct CfDataView cfv = {0};
-
-*buffer = '\0';
-
-if (1)//!Nova_ReadTimeSeries(&cfv,keyhash,obs))
-   {
-   return;
-   }
-
-strcpy(buffer,"[");
-
-snprintf(work,CF_BUFSIZE-1,"\"Maximum value: %lf %s\",",cfv.max,NovaGetSlotUnits(obs));
-Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"\"Minimum value %lf %s\",",cfv.min,NovaGetSlotUnits(obs));
-Join(buffer,work,bufsize);
-x = 100*(double)cfv.over/(double)CF_TIMESERIESDATA;
-snprintf(work,CF_BUFSIZE-1,"\"Percentage over average/normal: %lf%%\",",x);
-Join(buffer,work,bufsize);
-x = 100*(double)cfv.under/(double)CF_TIMESERIESDATA;
-snprintf(work,CF_BUFSIZE-1,"\"Percentage under average/normal: %lf%%\",",x);
-Join(buffer,work,bufsize);
-x = 100*(double)cfv.over_dev1/(double)CF_TIMESERIESDATA;
-snprintf(work,CF_BUFSIZE-1,"\"Percentage 1 deviation over mean: %lf%%\",",x);
-Join(buffer,work,bufsize);
-x = 100*(double)cfv.under_dev1/(double)CF_TIMESERIESDATA;
-snprintf(work,CF_BUFSIZE-1,"\"Percentage 1 deviation under mean: %lf%%\",",x);
-Join(buffer,work,bufsize);
-x = 100*(double)cfv.over_dev2/(double)CF_TIMESERIESDATA;
-snprintf(work,CF_BUFSIZE-1,"\"Percentage 2 deviations over mean: %lf%%\",",x);
-Join(buffer,work,bufsize);
-x = 100*(double)cfv.under_dev2/(double)CF_TIMESERIESDATA;
-snprintf(work,CF_BUFSIZE-1,"\"Percentage 2 deviations under mean: %lf%%\"",x);
-Join(buffer,work,bufsize);
-Join(buffer,"]",bufsize);
-}
-
 
 #endif  /* HAVE_LIBMONGOC */

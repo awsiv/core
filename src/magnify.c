@@ -88,42 +88,6 @@ else
    }
 }
 
-/***********************************************************/
-
-void Nova_AnalyseMag(char *keyhash,enum observables obs,char *buffer,int bufsize)
-/* TODO: new protocol adjustments? */
-{ char work[CF_BUFSIZE];
-  struct CfDataView cfv = {0};
-  
-*buffer = '\0';
-
-if (1)//!Nova_ReadMagTimeSeries2(&cfv,keyhash,obs))
-   {
-   return;
-   }
-
-strcpy(buffer,"[");
-   
-if (cfv.max - cfv.min < cfv.error_scale * 2)
-   {
-   snprintf(work,CF_BUFSIZE,"\"No significant variations\",");
-   Join(buffer,work,bufsize);
-   }
-else
-   {
-   snprintf(work,CF_BUFSIZE,"\"Significant variations\",");
-   Join(buffer,work,bufsize);
-   }
-
-snprintf(work,CF_BUFSIZE,"\"Maximum value_ %lf %s\",",cfv.max,NovaGetSlotUnits(obs));
-Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"\"Minimum value: %lf %s\",",cfv.min,NovaGetSlotUnits(obs));
-Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE,"\"Average variability: %lf %s\",",cfv.error_scale,NovaGetSlotUnits(obs));
-Join(buffer,work,bufsize);
-Join(buffer,"]",bufsize);
-}
-
 
 #endif  /* HAVE_LIBMONGOC */
 
