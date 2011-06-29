@@ -15,7 +15,7 @@
                 <div class="panel">
                     <div class="panelhead">Copernicus local cluster view</div>
                     <div class="panelcontent">
-                        <div id="infovis" style="width:90%;height: 95%;min-height:330px"></div>
+                        <div id="infovis" style="width:95%;height: 98%;min-height:430px"></div>
                         <div id="log"></div>
 
                     </div>
@@ -155,7 +155,7 @@
             Edge: {
                 overridable: true,
                 color: '#000000',
-                lineWidth: 0.4
+                lineWidth: 0.2
             },
             //Native canvas text styling
             Label: {
@@ -166,13 +166,10 @@
             //Add Tips
             Tips: {
                 enable: true,
-                onShow: function(tip, node) {
-                    //count connections
-                    var count = 0;
-                    node.eachAdjacency(function() { count++; });
+                onShow: function(tip, node) {                  
                     //display node info in tooltip
-                    tip.innerHTML = "<div class=\"tip-title\">" + node.name + "<\/div>"
-                        + "<div class=\"tip-text\"><b>connections:<\/b> " + count + "<\/div>";
+                    tip.innerHTML = "<div class=\"tip-title\">" + node.data.fullname + "<\/div>"
+                        + "<div class=\"tip-text\"><b>context:<\/b> " + node.data.context + "<\/div>";
                 }
             },
             // Add node events
@@ -208,13 +205,13 @@
             //Number of iterations for the FD algorithm
             iterations: 200,
             //Edge length
-            levelDistance: 100,
+            levelDistance: 180,
             // Add text to the labels. This method is only triggered
             // on label creation and only for DOM labels (not native canvas ones).
             onCreateLabel: function(domElement, node){
                 domElement.innerHTML = node.name;
                 var style = domElement.style;
-                style.fontSize = "0.9em";
+                style.fontSize = "0.7em";
                 style.color = "#000000";
             },
             // Change node styles when DOM labels are placed
