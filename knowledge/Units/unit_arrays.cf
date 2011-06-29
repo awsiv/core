@@ -1,0 +1,36 @@
+#cop arrays,example
+
+body common control
+{
+bundlesequence => { "array" };
+}
+
+#
+# Global variables in common bundles
+#
+
+bundle common g
+{
+vars:
+
+  "array[1]" string => "one"; 
+  "array[2]" string => "two"; 
+}
+
+#
+# Local variables in other bundles
+#
+
+bundle agent array
+{
+vars:
+
+  "localarray[1]" string => "one"; 
+  "localarray[2]" string => "two"; 
+
+reports:
+
+ linux::
+
+   "Global $(g.array[1]) and $(localarray[2])";
+}

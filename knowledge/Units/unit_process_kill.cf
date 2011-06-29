@@ -1,0 +1,20 @@
+#cop signals,example
+#cop killing processes,example
+#cop processes,example
+
+body common control
+{
+bundlesequence => { "test" };
+}
+
+
+
+bundle agent test
+{
+processes:
+
+ "sleep"
+
+   signals => { "term", "kill" };
+
+}

@@ -1,0 +1,21 @@
+#cop returnszero,example
+#cop Function returnszero,example
+
+body common control 
+{ 
+bundlesequence => { "main" }; 
+}
+
+
+bundle agent main 
+{
+classes:
+
+    # Fix me to remove error
+
+    "testclass" expression => returnszero("/bin/true sdkjfh","noshell");
+
+reports:
+    testclass::
+        "testclass is defined";
+}

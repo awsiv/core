@@ -1,0 +1,35 @@
+#cop functions::isgreaterthan,example
+#cop file comparisons,example
+
+#
+# Testing some variable/class definitions - note scope
+#
+# Use browser -f promise_output_agent.html to view
+#
+
+body common control
+
+{
+bundlesequence  => { "test"  };
+}
+
+###########################################################
+
+bundle agent test
+
+{     
+classes:
+
+  "ok" expression => isgreaterthan("1","0");
+
+reports:
+
+  ok::
+
+    "Assertion is true";
+
+ !ok::
+
+  "Assertion is false";
+
+}

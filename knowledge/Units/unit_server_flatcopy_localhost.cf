@@ -1,0 +1,2 @@
+#cop collapse_destination_dir,example
+#cop copy_from,example

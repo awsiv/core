@@ -1,0 +1,45 @@
+#cop occurrences,example
+#cop back references,example
+#cop representation,example
+
+#
+# Matching knowledge occurrences from existing local files
+#
+
+body common control
+{
+bundlesequence => { "test" };
+}
+
+#
+
+body knowledge control
+{
+query_engine => "myscript.php";
+}
+
+#
+
+bundle knowledge test
+
+{
+topics:
+
+  "help files";
+
+occurrences:
+
+  # Look for /home/mark/tmp/.*/help.html
+  # and use ".*" as the reference
+
+  help_files::
+
+   "(.*)/help.html"
+
+            represents => { "host $(match.1)" },
+            representation => "file",
+            path_root => "/home/mark/tmp",
+            web_root => "http://www.cfengine.com";
+
+
+}

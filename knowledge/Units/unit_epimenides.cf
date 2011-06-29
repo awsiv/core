@@ -1,0 +1,25 @@
+
+#cop convergence,epimenides
+
+#
+# Verify detection of non-convergent loops
+#
+
+body common control
+{
+bundlesequence => { "g" };
+}
+
+bundle common g
+{
+vars:
+
+  "head" string => "Swallow my ${tail}";
+  "tail" string => "behind my ${head}";
+
+reports:
+
+ linux::
+
+  "Go $(head)";
+}

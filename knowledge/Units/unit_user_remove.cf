@@ -1,0 +1,47 @@
+
+#cop identity management,example
+#cop User passwords,example
+#cop changing passwords,example
+#cop identity management,remove users
+
+#
+# Remove certain users
+#
+
+body common control
+{
+bundlesequence => { "delusers" };
+}
+
+#########################################################
+
+body agent control
+{
+abortbundleclasses => { "ldap_fail" };
+}
+
+#########################################################
+
+bundle agent delusers
+{
+vars:
+
+   "users" slist => { "mark", "avahi" };
+
+files:
+
+   "/etc/passwd"
+
+       create => "true",
+     edit_line => DeleteColonTabStarting(@(delusers.users));
+}
+
+###################################################################################################
+
+bundle edit_line DeleteColonTabStarting(x)
+{
+delete_lines:
+
+   "$(x):.*";
+
+}

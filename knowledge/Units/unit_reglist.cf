@@ -1,0 +1,34 @@
+#cop reglist,example
+#cop Function reglist,example
+#cop regular expressions,example
+
+body common control
+
+{
+bundlesequence  => { "testbundle"  };
+}
+
+###########################################
+
+bundle agent testbundle
+{
+vars:
+
+ "userlist" slist => { "xyz", "mark", "jeang", "jonhenrik", "thomas", "eben" };
+
+classes:
+
+  "ok" expression => reglist("@(userlist)","j.*");
+
+reports:
+
+ ok::
+
+    "Found in list";
+
+ !ok::
+
+    "Not found in list";
+
+}
+

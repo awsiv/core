@@ -1,0 +1,63 @@
+#cop cfengine nova,ldap functions
+#cop LDAP,cfengine support
+#cop ldapvalue,example
+#cop ldaplist,example
+#cop ldaparray,example
+#cop regldap,example
+#cop Function ldapvalue,example
+#cop Function ldaplist,example
+#cop Function ldaparray,example
+#cop Function regldap,example
+
+body common control
+{
+bundlesequence => { "ldap" , "followup"};
+}
+
+###################################################################################################
+
+bundle agent ldap
+{
+vars:
+
+   # Get the first matching value for "uid"
+
+  "value" string => ldapvalue("ldap://example.com","dc=example,dc=com","(sn=User)","uid","subtree","none");
+
+   # Geta all matching values for "uid" - should be a single record match
+
+  "list" slist =>  ldaplist("ldap://example.com","dc=example,dc=com","(sn=User)","uid","subtree","none");
+
+classes:
+
+   "gotdata" expression => ldaparray("myarray","ldap://example.com","dc=example,dc=com","(uid=mark)","subtree","none");
+
+   "found" expression => regldap("ldap://example.com","dc=example,dc=com","(sn=User)","uid","subtree","jon.*","none");
+
+reports:
+
+ linux::
+
+   "LDAP VALUE $(value) found";
+   "LDAP LIST VALUE $(list)";
+
+ gotdata::
+
+   "Found specific entry data  ...$(ldap.myarray[uid]),$(ldap.myarray[gecos]), etc";
+
+  found::
+
+    "Matched regex";
+
+}
+
+bundle agent followup
+
+{
+reports:
+
+ linux::
+
+   "Different bundle  ...$(ldap.myarray[uid]),$(ldap.myarray[gecos]), etc";
+
+}

@@ -1,0 +1,6 @@
+#cop classes,example
+#cop promise_kept,example
+#cop promise_repaired,example
+#cop repair_failed,example
+#cop repair_denied,example
+#cop repair_timeout,example

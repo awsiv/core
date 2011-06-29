@@ -1,0 +1,182 @@
+#cop application management,example
+#cop patch management,example
+#cop windows,example
+#cop software,installing
+
+##################################################################
+#
+# Software package management demonstration, approach #1
+#
+##################################################################
+
+bundle common classes
+
+{
+classes:
+
+  # Define the organization regions in which different promises will be made
+
+  "domain_01" expression => iprange("172.16.12.174-176");
+
+  "domain_02" or => { 
+	            "ipv4_172_16_12_100",
+	            "ipv4_172_16_12_200" 
+	            };
+
+  "domain_03" expression => iprange("172.16.12.170-173");
+
+  "domain_04" expression => "ipv4_172_16_12_254";
+
+}
+
+##################################################################
+
+bundle agent Trial1
+
+{
+vars:
+
+  "software_repository" string => "c:\Software_Repository";
+
+  "all_applications"     slist => {
+                                  "cf_dummy1.msi",
+                                  "cf_dummy2.msi",
+                                  "cf_dummy3.msi" 
+                                  };
+
+ # Define lists of software dependencies that make implicit orderings of packages for installation
+ # This is domain dependent
+
+ domain_01::
+
+  "dep1" slist => { "c:\WINDOWS\system32\msiexec.exe" };
+
+  "dep2" slist => { "c:\WINDOWS\system32\msiexec.exe", "c:\Program Files\cf_dummy1" };
+
+  "dep3" slist => { "c:\WINDOWS\system32\msiexec.exe", "c:\Program Files\cf_dummy1", "c:\Program Files\cf_dummy2" };
+
+
+ domain_02::
+
+  "dep1" slist => { "c:\WINDOWS\system32\msiexec.exe" };
+
+  "dep2" slist => { "c:\WINDOWS\system32\msiexec.exe", "c:\Program Files\cf_dummy2" };
+
+
+ domain_04::
+
+  "dep1" slist => { "c:\WINDOWS\system32\msiexec.exe" };
+
+  "dep2" slist => { "c:\WINDOWS\system32\msiexec.exe", "c:\Program Files\cf_dummy3" };
+
+ ##################################################################################
+
+files:
+
+ domain_01|domain_02|domain_04::
+
+   "c:\tmp\."
+
+          create => "true",
+         comment => "Create a directory and download the entire software menu to local host",
+       copy_from => mycopy("$(software_repository)","$(update.policy_server)"),
+    depth_search => recurse("inf"),
+     file_select => all_msi,
+      depends_on => { "grant_access_software" },
+          action => immediate;
+
+ domain_03::
+
+   "c:\tmp\."
+
+     create => "true",
+         comment => "Create a directory and download the specified software to the localhost",
+       copy_from => mycopy("$(software_repository)","$(update.policy_server)"),
+    depth_search => recurse("inf"),
+     file_select => selected_msi("cf_dummy1.msi"),
+      depends_on => { "grant_access_software" },
+          action => immediate;
+
+ ##################################################################################
+
+methods:
+
+ # perform the actual installation with dependency checking
+
+ domain_01::
+
+  "all"  usebundle => install_software("cf_dummy1.msi","cf_dummy1",@(Trial1.dep1));
+  "all"  usebundle => install_software("cf_dummy2.msi","cf_dummy2",@(Trial1.dep2));
+  "all"  usebundle => install_software("cf_dummy3.msi","cf_dummy3",@(Trial1.dep3));
+
+ domain_02::
+
+  "all"  usebundle => install_software("cf_dummy2.msi","cf_dummy2",@(Trial1.dep1));
+  "all"  usebundle => install_software("cf_dummy1.msi","cf_dummy1",@(Trial1.dep2));
+
+ domain_04::
+
+  "all"  usebundle => install_software("cf_dummy3.msi","cf_dummy3",@(Trial1.dep1));
+  "all"  usebundle => install_software("cf_dummy2.msi","cf_dummy2",@(Trial1.dep2));
+
+
+commands:
+
+ domain_03::
+
+   "c:\WINDOWS\system32\msiexec.exe /qn /i c:\tmp\cf_dummy1.msi",
+         comment => "Install MSI packaged software using the MSI script in silent mode";  
+
+}
+
+#########################################################
+
+bundle agent install_software(name,result,dependencies)
+
+{
+classes:
+
+  "deps_ok" expression => filesexist("@(dependencies)");
+  
+  "not_installed"  not => fileexists("c:\Program Files\$(result)");
+
+  "ok_to_install"  and => { "deps_ok", "not_installed" };
+
+commands:
+
+  ok_to_install::
+
+   "c:\WINDOWS\system32\msiexec.exe /qn /i c:\tmp\$(name)",
+
+         comment => "Install MSI packaged software using the MSI script in silent mode";  
+}
+
+#########################################################
+
+body file_select all_msi
+
+{
+leaf_name => { ".*.msi" };
+file_result => "leaf_name";	
+}
+
+#########################################################
+
+body file_select selected_msi(software)
+
+{
+leaf_name => { "$(software)" };
+file_result => "leaf_name";	
+}
+
+#########################################################
+
+body classes satisfied(new_class)
+
+{
+promise_kept => { "$(new_class)"};
+promise_repaired => { "$(new_class)"};
+persist_time => "0";
+}
+
+#########################################################

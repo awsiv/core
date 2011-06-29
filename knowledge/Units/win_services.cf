@@ -1,0 +1,3 @@
+#cop Windows service management,example
+#cop service_autostart_policy,example
+#cop application services,example

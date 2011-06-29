@@ -1,0 +1,5 @@
+#cop remoteclassesmatching,example
+#cop Function remoteclassesmatching,example
+#cop scheduling,example
+#cop distributed scheduling,example
+#cop cfengine nova,server functions
