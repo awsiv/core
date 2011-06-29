@@ -3053,14 +3053,18 @@ else
 
 void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize)
 
-{ struct Item *lastp,*ip;
- struct Item *list = Nova_ScanLeadsAssociations(id,NULL);
+{ struct Item *ip;
+  struct Item *list = Nova_ScanLeadsAssociations(id,NULL);
   char work[CF_BUFSIZE];
+
+  DebugListItemList(list);
   
 buffer[0] = '\0';
 strcpy(buffer,"[ ");
 
-lastp = list;
+// name contains the association
+// classes contains the related topic
+// counter contains the topic id
 
 for (ip = list; ip != NULL; ip=ip->next)
    {
@@ -3076,16 +3080,12 @@ for (ip = list; ip != NULL; ip=ip->next)
    if (ip->next && strcmp(ip->name,ip->next->name) != 0)
       {
       strcpy(buffer+strlen(buffer)-1,"]},");
-
-      snprintf(work,CF_BUFSIZE,"{ \"assoc\": \"%s\", \"topics\": [",ip->name);
+      snprintf(work,CF_BUFSIZE,"{ \"assoc\": \"%s\", \"topics\": [",ip->next->name);
       Join(buffer,work,bufsize);
       }
-
-   lastp = ip;
    }
 
-strcpy(buffer+strlen(buffer)-1,"]} ]");
- 
+strcpy(buffer+strlen(buffer)-1,"]} ]"); 
 }
 
 /*****************************************************************************/

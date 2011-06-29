@@ -830,7 +830,7 @@ fprintf(fp,"ports::");
 
 for (i = 0; i < ATTR; i++)
    {
-   fprintf(fp,"  \"port %s\" comment => \"The standard reserved port for %s\", generalizations => { \"ports\" }, synonyms => {\"%s\"}; ",ECGSOCKS[i].portnr,ECGSOCKS[i].name,ECGSOCKS[i].name);
+   fprintf(fp,"  \"port %s\" comment => \"The standard reserved port for %s\", generalizations => { \"ports\" }, synonyms => {\"ports::%s\"}; ",ECGSOCKS[i].portnr,ECGSOCKS[i].name,ECGSOCKS[i].name);
    }
 
 fprintf(fp,"measurements:: \"anomalies\" comment => \"Measurements that exceed the boundaries of normal behaviour, as learned by cf-monitord\";");
