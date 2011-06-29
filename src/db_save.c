@@ -342,7 +342,7 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
  bson insertOp;
  char monId[CF_SMALLBUF] = {0}, monDesc[CF_MAXVARSIZE] = {0}, monUnits[CF_SMALLBUF] = {0};
  char varName[CF_SMALLBUF], iStr[CF_SMALLBUF];
- bool didUpdate, haveAllMeta;
+ bool didUpdate, haveAllMeta=false;
  char *db;
  char *dbOp;
  struct Item *ip, *ip2, *slotStart;
