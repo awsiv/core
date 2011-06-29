@@ -2260,3 +2260,8 @@ ul.admin_menu li.current a{
     color:#ff9900;
     cursor: pointer;
 }
+
+.graphunit {
+    font-size: .9em;
+    text-align: center;
+}
