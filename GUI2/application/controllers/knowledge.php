@@ -54,14 +54,6 @@ class Knowledge extends Cf_Controller {
         $this->carabiner->group('iefix', array('js' => $jsIE));
          $this->carabiner->css('tabs-custom.css');
 
-        $bc = array(
-            'title' => 'Knowledge Map',
-            'url' => 'knowledge/knowledgemap',
-            'isRoot' => false
-        );
-
-        $this->breadcrumb->setBreadCrumb($bc);
-
         $getparams = $this->uri->uri_to_assoc(3);
         $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
         $topic = isset($getparams['topic']) ? $getparams['topic'] : $this->input->post('topic');
@@ -70,6 +62,15 @@ class Knowledge extends Cf_Controller {
         $pid = intval($pid,10);
         if (!$pid)
             $pid = cfpr_get_pid_for_topic("", "system policy");
+
+       $breadcrumbs_url = "knowledge/knowledgemap/pid/$pid";
+        $bc = array(
+               'title' => 'Knowledge Map',
+               'url' =>$breadcrumbs_url,
+               'isRoot' => false,
+               'replace_existing'=>true
+           );
+         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
             'search' => $search,

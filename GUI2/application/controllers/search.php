@@ -101,16 +101,14 @@ class Search extends Cf_Controller {
                 //$params=$this->uri->assoc_to_uri($_POST);
             }
             
-            $modified=$this->breadcrumblist-> replace_last_with_current("search/index",site_url("$breadcrumbs_url"));
-            if (!$modified)
-            {
-                $bc = array(
+            //$modified=$this->breadcrumblist-> replace_last_with_current("search/index",site_url("$breadcrumbs_url"));
+            $bc = array(
                     'title' => 'Reports',
                     'url' => site_url("$breadcrumbs_url"),
-                    'isRoot' => false
+                    'isRoot' => false,
+                   'replace_existing'=>true
                 );
-                $this->breadcrumb->setBreadCrumb($bc);
-            }
+            $this->breadcrumb->setBreadCrumb($bc);
         }
       // var_dump($this->breadcrumblist->getBreadCrumbs());
         //for css of autocompletion to work

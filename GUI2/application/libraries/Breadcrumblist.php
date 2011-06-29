@@ -34,11 +34,19 @@ final class BreadCrumbList{
 			if($bc->isRoot()){
 				$this->reset();
 			}
-			if(!in_array($bc, $this->breadCrumbs)){
-                               
+                        if($bc->replaceExisting())
+                        {
+                            if(!$this->replace_last_with_current($bc->getTitle(), $bc->getUrl())){
+                                $this->breadCrumbs[] = $bc;
+				$_SESSION['breadCrumbList']=$this->breadCrumbs;
+                            }
+                            return;
+                        }
+                        if(!in_array($bc, $this->breadCrumbs)){
 				$this->breadCrumbs[] = $bc;
 				$_SESSION['breadCrumbList']=$this->breadCrumbs;
-			}else{
+			}
+                        else{
 				// in array, remove objects after index
 				$index = array_search($bc,$this->breadCrumbs);
 				for($i=(count($this->breadCrumbs)-1); $i>=($index+1); $i-- ){
@@ -109,13 +117,16 @@ final class BreadCrumbList{
                $_SESSION['breadCrumbList']=$newbreadbrumbs;
         }
 
-        function replace_last_with_current($checkstring,$replaceurl){
+   function replace_last_with_current($checkstring,$replaceurl){
             $breadcrumbs = $this->getBreadCrumbs();
             $modified = false;
             $index=0;
             foreach ($breadcrumbs as $breadcrumb) {
-                $pos = strpos($breadcrumb->getUrl(), $checkstring);
-                if ($pos) {
+               // $pos = strpos($breadcrumb->getUrl(), $checkstring);
+               // var_dump($pos);
+                //echo $pos;
+                //if ($pos!== FALSE ) {
+                if(strcmp(strtolower($breadcrumb->getTitle()), strtolower($checkstring)) == 0){
                     $breadcrumb->setUrl($replaceurl);
                     $modified = true;
                     break;

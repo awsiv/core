@@ -12,7 +12,7 @@ final class BreadCrumb{
 	private $title;
 	private $url;
 	private $isRoot;
-        
+        private $replace_if_exist;
 
 	/*
 	 * No need to set anything up.  I autoload it and
@@ -32,6 +32,7 @@ final class BreadCrumb{
 		$this->title=$bcObjArr['title'];
 		$this->url=$bcObjArr['url'];
 		$this->isRoot=$bcObjArr['isRoot'];
+                $this->replace_if_exist=array_key_exists('replace_existing', $bcObjArr)?$bcObjArr['replace_existing']:false;
 
 		$CI =& get_Instance();
 		$CI->breadcrumblist->add($this);
@@ -57,5 +58,9 @@ final class BreadCrumb{
 	function setIsRoot($r){
 		$this->isRoot=$r;
 	}
+
+        function replaceExisting(){
+            return $this->replace_if_exist;
+        }
 }
 ?>
