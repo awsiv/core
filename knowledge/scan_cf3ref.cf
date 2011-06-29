@@ -1779,17 +1779,17 @@ Remote_access_troubleshooting::
     "Key exchange" ;
 Remote_access_troubleshooting::
     "Server connection" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Remote access troubleshooting" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Familiarizing yourself" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "The bare necessities of a cfengine 3" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Testing as a non-privilieged user" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Upgrading from cfengine 2" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Filenames and paths" ;
 Decisions::
     "Global and local classes" ;
@@ -1797,17 +1797,17 @@ Decisions::
     "Class combination operators and precedence" ;
 Decisions::
     "Cfengine hard classes" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Decisions" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "The work directory" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Syntax, identifiers and names" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Installation" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "A renewed cfengine" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Core concepts" ;
 Software_components::
     "cf-hub" ;
@@ -1829,10 +1829,10 @@ Software_components::
     "cf-execd" ;
 Software_components::
     "cf-agent" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Software components" ;
-Cfengine_3_2_0a1_r2438M__Getting_started::
-    "Cfengine 3.2.0a1.r2438M  Getting started" ;
+Cfengine_3_2_0a1_r2426M__Getting_started::
+    "Cfengine 3.2.0a1.r2426M  Getting started" ;
 Special_Topics_Guide::
     "CFEngine-AutoReference"  association => a("discussed in","CFEngine-AutoReference","discusses");
 
@@ -1845,7 +1845,7 @@ manuals::
 CFEngine_AutoReference::
  "/docs/cf3-reference.html#Top"
   represents => { "Text section" };
-Cfengine_3_2_0a1_r2438M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
  "/docs/cf3-reference.html#Getting-started"
   represents => { "manual chapter" };
 Software_components::

@@ -170,7 +170,7 @@ while (!feof(fin))
          }
 
       printf("Processing %s\n",file);
-      fprintf(FOUT,"occurrences:\n   %s::\n \"https://cfengine.com/copernicus/?quote=examples/%s\" represents => { \"%s\" };\n",CanonifyName(topic),file,subtype);
+      fprintf(FOUT,"occurrences:\n   %s::\n \"/showexample.php?example=%s\" represents => { \"%s\" };\n",CanonifyName(topic),file,subtype);
       continue;
       }
 
