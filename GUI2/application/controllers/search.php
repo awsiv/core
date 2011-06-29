@@ -101,15 +101,7 @@ class Search extends Cf_Controller {
                 //$params=$this->uri->assoc_to_uri($_POST);
             }
             
-            $breadcrumbs = $this->breadcrumblist->getBreadCrumbs();
-            $modified = false;
-            foreach ($breadcrumbs as $breadcrumb) {
-                $pos = strpos($breadcrumb->getUrl(), "search/index");
-                if ($pos) {
-                    $breadcrumb->setUrl(site_url("$breadcrumbs_url"));
-                    $modified = true;
-                }
-            }
+            $modified=$this->breadcrumblist-> replace_last_with_current("search/index",site_url("$breadcrumbs_url"));
             if (!$modified)
             {
                 $bc = array(
