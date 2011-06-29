@@ -281,8 +281,8 @@ void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status sta
 
 { CF_DB *dbp;
   FILE *fp;
-  char name[CF_BUFSIZE],id[CF_MAXVARSIZE];
-  static char previous[CF_BUFSIZE];
+  char name[CF_BUFSIZE],promiseHandle[CF_MAXVARSIZE],newNoRepeatId[CF_BUFSIZE];
+  static char oldNoRepeatId[CF_BUFSIZE] = {0};
   struct Event e,newe;
   time_t now = time(NULL);
   double lastseen,delta2;
@@ -290,14 +290,16 @@ void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status sta
   
 Debug("Note Promise Compliance\n");
 
-cf_strncpy(id,Nova_PromiseID(pp),CF_MAXVARSIZE);
+cf_strncpy(promiseHandle,Nova_PromiseID(pp),sizeof(promiseHandle)-1);
+snprintf(newNoRepeatId, sizeof(newNoRepeatId), "%s:%s", promiseHandle, reason);
 
-if (strcmp(previous,id) == 0)
+if (strcmp(newNoRepeatId,oldNoRepeatId) == 0)
    {
+   // TODO: this is a bit hackish, preferably we should fix this earlier in callstack
    return;
    }
 
-cf_strncpy(previous,Nova_PromiseID(pp),CF_MAXVARSIZE);
+cf_strncpy(oldNoRepeatId,newNoRepeatId,sizeof(oldNoRepeatId)-1);
 
 snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_COMPLIANCE);
 MapName(name);
@@ -327,7 +329,7 @@ if (!OpenDB(name,&dbp))
 
 /* First record the classes that are in use */
 
-if (ReadDB(dbp,id,&e,sizeof(e)))
+if (ReadDB(dbp,promiseHandle,&e,sizeof(e)))
    {
    lastseen = now - e.t;
    newe.t = now;
@@ -345,7 +347,7 @@ else
    newe.Q.var = 0.000;
    }
 
-WriteDB(dbp,id,&newe,sizeof(newe));
+WriteDB(dbp,promiseHandle,&newe,sizeof(newe));
 CloseDB(dbp);
 
 /* Just noise to log variables and classes */
@@ -377,7 +379,7 @@ if ((fp = fopen(name,"a")) == NULL)
    return;
    }
 
-fprintf(fp,"%ld,%s,%s",(long)now,id,reason);
+fprintf(fp,"%ld,%s,%s",(long)now,promiseHandle,reason);
 
 if(reason[strlen(reason) - 1] != '\n')
   {
