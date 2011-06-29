@@ -36,6 +36,7 @@ void Nova_DrawTribe(int *tribe_id,struct CfGraphNode *tribe_node,double tribe_ad
 { int i,j;
   double radius;
   char work[CF_BUFSIZE],url[CF_MAXVARSIZE],shortname[CF_MAXVARSIZE];
+  char longname[CF_BUFSIZE],context[CF_BUFSIZE];
   char *colour;
 
 Nova_GetMaxEvcNode(tribe_evc,tribe_size); /* FIXME: unused? */
@@ -83,6 +84,9 @@ for (i = 0; i < tribe_size; i++)
    
    snprintf(url,CF_MAXVARSIZE,"/knowledge/knowledgemap/pid/%d",tribe_node[i].real_id);
    EscapeJson(tribe_node[i].shortname,shortname,CF_MAXVARSIZE-1);
+   EscapeJson(tribe_node[i].fullname,longname,CF_MAXVARSIZE-1);
+   EscapeJson(tribe_node[i].context,context,CF_MAXVARSIZE-1);
+
    snprintf(work,CF_BUFSIZE,
             "{ "
             "\"id\": \"g%d\",\n"
@@ -98,8 +102,8 @@ for (i = 0; i < tribe_size; i++)
             "},\n"
             "\"adjacencies\": [ ",
             i,shortname,colour,radius,
-	    tribe_node[i].context ? tribe_node[i].context: "",
-	    tribe_node[i].fullname ? tribe_node[i].fullname: "",
+	    context,
+	    longname,
 	    url
             );
    
