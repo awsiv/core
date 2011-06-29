@@ -677,7 +677,7 @@ struct Item *Nova_GetBusinessGoals(char *handle)
   struct Item *worklist = NULL, *ip;
   int pid;
 
-snprintf(querytopic,CF_BUFSIZE,"handles::%s",handle);
+snprintf(querytopic,CF_BUFSIZE,"bundles::%s",handle);
 pid = Nova_GetTopicIdForTopic(querytopic);
 
 worklist = Nova_NearestNeighbours(pid,NOVA_GOAL);
@@ -853,7 +853,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
    }
 
-ip->classes = strdup("No description available");
+ip->classes = strdup("[No description]");
 #endif
 }
 
@@ -864,8 +864,6 @@ char *Nova_GetBundleComment(char *bundle)
 {
 #ifdef HAVE_LIBMONGOC
   static char buf[CF_BUFSIZE];
-  struct Rlist *rp;
-  char searchstring[CF_MAXVARSIZE],work[CF_MAXVARSIZE];
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
@@ -882,7 +880,7 @@ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
 
 bson_buffer_init(&bb);
 bson_append_string(&bb,cfk_occurrep,"description");
-bson_append_string(&bb,cfk_occurcontext,"bundle");
+bson_append_string(&bb,cfk_occurcontext,bundle);
 bson_from_buffer(&query,&bb);
 
 /* BEGIN RESULT DOCUMENT */
@@ -908,11 +906,11 @@ while (mongo_cursor_next(cursor))  // loops over documents
          {
          strncpy(buf,bson_iterator_string(&it1),CF_BUFSIZE-1);
          return buf;
-         }   
+         }
       }
    }
-
-return NULL;
+strncpy(buf,"[No Description]",CF_BUFSIZE-1);
+return buf;
 #endif
 }
 
