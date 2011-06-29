@@ -1013,7 +1013,7 @@ for (ip = nn; ip != NULL; ip = ip->next)
       tribe_counter++;
       }
 
-   Debug("NEAREST NEIGHOUR: %s::%s at %d\n",a_context,a_name,a_pid);
+   Debug("NEAREST NEIGHOUR (%d): %s::%s at %d\n",tribe_counter,a_context,a_name,a_pid);
 
    if (tribe_counter >= CF_TRIBE_SIZE-1)
       {
@@ -1047,7 +1047,7 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && secondary_boundary > 0)
             continue;
             }
          
-         Debug("  2nd NEIGHOUR: %s::%s at %d\n",a_context,a_name,a_pid);
+         Debug("  2nd NEIGHOUR (%d): %s::%s at %d\n",tribe_counter,a_context,a_name,a_pid);
 
          if (Nova_NewVertex(tribe_nodes,tribe_counter,2,a_pid,a_name,a_context))
             {            
@@ -1238,6 +1238,7 @@ void Nova_InitVertex(struct CfGraphNode *tribe,int i)
 tribe[i].real_id = 0;
 tribe[i].shortname = NULL;
 tribe[i].fullname = NULL;
+tribe[i].context = NULL;
 tribe[i].distance_from_centre = 0;
 }
 
@@ -1249,11 +1250,20 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char
   char topic_id[CF_BUFSIZE];
   int j;
 
+Debug("NEWVERT(%d,%d,%s:%s)\n",distance,real,topic_context,topic_name);
+
 /* If more than a few nodes, don't waste visual space on repeated topics */
 
 if (strlen(topic_name) == 0)
    {
    Nova_GetTopicByTopicId(real,topic_name,topic_id,topic_context);
+   }
+
+sscanf(topic_name,"%32[^\n]",sshort);
+
+if (strlen(sshort) == 0)
+   {
+   return false;
    }
 
 if (node > 5)
@@ -1268,16 +1278,10 @@ if (node > 5)
       }
    }
 
-sscanf(topic_name,"%32[^\n]",sshort);
-
-if (strlen(sshort) == 0)
-   {
-   return false;
-   }
-
 tribe[node].real_id = real; 
 tribe[node].shortname = strdup(sshort);
-tribe[node].fullname = strdup(name);
+tribe[node].fullname = strdup(topic_name);
+tribe[node].context = strdup(topic_context);
 tribe[node].distance_from_centre = distance;
 return true;
 }
@@ -1383,7 +1387,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                    }   
                 }
              
-             Debug(" - topic %d has associate %s::%s (%d)\n",topic_id,afwd,assoc_context,assoc_name,assoc_id);
+             Debug(" - NEIGH topic %d has association %s %s::%s (%d)\n",topic_id,afwd,assoc_context,assoc_name,assoc_id);
 
              if (assoc_mask == NULL || FullTextMatch(assoc_mask,afwd))
                 {

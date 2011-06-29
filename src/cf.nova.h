@@ -128,6 +128,7 @@ struct CfGraphNode
    int tribe_id;
    char *shortname;
    char *fullname;
+   char *context;
    int distance_from_centre;
    };
 

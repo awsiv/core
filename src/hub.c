@@ -332,7 +332,6 @@ void Nova_CacheTotalCompliance(bool allSlots)
 
 now = time(NULL);
 
-
 if (allSlots)
    {
    curr = GetShiftSlotStart(now - SECONDS_PER_WEEK);
