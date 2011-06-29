@@ -112,14 +112,21 @@ final class BreadCrumbList{
         function replace_last_with_current($checkstring,$replaceurl){
             $breadcrumbs = $this->getBreadCrumbs();
             $modified = false;
+            $index=0;
             foreach ($breadcrumbs as $breadcrumb) {
                 $pos = strpos($breadcrumb->getUrl(), $checkstring);
                 if ($pos) {
                     $breadcrumb->setUrl($replaceurl);
                     $modified = true;
+                    break;
                 }
+                $index++;
             }
-            return $modified;
-        }
+          for($i=(count($this->breadCrumbs)-1); $i>=($index+1); $i-- ){
+	    unset($this->breadCrumbs[$i]);
+	  }
+	$_SESSION['breadCrumbList']=$this->breadCrumbs;
+        return $modified;
+       }
 }
 ?>
