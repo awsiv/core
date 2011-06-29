@@ -49,7 +49,7 @@ class OnlineUsers{
 				$this->data['bot'] = false;
 			
 			//Destroys the USER_AGENT class so it can be loaded again on the controller
-			if($class_loaded) unset($class_loaded, $this->CI->agent);
+			//if($class_loaded) unset($class_loaded, $this->CI->agent);
                         $this->CI->mongo_db->insert('onlineusers', $this->data);
 		}
 		else

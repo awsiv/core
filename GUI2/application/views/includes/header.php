@@ -15,6 +15,34 @@
 <?php
 $injected= isset($injected_item)?$injected_item:"" ;echo $injected;
 $this->carabiner->display(); ?>
+<?php
+/**
+ * FIX for back button click in OPera and safari for refreshing the bread crumbs in session list 
+ */
+if($this->agent->is_browser('Opera'))
+{
+?>
+<script type="text/javascript">
+ if (window.opera)
+{
+    window.opera.setOverrideHistoryNavigationMode('compatible');
+    history.navigationMode = 'compatible';
+}
+    $(document).ready(function(){
+        var path=window.location.pathname,
+             newpath=path.replace(/\/index\.php\//,'');
+             $('#breadcrumb').load('/widget/getbreadcrumbs',{url:newpath},function(){
+             });
+   });
+</script>
+<?
+  }
+if($this->agent->is_browser('Safari')){
+?>
+<script type="text/javascript">
+   $ (window).bind("unload", function() { });
+</script>
+<?php }?>
 </head>
 
 <body>

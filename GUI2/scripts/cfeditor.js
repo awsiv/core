@@ -292,8 +292,6 @@ var $tabs = $('#tabs').tabs({
 		 autoOpen: false,
 		 modal: true,
 		 hide: 'puff',
-                 width:400,
-                 resizable:false,
 		 buttons: {
 		 'Save': function() {
 		var agent=jQuery.uaMatch(navigator.userAgent).browser;
@@ -349,8 +347,7 @@ var $tabs = $('#tabs').tabs({
 		 }
 		 },
 		 open: function() {
-		 //$('#tab_title').focus();
-                 $('#tab_title').css('font-size','14px').height(20).width(350);
+		 $('#tab_title').focus();
 		 $('#tab_content').hide();//hiding the contents of the tab.
 		 },
 		 close: function() {
@@ -481,8 +478,8 @@ var $tabs = $('#tabs').tabs({
 	      }
 	 }
 	 });
-
-  //save file dialogue to be displayed when user clicks the cross icon on the tab.
+	 
+	//save file dialogue to be displayed when user clicks the cross icon on the tab.
     var $sfd = $('#sfdialog').dialog({
 		 autoOpen: false,
 		 modal: true,

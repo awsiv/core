@@ -57,8 +57,7 @@ var hostfinder={
          self.cfui.categories.addClass('categories').appendTo( self.titlebar).hide();
 
          self.temp.siblings('div.ui-dialog-titlebar')
-         self.cfui.categories.delegate('li','click',{ui:self},self.categoryselected);
-         $('<span class="slider">X</span>').appendTo(self.cfui.categories).bind('click',function(event){ self.cfui.categories.slideUp();});
+         self.cfui.categories.delegate('li','click',{ui:self},self.categoryselected)
          //self.temp.delegate('form','submit',{ui:self},self.searchsubmit);
          self.element.bind('click',function(event){event.preventDefault();self.temp.dialog('open')});
          self.cfui.alphapaging.appendTo(self.temp.parent()).delegate('li','click',{ui:self},self.sortalphabetically);

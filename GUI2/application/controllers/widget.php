@@ -1,6 +1,6 @@
 <?php
 
-class Widget extends CI_Controller {
+class Widget extends Cf_Controller {
 
     function Widget() {
         parent::__construct();
@@ -220,12 +220,16 @@ class Widget extends CI_Controller {
     }
 
     function tracker() {
-
         // compliance summary meter
         $envList = cfpr_environments_list();
         //$envListArray = json_decode($envList);
         $data['envList'] = $envList;
         $this->load->view('widgets/tracker', $data);
+    }
+
+    function getbreadcrumbs(){
+        $this->breadcrumblist->checkurl($this->input->post('url'));
+        echo $this->breadcrumblist->display();
     }
 
 }

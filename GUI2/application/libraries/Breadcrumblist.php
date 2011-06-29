@@ -91,5 +91,22 @@ final class BreadCrumbList{
 	function setDelimiter($d){
 		$this->delimiter='<span class="delimiter" >'.$d.'</span>';
 	}
+        
+        function checkurl($url){
+              $newbreadbrumbs=$this->breadCrumbs;
+              $index=0;
+               foreach ($this->breadCrumbs as $bc)
+               {
+                   if($bc->getUrl() ==$url)
+                   {
+                     for($i=(count($newbreadbrumbs)-1); $i>=($index+1); $i-- ){
+			   unset($newbreadbrumbs[$i]);
+		      }
+                   }
+                  $index++;
+               }
+               $this->breadCrumbs=$newbreadbrumbs;
+               $_SESSION['breadCrumbList']=$newbreadbrumbs;
+        }
 }
 ?>

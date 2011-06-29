@@ -9,7 +9,7 @@ class Cf_Controller extends CI_Controller {
     function __construct() {
         parent::__construct();
 
-        $this->load->library(array('session', 'ion_auth', 'breadcrumb', 'breadcrumblist', 'onlineUsers', 'carabiner'));
+        $this->load->library(array('session', 'ion_auth', 'breadcrumb', 'breadcrumblist', 'onlineUsers', 'carabiner','user_agent'));
         //$this->load->library('session');
 
         
