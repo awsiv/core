@@ -24,8 +24,7 @@
                                     <th scope="col">COMMENT</th>
                                 </tr>
                                 <tr>
-                                    <th scope="host-class">Host classes using this bundle </th>
-                                    <th scope="host-class"></th>
+                                    <th scope="host-class" colspan="2">Host classes using this bundle </th>
                                 </tr>
 
                                 <?php if (is_array($classes) && !empty($classes)) {
@@ -42,15 +41,8 @@
                                     </tr>
                                 <?php } ?>
 
-
-
-
-
-
-
                                 <tr>
-                                    <th scope="promise">Promises in this bundle </td>
-                                    <th scope="promise"></td>
+                                    <th scope="promise" colspan="2">Promises in this bundle </th>
                                 </tr>
 
                                 <?php if (is_array($list) && !empty($list)) {

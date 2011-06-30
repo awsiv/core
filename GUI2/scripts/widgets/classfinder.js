@@ -32,7 +32,7 @@ addsearchbar:function(){
   self.filter=$('<ul>');
   self.filter.attr('id',"cfinderfilter").addClass('classfilters').appendTo(self.dialogcontent.parent());
 
-  self.gethostbtn=$('<span>').attr('id','findmatchedhost').text('view host');
+  self.gethostbtn=$('<span>').attr('id','findmatchedhost').text('view hosts');
   self.gethostbtn.appendTo(self.dialogcontent.parent()).hide();
   self.matchhostfinder=$('<form>').attr({id:"finderform",action:"/search/index",method:"post"}).hide();
   $('<input>').attr({id:'name',name:'name',type:'hidden'}).appendTo(self.matchhostfinder);
@@ -85,7 +85,7 @@ menuitemclicked:function(event){
                                         var li = $("<li>");
                                         $("<a>").text(val).attr({title:val, href:"/search/index/host/All/report/Class+profile/name/"+val}).addClass('name').appendTo(li);
                                         if(self.options.defaultbehaviour){
-                                        $("<a>").text('View hosts').attr('href',"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').addClass('btn').appendTo(li);
+                                        $("<a>").text('view hosts').attr('href',"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').addClass('btn').appendTo(li);
                                          $("<a>").text('add to list').data('val',val).addClass('classadd').addClass('btn').appendTo(li);
                                         }
                                         li.appendTo("#classList");

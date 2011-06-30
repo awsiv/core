@@ -341,17 +341,15 @@ class Welcome extends Cf_Controller {
     }
 
     function host($hostkey=NULL) {
-        if($hostkey==NULL)
+       $hostkey_tobe_deleted=$this->input->post('delhost');
+        if($hostkey_tobe_deleted)
+        {
+            cfpr_delete_host($hostkey_tobe_deleted);
+        }
+         if($hostkey==NULL)
         {
             redirect('welcome/engg');
                 return;
-        }
-        $hostkey_tobe_deleted=$this->input->post('hostkey');
-        if($hostkey_tobe_deleted)
-        {
-            //cfpr_delete_host($hostkey_tobe_deleted);
-            redirect('welcome/engg');
-            return;
         }
         $this->load->library('cf_table');
         //loading required javascript files

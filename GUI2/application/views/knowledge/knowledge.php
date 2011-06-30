@@ -1,4 +1,4 @@
-<div id="body" class="grid_12">
+<div id="body">
     <div class="outerdiv">
 
         <div id="custom-tabs" style="margin:15px;">

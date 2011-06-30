@@ -1,4 +1,4 @@
-<div id="body" class="grid_12">
+<div id="body">
     <div class="outerdiv">
 
         <div class="innerdiv" style="min-width: 500px;">

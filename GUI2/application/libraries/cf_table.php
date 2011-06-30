@@ -111,25 +111,37 @@ class cf_table {
                     $goal_link="";
                           $subindexs=  array_values($value['subkeys']);
                           $index=$value['index'];
-                          if($row[$index][$value['subkeys']['name']]=="Unknown")
+                        /* if($row[$index][$value['subkeys']['name']]=="Unknown")
                           {
                               $cell="unknown";
                               $table.="<td>$cell</td>";
                           }
                           else
-                          {
-                               foreach($subindexs as $subindex)
-                                {
-                                 if($subindex ==0)continue;
-                                //pid=0 name=1 and description=2
-                                 $cell=$row[$index][$subindex];
-                                 if($subindex !=2 )
-                                    {
-                                     $cell="<a href=".site_url ("knowlege/pid/").$row[$index][0].">".$row[$index][1]."</a>";
-                                    }
-                                  $table.="<td>$cell</td>";
-                                }
-                          }     
+                          {*/
+                              if(count($row[$index])>0)
+                              {
+                                  foreach($row[$index] as $secodtablerow)
+                                  {
+                                      $table.="<tr>";
+                                      foreach($subindexs as $subindex)
+                                        {
+                                         if($subindex ==0)continue;
+                                        //pid=0 name=1 and description=2
+                                          if(strcmp(strtolower($secodtablerow[$subindex]), "unknown")==0)
+                                              {
+                                                  continue;
+                                              }
+                                         $cell=$secodtablerow[$subindex];
+                                         if($subindex !=2 )
+                                            {
+                                             $cell="<a href=".site_url ("/knowledge/knowledgemap/pid")."/".$secodtablerow[0].">".$secodtablerow[1]."</a>";
+                                            }
+                                            $table.="<td>$cell</td>";
+                                        }
+                                         $table.="</tr>";
+                                  }
+                              }
+                        //  }
                       $table.="</tr></table>";
                       array_push($temp, $table);
                     }
