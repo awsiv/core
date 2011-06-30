@@ -4,7 +4,7 @@ if test "x$NOVA_SUBDIR" != "x"; then
   AC_MSG_RESULT([ Nova: enabled])
 
   if test $WITH_MONGO = 1; then
-    AC_MSG_RESULT([ -> MongoDB: enabled])
+    AC_MSG_RESULT([ -> MongoDB: $MONGO_PATH])
   else
     AC_MSG_RESULT([ -> MongoDB: disabled])
   fi

@@ -23,23 +23,21 @@ AC_SUBST([NOVA_LDADD])
 #
 
 AC_ARG_WITH(mongo,
-	AS_HELP_STRING(--without-mongo, [disable MongoDB report aggregation database]),[],with_mongo=yes)
-
-if test "x$with_mongo" = xyes; then
-   AC_MSG_CHECKING(for libmongoc)
-   WITH_MONGO=1
-else
-   WITH_MONGO=0
-fi
+	AS_HELP_STRING(--with-mongo[[=PATH]], [Use MongoDB as report aggregation database]), [], [with_mongo=yes])
+AS_IF([test -n "$with_mongo" && test "x$with_mongo" != "xno"], [WITH_MONGO=1], [WITH_MONGO=0])
 
 if test $WITH_MONGO = 1; then
-  AC_DEFINE([MONGO_HAVE_STDINT], [], [Inform mongo header about stdint support])
-  AC_CHECK_HEADERS(mongo.h)
-  AC_CHECK_HEADERS(mongo_except.h)
-  AC_CHECK_HEADERS(bson.h)
-  AC_CHECK_HEADERS(platform_hacks.h)
-  AC_CHECK_MEMBER([mongo_connection_options.host], AC_DEFINE([MONGO_OLD_CONNECT], [], [Use deprecated MongoDB client API]),[],[[#include <mongo.h>]])
-  AC_CHECK_LIB(mongoc,main)
+  CF3_WITH_LIBRARY(mongo, [
+    AC_DEFINE([MONGO_HAVE_STDINT], [], [Inform mongo header about stdint support])
+
+    AC_CHECK_LIB(mongoc, mongo_connect, [], [AC_MSG_ERROR(Cannot find mongo_connect)])
+    AC_CHECK_HEADERS(mongo.h, [], [AC_MSG_ERROR(Cannot find mongo.h)])
+    AC_CHECK_HEADERS(mongo_except.h, [], [AC_MSG_ERROR(Cannot find mongo_except.h)])
+    AC_CHECK_HEADERS(bson.h, [], [AC_MSG_ERROR(Cannot find bson.h)])
+    AC_CHECK_HEADERS(platform_hacks.h, [], [AC_MSG_ERROR(Cannot find platform_hacks.h)])
+
+    AC_CHECK_MEMBER([mongo_connection_options.host], AC_DEFINE([MONGO_OLD_CONNECT], [], [Use deprecated MongoDB client API]),[],[[#include <mongo.h>]])
+  ])
 fi
 
 AC_ARG_WITH([ldap],
