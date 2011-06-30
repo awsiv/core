@@ -2826,7 +2826,7 @@ if (matched)
          }
       else if (type)
          {
-         snprintf(goals,CF_MAXVARSIZE,"[-1,\"Unknown\",\"Unknown\"]");
+         snprintf(goals,CF_MAXVARSIZE,"[[-1,\"Unknown\",\"Unknown\"]]");
          snprintf(colour,CF_SMALLBUF,"yellow");
          }
 

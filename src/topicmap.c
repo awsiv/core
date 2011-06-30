@@ -695,16 +695,36 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
 {
 #ifdef HAVE_LIBMONGOC
-  bson_buffer bb;
-  bson query,field;
-  mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
-  mongo_connection conn;
+ struct Rlist *rp,*rp2;
+ bson_buffer bb;
+ bson query,field;
+ mongo_cursor *cursor;
+ bson_iterator it1,it2,it3;
+ mongo_connection conn;
 
-  char topic_name[CF_BUFSIZE];
-  int topic_id;
-  char work[CF_BUFSIZE];
-  char goals[CF_BUFSIZE];
+ char topic_name[CF_MAXVARSIZE] = {0};
+ int topic_id;
+ char work[CF_BUFSIZE] = {0};
+ char goals[CF_MAXVARSIZE] = {0};
+ char searchstring[CF_BUFSIZE] = {0};
+ 
+for (rp = GOALCATEGORIES; rp != NULL; rp=rp->next)
+     {
+     for (rp2 = GOALS; rp2 != NULL; rp2=rp2->next)
+        {
+        snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",rp->item,CanonifyName(rp2->item));
+        strcat(searchstring,work);
+        }
+     }
+
+if(strlen(searchstring) > 1)
+   {
+   searchstring[strlen(searchstring)-1] = '\0';
+   }
+else
+   {
+   snprintf(searchstring,CF_MAXVARSIZE-1,"goals\\.goal_.*");
+   }
 
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
@@ -715,7 +735,7 @@ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
 /* BEGIN query document */
 
 bson_buffer_init(&bb);
-bson_append_regex(&bb,cfk_occurcontext,"goals\\.goal_.*","");
+bson_append_regex(&bb,cfk_occurcontext,searchstring,"");
 bson_from_buffer(&query,&bb);
 
 /* BEGIN RESULT DOCUMENT */
@@ -804,14 +824,21 @@ void Nova_FillInGoalComment(struct Item *ip)
 // Get comment goals.* or targets.%s etc
 
 searchstring[0] = '\0';
-  
+
 for (rp = GOALCATEGORIES; rp != NULL; rp=rp->next)
    {
    snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",rp->item,CanonifyName(ip->name));
    strcat(searchstring,work);
    }
 
-searchstring[strlen(searchstring)-1] = '\0';
+if(strlen(searchstring) > 1)
+   {
+   searchstring[strlen(searchstring)-1] = '\0';
+   }
+else
+   {
+   snprintf(searchstring,CF_MAXVARSIZE-1,"%s",ip->name);
+   }
 
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
@@ -840,7 +867,7 @@ bson_destroy(&field);
 while (mongo_cursor_next(cursor))  // loops over documents
    {
    bson_iterator_init(&it1,cursor->current.data);
-   
+
    while (bson_iterator_next(&it1))
       {
       /* Query specific search/marshalling */
