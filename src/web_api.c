@@ -2092,54 +2092,54 @@ int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *classreg,cha
 int Nova2PHP_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
- struct HubHost *hh;
- struct HubQuery *hq;
- struct Rlist *rp,*result;
- int counter = 0, n = 180;
- mongo_connection dbconn;
+  struct HubHost *hh;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int counter = 0, n = 180;
+  mongo_connection dbconn;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
+hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
 
- StartJoin(returnval,"[",bufsize);
+StartJoin(returnval,"[",bufsize);
 
- for (rp = hq->hosts; rp != NULL; rp=rp->next)
-    {
-    hh = (struct HubHost *)rp->item;
-    counter++;
-    snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   counter++;
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
-    if(!Join(returnval,buffer,bufsize))
-       {
-       break;
-       }
+   if(!Join(returnval,buffer,bufsize))
+      {
+      break;
+      }
+   
+   if (counter > n && counter % 6 == 0)
+      {
+      break;
+      }
+   }
 
-    if (counter > n && counter % 6 == 0)
-       {
-       break;
-       }
-    }
+if (returnval[strlen(returnval)-1]==',')
+   {
+   returnval[strlen(returnval) - 1] = '\0';
+   }
 
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0';
-    }
+EndJoin(returnval,"]\n",bufsize);
 
- EndJoin(returnval,"]\n",bufsize);
+DeleteHubQuery(hq,DeleteHubVariable);
 
- DeleteHubQuery(hq,DeleteHubVariable);
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- return true;
+return true;
 }
 
 /*****************************************************************************/
@@ -2209,60 +2209,61 @@ int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
 int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE];
- struct HubHost *hh;
- struct HubQuery *hq;
- struct Rlist *rp,*result;
- int counter = 0, n = 180,icmp;
- mongo_connection dbconn;
+  struct HubHost *hh;
+  struct HubQuery *hq;
+  struct Rlist *rp,*result;
+  int counter = 0, n = 180,icmp;
+  mongo_connection dbconn;
 
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- if(!status)  // any
-    {
-    status = "x";
-    }
+if (!status)  // any
+   {
+   status = "x";
+   }
 
 
- hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,false,classreg);
+hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,false,classreg);
 
- StartJoin(returnval,"[",bufsize);
+StartJoin(returnval,"[",bufsize);
 
- for (rp = hq->hosts; rp != NULL; rp=rp->next)
-    {
-    hh = (struct HubHost *)rp->item;
-    counter++;   
-    snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   counter++;   
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
-    if(!Join(returnval,buffer,bufsize))
-       {
-       break;
-       }
+   if(!Join(returnval,buffer,bufsize))
+      {
+      break;
+      }
    
-    if (counter > n && counter % 6 == 0)
-       {
-       break;
-       }
-    }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0';
-    }
+   if (counter > n && counter % 6 == 0)
+      {
+      break;
+      }
+   }
 
- EndJoin(returnval,"]\n",bufsize);
+if (returnval[strlen(returnval)-1]==',')
+   {
+   returnval[strlen(returnval) - 1] = '\0';
+   }
 
- DeleteHubQuery(hq,DeleteHubPromiseCompliance);
+EndJoin(returnval,"]\n",bufsize);
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
- return true;
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
 }
 
 /*****************************************************************************/
@@ -2864,7 +2865,9 @@ if (!CFDB_Close(&dbconn))
 
 return true;
 }
+
 /*****************************************************************************/
+
 int Nova2PHP_get_bundle_type(char *name,char *buffer,int bufsize)
 
 { mongo_connection dbconn;
@@ -3136,9 +3139,9 @@ strcat(buffer,"{\"data\":[");
 startIndex = page->resultsPerPage*(page->pageNum - 1);
 endIndex = (page->resultsPerPage*page->pageNum) - 1;
 
-for (ip = clist, i=0; (ip !=  NULL); ip=ip->next,i++)
+for (ip = clist, i = 0; (ip !=  NULL); ip=ip->next,i++)
    {
-   if(i>=startIndex && (i<=endIndex || endIndex < 0))
+   if (i >= startIndex && (i <= endIndex || endIndex < 0))
       {
       if (Nova_IsGreen(ip->counter))
          {
@@ -3154,7 +3157,7 @@ for (ip = clist, i=0; (ip !=  NULL); ip=ip->next,i++)
          }
       else
          {
-         snprintf(work,sizeof(work),"{ \"colour\": \"blue\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);      
+         snprintf(work,sizeof(work),"{ \"colour\": \"blue\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
          }
    
       if (!Join(buffer,work,bufsize))
@@ -3430,18 +3433,18 @@ void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize)
 
 { int score = Nova_GetHostColour(hostkey);
 
- if (Nova_IsYellow(score))
-    {
-    strncpy(buffer,"yellow",bufsize);
-    }
- else if (Nova_IsGreen(score))
-    {
-    strncpy(buffer,"green",bufsize);
-    }
- else
-    {
-    strncpy(buffer,"red",bufsize);
-    }
+if (Nova_IsYellow(score))
+   {
+   strncpy(buffer,"yellow",bufsize);
+   }
+else if (Nova_IsGreen(score))
+   {
+   strncpy(buffer,"green",bufsize);
+   }
+else
+   {
+   strncpy(buffer,"red",bufsize);
+   }
 }
 
 /*****************************************************************************/
