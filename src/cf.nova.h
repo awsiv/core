@@ -763,6 +763,7 @@ void Nova_StoreBody(mongo_connection *dbconn, struct Body *body);
 /* promises.c */
 
 void Nova_Version(void);
+const char *Nova_NameVersion(void);
 char *Nova_GetVersion(void);
 char * Nova_StrVersion(void);
 void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status,char *reason);

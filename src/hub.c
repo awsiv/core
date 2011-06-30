@@ -719,7 +719,7 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMa",OPTIONS,&optindex)) != EOF)
           NO_FORK = true;
           break;
 
-      case 'V': Version("cf-hub");
+      case 'V': PrintVersionBanner("cf-hub");
           exit(0);
           
       case 'h': Syntax("cf-hub - cfengine's report aggregator",OPTIONS,HINTS,ID);

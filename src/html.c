@@ -139,7 +139,7 @@ snprintf(buffer,bufsize,
 "   </div>\n"
 "</div>\n"
 "</body>\n"
-"</html>\n",Nova_GetVersion(),Cf_GetVersion());
+"</html>\n",NOVA_VERSION,Version());
 }
 
 /*****************************************************************************/
