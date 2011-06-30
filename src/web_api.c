@@ -5826,6 +5826,61 @@ return false;
 }
 
 /*****************************************************************************/
+
+int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle,int escRegex,char *returnval,int bufsize)
+
+{ mongo_connection dbconn;
+  char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
+  char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
+  char work[CF_MAXVARSIZE] = {0};
+  char bundleName[CF_BUFSIZE],promiserJson[CF_BUFSIZE];
+  struct Rlist *rp;
+  struct HubPromise *hp;
+  struct HubQuery *hq;
+  int i,count;
+
+  /* BEGIN query document */
+
+  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+      CfOut(cf_verbose,"", "!! Could not open connection to report database");
+      return false;
+    }
+
+  hq = CFDB_QueryPolicyFinderData(&dbconn,handle,promiser,bundle,escRegex);
+  returnval[0] = '\0';
+
+  if(hq)
+    {
+    StartJoin(returnval, "[", bufsize);
+    for (rp = hq->records; rp != NULL; rp=rp->next)
+      {
+      hp = (struct HubPromise *)rp->item;
+      snprintf(work,sizeof(work),"[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",
+               (char*)hp->handle,
+               (char*)hp->promiseType,
+               (char *)hp->bundleName,
+               (char*)hp->bundleType,
+               (char*)EscapeJson(hp->promiser,promiserJson,CF_BUFSIZE-1));
+      Join(returnval,work,bufsize);
+      }
+
+    CFDB_Close(&dbconn);
+    ReplaceTrailingChar(returnval, ',', '\0');
+    EndJoin(returnval, "]", bufsize);
+    DeleteHubQuery(hq,DeleteHubPromise);
+    return true;
+    }
+  else  // no result
+    {
+    CFDB_Close(&dbconn);
+    return false;
+    }
+}
+
+
+
+/*****************************************************************************/
 /*                           Constellation                                   */
 /*****************************************************************************/
 
@@ -6280,59 +6335,65 @@ int Con2PHP_rank_promise_popularity(bool sortAscending, char *buf, int bufsize)
 #endif
 
 }
-/*****************************************************************************/
-int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle,int escRegex,char *returnval,int bufsize)
-
-{ mongo_connection dbconn;
-  char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
-  char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
-  char work[CF_MAXVARSIZE] = {0};
-  char bundleName[CF_BUFSIZE],promiserJson[CF_BUFSIZE];
-  struct Rlist *rp;
-  struct HubPromise *hp;
-  struct HubQuery *hq;
-  int i,count;
-
-  /* BEGIN query document */
-
-  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-      CfOut(cf_verbose,"", "!! Could not open connection to report database");
-      return false;
-    }
-
-  hq = CFDB_QueryPolicyFinderData(&dbconn,handle,promiser,bundle,escRegex);
-  returnval[0] = '\0';
-
-  if(hq)
-    {
-    StartJoin(returnval, "[", bufsize);
-    for (rp = hq->records; rp != NULL; rp=rp->next)
-      {
-      hp = (struct HubPromise *)rp->item;
-      snprintf(work,sizeof(work),"[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",
-               (char*)hp->handle,
-               (char*)hp->promiseType,
-               (char *)hp->bundleName,
-               (char*)hp->bundleType,
-               (char*)EscapeJson(hp->promiser,promiserJson,CF_BUFSIZE-1));
-      Join(returnval,work,bufsize);
-      }
-
-    CFDB_Close(&dbconn);
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
-    DeleteHubQuery(hq,DeleteHubPromise);
-    return true;
-    }
-  else  // no result
-    {
-    CFDB_Close(&dbconn);
-    return false;
-    }
-}
-
-/*****************************************************************************/
 
 #endif  /* HAVE_LIBMONGOC */
 
+/*****************************************************************************/
+
+int Con2PHP_summarise_filechange(char *hubKeyHash, char *filePath, char *buf, int bufsize)
+
+{
+#ifdef HAVE_CONSTELLATION
+ struct HubQuery *hq;
+ conocs_t *ocs;
+ mongo_connection dbconn;
+ struct Rlist *rp;
+ char work[CF_MAXVARSIZE];
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+hq = CFDBCon_QueryFileChange(&dbconn,hubKeyHash,filePath);
+
+CFDB_Close(&dbconn);
+
+if (!hq)
+   {
+   buf[0] = '\0';
+   return false;
+   }
+snprintf(buf, bufsize, "{\"meta\":{\"count\" : %d,"
+         "\"header\": {\"File name\":0,\"Total count\":1,\"Host count\":2,\"Hub count\":3}"
+         "},\"data\":[", 999);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   ocs = (conocs_t *)rp->item;
+
+   snprintf(work, sizeof(work), "[\"%s\",%d,%d,%d],\n",
+            ocs->id, ocs->total, ocs->hosts, ocs->hubs);
+   
+   if (!Join(buf,work,bufsize))
+      {
+      break;
+      }
+   }
+
+ReplaceTrailingStr(buf, ",\n", '\0');
+EndJoin(buf,"]}\n",bufsize);
+
+DeleteHubQuery(hq,DeleteConOccurences);
+
+return true;
+
+#else  /* NOT HAVE_CONSTELLATION */
+
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_summarise_filechange() in Nova-only environment\n");
+CfOut(cf_error, "", buf);
+return false;
+
+#endif
+}
