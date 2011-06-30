@@ -1,7 +1,6 @@
 
 <div id="body" class="">
-    <div class=" grid_9">
-        <div class="outerdiv">
+        <div class="grid_9 outerdiv">
         <div id="overall" class="innerdiv">
             <p style="text-align: right;"><span id="alltime"></span><span id="thisweek"></span><span id="today"></span></p>
 
@@ -39,9 +38,7 @@
             </div>
         </div>
         </div>
-     </div>
-    <div class="grid_3">
-        <div class="outerdiv ">
+        <div class="grid_3 outerdiv">
            
             <div id="goals" class="innerdiv statusgoal">
                 <p class="title">Services/goals</p>
@@ -55,7 +52,6 @@
                     </ul>
                 </div>
         </div>
-    </div>
 </div>
     <script type="text/javascript">
         // for summary compliance graph

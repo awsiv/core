@@ -29,6 +29,10 @@ body {
     /*text-shadow: white 0px 1px 0px;*/
 }
 
+div.ui-widget{
+   font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
+}
+
 #wrapper{
     width:80%;
     min-width: 960px;
@@ -559,9 +563,18 @@ body {
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F7F7F0), to(#Cfcfc8));
     background: -moz-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 transparent;
     background: -o-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 transparent;
-    margin-bottom:10px
-
+    margin-bottom:10px;
+    margin-left: 0.5%;
+    margin-right: 0.5%;
 }
+
+.grid_9.outerdiv{
+    margin-right: 0.3%;
+}
+.grid_3.outerdiv{
+     margin-left: 0.4%;
+}
+
 .innerdiv{
 
     border: solid 1px #d4d5d0;
@@ -1514,12 +1527,18 @@ span.search input
 {
     margin:2%;
 }
-#hostviewerbtn.innerdiv,#monitoredjob.innerdiv,#statusmeasured.innerdiv
+
+#monitoredjob.innerdiv,#statusmeasured.innerdiv
 {
     margin:5px 5px 5px 10px;
 }
+#statusmeasured.innerdiv
+{
+    margin-bottom:15px;
+}
 #hostviewerbtn.innerdiv{
-    padding:0.4em
+    padding:0.4em;
+    margin:15px 5px 5px 10px;
 }
 
 #hostviewerbtn .title
@@ -1527,10 +1546,30 @@ span.search input
     padding-left: 1px;
     margin-bottom: 40px;
 }
-
+#hostviewerrightpanes
+{
+   margin-top:10px;
+}
 #hostviewerrightpanes .innerdiv
 {
     margin: 5px 10px 5px 0;
+}
+#hostinformation .title
+{
+    float:left;
+    width:200px;
+}
+#delform
+{
+   float:right;
+    margin-right: 15px;
+    padding-top:20px;
+}
+
+#delform .btn
+{
+   padding:2px 4px;
+   border:none;
 }
 
 #findreport
@@ -1969,7 +2008,7 @@ span.search input
     color:#4D4D4D;
 }
 
-.morebtn a:hover
+.btn:hover,.morebtn a:hover
 {
   color:#08A3C1;
 }
@@ -2255,10 +2294,14 @@ ul.admin_menu li.current a{
     position:absolute;
     right:7%;
     bottom:5%;
+    background: url("../images/up_arw.png") no-repeat scroll 0 0 transparent;
+    padding:5px;
 }
+
 .slider:hover{
     color:#ff9900;
     cursor: pointer;
+    background: url("../images/up_arwhover.png") no-repeat scroll 0 0 transparent;
 }
 
 .graphunit {

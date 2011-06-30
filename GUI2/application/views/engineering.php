@@ -1,4 +1,4 @@
-<div id="body" class="grid_12">
+<div id="body">
     <div class="outerdiv">
         <div id="hoststatus" class="minwidth30 innerdiv">
          <p class="title">Host Status</p>

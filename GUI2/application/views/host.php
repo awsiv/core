@@ -7,12 +7,12 @@
 				$free = cfpr_get_variable($hostkey,"mon","av_diskfree");
 				$speed = cfpr_get_network_rate($hostkey);
 			  ?>
-<div id="hostview" class="outerdiv">
-    <div class="innerdiv">
+<div id="hostview">
+    <div class="outerdiv">
+   <div class="innerdiv" id="notkepttable" title="Promises not kept in the past week">
 			<?php $report = cfpr_summarize_notkept($hostkey,NULL,NULL,NULL,NULL,NULL,NULL);?>
-              <p class="title">Promises not kept in the past week</p>
-                      <div class="tables">
-
+              <!--<p class="title">Promises not kept in the past week</p-->
+                     <div class="tables">
                       <?php
                       $tableData = json_decode($report,true);
                       if (is_array($tableData)) {
@@ -41,6 +41,7 @@
                       ?>
                 <li><a href="<?php echo $noteUrl ?>" class="note" id="add_cmt">Notes</a></li>
                 <li> <?php echo anchor('visual/vital/'.$hostkey,'vitals',array('id'=>'pulseNvitals')) ?></li>
+                <li><a href="#" id="notkeptlnk" title="Promises not kept in the past week">Promises NotKept</a></li>
                 <p class="clearleft"></p>
             </ul>
         </div>
@@ -84,19 +85,32 @@
                 <div id="hostviewgraph" class="graphcontainer"><?php include_once('graph/summaryCompliance.php'); ?></div>
                 <!--<p><a href="<?php echo site_url('visual/vital').'/'.$hostkey ?>" ><img src="<?php echo get_imagedir()?>pulsed.png" class="align"/></a></p>-->
             </div>
-            <div class="innerdiv">
+            <div id="hostinformation" class="innerdiv">
                 
-                     <p class="title">Host Details (discovered)</p>
-                       <p><label class="width_20">Alias:</label><label ><?php echo $hostname?></label></p>
-                       <p><label class="width_20">OS class:</label><label><?php echo $class?></label></p>
-                       <p><label class="width_20">Release:</label><label><?php echo $rel?></label></p>
-                       <p><label class="width_20">Flavour:</label><label><?php echo $flavour?></label></p>
-                       <p><label class="width_20">Last IP-address:</label><label><?php echo $ipaddr?></label></p>
-                       <p><label class="width_20">Last data:</label><label><?php echo getDateStatus($last);?></label></p>
-                       <p><label class="width_20">ID:</label><label><small><?php echo $hostkey?></small></label></p>
+               
+                    <p class="title">Host Details (discovered)</p>
+                     <form  id="delform"method="post" action="/welcome/host">
+                     <input type="hidden" name="delhost" id="delhost" value="<?php echo $hostkey?>"/>
+                     <input class="btn"  type="submit" id="btnsubmit"  value="Delete this host"/>
+                    </form>
+                    <br class="clear">
+                       <p><label>Alias: </label><label ><?php echo $hostname?></label></p>
+                       <p><label>OS class: </label><label><?php echo $class?></label></p>
+                       <p><label>Release: </label><label><?php echo $rel?></label></p>
+                       <p><label>Flavour: </label><label><?php echo $flavour?></label></p>
+                       <p><label>Last IP-address: </label><label><?php echo $ipaddr?></label></p>
+                       <p><label>Last data: </label><label><?php echo getDateStatus($last);?></label></p>
+                       <p><label>ID: </label><label><small><?php echo $hostkey?></small></label></p>
              </div>
     </div>
     <div class="clear"></div>
+    </div>
+</div>
+<div id="hostdelconfirmation" title="Proceed Host Deletion">
+    <span>
+        The host will be deleted from the report database of the hub.
+        The hub will still try to pull it for reports, and it may thus <strong>Reappear</strong>.Are you sure you want to delete this host?
+    </span>
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -111,5 +125,56 @@ $(document).ready(function() {
         }});
     
     $('#findreport').reportfinder({allhost:false,hostkey:"<?php echo $hostkey;?>"});
+
+     var $notkeptbox = $('#notkepttable').dialog({
+		 autoOpen: false,
+		 modal: true,
+		 hide: 'puff',
+                 width: 'auto',
+		 buttons: {
+		 'Ok': function() {
+	         $(this).dialog('close');
+	         }
+		 },
+		 open: function() {
+		 //$(this).parent().find('.ui-dialog-buttonpane').find('button:first').focus()
+		 }
+	 });
+         
+         $('#notkeptlnk').bind('click',function(event){
+             event.preventDefault();
+             $notkeptbox.dialog('open');
+         });
+
+         var $hostdelconfirm = $('#hostdelconfirmation').dialog({
+		 autoOpen: false,
+		 modal: true,
+		 hide: 'puff',
+                 width: 400,
+                 resizable:false,
+		 buttons: {
+		 'Yes': function() {
+	         $(this).dialog('close');
+                 $("#delform").submit();
+	         },
+                'NO': function() {
+	         $(this).dialog('close');
+	         }
+		 },
+		 open: function() {
+		 //$(this).parent().find('.ui-dialog-buttonpane').find('button:first').focus()
+
+		 }
+	 });
+
+    /*$("#delform").submit(function(event){
+        event.preventDefault();
+        $hostdelconfirm.dialog('open');
+    });*/
+
+    $("[type=submit]").bind("click", function(e){
+      e.preventDefault();
+     $hostdelconfirm.dialog('open');
+    });
 });
 </script>

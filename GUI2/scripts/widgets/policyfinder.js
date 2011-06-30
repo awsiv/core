@@ -13,7 +13,6 @@ _init: function(){
 _create:function(){
         var self=this;
         self.addsearchbar();
-        self.loadpagebody(self.element.attr('href'),"",true);
         self.addalphapager();
         $.ui.policyfinder.instances.push(this.element);
 },
@@ -54,11 +53,20 @@ addsearchbar:function(){
   self.searchbar.find('input[type="text"]').data('default',self.searchbar.find('input[type="text"]').val());
   self.searchbar.delegate('input[type="text"]','keyup',$.proxy(self.searchbarkeyevent,self));
 
-        self.menu=$('<ul id="classoptions" class="categories"></ul>');
-        self.menu.append('<li>by bundle</li><li>by handle</li><li>by promiser</li>');
+        self.menu=$('<div class="categories"><ul id="classoptions"></ul></div>');
+        self.menu.find('ul').append('<li>by bundle</li><li>by handle</li><li>by promiser</li>');
+        $('<span class="slider"></span>').appendTo(self.menu).bind('click',function(event){ self.menu.slideUp();});
         self.menu.appendTo(self.titlebar).hide();
         self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
-        self.element.bind('click',function(event){event.preventDefault();self.dialogcontent.dialog('open')});
+        self.element.bind('click',function(event){
+            event.preventDefault();
+            self.dialogcontent.dialog('open');
+            if(!$("#policyList").size()>0)
+                {
+                 self.dialogcontent.html(self.ajaxloader);
+                 self.loadpagebody(self.element.attr('href'),"",true);
+                }
+        });
 
 },
 
@@ -72,7 +80,8 @@ menuitemclicked:function(event){
   self.loadpagebody(self.searchbar.attr('action'),"",false) ;
   self.searchbar.find('input[type="text"]').trigger('blur');
   self.alphasearch.find('li').removeClass('selected');
-  self.menu.fadeOut();
+  sender.addClass('selected').siblings().removeClass('selected');
+  //self.menu.fadeOut();
 },
 
 loadpagebody:function(url,val,escreg){
