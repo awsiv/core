@@ -166,7 +166,6 @@
     
     $("#compliance_summary_graph").bind("plotclick", function (event, pos, item) {
         if (item) {
-            console.log("You clicked point " + item.dataIndex + " in " + item.series.label + ".");
             var element = $('<a href="/widget/summaryCompliance/start/'+ (item.datapoint[0] /1000)+ '/env/' + graphEnvironment+ '" title="overview" />');
             element.ajaxyDialog().ajaxyDialog("open");
         }
