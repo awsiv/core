@@ -25,6 +25,7 @@ scan_monitoring.cf: st-monitoring.html
 
 st-editing.html: ../../core/docs/guides/SpecialTopic_Editing.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
+
 scan_editing.cf: st-editing.html
 	./scan_texinfo "special topic" $< > scan_editing.cf
 
