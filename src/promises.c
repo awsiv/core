@@ -274,10 +274,8 @@ return NOVA_VERSION;
 
 char *Nova_StrVersion()
 
-{ static char buf[64];
-
-snprintf(buf,63,"Contains Nova extensions at version %s\n",NOVA_VERSION);
-return buf;
+{
+return "CFEngine Nova " NOVA_VERSION;
 }
 
 /***************************************************************/
