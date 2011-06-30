@@ -5816,13 +5816,13 @@ return true;
 int Nova2PHP_enterprise_version(char *buf, int bufsize)
 {
 #ifdef HAVE_CONSTELLATION
- snprintf(buf, bufsize, "Constellation %s", Constellation_GetVersion());
- return true;
+strlcpy(buf, Constellation_NameVersion(), bufsize);
+return true;
 #else
- snprintf(buf, bufsize, "Nova %s", Nova_GetVersion());
- return true;
+strlcpy(buf, Nova_NameVersion(), bufsize);
+return true;
 #endif
- return false;
+return false;
 }
 
 /*****************************************************************************/

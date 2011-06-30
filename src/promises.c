@@ -249,31 +249,14 @@ if (strcmp("reports",pp->agentsubtype) == 0)
 
 /*****************************************************************************/
 
-void Nova_Version()
-
-{
-printf("This core uses commercial Nova extensions at version %s Copyright (C) Cfengine AS 2009-%s\n",NOVA_VERSION,VYEAR);
-}
-
-/*******************************************************************/
-
-const char *Nova_NameVersion(void)
-{
-return "Contains Nova extensions at version" NOVA_VERSION;
-}
-
-/*****************************************************************************/
-
-char *Nova_GetVersion()
-
+const char *Nova_Version(void)
 {
 return NOVA_VERSION;
 }
 
 /*****************************************************************************/
 
-char *Nova_StrVersion()
-
+const char *Nova_NameVersion(void)
 {
 return "CFEngine Nova " NOVA_VERSION;
 }
