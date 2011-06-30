@@ -183,6 +183,7 @@ void Nova_SyntaxCompletion(char *s)
 { int i,j,k,l,m;
   struct SubTypeSyntax *ss;
   struct BodySyntax *bs,*bs2 = NULL;
+  FnCallType *fn;
 
 if (EnterpriseExpiry())
    {
@@ -311,14 +312,12 @@ for  (i = 0; i < CF3_MODULES; i++)
 
 /* Check functions */
 
-for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
-    {
-    if (cf_strcmp(s,CF_FNCALL_TYPES[i].name) == 0)
-       {
-       Nova_ListFunction(CF_FNCALL_TYPES[i],true);
-       return;
-       }
-    }
+fn = FindFunction(s);
+if (fn)
+   {
+   Nova_ListFunction(fn, true);
+   return;
+   }
 
 /* If nothing found */
 
@@ -903,18 +902,18 @@ printf("In-built functions:\n\n");
  
 for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
     {
-    Nova_ListFunction(CF_FNCALL_TYPES[i],false);
+    Nova_ListFunction(CF_FNCALL_TYPES + i,false);
     }
 }
 
 /*****************************************************************************/
 
-void Nova_ListFunction(struct FnCallType f,int full)
+void Nova_ListFunction(struct FnCallType *f,int full)
 
 { int j;
-  struct FnCallArg *args = f.args;
+  struct FnCallArg *args = f->args;
  
-switch (f.dtype)
+switch (f->dtype)
    {
    case cf_str:
        printf("   (string)  ");
@@ -941,14 +940,14 @@ switch (f.dtype)
        
    }
 
-printf("   %s",f.name);
+printf("   %s",f->name);
 
-for (j = 0; strlen(f.name)+j < 18; j++)
+for (j = 0; strlen(f->name)+j < 18; j++)
    {
    putchar(' ');
    }
 
-printf(" %s\n",f.description);
+printf(" %s\n",f->description);
 
 if (full)
    {

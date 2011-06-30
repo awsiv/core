@@ -262,7 +262,6 @@ struct Rval NovaWin_FnCallUserExists(struct FnCall *fp,struct Rlist *finalargs)
   char *arg = finalargs->item;
  
 buffer[0] = '\0';  
-ArgTemplate(fp,CF_FNCALL_TYPES[cfn_userexists].args,finalargs);
 
 /* begin fn specific content */
 
@@ -296,7 +295,6 @@ struct Rval NovaWin_FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs)
   char *arg = finalargs->item;
  
 buffer[0] = '\0';  
-ArgTemplate(fp,CF_FNCALL_TYPES[cfn_groupexists].args,finalargs);
 
 /* begin fn specific content */
 

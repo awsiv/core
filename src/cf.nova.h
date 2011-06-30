@@ -643,7 +643,7 @@ void Nova_StoreKMDB(struct Topic **topichash,struct Occurrence *occurrences,stru
 void Nova_SyntaxCompletion(char *s);
 void Nova_ListAgents(void);
 void Nova_ListFunctions(void);
-void Nova_ListFunction(struct FnCallType f,int full);
+void Nova_ListFunction(struct FnCallType *f,int full);
 void Nova_ListPromiseTypes(void);
 
 void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,const char *version);
