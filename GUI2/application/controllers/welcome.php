@@ -71,8 +71,8 @@ class Welcome extends Cf_Controller {
 
 
         $requiredjs = array(
-            array('jit/jit-yc.js'),
             array('flot/jquery.flot.js'),
+            array('flot/jquery.flot.stack.js'),
             array('flot/jquery.flot.pie.js'),
             array('/widgets/notes.js')
         );
@@ -107,9 +107,12 @@ class Welcome extends Cf_Controller {
 
         $cdata = cfpr_compliance_summary_graph(NULL);
         if ($cdata) {
-            $graphData['compliance_summary'] = $this->_convert_summary_compliance_graph($cdata);
+            $graphData['compliance_summary'] = $this->_convert_summary_compliance_graph_status($cdata);
             $data = array_merge($data, $graphData);
         }
+        
+        
+        
 
 
         $businessValuePieData = cfpr_get_value_graph(NULL, NULL, NULL, NULL, NULL);
@@ -149,6 +152,60 @@ class Welcome extends Cf_Controller {
         $data['greenhost'] = cfpr_count_green_hosts();
 
         $this->template->load('template', 'status', $data);
+    }
+    
+    
+    function _convert_summary_compliance_graph_status($rawData) {
+        $convertedData = json_decode($rawData, true);
+
+        $values = array();
+        $data['graphSeries'] = array();
+        $labels = array('kept', 'repaired', 'not kept', 'no data');
+        $count = array(); // for keeping tracks of each count
+        $start = array(); // the timestamp passed of each node starttime.
+        $keptSeries = array();
+        $repairedSeries = array();
+        $notKeptSeries = array();
+        $nodataSeries = array();
+        foreach ($convertedData as $key => $graphData) {
+            $nodata = (isset($graphData['nodata'])) ? $graphData['nodata'] : 0;
+            $values[] = array('label' => $graphData['title'],
+                'values' => array($graphData['kept'], $graphData['repaired'], $graphData['notkept'], $nodata));
+
+// track the count parameter
+// because we cannot directly pass the custom data in barChart of infovis
+            if (isset($graphData['count'])) {
+                $count[$graphData['start']] = $graphData['count'];
+            }
+            if (isset($graphData['start'])) {
+                $start[$graphData['title']] = $graphData['start'];
+            }
+
+            $time = $graphData['start'] * 1000;
+            $keptSeries[] = array($time, $graphData['kept']);
+            $repairedSeries[] = array($time, $graphData['repaired']);
+            $notKeptSeries[] = array($time, $graphData['notkept']);
+            $nodataSeries[] = array($time, $nodata);
+        }
+
+
+        $data['graphSeries']['labels'] = json_encode($labels);
+        $data['graphSeries']['values'] = json_encode($values);
+        $data['graphSeries']['keptseries'] = json_encode($keptSeries);
+        $data['graphSeries']['repairedseries'] = json_encode($repairedSeries);
+        $data['graphSeries']['notkeptseries'] = json_encode($notKeptSeries);
+        $data['graphSeries']['nodataseries'] = json_encode($nodataSeries);
+
+
+        // these are two extra parameters that has to be accessible in the bar chart graph
+        if (is_array($count) && !empty($count)) {
+            $data['graphSeries']['count'] = json_encode($count);
+        }
+
+        if (is_array($start) && !empty($start)) {
+            $data['graphSeries']['start'] = json_encode($start);
+        }        
+        return $data;
     }
 
     function _convert_summary_compliance_graph($rawData) {
@@ -195,21 +252,56 @@ class Welcome extends Cf_Controller {
      */
     function getJsonComplianceSummary($env=NULL) {
         $cdata = cfpr_compliance_summary_graph($env);
-        if ($cdata) {
-            $graphData['compliance_summary'] = $this->_convert_summary_compliance_graph($cdata);
+        $convertedData = json_decode($cdata, true);
+        $labels = array('kept', 'repaired', 'not kept', 'no data');
+        $count = array(); // for keeping tracks of each count
+        $start = array(); // the timestamp passed of each node starttime.
+        $keptSeries = array();
+        $repairedSeries = array();
+        $notKeptSeries = array();
+        $nodataSeries = array();
+        foreach ($convertedData as $key => $graphData) {
+            $nodata = (isset($graphData['nodata'])) ? $graphData['nodata'] : 0;
+            $values[] = array('label' => $graphData['title'],
+                'values' => array($graphData['kept'], $graphData['repaired'], $graphData['notkept'], $nodata));
 
-            $jsonString = '{"graphdata":[{ "color":["#A3DF00", "#EEEE00", "#D43030", "#5C5858"],';
-            $jsonString .= '"label":' . $graphData['compliance_summary']['graphSeries']['labels'] . ",";
-            $jsonString .= '"values":' . $graphData['compliance_summary']['graphSeries']['values'] . "}],";
+            // track the count parameter
+            // because we cannot directly pass the custom data in barChart of infovis
+            if (isset($graphData['count'])) {
+                $count[$graphData['start']] = $graphData['count'];
+            }
+            if (isset($graphData['start'])) {
+                $start[$graphData['title']] = $graphData['start'];
+            }
 
-            // count data
-            $jsonString .='"countData":' . $graphData['compliance_summary']['graphSeries']['count'] . ",";
-            $jsonString .='"startData":' . $graphData['compliance_summary']['graphSeries']['start'] . "}";
-
-
-            echo trim($jsonString);
-            return;
+            $time = $graphData['start'] * 1000;
+            $keptSeries[] = array($time, $graphData['kept']);
+            $repairedSeries[] = array($time, $graphData['repaired']);
+            $notKeptSeries[] = array($time, $graphData['notkept']);
+            $nodataSeries[] = array($time, $nodata);
         }
+        $jsonString = sprintf('{"graphdata":[
+        {  
+            "label":"kept",
+            "data": %s         
+        },
+        {  
+            "label":"repaired",
+            "data": %s            
+        },
+        {   "label":"notkept",
+            "data": %s
+         },
+         {   "label":"nodata",
+            "data": %s
+         }
+        ],
+        "countData":%s
+
+        }', json_encode($keptSeries), json_encode($repairedSeries), json_encode($notKeptSeries), json_encode($nodataSeries), json_encode($count));
+
+        echo trim($jsonString);
+
         return;
     }
 
