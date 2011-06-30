@@ -4,7 +4,7 @@
             <p class="title">Goals </p>
             <ul>
                 <?php
-                foreach ($goals as $goal) {
+                foreach ((array)$goals as $goal) {
                     $words = explode("_", $goal->name);
                     echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>$goal->desc</span><span class=\"check\"></span></li>";
                 }

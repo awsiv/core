@@ -107,13 +107,7 @@ class Knowledge extends Cf_Controller {
         $this->carabiner->group('iefix', array('js' => $jsIE));
 
 
-        $bc = array(
-            'title' => 'Knowledge Map',
-            'url' => 'knowledge/knowledgemap',
-            'isRoot' => false
-        );
-
-        $this->breadcrumb->setBreadCrumb($bc);
+      
 
         $getparams = $this->uri->uri_to_assoc(3);
         $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search');
