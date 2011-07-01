@@ -32,21 +32,42 @@ class Knowledge extends Cf_Controller {
 
         $this->template->load('template', 'knowledge/index', $data);
     }
-    
+
     /**
      * Doc links pages
      */
     function docs() {
-        
-    }
+
     
+        $bc = array(
+            'title' => 'Docs',
+            'url' => 'knowledge/docs',
+            'isRoot' => false
+        );
+
+        $this->breadcrumb->setBreadCrumb($bc);
+
+        $data = array(
+            'title' => "Cfengine Mission Portal - overview",
+            'title_header' => "Docs",
+            'breadcrumbs' => $this->breadcrumblist->display()
+        );
+    
+        $root = getenv("DOCUMENT_ROOT");
+        $root = $root . '/docs/';
+        $docdata = cfpr_list_documents($root);
+        
+        $data['docs'] = json_decode(utf8_encode($docdata), true);
+
+        $this->template->load('template', 'knowledge/docs', $data);
+    }
 
     function topicFinder() {
 
 
         $data = array();
         $data['searchData'] = array();
-        
+
         $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search');
         $data['search'] = trim($search);
         $searchJson = cfpr_search_topics($search, true);
@@ -60,25 +81,25 @@ class Knowledge extends Cf_Controller {
         $this->carabiner->js('jit/jit-yc.js');
         $jsIE = array('jit/Extras/excanvas.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
-         $this->carabiner->css('tabs-custom.css');
+        $this->carabiner->css('tabs-custom.css');
 
         $getparams = $this->uri->uri_to_assoc(3);
         $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
         $topic = isset($getparams['topic']) ? $getparams['topic'] : $this->input->post('topic');
         $pid = isset($getparams['pid']) ? $getparams['pid'] : $this->input->post('pid');
         // chech for integer
-        $pid = intval($pid,10);
+        $pid = intval($pid, 10);
         if (!$pid)
             $pid = cfpr_get_pid_for_topic("", "system policy");
 
-       $breadcrumbs_url = "knowledge/knowledgemap/pid/$pid";
+        $breadcrumbs_url = "knowledge/knowledgemap/pid/$pid";
         $bc = array(
-               'title' => 'Knowledge Map',
-               'url' =>$breadcrumbs_url,
-               'isRoot' => false,
-               'replace_existing'=>true
-           );
-         $this->breadcrumb->setBreadCrumb($bc);
+            'title' => 'Knowledge Map',
+            'url' => $breadcrumbs_url,
+            'isRoot' => false,
+            'replace_existing' => true
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
             'search' => $search,
@@ -115,7 +136,7 @@ class Knowledge extends Cf_Controller {
         $this->carabiner->group('iefix', array('js' => $jsIE));
 
 
-      
+
 
         $getparams = $this->uri->uri_to_assoc(3);
         $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search');

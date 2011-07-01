@@ -3,14 +3,13 @@
         <div class="push_3 grid_9" style="margin-top:20px;margin-bottom:20px;">
             <div style="margin:20px;">    
                 <h2>Welcome to the Library!</h2> 
-                <div>Todays message is that this library page is in construction. May need more modifications. Stay tuned.</div>   
             </div>
             <div id="library" class="dash" style="margin-top:40px;">
                 <ul>
-                    <li><a href="/docs/cf3-reference.html" class="docs" id="docs">docs</a></li>
+                    <li><?php echo anchor('/knowledge/docs/', 'Docs', array('class' => 'docs', 'id' => 'docs')); ?></li>
                     <li><?php echo anchor('/knowledge/topicFinder/', 'Find Topic', array('class' => 'topic' ,'title'=>'Topic Finder','id' => 'topic')); ?></li>
-                    <li><?php echo anchor('/notes/shownotes/', 'Message Archieve', array('class' => 'knowledge-message', 'id' => 'knowledge-message')); ?></li>
-                    <li><?php echo anchor('#', 'Forum', array('class' => 'forum', 'id' => 'forum')); ?></li>
+                    <li><?php echo anchor('/notes/shownotes/', 'Message Archive', array('class' => 'knowledge-message', 'id' => 'knowledge-message')); ?></li>
+                    <li><?php echo anchor('http://cfengine.com/pages/community', 'Community', array('class' => 'forum', 'id' => 'forum')); ?></li>
                 </ul>
             </div>
             <div class="clearboth"></div>

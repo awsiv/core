@@ -26,7 +26,10 @@ class test_docs extends CodeIgniterUnitTestCase {
     }
 
     public function test_docsList() {
-        $data = cfpr_list_documents(NULL);
+        $root = getenv("DOCUMENT_ROOT") ;
+        $root = $root.'/docs/';
+        $this->dump($root);
+        $data = cfpr_list_documents($root);
         $this->validateJson($data);
     }
 
