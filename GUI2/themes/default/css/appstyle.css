@@ -41,9 +41,10 @@ ul li{
     color:#6C695A;
 }
 
-div.ui-widget{
+div.ui-widget, div.ui-widget-content{
    /*font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;*/
-     font: 14px/21px 'Conv_DINRoundOT', arial, Helvetica,sans-serif;
+     font: 14px/19px 'Conv_DINRoundOT', arial, Helvetica,sans-serif;
+     color:#6C695A;
 }
 
 #wrapper{
@@ -963,6 +964,7 @@ span.search input
     -opera-border-radius: 0 0 5px 5px;
     -khtml-border-radius:0 0 5px 5px;
     -webkit-border-radius:0 0 5px 5px;
+    font-family:"Trebuchet MS",Helvetica, Arial, sans-serif;
 }
 
 .categories li
@@ -972,6 +974,7 @@ span.search input
     border-bottom:#fff 1px dashed;
     cursor: pointer;
     list-style: none;
+    color:#fff;
 }
 
 .categories li:hover,.categories li.selected
@@ -1086,8 +1089,8 @@ span.search input
 
 .alphasearch li
 {
-    margin-top: 2px;
-    margin-bottom: 2px;
+   /* margin-top: 2px;
+    margin-bottom: 2px;*/
     list-style: none;
 }
 
@@ -1138,6 +1141,7 @@ span.search input
     border-radius:5px;
     color:#4D4D4D;
     font-size: 11px;
+    font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
 }
 
 .classfilters li a{
@@ -1153,7 +1157,6 @@ span.search input
     text-align: center;
     top: 0.2em;
     width: 10px;
-
 }
 
 .classfilter li a:hover{
@@ -2207,6 +2210,10 @@ background-image: url('warning.png');
 color: #D8000C;
 background-color: #FFBABA;
 background-image: url(../images/error.png);
+}
+
+.error ul li{
+    list-style: none;
 }
 
 .errorlist

@@ -1,6 +1,4 @@
 <?php
-
-
 function deleteAll($directory, $empty = false) 
 { 
     if(substr($directory,-1) == "/") { 

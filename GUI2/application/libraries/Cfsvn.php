@@ -37,6 +37,7 @@ class Cfsvn {
             }
         }
         $this->repository = isset($params['repository']) ? $params['repository'] : NULL;
+        $this->ci =& get_instance();
     }
 
     public function addcredentials($params){
@@ -51,6 +52,8 @@ class Cfsvn {
     
     function cfsvn_checkout() {
         try {
+        $this->ci->load->helper('directory');
+       deleteAll($this->working_dir);
         $status = svn_checkout($this->repository, $this->working_dir);
         } catch(Exception $e){
          throw $e;   

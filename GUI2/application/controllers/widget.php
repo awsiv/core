@@ -35,7 +35,9 @@ class Widget extends Cf_Controller {
         $hostname = $this->input->post('value');
         $data = "";
         if ($hostname) {
-            $data = json_decode(cfpr_show_hosts_name('^' . $hostname, NULL, NULL,NULL), true);
+            $data1= json_decode(cfpr_show_hosts_name('^' . $hostname, NULL, NULL,NULL), true);
+            $data2=json_decode(cfpr_show_hosts_name('^' . strtolower($hostname), NULL, NULL,NULL), true);
+            $data=array_merge($data1,$data2);
         } else {
             //last two arguments in the function call are for row no and column no
             $data = json_decode(cfpr_show_hosts_name(NULL, NULL, NULL, NULL), true);

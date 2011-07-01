@@ -13,7 +13,7 @@ var hostfinder={
         url: "/widget/hostfinder",
         classhandler:"/widget/cfclasses",
         defaultbehaviour:true,
-        height:525,
+        height:600,
         width:735
     },
  _init: function() {

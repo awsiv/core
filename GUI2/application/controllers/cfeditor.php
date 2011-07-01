@@ -183,6 +183,10 @@
              }
      //$password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
     // echo json_encode ($cdetails);
+             if($data=="")
+             {
+                  $data=array('status'=>false,'message'=>$this->input->post('file')." Was not comitted");
+             }
      echo json_encode ($data);
    }
    
