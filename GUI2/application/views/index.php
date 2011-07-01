@@ -1,6 +1,6 @@
-<div id="bodyindex">
-              <div class="left"></div>
-              <div id="work" class="middle">
+<div id="body">
+             
+              <div id="work" class="outerdiv">
                   <div class="grid_8 push_2 header">
                       <h1>
                           <?php echo  $this->lang->line('front_greeting');?>
@@ -20,13 +20,12 @@
 
                   <div id="licenseinfo"class="push_4"><?php
                       echo $this->lang->line('license_to');
-                      echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo'));?></div>
-                  <div class="clearboth"></div>
+                      echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo', 'title'=>"view license information"));?></div>
+                  <div class="clear"></div>
                   <div id="licensebar" class="grid_4 push_4">
                   </div>
+                   <div class="clear"></div>
               </div>
-              <div class="right"></div>
-     <div class="clearboth"></div>
   </div>
 <script type="text/javascript">
     $('#licensebar').licensemeter(

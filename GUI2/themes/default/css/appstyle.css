@@ -73,7 +73,7 @@ div.ui-widget{
 {
     font-size: 21px;
     text-transform: uppercase;
-    margin-top: 25px;
+    margin-top: 10px;
      color: #fff;
 }
 #header_left ul li
@@ -82,9 +82,10 @@ div.ui-widget{
 }
 
 p#userbox{
-    background: url("../images/logged_in_as.png") no-repeat scroll 0 7px transparent;
+    /*background: url("../images/logged_in_as.png") no-repeat scroll 0 7px transparent;*/
     float: right;
-    margin-top:10px;
+    margin-bottom: 15px;
+    margin-top: 10px;
     padding: 5px 0 0 18px;
     font-size: 14px;
     color: #fff;
@@ -99,9 +100,8 @@ p#userbox a{
 
 .online_users
 {
-    display:block;
+    /*display:block;*/
     font-size:11px;
-    margin-bottom: 15px;
     text-align: right;
     font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
 }
@@ -156,8 +156,8 @@ p#userbox a{
 
 .adminbtn{
     background: url("../images/admin.png") no-repeat;
-    width:55px;
-    height:55px;
+    width:25px;
+    height:25px;
     display:block;
     margin: 0 10px 10px 10px;
     float:right;
@@ -165,8 +165,8 @@ p#userbox a{
 
 .settingbtn{
     background: url("../images/settings.png") no-repeat;
-    width:55px;
-    height:55px;
+    width:25px;
+    height:25px;
     display:block;
     float:right;
 
@@ -232,7 +232,7 @@ label#searchbox input
     padding: 4px 0 0 23px;
     width:220px;
 }
-
+/*
 #bodyindex {
     color: #000000;
 }
@@ -251,25 +251,29 @@ label#searchbox input
     min-width: 97.7%;
 }
 
-.licenseinfo{
-      background: none repeat scroll 0 0 #3D4439;
-     border-radius: 3px 3px 3px 3px;
-    color: #FFFFFF;
-    padding: 0 4px;
-}
-
 #bodyindex .right{
     background: url("../images/box_main_right.png") no-repeat;
     min-width:11px;
     height:511px;
     float:left;
 }
-
+*/
 /*for working pane*/
 #work {
 
+    min-height:500px;
     margin-bottom: 10px;
 
+}
+
+.outerdiv a.licenseinfo{
+      background: none repeat scroll 0 0 #009193 /*#3D4439*/;
+     border-radius: 3px 3px 3px 3px;
+    color: #FFFFFF;
+    padding: 0 4px;
+    color: #FFFFFF;
+    font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;;
+    font-size: 12px;
 }
 
 #work .header{
@@ -294,7 +298,7 @@ label#searchbox input
 }
 
 #work .dash ul{
-    width:500px;
+    width:510px;
 }
 
 
@@ -305,16 +309,15 @@ label#searchbox input
 
 .innerdiv.dash ul li,.dash ul li{
     float:left;
-    margin:20px;
     text-align: center;
     list-style: none;
-    padding:0;
+    padding:20px;
 }
 
 .dash ul li a{
     width:85px;
     display:block;
-    padding-top: 85px;
+    padding: 85px 1px 0 0;
     font-size: 14px;
     color:#717171;
 }
@@ -323,15 +326,43 @@ label#searchbox input
 .dash a.status{
     background: url("../images/status.png") no-repeat;
 }
+.dash a.status:hover{
+    background: url("../images/status_hover.png") no-repeat;
+    width:86px;
+    padding: 85px 0 0 0;
+    color:#596E99;
+}
+
 .dash a.library{
     background: url("../images/library.png") no-repeat;
 }
+.dash a.library:hover{
+    background: url("../images/library_hover.png") no-repeat;
+     width:86px;
+     padding: 85px 0 0 0;
+     color:#D3BE4A;
+}
+
 .dash a.engineering{
     background: url("../images/engineering.png") no-repeat;
 }
 
+.dash a.engineering:hover{
+    background: url("../images/engineering_hover.png") no-repeat;
+    width:86px;
+    padding: 85px 0 0 0;
+    color:#F68E36
+}
+
 .dash a.planning{
     background: url("../images/planning.png") no-repeat;
+}
+
+.dash a.planning:hover{
+    background: url("../images/planning_hover.png") no-repeat;
+    width:86px;
+    padding: 85px 0 0 0;
+    color:#009193;
 }
 
 .dash a.host{
