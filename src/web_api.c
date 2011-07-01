@@ -91,6 +91,150 @@ if (false)
 
 /*****************************************************************************/
 /* Helper functions                                                          */
+/*****************************************************************************/
+
+void Nova2PHP_GetLibraryDocuments(char *buffer,int bufsize)
+
+{ char namedir[CF_MAXVARSIZE], work[CF_BUFSIZE];
+  struct dirent *dirp;
+  struct Item *refs = NULL, *guides = NULL, *others = NULL, *pics = NULL,*ip;
+  DIR *dirh;
+
+  snprintf(DOCROOT,CF_MAXVARSIZE,"/home/a10004/LapTop/cfengine/nova/knowledge");
+
+snprintf(namedir,CF_MAXVARSIZE,"%s",DOCROOT);
+//snprintf(namedir,CF_MAXVARSIZE,"%s/docs",DOCROOT);
+
+if ((dirh = opendir(namedir)) == NULL)
+  {
+  CfOut(cf_verbose,"", " !! Could not open connection to report database");
+  return; 
+  }
+
+for (dirp = readdir(dirh); dirp != NULL; dirp = readdir(dirh))
+   {
+   if (strcmp("cf3-reference.html",dirp->d_name) == 0 || strcmp("cfnova.html",dirp->d_name) == 0)
+      {
+      Nova_RegisterDoc(&refs,DOCROOT,dirp->d_name);
+      }
+   else if (FullTextMatch("cf3.*\\.html",dirp->d_name))
+      {
+      Nova_RegisterDoc(&others,DOCROOT,dirp->d_name);
+      }
+   else if (FullTextMatch("st-.*\\.html",dirp->d_name))
+      {
+      Nova_RegisterDoc(&guides,DOCROOT,dirp->d_name);
+      }
+   else if (FullTextMatch(".*\\.png",dirp->d_name))
+      {
+      Nova_RegisterImg(&pics,DOCROOT,dirp->d_name);
+      }
+   }
+
+closedir(dirh);
+
+// Format the buffer
+
+refs = SortItemListNames(refs);
+pics = SortItemListNames(pics);
+guides = SortItemListNames(guides);
+others = SortItemListNames(others);
+
+strcpy(buffer,"{");
+
+// Reference docs
+
+snprintf(work, sizeof(work),"{ \"category\" : \"Reference Section\",");
+Join(buffer,work,bufsize);
+
+snprintf(work, sizeof(work),"\"files\" : [");
+Join(buffer,work,bufsize);
+
+for (ip = refs; ip != NULL; ip=ip->next)
+   {
+   snprintf(work,CF_MAXVARSIZE,"{ \"filename\": \"%s\",  \"title\": \"%s\"}",ip->name,ip->classes);
+   Join(buffer,work,bufsize);
+   if (ip->next)
+      {
+      Join(buffer,",",bufsize);
+      }
+   }
+
+Join(buffer,"]},\n",bufsize);
+
+// Concept guide etc
+
+snprintf(work, sizeof(work),"{ \"category\" : \"Further Reading\",");
+Join(buffer,work,bufsize);
+
+snprintf(work, sizeof(work),"\"files\" : [");
+Join(buffer,work,bufsize);
+
+for (ip = others; ip != NULL; ip=ip->next)
+   {
+   snprintf(work,CF_MAXVARSIZE,"{ \"filename\": \"%s\",  \"title\": \"%s\"}",ip->name,ip->classes);
+   Join(buffer,work,bufsize);
+   if (ip->next)
+      {
+      Join(buffer,",\n",bufsize);
+      }
+   }
+
+Join(buffer,"]},\n",bufsize);
+
+// Concept guides
+
+snprintf(work, sizeof(work),"{ \"category\" : \"Special Topics\",");
+Join(buffer,work,bufsize);
+
+snprintf(work, sizeof(work),"\"files\" : [");
+Join(buffer,work,bufsize);
+
+for (ip = guides; ip != NULL; ip=ip->next)
+   {
+   snprintf(work,CF_MAXVARSIZE,"{ \"filename\": \"%s\",  \"title\": \"%s\"}",ip->name,ip->classes);
+   Join(buffer,work,bufsize);
+   if (ip->next)
+      {
+      Join(buffer,",\n",bufsize);
+      }
+   }
+
+Join(buffer,"]},\n",bufsize);
+
+// Pictures
+
+snprintf(work, sizeof(work),"{ \"category\" : \"Illustrations\",");
+Join(buffer,work,bufsize);
+
+snprintf(work, sizeof(work),"\"files\" : [");
+Join(buffer,work,bufsize);
+
+
+for (ip = pics; ip != NULL; ip=ip->next)
+   {
+   snprintf(work,CF_MAXVARSIZE,"{ \"filename\": \"%s\",  \"title\": \"%s\"}",ip->name,ip->classes);
+   Join(buffer,work,bufsize);
+   if (ip->next)
+      {
+      Join(buffer,",\n",bufsize);
+      }
+   }
+
+Join(buffer,"]}\n",bufsize);
+
+
+
+Join(buffer,"}",bufsize);
+
+// Cleanup
+
+DeleteItemList(refs);
+DeleteItemList(pics);
+DeleteItemList(guides);
+DeleteItemList(others);
+}
+
 /****************************************************************************/
 
 void Nova2PHP_get_knowledge_view(int pid,char *view,char *buffer,int bufsize)
@@ -152,7 +296,7 @@ void Nova2PHP_summary_meter(char *buffer,int bufsize)
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize)
 
 {
- Nova_Meter(hostkey,buffer,bufsize);
+Nova_Meter(hostkey,buffer,bufsize);
 }
 
 /*****************************************************************************/

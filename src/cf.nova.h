@@ -665,6 +665,8 @@ void Nova_ShowBundleDependence(FILE *fp);
 void Nova_RegisterBundleDepedence(char *name,struct Promise *pp);
 char *NovaEscape(char *s);
 void NovaShowValues(FILE *fp,struct BodySyntax bs);
+void Nova_RegisterImg(struct Item **list,char *dir,char *pic);
+void Nova_RegisterDoc(struct Item **list,char *dir,char *doc);
 
 /* license.c */
 

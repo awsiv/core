@@ -1316,4 +1316,64 @@ strncpy(detox,CanonifyName(ret),CF_BUFSIZE-1);
 return detox;
 }
 
+/*********************************************************************/
+/* Library documents                                                 */
+/*********************************************************************/
+
+void Nova_RegisterDoc(struct Item **list,char *dir,char *doc)
+
+{ char title[CF_BUFSIZE] = {0},path[CF_BUFSIZE],line[CF_BUFSIZE];
+  int i;
+  FILE *fp;
+
+snprintf(path,CF_BUFSIZE,"%s/%s",dir,doc);
+  
+if ((fp = fopen(path,"r")) == NULL)
+   {
+   CfOut(cf_error,"fopen","Couldn't open %s for reading",path);
+   return;
+   }
+
+/* The title should be on line 3, but just in case something changes
+   read only a few lines of these long docs
+*/
+
+for (i = 0; i < 10; i++)
+   {
+   fgets(line,CF_BUFSIZE,fp);
+
+   if (strncmp(line,"<title>",strlen("<title>")) == 0)
+      {
+      sscanf(line+strlen("<title>"),"%[^<]",title);
+      break;
+      }
+   }
+
+fclose(fp);
+
+if (strlen(title) > 0)
+   {
+   PrependItem(list,doc,title);
+   }
+}
+
+/*********************************************************************/
+
+void Nova_RegisterImg(struct Item **list,char *dir,char *pic)
+
+{ char work[CF_MAXVARSIZE],*sp;
+
+strcpy(work,pic);
+
+for (sp = work; *sp != '\0'; sp++)
+   {
+   if (*sp == '.')
+      {
+      *sp = NULL;
+      break;
+      }
+   }
+
+PrependItem(list,pic,work); 
+}
 
