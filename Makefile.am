@@ -6,11 +6,11 @@ top_build_prefix = $(abs_srcdir)/../core/
 
 SUBDIRS = src docs GUI2
 
-EXTRA_DIST = acconfig.h COPYING ChangeLog LICENSE README
+EXTRA_DIST = acconfig.h COPYING ChangeLog LICENSE
 
 docdir = $(pkgdatadir)
 
-doc_DATA = ChangeLog README
+doc_DATA = ChangeLog
 
 #
 # Some basic clean ups
