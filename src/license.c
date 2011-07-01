@@ -517,11 +517,11 @@ if (sum_t > 0)
    Join(buffer,work,sizeof(buffer));
    snprintf(work,sizeof(work),"\"Maximum observed level\":%d,",max);
    Join(buffer,work,sizeof(buffer));
-   snprintf(work,sizeof(work),"\"Mean actual usage\":%lf,",average);
+   snprintf(work,sizeof(work),"\"Mean weighted usage over interval\":%lf,",average);
    Join(buffer,work,sizeof(buffer));
-   snprintf(work,sizeof(work),"\"Mean expected usage\":%lf,",granted);
+   snprintf(work,sizeof(work),"\"Mean expected usage (granted)\":%lf,",granted);
    Join(buffer,work,sizeof(buffer));
-   snprintf(work,sizeof(work),"\"Mean utilization\":%lf",average/granted*100.0);
+   snprintf(work,sizeof(work),"\"Mean utilization (percent)\":%.2lf",average/granted*100.0);
    Join(buffer,work,sizeof(buffer));
    }
 else
@@ -531,6 +531,8 @@ else
    snprintf(work,sizeof(work),"\"Maximum observed level\":%d,",max);
    Join(buffer,work,sizeof(buffer));
    snprintf(work,sizeof(work),"\"Mean usage\":\"unknown\"");
+   Join(buffer,work,sizeof(buffer));
+   snprintf(work,sizeof(work),"\"Actual licenses used today\": %d",count);
    Join(buffer,work,sizeof(buffer));
    }
 
