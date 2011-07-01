@@ -1,0 +1,5 @@
+# Nova trunk tracks Core trunk
+#
+# Do not forget to change this item after branching!
+#
+core branch trunk
