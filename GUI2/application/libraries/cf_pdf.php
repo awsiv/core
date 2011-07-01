@@ -84,7 +84,7 @@ class cf_pdf extends FPDF
 
 	$this->SetY(-10);
 	$this->SetFont('Arial','',6);
-	$this->Cell(0,10,'Run: '.date("m.d.y H:i:s",time()).' - Powered by Cfengine - '.$this->reportname,0,0,'C');
+	$this->Cell(0,10,'Run: '.date("m.d.y H:i:s",time()).' - Powered by CFEngine - '.$this->reportname,0,0,'C');
     }
 
     #******************************
