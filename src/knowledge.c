@@ -21,6 +21,25 @@ struct Item *NOVA_BUNDLEDEPENDENCE = NULL;
 
 /*****************************************************************************/
 
+static char *CF_HELPTEXT[20][2] =
+    {
+    {"green policy","Promises kept"},
+    {"yellow policy","Promises repaired"},
+    {"red policy","Promises not kept"},
+
+    {"green host","More than 80% of promises are stable and kept"},
+    {"yellow host","More than 20% of promises needed repair at last measurement"},
+    {"red host","More than 20% of promises could not be kept at last measurement"},
+    {"blue host","Hosts that have not been reachable for more than the time horizon"},
+
+    {"mission status room","Mission status shows how close you are an ideal state. The average compliance of machines is graphed for the present and over the past week. If business values have been configured, the monetary value of the promises is also represented. A reminder of the documented goals is shown in the panel."},
+    {"engineering room","Engineering shows technical status of machines in the local cluster."},
+    
+    {NULL,NULL,NULL}
+    };
+
+/*****************************************************************************/
+
 static char *CF_VALUETYPES[18][3] =
  {
  {"hup,int,trap,kill,pipe,cont,abrt,stop,quit,term,child,usr1,usr2,bus,segv","system signals","a unix signal name"},

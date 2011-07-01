@@ -93,17 +93,21 @@ if (false)
 /* Helper functions                                                          */
 /*****************************************************************************/
 
-void Nova2PHP_GetLibraryDocuments(char *buffer,int bufsize)
+void Nova2PHP_GetLibraryDocuments(char *path, char *buffer,int bufsize)
 
 { char namedir[CF_MAXVARSIZE], work[CF_BUFSIZE];
   struct dirent *dirp;
   struct Item *refs = NULL, *guides = NULL, *others = NULL, *pics = NULL,*ip;
   DIR *dirh;
 
-  snprintf(DOCROOT,CF_MAXVARSIZE,"/home/a10004/LapTop/cfengine/nova/knowledge");
-
-snprintf(namedir,CF_MAXVARSIZE,"%s",DOCROOT);
-//snprintf(namedir,CF_MAXVARSIZE,"%s/docs",DOCROOT);
+if (path)
+   {
+   snprintf(namedir,CF_MAXVARSIZE,"%s",path);
+   }
+else
+   {
+   snprintf(namedir,CF_MAXVARSIZE,"%s/docs",DOCROOT);
+   }
 
 if ((dirh = opendir(namedir)) == NULL)
   {
