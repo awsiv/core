@@ -32,6 +32,14 @@ class Knowledge extends Cf_Controller {
 
         $this->template->load('template', 'knowledge/index', $data);
     }
+    
+    /**
+     * Doc links pages
+     */
+    function docs() {
+        
+    }
+    
 
     function topicFinder() {
 

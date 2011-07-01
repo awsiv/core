@@ -10,9 +10,10 @@ class Repository extends Cf_Controller {
         $this->load->model('repository_model');
         $this->load->helper('form');
         $this->username = $this->session->userdata('username');
+        $this->config->load('appsettings');
+        $this->env = $this->config->item('env');
     }
 
-   
     function edit() {
 
         $submit = $this->input->post('submit');
@@ -45,15 +46,19 @@ class Repository extends Cf_Controller {
         if ($obj != NULL) {
             // var_dump($obj);
             $info = array('userId' => $obj->userId, 'password' => $obj->password);
-            $username = $obj->username;
-            $password = $this->repository_model->decrypt_password($info);
-            
+            $username = $obj->username != '' ? $obj->username : NULL;
+            $password = NULL;
+            if ($info['password'] != '') {
+                $password = $this->repository_model->decrypt_password($info);
+            }
             $params = array(
                 'username' => $username,
                 'password' => $password,
                 'repository' => $url,
                 'workingdir' => get_policiesdir() . $this->session->userdata('username')
             );
+
+
 
             $this->load->library('cfsvn', $params);
             $errorArray = array();
@@ -79,6 +84,8 @@ class Repository extends Cf_Controller {
                     'breadcrumbs' => $this->breadcrumblist->display()
                 );
                 $data['url'] = $url;
+                $data['errorArray'] = $errorArray;
+                $data['env'] = $this->env;
 
                 $this->template->load('template', '/repository/check_out_error', $data);
             } else {
@@ -94,6 +101,8 @@ class Repository extends Cf_Controller {
         $this->load->library('form_validation');
         $data = array();
 
+
+
         $alreadyCheckedOut = is_svn_checked_out('./policies/', $this->session->userdata('username'));
 
         // check if it is already checked out  checked out 
@@ -108,7 +117,7 @@ class Repository extends Cf_Controller {
             try {
                 $hasChanges = $this->cfsvn->cfsvn_working_copy_status();
             } catch (Exception $e) {
-                log_message('', $e->__toString());                
+                log_message('', $e->__toString());
             }
             $data['hasChanges'] = $hasChanges;
             $this->load->view('/repository/already_checked_out', $data);
@@ -153,8 +162,10 @@ class Repository extends Cf_Controller {
     function _insert_repository($info) {
 
         //password is jencrypted before so decrypt to clear one .
-        $info['password'] = $this->jcryption->decrypt($info['password'], $_SESSION["d"]["int"], $_SESSION["n"]["int"]);
-        // var_dump($info);
+        if ($info['password'] != '') {
+            $info['password'] = $this->jcryption->decrypt($info['password'], $_SESSION["d"]["int"], $_SESSION["n"]["int"]);
+            // var_dump($info);
+        }
         $return = $this->repository_model->insert_repository($info);
         return $return;
     }
@@ -188,7 +199,7 @@ class Repository extends Cf_Controller {
         if ($this->input->post('addnew')) {
             $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
             $this->form_validation->set_rules('repoPath', 'Repository path', 'required');
-            $this->form_validation->set_rules('username', 'Username', 'required');
+            //$this->form_validation->set_rules('username', 'Username', 'required');
             if ($this->form_validation->run()) {
                 $info = array('userId' => $this->session->userdata('username'),
                     'repoPath' => $this->input->post('repoPath'),

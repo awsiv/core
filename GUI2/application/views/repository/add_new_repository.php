@@ -3,10 +3,10 @@
     <form action="<?php echo isset($addFormPath) ? $addFormPath : '' ?>" method="POST" id="repo-add-form">
 
 
-       
+
         <fieldset>
-             <?php if (isset($errors) && is_array($errors) && !empty($errors)) { ?>
-           
+            <?php if (isset($errors) && is_array($errors) && !empty($errors)) { ?>
+
                 <div class="error">
                     <ul>
                         <?php foreach ($errors as $error) { ?>
@@ -14,14 +14,14 @@
                         <?php } ?>
                     </ul>
                 </div>
-           
-        <?php } ?>
-        <?php if ($this->session->flashdata('success')) { ?>
-          
+
+            <?php } ?>
+            <?php if ($this->session->flashdata('success')) { ?>
+
                 <div class="success"><?php echo $this->session->flashdata('success'); ?></div> 
-           
-        <?php } ?>
-            
+
+            <?php } ?>
+
             <legend>Add new repository information</legend>
             <label id="repoPath" for="repoPath">Path :: </label>
             <input type="text" name="repoPath" value="<?php echo set_value('repoPath'); ?>" size="50" />
@@ -49,19 +49,22 @@
         
         $('#submit-form').hide();
         $('#ajax-loader').show();
-        
-        $.jCryption.getKeys("/repository/get_keys",function(receivedKeys) {
-            keys = receivedKeys;           
-            $.jCryption.encrypt($("#vis-password").val(),keys,function(encrypted) {
-                $("#password").val(encrypted);
-                var replaceVal = Array($('#vis-password').val().length + 1 ).join(" ");
-                $('#vis-password').val(replaceVal); // replace with blank values so that real value is destroyed          
-                $('#submit').removeAttr('disabled');             
-                $('#repo-add-form').submit();
-                $('#ajax-loader').hide();
-                $('#submit-form').show();
-            });
-        });     
+        if ($("#vis-password").val()!='') {
+            $.jCryption.getKeys("/repository/get_keys",function(receivedKeys) {
+                keys = receivedKeys;           
+                $.jCryption.encrypt($("#vis-password").val(),keys,function(encrypted) {
+                    $("#password").val(encrypted);
+                    var replaceVal = Array($('#vis-password').val().length + 1 ).join(" ");
+                    $('#vis-password').val(replaceVal); // replace with blank values so that real value is destroyed          
+                    $('#submit').removeAttr('disabled');             
+                    $('#repo-add-form').submit();
+                    $('#ajax-loader').hide();
+                    $('#submit-form').show();
+                });
+            });} else {
+            $('#repo-add-form').submit();
+            $('#submit-form').show();
+        }    
     });
     
     

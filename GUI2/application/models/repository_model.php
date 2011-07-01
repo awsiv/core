@@ -49,9 +49,9 @@ class Repository_model extends CI_Model {
             $this->set_error('Repository already exists.');
             return FALSE;
         }
-
-        $repoInfo['password'] = $this->encrypt_password($repoInfo);
-
+        if (trim($repoInfo['password']) != '') { 
+            $repoInfo['password'] = $this->encrypt_password($repoInfo);
+        } else  $repoInfo['password'] = '';
         $id = $this->mongo_db->insert($this->collectionName, $repoInfo);
         return $id;
     }
@@ -72,7 +72,7 @@ class Repository_model extends CI_Model {
             $this->set_error('Cannot find existing repository information to update');
             return FALSE;
         }
-        if (isset($newRepoInfo['password'])) {
+        if (isset($newRepoInfo['password']) && $newRepoInfo['password']!= '' )  {
             $newRepoInfo['password'] = $this->encrypt_password($newRepoInfo);
         }
         
