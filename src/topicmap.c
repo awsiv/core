@@ -880,7 +880,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
    }
 
-ip->classes = strdup("[No description]");
+ip->classes = strdup("No description found");
 #endif
 }
 
@@ -936,8 +936,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
          }
       }
    }
-strncpy(buf,"[No Description]",CF_BUFSIZE-1);
-return buf;
+return "";
 #endif
 }
 
