@@ -38,10 +38,11 @@ class Testing extends CI_Controller
          function mongodbselect()
          {
          $this->load->library('mongo_db');
-         
+
+         $result=$this->mongo_db->get('users');
          //$result = $this->mongo_db->select(array('uri','message'))->get('app_logs');
          //$this->mongo_db->where(array('group'=>'faculty'));
-         $result=$this->mongo_db->get('work_logs');
+         //$result=$this->mongo_db->get('work_logs');
          //$result=$this->mongo_db->select(array('username'))->get_where('users',array('group'=>'admin'));
          //print_r($result) ;
          foreach ($result as  $docs) {
@@ -67,16 +68,25 @@ class Testing extends CI_Controller
 
          function mongodbinput()
          {
+           $this->load->library('ion_auth');
           $this->load->model('ion_auth_model_mongo');
-          $result=$this->ion_auth_model_mongo->register('admin', 'admin','admin@cfengine.com',array('admin','developer','faculty'));
-          echo $result;
+          $result1=$this->ion_auth_model_mongo->register('admin', 'admin',' ',array('admin'));
+          $result2=$this->ion_auth->create_group(array('name'=>'admin'));
+          echo $result1. ' '.$result2;
+         }
+
+         function pwdtest()
+         {
+             $this->load->model('ion_auth_model_mongo');
+            $hased= $this->ion_auth_model_mongo->hash_password_db('test','2a70c656eb');
+            echo $hased;
          }
          
 	 function mongodbupdate()
          {
           $this->load->library('mongo_db');
           $this->mongo_db->where(array('_id'=>new MongoId('4d36a0424a235a8024000000')));
-          $result=$this->mongo_db->update('users',array('username'=>'sudhir'));
+          $result=$this->mongo_db->update('users',array('password'=>'password'));
           print_r($result);
          }
 
@@ -210,6 +220,8 @@ class Testing extends CI_Controller
             echo $this->email->print_debugger();
          }
 
+
+
          function mongoextensiontest()
          {
            $connection = new Mongo('localhost:27017');
@@ -308,25 +320,7 @@ class Testing extends CI_Controller
           //print_r(json_encode($control));
          }
 
-         function _rand_colorCode(){
-            $r = dechex(mt_rand(0,255)); // generate the red component
-            $g = dechex(mt_rand(0,255)); // generate the green component
-            $b = dechex(mt_rand(0,255)); // generate the blue component
-            $rgb = $r.$g.$b;
-            if($r == $g && $g == $b){
-            $rgb = substr($rgb,0,3); // shorter version
-            }
-            if( strlen( $rgb ) == 4 )
-            {
-                $rgb = $rgb . rand(10,99);
-            }
-            else if( strlen( $rgb ) == 5 )
-            {
-               $rgb = $rgb . rand(0,9);
-            }
-            return '#'.$rgb;
-        }
-
+       
         function software_installed_autocomplete($column)
         {
             $data=cfpr_report_software_in(NULL,NULL,NULL,NULL,true,NULL,NULL,NULL);
@@ -469,7 +463,185 @@ function license() {
         $this->load->library('userdata');
         //$this->userdata->insert_personal_working_log("working on test");
         //var_dump($this->userdata->get_personal_working_log_latest('sudhir'));
-        $workinon=$this->userdata->get_personal_working_log_latest('mark');
-        echo $workinon;
+        //$workinon=$this->userdata->get_personal_working_log_latest('mark');
+        $workinon=$this->userdata->get_personal_working_notes('sudhir');
+        var_dump($workinon);
+    }
+
+    function svnstat()
+    {
+       // echo svn_client_version();
+        $status=svn_status('./policies/sudhir',SVN_ALL);
+        //print_r(svn_status('./policies/sudhir',SVN_ALL));
+        
+       /* for ($i=1;$i<2;$i++)
+        {
+            echo  $status[$i]['revision'];
+        }*/
+        $modified_files=array();
+        foreach($status as $file)
+        {
+          if($file['text_status']==8)
+          {
+            array_push($modified_files,$file['name']) ;
+          }
+        }
+        print_r($modified_files);
+    }
+
+    function viewlogs()
+    {
+     $this->load->model('repository_model');
+    var_dump($this->repository_model->get_svn_logs('https://c.cfengine.com/svn/sudhir'));
+    }
+
+    function viewrev()
+    {
+        $this->load->model('repository_model');
+        var_dump($this->repository_model->get_revisions('https://c.cfengine.com/svn/sudhir'));
+    }
+
+    function currepo()
+    {
+        $params=array(
+			'workingdir' => get_policiesdir().$this->session->userdata('username')
+			);
+	$this->load->library('cfsvn',$params);
+        echo $this->cfsvn->get_current_repository();
+    }
+
+    function currentversion()
+    {
+        $params=array(
+			'workingdir' => get_policiesdir().$this->session->userdata('username')
+			);
+	$this->load->library('cfsvn',$params);
+        echo $this->cfsvn->get_working_revision();
+    }
+
+    function getapprovedpolicies()
+    {
+        $this->load->library('mongo_db');
+         var_dump($this->mongo_db->get('approvedpolicies'));
+       // var_dump($this->repository_model->get_all_approved_policies('https://c.cfengine.com/svn/sudhir'));
+    }
+
+    function getapprovedpoliciescount()
+    {
+      $params=array(
+			'workingdir' => get_policiesdir().$this->session->userdata('username')
+			);
+     $this->load->library('cfsvn',$params);
+     $this->load->model('repository_model');
+     $current_repo=$this->cfsvn->get_current_repository();
+     echo $this->repository_model->get_total_approval_count($current_repo);
+    }
+
+    function svn_logs()
+    {
+
+        $this->load->model('repository_model');
+try {
+    $params=array(
+			'workingdir' => get_policiesdir().$this->session->userdata('username')
+			);
+         $this->load->library('cfsvn',$params);
+         $currentUser = $this->session->userdata('username');
+         $current_repo=$this->cfsvn->get_current_repository();
+	 $obj = $this->repository_model->get_specific_repository($currentUser, $current_repo);
+
+         if ($obj != NULL) {
+            $info = array('userId' => $obj->userId, 'password' => $obj->password);
+            $username = $obj->username;
+            $password = $this->repository_model->decrypt_password($info);
+            $params=array(
+	                'username' => $username,
+			'password' => $password,
+                        'repository'=> $current_repo
+			);
+        }
+        $this->cfsvn->addcredentials($params);
+        
+        //var_dump($this->cfsvn->get_current_repository());
+       // echo $this->cfsvn->get_current_repository();
+        var_dump($this->cfsvn-> cfsvn_log(10));
+    
+    } catch(Exception $e) {
+        var_dump($e);
+    }
+    }
+
+    function vitals_week_test()
+    {
+        /*$ret_host = cfpr_vitals_list("SHA=38c5642ccb0dc74bc754aa1a63e81760869e1b3405bf9e43ad85c99822628e8e");
+        echo $ret_host."/n";
+        $ret_old=cfpr_performance_analysis("SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e");
+        echo $ret_old;
+        $ret=cfpr_vitals_list("SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e");
+        //$ret=cfpr_vitals_view_week("SHA=38c5642ccb0dc74bc754aa1a63e81760869e1b3405bf9e43ad85c99822628e8e",1);
+                echo $ret;*/
+              echo "<h1>vitals</h1><br /><br />";
+              echo cfpr_performance_analysis("SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e")."<br /><br />";
+              echo cfpr_vitals_list("SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e").'<br />';
+              echo "<h1>weekley</h1><br /><br />";
+              echo  cfpr_get_weekly_view("SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e","26") ."<br /><br />";
+              echo  cfpr_vitals_view_week("SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e","wwws_out") ."<br/>";
+    }
+
+    function vitals_list_test()
+    {
+        $list= cfpr_vitals_list(NULL);
+        echo $list;
+        $newlist=json_decode($list,true);
+        var_dump($newlist);
+    }
+
+    function testcurl()
+    {
+       $_data=array("name"=>"sudhir","login"=>true);
+        $data = array();
+       while(list($n,$v) = each($_data)){
+        $data[] = urlencode($n)."=".urlencode($v);
+       }
+      $data = implode('&', $data);
+       $ch = curl_init();
+
+        // set URL and other appropriate options
+        curl_setopt($ch, CURLOPT_URL, "http://localhost:8080/start");
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt ($ch, CURLOPT_POST, true);
+        curl_setopt ($ch, CURLOPT_POSTFIELDS, $data);
+        // grab URL and pass it to the browser
+        curl_exec($ch);
+
+        // close cURL resource, and free up system resources
+        curl_close($ch);
+    }
+
+    function notifier_test()
+    {
+      $this->load->library('onlineUsers');
+     $_data=array('event_loggedin'=>true,'ttlusr'=>$this->onlineusers->total_users());
+     $url=get_nodehost_from_server().'/userloggedin';
+     var_dump($url);
+     notifier($url , $_data );
+    }
+
+    function get_keys()
+    {
+        $this->load->model('repository_model');
+        $currentUser = $this->session->userdata('username');
+        echo "getting repositoriy info <br/>";
+        $obj = $this->repository_model->get_specific_repository($currentUser, "https://c.cfengine.com/svn/sudhir");
+        var_dump($obj);
+        echo "getting keys <br/>";
+        $keys=$this->repository_model->get_key( array('userId'=>$obj->userId));
+        var_dump($keys);
+        echo "encrytp password<br ";
+        $password=$this->repository_model->encrypt_password(array('password'=>'wachnapmadu','userId'=>$obj->userId));
+        echo $password."<br />";
+        echo "decrypting passwordkeys<br/>";
+        $password=$this->repository_model->decrypt_password(array('userId'=>$obj->userId,'password'=>$obj->password));
+        echo $password;
     }
 }
