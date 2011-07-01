@@ -32,16 +32,19 @@ static char *CF_HELPTEXT[20][2] =
     {"red host","More than 20% of promises could not be kept at last measurement."},
     {"blue host","Hosts that have not been reachable for more than the time horizon."},
 
-    {"mission status room","The mission status room shows how close you are an ideal state. The average compliance of machines is graphed for the present and over the past week. If business values have been configured, the monetary value of the promises is also represented. A reminder of the documented goals is shown in the panel."},
-    {"engineering room","Engineering shows technical status of machines in the local cluster."},
+    {"mission status room","The mission status room shows how close you are an ideal state. The average compliance of hosts is graphed for the present and over the past week. If business values have been configured, the monetary value of the promises is also represented. A reminder of the documented goals is shown in the panel."},
+    {"engineering room","Engineering shows technical status of hosts in the local cluster."},
     {"mission planning room","The mission planning room allows you to see how the current goals and policies are performing, approve a change of course and communicate with co-workers."},
     {"the library","A place where users can learn about the software and the system."},
 
     {"host finder","Find hosts by name or address within the local cluster."},
     {"class finder","Find hosts by the class contexts they occupy in the local cluster."},
     {"policy finder","Find promises that make up the policy in the local cluster."},
-    {"reports finder","Search and browse hosts in the local cluster."},
+    {"reports finder","Search and browse the available reports in the local cluster."},
 
+    {"license report","Displays a summary of the utilization of CFEngine licenses for this cluster."},
+    {"vital signs","Performance measurements that characterize the observed runtime state of a host."},
+    {"problems","An incarnation of the promises not kept summary for a host, showing the most frequent repeated incidents in relation to the approved policy."},
     
     {NULL,NULL,NULL}
     };
