@@ -119,19 +119,19 @@ for (dirp = readdir(dirh); dirp != NULL; dirp = readdir(dirh))
    {
    if (strcmp("cf3-reference.html",dirp->d_name) == 0 || strcmp("cfnova.html",dirp->d_name) == 0)
       {
-      Nova_RegisterDoc(&refs,DOCROOT,dirp->d_name);
+      Nova_RegisterDoc(&refs,namedir,dirp->d_name);
       }
    else if (FullTextMatch("cf3.*\\.html",dirp->d_name))
       {
-      Nova_RegisterDoc(&others,DOCROOT,dirp->d_name);
+      Nova_RegisterDoc(&others,namedir,dirp->d_name);
       }
    else if (FullTextMatch("st-.*\\.html",dirp->d_name))
       {
-      Nova_RegisterDoc(&guides,DOCROOT,dirp->d_name);
+      Nova_RegisterDoc(&guides,namedir,dirp->d_name);
       }
    else if (FullTextMatch(".*\\.png",dirp->d_name))
       {
-      Nova_RegisterImg(&pics,DOCROOT,dirp->d_name);
+      Nova_RegisterImg(&pics,namedir,dirp->d_name);
       }
    }
 
@@ -144,7 +144,7 @@ pics = SortItemListNames(pics);
 guides = SortItemListNames(guides);
 others = SortItemListNames(others);
 
-strcpy(buffer,"{");
+strcpy(buffer,"[");
 
 // Reference docs
 
@@ -229,7 +229,7 @@ Join(buffer,"]}\n",bufsize);
 
 
 
-Join(buffer,"}",bufsize);
+Join(buffer,"]",bufsize);
 
 // Cleanup
 
