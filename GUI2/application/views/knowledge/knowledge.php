@@ -14,8 +14,8 @@
             <div id="tabs-1" class="ui-corner-all">
                 <div class="panel">
                     <div class="panelhead">Copernicus local cluster view</div>
-                    <div class="panelcontent">
-                        <div id="infovis" style="width:95%;height: 98%;min-height:430px"></div>
+                    <div class="panelcontent"  style="height:100%;min-height: 400px;">
+                        <div id="infovis" style="width:95%;height:100%"></div>
                         <div id="log"></div>
 
                     </div>
@@ -31,15 +31,15 @@
                 require_once('topics.php');
                 ?>
             </div>
-            
+
             <div id="tabs-4" class="ui-corner-all">
                 <?php
                 require_once('subcategory.php');
                 ?>
-                
+
             </div>
             <div id="tabs-5" class="ui-corner-all">
-                
+
                 <?php
                 require_once('category.php');
                 ?>
@@ -53,11 +53,15 @@
 <script id="source" language="javascript" type="text/javascript">
 
     //<![CDATA[
-
+    var height = '';
     $(document).ready(function() {
         $('div#disambig').addClass('pagepanel');
         $('div#disambig').find('h2').addClass('panelhead');
-        $('div#disambig').find('ul').addClass('panelcontent');
+        $('div#disambig').find('ul').addClass('panelcontent');       
+        
+        var   wheight = $(window).height(),
+              cheight = wheight - 250;
+        height = cheight;
     });
 
     var labelType, useGradients, nativeTextSupport, animate;
@@ -133,6 +137,7 @@
         var fd = new $jit.ForceDirected({
             //id of the visualization container
             injectInto: 'infovis',
+            height:height,
             //Enable zooming and panning
             //by scrolling and DnD
             Navigation: {
