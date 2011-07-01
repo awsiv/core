@@ -711,26 +711,32 @@ return list;
 int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
 
 { int result = CF_GREEN;
-  double kav,rav; 
+ double kav,rav,notkept; 
 
  switch (method)
     {
     case cfrank_compliance:
-        if (k[meter_compliance_hour] < 80)
+
+        notkept = 100 - k[meter_compliance_hour] - r[meter_compliance_hour];
+        
+        if (notkept > 20)                   // 20% of promises are not kept => RED!
            {
-           result = CF_RED_THRESHOLD + 100;
+           result = CF_RED_THRESHOLD + 100; // Make red override all variations in amber/green
            }
        
-        if (r[meter_compliance_hour] > 20)
+        if (r[meter_compliance_hour] > 20)  // If more than 20% of promises were repaired => AMBER
            {
            result = CF_AMBER_THRESHOLD + r[meter_compliance_hour];
            }
 
-        result -= k[meter_compliance_hour];
+        result -= k[meter_compliance_hour]; // Adjust the Green Value relative
         break;
        
     case cfrank_anomaly:
-        if (k[meter_anomalies_day] < 80)
+
+        notkept = 100 - k[meter_anomalies_day] - r[meter_anomalies_day];
+                
+        if (notkept > 20)
            {
            result = CF_RED_THRESHOLD + 100;
            }
@@ -744,7 +750,10 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
         break;
        
     case cfrank_performance:
-        if (k[meter_perf_day] < 80)
+
+        notkept = 100 - k[meter_perf_day] - r[meter_perf_day];
+        
+        if (notkept > 20)
            {
            result = CF_RED_THRESHOLD + 100;
            }
@@ -758,7 +767,10 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
         break;
        
     case cfrank_lastseen:
-        if (k[meter_comms_hour] < 80)
+
+        notkept = 100 - k[meter_comms_hour] - r[meter_comms_hour];
+            
+        if (notkept > 20)
            {
            result = CF_RED_THRESHOLD + 100;
            }
@@ -775,7 +787,9 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
         kav = (k[meter_comms_hour] + k[meter_compliance_hour] + k[meter_anomalies_day]) / 3;
         rav = (r[meter_comms_hour] + r[meter_compliance_hour] + r[meter_anomalies_day]) / 3;
 
-        if (kav < 80)
+        notkept = 100 - kav - rav;
+            
+        if (notkept > 20)
            {
            result = CF_RED_THRESHOLD + 100;
            }
