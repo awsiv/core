@@ -5,26 +5,26 @@ bundle knowledge st_cloud
 topics:
 
 "st-cloud";
-Federation::
+Cloud_Computing::
     "The future - molecular computing" ;
-Federation::
+Cloud_Computing::
     "What if I change my mind about Cloud Computing?" ;
-Federation::
+Cloud_Computing::
     "Challenges for Cloud Computing" ;
-Federation::
+Cloud_Computing::
     "Isnt virtualization inefficient?" ;
-Federation::
+Cloud_Computing::
     "How does Cloud relate to virtualization?" ;
-Federation::
+Cloud_Computing::
     "Permanent infra-structure with vibrant change" ;
-Federation::
+Cloud_Computing::
     "How does CFEngine enable Cloud Computing?" ;
-Federation::
+Cloud_Computing::
     "Is Cloud Computing for everything and everyone?" ;
-Federation::
+Cloud_Computing::
     "What is Cloud Computing?" ;
 Special_Topics_Guide::
-    "Federation"  association => a("discussed in","Federation","discusses");
+    "Cloud Computing"  association => a("discussed in","Cloud Computing","discusses");
 
 
 occurrences:
@@ -32,7 +32,7 @@ occurrences:
 special_topics_guides::
  "/docs/st-cloud.html"
   represents => { "Cloud" };
-Federation::
+Cloud_Computing::
  "/docs/st-cloud.html#Top"
   represents => { "Text section" };
 What_is_Cloud_Computing_::

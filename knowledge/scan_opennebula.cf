@@ -5,32 +5,32 @@ bundle knowledge st_opennebula
 topics:
 
 "st-opennebula";
-Iteration::
+Open_Nebula::
     "Open Nebula Summary" ;
-Iteration::
+Open_Nebula::
     "Webserver in Open Nebula" ;
-Iteration::
+Open_Nebula::
     "Virtual machine configuration" ;
-Iteration::
+Open_Nebula::
     "Open Nebula Commands" ;
-Iteration::
+Open_Nebula::
     "Virtual machine template configuration" ;
-Iteration::
+Open_Nebula::
     "Network configuration" ;
-Iteration::
+Open_Nebula::
     "Open Nebula environment configuration" ;
-Iteration::
+Open_Nebula::
     "NFS config for shared image repository" ;
-Iteration::
+Open_Nebula::
     "Installation and dependancy configuration" ;
-Iteration::
+Open_Nebula::
     "Example Setup" ;
-Iteration::
+Open_Nebula::
     "How can CFEngine work with Open Nebula?" ;
-Iteration::
+Open_Nebula::
     "What is Open Nebula?" ;
 Special_Topics_Guide::
-    "Iteration"  association => a("discussed in","Iteration","discusses");
+    "Open Nebula"  association => a("discussed in","Open Nebula","discusses");
 
 
 occurrences:
@@ -38,7 +38,7 @@ occurrences:
 special_topics_guides::
  "/docs/st-opennebula.html"
   represents => { "Using CFEngine with Open Nebula" };
-Iteration::
+Open_Nebula::
  "/docs/st-opennebula.html#Top"
   represents => { "Text section" };
 What_is_Open_Nebula_::
