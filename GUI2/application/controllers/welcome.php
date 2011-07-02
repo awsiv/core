@@ -92,7 +92,7 @@ class Welcome extends Cf_Controller {
             'goals' => json_decode(cfpr_list_business_goals())
         );
 
-// Summary meter for host
+        // Summary meter for host
         $gdata = cfpr_summary_meter(null);
         $returnedData = $this->_convert_summary_compliance_graph($gdata);
         $data = array_merge($data, $returnedData);

@@ -210,13 +210,8 @@
                 radius: 0.7,
                 tilt: 0.3,
                 label: {
-                    show: false,
-                    radius: 1,
-                    formatter: function(label, series){
-                        return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
-                    },
-                    background: { opacity: 0.8 }
-                },
+                    show: false
+                   },
                 highlight: {
                     opacity: .5
                 }
@@ -245,13 +240,8 @@
                 radius: 0.7,
                 tilt: 0.3,
                 label: {
-                    show: false,
-                    radius: 1,
-                    formatter: function(label, series){
-                        return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                    show: false
                     },
-                    background: { opacity: 0.8 }
-                },
                 highlight: {
                     opacity: .5
                 }
@@ -276,7 +266,9 @@
             return;
         }
         percent = parseFloat(obj.series.percent).toFixed(2);
-        var content = '<span style="font-weight: bold; color: '+obj.series.color+'">'+obj.series.label+' ('+percent+'%)</span>';
+        var index = obj.dataIndex;
+        var value = obj.series.data[index][1];
+        var content = '<span>'+obj.series.label+' ('+percent+'%) <br /> Value:: '+value+'</span>';
         $("#tooltip").remove();
         showTooltip(pos.pageX, pos.pageY, content);
     }
@@ -292,11 +284,11 @@
             display: 'none',
             top: y + 5,
             left: x + 5,
-            border: '1px solid #fdd',
+            border: '1px solid #000000',
             padding: '2px',
             color: '#000',
-            'background-color': '#fee',
-            opacity: 0.80
+            'background-color': '#cccccc',
+            opacity: 1
         }).appendTo("body").fadeIn(200);
     }
 
