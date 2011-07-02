@@ -62,7 +62,7 @@ inputs         => {
                   "enterprise_control.cf",
                   "enterprise_knowledge.cf",
                   "knowledge_models.cf",
-                  "company_knowledge.cf",
+                  "$(sys.workdir)/inputs/company_knowledge.cf",
                   "scan_tutorial3.cf",
                   "scan_cf3ref.cf",
                      "scan_appl.cf",

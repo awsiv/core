@@ -1,5 +1,5 @@
 
-all: highlight_syntax scan_texinfo scan_examples cf-QuickRef3.html scan_quickref3.cf scan_cf3ref.cf cf3-solutions.html scan_solutions.cf cf-copernicus.html scan_copernicus.cf cfnova.html scan_cfnova.cf examples.cf cf3-tutorial.html scan_tutorial3.cf unit_peers.html cf3-bestpractice.html scan_bp3.cf cf3-upgrade.html scan_upgrade.cf st-rollback.html scan_rollback.cf  st-adopt.html scan_adopt.cf  st-bdma.html scan_bdma.cf st-itil.html scan_itil.cf st-knowledge.html scan_knowledge.cf st-orchestrate.html scan_orchestrate.cf st-reporting.html scan_reporting.cf st-schedule.html scan_schedule.cf st-teams.html scan_teams.cf scan_stdlib.cf st-distsched.html scan_distsched.cf st-iterate.html scan_iterate.cf scan_glossary.cf cf3-glossary.html st-hierarchy.html st-appmgt.html scan_appl.cf scan_hierarchy.cf scan_virt.cf st-security.html scan_security.cf st-federation.html scan_federation.cf st-cdp.html scan_cdp.cf scan_cloud.cf st-cloud.html st-opennebula.html scan_opennebula.cf st-scale.html scan_scale.cf st-rbac.html scan_rbac.cf st-change.html scan_change.cf st-menus.html scan_menus.cf st-monitoring.html scan_monitoring.cf st-editing.html scan_editing.cf
+all: highlight_syntax scan_texinfo scan_examples cf-QuickRef3.html scan_quickref3.cf scan_cf3ref.cf cf3-solutions.html scan_solutions.cf cf-copernicus.html scan_copernicus.cf cfnova.html scan_cfnova.cf examples.cf cf3-tutorial.html scan_tutorial3.cf unit_peers.html cf3-bestpractice.html scan_bp3.cf cf3-upgrade.html scan_upgrade.cf st-rollback.html scan_rollback.cf  st-adopt.html scan_adopt.cf  st-bdma.html scan_bdma.cf st-itil.html scan_itil.cf st-knowledge.html scan_knowledge.cf st-orchestrate.html scan_orchestrate.cf st-reporting.html scan_reporting.cf st-schedule.html scan_schedule.cf st-teams.html scan_teams.cf scan_stdlib.cf st-distsched.html scan_distsched.cf st-iterate.html scan_iterate.cf scan_glossary.cf cf3-glossary.html st-hierarchy.html st-appmgt.html scan_appl.cf scan_hierarchy.cf scan_virt.cf st-security.html scan_security.cf st-federation.html scan_federation.cf st-cdp.html scan_cdp.cf scan_cloud.cf st-cloud.html st-opennebula.html scan_opennebula.cf st-scale.html scan_scale.cf st-rbac.html scan_rbac.cf st-change.html scan_change.cf st-menus.html scan_menus.cf st-monitoring.html scan_monitoring.cf st-editing.html scan_editing.cf st-packages.html scan_packages.cf
 
 clean:
 	rm scan*cf
@@ -20,12 +20,22 @@ scan_glossary.cf: cf3-glossary.html
 
 st-monitoring.html: ../../core/docs/guides/SpecialTopic_Monitoring.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
+	./highlight_syntax st-monitoring.html
+	mv st-monitoring.trans st-monitoring.html
 scan_monitoring.cf: st-monitoring.html
 	./scan_texinfo "special topic" $< > scan_monitoring.cf
 
+st-packages.html: ../../core/docs/guides/SpecialTopic_Packages.texinfo
+	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
+	./highlight_syntax st-packages.html
+	mv st-packages.trans st-packages.html
+scan_packages.cf: st-packages.html
+	./scan_texinfo "special topic" $< > scan_packages.cf
+
 st-editing.html: ../../core/docs/guides/SpecialTopic_Editing.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
-
+	./highlight_syntax st-editing.html
+	mv st-editing.trans st-editing.html
 scan_editing.cf: st-editing.html
 	./scan_texinfo "special topic" $< > scan_editing.cf
 
@@ -37,6 +47,8 @@ scan_cdp.cf: st-cdp.html
 
 st-change.html: ../../core/docs/guides/SpecialTopic_Change.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
+	./highlight_syntax st-change.html
+	mv st-change.trans st-change.html
 scan_change.cf: st-change.html
 	./scan_texinfo "special topic" $< > scan_change.cf
 
@@ -47,6 +59,8 @@ scan_cloud.cf: st-cloud.html
 
 st-menus.html: ../../core/docs/guides/SpecialTopic_MenuDrivenConfig.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
+	./highlight_syntax st-menus.html
+	mv st-menus.trans st-menus.html
 scan_menus.cf: st-menus.html
 	./scan_texinfo "special topic" $< > scan_menus.cf
 
@@ -57,9 +71,10 @@ scan_scale.cf: st-scale.html
 
 st-rbac.html: ../../core/docs/guides/SpecialTopic_RBAC.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
+	./highlight_syntax st-rbac.html
+	mv st-rbac.trans st-rbac.html
 scan_rbac.cf: st-rbac.html
 	./scan_texinfo "special topic" $< > scan_rbac.cf
-
 
 st-opennebula.html: ../../core/docs/guides/SpecialTopic_OpenNebula.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
@@ -83,6 +98,8 @@ scan_virt.cf: st-virt.html
 
 st-hierarchy.html: ../../core/docs/guides/SpecialTopic_Hierarchy.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
+	./highlight_syntax st-hierarchy.html
+	mv st-hierarchy.trans st-hierarchy.html
 scan_hierarchy.cf: st-hierarchy.html
 	./scan_texinfo "special topic" $< > scan_hierarchy.cf
 
@@ -108,6 +125,8 @@ scan_bdma.cf: st-bdma.html
 
 st-iterate.html:  ../../core/docs/guides/SpecialTopic_Iteration.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
+	./highlight_syntax st-iterate.html
+	mv st-iterate.trans st-iterate.html
 scan_iterate.cf: st-iterate.html
 	./scan_texinfo "special topic" $< > scan_iterate.cf
 
@@ -118,7 +137,8 @@ scan_itil.cf: st-itil.html
 
 st-distsched.html: ../../core/docs/guides/SpecialTopic_DistributedScheduling.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
-
+	./highlight_syntax st-distsched.html
+	mv st-distsched.trans st-distsched.html
 scan_distsched.cf: st-distsched.html
 	./scan_texinfo "special topic" $< > scan_distsched.cf
 
