@@ -137,7 +137,7 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
   mongo_connection conn;
   int topic_id = 0;
   
-Nova_DeClassifyTopic(typed_topic,topic,type); // Linker trouble - copy this from core
+Nova_DeClassifyTopic(ToLowerStr(typed_topic),topic,type); // Linker trouble - copy this from core
 
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
@@ -151,9 +151,9 @@ bson_buffer_init(&bb);
 bson_append_string(&bb,cfk_topicname,topic);
 
 if (strlen(type) > 0)
-  {
-    bson_append_string(&bb,cfk_topiccontext,type);
-  }
+   {
+   bson_append_string(&bb,cfk_topiccontext,type);
+   }
 
 bson_from_buffer(&query,&bb);
 
@@ -575,6 +575,10 @@ if (strcmp("any",topic_context) == 0)
    {
    snprintf(searchstring,CF_BUFSIZE,".*\\.*%s\\.*.*",topic_id);
    }
+else
+   {
+   snprintf(searchstring,CF_BUFSIZE,"%s",topic_id);
+   }
 
 bson_buffer_init(&bb);
 bson_append_regex(&bb,cfk_occurcontext,searchstring,"");
@@ -638,7 +642,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    for (rp = frags; rp != NULL; rp=rp->next)
       {
       int found = false;
-      
+
       if (strcmp(rp->item,topic_id) == 0)
          {
          Nova_AddOccurrenceBuffer(rp->item,locator,locator_type,represents,buffer,bufsize);

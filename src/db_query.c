@@ -3249,21 +3249,21 @@ while (mongo_cursor_next(cursor))  // loops over documents
             rrepaired = 0;
             
             while (bson_iterator_next(&it3))
-	      {
-		if (strcmp(bson_iterator_key(&it3),cfr_day) == 0)
+               {
+               if (strcmp(bson_iterator_key(&it3),cfr_day) == 0)
 		  {
-		    if ( strptime(bson_iterator_string(&it3), "%d %b %Y", &tm) != 0 )
-		      {
-			epoch = mktime(&tm);
-			snprintf(rday,CF_MAXVARSIZE-1,"%ld",epoch);
-		      }
-		    else
-		      {
-			strcpy(rday,"");
-		      }
+                  if ( strptime(bson_iterator_string(&it3), "%d %b %Y", &tm) != 0 )
+                     {
+                     epoch = mktime(&tm);
+                     snprintf(rday,CF_MAXVARSIZE-1,"%ld",epoch);
+                     }
+                  else
+                     {
+                     strcpy(rday,"");
+                     }
                   }
                else if (strcmp(bson_iterator_key(&it3),cfr_kept) == 0)
-		 {
+                  {
                   rkept = bson_iterator_double(&it3);
                   }
                else if (strcmp(bson_iterator_key(&it3),cfr_notkept) == 0)
@@ -6572,7 +6572,7 @@ struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *p
 		genTime = bson_iterator_int(&it3);
                 }
              }
-          if(genTime >= minGenTime)
+          if (genTime >= minGenTime)
              {
              PrependRlistAlien(&record_list,NewHubCacheTotalCompliance(policyDB,slot,count,kept,repaired,notkept,genTime));
              }

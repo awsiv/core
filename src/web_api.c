@@ -919,65 +919,67 @@ int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *c
 
 /* BEGIN query document */
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,classreg);
+hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,classreg);
 
- PageRecords(&(hq->records),page,DeleteHubValue);
- snprintf(buffer,sizeof(buffer),
-	  "{\"meta\":{\"count\" : %d,"
-	  "\"header\":{\"Host\":0,\"Day\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,"
-	  "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
-	  "}},\"data\":[", page->totalResultCount);
- StartJoin(returnval,buffer,bufsize);
+PageRecords(&(hq->records),page,DeleteHubValue);
+snprintf(buffer,sizeof(buffer),
+         "{\"meta\":{\"count\" : %d,"
+         "\"header\":{\"Host\":0,\"Day\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,"
+         "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
+         "}},\"data\":[", page->totalResultCount);
+StartJoin(returnval,buffer,bufsize);
 
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    hp = (struct HubValue *)rp->item;
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hp = (struct HubValue *)rp->item;
+   
+   if(strcmp(hp->nid,CF_NONOTE) == 0)
+      {
+      snprintf(buffer,sizeof(buffer),
+               "[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf,"
+               "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
+               hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept,
+               hp->hh->keyhash,CFREPORT_VALUE,hp->handle);
+      }
+   else
+      {
+      snprintf(buffer,sizeof(buffer),
+               "[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf,"
+               "[\"show\",\"\",\"\",\"\",\"%s\"]],",
+               hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept,
+               hp->nid);
+      }
+   
+   if (!Join(returnval,buffer,bufsize))
+      {
+      break;
+      }
+   }
 
-    if(strcmp(hp->nid,CF_NONOTE) == 0)
-       {
-       snprintf(buffer,sizeof(buffer),
-		"[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf,"
-		"[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-		hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept,
-		hp->hh->keyhash,CFREPORT_VALUE,hp->handle);
-       }
-    else
-       {
-       snprintf(buffer,sizeof(buffer),
-		"[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf,"
-		"[\"show\",\"\",\"\",\"\",\"%s\"]],",
-		hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept,
-		hp->nid);
-       }
+if (returnval[strlen(returnval)-1]==',')
+   {
+   returnval[strlen(returnval)-1]='\0';
+   }
+EndJoin(returnval,"]}\n",bufsize);
 
-    if(!Join(returnval,buffer,bufsize))
-       {
-       break;
-       }
-    }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval)-1]='\0';
-    }
- EndJoin(returnval,"]}\n",bufsize);
+DeleteHubQuery(hq,DeleteHubValue);
 
- DeleteHubQuery(hq,DeleteHubValue);
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- return true;
+return true;
 }
 
 /*****************************************************************************/
+
 int Nova2PHP_get_value_graph(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize)
 
 { struct HubValue *hp;
