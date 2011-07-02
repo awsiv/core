@@ -371,8 +371,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <span class="comment"># applicable for both files and directory on all platforms
 </span>
 {
-<span class="red">acl_method </span>=><span class="green"> "overwrite";</span>
-<span class="red">aces </span>=> { "@(acl)" };
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -390,17 +390,17 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <h3 class="section">1.2 body acl strict</h3>
 
 <pre class="verbatim">body acl strict
-<span class="comment"># NOTE: May need to take ownership of file/dir
-</span>
+<span class="red"><span class="comment"># NOTE: May need to take ownership of file/dir
+</span></span>
 <span class="comment"># to be sure no-one else is allowed access
 </span>
 {
-<span class="red">acl_method </span>=><span class="green"> "overwrite";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 windows::
-<span class="red">aces </span>=> { "user:Administrator:rwx" };
+<span class="red"><span class</span>=><span class="blue"></span>
 !windows::
-<span class="red">aces </span>=> { "user:root:rwx" };
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -419,9 +419,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body action bg(elapsed,expire)
 {
-<span class="red">ifelapsed   </span>=><span class="green"> "$(elapsed)";</span>
-<span class="red">expireafter </span>=><span class="green"> "$(expire)";</span>
-<span class="red">background  </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -441,8 +441,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body action if_elapsed(x)
 {
-<span class="red">ifelapsed </span>=><span class="green"> "$(x)";</span>
-<span class="red">expireafter </span>=><span class="green"> "$(x)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -463,7 +463,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <pre class="verbatim">body action ifwin_bg
 {
 windows::
-<span class="red">background </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -482,7 +482,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body action immediate
 {
-<span class="red">ifelapsed </span>=><span class="green"> "0";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -502,8 +502,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body action log_repaired(log,message)
 {
-<span class="red">log_string </span>=><span class="green"> "$(sys.date), $(message)";</span>
-<span class="red">log_repaired </span>=><span class="green"> "$(log)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -523,9 +523,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body action measure_performance(x)
 {
-<span class="red">measurement_class </span>=><span class="green"> "Detect changes in $(this.promiser)";</span>
-<span class="red">ifelapsed </span>=><span class="green"> "$(x)";</span>
-<span class="red">expireafter </span>=><span class="green"> "$(x)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -544,7 +544,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body action policy(p)
 {
-<span class="red">action_policy </span>=><span class="green"> "$(p)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -567,8 +567,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body action sample_rate(x)
 {
-<span class="red">ifelapsed </span>=><span class="green"> "$(x)";</span>
-<span class="red">expireafter </span>=><span class="green"> "10";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 </pre>
 
@@ -586,8 +586,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body action warn_only
 {
-<span class="red">action_policy </span>=><span class="green"> "warn";</span>
-<span class="red">ifelapsed </span>=><span class="green"> "60";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -611,9 +611,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 
 {
-<span class="red">hash           </span>=><span class="green"> "best";</span>
-<span class="red">report_changes </span>=><span class="green"> "all";</span>
-<span class="red">update_hashes  </span>=><span class="green"> "yes";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -637,9 +637,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 
 {
-<span class="red">hash           </span>=><span class="green"> "md5";</span>
-<span class="red">report_changes </span>=><span class="green"> "content";</span>
-<span class="red">update_hashes  </span>=><span class="green"> "yes";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -660,10 +660,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <span class="comment"># Generates diff report (Nova and above)
 </span>
 {
-<span class="red">hash           </span>=><span class="green"> "sha256";</span>
-<span class="red">report_changes </span>=><span class="green"> "content";</span>
-<span class="red">report_diffs   </span>=><span class="green"> "true";</span>
-<span class="red">update_hashes  </span>=><span class="green"> "yes";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -684,9 +684,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <span class="comment"># Use on (small) files that should never change
 </span>
 {
-<span class="red">hash           </span>=><span class="green"> "sha256";</span>
-<span class="red">report_changes </span>=><span class="green"> "content";</span>
-<span class="red">update_hashes  </span>=><span class="green"> "no";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -710,10 +710,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 
 {
-<span class="red">promise_repaired </span>=> { "$(yes)" };
-<span class="red">repair_failed    </span>=> { "$(no)" };
-<span class="red">repair_denied    </span>=> { "$(no)" };
-<span class="red">repair_timeout   </span>=> { "$(no)" };
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -742,12 +742,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 
 {
-<span class="red">promise_repaired </span>=> { "mXC_$(x)" };
-<span class="red">promise_kept </span>=> { "mXC_$(x)" };
-<span class="red">persist_time </span>=><span class="green"> "15";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
-<span class="comment"># agent bundles
+<span class="red"><span class="comment">#</span> <span class="blue">agent</span>
 </span>
 
 
@@ -770,11 +770,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <pre class="verbatim">body classes if_else(yes,no)
 
 {
-<span class="red">promise_kept     </span>=> { "$(yes)" };
-<span class="red">promise_repaired </span>=> { "$(yes)" };
-<span class="red">repair_failed    </span>=> { "$(no)" };
-<span class="red">repair_denied    </span>=> { "$(no)" };
-<span class="red">repair_timeout   </span>=> { "$(no)" };
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -794,9 +794,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body classes if_notkept(x)
 {
-<span class="red">repair_failed   </span>=> { "$(x)" };
-<span class="red">repair_denied   </span>=> { "$(x)" };
-<span class="red">repair_timeout  </span>=> { "$(x)" };
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -816,8 +816,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body classes if_ok(x)
 {
-<span class="red">promise_repaired </span>=> { "$(x)" };
-<span class="red">promise_kept </span>=> { "$(x)" };
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -837,7 +837,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body classes if_repaired(x)
 {
-<span class="red">promise_repaired </span>=> { "$(x)" };
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -857,8 +857,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body classes state_repaired(x)
 {
-<span class="red">promise_repaired </span>=> { "$(x)" };
-<span class="red">persist_time </span>=><span class="green"> "10";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -878,7 +878,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body contain in_dir(s)
 {
-<span class="red">chdir </span>=><span class="green"> "$(s)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -898,8 +898,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body contain in_dir_shell(s)
 {
-<span class="red">chdir </span>=><span class="green"> "$(s)";</span>
-<span class="red">useshell </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -919,7 +919,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body contain in_shell
 {
-<span class="red">useshell </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -938,10 +938,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body contain jail(owner,root,dir)
 {
-<span class="red">exec_owner </span>=><span class="green"> "$(owner)";</span>
-<span class="red">useshell </span>=><span class="green"> "true";</span>
-<span class="red">chdir </span>=><span class="green"> "$(dir)";</span>
-<span class="red">chroot </span>=><span class="green"> "$(root)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -962,8 +962,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body contain setuid(x)
 {
-<span class="red">exec_owner </span>=><span class="green"> "$(x)";</span>
-<span class="red">useshell </span>=><span class="green"> "false";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -983,8 +983,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body contain setuid_sh(x)
 {
-<span class="red">exec_owner </span>=><span class="green"> "$(x)";</span>
-<span class="red">useshell </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1004,9 +1004,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body contain setuidgid_sh(owner,group)
 {
-<span class="red">exec_owner </span>=><span class="green"> "$(owner)";</span>
-<span class="red">exec_group </span>=><span class="green"> "$(group)";</span>
-<span class="red">useshell </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1025,7 +1025,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body contain silent
 {
-<span class="red">no_output </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1045,8 +1045,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body contain silent_in_dir(s)
 {
-<span class="red">chdir </span>=><span class="green"> "$(s)";</span>
-<span class="red">no_output </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1066,7 +1066,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body copy_from local_cp(from)
 {
-<span class="red">source      </span>=><span class="green"> "$(from)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1086,8 +1086,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body copy_from no_backup_cp(from)
 {
-<span class="red">source      </span>=><span class="green"> "$(from)";</span>
-<span class="red">copy_backup </span>=><span class="green"> "false";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1107,10 +1107,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body copy_from no_backup_rcp(from,server)
 {
-<span class="red">servers     </span>=> { "$(server)" };
-<span class="red">source      </span>=><span class="green"> "$(from)";</span>
-<span class="red">compare     </span>=><span class="green"> "mtime";</span>
-<span class="red">copy_backup </span>=><span class="green"> "false";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1130,8 +1130,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body copy_from perms_cp(from)
 {
-<span class="red">source      </span>=><span class="green"> "$(from)";</span>
-<span class="red">preserve    </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1154,9 +1154,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body copy_from remote_cp(from,server)
 {
-<span class="red">servers     </span>=> { "$(server)" };
-<span class="red">source      </span>=><span class="green"> "$(from)";</span>
-<span class="red">compare     </span>=><span class="green"> "mtime";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1176,11 +1176,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body copy_from secure_cp(from,server)
 {
-<span class="red">source      </span>=><span class="green"> "$(from)";</span>
-<span class="red">servers     </span>=> { "$(server)" };
-<span class="red">compare     </span>=><span class="green"> "digest";</span>
-<span class="red">encrypt     </span>=><span class="green"> "true";</span>
-<span class="red">verify      </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1200,8 +1200,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body copy_from seed_cp(from)
 {
-<span class="red">source      </span>=><span class="green"> "$(from)";</span>
-<span class="red">compare     </span>=><span class="green"> "exists";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1221,10 +1221,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body copy_from sync_cp(from,server)
 {
-<span class="red">servers     </span>=> { "$(server)" };
-<span class="red">source      </span>=><span class="green"> "$(from)";</span>
-<span class="red">purge       </span>=><span class="green"> "true";</span>
-<span class="red">preserve    </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1244,8 +1244,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <pre class="verbatim">body delete tidy
 
 {
-<span class="red">dirlinks </span>=><span class="green"> "delete";</span>
-<span class="red">rmdirs   </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1266,8 +1266,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <pre class="verbatim">body depth_search recurse(d)
 
 {
-<span class="red">depth </span>=><span class="green"> "$(d)";</span>
-<span class="red">xdev  </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1287,8 +1287,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body depth_search recurse_ignore(d,list)
 {
-<span class="red">depth </span>=><span class="green"> "$(d)";</span>
-<span class="red">exclude_dirs </span>=> { @(list) };
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1308,9 +1308,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body edit_defaults empty
 {
-<span class="red">empty_file_before_editing </span>=><span class="green"> "true";</span>
-<span class="red">edit_backup </span>=><span class="green"> "false";</span>
-<span class="red">max_file_size </span>=><span class="green"> "300000";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1330,9 +1330,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body edit_defaults std_defs
 {
-<span class="red">empty_file_before_editing </span>=><span class="green"> "false";</span>
-<span class="red">edit_backup </span>=><span class="green"> "false";</span>
-<span class="red">max_file_size </span>=><span class="green"> "300000";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1352,13 +1352,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body edit_field col(split,col,newval,method)
 {
-<span class="red">field_separator    </span>=><span class="green"> "$(split)";</span>
-<span class="red">select_field       </span>=><span class="green"> "$(col)";</span>
-<span class="red">value_separator    </span>=><span class="green"> ",";</span>
-<span class="red">field_value        </span>=><span class="green"> "$(newval)";</span>
-<span class="red">field_operation    </span>=><span class="green"> "$(method)";</span>
-<span class="red">extend_fields      </span>=><span class="green"> "true";</span>
-<span class="red">allow_blank_fields </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1379,13 +1379,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body edit_field quoted_var(newval,method)
 {
-<span class="red">field_separator </span>=><span class="green"> "\"";</span>
-<span class="red">select_field    </span>=><span class="green"> "2";</span>
-<span class="red">value_separator  </span>=><span class="green"> " ";</span>
-<span class="red">field_value     </span>=><span class="green"> "$(newval)";</span>
-<span class="red">field_operation </span>=><span class="green"> "$(method)";</span>
-<span class="red">extend_fields </span>=><span class="green"> "false";</span>
-<span class="red">allow_blank_fields </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1405,8 +1405,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body file_select by_name(names)
 {
-<span class="red">leaf_name  </span>=> { @(names)};
-<span class="red">file_result </span>=><span class="green"> "leaf_name";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1426,8 +1426,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body file_select days_old(days)
 {
-<span class="red">mtime       </span>=> irange(0,ago(0,0,"$(days)",0,0,0));
-<span class="red">file_result </span>=><span class="green"> "mtime";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1447,8 +1447,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body file_select dirs
 {
-<span class="red">file_types  </span>=> { "dir" };
-<span class="red">file_result </span>=><span class="green"> "file_types";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1468,8 +1468,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body file_select ex_list(names)
 {
-<span class="red">leaf_name  </span>=> { @(names)};
-<span class="red">file_result </span>=><span class="green"> "!leaf_name";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1489,8 +1489,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body file_select exclude(name)
 {
-<span class="red">leaf_name  </span>=> { "$(name)"};
-<span class="red">file_result </span>=><span class="green"> "!leaf_name";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1510,9 +1510,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body file_select name_age(name,days)
 {
-<span class="red">leaf_name   </span>=> { "$(name)" };
-<span class="red">mtime       </span>=> irange(0,ago(0,0,"$(days)",0,0,0));  
-<span class="red">file_result </span>=><span class="green"> "mtime.leaf_name"; </span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1532,8 +1532,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body file_select plain
 {
-<span class="red">file_types  </span>=> { "plain" };
-<span class="red">file_result </span>=><span class="green"> "file_types";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 </pre>
@@ -1552,8 +1552,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body file_select size_range(from,to)
 {
-<span class="red">search_size </span>=> irange("$(from)","$(to)");
-<span class="red">file_result </span>=><span class="green"> "size";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1573,11 +1573,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body link_from linkchildren(tofile)
 {
-<span class="red">source        </span>=><span class="green"> "$(tofile)";</span>
-<span class="red">link_type     </span>=><span class="green"> "symlink";</span>
-<span class="red">when_no_source  </span>=><span class="green"> "force";</span>
-<span class="red">link_children </span>=><span class="green"> "true";</span>
-<span class="red">when_linking_children </span>=><span class="green"> "if_no_such_file"; # "override_file";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1597,9 +1597,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body link_from ln_s(x)
 {
-<span class="red">link_type </span>=><span class="green"> "symlink";</span>
-<span class="red">source </span>=><span class="green"> "$(x)";</span>
-<span class="red">when_no_source </span>=><span class="green"> "force";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1618,8 +1618,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body location after(str)
 {
-<span class="red">before_after </span>=><span class="green"> "after";</span>
-<span class="red">select_line_matching </span>=><span class="green"> "$(str)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1639,7 +1639,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body location start
 {
-<span class="red">before_after </span>=><span class="green"> "before";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1659,8 +1659,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body match_value scan_log(line)
 {
-<span class="red">select_line_matching </span>=><span class="green"> "$(line)";</span>
-<span class="red">track_growing_file </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1679,10 +1679,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body mount nfs(server,source)
 {
-<span class="red">mount_type </span>=><span class="green"> "nfs";</span>
-<span class="red">mount_source </span>=><span class="green"> "$(source)";</span>
-<span class="red">mount_server </span>=><span class="green"> "$(server)";</span>
-<span class="red">edit_fstab </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1703,11 +1703,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body mount nfs_p(server,source,perm)
 {
-<span class="red">mount_type </span>=><span class="green"> "nfs";</span>
-<span class="red">mount_source </span>=><span class="green"> "$(source)";</span>
-<span class="red">mount_server </span>=><span class="green"> "$(server)";</span>
-<span class="red">mount_options </span>=> {"$(perm)"};
-<span class="red">edit_fstab </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1726,9 +1726,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body mount unmount
 {
-<span class="red">mount_type </span>=><span class="green"> "nfs";</span>
-<span class="red">edit_fstab </span>=><span class="green"> "true";</span>
-<span class="red">unmount </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1748,29 +1748,29 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body package_method apt
 {
-<span class="red">package_changes </span>=><span class="green"> "bulk";</span>
-<span class="red">package_list_command </span>=><span class="green"> "/usr/bin/dpkg -l";</span>
-<span class="red">package_list_name_regex    </span>=><span class="green"> "ii\s+([^\s]+).*";</span>
-<span class="red">package_list_version_regex </span>=><span class="green"> "ii\s+[^\s]+\s+([^\s]+).*";</span>
-<span class="red">package_installed_regex </span>=><span class="green"> ".*"; # all reported are installed</span>
-<span class="red">package_name_convention </span>=><span class="green"> "$(name)";</span>
-<span class="red">package_list_update_ifelapsed </span>=><span class="green"> "240";		# 4 hours</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 have_aptitude::
-<span class="red">   package_add_command </span>=><span class="green"> "/usr/bin/aptitude --assume-yes install";</span>
-<span class="red">   package_list_update_command </span>=><span class="green"> "/usr/bin/aptitude update";</span>
-<span class="red">   package_delete_command </span>=><span class="green"> "/usr/bin/aptitude --assume-yes remove";</span>
-<span class="red">   package_update_command </span>=><span class="green">  "/usr/bin/aptitude --assume-yes install";</span>
-<span class="red">   package_verify_command </span>=><span class="green">  "/usr/bin/aptitude show";</span>
-<span class="red">   package_noverify_regex </span>=><span class="green"> "(State: not installed|E: Unable to locate package .*)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 !have_aptitude::
-<span class="red">   package_add_command </span>=><span class="green"> "/usr/bin/apt-get --yes install";</span>
-<span class="red">   package_list_update_command </span>=><span class="green"> "/usr/bin/apt-get update";</span>
-<span class="red">   package_delete_command </span>=><span class="green"> "/usr/bin/apt-get --yes remove";</span>
-<span class="red">   package_update_command </span>=><span class="green">  "/usr/bin/apt-get --yes install";</span>
-<span class="red">   package_verify_command </span>=><span class="green"> "/usr/bin/dpkg -s";</span>
-<span class="red">   package_noverify_returncode </span>=><span class="green"> "1";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1790,32 +1790,32 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body package_method freebsd
 {
-<span class="red"> package_changes </span>=><span class="green"> "individual";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 <span class="comment"> # Could use rpm for this
 </span>
-<span class="red"> package_list_command </span>=><span class="green"> "/usr/sbin/pkg_info";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 <span class="comment"> # Remember to escape special characters like |
 </span>
 
-<span class="red"> package_list_name_regex    </span>=><span class="green"> "([^-]+).*";</span>
-<span class="red"> package_list_version_regex </span>=><span class="green"> "[^-]+-([^\s]+).*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red"> package_name_regex    </span>=><span class="green"> "([^-]+).*";</span>
-<span class="red"> package_version_regex </span>=><span class="green"> "[^-]+-([^\s]+).*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red"> package_installed_regex </span>=><span class="green"> ".*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red"> package_name_convention </span>=><span class="green"> "$(name)-$(version)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 
-<span class="red">package_add_command </span>=><span class="green"> "/usr/sbin/pkg_add -r";</span>
-<span class="red">package_delete_command </span>=><span class="green"> "/usr/sbin/pkg_delete";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
-<span class="comment"> # Single bundle for all the similar managers simplifies promises
+<span class="red"><span class="comment"></span> <span class="blue">#</span>
 </span>
 
 </pre>
@@ -1835,77 +1835,77 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <pre class="verbatim">body package_method generic
 {
 SuSE::
-<span class="red"> package_changes </span>=><span class="green"> "bulk";</span>
-<span class="red"> package_list_command </span>=><span class="green"> "/usr/bin/zypper packages";</span>
-<span class="red"> package_patch_list_command </span>=><span class="green"> "/usr/bin/zypper patches";</span>
-<span class="red"> package_installed_regex </span>=><span class="green"> "i.*";</span>
-<span class="red"> package_list_name_regex    </span>=><span class="green"> "[^|]+\|[^|]+\|\s+([^\s]+).*";</span>
-<span class="red"> package_list_version_regex </span>=><span class="green"> "[^|]+\|[^|]+\|[^|]+\|\s+([^\s]+).*";</span>
-<span class="red"> package_list_arch_regex    </span>=><span class="green"> "[^|]+\|[^|]+\|[^|]+\|[^|]+\|\s+([^\s]+).*";</span>
-<span class="red"> package_patch_installed_regex </span>=><span class="green"> ".*Installed.*|.*Not Applicable.*";</span>
-<span class="red"> package_patch_name_regex    </span>=><span class="green"> "[^|]+\|\s+([^\s]+).*";</span>
-<span class="red"> package_patch_version_regex </span>=><span class="green"> "[^|]+\|[^|]+\|\s+([^\s]+).*";</span>
-<span class="red"> package_name_convention </span>=><span class="green"> "$(name)";</span>
-<span class="red"> package_add_command </span>=><span class="green"> "/usr/bin/zypper --non-interactive install";</span>
-<span class="red"> package_delete_command </span>=><span class="green"> "/usr/bin/zypper --non-interactive remove --force-resolution";</span>
-<span class="red"> package_update_command </span>=><span class="green"> "/usr/bin/zypper --non-interactive update";</span>
-<span class="red"> package_patch_command </span>=><span class="green"> "/usr/bin/zypper --non-interactive patch$"; # $ means no args</span>
-<span class="red"> package_verify_command </span>=><span class="green"> "/usr/bin/zypper --non-interactive verify$";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 redhat::
-<span class="red"> package_changes </span>=><span class="green"> "bulk";</span>
-<span class="red"> package_list_command </span>=><span class="green"> "/usr/bin/yum list installed";</span>
-<span class="red"> package_patch_list_command </span>=><span class="green"> "/usr/bin/yum check-update";</span>
-<span class="red"> package_list_name_regex    </span>=><span class="green"> "([^.]+).*";</span>
-<span class="red"> package_list_version_regex </span>=><span class="green"> "[^\s]\s+([^\s]+).*";</span>
-<span class="red"> package_list_arch_regex    </span>=><span class="green"> "[^.]+\.([^\s]+).*";</span>
-<span class="red"> package_installed_regex </span>=><span class="green"> ".*installed.*";</span>
-<span class="red"> package_name_convention </span>=><span class="green"> "$(name).$(arch)";</span>
-<span class="red"> package_list_update_ifelapsed </span>=><span class="green"> "240";</span>
-<span class="red"> package_patch_installed_regex </span>=><span class="green"> "";</span>
-<span class="red"> package_patch_name_regex    </span>=><span class="green"> "([^.]+).*";</span>
-<span class="red"> package_patch_version_regex </span>=><span class="green"> "[^\s]\s+([^\s]+).*";</span>
-<span class="red"> package_patch_arch_regex    </span>=><span class="green"> "[^.]+\.([^\s]+).*";</span>
-<span class="red"> package_add_command </span>=><span class="green"> "/usr/bin/yum -y install";</span>
-<span class="red"> package_delete_command </span>=><span class="green"> "/bin/rpm -e";</span>
-<span class="red"> package_verify_command </span>=><span class="green"> "/bin/rpm -V";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 debian::
-<span class="red"> package_changes </span>=><span class="green"> "bulk";</span>
-<span class="red"> package_list_command </span>=><span class="green"> "/usr/bin/dpkg -l";</span>
-<span class="red"> package_list_name_regex    </span>=><span class="green"> "ii\s+([^\s]+).*";</span>
-<span class="red"> package_list_version_regex </span>=><span class="green"> "ii\s+[^\s]+\s+([^\s]+).*";</span>
-<span class="red"> package_installed_regex </span>=><span class="green"> ".*"; # all reported are installed</span>
-<span class="red"> package_name_convention </span>=><span class="green"> "$(name)";</span>
-<span class="red"> package_list_update_ifelapsed </span>=><span class="green"> "240";		# 4 hours</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 debian.have_aptitude::
-<span class="red">   package_add_command </span>=><span class="green"> "/usr/bin/aptitude --assume-yes install";</span>
-<span class="red">   package_list_update_command </span>=><span class="green"> "/usr/bin/aptitude update";</span>
-<span class="red">   package_delete_command </span>=><span class="green"> "/usr/bin/aptitude --assume-yes remove";</span>
-<span class="red">   package_update_command </span>=><span class="green">  "/usr/bin/aptitude --assume-yes install";</span>
-<span class="red">   package_verify_command </span>=><span class="green">  "/usr/bin/aptitude show";</span>
-<span class="red">   package_noverify_regex </span>=><span class="green"> "(State: not installed|E: Unable to locate package .*)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 debian.!have_aptitude::
-<span class="red">   package_add_command </span>=><span class="green"> "/usr/bin/apt-get --yes install";</span>
-<span class="red">   package_list_update_command </span>=><span class="green"> "/usr/bin/apt-get update";</span>
-<span class="red">   package_delete_command </span>=><span class="green"> "/usr/bin/apt-get --yes remove";</span>
-<span class="red">   package_update_command </span>=><span class="green">  "/usr/bin/apt-get --yes install";</span>
-<span class="red">   package_verify_command </span>=><span class="green"> "/usr/bin/dpkg -s";</span>
-<span class="red">   package_noverify_returncode </span>=><span class="green"> "1";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 freebsd::
-<span class="red"> package_changes </span>=><span class="green"> "individual";</span>
-<span class="red"> package_list_command </span>=><span class="green"> "/usr/sbin/pkg_info";</span>
-<span class="red"> package_list_name_regex    </span>=><span class="green"> "([^-]+).*";</span>
-<span class="red"> package_list_version_regex </span>=><span class="green"> "[^-]+-([^\s]+).*";</span>
-<span class="red"> package_name_regex    </span>=><span class="green"> "([^-]+).*";</span>
-<span class="red"> package_version_regex </span>=><span class="green"> "[^-]+-([^\s]+).*";</span>
-<span class="red"> package_installed_regex </span>=><span class="green"> ".*";</span>
-<span class="red"> package_name_convention </span>=><span class="green"> "$(name)-$(version)";</span>
-<span class="red"> package_add_command </span>=><span class="green"> "/usr/sbin/pkg_add -r";</span>
-<span class="red"> package_delete_command </span>=><span class="green"> "/usr/sbin/pkg_delete";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1929,17 +1929,17 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <span class="comment"># specify any package_version and package_arch
 </span>
 {
-<span class="red">package_changes </span>=><span class="green"> "individual";</span>
-<span class="red">package_file_repositories </span>=> { "$(repo)" };
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_installed_regex </span>=><span class="green"> ".*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
  
-<span class="red">package_name_convention </span>=><span class="green"> "$(name)-$(version)-$(arch).msi";</span>
-<span class="red">package_delete_convention </span>=><span class="green"> "$(firstrepo)$(name)-$(version)-$(arch).msi";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_add_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";</span>
-<span class="red">package_update_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";</span>
-<span class="red">package_delete_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /x";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1963,21 +1963,21 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <span class="comment"># the name, version and arch is then deduced from the promiser
 </span>
 {
-<span class="red">package_changes </span>=><span class="green"> "individual";</span>
-<span class="red">package_file_repositories </span>=> { "$(repo)" };
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_installed_regex </span>=><span class="green"> ".*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
  
-<span class="red">package_name_convention </span>=><span class="green"> "$(name)-$(version)-$(arch).msi";</span>
-<span class="red">package_delete_convention </span>=><span class="green"> "$(firstrepo)$(name)-$(version)-$(arch).msi";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_name_regex </span>=><span class="green"> "^(\S+)-(\d+\.?)+";</span>
-<span class="red">package_version_regex </span>=><span class="green"> "^\S+-((\d+\.?)+)";</span>
-<span class="red">package_arch_regex </span>=><span class="green"> "^\S+-[\d\.]+-(.*).msi";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_add_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";</span>
-<span class="red">package_update_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";</span>
-<span class="red">package_delete_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /x";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -1997,25 +1997,25 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body package_method rpm_version(repo)
 {
-<span class="red">package_changes </span>=><span class="green"> "individual";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_list_command </span>=><span class="green"> "/bin/rpm -qa --queryformat \"i | repos | %{name} | %{version} | %{arch}\n\"";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_list_name_regex    </span>=><span class="green"> "[^|]+\|[^|]+\|\s+([^\s|]+).*";</span>
-<span class="red">package_list_version_regex </span>=><span class="green"> "[^|]+\|[^|]+\|[^|]+\|\s+([^\s|]+).*";</span>
-<span class="red">package_list_arch_regex    </span>=><span class="green"> "[^|]+\|[^|]+\|[^|]+\|[^|]+\|\s+([^\s]+).*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_installed_regex </span>=><span class="green"> "i.*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
  
-<span class="red">package_file_repositories </span>=> { "$(repo)" };
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_name_convention </span>=><span class="green"> "$(name)-$(version)-$(arch).rpm";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_add_command </span>=><span class="green"> "/bin/rpm -ivh ";</span>
-<span class="red">package_delete_command </span>=><span class="green"> "/bin/rpm -e --nodeps";</span>
-<span class="red">package_verify_command </span>=><span class="green"> "/bin/rpm -V";</span>
-<span class="red">package_update_command </span>=><span class="green"> "/bin/rpm -Uvh ";</span>
-<span class="red">package_noverify_regex </span>=><span class="green"> ".*[^\s].*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2035,16 +2035,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body package_method solaris (pkgname, spoolfile, adminfile)
 {
-<span class="red">package_changes </span>=><span class="green"> "individual";</span>
-<span class="red">package_list_command </span>=><span class="green"> "/usr/bin/pkginfo -l";</span>
-<span class="red">package_multiline_start    </span>=><span class="green">  "\s*PKGINST:\s+[^\s]+";</span>
-<span class="red">package_list_name_regex    </span>=><span class="green"> "\s*PKGINST:\s+([^\s]+)";</span>
-<span class="red">package_list_version_regex </span>=><span class="green"> "\s*VERSION:\s+([^\s]+)";</span>
-<span class="red">package_list_arch_regex    </span>=><span class="green"> "\s*ARCH:\s+([^\s]+)";</span>
-<span class="red">package_installed_regex </span>=><span class="green"> "\s*STATUS:\s*(completely|partially)\s+installed.*";</span>
-<span class="red">package_name_convention </span>=><span class="green"> "$(name)";</span>
-<span class="red">package_add_command </span>=><span class="green"> "/usr/sbin/pkgadd -n -a /tmp/$(adminfile) -d /tmp/$(spoolfile)";</span>
-<span class="red">package_delete_command </span>=><span class="green"> "/usr/sbin/pkgrm -n -a /tmp/$(adminfile)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2064,30 +2064,30 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body package_method yum
 {
-<span class="red">package_changes </span>=><span class="green"> "bulk";</span>
-<span class="red">package_list_command </span>=><span class="green"> "/usr/bin/yum list installed";</span>
-<span class="red">package_patch_list_command </span>=><span class="green"> "/usr/bin/yum check-update";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 <span class="comment"># Remember to escape special characters like |
 </span>
 
-<span class="red">package_list_name_regex    </span>=><span class="green"> "([^.]+).*";</span>
-<span class="red">package_list_version_regex </span>=><span class="green"> "[^\s]\s+([^\s]+).*";</span>
-<span class="red">package_list_arch_regex    </span>=><span class="green"> "[^.]+\.([^\s]+).*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_installed_regex </span>=><span class="green"> ".*installed.*";</span>
-<span class="red">package_name_convention </span>=><span class="green"> "$(name).$(arch)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_list_update_ifelapsed </span>=><span class="green"> "240";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_patch_installed_regex </span>=><span class="green"> "";</span>
-<span class="red">package_patch_name_regex    </span>=><span class="green"> "([^.]+).*";</span>
-<span class="red">package_patch_version_regex </span>=><span class="green"> "[^\s]\s+([^\s]+).*";</span>
-<span class="red">package_patch_arch_regex    </span>=><span class="green"> "[^.]+\.([^\s]+).*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_add_command </span>=><span class="green"> "/usr/bin/yum -y install";</span>
-<span class="red">package_delete_command </span>=><span class="green"> "/bin/rpm -e";</span>
-<span class="red">package_verify_command </span>=><span class="green"> "/bin/rpm -V";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2111,8 +2111,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <span class="comment"># More efficient package method for RedHat - uses rpm to list instead of yum
 </span>
-<span class="comment"># Notes:
-</span>
+<span class="red"><span class="comment"># Notes:
+</span></span>
 <span class="comment"># - using $(name).$(arch) instead of $(name) for package_name_convention
 </span>
 <span class="comment">#   causes uninstallation to fail.
@@ -2122,26 +2122,26 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <span class="comment">#
 </span>
 {
-<span class="red">  package_changes </span>=><span class="green"> "bulk";</span>
-<span class="red">  package_list_command </span>=><span class="green"> "/bin/rpm -qa --qf '%{name} %{version}-%{release} %{arch}\n'";</span>
-<span class="red">  package_patch_list_command </span>=><span class="green"> "/usr/bin/yum check-update";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">  package_list_name_regex    </span>=><span class="green"> "^(\S+?)\s\S+?\s\S+$";</span>
-<span class="red">  package_list_version_regex </span>=><span class="green"> "^\S+?\s(\S+?)\s\S+$";</span>
-<span class="red">  package_list_arch_regex    </span>=><span class="green"> "^\S+?\s\S+?\s(\S+)$";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">  package_installed_regex </span>=><span class="green"> ".*";</span>
-<span class="red">  package_name_convention </span>=><span class="green"> "$(name)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">  package_patch_installed_regex </span>=><span class="green"> "";</span>
-<span class="red">  package_patch_name_regex    </span>=><span class="green"> "([^.]+).*";</span>
-<span class="red">  package_patch_version_regex </span>=><span class="green"> "[^\s]\s+([^\s]+).*";</span>
-<span class="red">  package_patch_arch_regex    </span>=><span class="green"> "[^.]+\.([^\s]+).*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">  package_add_command    </span>=><span class="green"> "/usr/bin/yum -y install";</span>
-<span class="red">  package_update_command </span>=><span class="green"> "/usr/bin/yum -y update";</span>
-<span class="red">  package_delete_command </span>=><span class="green"> "/bin/rpm -e --allmatches";</span>
-<span class="red">  package_verify_command </span>=><span class="green"> "/bin/rpm -V";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2169,26 +2169,26 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <pre class="verbatim">body package_method zypper
 
 {
-<span class="red">package_changes </span>=><span class="green"> "bulk";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_list_command </span>=><span class="green"> "/usr/bin/zypper packages";</span>
-<span class="red">package_patch_list_command </span>=><span class="green"> "/usr/bin/zypper patches";</span>
-<span class="red">package_installed_regex </span>=><span class="green"> "i.*";</span>
-<span class="red">package_list_name_regex    </span>=><span class="green"> "[^|]+\|[^|]+\|\s+([^\s]+).*";</span>
-<span class="red">package_list_version_regex </span>=><span class="green"> "[^|]+\|[^|]+\|[^|]+\|\s+([^\s]+).*";</span>
-<span class="red">package_list_arch_regex    </span>=><span class="green"> "[^|]+\|[^|]+\|[^|]+\|[^|]+\|\s+([^\s]+).*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_patch_installed_regex </span>=><span class="green"> ".*Installed.*|.*Not Applicable.*";</span>
-<span class="red">package_patch_name_regex    </span>=><span class="green"> "[^|]+\|\s+([^\s]+).*";</span>
-<span class="red">package_patch_version_regex </span>=><span class="green"> "[^|]+\|[^|]+\|\s+([^\s]+).*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_name_convention </span>=><span class="green"> "$(name)";</span>
-<span class="red">package_add_command </span>=><span class="green"> "/usr/bin/zypper --non-interactive install";</span>
-<span class="red">package_delete_command </span>=><span class="green"> "/usr/bin/zypper --non-interactive remove --force-resolution";</span>
-<span class="red">package_update_command </span>=><span class="green"> "/usr/bin/zypper --non-interactive update";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">package_patch_command </span>=><span class="green"> "/usr/bin/zypper --non-interactive patch$"; # $ means no args</span>
-<span class="red">package_verify_command </span>=><span class="green"> "/usr/bin/zypper --non-interactive verify$";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2207,7 +2207,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body perms m(mode)
 {
-<span class="red">mode   </span>=><span class="green"> "$(mode)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2226,8 +2226,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body perms mo(mode,user)
 {
-<span class="red">owners </span>=> { "$(user)" };
-<span class="red">mode   </span>=><span class="green"> "$(mode)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2246,9 +2246,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body perms mog(mode,user,group)
 {
-<span class="red">owners </span>=> { "$(user)" };
-<span class="red">groups </span>=> { "$(group)" };
-<span class="red">mode   </span>=><span class="green"> "$(mode)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2267,8 +2267,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body perms og(u,g)
 {
-<span class="red">owners </span>=> { "$(u)" };
-<span class="red">groups </span>=> { "$(g)" };
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2287,7 +2287,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body perms owner(user)
 {
-<span class="red">owners </span>=> { "$(user)" };
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2307,8 +2307,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body process_count check_range(name,lower,upper)
 {
-<span class="red">match_range </span>=> irange("$(lower)","$(upper)");
-<span class="red">out_of_range_define </span>=> { "$(name)_out_of_range" };
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2328,8 +2328,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body process_select exclude_procs(x)
 {
-<span class="red">command </span>=><span class="green"> "$(x)";</span>
-<span class="red">process_result </span>=><span class="green"> "!command";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2348,7 +2348,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body rename disable
 {
-<span class="red">disable </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2367,7 +2367,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body rename rotate(level)
 {
-<span class="red">rotate </span>=><span class="green"> "$(level)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2386,7 +2386,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body rename to(file)
 {
-<span class="red">newname </span>=><span class="green"> "$(file)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2406,8 +2406,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body replace_with comment(c)
 {
-<span class="red">replace_value </span>=><span class="green"> "$(c) $(match.1)";</span>
-<span class="red">occurrences </span>=><span class="green"> "all";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2427,8 +2427,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body replace_with uncomment
 {
-<span class="red">replace_value </span>=><span class="green"> "$(match.1)";</span>
-<span class="red">occurrences </span>=><span class="green"> "all";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2449,8 +2449,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body replace_with value(x)
 {
-<span class="red">replace_value </span>=><span class="green"> "$(x)";</span>
-<span class="red">occurrences </span>=><span class="green"> "all";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2470,8 +2470,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body select_region INI_section(x)
 {
-<span class="red">select_start </span>=><span class="green"> "\[$(x)\]\s*";</span>
-<span class="red">select_end </span>=><span class="green"> "\[.*\]\s*";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2491,10 +2491,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body service_method bootstart
 {
-<span class="red">  service_autostart_policy </span>=><span class="green"> "boot_time";</span>
-<span class="red">  service_dependence_chain </span>=><span class="green"> "start_parent_services";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 windows::
-<span class="red">  service_type </span>=><span class="green"> "windows";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2514,9 +2514,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body service_method force_deps
 {
-<span class="red">  service_dependence_chain </span>=><span class="green"> "all_related";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 windows::
-<span class="red">  service_type </span>=><span class="green"> "windows";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2536,10 +2536,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">body volume min_free_space(free)
 {
-<span class="red">check_foreign  </span>=><span class="green"> "false";</span>
-<span class="red">freespace      </span>=><span class="green"> "$(free)";</span>
-<span class="red">sensible_size  </span>=><span class="green"> "10000";</span>
-<span class="red">sensible_count </span>=><span class="green"> "2";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2560,32 +2560,32 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <span class="comment"> # For adding lines to crontab for a user
 </span>
-<span class="comment"> # methods:
-</span>
-<span class="comment"> #  "cron" usebundle => cronjob("/bin/ls","mark","*","5,10");
+<span class="red"><span class="comment"> # methods:
+</span></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 </span>
 
 {
-<span class="red">vars:
-</span>  SuSE::
-   "crontab"<span class="red"> string </span>=><span class="green"> "/var/spool/cron/tabs";</span>
+<span class="red"><span class="red">vars:
+</span></span>  SuSE::
+   "crontab"<span class="red"><span class</span>=><span class="blue"></span>
  !SuSE::
-   "crontab"<span class="red"> string </span>=><span class="green"> "/var/spool/cron/crontabs";</span>
+   "crontab"<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">files:
-</span>
+<span class="red"><span class="red">files:
+</span></span>
   "$(crontab)/$(user)" 
 
-<span class="red">    comment </span>=><span class="green"> "A user's regular batch jobs are added to this file",</span>
-<span class="red">     create </span>=><span class="green"> "true",</span>
-<span class="red">     edit_line </span>=><span class="blue"> append_if_no_line("$(mins) $(hours) * * * $(commands)"),</span>
-<span class="red">     perms </span>=><span class="blue"> mo("644","$(user)");</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">processes:
-</span>
+<span class="red"><span class="red">processes:
+</span></span>
    "cron"
-<span class="red">         comment </span>=><span class="green"> "Most crons need to be huped after file changes",</span>
-<span class="red">         signals </span>=> { "hup" };
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 }
 
@@ -2610,24 +2610,24 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <span class="comment"> # For adding groups to /etc/group, needs
 </span>
-<span class="comment"> # an array v[groupname] string => "line..."
+<span class="red"><span class</span>=><span class="blue"></span>
 </span>
 
 {
-<span class="red">vars:
-</span>
-  "index"<span class="red">        slist </span>=> getindices("$(v)");
+<span class="red"><span class="red">vars:
+</span></span>
+  "index"<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">classes:
-</span>
-  "add_$(index)"<span class="red"> not </span>=> groupexists("$(index)");
+<span class="red"><span class="red">classes:
+</span></span>
+  "add_$(index)"<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">insert_lines:
-</span>
+<span class="red"><span class="red">insert_lines:
+</span></span>
   "$($(v)[$(index)])",
 
-<span class="red">         comment </span>=><span class="green"> "Append users into a group file format",</span>
-<span class="red">      ifvarclass </span>=><span class="green"> "add_$(index)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 }
 
@@ -2648,11 +2648,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">bundle edit_line append_if_no_line(str)
 {
-<span class="red">insert_lines:
-</span>
+<span class="red"><span class="red">insert_lines:
+</span></span>
  "$(str)"
 
-<span class="red">     comment </span>=><span class="green"> "Append a line to the file if it doesn't already exist";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2672,11 +2672,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">bundle edit_line append_if_no_lines(list)
 {
-<span class="red">insert_lines:
-</span>
+<span class="red"><span class="red">insert_lines:
+</span></span>
  "$(list)"
 
-<span class="red">   comment </span>=><span class="green"> "Append lines to the file if they don't already exist";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2702,16 +2702,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 
 {
-<span class="red">vars:
-</span>
-  "val"<span class="red"> slist </span>=> { @(allusers) };
+<span class="red"><span class="red">vars:
+</span></span>
+  "val"<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">field_edits:
-</span>
-<span class="red"> "$(group):.*"
-</span>
-<span class="red">       comment </span>=><span class="green"> "Append users into a password file format",</span>
-<span class="red">    edit_field </span>=><span class="blue"> col(":","$(field)","$(val)","alphanum");</span>
+<span class="red"><span class="red">field_edits:
+</span></span>
+<span class="red"><span class="red"> "$(group):.*"
+</span></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2733,24 +2733,24 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <span class="comment"> # For adding to /etc/passwd or etc/shadow, needs
 </span>
-<span class="comment"> # an array v[username] string => "line..."
+<span class="red"><span class</span>=><span class="blue"></span>
 </span>
 
 {
-<span class="red">vars:
-</span>
-  "index"<span class="red">        slist </span>=> getindices("$(v)");
+<span class="red"><span class="red">vars:
+</span></span>
+  "index"<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">classes:
-</span>
-  "add_$(index)"<span class="red"> not </span>=> userexists("$(index)");
+<span class="red"><span class="red">classes:
+</span></span>
+  "add_$(index)"<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">insert_lines:
-</span>
+<span class="red"><span class="red">insert_lines:
+</span></span>
   "$($(v)[$(index)])",
 
-<span class="red">         comment </span>=><span class="green"> "Append users into a password file format",</span>
-<span class="red">      ifvarclass </span>=><span class="green"> "add_$(index)";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2774,12 +2774,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 
 {
-<span class="red">replace_patterns:
-</span> 
+<span class="red"><span class="red">replace_patterns:
+</span></span> 
  "^(.*$(regex).*)$" 
 
-<span class="red">     replace_with </span>=><span class="blue"> comment("$(comment)"),</span>
-<span class="red">          comment </span>=><span class="green"> "Comment out lines in a file";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 	 
 	 
@@ -2803,12 +2803,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 
 {
-<span class="red">replace_patterns:
-</span>	 
+<span class="red"><span class="red">replace_patterns:
+</span></span>	 
  "^($(regex))$" 
 
-<span class="red">     replace_with </span>=><span class="blue"> comment("$(comment)"),</span>
-<span class="red">          comment </span>=><span class="green"> "Search and replace string";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 	 
 	 
@@ -2828,11 +2828,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">bundle edit_line delete_lines_matching(regex)
 {
-<span class="red">delete_lines:
-</span>
+<span class="red"><span class="red">delete_lines:
+</span></span>
   "$(regex)"
 
-<span class="red">     comment </span>=><span class="green"> "Delete lines matching regular expressions";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2858,13 +2858,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 
 {
-<span class="red">insert_lines:
-</span>
+<span class="red"><span class="red">insert_lines:
+</span></span>
    "$(templatefile)"
 
-<span class="red">        insert_type </span>=><span class="green"> "file",</span>
-<span class="red">            comment </span>=><span class="green"> "Expand variables in the template file",</span>
-<span class="red">     expand_scalars </span>=><span class="green"> "true";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2885,16 +2885,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 <pre class="verbatim"></pre>
 
 <div class="node">
-<span class="red"><a name="bundle-edit_line-resolvconf"></a></span> <span class="blue"></span>
-<span class="red"><a name="bundle-edit_005fline-resolvconf"></a></span> <span class="blue"></span>
+<span class="red"><span class="red"><a</span> <span class="blue">name="bundle-edit_line-resolvconf"></a></span></span>
+<span class="red"><span class="red"><a</span> <span class="blue">name="bundle-edit_005fline-resolvconf"></a></span></span>
 <p><hr>
-<span class="red">Next:&nbsp;<a rel="next"</span> <span class="blue">accesskey="n"</span>
-<span class="red">Previous:&nbsp;<a rel="previous"</span> <span class="blue">accesskey="p"</span>
-<span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purpose Of This Handbook</a>
-</span>
+<span class="red"><span class="red">Next:&nbsp;<a rel="next"</span> <span class="blue">accesskey="n"</span>
+</span><span class="red"><span class="red">Previous:&nbsp;<a rel="previous"</span> <span class="blue">accesskey="p"</span>
+</span><span class="red"><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purpose Of This Handbook</a>
+</span></span>
 </div>
 
-<span class="red"><h3 class="section">1.101</span> <span class="blue">bundle</span>
+<span class="red"><span class="red"><h3</span> <span class="blue">class="section">1.101</span></span>
 
 <pre class="verbatim">bundle edit_line resolvconf(search,list)
 
@@ -2904,15 +2904,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 
 {
-<span class="red">delete_lines:
-</span>
-  "search.*"<span class="red">     comment </span>=><span class="green"> "Reset search lines from resolver";</span>
-  "nameserver.*"<span class="red"> comment </span>=><span class="green"> "Reset nameservers in resolver";</span>
+<span class="red"><span class="red">delete_lines:
+</span></span>
+  "search.*"<span class="red"><span class</span>=><span class="blue"></span>
+  "nameserver.*"<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">insert_lines:
-</span>
-  "search $(search)"<span class="red">    comment </span>=><span class="green"> "Add search domains to resolver";</span>
-  "nameserver $(list)"<span class="red">  comment </span>=><span class="green"> "Add name servers to resolver";</span>
+<span class="red"><span class="red">insert_lines:
+</span></span>
+  "search $(search)"<span class="red"><span class</span>=><span class="blue"></span>
+  "nameserver $(list)"<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2934,16 +2934,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <span class="comment"> # Set the value of field number "field" in
 </span>
-<span class="comment"> # a :-field formatted file like /etc/passwd
-</span>
+<span class="red"><span class="comment"> # a :-field formatted file like /etc/passwd
+</span></span>
 
 {
-<span class="red">field_edits:
-</span>
-<span class="red"> "$(user):.*"
-</span>
-<span class="red">        comment </span>=><span class="green"> "Edit a user attribute in the password file",</span>
-<span class="red">     edit_field </span>=><span class="blue"> col(":","$(field)","$(val)","set");</span>
+<span class="red"><span class="red">field_edits:
+</span></span>
+<span class="red"><span class="red"> "$(user):.*"
+</span></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -2971,46 +2971,46 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 <span class="comment"> #
 </span>
-<span class="comment"> # To use:
-</span>
+<span class="red"><span class="comment"> # To use:
+</span></span>
 <span class="comment"> #   1) Define an array, where the keys are the LHS and the values are the RHS
 </span>
-<span class="comment"> #        "stuff[lhs-1]" string => "rhs1";
+<span class="red"><span class</span>=><span class="blue"></span>
 </span>
-<span class="comment"> #        "stuff[lhs-2]" string => "rhs2";
+<span class="red"><span class</span>=><span class="blue"></span>
 </span>
 <span class="comment"> #   2) The parameter passed to the edit_line promise is the fully qualified
 </span>
-<span class="comment"> #      name of the array (i.e., "bundlename.stuff") WITHOUT any "$" or "@"
+<span class="red"><span class="comment"></span> <span class="blue">#</span>
 </span>
 
 {
-<span class="red">vars:
-</span>
-  "index"<span class="red"> slist </span>=> getindices("$(v)");
+<span class="red"><span class="red">vars:
+</span></span>
+  "index"<span class="red"><span class</span>=><span class="blue"></span>
 
 <span class="comment">  # Be careful if the index string contains funny chars
 </span>
 
-  "cindex[$(index)]"<span class="red"> string </span>=> canonify("$(index)");
+  "cindex[$(index)]"<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">field_edits:
-</span>
+<span class="red"><span class="red">field_edits:
+</span></span>
 <span class="comment">  # match a line starting like the key = something
 </span>
 
   "\s*$(index)\s*=.*"
 
-<span class="red">     edit_field </span>=><span class="blue"> col("=","2","$($(v)[$(index)])","set"),</span>
-<span class="red">        classes </span>=><span class="blue"> if_ok("$(cindex[$(index)])_in_file"),</span>
-<span class="red">        comment </span>=><span class="green"> "Match a line starting like key = something";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">insert_lines:
-</span>
+<span class="red"><span class="red">insert_lines:
+</span></span>
   "$(index)=$($(v)[$(index)])",
 
-<span class="red">         comment </span>=><span class="green"> "Insert a variable definition",</span>
-<span class="red">      ifvarclass </span>=><span class="green"> "!$(cindex[$(index)])_in_file";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -3035,37 +3035,37 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 <span class="comment"># The input and output should be exactly the same, but in some Cfengine
 </span>
-<span class="comment"># versions there are bugs, so this bundle can be used as a workaround.
+<span class="red"><span class="comment">#</span> <span class="blue">versions</span>
 </span>
 <span class="comment">#
 </span>
 {
-<span class="red">vars:
-</span>
-  "index"<span class="red"> slist </span>=> getindices("$(v)");
+<span class="red"><span class="red">vars:
+</span></span>
+  "index"<span class="red"><span class</span>=><span class="blue"></span>
 
 <span class="comment">  # Be careful if the index string contains funny chars
 </span>
 
-  "cindex[$(index)]"<span class="red"> string </span>=> canonify("$(index)");
+  "cindex[$(index)]"<span class="red"><span class</span>=><span class="blue"></span>
 
-  "fieldc_$(cindex[$(index)])"<span class="red"> int </span>=> getfields("$(index).*","/tmp/service","=","FIELD_$(cindex[$(index)])");
+  "fieldc_$(cindex[$(index)])"<span class="red"><span class</span>=><span class="blue"></span>
 
-<span class="red">classes:
-</span>  "$(cindex[$(index)])_in_file"<span class="red"> expression </span>=> strcmp("$(index)=$($(v)[$(index)])", "$(FIELD_$(index)[1])=$(FIELD_$(index)[2])");
-
-
-<span class="red">delete_lines:  # delete any lhs when no match
-</span>  "$(index)=.*",
-<span class="red">    ifvarclass </span>=><span class="green"> "!$(cindex[$(index)])_in_file";</span>
+<span class="red"><span class="red">classes:
+</span></span>  "<span class="red">$(cindex[$(index)])_in_file"<span class</span>=><span class="blue"></span>
 
 
-<span class="red">insert_lines:
-</span>
+<span class="red"><span class="red">delete_lines:  # delete any lhs when no match
+</span></span>  "$(index)=.*",
+<span class="red"><span class</span>=><span class="blue"></span>
+
+
+<span class="red"><span class="red">insert_lines:
+</span></span>
   "$(index)=$($(v)[$(index)])",
 
-<span class="red">         comment </span>=><span class="green"> "Insert a variable definition",</span>
-<span class="red">      ifvarclass </span>=><span class="green"> "!$(cindex[$(index)])_in_file";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 
 }
 
@@ -3092,12 +3092,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 	 
 {
-<span class="red">replace_patterns:
-</span> 
+<span class="red"><span class="red">replace_patterns:
+</span></span> 
  "^$(comment)\s?(.*$(regex).*)$" 
 
-<span class="red">    replace_with </span>=><span class="blue"> uncomment,</span>
-<span class="red">         comment </span>=><span class="green"> "Uncomment a line containing a fragment";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -3123,12 +3123,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </span>
 	 
 {
-<span class="red">replace_patterns:
-</span> 
+<span class="red"><span class="red">replace_patterns:
+</span></span> 
  "^$(comment)\s?($(regex))$" 
 
-<span class="red">       replace_with </span>=><span class="blue"> uncomment,</span>
-<span class="red">            comment </span>=><span class="green"> "Uncomment lines matching a regular expression";</span>
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 	 
 
@@ -3147,12 +3147,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 
 <pre class="verbatim">bundle edit_line warn_lines_matching(regex)
 {
-<span class="red">delete_lines:
-</span>
+<span class="red"><span class="red">delete_lines:
+</span></span>
   "$(regex)"  
 
-<span class="red">   comment </span>=><span class="green"> "Warn about lines in a file",</span>
-<span class="red">    action </span>=> warn_only;
+<span class="red"><span class</span>=><span class="blue"></span>
+<span class="red"><span class</span>=><span class="blue"></span>
 }
 
 
@@ -3278,5 +3278,6 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-Purpose-Of-This-Handbook">The Purp
 </div>
 
 </body></html>
+
 
 

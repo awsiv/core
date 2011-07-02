@@ -92,8 +92,6 @@ Variable_context_sys::
 Variable_context_sys::
     "Variable sys.date" ;
 Variable_context_sys::
-    "Variable sys.constellation_version" ;
-Variable_context_sys::
     "Variable sys.class" ;
 Variable_context_sys::
     "Variable sys.cf_version" ;
@@ -1781,17 +1779,17 @@ Remote_access_troubleshooting::
     "Key exchange" ;
 Remote_access_troubleshooting::
     "Server connection" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Remote access troubleshooting" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Familiarizing yourself" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "The bare necessities of a cfengine 3" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Testing as a non-privilieged user" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Upgrading from cfengine 2" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Filenames and paths" ;
 Decisions::
     "Global and local classes" ;
@@ -1799,17 +1797,17 @@ Decisions::
     "Class combination operators and precedence" ;
 Decisions::
     "Cfengine hard classes" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Decisions" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "The work directory" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Syntax, identifiers and names" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Installation" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "A renewed cfengine" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Core concepts" ;
 Software_components::
     "cf-hub" ;
@@ -1831,10 +1829,10 @@ Software_components::
     "cf-execd" ;
 Software_components::
     "cf-agent" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
     "Software components" ;
-CFEngine_3_2_0a1_r2483M__Getting_started::
-    "CFEngine 3.2.0a1.r2483M  Getting started" ;
+Cfengine_3_2_0a1_r2426M__Getting_started::
+    "Cfengine 3.2.0a1.r2426M  Getting started" ;
 Special_Topics_Guide::
     "CFEngine-AutoReference"  association => a("discussed in","CFEngine-AutoReference","discusses");
 
@@ -1847,7 +1845,7 @@ manuals::
 CFEngine_AutoReference::
  "/docs/cf3-reference.html#Top"
   represents => { "Text section" };
-CFEngine_3_2_0a1_r2483M__Getting_started::
+Cfengine_3_2_0a1_r2426M__Getting_started::
  "/docs/cf3-reference.html#Getting-started"
   represents => { "manual chapter" };
 Software_components::
@@ -4822,9 +4820,6 @@ Variable_sys_cf_version::
   represents => { "manual subsection" };
 Variable_sys_class::
  "/docs/cf3-reference.html#Variable-sys_002eclass"
-  represents => { "manual subsection" };
-Variable_sys_constellation_version::
- "/docs/cf3-reference.html#Variable-sys_002econstellation_005fversion"
   represents => { "manual subsection" };
 Variable_sys_date::
  "/docs/cf3-reference.html#Variable-sys_002edate"
