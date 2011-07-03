@@ -184,7 +184,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
 </div>
 
-<h2 class="unnumbered">CFEngine-Tutorial</h2>
+<h2 class="unnumbered">Change Management</h2>
 
 <ul class="menu">
 <li><a accesskey="1" href="#What-is-change-management_003f">What is change management?</a>
@@ -570,16 +570,16 @@ promises made during change management, with CFEngine examples.
      
          "apache"
      
-              comment => "Ensure Apache webserver installed",
-              package_policy => "add",
-              package_method => yum;
+<span class="red">              comment </span>=><span class="green"> "Ensure Apache webserver installed",</span>
+<span class="red">              package_policy </span>=><span class="green"> "add",</span>
+<span class="red">              package_method </span>=><span class="blue"> yum;</span>
        
-     processes:
-     
+<span class="red">     processes:
+</span>     
          "apache"
      
-              comment => "Ensure apache webserver running",
-              restart_class => restart_apache;
+<span class="red">              comment </span>=><span class="green"> "Ensure apache webserver running",</span>
+<span class="red">              restart_class </span>=><span class="blue"> restart_apache;</span>
      
 </pre>
 
@@ -592,33 +592,33 @@ like Subversion or CVS.
      
          "apache"
      
-              comment => "Ensure Apache webserver up to date",
-              package_policy => "update",
-              package_method => yum;
+<span class="red">              comment </span>=><span class="green"> "Ensure Apache webserver up to date",</span>
+<span class="red">              package_policy </span>=><span class="green"> "update",</span>
+<span class="red">              package_method </span>=><span class="blue"> yum;</span>
      
 </pre>
 
      <br><dt><i>We promise to monitor unintended changes.</i><dd>
 <pre class="verbatim">     
-     files:
-     
+<span class="red">     files:
+</span>     
        "/usr" -> "Security team"
      
-            changes      => detect_all_change,
-            depth_search => recurse("inf");
+<span class="red">            changes      </span>=><span class="blue"> detect_all_change,</span>
+<span class="red">            depth_search </span>=><span class="blue"> recurse("inf");</span>
      
 </pre>
 
      <br><dt><i>We promise two conflicting outcomes (a validation error to be corrected).</i><dd>
 Conflicts of intention are easy to see when they are mediated by CFEngine. 
 <pre class="verbatim">     
-     files:
+<span class="red">     files:
+</span>     
+       "/etc/passwd" -> "Security team"
+<span class="red">               perms </span>=><span class="blue"> owner("root");</span>
      
        "/etc/passwd" -> "Security team"
-               perms => owner("root");
-     
-       "/etc/passwd" -> "Security team"
-               perms => owner("mark");
+<span class="red">               perms </span>=><span class="blue"> owner("mark");</span>
      
 </pre>
 
@@ -864,7 +864,7 @@ in the same way.
    <div class="contents">
 <h2>Table of Contents</h2>
 <ul>
-<li><a name="toc_Top" href="#Top">CFEngine-Tutorial</a>
+<li><a name="toc_Top" href="#Top">Change Management</a>
 <ul>
 <li><a href="#What-is-change-management_003f">What is change management?</a>
 <li><a href="#Regulation-_002d-authorized-and-unauthorized-change">Regulation: authorized and unauthorized change</a>
@@ -922,4 +922,5 @@ property idempotence.</p>
    <hr></div>
 
 </body></html>
+
 

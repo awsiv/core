@@ -5,34 +5,34 @@ bundle knowledge st_change
 topics:
 
 "st-change";
-CFEngine_Tutorial::
+Change_Management::
     "Deploying policy changes" ;
-CFEngine_Tutorial::
+Change_Management::
     "The change decision process or release management" ;
-CFEngine_Tutorial::
+Change_Management::
     "Change and convergence" ;
-CFEngine_Tutorial::
+Change_Management::
     "Non-destructive change" ;
-CFEngine_Tutorial::
+Change_Management::
     "Change management and knowledge management" ;
-CFEngine_Tutorial::
+Change_Management::
     "Promises about change" ;
-CFEngine_Tutorial::
+Change_Management::
     "Promises about change vs state" ;
-CFEngine_Tutorial::
+Change_Management::
     "The decision point" ;
-CFEngine_Tutorial::
+Change_Management::
     "Partially centralized change" ;
-CFEngine_Tutorial::
+Change_Management::
     "How fast should changes be made?" ;
-CFEngine_Tutorial::
+Change_Management::
     "Intended and unintended change" ;
-CFEngine_Tutorial::
+Change_Management::
     "Regulation: authorized and unauthorized change" ;
-CFEngine_Tutorial::
+Change_Management::
     "What is change management?" ;
 Special_Topics_Guide::
-    "CFEngine-Tutorial"  association => a("discussed in","CFEngine-Tutorial","discusses");
+    "Change Management"  association => a("discussed in","Change Management","discusses");
 
 
 occurrences:
@@ -40,7 +40,7 @@ occurrences:
 special_topics_guides::
  "/docs/st-change.html"
   represents => { "Change Management and Incident Repair" };
-CFEngine_Tutorial::
+Change_Management::
  "/docs/st-change.html#Top"
   represents => { "Text section" };
 What_is_change_management_::
