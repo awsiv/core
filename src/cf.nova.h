@@ -376,7 +376,7 @@ int QueryInsertHostInfo(mongo_connection *conn,struct Rlist *host_list);
 void PrintCFDBKey(bson_iterator *it, int depth);
 int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
 int Nova_MagViewOffset(int start_slot,int dbslot,int wrap);
-int CFDB_QueryHostCount(mongo_connection *conn);
+int CFDB_CountHosts(mongo_connection *conn);
 int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
 bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate);
 #endif

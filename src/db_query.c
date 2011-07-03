@@ -3973,7 +3973,7 @@ int CFDB_QueryMonView(mongo_connection *conn, char *keyhash,char *monId, enum mo
 
 /*****************************************************************************/
 
-int CFDB_QueryHostCount(mongo_connection *conn)
+int CFDB_CountHosts(mongo_connection *conn)
 /**
  * Counts number of hosts.
  * Can be extended to support some query criteria.

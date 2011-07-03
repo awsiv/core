@@ -3526,7 +3526,7 @@ long Nova2PHP_count_hosts()
     return 0;
     }
 
- count = CFDB_QueryHostCount(&dbconn);
+ count = CFDB_CountHosts(&dbconn, NULL);
 
  CFDB_Close(&dbconn);
  
@@ -6381,7 +6381,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hostCount = CFDB_QueryHostCount(&dbconn);
+hostCount = CFDB_CountHosts(&dbconn, NULL);
 
 if(hostCount < 0)
    {
@@ -6515,6 +6515,7 @@ if (!hq)
    buf[0] = '\0';
    return false;
    }
+
 snprintf(buf, bufsize, "{\"meta\":{\"count\" : %d,"
          "\"header\": {\"File name\":0,\"Total count\":1,\"Host count\":2,\"Hub count\":3}"
          "},\"data\":[", 999);
