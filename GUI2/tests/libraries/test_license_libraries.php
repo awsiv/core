@@ -53,6 +53,12 @@ class test_license_libraries extends CodeIgniterUnitTestCase {
         $this->assertTrue(isset($data),"Should return valid String");
         $this->dump($data);
     }
+
+    public function test_cfpr_enterprise_version(){
+        $data=cfpr_enterprise_version();
+        $this->assertTrue(isset($data),"Should return valid String");
+        $this->dump($data);
+    }
 }
 
 ?>

@@ -324,22 +324,15 @@
 		if(file_exists($filetobesaved)&&$this->input->post('filestats')=='old')
 			{
 				//open file for writng and place pointer at the end
-				$handle = fopen($filetobesaved, 'w');
-				if(!$handle)
-				{
-					$msg="couldn't open file <i>$filetobesaved</i>";
-				}
-			    $content=str_replace('\\\\', '\\' , $this->input->post('content'));
-//			    $content=str_replace('\\"', '"' , $content);
-                $content=str_replace('&gt;', '>' , $content);
-				if($_POST['agent']=='webkit')
-				{
-				$content=substr($content, 0, -3);
-				}
-				fwrite($handle, $content);
-				$msg= "success writing to file,".$content;
-				$written=true;
-				fclose($handle);
+                              try{
+                                   $this->load->helper('directory');
+                                   $written= write_savefile($filetobesaved, $this->input->post('content'));
+                                    $msg= "success writing to file";
+                                 }
+                                 catch (Exception $e){
+                                    $written=false;
+                                   $msg= "Error writing to file";
+                               }
 			}
 			elseif(file_exists($filetobesaved)&&$this->input->post('filestats')=='new')
 			{
@@ -347,24 +340,16 @@
 			}
 			else
 			{
-				$handle = fopen($filetobesaved, 'w');
-				if(!$handle)
-				{
-					$msg="couldn't open file <i>$filetobesaved</i>";
-				}
-			    $content=str_replace('\\\\', '\\' , $this->input->post('content'));
-
-				$content=str_replace('&gt;', '>' , $content);
-				if($_POST['agent']=='webkit')
-				{
-				$content=substr($content, 0, -3);
-				}
-				fwrite($handle, $content);
-				$written=true;
-				$msg= "success writing to file";
-				fclose($handle);
-			}
-			
+			   try{
+                               $this->load->helper('directory');
+                               $written= write_savefile($filetobesaved, $this->input->post('content'));
+                                $msg= "success creating and writing to file";
+			     }
+                             catch (Exception $e){
+                                $written=false;
+                               $msg= "Error writing to file";
+                           }
+                        }
 			$details=array(
 			'status'=>$written,
 		        'dir'=>  basename (dirname($filetobesaved),"/"),
@@ -373,7 +358,6 @@
 		        'msg'=>$msg
 	        );		
 	       echo json_encode($details);
-   
    }
    
    function check_syntax()

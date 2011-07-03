@@ -819,7 +819,7 @@ span#today
 
 #goals
 {
-   
+  
 }
 .statusgoal
 {
@@ -1964,6 +1964,10 @@ span.search input
     font-size:14px;
 }
 
+#loggedon{
+    margin-left:0.3%;
+}
+
 .ui-widget-content a.slvbutton, a.slvbutton
 {
     padding:2px;
@@ -2025,7 +2029,8 @@ span.search input
 
 #plandash
 {
-    padding-top:30px
+    padding-top:30px;
+    margin-right: 0.3%;
 }
 
 #plandash ul

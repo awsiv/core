@@ -3,6 +3,7 @@
 <head>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=9" />
 <title><?php echo $title ;?></title>
 <link href="<?php echo get_cssdir();?>resets.css" rel="stylesheet" media="screen" type="text/css"/>
 <link href="<?php echo get_cssdir();?>960.css" rel="stylesheet" media="screen" type="text/css"/>

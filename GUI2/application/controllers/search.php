@@ -125,8 +125,16 @@ class Search extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display(),
             'current' => $page_number,
             'number_of_rows' => $rows,
-            'params' => $params
+            'params' => $params,
+            'classregex'=>$class_regex
         );
+       if(isset($getparams['name'])){
+           $data['name']=urldecode($getparams['name']);
+       }
+       elseif($this->input->post('name'))
+       {
+            $data['name']=urldecode($this->input->post('name'));
+       }
 
         if ($search == "") {
             $search = ".*";
@@ -137,8 +145,6 @@ class Search extends Cf_Controller {
 
                 if ($many) {
                     $name = isset($_POST['name']) ? $_POST['name'] : "";
-
-                    $data['name'] = $name;
                     if ($hosts_only) {// when host only field is checked  to geat a group pf hosts
                         $data['report_result'] = cfpr_hosts_with_bundlesseen(NULL, $name, true, $class_regex);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
