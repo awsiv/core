@@ -304,6 +304,62 @@ Nova_Meter(hostkey,buffer,bufsize);
 }
 
 /*****************************************************************************/
+
+char *Nova2PHP_get_help_text(char *key)
+
+{ int i;
+  static char *help_txt[40][2] =
+    {
+    {"green policy","Promises kept"},
+    {"yellow policy","Promises repaired"},
+    {"red policy","Promises not kept"},
+
+    {"green host","More than 80% of promises are stable and kept."},
+    {"yellow host","More than 20% of promises needed repair at last measurement."},
+    {"red host","More than 20% of promises could not be kept at last measurement."},
+    {"blue host","Hosts that have not been reachable for more than the time horizon."},
+
+    {"mission status room","The mission status room shows how close you are an ideal state. The average compliance of hosts is graphed for the present and over the past week. If business values have been configured, the monetary value of the promises is also represented. A reminder of the documented goals is shown in the panel."},
+    {"engineering room","Engineering shows technical status of hosts in the local cluster."},
+    {"mission planning room","The mission planning room allows you to see how the current goals and policies are performing, approve a change of course and communicate with co-workers."},
+    {"the library","A place where users can learn about the software and the system."},
+
+    {"host finder","Find hosts by name or address within the local cluster."},
+    {"class finder","Find hosts by the class contexts they occupy in the local cluster."},
+    {"policy finder","Find promises that make up the policy in the local cluster."},
+    {"reports finder","Search and browse the available reports in the local cluster."},
+
+    {"license report","Displays a summary of the utilization of CFEngine licenses for this cluster."},
+    {"vital signs","Performance measurements that characterize the observed runtime state of a host."},
+    {"problems","An incarnation of the promises not kept summary for a host, showing the most frequent repeated incidents in relation to the approved policy."},
+
+    {"Week","Average compliance over the past week"},
+    {"Day","Average compliance over the past day"},
+    {"Hour","Average compliance over the past hour"},
+    {"Perform","Stability learned average values in promise verification performance"},
+    {"Change","Stability in changes => promises - 100% means no change"},
+    {"Seen","Stability of regular last-seen behaviour for all peers"},
+    {"Anomaly","Stability of regular measurement levels of all vital signs."},
+
+    {"",""},
+    {"",""},
+    {"",""},
+    {"",""},    
+    {NULL,NULL}
+    };
+
+for (i = 0; help_txt[i][0] != NULL; i++)
+   {
+   if (strcmp(help_txt[i][0],key) == 0)
+      {
+      return help_txt[i][1];
+      }     
+   }
+
+return "";
+}
+
+/*****************************************************************************/
 /* Vitals functions                                                          */
 /*****************************************************************************/
 

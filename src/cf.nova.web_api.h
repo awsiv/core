@@ -164,9 +164,13 @@ int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *classreg
 
 /* svn helper functions */
 int Nova2PHP_validate_policy(char *file,char *buffer,int bufsize);
+
 /*
  * commenting
  */
+
+char *Nova2PHP_get_help_text(char *key);
+
 int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *username, time_t datetime, char *note,char *returnval, int bufsize);
 int Nova2PHP_add_note(char *noteid,char *username, time_t datetime, char* note,char *returnval, int bufsize);
 int Nova2PHP_get_notes(char *keyhash, char *cid, char *username, time_t from, time_t to,struct PageInfo *page, char *returnval, int bufsize);
