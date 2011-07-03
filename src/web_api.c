@@ -3526,7 +3526,7 @@ long Nova2PHP_count_hosts()
     return 0;
     }
 
- count = CFDB_CountHosts(&dbconn, NULL);
+ count = CFDB_CountHosts(&dbconn);
 
  CFDB_Close(&dbconn);
  
@@ -6381,7 +6381,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hostCount = CFDB_CountHosts(&dbconn, NULL);
+hostCount = CFDB_CountHosts(&dbconn);
 
 if(hostCount < 0)
    {
