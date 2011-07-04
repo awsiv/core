@@ -30,6 +30,7 @@
                 <li><?php echo anchor('/repository/checkout', 'repository', array('class' => 'repolink', 'id' => 'repobrowser')); ?></li>
                 <li><?php echo anchor('widget/tracker', 'track records', array('class' => 'trackrecord', 'id' => 'trackrecord')); ?></li>
                 <li><?php echo anchor('/repository/policyApprover', 'approve policies', array('class' => 'approve ', 'id' => 'aprvpolicy')); ?></li>
+                 <li><?php echo anchor('/welcome/services', 'Service Catalogue', array('class' => 'service ', 'id' => 'aprvpolicy')); ?></li>
                 <p class="clearleft"></p>
             </ul>
         </div>
@@ -100,7 +101,7 @@
                 data:$(this).serialize(),
                 success: function(data){
                     $('#personalnotes').html(data);
-                    //$('#users').load('/widget/getworkinglatestlogs')
+                    $('#users').load('/widget/getworkinglatestlogs')
                     $("#message").val('').animate({"height": "30px"}, "fast" );
                     $("#button_block").slideUp("fast");
                     // socket.send("reload");

@@ -40,7 +40,7 @@
                          }
                       ?>
                 <li><a href="<?php echo $noteUrl ?>" class="note" id="add_cmt">Notes</a></li>
-                <li> <?php echo anchor('visual/vital/'.$hostkey,'vitals',array('id'=>'pulseNvitals','class'=>'problems')) ?></li>
+                <li> <?php echo anchor('visual/vital/'.$hostkey,'vitals',array('id'=>'pulseNvitals','class'=>'pulseNvitals')) ?></li>
                 <li><a href="#" id="notkeptlnk" title="Promises not kept in the past week" class="problems">Problems</a></li>
                 <p class="clearleft"></p>
             </ul>

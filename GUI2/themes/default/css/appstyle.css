@@ -33,7 +33,6 @@ font-style: normal;
 body {
     background: url("../images/bg_tile.png") repeat-x scroll 0 0 #A5ACA2;
     color:#6C695A;
-    line-height: 16px;
     font: 14px/21px 'Conv_DINRoundOT', arial, Helvetica,sans-serif;
 }
 
@@ -168,13 +167,25 @@ p#userbox a{
     float:right;
 }
 
+.adminbtn:hover{
+    background: url("../images/admin_hover.png") no-repeat;
+    margin: 0 10px 9px 9px;
+    width:26px;
+    height:26px;
+}
+
 .settingbtn{
     background: url("../images/settings.png") no-repeat;
     width:25px;
     height:25px;
     display:block;
     float:right;
+}
 
+.settingbtn:hover{
+    background: url("../images/settings_hover.png") no-repeat;
+    width:26px;
+    height:26px;
 }
 
 .clearright{
@@ -437,6 +448,14 @@ label#searchbox input
 
 .dash a.approve:hover{
     background: url("../images/approve_policies_hover.png") no-repeat;
+}
+
+.dash a.service{
+     background: url("../images/service_catalogue.png") no-repeat;
+}
+
+.dash a.service:hover{
+     background: url("../images/service_catalogue_hover.png") no-repeat;
 }
 
 #library.dash a:hover{
@@ -716,7 +735,7 @@ body {
 
 .title
 {
-    font-size: 14px;
+    font-size: 15px;
    /* text-decoration: underline;*/
    font-weight: bold;
    color:#6C695A;
@@ -2123,7 +2142,7 @@ span.search input
 #plandash ul
 {
     margin:0 auto;
-    width: 375px;
+    width: 481px;
 }
 
 .morebtnpane{

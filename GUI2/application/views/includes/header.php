@@ -6,8 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9" />
 <title><?php echo $title ;?></title>
 <link href="<?php echo get_cssdir();?>resets.css" rel="stylesheet" media="screen" type="text/css"/>
-<link href="<?php echo get_cssdir();?>960.css" rel="stylesheet" media="screen" type="text/css"/>
 <link href="<?php echo get_cssdir();?>Base.css" rel="stylesheet" media="screen" type="text/css"/>
+<link href="<?php echo get_cssdir();?>960.css" rel="stylesheet" media="screen" type="text/css"/>
 <link href="<?php echo get_cssdir();?>appstyle.css" rel="stylesheet" media="screen" type="text/css"/>
 <link href="<?php echo get_cssdir();?>jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />
 <script src="<?php echo get_scriptdir();?>jquery-1.6.1.min.js" type="text/javascript"></script>
