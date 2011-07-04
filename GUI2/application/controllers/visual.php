@@ -1,4 +1,4 @@
-<?
+<?php
 
 class Visual extends Cf_Controller {
 
