@@ -8,7 +8,7 @@
                 <ul>
                     <li><?php echo anchor('/knowledge/docs/', 'Docs', array('class' => 'docs', 'id' => 'docs')); ?></li>
                     <li><?php echo anchor('/knowledge/topicFinder/', 'Find Topic', array('class' => 'topic' ,'title'=>'Topic Finder','id' => 'topic')); ?></li>
-                    <li><?php echo anchor('/notes/shownotes/', 'Message Archive', array('class' => 'knowledge-message', 'id' => 'knowledge-message')); ?></li>
+                    <li><?php echo anchor('/notes/shownotes/', 'Notes Archive', array('class' => 'knowledge-message', 'id' => 'knowledge-message')); ?></li>
                     <li><?php echo anchor('http://cfengine.com/pages/community', 'Community', array('class' => 'forum', 'id' => 'forum')); ?></li>
                 </ul>
             </div>
