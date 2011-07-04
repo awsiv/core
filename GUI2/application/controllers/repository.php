@@ -10,8 +10,7 @@ class Repository extends Cf_Controller {
         $this->load->model('repository_model');
         $this->load->helper('form');
         $this->username = $this->session->userdata('username');
-        $this->config->load('appsettings');
-        $this->env = $this->config->item('env');
+        $this->env = ENVIRONMENT;
     }
 
     function edit() {

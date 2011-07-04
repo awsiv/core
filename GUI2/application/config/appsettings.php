@@ -23,4 +23,4 @@ $config['nodeport']='8080';
 |app is deployed. On production it should be stated as production
 |---------------------------------------------------------------------------
 */
-$config['env']='development';
+$config['env']='production';
