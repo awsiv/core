@@ -1,7 +1,7 @@
  <div id="nav">
              <ul class="grid_9">
              <?php if(isset($breadcrumbs)): ?>
-                 <?=$breadcrumbs?>
+                 <?php echo $breadcrumbs?>
               <?php endif;?>
 
              </ul>
