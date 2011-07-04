@@ -2,8 +2,7 @@
 <div id="body" class="">
         <div class="grid_9 outerdiv">
             <div id="overall" class="innerdiv">
-                <p style="text-align: right;"><span id="alltime"></span><span id="thisweek"></span><span id="today"></span></p>
-
+              
 
                 <div id="pie-charts">
 
