@@ -446,9 +446,8 @@ switch (pp->petype)
        fprintf(fp,"  \"%s\"\n",pp->promisee);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B,NovaEscape(pp->promiser),KM_AFFECTS_CERT_F);          
 
-       
        for (rp = GOALS; rp != NULL; rp = rp->next)
-          {
+          {          
           if (FullTextMatch(rp->item,pp->promisee))
              {
              fprintf(fp,"promises::\n\n");
@@ -475,10 +474,9 @@ switch (pp->petype)
           fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);          
           fprintf(fp,"  \"%s\"\n",rp->item);
           fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
-
           for (rp2 = GOALS; rp2 != NULL; rp2 = rp2->next)
              {
-             if (FullTextMatch(rp2->item,pp->promisee))
+             if (FullTextMatch(rp2->item,rp->item))
                 {
                 fprintf(fp,"promises::\n\n");
                 fprintf(fp,"  \"%s\"\n",promise_id);
@@ -488,8 +486,8 @@ switch (pp->petype)
                    {
                    fprintf(fp,"bundles::\n\n");
                    fprintf(fp,"  \"%s\"\n",bundlename);
-                   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,rp2->item,NOVA_ISIMPACTED);
-                   fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,rp2->item,NOVA_GOAL_INV);
+                   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,rp->item,NOVA_ISIMPACTED);
+                   fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,rp->item,NOVA_GOAL_INV);
                    }
                 }
              }
