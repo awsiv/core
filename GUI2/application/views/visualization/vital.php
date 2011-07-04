@@ -3,7 +3,7 @@
         <div class="innerdiv">
             <div id="tabpane">
                 <div class="pagepanel">
-                    <div class="panelhead">Vital signals</div>
+                    <div class="panelhead">Vital signals of <?php echo sprintf("%s (%s)",$performanceData['hostname'],$performanceData['ip']); ?></div>
                     <div class="panelcontent">
                         <div class="vitaltable">
                             <div id="graph-pulses-vital-sign">
