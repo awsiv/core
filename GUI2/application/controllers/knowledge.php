@@ -38,7 +38,7 @@ class Knowledge extends Cf_Controller {
      */
     function docs() {
 
-    
+
         $bc = array(
             'title' => 'Docs',
             'url' => 'knowledge/docs',
@@ -52,11 +52,11 @@ class Knowledge extends Cf_Controller {
             'title_header' => "Docs",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
-    
+
         $root = getenv("DOCUMENT_ROOT");
         $root = $root . '/docs/';
         $docdata = cfpr_list_documents($root);
-        
+
         $data['docs'] = json_decode(utf8_encode($docdata), true);
 
         $this->template->load('template', 'knowledge/docs', $data);
@@ -70,9 +70,17 @@ class Knowledge extends Cf_Controller {
 
         $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search');
         $data['search'] = trim($search);
-        $searchJson = cfpr_search_topics($search, true);
-        $data['searchData'] = json_decode(utf8_encode($searchJson), TRUE);
-        $this->load->view('/knowledge/search', $data);
+        if ($data['search']) {
+            $searchJson = cfpr_search_topics($search, true);
+            $data['searchData'] = json_decode(utf8_encode($searchJson), TRUE);
+            $this->load->view('/knowledge/search', $data);
+        } else {
+            // search for default manuals
+            $pid = cfpr_get_pid_for_topic("any", "manuals");
+            $searchJson = cfpr_show_topic_hits($pid);
+            $data['searchData'] = json_decode(utf8_encode($searchJson), TRUE);
+            $this->load->view('/knowledge/searchmanual', $data);
+        }
     }
 
     function knowledgemap() {

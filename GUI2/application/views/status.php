@@ -13,7 +13,7 @@
                         </div>
                     </div>
                     <div id="compliance-value-pie-chart-container" class="grid_4 push_1" style="margin-bottom: 15px">
-                        <p class="title">Compliance Now</p>
+                        <p class="title">Host Status</p>
                         <div id="compliance-now-pie-chart" style="height: 120px; width:300px;">
                         </div>
                     </div>
@@ -257,8 +257,8 @@
     });
 
     
-    $("#business-value-pie-chart").bind("plothover", pieHover);
-    $("#compliance-now-pie-chart").bind("plothover", pieHover);
+    $("#business-value-pie-chart").bind("plothover",{'unit':'mu'},pieHover);
+    $("#compliance-now-pie-chart").bind("plothover",{'unit':'host'}, pieHover);
     function pieHover(event, pos, obj)
     {
         if (!obj) {
@@ -266,9 +266,10 @@
             return;
         }
         percent = parseFloat(obj.series.percent).toFixed(2);
+        
         var index = obj.dataIndex;
         var value = obj.series.data[index][1];
-        var content = '<span>'+obj.series.label+' ('+percent+'%) <br /> Value:: '+value+'</span>';
+        var content = '<span>'+obj.series.label+' ('+percent+'%) <br /> Value:: '+value+' '+event.data.unit+' '+ '</span>';
         $("#tooltip").remove();
         showTooltip(pos.pageX, pos.pageY, content);
     }

@@ -5,7 +5,7 @@
             filterhandlerurl: "/widget/filtertopic",
             defaultbehaviour:true,
             width:600,
-            height:550
+            height:580
 
         },
         _init: function(){
