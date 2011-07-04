@@ -519,9 +519,7 @@ if (sum_t > 0)
    Join(buffer,work,sizeof(buffer));
    snprintf(work,sizeof(work),"\"Mean weighted usage over interval\":%lf,",average);
    Join(buffer,work,sizeof(buffer));
-   snprintf(work,sizeof(work),"\"Mean expected usage (granted)\":%lf,",granted);
-   Join(buffer,work,sizeof(buffer));
-   snprintf(work,sizeof(work),"\"Mean utilization (percent)\":%.2lf",average/granted*100.0);
+   snprintf(work,sizeof(work),"\"Mean utilization over cumulative period (percent)\":%.2lf",average/granted*100.0);
    Join(buffer,work,sizeof(buffer));
    }
 else
