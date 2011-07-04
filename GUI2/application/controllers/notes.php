@@ -192,7 +192,7 @@ class Notes extends Cf_Controller {
         $comments = $this->note_model->getAllNotes($filter);
         $data['data'] = $comments;
         $data['totalNotes'] = $this->note_model->getTotalNoteCount();
-
+        $data['filters'] = $filter;
 
         $this->template->load('template', '/notes/show_notes', $data);
     }

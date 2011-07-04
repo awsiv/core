@@ -23,6 +23,40 @@
                 </div>
             </div>
         </div>
+        <?php 
+        if ($filters['userId'] != '' || $filters['dateFrom'] != '-1' || $filters['dateTo'] != '-1') { ?>
+            <div class="info">
+                Current Filters applied:<br />
+                <?php
+                if ($filters['userId'] != '') {
+                    echo "Username :: " . $filters['userId'];
+                }
+                ?> 
+                <br />
+
+                <?php
+                if ($filters['dateFrom'] != '-1') {
+                    echo "Date From :: " . date('m/d/Y', $filters['dateFrom']);
+                }
+                ?> 
+                <br />
+                <?php
+                if ($filters['dateTo'] != '-1') {
+                    echo "Date To :: " . date('m/d/Y', $filters['dateTo']);
+                }
+                ?> 
+                <br />    
+                <form action="/notes/shownotes" method="POST">
+                    <input type="hidden" name="username" value="" size="" />
+
+                    <input autocomplete="off" id="date_from" type="hidden" name="date_from" value="" size="50" />
+                    <input autocomplete="off" id="date_to" type="hidden" name="date_to" value="" size="50" />
+
+                    <input type="submit" value="Reset" name="submit" />
+                </form>  
+            </div>    
+<?php } ?>
+
         <div class="innerdiv">              
             <div style="max-height: 400px;overflow: auto;">
                 <table id="notes-table" class="bundlelist-table">                   
@@ -34,10 +68,8 @@
                     </tr>
 
                     <tbody>
-                        <?php if (!empty($data)) {
-                            ?>
-                            <?php foreach ($data as $notes) {
-                                ?>
+                        <?php if (!empty($data)) { ?>
+    <?php foreach ($data as $notes) { ?>
                                 <tr>
                                     <td><?php echo $notes->getuserId(); ?></td>
                                     <td><?php echo $notes->getDate(); ?></td>
@@ -45,12 +77,11 @@
                                     <td><?php echo $notes->getReportType(); ?></td>
                                 </tr>
                             <?php } ?>
-                        <?php } else {
-                            ?>
+<?php } else { ?>
                             <tr id="no-data-row">
                                 <td colspan="4">No notes available</td>
                             </tr>
-                        <?php } ?>
+<?php } ?>
                     </tbody>
                 </table>
 
@@ -111,28 +142,28 @@
         });
         
         // accordian search 
-     $("#collapse").addClass("ui-accordion ui-accordion-icons ui-widget ui-helper-reset")
-    .find("h3")
-    .addClass("ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-corner-bottom")
-    .hover(function() { $(this).toggleClass("ui-state-hover"); })
-    .prepend('<span class="ui-icon ui-icon-triangle-1-e"></span>')
-    .click(function() {
-        $(this)
-        .toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom")
-        .find("> .ui-icon").toggleClass("ui-icon-triangle-1-e ui-icon-triangle-1-s").end()
-        .next().slideToggle().toggleClass("ui-accordion-content-active");
-        var $link = $('.ui-tabs-nav li:eq(1) a',$(this).next());       
-        $link.trigger('click');
-        return false;
-    })
-    .next()
-    .addClass("ui-accordion-content  ui-helper-reset ui-widget-content ui-corner-bottom")
-    .hide();
+        $("#collapse").addClass("ui-accordion ui-accordion-icons ui-widget ui-helper-reset")
+        .find("h3")
+        .addClass("ui-accordion-header ui-helper-reset ui-state-default ui-corner-top ui-corner-bottom")
+        .hover(function() { $(this).toggleClass("ui-state-hover"); })
+        .prepend('<span class="ui-icon ui-icon-triangle-1-e"></span>')
+        .click(function() {
+            $(this)
+            .toggleClass("ui-accordion-header-active ui-state-active ui-state-default ui-corner-bottom")
+            .find("> .ui-icon").toggleClass("ui-icon-triangle-1-e ui-icon-triangle-1-s").end()
+            .next().slideToggle().toggleClass("ui-accordion-content-active");
+            var $link = $('.ui-tabs-nav li:eq(1) a',$(this).next());       
+            $link.trigger('click');
+            return false;
+        })
+        .next()
+        .addClass("ui-accordion-content  ui-helper-reset ui-widget-content ui-corner-bottom")
+        .hide();
 
-    $("#collapse")
-    .find("h3 a")
-    .focus(function() { $(this).parent().toggleClass("ui-state-hover"); })
-    .focusout(function() { $(this).parent().toggleClass("ui-state-hover"); })
+        $("#collapse")
+        .find("h3 a")
+        .focus(function() { $(this).parent().toggleClass("ui-state-hover"); })
+        .focusout(function() { $(this).parent().toggleClass("ui-state-hover"); })
         
         
         
