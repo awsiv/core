@@ -6030,6 +6030,13 @@ return true;
 #endif
 return false;
 }
+/*****************************************************************************/
+
+int Nova2PHP_community_version(char *buf, int bufsize)
+{
+ strlcpy(buf, NameVersion(), bufsize);
+ return true;
+}
 
 /*****************************************************************************/
 

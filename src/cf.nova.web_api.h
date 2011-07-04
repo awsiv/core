@@ -123,6 +123,7 @@ int Nova2PHP_get_promise_count(char *buffer, int bufsize);
 void Nova2PHP_ComplianceSummaryGraph(char *policy,char *buffer,int bufsize);
 int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize);
 int Nova2PHP_enterprise_version(char *buf, int bufsize);
+int Nova2PHP_community_version(char *buf, int bufsize);
 
 void Nova2PHP_GetLibraryDocuments(char *pth,char *buffer,int bufsize);
 
