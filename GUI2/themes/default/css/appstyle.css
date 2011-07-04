@@ -735,9 +735,8 @@ body {
 
 .title
 {
-    font-size: 15px;
+    font-size: 16px;
    /* text-decoration: underline;*/
-   font-weight: bold;
    color:#6C695A;
     padding-top: 20px;
     padding-left:10px
@@ -2482,4 +2481,9 @@ ul.admin_menu li.current a{
 .graphunit {
     font-size: .9em;
     text-align: center;
+}
+
+/*graphs na meters*/
+.graphunit,.tickLabel{
+    font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
 }

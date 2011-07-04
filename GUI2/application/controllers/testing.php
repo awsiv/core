@@ -644,4 +644,8 @@ try {
         $password=$this->repository_model->decrypt_password(array('userId'=>$obj->userId,'password'=>$obj->password));
         echo $password;
     }
+
+    function version(){
+        echo cfpr_enterprise_version();
+    }
 }
