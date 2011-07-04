@@ -704,8 +704,9 @@ body {
 .title
 {
     font-size: 14px;
-    text-decoration: underline;
-    color:#4d4d4d;
+   /* text-decoration: underline;*/
+   font-weight: bold;
+   color:#6C695A;
     padding-top: 20px;
     padding-left:10px
 }
@@ -1644,6 +1645,11 @@ span.search input
     margin:15px 5px 5px 10px;
 }
 
+#hostviewerbtn.dash ul li
+{
+   padding:2px;
+}
+
 #hostviewerbtn .title
 {
     padding-left: 1px;
@@ -1679,15 +1685,35 @@ span.search input
 {
    /* background: url("../images/report.png") no-repeat scroll 0 0 transparent;*/
 }
-
 #add_cmt
 {
-    background: url("../images/notes.png") no-repeat scroll 0 0 transparent;
+}
+
+.dash a.note{
+     background: url("../images/notes.png") no-repeat scroll 0 0 transparent;
+}
+.dash a.note:hover{
+     background: url("../images/notes_hover.png") no-repeat scroll 0 0 transparent;
+}
+
+.dash a.pulseNvitals{
+   background: url("../images/analysis.png") no-repeat scroll 0 0 transparent;
+}
+.dash a.pulseNvitals:hover{
+   background: url("../images/analysis_hover.png") no-repeat scroll 0 0 transparent;
+}
+
+.dash a.problems{
+   background: url("../images/promise_not_kept.png") no-repeat scroll 0 0 transparent;
+}
+
+.dash a.problems:hover{
+   background: url("../images/promise_not_kept_hover.png") no-repeat scroll 0 0 transparent;
 }
 
 #pulseNvitals
 {
-    background: url("../images/analysis.png") no-repeat scroll 0 0 transparent;
+   
 }
 .nodata
 {

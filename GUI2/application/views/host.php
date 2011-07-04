@@ -28,7 +28,7 @@
         <div id="hostviewerbtn" class="dash innerdiv">
             <p class="title">Actions</p>
             <ul>
-                <li><?php echo anchor('widget/allreports','Reports',array('id'=>'findreport')) ?></li>
+                <li><?php echo anchor('widget/allreports','Reports',array('id'=>'findreport', 'class'=>'report')) ?></li>
                     <?php
                      if ($is_commented != "")
                          {
@@ -40,8 +40,8 @@
                          }
                       ?>
                 <li><a href="<?php echo $noteUrl ?>" class="note" id="add_cmt">Notes</a></li>
-                <li> <?php echo anchor('visual/vital/'.$hostkey,'vitals',array('id'=>'pulseNvitals')) ?></li>
-                <li><a href="#" id="notkeptlnk" title="Promises not kept in the past week">Problems</a></li>
+                <li> <?php echo anchor('visual/vital/'.$hostkey,'vitals',array('id'=>'pulseNvitals','class'=>'problems')) ?></li>
+                <li><a href="#" id="notkeptlnk" title="Promises not kept in the past week" class="problems">Problems</a></li>
                 <p class="clearleft"></p>
             </ul>
         </div>

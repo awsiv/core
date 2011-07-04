@@ -26,7 +26,7 @@
 
 
         <div id="finder" class="dash innerdiv">
-            <p class="title">Finder</p>
+            <p class="title">Finders</p>
             <ul>
                 <li><?php echo anchor('#', 'host', array('class' => 'host', 'id' => 'findhost')); ?></li>
                 <li><?php echo anchor('widget/allclasses', 'class', array('class' => 'classes', 'id' => 'findclass')); ?></li>
