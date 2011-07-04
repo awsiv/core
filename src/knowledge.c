@@ -449,7 +449,6 @@ switch (pp->petype)
        
        for (rp = GOALS; rp != NULL; rp = rp->next)
           {
-          printf("HERE.............%s\n",rp->item);
           if (FullTextMatch(rp->item,pp->promisee))
              {
              fprintf(fp,"promises::\n\n");
