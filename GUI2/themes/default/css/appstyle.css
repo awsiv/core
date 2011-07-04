@@ -315,10 +315,18 @@ label#searchbox input
     padding:20px;
 }
 
-.dash ul li a{
+#work .dash ul li a, #library.dash ul li a{
     width:85px;
     display:block;
     padding: 85px 1px 0 0;
+    font-size: 14px;
+    color:#717171;
+}
+
+.dash ul li a{
+    width:66px;
+    display:block;
+    padding: 66px 1px 0 0;
     font-size: 14px;
     color:#717171;
 }
@@ -370,28 +378,55 @@ label#searchbox input
     background: url("../images/host.png") no-repeat;
 }
 
+.dash a.host:hover{
+    background: url("../images/host_hover.png") no-repeat;
+}
+
 .dash a.classes{
     background: url("../images/class.png") no-repeat;
 }
+.dash a.classes:hover{
+    background: url("../images/class_hover.png") no-repeat;
+}
 
 .dash a.policies{
-    background: url("../images/bundle.png") no-repeat;
+    background: url("../images/policy.png") no-repeat;
+}
+.dash a.policies:hover{
+    background: url("../images/policy_hover.png") no-repeat;
 }
 
 .dash a.report{
     background: url("../images/report.png") no-repeat;
 }
 
+.dash a.report:hover{
+    background: url("../images/report_hover.png") no-repeat;
+}
+
+
 .dash a.repolink{
-    background: url("../images/repos_finder.png") no-repeat;
+    background: url("../images/repository.png") no-repeat;
+}
+
+.dash a.repolink:hover{
+    background: url("../images/repository_hover.png") no-repeat;
 }
 
 .dash a.trackrecord{
     background: url("../images/track_record.png") no-repeat;
 }
 
+.dash a.trackrecord:hover{
+    background: url("../images/track_record_hover.png") no-repeat;
+}
+
 .dash a.approve{
-    background: url("../images/approve_editor.png") no-repeat;
+    background: url("../images/approve_policies.png") no-repeat;
+}
+
+.dash a.approve:hover{
+    background: url("../images/approve_policies_hover.png") no-repeat;
 }
 
 
@@ -399,16 +434,29 @@ label#searchbox input
     background: url("../images/docs.png") no-repeat;
 }
 
+#library  a.docs:hover{
+    background: url("../images/docs_hover.png") no-repeat;
+}
+
 #library  a.topic{
     background: url("../images/find_topic.png") no-repeat;
+}
+#library  a.topic:hover{
+    background: url("../images/find_topic_hover.png") no-repeat;
 }
 
 #library  a.knowledge-message{
     background: url("../images/message_archive.png") no-repeat;
 }
+#library  a.knowledge-message:hover{
+    background: url("../images/message_archive_hover.png") no-repeat;
+}
 
 #library  a.forum{
-    background: url("../images/forum.png") no-repeat;
+    background: url("../images/community.png") no-repeat;
+}
+#library  a.forum:hover{
+    background: url("../images/community_hover.png") no-repeat;
 }
 
 
@@ -1629,7 +1677,7 @@ span.search input
 
 #findreport
 {
-    background: url("../images/report.png") no-repeat scroll 0 0 transparent;
+   /* background: url("../images/report.png") no-repeat scroll 0 0 transparent;*/
 }
 
 #add_cmt
