@@ -47,6 +47,10 @@ div.ui-widget, div.ui-widget-content{
      color:#6C695A;
 }
 
+div.ui-accordion .ui-accordion-header a{
+    font-size: 1em;
+}
+
 #wrapper{
     width:80%;
     min-width: 960px;
@@ -332,53 +336,57 @@ label#searchbox input
 }
 
 
-.dash a.status{
+#work .dash a.status{
     background: url("../images/status.png") no-repeat;
 }
-.dash a.status:hover{
+#work .dash a.status:hover{
     background: url("../images/status_hover.png") no-repeat;
     width:86px;
     padding: 85px 0 0 0;
     color:#596E99;
 }
 
-.dash a.library{
+#work .dash a.library{
     background: url("../images/library.png") no-repeat;
 }
-.dash a.library:hover{
-    background: url("../images/library_hover.png") no-repeat;
+#work .dash a.library:hover{
+     background: url("../images/library_hover.png") no-repeat;
      width:86px;
      padding: 85px 0 0 0;
      color:#D3BE4A;
 }
 
-.dash a.engineering{
+#work .dash a.engineering{
     background: url("../images/engineering.png") no-repeat;
 }
 
-.dash a.engineering:hover{
+#work .dash a.engineering:hover{
     background: url("../images/engineering_hover.png") no-repeat;
     width:86px;
     padding: 85px 0 0 0;
     color:#F68E36
 }
 
-.dash a.planning{
+#work .dash a.planning{
     background: url("../images/planning.png") no-repeat;
 }
 
-.dash a.planning:hover{
+#work .dash a.planning:hover{
     background: url("../images/planning_hover.png") no-repeat;
     width:86px;
     padding: 85px 0 0 0;
     color:#009193;
 }
 
+#finder.dash a:hover{
+     color:#F68E36;
+}
+
 .dash a.host{
     background: url("../images/host.png") no-repeat;
 }
 
-.dash a.host:hover{
+ .dash a.host:hover{
     background: url("../images/host_hover.png") no-repeat;
 }
 
@@ -404,7 +412,9 @@ label#searchbox input
     background: url("../images/report_hover.png") no-repeat;
 }
 
-
+#plandash.dash a:hover{
+   color:#009193;
+}
 .dash a.repolink{
     background: url("../images/repository.png") no-repeat;
 }
@@ -429,6 +439,9 @@ label#searchbox input
     background: url("../images/approve_policies_hover.png") no-repeat;
 }
 
+#library.dash a:hover{
+     color:#D3BE4A;
+}
 
 #library  a.docs{
     background: url("../images/docs.png") no-repeat;

@@ -37,7 +37,7 @@
                 </div>
             </div>
         </div>
-        </div>
+
         <div class="grid_3 outerdiv">
 
             <div id="goals" class="innerdiv statusgoal">
