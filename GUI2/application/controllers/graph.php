@@ -22,7 +22,7 @@ class Graph extends CF_Controller {
     function canonifyObservables($obs) {
         $replaceArray = array('!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~');
 
-        return str_replace($replaceArray, '_', $obs);
+        return str_replace($replaceArray, '', $obs);
     }
 
     function summary($hostKey=null) {
