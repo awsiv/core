@@ -76,7 +76,7 @@ class cf_table {
 
     function generate_nested_table($result,$title='')
     {
-        foreach ($result['data'] as $row)
+        foreach ((array)$result['data'] as $row)
        {
         //$this->table->add_row($row);
            $temp=array();

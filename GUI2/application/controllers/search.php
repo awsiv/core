@@ -68,27 +68,19 @@ class Search extends Cf_Controller {
             if (count($getparams) > 0) {
                 //$params=$this->uri->assoc_to_uri($getparams);
                 foreach ($getparams as $key => $value) {
-                    if (empty($value)) {
-                        if ($key <> "page" && $key <> "rows") {
-                            //
-                            //$params.=$key.'/';
-                        }
-                    } else {
-
+                    if (!empty($value)) {
+                   
                         if ($key <> "page" && $key <> "rows") {
                             $params.=$key . '/' . $value . '/';
-                        }
-                        if ($key <> "page" && $key <> "rows") {
-                            $breadcrumbs_url.=$key . '/' . $value . '/';
+                             $breadcrumbs_url.=$key . '/' . $value . '/';
                         }
                     }
                 }
             } else {
 
                 foreach ($_POST as $key => $value) {
-                    if (empty($value)) {
+                    if (!empty($value)) {
                         //$params.=$key.'/';
-                    } else {
                         $params.=$key . '/' . urlencode($value) . '/';
 
                         /* $key == "host" || $key == "report" old condition */

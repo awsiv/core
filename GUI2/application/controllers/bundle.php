@@ -39,6 +39,13 @@ class Bundle extends Cf_Controller {
         $params = $this->uri->uri_to_assoc(3);
         $bundle = isset($params['bundle']) ? urldecode($params['bundle']) : "";
         $type = isset($params['type']) ? $params['type'] : cfpr_get_bundle_type($bundle);
+        $bc = array(
+            'title' => 'Bundle',
+            'url' => 'bundle/details/bundle/'.urlencode($bundle).'/type/'.urlencode($type) ,
+            'isRoot' => false,
+             'replace_existing'=>true
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
             'title' => "Cfengine Mission Portal - Bundles",

@@ -9,7 +9,7 @@
                 <p class="title">Weakest Hosts</p>
                 <table>
                     <thead></thead>
-                    <?php foreach ($ret['data'] as $index=>$val) {
+                    <?php foreach ((array)$ret['data'] as $index=>$val) {
                     ?>
                         <tr>
                             <td>

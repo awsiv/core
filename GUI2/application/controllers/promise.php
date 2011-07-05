@@ -44,8 +44,16 @@ class Promise extends Cf_Controller {
         $type = cfpr_get_promise_type($handle);
         $pid = cfpr_get_pid_for_topic("promises", $handle);
         $topicDetail = cfpr_show_topic($pid);
-        
-        
+
+            $bc = array(
+            'title' => 'Promise',
+            'url' => 'promise/details/'.$handle,
+            'isRoot' => false,
+             'replace_existing'=>true
+          );
+        $this->breadcrumb->setBreadCrumb($bc);
+
+       
         $data = array(
             'handle' => $handle,
             'title' => "Cfengine Mission Portal - promise $handle",
