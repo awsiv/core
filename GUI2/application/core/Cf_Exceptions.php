@@ -11,6 +11,7 @@ class Cf_Exceptions extends CI_Exceptions {
 
     public function show_error($heading, $megetenvssage, $template = 'error_general', $status_code = 500) {
 
+        
         if ($this->env == "development") {
             try {
                 switch ($status_code) {
@@ -26,25 +27,29 @@ class Cf_Exceptions extends CI_Exceptions {
                 if (!$page = $path->uri_string()) {
                     $page = 'home';
                 }
-                log_message('error', $status_code . ' ' . $heading . '-' . $megetenvssage . ' --> ' . $page);
+
                 /*                 * ************************ */
 
                 throw new Exception($megetenvssage);
             } catch (Exception $e) {
-                $msg = parent::show_error($heading, $e->getMessage(), $template = 'error_general', $status_code = 500);
+                $msg = parent::show_error($heading, $e->getMessage(), $template = 'error_general', $status_code);
 
                 $trace = "<h1>$msg</h1><h1>Call Trace</h1><pre>" . $e->getTraceAsString() . "<pre>";
                 $err = $trace;
                 echo $err;
+                log_message('error', $status_code . ' ' . $heading . '-' . $megetenvssage . ' --> ' . $page);
+                
             }
         } else {
             $path = & load_class("URI");
             if (!$page = $path->uri_string()) {
                 $page = 'home';
             }
-            if ($status_code != 404)
+            echo parent::show_error($heading, $megetenvssage, $template = 'error_general', $status_code);
+
+            if ($status_code != 404) {
                 log_message('error', $status_code . ' ' . $heading . '-' . $megetenvssage . ' --> ' . $page);
-            echo parent::show_error($heading, $megetenvssage, $template = 'error_general', $status_code = 500);
+            }
         }
     }
 

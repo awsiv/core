@@ -40,7 +40,7 @@ class Testing extends CI_Controller
          $this->load->library('mongo_db');
 
          $result=$this->mongo_db->get('users');
-         //$result = $this->mongo_db->select(array('uri','message'))->get('app_logs');
+         $result = $this->mongo_db->get('app_logs');
          //$this->mongo_db->where(array('group'=>'faculty'));
          //$result=$this->mongo_db->get('work_logs');
          //$result=$this->mongo_db->select(array('username'))->get_where('users',array('group'=>'admin'));

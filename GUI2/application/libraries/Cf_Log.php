@@ -13,7 +13,8 @@ class Cf_Log extends CI_Log {
         try {
             $this->mongo = new Mongo("mongodb://127.0.0.1:27017", array("persist" => "ci_mongo_persist"));
         } catch (Exception $e) {
-            show_error("Cannot connect to mongo", 500);
+            die("Cannot connect to mongo while logging");
+            exit();
         }
         $this->_enabled = true;
     }
