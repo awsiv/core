@@ -21,6 +21,7 @@ class cf_table {
 
     function generateReportTable($result,$report_title = '') {
         $return = '';
+        $this->CI->table->clear();
         if (is_array($result)) {
             $this->CI->table->set_heading(array_keys($result['meta']['header']));
             $heading = "";
@@ -38,10 +39,10 @@ class cf_table {
                                 $tempValue = $row[$value];
                                 // make link to bundle and promises
                                 if (strtolower($key) == 'promise handle') {
-                                    $tempValue = sprintf('<a target="_self" href="/promise/details/%s">%s</a>',urlencode($tempValue),$tempValue);
+                                    $tempValue = sprintf('<a target="_self" href="%s/promise/details/%s">%s</a>',site_url(),urlencode($tempValue),$tempValue);
                                 }
                                 if (strtolower($key) == 'bundle') {
-                                    $tempValue = sprintf('<a target="_self" href="/bundle/details/bundle/%s">%s</a>',urlencode($tempValue),$tempValue);
+                                    $tempValue = sprintf('<a target="_self" href="%s/bundle/details/bundle/%s">%s</a>',site_url(),urlencode($tempValue),$tempValue);
                                 }
 
                                 array_push($temp, $tempValue);
@@ -95,7 +96,7 @@ class cf_table {
                   }
                   else if(strtolower($key) == 'service bundle name')
                   {
-                   $content=sprintf('<a href="/bundle/details/bundle/%s/type/%s">%s</a>',urlencode($row[$value]),$row[$result['meta']['header']['Type']],$row[$value]);
+                   $content=sprintf('<a href="%s/bundle/details/bundle/%s/type/%s">%s</a>',site_url(),urlencode($row[$value]),$row[$result['meta']['header']['Type']],$row[$value]);
                      array_push($temp, $content);
                   }
                   else
