@@ -1,0 +1,390 @@
+\input texinfo-altfont
+\input texinfo-logo
+\input texinfo
+@selectaltfont{cmbright}
+@setlogo{NewLogo}
+@c *********************************************************************
+@c
+@c  This is an AUTO_GENERATED TEXINFO file. Do not submit patches against it.
+@c  Refer to the the component .texinfo files instead when patching docs.
+@c
+@c ***********************************************************************
+@c %** start of header
+@setfilename cf-nova-gui.info
+@settitle CFEngine Nova Mission Portal
+@setchapternewpage odd
+@c %** end of header
+@titlepage
+@title CFEngine Nova Mission Portal
+@subtitle CFEngine Enterprise Documentation
+@subtitle for version 2.1 alpha1
+@author CFEngine
+@c @smallbook
+@fonttextsize 10
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 2011 CFEngine AS.
+The features described herein are in provided for user convenience and imply no warranty whatsoever
+to the extent of applicable law.
+@end titlepage
+@c *************************** File begins here ************************
+@ifinfo
+@dircategory CFEngine Training
+@direntry
+* CFEngine Reference:
+                        CFEngine is a language based framework
+                        designed for configuring and maintaining
+                        Unix-like operating systems attached
+                        to a TCP/IP network.
+@end direntry
+@end ifinfo
+@ifnottex
+@node 
+@top CFEngine-AutoReference
+@end ifnottex
+@ifhtml
+@html
+<a href="#Contents"><h1>COMPLETE TABLE OF CONTENTS</h1></a>
+<h2>Summary of contents</h2>
+@end html
+@end ifhtml
+
+@iftex
+@contents
+@end iftex
+
+
+@c *****************************************************
+@c * CHAPTER
+@c *****************************************************
+@menu
+* Introduction::
+* Mission Portal::
+* Business Integration::
+@end menu
+
+@node 
+@chapter Introduction
+
+CFEngine Nova is a commercially licensed version of the core CFEngine
+software@footnote{Major version 3} with enterprise library extensions. All of
+the documentation for CFEngine 3 applies to CFEngine Nova. This
+document is a supplement describing the graphical user interphase used in CFEngine Nova: the Mission Portal.
+
+
+@c *****************************************************
+@c * CHAPTER
+@c *****************************************************
+@node 
+@chapter Mission Portal
+
+Knowledge management has become a new focus in IT management, and it
+is a core focus at CFEngine. Comprehending the growing complexity of
+IT operations is one of the main challenges in IT today. CFEngine Nova
+has a number of key features for knowledge management, including
+automated documentation, report generation and associative inference. The
+CFEngine Mission Portal is the centerpiece of user interaction with
+CFEngine Nova.
+
+@sp 1
+@image{mission-portal-nova-2-1,15cm,,Mission Portal}
+@center Figure: The mission portal
+@sp 1
+
+@menu
+* Mission Portal Rooms::
+* Finders::
+* Viewers::
+* Editors::
+@end menu
+
+@node 
+@section Mission Portal Rooms
+
+There are four main rooms in the Mission Portal:
+
+@itemize
+@item Status - a top level overview of compliance status
+@item Engineering - a place to see the current state of system repair
+@item Planning - a place to plan and make policy changes
+@item Library - a knowledge bank that connects information together
+@end itemize
+
+Each of these rooms is a beginning from which you can refine your overview and search
+through information.
+
+@c The Mission Portal offers insight into three main areas:
+@c @itemize
+@c @item Operations and performance.
+@c @item Business and compliance.
+@c @item Organizational knowledge and library.
+@c @end itemize
+
+@c @sp 1
+@c @image{views,15cm,,The front page}
+@c @center Figure: Topic Maps provide a variety of viewpoints on the information
+@c @sp 1
+
+@c Mission portal views link together a number of relevant resources for common system roles, like operator, security officer or system architect.
+@c This is an example of how the mission portal offers relationships that transcend simple categories. The same information can appear in different contexts.
+
+@menu
+* Mission Status::
+* Mission Engineering::
+* Mission Planning::
+* Mission Library::
+@end menu
+
+@node 
+@subsection Mission Status
+
+Mission status is a high level summary of how well the entire system is behaving.
+
+@sp 1
+@image{status,15cm,,Mission Status}
+@center Figure: The status of IT operations.
+@sp 1
+
+Business Value and Host Status:
+Pie charts show the business value of the promises kept/not kept as well as host status (for those that have reported to the hub; hosts that have lost connection are not included).
+
+Compliance Summary:
+The row of bar meters shows the compliance of all registered hosts in blocks of 6 hours for the past
+week. It summarizes performance and anomalous behavior in a simple red (prommises not kept), yellow (promises repaired) and green (promises kept) scale.
+
+Services/Goals:
+A summary of Mission goals (as defined in user policy files; cannot be edited from the Mission Portal).
+
+
+@node
+@subsection Mission Engineering
+
+Mission engineering illustrates the state of the system in relation to the desired state at all scales. Zoom in to specific areas and examine the impact of promises, query data, and extract reports.
+
+@sp 1
+@image{engineering,15cm,,Mission Engineering}
+@center Figure: Mission Engineering
+@sp 1
+
+Host Status:
+The hosts are classified into red, yellow, green and blue according to the status of their compliance. A host is red if less than 80% of its promises are kept, yellow if less than 80% of its promises were initially kept, but CFEngine was able to repair to above 80% promises kept during a run, green if more than 80% of its promises are kept, and blue if there is no contact between the hub and the client. Clicking on the colored links produces a list of the
+hosts in that category.
+
+Averages summarizing all hosts:
+The row of bar meters shows the compliance of all registered hosts over the past
+week, the past day and the past hour. It also summarizes performance
+and anomalous behavior in a simple red, yellow green scale.
+
+Finders:
+The Mission Engineering room comes with four finder functions: host, class, promises, and reports (see section on Finders).
+
+
+@node
+@subsection Mission Planning
+
+Make changes to policies, goals determined by promises and implement specific tactics to achieve the desired state. Interact with data, approve changes and anomalies. Get an overiew of users logged on to the Mission Portal, as well as their current activity.
+
+@sp 1
+@image{planning,15cm,,Mission Planning}
+@center Figure: Mission Planning
+@sp 1
+
+Policy Goals:
+List of policy goals and link to the Service Catalogue (see which bundles contribute to these policy goals).
+
+Editors. Repository, track records, approve policies, service catalogue.
+
+Activity log:
+Shows the the latest entries in the activity log. Type in a new activity to keep your colleagues posted on what you are working on.
+
+@node
+@subsection Mission Library
+
+The Library contains finders for documents, topics, a notes archive, and link to the CFEngine community.
+
+@sp 1
+@image{library,15cm,,Mission Library}
+@center Figure: Mission Library
+@sp 1
+
+@node
+@section Finders
+
+Finders are modules that make it simple and intuitive to browse and search for objects of a particular type.
+
+@sp 1
+@center @image{finders,14cm,,Finders}
+@center Figure: Finders in the Mission Engineering room
+@sp 1
+
+@menu
+* Host finder::
+* Class finder::
+* Promise finder::
+* Reports finder::
+@end menu
+
+@node
+@subsection Host finder
+
+The host finder can be found in the Mission Engineering room and will display a list of hosts. Browse by scrolling through the list, click a letter corresponding to the first letter of a host name, or search for hosts in the search box (top right corner). Clicking on a host name will bring you to the host viewer.
+
+@sp 1
+@center @image{hostfinder,10cm,,Host finder}
+@center Figure: Host finder
+@sp 1
+
+@node
+@subsection Class finder
+
+The class finder can be found in the Mission Engineering room and will display a list of classes. Browse by scrolling through the list, click a letter corresponding to the first letter of a class name, or search for classes in the search box (top right corner; choose between searching all, time, soft or IP classes). Clicking on a class will bring you to a report for that class profile.
+
+@sp 1
+@center @image{classfinder,10cm,,Class finder}
+@center Figure: Class finder.
+@sp 1
+
+@node
+@subsection Promise finder
+
+The promise finder can be found in the Mission Engineering room and will display a list of promises. Browse by scrolling through the list, click a letter corresponding to the first letter of a promiser/bundle/handle name (set alternative in searchbox and click a letter in the right column), or search for promiser/bundle/handle in the search box (top right corner; choose between searching promiser, bundle, or handle). Clicking on a promise/bundle will bring you to the promise/bundle viewer.
+
+@sp 1
+@center @image{promisefinder,10cm,,Promise finder}
+@center Figure: Promise finder
+@sp 1
+
+@node
+@subsection Reports finder
+
+The reports finder can be found in the Mission Engineering room and will display a list of report categories. Browse by scrolling through the list. Clicking on a report category will bring up a query table that will produce a report according to the entered query criteria.
+
+@sp 1
+@center @image{reportsfinder,10cm,,Reports finder}
+@center Figure: Reports finder
+@sp 1
+
+@node
+@section Viewers
+
+Viewers show info abouth the main objects at differenent scales of the system.
+
+@menu
+* Host viewer::
+* Bundle viewer::
+* Promise viewer::
+* Vital signs::
+* Topics (Knowledge library)::
+* Weakest hosts::
+* Reports
+@end menu
+
+@node
+@subsection Host viewer
+
+The host viewer has the following broad characteristics:
+
+@itemize
+@item Action buttons: view reports, view and make notes, view vital signs and problems (promises not kept).
+@item Host name, operating system, type, address and unique identity.
+@item A summary meter for compliance, performance, etc.
+@item Operating system and host type.
+@end itemize
+
+@sp 1
+@center @image{hostviewer,15cm,,Host viewer}
+@center Figure: Host viewer
+@sp 1
+
+Analysis
+
+@node
+@subsection Bundle viewer
+
+The bundle viewer shows a list of classes using the bundle and the promises made within that bundle. Tabs also display other bundles using the one currently viewed or an overview of all bundles.
+
+@sp 1
+@center @image{bundleviewer,15cm,,Bundle viewer}
+@center Figure: Bundle viewer
+@sp 1
+
+
+@node
+@subsection Promise viewer
+
+The promise viewer shows a promise definition and body. There are tabs for viewing leads (promise type, context, dependencies), other promises used in same bundle, other promises made by same promiser, and other promises of same type.
+
+@sp 1
+@center @image{promiseviewer,15cm,,Promise viewer}
+@center Figure: Promise viewer
+@sp 1
+
+@node
+@subsection Vital signs
+
+The Vital signs viewer shows the performance specs of a host in different categories of information.
+
+@sp 1
+@center @image{vitalsviewer,15cm,,Host viewer}
+@center Figure: Host viewer
+@sp 1
+
+@node
+@subsection Topics (Knowledge library)
+
+Knowledge map
+
+@node
+@subsection Weakest hosts
+
+A link to Top N worst hosts can be found in the Mission Engineering room.
+
+@sp 1
+@center @image{topnworsthosts,15cm,,Weakest hosts}
+@center Figure: Weakest hosts
+@sp 1
+
+@node
+@subsection Reports
+
+A significant capability of CFEngine Nova is the existence of automated system reporting. A report is a tabular summary of CFEngine's internal information, tailored to a particular purpose. Reports are searchable and describe
+attributes and qualities of managed hosts.
+
+@node
+@section Editors
+
+TBC.
+
+
+
+@c =========================================================================
+@c @node Index,  , CFEngine Methods, Top
+@c @unnumbered Concept Index
+@c @printindex cp
+@c =========================================================================
+@ifhtml
+@html
+<a name="Contents">
+@contents
+@end html
+@end ifhtml
+
+@c  The file is structured like a programming language. Each chapter
+@c  starts with a chapter comment.
+@c
+@c  Menus list the subsections so that an online info-reader can parse
+@c  the file hierarchically.
+@ifhtml
+@html
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-2576171-2");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+@end html
+@end ifhtml
+@bye
