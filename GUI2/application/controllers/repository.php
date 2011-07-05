@@ -126,7 +126,6 @@ class Repository extends Cf_Controller {
         if ($this->input->post('addnew')) {
             $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
             $this->form_validation->set_rules('repoPath', 'Repository path', 'required');
-            $this->form_validation->set_rules('username', 'Username', 'required');
             if ($this->form_validation->run()) {
 
                 $info = array('userId' => $this->session->userdata('username'),
