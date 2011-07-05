@@ -690,7 +690,7 @@ for (ip = worklist; ip !=  NULL; ip=ip->next)
    {
    Nova_FillInGoalComment(ip);
    }
-
+worklist = SortItemListNames(worklist);
 return worklist;
 }
     

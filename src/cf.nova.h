@@ -306,7 +306,7 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 /* db_query.c */
 
 #ifdef HAVE_LIBMONGOC
-
+struct HubQuery *CFDB_QueryMeter1(mongo_connection *conn,char *lkeyhash);
 int CFDB_GetValue(char *lval,char *rval,int size);
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn);
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
@@ -822,6 +822,7 @@ int Nova_ImportHostReports(char *filePath);
 
 void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize);
 void Nova_Meter(char *hostkey,char *buffer,int bufsize);
+void Nova_GetHourlyData(char *search_string,char *buffer,int bufsize);
 struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
 struct Item *Nova_GreenHosts(void);
 struct Item *Nova_YellowHosts(void);
@@ -928,7 +929,8 @@ char *Nova_URL(char *s,char *rep);
 struct Item *Nova_NearestNeighbours(int topic_id,char *assoc_mask);
 struct Item *Nova_GetTopicsInContext(char *context);
 struct Item *Nova_GetBusinessGoals(char *handle);
-int Nova_GetUniqueBusinessGoals(char *buffer,int bufsize);
+//int Nova_GetUniqueBusinessGoals(char *buffer,int bufsize);
+struct Item *Nova_GetUniqueBusinessGoals();
 
 void Nova_SpecialQuote(char *name,char *type);
 void Nova_PlotTopicCosmos(int topic,char *view,char *buf,int size);
