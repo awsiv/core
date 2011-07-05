@@ -11,7 +11,7 @@
         <?php } ?>
         
         <p>
-            Manage you repositories. <a href="/repository/manageRepository/">Go</a>
+            Manage you repositories. <a href="<?php echo site_url() ?>/repository/manageRepository/">Go</a>
         </p>
         
     </div>

@@ -34,10 +34,10 @@ class Notes extends Cf_Controller {
                 'dateTo' => -1
             );
             $this->data['data'] = $this->note_model->getAllNotes($filter);
-            $this->data['form_url'] = '/notes/addnote';
+            $this->data['form_url'] = site_url().'/notes/addnote';
         } else if ($action == "add") {
             $this->data['data'] = array();
-            $this->data['form_url'] = '/notes/addnewnote';
+            $this->data['form_url'] = site_url().'/notes/addnewnote';
         }
         $this->load->view('/notes/view_notes', $this->data);
     }
@@ -53,7 +53,7 @@ class Notes extends Cf_Controller {
         $this->data['rid'] = '';
         $this->data['hostkey'] = '';
         $this->data['reporttype'] = '';
-        $this->data['form_url'] = '/notes/addnote';
+        $this->data['form_url'] = site_url().'/notes/addnote';
 
 
         if (trim($message) != null) {
@@ -108,7 +108,7 @@ class Notes extends Cf_Controller {
         $this->data['hostkey'] = $keyhash;
         $this->data['reporttype'] = $report_type;
 
-        $this->data['form_url'] = '/notes/addnewnote';
+        $this->data['form_url'] = site_url().'/notes/addnewnote';
 
 
         $filter = array('hostname' => NULL,
@@ -120,7 +120,7 @@ class Notes extends Cf_Controller {
 
         // if we have valid insert get that notes else leave it blank 
         if ($ret) {
-            $this->data['form_url'] = '/notes/addnote';
+            $this->data['form_url'] = site_url().'/notes/addnote';
             $this->data['data'] = $this->note_model->getAllNotes($filter);
         } else {
             $this->data['data'] = array();

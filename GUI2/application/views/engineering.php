@@ -42,10 +42,19 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        $('#findhost').hostfinder();
-        $('#findclass').classfinder();
-        $('#findpolicy').policyfinder();
-        $('#findreport').reportfinder();
+        
+        var genericOption = {
+            baseUrl: '<?php echo site_url() ?>'
+        };
+        
+        var hostFinderOption =   {
+        url: "<?php echo site_url() ?>/widget/hostfinder",
+        classhandler:"<?php echo site_url() ?>/widget/cfclasses"};
+    
+        $('#findhost').hostfinder(hostFinderOption);
+        $('#findclass').classfinder(genericOption);
+        $('#findpolicy').policyfinder(genericOption);
+        $('#findreport').reportfinder(genericOption);
         //fix for manintaining the layout of the page when window is resized.
         $('#compliance_summary').css('width','50px');
     });

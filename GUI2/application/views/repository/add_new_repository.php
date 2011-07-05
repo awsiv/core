@@ -50,7 +50,7 @@
         $('#submit-form').hide();
         $('#ajax-loader').show();
         if ($("#vis-password").val()!='') {
-            $.jCryption.getKeys("/repository/get_keys",function(receivedKeys) {
+            $.jCryption.getKeys("<?php echo site_url() ?>/repository/get_keys",function(receivedKeys) {
                 keys = receivedKeys;           
                 $.jCryption.encrypt($("#vis-password").val(),keys,function(encrypted) {
                     $("#password").val(encrypted);

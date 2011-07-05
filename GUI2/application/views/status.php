@@ -24,10 +24,10 @@
                 <div id="environment-list">
                     <ul>
                         <li><!-- chrome fix --></li>
-                        <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/" title="">Default</a><span class="rear"></span></li>
+                        <li><span class="front"></span><a class ="updateComplianceGraph" href="<?php echo site_url(); ?>/welcome/getJsonComplianceSummary/" title="">Default</a><span class="rear"></span></li>
                         <?php foreach ($envList as $key => $env) {
                             ?>
-                            <li><span class="front"></span><a class ="updateComplianceGraph" href="/welcome/getJsonComplianceSummary/<?php echo $env; ?>" title="environment_<?php echo $env; ?>"><?php echo $env; ?></a><span class="rear"></span></li>
+                            <li><span class="front"></span><a class ="updateComplianceGraph" href="<?php echo site_url(); ?>/welcome/getJsonComplianceSummary/<?php echo $env; ?>" title="environment_<?php echo $env; ?>"><?php echo $env; ?></a><span class="rear"></span></li>
                         <?php } ?>
                     </ul>
                 </div>
@@ -165,7 +165,7 @@
     
     $("#compliance_summary_graph").bind("plotclick", function (event, pos, item) {
         if (item) {
-            var element = $('<a href="/widget/summaryCompliance/start/'+ (item.datapoint[0] /1000)+ '/env/' + graphEnvironment+ '" title="overview" />');
+            var element = $('<a href="<?php echo site_url(); ?>/widget/summaryCompliance/start/'+ (item.datapoint[0] /1000)+ '/env/' + graphEnvironment+ '" title="overview" />');
             element.ajaxyDialog().ajaxyDialog("open");
         }
     });

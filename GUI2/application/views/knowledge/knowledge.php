@@ -203,7 +203,7 @@
                 onClick: function(node) {
                     if(!node) return;
                     if (node.data.link) {
-                        window.location.href = (node.data.link);
+                        window.location.href = '<?php echo site_url(); ?>'+(node.data.link);
                     }
                 }
             },

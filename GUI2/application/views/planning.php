@@ -28,7 +28,7 @@
         <div id="plandash" class="grid_7 dash innerdiv">
             <ul>
                 <li><?php echo anchor('/repository/checkout', 'repository', array('class' => 'repolink', 'id' => 'repobrowser')); ?></li>
-                <li><?php echo anchor('widget/tracker', 'track records', array('class' => 'trackrecord', 'id' => 'trackrecord')); ?></li>
+                <li><?php echo anchor('/widget/tracker', 'track records', array('class' => 'trackrecord', 'id' => 'trackrecord')); ?></li>
                 <li><?php echo anchor('/repository/policyApprover', 'approve policies', array('class' => 'approve ', 'id' => 'aprvpolicy')); ?></li>
                  <li><?php echo anchor('/welcome/services', 'Service Catalogue', array('class' => 'service ', 'id' => 'aprvpolicy')); ?></li>
                 <p class="clearleft"></p>
@@ -37,7 +37,7 @@
         <div id="personallog" class="grid_5 innerdiv">
             <p class="title">Activity log</p>
             <div id="messageinput_container">
-                <form method="post" action="/widget/insertworkinglogs">
+                <form method="post" action="<?php echo site_url(); ?>/widget/insertworkinglogs">
                     <textarea  id="message" name="message" placeholder="Working on...."></textarea>
                     <div id="button_block">
                         <input type="submit" id="button" value=" Share" class="slvbutton"/>
@@ -101,7 +101,7 @@
                 data:$(this).serialize(),
                 success: function(data){
                     $('#personalnotes').html(data);
-                    $('#users').load('/widget/getworkinglatestlogs')
+                    $('#users').load('<?php echo site_url(); ?>/widget/getworkinglatestlogs')
                     $("#message").val('').animate({"height": "30px"}, "fast" );
                     $("#button_block").slideUp("fast");
                     // socket.send("reload");

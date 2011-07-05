@@ -17,11 +17,11 @@
                             </tr>
                             <tr>
                                 <td>Type</td>
-                                <td><a href="/knowledge/knowledgeSearch/topic/<?php echo $def['Type']; ?>"><?php echo $def['Type']; ?></a></td>
+                                <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo $def['Type']; ?>"><?php echo $def['Type']; ?></a></td>
                             </tr>
                             <tr>
                                 <td>Name</td>
-                                <td><a href="/knowledge/knowledgeSearch/topic/<?php echo $def['Name']; ?>"> <?php echo $def['Name']; ?></a></td>
+                                <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo $def['Name']; ?>"> <?php echo $def['Name']; ?></a></td>
                             </tr>
                             <tr>
                                 <td>Arguments</th>
@@ -33,7 +33,7 @@
 
                             <?php foreach ((array) $def['attributes'] as $att) { ?>
                                 <tr>
-                                    <td><a href="/knowledge/knowledgeSearch/topic/<?php echo $att['lval']; ?>"><?php echo $att['lval']; ?></a> => </td><td><?php echo $att['rval']; ?> (<a href="/knowledge/knowledgeSearch/topic/<?php echo $att['class_context']; ?>"><?php echo $att['class_context']; ?></a>)</td>
+                                    <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo $att['lval']; ?>"><?php echo $att['lval']; ?></a> => </td><td><?php echo $att['rval']; ?> (<a href="/knowledge/knowledgeSearch/topic/<?php echo $att['class_context']; ?>"><?php echo $att['class_context']; ?></a>)</td>
                                 </tr>
                             <?php } ?>
                         </table>    
@@ -48,7 +48,7 @@
                     <div class="panelcontent">
                         <ul style="margin-left: 15px;">
                             <?php foreach ((array) $allbodies as $b) { ?>
-                                <li><?php echo sprintf("<a href='/welcome/body/body/%s/type/%s'>%s %s</a>", $b['body'], $b['type'], $b['body'], $b['type']); ?> </a></li>
+                            <li><?php echo sprintf("<a href='%s/welcome/body/body/%s/type/%s'>%s %s</a>", site_url(),$b['body'], $b['type'], $b['body'], $b['type']); ?> </a></li>
                             <?php } ?>                    
                         </ul>
                     </div>

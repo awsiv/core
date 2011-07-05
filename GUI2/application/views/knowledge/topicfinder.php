@@ -6,7 +6,7 @@
                     <?php foreach ((array) $searchData as $item) { ?>
                         <?php if (trim($item['topic'])) { ?>
 
-                            <li><?php echo sprintf('"<a target="_self" href="/knowledge/knowledgemap/pid/%s">%s</a>" is mentioned in the context of %s', $item['id'], $item['topic'], $item['context']); ?></li>
+                    <li><?php echo sprintf('"<a target="_self" href="%s/knowledge/knowledgemap/pid/%s">%s</a>" is mentioned in the context of %s', site_url(),$item['id'], $item['topic'], $item['context']); ?></li>
 
                         <?php } ?>
                     <?php } ?>

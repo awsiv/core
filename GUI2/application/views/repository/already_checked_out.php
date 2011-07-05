@@ -14,7 +14,7 @@
 
 <?php } ?>
 <div>
-    <a href="/repository/checkout/force" class="slvbutton">Force checkout</a>
-    <a href="/cfeditor" target="_self" class="slvbutton">Continue to policy editor</a>
+    <a href="<?php echo site_url(); ?>/repository/checkout/force" class="slvbutton">Force checkout</a>
+    <a href="<?php echo site_url(); ?>/cfeditor" target="_self" class="slvbutton">Continue to policy editor</a>
 
 </div>    

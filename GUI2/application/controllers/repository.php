@@ -21,7 +21,7 @@ class Repository extends Cf_Controller {
             $repoPath = $this->input->post('repoPath');
             $info = array('userId' => $username, 'repoPath' => $repoPath);
             $result = $this->repository_model->delete_repository($info);
-            redirect('/repository/manageRepository');
+            redirect(site_url().'/repository/manageRepository');
             exit;
         }
     }
@@ -71,7 +71,7 @@ class Repository extends Cf_Controller {
 
                 $bc = array(
                     'title' => 'Manage Repository',
-                    'url' => 'repository/manageRepository',
+                    'url' => site_url().'repository/manageRepository',
                     'isRoot' => false
                 );
 
@@ -89,7 +89,7 @@ class Repository extends Cf_Controller {
                 $this->template->load('template', '/repository/check_out_error', $data);
             } else {
                 //check out successful
-                redirect('/cfeditor');
+                redirect(site_url().'/cfeditor');
                 exit;
             }
         }
@@ -137,7 +137,7 @@ class Repository extends Cf_Controller {
                 if (!$return) {
                     $this->form_validation->_error_array = array_merge($this->form_validation->_error_array, $this->repository_model->get_errors());
                 } else {
-                    $successMessage = sprintf('Repository added sucessfully. <a href="/repository/checkOutUrl/%s" target="_self">Go to policy editor</a>', urlencode($this->input->post('repoPath')));
+                    $successMessage = sprintf('Repository added sucessfully. <a href="%s/repository/checkOutUrl/%s" target="_self">Go to policy editor</a>',site_url(), urlencode($this->input->post('repoPath')));
                     $this->session->set_flashdata(array('success' => $successMessage));
                     redirect(current_url());
                     exit();
@@ -147,7 +147,7 @@ class Repository extends Cf_Controller {
         $repo = $this->repository_model->get_all_repository($this->username);
         $data['repoData'] = $repo;
         $data['errors'] = $this->form_validation->_error_array;
-        $data['addFormPath'] = '/repository/checkout/force';
+        $data['addFormPath'] = site_url().'/repository/checkout/force';
 
         $this->load->view('/repository/checkout_repository', $data);
     }
@@ -175,7 +175,7 @@ class Repository extends Cf_Controller {
 
         $bc = array(
             'title' => 'Manage Repository',
-            'url' => 'repository/manageRepository',
+            'url' => '/repository/manageRepository',
             'isRoot' => false
         );
 
@@ -278,7 +278,7 @@ class Repository extends Cf_Controller {
         $rev_table = $this->repository_model->get_all_approved_policies();
         $bc = array(
             'title' => 'Approved Policies',
-            'url' => 'repository/approvedPolicies',
+            'url' =>  '/repository/approvedPolicies',
             'isRoot' => false
         );
         $data = array(

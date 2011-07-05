@@ -13,7 +13,7 @@
                         <?php if (!empty($repoData)) {
                         ?>
                         <?php foreach ($repoData as $repository) {
-                        ?><form method="post" action="/repository/edit">
+                        ?><form method="post" action="<?php echo site_url() ?>/repository/edit">
                                 <tr>
                                     <td><?php echo $repository['repoPath'] ?></td>
                                     <input type="hidden" name="repoPath" value="<?php echo $repository['repoPath'] ?>" />

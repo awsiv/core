@@ -2,6 +2,7 @@
 $.widget('ui.reportfinder',
 {
  options: {
+            baseUrl:'',
             width:700,
             height:600,
             allhost:true,
@@ -32,7 +33,7 @@ dialoginit:function(){
   self.titlebar=self.dialogcontent.siblings('div.ui-dialog-titlebar');
   self.repdialog.appendTo(self.dialogcontent).hide();
   if(!self.options.allhost){
-      self.repform=$('<form>').attr('action','/search/').attr('method','post');
+      self.repform=$('<form>').attr('action',self.options.baseUrl+'/search/').attr('method','post');
       self.repform.appendTo(self.dialogcontent);
   }
 },
@@ -56,7 +57,7 @@ var self=this,
     sender=$(event.target);
 if(self.options.allhost)
     {
-    self.repdialog.load('/search/index', {report: sender.text()}, function() {
+    self.repdialog.load(self.options.baseUrl+'/search/index', {report: sender.text()}, function() {
                self.repdialog.slideDown();
                var $closebtn=$("<a class='ui-dialog-titlebar-close ui-corner-all'><span class='ui-icon ui-icon-closethick'></span></a>");
                 $(this).find('.panelhead').append($closebtn);

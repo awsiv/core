@@ -2,6 +2,7 @@
 $.widget('ui.policyfinder',
 {
  options: {
+            baseUrl: '',
             filterhandlerurl: "/widget/filterpolicy",
             width:700,
             height:600
@@ -45,7 +46,7 @@ addsearchbar:function(){
   //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
   //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
 
-  self.searchbar=$('<form id="policyfindersearch" action="/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="search by bundle"/></span></form>')
+  self.searchbar=$('<form id="policyfindersearch" action="'+self.options.baseUrl+'/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="search by bundle"/></span></form>')
   self.titlebar.append(self.searchbar).delegate('form','submit',$.proxy(self.searchpolicyfile,self));
   self.searchbar.delegate('input[type="text"]','click',function(){$(this).focus().select()});
   self.searchbar.delegate('input[type="text"]','focusin',$.proxy(self.searchboxevent,self));
@@ -75,7 +76,7 @@ menuitemclicked:function(event){
   var sender=$(event.target);
   var selected_category=sender.text().toLowerCase();
   self.searchbar.find('input[type="text"]').val('search '+sender.text().toLowerCase()).data('default','search '+sender.text().toLowerCase())
-  self.searchbar.attr("action","/widget/search_"+selected_category.replace(/\s+/g, "_").toLowerCase());
+  self.searchbar.attr("action",self.options.baseUrl+"/widget/search_"+selected_category.replace(/\s+/g, "_").toLowerCase());
   self.dialogcontent.html(self.ajaxloader);
   self.loadpagebody(self.searchbar.attr('action'),"",false) ;
   self.searchbar.find('input[type="text"]').trigger('blur');
@@ -103,9 +104,9 @@ loadpagebody:function(url,val,escreg){
                                         
                                         li.append('<span class="type">'+val[3]+'</span>');
                                         var p =$("<p>")
-                                        $("<a>").attr({title:"promise : "+val, href:"/promise/details/"+escape(val[0])}).addClass('promiselnk').append('<span class="promiser">'+val[4]+'</span>').appendTo(p);
-                                        $("<a>").attr({title:"handle : "+val, href:"/promise/details/"+escape(val[0])}).append('<span class="handle">'+val[0]+'</span>').appendTo(p);
-                                        $("<a>").attr({title:"bundle : "+val, href:"/bundle/details/bundle/"+escape(val[2])+"/type/"+val[3]}).append('<span class="bundle">'+val[2]+'</span>').appendTo(p);
+                                        $("<a>").attr({title:"promise : "+val, href:self.options.baseUrl+"/promise/details/"+escape(val[0])}).addClass('promiselnk').append('<span class="promiser">'+val[4]+'</span>').appendTo(p);
+                                        $("<a>").attr({title:"handle : "+val, href:self.options.baseUrl+"/promise/details/"+escape(val[0])}).append('<span class="handle">'+val[0]+'</span>').appendTo(p);
+                                        $("<a>").attr({title:"bundle : "+val, href:self.options.baseUrl+"/bundle/details/bundle/"+escape(val[2])+"/type/"+val[3]}).append('<span class="bundle">'+val[2]+'</span>').appendTo(p);
                                         p.appendTo(li);
                                         li.appendTo("#policyList");
                                   });

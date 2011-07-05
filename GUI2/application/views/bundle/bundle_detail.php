@@ -30,7 +30,7 @@
                                 <?php if (is_array($classes) && !empty($classes)) {
                                     foreach ((array) $classes as $c) { ?>
                                         <tr>
-                                            <td><?php echo sprintf("<a href='/knowledge/knowledgemap/pid/%s'>%s</a>", $c[0], $c[1]); ?></td>
+                                            <td><?php echo sprintf("<a href='%s/knowledge/knowledgemap/pid/%s'>%s</a>",  site_url(), $c[0], $c[1]); ?></td>
                                             <td></td>
                                         </tr>
                                     <?php }
@@ -48,7 +48,7 @@
                                 <?php if (is_array($list) && !empty($list)) {
                                     foreach ((array) $list as $promise) { ?>
                                         <tr>
-                                            <td><?php echo sprintf("<a href='/promise/details/%s'>%s</a>", $promise, $promise); ?></td>
+                                            <td><?php echo sprintf("<a href='%s/promise/details/%s'>%s</a>",  site_url(), $promise, $promise); ?></td>
                                             <td></td>
                                         </tr>
                                     <?php }

@@ -4,7 +4,7 @@
             <h3><a href="#">Search</a></h3>
             <div id="notes-filter" style="padding:5px;">
                 <div class="stylized">
-                    <form action="/notes/shownotes" method="POST">
+                    <form action="<?php echo site_url(); ?>/notes/shownotes" method="POST">
                         <fieldset>                           
                             <label id="Username" for="username">User Name :: </label>
                             <input type="text" name="username" value="<?php echo set_value('username'); ?>" size="50" />
@@ -46,7 +46,7 @@
                 }
                 ?> 
                 <br />    
-                <form action="/notes/shownotes" method="POST">
+                <form action="<?php echo site_url(); ?>/notes/shownotes" method="POST">
                     <input type="hidden" name="username" value="" size="" />
 
                     <input autocomplete="off" id="date_from" type="hidden" name="date_from" value="" size="50" />

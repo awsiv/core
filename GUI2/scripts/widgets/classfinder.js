@@ -2,6 +2,7 @@
 $.widget('ui.classfinder', 
 {
  options: {
+            baseUrl: '',
             filterhandlerurl: "/widget/filterclass",
             defaultbehaviour:true,
             width:700,
@@ -34,7 +35,7 @@ addsearchbar:function(){
 
   self.gethostbtn=$('<span>').attr('id','findmatchedhost').text('view hosts');
   self.gethostbtn.appendTo(self.dialogcontent.parent()).hide();
-  self.matchhostfinder=$('<form>').attr({id:"finderform",action:"/search/index",method:"post"}).hide();
+  self.matchhostfinder=$('<form>').attr({id:"finderform",action:self.options.baseUrl+"/search/index",method:"post"}).hide();
   $('<input>').attr({id:'name',name:'name',type:'hidden'}).appendTo(self.matchhostfinder);
   $('<input>').attr({name:'hosts_only',type:'hidden'}).val(true).appendTo(self.matchhostfinder);
   $('<input>').attr({name:'host',type:'hidden'}).val('All').appendTo(self.matchhostfinder);
@@ -76,16 +77,16 @@ menuitemclicked:function(event){
   sender.addClass('selected').siblings().removeClass('selected');
            $.ajax({
                   type: "POST",
-                  url: self.options.filterhandlerurl,
+                  url: self.options.baseUrl+self.options.filterhandlerurl,
                   data: {filter:sender.text().toLowerCase().split(" ")[0]},
                   dataType:"json",
                   success: function(data) {
                   self.dialogcontent.html($("<ul>").attr("id", "classList")); //repeated can be merged with loadpagebody
                     $.each(data, function(i, val) {
                                         var li = $("<li>");
-                                        $("<a>").text(val).attr({title:val, href:"/search/index/host/All/report/Class+profile/name/"+val}).addClass('name').appendTo(li);
+                                        $("<a>").text(val).attr({title:val, href:self.options.baseUrl+"/search/index/host/All/report/Class+profile/name/"+val}).addClass('name').appendTo(li);
                                         if(self.options.defaultbehaviour){
-                                        $("<a>").text('view hosts').attr('href',"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').addClass('btn').appendTo(li);
+                                        $("<a>").text('view hosts').attr('href',self.options.baseUrl+"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').addClass('btn').appendTo(li);
                                          $("<a>").text('add to list').data('val',val).addClass('classadd').addClass('btn').appendTo(li);
                                         }
                                         li.appendTo("#classList");
@@ -146,9 +147,9 @@ loadpagebody:function(){
                                //$("<ul>").attr("id", "tagList").appendTo(self.classdlg);
                                   $.each(data, function(i, val) {
                                         var li = $("<li>");
-                                        $("<a>").text(val).attr({title:val, href:"/search/index/host/All/report/Class+profile/name/"+val}).addClass('name').appendTo(li);
+                                        $("<a>").text(val).attr({title:val, href:self.options.baseUrl+"/search/index/host/All/report/Class+profile/name/"+val}).addClass('name').appendTo(li);
                                         if(self.options.defaultbehaviour){
-                                        $("<a>").text('View hosts').attr('href',"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').addClass('btn').appendTo(li);
+                                        $("<a>").text('View hosts').attr('href',self.options.baseUrl+"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').addClass('btn').appendTo(li);
                                          $("<a>").text('add to list').data('val',val).addClass('classadd').addClass('btn').appendTo(li);
                                         }
                                        li.appendTo("#classList");

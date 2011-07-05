@@ -18,17 +18,17 @@
                         </tr>
                         <tr>
                             <td>Belonging to agent bundle</td>
-                            <td><a href="/bundle/details/bundle/<?php echo urlencode($promise['bundlename']); ?>/type/<?php echo urlencode($promise['bundletype']); ?>"><?php echo $promise['bundlename']; ?></a></td>
+                            <td><a href="<?php echo site_url(); ?>/bundle/details/bundle/<?php echo urlencode($promise['bundlename']); ?>/type/<?php echo urlencode($promise['bundletype']); ?>"><?php echo $promise['bundlename']; ?></a></td>
                         </tr>
 
                         <tr>
                             <td>Reference handle</td>
-                            <td><a href="/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['handle']); ?>"><?php echo $promise['handle']; ?></a></td>
+                            <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['handle']); ?>"><?php echo $promise['handle']; ?></a></td>
                         </tr>
 
                         <tr>
                             <td>Affected object (promiser)</td>
-                            <td><a href="/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['promiser']); ?>"><?php echo $promise['promiser']; ?></a></td>
+                            <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['promiser']); ?>"><?php echo $promise['promiser']; ?></a></td>
                         </tr>
 
                         <tr>
@@ -43,12 +43,12 @@
 
                         <tr>
                             <td>Promise is about</td>
-                            <td><a href="/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['promise_type']); ?>"><?php echo $promise['promise_type']; ?></a></td>
+                            <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['promise_type']); ?>"><?php echo $promise['promise_type']; ?></a></td>
                         </tr>
 
                         <tr>
                             <td>Applies in the class context</td>
-                            <td><a href="/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['class_context']); ?>"><?php echo $promise['class_context']; ?></a></td>
+                            <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['class_context']); ?>"><?php echo $promise['class_context']; ?></a></td>
                         </tr>
 
                         <tr>
@@ -62,7 +62,7 @@
 
                         <?php foreach ((array) $promise['body'] as $body) { ?>
                             <tr>
-                                <td><a href="/knowledge/knowledgeSearch/topic/<?php echo urlencode($body['type']); ?>"><?php echo $body['type'] ?></a> =></td><td><a href="/welcome/body/body/<?php echo urlencode($body['name']); ?>/type/<?php echo urlencode($body['type']) ?>"><?php echo $body['name'] ?><?php echo $body['args'] ?></a></td>
+                                <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($body['type']); ?>"><?php echo $body['type'] ?></a> =></td><td><a href="<?php echo site_url(); ?>/welcome/body/body/<?php echo urlencode($body['name']); ?>/type/<?php echo urlencode($body['type']) ?>"><?php echo $body['name'] ?><?php echo $body['args'] ?></a></td>
                             </tr>
                         <?php } ?>
                     </table>                 
@@ -80,13 +80,13 @@
 
                 <table class="bundlelist-table">
                     <tr>
-                        <th scope="col">Other promises in bundle <a href="/bundle/details/bundle/<?php echo urlencode($mybundle); ?>"><span id="bundle"><?php echo $mybundle; ?></span></a></th>
+                        <th scope="col">Other promises in bundle <a href="<?php echo site_url(); ?>/bundle/details/bundle/<?php echo urlencode($mybundle); ?>"><span id="bundle"><?php echo $mybundle; ?></span></a></th>
                     </tr>
 
 
                     <?php foreach ((array) $allhandles as $p) { ?>
                         <tr>
-                            <td><?php echo sprintf("<a href='/promise/details/%s'>%s</a>", $p, $p); ?></td> 
+                            <td><?php echo sprintf("<a href='%s/promise/details/%s'>%s</a>", site_url(),$p, $p); ?></td> 
                         </tr>
                     <?php } ?>   
                 </table>    
@@ -102,7 +102,7 @@
 
                     <?php foreach ((array) $allhandlespromiser as $p) { ?>
                         <tr>
-                            <td><?php echo sprintf("<a href='/promise/details/%s'>%s</a>", $p, $p); ?></td> 
+                            <td><?php echo sprintf("<a href='%s/promise/details/%s'>%s</a>", site_url(),$p, $p); ?></td> 
                         </tr>
                     <?php } ?>   
                 </table>  
@@ -117,7 +117,7 @@
 
                     <?php foreach ((array) $allhandlesbytype as $p) { ?>
                         <tr>
-                            <td><?php echo sprintf("<a href='/promise/details/%s'>%s</a>", $p, $p); ?></td> 
+                            <td><?php echo sprintf("<a href='%s/promise/details/%s'>%s</a>",  site_url(), $p, $p); ?></td> 
                         </tr>
                     <?php } ?>   
                 </table> 

@@ -53,7 +53,8 @@ class Knowledge extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display()
         );
 
-        $root = getenv("DOCUMENT_ROOT");
+        $root = getcwd();
+        
         $root = $root . '/docs/';
         $docdata = cfpr_list_documents($root);
 

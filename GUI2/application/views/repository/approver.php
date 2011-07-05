@@ -1,5 +1,5 @@
 <div class="stylized">
-    <form action="/repository/approveRepoAction" method="POST">
+    <form action="<?php echo site_url(); ?>/repository/approveRepoAction" method="POST">
         <fieldset>
             <legend>Approve Policy</legend>
             <p>
@@ -40,7 +40,7 @@
     $(document).ready(function(){
         $('#repolist').change(function(){
             var selected_repo=$(this).find("option:selected").text();
-            $('#revisions').load('/repository/getListofRev',{repo:selected_repo});
+            $('#revisions').load('<?php echo site_url(); ?>/repository/getListofRev',{repo:selected_repo});
         });
         $("#comments").live('focusin',function(){$(this).autoGrow();});
     });
