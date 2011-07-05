@@ -929,8 +929,7 @@ char *Nova_URL(char *s,char *rep);
 struct Item *Nova_NearestNeighbours(int topic_id,char *assoc_mask);
 struct Item *Nova_GetTopicsInContext(char *context);
 struct Item *Nova_GetBusinessGoals(char *handle);
-//int Nova_GetUniqueBusinessGoals(char *buffer,int bufsize);
-struct Item *Nova_GetUniqueBusinessGoals();
+int Nova_GetUniqueBusinessGoals(char *buffer,int bufsize);
 
 void Nova_SpecialQuote(char *name,char *type);
 void Nova_PlotTopicCosmos(int topic,char *view,char *buf,int size);

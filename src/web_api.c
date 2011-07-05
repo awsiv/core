@@ -3106,25 +3106,19 @@ else
 }
 /*****************************************************************************/
 int Nova2PHP_list_all_goals(char *buffer,int bufsize)
-//struct Item *Nova_GetUniqueBusinessGoals()  
 
 { char work[CF_BUFSIZE];
  struct Item *ip2,*glist;
 
- glist = Nova_GetUniqueBusinessGoals();
- for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
+ if (Nova_GetUniqueBusinessGoals(buffer,bufsize))
     {
-    printf("{\"desc\": \"%s\",\"name\":\"%s\",\"pid\":%d},\n",ip2->classes,ip2->name,ip2->counter);
-    snprintf(work,CF_BUFSIZE,"{\"desc\": \"%s\",\"name\":\"%s\",\"pid\":%d},",ip2->classes,ip2->name,ip2->counter);
-
-    if (!Join(buffer,work,CF_BUFSIZE))
-       {
-       break;
-       }
+         return true;
     }
- 
- DeleteItemList(glist);
- return true;
+ else
+    {
+    return false;
+    }
+
 }
 
 /*****************************************************************************/
