@@ -14,8 +14,8 @@
              <?php
              if($is_admin)
              {
-             echo anchor("auth/manage_group/edit/".$group['_id'], ' ',array('class'=>'edit','title'=>'edit group'));
-              echo anchor("auth/delete_group/".$group['_id'], ' ',array('class'=>'delete','title'=>'delete group'));
+             echo anchor("auth/manage_group/edit/".$group['_id']->__toString(), ' ',array('class'=>'edit','title'=>'edit group'));
+              echo anchor("auth/delete_group/".$group['_id']->__toString(), ' ',array('class'=>'delete','title'=>'delete group'));
              }
              ?>
           </td>
@@ -26,4 +26,4 @@
 <p id="btnholder">
   <span class="btn"><?php echo anchor("auth/manage_group/create", 'Add Group',array('id'=>'add_group'))?></span>
 </p>
-<?}?>
+<?php } ?>

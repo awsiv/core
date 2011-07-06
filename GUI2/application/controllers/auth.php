@@ -545,7 +545,7 @@ class Auth extends Controller {
                     $this->__load_group_add_edit($op, $id);
                     return;
                 }
-                if ($op == 'create' && $this->ion_auth->create_group($data) == "") {
+                if ($op == 'create' && $this->ion_auth->create_group($data) === FALSE) {
                     $this->__load_group_add_edit($op, $id);
                     return;
                 }

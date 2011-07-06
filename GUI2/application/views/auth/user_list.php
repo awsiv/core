@@ -30,7 +30,7 @@
                                     ;?></td>
 
 				<td><?php if($is_admin) {
-                                    echo ($user['active']) ? anchor("auth/deactivate/".$user['_id'], 'Active', array('class'=>'activate')) : anchor("auth/activate/". $user['_id'], 'Inactive',array('class'=>'inactivate'));
+                                    echo ($user['active']) ? anchor("auth/deactivate/".$user['_id']->__toString(), 'Active', array('class'=>'activate')) : anchor("auth/activate/". $user['_id'], 'Inactive',array('class'=>'inactivate'));
                                 }else{
                                  echo ($user['active']) ? 'Active' :  'Inactive';
                                 }
@@ -40,14 +40,14 @@
                 <?php
                 if($is_admin)
                 {
-                echo anchor("auth/change_password/".$user['_id'], ' ',array('class'=>'changepassword','title'=>'change password'));
-                echo anchor("auth/edit_user/".$user['_id'], ' ',array('class'=>'edit','title'=>'edit user'));
-                echo anchor("auth/delete_user/".$user['_id'], ' ', array('class' => 'delete','title'=>'delete user'));
+                echo anchor("auth/change_password/".$user['_id']->__toString(), ' ',array('class'=>'changepassword','title'=>'change password'));
+                echo anchor("auth/edit_user/".$user['_id']->__toString(), ' ',array('class'=>'edit','title'=>'edit user'));
+                echo anchor("auth/delete_user/".$user['_id']->__toString(), ' ', array('class' => 'delete','title'=>'delete user'));
                 }
                 elseif( $user['username']==$username)
                 {
-                echo anchor("auth/change_password/".$user['_id'], ' ',array('class'=>'changepassword','title'=>'change password'));
-                echo anchor("auth/edit_user/".$user['_id'], ' ',array('class'=>'edit','title'=>'edit my details'));
+                echo anchor("auth/change_password/".$user['_id']->__toString(), ' ',array('class'=>'changepassword','title'=>'change password'));
+                echo anchor("auth/edit_user/".$user['_id']->__toString(), ' ',array('class'=>'edit','title'=>'edit my details'));
                 }
              ?>
                 </td>

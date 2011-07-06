@@ -147,6 +147,12 @@ $(document).ready(function() {
     var path=$(this).attr('href');
     $("#admin_content").load(path);
  });
+
+ $('.inactivate').live('click',function(event){
+    event.preventDefault();
+    var path=$(this).attr('href');
+    $("#admin_content").load(path);
+ });
  
   $('#deactivate_user').live('submit',function(event) {
        event.preventDefault();

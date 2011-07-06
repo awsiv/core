@@ -706,7 +706,7 @@ class Ion_auth_model_mongo extends CI_Model
 	    if (array_key_exists($this->identity_column, $data) && $this->identity_check($data[$this->identity_column]))
 	    {
                 $user=$this->get_user_by_col($this->identity_column, $data[$this->identity_column]);
-                if($user->_id != $id)
+                if($user->_id->__toString() != $id)
                 {
 		$this->ion_auth->set_error('account_creation_duplicate_'.$this->identity_column);
 		return FALSE;
@@ -895,7 +895,7 @@ class Ion_auth_model_mongo extends CI_Model
             if (array_key_exists('name', $data) && $this->group_check($data['name']))
 	    {
                 $group=$this->get_group_by_name($data['name']);
-                if($group->_id != $id)
+                if($group->_id->__toString() != $id)
                 {
 		$this->ion_auth->set_error('group_creation_duplicate');
 		return FALSE;
