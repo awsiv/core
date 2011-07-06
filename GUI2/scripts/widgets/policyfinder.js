@@ -24,7 +24,7 @@ dialogContainer: function() {
             }
             else {
                 //single shared element for modal dialogs
-                var requestDialog = $('<div id="policylistcontainer" style="display:none" class="result" title="Policies"></div>').appendTo('body').
+                var requestDialog = $('<div id="policylistcontainer" style="display:none" class="result" title="Promises"></div>').appendTo('body').
                 dialog({
                     autoOpen: false
                 });
@@ -104,9 +104,9 @@ loadpagebody:function(url,val,escreg){
                                         
                                         li.append('<span class="type">'+val[3]+'</span>');
                                         var p =$("<p>")
-                                        $("<a>").attr({title:"promise : "+val, href:self.options.baseUrl+"/promise/details/"+escape(val[0])}).addClass('promiselnk').append('<span class="promiser">'+val[4]+'</span>').appendTo(p);
-                                        $("<a>").attr({title:"handle : "+val, href:self.options.baseUrl+"/promise/details/"+escape(val[0])}).append('<span class="handle">'+val[0]+'</span>').appendTo(p);
-                                        $("<a>").attr({title:"bundle : "+val, href:self.options.baseUrl+"/bundle/details/bundle/"+escape(val[2])+"/type/"+val[3]}).append('<span class="bundle">'+val[2]+'</span>').appendTo(p);
+                                        $("<a>").attr({title:"promise : "+val[4], href:self.options.baseUrl+"/promise/details/"+escape(val[0])}).addClass('promiselnk').append('<span class="promiser">'+val[4]+'</span>').appendTo(p);
+                                        $("<a>").attr({title:"handle : "+val[0], href:self.options.baseUrl+"/promise/details/"+escape(val[0])}).append('<span class="handle">'+val[0]+'</span>').appendTo(p);
+                                        $("<a>").attr({title:"bundle : "+val[2], href:self.options.baseUrl+"/bundle/details/bundle/"+escape(val[2])+"/type/"+val[3]}).append('<span class="bundle">'+val[2]+'</span>').appendTo(p);
                                         p.appendTo(li);
                                         li.appendTo("#policyList");
                                   });

@@ -63,16 +63,20 @@ class Search extends Cf_Controller {
 
         $params = '';
         $breadcrumbs_url = "search/index/";
+        $hostfinderparams="";
         if (!is_ajax ()) {
 
             if (count($getparams) > 0) {
                 //$params=$this->uri->assoc_to_uri($getparams);
                 foreach ($getparams as $key => $value) {
                     if (!empty($value)) {
-                   
+
+                     $breadcrumbs_url.=$key . '/' . $value . '/';
                         if ($key <> "page" && $key <> "rows") {
                             $params.=$key . '/' . $value . '/';
-                             $breadcrumbs_url.=$key . '/' . $value . '/';
+                        }
+                        if($key<>"host" && $key <> "page" && $key <> "rows"){
+                            $hostfinderparams.=$key . '/' . $value . '/';
                         }
                     }
                 }
@@ -82,15 +86,14 @@ class Search extends Cf_Controller {
                     if (!empty($value)) {
                         //$params.=$key.'/';
                         $params.=$key . '/' . urlencode($value) . '/';
-
+                        $breadcrumbs_url .= $key . '/' . urlencode($value) . '/';
                         /* $key == "host" || $key == "report" old condition */
-                        if ($key <> "page" && $key <> "rows") {
-                            $breadcrumbs_url .= $key . '/' . urlencode($value) . '/';
+                        if ($key <> "page" && $key <> "rows" &&$key<>"host") {
+                            $hostfinderparams.=$key . '/' .  urlencode($value) . '/';
                         }
                     }
                 }
-                // $params.='rows/20/page/1';
-                //$params=$this->uri->assoc_to_uri($_POST);
+               
             }
             
             //$modified=$this->breadcrumblist-> replace_last_with_current("search/index",site_url("$breadcrumbs_url"));
@@ -118,7 +121,8 @@ class Search extends Cf_Controller {
             'current' => $page_number,
             'number_of_rows' => $rows,
             'params' => $params,
-            'classregex'=>$class_regex
+            'classregex'=>$class_regex,
+            'hostfinderparams'=>$hostfinderparams
         );
        if(isset($getparams['name'])){
            $data['name']=urldecode($getparams['name']);

@@ -23,7 +23,7 @@
 
             </div>
            <div>
-            <?
+            <?php
                 echo form_open('search/index/' . $params);
                 echo form_input('rows', $number_of_rows);
                 echo "  Rows/Page";

@@ -32,7 +32,7 @@
          /*
 	 * Admin Email, admin@example.com
 	 */
-	$config['admin_email']		   = "sudhir.pandey@cfengine.com";
+	$config['admin_email']		   = "admin@cfengine.com";
 	
 	/**
 	 * Default group, use name
