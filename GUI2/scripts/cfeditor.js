@@ -163,7 +163,7 @@ var $tabs = $('#tabs').tabs({
     	 addTab('new');
     	 var editor = CodeMirror.fromTextArea('code'+code_editor_counter, {
     		    parserfile: ["cfsyntax.js", "parsecf.js"],
-    		    stylesheet: "../css/cfcolors.css",
+    		    stylesheet: "../themes/default/css/cfcolors.css",
     		    path: "../scripts/Cfeditor/",
     		    lineNumbers: true,
     		    styleNumbers: styleLineNum,
