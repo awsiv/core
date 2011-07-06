@@ -33,7 +33,7 @@
 
                             <?php foreach ((array) $def['attributes'] as $att) { ?>
                                 <tr>
-                                    <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo $att['lval']; ?>"><?php echo $att['lval']; ?></a> => </td><td><?php echo $att['rval']; ?> (<a href="/knowledge/knowledgeSearch/topic/<?php echo $att['class_context']; ?>"><?php echo $att['class_context']; ?></a>)</td>
+                                    <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo $att['lval']; ?>"><?php echo $att['lval']; ?></a> => </td><td><?php echo $att['rval']; ?> (<a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo $att['class_context']; ?>"><?php echo $att['class_context']; ?></a>)</td>
                                 </tr>
                             <?php } ?>
                         </table>    

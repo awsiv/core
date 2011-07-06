@@ -81,7 +81,7 @@
                     <?php if (is_array($others) && !empty($others)) {
                         foreach ((array) $others as $o) { ?>
                             <tr>
-                                <td><?php echo sprintf("<a href='/bundle/details/bundle/%s/type/%s'>%s</a>", $o['bundlename'], $o['bundletype'], $o['bundlename']); ?></td>
+                                <td><?php echo sprintf("<a href='%s/bundle/details/bundle/%s/type/%s'>%s</a>",  site_url(), $o['bundlename'], $o['bundletype'], $o['bundlename']); ?></td>
                             </tr>
                         <?php }
                     } else { ?>
@@ -103,7 +103,7 @@
                     <?php if (is_array($allbundles) && !empty($allbundles)) {
                         foreach ((array) $allbundles as $bundles) { ?>
                             <tr>       
-                                <td><?php echo sprintf("<a href='/bundle/details/bundle/%s/type/%s'>%s</a>", $bundles[1], $bundles[0], $bundles[1]); ?></td>
+                                <td><?php echo sprintf("<a href='%s/bundle/details/bundle/%s/type/%s'>%s</a>",  site_url(), $bundles[1], $bundles[0], $bundles[1]); ?></td>
                             </tr>
                         <?php }
                     } else { ?>
