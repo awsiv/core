@@ -3921,7 +3921,6 @@ int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,i
 /*****************************************************************************/
 /* Reports                                                                   */
 /*****************************************************************************/
-
 void Nova2PHP_select_reports(char *buffer,int bufsize)
 
 { char work[CF_MAXVARSIZE];
@@ -3932,17 +3931,15 @@ strcat(buffer,"[");
 
 for (i = 0; BASIC_REPORTS[i][0] != NULL; i++)
    {
-   snprintf(work,CF_MAXVARSIZE,"\"%s\"",BASIC_REPORTS[i][0]);
+   snprintf(work,CF_MAXVARSIZE,"[\"%s\",\"%s\"]",BASIC_REPORTS[i][0],BASIC_REPORTS[i][1]);
    if (BASIC_REPORTS[i+1] != NULL)
       {
       strcat(work,",");
       }
    Join(buffer,work,bufsize);
    }
- if(buffer[strlen(buffer)-1] == ',')
-   {
-     buffer[strlen(buffer)-1] = '\0';
-   }
+
+ReplaceTrailingChar(buffer, ',', '\0');
 Join(buffer,"]",bufsize);
 }
 
