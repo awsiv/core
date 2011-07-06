@@ -1244,15 +1244,21 @@ span.search input
     color: #D4D5D0;
 }
 
+.repdesc{
+    margin-left:10px;
+}
 
 
 /* licensemeter */
 #licensebar{
-    height: 10px;
     text-align: center;
     color: #717171;
     font-family: Trebuchet MS;
     font-size: 11px;
+}
+
+#licensebar div{
+    height: 10px
 }
 
 #licenseinfo{
@@ -1262,6 +1268,9 @@ span.search input
     padding-bottom: 5px;
 }
 
+.licensetext{
+  display:block;
+}
 /* classfinder */
 
 .btnoptions{

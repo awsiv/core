@@ -44,7 +44,8 @@ loadpagebody:function(){
                              self.dialogcontent.append(self.reports);
                                   $.each(data, function(i, val) {
                                         var li = $("<li>");
-                                        $("<a>").text(val).attr({title:val, href:"#"}).appendTo(li);
+                                        $("<a>").text(val[0]).attr({title:'Generates Report for: '+val[1], href:"#"}).appendTo(li);
+                                        $("<span class=\"repdesc\">").text(val[1]).appendTo(li);
                                         li.appendTo(self.reports);
                                   });
      });

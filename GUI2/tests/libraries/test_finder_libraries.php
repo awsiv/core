@@ -18,7 +18,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
-        //   $this->dump($gdata);
+        $this->dump($data);
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
         $this->assertTrue(!empty ($array),"Is not empty ". count($array) ."items");
     }
@@ -28,7 +28,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
-        //   $this->dump($gdata);
+         $this->dump($data);
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
         $this->assertTrue(!empty ($array),"Is not empty ". count($array) ."items");
     }
@@ -48,7 +48,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
-        //   $this->dump($gdata);
+         $this->dump($data);
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
         $this->assertTrue(!empty ($array),"Is  Empty ". count($array) ."items");
     }
@@ -78,7 +78,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
-        //   $this->dump($gdata);
+         $this->dump($data);
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
         $this->assertTrue(!empty ($array),"Is  Empty ". count($array) ."items");
     }
@@ -155,6 +155,15 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
         $this->assertTrue(!empty ($array),"Is  Empty ". count($array) ."items");
     }
 
+    public function test_cfpr_select_reports(){
+        $data=cfpr_select_reports(".*", 100);
+        $array = json_decode(utf8_encode($data), true);
+        $retValue = json_last_error();
+        $this->dump($data);
+        $this->assertTrue(is_array($array), "Should Return a valid array");
+        $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
+        $this->assertTrue(!empty ($array),"Is  Empty ". count($array) ."items");
+    }
 
     
 }

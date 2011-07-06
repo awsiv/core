@@ -648,4 +648,21 @@ try {
     function version(){
         echo cfpr_enterprise_version();
     }
+
+    function timezoneset($offset){
+        $offset = $offset*60*60;
+        $abbrarray = timezone_abbreviations_list();
+        foreach ($abbrarray as $abbr) {
+            //echo $abbr."<br>";
+                foreach ($abbr as $city) {
+                    //echo $city['offset']." $offset<br>";
+                        if ($city['offset'] == $offset) { // remember to multiply $offset by -1 if you're getting it from js
+                               date_default_timezone_set($city['timezone_id']);
+                               $data=date_default_timezone_get();
+                               var_dump($data);
+                               return true;
+                        }
+                }
+        }
+    }
 }

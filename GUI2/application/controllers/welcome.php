@@ -471,7 +471,7 @@ class Welcome extends Cf_Controller {
 
             $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : "none";
         }
-        $reports = (array) json_decode(cfpr_select_reports(".*", 100));
+        $reports = json_decode(cfpr_select_reports(".*", 100));
         $hostname = cfpr_hostname($hostkey);
         $ipaddr = cfpr_ipaddr($hostkey);
         $username = isset($_POST['username']) ? $_POST['username'] : "";
@@ -492,7 +492,7 @@ class Welcome extends Cf_Controller {
             'ipaddr' => $ipaddr,
             'is_commented' => $is_commented,
             'op' => $op,
-            'allreps' => array_combine($reports, $reports),
+            //'allreps' => array_combine($reports, $reports),
             'allhosts' => $allhosts,
             'breadcrumbs' => $this->breadcrumblist->display()
         );
@@ -569,19 +569,37 @@ class Welcome extends Cf_Controller {
     }
 
     function license() {
+        $this->carabiner->js('/widgets/licensemeter.js');
         $bc = array(
             'title' => 'License',
             'url' => 'welcome/license',
             'isRoot' => false
         );
+        
         $this->breadcrumb->setBreadCrumb($bc);
+          try{
+                    $expirydate = strtotime(cfpr_getlicense_expiry());
+                    $startDate = cfpr_getlicense_installtime();
+                    //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
+                    $datediff = $expirydate - $startDate;
+                    $totaldays = floor($datediff / (60 * 60 * 24));
+                    $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
+
+                    $pbarvalue = floor(($dayspassed / $totaldays) * 100);
+            }catch(Exception $e)
+            {
+                log_message('license error:'.$e->getMessage());
+            }
         $data = array(
             'title' => "Cfengine Mission Portal - license usage status ",
             'ret2' => cfpr_getlicenses_promised(),
             'ret3' => cfpr_getlicenses_granted(),
+            'started'=> date('D F d h:m:s Y',$startDate),
             'expiry' => cfpr_getlicense_expiry(),
             'txt' => cfpr_getlicense_summary(),
-            'breadcrumbs' => $this->breadcrumblist->display()
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'pbarvalue' => $pbarvalue,
+            'daysleft' => $totaldays - $dayspassed,
         );
         $this->template->load('template', 'license', $data);
     }

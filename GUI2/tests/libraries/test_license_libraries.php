@@ -65,6 +65,7 @@ class test_license_libraries extends CodeIgniterUnitTestCase {
         $this->assertTrue(isset($data),"Should return valid String");
         $this->dump($data);
     }
+    
 }
 
 ?>

@@ -23,12 +23,13 @@
                       echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo', 'title'=>"view license information"));?></div>
                   <div class="clear"></div>
                   <div id="licensebar" class="grid_4 push_4">
+                      <div></div>
                   </div>
                    <div class="clear"></div>
               </div>
   </div>
 <script type="text/javascript">
-    $('#licensebar').licensemeter(
+    $('#licensebar').find('div').licensemeter(
              {
                  value:<?php echo $pbarvalue?>,
                  daysleft:<?php echo $daysleft?>
