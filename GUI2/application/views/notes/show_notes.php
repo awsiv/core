@@ -112,7 +112,7 @@
 
                             <a href="<?php echo site_url("notes/shownotes/" . "page/$i") ?>" title="Go to Page <?php echo $i; ?>" class="page <?php echo $current; ?>"><span><?php echo $i; ?></span></a>
 
-<? } ?>
+<?php } ?>
 
                         <a href="<?php echo site_url('notes/shownotes/' . 'rows/' . $number_of_rows . '/page/' . $pg['next']) ?>" title="Go to Next Page" class="next"><span>></span></a>
                         <a href="<?php echo site_url('notes/shownotes/' . 'rows/' . $number_of_rows . '/page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>Last</span></a>

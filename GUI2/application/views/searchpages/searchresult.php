@@ -74,13 +74,13 @@
                                     <a href="<?php echo site_url('search/index/'.$params.'page/'.$pg['first']).'/rows/'.$number_of_rows?>" title="Go to First Page" class="first"><span>&laquo;</span></a>
                                     <a href="<?php echo site_url('search/index/'.$params.'page/'.$pg['prev']).'/rows/'.$number_of_rows?>" title="Go to Previous Page" class="prev"><span>&lsaquo;</span></a>
 
-                                    <? for ($i=$pg['start'];$i<=$pg['end'];$i++) {
+                                    <?php for ($i=$pg['start'];$i<=$pg['end'];$i++) {
                                        if ($i==$pg['page']) $current = 'current'; else $current="";
                                     ?>
 
                                     <a href="<?php echo site_url("search/index/".$params."page/$i".'/rows/'.$number_of_rows)?>" title="Go to Page <?php echo $i?>" class="page <?php echo $current?>"><span><?php echo $i?></span></a>
 
-                                    <? } ?>
+                                    <?php } ?>
 
                                     <a href="<?php echo site_url('search/index/'.$params.'page/'.$pg['next'].'/rows/'.$number_of_rows)?>" title="Go to Next Page" class="next"><span>&rsaquo;</span></a>
                                     <a href="<?php echo site_url('search/index/'.$params.'page/'.$pg['last'].'/rows/'.$number_of_rows)?>" title="Go to Last Page" class="last"><span>&raquo;</span></a>
