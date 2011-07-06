@@ -22,7 +22,7 @@
                      $data=json_decode(utf8_encode(trim($txt)));
                      //var_dump($data);
                     // echo json_last_error();
-                     foreach ($data as $key=>$value)
+                     foreach ((array)$data as $key=>$value)
                       {
                          $this->table->add_row($key, $value);
                       }
