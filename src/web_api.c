@@ -886,7 +886,7 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
 
 int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE],hostname[CF_MAXVARSIZE],report[CF_BUFSIZE]={0};
+{ char buffer[CF_BUFSIZE],report[CF_BUFSIZE]={0};
  struct HubPromiseLog *hp;
  struct HubQuery *hq;
  struct Rlist *rp;
@@ -904,18 +904,11 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
 
  hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,false,classreg);
  
- hostname[0] = '\0';
-
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hp = (struct HubPromiseLog *)rp->item;
     ip = IdempPrependItem(&summary,hp->handle,hp->cause);
     ip->counter++;
-
-    if (hostname[0] == '\0')
-       {
-       strncpy(hostname,hp->hh->hostname,CF_MAXVARSIZE);
-       }
     }
 
  DeleteHubQuery(hq,DeleteHubPromiseLog);
@@ -934,7 +927,7 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
     summary = SortItemListCounters(summary);
     snprintf(buffer,sizeof(buffer),
              "{\"meta\":{\"count\" : %d,"
-             "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Occurrences\":3"
+             "\"header\":{\"Promise Handle\":0,\"Report\":1,\"Occurrences\":2"
              "}},\"data\":[",ListLen(summary));
      
     StartJoin(returnval,buffer,bufsize);
@@ -944,8 +937,8 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
        if(i>=startIndex && (i<=endIndex || endIndex < 0))
           {
           EscapeJson(ip->classes,report,sizeof(report));
-          snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",\"%s\",%d],",
-                   hostname,ip->name,report,ip->counter);
+          snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%d],",
+                   ip->name,report,ip->counter);
        
           if(!Join(returnval,buffer,bufsize))
              {
