@@ -409,16 +409,16 @@ for (ip = data; ip != NULL; ip=ip->next)
    switch (type)
       {
       case 'c':
-          Debug("Promise \"%s\" was compliant, av %.2lf +/- %.2lf at %s",eventname,av,dev,cf_ctime(&then));
+          Debug("Promise \"%s\" was compliant, av %.2lf +/- %.2lf at %s\n",eventname,av,dev,cf_ctime(&then));
           break;
       case 'r':
-          Debug("Promise \"%s\" was repaired, av %.2lf +/- %.2lf at %s",eventname,av,dev,cf_ctime(&then));
+          Debug("Promise \"%s\" was repaired, av %.2lf +/- %.2lf at %s\n",eventname,av,dev,cf_ctime(&then));
           break;
       case 'n':
-          Debug("Promise \"%s\" was non-compliant, av %.2lf +/- %.2lf at %s",eventname,av,dev,cf_ctime(&then));
+          Debug("Promise \"%s\" was non-compliant, av %.2lf +/- %.2lf at %s\n",eventname,av,dev,cf_ctime(&then));
           break;
       default:
-	Debug("Unknown state '%c' (eventname=%s,%.2lf +/- %.2lf at %s)",type,eventname,av,dev,cf_ctime(&then));
+	Debug("Unknown state '%c' (eventname=%s,%.2lf +/- %.2lf at %s)\n",type,eventname,av,dev,cf_ctime(&then));
       }
    }
 }

@@ -3976,7 +3976,6 @@ int CFDB_QueryMonView(mongo_connection *conn, char *keyhash,char *monId, enum mo
 int CFDB_CountHosts(mongo_connection *conn)
 /**
  * Counts number of hosts.
- * Can be extended to support some query criteria.
  *
  **/
 {
@@ -3984,7 +3983,54 @@ int CFDB_CountHosts(mongo_connection *conn)
 
  bson_empty(&query);
  
- return (int)mongo_count(conn, MONGO_BASE, "hosts", &query);
+ return CFDB_CountHostsGeneric(conn, &query);
+}
+
+/*****************************************************************************/
+
+int CFDB_CountHostsWithClasses(mongo_connection *conn, struct Item *classes)
+/**
+ * Counts number of hosts with all the classes set during the last week.
+ *
+ **/
+{
+ bson query;
+ bson_buffer bb, *sub1, *sub2;
+ struct Item *ip;
+ int i;
+ char iStr[64];
+
+ bson_buffer_init(&bb);
+
+ sub1 = bson_append_start_object(&bb, cfr_class_keys);
+ sub2 = bson_append_start_array(&bb, "$all");
+
+ for(ip = classes, i = 0; ip != NULL; ip = ip->next, i++)
+    {
+    snprintf(iStr, sizeof(iStr), "%d", i);
+    bson_append_string(sub2, iStr, ip->name);
+    }
+ 
+ bson_append_finish_object(sub2); 
+ bson_append_finish_object(sub1);
+ 
+ bson_from_buffer(&query, &bb);
+ 
+ int count = CFDB_CountHostsGeneric(conn, &query);
+
+ bson_destroy(&query);
+ 
+ return count;
+}
+
+/*****************************************************************************/
+
+int CFDB_CountHostsGeneric(mongo_connection *conn, bson *query)
+/**
+ * Counts number of hosts matching the given query.
+ **/
+{
+ return (int)mongo_count(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, query);
 }
 
 /*****************************************************************************/
