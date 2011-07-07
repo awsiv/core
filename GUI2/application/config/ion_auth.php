@@ -27,7 +27,7 @@
 	/**
 	 * Site Title, example.com
 	 */
-	$config['site_title']		   = "http://sudhir.no-ip.biz:8088/";
+	$config['site_title']		   = "CFEngine";
 	
          /*
 	 * Admin Email, admin@example.com

@@ -47,3 +47,13 @@ after creating restoring the database from dumpfiles inside phpcfenginenova we c
 There should also be a policies directories inside the www root folder of application where it can make  the working directory for various users.
 Also we need directory named temp to make temporary storage to do a pdf calculation and emailing that pdf file.
 
+
+Email send By the system
+------------------------------------
+The default email address used by the System to send emails is
+admin@cfengine.com
+It can be changed by editing file name under application/config/ion_auth.php line containing
+$config['admin_email']		   = "admin@cfengine.com";
+
+
+
