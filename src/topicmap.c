@@ -716,7 +716,7 @@ for (rp = GOALCATEGORIES; rp != NULL; rp=rp->next)
      {
      for (rp2 = GOALS; rp2 != NULL; rp2=rp2->next)
         {
-        snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",rp->item,CanonifyName(rp2->item));
+        snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",(char*)rp->item,CanonifyName(rp2->item));
         strcat(searchstring,work);
         }
      }
@@ -831,7 +831,7 @@ searchstring[0] = '\0';
 
 for (rp = GOALCATEGORIES; rp != NULL; rp=rp->next)
    {
-   snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",rp->item,CanonifyName(ip->name));
+   snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",(char*)rp->item,CanonifyName(ip->name));
    strcat(searchstring,work);
    }
 

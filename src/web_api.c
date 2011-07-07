@@ -1028,7 +1028,6 @@ return true;
 }
 
 /*****************************************************************************/
-
 int Nova2PHP_get_value_graph(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize)
 
 { struct HubValue *hp;
@@ -2170,6 +2169,59 @@ int Nova2PHP_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsiz
 
  return true;
 }
+/*****************************************************************************/
+
+int Nova2PHP_value_hosts(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize)
+
+{ struct HubValue *hp;
+  struct HubQuery *hq;
+  struct Rlist *rp;
+  mongo_connection dbconn;
+  char buffer[CF_BUFSIZE]={0};
+  int counter = 0, n = 180;
+  struct HubHost *hh;
+
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,classreg);
+
+StartJoin(returnval,"[",bufsize);
+
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
+   
+   counter++;
+   snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
+   
+   if(!Join(returnval,buffer,bufsize))
+      {
+      break;
+      }
+   
+   if (counter > n && counter % 6 == 0)
+      {
+      break;
+      }
+   }
+
+ReplaceTrailingChar(returnval,',',']');
+
+DeleteHubQuery(hq,DeleteHubValue);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
 
 /*****************************************************************************/
 
@@ -2211,13 +2263,8 @@ int Nova2PHP_software_hosts(char *hostkey,char *name,char *value, char *arch,int
        break;
        }
     }
- 
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0';
-    }
 
- EndJoin(returnval,"]\n",bufsize);
+ ReplaceTrailingChar(returnval,',',']'); 
 
  DeleteHubQuery(hq,DeleteHubSoftware);
 
@@ -2269,12 +2316,8 @@ int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *classreg,cha
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0';
-    }
 
- EndJoin(returnval,"]\n",bufsize);
+ ReplaceTrailingChar(returnval,',',']');
 
  DeleteHubQuery(hq,DeleteHubClass);
 
@@ -2324,12 +2367,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-if (returnval[strlen(returnval)-1]==',')
-   {
-   returnval[strlen(returnval) - 1] = '\0';
-   }
-
-EndJoin(returnval,"]\n",bufsize);
+ReplaceTrailingChar(returnval,',',']');
 
 DeleteHubQuery(hq,DeleteHubVariable);
 
@@ -2386,13 +2424,9 @@ int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0';
-    }
 
- EndJoin(returnval,"]\n",bufsize);
-
+ ReplaceTrailingChar(returnval,',',']');
+ 
  DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
  if (!CFDB_Close(&dbconn))
@@ -2448,12 +2482,7 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-if (returnval[strlen(returnval)-1]==',')
-   {
-   returnval[strlen(returnval) - 1] = '\0';
-   }
-
-EndJoin(returnval,"]\n",bufsize);
+ReplaceTrailingChar(returnval,',',']');
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
@@ -2505,12 +2534,8 @@ int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0';
-    }
 
- EndJoin(returnval,"]\n",bufsize);
+ ReplaceTrailingChar(returnval,',',']');
 
  DeleteHubQuery(hq,DeleteHubLastSeen);
 
@@ -2559,12 +2584,8 @@ int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *classreg,
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0';
-    }
 
- EndJoin(returnval,"]\n",bufsize);
+ ReplaceTrailingChar(returnval,',',']');
 
  DeleteHubQuery(hq,DeleteHubPerformance);
 
@@ -2613,12 +2634,8 @@ int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0';
-    }
 
- EndJoin(returnval,"]\n",bufsize);
+ ReplaceTrailingChar(returnval, ',', ']');
 
  DeleteHubQuery(hq,DeleteHubSetUid);
 
@@ -2671,12 +2688,8 @@ int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,ch
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0';
-    }
 
- EndJoin(returnval,"]\n",bufsize);
+ ReplaceTrailingChar(returnval, ',', ']');
 
  DeleteHubQuery(hq,DeleteHubBundleSeen);
 
@@ -2736,8 +2749,7 @@ int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
        }
     }
 
- ReplaceTrailingChar(returnval, ',', '\0');
- EndJoin(returnval,"]\n",bufsize);
+ ReplaceTrailingChar(returnval, ',', ']');
 
  DeleteHubQuery(hq,DeleteHubFileChanges);
 

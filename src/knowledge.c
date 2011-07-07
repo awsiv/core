@@ -747,7 +747,7 @@ fprintf(fp,"data_types::\n");
 
 for (i = 0; CF_VARBODY[i].lval != NULL; i++)
    {
-   fprintf(fp,"  \"%s\" comment => \"%s matching %s\";\n",CF_VARBODY[i].lval,CF_VARBODY[i].description,CF_VARBODY[i].range);
+   fprintf(fp,"  \"%s\" comment => \"%s matching %s\";\n",CF_VARBODY[i].lval,(char*)CF_VARBODY[i].description,CF_VARBODY[i].range);
    }
 
 fprintf(fp,"  \"class\" comment => \"A boolean returned by certain functions in classes promises\";\n");
@@ -817,7 +817,7 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_site_classes].lval,&retval,
 
    for (rp = retval; rp != NULL; rp=rp->next)
       {
-      fprintf(fp,"  \"%s\" comment => { \"A hosting location for computers.\" }, generalizations => { \"locations\" }; ");
+      fprintf(fp,"  \"%s\" comment => { \"A hosting location for computers.\" }, generalizations => { \"locations\" }; ",(char *)rp->item);
       }
    }
 
@@ -1129,10 +1129,10 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
                fprintf(fp,"topics:\n");
                fprintf(fp,"promises::");
                fprintf(fp,"  \"%s\"\n",promise_id);
-               fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,rp->item,NOVA_ISIMPACTED);
+               fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,(char*)rp->item,NOVA_ISIMPACTED);
                fprintf(fp,"promisers::");
                fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
-               fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,rp->item,NOVA_ISIMPACTED);
+               fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,(char *)rp->item,NOVA_ISIMPACTED);
                found = true;
                }
 
