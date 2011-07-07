@@ -17,7 +17,7 @@
             </ul>
         </div>
         <div id="summarymetereng" class="minwidth70 innerdiv">
-            <p class="title">Averages summarizing all host</p>
+            <p class="title">Promise compliance summary for all host(s)</p>
             <div class="graphcontainer">
                 <?php include_once('graph/summaryCompliance.php'); ?>
             </div>
