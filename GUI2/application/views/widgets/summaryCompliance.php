@@ -1,10 +1,10 @@
 <div>
-<table>
+    <table style="width:98%">
     <tr>
      <th scope="red">Promise Not Kept</th>
     </tr>
     <tr>       
-        <td id="promise-not-kept" class="bundlelist-table">
+        <td id="promise-not-kept" style="width:98%" class="bundlelist-table">
             <?php
             if (is_array($notkept)) {
                 echo $this->cf_table->generateReportTable($notkept);

@@ -166,7 +166,8 @@
     $("#compliance_summary_graph").bind("plotclick", function (event, pos, item) {
         if (item) {
             var element = $('<a href="<?php echo site_url(); ?>/widget/summaryCompliance/start/'+ (item.datapoint[0] /1000)+ '/env/' + graphEnvironment+ '" title="overview" />');
-            element.ajaxyDialog().ajaxyDialog("open");
+            var option = {'width':'95%','height':'400'};
+            element.ajaxyDialog(option).ajaxyDialog("open");
         }
     });
     

@@ -22,6 +22,37 @@ class cf_table {
     function generateReportTable($result,$report_title = '') {
         $return = '';
         $this->CI->table->clear();
+        
+        $template =  array (
+						'table_open'			=> '<table border="0" style="width:100%;" cellpadding="0" cellspacing="0">',
+
+						'thead_open'			=> '<thead>',
+						'thead_close'			=> '</thead>',
+
+						'heading_row_start'		=> '<tr>',
+						'heading_row_end'		=> '</tr>',
+						'heading_cell_start'	=> '<th>',
+						'heading_cell_end'		=> '</th>',
+
+						'tbody_open'			=> '<tbody>',
+						'tbody_close'			=> '</tbody>',
+
+						'row_start'				=> '<tr>',
+						'row_end'				=> '</tr>',
+						'cell_start'			=> '<td>',
+						'cell_end'				=> '</td>',
+
+						'row_alt_start'		=> '<tr>',
+						'row_alt_end'			=> '</tr>',
+						'cell_alt_start'		=> '<td>',
+						'cell_alt_end'			=> '</td>',
+
+						'table_close'			=> '</table>'
+					);
+      
+        $this->CI->table->set_template($template);
+        
+        
         if (is_array($result)) {
             $this->CI->table->set_heading(array_keys($result['meta']['header']));
             $heading = "";
