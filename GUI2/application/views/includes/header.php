@@ -49,7 +49,7 @@ if($this->agent->is_browser('Safari')){
 <body>
   <div id="wrapper" class="container_12">
           <div id="header">
-              <div id="header_left"class="grid_7">
+              <div id="header_left"class="grid_8">
                <p class="sitetitle"><?php echo anchor("welcome/index",'cfengine mission portal') ?></p>
                <p class="breadcrumbs">
                   <ul id="breadcrumb">
@@ -59,7 +59,7 @@ if($this->agent->is_browser('Safari')){
                </p>
                </div>
 
-              <div id="header_right"class="grid_5">
+              <div id="header_right"class="grid_4">
                        <p id="userbox">
 	                Hello  <strong><?php echo $this->session->userdata('username');?></strong>
                         &nbsp;| &nbsp;
