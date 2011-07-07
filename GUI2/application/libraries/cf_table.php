@@ -18,7 +18,6 @@ class cf_table {
                                         'Compliance summary',
                                         'File change log',
                                         'File change diffs',
-                                        'Compliance by promise',
                                         'Performance');
 
         // these are the table fields that should be formatted as date and time

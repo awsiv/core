@@ -82,7 +82,7 @@ class Welcome extends Cf_Controller {
             array('/widgets/notes.js')
         );
 
-        $jsIE = array('jit/Extras/excanvas.js');
+        $jsIE = array('flot/excanvas.min');
         $this->carabiner->group('iefix', array('js' => $jsIE));
         $this->carabiner->js($requiredjs);
 
