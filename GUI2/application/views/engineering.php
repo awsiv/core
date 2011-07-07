@@ -1,14 +1,14 @@
 <div id="body">
     <div class="outerdiv">
         <div id="hoststatus" class="minwidth30 innerdiv">
-         <p class="title">Host Status</p>
+         <p class="title">Host Status (Last hour) </p>
         <ul>
             <!--<li>Hosts Known: <strong><?php echo $all ?></strong></li>
             <li>Ranked worst: <a href="weakest_host">Show top 50</a></li>-->
-            <li> <a href="<?php echo site_url('welcome/hosts/red')?>" class="redhost hoststatuslist"><?php echo $r ?> hosts known</a> </li>
-            <li> <a href="<?php echo site_url('welcome/hosts/yellow')?>" class="yellowhost hoststatuslist"><?php echo $y ?> hosts </a> </li>
-            <li> <a href="<?php echo site_url('welcome/hosts/green')?>" class="greenhost hoststatuslist"><?php echo $g ?> hosts known</a> </li>
-            <li> <a href="<?php echo site_url('welcome/hosts/blue')?>" class="bluehost hoststatuslist"><?php echo $b ?> hosts known</a> </li>
+            <li> <a href="<?php echo site_url('welcome/hosts/red')?>" class="redhost hoststatuslist"><?php echo $r ?> hosts 20% failure</a> </li>
+            <li> <a href="<?php echo site_url('welcome/hosts/yellow')?>" class="yellowhost hoststatuslist"><?php echo $y ?> hosts at 20% repaired </a> </li>
+            <li> <a href="<?php echo site_url('welcome/hosts/green')?>" class="greenhost hoststatuslist"><?php echo $g ?> hosts greater than 80% compliant </a> </li>
+            <li> <a href="<?php echo site_url('welcome/hosts/blue')?>" class="bluehost hoststatuslist"><?php echo $b ?> hosts unreachable</a> </li>
         </ul>
 
             <ul>
