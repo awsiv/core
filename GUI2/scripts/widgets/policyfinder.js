@@ -95,12 +95,9 @@ loadpagebody:function(url,val,escreg){
                   data: {filter:searchval,reg:escreg},
                   dataType:"json",
                   success: function(data) {
-                  self.dialogcontent.html($("<ul>").attr("id", "policyList"));
+                  self.dialogcontent.html($("<ul>").attr("id", "policyList"));           
                   $.each(data, function(i, val) {
-                                        var li = $("<li>");
-                                        //$("<a>").attr({title:val, href:"/promise/details/"+val[0]})
-                                        //.append('<span class="type">'+val[3]+'</span><p><span class="promiser">'+val[4]+'</span><span class="handle">'+val[0]+'</span> / <span class="bundle">'+val[2]+'</span></p><p class="clearleft"></p>')
-                                        //.appendTo(li);
+                                    var li = $("<li>");
                                         
                                         li.append('<span class="type">'+val[3]+'</span>');
                                         var p =$("<p>")
@@ -110,7 +107,13 @@ loadpagebody:function(url,val,escreg){
                                         p.appendTo(li);
                                         li.appendTo("#policyList");
                                   });
-                  }
+                  },
+	    error:function(jqXHR, textStatus, errorThrown){
+                      self.dialogcontent.html($("<ul>").attr("id", "policyList"));
+                      var li = $("<li>");
+                      li.append('<span class="type">'+textStatus+'</span><p>'+errorThrown+'</p>');
+		      li.appendTo("#policyList");
+	             }
            });
 },
 

@@ -202,4 +202,33 @@ function notifier($url,$_data)
         curl_close($ch);
 }
 
+//checking the format of json data returned from the core before echoing back to user
+    function sanitycheckjson($data) {
+        //php 5.1.6 only have json_encode and json_decode and red hat only have this 5.1.6 ats stable package so need to support it as well
+    $data_check = json_decode(utf8_encode($data), true);
+      $CI=&get_instance();
+        if (function_exists("json_last_error")) {
+            if (json_last_error() == 0) {
+                if (!empty($data_check )) {
+                    echo $data;
+                } else {
+                    $CI->output->set_status_header('400', 'No data Found');
+                }
+            } else {
+                   $CI->output->set_status_header('500', 'Valid Json Data cannot be generated from Promises');
+            }
+        } else {
+            if ($data_check  == NULL) {
+
+                $CI->output->set_status_header('500', 'Valid Json Data cannot be generated from Promises');
+            } else {
+                if (is_array($data_check ) && !empty($data_check)) {
+                    echo $data;
+                } else {
+                    $CI->output->set_status_header('400', 'No data Found');
+                }
+            }
+        }
+    }
+
 ?>

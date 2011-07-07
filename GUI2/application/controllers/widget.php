@@ -23,11 +23,11 @@ class Widget extends Cf_Controller {
         $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : time();
         $environment = $env;
 
-        $this->data['notkept'] = json_decode(cfpr_summarize_notkept(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment,0,0), true);
-        $this->data['repaired'] = json_decode(cfpr_summarize_repaired(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment,0,0), true);
+        $this->data['notkept'] = json_decode(cfpr_summarize_notkept(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, 0, 0), true);
+        $this->data['repaired'] = json_decode(cfpr_summarize_repaired(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, 0, 0), true);
 
-        
-        
+
+
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
         $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);
         $this->load->view('widgets/summaryCompliance', $this->data);
@@ -37,9 +37,9 @@ class Widget extends Cf_Controller {
         $hostname = $this->input->post('value');
         $data = "";
         if ($hostname) {
-            $data1= json_decode(cfpr_show_hosts_name('^' . $hostname, NULL, NULL,NULL), true);
-            $data2=json_decode(cfpr_show_hosts_name('^' . strtolower($hostname), NULL, NULL,NULL), true);
-            $data=array_merge($data1,$data2);
+            $data1 = json_decode(cfpr_show_hosts_name('^' . $hostname, NULL, NULL, NULL), true);
+            $data2 = json_decode(cfpr_show_hosts_name('^' . strtolower($hostname), NULL, NULL, NULL), true);
+            $data = array_merge($data1, $data2);
         } else {
             //last two arguments in the function call are for row no and column no
             $data = json_decode(cfpr_show_hosts_name(NULL, NULL, NULL, NULL), true);
@@ -52,10 +52,10 @@ class Widget extends Cf_Controller {
         if (key_exists('data', $result) && count($result['data']) > 0) {
             $html.="<ul class=\"result\">";
             foreach ($result['data'] as $row) {
-                if ($display == 'hostname' && strlen($row[0])>0)
+                if ($display == 'hostname' && strlen($row[0]) > 0)
                     $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[0] ($row[1])</a></li>";
 
-                if ($display == 'ipaddress' && strlen($row[1])>0)
+                if ($display == 'ipaddress' && strlen($row[1]) > 0)
                     $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[1] ($row[0])</a></li>";
             }
             $html.="</ul>";
@@ -103,28 +103,31 @@ class Widget extends Cf_Controller {
     }
 
     function allclasses() {
-        echo cfpr_list_all_classes(NULL, NULL, NULL, NULL);
+        $data=cfpr_list_all_classes(NULL, NULL, NULL, NULL);
+        sanitycheckjson($data);
     }
 
     function filterclass() {
         $filter = $this->input->post('filter');
+        $data="";
         switch ($filter) {
             case "time":
-                echo cfpr_list_time_classes(NULL, NULL, NULL, NULL);
+                $data= cfpr_list_time_classes(NULL, NULL, NULL, NULL);
                 break;
             case "ip":
-                echo cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
+                $data= cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
                 break;
             case "soft":
-                echo cfpr_list_soft_classes(NULL, NULL, NULL, NULL);
+                $data= cfpr_list_soft_classes(NULL, NULL, NULL, NULL);
                 break;
             case "all":
-                echo cfpr_list_all_classes(NULL, NULL, NULL, NULL);
+                $data= cfpr_list_all_classes(NULL, NULL, NULL, NULL);
                 break;
             case "host":
-                echo cfpr_list_host_classes(NULL, NULL, NULL, NULL);
+                $data= cfpr_list_host_classes(NULL, NULL, NULL, NULL);
                 break;
         }
+        sanitycheckjson($data);
     }
 
     /* used by host finder */
@@ -145,7 +148,8 @@ class Widget extends Cf_Controller {
     }
 
     function allpolicies() {
-        echo cfpr_policy_finder_by_handle(NULL, true);
+        $data=cfpr_policy_finder_by_handle(NULL, true);
+        sanitycheckjson($data);
     }
 
     function search_by_handle() {
@@ -157,11 +161,13 @@ class Widget extends Cf_Controller {
         if ($reg == "false") {
             $reg = false;
         }
+        $data = "";
         if ($handle) {
-            echo cfpr_policy_finder_by_handle($handle, $reg);
+            $data = cfpr_policy_finder_by_handle($handle, $reg);
         } else {
-            echo cfpr_policy_finder_by_handle(NULL, $reg);
+            $data = cfpr_policy_finder_by_handle(NULL, $reg);
         }
+       sanitycheckjson($data);
     }
 
     function search_by_bundle() {
@@ -173,11 +179,13 @@ class Widget extends Cf_Controller {
         if ($reg == "false") {
             $reg = false;
         }
+        $data = "";
         if ($bundle) {
-            echo cfpr_policy_finder_by_bundle($bundle, $reg);
+            $data = cfpr_policy_finder_by_bundle($bundle, $reg);
         } else {
-            echo cfpr_policy_finder_by_bundle(NULL, $reg);
+            $data = cfpr_policy_finder_by_bundle(NULL, $reg);
         }
+       sanitycheckjson($data);
     }
 
     function search_by_promiser() {
@@ -189,15 +197,18 @@ class Widget extends Cf_Controller {
         if ($reg == "false") {
             $reg = false;
         }
+        $data = "";
         if ($promiser) {
-            echo cfpr_policy_finder_by_promiser($promiser, $reg);
+            $data = cfpr_policy_finder_by_promiser($promiser, $reg);
         } else {
-            echo cfpr_policy_finder_by_promiser(NULL, $reg);
+            $data = cfpr_policy_finder_by_promiser(NULL, $reg);
         }
+        sanitycheckjson($data);
     }
 
     function allreports() {
-        echo cfpr_select_reports(".*", 100);
+        $data= cfpr_select_reports(".*", 100);
+        sanitycheckjson($data);
     }
 
     function insertworkinglogs() {
@@ -231,7 +242,7 @@ class Widget extends Cf_Controller {
         $this->load->view('widgets/tracker', $data);
     }
 
-    function getbreadcrumbs(){
+    function getbreadcrumbs() {
         $this->breadcrumblist->checkurl($this->input->post('url'));
         echo $this->breadcrumblist->display();
     }
