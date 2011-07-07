@@ -13,7 +13,13 @@ class cf_table {
         $this->CI->load->library('table');
 
         // these array are the report titles where date should not be coloured 
-        $this->ignoreDateColor = array('Promises not kept log','Promises repaired log');
+        $this->ignoreDateColor = array('Promises not kept log',
+                                        'Promises repaired log',
+                                        'Compliance summary',
+                                        'File change log',
+                                        'File change diffs',
+                                        'Compliance by promise',
+                                        'Performance');
 
         // these are the table fields that should be formatted as date and time
         $this->dateTimeField = array('lastseen', 'last seen', 'time', 'last verified', 'change detected at','last performed');
