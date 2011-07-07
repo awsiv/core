@@ -209,6 +209,9 @@ p#userbox a{
     text-decoration: underline;
 }
 
+.alignright{
+    text-align: right;
+}
 .note_date
 {
     display:none;
@@ -903,7 +906,7 @@ span#today
 }
 .statusgoal
 {
-  margin:10px 8px 22px 8px;
+  margin:15px 8px 22px 8px;
   min-height:311px;
 }
 
@@ -1501,7 +1504,7 @@ span.search input
 
 /**************/
 #footer p{
-    color:#A3C380;
+    
 }
 .tablesfixed table
 {

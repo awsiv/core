@@ -1,58 +1,55 @@
+        <div class="outerdiv">
+            <div class="grid_9">
+                <div id="overall" class="innerdiv">
+                    <div id="pie-charts">
 
-<div id="body" class="">
-        <div class="grid_9 outerdiv">
-            <div id="overall" class="innerdiv">
-              
-
-                <div id="pie-charts">
-
-                    <div id="business-value-pie-chart-container" class="grid_4">
-                        <p class="title">Business Value</p>
-                        <div id="business-value-pie-chart" style="height: 120px;width:300px;">
+                        <div id="business-value-pie-chart-container" class="grid_4">
+                            <p class="title">Business Value</p>
+                            <div id="business-value-pie-chart" style="height: 120px;width:300px;">
+                            </div>
+                        </div>
+                        <div id="compliance-value-pie-chart-container" class="grid_4 push_1" style="margin-bottom: 15px">
+                            <p class="title">Host Status</p>
+                            <div id="compliance-now-pie-chart" style="height: 120px; width:300px;">
+                            </div>
                         </div>
                     </div>
-                    <div id="compliance-value-pie-chart-container" class="grid_4 push_1" style="margin-bottom: 15px">
-                        <p class="title">Host Status</p>
-                        <div id="compliance-now-pie-chart" style="height: 120px; width:300px;">
-                        </div>
+
+                </div>
+                <div id="compliance" class="innerdiv">
+                    <p class="title">Compliance Summary</p>
+                    <div id="environment-list">
+                        <ul>
+                            <li><!-- chrome fix --></li>
+                            <li><span class="front"></span><a class ="updateComplianceGraph" href="<?php echo site_url(); ?>/welcome/getJsonComplianceSummary/" title="">Default</a><span class="rear"></span></li>
+                            <?php foreach ($envList as $key => $env) {
+                                ?>
+                                <li><span class="front"></span><a class ="updateComplianceGraph" href="<?php echo site_url(); ?>/welcome/getJsonComplianceSummary/<?php echo $env; ?>" title="environment_<?php echo $env; ?>"><?php echo $env; ?></a><span class="rear"></span></li>
+                            <?php } ?>
+                        </ul>
+                    </div>
+                    <div id="compliancemeter" style="padding:5px;">
+                        <div id="compliance_summary_graph" style="height: 200px; width:98%;"></div>
+                        <div class="clear"></div>
                     </div>
                 </div>
-
-            </div>
-            <div id="compliance" class="innerdiv">
-                <p class="title">Compliance Summary</p>
-                <div id="environment-list">
+        </div>
+        <div class="grid_3">
+                <div id="goals" class="innerdiv statusgoal">
+                    <p class="title">Services/goals</p>
                     <ul>
-                        <li><!-- chrome fix --></li>
-                        <li><span class="front"></span><a class ="updateComplianceGraph" href="<?php echo site_url(); ?>/welcome/getJsonComplianceSummary/" title="">Default</a><span class="rear"></span></li>
-                        <?php foreach ($envList as $key => $env) {
-                            ?>
-                            <li><span class="front"></span><a class ="updateComplianceGraph" href="<?php echo site_url(); ?>/welcome/getJsonComplianceSummary/<?php echo $env; ?>" title="environment_<?php echo $env; ?>"><?php echo $env; ?></a><span class="rear"></span></li>
-                        <?php } ?>
+                        <?php
+                        foreach ((array) $goals as $goal) {
+                            $words = explode("_", $goal->name);
+                            echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>$goal->desc</span><span class=\"check\"></span></li>";
+                        }
+                        ?>
                     </ul>
                 </div>
-                <div id="compliancemeter" style="padding:5px;">
-                    <div id="compliance_summary_graph" style="height: 200px; width:98%;"></div>
-                    <div class="clear"></div>
-                </div>
             </div>
+            <div class="clear"></div>
         </div>
 
-        <div class="grid_3 outerdiv">
-
-            <div id="goals" class="innerdiv statusgoal">
-                <p class="title">Services/goals</p>
-                <ul>
-                    <?php
-                    foreach ((array) $goals as $goal) {
-                        $words = explode("_", $goal->name);
-                        echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>$goal->desc</span><span class=\"check\"></span></li>";
-                    }
-                    ?>
-                </ul>
-            </div>
-        </div>
-</div>
 <script type="text/javascript">
     // for summary compliance graph
 
