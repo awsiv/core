@@ -56,4 +56,16 @@ It can be changed by editing file name under application/config/ion_auth.php lin
 $config['admin_email']		   = "admin@cfengine.com";
 
 
+EnvironmentConfiguration
+------------------------------------
+The Default environment is Developement which will show all kinds of php errors to the user
+if it is set to "Production" then errors are logged in apache log as well as in mongo db collection bt in this release it
+the logs in mongo are  not viewable as there are no viewere to display it.
+Environment can be changed by editing the file named index.php in application root with line
+
+define('ENVIRONMENT', 'development');
+
+
+
+
 
