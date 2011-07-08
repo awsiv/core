@@ -119,6 +119,10 @@ while (true)
       NewClass("am_policy_hub");
       Nova_CacheTotalCompliance(true);
       CFDB_Maintenance(false);
+      
+#ifdef HAVE_CONSTELLATION
+      CFDBCon_CacheVirtualBundleCompliance();
+#endif
       }
 
    // Longterm reports cleanup everyday

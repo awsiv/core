@@ -1304,6 +1304,9 @@ struct cf_pscalar
 /* cache collection */
 #define cfc_cachetype "ct"
 #define cfc_cachecompliance "cc"  // total compliance
+#define cfc_cachebundlecompliance "vb"  // virtual bundle compliance
+#define cfc_count_hosts "ch"
+#define cfc_compliance_avg "ae"
 #define cfc_count "cn"
 #define cfc_timegen "tg"
 
