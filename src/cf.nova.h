@@ -615,8 +615,7 @@ void DeleteHubNote(struct HubNote *hc);
 void DeleteHubNoteInfo(struct HubNoteInfo *hci);
 struct HubVital *PrependHubVital(struct HubVital **first, char *id, char *units, char *description);
 void DeleteHubVital(struct HubVital *hv);
-
-struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int count, double kept, double repaired, double notkept, time_t genTime);
+struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime);
 void DeleteHubCacheTotalCompliance(struct HubCacheTotalCompliance *tc);
 
 int SortPromiseLog(void *p1, void *p2);
@@ -1573,7 +1572,8 @@ struct HubCacheTotalCompliance
   {
   char *policy;
   int slot;
-  int count;
+  int hostCount;  // how many hosts matched
+  int totalHostCount; // optional, how many hosts could possibly match
   double kept;
   double repaired;
   double notkept;

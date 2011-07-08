@@ -6136,7 +6136,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hq = CFDB_QueryHubs(&dbconn);
+hq = CFDBCon_QueryHubs(&dbconn);
 
 CFDB_Close(&dbconn);
 
@@ -6176,7 +6176,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hq = CFDB_QueryHubs(&dbconn);
+hq = CFDBCon_QueryHubs(&dbconn);
 
 CFDB_Close(&dbconn);
 
@@ -6234,7 +6234,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hq = CFDB_QuerySumPromiseLog(&dbconn,hubKeyHash,NULL,log_type,tw);
+hq = CFDBCon_QueryPromiseLog(&dbconn,hubKeyHash,NULL,log_type,tw);
 
 CFDB_Close(&dbconn);
 
@@ -6294,7 +6294,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hq = CFDB_QuerySumPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type,tw);
+hq = CFDBCon_QueryPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type,tw);
 
 CFDB_Close(&dbconn);
 
@@ -6347,7 +6347,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hq = CFDB_QueryReasonsPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type,tw);
+hq = CFDBCon_QueryReasonsPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type,tw);
 
 StartJoin(buf,"<table>\n",bufsize);
 

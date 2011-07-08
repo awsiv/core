@@ -6620,7 +6620,7 @@ struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *p
              }
           if (genTime >= minGenTime)
              {
-             PrependRlistAlien(&record_list,NewHubCacheTotalCompliance(policyDB,slot,count,kept,repaired,notkept,genTime));
+             PrependRlistAlien(&record_list,NewHubCacheTotalCompliance(policyDB,slot,count,-1,kept,repaired,notkept,genTime));
              }
           }
       

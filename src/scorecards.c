@@ -39,7 +39,7 @@ if (constellation)
    {
 #ifdef HAVE_CONSTELLATION
    
-   hq = CFDB_QuerySumComp(&dbconn, hubKeyHash, policy, now - CF_WEEK);
+   hq = CFDBCon_QueryComp(&dbconn, hubKeyHash, policy, now - CF_WEEK);
    
 #else
    CfOut(cf_error, "", "!! Trying to get constellation data from data ComplianceSummaryGraph() without libcfconstellation");
@@ -73,13 +73,13 @@ for (i = 0; i < 28; start += CF_SHIFT_INTERVAL,i++)
    
    tc = GetHubCacheTotalComplianceSlot(hq->records,slot);
    
-   if (tc && tc->count > 0)
+   if (tc && tc->hostCount > 0)
       {
       kept = tc->kept;
       repaired = tc->repaired;
       notkept = tc->notkept;
       nodata = 0;
-      count = tc->count;
+      count = tc->hostCount;
       }
    else
       {

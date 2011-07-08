@@ -368,7 +368,7 @@ void DeleteHubTotalCompliance(struct HubTotalCompliance *ht)
 
 /*****************************************************************************/
 
-struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int count, double kept, double repaired, double notkept, time_t genTime)
+struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime)
 
 { struct HubCacheTotalCompliance *tc;
  
@@ -379,7 +379,8 @@ struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slo
 
  tc->policy = strdup(policy);
  tc->slot = slot;
- tc->count = count;
+ tc->hostCount = hostCount;
+ tc->totalHostCount = totalHostCount;
  tc->kept = kept;
  tc->repaired = repaired;
  tc->notkept = notkept;
