@@ -115,8 +115,9 @@
         $('#repobrowser').ajaxyDialog({title:'SVN Checkout'});
         $('#aprvpolicy').ajaxyDialog({title:'Approve Policices'});
         $('#trackrecord').ajaxyDialog({
-            title:'Track Record'
-           
+            title:'Track Record',
+           width:'95%',
+           height:'400'
         });
      
     });
