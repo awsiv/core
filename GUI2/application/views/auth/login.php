@@ -54,7 +54,7 @@ background: -moz-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 tran
 background: -o-linear-gradient(90deg, #CCCCCC, #FFFFFF) repeat scroll 0 0 transparent;
 margin: 40px auto 0px;
 padding: 20px;
-width: 300px;
+width: 311px;
 }
 
 #login #start {
@@ -186,8 +186,8 @@ text-shadow:none;
         
 </div>
 <p id="credits">
-    <strong>Configure</strong> Build <strong>Deploy</strong>Manage<br>
-     © 2010 - <a href="http://cfengine.com">cfengine</a>
+    <strong>Configuration from within</strong><br />
+     © 2011 - <a href="http://cfengine.com">CFEngine</a>
 </p>
 
 </body>
