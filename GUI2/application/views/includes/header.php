@@ -50,7 +50,7 @@ if($this->agent->is_browser('Safari')){
   <div id="wrapper" class="container_12">
           <div id="header">
               <div id="header_left"class="grid_8">
-               <p class="sitetitle"><?php echo anchor("welcome/index",'cfengine mission portal') ?></p>
+               <p class="sitetitle"><?php echo anchor("welcome/index",'cfengine mission portal') ?> <span class="version">Alpha</span></p>
                <p class="breadcrumbs">
                   <ul id="breadcrumb">
                   <?php if(isset($breadcrumbs)){ echo $breadcrumbs;}?>

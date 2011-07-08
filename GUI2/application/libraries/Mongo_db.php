@@ -452,9 +452,14 @@ class Mongo_db {
 	 public function count($collection = "") {
 	 	if(empty($collection))
 	 		show_error("In order to retreive a count of documents from MongoDB, a collection name must be passed", 500);
-	 	$count = $this->db->{$collection}->find($this->wheres)->limit((int) $this->limit)->skip((int) $this->offset)->count();
-	 	$this->clear();
-	 	return($count);
+                try {
+			$count = $this->db->{$collection}->find($this->wheres)->limit((int) $this->limit)->skip((int) $this->offset)->count();
+	 	        $this->clear();
+	 	        return($count);
+		} catch(Exception $e) {
+			show_error("Mongo Db Error: {$e->getMessage()}", 500);
+		}
+	 	
 	 }
 	 
 	/**

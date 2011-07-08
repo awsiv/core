@@ -80,6 +80,13 @@ div.ui-accordion .ui-accordion-header a{
     margin-top: 10px;
      color: #fff;
 }
+#header_left .sitetitle .version
+{
+    font-size: 14px;
+    text-transform: none;
+    font-weight: bold;
+    color:#CEAC0F;
+}
 #header_left ul li
 {
     list-style: none

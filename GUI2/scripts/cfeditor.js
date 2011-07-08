@@ -207,7 +207,6 @@ var $tabs = $('#tabs').tabs({
 		   		//addcontextmenu();//adding the context menu to the tab newly added
 	             },
           error:function(data){
-	            	
                         $.jnotify('An error occured while performing request','error');
 	             }
 	       }); 
