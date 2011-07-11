@@ -227,7 +227,8 @@
     var complianceNowData =  [
         { label: "green",  data: <?php echo $greenhost; ?>,color:"#90A316"},
         { label: "yellow",  data: <?php echo $yellowhost; ?>,color:"#BFAA54"},
-        { label: "red",  data: <?php echo $redhost; ?>,color:"#D43030"}
+        { label: "red",  data: <?php echo $redhost; ?>,color:"#D43030"},
+        { label: "blue",  data: <?php echo $bluehost; ?>,color:"#375060"}        
     ];
     $.plot($("#compliance-now-pie-chart"), complianceNowData,
     {

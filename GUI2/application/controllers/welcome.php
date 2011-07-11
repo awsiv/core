@@ -155,6 +155,7 @@ class Welcome extends Cf_Controller {
         $data['redhost'] = cfpr_count_red_hosts();
         $data['yellowhost'] = cfpr_count_yellow_hosts();
         $data['greenhost'] = cfpr_count_green_hosts();
+        $data['bluehost'] = cfpr_count_blue_hosts();
 
         $this->template->load('template', 'status', $data);
     }
