@@ -4403,6 +4403,7 @@ int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,in
  struct Rlist *rp,*result;
  int count = 0, tmpsize,icmp;
  mongo_connection dbconn;
+ int margin = strlen(CF_NOTICE_TRUNCATED);
 
  switch (*cmp)
     {
@@ -4429,12 +4430,15 @@ int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,in
     snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%d<nc>%d<nc>%d<nc>%s<nova_nl>",
              ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,cf_ctime(&(ht->t)));
 
-    if(!Join(returnval,buffer,bufsize))
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))    
        {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
        break;
        }
     }
 
+ printf("%s\n",returnval);
  DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
  if (!CFDB_Close(&dbconn))
@@ -4456,7 +4460,8 @@ int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,
  struct Rlist *rp,*result;
  int count = 0, tmpsize,icmp;
  mongo_connection dbconn;
-
+ int margin = strlen(CF_NOTICE_TRUNCATED);
+ 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
@@ -4474,8 +4479,10 @@ int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,
     snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%s<nova_nl>",
              hp->hh->hostname,hp->handle,hp->cause,cf_ctime(&(hp->t)));
 
-    if(!Join(returnval,buffer,bufsize))
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))    
        {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
        break;
        }
     }
@@ -4500,7 +4507,8 @@ int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *classr
  struct Rlist *rp,*result;
  int count = 0, tmpsize,icmp;
  mongo_connection dbconn;
-
+ int margin = strlen(CF_NOTICE_TRUNCATED);
+ 
 /* BEGIN query document */
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -4529,12 +4537,14 @@ int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *classr
              hb->hh->hostname,hb->bundle,date,
              hb->hrsago,hb->hrsavg,hb->hrsdev);
 
-    if(!Join(returnval,buffer,bufsize))
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
        break;
        }
     }
-
+ 
  DeleteHubQuery(hq,DeleteHubBundleSeen);
 
  if (!CFDB_Close(&dbconn))
@@ -4556,7 +4566,7 @@ int Nova2PHP_value_report_pdf(char *hostkey,char *day,char *month,char *year,cha
  bson query,b;
  bson_buffer bb;
  char buffer[CF_BUFSIZE];
-
+ int margin = strlen(CF_NOTICE_TRUNCATED);
 /* BEGIN query document */
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -4575,9 +4585,10 @@ int Nova2PHP_value_report_pdf(char *hostkey,char *day,char *month,char *year,cha
 
     snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%.1lf<nc>%.1lf<nc>%.1lf<nova_nl>",
              hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept);
-
-    if(!Join(returnval,buffer,bufsize))
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
        break;
        }
     }
@@ -4602,6 +4613,7 @@ int Nova2PHP_classes_report_pdf(char *hostkey,char *name,int regex,char *classre
  int count = 0, tmpsize;
  mongo_connection dbconn;
  time_t now = time(NULL);
+ int margin = strlen(CF_NOTICE_TRUNCATED);
 
 /* BEGIN query document */
  
@@ -4631,9 +4643,11 @@ int Nova2PHP_classes_report_pdf(char *hostkey,char *name,int regex,char *classre
        {
        snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%lf<nc>%lf<nc>%s<nova_nl>",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
        }
-   
-    if(!Join(returnval,buffer,bufsize))
+
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
        break;
        }
     }
@@ -4658,6 +4672,7 @@ int Nova2PHP_compliance_promises_pdf(char *hostkey,char *handle,char *status,int
  struct Rlist *rp,*result;
  int count = 0, tmpsize,icmp;
  mongo_connection dbconn;
+ int margin = strlen(CF_NOTICE_TRUNCATED);
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -4678,8 +4693,10 @@ int Nova2PHP_compliance_promises_pdf(char *hostkey,char *handle,char *status,int
     snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%.2lf<nc>%.2lf<nc>%s<nova_nl>",
              hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_ctime(&(hp->t)));
 
-    if(!Join(returnval,buffer,bufsize))
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
        break;
        }
     }
@@ -4706,7 +4723,7 @@ int Nova2PHP_lastseen_report_pdf(char *hostkey,char *lhash,char *lhost,char *lad
  mongo_connection dbconn;
  char inout[CF_SMALLBUF];
  time_t then;
-
+ int margin = strlen(CF_NOTICE_TRUNCATED);
 /* BEGIN query document */
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -4739,9 +4756,11 @@ int Nova2PHP_lastseen_report_pdf(char *hostkey,char *lhash,char *lhost,char *lad
              hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,cf_ctime(&then),
              hl->hrsago,hl->hrsavg,hl->hrsdev,
              hl->rhost->keyhash);
-          
-    if(!Join(returnval,buffer,bufsize))
+
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nc><nc><nc><nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
        break;
        }
     }
@@ -4766,6 +4785,7 @@ int Nova2PHP_software_report_pdf(char *hostkey,char *name,char *value, char *arc
  struct Rlist *rp,*result;
  int count = 0, tmpsize;
  mongo_connection dbconn;
+ int margin = strlen(CF_NOTICE_TRUNCATED);
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -4784,12 +4804,13 @@ int Nova2PHP_software_report_pdf(char *hostkey,char *name,char *value, char *arc
     hs = (struct HubSoftware *)rp->item;
     snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%s<nova_nl>",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
 
-    if(!Join(returnval,buffer,bufsize))
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
        break;
        }
     }
-
 
  DeleteHubQuery(hq,DeleteHubSoftware);
 
@@ -4810,6 +4831,7 @@ int Nova2PHP_performance_report_pdf(char *hostkey,char *job,int regex,char *clas
  struct Rlist *rp,*result;
  int count = 0, tmpsize,icmp;
  mongo_connection dbconn;
+ int margin = strlen(CF_NOTICE_TRUNCATED);
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -4831,13 +4853,12 @@ int Nova2PHP_performance_report_pdf(char *hostkey,char *job,int regex,char *clas
    
     tmpsize = strlen(buffer);
    
-    if (count + tmpsize > bufsize - 1)
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
        break;
        }
-   
-    strcat(returnval,buffer);
-    count += tmpsize;
     }
 
  DeleteHubQuery(hq,DeleteHubPerformance);
@@ -4860,7 +4881,7 @@ int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_r
  int count = 0, tmpsize,icmp;
  mongo_connection dbconn;
  struct Item *ip,*summary = NULL;
-
+ int margin = strlen(CF_NOTICE_TRUNCATED);
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
@@ -4904,9 +4925,10 @@ int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_r
     for (ip = summary; ip != NULL; ip=ip->next)
        {
        snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%d<nova_nl>",hostname,ip->name,ip->classes,ip->counter);
-
-       if(!Join(returnval,buffer,bufsize))
+       if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
           {
+          snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+          Join(returnval,buffer,bufsize);
           break;
           }
        }
@@ -4926,6 +4948,7 @@ int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,cha
  struct Rlist *rp,*result;
  int count = 0, tmpsize = 0;
  mongo_connection dbconn;
+ int margin = strlen(CF_NOTICE_TRUNCATED);
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -4976,7 +4999,13 @@ int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,cha
        }
    
     snprintf(buffer,CF_BUFSIZE,"%s<nc>%s<nc>%s<nc>",hv->hh->hostname,typestr,hv->lval);
-    strcat(returnval,buffer);
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
+       {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
+       break;
+       }
+
     count += strlen(buffer);
 
     if (strlen(hv->dtype) > 1) // list
@@ -4990,10 +5019,14 @@ int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,cha
        {
        snprintf(buffer,sizeof(buffer),"%s<nova_nl>",(char *)hv->rval);
        }
-
-    Join(returnval,buffer,bufsize);
+    
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
+       {
+       snprintf(buffer,sizeof(buffer),"%s<nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
+       break;
+       }
     }
-
 
  DeleteHubQuery(hq,DeleteHubVariable);
 
@@ -5051,6 +5084,7 @@ int Nova2PHP_filechanges_report_pdf(char *hostkey,char *file,int regex,time_t t,
  struct Rlist *rp,*result;
  int count = 0, tmpsize,icmp;
  mongo_connection dbconn;
+ int margin = strlen(CF_NOTICE_TRUNCATED);
 
  switch (*cmp)
     {
@@ -5076,9 +5110,10 @@ int Nova2PHP_filechanges_report_pdf(char *hostkey,char *file,int regex,time_t t,
     hC = (struct HubFileChanges *)rp->item;
 
     snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nova_nl>",hC->hh->hostname,hC->path,cf_ctime(&(hC->t)));
-
-    if(!Join(returnval,buffer,bufsize))
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
        break;
        }
     }
@@ -5103,7 +5138,7 @@ int Nova2PHP_filediffs_report_pdf(char *hostkey,char *file,char *diffs,int regex
  struct Rlist *rp,*result;
  int count = 0, tmpsize,icmp;
  mongo_connection dbconn;
-
+int margin = strlen(CF_NOTICE_TRUNCATED);
  switch (*cmp)
     {
     case '<': icmp = CFDB_LESSTHANEQ;
@@ -5130,9 +5165,10 @@ int Nova2PHP_filediffs_report_pdf(char *hostkey,char *file,char *diffs,int regex
     hd = (struct HubFileDiff *)rp->item;
 
     snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%s<nova_nl>",hd->hh->hostname,hd->path,cf_ctime(&(hd->t)),Nova_FormatDiff_pdf(hd->diff));
-
-    if(!Join(returnval,buffer,bufsize))
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
        break;
        }
     }
@@ -5155,7 +5191,7 @@ char *Nova_FormatDiff_pdf(char *s)
  static char returnval[CF_BUFSIZE] = "";
  char pm;
  int line = 0;
-
+ int margin = strlen(CF_NOTICE_TRUNCATED);
  for (sp = s; *sp != '\0'; sp += strlen(tline)+1)
     {
     sscanf(sp,"%c,%d,%2047[^\n]",&pm,&line,diff);
@@ -5193,7 +5229,7 @@ int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *classreg
  struct Rlist *rp,*result;
  int count = 0, tmpsize,icmp;
  mongo_connection dbconn;
-
+ int margin = strlen(CF_NOTICE_TRUNCATED);
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -5213,9 +5249,10 @@ int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *classreg
     hS = ( struct HubSetUid *)rp->item;
 
     snprintf(buffer,sizeof(buffer),"%s<nc>%s<nova_nl>",hS->hh->hostname,hS->path);
-
-    if(!Join(returnval,buffer,bufsize))
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       snprintf(buffer,sizeof(buffer),"<nc>%s<nova_nl>",CF_NOTICE_TRUNCATED);
+       Join(returnval,buffer,bufsize);
        break;
        }
     }

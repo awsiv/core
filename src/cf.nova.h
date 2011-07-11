@@ -89,6 +89,9 @@
 #define CF_CODEBOOK_SIZE 28
 #define NOVA_MAXDIFFSIZE (80 * 1024 * 1024)
 
+// for pdf reports
+#define CF_NOTICE_TRUNCATED "NOTICE: Data truncated due to buffer internal limit!"
+
 /*****************************************************************************/
 
 enum cf_rank_method
