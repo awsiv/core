@@ -90,7 +90,7 @@
 #define NOVA_MAXDIFFSIZE (80 * 1024 * 1024)
 
 // for pdf reports
-#define CF_NOTICE_TRUNCATED "NOTICE: Data truncated due to buffer internal limit!"
+#define CF_NOTICE_TRUNCATED "NOTICE: Data truncated due to internal buffer limit!"
 
 /*****************************************************************************/
 
