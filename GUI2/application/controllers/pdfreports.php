@@ -98,55 +98,55 @@ class pdfreports extends Cf_Controller {
                 break;
 
             case "Business value report":
-                $desc = cfpr_report_description('value report');
+                $desc = cfpr_report_description('business value report');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_business_value($params['hostkey'], $params['days'], $params['months'], $params['years'], $pdf, $params['class_regex']);
                 break;
 
             case "Class profile":
-                $desc = cfpr_report_description('classes report');
+                $desc = cfpr_report_description('class profile');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_class_profile($params['hostkey'], $params['search'], $pdf, $params['class_regex']);
                 break;
 
             case "Compliance by promise":
-                $desc = cfpr_report_description('promise report');
+                $desc = cfpr_report_description('compliance by promise');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_compliance_promises($params['hostkey'], $params['search'], $params['state'], $pdf, $params['class_regex']);
                 break;
 
             case "Compliance summary":
-                $desc = cfpr_report_description('compliance report');
+                $desc = cfpr_report_description('compliance summary');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_compliance_summary($params['hostkey'], $pdf, $params['class_regex']);
                 break;
 
             case "File change log":
-                $desc = cfpr_report_description('file_changes report');
+                $desc = cfpr_report_description('file change log');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_filechange_log($params['hostkey'], $params['search'], $pdf, $params['class_regex']);
                 break;
 
             case "Last saw hosts":
-                $desc = cfpr_report_description('lastseen report');
+                $desc = cfpr_report_description('last saw hosts');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_lastsaw_hosts($params['hostkey'], $params['key'], $params['search'], $params['address'], $params['ago'], $pdf, $params['class_regex']);
                 break;
 
             case "Patches available":
-                $desc = cfpr_report_description('patches available report');
+                $desc = cfpr_report_description('patches available');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_patches_available($params['hostkey'], $params['search'], $params['version'], $params['arch'], $pdf, $params['class_regex']);
                 break;
 
             case "Patch status":
-                $desc = cfpr_report_description('patches installed report');
+                $desc = cfpr_report_description('patch status');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_patch_status($params['hostkey'], $params['search'], $params['version'], $params['arch'], $pdf, $params['class_regex']);
                 break;
 
             case "Performance":
-                $desc = cfpr_report_description('performance report');
+                $desc = cfpr_report_description('performance');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_performance($params['hostkey'], $params['search'], $pdf, $params['class_regex']);
                 break;
@@ -158,44 +158,44 @@ class pdfreports extends Cf_Controller {
                 break;
 
             case "Promises repaired log":
-                $desc = cfpr_report_description('promises repaired report');
+                $desc = cfpr_report_description('promises repaired log');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_repaired_log($params['hostkey'], $params['search'], $pdf, $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex']);
                 break;
 
             case "Promises not kept summary":
-                $desc = cfpr_report_description('promises repaired report');
+                $desc = cfpr_report_description('promises not kept summary');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_promise_notkept($params['hostkey'], $params['search'], $pdf, '', '', $params['class_regex']);
                 break;
 
             case "Promises not kept log":
-                $desc = cfpr_report_description('promises not kept report');
+                $desc = cfpr_report_description('promises not kept log');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_promise_notkept($params['hostkey'], $params['search'], $pdf, $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex']);
                 break;
 
             case "Setuid-gid root programs":
-                $desc = cfpr_report_description('setuid report');
+                $desc = cfpr_report_description('setuid gid root programs');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_setuid($params['hostkey'], $params['search'], $pdf, $params['class_regex']);
                 break;
 
             case "Software installed":
 
-                $desc = cfpr_report_description('software installed report');
+                $desc = cfpr_report_description('software installed');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_software_installed($params['hostkey'], $params['search'], $params['version'], $params['arch'], $pdf, $params['class_regex']);
                 break;
 
             case "Variables":
-                $desc = cfpr_report_description('variables report');
+                $desc = cfpr_report_description('variables');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_variables($params['hostkey'], $params['search'], $params['scope'], $params['lval'], $params['rval'], $params['var_type'], $pdf, $params['class_regex']);
                 break;
 
             case "File change diffs":
-                $desc = cfpr_report_description('file_diffs report');
+                $desc = cfpr_report_description('file change diffs');
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_filediffs($params['hostkey'], $params['search'], $params['diff'], $params['cal'], $pdf, $params['class_regex']);
                 break;
