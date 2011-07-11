@@ -674,6 +674,70 @@ buffer[strlen(buffer)-1] = ']';
 }
 
 /*************************************************************************/
+int Nova_GetReportDescription(int this_id,char *buffer, int bufsize)
+
+{
+#ifdef HAVE_LIBMONGOC
+  char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE];
+  char searchstring[CF_BUFSIZE];
+  bson query,field;
+  mongo_cursor *cursor;
+  bson_buffer bb;
+  bson_iterator it1,it2,it3;
+  mongo_connection conn;
+
+if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
+   return false;
+   }
+
+Nova_GetTopicByTopicId(this_id,topic_name,topic_id,topic_context);
+
+if (strcmp("system_reports",topic_context) == 0)
+   {
+   snprintf(searchstring,CF_BUFSIZE,"%s.%s",topic_context,topic_id);
+   }
+else
+   {
+   CfOut(cf_verbose,"", "!! No description found for topic");
+   return false;
+   }
+
+bson_buffer_init(&bb);
+bson_append_regex(&bb,cfk_occurcontext,searchstring,"");
+bson_from_buffer(&query,&bb);
+
+/* BEGIN RESULT DOCUMENT */
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfk_occurlocator,1);
+bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,0);
+bson_destroy(&field);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while (bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1),cfk_occurlocator) == 0)
+         {
+         strncpy(buffer,bson_iterator_string(&it1),bufsize-1);
+         return true;
+         }
+      }
+   }
+return false;
+#endif
+return false;
+}
+
+/*************************************************************************/
 
 struct Item *Nova_GetBusinessGoals(char *handle)
 

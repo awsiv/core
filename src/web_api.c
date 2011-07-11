@@ -5043,33 +5043,23 @@ int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,cha
 int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize)
 {
  int pid;
- char topic_name[CF_BUFSIZE] = {0};
- char topic_id[CF_BUFSIZE] = {0};
- char topic_context[CF_BUFSIZE] = {0};
  char topic_comment[CF_BUFSIZE] = {0};
- char typedName[CF_MAXVARSIZE] = {0};
+ int found = false;
 
- snprintf(typedName,sizeof(typedName),"system_reports::%s",reportName);
+pid = Nova_GetTopicIdForTopic(reportName);
+if(pid > 0)
+   {
+   topic_comment[0] = '\0';
+   found =  Nova_GetReportDescription(pid,topic_comment, sizeof(topic_comment));
+   }
 
-/*pid = Nova_GetTopicIdForTopic(typedName);
+if(found)
+   {
+   snprintf(returnval,bufsize,"%s",topic_comment);
+   return true;
+   }
 
-if (pid && Nova_GetTopicByTopicId(pid,topic_name,topic_id,topic_context))
-{
-if (EMPTY(topic_comment))
-{
-snprintf(returnval,bufsize,"(no comment for %s found in topic map)",reportName);
-return false;
-}
-   
-snprintf(returnval,bufsize,"%s",topic_comment);
-   
-return true;
-}
-
-FIX ME TO GET COMMENT..........
-*/
-
-    snprintf(returnval,bufsize,"(no description for %s found in topic map)",reportName);
+snprintf(returnval,bufsize,"(no description for %s report found in topic map)",reportName);
 return false;
 }
 

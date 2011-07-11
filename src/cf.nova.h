@@ -921,6 +921,7 @@ void Nova_ScanTheRest(int pid,char *buffer, int bufsize);
 int Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize);
 struct Item *Nova_ScanLeadsAssociations(int pid,char *view);
 void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize);
+int Nova_GetReportDescription(int this_id,char *buffer, int bufsize);
 
 int Nova_GetTopicByTopicId(int pid,char *topic_name,char *topic_id,char *topic_type);
 int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_type,char *buffer,int bufsize);
