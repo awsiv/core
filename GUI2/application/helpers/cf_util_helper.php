@@ -141,8 +141,9 @@ function getonlineusernames()
         $result=$CI->mongo_db->get('onlineusers');
          foreach ($result as  $docs) {
             $obj=(object)$docs;
-            $user=$CI->ion_auth->get_user($obj->user_id);
-            array_push($onlineuser, $user->username);
+            //$user=$CI->ion_auth->get_user($obj->user_id);
+           // array_push($onlineuser, $user->username);
+               array_push($onlineuser, $obj->user_id);
            //var_dump($user);
          }
        return $onlineuser;

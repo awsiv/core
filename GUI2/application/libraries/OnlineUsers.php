@@ -27,9 +27,8 @@ class OnlineUsers{
         }
 	function OnlineUsers(){
                 
-               $this->data=$this->CI->mongo_db->where(array('user_id'=>$this->CI->session->userdata('user_id')))->get('onlineusers');
-               
-		
+               //$this->data=$this->CI->mongo_db->where(array('user_id'=>$this->CI->session->userdata('user_id')))->get('onlineusers');
+                $this->data=$this->CI->mongo_db->where(array('user_id'=>$this->CI->session->userdata('username')))->get('onlineusers');
 		$timeout = time()-120;
 		
 		//If it's the first hit, add the information to database
@@ -38,7 +37,8 @@ class OnlineUsers{
                         
                         $this->data=array();
                         $this->data['ip']=$this->ip;
-                        $this->data['user_id']=$this->CI->session->userdata('user_id');
+                        //$this->data['user_id']=$this->CI->session->userdata('user_id');
+                        $this->data['user_id']=$this->CI->session->userdata('username');
 			$this->data['time'] = time();
 			$this->data['uri'] = $_SERVER['REQUEST_URI'];
 			//Loads the USER_AGENT class if it's not loaded yet
