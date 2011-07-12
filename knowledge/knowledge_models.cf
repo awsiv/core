@@ -150,7 +150,7 @@ vars:
 
 ######################################################
 
-things:
+topics:
 
  # This is example knowledge -- add your own
 
@@ -227,12 +227,15 @@ things:
   "login"              comment => "The ability to log onto systems with a username and password";
   "daemons"            comment => "Unix parlance for a running background process that handles an application service";
 
-daemons::
 
- "httpd" comment => "The apache web daemon",
-         affects => { "application_services::web", "promise_types::processes" },
-         provides => { "application_services::web", "www" },
-       is_part_of => { "application_services::web" };
+things:
+
+ daemons::
+
+   "httpd" comment => "The apache web daemon",
+           affects => { "application_services::web", "promise_types::processes" },
+          provides => { "application_services::web", "www" },
+        is_part_of => { "application_services::web" };
 
   "saslauthd"     comment => "Authentication module for the mail delivery service";
   "freshclam"     comment => "Gets updates for the clam virus scanner";
@@ -269,6 +272,8 @@ daemons::
   "LDAP"     comment => "A well-known directory service. MS Active Directory purports to support this standard.";
   "NIS"      comment => "Sun's Network Information Service (previously called Yellow Pages).";
   "DHCP"     comment => "An IP configuration service.";
+
+topics:
 
  database::
 
@@ -310,8 +315,6 @@ daemons::
   "File system not mounted";
 
  ########################################################################
-
-topics:
 
  compliance::
 
@@ -868,7 +871,7 @@ topics:
 
   ################################################################
 
-
+occurrences:
 
  eTOM::
 
