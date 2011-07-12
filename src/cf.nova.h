@@ -100,7 +100,8 @@ enum cf_rank_method
    cfrank_anomaly,
    cfrank_performance,
    cfrank_lastseen,
-   cfrank_default
+   cfrank_mixed,
+   cfrank_default  // Currently set to be same as compliance
    };
 
 /*****************************************************************************/

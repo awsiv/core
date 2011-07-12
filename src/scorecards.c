@@ -715,6 +715,8 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
 
  switch (method)
     {
+    default:
+    case cfrank_default:
     case cfrank_compliance:
 
         notkept = 100 - k[meter_compliance_hour] - r[meter_compliance_hour];
@@ -783,7 +785,7 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
         result -= k[meter_comms_hour];
         break;
        
-    default:
+    case cfrank_mixed:
         kav = (k[meter_comms_hour] + k[meter_compliance_hour] + k[meter_anomalies_day]) / 3;
         rav = (r[meter_comms_hour] + r[meter_compliance_hour] + r[meter_anomalies_day]) / 3;
 
@@ -801,6 +803,8 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
 
         result -= kav;
         break;
+
+        
     }
 
 return result;
