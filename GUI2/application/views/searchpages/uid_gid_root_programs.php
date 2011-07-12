@@ -10,11 +10,14 @@
          <input type="hidden" name="host" value="All">
           <input type="hidden" name="report" value="<?php echo $report_type ?>">
           <p>Return hostnames only: <input type="checkbox" name="hosts_only" value="true"></p>
-          <p><input class="btn" type="submit" value="Generate report"></p>
+          <p><input class="btn" type="submit" value="Generate report"> <span>       <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="slvbutton loadsavedsearch">Load saved searches</a>
+</span> </p>
           </form>
       </div>
    </div>
 <script type="text/javascript">
+    $('.loadsavedsearch').ajaxyDialog({title:'Saved Searches'});
+
  $('#hg').smartTextBox({separator : "|"});
 $('#bphghelp').classfinder({
     defaultbehaviour:false,

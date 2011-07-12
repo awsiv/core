@@ -11,6 +11,7 @@ class Search extends Cf_Controller {
         $this->carabiner->js('jquery.tablesorter.pager.js');
         $this->carabiner->js('jquery.qtip-1.0.min.js');
         $this->carabiner->js('widgets/hostfinder.js');
+        
     }
 
     /**
@@ -30,6 +31,18 @@ class Search extends Cf_Controller {
 
     function index() {
 
+
+        $requiredjs = array(
+            array('widgets/notes.js'),
+            array('jquery.form.js'),
+            array('SmartTextBox.js'),
+            array('widgets/classfinder.js')
+        );
+        $this->carabiner->js($requiredjs);
+
+
+
+
         $getparams = $this->uri->uri_to_assoc(3);
         $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
         $hostkey = "";
@@ -45,7 +58,7 @@ class Search extends Cf_Controller {
         $class_regex = isset($getparams['class_regex']) ? urldecode($getparams['class_regex']) : $this->input->post('class_regex');
         $hosts_only = isset($getparams['hosts_only']) ? $getparams['hosts_only'] : $this->input->post('hosts_only');
         $state = isset($getparams['state']) ? $getparams['state'] : $this->input->post('state');
-        $longterm_data=isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
+        $longterm_data = isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
         $hostname = cfpr_hostname($hostkey);
 
         $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : 20);
@@ -63,19 +76,19 @@ class Search extends Cf_Controller {
 
         $params = '';
         $breadcrumbs_url = "search/index/";
-        $hostfinderparams="";
-        if (!is_ajax ()) {
+        $hostfinderparams = "";
+        if (!is_ajax()) {
 
             if (count($getparams) > 0) {
                 //$params=$this->uri->assoc_to_uri($getparams);
                 foreach ($getparams as $key => $value) {
                     if (!empty($value)) {
 
-                     $breadcrumbs_url.=$key . '/' . $value . '/';
+                        $breadcrumbs_url.=$key . '/' . $value . '/';
                         if ($key <> "page" && $key <> "rows") {
                             $params.=$key . '/' . $value . '/';
                         }
-                        if($key<>"host" && $key <> "page" && $key <> "rows"){
+                        if ($key <> "host" && $key <> "page" && $key <> "rows") {
                             $hostfinderparams.=$key . '/' . $value . '/';
                         }
                     }
@@ -88,30 +101,23 @@ class Search extends Cf_Controller {
                         $params.=$key . '/' . urlencode($value) . '/';
                         $breadcrumbs_url .= $key . '/' . urlencode($value) . '/';
                         /* $key == "host" || $key == "report" old condition */
-                        if ($key <> "page" && $key <> "rows" &&$key<>"host") {
-                            $hostfinderparams.=$key . '/' .  urlencode($value) . '/';
+                        if ($key <> "page" && $key <> "rows" && $key <> "host") {
+                            $hostfinderparams.=$key . '/' . urlencode($value) . '/';
                         }
                     }
                 }
-               
             }
-            
+
             //$modified=$this->breadcrumblist-> replace_last_with_current("search/index",site_url("$breadcrumbs_url"));
             $bc = array(
-                    'title' => 'Reports',
-                    'url' => site_url("$breadcrumbs_url"),
-                    'isRoot' => false,
-                   'replace_existing'=>true
-                );
+                'title' => 'Reports',
+                'url' => site_url("$breadcrumbs_url"),
+                'isRoot' => false,
+                'replace_existing' => true
+            );
             $this->breadcrumb->setBreadCrumb($bc);
         }
-      // var_dump($this->breadcrumblist->getBreadCrumbs());
-        //for css of autocompletion to work
-        $inject = array('<link href="' . get_cssdir() . 'jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />',
-            '<script  src="' . get_scriptdir() . 'widgets/notes.js" type="text/javascript"></script>',
-            '<script  src="' . get_scriptdir() . 'jquery.form.js" type="text/javascript"></script>');
-
-        $this->template->set('injected_item', implode("", $inject));
+      
         $data = array(
             'report_type' => $report_type,
             'title' => "Cfengine Mission Portal - search results",
@@ -121,16 +127,18 @@ class Search extends Cf_Controller {
             'current' => $page_number,
             'number_of_rows' => $rows,
             'params' => $params,
-            'classregex'=>$class_regex,
-            'hostfinderparams'=>$hostfinderparams
+            'classregex' => $class_regex,
+            'hostfinderparams' => $hostfinderparams,
+            'breadCrumbUrl' => isset($breadcrumbs_url) ? $breadcrumbs_url : ''
         );
-       if(isset($getparams['name'])){
-           $data['name']=urldecode($getparams['name']);
-       }
-       elseif($this->input->post('name'))
-       {
-            $data['name']=urldecode($this->input->post('name'));
-       }
+        
+     
+        
+        if (isset($getparams['name'])) {
+            $data['name'] = urldecode($getparams['name']);
+        } elseif ($this->input->post('name')) {
+            $data['name'] = urldecode($this->input->post('name'));
+        }
 
         if ($search == "") {
             $search = ".*";
@@ -318,7 +326,7 @@ class Search extends Cf_Controller {
                             'class_regex' => $class_regex,
                             'hostkey' => $hostkey
                         );
-                        $data['report_link'] = site_url('/pdfreports/index' . $this->assoc_to_uri($pdfurlParams));
+                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         if ($longterm_data) {
                             $data['report_result'] = cfpr_report_filechanges_longterm(NULL, $name, true, -1, ">", $class_regex, $rows, $page_number);
@@ -358,7 +366,7 @@ class Search extends Cf_Controller {
                         );
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                       if ($longterm_data) {
+                        if ($longterm_data) {
                             $data['report_result'] = cfpr_report_filediffs_longterm(NULL, $name, $diff, true, $cal, ">", $class_regex, $rows, $page_number);
                         } else {
                             $data['report_result'] = cfpr_report_filediffs(NULL, $name, $diff, true, $cal, ">", $class_regex, $rows, $page_number);
@@ -415,7 +423,7 @@ class Search extends Cf_Controller {
                         'search' => $search
                     );
 
-                    $data['report_link'] = site_url('/pdfreports/index' . $this->assoc_to_uri($pdfurlParams));
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email/');
                     $data['report_result'] = cfpr_report_lastseen($hostkey, NULL, $search, NULL, -1, true, $class_regex, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
@@ -454,8 +462,8 @@ class Search extends Cf_Controller {
                         'hostkey' => $hostkey
                     );
 
-                    $data['report_link'] = site_url('/pdfreports/index' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $data['report_result'] = cfpr_report_patch_avail($hostkey, $search, NULL, NULL, true, $class_regex, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
@@ -548,11 +556,11 @@ class Search extends Cf_Controller {
                             'hours_deltafrom' => $hours_deltafrom,
                             'hours_deltato' => $hours_deltato
                         );
-                      if ($report_type == "Promises repaired log")
-                        $data['report_result'] =cfpr_report_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
-                    if ($report_type == "Promises repaired summary")
-                        $data['report_result'] = cfpr_summarize_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
-                       // $data['report_result'] = cfpr_report_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+                        if ($report_type == "Promises repaired log")
+                            $data['report_result'] = cfpr_report_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+                        if ($report_type == "Promises repaired summary")
+                            $data['report_result'] = cfpr_summarize_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+                        // $data['report_result'] = cfpr_report_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
@@ -569,7 +577,7 @@ class Search extends Cf_Controller {
                     if ($report_type == "Promises repaired log")
                         $data['report_result'] = cfpr_report_repaired($hostkey, NULL, 0, 0, $class_regex, $rows, $page_number);
                     if ($report_type == "Promises repaired summary")
-                        $data['report_result'] = cfpr_summarize_repaired($hostkey, NULL, NULL,NULL,NULL, $rows, $page_number);
+                        $data['report_result'] = cfpr_summarize_repaired($hostkey, NULL, NULL, NULL, NULL, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 }
                 else {
@@ -585,7 +593,7 @@ class Search extends Cf_Controller {
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     } else {
                         if ($report_type == "Promises not kept summary")
-                            $data['report_result'] = cfpr_summarize_notkept(NULL, NULL, NULL,NULL,NULL,$rows, $page_number);
+                            $data['report_result'] = cfpr_summarize_notkept(NULL, NULL, NULL, NULL, NULL, $rows, $page_number);
                         if ($report_type == "Promises not kept log")
                             $data['report_result'] = cfpr_report_notkept(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
 
@@ -615,7 +623,7 @@ class Search extends Cf_Controller {
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     if ($report_type == "Promises not kept summary")
-                        $data['report_result'] = cfpr_summarize_notkept($hostkey, NULL, NULL,NULL,NULL,$rows, $page_number);
+                        $data['report_result'] = cfpr_summarize_notkept($hostkey, NULL, NULL, NULL, NULL, $rows, $page_number);
                     if ($report_type == "Promises not kept log")
                         $data['report_result'] = cfpr_report_notkept($hostkey, NULL, 0, 0, $class_regex, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);

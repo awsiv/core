@@ -318,6 +318,7 @@ class Welcome extends Cf_Controller {
             array('widgets/classfinder.js'),
             array('widgets/policyfinder.js'),
             array('widgets/reportfinder.js'),
+            array('widgets/notes.js'),
             array('SmartTextBox.js'),
             array('jquery.qtip-1.0.min.js')
         );

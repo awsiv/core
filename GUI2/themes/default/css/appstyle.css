@@ -2209,6 +2209,10 @@ span.search input
     width: 95%;
 }
 
+.ui-widget-content  .bundlelist-table a {
+    color:#08A3C1;
+}
+
 .bundlelist-table caption
 {
     caption-side: bottom;
