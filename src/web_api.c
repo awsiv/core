@@ -296,6 +296,76 @@ void Nova2PHP_summary_meter(char *buffer,int bufsize)
 }
 
 /*****************************************************************************/
+int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
+
+{ char buffer[CF_BUFSIZE];
+  struct HubPromiseCompliance *hp;
+  struct HubQuery *hq;
+  struct Rlist *rp;
+  mongo_connection dbconn;
+  int n_kept = 0, n_repaired = 0, n_notkept = 0,host_count=0;
+  long from=0,to=0;
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+ 
+if(!status)  // any
+   {
+   status = "x";
+   }
+
+hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hp = (struct HubPromiseCompliance *)rp->item;
+
+   if(hp->t > to)
+      {
+      to = hp->t;
+      }
+   
+   if(hp->t < from || from == 0)
+      {
+      from = hp->t;
+      }
+   
+   switch(hp->status)
+      {
+      case 'c':
+          n_kept++;
+          break;
+      case 'r':
+          n_repaired++;
+          break;
+      case 'n':
+      default:
+          n_notkept++;
+          break;
+      }
+   }
+
+for(rp = hq->hosts; rp != NULL; rp = rp->next)
+   {
+   host_count++;
+   }
+
+snprintf(returnval,bufsize,"{\"kept\":%d,\"not_kept\":%d,\"repaired\":%d,\"from\":%ld,\"to\":%ld,\"host_count\":%d,\"class\":\"%s\"}",
+         n_kept,n_notkept,n_repaired,from,to,host_count,classreg);
+
+DeleteHubQuery(hq,DeleteHubPromiseCompliance);
+
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+return true;
+}
+
+/*****************************************************************************/
 
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize)
 
@@ -1144,7 +1214,6 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,st
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
     }
-
 
  hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
  PageRecords(&(hq->records),page,DeleteHubClass);
@@ -2255,8 +2324,9 @@ int Nova2PHP_software_hosts(char *hostkey,char *name,char *value, char *arch,int
        break;
        }
     }
-
- ReplaceTrailingChar(returnval,',',']'); 
+ 
+ ReplaceTrailingChar(returnval,',',']');
+ ReplaceTrailingChar(returnval,'[','\0'); 
 
  DeleteHubQuery(hq,DeleteHubSoftware);
 
@@ -2742,6 +2812,7 @@ int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
     }
 
  ReplaceTrailingChar(returnval, ',', ']');
+ ReplaceTrailingChar(returnval, '[', '\0');
 
  DeleteHubQuery(hq,DeleteHubFileChanges);
 
@@ -4269,22 +4340,22 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
     Join(returnval,work,bufsize);
     count += ip->counter+1;
     }
-
- if (count == 0)
-    {
-    snprintf(work,CF_BUFSIZE,"{\"count\":0}");
-    Join(returnval,work,bufsize);
-    }
  
- ReplaceTrailingChar(returnval, ',', ']');
-
  DeleteHubQuery(hq,DeleteHubClass);
+ ReplaceTrailingChar(returnval, ',', ']');
+ ReplaceTrailingChar(returnval, '[', '\0');
 
  if (!CFDB_Close(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not close connection to report database");
     }
-
+   
+ if (count == 0)
+    {
+    snprintf(work,CF_BUFSIZE,"[{\"count\":0}]");
+    Join(returnval,work,bufsize);
+    }
+ 
  return count;
 }
 
@@ -5306,6 +5377,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
  char row[CF_MAXVARSIZE] = {0};
  int ret = false;
  cdp_t cdpType;
+ int count = 0;
 
  memset(buf,0,bufSz);
  now = time(NULL);
@@ -5356,17 +5428,20 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
    
  if (promises)
     {
-    snprintf(buf,bufSz,"\n<table>\n");
-    Join(buf,GetCdpTableHeader(cdpType),bufSz);
-   
+    snprintf(buf,bufSz,
+             "{\"meta\":{\"count\" : %d,"
+             "\"header\": {\"Host\":0,\"Service Name\":1,\"Run Status\":2,\"Action\":3,\"Class Expression\":4,\"State\":5,\"Time Checked\":6"
+             "}},\"data\":[", count);
+    
     for(ip = promises; ip != NULL; ip = ip->next)  // join policy with host reports
        {
        sscanf(ip->name,"%128[^<]</td><td>%512[^$]",handle,attributes);
       
        hosts = CFDB_QueryCdpCompliance(&dbconn,handle);
       
-       if (hosts)
-          {	   
+       if (hosts)           
+          {
+          
           for (ip2 = hosts; ip2 != NULL; ip2 = ip2->next)
              {	       
              sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%ld[^$]",hostKeyHash,host,statusStr,&then);
@@ -5395,7 +5470,8 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
                     break;
                 }
 
-             snprintf(row,sizeof(row),"<tr><td><a href=\"host/%s\">%s</a></td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+             
+             snprintf(row,sizeof(row),"[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",
                       hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr);
             
              if(!Join(buf,row,bufSz))
@@ -5407,8 +5483,8 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
           DeleteItemList(hosts);
           }
        }
-   
-    EndJoin(buf,"\n</table>\n",bufSz);
+    ReplaceTrailingChar(buf,',','\0');
+    EndJoin(buf,"]}",bufSz);
    
     DeleteItemList(promises);
    
