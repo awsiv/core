@@ -23,7 +23,7 @@
                         <input type="submit" id="submit_search" value="save" />
                     </form>                
                 </div> 
-                <div><a href="#" id="modifySearch" title="modify search parameters">change this search</a></div>
+                <div><a href="#" id="modifySearch" title="modify search parameters">New search</a></div>
 
             </div>
             <div class="clearboth">

@@ -41,7 +41,12 @@
 <script type="text/javascript">
 
 $('a.jDelete').click(function(e) {
-      e.preventDefault();
+    e.preventDefault();
+    if (!confirm('Are you sure to delete this search?')) {
+        return false; 
+        
+    }
+    
     var url = $(this).attr('href');
   
     var parent = $(this).parent().parent();
