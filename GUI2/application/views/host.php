@@ -39,8 +39,8 @@
 
                          }
                       ?>
-                <li><a href="<?php echo $noteUrl ?>" class="note" id="add_cmt">Notes</a></li>
-                <li> <?php echo anchor('visual/vital/'.$hostkey,'vitals',array('id'=>'pulseNvitals','class'=>'pulseNvitals')) ?></li>
+                <li><a href="<?php echo $noteUrl ?>" class="note" id="add_cmt" title="Add note about this host">Notes</a></li>
+                <li> <?php echo anchor('visual/vital/'.$hostkey,'vitals',array('id'=>'pulseNvitals','class'=>'pulseNvitals','title'=>'View probes regarding cpu,memory,network etc')) ?></li>
                 <li><a href="#" id="notkeptlnk" title="Promises not kept in the past week" class="problems">Problems</a></li>
                 <p class="clearleft"></p>
             </ul>

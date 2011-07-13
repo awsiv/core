@@ -10,6 +10,14 @@ class Cf_Log extends CI_Log {
     public function __construct() {
         parent::__construct();
         //$this->load->library('mongo_db');
+        $this->env = ENVIRONMENT;
+         if ($this->env == "development") {
+             $this->_threshold=2;
+             $this->_levels= array('ERROR' => '1', 'INFO' => '2',  'DEBUG' => '3', 'ALL' => '4');
+         }
+         else{
+             $this->_threshold=4;
+         }
         try {
             $this->mongo = new Mongo("mongodb://127.0.0.1:27017", array("persist" => "ci_mongo_persist"));
         } catch (Exception $e) {
@@ -25,9 +33,8 @@ class Cf_Log extends CI_Log {
         }
 
         $level = strtoupper($level);
-
-        if (!isset($this->_levels[$level]) OR ($this->_levels[$level] > $this->_threshold)) {
-
+       
+        if (!isset($this->_levels[$level]) || ($this->_levels[$level] > $this->_threshold)) {
             return FALSE;
         }
         $db = $this->mongo->phpcfengine->app_logs;
