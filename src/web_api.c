@@ -296,7 +296,7 @@ void Nova2PHP_summary_meter(char *buffer,int bufsize)
 }
 
 /*****************************************************************************/
-int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg,char *timerange,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
   struct HubPromiseCompliance *hp;
@@ -304,14 +304,37 @@ int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,ch
   struct Rlist *rp;
   mongo_connection dbconn;
   int n_kept = 0, n_repaired = 0, n_notkept = 0,host_count=0;
-  long from=0,to=0;
+  time_t from=0,to=0, interval, now = time(NULL);
+  struct Item *ip,*list=NULL;
+  char range;
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
- 
+
+if(timerange)
+   {
+   range = timerange[0];
+   }
+
+switch(range)
+   {
+   case 'd':
+       interval = CF_DAY;
+       break;
+   case 'w':
+       interval = CF_WEEK;
+       break;
+   case 'h':
+       interval = CF_HOUR;
+       break;
+   default:
+       return 0;
+       break;
+   }
+
 if(!status)  // any
    {
    status = "x";
@@ -323,16 +346,11 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseCompliance *)rp->item;
 
-   if(hp->t > to)
+   if(now - hp->t > interval)
       {
-      to = hp->t;
+      continue;
       }
-   
-   if(hp->t < from || from == 0)
-      {
-      from = hp->t;
-      }
-   
+
    switch(hp->status)
       {
       case 'c':
@@ -346,18 +364,14 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
           n_notkept++;
           break;
       }
+   ip = IdempPrependItem(&list,hp->hh->keyhash,NULL);
    }
 
-for(rp = hq->hosts; rp != NULL; rp = rp->next)
-   {
-   host_count++;
-   }
-
-snprintf(returnval,bufsize,"{\"kept\":%d,\"not_kept\":%d,\"repaired\":%d,\"from\":%ld,\"to\":%ld,\"host_count\":%d,\"class\":\"%s\"}",
-         n_kept,n_notkept,n_repaired,from,to,host_count,classreg);
+snprintf(returnval,bufsize,"{\"kept\":%d,\"not_kept\":%d,\"repaired\":%d,\"host_count\":%d,\"class\":\"%s\"}",
+         n_kept,n_notkept,n_repaired,ListLen(list),classreg);
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
-
+DeleteItemList(list);
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
@@ -517,7 +531,8 @@ if (haveData)
       }
    }
 
-ReplaceTrailingChar(buffer, ',', ']');
+ReplaceTrailingChar(buffer, ',', '\0');
+EndJoin(buffer,"]",bufsize);
 
 return haveData;
 }
@@ -553,7 +568,8 @@ if (haveData)
       }
    }
 
-ReplaceTrailingChar(buffer, ',', ']');
+ReplaceTrailingChar(buffer, ',', '\0');
+EndJoin(buffer,"]",bufsize);
 
 return haveData;
 }
@@ -589,7 +605,8 @@ if (haveData)
       }
    }
 
-ReplaceTrailingChar(buffer, ',', ']');
+ReplaceTrailingChar(buffer, ',', '\0');
+EndJoin(buffer,"]",bufsize);
 
 return haveData;
 }
@@ -625,7 +642,8 @@ if (haveData)
       }
    }
 
-ReplaceTrailingChar(buffer, ',', ']');
+ReplaceTrailingChar(buffer, ',', '\0');
+EndJoin(buffer,"]",bufsize);
 
 return haveData;
 }
@@ -1077,6 +1095,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       }
    }
 
+
+
 if (returnval[strlen(returnval)-1]==',')
    {
    returnval[strlen(returnval)-1]='\0';
@@ -1489,7 +1509,8 @@ int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
           }           
        }
 
-    ReplaceTrailingChar(buf, ',', ']');
+    ReplaceTrailingChar(buf, ',', '\0');
+    EndJoin(buf,"]",bufsize);
 
     Join(buf, ",\n\"classes\":[", bufsize - 10);
     
@@ -1504,7 +1525,8 @@ int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
           }
        }
 
-    ReplaceTrailingChar(buf, ',', ']');
+    ReplaceTrailingChar(buf, ',', '\0');
+    EndJoin(buf,"]",bufsize);
     }
 
  EndJoin(buf, "}", bufsize);
@@ -2008,10 +2030,8 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,s
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval)-1] = '\0'; 
-    }
+
+ ReplaceTrailingChar(buffer, ',', '\0');
  EndJoin(returnval,"]}",bufsize);
 
  DeleteHubQuery(hq,DeleteHubBundleSeen);
@@ -2272,7 +2292,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-ReplaceTrailingChar(returnval,',',']');
+ReplaceTrailingChar(returnval, ',', '\0');
+EndJoin(returnval,"]",bufsize);
 
 DeleteHubQuery(hq,DeleteHubValue);
 
@@ -2325,8 +2346,8 @@ int Nova2PHP_software_hosts(char *hostkey,char *name,char *value, char *arch,int
        }
     }
  
- ReplaceTrailingChar(returnval,',',']');
- ReplaceTrailingChar(returnval,'[','\0'); 
+ ReplaceTrailingChar(returnval, ',', '\0');
+ EndJoin(returnval,"]",bufsize);
 
  DeleteHubQuery(hq,DeleteHubSoftware);
 
@@ -2379,7 +2400,8 @@ int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *classreg,cha
        }
     }
 
- ReplaceTrailingChar(returnval,',',']');
+ ReplaceTrailingChar(returnval, ',', '\0');
+ EndJoin(returnval,"]",bufsize);
 
  DeleteHubQuery(hq,DeleteHubClass);
 
@@ -2429,7 +2451,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-ReplaceTrailingChar(returnval,',',']');
+ReplaceTrailingChar(returnval, ',', '\0');
+EndJoin(returnval,"]",bufsize);
 
 DeleteHubQuery(hq,DeleteHubVariable);
 
@@ -2487,7 +2510,8 @@ int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
        }
     }
 
- ReplaceTrailingChar(returnval,',',']');
+ ReplaceTrailingChar(returnval, ',', '\0');
+ EndJoin(returnval,"]",bufsize);
  
  DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
@@ -2544,7 +2568,8 @@ for (rp = hq->hosts; rp != NULL; rp=rp->next)
       }
    }
 
-ReplaceTrailingChar(returnval,',',']');
+ReplaceTrailingChar(returnval, ',', '\0');
+EndJoin(returnval,"]",bufsize);
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
@@ -2597,7 +2622,8 @@ int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress
        }
     }
 
- ReplaceTrailingChar(returnval,',',']');
+ ReplaceTrailingChar(returnval, ',', '\0');
+ EndJoin(returnval,"]",bufsize);
 
  DeleteHubQuery(hq,DeleteHubLastSeen);
 
@@ -2647,7 +2673,8 @@ int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *classreg,
        }
     }
 
- ReplaceTrailingChar(returnval,',',']');
+ ReplaceTrailingChar(returnval, ',', '\0');
+ EndJoin(returnval,"]",bufsize);
 
  DeleteHubQuery(hq,DeleteHubPerformance);
 
@@ -2697,7 +2724,8 @@ int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char
        }
     }
 
- ReplaceTrailingChar(returnval, ',', ']');
+ ReplaceTrailingChar(returnval, ',', '\0');
+ EndJoin(returnval,"]",bufsize);
 
  DeleteHubQuery(hq,DeleteHubSetUid);
 
@@ -2751,7 +2779,8 @@ int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,ch
        }
     }
 
- ReplaceTrailingChar(returnval, ',', ']');
+ ReplaceTrailingChar(returnval, ',', '\0');
+ EndJoin(returnval,"]",bufsize);
 
  DeleteHubQuery(hq,DeleteHubBundleSeen);
 
@@ -2811,8 +2840,8 @@ int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
        }
     }
 
- ReplaceTrailingChar(returnval, ',', ']');
- ReplaceTrailingChar(returnval, '[', '\0');
+ ReplaceTrailingChar(returnval, ',', '\0');
+ EndJoin(returnval,"]",bufsize);
 
  DeleteHubQuery(hq,DeleteHubFileChanges);
 
@@ -2983,7 +3012,8 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
           }
        }
     
-    ReplaceTrailingChar(buffer, ',', ']');
+    ReplaceTrailingChar(buffer, ',', '\0');
+    EndJoin(buffer,"]",bufsize);
 
     DeleteItemList(list);
     }
@@ -3093,7 +3123,9 @@ if (matched)
                }
             }
          
-         ReplaceTrailingChar(goals, ',', ']');
+         ReplaceTrailingChar(goals, ',', '\0');
+         EndJoin(goals,"]",sizeof(goals));
+
          snprintf(colour,CF_SMALLBUF,"green");
          }
       else if (type)
@@ -3218,7 +3250,9 @@ if (matched)
          break;
          }
       }
-   ReplaceTrailingChar(buffer, ',', ']');
+
+   ReplaceTrailingChar(buffer, ',', '\0');
+   EndJoin(buffer,"]",bufsize);
    DeleteItemList(matched);
    }
 
@@ -3825,7 +3859,9 @@ void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
           snprintf(work,CF_MAXVARSIZE-1,"{\"lval\":\"%s\",\"rval\":\"%s\",\"class_context\":\"%s\"},",ha->lval,ha->rval,ha->classContext);
           Join(returnval,work,bufsize);
           }
-       ReplaceTrailingChar(returnval, ',', ']');
+
+       ReplaceTrailingChar(returnval, ',', '\0');
+       EndJoin(returnval,"]",bufsize);
        }
    
     DeleteHubBody(hb);
@@ -3863,8 +3899,9 @@ int Nova2PHP_list_bodies(char *name,char *type,char *returnval,int bufsize)
        snprintf(work,CF_MAXVARSIZE-1,"{\"body\":\"%s\",\"type\":\"%s\"},",ip->name,ip->classes);
        Join(returnval,work,bufsize);
        }
-    
-    ReplaceTrailingChar(returnval, ',', ']');
+
+    ReplaceTrailingChar(returnval, ',', '\0');
+    EndJoin(returnval,"]",bufsize);
     }
 
  if (!CFDB_Close(&dbconn))
@@ -4004,7 +4041,8 @@ for (i = 0; BASIC_REPORTS[i][0] != NULL; i++)
    Join(buffer,work,bufsize);
    }
 
-ReplaceTrailingChar(buffer, ',', ']');
+ReplaceTrailingChar(buffer, ',', '\0');
+EndJoin(buffer,"]",bufsize);
 }
 
 /*****************************************************************************/
@@ -4161,7 +4199,8 @@ int Nova2PHP_list_promise_handles_with_comments(char *bundle,char *btype,char *r
        Join(returnval,work,bufsize);
        }
 
-    ReplaceTrailingChar(returnval, ',', ']');
+    ReplaceTrailingChar(returnval, ',', '\0');
+    EndJoin(returnval,"]",bufsize);
     
     DeleteHubQuery(hq,DeleteHubPromise);
 
@@ -4212,7 +4251,8 @@ int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
        Join(returnval,work,bufsize);
        }
 
-    ReplaceTrailingChar(returnval, ',', ']');
+    ReplaceTrailingChar(returnval, ',', '\0');
+    EndJoin(returnval,"]",bufsize);
     
     DeleteHubQuery(hq,DeleteHubPromise);
 
@@ -4342,8 +4382,8 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
     }
  
  DeleteHubQuery(hq,DeleteHubClass);
- ReplaceTrailingChar(returnval, ',', ']');
- ReplaceTrailingChar(returnval, '[', '\0');
+ ReplaceTrailingChar(returnval, ',', '\0');
+ EndJoin(returnval,"]",bufsize);
 
  if (!CFDB_Close(&dbconn))
     {
@@ -5332,7 +5372,9 @@ for (i = 0; CDP_REPORTS[i][0] != NULL; i++)
       break;
       }
    }
-ReplaceTrailingChar(buf, ',', ']');
+
+ReplaceTrailingChar(buf, ',', '\0');
+EndJoin(buf,"]",bufSz);
 }
 
 /*****************************************************************************/
@@ -6032,10 +6074,7 @@ for (rp = result; rp != NULL; rp=rp->next)
    hni = NULL;
    }
 
-if (returnval[strlen(returnval)-1]==',')
-   {
-   returnval[strlen(returnval) - 1] = '\0';
-   }
+ReplaceTrailingChar(returnval, ',', '\0');
 
 snprintf(buffer,sizeof(buffer),"],\"meta\":{\"count\":%d}}\n",count);
 EndJoin(returnval,buffer,bufsize);
@@ -6166,7 +6205,8 @@ int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle
 
     CFDB_Close(&dbconn);
     
-    ReplaceTrailingChar(returnval, ',', ']');
+    ReplaceTrailingChar(returnval, ',', '\0');
+    EndJoin(returnval, "]", bufsize);
     
     DeleteHubQuery(hq,DeleteHubPromise);
     return true;
@@ -6177,8 +6217,6 @@ int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle
     return false;
     }
 }
-
-
 
 /*****************************************************************************/
 /*                           Constellation                                   */
@@ -6500,7 +6538,8 @@ for (ip = environments; ip != NULL; ip = ip->next)
    Join(buf, work, bufsize);
    }
 
-ReplaceTrailingChar(buf, ',', ']');
+ReplaceTrailingChar(buf, ',', '\0');
+EndJoin(buf, "]", bufsize);
 DeleteItemList(environments);
 return true;
 
