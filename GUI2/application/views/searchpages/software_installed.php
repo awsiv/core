@@ -8,7 +8,7 @@
           <p>Host group: (.*+[])
                <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help"
              title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
-              <input class="searchfield" type="text" name="class_regex" size="80"></p>
+              <input class="searchfield" type="text" id="hg" name="class_regex" size="80"></p>
           <!--<input type="hidden" name="manyhosts" value="true">-->
           <input type="hidden" name="report" value="<?php echo $report_type?>">
            <input type="hidden" name="host" value="All">
@@ -26,7 +26,7 @@ $('#bphghelp').classfinder({
     defaultbehaviour:false,
     complete:function(event,data){
         //console.log(data.selectedclass);
-        $('#hg') .smartTextBox('add', data.selectedclass);
+        $('#hg').smartTextBox('add', data.selectedclass);
     }
 });
 $('#bphghelp').qtip({
