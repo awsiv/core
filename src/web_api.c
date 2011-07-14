@@ -3464,7 +3464,7 @@ for (ip = clist, i = 0; (ip !=  NULL); ip=ip->next,i++)
          }
       else
          {
-         snprintf(work,sizeof(work),"{ \"colour\": \"blue\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
+         i--;
          }
    
       if (!Join(buffer,work,bufsize))
