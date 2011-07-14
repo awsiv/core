@@ -1106,11 +1106,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    }
 
 
-
-if (returnval[strlen(returnval)-1]==',')
-   {
-   returnval[strlen(returnval)-1]='\0';
-   }
+ReplaceTrailingChar(returnval, ',', '\0');
 EndJoin(returnval,"]}\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubValue);
@@ -1157,10 +1153,8 @@ int Nova2PHP_get_value_graph(char *hostkey,char *day,char *month,char *year,char
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval)-1]='\0';
-    }
+ 
+ ReplaceTrailingChar(returnval, ',', '\0');
  EndJoin(returnval,"]\n",bufsize);
 
  DeleteHubQuery(hq,DeleteHubValue);
@@ -1210,12 +1204,9 @@ int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,in
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval)-1]='\0';
-    }
- EndJoin(returnval,"]}\n",bufsize);
 
+ ReplaceTrailingChar(returnval, ',', '\0');
+ EndJoin(returnval,"]}\n",bufsize);
 
  DeleteHubQuery(hq,DeleteHubSoftware);
 
@@ -2041,7 +2032,7 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,s
        }
     }
 
- ReplaceTrailingChar(buffer, ',', '\0');
+ ReplaceTrailingChar(returnval, ',', '\0');
  EndJoin(returnval,"]}",bufsize);
 
  DeleteHubQuery(hq,DeleteHubBundleSeen);
@@ -4402,8 +4393,7 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
    
  if (count == 0)
     {
-    snprintf(work,CF_BUFSIZE,"[{\"count\":0}]");
-    Join(returnval,work,bufsize);
+    snprintf(returnval,bufsize,"[{\"count\":0}]");
     }
  
  return count;
