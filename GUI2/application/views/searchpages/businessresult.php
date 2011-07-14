@@ -43,7 +43,7 @@
                     echo $this->cf_table->generateReportTable($result, $report_title);
                     $pg = paging($current, $number_of_rows, $result['meta']['count'], 10);
                     include 'paging_footer.php';
-                    //echo $report_result;
+                   // echo $report_result;
                 } else {
                     echo"<table><tr><td>" . $this->lang->line("no_data") . "</td></tr></table>";
                 }

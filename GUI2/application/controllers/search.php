@@ -301,7 +301,7 @@ class Search extends Cf_Controller {
                         $data['report_title'] = $report_type;
                         $data['report_link'] = site_url('/pdfreports/index' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $data['report_result'] = cfpr_report_compliance_summary($hostkey, NULL, -1, -1, -1, -1, ">", $class_regex, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_compliance_summary(NULL, NULL, -1, -1, -1, -1, ">", $class_regex, $rows, $page_number);
                         $this->template->load('template', 'searchpages/businessresult', $data);
                     }
                 } elseif ($hostkey != "") {

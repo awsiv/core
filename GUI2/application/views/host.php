@@ -51,12 +51,12 @@
                 $number = cfpr_get_class_frequency(NULL,"mXC.*");
                 $count=0;
                 $nlist =json_decode(cfpr_report_class_frequency($hostkey,"mXC.*"),true) ;
-               
               //  echo cfpr_report_class_frequency($hostkey,"mXC.*");
                 ?>
                 <p>Total number under surveillance:<?php echo $number?><p>
                 <p>On this host: <?php
-                foreach($nlist as $list)
+                if(!empty($nlist)){
+                foreach((array)$nlist as $list)
                 {
                    if($list['count']>0)
                    {
@@ -67,7 +67,11 @@
                        echo $count;
                        break;
                    }
+                 }
+                }else{
+                 echo "no data found" ;
                 }?></p> <!--proble, with varaibale nlist-->
+
        </div>
 
          <div id="statusmeasured" class="innerdiv ">
