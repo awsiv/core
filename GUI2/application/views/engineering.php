@@ -32,6 +32,9 @@
                 <li><?php echo anchor('widget/allclasses', 'class', array('class' => 'classes', 'id' => 'findclass')); ?></li>
                 <li><?php echo anchor('widget/allpolicies', 'promises', array('class' => 'policies', 'id' => 'findpolicy')); ?></li>
                 <li><?php echo anchor('widget/allreports', 'reports', array('class' => 'report', 'id' => 'findreport')); ?></li>
+                <li><?php echo anchor('summaryreports/search', 'summary reports', array('class' => 'report','id' => 'summaryreport')); ?></li>
+                
+                
                 <p class="clearleft"></p>
             </ul>
 
@@ -55,7 +58,16 @@
         $('#findclass').classfinder(genericOption);
         $('#findpolicy').policyfinder(genericOption);
         $('#findreport').reportfinder(genericOption);
+         $('#summaryreport').ajaxyDialog({'title':'Summary report',
+            width:'50%'});
+        
+        
         //fix for manintaining the layout of the page when window is resized.
         $('#compliance_summary').css('width','50px');
+        
+        
+        
+        
+        
     });
 </script>

@@ -735,11 +735,11 @@ body {
     padding-left: 10px;
 }
 
-.innerdiv a{
+body .innerdiv a{
     color:#08A3C1;
 }
 
-.outerdiv a{
+body .outerdiv a{
     color:#08A3C1;
 }
 

@@ -56,10 +56,10 @@ final class BreadCrumbList{
 			}
 	}
 	function display(){
-		$iter = $_SESSION['breadCrumbList'];
+		$iter = isset($_SESSION['breadCrumbList']) ? $_SESSION['breadCrumbList'] : array() ;
 		$i=1;
 		$return_str='';
-		foreach($iter as $bc){
+		foreach((array)$iter as $bc){
 			$uBC = $bc;
 			$del = $i < count($iter)?$this->delimiter:'';
                         if(!$iter[0]->isRoot())

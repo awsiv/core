@@ -6,7 +6,7 @@
             <?php if (is_array($searchData) && !empty($searchData)) { ?>    
             <ul style="padding: 5px;" class="knowledgesearch">
                     <?php foreach ((array) $searchData as $item) { ?>
-                        <?php if (trim($item['represents'])) { ?>
+                        <?php if (trim($item['represents']) && $item['type']!=4) { ?>
                 <li style="padding:5px;"><?php echo sprintf('"<a target="_self" href="%s">%s</a>" is mentioned in the context of %s',  trim(base_url(),'/').$item['ref'], $item['represents'], $item['context']); ?></li>
                         <?php } ?>
                     <?php } ?>

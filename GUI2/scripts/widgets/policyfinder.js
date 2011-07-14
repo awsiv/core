@@ -5,7 +5,10 @@
             baseUrl: '',
             filterhandlerurl: "/widget/filterpolicy",
             width:700,
-            height:600
+            height:600,
+            defaultbehaviour:true,
+            onlyShowHandle:false
+            
 
         },
         _init: function(){
@@ -16,6 +19,11 @@
             self.addalphapager();
             $.ui.policyfinder.instances.push(this.element);
         },
+        
+        containerID:function() {
+            return this.element.attr('id') + '-'+'policyList';
+        },
+        
         dialogContainer: function() {            
             var existing = $("#policylistcontainer");
             if ( existing.length > 0) {
@@ -45,31 +53,44 @@
             //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
             //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
 
-            self.searchbar=$('<form id="policyfindersearch" action="'+self.options.baseUrl+'/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="search by bundle"/></span></form>')
+            
+            if (!self.options.onlyShowHandle) {
+                self.searchbar=$('<form id="policyfindersearch" action="'+self.options.baseUrl+'/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="search by bundle"/></span></form>')
+            } else {
+                self.searchbar=$('<form id="policyfindersearch" action="'+self.options.baseUrl+'/widget/search_by_handle"><span class="search"><input type="text" name="search" value="search by handle"/></span></form>')
+                
+            }
+            
             self.titlebar.append(self.searchbar).delegate('form','submit',$.proxy(self.searchpolicyfile,self));
             self.searchbar.delegate('input[type="text"]','click',function(){
                 $(this).focus().select()
-                });
+            });
             self.searchbar.delegate('input[type="text"]','focusin',$.proxy(self.searchboxevent,self));
             self.searchbar.delegate('input[type="text"]','focusout',$.proxy(self.searchboxevent,self));
             self.searchbar.find('input[type="text"]').data('default',self.searchbar.find('input[type="text"]').val());
             self.searchbar.delegate('input[type="text"]','keyup',$.proxy(self.searchbarkeyevent,self));
 
             self.menu=$('<div class="categories"><ul id="classoptions"></ul></div>');
-            self.menu.find('ul').append('<li>by bundle</li><li>by handle</li><li>by promiser</li>');
+            
+            if (!self.options.onlyShowHandle) {
+                self.menu.find('ul').append('<li>by bundle</li><li>by handle</li><li>by promiser</li>');
+            } else {
+                self.menu.find('ul').append('<li>by handle</li>');
+            }
+             
             $('<span class="slider"></span>').appendTo(self.menu).bind('click',function(event){
                 self.menu.slideUp();
             });
             self.menu.appendTo(self.titlebar).hide();
             self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
             self.element.bind('click',function(event){
-                console.log('test');
-                if(!$("#policyList").size()>0)
+              
+               if(!$("#"+self.containerID()).size()>0)
                 {
                     self.dialogcontent.html(self.ajaxloader);
                     self.loadpagebody(self.element.attr('href'),"",true);
                 }
-                 self.dialogcontent.dialog('open');
+                self.dialogcontent.dialog('open');
                
                 event.preventDefault();
                 return false;
@@ -104,35 +125,60 @@
                 },
                 dataType:"json",
                 success: function(data) {
-                    self.dialogcontent.html($("<ul>").attr("id", "policyList"));           
+                    self.dialogcontent.html($("<div id='policyList'><ul id="+self.containerID()+">"));           
                     var li = '';
                     $.each(data, function(i, val) {
-                         li += '<li>';
+                        li += '<li>';
                         
-                                        
-                        li += '<span class="type">'+val[3]+'</span>';
+                        if (!self.options.onlyShowHandle) {                
+                            li += '<span class="type">'+val[3]+'</span>';
+                        }
                         li += "<p>";
-                        li += '<a href="'+ self.options.baseUrl+ '/promise/details/' + escape(val[0])+'" title="'+
-                        "promise : "+val[4] +'" class="promiselnk"><span class="promiser">'+val[4]+'</span></a>';
-                            
-                        li += '<a href="'+self.options.baseUrl+'/promise/details/'+escape(val[0])+'" title="'+'handle : '+val[0] +'"><span class="handle">'+val[0]+'</span></a>';
+                        if (!self.options.onlyShowHandle) {                
                         
-                        li += '<a href="'+self.options.baseUrl+ '/bundle/details/bundle/' +escape(val[2])+"/type/"+val[3]+'" title="'+
-                        'bundle : '+val[2] +'"><span class="bundle">'+val[2]+'</span></a>';
-                        li +='</p></li>';
+                            li += '<a href="'+ self.options.baseUrl+ '/promise/details/' + escape(val[0])+'" title="'+
+                            "promise : "+val[4] +'" class="promiselnk"><span class="promiser">'+val[4]+'</span></a>';
+                        }    
+                        
+                        
+                        li += '<a class="handleClick" href="'+self.options.baseUrl+'/promise/details/'+escape(val[0])+'" rel="'+escape(val[0])+'" title="'+'handle : '+val[0] +'"><span class="handle">'+val[0]+'</span></a>';
+                        
+                        if (!self.options.onlyShowHandle) {                
+                                               
+                            li += '<a href="'+self.options.baseUrl+ '/bundle/details/bundle/' +escape(val[2])+"/type/"+val[3]+'" title="'+
+                            'bundle : '+val[2] +'"><span class="bundle">'+val[2]+'</span></a>';
+                        }
+                        li +='</p>';
+                        
+                        li +='</li>';
                             
                                
                     });
-                    $('#policyList').append(li);
+                    $('#'+self.containerID()).append(li);
+                    
+                    $('#'+self.containerID()).delegate('a','click',$.proxy(self.handleSelected,self));
                 },
                 error:function(jqXHR, textStatus, errorThrown){
-                    self.dialogcontent.html($("<ul>").attr("id", "policyList"));
+                    self.dialogcontent.html($("<ul>").attr("id", self.containerID()));
                     var li = $("<li>");
                     li.append('<span class="type">'+textStatus+'</span><p>'+errorThrown+'</p>');
-                    li.appendTo("#policyList");
+                    li.appendTo(self.containerID());
                 }
             });
         },
+        
+        handleSelected:function(event){
+            var self=this,
+            sender=$(event.target);
+            if(!self.options.defaultbehaviour)
+            {
+                event.preventDefault();
+                self._trigger("handleClicked",event,{
+                    selectedHandleName:sender.html()
+                })   
+            }            
+        },
+        
 
         searchboxevent:function(event)
         {
@@ -209,6 +255,10 @@
             }
             // call the original destroy method since we overwrote it
             $.Widget.prototype.destroy.call( this );
+        },
+        
+        hideDialog:function() {
+            this.dialogContainer().dialog('close');
         }
 
 
