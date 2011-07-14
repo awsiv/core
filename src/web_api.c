@@ -305,8 +305,9 @@ int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,ch
   mongo_connection dbconn;
   int n_kept = 0, n_repaired = 0, n_notkept = 0,host_count=0;
   time_t from=0,to=0, interval, now = time(NULL);
-  struct Item *ip,*list=NULL;
+  struct Item *ipc,*listc=NULL, *ipr, *listr=NULL, *ipn, *listn=NULL, *ip, *list=NULL;
   char range;
+  int n,k,r,total;
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -354,24 +355,33 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    switch(hp->status)
       {
       case 'c':
-          n_kept++;
+          ipc = IdempPrependItem(&listc,hp->hh->keyhash,NULL);
           break;
       case 'r':
-          n_repaired++;
+          ipr = IdempPrependItem(&listr,hp->hh->keyhash,NULL);
           break;
       case 'n':
       default:
-          n_notkept++;
+          ipn = IdempPrependItem(&listn,hp->hh->keyhash,NULL);
           break;
       }
    ip = IdempPrependItem(&list,hp->hh->keyhash,NULL);
    }
 
+n = ListLen(listn);
+k = ListLen(listc);
+r = ListLen(listr);
+total = ListLen(list);
+
 snprintf(returnval,bufsize,"{\"kept\":%d,\"not_kept\":%d,\"repaired\":%d,\"host_count\":%d,\"class\":\"%s\"}",
-         n_kept,n_notkept,n_repaired,ListLen(list),classreg);
+         k,n,r,total,classreg);
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
+DeleteItemList(listc);
+DeleteItemList(listr);
+DeleteItemList(listn);
 DeleteItemList(list);
+
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
