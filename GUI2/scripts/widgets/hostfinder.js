@@ -2,8 +2,14 @@
     $.widget('ui.hostfinder', 
     {
         _create: function() {
-            var self = this;
-            self.createhostfinder();
+            var self = this;            
+            self.element.bind('click',function(event){
+                event.preventDefault();
+                self.createhostfinder();
+                 self.cfui.categories.hide();
+                self.temp.dialog('open')
+            });
+            
             $.ui.hostfinder.instances.push(this.element);
         },
         cfui:{
@@ -21,7 +27,7 @@
         _init: function() {
             var self=this;
             //self.cfui.searchform.find('input[type="text"]').focusout();
-            self.cfui.categories.hide();
+           
         },
         createhostfinder:function()
         {
@@ -68,10 +74,7 @@
                 self.cfui.categories.slideUp();
             });
             //self.temp.delegate('form','submit',{ui:self},self.searchsubmit);
-            self.element.bind('click',function(event){
-                event.preventDefault();
-                self.temp.dialog('open')
-            });
+           
             self.cfui.alphapaging.appendTo(self.temp.parent()).delegate('li','click',{
                 ui:self
             },self.sortalphabetically);
@@ -151,7 +154,7 @@
         },
    
         updatesearchresult:function(data){
-            //self.cfui.resultpane.html(data);
+        //self.cfui.resultpane.html(data);
         },
 
         createclasstagcloud:function(ui){
@@ -413,7 +416,7 @@
         },
         
         hideDialog:function() {
-             this.temp.dialog('close');
+            this.temp.dialog('close');
         }
         
 
