@@ -58,6 +58,9 @@
             var self = this;
             var url = this.element.attr("href");
             var requestDialog = self.dialogContainer();
+            requestDialog.parent().addClass('customdlg').removeClass('ui-widget-content');
+            
+            self.titlebar=requestDialog.siblings('div.ui-dialog-titlebar');
             
             if (self.firstClicked != null)
                 self.firstClicked = self.element;
@@ -120,10 +123,13 @@
             //our own local options, since its' a reuseable dialog.
             //for now we insist on modal:true.
             dialog.dialog($.extend({}, 
-                                  $.ui.dialog.prototype.options, 
-                                  self.options, 
-                                  {autoOpen:false, modal:true}
-                                ));
+                $.ui.dialog.prototype.options, 
+                self.options, 
+                {
+                    autoOpen:false, 
+                    modal:true
+                }
+                ));
                     
 
             if (self._trigger('beforeDisplay', 0, html_content) !== false) {

@@ -91,7 +91,8 @@ menuitemclicked:function(event){
                                         }
                                         li.appendTo("#classList");
                                   });
-                  }
+                self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));    
+              }
            });
    self.searchbar.find('input[type="text"]').trigger('blur');
    self.alphasearch.find('li').removeClass('selected');
