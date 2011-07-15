@@ -130,10 +130,8 @@
                     $.each(data, function(i, val) {
                         li += '<li>';
                         
-                        if (!self.options.onlyShowHandle) {                
-                            li += '<span class="type">'+val[3]+'</span>';
-                        }
-                        li += "<p>";
+                           li += '<span class="type">'+val[3]+'</span>'; 
+                        
                         if (!self.options.onlyShowHandle) {                
                         
                             li += '<a href="'+ self.options.baseUrl+ '/promise/details/' + escape(val[0])+'" title="'+
@@ -149,7 +147,7 @@
                             'bundle : '+val[2] +'"><span class="bundle">'+val[2]+'</span></a>';
                         }
                         li +='</p>';
-                        
+                        li += "<br style='clear:both;'>";
                         li +='</li>';
                             
                                
@@ -162,7 +160,7 @@
                     self.dialogcontent.html($("<ul>").attr("id", self.containerID()));
                     var li = $("<li>");
                     li.append('<span class="type">'+textStatus+'</span><p>'+errorThrown+'</p>');
-                    li.appendTo(self.containerID());
+                    li.appendTo($('#'+self.containerID()));
                 }
             });
         },

@@ -405,7 +405,6 @@
             // remove this instance from $.ui.mywidget.instances
             var element = this.element;
             
-            this.temp.dialog('close');
             position = $.inArray(element, $.ui.classfinder.instances);
             // if this instance was found, splice it off
             if(position > -1){
