@@ -297,8 +297,10 @@ void Nova2PHP_summary_meter(char *buffer,int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg,char *timerange,char *returnval,int bufsize)
-
+int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
+/*
+  Return current best-knowledge of average compliance for the class of hosts and promises selected
+ */
 { char buffer[CF_BUFSIZE];
   struct HubPromiseCompliance *hp;
   struct HubQuery *hq;
@@ -307,7 +309,7 @@ int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,ch
   time_t now = time(NULL),from=now,to=now-CF_WEEK, interval;
   int total,code_blue = 0,tot_hosts;
   double n,r,k,n_av,k_av,r_av,tot_promises;
-  char *current_host = NULL;
+  char *current_host = "x";
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -320,11 +322,11 @@ if (!status)  // any
    status = "x";
    }
 
-hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
+hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,false,classreg);
 
 n = k = r = 0;
 n_av = k_av = r_av = 0;
-tot_promises = 0;
+tot_promises = 1;
 tot_hosts = 0;
 
 // For each promise record (from multiple matching hosts)
@@ -338,17 +340,16 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    
    if (hp->t < now - CF_HUB_HORIZON)
       {
-      code_blue++;
+      if (current_host && strcmp(hp->hh->keyhash,current_host) != 0) // New host
+         {
+         code_blue++;
+         current_host = hp->hh->keyhash;
+         }
       continue;
       }
-   else
-      {
-      tot_promises++;
-      }
-
+   
    // How do we know how many promises are supposed to be kept on a given host?
-   // compute the average number per host
-
+   // compute the average number per host      
    if (current_host && strcmp(hp->hh->keyhash,current_host) != 0) // New host
       {
       n_av += n / tot_promises; // Average not kept on available hosts in class
@@ -356,12 +357,15 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       k_av += k / tot_promises; // Average compliant/kept on available hosts in class
 
       n = k = r = 0;
-      tot_promises = 0;
+      tot_promises = 1;
       tot_hosts++;              // The number of hosts in the class that have fresh data
-
       current_host = hp->hh->keyhash;
       }
-
+   else
+      {
+      tot_promises++;
+      }
+   
    // Get minimax boundary of last measured time region so we can compute uncertainty
 
    if (hp->t < from)
@@ -375,7 +379,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       }
 
    // Get status of this matching promise (n,r,k = 1 if unique handle)
-   
+  
    switch (hp->status)
       {
       case 'c':
@@ -390,6 +394,10 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
           break;
       }
    }
+
+n_av += n / tot_promises; // Average not kept on available hosts in class
+r_av += r / tot_promises; // Average repaired on available hosts in class
+k_av += k / tot_promises; // Average compliant/kept on available hosts in class
 
 // Return current best-knowledge of average compliance for the class of hosts and promises selected
 
