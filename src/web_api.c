@@ -399,6 +399,11 @@ n_av += n / tot_promises; // Average not kept on available hosts in class
 r_av += r / tot_promises; // Average repaired on available hosts in class
 k_av += k / tot_promises; // Average compliant/kept on available hosts in class
 
+if(tot_hosts == 0)
+   {
+   from = now - CF_HUB_HORIZON;
+   to = now;
+   }
 // Return current best-knowledge of average compliance for the class of hosts and promises selected
 
 snprintf(returnval,bufsize,"{\"kept\":%.2lf,\"not_kept\":%.2lf,\"repaired\":%.2lf,\"host_count\":%d,\"code_blue\":\"%d\",\"class\":\"%s\",\"start\":%ld,\"end\":%ld}",
