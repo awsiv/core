@@ -834,10 +834,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
          }
       if (strcmp(bson_iterator_key(&it1),cfk_occurcontext) == 0)
          {
-         snprintf(goals,CF_BUFSIZE,"%s",bson_iterator_string(&it1));
+         snprintf(goals,CF_MAXVARSIZE,"%s",bson_iterator_string(&it1));
          strncpy(topic_name,goals+6,strlen(goals));
          topic_id = Nova_GetTopicIdForTopic(topic_name);
-         snprintf(goals,CF_BUFSIZE,"\"name\":\"%s\",\"pid\":%d},",topic_name,topic_id);
+         snprintf(goals,CF_MAXVARSIZE,"\"name\":\"%s\",\"pid\":%d},",topic_name,topic_id);
          Join(buffer,goals,CF_BUFSIZE);
          }       
       }
