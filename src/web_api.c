@@ -393,8 +393,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
 // Return current best-knowledge of average compliance for the class of hosts and promises selected
 
-snprintf(returnval,bufsize,"{\"kept\":%.2lf,\"not_kept\":%.2lf,\"repaired\":%.2lf,\"host_count\":%d,\"code_blue\":\"%d\",\"class\":\"%s\"}",
-         k_av,n_av,r_av,tot_hosts,code_blue,classreg);
+snprintf(returnval,bufsize,"{\"kept\":%.2lf,\"not_kept\":%.2lf,\"repaired\":%.2lf,\"host_count\":%d,\"code_blue\":\"%d\",\"class\":\"%s\",\"start\":%ld,\"end\":%ld}",
+         k_av,n_av,r_av,tot_hosts,code_blue,classreg,from,to);
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
