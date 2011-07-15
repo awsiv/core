@@ -19,7 +19,13 @@
 
 /* Prototypes */
 
+int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd,char *sec)
 LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *pwd);
+void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
+void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
+void *CfLDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,char *sec);
+void *CfRegLDAP(char *uri,char *basedn,char *filter,char *name,char *scopes,char *regex,char *sec);
+
 int NovaStr2Scope(char *scope);
 
 #endif
@@ -27,6 +33,27 @@ int NovaStr2Scope(char *scope);
 /*****************************************************************************/
 
 #ifdef HAVE_LIBLDAP
+
+int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd,char *sec)
+
+{ LDAP *ld;
+  
+if (LICENSES == 0)
+   {
+   CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
+   return false;
+   }
+
+if ((ld = NovaQueryLDAP(uri,basedn,"sasl",passwd)) == NULL)
+   {
+   return false;
+   }
+
+return true;
+}
+
+/*****************************************************************************/
+
 void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec)
 
 { LDAP *ld;
