@@ -19,7 +19,7 @@
 
 /* Prototypes */
 
-LDAP *NovaQueryLDAP(char *uri,char *sec);
+LDAP *NovaQueryLDAP(char *uri,char *sec,char *pwd);
 int NovaStr2Scope(char *scope);
 
 #endif
@@ -46,7 +46,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,sec)) == NULL)
+if ((ld = NovaQueryLDAP(uri,sec,NULL)) == NULL)
    {
    return NULL;
    }
@@ -226,7 +226,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,sec)) == NULL)
+if ((ld = NovaQueryLDAP(uri,sec,NULL)) == NULL)
    {
    return NULL;
    }
@@ -398,7 +398,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,sec)) == NULL)
+if ((ld = NovaQueryLDAP(uri,sec,NULL)) == NULL)
    {
    return NULL;
    }
@@ -587,7 +587,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,sec)) == NULL)
+if ((ld = NovaQueryLDAP(uri,sec,NULL)) == NULL)
    {
    return NULL;
    }
@@ -754,7 +754,7 @@ return NULL;
 
 #ifdef HAVE_LIBLDAP
 
-LDAP *NovaQueryLDAP(char *uri,char *sec)
+LDAP *NovaQueryLDAP(char *uri,char *sec, char *passwd)
 
 { LDAP *ld;
   char *matched_msg = NULL, *error_msg = NULL;
