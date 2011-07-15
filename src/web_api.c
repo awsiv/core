@@ -374,7 +374,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       to = hp->t;
       }
 
-   // Get status of this matching promise
+   // Get status of this matching promise (n,r,k = 1 if unique handle)
    
    switch (hp->status)
       {
