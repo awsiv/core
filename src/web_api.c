@@ -296,6 +296,7 @@ void Nova2PHP_summary_meter(char *buffer,int bufsize)
 }
 
 /*****************************************************************************/
+
 int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg,char *timerange,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
@@ -303,11 +304,10 @@ int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,ch
   struct HubQuery *hq;
   struct Rlist *rp;
   mongo_connection dbconn;
-  int n_kept = 0, n_repaired = 0, n_notkept = 0,host_count=0;
-  time_t from=0,to=0, interval, now = time(NULL);
-  struct Item *ipc,*listc=NULL, *ipr, *listr=NULL, *ipn, *listn=NULL, *ip, *list=NULL;
-  char range;
-  int n,k,r,total;
+  time_t now = time(NULL),from=now,to=now-CF_WEEK, interval;
+  int total,code_blue = 0,tot_hosts;
+  double n,r,k,n_av,k_av,r_av,tot_promises;
+  char *current_host = NULL;
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -315,77 +315,94 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-if(timerange)
-   {
-   range = timerange[0];
-   }
-
-switch(range)
-   {
-   case 'd':
-       interval = CF_DAY;
-       break;
-   case 'w':
-       interval = CF_WEEK;
-       break;
-   case 'h':
-       interval = CF_HOUR;
-       break;
-   default:
-       return 0;
-       break;
-   }
-
-if(!status)  // any
+if (!status)  // any
    {
    status = "x";
    }
 
 hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
 
+n = k = r = 0;
+n_av = k_av = r_av = 0;
+tot_promises = 0;
+tot_hosts = 0;
+
+// For each promise record (from multiple matching hosts)
+
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseCompliance *)rp->item;
 
-   if(now - hp->t > interval)
+   // If data have passed the time horizon, we should not claim to know their state
+   // The system might or might not be compliant
+   
+   if (hp->t < now - CF_HUB_HORIZON)
       {
+      code_blue++;
       continue;
       }
+   else
+      {
+      tot_promises++;
+      }
 
-   switch(hp->status)
+   // How do we know how many promises are supposed to be kept on a given host?
+   // compute the average number per host
+
+   if (current_host && strcmp(hp->hh->keyhash,current_host) != 0) // New host
+      {
+      n_av += n / tot_promises; // Average not kept on available hosts in class
+      r_av += r / tot_promises; // Average repaired on available hosts in class
+      k_av += k / tot_promises; // Average compliant/kept on available hosts in class
+
+      n = k = r = 0;
+      tot_promises = 0;
+      tot_hosts++;              // The number of hosts in the class that have fresh data
+
+      current_host = hp->hh->keyhash;
+      }
+
+   // Get minimax boundary of last measured time region so we can compute uncertainty
+
+   if (hp->t < from)
+      {
+      from = hp->t;
+      }
+
+   if (hp->t > to)
+      {
+      to = hp->t;
+      }
+
+   // Get status of this matching promise
+   
+   switch (hp->status)
       {
       case 'c':
-          ipc = IdempPrependItem(&listc,hp->hh->keyhash,NULL);
+          k++;
           break;
       case 'r':
-          ipr = IdempPrependItem(&listr,hp->hh->keyhash,NULL);
+          r++;
           break;
       case 'n':
       default:
-          ipn = IdempPrependItem(&listn,hp->hh->keyhash,NULL);
+          n++;
           break;
       }
-   ip = IdempPrependItem(&list,hp->hh->keyhash,NULL);
    }
 
-n = ListLen(listn);
-k = ListLen(listc);
-r = ListLen(listr);
-total = ListLen(list);
+// Return current best-knowledge of average compliance for the class of hosts and promises selected
 
-snprintf(returnval,bufsize,"{\"kept\":%d,\"not_kept\":%d,\"repaired\":%d,\"host_count\":%d,\"class\":\"%s\"}",
-         k,n,r,total,classreg);
+snprintf(returnval,bufsize,"{\"kept\":%.2lf,\"not_kept\":%.2lf,\"repaired\":%.2lf,\"host_count\":%d,\"code_blue\":\"%d\",\"class\":\"%s\"}",
+         k_av,n_av,r_av,tot_hosts,code_blue,classreg);
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
-DeleteItemList(listc);
-DeleteItemList(listr);
-DeleteItemList(listn);
-DeleteItemList(list);
 
 if (!CFDB_Close(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
    }
+
 return true;
 }
 

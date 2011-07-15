@@ -1590,15 +1590,15 @@ struct HubCacheTotalCompliance
  * Commenting on reports
  */ 
 struct HubNote
-{
+  {
   char *user;
   char *msg;
   time_t t;
   struct HubNote *next;
-};
+  };
 
 struct HubNoteInfo
-{
+  {
   struct HubHost *hh;
   char *nid;
   char *user;
@@ -1607,16 +1607,16 @@ struct HubNoteInfo
   char *report;
   int reportType;
   struct HubNote *note;
-};
+  };
 
 
 struct HubVital
-{
+   {
    char *id;
    char *units;
    char *description;
    struct HubVital *next;
-};
+   };
 
 
 #endif
