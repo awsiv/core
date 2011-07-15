@@ -31,11 +31,12 @@
                             <th scope="col" colspan="2" rowspan="1" style="text-align: center; ">
                                 Compliant hosts</th>
                             <th scope="col" rowspan="1" style="text-align: center">Non-compliant hosts</th>
-                              <th scope="col" rowspan="1" style="text-align: center">Unavailable hosts</th>
-                            <th scope="col" rowspan="1" style="text-align: center; ">
-                                Total hosts affected</th>
+                             <th scope="col" rowspan="1" style="text-align: center; ">
+                                Total hosts verified</th>  
+                            <th scope="col" rowspan="1" style="text-align: center">Unreachable hosts</th>
+                           
                             <th scope="col" colspan="1" rowspan="1" style="text-align: center; ">
-                                This was true for interval</th>
+                                This was last verified between</th>
                         </tr>
                       
                         <tr>
@@ -50,10 +51,11 @@
                                 <span style="width:15px;display: inline-block" class="yellowhost">&nbsp;</span><span style="float: right; clear: both;"><?php echo $result['repaired']; ?></span></td>
                             <td>
                                 <span style="width:15px;display: inline-block" class="redhost">&nbsp;</span><span style="float: right; clear: both;"><?php echo $result['not_kept']; ?></span></td>
+                             <td style="text-align: right; ">
+                                <?php echo $result['host_count']; ?></td>
                             <td>
                                 <span style="width:15px;display: inline-block" class="bluehost">&nbsp;</span><span style="float: right; clear: both;"> <?php echo $result['code_blue']; ?></span></td>
-                            <td style="text-align: right; ">
-                                <?php echo $result['host_count']; ?></td>
+                           
                             <td style="text-align: center; ">
                                  <?php echo getDateStatus($result['start'],true); ?> -  <?php echo getDateStatus($result['end'],true); ?></td>
                         </tr>
