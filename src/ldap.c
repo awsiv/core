@@ -19,7 +19,7 @@
 
 /* Prototypes */
 
-LDAP *NovaQueryLDAP(char *uri,char *sec,char *pwd);
+LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *pwd);
 int NovaStr2Scope(char *scope);
 
 #endif
@@ -46,7 +46,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,sec,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
    {
    return NULL;
    }
@@ -226,7 +226,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,sec,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
    {
    return NULL;
    }
@@ -398,7 +398,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,sec,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
    {
    return NULL;
    }
@@ -587,7 +587,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,sec,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
    {
    return NULL;
    }
@@ -754,11 +754,12 @@ return NULL;
 
 #ifdef HAVE_LIBLDAP
 
-LDAP *NovaQueryLDAP(char *uri,char *sec, char *passwd)
+LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *password)
 
 { LDAP *ld;
   char *matched_msg = NULL, *error_msg = NULL;
   int ret,version;
+  struct berval passwd = { strlen(password), password };
 
 /* Get a handle to an LDAP connection. */
 
@@ -785,13 +786,15 @@ if ((ret = ldap_set_option(ld,LDAP_OPT_PROTOCOL_VERSION,&version)) != LDAP_SUCCE
 
 /* Bind to the server anonymously. */
 
-if (cf_strcmp(sec,"ssl") == 0)
+if (cf_strcmp(sec,"sasl") == 0)
    {
-   //ret = ldap_ssl_bind_s(ld,NULL,LDAP_SASL_SIMPLE,NULL,NULL,NULL,NULL);
-   }
-else if (cf_strcmp(sec,"sasl") == 0)
-   {
-   //ret = ldap_sasl_bind_s(ld,NULL,LDAP_SASL_SIMPLE,NULL,NULL,NULL,NULL);
+   int err;
+   ret = ldap_sasl_bind_s(ld,basedn,LDAP_SASL_SIMPLE,&passwd,NULL,NULL,&err);
+
+   if (err == -1)
+      {
+      CfLog(cf_verbose,"ldap_sasl_bind"," !! Unable to authenticate with given credentials");
+      }
    }
 else
    {
