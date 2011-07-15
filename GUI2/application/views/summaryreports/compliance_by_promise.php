@@ -11,24 +11,16 @@
                                               title="<?php echo $this->lang->line('report_hostgp_help'); ?>">Help ?</a>
                     <input class="searchfield" type="text" name="class_regex" size="80" id="hg" value="<?php echo set_value('class_regex', ''); ?>"></p>
 
-                <p>
-                    Time 
-
-                    <?php
-                    $options = array('h' => 'Hour',
-                        'd' => 'Day',
-                        'w' => 'Week');
-
-                    echo form_dropdown('time', $options, $this->input->post('time'));
-                    ?>
 
 
-                </p>
-                <div style="display: none;" id="showSelectedHostContainer"><p>Selected host :: <span id="showSelectedHost"></span><span> ( <a href="#" target="_self"  id="removeshowSelectedHost"> x </a>  )  </span></p></div>
-                <p><?php echo anchor('#', 'Select a host', array('id' => 'findhostforsummary', 'title' => 'Report for another host', 'class' => 'slvbutton', 'target' => '_self')) ?></p>
-                <input type="hidden" name="host" id="host" value="<?php echo set_value('host', ''); ?>">
+                <p>Select a host:    <a target="_self" href="#" id="bphghelp-host" class="help"
+                                        title="<?php echo $this->lang->line('report_hostgp_help'); ?>">Select</a>
+
+                    <input class="searchfield" id="hostbox" type="text" readonly="readonly" name="hostbox" value="<?php echo set_value('hostbox', ''); ?>">
+                     <input class="searchfield" id="host" type="hidden"  name="host" value="<?php echo set_value('host', ''); ?>">
+                
+                </p>                
                 <input type="hidden" name="report" value="Summary report query">
-                <p></p>
                 <p><input class="btn" type="submit" value="Generate report"></p>
             </form>
         </div>
@@ -37,6 +29,9 @@
 <script type="text/javascript">
     $('#hg').smartTextBox({separator : "|"});
     $('#handlebox').smartTextBox({separator : "|"});
+    $('#hostbox').smartTextBox({separator : ",",maxResults:1,uniqueValues:true,onElementRemove:function(){
+              $('#host').val(''); // remove the hidden val as well
+    }});
     $('#bphghelp').classfinder({
         defaultbehaviour:false,
         complete:function(event,data){
@@ -48,9 +43,9 @@
         defaultbehaviour:false,
         onlyShowHandle:true,
         handleClicked:function(event,data){
-             $('#handlebox').smartTextBox('add', data.selectedHandleName);
-             var instance = $(this).data("policyfinder");
-             instance.hideDialog();
+            $('#handlebox').smartTextBox('add', data.selectedHandleName);
+            var instance = $(this).data("policyfinder");
+            instance.hideDialog();
             
         }
     });
@@ -58,26 +53,18 @@
     
     
     
-    $('#removeshowSelectedHost').click(function(e) {
-        // remove the text remove the value from hidden field.
-        e.preventDefault();
-        $('#host').val('');
-        $('#showSelectedHost').html('');
-        $('#showSelectedHostContainer').hide();
-        return false;
-    });
 
-    $('#findhostforsummary').hostfinder({
+    $('#bphghelp-host').hostfinder({
         'defaultbehaviour':false,
             
         complete:function(event,data){
             var instance = $(this).data("hostfinder");
             var text = data.selectedHostName;
             var hostId = data.selectedhost;
-            $('#host').val(hostId);
-            $('#showSelectedHost').html(text).show();
-            $('#showSelectedHostContainer').show();
-                
+             $('#hostbox').smartTextBox('clear');
+             $('#hostbox').smartTextBox('add', text);
+              $('#host').val(hostId);
+            
             instance.hideDialog();
             return false;
         }

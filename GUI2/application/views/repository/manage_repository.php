@@ -17,7 +17,7 @@
                                 <tr>
                                     <td><?php echo $repository['repoPath'] ?></td>
                                     <input type="hidden" name="repoPath" value="<?php echo $repository['repoPath'] ?>" />
-                                    <td><input type="submit" name="submit" value="Delete" /></td>
+                                    <td><input type="submit" name="submit" value="Delete" onclick="return confirm('Do you want to delete this?')" /></td>
                                 </tr>
                             </form>
                     <?php } ?>

@@ -37,8 +37,10 @@ class Summaryreports extends Cf_Controller {
         $regex = true;
         $time = $this->input->post('time', true);
 
+        
+       
 
-        $result = cfpr_report_overall_summary($host, $handle, $state, $regex, $classRegex, $time);
+        $result = cfpr_report_overall_summary($host, $handle, $state, $regex, $classRegex);
 
 
         $data = array(

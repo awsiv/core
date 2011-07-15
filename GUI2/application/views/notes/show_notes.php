@@ -1,30 +1,31 @@
 <div id="body">
     <div class="outerdiv">
-        <div class="innerdiv" id="collapse">
-            <h3><a href="#">Search</a></h3>
-            <div id="notes-filter" style="padding:5px;">
-                <div class="stylized">
-                    <form action="<?php echo site_url(); ?>/notes/shownotes" method="POST">
-                        <fieldset>                           
-                            <label id="Username" for="username">User Name :: </label>
-                            <input type="text" name="username" value="<?php echo set_value('username'); ?>" size="50" />
+        <div class="innerdiv">
+            <div id="collapse">
+                <h3><a href="#">Search</a></h3>
+                <div id="notes-filter" style="padding:5px;">
+                    <div class="stylized">
+                        <form action="<?php echo site_url(); ?>/notes/shownotes" method="POST">
+                            <fieldset>                           
+                                <label id="Username" for="username">User Name :: </label>
+                                <input type="text" name="username" value="<?php echo set_value('username'); ?>" size="50" />
 
-                            <label for="date_from">Date From :: </label>
-                            <input autocomplete="off" id="date_from" type="text" name="date_from" value="<?php echo set_value('date_from'); ?>" size="50" />
+                                <label for="date_from">Date From :: </label>
+                                <input autocomplete="off" id="date_from" type="text" name="date_from" value="<?php echo set_value('date_from'); ?>" size="50" />
 
-                            <label for="date_to">Date To :: </label>
-                            <input autocomplete="off" id="date_to" type="text" name="date_to" value="<?php echo set_value('date_to'); ?>" size="50" />
-                            <label for="submit"></label>
-                            <input type="submit" value="search" name="submit" />
-                        </fieldset>
+                                <label for="date_to">Date To :: </label>
+                                <input autocomplete="off" id="date_to" type="text" name="date_to" value="<?php echo set_value('date_to'); ?>" size="50" />
+                                <label for="submit"></label>
+                                <input type="submit" value="search" name="submit" />
+                            </fieldset>
 
-                        <br />
-                    </form>
+                            <br />
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-        <?php 
-        if ($filters['userId'] != '' || $filters['dateFrom'] != '-1' || $filters['dateTo'] != '-1') { ?>
+        <?php if ($filters['userId'] != '' || $filters['dateFrom'] != '-1' || $filters['dateTo'] != '-1') { ?>
             <div class="info">
                 Current Filters applied:<br />
                 <?php
@@ -55,7 +56,7 @@
                     <input type="submit" value="Reset" name="submit" />
                 </form>  
             </div>    
-<?php } ?>
+        <?php } ?>
 
         <div class="innerdiv">              
             <div style="max-height: 400px;overflow: auto;">
@@ -69,7 +70,7 @@
 
                     <tbody>
                         <?php if (!empty($data)) { ?>
-    <?php foreach ($data as $notes) { ?>
+                            <?php foreach ($data as $notes) { ?>
                                 <tr>
                                     <td><?php echo $notes->getuserId(); ?></td>
                                     <td><?php echo $notes->getDate(); ?></td>
@@ -77,11 +78,11 @@
                                     <td><?php echo $notes->getReportType(); ?></td>
                                 </tr>
                             <?php } ?>
-<?php } else { ?>
+                        <?php } else { ?>
                             <tr id="no-data-row">
                                 <td colspan="4">No notes available</td>
                             </tr>
-<?php } ?>
+                        <?php } ?>
                     </tbody>
                 </table>
 
@@ -112,7 +113,7 @@
 
                             <a href="<?php echo site_url("notes/shownotes/" . "page/$i") ?>" title="Go to Page <?php echo $i; ?>" class="page <?php echo $current; ?>"><span><?php echo $i; ?></span></a>
 
-<?php } ?>
+                        <?php } ?>
 
                         <a href="<?php echo site_url('notes/shownotes/' . 'rows/' . $number_of_rows . '/page/' . $pg['next']) ?>" title="Go to Next Page" class="next"><span>></span></a>
                         <a href="<?php echo site_url('notes/shownotes/' . 'rows/' . $number_of_rows . '/page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>Last</span></a>
