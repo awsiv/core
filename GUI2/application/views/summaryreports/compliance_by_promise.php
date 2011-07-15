@@ -13,12 +13,11 @@
 
 
 
-                <p>Select a host:    <a target="_self" href="#" id="bphghelp-host" class="help"
-                                        title="<?php echo $this->lang->line('report_hostgp_help'); ?>">Select</a>
+                <p>Select a host:  
 
-                    <input class="searchfield" id="hostbox" type="text" readonly="readonly" name="hostbox" value="<?php echo set_value('hostbox', ''); ?>">
+                    <input class="searchfield" id="hostbox" placeholder="click to select a host" type="text" readonly name="hostbox" value="<?php echo set_value('hostbox', ''); ?>">
                      <input class="searchfield" id="host" type="hidden"  name="host" value="<?php echo set_value('host', ''); ?>">
-                
+                      <span style="display: none; cursor: pointer;" id="clearhost">(clear host)</span>
                 </p>                
                 <input type="hidden" name="report" value="Summary report query">
                 <p><input class="btn" type="submit" value="Generate report"></p>
@@ -29,9 +28,8 @@
 <script type="text/javascript">
     $('#hg').smartTextBox({separator : "|"});
     $('#handlebox').smartTextBox({separator : "|"});
-    $('#hostbox').smartTextBox({separator : ",",maxResults:1,uniqueValues:true,onElementRemove:function(){
-              $('#host').val(''); // remove the hidden val as well
-    }});
+    if ($('#host').val()!='') $('#clearhost').show();
+   
     $('#bphghelp').classfinder({
         defaultbehaviour:false,
         complete:function(event,data){
@@ -51,20 +49,24 @@
     });
     
     
-    
+    $('#clearhost').click(function(){
+       $('#hostbox').val('');
+       $('#host').val('');
+       this.hide();
+        
+    });
     
 
-    $('#bphghelp-host').hostfinder({
+    $('#hostbox').hostfinder({
         'defaultbehaviour':false,
             
         complete:function(event,data){
             var instance = $(this).data("hostfinder");
             var text = data.selectedHostName;
             var hostId = data.selectedhost;
-             $('#hostbox').smartTextBox('clear');
-             $('#hostbox').smartTextBox('add', text);
+             $('#hostbox').val(text);
               $('#host').val(hostId);
-            
+            $('#clearhost').show();
             instance.hideDialog();
             return false;
         }
