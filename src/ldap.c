@@ -19,7 +19,7 @@
 
 /* Prototypes */
 
-int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd,char *sec)
+int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd)
 LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *pwd);
 void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
 void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
@@ -34,7 +34,7 @@ int NovaStr2Scope(char *scope);
 
 #ifdef HAVE_LIBLDAP
 
-int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd,char *sec)
+int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd)
 
 { LDAP *ld;
   
