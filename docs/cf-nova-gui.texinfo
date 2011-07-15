@@ -2,7 +2,7 @@
 \input texinfo-logo
 \input texinfo
 @selectaltfont{cmbright}
-@setlogo{NewLogo}
+@setlogo{CFEngineFrontPage}
 @c *********************************************************************
 @c
 @c  This is an AUTO_GENERATED TEXINFO file. Do not submit patches against it.
@@ -17,7 +17,7 @@
 @titlepage
 @title CFEngine Nova Mission Portal
 @subtitle CFEngine Enterprise Documentation
-@subtitle for version 2.1 alpha1
+@subtitle for version 2.1 alpha2, 18. July 2011
 @author CFEngine
 @c @smallbook
 @fonttextsize 10
@@ -39,8 +39,8 @@ to the extent of applicable law.
 @end direntry
 @end ifinfo
 @ifnottex
-@node 
-@top CFEngine-AutoReference
+@node Top
+@top CFEngine Nova Mission Portal
 @end ifnottex
 @ifhtml
 @html
@@ -60,7 +60,6 @@ to the extent of applicable law.
 @menu
 * Introduction::
 * Mission Portal::
-* Business Integration::
 @end menu
 
 @node 
@@ -71,25 +70,24 @@ software@footnote{Major version 3} with enterprise library extensions. All of
 the documentation for CFEngine 3 applies to CFEngine Nova. This
 document is a supplement describing the graphical user interphase used in CFEngine Nova: the Mission Portal.
 
+Knowledge management has become a new focus in IT management, and it is a core focus at CFEngine.
+Comprehending the growing complexity of IT operations is one of the main challenges in IT today.
+CFEngine Nova has a number of key features for knowledge management, including automated docu-
+mentation, report generation and associative inference. The CFEngine Mission Portal is the centerpiece
+of user interaction with CFEngine Nova and can be accessed after the successful installation of the software on your hub server (policy host). Connect to the server (port 80) with your web browser (for example at http://123.456.789.123), you should see a login screen:
+
+@sp 1
+@center @image{img-mission-portal-login,5cm,,Mission Portal login}
+@center Figure: Mission Portal login screen
+@sp 1
+
+@noindent Default user and password is 'admin' and 'admin' (make sure to change this at first login to prevent unauthorized access).
 
 @c *****************************************************
 @c * CHAPTER
 @c *****************************************************
 @node 
 @chapter Mission Portal
-
-Knowledge management has become a new focus in IT management, and it
-is a core focus at CFEngine. Comprehending the growing complexity of
-IT operations is one of the main challenges in IT today. CFEngine Nova
-has a number of key features for knowledge management, including
-automated documentation, report generation and associative inference. The
-CFEngine Mission Portal is the centerpiece of user interaction with
-CFEngine Nova.
-
-@sp 1
-@image{mission-portal-nova-2-1,15cm,,Mission Portal}
-@center Figure: The mission portal
-@sp 1
 
 @menu
 * Mission Portal Rooms::
@@ -98,35 +96,12 @@ CFEngine Nova.
 * Editors::
 @end menu
 
+@image{img-mission-portal-nova-2-1,15cm,,Mission Portal}
+@center Figure: The mission portal
+
+
 @node 
 @section Mission Portal Rooms
-
-There are four main rooms in the Mission Portal:
-
-@itemize
-@item Status - a top level overview of compliance status
-@item Engineering - a place to see the current state of system repair
-@item Planning - a place to plan and make policy changes
-@item Library - a knowledge bank that connects information together
-@end itemize
-
-Each of these rooms is a beginning from which you can refine your overview and search
-through information.
-
-@c The Mission Portal offers insight into three main areas:
-@c @itemize
-@c @item Operations and performance.
-@c @item Business and compliance.
-@c @item Organizational knowledge and library.
-@c @end itemize
-
-@c @sp 1
-@c @image{views,15cm,,The front page}
-@c @center Figure: Topic Maps provide a variety of viewpoints on the information
-@c @sp 1
-
-@c Mission portal views link together a number of relevant resources for common system roles, like operator, security officer or system architect.
-@c This is an example of how the mission portal offers relationships that transcend simple categories. The same information can appear in different contexts.
 
 @menu
 * Mission Status::
@@ -135,34 +110,46 @@ through information.
 * Mission Library::
 @end menu
 
+There are four main rooms in the Mission Portal that offer insight into different aspects of operations:
+
+@itemize
+@item Mission status - a top level overview of compliance status and business value
+@item Mission engineering - a place to see the current state of system repair
+@item Mission planning - a place to plan and make policy changes
+@item Mission library - a knowledge bank that connects information together
+@end itemize
+
+Each of these rooms is a beginning from which you can refine your overview and search
+through information.
+
+@page
 @node 
 @subsection Mission Status
 
-Mission status is a high level summary of how well the entire system is behaving.
+Mission status is a high level summary of how well the entire system is behaving. Note that the charts will show blank (black) after a fresh install. The Host Status will be populated first, followed by the Business Value and Compliance Summary charts after approximately 6 hours.
 
-@sp 1
-@image{status,15cm,,Mission Status}
+@image{img-status,15cm,,Mission Status}
 @center Figure: The status of IT operations.
 @sp 1
 
 Business Value and Host Status:
-Pie charts show the business value of the promises kept/not kept as well as host status (for those that have reported to the hub; hosts that have lost connection are not included).
+Pie charts show the business value of the promises kept/not kept as well as host status. In Host Status, each host represents a slice of the pie and is classified into red, yellow, green and blue according to the level of their compliance. A host is red if less than 80% of its promises are kept, yellow if less than 80% of its promises were initially kept, but CFEngine was able to repair to above 80% promises kept during a run, green if more than 80% of its promises are kept, and blue if there is no contact between the hub and the client host.
 
 Compliance Summary:
-The row of bar meters shows the compliance of all registered hosts in blocks of 6 hours for the past
-week. It summarizes performance and anomalous behavior in a simple red (prommises not kept), yellow (promises repaired) and green (promises kept) scale.
+The row of bar meters shows the compliance of all registered hosts @footnote{Blue hosts will not appear here} in blocks of 6 hours for the past week. It summarizes performance and anomalous behavior in a simple red (prommises not kept), yellow (promises repaired) and green (promises kept) scale.
 
 Services/Goals:
-A summary of Mission goals (as defined in user policy files; cannot be edited from the Mission Portal).
+A summary of Mission goals (as defined in user policy files; these examples are from @file{company_knowledge.cf}). Edit the file in the policy editor (Planning room -> repository), or edit the file in your own text editor, to change these goals.
 
 
+@page
 @node
 @subsection Mission Engineering
 
 Mission engineering illustrates the state of the system in relation to the desired state at all scales. Zoom in to specific areas and examine the impact of promises, query data, and extract reports.
 
 @sp 1
-@image{engineering,15cm,,Mission Engineering}
+@image{img-engineering,15cm,,Mission Engineering}
 @center Figure: Mission Engineering
 @sp 1
 
@@ -173,187 +160,346 @@ hosts in that category.
 Averages summarizing all hosts:
 The row of bar meters shows the compliance of all registered hosts over the past
 week, the past day and the past hour. It also summarizes performance
-and anomalous behavior in a simple red, yellow green scale.
+and anomalous behavior in a simple red (promises not kept), yellow (promises repaired), and green (promises kept) scale.
 
 Finders:
-The Mission Engineering room comes with four finder functions: host, class, promises, and reports (see section on Finders).
+The Mission Engineering room comes with five finder functions: host, class, promises, reports and reports summary (see section on Finders).
 
 
+@page
 @node
 @subsection Mission Planning
 
 Make changes to policies, goals determined by promises and implement specific tactics to achieve the desired state. Interact with data, approve changes and anomalies. Get an overiew of users logged on to the Mission Portal, as well as their current activity.
 
 @sp 1
-@image{planning,15cm,,Mission Planning}
+@image{img-planning,15cm,,Mission Planning}
 @center Figure: Mission Planning
 @sp 1
 
-Policy Goals:
-List of policy goals and link to the Service Catalogue (see which bundles contribute to these policy goals).
+@noindent Policy Goals:
+List of policy goals as defined in user policy files; these examples are from @file{company_knowledge.cf}. Edit the file in the policy editor (Planning room -> repository) or edit the file in your own text editor. The "More..." button links  to the Service Catalogue, click to see which bundles contribute to these policy goals.
 
-Editors. Repository, track records, approve policies, service catalogue.
+@noindent Action buttons:
+@itemize -
+@item Repository: Edit policy files in the integrated policy editor (requires subversion)
+@item Track records: To be developed
+@item Approve policies: To be developed
+@item Service catalogue: See which bundles contribute to policy goals
+@end itemize
 
-Activity log:
-Shows the the latest entries in the activity log. Type in a new activity to keep your colleagues posted on what you are working on.
+@noindent Logged on:
+Shows users currently logged on to the Mission Portal and their activity.
 
+@noindent Activity log:
+Shows the latest activity entries. Type in a new activity to keep colleagues posted on current work.
+
+
+@page
 @node
 @subsection Mission Library
 
-The Library contains finders for documents, topics, a notes archive, and link to the CFEngine community.
+The Library contains finders for documents, topics, a notes archive, and (external) link to the CFEngine community.
 
 @sp 1
-@image{library,15cm,,Mission Library}
+@image{img-library,15cm,,Mission Library}
 @center Figure: Mission Library
 @sp 1
 
+@noindent Library buttons:
+@itemize -
+@item Docs: Overview of documentation that was packaged with CFEngine Nova.
+@item Find Topic: Search for topics either by scrolling through the alphabetical list or by typing in the search box (same as the search box on top right of page).
+@item Notes Archive: Get overiew of all notes made in regard to hosts or reports.
+@item Community: External link to the CFEngine community
+@end itemize
+
+
 @node
 @section Finders
-
-Finders are modules that make it simple and intuitive to browse and search for objects of a particular type.
-
-@sp 1
-@center @image{finders,14cm,,Finders}
-@center Figure: Finders in the Mission Engineering room
-@sp 1
 
 @menu
 * Host finder::
 * Class finder::
 * Promise finder::
-* Reports finder::
+* Report finder::
+* Topic finder::
 @end menu
 
+Finders are modules that make it simple and intuitive to browse and search for objects of a particular type.
+
+@sp 1
+@center @image{img-finders,14cm,,Finders}
+@center Figure: Finders in the Mission Engineering room
+@sp 1
+
+
+@page
 @node
 @subsection Host finder
 
-The host finder can be found in the Mission Engineering room and will display a list of hosts. Browse by scrolling through the list, click a letter corresponding to the first letter of a host name, or search for hosts in the search box (top right corner). Clicking on a host name will bring you to the host viewer.
+The host finder is located in the Mission Engineering room and will display a list of hosts. Browse by scrolling through the list, click a letter corresponding to the first letter of a host name, or search for hosts in the search box (top right corner). Clicking on a host name will bring you to the host viewer.
 
 @sp 1
-@center @image{hostfinder,10cm,,Host finder}
+@center @image{img-hostfinder,10cm,,Host finder}
 @center Figure: Host finder
 @sp 1
 
 @node
 @subsection Class finder
 
-The class finder can be found in the Mission Engineering room and will display a list of classes. Browse by scrolling through the list, click a letter corresponding to the first letter of a class name, or search for classes in the search box (top right corner; choose between searching all, time, soft or IP classes). Clicking on a class will bring you to a report for that class profile.
+The class finder is located in the Mission Engineering room and will display a list of classes. Browse by scrolling through the list, click a letter corresponding to the first letter of a class name, or search for classes in the search box (top right corner; choose between searching all, time, soft or IP classes). Clicking on a class will bring you to a report for that class profile.
 
 @sp 1
-@center @image{classfinder,10cm,,Class finder}
+@center @image{img-classfinder,10cm,,Class finder}
 @center Figure: Class finder.
 @sp 1
 
 @node
 @subsection Promise finder
 
-The promise finder can be found in the Mission Engineering room and will display a list of promises. Browse by scrolling through the list, click a letter corresponding to the first letter of a promiser/bundle/handle name (set alternative in searchbox and click a letter in the right column), or search for promiser/bundle/handle in the search box (top right corner; choose between searching promiser, bundle, or handle). Clicking on a promise/bundle will bring you to the promise/bundle viewer.
+The promise finder is located in the Mission Engineering room and will display a list of promises. Browse by scrolling through the list, click a letter corresponding to the first letter of a promiser/bundle/handle name (set alternative in searchbox and click a letter in the right column), or search for promiser/bundle/handle in the search box (top right corner; choose between searching promiser, bundle, or handle). Clicking on a promise/bundle will bring you to the promise/bundle viewer.
 
 @sp 1
-@center @image{promisefinder,10cm,,Promise finder}
+@center @image{img-promisefinder,10cm,,Promise finder}
 @center Figure: Promise finder
 @sp 1
 
 @node
-@subsection Reports finder
+@subsection Report finder
 
-The reports finder can be found in the Mission Engineering room and will display a list of report categories. Browse by scrolling through the list. Clicking on a report category will bring up a query table that will produce a report according to the entered query criteria.
+The report finder is located in the Mission Engineering room and will display a list of standard report categories. Browse by scrolling through the list. Clicking on a report category will bring up a query table that will produce a report according to the entered query criteria.
 
 @sp 1
-@center @image{reportsfinder,10cm,,Reports finder}
-@center Figure: Reports finder
+@center @image{img-reportsfinder,10cm,,Report finder}
+@center Figure: Report finder
+@sp 1
+
+@noindent Standard reports:
+@itemize -
+    @item Bundle profile: Status of promise bundles and when they were last verified
+    @item Business value report: Accumulated value of promises kept
+    @item Class profile: User defined classes observed on the system
+    @item Compliance by promise: Compliance of each promise individually
+    @item Compliance summary: Total summary of host compliance
+    @item File change log: Log of all detected changes to files from changes promises
+    @item File change diffs: Delta/difference comparison showing file changes
+    @item Last saw hosts: Log of when neighbouring hosts were last observed online
+    @item Patches available: A list of patches currently claimed to be available by the local package manager
+    @item Patch status: A list of (un)applied patches according to the local package manager
+    @item Performance: Execution time used to verify selected promises
+    @item Promises repaired log: Log of actual repairs made to the system
+    @item Promises repaired summary: Cumulative (histogram) summary of promises repaired
+    @item Promises not kept log: Log of promises that could not or would not be kept
+    @item Promises not kept summary: Cumulative (histogram) summary of promises not kept
+    @item Setuid/gid root programs: Current list of observed setuid/setgid root programs
+    @item Software installed: List of software packages claimed to be installed according to the local package manager
+    @item Variables: Table of variable values last observed
+@end itemize
+
+@node
+@subsection Topic finder
+
+The Topic finder is located in the Mission Library and will display a list of common topics. Browse by scrolling through the list, click a letter corresponding to the first letter of a topic name, or search for topics in the search box (top right corner). Clicking on a topic will bring you either to a document, web page or the Topic viewer (Knowledge map).
+
+@sp 1
+@c @center @image{img-topicsfinder,10cm,,Topic finder}
+@center Figure: Topic finder
 @sp 1
 
 @node
 @section Viewers
 
-Viewers show info abouth the main objects at differenent scales of the system.
-
 @menu
 * Host viewer::
 * Bundle viewer::
 * Promise viewer::
-* Vital signs::
-* Topics (Knowledge library)::
-* Weakest hosts::
-* Reports
+* Vital signs viewer::
+* Topics viewer (Knowledge map)::
+* Weakest hosts viewer::
+* Report viewer::
 @end menu
+
+Viewers show info about the main objects at different scales of the system.
 
 @node
 @subsection Host viewer
 
-The host viewer has the following broad characteristics:
-
-@itemize
-@item Action buttons: view reports, view and make notes, view vital signs and problems (promises not kept).
-@item Host name, operating system, type, address and unique identity.
-@item A summary meter for compliance, performance, etc.
-@item Operating system and host type.
-@end itemize
+Shows information about hosts, including name, status, operating system, vital signs, promises not kept, standard and custom reports, and more. View and make notes about the host.
 
 @sp 1
-@center @image{hostviewer,15cm,,Host viewer}
+@center @image{img-hostviewer,15cm,,Host viewer}
 @center Figure: Host viewer
 @sp 1
 
-Analysis
+@noindent Action buttons:
+@itemize -
+@item Reports: Tabular summary of the host's internal information, tailored to a particular topics
+@item Notes: View and make comments about this host
+@item Vitals: Overview of monitoring data for this host and its current performance statistics
+@item Problems: Overview of promises not kept by this host
+@end itemize
+
+@noindent Monitored jobs:
+To be developed.
+
+@noindent Analysis: The bar meter shows the host-summary status of a number of key
+performance indicators.
+
+@itemize -
+@item Week: The average level of promise-compliance over the whole past week.
+@item Day:  The average level of promise-compliance over the past day.
+@item Hour:  The average level of promise-compliance over the past hour.
+@item Perf: The average performance status of the system, compared to the learned norm.
+@item Chng: Software update status of the system (only shows on hub, not displayed on clients).
+@item Seen: The average level of connectivity compliance (to the hub) over the past week .
+@item Anom: Level of anomalous site-wide activity on the system.
+@end itemize
+
 
 @node
 @subsection Bundle viewer
 
-The bundle viewer shows a list of classes using the bundle and the promises made within that bundle. Tabs also display other bundles using the one currently viewed or an overview of all bundles.
+The bundle viewer shows a list of classes using the bundle and the promises made within that bundle. Tabs also display other bundles using the one currently viewed or an overview of all bundles. 
 
 @sp 1
-@center @image{bundleviewer,15cm,,Bundle viewer}
+@center @image{img-bundleviewer,15cm,,Bundle viewer}
 @center Figure: Bundle viewer
 @sp 1
 
 
+@page
 @node
 @subsection Promise viewer
 
 The promise viewer shows a promise definition and body. There are tabs for viewing leads (promise type, context, dependencies), other promises used in same bundle, other promises made by same promiser, and other promises of same type.
 
 @sp 1
-@center @image{promiseviewer,15cm,,Promise viewer}
+@center @image{img-promiseviewer,15cm,,Promise viewer}
 @center Figure: Promise viewer
 @sp 1
 
+@page
 @node
-@subsection Vital signs
+@subsection Vital signs viewer
 
-The Vital signs viewer shows the performance specs of a host in different categories of information.
+The Vital signs viewer shows an
+overview of monitoring data from each host and its current performance
+statistics. In order to see data in these graphs, each host in the CFEngine
+managed network must be running @code{cf-monitord} and @code{cf-serverd}.
+This is the default behavior for a Nova installation.
 
 @sp 1
-@center @image{vitalsviewer,15cm,,Host viewer}
+@center @image{img-vitalsviewer,15cm,,Host viewer}
 @center Figure: Host viewer
 @sp 1
 
 @node
-@subsection Topics (Knowledge library)
+@subsection Topics viewer (Knowledge map)
 
-Knowledge map
-
-@node
-@subsection Weakest hosts
-
-A link to Top N worst hosts can be found in the Mission Engineering room.
+The Topics viewer, or Knowledge map, is a sematic web of subject references and document pointers. It can be found by searching for a topic in the top right corner or through the topic finder in the Mission Library (this will sometimes also lead directly to a document or web page instead of the topic viewer).
 
 @sp 1
-@center @image{topnworsthosts,15cm,,Weakest hosts}
+@c @center @image{img-topicsviewer,15cm,,Topics viewer}
+@center Figure: Topics viewer (Knowledge map)
+@sp 1
+
+The yellow sphere represents the current topic, surrounding (blue) spheres represent related topics, and the size of the circles represents the number of associations each topic has. This map is navigable: click on a different topic to see a new view centered on that topic, with its related topics attached. The tabs will show leads, documents and web pages related to the current topic.
+
+@node
+@subsection Weakest hosts viewer
+
+A link to the worst ranked hosts is located in the Mission Engineering room. This ranks all hosts that have reported to the hub @footnote{Blue hosts will not appear} according to their level of promises not kept, with the worst host on top. A secondary level of ranking looks at the level of promises repaired, where the host with most repairs gets a worse status.
+
+@sp 1
+@center @image{img-weakesthostsviewer,15cm,,Weakest hosts}
 @center Figure: Weakest hosts
 @sp 1
 
 @node
-@subsection Reports
+@subsection Report viewer
 
 A significant capability of CFEngine Nova is the existence of automated system reporting. A report is a tabular summary of CFEngine's internal information, tailored to a particular purpose. Reports are searchable and describe
 attributes and qualities of managed hosts.
 
+@sp 1
+@c @center @image{img-reportviewer,15cm,,Report viewer}
+@center Figure: Report viewer
+@sp 1
+
+@noindent Standard reports include:
+@itemize -
+    @item Bundle profile: Status of promise bundles and when they were last verified
+    @item Business value report: Accumulated value of promises kept
+    @item Class profile: User defined classes observed on the system
+    @item Compliance by promise: Compliance of each promise individually
+    @item Compliance summary: Total summary of host compliance
+    @item File change log: Log of all detected changes to files from changes promises
+    @item File change diffs: Delta/difference comparison showing file changes
+    @item Last saw hosts: Log of when neighbouring hosts were last observed online
+    @item Patches available: A list of patches currently claimed to be available by the local package manager
+    @item Patch status: A list of (un)applied patches according to the local package manager
+    @item Performance: Execution time used to verify selected promises
+    @item Promises repaired log: Log of actual repairs made to the system
+    @item Promises repaired summary: Cumulative (histogram) summary of promises repaired
+    @item Promises not kept log: Log of promises that could not or would not be kept
+    @item Promises not kept summary: Cumulative (histogram) summary of promises not kept
+    @item Setuid/gid root programs: Current list of observed setuid/setgid root programs
+    @item Software installed: List of software packages claimed to be installed according to the local package manager
+    @item Variables: Table of variable values last observed
+@end itemize
+
+
 @node
 @section Editors
 
-TBC.
+@menu
+* Policy editor::
+@end menu
+
+@node
+@subsection Policy editor
+
+The CFEngine Nova Mission Portal provides an editor for working on
+CFEngine language. The editor provides syntax high-lighting and look-up to make working
+with CFEngine's extensive language easier.
+
+The main key commands in the editor Window are:
+
+@table @i
+@item Autocompletion: Ctrl+Space 
+Shows a pop-up menu of possible items. This is context sensitive,
+e.g. it also works inside lists (e.g. @code{bsdflags}) to provide
+possible values.
+@item Undo: Ctrl+Z 
+ In Safari, Ctrl-backspace may be used.
+@item Redo: Ctrl+Y
+Undo an undo operation, i.e. reverse the direction of transaction roll.
+@item Indent: TAB
+Format a file to a standard indentation.
+@end table
+
+Multiple documents appear as tabs along the top of the screen.
+@sp 1
+@center @image{img-policy-editor,15cm,,Policy Editor}
+@center Figure: The Policy Editor
+@sp 1
+
+The CFEngine Nova policy editor detects syntax errors and highlights
+these in red to avoid mistakes when editing.  In addition, by using
+the @code{Check syntax} button, it is possible to pre-test the policy
+before committing changes to a repository. This will run
+@code{promises.cf} through the @code{cf-promises} parser.
+
+The main menu on the left hand panel shows the main workflow items for
+policy editing. Clicking the arrow in the panel divider collapses the
+menu and gives full-screen editing.
+
+@c @sp 1
+@c @center @image{Editormenu,5cm,,The front page}
+@c @center Figure: The policy editor main menu
+@c @sp 1
+
 
 
 
