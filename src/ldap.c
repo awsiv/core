@@ -820,7 +820,7 @@ if (cf_strcmp(sec,"sasl") == 0)
 
    if (err == -1)
       {
-      CfLog(cf_verbose,"ldap_sasl_bind"," !! Unable to authenticate with given credentials");
+      CfOut(cf_verbose,"ldap_sasl_bind"," !! Unable to authenticate with given credentials");
       }
    }
 else
