@@ -45,8 +45,14 @@ if test $WITH_MONGO = 1; then
 fi
 
 AC_ARG_WITH([ldap],
-    [AS_HELP_STRING([--with-ldap], [support ldap functions])])
-AS_IF([test "x$with_ldap" = "xyes"], [AC_CHECK_LIB([ldap], [ldap_get_values_len])])
+    [AS_HELP_STRING([--with-ldap[[=PATH]]], [Enable LDAP functions])])
+
+if test "x$with_ldap" != xno; then
+   CF3_WITH_LIBRARY(ldap, [
+      AC_CHECK_HEADERS(ldap.h, [], [if test "x$with_ldap" != xcheck; then AC_MSG_ERROR(Cannot find OpenLDAP library headers); fi])
+      AC_CHECK_LIB(ldap, ldap_get_values_len, [], [if test "x$with_ldap" != xcheck; then AC_MSG_ERROR(Cannot find OpenLDAP library); fi])
+   ])
+fi
 
 AC_ARG_WITH([libvirt],
     [AS_HELP_STRING([--with-libvirt], [support virtual machine management])])

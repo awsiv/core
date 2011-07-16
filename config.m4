@@ -10,7 +10,7 @@ if test "x$NOVA_SUBDIR" != "x"; then
   fi
 
   if test "x$ac_cv_lib_ldap_ldap_get_values_len" = "xyes"; then
-    AC_MSG_RESULT([ -> LDAP: enabled])
+    AC_MSG_RESULT([ -> LDAP: $LDAP_PATH])
   else
     AC_MSG_RESULT([ -> LDAP: disabled])
   fi
