@@ -56,11 +56,12 @@ fi
 
 AC_ARG_WITH([libvirt],
     [AS_HELP_STRING([--with-libvirt], [support virtual machine management])])
-AS_IF([test "x$with_libvirt" = "xyes"], [WITH_VIRT=1], [WITH_VIRT=0])
 
-if test $WITH_VIRT = 1; then
-  AC_MSG_CHECKING(for libvirt)
-  AC_CHECK_LIB(virt,main, [], [AC_MSG_ERROR(Cannot find libvirt)])
+if test "x$with_libvirt" != xno; then
+   CF3_WITH_LIBRARY(libvirt, [
+      AC_CHECK_LIB(virt, virConnectOpen, [], [if test "x$with_libvirt" != xcheck; then AC_MSG_ERROR(Cannot find libvirt library); fi])
+      AC_CHECK_HEADERS(libvirt/libvirt.h, [], [if test "x$with_libvirt" != xcheck; then AC_MSG_ERROR(Cannot find libvirt library headers); fi])
+   ])
 fi
 
 AC_SEARCH_LIBS(kstat_open,kstat,[

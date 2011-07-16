@@ -15,8 +15,8 @@ if test "x$NOVA_SUBDIR" != "x"; then
     AC_MSG_RESULT([ -> LDAP: disabled])
   fi
 
-  if test $WITH_VIRT = 1; then
-    AC_MSG_RESULT([ -> libvirt: enabled])
+  if test "x$ac_cv_lib_virt_virConnectOpen" = xyes; then
+    AC_MSG_RESULT([ -> libvirt: $LIBVIRT_PATH])
   else
     AC_MSG_RESULT([ -> libvirt: disabled])
   fi
