@@ -42,3 +42,21 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.sub \
 # Pass proper flags to aclocal to pick up Libtool macros
 #
 ACLOCAL_AMFLAGS = -I m4
+
+initdir= $(sysconfdir)/init.d
+init_SCRIPTS = misc/init.d/cfengine3
+
+sysconfigdir = $(sysconfdir)/sysconfig
+sysconfig_DATA = misc/sysconfig/cfengine3
+
+shprofiledir = $(sysconfdir)/profile.d
+shprofile_SCRIPTS = misc/profile.d/cfengine.sh
+
+install-data-hook:
+	mkdir $(DESTDIR)$(prefix)/inputs
+	mkdir $(DESTDIR)$(prefix)/master_software_updates
+	mkdir $(DESTDIR)$(prefix)/masterfiles
+	mkdir $(DESTDIR)$(prefix)/modules
+	mkdir $(DESTDIR)$(prefix)/outputs
+	mkdir $(DESTDIR)$(prefix)/ppkeys
+	cp -R misc/software_updates $(DESTDIR)$(prefix)
