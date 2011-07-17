@@ -216,7 +216,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">1 Cfengine 3.2.0a1.r2426M &ndash; Getting started</h2>
+<h2 class="chapter">1 CFEngine 3.2.0b2.r2549 &ndash; Getting started</h2>
 
 <p><br>
 
@@ -4376,14 +4376,16 @@ the behaviour of all the components.
 
 <ul class="menu">
 <li><a accesskey="1" href="#bundlesequence-in-common">bundlesequence in common</a>
-<li><a accesskey="2" href="#ignore_005fmissing_005fbundles-in-common">ignore_missing_bundles in common</a>
-<li><a accesskey="3" href="#ignore_005fmissing_005finputs-in-common">ignore_missing_inputs in common</a>
-<li><a accesskey="4" href="#inputs-in-common">inputs in common</a>
-<li><a accesskey="5" href="#version-in-common">version in common</a>
-<li><a accesskey="6" href="#lastseenexpireafter-in-common">lastseenexpireafter in common</a>
-<li><a accesskey="7" href="#output_005fprefix-in-common">output_prefix in common</a>
-<li><a accesskey="8" href="#domain-in-common">domain in common</a>
-<li><a accesskey="9" href="#require_005fcomments-in-common">require_comments in common</a>
+<li><a accesskey="2" href="#goal_005fcategories-in-common">goal_categories in common</a>
+<li><a accesskey="3" href="#goal_005fpatterns-in-common">goal_patterns in common</a>
+<li><a accesskey="4" href="#ignore_005fmissing_005fbundles-in-common">ignore_missing_bundles in common</a>
+<li><a accesskey="5" href="#ignore_005fmissing_005finputs-in-common">ignore_missing_inputs in common</a>
+<li><a accesskey="6" href="#inputs-in-common">inputs in common</a>
+<li><a accesskey="7" href="#version-in-common">version in common</a>
+<li><a accesskey="8" href="#lastseenexpireafter-in-common">lastseenexpireafter in common</a>
+<li><a accesskey="9" href="#output_005fprefix-in-common">output_prefix in common</a>
+<li><a href="#domain-in-common">domain in common</a>
+<li><a href="#require_005fcomments-in-common">require_comments in common</a>
 <li><a href="#host_005flicenses_005fpaid-in-common">host_licenses_paid in common</a>
 <li><a href="#site_005fclasses-in-common">site_classes in common</a>
 <li><a href="#syslog_005fhost-in-common">syslog_host in common</a>
@@ -4394,7 +4396,7 @@ the behaviour of all the components.
 <div class="node">
 <a name="bundlesequence-in-common"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#ignore_005fmissing_005fbundles-in-common">ignore_missing_bundles in common</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#goal_005fcategories-in-common">goal_categories in common</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#control-common">control common</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
@@ -4480,16 +4482,88 @@ also be specified using the <code>-b</code> or <code>--bundlesequence</code> com
 option.
 
 <div class="node">
-<a name="ignore_missing_bundles-in-common"></a>
-<a name="ignore_005fmissing_005fbundles-in-common"></a>
+<a name="goal_categories-in-common"></a>
+<a name="goal_005fcategories-in-common"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#ignore_005fmissing_005finputs-in-common">ignore_missing_inputs in common</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#goal_005fpatterns-in-common">goal_patterns in common</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#bundlesequence-in-common">bundlesequence in common</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.2 <code>ignore_missing_bundles</code></h4>
+<h4 class="subsection">5.1.2 <code>goal_categories</code></h4>
+
+<p class="noindent"><b>Type</b>: slist
+
+<p class="noindent"><b>Allowed input range</b>: (arbitrary string)
+
+<p class="noindent"><b>Synopsis</b>: A list of context names that represent parent categories for goals (goal patterns)
+
+<p class="noindent"><b>Example</b>:<br>
+<br>
+
+<pre class="verbatim">body knowledge control
+{
+<span class="red">goal_categories </span>=> { "goals", "targets", "milestones" };
+}
+</pre>
+
+<p class="noindent"><b>Notes</b>:<br>
+<br>
+
+   <p><i>History</i>: Was introduced in version 3.1.5, Nova 2.1 Constellation 1.0 (2011)
+
+   <p>Goal categories are the parent classes used when searching for goals in the knowledge map. 
+This is mostly for internal use in the Knowledge Map.
+
+<div class="node">
+<a name="goal_patterns-in-common"></a>
+<a name="goal_005fpatterns-in-common"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#ignore_005fmissing_005fbundles-in-common">ignore_missing_bundles in common</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#goal_005fcategories-in-common">goal_categories in common</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
+
+</div>
+
+<h4 class="subsection">5.1.3 <code>goal_patterns</code></h4>
+
+<p class="noindent"><b>Type</b>: slist
+
+<p class="noindent"><b>Allowed input range</b>: (arbitrary string)
+
+<p class="noindent"><b>Synopsis</b>: A list of regular expressions that match promisees/topics considered to be organizational goals
+
+<p class="noindent"><b>Example</b>:<br>
+<br>
+
+<pre class="verbatim">
+<span class="red">body knowledge</span> <span class="blue">control</span>
+{
+<span class="red">goal_patterns </span>=> { "goal_.*", "target.*" };
+}
+</pre>
+
+<p class="noindent"><b>Notes</b>:<br>
+<br>
+
+   <p><i>History</i>: Was introduced in version 3.1.5, Nova 2.1.0, Constellation 1.0 (2011)
+
+   <p>Used as identifier to mark business and organizational goals in
+commercial versions of Cfengine.  Cfengine uses this to match
+promisees that represent business goals in promises.
+
+<div class="node">
+<a name="ignore_missing_bundles-in-common"></a>
+<a name="ignore_005fmissing_005fbundles-in-common"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#ignore_005fmissing_005finputs-in-common">ignore_missing_inputs in common</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#goal_005fpatterns-in-common">goal_patterns in common</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
+
+</div>
+
+<h4 class="subsection">5.1.4 <code>ignore_missing_bundles</code></h4>
 
 <p class="noindent"><b>Type</b>: (menu option)
 
@@ -4528,7 +4602,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.3 <code>ignore_missing_inputs</code></h4>
+<h4 class="subsection">5.1.5 <code>ignore_missing_inputs</code></h4>
 
 <p class="noindent"><b>Type</b>: (menu option)
 
@@ -4572,7 +4646,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.4 <code>inputs</code></h4>
+<h4 class="subsection">5.1.6 <code>inputs</code></h4>
 
 <p class="noindent"><b>Type</b>: slist
 
@@ -4615,7 +4689,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.5 <code>version</code></h4>
+<h4 class="subsection">5.1.7 <code>version</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -4651,7 +4725,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.6 <code>lastseenexpireafter</code></h4>
+<h4 class="subsection">5.1.8 <code>lastseenexpireafter</code></h4>
 
 <p class="noindent"><b>Type</b>: int
 
@@ -4687,7 +4761,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.7 <code>output_prefix</code></h4>
+<h4 class="subsection">5.1.9 <code>output_prefix</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -4721,7 +4795,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.8 <code>domain</code></h4>
+<h4 class="subsection">5.1.10 <code>domain</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -4757,7 +4831,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.9 <code>require_comments</code></h4>
+<h4 class="subsection">5.1.11 <code>require_comments</code></h4>
 
 <p class="noindent"><b>Type</b>: (menu option)
 
@@ -4805,7 +4879,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.10 <code>host_licenses_paid</code></h4>
+<h4 class="subsection">5.1.12 <code>host_licenses_paid</code></h4>
 
 <p class="noindent"><b>Type</b>: int
 
@@ -4843,7 +4917,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.11 <code>site_classes</code></h4>
+<h4 class="subsection">5.1.13 <code>site_classes</code></h4>
 
 <p class="noindent"><b>Type</b>: clist
 
@@ -4880,7 +4954,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.12 <code>syslog_host</code></h4>
+<h4 class="subsection">5.1.14 <code>syslog_host</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -4914,7 +4988,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.13 <code>syslog_port</code></h4>
+<h4 class="subsection">5.1.15 <code>syslog_port</code></h4>
 
 <p class="noindent"><b>Type</b>: int
 
@@ -4949,7 +5023,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 </div>
 
-<h4 class="subsection">5.1.14 <code>fips_mode</code></h4>
+<h4 class="subsection">5.1.16 <code>fips_mode</code></h4>
 
 <p class="noindent"><b>Type</b>: (menu option)
 
@@ -6428,7 +6502,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-agent">control agent</a>
 
 <p class="noindent"><b>Type</b>: string
 
-<p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+<p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
 <p class="noindent"><b>Default value:</b> in situ
 
@@ -7113,7 +7187,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-server">control server</a>
 
 <p class="noindent"><b>Type</b>: string
 
-<p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+<p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
 <p class="noindent"><b>Synopsis</b>: Path to the cf-agent command or cf-execd wrapper for remote execution
 
@@ -7499,11 +7573,6 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-server">control server</a>
 <br>
 
 <pre class="verbatim">
-<span class="red">body runagent</span> <span class="blue">control</span>
-{
-<span class="red">port </span>=><span class="green"> "5308";</span>
-}
-
 <span class="red">body hub</span> <span class="blue">control</span>
 {
 <span class="red">port </span>=><span class="green"> "5308";</span>
@@ -7870,7 +7939,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-monitor">control monitor</a>
 
 <p class="noindent"><b>Type</b>: string
 
-<p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+<p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
 <p class="noindent"><b>Synopsis</b>: Path to the tcpdump command on this system
 
@@ -8004,11 +8073,6 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-runagent">control runagent</a>
 <br>
 
 <pre class="verbatim">
-<span class="red">body runagent</span> <span class="blue">control</span>
-{
-<span class="red">port </span>=><span class="green"> "5308";</span>
-}
-
 <span class="red">body hub</span> <span class="blue">control</span>
 {
 <span class="red">port </span>=><span class="green"> "5308";</span>
@@ -8325,7 +8389,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-runagent">control runagent</a>
 
 <p class="noindent"><b>Type</b>: string
 
-<p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+<p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
 <p class="noindent"><b>Synopsis</b>: Directory where the output is stored
 
@@ -8724,7 +8788,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-executor">control executor</a>
 
 <p class="noindent"><b>Type</b>: string
 
-<p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+<p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
 <p class="noindent"><b>Synopsis</b>: The full path and command to the executable run by default (overriding builtin)
 
@@ -8784,12 +8848,10 @@ of the queries.
 <li><a accesskey="3" href="#generate_005fmanual-in-knowledge">generate_manual in knowledge</a>
 <li><a accesskey="4" href="#graph_005fdirectory-in-knowledge">graph_directory in knowledge</a>
 <li><a accesskey="5" href="#graph_005foutput-in-knowledge">graph_output in knowledge</a>
-<li><a accesskey="6" href="#goal_005fcategories-in-knowledge">goal_categories in knowledge</a>
-<li><a accesskey="7" href="#goal_005fpatterns-in-knowledge">goal_patterns in knowledge</a>
-<li><a accesskey="8" href="#html_005fbanner-in-knowledge">html_banner in knowledge</a>
-<li><a accesskey="9" href="#html_005ffooter-in-knowledge">html_footer in knowledge</a>
-<li><a href="#id_005fprefix-in-knowledge">id_prefix in knowledge</a>
-<li><a href="#manual_005fsource_005fdirectory-in-knowledge">manual_source_directory in knowledge</a>
+<li><a accesskey="6" href="#html_005fbanner-in-knowledge">html_banner in knowledge</a>
+<li><a accesskey="7" href="#html_005ffooter-in-knowledge">html_footer in knowledge</a>
+<li><a accesskey="8" href="#id_005fprefix-in-knowledge">id_prefix in knowledge</a>
+<li><a accesskey="9" href="#manual_005fsource_005fdirectory-in-knowledge">manual_source_directory in knowledge</a>
 <li><a href="#query_005fengine-in-knowledge">query_engine in knowledge</a>
 <li><a href="#query_005foutput-in-knowledge">query_output in knowledge</a>
 <li><a href="#sql_005ftype-in-knowledge">sql_type in knowledge</a>
@@ -8944,7 +9006,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 <p class="noindent"><b>Type</b>: string
 
-<p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+<p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
 <p class="noindent"><b>Synopsis</b>: Path to directory where rendered .png files will be created
 
@@ -8971,7 +9033,7 @@ present.
 <a name="graph_output-in-knowledge"></a>
 <a name="graph_005foutput-in-knowledge"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#goal_005fcategories-in-knowledge">goal_categories in knowledge</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#html_005fbanner-in-knowledge">html_banner in knowledge</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#graph_005fdirectory-in-knowledge">graph_directory in knowledge</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</a>
 
@@ -9010,88 +9072,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
    <p>Equivalent to the use of the &lsquo;<samp><span class="samp">-g</span></samp>&rsquo; option for <code>cf-know</code>.
 
 <div class="node">
-<a name="goal_categories-in-knowledge"></a>
-<a name="goal_005fcategories-in-knowledge"></a>
+<a name="html_banner-in-knowledge"></a>
+<a name="html_005fbanner-in-knowledge"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#goal_005fpatterns-in-knowledge">goal_patterns in knowledge</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#html_005ffooter-in-knowledge">html_footer in knowledge</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#graph_005foutput-in-knowledge">graph_output in knowledge</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</a>
 
 </div>
 
-<h4 class="subsection">5.7.6 <code>goal_categories</code></h4>
-
-<p class="noindent"><b>Type</b>: slist
-
-<p class="noindent"><b>Allowed input range</b>: (arbitrary string)
-
-<p class="noindent"><b>Synopsis</b>: A list of context names that represent parent categories for goals (goal patterns)
-
-<p class="noindent"><b>Example</b>:<br>
-<br>
-
-<pre class="verbatim">body knowledge control
-{
-<span class="red">goal_categories </span>=> { "goals", "targets", "milestones" };
-}
-</pre>
-
-<p class="noindent"><b>Notes</b>:<br>
-<br>
-
-   <p><i>History</i>: Was introduced in version 3.1.5, Nova 2.1 Constellation 1.0 (2011)
-
-   <p>Goal categories are the parent classes used when searching for goals in the knowledge map. 
-This is mostly for internal use in the Knowledge Map.
-
-<div class="node">
-<a name="goal_patterns-in-knowledge"></a>
-<a name="goal_005fpatterns-in-knowledge"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#html_005fbanner-in-knowledge">html_banner in knowledge</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#goal_005fcategories-in-knowledge">goal_categories in knowledge</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</a>
-
-</div>
-
-<h4 class="subsection">5.7.7 <code>goal_patterns</code></h4>
-
-<p class="noindent"><b>Type</b>: slist
-
-<p class="noindent"><b>Allowed input range</b>: (arbitrary string)
-
-<p class="noindent"><b>Synopsis</b>: A list of regular expressions that match promisees/topics considered to be organizational goals
-
-<p class="noindent"><b>Example</b>:<br>
-<br>
-
-<pre class="verbatim">
-<span class="red">body knowledge</span> <span class="blue">control</span>
-{
-<span class="red">goal_patterns </span>=> { "goal_.*", "target.*" };
-}
-</pre>
-
-<p class="noindent"><b>Notes</b>:<br>
-<br>
-
-   <p><i>History</i>: Was introduced in version 3.1.5, Nova 2.1.0, Constellation 1.0 (2011)
-
-   <p>Used as identifier to mark business and organizational goals in
-commercial versions of Cfengine.  Cfengine uses this to match
-promisees that represent business goals in promises.
-
-<div class="node">
-<a name="html_banner-in-knowledge"></a>
-<a name="html_005fbanner-in-knowledge"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#html_005ffooter-in-knowledge">html_footer in knowledge</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#goal_005fpatterns-in-knowledge">goal_patterns in knowledge</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</a>
-
-</div>
-
-<h4 class="subsection">5.7.8 <code>html_banner</code></h4>
+<h4 class="subsection">5.7.6 <code>html_banner</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -9130,7 +9120,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.9 <code>html_footer</code></h4>
+<h4 class="subsection">5.7.7 <code>html_footer</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -9174,7 +9164,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.10 <code>id_prefix</code></h4>
+<h4 class="subsection">5.7.8 <code>id_prefix</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -9209,11 +9199,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.11 <code>manual_source_directory</code></h4>
+<h4 class="subsection">5.7.9 <code>manual_source_directory</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
-<p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+<p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
 <p class="noindent"><b>Synopsis</b>: Path to directory where raw text about manual topics is found (defaults to build_directory)
 
@@ -9244,7 +9234,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.12 <code>query_engine</code></h4>
+<h4 class="subsection">5.7.10 <code>query_engine</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -9286,7 +9276,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.13 <code>query_output</code></h4>
+<h4 class="subsection">5.7.11 <code>query_output</code></h4>
 
 <p class="noindent"><b>Type</b>: (menu option)
 
@@ -9320,7 +9310,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.14 <code>sql_type</code></h4>
+<h4 class="subsection">5.7.12 <code>sql_type</code></h4>
 
 <p class="noindent"><b>Type</b>: (menu option)
 
@@ -9354,7 +9344,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.15 <code>sql_database</code></h4>
+<h4 class="subsection">5.7.13 <code>sql_database</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -9388,7 +9378,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.16 <code>sql_owner</code></h4>
+<h4 class="subsection">5.7.14 <code>sql_owner</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -9423,7 +9413,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.17 <code>sql_passwd</code></h4>
+<h4 class="subsection">5.7.15 <code>sql_passwd</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -9459,7 +9449,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.18 <code>sql_server</code></h4>
+<h4 class="subsection">5.7.16 <code>sql_server</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -9493,7 +9483,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.19 <code>sql_connection_db</code></h4>
+<h4 class="subsection">5.7.17 <code>sql_connection_db</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -9536,7 +9526,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.20 <code>style_sheet</code></h4>
+<h4 class="subsection">5.7.18 <code>style_sheet</code></h4>
 
 <p class="noindent"><b>Type</b>: string
 
@@ -9574,7 +9564,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 
 </div>
 
-<h4 class="subsection">5.7.21 <code>view_projections</code></h4>
+<h4 class="subsection">5.7.19 <code>view_projections</code></h4>
 
 <p class="noindent"><b>Type</b>: (menu option)
 
@@ -9669,7 +9659,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-reporter">control reporter</a>
 
 <p class="noindent"><b>Type</b>: string
 
-<p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+<p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
 <p class="noindent"><b>Synopsis</b>: The root directory of the data cache for CMDB aggregation
 
@@ -10379,11 +10369,6 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-hub">control hub</a>
 <br>
 
 <pre class="verbatim">
-<span class="red">body runagent</span> <span class="blue">control</span>
-{
-<span class="red">port </span>=><span class="green"> "5308";</span>
-}
-
 <span class="red">body hub</span> <span class="blue">control</span>
 {
 <span class="red">port </span>=><span class="green"> "5308";</span>
@@ -11279,7 +11264,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#reports-in-common-promises">reports in
      <dl>
 <dt>&lsquo;<samp><code>file_to_print</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: Path name to the file that is to be sent to standard output
 
@@ -11336,7 +11321,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#reports-in-common-promises">reports in
 
 <p class="noindent"><b>Type</b>: string
 
-<p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+<p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
 <p class="noindent"><b>Synopsis</b>: The path and filename to which output should be appended
 
@@ -13197,7 +13182,7 @@ commands are willing to be interrupted in case of failure.
 
      <br><dt>&lsquo;<samp><code>chdir</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: Directory for setting current/base directory for the process
 
@@ -13221,7 +13206,7 @@ directory equal to the parameter given, i.e. it works like the &lsquo;<samp><spa
 
      <br><dt>&lsquo;<samp><code>chroot</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: Directory of root sandbox for process
 
@@ -14312,7 +14297,7 @@ time.
 
      <br><dt>&lsquo;<samp><code>env_baseline</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: The path to an image with which to baseline the virtual environment
 
@@ -14331,7 +14316,7 @@ time.
 
      <br><dt>&lsquo;<samp><code>env_spec_file</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: The path to a file containing a technology specific set of promises for the virtual instance
 
@@ -15431,7 +15416,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#files-in-agent-promises">files in agen
      <dl>
 <dt>&lsquo;<samp><code>source</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>.+</code>
 
      <p class="noindent"><b>Synopsis</b>: Reference source file from which to copy
 
@@ -16756,7 +16741,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#files-in-agent-promises">files in agen
 
      <br><dt>&lsquo;<samp><code>path_name</code></samp>&rsquo;<dd><b>Type</b>: slist
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: List of pathnames to match acceptable target
 
@@ -17067,7 +17052,7 @@ be matched (that is, as if the regex is anchored, see <a href="#Anchored-vs_002e
 
      <br><dt>&lsquo;<samp><code>exec_program</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: Execute this command on each file and match if the exit status is zero
 
@@ -17328,7 +17313,7 @@ relative and absolute links are mutually exclusive.
 
      <br><dt>&lsquo;<samp><code>source</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: (arbitrary string)
+     <p class="noindent"><b>Allowed input range</b>: <code>.+</code>
 
      <p class="noindent"><b>Synopsis</b>: The source file to which the link should point
 
@@ -17866,7 +17851,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#files-in-agent-promises">files in agen
 
 <p class="noindent"><b>Type</b>: string
 
-<p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+<p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
 <p class="noindent"><b>Synopsis</b>: Name of a repository for versioning
 
@@ -17945,7 +17930,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#files-in-agent-promises">files in agen
 
 <p class="noindent"><b>Type</b>: string
 
-<p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+<p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
 <p class="noindent"><b>Synopsis</b>: Command (with full path) used to transform current file (no shell wrapper used)
 
@@ -20474,7 +20459,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#packages-in-agent-promises">packages i
      <dl>
 <dt>&lsquo;<samp><code>package_add_command</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: Command to install a package to the system
 
@@ -20567,7 +20552,7 @@ package manager to handle dependencies.
 
      <br><dt>&lsquo;<samp><code>package_delete_command</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: Command to remove a package from the system
 
@@ -20716,7 +20701,7 @@ regex.
 
      <br><dt>&lsquo;<samp><code>package_list_command</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: Command to obtain a list of available packages
 
@@ -20982,7 +20967,7 @@ it is anchored, see <a href="#Anchored-vs_002e-unanchored-regular-expressions">A
 
      <br><dt>&lsquo;<samp><code>package_patch_command</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: Command to update to the latest patch release of an installed package
 
@@ -21038,7 +21023,7 @@ it is anchored, see <a href="#Anchored-vs_002e-unanchored-regular-expressions">A
 
      <br><dt>&lsquo;<samp><code>package_patch_list_command</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: Command to obtain a list of available patches or updates
 
@@ -21117,7 +21102,7 @@ it is unanchored, see <a href="#Anchored-vs_002e-unanchored-regular-expressions"
 
      <br><dt>&lsquo;<samp><code>package_update_command</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: Command to update to the latest version a currently installed package
 
@@ -21149,7 +21134,7 @@ is not specified, the <code>package_delete_command</code> and
 
      <br><dt>&lsquo;<samp><code>package_verify_command</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: Command to verify the correctness of an installed package
 
@@ -22111,7 +22096,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#processes-in-agent-promises">processes
 
 <p class="noindent"><b>Type</b>: string
 
-<p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+<p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
 <p class="noindent"><b>Synopsis</b>: A command used to stop a running process
 
@@ -22708,7 +22693,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#storage-in-agent-promises">storage in 
 
      <br><dt>&lsquo;<samp><code>mount_source</code></samp>&rsquo;<dd><b>Type</b>: string
 
-     <p class="noindent"><b>Allowed input range</b>: <code>"?(([a-zA-Z]:\\.*)|(/.*))</code>
+     <p class="noindent"><b>Allowed input range</b>: <code>"?(/.*)</code>
 
      <p class="noindent"><b>Synopsis</b>: Path of remote file system to mount
 
@@ -25736,9 +25721,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: accessedbefore(arg0,arg1) returns type <b>class</b>
 
    <p><br>
-   <i>arg0</i> : Newer filename, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : Newer filename, <i>in the range</i> "?(/.*)
 <br>
-   <i>arg1</i> : Older filename, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : Older filename, <i>in the range</i> "?(/.*)
 <br>
 
 <p class="noindent">True if arg1 was accessed before arg2 (atime)
@@ -26034,9 +26019,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: changedbefore(arg0,arg1) returns type <b>class</b>
 
    <p><br>
-   <i>arg0</i> : Newer filename, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : Newer filename, <i>in the range</i> "?(/.*)
 <br>
-   <i>arg1</i> : Older filename, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : Older filename, <i>in the range</i> "?(/.*)
 <br>
 
 <p class="noindent">True if arg1 was changed before arg2 (ctime)
@@ -26240,7 +26225,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
    <p><br>
    <i>arg0</i> : Regular expression, <i>in the range</i> .*
 <br>
-   <i>arg1</i> : Filename, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : Filename, <i>in the range</i> "?(/.*)
 <br>
 
 <p class="noindent">Count the number of lines matching regex arg1 in file arg2
@@ -26295,7 +26280,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: diskfree(arg0) returns type <b>int</b>
 
    <p><br>
-   <i>arg0</i> : File system directory, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File system directory, <i>in the range</i> "?(/.*)
 <br>
 
 <p class="noindent">Return the free space (in KB) available on the directory's current partition (0 if not found)
@@ -26385,7 +26370,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: execresult(arg0,arg1) returns type <b>string</b>
 
    <p><br>
-   <i>arg0</i> : Fully qualified command path, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : Fully qualified command path, <i>in the range</i> "?(/.*)
 <br>
    <i>arg1</i> : Shell encapsulation option, <i>in the range</i> useshell,noshell
 <br>
@@ -26459,7 +26444,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: fileexists(arg0) returns type <b>class</b>
 
    <p><br>
-   <i>arg0</i> : File object name, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File object name, <i>in the range</i> "?(/.*)
 <br>
 
 <p class="noindent">True if the named file can be accessed
@@ -26579,7 +26564,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: filesize(arg0) returns type <b>int</b>
 
    <p><br>
-   <i>arg0</i> : File object name, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File object name, <i>in the range</i> "?(/.*)
 <br>
 
 <p class="noindent">Returns the size in bytes of the file
@@ -26689,7 +26674,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
    <p><br>
    <i>arg0</i> : Regular expression to match line, <i>in the range</i> .*
 <br>
-   <i>arg1</i> : Filename to read, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : Filename to read, <i>in the range</i> "?(/.*)
 <br>
    <i>arg2</i> : Regular expression to split fields, <i>in the range</i> .*
 <br>
@@ -27215,7 +27200,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: hashmatch(arg0,arg1,arg2) returns type <b>class</b>
 
    <p><br>
-   <i>arg0</i> : Filename to hash, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : Filename to hash, <i>in the range</i> "?(/.*)
 <br>
    <i>arg1</i> : Hash or digest algorithm, <i>in the range</i> md5,sha1,crypt,cf_sha224,cf_sha256,cf_sha384,cf_sha512
 <br>
@@ -27658,7 +27643,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: isdir(arg0) returns type <b>class</b>
 
    <p><br>
-   <i>arg0</i> : File object name, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File object name, <i>in the range</i> "?(/.*)
 <br>
 
 <p class="noindent">True if the named object is a directory
@@ -27714,7 +27699,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: isexecutable(arg0) returns type <b>class</b>
 
    <p><br>
-   <i>arg0</i> : File object name, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File object name, <i>in the range</i> "?(/.*)
 <br>
 
 <p class="noindent">True if the named object has execution rights for the current user
@@ -27870,7 +27855,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: islink(arg0) returns type <b>class</b>
 
    <p><br>
-   <i>arg0</i> : File object name, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File object name, <i>in the range</i> "?(/.*)
 <br>
 
 <p class="noindent">True if the named object is a symbolic link
@@ -27925,9 +27910,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: isnewerthan(arg0,arg1) returns type <b>class</b>
 
    <p><br>
-   <i>arg0</i> : Newer file name, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : Newer file name, <i>in the range</i> "?(/.*)
 <br>
-   <i>arg1</i> : Older file name, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : Older file name, <i>in the range</i> "?(/.*)
 <br>
 
 <p class="noindent">True if arg1 is newer (modified later) than arg2 (mtime)
@@ -27982,7 +27967,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: isplain(arg0) returns type <b>class</b>
 
    <p><br>
-   <i>arg0</i> : File object name, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File object name, <i>in the range</i> "?(/.*)
 <br>
 
 <p class="noindent">True if the named object is a plain/regular file
@@ -28573,7 +28558,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
    <p><br>
    <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
-   <i>arg1</i> : A string to parse for input data, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : A string to parse for input data, <i>in the range</i> "?(/.*)
 <br>
    <i>arg2</i> : Regex matching comments, <i>in the range</i> .*
 <br>
@@ -28656,7 +28641,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
    <p><br>
    <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
-   <i>arg1</i> : A string to parse for input data, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : A string to parse for input data, <i>in the range</i> "?(/.*)
 <br>
    <i>arg2</i> : Regex matching comments, <i>in the range</i> .*
 <br>
@@ -28739,7 +28724,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
    <p><br>
    <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
-   <i>arg1</i> : A string to parse for input data, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : A string to parse for input data, <i>in the range</i> "?(/.*)
 <br>
    <i>arg2</i> : Regex matching comments, <i>in the range</i> .*
 <br>
@@ -28822,7 +28807,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
    <p><br>
    <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
-   <i>arg1</i> : File name to read, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : File name to read, <i>in the range</i> "?(/.*)
 <br>
    <i>arg2</i> : Regex matching comments, <i>in the range</i> .*
 <br>
@@ -28902,7 +28887,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: peers(arg0,arg1,arg2) returns type <b>slist</b>
 
    <p><br>
-   <i>arg0</i> : File name of host list, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File name of host list, <i>in the range</i> "?(/.*)
 <br>
    <i>arg1</i> : Comment regex pattern, <i>in the range</i> .*
 <br>
@@ -29004,7 +28989,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: peerleader(arg0,arg1,arg2) returns type <b>string</b>
 
    <p><br>
-   <i>arg0</i> : File name of host list, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File name of host list, <i>in the range</i> "?(/.*)
 <br>
    <i>arg1</i> : Comment regex pattern, <i>in the range</i> .*
 <br>
@@ -29104,7 +29089,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: peerleaders(arg0,arg1,arg2) returns type <b>slist</b>
 
    <p><br>
-   <i>arg0</i> : File name of host list, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File name of host list, <i>in the range</i> "?(/.*)
 <br>
    <i>arg1</i> : Comment regex pattern, <i>in the range</i> .*
 <br>
@@ -29291,7 +29276,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: readfile(arg0,arg1) returns type <b>string</b>
 
    <p><br>
-   <i>arg0</i> : File name, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File name, <i>in the range</i> "?(/.*)
 <br>
    <i>arg1</i> : Maximum number of bytes to read, <i>in the range</i> 0,99999999999
 <br>
@@ -29331,7 +29316,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
    <p><br>
    <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
-   <i>arg1</i> : File name to read, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : File name to read, <i>in the range</i> "?(/.*)
 <br>
    <i>arg2</i> : Regex matching comments, <i>in the range</i> .*
 <br>
@@ -29426,7 +29411,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: readintlist(arg0,arg1,arg2,arg3,arg4) returns type <b>ilist</b>
 
    <p><br>
-   <i>arg0</i> : File name to read, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File name to read, <i>in the range</i> "?(/.*)
 <br>
    <i>arg1</i> : Regex matching comments, <i>in the range</i> .*
 <br>
@@ -29508,7 +29493,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
    <p><br>
    <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
-   <i>arg1</i> : File name to read, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : File name to read, <i>in the range</i> "?(/.*)
 <br>
    <i>arg2</i> : Regex matching comments, <i>in the range</i> .*
 <br>
@@ -29572,7 +29557,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: readreallist(arg0,arg1,arg2,arg3,arg4) returns type <b>rlist</b>
 
    <p><br>
-   <i>arg0</i> : File name to read, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File name to read, <i>in the range</i> "?(/.*)
 <br>
    <i>arg1</i> : Regex matching comments, <i>in the range</i> .*
 <br>
@@ -29654,7 +29639,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
    <p><br>
    <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
-   <i>arg1</i> : File name to read, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : File name to read, <i>in the range</i> "?(/.*)
 <br>
    <i>arg2</i> : Regex matching comments, <i>in the range</i> .*
 <br>
@@ -29760,7 +29745,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
    <p><br>
    <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
-   <i>arg1</i> : A string to parse for input data, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg1</i> : A string to parse for input data, <i>in the range</i> "?(/.*)
 <br>
    <i>arg2</i> : Regex matching comments, <i>in the range</i> .*
 <br>
@@ -29862,7 +29847,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: readstringlist(arg0,arg1,arg2,arg3,arg4) returns type <b>slist</b>
 
    <p><br>
-   <i>arg0</i> : File name to read, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : File name to read, <i>in the range</i> "?(/.*)
 <br>
    <i>arg1</i> : Regex matching comments, <i>in the range</i> .*
 <br>
@@ -30699,7 +30684,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: returnszero(arg0,arg1) returns type <b>class</b>
 
    <p><br>
-   <i>arg0</i> : Fully qualified command path, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : Fully qualified command path, <i>in the range</i> "?(/.*)
 <br>
    <i>arg1</i> : Shell encapsulation option, <i>in the range</i> useshell,noshell
 <br>
@@ -31177,7 +31162,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: translatepath(arg0) returns type <b>string</b>
 
    <p><br>
-   <i>arg0</i> : Unix style path, <i>in the range</i> "?(([a-zA-Z]:\\.*)|(/.*))
+   <i>arg0</i> : Unix style path, <i>in the range</i> "?(/.*)
 <br>
 
 <p class="noindent">Translate path separators from Unix style to the host's native
@@ -32005,7 +31990,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-mon">Variable context
 
 <h4 class="subsection">12.4.13 Variable mon.value_loadavg</h4>
 
-<p>Observational measure collected every 2.5 minutes from cf-monitord, description: <var>% kernel load utilization</var>. 
+<p>Observational measure collected every 2.5 minutes from cf-monitord, description: <var>Kernel load average utilization (sum over cores)</var>. 
 <div class="node">
 <a name="Variable-mon.av_loadavg"></a>
 <a name="Variable-mon_002eav_005floadavg"></a>
@@ -32018,7 +32003,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-mon">Variable context
 
 <h4 class="subsection">12.4.14 Variable mon.av_loadavg</h4>
 
-<p>Observational measure collected every 2.5 minutes from cf-monitord, description: <var>% kernel load utilization</var>. 
+<p>Observational measure collected every 2.5 minutes from cf-monitord, description: <var>Kernel load average utilization (sum over cores)</var>. 
 <div class="node">
 <a name="Variable-mon.dev_loadavg"></a>
 <a name="Variable-mon_002edev_005floadavg"></a>
@@ -32031,7 +32016,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-mon">Variable context
 
 <h4 class="subsection">12.4.15 Variable mon.dev_loadavg</h4>
 
-<p>Observational measure collected every 2.5 minutes from cf-monitord, description: <var>% kernel load utilization</var>. 
+<p>Observational measure collected every 2.5 minutes from cf-monitord, description: <var>Kernel load average utilization (sum over cores)</var>. 
 <div class="node">
 <a name="Variable-mon.value_netbiosns_in"></a>
 <a name="Variable-mon_002evalue_005fnetbiosns_005fin"></a>
@@ -33992,6 +33977,7 @@ variable itself is class-specific.
 <li><a href="#Variable-sys_002ecf_005ftwin">Variable sys.cf_twin</a>
 <li><a href="#Variable-sys_002ecf_005fversion">Variable sys.cf_version</a>
 <li><a href="#Variable-sys_002eclass">Variable sys.class</a>
+<li><a href="#Variable-sys_002econstellation_005fversion">Variable sys.constellation_version</a>
 <li><a href="#Variable-sys_002edate">Variable sys.date</a>
 <li><a href="#Variable-sys_002edomain">Variable sys.domain</a>
 <li><a href="#Variable-sys_002eexpires">Variable sys.expires</a>
@@ -34362,7 +34348,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 <a name="Variable-sys.class"></a>
 <a name="Variable-sys_002eclass"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002edate">Variable sys.date</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002econstellation_005fversion">Variable sys.constellation_version</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ecf_005fversion">Variable sys.cf_version</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
@@ -34382,16 +34368,39 @@ top level operating system type classification.
 </pre>
 
 <div class="node">
-<a name="Variable-sys.date"></a>
-<a name="Variable-sys_002edate"></a>
+<a name="Variable-sys.constellation_version"></a>
+<a name="Variable-sys_002econstellation_005fversion"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002edomain">Variable sys.domain</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002edate">Variable sys.date</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002eclass">Variable sys.class</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.16 Variable sys.date</h4>
+<h4 class="subsection">12.5.16 Variable sys.constellation_version</h4>
+
+<p><br>
+This variable contains the version of running CFEngine Constellation
+
+   <p><i>History</i>: Was introduced in 3.2.0, Nova 2.1.0, Constellation 1.0.0 (2011)
+
+<pre class="verbatim">
+<span class="comment"># constellation_version = 1.0.0
+</span>
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.date"></a>
+<a name="Variable-sys_002edate"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002edomain">Variable sys.domain</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002econstellation_005fversion">Variable sys.constellation_version</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.17 Variable sys.date</h4>
 
 <p><br>
 
@@ -34413,7 +34422,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.17 Variable sys.domain</h4>
+<h4 class="subsection">12.5.18 Variable sys.domain</h4>
 
 <p><br>
 
@@ -34439,7 +34448,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.18 Variable sys.expires</h4>
+<h4 class="subsection">12.5.19 Variable sys.expires</h4>
 
 <p><br>
 
@@ -34460,7 +34469,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.19 Variable sys.exports</h4>
+<h4 class="subsection">12.5.20 Variable sys.exports</h4>
 
 <p><br>
 
@@ -34484,7 +34493,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.20 Variable sys.fqhost</h4>
+<h4 class="subsection">12.5.21 Variable sys.fqhost</h4>
 
 <p><br>
 
@@ -34507,7 +34516,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.21 Variable sys.fstab</h4>
+<h4 class="subsection">12.5.22 Variable sys.fstab</h4>
 
 <p><br>
 
@@ -34529,7 +34538,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.22 Variable sys.host</h4>
+<h4 class="subsection">12.5.23 Variable sys.host</h4>
 
 <p><br>
 
@@ -34552,7 +34561,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.23 Variable sys.interface</h4>
+<h4 class="subsection">12.5.24 Variable sys.interface</h4>
 
 <p><br>
 
@@ -34574,7 +34583,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.24 Variable sys.ipv4</h4>
+<h4 class="subsection">12.5.25 Variable sys.ipv4</h4>
 
 <p><br>
 
@@ -34598,7 +34607,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.25 Variable sys.ipv4[interface_name]</h4>
+<h4 class="subsection">12.5.26 Variable sys.ipv4[interface_name]</h4>
 
 <p><br>
 
@@ -34652,7 +34661,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.26 Variable sys.ipv4_1[interface_name]</h4>
+<h4 class="subsection">12.5.27 Variable sys.ipv4_1[interface_name]</h4>
 
 <p><br>
 
@@ -34670,7 +34679,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.27 Variable sys.ipv4_2[interface_name]</h4>
+<h4 class="subsection">12.5.28 Variable sys.ipv4_2[interface_name]</h4>
 
 <p><br>
 
@@ -34688,7 +34697,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.28 Variable sys.ipv4_3[interface_name]</h4>
+<h4 class="subsection">12.5.29 Variable sys.ipv4_3[interface_name]</h4>
 
 <p><br>
 
@@ -34706,7 +34715,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.29 Variable sys.key_digest</h4>
+<h4 class="subsection">12.5.30 Variable sys.key_digest</h4>
 
 <p><br>
 
@@ -34730,7 +34739,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.30 Variable sys.license_owner</h4>
+<h4 class="subsection">12.5.31 Variable sys.license_owner</h4>
 
 <p><br>
 
@@ -34755,7 +34764,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.31 Variable sys.licenses_granted</h4>
+<h4 class="subsection">12.5.32 Variable sys.licenses_granted</h4>
 
 <p><br>
 
@@ -34780,7 +34789,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.32 Variable sys.licenses_installtime</h4>
+<h4 class="subsection">12.5.33 Variable sys.licenses_installtime</h4>
 
 <p><br>
 
@@ -34806,7 +34815,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.33 Variable sys.long_arch</h4>
+<h4 class="subsection">12.5.34 Variable sys.long_arch</h4>
 
 <p><br>
 
@@ -34829,7 +34838,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.34 Variable sys.maildir</h4>
+<h4 class="subsection">12.5.35 Variable sys.maildir</h4>
 
 <p><br>
 
@@ -34851,7 +34860,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.35 Variable sys.nova_version</h4>
+<h4 class="subsection">12.5.36 Variable sys.nova_version</h4>
 
 <p><br>
 
@@ -34873,7 +34882,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.36 Variable sys.os</h4>
+<h4 class="subsection">12.5.37 Variable sys.os</h4>
 
 <p><br>
 
@@ -34895,7 +34904,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.37 Variable sys.ostype</h4>
+<h4 class="subsection">12.5.38 Variable sys.ostype</h4>
 
 <p><br>
 
@@ -34917,7 +34926,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.38 Variable sys.policy_hub</h4>
+<h4 class="subsection">12.5.39 Variable sys.policy_hub</h4>
 
 <p><br>
 
@@ -34940,7 +34949,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.39 Variable sys.release</h4>
+<h4 class="subsection">12.5.40 Variable sys.release</h4>
 
 <p><br>
 
@@ -34962,7 +34971,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.40 Variable sys.resolv</h4>
+<h4 class="subsection">12.5.41 Variable sys.resolv</h4>
 
 <p><br>
 
@@ -34984,7 +34993,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.41 Variable sys.uqhost</h4>
+<h4 class="subsection">12.5.42 Variable sys.uqhost</h4>
 
 <p><br>
 
@@ -35006,7 +35015,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.42 Variable sys.version</h4>
+<h4 class="subsection">12.5.43 Variable sys.version</h4>
 
 <p><br>
 
@@ -35031,7 +35040,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.43 Variable sys.windir</h4>
+<h4 class="subsection">12.5.44 Variable sys.windir</h4>
 
 <p><br>
 
@@ -35054,7 +35063,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.44 Variable sys.winprogdir</h4>
+<h4 class="subsection">12.5.45 Variable sys.winprogdir</h4>
 
 <p><br>
 
@@ -35077,7 +35086,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.45 Variable sys.winprogdir86</h4>
+<h4 class="subsection">12.5.46 Variable sys.winprogdir86</h4>
 
 <p><br>
 
@@ -35100,7 +35109,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.46 Variable sys.winsysdir</h4>
+<h4 class="subsection">12.5.47 Variable sys.winsysdir</h4>
 
 <p><br>
 
@@ -35122,7 +35131,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.47 Variable sys.workdir</h4>
+<h4 class="subsection">12.5.48 Variable sys.workdir</h4>
 
 <p><br>
 
@@ -35442,7 +35451,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <h2>Table of Contents</h2>
 <ul>
 <li><a name="toc_Top" href="#Top">CFEngine-AutoReference</a>
-<li><a name="toc_Getting-started" href="#Getting-started">1 Cfengine 3.2.0a1.r2426M &ndash; Getting started</a>
+<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.2.0b2.r2549 &ndash; Getting started</a>
 <ul>
 <li><a href="#Software-components">1.1 Software components</a>
 <ul>
@@ -35532,19 +35541,21 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#control-common">5.1 <code>common</code> control promises</a>
 <ul>
 <li><a href="#bundlesequence-in-common">5.1.1 <code>bundlesequence</code></a>
-<li><a href="#ignore_005fmissing_005fbundles-in-common">5.1.2 <code>ignore_missing_bundles</code></a>
-<li><a href="#ignore_005fmissing_005finputs-in-common">5.1.3 <code>ignore_missing_inputs</code></a>
-<li><a href="#inputs-in-common">5.1.4 <code>inputs</code></a>
-<li><a href="#version-in-common">5.1.5 <code>version</code></a>
-<li><a href="#lastseenexpireafter-in-common">5.1.6 <code>lastseenexpireafter</code></a>
-<li><a href="#output_005fprefix-in-common">5.1.7 <code>output_prefix</code></a>
-<li><a href="#domain-in-common">5.1.8 <code>domain</code></a>
-<li><a href="#require_005fcomments-in-common">5.1.9 <code>require_comments</code></a>
-<li><a href="#host_005flicenses_005fpaid-in-common">5.1.10 <code>host_licenses_paid</code></a>
-<li><a href="#site_005fclasses-in-common">5.1.11 <code>site_classes</code></a>
-<li><a href="#syslog_005fhost-in-common">5.1.12 <code>syslog_host</code></a>
-<li><a href="#syslog_005fport-in-common">5.1.13 <code>syslog_port</code></a>
-<li><a href="#fips_005fmode-in-common">5.1.14 <code>fips_mode</code></a>
+<li><a href="#goal_005fcategories-in-common">5.1.2 <code>goal_categories</code></a>
+<li><a href="#goal_005fpatterns-in-common">5.1.3 <code>goal_patterns</code></a>
+<li><a href="#ignore_005fmissing_005fbundles-in-common">5.1.4 <code>ignore_missing_bundles</code></a>
+<li><a href="#ignore_005fmissing_005finputs-in-common">5.1.5 <code>ignore_missing_inputs</code></a>
+<li><a href="#inputs-in-common">5.1.6 <code>inputs</code></a>
+<li><a href="#version-in-common">5.1.7 <code>version</code></a>
+<li><a href="#lastseenexpireafter-in-common">5.1.8 <code>lastseenexpireafter</code></a>
+<li><a href="#output_005fprefix-in-common">5.1.9 <code>output_prefix</code></a>
+<li><a href="#domain-in-common">5.1.10 <code>domain</code></a>
+<li><a href="#require_005fcomments-in-common">5.1.11 <code>require_comments</code></a>
+<li><a href="#host_005flicenses_005fpaid-in-common">5.1.12 <code>host_licenses_paid</code></a>
+<li><a href="#site_005fclasses-in-common">5.1.13 <code>site_classes</code></a>
+<li><a href="#syslog_005fhost-in-common">5.1.14 <code>syslog_host</code></a>
+<li><a href="#syslog_005fport-in-common">5.1.15 <code>syslog_port</code></a>
+<li><a href="#fips_005fmode-in-common">5.1.16 <code>fips_mode</code></a>
 </li></ul>
 <li><a href="#control-agent">5.2 <code>agent</code> control promises</a>
 <ul>
@@ -35651,22 +35662,20 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#generate_005fmanual-in-knowledge">5.7.3 <code>generate_manual</code></a>
 <li><a href="#graph_005fdirectory-in-knowledge">5.7.4 <code>graph_directory</code></a>
 <li><a href="#graph_005foutput-in-knowledge">5.7.5 <code>graph_output</code></a>
-<li><a href="#goal_005fcategories-in-knowledge">5.7.6 <code>goal_categories</code></a>
-<li><a href="#goal_005fpatterns-in-knowledge">5.7.7 <code>goal_patterns</code></a>
-<li><a href="#html_005fbanner-in-knowledge">5.7.8 <code>html_banner</code></a>
-<li><a href="#html_005ffooter-in-knowledge">5.7.9 <code>html_footer</code></a>
-<li><a href="#id_005fprefix-in-knowledge">5.7.10 <code>id_prefix</code></a>
-<li><a href="#manual_005fsource_005fdirectory-in-knowledge">5.7.11 <code>manual_source_directory</code></a>
-<li><a href="#query_005fengine-in-knowledge">5.7.12 <code>query_engine</code></a>
-<li><a href="#query_005foutput-in-knowledge">5.7.13 <code>query_output</code></a>
-<li><a href="#sql_005ftype-in-knowledge">5.7.14 <code>sql_type</code></a>
-<li><a href="#sql_005fdatabase-in-knowledge">5.7.15 <code>sql_database</code></a>
-<li><a href="#sql_005fowner-in-knowledge">5.7.16 <code>sql_owner</code></a>
-<li><a href="#sql_005fpasswd-in-knowledge">5.7.17 <code>sql_passwd</code></a>
-<li><a href="#sql_005fserver-in-knowledge">5.7.18 <code>sql_server</code></a>
-<li><a href="#sql_005fconnection_005fdb-in-knowledge">5.7.19 <code>sql_connection_db</code></a>
-<li><a href="#style_005fsheet-in-knowledge">5.7.20 <code>style_sheet</code></a>
-<li><a href="#view_005fprojections-in-knowledge">5.7.21 <code>view_projections</code></a>
+<li><a href="#html_005fbanner-in-knowledge">5.7.6 <code>html_banner</code></a>
+<li><a href="#html_005ffooter-in-knowledge">5.7.7 <code>html_footer</code></a>
+<li><a href="#id_005fprefix-in-knowledge">5.7.8 <code>id_prefix</code></a>
+<li><a href="#manual_005fsource_005fdirectory-in-knowledge">5.7.9 <code>manual_source_directory</code></a>
+<li><a href="#query_005fengine-in-knowledge">5.7.10 <code>query_engine</code></a>
+<li><a href="#query_005foutput-in-knowledge">5.7.11 <code>query_output</code></a>
+<li><a href="#sql_005ftype-in-knowledge">5.7.12 <code>sql_type</code></a>
+<li><a href="#sql_005fdatabase-in-knowledge">5.7.13 <code>sql_database</code></a>
+<li><a href="#sql_005fowner-in-knowledge">5.7.14 <code>sql_owner</code></a>
+<li><a href="#sql_005fpasswd-in-knowledge">5.7.15 <code>sql_passwd</code></a>
+<li><a href="#sql_005fserver-in-knowledge">5.7.16 <code>sql_server</code></a>
+<li><a href="#sql_005fconnection_005fdb-in-knowledge">5.7.17 <code>sql_connection_db</code></a>
+<li><a href="#style_005fsheet-in-knowledge">5.7.18 <code>style_sheet</code></a>
+<li><a href="#view_005fprojections-in-knowledge">5.7.19 <code>view_projections</code></a>
 </li></ul>
 <li><a href="#control-reporter">5.8 <code>reporter</code> control promises</a>
 <ul>
@@ -36232,38 +36241,39 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#Variable-sys_002ecf_005ftwin">12.5.13 Variable sys.cf_twin</a>
 <li><a href="#Variable-sys_002ecf_005fversion">12.5.14 Variable sys.cf_version</a>
 <li><a href="#Variable-sys_002eclass">12.5.15 Variable sys.class</a>
-<li><a href="#Variable-sys_002edate">12.5.16 Variable sys.date</a>
-<li><a href="#Variable-sys_002edomain">12.5.17 Variable sys.domain</a>
-<li><a href="#Variable-sys_002eexpires">12.5.18 Variable sys.expires</a>
-<li><a href="#Variable-sys_002eexports">12.5.19 Variable sys.exports</a>
-<li><a href="#Variable-sys_002efqhost">12.5.20 Variable sys.fqhost</a>
-<li><a href="#Variable-sys_002efstab">12.5.21 Variable sys.fstab</a>
-<li><a href="#Variable-sys_002ehost">12.5.22 Variable sys.host</a>
-<li><a href="#Variable-sys_002einterface">12.5.23 Variable sys.interface</a>
-<li><a href="#Variable-sys_002eipv4">12.5.24 Variable sys.ipv4</a>
-<li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">12.5.25 Variable sys.ipv4[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f1_005binterface_005fname_005d">12.5.26 Variable sys.ipv4_1[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">12.5.27 Variable sys.ipv4_2[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">12.5.28 Variable sys.ipv4_3[interface_name]</a>
-<li><a href="#Variable-sys_002ekey_005fdigest">12.5.29 Variable sys.key_digest</a>
-<li><a href="#Variable-sys_002elicense_005fowner">12.5.30 Variable sys.license_owner</a>
-<li><a href="#Variable-sys_002elicenses_005fgranted">12.5.31 Variable sys.licenses_granted</a>
-<li><a href="#Variable-sys_002elicenses_005finstalltime">12.5.32 Variable sys.licenses_installtime</a>
-<li><a href="#Variable-sys_002elong_005farch">12.5.33 Variable sys.long_arch</a>
-<li><a href="#Variable-sys_002emaildir">12.5.34 Variable sys.maildir</a>
-<li><a href="#Variable-sys_002enova_005fversion">12.5.35 Variable sys.nova_version</a>
-<li><a href="#Variable-sys_002eos">12.5.36 Variable sys.os</a>
-<li><a href="#Variable-sys_002eostype">12.5.37 Variable sys.ostype</a>
-<li><a href="#Variable-sys_002epolicy_005fhub">12.5.38 Variable sys.policy_hub</a>
-<li><a href="#Variable-sys_002erelease">12.5.39 Variable sys.release</a>
-<li><a href="#Variable-sys_002eresolv">12.5.40 Variable sys.resolv</a>
-<li><a href="#Variable-sys_002euqhost">12.5.41 Variable sys.uqhost</a>
-<li><a href="#Variable-sys_002eversion">12.5.42 Variable sys.version</a>
-<li><a href="#Variable-sys_002ewindir">12.5.43 Variable sys.windir</a>
-<li><a href="#Variable-sys_002ewinprogdir">12.5.44 Variable sys.winprogdir</a>
-<li><a href="#Variable-sys_002ewinprogdir86">12.5.45 Variable sys.winprogdir86</a>
-<li><a href="#Variable-sys_002ewinsysdir">12.5.46 Variable sys.winsysdir</a>
-<li><a href="#Variable-sys_002eworkdir">12.5.47 Variable sys.workdir</a>
+<li><a href="#Variable-sys_002econstellation_005fversion">12.5.16 Variable sys.constellation_version</a>
+<li><a href="#Variable-sys_002edate">12.5.17 Variable sys.date</a>
+<li><a href="#Variable-sys_002edomain">12.5.18 Variable sys.domain</a>
+<li><a href="#Variable-sys_002eexpires">12.5.19 Variable sys.expires</a>
+<li><a href="#Variable-sys_002eexports">12.5.20 Variable sys.exports</a>
+<li><a href="#Variable-sys_002efqhost">12.5.21 Variable sys.fqhost</a>
+<li><a href="#Variable-sys_002efstab">12.5.22 Variable sys.fstab</a>
+<li><a href="#Variable-sys_002ehost">12.5.23 Variable sys.host</a>
+<li><a href="#Variable-sys_002einterface">12.5.24 Variable sys.interface</a>
+<li><a href="#Variable-sys_002eipv4">12.5.25 Variable sys.ipv4</a>
+<li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">12.5.26 Variable sys.ipv4[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f1_005binterface_005fname_005d">12.5.27 Variable sys.ipv4_1[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">12.5.28 Variable sys.ipv4_2[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">12.5.29 Variable sys.ipv4_3[interface_name]</a>
+<li><a href="#Variable-sys_002ekey_005fdigest">12.5.30 Variable sys.key_digest</a>
+<li><a href="#Variable-sys_002elicense_005fowner">12.5.31 Variable sys.license_owner</a>
+<li><a href="#Variable-sys_002elicenses_005fgranted">12.5.32 Variable sys.licenses_granted</a>
+<li><a href="#Variable-sys_002elicenses_005finstalltime">12.5.33 Variable sys.licenses_installtime</a>
+<li><a href="#Variable-sys_002elong_005farch">12.5.34 Variable sys.long_arch</a>
+<li><a href="#Variable-sys_002emaildir">12.5.35 Variable sys.maildir</a>
+<li><a href="#Variable-sys_002enova_005fversion">12.5.36 Variable sys.nova_version</a>
+<li><a href="#Variable-sys_002eos">12.5.37 Variable sys.os</a>
+<li><a href="#Variable-sys_002eostype">12.5.38 Variable sys.ostype</a>
+<li><a href="#Variable-sys_002epolicy_005fhub">12.5.39 Variable sys.policy_hub</a>
+<li><a href="#Variable-sys_002erelease">12.5.40 Variable sys.release</a>
+<li><a href="#Variable-sys_002eresolv">12.5.41 Variable sys.resolv</a>
+<li><a href="#Variable-sys_002euqhost">12.5.42 Variable sys.uqhost</a>
+<li><a href="#Variable-sys_002eversion">12.5.43 Variable sys.version</a>
+<li><a href="#Variable-sys_002ewindir">12.5.44 Variable sys.windir</a>
+<li><a href="#Variable-sys_002ewinprogdir">12.5.45 Variable sys.winprogdir</a>
+<li><a href="#Variable-sys_002ewinprogdir86">12.5.46 Variable sys.winprogdir86</a>
+<li><a href="#Variable-sys_002ewinsysdir">12.5.47 Variable sys.winsysdir</a>
+<li><a href="#Variable-sys_002eworkdir">12.5.48 Variable sys.workdir</a>
 </li></ul>
 <li><a href="#Variable-context-this">12.6 Variable context <code>this</code></a>
 <ul>

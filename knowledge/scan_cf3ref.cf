@@ -92,6 +92,8 @@ Variable_context_sys::
 Variable_context_sys::
     "Variable sys.date" ;
 Variable_context_sys::
+    "Variable sys.constellation_version" ;
+Variable_context_sys::
     "Variable sys.class" ;
 Variable_context_sys::
     "Variable sys.cf_version" ;
@@ -1488,10 +1490,6 @@ knowledge_control_promises::
 knowledge_control_promises::
     "html_banner" ;
 knowledge_control_promises::
-    "goal_patterns" ;
-knowledge_control_promises::
-    "goal_categories" ;
-knowledge_control_promises::
     "graph_output" ;
 knowledge_control_promises::
     "graph_directory" ;
@@ -1694,6 +1692,10 @@ common_control_promises::
 common_control_promises::
     "ignore_missing_bundles" ;
 common_control_promises::
+    "goal_patterns" ;
+common_control_promises::
+    "goal_categories" ;
+common_control_promises::
     "bundlesequence" ;
 Control_promises::
     "common control promises" ;
@@ -1779,17 +1781,17 @@ Remote_access_troubleshooting::
     "Key exchange" ;
 Remote_access_troubleshooting::
     "Server connection" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "Remote access troubleshooting" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "Familiarizing yourself" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "The bare necessities of a cfengine 3" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "Testing as a non-privilieged user" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "Upgrading from cfengine 2" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "Filenames and paths" ;
 Decisions::
     "Global and local classes" ;
@@ -1797,17 +1799,17 @@ Decisions::
     "Class combination operators and precedence" ;
 Decisions::
     "Cfengine hard classes" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "Decisions" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "The work directory" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "Syntax, identifiers and names" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "Installation" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "A renewed cfengine" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "Core concepts" ;
 Software_components::
     "cf-hub" ;
@@ -1829,10 +1831,10 @@ Software_components::
     "cf-execd" ;
 Software_components::
     "cf-agent" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
     "Software components" ;
-Cfengine_3_2_0a1_r2426M__Getting_started::
-    "Cfengine 3.2.0a1.r2426M  Getting started" ;
+CFEngine_3_2_0b2_r2549__Getting_started::
+    "CFEngine 3.2.0b2.r2549  Getting started" ;
 Special_Topics_Guide::
     "CFEngine-AutoReference"  association => a("discussed in","CFEngine-AutoReference","discusses");
 
@@ -1845,7 +1847,7 @@ manuals::
 CFEngine_AutoReference::
  "/docs/cf3-reference.html#Top"
   represents => { "Text section" };
-Cfengine_3_2_0a1_r2426M__Getting_started::
+CFEngine_3_2_0b2_r2549__Getting_started::
  "/docs/cf3-reference.html#Getting-started"
   represents => { "manual chapter" };
 Software_components::
@@ -2153,6 +2155,12 @@ common_control_promises::
   represents => { "code example" };
 bundlesequence::
  "/docs/cf3-reference.html#bundlesequence-in-common"
+  represents => { "manual subsection" };
+goal_categories::
+ "/docs/cf3-reference.html#goal_005fcategories-in-common"
+  represents => { "manual subsection" };
+goal_patterns::
+ "/docs/cf3-reference.html#goal_005fpatterns-in-common"
   represents => { "manual subsection" };
 ignore_missing_bundles::
  "/docs/cf3-reference.html#ignore_005fmissing_005fbundles-in-common"
@@ -2492,12 +2500,6 @@ graph_directory::
   represents => { "manual subsection" };
 graph_output::
  "/docs/cf3-reference.html#graph_005foutput-in-knowledge"
-  represents => { "manual subsection" };
-goal_categories::
- "/docs/cf3-reference.html#goal_005fcategories-in-knowledge"
-  represents => { "manual subsection" };
-goal_patterns::
- "/docs/cf3-reference.html#goal_005fpatterns-in-knowledge"
   represents => { "manual subsection" };
 html_banner::
  "/docs/cf3-reference.html#html_005fbanner-in-knowledge"
@@ -4820,6 +4822,9 @@ Variable_sys_cf_version::
   represents => { "manual subsection" };
 Variable_sys_class::
  "/docs/cf3-reference.html#Variable-sys_002eclass"
+  represents => { "manual subsection" };
+Variable_sys_constellation_version::
+ "/docs/cf3-reference.html#Variable-sys_002econstellation_005fversion"
   represents => { "manual subsection" };
 Variable_sys_date::
  "/docs/cf3-reference.html#Variable-sys_002edate"

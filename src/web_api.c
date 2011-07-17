@@ -83,6 +83,8 @@ if (false)
    Nova2PHP_get_host_noteid(NULL,NULL,4096);
    
    Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
+
+   CfLDAPAuthenticate("x","x","x");
    }
 #endif
 }
@@ -452,7 +454,7 @@ char *Nova2PHP_get_help_text(char *key)
     {"class finder","Find hosts by the class contexts they occupy in the local cluster."},
     {"policy finder","Find promises that make up the policy in the local cluster."},
     {"reports finder","Search and browse the available reports in the local cluster."},
-    {"summary finder","Show the current state of knowledge about promise compliance. If a single promise handle is specified, this returns the number of hosts matching a class regex that is compliant. If a regex is given for the promise the result is an expectation value of number of hosts wrt all the matching promises."},
+    {"summary finder","Show the current state of knowledge about promise compliance. If a singleÂ promise handle is specified, this returns the number of hosts matching a class regex that is compliant. If a regex is given for the promise the result is an expectation value of number of hosts wrt all the matching promises."},
     
     {"license report","Displays a summary of the utilization of CFEngine licenses for this cluster."},
     {"vital signs","Performance measurements that characterize the observed runtime state of a host."},
