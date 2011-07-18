@@ -213,8 +213,8 @@ class cf_table {
                   $cell3
                   ));
        }else{
-          $lnk=anchor('search/index/report/Promises+not+kept+summary/host/'.$cols['key'],' ',array('title' => 'promises not kept','class'=>'promisesnotkeptbtn'))
-               .anchor('visual/vital/' . $cols['key'], ' ', array('title' => 'pulse and vitals','class'=>'vitalsbtn'));
+          $lnk=anchor('search/index/report/Promises+not+kept+summary/host/'.$cols['key'],' ',array('title' => 'promises not kept','class'=>'promisesnotkeptbtn showqtip'))
+               .anchor('visual/vital/' . $cols['key'], ' ', array('title' => 'pulse and vitals','class'=>'vitalsbtn showqtip'));
           $cell = array('data' => $lnk, 'class' => 'actioncol');
           $this->CI->table->add_row(array(
                   anchor('welcome/host/' . $cols['key'], $title, 'class=""'),

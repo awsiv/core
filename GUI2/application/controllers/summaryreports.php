@@ -9,7 +9,6 @@ class Summaryreports extends Cf_Controller {
         $this->carabiner->js('jquery.tablesorter.min.js');
         $this->carabiner->js('picnet.jquery.tablefilter.js');
         $this->carabiner->js('jquery.tablesorter.pager.js');
-        $this->carabiner->js('jquery.qtip-1.0.min.js');
         $this->carabiner->js('widgets/hostfinder.js');
     }
 

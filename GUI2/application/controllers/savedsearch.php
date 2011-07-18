@@ -12,7 +12,6 @@ class savedsearch extends Cf_Controller {
         $this->carabiner->js('picnet.jquery.tablefilter.js');
         $this->carabiner->js('jquery.tablesorter.pager.js');
         $this->carabiner->js('jquery.qtip-1.0.min.js');
-        $this->carabiner->js('widgets/hostfinder.js');
 
         $this->load->model('search_save_model');
     }

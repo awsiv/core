@@ -1,17 +1,17 @@
-<?php //echo $breadCrumbUrl;          ?>
+<?php //echo $breadCrumbUrl;           ?>
 <div id="bodyreport" class="outerdiv grid_12">
 
     <div id="reportpanel" class="innerdiv">
         <p class="title"><?php echo $report_title; ?></p>
         <div class="reporthead">
             <div class="grid_8">
-                <a href="<?php echo $report_link ?>" class="icons pdf" title="Generate pdf report"></a>
-                <a href="<?php echo $email_link ?>" id="send_mail" class="icons email" title="Send this report as email"></a>
+                <a href="<?php echo $report_link ?>" class="icons pdf showqtip" title="Generate pdf report"></a>
+                <a href="<?php echo $email_link ?>" id="send_mail" class="icons email showqtip" title="Send this report as email"></a>
                 <!--<a href="<?php echo site_url('search/index/report/' . $report_title) ?>" id="advsearch">Advance search</a>-->
-                <?php echo anchor('#', 'Host only', array('id' => 'findhost', 'title' => 'Report for another host')) ?>
+                <?php echo anchor('#', 'Host only', array('id' => 'findhost', 'title' => 'Report for another host','class'=>'showqtip')) ?>
             </div>
             <div class="grid_4" style="text-align: right;">
-                <div><a href="#" id="savesearch" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>
+                <div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>
                 <div id="savesearchcontainer" style="margin: 5px;display:none;">
                     <div id="searchSaveError" class="error" style="display:none;"></div>
                     <div id="searchSaveSuccess" class="success" style="display:none;"></div> 
@@ -23,7 +23,7 @@
                         <input type="submit" id="submit_search" value="save" />
                     </form>                
                 </div> 
-                <div><a href="#" id="modifySearch" title="modify search parameters">New search</a></div>
+                <div><a href="#" id="modifySearch" class="showqtip" title="modify search parameters">New search</a></div>
 
             </div>
             <div class="clearboth">
@@ -43,7 +43,7 @@
                     echo $this->cf_table->generateReportTable($result, $report_title);
                     $pg = paging($current, $number_of_rows, $result['meta']['count'], 10);
                     include 'paging_footer.php';
-                   // echo $report_result;
+                    // echo $report_result;
                 } else {
                     echo"<table><tr><td>" . $this->lang->line("no_data") . "</td></tr></table>";
                 }
@@ -193,39 +193,6 @@
                 $(element).attr('href', '/notes/index/action/show/nid/' + nid);
                 // console.log(nid,element);
             }});
-
-
-        $('.reporthead').find('a').qtip({
-            style: {
-                background:'#454545',
-                opacity:0.9,
-                name: 'dark',
-                width:{
-                    min:0,
-                    max:150
-                },
-                border: {
-                    width: 1,
-                    radius: 1
-                },
-                tip:{
-                    corner:'bottomMiddle',
-                    size:{
-                        x:5,
-                        y:5
-                    }
-                }
-            },
-            show:{
-                effect:'false'
-            },
-
-            position: {
-                corner: {
-                    target: 'topMiddle',
-                    tooltip: 'bottomMiddle'
-                }
-            }
-        });
+       
     });
 </script>

@@ -29,39 +29,4 @@ $('#bphghelp').classfinder({
         $('#hg').smartTextBox('add', data.selectedclass);
     }
 });
-$('#bphghelp').qtip({
-            style: {
-                background:'#454545',
-                opacity:0.9,
-                name: 'dark',
-                width:{
-                    min:0,
-                    max:150
-                },
-                border: {
-                    width: 1,
-                    radius: 4
-                },
-                tip:{
-                    corner:'topMiddle',
-                    size:{
-                        x:10,
-                        y:10
-                    }
-                }
-            },
-            show:{
-                effect:{
-                    type:'fade',
-                    lenght:200
-                }
-            },
-
-            position: {
-                corner: {
-                    target: 'bottomMiddle',
-                    tooltip: 'topMiddle'
-                }
-            }
-        });
 </script>

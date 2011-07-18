@@ -320,7 +320,6 @@ class Welcome extends Cf_Controller {
             array('widgets/reportfinder.js'),
             array('widgets/notes.js'),
             array('SmartTextBox.js'),
-            array('jquery.qtip-1.0.min.js')
         );
 
         $jsIE = array('jit/Extras/excanvas.js');
@@ -425,7 +424,6 @@ class Welcome extends Cf_Controller {
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
-        $this->carabiner->js('jquery.qtip-1.0.min.js');
 
         $data = array(
             'type' => $type,
