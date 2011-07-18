@@ -742,6 +742,8 @@ bool Nova2PHP_vitals_analyse_magnified(char *hostkey, char *vitalId, char *buffe
  Join(buffer,work,bufsize);
  snprintf(work,sizeof(work),"\"Average variability: %lf\",", cfv.error_scale);
  Join(buffer,work,bufsize);
+
+ ReplaceTrailingChar(buffer,',','\0');
  Join(buffer,"]",bufsize);
  
  return true;
@@ -794,8 +796,10 @@ bool Nova2PHP_vitals_analyse_week(char *hostkey, char *vitalId, char *buffer, in
  snprintf(work,CF_BUFSIZE-1,"\"Percentage 2 deviations over mean: %lf%%\",",x);
  Join(buffer,work,bufsize);
  x = 100*(double)cfv.under_dev2/(double)CF_TIMESERIESDATA;
- snprintf(work,CF_BUFSIZE-1,"\"Percentage 2 deviations under mean: %lf%%\"",x);
+ snprintf(work,CF_BUFSIZE-1,"\"Percentage 2 deviations under mean: %lf%%\",",x);
  Join(buffer,work,bufsize);
+
+ ReplaceTrailingChar(buffer,',','\0');
  Join(buffer,"]",bufsize);
 
  return true;
@@ -831,10 +835,11 @@ bool Nova2PHP_vitals_analyse_year(char *hostkey, char *vitalId, char *buffer, in
  Join(buffer,work,bufsize);
  snprintf(work,CF_BUFSIZE,"\"Minimum value: %.2lf\",",cfv.min);
  Join(buffer,work,bufsize);
- snprintf(work,CF_BUFSIZE,"\"Average variability: %lf\"",cfv.error_scale);
+ snprintf(work,CF_BUFSIZE,"\"Average variability: %lf\",",cfv.error_scale);
  Join(buffer,work,bufsize);
- Join(buffer,"]",bufsize);
 
+ ReplaceTrailingChar(buffer,',','\0');
+ Join(buffer,"]",bufsize);
 
  return true;
 }
@@ -882,9 +887,9 @@ for (sx = 1; sx < CF_GRAINS; sx++)
 
 sigma2 = sum / (double)CF_GRAINS;
 
-snprintf(work,CF_BUFSIZE-1,"Maximum observed %s = %.2lf\",",vitalId,cfv.max);
+snprintf(work,CF_BUFSIZE-1,"\"Maximum observed %s = %.2lf\",",vitalId,cfv.max);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"Minimum observed %s = %.2lf\",",vitalId,cfv.min);
+snprintf(work,CF_BUFSIZE-1,"\"Minimum observed %s = %.2lf\",",vitalId,cfv.min);
 Join(buffer,work,bufsize);
 
 for (sx = 1; sx < CF_GRAINS; sx++)
@@ -902,13 +907,13 @@ for (sx = 1; sx < CF_GRAINS; sx++)
          {
          max++;
 
-         snprintf(work,CF_BUFSIZE-1,"\"%d: Spectral mode with peak at %.0lf/%.0lf grains, ",max,sx-1,(double)CF_GRAINS);
+         snprintf(work,CF_BUFSIZE-1,"\"%d: Spectral mode with peak at %.0lf/%.0lf grains\", ",max,sx-1,(double)CF_GRAINS);
          Join(buffer,work,bufsize);
 
          if (sx < ((double)CF_GRAINS)/2.0 - 1.0)
             {
             redshift++;
-            snprintf(work,CF_BUFSIZE-1,"red-shifted, e.g. a retardation process where usage is declining. "
+            snprintf(work,CF_BUFSIZE-1,"\"red-shifted, e.g. a retardation process where usage is declining. "
                      "If the distribution is skewed, it has a long ramp, indicating "
                      "a possible resource ceiling, a well-utilized system. "
                      "Or there could be outliers of low value, because data are incomplete.\",");
@@ -917,7 +922,7 @@ for (sx = 1; sx < CF_GRAINS; sx++)
          else if (sx > ((double)CF_GRAINS)/2.0 + 1.0)
             {
             blueshift++;
-            snprintf(work,CF_BUFSIZE-1,"blue-shifted, e.g. an acceleration process where usage is increasing. "
+            snprintf(work,CF_BUFSIZE-1,"\"blue-shifted, e.g. an acceleration process where usage is increasing. "
                      "If the distribution is skewed, it has a long tail, indicating "
                     "plenty of resources, or an under-used system. "
                     "Or there could be outliers of low value, because data are incomplete.\",");
@@ -930,6 +935,8 @@ for (sx = 1; sx < CF_GRAINS; sx++)
    }
 
 Join(buffer,work,bufsize);
+
+ReplaceTrailingChar(buffer,',','\0');
 Join(buffer,"]",bufsize);
 DeleteItemList(spectrum);
 
