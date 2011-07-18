@@ -433,6 +433,14 @@ label#searchbox input
     background: url("../images/report_hover.png") no-repeat;
 }
 
+.dash a.summary_report{
+    background: url("../images/summary_reports.png") no-repeat;
+}
+
+.dash a.summary_report:hover{
+    background: url("../images/summary_reports_hover.png") no-repeat;
+}
+
 #plandash.dash a:hover{
    color:#009193;
 }
