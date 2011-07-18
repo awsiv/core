@@ -53,10 +53,10 @@ shprofiledir = $(sysconfdir)/profile.d
 shprofile_SCRIPTS = misc/profile.d/cfengine.sh
 
 install-data-hook:
-	mkdir $(DESTDIR)$(prefix)/inputs
-	mkdir $(DESTDIR)$(prefix)/master_software_updates
-	mkdir $(DESTDIR)$(prefix)/masterfiles
-	mkdir $(DESTDIR)$(prefix)/modules
-	mkdir $(DESTDIR)$(prefix)/outputs
-	mkdir $(DESTDIR)$(prefix)/ppkeys
+	mkdir -p $(DESTDIR)$(prefix)/inputs
+	mkdir -p $(DESTDIR)$(prefix)/master_software_updates
+	mkdir -p $(DESTDIR)$(prefix)/masterfiles
+	mkdir -p $(DESTDIR)$(prefix)/modules
+	mkdir -p $(DESTDIR)$(prefix)/outputs
+	mkdir -p $(DESTDIR)$(prefix)/ppkeys
 	cp -R misc/software_updates $(DESTDIR)$(prefix)
