@@ -1,4 +1,4 @@
-<div  style="display: block;min-height: 400; background-color: #3D453A;color:#FFFFFF">
+<div  style="display: block;min-height: 400;">
     <div id="searchform" class="panel"><div class="panelhead">Summary report query</div>
         <div class="panelcontent">
             <form method="post" target="_self" action="<?php echo site_url('summaryreports/show/') ?>">

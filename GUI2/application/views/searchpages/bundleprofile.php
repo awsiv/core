@@ -8,7 +8,8 @@
          <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help" title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
          <input class="searchfield" type="text" name="class_regex" size="80" id="hg"></p>
          <p>Return host names only: <input type="checkbox" name="hosts_only" value="true"></p>
-         <p><input class="btn" type="submit" value="Generate report">  <span>       <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="slvbutton loadsavedsearch">Load saved searches</a>
+         <p><input class="btn" type="submit" value="Generate report">  <span>       
+                 <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="btn loadsavedsearch">Load saved searches</a>
 </span>  </p>
          <input type="hidden" name="host" value="All">
          <input type="hidden" name="report" value="<?php echo $report_type?>">

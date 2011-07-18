@@ -1616,7 +1616,7 @@ span.search input
 .pages{
     margin-bottom: 15px;
 }
-.pages a
+.innerdiv .pages a,.pages a
 {
     background: #e6eee3;
     color:#3D453A;
@@ -2435,15 +2435,21 @@ background-image: url(../images/error.png);
     margin:0;
 }
 
-.ui-widget-content .btn a, .btn a, .btn
+.outerdiv input.textbox{
+    padding:2px;
+    border:solid 1px #999;
+}
+
+.ui-widget-content .btn a, .btn a, .btn, .outerdiv .btn,.ui-widget-content a.btn
 {
     background: #3D4439;
     color:#fff;
     font-size: 13px;
     padding:3px;
     font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
+    border:solid 1px #fff
 }
-.ui-widget-content .btn a:hover, .btn a:hover{
+.ui-widget-content .btn a:hover, .btn a:hover, .outerdiv .btn:hover,.ui-widget-content a.btn:hover{
     color:#08A3C1
 }
 
@@ -2526,4 +2532,12 @@ ul.admin_menu li.current a{
 
 #reusableModalDialog{
     background: #fff;
+}
+
+#modifySearchPanel{
+    background: none;
+    border:solid 1px #999;
+    display:none;
+    margin:10px;
+    padding:10px;
 }

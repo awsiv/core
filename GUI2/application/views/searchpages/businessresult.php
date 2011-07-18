@@ -17,10 +17,10 @@
                     <div id="searchSaveSuccess" class="success" style="display:none;"></div> 
                     <form id="saveform" method="post" action="<?php echo site_url(); ?>/savedsearch/save/">
                         <label for="search_name">Name</label>   
-                        <input type="input" id="search_name" name="search_name"></input>
+                        <input type="input" id="search_name" name="search_name" class="textbox"></input>
                         <input type="hidden" id="search_url" name="search_url" value="<?php echo $params; ?>"></input>
                         <input type="hidden" id="report_title" name="report_title" value="<?php echo $report_title; ?>"></input>
-                        <input type="submit" id="submit_search" value="save" />
+                        <input type="submit" id="submit_search" value="save" class="btn" />
                     </form>                
                 </div> 
                 <div><a href="#" id="modifySearch" class="showqtip" title="modify search parameters">New search</a></div>
@@ -30,7 +30,7 @@
             </div>   
 
         </div>
-        <div id="modifySearchPanel" style="display:none;margin:10px;padding:10px;background: #cccccc;">
+        <div id="modifySearchPanel" style="">
 
         </div>
 
@@ -40,9 +40,10 @@
                 <?php
                 $result = json_decode($report_result, true);
                 if (count($result['data']) > 0) {
-                    echo $this->cf_table->generateReportTable($result, $report_title);
+                   
                     $pg = paging($current, $number_of_rows, $result['meta']['count'], 10);
-                    include 'paging_footer.php';
+                     echo $this->cf_table->generateReportTable($result, $report_title);
+                     include 'paging_footer.php';
                     // echo $report_result;
                 } else {
                     echo"<table><tr><td>" . $this->lang->line("no_data") . "</td></tr></table>";
@@ -71,7 +72,7 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('.tables table').tableFilter();
+       // $('.tables table').tableFilter();
         $('.tables table').tablesorter({widgets: ['zebra']});
         
         
