@@ -58,8 +58,6 @@
             var self = this;
             var url = this.element.attr("href");
             var requestDialog = self.dialogContainer();
-            requestDialog.parent().addClass('customdlg').removeClass('ui-widget-content');
-            
             self.titlebar=requestDialog.siblings('div.ui-dialog-titlebar');
             
             if (self.firstClicked != null)
@@ -131,7 +129,7 @@
                 }
                 ));
                     
-
+             dialog.parent().removeClass('ui-widget-content').addClass('customdlg');
             if (self._trigger('beforeDisplay', 0, html_content) !== false) {
                 dialog.html( html_content );
 

@@ -1716,6 +1716,7 @@ span.search input
 #hostviewerrightpanes
 {
    margin-top:10px;
+   margin-bottom: 10px;
 }
 #hostviewerrightpanes .innerdiv
 {
@@ -2521,4 +2522,8 @@ ul.admin_menu li.current a{
 
 .hoststatcolorsquare{
     padding:1px 7px 0 2px;
+}
+
+#reusableModalDialog{
+    background: #fff;
 }
