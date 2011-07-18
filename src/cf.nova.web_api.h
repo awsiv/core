@@ -19,6 +19,7 @@
 
 // Separation needed because it is included by php extension
 
+int Nova2PHP_LDAPAuthenticate(char *uri,char *basedn,char *passwd);
 bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_week(char *keyHash, char *vitalId, char *buffer, int bufsize);
