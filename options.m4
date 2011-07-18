@@ -45,7 +45,8 @@ if test $WITH_MONGO = 1; then
 fi
 
 AC_ARG_WITH([ldap],
-    [AS_HELP_STRING([--with-ldap[[=PATH]]], [Enable LDAP functions])])
+    [AS_HELP_STRING([--with-ldap[[=PATH]]], [Enable LDAP functions])],
+    [], [with_ldap=check])
 
 if test "x$with_ldap" != xno; then
    CF3_WITH_LIBRARY(ldap, [
@@ -55,7 +56,8 @@ if test "x$with_ldap" != xno; then
 fi
 
 AC_ARG_WITH([libvirt],
-    [AS_HELP_STRING([--with-libvirt], [support virtual machine management])])
+    [AS_HELP_STRING([--with-libvirt], [support virtual machine management])],
+    [], [with_libvirt=check])
 
 if test "x$with_libvirt" != xno; then
    CF3_WITH_LIBRARY(libvirt, [
