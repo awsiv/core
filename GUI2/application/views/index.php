@@ -9,10 +9,10 @@
                   <div class="clear"></div>
                   <div class ="grid_8 push_2 dash">
                       <ul>
-                          <li><?php echo anchor('welcome/status','status',array('class'=>'status'));?></li>
-                          <li><?php echo anchor('welcome/engg','engineering',array('class'=>'engineering'));?></li>
-                          <li><?php echo anchor('welcome/planning','planning',array('class'=>'planning'));?></li>
-                          <li><?php echo anchor('knowledge/index','library',array('class'=>'library'));?></li>
+                          <li><?php echo anchor('welcome/status','status',array('class'=>'status showqtip','title'=>lang('tooltip_statusroom')));?></li>
+                          <li><?php echo anchor('welcome/engg','engineering',array('class'=>'engineering showqtip','title'=>lang('tooltip_engineeringroom')));?></li>
+                          <li><?php echo anchor('welcome/planning','planning',array('class'=>'planning showqtip','title'=>lang('tooltip_planningroom')));?></li>
+                          <li><?php echo anchor('knowledge/index','library',array('class'=>'library showqtip','title'=>lang('tooltip_libraryroom')));?></li>
                           <p class="clearleft"></p>
                       </ul>
                   </div>                  
@@ -20,7 +20,7 @@
 
                   <div id="licenseinfo"class="push_4"><?php
                       echo $this->lang->line('license_to');
-                      echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo', 'title'=>"view license information"));?></div>
+                      echo  anchor('welcome/license',cfpr_getlicense_owner(),array('class'=>'licenseinfo showqtip', 'title'=>$this->lang->line('tooltip_license_report')));?></div>
                   <div class="clear"></div>
                   <div id="licensebar" class="grid_4 push_4">
                       <div></div>

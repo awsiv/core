@@ -1,5 +1,13 @@
 <div class="graphunit"><?php echo urldecode($units); ?></div>
 <div id="YEARLY_placeholder_<?php echo $observable; ?>" style="height: 500px; width: 70%; "></div>
+<div>
+    <h3>Analysis</h3>
+    <ul>
+    <?php foreach ((array)$graphDetails as $details) { ?>
+        <li><?php echo $details; ?></li>   
+    <?php } ?>
+    </ul>
+</div>
 <script language="javascript" type="text/javascript">
     //<![CDATA[
     (function() {

@@ -7,23 +7,3 @@
 </div>
 </body>
 </html>
-<script type="text/javascript">
-    // q tip initialization 
-    $(document).ready(function() {
-        
-        
-        $("a.showqtip,a.help").live("mouseover", function(){
-
-            $(this).qtip({
-                show: { ready: true }, 
-                position: {
-                    my: 'top left',  // Position my top left...
-                    at: 'bottom middle' // at the bottom right of...
-                }
-
-        
-            });
-        });
-    });
-       
-</script>

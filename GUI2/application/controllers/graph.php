@@ -126,6 +126,9 @@ class Graph extends CF_Controller {
 
             $this->data['graphdatalineseries1'] = json_encode($lineSeries1);
             $this->data['graphdatalineseries2'] = json_encode($lineSeries2);
+            
+            $this->data['graphDetails'] = json_decode(cfpr_vitals_analyse_magnified($hostKey, $observables),true);
+            
             $this->load->view('graph/magnifiedView', $this->data);
         } else
             echo "No data available.";
@@ -181,6 +184,8 @@ class Graph extends CF_Controller {
 
             $this->data['graphdatalineseries1'] = json_encode($lineSeries1);
             $this->data['graphdatalineseries2'] = json_encode($lineSeries2);
+            $this->data['graphDetails'] = json_decode(cfpr_vitals_analyse_week($hostKey, $observables),true);
+           
             $this->load->view('graph/weekly', $this->data);
         } else
             echo "No data available.";
@@ -233,6 +238,8 @@ class Graph extends CF_Controller {
 
             $this->data['graphdatalineseries1'] = json_encode($lineSeries1);
             $this->data['graphdatalineseries2'] = json_encode($lineSeries2);
+             $this->data['graphDetails'] = json_decode(cfpr_vitals_analyse_year($hostKey, $observables),true);
+           
             $this->load->view('graph/yearview', $this->data);
         } else
             echo "No data available.";
@@ -262,6 +269,8 @@ class Graph extends CF_Controller {
             $this->data['graphLastUpdated'] = $lastUpdated;
             $this->data['graphdata'] = $graphData;
             $this->data['observable'] = $this->canonifyObservables($observables);
+             $this->data['graphDetails'] = json_decode(cfpr_vitals_analyse_histogram($hostKey, $observables),true);
+           
             $this->load->view('graph/histogram', $this->data);
         } else
             echo "No data available";

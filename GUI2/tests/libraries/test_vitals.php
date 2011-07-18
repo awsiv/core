@@ -28,6 +28,43 @@ class test_vitals extends CodeIgniterUnitTestCase {
         $graphdata = cfpr_vitals_list($this->hostkey);
         $this->validateJson($graphdata);
     }
+    
+    public function test_vital_analysis_magnified() {
+        
+        $observables = 'mem:total';
+        $test = cfpr_vitals_analyse_magnified($this->hostkey, $observables);
+        $this->dump($test);
+        $this->validateJson($test);
+        
+        
+    }
+     public function test_vital_analysis_week() {
+        
+        $observables = 'mem:total';
+        $test = cfpr_vitals_analyse_week($this->hostkey, $observables);
+        $this->dump($test);
+        $this->validateJson($test);
+        
+        
+    }
+     public function test_vital_analysis_year() {
+        
+        $observables = 'mem:total';
+        $test = cfpr_vitals_analyse_year($this->hostkey, $observables);
+        $this->dump($test);
+        $this->validateJson($test);
+        
+        
+    }
+    public function test_vital_analysis_histogram() {
+        
+        $observables = 'mem:total';
+        $test = cfpr_vitals_analyse_histogram($this->hostkey, $observables);
+        $this->dump($test);
+        $this->validateJson($test);
+        
+        
+    }
 
 }
 

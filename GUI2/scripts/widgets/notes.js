@@ -9,7 +9,8 @@
             chainAjaxySelector: "a:not([target]), form:not([target])",
             closeDialogSelector: "a.dialog-close",
             width:'auto',
-            originalElement: null // store a refrence to the originally called element
+            originalElement: null, // store a refrence to the originally called element
+            dontOverrideTitle : false
             
         },
         
@@ -134,13 +135,14 @@
                 dialog.html( html_content );
 
                 //extract and set title
+                if (!self.options.dontOverrideTitle) {
                 var title;
                 self.options.extractTitleSelector &&
                 (title = dialog.find(self.options.extractTitleSelector).first().remove().text());
                 title = title ||
                 self.element.attr("title")
                 title && dialog.dialog("option", "title", title);
-
+                }
                 //Make any hyperlinks or forms ajaxified, by applying
                 //this very same plugin to em, and passing on our options.
                 if (self.options.chainAjaxySelector) {

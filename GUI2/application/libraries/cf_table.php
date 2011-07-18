@@ -206,7 +206,7 @@ class cf_table {
      if($type=='blue'){
          $lnk=date('D F d h:m:s Y',$cols['lastseen']);
          $cell2=array('data' => $lnk, 'class' => 'datecol');
-         $cell3=array('data' => anchor('visual/vital/' . $cols['key'], ' ', array('title' => 'pulse and vitals','class'=>'vitalsbtn')), 'class' => 'actioncol');
+         $cell3=array('data' => anchor('visual/vital/' . $cols['key'], ' ', array('title' => $this->CI->lang->line('tooltip_vital_signs'),'class'=>'vitalsbtn showqtip')), 'class' => 'actioncol');
          $this->CI->table->add_row(array(
                   anchor('welcome/host/' . $cols['key'], $title, 'class="imglabel"'),
                   $cell2,
