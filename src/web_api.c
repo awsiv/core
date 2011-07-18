@@ -3781,9 +3781,13 @@ else if (Nova_IsGreen(score))
    {
    strncpy(buffer,"green",bufsize);
    }
-else
+else if(Nova_IsRed(score))
    {
    strncpy(buffer,"red",bufsize);
+   }
+else
+   {
+   strncpy(buffer,"blue",bufsize);
    }
 }
 
