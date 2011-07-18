@@ -438,7 +438,7 @@ class Search extends Cf_Controller {
                    
                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                    $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
-                   $name = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
+                   $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
                     if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_patch_avail(NULL, $name, $version, $arch, true, $class_regex);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
