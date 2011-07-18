@@ -2510,3 +2510,7 @@ ul.admin_menu li.current a{
 .graphunit,.tickLabel{
     font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
 }
+
+.hoststatcolorsquare{
+    padding:1px 7px 0 2px;
+}

@@ -6,6 +6,7 @@
 				$load = cfpr_get_variable($hostkey,"mon","av_loadavg");
 				$free = cfpr_get_variable($hostkey,"mon","av_diskfree");
 				$speed = cfpr_get_network_rate($hostkey);
+                                $colour=cfpr_get_host_colour($hostkey);
 			  ?>
 <div id="hostview">
     <div class="outerdiv">
@@ -26,7 +27,7 @@
      </div>
     <div class="grid_4">
         <div id="hostviewerbtn" class="dash innerdiv">
-            <p class="title">Actions</p>
+            <p class="title"> <img src= "<?php echo get_imagedir().$colour?>_square_little.png" class="hoststatcolorsquare"/>Actions</p>
             <ul>
                 <li><?php echo anchor('widget/allreports','Reports',array('id'=>'findreport', 'class'=>'report')) ?></li>
                     <?php
@@ -46,7 +47,7 @@
             </ul>
         </div>
       <div id="monitoredjob"class="innerdiv">
-         <p class="title">Monitored jobs</p>
+         <p class="title">  <img src= "<?php echo get_imagedir().$colour?>_square_little.png" class="hoststatcolorsquare"/>Monitored jobs</p>
                 <?php
                 $number = cfpr_get_class_frequency(NULL,"mXC.*");
                 $count=0;
@@ -75,7 +76,7 @@
        </div>
 
          <div id="statusmeasured" class="innerdiv ">
-                   <p class="title">Status (measured)</p>
+                   <p class="title"> <img src= "<?php echo get_imagedir().$colour?>_square_little.png" class="hoststatcolorsquare"/>Status (measured)</p>
               
                <p><label class="width_20">Average Load:</label><label ><?php echo $load?>%</label></p>
                <p> <label class="width_20">Average Free Disk:</label><label><?php echo $free?>%</label></p>
@@ -85,14 +86,14 @@
     </div>
     <div id="hostviewerrightpanes" class="grid_8">
             <div class="innerdiv">
-                <p class="title">Analysis</p>
+                <p class="title"> <img src= "<?php echo get_imagedir().$colour?>_square_little.png" class="hoststatcolorsquare"/>Analysis</p>
                 <div id="hostviewgraph" class="graphcontainer"><?php include_once('graph/summaryCompliance.php'); ?></div>
                 <!--<p><a href="<?php echo site_url('visual/vital').'/'.$hostkey ?>" ><img src="<?php echo get_imagedir()?>pulsed.png" class="align"/></a></p>-->
             </div>
             <div id="hostinformation" class="innerdiv">
                 
                
-                    <p class="title">Host Details (discovered)</p>
+                    <p class="title"> <img src= "<?php echo get_imagedir().$colour?>_square_little.png" class="hoststatcolorsquare"/>Host Details (discovered)</p>
                      <form  id="delform"method="post" action="/welcome/host">
                      <input type="hidden" name="delhost" id="delhost" value="<?php echo $hostkey?>"/>
                      <input class="btn"  type="submit" id="btnsubmit"  value="Delete this host"/>
