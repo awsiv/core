@@ -197,14 +197,18 @@ class cf_table {
        }else{
           $this->CI->table->set_heading('hostname','Action');
        }
- foreach ($data as $cols) {
+ foreach ((array)$data as $cols) {
                 //array_push($columns, img(array('src' => 'images/' . $type . '.png', 'class' => 'align')) . anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
-       if($type=='blue'){
+       $title=$cols['id'];
+          if($cols['id']==""){
+              $title=$cols['key'];
+          }
+     if($type=='blue'){
          $lnk=date('D F d h:m:s Y',$cols['lastseen']);
          $cell2=array('data' => $lnk, 'class' => 'datecol');
          $cell3=array('data' => anchor('visual/vital/' . $cols['key'], ' ', array('title' => 'pulse and vitals','class'=>'vitalsbtn')), 'class' => 'actioncol');
          $this->CI->table->add_row(array(
-                  anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'),
+                  anchor('welcome/host/' . $cols['key'], $title, 'class="imglabel"'),
                   $cell2,
                   $cell3
                   ));
@@ -213,7 +217,7 @@ class cf_table {
                .anchor('visual/vital/' . $cols['key'], ' ', array('title' => 'pulse and vitals','class'=>'vitalsbtn'));
           $cell = array('data' => $lnk, 'class' => 'actioncol');
           $this->CI->table->add_row(array(
-                  anchor('welcome/host/' . $cols['key'], $cols['id'], 'class=""'),
+                  anchor('welcome/host/' . $cols['key'], $title, 'class=""'),
                   $cell,
                   ));
           
