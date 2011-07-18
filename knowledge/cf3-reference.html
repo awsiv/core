@@ -216,7 +216,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">1 CFEngine 3.2.0b2.r2549 &ndash; Getting started</h2>
+<h2 class="chapter">1 CFEngine 3.2.0b2.r2587M &ndash; Getting started</h2>
 
 <p><br>
 
@@ -4502,7 +4502,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 <p class="noindent"><b>Example</b>:<br>
 <br>
 
-<pre class="verbatim">body knowledge control
+<pre class="verbatim">body common control
 {
 <span class="red">goal_categories </span>=> { "goals", "targets", "milestones" };
 }
@@ -4514,7 +4514,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
    <p><i>History</i>: Was introduced in version 3.1.5, Nova 2.1 Constellation 1.0 (2011)
 
    <p>Goal categories are the parent classes used when searching for goals in the knowledge map. 
-This is mostly for internal use in the Knowledge Map.
+This is mostly for internal use in the Knowledge Map, but is a generic part of policy
+so it appears in the common body.
 
 <div class="node">
 <a name="goal_patterns-in-common"></a>
@@ -4538,8 +4539,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 <br>
 
 <pre class="verbatim">
-<span class="red">body knowledge</span> <span class="blue">control</span>
-{
+<span class="red">body common control
+</span>{
 <span class="red">goal_patterns </span>=> { "goal_.*", "target.*" };
 }
 </pre>
@@ -35451,7 +35452,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <h2>Table of Contents</h2>
 <ul>
 <li><a name="toc_Top" href="#Top">CFEngine-AutoReference</a>
-<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.2.0b2.r2549 &ndash; Getting started</a>
+<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.2.0b2.r2587M &ndash; Getting started</a>
 <ul>
 <li><a href="#Software-components">1.1 Software components</a>
 <ul>

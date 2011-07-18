@@ -1781,17 +1781,17 @@ Remote_access_troubleshooting::
     "Key exchange" ;
 Remote_access_troubleshooting::
     "Server connection" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "Remote access troubleshooting" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "Familiarizing yourself" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "The bare necessities of a cfengine 3" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "Testing as a non-privilieged user" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "Upgrading from cfengine 2" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "Filenames and paths" ;
 Decisions::
     "Global and local classes" ;
@@ -1799,17 +1799,17 @@ Decisions::
     "Class combination operators and precedence" ;
 Decisions::
     "Cfengine hard classes" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "Decisions" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "The work directory" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "Syntax, identifiers and names" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "Installation" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "A renewed cfengine" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "Core concepts" ;
 Software_components::
     "cf-hub" ;
@@ -1831,10 +1831,10 @@ Software_components::
     "cf-execd" ;
 Software_components::
     "cf-agent" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
     "Software components" ;
-CFEngine_3_2_0b2_r2549__Getting_started::
-    "CFEngine 3.2.0b2.r2549  Getting started" ;
+CFEngine_3_2_0b2_r2587M__Getting_started::
+    "CFEngine 3.2.0b2.r2587M  Getting started" ;
 Special_Topics_Guide::
     "CFEngine-AutoReference"  association => a("discussed in","CFEngine-AutoReference","discusses");
 
@@ -1847,7 +1847,7 @@ manuals::
 CFEngine_AutoReference::
  "/docs/cf3-reference.html#Top"
   represents => { "Text section" };
-CFEngine_3_2_0b2_r2549__Getting_started::
+CFEngine_3_2_0b2_r2587M__Getting_started::
  "/docs/cf3-reference.html#Getting-started"
   represents => { "manual chapter" };
 Software_components::

@@ -179,8 +179,8 @@ CfengineStdLibrary.html: ../../copbl/stdlib.texinfo
 
 scan_stdlib.cf: CfengineStdLibrary.html
 	./scan_texinfo "community library" CfengineStdLibrary.html > scan_stdlib.cf
-	./highlight_syntax CfengineStdLibrary.html
-	mv CfengineStdLibrary.trans CfengineStdLibrary.html
+	#./highlight_syntax CfengineStdLibrary.html
+	#mv CfengineStdLibrary.trans CfengineStdLibrary.html
 
 cf3-upgrade.html: ../../core/docs/guides/cf3-upgrade.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<

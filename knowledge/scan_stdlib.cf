@@ -18,6 +18,8 @@ The_Purpose_Of_This_Handbook::
 The_Purpose_Of_This_Handbook::
     "bundle edit_line set_user_field" ;
 The_Purpose_Of_This_Handbook::
+    "bundle edit_line resolvconf" ;
+The_Purpose_Of_This_Handbook::
     "bundle edit_line insert_lines" ;
 The_Purpose_Of_This_Handbook::
     "bundle edit_line expand_template" ;
@@ -534,6 +536,9 @@ bundle_edit_line_expand_template::
 bundle_edit_line_insert_lines::
  "/docs/CfengineStdLibrary.html#bundle-edit_005fline-insert_005flines"
   represents => { "manual section bundle edit_line insert_lines" };
+bundle_edit_line_resolvconf::
+ "/docs/CfengineStdLibrary.html#bundle-edit_005fline-resolvconf"
+  represents => { "manual section bundle edit_line resolvconf" };
 bundle_edit_line_set_user_field::
  "/docs/CfengineStdLibrary.html#bundle-edit_005fline-set_005fuser_005ffield"
   represents => { "manual section bundle edit_line set_user_field" };

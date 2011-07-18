@@ -222,7 +222,8 @@ IT infrastructure to highly integrated platforms.
 Leading the way is a group of highly innovative Web-based companies
 whose businesses depend on very specific arrangements of
 infrastructure. It is about giving software developers more influence
-over the IT infrastructure their applications run on.
+over the IT infrastructure their applications run on, and allowing
+change at the same speed as agile development teams.
 
 <div class="node">
 <a name="Why-is-DevOps-happening-now%3f"></a>
@@ -279,9 +280,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 Web frameworks have seen the rise of languages like PHP, Java, Python
 and Ruby, all of which offer frameworks for fast deployment. 
 Languages that work well for application development are not well
-suited to managing infrastructure however: they focus on details that
-one would like to escape from. The fact that programmers already know the
-languages does not change this.
+suited to managing infrastructure however: they focus too much on low
+level details that one would like to suppress. The fact that
+programmers already know the languages does not change this.
 
    <p>An important principle for robustness and stability of systems is weak
 coupling between components. This brings flexibility rather than brittle
@@ -332,8 +333,8 @@ predictions, so they aid understanding and help us to avoid mistake.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 CFEngine's promise model offers a flexible approach to weakly-coupled
-autonomous resource configuration. It simultaneously allows efficient
-convergent and repeatable implementation, and a simple definition of
+autonomous resource configuration. It simultaneously allows efficient,
+convergent, and repeatable implementation, and a simple definition of
 <i>compliance</i> with requirements<a rel="footnote" href="#fn-2" name="fnd-2"><sup>2</sup></a>. All web-based companies using credit
 cards will know about the need for PCI-DSS compliance, for instance. 
 And US-traded companies will know about Sarbanes-Oxley (SOX). 
@@ -393,11 +394,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 CFEngine uses a pragmatic mixture of the declarative (functional) and
 imperative to represent configurations. Programmers are taught mainly
 imperative programming today, so a declarative approach could seem like
-a barrier to adoption. The principles are very simple however.
+a barrier to adoption. The principles are very simple however, and easy for
+developers to grasp.
 
    <p>In spite of the focus on readability for documenting <i>intent</i>,
 all the familiar structures of imperative programming are, in fact, available
-in CFEngine, just thinly disguised for clarity.
+in CFEngine, just optimized for clarity.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 The main goals of CFEngine are <i>convergence to a desired state</i>, <i>repeatability</i>
@@ -554,7 +556,7 @@ is generally easier to comprehend than `do this to the first, do this to the nex
 so on, because our brains are wired to see patterns.
 
    <p>Thus, loops are as useful for configuration as for programming.  We
-only want to simlify the syntax once again to hide redundant words
+only want to simplify the syntax once again to hide redundant words
 like `foreach'. To do this, CFEngine makes loops implicit. If you
 use a scalar variable reference &lsquo;<samp><span class="samp">$(mylist)</span></samp>&rsquo; to a list variable
 &lsquo;<samp><span class="samp">@(mylist)</span></samp>&rsquo;, CFEngine assumes you want to iterate over each
