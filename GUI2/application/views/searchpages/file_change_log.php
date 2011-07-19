@@ -10,7 +10,7 @@
           <p><input type="hidden" name="report" value="<?php echo $report_type?>"></p>
           <p>Return hostnames only: <input type="checkbox" name="hosts_only" value="true"></p>
           <p>Show long term data:<input type="checkbox" name="long_term" value="true" /></p>
-          <p><input class="btn" type="submit" value="Generate report">  <span>       <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="slvbutton loadsavedsearch">Load saved searches</a>
+          <p><input class="btn" type="submit" value="Generate report">  <span>       <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="btn loadsavedsearch">Load saved searches</a>
 </span> </p>
           </form>
     </div>

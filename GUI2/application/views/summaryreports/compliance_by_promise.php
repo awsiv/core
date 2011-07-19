@@ -2,12 +2,12 @@
     <div id="searchform" class="panel"><div class="panelhead">Summary report query</div>
         <div class="panelcontent">
             <form method="post" target="_self" action="<?php echo site_url('summaryreports/show/') ?>">
-                <p>Promise by handle: (.*+[])    <a target="_self" href="<?php echo site_url('widget/allpolicies') ?>" id="bphghelp-promise" class="help"
+                <p>Promise by handle: (.*+[])    <a target="_self" href="<?php echo site_url('widget/allpolicies') ?>" id="bphghelp-promise" class=""
                                                     title="<?php echo $this->lang->line('report_hostgp_help'); ?>">Help ?</a>
 
                     <input class="searchfield" id="handlebox" type="text" name="name" value="<?php echo set_value('name', ''); ?>"></p>
 
-                <p>Host group: (.*+[])     <a target="_self" href="<?php echo site_url('widget/allclasses') ?>" id="bphghelp" class="help"
+                <p>Host group: (.*+[])     <a target="_self" href="<?php echo site_url('widget/allclasses') ?>" id="bphghelp" class=""
                                               title="<?php echo $this->lang->line('report_hostgp_help'); ?>">Help ?</a>
                     <input class="searchfield" type="text" name="class_regex" size="80" id="hg" value="<?php echo set_value('class_regex', ''); ?>"></p>
 

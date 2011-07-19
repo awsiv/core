@@ -41,6 +41,26 @@ class CF_Search {
     function getId() {
         return $this->id;
     }
+    /**
+     * Returns the parameter form the url that is constructed
+     * return @array with key as parameter and value as the searched value, if nothing returns empty array 
+     */
+    function getParameters() {
+        
+        if (!$this->getUrl()) return array();
+        $segments = explode('/', trim($this->getUrl()));
+        $segments = array_filter($segments);
+        $params = array();
+        $count = count($segments);
+        foreach ($segments as $index=>$value) {
+            if ($index%2 == 0 && $index <= $count) {
+                $nextVal = $index +1;
+                $params[$value] = $segments[$nextVal];
+            }
+        }
+        return $params;
+        
+    }
 
 }
 

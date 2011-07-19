@@ -13,7 +13,7 @@
           <input type="hidden" name="report" value="<?php echo $report_type?>">
            <input type="hidden" name="host" value="All">
           <p>Return hostnames only: <input type="checkbox" name="hosts_only" value="true"></p>
-          <p><input class="btn" type="submit" value="Generate report"> <span>       <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="slvbutton loadsavedsearch">Load saved searches</a>
+          <p><input class="btn" type="submit" value="Generate report"> <span>       <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="btn loadsavedsearch">Load saved searches</a>
 </span> </p>
           </form>
      </div>

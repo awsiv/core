@@ -2,9 +2,10 @@
     <?php if (is_array($group) && !empty($group))  { foreach ((array)$group as $index=>$g) { ?>
         <table class="bundlelist-table">
             <thead>
-                <tr><th scope="blue" colspan="4"><?php echo $index; ?></td></tr>
+                <tr><th scope="blue" colspan="5"><?php echo $index; ?></td></tr>
                 <tr>
                     <th scope="col">Search Label</th>
+                    <th scope="col">Parameters</th>
                     <th scope="col">Date</th>
                     <th scope="col"></th>
                     <th scope="col"></th>
@@ -17,6 +18,11 @@
                         ?>
                         <tr>
                             <td><?php echo $search->getLabel(); ?></td>
+                            <td><?php foreach($search->getParameters()  as $index=>$p) { ?>
+                                <?php echo $index .' :: '.$p; ?>
+                                <?php echo '<br />' ?>
+                            <?php } ?>
+                            </td>
                             <td><?php echo $search->getDate(); ?></td>
                             <td>
                                 <a href="<?php echo site_url() . "/search/index/" . $search->getUrl(); ?>" target="_self"> Run this search</a>
