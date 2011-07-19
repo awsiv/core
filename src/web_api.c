@@ -490,8 +490,12 @@ return "";
 
 int Nova2PHP_LDAPAuthenticate(char *uri,char *basedn,char *passwd)
 {
+#ifdef HAVE_LIBLDAP
 LICENSES = 1;
 return CfLDAPAuthenticate(uri,basedn,passwd);
+#else
+return false;
+#endif
 }
 
 /*****************************************************************************/
