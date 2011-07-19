@@ -39,6 +39,11 @@
             <div class="tables tablesfixed">
                 <?php
                 $result = json_decode($report_result, true);
+                if(key_exists('truncated', $result['meta']))
+                {
+                  $message=$result['meta']['truncated'];
+                  echo "<p class=\"info\">$message</p>";
+                }
                 if (count($result['data']) > 0) {
                    
                     $pg = paging($current, $number_of_rows, $result['meta']['count'], 10);

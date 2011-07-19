@@ -10,6 +10,11 @@
         <div class="tables">
             <?php
             $result = json_decode($report_result, true);
+             if(key_exists('truncated', $result['meta']))
+                {
+                  $message=$result['meta']['truncated'];
+                  echo "<p class=\"info\">$message</p>";
+                }
             $headings = array();
             foreach ($result['meta']['header'] as $key => $value) {
                 if (strtolower($key) == "change") {

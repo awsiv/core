@@ -10,6 +10,11 @@
       <?php
        $result = json_decode($report_result,true);
        //$this->table->set_heading(array_keys($result['meta']['header']))
+        if(key_exists('truncated', $result['meta']))
+                {
+                  $message=$result['meta']['truncated'];
+                  echo "<p class=\"info\">$message</p>";
+                }
        if($result['meta']['count']>0)
        {
         echo "<h2> Total : ".$result['meta']['count']." variables found </h2>";
