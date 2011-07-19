@@ -129,7 +129,7 @@ int Nova2PHP_enterprise_version(char *buf, int bufsize);
 int Nova2PHP_community_version(char *buf, int bufsize);
 
 void Nova2PHP_GetLibraryDocuments(char *pth,char *buffer,int bufsize);
-
+int Nova_AddReportHeader(char *header,int truncated,char *buffer,int bufsize);
 
 // constellation function stubs
 

@@ -1106,8 +1106,10 @@ int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *c
  struct HubQuery *hq;
  struct Rlist *rp;
  mongo_connection dbconn;
- char buffer[CF_BUFSIZE]={0};
-
+ char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0}; 
+ int margin = 0,headerLen=0,noticeLen=0;
+ int truncated = false;
+ 
 /* BEGIN query document */
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -1119,12 +1121,14 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,classreg);
 
 PageRecords(&(hq->records),page,DeleteHubValue);
-snprintf(buffer,sizeof(buffer),
-         "{\"meta\":{\"count\" : %d,"
+snprintf(header,sizeof(header), "\"meta\":{\"count\" : %d,"
          "\"header\":{\"Host\":0,\"Day\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,"
-         "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
-         "}},\"data\":[", page->totalResultCount);
-StartJoin(returnval,buffer,bufsize);
+         "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}}",
+         page->totalResultCount);
+
+headerLen = strlen(header);
+noticeLen = strlen(CF_NOTICE_TRUNCATED);
+StartJoin(returnval,"{\"data\":[",bufsize);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -1146,16 +1150,22 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
                hp->hh->hostname,hp->day,hp->kept,hp->repaired,hp->notkept,
                hp->nid);
       }
+   margin = headerLen + noticeLen + strlen(buffer);
    
-   if (!Join(returnval,buffer,bufsize))
+   if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))    
       {
+      truncated = true;
       break;
       }
    }
 
+ReplaceTrailingChar(returnval, ',','\0');
+EndJoin(returnval,"]",bufsize);
 
-ReplaceTrailingChar(returnval, ',', '\0');
-EndJoin(returnval,"]}\n",bufsize);
+Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+
+Join(returnval,buffer,bufsize);
+EndJoin(returnval,"}}\n",bufsize);
 
 DeleteHubQuery(hq,DeleteHubValue);
 
@@ -1219,12 +1229,13 @@ int Nova2PHP_get_value_graph(char *hostkey,char *day,char *month,char *year,char
 
 int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
+ int margin = 0,headerLen=0,noticeLen=0;
+ int truncated = false;
  struct HubSoftware *hs;
  struct HubQuery *hq;
  struct Rlist *rp;
  mongo_connection dbconn;
-
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -1236,28 +1247,38 @@ int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,in
  hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,true);
  PageRecords(&(hq->records),page,DeleteHubSoftware);
 
- snprintf(buffer,sizeof(buffer),
-	  "{\"meta\":{\"count\" : %d,"
+ snprintf(header,sizeof(header),
+	  "\"meta\":{\"count\" : %d,"
 	  "\"header\": {\"Host\":0,\"Name\":1,\"Version\":2,\"Architecture\":3"
-	  "}},\"data\":[", page->totalResultCount);
- StartJoin(returnval,buffer,bufsize);
+	  "}", page->totalResultCount);
+
+ headerLen = strlen(header);
+ noticeLen = strlen(CF_NOTICE_TRUNCATED);
+
+ StartJoin(returnval,"{\"data\":[",bufsize);
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hs = (struct HubSoftware *)rp->item;
     snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",\"%s\",\"%s\"],",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
-
-    if(!Join(returnval,buffer,bufsize))
+    margin = headerLen + noticeLen + strlen(buffer);
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       truncated = true;
        break;
        }
     }
 
  ReplaceTrailingChar(returnval, ',', '\0');
- EndJoin(returnval,"]}\n",bufsize);
+ EndJoin(returnval,"]",bufsize);
 
+ Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+
+ Join(returnval,buffer,bufsize);
+ EndJoin(returnval,"}}\n",bufsize);
+ 
  DeleteHubQuery(hq,DeleteHubSoftware);
-
+ 
  if (!CFDB_Close(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not close connection to report database");
@@ -1270,7 +1291,9 @@ int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,in
 
 int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE]={0};
+{  char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
+ int margin = 0,headerLen=0,noticeLen=0;
+ int truncated = false;
  struct HubClass *hc;
  struct HubQuery *hq;
  struct Rlist *rp;
@@ -1287,28 +1310,35 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,st
  hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
  PageRecords(&(hq->records),page,DeleteHubClass);
 
- snprintf(buffer,sizeof(buffer),
-	  "{\"meta\":{\"count\" : %d,"
+ snprintf(header,sizeof(header),
+	  "\"meta\":{\"count\" : %d,"
 	  "\"header\": {\"Host\":0,\"Class Context\":1,\"Occurs with Probability\":2,\"Uncertainty\":3,\"Last seen\":4"
-	  "}},\"data\":[", page->totalResultCount);
- StartJoin(returnval,buffer,bufsize);
-
+	  "}", page->totalResultCount);
+ 
+ headerLen = strlen(header);
+ noticeLen = strlen(CF_NOTICE_TRUNCATED);
+ StartJoin(returnval,"{\"data\":[",bufsize);
+ 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hc = (struct HubClass *)rp->item;
    
     snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%lf,%lf,%ld],",hc->hh->hostname,hc->class,hc->prob,hc->dev,hc->t);
-   
-    if(!Join(returnval,buffer,bufsize))
+    margin = headerLen + noticeLen + strlen(buffer);
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       truncated = true;
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval)-1]='\0';
-    }
- EndJoin(returnval,"]}\n",bufsize);
+ ReplaceTrailingChar(returnval,',','\0');
+ EndJoin(returnval,"]",bufsize);
+
+ Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+
+ Join(returnval,buffer,bufsize);
+ EndJoin(returnval,"}}\n",bufsize);
+ 
  DeleteHubQuery(hq,DeleteHubClass);
 
  CFDB_Close(&dbconn);
@@ -1595,12 +1625,13 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
  char rvalBuf[CF_MAXVARSIZE];
  struct HubVariable *hv;
  struct HubQuery *hq;
-
  struct Rlist *rp;
  mongo_connection dbconn;
-  
  int first = true, countadded=false;
  int scope_record_count = 0,last_scope_record_count=0,first_scope_record_count=0, meta_len=0;
+ char header[CF_BUFSIZE]={0};
+ int margin = 0, noticeLen=0,headerLen=0;
+ int truncated = false;
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -1615,9 +1646,12 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
 
  lscope[0] = '\0';
 
- snprintf(buffer,sizeof(buffer),"{\"meta\":{\"count\":%d},",page->totalResultCount);
+ snprintf(header,sizeof(header),"\"meta\":{\"count\":%d",page->totalResultCount);
  meta_len=strlen(buffer);
- StartJoin(returnval,buffer,bufsize);
+
+ headerLen = strlen(header);
+ noticeLen = strlen(CF_NOTICE_TRUNCATED);
+ StartJoin(returnval,"{",bufsize);
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
@@ -1680,8 +1714,10 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
              "[\"%s\",\"%s\",\"%s\",\"%s\",%ld],",
              hv->hh->hostname,typestr,hv->lval,canonifiedValue,hv->t);
 
-    if(!Join(returnval,buffer,bufsize))
+    margin = headerLen + noticeLen + strlen(buffer);
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       truncated = true;
        countadded=true;
        break;
        }
@@ -1693,7 +1729,8 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
     returnval[strlen(returnval)-1] = '\0';
     snprintf(buffer,CF_BUFSIZE,"],\"count\":%d}",last_scope_record_count);
     Join(returnval,buffer,bufsize); // end scope
-    }else if(first)
+    }
+ else if(first)
     {
     returnval[strlen(returnval)-1] = ']';
     }
@@ -1702,8 +1739,11 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
     returnval[strlen(returnval)-1] = '\0';
     }
 
- EndJoin(returnval,"}\n",bufsize);
+ Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
 
+ Join(returnval,buffer,bufsize);
+ EndJoin(returnval,"}}\n",bufsize);
+ 
  DeleteHubQuery(hq,DeleteHubVariable);
 
  if (!CFDB_Close(&dbconn))
@@ -1723,6 +1763,9 @@ int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
  struct Rlist *rp;
  int icmp;
  mongo_connection dbconn;
+ char header[CF_BUFSIZE]={0};
+ int margin = 0,headerLen=0,noticeLen=0;
+ int truncated = false;
 
  switch (*cmp)
     {
@@ -1741,11 +1784,15 @@ int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
  hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,classreg);
  PageRecords(&(hq->records),page,DeleteHubTotalCompliance);
 
- snprintf(buffer,sizeof(buffer),
-	  "{\"meta\":{\"count\" : %d,"
+ snprintf(header,sizeof(header),
+	  "\"meta\":{\"count\" : %d,"
 	  "\"header\": {\"Host\":0,\"Policy\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,\"Last seen\":5" 
-	  "}},\"data\":[", page->totalResultCount);
- StartJoin(returnval,buffer,bufsize);
+	  "}", page->totalResultCount);
+
+ headerLen = strlen(header);
+ noticeLen = strlen(CF_NOTICE_TRUNCATED);
+ 
+ StartJoin(returnval,"{\"data\":[",bufsize);
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
@@ -1754,17 +1801,21 @@ int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
     snprintf(buffer,sizeof(buffer),
              "[\"%s\",\"%s\",%d,%d,%d,%ld],",
              ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,ht->t);
-
-    if(!Join(returnval,buffer,bufsize))
+    margin = headerLen + noticeLen + strlen(buffer);
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       truncated = true;
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval)-1]='\0';
-    }
- EndJoin(returnval,"]}\n",bufsize);
+
+ ReplaceTrailingChar(returnval,',','\0');
+ EndJoin(returnval,"]",bufsize);
+
+ Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+
+ Join(returnval,buffer,bufsize);
+ EndJoin(returnval,"}}\n",bufsize);
  
  DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
@@ -1785,7 +1836,10 @@ int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int reg
  struct HubQuery *hq;
  struct Rlist *rp;
  mongo_connection dbconn;
-
+ char header[CF_BUFSIZE]={0};
+ int margin = 0,headerLen=0,noticeLen=0;
+ int truncated = false;
+ 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
@@ -1800,11 +1854,14 @@ int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int reg
  hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
  PageRecords(&(hq->records),page,DeleteHubPromiseCompliance);
 
- snprintf(buffer,sizeof(buffer),
-          "{\"meta\":{\"count\" : %d,"
+ snprintf(header,sizeof(header),
+          "\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"Promise Handle\":1,\"Last Known State\":2,\"Probability Kept\":3,\"Uncertainty\":4,\"Last seen\":5"
-          "}},\"data\":[",page->totalResultCount);
- StartJoin(returnval,buffer,bufsize);
+          "}",page->totalResultCount);
+ 
+ headerLen = strlen(header);
+ noticeLen = strlen(CF_NOTICE_TRUNCATED);
+ StartJoin(returnval,"{\"data\":[",bufsize);
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
@@ -1812,17 +1869,23 @@ int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int reg
 
     snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",\"%s\",%.2lf,%.2lf,%ld],",
              hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,hp->t);
-    if(!Join(returnval,buffer,bufsize))
+
+    margin = headerLen + noticeLen + strlen(buffer);
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       truncated = true;
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval)-1]='\0';
-    }
+ 
+ ReplaceTrailingChar(returnval,',','\0');
+ EndJoin(returnval,"]",bufsize);
 
- EndJoin(returnval,"]}\n",bufsize);
+ Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+
+ Join(returnval,buffer,bufsize);
+ EndJoin(returnval,"}}\n",bufsize);
+
  DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
  if (!CFDB_Close(&dbconn))
@@ -1845,6 +1908,9 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
  mongo_connection dbconn;
  char inout[CF_SMALLBUF];
  time_t then;
+ char header[CF_BUFSIZE]={0};
+ int margin = 0,headerLen=0,noticeLen=0;
+ int truncated = false;
   
 /* BEGIN query document */
 
@@ -1856,11 +1922,15 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
  hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
  PageRecords(&(hq->records),page,DeleteHubLastSeen);
 
- snprintf(buffer,sizeof(buffer),
-          "{\"meta\":{\"count\" : %d,"
+ snprintf(header,sizeof(header),
+          "\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"Initiated\":1,\"Remote host name\":2,\"Remote IP address\":3,\"Last seen\":4,\"Hours ago\":5,\"Avg interval\":6,\"Uncertainty\":7,\"Remote host key\":8"
-          "}},\"data\":[",page->totalResultCount);
- StartJoin(returnval,buffer,bufsize);
+          "}",page->totalResultCount);
+ 
+ headerLen = strlen(header);
+ noticeLen = strlen(CF_NOTICE_TRUNCATED);
+ 
+ StartJoin(returnval,"{\"data\":[",bufsize);
 
  count += strlen(returnval);
 
@@ -1886,16 +1956,22 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
              hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,hl->t,
              hl->hrsago,hl->hrsavg,hl->hrsdev,
              hl->rhost->keyhash);
-   
-    if(!Join(returnval,buffer,bufsize))
+    margin = headerLen + noticeLen + strlen(buffer);
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       truncated = true;
        break;
        }
     }
 
- ReplaceTrailingChar(returnval, ',', '\0');
- EndJoin(returnval,"]}\n",bufsize);
+ ReplaceTrailingChar(returnval,',','\0');
+ EndJoin(returnval,"]",bufsize);
 
+ Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+
+ Join(returnval,buffer,bufsize);
+ EndJoin(returnval,"}}\n",bufsize);
+ 
  DeleteHubQuery(hq,DeleteHubLastSeen);
 
  CFDB_Close(&dbconn);
@@ -1911,6 +1987,9 @@ int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg
  struct HubQuery *hq;
  struct Rlist *rp;
  mongo_connection dbconn;
+ char header[CF_BUFSIZE]={0};
+ int margin = 0,headerLen=0,noticeLen=0;
+ int truncated = false;
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -1921,12 +2000,15 @@ int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg
  hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,true,classreg);
  PageRecords(&(hq->records),page,DeleteHubPerformance);
 
- snprintf(buffer,sizeof(buffer),
-          "{\"meta\":{\"count\" : %d,"
+ snprintf(header,sizeof(header),
+          "\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"Event\":1,\"Last time\":2,\"Avg Time\":3,\"Uncertainty\":4,\"Last performed\":5,"
 	  "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
-          "}},\"data\":[",page->totalResultCount);
- StartJoin(returnval,buffer,bufsize);
+          "}",page->totalResultCount);
+ 
+ headerLen = strlen(header);
+ noticeLen = strlen(CF_NOTICE_TRUNCATED);
+ StartJoin(returnval,"{\"data\":[",bufsize);
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
@@ -1946,17 +2028,21 @@ int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg
 		hP->hh->hostname,hP->event,hP->q,hP->e,hP->d,hP->t,
 		hP->nid);
        }
-   
-    if(!Join(returnval,buffer,bufsize))
+    margin = headerLen + noticeLen + strlen(buffer);
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       truncated = true;
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval)-1] = '\0';
-    }
- EndJoin(returnval,"]}\n",bufsize);
+
+ ReplaceTrailingChar(returnval,',','\0');
+ EndJoin(returnval,"]",bufsize);
+
+ Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+
+ Join(returnval,buffer,bufsize);
+ EndJoin(returnval,"}}\n",bufsize);
 
  DeleteHubQuery(hq,DeleteHubPerformance);
 
@@ -1977,6 +2063,9 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,str
  struct HubQuery *hq;
  struct Rlist *rp;
  mongo_connection dbconn;
+ char header[CF_BUFSIZE]={0};
+ int margin = 0,headerLen=0,noticeLen=0;
+ int truncated = false;
 
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
@@ -1987,28 +2076,35 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,str
  hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
  PageRecords(&(hq->records),page,DeleteHubSetUid);
 
- snprintf(buffer,sizeof(buffer),
-          "{\"meta\":{\"count\" : %d,"
+ snprintf(header,sizeof(header),
+          "\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"File\":1"
-          "}},\"data\":[", page->totalResultCount);
- StartJoin(returnval,buffer,bufsize);
+          "}", page->totalResultCount);
+
+ headerLen = strlen(header);
+ noticeLen = strlen(CF_NOTICE_TRUNCATED);
+ StartJoin(returnval,"{\"data\":[",bufsize);
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hS = ( struct HubSetUid *)rp->item;
 
     snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\"],",hS->hh->hostname,hS->path);
-
-    if(!Join(returnval,buffer,bufsize))
+    margin = headerLen + noticeLen + strlen(buffer);
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       truncated = true;
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval)-1] = '\0';
-    }
- EndJoin(returnval,"]}\n",bufsize);
+
+ ReplaceTrailingChar(returnval,',','\0');
+ EndJoin(returnval,"]",bufsize);
+
+ Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+
+ Join(returnval,buffer,bufsize);
+ EndJoin(returnval,"}}\n",bufsize);
 
  DeleteHubQuery(hq,DeleteHubSetUid);
 
@@ -2025,11 +2121,14 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,str
 
 int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE]={0};
  struct HubBundleSeen *hb;   
  struct HubQuery *hq;
  struct Rlist *rp;
  mongo_connection dbconn;
+ char header[CF_BUFSIZE]={0};
+ int margin = 0,headerLen=0,noticeLen=0;
+ int truncated = false;
 
 /* BEGIN query document */
 
@@ -2041,12 +2140,15 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,s
 
  hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg,true);
  PageRecords(&(hq->records),page,DeleteHubBundleSeen);
- snprintf(buffer,sizeof(buffer),
-          "{\"meta\":{\"count\" : %d,"
+ snprintf(header,sizeof(header),
+          "\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"Hours Ago\":3,\"Avg Interval\":4,\"Uncertainty\":5,"
 	  "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
-          "}},\"data\":[",page->totalResultCount);
- StartJoin(returnval,buffer,bufsize);
+          "}",page->totalResultCount);
+
+ headerLen = strlen(header);
+ noticeLen = strlen(CF_NOTICE_TRUNCATED);
+ StartJoin(returnval,"{\"data\":[",bufsize);
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
@@ -2073,16 +2175,21 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,s
 		hb->hrsago,hb->hrsavg,hb->hrsdev,
 		hb->nid);
        }
-
-    if(!Join(returnval,buffer,bufsize))
+    margin = headerLen + noticeLen + strlen(buffer);
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       truncated = true;
        break;
        }
     }
 
- ReplaceTrailingChar(returnval, ',', '\0');
- EndJoin(returnval,"]}",bufsize);
+ ReplaceTrailingChar(returnval,',','\0');
+ EndJoin(returnval,"]",bufsize);
 
+ Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+ Join(returnval,buffer,bufsize);
+ EndJoin(returnval,"}}\n",bufsize);
+ 
  DeleteHubQuery(hq,DeleteHubBundleSeen);
 
  if (!CFDB_Close(&dbconn))
@@ -2103,7 +2210,10 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
  struct Rlist *rp;
  int icmp;
  mongo_connection dbconn;
-
+ char header[CF_BUFSIZE]={0};
+ int margin = 0,headerLen=0,noticeLen=0;
+ int truncated = false;
+ 
  switch (*cmp)
     {
     case '<': icmp = CFDB_LESSTHANEQ;
@@ -2121,12 +2231,14 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
  hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,classreg, lookInArchive);
  PageRecords(&(hq->records),page,DeleteHubFileChanges);
 
- snprintf(buffer,sizeof(buffer),
-          "{\"meta\":{\"count\" : %d,"
+ snprintf(header,sizeof(header),
+          "\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2,"
 	  "\"Note\":{\"index\":3,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
-          "}},\"data\":[",page->totalResultCount);
- StartJoin(returnval,buffer,bufsize);
+          "}",page->totalResultCount);
+ headerLen = strlen(header);
+ noticeLen = strlen(CF_NOTICE_TRUNCATED);
+ StartJoin(returnval,"{\"data\":[",bufsize);
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
@@ -2145,17 +2257,24 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
                 "[\"show\",\"\",\"\",\"\",\"%s\"]],",
                 hC->hh->hostname,hC->path,hC->t,
                 hC->nid);
-       }     
-
-    if(!Join(returnval,buffer,bufsize))
+       }
+    
+    margin = headerLen + noticeLen + strlen(buffer);
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       truncated = true;
        break;
        }
     }
 
- ReplaceTrailingChar(returnval, ',', '\0');
- EndJoin(returnval,"]}\n",bufsize);
-   
+ ReplaceTrailingChar(returnval,',','\0');
+ EndJoin(returnval,"]",bufsize);
+
+ Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+
+ Join(returnval,buffer,bufsize);
+ EndJoin(returnval,"}}\n",bufsize);
+ 
  DeleteHubQuery(hq,DeleteHubFileChanges);
    
  CFDB_Close(&dbconn);
@@ -2173,7 +2292,10 @@ int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,tim
  struct Rlist *rp;
  int icmp;
  mongo_connection dbconn;
-
+ char header[CF_BUFSIZE]={0};
+ int margin = 0,headerLen=0,noticeLen=0;
+ int truncated = false;
+ 
  switch (*cmp)
     {
     case '<': icmp = CFDB_LESSTHANEQ;
@@ -2191,12 +2313,14 @@ int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,tim
  hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,true,classreg,lookInArchive);
  PageRecords(&(hq->records),page,DeleteHubFileDiff);
  
- snprintf(buffer,sizeof(buffer),
-          "{\"meta\":{\"count\" : %d,"
+ snprintf(header,sizeof(header),
+          "\"meta\":{\"count\" : %d,"
           "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2,"
 	  "\"Change\":{\"index\":3,\"subkeys\":{\"plusminus\":0,\"line\":1,\"diff\":2}}"
-          "}},\"data\":[",page->totalResultCount);
- StartJoin(returnval,buffer,bufsize);
+          "}",page->totalResultCount);
+ headerLen = strlen(header);
+ noticeLen = strlen(CF_NOTICE_TRUNCATED);
+ StartJoin(returnval,"{\"data\":[",bufsize);
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
@@ -2205,17 +2329,21 @@ int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,tim
     snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,%s],",
              hd->hh->hostname,hd->path,hd->t,Nova_FormatDiff(hd->diff));
 
-    if(!Join(returnval,buffer,bufsize))
+    margin = headerLen + noticeLen + strlen(buffer);
+    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
+       truncated = true;
        break;
        }
     }
 
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval) - 1] = '\0'; 
-    }
- EndJoin(returnval,"]}\n",bufsize);
+ ReplaceTrailingChar(returnval,',','\0');
+ EndJoin(returnval,"]",bufsize);
+
+ Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+
+ Join(returnval,buffer,bufsize);
+ EndJoin(returnval,"}}\n",bufsize);
 
  DeleteHubQuery(hq,DeleteHubFileDiff);
 
@@ -2226,7 +2354,20 @@ int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,tim
 
  return true;
 }
-
+/*****************************************************************************/
+int Nova_AddReportHeader(char *header,int truncated,char *buffer,int bufsize)
+{
+ buffer[0]='\0';
+ if(truncated)
+    {
+    snprintf(buffer,bufsize,",%s,\"truncated\":\"%s\"",header,CF_NOTICE_TRUNCATED);
+    }
+ else
+    {
+    snprintf(buffer,bufsize,",%s",header);
+    }
+ return true;
+}
 /*****************************************************************************/
 /* Search for hosts with property X,Y,Z                                      */
 /*****************************************************************************/
