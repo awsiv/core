@@ -807,7 +807,6 @@ version = LDAP_VERSION3;
 if ((ret = ldap_set_option(ld,LDAP_OPT_PROTOCOL_VERSION,&version)) != LDAP_SUCCESS)
    {
    CfOut(cf_error,"","Trouble setting LDAP option %s",ldap_err2string(ret));   
-   ldap_unbind(ld);
    return NULL;
    }
 
@@ -821,6 +820,7 @@ if (cf_strcmp(sec,"sasl") == 0)
    if (err == -1)
       {
       CfOut(cf_verbose,"ldap_sasl_bind"," !! Unable to authenticate with given credentials");
+      return NULL;
       }
    }
 else
