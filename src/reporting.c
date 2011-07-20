@@ -1303,14 +1303,6 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_ReportSoftware(struct CfPackageManager *list)
-
-{
-// Deprecated
-}
-
-/*****************************************************************************/
-
 void Nova_ReportPatches(struct CfPackageManager *list)
 
 { FILE *fout;
