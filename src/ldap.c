@@ -26,6 +26,9 @@ void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,cha
 void *CfLDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,char *sec);
 void *CfRegLDAP(char *uri,char *basedn,char *filter,char *name,char *scopes,char *regex,char *sec);
 
+int *CfLDAP_JSON_GetSeveralAttributes(char *uri,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,int page,int linesperpage,char *buffer, int bufsize);
+int *CfLDAP_JSON_GetSingleAttributeList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec,int page,int linesperpage,char *buffer, int bufsize);
+
 int NovaStr2Scope(char *scope);
 
 #endif
@@ -33,10 +36,10 @@ int NovaStr2Scope(char *scope);
 /*****************************************************************************/
 
 #ifdef HAVE_LIBLDAP
-
+v
 int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd)
 
-{ LDAP *ld;
+v{ LDAP *ld;
   
 if (LICENSES == 0)
    {
@@ -774,6 +777,438 @@ return NULL;
 }
 
 #endif /* HAVE_LIBLDAP */
+
+/*****************************************************************************/
+
+#ifdef HAVE_LIBLDAP
+int *CfLDAP_JSON_GetSeveralAttributes(char *uri,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,int page,int linesperpage,char *buffer, int bufsize)
+
+{ LDAP *ld;
+  LDAPMessage *res, *msg;
+  LDAPControl **serverctrls;
+  BerElement *ber;
+  struct berval **vals;
+  char **referrals;
+  int version,i,ret,parse_ret,num_entries = 0,num_refs = 0;
+  char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
+  int scope = NovaStr2Scope(scopes), count;
+  struct Rlist *master = NULL,*rp,*dn_rp;
+  struct Item *ip;
+  struct CfAssoc ap;
+  char work[CF_BUFSIZE];
+  
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
+   {
+   return NULL;
+   }
+
+if ((ret = ldap_search_ext_s(ld,basedn,scope,filter,NULL,0,NULL,NULL,NULL,LDAP_NO_LIMIT,&res)) != LDAP_SUCCESS)
+   {
+   CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
+   ldap_unbind(ld);
+   return NULL;
+   }
+
+num_entries = ldap_count_entries(ld,res);
+num_refs = ldap_count_references(ld,res);
+count = 0;
+
+for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,msg))
+   {
+   count++;
+   
+   if (count % linesperpage > page)
+      {
+      break;
+      }
+
+   if (count % linesperpage < page)
+      {
+      continue;
+      }
+
+   switch(ldap_msgtype(msg))
+      {
+      case LDAP_RES_SEARCH_ENTRY:
+          
+          if ((dn = ldap_get_dn(ld,msg)) != NULL)
+             {
+             CfOut(cf_verbose,""," -> LDAP query found dn: %s\n",dn);
+             }
+          else
+             {
+             CfOut(cf_verbose,""," !! No LDAP query found\n");
+             }
+          
+          /* Iterate through each attribute in the entry. */
+
+          dn_rp = PrependRlistAlien(&master,NewAssoc(dn,"junk",CF_SCALAR,cf_slist));
+          ap = (struct CfAssoc *)dn_rp->item;
+          free(ap->rval);
+          ap->rval = NULL;
+          
+          for (a = ldap_first_attribute(ld,res,&ber); a != NULL; a = ldap_next_attribute(ld,res,ber))
+             {
+             /* Get and print all values for each attribute. */
+
+             Debug(" ->   LDAP query found attribute %s",a);
+             
+             if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
+                {                
+                for (i = 0; vals[i] != NULL; i++)
+                   {
+                   for (rp = names; rp != NULL; rp=rp->next)
+                      {
+                      if (cf_strcmp(a,rp->name) == 0)
+                         {
+                         ap = dn_rp->item;
+                         CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]);
+                         PrependItem(&(ap->rval),(char *)vals[i]->bv_val,name);
+                         }
+                      }
+                   }
+                
+                ldap_value_free_len(vals);
+                }
+             
+             ldap_memfree(a);
+             }
+          
+          if (ber != NULL)
+             {             
+             ber_free(ber,0);             
+             }
+
+          ldap_memfree(dn);
+          break;
+          
+      case LDAP_RES_SEARCH_REFERENCE:
+          
+       /* The server sent a search reference encountered during the search operation. */
+       /* Parse the result and print the search references.
+          Ideally, rather than print them out, you would follow the references....what does this mean? */
+          
+          parse_ret = ldap_parse_reference(ld,msg,&referrals,NULL,0);
+          
+          if (parse_ret != LDAP_SUCCESS)
+             {
+             CfOut(cf_error,"","Unable to parse LDAP references: %s\n",ldap_err2string(parse_ret));
+             ldap_unbind(ld);
+             return NULL;
+             }
+
+          if (referrals != (char **)NULL)
+             {
+             for (i = 0; referrals[i] != NULL; i++)
+                {                
+                CfOut(cf_verbose,"","Search reference: %s\n\n",referrals[i]);
+                }
+             
+             ldap_value_free(referrals);
+             }
+          
+          break;
+          
+      case LDAP_RES_SEARCH_RESULT:
+
+          /* At the end, a result status is sent */
+
+          CfOut(cf_verbose,""," -> LDAP Query result received\n");
+
+          parse_ret = ldap_parse_result(ld,msg,&ret,&matched_msg,&error_msg,NULL,&serverctrls,0);
+          
+          if (parse_ret != LDAP_SUCCESS)
+             {             
+             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));             
+             ldap_unbind(ld);             
+             return NULL;
+             }
+
+          /* Then check the results of the LDAP search operation. */
+
+          if (ret != LDAP_SUCCESS)
+             {             
+             CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
+             
+             if (error_msg != NULL & *error_msg != '\0')
+                {                
+                CfOut(cf_error,"","%s", error_msg);                
+                }
+             
+             if (matched_msg != NULL && *matched_msg != '\0')
+                {                
+                CfOut(cf_verbose,"","Part of the DN that matches an existing entry: %s\n", matched_msg);
+                }
+             }
+          else
+             {          
+             CfOut(cf_verbose,""," -> LDAP search was successful, %d entries, %d references",num_entries,num_refs);
+             }          
+          break;
+          
+      default:          
+          break;
+          
+      }
+   }
+
+/* Disconnect when done. */
+
+ldap_unbind(ld);
+
+/* Now format the data in JSON */
+
+strcpy(work,"{");
+
+snprintf(work,"\"keys\" : [");
+Join(work,buffer,bufsize);
+
+for (rp = master; rp != NULL; rp=rp->next)
+   {
+   snprintf(work,"\"%s\" : \"%s\",");
+   Join(work,buffer,bufsize);
+   }
+
+snprintf(work,"], \"data\" : [");
+
+for (rp = master; rp != NULL; rp=rp->next)
+   {
+   Join("{");
+
+   for (ip = ap->rval; ip != NULL; ip=ip->next)
+      {
+      if (ip->next)
+         {
+         snprintf(work,"\"%s\" : \"%s\",",ip->class,ip->name);
+         }
+      else
+         {
+         snprintf(work,"\"%s\" : \"%s\"",ip->class,ip->name);
+         }
+
+      Join(work,buffer,bufsize);
+      }
+
+   if (rp->next)
+      {
+      Join("},",buffer,bufsize);
+      }
+   else
+      {
+      Join("}",buffer,bufsize);
+      }
+
+   Join("]",buffer,bufsize);
+   ap = (struct CfAssoc *)rp->item;
+   DeleteItemList(ap->rval);
+   DeleteAssoc(ap);
+   }
+
+DeleteRlist(master);
+
+Join("}",buffer,bufsize);
+
+return return_value;
+}
+
+#else /* HAVE_LIBLDAP */
+
+void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec)
+{
+CfOut(cf_error, "", "LDAP support is disabled");
+return NULL;
+}
+
+#endif /* HAVE_LIBLDAP */
+
+/*****************************************************************************/
+
+#ifdef HAVE_LIBLDAP
+int *CfLDAP_JSON_GetSingleAttributeList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec,int page,int linesperpage,char *buffer, int bufsize)
+
+{ LDAP *ld;
+  LDAPMessage *res, *msg;
+  LDAPControl **serverctrls;
+  BerElement *ber;
+  struct berval **vals;
+  char **referrals;
+  int version,i,ret,parse_ret,num_entries = 0,num_refs = 0;
+  char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
+  int scope = NovaStr2Scope(scopes),count = 0;
+  struct Rlist *return_value = NULL,*rp;
+  
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
+   {
+   return NULL;
+   }
+
+if ((ret = ldap_search_ext_s(ld,basedn,scope,filter,NULL,0,NULL,NULL,NULL,LDAP_NO_LIMIT,&res)) != LDAP_SUCCESS)
+   {
+   CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
+   ldap_unbind(ld);
+   return NULL;
+   }
+
+num_entries = ldap_count_entries(ld,res);
+num_refs = ldap_count_references(ld,res);
+
+for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,msg))
+   {
+   count++;
+   
+   if (count % linesperpage > page)
+      {
+      break;
+      }
+
+   if (count % linesperpage < page)
+      {
+      continue;
+      }
+
+   switch(ldap_msgtype(msg))
+      {
+      case LDAP_RES_SEARCH_ENTRY:
+          
+          if ((dn = ldap_get_dn(ld,msg)) != NULL)
+             {
+             CfOut(cf_verbose,""," -> LDAP query found dn: %s\n",dn);
+             }
+          else
+             {
+             CfOut(cf_verbose,""," !! No LDAP query found\n");
+             }
+          
+          /* Iterate through each attribute in the entry. */
+          
+          for (a = ldap_first_attribute(ld,res,&ber); a != NULL; a = ldap_next_attribute(ld,res,ber))
+             {
+             /* Get and print all values for each attribute. */
+
+             Debug(" ->   LDAP query found attribute %s",a);
+             
+             if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
+                {                
+                for (i = 0; vals[i] != NULL; i++)
+                   {
+                   if (cf_strcmp(a,rp->name) == 0)
+                      {
+                      CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]);
+                      AppendRScalar(&return_value,(char *)vals[i]->bv_val,CF_SCALAR);
+                      }
+                   }
+                
+                ldap_value_free_len(vals);
+                }
+             
+             ldap_memfree(a);
+             }
+          
+          if (ber != NULL)
+             {             
+             ber_free(ber,0);             
+             }
+
+          ldap_memfree(dn);
+          break;
+          
+      case LDAP_RES_SEARCH_REFERENCE:
+          
+       /* The server sent a search reference encountered during the search operation. */
+       /* Parse the result and print the search references.
+          Ideally, rather than print them out, you would follow the references....what does this mean? */
+          
+          parse_ret = ldap_parse_reference(ld,msg,&referrals,NULL,0);
+          
+          if (parse_ret != LDAP_SUCCESS)
+             {
+             CfOut(cf_error,"","Unable to parse LDAP references: %s\n",ldap_err2string(parse_ret));
+             ldap_unbind(ld);
+             return NULL;
+             }
+
+          if (referrals != (char **)NULL)
+             {
+             for (i = 0; referrals[i] != NULL; i++)
+                {                
+                CfOut(cf_verbose,"","Search reference: %s\n\n",referrals[i]);
+                }
+             
+             ldap_value_free(referrals);
+             }
+          
+          break;
+          
+      case LDAP_RES_SEARCH_RESULT:
+
+          /* At the end, a result status is sent */
+
+          CfOut(cf_verbose,""," -> LDAP Query result received\n");
+
+          parse_ret = ldap_parse_result(ld,msg,&ret,&matched_msg,&error_msg,NULL,&serverctrls,0);
+          
+          if (parse_ret != LDAP_SUCCESS)
+             {             
+             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));             
+             ldap_unbind(ld);             
+             return NULL;
+             }
+
+          /* Then check the results of the LDAP search operation. */
+
+          if (ret != LDAP_SUCCESS)
+             {             
+             CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
+             
+             if (error_msg != NULL & *error_msg != '\0')
+                {                
+                CfOut(cf_error,"","%s", error_msg);                
+                }
+             
+             if (matched_msg != NULL && *matched_msg != '\0')
+                {                
+                CfOut(cf_verbose,"","Part of the DN that matches an existing entry: %s\n", matched_msg);
+                }
+             }
+          else
+             {          
+             CfOut(cf_verbose,""," -> LDAP search was successful, %d entries, %d references",num_entries,num_refs);
+             }          
+          break;
+          
+      default:          
+          break;
+          
+      }
+   }
+
+/* Format JSON */
+
+strcpy(buffer,"[");
+
+for (rp = return_value; rp != NULL; rp=rp->next)
+   {
+   snprintf(work,CF_BUFSIZE,"\"%s\",");
+   Join(work,buffer,bufsize);
+   }
+
+buffer[strlen(buffer)-1] = ']';
+
+/* Disconnect when done. */
+ldap_unbind(ld);
+return 0;
+}
+
+#else /* HAVE_LIBLDAP */
+
+void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec)
+{
+CfOut(cf_error, "", "LDAP support is disabled");
+return NULL;
+}
+
+#endif /* HAVE_LIBLDAP */
+
 
 /*****************************************************************************/
 /* Level                                                                     */
