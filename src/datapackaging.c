@@ -1036,7 +1036,7 @@ void Nova_PackSoftware(struct Item **reply,char *header,time_t from,enum cfd_men
 
 CfOut(cf_verbose,""," -> Packing software data");
    
-snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_SOFTWARE_INSTALLED);
+snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,SOFTWARE_PACKAGES_CACHE);
 MapName(name);
 
 if ((fin = fopen(name,"r")) == NULL)

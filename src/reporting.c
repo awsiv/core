@@ -1359,7 +1359,7 @@ void Nova_SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,
   struct Item *ip,*file = NULL;
   int i = 0;
 
-snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_SOFTWARE_INSTALLED);
+snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,SOFTWARE_PACKAGES_CACHE);
 MapName(name);
 
 if ((fin = fopen(name,"r")) == NULL)
