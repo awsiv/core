@@ -11,7 +11,7 @@
               ?>
          </div>
          <!--<h2>Matched Hosts</h2>-->
-		   <div class="tables">
+		   <div class="tables tablesfixed">
 			<?php 
                         $data=json_decode($report_result,true);
                         echo  host_only_table($data);

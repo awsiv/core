@@ -63,6 +63,12 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 </p>
 
 <p>
+        <label for="users_directory">Users Directory <span class="required">*</span></label>
+        <?php// echo form_error('login_attribute'); ?>
+        <input id="users_directory" type="text" name="users_directory"  value="<?php echo $users_directory ?>"  />
+</p>
+
+<p>
         <label for="active_directory">Active directory <span class="required">*</span></label>
         <?php //echo form_error('active_directory'); ?>
       

@@ -121,7 +121,7 @@ function host_only_table($data_array) {
     if (count($cells) > 0) {
         $table.="<table><tr>";
         for ($i = 0; $i < count($cells); $i++) {
-            if ($i % 6 == 0 && $i != 0) {
+            if ($i % 3 == 0 && $i != 0) {
                 $table.='</tr><tr>';
             }
             $table.='<td>' . $cells[$i] . '</td>';
