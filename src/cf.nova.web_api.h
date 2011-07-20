@@ -6,7 +6,7 @@
 
 /*****************************************************************************/
 /*                                                                           */
-/* File: web_api.c                                                           */
+/* File: cf.nova.web_api.h                                                   */
 /*                                                                           */
 /* Created: Tue Feb 22 14:35:16 2011                                         */
 /*                                                                           */
@@ -20,6 +20,12 @@
 // Separation needed because it is included by php extension
 
 int Nova2PHP_LDAPAuthenticate(char *uri,char *basedn,char *passwd);
+void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
+
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize);
+
+int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize);
+
 bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_week(char *keyHash, char *vitalId, char *buffer, int bufsize);

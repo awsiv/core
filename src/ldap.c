@@ -18,7 +18,6 @@
 #ifdef HAVE_LIBLDAP
 
 /* Prototypes */
-
 int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd);
 LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *pwd);
 void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
@@ -26,37 +25,14 @@ void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,cha
 void *CfLDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,char *sec);
 void *CfRegLDAP(char *uri,char *basedn,char *filter,char *name,char *scopes,char *regex,char *sec);
 
-int *CfLDAP_JSON_GetSeveralAttributes(char *uri,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,int page,int linesperpage,char *buffer, int bufsize);
-int *CfLDAP_JSON_GetSingleAttributeList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec,int page,int linesperpage,char *buffer, int bufsize);
-
 int NovaStr2Scope(char *scope);
 
 #endif
 
+
 /*****************************************************************************/
 
 #ifdef HAVE_LIBLDAP
-v
-int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd)
-
-v{ LDAP *ld;
-  
-if (LICENSES == 0)
-   {
-   CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
-   return false;
-   }
-
-if ((ld = NovaQueryLDAP(uri,basedn,"sasl",passwd)) == NULL)
-   {
-   return false;
-   }
-
-return true;
-}
-
-/*****************************************************************************/
-
 void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec)
 
 { LDAP *ld;
@@ -778,10 +754,32 @@ return NULL;
 
 #endif /* HAVE_LIBLDAP */
 
+
 /*****************************************************************************/
 
 #ifdef HAVE_LIBLDAP
-int *CfLDAP_JSON_GetSeveralAttributes(char *uri,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,int page,int linesperpage,char *buffer, int bufsize)
+
+int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd)
+
+{ LDAP *ld;
+  
+if (LICENSES == 0)
+   {
+   CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
+   return false;
+   }
+
+if ((ld = NovaQueryLDAP(uri,basedn,"sasl",passwd)) == NULL)
+   {
+   return false;
+   }
+
+return true;
+}
+
+/*****************************************************************************/
+
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -794,19 +792,19 @@ int *CfLDAP_JSON_GetSeveralAttributes(char *uri,char *basedn,char *filter,struct
   int scope = NovaStr2Scope(scopes), count;
   struct Rlist *master = NULL,*rp,*dn_rp;
   struct Item *ip;
-  struct CfAssoc ap;
+  struct CfAssoc *ap;
   char work[CF_BUFSIZE];
   
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,passwd)) == NULL)
    {
-   return NULL;
+   return -1;
    }
 
 if ((ret = ldap_search_ext_s(ld,basedn,scope,filter,NULL,0,NULL,NULL,NULL,LDAP_NO_LIMIT,&res)) != LDAP_SUCCESS)
    {
    CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
    ldap_unbind(ld);
-   return NULL;
+   return -1;
    }
 
 num_entries = ldap_count_entries(ld,res);
@@ -859,11 +857,13 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                    {
                    for (rp = names; rp != NULL; rp=rp->next)
                       {
-                      if (cf_strcmp(a,rp->name) == 0)
+                      if (cf_strcmp(a,rp->item) == 0)
                          {
+                         struct Item **list;
                          ap = dn_rp->item;
+                         list = (struct Item **)&(ap->rval);
                          CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]);
-                         PrependItem(&(ap->rval),(char *)vals[i]->bv_val,name);
+                         PrependItem(list,(char *)vals[i]->bv_val,rp->item);
                          }
                       }
                    }
@@ -894,7 +894,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_error,"","Unable to parse LDAP references: %s\n",ldap_err2string(parse_ret));
              ldap_unbind(ld);
-             return NULL;
+             return -1;
              }
 
           if (referrals != (char **)NULL)
@@ -921,7 +921,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {             
              CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));             
              ldap_unbind(ld);             
-             return NULL;
+             return -1;
              }
 
           /* Then check the results of the LDAP search operation. */
@@ -960,30 +960,34 @@ ldap_unbind(ld);
 
 strcpy(work,"{");
 
-snprintf(work,"\"keys\" : [");
+snprintf(work,CF_BUFSIZE,"\"keys\" : [");
 Join(work,buffer,bufsize);
 
 for (rp = master; rp != NULL; rp=rp->next)
    {
-   snprintf(work,"\"%s\" : \"%s\",");
+   snprintf(work,CF_BUFSIZE,"\"%s\",",(char *)rp->item);
    Join(work,buffer,bufsize);
    }
 
-snprintf(work,"], \"data\" : [");
+snprintf(work,CF_BUFSIZE,"], \"data\" : [");
 
 for (rp = master; rp != NULL; rp=rp->next)
    {
-   Join("{");
+   struct Item *list;
+   ap = rp->item;
+   list = (struct Item *)(ap->rval);
 
-   for (ip = ap->rval; ip != NULL; ip=ip->next)
+   Join("{",buffer,bufsize);
+
+   for (ip = list; ip != NULL; ip=ip->next)
       {
       if (ip->next)
          {
-         snprintf(work,"\"%s\" : \"%s\",",ip->class,ip->name);
+         snprintf(work,CF_BUFSIZE,"\"%s\" : \"%s\",",ip->classes,ip->name);
          }
       else
          {
-         snprintf(work,"\"%s\" : \"%s\"",ip->class,ip->name);
+         snprintf(work,CF_BUFSIZE,"\"%s\" : \"%s\"",ip->classes,ip->name);
          }
 
       Join(work,buffer,bufsize);
@@ -1008,15 +1012,16 @@ DeleteRlist(master);
 
 Join("}",buffer,bufsize);
 
-return return_value;
+return 0;
 }
 
 #else /* HAVE_LIBLDAP */
 
-void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec)
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
+
 {
 CfOut(cf_error, "", "LDAP support is disabled");
-return NULL;
+return -1;
 }
 
 #endif /* HAVE_LIBLDAP */
@@ -1024,7 +1029,7 @@ return NULL;
 /*****************************************************************************/
 
 #ifdef HAVE_LIBLDAP
-int *CfLDAP_JSON_GetSingleAttributeList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec,int page,int linesperpage,char *buffer, int bufsize)
+int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -1033,20 +1038,20 @@ int *CfLDAP_JSON_GetSingleAttributeList(char *uri,char *basedn,char *filter,char
   struct berval **vals;
   char **referrals;
   int version,i,ret,parse_ret,num_entries = 0,num_refs = 0;
-  char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
+  char *a, *dn, *matched_msg = NULL, *error_msg = NULL,work[CF_BUFSIZE];
   int scope = NovaStr2Scope(scopes),count = 0;
   struct Rlist *return_value = NULL,*rp;
   
 if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
    {
-   return NULL;
+   return -1;
    }
 
 if ((ret = ldap_search_ext_s(ld,basedn,scope,filter,NULL,0,NULL,NULL,NULL,LDAP_NO_LIMIT,&res)) != LDAP_SUCCESS)
    {
    CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
    ldap_unbind(ld);
-   return NULL;
+   return -1;
    }
 
 num_entries = ldap_count_entries(ld,res);
@@ -1091,7 +1096,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                 {                
                 for (i = 0; vals[i] != NULL; i++)
                    {
-                   if (cf_strcmp(a,rp->name) == 0)
+                   if (cf_strcmp(a,name) == 0)
                       {
                       CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]);
                       AppendRScalar(&return_value,(char *)vals[i]->bv_val,CF_SCALAR);
@@ -1124,7 +1129,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_error,"","Unable to parse LDAP references: %s\n",ldap_err2string(parse_ret));
              ldap_unbind(ld);
-             return NULL;
+             return -1;
              }
 
           if (referrals != (char **)NULL)
@@ -1151,7 +1156,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {             
              CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));             
              ldap_unbind(ld);             
-             return NULL;
+             return -1;
              }
 
           /* Then check the results of the LDAP search operation. */
@@ -1188,7 +1193,7 @@ strcpy(buffer,"[");
 
 for (rp = return_value; rp != NULL; rp=rp->next)
    {
-   snprintf(work,CF_BUFSIZE,"\"%s\",");
+   snprintf(work,CF_BUFSIZE,"\"%s\",",(char *)rp->item);
    Join(work,buffer,bufsize);
    }
 
@@ -1201,7 +1206,7 @@ return 0;
 
 #else /* HAVE_LIBLDAP */
 
-void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec)
+int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
 {
 CfOut(cf_error, "", "LDAP support is disabled");
 return NULL;
@@ -1250,13 +1255,9 @@ if ((ret = ldap_set_option(ld,LDAP_OPT_PROTOCOL_VERSION,&version)) != LDAP_SUCCE
 if (cf_strcmp(sec,"sasl") == 0)
    {
    int err;
-   ret = ldap_sasl_bind_s(ld,basedn,LDAP_SASL_SIMPLE,&passwd,NULL,NULL,&err);
+   struct berval *servcred;
 
-   if (err == -1)
-      {
-      CfOut(cf_verbose,"ldap_sasl_bind"," !! Unable to authenticate with given credentials");
-      return NULL;
-      }
+   ret = ldap_sasl_bind_s(ld,basedn,LDAP_SASL_SIMPLE,&passwd,NULL,NULL,&servcred);
    }
 else
    {
