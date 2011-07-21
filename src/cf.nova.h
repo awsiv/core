@@ -310,7 +310,6 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 /* db_query.c */
 
 #ifdef HAVE_LIBMONGOC
-struct HubQuery *CFDB_QueryMeter1(mongo_connection *conn,char *lkeyhash);
 int CFDB_GetValue(char *lval,char *rval,int size);
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn);
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
@@ -672,6 +671,10 @@ char *NovaEscape(char *s);
 void NovaShowValues(FILE *fp,struct BodySyntax bs);
 void Nova_RegisterImg(struct Item **list,char *dir,char *pic);
 void Nova_RegisterDoc(struct Item **list,char *dir,char *doc);
+
+void Nova_GenerateTestData(int count);
+void Nova_RemoveTestData(void);
+void Nova_UpdateTestData(void);
 
 /* license.c */
 
