@@ -45,7 +45,6 @@ void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,ch
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL,*return_value = NULL;
   int scope = NovaStr2Scope(scopes);
   
-
 if (LICENSES == 0)
    {
    CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
@@ -225,7 +224,7 @@ void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,cha
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes);
   struct Rlist *return_value = NULL;
-  
+
 if (LICENSES == 0)
    {
    CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
@@ -397,7 +396,7 @@ void *CfLDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,c
   char *a, *dn,*matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes);
   char name[CF_MAXVARSIZE],*return_value = NULL;
-  
+
 if (LICENSES == 0)
    {
    CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
@@ -586,7 +585,7 @@ void *CfRegLDAP(char *uri,char *basedn,char *filter,char *name,char *scopes,char
   int version,i,ret,parse_ret,num_entries = 0,num_refs = 0;
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL,*return_value = NULL;
   int scope = NovaStr2Scope(scopes);
-  
+
 if (LICENSES == 0)
    {
    CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
@@ -762,7 +761,7 @@ return NULL;
 int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd)
 
 { LDAP *ld;
-  
+
 if (LICENSES == 0)
    {
    CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
@@ -780,10 +779,12 @@ return true;
 /*****************************************************************************/
 /* JSON functions                                                            */
 /*****************************************************************************/
+
+
+//CODE EXAMPLE
 /*
-
-CODE EXAMPLE
-
+void test(void)
+{
        if (Nova2PHP_LDAPAuthenticate("ldap://10.0.0.100","uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com","q1w2e3r4t5"))
              {
              char buffer[1000000] = {0};
@@ -813,9 +814,9 @@ CODE EXAMPLE
              {
              printf("NOT Authenticated\n");
              }
+}
 
 */
-
 int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
 
 { LDAP *ld;
@@ -831,7 +832,7 @@ int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *fil
   struct Item *ip;
   struct CfAssoc *ap;
   char work[CF_BUFSIZE],totaldn[CF_BUFSIZE];
-
+  
 snprintf(totaldn,CF_BUFSIZE,"%s,%s",user,basedn);
   
 if ((ld = NovaQueryLDAP(uri,totaldn,sec,passwd)) == NULL)
@@ -853,13 +854,12 @@ count = 0;
 for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,msg))
    {
    count++;
-   
-   if (count > linesperpage*page)
+   if (count > linesperpage*page && linesperpage*page != 0)
       {
       break;
       }
 
-   if (count > linesperpage*page)
+   if(linesperpage*page != 0 && count < linesperpage*page)
       {
       continue;
       }
@@ -878,11 +878,9 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              }
           
           /* Iterate through each attribute in the entry. */
-
           for (a = ldap_first_attribute(ld,res,&ber); a != NULL; a = ldap_next_attribute(ld,res,ber))
              {
              /* Get and print all values for each attribute. */
-
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
                 {                
                 for (i = 0; vals[i] != NULL; i++)
@@ -964,7 +962,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           
           if (parse_ret != LDAP_SUCCESS)
              {             
-             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));             
+             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));
              ldap_unbind(ld);             
              return -1;
              }
@@ -977,7 +975,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              
              if (error_msg != NULL & *error_msg != '\0')
                 {                
-                CfOut(cf_error,"","%s", error_msg);                
+                CfOut(cf_error,"","%s", error_msg);
                 }
              
              if (matched_msg != NULL && *matched_msg != '\0')
@@ -1002,13 +1000,11 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
 ldap_unbind(ld);
 
 /* Now format the data in JSON */
-
 strcpy(buffer,"{");
 
 snprintf(work,CF_BUFSIZE,"\"keys\" : {");
 Join(buffer,work,bufsize);
-count
-    = 0;
+count = 0;
 
 for (rp = master; rp != NULL; rp=rp->next,count++)
    {
@@ -1027,20 +1023,19 @@ for (rp = master; rp != NULL; rp=rp->next,count++)
       }
    Join(buffer,work,bufsize);
    }
-
 snprintf(work,CF_BUFSIZE,"}, \"data\" : [");
 Join(buffer,work,bufsize);
 
 while(notdone)
    {
    Join(buffer,"[",bufsize);
-   
+
    for (rp = master; rp != NULL; rp=rp->next)
       {
       struct Item *list;
       
       ap = rp->item;
-      list = (struct Item *)(ap->rval);
+//      list = (struct Item *)(ap->rval);
       
       ip = (struct Item *)rp->state_ptr;
       
@@ -1133,12 +1128,12 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
    {
    count++;
    
-   if (count % linesperpage > page)
+   if ((count % linesperpage > page) && (page*linesperpage != 0))
       {
       break;
       }
 
-   if (count % linesperpage < page)
+   if ((count % linesperpage < page) && (page*linesperpage != 0))
       {
       continue;
       }
