@@ -97,7 +97,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                    {
                    if (cf_strcmp(a,name) == 0)
                       {
-                      CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]);
+                      CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]->bv_val);
                       return_value = strdup((char *)vals[i]->bv_val);
                       break;
                       }
@@ -276,7 +276,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                    {
                    if (cf_strcmp(a,name) == 0)
                       {
-                      CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]);
+                      CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]->bv_val);
                       AppendRScalar(&return_value,(char *)vals[i]->bv_val,CF_SCALAR);
                       }
                    }
@@ -840,16 +840,9 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           
           /* Iterate through each attribute in the entry. */
 
-          dn_rp = PrependRlistAlien(&master,NewAssoc(dn,"junk",CF_SCALAR,cf_slist));
-          ap = (struct CfAssoc *)dn_rp->item;
-          free(ap->rval);
-          ap->rval = NULL;
-          
           for (a = ldap_first_attribute(ld,res,&ber); a != NULL; a = ldap_next_attribute(ld,res,ber))
              {
              /* Get and print all values for each attribute. */
-
-             Debug(" ->   LDAP query found attribute %s",a);
              
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
                 {                
@@ -860,9 +853,15 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                       if (cf_strcmp(a,rp->item) == 0)
                          {
                          struct Item **list;
-                         ap = dn_rp->item;
+
+                         dn_rp = PrependRlistAlien(&master,NewAssoc(a,"dummy",CF_SCALAR,cf_slist));
+
+                         ap = (struct CfAssoc *)dn_rp->item;
+                         free(ap->rval);
+                         ap->rval = NULL;
+                         
                          list = (struct Item **)&(ap->rval);
-                         CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]);
+                         CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]->bv_val);
                          PrependItem(list,(char *)vals[i]->bv_val,rp->item);
                          }
                       }
@@ -958,26 +957,36 @@ ldap_unbind(ld);
 
 /* Now format the data in JSON */
 
-strcpy(work,"{");
+strcpy(buffer,"{");
 
 snprintf(work,CF_BUFSIZE,"\"keys\" : [");
-Join(work,buffer,bufsize);
+Join(buffer,work,bufsize);
 
 for (rp = master; rp != NULL; rp=rp->next)
    {
-   snprintf(work,CF_BUFSIZE,"\"%s\",",(char *)rp->item);
-   Join(work,buffer,bufsize);
+   struct Item *list;
+   ap = rp->item;
+   if (rp->next)
+      {
+      snprintf(work,CF_BUFSIZE,"\"%s\",",(char *)ap->lval);
+      }
+   else
+      {
+      snprintf(work,CF_BUFSIZE,"\"%s\"",(char *)ap->lval);
+      }
+   Join(buffer,work,bufsize);
    }
 
 snprintf(work,CF_BUFSIZE,"], \"data\" : [");
-
+Join(buffer,work,bufsize);
+   
 for (rp = master; rp != NULL; rp=rp->next)
    {
    struct Item *list;
    ap = rp->item;
    list = (struct Item *)(ap->rval);
 
-   Join("{",buffer,bufsize);
+   Join(buffer,"{",bufsize);
 
    for (ip = list; ip != NULL; ip=ip->next)
       {
@@ -990,27 +999,25 @@ for (rp = master; rp != NULL; rp=rp->next)
          snprintf(work,CF_BUFSIZE,"\"%s\" : \"%s\"",ip->classes,ip->name);
          }
 
-      Join(work,buffer,bufsize);
+      Join(buffer,work,bufsize);
       }
 
    if (rp->next)
       {
-      Join("},",buffer,bufsize);
+      Join(buffer,"},",bufsize);
       }
    else
       {
-      Join("}",buffer,bufsize);
+      Join(buffer,"}",bufsize);
       }
 
-   Join("]",buffer,bufsize);
    ap = (struct CfAssoc *)rp->item;
-   DeleteItemList(ap->rval);
    DeleteAssoc(ap);
    }
 
 DeleteRlist(master);
 
-Join("}",buffer,bufsize);
+Join(buffer,"]}",bufsize);
 
 return 0;
 }
@@ -1029,6 +1036,7 @@ return -1;
 /*****************************************************************************/
 
 #ifdef HAVE_LIBLDAP
+
 int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
 
 { LDAP *ld;
@@ -1041,8 +1049,9 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *basedn,char *filter,char 
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL,work[CF_BUFSIZE];
   int scope = NovaStr2Scope(scopes),count = 0;
   struct Rlist *return_value = NULL,*rp;
+
   
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,passwd)) == NULL)
    {
    return -1;
    }
@@ -1078,6 +1087,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           if ((dn = ldap_get_dn(ld,msg)) != NULL)
              {
              CfOut(cf_verbose,""," -> LDAP query found dn: %s\n",dn);
+             printf(" -> LDAP query found dn: %s\n",dn);
              }
           else
              {
@@ -1090,7 +1100,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              /* Get and print all values for each attribute. */
 
-             Debug(" ->   LDAP query found attribute %s",a);
+             Debug(" ->   LDAP query found attribute %s\n",a);
              
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
                 {                
@@ -1098,7 +1108,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                    {
                    if (cf_strcmp(a,name) == 0)
                       {
-                      CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]);
+                      CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]->bv_val);
                       AppendRScalar(&return_value,(char *)vals[i]->bv_val,CF_SCALAR);
                       }
                    }
@@ -1194,7 +1204,7 @@ strcpy(buffer,"[");
 for (rp = return_value; rp != NULL; rp=rp->next)
    {
    snprintf(work,CF_BUFSIZE,"\"%s\",",(char *)rp->item);
-   Join(work,buffer,bufsize);
+   Join(buffer,work,bufsize);
    }
 
 buffer[strlen(buffer)-1] = ']';
