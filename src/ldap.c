@@ -26,7 +26,7 @@ void *CfLDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,c
 void *CfRegLDAP(char *uri,char *basedn,char *filter,char *name,char *scopes,char *regex,char *sec);
 
 int NovaStr2Scope(char *scope);
-
+struct Rlist *LDAPKeyInRlist(struct Rlist *list,char *key);
 #endif
 
 
@@ -778,8 +778,45 @@ return true;
 }
 
 /*****************************************************************************/
+/* JSON functions                                                            */
+/*****************************************************************************/
+/*
 
-int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
+CODE EXAMPLE
+
+       if (Nova2PHP_LDAPAuthenticate("ldap://10.0.0.100","uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com","q1w2e3r4t5"))
+             {
+             char buffer[1000000] = {0};
+             
+             printf("Authenticated\n");
+
+             struct Rlist *names = SplitStringAsRList("uid,mail,sn,altSecurityIdentities",',');
+
+             buffer[0] = '\0';
+             if (CfLDAP_JSON_GetSeveralAttributes(
+                       "ldap://10.0.0.152",
+                       "uid=sudhir","ou=people,dc=cfengine,dc=com",
+                     "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))" ,
+                     names,
+                     "subtree",
+                     "sasl",
+                       "password",
+                     1,
+                     100,
+                     buffer,1000000) == 0)
+                {
+                printf("JSON2: %s\n",buffer);
+                }
+
+             }
+          else
+             {
+             printf("NOT Authenticated\n");
+             }
+
+*/
+
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -787,15 +824,17 @@ int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *basedn,char *filter,struct 
   BerElement *ber;
   struct berval **vals;
   char **referrals;
-  int version,i,ret,parse_ret,num_entries = 0,num_refs = 0;
+  int version,i,ret,parse_ret,num_entries = 0,num_refs = 0,notdone=true;
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes), count;
   struct Rlist *master = NULL,*rp,*dn_rp;
   struct Item *ip;
   struct CfAssoc *ap;
-  char work[CF_BUFSIZE];
+  char work[CF_BUFSIZE],totaldn[CF_BUFSIZE];
+
+snprintf(totaldn,CF_BUFSIZE,"%s,%s",user,basedn);
   
-if ((ld = NovaQueryLDAP(uri,basedn,sec,passwd)) == NULL)
+if ((ld = NovaQueryLDAP(uri,totaldn,sec,passwd)) == NULL)
    {
    return -1;
    }
@@ -815,12 +854,12 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
    {
    count++;
    
-   if (count % linesperpage > page)
+   if (count > linesperpage*page)
       {
       break;
       }
 
-   if (count % linesperpage < page)
+   if (count > linesperpage*page)
       {
       continue;
       }
@@ -843,7 +882,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           for (a = ldap_first_attribute(ld,res,&ber); a != NULL; a = ldap_next_attribute(ld,res,ber))
              {
              /* Get and print all values for each attribute. */
-             
+
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
                 {                
                 for (i = 0; vals[i] != NULL; i++)
@@ -854,13 +893,20 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                          {
                          struct Item **list;
 
-                         dn_rp = PrependRlistAlien(&master,NewAssoc(a,"dummy",CF_SCALAR,cf_slist));
+                         if ((dn_rp = LDAPKeyInRlist(master,a)) == NULL)
+                            {
+                            dn_rp = PrependRlistAlien(&master,NewAssoc(a,"dummy",CF_SCALAR,cf_slist));
+                            ap = (struct CfAssoc *)dn_rp->item;
+                            free(ap->rval);
+                            ap->rval = NULL;
+                            }
+                         else
+                            {
+                            ap = (struct CfAssoc *)dn_rp->item;
+                            }
 
-                         ap = (struct CfAssoc *)dn_rp->item;
-                         free(ap->rval);
-                         ap->rval = NULL;
-                         
                          list = (struct Item **)&(ap->rval);
+
                          CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]->bv_val);
                          PrependItem(list,(char *)vals[i]->bv_val,rp->item);
                          }
@@ -959,60 +1005,75 @@ ldap_unbind(ld);
 
 strcpy(buffer,"{");
 
-snprintf(work,CF_BUFSIZE,"\"keys\" : [");
+snprintf(work,CF_BUFSIZE,"\"keys\" : {");
 Join(buffer,work,bufsize);
+count
+    = 0;
 
-for (rp = master; rp != NULL; rp=rp->next)
+for (rp = master; rp != NULL; rp=rp->next,count++)
    {
    struct Item *list;
+
    ap = rp->item;
+   rp->state_ptr = ap->rval;
+
    if (rp->next)
       {
-      snprintf(work,CF_BUFSIZE,"\"%s\",",(char *)ap->lval);
+      snprintf(work,CF_BUFSIZE,"\"%s\" : %d,",(char *)ap->lval,count);
       }
    else
       {
-      snprintf(work,CF_BUFSIZE,"\"%s\"",(char *)ap->lval);
+      snprintf(work,CF_BUFSIZE,"\"%s\" : %d",(char *)ap->lval,count);
       }
    Join(buffer,work,bufsize);
    }
 
-snprintf(work,CF_BUFSIZE,"], \"data\" : [");
+snprintf(work,CF_BUFSIZE,"}, \"data\" : [");
 Join(buffer,work,bufsize);
-   
-for (rp = master; rp != NULL; rp=rp->next)
+
+while(notdone)
    {
-   struct Item *list;
-   ap = rp->item;
-   list = (struct Item *)(ap->rval);
-
-   Join(buffer,"{",bufsize);
-
-   for (ip = list; ip != NULL; ip=ip->next)
+   Join(buffer,"[",bufsize);
+   
+   for (rp = master; rp != NULL; rp=rp->next)
       {
+      struct Item *list;
+      
+      ap = rp->item;
+      list = (struct Item *)(ap->rval);
+      
+      ip = (struct Item *)rp->state_ptr;
+      
+      snprintf(work,CF_BUFSIZE,"\"%s\"",ip->name);
+      Join(buffer,work,bufsize);
+
+      if (rp->next)
+         {
+         Join(buffer,",",bufsize);
+         }
+      
+      ap = (struct CfAssoc *)rp->item;
+      DeleteAssoc(ap);
+      rp->item = NULL;
+
       if (ip->next)
          {
-         snprintf(work,CF_BUFSIZE,"\"%s\" : \"%s\",",ip->classes,ip->name);
+         rp->state_ptr = ip->next;
          }
       else
          {
-         snprintf(work,CF_BUFSIZE,"\"%s\" : \"%s\"",ip->classes,ip->name);
+         notdone = false;
          }
-
-      Join(buffer,work,bufsize);
       }
 
-   if (rp->next)
+   if (notdone)
       {
-      Join(buffer,"},",bufsize);
+      Join(buffer,"],",bufsize);
       }
    else
       {
-      Join(buffer,"}",bufsize);
+      Join(buffer,"]",bufsize);
       }
-
-   ap = (struct CfAssoc *)rp->item;
-   DeleteAssoc(ap);
    }
 
 DeleteRlist(master);
@@ -1037,7 +1098,7 @@ return -1;
 
 #ifdef HAVE_LIBLDAP
 
-int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
+int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -1046,12 +1107,14 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *basedn,char *filter,char 
   struct berval **vals;
   char **referrals;
   int version,i,ret,parse_ret,num_entries = 0,num_refs = 0;
-  char *a, *dn, *matched_msg = NULL, *error_msg = NULL,work[CF_BUFSIZE];
+  char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes),count = 0;
   struct Rlist *return_value = NULL,*rp;
+  char work[CF_BUFSIZE],totaldn[CF_BUFSIZE];
 
-  
-if ((ld = NovaQueryLDAP(uri,basedn,sec,passwd)) == NULL)
+snprintf(totaldn,CF_BUFSIZE,"%s,%s",user,basedn);
+
+if ((ld = NovaQueryLDAP(uri,totaldn,sec,passwd)) == NULL)
    {
    return -1;
    }
@@ -1087,7 +1150,6 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           if ((dn = ldap_get_dn(ld,msg)) != NULL)
              {
              CfOut(cf_verbose,""," -> LDAP query found dn: %s\n",dn);
-             printf(" -> LDAP query found dn: %s\n",dn);
              }
           else
              {
@@ -1306,5 +1368,32 @@ if (cf_strcmp(scope,"onelevel") == 0)
 
 return LDAP_SCOPE_SUBTREE;
 }
+
+/*******************************************************************/
+
+struct Rlist *LDAPKeyInRlist(struct Rlist *list,char *key)
+
+{ struct Rlist *rp;
+  struct CfAssoc *ap;
+
+for (rp = list; rp != NULL; rp = rp->next)
+   {
+   if (rp->type != CF_SCALAR)
+      {
+      continue;
+      }
+
+   ap = (struct CfAssoc *)rp->item;
+   
+   if (strcmp((char *)ap->lval,key) == 0)
+      {
+      return rp;
+      }
+   }
+
+return NULL;
+}
+
+
 
 #endif
