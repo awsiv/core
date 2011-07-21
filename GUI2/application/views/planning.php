@@ -57,7 +57,7 @@
         <div class="clearboth"></div>
     </div>
 <div class="clear"></div>
-<script src="<?php echo get_nodehost()?>/socket.io/socket.io.js" type="text/javascript"></script>
+<!--<script src="<?php echo get_nodehost()?>/socket.io/socket.io.js" type="text/javascript"></script>-->
 <script type="text/javascript">
     $(document).ready(function(){
         /* var socket = new io.Socket(null, {port: 8080});
@@ -113,7 +113,7 @@
         });
        
         $('#repobrowser').ajaxyDialog({title:'SVN Checkout'});
-        $('#aprvpolicy').ajaxyDialog({title:'Approve Policices'});
+        $('#aprvpolicy').ajaxyDialog({title:'Approve Policies'});
         $('#trackrecord').ajaxyDialog({
             title:'Track Record',
            width:'95%',
