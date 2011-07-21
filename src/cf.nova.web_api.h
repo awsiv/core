@@ -140,6 +140,7 @@ int Nova_AddReportHeader(char *header,int truncated,char *buffer,int bufsize);
 // constellation function stubs
 
 void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer,int bufsize);
+int Con2PHP_compliance_virtualbundle_graph(char *hubKeyHash, char *bundleName, char *buf, int bufsize);;
 int Con2PHP_count_hubs(char *classification, char *buf, int bufsize);
 int Con2PHP_show_hubs(char *classification, char *buf, int bufsize);
 int Con2PHP_summarize_promiselog(char *hubKeyHash, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize);

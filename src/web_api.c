@@ -6435,6 +6435,65 @@ void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer
 #endif
 }
 
+
+/*****************************************************************************/
+
+int Con2PHP_compliance_virtualbundle_graph(char *hubKeyHash, char *bundleName, char *buf, int bufsize)
+
+{
+#ifdef HAVE_CONSTELLATION
+ struct HubQuery *hq;
+ mongo_connection dbconn;
+ struct Rlist *rp;
+ char work[CF_MAXVARSIZE];
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+hq = CFDBCon_QueryVirtualBundleCompliance(&dbconn,hubKeyHash,bundleName);
+
+CFDB_Close(&dbconn);
+
+if (!hq)
+   {
+   buf[0] = '\0';
+   return false;
+   }
+
+strcpy(buf,"[");
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   struct HubCacheTotalCompliance *hc = (struct HubCacheTotalCompliance *)rp->item;
+
+   snprintf(work, sizeof(work), "{\"position\":%d,\"compliance\":%f,\"count\":%d},\n",
+            hc->slot, hc->kept, hc->hostCount);
+   
+   if (!Join(buf,work,bufsize))
+      {
+      break;
+      }
+   }
+
+ReplaceTrailingStr(buf, ",\n", '\0');
+EndJoin(buf,"]\n",bufsize);
+
+DeleteHubQuery(hq,DeleteHubCacheTotalCompliance);
+
+return true;
+
+#else  /* NOT HAVE_CONSTELLATION */
+
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_compliance_virtualbundle_graph() in Nova-only environment\n");
+CfOut(cf_error, "", buf);
+return false;
+
+#endif
+}
+
 /*****************************************************************************/
 
 int Con2PHP_count_hubs(char *classification, char *buf, int bufsize)
@@ -6933,3 +6992,4 @@ return false;
 
 #endif
 }
+
