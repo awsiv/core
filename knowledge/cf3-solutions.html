@@ -1282,11 +1282,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 <span class="comment">########################################################################
 </span>
 
-<span class="red">bundle edit_line</span> <span class="blue">insert_file_if_no_line_matching(user,file),</span>
+<span class="red">bundle edit_line</span> <span class="blue">insert_file_if_no_line_matching(user,file)</span>
 {
 <span class="red">classes:
 </span>
-<span class="red">  have_user expression </span>=> regline("$(user).*","$(this.promiser)");
+  "have_user"<span class="red"> expression </span>=> regline("$(user).*","$(this.promiser)");
 
 <span class="red">insert_lines:
 </span>

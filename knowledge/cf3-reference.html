@@ -216,7 +216,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">1 CFEngine 3.2.0b2.r2587M &ndash; Getting started</h2>
+<h2 class="chapter">1 CFEngine 3.2.0b3.r2651:2652M &ndash; Getting started</h2>
 
 <p><br>
 
@@ -929,11 +929,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Decisions">Decisions</a>
 
 <h4 class="subsection">1.7.3 Global and local classes</h4>
 
-<p>Classes are defined in bundles. Bundles of type <code>common</code> yield classes that
-are global in scope, whereas in all other bundle types classes are local. 
-Classes are evaluated when the bundle is evaluated (and the bundles are
-evaluated in the order specified in the <code>bundlesequence</code>). 
-Consider the following example.
+<p>User defined classes are mostly defined in bundles, but they are used as a
+signalling mechanism between promises. We'll return to those in a moment.
+
+   <p>Classes promises may be specified in any kind of bundle. 
+Bundles of type <code>common</code> yield classes that are global in scope,
+whereas in all other bundle types classes are local.  Classes are
+evaluated when the bundle is evaluated (and the bundles are evaluated
+in the order specified in the <code>bundlesequence</code>).  Consider the
+following example.
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -986,6 +990,19 @@ their respective bundles).
 The report result `Success' is therefore true because only &lsquo;<samp><span class="samp">one</span></samp>&rsquo; and
 &lsquo;<samp><span class="samp">three</span></samp>&rsquo; are in scope (and &lsquo;<samp><span class="samp">two</span></samp>&rsquo; is <i>not</i> in scope) inside of the
 third bundle.
+
+   <p>Another type of class definition happens when you define classes based on the
+outcome of a promise, e.g. to set a class if a promise is repaired, one might write:
+
+<pre class="verbatim"> "promiser..."
+
+    ...
+
+<span class="red">    classes </span>=><span class="blue"> if_repaired("signal_class");</span>
+</pre>
+
+   <p>These classes are global in scope. Finally <code>restart_class</code> classes in <code>processes</code>
+are global.
 
 <!--  -->
 <!-- SECTION -->
@@ -17939,25 +17956,25 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#files-in-agent-promises">files in agen
 <br>
 
 <pre class="verbatim">
- "/home/mark/tmp/testcopy"
+<span class="red">files:
+</span>  "/home/mark/tmp/testcopy"
 
 <span class="red">    file_select </span>=><span class="blue"> pdf_files,</span>
 <span class="red">    transformer </span>=><span class="green"> "/usr/bin/gzip $(this.promiser)",</span>
 <span class="red">    depth_search </span>=><span class="blue"> recurse("inf");</span>
 
-<span class="comment">###################
-</span>
+</pre>
 
+<pre class="verbatim">
 <span class="red"> classes:
 </span>    "do_update"<span class="red"> or </span>=> isnewerthan("/etc/postfix/alias",
                                   "/etc/postfix/alias.cdb") };
 
 <span class="red"> files:
 </span>    "/etc/postfix/alias.cdb"
-<span class="red">       create </span>=><span class="blue"> true,		# Must have this!</span>
+<span class="red">       create </span>=><span class="green"> "true",		# Must have this!</span>
 <span class="red">       transformer </span>=><span class="green"> "/usr/sbin/postalias /etc/postfix/alias",</span>
 <span class="red">       ifvarclass </span>=><span class="green"> "do_update";</span>
-}
 
 </pre>
 
@@ -19164,7 +19181,6 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#insert_005flines-in-edit_005fline-prom
 <p class="noindent"><b>Allowed input range</b>: <br>
 <pre class="example">               <code>ignore_leading</code>
                <code>ignore_trailing</code>
-               <code>ignore_embedded</code>
                <code>ignore_embedded</code>
                <code>exact_match</code>
 </pre>
@@ -25558,6 +25574,7 @@ strings, etc.) and outside of Cfengine (from files, databases, arrays, etc.)
 <h5 class="unnumberedsubsubsec">Functions which read arrays</h5>
 
 <p><table summary=""><tr align="left"><td valign="top" width="20%"><a href="#Function-getindices">getindices</a>
+<br></td></tr><tr align="left"><td valign="top" width="20%"><a href="#Function-getvalues">getvalues</a>
 </td><td valign="top" width="20%"><a href="#Function-regarray">regarray</a>
 <br></td></tr></table>
 
@@ -25853,10 +25870,11 @@ minutes of total run time.
 <p class="noindent"><b>ARGUMENTS</b>:
 
    <p>The <code>accumulated</code> function measures total accumulated runtime. 
-Arguments are applied additively, so that ago(0,0,2,27,90,0) means "2 days,
-27 hours and 90 minutes of runtime" " &ndash; however, you are strongly encouraged
-to keep your usage of <code>accumulated</code> sensible and readable, e.g.,
-accumulated(0,0,0,48,0,0) or accumulated(0,0,0,0,90,0).
+Arguments are applied additively, so that accumulated(0,0,2,27,90,0)
+means "2 days, 27 hours and 90 minutes of runtime" " &ndash; however, you
+are strongly encouraged to keep your usage of <code>accumulated</code>
+sensible and readable, e.g., accumulated(0,0,0,48,0,0) or
+accumulated(0,0,0,0,90,0).
 
      <dl>
 <dt>&lsquo;<samp><span class="samp">Years</span></samp>&rsquo;<dd>Years of run time.  For convenience in conversion, a year of runtime is always
@@ -25984,7 +26002,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: canonify(arg0) returns type <b>string</b>
 
    <p><br>
-   <i>arg0</i> : String containing non-identifer characters, <i>in the range</i> .*
+   <i>arg0</i> : String containing non-identifier characters, <i>in the range</i> .*
 <br>
 
 <p class="noindent">Convert an abitrary string into a legal class name
@@ -28557,7 +28575,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: parseintarray(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
    <p><br>
-   <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
+   <i>arg0</i> : Array identifier to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
    <i>arg1</i> : A string to parse for input data, <i>in the range</i> "?(/.*)
 <br>
@@ -28640,7 +28658,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: parserealarray(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
    <p><br>
-   <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
+   <i>arg0</i> : Array identifier to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
    <i>arg1</i> : A string to parse for input data, <i>in the range</i> "?(/.*)
 <br>
@@ -28723,7 +28741,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: parsestringarray(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
    <p><br>
-   <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
+   <i>arg0</i> : Array identifier to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
    <i>arg1</i> : A string to parse for input data, <i>in the range</i> "?(/.*)
 <br>
@@ -28806,7 +28824,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: parsestringarrayidx(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
    <p><br>
-   <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
+   <i>arg0</i> : Array identifier to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
    <i>arg1</i> : File name to read, <i>in the range</i> "?(/.*)
 <br>
@@ -29315,7 +29333,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: readintarray(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
    <p><br>
-   <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
+   <i>arg0</i> : Array identifier to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
    <i>arg1</i> : File name to read, <i>in the range</i> "?(/.*)
 <br>
@@ -29492,7 +29510,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: readrealarray(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
    <p><br>
-   <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
+   <i>arg0</i> : Array identifier to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
    <i>arg1</i> : File name to read, <i>in the range</i> "?(/.*)
 <br>
@@ -29638,7 +29656,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: readstringarray(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
    <p><br>
-   <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
+   <i>arg0</i> : Array identifier to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
    <i>arg1</i> : File name to read, <i>in the range</i> "?(/.*)
 <br>
@@ -29744,7 +29762,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Synopsis</b>: readstringarrayidx(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
    <p><br>
-   <i>arg0</i> : Array identifer to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
+   <i>arg0</i> : Array identifier to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
    <i>arg1</i> : A string to parse for input data, <i>in the range</i> "?(/.*)
 <br>
@@ -34930,8 +34948,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 <h4 class="subsection">12.5.39 Variable sys.policy_hub</h4>
 
 <p><br>
+Hostname of the machine acting as a policy hub. This value is set
+during bootstrap. In case bootstrap was not performed, it is set to &ldquo;undefined&rdquo;.
 
-   <p><b>History</b>: Was introduced in version 3.1.0b1,Nova 2.0.0b1 (2010)
+   <p><b>History</b>: Was introduced in version 3.1.0b1,Nova 2.0.0b1 (2010). Available in Community since 3.2.0
 
 <pre class="verbatim">
 <span class="red">reports:
@@ -35218,7 +35238,7 @@ useful to differentiate otherwise identical reports promises.
 <p>The special variable <code>$(this.promiser)</code> is used to refer to the current
 value of the promiser itself, in a number of allowed cases, typically when
 searches can take place. Current promise types that define <code>$(this.promiser)</code>
-are: <code>files</code>, <code>processes</code>, <code>exec</code>.
+are: <code>files</code>, <code>processes</code>, <code>commands</code>.
 
    <p>This variable is useful in <code>files</code> promises, for instance when using
 pattern matching or <code>depth_search</code> that implicitly match multiple
@@ -35452,7 +35472,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <h2>Table of Contents</h2>
 <ul>
 <li><a name="toc_Top" href="#Top">CFEngine-AutoReference</a>
-<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.2.0b2.r2587M &ndash; Getting started</a>
+<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.2.0b3.r2651:2652M &ndash; Getting started</a>
 <ul>
 <li><a href="#Software-components">1.1 Software components</a>
 <ul>
