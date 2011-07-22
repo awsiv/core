@@ -1053,7 +1053,7 @@ while(notdone)
 
       if (ip->next)
          {
-         rp->state_ptr = ip->next;
+         rp->state_ptr = (void *)ip->next; // This is a harmless hack
          }
       else
          {
