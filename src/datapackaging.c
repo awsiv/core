@@ -460,7 +460,7 @@ while (!feof(fin))
 
       no[0] = '\0';
       change[0] = '\0';
-      sscanf(line,"%c,%[^,],%1024[^\n]",&pm,no,change);
+      sscanf(line,"%c,%64[^,],%1024[^\n]",&pm,no,change);
 
       // the web interface doesn't handle TABs
       changeNoTab[0] = '\0';
