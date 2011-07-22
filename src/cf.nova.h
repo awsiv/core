@@ -1077,6 +1077,11 @@ int Nova_ReadYearTimeSeries(mongo_connection *conn, struct CfDataView *cfv,char 
 void Nova_DrawLongHAxes(struct CfDataView *cfv,int col);
 void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int bufsize);
 
+/* ldap.c */
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize);
+
+int CfLDAP_JSON_GetSingleAttributeList(char *uri,char*puser,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize);
+
 /***************************************************************************/
 
 #define CF_METER_HEIGHT 80
