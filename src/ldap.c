@@ -780,8 +780,8 @@ return true;
 /* JSON functions                                                            */
 /*****************************************************************************/
 
-
 //CODE EXAMPLE
+
 /*
 void test(void)
 {
@@ -817,7 +817,10 @@ void test(void)
 }
 
 */
-int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
+
+/*****************************************************************************/
+
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *authdn,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -831,11 +834,20 @@ int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *fil
   struct Rlist *master = NULL,*rp,*dn_rp;
   struct Item *ip;
   struct CfAssoc *ap;
-  char work[CF_BUFSIZE],totaldn[CF_BUFSIZE];
+  char work[CF_BUFSIZE];
+
+
+if (page == 0)
+   {
+   page = 1;
+   }
+
+if (linesperpage == 0)
+   {
+   linesperpage = 1000;
+   }
   
-snprintf(totaldn,CF_BUFSIZE,"%s,%s",user,basedn);
-  
-if ((ld = NovaQueryLDAP(uri,totaldn,sec,passwd)) == NULL)
+if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd)) == NULL)
    {
    return -1;
    }
@@ -854,12 +866,13 @@ count = 0;
 for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,msg))
    {
    count++;
-   if (count > linesperpage*page && linesperpage*page != 0)
+
+   if (count > linesperpage*page)
       {
       break;
       }
 
-   if(linesperpage*page != 0 && count < linesperpage*page)
+   if (count < linesperpage*(page-1))
       {
       continue;
       }
@@ -1035,8 +1048,7 @@ while(notdone)
       struct Item *list;
       
       ap = rp->item;
-//      list = (struct Item *)(ap->rval);
-      
+
       ip = (struct Item *)rp->state_ptr;
       
       snprintf(work,CF_BUFSIZE,"\"%s\"",ip->name);
@@ -1093,7 +1105,7 @@ return -1;
 
 #ifdef HAVE_LIBLDAP
 
-int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
+int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *authdn,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -1105,11 +1117,19 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *f
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes),count = 0;
   struct Rlist *return_value = NULL,*rp;
-  char work[CF_BUFSIZE],totaldn[CF_BUFSIZE];
+  char work[CF_BUFSIZE];
 
-snprintf(totaldn,CF_BUFSIZE,"%s,%s",user,basedn);
+if (page == 0)
+   {
+   page = 1;
+   }
 
-if ((ld = NovaQueryLDAP(uri,totaldn,sec,passwd)) == NULL)
+if (linesperpage == 0)
+   {
+   linesperpage = 1000;
+   }
+    
+if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd)) == NULL)
    {
    return -1;
    }
@@ -1128,12 +1148,12 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
    {
    count++;
    
-   if ((count % linesperpage > page) && (page*linesperpage != 0))
+   if (count > page*linesperpage)
       {
       break;
       }
 
-   if ((count % linesperpage < page) && (page*linesperpage != 0))
+   if (count < linesperpage*(page-1))
       {
       continue;
       }
@@ -1260,7 +1280,14 @@ strcpy(buffer,"[");
 
 for (rp = return_value; rp != NULL; rp=rp->next)
    {
-   snprintf(work,CF_BUFSIZE,"\"%s\",",(char *)rp->item);
+   if (rp->next)
+      {
+      snprintf(work,CF_BUFSIZE,"\"%s\",",(char *)rp->item);
+      }
+   else
+      {
+      snprintf(work,CF_BUFSIZE,"\"%s\",",(char *)rp->item);
+      }
    Join(buffer,work,bufsize);
    }
 
@@ -1323,7 +1350,6 @@ if (cf_strcmp(sec,"sasl") == 0)
    {
    int err;
    struct berval *servcred;
-
    ret = ldap_sasl_bind_s(ld,basedn,LDAP_SASL_SIMPLE,&passwd,NULL,NULL,&servcred);
    }
 else
