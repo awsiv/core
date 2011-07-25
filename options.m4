@@ -56,7 +56,7 @@ if test "x$with_ldap" != xno; then
 fi
 
 AC_ARG_WITH([libvirt],
-    [AS_HELP_STRING([--with-libvirt], [support virtual machine management])],
+    [AS_HELP_STRING([--with-libvirt[[=PATH]]], [support virtual machine management])],
     [], [with_libvirt=check])
 
 if test "x$with_libvirt" != xno; then
