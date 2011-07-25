@@ -547,7 +547,6 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
 
  CFDB_Close(&dbconn);
  
- 
  snprintf(work, sizeof(work), "\"hostname\" : \"%s\", \"ip\" : \"%s\", \"ls\" : %ld, \n\"obs\" : [",
           hostName, ipAddress, lastUpdate);
 
@@ -556,7 +555,7 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
  
  for(hv = res; hv != NULL; hv = hv->next)
     {
-    snprintf(work, sizeof(work), "{\"id\":\"%s\", \"units\":\"%s\", \"desc\":\"%s\"},\n",
+    snprintf(work, sizeof(work), "{\"id\":\"%s\", \"units\":\"%s\", \"desc\":\"%s\"},",
              hv->id, hv->units, hv->description);
     Join(buffer, work, bufsize);
     
@@ -565,13 +564,8 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
 
  DeleteHubVital(res);
  
- int buflen = strlen(buffer);
- if(buffer[buflen - 2] == ',')
-    {
-    buffer[buflen - 2] = '\0';
-    }
- 
- Join(buffer, "]}", bufsize);
+ ReplaceTrailingChar(buffer, ',', '\0');
+ EndJoin(buffer, "]}", bufsize);
  
  return ret;
 }
