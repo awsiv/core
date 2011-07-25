@@ -17,14 +17,11 @@ class Welcome extends Cf_Controller {
         );
         $this->breadcrumb->setBreadCrumb($bc);
 
-        $all = cfpr_count_all_hosts();
-        $r = cfpr_count_red_hosts();
-        $y = cfpr_count_yellow_hosts();
-        $g = cfpr_count_green_hosts();
+        
 
         $scripts = array(
-            '<script language="javascript" type="text/javascript" src="' . get_nodehost() . '/socket.io/socket.io.js"> </script>
-            ',
+           // '<script language="javascript" type="text/javascript" src="' . get_nodehost() . '/socket.io/socket.io.js"> </script>
+            // ',
             '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'widgets/licensemeter.js"></script>
             '
         );
@@ -45,11 +42,7 @@ class Welcome extends Cf_Controller {
         $data = array(
             'title' => "Cfengine Mission Portal - overview",
             'title_header' => "overview",
-            'breadcrumbs' => $this->breadcrumblist->display(),
-            'all' => $all,
-            'r' => $r,
-            'y' => $y,
-            'g' => $g,
+            'breadcrumbs' => $this->breadcrumblist->display(),            
             'pbarvalue' => $pbarvalue,
             'daysleft' => $totaldays - $dayspassed,
         );
