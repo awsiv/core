@@ -222,7 +222,7 @@ void NovaWin_GetInterfaceInfo()
     } 
 }
 
-int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, struct sockaddr *cinp, int cinpSz)
+int TryConnect(int fd, struct timeval *tvp, struct sockaddr *cinp, int cinpSz)
 /** 
  * Tries a nonblocking connect and then restores blocking if
  * successful. Returns true on success, false otherwise.
@@ -243,12 +243,12 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
    /* set non-blocking socket */
 
    nonBlock= true;
-   if(ioctlsocket(conn->sd,FIONBIO,&nonBlock) != 0)
+   if(ioctlsocket(fd,FIONBIO,&nonBlock) != 0)
      {
      CfOut(cf_error,"ioctlsocket","!! Could not disable socket blocking mode");
      }
 
-   res = connect(conn->sd,cinp,cinpSz);
+   res = connect(fd,cinp,cinpSz);
 
    if (res != 0)
       {
@@ -262,8 +262,8 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
 	    
 	    FD_ZERO(&wrset);
 	    FD_ZERO(&exset);
-	    FD_SET(conn->sd,&wrset);
-	    FD_SET(conn->sd,&exset);
+	    FD_SET(fd,&wrset);
+	    FD_SET(fd,&exset);
 	    
 	    /* now wait for connect, but no more than tvp.sec */
 	    res = select(0, NULL, &wrset, &exset, tvp);
@@ -280,7 +280,7 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
 	      }
 
 
-	    if(getsockopt(conn->sd, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) != 0)
+	    if(getsockopt(fd, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) != 0)
 	      {
 		CfOut(cf_error,"getsockopt","!! Could not check connection status");
 		return false;
@@ -305,7 +305,7 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
 
    nonBlock = false;
 
-   if(ioctlsocket(conn->sd,FIONBIO,&nonBlock) != 0)
+   if(ioctlsocket(fd,FIONBIO,&nonBlock) != 0)
      {
      CfOut(cf_error,"ioctlsocket","!! Could not enable socket blocking mode");
      }
@@ -320,7 +320,7 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
    tvRecv.tv_sec = RECVTIMEOUT;
    tvRecv.tv_usec = 0;
 
-   if (setsockopt(conn->sd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tvRecv, sizeof(tvRecv)))
+   if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tvRecv, sizeof(tvRecv)))
       {
       CfOut(cf_error,"setsockopt","!! Couldn't set socket timeout");
       }
