@@ -1009,6 +1009,7 @@ void GatherCPUData(double *CF_THIS);
 /* win_net.c */
 
 void NovaWin_GetInterfaceInfo(void);
+int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, struct sockaddr *cinp, int cinpSz);
 
 /* win_pipe.c */
 
