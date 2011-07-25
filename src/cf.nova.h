@@ -1079,8 +1079,7 @@ void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int
 
 /* ldap.c */
 int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize);
-
-int CfLDAP_JSON_GetSingleAttributeList(char *uri,char*puser,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize);
+int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize);
 
 /***************************************************************************/
 
