@@ -969,7 +969,6 @@ int NovaWin_chmod(const char *path, mode_t mode);
 int fchmod(int fildes, mode_t mode);
 long int random(void);
 void srandom(unsigned int seed);
-void setlinebuf(FILE *stream);
 int NovaWin_stat(const char *path, struct stat *buf);
 void NovaWin_OpenNetwork(void);
 void NovaWin_CloseNetwork(void);

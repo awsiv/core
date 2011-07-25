@@ -127,13 +127,6 @@ void srandom(unsigned int seed)
 
 /*****************************************************************************/
 
-void setlinebuf(FILE *stream)
-{
- setvbuf(stream, (char *)NULL, _IOLBF, 0);
-}
-
-/*****************************************************************************/
-
 int NovaWin_stat(const char *path, struct stat *statBuf)
 /* Implementation of stat() which gives better times and correct nlinks */
 {
