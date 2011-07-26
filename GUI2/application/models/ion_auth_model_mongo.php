@@ -866,7 +866,6 @@ class Ion_auth_model_mongo extends CI_Model
 
 		return TRUE;
 	    }
-
 	    return FALSE;
 	}
 

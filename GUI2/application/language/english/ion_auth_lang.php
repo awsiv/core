@@ -59,3 +59,6 @@ $lang['group_update_successful']                = 'Group Information Sucessfully
 $lang['group_update_unsuccessful']              = 'Unable to Update group';
 $lang['backend_error']              = 'No Backend mentioned in the app Settings';
 
+
+//modes of login
+$lang['login_mode_changed']          =  'You have changed the mode of authentication , please re-login into the system';

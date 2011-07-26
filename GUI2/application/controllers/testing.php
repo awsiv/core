@@ -39,8 +39,10 @@ class Testing extends CI_Controller
          {
          $this->load->library('mongo_db');
 
-         $result=$this->mongo_db->get('users');
-         $result = $this->mongo_db->get('app_logs');
+         //$result=$this->mongo_db->get('users');
+        //$result = $this->mongo_db->get('app_logs');
+         $result=$this->mongo_db->get('appsettings');
+         //$result=$this->mongo_db->get('onlineusers');
          //$this->mongo_db->where(array('group'=>'faculty'));
          //$result=$this->mongo_db->get('work_logs');
          //$result=$this->mongo_db->select(array('username'))->get_where('users',array('group'=>'admin'));
@@ -134,11 +136,11 @@ class Testing extends CI_Controller
          function get_users()
          {
              $this->load->library('ion_auth');
-             $user=$this->ion_auth->get_user('4d36a0424a235a8024000000');
-             //$result=$this->ion_auth->get_users_array();
-             //print_r($user);
+             //$user=$this->ion_auth->get_user('4d36a0424a235a8024000000');
+             $result=$this->ion_auth->get_users_array();
+             print_r($result);
              
-             print_r ($user->_id);
+            // print_r ($user->_id);
          }
 
          function remove_user()
@@ -154,10 +156,11 @@ class Testing extends CI_Controller
              $this->load->library('ion_auth');
               //$result=$this->ion_auth->create_group(array('name'=>'manager'));
               $result=$this->ion_auth->get_groups();
-              foreach($result as $group)
+             /* foreach($result as $group)
               {
                   echo $group['name'].' '.$group['_id'].'<br/>';
-              }
+              }*/
+             print_r($result);
          }
 
          function test_update()
@@ -665,4 +668,107 @@ try {
                 }
         }
     }
+
+    function testldap(){
+         $this->load->library('Auth_Ldap');
+         $result=$this->auth_ldap->login('sudhir','Cf3ng1n3');
+        if($result)
+        {
+         print_r($result);
+         echo "logged in";
+        }
+        else
+        {
+           echo  "not ";
+        }
+    }
+
+    function load_ldap_users(){
+         $this->load->library('Auth_Ldap');
+         //$values=$this->auth_ldap-> getallLdapUsers();
+         $values=$this->auth_ldap-> get_all_ldap_users('sudhir','Cf3ng1n3');
+         print_r($values);
+    }
+
+    function load_ldap_groups(){
+        $this->load->library('Auth_Ldap');
+         //$values=$this->auth_ldap-> getallLdapUsers();
+         $values=$this->auth_ldap->get_all_ldap_groups('sudhir','q1w2e3r4t5');
+         print_r($values);
+    }
+
+   function setting_get_item(){
+       $this->load->model('settings_model');
+        var_dump($this->settings_model->get_app_settings());
+   }
+
+   function test_cfpr_ldap(){
+       if(function_exists("cfpr_ldap_authenticate")){
+         //$result=cfpr_ldap_authenticate('ldaps://cf022osx.cfengine.com:636','uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com','q1w2e3r4t5');
+        //$result=cfpr_ldap_authenticate('ldap://10.0.0.152','uid=sudhir,ou=people,dc=cfengine,dc=com','password');
+        $result=cfpr_ldap_authenticate('ldap://10.0.0.35','sudhir@windows1.test.cfengine.com','Cf3ng1n3');
+         var_dump($result);
+       }
+   }
+
+   function test_cfpr_ldap_attr(){
+       //$result=cfpr_ldap_get_several_attributes("ldap://10.0.0.100","uid=sudhir","cn=users,dc=cf022osx,dc=cfengine,dc=com","(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))","uid,mail,sn,altSecurityIdentities","subtree","sasl","q1w2e3r4t5","2",100);
+       $result=cfpr_ldap_get_several_attributes("ldap://10.0.0.152",
+               "uid=sudhir",
+               "ou=people,dc=cfengine,dc=com",
+               "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))" ,
+               "uid,cn,mail",
+               "subtree",
+               "sasl",
+               "password",1,100) ;
+       $users=json_decode($result,true);
+       $ret=array();
+       foreach($users['data'] as $user)
+       {
+         $row=array();
+         foreach($users['keys'] as $key=>$value){
+           $row[$key]=$user[$value];
+         }
+         array_push($ret,$row);
+       }
+      var_dump($ret);
+   }
+
+   function test_cfpr_ldap_single_attr(){
+
+       $result=cfpr_ldap_get_single_attribute_list("ldap://10.0.0.152",
+                "uid=sudhir,ou=people,dc=cfengine,dc=com",
+                "ou=people,dc=cfengine,dc=com",
+                "(uid=sudhir)",
+                "mail",
+                "subtree",
+                "sasl",
+                "password",1,100);
+       var_dump($result);
+
+   }
+
+   function test_get_groups(){
+        $this->load->library('Auth_Ldap');
+         //$values=$this->auth_ldap-> getallLdapUsers();
+         $values=$this->auth_ldap->get_role_for_user('sudhir','Cf3ng1n3');
+         print_r($values);
+         //var_dump($result);
+   }
+
+   function test_get_details_ldap_users(){
+       $result=cfpr_ldap_get_several_attributes("ldap://10.0.0.35",
+               "sudhir@windows1.test.cfengine.com",
+               "cn=users,dc=windows1,dc=test,dc=cfengine,dc=com",
+               "(samaccountname=sudhir)" ,
+               "givenname,cn,distinguishedname",
+               "subtree",
+               "sasl",
+               "Cf3ng1n3",1,100) ;
+       /* $this->load->library('Auth_Ldap');
+        $result=$this->auth_ldap->get_details_for_user('sudhir','Cf3ng1n3');*/
+        var_dump($result);
+   }
+
+   
 }

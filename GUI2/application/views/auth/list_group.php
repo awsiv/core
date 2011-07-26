@@ -4,12 +4,13 @@
 		<tr>
 			<th>Name</th>
 			<th></th>
-                <th>Action</th>
+               <?php if($this->ion_auth->mode!="ldap"){ ?> <th>Action</th><?php }?>
 		</tr>
-        <?php foreach ($groups as $group){?>				
+        <?php foreach ((array)$groups as $group){?>
         <tr>
-          <td><?php echo $group['name']?></td>
+          <td><?php echo isset($group['name'])?$group['name']:$group['displayname']?></td>
           <td><?php if(array_key_exists('description', $group))  echo $group['description']?></td>
+         <?php if($this->ion_auth->mode!="ldap"){ ?>
           <td class="actioncol">
              <?php
              if($is_admin)
@@ -19,11 +20,14 @@
              }
              ?>
           </td>
+          <?php } ?>
         </tr>
 		<?php }?>
   </table>
-<?php if($is_admin){?>
+<?php 
+if($this->ion_auth->mode!="ldap"){
+if($is_admin){?>
 <p id="btnholder">
   <span class="btn"><?php echo anchor("auth/manage_group/create", 'Add Group',array('id'=>'add_group'))?></span>
 </p>
-<?php } ?>
+<?php } }?>

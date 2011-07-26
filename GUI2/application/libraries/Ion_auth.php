@@ -77,6 +77,8 @@ class Ion_auth
 	 **/
 	public $_extra_set = array();
 
+
+        public $mode='database';
 	/**
 	 * __construct
 	 *
@@ -89,8 +91,10 @@ class Ion_auth
 		$this->ci->load->config('ion_auth', TRUE);
 		$this->ci->load->library('email');
 		$this->ci->load->library('session');
+                $this->ci->load->library('Auth_Ldap');
 		$this->ci->lang->load('ion_auth');
 		$this->ci->load->model('ion_auth_model_mongo');
+                $this->ci->load->model('settings_model');
 		$this->ci->load->helper('cookie');
 
 		$this->messages = array();
@@ -102,6 +106,15 @@ class Ion_auth
 		$this->error_end_delimiter     = $this->ci->config->item('error_end_delimiter', 'ion_auth');
                 $this->info_start_delimiter =$this->ci->config->item('info_start_delimiter', 'ion_auth');
                 $this->info_end_delimiter =$this->ci->config->item('info_end_delimiter', 'ion_auth');
+                //load the mode of authentication
+                $this->mode=$this->ci->settings_model->app_settings_get_item('mode');
+                if(!$this->mode){
+                    $this->set_error('backend_error');
+                    $this->mode='database';
+		    //return FALSE;
+                }
+                 //$this->mode='database';
+
 		//auto-login the user if they are remembered
 		if (!$this->logged_in() && get_cookie('identity') && get_cookie('remember_code'))
 		{
@@ -362,6 +375,20 @@ class Ion_auth
 	 **/
 	public function login($identity, $password, $remember=false)
 	{
+          
+              if($this->mode!='database')
+              {
+                 $ret=$this->ci->auth_ldap->login($identity,$password);
+                     if(is_array($ret))
+                     {
+                      $this->ci->session->set_userdata($ret);
+                      $this->ci->session->set_userdata('pwd', $password);
+                      return TRUE;
+                     }
+                $this->set_error('login_unsuccessful');
+		return FALSE;
+               }
+               
 		if ($this->ci->ion_auth_model_mongo->login($identity, $password, $remember))
 		{
 			$this->set_message('login_successful');
@@ -487,6 +514,12 @@ class Ion_auth
 	 **/
 	public function get_users_array($group_name=false, $limit=NULL, $offset=NULL)
 	{
+            if(strtolower($this->mode)!='database'){
+               if(!$this->ci->session->userdata('pwd')){
+                     $this->set_error('login_mode_changed');
+                }
+                return $this->ci->auth_ldap->get_all_ldap_users( $this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
+            }
 		return $this->ci->ion_auth_model_mongo->get_users_by_group($group_name, $limit, $offset);
 	}
 
@@ -815,6 +848,12 @@ class Ion_auth
 	 **/
 	 public function get_groups()
 	 {
+            if(strtolower($this->mode)!='database'){
+                if(!$this->ci->session->userdata('pwd')){
+                     $this->set_error('login_mode_changed');
+                }
+               return $this->ci->auth_ldap->get_all_ldap_groups( $this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
+            }
 		 return $this->ci->ion_auth_model_mongo->get_groups();
 	 }
 	 
@@ -872,7 +911,7 @@ class Ion_auth
 			return TRUE;
 		}
 
-		//$this->set_error('group_update_unsuccessful');
+		$this->set_error('group_update_unsuccessful');
 		return FALSE;
 	  }
 

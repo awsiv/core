@@ -18,6 +18,12 @@ $config['default']='themes/default/';
 $config['nodeport']='8080';
 
 /*
+ * Set this item to 'ldap' if ldap is to be used for authenticating user , other wise
+ * Default database 'mongodb' used for authenticating users 
+ * 
+ */
+$config['auth']='database';
+/*
 |----------------------------------------------------------------------------
 |This item is for adjusting the environment on which the cfengine web
 |app is deployed. On production it should be stated as production

@@ -10,26 +10,32 @@ class Settings extends Cf_Controller {
 
 
     function manage($op=false, $id=false){
+                $requiredjs = array(
+                    array('widgets/notes.js'),
+                );
+        $this->carabiner->js($requiredjs);
                 $required_if_ldap =$this->__ldap_check();
                 $required_if_database=$this->__db_check();
+                $required_if_ad=$this->__AD_check();
                 $this->form_validation->set_rules('appemail', 'Application email', 'xss_clean|trim|required|valid_email');
                 $this->form_validation->set_rules('mode', 'Authentication mode', 'xss_clean|trim|required');
-		$this->form_validation->set_rules('username', 'username', 'xss_clean|trim'.$required_if_database);
-		$this->form_validation->set_rules('password', 'password', 'xss_clean|trim'.$required_if_database.'|matches[confirm_password]');
-		$this->form_validation->set_rules('confirm_password', 'confirm password', 'trim'.$required_if_database);
-		$this->form_validation->set_rules('host', 'host', 'xss_clean|trim'. $required_if_ldap);
-		$this->form_validation->set_rules('base_dn', 'base dn', 'xss_clean|trim'. $required_if_ldap);
-		$this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim'. $required_if_ldap);
-		$this->form_validation->set_rules('active_directory', 'Active directory', 'xss_clean|trim'. $required_if_ldap);
-		$this->form_validation->set_rules('active_directory_domain', 'active directory domain', 'xss_clean|trim'. $required_if_ldap);
-		$this->form_validation->set_rules('member_attribute', 'member attribute', 'xss_clean|trim'. $required_if_ldap);
-
+		//$this->form_validation->set_rules('username', 'username', 'xss_clean|trim'.$required_if_database);
+		//$this->form_validation->set_rules('password', 'password', 'xss_clean|trim'.$required_if_database.'|matches[confirm_password]');
+		//$this->form_validation->set_rules('confirm_password', 'confirm password', 'trim'.$required_if_database);
+		$this->form_validation->set_rules('host', 'host', 'xss_clean|trim'. $required_if_ldap. $required_if_ad);
+		$this->form_validation->set_rules('base_dn', 'base dn', 'xss_clean|trim'. $required_if_ldap. $required_if_ad);
+		$this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim'. $required_if_ldap.$required_if_ad);
+                $this->form_validation->set_rules('users_directory','users directory','xss_clean|trim'. $required_if_ldap. $required_if_ad);
+		//$this->form_validation->set_rules('active_directory', 'Active directory', 'xss_clean|trim'. $required_if_ldap);
+                $this->form_validation->set_rules('member_attribute', 'member attribute', 'xss_clean|trim'. $required_if_ldap);
+		$this->form_validation->set_rules('active_directory_domain', 'active directory domain', 'xss_clean|trim'.$required_if_ad);
+                
 		$this->form_validation->set_error_delimiters('<br /><span>', '</span>');
 
 		if ($this->form_validation->run() == FALSE) // validation hasn't been passed
 		{
                          $bc = array(
-                                'title' => 'Admin',
+                                'title' => 'settings',
                                 'url' => 'auth/setting',
                                 'isRoot' => false,
                                 'replace_existing' => true
@@ -72,7 +78,8 @@ class Settings extends Cf_Controller {
 					       	'host' => set_value('host'),
 					       	'base_dn' => set_value('base_dn'),
 					       	'login_attribute' => set_value('login_attribute'),
-					       	'active_directory' => set_value('active_directory'),
+                                                'users_directory' => set_value('users_directory'),
+					     //  	'active_directory' => set_value('active_directory'),
 					       	'active_directory_domain' => set_value('active_directory_domain'),
 					       	'member_attribute' => set_value('member_attribute')
 						);
@@ -108,7 +115,7 @@ class Settings extends Cf_Controller {
                               if($property=='mode')
                               {
                                 $data[$value]=' checked="checked"';
-                                  continue;
+                                continue;
 
                               }
                               if($property != '_id'){
@@ -140,6 +147,20 @@ class Settings extends Cf_Controller {
          }
     }
 
+     function __AD_check()
+    {
+
+         if($this->input->post('mode')&&strtolower($this->input->post('mode'))=='active_directory')
+         {
+           return '|required';
+         }
+         else
+         {
+             return '';
+         }
+    }
+    
+
     function __db_check(){
         if($this->input->post('mode')&&strtolower($this->input->post('mode'))=='database')
          {
@@ -149,6 +170,37 @@ class Settings extends Cf_Controller {
          {
              return '';
          }
+    }
+
+    function logintest(){
+        $this->load->library('Auth_Ldap');
+        $this->auth_ldap->set_host($this->input->post('host'));
+        $this->auth_ldap->set_basedn($this->input->post('basedn'));
+        $this->auth_ldap->set_mode($this->input->post('mode'));
+        $this->auth_ldap->set_login_attr($this->input->post('login_attr'));
+        $this->auth_ldap->set_user_dir($this->input->post('user_dir'));
+        $this->auth_ldap->set_member_attr($this->input->post('member_attr'));
+        $this->auth_ldap->set_ad_domain($this->input->post('addomain'));
+        
+        $result=$this->auth_ldap->login($this->input->post('username'), $this->input->post('password'));
+        //print_r($result);
+        if($result)
+        {
+         echo "<div id=\"infoMessage\" style=\"margin-top:20px\"><span class=\"success\">ldap_authentication_Sucessful</span></div>";
+        }
+        else
+        {
+           echo "<div id=\"infoMessage\" style=\"margin-top:20px\"><span class=\"error\">ldap_authentication_unsucessful</span></div>";
+        }
+    }
+
+    function ldaptest(){;
+        $data = array();
+        foreach ( $_POST as $key => $value )
+        {
+            $data['configsettings'][$key] = $this->input->post($key);
+        }
+       $this->load->view('appsetting/ldaplogintest',$data);
     }
 }
 ?>

@@ -18,15 +18,18 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
         <?php// echo form_error('mode'); ?>
       
                 <?php // Change or Add the radio values/labels/css classes to suit your needs ?>
-                <input id="mode1" name="mode" type="radio" class="" value="database" <?php echo (isset($database))?$database:$this->form_validation->set_radio('mode', 'ldap') ; ?> />
+                     <input id="mode1" name="mode" type="radio" class="" value="database" <?php echo (isset($database))?$database:$this->form_validation->set_radio('mode', 'database') ; ?> />
         		<label for="mode" class="">Database</label>
 
         		<input id="mode2" name="mode" type="radio" class="" value="ldap" <?php echo (isset($ldap))?$ldap:$this->form_validation->set_radio('mode', 'ldap'); ?> />
         		<label for="mode" class="">LDAP</label>
+
+                       <input id="mode3" name="mode" type="radio" class="" value="active_directory" <?php echo (isset($active_directory))?$active_directory:$this->form_validation->set_radio('mode', 'active_directory') ; ?> />
+        		<label for="mode" class="">Active Directory</label>
 </p>
 
 
-<p>
+<!--<p>
         <label for="username">username <span class="required">*</span></label>
         <?php// echo form_error('username'); ?>
         <input id="username" type="text" name="username" maxlength="50" value="<?php echo $username ;?>"  />
@@ -42,8 +45,9 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
         <label for="confirm_password">confirm password <span class="required">*</span></label>
         <?php// echo form_error('confirm_password'); ?>
         <input id="confirm_password" type="password" name="confirm_password" maxlength="50" value="<?php echo $password ?>"  />
-</p>
-
+</p>-->
+<fieldset id="ldapsettings">
+    <legend></legend>
 <p>
         <label for="host">LDAP host <span class="required">*</span></label>
         <?php //echo form_error('host'); ?>
@@ -68,31 +72,32 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
         <input id="users_directory" type="text" name="users_directory"  value="<?php echo $users_directory ?>"  />
 </p>
 
-<p>
+<!--<p>
         <label for="active_directory">Active directory <span class="required">*</span></label>
         <?php //echo form_error('active_directory'); ?>
       
                 <?php // Change or Add the radio values/labels/css classes to suit your needs ?>
-                <input id="active_directory" name="active_directory" type="radio" class="" value="yes" <?php echo (isset($yes))?$yes:$this->form_validation->set_radio('active_directory', 'yes'); ?> />
+                <input id="active_directory" name="active_directory" type="radio" class="" value="yes" <?php //echo (isset($yes))?$yes:$this->form_validation->set_radio('active_directory', 'yes'); ?> />
         		<label for="active_directory" class="">Yes</label>
 
-        		<input id="active_directory" name="active_directory" type="radio" class="" value="no" <?php echo (isset($no))?$no:$this->form_validation->set_radio('active_directory', 'no'); ?> />
+        		<input id="active_directory" name="active_directory" type="radio" class="" value="no" <?php //echo (isset($no))?$no:$this->form_validation->set_radio('active_directory', 'no'); ?> />
         		<label for="active_directory" class="">No</label>
-</p>
-
-
-<p>
-        <label for="active_directory_domain">active directory domain <span class="required">*</span></label>
-        <?php// echo form_error('active_directory_domain'); ?>
-        <input id="active_directory_domain" type="text" name="active_directory_domain"  value="<?php echo $active_directory_domain  ?>"  />
-</p>
-
-<p>
+</p>-->
+<p id="member_attribute_related">
         <label for="member_attribute">member attribute <span class="required">*</span></label>
         <?php //echo form_error('member_attribute'); ?>
         <input id="member_attribute" type="text" name="member_attribute"  value="<?php echo $member_attribute ?>"  />
 </p>
 
+
+<p id="adrelated">
+        <label for="active_directory_domain">active directory domain <span class="required">*</span></label>
+        <?php// echo form_error('active_directory_domain'); ?>
+        <input id="active_directory_domain" type="text" name="active_directory_domain"  value="<?php echo $active_directory_domain  ?>"  />
+</p>
+
+<p><label></label> <a class="btn" id="testsettings" href="<?php echo site_url('settings/ldaptest')?>">Test it </a></p>
+</fieldset>
 
 <p  id="btnholder">
         <?php echo form_submit( array('name'=>'submit','class'=>'btn','value'=>'Submit')); ?>
@@ -103,3 +108,47 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
     </div>
   </div>
 </div>
+<script type="text/javascript">
+ $(document).ready(function(){
+     $('#ldapsettings').hide();
+      settings_toggle();
+        function settings_toggle(){
+            if ($("input[@name='mode']:checked").val() == 'database')
+            {
+                $('#ldapsettings').hide();
+            }
+            else if ($("input[@name='mode']:checked").val() == 'ldap')
+            {
+                $('#ldapsettings').show();
+                $('#adrelated').hide();
+                $('#member_attribute_related').show();
+            }
+            else if($("input[@name='mode']:checked").val() == 'active_directory'){
+                $('#ldapsettings').show()
+                $('#adrelated').show();
+                $('#member_attribute_related').hide();
+            }
+     }
+     
+     $("input[name='mode']").change(function(){
+      settings_toggle();
+     });
+
+      $('#testsettings').bind('click',function(event){
+          event.preventDefault();
+          $(this).ajaxyDialog({title:'LDAP Test',clickData:{
+             'mode':$("input[@name='mode']:checked").val(),
+             'host':$("#host").val(),
+             'basedn':$("#base_dn").val(),
+             'login_attr':$("#login_attribute").val(),
+             'user_dir':$("#users_directory").val(),
+             'member_attr':$("#member_attribute").val(),
+             'addomain':$("#active_directory_domain").val()
+         }}).ajaxyDialog('open');
+
+      });
+   
+
+     
+});
+</script>

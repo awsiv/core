@@ -50,6 +50,12 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
        $this->__testcases($data);
 
     }
+
+
+    public function test_cfpr_report_class_frequency(){
+         $data= cfpr_report_class_frequency($hostkey,"mXC.*");
+         $this->__testcases($data);
+    }
     
     public function test_cfpr_report_bundlesseen(){
         $data=cfpr_report_bundlesseen(NULL, NULL, true, false, NULL, NULL);

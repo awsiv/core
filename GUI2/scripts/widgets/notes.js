@@ -10,7 +10,8 @@
             closeDialogSelector: "a.dialog-close",
             width:'auto',
             originalElement: null, // store a refrence to the originally called element
-            dontOverrideTitle : false
+            dontOverrideTitle : false,
+            clickData:[]
             
         },
         
@@ -69,6 +70,8 @@
             $.ajax({
                 url: url,
                 dataType: "html",
+                data:self.options.clickData,
+                type:"POST",
                 success: function(resp, status, xhr) {
                     if (xhr.status != 0) {
                         self._loadToDialog(resp);

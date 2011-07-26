@@ -1100,6 +1100,13 @@ span.search input
     padding:12px 0;
     width:96.5%;
     list-style: none;
+    overflow: hidden;
+    word-wrap:break-word;
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+
 }
 
 .result li:hover
@@ -1550,7 +1557,7 @@ span.search input
     color:#3d453a;
     vertical-align: middle;
     overflow:hidden;
-    max-width: 600px;
+    max-width: 450px;
     white-space: pre-wrap; /* css-3 */
     white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
     white-space: -pre-wrap; /* Opera 4-6 */
@@ -1809,7 +1816,7 @@ span.search input
     width: 570px; 
 }
 
-.stylized form fieldset {
+.stylized form fieldset,.form fieldset {
     /* clear: both; note that this clear causes inputs to break to left in ie5.x mac, commented out */
 
     border-width: 1px;
@@ -1820,7 +1827,7 @@ span.search input
     border-radius: 5px 5px 5px 5px;
 }
 
-.stylized form fieldset legend {
+.stylized form fieldset ,.form fieldset ledgend{
     font-size:1.1em; /* bump up legend font size, not too large or it'll overwrite border on left */
     /* be careful with padding, it'll shift the nice offset on top of border  */
 }
@@ -2205,6 +2212,7 @@ span.search input
 .btn:hover,.morebtn a:hover
 {
   color:#08A3C1;
+  cursor: pointer;
 }
 
 .bundlelist-table
@@ -2389,12 +2397,14 @@ background-image: url(../images/error.png);
 .form
 {
     padding:5px;
+    min-width:400px
 }
 .form input[type='text'],.form input[type='password']
 {
     border:solid 1px #CECECE;
     padding:3px;
     width:20%;
+    min-width: 200px;
 }
 
 .form input[type="checkbox"]

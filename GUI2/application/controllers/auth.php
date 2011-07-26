@@ -37,11 +37,11 @@ class Auth extends Controller {
             //$identifier=$this->config->item('identity','ion_auth');
             $this->data['title'] = "Cfengine Mission Portal - Admin";
             $this->data['username'] = $this->session->userdata('username');
-            $this->data['message'] = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : $this->session->flashdata('message');
             //list the users
             $this->data['users'] = $this->ion_auth->get_users_array();
             $this->data['usergroup'] = $this->session->userdata('group');
             $this->data['is_admin'] = $this->ion_auth->is_admin();
+            $this->data['message'] = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message'));
             $_data = array('event_loggedin' => true, 'ttlusr' => $this->onlineusers->total_users());
             //notifier( get_nodehost_from_server().'/userloggedin', $_data );
             if (is_ajax ()) {
@@ -61,7 +61,8 @@ class Auth extends Controller {
         $bc = array(
             'title' => 'Admin',
             'url' => 'auth/admin_page',
-            'isRoot' => false
+            'isRoot' => false,
+           'replace_existing'=>true
         );
         $this->breadcrumb->setBreadCrumb($bc);
         $this->data['title'] = "Cfengine Mission Portal - Admin";
@@ -102,6 +103,7 @@ class Auth extends Controller {
                 //redirect them back to the home page
                 $this->session->set_flashdata('message', $this->ion_auth->messages());
                 //redirect($this->config->item('base_url'), 'refresh');
+               
                 redirect('auth/index', 'refresh');
             } else { //if the login was un-successful
                 //redirect them back to the login page
@@ -561,8 +563,8 @@ class Auth extends Controller {
                 $this->__load_group_add_edit($op, $id);
             }
         } else {
-            $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
             $this->data['groups'] = $this->ion_auth->get_groups();
+            $this->data['message'] = (validation_errors()) ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message'));
             $this->load->view('auth/list_group', $this->data);
         }
     }
@@ -626,8 +628,9 @@ class Auth extends Controller {
     function setting() {
         $bc = array(
             'title' => 'Admin',
-            'url' => 'auth/admin_page',
-            'isRoot' => false
+            'url' => 'auth/setting',
+            'isRoot' => false,
+            'replace_existing'=>true
         );
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
