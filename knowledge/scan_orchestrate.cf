@@ -5,34 +5,8 @@ bundle knowledge st_orchestrate
 topics:
 
 "st-orchestrate";
-Orchestration::
-    "Distributing Ordering between hosts with CFEngine Nova" ;
-Orchestration::
-    "Overriding order" ;
-Orchestration::
-    "Bundle ordering" ;
-Orchestration::
-    "Ordering operations in CFEngine" ;
-Orchestration::
-    "Bulk operations are handled by repeating patterns over lists" ;
-Orchestration::
-    "Black, grey and white box encapsulation in CFEngine" ;
-Orchestration::
-    "Hiding details" ;
-Orchestration::
-    "High level services in CFEngine" ;
-Orchestration::
-    "Is CFEngine patch-oriented or package-oriented?" ;
-Orchestration::
-    "Levels of policy abstraction" ;
-Orchestration::
-    "How does CFEngine deal with modularity and orchestration?" ;
-Orchestration::
-    "What is orchestration?" ;
-Orchestration::
-    "What is modularity?" ;
 Special_Topics_Guide::
-    "Orchestration"  association => a("discussed in","Orchestration","discusses");
+    "Orchestration"  association => a("discusses","Distributing Ordering between hosts with CFEngine Nova","is discussed in");
 
 
 occurrences:

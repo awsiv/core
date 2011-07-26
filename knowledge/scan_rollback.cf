@@ -5,28 +5,8 @@ bundle knowledge st_rollback
 topics:
 
 "st-rollback";
-CFEngine_Tutorial::
-    "Appendix - Did you know?" ;
-CFEngine_Tutorial::
-    "Resetting  a case where rollback works?" ;
-CFEngine_Tutorial::
-    "How does CFEngine convergence help?" ;
-CFEngine_Tutorial::
-    "An alternative way to plan changes" ;
-CFEngine_Tutorial::
-    "Dont shoot the messenger" ;
-CFEngine_Tutorial::
-    "Why is relying on rollback not a good strategy?" ;
-CFEngine_Tutorial::
-    "ITIL release management" ;
-CFEngine_Tutorial::
-    "Limitations of rollback in system administration" ;
-CFEngine_Tutorial::
-    "Like revision control?" ;
-CFEngine_Tutorial::
-    "What is rollback?" ;
 Special_Topics_Guide::
-    "CFEngine-Tutorial"  association => a("discussed in","CFEngine-Tutorial","discusses");
+    "CFEngine-Tutorial"  association => a("discusses","Appendix - Did you know?","is discussed in");
 
 
 occurrences:

@@ -5,26 +5,6 @@ bundle knowledge cf_copernicus
 topics:
 
 "cf-copernicus";
-Improve_Copernicus::
-    "Improve Copernicus" ;
-Graphs::
-    "Graphs" ;
-The_content::
-    "Searching" ;
-The_content::
-    "Occurrences" ;
-The_content::
-    "Associations" ;
-The_content::
-    "Types" ;
-The_content::
-    "Topics" ;
-The_content::
-    "The content" ;
-Introduction::
-    "Introduction" ;
-Special_Topics_Guide::
-    "CFEngine-Reference"  association => a("discussed in","CFEngine-Reference","discusses");
 
 
 occurrences:

@@ -5,14 +5,8 @@ bundle knowledge st_teams
 topics:
 
 "st-teams";
-Teams::
-    "Delegating roles in a collaboration" ;
-Teams::
-    "Creative roles" ;
-Teams::
-    "What is team-work?" ;
 Special_Topics_Guide::
-    "Teams"  association => a("discussed in","Teams","discusses");
+    "Teams"  association => a("discusses","Delegating roles in a collaboration","is discussed in");
 
 
 occurrences:

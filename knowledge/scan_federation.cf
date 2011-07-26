@@ -5,34 +5,8 @@ bundle knowledge st_federation
 topics:
 
 "st-federation";
-Federation::
-    "The benefits of federated management" ;
-Federation::
-    "Why federation does not reduce predictabilty" ;
-Federation::
-    "Merging and dividing enterprises" ;
-Federation::
-    "Global assurance" ;
-Federation::
-    "Handling multiple sources" ;
-Federation::
-    "Disconnected parts inheriting a single baseline" ;
-Federation::
-    "Each part disconnected, providing services" ;
-Federation::
-    "Service oriented federation" ;
-Federation::
-    "The social contract" ;
-Federation::
-    "The Authority Paradox" ;
-Federation::
-    "Coordination, hierarchy and centralization" ;
-Federation::
-    "What is federation?" ;
-Federation::
-    "What is organizational complexity?" ;
 Special_Topics_Guide::
-    "Federation"  association => a("discussed in","Federation","discusses");
+    "Federation"  association => a("discusses","The benefits of federated management","is discussed in");
 
 
 occurrences:

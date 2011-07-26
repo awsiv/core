@@ -5,24 +5,8 @@ bundle knowledge st_menus
 topics:
 
 "st-menus";
-Menu_Driven_Configuration::
-    "Should I use menu driven configuration?" ;
-Menu_Driven_Configuration::
-    "Can I see a score-card of compliance?" ;
-Menu_Driven_Configuration::
-    "How do I see what machines keep which promises?" ;
-Menu_Driven_Configuration::
-    "Strong and weak dependency" ;
-Menu_Driven_Configuration::
-    "How do I nest menus and make dependencies?" ;
-Menu_Driven_Configuration::
-    "How do I select from menus?" ;
-Menu_Driven_Configuration::
-    "How do you create menus with CFEngine?" ;
-Menu_Driven_Configuration::
-    "What is menu-driven configuration?" ;
 Special_Topics_Guide::
-    "Menu Driven Configuration"  association => a("discussed in","Menu Driven Configuration","discusses");
+    "Menu Driven Configuration"  association => a("discusses","Should I use menu driven configuration?","is discussed in");
 
 
 occurrences:

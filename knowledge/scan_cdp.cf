@@ -5,16 +5,8 @@ bundle knowledge st_cdp
 topics:
 
 "st-cdp";
-Content_Driven_Policies::
-    "Can I make my own Content-Diven Policies?" ;
-Content_Driven_Policies::
-    "How do Content-Driven Policies work in detail?" ;
-Content_Driven_Policies::
-    "Why should I use Content-Driven Policies?" ;
-Content_Driven_Policies::
-    "What is a Content-Driven Policy?" ;
 Special_Topics_Guide::
-    "Content-Driven Policies"  association => a("discussed in","Content-Driven Policies","discusses");
+    "Content-Driven Policies"  association => a("discusses","Can I make my own Content-Diven Policies?","is discussed in");
 
 
 occurrences:

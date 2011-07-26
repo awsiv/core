@@ -5,32 +5,8 @@ bundle knowledge st_appmgt
 topics:
 
 "st-appmgt";
-Application_Management::
-    "Auditing software applications" ;
-Application_Management::
-    "Starting and stopping software" ;
-Application_Management::
-    "Customizing applications" ;
-Application_Management::
-    "Notes on Windows systems" ;
-Application_Management::
-    "Adapting to Windows" ;
-Application_Management::
-    "Stopping and restarting an application for update" ;
-Application_Management::
-    "Distributing software packages to client hosts" ;
-Application_Management::
-    "Integrated software installation" ;
-Application_Management::
-    "Enterprise Software Reporting" ;
-Application_Management::
-    "Package management" ;
-Application_Management::
-    "How can CFEngine help?" ;
-Application_Management::
-    "What is Application Management?" ;
 Special_Topics_Guide::
-    "Application Management"  association => a("discussed in","Application Management","discusses");
+    "Application Management"  association => a("discusses","Auditing software applications","is discussed in");
 
 
 occurrences:

@@ -5,32 +5,8 @@ bundle knowledge st_opennebula
 topics:
 
 "st-opennebula";
-Open_Nebula::
-    "Open Nebula Summary" ;
-Open_Nebula::
-    "Webserver in Open Nebula" ;
-Open_Nebula::
-    "Virtual machine configuration" ;
-Open_Nebula::
-    "Open Nebula Commands" ;
-Open_Nebula::
-    "Virtual machine template configuration" ;
-Open_Nebula::
-    "Network configuration" ;
-Open_Nebula::
-    "Open Nebula environment configuration" ;
-Open_Nebula::
-    "NFS config for shared image repository" ;
-Open_Nebula::
-    "Installation and dependancy configuration" ;
-Open_Nebula::
-    "Example Setup" ;
-Open_Nebula::
-    "How can CFEngine work with Open Nebula?" ;
-Open_Nebula::
-    "What is Open Nebula?" ;
 Special_Topics_Guide::
-    "Open Nebula"  association => a("discussed in","Open Nebula","discusses");
+    "Open Nebula"  association => a("discusses","Open Nebula Summary","is discussed in");
 
 
 occurrences:

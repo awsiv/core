@@ -5,28 +5,10 @@ bundle knowledge st_packages
 topics:
 
 "st-packages";
-Package_management::
-    "Package management next steps" ;
-Package_management::
-    "Uprading to a newer package version example" ;
-Package_management::
-    "Install specific package version example" ;
-Package_management::
-    "Install latest package version example" ;
-Package_management::
-    "Example package promises" ;
-Package_management::
-    "How CFEngine compares package versions" ;
-Package_management::
-    "Package promises" ;
-Package_management::
-    "What does CFEngine bring to package management?" ;
-Package_management::
-    "Strengths and weaknesses of package management" ;
-Package_management::
-    "What is package management?" ;
 Special_Topics_Guide::
-    "Package management"  association => a("discussed in","Package management","discusses");
+    "Package management"  association => a("seems to refer to","package","seems be referred to in");
+Special_Topics_Guide::
+    "Package management"  association => a("discusses","Package management next steps","is discussed in");
 
 
 occurrences:

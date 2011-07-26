@@ -5,38 +5,8 @@ bundle knowledge st_reporting
 topics:
 
 "st-reporting";
-Reporting::
-    "Cheaper options - tripwires" ;
-Reporting::
-    "Change auditing - the all seeing eye" ;
-Reporting::
-    "Nova measurements" ;
-Reporting::
-    "Redirecting output to logs" ;
-Reporting::
-    "Creating custom logs" ;
-Reporting::
-    "Including data in reports" ;
-Reporting::
-    "Creating custom reports  all versions" ;
-Reporting::
-    "CFEngine output levels" ;
-Reporting::
-    "Standard reports in CFEngine Nova" ;
-Reporting::
-    "Reporting in CFEngine" ;
-Reporting::
-    "Decentralized data collection in CFEngine" ;
-Reporting::
-    "CMDB and CFEngine" ;
-Reporting::
-    "What is a CMDB?" ;
-Reporting::
-    "Should monitoring and configuration be separate?" ;
-Reporting::
-    "What are monitoring and reporting?" ;
 Special_Topics_Guide::
-    "Reporting"  association => a("discussed in","Reporting","discusses");
+    "Reporting"  association => a("discusses","Cheaper options - tripwires","is discussed in");
 
 
 occurrences:

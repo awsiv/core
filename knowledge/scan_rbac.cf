@@ -5,30 +5,8 @@ bundle knowledge st_rbac
 topics:
 
 "st-rbac";
-RBAC::
-    "Granting the right to switch on special pre-defined policies" ;
-RBAC::
-    "The bowtie process" ;
-RBAC::
-    "The right to edit and publish policy" ;
-RBAC::
-    "The Policy Dispatch Point" ;
-RBAC::
-    "The risk from centralized trusted hosts" ;
-RBAC::
-    "No need for any centralization in CFEngine" ;
-RBAC::
-    "The role of centralized push and pull in RBAC" ;
-RBAC::
-    "The chain of privilege in CFEngine" ;
-RBAC::
-    "CFEngines approach to privilege" ;
-RBAC::
-    "The risks of RBAC" ;
-RBAC::
-    "What is Role Based Access Control?" ;
 Special_Topics_Guide::
-    "RBAC"  association => a("discussed in","RBAC","discusses");
+    "RBAC"  association => a("discusses","Granting the right to switch on special pre-defined policies","is discussed in");
 
 
 occurrences:

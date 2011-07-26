@@ -5,28 +5,6 @@ bundle knowledge cf_QuickRef3
 topics:
 
 "cf-QuickRef3";
-Command_reference::
-    "cfkey" ;
-Command_reference::
-    "cf-know - CFEngines knowledge agent" ;
-Command_reference::
-    "cf-report - CFEngines reporting agent" ;
-Command_reference::
-    "cf-runagent - Run agent" ;
-Command_reference::
-    "cf-monitord - CFEngines monitoring agent" ;
-Command_reference::
-    "cf-execd - CFEngines execution agent" ;
-Command_reference::
-    "cf-serverd - CFEngines server agent" ;
-Command_reference::
-    "cf-agent - CFEngines change agent" ;
-Command_reference::
-    "cf-promises - CFEngines promise analyzer" ;
-Command_reference::
-    "Command reference" ;
-Special_Topics_Guide::
-    "CFEngine-Reference"  association => a("discussed in","CFEngine-Reference","discusses");
 
 
 occurrences:

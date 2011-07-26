@@ -5,32 +5,8 @@ bundle knowledge st_schedule
 topics:
 
 "st-schedule";
-Scheduling::
-    "Appendix - Did you know?" ;
-Scheduling::
-    "Choosing a scheduling interval" ;
-Scheduling::
-    "Splaying host times" ;
-Scheduling::
-    "Commands promises" ;
-Scheduling::
-    "Working with Unix cron." ;
-Scheduling::
-    "Scheduling by Sensing Events and Patterns" ;
-Scheduling::
-    "Logging execution" ;
-Scheduling::
-    "Calendars" ;
-Scheduling::
-    "Chaining jobs together" ;
-Scheduling::
-    "Define jobs with basic profile information" ;
-Scheduling::
-    "How can CFEngine help?" ;
-Scheduling::
-    "What is scheduling?" ;
 Special_Topics_Guide::
-    "Scheduling"  association => a("discussed in","Scheduling","discusses");
+    "Scheduling"  association => a("discusses","Appendix - Did you know?","is discussed in");
 
 
 occurrences:

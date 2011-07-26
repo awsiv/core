@@ -5,26 +5,8 @@ bundle knowledge st_iterate
 topics:
 
 "st-iterate";
-Iteration::
-    "Summary of iteration" ;
-Iteration::
-    "The power of iteration in CFEngine" ;
-Iteration::
-    "Nesting promises workaround" ;
-Iteration::
-    "Iterating across multiple lists, revisted" ;
-Iteration::
-    "Fixing Iterating across nested lists" ;
-Iteration::
-    "Iterating over nested lists" ;
-Iteration::
-    "Iterating across multiple lists" ;
-Iteration::
-    "Iterated promises" ;
-Iteration::
-    "What is iteration?" ;
 Special_Topics_Guide::
-    "Iteration"  association => a("discussed in","Iteration","discusses");
+    "Iteration"  association => a("discusses","Summary of iteration","is discussed in");
 
 
 occurrences:

@@ -5,798 +5,20 @@ bundle knowledge cf3_reference
 topics:
 
 "cf3-reference";
-Logs_and_records::
-    "State information" ;
-Logs_and_records::
-    "Additional reports in commcerical cfengine versions" ;
-Logs_and_records::
-    "Reports in outputs" ;
-Logs_and_records::
-    "Text logs" ;
-Logs_and_records::
-    "Embedded Databases" ;
-Logs_and_records::
-    "Logs and records" ;
-Variable_context_this::
-    "Variable this.promiser" ;
-Variable_context_this::
-    "Variable this.promise_linenumber" ;
-Variable_context_this::
-    "Variable this.promise_filename" ;
-Variable_context_this::
-    "Variable this.handle" ;
-Special_Variables::
-    "Variable context this" ;
-Variable_context_sys::
-    "Variable sys.workdir" ;
-Variable_context_sys::
-    "Variable sys.winsysdir" ;
-Variable_context_sys::
-    "Variable sys.winprogdir86" ;
-Variable_context_sys::
-    "Variable sys.winprogdir" ;
-Variable_context_sys::
-    "Variable sys.windir" ;
-Variable_context_sys::
-    "Variable sys.version" ;
-Variable_context_sys::
-    "Variable sys.uqhost" ;
-Variable_context_sys::
-    "Variable sys.resolv" ;
-Variable_context_sys::
-    "Variable sys.release" ;
-Variable_context_sys::
-    "Variable sys.policy_hub" ;
-Variable_context_sys::
-    "Variable sys.ostype" ;
-Variable_context_sys::
-    "Variable sys.os" ;
-Variable_context_sys::
-    "Variable sys.nova_version" ;
-Variable_context_sys::
-    "Variable sys.maildir" ;
-Variable_context_sys::
-    "Variable sys.long_arch" ;
-Variable_context_sys::
-    "Variable sys.licenses_installtime" ;
-Variable_context_sys::
-    "Variable sys.licenses_granted" ;
-Variable_context_sys::
-    "Variable sys.license_owner" ;
-Variable_context_sys::
-    "Variable sys.key_digest" ;
-Variable_context_sys::
-    "Variable sys.ipv4_3[interface_name]" ;
-Variable_context_sys::
-    "Variable sys.ipv4_2[interface_name]" ;
-Variable_context_sys::
-    "Variable sys.ipv4_1[interface_name]" ;
-Variable_context_sys::
-    "Variable sys.ipv4[interface_name]" ;
-Variable_context_sys::
-    "Variable sys.ipv4" ;
-Variable_context_sys::
-    "Variable sys.interface" ;
-Variable_context_sys::
-    "Variable sys.host" ;
-Variable_context_sys::
-    "Variable sys.fstab" ;
-Variable_context_sys::
-    "Variable sys.fqhost" ;
-Variable_context_sys::
-    "Variable sys.exports" ;
-Variable_context_sys::
-    "Variable sys.expires" ;
-Variable_context_sys::
-    "Variable sys.domain" ;
-Variable_context_sys::
-    "Variable sys.date" ;
-Variable_context_sys::
-    "Variable sys.constellation_version" ;
-Variable_context_sys::
-    "Variable sys.class" ;
-Variable_context_sys::
-    "Variable sys.cf_version" ;
-Variable_context_sys::
-    "Variable sys.cf_twin" ;
-Variable_context_sys::
-    "Variable sys.cf_serverd" ;
-Variable_context_sys::
-    "Variable sys.cf_runagent" ;
-Variable_context_sys::
-    "Variable sys.cf_report" ;
-Variable_context_sys::
-    "Variable sys.cf_promises" ;
-Variable_context_sys::
-    "Variable sys.cf_monitord" ;
-Variable_context_sys::
-    "Variable sys.cf_know" ;
-Variable_context_sys::
-    "Variable sys.cf_key" ;
-Variable_context_sys::
-    "Variable sys.cf_hub" ;
-Variable_context_sys::
-    "Variable sys.cf_execd" ;
-Variable_context_sys::
-    "Variable sys.cf_agent" ;
-Variable_context_sys::
-    "Variable sys.cdate" ;
-Variable_context_sys::
-    "Variable sys.arch" ;
-Special_Variables::
-    "Variable context sys" ;
-Variable_context_mon::
-    "Variable mon.dev_cpu3" ;
-Variable_context_mon::
-    "Variable mon.av_cpu3" ;
-Variable_context_mon::
-    "Variable mon.value_cpu3" ;
-Variable_context_mon::
-    "Variable mon.dev_cpu2" ;
-Variable_context_mon::
-    "Variable mon.av_cpu2" ;
-Variable_context_mon::
-    "Variable mon.value_cpu2" ;
-Variable_context_mon::
-    "Variable mon.dev_cpu1" ;
-Variable_context_mon::
-    "Variable mon.av_cpu1" ;
-Variable_context_mon::
-    "Variable mon.value_cpu1" ;
-Variable_context_mon::
-    "Variable mon.dev_cpu0" ;
-Variable_context_mon::
-    "Variable mon.av_cpu0" ;
-Variable_context_mon::
-    "Variable mon.value_cpu0" ;
-Variable_context_mon::
-    "Variable mon.dev_cpu" ;
-Variable_context_mon::
-    "Variable mon.av_cpu" ;
-Variable_context_mon::
-    "Variable mon.value_cpu" ;
-Variable_context_mon::
-    "Variable mon.dev_temp3" ;
-Variable_context_mon::
-    "Variable mon.av_temp3" ;
-Variable_context_mon::
-    "Variable mon.value_temp3" ;
-Variable_context_mon::
-    "Variable mon.dev_temp2" ;
-Variable_context_mon::
-    "Variable mon.av_temp2" ;
-Variable_context_mon::
-    "Variable mon.value_temp2" ;
-Variable_context_mon::
-    "Variable mon.dev_temp1" ;
-Variable_context_mon::
-    "Variable mon.av_temp1" ;
-Variable_context_mon::
-    "Variable mon.value_temp1" ;
-Variable_context_mon::
-    "Variable mon.dev_temp0" ;
-Variable_context_mon::
-    "Variable mon.av_temp0" ;
-Variable_context_mon::
-    "Variable mon.value_temp0" ;
-Variable_context_mon::
-    "Variable mon.dev_messages" ;
-Variable_context_mon::
-    "Variable mon.av_messages" ;
-Variable_context_mon::
-    "Variable mon.value_messages" ;
-Variable_context_mon::
-    "Variable mon.dev_syslog" ;
-Variable_context_mon::
-    "Variable mon.av_syslog" ;
-Variable_context_mon::
-    "Variable mon.value_syslog" ;
-Variable_context_mon::
-    "Variable mon.dev_weberrors" ;
-Variable_context_mon::
-    "Variable mon.av_weberrors" ;
-Variable_context_mon::
-    "Variable mon.value_weberrors" ;
-Variable_context_mon::
-    "Variable mon.dev_webaccess" ;
-Variable_context_mon::
-    "Variable mon.av_webaccess" ;
-Variable_context_mon::
-    "Variable mon.value_webaccess" ;
-Variable_context_mon::
-    "Variable mon.dev_tcpmisc_out" ;
-Variable_context_mon::
-    "Variable mon.av_tcpmisc_out" ;
-Variable_context_mon::
-    "Variable mon.value_tcpmisc_out" ;
-Variable_context_mon::
-    "Variable mon.dev_tcpmisc_in" ;
-Variable_context_mon::
-    "Variable mon.av_tcpmisc_in" ;
-Variable_context_mon::
-    "Variable mon.value_tcpmisc_in" ;
-Variable_context_mon::
-    "Variable mon.dev_tcpfin_out" ;
-Variable_context_mon::
-    "Variable mon.av_tcpfin_out" ;
-Variable_context_mon::
-    "Variable mon.value_tcpfin_out" ;
-Variable_context_mon::
-    "Variable mon.dev_tcpfin_in" ;
-Variable_context_mon::
-    "Variable mon.av_tcpfin_in" ;
-Variable_context_mon::
-    "Variable mon.value_tcpfin_in" ;
-Variable_context_mon::
-    "Variable mon.dev_tcpack_out" ;
-Variable_context_mon::
-    "Variable mon.av_tcpack_out" ;
-Variable_context_mon::
-    "Variable mon.value_tcpack_out" ;
-Variable_context_mon::
-    "Variable mon.dev_tcpack_in" ;
-Variable_context_mon::
-    "Variable mon.av_tcpack_in" ;
-Variable_context_mon::
-    "Variable mon.value_tcpack_in" ;
-Variable_context_mon::
-    "Variable mon.dev_tcpsyn_out" ;
-Variable_context_mon::
-    "Variable mon.av_tcpsyn_out" ;
-Variable_context_mon::
-    "Variable mon.value_tcpsyn_out" ;
-Variable_context_mon::
-    "Variable mon.dev_tcpsyn_in" ;
-Variable_context_mon::
-    "Variable mon.av_tcpsyn_in" ;
-Variable_context_mon::
-    "Variable mon.value_tcpsyn_in" ;
-Variable_context_mon::
-    "Variable mon.dev_dns_out" ;
-Variable_context_mon::
-    "Variable mon.av_dns_out" ;
-Variable_context_mon::
-    "Variable mon.value_dns_out" ;
-Variable_context_mon::
-    "Variable mon.dev_dns_in" ;
-Variable_context_mon::
-    "Variable mon.av_dns_in" ;
-Variable_context_mon::
-    "Variable mon.value_dns_in" ;
-Variable_context_mon::
-    "Variable mon.dev_udp_out" ;
-Variable_context_mon::
-    "Variable mon.av_udp_out" ;
-Variable_context_mon::
-    "Variable mon.value_udp_out" ;
-Variable_context_mon::
-    "Variable mon.dev_udp_in" ;
-Variable_context_mon::
-    "Variable mon.av_udp_in" ;
-Variable_context_mon::
-    "Variable mon.value_udp_in" ;
-Variable_context_mon::
-    "Variable mon.dev_icmp_out" ;
-Variable_context_mon::
-    "Variable mon.av_icmp_out" ;
-Variable_context_mon::
-    "Variable mon.value_icmp_out" ;
-Variable_context_mon::
-    "Variable mon.dev_icmp_in" ;
-Variable_context_mon::
-    "Variable mon.av_icmp_in" ;
-Variable_context_mon::
-    "Variable mon.value_icmp_in" ;
-Variable_context_mon::
-    "Variable mon.dev_wwws_out" ;
-Variable_context_mon::
-    "Variable mon.av_wwws_out" ;
-Variable_context_mon::
-    "Variable mon.value_wwws_out" ;
-Variable_context_mon::
-    "Variable mon.dev_wwws_in" ;
-Variable_context_mon::
-    "Variable mon.av_wwws_in" ;
-Variable_context_mon::
-    "Variable mon.value_wwws_in" ;
-Variable_context_mon::
-    "Variable mon.dev_ssh_out" ;
-Variable_context_mon::
-    "Variable mon.av_ssh_out" ;
-Variable_context_mon::
-    "Variable mon.value_ssh_out" ;
-Variable_context_mon::
-    "Variable mon.dev_ssh_in" ;
-Variable_context_mon::
-    "Variable mon.av_ssh_in" ;
-Variable_context_mon::
-    "Variable mon.value_ssh_in" ;
-Variable_context_mon::
-    "Variable mon.dev_ftp_out" ;
-Variable_context_mon::
-    "Variable mon.av_ftp_out" ;
-Variable_context_mon::
-    "Variable mon.value_ftp_out" ;
-Variable_context_mon::
-    "Variable mon.dev_ftp_in" ;
-Variable_context_mon::
-    "Variable mon.av_ftp_in" ;
-Variable_context_mon::
-    "Variable mon.value_ftp_in" ;
-Variable_context_mon::
-    "Variable mon.dev_www_out" ;
-Variable_context_mon::
-    "Variable mon.av_www_out" ;
-Variable_context_mon::
-    "Variable mon.value_www_out" ;
-Variable_context_mon::
-    "Variable mon.dev_www_in" ;
-Variable_context_mon::
-    "Variable mon.av_www_in" ;
-Variable_context_mon::
-    "Variable mon.value_www_in" ;
-Variable_context_mon::
-    "Variable mon.dev_smtp_out" ;
-Variable_context_mon::
-    "Variable mon.av_smtp_out" ;
-Variable_context_mon::
-    "Variable mon.value_smtp_out" ;
-Variable_context_mon::
-    "Variable mon.dev_smtp_in" ;
-Variable_context_mon::
-    "Variable mon.av_smtp_in" ;
-Variable_context_mon::
-    "Variable mon.value_smtp_in" ;
-Variable_context_mon::
-    "Variable mon.dev_nfsd_out" ;
-Variable_context_mon::
-    "Variable mon.av_nfsd_out" ;
-Variable_context_mon::
-    "Variable mon.value_nfsd_out" ;
-Variable_context_mon::
-    "Variable mon.dev_nfsd_in" ;
-Variable_context_mon::
-    "Variable mon.av_nfsd_in" ;
-Variable_context_mon::
-    "Variable mon.value_nfsd_in" ;
-Variable_context_mon::
-    "Variable mon.dev_cfengine_out" ;
-Variable_context_mon::
-    "Variable mon.av_cfengine_out" ;
-Variable_context_mon::
-    "Variable mon.value_cfengine_out" ;
-Variable_context_mon::
-    "Variable mon.dev_cfengine_in" ;
-Variable_context_mon::
-    "Variable mon.av_cfengine_in" ;
-Variable_context_mon::
-    "Variable mon.value_cfengine_in" ;
-Variable_context_mon::
-    "Variable mon.dev_irc_out" ;
-Variable_context_mon::
-    "Variable mon.av_irc_out" ;
-Variable_context_mon::
-    "Variable mon.value_irc_out" ;
-Variable_context_mon::
-    "Variable mon.dev_irc_in" ;
-Variable_context_mon::
-    "Variable mon.av_irc_in" ;
-Variable_context_mon::
-    "Variable mon.value_irc_in" ;
-Variable_context_mon::
-    "Variable mon.dev_netbiosssn_out" ;
-Variable_context_mon::
-    "Variable mon.av_netbiosssn_out" ;
-Variable_context_mon::
-    "Variable mon.value_netbiosssn_out" ;
-Variable_context_mon::
-    "Variable mon.dev_netbiosssn_in" ;
-Variable_context_mon::
-    "Variable mon.av_netbiosssn_in" ;
-Variable_context_mon::
-    "Variable mon.value_netbiosssn_in" ;
-Variable_context_mon::
-    "Variable mon.dev_netbiosdgm_out" ;
-Variable_context_mon::
-    "Variable mon.av_netbiosdgm_out" ;
-Variable_context_mon::
-    "Variable mon.value_netbiosdgm_out" ;
-Variable_context_mon::
-    "Variable mon.dev_netbiosdgm_in" ;
-Variable_context_mon::
-    "Variable mon.av_netbiosdgm_in" ;
-Variable_context_mon::
-    "Variable mon.value_netbiosdgm_in" ;
-Variable_context_mon::
-    "Variable mon.dev_netbiosns_out" ;
-Variable_context_mon::
-    "Variable mon.av_netbiosns_out" ;
-Variable_context_mon::
-    "Variable mon.value_netbiosns_out" ;
-Variable_context_mon::
-    "Variable mon.dev_netbiosns_in" ;
-Variable_context_mon::
-    "Variable mon.av_netbiosns_in" ;
-Variable_context_mon::
-    "Variable mon.value_netbiosns_in" ;
-Variable_context_mon::
-    "Variable mon.dev_loadavg" ;
-Variable_context_mon::
-    "Variable mon.av_loadavg" ;
-Variable_context_mon::
-    "Variable mon.value_loadavg" ;
-Variable_context_mon::
-    "Variable mon.dev_diskfree" ;
-Variable_context_mon::
-    "Variable mon.av_diskfree" ;
-Variable_context_mon::
-    "Variable mon.value_diskfree" ;
-Variable_context_mon::
-    "Variable mon.dev_otherprocs" ;
-Variable_context_mon::
-    "Variable mon.av_otherprocs" ;
-Variable_context_mon::
-    "Variable mon.value_otherprocs" ;
-Variable_context_mon::
-    "Variable mon.dev_rootprocs" ;
-Variable_context_mon::
-    "Variable mon.av_rootprocs" ;
-Variable_context_mon::
-    "Variable mon.value_rootprocs" ;
-Variable_context_mon::
-    "Variable mon.dev_users" ;
-Variable_context_mon::
-    "Variable mon.av_users" ;
-Variable_context_mon::
-    "Variable mon.value_users" ;
-Special_Variables::
-    "Variable context mon" ;
-Variable_context_match::
-    "Variable match.0" ;
-Special_Variables::
-    "Variable context match" ;
-Variable_context_edit::
-    "Variable edit.filename" ;
-Special_Variables::
-    "Variable context edit" ;
-Variable_context_const::
-    "Variable const.t" ;
-Variable_context_const::
-    "Variable const.r" ;
-Variable_context_const::
-    "Variable const.n" ;
-Variable_context_const::
-    "Variable const.endl" ;
-Variable_context_const::
-    "Variable const.dollar" ;
-Special_Variables::
-    "Variable context const" ;
-Special_Variables::
-    "Special Variables" ;
 Special_functions::
-    "Function userexists" ;
-Special_functions::
-    "Function usemodule" ;
-Special_functions::
-    "Function translatepath" ;
-Special_functions::
-    "Function sum" ;
-Special_functions::
-    "Function strcmp" ;
-Special_functions::
-    "Function splitstring" ;
-Special_functions::
-    "Function splayclass" ;
-Special_functions::
-    "Function selectservers" ;
-Special_functions::
-    "Function rrange" ;
-Special_functions::
-    "Function returnszero" ;
-Special_functions::
-    "Function remoteclassesmatching" ;
-Special_functions::
-    "Function remotescalar" ;
-Special_functions::
-    "Function regldap" ;
-Special_functions::
-    "Function reglist" ;
-Special_functions::
-    "Function regline" ;
-Special_functions::
-    "Function registryvalue" ;
-Special_functions::
-    "Function regextract" ;
-Special_functions::
-    "Function regcmp" ;
-Special_functions::
-    "Function regarray" ;
-Special_functions::
-    "Function readtcp" ;
-Special_functions::
-    "Function readstringlist" ;
-Special_functions::
-    "Function readstringarrayidx" ;
-Special_functions::
-    "Function readstringarray" ;
-Special_functions::
-    "Function readreallist" ;
-Special_functions::
-    "Function readrealarray" ;
-Special_functions::
-    "Function readintlist" ;
-Special_functions::
-    "Function readintarray" ;
-Special_functions::
-    "Function readfile" ;
-Special_functions::
-    "Function randomint" ;
-Special_functions::
-    "Function product" ;
-Special_functions::
-    "Function peerleaders" ;
-Special_functions::
-    "Function peerleader" ;
-Special_functions::
-    "Function peers" ;
-Special_functions::
-    "Function parsestringarrayidx" ;
-Special_functions::
-    "Function parsestringarray" ;
-Special_functions::
-    "Function parserealarray" ;
-Special_functions::
-    "Function parseintarray" ;
-Special_functions::
-    "Function on" ;
-Special_functions::
-    "Function now" ;
-Special_functions::
-    "Function ldapvalue" ;
-Special_functions::
-    "Function ldaplist" ;
-Special_functions::
-    "Function ldaparray" ;
-Special_functions::
-    "Function laterthan" ;
-Special_functions::
-    "Function lastnode" ;
-Special_functions::
-    "Function join" ;
-Special_functions::
-    "Function isvariable" ;
-Special_functions::
-    "Function isplain" ;
-Special_functions::
-    "Function isnewerthan" ;
-Special_functions::
-    "Function islink" ;
-Special_functions::
-    "Function islessthan" ;
-Special_functions::
-    "Function isgreaterthan" ;
-Special_functions::
-    "Function isexecutable" ;
-Special_functions::
-    "Function isdir" ;
-Special_functions::
-    "Function irange" ;
-Special_functions::
-    "Function iprange" ;
-Special_functions::
-    "Function hubknowledge" ;
-Special_functions::
-    "Function hostsseen" ;
-Special_functions::
-    "Function hostrange" ;
-Special_functions::
-    "Function hostinnetgroup" ;
-Special_functions::
-    "Function ip2host" ;
-Special_functions::
-    "Function host2ip" ;
-Special_functions::
-    "Function hashmatch" ;
-Special_functions::
-    "Function hash" ;
-Special_functions::
-    "Function groupexists" ;
-Special_functions::
-    "Function grep" ;
-Special_functions::
-    "Function getvalues" ;
-Special_functions::
-    "Function getusers" ;
-Special_functions::
-    "Function getuid" ;
-Special_functions::
-    "Function getindices" ;
-Special_functions::
-    "Function getgid" ;
-Special_functions::
-    "Function getfields" ;
-Special_functions::
-    "Function getenv" ;
-Special_functions::
-    "Function filesize" ;
-Special_functions::
-    "Function filesexist" ;
-Special_functions::
-    "Function fileexists" ;
-Special_functions::
-    "Function execresult" ;
-Special_functions::
-    "Function escape" ;
-Special_functions::
-    "Function diskfree" ;
-Special_functions::
-    "Function countlinesmatching" ;
-Special_functions::
-    "Function countclassesmatching" ;
-Special_functions::
-    "Function classmatch" ;
-Special_functions::
-    "Function classify" ;
-Special_functions::
-    "Function changedbefore" ;
-Special_functions::
-    "Function canonify" ;
-Special_functions::
-    "Function ago" ;
-Special_functions::
-    "Function accumulated" ;
-Special_functions::
-    "Function accessedbefore" ;
-Introduction_to_functions::
-    "Functions which work with or on regular expressions" ;
-Introduction_to_functions::
-    "Functions involving date or time" ;
-Introduction_to_functions::
-    "Functions which look at variables" ;
-Introduction_to_functions::
-    "Functions which look at file metadata" ;
-Introduction_to_functions::
-    "Functions which read strings" ;
-Introduction_to_functions::
-    "Functions which read" ;
-Introduction_to_functions::
-    "Functions which read the Windows registry" ;
-Introduction_to_functions::
-    "Functions which read from the network" ;
-Introduction_to_functions::
-    "Functions which read LDAP data" ;
-Introduction_to_functions::
-    "Functions which read files" ;
-Introduction_to_functions::
-    "Functions which read the environment" ;
-Introduction_to_functions::
-    "Functions which read command output" ;
-Introduction_to_functions::
-    "Functions which read classes" ;
-Introduction_to_functions::
-    "Functions which read from a remote-cfengine" ;
-Introduction_to_functions::
-    "Functions which read disk data" ;
-Introduction_to_functions::
-    "Functions which read arrays" ;
-Introduction_to_functions::
-    "Functions which read large data" ;
-Introduction_to_functions::
-    "Functions which fill arrays" ;
-Introduction_to_functions::
-    "Functions which return string" ;
-Introduction_to_functions::
-    "Functions which return real" ;
-Introduction_to_functions::
-    "Functions which return int" ;
-Introduction_to_functions::
-    "Functions which return" ;
-Introduction_to_functions::
-    "Functions which return class" ;
-Introduction_to_functions::
-    "Functions listed by return value" ;
-Special_functions::
-    "Introduction to functions"  association => a("discussed in","Introduction to functions","discusses");
-Special_functions::
-    "Special functions" ;
+    "Introduction to functions"  association => a("discusses","Functions which read strings","is discussed in");
 documentation::
     "track_growing_file"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "extraction_regex"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "select_line_number"  association => a("is contained in","cf3-reference","contains");
-measurements_promises_in_monitor::
-    "match_value" ;
-measurements_promises_in_monitor::
-    "units" ;
-measurements_promises_in_monitor::
-    "history_type" ;
-measurements_promises_in_monitor::
-    "data_type" ;
-measurements_promises_in_monitor::
-    "stream_type" ;
-Bundles_of_monitor::
-    "measurements promises in monitor" ;
-Bundles_of_monitor::
-    "Bundles of monitor" ;
-occurrences_promises_in_knowledge::
-    "path_root" ;
-occurrences_promises_in_knowledge::
-    "web_root" ;
-occurrences_promises_in_knowledge::
-    "representation" ;
-occurrences_promises_in_knowledge::
-    "represents" ;
-Bundles_of_knowledge::
-    "occurrences promises in knowledge" ;
 documentation::
     "associates"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "backward_relationship"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "forward_relationship"  association => a("is contained in","cf3-reference","contains");
-topics_promises_in_knowledge::
-    "association" ;
-Bundles_of_knowledge::
-    "topics promises in knowledge" ;
-things_promises_in_knowledge::
-    "uses" ;
-things_promises_in_knowledge::
-    "provides" ;
-things_promises_in_knowledge::
-    "needs" ;
-things_promises_in_knowledge::
-    "is_part_of" ;
-things_promises_in_knowledge::
-    "is_located_in" ;
-things_promises_in_knowledge::
-    "is_connected_to" ;
-things_promises_in_knowledge::
-    "generalizations" ;
-things_promises_in_knowledge::
-    "determines" ;
-things_promises_in_knowledge::
-    "certainty" ;
-things_promises_in_knowledge::
-    "causes" ;
-things_promises_in_knowledge::
-    "caused_by" ;
-things_promises_in_knowledge::
-    "belongs_to" ;
-things_promises_in_knowledge::
-    "affects" ;
-things_promises_in_knowledge::
-    "synonyms" ;
-Bundles_of_knowledge::
-    "things promises in knowledge" ;
-inferences_promises_in_knowledge::
-    "qualifiers" ;
-inferences_promises_in_knowledge::
-    "precedents" ;
-Bundles_of_knowledge::
-    "inferences promises in knowledge" ;
-Bundles_of_knowledge::
-    "Bundles of knowledge" ;
-roles_promises_in_server::
-    "authorize" ;
-Bundles_of_server::
-    "roles promises in server" ;
-access_promises_in_server::
-    "resource_type" ;
-access_promises_in_server::
-    "ifencrypted" ;
-access_promises_in_server::
-    "maproot" ;
-access_promises_in_server::
-    "deny" ;
-access_promises_in_server::
-    "admit" ;
-access_promises_in_server::
-    "Access Example" ;
-Bundles_of_server::
-    "access promises in server" ;
-Bundles_of_server::
-    "Bundles of server" ;
 documentation::
     "scan_arrivals"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -807,8 +29,6 @@ documentation::
     "freespace"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "check_foreign"  association => a("is contained in","cf3-reference","contains");
-storage_promises_in_agent::
-    "volume" ;
 documentation::
     "unmount"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -821,10 +41,6 @@ documentation::
     "mount_type"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "edit_fstab"  association => a("is contained in","cf3-reference","contains");
-storage_promises_in_agent::
-    "mount" ;
-Bundles_of_agent::
-    "storage promises in agent" ;
 documentation::
     "service_dependence_chain"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -833,20 +49,6 @@ documentation::
     "service_args"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "service_type"  association => a("is contained in","cf3-reference","contains");
-services_promises_in_agent::
-    "service_method" ;
-services_promises_in_agent::
-    "service_dependencies" ;
-services_promises_in_agent::
-    "service_policy" ;
-Bundles_of_agent::
-    "services promises in agent" ;
-processes_promises_in_agent::
-    "signals" ;
-processes_promises_in_agent::
-    "restart_class" ;
-processes_promises_in_agent::
-    "process_stop" ;
 documentation::
     "vsize"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -875,24 +77,12 @@ documentation::
     "pid"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "command"  association => a("is contained in","cf3-reference","contains");
-processes_promises_in_agent::
-    "process_select" ;
 documentation::
     "out_of_range_define"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "match_range"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "in_range_define"  association => a("is contained in","cf3-reference","contains");
-processes_promises_in_agent::
-    "process_count" ;
-Bundles_of_agent::
-    "processes promises in agent" ;
-packages_promises_in_agent::
-    "package_version" ;
-packages_promises_in_agent::
-    "package_select" ;
-packages_promises_in_agent::
-    "package_policy" ;
 documentation::
     "package_multiline_start"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -947,40 +137,16 @@ documentation::
     "package_arch_regex"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "package_add_command"  association => a("is contained in","cf3-reference","contains");
-packages_promises_in_agent::
-    "package_method" ;
-packages_promises_in_agent::
-    "package_architectures" ;
-Bundles_of_agent::
-    "packages promises in agent" ;
-outputs_promises_in_agent::
-    "promiser_type" ;
-outputs_promises_in_agent::
-    "output_level" ;
-Bundles_of_agent::
-    "outputs promises in agent" ;
-methods_promises_in_agent::
-    "usebundle" ;
-Bundles_of_agent::
-    "methods promises in agent" ;
 documentation::
     "ipv6_address"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "ipv4_netmask"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "ipv4_address"  association => a("is contained in","cf3-reference","contains");
-interfaces_promises_in_agent::
-    "tcp_ip" ;
-Bundles_of_agent::
-    "interfaces promises in agent" ;
 documentation::
     "replace_value"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "occurrences"  association => a("is contained in","cf3-reference","contains");
-replace_patterns_promises_in_edit_line::
-    "replace_with" ;
-Bundles_of_agent::
-    "replace_patterns promises in edit_line" ;
 documentation::
     "value_separator"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -997,20 +163,12 @@ documentation::
     "extend_fields"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "allow_blank_fields"  association => a("is contained in","cf3-reference","contains");
-field_edits_promises_in_edit_line::
-    "edit_field" ;
-Bundles_of_agent::
-    "field_edits promises in edit_line" ;
-insert_lines_promises_in_edit_line::
-    "whitespace_policy" ;
 documentation::
     "select_line_matching"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "first_last"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "before_after"  association => a("is contained in","cf3-reference","contains");
-insert_lines_promises_in_edit_line::
-    "location" ;
 documentation::
     "insert_if_not_contains_from_list"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1023,16 +181,6 @@ documentation::
     "insert_if_not_startwith_from_list"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "insert_if_startwith_from_list"  association => a("is contained in","cf3-reference","contains");
-insert_lines_promises_in_edit_line::
-    "insert_select" ;
-insert_lines_promises_in_edit_line::
-    "insert_type" ;
-insert_lines_promises_in_edit_line::
-    "expand_scalars" ;
-Bundles_of_agent::
-    "insert_lines promises in edit_line" ;
-delete_lines_promises_in_edit_line::
-    "not_matching" ;
 documentation::
     "delete_if_not_contains_from_list"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1045,10 +193,6 @@ documentation::
     "delete_if_not_startwith_from_list"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "delete_if_startwith_from_list"  association => a("is contained in","cf3-reference","contains");
-delete_lines_promises_in_edit_line::
-    "delete_select" ;
-Bundles_of_agent::
-    "delete_lines promises in edit_line" ;
 documentation::
     "select_end"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1057,16 +201,6 @@ documentation::
     "include_end_delimiter"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "include_start_delimiter"  association => a("is contained in","cf3-reference","contains");
-__promises_in_edit_line::
-    "select_region" ;
-Bundles_of_agent::
-    "* promises in edit_line" ;
-files_promises_in_agent::
-    "transformer" ;
-files_promises_in_agent::
-    "touch" ;
-files_promises_in_agent::
-    "repository" ;
 documentation::
     "rotate"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1077,8 +211,6 @@ documentation::
     "disable_mode"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "disable"  association => a("is contained in","cf3-reference","contains");
-files_promises_in_agent::
-    "rename" ;
 documentation::
     "rxdirs"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1089,12 +221,6 @@ documentation::
     "groups"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "bsdflags"  association => a("is contained in","cf3-reference","contains");
-files_promises_in_agent::
-    "perms" ;
-files_promises_in_agent::
-    "pathtype" ;
-files_promises_in_agent::
-    "move_obstructions" ;
 documentation::
     "when_no_source"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1103,8 +229,6 @@ documentation::
     "link_children"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "copy_patterns"  association => a("is contained in","cf3-reference","contains");
-files_promises_in_agent::
-    "link_from" ;
 documentation::
     "file_result"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1135,8 +259,6 @@ documentation::
     "path_name"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "leaf_name"  association => a("is contained in","cf3-reference","contains");
-files_promises_in_agent::
-    "file_select" ;
 documentation::
     "recognize_join"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1145,12 +267,6 @@ documentation::
     "empty_file_before_editing"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "edit_backup"  association => a("is contained in","cf3-reference","contains");
-files_promises_in_agent::
-    "edit_defaults" ;
-files_promises_in_agent::
-    "edit_xml" ;
-files_promises_in_agent::
-    "edit_line" ;
 documentation::
     "xdev"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1165,16 +281,10 @@ documentation::
     "exclude_dirs"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "depth"  association => a("is contained in","cf3-reference","contains");
-files_promises_in_agent::
-    "depth_search" ;
 documentation::
     "rmdirs"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "dirlinks"  association => a("is contained in","cf3-reference","contains");
-files_promises_in_agent::
-    "delete" ;
-files_promises_in_agent::
-    "create" ;
 documentation::
     "verify"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1211,8 +321,6 @@ documentation::
     "servers"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "source"  association => a("is contained in","cf3-reference","contains");
-files_promises_in_agent::
-    "copy_from" ;
 documentation::
     "report_diffs"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1221,8 +329,6 @@ documentation::
     "report_changes"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "hash"  association => a("is contained in","cf3-reference","contains");
-files_promises_in_agent::
-    "changes" ;
 documentation::
     "specify_inherit_aces"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1233,14 +339,6 @@ documentation::
     "acl_directory_inherit"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "aces"  association => a("is contained in","cf3-reference","contains");
-files_promises_in_agent::
-    "acl" ;
-Bundles_of_agent::
-    "files promises in agent" ;
-environments_promises_in_agent::
-    "environment_type" ;
-environments_promises_in_agent::
-    "environment_state" ;
 documentation::
     "env_spec_file"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1251,30 +349,12 @@ documentation::
     "env_memory"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "env_cpus"  association => a("is contained in","cf3-reference","contains");
-environments_promises_in_agent::
-    "environment_resources" ;
 documentation::
     "env_network"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "env_name"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "env_addresses"  association => a("is contained in","cf3-reference","contains");
-environments_promises_in_agent::
-    "environment_interface" ;
-environments_promises_in_agent::
-    "environment_host" ;
-Bundles_of_agent::
-    "environments promises in agent" ;
-databases_promises_in_agent::
-    "registry_exclude" ;
-databases_promises_in_agent::
-    "database_rows" ;
-databases_promises_in_agent::
-    "database_columns" ;
-databases_promises_in_agent::
-    "database_operation" ;
-databases_promises_in_agent::
-    "database_type" ;
 documentation::
     "db_server_connection_db"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1285,12 +365,6 @@ documentation::
     "db_server_password"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "db_server_owner"  association => a("is contained in","cf3-reference","contains");
-databases_promises_in_agent::
-    "database_server" ;
-Bundles_of_agent::
-    "databases promises in agent" ;
-commands_promises_in_agent::
-    "module" ;
 documentation::
     "no_output"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1309,22 +383,6 @@ documentation::
     "umask"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "useshell"  association => a("is contained in","cf3-reference","contains");
-commands_promises_in_agent::
-    "contain" ;
-commands_promises_in_agent::
-    "args" ;
-Bundles_of_agent::
-    "commands promises in agent" ;
-Bundles_of_agent::
-    "Bundles of agent" ;
-__promises::
-    "comment" ;
-__promises::
-    "depends_on" ;
-__promises::
-    "handle" ;
-__promises::
-    "ifvarclass" ;
 documentation::
     "timer_policy"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1351,8 +409,6 @@ documentation::
     "repair_failed"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "promise_repaired"  association => a("is contained in","cf3-reference","contains");
-__promises::
-    "classes" ;
 documentation::
     "measurement_class"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -1381,462 +437,22 @@ documentation::
     "log_string"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "action_policy"  association => a("is contained in","cf3-reference","contains");
-__promises::
-    "action" ;
-Bundles_of_common::
-    "* promises" ;
-reports_promises::
-    "showstate" ;
-reports_promises::
-    "report_to_file" ;
 documentation::
     "number_of_lines"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "file_to_print"  association => a("is contained in","cf3-reference","contains");
-reports_promises::
-    "printfile" ;
-reports_promises::
-    "lastseen" ;
-reports_promises::
-    "friend_pattern" ;
-Bundles_of_common::
-    "reports promises" ;
-classes_promises::
-    "select_class" ;
-classes_promises::
-    "not" ;
-classes_promises::
-    "expression" ;
-classes_promises::
-    "dist" ;
-classes_promises::
-    "xor" ;
-classes_promises::
-    "and" ;
-classes_promises::
-    "or" ;
-Bundles_of_common::
-    "classes promises" ;
-vars_promises::
-    "policy" ;
-vars_promises::
-    "rlist" ;
-vars_promises::
-    "ilist" ;
-vars_promises::
-    "slist" ;
-vars_promises::
-    "real" ;
-vars_promises::
-    "int" ;
-vars_promises::
-    "string" ;
-Bundles_of_common::
-    "vars promises" ;
-Bundles_of_common::
-    "Bundles of common" ;
-hub_control_promises::
-    "hub_schedule" ;
-hub_control_promises::
-    "federation" ;
-hub_control_promises::
-    "export_zenoss" ;
-Control_promises::
-    "hub control promises" ;
-reporter_control_promises::
-    "time_stamps" ;
-reporter_control_promises::
-    "report_output" ;
-reporter_control_promises::
-    "reports" ;
-reporter_control_promises::
-    "html_embed" ;
-reporter_control_promises::
-    "error_bars" ;
-reporter_control_promises::
-    "csv2xml" ;
-reporter_control_promises::
-    "auto_scaling" ;
-reporter_control_promises::
-    "aggregation_point" ;
-Control_promises::
-    "reporter control promises" ;
-knowledge_control_promises::
-    "view_projections" ;
-knowledge_control_promises::
-    "style_sheet" ;
-knowledge_control_promises::
-    "sql_connection_db" ;
-knowledge_control_promises::
-    "sql_server" ;
-knowledge_control_promises::
-    "sql_passwd" ;
-knowledge_control_promises::
-    "sql_owner" ;
-knowledge_control_promises::
-    "sql_database" ;
-knowledge_control_promises::
-    "sql_type" ;
-knowledge_control_promises::
-    "query_output" ;
-knowledge_control_promises::
-    "query_engine" ;
-knowledge_control_promises::
-    "manual_source_directory" ;
-knowledge_control_promises::
-    "id_prefix" ;
-knowledge_control_promises::
-    "html_footer" ;
-knowledge_control_promises::
-    "html_banner" ;
-knowledge_control_promises::
-    "graph_output" ;
-knowledge_control_promises::
-    "graph_directory" ;
-knowledge_control_promises::
-    "generate_manual" ;
-knowledge_control_promises::
-    "document_root" ;
-knowledge_control_promises::
-    "build_directory" ;
-Control_promises::
-    "knowledge control promises" ;
-executor_control_promises::
-    "exec_command" ;
-executor_control_promises::
-    "executorfacility" ;
-executor_control_promises::
-    "schedule" ;
-executor_control_promises::
-    "mailmaxlines" ;
-executor_control_promises::
-    "smtpserver" ;
-executor_control_promises::
-    "mailto" ;
-executor_control_promises::
-    "mailfrom" ;
-executor_control_promises::
-    "splaytime" ;
-Control_promises::
-    "executor control promises" ;
 runagent_control_promises::
     "timeout"  association => a("is contained in","cf3-reference","contains");
-runagent_control_promises::
-    "output_directory" ;
-runagent_control_promises::
-    "output_to_file" ;
-runagent_control_promises::
-    "background_children" ;
 runagent_control_promises::
     "encrypt"  association => a("is contained in","cf3-reference","contains");
 runagent_control_promises::
     "trustkey"  association => a("is contained in","cf3-reference","contains");
 runagent_control_promises::
     "force_ipv4"  association => a("is contained in","cf3-reference","contains");
-runagent_control_promises::
-    "hosts" ;
-Control_promises::
-    "runagent control promises" ;
-monitor_control_promises::
-    "tcpdumpcommand" ;
-monitor_control_promises::
-    "tcpdump" ;
-monitor_control_promises::
-    "histograms" ;
-monitor_control_promises::
-    "monitorfacility" ;
-monitor_control_promises::
-    "forgetrate" ;
-Control_promises::
-    "monitor control promises" ;
-server_control_promises::
-    "trustkeysfrom" ;
-server_control_promises::
-    "skipverify" ;
-server_control_promises::
-    "serverfacility" ;
-server_control_promises::
-    "port" ;
-server_control_promises::
-    "logencryptedtransfers" ;
-server_control_promises::
-    "logallconnections" ;
-server_control_promises::
-    "keycacheTTL" ;
-server_control_promises::
-    "dynamicaddresses" ;
-server_control_promises::
-    "denyconnects" ;
-server_control_promises::
-    "denybadclocks" ;
-server_control_promises::
-    "cfruncommand" ;
-server_control_promises::
-    "allowusers" ;
-server_control_promises::
-    "allowconnects" ;
-server_control_promises::
-    "allowallconnects" ;
-Control_promises::
-    "server control promises" ;
-agent_control_promises::
-    "verbose" ;
-agent_control_promises::
-    "default_timeout" ;
-agent_control_promises::
-    "timezone" ;
-agent_control_promises::
-    "track_value" ;
-agent_control_promises::
-    "syslog" ;
-agent_control_promises::
-    "suspiciousnames" ;
-agent_control_promises::
-    "skipidentify" ;
-agent_control_promises::
-    "sensiblesize" ;
-agent_control_promises::
-    "sensiblecount" ;
-agent_control_promises::
-    "secureinput" ;
-agent_control_promises::
-    "default_repository" ;
-agent_control_promises::
-    "refresh_processes" ;
-agent_control_promises::
-    "repchar" ;
-agent_control_promises::
-    "nonalphanumfiles" ;
-agent_control_promises::
-    "mountfilesystems" ;
-agent_control_promises::
-    "maxconnections" ;
-agent_control_promises::
-    "max_children" ;
-agent_control_promises::
-    "intermittency" ;
-agent_control_promises::
-    "inform" ;
 agent_control_promises::
     "ifelapsed"  association => a("is contained in","cf3-reference","contains");
 agent_control_promises::
-    "hostnamekeys" ;
-agent_control_promises::
-    "files_auto_define" ;
-agent_control_promises::
-    "files_single_copy" ;
-agent_control_promises::
     "expireafter"  association => a("is contained in","cf3-reference","contains");
-agent_control_promises::
-    "exclamation" ;
-agent_control_promises::
-    "environment" ;
-agent_control_promises::
-    "editfilesize" ;
-agent_control_promises::
-    "editbinaryfilesize" ;
-agent_control_promises::
-    "dryrun" ;
-agent_control_promises::
-    "defaultcopytype" ;
-agent_control_promises::
-    "checksum_alert_time" ;
-agent_control_promises::
-    "childlibpath" ;
-agent_control_promises::
-    "hashupdates" ;
-agent_control_promises::
-    "bindtointerface" ;
-agent_control_promises::
-    "binarypaddingchar" ;
-agent_control_promises::
-    "auditing" ;
-agent_control_promises::
-    "alwaysvalidate" ;
-agent_control_promises::
-    "agentfacility" ;
-agent_control_promises::
-    "agentaccess" ;
-agent_control_promises::
-    "addclasses" ;
-agent_control_promises::
-    "abortbundleclasses" ;
-agent_control_promises::
-    "abortclasses" ;
-Control_promises::
-    "agent control promises" ;
-common_control_promises::
-    "fips_mode" ;
-common_control_promises::
-    "syslog_port" ;
-common_control_promises::
-    "syslog_host" ;
-common_control_promises::
-    "site_classes" ;
-common_control_promises::
-    "host_licenses_paid" ;
-common_control_promises::
-    "require_comments" ;
-common_control_promises::
-    "domain" ;
-common_control_promises::
-    "output_prefix" ;
-common_control_promises::
-    "lastseenexpireafter" ;
-common_control_promises::
-    "version" ;
-common_control_promises::
-    "inputs" ;
-common_control_promises::
-    "ignore_missing_inputs" ;
-common_control_promises::
-    "ignore_missing_bundles" ;
-common_control_promises::
-    "goal_patterns" ;
-common_control_promises::
-    "goal_categories" ;
-common_control_promises::
-    "bundlesequence" ;
-Control_promises::
-    "common control promises" ;
-Control_promises::
-    "Control promises" ;
-A_complete_configuration::
-    "Recovery from errors in the software" ;
-A_complete_configuration::
-    "Recovery from errors in the configuration" ;
-A_complete_configuration::
-    "What should a failsafe and update file contain?" ;
-A_complete_configuration::
-    "failsafe.cf" ;
-A_complete_configuration::
-    "update.cf" ;
-A_complete_configuration::
-    "site.cf" ;
-A_complete_configuration::
-    "promises.cf" ;
-A_complete_configuration::
-    "A complete configuration" ;
-How_to_run_cfengine_3_examples::
-    "How to run cfengine 3 examples" ;
-A_simple_crash_course_in_concepts::
-    "Developer structures" ;
-A_simple_crash_course_in_concepts::
-    "Distributed discovery" ;
-Pattern_matching_and_referencing::
-    "Special topics on Regular Expressions" ;
-Pattern_matching_and_referencing::
-    "Anchored vs. unanchored regular expressions" ;
-Pattern_matching_and_referencing::
-    "Regular expressions in paths" ;
-Pattern_matching_and_referencing::
-    "Commenting lines" ;
-Pattern_matching_and_referencing::
-    "Runaway change warning" ;
-A_simple_crash_course_in_concepts::
-    "Pattern matching and referencing" ;
-A_simple_crash_course_in_concepts::
-    "Loops and lists in cfengine 3" ;
-Normal_ordering::
-    "Knowledge normal ordering" ;
-Normal_ordering::
-    "Monitor normal ordering" ;
-Normal_ordering::
-    "Server normal ordering" ;
-Normal_ordering::
-    "Agent normal ordering" ;
-A_simple_crash_course_in_concepts::
-    "Normal ordering" ;
-Variable_expansion_in_cfengine_3::
-    "Arrays in cfengine 3" ;
-Variable_expansion_in_cfengine_3::
-    "Special list value cf_null" ;
-Variable_expansion_in_cfengine_3::
-    "List variable substitution and expansion" ;
-Variable_expansion_in_cfengine_3::
-    "Scalar variable expansion" ;
-A_simple_crash_course_in_concepts::
-    "Variable expansion in cfengine 3" ;
-A_simple_crash_course_in_concepts::
-    "Datatypes in cfengine 3" ;
-A_simple_crash_course_in_concepts::
-    "Types in cfengine 3" ;
-A_simple_crash_course_in_concepts::
-    "When and where are promises made?" ;
-A_simple_crash_course_in_concepts::
-    "Containers" ;
-A_simple_crash_course_in_concepts::
-    "Best practice for writing promises" ;
-A_simple_crash_course_in_concepts::
-    "Rules are promises" ;
-A_simple_crash_course_in_concepts::
-    "A simple crash course in concepts" ;
-Remote_access_troubleshooting::
-    "Encryption" ;
-Remote_access_troubleshooting::
-    "Other users than root" ;
-Remote_access_troubleshooting::
-    "Time windows" ;
-Remote_access_troubleshooting::
-    "Key exchange" ;
-Remote_access_troubleshooting::
-    "Server connection" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "Remote access troubleshooting" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "Familiarizing yourself" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "The bare necessities of a cfengine 3" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "Testing as a non-privilieged user" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "Upgrading from cfengine 2" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "Filenames and paths" ;
-Decisions::
-    "Global and local classes" ;
-Decisions::
-    "Class combination operators and precedence" ;
-Decisions::
-    "Cfengine hard classes" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "Decisions" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "The work directory" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "Syntax, identifiers and names" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "Installation" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "A renewed cfengine" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "Core concepts" ;
-Software_components::
-    "cf-hub" ;
-Software_components::
-    "cf-key" ;
-Software_components::
-    "cf-report" ;
-Software_components::
-    "cf-serverd" ;
-Software_components::
-    "cf-runagent" ;
-Software_components::
-    "cf-promises" ;
-Software_components::
-    "cf-monitord" ;
-Software_components::
-    "cf-know*" ;
-Software_components::
-    "cf-execd" ;
-Software_components::
-    "cf-agent" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "Software components" ;
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
-    "CFEngine 3.2.0b3.r2651:2652M  Getting started" ;
-Special_Topics_Guide::
-    "CFEngine-AutoReference"  association => a("discussed in","CFEngine-AutoReference","discusses");
 
 
 occurrences:

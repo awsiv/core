@@ -5,26 +5,8 @@ bundle knowledge st_virt
 topics:
 
 "st-virt";
-Virtualization::
-    "Virtual network example" ;
-Virtualization::
-    "Virtualized host examples" ;
-Virtualization::
-    "Example deployment" ;
-Virtualization::
-    "Distinct states" ;
-Virtualization::
-    "Virtualization types supported" ;
-Virtualization::
-    "Environments promises" ;
-Virtualization::
-    "What can CFEngine do with virtual machines?" ;
-Virtualization::
-    "Why build virtualization support into CFEngine?" ;
-Virtualization::
-    "What are virtualization and cloud computing?" ;
 Special_Topics_Guide::
-    "Virtualization"  association => a("discussed in","Virtualization","discusses");
+    "Virtualization"  association => a("discusses","Virtual network example","is discussed in");
 
 
 occurrences:

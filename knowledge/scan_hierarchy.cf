@@ -5,24 +5,8 @@ bundle knowledge st_hierarchy
 topics:
 
 "st-hierarchy";
-Hierarchies::
-    "Applications of hierarchy" ;
-Hierarchies::
-    "How to organize your organization" ;
-Hierarchies::
-    "Expressing is a or has a" ;
-Hierarchies::
-    "Inheritance and its forms" ;
-Hierarchies::
-    "For and against hierarchies" ;
-Hierarchies::
-    "Classes are sets" ;
-Hierarchies::
-    "How hierarchy compares to sets" ;
-Hierarchies::
-    "What is a hierarchy?" ;
 Special_Topics_Guide::
-    "Hierarchies"  association => a("discussed in","Hierarchies","discusses");
+    "Hierarchies"  association => a("discusses","Applications of hierarchy","is discussed in");
 
 
 occurrences:

@@ -22,6 +22,7 @@
 #define false 0
 #define true  1
 #define CF_BUFSIZE 2048
+#define CF_MAXVARSIZE 1024
 #define cf_error 1
 
 /*************************************************************************/
@@ -86,6 +87,8 @@ struct TopicAssociation *AssociationExists(struct TopicAssociation *list,char *f
 struct Rlist *IdempPrependRScalar(struct Rlist **start,void *item, char type);
 struct Rlist *KeyInRlist(struct Rlist *list,char *key);
 struct Rlist *PrependRlist(struct Rlist **start,void *item, char type);
+struct Rlist *SplitStringAsRList(char *string,char sep);
+int SubStrnCopyChr(char *to,char *from,int len,char sep);
 
 /*****************************************************************************/
 
@@ -161,6 +164,7 @@ while (!feof(fin))
       if (tp = GetTopic(topics,title))
          {
          AddTopicAssociation(&(tp->associations),"is contained in","contains","files",document,true);
+         AddKeyAssociations(&(tp->associations),document);
          }
 
       }
@@ -213,17 +217,20 @@ while (!feof(fin))
          AppendItem(&scriptlog,script);
          strcpy(subsection,title);
 
-         
          AddTopic(&topics,title,section,lineno);
 
          if (strcmp(section,"Special Topics Guide") == 0)
             {
             strcpy(section,title);
             }
-         
-         if (tp = GetTopic(topics,section))
+
+         if (strcmp(title,section) != 0)
             {
-            AddTopicAssociation(&(tp->associations),"discussed in","discusses","short topic",section,true);
+            if (tp = GetTopic(topics,section))
+               {
+               AddTopicAssociation(&(tp->associations),"discusses","is discussed in","short topic",title,true);
+               AddKeyAssociations(&(tp->associations),section);
+               }
             }
          }
 
@@ -246,6 +253,7 @@ while (!feof(fin))
          if ((tp = GetTopic(topics,subsection)) && (strlen(section) > 0))
             {
             AddTopicAssociation(&(tp->associations),"is a subsection of","has subsection","manual",section,true);
+            AddKeyAssociations(&(tp->associations),section);
             }
          }
 
@@ -264,10 +272,15 @@ while (!feof(fin))
          strcpy(subsection,"");
          AddTopic(&topics,section,chapter,lineno);
 
-         if (tp = GetTopic(topics,subsection))
+         if (strcmp(title,section) != 0)
             {
-            AddTopicAssociation(&(tp->associations),"discussed in","discusses","manual",chapter,true);
+            if (tp = GetTopic(topics,subsection))
+               {
+               AddTopicAssociation(&(tp->associations),"discussed in","discusses","manual",chapter,true);
+               AddKeyAssociations(&(tp->associations),chapter);
+               }
             }
+
          continue;
          }
 
@@ -287,9 +300,13 @@ while (!feof(fin))
          strcpy(subsection,"");
          AddTopic(&topics,chapter,title,lineno);
 
-         if (tp = GetTopic(topics,subsection))
-            {
-            AddTopicAssociation(&(tp->associations),"discussed in","discusses","Documentation",section,true);
+         if (strcmp(title,section) != 0)
+            {           
+            if (tp = GetTopic(topics,subsection))
+               {
+               AddTopicAssociation(&(tp->associations),"discussed in","discusses","Documentation",title,true);
+               AddKeyAssociations(&(tp->associations),section);
+               }
             }
 
          continue;
@@ -335,25 +352,26 @@ printf("\"%s\";\n",document);
 
 for (tp = topics; tp != NULL; tp=tp->next)
    {
-   if (strlen(tp->topic_type) > 0)
+   struct TopicAssociation *ta;
+   
+   for (ta = tp->associations; ta != NULL; ta=ta->next)
       {
-      printf("%s::\n",CanonifyName(tp->topic_type));
-      }
-
-   printf("    \"%s\" ",tp->topic_name);
-
-   if (tp->associations)
-      {
-      struct TopicAssociation *ta = tp->associations;
+      if (strlen(tp->topic_type) > 0)
+         {
+         printf("%s::\n",CanonifyName(tp->topic_type));
+         }
+      
+      printf("    \"%s\" ",tp->topic_name);
+      
       struct Rlist *list = ta->associates;
       
       printf(" association => a(\"%s\",\"%s\",\"%s\")",
              ta->fwd_name,
-             list->item,
-             ta->bwd_name);
+             (char *)list->item,
+                 ta->bwd_name);
+      
+      printf(";\n");
       }
-   
-   printf(";\n");
    }
 
 printf("\n\noccurrences:\n\n");
@@ -511,6 +529,79 @@ tp->next = *list;
 
 
 /*****************************************************************************/
+
+int AddKeyAssociations(struct TopicAssociation **a, char *s)
+
+{ char *keywords[] = {  "track_growing_file", "extraction_regex", "select_line_number", "measurements", "associates", "backward_relationship", "forward_relationship", "topics", "things", "inferences", "roles", "access", "scan_arrivals", "sensible_count", "sensible_size", "freespace", "check_foreign", "unmount", "mount_options", "mount_server", "mount_source", "mount_type", "edit_fstab", "storage", "service_dependence_chain", "service_autostart_policy", "service_args", "service_type", "services", "vsize", "threads", "tty", "ttime_range", "stime_range", "status", "rsize", "process_result", "process_owner", "priority", "ppid", "pgid", "pid", "command", "out_of_range_define", "match_range", "in_range_define", "processes", "package_multiline_start", "package_version_regex", "package_verify_command", "package_update_command", "package_patch_version_regex", "package_patch_name_regex", "package_patch_list_command", "package_patch_installed_regex", "package_patch_command", "package_patch_arch_regex", "package_noverify_returncode", "package_noverify_regex", "package_name_regex", "package_name_convention", "package_list_version_regex", "package_list_update_ifelapsed", "package_list_update_command", "package_list_name_regex", "package_list_command", "package_list_arch_regex", "package_installed_regex", "package_file_repositories", "package_delete_convention", "package_delete_command", "package_changes", "package_arch_regex", "package_add_command", "packages", "outputs", "methods", "ipv6_address", "ipv4_netmask", "ipv4_address", "interfaces", "replace_value", "occurrences", "replace_patterns", "value_separator", "start_fields_from_zero", "select_field", "field_value", "field_separator", "field_operation", "extend_fields", "allow_blank_fields", "field_edits", "select_line_matching", "first_last", "before_after", "insert_if_not_contains_from_list", "insert_if_contains_from_list", "insert_if_not_match_from_list", "insert_if_match_from_list", "insert_if_not_startwith_from_list", "insert_if_startwith_from_list", "insert_lines", "delete_if_not_contains_from_list", "delete_if_contains_from_list", "delete_if_not_match_from_list", "delete_if_match_from_list", "delete_if_not_startwith_from_list", "delete_if_startwith_from_list", "delete_lines", "select_end", "select_start", "include_end_delimiter", "include_start_delimiter", "rotate", "newname", "disable_suffix", "disable_mode", "disable", "rxdirs", "owners", "mode", "groups", "bsdflags", "when_no_source", "when_linking_children", "link_children", "copy_patterns", "file_result", "issymlinkto", "file_types", "exec_program", "exec_regex", "atime", "mtime", "ctime", "search_bsdflags", "search_groups", "search_owners", "search_size", "search_mode", "path_name", "leaf_name", "recognize_join", "max_file_size", "empty_file_before_editing", "edit_backup", "xdev", "traverse_links", "rmdeadlinks", "include_dirs", "include_basedir", "exclude_dirs", "depth", "rmdirs", "dirlinks", "verify", "type_check", "stealth", "purge", "preserve", "portnumber", "force_update", "link_type", "linkcopy_patterns", "findertype", "copy_size", "copylink_patterns", "check_root", "copy_backup", "compare", "collapse_destination_dir", "servers", "source", "report_diffs", "update_hashes", "report_changes", "hash", "specify_inherit_aces", "acl_type", "acl_method", "acl_directory_inherit", "aces", "files", "env_spec_file", "env_baseline", "env_disk", "env_memory", "env_cpus", "env_network", "env_name", "env_addresses", "environments", "db_server_connection_db", "db_server_type", "db_server_host", "db_server_password", "db_server_owner", "databases", "no_output", "preview", "chroot", "chdir", "exec_timeout", "exec_group", "exec_owner", "umask", "useshell", "commands", "timer_policy", "persist_time", "failed_returncodes", "repaired_returncodes", "kept_returncodes", "cancel_notkept", "cancel_repaired", "cancel_kept", "promise_kept", "repair_timeout", "repair_denied", "repair_failed", "promise_repaired", "measurement_class", "report_level", "background", "audit", "value_notkept", "value_repaired", "value_kept", "log_failed", "log_repaired", "log_priority", "log_kept", "log_level", "log_string", "action_policy", "*", "number_of_lines", "file_to_print", "classes", "vars", "hub_schedule", "federation", "export_zenoss", "time_stamps", "report_output", "reports", "html_embed", "error_bars", "csv2xml", "auto_scaling", "aggregation_point", "view_projections", "style_sheet", "sql_connection_db", "sql_server", "sql_passwd", "sql_owner", "sql_database", "sql_type", "query_output", "query_engine", "manual_source_directory", "id_prefix", "html_footer", "html_banner", "graph_output", "graph_directory", "generate_manual", "document_root", "build_directory", "exec_command", "executorfacility", "schedule", "mailmaxlines", "smtpserver", "mailto", "mailfrom", "splaytime", "timeout", "output_directory", "output_to_file", "background_children", "encrypt", "trustkey", "force_ipv4", "hosts", "tcpdumpcommand", "tcpdump", "histograms", "monitorfacility", "forgetrate", "trustkeysfrom", "skipverify", "serverfacility", "port", "logencryptedtransfers", "logallconnections", "keycacheTTL", "dynamicaddresses", "denyconnects", "denybadclocks", "cfruncommand", "allowusers", "allowconnects", "allowallconnects", "verbose", "default_timeout", "timezone", "track_value", "syslog", "suspiciousnames", "skipidentify", "sensiblesize", "sensiblecount", "secureinput", "default_repository", "refresh_processes", "repchar", "nonalphanumfiles", "mountfilesystems", "maxconnections", "max_children", "intermittency", "inform", "ifelapsed", "hostnamekeys", "files_auto_define", "files_single_copy", "expireafter", "exclamation", "environment", "editfilesize", "editbinaryfilesize", "dryrun", "defaultcopytype", "checksum_alert_time", "childlibpath", "hashupdates", "bindtointerface", "binarypaddingchar", "auditing", "alwaysvalidate", "agentfacility", "agentaccess", "addclasses", "abortbundleclasses", "abortclasses", "fips_mode", "syslog_port", "syslog_host", "site_classes", "host_licenses_paid", "require_comments", "domain", "output_prefix", "lastseenexpireafter", "version", "inputs", "ignore_missing_inputs", "ignore_missing_bundles", "goal_patterns", "goal_categories", "bundlesequence", "control", NULL};
+
+
+ char *exceptions[] = { "or", "and" , NULL };
+ char *otherwords[] =  { "convergence", "promise", "scheduling", "workflow","bundles", "hierarchy", "cloud",
+                         "package", "policy", "security", "virtualization", "scalability",
+                         "hierarchies","file",  NULL  };
+ char *sp;
+ int i,j;
+ 
+for (i = 0; keywords[i] != NULL; i++)
+   {
+   for (j = 0; exceptions[j] != NULL; j++)
+      {
+      if (strcmp(keywords[i],exceptions[j]) == 0)
+         {
+         continue;
+         }
+      }
+
+
+   //Check for canonified form too
+
+   if (strcmp(ToLowerStr(s),keywords[i]) == 0)
+      {
+      continue;
+      }
+   
+   if (sp = strstr(ToLowerStr(s),keywords[i]))
+      {
+      // Check for at least one space around the word
+
+      if ((sp > s && *(sp-1) != ' ') || !isspace(*(sp+strlen(keywords[i]))))
+         {
+         continue;
+         }
+
+      AddTopicAssociation(a,"seems to refer to","seems be referred to in","any",keywords[i],true);
+      }
+   
+   if (strstr(CanonifyName(s),keywords[i]))
+      {
+      AddTopicAssociation(a,"seems to refer to","seems be referred to in","any",keywords[i],true);
+      }
+   }
+
+
+for (i = 0; otherwords[i] != NULL; i++)
+   {
+   if (strcmp(ToLowerStr(s),otherwords[i]) == 0)
+      {
+      continue;
+      }
+
+   if (sp = strstr(ToLowerStr(s),otherwords[i]))
+      {
+       // Check for at least one space around the word
+
+      if ((sp > s && *(sp-1) != ' ') || !isspace(*(sp+strlen(otherwords[i]))))
+         {
+//         continue;
+         }
+
+      AddTopicAssociation(a,"seems to refer to","seems be referred to in","any",otherwords[i],true);
+      }
+   }
+
+}
+
+/*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
 
@@ -526,6 +617,7 @@ for (tp = list; tp != NULL; tp=tp->next)
          {
          //fprintf(stderr,"Scan: Topic \"%s\" exists, but its type \"%s\" does not match promised type \"%s\"\n",topic_name,tp->topic_type,topic_type);
          }
+      
       return true;
       }
    }
@@ -724,7 +816,6 @@ void AddTopicAssociation(struct TopicAssociation **list,char *fwd_name,char *bwd
 
 strncpy(assoc_type,CanonifyName(fwd_name),255);
 
-
 if (associates == NULL)
    {
    printf("A topic must have at least one associate in association %s",fwd_name);
@@ -897,5 +988,87 @@ rp->state_ptr = NULL;
 *start = rp;
 
 return rp;
+}
+
+
+/*******************************************************************/
+
+struct Rlist *SplitStringAsRList(char *string,char sep)
+
+ /* Splits a string containing a separator like "," 
+    into a linked list of separate items, supports
+    escaping separators, e.g. \, */
+
+{ struct Rlist *liststart = NULL;
+  char *sp;
+  char node[CF_MAXVARSIZE];
+  int maxlen = strlen(string);
+  
+
+if (string == NULL)
+   {
+   return NULL;
+   }
+
+for (sp = string; *sp != '\0'; sp++)
+   {
+   if (*sp == '\0' || sp > string+maxlen)
+      {
+      break;
+      }
+
+   memset(node,0,CF_MAXVARSIZE);
+
+   sp += SubStrnCopyChr(node,sp,CF_MAXVARSIZE,sep);
+
+   PrependRlist(&liststart,node,CF_SCALAR);
+   }
+
+return liststart;
+}
+
+/*********************************************************************/
+
+int SubStrnCopyChr(char *to,char *from,int len,char sep)
+
+{ char *sp,*sto = to;
+  int count = 0;
+
+memset(to,0,len);
+
+if (from == NULL)
+   {
+   return 0;
+   }
+
+if (from && strlen(from) == 0)
+   {
+   return 0;
+   }
+
+for (sp = from; *sp != '\0'; sp++)
+   {
+   if (count > len-1)
+      {
+      break;
+      }
+
+   if (*sp == '\\' && *(sp+1) == sep)
+      {
+      *sto++ = *++sp;
+      }
+   else if (*sp == sep)
+      {
+      break;          
+      }
+   else
+      {
+      *sto++ = *sp;
+      }
+
+   count++;
+   }
+
+return count;
 }
 

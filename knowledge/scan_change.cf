@@ -5,34 +5,8 @@ bundle knowledge st_change
 topics:
 
 "st-change";
-Change_Management::
-    "Deploying policy changes" ;
-Change_Management::
-    "The change decision process or release management" ;
-Change_Management::
-    "Change and convergence" ;
-Change_Management::
-    "Non-destructive change" ;
-Change_Management::
-    "Change management and knowledge management" ;
-Change_Management::
-    "Promises about change" ;
-Change_Management::
-    "Promises about change vs state" ;
-Change_Management::
-    "The decision point" ;
-Change_Management::
-    "Partially centralized change" ;
-Change_Management::
-    "How fast should changes be made?" ;
-Change_Management::
-    "Intended and unintended change" ;
-Change_Management::
-    "Regulation: authorized and unauthorized change" ;
-Change_Management::
-    "What is change management?" ;
 Special_Topics_Guide::
-    "Change Management"  association => a("discussed in","Change Management","discusses");
+    "Change Management"  association => a("discusses","Deploying policy changes","is discussed in");
 
 
 occurrences:

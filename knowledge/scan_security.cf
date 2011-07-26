@@ -5,50 +5,6 @@ bundle knowledge st_security
 topics:
 
 "st-security";
-Communication_Security::
-    "Tamperproof data and distributed monitoring" ;
-CFEngine_and_Firewalls::
-    "Pulling through a wormhole" ;
-CFEngine_and_Firewalls::
-    "Policy Mirror in the DMZ" ;
-CFEngine_and_Firewalls::
-    "CFEngine trust model" ;
-Communication_Security::
-    "CFEngine and Firewalls" ;
-Communication_Security::
-    "Security FAQ" ;
-Communication_Security::
-    "Authentication" ;
-Communication_Security::
-    "Remote communication" ;
-Communication_Security::
-    "Encryption algorithms" ;
-Communication_Security::
-    "The connection sequence" ;
-Communication_Security::
-    "TCP wrappers" ;
-Communication_Security::
-    "Communication Security" ;
-Security_Principles::
-    "Communications" ;
-Security_Principles::
-    "The principles of CFEngine security" ;
-Security_Principles::
-    "What is security?" ;
-Security_Principles::
-    "Security Principles" ;
-Architecture_Principles::
-    "Distributed execution and federation" ;
-Architecture_Principles::
-    "Robustness to failure" ;
-Architecture_Principles::
-    "Policy information flow" ;
-Architecture_Principles::
-    "Single point of coordination" ;
-Architecture_Principles::
-    "Architecture Principles" ;
-Special_Topics_Guide::
-    "Security"  association => a("discussed in","Security","discusses");
 
 
 occurrences:

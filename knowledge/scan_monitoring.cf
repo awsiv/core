@@ -5,32 +5,6 @@ bundle knowledge st_monitoring
 topics:
 
 "st-monitoring";
-    "Summary Monitoring" ;
-    "Threshold monitoring" ;
-    "Scanning syslog for breakin attempts" ;
-    "Scanning syslog for email milter failures" ;
-    "Scanning syslog for email statistics" ;
-    "Scanning DNS logs for query statistics" ;
-    "Scanning syslog for FTP statistics" ;
-    "Scanning log files for patterns" ;
-    "measurements promises" ;
-    "What are measurements?" ;
-Monitoring_customization::
-    "Monitoring customization" ;
-    "Persistent classes for alert conditions" ;
-    "Entropy" ;
-    "Variables" ;
-    "Estimate of the level of normality" ;
-    "Standard measured variables" ;
-    "Visualization of monitoring in CFEngine" ;
-    "Monitoring in CFEngine" ;
-    "What does monitoring software do?" ;
-    "What are the goals of monitoring?" ;
-    "What is monitoring?" ;
-Monitoring_introduction::
-    "Monitoring introduction" ;
-Special_Topics_Guide::
-    "Measurement and Monitoring"  association => a("discussed in","Measurement and Monitoring","discusses");
 
 
 occurrences:

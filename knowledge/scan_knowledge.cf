@@ -5,34 +5,8 @@ bundle knowledge st_knowledge
 topics:
 
 "st-knowledge";
-Knowledge::
-    "How does CFEngine Nova help?" ;
-Knowledge::
-    "Knowledge transfer" ;
-Knowledge::
-    "What other special documents should an organization have?" ;
-Knowledge::
-    "Example company_knowledge.cf" ;
-Knowledge::
-    "Documenting locations" ;
-Knowledge::
-    "Documenting goals" ;
-Knowledge::
-    "Creating your own map" ;
-Knowledge::
-    "Types of information" ;
-Knowledge::
-    "Pitfalls to avoid" ;
-Knowledge::
-    "The Copernicus Knowledge Map in CFEngine" ;
-Knowledge::
-    "How should you begin?" ;
-Knowledge::
-    "Risk and uncertainty" ;
-Knowledge::
-    "What is knowledge management?" ;
 Special_Topics_Guide::
-    "Knowledge"  association => a("discussed in","Knowledge","discusses");
+    "Knowledge"  association => a("discusses","How does CFEngine Nova help?","is discussed in");
 
 
 occurrences:

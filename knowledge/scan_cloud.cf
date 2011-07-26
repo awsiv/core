@@ -5,26 +5,10 @@ bundle knowledge st_cloud
 topics:
 
 "st-cloud";
-Cloud_Computing::
-    "The future - molecular computing" ;
-Cloud_Computing::
-    "What if I change my mind about Cloud Computing?" ;
-Cloud_Computing::
-    "Challenges for Cloud Computing" ;
-Cloud_Computing::
-    "Isnt virtualization inefficient?" ;
-Cloud_Computing::
-    "How does Cloud relate to virtualization?" ;
-Cloud_Computing::
-    "Permanent infra-structure with vibrant change" ;
-Cloud_Computing::
-    "How does CFEngine enable Cloud Computing?" ;
-Cloud_Computing::
-    "Is Cloud Computing for everything and everyone?" ;
-Cloud_Computing::
-    "What is Cloud Computing?" ;
 Special_Topics_Guide::
-    "Cloud Computing"  association => a("discussed in","Cloud Computing","discusses");
+    "Cloud Computing"  association => a("seems to refer to","cloud","seems be referred to in");
+Special_Topics_Guide::
+    "Cloud Computing"  association => a("discusses","The future - molecular computing","is discussed in");
 
 
 occurrences:

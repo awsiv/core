@@ -5,32 +5,8 @@ bundle knowledge st_distsched
 topics:
 
 "st-distsched";
-CFEngine_Tutorial::
-    "Summary of Distributed Scheduling" ;
-CFEngine_Tutorial::
-    "Long workflow chains" ;
-CFEngine_Tutorial::
-    "Self-healing workflows" ;
-CFEngine_Tutorial::
-    "Triggering multiple follow-ups" ;
-CFEngine_Tutorial::
-    "Aggregation of multiple jobs" ;
-CFEngine_Tutorial::
-    "More links in the chain" ;
-CFEngine_Tutorial::
-    "Fancy distributed encapsulation" ;
-CFEngine_Tutorial::
-    "Regular workflows" ;
-CFEngine_Tutorial::
-    "One-off workflows" ;
-CFEngine_Tutorial::
-    "Job scheduling and periodic maintenance" ;
-CFEngine_Tutorial::
-    "Coordinating dispatch" ;
-CFEngine_Tutorial::
-    "What is distributed scheduling?" ;
 Special_Topics_Guide::
-    "CFEngine-Tutorial"  association => a("discussed in","CFEngine-Tutorial","discusses");
+    "CFEngine-Tutorial"  association => a("discusses","Summary of Distributed Scheduling","is discussed in");
 
 
 occurrences:

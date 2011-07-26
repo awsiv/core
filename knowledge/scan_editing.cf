@@ -5,30 +5,8 @@ bundle knowledge st_editing
 topics:
 
 "st-editing";
-Editing::
-    "Modifying the current state of a file" ;
-Editing::
-    "Contextual adaptation of a file template" ;
-Editing::
-    "Copying a file template into place" ;
-Editing::
-    "Examples of file editing" ;
-Editing::
-    "Pitfalls to watch out for in file editing" ;
-Editing::
-    "Choosing an approach to file editing" ;
-Editing::
-    "Standard library methods for editing" ;
-Editing::
-    "Editing bundles" ;
-Editing::
-    "What does file editing involve?" ;
-Editing::
-    "Why is file editing difficult?" ;
-Editing::
-    "What is convergent file editing?" ;
 Special_Topics_Guide::
-    "Editing"  association => a("discussed in","Editing","discusses");
+    "Editing"  association => a("discusses","Modifying the current state of a file","is discussed in");
 
 
 occurrences:

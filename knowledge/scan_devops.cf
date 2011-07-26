@@ -5,32 +5,8 @@ bundle knowledge st_devops
 topics:
 
 "st-devops";
-Cfengine_for_Devops::
-    "Cloud computing is a rehearsal" ;
-Cfengine_for_Devops::
-    "Using CFEngine to integrate software components" ;
-Cfengine_for_Devops::
-    "Expressing subroutines in CFEngine" ;
-Cfengine_for_Devops::
-    "Expressing loops in CFEngine" ;
-Cfengine_for_Devops::
-    "Expressing conditionals in CFEngine" ;
-Cfengine_for_Devops::
-    "Expressing actions or tasks in CFEngine" ;
-Cfengine_for_Devops::
-    "Getting used to declarative expression" ;
-Cfengine_for_Devops::
-    "What role does CFEngine play in DevOps?" ;
-Cfengine_for_Devops::
-    "How do we make controlled change faster?" ;
-Cfengine_for_Devops::
-    "Should Web and IT management be closely related?" ;
-Cfengine_for_Devops::
-    "Why is DevOps happening now?" ;
-Cfengine_for_Devops::
-    "What is DevOps?" ;
 Special_Topics_Guide::
-    "Cfengine for Devops"  association => a("discussed in","Cfengine for Devops","discusses");
+    "Cfengine for Devops"  association => a("discusses","Cloud computing is a rehearsal","is discussed in");
 
 
 occurrences:
