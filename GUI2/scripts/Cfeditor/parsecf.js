@@ -75,6 +75,7 @@ var CfengineParser = Editor.Parser = (function() {
       forEachIn(obj, explore);
     }
   }
+  
   forEachIn(bundle_syntax, function(name, bundle) {
     var all = bundle["*"];
     if (all) {
@@ -137,6 +138,7 @@ var CfengineParser = Editor.Parser = (function() {
       else
         return propertiesOf(expected);
     }
+    
     function next() {
       var token = lookahead.length ? lookahead.shift() : tokens.next();
       if (token.style == "whitespace" && column == 0)

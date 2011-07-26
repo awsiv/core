@@ -22,7 +22,8 @@ $config['nodeport']='8080';
  * Default database 'mongodb' used for authenticating users 
  * 
  */
-$config['auth']='database';
+//$config['auth_mode']='database';
+
 /*
 |----------------------------------------------------------------------------
 |This item is for adjusting the environment on which the cfengine web

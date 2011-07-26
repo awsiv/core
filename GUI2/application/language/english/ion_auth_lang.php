@@ -62,3 +62,10 @@ $lang['backend_error']              = 'No Backend mentioned in the app Settings'
 
 //modes of login
 $lang['login_mode_changed']          =  'You have changed the mode of authentication , please re-login into the system';
+
+//ldap related
+$lang['error_loading_application_setting']    = "Error loading Application settings from database";
+$lang['no_entries_found']                            ="Cannot find any entry in database";
+$lang['unsucessful_active_directory_bind']   ="Cannot perform a sucessful bind with the supplied credentials and the configuration";
+$lang['Internal_Ldap_module_error']            ="Please check credentials and Configuration for the ldap, Ldap module error";
+$lang['unsucessful_ldap_bind']                    ="Unable to perform LDAP bind with supplied credentials";

@@ -89,6 +89,7 @@ class Ion_auth
 	{
 		$this->ci =& get_instance();
 		$this->ci->load->config('ion_auth', TRUE);
+                $this->ci->load->config('appsettings', TRUE);
 		$this->ci->load->library('email');
 		$this->ci->load->library('session');
                 $this->ci->load->library('Auth_Ldap');
@@ -112,6 +113,9 @@ class Ion_auth
                     $this->set_error('backend_error');
                     $this->mode='database';
 		    //return FALSE;
+                }
+                if($this->ci->config->item('auth_mode') &&$this->ci->config->item('auth_mode') !=''){
+                   $this->mode=strtolower($this->ci->config->item('auth_mode'));
                 }
                  //$this->mode='database';
 
@@ -385,7 +389,10 @@ class Ion_auth
                       $this->ci->session->set_userdata('pwd', $password);
                       return TRUE;
                      }
-                $this->set_error('login_unsuccessful');
+                  foreach((array)$this->ci->auth_ldap->get_unformatted_error() as $error){
+                       $this->set_error($error);
+                   }
+                //$this->set_error('login_unsuccessful');
 		return FALSE;
                }
                
