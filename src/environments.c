@@ -75,7 +75,7 @@ if (Nova_EnvironmentsSanityChecks(a,pp))
       return;
       }
 
-   CF_NODES++;
+   CF_OCCUR++;
 
    PromiseBanner(pp);
    NewScalar("this","promiser",pp->promiser,cf_str);
