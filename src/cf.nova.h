@@ -677,6 +677,8 @@ void Nova_RegisterDoc(struct Item **list,char *dir,char *doc);
 void Nova_GenerateTestData(int count);
 void Nova_RemoveTestData(void);
 void Nova_UpdateTestData(void);
+struct Rlist* Nova_AddReportsTestData(int count);
+struct Rlist* Nova_GetTestMachines(void);
 
 /* license.c */
 
