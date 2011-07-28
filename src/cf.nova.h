@@ -565,6 +565,8 @@ void Nova_CountMonitoredClasses(void);
 void Nova_CacheTotalCompliance(bool allSlots);
 void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot, time_t start, time_t now);
 int Nova_ShiftChange(void);
+void Nova_UpdateMongoHostList(struct Item *list);
+struct Item *Nova_GetMongoLastSeen(void);
 
 /* install.c */
 
