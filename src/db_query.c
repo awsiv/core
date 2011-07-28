@@ -7003,7 +7003,7 @@ struct Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char 
 
 /******************************************************************/
  
-struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson)
+struct Item *CFDB_QueryIsMaster(mongo_connection *conn)
 {
  bson_buffer bb,*query;
  bson cmd,result;
@@ -7011,17 +7011,10 @@ struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *co
  struct Item *ret = NULL;
  
 bson_buffer_init(&bb);
-bson_append_string(&bb, "distinct", collection);
-bson_append_string(&bb, "key", dKey);
-
-if (queryBson)
-   {
-   bson_append_bson(&bb, "query", queryBson);
-   }
-
+//bson_append_string(&bb, "isMaster", collection);
 bson_from_buffer(&cmd, &bb);
 
-if (!mongo_run_command(conn, database, &cmd, &result))
+if (!mongo_run_command(conn, MONGO_BASE, &cmd, &result))
    {
    MongoCheckForError(conn,"CFDB_QueryDistinct()", "", NULL);
    bson_buffer_destroy(&bb);
@@ -7031,7 +7024,9 @@ if (!mongo_run_command(conn, database, &cmd, &result))
 
 bson_destroy(&cmd);
 
-if (!bson_find(&it1, &result, "values"))
+bson_print(&result);
+
+/*if (!bson_find(&it1, &result, "values"))
    {
    CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
    bson_destroy(&result);
@@ -7051,7 +7046,7 @@ while (bson_iterator_next(&values))
    {
    PrependItem(&ret,(char *)bson_iterator_string(&values),NULL);
    }
-
+*/
 bson_destroy(&result);
 
 return ret;
@@ -7290,8 +7285,42 @@ struct Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lc
   return classList;
 }
 /*************************************************/
+struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson)
 
+{ bson_buffer bb,*query;
+ bson cmd,result;
+ bson_iterator it1,values;
+ struct Item *ret = NULL;
 
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, "distinct", collection);
+ bson_append_string(&bb, "key", dKey);
+
+ if (queryBson)
+    {
+    bson_append_bson(&bb, "query", queryBson);
+    }
+
+ bson_from_buffer(&cmd, &bb);
+
+ if (!mongo_run_command(conn, database, &cmd, &result))
+    {
+    MongoCheckForError(conn,"CFDB_QueryDistinct()", "", NULL);
+    bson_buffer_destroy(&bb);
+    bson_destroy(&cmd);
+    return false;
+    }
+
+ bson_destroy(&cmd);
+
+ if (!bson_find(&it1, &result, "values"))
+    {
+    CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
+    bson_destroy(&result);
+    return false;
+    }
+}
+/*************************************************/
 #endif  /* HAVE LIB_MONGOC */
 
 

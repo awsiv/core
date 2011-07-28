@@ -1405,6 +1405,87 @@ void ThisHashString(char *str,char *buffer,int len,unsigned char digest[EVP_MAX_
 /*********************************************************************/
 void Nova_GenerateTestData(int count)
 
+{ struct Rlist *testmachines = NULL,*rp=NULL;
+ struct Item *ip;
+ time_t from;
+ char newkeyhash[CF_BUFSIZE]={0},newaddresses[CF_MAXVARSIZE]={0},newhostnames[CF_BUFSIZE]={0},noDot[CF_BUFSIZE]={0};
+ unsigned char digest[EVP_MAX_MD_SIZE+1];
+ int i = 0;
+ int currReport = -1;
+
+ snprintf(CFWORKDIR,sizeof(CFWORKDIR),"/var/cfengine");
+ //FILE_SEPARATOR = '/';
+ from = time(NULL) - CF_WEEK;
+ struct Item *reports[CF_CODEBOOK_SIZE] = {0}, *packedReports=NULL;
+ char buffer[1000000]={0},buf[CF_BUFSIZE]={0};
+ int bufsize = 1000000;
+ int countLen =0;
+ int hostCount = 0;
+ int startFrom = 0;
+
+ LICENSES=1;
+
+ Nova_PackAllReports(&packedReports,from,0,cfd_menu_full);
+ 
+ for(ip = packedReports; ip != NULL; ip = ip->next)
+    {
+    // skip the first line
+    if(i==0)
+       {
+       i++;
+       continue;
+       }
+    ReplaceTrailingChar(ip->name, '\n', '\0');
+    snprintf(buf,sizeof(buf),"%s\n",ip->name);
+    Join(buffer,buf,bufsize);
+    }
+
+ DeleteItemList(packedReports);
+
+ i=0;
+ int len = strlen(buffer);
+ NewReportBook(reports);
+ currReport=-1;
+
+ while(countLen < len)
+    {
+    while (buffer[countLen] != '\n')
+       {
+       buf[i] = buffer[countLen];
+       i++;
+       countLen++;
+       }
+    buf[i] ='\0';
+    countLen++;
+    i=0;
+    currReport = Nova_StoreIncomingReports(buf,reports,currReport);
+    }
+ 
+ testmachines= Nova_GetTestMachines();
+ 
+ for(rp=testmachines;rp!=NULL;rp=rp->next)
+    {
+    startFrom++;
+    }
+ 
+ for(hostCount=0;hostCount<count;hostCount++)
+    {
+    snprintf(newhostnames,sizeof(newhostnames),"%s_%s_%d",CF_TEST_HOSTNAME,noDot,startFrom+2);
+    snprintf(newaddresses,sizeof(newaddresses),"%d.%d.%d.%d",10,count%(hostCount+1),count%(hostCount+2),hostCount+1);
+
+    ThisHashString(newhostnames,newaddresses,strlen(newaddresses),digest);
+    snprintf(newkeyhash,sizeof(newkeyhash),"%s",ThisHashPrint(digest));
+ 
+    snprintf(PUBKEY_DIGEST, sizeof(PUBKEY_DIGEST), "%s", newkeyhash);
+    snprintf(VIPADDRESS,CF_MAXVARSIZE-1,"%s",newaddresses);
+    snprintf(VFQNAME,CF_MAXVARSIZE-1,"%s",newhostnames);
+    UnpackReportBook(newkeyhash,newaddresses,newhostnames,&reports);
+    }
+ // DeleteItemList(reports);
+}
+/*********************************************************************/
+struct Rlist* Nova_GetTestMachines(void)
+
 { mongo_cursor *cursor;
   bson_iterator it;
   bson b,query,empty,element;
@@ -1418,148 +1499,21 @@ void Nova_GenerateTestData(int count)
   char newkeyhash[CF_BUFSIZE]={0},newaddresses[CF_MAXVARSIZE]={0},newhostnames[CF_BUFSIZE]={0};
   char noDot[CF_BUFSIZE]={0}, temp[CF_MAXVARSIZE];
   unsigned char digest[EVP_MAX_MD_SIZE+1];
-  int i;
+  int i, total_added=0;
+   struct Rlist *testmachines = NULL,*rp=NULL;
 
   oid = &_oid;
 
 if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-   return;
+   return NULL;
    }
   
 cursor = mongo_find(&conn,MONGO_DATABASE,bson_empty(&query),0,0,0,0);
 
 while(mongo_cursor_next(cursor))  // loops over documents  
    {
-   // replicates the existing hosts data n=count times
-   for(i=0; i< count; i++)
-      {
-      bson_iterator_init(&it,cursor->current.data);
-
-      keyhash[0]='\0';
-      hostnames[0]='\0';
-      addresses[0]='\0';
-      digest[0]='\0';
-      newkeyhash[0]='\0';
-      newhostnames[0]='\0';
-      newaddresses[0]='\0';
-   
-      bson_buffer_init(&bb_dup);
-      bson_append_start_object(&bb_dup,"$set");   
-      while(bson_iterator_next(&it))
-         {
-         if (bson_iterator_type(&it) == bson_string && strcmp(bson_iterator_key(&it),cfr_keyhash) == 0)
-            {
-            CFDB_ScanHubHost(&it,keyhash,addresses,hostnames);
-            }
-         else if (strcmp(bson_iterator_key(&it),cfr_ip_array) == 0)
-            {
-            CFDB_ScanHubHost(&it,keyhash,addresses,hostnames);
-            }
-         else if (strcmp(bson_iterator_key(&it),cfr_host_array) == 0)
-            {
-            CFDB_ScanHubHost(&it,keyhash,addresses,hostnames);
-            }
-         else if (strcmp(bson_iterator_key(&it),"_id") == 0)
-            {
-            oid = bson_iterator_oid(&it);
-            }
-         else 
-            {
-            bson_append_element( &bb_dup, NULL, &it);
-            }
-         }
-         
-      // generate new names, ip and keyhash
-      ReplaceChar(hostnames,noDot,sizeof(noDot),'.','_');
-      strncpy(temp,noDot,strlen(CF_TEST_HOSTNAME));
-      temp[strlen(CF_TEST_HOSTNAME)] = '\0';
-
-      if(strcmp(temp,CF_TEST_HOSTNAME)!=0 && strlen(hostnames)>0)
-         {         
-         snprintf(newhostnames,sizeof(newhostnames),"%s_%s_%d",CF_TEST_HOSTNAME,noDot,i+1);
-         snprintf(newaddresses,sizeof(newaddresses),"%d_%d_%d_%d",10,count%(i+1),count%(i+2),i+1);
-         ThisHashString(newhostnames,newaddresses,strlen(newaddresses),digest);
-         snprintf(newkeyhash,sizeof(newkeyhash),"%s",ThisHashPrint(digest));
-
-         //query
-         bson_buffer_init(&bb);
-         bson_append_string(&bb,cfr_keyhash,newkeyhash);
-         bson_from_buffer(&query,&bb); 
-
-         // add ip addresses
-         bson_buffer_init(&bb);
-         setObj = bson_append_start_object(&bb,"$set");
-         arr = bson_append_start_array(setObj,cfr_ip_array);
-         bson_append_string(setObj,"0",newaddresses);
-         bson_append_finish_object(arr);
-         bson_append_finish_object(setObj);
-         bson_from_buffer(&setOp,&bb);
-
-         mongo_update(&conn,MONGO_DATABASE,&query,&setOp,MONGO_UPDATE_UPSERT);
-         MongoCheckForError(&conn,"GenerateTestData add IP",keyhash,NULL);         
-         bson_destroy(&setOp);
-
-         // add hostnames
-         bson_buffer_init(&bb);
-         setObj = bson_append_start_object(&bb,"$set");
-         arr = bson_append_start_array(setObj,cfr_host_array);
-         bson_append_string(setObj,"0",newhostnames);
-         bson_append_finish_object(arr);
-         bson_append_finish_object(setObj);
-         bson_from_buffer(&setOp,&bb);
-         
-         mongo_update(&conn,MONGO_DATABASE,&query,&setOp,MONGO_UPDATE_UPSERT);
-         MongoCheckForError(&conn,"GenerateTestData add hostnames",keyhash,NULL);
-         bson_destroy(&setOp);
-
-         // replicate existing hosts
-         bson_append_finish_object(&bb_dup);
-         bson_from_buffer(&setOp,&bb_dup);
-         
-         mongo_update(&conn, MONGO_DATABASE,&query,&setOp,MONGO_UPDATE_UPSERT);
-         MongoCheckForError(&conn,"GenerateTestData replicate data",newkeyhash,NULL);
-         bson_destroy(&query);
-         bson_destroy(&setOp);
-         }
-      }
-   }
-
-mongo_cursor_destroy(cursor);
-
-if (!CFDB_Close(&conn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   } 
-}
-/****************************************************************************************/
-void Nova_RemoveTestData(void)
-
-{ mongo_cursor *cursor;
-  bson_iterator it;
-  bson b,query,element,setOp;
-  bson_buffer bb, *setObj;
-  bson_oid_t *oid,_oid;
-  mongo_connection conn;
-
-  char keyhash[CF_MAXVARSIZE],addresses[CF_MAXVARSIZE],hostnames[CF_MAXVARSIZE];
-  char noDot[CF_BUFSIZE]={0},temp[CF_MAXVARSIZE];
-
-  int i=1;
-  oid = &_oid;
-
-if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
-   {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
-   return;
-   }
-
-cursor = mongo_find(&conn,MONGO_DATABASE,bson_empty(&query),0,0,0,0);
-
-while(mongo_cursor_next(cursor))  // loops over documents   
-   {
-
    bson_iterator_init(&it,cursor->current.data);
    
    keyhash[0]='\0';
@@ -1570,7 +1524,7 @@ while(mongo_cursor_next(cursor))  // loops over documents
       {
       if (bson_iterator_type(&it) == bson_string && strcmp(bson_iterator_key(&it),cfr_keyhash) == 0)
          {
-         CFDB_ScanHubHost(&it,keyhash,addresses,hostnames);
+         CFDB_ScanHubHost(&it,keyhash,addresses,hostnames);            
          }
       else if (strcmp(bson_iterator_key(&it),cfr_host_array) == 0)
          {
@@ -1582,33 +1536,79 @@ while(mongo_cursor_next(cursor))  // loops over documents
          }
       }
    
-   // generate new names, ip and keyhash
-   ReplaceChar(hostnames,noDot,sizeof(noDot),'.','_');
-   strncpy(temp,noDot,strlen(CF_TEST_HOSTNAME));
+   strncpy(temp,hostnames,strlen(CF_TEST_HOSTNAME));
    temp[strlen(CF_TEST_HOSTNAME)] = '\0';
-
-   if(strlen(hostnames)<1)
+   if(strcmp(temp,CF_TEST_HOSTNAME)==0)
       {
-      bson_buffer_init(&bb);
-      bson_append_oid(&bb,"_id",oid);
-      bson_from_buffer(&query,&bb);
-      
-      mongo_remove(&conn,MONGO_DATABASE,&query);
-      MongoCheckForError(&conn, "RemoveEmptyObjects", keyhash,NULL);
-      bson_destroy(&query);
+      IdempPrependRScalar(&testmachines,keyhash,CF_SCALAR);
       }
-   else if(strcmp(temp,CF_TEST_HOSTNAME) == 0)
-      {
-      bson_buffer_init(&bb);
-      bson_append_string(&bb,cfr_keyhash,keyhash);
-      bson_from_buffer(&query,&bb);
-
-      mongo_remove(&conn,MONGO_DATABASE,&query);
-      MongoCheckForError(&conn, "RemoveTestData", keyhash,NULL);
-      bson_destroy(&query);
+   
+   if(strcmp(temp,CF_TEST_HOSTNAME)!=0 && strlen(hostnames)>0)
+      {         
+      total_added++;
       }
    }
+
 mongo_cursor_destroy(cursor);
+
+if (!CFDB_Close(&conn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return testmachines;
+}
+/****************************************************************************************/
+void Nova_RemoveTestData(void)
+{
+ struct Rlist *testmachines = NULL,*rp=NULL;
+  int i=0;
+  testmachines= Nova_GetTestMachines();
+
+  for(rp=testmachines;rp!=NULL;rp=rp->next)
+     {
+     Nova_RemoveTestData1(MONGO_DATABASE, (char*)rp->item);
+     Nova_RemoveTestData1(MONGO_DATABASE_MON_MG, (char*)rp->item);
+     Nova_RemoveTestData1(MONGO_DATABASE_MON_WK, (char*)rp->item);
+     Nova_RemoveTestData1(MONGO_DATABASE_MON_YR, (char*)rp->item);
+     Nova_RemoveTestData1(MONGO_LOGS_REPAIRED, (char*)rp->item);
+     Nova_RemoveTestData1(MONGO_LOGS_REPAIRED, (char*)rp->item);
+     Nova_RemoveTestData1(MONGO_LOGS_NOTKEPT, (char*)rp->item);
+     Nova_RemoveTestData1(MONGO_ARCHIVE, (char*)rp->item);
+     }
+  DeleteRlist(testmachines);
+}
+    
+/****************************************************************************************/
+void Nova_RemoveTestData1(char *db, char *keyhash)
+
+{ mongo_cursor *cursor;
+  bson_iterator it;
+  bson b,query,element,setOp;
+  bson_buffer bb, *setObj;
+  bson_oid_t *oid,_oid;
+  mongo_connection conn;
+
+  char addresses[CF_MAXVARSIZE],hostnames[CF_MAXVARSIZE];
+  char noDot[CF_BUFSIZE]={0},temp[CF_MAXVARSIZE];
+  struct Rlist *testmachines = NULL;
+
+  int i=1;
+  oid = &_oid;
+
+if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return;
+   }
+
+bson_buffer_init(&bb);
+bson_append_string(&bb,cfr_keyhash,keyhash);
+bson_from_buffer(&query,&bb);
+
+mongo_remove(&conn,db,&query);
+
+bson_destroy(&query);
 
 if (!CFDB_Close(&conn))
    {
