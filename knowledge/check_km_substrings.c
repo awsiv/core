@@ -31,7 +31,7 @@ int main()
  char *sp;
  int i,j,k,skip;
  FILE *fp;
- char word[1024],w1[1024],w2[1024];
+ char word[1024],w1[1024],w2[1024],class[1024],line[1024];
 
 if ((fp = fopen("words","r")) == NULL)
    {
@@ -42,9 +42,10 @@ i = 0;
 
 while(!feof(fp))
    {
+   memset(line,0,1024);
    memset(word,0,1024);
+   memset(class,0,1024);
    fgets(word,1023,fp);
-   Chop(word);
 
    if (strlen(word) == 0)
       {
@@ -89,8 +90,11 @@ for (k = 0; keywords[k] != NULL; k++)
       
       //Check for canonified form too
 
+      sscanf(keywords[i],"%[^:]::%[^\n]",class,word);
+
+      Chop(keywords[k]);
       strcpy(w1,ToLowerStr(keywords[k]));
-      strcpy(w2,ToLowerStr(keywords[i]));
+      strcpy(w2,ToLowerStr(word));
       
       if (strcmp(w1,w2) == 0)
          {
@@ -106,7 +110,7 @@ for (k = 0; keywords[k] != NULL; k++)
             // continue;
             }
          
-         printf(" \"%s\" association => a(\"seems to refer to\",\"%s\",\"seems to be referred to in\");\n",keywords[k],keywords[i]);
+         printf(" %s:: \"%s\" association => a(\"seems to refer to\",\"%s\",\"seems to be referred to in\");\n",class,word,keywords[k]);
          }      
       }
    }
