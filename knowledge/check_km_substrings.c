@@ -23,7 +23,7 @@ char *ToLowerStr (char *str);
 int main()
 
 { char *keywords[8000];
- char *exceptions[] = { "or", "and","the", "there","then", "what", "how", "ci","on","at","int","now","not", NULL };
+ char *exceptions[] = { "or", "and","the", "there","then", "what", "how", "ci","on","at","int","now","not","any", NULL };
  
   char *otherwords[] =  { "convergence", "promise", "scheduling", "workflow","bundles", "hierarchy", "cloud",
                          "package", "policy", "security", "virtualization", "scalability",
@@ -31,7 +31,7 @@ int main()
  char *sp;
  int i,j,k,skip;
  FILE *fp;
- char word[1024],w1[1024],w2[1024],class[1024],line[1024];
+ char w1[1024],w2[1024],line[1024],word1[1024],class1[1024],word2[1024],class2[1024];
 
 if ((fp = fopen("words","r")) == NULL)
    {
@@ -43,16 +43,16 @@ i = 0;
 while(!feof(fp))
    {
    memset(line,0,1024);
-   memset(word,0,1024);
-   memset(class,0,1024);
-   fgets(word,1023,fp);
+   memset(word1,0,1024);
+   memset(class1,0,1024);
+   fgets(word1,1023,fp);
 
-   if (strlen(word) == 0)
+   if (strlen(word1) == 0)
       {
       continue;
       }
    
-   keywords[i] = strdup(word);
+   keywords[i] = strdup(word1);
 
    i++;
 
@@ -90,11 +90,19 @@ for (k = 0; keywords[k] != NULL; k++)
       
       //Check for canonified form too
 
-      sscanf(keywords[i],"%[^:]::%[^\n]",class,word);
+      sscanf(keywords[i],"%[^:]::%[^\n]",class1,word1);
+      sscanf(keywords[k],"%[^:]::%[^\n]",class2,word2);
 
       Chop(keywords[k]);
-      strcpy(w1,ToLowerStr(keywords[k]));
-      strcpy(w2,ToLowerStr(word));
+      Chop(keywords[i]);
+      
+      strcpy(w1,ToLowerStr(word2));
+      strcpy(w2,ToLowerStr(word1));
+
+      if (strlen(w1) == 0||strlen(w2)==0)
+         {
+         continue;
+         }
       
       if (strcmp(w1,w2) == 0)
          {
@@ -110,7 +118,7 @@ for (k = 0; keywords[k] != NULL; k++)
             // continue;
             }
          
-         printf(" %s:: \"%s\" association => a(\"seems to refer to\",\"%s\",\"seems to be referred to in\");\n",class,word,keywords[k]);
+         printf(" %s:: \"%s\" association => a(\"seems to refer to\",\"%s\",\"seems to be referred to in\");\n",class1,word1,keywords[k]);
          }      
       }
    }
