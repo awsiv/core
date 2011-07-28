@@ -384,6 +384,12 @@ int CFDB_CountHostsWithClasses(mongo_connection *conn, struct Item *classes);
 int CFDB_CountHostsGeneric(mongo_connection *conn, bson *query);
 int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
 bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate);
+
+//replica set
+struct Item * CFDB_GetLastseenCache(void);
+int CFDB_QueryIsMaster(void);
+
+
 #endif
 
 /* db_save.c */
@@ -422,6 +428,8 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 
 struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
 void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired, double notkept, int count, time_t genTime);
+int CFDB_SaveLastseenCache(char *keyhash,char *ip);
+
 /*
  * commenting
  */

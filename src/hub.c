@@ -496,6 +496,7 @@ struct Item *Nova_ScanClients()
   int ksize,vsize;
   struct Item *list = NULL,*listm;
 
+  
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
 MapName(name);
 
@@ -535,11 +536,16 @@ DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
 
 /* Now we need to do some magic for hubs so that only one hub collects reports at a time */
+if(CFDB_QueryIsMaster())
+   {
+   NewClass("am_mongodb_master");
+   NewClass("am_policy_hub");
+   }
 
 Nova_UpdateMongoHostList(list);
 DeleteItemList(list);
 
-if (IsDefinedClass("am_mongo_master"))
+if (IsDefinedClass("am_mongodb_master"))
    {
    // If there is a list in Mongo, this takes precedence, else populate one
    list = Nova_GetMongoLastSeen();
@@ -934,9 +940,12 @@ return false;
 
 void Nova_UpdateMongoHostList(struct Item *list)
 
-{
+{  struct Item *ip = NULL;
 
-// Write this list to some fixed mongo DB (addtoset)
+ for(ip=list;ip!=NULL;ip=ip->next)
+    {
+    CFDB_SaveLastseenCache(ip->name,ip->classes);
+    }
 }
 
 /*****************************************************************************/
@@ -944,8 +953,9 @@ void Nova_UpdateMongoHostList(struct Item *list)
 struct Item *Nova_GetMongoLastSeen()
 
 {
+ 
  // Read back the full list from Mongo
- return NULL;
+ return CFDB_GetLastseenCache();
 }
 
 /* EOF */

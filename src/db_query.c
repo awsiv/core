@@ -49,6 +49,70 @@ return true;
 }
 
 /*****************************************************************************/
+struct Item *CFDB_GetLastseenCache(void)
+
+{ bson query,field;
+  bson_iterator it1,it2,it3;
+  mongo_cursor *cursor;
+ mongo_connection conn;
+ bson_buffer bb;
+ char keyhash[CF_BUFSIZE]={0},ip[CF_MAXVARSIZE]={0};
+ struct Item *list = {0};
+
+
+if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database to get lastseen cache");
+   return false;
+   }
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,"lastseen_hosts",1);
+bson_from_buffer(&field, &bb);
+
+cursor = mongo_find(&conn,MONGO_SCRATCH,bson_empty(&query),&field,0,0,0);
+
+bson_destroy(&field);
+bson_destroy(&query);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while(bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1),"lastseen_hosts") == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+           
+         while (bson_iterator_next(&it2))
+            {
+            bson_iterator_init(&it3, bson_iterator_value(&it2));
+            while (bson_iterator_next(&it3))
+               {
+               if(strcmp(bson_iterator_key(&it3),"kH")==0)
+                  {
+                  snprintf(keyhash,sizeof(keyhash),"%s",bson_iterator_string(&it3));
+                  }
+               else if(strcmp(bson_iterator_key(&it3),"ip")==0)
+                  {
+                  snprintf(ip,sizeof(ip),"%s",bson_iterator_string(&it3));
+                  }
+               }
+            if(keyhash && ip)
+               {
+               IdempPrependItem(&list,keyhash,ip);
+               }
+            }
+         }
+      }
+   }
+           
+mongo_cursor_destroy(cursor);
+CFDB_Close(&conn);
+return list;
+}
+/*****************************************************************************/
 
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn)
 
@@ -7003,7 +7067,7 @@ struct Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char 
 
 /******************************************************************/
  
-struct Item *CFDB_QueryIsMaster(mongo_connection *conn)
+struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson)
 {
  bson_buffer bb,*query;
  bson cmd,result;
@@ -7011,10 +7075,17 @@ struct Item *CFDB_QueryIsMaster(mongo_connection *conn)
  struct Item *ret = NULL;
  
 bson_buffer_init(&bb);
-//bson_append_string(&bb, "isMaster", collection);
+bson_append_string(&bb, "distinct", collection);
+bson_append_string(&bb, "key", dKey);
+
+if (queryBson)
+   {
+   bson_append_bson(&bb, "query", queryBson);
+   }
+
 bson_from_buffer(&cmd, &bb);
 
-if (!mongo_run_command(conn, MONGO_BASE, &cmd, &result))
+if (!mongo_run_command(conn, database, &cmd, &result))
    {
    MongoCheckForError(conn,"CFDB_QueryDistinct()", "", NULL);
    bson_buffer_destroy(&bb);
@@ -7024,9 +7095,7 @@ if (!mongo_run_command(conn, MONGO_BASE, &cmd, &result))
 
 bson_destroy(&cmd);
 
-bson_print(&result);
-
-/*if (!bson_find(&it1, &result, "values"))
+if (!bson_find(&it1, &result, "values"))
    {
    CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
    bson_destroy(&result);
@@ -7046,7 +7115,7 @@ while (bson_iterator_next(&values))
    {
    PrependItem(&ret,(char *)bson_iterator_string(&values),NULL);
    }
-*/
+
 bson_destroy(&result);
 
 return ret;
@@ -7285,42 +7354,50 @@ struct Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lc
   return classList;
 }
 /*************************************************/
-struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson)
-
-{ bson_buffer bb,*query;
+int CFDB_QueryIsMaster(void)
+{
+ bson_buffer bb,*query;
  bson cmd,result;
- bson_iterator it1,values;
- struct Item *ret = NULL;
+ bson_iterator it1,values,it2;
+ int ret = false;
+ mongo_connection conn;
+
+
+ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to check if the db is master");
+    return false;
+    }
 
  bson_buffer_init(&bb);
- bson_append_string(&bb, "distinct", collection);
- bson_append_string(&bb, "key", dKey);
-
- if (queryBson)
-    {
-    bson_append_bson(&bb, "query", queryBson);
-    }
-
+ bson_append_string(&bb, "isMaster", MONGO_HOSTS_COLLECTION);
  bson_from_buffer(&cmd, &bb);
 
- if (!mongo_run_command(conn, database, &cmd, &result))
+ if (mongo_run_command(&conn, MONGO_BASE, &cmd, &result))
     {
-    MongoCheckForError(conn,"CFDB_QueryDistinct()", "", NULL);
-    bson_buffer_destroy(&bb);
-    bson_destroy(&cmd);
-    return false;
+    if (bson_find(&it1, &result, "ismaster"))
+       {
+       if(bson_iterator_bool(&it1))
+          {
+          ret = true;
+          }
+       }
+    else
+       {
+       CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryIsMaster()");
+       }
     }
-
+ else
+    {
+    MongoCheckForError(&conn,"CFDB_QueryIsMaster()", "", NULL);
+    }
  bson_destroy(&cmd);
-
- if (!bson_find(&it1, &result, "values"))
-    {
-    CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
-    bson_destroy(&result);
-    return false;
-    }
+ bson_destroy(&result);
+ CFDB_Close(&conn);
+ return ret;
 }
 /*************************************************/
+
 #endif  /* HAVE LIB_MONGOC */
 
 

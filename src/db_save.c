@@ -107,6 +107,44 @@ return true;
 
 /*****************************************************************************/
 
+int CFDB_SaveLastseenCache(char *keyhash,char *ip)
+
+{ bson_buffer bb;
+ bson_buffer *setObj,*sub;
+  bson setOp,empty;
+  mongo_connection dbconn;
+
+if (!IsDefinedClass("am_policy_hub") && !IsDefinedClass("am_php_module"))
+   {
+   CfOut(cf_verbose,"","Ignoring DB put of (%s=%s) - we are not a policy server",keyhash,ip);
+   return false;
+   }
+  
+if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
+   {
+   CfOut(cf_verbose,"","!! Could not open connection to report database to put value %s",keyhash);
+   return false;
+   }
+
+  
+bson_buffer_init(&bb);
+setObj = bson_append_start_object(&bb, "$addToSet");
+sub = bson_append_start_object(setObj, "lastseen_hosts");
+bson_append_string(sub,"kH",keyhash);
+bson_append_string(sub,"ip",ip);
+bson_append_finish_object(sub);
+bson_append_finish_object(setObj);
+
+bson_from_buffer(&setOp,&bb);
+mongo_update(&dbconn,MONGO_SCRATCH,bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
+
+bson_destroy(&setOp);
+CFDB_Close(&dbconn);
+
+return true;
+}
+/*****************************************************************************/
+
 void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char *ipaddr, char *hostname)
 /**
  *  hostname is optional, reverse lookup if not specified
