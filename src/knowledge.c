@@ -1481,7 +1481,7 @@ void Nova_GenerateTestData(int count)
     snprintf(VFQNAME,CF_MAXVARSIZE-1,"%s",newhostnames);
     UnpackReportBook(newkeyhash,newaddresses,newhostnames,&reports);
     }
- // DeleteItemList(reports);
+ DeleteReportBook(reports);
 }
 /*********************************************************************/
 struct Rlist* Nova_GetTestMachines(void)
