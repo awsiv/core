@@ -51,7 +51,7 @@ bundlesequence  => {
                    "system",
                    "cf_assoc",
                    "examples",
-
+                   "substrings",
                    "CfengineSiteConfiguration",
                    "enterprise_knowledge",
 
@@ -103,6 +103,7 @@ inputs         => {
                      "cf_associations.cf",
                      "cf_system.cf",
                      "examples.cf",
+                     "scan_substrings.cf",
                   "$(sys.workdir)/promise_knowledge.cf",
 
                   };
