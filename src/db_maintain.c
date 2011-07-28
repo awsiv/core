@@ -631,6 +631,33 @@ void CFDB_PurgeDeprecatedVitals(mongo_connection *conn)
  bson_destroy(&unsetOp);
  
 }
+/*****************************************************************************/
+
+void CFDB_RemoveTestData(char *db, char *keyhash)
+
+{ bson query;
+  bson_buffer bb;
+  mongo_connection conn;
+
+if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return;
+    }
+
+ bson_buffer_init(&bb);
+ bson_append_string(&bb,cfr_keyhash,keyhash);
+ bson_from_buffer(&query,&bb);
+
+ mongo_remove(&conn,db,&query);
+
+ bson_destroy(&query);
+ if (!CFDB_Close(&conn))
+    {
+    CfOut(cf_verbose,"", "!! Could not close connection to report database");
+    }
+}
+
 
 #endif  /* HAVE_LIBMONGOC */
 

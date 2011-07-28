@@ -458,6 +458,8 @@ void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *rep
 void DeleteFromBsonArray(bson_buffer *bb, char *arrName, struct Item *elements);
 void CFDB_PurgeHost(mongo_connection *conn, char *keyHash);
 void CFDB_PurgeDeprecatedVitals(mongo_connection *conn);
+
+void CFDB_RemoveTestData(char *db, char *keyhash);
 #endif /* HAVE_LIBMONGOC */
 
 
@@ -682,11 +684,13 @@ void NovaShowValues(FILE *fp,struct BodySyntax bs);
 void Nova_RegisterImg(struct Item **list,char *dir,char *pic);
 void Nova_RegisterDoc(struct Item **list,char *dir,char *doc);
 
+// generating test data
 void Nova_GenerateTestData(int count);
 void Nova_RemoveTestData(void);
 void Nova_UpdateTestData(void);
-struct Rlist* Nova_AddReportsTestData(int count);
 struct Rlist* Nova_GetTestMachines(void);
+char *ThisHashPrint(unsigned char digest[EVP_MAX_MD_SIZE+1]);
+void ThisHashString(char *str,char *buffer,int len,unsigned char digest[EVP_MAX_MD_SIZE+1]);
 
 /* license.c */
 

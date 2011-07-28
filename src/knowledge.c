@@ -1413,9 +1413,6 @@ void Nova_GenerateTestData(int count)
  int i = 0;
  int currReport = -1;
 
- snprintf(CFWORKDIR,sizeof(CFWORKDIR),"/var/cfengine");
- //FILE_SEPARATOR = '/';
- from = time(NULL) - CF_WEEK;
  struct Item *reports[CF_CODEBOOK_SIZE] = {0}, *packedReports=NULL;
  char buffer[1000000]={0},buf[CF_BUFSIZE]={0};
  int bufsize = 1000000;
@@ -1424,7 +1421,8 @@ void Nova_GenerateTestData(int count)
  int startFrom = 0;
 
  LICENSES=1;
-
+ snprintf(CFWORKDIR,sizeof(CFWORKDIR),"/var/cfengine");
+ from = time(NULL) - CF_WEEK;
  Nova_PackAllReports(&packedReports,from,0,cfd_menu_full);
  
  for(ip = packedReports; ip != NULL; ip = ip->next)
@@ -1479,7 +1477,7 @@ void Nova_GenerateTestData(int count)
     snprintf(PUBKEY_DIGEST, sizeof(PUBKEY_DIGEST), "%s", newkeyhash);
     snprintf(VIPADDRESS,CF_MAXVARSIZE-1,"%s",newaddresses);
     snprintf(VFQNAME,CF_MAXVARSIZE-1,"%s",newhostnames);
-    UnpackReportBook(newkeyhash,newaddresses,newhostnames,&reports);
+    UnpackReportBook(newkeyhash,newaddresses,newhostnames,reports);
     }
  DeleteReportBook(reports);
 }
@@ -1567,55 +1565,20 @@ void Nova_RemoveTestData(void)
 
   for(rp=testmachines;rp!=NULL;rp=rp->next)
      {
-     Nova_RemoveTestData1(MONGO_DATABASE, (char*)rp->item);
-     Nova_RemoveTestData1(MONGO_DATABASE_MON_MG, (char*)rp->item);
-     Nova_RemoveTestData1(MONGO_DATABASE_MON_WK, (char*)rp->item);
-     Nova_RemoveTestData1(MONGO_DATABASE_MON_YR, (char*)rp->item);
-     Nova_RemoveTestData1(MONGO_LOGS_REPAIRED, (char*)rp->item);
-     Nova_RemoveTestData1(MONGO_LOGS_REPAIRED, (char*)rp->item);
-     Nova_RemoveTestData1(MONGO_LOGS_NOTKEPT, (char*)rp->item);
-     Nova_RemoveTestData1(MONGO_ARCHIVE, (char*)rp->item);
+     CFDB_RemoveTestData(MONGO_DATABASE, (char*)rp->item);
+     CFDB_RemoveTestData(MONGO_DATABASE_MON_MG, (char*)rp->item);
+     CFDB_RemoveTestData(MONGO_DATABASE_MON_WK, (char*)rp->item);
+     CFDB_RemoveTestData(MONGO_DATABASE_MON_YR, (char*)rp->item);
+     CFDB_RemoveTestData(MONGO_LOGS_REPAIRED, (char*)rp->item);
+     CFDB_RemoveTestData(MONGO_LOGS_REPAIRED, (char*)rp->item);
+     CFDB_RemoveTestData(MONGO_LOGS_NOTKEPT, (char*)rp->item);
+     CFDB_RemoveTestData(MONGO_ARCHIVE, (char*)rp->item);
      }
   DeleteRlist(testmachines);
 }
     
 /****************************************************************************************/
-void Nova_RemoveTestData1(char *db, char *keyhash)
 
-{ mongo_cursor *cursor;
-  bson_iterator it;
-  bson b,query,element,setOp;
-  bson_buffer bb, *setObj;
-  bson_oid_t *oid,_oid;
-  mongo_connection conn;
-
-  char addresses[CF_MAXVARSIZE],hostnames[CF_MAXVARSIZE];
-  char noDot[CF_BUFSIZE]={0},temp[CF_MAXVARSIZE];
-  struct Rlist *testmachines = NULL;
-
-  int i=1;
-  oid = &_oid;
-
-if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
-   {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
-   return;
-   }
-
-bson_buffer_init(&bb);
-bson_append_string(&bb,cfr_keyhash,keyhash);
-bson_from_buffer(&query,&bb);
-
-mongo_remove(&conn,db,&query);
-
-bson_destroy(&query);
-
-if (!CFDB_Close(&conn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   } 
-}
-/*********************************************************************/
 void Nova_UpdateTestData(void)
 
 { mongo_cursor *cursor;
