@@ -1470,7 +1470,7 @@ void Nova_GenerateTestData(int count)
  for(hostCount=0;hostCount<count;hostCount++)
     {
     snprintf(newhostnames,sizeof(newhostnames),"%s_%s_%d",CF_TEST_HOSTNAME,noDot,startFrom+hostCount+1);
-    snprintf(newaddresses,sizeof(newaddresses),"%d.%d.%d.%d",10,255%(startFrom+hostCount+1),255%(startFrom+hostCount+2),255%(startFrom+hostCount));
+    snprintf(newaddresses,sizeof(newaddresses),"%d.%d.%d.%d",10,255%(startFrom+hostCount+1),255%(startFrom+hostCount+2),255%(startFrom+hostCount+3));
 
     ThisHashString(newhostnames,newaddresses,strlen(newaddresses),digest);
     snprintf(newkeyhash,sizeof(newkeyhash),"%s",ThisHashPrint(digest));
