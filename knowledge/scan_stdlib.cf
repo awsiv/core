@@ -5,6 +5,8 @@ bundle knowledge CfengineStdLibrary
 topics:
 
 "CfengineStdLibrary";
+Special_Topics_Guide::
+    "Cfengine-Open-Promise-Body-Library"  association => a("discusses","Community Open Promise Body Library","is discussed in");
 
 
 occurrences:

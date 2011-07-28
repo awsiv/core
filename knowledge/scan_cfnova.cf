@@ -5,6 +5,8 @@ bundle knowledge cfnova
 topics:
 
 "cfnova";
+Special_Topics_Guide::
+    "CFEngine-AutoReference"  association => a("discusses","CFEngine Nova Technical Supplement","is discussed in");
 
 
 occurrences:

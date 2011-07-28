@@ -6,7 +6,31 @@ topics:
 
 "st-distsched";
 Special_Topics_Guide::
-    "CFEngine-Tutorial"  association => a("discusses","Summary of Distributed Scheduling","is discussed in");
+    "Summary of Distributed Scheduling"  association => a("discusses","Distributed Scheduling","is discussed in");
+Special_Topics_Guide::
+    "Long workflow chains"  association => a("discusses","Distributed Scheduling","is discussed in");
+Special_Topics_Guide::
+    "Self-healing workflows"  association => a("discusses","Distributed Scheduling","is discussed in");
+Special_Topics_Guide::
+    "Triggering multiple follow-ups"  association => a("discusses","Distributed Scheduling","is discussed in");
+Special_Topics_Guide::
+    "Aggregation of multiple jobs"  association => a("discusses","Distributed Scheduling","is discussed in");
+Special_Topics_Guide::
+    "More links in the chain"  association => a("discusses","Distributed Scheduling","is discussed in");
+Special_Topics_Guide::
+    "Fancy distributed encapsulation"  association => a("discusses","Distributed Scheduling","is discussed in");
+Special_Topics_Guide::
+    "Regular workflows"  association => a("discusses","Distributed Scheduling","is discussed in");
+Special_Topics_Guide::
+    "One-off workflows"  association => a("discusses","Distributed Scheduling","is discussed in");
+Special_Topics_Guide::
+    "Job scheduling and periodic maintenance"  association => a("discusses","Distributed Scheduling","is discussed in");
+Special_Topics_Guide::
+    "Coordinating dispatch"  association => a("discusses","Distributed Scheduling","is discussed in");
+Special_Topics_Guide::
+    "What is distributed scheduling?"  association => a("discusses","Distributed Scheduling","is discussed in");
+Special_Topics_Guide::
+    "CFEngine-Tutorial"  association => a("discusses","Distributed Scheduling","is discussed in");
 
 
 occurrences:

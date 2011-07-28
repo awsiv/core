@@ -6,9 +6,27 @@ topics:
 
 "st-packages";
 Special_Topics_Guide::
-    "Package management"  association => a("seems to refer to","package","seems be referred to in");
+    "Package management next steps"  association => a("discusses","Package Management","is discussed in");
 Special_Topics_Guide::
-    "Package management"  association => a("discusses","Package management next steps","is discussed in");
+    "Uprading to a newer package version example"  association => a("discusses","Package Management","is discussed in");
+Special_Topics_Guide::
+    "Install specific package version example"  association => a("discusses","Package Management","is discussed in");
+Special_Topics_Guide::
+    "Install latest package version example"  association => a("discusses","Package Management","is discussed in");
+Special_Topics_Guide::
+    "Example package promises"  association => a("discusses","Package Management","is discussed in");
+Special_Topics_Guide::
+    "How CFEngine compares package versions"  association => a("discusses","Package Management","is discussed in");
+Special_Topics_Guide::
+    "Package promises"  association => a("discusses","Package Management","is discussed in");
+Special_Topics_Guide::
+    "What does CFEngine bring to package management?"  association => a("discusses","Package Management","is discussed in");
+Special_Topics_Guide::
+    "Strengths and weaknesses of package management"  association => a("discusses","Package Management","is discussed in");
+Special_Topics_Guide::
+    "What is package management?"  association => a("discusses","Package Management","is discussed in");
+Special_Topics_Guide::
+    "Package management"  association => a("discusses","Package Management","is discussed in");
 
 
 occurrences:

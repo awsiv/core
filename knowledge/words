@@ -1,0 +1,1423 @@
+
+!dsflkj
+(ext bundle)
+(menu option)
+(option list)
+*
+.a files
+.c files
+.l files
+.o files
+.so files
+.y files
+/etc/filesystems
+/etc/fstab
+/etc/ftpusers
+/etc/hosts.allow
+/etc/hosts.deny
+/etc/ldso.conf
+/etc/passwd
+/etc/printers.conf
+/etc/resolv.conf
+/etc/shadow
+/etc/vfstab
+192.12.74.0/23
+192.23.45.0/24
+ISO/IEC 20000
+a cfengine class expression
+a cfengine identifier
+a file path
+a positive integer
+a single character
+a syslog level
+a theory for itil
+a time range
+a user/group id
+a.out
+abandon autonomy?
+access
+access control
+access to file not granted
+accessedbefore
+accumulated
+aces
+acl
+acl (compound body)
+acl_directory_inherit
+acl_method
+acl_type
+action
+action (compound body)
+action_policy
+actions
+active monitoring
+adapting to windows
+adding users
+admit
+adopting cfengine in your organization
+adoption
+adoption of cfengine
+agents
+aggregation of multiple jobs
+ago
+agreement
+alert
+alerts
+allow_blank_fields
+allowconnectionsfrom not set
+allowmultipleconnectionsfrom not set
+amavisd
+americas
+amsterdam
+an alternative way to plan changes
+an arbitrary string
+and
+announcements
+anomaly detection
+any
+apac
+appendix - did you know?
+application management
+application services
+applications of hierarchy
+apps
+apt-get
+architect view
+architecture and security
+args
+arrays
+aspect orientation
+aspect paradigm
+associates
+association
+association (compound body)
+associations
+at
+atime
+audit
+auditing
+auditing software applications
+authentication
+authoring
+authorize
+automation
+autonomics
+availability
+background
+backup
+backward_relationship
+bad library
+bad memory reference
+baseline
+bash
+basics
+bdim
+bdma
+before_after
+behaviours
+benchmark
+bergen
+bind
+binservers
+bison
+black, grey and white box encapsulation in cfengine
+bodies
+body changes detect_all_change
+body constraints
+body-constaint
+body-constraint
+body-type
+boolean
+boot services
+bootp
+broadcast
+bsdflags
+budget
+build
+build, deploy, manage, audit
+bulk operations are handled by repeating patterns over lists
+bundle contains promiser
+bundle ordering
+bundle reference
+bundles
+business goals
+business process
+business services
+business value
+business value reports
+cacti
+calendars
+can i make my own content-diven policies?
+can i see a score-card of compliance?
+cancel_kept
+cancel_notkept
+cancel_repaired
+canonify
+capability
+capacity planning
+cascading
+causative relationships
+cdp
+cf-agent
+cf-copernicus
+cf-execd
+cf-hub
+cf-know
+cf-monitord
+cf-promises
+cf-quickref3
+cf-report
+cf-runagent
+cf-serverd
+cf3-bestpractice
+cf3-glossary
+cf3-reference
+cf3-solutions
+cf3-tutorial
+cf3-upgrade
+cfagent
+cfd
+cfengine
+cfengine 1
+cfengine 2
+cfengine 2 control settings
+cfengine 3
+cfengine 3 best practices
+cfengine 3 concept guide
+cfengine community
+cfengine components
+cfengine constellation
+cfengine glossary
+cfengine in itil clothes?
+cfengine nova
+cfengine nova technical supplement
+cfengine output levels
+cfengine reference manual
+cfengine solutions
+cfengine version 2
+cfengine-autoreference
+cfengine-best-practices
+cfengine-open-promise-body-library
+cfengine-reference
+cfengine-solutions
+cfengine-tutorial
+cfengines approach to privilege
+cfenginestdlibrary
+cfenvd
+cfenvgraph
+cfexecd
+cfnova
+cfrun
+cfservd
+cfshow
+chaining jobs together
+change and convergence
+change auditing - the all seeing eye
+change detection
+change detection scans
+change management
+change management and incident repair
+change management and knowledge management
+change management in the enterprise
+change management vs convergence
+change record
+changedbefore
+changes
+changes (compound body)
+changes__compound_body_
+changing a password
+changing passwords
+chdir
+cheaper options - tripwires
+check_foreign
+check_root
+checksums
+checksums and change management
+choosing a scheduling interval
+choosing an approach to file editing
+chronological analysis
+chroot
+ci
+clamav-milter
+clamd
+class
+class contexts
+classes
+classes (compound body)
+classes are sets
+classes report
+classify
+classmatch
+clist
+cloud
+cloud computing
+cm
+cmdb
+cmdb and cfengine
+cmdb asset management
+collapse_destination_dir
+command
+commands
+commands promises
+comment
+comment_lines_matching
+comments
+commercial or free?
+communicated information
+community open promise body library
+companies
+company
+compare
+compliance
+compliance report
+computer immunology
+computing environment
+conceptual relationships
+conditional promises
+configuration
+configuration item
+configuration management
+configuration management database
+connectivity
+contact cfengine
+contain
+contain (compound body)
+content-driven policies
+contexts
+contextual adaptation of a file template
+continual service improvement
+contract
+convergence
+convergent operators
+coordinating dispatch
+coordination, hierarchy and centralization
+copernicus
+copernicus hints
+copy
+copy_backup
+copy_from
+copy_from (compound body)
+copy_patterns
+copy_size
+copying a file template into place
+copylink_patterns
+countclassesmatching
+countlinesmatching
+create
+creating custom logs
+creating custom reports  all versions
+creating your own map
+creative roles
+crises and fire fighting
+cron
+csh
+ctime
+current projects
+customizing applications
+daemons
+darwin
+data types
+data_type
+database
+database_columns
+database_operation
+database_rows
+database_server
+database_server (compound body)
+database_type
+databases
+db_server_connection_db
+db_server_host
+db_server_owner
+db_server_password
+db_server_type
+debian
+debugging cfengine client-server
+decentralized data collection in cfengine
+default route
+defaultroute
+define jobs with basic profile information
+delegating roles in a collaboration
+delete
+delete (compound body)
+delete (compound_body)
+delete_if_contains_from_list
+delete_if_match_from_list
+delete_if_not_contains_from_list
+delete_if_not_match_from_list
+delete_if_not_startwith_from_list
+delete_if_startwith_from_list
+delete_lines
+delete_select
+delete_select (compound body)
+delta hub query
+deny
+departments
+dependencies
+depends_on
+deploy
+deploying policy changes
+depth
+depth_search
+depth_search (compound body)
+desktop
+dhcp
+digest
+digests
+directories
+directory services
+dirlinks
+disable
+disable_mode
+disable_suffix
+disconnected parts inheriting a single baseline
+diskfree
+disks
+dist
+distinct states
+distributed execution and federation
+distributed scheduling
+distributed system
+distributing ordering between hosts with cfengine nova
+distributing software packages to client hosts
+distro
+dmz
+dns
+document
+documentation
+documenting goals
+documenting locations
+dont shoot the messenger
+dpkg
+dsflkj
+dynamic addresses
+each part disconnected, providing services
+ebc
+edit_backup
+edit_defaults
+edit_defaults (compound body)
+edit_field
+edit_field (compound body)
+edit_fstab
+edit_line
+edit_xml
+editfiles
+editing
+editing bundles
+egc
+email
+email address
+emea
+emerge
+emergency change
+empty_file_before_editing
+encrypt
+encryption
+enterprise
+enterprise level cfengine
+enterprise software reporting
+entropy
+env_addresses
+env_baseline
+env_cpus
+env_disk
+env_memory
+env_name
+env_network
+env_spec_file
+environment
+environment variables
+environment_host
+environment_interface
+environment_resources
+environment_state
+environment_type
+environments
+environments promises
+error
+escape
+estimate of the level of normality
+etom
+eurosox
+event
+example company_knowledge.cf
+example deployment
+example package promises
+examples of file editing
+exception, failure, event, summary
+exclude_dirs
+exec_group
+exec_owner
+exec_program
+exec_regex
+exec_timeout
+execresult
+executable files
+exim
+expand_scalars
+expireafter
+export_zenoss
+expressing is a or has a
+expression
+extend_fields
+extraction_regex
+facts
+failed_returncodes
+failure
+fancy distributed encapsulation
+faults
+fcaps
+federated architecture
+federation
+fedora
+field_edits
+field_operation
+field_separator
+field_value
+file system not mounted
+file_changes report
+file_diffs report
+file_result
+file_select
+file_select (compound body)
+file_to_print
+file_types
+fileexists
+files
+files promises in agent
+filesexist
+filesize
+filesystem
+filters
+findertype
+firewalls
+firm
+first_last
+fixing iterating across nested lists
+flex
+fmd
+fmd terminology
+for and against hierarchies
+force_ipv4
+force_update
+forward_relationship
+freebsd
+freespace
+frequently asked topics
+freshclam
+friend status
+friend_pattern
+ftpusers
+full hub query
+functions
+functions which read
+functions which read arrays
+functions which read classes
+functions which read command output
+functions which read disk data
+functions which read files
+functions which read from a remote-cfengine
+functions which read from the network
+functions which read ldap data
+functions which read strings
+functions which read the environment
+functions which read the windows registry
+functions which return
+functions which return class
+functions which return int
+functions which return real
+functions which return string
+garbage collection
+gcc
+gdm
+gentoo
+germany
+getenv
+getfields
+getgid
+getindices
+getuid
+getusers
+global assurance
+global variables
+gnome
+gnu/linux
+goal 1
+goal 2
+goal 3
+goal 4
+goals
+gold server
+granting the right to switch on special pre-defined policies
+great britain
+grep
+groupexists
+groups
+grub
+handle
+handles
+handling multiple sources
+hard classes
+has current exemplars
+hash
+hashcommentlinesmatching
+hashes
+hashes report
+hashmatch
+hashuncommentlinesmatching
+heloooooooooooo
+heterogeneous system
+hiding details
+hierarchical structure
+hierarchies
+high level services in cfengine
+history_type
+holland
+home page
+homeservers
+homogeneous system
+host portal
+host2ip
+hostinnetgroup
+hostrange
+hosts
+hostsseen
+how can cfengine help?
+how can cfengine or promises help an enterprise
+how cfengine compares package versions
+how do content-driven policies work in detail?
+how do i nest menus and make dependencies?
+how do i see what machines keep which promises?
+how do i select from menus?
+how do you create menus with cfengine?
+how does cfengine convergence help?
+how does cfengine deal with modularity and orchestration?
+how does cfengine nova help?
+how fast should changes be made?
+how hierarchy compares to sets
+how should you begin?
+how to organize your organization
+how to use the library
+httpd
+hubknowledge
+hyper-v
+idempotence
+identifying the team
+identity management
+ifelapsed
+ifencrypted
+ifvarclass
+ignore
+ilist
+implementing knowledge management
+import
+in_range_define
+incident
+incident and problem management
+incident management
+incident management vs maintenance
+include_basedir
+include_dirs
+include_end_delimiter
+include_start_delimiter
+including data in reports
+inferences
+inheritance and its forms
+insert_if_contains_from_list
+insert_if_match_from_list
+insert_if_not_contains_from_list
+insert_if_not_match_from_list
+insert_if_not_startwith_from_list
+insert_if_startwith_from_list
+insert_lines
+insert_select
+insert_select (compound body)
+insert_type
+install latest package version example
+install specific package version example
+installation
+installation or pilot
+instrumentation
+insufficient permissions
+int
+integer
+integrated software installation
+integration of monitoring with knowledge base
+intended and unintended change
+intentions
+interactive job
+interactive jobs
+interactive load monitor
+interfaces
+intermittency
+inventory
+ip address
+ip chains
+ip tables
+ip2host
+iprange
+iptables
+ipv4_address
+ipv4_netmask
+ipv6_address
+irange
+irange [int,int]
+is a promise made by
+is a promise of type
+is cfengine patch-oriented or package-oriented?
+isdir
+isexecutable
+isgreaterthan
+islessthan
+islink
+isnewerthan
+isplain
+issymlinkto
+isvariable
+iterated promises
+iterating across multiple lists
+iterating across multiple lists, revisted
+iterating over nested lists
+iteration
+iteration in cfengine
+itil
+itil and cfengine summary
+itil configuration management
+itil history and versions
+itil processes
+itil release management
+job scheduling and periodic maintenance
+join
+kde
+kdm
+kept_returncodes
+key exchange
+knowledge
+knowledge management
+knowledge transfer
+ksh
+label
+lastnode
+lastseen
+lastseen report
+laterthan
+ldap
+ldaparray
+ldaplist
+ldapvalue
+ldd
+leaf_name
+levels of policy abstraction
+lex
+library
+license report
+like revision control?
+limitations of rollback in system administration
+linear topic map notation
+link type
+link_children
+link_from
+link_from (compound body)
+link_type
+linkcopy_patterns
+links
+linux
+list variable substitution and expansion
+lists
+location
+location (compound body)
+location relationships
+log rotation
+log_failed
+log_kept
+log_level
+log_priority
+log_repaired
+log_string
+logging
+logging execution
+login
+london
+london_1
+long workflow chains
+lvalue
+machine resources
+macos x
+mail
+mailserver
+maintenance paradigms
+makes promise of type
+makes promises
+management
+management issues
+management terminology
+manager view
+mandrake
+mandriva
+manual
+manuals
+maproot
+match_range
+match_value
+match_value (compound body)
+max_file_size
+measurement and monitoring
+measurement_class
+measurements
+measurements promises
+menu driven configuration
+merging and dividing enterprises
+message archive
+methods
+miscmounts
+mission goal and knowledge management
+mission portal
+mission statement
+mission status
+mode
+models of knowledge
+models of organization
+models of system administration
+modifying the current state of a file
+modularizing and orchestrating system policy
+module
+modules
+monitor summary report
+monitoring
+monitoring in cfengine
+monterey
+more links in the chain
+mount
+mount (compound body)
+mount_options
+mount_server
+mount_source
+mount_type
+mountables
+move_obstructions
+mtime
+mysql
+nagios
+nat
+nesting promises workaround
+netherlands
+network services
+new york
+new_jersey
+newname
+nfs
+nis
+no need for any centralization in cfengine
+no_output
+non-destructive change
+normal operational behaviour
+not
+not_matching
+notes on windows policies
+notes on windows systems
+nova measurements
+now
+number_of_lines
+nyc-hub-456
+object orientation
+object paradigm
+occurrence types
+occurrence-types
+occurrences
+occurs in bundle
+on
+one-off workflows
+operating systems
+operations
+operator view
+or
+oracle
+orchestration
+ordering operations in cfengine
+organization
+oslo
+oslo-hub-123
+oslo-hub-p6 
+oslo-hub-trunk
+out_of_range_define
+output_level
+outputs
+overlapping sets
+overriding order
+owners
+package management
+package management next steps
+package managers
+package promises
+package_add_command
+package_arch_regex
+package_architectures
+package_changes
+package_delete_command
+package_delete_convention
+package_file_repositories
+package_installed_regex
+package_list_arch_regex
+package_list_command
+package_list_name_regex
+package_list_update_command
+package_list_update_ifelapsed
+package_list_version_regex
+package_method
+package_method (compound body)
+package_multiline_start
+package_name_convention
+package_name_regex
+package_noverify_regex
+package_noverify_returncode
+package_patch_arch_regex
+package_patch_command
+package_patch_installed_regex
+package_patch_list_command
+package_patch_name_regex
+package_patch_version_regex
+package_policy
+package_select
+package_update_command
+package_verify_command
+package_version
+package_version_regex
+packages
+pam
+partially centralized change
+passive monitoring
+passwd
+passwords
+patch management
+patches available report
+patches installed report
+path_name
+path_root
+pathtype
+pattern matching
+peer to peer network
+peerleader
+peerleaders
+peers
+performance report
+permission
+perms
+perms (compound body)
+persist_time
+persistent classes
+persistent classes for alert conditions
+pgid
+phone number mobile
+phone number office
+pid
+pitfalls to avoid
+pitfalls to watch out for in file editing
+pkg_add
+pkgadd
+places
+policy
+policy editor
+policy hub
+policy server
+portage
+portnumber
+posix file mode or permission
+postfix
+postgres
+ppid
+pre-screening
+precedent
+preserve
+preview
+print server not running
+printfile
+printfile (compound body)
+priority
+privacy
+private keys
+proactive monitoring, problem, policy, summary
+problem
+procedures
+process_count
+process_count (compound body)
+process_owner
+process_result
+process_select
+process_select (compound body)
+process_stop
+processes
+processor snapshot
+product
+promise
+promise body
+promise of necessary conditions
+promise proposals
+promise report
+promise suggestions
+promise theory
+promise types
+promise, reactive monitoring, problem, summary
+promise-type
+promise_kept
+promise_promises_cf_14
+promise_repaired
+promisee
+promisees
+promiser
+promiser_type
+promisers
+promises
+promises about change
+promises about change vs state
+promises have been made by
+promises not kept report
+promises repaired report
+promising and editing file content
+provisioning
+public private keys
+publickeys
+purge
+pxe
+qualifier
+quality assurance
+quality assurance around cfengine
+quick reference guide for cfengine 3
+randomint
+rbac
+reactive monitoring
+readfile
+readintarray
+readintlist
+readrealarray
+readreallist
+readstringarray
+readstringarrayidx
+readstringlist
+readtcp
+real
+real number
+recognize_join
+recommendations for audit
+recommendations for build
+recommendations for deploy
+recommendations for manage
+record
+recovery
+redhat
+redirecting output to logs
+redundancy
+regarray
+regcmp
+regextract
+registry_exclude
+registryvalue
+regldap
+regline
+reglist
+regular workflows
+regulation: authorized and unauthorized change
+release management
+release, request for change, repair, summary
+reliability
+remediation
+remote access
+remote connection problem
+remote copy
+remoteclassesmatching
+remotescalar
+removing users
+rename
+rename (compound body)
+repair
+repair_denied
+repair_failed
+repair_timeout
+repaired_returncodes
+replace_patterns
+replace_value
+replace_with
+replace_with (compound body)
+report_changes
+report_diffs
+report_level
+report_to_file
+reporting
+reporting hub
+reporting in cfengine
+reports
+repository
+representation
+represents
+request for change
+required
+research
+resetting  a case where rollback works?
+resilience
+resolv.conf
+resolve
+resource_type
+resources
+restart_class
+restoration
+returnszero
+risk and uncertainty
+rlist
+rmdeadlinks
+rmdirs
+road map
+role
+role based access control
+role based access control and cfengine
+roles
+rollback
+rollout and rollback
+rotate
+routing
+rpm
+rrange
+rrange [real,real]
+rsize
+rvalue
+rxdirs
+salt lake city
+samba
+sas-70
+saslauthd
+scalability
+scale and scalability
+scan_arrivals
+scanning dns logs for query statistics
+scanning log files for patterns
+scanning syslog for breakin attempts
+scanning syslog for email milter failures
+scanning syslog for email statistics
+scanning syslog for ftp statistics
+scheduling
+scheduling and event management
+scheduling by sensing events and patterns
+scli
+search_bsdflags
+search_groups
+search_mode
+search_owners
+search_size
+security
+security policy
+security routines and procedures
+security view
+segmentation fault
+select_end
+select_field
+select_line_matching
+select_line_number
+select_region
+select_region (compound body)
+select_start
+selectservers
+self-healing
+self-healing workflows
+sendmail
+sensible_count
+sensible_size
+server lifecycle
+servers
+service catalogue
+service design
+service desk
+service level agreement
+service level agreements
+service level management
+service management
+service operation
+service orientation
+service orientation and itil
+service oriented federation
+service strategy
+service_args
+service_autostart_policy
+service_dependence_chain
+service_dependencies
+service_method
+service_policy
+service_type
+services
+set up a neighbourhood watch
+set up a web server
+set up dns server
+set up name resolution
+set up resolv.conf
+setgid files
+setting variables with functions
+setuid files
+setuid report
+shadow
+shadow file
+shellcommands
+shells
+short topic
+should i use menu driven configuration?
+should monitoring and configuration be separate?
+showstate
+signals
+singapore
+sla
+slackware
+slist
+smtpd
+snmp
+soft classes
+software
+software bug
+software build error
+software installed report
+software licenses
+software management
+solaris
+source
+sox
+spamd
+special topics guide
+special topics guides
+special variables
+specify_inherit_aces
+splayclass
+splaying host times
+splitstring
+ssh key management
+st-adopt
+st-appmgt
+st-bdma
+st-cdp
+st-change
+st-distsched
+st-editing
+st-federation
+st-hierarchy
+st-iterate
+st-itil
+st-knowledge
+st-menus
+st-monitoring
+st-orchestrate
+st-packages
+st-rbac
+st-reporting
+st-rollback
+st-scale
+st-schedule
+st-security
+st-teams
+st-virt
+standard library methods for editing
+standard measured variables
+standard reports in cfengine nova
+start_fields_from_zero
+starting and stopping software
+status
+status level meters
+stealth
+stem cell hosts
+stime_range
+stopping and restarting an application for update
+storage
+storage management
+stories
+strategies
+strcmp
+stream_type
+strengths and weaknesses of package management
+string
+strong and weak dependency
+structural relationships
+subjects
+sum
+summary bdma workflow
+summary monitoring
+summary of distributed scheduling
+summary of iteration
+sunos
+suppliers
+suse
+symptoms
+synonyms
+sys
+syslog
+syslog-ng
+system discovery
+system knowledge
+system outputs
+system packages
+system policy
+system processes
+system reports
+system services
+system signals
+system trends
+tamperproof data
+tamperproof system
+tcp wrappers
+tcp_ip
+tcp_ip (compound body)
+tcsh
+team work
+teams
+teamwork
+template
+the authority paradox
+the benefits of federated management
+the bowtie process
+the chain of privilege in cfengine
+the change decision process or release management
+the copernicus knowledge map in cfengine
+the decision point
+the mission plan
+the omnigator
+the policy dispatch point
+the power of iteration in cfengine
+the right to edit and publish policy
+the risk from centralized trusted hosts
+the risks of rbac
+the role of centralized push and pull in rbac
+the social contract
+the tao
+threads
+threshold monitoring
+tidy
+time services
+timeout
+timer_policy
+tool support
+topic finder
+topic map sub-types
+topic maps
+topic types
+topic-instances
+topic-types
+topics
+touch
+toulouse
+track_growing_file
+training and certification
+transformer
+translatepath
+traverse_links
+triggering multiple follow-ups
+trust in cfengine
+trusted third party
+trustkey
+trustkeysfrom not set
+ttime_range
+tty
+type-instances
+type_check
+types of information
+ubuntu
+uk
+umask
+uncomment_lines_matching
+understanding dependencies
+unitedlinux
+units
+unmount
+unusual operational behaviour
+update
+update_hashes
+upgrading from cfengine 2 to 3
+uprading to a newer package version example
+usa
+usebundle
+used in promise
+usemodule
+userexists
+useshell
+using cfengine to implement itil objectives
+valbonne
+value report
+value_kept
+value_notkept
+value_repaired
+value_separator
+values
+variables
+variables report
+vars
+verify
+version 2
+version 3
+version control
+versions
+views
+virtual network example
+virtualization
+virtualization and cloud support in cfengine
+virtualization types supported
+virtualized host examples
+visualization of monitoring in cfengine
+vmware
+volume
+volume (compound body)
+voluntary cooperation
+vsize
+warniflinematching
+warning
+web
+web server not running
+web services
+web_root
+webserver
+website
+what are measurements?
+what are monitoring and reporting?
+what are the goals of monitoring?
+what are virtualization and cloud computing?
+what can cfengine do with virtual machines?
+what does adoption involve?
+what does cfengine bring to package management?
+what does file editing involve?
+what does monitoring software do?
+what is a cmdb?
+what is a content-driven policy?
+what is a hierarchy?
+what is application management?
+what is bdma?
+what is change management?
+what is convergent file editing?
+what is distributed scheduling?
+what is federation?
+what is iteration?
+what is knowledge management?
+what is maintenance?
+what is menu-driven configuration?
+what is modularity?
+what is monitoring?
+what is orchestration?
+what is organizational complexity?
+what is package management?
+what is role based access control?
+what is rollback?
+what is scheduling?
+what is team-work?
+what it itil?
+what other special documents should an organization have?
+what's new in nova 2.0
+when_linking_children
+when_no_source
+which itil processes apply to cfengine?
+whitespace_policy
+why build virtualization support into cfengine?
+why federation does not reduce predictabilty
+why is file editing difficult?
+why is relying on rollback not a good strategy?
+why should i use content-driven policies?
+work shifts
+workflows
+working with unix cron.
+x windows
+xdev
+xen
+xor
+xxx
+yast
+yum
+zsh
+zypper

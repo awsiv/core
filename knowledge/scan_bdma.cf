@@ -6,7 +6,21 @@ topics:
 
 "st-bdma";
 Special_Topics_Guide::
-    "BDMA"  association => a("discusses","Summary BDMA workflow","is discussed in");
+    "Summary BDMA workflow"  association => a("discusses","BDMA","is discussed in");
+Special_Topics_Guide::
+    "Recommendations for Audit"  association => a("discusses","BDMA","is discussed in");
+Special_Topics_Guide::
+    "Recommendations for Manage"  association => a("discusses","BDMA","is discussed in");
+Special_Topics_Guide::
+    "Recommendations for Deploy"  association => a("discusses","BDMA","is discussed in");
+Special_Topics_Guide::
+    "Recommendations for Build"  association => a("discusses","BDMA","is discussed in");
+Special_Topics_Guide::
+    "Stem cell hosts"  association => a("discusses","BDMA","is discussed in");
+Special_Topics_Guide::
+    "What is BDMA?"  association => a("discusses","BDMA","is discussed in");
+Special_Topics_Guide::
+    "BDMA"  association => a("discusses","BDMA","is discussed in");
 
 
 occurrences:

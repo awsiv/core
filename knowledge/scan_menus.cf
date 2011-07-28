@@ -6,7 +6,23 @@ topics:
 
 "st-menus";
 Special_Topics_Guide::
-    "Menu Driven Configuration"  association => a("discusses","Should I use menu driven configuration?","is discussed in");
+    "Should I use menu driven configuration?"  association => a("discusses","Menu Driven Configuration","is discussed in");
+Special_Topics_Guide::
+    "Can I see a score-card of compliance?"  association => a("discusses","Menu Driven Configuration","is discussed in");
+Special_Topics_Guide::
+    "How do I see what machines keep which promises?"  association => a("discusses","Menu Driven Configuration","is discussed in");
+Special_Topics_Guide::
+    "Strong and weak dependency"  association => a("discusses","Menu Driven Configuration","is discussed in");
+Special_Topics_Guide::
+    "How do I nest menus and make dependencies?"  association => a("discusses","Menu Driven Configuration","is discussed in");
+Special_Topics_Guide::
+    "How do I select from menus?"  association => a("discusses","Menu Driven Configuration","is discussed in");
+Special_Topics_Guide::
+    "How do you create menus with CFEngine?"  association => a("discusses","Menu Driven Configuration","is discussed in");
+Special_Topics_Guide::
+    "What is menu-driven configuration?"  association => a("discusses","Menu Driven Configuration","is discussed in");
+Special_Topics_Guide::
+    "Menu Driven Configuration"  association => a("discusses","Menu Driven Configuration","is discussed in");
 
 
 occurrences:

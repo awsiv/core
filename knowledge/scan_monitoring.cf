@@ -5,6 +5,28 @@ bundle knowledge st_monitoring
 topics:
 
 "st-monitoring";
+    "Summary Monitoring"  association => a("discusses","Reporting","is discussed in");
+    "Threshold monitoring"  association => a("discusses","Reporting","is discussed in");
+    "Scanning syslog for breakin attempts"  association => a("discusses","Reporting","is discussed in");
+    "Scanning syslog for email milter failures"  association => a("discusses","Reporting","is discussed in");
+    "Scanning syslog for email statistics"  association => a("discusses","Reporting","is discussed in");
+    "Scanning DNS logs for query statistics"  association => a("discusses","Reporting","is discussed in");
+    "Scanning syslog for FTP statistics"  association => a("discusses","Reporting","is discussed in");
+    "Scanning log files for patterns"  association => a("discusses","Reporting","is discussed in");
+    "measurements promises"  association => a("discusses","Reporting","is discussed in");
+    "What are measurements?"  association => a("discusses","Reporting","is discussed in");
+    "Persistent classes for alert conditions"  association => a("discusses","Reporting","is discussed in");
+    "Entropy"  association => a("discusses","Reporting","is discussed in");
+    "Variables"  association => a("discusses","Reporting","is discussed in");
+    "Estimate of the level of normality"  association => a("discusses","Reporting","is discussed in");
+    "Standard measured variables"  association => a("discusses","Reporting","is discussed in");
+    "Visualization of monitoring in CFEngine"  association => a("discusses","Reporting","is discussed in");
+    "Monitoring in CFEngine"  association => a("discusses","Reporting","is discussed in");
+    "What does monitoring software do?"  association => a("discusses","Reporting","is discussed in");
+    "What are the goals of monitoring?"  association => a("discusses","Reporting","is discussed in");
+    "What is monitoring?"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Measurement and Monitoring"  association => a("discusses","Reporting","is discussed in");
 
 
 occurrences:

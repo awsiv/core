@@ -6,7 +6,31 @@ topics:
 
 "st-opennebula";
 Special_Topics_Guide::
-    "Open Nebula"  association => a("discusses","Open Nebula Summary","is discussed in");
+    "Open Nebula Summary"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
+Special_Topics_Guide::
+    "Webserver in Open Nebula"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
+Special_Topics_Guide::
+    "Virtual machine configuration"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
+Special_Topics_Guide::
+    "Open Nebula Commands"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
+Special_Topics_Guide::
+    "Virtual machine template configuration"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
+Special_Topics_Guide::
+    "Network configuration"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
+Special_Topics_Guide::
+    "Open Nebula environment configuration"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
+Special_Topics_Guide::
+    "NFS config for shared image repository"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
+Special_Topics_Guide::
+    "Installation and dependancy configuration"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
+Special_Topics_Guide::
+    "Example Setup"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
+Special_Topics_Guide::
+    "How can CFEngine work with Open Nebula?"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
+Special_Topics_Guide::
+    "What is Open Nebula?"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
+Special_Topics_Guide::
+    "Open Nebula"  association => a("discusses","Using CFEngine with Open Nebula","is discussed in");
 
 
 occurrences:

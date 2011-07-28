@@ -5,6 +5,8 @@ bundle knowledge cf3_glossary
 topics:
 
 "cf3-glossary";
+Special_Topics_Guide::
+    "CFEngine-Best-Practices"  association => a("discusses","CFEngine Glossary","is discussed in");
 
 
 occurrences:

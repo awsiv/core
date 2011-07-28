@@ -6,7 +6,27 @@ topics:
 
 "st-rollback";
 Special_Topics_Guide::
-    "CFEngine-Tutorial"  association => a("discusses","Appendix - Did you know?","is discussed in");
+    "Appendix - Did you know?"  association => a("discusses","Rollout and Rollback","is discussed in");
+Special_Topics_Guide::
+    "Resetting  a case where rollback works?"  association => a("discusses","Rollout and Rollback","is discussed in");
+Special_Topics_Guide::
+    "How does CFEngine convergence help?"  association => a("discusses","Rollout and Rollback","is discussed in");
+Special_Topics_Guide::
+    "An alternative way to plan changes"  association => a("discusses","Rollout and Rollback","is discussed in");
+Special_Topics_Guide::
+    "Dont shoot the messenger"  association => a("discusses","Rollout and Rollback","is discussed in");
+Special_Topics_Guide::
+    "Why is relying on rollback not a good strategy?"  association => a("discusses","Rollout and Rollback","is discussed in");
+Special_Topics_Guide::
+    "ITIL release management"  association => a("discusses","Rollout and Rollback","is discussed in");
+Special_Topics_Guide::
+    "Limitations of rollback in system administration"  association => a("discusses","Rollout and Rollback","is discussed in");
+Special_Topics_Guide::
+    "Like revision control?"  association => a("discusses","Rollout and Rollback","is discussed in");
+Special_Topics_Guide::
+    "What is rollback?"  association => a("discusses","Rollout and Rollback","is discussed in");
+Special_Topics_Guide::
+    "CFEngine-Tutorial"  association => a("discusses","Rollout and Rollback","is discussed in");
 
 
 occurrences:

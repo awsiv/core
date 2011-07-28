@@ -6,7 +6,25 @@ topics:
 
 "st-adopt";
 Special_Topics_Guide::
-    "Adoption"  association => a("discusses","Contact CFEngine","is discussed in");
+    "Contact CFEngine"  association => a("discusses","Adopting Cfengine in Your Organization","is discussed in");
+Special_Topics_Guide::
+    "Build, Deploy, Manage, Audit"  association => a("discusses","Adopting Cfengine in Your Organization","is discussed in");
+Special_Topics_Guide::
+    "Mission Goal and Knowledge Management"  association => a("discusses","Adopting Cfengine in Your Organization","is discussed in");
+Special_Topics_Guide::
+    "Training and Certification"  association => a("discusses","Adopting Cfengine in Your Organization","is discussed in");
+Special_Topics_Guide::
+    "Identifying the Team"  association => a("discusses","Adopting Cfengine in Your Organization","is discussed in");
+Special_Topics_Guide::
+    "Installation or Pilot"  association => a("discusses","Adopting Cfengine in Your Organization","is discussed in");
+Special_Topics_Guide::
+    "Commercial or Free?"  association => a("discusses","Adopting Cfengine in Your Organization","is discussed in");
+Special_Topics_Guide::
+    "The Mission Plan"  association => a("discusses","Adopting Cfengine in Your Organization","is discussed in");
+Special_Topics_Guide::
+    "What does adoption involve?"  association => a("discusses","Adopting Cfengine in Your Organization","is discussed in");
+Special_Topics_Guide::
+    "Adoption"  association => a("discusses","Adopting Cfengine in Your Organization","is discussed in");
 
 
 occurrences:

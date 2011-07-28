@@ -5,6 +5,8 @@ bundle knowledge cf3_solutions
 topics:
 
 "cf3-solutions";
+Special_Topics_Guide::
+    "CFEngine-Solutions"  association => a("discusses","CFEngine Solutions","is discussed in");
 
 
 occurrences:

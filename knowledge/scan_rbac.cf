@@ -6,7 +6,29 @@ topics:
 
 "st-rbac";
 Special_Topics_Guide::
-    "RBAC"  association => a("discusses","Granting the right to switch on special pre-defined policies","is discussed in");
+    "Granting the right to switch on special pre-defined policies"  association => a("discusses","Role Based Access Control and CFEngine","is discussed in");
+Special_Topics_Guide::
+    "The bowtie process"  association => a("discusses","Role Based Access Control and CFEngine","is discussed in");
+Special_Topics_Guide::
+    "The right to edit and publish policy"  association => a("discusses","Role Based Access Control and CFEngine","is discussed in");
+Special_Topics_Guide::
+    "The Policy Dispatch Point"  association => a("discusses","Role Based Access Control and CFEngine","is discussed in");
+Special_Topics_Guide::
+    "The risk from centralized trusted hosts"  association => a("discusses","Role Based Access Control and CFEngine","is discussed in");
+Special_Topics_Guide::
+    "No need for any centralization in CFEngine"  association => a("discusses","Role Based Access Control and CFEngine","is discussed in");
+Special_Topics_Guide::
+    "The role of centralized push and pull in RBAC"  association => a("discusses","Role Based Access Control and CFEngine","is discussed in");
+Special_Topics_Guide::
+    "The chain of privilege in CFEngine"  association => a("discusses","Role Based Access Control and CFEngine","is discussed in");
+Special_Topics_Guide::
+    "CFEngines approach to privilege"  association => a("discusses","Role Based Access Control and CFEngine","is discussed in");
+Special_Topics_Guide::
+    "The risks of RBAC"  association => a("discusses","Role Based Access Control and CFEngine","is discussed in");
+Special_Topics_Guide::
+    "What is Role Based Access Control?"  association => a("discusses","Role Based Access Control and CFEngine","is discussed in");
+Special_Topics_Guide::
+    "RBAC"  association => a("discusses","Role Based Access Control and CFEngine","is discussed in");
 
 
 occurrences:

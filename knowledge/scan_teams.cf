@@ -6,7 +6,13 @@ topics:
 
 "st-teams";
 Special_Topics_Guide::
-    "Teams"  association => a("discusses","Delegating roles in a collaboration","is discussed in");
+    "Delegating roles in a collaboration"  association => a("discusses","Teamwork","is discussed in");
+Special_Topics_Guide::
+    "Creative roles"  association => a("discusses","Teamwork","is discussed in");
+Special_Topics_Guide::
+    "What is team-work?"  association => a("discusses","Teamwork","is discussed in");
+Special_Topics_Guide::
+    "Teams"  association => a("discusses","Teamwork","is discussed in");
 
 
 occurrences:

@@ -5,6 +5,8 @@ bundle knowledge cf3_bestpractice
 topics:
 
 "cf3-bestpractice";
+Special_Topics_Guide::
+    "CFEngine-Best-Practices"  association => a("discusses","CFEngine 3 Best Practices","is discussed in");
 
 
 occurrences:

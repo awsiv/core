@@ -6,7 +6,23 @@ topics:
 
 "st-hierarchy";
 Special_Topics_Guide::
-    "Hierarchies"  association => a("discusses","Applications of hierarchy","is discussed in");
+    "Applications of hierarchy"  association => a("discusses","Hierarchies","is discussed in");
+Special_Topics_Guide::
+    "How to organize your organization"  association => a("discusses","Hierarchies","is discussed in");
+Special_Topics_Guide::
+    "Expressing is a or has a"  association => a("discusses","Hierarchies","is discussed in");
+Special_Topics_Guide::
+    "Inheritance and its forms"  association => a("discusses","Hierarchies","is discussed in");
+Special_Topics_Guide::
+    "For and against hierarchies"  association => a("discusses","Hierarchies","is discussed in");
+Special_Topics_Guide::
+    "Classes are sets"  association => a("discusses","Hierarchies","is discussed in");
+Special_Topics_Guide::
+    "How hierarchy compares to sets"  association => a("discusses","Hierarchies","is discussed in");
+Special_Topics_Guide::
+    "What is a hierarchy?"  association => a("discusses","Hierarchies","is discussed in");
+Special_Topics_Guide::
+    "Hierarchies"  association => a("discusses","Hierarchies","is discussed in");
 
 
 occurrences:

@@ -5,6 +5,8 @@ bundle knowledge st_security
 topics:
 
 "st-security";
+Special_Topics_Guide::
+    "Security"  association => a("discusses","Architecture and Security","is discussed in");
 
 
 occurrences:

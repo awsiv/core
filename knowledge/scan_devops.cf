@@ -6,7 +6,31 @@ topics:
 
 "st-devops";
 Special_Topics_Guide::
-    "Cfengine for Devops"  association => a("discusses","Cloud computing is a rehearsal","is discussed in");
+    "Cloud computing is a rehearsal"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
+Special_Topics_Guide::
+    "Using CFEngine to integrate software components"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
+Special_Topics_Guide::
+    "Expressing subroutines in CFEngine"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
+Special_Topics_Guide::
+    "Expressing loops in CFEngine"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
+Special_Topics_Guide::
+    "Expressing conditionals in CFEngine"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
+Special_Topics_Guide::
+    "Expressing actions or tasks in CFEngine"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
+Special_Topics_Guide::
+    "Getting used to declarative expression"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
+Special_Topics_Guide::
+    "What role does CFEngine play in DevOps?"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
+Special_Topics_Guide::
+    "How do we make controlled change faster?"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
+Special_Topics_Guide::
+    "Should Web and IT management be closely related?"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
+Special_Topics_Guide::
+    "Why is DevOps happening now?"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
+Special_Topics_Guide::
+    "What is DevOps?"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
+Special_Topics_Guide::
+    "Cfengine for Devops"  association => a("discusses","CFEngine for `DevOps'","is discussed in");
 
 
 occurrences:

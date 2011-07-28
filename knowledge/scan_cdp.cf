@@ -6,7 +6,15 @@ topics:
 
 "st-cdp";
 Special_Topics_Guide::
-    "Content-Driven Policies"  association => a("discusses","Can I make my own Content-Diven Policies?","is discussed in");
+    "Can I make my own Content-Diven Policies?"  association => a("discusses","Content-Driven Policies","is discussed in");
+Special_Topics_Guide::
+    "How do Content-Driven Policies work in detail?"  association => a("discusses","Content-Driven Policies","is discussed in");
+Special_Topics_Guide::
+    "Why should I use Content-Driven Policies?"  association => a("discusses","Content-Driven Policies","is discussed in");
+Special_Topics_Guide::
+    "What is a Content-Driven Policy?"  association => a("discusses","Content-Driven Policies","is discussed in");
+Special_Topics_Guide::
+    "Content-Driven Policies"  association => a("discusses","Content-Driven Policies","is discussed in");
 
 
 occurrences:

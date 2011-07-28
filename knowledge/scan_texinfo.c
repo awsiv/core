@@ -51,7 +51,6 @@ struct TopicAssociation
 
 /*******************************************************************/
 
-
 struct Rlist
    {
    void *item;
@@ -59,7 +58,6 @@ struct Rlist
    struct Rlist *state_ptr; /* Points to "current" state/element of sub-list */
    struct Rlist *next;
    };
-
 
 struct Item
    {
@@ -525,34 +523,73 @@ tp->next = *list;
 
 int AddKeyAssociations(struct TopicAssociation **a, char *s)
 
-{ char *keywords[] = {  "track_growing_file", "extraction_regex", "select_line_number", "measurements", "associates", "backward_relationship", "forward_relationship", "topics", "things", "inferences", "roles", "access", "scan_arrivals", "sensible_count", "sensible_size", "freespace", "check_foreign", "unmount", "mount_options", "mount_server", "mount_source", "mount_type", "edit_fstab", "storage", "service_dependence_chain", "service_autostart_policy", "service_args", "service_type", "services", "vsize", "threads", "tty", "ttime_range", "stime_range", "status", "rsize", "process_result", "process_owner", "priority", "ppid", "pgid", "pid", "command", "out_of_range_define", "match_range", "in_range_define", "processes", "package_multiline_start", "package_version_regex", "package_verify_command", "package_update_command", "package_patch_version_regex", "package_patch_name_regex", "package_patch_list_command", "package_patch_installed_regex", "package_patch_command", "package_patch_arch_regex", "package_noverify_returncode", "package_noverify_regex", "package_name_regex", "package_name_convention", "package_list_version_regex", "package_list_update_ifelapsed", "package_list_update_command", "package_list_name_regex", "package_list_command", "package_list_arch_regex", "package_installed_regex", "package_file_repositories", "package_delete_convention", "package_delete_command", "package_changes", "package_arch_regex", "package_add_command", "packages", "outputs", "methods", "ipv6_address", "ipv4_netmask", "ipv4_address", "interfaces", "replace_value", "occurrences", "replace_patterns", "value_separator", "start_fields_from_zero", "select_field", "field_value", "field_separator", "field_operation", "extend_fields", "allow_blank_fields", "field_edits", "select_line_matching", "first_last", "before_after", "insert_if_not_contains_from_list", "insert_if_contains_from_list", "insert_if_not_match_from_list", "insert_if_match_from_list", "insert_if_not_startwith_from_list", "insert_if_startwith_from_list", "insert_lines", "delete_if_not_contains_from_list", "delete_if_contains_from_list", "delete_if_not_match_from_list", "delete_if_match_from_list", "delete_if_not_startwith_from_list", "delete_if_startwith_from_list", "delete_lines", "select_end", "select_start", "include_end_delimiter", "include_start_delimiter", "rotate", "newname", "disable_suffix", "disable_mode", "disable", "rxdirs", "owners", "mode", "groups", "bsdflags", "when_no_source", "when_linking_children", "link_children", "copy_patterns", "file_result", "issymlinkto", "file_types", "exec_program", "exec_regex", "atime", "mtime", "ctime", "search_bsdflags", "search_groups", "search_owners", "search_size", "search_mode", "path_name", "leaf_name", "recognize_join", "max_file_size", "empty_file_before_editing", "edit_backup", "xdev", "traverse_links", "rmdeadlinks", "include_dirs", "include_basedir", "exclude_dirs", "depth", "rmdirs", "dirlinks", "verify", "type_check", "stealth", "purge", "preserve", "portnumber", "force_update", "link_type", "linkcopy_patterns", "findertype", "copy_size", "copylink_patterns", "check_root", "copy_backup", "compare", "collapse_destination_dir", "servers", "source", "report_diffs", "update_hashes", "report_changes", "hash", "specify_inherit_aces", "acl_type", "acl_method", "acl_directory_inherit", "aces", "files", "env_spec_file", "env_baseline", "env_disk", "env_memory", "env_cpus", "env_network", "env_name", "env_addresses", "environments", "db_server_connection_db", "db_server_type", "db_server_host", "db_server_password", "db_server_owner", "databases", "no_output", "preview", "chroot", "chdir", "exec_timeout", "exec_group", "exec_owner", "umask", "useshell", "commands", "timer_policy", "persist_time", "failed_returncodes", "repaired_returncodes", "kept_returncodes", "cancel_notkept", "cancel_repaired", "cancel_kept", "promise_kept", "repair_timeout", "repair_denied", "repair_failed", "promise_repaired", "measurement_class", "report_level", "background", "audit", "value_notkept", "value_repaired", "value_kept", "log_failed", "log_repaired", "log_priority", "log_kept", "log_level", "log_string", "action_policy", "*", "number_of_lines", "file_to_print", "classes", "vars", "hub_schedule", "federation", "export_zenoss", "time_stamps", "report_output", "reports", "html_embed", "error_bars", "csv2xml", "auto_scaling", "aggregation_point", "view_projections", "style_sheet", "sql_connection_db", "sql_server", "sql_passwd", "sql_owner", "sql_database", "sql_type", "query_output", "query_engine", "manual_source_directory", "id_prefix", "html_footer", "html_banner", "graph_output", "graph_directory", "generate_manual", "document_root", "build_directory", "exec_command", "executorfacility", "schedule", "mailmaxlines", "smtpserver", "mailto", "mailfrom", "splaytime", "timeout", "output_directory", "output_to_file", "background_children", "encrypt", "trustkey", "force_ipv4", "hosts", "tcpdumpcommand", "tcpdump", "histograms", "monitorfacility", "forgetrate", "trustkeysfrom", "skipverify", "serverfacility", "port", "logencryptedtransfers", "logallconnections", "keycacheTTL", "dynamicaddresses", "denyconnects", "denybadclocks", "cfruncommand", "allowusers", "allowconnects", "allowallconnects", "verbose", "default_timeout", "timezone", "track_value", "syslog", "suspiciousnames", "skipidentify", "sensiblesize", "sensiblecount", "secureinput", "default_repository", "refresh_processes", "repchar", "nonalphanumfiles", "mountfilesystems", "maxconnections", "max_children", "intermittency", "inform", "ifelapsed", "hostnamekeys", "files_auto_define", "files_single_copy", "expireafter", "exclamation", "environment", "editfilesize", "editbinaryfilesize", "dryrun", "defaultcopytype", "checksum_alert_time", "childlibpath", "hashupdates", "bindtointerface", "binarypaddingchar", "auditing", "alwaysvalidate", "agentfacility", "agentaccess", "addclasses", "abortbundleclasses", "abortclasses", "fips_mode", "syslog_port", "syslog_host", "site_classes", "host_licenses_paid", "require_comments", "domain", "output_prefix", "lastseenexpireafter", "version", "inputs", "ignore_missing_inputs", "ignore_missing_bundles", "goal_patterns", "goal_categories", "bundlesequence", "control", NULL};
-
-
- char *exceptions[] = { "or", "and" , NULL };
- char *otherwords[] =  { "convergence", "promise", "scheduling", "workflow","bundles", "hierarchy", "cloud",
+{ char *keywords[8000];
+  char *exceptions[] = { "or", "and","the", "there","then", "what", "how", "ci", NULL };
+ 
+  char *otherwords[] =  { "convergence", "promise", "scheduling", "workflow","bundles", "hierarchy", "cloud",
                          "package", "policy", "security", "virtualization", "scalability",
                          "hierarchies","file",  NULL  };
  char *sp;
- int i,j;
+ int i,j,skip;
+ FILE *fp;
+ char word[1024];
+
+if ((fp = fopen("words","r")) == NULL)
+   {
+   return;
+   }
+
+i = 0;
+
+while(!feof(fp))
+   {
+   memset(word,0,1024);
+   fgets(word,1023,fp);
+   Chop(word);
+
+   if (strlen(word) == 0)
+      {
+      continue;
+      }
+   
+   keywords[i] = strdup(word);
+
+   i++;
+
+   if (i >= 8000)
+      {
+      break;
+      }
+   }
+
+keywords[i] = NULL;
+fclose(fp);
  
 for (i = 0; keywords[i] != NULL; i++)
    {
+   skip = false;
+   
    for (j = 0; exceptions[j] != NULL; j++)
       {
       if (strcmp(keywords[i],exceptions[j]) == 0)
          {
+         skip = true;
          continue;
          }
       }
 
-
+   if (skip)
+      {
+      continue;
+      }
+   
    //Check for canonified form too
 
    if (strcmp(ToLowerStr(s),keywords[i]) == 0)
       {
       continue;
       }
-   
+
    if (sp = strstr(ToLowerStr(s),keywords[i]))
       {
       // Check for at least one space around the word
@@ -570,7 +607,6 @@ for (i = 0; keywords[i] != NULL; i++)
       AddTopicAssociation(a,"seems to refer to","seems be referred to in","any",keywords[i],true);
       }
    }
-
 
 for (i = 0; otherwords[i] != NULL; i++)
    {
@@ -1063,5 +1099,22 @@ for (sp = from; *sp != '\0'; sp++)
    }
 
 return count;
+}
+
+/*************************************************************************/
+
+int Chop(char *str) /* remove trailing spaces */
+
+{ int i;
+ 
+if ((str == NULL) || (strlen(str) == 0))
+   {
+   return;
+   }
+
+for (i = strlen(str)-1; i >= 0 && isspace((int)str[i]); i--)
+   {
+   str[i] = '\0';
+   }
 }
 

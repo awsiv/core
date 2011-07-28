@@ -6,7 +6,137 @@ topics:
 
 "st-itil";
 Special_Topics_Guide::
-    "ITIL"  association => a("discusses","Warning","is discussed in");
+    "Warning"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Service Management"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Service Level Agreement"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Service desk"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Role"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Restoration"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Resilience"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Abandon Autonomy?"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Request for Change"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Release, Request for Change, Repair, Summary"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Repair"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Remediation"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Recovery"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Record"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Reactive Monitoring"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Promise, Reactive Monitoring, Problem, Summary"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Problem"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Proactive Monitoring, Problem, Policy, Summary"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Policy"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Passive Monitoring"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Monitoring"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Incident"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Failure"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Exception, Failure, Event, Summary"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Event"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Error"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Emergency Change"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Document"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Configuration Management Database"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Configuration Item"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Configuration"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Chronological Analysis"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Change record"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Capability"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Benchmark"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Baseline"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Audit"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Alert"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Availability"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Active Monitoring"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "ITIL and CFEngine Summary"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "What is maintenance?"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "How can CFEngine or promises help an enterprise"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Using CFEngine to implement ITIL objectives"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Service Level Management"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Incident and problem management"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Release management"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Change management vs convergence"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Change management in the enterprise"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "CMDB Asset Management"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "ITIL Configuration Management"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Which ITIL processes apply to CFEngine?"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Tool Support"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Continual Service Improvement"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Service Operation"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Service Design"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Service Strategy"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "ITIL processes"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "CFEngine in ITIL clothes?"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Service orientation and ITIL"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Version 3"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Version 2"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "Basics"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "ITIL history and versions"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "What it ITIL?"  association => a("discusses","ITIL","is discussed in");
+Special_Topics_Guide::
+    "ITIL"  association => a("discusses","ITIL","is discussed in");
 
 
 occurrences:

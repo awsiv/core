@@ -6,7 +6,29 @@ topics:
 
 "st-editing";
 Special_Topics_Guide::
-    "Editing"  association => a("discusses","Modifying the current state of a file","is discussed in");
+    "Modifying the current state of a file"  association => a("discusses","Promising and Editing File Content","is discussed in");
+Special_Topics_Guide::
+    "Contextual adaptation of a file template"  association => a("discusses","Promising and Editing File Content","is discussed in");
+Special_Topics_Guide::
+    "Copying a file template into place"  association => a("discusses","Promising and Editing File Content","is discussed in");
+Special_Topics_Guide::
+    "Examples of file editing"  association => a("discusses","Promising and Editing File Content","is discussed in");
+Special_Topics_Guide::
+    "Pitfalls to watch out for in file editing"  association => a("discusses","Promising and Editing File Content","is discussed in");
+Special_Topics_Guide::
+    "Choosing an approach to file editing"  association => a("discusses","Promising and Editing File Content","is discussed in");
+Special_Topics_Guide::
+    "Standard library methods for editing"  association => a("discusses","Promising and Editing File Content","is discussed in");
+Special_Topics_Guide::
+    "Editing bundles"  association => a("discusses","Promising and Editing File Content","is discussed in");
+Special_Topics_Guide::
+    "What does file editing involve?"  association => a("discusses","Promising and Editing File Content","is discussed in");
+Special_Topics_Guide::
+    "Why is file editing difficult?"  association => a("discusses","Promising and Editing File Content","is discussed in");
+Special_Topics_Guide::
+    "What is convergent file editing?"  association => a("discusses","Promising and Editing File Content","is discussed in");
+Special_Topics_Guide::
+    "Editing"  association => a("discusses","Promising and Editing File Content","is discussed in");
 
 
 occurrences:

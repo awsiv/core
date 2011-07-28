@@ -5,6 +5,8 @@ bundle knowledge cf3_tutorial
 topics:
 
 "cf3-tutorial";
+Special_Topics_Guide::
+    "CFEngine-Tutorial"  association => a("discusses","CFEngine 3 Concept Guide","is discussed in");
 
 
 occurrences:

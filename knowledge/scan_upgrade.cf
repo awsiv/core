@@ -5,6 +5,8 @@ bundle knowledge cf3_upgrade
 topics:
 
 "cf3-upgrade";
+Special_Topics_Guide::
+    "CFEngine-Best-Practices"  association => a("discusses","Upgrading from CFEngine 2 to 3","is discussed in");
 
 
 occurrences:

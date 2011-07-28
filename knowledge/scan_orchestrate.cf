@@ -6,7 +6,33 @@ topics:
 
 "st-orchestrate";
 Special_Topics_Guide::
-    "Orchestration"  association => a("discusses","Distributing Ordering between hosts with CFEngine Nova","is discussed in");
+    "Distributing Ordering between hosts with CFEngine Nova"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "Overriding order"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "Bundle ordering"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "Ordering operations in CFEngine"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "Bulk operations are handled by repeating patterns over lists"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "Black, grey and white box encapsulation in CFEngine"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "Hiding details"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "High level services in CFEngine"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "Is CFEngine patch-oriented or package-oriented?"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "Levels of policy abstraction"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "How does CFEngine deal with modularity and orchestration?"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "What is orchestration?"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "What is modularity?"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
+Special_Topics_Guide::
+    "Orchestration"  association => a("discusses","Modularizing and Orchestrating System Policy","is discussed in");
 
 
 occurrences:

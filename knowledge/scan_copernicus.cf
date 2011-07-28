@@ -5,6 +5,8 @@ bundle knowledge cf_copernicus
 topics:
 
 "cf-copernicus";
+Special_Topics_Guide::
+    "CFEngine-Reference"  association => a("discusses","Copernicus Hints","is discussed in");
 
 
 occurrences:

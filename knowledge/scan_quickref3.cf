@@ -5,6 +5,8 @@ bundle knowledge cf_QuickRef3
 topics:
 
 "cf-QuickRef3";
+Special_Topics_Guide::
+    "CFEngine-Reference"  association => a("discusses","Quick Reference Guide for CFEngine 3","is discussed in");
 
 
 occurrences:

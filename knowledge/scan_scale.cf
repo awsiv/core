@@ -5,6 +5,8 @@ bundle knowledge st_scale
 topics:
 
 "st-scale";
+Special_Topics_Guide::
+    "Scalability"  association => a("discusses","Scale and Scalability","is discussed in");
 
 
 occurrences:

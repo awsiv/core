@@ -6,7 +6,31 @@ topics:
 
 "st-schedule";
 Special_Topics_Guide::
-    "Scheduling"  association => a("discusses","Appendix - Did you know?","is discussed in");
+    "Appendix - Did you know?"  association => a("discusses","Scheduling and Event Management","is discussed in");
+Special_Topics_Guide::
+    "Choosing a scheduling interval"  association => a("discusses","Scheduling and Event Management","is discussed in");
+Special_Topics_Guide::
+    "Splaying host times"  association => a("discusses","Scheduling and Event Management","is discussed in");
+Special_Topics_Guide::
+    "Commands promises"  association => a("discusses","Scheduling and Event Management","is discussed in");
+Special_Topics_Guide::
+    "Working with Unix cron."  association => a("discusses","Scheduling and Event Management","is discussed in");
+Special_Topics_Guide::
+    "Scheduling by Sensing Events and Patterns"  association => a("discusses","Scheduling and Event Management","is discussed in");
+Special_Topics_Guide::
+    "Logging execution"  association => a("discusses","Scheduling and Event Management","is discussed in");
+Special_Topics_Guide::
+    "Calendars"  association => a("discusses","Scheduling and Event Management","is discussed in");
+Special_Topics_Guide::
+    "Chaining jobs together"  association => a("discusses","Scheduling and Event Management","is discussed in");
+Special_Topics_Guide::
+    "Define jobs with basic profile information"  association => a("discusses","Scheduling and Event Management","is discussed in");
+Special_Topics_Guide::
+    "How can CFEngine help?"  association => a("discusses","Scheduling and Event Management","is discussed in");
+Special_Topics_Guide::
+    "What is scheduling?"  association => a("discusses","Scheduling and Event Management","is discussed in");
+Special_Topics_Guide::
+    "Scheduling"  association => a("discusses","Scheduling and Event Management","is discussed in");
 
 
 occurrences:

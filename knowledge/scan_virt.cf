@@ -6,7 +6,25 @@ topics:
 
 "st-virt";
 Special_Topics_Guide::
-    "Virtualization"  association => a("discusses","Virtual network example","is discussed in");
+    "Virtual network example"  association => a("discusses","Virtualization and Cloud Support in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Virtualized host examples"  association => a("discusses","Virtualization and Cloud Support in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Example deployment"  association => a("discusses","Virtualization and Cloud Support in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Distinct states"  association => a("discusses","Virtualization and Cloud Support in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Virtualization types supported"  association => a("discusses","Virtualization and Cloud Support in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Environments promises"  association => a("discusses","Virtualization and Cloud Support in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "What can CFEngine do with virtual machines?"  association => a("discusses","Virtualization and Cloud Support in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Why build virtualization support into CFEngine?"  association => a("discusses","Virtualization and Cloud Support in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "What are virtualization and cloud computing?"  association => a("discusses","Virtualization and Cloud Support in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Virtualization"  association => a("discusses","Virtualization and Cloud Support in CFEngine","is discussed in");
 
 
 occurrences:

@@ -6,7 +6,33 @@ topics:
 
 "st-knowledge";
 Special_Topics_Guide::
-    "Knowledge"  association => a("discusses","How does CFEngine Nova help?","is discussed in");
+    "How does CFEngine Nova help?"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Knowledge transfer"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "What other special documents should an organization have?"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Example company_knowledge.cf"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Documenting locations"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Documenting goals"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Creating your own map"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Types of information"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Pitfalls to avoid"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "The Copernicus Knowledge Map in CFEngine"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "How should you begin?"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Risk and uncertainty"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "What is knowledge management?"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Knowledge"  association => a("discusses","Implementing Knowledge Management","is discussed in");
 
 
 occurrences:

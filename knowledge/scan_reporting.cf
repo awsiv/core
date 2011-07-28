@@ -6,7 +6,37 @@ topics:
 
 "st-reporting";
 Special_Topics_Guide::
-    "Reporting"  association => a("discusses","Cheaper options - tripwires","is discussed in");
+    "Cheaper options - tripwires"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Change auditing - the all seeing eye"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Nova measurements"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Redirecting output to logs"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Creating custom logs"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Including data in reports"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Creating custom reports  all versions"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "CFEngine output levels"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Standard reports in CFEngine Nova"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Reporting in CFEngine"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Decentralized data collection in CFEngine"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "CMDB and CFEngine"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "What is a CMDB?"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Should monitoring and configuration be separate?"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "What are monitoring and reporting?"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Reporting"  association => a("discusses","Reporting","is discussed in");
 
 
 occurrences:
