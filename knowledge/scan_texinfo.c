@@ -136,7 +136,7 @@ fclose(fin);
 void ProcessFile(char *document,FILE *fin,char *context,char *prefix)
 
 { char tmp[2048],line[2048],type[2048],url[2048],title[2048],*sp;
-  char chapter[2048],section[2048],subsection[2048],script[2048];
+ char chapter[2048],section[2048],subsection[2048],script[2048],doctitle[2048];
   struct Topic *tp,*topics = NULL;
   struct Item *ip,*scriptlog = NULL;
   int lineno = 0;  
@@ -179,6 +179,8 @@ while (!feof(fin))
       {
       memset(url,0,2048);
       sscanf(sp+strlen("<title>"),"%[^<]",title);
+
+      strcpy(doctitle,title);
       
       if (strncmp(document,"st-",3) == 0)
          {
@@ -205,10 +207,9 @@ while (!feof(fin))
       memset(type,0,2048);
       sscanf(sp+strlen("class=\""),"%[^\"]",type);
 
-      if (strstr(type,"unnumbered"))
+      if (strstr(type,"unnumbered") || strstr(type,"unnumberedsec"))
          {
          strcpy(title,GetTitle(sp,type));
-         
          sprintf(script,"%s::\n",CanonifyName(title));
          AppendItem(&scriptlog,script);
          sprintf(script," \"%s%s.html#%s\"\n",prefix,document,url);
@@ -219,18 +220,10 @@ while (!feof(fin))
 
          AddTopic(&topics,title,section,lineno);
 
-         if (strcmp(section,"Special Topics Guide") == 0)
+         if (tp = GetTopic(topics,title))
             {
-            strcpy(section,title);
-            }
-
-         if (strcmp(title,section) != 0)
-            {
-            if (tp = GetTopic(topics,section))
-               {
-               AddTopicAssociation(&(tp->associations),"discusses","is discussed in","short topic",title,true);
-               AddKeyAssociations(&(tp->associations),section);
-               }
+            AddTopicAssociation(&(tp->associations),"discusses","is discussed in","short topic",doctitle,true);
+            AddKeyAssociations(&(tp->associations),section);
             }
          }
 
@@ -353,7 +346,7 @@ printf("\"%s\";\n",document);
 for (tp = topics; tp != NULL; tp=tp->next)
    {
    struct TopicAssociation *ta;
-   
+
    for (ta = tp->associations; ta != NULL; ta=ta->next)
       {
       if (strlen(tp->topic_type) > 0)
@@ -396,7 +389,7 @@ char *GetTitle(char *base,char *type)
 tmp[0] = '\0';
 memset(tmp,0,CF_BUFSIZE);
 
-if (strstr(type,"unnumbered"))
+if (strstr(type,"unnumbered")||strstr(type,"unnumberedsec"))
    {
    sscanf(base+strlen("class=\"xx")+strlen(type),"%[^(\n]",buffer);
    }

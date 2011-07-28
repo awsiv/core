@@ -5,8 +5,40 @@ bundle knowledge cf3_reference
 topics:
 
 "cf3-reference";
-Special_functions::
-    "Introduction to functions"  association => a("discusses","Functions which read strings","is discussed in");
+Introduction_to_functions::
+    "Functions which read strings"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which read"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which read the Windows registry"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which read from the network"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which read LDAP data"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which read files"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which read the environment"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which read command output"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which read classes"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which read from a remote-cfengine"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which read disk data"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which read arrays"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which return string"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which return real"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which return int"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which return"  association => a("discusses","CFEngine reference manual","is discussed in");
+Introduction_to_functions::
+    "Functions which return class"  association => a("discusses","CFEngine reference manual","is discussed in");
 documentation::
     "track_growing_file"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -453,6 +485,8 @@ agent_control_promises::
     "ifelapsed"  association => a("is contained in","cf3-reference","contains");
 agent_control_promises::
     "expireafter"  association => a("is contained in","cf3-reference","contains");
+Special_Topics_Guide::
+    "CFEngine-AutoReference"  association => a("discusses","CFEngine reference manual","is discussed in");
 
 
 occurrences:
