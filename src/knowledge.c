@@ -1405,7 +1405,7 @@ void ThisHashString(char *str,char *buffer,int len,unsigned char digest[EVP_MAX_
 /*********************************************************************/
 void Nova_GenerateTestData(int count)
 
-{ struct Rlist *testmachines = NULL,*rp=NULL;
+{ struct Rlist *testmachines = NULL,*rp=NULL,*total=NULL;
  struct Item *ip;
  time_t from;
  char newkeyhash[CF_BUFSIZE]={0},newaddresses[CF_MAXVARSIZE]={0},newhostnames[CF_BUFSIZE]={0},noDot[CF_BUFSIZE]={0};
@@ -1418,7 +1418,7 @@ void Nova_GenerateTestData(int count)
  int bufsize = 1000000;
  int countLen =0;
  int hostCount = 0;
- int startFrom = 0;
+ int startFrom = 0,len = 0;
 
  LICENSES=1;
  snprintf(CFWORKDIR,sizeof(CFWORKDIR),"/var/cfengine");
@@ -1440,8 +1440,8 @@ void Nova_GenerateTestData(int count)
 
  DeleteItemList(packedReports);
 
+ len = strlen(buffer);
  i=0;
- int len = strlen(buffer);
  NewReportBook(reports);
  currReport=-1;
 
@@ -1465,11 +1465,12 @@ void Nova_GenerateTestData(int count)
     {
     startFrom++;
     }
- 
+ DeleteRlist(testmachines);
+   
  for(hostCount=0;hostCount<count;hostCount++)
     {
-    snprintf(newhostnames,sizeof(newhostnames),"%s_%s_%d",CF_TEST_HOSTNAME,noDot,startFrom+2);
-    snprintf(newaddresses,sizeof(newaddresses),"%d.%d.%d.%d",10,count%(hostCount+1),count%(hostCount+2),hostCount+1);
+    snprintf(newhostnames,sizeof(newhostnames),"%s_%s_%d",CF_TEST_HOSTNAME,noDot,startFrom+hostCount+1);
+    snprintf(newaddresses,sizeof(newaddresses),"%d.%d.%d.%d",10,255%(startFrom+hostCount+1),255%(startFrom+hostCount+2),255%(startFrom+hostCount));
 
     ThisHashString(newhostnames,newaddresses,strlen(newaddresses),digest);
     snprintf(newkeyhash,sizeof(newkeyhash),"%s",ThisHashPrint(digest));
@@ -1480,6 +1481,16 @@ void Nova_GenerateTestData(int count)
     UnpackReportBook(newkeyhash,newaddresses,newhostnames,reports);
     }
  DeleteReportBook(reports);
+
+ hostCount=0;
+ total= Nova_GetTestMachines();
+
+ for(rp=total;rp!=NULL;rp=rp->next)
+    {
+    hostCount++;
+    }
+ DeleteRlist(total);
+ printf("%d test machines added\n",hostCount-startFrom);
 }
 /*********************************************************************/
 struct Rlist* Nova_GetTestMachines(void)
@@ -1573,8 +1584,11 @@ void Nova_RemoveTestData(void)
      CFDB_RemoveTestData(MONGO_LOGS_REPAIRED, (char*)rp->item);
      CFDB_RemoveTestData(MONGO_LOGS_NOTKEPT, (char*)rp->item);
      CFDB_RemoveTestData(MONGO_ARCHIVE, (char*)rp->item);
+     i++;
      }
   DeleteRlist(testmachines);
+
+  printf("%d test machines removed\n",i);
 }
     
 /****************************************************************************************/
@@ -1592,7 +1606,7 @@ void Nova_UpdateTestData(void)
   char keyhash[CF_MAXVARSIZE],addresses[CF_MAXVARSIZE];
   char temp[CF_MAXVARSIZE],hostnames[CF_MAXVARSIZE],noDot[CF_BUFSIZE]={0};
 
-  int i=1;
+  int i=0;
   oid = &_oid;
 
 if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
@@ -1650,10 +1664,13 @@ while(mongo_cursor_next(cursor))  // loops over documents
 
       bson_destroy(&setOp);
       bson_destroy(&query);
+      i++;
       }
    }
 
 mongo_cursor_destroy(cursor);
+
+printf("%d test machines updated\n",i);
 
 if (!CFDB_Close(&conn))
    {
