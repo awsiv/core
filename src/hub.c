@@ -536,17 +536,11 @@ DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
 
 /* Now we need to do some magic for hubs so that only one hub collects reports at a time */
-if(CFDB_QueryIsMaster())
+if (CFDB_QueryIsMaster())
    {
-   NewClass("am_mongodb_master");
-   NewClass("am_policy_hub");
-   }
+   Nova_UpdateMongoHostList(list);
+   DeleteItemList(list);
 
-Nova_UpdateMongoHostList(list);
-DeleteItemList(list);
-
-if (IsDefinedClass("am_mongodb_master"))
-   {
    // If there is a list in Mongo, this takes precedence, else populate one
    list = Nova_GetMongoLastSeen();
    }

@@ -174,6 +174,11 @@ NewScalar("sys","zone",zone,cf_str);
 snprintf(vbuff,CF_BUFSIZE-1,"zone_%s",zone);
 NewClass(vbuff);
 #endif
+
+if (CFDB_QueryIsMaster())
+   {
+   NewClass("am_mongo_master");
+   }
 }
 
 /*****************************************************************************/
