@@ -200,13 +200,24 @@ class Repository_model extends CI_Model {
      * get a list of revision numbers with username and time and comment for depending on the parameters
      * @param <type> $repo 
      */
-    function get_all_approved_policies($repo='', $limit='') {
+    function get_all_approved_policies($repo='', $limit='',$docs='') {
         if ($repo != '' && $limit != '') {
-            return $this->mongo_db->where(array('repo' => $repo))->order_by(array('date' => 'desc'))->limit($limit)->get($this->approved_policies_collection);
+            return $this->mongo_db-> where_in('repo',$repo)->order_by(array('date' => 'desc'))->limit($limit)->offset($docs)->get($this->approved_policies_collection);
         } elseif ($limit == '' && $repo != '') {
-            return $this->mongo_db->where(array('repo' => $repo))->order_by(array('date' => 'desc'))->get($this->approved_policies_collection);
-        } elseif ($repo == '') {
+            return $this->mongo_db->where_in('repo',$repo)->order_by(array('date' => 'desc'))->get($this->approved_policies_collection);
+        } elseif ($repo == ''&& limit!='') {
+            return $this->mongo_db->order_by(array('date' => 'desc'))->limit($limit)->offset($docs)->get($this->approved_policies_collection);
+        }
+        else{
             return $this->mongo_db->order_by(array('date' => 'desc'))->get($this->approved_policies_collection);
+        }
+    }
+
+    function count_all_approved_policies($repo=''){
+        if ($repo != '') {
+            return $this->mongo_db->where_in('repo', $repo)->count($this->approved_policies_collection);
+        } else {
+            return $this->mongo_db->count($this->approved_policies_collection);
         }
     }
 

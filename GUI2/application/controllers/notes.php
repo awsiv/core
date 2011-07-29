@@ -148,9 +148,6 @@ class Notes extends Cf_Controller {
          
         $this->session->set_userdata($searchSession);
         
-        
-        
-
         if ($searchSession['search_dateFrom'] && $searchSession['search_dateFrom'] != -1) {
         //we have a start date so set the end date as well
             if ($searchSession['search_dateto'] == -1) {

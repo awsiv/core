@@ -286,7 +286,21 @@ class Repository extends Cf_Controller {
 
     function approvedPolicies() {
         $this->load->library('table');
-        $rev_table = $this->repository_model->get_all_approved_policies();
+        $repos=$this->repository_model->get_all_repository($this->session->userdata('username'));
+        foreach($repos as $repo){
+            $reposlist[]=$repo['repoPath'];
+        }
+        $params = $this->uri->uri_to_assoc(3);
+        $rows=$this->input->post('rows')?$this->input->post('rows'):10;
+        if(!is_numeric($rows)){
+             $rows=10;
+        }
+        $page = isset($params['page']) ? intval($params['page'], 10) : 1;
+        $total=$this->repository_model->count_all_approved_policies($reposlist);
+        $skip = (int)($rows * ($page - 1));
+        $rev_table=$this->repository_model->get_all_approved_policies($reposlist,$rows,$skip);
+       
+        //$rev_table = $this->repository_model->get_all_approved_policies();
         $bc = array(
             'title' => 'Approved Policies',
             'url' =>  '/repository/approvedPolicies',
@@ -296,7 +310,10 @@ class Repository extends Cf_Controller {
             'title' => "Cfengine Mission Portal - approved policies",
             'title_header' => "policies approved",
             'table' => $rev_table,
-            'breadcrumbs' => $this->breadcrumblist->display()
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'rows_per_page'=>$rows,
+            'current_page'=>$page,
+            'total'=>$total,
         );
         $this->template->load('template', 'repository/approved_policies_fullview', $data);
     }
