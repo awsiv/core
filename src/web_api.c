@@ -6429,6 +6429,36 @@ int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle
     return false;
     }
 }
+/*****************************************************************************/
+int Nova2PHP_GetHubKey(char *buffer,int bufsize)
+
+{ char name[CF_MAXVARSIZE]={0},policy_server[CF_MAXVARSIZE]={0};
+  char serverdig[CF_MAXVARSIZE] = "";
+  FILE *fp;
+  struct Item *list=NULL,*ip=NULL;
+
+  if(strlen(CFWORKDIR) < 1)
+     {
+     snprintf(CFWORKDIR,CF_MAXVARSIZE,"%s","/var/cfengine");
+     }
+  snprintf(name,sizeof(name),"%s%cpolicy_server.dat",CFWORKDIR,FILE_SEPARATOR);
+
+ if ((fp = fopen(name,"r")) != NULL)
+    {
+    fscanf(fp,"%s",policy_server);
+    fclose(fp);
+    }
+ list = CFDB_GetLastseenCache();
+ for(ip=list;ip!=NULL;ip=ip->next)
+    {
+    if(strcmp(ip->classes,policy_server) == 0)
+       {
+        snprintf(buffer,bufsize,"%s",ip->name);
+        return 1;
+       }
+    }
+ return 0;
+}
 
 /*****************************************************************************/
 /*                           Constellation                                   */

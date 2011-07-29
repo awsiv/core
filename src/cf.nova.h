@@ -389,7 +389,7 @@ bool MongoCheckForError(mongo_connection *conn, const char *operation, const cha
 struct Item * CFDB_GetLastseenCache(void);
 int CFDB_QueryIsMaster(void);
 
-
+int Nova2PHP_GetHubKey(char *buffer,int bufsize);
 #endif
 
 /* db_save.c */
