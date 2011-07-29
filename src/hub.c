@@ -535,9 +535,13 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
 DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
 
+#ifdef HAVE_LIBMONGOC
 /* Now we need to do some magic for hubs so that only one hub collects reports at a time */
+NewClass("am_policy_hub");
+CfOut(cf_inform,"","Checking for MongoDB master\n");
 if (CFDB_QueryIsMaster())
    {
+   CfOut(cf_inform,"","I am MongoDB master\n");
    Nova_UpdateMongoHostList(list);
    DeleteItemList(list);
 
@@ -546,9 +550,10 @@ if (CFDB_QueryIsMaster())
    }
 else
    {
+   CfOut(cf_inform,"","I am not the MongoDB master\n");
    list = NULL;   
    }
-
+#endif
 return list;
 }
 
@@ -934,12 +939,18 @@ return false;
 
 void Nova_UpdateMongoHostList(struct Item *list)
 
-{  struct Item *ip = NULL;
+{
+#ifdef HAVE_LIBMONGOC
+ struct Item *ip = NULL;
+  int count = 0;
 
  for(ip=list;ip!=NULL;ip=ip->next)
     {
     CFDB_SaveLastseenCache(ip->name,ip->classes);
+    count++;
     }
+ CfOut(cf_inform,"","%d hosts added to the lastseen cache\n",count);
+ #endif
 }
 
 /*****************************************************************************/
@@ -947,9 +958,12 @@ void Nova_UpdateMongoHostList(struct Item *list)
 struct Item *Nova_GetMongoLastSeen()
 
 {
- 
+ #ifdef HAVE_LIBMONGOC
  // Read back the full list from Mongo
  return CFDB_GetLastseenCache();
+ #else
+ return NULL;
+ #endif
 }
 
 /* EOF */
