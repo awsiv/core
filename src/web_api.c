@@ -3345,7 +3345,7 @@ if (matched)
 
       if (type)
          {
-         snprintf(work,CF_BUFSIZE,"[\"%s\",\"%s\",\"%s\",%s,\"%s\"],",ip->classes,ip->name,Nova_GetBundleComment(ip->name),goals,colour);
+         snprintf(work,CF_BUFSIZE,"[\"%s\",\"%s\",\"%s\",%s,\"%s\"],",ip->classes,ip->name,Nova_GetBundleComment(ToLowerStr(ip->name)),goals,colour);
          }
       else
          {
