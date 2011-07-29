@@ -3189,7 +3189,7 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
     return -1;
     }
 
- classList = CFDB_QueryBundleClasses(&dbconn,type,name);
+ classList = CFDB_QueryBundleClasses(&dbconn,type,ToLowerStr(name));
 
  if (classList)
     {
@@ -3250,7 +3250,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return -1;
    }
 
-matched = CFDB_QueryBundleArgs(&dbconn,type,name);
+matched = CFDB_QueryBundleArgs(&dbconn,type,ToLowerStr(name));
 
 if (matched)
    {
@@ -3395,7 +3395,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return -1;
    }
 
-matched = CFDB_QueryBundleType(&dbconn,name,buffer,bufsize);
+matched = CFDB_QueryBundleType(&dbconn,ToLowerStr(name),buffer,bufsize);
  
 if (!CFDB_Close(&dbconn))
    {
@@ -3442,7 +3442,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return -1;
    }
 
-matched = CFDB_QueryBundlesUsing(&dbconn,name);
+matched = CFDB_QueryBundlesUsing(&dbconn,ToLowerStr(name));
 
 matched = SortItemListClasses(matched);
 
@@ -4395,7 +4395,7 @@ int Nova2PHP_list_promise_handles_with_comments(char *bundle,char *btype,char *r
     return false;
     }
 
- hq = CFDB_QueryHandlesForBundlesWithComments(&dbconn,btype,bundle);
+ hq = CFDB_QueryHandlesForBundlesWithComments(&dbconn,btype,ToLowerStr(bundle));
 
  CFDB_Close(&dbconn);
 
@@ -4446,7 +4446,7 @@ int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
     return false;
     }
 
- hq = CFDB_QueryPromiseHandles(&dbconn,promiser,ptype,btype,bundle,regex,false);
+ hq = CFDB_QueryPromiseHandles(&dbconn,promiser,ptype,btype,ToLowerStr(bundle),regex,false);
 
  CFDB_Close(&dbconn);
 
