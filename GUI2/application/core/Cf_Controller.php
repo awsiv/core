@@ -10,12 +10,7 @@ class Cf_Controller extends CI_Controller {
         parent::__construct();
 
         $this->load->library(array('session', 'ion_auth', 'breadcrumb', 'breadcrumblist', 'onlineUsers', 'carabiner','user_agent'));
-        
         $this->lang->load('tooltip');
-
-        
-
-
         $this->load->helper(array('url', 'html','language'));
         $this->lang->load('cf_message');
         ///cfpr_set_siteurl(site_url());
