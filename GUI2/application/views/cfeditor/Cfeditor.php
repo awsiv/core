@@ -161,7 +161,6 @@ $this->carabiner->display(); ?>
 </div>
 <script src="<?php echo get_scriptdir()?>Cfeditor/jquery.layout.min-1.2.0.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir()?>jquery.jcryption-1.1.min.js" type="text/javascript"></script>
-
 <script src="<?php echo get_scriptdir()?>Cfeditor/lib/codemirror.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir()?>Cfeditor/lib/shortcut.js" type="text/javascript"></script>
  <script src="<?php echo get_scriptdir()?>Cfeditor/mode/cfengine/cfsyntax.js" type="text/javascript"></script>

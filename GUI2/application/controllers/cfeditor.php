@@ -6,6 +6,7 @@
    parent::__construct();
    $this->load->library('jcryption');
    $this->load->model('repository_model');
+   $this->load->model('settings_model');
     $this->carabiner->js('jquery.tablesorter.min.js');
     $this->carabiner->js('picnet.jquery.tablefilter.js');
     $this->carabiner->js('jquery.tablesorter.pager.js');
@@ -155,7 +156,13 @@
      if ($obj != NULL) {
             $info = array('userId' => $obj->userId, 'password' => $obj->password);
             $username = $obj->username;
-            $password = $this->repository_model->decrypt_password($info);
+            if($this->settings_model->app_settings_get_item('mode') !='database')
+                  {
+                      $password = $this->repository_model->decrypt_password($info,$this->session->userdata('pwd'));
+                  }else
+                  {
+                      $password = $this->repository_model->decrypt_password($info);
+                  }
             if(!$this->input->post('file'))
 		 {
                  $working_dir=$working_dir.'/'.$this->input->post('file');
@@ -202,7 +209,13 @@
 
             $info = array('userId' => $obj->userId, 'password' => $obj->password);
             $username = $obj->username;
-            $password = $this->repository_model->decrypt_password($info);
+            if($this->settings_model->app_settings_get_item('mode') !='database')
+                  {
+                      $password = $this->repository_model->decrypt_password($info,$this->session->userdata('pwd'));
+                  }else
+                  {
+                      $password = $this->repository_model->decrypt_password($info);
+                  }
              $params=array(
 	                'username' => $username,
 			'password' =>  $password,
@@ -239,15 +252,25 @@
     try{
         $current_repo=$this->cfsvn->get_current_repository();
         $obj = $this->repository_model->get_specific_repository($currentUser, $current_repo);
-        if ($obj != NULL) {
+       
+        if ($obj != NULL) {             
             $info = array('userId' => $obj->userId, 'password' => $obj->password);
             $username = $obj->username;
-            $password = $this->repository_model->decrypt_password($info);
+             if($this->settings_model->app_settings_get_item('mode') !='database')
+                  {
+                      $password = $this->repository_model->decrypt_password($info,$this->session->userdata('pwd'));
+                  }else
+                  {
+                      $password = $this->repository_model->decrypt_password($info);
+                  }
+            
+           
             $params=array(
 	                'username' => $username,
 			'password' => $password,
                         'repository'=> $current_repo
-			);    
+			);
+           
            $this->cfsvn->addcredentials($params);
            $data=array('logs'=>$this->cfsvn->cfsvn_log($no_of_records));
             $this->load->view('cfeditor/svnlogs',$data);

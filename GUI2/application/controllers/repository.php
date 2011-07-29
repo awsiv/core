@@ -8,6 +8,7 @@ class Repository extends Cf_Controller {
         parent::__construct();
         $this->load->library('jcryption');
         $this->load->model('repository_model');
+        $this->load->model('settings_model');
         $this->load->helper('form');
         $this->username = $this->session->userdata('username');
         $this->env = ENVIRONMENT;
@@ -48,7 +49,13 @@ class Repository extends Cf_Controller {
             $username = $obj->username != '' ? $obj->username : NULL;
             $password = NULL;
             if ($info['password'] != '') {
-                $password = $this->repository_model->decrypt_password($info);
+                if($this->settings_model->app_settings_get_item('mode') !='database')
+                  {
+                      $password = $this->repository_model->decrypt_password($info,$this->session->userdata('pwd'));
+                  }else
+                  {
+                      $password = $this->repository_model->decrypt_password($info);
+                  }
             }
             $params = array(
                 'username' => $username,
@@ -164,7 +171,11 @@ class Repository extends Cf_Controller {
             $info['password'] = $this->jcryption->decrypt($info['password'], $_SESSION["d"]["int"], $_SESSION["n"]["int"]);
             // var_dump($info);
         }
-        $return = $this->repository_model->insert_repository($info);
+      if ($this->settings_model->app_settings_get_item('mode') != 'database') {
+            $return = $this->repository_model->insert_repository($info, $this->session->userdata('pwd'));
+        } else {
+            $return = $this->repository_model->insert_repository($info);
+        }
         return $return;
     }
 

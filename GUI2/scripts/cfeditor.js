@@ -295,6 +295,7 @@ $(document).ready(function() {
         autoOpen: false,
         modal: true,
         hide: 'puff',
+        width:400,
         buttons: {
             'Save': function() {
                 var agent=jQuery.uaMatch(navigator.userAgent).browser;
@@ -511,7 +512,8 @@ $(document).ready(function() {
         else
         {
             $(this).ajaxyDialog({
-                title:'SVN Checkout'
+                title:'SVN Checkout',
+                customstyle:false
             }).ajaxyDialog('open');
         }
     });
@@ -562,7 +564,8 @@ $(document).ready(function() {
 
     $('#svnlogs').ajaxyDialog({
         title:'SVN Logs',
-        height:500
+        height:500,
+        customstyle:false
     });
        
     $('#checksyntax')

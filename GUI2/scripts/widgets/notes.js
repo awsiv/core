@@ -11,7 +11,8 @@
             width:'auto',
             originalElement: null, // store a refrence to the originally called element
             dontOverrideTitle : false,
-            clickData:[]
+            clickData:[],
+            customstyle:true
             
         },
         
@@ -132,8 +133,9 @@
                     modal:true
                 }
                 ));
-                    
+             if(self.options.customstyle) {
              dialog.parent().removeClass('ui-widget-content').addClass('customdlg');
+             }
             if (self._trigger('beforeDisplay', 0, html_content) !== false) {
                 dialog.html( html_content );
 

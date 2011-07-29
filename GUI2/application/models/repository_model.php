@@ -37,7 +37,7 @@ class Repository_model extends CI_Model {
      * @param <type> $repoInfo
      * @return bool
      */
-    function insert_repository($repoInfo = array()) {
+    function insert_repository($repoInfo = array(),$key=NULL) {
 
 
         // validate data
@@ -50,7 +50,7 @@ class Repository_model extends CI_Model {
             return FALSE;
         }
         if (trim($repoInfo['password']) != '') { 
-            $repoInfo['password'] = $this->encrypt_password($repoInfo);
+            $repoInfo['password'] = $this->encrypt_password($repoInfo,$key);
         } else  $repoInfo['password'] = '';
         $id = $this->mongo_db->insert($this->collectionName, $repoInfo);
         return $id;
@@ -124,10 +124,10 @@ class Repository_model extends CI_Model {
      * Hash the passowrd
      * @param <type> $userInfo 
      */
-    function encrypt_password($userInfo) {
+    function encrypt_password($userInfo,$key=NULL) {
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
         $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-        $key = $this->get_key($userInfo);
+        $key =  is_null($key) ?$this->get_key($userInfo) :$key;
         $text = $userInfo['password'];
         $cryptpass = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $text, MCRYPT_MODE_ECB, $iv);
         return base64_encode($cryptpass);

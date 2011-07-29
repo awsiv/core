@@ -93,6 +93,7 @@ class Ion_auth
 		$this->ci->load->library('email');
 		$this->ci->load->library('session');
                 $this->ci->load->library('Auth_Ldap');
+                $this->ci->load->library('encrypt');
 		$this->ci->lang->load('ion_auth');
 		$this->ci->load->model('ion_auth_model_mongo');
                 $this->ci->load->model('settings_model');
