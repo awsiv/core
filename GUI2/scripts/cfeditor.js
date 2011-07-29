@@ -108,6 +108,7 @@ $(document).ready(function() {
         show: function (event,ui){
             if(editors[current_tab_id]) {
                 editors[current_tab_id].setOption("mode","CFEngine");
+                editors[current_tab_id].focus();               
                 editors[current_tab_id].refresh();
             }
         }

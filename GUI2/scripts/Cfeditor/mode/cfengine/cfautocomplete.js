@@ -38,7 +38,7 @@ startComplete= function(tab_id) {
     var to = {
         'line':cur.line,
         'ch':cur.ch-1
-        };
+    };
 
     var textBefore = editor.getRange(to,cur);
 
@@ -90,10 +90,10 @@ startComplete= function(tab_id) {
         editor.replaceRange(str, {
             line: cur.line,
             ch: token.start
-            }, {
+        }, {
             line: cur.line,
             ch: token.end
-            });
+        });
         return;
     }
     // When there is only one completion, use it directly.
@@ -128,39 +128,51 @@ startComplete= function(tab_id) {
         complete.parentNode.removeChild(complete);
     }
     function pick() {
-        insert(sel.options[sel.selectedIndex].value);
-        close();
+        var index = sel.selectedIndex;
+        var val = sel.options[index].text; // should be for ie
+        
+        insert(val);
+        
         setTimeout(function(){
+            close();
             editor.focus();
         }, 50);
     }
-    connect(sel, "blur", close);
-    connect(sel, "keydown", function(event) {
-        var code = event.keyCode;
-        // Enter and space
-        if (code == 13 || code == 32) {
-            event.stop();
-            pick();
-        }
-        // Escape
-        else if (code == 27) {
-            event.stop();
-            close();
-            editor.focus();
-        }
-        else if (code != 38 && code != 40) {
-            close();
-            editor.focus();
-            setTimeout(startComplete, 50);
-        }
-    });
-    connect(sel, "dblclick", pick);
+    
+    // for IE delay the bindings
+    setTimeout(function(){
+        sel.focus();
+        
+        connect(sel, "keydown", function(event) {
+            var code = event.keyCode;                        
+            // Enter and space
+            if (code == 13 || code == 32) {
+                event.stop();
+                pick();
+            }
+            // Escape
+            else if (code == 27) {
+                event.stop();
+                close();
+                editor.focus();
+            }
+            else if (code != 38 && code != 40) {
+                close();
+                editor.focus();
+                setTimeout(startComplete, 50);
+            }
+        });
+        connect(sel, "dblclick", pick);
+      
+        connect(sel, "blur", function(e){
+            close(e)
+        });
+                 
+                        
+                        
+    }, 5);
 
-    sel.focus();
-    // Opera sometimes ignores focusing a freshly created node
-    if (window.opera) setTimeout(function(){
-        if (!done) sel.focus();
-    }, 100);
+  
     return true;
 
 }

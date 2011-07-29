@@ -32,11 +32,13 @@ class Cf_Exceptions extends CI_Exceptions {
 
                 throw new Exception($megetenvssage);
             } catch (Exception $e) {
-                $msg = parent::show_error($heading, $e->getMessage(), $template = 'error_general', $status_code);
-
-                $trace = "<h1>$msg</h1><h1>Call Trace</h1><pre>" . $e->getTraceAsString() . "<pre>";
+                $trace = "<h1>Call Trace</h1><pre>" . $e->getTraceAsString() . "<pre>";
                 $err = $trace;
-                echo $err;
+                $errorMessage =  $e->getMessage() . $err ;
+                
+                echo  parent::show_error($heading,$errorMessage, $template = 'error_general', $status_code);
+
+                
                 log_message('error', $status_code . ' ' . $heading . '-' . $megetenvssage . ' --> ' . $page);
                 
             }
