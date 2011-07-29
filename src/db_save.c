@@ -114,9 +114,9 @@ int CFDB_SaveLastseenCache(char *keyhash,char *ip)
   bson setOp,empty;
   mongo_connection dbconn;
 
-if (!IsDefinedClass("am_policy_hub") && !IsDefinedClass("am_php_module"))
+if (!IsDefinedClass("am_policy_hub"))
    {
-   CfOut(cf_verbose,"","Ignoring DB put of (%s=%s) - we are not a policy server",keyhash,ip);
+   CfOut(cf_verbose,"","Ignoring caching of lastseen hosts into database - we are not a policy server");
    return false;
    }
   
