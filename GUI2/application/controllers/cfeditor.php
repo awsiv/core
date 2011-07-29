@@ -291,7 +291,7 @@
 
 		if($this->input->post('agent')=='webkit')
 		{
-		$newcontents=substr($newcontents, 0, -3);
+		//$newcontents=substr($newcontents, 0, -3);
 		}
 		if(strcmp($contents,$newcontents))
 		{

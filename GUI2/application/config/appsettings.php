@@ -15,7 +15,6 @@ $config['hub_dir']='/hub/';
 $config['graph_dir']='./graphs/';
 $config['policies_dir']='./policies/';
 $config['default']='themes/default/';
-$config['nodeport']='8080';
 
 /*
  * Set this item to 'ldap' if ldap is to be used for authenticating user , other wise

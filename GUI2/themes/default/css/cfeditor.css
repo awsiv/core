@@ -655,4 +655,105 @@ font-weight:bold;
     border-radius:5px;
 }
 
+.info, .success, .warning, .error, .validation {
+border: 1px solid;
+margin: 10px 0px;
+padding:15px 10px 15px 50px;
+background-repeat: no-repeat;
+background-position: 10px center;
+}
+.info {
+color: #00529B;
+background-color: #BDE5F8;
+background-image: url('../images/info.png');
+}
+.success {
+color: #4F8A10;
+background-color: #DFF2BF;
+background-image:url(../images/success.png);
+}
 
+.warning {
+color: #9F6000;
+background-color: #FEEFB3;
+background-image: url('warning.png');
+}
+
+.slvbutton
+{
+    background-color:#959595;
+    border:solid 1px #707070;
+    color:#ffffff;
+    text-transform: uppercase;
+    cursor:pointer
+}
+
+.slvbutton.disabled
+{
+    background:#f0f0f0;
+}
+
+ .cm-completions {
+                position: absolute;
+                z-index: 10;
+                overflow: hidden;
+                -webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+                -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+                box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+   }
+ .cm-completions select {
+                background: #fafafa;
+                outline: none;
+                border: none;
+                padding: 0;
+                margin: 0;
+                font-family: monospace;
+            }
+
+ #keyboardHelp {
+    display: block;
+}
+
+#keyboardHelp {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.85);
+    bottom: 0;
+    color: #FFFFFF;
+    display: none;
+    font-size: 20px;
+    height: 100%;
+    left: 0;
+    overflow: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+    z-index: 199999;
+}
+#keyboardHelp h2 {
+    padding-top: 10%;
+}
+#keyboardHelp table, #keyboardHelp h2 {
+    margin: 20px auto;
+    width: 520px;
+    border:none;
+    color:#fff;
+}
+#keyboardHelp thead th {
+    text-align: left;
+    border: none;
+}
+#keyboardHelp tbody tr {
+    height: 30px;
+}
+#keyboardHelp tbody td{
+    border: none;
+}
+#keyboardHelp tbody td span{
+    display:block;
+    font-size:14px;
+}
+#keyboardHelp tbody td:first-child {
+    color: yellow;
+    font-family: "MenschRegular";
+    padding-right: 20px;
+}

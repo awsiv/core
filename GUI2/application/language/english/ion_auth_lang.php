@@ -57,7 +57,7 @@ $lang['group_delete_successful'] 		= 'Group Deleted';
 $lang['group_delete_unsuccessful'] 		= 'Unable to Delete Group';
 $lang['group_update_successful']                = 'Group Information Sucessfully Updated';
 $lang['group_update_unsuccessful']              = 'Unable to Update group';
-$lang['backend_error']              = 'No Backend mentioned in the app Settings';
+$lang['backend_error']              = "Appsetting's doesn't exist switched to mongo db but no tables found";
 
 
 //modes of login

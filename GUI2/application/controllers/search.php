@@ -61,6 +61,13 @@ class Search extends Cf_Controller {
         $hostname = cfpr_hostname($hostkey);
 
         $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : 20);
+        if(is_numeric($rows))
+        {
+            $rows=(int)$rows;
+        }
+        else{
+             $rows=20;
+        }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         //necessary for search result view
         //must use site_url for making bread crumbs work

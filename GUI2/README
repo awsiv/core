@@ -70,7 +70,7 @@ LDAP configuration
 By default the mission portal will be using its default database in mongo for user authentication , and when mission portal is installed , it creates
 default user(username:admin , password:admin) in mongo DB,
 If user want to do user authentication with ldap in fresh install of mission portal , using  admin as username and password,  login into
-the system .  Going on the settings section of mission portal from we can configure mission portal to used ldap .Various configuration setting like
+the system .  Going on the settings section of mission portal from we can configure mission portal to use ldap .Various configuration setting like
 hostname: The ldap machine(cf022x.cfengine.com)
 base dn:  Ldap rooteg(dc=cf022osx,dc=cfengine,dc=com)
 login attribute: the  field in ldap which will be used by mission portal to match the username eg (uid)

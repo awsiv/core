@@ -58,7 +58,7 @@ function deleteAll($directory, $empty = false)
 				$content=str_replace('&gt;', '>' , $content);
 				if($_POST['agent']=='webkit')
 				{
-				$content=substr($content, 0, -3);
+				//$content=substr($content, 0, -3);
 				}
 				fwrite($handle, $content);
 				fclose($handle);

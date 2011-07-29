@@ -12,6 +12,8 @@
 <link href="<?php echo get_cssdir();?>960.css" rel="stylesheet" media="screen" />
 <link href="<?php echo get_cssdir();?>Base.css" rel="stylesheet" media="screen" />
 <link href="<?php echo get_cssdir();?>jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />
+<link href="<?php echo get_scriptdir();?>/Cfeditor/lib/codemirror.css" rel="stylesheet" media="screen" />
+<link href="<?php echo get_scriptdir();?>/Cfeditor/mode/cfengine/cfengine.css" rel="stylesheet" media="screen" />
 <script src="<?php echo get_scriptdir();?>jquery-1.6.1.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir();?>jquery-ui-1.8.9.custom.min.js" type="text/javascript"></script>
 <!--[if IE]><?php echo $this->carabiner->display('iefix'); ?><![endif]-->
@@ -60,6 +62,7 @@ $this->carabiner->display(); ?>
 		  </ul>
 		  <div id="news">
                   Welcome to the Cfengine Nova policy editor. Please click an existing policy file on the left, or "New" to start editing.
+                  To know about the shortcuts available press <strong>ctrl+h (help)</strong>.
 		  </div>
 	 </div>
 
@@ -98,12 +101,6 @@ $this->carabiner->display(); ?>
 <div id="commitdlg" style="display:none;" title="Commit file" class="dialog">
             <form>
                 <fieldset class="ui-helper-reset">
-                   <!-- <label for="tab_title">User name:</label>
-                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="username" />
-                    <label for="tab_title">Password:</label>
-                    <input type="password" class="ui-widget-content ui-corner-all" value="" id="password" />
-                    <label for="tab_title" id="repolbl">Repository</label>
-                    <input type="text" class="ui-widget-content ui-corner-all" value="" id="repo" />-->
                     <label for="tab_title" id="commentlbl">Comment</label>
                     <textarea class="ui-widget-content ui-corner-all" id="comments" name="comments"></textarea>
                     <input type="hidden" id="event"></input>
@@ -114,19 +111,62 @@ $this->carabiner->display(); ?>
             </form>
    </div>
    
-   <div id="confirmation" style="display:none">
-   </div>
-   <div id="svnlogtable" style="display:none;" class="dialog">
-   </div>
-   <div id="checkoutconfirmation" style="display:none" class="dialog">
-   </div>
-   <div id="usedRepo" style="display:none">  
+  <div id="svnlogtable" style="display:none;" class="dialog">
    </div>
   </div>
+
+ <div id="keyboardHelp">
+  <h2>Keyboard Shortcuts</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Shortcut</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ctrl + s</td>
+        <td>Save the current policy</td>
+      </tr>
+      <tr>
+        <td>ctrl + n</td>
+        <td>Open new policy tab</td>
+      </tr>
+      <tr>
+        <td>ctrl + m</td>
+        <td>
+            compile the policy file
+            <span>To compile a policy file , it need to be saved in the server</span>
+        </td>
+      </tr>
+      <tr>
+        <td>ctrl + q</td>
+        <td>Close the current tab</td>
+      </tr>
+      <tr>
+        <td>ctrl + space</td>
+        <td>Auto-completion and suggest generation</td>
+      </tr>
+      <tr>
+        <td>ctrl + z</td>
+        <td>Undo</td>
+      </tr>
+      <tr>
+        <td>esc</td>
+        <td>get out of help</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 <script src="<?php echo get_scriptdir()?>Cfeditor/jquery.layout.min-1.2.0.js" type="text/javascript"></script>
-<script src="<?php echo get_scriptdir()?>Cfeditor/codemirror.js" type="text/javascript"></script>
-<script src="<?php echo get_scriptdir()?>Cfeditor/cf.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir()?>jquery.jcryption-1.1.min.js" type="text/javascript"></script>
+
+<script src="<?php echo get_scriptdir()?>Cfeditor/lib/codemirror.js" type="text/javascript"></script>
+<script src="<?php echo get_scriptdir()?>Cfeditor/lib/shortcut.js" type="text/javascript"></script>
+ <script src="<?php echo get_scriptdir()?>Cfeditor/mode/cfengine/cfsyntax.js" type="text/javascript"></script>
+ <script src="<?php echo get_scriptdir()?>Cfeditor/mode/cfengine/cfengine.js" type="text/javascript"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>cfeditor.js"></script>
+ <script src="<?php echo get_scriptdir()?>Cfeditor/mode/cfengine/cfautocomplete.js" type="text/javascript"></script>
 </body>
 </html>
