@@ -4,7 +4,7 @@ $attributes = array('class' => '', 'id' => '');
 echo form_open('settings/logintest', $attributes,$configsettings); ?>
 <p>
         <label for="username">username</label>
-        <?php// echo form_error('username'); ?>
+        <?php // echo form_error('username'); ?>
         <input id="username" type="text" name="username" maxlength="50" value=""  />
 </p>
 
