@@ -16,9 +16,6 @@ class Welcome extends Cf_Controller {
             'isRoot' => true
         );
         $this->breadcrumb->setBreadCrumb($bc);
-
-        
-
         $scripts = array(
            // '<script language="javascript" type="text/javascript" src="' . get_nodehost() . '/socket.io/socket.io.js"> </script>
             // ',
@@ -385,6 +382,9 @@ class Welcome extends Cf_Controller {
         $this->load->library('cf_table');
         $getparams = $this->uri->uri_to_assoc(4);
         $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : 20);
+        if(!is_numeric($rows)){
+            $rows=20;
+        }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         switch ($type) {
             case "red":

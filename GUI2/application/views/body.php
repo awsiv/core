@@ -17,15 +17,15 @@
                             </tr>
                             <tr>
                                 <td>Type</td>
-                                <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo $def['Type']; ?>"><?php echo $def['Type']; ?></a></td>
+                                <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo $def['Type']; ?>"><?php echo isset($def['Type'])?$def['Type']:"not found"; ?></a></td>
                             </tr>
                             <tr>
                                 <td>Name</td>
-                                <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo $def['Name']; ?>"> <?php echo $def['Name']; ?></a></td>
+                                <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo $def['Name']; ?>"> <?php echo isset($def['Name'])?$def['Name']:"not found"; ?></a></td>
                             </tr>
                             <tr>
-                                <td>Arguments</th>
-                                <td><?php echo $def['Arguments']; ?></td>
+                                <td>Arguments</td>
+                                <td><?php echo isset($def['Arguments'])?$def['Arguments']:"not found any"; ?></td>
                             </tr>
 
 
@@ -47,9 +47,13 @@
                 <div class="panel"><div class="panelhead">Other bodies of type <?php echo $type ?></div>
                     <div class="panelcontent">
                         <ul style="margin-left: 15px;">
-                            <?php foreach ((array) $allbodies as $b) { ?>
-                            <li><?php echo sprintf("<a href='%s/welcome/body/body/%s/type/%s'>%s %s</a>", site_url(),$b['body'], $b['type'], $b['body'], $b['type']); ?> </a></li>
-                            <?php } ?>                    
+                            <?php foreach ((array) $allbodies as $b) { 
+                               if(is_execptional_body($b['type'])) {
+                                ?>
+                              <li><?php echo sprintf("<a href='%s/bundle/detail/bundle/%s</a>", site_url(), $b['type']); ?> </li>
+                            <?php } else{?>
+                            <li><?php echo sprintf("<a href='%s/welcome/body/body/%s/type/%s'>%s %s</a>", site_url(),$b['body'], $b['type'], $b['body'], $b['type']); ?></li>
+                            <?php }} ?>
                         </ul>
                     </div>
                 </div>

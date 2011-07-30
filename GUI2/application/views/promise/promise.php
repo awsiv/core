@@ -62,7 +62,12 @@
 
                         <?php foreach ((array) $promise['body'] as $body) { ?>
                             <tr>
-                                <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($body['type']); ?>"><?php echo $body['type'] ?></a> =></td><td><a href="<?php echo site_url(); ?>/welcome/body/body/<?php echo urlencode($body['name']); ?>/type/<?php echo urlencode($body['type']) ?>"><?php echo $body['name'] ?><?php echo $body['args'] ?></a></td>
+                                <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($body['type']); ?>"><?php echo $body['type'] ?></a> =></td>
+                               <?php if(is_execptional_body(urlencode($body['type']))) {?>
+                                <td><a href="<?php echo site_url(); ?>/bundle/details/bundle/<?php echo urlencode($body['name']) ?>"><?php echo $body['name'] ?></a></td>
+                                <?php } else{?>
+                                <td><a href="<?php echo site_url(); ?>/welcome/body/body/<?php echo urlencode($body['name']); ?>/type/<?php echo urlencode($body['type']) ?>"><?php echo $body['name'] ?><?php echo $body['args'] ?></a></td>
+                                 <?php } ?>
                             </tr>
                         <?php } ?>
                     </table>                 

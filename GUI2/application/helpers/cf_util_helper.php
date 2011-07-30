@@ -232,4 +232,12 @@ function notifier($url,$_data)
         }
     }
 
+    function is_execptional_body($body){
+       $list=array('usebundle','edit_line');
+       if(array_search($body, $list) !==FALSE){
+           return True;
+       }
+       return false;
+    }
+
 ?>
