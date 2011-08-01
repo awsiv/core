@@ -620,13 +620,7 @@ CodeMirror.defineMode("CFEngine", function(config, parserConfig) {
            
             $return =   parseCf(state,style,cftype, content, stream);
             return $return;
-        },
-        
-        indent: function(state, textAfter) {
-           
-           
-           
-        },
+        },      
         electricChars: "}"
             
     };
