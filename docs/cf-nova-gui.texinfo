@@ -3,12 +3,6 @@
 \input texinfo
 @selectaltfont{cmbright}
 @setlogo{CFEngineFrontPage}
-@c *********************************************************************
-@c
-@c  This is an AUTO_GENERATED TEXINFO file. Do not submit patches against it.
-@c  Refer to the the component .texinfo files instead when patching docs.
-@c
-@c ***********************************************************************
 @c %** start of header
 @setfilename cf-nova-gui.info
 @settitle CFEngine Nova Mission Portal
@@ -94,6 +88,7 @@ of user interaction with CFEngine Nova and can be accessed after the successful 
 * Finders::
 * Viewers::
 * Editors::
+* Settings::
 @end menu
 
 @image{img-mission-portal-nova-2-1,15cm,,Mission Portal}
@@ -112,11 +107,11 @@ of user interaction with CFEngine Nova and can be accessed after the successful 
 
 There are four main rooms in the Mission Portal that offer insight into different aspects of operations:
 
-@itemize
-@item Mission status - a top level overview of compliance status and business value
-@item Mission engineering - a place to see the current state of system repair
-@item Mission planning - a place to plan and make policy changes
-@item Mission library - a knowledge bank that connects information together
+@itemize -
+@item Mission status: a top level overview of compliance status and business value
+@item Mission engineering: a place to see the current state of system repair
+@item Mission planning: a place to plan and make policy changes
+@item Mission library: a knowledge bank that connects information together
 @end itemize
 
 Each of these rooms is a beginning from which you can refine your overview and search
@@ -128,15 +123,16 @@ through information.
 
 Mission status is a high level summary of how well the entire system is behaving. Note that the charts will show blank (black) after a fresh install. The Host Status will be populated first, followed by the Business Value and Compliance Summary charts after approximately 6 hours.
 
+@sp 1
 @image{img-status,15cm,,Mission Status}
 @center Figure: The status of IT operations.
 @sp 1
 
 Business Value and Host Status:
-Pie charts show the business value of the promises kept/not kept as well as host status. In Host Status, each host represents a slice of the pie and is classified into red, yellow, green and blue according to the level of their compliance. A host is red if less than 80% of its promises are kept, yellow if less than 80% of its promises were initially kept, but CFEngine was able to repair to above 80% promises kept during a run, green if more than 80% of its promises are kept, and blue if there is no contact between the hub and the client host.
+Pie charts show the business value of the promises kept/not kept as well as host status. Business value is associated with the value of promises as defined in user policy files. In the Host Status chart, each host represents a slice of the pie and is classified into red, yellow, green and blue according to the level of their compliance. A host is red if less than 80% of its promises are kept, yellow if less than 80% of its promises were initially kept, but CFEngine was able to repair to above 80% promises kept during a run, green if more than 80% of its promises are kept, and blue if there is no contact between the hub and the client host.
 
 Compliance Summary:
-The row of bar meters shows the compliance of all registered hosts @footnote{Blue hosts will not appear here} in blocks of 6 hours for the past week. It summarizes performance and anomalous behavior in a simple red (prommises not kept), yellow (promises repaired) and green (promises kept) scale.
+The row of bar meters shows the compliance of all registered hosts @footnote{Blue hosts will not appear here} in blocks of 6 hours for the past week. It summarizes performance and anomalous behavior in a simple red (prommises not kept), yellow (promises repaired) and green (promises kept) scale. Click on a bar to see which promises were kept/not kept.
 
 Services/Goals:
 A summary of Mission goals (as defined in user policy files; these examples are from @file{company_knowledge.cf}). Edit the file in the policy editor (Planning room -> repository), or edit the file in your own text editor, to change these goals.
@@ -163,7 +159,7 @@ week, the past day and the past hour. It also summarizes performance
 and anomalous behavior in a simple red (promises not kept), yellow (promises repaired), and green (promises kept) scale.
 
 Finders:
-The Mission Engineering room comes with five finder functions: host, class, promises, reports and reports summary (see section on Finders).
+The Mission Engineering room comes with five finder functions: host, class, promises, reports and summary reports (see section on Finders).
 
 
 @page
@@ -182,7 +178,7 @@ List of policy goals as defined in user policy files; these examples are from @f
 
 @noindent Action buttons:
 @itemize -
-@item Repository: Edit policy files in the integrated policy editor (requires subversion)
+@item Repository: Edit policy files in the integrated policy editor (requires Subversion)
 @item Track records: To be developed
 @item Approve policies: To be developed
 @item Service catalogue: See which bundles contribute to policy goals
@@ -223,10 +219,11 @@ The Library contains finders for documents, topics, a notes archive, and (extern
 * Class finder::
 * Promise finder::
 * Report finder::
+* Summary report finder::
 * Topic finder::
 @end menu
 
-Finders are modules that make it simple and intuitive to browse and search for objects of a particular type.
+Finders are modules that make it simple and intuitive to browse and search for objects of a particular type. Some are located in the Mission Engineering room, others in the Mission Library or the generic search box in the top right corner.
 
 @sp 1
 @center @image{img-finders,14cm,,Finders}
@@ -297,16 +294,37 @@ The report finder is located in the Mission Engineering room and will display a 
     @item Variables: Table of variable values last observed
 @end itemize
 
+
+@node
+@subsection Summary report finder
+
+Find the current state of knowledge about promise compliance. Search by promise handle and/or host group (host class) and/or specific host. Click the @code{Help?} link to open the Promise finder or Classes finder to view available promise handles or host groups (host classes), respectively.
+
+@sp 1
+@center @image{img-summaryreportfinder,10cm,,Summary report finder}
+@center Figure: Summary report finder
+@sp 1
+
+The result shows the number of hosts and their compliance when a single promise handle is specified, and an expectation value @footnote{Predicted mean in the time frame shown} of the number of hosts that match a search criteria when a search string (regex) is specified. Click @code{New search} to change or refine the query.
+
+@sp 1
+@center @image{img-summaryreport,15cm,,Summary report}
+@center Figure: Summary report
+@sp 1
+
+
 @node
 @subsection Topic finder
 
 The Topic finder is located in the Mission Library and will display a list of common topics. Browse by scrolling through the list, click a letter corresponding to the first letter of a topic name, or search for topics in the search box (top right corner). Clicking on a topic will bring you either to a document, web page or the Topic viewer (Knowledge map).
 
 @sp 1
-@c @center @image{img-topicsfinder,10cm,,Topic finder}
+@center @image{img-topicsfinder,10cm,,Topic finder}
 @center Figure: Topic finder
 @sp 1
 
+
+@page
 @node
 @section Viewers
 
@@ -360,7 +378,7 @@ performance indicators.
 @node
 @subsection Bundle viewer
 
-The bundle viewer shows a list of classes using the bundle and the promises made within that bundle. Tabs also display other bundles using the one currently viewed or an overview of all bundles. 
+The bundle viewer provides an interface to explore the context (class) in which a bundle is used and the promises made within that bundle. Tabs display other bundles using the one currently viewed and a general overview of all bundles. Navigate to interact with other views and get a complete picture of context, leads, references, affected objects, similar topics, and more.
 
 @sp 1
 @center @image{img-bundleviewer,15cm,,Bundle viewer}
@@ -400,16 +418,16 @@ This is the default behavior for a Nova installation.
 The Topics viewer, or Knowledge map, is a sematic web of subject references and document pointers. It can be found by searching for a topic in the top right corner or through the topic finder in the Mission Library (this will sometimes also lead directly to a document or web page instead of the topic viewer).
 
 @sp 1
-@c @center @image{img-topicsviewer,15cm,,Topics viewer}
+@center @image{img-topicsviewer,15cm,,Topics viewer}
 @center Figure: Topics viewer (Knowledge map)
 @sp 1
 
-The yellow sphere represents the current topic, surrounding (blue) spheres represent related topics, and the size of the circles represents the number of associations each topic has. This map is navigable: click on a different topic to see a new view centered on that topic, with its related topics attached. The tabs will show leads, documents and web pages related to the current topic.
+The yellow sphere represents the current topic, surrounding (blue) spheres represent related topics, and the size of the spheres represents the number of associations each topic has. This map is navigable: click on a different topic to see a new view centered on that topic and its associations. The tabs will show leads, references, topics in the same context, and sub topics in the same context. Links can also lead to other viewers in the Mission Portal, documents and web pages related to the current topic.
 
 @node
 @subsection Weakest hosts viewer
 
-A link to the worst ranked hosts is located in the Mission Engineering room. This ranks all hosts that have reported to the hub @footnote{Blue hosts will not appear} according to their level of promises not kept, with the worst host on top. A secondary level of ranking looks at the level of promises repaired, where the host with most repairs gets a worse status.
+A link to the worst ranked hosts is located in the Mission Engineering room. This ranks all hosts that have reported to the hub @footnote{Blue hosts will not appear} according to their level of promises not kept during the last hour, with the worst host on top.
 
 @sp 1
 @center @image{img-weakesthostsviewer,15cm,,Weakest hosts}
@@ -419,11 +437,11 @@ A link to the worst ranked hosts is located in the Mission Engineering room. Thi
 @node
 @subsection Report viewer
 
-A significant capability of CFEngine Nova is the existence of automated system reporting. A report is a tabular summary of CFEngine's internal information, tailored to a particular purpose. Reports are searchable and describe
-attributes and qualities of managed hosts.
+A significant capability of CFEngine Nova is the existence of automated system reporting. A report is a tabular summary of CFEngine's internal information, tailored to a particular purpose. Reports describe
+attributes and qualities of managed hosts and can be filtered through the text boxes on top of each column.
 
 @sp 1
-@c @center @image{img-reportviewer,15cm,,Report viewer}
+@center @image{img-reportviewer,15cm,,Report viewer}
 @center Figure: Report viewer
 @sp 1
 
@@ -495,11 +513,109 @@ The main menu on the left hand panel shows the main workflow items for
 policy editing. Clicking the arrow in the panel divider collapses the
 menu and gives full-screen editing.
 
+The right hand panel shows basic file and Subversion commands. The @code{Save} button will store a local/intermediate (?) version of the opened files. 
+
+
 @c @sp 1
 @c @center @image{Editormenu,5cm,,The front page}
 @c @center Figure: The policy editor main menu
 @c @sp 1
 
+
+@node 
+@section Mission Portal Settings
+
+@menu
+* Mission Portal Settings::
+* Mission Portal User Admin::
+@end menu
+
+
+@node 
+@subsection Mission Portal Configuration
+
+Configure and view various settings for the Mission Portal.
+
+@sp 1
+@image{img-settings,15cm,,Mission Portal Settings}
+@center Figure: Mission Portal Settings
+@sp 1
+
+@itemize -
+@item List of saved searches: To be developed
+@item Mission Portal settings: Configure access authentication mode (database, LDAP, Active Directory)
+@item Search settings: To be developed
+@item Report settings: To be developed
+@item Machine settings: To be developed
+@end itemize
+
+
+@node 
+@subsection Mission Portal User Admin
+
+Manage users and groups for the Mission Portal (to be developed).
+
+@sp 1
+@image{img-useradmin,15cm,,Mission Portal User Admin}
+@center Figure: Mission Portal User Admin
+@sp 1
+
+@node
+@appendix Configuration of LDAP
+
+LDAP authentication is available for CFEngine Nova 2.1 and up, but by default the mission portal will use the embedded database to store user information (default username and password are "admin" and "admin"). Note that users in the default database will be locked out of the Mission Portal upon configuration of LDAP. They will regain access if LDAP authentication is deactivated by selecting the Database button on the Mission Portal Settings page (see below).
+
+To enable LDAP on a fresh install, log on to the Mission Portal with the default user and password and go to "Settings". Click "Mission Portal Settings" and enter the appropriate configuration for LDAP or Active Directory as described below.
+
+@sp 1
+@center @image{img-settings,15cm,,The settings page}
+@center Figure: The settings page
+@sp 1
+
+@node
+@section Configure LDAP
+
+Select the LDAP button. 
+
+@sp 1
+@center @image{img-configldap,15cm,,Configure LDAP}
+@center Figure: Configure LDAP
+@sp 1
+
+@noindent Form fields:
+
+@itemize -
+@item LDAP host: Address of the LDAP machine
+@item Base dn: LDAP root, the top entry (starting point) in the directory
+@item Login attribute: Field name used to match username, e.g. uid.
+@item User directory: Directory name where usernames are stored, e.g. cn=users or ou=people
+@item Member attribute: Field name used to match user group (only needed for OPENLDAP), e.g. memberUid
+@end itemize
+
+Always check that the entered configuration is correct by clicking the "Test it" button before submitting changes. Enter a valid username and password in the popup to test LDAP bind, and submit if everything is fine. Submitting an incorrect configuration will lock out all users. To revert, set the switch @code{$config['auth_mode']='database';} in @file{<your web directory>/application/config/appsettings} and start over again using a valid database login and password ("admin" and "admin" on a fresh install).
+
+
+@node
+@section Configure Active Directory
+
+Select the Active Directory button.
+
+@sp 1
+@center @image{img-configactivedirectory,15cm,,Configure Active Directory}
+@center Figure: Configure Active Directory
+@sp 1
+
+@noindent Form fields:
+
+@itemize -
+@item LDAP host: Address of the LDAP machine
+@item Base dn: LDAP root, the top entry (starting point) in the directory
+@item Login attribute: Field name used to match username, e.g. uid.
+@item User directory: Directory name where usernames are stored, e.g. cn=users or ou=people
+@item Active directory domain: Field name used to match directory domain on Windows machines, e.g. windows1.test.cfengine.com
+@end itemize
+
+Always check that the entered configuration is correct by clicking the "Test it" button before submitting changes. Enter a valid username and password in the popup to test LDAP bind, and submit if everything is fine. Submitting an incorrect configuration will lock out all users. To revert, set the switch @code{$config['auth_mode']='database';} in @file{<your web directory>/application/config/appsettings} and start over again using a valid database login and password ("admin" and "admin" on a fresh install).
 
 
 
