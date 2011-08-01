@@ -6436,6 +6436,7 @@ int Nova2PHP_GetHubKey(char *buffer,int bufsize)
   char serverdig[CF_MAXVARSIZE] = "";
   FILE *fp;
   struct Item *list=NULL,*ip=NULL;
+  int ret = false;
 
   if(strlen(CFWORKDIR) < 1)
      {
@@ -6454,10 +6455,11 @@ int Nova2PHP_GetHubKey(char *buffer,int bufsize)
     if(strcmp(ip->classes,policy_server) == 0)
        {
         snprintf(buffer,bufsize,"%s",ip->name);
-        return 1;
+        ret=true;
        }
     }
- return 0;
+ DeleteItemList(list);
+ return ret;
 }
 
 /*****************************************************************************/
