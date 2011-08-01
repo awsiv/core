@@ -119,7 +119,7 @@ class Cfsvn {
         $repo = "";
         $i = 0;
         for ($i = 0; $i < 1; $i++) {
-            $repo = $status[$i]['repos'];
+            $repo = $status[$i]['url'];
         }
         //$this->repository=$repo;
         return $repo;
