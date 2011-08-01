@@ -498,6 +498,7 @@ struct Item *Nova_ScanClients()
 
   
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
+printf("[bishwa]%s/%s",CFWORKDIR,CF_LASTDB_FILE);
 MapName(name);
 
 if (!OpenDB(name,&dbp))
@@ -538,10 +539,10 @@ CloseDB(dbp);
 #ifdef HAVE_LIBMONGOC
 /* Now we need to do some magic for hubs so that only one hub collects reports at a time */
 NewClass("am_policy_hub");
-CfOut(cf_inform,"","Checking for MongoDB master\n");
+CfOut(cf_inform,"","Checking for Hub master\n");
 if (CFDB_QueryIsMaster())
    {
-   CfOut(cf_inform,"","I am MongoDB master\n");
+   CfOut(cf_inform,"","I am Hub master\n");
    Nova_UpdateMongoHostList(list);
    DeleteItemList(list);
 
@@ -550,7 +551,7 @@ if (CFDB_QueryIsMaster())
    }
 else
    {
-   CfOut(cf_inform,"","I am not the MongoDB master\n");
+   CfOut(cf_inform,"","I am not the hub master\n");
    list = NULL;   
    }
 #endif

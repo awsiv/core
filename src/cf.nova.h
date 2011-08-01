@@ -401,6 +401,7 @@ bool MongoCheckForError(mongo_connection *conn, const char *operation, const cha
 //replica set
 struct Item * CFDB_GetLastseenCache(void);
 int CFDB_QueryIsMaster(void);
+int CFDB_QueryMasterIP(char *buffer,int bufsize);
 
 int Nova2PHP_GetHubKey(char *buffer,int bufsize);
 #endif

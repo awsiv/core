@@ -7397,6 +7397,47 @@ int CFDB_QueryIsMaster(void)
  return ret;
 }
 /*************************************************/
+int CFDB_QueryMasterIP(char *buffer,int bufsize)
+{
+ bson_buffer bb,*query;
+ bson cmd,result;
+ bson_iterator it1,values,it2;
+ int ret = false;
+ mongo_connection conn;
+ char master[CF_MAXVARSIZE]={0};
+
+ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to check if the db is master");
+    return false;
+    }
+
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, "isMaster", MONGO_HOSTS_COLLECTION);
+ bson_from_buffer(&cmd, &bb);
+
+ if (mongo_run_command(&conn, MONGO_BASE, &cmd, &result))
+    {
+    if (bson_find(&it1, &result, "primary"))
+          {
+          snprintf(buffer,bufsize,"%s",bson_iterator_string(&it1));
+          ret=true;
+          }
+    else
+       {
+       CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryIsMaster()");
+       }
+    }
+ else
+    {
+    MongoCheckForError(&conn,"CFDB_QueryIsMaster()", "", NULL);
+    }
+ bson_destroy(&cmd);
+ bson_destroy(&result);
+ CFDB_Close(&conn);
+ return ret;
+}
+/*************************************************/
 
 #endif  /* HAVE LIB_MONGOC */
 

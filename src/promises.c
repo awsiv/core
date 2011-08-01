@@ -1,4 +1,3 @@
-
 /*
 
  This file is (C) Cfengine AS. See COSL LICENSE for details.
@@ -161,6 +160,7 @@ for (p1 = PROMISER_REGEXES; p1 != NULL; p1=p1->next)
 void Nova_EnterpriseContext()
 
 {
+  char master[CF_BUFSIZE]={0};
 #ifdef HAVE_GETZONEID
  zoneid_t zid;
  char zone[ZONENAME_MAX];
@@ -176,9 +176,32 @@ NewClass(vbuff);
 #endif
 
 if (CFDB_QueryIsMaster())
-   {
-   NewClass("am_mongo_master");
+   { char name[CF_MAXVARSIZE]={0};
+   char serverdig[CF_MAXVARSIZE] = "";
+   FILE *fp;
+
+   master[0]='\0';
+   
+   if(strlen(CFWORKDIR) < 1)
+      {
+      snprintf(CFWORKDIR,CF_MAXVARSIZE,"%s","/var/cfengine");
+      }
+   snprintf(name,sizeof(name),"%s%cpolicy_server.dat",CFWORKDIR,FILE_SEPARATOR);
+
+   if ((fp = fopen(name,"r")) != NULL)
+      {
+      fscanf(fp,"%s",master);
+      fclose(fp);
+      }
+   
+   NewClass("am_hub_master");
    }
+else 
+   {
+   CFDB_QueryMasterIP(master,sizeof(master));
+   }
+
+NewScalar("sys","hub_master",master,cf_str);
 }
 
 /*****************************************************************************/
