@@ -505,16 +505,25 @@ class Ion_auth_model_mongo extends CI_Model
 	 * @return bool
 	 * @author Mathew
 	 **/
-	public function login($identity, $password, $remember=FALSE)
+	public function login($identity, $password, $remember=FALSE,$ldap_fallback=FALSE)
 	{
 	    if (empty($identity) || empty($password) || !$this->identity_check($identity))
 	    {
 		return FALSE;
 	    }
+         
+           if($ldap_fallback){
+               $this->load->model('settings_model');
+               $group=$this->settings_model->app_settings_get_item('fall_back_for');
+               
+               $this->mongo_db->select(array($this->identity_column,'id', 'password','group'));
+               $this->mongo_db->where(array($this->identity_column => $identity,'active' => 1,'group'=>$group));
+           }else{
+                $this->mongo_db->select(array($this->identity_column,'id', 'password','group'));
+                $this->mongo_db->where(array($this->identity_column => $identity,'active' => 1));
+           }
 
-            $result=$this->mongo_db->select(array($this->identity_column,'id', 'password','group'))
-                           ->where(array($this->identity_column => $identity,'active' => 1))
-                           ->limit(1)
+            $result= $this->mongo_db ->limit(1)
                            ->get_object('users');
             
 	    if ($result != NULL)

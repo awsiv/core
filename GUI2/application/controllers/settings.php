@@ -5,6 +5,7 @@ class Settings extends Cf_Controller {
     function __construct() {
         parent::__construct();
         $this->load->library('form_validation');
+        $this->load->library('ion_auth');
         $this->load->helper('form');
         $this->load->helper('url');
         $this->load->model('settings_model');
@@ -20,16 +21,12 @@ class Settings extends Cf_Controller {
         $required_if_ad = $this->__AD_check();
         $this->form_validation->set_rules('appemail', 'Application email', 'xss_clean|trim|required|valid_email');
         $this->form_validation->set_rules('mode', 'Authentication mode', 'xss_clean|trim|required');
-//$this->form_validation->set_rules('username', 'username', 'xss_clean|trim'.$required_if_database);
-//$this->form_validation->set_rules('password', 'password', 'xss_clean|trim'.$required_if_database.'|matches[confirm_password]');
-//$this->form_validation->set_rules('confirm_password', 'confirm password', 'trim'.$required_if_database);
         $this->form_validation->set_rules('host', 'host', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('base_dn', 'base dn', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('users_directory', 'users directory', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
-//$this->form_validation->set_rules('active_directory', 'Active directory', 'xss_clean|trim'. $required_if_ldap);
-        $this->form_validation->set_rules('member_attribute', 'member attribute', 'xss_clean|trim' . $required_if_ldap);
         $this->form_validation->set_rules('active_directory_domain', 'active directory domain', 'xss_clean|trim' . $required_if_ad);
+        $this->form_validation->set_rules('member_attribute', 'memberof attribute', 'xss_clean|trim' . $required_if_ldap);
 
         $this->form_validation->set_error_delimiters('<br /><span>', '</span>');
 
@@ -46,9 +43,12 @@ class Settings extends Cf_Controller {
                 'breadcrumbs' => $this->breadcrumblist->display(),
                 'message' => validation_errors(),
                 'op' => 'create'
-            );
-
+            );     
 //if previous settings exist load it and display
+             $groups=$this->ion_auth->get_groups_fromdb();
+            foreach((array)$groups as $group){
+              $data['groups'][$group['name']]=$group['name'];
+            }
             $settings = $this->settings_model->get_app_settings();
             if (is_object($settings)) {// the information has therefore been successfully saved in the db
                 foreach ($settings as $property => $value) {
@@ -66,16 +66,13 @@ class Settings extends Cf_Controller {
                     $form_data = array(
                     'appemail' => set_value('appemail'),
                     'mode' => set_value('mode'),
-                    'username' => set_value('username'),
-                    'password' => set_value('password'),
-                    'confirm_password' => set_value('confirm_password'),
                     'host' => set_value('host'),
                     'base_dn' => set_value('base_dn'),
                     'login_attribute' => set_value('login_attribute'),
                     'users_directory' => set_value('users_directory'),
-                    //  	'active_directory' => set_value('active_directory'),
+                    //'active_directory' => set_value('active_directory'),
                     'active_directory_domain' => set_value('active_directory_domain'),
-                    'member_attribute' => set_value('member_attribute')
+                    'member_attribute' => set_value('member_attribute'),
                 );
                 $data=array_merge($form_data,$data);
             }
@@ -84,16 +81,14 @@ class Settings extends Cf_Controller {
             $form_data = array(
                 'appemail' => set_value('appemail'),
                 'mode' => set_value('mode'),
-                'username' => set_value('username'),
-                'password' => set_value('password'),
-                'confirm_password' => set_value('confirm_password'),
                 'host' => set_value('host'),
                 'base_dn' => set_value('base_dn'),
                 'login_attribute' => set_value('login_attribute'),
                 'users_directory' => set_value('users_directory'),
                 //  	'active_directory' => set_value('active_directory'),
                 'active_directory_domain' => set_value('active_directory_domain'),
-                'member_attribute' => set_value('member_attribute')
+                'member_attribute' => set_value('member_attribute'),
+                'fall_back_for'=>$this->input->post('fall_back_for')
             );
 
 // run insert model to write data to db
@@ -129,6 +124,10 @@ class Settings extends Cf_Controller {
                     }
                 }
 //$this->load->view('appsetting/missionportalpref',$data);
+            $groups=$this->ion_auth->get_groups_fromdb();
+            foreach((array)$groups as $group){
+              $data['groups'][$group['name']]=$group['name'];
+            }
                 $this->template->load('template', 'appsetting/missionportalpref', $data);
             } else {
                 echo 'An error occurred saving your information. Please try again later';

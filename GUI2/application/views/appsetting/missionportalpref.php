@@ -69,7 +69,10 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 
 <p><label></label> <a class="btn" id="testsettings" href="<?php echo site_url('settings/ldaptest')?>">Test it </a></p>
 </fieldset>
-
+<p>
+    <label for="fall back for">Fall back only for group<span class="required">*</span></label>
+    <?php echo form_dropdown('fall_back_for', $groups, isset($fall_back_for)?$fall_back_for:'admin');?>
+</p>
 <p  id="btnholder">
         <?php echo form_submit( array('name'=>'submit','class'=>'btn','value'=>'Submit')); ?>
 </p>

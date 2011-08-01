@@ -61,7 +61,8 @@ $lang['backend_error']              = "Appsetting's doesn't exist switched to mo
 
 
 //modes of login
-$lang['login_mode_changed']          =  'You have changed the mode of authentication , please re-login into the system';
+$lang['login_mode_changed']          =  'The mode of authentication is changed , it might be due to config changes or system fall back to use database in case of unsucessful ldap login
+                                                       Please relogin';
 
 //ldap related
 $lang['error_loading_application_setting']    = "Error loading Application settings from database";
