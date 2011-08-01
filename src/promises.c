@@ -160,7 +160,6 @@ for (p1 = PROMISER_REGEXES; p1 != NULL; p1=p1->next)
 void Nova_EnterpriseContext()
 
 {
-  char master[CF_BUFSIZE]={0};
 #ifdef HAVE_GETZONEID
   zoneid_t zid;
   char zone[ZONENAME_MAX];
@@ -174,15 +173,18 @@ NewScalar("sys","zone",zone,cf_str);
 snprintf(vbuff,CF_BUFSIZE-1,"zone_%s",zone);
 NewClass(vbuff);
 #endif
+}
 
-if (CFDB_QueryIsMaster())
-   { char name[CF_MAXVARSIZE]={0};
-   char serverdig[CF_MAXVARSIZE] = "";
-   FILE *fp;
+/*****************************************************************************/
+void Nova_DefineHubMaster()
 
-   master[0]='\0';
+{ char master[CF_MAXVARSIZE]={0};
+
+ master[0]='\0';
    
-   snprintf(master,sizeof(name),"%s",VIPADDRESS);
+if (CFDB_QueryIsMaster())
+   {   
+   snprintf(master,sizeof(master),"%s",VIPADDRESS);
    NewClass("am_hub_master");
    }
 else 
@@ -190,18 +192,16 @@ else
    char *sp;
    
    CFDB_QueryMasterIP(master,sizeof(master));
-
+   
    if (sp = strchr(master,':'))
       {
       *sp = '\0';
       }
    }
 
-NewScalar("sys","hub_master",master,cf_str);
+NewScalar("sys","hub_master",master,cf_str); 
 }
-
 /*****************************************************************************/
-
 void Nova_EnterpriseDiscovery()
 {
 if (IsDefinedClass("redhat"))

@@ -815,7 +815,7 @@ void Nova_EnterpriseDiscovery(void);
 void Nova_AnalyzePromiseConflicts(void);
 void Nova_NewPromiser(struct Promise *pp);
 int Nova_ClassesIntersect(struct Rlist *contexts1,struct Rlist *contexts2);
-
+void Nova_DefineHubMaster(void);
 /* pscalar.c */
 
 int Nova_GetPersistentScalar(char *lval,char *rval,int size,time_t timeout);
