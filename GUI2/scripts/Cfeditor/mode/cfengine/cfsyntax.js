@@ -109,7 +109,7 @@ var edit_line_bundle_syntax = {
         "whitespace_policy" : 
         {
             datatype: "(option list)",
-            pcre_range: "ignore_leading|ignore_trailing|ignore_embedded|ignore_embedded|exact_match"
+            pcre_range: "ignore_leading|ignore_trailing|ignore_embedded|exact_match"
         }
     },
     "field_edits":
@@ -219,17 +219,17 @@ var edit_line_bundle_syntax = {
         "or" : 
         {
             datatype: "clist",
-            pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+            pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
         },
         "and" : 
         {
             datatype: "clist",
-            pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+            pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
         },
         "xor" : 
         {
             datatype: "clist",
-            pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+            pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
         },
         "dist" : 
         {
@@ -239,12 +239,17 @@ var edit_line_bundle_syntax = {
         "expression" : 
         {
             datatype: "class",
-            pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+            pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
         },
         "not" : 
         {
             datatype: "class",
-            pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+            pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
+        },
+        "select_class" : 
+        {
+            datatype: "rlist",
+            pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
         }
     },
     "reports":
@@ -269,7 +274,7 @@ var edit_line_bundle_syntax = {
             "file_to_print" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             },
             "number_of_lines" : 
             {
@@ -281,7 +286,7 @@ var edit_line_bundle_syntax = {
         "report_to_file" : 
         {
             datatype: "string",
-            pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+            pcre_range: "\"?(/.*)"
         },
         "showstate" : 
         {
@@ -341,17 +346,17 @@ var edit_line_bundle_syntax = {
             "value_kept" : 
             {
                 datatype: "real",
-                pcre_range: ".*"
+                pcre_range: "-9.99999E100,9.99999E100"
             },
             "value_repaired" : 
             {
                 datatype: "real",
-                pcre_range: ".*"
+                pcre_range: "-9.99999E100,9.99999E100"
             },
             "value_notkept" : 
             {
                 datatype: "real",
-                pcre_range: ".*"
+                pcre_range: "-9.99999E100,9.99999E100"
             },
             "audit" : 
             {
@@ -380,42 +385,57 @@ var edit_line_bundle_syntax = {
             "promise_repaired" : 
             {
                 datatype: "slist",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "repair_failed" : 
             {
                 datatype: "slist",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "repair_denied" : 
             {
                 datatype: "slist",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "repair_timeout" : 
             {
                 datatype: "slist",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "promise_kept" : 
             {
                 datatype: "slist",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "cancel_kept" : 
             {
                 datatype: "slist",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "cancel_repaired" : 
             {
                 datatype: "slist",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "cancel_notkept" : 
             {
                 datatype: "slist",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
+            },
+            "kept_returncodes" : 
+            {
+                datatype: "slist",
+                pcre_range: "[-0-9_$(){}\\[\\].]+"
+            },
+            "repaired_returncodes" : 
+            {
+                datatype: "slist",
+                pcre_range: "[-0-9_$(){}\\[\\].]+"
+            },
+            "failed_returncodes" : 
+            {
+                datatype: "slist",
+                pcre_range: "[-0-9_$(){}\\[\\].]+"
             },
             "persist_time" : 
             {
@@ -437,7 +457,7 @@ var edit_line_bundle_syntax = {
         "handle" : 
         {
             datatype: "string",
-            pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+            pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
         },
         "depends_on" : 
         {
@@ -525,17 +545,17 @@ var bundle_syntax = {
             "or" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "and" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "xor" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "dist" : 
             {
@@ -545,12 +565,17 @@ var bundle_syntax = {
             "expression" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "not" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
+            },
+            "select_class" : 
+            {
+                datatype: "rlist",
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             }
         },
         "reports":
@@ -575,7 +600,7 @@ var bundle_syntax = {
                 "file_to_print" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "number_of_lines" : 
                 {
@@ -587,7 +612,7 @@ var bundle_syntax = {
             "report_to_file" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             },
             "showstate" : 
             {
@@ -647,17 +672,17 @@ var bundle_syntax = {
                 "value_kept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_repaired" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_notkept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "audit" : 
                 {
@@ -686,42 +711,57 @@ var bundle_syntax = {
                 "promise_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_failed" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_denied" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_timeout" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "promise_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_notkept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
+                },
+                "kept_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "repaired_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "failed_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
                 },
                 "persist_time" : 
                 {
@@ -743,7 +783,7 @@ var bundle_syntax = {
             "handle" : 
             {
                 datatype: "string",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "depends_on" : 
             {
@@ -802,17 +842,17 @@ var bundle_syntax = {
             "or" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "and" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "xor" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "dist" : 
             {
@@ -822,12 +862,17 @@ var bundle_syntax = {
             "expression" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "not" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
+            },
+            "select_class" : 
+            {
+                datatype: "rlist",
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             }
         },
         "reports":
@@ -852,7 +897,7 @@ var bundle_syntax = {
                 "file_to_print" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "number_of_lines" : 
                 {
@@ -864,7 +909,7 @@ var bundle_syntax = {
             "report_to_file" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             },
             "showstate" : 
             {
@@ -924,17 +969,17 @@ var bundle_syntax = {
                 "value_kept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_repaired" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_notkept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "audit" : 
                 {
@@ -963,42 +1008,57 @@ var bundle_syntax = {
                 "promise_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_failed" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_denied" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_timeout" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "promise_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_notkept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
+                },
+                "kept_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "repaired_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "failed_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
                 },
                 "persist_time" : 
                 {
@@ -1020,7 +1080,7 @@ var bundle_syntax = {
             "handle" : 
             {
                 datatype: "string",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "depends_on" : 
             {
@@ -1070,12 +1130,12 @@ var bundle_syntax = {
                 "chdir" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "chroot" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "preview" : 
                 {
@@ -1157,7 +1217,7 @@ var bundle_syntax = {
             "environment_host" : 
             {
                 datatype: "string",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_$(){}.:-]+"
             },
             "environment_interface" : 
             {
@@ -1198,12 +1258,12 @@ var bundle_syntax = {
                 "env_baseline" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "env_spec_file" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 }
             
             },
@@ -1254,7 +1314,7 @@ var bundle_syntax = {
                 "hash" : 
                 {
                     datatype: "(menu option)",
-                    pcre_range: "md5|sha1|sha256|sha384|sha512|best"
+                    pcre_range: "md5|sha1|sha224|sha256|sha384|sha512|best"
                 },
                 "report_changes" : 
                 {
@@ -1278,7 +1338,7 @@ var bundle_syntax = {
                 "source" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: ".+"
                 },
                 "servers" : 
                 {
@@ -1333,7 +1393,7 @@ var bundle_syntax = {
                 "link_type" : 
                 {
                     datatype: "(menu option)",
-                    pcre_range: "symlink|hardlink|relative|absolute|none"
+                    pcre_range: "symlink|hardlink|relative|absolute"
                 },
                 "force_update" : 
                 {
@@ -1481,7 +1541,7 @@ var bundle_syntax = {
                 "path_name" : 
                 {
                     datatype: "slist",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "search_mode" : 
                 {
@@ -1526,12 +1586,12 @@ var bundle_syntax = {
                 "exec_regex" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: ".*"
                 },
                 "exec_program" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "file_types" : 
                 {
@@ -1546,7 +1606,7 @@ var bundle_syntax = {
                 "file_result" : 
                 {
                     datatype: "string",
-                    pcre_range: "[(leaf_name|path_name|file_types|mode|size|owner|group|atime|ctime|mtime|issymlinkto|exec_regex|exec_program|bsdflags)[|&!.]*]*"
+                    pcre_range: "[!*(leaf_name|path_name|file_types|mode|size|owner|group|atime|ctime|mtime|issymlinkto|exec_regex|exec_program|bsdflags)[|&.]*]*"
                 }
             
             },
@@ -1565,12 +1625,12 @@ var bundle_syntax = {
                 "link_type" : 
                 {
                     datatype: "(menu option)",
-                    pcre_range: "symlink|hardlink|relative|absolute|none"
+                    pcre_range: "symlink|hardlink|relative|absolute"
                 },
                 "source" : 
                 {
                     datatype: "string",
-                    pcre_range: ".*"
+                    pcre_range: ".+"
                 },
                 "when_linking_children" : 
                 {
@@ -1655,12 +1715,7 @@ var bundle_syntax = {
             "repository" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
-            },
-             "string" : 
-            {
-                datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             },
             "touch" : 
             {
@@ -1670,7 +1725,7 @@ var bundle_syntax = {
             "transformer" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             }
         },
         "interfaces":
@@ -1724,7 +1779,7 @@ var bundle_syntax = {
                 "package_add_command" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "package_arch_regex" : 
                 {
@@ -1734,12 +1789,12 @@ var bundle_syntax = {
                 "package_changes" : 
                 {
                     datatype: "(menu option)",
-                    pcre_range: "individual|bulk|bulk_no_names"
+                    pcre_range: "individual|bulk"
                 },
                 "package_delete_command" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "package_delete_convention" : 
                 {
@@ -1764,7 +1819,7 @@ var bundle_syntax = {
                 "package_list_command" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "package_list_name_regex" : 
                 {
@@ -1814,7 +1869,7 @@ var bundle_syntax = {
                 "package_patch_command" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "package_patch_installed_regex" : 
                 {
@@ -1824,7 +1879,7 @@ var bundle_syntax = {
                 "package_patch_list_command" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "package_patch_name_regex" : 
                 {
@@ -1839,12 +1894,12 @@ var bundle_syntax = {
                 "package_update_command" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "package_verify_command" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "package_version_regex" : 
                 {
@@ -1972,12 +2027,12 @@ var bundle_syntax = {
             "process_stop" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             },
             "restart_class" : 
             {
                 datatype: "string",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "signals" : 
             {
@@ -1995,7 +2050,7 @@ var bundle_syntax = {
             "service_dependencies" : 
             {
                 datatype: "slist",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "service_method" : 
             {
@@ -2039,7 +2094,7 @@ var bundle_syntax = {
                 "mount_source" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "mount_server" : 
                 {
@@ -2134,17 +2189,17 @@ var bundle_syntax = {
             "or" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "and" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "xor" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "dist" : 
             {
@@ -2154,12 +2209,17 @@ var bundle_syntax = {
             "expression" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "not" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
+            },
+            "select_class" : 
+            {
+                datatype: "rlist",
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             }
         },
         "reports":
@@ -2184,7 +2244,7 @@ var bundle_syntax = {
                 "file_to_print" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "number_of_lines" : 
                 {
@@ -2196,7 +2256,7 @@ var bundle_syntax = {
             "report_to_file" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             },
             "showstate" : 
             {
@@ -2256,17 +2316,17 @@ var bundle_syntax = {
                 "value_kept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_repaired" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_notkept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "audit" : 
                 {
@@ -2295,42 +2355,57 @@ var bundle_syntax = {
                 "promise_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_failed" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_denied" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_timeout" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "promise_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_notkept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
+                },
+                "kept_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "repaired_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "failed_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
                 },
                 "persist_time" : 
                 {
@@ -2352,7 +2427,7 @@ var bundle_syntax = {
             "handle" : 
             {
                 datatype: "string",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "depends_on" : 
             {
@@ -2447,17 +2522,17 @@ var bundle_syntax = {
             "or" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "and" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "xor" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "dist" : 
             {
@@ -2467,12 +2542,17 @@ var bundle_syntax = {
             "expression" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "not" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
+            },
+            "select_class" : 
+            {
+                datatype: "rlist",
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             }
         },
         "reports":
@@ -2497,7 +2577,7 @@ var bundle_syntax = {
                 "file_to_print" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "number_of_lines" : 
                 {
@@ -2509,7 +2589,7 @@ var bundle_syntax = {
             "report_to_file" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             },
             "showstate" : 
             {
@@ -2569,17 +2649,17 @@ var bundle_syntax = {
                 "value_kept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_repaired" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_notkept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "audit" : 
                 {
@@ -2608,42 +2688,57 @@ var bundle_syntax = {
                 "promise_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_failed" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_denied" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_timeout" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "promise_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_notkept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
+                },
+                "kept_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "repaired_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "failed_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
                 },
                 "persist_time" : 
                 {
@@ -2665,7 +2760,7 @@ var bundle_syntax = {
             "handle" : 
             {
                 datatype: "string",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "depends_on" : 
             {
@@ -2771,17 +2866,17 @@ var bundle_syntax = {
             "or" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "and" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "xor" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "dist" : 
             {
@@ -2791,12 +2886,17 @@ var bundle_syntax = {
             "expression" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "not" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
+            },
+            "select_class" : 
+            {
+                datatype: "rlist",
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             }
         },
         "reports":
@@ -2821,7 +2921,7 @@ var bundle_syntax = {
                 "file_to_print" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "number_of_lines" : 
                 {
@@ -2833,7 +2933,7 @@ var bundle_syntax = {
             "report_to_file" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             },
             "showstate" : 
             {
@@ -2893,17 +2993,17 @@ var bundle_syntax = {
                 "value_kept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_repaired" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_notkept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "audit" : 
                 {
@@ -2932,42 +3032,57 @@ var bundle_syntax = {
                 "promise_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_failed" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_denied" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_timeout" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "promise_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_notkept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
+                },
+                "kept_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "repaired_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "failed_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
                 },
                 "persist_time" : 
                 {
@@ -2989,7 +3104,7 @@ var bundle_syntax = {
             "handle" : 
             {
                 datatype: "string",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "depends_on" : 
             {
@@ -3048,17 +3163,17 @@ var bundle_syntax = {
             "or" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "and" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "xor" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "dist" : 
             {
@@ -3068,12 +3183,17 @@ var bundle_syntax = {
             "expression" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "not" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
+            },
+            "select_class" : 
+            {
+                datatype: "rlist",
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             }
         },
         "reports":
@@ -3098,7 +3218,7 @@ var bundle_syntax = {
                 "file_to_print" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "number_of_lines" : 
                 {
@@ -3110,7 +3230,7 @@ var bundle_syntax = {
             "report_to_file" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             },
             "showstate" : 
             {
@@ -3170,17 +3290,17 @@ var bundle_syntax = {
                 "value_kept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_repaired" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_notkept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "audit" : 
                 {
@@ -3209,42 +3329,57 @@ var bundle_syntax = {
                 "promise_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_failed" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_denied" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_timeout" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "promise_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_notkept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
+                },
+                "kept_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "repaired_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "failed_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
                 },
                 "persist_time" : 
                 {
@@ -3266,7 +3401,7 @@ var bundle_syntax = {
             "handle" : 
             {
                 datatype: "string",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "depends_on" : 
             {
@@ -3282,7 +3417,6 @@ var bundle_syntax = {
     },
     knowledge:
     {
-        "things":{},
         "vars":
         {
             "string" : 
@@ -3326,17 +3460,17 @@ var bundle_syntax = {
             "or" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "and" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "xor" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "dist" : 
             {
@@ -3346,12 +3480,17 @@ var bundle_syntax = {
             "expression" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "not" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
+            },
+            "select_class" : 
+            {
+                datatype: "rlist",
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             }
         },
         "reports":
@@ -3376,7 +3515,7 @@ var bundle_syntax = {
                 "file_to_print" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "number_of_lines" : 
                 {
@@ -3388,7 +3527,7 @@ var bundle_syntax = {
             "report_to_file" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             },
             "showstate" : 
             {
@@ -3448,17 +3587,17 @@ var bundle_syntax = {
                 "value_kept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_repaired" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_notkept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "audit" : 
                 {
@@ -3487,42 +3626,57 @@ var bundle_syntax = {
                 "promise_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_failed" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_denied" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_timeout" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "promise_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_notkept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
+                },
+                "kept_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "repaired_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "failed_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
                 },
                 "persist_time" : 
                 {
@@ -3544,7 +3698,7 @@ var bundle_syntax = {
             "handle" : 
             {
                 datatype: "string",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "depends_on" : 
             {
@@ -3554,6 +3708,92 @@ var bundle_syntax = {
             "comment" : 
             {
                 datatype: "string",
+                pcre_range: ".*"
+            }
+        },
+        "inferences":
+        {
+            "precedents" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "qualifiers" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            }
+        },
+        "things":
+        {
+            "synonyms" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "affects" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "belongs_to" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "caused_by" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "causes" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "certainty" : 
+            {
+                datatype: "(menu option)",
+                pcre_range: "certain|uncertain|possible"
+            },
+            "determines" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "generalizations" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "is_connected_to" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "is_located_in" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "is_part_of" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "needs" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "provides" : 
+            {
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "uses" : 
+            {
+                datatype: "slist",
                 pcre_range: ".*"
             }
         },
@@ -3578,12 +3818,16 @@ var bundle_syntax = {
                 }
             
             },
-            "comment" : 
+            "synonyms" : 
             {
-                datatype: "string",
+                datatype: "slist",
+                pcre_range: ".*"
+            },
+            "generalizations" : 
+            {
+                datatype: "slist",
                 pcre_range: ".*"
             }
-            
         },
         "occurrences":
         {
@@ -3606,33 +3850,6 @@ var bundle_syntax = {
             {
                 datatype: "string",
                 pcre_range: ".*"
-            }
-        },
-        "inferences":
-        {
-            "follow_topics" : 
-            {
-                datatype: "string",
-                pcre_range: ".*"
-            },
-            "infer" : 
-            {
-                "pre_assoc_pattern" : 
-                {
-                    datatype: "string",
-                    pcre_range: ".*"
-                },
-                "post_assoc_pattern" : 
-                {
-                    datatype: "string",
-                    pcre_range: ".*"
-                },
-                "inference" : 
-                {
-                    datatype: "string",
-                    pcre_range: ".*"
-                }
-            
             }
         }
     },
@@ -3681,17 +3898,17 @@ var bundle_syntax = {
             "or" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "and" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "xor" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "dist" : 
             {
@@ -3701,12 +3918,17 @@ var bundle_syntax = {
             "expression" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "not" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
+            },
+            "select_class" : 
+            {
+                datatype: "rlist",
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             }
         },
         "reports":
@@ -3731,7 +3953,7 @@ var bundle_syntax = {
                 "file_to_print" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "number_of_lines" : 
                 {
@@ -3743,7 +3965,7 @@ var bundle_syntax = {
             "report_to_file" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             },
             "showstate" : 
             {
@@ -3803,17 +4025,17 @@ var bundle_syntax = {
                 "value_kept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_repaired" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_notkept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "audit" : 
                 {
@@ -3842,42 +4064,57 @@ var bundle_syntax = {
                 "promise_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_failed" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_denied" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_timeout" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "promise_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_notkept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
+                },
+                "kept_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "repaired_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "failed_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
                 },
                 "persist_time" : 
                 {
@@ -3899,7 +4136,7 @@ var bundle_syntax = {
             "handle" : 
             {
                 datatype: "string",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "depends_on" : 
             {
@@ -3958,17 +4195,17 @@ var bundle_syntax = {
             "or" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "and" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "xor" : 
             {
                 datatype: "clist",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "dist" : 
             {
@@ -3978,12 +4215,17 @@ var bundle_syntax = {
             "expression" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             },
             "not" : 
             {
                 datatype: "class",
-                pcre_range: "[a-zA-Z0-9_!&@@$|.()]+"
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
+            },
+            "select_class" : 
+            {
+                datatype: "rlist",
+                pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
             }
         },
         "reports":
@@ -4008,7 +4250,7 @@ var bundle_syntax = {
                 "file_to_print" : 
                 {
                     datatype: "string",
-                    pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                    pcre_range: "\"?(/.*)"
                 },
                 "number_of_lines" : 
                 {
@@ -4020,7 +4262,7 @@ var bundle_syntax = {
             "report_to_file" : 
             {
                 datatype: "string",
-                pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+                pcre_range: "\"?(/.*)"
             },
             "showstate" : 
             {
@@ -4080,17 +4322,17 @@ var bundle_syntax = {
                 "value_kept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_repaired" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "value_notkept" : 
                 {
                     datatype: "real",
-                    pcre_range: ".*"
+                    pcre_range: "-9.99999E100,9.99999E100"
                 },
                 "audit" : 
                 {
@@ -4119,42 +4361,57 @@ var bundle_syntax = {
                 "promise_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_failed" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_denied" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "repair_timeout" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "promise_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_kept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_repaired" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
                 },
                 "cancel_notkept" : 
                 {
                     datatype: "slist",
-                    pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                    pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
+                },
+                "kept_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "repaired_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
+                },
+                "failed_returncodes" : 
+                {
+                    datatype: "slist",
+                    pcre_range: "[-0-9_$(){}\\[\\].]+"
                 },
                 "persist_time" : 
                 {
@@ -4176,7 +4433,7 @@ var bundle_syntax = {
             "handle" : 
             {
                 datatype: "string",
-                pcre_range: "[a-zA-Z0-9_$()\\[\\].]+"
+                pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
             },
             "depends_on" : 
             {
@@ -4197,6 +4454,16 @@ var body_control_syntax = {
     common:
     {
         "bundlesequence" : 
+        {
+            datatype: "slist",
+            pcre_range: ".*"
+        },
+        "goal_categories" : 
+        {
+            datatype: "slist",
+            pcre_range: ".*"
+        },
+        "goal_patterns" : 
         {
             datatype: "slist",
             pcre_range: ".*"
@@ -4226,16 +4493,6 @@ var body_control_syntax = {
             datatype: "int",
             pcre_range: "0,99999999999"
         },
-        "goal_patterns" : 
-        {
-            datatype: "slist",
-            pcre_range: ".*"
-        },
-        "goal_categories" : 
-        {
-            datatype: "slist",
-            pcre_range: ".*"
-        },
         "output_prefix" : 
         {
             datatype: "string",
@@ -4256,10 +4513,15 @@ var body_control_syntax = {
             datatype: "int",
             pcre_range: "0,99999999999"
         },
+        "site_classes" : 
+        {
+            datatype: "clist",
+            pcre_range: "[a-zA-Z0-9_!&@@$|.()\\[\\]{}]+"
+        },
         "syslog_host" : 
         {
             datatype: "string",
-            pcre_range: "[a-zA-Z0-9_$.:-]+"
+            pcre_range: "[a-zA-Z0-9_$(){}.:-]+"
         },
         "syslog_port" : 
         {
@@ -4298,6 +4560,11 @@ var body_control_syntax = {
         {
             datatype: "(menu option)",
             pcre_range: "LOG_USER|LOG_DAEMON|LOG_LOCAL0|LOG_LOCAL1|LOG_LOCAL2|LOG_LOCAL3|LOG_LOCAL4|LOG_LOCAL5|LOG_LOCAL6|LOG_LOCAL7"
+        },
+        "alwaysvalidate" : 
+        {
+            datatype: "(menu option)",
+            pcre_range: "true|false|yes|no|on|off"
         },
         "auditing" : 
         {
@@ -4419,10 +4686,15 @@ var body_control_syntax = {
             datatype: "string",
             pcre_range: "."
         },
+        "refresh_processes" : 
+        {
+            datatype: "slist",
+            pcre_range: "[a-zA-Z0-9_$(){}\\[\\].]+"
+        },
         "default_repository" : 
         {
             datatype: "string",
-            pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+            pcre_range: "\"?(/.*)"
         },
         "secureinput" : 
         {
@@ -4447,7 +4719,7 @@ var body_control_syntax = {
         "suspiciousnames" : 
         {
             datatype: "slist",
-            pcre_range: "List of names to warn about if found during any file search"
+            pcre_range: ".*"
         },
         "syslog" : 
         {
@@ -4477,37 +4749,12 @@ var body_control_syntax = {
     },
     server:
     {
-        "cfruncommand" : 
-        {
-            datatype: "string",
-            pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
-        },
-        "maxconnections" : 
-        {
-            datatype: "int",
-            pcre_range: "0,99999999999"
-        },
-        "denybadclocks" : 
-        {
-            datatype: "(menu option)",
-            pcre_range: "true|false|yes|no|on|off"
-        },
-        "allowconnects" : 
-        {
-            datatype: "slist",
-            pcre_range: ".*"
-        },
-        "denyconnects" : 
-        {
-            datatype: "slist",
-            pcre_range: ".*"
-        },
         "allowallconnects" : 
         {
             datatype: "slist",
             pcre_range: ".*"
         },
-        "trustkeysfrom" : 
+        "allowconnects" : 
         {
             datatype: "slist",
             pcre_range: ".*"
@@ -4516,31 +4763,6 @@ var body_control_syntax = {
         {
             datatype: "slist",
             pcre_range: ".*"
-        },
-        "dynamicaddresses" : 
-        {
-            datatype: "slist",
-            pcre_range: ".*"
-        },
-        "skipverify" : 
-        {
-            datatype: "slist",
-            pcre_range: ".*"
-        },
-        "logallconnections" : 
-        {
-            datatype: "(menu option)",
-            pcre_range: "true|false|yes|no|on|off"
-        },
-        "logencryptedtransfers" : 
-        {
-            datatype: "(menu option)",
-            pcre_range: "true|false|yes|no|on|off"
-        },
-        "hostnamekeys" : 
-        {
-            datatype: "(menu option)",
-            pcre_range: "true|false|yes|no|on|off"
         },
         "auditing" : 
         {
@@ -4552,20 +4774,70 @@ var body_control_syntax = {
             datatype: "string",
             pcre_range: ".*"
         },
-        "serverfacility" : 
+        "cfruncommand" : 
+        {
+            datatype: "string",
+            pcre_range: "\"?(/.*)"
+        },
+        "denybadclocks" : 
         {
             datatype: "(menu option)",
-            pcre_range: "LOG_USER|LOG_DAEMON|LOG_LOCAL0|LOG_LOCAL1|LOG_LOCAL2|LOG_LOCAL3|LOG_LOCAL4|LOG_LOCAL5|LOG_LOCAL6|LOG_LOCAL7"
+            pcre_range: "true|false|yes|no|on|off"
+        },
+        "denyconnects" : 
+        {
+            datatype: "slist",
+            pcre_range: ".*"
+        },
+        "dynamicaddresses" : 
+        {
+            datatype: "slist",
+            pcre_range: ".*"
+        },
+        "hostnamekeys" : 
+        {
+            datatype: "(menu option)",
+            pcre_range: "true|false|yes|no|on|off"
+        },
+        "keycacheTTL" : 
+        {
+            datatype: "int",
+            pcre_range: "0,99999999999"
+        },
+        "logallconnections" : 
+        {
+            datatype: "(menu option)",
+            pcre_range: "true|false|yes|no|on|off"
+        },
+        "logencryptedtransfers" : 
+        {
+            datatype: "(menu option)",
+            pcre_range: "true|false|yes|no|on|off"
+        },
+        "maxconnections" : 
+        {
+            datatype: "int",
+            pcre_range: "0,99999999999"
         },
         "port" : 
         {
             datatype: "int",
             pcre_range: "1024,99999"
         },
-        "keycacheTTL" : 
+        "serverfacility" : 
         {
-            datatype: "int",
-            pcre_range: "0,99999999999"
+            datatype: "(menu option)",
+            pcre_range: "LOG_USER|LOG_DAEMON|LOG_LOCAL0|LOG_LOCAL1|LOG_LOCAL2|LOG_LOCAL3|LOG_LOCAL4|LOG_LOCAL5|LOG_LOCAL6|LOG_LOCAL7"
+        },
+        "skipverify" : 
+        {
+            datatype: "slist",
+            pcre_range: ".*"
+        },
+        "trustkeysfrom" : 
+        {
+            datatype: "slist",
+            pcre_range: ".*"
         }
     },
     monitor:
@@ -4593,7 +4865,7 @@ var body_control_syntax = {
         "tcpdumpcommand" : 
         {
             datatype: "string",
-            pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+            pcre_range: "\"?(/.*)"
         }
     },
     runagent:
@@ -4637,6 +4909,11 @@ var body_control_syntax = {
         {
             datatype: "(menu option)",
             pcre_range: "true|false|yes|no|on|off"
+        },
+        "output_directory" : 
+        {
+            datatype: "string",
+            pcre_range: "\"?(/.*)"
         },
         "timeout" : 
         {
@@ -4684,7 +4961,7 @@ var body_control_syntax = {
         "exec_command" : 
         {
             datatype: "string",
-            pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+            pcre_range: "\"?(/.*)"
         }
     },
     knowledge:
@@ -4707,7 +4984,7 @@ var body_control_syntax = {
         "graph_directory" : 
         {
             datatype: "string",
-            pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+            pcre_range: "\"?(/.*)"
         },
         "graph_output" : 
         {
@@ -4732,7 +5009,7 @@ var body_control_syntax = {
         "manual_source_directory" : 
         {
             datatype: "string",
-            pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+            pcre_range: "\"?(/.*)"
         },
         "query_engine" : 
         {
@@ -4790,7 +5067,7 @@ var body_control_syntax = {
         "aggregation_point" : 
         {
             datatype: "string",
-            pcre_range: "\"?(([a-zA-Z]:\\\\.*)|(/.*))"
+            pcre_range: "\"?(/.*)"
         },
         "auto_scaling" : 
         {
@@ -4860,10 +5137,20 @@ var body_control_syntax = {
             datatype: "(menu option)",
             pcre_range: "true|false|yes|no|on|off"
         },
+        "federation" : 
+        {
+            datatype: "slist",
+            pcre_range: ".*"
+        },
         "hub_schedule" : 
         {
             datatype: "slist",
             pcre_range: ".*"
+        },
+        "port" : 
+        {
+            datatype: "int",
+            pcre_range: "1024,99999"
         }
     }
 };
