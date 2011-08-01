@@ -2099,34 +2099,34 @@ var.e.t = now;  // all are last seen now
 
 for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
    {
+   HashIterator i = HashIteratorInit(ptr->hashtable);
+   CfAssoc *assoc;
+
    if (strcmp(ptr->scope,"this") == 0)
       {
       continue;
       }
-   
-   for (i = 0; i < CF_HASHTABLESIZE; i++)
+
+   while ((assoc = HashIteratorNext(&i)))
       {
-      if (ptr->hashtable[i] != NULL)
-	 {
-         snprintf(key,sizeof(key),"%s.%s", ptr->scope, ptr->hashtable[i]->lval);
-         var.dtype = ptr->hashtable[i]->dtype;
-         var.rtype = ptr->hashtable[i]->rtype;
-         var.rval[0] = '\0';
+      snprintf(key,sizeof(key),"%s.%s", ptr->scope, assoc->lval);
+      var.dtype = assoc->dtype;
+      var.rtype = assoc->rtype;
+      var.rval[0] = '\0';
 
-         if (strlen(ptr->hashtable[i]->rval) > 1000) // MAXVARSIZE == 1024
-            {
-            char limit_rval[CF_MAXVARSIZE];
-            snprintf(limit_rval,CF_MAXVARSIZE-1,"%1000s ... (truncated)",ptr->hashtable[i]->rval);
-            PrintRval(var.rval, sizeof(var.rval),limit_rval, ptr->hashtable[i]->rtype);
-            }
-         else
-            {
-            PrintRval(var.rval, sizeof(var.rval),ptr->hashtable[i]->rval, ptr->hashtable[i]->rtype);
-            }
+      if (strlen(assoc->rval) > 1000) // MAXVARSIZE == 1024
+         {
+         char limit_rval[CF_MAXVARSIZE];
+         snprintf(limit_rval,CF_MAXVARSIZE-1,"%1000s ... (truncated)",assoc->rval);
+         PrintRval(var.rval, sizeof(var.rval),limit_rval, assoc->rtype);
+         }
+      else
+         {
+         PrintRval(var.rval, sizeof(var.rval), assoc->rval, assoc->rtype);
+         }
 
-         WriteDB(dbp,key,&var,VARSTRUCTUSAGE(var));
-	 }
-      } 
+      WriteDB(dbp,key,&var,VARSTRUCTUSAGE(var));
+      }
    }
 
 /* purge old entries from DB */
