@@ -162,9 +162,9 @@ void Nova_EnterpriseContext()
 {
   char master[CF_BUFSIZE]={0};
 #ifdef HAVE_GETZONEID
- zoneid_t zid;
- char zone[ZONENAME_MAX];
- char vbuff[CF_BUFSIZE];
+  zoneid_t zid;
+  char zone[ZONENAME_MAX];
+  char vbuff[CF_BUFSIZE];
 
 zid = getzoneid();
 getzonenamebyid(zid,zone,ZONENAME_MAX);
@@ -182,23 +182,19 @@ if (CFDB_QueryIsMaster())
 
    master[0]='\0';
    
-   if(strlen(CFWORKDIR) < 1)
-      {
-      snprintf(CFWORKDIR,CF_MAXVARSIZE,"%s","/var/cfengine");
-      }
-   snprintf(name,sizeof(name),"%s%cpolicy_server.dat",CFWORKDIR,FILE_SEPARATOR);
-
-   if ((fp = fopen(name,"r")) != NULL)
-      {
-      fscanf(fp,"%s",master);
-      fclose(fp);
-      }
-   
+   snprintf(master,sizeof(name),"%s",VIPADDRESS);
    NewClass("am_hub_master");
    }
 else 
    {
+   char *sp;
+   
    CFDB_QueryMasterIP(master,sizeof(master));
+
+   if (sp = strchr(master,':'))
+      {
+      *sp = '\0';
+      }
    }
 
 NewScalar("sys","hub_master",master,cf_str);
