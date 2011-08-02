@@ -5634,7 +5634,7 @@ struct Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep)
           }
        }
    
-    snprintf(buf,sizeof(buf),"%s%s%s%s%s%s%s%s%s%s%s",
+    snprintf(buf,sizeof(buf),"%s%s\"%s\"%s\"%s\"%s\"%s\"%s\"%s\"%s\"%s\"",
              handle,sep,path,sep,aces,sep,owner,sep,action,sep,ifvarclass);
     PrependItem(&retList,buf,NULL);
     }
@@ -5657,7 +5657,7 @@ struct Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep)
  mongo_cursor *cursor;
  struct Item *retList = {0};
  char handle[CF_SMALLBUF] = {0};
- char command[CF_SMALLBUF] = {0};
+ char command[CF_MAXVARSIZE] = {0};
  char failClass[CF_SMALLBUF] = {0};
  char action[CF_SMALLBUF] = {0};
  char ifvarclass[CF_SMALLBUF] = {0};
@@ -5697,7 +5697,7 @@ struct Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep)
        {
        if (strcmp(bson_iterator_key(&it1), cfp_promiser_exp) == 0)
           {
-          snprintf(command,sizeof(command),"%s",bson_iterator_string(&it1));
+          EscapeJson((char*)bson_iterator_string(&it1),command,sizeof(command));
           }
        else if (strcmp(bson_iterator_key(&it1), cfp_handle_exp) == 0)
           {
@@ -5726,7 +5726,7 @@ struct Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep)
           }
        }
    
-    snprintf(buf,sizeof(buf),"%s%s%s%s%s%s%s%s%s",
+    snprintf(buf,sizeof(buf),"%s%s\"%s\"%s\"%s\"%s\"%s\"%s\"%s\"",
              handle,sep,command,sep,failClass,sep,action,sep,ifvarclass);
     PrependItem(&retList,buf,NULL);
     }
@@ -5994,7 +5994,7 @@ struct Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep)
           }
        }
    
-    snprintf(buf,sizeof(buf),"%s%s%s%s%s%s%s%s%s",
+    snprintf(buf,sizeof(buf),"%s%s\"%s\"%s\"%s\"%s\"%s\"%s\"%s\"",
              handle,sep,key,sep,value,sep,action,sep,ifvarclass);
 
     PrependItem(&retList,buf,NULL);
@@ -6087,7 +6087,7 @@ struct Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep)
           }
        }
    
-    snprintf(buf,sizeof(buf),"%s%s%s%s%s%s%s%s%s",
+    snprintf(buf,sizeof(buf),"%s%s\"%s\"%s\"%s\"%s\"%s\"%s\"%s\"",
              handle,sep,serviceName,sep,servicePolicy,sep,action,sep,ifvarclass);
     PrependItem(&retList,buf,NULL);
     }

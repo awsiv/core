@@ -4641,7 +4641,7 @@ char *Nova_LongStateWarn(char s)
         return "Repaired";
     case 'n':
     default:
-        return "<span class=\"amber\">Not Compliant</span>";
+        return "Not Compliant";
     }
 }
 
@@ -5571,7 +5571,7 @@ int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *classreg
 void Nova2PHP_cdp_reportnames(char *buf,int bufSz)
 
 { int i;
-  char work[CF_SMALLBUF];
+ char work[CF_SMALLBUF]={0};
 
 buf[0] = '[';
 
@@ -5693,8 +5693,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
        hosts = CFDB_QueryCdpCompliance(&dbconn,handle);
       
        if (hosts)           
-          {
-          
+          {          
           for (ip2 = hosts; ip2 != NULL; ip2 = ip2->next)
              {	       
              sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%ld[^$]",hostKeyHash,host,statusStr,&then);
@@ -5712,14 +5711,17 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
                     CFDB_QueryLastFileChange(&dbconn, hostKeyHash, reportName, fileChangePath, lastChangeStr, sizeof(lastChangeStr));
                     snprintf(jsonLastChangeStr,sizeof(jsonLastChangeStr),"\"%s\"",lastChangeStr);
                     Join(attributes, ",", sizeof(attributes));
-                    Join(attributes, jsonLastChangeStr, sizeof(attributes));                   
+                    Join(attributes, jsonLastChangeStr, sizeof(attributes));                                       
+                    snprintf(row,sizeof(row),"[\"%s\",\"%s\",%s,\"%s\",\"%s\",\"%s\"],",
+                             hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr,urlReportName);
+                    break;
+                    
+                default:
+                    snprintf(row,sizeof(row),"[\"%s\",\"%s\",%s,\"%s\",\"%s\"],",
+                             hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr);
                     break;
                 }
 
-             
-             snprintf(row,sizeof(row),"[\"%s\",\"%s\",%s,\"%s\",\"%s\",\"%s\"],",
-                      hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr,urlReportName);
-            
              if(!Join(buf,row,bufSz))
                 {
                 break;
