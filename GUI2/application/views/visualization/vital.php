@@ -11,7 +11,7 @@
                                // foreach ($performanceData as $name){
                                     ?>
                                 <h3><a href="#"><?php echo $fetchData['id']; ?> <?php echo $fetchData['desc'] ? "(".$fetchData['desc'].")":''; ?>  <?php echo ($fetchData['units']) ? "[".urldecode($fetchData['units'])."]":'' ; ?><br/>
-                                            <?php echo date('D F d h:m:s Y', $performanceData['ls']); ?></a>
+                                            <?php echo getDateStatus($performanceData['ls'],true); ?></a>
                                     </h3>
                                     <div>
 

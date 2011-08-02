@@ -16,6 +16,10 @@
 <script src="<?php echo get_scriptdir();?>jquery-1.6.1.min.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir();?>jquery-ui-1.8.9.custom.min.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir();?>jquery.qtip.min.js" type="text/javascript"></script>
+<script src="<?php echo get_scriptdir();?>dateformat.js" type="text/javascript"></script>
+
+
+
 
 <!--[if IE]><?php echo $this->carabiner->display('iefix'); ?><![endif]-->
 <?php

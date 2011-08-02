@@ -1,4 +1,3 @@
-
 <div id="footer">
     <p class="grid_7"><?php echo cfpr_enterprise_version(); ?> running on <?php echo cfpr_community_version(); ?> </p>
     <p class="grid_5 alignright">Copyright &copy; 2011 CFEngine AS - All rights reserved</p>
@@ -25,6 +24,16 @@
                 }
             }, event); // Pass through our original event to qTip
         })
-       
+        
+        
+        var dateFormat = 'F d, Y H:i:s P'; 
+        $('.localtime').each(function(){
+            var dateString = $(this).html();
+            var localDate = Date.parse(dateString);
+            if (localDate) {
+                var d = new Date(localDate);
+                 $(this).html(d.format(dateFormat));
+            }
+        });
     });
 </script>

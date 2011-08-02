@@ -170,8 +170,8 @@ function getDateStatus($timestamp,$noColor=false) {
         $colorClass = 'red';
     }
     if ($noColor) $colorClass = '';
-    $formattedDate = date('D F d h:i:s Y',$timestamp);
-    return "<span class=$colorClass>$formattedDate</span>";
+    $formattedDate = date('c',$timestamp);
+    return '<span class="localtime '.$colorClass.'">'.$formattedDate.'</span>';
     
 }
 

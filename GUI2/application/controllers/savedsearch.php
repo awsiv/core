@@ -30,7 +30,7 @@ class savedsearch extends Cf_Controller {
             'date' => time());
         $obj = $this->search_save_model->insert($data);
         if ($obj) {
-            echo 'saved search sucessfully.';
+            echo 'Search successfully saved.';
             return;
         } else {
             $this->output->set_status_header('404', 'Cannot save the search');
