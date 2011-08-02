@@ -7,7 +7,7 @@ class Widget extends Cf_Controller {
     }
 
     function hostfinder() {
-        $this->data['hostlist'] = json_decode(cfpr_select_hosts("none", ".*", 100));
+        $this->data['hostlist'] = json_decode(cfpr_select_hosts("none", ".*", NULL));
         $this->load->view('widgets/hostfinder', $this->data);
     }
 
@@ -245,6 +245,11 @@ class Widget extends Cf_Controller {
     function getbreadcrumbs() {
         $this->breadcrumblist->checkurl($this->input->post('url'));
         echo $this->breadcrumblist->display();
+    }
+
+    function cdpreports(){
+        $data= cfpr_cdp_reportnames();
+        sanitycheckjson($data);  
     }
 
 }

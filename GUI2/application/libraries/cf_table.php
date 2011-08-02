@@ -225,6 +225,41 @@ class cf_table {
          }
      return $this->CI->table->generate();
     }
+
+    function generate_cdp_report_table($report,$tabledata){
+        if(!is_array($tabledata)){
+            return "invalid json data";
+        }
+        $escape_header = array('hostkey','urlReport');
+        $links_only_for= array('file diffs'=>'Path');
+        $headers=array();
+        foreach ($tabledata['meta']['header'] as $header=>$value) {
+            if (array_search($header, $escape_header) === FALSE) {
+                array_push($headers,$header);
+            }
+        }
+
+        $this->CI->table->set_heading($headers);
+        if (count($tabledata['data']) > 0) {
+            foreach ($tabledata['data'] as $row) {
+                $temp=array();
+                foreach ($tabledata['meta']['header'] as $key => $value) {
+                    if (array_search($key, $escape_header) === FALSE) {
+                          if(key_exists(strtolower($report), $links_only_for)&&$links_only_for[strtolower($report)]==$key){
+                            $content=sprintf('<a href="%s/search/index/report/%s/host/%s/name/%s">%s</a>'
+                                    ,site_url(),urlencode($row[$tabledata['meta']['header']['urlReport']]),urlencode($row[$tabledata['meta']['header']['hostkey']]),urlencode($row[$value]),$row[$value]);
+                            array_push($temp, $content);
+                          }
+                          else{
+                              array_push($temp,$row[$value]);
+                          }
+                }
+            }
+             $this->CI->table->add_row($temp);
+        }
+       return $this->CI->table->generate();
+        }
+    }
 }
 
 ?>

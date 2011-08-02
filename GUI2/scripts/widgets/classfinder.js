@@ -60,11 +60,13 @@ addsearchbar:function(){
         self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
         self.element.bind('click',function(event){
             event.preventDefault();
-          self.dialogcontent.dialog('open');
-          if(!$("#classList").size()>0)
+          $(this).text('').append('<span class="loadinggif"> </span>');
+           self.loadpagebody();
+           self.dialogcontent.dialog('open');
+            /* if(!$("#classList").size()>0)
               {
                  self.loadpagebody();
-              }
+              }*/
         });
 
 },
@@ -157,6 +159,7 @@ loadpagebody:function(){
                                   });
           self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
           self.dialogcontent.find("#classList").delegate('a.classadd','click',$.proxy(self.addclassfilter,self));
+          self.element.text('class');
      });
 },
 

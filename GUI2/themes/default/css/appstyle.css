@@ -962,6 +962,11 @@ span#today
 
 
 /* host finder control*/
+.loadinggif{
+ background: url("../images/small_loader.gif") no-repeat scroll 0 0 transparent;
+ margin-left: 3px;
+ padding: 0 9px;
+}
 span.search
 {
     background: url("../images/searchbar.png") no-repeat scroll 0 0 transparent;
@@ -1005,7 +1010,7 @@ span.search input
     background:#fff;
 }
 
-.customdlg #reportlistcontainer
+.customdlg #reportlistcontainer,.customdlg #cdpreportlistcontainer
 {
     background:#fff;
 }

@@ -31,7 +31,7 @@
                 <li><?php echo anchor('widget/allpolicies', 'promises', array('class' => 'policies showqtip','title'=>lang('tooltip_promise_finder'), 'id' => 'findpolicy')); ?></li>
                 <li><?php echo anchor('widget/allreports', 'reports', array('class' => 'report showqtip', 'id' => 'findreport','title'=>lang('tooltip_reports_finder'))); ?></li>
                 <li><?php echo anchor('summaryreports/search', 'summary reports', array('class' => 'summary_report showqtip','id' => 'summaryreport','title'=>lang('tooltip_summary_finder'))); ?></li>
-                
+                 <li><?php echo anchor('widget/cdpreports', 'Cdp reports', array('class' => 'report showqtip', 'id' => 'findcdpreport','title'=>lang('tooltip_reports_finder'))); ?></li>
                 
                 <p class="clearleft"></p>
             </ul>
@@ -58,7 +58,7 @@
         $('#findreport').reportfinder(genericOption);
          $('#summaryreport').ajaxyDialog({'title':'Summary report',dontOverrideTitle:true,
             'width':'50%'});
-        
+         $('#findcdpreport').cdpreportfinder(genericOption);
         
         //fix for manintaining the layout of the page when window is resized.
         $('#compliance_summary').css('width','50px');

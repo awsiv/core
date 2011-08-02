@@ -5,9 +5,10 @@
             var self = this;            
             self.element.bind('click',function(event){
                 event.preventDefault();
+                $(this).text('').append('<span class="loadinggif"> </span>');
                 self.createhostfinder();
                  self.cfui.categories.hide();
-                self.temp.dialog('open')
+                 self.temp.dialog('open');
             });
             
             $.ui.hostfinder.instances.push(this.element);
@@ -53,7 +54,8 @@
                         width: self.options.width,
                         autoOpen: false,
                         modal: true
-                    });   
+                    });
+                   self.element.text('host') ;
                 }
             });
 

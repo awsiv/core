@@ -84,16 +84,16 @@
             self.menu.appendTo(self.titlebar).hide();
             self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
             self.element.bind('click',function(event){
-              
-               if(!$("#"+self.containerID()).size()>0)
+               event.preventDefault();
+               $(this).text('').append('<span class="loadinggif"> </span>');
+              /* if(!$("#"+self.containerID()).size()>0)
                 {
                     self.dialogcontent.html(self.ajaxloader);
                     self.loadpagebody(self.element.attr('href'),"",true);
-                }
+                }*/
+                self.dialogcontent.html(self.ajaxloader);
+                self.loadpagebody(self.element.attr('href'),"",true);
                 self.dialogcontent.dialog('open');
-               
-                event.preventDefault();
-                return false;
             });
 
         },
@@ -153,8 +153,8 @@
                                
                     });
                     $('#'+self.containerID()).append(li);
-                    
                     $('#'+self.containerID()).delegate('a','click',$.proxy(self.handleSelected,self));
+                    self.element.text('promises');
                 },
                 error:function(jqXHR, textStatus, errorThrown){
                     self.dialogcontent.html($("<ul>").attr("id", self.containerID()));

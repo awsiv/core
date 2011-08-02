@@ -770,5 +770,13 @@ try {
         var_dump($result);
    }
 
+   function test_get_users_by_group(){
+      $this->load->model('ion_auth_model_mongo');
+       $result=$this->ion_auth_model_mongo-> get_users_by_group('manager');
+         var_dump($result);
+   }
+
+
+
    
 }
