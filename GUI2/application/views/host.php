@@ -10,7 +10,7 @@
 			  ?>
 <div id="hostview">
     <div class="outerdiv">
-   <div class="innerdiv" id="notkepttable" title="Promises not kept in the past week">
+   <div id="notkepttable" title="Promises not kept in the past week">
 			<?php $report = cfpr_summarize_notkept($hostkey,NULL,NULL,NULL,NULL,NULL,NULL);?>
               <!--<p class="title">Promises not kept in the past week</p-->
                      <div class="tables">
@@ -134,7 +134,6 @@ $(document).ready(function() {
      var $notkeptbox = $('#notkepttable').dialog({
 		 autoOpen: false,
 		 modal: true,
-		 hide: 'puff',
                  width: 'auto',
 		 buttons: {
 		 'Ok': function() {
@@ -154,7 +153,6 @@ $(document).ready(function() {
          var $hostdelconfirm = $('#hostdelconfirmation').dialog({
 		 autoOpen: false,
 		 modal: true,
-		 hide: 'puff',
                  width: 400,
                  resizable:false,
 		 buttons: {

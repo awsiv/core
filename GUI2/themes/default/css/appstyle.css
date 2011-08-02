@@ -988,31 +988,12 @@ span.search input
     width:220px;
 }
 
-.customdlg
+div.ui-dialog, .customdlg
 {
     background: #3d453a;
     /*background: url("images/ui-bg_glass_75_ffffff_1x400.png") repeat-x scroll 50% 50% #FFFFFF;*/
     border: 1px solid #3d453a;
     color: #222222;
-}
-
-.customdlg #classlistcontainer
-{
-    background: #fff;
-}
-.customdlg #hostfinderctrl
-{
-    background:#fff;
-}
-
-.customdlg #policylistcontainer
-{
-    background:#fff;
-}
-
-.customdlg #reportlistcontainer,.customdlg #cdpreportlistcontainer
-{
-    background:#fff;
 }
 
 .customdlg #topiclistcontainer
@@ -1024,18 +1005,19 @@ span.search input
     color:#08A3C1;
 }
 
-.customdlg .ui-widget-header{
+div.ui-dialog .ui-widget-header,.customdlg .ui-widget-header{
     color:#FFF;
     background: #3d453a;
     border: none;
 }
 
-.customdlg .ui-widget-header .ui-dialog-titlebar-close{
+div.ui-dialog .ui-widget-header .ui-dialog-titlebar-close,.customdlg .ui-widget-header .ui-dialog-titlebar-close{
     top:20%;
     right:-0.3em
 }
 
-.customdlg .ui-widget-header .ui-icon{
+
+div.ui-dialog .ui-widget-header .ui-icon, .customdlg .ui-widget-header .ui-icon{
     background:url('../images/close.png');
     height:10px;
     width:10px;
@@ -1045,11 +1027,19 @@ span.search input
     background-position: 0 0;
 }
 
-.customdlg .ui-widget-header .ui-dialog-title{
+div.ui-dialog .ui-widget-header .ui-dialog-title, .customdlg .ui-widget-header .ui-dialog-title{
     font-size: 21px;
     text-transform: uppercase;
     font-weight: normal;
     padding:12px 0;
+}
+
+div.ui-dialog .ui-dialog-content{
+    background:#fff;
+}
+
+div.ui-dialog .ui-dialog-buttonpane{
+    margin:0;
 }
 
 .categories
@@ -1177,11 +1167,17 @@ span.search input
     padding: 2px 5px;
     cursor: pointer;
     font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
+    color:#222222;
 }
 
 #classList li:hover .btn
 {
   border:  1px solid #3D453A
+}
+
+#classList  .btn:hover
+{
+  color:#ff9900;
 }
 
 #findmatchedhost
@@ -1410,18 +1406,16 @@ span.search input
 /*reportdialog*/
 #repdialog
 {
-    background: #3d453a;
+    background: #50574D;
     color:#fff;
-    opacity:0.9;
-    z-index:1500;
     position:absolute;
     top:0;
     left:0;
-    -moz-border-radius:5px;
-    -opera-border-radius:5px;
-    -khtml-border-radius:5px;
-    -webkit-border-radius:5px;
-    border-radius:5px;
+    -moz-border-radius:0 0 5px 5px;
+    -opera-border-radius:0 0 5px 5px;
+    -khtml-border-radius:0 0 5px 5px;
+    -webkit-border-radius:0 0 5px 5px;
+    border-radius: 0 0 5px 5px;
     width:100%;
 }
 

@@ -71,7 +71,7 @@
             <label for="mail_subject">Subject:</label>
             <input type="text" class="" value="" id="mail_subject" name="mail_subject"  size="50" />
             <label for="mail_desc">Message:</label>
-            <textarea class="" id="mail_desc" name="mail_desc" rows="4" cols="48"></textarea>
+            <textarea class="" id="mail_desc" name="mail_desc" rows="4" cols="43"></textarea>
             <input type="hidden" id="parameters" />
         </fieldset>
         <br />
@@ -142,15 +142,12 @@
 
         });
         
-        
-        
-     
+       
         var $dialog = $('#dialog');
         
         $dialog.dialog({
             autoOpen: false,
             modal: true,
-            hide: 'puff',
             width: 'auto',
             buttons: {
                 'Send': function() {
