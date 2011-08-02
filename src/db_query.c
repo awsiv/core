@@ -5807,7 +5807,7 @@ struct Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bund
           }
        }
    
-    snprintf(buf,sizeof(buf),"%s%s%s%s%s",
+    snprintf(buf,sizeof(buf),"%s%s\"%s\"%s\"%s\"",
              handle,sep,path,sep,ifvarclass);
     PrependItem(&retList,buf,NULL);
     }

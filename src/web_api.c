@@ -5621,7 +5621,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
  char thenStr[CF_SMALLBUF] = {0};
  char cause[CF_MAXVARSIZE] = {0};
  char statusStr[CF_SMALLBUF];
- char lastChangeStr[CF_SMALLBUF];
+ char lastChangeStr[CF_SMALLBUF], jsonLastChangeStr[CF_SMALLBUF]={0};
  char fileChangePath[CF_MAXVARSIZE];
  char fileChangePathUrl[CF_MAXVARSIZE];
  char *urlReportName = "";
@@ -5684,7 +5684,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
     {
     snprintf(buf,bufSz,
              "{\"meta\":{\"count\" : %d,"
-             "\"header\": %s"//{\"Host\":0,\"Service Name\":1,\"Run Status\":2,\"Action\":3,\"Class Expression\":4,\"State\":5,\"Time Checked\":6"
+             "\"header\": %s"
              "},\"data\":[", count,GetCdpTableHeader(cdpType));
     
     for(ip = promises; ip != NULL; ip = ip->next)  // join policy with host reports
@@ -5709,22 +5709,16 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
 
                     sscanf(attributes, "%512[^,]", fileChangePath);
                    
-                    snprintf(fileChangePathUrl, sizeof(fileChangePathUrl), "\"%s\",\"%s\"",
-                                                urlReportName, fileChangePath);
-                   
-                    // insert url to detailed report
-                    snprintf(attributesTmp,sizeof(attributesTmp),"%s",attributes);
-                    ReplaceStr(attributesTmp, attributes, sizeof(attributes), fileChangePath, fileChangePathUrl);
-                   
                     CFDB_QueryLastFileChange(&dbconn, hostKeyHash, reportName, fileChangePath, lastChangeStr, sizeof(lastChangeStr));
+                    snprintf(jsonLastChangeStr,sizeof(jsonLastChangeStr),"\"%s\"",lastChangeStr);
                     Join(attributes, ",", sizeof(attributes));
-                    Join(attributes, lastChangeStr, sizeof(attributes));                   
+                    Join(attributes, jsonLastChangeStr, sizeof(attributes));                   
                     break;
                 }
 
              
-             snprintf(row,sizeof(row),"[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",
-                      hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr);
+             snprintf(row,sizeof(row),"[\"%s\",\"%s\",%s,\"%s\",\"%s\",\"%s\"],",
+                      hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr,urlReportName);
             
              if(!Join(buf,row,bufSz))
                 {
@@ -5759,16 +5753,16 @@ char *GetCdpTableHeader(cdp_t cdpType)
  switch(cdpType)
     {
     case cdp_acls:
-        return "{\"Host\":0,\"Path\":1,\"Permission (ACL)\":2,\"Owner\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7}";
+        return "{\"hostkey\":0,\"Host\":1,\"Path\":2,\"Permission (ACL)\":3,\"Owner\":4,\"Action\":5,\"Class expression\":6,\"State\":7,\"Last checked\":8}";
     case cdp_commands:
-        return "{\"Host\":0,\"Command\":1,\"Failclass\":2,\"Action\":3,\"Class expression\":4,\"State\":5,\"Last checked\":6}";
+        return "{\"hostkey\":0,\"Host\":1,\"Command\":2,\"Failclass\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7}";
     case cdp_filechanges:
     case cdp_filediffs:
-        return "{\"Host\":0,\"Path\":1,\"Class expression\":2,\"Last change detected\":3,\"State\":4,\"Last checked\":5}";
+        return "{\"hostkey\":0,\"Host\":1,\"Path\":2,\"Class expression\":3,\"Last change detected\":4,\"State\":5,\"Last checked\":6,\"urlReport\":7}";
     case cdp_registry:
-        return "{\"Host\":0,\"Key\":1,\"Value\":2,\"Action\":3,\"Class expression\":4,\"State\":5,\"Last checked\":6}";
+        return "{\"hostkey\":0,\"Host\":1,\"Key\":2,\"Value\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7}";
     case cdp_services:
-        return "{\"Host\":0,\"Service name\":1,\"Runstatus\":2,\"Action\":3,\"Class expression\":4,\"State\":5,\"Last checked\":6}";
+        return "{\"hostkey\":0,\"Host\":1,\"Service name\":2,\"Runstatus\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7}";
     }
 
 
