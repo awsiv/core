@@ -3189,7 +3189,7 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
     return -1;
     }
 
- classList = CFDB_QueryBundleClasses(&dbconn,type,ToLowerStr(name));
+ classList = CFDB_QueryBundleClasses(&dbconn,type,name);
 
  if (classList)
     {
@@ -3250,7 +3250,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return -1;
    }
 
-matched = CFDB_QueryBundleArgs(&dbconn,type,ToLowerStr(name));
+matched = CFDB_QueryBundleArgs(&dbconn,type,name);
 
 if (matched)
    {
@@ -3395,7 +3395,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return -1;
    }
 
-matched = CFDB_QueryBundleType(&dbconn,ToLowerStr(name),buffer,bufsize);
+matched = CFDB_QueryBundleType(&dbconn,name,buffer,bufsize);
  
 if (!CFDB_Close(&dbconn))
    {
@@ -3442,7 +3442,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return -1;
    }
 
-matched = CFDB_QueryBundlesUsing(&dbconn,ToLowerStr(name));
+matched = CFDB_QueryBundlesUsing(&dbconn,name);
 
 matched = SortItemListClasses(matched);
 
@@ -4395,7 +4395,7 @@ int Nova2PHP_list_promise_handles_with_comments(char *bundle,char *btype,char *r
     return false;
     }
 
- hq = CFDB_QueryHandlesForBundlesWithComments(&dbconn,btype,ToLowerStr(bundle));
+ hq = CFDB_QueryHandlesForBundlesWithComments(&dbconn,btype,bundle);
 
  CFDB_Close(&dbconn);
 
@@ -4446,7 +4446,7 @@ int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
     return false;
     }
 
- hq = CFDB_QueryPromiseHandles(&dbconn,promiser,ptype,btype,ToLowerStr(bundle),regex,false);
+ hq = CFDB_QueryPromiseHandles(&dbconn,promiser,ptype,btype,bundle,regex,false);
 
  CFDB_Close(&dbconn);
 
@@ -5647,31 +5647,31 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
  switch(cdpType)
     {
     case cdp_acls:
-        promises = CFDB_QueryCdpAcls(&dbconn,"</td><td>");
+        promises = CFDB_QueryCdpAcls(&dbconn,",");
         break;
 
     case cdp_commands:
-        promises = CFDB_QueryCdpCommands(&dbconn,"</td><td>");
+        promises = CFDB_QueryCdpCommands(&dbconn,",");
         break;
 
     case cdp_services:
-        promises = CFDB_QueryCdpServices(&dbconn,"</td><td>");
+        promises = CFDB_QueryCdpServices(&dbconn,",");
         break;
 
     case cdp_filechanges:
-        promises = CFDB_QueryCdpPromiser(&dbconn,"</td><td>",cfp_cdp_bundle_filechanges,"files");
+        promises = CFDB_QueryCdpPromiser(&dbconn,",",cfp_cdp_bundle_filechanges,"files");
         reportName = cfr_filechanges;
         urlReportName = "File change log";
         break;
 
     case cdp_filediffs:
-        promises = CFDB_QueryCdpPromiser(&dbconn,"</td><td>",cfp_cdp_bundle_filediffs,"files");
+        promises = CFDB_QueryCdpPromiser(&dbconn,",",cfp_cdp_bundle_filediffs,"files");
         reportName = cfr_filediffs;
         urlReportName = "File change diffs";
         break;
 
     case cdp_registry:
-        promises = CFDB_QueryCdpRegistry(&dbconn,"</td><td>");
+        promises = CFDB_QueryCdpRegistry(&dbconn,",");
         break;
 
     default:
@@ -5684,13 +5684,12 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
     {
     snprintf(buf,bufSz,
              "{\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Service Name\":1,\"Run Status\":2,\"Action\":3,\"Class Expression\":4,\"State\":5,\"Time Checked\":6"
-             "}},\"data\":[", count);
+             "\"header\": %s"//{\"Host\":0,\"Service Name\":1,\"Run Status\":2,\"Action\":3,\"Class Expression\":4,\"State\":5,\"Time Checked\":6"
+             "},\"data\":[", count,GetCdpTableHeader(cdpType));
     
     for(ip = promises; ip != NULL; ip = ip->next)  // join policy with host reports
        {
-       sscanf(ip->name,"%128[^<]</td><td>%512[^$]",handle,attributes);
-      
+       sscanf(ip->name,"%128[^,],%512[^$]",handle,attributes);
        hosts = CFDB_QueryCdpCompliance(&dbconn,handle);
       
        if (hosts)           
@@ -5708,19 +5707,18 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
                 case cdp_filechanges:
                 case cdp_filediffs:
 
-                    sscanf(attributes, "%512[^<]", fileChangePath);
+                    sscanf(attributes, "%512[^,]", fileChangePath);
                    
-                    snprintf(fileChangePathUrl, sizeof(fileChangePathUrl), "<a href=\"/search/index/report/%s/hostkey/%s/search/%s\">%s</a>",
-                                                urlReportName, hostKeyHash, fileChangePath,fileChangePath);
+                    snprintf(fileChangePathUrl, sizeof(fileChangePathUrl), "\"%s\",\"%s\"",
+                                                urlReportName, fileChangePath);
                    
                     // insert url to detailed report
                     snprintf(attributesTmp,sizeof(attributesTmp),"%s",attributes);
                     ReplaceStr(attributesTmp, attributes, sizeof(attributes), fileChangePath, fileChangePathUrl);
                    
-                    CFDB_QueryLastFileChange(&dbconn, hostKeyHash, reportName,fileChangePath, lastChangeStr, sizeof(lastChangeStr));
-                    Join(attributes, "</td><td>", sizeof(attributes));
-                    Join(attributes, lastChangeStr, sizeof(attributes));
-                   
+                    CFDB_QueryLastFileChange(&dbconn, hostKeyHash, reportName, fileChangePath, lastChangeStr, sizeof(lastChangeStr));
+                    Join(attributes, ",", sizeof(attributes));
+                    Join(attributes, lastChangeStr, sizeof(attributes));                   
                     break;
                 }
 
@@ -5761,20 +5759,20 @@ char *GetCdpTableHeader(cdp_t cdpType)
  switch(cdpType)
     {
     case cdp_acls:
-        return "<tr><th>Host</th><th>Path</th><th>Permission (ACL)</th><th>Owner</th><th>Action</th><th>Class expression</th><th>State</th><th>Last checked</th></tr>";
+        return "{\"Host\":0,\"Path\":1,\"Permission (ACL)\":2,\"Owner\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7}";
     case cdp_commands:
-        return "<tr><th>Host</th><th>Command</th><th>Failclass</th><th>Action</th><th>Class expression</th><th>State</th><th>Last checked</th></tr>";
+        return "{\"Host\":0,\"Command\":1,\"Failclass\":2,\"Action\":3,\"Class expression\":4,\"State\":5,\"Last checked\":6}";
     case cdp_filechanges:
     case cdp_filediffs:
-        return "<tr><th>Host</th><th>Path</th><th>Class expression</th><th>Last change detected</th><th>State</th><th>Last checked</th></tr>";
+        return "{\"Host\":0,\"Path\":1,\"Class expression\":2,\"Last change detected\":3,\"State\":4,\"Last checked\":5}";
     case cdp_registry:
-        return "<tr><th>Host</th><th>Key</th><th>Value</th><th>Action</th><th>Class expression</th><th>State</th><th>Last checked</th></tr>";
+        return "{\"Host\":0,\"Key\":1,\"Value\":2,\"Action\":3,\"Class expression\":4,\"State\":5,\"Last checked\":6}";
     case cdp_services:
-        return "<tr><th>Host</th><th>Service name</th><th>Runstatus</th><th>Action</th><th>Class expression</th><th>State</th><th>Last checked</th></tr>";
+        return "{\"Host\":0,\"Service name\":1,\"Runstatus\":2,\"Action\":3,\"Class expression\":4,\"State\":5,\"Last checked\":6}";
     }
 
 
- return "<tr>Undefined Special Policy Header</tr>";
+ return "\"Undefined Special Policy Header\"";
 }
 
 /*****************************************************************************/
