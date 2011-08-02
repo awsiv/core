@@ -194,6 +194,11 @@ cdp_t CdpReportNameToType(char *reportName);
 
 int Nova2PHP_delete_host(char *keyHash);
 
+/*
+ * replica set
+ */
+int Nova2PHP_GetHubKey(char *buffer,int bufsize);
+
 struct EnvironmentsList
 {
     char *name;
