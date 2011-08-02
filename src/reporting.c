@@ -2192,7 +2192,10 @@ void Nova_ShowPromise(const char *version, struct Promise *pp, int indent)
 {
 #if defined (HAVE_LIBMONGOC)
 Nova_StoreExpandedPromise(pp);
-MapPromiseToTopic(FKNOW,pp,version);
+if (FKNOW)
+   {
+   Nova_MapPromiseToTopic(FKNOW,pp,version);
+   }
 #else
 ShowPromiseInReport(version, pp, indent);
 #endif
