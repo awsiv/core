@@ -498,7 +498,6 @@ struct Item *Nova_ScanClients()
 
   
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
-printf("[bishwa]%s/%s",CFWORKDIR,CF_LASTDB_FILE);
 MapName(name);
 
 if (!OpenDB(name,&dbp))
