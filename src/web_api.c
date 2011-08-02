@@ -3634,7 +3634,7 @@ void Nova2PHP_show_topN(char *policy,int n,struct PageInfo *page,char *buffer,in
  char work[CF_BUFSIZE] = {0};
  static char *policies[] = { "compliance", "anomaly", "performance", "lastseen", NULL};
  enum cf_rank_method pol;
- int startIndex=0,endIndex=0, i=0;
+ int startIndex=0,endIndex=0, total=0, count = 0;
  
 Nova_WebTopicMap_Initialize();
 
@@ -3646,7 +3646,7 @@ for (pol = 0; policies[pol] != NULL; pol++)
       }
    }
 
-clist = Nova_RankHosts(NULL,0,pol,n);
+clist = Nova_RankHosts(NULL,0,pol,-1);
 
 buffer[0] = '\0';
 strcat(buffer,"{\"data\":[");
@@ -3654,37 +3654,45 @@ strcat(buffer,"{\"data\":[");
 startIndex = page->resultsPerPage*(page->pageNum - 1);
 endIndex = (page->resultsPerPage*page->pageNum) - 1;
 
-for (ip = clist, i = 0; (ip !=  NULL); ip=ip->next,i++)
+for (ip = clist; (ip !=  NULL); ip=ip->next,total++)
    {
-   if (i >= startIndex && (i <= endIndex || endIndex < 0))
+   if (count >= startIndex && (count <= endIndex || endIndex <= 0))
       {
+      work[0] = '\0';
       if (Nova_IsGreen(ip->counter))
          {
          snprintf(work,sizeof(work),"{ \"colour\": \"green\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
+         count++;
          }
       else if (Nova_IsYellow(ip->counter))
          {
          snprintf(work,sizeof(work),"{ \"colour\": \"yellow\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
+         count++;
          }
       else if (Nova_IsRed(ip->counter))
          {
          snprintf(work,sizeof(work),"{ \"colour\": \"red\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
+         count++;
          }
       else
          {
-         i--;
+         total--;
          }
-   
-      if (!Join(buffer,work,bufsize))
+      
+      if(work)
          {
-         break;
-         }      
+         if (!Join(buffer,work,bufsize))
+            {
+            break;
+            }
+         }
       }
+   total++;
    }
 
 ReplaceTrailingChar(buffer, ',', '\0');
 
-snprintf(work,sizeof(work),"],\"meta\":{\"count\":%d}}",i);
+snprintf(work,sizeof(work),"],\"meta\":{\"count\":%d}}",total);
 EndJoin(buffer,work,bufsize);
 
 DeleteItemList(clist);
@@ -5682,11 +5690,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
    
  if (promises)
     {
-    snprintf(buf,bufSz,
-             "{\"meta\":{\"count\" : %d,"
-             "\"header\": %s"
-             "},\"data\":[", count,GetCdpTableHeader(cdpType));
-    
+    snprintf(buf,bufSz,"{\"data\":[", count,GetCdpTableHeader(cdpType));
     for(ip = promises; ip != NULL; ip = ip->next)  // join policy with host reports
        {
        sscanf(ip->name,"%128[^,],%512[^$]",handle,attributes);
@@ -5726,16 +5730,20 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
                 {
                 break;
                 }
+             count++;
              }
          
           DeleteItemList(hosts);
           }
        }
+
     ReplaceTrailingChar(buf,',','\0');
-    EndJoin(buf,"]}",bufSz);
-   
-    DeleteItemList(promises);
-   
+
+    snprintf(row,sizeof(row),
+                          "],\"meta\":{\"count\" : %d,"
+                          "\"header\": %s}}", count,GetCdpTableHeader(cdpType));
+    EndJoin(buf,row,bufSz);
+    DeleteItemList(promises);   
     ret = true;
     }
 
