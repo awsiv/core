@@ -3634,7 +3634,7 @@ void Nova2PHP_show_topN(char *policy,int n,struct PageInfo *page,char *buffer,in
  char work[CF_BUFSIZE] = {0};
  static char *policies[] = { "compliance", "anomaly", "performance", "lastseen", NULL};
  enum cf_rank_method pol;
- int startIndex=0,endIndex=0, total=0, count = 0;
+ int startIndex=0,endIndex=0, total=0, count = -1;
  
 Nova_WebTopicMap_Initialize();
 
@@ -3654,29 +3654,32 @@ strcat(buffer,"{\"data\":[");
 startIndex = page->resultsPerPage*(page->pageNum - 1);
 endIndex = (page->resultsPerPage*page->pageNum) - 1;
 
-for (ip = clist; (ip !=  NULL); ip=ip->next,total++)
+for (ip = clist; (ip !=  NULL); ip=ip->next)
    {
+   if(Nova_IsBlue(ip->counter))
+      {
+      continue;
+      }
+   else
+      {
+      count++; // starts from 0
+      total++; 
+      }
+   
    if (count >= startIndex && (count <= endIndex || endIndex <= 0))
       {
       work[0] = '\0';
       if (Nova_IsGreen(ip->counter))
          {
          snprintf(work,sizeof(work),"{ \"colour\": \"green\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
-         count++;
          }
       else if (Nova_IsYellow(ip->counter))
          {
          snprintf(work,sizeof(work),"{ \"colour\": \"yellow\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
-         count++;
          }
       else if (Nova_IsRed(ip->counter))
          {
          snprintf(work,sizeof(work),"{ \"colour\": \"red\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
-         count++;
-         }
-      else
-         {
-         total--;
          }
       
       if(work)
@@ -3687,7 +3690,6 @@ for (ip = clist; (ip !=  NULL); ip=ip->next,total++)
             }
          }
       }
-   total++;
    }
 
 ReplaceTrailingChar(buffer, ',', '\0');
@@ -4346,11 +4348,11 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
  Join(returnval,work,bufsize);
 
  constText[0] = '\0';
-
+ 
  if (hp->constraints)
     {
-    snprintf(work,CF_MAXVARSIZE-1,"\"body\":[");
-    Join(returnval,work,bufsize);
+     snprintf(work,CF_MAXVARSIZE-1,"\"body\":[");
+     Join(returnval,work,bufsize);
     for(i = 0; hp->constraints[i] != NULL; i++)
        {
        char lval[CF_MAXVARSIZE],rval[CF_MAXVARSIZE],args[CF_MAXVARSIZE];
@@ -4369,13 +4371,18 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
       
        Join(returnval,work,bufsize);   
        }
+    
     if (i == 0)
        {
-       Join(returnval,"body content is implicit, no futher details",bufsize);
+       Join(returnval,"\"body content is implicit, no futher details\"",bufsize);
        }
+    
+    ReplaceTrailingChar(returnval, ',', '\0');
+    strcat(returnval,"]");
     }
+ 
  ReplaceTrailingChar(returnval, ',', '\0');
- strcat(returnval,"]}");
+ strcat(returnval,"}");
     
  DeleteHubPromise(hp);
 
