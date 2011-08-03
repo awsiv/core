@@ -446,7 +446,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    // architcure coding, see Nova_ShortArch
    
    Debug("Installed software: %s version (%s on %c)\n",name,version,arch);
-   } 
+   }
 }
 
 /*****************************************************************************/

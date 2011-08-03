@@ -103,40 +103,49 @@ while (true)
    if (time_to_run)
       {
       CfOut(cf_verbose,""," -> Wake up");
-      struct Item *masterhostlist = Nova_ScanClients();
+
+      if(CFDB_QueryIsMaster())  // relevant if we are part of mongo replica set
+         {
+         struct Item *masterhostlist = Nova_ScanClients();
       
-      Nova_ParallelizeScan(masterhostlist,a,pp);      
-      DeleteItemList(masterhostlist);
+         Nova_ParallelizeScan(masterhostlist,a,pp);      
+         DeleteItemList(masterhostlist);
 
 #ifdef HAVE_CONSTELLATION
-      Constellation_ScanHubs(FEDERATION);  // query reports from hubs
+         Constellation_ScanHubs(FEDERATION);  // query reports from hubs
 #endif
-      }
 
-   if (Nova_ShiftChange())
-      {
-      CfOut(cf_verbose,""," -> Scanning all total compliance cache");
-      NewClass("am_policy_hub");
-      Nova_CacheTotalCompliance(true);
-      CFDB_Maintenance(false);
+         if (Nova_ShiftChange())
+            {
+            CfOut(cf_verbose,""," -> Scanning all total compliance cache");
+            NewClass("am_policy_hub");
+            Nova_CacheTotalCompliance(true);
+            CFDB_Maintenance(false);
       
 #ifdef HAVE_CONSTELLATION
-      CFDBCon_CacheVirtualBundleCompliance();
+            CFDBCon_CacheVirtualBundleCompliance();
 #endif
-      }
+            }
 
-   // Longterm reports cleanup everyday
-   if(IsDefinedClass("Hr10.Min00_05"))
-      {
-      CFDB_Maintenance(true);
+         // Longterm reports cleanup everyday
+         if(IsDefinedClass("Hr10.Min00_05"))
+            {
+            CFDB_Maintenance(true);
+            }
+   
+         if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
+            {
+            Nova_ZenossSummary(DOCROOT);
+            }
+   
+         Nova_CountMonitoredClasses();
+         }
+      else
+         {
+         CfOut(cf_verbose,"","We are part of report repliaca set, but not master - not collecting reports...\n");
+         }
       }
    
-   if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
-      {
-      Nova_ZenossSummary(DOCROOT);
-      }
-   
-   Nova_CountMonitoredClasses();
    CfOut(cf_verbose,"","Sleeping...\n");
    sleep(CFPULSETIME);
    }

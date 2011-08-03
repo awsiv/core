@@ -370,7 +370,7 @@ return hq;
 /*****************************************************************************/
 
 struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex, int sort)
-
+// NOTE: needs to return report from one host before next - not mixed (for Constellation)
 { bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
