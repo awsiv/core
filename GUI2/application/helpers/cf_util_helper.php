@@ -204,13 +204,16 @@ function notifier($url,$_data)
 }
 
 //checking the format of json data returned from the core before echoing back to user
-    function sanitycheckjson($data) {
+    function sanitycheckjson($data,$noecho=false) {
         //php 5.1.6 only have json_encode and json_decode and red hat only have this 5.1.6 ats stable package so need to support it as well
     $data_check = json_decode(utf8_encode($data), true);
       $CI=&get_instance();
         if (function_exists("json_last_error")) {
             if (json_last_error() == 0) {
                 if (!empty($data_check )) {
+                    if($noecho){
+                        return $data_check;
+                    }
                     echo $data;
                 } else {
                     $CI->output->set_status_header('400', 'No data Found');
@@ -220,10 +223,12 @@ function notifier($url,$_data)
             }
         } else {
             if ($data_check  == NULL) {
-
                 $CI->output->set_status_header('500', 'Valid Json Data cannot be generated from Promises');
             } else {
                 if (is_array($data_check ) && !empty($data_check)) {
+                      if($noecho){
+                        return $data_check;
+                      }
                     echo $data;
                 } else {
                     $CI->output->set_status_header('400', 'No data Found');
@@ -239,5 +244,39 @@ function notifier($url,$_data)
        }
        return false;
     }
+
+    function array_msort($array, $cols,$natsort=false)
+{
+    $colarr = array();
+    foreach ($cols as $col => $order) {
+        $colarr[$col] = array();
+        foreach ($array as $k => $row) { 
+            $colarr[$col]['_'.$k] = strtolower($row[$col]);
+          }
+    }
+    $eval = 'array_multisort(';
+    foreach ($cols as $col => $order) {
+        $eval .= '$colarr[\''.$col.'\'],'.$order.',';
+    }
+    $eval = substr($eval,0,-1).');';
+    eval($eval);
+   if($natsort)
+    {
+        foreach($cols as $col => $order){
+         natsort($colarr[$col]);
+        }
+    }
+    $ret = array();
+    foreach ($colarr as $col => $arr) {
+        foreach ($arr as $k => $v) {
+            $k = substr($k,1);
+            if (!isset($ret[$k])) $ret[$k] = $array[$k];
+            $ret[$k][$col] = $array[$k][$col];
+        }
+    }
+    return  $ret;
+    
+
+}
 
 ?>

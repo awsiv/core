@@ -45,10 +45,10 @@ class test_miscellaneous_libraries extends CodeIgniterUnitTestCase {
     
      public function test_cfpr_show_top_n_hosts(){
         $data= $gdata = cfpr_top_n_hosts(NULL, 50, 20, 1);
-        $this->dump($data);
         $jsondata=json_decode($data,True);
         $this->assertTrue(isset($jsondata),"should return a valid array");
-        
+        $this->dump($data);;
+        $this->assertEqual(count($data['data']), 0,"should not be empty");
     }
 
 }

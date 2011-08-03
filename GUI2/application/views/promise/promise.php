@@ -60,7 +60,9 @@
                             <th scope="blue" colspan="2">Body of the promise</th>
                         </tr>
 
-                        <?php foreach ((array) $promise['body'] as $body) { ?>
+                        <?php 
+                        if(key_exists('body', $promise)){
+                        foreach ((array) $promise['body'] as $body) { ?>
                             <tr>
                                 <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($body['type']); ?>"><?php echo $body['type'] ?></a> =></td>
                                <?php if(is_execptional_body(urlencode($body['type']))) {?>
@@ -69,7 +71,9 @@
                                 <td><a href="<?php echo site_url(); ?>/welcome/body/body/<?php echo urlencode($body['name']); ?>/type/<?php echo urlencode($body['type']) ?>"><?php echo $body['name'] ?><?php echo $body['args'] ?></a></td>
                                  <?php } ?>
                             </tr>
-                        <?php } ?>
+                        <?php } }else{
+                            echo "<tr><td colspan=\"2\">Body defination was not found</td></tr>";
+                        }?>
                     </table>                 
                 </div>
             </div>

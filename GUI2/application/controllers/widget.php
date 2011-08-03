@@ -7,7 +7,8 @@ class Widget extends Cf_Controller {
     }
 
     function hostfinder() {
-        $this->data['hostlist'] = json_decode(cfpr_select_hosts("none", ".*", NULL));
+        $result = json_decode(cfpr_select_hosts("none", ".*", NULL),true);
+        $this->data['hostlist']= array_msort($result,array('id'=>SORT_ASC),true);
         $this->load->view('widgets/hostfinder', $this->data);
     }
 
@@ -50,10 +51,11 @@ class Widget extends Cf_Controller {
     function __format_to_html($result, $display) {
         $html = "";
         if (key_exists('data', $result) && count($result['data']) > 0) {
+            $result=array_msort($result['data'],array('0'=>SORT_ASC),true);
             $html.="<ul class=\"result\">";
-            foreach ($result['data'] as $row) {
+            foreach ($result as $row) {
                 if ($display == 'hostname' && strlen($row[0]) > 0)
-                    $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[0] ($row[1])</a></li>";
+                    $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[0]</a></li>";
 
                 if ($display == 'ipaddress' && strlen($row[1]) > 0)
                     $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[1] ($row[0])</a></li>";
@@ -74,9 +76,9 @@ class Widget extends Cf_Controller {
         $ipaddress = $this->input->post('value');
         $data = "";
         if ($ipaddress) {
-            $data = json_decode(cfpr_show_hosts_ip($ipaddress, NULL, 10, 1), true);
+            $data = json_decode(cfpr_show_hosts_ip($ipaddress, NULL, NULL, NULL), true);
         } else {
-            $data = json_decode(cfpr_show_hosts_ip(NULL, NULL, 10, 1), true);
+            $data = json_decode(cfpr_show_hosts_ip(NULL, NULL, NULL, NULL), true);
         }
         echo $this->__format_to_html($data, 'ipaddress');
     }

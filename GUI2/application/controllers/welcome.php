@@ -410,8 +410,8 @@ class Welcome extends Cf_Controller {
             //array_push($columns, img(array('src' => 'images/' . $type . '.png', 'class' => 'align')) . anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
             //array_push($columns,anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
             // }
-
-            $table = $this->cf_table->generateSingleColourHostTable($result['data'], $type);
+            $list= array_msort($result['data'],array('id'=>SORT_ASC),true);
+            $table = $this->cf_table->generateSingleColourHostTable($list, $type);
         }
         $bc = array(
             'title' => "$type hosts",

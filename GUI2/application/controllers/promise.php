@@ -38,7 +38,6 @@ class Promise extends Cf_Controller {
         } else {
             $handle = urldecode($handle);
         }
-
         $mybundle = cfpr_get_promise_bundle($handle);
         $promiser = cfpr_get_promiser($handle);
         $type = cfpr_get_promise_type($handle);
@@ -52,7 +51,6 @@ class Promise extends Cf_Controller {
              'replace_existing'=>true
           );
         $this->breadcrumb->setBreadCrumb($bc);
-
        
         $data = array(
             'handle' => $handle,
@@ -65,7 +63,7 @@ class Promise extends Cf_Controller {
             'allhandlesbytype' =>json_decode(utf8_encode(cfpr_list_handles("", $type, false)),TRUE),
             'topicLeads' => json_decode(utf8_encode(cfpr_show_topic_leads($pid)),TRUE),
             'topicDetail' => json_decode(utf8_encode($topicDetail), true),
-            'promise' => json_decode(utf8_encode(cfpr_summarize_promise($handle)),TRUE),
+            'promise' => sanitycheckjson(cfpr_summarize_promise($handle),true),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'promise/promise', $data);

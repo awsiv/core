@@ -30,7 +30,7 @@
                 <?php
                 foreach($hostlist as $host)
                 {
-                   echo "<li><a href=".site_url('welcome/host')."/".$host->key." title=".$host->key.">$host->id</a></li>";
+                   echo "<li><a href=".site_url('welcome/host')."/".$host['key']." title=".$host['key'].">".$host['id']."</a></li>";
                 }
                ?>
             </ul>
