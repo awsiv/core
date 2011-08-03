@@ -97,7 +97,7 @@
             <label for="mail_subject">Subject:</label>
             <input type="text" class="ui-widget-content ui-corner-all" value="" id="mail_subject" name="mail_subject"  size="50" />
             <label for="mail_desc">Message:</label>
-            <textarea class="ui-widget-content ui-corner-all" id="mail_desc" name="mail_desc" rows="4" cols="48"></textarea>
+            <textarea class="ui-widget-content ui-corner-all" id="mail_desc" name="mail_desc" rows="4" cols="43"></textarea>
             <input type="hidden" id="parameters" />
         </fieldset>
         <br />
@@ -108,13 +108,12 @@
         //$('.tables table:first').prepend(
         //$('<thead></thead>').append($('.tables tr:first').remove())
         //);
-        $('.tables table').tableFilter();
+        //$('.tables table').tableFilter();
         $('.tables table').tablesorter({widgets: ['zebra']});
 
         var $dialog = $('#dialog').dialog({
             autoOpen: false,
             modal: true,
-            hide: 'puff',
             width:'auto',
             buttons: {
                 'Send': function() {

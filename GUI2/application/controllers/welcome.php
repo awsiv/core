@@ -379,6 +379,7 @@ class Welcome extends Cf_Controller {
     }
 
     function hosts($type) {
+        $this->carabiner->js('jquery.tablesorter.min.js');
         $result = array();
         $this->load->library('cf_table');
         $getparams = $this->uri->uri_to_assoc(4);

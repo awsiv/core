@@ -920,6 +920,10 @@ class Ion_auth_model_mongo extends CI_Model
             $this->mongo_db->where(array('group'=>$old_doc->name));
             $result_user=$this->mongo_db->update_all('users',array('group.$' => $data['name']));
             $this->mongo_db->clear();
+
+            $this->mongo_db->where(array('fall_back_for'=>$old_doc->name));
+            $result_user=$this->mongo_db->update_all('appsettings',array('fall_back_for' => $data['name']));
+             $this->mongo_db->clear();
             return True;
 	}
 

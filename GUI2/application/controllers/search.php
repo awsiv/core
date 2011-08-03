@@ -7,8 +7,8 @@ class Search extends Cf_Controller {
         $this->load->library(array('table', 'cf_table', 'pagination'));
         $this->load->helper('form');
         $this->carabiner->js('jquery.tablesorter.min.js');
-        $this->carabiner->js('picnet.jquery.tablefilter.js');
-        $this->carabiner->js('jquery.tablesorter.pager.js');
+        //$this->carabiner->js('picnet.jquery.tablefilter.js');
+        //$this->carabiner->js('jquery.tablesorter.pager.js');
         $this->carabiner->js('widgets/hostfinder.js');
         
     }

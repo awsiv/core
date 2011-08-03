@@ -57,3 +57,34 @@
        ?>
 </div>
 </div>
+<script type="text/javascript">
+    $(document).ready(function() {
+     $.tablesorter.addParser({
+      id: 'hostname',
+      is: function(s) {
+        return false;
+      },
+      format: function(s) {
+        var str = s.replace(/(\d{1,})/g, function(a){
+            return pad(a);
+        });
+
+        return str;
+      },
+      type: 'text'
+    });
+
+    function pad(num ){
+      var s = '00000' + num;
+      return s.substr(s.length-5);
+    }
+        $('.tables table').tablesorter({widgets: ['zebra'],
+        headers: {
+                0: {
+                    sorter:'hostname'
+                }
+            } 
+       });
+    });
+
+   </script>

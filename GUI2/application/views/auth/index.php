@@ -108,7 +108,7 @@ $(document).ready(function() {
   $('.admin_menu li a').click(function(event){
       event.preventDefault();
       var path=$(this).attr('href');
-      $("#admin_content").fadeOut(700).load(path).fadeIn(500);
+      $("#admin_content").load(path);
       $(this).parent().addClass('current').siblings().removeClass('current');
   });
 
