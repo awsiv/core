@@ -1,6 +1,5 @@
 <div id="body">
     <div class="outerdiv">
-
         <div id="custom-tabs" style="margin:15px;">
             <ul>
                 <li><a href="#tabs-1">Map</a></li>
@@ -60,7 +59,7 @@
         $('div#disambig').find('ul').addClass('panelcontent');       
         
         var   wheight = $(window).height(),
-              cheight = wheight - 250;
+        cheight = wheight - 250;
         height = cheight;
     });
 
@@ -83,7 +82,30 @@
 
         init();
 
-        $( "#custom-tabs" ).tabs();
+        $( "#custom-tabs" ).tabs(
+        {
+            cookie: {
+                // store cookie for a day, without, it would be a session cookie
+                expires: 1,
+                name:'ktab_cookie',
+                path:'/'
+            },
+            
+            show: function(event, ui) {
+                
+                // remove the cookie if it is not the reference tab
+                var tabid = 2;
+               
+                if (ui.index != tabid) {
+                    // remove the cookie
+                    console.log(ui.index);
+                    $.cookie('ktab_cookie', null, { path: '/',expires: -5 });
+                }
+                
+            }
+            
+            
+        });
        
      
 

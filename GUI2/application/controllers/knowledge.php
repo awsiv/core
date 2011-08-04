@@ -23,7 +23,7 @@ class Knowledge extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $requiredjs = array(
-            array('widgets/notes.js'),
+            array('widgets/notes.js'),           
             array('widgets/topicfinder.js'),
         );
         $this->carabiner->js($requiredjs);
@@ -88,6 +88,7 @@ class Knowledge extends Cf_Controller {
 
         // add a js file
         $this->carabiner->js('jit/jit-yc.js');
+        $this->carabiner->js('jquery.cookie.js');
         $jsIE = array('jit/Extras/excanvas.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
         $this->carabiner->css('tabs-custom.css');

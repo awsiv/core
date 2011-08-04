@@ -6,7 +6,7 @@
                 <?php foreach ((array) $category['files'] as $files) { ?>
 
 
-                    <span style="padding:5px;"><a href="<?php echo base_url() . 'docs/' . $files['filename']; ?>"><?php echo $files['title']; ?></a></span>   
+                    <span style="padding:5px;"><a target="_blank" href="<?php echo base_url() . 'docs/' . $files['filename']; ?>"><?php echo $files['title']; ?></a></span>   
 
 
                 <?php } ?>
