@@ -4,7 +4,7 @@ class Search extends Cf_Controller {
 
     function Search() {
         parent::__construct();
-        $this->load->library(array('table', 'cf_table', 'pagination'));
+        $this->load->library(array('table', 'cf_table', 'pagination','settings'));
         $this->load->helper('form');
         $this->carabiner->js('jquery.tablesorter.min.js');
         //$this->carabiner->js('picnet.jquery.tablefilter.js');
@@ -60,7 +60,8 @@ class Search extends Cf_Controller {
         $longterm_data = isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
         $hostname = cfpr_hostname($hostkey);
 
-        $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : 20);
+       
+        $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->settings->get_no_of_rows());
         if(is_numeric($rows))
         {
             $rows=(int)$rows;

@@ -88,7 +88,7 @@ class Settings_model extends CI_Model {
 
    function user_settings_get_item($username,$item)
    {
-      $data=$this->mongo_db->select(array($item))->limit(1)->get_object($this->usersSettings);
+      $data=$this->mongo_db->select(array($item))->where(array('username'=>$username))->limit(1)->get_object($this->usersSettings);
       if (is_object($data) &&  property_exists($data, $item)){
           return $data->$item;
           }

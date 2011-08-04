@@ -28,11 +28,16 @@ class Settings {
   }
 
   public function get_no_of_rows(){
-        $value=$this->ci->settings_model->app_settings_get_item($this->username,'num_rows');
+        $value=$this->ci->settings_model->user_settings_get_item($this->username,'num_rows');
         if($value!==False ){
             return $value;
           }
         return false;
+  }
+
+  //for testing
+  public function set_username($username){
+      $this->username=$username;
   }
     
 }
