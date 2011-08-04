@@ -13,6 +13,7 @@
                     </td>
                     <td>
                         <?php
+                          $target = '';
                         if ($topic['represents'] == 'description') {
                             echo sprintf("%s (%s) ", $topic['ref'], $topic['represents']);
                         } else {
@@ -20,8 +21,15 @@
                             $appendPath = rtrim(base_url(),'/'); // remove the trailing slash
                             if (preg_match($strPattern, $topic['ref'])) {
                                 $appendPath = ''; // no need to append if its full web url
-                            } 
-                            echo sprintf("<a href='%s'> %s</a> (URL)", $appendPath.$topic['ref'], $topic['represents']);
+                                $target = '_blank';
+                            }
+                          
+                            if (preg_match('/^\/docs/', $topic['ref'])) {
+                                $target = '_blank'; // no need to append if its full web url
+                            }
+                            
+                            
+                            echo sprintf("<a href='%s' target='%s'>%s</a> (URL)", $appendPath.$topic['ref'],$target, $topic['represents']);
                         }
                         ?>
                     </td>
