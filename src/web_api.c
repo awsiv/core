@@ -5194,67 +5194,59 @@ int Nova2PHP_performance_report_pdf(char *hostkey,char *job,int regex,char *clas
  return true;
 }
 /*****************************************************************************/
+int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,char *returnval,int bufsize)
 
-int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_rep type,char *classreg,char *returnval,int bufsize)
-
-{ char *report,buffer[CF_BUFSIZE],hostname[CF_MAXVARSIZE];
+{  char buffer[CF_BUFSIZE],report[CF_BUFSIZE]={0};
  struct HubPromiseLog *hp;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, tmpsize,icmp;
+ struct Rlist *rp;
  mongo_connection dbconn;
  struct Item *ip,*summary = NULL;
+ int startIndex = 0, endIndex=0, i = 0;
  int margin = strlen(CF_NOTICE_TRUNCATED);
+
+/* BEGIN query document */
+
  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
     }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,0,0,false,classreg);
-
- hostname[0] = '\0';
-
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,false,classreg);
+ 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hp = (struct HubPromiseLog *)rp->item;
-    IdempPrependItem(&summary,hp->handle,hp->cause);
-    IncrementItemListCounter(summary,hp->handle);
-
-    if (hostname[0] == '\0')
-       {
-       strncpy(hostname,hp->hh->hostname,CF_MAXVARSIZE);
-       }
+    ip = IdempPrependItem(&summary,hp->handle,hp->cause);
+    ip->counter++;
     }
 
  DeleteHubQuery(hq,DeleteHubPromiseLog);
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+ CFDB_Close(&dbconn);
 
  if (summary == NULL)
     {
     snprintf(returnval,bufsize,"No data to report on");
     }
  else
-    {
-    returnval[0] = '\0';
-    strcat(returnval,"<table>\n");
-
+    {     
     summary = SortItemListCounters(summary);
-            
-    for (ip = summary; ip != NULL; ip=ip->next)
+     
+    StartJoin(returnval,buffer,bufsize);
+   
+    for (ip = summary; ip != NULL; ip=ip->next, i++)
        {
-       snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%s<nc>%d<nova_nl>",hostname,ip->name,ip->classes,ip->counter);
+       snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%d<nova_nl>",ip->name,ip->classes,ip->counter);
        if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
           {
-          snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);
+          snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nova_nl>",CF_NOTICE_TRUNCATED);
           Join(returnval,buffer,bufsize);
           break;
           }
        }
+
     DeleteItemList(summary);
     }
 
