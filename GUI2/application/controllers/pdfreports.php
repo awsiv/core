@@ -154,7 +154,7 @@ class pdfreports extends Cf_Controller {
             case "Promises repaired summary":
                 $desc = cfpr_report_description('promises repaired summary');
                 $pdf->PDFSetDescription($desc);
-                $this->rpt_repaired_log($params['hostkey'], $params['search'], $pdf, $params['class_regex']);
+                $this->rpt_promise_repaired_summary($params['hostkey'], $params['search'], $pdf, $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex']);
                 break;
 
             case "Promises repaired log":
@@ -166,7 +166,7 @@ class pdfreports extends Cf_Controller {
             case "Promises not kept summary":
                 $desc = cfpr_report_description('promises not kept summary');
                 $pdf->PDFSetDescription($desc);
-                $this->rpt_promise_notkept($params['hostkey'], $params['search'], $pdf, '', '', $params['class_regex']);
+                $this->rpt_promise_notkept_summary($params['hostkey'], $params['search'], $pdf, $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex']);
                 break;
 
             case "Promises not kept log":
@@ -359,6 +359,41 @@ class pdfreports extends Cf_Controller {
         $pdf->SetFont('Arial', '', 9);
         $pdf->DrawTable($data1, 4, $col_len, $header, 8);
     }
+
+# promise summary
+function rpt_promise_notkept_summary($hostkey, $search, &$pdf, $hours_deltafrom, $hours_deltato, $class_regex='') 
+ {
+        $col_len = array(25, 55, 20);  
+        $header = array('Promise Handle', 'Report', 'Occurrences');
+
+        $ret = cfpr_summarize_notkept_pdf($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
+        $data1 = $pdf->ParseData($ret);
+
+        $pdf->ReportTitle();
+        $pdf->ReportDescription();
+        $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
+        $pdf->Ln(8);
+
+        $pdf->SetFont('Arial', '', 9);
+        $pdf->DrawTable($data1, 3, $col_len, $header, 8);
+ }
+
+function rpt_promise_repaired_summary($hostkey, $search, &$pdf, $hours_deltafrom, $hours_deltato, $class_regex='') 
+{
+        $col_len = array(25, 55, 20);  
+        $header = array('Promise Handle', 'Report', 'Occurrences');
+
+        $ret = cfpr_summarize_repaired_pdf($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
+        $data1 = $pdf->ParseData($ret);
+
+        $pdf->ReportTitle();
+        $pdf->ReportDescription();
+        $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
+        $pdf->Ln(8);
+
+        $pdf->SetFont('Arial', '', 9);
+        $pdf->DrawTable($data1, 3, $col_len, $header, 8);
+}
 
 ### Compliance by promise ##
 
