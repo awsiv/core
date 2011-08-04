@@ -20,8 +20,8 @@ class Setting_lib {
     }
 
   public function get_tooltips_status(){
-          $value=$this->ci->settings_model->user_settings_get_item($this->username,'toottips');
-          if($value!==False && $value=='tips_on'){
+          $value=$this->ci->settings_model->user_settings_get_item($this->username,'tooltips');
+          if($value!==false && $value=='tips_on'){
               return true;
           }
           return false;

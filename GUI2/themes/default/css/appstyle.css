@@ -1791,7 +1791,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 }
 
 /* FOR KNOWLEDGE MAP */
-.node{
+#infovis-label .node{
     background-color: #ccccff;
     border: 1px;
     -moz-box-shadow: 3px 3px 5px #888;

@@ -10,6 +10,7 @@
     // q tip initialization 
     $(document).ready(function() {
         
+        <?php if ($this->setting_lib->get_tooltips_status()) { ?> 
         
         $('a.showqtip,a.help').live('mouseover', function(event) {
             // Bind the qTip within the event handler
@@ -24,6 +25,8 @@
                 }
             }, event); // Pass through our original event to qTip
         })
+        
+         <?php } ?> 
         
         
         var dateFormat = 'F d, Y H:i:s P'; 
