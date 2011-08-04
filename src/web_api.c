@@ -4662,17 +4662,19 @@ char *Nova_LongStateWarn(char s)
 
 /*****************************************************************************/
 
-void Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz)
+int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz)
 {
 
- if(now > then + threshold)
-    {
-    snprintf(outStr,outStrSz,"<span class=\"amber\">%s</span>",cf_ctime(&then));
-    }
- else
-    {
-    snprintf(outStr,outStrSz,"%s",cf_ctime(&then));
-    }
+snprintf(outStr,outStrSz,"%s",cf_ctime(&then));
+
+if(now > then + threshold)
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
 }
 
 /*****************************************************************************/
@@ -5623,7 +5625,7 @@ return cdp_unknown;
 
 /*****************************************************************************/
 
-int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
+int Nova2PHP_cdp_report(char *hostkey, char *reportName, struct PageInfo *page, char *buf, int bufSz)
 
 {
  struct Item *promises = {0}, *hosts = {0};
@@ -5647,6 +5649,8 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
  int ret = false;
  cdp_t cdpType;
  int count = 0;
+ int timewarn = false;
+ int startIndex, endIndex;
 
  memset(buf,0,bufSz);
  now = time(NULL);
@@ -5656,6 +5660,9 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
     }
+
+ startIndex = page->resultsPerPage*(page->pageNum - 1);
+ endIndex = (page->resultsPerPage*page->pageNum) - 1;
 
  cdpType = CdpReportNameToType(reportName);
 
@@ -5694,7 +5701,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
         CFDB_Close(&dbconn);
         return false;
     }
-   
+ 
  if (promises)
     {
     snprintf(buf,bufSz,"{\"data\":[", count,GetCdpTableHeader(cdpType));
@@ -5705,39 +5712,44 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz)
       
        if (hosts)           
           {          
-          for (ip2 = hosts; ip2 != NULL; ip2 = ip2->next)
-             {	       
-             sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%ld[^$]",hostKeyHash,host,statusStr,&then);
-            
-             Nova_TimeWarn(now,then,CF_HUB_HORIZON,thenStr,sizeof(thenStr));
-            
-	    
-             switch(cdpType)  // include special fields
+          for (ip2 = hosts; ip2 != NULL; ip2 = ip2->next,count++)
+             {
+             if(count>=startIndex && (count<=endIndex || endIndex < 0))
                 {
-                case cdp_filechanges:
-                case cdp_filediffs:
+                sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%ld[^$]",hostKeyHash,host,statusStr,&then);
+            
+                timewarn = Nova_TimeWarn(now,then,CF_HUB_HORIZON,thenStr,sizeof(thenStr));
+            
+                row[0]='\0';
+                lastChangeStr[0]='\0';
+                jsonLastChangeStr[0]='\0';
+                switch(cdpType)  // include special fields
+                   {
+                   case cdp_filechanges:
+                   case cdp_filediffs:
 
-                    sscanf(attributes, "%512[^,]", fileChangePath);
+                       sscanf(attributes, "%512[^,]", fileChangePath);
                    
-                    CFDB_QueryLastFileChange(&dbconn, hostKeyHash, reportName, fileChangePath, lastChangeStr, sizeof(lastChangeStr));
-                    snprintf(jsonLastChangeStr,sizeof(jsonLastChangeStr),"\"%s\"",lastChangeStr);
-                    Join(attributes, ",", sizeof(attributes));
-                    Join(attributes, jsonLastChangeStr, sizeof(attributes));                                       
-                    snprintf(row,sizeof(row),"[\"%s\",\"%s\",%s,\"%s\",\"%s\",\"%s\"],",
-                             hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr,urlReportName);
-                    break;
-                    
-                default:
-                    snprintf(row,sizeof(row),"[\"%s\",\"%s\",%s,\"%s\",\"%s\"],",
-                             hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr);
-                    break;
-                }
+                       CFDB_QueryLastFileChange(&dbconn, hostKeyHash, reportName, fileChangePath, lastChangeStr, sizeof(lastChangeStr));
 
-             if(!Join(buf,row,bufSz))
-                {
-                break;
+                       snprintf(row,sizeof(row),"[\"%s\",\"%s\",%s,\"%s\",\"%s\",\"%s\",\"%s\",%d],",
+                                hostKeyHash,host,attributes,lastChangeStr,Nova_LongStateWarn(*statusStr),thenStr,urlReportName,timewarn);
+                       break;
+                    
+                   default:
+                       snprintf(row,sizeof(row),"[\"%s\",\"%s\",%s,\"%s\",\"%s\",%d],",
+                                hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr,timewarn);
+                       break;
+                   }
+                if(!row)
+                   {
+                   continue;
+                   }
+                if(!Join(buf,row,bufSz))
+                   {
+                   break;
+                   }
                 }
-             count++;
              }
          
           DeleteItemList(hosts);
@@ -5770,16 +5782,16 @@ char *GetCdpTableHeader(cdp_t cdpType)
  switch(cdpType)
     {
     case cdp_acls:
-        return "{\"hostkey\":0,\"Host\":1,\"Path\":2,\"Permission (ACL)\":3,\"Owner\":4,\"Action\":5,\"Class expression\":6,\"State\":7,\"Last checked\":8}";
+        return "{\"hostkey\":0,\"Host\":1,\"Path\":2,\"Permission (ACL)\":3,\"Owner\":4,\"Action\":5,\"Class expression\":6,\"State\":7,\"Last checked\":8,\"timewarn\":9}";
     case cdp_commands:
-        return "{\"hostkey\":0,\"Host\":1,\"Command\":2,\"Failclass\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7}";
+        return "{\"hostkey\":0,\"Host\":1,\"Command\":2,\"Failclass\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7,\"timewarn\":8}";
     case cdp_filechanges:
     case cdp_filediffs:
-        return "{\"hostkey\":0,\"Host\":1,\"Path\":2,\"Class expression\":3,\"Last change detected\":4,\"State\":5,\"Last checked\":6,\"urlReport\":7}";
+        return "{\"hostkey\":0,\"Host\":1,\"Path\":2,\"Class expression\":3,\"Last change detected\":4,\"State\":5,\"Last checked\":6,\"urlReport\":7,\"timewarn\":8}";
     case cdp_registry:
-        return "{\"hostkey\":0,\"Host\":1,\"Key\":2,\"Value\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7}";
+        return "{\"hostkey\":0,\"Host\":1,\"Key\":2,\"Value\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7,\"timewarn\":8}";
     case cdp_services:
-        return "{\"hostkey\":0,\"Host\":1,\"Service name\":2,\"Runstatus\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7}";
+        return "{\"hostkey\":0,\"Host\":1,\"Service name\":2,\"Runstatus\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7,\"timewarn\":8}";
     }
 
 

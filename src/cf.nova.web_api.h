@@ -52,7 +52,7 @@ void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize);
 int Nova2PHP_list_bodies(char *name,char *type,char *buffer,int bufsize);
 char *Nova_LongState(char s);
 char *Nova_LongStateWarn(char s);
-void Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz);
+int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz);
 int Nova2PHP_docroot(char *buffer,int bufsize);
 void Nova_EnterpriseModuleTrick(void);
 void Nova2PHP_getlastupdate(char *hostkey,char *buffer,int bufsize);
@@ -187,7 +187,7 @@ int Nova2PHP_get_notes(char *keyhash, char *cid, char *username, time_t from, ti
 int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize);
 
 void Nova2PHP_cdp_reportnames(char *buf,int bufSz);
-int Nova2PHP_cdp_report(char *hostkey, char *reportName, char *buf, int bufSz);
+int Nova2PHP_cdp_report(char *hostkey, char *reportName, struct PageInfo *page, char *buf, int bufSz);
 char *GetCdpTableHeader(cdp_t cdpType);
 cdp_t CdpReportNameToType(char *reportName);
 
