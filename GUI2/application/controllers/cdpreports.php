@@ -6,15 +6,17 @@ class Cdpreports extends Cf_Controller {
         parent::__construct();
         $this->load->library('cf_table');
         $this->load->helper('form');
+        $this->carabiner->js('jquery.tablesorter.min.js');
     }
 
     function get_report($report=NULL) {
         $report=urldecode($report);
         $getparams = $this->uri->uri_to_assoc(4);
          $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
-        if(!is_numeric($rows))
-        {
-           $rows=20;
+        if (is_numeric($rows)) {
+            $rows = (int) $rows;
+        } else {
+            $rows = 20;
         }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         $data = cfpr_cdp_report(NULL,$report,$rows,$page_number);

@@ -78,13 +78,10 @@
       var s = '00000' + num;
       return s.substr(s.length-5);
     }
-        $('.tables table').tablesorter({widgets: ['zebra'],
-        headers: {
-                0: {
-                    sorter:'hostname'
-                }
-            } ,
-      sortList: [[0,0]]
+         $('.tables table').tablesorter({
+            widgets: ['zebra'],
+            headers: {0: {sorter:'hostname'} } ,
+            sortList: [[0,0]]
        });
     });
 
