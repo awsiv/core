@@ -561,6 +561,7 @@ if (CFDB_QueryIsMaster())
 else
    {
    CfOut(cf_inform,"","I am not the hub master\n");
+   DeleteItemList(list);
    list = NULL;   
    }
 #endif
