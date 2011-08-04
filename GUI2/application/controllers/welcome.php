@@ -386,9 +386,9 @@ class Welcome extends Cf_Controller {
         }
         $this->carabiner->js('jquery.tablesorter.min.js');
         $result = array();
-        $this->load->library('cf_table');
+        $this->load->library(array('cf_table'));
         $getparams = $this->uri->uri_to_assoc(4);
-        $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : 20);
+        $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
         if(!is_numeric($rows)){
             $rows=20;
         }

@@ -5,7 +5,7 @@ if (!defined('BASEPATH'))
 /**
  * To retrive specific things from app settings and user settings
  */
-class Settings {
+class Setting_lib {
   protected $errors = array();
   protected $username;
   public function __construct()
