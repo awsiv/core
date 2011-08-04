@@ -16,7 +16,7 @@
                     <span class="<?php echo $type.'host'?> coloriconinline"></span><span class="title"><?php echo $type?> hosts</span>
                     </p>
        <?php
-      echo $tabledata;
+           echo $tabledata;
                 $pg = paging($current, $number_of_rows, $count, 10);?>
                 <div class="Paging">
                 <div class="pages">
@@ -83,7 +83,8 @@
                 0: {
                     sorter:'hostname'
                 }
-            } 
+            } ,
+      sortList: [[0,0]]
        });
     });
 

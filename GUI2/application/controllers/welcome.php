@@ -378,7 +378,12 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'planning', $data);
     }
 
-    function hosts($type) {
+    function hosts($type=NULL) {
+          if($type==NULL)
+        {
+            redirect('welcome/engg');
+                return;
+        }
         $this->carabiner->js('jquery.tablesorter.min.js');
         $result = array();
         $this->load->library('cf_table');
@@ -438,6 +443,16 @@ class Welcome extends Cf_Controller {
         {
             cfpr_delete_host($hostkey_tobe_deleted);
         }
+         $getparams = $this->uri->uri_to_assoc(3);
+         
+         if(key_exists('delhost', $getparams)){
+              cfpr_delete_host($getparams['delhost']);
+         }
+          if(key_exists('type', $getparams)){
+              redirect('welcome/hosts/'.$getparams['type']);
+         }
+          
+        
          if($hostkey==NULL)
         {
             redirect('welcome/engg');

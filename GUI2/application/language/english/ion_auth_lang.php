@@ -57,9 +57,9 @@ $lang['group_delete_successful'] 		= 'Group Deleted';
 $lang['group_delete_unsuccessful'] 		= 'Unable to Delete Group';
 $lang['group_update_successful']                = 'Group Information Sucessfully Updated';
 $lang['group_update_unsuccessful']              = 'Unable to Update group';
-$lang['backend_error']              = "Appsetting's doesn't exist switched to mongo db but no tables found";
-
-
+$lang['backend_error']              = "Appsetting's doesn't exist ,create it using mission portal settings link";
+$lang['admin_group_deletion']= "Cannot delete the admin group";
+$lang['no_admin_group']="No Admin group selected yet in app config";
 //modes of login
 $lang['login_mode_changed']          =  'The mode of authentication is changed , it might be due to config changes or system fall back to use database in case of unsucessful ldap login
                                                        Please relogin';

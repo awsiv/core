@@ -46,7 +46,7 @@ class Settings_model extends CI_Model {
    function app_settings_get_item($item)
    {
       $data=$this->mongo_db->select(array($item))->limit(1)->get_object($this->collectionName);
-      if (is_object($data)){
+      if (is_object($data) &&  property_exists($data, $item)){
           return $data->$item;
           }
       return false;

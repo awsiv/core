@@ -12,6 +12,19 @@ class Settings extends Cf_Controller {
     }
 
     function manage($op=false, $id=false) {
+          $bc = array(
+                'title' => 'settings',
+                'url' => 'auth/setting',
+                'isRoot' => false,
+                'replace_existing' => true
+            );
+            $this->breadcrumb->setBreadCrumb($bc);
+        $isadmin=$this->settings_model->app_settings_get_item('admin_group');
+        if($isadmin!==FALSE){
+            if(!$this->ion_auth->is_admin() && !$this->ion_auth->is_in_fallback_group()){
+                 redirect('auth/setting');
+            }
+        }
         $requiredjs = array(
             array('widgets/notes.js'),
         );
@@ -31,13 +44,6 @@ class Settings extends Cf_Controller {
         $this->form_validation->set_error_delimiters('<br /><span>', '</span>');
 
         if ($this->form_validation->run() == FALSE) { // validation hasn't been passed
-            $bc = array(
-                'title' => 'settings',
-                'url' => 'auth/setting',
-                'isRoot' => false,
-                'replace_existing' => true
-            );
-            $this->breadcrumb->setBreadCrumb($bc);
             $data = array(
                 'title' => "Cfengine Mission Portal - authentication",
                 'breadcrumbs' => $this->breadcrumblist->display(),
@@ -49,6 +55,12 @@ class Settings extends Cf_Controller {
             foreach((array)$groups as $group){
               $data['groups'][$group['name']]=$group['name'];
             }
+
+             $groups_acc_mode=$this->ion_auth->get_groups();
+             foreach((array)$groups_acc_mode as $group){
+                 key_exists('name', $group)?$data['groupsacc'][$group['name']]=$group['name']:$data['groupsacc'][$group['displayname']]=$group['displayname'];
+            }
+            
             $settings = $this->settings_model->get_app_settings();
             if (is_object($settings)) {// the information has therefore been successfully saved in the db
                 foreach ($settings as $property => $value) {
@@ -88,7 +100,8 @@ class Settings extends Cf_Controller {
                 //  	'active_directory' => set_value('active_directory'),
                 'active_directory_domain' => set_value('active_directory_domain'),
                 'member_attribute' => set_value('member_attribute'),
-                'fall_back_for'=>$this->input->post('fall_back_for')
+                'fall_back_for'=>$this->input->post('fall_back_for'),
+                'admin_group'=>$this->input->post('admin_group')
             );
 
 // run insert model to write data to db
@@ -96,18 +109,12 @@ class Settings extends Cf_Controller {
             if ($op == 'edit') {
                 $settings = $this->settings_model->get_app_settings();
                 $inserted = $this->settings_model->update_app_settings($form_data, $settings->_id->__toString());
+                $this->ion_auth->set_mode($form_data['mode']);
             } else {
                 $inserted = $this->settings_model->insert_app_settings($form_data);
             }
             if ($inserted) {// the information has therefore been successfully saved in the db
 //redirect('settings/success');   // or whatever logic needs to occur
-                $bc = array(
-                    'title' => 'Admin',
-                    'url' => 'auth/setting',
-                    'isRoot' => false,
-                    'replace_existing' => true
-                );
-                $this->breadcrumb->setBreadCrumb($bc);
                 $data = array(
                     'title' => "Cfengine Mission Portal - Settings",
                     'breadcrumbs' => $this->breadcrumblist->display(),
@@ -128,6 +135,12 @@ class Settings extends Cf_Controller {
             foreach((array)$groups as $group){
               $data['groups'][$group['name']]=$group['name'];
             }
+
+            $groups_acc_mode=$this->ion_auth->get_groups();
+              foreach((array)$groups_acc_mode as $group){
+                 key_exists('name', $group)?$data['groupsacc'][$group['name']]=$group['name']:$data['groupsacc'][$group['displayname']]=$group['displayname'];
+            }
+
                 $this->template->load('template', 'appsetting/missionportalpref', $data);
             } else {
                 echo 'An error occurred saving your information. Please try again later';
@@ -180,7 +193,7 @@ class Settings extends Cf_Controller {
             echo "<div id=\"infoMessage\" style=\"margin-top:20px\"><span class=\"error\">ldap_authentication_unsucessful</span></div>";
         }
     }
-
+    
     function ldaptest() {
         $data = array();
         foreach ($_POST as $key => $value) {
@@ -188,6 +201,7 @@ class Settings extends Cf_Controller {
         }
         $this->load->view('appsetting/ldaplogintest', $data);
     }
+
 
 }
 

@@ -471,13 +471,35 @@ class Ion_auth
 	 **/
 	public function is_admin()
 	{
-		$admin_group = $this->ci->config->item('admin_group', 'ion_auth');
+                 $admin_group=$this->ci->settings_model->app_settings_get_item('admin_group');
+                 
+                 if($admin_group===False){
+                     $admin_group = $this->ci->config->item('admin_group', 'ion_auth');
+                 }
 		$user_group  = $this->ci->session->userdata('group');
-
 		//return $user_group == $admin_group;
-                return in_array(strtolower($admin_group), $user_group);
+               // var_dump(in_array(strtolower($admin_group),$user_group));
+                return in_array($admin_group, $user_group);
 	}
 
+        /**
+	 * is_in_fallback_group
+	 *
+	 * @return bool
+	 * @author sudhir
+	 **/
+        public function is_in_fallback_group()
+	{
+                 $admin_group=$this->ci->settings_model->app_settings_get_item('fall_back_for');
+
+                 if($admin_group===False){
+                     $admin_group = $this->ci->config->item('admin_group', 'ion_auth');
+                 }
+		$user_group  = $this->ci->session->userdata('group');
+		//return $user_group == $admin_group;
+               // var_dump(in_array(strtolower($admin_group),$user_group));
+                return in_array($admin_group, $user_group);
+	}
 	/**
 	 * is_group
 	 *

@@ -70,9 +70,18 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 <p><label></label> <a class="btn" id="testsettings" href="<?php echo site_url('settings/ldaptest')?>">Test it </a></p>
 </fieldset>
 <p>
-    <label for="fall back for">Fall back only for group<span class="required">*</span></label>
+    <label for="fall back for">Fall back for group ( if LDAP Down)<span class="required">*</span></label>
     <?php echo form_dropdown('fall_back_for', $groups, isset($fall_back_for)?$fall_back_for:'admin');?>
 </p>
+
+ <?php if(isset( $groupsacc)){?>
+<p>
+    <label for="fall back for">Admin Group<span class="required">*</span></label>
+   <?php  echo form_dropdown('admin_group', $groupsacc, isset($admin_group)?$admin_group:'admin');?>
+</p>
+<?php }?>
+
+
 <p  id="btnholder">
         <?php echo form_submit( array('name'=>'submit','class'=>'btn','value'=>'Submit')); ?>
 </p>
@@ -96,6 +105,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 $('#ldapsettings').show();
                 $('#adrelated').hide();
                 $('#member_attribute_related').show();
+                
             }
             else if($("input[@name='mode']:checked").val() == 'active_directory'){
                 $('#ldapsettings').show()
@@ -106,6 +116,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
      
      $("input[name='mode']").change(function(){
       settings_toggle();
+      $("select[name='admin_group']").find('option') .remove().end()
      });
 
       $('#testsettings').bind('click',function(event){
@@ -121,8 +132,6 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
          }}).ajaxyDialog('open');
 
       });
-   
 
-     
 });
 </script>

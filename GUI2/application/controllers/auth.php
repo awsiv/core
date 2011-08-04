@@ -601,7 +601,7 @@ class Auth extends Controller {
     function delete_user($id) {
         $this->ion_auth->delete_user($id);
         if (is_ajax ()) {
-            $this->data['message'] = $this->ion_auth->messages();
+            $this->data['message'] = $this->ion_auth->errors()?$this->ion_auth->errors():$this->ion_auth->messages();
             $this->data['users'] = $this->ion_auth->get_users_array();
             $this->data['usergroup'] = $this->session->userdata('group');
             $this->data['is_admin'] = $this->ion_auth->is_admin();
@@ -615,7 +615,7 @@ class Auth extends Controller {
     function delete_group($id) {
         $this->ion_auth->delete_group($id);
         if (is_ajax ()) {
-            $this->data['message'] = $this->ion_auth->messages();
+            $this->data['message'] = $this->ion_auth->errors()?$this->ion_auth->errors():$this->ion_auth->messages();
             $this->data['groups'] = $this->ion_auth->get_groups();
             $this->data['is_admin'] = $this->ion_auth->is_admin();
             $this->load->view('auth/list_group', $this->data);

@@ -759,7 +759,22 @@ class Ion_auth_model_mongo extends CI_Model
 
         public function delete_group($id)
         {
-             return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('groups');
+            // return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('groups');
+            $group=$this->mongo_db->get_where_object('groups',array('_id'=>new MongoId($id)));
+            $admin_group=$this->mongo_db->select(array('admin_group','fall_back_for'))->limit(1)->get_object('appsettings');
+            if (is_object($admin_group) && $admin_group->admin_group !==False){
+                if($group->name!=$admin_group->admin_group ){
+                    return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('groups');
+                 }
+                 $this->ion_auth->set_error('admin_group_deletion');
+              }else{
+                 /* if($group->name!='admin'){
+                       return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('groups');
+                  }*/
+                  $this->ion_auth->set_error('no_admin_group');
+              }
+               
+		return FALSE;
         }
 
 
@@ -923,7 +938,11 @@ class Ion_auth_model_mongo extends CI_Model
 
             $this->mongo_db->where(array('fall_back_for'=>$old_doc->name));
             $result_user=$this->mongo_db->update_all('appsettings',array('fall_back_for' => $data['name']));
-             $this->mongo_db->clear();
+            $this->mongo_db->clear();
+
+            $this->mongo_db->where(array('admin_group'=>$old_doc->name));
+            $result_user=$this->mongo_db->update_all('appsettings',array('admin_group' => $data['name']));
+            $this->mongo_db->clear();
             return True;
 	}
 

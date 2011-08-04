@@ -1902,10 +1902,16 @@ div.ui-dialog .ui-dialog-buttonpane{
     padding:10px 15px;
     display:inline-block;
 }
+.deletehostbtn
+{
+    background: url("../images/button_delete.png") no-repeat scroll 0 0 transparent;
+    padding:10px 15px;
+    display:inline-block;
+}
 
 .actioncol
 {
-    width:60px;
+    width:90px;
 }
 .datecol
 {
