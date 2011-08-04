@@ -92,7 +92,7 @@ for (i = 0; i < 28; start += CF_SHIFT_INTERVAL,i++)
    
    UtcShiftInterval(start, buf, sizeof(buf));
    
-   snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"start\": %d, \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf, \"nodata\": %lf, \"count\": %d },",
+   snprintf(work,CF_BUFSIZE,"{ \"title\": \"%s\", \"start\": %ld, \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf, \"nodata\": %lf, \"count\": %d },",
             buf, start, i, kept, repaired, notkept, nodata, count);
    
    if (!Join(buffer,work,bufsize))
@@ -248,8 +248,9 @@ int Nova_GetHostColour(char *lkeyhash)
   double akept[meter_endmark] = {0},arepaired[meter_endmark] = {0};
   double rkept,rrepaired;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
-  int found = false,result = -1,awol = false;
+  int result = -1,awol, foundMeter;
   mongo_connection conn;
+  time_t now = time(NULL);
 
 if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
    {
@@ -292,8 +293,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
    keyhash[0] = '\0';
    hostnames[0] = '\0';
    addresses[0] = '\0';
-   found = false;
-   awol = false;
+   awol = true;
+   foundMeter = false;
    
    while (bson_iterator_next(&it1))
       {
@@ -305,18 +306,19 @@ while (mongo_cursor_next(cursor))  // loops over documents
       
       if (strcmp(bson_iterator_key(&it1),cfr_day) == 0)
          {
-         time_t then,now = time(NULL);
+         time_t then;
          then = (time_t)bson_iterator_int(&it1);
          
-         if (now > then + CF_HUB_HORIZON)
+         if (now - CF_HUB_HORIZON < then)
             {
-            awol = true;
-            break; // Machine is officially AWOL
+            awol = false;
             }
          }
       
       if (strcmp(bson_iterator_key(&it1),cfr_meter) == 0)
          {
+         foundMeter = true;
+         
          bson_iterator_init(&it2,bson_iterator_value(&it1));
          
          while (bson_iterator_next(&it2))
@@ -380,24 +382,20 @@ while (mongo_cursor_next(cursor))  // loops over documents
                    arepaired[meter_other_day] = rrepaired;
                    break;
                }
-            
-            found = true;           
             }
          }   
       }
    
-   if (found)
+   if (awol || !foundMeter)
       {
-      if (awol)
-         {
-         result = CF_CODE_BLUE;
-         }
-      else
-         {
-         result = Nova_GetComplianceScore(cfrank_compliance,akept,arepaired);
-         }
+      result = CF_CODE_BLUE;
+      }
+   else
+      {
+      result = Nova_GetComplianceScore(cfrank_compliance,akept,arepaired);
       }
    }
+
 
 mongo_cursor_destroy(cursor);
 
@@ -447,7 +445,7 @@ struct Item *Nova_GreenHosts()
 
 { struct Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,1000);
+ hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
  for (ip = hosts; ip != NULL; ip=ip->next)
     {
@@ -468,7 +466,7 @@ struct Item *Nova_YellowHosts()
 
 { struct Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,1000);
+ hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
  for (ip = hosts; ip != NULL; ip=ip->next)
     {
@@ -489,7 +487,7 @@ struct Item *Nova_RedHosts()
 
 { struct Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,1000);
+ hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
  for (ip = hosts; ip != NULL; ip=ip->next)
     {
@@ -510,7 +508,7 @@ struct Item *Nova_BlueHosts()
 
 { struct Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,1000);
+hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -540,9 +538,10 @@ struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_m
   double akept[meter_endmark] = {0},arepaired[meter_endmark] = {0};
   double rkept,rrepaired;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
-  int num = 0,found = false,awol;
+  int num = 0,awol,foundMeter;
   mongo_connection conn;
   struct Item *list = NULL;
+  time_t now = time(NULL);
 
 if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
    {
@@ -576,8 +575,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
    keyhash[0] = '\0';
    hostnames[0] = '\0';
    addresses[0] = '\0';
-   found = false;
-   awol = false;
+   awol = true;
+   foundMeter = false;
    
    while (bson_iterator_next(&it1))
       {
@@ -587,13 +586,12 @@ while (mongo_cursor_next(cursor))  // loops over documents
       
       if (strcmp(bson_iterator_key(&it1),cfr_day) == 0)
          {
-         time_t then,now = time(NULL);
+         time_t then;
          then = (time_t)bson_iterator_int(&it1);
          
-         if (now > then + CF_HUB_HORIZON)
+         if (now - CF_HUB_HORIZON < then)
             {
-            awol = true;
-            break; // Machine is officially AWOL
+            awol = false;
             }
          }
       
@@ -601,6 +599,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
       
       if (strcmp(bson_iterator_key(&it1),cfr_meter) == 0)
          {
+         foundMeter = true;
+         
          bson_iterator_init(&it2,bson_iterator_value(&it1));
          
          while (bson_iterator_next(&it2))
@@ -664,36 +664,33 @@ while (mongo_cursor_next(cursor))  // loops over documents
                    arepaired[meter_other_day] = rrepaired;
                     break;
                }
-            
-            found = true;           
+
             }
          }   
       }
    
-   if (found)
+   if (search_string == NULL || FullTextMatch(search_string,hostnames))
       {
-      if (search_string == NULL || FullTextMatch(search_string,hostnames))
+      int score;
+      
+      if (awol || !foundMeter)
          {
-         int score;
+         score = CF_CODE_BLUE;
+         }
+      else
+         {
+         score = Nova_GetComplianceScore(method,akept,arepaired);
+         }
+      
+      PrependItem(&list,keyhash,hostnames);
+      SetItemListCounter(list,keyhash,score);
          
-         if (awol)
-            {
-            score = CF_CODE_BLUE;
-            }
-         else
-            {
-            score = Nova_GetComplianceScore(method,akept,arepaired);
-            }
-         
-         PrependItem(&list,keyhash,hostnames);
-         SetItemListCounter(list,keyhash,score);
-         
-         if (max_return && (num++ >= max_return))
-            {
-            break;
-            }
+      if (max_return && (num++ >= max_return))
+         {
+         break;
          }
       }
+
    }
 
 mongo_cursor_destroy(cursor);
