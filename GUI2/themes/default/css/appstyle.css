@@ -650,24 +650,6 @@ label#searchbox input
 /*
 styles for status page may be mergerd in the future
 */
-
-body {
-    background: url("../images/icons/bg_tile.png") repeat-x scroll 0 0 #A5ACA2;
-}
-
-#body .left{
-    background: url("../images/icons/box_main_left.png") no-repeat;
-    min-width:7px;
-    height:594px;
-    float:left;
-}
-
-#body .middle{
-    background: url("../images/icons/box_main_mid_tile.png") repeat-x;
-    height: 594px;
-    float:left;
-}
-
 .width80{
     width:80%;
 }
@@ -688,12 +670,6 @@ body {
 
 .minwidth70{
     min-width: 67.5%;
-}
-#body .right{
-    background: url("../images/icons/box_main_right.png") no-repeat;
-    min-width:11px;
-    height:594px;
-    float:left;
 }
 
 .outerdiv
