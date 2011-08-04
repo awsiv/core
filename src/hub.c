@@ -551,6 +551,7 @@ CfOut(cf_inform,"","Checking for Hub master\n");
 if (CFDB_QueryIsMaster())
    {
    CfOut(cf_inform,"","I am Hub master\n");
+
    Nova_UpdateMongoHostList(list);
    DeleteItemList(list);
 
@@ -953,12 +954,14 @@ void Nova_UpdateMongoHostList(struct Item *list)
  struct Item *ip = NULL;
   int count = 0;
 
- for(ip=list;ip!=NULL;ip=ip->next)
-    {
-    CFDB_SaveLastseenCache(ip->name,ip->classes);
-    count++;
-    }
- CfOut(cf_inform,"","%d hosts added to the lastseen cache\n",count);
+CFDB_PurgeLastseenCache(list); 
+  
+for(ip=list;ip!=NULL;ip=ip->next)
+   {
+   CFDB_SaveLastseenCache(ip->name,ip->classes);
+   count++;
+   }
+CfOut(cf_inform,"","%d hosts added to the lastseen cache\n",count);
  #endif
 }
 

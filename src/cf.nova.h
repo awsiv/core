@@ -472,6 +472,7 @@ void CFDB_PurgeHost(mongo_connection *conn, char *keyHash);
 void CFDB_PurgeDeprecatedVitals(mongo_connection *conn);
 
 void CFDB_RemoveTestData(char *db, char *keyhash);
+int CFDB_PurgeLastseenCache(struct Item *list);
 #endif /* HAVE_LIBMONGOC */
 
 
