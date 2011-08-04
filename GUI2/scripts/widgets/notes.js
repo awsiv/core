@@ -176,7 +176,7 @@
             }) !== false) {
                 var dialog = this.dialogContainer();
 
-                dialog.html("<div class='ui-state-error' style='padding: 1em;'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + uri + ": " + xhr.status + " "  + serverMsg+"</p></div>");
+                dialog.html("<div class='ui-state-error' style='padding: 1em;'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + ": " + xhr.status + " "  + serverMsg+"</p></div>");
                 dialog.dialog("option", "title", "Sorry, an error has occured.");
                 dialog.dialog("option", "buttons", {
                     "OK": function() {
