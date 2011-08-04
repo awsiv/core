@@ -500,6 +500,19 @@ class Ion_auth
                // var_dump(in_array(strtolower($admin_group),$user_group));
                 return in_array($admin_group, $user_group);
 	}
+
+        /**
+         *
+         */
+
+        public function is_accessable()
+        {
+           $isadmin=$this->ci->settings_model->app_settings_get_item('admin_group');
+            if($isadmin!==FALSE && (!$this->is_admin() && !$this->is_in_fallback_group())){
+                return false;
+            }
+            return true;
+        }
 	/**
 	 * is_group
 	 *

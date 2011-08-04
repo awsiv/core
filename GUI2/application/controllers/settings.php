@@ -19,12 +19,10 @@ class Settings extends Cf_Controller {
                 'replace_existing' => true
             );
             $this->breadcrumb->setBreadCrumb($bc);
-        $isadmin=$this->settings_model->app_settings_get_item('admin_group');
-        if($isadmin!==FALSE){
-            if(!$this->ion_auth->is_admin() && !$this->ion_auth->is_in_fallback_group()){
-                 redirect('auth/setting');
-            }
-        }
+
+        if(!$this->ion_auth->is_accessable()){
+             redirect('auth/setting');
+         }
         $requiredjs = array(
             array('widgets/notes.js'),
         );
@@ -50,17 +48,20 @@ class Settings extends Cf_Controller {
                 'message' => validation_errors(),
                 'op' => 'create'
             );     
-//if previous settings exist load it and display
+
+            //for fall back groups list
              $groups=$this->ion_auth->get_groups_fromdb();
             foreach((array)$groups as $group){
               $data['groups'][$group['name']]=$group['name'];
             }
 
+            //for selecting admin_group from list, populated list depends on the mode selected and saved
              $groups_acc_mode=$this->ion_auth->get_groups();
              foreach((array)$groups_acc_mode as $group){
                  key_exists('name', $group)?$data['groupsacc'][$group['name']]=$group['name']:$data['groupsacc'][$group['displayname']]=$group['displayname'];
             }
-            
+
+            //if previous settings exist load it and display
             $settings = $this->settings_model->get_app_settings();
             if (is_object($settings)) {// the information has therefore been successfully saved in the db
                 foreach ($settings as $property => $value) {
@@ -114,7 +115,7 @@ class Settings extends Cf_Controller {
                 $inserted = $this->settings_model->insert_app_settings($form_data);
             }
             if ($inserted) {// the information has therefore been successfully saved in the db
-//redirect('settings/success');   // or whatever logic needs to occur
+//redirect('settings/success');   
                 $data = array(
                     'title' => "Cfengine Mission Portal - Settings",
                     'breadcrumbs' => $this->breadcrumblist->display(),
@@ -201,6 +202,81 @@ class Settings extends Cf_Controller {
         }
         $this->load->view('appsetting/ldaplogintest', $data);
     }
+
+    function preferences($op=false, $id=false){
+           $bc = array(
+                'title' => 'settings',
+                'url' => 'auth/setting',
+                'isRoot' => false,
+                'replace_existing' => true
+            );
+        $this->form_validation->set_rules('tooltips', 'Enable tool tips', 'xss_clean|trim|required');
+        $this->form_validation->set_rules('num_rows', 'Number of rows shown in tables', 'xss_clean|trim|required|numeric|integer');
+        $this->form_validation->set_error_delimiters('<br /><span>', '</span>');
+
+         if ($this->form_validation->run() == FALSE) { // validation hasn't been passed
+            $data = array(
+                'title' => "Cfengine Mission Portal - authentication",
+                'breadcrumbs' => $this->breadcrumblist->display(),
+                'message' => validation_errors(),
+                'op' => 'create'
+            );
+           $settings = $this->settings_model->get_user_settings();
+            if (is_object($settings)) {// the information has therefore been successfully saved in the db
+                foreach ($settings as $property => $value) {
+                    if ($property == 'tooltips') {
+                        $data[$value] = ' checked="checked"';
+                        continue;
+                    }
+                    if ($property != '_id') {
+                        $data[$property] = $this->form_validation->set_value($property, $value);
+                    }
+                }
+                $data['op'] = 'edit';
+            } else {
+                $form_data = array(
+                    'tooltips' => set_value('tooltips'),
+                     'num_rows' => set_value('num_rows')
+                );
+                $data = array_merge($form_data, $data);
+            }
+            $this->template->load('template', 'appsetting/userpref', $data);
+         }else{
+               $form_data = array(
+                    'tooltips' => set_value('tooltips'),
+                   'num_rows' => set_value('num_rows')
+                );
+               // run insert model to write data to db
+                $inserted = '';
+                if ($op == 'edit') {
+                    $settings = $this->settings_model->get_user_settings();
+                    $inserted = $this->settings_model->update_user_settings($form_data, $settings->_id->__toString());
+                   } else {
+                    $inserted = $this->settings_model->insert_user_settings($form_data);
+                }
+                 if ($inserted) {
+                            $data = array(
+                                'title' => "Cfengine Mission Portal - Settings",
+                                'breadcrumbs' => $this->breadcrumblist->display(),
+                                'op' => 'edit',
+                                'message' => '<p class="success"> Preferences Saved </p>'
+                                );
+                             foreach ($form_data as $property => $value) {
+                                if ($property == 'tooltips') {
+                                    $data[$value] = ' checked="checked"';
+                                    continue;
+                                    }
+                                if ($property != '_id') {
+                                    $data[$property] = $this->form_validation->set_value($property, $value);
+                                   }
+                               }
+                               $this->template->load('template', 'appsetting/userpref', $data);
+                    }
+                    else {
+                             echo 'An error occurred saving your information. Please try again later';
+                     }
+             } 
+         }
 
 
 }

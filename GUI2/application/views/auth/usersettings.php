@@ -4,7 +4,7 @@
         <ul>
             <li><?php echo anchor('/savedsearch/listSavedSearches/'," List of saved searches") ?></li>
             <li><?php echo anchor('/settings/manage/'," Mission Portal Setting") ?></li>
-            <li>search settings</li>
+            <li><?php echo anchor('/settings/preferences/'," My preferences") ?></li>
             <li>report settings</li>
             <li>machine settings</li>
         </ul>
