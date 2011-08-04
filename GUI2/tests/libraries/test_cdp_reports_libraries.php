@@ -7,7 +7,7 @@ public function __construct() {
 
     public function setUp() {
         $this->testHandle = "cfengine_php_mod_cfmod_ini_ubuntu10";
-        $this->cdptitle="File Diffs";
+        $this->cdptitle="Commands";
     }
 
     public function tearDown() {
@@ -29,7 +29,7 @@ public function __construct() {
     }
 
     public function test_cdp_report_detail(){
-     $result=cfpr_cdp_report(NULL,$this->cdptitle);
+     $result=cfpr_cdp_report(NULL,$this->cdptitle,0,0);
      $this->dump($result);
      $array = json_decode(utf8_encode($result), true);
      $this->assertTrue(is_array($array), "Should Return a valid array");

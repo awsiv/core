@@ -10,11 +10,11 @@
                         <th>Action</th>
                        <?php } ?>
 		</tr>
-		<?php foreach ((array)$users as $user):?>
+		<?php foreach ((array)$users as $user){?>
 			<tr>
-				<td><?php echo isset($user['username'])?$user['username']:$user['name']?></td>
+				<td><?php echo  isset($user['username'])?$user['username']:$user['name'] ?></td>
 				<td><?php echo isset($user['email'])?$user['email']:"";?></td>
-                      <?php  if($this->ion_auth->mode!="ldap"){?>
+                      <?php  if($this->ion_auth->mode=="database"){?>
                                 <td><?php if(isset($user['group'])&&is_array($user['group'])){
                                     $no_of_elements=count($user['group']);
                                       foreach ($user['group'] as $group) {
@@ -47,7 +47,9 @@
                     {
                     echo anchor("auth/change_password/".$user['_id']->__toString(), ' ',array('class'=>'changepassword','title'=>'change password'));
                     echo anchor("auth/edit_user/".$user['_id']->__toString(), ' ',array('class'=>'edit','title'=>'edit user'));
-                    echo anchor("auth/delete_user/".$user['_id']->__toString(), ' ', array('class' => 'delete','title'=>'delete user'));
+                    if( $user['username']!=$username){
+                      echo anchor("auth/delete_user/".$user['_id']->__toString(), ' ', array('class' => 'delete','title'=>'delete user'));
+                      }
                     }
                     elseif( $user['username']==$username)
                     {
@@ -58,7 +60,7 @@
                 </td>
                 <?php } ?>
 			</tr>
-		<?php endforeach;?>
+		<?php }?>
 	</table>
 <?php
 if($this->ion_auth->mode!="ldap"){

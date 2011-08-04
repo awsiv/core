@@ -762,8 +762,9 @@ class Ion_auth_model_mongo extends CI_Model
             // return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('groups');
             $group=$this->mongo_db->get_where_object('groups',array('_id'=>new MongoId($id)));
             $admin_group=$this->mongo_db->select(array('admin_group','fall_back_for'))->limit(1)->get_object('appsettings');
+            $not_deleteable_group=array($admin_group->admin_group,$admin_group->fall_back_for);
             if (is_object($admin_group) && $admin_group->admin_group !==False){
-                if($group->name!=$admin_group->admin_group ){
+                if(!in_array($group->name, $not_deleteable_group)){
                     return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('groups');
                  }
                  $this->ion_auth->set_error('admin_group_deletion');

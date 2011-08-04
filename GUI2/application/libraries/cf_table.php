@@ -233,8 +233,9 @@ class cf_table {
         if(!is_array($tabledata)){
             return "invalid json data";
         }
-        $escape_header = array('hostkey','urlReport');
+        $escape_header = array('hostkey','urlReport','timewarn');
         $links_only_for= array('file diffs'=>'Path');
+        $time_fields=array('Last checked');
         $headers=array();
         foreach ($tabledata['meta']['header'] as $header=>$value) {
             if (array_search($header, $escape_header) === FALSE) {
@@ -252,6 +253,16 @@ class cf_table {
                             $content=sprintf('<a href="%s/search/index/report/%s/host/%s/name/%s">%s</a>'
                                     ,site_url(),urlencode($row[$tabledata['meta']['header']['urlReport']]),urlencode($row[$tabledata['meta']['header']['hostkey']]),urlencode($row[$value]),$row[$value]);
                             array_push($temp, $content);
+                          }
+                          elseif(in_array($key, $time_fields)){
+                              $content="";
+                              if($row[$tabledata['meta']['header']['timewarn']]){
+                                   $content="<span class=\"amber\">".$row[$value]." </span>";
+                                   array_push($temp, $content);
+                              }
+                              else{
+                                  array_push($temp, $row[$value]);
+                              }
                           }
                           else{
                               array_push($temp,$row[$value]);
