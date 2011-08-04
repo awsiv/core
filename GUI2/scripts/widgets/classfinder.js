@@ -8,6 +8,7 @@ $.widget('ui.classfinder',
             width:700,
             height:600
           },
+   elementtext:"",
 _init: function(){
 		
 },
@@ -60,6 +61,7 @@ addsearchbar:function(){
         self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
         self.element.bind('click',function(event){
             event.preventDefault();
+            self. elementtext=$(this).text();
           $(this).text('').append('<span class="loadinggif"> </span>');
            self.loadpagebody();
            self.dialogcontent.dialog('open');
@@ -159,7 +161,7 @@ loadpagebody:function(){
                                   });
           self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
           self.dialogcontent.find("#classList").delegate('a.classadd','click',$.proxy(self.addclassfilter,self));
-          self.element.text('class');
+          self.element.text(self. elementtext);
      });
 },
 

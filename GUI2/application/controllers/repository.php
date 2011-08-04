@@ -291,10 +291,13 @@ class Repository extends Cf_Controller {
             $reposlist[]=$repo['repoPath'];
         }
         $params = $this->uri->uri_to_assoc(3);
-        $rows=$this->input->post('rows')?$this->input->post('rows'):10;
-        if(!is_numeric($rows)){
-             $rows=10;
+       $rows = isset($params['rows']) ? $params['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
+        if(is_numeric($rows)) {
+            $rows=(int)$rows;
+        }else{
+             $rows=20;
         }
+
         $page = isset($params['page']) ? intval($params['page'], 10) : 1;
         $total=$this->repository_model->count_all_approved_policies($reposlist);
         $skip = (int)($rows * ($page - 1));

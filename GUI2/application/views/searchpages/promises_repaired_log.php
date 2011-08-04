@@ -1,5 +1,5 @@
   <div id="searchform" class="panel">
-   <div class="panelhead"<?php echo $report_type ?> query</div>
+   <div class="panelhead"><?php echo $report_type ?> query</div>
     <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
           <p>Promise handles: (.*+[])<input class="searchfield" type="text" name="name"></p>

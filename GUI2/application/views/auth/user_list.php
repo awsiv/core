@@ -10,7 +10,9 @@
                         <th>Action</th>
                        <?php } ?>
 		</tr>
-		<?php foreach ((array)$users as $user){?>
+		<?php
+                $username=isset($username)?$username:$this->session->userdata('username');
+                foreach ((array)$users as $user){?>
 			<tr>
 				<td><?php echo  isset($user['username'])?$user['username']:$user['name'] ?></td>
 				<td><?php echo isset($user['email'])?$user['email']:"";?></td>

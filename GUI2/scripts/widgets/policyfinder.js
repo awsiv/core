@@ -8,9 +8,8 @@
             height:600,
             defaultbehaviour:true,
             onlyShowHandle:false
-            
-
         },
+        elementtext:"",
         _init: function(){
         },
         _create:function(){
@@ -85,6 +84,7 @@
             self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
             self.element.bind('click',function(event){
                event.preventDefault();
+               self. elementtext=$(this).text();
                $(this).text('').append('<span class="loadinggif"> </span>');
               /* if(!$("#"+self.containerID()).size()>0)
                 {
@@ -154,7 +154,7 @@
                     });
                     $('#'+self.containerID()).append(li);
                     $('#'+self.containerID()).delegate('a','click',$.proxy(self.handleSelected,self));
-                    self.element.text('promises');
+                    self.element.text(self. elementtext);
                 },
                 error:function(jqXHR, textStatus, errorThrown){
                     self.dialogcontent.html($("<ul>").attr("id", self.containerID()));

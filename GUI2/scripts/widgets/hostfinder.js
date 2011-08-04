@@ -5,6 +5,7 @@
             var self = this;            
             self.element.bind('click',function(event){
                 event.preventDefault();
+                self.elementtext=$(this).text();
                 $(this).text('').append('<span class="loadinggif"> </span>');
                 self.createhostfinder();
                  self.cfui.categories.hide();
@@ -25,6 +26,7 @@
             height:600,
             width:735
         },
+        elementtext:"",
         _init: function() {
             var self=this;
             //self.cfui.searchform.find('input[type="text"]').focusout();
@@ -55,7 +57,7 @@
                         autoOpen: false,
                         modal: true
                     });
-                   self.element.text('host') ;
+                   self.element.text(self.elementtext) ;
                 }
             });
 

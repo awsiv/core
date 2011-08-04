@@ -48,7 +48,6 @@ $(document).ready(function() {
  var $confirmation = $('#confirmation').dialog({
 		 autoOpen: false,
 		 modal: true,
-		 hide: 'puff',
 		 resizable: false,
 		 buttons: {
                    'Cancel':function() {
