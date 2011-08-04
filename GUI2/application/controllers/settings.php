@@ -210,6 +210,7 @@ class Settings extends Cf_Controller {
                 'isRoot' => false,
                 'replace_existing' => true
             );
+        $user=$this->session->userdata('username');
         $this->form_validation->set_rules('tooltips', 'Enable tool tips', 'xss_clean|trim|required');
         $this->form_validation->set_rules('num_rows', 'Number of rows shown in tables', 'xss_clean|trim|required|numeric|integer');
         $this->form_validation->set_error_delimiters('<br /><span>', '</span>');
@@ -221,7 +222,7 @@ class Settings extends Cf_Controller {
                 'message' => validation_errors(),
                 'op' => 'create'
             );
-           $settings = $this->settings_model->get_user_settings();
+           $settings = $this->settings_model->get_user_settings($user);
             if (is_object($settings)) {// the information has therefore been successfully saved in the db
                 foreach ($settings as $property => $value) {
                     if ($property == 'tooltips') {
@@ -244,12 +245,13 @@ class Settings extends Cf_Controller {
          }else{
                $form_data = array(
                     'tooltips' => set_value('tooltips'),
-                   'num_rows' => set_value('num_rows')
-                );
+                   'num_rows' => set_value('num_rows'),
+                   'username'=>$user
+                   );
                // run insert model to write data to db
                 $inserted = '';
                 if ($op == 'edit') {
-                    $settings = $this->settings_model->get_user_settings();
+                    $settings = $this->settings_model->get_user_settings($user);
                     $inserted = $this->settings_model->update_user_settings($form_data, $settings->_id->__toString());
                    } else {
                     $inserted = $this->settings_model->insert_user_settings($form_data);

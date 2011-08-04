@@ -57,8 +57,8 @@ class Settings_model extends CI_Model {
     *For saving  and retriving user preferences
     * @return <type>
     */
-   function get_user_settings(){
-      $data=$this->mongo_db->limit(1)->get_object($this->usersSettings);
+   function get_user_settings($username=null){
+      $data=$this->mongo_db->where(array('username'=>$username))->limit(1)->get_object($this->usersSettings);
       if (is_object($data)){
           return $data;
           }
@@ -86,7 +86,7 @@ class Settings_model extends CI_Model {
       return false;
    }
 
-   function user_settings_get_item($item)
+   function user_settings_get_item($username,$item)
    {
       $data=$this->mongo_db->select(array($item))->limit(1)->get_object($this->usersSettings);
       if (is_object($data) &&  property_exists($data, $item)){
