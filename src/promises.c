@@ -179,6 +179,9 @@ NewClass(vbuff);
 void Nova_DefineHubMaster()
 
 { char master[CF_MAXVARSIZE]={0};
+ char master_ip[CF_MAXVARSIZE]={0};
+ struct hostent *hp;
+ struct sockaddr_in cin;
 
  master[0]='\0';
    
@@ -199,7 +202,24 @@ else
       }
    }
 
-NewScalar("sys","hub_master",master,cf_str); 
+if(!IsIPV4Address(master) && !IsIPV6Address(master))
+   {
+   if ((hp = gethostbyname(master)) == NULL)
+      {
+      CfOut(cf_verbose,"","Hostname lookup failed on node name \"%s\"\n",master);
+      return;
+      }
+   else
+      {
+      memset(&cin,0,sizeof(cin));
+      cin.sin_addr.s_addr = ((struct in_addr *)(hp->h_addr))->s_addr;
+      CfOut(cf_verbose,"","Address given by nameserver: %s\n",inet_ntoa(cin.sin_addr));
+      master[0]='\0';
+      strcpy(master,inet_ntoa(cin.sin_addr));
+      }
+   }
+
+NewScalar("sys","hub_master",master,cf_str);
 }
 /*****************************************************************************/
 void Nova_EnterpriseDiscovery()
