@@ -21,7 +21,9 @@ class Cf_Log extends CI_Log {
         try {
             $this->mongo = new Mongo("mongodb://127.0.0.1:27017", array("persist" => "ci_mongo_persist"));
         } catch (Exception $e) {
-            die("Cannot connect to mongo while logging");
+            die('Could not connect to the MongoDB database. Please ensure that CFEngine Nova is running correctly, by issuing the following command on the hub.
+
+            # /var/cfengine/bin/cf-twin -Kf failsafe.cf');
             exit();
         }
         $this->_enabled = true;

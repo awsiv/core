@@ -12,7 +12,7 @@
 
             <div id="tabs-1" class="ui-corner-all">
                 <div class="panel">
-                    <div class="panelhead">Copernicus local cluster view</div>
+                    <div class="panelhead">Copernicus local cluster view for topic:: <b><?php echo $topicDetail['topic']; ?></b></div>
                     <div class="panelcontent"  style="height:100%;min-height: 400px;">
                         <div id="infovis" style="width:95%;height:100%"></div>
                         <div id="log"></div>
