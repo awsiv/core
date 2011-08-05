@@ -21,10 +21,10 @@ class Setting_lib {
 
   public function get_tooltips_status(){
           $value=$this->ci->settings_model->user_settings_get_item($this->username,'tooltips');
-          if($value!==false && $value=='tips_on'){
-              return true;
+          if($value=='tips_off'){
+              return false;
           }
-          return false;
+          return true;
   }
 
   public function get_no_of_rows(){
