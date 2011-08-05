@@ -193,7 +193,7 @@ snprintf(installed_time,CF_MAXVARSIZE,"%ld",sb.st_mtime);
 NewScalar("sys","licenses_installtime",installed_time,cf_str);
 
 #ifdef HAVE_LIBMONGOC
-if (am_policy_server && THIS_AGENT_TYPE == cf_agent)
+if (am_policy_server && THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
    {
    CFDB_PutValue("license_owner",company);
    CFDB_PutValue("licenses_granted",snumber);
@@ -324,7 +324,7 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&ret
    CfOut(cf_verbose,""," -> %d paid licenses have been purchased (this is a promise by you)",licenses);
    NewScalar("sys","licenses_promised",retval,cf_int);
 #ifdef HAVE_LIBMONGOC
-   if (THIS_AGENT_TYPE == cf_agent)
+   if (THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
       {
       CFDB_PutValue("licenses_promised",retval);
       }
@@ -538,7 +538,10 @@ snprintf(work,sizeof(work),"}");
 Join(buffer,work,sizeof(buffer));
 
 #ifdef HAVE_LIBMONGOC
-CFDB_PutValue("license_report",buffer);
+if(CFDB_QueryIsMaster())
+   {
+   CFDB_PutValue("license_report",buffer);
+   }
 #endif
 YieldCurrentLock(thislock);
 DeletePromise(pp);
