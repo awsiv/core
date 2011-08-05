@@ -27,6 +27,18 @@ $lang['tooltip_engineeringroom'] = 'Engineering shows technical status of hosts 
 $lang['tooltip_planningroom'] = 'The mission planning room allows you to see how the current goals and policies are performing, approve a change of course and communicate with co-workers.';
 $lang['tooltip_libraryroom'] = 'A place where users can learn about the software and the system.';
 
+$lang['tooltip_edit_policies'] = 'choose an SVN repository to edit the policies.';
+$lang['tooltip_track_records'] = 'review successes and failures of the current version.';
+$lang['tooltip_approve_policies'] = 'add your approval to adopt a named policy revision.';
+$lang['tooltip_service_catalogue'] = 'list technical services (promise bundles) and the business goals they address.';
+
+
+$lang['tooltip_docs'] = 'documentation dump for all official CFEngine documents.';
+$lang['tooltip_find_topics'] = 'look up keywords or phrases in the knowledge map.';
+$lang['tooltip_notes_archive'] = 'browse public notes added manually by CFEngine users.';
+$lang['tooltip_community'] = 'link to the community help-forum.';
+
+
 
 
 
