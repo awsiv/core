@@ -71,13 +71,13 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 </fieldset>
 <p>
     <label for="fall back for">Fall back for group ( if LDAP Down)<span class="required">*</span></label>
-    <?php echo form_dropdown('fall_back_for', $groups, isset($fall_back_for)?$fall_back_for:'admin');?>
+    <?php echo form_dropdown('fall_back_for', $groups, $fall_back_for?$fall_back_for:'select');?>
 </p>
 
  <?php if(isset( $groupsacc)){?>
 <p>
     <label for="fall back for">Admin Group<span class="required">*</span></label>
-   <?php  echo form_dropdown('admin_group', $groupsacc, isset($admin_group)?$admin_group:'admin');?>
+   <?php  echo form_dropdown('admin_group', $groupsacc, $admin_group?$admin_group:'select');?>
 </p>
 <?php }?>
 

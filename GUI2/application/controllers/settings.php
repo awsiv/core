@@ -38,8 +38,9 @@ class Settings extends Cf_Controller {
         $this->form_validation->set_rules('users_directory', 'users directory', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('active_directory_domain', 'active directory domain', 'xss_clean|trim' . $required_if_ad);
         $this->form_validation->set_rules('member_attribute', 'memberof attribute', 'xss_clean|trim' . $required_if_ldap);
-
-        $this->form_validation->set_error_delimiters('<br /><span>', '</span>');
+        $this->form_validation->set_rules('fall_back_for', 'valid group', 'callback_required_valid_group');
+        $this->form_validation->set_rules('admin_group', 'valid group', 'callback_required_valid_group');
+        $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
 
         if ($this->form_validation->run() == FALSE) { // validation hasn't been passed
             $data = array(
@@ -54,13 +55,14 @@ class Settings extends Cf_Controller {
             foreach((array)$groups as $group){
               $data['groups'][$group['name']]=$group['name'];
             }
+            $data['groups']['select']="--select-one--";
 
             //for selecting admin_group from list, populated list depends on the mode selected and saved
              $groups_acc_mode=$this->ion_auth->get_groups();
              foreach((array)$groups_acc_mode as $group){
                  key_exists('name', $group)?$data['groupsacc'][$group['name']]=$group['name']:$data['groupsacc'][$group['displayname']]=$group['displayname'];
             }
-
+            $data['groupsacc']['select']="--select-one--";
             //if previous settings exist load it and display
             $settings = $this->settings_model->get_app_settings();
             if (is_object($settings)) {// the information has therefore been successfully saved in the db
@@ -136,12 +138,12 @@ class Settings extends Cf_Controller {
             foreach((array)$groups as $group){
               $data['groups'][$group['name']]=$group['name'];
             }
-
+             $data['groups']['select']="--select-one--";
             $groups_acc_mode=$this->ion_auth->get_groups();
               foreach((array)$groups_acc_mode as $group){
                  key_exists('name', $group)?$data['groupsacc'][$group['name']]=$group['name']:$data['groupsacc'][$group['displayname']]=$group['displayname'];
             }
-
+            $data['groupsacc']['select']="--select-one--";
                 $this->template->load('template', 'appsetting/missionportalpref', $data);
             } else {
                 echo 'An error occurred saving your information. Please try again later';
@@ -165,6 +167,15 @@ class Settings extends Cf_Controller {
             return '|required';
         } else {
             return '';
+        }
+    }
+
+    function required_valid_group($value){
+         if ($value == "select") {
+           $this->form_validation->set_message('required_valid_group', 'Required a valid group');
+            return false;
+        } else {
+            return true;
         }
     }
 
