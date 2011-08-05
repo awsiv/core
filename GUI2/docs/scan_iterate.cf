@@ -5,65 +5,68 @@ bundle knowledge st_iterate
 topics:
 
 "st-iterate";
-Iteration::
-    "Summary of iteration" ;
-Iteration::
-    "The power of iteration in cfengine" ;
-Iteration::
-    "Nesting promises workaround" ;
-Iteration::
-    "Iterating across multiple lists, revisted" ;
-Iteration::
-    "Fixing Iterating across nested lists" ;
-Iteration::
-    "Iterating over nested lists" ;
-Iteration::
-    "Iterating across multiple lists" ;
-Iteration::
-    "Iterated promises" ;
-Iteration::
-    "What is iteration?" ;
 Special_Topics_Guide::
-    "Iteration"  association => a("discussed in","Iteration","discusses");
+    "Summary of iteration"  association => a("discusses","Iteration in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "The power of iteration in CFEngine"  association => a("discusses","Iteration in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Nesting promises workaround"  association => a("discusses","Iteration in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Iterating across multiple lists, revisted"  association => a("discusses","Iteration in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Fixing Iterating across nested lists"  association => a("discusses","Iteration in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Iterating over nested lists"  association => a("discusses","Iteration in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Iterating across multiple lists"  association => a("discusses","Iteration in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Iterated promises"  association => a("discusses","Iteration in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "What is iteration?"  association => a("discusses","Iteration in CFEngine","is discussed in");
+Special_Topics_Guide::
+    "Iteration"  association => a("discusses","Iteration in CFEngine","is discussed in");
 
 
 occurrences:
 
+special_topics_guides::
+ "/docs/st-iterate.html"
+  represents => { "Iteration in CFEngine" };
 Iteration::
  "/docs/st-iterate.html#Top"
-  represents => { "Short note" };
+  represents => { "Text section" };
 What_is_iteration_::
  "/docs/st-iterate.html#What-is-Iteration_003f"
-  represents => { "Short note" };
+  represents => { "Text section" };
 Iterated_promises::
  "/docs/st-iterate.html#Iterated-promises"
-  represents => { "Short note" };
+  represents => { "Text section" };
 Iterating_across_multiple_lists::
  "/docs/st-iterate.html#Iterating-across-multiple-lists"
-  represents => { "Short note" };
+  represents => { "Text section" };
 Iterating_over_nested_lists::
  "/docs/st-iterate.html#Iterating-over-nested-lists"
-  represents => { "Short note" };
+  represents => { "Text section" };
 Iterating_over_nested_lists::
  "/docs/st-iterate.html#Iterating-over-nested-lists"
   represents => { "code example" };
 Fixing_Iterating_across_nested_lists::
  "/docs/st-iterate.html#Fixing-Iterating-across-nested-lists"
-  represents => { "Short note" };
+  represents => { "Text section" };
 Iterating_across_multiple_lists__revisted::
  "/docs/st-iterate.html#Iterating-revisted"
-  represents => { "Short note" };
+  represents => { "Text section" };
 Nesting_promises_workaround::
  "/docs/st-iterate.html#Nesting-promises-workaround"
-  represents => { "Short note" };
+  represents => { "Text section" };
 Nesting_promises_workaround::
  "/docs/st-iterate.html#Nesting-promises-workaround"
   represents => { "code example" };
-The_power_of_iteration_in_cfengine::
+The_power_of_iteration_in_CFEngine::
  "/docs/st-iterate.html#Power"
-  represents => { "Short note" };
+  represents => { "Text section" };
 Summary_of_iteration::
  "/docs/st-iterate.html#Summary-of-iteration"
-  represents => { "Short note" };
+  represents => { "Text section" };
 }
 

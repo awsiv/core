@@ -1,8 +1,8 @@
 <html lang="en">
 <head>
-<title>Cfengine 3 Best Practices</title>
+<title>CFEngine 3 Best Practices</title>
 <meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="Cfengine 3 Best Practices">
+<meta name="description" content="CFEngine 3 Best Practices">
 <meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="top" href="#Top">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
@@ -174,7 +174,7 @@ A:visited { color: black }
 A:active { color: #600041 }--></style>
 </head>
 <body>
-<h1 class="settitle">Cfengine 3 Best Practices</h1>
+<h1 class="settitle">CFEngine 3 Best Practices</h1>
 <div class="node">
 <a name="Top"></a>
 <p><hr>
@@ -184,7 +184,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
 </div>
 
-<h2 class="unnumbered">Cfengine-Best-Practices</h2>
+<h2 class="unnumbered">CFEngine-Best-Practices</h2>
 
    <p><a href="#Contents"><h1>COMPLETE TABLE OF CONTENTS</h1></a>
 <h2>Summary of contents</h2>
@@ -196,7 +196,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a accesskey="1" href="#Policy-Style-Guide">Policy Style Guide</a>
 <li><a accesskey="2" href="#Policy-Dos-and-Don_0027ts">Policy Dos and Don'ts</a>
 <li><a accesskey="3" href="#Common-Workflows">Common Workflows </a>
-<li><a accesskey="4" href="#Quality-Assurance-around-cfengine">Quality Assurance around cfengine</a>
+<li><a accesskey="4" href="#Quality-Assurance-around-CFEngine">Quality Assurance around CFEngine</a>
 </ul>
 
 <!-- ********************************************************************** -->
@@ -263,7 +263,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-Style-Guide">Policy Style Guide
 <h3 class="section">1.2 Where to define variables and classes</h3>
 
 <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Note that all Cfengine variables are globally accessable, by using their
+Note that all CFEngine variables are globally accessable, by using their
 fully qualified name :<code>$(bundle.variable)</code>, or <code>@(bundle.variable)</code>,
 so placing variables in one place or another does not affect their accessability. 
 </td></tr></table>
@@ -429,10 +429,10 @@ in <code>common</code> bundles have global scope).
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 
-   <p>Note, if you are converting from Cfengine 2 you should know the following. 
-In Cfengine 2, all classes were global and it was common to define all classes
+   <p>Note, if you are converting from CFEngine 2 you should know the following. 
+In CFEngine 2, all classes were global and it was common to define all classes
 in a big unmanageable list. That meant that there was a chance of
-class name collisions.  Cfengine 3 has both local and global classes, allowing you
+class name collisions.  CFEngine 3 has both local and global classes, allowing you
 to limit the scope of classes and define them more in context.
 
    </td></tr></table>
@@ -540,7 +540,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Never-do">Never do</a>
 
 <h4 class="subsection">2.1.2 Never embed simple shell commands</h4>
 
-<p>Do not embed simple shell commands with cfengine <code>commands</code> promises, like this:
+<p>Do not embed simple shell commands with CFEngine <code>commands</code> promises, like this:
 
 <pre class="smallexample">     
      commands:
@@ -551,12 +551,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Never-do">Never do</a>
         "/bin/mkdir /tmp/abcd";
      
 </pre>
-   <p><b>WHY?</b> Embedded shell commands like this cannot be managed by cfengine,
-so none of the protections that cfengine offers can be applied to the process. 
+   <p><b>WHY?</b> Embedded shell commands like this cannot be managed by CFEngine,
+so none of the protections that CFEngine offers can be applied to the process. 
 Moreover, this starts a new process, adding to the burden on the system.
 
    <p>Most importantly, this approach works like a covert channel, making changes
-that are not directly visible to cfengine.
+that are not directly visible to CFEngine.
 
 <div class="node">
 <a name="Never-manage-more-than-one-cron-job"></a>
@@ -568,10 +568,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Never-do">Never do</a>
 
 <h4 class="subsection">2.1.3 Never manage more than one cron job</h4>
 
-<p>When you run cfengine, there is no reason to maintain separate cron
-jobs.  Instead, use cfengine's time classes to work like a user
+<p>When you run CFEngine, there is no reason to maintain separate cron
+jobs.  Instead, use CFEngine's time classes to work like a user
 interface for cron.  This allows you to have a single, central
-cfengine file which contains all the cron jobs on your system without
+CFEngine file which contains all the cron jobs on your system without
 losing any of the fine control which cron affords you. All of the
 usual advantages apply:
      <ul>
@@ -583,8 +583,8 @@ classes to identify which host should run which programs.
 </ul>
 
    <p><b>WHY?</b> This gives you a single point of definition for batch jobs. 
-It encapsulates jobs under cfengine's tutelage, for improved control
-and security. Finally, cfengine can collate and summarize the outputs
+It encapsulates jobs under CFEngine's tutelage, for improved control
+and security. Finally, CFEngine can collate and summarize the outputs
 from multiple scripts in a rational monitoring process.
 
 <!-- ********************************************************************** -->
@@ -601,13 +601,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-Dos-and-Don_0027ts">Policy Dos 
 
 <ul class="menu">
 <li><a accesskey="1" href="#Avoid-writing-custom-scripts">Avoid writing custom scripts</a>
-<li><a accesskey="2" href="#Avoid-running-cfengine-without-lock-protection">Avoid running cfengine without lock protection</a>
+<li><a accesskey="2" href="#Avoid-running-CFEngine-without-lock-protection">Avoid running CFEngine without lock protection</a>
 </ul>
 
 <div class="node">
 <a name="Avoid-writing-custom-scripts"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Avoid-running-cfengine-without-lock-protection">Avoid running cfengine without lock protection</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Avoid-running-CFEngine-without-lock-protection">Avoid running CFEngine without lock protection</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Avoid">Avoid</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Avoid">Avoid</a>
 
@@ -615,10 +615,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Avoid">Avoid</a>
 
 <h4 class="subsection">2.2.1 Avoid writing custom scripts</h4>
 
-<p>Do not spend your time writing scripts to embed within cfengine.  If
-you are doing this, you are not using the potential of cfengine and
+<p>Do not spend your time writing scripts to embed within CFEngine.  If
+you are doing this, you are not using the potential of CFEngine and
 you are not benefitting from the protections and efficiencies that
-cfengine offers. Custom scripts should be for your specific business
+CFEngine offers. Custom scripts should be for your specific business
 operations, not for system maintenance.
 
    <p>If you are tempted to use scripts to achieve your needs, consider
@@ -626,17 +626,17 @@ jusing <code>methods</code>, and if necessary consult with support personnel
 for advice.
 
 <div class="node">
-<a name="Avoid-running-cfengine-without-lock-protection"></a>
+<a name="Avoid-running-CFEngine-without-lock-protection"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Avoid-writing-custom-scripts">Avoid writing custom scripts</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Avoid">Avoid</a>
 
 </div>
 
-<h4 class="subsection">2.2.2 avoid running cfengine without lock protection</h4>
+<h4 class="subsection">2.2.2 avoid running CFEngine without lock protection</h4>
 
-<p>Cfengine's adaptive locking is an important system protection.  You
-should not run cfengine continuously without this protection, e.g.  by
+<p>CFEngine's adaptive locking is an important system protection.  You
+should not run CFEngine continuously without this protection, e.g.  by
 running with the &lsquo;<samp><span class="samp">-K</span></samp>&rsquo; flag set, of by setting <code>ifelapsed</code> to
 zero for a promise.
 
@@ -674,7 +674,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Recommended">Recommended</a>
 <p>Searching through files on a disk is one of the most time consuming
 operations for a computer. If you have to do it, make sure that
 you are getting the most for your CPU-cycles and combine operations
-in a single promise. This allows cfengine to optimize the resource use
+in a single promise. This allows CFEngine to optimize the resource use
 of the system.
 
 <pre class="smallexample">     
@@ -709,7 +709,7 @@ changes involve many interdependencies, which make them fragile to
 unexpected contingencies. The risk of large changes is high. The risk
 of small changes is low.
 
-   <p>Cfengine makes it easy to make small changes frequently, without
+   <p>CFEngine makes it easy to make small changes frequently, without
 operational repercussions. As long as humans are on hand during the
 change to observe possible side-effects this.
 
@@ -805,15 +805,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Always-do">Always do</a>
 
 <h4 class="subsection">2.4.2 Always keep coding to a minimum</h4>
 
-<p>If you are coming to cfengine from another scripting langauge, you
-will probably be tempted to add a lot of `logic' to your cfengine
+<p>If you are coming to CFEngine from another scripting langauge, you
+will probably be tempted to add a lot of `logic' to your CFEngine
 program, testing whether things are true and trying to control the
 order of things. This is not necessary. You should think of each
 promise as being a self-contained `nugget' that requires little
 additional coding. The more coding you add, the more fragile
 a configuration becomes.
 
-   <p>The hardest part of using cfengine for programmers is letting go
+   <p>The hardest part of using CFEngine for programmers is letting go
 of the reins.
 
 <div class="node">
@@ -858,7 +858,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Always-do">Always do</a>
 
 <h4 class="subsection">2.4.4 Always use existing templates</h4>
 
-<p>Familiarize yourself with the current <code>cfengine_stdlib.cf</code> file in the
+<p>Familiarize yourself with the current <code>CFEngine_stdlib.cf</code> file in the
 software distribution. This contains many body templates, e.g.
 
 <pre class="smallexample">     local_cp() remote_cp() secure_cp() if_elapsed() recurse()
@@ -882,7 +882,7 @@ than inventing new ones. For example:
 </pre>
    <p><b>WHY?</b> The comprehensibility of your code to consultants and new
 employees is enhanced by standardization of practice. If the global
-cfengine community uses the same set of idioms, then communicating
+CFEngine community uses the same set of idioms, then communicating
 policy will be simpler.
 
 <div class="node">
@@ -896,11 +896,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Always-do">Always do</a>
 
 <h4 class="subsection">2.4.5 Always use the system variables for system resources</h4>
 
-<p>Cfengine provides indirection (pointers) to particular resources,
+<p>CFEngine provides indirection (pointers) to particular resources,
 through its &lsquo;<samp><span class="samp">sys</span></samp>&rsquo; variable context. These variables adapt
-to the operating system and user id under which cfengine is run. 
+to the operating system and user id under which CFEngine is run. 
 You policy will be more readily portable and you will need to
-code fewer exceptions if you use cfengine's automatically adapting
+code fewer exceptions if you use CFEngine's automatically adapting
 primitives, e.g. instead of writing <samp><span class="file">/etc/resolv.conf</span></samp> for the
 name-service configuration file, use <code>$(sys.resolv)</code>.
 
@@ -955,7 +955,7 @@ for change.
    <div class="node">
 <a name="Common-Workflows"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Quality-Assurance-around-cfengine">Quality Assurance around cfengine</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Quality-Assurance-around-CFEngine">Quality Assurance around CFEngine</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Policy-Dos-and-Don_0027ts">Policy Dos and Don'ts</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -965,10 +965,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <p>This chapter concerns `workflow processes' that should typically be
 dealt with on systems. A workflow process is represented by a
-<i>promise bundle</i> in cfengine.  None of the proposals here should be
+<i>promise bundle</i> in CFEngine.  None of the proposals here should be
 considered mandatory in any sense, but the do represent the norm.
 
-   <p>We refer users to the cfengine solutions guide for implementation details of
+   <p>We refer users to the CFEngine solutions guide for implementation details of
 specific solutions.
 
 <!-- ********************************************************************** -->
@@ -1090,7 +1090,7 @@ as updating databases or executing business related tasks.
 
 <p class="noindent"><b>Remarks:</b>
 
-   <p>Batch jobs should not be run every time cfengine runs, so you need to limit the
+   <p>Batch jobs should not be run every time CFEngine runs, so you need to limit the
 execution of each one carefully, using:
 
      <ul>
@@ -1236,7 +1236,7 @@ file.
      
      insert_lines:
      
-       "search cfengine.com" location =&gt; start;
+       "search CFEngine.com" location =&gt; start;
        "nameserver 212.112.166.18";
        "nameserver 212.112.166.22";
      }
@@ -1379,7 +1379,7 @@ change monitoring or anomaly detection.
 <p class="noindent"><b>Remarks:</b>
 This is an open ended topic. Security should be discussed as a
 human process, since most breaches come from within the system. 
-Cfengine can then be used to implement hardening measures, and
+CFEngine can then be used to implement hardening measures, and
 monitoring of important assets.
 
 <p class="noindent"><b>Example:</b>
@@ -1427,7 +1427,7 @@ Installing software and updating
 
    <p>These days most systems have some kind of package based management
 system.  These vary in their intelligence from self-updating robots to
-simple dumb file repositories. Cfengine can manage the installation
+simple dumb file repositories. CFEngine can manage the installation
 and subsequent customization/configuration.
 
 <p class="noindent"><b>Remarks:</b>
@@ -1460,16 +1460,16 @@ and operational requirements.
 <!-- CHAPTER -->
 <!-- ********************************************************************** -->
 <div class="node">
-<a name="Quality-Assurance-around-cfengine"></a>
+<a name="Quality-Assurance-around-CFEngine"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Common-Workflows">Common Workflows</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">4 Quality Assurance around cfengine</h2>
+<h2 class="chapter">4 Quality Assurance around CFEngine</h2>
 
-<p>A powerful tool like cfengine can do great good, or cause enormous
+<p>A powerful tool like CFEngine can do great good, or cause enormous
 damage if used carelessly.  It is essential to have a strict
 discipline when making changes. This is a human quality assurance
 process.
@@ -1487,8 +1487,8 @@ process.
 <a name="Policy-changes"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#The-policy-decision-flow">The policy decision flow</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Quality-Assurance-around-cfengine">Quality Assurance around cfengine</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Quality-Assurance-around-cfengine">Quality Assurance around cfengine</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Quality-Assurance-around-CFEngine">Quality Assurance around CFEngine</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Quality-Assurance-around-CFEngine">Quality Assurance around CFEngine</a>
 
 </div>
 
@@ -1504,7 +1504,7 @@ changes involve many interdependencies, which make them fragile to
 unexpected contingencies. The risk of large changes is high. The risk
 of small changes is low.
 
-   <p>Cfengine makes it easy to make small changes frequently, without
+   <p>CFEngine makes it easy to make small changes frequently, without
 operational repercussions. As long as humans are on hand during the
 change to observe possible side-effects this.
 
@@ -1532,10 +1532,10 @@ as follows (see figure):
 </ul>
 
    <p>These separate phases originate with a model of system management
-based on transactional changes.  Cfengine's conception of management
+based on transactional changes.  CFEngine's conception of management
 is some different, as transaction processing is not a good model for
 system management, but we can use this template to see how
-cfengine works differently.
+CFEngine works differently.
 
      <dl>
 <dt><em>Build</em><dd>A system is based on a number of decisions and resources that need to
@@ -1544,7 +1544,7 @@ foundations of a system are the key to guiding its development.  You
 don't need to decide every detail, just enough to build trust and
 predictability into your system.
 
-     <p>In cfengine, what you build is a template of proposed promises for the
+     <p>In CFEngine, what you build is a template of proposed promises for the
 machines in an organization such that, if the machines all make and
 keep these promises, the system will function seamlessly as
 planned. This is how it works in a human organization, and this is how
@@ -1552,23 +1552,23 @@ is works for computers too.
 
      <br><dt><em>Deploy</em><dd>Deploying really means implementing the policy that was already
 decided.  In transaction systems, one tries to push out changes one by
-one, hence `deploying' the decision. In cfengine you simply publish
-your policy (in cfengine parlance these are `promise proposals') and
-the machines see the new proposals and can adust accordingly. Each
+one, hence `deploying' the decision. In CFEngine you simply publish
+your policy (in CFEngine parlance these are `promise proposals') and
+the machines see the new proposals and can adjust accordingly. Each
 machine runs an agent that is capable of implementing policies and
 maintaining them over time without further assistance.
 
      <br><dt><em>Manage</em><dd>Once a decision is made, unplanned events will occur. Such
 incidents usually set off alarms and humans rush to make new transactions
-to repair them. In cfengine, the autonous agent manages the system,
+to repair them. In CFEngine, the autonous agent manages the system,
 and you only have to deal with rare events that cannot be dealt with
 automatically.
 
      <br><dt><em>Audit</em><dd>In traditional configuration systems, the outcome is far from clear
 after a one-shot transaction, so one audits the system
-to determine to discover what actually happened. In cfengine, changes
+to determine to discover what actually happened. In CFEngine, changes
 are not just initiated once, but locally audited and maintained. 
-Decision outcomes are assured by design in cfengine and maintained
+Decision outcomes are assured by design in CFEngine and maintained
 automatically, so the main worry is managing conflicting
 intentions. Users can sit back and examine regular reports of
 compliance generated by the agents, without having to arrange
@@ -1577,11 +1577,11 @@ for new `roll out' transactions.
    </dl>
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-<em>ROLL-OUT and ROLL-BACK?  You should not think of cfengine with a
+<em>ROLL-OUT and ROLL-BACK?  You should not think of CFEngine with a
 roll-out system, i.e. one that attempts to force out absolute changes
 and perhaps reverse them in case of error. Roll-out and roll-back are
 theoretically flawed concepts that only sometimes work in practice. 
-With cfengine, you publish a sequences of policy revisions, always
+With CFEngine, you publish a sequences of policy revisions, always
 moving forward (because like it or not, time only goes in one
 direction).  All of the desired-state changes are managed locally by
 each individual computer, and continuously repaired to ensure on-going
@@ -1593,26 +1593,26 @@ compliance with policy. </em>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Configuration-version-control-and-rollback">Configuration version control and rollback</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Policy-changes">Policy changes</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Quality-Assurance-around-cfengine">Quality Assurance around cfengine</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Quality-Assurance-around-CFEngine">Quality Assurance around CFEngine</a>
 
 </div>
 
 <h3 class="section">4.2 The policy decision flow</h3>
 
-<p>Cfengine does not make many absolute choices. Almost everything about
+<p>CFEngine does not make many absolute choices. Almost everything about
 its behaviour is matter of policy and can be changed.  However, a
 structure for use, like the following, is recommended (see figure).
 
-   <p>In order to keep operations as simple as possible, cfengine maintains
+   <p>In order to keep operations as simple as possible, CFEngine maintains
 a private working directory on each machine referred to in
 documentation as WORKDIR and in policy by the variable
 <code>$(sys.workdir)</code>. By default, this is located at
-<samp><span class="file">/var/cfengine</span></samp> or <samp><span class="file">C:\var\cfengine</span></samp>. It contains everything
-cfengine needs to run.
+<samp><span class="file">/var/cfengine</span></samp> or <samp><span class="file">C:\var\CFEngine</span></samp>. It contains everything
+CFEngine needs to run.
 
    <p>The figure below shows how decisions flow through the parts of a system.
 
-   <div class="block-image"><img src="arch.png" alt="The cfengine architecture"></div>
+   <div class="block-image"><img src="arch.png" alt="The CFEngine architecture"></div>
 
      <ul>
 <li>It makes sense to have a single point of coordination.  Decisions are
@@ -1620,7 +1620,7 @@ therefore usually made in a single location (the Policy Definition
 Point).  The history of decisions and changes can be tracked by a
 version control system of your choice (e.g. SubVersion).
 
-     <li>Decisions are made by editing cfengine's policy file
+     <li>Decisions are made by editing CFEngine's policy file
 <samp><span class="file">promises.cf</span></samp> on one of its included children. This process is
 carried out off-line.
 
@@ -1641,12 +1641,12 @@ server.
 
    <p>Once a client machine has a copy of the policy, it extracts only those
 promise proposals that are relevant to it, and implements any changes
-without human assistance.  This is how cfengine manages change.
+without human assistance.  This is how CFEngine manages change.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 
-   <p><em>WHY DO THIS? Cfengine tries to minimize dependencies by decoupling
-processes. By following this pull-based architecture, cfengine will
+   <p><em>WHY DO THIS? CFEngine tries to minimize dependencies by decoupling
+processes. By following this pull-based architecture, CFEngine will
 tolerate network outages and will recover from deployment errors
 easily. By placing the burden of responsibility for decision at the
 top, and for implementation at the bottom, we avoid needless fragility
@@ -1660,19 +1660,19 @@ and keep two independent quality assurance processes apart.</em>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Delegating-responsibility">Delegating responsibility</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-policy-decision-flow">The policy decision flow</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Quality-Assurance-around-cfengine">Quality Assurance around cfengine</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Quality-Assurance-around-CFEngine">Quality Assurance around CFEngine</a>
 
 </div>
 
 <h3 class="section">4.3 Version control and rollback</h3>
 
-<p>Cfengine does not provide specific tools for versioning promise
+<p>CFEngine does not provide specific tools for versioning promise
 specifications. It is recommended to use a tool such as subversion for
-this.  Cfengine does allow you to track changes and keep versions of
+this.  CFEngine does allow you to track changes and keep versions of
 non-trivial changes, such as file content changes.
 
    <p>Subversion maintains revision numbers on files. It is useful to be
-able to refer to version names or numbers also in cfengine. A version
+able to refer to version names or numbers also in CFEngine. A version
 string can be added to files as follows:
 <pre class="smallexample">     body common control
      {
@@ -1681,9 +1681,9 @@ string can be added to files as follows:
      
 </pre>
    <p>This defines the version number of a set of configuration files
-which is referred to in reference messages from cfengine.
+which is referred to in reference messages from CFEngine.
 
-   <p>When cfengine saves a current version of a file that it is modifying
+   <p>When CFEngine saves a current version of a file that it is modifying
 or replacing, by default such files are given a new extension and
 remain within the same directory which they were
 encountered. Alternatively, one can specify a repository directory to
@@ -1705,14 +1705,14 @@ changes that have occurred.
 <a name="Delegating-responsibility"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Configuration-version-control-and-rollback">Configuration version control and rollback</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Quality-Assurance-around-cfengine">Quality Assurance around cfengine</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Quality-Assurance-around-CFEngine">Quality Assurance around CFEngine</a>
 
 </div>
 
 <h3 class="section">4.4 Delegating responsibility</h3>
 
 <p>In a large organization, you delegate responsibility for different
-issues to different teams.  Cfengine has no meta-access control
+issues to different teams.  CFEngine has no meta-access control
 mechanism which can decide who may write policy rules on what
 issue. To create such a mechanism, there would have to be a monitor
 which could identify users, and an authority mechanism that would
@@ -1723,7 +1723,7 @@ to use and would add a whole new level of complexity to policy and
 potential error to the configuration process.
 
    <p>To keep matters as simple as possible, we avoid this and propose a
-different approach. Promise theory (cfengine's basis) reveals a
+different approach. Promise theory (CFEngine's basis) reveals a
 straightforward answer to model the security implications of this (see
 the figure of the bow-tie structure). A simple method of delegating is
 the following.
@@ -1759,7 +1759,7 @@ representatives from the multiple teams.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 
-   <p>Run several cfengines? Another way to delegate cfengine control for
+   <p>Run several CFEngines? Another way to delegate CFEngine control for
 users that only require limited privileges would be to run several
 agents as non-root users. This only works however if the tasks
 delegated are very self-contained and require no special privilege.
@@ -1767,7 +1767,7 @@ delegated are very self-contained and require no special privilege.
    </td></tr></table>
 
 <!-- ========================================================================= -->
-<!-- @node Index,  , Cfengine Methods, Top -->
+<!-- @node Index,  , CFEngine Methods, Top -->
 <!-- @unnumbered Concept Index -->
 <!-- @printindex cp -->
 <!-- ========================================================================= -->
@@ -1775,7 +1775,7 @@ delegated are very self-contained and require no special privilege.
    <div class="contents">
 <h2>Table of Contents</h2>
 <ul>
-<li><a name="toc_Top" href="#Top">Cfengine-Best-Practices</a>
+<li><a name="toc_Top" href="#Top">CFEngine-Best-Practices</a>
 <li><a name="toc_Policy-Style-Guide" href="#Policy-Style-Guide">1 Policy Style Guide</a>
 <ul>
 <li><a href="#Arranging-files">1.1 Arranging files</a>
@@ -1798,7 +1798,7 @@ delegated are very self-contained and require no special privilege.
 <li><a href="#Avoid">2.2 Avoid</a>
 <ul>
 <li><a href="#Avoid-writing-custom-scripts">2.2.1 Avoid writing custom scripts</a>
-<li><a href="#Avoid-running-cfengine-without-lock-protection">2.2.2 avoid running cfengine without lock protection</a>
+<li><a href="#Avoid-running-CFEngine-without-lock-protection">2.2.2 avoid running CFEngine without lock protection</a>
 </li></ul>
 <li><a href="#Recommended">2.3 Recommended (Try to)</a>
 <ul>
@@ -1827,7 +1827,7 @@ delegated are very self-contained and require no special privilege.
 <li><a href="#Security">3.8 Security</a>
 <li><a href="#Software-Management">3.9 Software Management</a>
 </li></ul>
-<li><a name="toc_Quality-Assurance-around-cfengine" href="#Quality-Assurance-around-cfengine">4 Quality Assurance around cfengine</a>
+<li><a name="toc_Quality-Assurance-around-CFEngine" href="#Quality-Assurance-around-CFEngine">4 Quality Assurance around CFEngine</a>
 <ul>
 <li><a href="#Policy-changes">4.1 Policy changes</a>
 <li><a href="#The-policy-decision-flow">4.2 The policy decision flow</a>

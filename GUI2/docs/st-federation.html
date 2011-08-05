@@ -338,7 +338,7 @@ are adhered to.
 
    <p>Promise Theory tells us that such conflicts can only be resolved by a
 party receiving information, not by the parties sending it. This leads
-to the model known as `voluntary cooperation' used by Cfengine, which
+to the model known as `voluntary cooperation' used by CFEngine, which
 implies that each federated part must effectively choose which inputs it is
 willing to use from external parties.
 
@@ -470,7 +470,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <p>Service oriented means business oriented. 
 Let us now consider what this means for IT configuration. In
-particular, how should a Cfengine configuration be structured for an
+particular, how should a CFEngine configuration be structured for an
 efficient organization?  In the examples below, we shall adopt a
 service oriented view, in which an enterprise is organized as a set of
 federated entities, some of whom depend on each other for services.
@@ -487,7 +487,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <h3 class="unnumberedsec">Each part disconnected, providing services</h3>
 
 <p>Each federated entity manages its own <samp><span class="file">promises.cf</span></samp> file. Each has, in effect, its
-own independent Cfengine configuration.
+own independent CFEngine configuration.
 
    <pre class="sp">
 
@@ -583,7 +583,7 @@ have been defined by an enterprise-wide global infrastructure service.
 
 </pre>
 
-The Cfengine code snippet above represents the Cfengine configuration
+The CFEngine code snippet above represents the CFEngine configuration
 for any of the hosts in one of the federated departments. The
 configuration is extremely simple. It begins by downloading the
 <samp><span class="file">baseline.cf</span></samp> configuration, provided by the global
@@ -594,7 +594,7 @@ technically trivial. The difficulties are rather conceptual and
 sociological.
 
    <p>Let us remark on the likelihood for conflict.  Although the source of
-the baseline is external, Cfengine configuration promises are always
+the baseline is external, CFEngine configuration promises are always
 implemented by the federated departments themselves, none are (or can
 be) implemented by any external party such as the infrastructure
 service. Thus, it is the responsibility of federated departments to
@@ -668,7 +668,7 @@ standard<a rel="footnote" href="#fn-3" name="fnd-3"><sup>3</sup></a>.
 
 </pre>
 <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine allows single-point-of-coodination monitoring of hosts
+CFEngine allows single-point-of-coodination monitoring of hosts
 by a variety of mechanisms, so that compliance can be assured. 
 </td></tr></table>
 
@@ -850,7 +850,7 @@ same piece of music.</p>
 
    <p class="footnote"><small>[<a name="fn-4" href="#fnd-4">4</a>]</small> This is why society needs a police force to monitor
 and respond to those who do not obey proposed law &ndash; whether they have
-promised to or not. This is the role of Cfengine.</p>
+promised to or not. This is the role of CFEngine.</p>
 
    <hr></div>
 

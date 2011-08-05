@@ -22,6 +22,7 @@
 #define false 0
 #define true  1
 #define CF_BUFSIZE 2048
+#define CF_MAXVARSIZE 1024
 #define cf_error 1
 
 /*************************************************************************/
@@ -50,7 +51,6 @@ struct TopicAssociation
 
 /*******************************************************************/
 
-
 struct Rlist
    {
    void *item;
@@ -58,7 +58,6 @@ struct Rlist
    struct Rlist *state_ptr; /* Points to "current" state/element of sub-list */
    struct Rlist *next;
    };
-
 
 struct Item
    {
@@ -86,6 +85,8 @@ struct TopicAssociation *AssociationExists(struct TopicAssociation *list,char *f
 struct Rlist *IdempPrependRScalar(struct Rlist **start,void *item, char type);
 struct Rlist *KeyInRlist(struct Rlist *list,char *key);
 struct Rlist *PrependRlist(struct Rlist **start,void *item, char type);
+struct Rlist *SplitStringAsRList(char *string,char sep);
+int SubStrnCopyChr(char *to,char *from,int len,char sep);
 
 /*****************************************************************************/
 
@@ -97,7 +98,7 @@ main(int argc, char **argv)
 
 if (argv[3] && strcmp(argv[3],"web") == 0)
    {
-   Manual(argv[1],argv[2],"http://cfengine.com/inside/manuals/");
+   Manual(argv[1],argv[2],"/docs/");
    }
 else
    {
@@ -133,7 +134,7 @@ fclose(fin);
 void ProcessFile(char *document,FILE *fin,char *context,char *prefix)
 
 { char tmp[2048],line[2048],type[2048],url[2048],title[2048],*sp;
-  char chapter[2048],section[2048],subsection[2048],script[2048];
+ char chapter[2048],section[2048],subsection[2048],script[2048],doctitle[2048];
   struct Topic *tp,*topics = NULL;
   struct Item *ip,*scriptlog = NULL;
   int lineno = 0;  
@@ -153,8 +154,17 @@ while (!feof(fin))
       AppendItem(&scriptlog,script);
       sprintf(script," \"%s%s.html#%s\"\n",prefix,document,url);
       AppendItem(&scriptlog,script);
-      sprintf(script,"  represents => { \"manual reference %s\" };\n",title);
+      sprintf(script,"  represents => { \"document\" };\n");
       AppendItem(&scriptlog,script);
+
+      AddTopic(&topics,title,"documentation",lineno);
+
+      if (tp = GetTopic(topics,title))
+         {
+         AddTopicAssociation(&(tp->associations),"is contained in","contains","files",document,true);
+         AddKeyAssociations(&(tp->associations),document);
+         }
+
       }
 
    if (sp = strstr(line,"<a name=\""))
@@ -167,6 +177,27 @@ while (!feof(fin))
       {
       memset(url,0,2048);
       sscanf(sp+strlen("<title>"),"%[^<]",title);
+
+      strcpy(doctitle,title);
+      
+      if (strncmp(document,"st-",3) == 0)
+         {
+         sprintf(script,"special_topics_guides::\n");
+         AppendItem(&scriptlog,script);
+         sprintf(script," \"%s%s.html\"\n",prefix,document);
+         AppendItem(&scriptlog,script);
+         sprintf(script,"  represents => { \"%s\" };\n",title);
+         AppendItem(&scriptlog,script);
+         }
+      else
+         {
+         sprintf(script,"manuals::\n");
+         AppendItem(&scriptlog,script);
+         sprintf(script," \"%s%s.html\"\n",prefix,document);
+         AppendItem(&scriptlog,script);
+         sprintf(script,"  represents => { \"%s\" };\n",title);
+         AppendItem(&scriptlog,script);
+         }
       }
 
    if (sp = strstr(line,"class=\""))       
@@ -174,28 +205,23 @@ while (!feof(fin))
       memset(type,0,2048);
       sscanf(sp+strlen("class=\""),"%[^\"]",type);
 
-      if (strstr(type,"unnumbered"))
+      if (strstr(type,"unnumbered") || strstr(type,"unnumberedsec"))
          {
          strcpy(title,GetTitle(sp,type));
-         
          sprintf(script,"%s::\n",CanonifyName(title));
          AppendItem(&scriptlog,script);
          sprintf(script," \"%s%s.html#%s\"\n",prefix,document,url);
          AppendItem(&scriptlog,script);
-         sprintf(script,"  represents => { \"Short note\" };\n");
+         sprintf(script,"  represents => { \"Text section\" };\n");
          AppendItem(&scriptlog,script);
          strcpy(subsection,title);
-         
+
          AddTopic(&topics,title,section,lineno);
 
-         if (strcmp(section,"Special Topics Guide") == 0)
+         if (tp = GetTopic(topics,title))
             {
-            strcpy(section,title);
-            }
-         
-         if (tp = GetTopic(topics,section))
-            {
-            AddTopicAssociation(&(tp->associations),"discussed in","discusses","short topic",section,true);
+            AddTopicAssociation(&(tp->associations),"discusses","is discussed in","short topic",doctitle,true);
+            AddKeyAssociations(&(tp->associations),section);
             }
          }
 
@@ -208,7 +234,7 @@ while (!feof(fin))
          AppendItem(&scriptlog,script);
          sprintf(script," \"%s%s.html#%s\"\n",prefix,document,url);
          AppendItem(&scriptlog,script);
-         sprintf(script,"  represents => { \"manual %s %s\" };\n",type,title);
+         sprintf(script,"  represents => { \"manual %s\" };\n",type);
          AppendItem(&scriptlog,script);
          strcpy(subsection,title);
          
@@ -218,6 +244,7 @@ while (!feof(fin))
          if ((tp = GetTopic(topics,subsection)) && (strlen(section) > 0))
             {
             AddTopicAssociation(&(tp->associations),"is a subsection of","has subsection","manual",section,true);
+            AddKeyAssociations(&(tp->associations),section);
             }
          }
 
@@ -236,10 +263,15 @@ while (!feof(fin))
          strcpy(subsection,"");
          AddTopic(&topics,section,chapter,lineno);
 
-         if (tp = GetTopic(topics,subsection))
+         if (strcmp(title,section) != 0)
             {
-            AddTopicAssociation(&(tp->associations),"discussed in","discusses","manual",chapter,true);
+            if (tp = GetTopic(topics,subsection))
+               {
+               AddTopicAssociation(&(tp->associations),"discussed in","discusses","manual",chapter,true);
+               AddKeyAssociations(&(tp->associations),chapter);
+               }
             }
+
          continue;
          }
 
@@ -251,7 +283,7 @@ while (!feof(fin))
          sprintf(script," \"%s%s.html#%s\"\n",prefix,document,url);
          AppendItem(&scriptlog,script);
          
-         sprintf(script,"  represents => { \"manual chapter %s\" };\n",title);
+         sprintf(script,"  represents => { \"manual chapter\" };\n");
          AppendItem(&scriptlog,script);
          
          strcpy(chapter,title);
@@ -259,9 +291,13 @@ while (!feof(fin))
          strcpy(subsection,"");
          AddTopic(&topics,chapter,title,lineno);
 
-         if (tp = GetTopic(topics,subsection))
-            {
-            AddTopicAssociation(&(tp->associations),"discussed in","discusses","Documentation",section,true);
+         if (strcmp(title,section) != 0)
+            {           
+            if (tp = GetTopic(topics,subsection))
+               {
+               AddTopicAssociation(&(tp->associations),"discussed in","discusses","Documentation",title,true);
+               AddKeyAssociations(&(tp->associations),section);
+               }
             }
 
          continue;
@@ -307,25 +343,26 @@ printf("\"%s\";\n",document);
 
 for (tp = topics; tp != NULL; tp=tp->next)
    {
-   if (strlen(tp->topic_type) > 0)
-      {
-      printf("%s::\n",CanonifyName(tp->topic_type));
-      }
+   struct TopicAssociation *ta;
 
-   printf("    \"%s\" ",tp->topic_name);
-
-   if (tp->associations)
+   for (ta = tp->associations; ta != NULL; ta=ta->next)
       {
-      struct TopicAssociation *ta = tp->associations;
+      if (strlen(tp->topic_type) > 0)
+         {
+         printf("%s::\n",CanonifyName(tp->topic_type));
+         }
+      
+      printf("    \"%s\" ",tp->topic_name);
+      
       struct Rlist *list = ta->associates;
       
       printf(" association => a(\"%s\",\"%s\",\"%s\")",
              ta->fwd_name,
-             list->item,
-             ta->bwd_name);
+             (char *)list->item,
+                 ta->bwd_name);
+      
+      printf(";\n");
       }
-   
-   printf(";\n");
    }
 
 printf("\n\noccurrences:\n\n");
@@ -350,7 +387,7 @@ char *GetTitle(char *base,char *type)
 tmp[0] = '\0';
 memset(tmp,0,CF_BUFSIZE);
 
-if (strstr(type,"unnumbered"))
+if (strstr(type,"unnumbered")||strstr(type,"unnumberedsec"))
    {
    sscanf(base+strlen("class=\"xx")+strlen(type),"%[^(\n]",buffer);
    }
@@ -403,7 +440,7 @@ for (sp = buffer,to = tmp; *sp != '\0'; sp++)
       }
    }
 
-if (sp = strstr(tmp," (compound body)"))
+if (sp = strstr(tmp," (body template)"))
    {
    *sp = '\0';
    }
@@ -483,6 +520,117 @@ tp->next = *list;
 
 
 /*****************************************************************************/
+
+int AddKeyAssociations(struct TopicAssociation **a, char *s)
+
+{ char *keywords[8000];
+  char *exceptions[] = { "or", "and","the", "there","then", "what", "how", "ci", NULL };
+ 
+  char *otherwords[] =  { "convergence", "promise", "scheduling", "workflow","bundles", "hierarchy", "cloud",
+                         "package", "policy", "security", "virtualization", "scalability",
+                         "hierarchies","file",  NULL  };
+ char *sp;
+ int i,j,skip;
+ FILE *fp;
+ char word[1024];
+
+if ((fp = fopen("words","r")) == NULL)
+   {
+   return;
+   }
+
+i = 0;
+
+while(!feof(fp))
+   {
+   memset(word,0,1024);
+   fgets(word,1023,fp);
+   Chop(word);
+
+   if (strlen(word) == 0)
+      {
+      continue;
+      }
+   
+   keywords[i] = strdup(word);
+
+   i++;
+
+   if (i >= 8000)
+      {
+      break;
+      }
+   }
+
+keywords[i] = NULL;
+fclose(fp);
+ 
+for (i = 0; keywords[i] != NULL; i++)
+   {
+   skip = false;
+   
+   for (j = 0; exceptions[j] != NULL; j++)
+      {
+      if (strcmp(keywords[i],exceptions[j]) == 0)
+         {
+         skip = true;
+         continue;
+         }
+      }
+
+   if (skip)
+      {
+      continue;
+      }
+   
+   //Check for canonified form too
+
+   if (strcmp(ToLowerStr(s),keywords[i]) == 0)
+      {
+      continue;
+      }
+
+   if (sp = strstr(ToLowerStr(s),keywords[i]))
+      {
+      // Check for at least one space around the word
+
+      if ((sp > s && *(sp-1) != ' ') || !isspace(*(sp+strlen(keywords[i]))))
+         {
+         continue;
+         }
+
+      AddTopicAssociation(a,"seems to refer to","seems be referred to in","any",keywords[i],true);
+      }
+   
+   if (strstr(CanonifyName(s),keywords[i]))
+      {
+      AddTopicAssociation(a,"seems to refer to","seems be referred to in","any",keywords[i],true);
+      }
+   }
+
+for (i = 0; otherwords[i] != NULL; i++)
+   {
+   if (strcmp(ToLowerStr(s),otherwords[i]) == 0)
+      {
+      continue;
+      }
+
+   if (sp = strstr(ToLowerStr(s),otherwords[i]))
+      {
+       // Check for at least one space around the word
+
+      if ((sp > s && *(sp-1) != ' ') || !isspace(*(sp+strlen(otherwords[i]))))
+         {
+//         continue;
+         }
+
+      AddTopicAssociation(a,"seems to refer to","seems be referred to in","any",otherwords[i],true);
+      }
+   }
+
+}
+
+/*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
 
@@ -498,6 +646,7 @@ for (tp = list; tp != NULL; tp=tp->next)
          {
          //fprintf(stderr,"Scan: Topic \"%s\" exists, but its type \"%s\" does not match promised type \"%s\"\n",topic_name,tp->topic_type,topic_type);
          }
+      
       return true;
       }
    }
@@ -696,7 +845,6 @@ void AddTopicAssociation(struct TopicAssociation **list,char *fwd_name,char *bwd
 
 strncpy(assoc_type,CanonifyName(fwd_name),255);
 
-
 if (associates == NULL)
    {
    printf("A topic must have at least one associate in association %s",fwd_name);
@@ -869,5 +1017,104 @@ rp->state_ptr = NULL;
 *start = rp;
 
 return rp;
+}
+
+
+/*******************************************************************/
+
+struct Rlist *SplitStringAsRList(char *string,char sep)
+
+ /* Splits a string containing a separator like "," 
+    into a linked list of separate items, supports
+    escaping separators, e.g. \, */
+
+{ struct Rlist *liststart = NULL;
+  char *sp;
+  char node[CF_MAXVARSIZE];
+  int maxlen = strlen(string);
+  
+
+if (string == NULL)
+   {
+   return NULL;
+   }
+
+for (sp = string; *sp != '\0'; sp++)
+   {
+   if (*sp == '\0' || sp > string+maxlen)
+      {
+      break;
+      }
+
+   memset(node,0,CF_MAXVARSIZE);
+
+   sp += SubStrnCopyChr(node,sp,CF_MAXVARSIZE,sep);
+
+   PrependRlist(&liststart,node,CF_SCALAR);
+   }
+
+return liststart;
+}
+
+/*********************************************************************/
+
+int SubStrnCopyChr(char *to,char *from,int len,char sep)
+
+{ char *sp,*sto = to;
+  int count = 0;
+
+memset(to,0,len);
+
+if (from == NULL)
+   {
+   return 0;
+   }
+
+if (from && strlen(from) == 0)
+   {
+   return 0;
+   }
+
+for (sp = from; *sp != '\0'; sp++)
+   {
+   if (count > len-1)
+      {
+      break;
+      }
+
+   if (*sp == '\\' && *(sp+1) == sep)
+      {
+      *sto++ = *++sp;
+      }
+   else if (*sp == sep)
+      {
+      break;          
+      }
+   else
+      {
+      *sto++ = *sp;
+      }
+
+   count++;
+   }
+
+return count;
+}
+
+/*************************************************************************/
+
+int Chop(char *str) /* remove trailing spaces */
+
+{ int i;
+ 
+if ((str == NULL) || (strlen(str) == 0))
+   {
+   return;
+   }
+
+for (i = strlen(str)-1; i >= 0 && isspace((int)str[i]); i--)
+   {
+   str[i] = '\0';
+   }
 }
 

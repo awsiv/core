@@ -205,11 +205,12 @@ class Settings extends Cf_Controller {
 
     function preferences($op=false, $id=false){
            $bc = array(
-                'title' => 'settings',
-                'url' => 'auth/setting',
+                'title' => 'preferences',
+                'url' => 'settings/preferences',
                 'isRoot' => false,
                 'replace_existing' => true
             );
+            $this->breadcrumb->setBreadCrumb($bc);
         $user=$this->session->userdata('username');
         $this->form_validation->set_rules('tooltips', 'Enable tool tips', 'xss_clean|trim|required');
         $this->form_validation->set_rules('num_rows', 'Number of rows shown in tables', 'xss_clean|trim|required|numeric|integer');

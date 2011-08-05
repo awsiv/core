@@ -5,160 +5,21 @@ bundle knowledge cf3_tutorial
 topics:
 
 "cf3-tutorial";
-More___::
-    "More..." ;
-Annex__Technical_pre_requisites::
-    "Trouble shooting the knowledge base" ;
-Annex__Technical_pre_requisites::
-    "Knowledge base requirements" ;
-Knowledge_Management::
-    "Annex: Technical pre-requisites" ;
-Knowledge_Management::
-    "Modelling configuration promises as topic maps" ;
-The_nuts_and_bolts_of_topic_maps::
-    "cf-know" ;
-The_nuts_and_bolts_of_topic_maps::
-    "Topic map definitions" ;
-Knowledge_Management::
-    "The nuts and bolts of topic maps" ;
-Knowledge_Management::
-    "Querying the Topic Map" ;
-Knowledge_Management::
-    "Step by step" ;
-Knowledge_Management::
-    "What topic maps offer" ;
-Knowledge_Management::
-    "Annotating promises" ;
-Knowledge_Management::
-    "The basics of knowledge" ;
-Knowledge_Management::
-    "Promises and Knowledge" ;
-Knowledge_Management::
-    "Knowledge Management" ;
-Remote_access_explained::
-    "Encryption" ;
-Remote_access_explained::
-    "Other users than root" ;
-Remote_access_explained::
-    "Time windows" ;
-Remote_access_explained::
-    "Key exchange" ;
-Remote_access_explained::
-    "Remote access troubleshooting" ;
-Remote_access_explained::
-    "Server connection" ;
-Network_services::
-    "Remote access explained" ;
-How_services_work::
-    "Remote execution of cf-agent" ;
-How_services_work::
-    "Remote file distribution" ;
-Network_services::
-    "How services work" ;
-Network_services::
-    "Cfengine network services" ;
-Network_services::
-    "Network services" ;
-Using_cfengine_as_a_front_end_or_replacement_for_cron::
-    "Choosing a scheduling interval" ;
-Using_cfengine_as_a_front_end_or_replacement_for_cron::
-    "Building flexible time classes" ;
-Using_cfengine_as_a_front_end_or_replacement_for_cron::
-    "Splaying host times" ;
-Using_cfengine_as_a_front_end_or_replacement_for_cron::
-    "Structuring commands promises" ;
-Using_cfengine_as_a_front_end_or_replacement_for_cron::
-    "The single cron job approach" ;
-Using_cfengine_as_a_front_end_or_replacement_for_cron::
-    "Do I need cron?" ;
-Using_cfengine_as_a_front_end_or_replacement_for_cron::
-    "Using cfengine as a front-end or replacement for cron" ;
-A_simple_crash_course_in_concepts::
-    "The main promise types" ;
-A_simple_crash_course_in_concepts::
-    "Loops" ;
-A_simple_crash_course_in_concepts::
-    "Decisions" ;
-Variables::
-    "Associative arrays" ;
-Variables::
-    "List variables" ;
-Variables::
-    "Scalar variables" ;
-A_simple_crash_course_in_concepts::
-    "Variables" ;
-A_simple_crash_course_in_concepts::
-    "Control promises" ;
-A_simple_crash_course_in_concepts::
-    "Rules are promises" ;
-A_simple_crash_course_in_concepts::
-    "A simple crash course in concepts" ;
-How_to_execute_and_test_a_cfengine_policy::
-    "cf-execd" ;
-How_to_execute_and_test_a_cfengine_policy::
-    "Reporting" ;
-How_to_execute_and_test_a_cfengine_policy::
-    "The update bundle - provisioning" ;
-How_to_execute_and_test_a_cfengine_policy::
-    "Changing a password" ;
-How_to_execute_and_test_a_cfengine_policy::
-    "Checking a file" ;
-How_to_execute_and_test_a_cfengine_policy::
-    "Hello world" ;
-How_to_execute_and_test_a_cfengine_policy::
-    "How to execute and test a cfengine policy" ;
-Bodies_and_bundles::
-    "A simple syntax pattern" ;
-Bundles::
-    "Bundle scope" ;
-Bodies_and_bundles::
-    "Bundles" ;
-Bodies::
-    "Control bodies" ;
-Bodies::
-    "Body parts" ;
-Bodies_and_bundles::
-    "Bodies" ;
-Bodies_and_bundles::
-    "Bodies and bundles" ;
-The_components_of_cfengine::
-    "Getting started with the Community Edition" ;
-The_components_of_cfengine::
-    "The policy decision flow" ;
-The_components_of_cfengine::
-    "About the cfengine architecture" ;
-The_components_of_cfengine::
-    "The players" ;
-The_components_of_cfengine::
-    "The work directory" ;
-The_components_of_cfengine::
-    "Installation" ;
-The_components_of_cfengine::
-    "The components of cfengine" ;
-System_automation::
-    "How do you view cfengine?" ;
-System_automation::
-    "Scaling up" ;
-System_automation::
-    "Why automation?" ;
-System_automation::
-    "Managing expectations - a theory of promises" ;
-System_automation::
-    "Managing diverse and challenging environments seamlessly and invisibly" ;
-System_automation::
-    "System automation" ;
 Special_Topics_Guide::
-    "Cfengine-Tutorial"  association => a("discussed in","Cfengine-Tutorial","discusses");
+    "CFEngine-Tutorial"  association => a("discusses","CFEngine 3 Concept Guide","is discussed in");
 
 
 occurrences:
 
-Cfengine_Tutorial::
+manuals::
+ "/docs/cf3-tutorial.html"
+  represents => { "CFEngine 3 Concept Guide" };
+CFEngine_Tutorial::
  "/docs/cf3-tutorial.html#Top"
-  represents => { "Short note" };
+  represents => { "Text section" };
 System_automation::
  "/docs/cf3-tutorial.html#System-automation"
-  represents => { "manual chapter System automation" };
+  represents => { "manual chapter" };
 Managing_diverse_and_challenging_environments_seamlessly_and_invisibly::
  "/docs/cf3-tutorial.html#Managing-diverse-and-challenging-environments-seamlessly-and-invisibly"
   represents => { "manual section Managing diverse and challenging environments seamlessly and invisibly" };
@@ -171,12 +32,12 @@ Why_automation_::
 Scaling_up::
  "/docs/cf3-tutorial.html#Scaling-up"
   represents => { "manual section Scaling up" };
-How_do_you_view_cfengine_::
- "/docs/cf3-tutorial.html#How-do-you-view-cfengine"
-  represents => { "manual section How do you view cfengine?" };
-The_components_of_cfengine::
- "/docs/cf3-tutorial.html#The-components-of-cfengine"
-  represents => { "manual chapter The components of cfengine" };
+How_do_you_view_CFEngine_::
+ "/docs/cf3-tutorial.html#How-do-you-view-CFEngine"
+  represents => { "manual section How do you view CFEngine?" };
+The_components_of_CFEngine::
+ "/docs/cf3-tutorial.html#The-components-of-CFEngine"
+  represents => { "manual chapter" };
 Installation::
  "/docs/cf3-tutorial.html#Installation"
   represents => { "manual section Installation" };
@@ -192,9 +53,9 @@ The_work_directory::
 The_players::
  "/docs/cf3-tutorial.html#The-players"
   represents => { "manual section The players" };
-About_the_cfengine_architecture::
- "/docs/cf3-tutorial.html#About-the-cfengine-architecture"
-  represents => { "manual section About the cfengine architecture" };
+About_the_CFEngine_architecture::
+ "/docs/cf3-tutorial.html#About-the-CFEngine-architecture"
+  represents => { "manual section About the CFEngine architecture" };
 The_policy_decision_flow::
  "/docs/cf3-tutorial.html#The-policy-decision-flow"
   represents => { "manual section The policy decision flow" };
@@ -212,13 +73,13 @@ Getting_started_with_the_Community_Edition::
   represents => { "code example" };
 Bodies_and_bundles::
  "/docs/cf3-tutorial.html#Bodies-and-bundles"
-  represents => { "manual chapter Bodies and bundles" };
+  represents => { "manual chapter" };
 Bodies::
  "/docs/cf3-tutorial.html#Bodies"
   represents => { "manual section Bodies" };
 Body_parts::
  "/docs/cf3-tutorial.html#Body-parts"
-  represents => { "manual subsection Body parts" };
+  represents => { "manual subsection" };
 Body_parts::
  "/docs/cf3-tutorial.html#Body-parts"
   represents => { "code example" };
@@ -227,20 +88,20 @@ Body_parts::
   represents => { "code example" };
 Control_bodies::
  "/docs/cf3-tutorial.html#Control-bodies"
-  represents => { "manual subsection Control bodies" };
+  represents => { "manual subsection" };
 Bundles::
  "/docs/cf3-tutorial.html#Bundles"
   represents => { "manual section Bundles" };
 Bundle_scope::
  "/docs/cf3-tutorial.html#Bundle-scope"
-  represents => { "manual subsection Bundle scope" };
+  represents => { "manual subsection" };
 A_simple_syntax_pattern::
  "/docs/cf3-tutorial.html#A-simple-syntax-pattern"
   represents => { "manual section A simple syntax pattern" };
-How_to_execute_and_test_a_cfengine_policy::
+How_to_execute_and_test_a_CFEngine_policy::
  "/docs/cf3-tutorial.html#First-promises"
-  represents => { "manual chapter How to execute and test a cfengine policy" };
-How_to_execute_and_test_a_cfengine_policy::
+  represents => { "manual chapter" };
+How_to_execute_and_test_a_CFEngine_policy::
  "/docs/cf3-tutorial.html#First-promises"
   represents => { "code example" };
 Hello_world::
@@ -293,7 +154,7 @@ cf_execd::
   represents => { "manual section cf-execd" };
 A_simple_crash_course_in_concepts::
  "/docs/cf3-tutorial.html#A-simple-crash-course-in-concepts"
-  represents => { "manual chapter A simple crash course in concepts" };
+  represents => { "manual chapter" };
 Rules_are_promises::
  "/docs/cf3-tutorial.html#Rules-are-promises"
   represents => { "manual section Rules are promises" };
@@ -317,13 +178,13 @@ Variables::
   represents => { "manual section Variables" };
 Scalar_variables::
  "/docs/cf3-tutorial.html#Scalar-variable-expansion"
-  represents => { "manual subsection Scalar variables" };
+  represents => { "manual subsection" };
 Scalar_variables::
  "/docs/cf3-tutorial.html#Scalar-variable-expansion"
   represents => { "code example" };
 List_variables::
  "/docs/cf3-tutorial.html#List-variables"
-  represents => { "manual subsection List variables" };
+  represents => { "manual subsection" };
 List_variables::
  "/docs/cf3-tutorial.html#List-variables"
   represents => { "code example" };
@@ -332,7 +193,7 @@ List_variables::
   represents => { "code example" };
 Associative_arrays::
  "/docs/cf3-tutorial.html#List-variable-substitution-and-expansion"
-  represents => { "manual subsection Associative arrays" };
+  represents => { "manual subsection" };
 Associative_arrays::
  "/docs/cf3-tutorial.html#List-variable-substitution-and-expansion"
   represents => { "code example" };
@@ -351,9 +212,9 @@ Loops::
 The_main_promise_types::
  "/docs/cf3-tutorial.html#The-main-promise-types"
   represents => { "manual section The main promise types" };
-Using_cfengine_as_a_front_end_or_replacement_for_cron::
- "/docs/cf3-tutorial.html#Using-cfengine-as-a-front_002dend-for-cron"
-  represents => { "manual chapter Using cfengine as a front-end or replacement for cron" };
+Using_CFEngine_as_a_front_end_or_replacement_for_cron::
+ "/docs/cf3-tutorial.html#Using-CFEngine-as-a-front_002dend-for-cron"
+  represents => { "manual chapter" };
 Do_I_need_cron_::
  "/docs/cf3-tutorial.html#Do-I-need-cron_003f"
   represents => { "manual section Do I need cron?" };
@@ -383,19 +244,19 @@ Choosing_a_scheduling_interval::
   represents => { "manual section Choosing a scheduling interval" };
 Network_services::
  "/docs/cf3-tutorial.html#Network-services"
-  represents => { "manual chapter Network services" };
-Cfengine_network_services::
+  represents => { "manual chapter" };
+CFEngine_network_services::
  "/docs/cf3-tutorial.html#What-services_003f"
-  represents => { "manual section Cfengine network services" };
+  represents => { "manual section CFEngine network services" };
 How_services_work::
  "/docs/cf3-tutorial.html#How-services-work"
   represents => { "manual section How services work" };
 Remote_file_distribution::
  "/docs/cf3-tutorial.html#Remote-file-distribution"
-  represents => { "manual subsection Remote file distribution" };
+  represents => { "manual subsection" };
 Remote_execution_of_cf_agent::
  "/docs/cf3-tutorial.html#Remote-execution-of-cfagent"
-  represents => { "manual subsection Remote execution of cf-agent" };
+  represents => { "manual subsection" };
 Remote_execution_of_cf_agent::
  "/docs/cf3-tutorial.html#Remote-execution-of-cfagent"
   represents => { "code example" };
@@ -404,37 +265,37 @@ Remote_access_explained::
   represents => { "manual section Remote access explained" };
 Server_connection::
  "/docs/cf3-tutorial.html#Server-connection"
-  represents => { "manual subsection Server connection" };
+  represents => { "manual subsection" };
 Server_connection::
  "/docs/cf3-tutorial.html#Server-connection"
   represents => { "code example" };
 Remote_access_troubleshooting::
  "/docs/cf3-tutorial.html#Remote-access-troubleshooting"
-  represents => { "manual subsection Remote access troubleshooting" };
+  represents => { "manual subsection" };
 Remote_access_troubleshooting::
  "/docs/cf3-tutorial.html#Remote-access-troubleshooting"
   represents => { "code example" };
 Key_exchange::
  "/docs/cf3-tutorial.html#Key-exchange"
-  represents => { "manual subsection Key exchange" };
+  represents => { "manual subsection" };
 Key_exchange::
  "/docs/cf3-tutorial.html#Key-exchange"
   represents => { "code example" };
 Time_windows::
  "/docs/cf3-tutorial.html#Time-windows"
-  represents => { "manual subsection Time windows" };
+  represents => { "manual subsection" };
 Time_windows::
  "/docs/cf3-tutorial.html#Time-windows"
   represents => { "code example" };
 Other_users_than_root::
  "/docs/cf3-tutorial.html#Other-users-than-root"
-  represents => { "manual subsection Other users than root" };
+  represents => { "manual subsection" };
 Encryption::
  "/docs/cf3-tutorial.html#Encryption"
-  represents => { "manual subsection Encryption" };
+  represents => { "manual subsection" };
 Knowledge_Management::
  "/docs/cf3-tutorial.html#Knowledge-Management"
-  represents => { "manual chapter Knowledge Management" };
+  represents => { "manual chapter" };
 Promises_and_Knowledge::
  "/docs/cf3-tutorial.html#Promises-and-Knowledge"
   represents => { "manual section Promises and Knowledge" };
@@ -444,65 +305,41 @@ The_basics_of_knowledge::
 Annotating_promises::
  "/docs/cf3-tutorial.html#Annotating-promises"
   represents => { "manual section Annotating promises" };
+A_promise_model_of_topic_maps::
+ "/docs/cf3-tutorial.html#A-promise-model-of-topic-maps"
+  represents => { "manual section A promise model of topic maps" };
 What_topic_maps_offer::
  "/docs/cf3-tutorial.html#What-topic-maps-offer"
   represents => { "manual section What topic maps offer" };
-Step_by_step::
- "/docs/cf3-tutorial.html#Step-by-step"
-  represents => { "manual section Step by step" };
-Step_by_step::
- "/docs/cf3-tutorial.html#Step-by-step"
-  represents => { "code example" };
-Step_by_step::
- "/docs/cf3-tutorial.html#Step-by-step"
-  represents => { "code example" };
-Step_by_step::
- "/docs/cf3-tutorial.html#Step-by-step"
-  represents => { "code example" };
-Querying_the_Topic_Map::
- "/docs/cf3-tutorial.html#Querying-the-Topic-Map"
-  represents => { "manual section Querying the Topic Map" };
-Querying_the_Topic_Map::
- "/docs/cf3-tutorial.html#Querying-the-Topic-Map"
-  represents => { "code example" };
-Querying_the_Topic_Map::
- "/docs/cf3-tutorial.html#Querying-the-Topic-Map"
-  represents => { "code example" };
-Querying_the_Topic_Map::
- "/docs/cf3-tutorial.html#Querying-the-Topic-Map"
-  represents => { "code example" };
 The_nuts_and_bolts_of_topic_maps::
  "/docs/cf3-tutorial.html#The-nuts-and-bolts-of-topic-maps"
   represents => { "manual section The nuts and bolts of topic maps" };
 Topic_map_definitions::
  "/docs/cf3-tutorial.html#Topic-map-definitions"
-  represents => { "manual subsection Topic map definitions" };
+  represents => { "manual subsection" };
 Topic_map_definitions::
  "/docs/cf3-tutorial.html#Topic-map-definitions"
   represents => { "code example" };
+Example_of_topics_promises::
+ "/docs/cf3-tutorial.html#Example-of-topics-promises"
+  represents => { "manual section Example of topics promises" };
+Example_of_topics_promises::
+ "/docs/cf3-tutorial.html#Example-of-topics-promises"
+  represents => { "code example" };
+Analysing_and_indexing_the_policy::
+ "/docs/cf3-tutorial.html#Analysing-and-indexing-the-policy"
+  represents => { "manual subsection" };
 cf_know::
  "/docs/cf3-tutorial.html#cf_002dknow"
-  represents => { "manual subsection cf-know" };
+  represents => { "manual subsection" };
 cf_know::
  "/docs/cf3-tutorial.html#cf_002dknow"
   represents => { "code example" };
 Modelling_configuration_promises_as_topic_maps::
  "/docs/cf3-tutorial.html#Modelling-configuration-promises-as-topic-maps"
   represents => { "manual section Modelling configuration promises as topic maps" };
-Annex__Technical_pre_requisites::
- "/docs/cf3-tutorial.html#Annex-Technical-pre_002drequisites"
-  represents => { "manual section Annex: Technical pre-requisites" };
-Knowledge_base_requirements::
- "/docs/cf3-tutorial.html#Knowledge-base-requirements"
-  represents => { "manual subsection Knowledge base requirements" };
-Knowledge_base_requirements::
- "/docs/cf3-tutorial.html#Knowledge-base-requirements"
-  represents => { "code example" };
-Trouble_shooting_the_knowledge_base::
- "/docs/cf3-tutorial.html#Trouble-shooting-the-knowledge-base"
-  represents => { "manual subsection Trouble shooting the knowledge base" };
 More___::
- "/docs/cf3-tutorial.html#Trouble-shooting-the-knowledge-base"
-  represents => { "manual chapter More..." };
+ "/docs/cf3-tutorial.html#Modelling-configuration-promises-as-topic-maps"
+  represents => { "manual chapter" };
 }
 

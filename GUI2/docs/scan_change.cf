@@ -1,0 +1,86 @@
+
+bundle knowledge st_change
+
+{
+topics:
+
+"st-change";
+Special_Topics_Guide::
+    "Deploying policy changes"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "The change decision process or release management"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "Change and convergence"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "Non-destructive change"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "Change management and knowledge management"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "Promises about change"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "Promises about change vs state"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "The decision point"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "Partially centralized change"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "How fast should changes be made?"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "Intended and unintended change"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "Regulation: authorized and unauthorized change"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "What is change management?"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+Special_Topics_Guide::
+    "Change Management"  association => a("discusses","Change Management and Incident Repair","is discussed in");
+
+
+occurrences:
+
+special_topics_guides::
+ "/docs/st-change.html"
+  represents => { "Change Management and Incident Repair" };
+Change_Management::
+ "/docs/st-change.html#Top"
+  represents => { "Text section" };
+What_is_change_management_::
+ "/docs/st-change.html#What-is-change-management_003f"
+  represents => { "Text section" };
+Regulation__authorized_and_unauthorized_change::
+ "/docs/st-change.html#Regulation-_002d-authorized-and-unauthorized-change"
+  represents => { "Text section" };
+Intended_and_unintended_change::
+ "/docs/st-change.html#Intended-and-unintended-change"
+  represents => { "Text section" };
+How_fast_should_changes_be_made_::
+ "/docs/st-change.html#How-fast-should-changes-be-made_003f"
+  represents => { "Text section" };
+Partially_centralized_change::
+ "/docs/st-change.html#Partially-centralized-change"
+  represents => { "Text section" };
+The_decision_point::
+ "/docs/st-change.html#The-decision-point"
+  represents => { "Text section" };
+Promises_about_change_vs_state::
+ "/docs/st-change.html#Promises-about-change-vs-state"
+  represents => { "Text section" };
+Promises_about_change::
+ "/docs/st-change.html#Promises-about-change"
+  represents => { "Text section" };
+Change_management_and_knowledge_management::
+ "/docs/st-change.html#Change-management-and-knowledge-management"
+  represents => { "Text section" };
+Non_destructive_change::
+ "/docs/st-change.html#Non_002ddestructive-change"
+  represents => { "Text section" };
+Change_and_convergence::
+ "/docs/st-change.html#Change-and-convergence"
+  represents => { "Text section" };
+The_change_decision_process_or_release_management::
+ "/docs/st-change.html#The-change-decision-process-or-release-management"
+  represents => { "Text section" };
+Deploying_policy_changes::
+ "/docs/st-change.html#Deploying-policy-changes"
+  represents => { "Text section" };
+}
+

@@ -190,11 +190,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a accesskey="1" href="#What-are-monitoring-and-reporting_003f">What are monitoring and reporting?</a>
 <li><a accesskey="2" href="#Should-monitoring-and-configuration-be-separate_003f">Should monitoring and configuration be separate?</a>
 <li><a accesskey="3" href="#What-is-a-CMDB_003f">What is a CMDB?</a>
-<li><a accesskey="4" href="#CMDB-and-Cfengine">CMDB and Cfengine</a>
-<li><a accesskey="5" href="#Decentralized-data-collection-in-Cfengine">Decentralized data collection in Cfengine</a>
-<li><a accesskey="6" href="#Reporting-in-Cfengine">Reporting in Cfengine</a>
-<li><a accesskey="7" href="#Standard-reports-in-Cfengine-Nova">Standard reports in Cfengine Nova</a>
-<li><a accesskey="8" href="#Cfengine-output-levels">Cfengine output levels</a>
+<li><a accesskey="4" href="#CMDB-and-CFEngine">CMDB and CFEngine</a>
+<li><a accesskey="5" href="#Decentralized-data-collection-in-CFEngine">Decentralized data collection in CFEngine</a>
+<li><a accesskey="6" href="#Reporting-in-CFEngine">Reporting in CFEngine</a>
+<li><a accesskey="7" href="#Standard-reports-in-CFEngine-Nova">Standard reports in CFEngine Nova</a>
+<li><a accesskey="8" href="#CFEngine-output-levels">CFEngine output levels</a>
 <li><a accesskey="9" href="#Creating-custom-reports-_002d_002d-all-versions">Creating custom reports -- all versions</a>
 <li><a href="#Including-data-in-reports">Including data in reports</a>
 <li><a href="#Creating-custom-logs">Creating custom logs</a>
@@ -263,18 +263,18 @@ When numbers of hosts grow beyond a few thousands, centralized
 monitoring schemes fail to manage the information. Tying configuration
 (and therefore repair) to monitoring at the host level is essential
 for the effective management of large and distributed data facilities. 
-Cfengine foresaw this need in 1998, with its Computer Immunology
+CFEngine foresaw this need in 1998, with its Computer Immunology
 initiative, and continues to develop this strategy.
 
-   <p>Cfengine's approach is to focus on scalability. The commercial editions
-of Cfengine provide what meaningful information they can in a manner that
+   <p>CFEngine's approach is to focus on scalability. The commercial editions
+of CFEngine provide what meaningful information they can in a manner that
 can be scaled to tens of thousands of machines.
 
 <div class="node">
 <a name="What-is-a-CMDB%3f"></a>
 <a name="What-is-a-CMDB_003f"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#CMDB-and-Cfengine">CMDB and Cfengine</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#CMDB-and-CFEngine">CMDB and CFEngine</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Should-monitoring-and-configuration-be-separate_003f">Should monitoring and configuration be separate?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -302,70 +302,70 @@ framework, where it is given a prominent role in system planning and
 verification. The CMDB is by definition a centralized repository.
 
 <div class="node">
-<a name="CMDB-and-Cfengine"></a>
+<a name="CMDB-and-CFEngine"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Decentralized-data-collection-in-Cfengine">Decentralized data collection in Cfengine</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Decentralized-data-collection-in-CFEngine">Decentralized data collection in CFEngine</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-is-a-CMDB_003f">What is a CMDB?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">CMDB and Cfengine</h3>
+<h3 class="unnumberedsec">CMDB and CFEngine</h3>
 
 <pre class="sp">
 
 </pre>
 
-Cfengine deviates from the classical view of a CMDB to modernize the
+CFEngine deviates from the classical view of a CMDB to modernize the
 concept for modern scaling requirements.  Configuration management
 requires something more sophisticated than a database to describe
 system patterns. The CMDB applies a <i>brute force</i> approach to
 collection and searching of system data that does not scale well, and requires
 large and expensive resources to manage.
 
-   <p>Cfengine works with a highly compressed description of system
+   <p>CFEngine works with a highly compressed description of system
 properties that is based on category classification rather than an
 exhaustive inventory of computers. Being distributed in operation,
-Cfengine can also enforce policy on state, without brute force imaging.
+CFEngine can also enforce policy on state, without brute force imaging.
 
 <div class="node">
-<a name="Decentralized-data-collection-in-Cfengine"></a>
+<a name="Decentralized-data-collection-in-CFEngine"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Reporting-in-Cfengine">Reporting in Cfengine</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#CMDB-and-Cfengine">CMDB and Cfengine</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Reporting-in-CFEngine">Reporting in CFEngine</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#CMDB-and-CFEngine">CMDB and CFEngine</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">Decentralized data collection in Cfengine</h3>
+<h3 class="unnumberedsec">Decentralized data collection in CFEngine</h3>
 
 <pre class="sp">
 
 </pre>
 
-Cfengine is designed to scale to vast numbers of machines.  It does so
+CFEngine is designed to scale to vast numbers of machines.  It does so
 because it is fundamentally decentralized. Data about system state are
 recorded <i>in situ</i> and are not transmitted over the network
-directly. Cfengine summarizes and compresses system information before
+directly. CFEngine summarizes and compresses system information before
 making it available for central aggregation and analysis. This means
 that high resolution data are available where they count, processing
 is decentralized, and inexpensive summaries may be compared and mined
 for correlations.
 
-   <p>Cfengine's distributed architecture means that no data are lost if the
-network fails temporarily. Cfengine uses the network <i>opportunistically</i>,
+   <p>CFEngine's distributed architecture means that no data are lost if the
+network fails temporarily. CFEngine uses the network <i>opportunistically</i>,
 but it is not reliant on it for real-time operations.
 
 <div class="node">
-<a name="Reporting-in-Cfengine"></a>
+<a name="Reporting-in-CFEngine"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Standard-reports-in-Cfengine-Nova">Standard reports in Cfengine Nova</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Decentralized-data-collection-in-Cfengine">Decentralized data collection in Cfengine</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Standard-reports-in-CFEngine-Nova">Standard reports in CFEngine Nova</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Decentralized-data-collection-in-CFEngine">Decentralized data collection in CFEngine</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">Reporting in Cfengine</h3>
+<h3 class="unnumberedsec">Reporting in CFEngine</h3>
 
 <pre class="sp">
 
@@ -373,34 +373,34 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 If you have regular reporting needs, we recommend using our commercially supported
-version of Cfengine (Cfengine Nova or above), as you will save considerable time
+version of CFEngine (CFEngine Nova or above), as you will save considerable time
 and resources in programming, and you will have access to the latest developments
 through the software subscription. 
 </td></tr></table>
 
-   <p>No promises made in Cfengine imply automatic aggregation of data to a central
-location. In commercial cfengine versions, e.g. Cfengine Nova, an optimized
+   <p>No promises made in CFEngine imply automatic aggregation of data to a central
+location. In commercial CFEngine versions, e.g. CFEngine Nova, an optimized
 aggregation of standardized reports is provided, but the ultimate decision to
 aggregate must be yours.
 
-   <p>Monitoring and reporting capabilities in Cfengine depend on the
+   <p>Monitoring and reporting capabilities in CFEngine depend on the
 software version include:
 
      <ul>
-<li><b>Community Edition:</b> Basic output to file or logs may be customized on a per-promise basis. Users can design their own log and report formats, but data processing and extraction from Cfengine's embedded databases must be scripted by the user.
+<li><b>Community Edition:</b> Basic output to file or logs may be customized on a per-promise basis. Users can design their own log and report formats, but data processing and extraction from CFEngine's embedded databases must be scripted by the user.
 
      <li><b>Nova:</b> In addition to community features, Nova provides automated extraction of
-data from Cfengine's self-learning agents, and the generation of a
+data from CFEngine's self-learning agents, and the generation of a
 standard set of reports in text, HTML or XML formats. Nova summarizes
 distributed data and provides simple compression and aggregation of
 these summaries. Finally summaries are tied into a knowledge map or
-semantic index for browsing by IT operations. At this level Cfengine exceeds
+semantic index for browsing by IT operations. At this level CFEngine exceeds
 other industry CMDB solutions for configuration.
 
      <li><b>Constellation:</b> In addition to Nova features, Constellation performs
 additional data extraction from the collected reports. It analyses correlations
 and provides reverse look up of system attributes based on searchable expressions. 
-At this level, Cfengine exceeds other industry CMDB solutions in both reporting
+At this level, CFEngine exceeds other industry CMDB solutions in both reporting
 and configuration.
 
      <li><b>Galaxy:</b> In addition to Constellation features, Galaxy adds a number
@@ -411,15 +411,15 @@ of networked system behaviour.
    </ul>
 
 <div class="node">
-<a name="Standard-reports-in-Cfengine-Nova"></a>
+<a name="Standard-reports-in-CFEngine-Nova"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Cfengine-output-levels">Cfengine output levels</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Reporting-in-Cfengine">Reporting in Cfengine</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#CFEngine-output-levels">CFEngine output levels</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Reporting-in-CFEngine">Reporting in CFEngine</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">Standard reports in Cfengine Nova</h3>
+<h3 class="unnumberedsec">Standard reports in CFEngine Nova</h3>
 
      <dl>
 <dt><em>Available patches report</em><dd>Patches already installed on system if available. 
@@ -431,7 +431,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <br><dt><em>Installed patches report</em><dd>Patches not yet installed, but published by vendor if available. 
 <br><dt><em>Installed software report</em><dd>Software already installed on system if available. 
 <br><dt><em>Lastseen report</em><dd>Time and frequency of communications with peers, host reliability. 
-<br><dt><em>Micro-audit report</em><dd>Generated by cfengine self-auditing. This report is not aggregated. 
+<br><dt><em>Micro-audit report</em><dd>Generated by CFEngine self-auditing. This report is not aggregated. 
 <br><dt><em>Monitor summary report</em><dd>Pseudo-real-time measurement of time series data. 
 <br><dt><em>Performance report</em><dd>Time cost of verifying system promises. 
 <br><dt><em>Promise report</em><dd>Per-promise average compliance report over time. 
@@ -442,37 +442,37 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 </dl>
 
 <div class="node">
-<a name="Cfengine-output-levels"></a>
+<a name="CFEngine-output-levels"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Creating-custom-reports-_002d_002d-all-versions">Creating custom reports -- all versions</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Standard-reports-in-Cfengine-Nova">Standard reports in Cfengine Nova</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Standard-reports-in-CFEngine-Nova">Standard reports in CFEngine Nova</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">Cfengine output levels</h3>
+<h3 class="unnumberedsec">CFEngine output levels</h3>
 
 <pre class="sp">
 
 </pre>
 
-Cfengine's default behaviour is to report to the console (known as
+CFEngine's default behaviour is to report to the console (known as
 standard output). It's default behaviour is to report nothing except
 errors that are judged to be of a critical nature.
 
-   <p>By using cfengine with the inform flag:
+   <p>By using CFEngine with the inform flag:
 <pre class="verbatim"># cf-agent -I
 # cf-agent --inform
 </pre>
 you can alter the default to report on action items (actual changes)
 and warnings.
 
-   <p>By using cfengine with the verbose flag:
+   <p>By using CFEngine with the verbose flag:
 <pre class="verbatim"># cf-agent -v
 # cf-agent --verbose
 </pre>
 you can alter the default to report all of its thought-processes. 
-You should not interpret a message that only appears in cfengine's
+You should not interpret a message that only appears in CFEngine's
 verbose mode as an actual error, only as information that might be relevant
 to decisions being made by the agent.
 
@@ -481,7 +481,7 @@ to decisions being made by the agent.
 <a name="Creating-custom-reports-_002d_002d-all-versions"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Including-data-in-reports">Including data in reports</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Cfengine-output-levels">Cfengine output levels</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#CFEngine-output-levels">CFEngine output levels</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
@@ -492,7 +492,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </pre>
 
-Cfengine allows you to use <code>reports</code> promises to
+CFEngine allows you to use <code>reports</code> promises to
 make reports of your own. A simple example of this is shown below.
 
 <pre class="verbatim">body common control
@@ -588,7 +588,7 @@ variety of report formats, but it requires a lot of coding and
 maintenance by the user.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine Nova simplifies this kind of report generation by enabling
+CFEngine Nova simplifies this kind of report generation by enabling
 and updating many out-of-the-box reports directly from the
 <code>cf-report</code> agent. 
 </td></tr></table>
@@ -604,7 +604,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Including data in reports</h3>
 
-<p>Cfengine generates information internally that you might want to use
+<p>CFEngine generates information internally that you might want to use
 in reports. For example, the agent <code>cf-agent</code>
 interfaces with the local light-weight monitoring
 agent <code>cf-monitord</code> so that system state can be reported simply:
@@ -633,7 +633,7 @@ reports:
 
 </pre>
 
-<p class="noindent">A corollary to this is that you can get cfengine to report
+<p class="noindent">A corollary to this is that you can get CFEngine to report
 system anomalies.
 
 <pre class="verbatim">reports:
@@ -740,7 +740,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 </pre>
 
 Logs can be attached to any promise. In this example, an executed shell command
-logs a message to the standard output. Cfengine recognizes the <code>stdout</code>
+logs a message to the standard output. CFEngine recognizes the <code>stdout</code>
 filename for Standard Output, in the Unix/C standard manner.
 
 <pre class="verbatim">bundle agent test
@@ -822,10 +822,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </pre>
 
-Cfengine interfaces with the system logging tools in different ways. 
+CFEngine interfaces with the system logging tools in different ways. 
 Syslog is the default log for Unix-like systems, while the event
 logger is the default on Windows. You may choose to copy a fixed
-level of cfengine's standard screen messaging to the system logger
+level of CFEngine's standard screen messaging to the system logger
 on a per-promise basis.
 
 <pre class="verbatim">body common control
@@ -865,7 +865,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </pre>
 
-In commercial versions of cfengine, you can extract data from the
+In commercial versions of CFEngine, you can extract data from the
 system in more sophisticated ways from files or pipes, using Perl
 Compatible Regular Expressions to match text. The <code>cf-monitord</code>
 agent is responsible for processing measurement promises.
@@ -897,7 +897,7 @@ select_line_matching => "^$(x)$";
 
 </pre>
 
-   <p>See the Cfengine Nova documentation for more possibilities of measurement
+   <p>See the CFEngine Nova documentation for more possibilities of measurement
 promises.
 
 <div class="node">
@@ -943,7 +943,7 @@ auditing  => "true";
 
 </pre>
 
-   <p>If you decide to go for full auditing, Cfengine will not collect and
+   <p>If you decide to go for full auditing, CFEngine will not collect and
 centralize the reports as they will be too large for this to be a
 scalable operation. Still, you can view them in a web browser on the
 local host, or copy them manually to a suitable location.
@@ -996,7 +996,7 @@ depth        => "$(d)";
 }
 </pre>
 
-   <p>In Cfengine Nova, reports of the following form are generated when these promises
+   <p>In CFEngine Nova, reports of the following form are generated when these promises
 are kept by the agent:
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
@@ -1007,7 +1007,7 @@ Sat Dec 5 18:20:45 2009  /tmp/testfile
 </pre>
 </td></tr></table>
 
-<p class="noindent">These reports are generated automatically in Cfengine Nova,
+<p class="noindent">These reports are generated automatically in CFEngine Nova,
 and are integrated into the web browsable knowledge map. Community
 edition users have to extract the data and create these themselves.
 
@@ -1020,11 +1020,11 @@ edition users have to extract the data and create these themselves.
 <li><a href="#What-are-monitoring-and-reporting_003f">What are monitoring and reporting?</a>
 <li><a href="#Should-monitoring-and-configuration-be-separate_003f">Should monitoring and configuration be separate?</a>
 <li><a href="#What-is-a-CMDB_003f">What is a CMDB?</a>
-<li><a href="#CMDB-and-Cfengine">CMDB and Cfengine</a>
-<li><a href="#Decentralized-data-collection-in-Cfengine">Decentralized data collection in Cfengine</a>
-<li><a href="#Reporting-in-Cfengine">Reporting in Cfengine</a>
-<li><a href="#Standard-reports-in-Cfengine-Nova">Standard reports in Cfengine Nova</a>
-<li><a href="#Cfengine-output-levels">Cfengine output levels</a>
+<li><a href="#CMDB-and-CFEngine">CMDB and CFEngine</a>
+<li><a href="#Decentralized-data-collection-in-CFEngine">Decentralized data collection in CFEngine</a>
+<li><a href="#Reporting-in-CFEngine">Reporting in CFEngine</a>
+<li><a href="#Standard-reports-in-CFEngine-Nova">Standard reports in CFEngine Nova</a>
+<li><a href="#CFEngine-output-levels">CFEngine output levels</a>
 <li><a href="#Creating-custom-reports-_002d_002d-all-versions">Creating custom reports &ndash; all versions</a>
 <li><a href="#Including-data-in-reports">Including data in reports</a>
 <li><a href="#Creating-custom-logs">Creating custom logs</a>

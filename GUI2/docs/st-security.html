@@ -203,14 +203,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h2 class="chapter">1 Architecture Principles</h2>
 
-<p>Cfengine is agent based software. It resides on and runs processes on
+<p>CFEngine is agent based software. It resides on and runs processes on
 each individual computer under its management. That means you do not
-need to grant any security credentials for login to Cfengine. Instead, for
-normal operation, Cfengine runs in privileged `root' or
+need to grant any security credentials for login to CFEngine. Instead, for
+normal operation, CFEngine runs in privileged `root' or
 `Administrator' mode to get access to system resources and makes these
 available safely to authorized enquiries.
 
-   <p>A Cfengine installation is thus required on every machine you want to
+   <p>A CFEngine installation is thus required on every machine you want to
 manage: client and server, desktop or blade.  Typically, you will
 single out one machine to be a <i>policy server</i> or <i>hub</i>. In very
 large networks of many thousands of machines, you might need several
@@ -235,14 +235,14 @@ if they are only weakly coupled. Strong dependence introduced
 
    <p>In many software products these two separate models are identical in
 design and implementation. However, Promise Theory maintains their
-independence and Cfengine makes no assumptions about the kind of
+independence and CFEngine makes no assumptions about the kind of
 information flows that should be set up.
 
    <pre class="sp">
 
 </pre>
 <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine takes host autonomy as its guiding
+CFEngine takes host autonomy as its guiding
 architectural principle.  Agents are functionally independent of one another
 and only weak couplings can be promised. 
 </td></tr></table>
@@ -250,7 +250,7 @@ and only weak couplings can be promised.
    <pre class="sp">
 
 </pre>
-The implication of this principle is that Cfengine is robust to
+The implication of this principle is that CFEngine is robust to
 failures of communication (e.g. network connectivity) and that each
 host is responsible for maintaining its own state. This affects the
 security and scalability of the solution.
@@ -273,10 +273,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Architecture-Principles">Architecture 
 
 <h3 class="section">1.1 Single point of coordination</h3>
 
-<p>The default Cfengine Nova architecture uses a single hub or policy
+<p>The default CFEngine Nova architecture uses a single hub or policy
 server to publish changes of policy and to aggregate knowledge about
 the environment, but you can set up as many as you like to manage
-different parts of your organization independently.  The Cfengine
+different parts of your organization independently.  The CFEngine
 technology is not centralized by nature. Most users choose to
 centralize updating of policy and report aggregation for convenience
 however.
@@ -285,13 +285,13 @@ however.
 
 </pre>
 <img src="hub.pdf" alt="The front page">
-<div align="center">Figure: A policy server or `hub' is implemented in Cfengine Nova</div>
+<div align="center">Figure: A policy server or `hub' is implemented in CFEngine Nova</div>
 <div align="center">as a simple solution that will scale for most sites `out of the box'.</div>
    <pre class="sp">
 
 </pre>
 
-If you operate Cfengine Nova in its default mode, the hub acts as a
+If you operate CFEngine Nova in its default mode, the hub acts as a
 server from which every other client machine can access policy
 updates. It also acts as a collector, aggregating summary information
 from each machine and weaving it into a knowledge map about the datacenter.
@@ -300,7 +300,7 @@ from each machine and weaving it into a knowledge map about the datacenter.
 process approach to managing policy. Policy is edited and developed at
 a Policy Definition Point, outside of normal production
 environment. This can be done using the specialized editor embedded
-in Cfengine Nova, or it can be done using any text editor of your choice.
+in CFEngine Nova, or it can be done using any text editor of your choice.
 
 <div class="node">
 <a name="Policy-information-flow"></a>
@@ -347,9 +347,9 @@ way non-executable, it switches to a failover strategy to recover. It will
 continue in this mode until a new policy proposal is available that can be
 executed.
 
-   <p>The Cfengine agent clones itself to avoid limitations of operating systems
+   <p>The CFEngine agent clones itself to avoid limitations of operating systems
 like Windows, where programs and disk files cannot be altered while in use. 
-When new software updates are available, Cfengine can update itself from
+When new software updates are available, CFEngine can update itself from
 a suitable source, and restart its own services. Should the new version be corrupt,
 the twin will still be the old working version, hence the software will be able
 to recover as soon as a new valid version is available.
@@ -369,10 +369,10 @@ acquire services from other hosts. Thus all processing capacity and
 decision-making computation takes place on the end nodes of the
 communication graph. There is no apriori need for agents to collect
 data from any source outside themselves,  though this is a highly
-convenient strategy. Cfengine's use of the network may be called opportunistic.
+convenient strategy. CFEngine's use of the network may be called opportunistic.
 
    <p>Each agent is the ultimate arbiter of whether or not to accept
-information from external sources. This makes Cfengine ideal for use
+information from external sources. This makes CFEngine ideal for use
 in federated architectures, where attention to local requirements is
 paramount for whatever reason.  Federation is typically a recommended
 strategy when the cost of avoiding local specialization outweighs the
@@ -394,7 +394,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <ul class="menu">
 <li><a accesskey="1" href="#What-is-security_003f">What is security?</a>
-<li><a accesskey="2" href="#The-principles-of-Cfengine-security">The principles of Cfengine security</a>
+<li><a accesskey="2" href="#The-principles-of-CFEngine-security">The principles of CFEngine security</a>
 <li><a accesskey="3" href="#Communications">Communications</a>
 </ul>
 
@@ -402,7 +402,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <a name="What-is-security%3f"></a>
 <a name="What-is-security_003f"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#The-principles-of-Cfengine-security">The principles of Cfengine security</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#The-principles-of-CFEngine-security">The principles of CFEngine security</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Security-Principles">Security Principles</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Security-Principles">Security Principles</a>
 
@@ -423,7 +423,7 @@ that determines where you draw the line in the sand between trusted
 and risky.
 
 <div class="node">
-<a name="The-principles-of-Cfengine-security"></a>
+<a name="The-principles-of-CFEngine-security"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Communications">Communications</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-is-security_003f">What is security?</a>,
@@ -431,39 +431,39 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Security-Principles">Security Principl
 
 </div>
 
-<h3 class="section">2.2 The principles of Cfengine security</h3>
+<h3 class="section">2.2 The principles of CFEngine security</h3>
 
-<p>Cfengine adheres to the following design principles:
+<p>CFEngine adheres to the following design principles:
 
      <ol type=1 start=1>
 <li>It shall be, by design, impossible to send policy-altering data to
-a Cfengine agent. Each host shall retain its right to veto policy suggestions
+a CFEngine agent. Each host shall retain its right to veto policy suggestions
 at all times. This is called the Voluntary Cooperation Model.
 
-     <li>Cfengine will support the encyrption of data transmitted over the network.
+     <li>CFEngine will support the encyrption of data transmitted over the network.
 
      <li>Each host shall continue to function, as
 far as possible, without the need for communication with other hosts.
 
-     <li>Cfengine will use a lightweight peer model for key trust (like
+     <li>CFEngine will use a lightweight peer model for key trust (like
 the Secure Shell). No centralized certificate authority shall be
 used. SSL and TLS shall not be used.
 
-     <li>Cfengine shall always provide safe defaults, that grant no access to other
+     <li>CFEngine shall always provide safe defaults, that grant no access to other
 hosts.
         </ol>
 
 <div class="node">
 <a name="Communications"></a>
 <p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-principles-of-Cfengine-security">The principles of Cfengine security</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-principles-of-CFEngine-security">The principles of CFEngine security</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Security-Principles">Security Principles</a>
 
 </div>
 
 <h3 class="section">2.3 Communications</h3>
 
-<p>Cfengine uses a simple, private protocol that is based on (but not
+<p>CFEngine uses a simple, private protocol that is based on (but not
 identical to) that used by OpenSSH (the free version of the Secure
 Shel). It is based on mutual, bi-directional challenge-reponse using
 an autonomous Public Key Infrastructure.
@@ -490,7 +490,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <li><a accesskey="4" href="#Remote-communication">Remote communication</a>
 <li><a accesskey="5" href="#Authentication">Authentication</a>
 <li><a accesskey="6" href="#Security-FAQ">Security FAQ</a>
-<li><a accesskey="7" href="#Cfengine-and-Firewalls">Cfengine and Firewalls</a>
+<li><a accesskey="7" href="#CFEngine-and-Firewalls">CFEngine and Firewalls</a>
 <li><a accesskey="8" href="#Tamperproof-data-and-distributed-monitoring">Tamperproof data and distributed monitoring</a>
 </ul>
 
@@ -506,7 +506,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Communication-Security">Communication 
 <h3 class="section">3.1 TCP wrappers</h3>
 
 <p>The right to connect to the server is the first line of defence. 
-Cfengine has built into it the equivalent of the `TCP wrappers'
+CFEngine has built into it the equivalent of the `TCP wrappers'
 software to deny non-authorized hosts the ability to connect to the
 server at all.
 
@@ -573,12 +573,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Communication-Security">Communication 
 
 <h3 class="section">3.3 Encryption algorithms</h3>
 
-<p>Cfengine Community Edition uses RSA 2048 public key encryption for
+<p>CFEngine Community Edition uses RSA 2048 public key encryption for
 authentication. These are generated by the &lsquo;<samp><span class="samp">cf-key</span></samp>&rsquo; command. 
 It generates a 128 bit random Blowfish encryption key for data
 transmission. Challenge response is verified by an MD5 hash.
 
-   <p>Commercial Editions of Cfengine use the same RSA 2048 key for
+   <p>Commercial Editions of CFEngine use the same RSA 2048 key for
 authentication, and then AES 256 with a 256 bit random key for data
 transmission. The latter is validated for FIPS 140-2 government use in
 the United States of America. Challenge response is verified by a SHA256
@@ -595,8 +595,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Communication-Security">Communication 
 
 <h3 class="section">3.4 Remote communication</h3>
 
-<p>The concept of voluntary cooperation used by cfengine places restrictions
-on how files can be copied between hosts.  Cfengine allows only `pull'
+<p>The concept of voluntary cooperation used by CFEngine places restrictions
+on how files can be copied between hosts.  CFEngine allows only `pull'
 (download) but not `push' (upload). Users cannot force an agent to
 perform an operation against local policy.
 
@@ -625,7 +625,7 @@ in the Web.
 
    <p>The challenge-response approach allows each individual to decide
 personally whether to trust the other. This is the approach used by
-Cfengine. Its model is based in the Secure Shell (OpenSSH).
+CFEngine. Its model is based in the Secure Shell (OpenSSH).
 
    <p>Two machines authenticate each other in a <i>public key exchange</i>
 process. For key exchange between client and server, the server has to
@@ -636,17 +636,17 @@ keys from one or more machines.
    <p>On the client-side the client also has to specify if it will trust key
 from the server by using the trustkey directive. The <code>trustkey</code>
 directive in <code>copy_from</code> allows a client to decide whether to
-accept keys from a server. The cfengine authentication model is based
-on the <code>ssh</code> scheme, however unlike <code>ssh</code>, cfengine
+accept keys from a server. The CFEngine authentication model is based
+on the <code>ssh</code> scheme, however unlike <code>ssh</code>, CFEngine
 authentication is not interactive and the keys are generated by
 <code>cf-key</code> program instead of &lsquo;<samp><span class="samp">ssh key-gen</span></samp>&rsquo; program. Key
-acceptance is accomplished in Cfengine using trust-key method. Once
+acceptance is accomplished in CFEngine using trust-key method. Once
 the keys have been exchange the trust settings are irrelevant.
 
 <div class="node">
 <a name="Security-FAQ"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Cfengine-and-Firewalls">Cfengine and Firewalls</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#CFEngine-and-Firewalls">CFEngine and Firewalls</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Authentication">Authentication</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Communication-Security">Communication Security</a>
 
@@ -658,8 +658,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Communication-Security">Communication 
 <li><i> Doesn't opening a port on a machine on the inside of the firewall make
 it vulnerable to both Denial of Service and buffer overflow attacks?</i>
 
-     <p>Buffer overflow attacks are extremely unlikely in Cfengine by
-design. The likelihood of a bug in cfengine should be compared to the
+     <p>Buffer overflow attacks are extremely unlikely in CFEngine by
+design. The likelihood of a bug in CFEngine should be compared to the
 likelihood of a bug existing in the firewall itself.
 
      <p>Denial of Service attacks can be mitigated by careful
@@ -676,9 +676,9 @@ vulnerabilities of the VPN software.
 compromise the integrity of the policy information by allowing an
 attacker the chance to alter it?</i>
 
-     <p>The cfengine security model, as well
+     <p>The CFEngine security model, as well
 as the design of the server, disallows the uploading of
-information. No message sent over the cfengine channel can alter data
+information. No message sent over the CFEngine channel can alter data
 on the server. (This assumes that buffer overflows are impossible.)
 
      <li><i>Couldn't an IP spoofer gain access to data from the policy
@@ -710,11 +710,11 @@ side of the firewall it is connected.
 
 <!--  -->
 <ul class="menu">
-<li><a accesskey="1" href="#Cfengine-and-Firewalls">Cfengine and Firewalls</a>
+<li><a accesskey="1" href="#CFEngine-and-Firewalls">CFEngine and Firewalls</a>
 </ul>
 
 <div class="node">
-<a name="Cfengine-and-Firewalls"></a>
+<a name="CFEngine-and-Firewalls"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Tamperproof-data-and-distributed-monitoring">Tamperproof data and distributed monitoring</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Security-FAQ">Security FAQ</a>,
@@ -722,13 +722,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Communication-Security">Communication 
 
 </div>
 
-<h3 class="section">3.7 Cfengine and Firewalls</h3>
+<h3 class="section">3.7 CFEngine and Firewalls</h3>
 
-<p>Some users want to use cfengine's remote copying mechanism through a
-firewall, in particular to update the cfengine policy on hosts inside
+<p>Some users want to use CFEngine's remote copying mechanism through a
+firewall, in particular to update the CFEngine policy on hosts inside
 a DMZ (so-called de-militarized zone). In making a risk assessment, it
 is important to see the firewall security model together with the
-Cfengine security model. Cfengine's security record is better than
+CFEngine security model. CFEngine's security record is better than
 most firewalls, but Firewalls are nearly always trusted because they
 are `security products'.
 
@@ -737,7 +737,7 @@ weaken the security of the barrier. On the other hand, a strong piece
 or software might have better security than the firewall
 itself. Consider the example in the figure;
 
-   <div class="block-image"><img src="firewall.png" alt="A cfengine host outside a firewall"></div>
+   <div class="block-image"><img src="firewall.png" alt="A CFEngine host outside a firewall"></div>
 
    <p>We label the regions inside and outside of the firewall as the &ldquo;secure
 area" and &ldquo;Demilitarized Zone" for convenience. It should be
@@ -750,7 +750,7 @@ in the DMZ, in order to send them their configuration policy
 updates. There are two ways of getting files through the firewall:
 
      <ul>
-<li>An automated cfengine solution, i.e., pull from outside to inside the secure area. 
+<li>An automated CFEngine solution, i.e., pull from outside to inside the secure area. 
 <li>A manual push to the outside of the wall from the inside. 
 </ul>
 
@@ -763,30 +763,30 @@ firewall.
 
 <!--  -->
 <ul class="menu">
-<li><a accesskey="1" href="#Cfengine-trust-model">Cfengine trust model</a>
+<li><a accesskey="1" href="#CFEngine-trust-model">CFEngine trust model</a>
 <li><a accesskey="2" href="#Policy-Mirror-in-the-DMZ">Policy Mirror in the DMZ</a>
 <li><a accesskey="3" href="#Pulling-through-a-wormhole">Pulling through a wormhole</a>
 </ul>
 
 <div class="node">
-<a name="Cfengine-trust-model"></a>
+<a name="CFEngine-trust-model"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Policy-Mirror-in-the-DMZ">Policy Mirror in the DMZ</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Cfengine-and-Firewalls">Cfengine and Firewalls</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Cfengine-and-Firewalls">Cfengine and Firewalls</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#CFEngine-and-Firewalls">CFEngine and Firewalls</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#CFEngine-and-Firewalls">CFEngine and Firewalls</a>
 
 </div>
 
-<h4 class="subsection">3.7.1 Cfengine trust model</h4>
+<h4 class="subsection">3.7.1 CFEngine trust model</h4>
 
-<p>Cfengine's trust model is fundamentally at odds with the external
-firewall concept. Cfengine says: &ldquo;I am my own boss. I don't trust
+<p>CFEngine's trust model is fundamentally at odds with the external
+firewall concept. CFEngine says: &ldquo;I am my own boss. I don't trust
 anyone to push me data.&rdquo; The firewall says: &ldquo;I only trust things
 that are behind me.&rdquo;  The firewall thinks it is being secure if it
-pushes data from behind itself to the DMZ. Cfengine thinks it is being
+pushes data from behind itself to the DMZ. CFEngine thinks it is being
 secure if it makes the decision to pull the data autonomously, without
 any orders from some potentially unknown machine. One of these
-mechanisms has to give if firewalls are to co-exist with cfengine.
+mechanisms has to give if firewalls are to co-exist with CFEngine.
 
    <p>From the firewall's viewpoint, push and pull are different: a push
 requires only an outgoing connection from a trusted source to an
@@ -803,11 +803,11 @@ update. You must decide for yourself. The aim here is only to evaluate
 the security implications. Exporting data from the secure area to the
 DMZ automatically downgrades the privacy of the information.
 
-     <li>The cfengine security model assumes that the security of every host
+     <li>The CFEngine security model assumes that the security of every host
 will be taken seriously. A firewall should never be used as a
 substitute for host security.
 
-     <li>Knowing about cfengine but not your firewall or your secure network, it is only possible
+     <li>Knowing about CFEngine but not your firewall or your secure network, it is only possible
 to say here that it seems, to us, safe to open a hole in a firewall to
 download data from a host of our choice, but we would not accept data
 from just any host on your company network on trust. It would be
@@ -820,15 +820,15 @@ secure than an inaccessible host in the DMZ.
 <a name="Policy-Mirror-in-the-DMZ"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Pulling-through-a-wormhole">Pulling through a wormhole</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Cfengine-trust-model">Cfengine trust model</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Cfengine-and-Firewalls">Cfengine and Firewalls</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#CFEngine-trust-model">CFEngine trust model</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#CFEngine-and-Firewalls">CFEngine and Firewalls</a>
 
 </div>
 
 <h4 class="subsection">3.7.2 Policy Mirror in the DMZ</h4>
 
 <p>By creating a policy mirror in the DMZ, these issues can be worked around. This is
-the recommended way to copy files, so that normal cfengine pull
+the recommended way to copy files, so that normal CFEngine pull
 methods can then be used by all other hosts in the DMZ, using the
 mirror as their source. The policy mirror host should be as secure as
 possible, with preferably few or no other services running that might
@@ -840,7 +840,7 @@ principle: CVS, FTP, RSYNC, SCP. The security disadvantage of the push
 method is that it opens a port on the policy-mirror, and therefore the
 same vulnerability is now present on the mirror, except that now you
 have to trust the security of another piece of software too. Since
-this is not a cfengine port, no guarantees can be made about what
+this is not a CFEngine port, no guarantees can be made about what
 access attackers will get to the mirror host.
 
 <!--  -->
@@ -848,7 +848,7 @@ access attackers will get to the mirror host.
 <a name="Pulling-through-a-wormhole"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Policy-Mirror-in-the-DMZ">Policy Mirror in the DMZ</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Cfengine-and-Firewalls">Cfengine and Firewalls</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#CFEngine-and-Firewalls">CFEngine and Firewalls</a>
 
 </div>
 
@@ -857,7 +857,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Cfengine-and-Firewalls">Cfengine and F
 <p>Suppose you are allowed to open a hole in your firewall to a single
 policy host on the inside.  To distribute files to hosts that are
 outside the firewall it is only necessary to open a single tunnel
-through the firewall from the policy-mirror to the cfengine service
+through the firewall from the policy-mirror to the CFEngine service
 port on the source machine. Connections from any other host will still
 be denied by the firewall. This minimizes the risk of any problems
 caused by attackers.
@@ -878,7 +878,7 @@ you seek the guidance of an expert if necessary.
      iptables -A newchain -p tcp -s mirror-ip 5308 -j ACCEPT
      iptables -A newchain -j DENY
 </pre>
-   <p>Once a new copy of the policy is downloaded by cfengine to the policy
+   <p>Once a new copy of the policy is downloaded by CFEngine to the policy
 mirror, other clients in the DMZ can download that copy from the
 mirror. The security of other hosts in the DMZ is dependent on the
 security of the policy mirror.
@@ -886,7 +886,7 @@ security of the policy mirror.
 <div class="node">
 <a name="Tamperproof-data-and-distributed-monitoring"></a>
 <p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Cfengine-and-Firewalls">Cfengine and Firewalls</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#CFEngine-and-Firewalls">CFEngine and Firewalls</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Communication-Security">Communication Security</a>
 
 </div>
@@ -896,7 +896,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Communication-Security">Communication 
 <p>Message digests are supposed to be unbreakable, tamperproof
 technologies, but of course everything can be broken by a sufficiently
 determined attacker. Suppose someone wanted to edit a file and alter
-the cfengine checksum database to cover their tracks. If they had
+the CFEngine checksum database to cover their tracks. If they had
 broken into your system, this is potentially easy to do. How can we
 detect whether this has happened or not?
 
@@ -944,7 +944,7 @@ files:
 
    <p>It works by building a list of neighbours for each host. The function
 <code>peers</code> can be used for this. Using a file which contains a list
-of all hosts running cfengine, we create a list of hosts to copy
+of all hosts running CFEngine, we create a list of hosts to copy
 databases . Each host in the network therefore takes on the
 responsibility to watch over its neighbours.
 
@@ -969,16 +969,16 @@ visible at least.
 
    <div class="footnote">
 <hr>
-<a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> Cfengine supports integration with Subversion
+<a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> CFEngine supports integration with Subversion
 through its Mission Portal, but any versioning system can of course be
 used.</p>
 
-   <p class="footnote"><small>[<a name="fn-2" href="#fnd-2">2</a>]</small> Cfengine and version control will document <i>what</i>
+   <p class="footnote"><small>[<a name="fn-2" href="#fnd-2">2</a>]</small> CFEngine and version control will document <i>what</i>
 the changes are, but what is usually missing from user documentation
 is an explanation of the reasonsing behind the change. This is most
 valuable when trying to diagnose and debug changes later.</p>
 
-   <p class="footnote"><small>[<a name="fn-3" href="#fnd-3">3</a>]</small> NB. Cfengine does not use web services
+   <p class="footnote"><small>[<a name="fn-3" href="#fnd-3">3</a>]</small> NB. CFEngine does not use web services
 as part of its technology, so this should not be construed to mean SOA.</p>
 
    <hr></div>

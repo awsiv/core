@@ -56,7 +56,7 @@
                     elseif( $user['username']==$username)
                     {
                     echo anchor("auth/change_password/".$user['_id']->__toString(), ' ',array('class'=>'changepassword','title'=>'change password'));
-                    echo anchor("auth/edit_user/".$user['_id']->__toString(), ' ',array('class'=>'edit','title'=>'edit my details'));
+                   // echo anchor("auth/edit_user/".$user['_id']->__toString(), ' ',array('class'=>'edit','title'=>'edit my details'));
                     }
                  ?>
                 </td>

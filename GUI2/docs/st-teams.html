@@ -220,18 +220,18 @@ because because humans need continual motivation and emotional support
 which sustains work-flow and adds creativity to work.
 
    <p>The team-aspect of management is often overlooked in favour of
-top-down hierarchical design (do what the boss tells you). Cfengine
+top-down hierarchical design (do what the boss tells you). CFEngine
 does not force us into hierarchical systems however;
-the team analogy is more appropriate for Cfengine's
-model of voluntarey cooperation.
+the team analogy is more appropriate for CFEngine's
+model of voluntary cooperation.
 
    <div class="block-image"><img src="hierarchy.png" alt="Hierarchy has long traditions but modern thinking favours teams."></div>
 
    <p>IT management is complex, so it makes sense to delegate
 responsibility for different issues.  An organization will generally
 consist of many groups and teams already, each with their own special
-needs and each craving its own autonomy. Cfengine and promise theory
-were designed for precisely this kind of environment. Cfengine allows
+needs and each craving its own autonomy. CFEngine and promise theory
+were designed for precisely this kind of environment. CFEngine allows
 cooperation and sharing without allowing central managers to ride
 roughshod over local needs.
 
@@ -240,7 +240,7 @@ policy or vision, allowing variation and arriving at a consensus when
 necessary. Success in a team depends on a combination of abilities
 working together not undermining one another. Conflicts in the
 promises made by team members reveal design problems in the group. An
-analysis of promises (cfengine's model of collaboration) is a
+analysis of promises (CFEngine's model of collaboration) is a
 significant tool for understanding and enabling teams.
 
    <pre class="sp">
@@ -305,12 +305,12 @@ presentation and spots potential flaws and gaps. The completer is
 a quality control person.
         </ol>
 
-   <p>His model has little room for technical workflow arguments. It is
+   <p>His model leaves little room for technical workflow arguments. It is
 entirely concerned with the creative process. This is probably
 significant.  We should ask ourselves: how can we use the freedom to
 organize into specialized teams to maximize human creativity, while
 passing hard work over to machines. Solving this problem is what
-cfengine is about.
+CFEngine is about.
 
 <div class="node">
 <a name="Delegating-roles-in-a-collaboration"></a>
@@ -326,34 +326,40 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </pre>
 
-We need to delegate responsiblity to divide and conquer, both when
-designing policy for computers and work schedules for humans. But how
+We need to delegate responsiblity to divide and conquer a problem, both when
+designing policy for computers and when making work schedules for humans. But how
 can we be certain different parties will not interfere with one
 anothers' responsibilities? The bottom line is that we cannot be certain
 without oversight and coordination.
 
-   <p>Promise theory can be used to show that coordination needs a single
-point of control to be the arbiter of correctness in any collaborative
+   <p>Promise theory shows that coordination needs a single
+point of coordination to be the arbiter of correctness in any collaborative
 process: a so-called `checkpoint' or `team leader', like passport
 control at an airport. This checkpoint has to examine each
 contribution to the team and look for conflicts.
 
-   <p>For humans, this is a matter of communication by meeting.  Cfengine,
+   <p>For humans, this might be a matter of communication by meeting.  CFEngine,
 on the other hand, has no built-in meta-access control mechanism which
 can decide who may write policy rules. To create such a mechanism,
 there would have to be a monitor which could identify users, and an
 authority mechanism that would disallow certain users to write rules
 of certain types about certain objects on certain hosts.
 
-   <p>Cfengine 3 has <code>roles</code> promises, which
-offer a partial solution, but it does not address the core issue which
-is that collaboration in change requires freedom to act, not restriction. 
-Delegation therefore requires trust.
+   <p>CFEngine Community Edition has <code>roles</code> promises, which offer a
+partial solution, but it does not address the core issue which is that
+collaboration in change requires freedom to act, not restriction. 
+Delegation therefore requires trust. CFEngine Nova and Constellation
+have `hubs' which can be coordinate large numbers of
+hosts. Coordination can also be pre-arranged as policy, so that
+everyone has their own copy of the script. This is how an orchestra
+scales, for instance.
 
-   <p>To keep matters as simple as possible, cfengine avoids this and
-proposes a different approach. Promise theory allows us to model the
-collaborative security implications of this (see the figure of the
-bow-tie structure). A simple method of delegating is the following.
+   <p>To keep matters as simple as possible, CFEngine avoids this kind of
+technical coordination as much as possible and proposes a different
+approach, using policy along with a social contract between
+the collaborating teams. Promise theory allows us to model the collaborative security
+implications of this (see the figure of the bow-tie structure). A
+simple method of delegating is the following.
 
      <ol type=1 start=1>
 <li>Delegate responsibility for different issues to admin teams 1,2,3, etc. 
@@ -375,7 +381,7 @@ to delegate responsibility for different parts of a policy to
 different sources. Human judgement as the `arbiter' is irreplaceable,
 but tools can be added to make conflicts easier to detect.
 
-   <p>Promise theory underlines that, if a host of computing device accepts
+   <p>Promise theory underlines that, if a host or computing device accepts
 policy from any source, then it is alone and entirely responsible for
 this decision. The ultimate responsibility for the published version
 policy is the vetting agent. This creates a shallow hierarchy, but

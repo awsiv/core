@@ -1,9 +1,9 @@
 <html lang="en">
 <head>
-<title>Orchestrating and Modularizing Business Processes</title>
+<title>Modularizing and Orchestrating System Policy</title>
 <meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="Orchestrating and Modularizing Business Processes">
-<meta name="generator" content="makeinfo 4.12">
+<meta name="description" content="Modularizing and Orchestrating System Policy">
+<meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="top" href="#Top">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <meta http-equiv="Content-Style-Type" content="text/css">
@@ -98,6 +98,7 @@ FONT.liten {font-size: 70%; }
         margin-bottom: 0em;
      font-size: 11pt;
         }
+
 .verbatim {
 	font-family: "Lucida Console", Monaco, monospace;
 	color: #000;
@@ -114,6 +115,15 @@ FONT.liten {font-size: 70%; }
 	margin-bottom: 20px;
 	margin-left: 0px;
 }
+
+.red { color: #b80047; font-weight: bold; }
+
+.blue { color: blue;  /*font-weight: bold;*/ }
+
+.green { color: darkgreen; }
+
+.comment { font-style: italic; }
+
 .example {
 	font-family: "Lucida Console", Monaco, monospace;
 	color: #000;
@@ -156,6 +166,7 @@ FONT.liten {font-size: 70%; }
 	border-left-style: none;
 	padding: 5px;
 	font-style: italic;
+        width: 100%;
 }
 
 A:link { color: #2c2e70 }
@@ -163,10 +174,10 @@ A:visited { color: black }
 A:active { color: #600041 }--></style>
 </head>
 <body>
-<h1 class="settitle">Orchestrating and Modularizing Business Processes</h1>
+<h1 class="settitle">Modularizing and Orchestrating System Policy</h1>
 <div class="node">
-<p><hr>
 <a name="Top"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#What-is-modularity_003f">What is modularity?</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#dir">(dir)</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
@@ -178,24 +189,26 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <ul class="menu">
 <li><a accesskey="1" href="#What-is-modularity_003f">What is modularity?</a>
 <li><a accesskey="2" href="#What-is-orchestration_003f">What is orchestration?</a>
-<li><a accesskey="3" href="#How-does-cfengine-deal-with-modularity-and-orchestration_003f">How does cfengine deal with modularity and orchestration?</a>
-<li><a accesskey="4" href="#High-level-services-in-cfengine">High level services in cfengine</a>
-<li><a accesskey="5" href="#Hiding-details">Hiding details</a>
-<li><a accesskey="6" href="#Black">Black</a>
-<li><a accesskey="7" href="#Bulk-operations-are-handled-by-repeating-patterns-over-lists">Bulk operations are handled by repeating patterns over lists</a>
-<li><a accesskey="8" href="#Ordering-operations-in-cfengine">Ordering operations in cfengine</a>
-<li><a accesskey="9" href="#Bundle-ordering">Bundle ordering</a>
+<li><a accesskey="3" href="#How-does-CFEngine-deal-with-modularity-and-orchestration_003f">How does CFEngine deal with modularity and orchestration?</a>
+<li><a accesskey="4" href="#Levels-of-policy-abstraction">Levels of policy abstraction</a>
+<li><a accesskey="5" href="#Is-CFEngine-patch-or-package-oriented_003f">Is CFEngine patch or package oriented?</a>
+<li><a accesskey="6" href="#High-level-services-in-CFEngine">High level services in CFEngine</a>
+<li><a accesskey="7" href="#Hiding-details">Hiding details</a>
+<li><a accesskey="8" href="#Black">Black</a>
+<li><a accesskey="9" href="#Bulk-operations-are-handled-by-repeating-patterns-over-lists">Bulk operations are handled by repeating patterns over lists</a>
+<li><a href="#Ordering-operations-in-CFEngine">Ordering operations in CFEngine</a>
+<li><a href="#Bundle-ordering">Bundle ordering</a>
 <li><a href="#Overriding-order">Overriding order</a>
-<li><a href="#Distributing-Ordering-between-hosts-with-cfengine-Nova">Distributing Ordering between hosts with cfengine Nova</a>
+<li><a href="#Distributing-Ordering-between-hosts-with-CFEngine-Nova">Distributing Ordering between hosts with CFEngine Nova</a>
 </ul>
 
    <p><a href="#Contents"><h1>COMPLETE TABLE OF CONTENTS</h1></a>
 <h2>Summary of contents</h2>
 
 <div class="node">
-<p><hr>
 <a name="What-is-modularity%3f"></a>
 <a name="What-is-modularity_003f"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#What-is-orchestration_003f">What is orchestration?</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
@@ -207,8 +220,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <pre class="sp">
 
 </pre>
-Modularity is the ability to separate concerns in a process and hide
-the details of the different concerns in different containers. It is a
+Modularity is the ability to separate concerns within a total process, and hide
+the details of the different concerns in different containers. In CFEngine, this is a
 <i>service oriented view</i>, in which different aspects of a problem are
 separated and turned into generic components that offer a service.  We
 often talk about black boxes, grey boxes or white boxes depending on
@@ -216,10 +229,10 @@ the extent to which the user of a service can see the details within
 the containers.
 
 <div class="node">
-<p><hr>
 <a name="What-is-orchestration%3f"></a>
 <a name="What-is-orchestration_003f"></a>
-Next:&nbsp;<a rel="next" accesskey="n" href="#How-does-cfengine-deal-with-modularity-and-orchestration_003f">How does cfengine deal with modularity and orchestration?</a>,
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#How-does-CFEngine-deal-with-modularity-and-orchestration_003f">How does CFEngine deal with modularity and orchestration?</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-is-modularity_003f">What is modularity?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -243,32 +256,32 @@ from the conductor to access a viewpoint that is not available to an
 individual. An orchestra is a weakly coupled expert system in which
 the management (conductor) provides a service to the players.
 
-   <p>Cfengine works like an orchestra &ndash; this is why is scales so well. 
+   <p>CFEngine works like an orchestra &ndash; this is why is scales so well. 
 Each computer is an autonomous entity, getting its script and a few
 occasional pieces of information from the policy server (conductor). 
 The coupling between the agents is weak &ndash; there is slack that makes
 the behaviour robust to minor errors in communication or timing.
 
 <div class="node">
+<a name="How-does-CFEngine-deal-with-modularity-and-orchestration%3f"></a>
+<a name="How-does-CFEngine-deal-with-modularity-and-orchestration_003f"></a>
 <p><hr>
-<a name="How-does-cfengine-deal-with-modularity-and-orchestration%3f"></a>
-<a name="How-does-cfengine-deal-with-modularity-and-orchestration_003f"></a>
-Next:&nbsp;<a rel="next" accesskey="n" href="#High-level-services-in-cfengine">High level services in cfengine</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Levels-of-policy-abstraction">Levels of policy abstraction</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-is-orchestration_003f">What is orchestration?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">How does cfengine deal with modularity and orchestration?</h3>
+<h3 class="unnumberedsec">How does CFEngine deal with modularity and orchestration?</h3>
 
 <p>Promise Theory provides simple principles for hiding details: agents are
 considered to reveal a kind of <i>service interface</i> to peers, that is
 advertised by making a promise to someone.  We assume an agent exerts
 best effort in keeping its promises. Orchestration requires a promise
 to coordinate and the promise to use that coordination service. 
-These basic ideas are built into Cfengine.
+These basic ideas are built into CFEngine.
 
-   <p>Cfengine provides containers called <i>bundles</i> for creating modular
+   <p>CFEngine provides containers called <i>bundles</i> for creating modular
 parts. Bundles can be independent (and therefore parallelizable)
 or they can be dependent (in which case the sequence in which they
 verify their promises matters).
@@ -282,17 +295,158 @@ both cases, but the confusion between them is typically the reason why
 large systems do not scale well.
 
 <div class="node">
+<a name="Levels-of-policy-abstraction"></a>
 <p><hr>
-<a name="High-level-services-in-cfengine"></a>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Hiding-details">Hiding details</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-does-cfengine-deal-with-modularity-and-orchestration_003f">How does cfengine deal with modularity and orchestration?</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Is-CFEngine-patch-or-package-oriented_003f">Is CFEngine patch or package oriented?</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-does-CFEngine-deal-with-modularity-and-orchestration_003f">How does CFEngine deal with modularity and orchestration?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">High level services in cfengine</h3>
+<h3 class="unnumberedsec">Levels of policy abstraction</h3>
 
-<p>Cfengine is designed to handle high level simplicity (without
+<p>CFEngine offers a number of layers of abstraction. The most fundamental atom
+in CFEngine is the promise. Promises can be made about many system issues,
+and you described in what context promises are to be kept.
+
+     <dl>
+<dt><i>Menu level</i><dd>At this high level, a user `selects' from a set of pre-defined `services' (or bundles in CFEngine parlance). 
+In commercial editions, users may view the set of services as a Service Catalogue, from which each
+host selects its roles. The selection is not made by every host, rather one places hosts into roles that
+will keep certain promises, just as different voices in an orchestra are assigned certain parts to play.
+
+     <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+     <pre class="smallexample">          bundle agent service_catalogue # menu
+          {
+          methods:
+            any:: # selected by everyone
+               "everyone" usebundle =&gt; <b>time_management</b>,
+                          comment =&gt; "Ensure clocks are synchronized";
+               "everyone" usebundle =&gt; garbage_collection,
+                          comment =&gt; "Clear junk and rotate logs";
+          
+            mailservers:: # selected by hosts in class
+              "mail server"  -&gt; { "goal_3", "goal_1", "goal_2" }
+                            usebundle =&gt; <b>app_mail_postfix</b>,
+                              comment =&gt; "The mail delivery agent";
+              "mail server"  -&gt; goal_3,
+                            usebundle =&gt; <b>app_mail_imap</b>,
+                              comment =&gt; "The mail reading service";
+              "mail server"  -&gt; goal_3,
+                            usebundle =&gt; <b>app_mail_mailman</b>,
+                              comment =&gt; "The mailing list handler";
+          }
+</pre>
+     </td></tr></table>
+
+     <p>The resulting menu of services can be browsed in the Mission Portal interface. 
+<div class="float">
+     <pre class="sp">
+     
+     </pre>
+     <div align="center"><img src="service_catalogue.png" alt="iso"></div>
+     <div align="center">A human-readable Service Catalogue generated from technical specifications</div>
+     <div align="center">shows what goals are being attended to automatically</div>
+     <pre class="sp">
+     
+     </pre>
+     <p><strong class="float-caption"></strong></p></div>
+
+        <br><dt><i>Bundle level</i><dd>At this level, users can switch on and off predefined features, or re-use
+standard methods, e.g. for editing files:
+
+        <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<pre class="verbatim">     body agent control 
+     { 
+     bundlesequence => {
+                       webserver("on"),
+                       dns("on"),
+                       security_set("on"),
+                       ftp("off")
+                       };
+     }
+</pre>
+</td></tr></table>
+        The set of bundles that can be selected from is extensible by the user.
+
+        <br><dt><i>Promise level</i><dd>This is the most detailed level of configuration, and gives full
+<i>convergent</i> promise behaviour to the user.  At this promise level,
+you can specificy every detail of promise-keeping behaviour, and
+combine promises together, reusing bundles and methods from standard
+libraries, or creating your own.
+
+        <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+     <pre class="smallexample">          bundle agent addpasswd
+          {
+          vars:
+          
+            # want to set these values by the names of their array keys
+          
+            "pwd[mark]" string =&gt; "mark:x:1000:100:Mark B:/home/mark:/bin/bash";
+            "pwd[fred]" string =&gt; "fred:x:1001:100:Right Said:/home/fred:/bin/bash";
+            "pwd[jane]" string =&gt; "jane:x:1002:100:Jane Doe:/home/jane:/bin/bash";
+          
+          files:
+          
+            "/etc/passwd"           # Use standard library functions
+                  create =&gt; "true",
+                 comment =&gt; "Ensure listed users are present",
+                   perms =&gt; mog("644","root","root"),
+               edit_line =&gt; append_users_starting("addpasswd.pwd");
+          
+          }
+</pre>
+        </td></tr></table>
+
+        <br><dt><i>Spread-sheet level</i><dd>
+CFEngine commercial editions support a spreadsheet
+In a spreadsheet approach, you create only the data to be inserted into predefined
+promises. The data are entered in tabular form, and may be browsed in the web interface. 
+This form of entry is preferred in some environments, especially on the Windows platform.
+
+     <div align="center"><img src="cdp_services_report.png" alt="The Content-Driven Policy services report"></div>
+     <div align="center">Content-Driven Policies</div>
+
+   </dl>
+
+<div class="node">
+<a name="Is-CFEngine-patch-or-package-oriented%3f"></a>
+<a name="Is-CFEngine-patch-or-package-oriented_003f"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#High-level-services-in-CFEngine">High level services in CFEngine</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Levels-of-policy-abstraction">Levels of policy abstraction</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h3 class="unnumberedsec">Is CFEngine patch-oriented or package-oriented?</h3>
+
+<p>Some system management products are patching systems. They package lumps
+of software and configuration along with scripts. If something goes wrong
+they simply update or replace the package with a new one. This is a patching
+model of system installation, but it is not a good model for repair as it nearly
+always leads to interruption of service or even requires a reboot.
+
+   <p>Installation of packages overwrites too much data in one go to be an effective model
+of simple repair<a rel="footnote" href="#fn-1" name="fnd-1"><sup>1</sup></a>. It can be both ineffecient and destructive. CFEngine manages addressable
+entities at the lowest possible level so that ultra-fine-grained repair can be
+performed with no interruption of service, e.g. altering a field within a line in a file,
+or restarting one process, or altering one bit of a flag in each file in a set of directories. 
+The power to express sophisticated patterns is what makes CFEngine's approach both
+non-intrusive and robust.
+
+<div class="node">
+<a name="High-level-services-in-CFEngine"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Hiding-details">Hiding details</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Is-CFEngine-patch-or-package-oriented_003f">Is CFEngine patch or package oriented?</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h3 class="unnumberedsec">High level services in CFEngine</h3>
+
+<p>CFEngine is designed to handle high level simplicity (without
 sacrificing low level capability) by working with configuration
 <i>patterns</i>, after all configuration is all about promising
 consistent patterns of system <i>state</i> in the resources of the
@@ -382,10 +536,10 @@ though in some other tools this layer has to be partially hard-coded.
 We can see some more approaches below, but let's look at this abstraction for a moment.
 
 <div class="node">
-<p><hr>
 <a name="Hiding-details"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Black">Black</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#High-level-services-in-cfengine">High level services in cfengine</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#High-level-services-in-CFEngine">High level services in CFEngine</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
@@ -393,12 +547,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <h3 class="unnumberedsec">Hiding details</h3>
 
 <p>Resource abstraction, or hiding system specific details inside a kind of
-grey-box, is just another service as far as cfengine is concerned &ndash; and we
+grey-box, is just another service as far as CFEngine is concerned &ndash; and we
 generally map services to bundles.
 
-   <p>Many system variables are discovered automatically by cfengine and provided
+   <p>Many system variables are discovered automatically by CFEngine and provided
 "out of the box", e.g. the location of the filesystem table might be <code>/etc/fstab</code>,
-or <code>/etc/vfstab</code> or even <code>/etc/filesystems</code>, but cfengine allows you to
+or <code>/etc/vfstab</code> or even <code>/etc/filesystems</code>, but CFEngine allows you to
 refer simply to <code>&lt;b&gt;$(sys.fstab)&lt;/b&gt;</code>. Soft-coded abstraction needs cannot
 be discovered by the system however. 
 So how do we create this mythical resource abstraction layer? It is
@@ -432,28 +586,28 @@ classes:
 }
 </pre>
 
-   <p>Some of the attempts to recreate a Cfengine-like tool try to hard code
+   <p>Some of the attempts to recreate a CFEngine-like tool try to hard code
 many decisions, meaning that minor changes in operating system versions
-require basic recoding of the software. Cfengine does not make decisions
+require basic recoding of the software. CFEngine does not make decisions
 for you without your permission.
 
 <div class="node">
-<p><hr>
 <a name="Black"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Bulk-operations-are-handled-by-repeating-patterns-over-lists">Bulk operations are handled by repeating patterns over lists</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Hiding-details">Hiding details</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">Black, grey and white box encapsulation in cfengine</h3>
+<h3 class="unnumberedsec">Black, grey and white box encapsulation in CFEngine</h3>
 
-<p>Cfengine's ability to abstract system decisions as promises also
+<p>CFEngine's ability to abstract system decisions as promises also
 applies to bundles of promises. After all, we can package promises
 as bumper compendia for grouping together related matters in
-a single package. Naturally, cfengine never abandons its insistence
+a single package. Naturally, CFEngine never abandons its insistence
 on &lt;b&gt;convergence&lt;/b&gt;, merely for the sake of making things look
-simple. Using cfengine, you can create convergent orchestration.
+simple. Using CFEngine, you can create convergent orchestration.
 
 <pre class="verbatim">bundle agent services
 {
@@ -465,12 +619,12 @@ methods:
 }
 </pre>
 The code above is all you really want to see. The rest can be hidden in libraries that
-you rarely look at. In cfengine, we want the intentions to shine forth and the
+you rarely look at. In CFEngine, we want the intentions to shine forth and the
 low level details to be clear on inspection, but hidden from view.
 
    <p>We can naturally modularize the packaged bundle of fully convergent
 promises and keep it as library code for reuse. Notice that
-cfengine adds comments in the code that follow processes through
+CFEngine adds comments in the code that follow processes through
 execution, allowing you to see the full intentions behind the
 promises in logs and error messages. In commercial versions, you can
 trace these comments to see your process details.
@@ -508,9 +662,9 @@ commands:
 </pre>
 
 <div class="node">
-<p><hr>
 <a name="Bulk-operations-are-handled-by-repeating-patterns-over-lists"></a>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Ordering-operations-in-cfengine">Ordering operations in cfengine</a>,
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Ordering-operations-in-CFEngine">Ordering operations in CFEngine</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Black">Black</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -518,7 +672,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Bulk operations are handled by repeating patterns over lists</h3>
 
-<p>The power of cfengine is to be able to handle lists of similar
+<p>The power of CFEngine is to be able to handle lists of similar
 patterns in a powerful way.  You can also wrap the whole experience in
 a method-bundle, and we can extend this kind of pattern to
 implement other interfaces, all without low level programming.
@@ -586,15 +740,15 @@ reports:
 </pre>
 
 <div class="node">
+<a name="Ordering-operations-in-CFEngine"></a>
 <p><hr>
-<a name="Ordering-operations-in-cfengine"></a>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Bundle-ordering">Bundle ordering</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Bulk-operations-are-handled-by-repeating-patterns-over-lists">Bulk operations are handled by repeating patterns over lists</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">Ordering operations in cfengine</h3>
+<h3 class="unnumberedsec">Ordering operations in CFEngine</h3>
 
 <p>Ordering of operations is less important than you probably
 think. We are taught to think of computing as an linear sequence of
@@ -604,22 +758,22 @@ many parts are independent of each other and exist in parallel.
    <p>Nevertheless there are sometimes cases of strong inter-dependency
 (that we strive to avoid, as they lead to most of the difficulties of
 system management) where order <i>is</i> important. In re-designing
-cfengine, we have taken a pragmatic approach to ordering. Essentially,
-cfengine takes care of ordering for you for most cases &ndash; and you can
+CFEngine, we have taken a pragmatic approach to ordering. Essentially,
+CFEngine takes care of ordering for you for most cases &ndash; and you can
 override the order in three ways:
 
      <ul>
-<li>Cfengine checks promises of the same type in the order in which they are defined, unless overridden
-<li>Bulk ordering of composite promises (called bundles) is handled using an overall list using the bundlesequence (replaces the actionsequence in previous cfengines)
+<li>CFEngine checks promises of the same type in the order in which they are defined, unless overridden
+<li>Bulk ordering of composite promises (called bundles) is handled using an overall list using the bundlesequence (replaces the actionsequence in previous CFEngines)
 <li>Dependency coupling through dynamic classes, may be used to guarantee ordering in the few cases
 where this is required,  as in the example below:
 </ul>
 
 <div class="node">
-<p><hr>
 <a name="Bundle-ordering"></a>
+<p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Overriding-order">Overriding order</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Ordering-operations-in-cfengine">Ordering operations in cfengine</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Ordering-operations-in-CFEngine">Ordering operations in CFEngine</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
@@ -702,9 +856,9 @@ methods:
 </pre>
 
 <div class="node">
-<p><hr>
 <a name="Overriding-order"></a>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Distributing-Ordering-between-hosts-with-cfengine-Nova">Distributing Ordering between hosts with cfengine Nova</a>,
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Distributing-Ordering-between-hosts-with-CFEngine-Nova">Distributing Ordering between hosts with CFEngine Nova</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Bundle-ordering">Bundle ordering</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -712,10 +866,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Overriding order</h3>
 
-<p>Cfengine is designed to handle non-deterministic events, such as
+<p>CFEngine is designed to handle non-deterministic events, such as
 anomalies and unexpected changes to system state, so it needs to
 adapt. For this, there is no deterministic solution and approximate
-methods are required. Nevertheless, it is possible to make cfengine
+methods are required. Nevertheless, it is possible to make CFEngine
 sort out dependent orderings, even when confounded by humans, as in
 this example:
 
@@ -750,16 +904,16 @@ Q: ".../bin/echo five": five
 </pre>
 
 <div class="node">
+<a name="Distributing-Ordering-between-hosts-with-CFEngine-Nova"></a>
 <p><hr>
-<a name="Distributing-Ordering-between-hosts-with-cfengine-Nova"></a>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Overriding-order">Overriding order</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">Distributing Ordering between hosts with cfengine Nova</h3>
+<h3 class="unnumberedsec">Distributing Ordering between hosts with CFEngine Nova</h3>
 
-<p>Cfengine Nova adds many powerful features to Cfengine, including
+<p>CFEngine Nova adds many powerful features to CFEngine, including
 a decentralized approach to coordinating activities across multiple
 hosts. Some tools try to approach this by centralizing data from the
 network in a single location, but this has two problems:
@@ -769,7 +923,7 @@ network in a single location, but this has two problems:
 <li>It relies on the network being available. 
 </ul>
 
-   <p>With Cfengine Nova there are are both decentralized network approaches
+   <p>With CFEngine Nova there are are both decentralized network approaches
 to this problem, and probabilistic methods that do not require the network
 at all.
 
@@ -781,15 +935,17 @@ at all.
 <ul>
 <li><a href="#What-is-modularity_003f">What is modularity?</a>
 <li><a href="#What-is-orchestration_003f">What is orchestration?</a>
-<li><a href="#How-does-cfengine-deal-with-modularity-and-orchestration_003f">How does cfengine deal with modularity and orchestration?</a>
-<li><a href="#High-level-services-in-cfengine">High level services in cfengine</a>
+<li><a href="#How-does-CFEngine-deal-with-modularity-and-orchestration_003f">How does CFEngine deal with modularity and orchestration?</a>
+<li><a href="#Levels-of-policy-abstraction">Levels of policy abstraction</a>
+<li><a href="#Is-CFEngine-patch-or-package-oriented_003f">Is CFEngine patch-oriented or package-oriented?</a>
+<li><a href="#High-level-services-in-CFEngine">High level services in CFEngine</a>
 <li><a href="#Hiding-details">Hiding details</a>
-<li><a href="#Black">Black, grey and white box encapsulation in cfengine</a>
+<li><a href="#Black">Black, grey and white box encapsulation in CFEngine</a>
 <li><a href="#Bulk-operations-are-handled-by-repeating-patterns-over-lists">Bulk operations are handled by repeating patterns over lists</a>
-<li><a href="#Ordering-operations-in-cfengine">Ordering operations in cfengine</a>
+<li><a href="#Ordering-operations-in-CFEngine">Ordering operations in CFEngine</a>
 <li><a href="#Bundle-ordering">Bundle ordering</a>
 <li><a href="#Overriding-order">Overriding order</a>
-<li><a href="#Distributing-Ordering-between-hosts-with-cfengine-Nova">Distributing Ordering between hosts with cfengine Nova</a>
+<li><a href="#Distributing-Ordering-between-hosts-with-CFEngine-Nova">Distributing Ordering between hosts with CFEngine Nova</a>
 </li></ul>
 </li></ul>
 </div>
@@ -807,6 +963,14 @@ var pageTracker = _gat._getTracker("UA-2576171-2");
 pageTracker._initData();
 pageTracker._trackPageview();
 </script>
+
+   <div class="footnote">
+<hr>
+<a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> Sometimes it is desirable to reinstall an entire package, but normally this is only true
+for software upgrades. CFEngine has an interface for working in concert with local
+package managers (RPM,DEB,MSI, etc).</p>
+
+   <hr></div>
 
 </body></html>
 

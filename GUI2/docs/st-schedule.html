@@ -188,7 +188,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
 <ul class="menu">
 <li><a accesskey="1" href="#What-is-scheduling_003f">What is scheduling?</a>
-<li><a accesskey="2" href="#How-can-Cfengine-help_003f">How can Cfengine help?</a>
+<li><a accesskey="2" href="#How-can-CFEngine-help_003f">How can CFEngine help?</a>
 <li><a accesskey="3" href="#Define-jobs-with-basic-profile-information">Define jobs with basic profile information </a>
 <li><a accesskey="4" href="#Chaining-jobs-together">Chaining jobs together</a>
 <li><a accesskey="5" href="#Calendars">Calendars </a>
@@ -208,7 +208,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <a name="What-is-scheduling%3f"></a>
 <a name="What-is-scheduling_003f"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#How-can-Cfengine-help_003f">How can Cfengine help?</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#How-can-CFEngine-help_003f">How can CFEngine help?</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -226,12 +226,12 @@ network of computers. On a given computer, jobs might be run
 sequentially in a queue, one after the other, or they might be run in
 parallel. 
 Jobs can also be started by triggers when sensors see certain system
-activity. Cfengine supports a full range of features for customizing
+activity. CFEngine supports a full range of features for customizing
 hands-free scheduling.
 
 <div class="node">
-<a name="How-can-Cfengine-help%3f"></a>
-<a name="How-can-Cfengine-help_003f"></a>
+<a name="How-can-CFEngine-help%3f"></a>
+<a name="How-can-CFEngine-help_003f"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Define-jobs-with-basic-profile-information">Define jobs with basic profile information</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-is-scheduling_003f">What is scheduling?</a>,
@@ -239,9 +239,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">How can Cfengine help?</h3>
+<h3 class="unnumberedsec">How can CFEngine help?</h3>
 
-<p>Cfengine is able to schedule processes or jobs across all managed
+<p>CFEngine is able to schedule processes or jobs across all managed
 nodes, in a platform independent manner. This eliminates the
 distributed configuration of shedulers like cron. The time resolution
 for this depends on the frequency with with the cf-agent is scheduled
@@ -252,14 +252,14 @@ which is sufficiently often for most batch scheduling requirements.
 <a name="Define-jobs-with-basic-profile-information"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Chaining-jobs-together">Chaining jobs together</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-can-Cfengine-help_003f">How can Cfengine help?</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-can-CFEngine-help_003f">How can CFEngine help?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
 <h3 class="unnumberedsec">Define jobs with basic profile information</h3>
 
-<p>Jobs are scheduled using cfengine as <code>commands</code> promises. 
+<p>Jobs are scheduled using CFEngine as <code>commands</code> promises. 
 To determine the conditions under which a job should be promised
 one uses <code>classes</code>.
 
@@ -360,7 +360,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <h3 class="unnumberedsec">Calendars</h3>
 
 <p>You can define classes based on any combination of events in
-Cfengine, and in this way build up special calendars.
+CFEngine, and in this way build up special calendars.
 
 <pre class="verbatim"> bundle agent jobs
  {
@@ -440,7 +440,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Logging execution</h3>
 
-<p class="noindent">There are many ways to log events in cfengine.
+<p class="noindent">There are many ways to log events in CFEngine.
 
 <pre class="verbatim"> bundle agent test
  {
@@ -506,9 +506,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Working with Unix <code>cron</code>.</h3>
 
-<p>One of cfengine's strengths is its use of classes to identify systems
+<p>One of CFEngine's strengths is its use of classes to identify systems
 from a single file or set of files. This allows you to have a single,
-central cfengine file which contains all the `cron' jobs on your
+central CFEngine file which contains all the `cron' jobs on your
 system without losing any of the fine control which cron affords
 you.
 
@@ -516,7 +516,7 @@ you.
 system which executes <code>cf-agent</code> at frequent intervals.  Each
 time <code>cf-agent</code> is started, it evaluates time classes and
 executes the shell commands defined in its configuration file. 
-Cfengine's time classes are much more powerful than
+CFEngine's time classes are much more powerful than
 <code>cron</code>'s time specification possibilities, and they add control
 over location too.
 
@@ -524,8 +524,8 @@ over location too.
 
 </pre>
 <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-DO I NEED TO USE CRON? No. With cfengine's <code>cf-execd</code> you don't
-need to use cron at all &ndash; cfengine can schedule itself. Whether you choose
+DO I NEED TO USE CRON? No. With CFEngine's <code>cf-execd</code> you don't
+need to use cron at all &ndash; CFEngine can schedule itself. Whether you choose
 to run <code>cf-execd</code> in daemon mode, or in wrapper mode is entirely
 up to you. 
 </td></tr></table>
@@ -545,7 +545,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Commands promises</h3>
 
-<p>Cfengine commands promises have the general form:
+<p>CFEngine commands promises have the general form:
 
 <pre class="smallexample">     
      <var>promise-type</var>:
@@ -616,7 +616,7 @@ The &lsquo;<samp><span class="samp">contain</span></samp>&rsquo;ment body provid
 to embed scripts.
 
    <p>The time resolution of the classes is limited by how often you execute
-cfengine either using cron or <code>cf-execd</code>. Five minutes is the
+CFEngine either using cron or <code>cf-execd</code>. Five minutes is the
 recommended scheduling interval.
 
 <div class="node">
@@ -661,7 +661,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Choosing a scheduling interval</h3>
 
-<p>How often should you call your global cfengine configuration? There
+<p>How often should you call your global CFEngine configuration? There
 are several
 things to think about:
 
@@ -670,12 +670,12 @@ things to think about:
 usually enough for most tasks, but you might need to exercise finer
 control for a few special tasks.
 
-     <li>Are you going to verify the entire cfengine configuration file
+     <li>Are you going to verify the entire CFEngine configuration file
 or just selected promises?
 
    </ul>
 
-   <p>Cfengine has an intelligent locking and timeout policy which should be
+   <p>CFEngine has an intelligent locking and timeout policy which should be
 sufficient to handle hanging shell commands from previous crons so that
 no overlap can take place.
 
@@ -690,7 +690,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Appendix - Did you know?</h3>
 
-<p>Here are some features that can help you with Cfengine's
+<p>Here are some features that can help you with CFEngine's
 scheduling capabilities:
 
      <ul>
@@ -709,7 +709,7 @@ will be killed and restarted.
 
      <li>The monitor agent <code>cf-monitord</code> can watch over special processes
 and monitor their resource usage, e.g. memory or CPU usage and report on these
-in Cfengine Nova.
+in CFEngine Nova.
 
      <li>You can arrange for jobs to run in a `sandbox' or `jail', running
 as a special user, in a special directory without access to system resources. 
@@ -724,7 +724,7 @@ Thus system security can be addressed when running foreign applications.
 <li><a name="toc_Top" href="#Top">Scheduling</a>
 <ul>
 <li><a href="#What-is-scheduling_003f">What is scheduling?</a>
-<li><a href="#How-can-Cfengine-help_003f">How can Cfengine help?</a>
+<li><a href="#How-can-CFEngine-help_003f">How can CFEngine help?</a>
 <li><a href="#Define-jobs-with-basic-profile-information">Define jobs with basic profile information</a>
 <li><a href="#Chaining-jobs-together">Chaining jobs together</a>
 <li><a href="#Calendars">Calendars</a>

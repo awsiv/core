@@ -1,8 +1,8 @@
 <html lang="en">
 <head>
-<title>Cfengine 3 Concept Guide</title>
+<title>CFEngine 3 Concept Guide</title>
 <meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="Cfengine 3 Concept Guide">
+<meta name="description" content="CFEngine 3 Concept Guide">
 <meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="top" href="#Top">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
@@ -174,7 +174,7 @@ A:visited { color: black }
 A:active { color: #600041 }--></style>
 </head>
 <body>
-<h1 class="settitle">Cfengine 3 Concept Guide</h1>
+<h1 class="settitle">CFEngine 3 Concept Guide</h1>
 <div class="node">
 <a name="Top"></a>
 <p><hr>
@@ -184,7 +184,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
 </div>
 
-<h2 class="unnumbered">Cfengine-Tutorial</h2>
+<h2 class="unnumbered">CFEngine-Tutorial</h2>
 
    <p><a href="#Contents"><h1>COMPLETE TABLE OF CONTENTS</h1></a>
 <h2>Summary of contents</h2>
@@ -195,11 +195,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <!-- ********************************************************************** -->
 <ul class="menu">
 <li><a accesskey="1" href="#System-automation">System automation</a>
-<li><a accesskey="2" href="#The-components-of-cfengine">The components of cfengine</a>
+<li><a accesskey="2" href="#The-components-of-CFEngine">The components of CFEngine</a>
 <li><a accesskey="3" href="#Bodies-and-bundles">Bodies and bundles</a>
 <li><a accesskey="4" href="#First-promises">First promises</a>
 <li><a accesskey="5" href="#A-simple-crash-course-in-concepts">A simple crash course in concepts</a>
-<li><a accesskey="6" href="#Using-cfengine-as-a-front_002dend-for-cron">Using cfengine as a front-end for cron</a>
+<li><a accesskey="6" href="#Using-CFEngine-as-a-front_002dend-for-cron">Using CFEngine as a front-end for cron</a>
 <li><a accesskey="7" href="#Network-services">Network services</a>
 <li><a accesskey="8" href="#Knowledge-Management">Knowledge Management</a>
 </ul>
@@ -207,7 +207,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <div class="node">
 <a name="System-automation"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#The-components-of-cfengine">The components of cfengine</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#The-components-of-CFEngine">The components of CFEngine</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -220,7 +220,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <li><a accesskey="2" href="#Managing-expectations-_002d-a-theory-of-promises">Managing expectations - a theory of promises</a>
 <li><a accesskey="3" href="#Why-automation_003f">Why automation?</a>
 <li><a accesskey="4" href="#Scaling-up">Scaling up</a>
-<li><a accesskey="5" href="#How-do-you-view-cfengine">How do you view cfengine</a>
+<li><a accesskey="5" href="#How-do-you-view-CFEngine">How do you view CFEngine</a>
 </ul>
 
 <div class="node">
@@ -253,9 +253,9 @@ nowhere &ndash; or more correctly, spread out across the planet in
 datacentres, instead of our offices and homes. This is one aspect of
 making computing into something we take for granted. At the
 foundations of any such technology are the tools required to implement
-mass configuration with surgical precision. Cfengine is such a tool.
+mass configuration with surgical precision. CFEngine is such a tool.
 
-   <p>Cfengine was designed to enable scalable configuration management, for
+   <p>CFEngine was designed to enable scalable configuration management, for
 the
 whole system life-cycle, in any kind of environment. 
 Almost every other system for configuration assumes that there will be
@@ -272,7 +272,7 @@ probe).
 or kitchen appliances). 
 </ul>
 
-   <p>Cfengine does not need reliable infrastructure. It works
+   <p>CFEngine does not need reliable infrastructure. It works
 opportunistically in almost any environment, using few resources. It
 has few software dependencies.  So, not only does it work in all of the
 traditional fixed-plan scenarios, but it is capable of working in
@@ -290,7 +290,7 @@ external requirements. This is how to build scalable and reliable
 services.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine works in all the places you think it should, and all the new
+CFEngine works in all the places you think it should, and all the new
 places you haven't even thought of yet. How do we know? Because it
 is based on almost 20 years of careful research and experience. 
 </td></tr></table>
@@ -318,8 +318,8 @@ intention to act or behave in some manner. This is what we need to
 learn to
 trust systems, no matter whether they are machines or humans.
 
-   <p>One cfengine user once said to me, that the thing that had helped him
-the most in deploying cfengine was its design based around voluntary
+   <p>One CFEngine user once said to me, that the thing that had helped him
+the most in deploying CFEngine was its design based around voluntary
 cooperation. &ldquo;Our main problems were not technical but political &ndash;
 getting everyone to agree in all of our departments around the
 world&rdquo;.  This was because, for all the technology, it is people who
@@ -328,12 +328,12 @@ empowering rather than disempowering them.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 
-   <p>Cfengine works on a simple notion of promises. Everything in
-cfengine can be thought of as a promise to be kept by different
+   <p>CFEngine works on a simple notion of promises. Everything in
+CFEngine can be thought of as a promise to be kept by different
 resources in the system.
 
    <p>Combining promises with patterns to describe where and when
-promises should apply is what cfengine is all about.
+promises should apply is what CFEngine is all about.
 
    </td></tr></table>
 
@@ -384,7 +384,7 @@ be willing to abandon the habit.
 <div class="node">
 <a name="Scaling-up"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#How-do-you-view-cfengine">How do you view cfengine</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#How-do-you-view-CFEngine">How do you view CFEngine</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Why-automation_003f">Why automation?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#System-automation">System automation</a>
 
@@ -426,48 +426,48 @@ production are not at odds with the economics of adaptation, but 40
 years later, we are still re-learning that lesson.
 
 <div class="node">
-<a name="How-do-you-view-cfengine"></a>
+<a name="How-do-you-view-CFEngine"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Scaling-up">Scaling up</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#System-automation">System automation</a>
 
 </div>
 
-<h3 class="section">1.5 How do <i>you</i> view cfengine?</h3>
+<h3 class="section">1.5 How do <i>you</i> view CFEngine?</h3>
 
-<p>Cfengine is a framework. It is not so complex, but it is certainly
+<p>CFEngine is a framework. It is not so complex, but it is certainly
 extensive. 
-Often when trying to describe cfengine, it seems that there is too
+Often when trying to describe CFEngine, it seems that there is too
 much to
 tell and it is hard to convey in a simple way what the software can do. 
-The picture below shows a few ways in which you can think of cfengine.
+The picture below shows a few ways in which you can think of CFEngine.
 
-   <div class="block-image"><img src="boxes.png" alt="Cfengine application areas"></div>
+   <div class="block-image"><img src="boxes.png" alt="CFEngine application areas"></div>
 
-   <p>For many users, cfengine is simply a configuration tool &ndash;
+   <p>For many users, CFEngine is simply a configuration tool &ndash;
 i.e. software for deploying and patching systems according to a
 policy. Policy is described using promises &ndash; indeed, every statement
-in cfengine 3 is a promise to be kept at some time or location.  More
-than this, however, cfengine is not like most automation tools that
+in CFEngine 3 is a promise to be kept at some time or location.  More
+than this, however, CFEngine is not like most automation tools that
 `roll out' an image of some software once and hope for the best. Every
-promise that you make in cfengine is continuously verified and
+promise that you make in CFEngine is continuously verified and
 maintained. It is not a one-off operation, but an encapsulated process
 that repairs itself should anything deviate from the policy.
 
-   <p>That clearly places cfengine in the realm of automation, which often
+   <p>That clearly places CFEngine in the realm of automation, which often
 begs the question: so it's just another scripting language? Certainly
-cfengine contains a powerful scripting language, but it is not like
-any other. Cfengine is not a low level language like Perl, Python or
+CFEngine contains a powerful scripting language, but it is not like
+any other. CFEngine is not a low level language like Perl, Python or
 Ruby; it is a language of promises, in which you express very high
 level intentions about the system and the inner details figure out the
 algorithms needed to implement the result. We'll return to this below.
 
-   <p>For many, cfengine is a tool for implementing security hardening
+   <p>For many, CFEngine is a tool for implementing security hardening
 procedures on systems, and monitoring them continuously thereafter. 
-This is certainly a major application area. Cfengine has a reputation
+This is certainly a major application area. CFEngine has a reputation
 for being reliable and secure. That is because its basic design is
 secure: it is not possible to send information about policy to
-cfengine from outside the system. If access has been granted, it is
+CFEngine from outside the system. If access has been granted, it is
 only possible to send a few simple protocol requests of limited length
 to the server. This makes the design safer than most firewalls. 
 Most servers fail security tests because it is possible to send
@@ -475,31 +475,31 @@ data to them.
 
    <p>The ability to describe almost any kind of policy for a system means
 that we can suggest promises that a system should make and comply
-with.  Thus cfengine can also be thought of as a compliance engine. 
+with.  Thus CFEngine can also be thought of as a compliance engine. 
 It is easily used to comply with frameworks like SOX, `EUROSOX' (the
 EU 8th Data Directive), ITIL and standards like ISO 17799, ISO 20000,
 etc.
 
-   <p>Finally, although cfengine was not initially conceived for monitoring,
+   <p>Finally, although CFEngine was not initially conceived for monitoring,
 it
 contains one of the most flexible and lightweight monitoring engines
 around. You can extract data about system configuration, usage,
-resources and log data and turn this into readable reports. Cfengine's
+resources and log data and turn this into readable reports. CFEngine's
 ability to discover and extract information about the system, combined
 with its reporting means that you can turn the system into a simple
 Configuration Management Database. In the Community edition,
-monitoring is a zero-touch background process. With cfengine
+monitoring is a zero-touch background process. With CFEngine
 commercial extensions, there is almost no limit to the kind of
 monitoring promises you can make, and without the embarrassing resource
 spikes that many monitoring systems produce.
 
-   <p>Above all, cfengine is aimed to promote human understanding of complex
+   <p>Above all, CFEngine is aimed to promote human understanding of complex
 processes. Its promises are easily documentable using comments that
 the system remembers and reminds us about in error reporting. It hides
 irrelevant and transitory details of implementation so that the
 <i>intentions</i> behind the promises are highlighted for all to see. 
 This means that the knowledge of your organization can be encoded into
-the cfengine language.
+the CFEngine language.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 <i>WHY DOES KNOWLEDGE MATTER? There are two reasons: the first is that
@@ -517,7 +517,7 @@ documentation is it possible to immunize against loss.</i>
 <!-- * CHAPTER -->
 <!-- ***************************************************** -->
 <div class="node">
-<a name="The-components-of-cfengine"></a>
+<a name="The-components-of-CFEngine"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Bodies-and-bundles">Bodies and bundles</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#System-automation">System automation</a>,
@@ -525,9 +525,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">2 The components of cfengine</h2>
+<h2 class="chapter">2 The components of CFEngine</h2>
 
-<p>Cfengine comprises a number of components. In this chapter we'll
+<p>CFEngine comprises a number of components. In this chapter we'll
 consider how to
 build them and what they are for.
 
@@ -535,7 +535,7 @@ build them and what they are for.
 <li><a accesskey="1" href="#Installation">Installation</a>
 <li><a accesskey="2" href="#Work-directory">Work directory</a>
 <li><a accesskey="3" href="#The-players">The players</a>
-<li><a accesskey="4" href="#About-the-cfengine-architecture">About the cfengine architecture</a>
+<li><a accesskey="4" href="#About-the-CFEngine-architecture">About the CFEngine architecture</a>
 <li><a accesskey="5" href="#The-policy-decision-flow">The policy decision flow</a>
 <li><a accesskey="6" href="#Getting-started-with-the-Community-Edition">Getting started with the Community Edition</a>
 </ul>
@@ -544,14 +544,14 @@ build them and what they are for.
 <a name="Installation"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Work-directory">Work directory</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-components-of-cfengine">The components of cfengine</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-cfengine">The components of cfengine</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-components-of-CFEngine">The components of CFEngine</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-CFEngine">The components of CFEngine</a>
 
 </div>
 
 <h3 class="section">2.1 Installation</h3>
 
-<p>To install cfengine, you will need a few packages.  You require:
+<p>To install CFEngine, you will need a few packages.  You require:
 
      <dl>
 <dt><b>OpenSSL</b><dd>Open source Secure Sockets Layer for encryption.<br>URL: <a href="http://www.openssl.org">http://www.openssl.org</a>
@@ -564,24 +564,24 @@ PCRE.
 
      <br><dt><dd>On Windows machines, you need to install the basic Cygwin DLL from
 <a href="http://www.cygwin.com">http://www.cygwin.com</a>
-in order to run cfengine. 
+in order to run CFEngine. 
 </dl>
 
    <p>Additional functionality (some of which is available only in
 commercial extensions) also becomes available if other libraries are
 present, e.g.  OpenLDAP, client libraries for MySQL and PostgreSQL,
-etc. It is possible to run cfengine without these, but related
+etc. It is possible to run CFEngine without these, but related
 functionality will be missing.
 
    <p>Unless you have purchased ready-to-run binaries, or are using a
-package distribution, you will need to compile cfengine. For this you
+package distribution, you will need to compile CFEngine. For this you
 will also need a build environment with <code>gcc</code>, <code>flex</code>,
 and <code>bison</code>.
 
 <p class="noindent">The preferred method of installation is then
 
-<pre class="smallexample">     tar zxf cfengine-x.x.x.tar.gz
-     cd cfengine-x.x.x
+<pre class="smallexample">     tar zxf CFEngine-x.x.x.tar.gz
+     cd CFEngine-x.x.x
      ./configure
      make
      make install
@@ -593,13 +593,13 @@ and <code>bison</code>.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#The-players">The players</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Installation">Installation</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-cfengine">The components of cfengine</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-CFEngine">The components of CFEngine</a>
 
 </div>
 
 <h3 class="section">2.2 The work directory</h3>
 
-<p>Cfengine keeps a work space directory for its own use. The default
+<p>CFEngine keeps a work space directory for its own use. The default
 location for this is <samp><span class="file">/var/cfengine</span></samp> when run as the root user, and
 <code>~/.cfagent</code> for other users.
 
@@ -610,12 +610,12 @@ location for this is <samp><span class="file">/var/cfengine</span></samp> when r
 </pre>
    <!-- chew end Work directory -->
    <p>A trusted cache of the input files must now be maintained in the
-<samp><span class="file">inputs</span></samp> subdirectory. When cfengine is invoked by the scheduler,
+<samp><span class="file">inputs</span></samp> subdirectory. When CFEngine is invoked by the scheduler,
 it expects to read only from this directory. It is up to the user to
 keep this cache updated, on each host (this is arranged by the default
 configuration files).
 
-   <p>Unlike cfengine 2, cfengine 3 does not recognize the
+   <p>Unlike CFEngine 2, CFEngine 3 does not recognize the
 <code>CF-INPUTS</code> environment variable.
 
    <p>The <samp><span class="file">outputs</span></samp> directory is now a record of spooled run-reports. 
@@ -627,30 +627,30 @@ to another central location and viewed in an alternative browser.
 <div class="node">
 <a name="The-players"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#About-the-cfengine-architecture">About the cfengine architecture</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#About-the-CFEngine-architecture">About the CFEngine architecture</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Work-directory">Work directory</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-cfengine">The components of cfengine</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-CFEngine">The components of CFEngine</a>
 
 </div>
 
 <h3 class="section">2.3 The players</h3>
 
-<p>A cfengine system is something like an orchestra. 
+<p>A CFEngine system is something like an orchestra. 
 It is composed of any number of computers (players), each of which has
 its
 own copy of the music and knows what to play. It might or might not have
 a conductor to help coordinate the individual parts &ndash; that's up to you.
 
-   <p>Cfengine's software agents run on each individual computer but can
+   <p>CFEngine's software agents run on each individual computer but can
 communicate if they need to, as depicted the figure below. This means
 you don't have to arrange risky login credentials to run your network
 &ndash; and if something goes wrong with the communications network,
-cfengine is where it needs to be to repair or protect the system
+CFEngine is where it needs to be to repair or protect the system
 during the outage.
 
-   <div class="block-image"><img src="components.png" alt="Cfengine components"></div>
+   <div class="block-image"><img src="components.png" alt="CFEngine components"></div>
 
-   <p>If the network is not working, cfengine just skips these parts and
+   <p>If the network is not working, CFEngine just skips these parts and
 continues
 with what it can do. It is fault tolerant and opportunistic.
 
@@ -659,14 +659,14 @@ with what it can do. It is fault tolerant and opportunistic.
 configuration promises before attempting to execute.
 
      <br><dt><em>cf-agent</em><dd>
-This is the instigator of change. The agent is the part of cfengine
+This is the instigator of change. The agent is the part of CFEngine
 that manipulates
 system resources.
 
      <br><dt><em>cf-serverd</em><dd>
 The server is able to share files and receive requests to execute
 existing policy on an individual machine. It is not possible to send
-(push) new information to cfengine from outside.
+(push) new information to CFEngine from outside.
 
      <br><dt><em>cf-execd</em><dd>
 This is a scheduling daemon (which can either supplement or replace
@@ -677,7 +677,7 @@ account.
      <br><dt><em>cf-runagent</em><dd>
 This is a helper program that can talk to <code>cf-serverd</code> and
 request that it execute <code>cf-agent</code> with its existing policy. It
-can thus be used to simulate a push of changes to cfengine hosts, if
+can thus be used to simulate a push of changes to CFEngine hosts, if
 their policy includes that they check for updates.
 
      <br><dt><em>cf-report</em><dd>
@@ -692,22 +692,22 @@ as a `semantic web'.
    </dl>
 
 <div class="node">
-<a name="About-the-cfengine-architecture"></a>
+<a name="About-the-CFEngine-architecture"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#The-policy-decision-flow">The policy decision flow</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-players">The players</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-cfengine">The components of cfengine</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-CFEngine">The components of CFEngine</a>
 
 </div>
 
-<h3 class="section">2.4 About the cfengine architecture</h3>
+<h3 class="section">2.4 About the CFEngine architecture</h3>
 
-<p>This section explains how cfengine will operate autonomously in a
+<p>This section explains how CFEngine will operate autonomously in a
 network, under your guidance.  If your site is large (thousands of
-servers) you should spend some time discussing with Cfengine experts
+servers) you should spend some time discussing with CFEngine experts
 how to tune this description to your environment as <em>scale</em>
 requires you to have more infrastructure, and a potentially more
-complicated configuration. The essence of any cfengine deployment
+complicated configuration. The essence of any CFEngine deployment
 is the same.
 
    <p>There are four commonly cited phases in managing systems, summarized
@@ -721,10 +721,10 @@ as follows:
 </ul>
 
    <p>These separate phases originate with a model of system management
-based on transactional changes.  Cfengine's conception of management
+based on transactional changes.  CFEngine's conception of management
 is somewhat different, as transaction processing is not a good model for
 system management, but we can use this template to see how
-cfengine works differently.
+CFEngine works differently.
 
      <dl>
 <dt><em>Build</em><dd>A system is based on a number of decisions and resources that need to
@@ -733,7 +733,7 @@ foundations of a system is the key to guiding its development.  You
 don't need to decide every detail, just enough to build trust and
 predictability into your system.
 
-     <p>In cfengine, what you build is a template of proposed promises for the
+     <p>In CFEngine, what you build is a template of proposed promises for the
 machines in an organization such that, if the machines all make and
 keep these promises, the system will function seamlessly as
 planned. This is how it works in a human organization, and this is how
@@ -741,24 +741,24 @@ is works for computers too.
 
      <br><dt><em>Deploy</em><dd>Deploying really means implementing the policy that was already
 decided.  In transaction systems, one tries to push out changes one by
-one, hence `deploying' the decision. In cfengine you simply publish
-your policy (in cfengine parlance these are `promise proposals') and
-the machines see the new proposals and can adust accordingly. Each
+one, hence `deploying' the decision. In CFEngine you simply publish
+your policy (in CFEngine parlance these are `promise proposals') and
+the machines see the new proposals and can adjust accordingly. Each
 machine runs an agent that is capable of implementing policies and
 maintaining them over time without further assistance.
 
      <br><dt><em>Manage</em><dd>Once a decision is made, unplanned events will occur. Such
 incidents traditionally set off alarms and humans rush to make new
 transactions
-to repair them. In cfengine, the autonomous agent manages the system,
+to repair them. In CFEngine, the autonomous agent manages the system,
 and you only have to deal with rare events that cannot be dealt with
 automatically.
 
      <br><dt><em>Audit</em><dd>In traditional configuration systems, the outcome is far from clear
 after a one-shot transaction, so one audits the system
-to determine to discover what actually happened. In cfengine, changes
+to determine to discover what actually happened. In CFEngine, changes
 are not just initiated once, but locally audited and maintained. 
-Decision outcomes are assured by design in cfengine and maintained
+Decision outcomes are assured by design in CFEngine and maintained
 automatically, so the main worry is managing conflicting
 intentions. Users can sit back and examine regular reports of
 compliance generated by the agents, without having to arrange
@@ -767,11 +767,11 @@ for new `roll out' transactions.
    </dl>
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-<em>ROLL-OUT and ROLL-BACK?  You should not think of cfengine as a
+<em>ROLL-OUT and ROLL-BACK?  You should not think of CFEngine as a
 roll-out system, i.e. one that attempts to force out absolute changes
 and perhaps reverse them in case of error. Roll-out and roll-back are
 theoretically flawed concepts that only sometimes work in practice. 
-With cfengine, you publish a sequences of policy revisions, always
+With CFEngine, you publish a sequences of policy revisions, always
 moving forward (because like it or not, time only goes in one
 direction).  All of the desired-state changes are managed locally by
 each individual computer, and continuously repaired to ensure on-going
@@ -782,28 +782,28 @@ compliance with policy. </em>
 <a name="The-policy-decision-flow"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Getting-started-with-the-Community-Edition">Getting started with the Community Edition</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#About-the-cfengine-architecture">About the cfengine architecture</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-cfengine">The components of cfengine</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#About-the-CFEngine-architecture">About the CFEngine architecture</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-CFEngine">The components of CFEngine</a>
 
 </div>
 
 <h3 class="section">2.5 The policy decision flow</h3>
 
-<p>Cfengine does not make absolute choices for you, like other
+<p>CFEngine does not make absolute choices for you, like other
 tools. Almost everything about its behaviour is matter of policy and
 can be changed.  However, a structure for use, like the following, is
 recommended (see the following figure).
 
-   <p>In order to keep operations as simple as possible, cfengine maintains
+   <p>In order to keep operations as simple as possible, CFEngine maintains
 a private working directory on each machine referred to in
 documentation as WORKDIR and in policy by the variable
 <code>$(sys.workdir)</code>. By default, this is located at
-<samp><span class="file">/var/cfengine</span></samp> or <samp><span class="file">C:\var\cfengine</span></samp>. It contains everything
-cfengine needs to run.
+<samp><span class="file">/var/cfengine</span></samp> or <samp><span class="file">C:\var\CFEngine</span></samp>. It contains everything
+CFEngine needs to run.
 
    <p>The figure below shows how decisions flow through the parts of a system.
 
-   <div class="block-image"><img src="arch.png" alt="The cfengine architecture"></div>
+   <div class="block-image"><img src="arch.png" alt="The CFEngine architecture"></div>
 
      <ul>
 <li>It makes sense to have a single point of coordination.  Decisions are
@@ -811,7 +811,7 @@ therefore usually made in a single location (the Policy Definition
 Point).  The history of decisions and changes can be tracked by a
 version control system of your choice (e.g. Subversion, CVS, etc.).
 
-     <li>Decisions are made by editing cfengine's policy file
+     <li>Decisions are made by editing CFEngine's policy file
 <samp><span class="file">promises.cf</span></samp> (or one of its included sub-files). This process is
 carried out off-line.
 
@@ -832,12 +832,12 @@ server.
 
    <p>Once a client machine has a copy of the policy, it extracts only those
 promise proposals that are relevant to it, and implements any changes
-without human assistance.  This is how cfengine manages change.
+without human assistance.  This is how CFEngine manages change.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 
-   <p><em>WHY DO THIS? Cfengine tries to minimize dependencies by decoupling
-processes. By following this pull-based architecture, cfengine will
+   <p><em>WHY DO THIS? CFEngine tries to minimize dependencies by decoupling
+processes. By following this pull-based architecture, CFEngine will
 tolerate network outages and will recover from deployment errors
 easily. By placing the burden of responsibility for decision at the
 top, and for implementation at the bottom, we avoid needless fragility
@@ -849,17 +849,17 @@ and keep two independent quality assurance processes apart.</em>
 <a name="Getting-started-with-the-Community-Edition"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-policy-decision-flow">The policy decision flow</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-cfengine">The components of cfengine</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-CFEngine">The components of CFEngine</a>
 
 </div>
 
 <h3 class="section">2.6 Getting started with the Community Edition</h3>
 
-<p>Bootstrapping the commercial versions of cfengine is a one-line trivial
+<p>Bootstrapping the commercial versions of CFEngine is a one-line trivial
 operation, which is covered in their separate documentation.  The
 quickest way to get started with the Community Edition is to copy the
 distributed policy files that were installed in
-<samp><span class="file">/usr/local/share/doc/cfengine/</span></samp> to a policy distribution point, like
+<samp><span class="file">/usr/local/share/doc/CFEngine/</span></samp> to a policy distribution point, like
 this:
 
      <ol type=1 start=1>
@@ -869,17 +869,17 @@ this:
 
      <li>Create the policy source directory and populate the cache:
      <pre class="smallexample">          host# /usr/local/sbin/cf-key
-          host# cp /usr/local/share/doc/cfengine/inputs/*cf /var/cfengine/inputs/
+          host# cp /usr/local/share/doc/CFEngine/inputs/*cf /var/cfengine/inputs/
           host# /usr/local/sbin/cf-agent --bootstrap
 </pre>
-     <p class="noindent">It does no harm to run Cfengine several times to resolve dependencies
+     <p class="noindent">It does no harm to run CFEngine several times to resolve dependencies
 in the process. 
 <li>Now start the system.
      <pre class="smallexample">          host# /usr/local/sbin/cf-agent
 </pre>
      </ol>
 
-   <p>Cfengine is now running on your policy server. 
+   <p>CFEngine is now running on your policy server. 
 <!-- What will it do?  Just a quick sentence or two, so folks know what to look -->
 <!-- for (or know that it is safe). -->
 
@@ -891,15 +891,15 @@ in the process.
 what they contain, and even make some alterations before doing
 this. Amongst other things, you will want to customize things like the
 <samp><span class="file">resolv.conf</span></samp> parameters to your site.  If you have used an
-earlier version of cfengine before, the contents of these files will
+earlier version of CFEngine before, the contents of these files will
 not look too mysterious.  For the rest, stay tuned for an overview.
 
    <p>Note: If you have manually configured a different location for the
-cfengine work directory,
+CFEngine work directory,
 you will need to adapt these lines above to replace <samp><span class="file">/var/
-cfengine</span></samp> with the path
+CFEngine</span></samp> with the path
 you have configured; e.g. Debian based packages feel that <samp><span class="file">/var/
-lib/cfengine</span></samp>
+lib/CFEngine</span></samp>
 is the right location for this.
 
 <!-- ***************************************************** -->
@@ -909,16 +909,16 @@ is the right location for this.
 <a name="Bodies-and-bundles"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#First-promises">First promises</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-components-of-cfengine">The components of cfengine</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-components-of-CFEngine">The components of CFEngine</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
 <h2 class="chapter">3 Bodies and bundles</h2>
 
-<p>To emphasize the fact that Cfengine is not an imperative programming
+<p>To emphasize the fact that CFEngine is not an imperative programming
 language, and to keep closely to the nomenclature of Promise Theory,
-cfengine uses two concepts throughout: bundles and bodies.
+CFEngine uses two concepts throughout: bundles and bodies.
 
 <ul class="menu">
 <li><a accesskey="1" href="#Bodies">Bodies</a>
@@ -937,7 +937,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Bodies-and-bundles">Bodies and bundles
 
 <h3 class="section">3.1 Bodies</h3>
 
-<p>Promises are the fundamental statements in Cfengine. Promises are the policy atoms. 
+<p>Promises are the fundamental statements in CFEngine. Promises are the policy atoms. 
 If there is no promise, nothing happens.
 
    <p>However, promises can become quite complicated and readability becomes
@@ -946,11 +946,11 @@ components. The structure of a promise is this:
 
      <dl>
 <dt><i>Promiser</i><dd>This is the object that formally makes the promise. It is always the <i>affected object</i>,
-since objects can only mkae promises about their own state or behaviour in Cfengine.
+since objects can only make promises about their own state or behaviour in CFEngine.
 
      <br><dt><i>Promisee (optional)</i><dd>This is a possible stakeholder, someone who is interested in the outcome of the
 promise. It is used as documentation, and it is used for reasoning in the commercial
-Cfengine product.
+CFEngine product.
 
      <br><dt><i>Promise body</i><dd>Everything else about a promise is defined in the body of the promise. 
 We use this word in the sense of `body of a contract' or the `body of a document'
@@ -958,7 +958,7 @@ We use this word in the sense of `body of a contract' or the `body of a document
 
      <p>A promise body is a list of declarations of the following form:
 
-     <pre class="verbatim">     cfengine_attribute_type => user_defined_value or template
+     <pre class="verbatim">     CFEngine_attribute_type => user_defined_value or template
 </pre>
 
    </dl>
@@ -979,7 +979,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Bodies">Bodies</a>
 
 <h4 class="subsection">3.1.1 Body parts</h4>
 
-<p>The Cfengine reserved word <code>body</code> is used to define
+<p>The CFEngine reserved word <code>body</code> is used to define
 <i>parameterized templates</i> for bodies to hide the details of complex
 promise specifications. For complex body lists, you must fill in a
 body declaration as an `attachment' to the promise, e.g.
@@ -991,8 +991,7 @@ body declaration as an `attachment' to the promise, e.g.
 <span class="red">    perms </span>=> myexample;  # The body is just one line, 
 <span class="comment">                         # but needs an attachment
 </span>
-<span class="comment">
-</span>
+
 </pre>
 The attachment is declared like this, with a `type' that matches the left
 hand side of the declaration in the promise:
@@ -1037,14 +1036,14 @@ Another way of looking at it is this:
 <pre class="smallexample">     
        <var>promiser</var>
      
-         <b>cfengine_word</b> =&gt; <var>user_defined_value</var>
+         <b>CFEngine_word</b> =&gt; <var>user_defined_value</var>
      
      ..
      
-      body <b>cfengine_word</b> <var>user_defined_value</var>
+      body <b>CFEngine_word</b> <var>user_defined_value</var>
       {
-      <b>cfengine_word</b> =&gt; <var>user_defined_value</var>;
-      <b>cfengine_word</b> =&gt; <var>user_defined_value</var>;
+      <b>CFEngine_word</b> =&gt; <var>user_defined_value</var>;
+      <b>CFEngine_word</b> =&gt; <var>user_defined_value</var>;
       ...
       }
      
@@ -1056,7 +1055,7 @@ Another way of looking at it is this:
 </pre>
 
 Body attachments are required items. You cannot choose to put the
-attachments in-line. This is a lesson that was learned from Cfengine
+attachments in-line. This is a lesson that was learned from CFEngine
 2. Readability is quickly lost if too many details are placed in-line.
 
 <div align="center"><img src="body_bundle.png" alt="body_bundle.png"></div>
@@ -1071,8 +1070,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Bodies">Bodies</a>
 
 <h4 class="subsection">3.1.2 Control bodies</h4>
 
-<p>Some promises in Cfengine are implicit. They are hard-coded into the program. 
-For example, the fact that Cfengine looks for a number of files to read and
+<p>Some promises in CFEngine are implicit. They are hard-coded into the program. 
+For example, the fact that CFEngine looks for a number of files to read and
 will execute them in a sequence is hard coded. You cannot change this. 
 However, you can change the behaviour of such promises by setting control
 parameters. These are formally parts of the `promise body' for these hard-coded
@@ -1133,7 +1132,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Bundles">Bundles</a>
 <h4 class="subsection">3.2.1 Bundle scope</h4>
 
 <p>Variables and classes defined inside bundles are not directly visible outside. 
-All variables in Cfengine are globally accessible, however if you refer to a variable
+All variables in CFEngine are globally accessible, however if you refer to a variable
 by &lsquo;<samp><span class="samp">$(unqualified)</span></samp>&rsquo;, then it is assumed to belong to the current bundle. To
 access any other (scalar) variable, you must qualify the name using the name of
 the bundle in which it is defined:
@@ -1154,9 +1153,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Bodies-and-bundles">Bodies and bundles
 
 <h3 class="section">3.3 A simple syntax pattern</h3>
 
-<p>The syntax of Cfengine follows a simple pattern in all cases. Once you have learned this pattern,
+<p>The syntax of CFEngine follows a simple pattern in all cases. Once you have learned this pattern,
 it will make sense anywhere in the program. The figure below illustrates
-this pattern. Some words are reserved by cfengine, and are used as types or categories
+this pattern. Some words are reserved by CFEngine, and are used as types or categories
 for talking about promises. Other words (in blue) are to be defined by you. 
 Look at the examples and try to identify these patterns yourself.
 
@@ -1174,9 +1173,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">4 How to execute and test a cfengine policy</h2>
+<h2 class="chapter">4 How to execute and test a CFEngine policy</h2>
 
-<p>You do not need root privilege to use cfengine. Most experiments can
+<p>You do not need root privilege to use CFEngine. Most experiments can
 be safely tested as an ordinary user. You should spend some time
 experimenting with small examples before setting out to configure a
 system. To do that you should log onto your system as a regular
@@ -1185,7 +1184,7 @@ unprivileged user and set up:
 <pre class="smallexample">     host$ /usr/local/sbin/cf-key
      host$ cp /usr/local/sbin/cf-* ~/.cfagent/bin
 </pre>
-   <p class="noindent">Cfengine wants to see copies of its binaries in its
+   <p class="noindent">CFEngine wants to see copies of its binaries in its
 work directory. For a regular user this lies in <samp><span class="file">~/.cfagent</span></samp>
 rather than <samp><span class="file">/var/cfengine</span></samp>. You should now be ready to go.
 
@@ -1210,13 +1209,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#First-promises">First promises</a>
 
 <h3 class="section">4.1 Hello world</h3>
 
-<p>Here is the simplest `Hello world' program in cfengine 3:
+<p>Here is the simplest `Hello world' program in CFEngine 3:
 
 <pre class="verbatim">
 <span class="comment"># Every policy must have a bundlesequence
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body common control
 </span>{
 <span class="red">bundlesequence  </span>=> { "test" };
@@ -1224,17 +1222,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#First-promises">First promises</a>
 
 <span class="comment">#
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">test</span>
 {
 <span class="red">reports:             # This is a promise type
 </span>
  cfengine_3::        # This is a class context (the promise will only
-<span class="comment">                     # be kept on a cfengine_3 system)
+<span class="comment">                     # be kept on a CFEngine_3 system)
 </span>
-<span class="comment">
-</span>
+
   "Hello world";   # This is a simple promise (it generates a report
 <span class="comment">		   # that says "Hello world")
 </span>
@@ -1258,8 +1254,8 @@ Now execute as follows:
 to a log &lsquo;<samp><span class="samp">L:</span></samp>&rsquo;, or the quoted output of some embedded program
 &lsquo;<samp><span class="samp">Q:</span></samp>&rsquo;).
 
-<p class="noindent">This is not a typical cfengine program, primarily because
-cfengine is not
+<p class="noindent">This is not a typical CFEngine program, primarily because
+CFEngine is not
 normally meant to print messages except in exceptional circumstances. 
 As a starter
 however, it is reassuring to see some output.
@@ -1280,16 +1276,16 @@ a minute, it will work again. Run the command in verbose mode (use the
      minutes elapsed)
      cf3&gt;
 </pre>
-   <p>This tells you that cfengine believes it is too soon to try to keep
+   <p>This tells you that CFEngine believes it is too soon to try to keep
 this promise
 again. The time it sets on this is determined by the <code>ifelapsed</code>
 parameter, which
-can be set individually for every promise. You can also ask cfengine
+can be set individually for every promise. You can also ask CFEngine
 to ignore these
 locks using the &lsquo;<samp><span class="samp">-K</span></samp>&rsquo; option.
 
    <p>Before the `Hello world' string, you see the class expression
-&lsquo;<samp><span class="samp">cfengine_3::</span></samp>&rsquo;.  This is how cfengine makes decisions. The
+&lsquo;<samp><span class="samp">cfengine_3::</span></samp>&rsquo;.  This is how CFEngine makes decisions. The
 promise to print the message will only apply if this condition is
 true. To see that this class is true for the execution, look at the
 verbose output from the command you just typed. You will see something
@@ -1302,20 +1298,20 @@ like this:
      linux_x86_64_2_6_27_23_0_1_default__1_SMP_2009_05_26_17_02_05__0400
      compiled_on_linux_gnu localhost_localdomain localhost net_iface_lo
      net_iface_wlan0 ipv4_192_168_1_100 ipv4_192_168_1 ipv4_192_168
-     ipv4_192 fe80__21c_bfff_fe6e_70ef cfengine_3_0_2b4 cfengine_3_0
-     <b>cfengine_3</b> SuSE lsb_compliant suse suse_n/a suse_11_1 suse_11
+     ipv4_192 fe80__21c_bfff_fe6e_70ef CFEngine_3_0_2b4 CFEngine_3_0
+     <b>CFEngine_3</b> SuSE lsb_compliant suse suse_n/a suse_11_1 suse_11
      agent )
 </pre>
    <p>i.e. a list of all the currently defined classes. Any one of these
 classes
 (or a combination) could have been used to label the promise. 
-That is the way cfengine points to which promises will be kept in which
+That is the way CFEngine points to which promises will be kept in which
 scenarios.
 
    <p>A final thing to note: if you try to process this using the
 &lsquo;<samp><span class="samp">cf-promises -r</span></samp>&rsquo; command, you will see something like this:
 
-<pre class="smallexample">     atlas$ ~/LapTop/Cfengine3/trunk/src/cf-promises -r -f ~/test.cf
+<pre class="smallexample">     atlas$ ~/LapTop/CFEngine3/trunk/src/cf-promises -r -f ~/test.cf
      Summarizing promises as text to ~/test.cf.txt
      Summarizing promises as html to ~/test.cf.html
 </pre>
@@ -1325,8 +1321,8 @@ produced:
 <pre class="smallexample">     cat ~/test.cf.txt
      firefox ~/test.cf.html
 </pre>
-   <p>You will see a summary of how cfengine interprets the files, either in
-HTML or text. All the cfengine components will produce debugging file
+   <p>You will see a summary of how CFEngine interprets the files, either in
+HTML or text. All the CFEngine components will produce debugging file
 with an expanded view when using this option
 (e.g. for the configuration file named <samp><span class="file">promise_output_agent.h</span></samp>,
 they will create the files <samp><span class="file">promise_output_agent.html</span></samp> and
@@ -1359,8 +1355,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#First-promises">First promises</a>
 </span>
 <span class="comment"># This is a throw-away comment, below is a full-bodied promise
 </span>
-<span class="comment">
-</span>
+
 "/tmp/testfile"                      # promiser
 
 <span class="red">   comment </span>=><span class="green"> "This is for keeps...", # Live comment</span>
@@ -1371,15 +1366,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#First-promises">First promises</a>
 
 </pre>
 
-   <p>In the Cfengine Community Open Promise-Body Library (cfengine_stdlib.cf) is a library of
-definitions that can be obtained from the cfengine website. It should be
+   <p>In the CFEngine Community Open Promise-Body Library (CFEngine_stdlib.cf) is a library of
+definitions that can be obtained from the CFEngine website. It should be
 included in the <samp><span class="file">inputs</span></samp> directory and input as above. 
 Within that file, the template &lsquo;<samp><span class="samp">m</span></samp>&rsquo; is defined:
 <pre class="verbatim"># This is a trivial body template, which makes parameterizing
 <span class="comment"># the promise body tidier and re-usable
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body perms</span> <span class="blue">m(x)</span>
 {
 <span class="red">mode </span>=><span class="green"> "$(x)";</span>
@@ -1399,7 +1393,7 @@ intention clear.
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 
    <p>In every `promise constraint' of the form &lsquo;<samp><span class="samp">left-hand-side =&gt;
-right-hand-side</span></samp>&rsquo;, the left hand side is a cfengine reserved word, and
+right-hand-side</span></samp>&rsquo;, the left hand side is a CFEngine reserved word, and
 the right hand side is a decision you make, possibly expressed in
 terms of standard templates.
 
@@ -1412,10 +1406,10 @@ terms of standard templates.
      <b>host$</b> ls -l /tmp/testfile
      -rw---x-w- 1 mark users 33 2009-06-30 06:06 /tmp/testfile
 </pre>
-   <p>The &lsquo;<samp><span class="samp">-I</span></samp>&rsquo; flag tells cfengine to `inform' us about changes only. 
+   <p>The &lsquo;<samp><span class="samp">-I</span></samp>&rsquo; flag tells CFEngine to `inform' us about changes only. 
 This provides a digestible amount of output that is more than the
 default (which is to only report un-fixable problems or explicit
-reports).  We see that cfengine creates the file as ordered, and sets
+reports).  We see that CFEngine creates the file as ordered, and sets
 the permissions appropriately. Now try to change the permissions:
 <pre class="smallexample">     <b>host$</b> chmod 400 /tmp/testfile
      
@@ -1450,7 +1444,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#First-promises">First promises</a>
 
 <p>To change root password of a system, we need to edit a file. A file is
 a complex object &ndash; once open there is a new world of possible
-promises to make about its contents.  Cfengine has bundles of promises
+promises to make about its contents.  CFEngine has bundles of promises
 that are specially for editing. Make a copy of a shadow file and copy
 it to <samp><span class="file">/tmp</span></samp> so that you can play with it.
 <pre class="verbatim">
@@ -1486,8 +1480,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#First-promises">First promises</a>
 
 <h3 class="section">4.4 The update bundle - provisioning</h3>
 
-<p>The default cfengine configuration contains a bundle of promises that
-copies the cfengine binaries into the cache directory and copies
+<p>The default CFEngine configuration contains a bundle of promises that
+copies the CFEngine binaries into the cache directory and copies
 the policy files from the server into the default location. This example
 is for local copying from file to file on the filesystem. Later, when we
 set up a server component, you will be able to copy from a remote host. 
@@ -1521,7 +1515,7 @@ This is a simple example of system provisioning, with automated update.
 
 </pre>
 These promises contain several attributes in their bodies that we have
-not seen yet. The <code>copy_from</code> attribute tells cfengine how to
+not seen yet. The <code>copy_from</code> attribute tells CFEngine how to
 source
 (copy) a file from a master location. The <code>depth_search</code> tells it
 to search recursively through the sub-directories and their files.
@@ -1537,8 +1531,7 @@ to search recursively through the sub-directories and their files.
 
 <span class="comment">#
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body copy_from</span> <span class="blue">u_cp(from,server)</span>
 {
 <span class="red">servers     </span>=> { "$(server)", "failover.example.org" };
@@ -1548,8 +1541,7 @@ to search recursively through the sub-directories and their files.
 
 <span class="comment">#
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body depth_search</span> <span class="blue">u_recurse(d)</span>
 {
 <span class="red">depth </span>=><span class="green"> "$(d)";</span>
@@ -1572,7 +1564,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#First-promises">First promises</a>
 
 <h3 class="section">4.5 Reporting</h3>
 
-<p>Cfengine contains a report generator called <samp><span class="file">cf-report</span></samp>. It is
+<p>CFEngine contains a report generator called <samp><span class="file">cf-report</span></samp>. It is
 configured
 using control parameters described in the next chapter. Try:
 
@@ -1582,7 +1574,7 @@ host$ mywebbrowser ~/.cfagent/reports/performance.html
 </pre>
 
    <p>Most of these reports will be blank at the start, until you have run
-cfengine
+CFEngine
 on some significant promises.
 
 <div class="node">
@@ -1596,7 +1588,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#First-promises">First promises</a>
 
 <h3 class="section">4.6 <code>cf-execd</code></h3>
 
-<p>Cfengine contains a service for running the agent with its default
+<p>CFEngine contains a service for running the agent with its default
 configuration in <samp><span class="file">WORKDIR/inputs/promises.cf</span></samp> called the
 exec-daemon. If you execute the binary directly it will go into the
 background and execute <samp><span class="file">cf-agent</span></samp> every five minutes by default,
@@ -1607,7 +1599,7 @@ with its default policy.
 <pre class="verbatim">host$ /usr/local/sbin/cf-execd -F
 </pre>
 
-   <p>When you run cfengine like this, any output that comes from cfengine
+   <p>When you run CFEngine like this, any output that comes from CFEngine
 is collected
 and placed in <samp><span class="file">WORKDIR/outputs</span></samp>. If you have configured an email
 address and
@@ -1633,7 +1625,7 @@ the name or IP address of an SMTP (mail) service, and the maximum
 number of lines
 of output to be included in any email sent.
 
-   <p>You should start to see a pattern in the way cfengine is configured. 
+   <p>You should start to see a pattern in the way CFEngine is configured. 
 In the next
 chapter, we'll look at these general matters.
 
@@ -1641,7 +1633,7 @@ chapter, we'll look at these general matters.
 <div class="node">
 <a name="A-simple-crash-course-in-concepts"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Using-cfengine-as-a-front_002dend-for-cron">Using cfengine as a front-end for cron</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Using-CFEngine-as-a-front_002dend-for-cron">Using CFEngine as a front-end for cron</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#First-promises">First promises</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -1669,13 +1661,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A s
 
 <h3 class="section">5.1 Rules are promises</h3>
 
-<p>Everything in cfengine 3 can be interpreted as a promise. Promises can
+<p>Everything in CFEngine 3 can be interpreted as a promise. Promises can
 be made about all kinds of different subjects, from file attributes,
 to the execution of commands, to access control decisions and
 knowledge relationships.
 
    <p>This simple but powerful idea allows a very practical uniformity in
-cfengine syntax.  There is only one grammatical form for statements in
+CFEngine syntax.  There is only one grammatical form for statements in
 the language that you need to know and it looks generically like this:
 
 <pre class="smallexample">     
@@ -1739,7 +1731,7 @@ A more complex promise contains many attributes:
           create  =&gt; "true";
      
 </pre>
-   <p>The list of promisees is not used by cfengine except for
+   <p>The list of promisees is not used by CFEngine except for
 documentation, just
 as the comment attribute (which can be added to any promise) has no
 actual function
@@ -1747,7 +1739,7 @@ other than to provide more information to the user in error tracing
 and auditing.
 
    <p>You see several kinds of object in this example. All literal strings
-(e.g. <code>"true"</code>) in cfengine 3 must be quoted. This provides
+(e.g. <code>"true"</code>) in CFEngine 3 must be quoted. This provides
 absolute consistency and makes type-checking easy and error-correction
 powerful. All function-like objects (e.g. <code>users("..")</code>) are
 either builtin
@@ -1772,11 +1764,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A s
 
 <h3 class="section">5.2 Control promises</h3>
 
-<p>Certain promises that cfengine components make are hard-wired into their
+<p>Certain promises that CFEngine components make are hard-wired into their
 code. For example, the promise to email output to an appropriate
 address, or the promise to wait until a certain time has elapsed before
 checking a promise again (<code>ifelapsed</code>). Although these promises are
-hard-wired, their behaviour can be changed. In cfengine, behaviour is
+hard-wired, their behaviour can be changed. In CFEngine, behaviour is
 always
 constrained by the promise body. Thus hard-wired behaviour is altered by
 changing the control body for each. You can find these alterable
@@ -1784,7 +1776,7 @@ parameters
 in the reference manual.
 
    <p>The most important bundle is the <code>common</code> bundle, that is read by
-all components of cfengine. It contains the list of promise bundles
+all components of CFEngine. It contains the list of promise bundles
 that should be read in and examined for promise suggestions.  From the
 <samp><span class="file">promises.cf</span></samp> file:
 
@@ -1807,8 +1799,7 @@ that should be read in and examined for promise suggestions.  From the
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body agent</span> <span class="blue">control</span>
 {
 <span class="comment"># if default runtime is 5 mins we need this for long jobs
@@ -1818,8 +1809,7 @@ that should be read in and examined for promise suggestions.  From the
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body monitor</span> <span class="blue">control</span>
 {
 <span class="red">forgetrate </span>=><span class="green"> "0.7";</span>
@@ -1828,8 +1818,7 @@ that should be read in and examined for promise suggestions.  From the
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body executor</span> <span class="blue">control</span>
 
 {
@@ -1841,8 +1830,7 @@ that should be read in and examined for promise suggestions.  From the
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body reporter</span> <span class="blue">control</span>
 
 {
@@ -1853,8 +1841,7 @@ that should be read in and examined for promise suggestions.  From the
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body runagent</span> <span class="blue">control</span>
 {
 <span class="red">hosts </span>=> {
@@ -1867,8 +1854,7 @@ that should be read in and examined for promise suggestions.  From the
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body server</span> <span class="blue">control</span>
 
 {
@@ -1878,8 +1864,7 @@ that should be read in and examined for promise suggestions.  From the
 
 <span class="comment"># Make updates and runs happen in one
 </span>
-<span class="comment">
-</span>
+
 <span class="red">cfruncommand          </span>=><span class="green"> "$(sys.workdir)/bin/cf-agent -f failsafe.cf &amp;&amp;</span>
 $(sys.workdir)/bin/cf-agent";
 <span class="red">allowusers            </span>=> { "root" };
@@ -1900,9 +1885,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A s
 
 <p>Variables (or "variable definitions") are also promises &ndash; the promise to
 represent their values.  We can write these in
-any promise bundle. Cfengine recognizes two object types: scalars and
+any promise bundle. CFEngine recognizes two object types: scalars and
 lists (lists contain 0 or more objects), as well as
-three data-types (string, integer and real). Typing in cfengine is
+three data-types (string, integer and real). Typing in CFEngine is
 dynamic, as in
 Perl and other scripting languages. Thus variables of any data-type
 may be used as strings.
@@ -1988,7 +1973,7 @@ not usually make sense to use this reference in a string. For instance
 </pre>
    <p class="noindent">means nothing and cannot be expanded (it does not generate an
 error, but instead inserts the text @(my_slist) into the string); but if
-we use the scalar reference to a list variable, cfengine will iterate over
+we use the scalar reference to a list variable, CFEngine will iterate over
 the  values in
 the list essentially making this into a list of promises.
 
@@ -2012,7 +1997,7 @@ where a list is expected as &lsquo;<samp><span class="samp">@(list)</span></samp
      
 </pre>
 
-     <p>The declaration order does not matter &ndash; cfengine will execute the promise
+     <p>The declaration order does not matter &ndash; CFEngine will execute the promise
 to assign the variable &lsquo;<samp><span class="samp">@(shortlist)</span></samp>&rsquo; before the promise to assign the
 variable &lsquo;<samp><span class="samp">@(longlist)</span></samp>&rsquo;.
 
@@ -2063,12 +2048,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A s
 
 <h3 class="section">5.4 Decisions</h3>
 
-<p>Cfengine decisions are made behind the scenes and the results of
+<p>CFEngine decisions are made behind the scenes and the results of
 certain true/false propositions are cached in Booleans referred to as
-`classes'. There are no if-then-else statements in cfengine; all
+`classes'. There are no if-then-else statements in CFEngine; all
 decisions are made with classes.
 
-   <p>Cfengine runs on every computer individually and each time it wakes up
+   <p>CFEngine runs on every computer individually and each time it wakes up
 the underlying generic agent platform discovers and classifies
 properties of the environment or context in which it runs.  This
 information
@@ -2084,7 +2069,7 @@ single hard class can be one of several things:
 
      <li>The unqualified name of a particular host. If your system
 returns a fully
-qualified domain name for your host, cfengine truncates it at the
+qualified domain name for your host, CFEngine truncates it at the
 first dot. Note: <code>www.sales.company.com</code> and
 <code>www.research.company.com</code> have the same unqualified name &ndash; <code>www</code>.
 
@@ -2158,8 +2143,7 @@ other classes:
 
 <span class="comment"># List form useful for including functions
 </span>
-<span class="comment">
-</span>
+
 "alt_class"<span class="red"> or </span>=> { "linux", "solaris", fileexists("/etc/fstab") };
 
 "oth_class"<span class="red"> and </span>=> { fileexists("/etc/shadow"), fileexists("/etc/ 
@@ -2209,8 +2193,7 @@ the scope of their bundle.
 
 <span class="comment">#################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle common g
 </span>{
 <span class="red">classes:
@@ -2223,8 +2206,7 @@ the scope of their bundle.
 
 <span class="comment">#################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">ls_1</span>
 {
 <span class="red">classes:
@@ -2236,8 +2218,7 @@ the scope of their bundle.
 
 <span class="comment">#################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">ls_2</span>
 {
 <span class="red">classes:
@@ -2275,14 +2256,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A s
 
 <h3 class="section">5.5 Loops</h3>
 
-<p>If you are looking for loops in cfengine then we need to reprogram you
-a little, as you are thinking like a programmer!  Cfengine is not a
+<p>If you are looking for loops in CFEngine then we need to reprogram you
+a little, as you are thinking like a programmer!  CFEngine is not a
 programming language that is meant to give you low level control, but
 rather a set of declarations that embody processes. It's the difference
 between the gears on a bicycle and the automated transmission in a
 transporter.
 
-   <p>Loops are executed implicitly in cfengine, but there is no visible
+   <p>Loops are executed implicitly in CFEngine, but there is no visible
 mechanism for it &ndash; because that would steal attention from the
 intention of the promises. The way to express them is through lists.
 
@@ -2298,8 +2279,7 @@ following.
 
 <span class="comment">###########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">example</span>
 
 {
@@ -2307,14 +2287,12 @@ following.
 </span>
 <span class="comment"># This is a list
 </span>
-<span class="comment">
-</span>
+
 "component"<span class="red"> slist </span>=> { "cf-monitord", "cf-serverd", "cf-execd" };
 
 <span class="comment"># This is an associative array
 </span>
-<span class="comment">
-</span>
+
 "array[cf-monitord]"<span class="red"> string </span>=><span class="green"> "The monitor";</span>
 "array[cf-serverd]"<span class="red"> string </span>=><span class="green"> "The server";</span>
 "array[cf-execd]"<span class="red"> string </span>=><span class="green"> "The executor, not executionist";</span>
@@ -2339,7 +2317,7 @@ The output looks something like this:
 </pre>
    <p>You see from this that, if we refer to a list variable using the
 scalar reference
-operator &lsquo;<samp><span class="samp">$()</span></samp>&rsquo;, cfengine interprets this to mean &ldquo;please iterate
+operator &lsquo;<samp><span class="samp">$()</span></samp>&rsquo;, CFEngine interprets this to mean &ldquo;please iterate
 over all
 values of the list&rdquo;. Thus, we have effectively a `foreach' loop, without the
 attendant syntax.
@@ -2378,7 +2356,7 @@ contents.
      <dl>
 <dt><code>access</code><dd>A promise to grant or deny access to file objects in <code>cf-serverd</code>. 
 <br><dt><code>measurements</code><dd>A promise to measure or sample data from the system, for monitoring or
-reporting in <code>cf-monitord</code> (Cfengine Nova and above). 
+reporting in <code>cf-monitord</code> (CFEngine Nova and above). 
 <br><dt><code>roles</code><dd>A promise to allow certain users to activate certain classes when
 executing <code>cf-agent</code> remotely, in <code>cf-serverd</code>. 
 <br><dt><code>topics</code><dd>A promise to associate knowledge with a name, and possibly other
@@ -2387,8 +2365,8 @@ topics, in <code>cf-know</code>.
 </dl>
 
 <div class="node">
-<a name="Using-cfengine-as-a-front-end-for-cron"></a>
-<a name="Using-cfengine-as-a-front_002dend-for-cron"></a>
+<a name="Using-CFEngine-as-a-front-end-for-cron"></a>
+<a name="Using-CFEngine-as-a-front_002dend-for-cron"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Network-services">Network services</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#A-simple-crash-course-in-concepts">A simple crash course in concepts</a>,
@@ -2396,7 +2374,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">6 Using cfengine as a front-end or replacement for cron</h2>
+<h2 class="chapter">6 Using CFEngine as a front-end or replacement for cron</h2>
 
 <ul class="menu">
 <li><a accesskey="1" href="#Do-I-need-cron_003f">Do I need cron?</a>
@@ -2412,24 +2390,24 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <a name="Do-I-need-cron_003f"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#The-single-cron-job-approach">The single cron job approach</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Using-cfengine-as-a-front_002dend-for-cron">Using cfengine as a front-end for cron</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Using-cfengine-as-a-front_002dend-for-cron">Using cfengine as a front-end for cron</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Using-CFEngine-as-a-front_002dend-for-cron">Using CFEngine as a front-end for cron</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Using-CFEngine-as-a-front_002dend-for-cron">Using CFEngine as a front-end for cron</a>
 
 </div>
 
 <h3 class="section">6.1 Do I need cron?</h3>
 
 <p>The Unix cron command is a useful beast, but a dumb one.  One of
-cfengine's strengths is its use of classes to identify systems from a
+CFEngine's strengths is its use of classes to identify systems from a
 single file or set of files. Many administrators think that it would
 be nice if the cron daemon also worked in this way. One possible way
 of setting up cron from a global configuration would be to use the
-cfengine file editing capability to edit each cron file
+CFEngine file editing capability to edit each cron file
 separately. That would be missing an obvious opportunity however.
 
-   <p>A much better way is to use cfengine's time classes to work like a
+   <p>A much better way is to use CFEngine's time classes to work like a
 user interface for cron.  This allows you to have a single, central
-cfengine file which contains all the cron jobs on your system without
+CFEngine file which contains all the cron jobs on your system without
 losing any of the fine control which cron affords you. All of the
 usual advantages apply:
      <ul>
@@ -2439,27 +2417,27 @@ system when you have everything in one place.
      <li>You can use all of your carefully crafted groups and user-defined
 classes to identify which host should run which programs. 
 </ul>
-   <a name="index-Cron-jobs_002c-controlling-with-cfengine-1"></a>
+   <a name="index-Cron-jobs_002c-controlling-with-CFEngine-1"></a>
 The central idea behind this scheme is to set up a regular cron job on
 every system which executes <code>cf-agent</code> at frequent intervals.  Each time
 <code>cf-agent</code> is started, it evaluates time classes and executes the
 shell commands defined in its configuration file.  In this way we use
 <code>cf-agent</code> as a wrapper for the cron scripts, so that we can use
-cfengine's classes to control jobs for multiple hosts. Cfengine's time
+CFEngine's classes to control jobs for multiple hosts. CFEngine's time
 classes are at least as powerful as <code>cron</code>'s time specification
 possibilities, and they add control over location too.  This does not
 restrict you in any way, See <a href="#Building-flexible-time-classes">Building flexible time classes</a>. The
-only price is the overhead of parsing the cfengine configuration file
+only price is the overhead of parsing the CFEngine configuration file
 which is insignificant.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-DO I NEED TO USE CRON? No. With cfengine's <code>cf-execd</code> you don't
-<i>have</i> to use cron &ndash; cfengine can schedule itself. Whether you
+DO I NEED TO USE CRON? No. With CFEngine's <code>cf-execd</code> you don't
+<i>have</i> to use cron &ndash; CFEngine can schedule itself. Whether you
 choose to run <code>cf-execd</code> in daemon mode, or in wrapper mode is
-entirely up to you. In the commercial versions of cfengine, the exec
+entirely up to you. In the commercial versions of CFEngine, the exec
 daemon has sophisticated features for reliability. In the Community
 Edition, you might feel comfortable having something independent
-watching over cfengine, especially during binary updates during which
+watching over CFEngine, especially during binary updates during which
 live programs can die from faults. 
 </td></tr></table>
 
@@ -2468,7 +2446,7 @@ live programs can die from faults.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Structuring-commands-promises">Structuring commands promises</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Do-I-need-cron_003f">Do I need cron?</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Using-cfengine-as-a-front_002dend-for-cron">Using cfengine as a front-end for cron</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Using-CFEngine-as-a-front_002dend-for-cron">Using CFEngine as a front-end for cron</a>
 
 </div>
 
@@ -2495,7 +2473,7 @@ file onto every host on your network:
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Splaying-host-times">Splaying host times</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-single-cron-job-approach">The single cron job approach</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Using-cfengine-as-a-front_002dend-for-cron">Using cfengine as a front-end for cron</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Using-CFEngine-as-a-front_002dend-for-cron">Using CFEngine as a front-end for cron</a>
 
 </div>
 
@@ -2524,16 +2502,14 @@ which they are executed,
 </span>
 <span class="comment"># Exec during the first quarter-hour after noon
 </span>
-<span class="comment">
-</span>
+
   Hr12.Q1::
 
     "/path/myscript -arg1 -arg2";
 
 <span class="comment"># Exec during any second quarter-hour
 </span>
-<span class="comment">
-</span>
+
   Q2::
 
     "/path/otherscript";
@@ -2542,8 +2518,7 @@ which they are executed,
 </span>
 <span class="comment"># (English says ``and'', but logic says ``if this interval or that is true''
 </span>
-<span class="comment">
-</span>
+
   Hr00.Min10_15||Hr12.Min45_55::
 
     "/path/amongstourscripts";
@@ -2564,8 +2539,7 @@ since only root has this power to change privilege).
 </span>
 <span class="comment"># Exec on the first quarter after noon
 </span>
-<span class="comment">
-</span>
+
   Hr12.Q1::
 
     "/path/myscript -arg1 -arg2",
@@ -2575,8 +2549,7 @@ since only root has this power to change privilege).
 
 <span class="comment"># ...
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body contain</span> <span class="blue">jail(owner,devnull)</span>
 {
 <span class="red">exec_owner </span>=><span class="green"> "$(owner)";     # run with this setuid</span>
@@ -2589,7 +2562,7 @@ The &lsquo;<samp><span class="samp">contain</span></samp>&rsquo;ment body provid
 to embed scripts.
 
    <p>The time resolution of the classes is limited by how often you execute
-cfengine
+CFEngine
 either using cron or <code>cf-execd</code>. Five minutes is the recommended
 scheduling interval.
 
@@ -2601,7 +2574,7 @@ scheduling interval.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Building-flexible-time-classes">Building flexible time classes</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Structuring-commands-promises">Structuring commands promises</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Using-cfengine-as-a-front_002dend-for-cron">Using cfengine as a front-end for cron</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Using-CFEngine-as-a-front_002dend-for-cron">Using CFEngine as a front-end for cron</a>
 
 </div>
 
@@ -2647,13 +2620,13 @@ your control but have a similar cron policy.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Scheduling-interval">Scheduling interval</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Splaying-host-times">Splaying host times</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Using-cfengine-as-a-front_002dend-for-cron">Using cfengine as a front-end for cron</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Using-CFEngine-as-a-front_002dend-for-cron">Using CFEngine as a front-end for cron</a>
 
 </div>
 
 <h3 class="section">6.5 Building flexible time classes</h3>
 
-<p>Each time cfengine is run, it reads the system clock and defines
+<p>Each time CFEngine is run, it reads the system clock and defines
 classes based on the time and date (see reference manual).
 
    <p>Time classes based on the precise minute at which cfagent started are
@@ -2696,13 +2669,13 @@ use &lsquo;<samp><span class="samp">|</span></samp>&rsquo; and &lsquo;<samp><spa
 <a name="Scheduling-interval"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Building-flexible-time-classes">Building flexible time classes</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Using-cfengine-as-a-front_002dend-for-cron">Using cfengine as a front-end for cron</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Using-CFEngine-as-a-front_002dend-for-cron">Using CFEngine as a front-end for cron</a>
 
 </div>
 
 <h3 class="section">6.6 Choosing a scheduling interval</h3>
 
-<p>How often should you call your global cfengine configuration? There
+<p>How often should you call your global CFEngine configuration? There
 are several
 things to think about:
 
@@ -2711,12 +2684,12 @@ things to think about:
 usually enough for most tasks, but you might need to exercise finer
 control for a few special tasks.
 
-     <li>Are you going to verify the entire cfengine configuration file
+     <li>Are you going to verify the entire CFEngine configuration file
 or just selected promises?
 
    </ul>
 
-   <p>Cfengine has an intelligent locking and timeout policy which should be
+   <p>CFEngine has an intelligent locking and timeout policy which should be
 sufficient to handle hanging shell commands from previous crons so that
 no overlap can take place.
 
@@ -2724,7 +2697,7 @@ no overlap can take place.
 <a name="Network-services"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Knowledge-Management">Knowledge Management</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Using-cfengine-as-a-front_002dend-for-cron">Using cfengine as a front-end for cron</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Using-CFEngine-as-a-front_002dend-for-cron">Using CFEngine as a front-end for cron</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
@@ -2732,9 +2705,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <h2 class="chapter">7 Network services</h2>
 
 <!--  -->
-<p>This chapter describes how you can set up a cfengine network service
+<p>This chapter describes how you can set up a CFEngine network service
 to handle
-remote file distribution and remote execution of cfengine without having
+remote file distribution and remote execution of CFEngine without having
 to open your hosts to possible attack using the <code>rsh</code> protocols.
 
 <ul class="menu">
@@ -2753,13 +2726,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Network-services">Network services</a>
 
 </div>
 
-<h3 class="section">7.1 Cfengine network services</h3>
+<h3 class="section">7.1 CFEngine network services</h3>
 
 <p>By starting the daemon called <code>cf-serverd</code>, you can set up a line
 of
 communication between hosts, allowing them to exchange files across
-the network or execute cfengine remotely on another system. 
-Cfengine network services are built around the following components:
+the network or execute CFEngine remotely on another system. 
+CFEngine network services are built around the following components:
 
      <dl>
 <dt><code>cf-agent</code><dd>The configuration engine's only contact with the network is via
@@ -2826,37 +2799,37 @@ remote file
 server which can result in the distribution of files to client hosts in
 a secure a reliable manner.
 
-   <p>An important difference between cfengine and other systems has to do
-with the way files are distributed.  Cfengine uses a `pull' rather
+   <p>An important difference between CFEngine and other systems has to do
+with the way files are distributed.  CFEngine uses a `pull' rather
 than a `push' model for distributing network files.  A majority of
 systems (probably) for instance, works by forcing an image of the
 files on one server machine onto all clients. This happens in the manner
 of an attack &ndash; indeed the recipients are often required to open various
-ports and accept whatever they get. Cfengine will not support this kind
+ports and accept whatever they get. CFEngine will not support this kind
 of technology as a matter of principle.
 
    <p>With the `push' approach files get changed when the distributor wishes
 it and the clients have no choice but to live with the consequences. 
-Cfengine, on the other hand, works by <i>voluntary cooperation</i>. Hosts
+CFEngine, on the other hand, works by <i>voluntary cooperation</i>. Hosts
 are allowed to remain in control of their defenses and protect
 themselves against attacks and pushes if they want to.
 
-   <p>In fact, cfengine cannot (by design) force its will onto other hosts,
+   <p>In fact, CFEngine cannot (by design) force its will onto other hosts,
 nor can it be forced. In order to distribute it can at best signal
 all machines and ask them to collect files if they are willing. In other
-words, cfengine simulates a `push' model by polling each client and
-running the local cfengine configuration script giving the host the
+words, CFEngine simulates a `push' model by polling each client and
+running the local CFEngine configuration script giving the host the
 chance to `pull' any updated files from the remote server, but leaving
 it up to the client machine to decide whether or not it wants to
 update.
 
    <p>Also, in contrast to programs like <code>rdist</code> which distribute files
-over many hosts, cfengine does not require any general <code>root</code>
+over many hosts, CFEngine does not require any general <code>root</code>
 access to a system using the <samp><span class="file">.rhosts</span></samp> file or the
 <samp><span class="file">/etc/hosts.equiv</span></samp> file. It is sufficient to run the daemon as
 root.  You can not run it by adding it to the <samp><span class="file">/etc/inetd.conf</span></samp>
 file on your system however. 
-<a name="index-g_t_0040file_007b_002fetc_002finetd_002econf_007d-file-and-cfengine-4"></a>The restricted functionality of the daemon protects your system from
+<a name="index-g_t_0040file_007b_002fetc_002finetd_002econf_007d-file-and-CFEngine-4"></a>The restricted functionality of the daemon protects your system from
 attempts to execute general commands as the root user using <code>rsh</code>.
 
    <p>To remotely access files on a server you use a <code>copy_from</code>
@@ -2878,8 +2851,7 @@ in a <samp><span class="file">files</span></samp> promise:
 
 <span class="comment"># Library template
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body copy_from</span> <span class="blue">rcp(file,server)</span>
 
 {
@@ -2891,7 +2863,7 @@ in a <samp><span class="file">files</span></samp> promise:
 Assuming that the <code>cf-serverd</code> daemon is running on <var>server-
 host</var>, <code>cf-agent</code>
 will make contact with the daemon and attempt to obtain information
-about the file. During this process, cfengine verifies that the system
+about the file. During this process, CFEngine verifies that the system
 clocks of the two hosts are reasonably synchronized. If they are not,
 it will not permit remote copying unless <code>denybadclocks</code> is false
 in the server control body.
@@ -2941,7 +2913,7 @@ or more hosts. It would then be inconvenient to have to log onto every
 host in order to do this manually.
 
    <p>If your scheduling interval is often enough, this should be
-unnecessary since cfengine will already have run by the time you
+unnecessary since CFEngine will already have run by the time you
 manage to log on &ndash; and the parallelism means that an entire network
 can be altered in minutes without the delay of waiting for centralized
 control.
@@ -3010,7 +2982,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Remote-access-explained">Remote access
 
 <h4 class="subsection">7.3.1 Server connection</h4>
 
-<p>In order to connect to the cfengine server you need
+<p>In order to connect to the CFEngine server you need
      <dl>
 <dt><em>A public-private key pair.</em><dd>To create a key pair, run
      <pre class="smallexample">          cf-key
@@ -3036,7 +3008,7 @@ trying to access.
 
    <p>If all of the above criteria are met, connection will be established
 and data will be transferred between client and server. The client can
-only send short requests, following the cfengine protocol. The server
+only send short requests, following the CFEngine protocol. The server
 can return data in a variety of forms, usually files, but sometimes
 console output.
 
@@ -3087,7 +3059,7 @@ file and that you have distributed and installed it to all
 participating hosts in your cluster.
         </ol>
 
-<p class="noindent">Always remember that you can run cfengine in verbose or
+<p class="noindent">Always remember that you can run CFEngine in verbose or
 debugging modes to see how the authentication takes place:
 
 <pre class="verbatim">cf-agent -v
@@ -3111,14 +3083,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Remote-access-explained">Remote access
 
 <h4 class="subsection">7.3.3 Key exchange</h4>
 
-<p>The key exchange model used by cfengine is based on that used by
+<p>The key exchange model used by CFEngine is based on that used by
 OpenSSH. It is a peer to peer exchange model, not a central
 certificate authority model. This means that there are no scalability
 bottlenecks (at least by design, though you might introduce your own
 if you go for an overly centralized architecture).
 
    <p>The problem of key distribution is the conundrum of every public key
-infrastructure. Key exchange is handled automatically by cfengine and
+infrastructure. Key exchange is handled automatically by CFEngine and
 all you
 need to do is to decide which keys to trust.
 
@@ -3276,7 +3248,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Remote-access-explained">Remote access
 
 <h4 class="subsection">7.3.5 Other users than root</h4>
 
-<p>Cfengine normally runs as user "root" (except on Windows which does
+<p>CFEngine normally runs as user "root" (except on Windows which does
 not normally have a root user), i.e. a privileged administrator. If
 other users
 are to be granted access to the system, they must also generate a key
@@ -3293,14 +3265,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Remote-access-explained">Remote access
 
 <h4 class="subsection">7.3.6 Encryption</h4>
 
-<p>Cfengine provides encryption for keeping file contents private during
+<p>CFEngine provides encryption for keeping file contents private during
 transfer. It is assumed that users will use this judiciously. There is
 nothing to be gained by encrypting the transfer of public files &ndash;
 overt use of encryption just contributes to global warming, burning
 unnecessary CPU cycles without offering any security.
 
    <p>The main role for encryption in configuration management is for
-authentication. Cfengine always uses encrypted for authentication, so
+authentication. CFEngine always uses encrypted for authentication, so
 none of the encryption settings affect the security of authentication.
 
 <div class="node">
@@ -3313,13 +3285,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h2 class="chapter">8 Knowledge Management</h2>
 
-<p>A truly unique aspect of cfengine its ability to enable integrated
-knowledge management in its automation process, and to use its
-configuration technology as a `semantic' documentation engine.
+<p>A unique aspect of CFEngine, that is fully developed in the commercial
+editions of the software, its ability to enable integrated knowledge
+management as part of an automation process, and to use its configuration
+technology as a `semantic' documentation engine.
+
+   <div class="block-image"><img src="topicmap.png" alt="topicmap.png"></div>
 
    <p>Knowledge management is the challenge of our times.  Organizations
-waste an
-incredible amount of effort re-learning old lessons because they have
+frequently waste significant effort re-learning old lessons because they have
 not been documented and entered into posterity.  Now you can alleviate
 this problem with some simple rules of thumb and even build
 sophisticated index-databases of documents.
@@ -3328,12 +3302,11 @@ sophisticated index-databases of documents.
 <li><a accesskey="1" href="#Promises-and-Knowledge">Promises and Knowledge</a>
 <li><a accesskey="2" href="#The-basics-of-knowledge">The basics of knowledge</a>
 <li><a accesskey="3" href="#Annotating-promises">Annotating promises</a>
-<li><a accesskey="4" href="#What-topic-maps-offer">What topic maps offer</a>
-<li><a accesskey="5" href="#Step-by-step">Step by step</a>
-<li><a accesskey="6" href="#Querying-the-Topic-Map">Querying the Topic Map</a>
-<li><a accesskey="7" href="#The-nuts-and-bolts-of-topic-maps">The nuts and bolts of topic maps</a>
+<li><a accesskey="4" href="#A-promise-model-of-topic-maps">A promise model of topic maps</a>
+<li><a accesskey="5" href="#What-topic-maps-offer">What topic maps offer</a>
+<li><a accesskey="6" href="#The-nuts-and-bolts-of-topic-maps">The nuts and bolts of topic maps</a>
+<li><a accesskey="7" href="#Example-of-topics-promises">Example of topics promises</a>
 <li><a accesskey="8" href="#Modelling-configuration-promises-as-topic-maps">Modelling configuration promises as topic maps</a>
-<li><a accesskey="9" href="#Annex-Technical-pre_002drequisites">Annex Technical pre-requisites</a>
 </ul>
 
 <div class="node">
@@ -3354,7 +3327,7 @@ abandon the idea of fine control altogether.  This has led either to
 information overload or over-simplification. The ability to cope with
 information complexity is therefore fundamental to IT management
 
-   <p>Cfengine introduced the <em>promise model</em> for configuration in
+   <p>CFEngine introduced the <em>promise model</em> for configuration in
 order to flatten out this learning curve. It can lead to
 simplifications in use, because a lot of the thinking has been done
 already and is encapsulated into the model. One of its special
@@ -3414,8 +3387,8 @@ thinking and engineers are often more comfortable with manipulating
 technical patterns and notations than writing fluent linguistic
 formulations that seem overtly long-winded.
 
-   <p>Cfengine tries to bridge this gap by making documentation simple and
-part of the technical configuration. Cfengine's knowledge agent then
+   <p>CFEngine tries to bridge this gap by making documentation simple and
+part of the technical configuration. CFEngine's knowledge agent then
 uses AI and network science algorithms to construct a readable
 documentation from these technical annotations. It can do this because
 a lot of thought has already gone into the meaning of the promise
@@ -3424,7 +3397,7 @@ model.
 <div class="node">
 <a name="Annotating-promises"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#What-topic-maps-offer">What topic maps offer</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#A-promise-model-of-topic-maps">A promise model of topic maps</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-basics-of-knowledge">The basics of knowledge</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Knowledge-Management">Knowledge Management</a>
 
@@ -3449,7 +3422,7 @@ try to use more meaningful titles to help make references clear.
 "/var/cfengine/inputs"
 
 <span class="red">     handle </span>=><span class="green"> "update_policy",</span>
-<span class="red">    comment </span>=><span class="green"> "Update the cfengine input files from the policy server",</span>
+<span class="red">    comment </span>=><span class="green"> "Update the CFEngine input files from the policy server",</span>
 <span class="red">      perms </span>=><span class="blue"> system("600"),</span>
 <span class="red">  copy_from </span>=> rcp("$(master_location)","$(policy_server)"),
 <span class="red">depth_search </span>=><span class="blue"> recurse("inf"),</span>
@@ -3457,14 +3430,14 @@ try to use more meaningful titles to help make references clear.
 <span class="red">     action </span>=><span class="blue"> immediate;</span>
 
 </pre>
-If a promise affects another promise is some way, you can
+If a promise affects another promise in some way, you can
 make the affected one
 promise one of the promisees, like this:
 
 <pre class="verbatim">
 <span class="red">access:
 </span>
-"/master/cfengine/inputs" -> { "update_policy", "other_promisee" },
+"/master/CFEngine/inputs" -> { "update_policy", "other_promisee" },
 
 <span class="red">handle  </span>=><span class="green"> "serve_updates",</span>
 <span class="red">  admit   </span>=> { "217.77.34.*" };
@@ -3480,7 +3453,7 @@ promise one of the promisees, like this:
 "/var/cfengine/inputs"
 
 <span class="red">      handle </span>=><span class="green"> "update_policy",</span>
-<span class="red">     comment </span>=><span class="green"> "Update the cfengine input files from the policy  </span>
+<span class="red">     comment </span>=><span class="green"> "Update the CFEngine input files from the policy  </span>
 server",
 <span class="red">  depends_on </span>=> { "serve_updates" },
 <span class="red">       perms </span>=><span class="blue"> system("600"),</span>
@@ -3492,41 +3465,65 @@ server",
 </pre>
 
 <p class="noindent">This use of annotation is the first level of documentation
-in cfengine. 
-The annotations are used internally by cfengine to provide meaningful
+in CFEngine. 
+The annotations are used internally by CFEngine to provide meaningful
 error messages with context and to compute dependencies that reveal
 the existence of process chains. These can be turned into a topic map
 for browsing the policy relationships is a web browser, using
 <code>cf-know</code>.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-To set up the knowledge base you will need a computer running an
-Apache web server with the PHP module installed. The knowledge base
-will probably run with other web servers too, but only Apache is
-currently supported.  To generate the graphical representations, you
-will currently
-need the GraphViz package. See the annex at the end for more details. 
+The CFEngine Knowledge Map is only available in commercial editions
+of the software, where the necessary support to set up and maintain
+this technology can be provided. 
 </td></tr></table>
 
 <div class="node">
-<a name="What-topic-maps-offer"></a>
+<a name="A-promise-model-of-topic-maps"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Step-by-step">Step by step</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#What-topic-maps-offer">What topic maps offer</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Annotating-promises">Annotating promises</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Knowledge-Management">Knowledge Management</a>
 
 </div>
 
-<h3 class="section">8.4 What topic maps offer</h3>
+<h3 class="section">8.4 A promise model of topic maps</h3>
 
-<p>Commercial enterprise releases of cfengine are capable of automating the
-documentation of a policy, using basic annotations provided above, as a
-knowledge map. They require very little effort from the user. If you are
-using the Community Edition of cfengine, all of the technology is
-available for use, but you will have to do the work manually. In
-either case, once you become familiar with the use of Topic Maps, you
-will want to extend your knowledge manually to incorporate things
-like:
+<p>CFEngine's model of promises can also be used to promise information
+and its relevance in different contexts. The Knowledge agent <code>cf-know</code>
+understands three kinds of promise.
+
+     <dl>
+<dt><code>topics:</code><dd>A topic is merely a string that can be associated with another string. It represents a `subject to be talked about'. 
+Like other promise types, you can use contexts, which are formed from other topics expressions to limit the scope of
+the current topic promise. 
+<br><dt><code>things:</code><dd>Things are a simplified interface to topics, that were introduced to make it easier
+for users to contribute knowledge about more concrete `things', or less abstract ideas. 
+A challenge with knowledge management is the abstract and technical nature of the models
+one must use to represent it. Things attempt to make that task easier. 
+<br><dt><code>occurrences:</code><dd>An occurrence is a reference to a document or a piece of text that actually represents
+knowledge content about the topic concerned. Occurrences are generally URLs or strings
+explaining things or topics. 
+</dl>
+
+<div class="node">
+<a name="What-topic-maps-offer"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#The-nuts-and-bolts-of-topic-maps">The nuts and bolts of topic maps</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#A-promise-model-of-topic-maps">A promise model of topic maps</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Knowledge-Management">Knowledge Management</a>
+
+</div>
+
+<h3 class="section">8.5 What topic maps offer</h3>
+
+<p>CFEngine is capable of automating the documentation of a policy, using basic annotations provided above, as a
+knowledge map. They require very little effort from the user. If you
+are using the Community Edition of CFEngine, you can develop a topic
+map, but we do not support the backend technology without a
+commercial license. In either case, once you become familiar with the
+use of Topic Maps, you will want to extend your knowledge manually to
+incorporate things like:
 
      <ul>
 <li>Local (high level) policy documents
@@ -3540,17 +3537,15 @@ using <code>cf-know</code>.
    <p>The kind of result you can expect is shown in the pictures below.  The
 example figures show typical pages generated by the knowledge agent
 <code>cf-know</code>. The first of these shows how we use the technology to
-power the web knowledge base in the commercial Cfengine product.
-
-   <div class="block-image"><img src="copernicus.png" alt="Support portal copernicus"></div>
+power the web knowledge base in the commercial CFEngine product.
 
    <p>In this use, all of the data are based on documentation for
-the Cfengine software, and most of the relationships are manually
+the CFEngine software, and most of the relationships are manually
 entered.
 
-   <p>For a second example, consider how Cfengine can generate such a
+   <p>For a second example, consider how CFEngine can generate such a
 knowledge map analysis of its own configuration (self-analysis).  The
-data in the images below describe the cfengine configuration
+data in the images below describe the CFEngine configuration
 promises. One such page is generated, for instance, for each policy
 promise, and pages are generated for reports from different computers
 etc. You can also create you own `topic pages' for any local
@@ -3571,8 +3566,6 @@ that are often unexpected, and illustrates relationships that broaden
 one's understanding
 of the place the current promise occupies within the whole.
 
-   <div class="block-image"><img src="promise_page.png" alt="Influence of the current policy promise"></div>
-
    <p>Although the graphical illustrations are just renderings of
 semantic associations shown more fully in text, they are useful for
 visualizing
@@ -3582,365 +3575,42 @@ particular, one can see the other promises that could be affected if
 we were to make a change to the current promise.  Such impact analyses
 can be crucial to planning change and release management of policy.
 
-   <div class="block-image"><img src="dependency.png" alt="The visualization of dependencies in cfengine with the knowledge agent's web rendering"></div>
-
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 
-   <p>A knowledge base is an implementation of a Topic Map which is an ISO
+   <p>A knowledge base is a slightly improved implementation of a Topic Map which is an ISO
 standard technology. A topic map works like an index that can point to
 many different kinds of external resources, and may contain simple
 text and images internally. So you use it to bind together documents
-of any kind. A cfengine knowledge base is not a new document format, it
+of any kind. A CFEngine knowledge base is not a new document format, it
 is an overlay map that joins ideas and resources together, and
 displays relationships.
 
    </td></tr></table>
 
 <div class="node">
-<a name="Step-by-step"></a>
+<a name="The-nuts-and-bolts-of-topic-maps"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Querying-the-Topic-Map">Querying the Topic Map</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Example-of-topics-promises">Example of topics promises</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-topic-maps-offer">What topic maps offer</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Knowledge-Management">Knowledge Management</a>
 
 </div>
 
-<h3 class="section">8.5 Step by step</h3>
-
-<p>You can use <code>cf-know</code> to render a topic map either as text (for
-command line
-use) or as HTML (for web rendering). We begin with the text rendering
-as it requires less
-infrastructure. You will just need a database.
-
-   <p>Try typing in the following knowledge promises:
-
-<pre class="smallexample">     
-     body common control
-     {
-     bundlesequence  =&gt; { "tm" };
-     }
-     
-     body knowledge control
-     {
-     query_output =&gt; "text";
-     query_engine =&gt; "none";
-     
-     sql_database =&gt; "test_map";
-     sql_owner =&gt; "mark";
-     sql_type =&gt; "mysql";
-     sql_passwd =&gt; ""; # No passwd for localhost
-     }
-     
-     ###################################################
-     
-     bundle knowledge tm
-     {
-     topics:
-     
-     any::
-     
-     # We have to start somewhere
-     
-     "Processes" comment =&gt; "Programs running on a computer";
-     
-     "Computers"     comment =&gt; "Generic boxes",
-                 association =&gt; a("run","Services","are run on");
-     
-     Computers::
-     
-     "server" comment =&gt; "Common name for a computer in a desktop";
-     
-     "desktop" comment =&gt; "Common name for a computer for end users";
-     
-     Programs::
-     
-     "httpd" comment =&gt; "A web service process";
-     "named" comment =&gt; "A name service process";
-     
-     Services::
-     
-     "WWW" comment =&gt; "World Wide Web service",
-           association =&gt; a("is implemented by","httpd","implements");
-     
-     "WWW" association =&gt; a("looks up addresses with","named","serves
-     addresses to");
-     
-     #
-     
-     occurrences:
-     
-     httpd::
-     
-        "http://www.apache.org"
-     
-          represents =&gt; { "website" };
-     
-     }
-     
-     ###################################################
-     
-     body association a(f,name,b)
-     
-     {
-     forward_relationship =&gt; "$(f)";
-     backward_relationship =&gt; "$(b)";
-     associates =&gt; { $(name) };
-     }
-     
-     
-</pre>
-<pre class="verbatim">atlas$ mysql
-Welcome to the MySQL monitor.  Commands end with ; or \g.
-Your MySQL connection id is 1
-<span class="red">Server version: 5.0.67 SUSE MySQL RPM
-</span>
-Type 'help;' or '\h' for help. Type '\c' to clear the buffer.
-
-mysql> create database test_map;
-Query OK, 1 row affected (0.00 sec)
-
-mysql> CREATE TABLE topics
-  -> (
-  -> topic_name varchar(256),
-  -> topic_comment varchar(1024),
-  -> topic_id varchar(256),
-  -> topic_type varchar(256)
-  -> );
-
-</pre>
-Once you have created the database, you populate it by typing:
-<pre class="verbatim">host$ /usr/local/sbin/cf-know -f ./unit_knowledge_txt.cf -s
-</pre>
-
-   <p>You can verify that the data have been inserted:
-<pre class="smallexample">     
-     mysql&gt; use test_map;
-     Reading table information for completion of table and column names
-     You can turn off this feature to get a quicker startup with -A
-     
-     Database changed
-     mysql&gt; select * from topics;
-     +------------+-----------------------------------------+-----------
-     +------------+
-     | topic_name | topic_comment                           | topic_id  |
-     topic_type |
-     +------------+-----------------------------------------+-----------
-     +------------+
-     | WWW        | World Wide Web service                  | WWW       |
-     Services   |
-     | named      | A name service process                  | named     |
-     Programs   |
-     | httpd      | A web service process                   | httpd     |
-     Programs   |
-     | desktop    | Common name for a computer for end users| desktop   |
-     Computers  |
-     | server     | Common name for a computer in a datacent| server    |
-     Computers  |
-     | Computers  | Generic boxes                           | Computers |
-     any        |
-     | Processes  | Programs running on a computer          | Processes |
-     any        |
-     +------------+-----------------------------------------+-----------
-     +------------+
-</pre>
-   <p>Hereafter, you do not need to parse the entire data set to use the
-topic map. 
-You can use a lightweight `driver script' which is sufficient to query
-the
-database for the relationships.
-
-<pre class="smallexample">     
-     body common control
-     {
-     bundlesequence  =&gt; { "tm" };
-     }
-     
-     body knowledge control
-     {
-     query_output =&gt; "text";
-     query_engine =&gt; "none";
-     
-     sql_database =&gt; "test_map";
-     sql_owner =&gt; "mark";
-     sql_type =&gt; "mysql";
-     sql_passwd =&gt; ""; # No passwd for localhost
-     }
-     
-     ###################################################
-     
-     bundle knowledge tm
-     {
-     topics:
-     
-     any::
-     
-     "Nothing needed here -- we get everything from the db cache";
-     }
-     
-</pre>
-   <div class="node">
-<a name="Querying-the-Topic-Map"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#The-nuts-and-bolts-of-topic-maps">The nuts and bolts of topic maps</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Step-by-step">Step by step</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Knowledge-Management">Knowledge Management</a>
-
-</div>
-
-<h3 class="section">8.6 Querying the Topic Map</h3>
-
-<p>You can now query the cached topic map directly from the database. The
-&lsquo;<samp><span class="samp">-t</span></samp>&rsquo; or &lsquo;<samp><span class="samp">--topic</span></samp>&rsquo;
-switch is used to enter a topic name. Alternatively the &lsquo;<samp><span class="samp">-r</span></samp>&rsquo; or
-&lsquo;<samp><span class="samp">--regex</span></samp>&rsquo; switch
-may be used to enter a case-free regular expression to match topics.
-
-   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-<pre class="smallexample">     atlas$ ~/LapTop/Cfengine3/trunk/src/cf-know -f ./unit_knowledge_txt.cf
-     -t Computers
-     
-     Topic "Computers" found in the context of "any"
-     
-     Results:
-     
-     Explanation:  "Generic boxes" (Text)
-     
-     Topics of the type Computers:
-     
-     desktop
-     server
-     
-     Associations:
-     
-     Computers "run"
-       - Computers
-     Computers "are run on"
-       - any::Computers
-     
-     Other topics of the same type (any):
-     
-     Processes - Programs running on a computer
-     
-</pre>
-   </td></tr></table>
-
-   <p>Now if we follow
-<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-<pre class="smallexample">     
-     atlas$ ~/LapTop/Cfengine3/trunk/src/cf-know -f ./unit_knowledge_txt.cf
-     -t httpd
-     
-     Topic "httpd" found in the context of "Programs"
-     
-     Results:
-     
-     Explanation:  "A web service process" (Text)
-     website:  http://www.apache.org (URL)
-     
-     Topics of the type httpd:
-     
-       (none)
-     
-     Associations:
-     
-     httpd "implements"
-       - Services::WWW
-     
-     Other topics of the same type (Programs):
-     
-     named - A name service process
-     
-</pre>
-   </td></tr></table>
-   Notice how, in this example, there are two results, one URL and one
-literal text string. 
-There is also an association to the WWW service. If we follow this:
-
-   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-<pre class="smallexample">     
-     atlas$ ~/LapTop/Cfengine3/trunk/src/cf-know -f ./unit_knowledge_txt.cf
-     -t WWW
-     
-     Topic "WWW" found in the context of "Services"
-     
-     Results:
-     
-     Explanation:  "World Wide Web service" (Text)
-     
-     Topics of the type WWW:
-     
-       (none)
-     
-     Associations:
-     
-     WWW "is implemented by"
-       - httpd
-     WWW "looks up addresses with"
-       - named
-     
-     Other topics of the same type (Services):
-     
-       (none)
-     
-</pre>
-   </td></tr></table>
-
-   <p>To render this as a web-page, we change the query output to be
-&lsquo;<samp><span class="samp">html</span></samp>&rsquo;;
-<code>cf-know</code> will then render html pages. A simple wrapper script
-can be created
-using a simple PHP script to make this into a web page, e.g.
-
-<pre class="verbatim">&lt;?php
-
-$arg1 = $_GET['next'];
-$cfknow = "/usr/local/sbin/cf-know";
-$file = "/path/to/portal/overview.cf";
-
-if ($arg1)
-{
-system("$cfknow -t $arg1 -f $file");
-}
-else
-{
-system("$cfknow -t some_start_topic -f $file");
-}
-
-?>
-
-</pre>
-
-   <p>Here there are insufficient topics to generate any graphs. A topic
-must have at
-least two associations to warrant a diagram.
-
-<div class="node">
-<a name="The-nuts-and-bolts-of-topic-maps"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Modelling-configuration-promises-as-topic-maps">Modelling configuration promises as topic maps</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Querying-the-Topic-Map">Querying the Topic Map</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Knowledge-Management">Knowledge Management</a>
-
-</div>
-
-<h3 class="section">8.7 The nuts and bolts of topic maps</h3>
+<h3 class="section">8.6 The nuts and bolts of topic maps</h3>
 
 <ul class="menu">
 <li><a accesskey="1" href="#Topic-map-definitions">Topic map definitions</a>
-<li><a accesskey="2" href="#cf_002dknow">cf-know</a>
 </ul>
 
 <div class="node">
 <a name="Topic-map-definitions"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#cf_002dknow">cf-know</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-nuts-and-bolts-of-topic-maps">The nuts and bolts of topic maps</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#The-nuts-and-bolts-of-topic-maps">The nuts and bolts of topic maps</a>
 
 </div>
 
-<h4 class="subsection">8.7.1 Topic map definitions</h4>
+<h4 class="subsection">8.6.1 Topic map definitions</h4>
 
 <p>Topic maps are really electronic indices, but they form and work like
 webs. 
@@ -3977,10 +3647,10 @@ For instance,
    <p class="noindent">The topic map model thus has three levels of containers:
 
      <dl>
-<dt><em>Types</em><dd>The box into which we classify a topic to disambiguate different
-topics with the same name (`in the context of').
+<dt><em>Contexts</em><dd>The box into which we classify a topic to disambiguate different
+topics with the same name (`in the context of')<a rel="footnote" href="#fn-1" name="fnd-1"><sup>1</sup></a>.
 
-     <br><dt><em>Topics</em><dd>The representation of a subject (an index term).
+     <br><dt><em>Topics/Things</em><dd>The representation of a subject (an index term).
 
      <br><dt><em>Occurrence Types</em><dd>A term that explains how an actual document occurrence relates
 to the topic is claims to say something about. e.g. (tutorial, manual,
@@ -3992,17 +3662,17 @@ documents
 that we want to read  (like page numbers in an index). 
 </dl>
 
-   <p>Types map conveniently into cfengine classes. 
+   <p>Contexts map conveniently into CFEngine classes. 
 Topics map conveniently into promisers. 
 Occurrences also map to promisers of a different type. 
-These three label different levels of granularity of meaning. Types
-are represent a set of topics, which in turn encompass a set of
-occurrences. The primacy of topics in this
+These three label different levels of granularity of meaning. Contexts
+represent a set of topics that might be relevant, which in turn encompass a set of
+occurrences of resources that contain actual information about the topics in that context. The primacy of topics in this
 stems from their ability to form networks by <em>association</em>.
 
    <p>The classic approach to information modelling is to build a
 hierarchical decomposition of non-overlapping objects. Data are
-forcibly manipulated into non-overlapping containers which often prove
+manipulated into non-overlapping containers which often prove
 to be overly restrictive. Topic maps allow us to avoid the kinds of
 mistakes that have led to monstrosities like the Common Information
 Model (CIM) with its <em>thousands</em> of strictly non-overlapping type
@@ -4013,27 +3683,158 @@ occurrences of information that highlight the concepts pertinent to
 the topic somehow.
 
 <div class="node">
+<a name="Example-of-topics-promises"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Modelling-configuration-promises-as-topic-maps">Modelling configuration promises as topic maps</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-nuts-and-bolts-of-topic-maps">The nuts and bolts of topic maps</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Knowledge-Management">Knowledge Management</a>
+
+</div>
+
+<h3 class="section">8.7 Example of topics promises</h3>
+
+<p>You can use <code>cf-know</code> to render a topic map either as text (for
+command line
+use) or as HTML (for web rendering). We begin with the text rendering
+as it requires less
+infrastructure. You will just need a database.
+
+   <p>Try typing in the following knowledge promises:
+
+<pre class="smallexample">     
+     body common control
+     {
+     bundlesequence  =&gt; { "tm" };
+     }
+     
+     ###################################################
+     
+     bundle knowledge tm
+     {
+     topics:
+     
+     
+     "server" comment =&gt; "Common name for a computer in a desktop";
+     "desktop" comment =&gt; "Common name for a computer for end users";
+     
+     programs:: # context of programs
+     
+     "httpd" comment =&gt; "A web service process";
+     "named" comment =&gt; "A name service process";
+     
+     services::
+     
+     "WWW" comment =&gt; "World Wide Web service",
+           association =&gt; a("is implemented by",
+                            "programs::httpd",
+                            "implements");
+     
+      # if we don't specificy a context, it is "any"
+     
+     "WWW" association =&gt; a("looks up addresses with",
+                            "named",
+                            "serves addresses to");
+     
+     occurrences:
+     
+     httpd::
+        "http://www.apache.org"
+          represents =&gt; { "website" };
+     
+     }
+     
+     ###################################################
+     
+     body association a(f,name,b)
+     
+     {
+     forward_relationship =&gt; "$(f)";
+     backward_relationship =&gt; "$(b)";
+     associates =&gt; { $(name) };
+     }
+</pre>
+   <p class="noindent">The simplified things interface is similar, but uses fixed relations:
+
+<pre class="verbatim">bundle knowledge company_knowledge
+{
+<span class="red">things:
+</span> regions::
+
+   "EMEA"<span class="red">     comment </span>=><span class="green"> "Europe, The Middle-East and Africa";</span>
+   "APAC"<span class="red">     comment </span>=><span class="green"> "Asia and the Pacific countries";</span>
+
+ countries::
+   "UK"<span class="red">            synonyms </span>=> { "Great Britain" },
+<span class="red">              is_located_in </span>=> { "EMEA", "Europe" };
+
+   "Netherlands"<span class="red">   synonyms </span>=> { "Holland" },
+<span class="red">              is_located_in </span>=> { "EMEA", "Europe" };
+
+   "Singapore"<span class="red">     is_located_in </span>=> { "APAC", "Asia" };
+
+ locations::
+   "London_1"<span class="red">    is_located_in </span>=> { "London", "UK" };
+   "New_Jersey"<span class="red">  is_located_in </span>=> { "USA" };
+
+ networks::
+
+  "192.23.45.0/24"<span class="red">         comment </span>=><span class="green"> "Secure network, zone 0. Single octet for corporate offices",</span>
+<span class="red">                   is_connected_to </span>=> { "oslo-hub-123" };
+
+</pre>
+
+<ul class="menu">
+<li><a accesskey="1" href="#Analysing-and-indexing-the-policy">Analysing and indexing the policy</a>
+<li><a accesskey="2" href="#cf_002dknow">cf-know</a>
+</ul>
+
+<div class="node">
+<a name="Analysing-and-indexing-the-policy"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#cf_002dknow">cf-know</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Example-of-topics-promises">Example of topics promises</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Example-of-topics-promises">Example of topics promises</a>
+
+</div>
+
+<h4 class="subsection">8.7.1 Analysing and indexing the policy</h4>
+
+<p>CFEngine can analyze the promises you have made, index and cross
+reference them using the command:
+
+<pre class="verbatim"># cf-promises -r
+</pre>
+Normally, the default policy in Nova or Constellation will perform this
+command each time the policy is changed.
+
+<div class="node">
 <a name="cf-know"></a>
 <a name="cf_002dknow"></a>
 <p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Topic-map-definitions">Topic map definitions</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#The-nuts-and-bolts-of-topic-maps">The nuts and bolts of topic maps</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Analysing-and-indexing-the-policy">Analysing and indexing the policy</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Example-of-topics-promises">Example of topics promises</a>
 
 </div>
 
 <h4 class="subsection">8.7.2 <code>cf-know</code></h4>
 
-<p>Cfengine's knowledge agent <code>cf-know</code> allows you to make promises
+<p>CFEngine's knowledge agent <code>cf-know</code> allows you to make promises
 about knowledge and its inter-relationships. It is not specifically a
 generic topic map language: rather it provides a powerful configuration
 language for managing a knowledge base that can be compiled into a
 topic map.
 
-   <p>The full ISO standard topic map model is too rich to be a useful tool
+   <p>To build a topic map from a set of knowledge promises in <samp><span class="file">knowledge.cf</span></samp>, you would write:
+
+<pre class="verbatim"># cf-know -b -f ./knowledge.cf
+</pre>
+
+   <p>The syntax of this file is hinted at below. 
+The full ISO standard topic map model is too rich to be a useful tool
 for system knowledge management. However, this is where powerful
 configuration management can help to simplify the process: encoding a
 topic map is a complex problem in configuration, which is exactly what
-cfengine is for. Cfengine's topic map promises have the following
+CFEngine is for. CFEngine's topic map promises have the following
 form:
 
 <pre class="smallexample">     
@@ -4082,25 +3883,24 @@ lead to poor knowledge maps.
 <div class="node">
 <a name="Modelling-configuration-promises-as-topic-maps"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Annex-Technical-pre_002drequisites">Annex Technical pre-requisites</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-nuts-and-bolts-of-topic-maps">The nuts and bolts of topic maps</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Example-of-topics-promises">Example of topics promises</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Knowledge-Management">Knowledge Management</a>
 
 </div>
 
 <h3 class="section">8.8 Modelling configuration promises as topic maps</h3>
 
-<p>We can model topic maps as promises within cfengine; the
+<p>We can model topic maps as promises within CFEngine; the
 question then remains as to how to use topic maps to model
-configurations so that cfengine users can navigate the documented
+configurations so that CFEngine users can navigate the documented
 promises using a web browser and be able to see all of the
 relationships between otherwise isolated and fragmentary rules. This
 will form the basis of a semantic Configuration Management Database
-(sCMDB) for the cfengine software. The key to making these ends meet
+(sCMDB) for the CFEngine software. The key to making these ends meet
 is to see the configuration of the topic map as a number öf promises
 made in the abstract space of topics and the turning each promise into
 a meta-promise that models the configuration as a topic with attendant
-associations. Consider the following cfengine promise.
+associations. Consider the following CFEngine promise.
 
 <pre class="verbatim">
 <span class="red">bundle agent</span> <span class="blue">update</span>
@@ -4124,7 +3924,7 @@ any::
 }
 </pre>
 
-   <p>This system configuration promise can be mapped by cfengine into a
+   <p>This system configuration promise can be mapped by CFEngine into a
 number of other promise proposals intended for the <code>cf-know</code>
 agent. Suppressing some of the details, we have:
 
@@ -4144,13 +3944,12 @@ in");
 
 <span class="comment"># etc ...
 </span>
-<span class="comment">
-</span>
+
 <span class="red">occurrences:
 </span>
-_var_cfengine_inputs::
+_var_CFEngine_inputs::
 
-  "promise_output_common.html#promise__var_cfengine_inputs_update_cf_13"
+  "promise_output_common.html#promise__var_CFEngine_inputs_update_cf_13"
 <span class="red">     represents </span>=> { "promise definition" };
 
 </pre>
@@ -4164,138 +3963,19 @@ semantic web for traversing the policy; this documents the structure
 and intention of the policy using a small ontology of standard
 concepts and can be extended indefinitely by human domain experts.
 
-<div class="node">
-<a name="Annex-Technical-pre-requisites"></a>
-<a name="Annex-Technical-pre_002drequisites"></a>
-<p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Modelling-configuration-promises-as-topic-maps">Modelling configuration promises as topic maps</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Knowledge-Management">Knowledge Management</a>
-
-</div>
-
-<h3 class="section">8.9 Annex: Technical pre-requisites</h3>
-
-<ul class="menu">
-<li><a accesskey="1" href="#Knowledge-base-requirements">Knowledge base requirements</a>
-<li><a accesskey="2" href="#Trouble-shooting-the-knowledge-base">Trouble shooting the knowledge base</a>
-</ul>
-
-<div class="node">
-<a name="Knowledge-base-requirements"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Trouble-shooting-the-knowledge-base">Trouble shooting the knowledge base</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Annex-Technical-pre_002drequisites">Annex Technical pre-requisites</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Annex-Technical-pre_002drequisites">Annex Technical pre-requisites</a>
-
-</div>
-
-<h4 class="subsection">8.9.1 Knowledge base requirements</h4>
-
-<p>You will need a computer running an Apache web server, with some
-active server page technology to use as a wrapper for cfengine. Our
-example assumes that the wrapper will be a PHP enabled web server. You
-will also need a backend SQL database (for cfengine not PHP). Cfengine
-currently supports MySQL and PostreSQL.  A PHP-active index page
-contains a wrapper which runs the <code>cf-know</code> component, and this
-renders pages for a web-browser.
-
-   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-
-   <p>In order to work, your cfengine build needs to have been compiled with
-database support. MySQL and PostgreSQL databases are currently
-supported. You do not need modules for these databases in your PHP
-installation, as cfengine talks to the database directly, but cfengine
-must have been compiled with database support.
-
-   </td></tr></table>
-
-   <p>You show create a <code>cf-know</code> control body to point to a database:
-<pre class="verbatim">body knowledge control
-
-{
-<span class="comment"># Decide the name of a local database
-</span>
-<span class="comment">
-</span>
-<span class="red">sql_database </span>=><span class="green"> "cf_knowledge_map";</span>
-<span class="red">sql_owner </span>=><span class="green"> "root";</span>
-<span class="red">sql_passwd </span>=><span class="green"> "";</span>
-<span class="red">sql_type </span>=><span class="green"> "mysql";</span>
-<span class="red">sql_server </span>=><span class="green"> "localhost";</span>
-}
-</pre>
-
-   <p>In the community edition, you must create the SQL database for
-<code>cf-know</code> to write to by hand, then remember to grant access to
-the owner as specified above or <code>cf-know</code> will not be able to add
-data. This database should have the following tables.
-
-<pre class="smallexample">     CREATE TABLE topics
-     (
-     topic_name varchar(256),
-     topic_comment varchar(1024),
-     topic_id varchar(256),
-     topic_type varchar(256)
-     );
-     
-     CREATE TABLE associations
-     (
-     from_name varchar(256),
-     from_type varchar(256),
-     from_assoc varchar(256),
-     to_assoc varchar(256),
-     to_type varchar(256),
-     to_name varchar(256)
-     );
-     
-     CREATE TABLE occurrences
-     (
-     topic_name varchar(256),
-     locator varchar(1024),
-     locator_type varchar(256),
-     subtype varchar(256)
-     );
-     
-</pre>
-   <div class="node">
-<a name="Trouble-shooting-the-knowledge-base"></a>
-<p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Knowledge-base-requirements">Knowledge base requirements</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Annex-Technical-pre_002drequisites">Annex Technical pre-requisites</a>
-
-</div>
-
-<h4 class="subsection">8.9.2 Trouble shooting the knowledge base</h4>
-
-<p>Cfengine Nova will try to create the database and all of the tables
-automatically. If this does not happen, the likely explanation is that
-it does not have permission from the database server to do this.
-
-   <p>Connect to the database and grant access to it, e.g.
-
-<pre class="verbatim">mysql
-USE mysql_mananage_point
-GRANT ALL on * to root;
-</pre>
-
-   <p>or
-<pre class="verbatim">psql postgres_manage_point
-GRANT ALL on * to root;
-</pre>
-
 <h2 class="chapter">9 More...</h2>
 
 <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 
    <p>You will find extensive help, examples and documentation as part of
 the commercial
-Cfengine support. Visit the website <a href="www.cfengine.com">www.cfengine.com</a> for more
+CFEngine support. Visit the website <a href="http://www.cfengine.com">http://www.cfengine.com</a> for more
 details.
 
 </td></tr></table>
 
 <!-- ======================================================================== -->
-<!-- @node Index,  , Cfengine Methods, Top -->
+<!-- @node Index,  , CFEngine Methods, Top -->
 <!-- @unnumbered Concept Index -->
 <!-- @printindex cp -->
 <!-- ======================================================================== -->
@@ -4303,21 +3983,21 @@ details.
    <div class="contents">
 <h2>Table of Contents</h2>
 <ul>
-<li><a name="toc_Top" href="#Top">Cfengine-Tutorial</a>
+<li><a name="toc_Top" href="#Top">CFEngine-Tutorial</a>
 <li><a name="toc_System-automation" href="#System-automation">1 System automation</a>
 <ul>
 <li><a href="#Managing-diverse-and-challenging-environments-seamlessly-and-invisibly">1.1 Managing diverse and challenging environments seamlessly and invisibly</a>
 <li><a href="#Managing-expectations-_002d-a-theory-of-promises">1.2 Managing expectations - a theory of promises</a>
 <li><a href="#Why-automation_003f">1.3 Why automation?</a>
 <li><a href="#Scaling-up">1.4 Scaling up</a>
-<li><a href="#How-do-you-view-cfengine">1.5 How do <i>you</i> view cfengine?</a>
+<li><a href="#How-do-you-view-CFEngine">1.5 How do <i>you</i> view CFEngine?</a>
 </li></ul>
-<li><a name="toc_The-components-of-cfengine" href="#The-components-of-cfengine">2 The components of cfengine</a>
+<li><a name="toc_The-components-of-CFEngine" href="#The-components-of-CFEngine">2 The components of CFEngine</a>
 <ul>
 <li><a href="#Installation">2.1 Installation</a>
 <li><a href="#Work-directory">2.2 The work directory</a>
 <li><a href="#The-players">2.3 The players</a>
-<li><a href="#About-the-cfengine-architecture">2.4 About the cfengine architecture</a>
+<li><a href="#About-the-CFEngine-architecture">2.4 About the CFEngine architecture</a>
 <li><a href="#The-policy-decision-flow">2.5 The policy decision flow</a>
 <li><a href="#Getting-started-with-the-Community-Edition">2.6 Getting started with the Community Edition</a>
 </li></ul>
@@ -4334,7 +4014,7 @@ details.
 </li></ul>
 <li><a href="#A-simple-syntax-pattern">3.3 A simple syntax pattern</a>
 </li></ul>
-<li><a name="toc_First-promises" href="#First-promises">4 How to execute and test a cfengine policy</a>
+<li><a name="toc_First-promises" href="#First-promises">4 How to execute and test a CFEngine policy</a>
 <ul>
 <li><a href="#Hello-world">4.1 Hello world</a>
 <li><a href="#Checking-a-file">4.2 Checking a file</a>
@@ -4357,7 +4037,7 @@ details.
 <li><a href="#Loops">5.5 Loops</a>
 <li><a href="#The-main-promise-types">5.6 The main promise types</a>
 </li></ul>
-<li><a name="toc_Using-cfengine-as-a-front_002dend-for-cron" href="#Using-cfengine-as-a-front_002dend-for-cron">6 Using cfengine as a front-end or replacement for cron</a>
+<li><a name="toc_Using-CFEngine-as-a-front_002dend-for-cron" href="#Using-CFEngine-as-a-front_002dend-for-cron">6 Using CFEngine as a front-end or replacement for cron</a>
 <ul>
 <li><a href="#Do-I-need-cron_003f">6.1 Do I need cron?</a>
 <li><a href="#The-single-cron-job-approach">6.2 The single cron job approach</a>
@@ -4368,7 +4048,7 @@ details.
 </li></ul>
 <li><a name="toc_Network-services" href="#Network-services">7 Network services</a>
 <ul>
-<li><a href="#What-services_003f">7.1 Cfengine network services</a>
+<li><a href="#What-services_003f">7.1 CFEngine network services</a>
 <li><a href="#How-services-work">7.2 How services work</a>
 <ul>
 <li><a href="#Remote-file-distribution">7.2.1 Remote file distribution</a>
@@ -4389,22 +4069,20 @@ details.
 <li><a href="#Promises-and-Knowledge">8.1 Promises and Knowledge</a>
 <li><a href="#The-basics-of-knowledge">8.2 The basics of knowledge</a>
 <li><a href="#Annotating-promises">8.3 Annotating promises</a>
-<li><a href="#What-topic-maps-offer">8.4 What topic maps offer</a>
-<li><a href="#Step-by-step">8.5 Step by step</a>
-<li><a href="#Querying-the-Topic-Map">8.6 Querying the Topic Map</a>
-<li><a href="#The-nuts-and-bolts-of-topic-maps">8.7 The nuts and bolts of topic maps</a>
+<li><a href="#A-promise-model-of-topic-maps">8.4 A promise model of topic maps</a>
+<li><a href="#What-topic-maps-offer">8.5 What topic maps offer</a>
+<li><a href="#The-nuts-and-bolts-of-topic-maps">8.6 The nuts and bolts of topic maps</a>
 <ul>
-<li><a href="#Topic-map-definitions">8.7.1 Topic map definitions</a>
+<li><a href="#Topic-map-definitions">8.6.1 Topic map definitions</a>
+</li></ul>
+<li><a href="#Example-of-topics-promises">8.7 Example of topics promises</a>
+<ul>
+<li><a href="#Analysing-and-indexing-the-policy">8.7.1 Analysing and indexing the policy</a>
 <li><a href="#cf_002dknow">8.7.2 <code>cf-know</code></a>
 </li></ul>
 <li><a href="#Modelling-configuration-promises-as-topic-maps">8.8 Modelling configuration promises as topic maps</a>
-<li><a href="#Annex-Technical-pre_002drequisites">8.9 Annex: Technical pre-requisites</a>
-<ul>
-<li><a href="#Knowledge-base-requirements">8.9.1 Knowledge base requirements</a>
-<li><a href="#Trouble-shooting-the-knowledge-base">8.9.2 Trouble shooting the knowledge base</a>
 </li></ul>
-</li></ul>
-<li><a name="toc_Trouble-shooting-the-knowledge-base" href="#Trouble-shooting-the-knowledge-base">9 More...</a>
+<li><a name="toc_Modelling-configuration-promises-as-topic-maps" href="#Modelling-configuration-promises-as-topic-maps">9 More...</a>
 </li></ul>
 </div>
 
@@ -4421,6 +4099,15 @@ var pageTracker = _gat._getTracker("UA-2576171-2");
 pageTracker._initData();
 pageTracker._trackPageview();
 </script>
+
+   <div class="footnote">
+<hr>
+<a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> Here, CFEngine differs from the topic map standard in allowing contexts
+to be overlapping sets, rather than mutually exclusive `types'. 
+CFEngine is guided by Promise Theory in this respect in order to enable
+distribtued cooperation and the development of a free and emergent ontology.</p>
+
+   <hr></div>
 
 </body></html>
 

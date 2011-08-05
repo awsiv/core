@@ -184,7 +184,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
 </div>
 
-<h2 class="unnumbered">Cfengine-Tutorial</h2>
+<h2 class="unnumbered">CFEngine-Tutorial</h2>
 
 <ul class="menu">
 <li><a accesskey="1" href="#What-is-distributed-scheduling_003f">What is distributed scheduling?</a>
@@ -249,7 +249,7 @@ information. Decentralization provides an automatic and natural
 load-balancing of job dispatch, and it allows machines to
 reveal information on a `need to know' basis.
 
-   <p>Cfengine is a naturally decentralized system, and only policy
+   <p>CFEngine is a naturally decentralized system, and only policy
 definition is usually centralized, but you can set up practically any
 architecture you like, in a secure fashion.
 
@@ -268,11 +268,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 places and times:
 
      <ul>
-<li>You tell cfengine <i>what</i> and <i>how</i> with the details of a promise. 
-<li>You tell cfengine <i>where</i> and <i>when</i> promises should be kept, using <i>classes</i>. 
+<li>You tell CFEngine <i>what</i> and <i>how</i> with the details of a promise. 
+<li>You tell CFEngine <i>where</i> and <i>when</i> promises should be kept, using <i>classes</i>. 
 </ul>
 
-   <p>Cfengine is designed principally to maintain desired state on a continuous
+   <p>CFEngine is designed principally to maintain desired state on a continuous
 basis. 
 There are three cases for job scheduling:
      <ul>
@@ -301,7 +301,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Job-scheduling-and-periodic-maintenanc
 
 <h4 class="unnumberedsubsec">One-off workflows</h4>
 
-<p>In Cfengine, you code a one-off workflow by specifying the space-time coordinates
+<p>In CFEngine, you code a one-off workflow by specifying the space-time coordinates
 of the event that starts it. For example, if you want a job to be run a 16:45 on Monday
 24th January 2012, you would make a class corresponding to this time, and place the
 promise of a job (or jobs) in this class. Let's look at some examples of this, in which
@@ -408,9 +408,9 @@ interval we have two options:
 <li>We repeat this at the same time each week, day, hour, etc. 
 <li>We don't care about the precise time, we only care about the interval between executions. 
 </ul>
-   The checking of promises in cfengine is controlled by <i>classes</i> and
+   The checking of promises in CFEngine is controlled by <i>classes</i> and
 by <i>ifelapsed locks</i>, which may be used for these two cases
-respectively. If nothing else is specified, cfengine runs every 5
+respectively. If nothing else is specified, CFEngine runs every 5
 minutes and reconsiders the state of all its active promises. To be
 specific about the time, we just alter which promises are active at
 different times.  Classes (as used already) allow us to anchor a
@@ -595,9 +595,9 @@ are combined from many sub-tasks, one typically uses some more
 specialized middleware to accomplish this kind of cooperation. Such
 software makes compromises of its own, but is generally better suited
 to the specialized task for which it was written than a tool like
-Cfengine (whose main design criteria are to be secure and generic).
+CFEngine (whose main design criteria are to be secure and generic).
 
-   <p>Nevertheless, there are some tricks left in Cfengine for distributed
+   <p>Nevertheless, there are some tricks left in CFEngine for distributed
 scheduling if we want to trigger a number of follow-ups from a single job, or
 aggregate a number of jobs to drive a single follow-up (see figure).
 
@@ -731,12 +731,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Self-healing workflows</h3>
 
-<p>To apply Cfengine's self-healing concepts to workflow scheduling, we
+<p>To apply CFEngine's self-healing concepts to workflow scheduling, we
 can imagine the concept of a convergent workflow, i.e. one that, if we
 repeat everything a sufficient number of times, will eventually lead
 to the result. The outcome of the chained sequence of jobs must have
 an outcome that is repeatably achievable and which will eventually be
-achieved if we try a sufficient number of times. Using cfengine this
+achieved if we try a sufficient number of times. Using CFEngine this
 is a natural outcome &ndash; however, most system designers do not think in
 terms of repeatable sustainable outcomes and fault-tolerance.
 
@@ -744,7 +744,7 @@ terms of repeatable sustainable outcomes and fault-tolerance.
 they only have a single chance to succeed. It is a question of
 business process design whether you design workflows to be sustainable
 and repeatable, or whether you trust the outcome of a single shot
-process. Using the persistent classes in cfengine together with the
+process. Using the persistent classes in CFEngine together with the
 if-elapsed locks to send signals between hosts, it is simple and
 automatic to make convergent self-healing workflows.
 
@@ -777,15 +777,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <p>Distributed scheduling is about tying together jobs to create a
 workflow across multiple machines. It introduces a level of fragility
-into system automation. Using cfengine promises, we can create self-healing
+into system automation. Using CFEngine promises, we can create self-healing
 workflows, but we recommend minimizing dependencies. This document shows how
-to build workflows using Cfengine primitives.
+to build workflows using CFEngine primitives.
 
    <p><a name="Contents">
    <div class="contents">
 <h2>Table of Contents</h2>
 <ul>
-<li><a name="toc_Top" href="#Top">Cfengine-Tutorial</a>
+<li><a name="toc_Top" href="#Top">CFEngine-Tutorial</a>
 <ul>
 <li><a href="#What-is-distributed-scheduling_003f">What is distributed scheduling?</a>
 <li><a href="#Coordinating-dispatch">Coordinating dispatch</a>

@@ -31,7 +31,7 @@ vars:
   "attr[f]" string => "is an attribute of";
   "attr[b]" string => "has attribute";
 
-  "cause[f]" string => "possibly caused by";
+  "cause[f]" string => "can be caused by";
   "cause[b]" string => "can cause";
 
   "chg[f]" string => "changes";
@@ -90,18 +90,16 @@ vars:
 
   "selfstar" slist => { "computer immunology", "autonomics", "self-healing" };
 
+  "mail_daemons" slist => { "sendmail", "postfix", "exim", "smtpd" };
+  "used_by_mail_daemons" slist => { "sendmail", "postfix", "exim", "saslauthd", "freshclam", "clamd", "clamav-milter", "spamd", "amavisd" };
 
   # Specific versions we need to mention explicitly
 
   "cfversions" slist => { "version 2", "community", "nova", "constellation" };
 
-
-
   #
   # Some related topics form a promise "group by association"
   #
-
-  "linux_distros" slist => { "suse", "ubuntu", "fedora", "redhat", "debian", "slackware", "gentoo" };
 
   "cf2_actions"   slist => {
                            "acl",
@@ -147,6 +145,10 @@ vars:
   "nova_features"  slist => { "ldap integration", "sql integration", "windows registry editing", "impact analysis",
                               "access control list management", "serving literal data", "syntax lookup" };
 
+  "seg_causes" slist => { "bad memory reference", "bad library", "software build error", "software bug" };
+
+
+######################################################
 
 topics:
 
@@ -223,6 +225,34 @@ topics:
   "storage"            comment => "Remotely accessible disk volumes.";
   "database"           comment => "Relational database services";
   "login"              comment => "The ability to log onto systems with a username and password";
+  "daemons"            comment => "Unix parlance for a running background process that handles an application service";
+
+
+things:
+
+ daemons::
+
+   "httpd" comment => "The apache web daemon",
+           affects => { "application_services::web", "promise_types::processes" },
+          provides => { "application_services::web", "www" },
+        is_part_of => { "application_services::web" };
+
+  "saslauthd"     comment => "Authentication module for the mail delivery service";
+  "freshclam"     comment => "Gets updates for the clam virus scanner";
+  "clamd"         comment => "A mail anti-virus content scanner";
+  "clamav-milter" comment => "Mail virus scanner interface for clamd";
+  "spamd"         comment => "A mail spam scanner, Spam Assassin service";
+  "amavisd"       comment => "Yet another virus/spam scanner";
+  "smtpd"         comment => "SMTP server used by postfix";
+
+
+
+ "$(mail_daemons)" comment => "Email delivery software",
+         affects => { "application_services::mail", "promise_types::processes" },
+         provides => { "application_services::mail", "smtp" },
+       is_part_of => { "application_services::mail" },
+             uses => { "@(used_by_mail_daemons)" };
+
 
  network_services::
 
@@ -242,6 +272,8 @@ topics:
   "LDAP"     comment => "A well-known directory service. MS Active Directory purports to support this standard.";
   "NIS"      comment => "Sun's Network Information Service (previously called Yellow Pages).";
   "DHCP"     comment => "An IP configuration service.";
+
+topics:
 
  database::
 
@@ -270,7 +302,7 @@ topics:
 
  faults::
 
-  "segmentation fault"       association => a("$(cause[f])","bad memory reference","$(cause[f])");
+  "segmentation fault"       association => a("$(cause[f])","@(seg_causes)","$(cause[f])");
   "remote connection problem";
   "web server not running";
   "print server not running";
@@ -279,6 +311,8 @@ topics:
   "allowMultipleConnectionsFrom not set";
   "trustKeysFrom not set";
   "access to file not granted";
+  "insufficient permissions";
+  "File system not mounted";
 
  ########################################################################
 
@@ -508,27 +542,27 @@ topics:
 
     "cfengine 2 control settings" comment => "Parameters that affect the behaviour of the agent rather than affect the system configuration.";
 
-     "acl"         association => a("corresponds to","promises::files","is the new syntax for");
-     "alerts"      association => a("corresponds to","promises::reports","is the new syntax for");
-     "copy"        association => a("corresponds to","promises::files","is the new syntax for");
-     "disks"       association => a("corresponds to","promises::storage","is the new syntax for");
-     "directories"  association => a("corresponds to","promises::files","is the new syntax for");
-     "disable"     association => a("corresponds to","promises::files","is the new syntax for");
-     "editfiles"   association => a("corresponds to","promises::files","is the new syntax for");
-     "files"       association => a("corresponds to","promises::files","is the new syntax for");
-     "groups"      association => a("corresponds to","promises::classes","is the new syntax for");
-     "links"       association => a("corresponds to","promises::files","is the new syntax for");
-     "methods"     association => a("corresponds to","promises::methods","is the new syntax for");
-     "miscmounts"  association => a("corresponds to","promises::storage","is the new syntax for");
-     "processes"  association => a("corresponds to","promises::processes","is the new syntax for");
-     "packages"  association => a("corresponds to","promises::packages","is the new syntax for");
-     "rename"  association => a("corresponds to","promises::files","is the new syntax for");
-     "required"  association => a("corresponds to","promises::storage","is the new syntax for");
-     "resolve"  association => a("corresponds to","edit_line","is the new syntax for");
-     "shellcommands"  association => a("corresponds to","promises::commands","is the new syntax for");
-     "strategies"  association => a("corresponds to","promises::classes","is the new syntax for");
-     "tidy"  association => a("corresponds to","promises::files","is the new syntax for");
-     "unmount"   association => a("corresponds to","promises::storage","is the new syntax for");
+     "acl"         association => a("corresponds to","promise_types::files","is the new syntax for");
+     "alerts"      association => a("corresponds to","promise_types::reports","is the new syntax for");
+     "copy"        association => a("corresponds to","promise_types::files","is the new syntax for");
+     "disks"       association => a("corresponds to","promise_types::storage","is the new syntax for");
+     "directories"  association => a("corresponds to","promise_types::files","is the new syntax for");
+     "disable"     association => a("corresponds to","promise_types::files","is the new syntax for");
+     "editfiles"   association => a("corresponds to","promise_types::files","is the new syntax for");
+     "files"       association => a("corresponds to","promise_types::files","is the new syntax for");
+     "groups"      association => a("corresponds to","promise_types::classes","is the new syntax for");
+     "links"       association => a("corresponds to","promise_types::files","is the new syntax for");
+     "methods"     association => a("corresponds to","promise_types::methods","is the new syntax for");
+     "miscmounts"  association => a("corresponds to","promise_types::storage","is the new syntax for");
+     "processes"  association => a("corresponds to","promise_types::processes","is the new syntax for");
+     "packages"  association => a("corresponds to","promise_types::packages","is the new syntax for");
+     "rename"  association => a("corresponds to","promise_types::files","is the new syntax for");
+     "required"  association => a("corresponds to","promise_types::storage","is the new syntax for");
+     "resolve"  association => a("corresponds to","promise_types::edit_line","is the new syntax for");
+     "shellcommands"  association => a("corresponds to","promise_types::commands","is the new syntax for");
+     "strategies"  association => a("corresponds to","promise_types::classes","is the new syntax for");
+     "tidy"  association => a("corresponds to","promise_types::files","is the new syntax for");
+     "unmount"   association => a("corresponds to","promise_types::storage","is the new syntax for");
 
  ########################################################################
 
@@ -659,11 +693,11 @@ topics:
 
   #
 
- "manage" comment => "Traditionally servers needed to be managed by responding to incidents. Under cfengine indicdents are repaired automatically and management is chiefly about observing and diving the success of the current system policy.";
+ "management" comment => "Traditionally servers needed to be managed by responding to incidents. Under cfengine indicdents are repaired automatically and management is chiefly about observing and diving the success of the current system policy.";
 
-  "manage" association => a("consists of","monitoring","can be used as part of");    
-  "manage" association => a("consists of","system outputs","can be used as part of");    
-  "manage" association => a("consists of","repair","is an aspect of");    
+  "management" association => a("consists of","monitoring","can be used as part of");    
+  "management" association => a("consists of","system outputs","can be used as part of");    
+  "management" association => a("consists of","repair","is an aspect of");    
 
   #
 
@@ -817,17 +851,27 @@ promise_theory::
    "linear topic map notation";
 
 
+topics:
+
+  #
+  # Manuals
+  #
+
+  "special topics guides" comment => "Short documents that highlight a specific issue";
+
+  "manuals" comment => "Short documents that highlight a specific issue";
+
+ special_topics_guides::
+
+   "adoption of cfengine";
+
+   "cdp" comment => "Content Driven Policies or Data Driven Policy. This is a standard template, usually written by Cfengine that allows users to provide just stripped down data, in \"spreadsheet\" format to accomplish certain policy.";
+
+
+
   ################################################################
 
-
 occurrences:
-
- orchestration::
-
-         "/inside/manuals/st-orchestrate.html"
-      represents => { "introduction" };
-
-
 
  eTOM::
 
@@ -942,19 +986,13 @@ occurrences:
 
    functions::
 
-     "/inside/manuals/cf2-Reference#Variable-expansion-and-contexts"
-          represents => { "variables" };
-
-     "/inside/manuals/cf2-Reference#Setting-classes-with-special-functions"
-          represents => { "classes" };
-
-     "/inside/manuals/cf3-reference#Special-functions"
+     "/docs/cf3-reference#Special-functions"
           represents => { "cf3" };
 
 
   hard_classes::
 
-   "/inside/manuals/cf3-reference#Hard-classes"
+   "/docs/cf3-reference#Hard-classes"
           represents => { "manual" };
 
    "A classification of the basic environment that is immutable, e.g. about the system hardware"
@@ -969,7 +1007,7 @@ occurrences:
 
   role_based_access_control::
 
-     "/inside/manuals/cf3-reference#roles-in-server-promises"
+     "/docs/cf3-reference#roles-in-server-promises"
           represents => { "cf3" };
 
 
@@ -1011,7 +1049,7 @@ occurrences:
             represents => { "definitions" },
             representation => "literal";
 
-     "/inside/manuals/cf3-reference#Types-in-cfengine-3"
+     "/docs/cf3-reference#Types-in-cfengine-3"
             represents => { "Cfengine reference" };
 
   rvalue::
@@ -1019,7 +1057,7 @@ occurrences:
             represents => { "definitions" },
             representation => "literal";
 
-     "/inside/manuals/cf3-reference#Types-in-cfengine-3"
+     "/docs/cf3-reference#Types-in-cfengine-3"
             represents => { "Cfengine reference" };
 
   structural_relationships:: 
@@ -1313,7 +1351,7 @@ computer_immunology::
 
  rollback::
 
-     "/inside/manuals/st-iterate.html",
+     "/docs/st-iterate.html",
       represents => { "definitions", "Example" };
 
 

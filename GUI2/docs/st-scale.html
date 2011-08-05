@@ -212,7 +212,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <ul class="menu">
 <li><a accesskey="1" href="#What-is-scalability_003f">What is scalability?</a>
-<li><a accesskey="2" href="#How-does-Cfengine-address-scale_003f">How does Cfengine address scale?</a>
+<li><a accesskey="2" href="#How-does-CFEngine-address-scale_003f">How does CFEngine address scale?</a>
 <li><a accesskey="3" href="#What-does-scalability-depend-on_003f">What does scalability depend on?</a>
 <li><a accesskey="4" href="#A-product-strategy-for-scaling">A product strategy for scaling</a>
 <li><a accesskey="5" href="#A-user-strategy-for-scaling">A user strategy for scaling</a>
@@ -223,7 +223,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <a name="What-is-scalability%3f"></a>
 <a name="What-is-scalability_003f"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#How-does-Cfengine-address-scale_003f">How does Cfengine address scale?</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#How-does-CFEngine-address-scale_003f">How does CFEngine address scale?</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Principles-of-scalability">Principles of scalability</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Principles-of-scalability">Principles of scalability</a>
 
@@ -256,8 +256,8 @@ lowest-common-denominator standardization.
 </pre>
 
 <div class="node">
-<a name="How-does-Cfengine-address-scale%3f"></a>
-<a name="How-does-Cfengine-address-scale_003f"></a>
+<a name="How-does-CFEngine-address-scale%3f"></a>
+<a name="How-does-CFEngine-address-scale_003f"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#What-does-scalability-depend-on_003f">What does scalability depend on?</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-is-scalability_003f">What is scalability?</a>,
@@ -265,7 +265,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Principles-of-scalability">Principles 
 
 </div>
 
-<h3 class="section">1.2 How does Cfengine address scale?</h3>
+<h3 class="section">1.2 How does CFEngine address scale?</h3>
 
 <pre class="sp">
 
@@ -274,7 +274,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Principles-of-scalability">Principles 
 
 </pre>
 <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine is a decentralized (or federated) agent-based system, with no single point of
+CFEngine is a decentralized (or federated) agent-based system, with no single point of
 failure. It uses integrated Knowledge Management to present
 comprehensible views of how infrastructure complies with user intentions. 
 </td></tr></table>
@@ -284,7 +284,7 @@ comprehensible views of how infrastructure complies with user intentions.
 </pre>
 
 In this Special Topics Guide, we take a simple approach to gauging the
-scalability of Cfengine, considering the worst case scalability of
+scalability of CFEngine, considering the worst case scalability of
 the software as a management system for typical environments
 and network models.
 
@@ -293,7 +293,7 @@ and network models.
 <a name="What-does-scalability-depend-on_003f"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#A-product-strategy-for-scaling">A product strategy for scaling</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-does-Cfengine-address-scale_003f">How does Cfengine address scale?</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-does-CFEngine-address-scale_003f">How does CFEngine address scale?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Principles-of-scalability">Principles of scalability</a>
 
 </div>
@@ -304,7 +304,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Principles-of-scalability">Principles 
 
 </pre>
 
-Cfengine's scalability is not only a function of the Cfengine
+CFEngine's scalability is not only a function of the CFEngine
 software, but also of the environment in which it operates and the
 choices that are made. Some relevant environmental factors include:
      <ul>
@@ -325,16 +325,16 @@ infrastructure:
 <li>The ability for a significant number of people to understand the result (comprehension). 
 </ul>
 
-   <p>Cfengine does all processing of configuration policy at the
+   <p>CFEngine does all processing of configuration policy at the
 destination node (i.e. on the affected system). There is no
-centralization of computation. Cfengine Nova adds fault-tolerant
+centralization of computation. CFEngine Nova adds fault-tolerant
 multi-node orchestration, in which any node's state can
 be made available to other nodes on request.
 
    <p>In general, reliance on common or centralized information will limit
 the inherent scalability of the system. However, through opportunistic
-use of caching, Cfengine is able to avoid single points of reliance. 
-Cfengine's asynchronous promise model makes the impact of resource sharing less significant.
+use of caching, CFEngine is able to avoid single points of reliance. 
+CFEngine's asynchronous promise model makes the impact of resource sharing less significant.
 
 <div class="node">
 <a name="A-product-strategy-for-scaling"></a>
@@ -351,7 +351,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Principles-of-scalability">Principles 
 
 </pre>
 
-As our product names suggest, Cfengine's scaling behaviour follows an
+As our product names suggest, CFEngine's scaling behaviour follows an
 `astronomical' hierarchy of scales. Our product range
      <ul>
 <li>Nova,
@@ -417,12 +417,12 @@ An environment that consists of multiple environments, or very large size will h
 to be handled as a constellation configuration.
 
 <ul class="menu">
-<li><a accesskey="1" href="#Scalable-Cfengine-architecture">Scalable Cfengine architecture</a>
+<li><a accesskey="1" href="#Scalable-CFEngine-architecture">Scalable CFEngine architecture</a>
 <li><a accesskey="2" href="#Layout-guidelines-for-scalability">Layout guidelines for scalability</a>
 </ul>
 
 <div class="node">
-<a name="Scalable-Cfengine-architecture"></a>
+<a name="Scalable-CFEngine-architecture"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Layout-guidelines-for-scalability">Layout guidelines for scalability</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#A-user-strategy-for-scaling">A user strategy for scaling</a>,
@@ -430,7 +430,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-user-strategy-for-scaling">A user st
 
 </div>
 
-<h4 class="subsection">1.5.1 Scalable Cfengine architecture</h4>
+<h4 class="subsection">1.5.1 Scalable CFEngine architecture</h4>
 
 <p>Several architectural principles aid the ability to scale to large size:
      <ul>
@@ -473,7 +473,7 @@ memory intensive work.
 <div class="node">
 <a name="Layout-guidelines-for-scalability"></a>
 <p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Scalable-Cfengine-architecture">Scalable Cfengine architecture</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Scalable-CFEngine-architecture">Scalable CFEngine architecture</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#A-user-strategy-for-scaling">A user strategy for scaling</a>
 
 </div>
@@ -609,13 +609,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-guidelines-for-comprehension">P
 
      <ul>
 <li><b>Don't have 250,000 promises</b>. If your conception of the problem is
-this complicated, then Cfengine is not your problem. Management will
+this complicated, then CFEngine is not your problem. Management will
 fail by its own overheads unless it can slim down problems to
 <i>necessary and sufficient</i> complexity. Over-constrained systems
 usually fail eventually because they become overwhelmed by the problem
 of unintentionally conflicting requirements. Keep it simple.
 
-     <p>If you are migrating from Cfengine 2, then many of your separate promises
+     <p>If you are migrating from CFEngine 2, then many of your separate promises
 can be turned into a single promise by using lists and other patterns. 
 This will drastically improve the modelling capabilities and reduce the
 complexity of the policy.
@@ -633,7 +633,7 @@ should be kept and managed locally by those entities, and not mixed together.
 Centralization is the enemy of scaling.
 
    </ul>
-   When writing the Cfengine bundles of promises, you will need to use a
+   When writing the CFEngine bundles of promises, you will need to use a
 `meta-model' to organize the bundles. This is part of a Knowledge
 Management (comprehension) strategy. Your best friend here is someone
 with didactic or pedagogical skills, as he/she will maintain the
@@ -747,7 +747,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Scalable-policy-strategy">Scalable pol
 
 <h3 class="section">2.3 Avoiding network traffic</h3>
 
-<p>Connecting to a Cfengine server process is one of the most time consuming activities
+<p>Connecting to a CFEngine server process is one of the most time consuming activities
 in centralized updating. Every bidirectional query that has to be made
 adds latency and processing time the limits scalability. The connection time
 and data transfer size during checking for updates can be minimized by making
@@ -803,8 +803,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Scalable-policy-strategy">Scalable pol
 
 <h3 class="section">2.5 Using the Copernicus Knowledge Map</h3>
 
-<p>The Copernicus Knowledge Map is an integral part of the commercial Cfengine products. 
-It is also a feature that is developing rapidly as part of the Cfengine commitment to
+<p>The Copernicus Knowledge Map is an integral part of the commercial CFEngine products. 
+It is also a feature that is developing rapidly as part of the CFEngine commitment to
 research and development. 
 It forms a browsable `mental model' of relationships
 between promises, goals and documents that describe them (including
@@ -850,7 +850,7 @@ system, and the way that information flows around the highways and
 bottlenecks within it. As a distributed system, some of those are
 internal to the software, and some lie in the way it is used.
 
-   <p>Cfengine allows users to build any external architecture, so the only
+   <p>CFEngine allows users to build any external architecture, so the only
 intrinsic limitations are those internal to the software itself. Poor
 decisions about external architecture generally lead to greater
 problems that the internal limitations.
@@ -868,12 +868,12 @@ each individual part by name, we can reduce the amount of information we need to
 specify.
 
      <br><dt><i>Persistent locking of execution</i><dd>is used to place limits on the frequency and concurrency of operations undertaken
-by Cfengine. Using the <code>ifelapsed</code> timers on each promise, one can say how
+by CFEngine. Using the <code>ifelapsed</code> timers on each promise, one can say how
 often work-intensive checks are made.
 
      <br><dt><i>Lazy evaluation</i><dd>is a common approach to efficiency, but it is difficult to achieve
 in a dynamic environment. Necessary complexity makes for necessary work. 
-Cfengine uses best-effort lazy evaluation to reduce processing, but errs on the side
+CFEngine uses best-effort lazy evaluation to reduce processing, but errs on the side
 of correctness, reliability and security. 
 </dl>
 
@@ -922,7 +922,7 @@ autonomously as a standalone system, requiring no communication with
 its peers, or with a central agency. Its policy is therefore constant
 and fixed.
 
-   <p>If this model suits your organization, the operation of Cfengine is
+   <p>If this model suits your organization, the operation of CFEngine is
 completely independent of the number of machines, so it exhibits
 <i>perfect scaling</i> with respect to the size of the infra-structure. 
 However, this model is too simple for most sites, and its value lies
@@ -940,17 +940,17 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Internal-and-external-scalability-of-t
 
 <h3 class="section">3.2 Failover and redundancy</h3>
 
-<p>As a self-healing system, Cfengine poses a low risk to loss of data. Most management
+<p>As a self-healing system, CFEngine poses a low risk to loss of data. Most management
 data that are lost in an incident will recover automatically.
 
      <dl>
 <dt><i>Failover due to unavailability.</i><dd>
-The loss of a hub is not a critical failure in a Cfengine managed
+The loss of a hub is not a critical failure in a CFEngine managed
 network. Client machines continue to work with the last known version
 of policy until a hub returns to `online' status.  During updates,
 hubs can come under load. To avoid this, splaying options should be
 used primarily<a rel="footnote" href="#fn-1" name="fnd-1"><sup>1</sup></a>. 
-Cfengine's failover servers for file-copying can be set up to offer
+CFEngine's failover servers for file-copying can be set up to offer
 immediate redundancy.
 
      <br><dt><i>Shared storage for </i><samp><span class="file">/var/cfengine/masterfiles</span></samp><i>.</i><dd>
@@ -959,7 +959,7 @@ policy server (hub) and any failover servers. In that case only this
 one directory can be shared.
 
      <br><dt><i>Backup of </i><samp><span class="file">/var/cfengine</span></samp><i>.</i><dd>
-It is not strictly necessary to have a backup of the Cfengine work directory, but
+It is not strictly necessary to have a backup of the CFEngine work directory, but
 keeping a backup of this for the hub can save time when restoring a broken hub,
 since the records of known clients are stored in this workspace, and the current
 status of reports is also stored.
@@ -997,8 +997,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Internal-and-external-scalability-of-t
 
 </pre>
 
-To understand the external scalability of Cfengine management, we
-shall estimate how large a Cfengine system can grow using simple
+To understand the external scalability of CFEngine management, we
+shall estimate how large a CFEngine system can grow using simple
 centralized management, in the so-called `star network' pattern. This
 will force us to confront low level performance characteristics, where we try to
 extract the most from limited resources.
@@ -1007,7 +1007,7 @@ extract the most from limited resources.
 possibly frequent updates. The challenge is to optimize this
 process<a rel="footnote" href="#fn-2" name="fnd-2"><sup>2</sup></a>.  This makes the central hub into a bottleneck. It
 becomes the weakest link in the chain of information, i.e. the star network has
-limitations that are nothing to do with Cfengine itself. The counterpoint
+limitations that are nothing to do with CFEngine itself. The counterpoint
 is that the star network is very easy to comprehend, and thus it usually forms
 the starting point for most management frameworks.
 
@@ -1023,8 +1023,8 @@ the starting point for most management frameworks.
 
 </pre>
 <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-In the Community edition of Cfengine, updates travel only in one
-direction, from server to client. Cfengine Nova, adds to this the
+In the Community edition of CFEngine, updates travel only in one
+direction, from server to client. CFEngine Nova, adds to this the
 collection of data for reporting and analysis (CFDB), from client to
 hub. Thus the expected load on the server is the sum of both
 processes. 
@@ -1040,14 +1040,14 @@ given a number of hosts to support with a single hub, what capacity
 is required in system infrastructure to support it at a certain level?
 
 <ul class="menu">
-<li><a accesskey="1" href="#Typical-Cfengine-scales">Typical Cfengine scales</a>
+<li><a accesskey="1" href="#Typical-CFEngine-scales">Typical CFEngine scales</a>
 <li><a accesskey="2" href="#Scaling-of-updates">Scaling of updates</a>
 <li><a accesskey="3" href="#Limitations-on-the-CFDB-hub-database">Limitations on the CFDB hub database</a>
 <li><a accesskey="4" href="#Update-storms">Update storms</a>
 </ul>
 
 <div class="node">
-<a name="Typical-Cfengine-scales"></a>
+<a name="Typical-CFEngine-scales"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Scaling-of-updates">Scaling of updates</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#A-simple-worst-case-approach-to-scalability-_002d-the-star-network">A simple worst case approach to scalability - the star network</a>,
@@ -1055,7 +1055,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-worst-case-approach-to-scalab
 
 </div>
 
-<h4 class="subsection">3.3.1 Typical Cfengine scales</h4>
+<h4 class="subsection">3.3.1 Typical CFEngine scales</h4>
 
 <p>We start by setting some fundamental scales.
 
@@ -1075,7 +1075,7 @@ management overhead.
 <a name="Scaling-of-updates"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Limitations-on-the-CFDB-hub-database">Limitations on the CFDB hub database</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Typical-Cfengine-scales">Typical Cfengine scales</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Typical-CFEngine-scales">Typical CFEngine scales</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-worst-case-approach-to-scalability-_002d-the-star-network">A simple worst case approach to scalability - the star network</a>
 
 </div>
@@ -1278,11 +1278,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Internal-and-external-scalability-of-t
 
 <h3 class="section">3.5 Redundancy and load balancing in the Nova hub</h3>
 
-<p>Cfengine does not <i>need</i> a `high availability' architecture to be an
+<p>CFEngine does not <i>need</i> a `high availability' architecture to be an
 effective management system. The software was designed to work with
 very low availability, and the designers highly recommend avoiding the
 introduction of dependencies that require such availability. In normal
-operation, Cfengine will be able to continue to repair systems without
+operation, CFEngine will be able to continue to repair systems without
 any contact with the outside world, until actual policy changes are
 made.
 
@@ -1295,7 +1295,7 @@ hubs, which are in principle single points of failure.
 <li>Availability of policy in case of policy server failure. 
 <li>Availability of reports in case of reporting hub failure. 
 </ul>
-   Because Cfengine is a pull-based technology, the two processes look
+   Because CFEngine is a pull-based technology, the two processes look
 like this:
      <ul>
 <li>Satellite `client' nodes pull policy from a policy server. 
@@ -1358,7 +1358,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Redundancy-and-load-balancing-in-the-N
 
 <h4 class="subsection">3.5.2 Redundant reporting hubs and recovery</h4>
 
-<p>A cfengine reporting hub is a host that aggregates reports from all
+<p>A CFEngine reporting hub is a host that aggregates reports from all
 managed hosts in a Nova starburst cluster. The purpose of aggregating
 reports is to have all the information in one place for searching,
 calibrating and comparing. The loss of a hub is an inconvenience
@@ -1373,7 +1373,7 @@ users.
 and increased overhead. 
 <li>If a hub serves so many computers that updating the reports becomes a burden,
 then you have probably already passed the point at which it makes sense to divide up
-your management into multiple hubs. Cfengine Constellation can provide a total viewpoint
+your management into multiple hubs. CFEngine Constellation can provide a total viewpoint
 in a scenario with multiple hubs. 
 </ul>
    Dividing hosts into multiple hubs should be a decision based on the absence of
@@ -1423,12 +1423,12 @@ The procedure for backing up the ephemeral data is:
 <li><a name="toc_Principles-of-scalability" href="#Principles-of-scalability">1 Principles of scalability</a>
 <ul>
 <li><a href="#What-is-scalability_003f">1.1 What is scalability?</a>
-<li><a href="#How-does-Cfengine-address-scale_003f">1.2 How does Cfengine address scale?</a>
+<li><a href="#How-does-CFEngine-address-scale_003f">1.2 How does CFEngine address scale?</a>
 <li><a href="#What-does-scalability-depend-on_003f">1.3 What does scalability depend on?</a>
 <li><a href="#A-product-strategy-for-scaling">1.4 A product strategy for scaling</a>
 <li><a href="#A-user-strategy-for-scaling">1.5 A user strategy for scaling</a>
 <ul>
-<li><a href="#Scalable-Cfengine-architecture">1.5.1 Scalable Cfengine architecture</a>
+<li><a href="#Scalable-CFEngine-architecture">1.5.1 Scalable CFEngine architecture</a>
 <li><a href="#Layout-guidelines-for-scalability">1.5.2 Layout guidelines for scalability</a>
 </li></ul>
 <li><a href="#Unexpected-risks-of-scaling">1.6 Unexpected risks of scaling</a>
@@ -1451,7 +1451,7 @@ The procedure for backing up the ephemeral data is:
 <li><a href="#Failover-and-redundancy">3.2 Failover and redundancy</a>
 <li><a href="#A-simple-worst-case-approach-to-scalability-_002d-the-star-network">3.3 A simple worst case approach to scalability: the star network</a>
 <ul>
-<li><a href="#Typical-Cfengine-scales">3.3.1 Typical Cfengine scales</a>
+<li><a href="#Typical-CFEngine-scales">3.3.1 Typical CFEngine scales</a>
 <li><a href="#Scaling-of-updates">3.3.2 Scaling of updates</a>
 <li><a href="#Limitations-on-the-CFDB-hub-database">3.3.3 Limitations on the CFDB hub database</a>
 <li><a href="#Update-storms">3.3.4 Update storms</a>
@@ -1492,7 +1492,7 @@ idea that it is possible to have `instant' or `immediate'
 updates. There is always some delay. It is more pragmatic to manage
 that delay by making it predictable than to leave it to chance.</p>
 
-   <p class="footnote"><small>[<a name="fn-2" href="#fnd-2">2</a>]</small> The estimates here are based on Cfengine core versions
+   <p class="footnote"><small>[<a name="fn-2" href="#fnd-2">2</a>]</small> The estimates here are based on CFEngine core versions
 3.1.2 and higher.</p>
 
    <p class="footnote"><small>[<a name="fn-3" href="#fnd-3">3</a>]</small> Maximum entropy means the most even or flat

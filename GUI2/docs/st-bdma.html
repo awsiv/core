@@ -222,26 +222,26 @@ The four mission phases are sometimes referred to as
 be put assembled or `built' before they can be applied. This is
 the planning phase.
 
-     <p>In cfengine, what you build is a template of proposed promises for the
+     <p>In CFEngine, what you build is a template of proposed promises for the
 machines in an organization such that, if the machines all make and
 keep these promises, the system will function seamlessly as
 planned. This is how it works in a human organization, and this is how
 is works for computers too.
 
      <br><dt><em>Deploy</em><dd>Deploying really means launching the policy into production.  In
-cfengine you simply publish your policy (in cfengine parlance these
+CFEngine you simply publish your policy (in CFEngine parlance these
 are `promise proposals') and the machines see the new proposals and
-can adust accordingly. Each machine runs an agent that is capable of
+can adjust accordingly. Each machine runs an agent that is capable of
 keeping the system on course and maintaining it over time without
 further assistance.
 
      <br><dt><em>Manage</em><dd>Once a decision is made, unplanned events will occur. Such incidents
 traditionally set off alarms and humans rush to make new transactions
-to repair them. Under Cfengine guidance, the autonomous agent manages
+to repair them. Under CFEngine guidance, the autonomous agent manages
 the system, and humans only manage knowledge and have to deal with
 rare events that cannot be dealt with automatically.
 
-     <br><dt><em>Audit</em><dd>Cfengine performs continuous analysis and correction, and commercial
+     <br><dt><em>Audit</em><dd>CFEngine performs continuous analysis and correction, and commercial
 editions generate explicit reports on mission status.  Users can sit
 back and examine these reports to check mission progress, or examine
 the current state in relation to the knowledge map for the mission.
@@ -264,15 +264,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <pre class="sp">
 
 </pre>
-At Cfengine we talk about stem cell hosts. A stem cell host is a generic
+At CFEngine we talk about stem cell hosts. A stem cell host is a generic
 foundation of software that is the <i>necessary and sufficient</i> basis for
 any future purpose. To make a finished system from this stem cell host,
-you only have to `differentiate' the system from this generic basis by running Cfengine.
+you only have to `differentiate' the system from this generic basis by running CFEngine.
 
    <p>Differentiation of hosts involves adding or subtracting software packages,
 and/or configuring the basic system.  This strategy is cost effective,
 as you do not have to maintain more than one base-line `image' for
-each operating system; rather, you use Cfengine to implement and
+each operating system; rather, you use CFEngine to implement and
 maintain the morphology of the differences. Stem cell hosts are
 normally built using PXE services by booting and installing automatically
 from the network.
@@ -292,7 +292,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </pre>
 There are many approaches to building complete systems. 
-When you use Cfengine, you should try to progress from
+When you use CFEngine, you should try to progress from
 thinking only about putting bytes on disks, to planning
 a long term set of promises to keep.
 
@@ -300,8 +300,8 @@ a long term set of promises to keep.
 <li>What services do you want to support? 
 <li>What promises do you want to keep concerning these services? 
 <li>Are these promises sustainable and convergently implementable? 
-<li>Formulate proposed intentions in the form of Cfengine promises. 
-<li>Discuss the impact of these in your team of Cfengine Mission Specialists (more than one pair of eyes). 
+<li>Formulate proposed intentions in the form of CFEngine promises. 
+<li>Discuss the impact of these in your team of CFEngine Mission Specialists (more than one pair of eyes). 
 </ul>
 
    <p>It is worth spending extra time in the build planning to simplify
@@ -313,8 +313,8 @@ The better you understand your intentions, the simpler the system will be.
 formulate your requirements as promises to be kept, you have identified not only
 what, where, when and how, but also who is reponsible and affected by every promise.
 
-   <p>Building systems is resource intensive. Cfengine works well with <b>rPath</b>, allowing optimized
-build that can shave off many minutes from the build time for machines. Cfengine can then take over where
+   <p>Building systems is resource intensive. CFEngine works well with <b>rPath</b>, allowing optimized
+build that can shave off many minutes from the build time for machines. CFEngine can then take over where
 rPath leaves off, performing surgically precise customization.
 
 <div class="node">
@@ -334,14 +334,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 Deploying a policy is a potentially dangerous operation, as it will
 lead to change, with associated risk. Side-effects are common, and
-often result from incomplete planning. (See the Cfengine Special
+often result from incomplete planning. (See the CFEngine Special
 Topics Guide on <i>Change Management</i>).
 
    <p>The following sequence forms a checklist for deploying successful policy change:
      <ol type=1 start=1>
 <li>Discuss the impact of changes in the team. 
 <li>Commit the changes to promises in version control, e.g. subversion. 
-<li>Make a change in the cfengine input files. 
+<li>Make a change in the CFEngine input files. 
 <li>Run the configuration through &lsquo;<samp><span class="samp">cf-promises --inform</span></samp>&rsquo; to check for problems. 
 <li>Move the policy to a test system. 
 <li>Try running the configuration in dry-run model: &lsquo;<samp><span class="samp">cf-agent --dry-run</span></samp>&rsquo;
@@ -352,10 +352,10 @@ Topics Guide on <i>Change Management</i>).
 <li>If possible, test on one or a few machines before releasing for general use.
         </ol>
 
-   <p>Cfengine recommends a process of many small incremental changes, rather than large
+   <p>CFEngine recommends a process of many small incremental changes, rather than large
 high-risk deployments.
 
-   <p>Cfengine allows you to apply changes at a much finer level of granularity than
+   <p>CFEngine allows you to apply changes at a much finer level of granularity than
 any package based management system, thus it complements basic package management with
 its deployment and real time repair (see next section).
 
@@ -374,22 +374,22 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </pre>
 
-Managing systems is an almost trivial task with Cfengine. Once a model
+Managing systems is an almost trivial task with CFEngine. Once a model
 for desired state has been created, you just sit back and watch.  You
 should be ready for `hands free' operation. No one should make changes
 to the system by hand. All changes should follow the deployment
 strategy above.
 
-   <p>All that remains to do is wait for email alerts from Cfengine and to
-browse reports about the system state. In Cfengine Nova, these reports
+   <p>All that remains to do is wait for email alerts from CFEngine and to
+browse reports about the system state. In CFEngine Nova, these reports
 are generated automatically and integrated into the system knowledge
 base.
 
-   <p>Most email alerts from Cfengine are information only. It is possible
-(but not recommended) to make Cfengine very verbose about its
+   <p>Most email alerts from CFEngine are information only. It is possible
+(but not recommended) to make CFEngine very verbose about its
 operations. It is common to look for confirmation early in the phase
-of adopting Cfengine, as trust in the software is building. Eventually
-users turn off the verbosity and the default is for Cfengine to send
+of adopting CFEngine, as trust in the software is building. Eventually
+users turn off the verbosity and the default is for CFEngine to send
 as little email or output as possible.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
@@ -415,13 +415,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </pre>
 
-Auditing systems is a continuous process when using Cfengine
+Auditing systems is a continuous process when using CFEngine
 Nova. Report data are collected on a continuous and distributed
 basis. These data are then collected from each distributed location
 according to a schedule of your choosing to collate and integrate the
 reports from all systems.
 
-   <p>The reports Cfengine provides are meant to offer simple summaries of
+   <p>The reports CFEngine provides are meant to offer simple summaries of
 the kind of information administrators need about their environment,
 avoiding unnecessary detail<a rel="footnote" href="#fn-1" name="fnd-1"><sup>1</sup></a>.
 
@@ -435,7 +435,7 @@ avoiding unnecessary detail<a rel="footnote" href="#fn-1" name="fnd-1"><sup>1</s
 <br><dt><em>Installed patches report</em><dd>Patches not yet installed, but published by vendor if available. 
 <br><dt><em>Installed software report</em><dd>Software already installed on system if available. 
 <br><dt><em>Lastseen report</em><dd>Time and frequency of communications with peers, host reliability. 
-<br><dt><em>Micro-audit report</em><dd>Generated by cfengine self-auditing. This report is not aggregated. 
+<br><dt><em>Micro-audit report</em><dd>Generated by CFEngine self-auditing. This report is not aggregated. 
 <br><dt><em>Monitor summary report</em><dd>Pseudo-real-time measurement of time series data. 
 <br><dt><em>Performance report</em><dd>Time cost of verifying system promises. 
 <br><dt><em>Promise report</em><dd>Per-promise average compliance report over time. 
@@ -460,19 +460,19 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 </pre>
      <ol type=1 start=1>
 <li>Define a stem cell host template
-<li>Set up PXE network booting and kickstart / jumpstart OS tools with Cfengine integrated
-<li>Get Cfengine running and updating on all hosts, but making no system changes. 
+<li>Set up PXE network booting and kickstart / jumpstart OS tools with CFEngine integrated
+<li>Get CFEngine running and updating on all hosts, but making no system changes. 
 <li>Define a service catalogue. 
 <li>Discuss and formulate a policy increment, thinking convergence at all times
 <li>Publish (deploy) the policy. 
-<li>Follow emails and reports in the Cfengine Knowledge Map (Manage). 
+<li>Follow emails and reports in the CFEngine Knowledge Map (Manage). 
 <li>Adjust policy if necessary, following procedures for change management (Manage)
 <li>View reports (or enjoy the silence) to audit system state.
         </ol>
 
-   <p>Cfengine works well with package based management software. Users of
+   <p>CFEngine works well with package based management software. Users of
 rPath, for example, can achieve substantially improved efficiency in
-the build phase. Cfengine takes over where package based systems leave
+the build phase. CFEngine takes over where package based systems leave
 off, providing an unprecedented level of control `hands free'.
 
    <p><a name="Contents">
@@ -509,7 +509,7 @@ pageTracker._trackPageview();
    <div class="footnote">
 <hr>
 <a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> Reporting intelligence is a major
-area of development in Cfengine, and the next commercial edition Cfengine Constellation
+area of development in CFEngine, and the next commercial edition CFEngine Constellation
 will include a generic queryable semantic web of the integrated system, with
 correlation analyses and more. The capabilities for reporting grow exponentially
 as one progresses from Community Edition to Nova to Constellation.</p>

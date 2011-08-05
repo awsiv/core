@@ -6,13 +6,16 @@ topics:
 
 "cf3-glossary";
 Special_Topics_Guide::
-    "Cfengine-Best-Practices"  association => a("discussed in","Cfengine-Best-Practices","discusses");
+    "CFEngine-Best-Practices"  association => a("discusses","CFEngine Glossary","is discussed in");
 
 
 occurrences:
 
-Cfengine_Best_Practices::
+manuals::
+ "/docs/cf3-glossary.html"
+  represents => { "CFEngine Glossary" };
+CFEngine_Best_Practices::
  "/docs/cf3-glossary.html#Top"
-  represents => { "Short note" };
+  represents => { "Text section" };
 }
 

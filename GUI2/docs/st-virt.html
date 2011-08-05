@@ -1,8 +1,8 @@
 <html lang="en">
 <head>
-<title>Virtualization and Cloud Support in Cfengine</title>
+<title>Virtualization and Cloud Support in CFEngine</title>
 <meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="Virtualization and Cloud Support in Cfengine">
+<meta name="description" content="Virtualization and Cloud Support in CFEngine">
 <meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="top" href="#Top">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
@@ -174,7 +174,7 @@ A:visited { color: black }
 A:active { color: #600041 }--></style>
 </head>
 <body>
-<h1 class="settitle">Virtualization and Cloud Support in Cfengine</h1>
+<h1 class="settitle">Virtualization and Cloud Support in CFEngine</h1>
 <div class="node">
 <a name="Top"></a>
 <p><hr>
@@ -188,8 +188,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
 <ul class="menu">
 <li><a accesskey="1" href="#What-are-virtualization-and-cloud-computing_003f">What are virtualization and cloud computing?</a>
-<li><a accesskey="2" href="#Why-build-virtualization-support-into-Cfengine_003f">Why build virtualization support into Cfengine?</a>
-<li><a accesskey="3" href="#What-can-Cfengine-do-with-virtual-machines_003f">What can Cfengine do with virtual machines?</a>
+<li><a accesskey="2" href="#Why-build-virtualization-support-into-CFEngine_003f">Why build virtualization support into CFEngine?</a>
+<li><a accesskey="3" href="#What-can-CFEngine-do-with-virtual-machines_003f">What can CFEngine do with virtual machines?</a>
 <li><a accesskey="4" href="#Environments-promises">Environments promises</a>
 <li><a accesskey="5" href="#Virtualization-types-supported">Virtualization types supported</a>
 <li><a accesskey="6" href="#Distinct-states">Distinct states</a>
@@ -205,7 +205,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <a name="What-are-virtualization-and-cloud-computing%3f"></a>
 <a name="What-are-virtualization-and-cloud-computing_003f"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Why-build-virtualization-support-into-Cfengine_003f">Why build virtualization support into Cfengine?</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Why-build-virtualization-support-into-CFEngine_003f">Why build virtualization support into CFEngine?</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -225,20 +225,20 @@ demand, often as an online service.
    <p>In this document, virtualization support refers specifically to
 hypervisor technologies supported by the open source library layer <i>libvirt</i>
 project, which includes interfaces for Xen, KVM, Vmware-ESX, and more. 
-Cfengine thus integrates freely with other tools based on this library, such
+CFEngine thus integrates freely with other tools based on this library, such
 as <i>virsh</i> and the <i>Virtual Manager</i> graphical user interface.
 
 <div class="node">
-<a name="Why-build-virtualization-support-into-Cfengine%3f"></a>
-<a name="Why-build-virtualization-support-into-Cfengine_003f"></a>
+<a name="Why-build-virtualization-support-into-CFEngine%3f"></a>
+<a name="Why-build-virtualization-support-into-CFEngine_003f"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#What-can-Cfengine-do-with-virtual-machines_003f">What can Cfengine do with virtual machines?</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#What-can-CFEngine-do-with-virtual-machines_003f">What can CFEngine do with virtual machines?</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-are-virtualization-and-cloud-computing_003f">What are virtualization and cloud computing?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">Why build virtualization support into Cfengine?</h3>
+<h3 class="unnumberedsec">Why build virtualization support into CFEngine?</h3>
 
 <pre class="sp">
 
@@ -250,7 +250,7 @@ in various stages of maturity. The libvirt project was designed as
 an integration layer based on an XML specification.
 
    <p>The tools for management are still quite primitive and require much
-manual work. Cfengine has a unique role to play in maintaining desired
+manual work. CFEngine has a unique role to play in maintaining desired
 state in virtual machine systems.
 
    <p>In the cloud, virtual machines may be rented from remote commercial
@@ -261,16 +261,16 @@ machines in other time-zones that it is impractical to monitor by
 legacy methods.
 
 <div class="node">
-<a name="What-can-Cfengine-do-with-virtual-machines%3f"></a>
-<a name="What-can-Cfengine-do-with-virtual-machines_003f"></a>
+<a name="What-can-CFEngine-do-with-virtual-machines%3f"></a>
+<a name="What-can-CFEngine-do-with-virtual-machines_003f"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Environments-promises">Environments promises</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Why-build-virtualization-support-into-Cfengine_003f">Why build virtualization support into Cfengine?</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Why-build-virtualization-support-into-CFEngine_003f">Why build virtualization support into CFEngine?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">What can Cfengine do with virtual machines?</h3>
+<h3 class="unnumberedsec">What can CFEngine do with virtual machines?</h3>
 
 <pre class="sp">
 
@@ -279,11 +279,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 The simple answer is: anything that <i>libvirt</i> can do, with added
 convergence to a desired state: that means, creating, destroying and
 starting and stopping machines. By starting virtual machines through
-Cfengine, you can be sure that a given `virtual guest' is running on
+CFEngine, you can be sure that a given `virtual guest' is running on
 one and only one physical host, thus avoiding conflicts that are
 difficult to detect with centralized systems.
 
-   <p>Cfengine does not support everything that libvirt does &ndash; it offers a
+   <p>CFEngine does not support everything that libvirt does &ndash; it offers a
 simplified interface that is meant for robustness, stability and
 hands-free repeatability.
 
@@ -291,10 +291,10 @@ hands-free repeatability.
 
 </pre>
 <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine does not use libvirt's TLS based web communication layer.  It
-manages every host as an independent entity, in typical Cfengine
-fashion, using Cfengine's own distributed cooperation to provide thje
-implicit communication.  Cfengine does not currently support so-called
+CFEngine does not use libvirt's TLS based web communication layer.  It
+manages every host as an independent entity, in typical CFEngine
+fashion, using CFEngine's own distributed cooperation to provide thje
+implicit communication.  CFEngine does not currently support so-called
 `live migration' of virtual machines. 
 </td></tr></table>
 
@@ -306,7 +306,7 @@ implicit communication.  Cfengine does not currently support so-called
 <a name="Environments-promises"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Virtualization-types-supported">Virtualization types supported</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-can-Cfengine-do-with-virtual-machines_003f">What can Cfengine do with virtual machines?</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-can-CFEngine-do-with-virtual-machines_003f">What can CFEngine do with virtual machines?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
@@ -317,7 +317,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </pre>
 
-A virtual machine is one example of what Cfengine calls an
+A virtual machine is one example of what CFEngine calls an
 `environment'.  You can promise to create (and host) an environment
 with certain attributes, just as you can promise to host a file or a
 process. Here is a simple example:
@@ -365,20 +365,20 @@ make a machine instance you normally want it to be running on one and
 only one host. So you want <i>every</i> machine to make a promise. On the
 environment's host, you want to promise that the environment is
 running, and on every other machine you want to promise that it is
-not. In Cfengine, you simply include a unique class belonging to host
-in the promise using <code>environment_host</code> and Cfengine assumes that
+not. In CFEngine, you simply include a unique class belonging to host
+in the promise using <code>environment_host</code> and CFEngine assumes that
 rest. Unique classes might include
           <ul>
-<li>Hostname class e.g. <code>myhost_cfengine_com</code>
+<li>Hostname class e.g. <code>myhost_CFEngine_com</code>
 <li>IP address class e.g. <code>ipv4_123_456_789_123</code>
 </ul>
      </ul>
 
    <p>An alternative way to write this example is to quote the XML
-specification in Cfengine directly. This has a few advantages: you can
+specification in CFEngine directly. This has a few advantages: you can
 re-use the data and use it as a template, filling in
-Cfengine-variables. You can thus adapt the configuration using
-Cfengine's classes.
+CFEngine-variables. You can thus adapt the configuration using
+CFEngine's classes.
 
 <pre class="verbatim">bundle agent my_vm_cloud
 {
@@ -442,10 +442,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </pre>
 
-Cfengine currently supports virtualization only through libvirt, so it supports
+CFEngine currently supports virtualization only through libvirt, so it supports
 those technologies that libvirt supports. Currently this includes  most popular
 technologies. You must choose the type of monitor that is to be responsible for
-keeping the environment promise. In Cfengine, you should choose between a
+keeping the environment promise. In CFEngine, you should choose between a
 machine environment or network environment of the following types:
      <dl>
 <dt><code>xen</code><dd>A Xen hypervisor virtual domain. 
@@ -478,7 +478,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </pre>
 
-Libvirt recognizes a number of distinct states are transliterated into Cfengine
+Libvirt recognizes a number of distinct states are transliterated into CFEngine
 as
      <dl>
 <dt><code>create</code><dd>Build and start an environment. 
@@ -526,19 +526,19 @@ To reserve all the data blocks right away:
 
 </pre>
 
-   <p>Libvirt uses an XML file format that cannot be circumvented. Cfengine
+   <p>Libvirt uses an XML file format that cannot be circumvented. CFEngine
 promises to honour the promises that are expressed in this file, as in
 the examples above.  You need to find out about this file format from
-the libvirt website.  To get Cfengine to honour these promises, you
+the libvirt website.  To get CFEngine to honour these promises, you
 point it to the specification that it should promise using
 <code>spec_file</code>.
 
    <p>You need to set up a network for virtual machines to communicate with
-the outside world. This can also be done with Cfengine, using the
+the outside world. This can also be done with CFEngine, using the
 network promise types to build a bridge into a virtual network.
 
-   <p>Then just run Cfengine to start, stop or manage the virtual environments on
-each localhost. Run in verbose mode to see how Cfengine maintains the states
+   <p>Then just run CFEngine to start, stop or manage the virtual environments on
+each localhost. Run in verbose mode to see how CFEngine maintains the states
 convergently.
 <pre class="verbatim"># cf-agent -v
 </pre>
@@ -686,8 +686,8 @@ body environment_resources virt_xml(name)
 <li><a name="toc_Top" href="#Top">Virtualization</a>
 <ul>
 <li><a href="#What-are-virtualization-and-cloud-computing_003f">What are virtualization and cloud computing?</a>
-<li><a href="#Why-build-virtualization-support-into-Cfengine_003f">Why build virtualization support into Cfengine?</a>
-<li><a href="#What-can-Cfengine-do-with-virtual-machines_003f">What can Cfengine do with virtual machines?</a>
+<li><a href="#Why-build-virtualization-support-into-CFEngine_003f">Why build virtualization support into CFEngine?</a>
+<li><a href="#What-can-CFEngine-do-with-virtual-machines_003f">What can CFEngine do with virtual machines?</a>
 <li><a href="#Environments-promises">Environments promises</a>
 <li><a href="#Virtualization-types-supported">Virtualization types supported</a>
 <li><a href="#Distinct-states">Distinct states</a>

@@ -1,8 +1,8 @@
 <html lang="en">
 <head>
-<title>Using Cfengine with Open Nebula</title>
+<title>Using CFEngine with Open Nebula</title>
 <meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="Using Cfengine with Open Nebula">
+<meta name="description" content="Using CFEngine with Open Nebula">
 <meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="top" href="#Top">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
@@ -174,7 +174,7 @@ A:visited { color: black }
 A:active { color: #600041 }--></style>
 </head>
 <body>
-<h1 class="settitle">Using Cfengine with Open Nebula</h1>
+<h1 class="settitle">Using CFEngine with Open Nebula</h1>
 <div class="node">
 <a name="Top"></a>
 <p><hr>
@@ -184,11 +184,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
 </div>
 
-<h2 class="unnumbered">Iteration</h2>
+<h2 class="unnumbered">Open Nebula</h2>
 
 <ul class="menu">
 <li><a accesskey="1" href="#What-is-Open-Nebula">What is Open Nebula</a>
-<li><a accesskey="2" href="#How-can-Cfengine-work-with-Open-Nebula">How can Cfengine work with Open Nebula</a>
+<li><a accesskey="2" href="#How-can-CFEngine-work-with-Open-Nebula">How can CFEngine work with Open Nebula</a>
 <li><a accesskey="3" href="#Example-Setup">Example Setup</a>
 <li><a accesskey="4" href="#Installation-and-dependancy-configuration">Installation and dependancy configuration</a>
 <li><a accesskey="5" href="#NFS-config-for-shared-image-repository">NFS config for shared image repository</a>
@@ -206,7 +206,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <div class="node">
 <a name="What-is-Open-Nebula"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#How-can-Cfengine-work-with-Open-Nebula">How can Cfengine work with Open Nebula</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#How-can-CFEngine-work-with-Open-Nebula">How can CFEngine work with Open Nebula</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -221,7 +221,7 @@ Interface (OCCI). Open Nebula is used as a cloud controller in a
 number of large private clouds.
 
 <div class="node">
-<a name="How-can-Cfengine-work-with-Open-Nebula"></a>
+<a name="How-can-CFEngine-work-with-Open-Nebula"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Example-Setup">Example Setup</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-is-Open-Nebula">What is Open Nebula</a>,
@@ -229,21 +229,21 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">How can Cfengine work with Open Nebula?</h3>
+<h3 class="unnumberedsec">How can CFEngine work with Open Nebula?</h3>
 
-<p>Cfengine is a lifecycle management tool that can be integrated with a
+<p>CFEngine is a lifecycle management tool that can be integrated with a
 Cloud Computing framework in a number of ways. Of the four phases of the computer lifecycle,
-Open Nebula and Cfengine will play different roles.
+Open Nebula and CFEngine will play different roles.
      <dl>
 <dt><i>Build</i><dd>Open Nebula focuses on building virtual machines in a managed framework, based on pre-built
-images. Cfengine can further customize these images through package of customized installation
+images. CFEngine can further customize these images through package of customized installation
 measures. 
 <br><dt><i>Deploy</i><dd>Open Nebula provides manual controls to bring up and tear down generic virtualized machines
-containing a baseline of software. Cfengine can further deploy patches and updates to these basic
+containing a baseline of software. CFEngine can further deploy patches and updates to these basic
 images without needing to take down a machine. 
-<br><dt><i>Manage</i><dd>One a machine is running, Cfengine can manage it exactly like any other physical computer. 
-<br><dt><i>Audit/Report</i><dd>Cfengine's local agents can extract information and learn system trends and characteristics
-over time. These may be collected in Cfengine's reporting interface or Mission Portal. 
+<br><dt><i>Manage</i><dd>One a machine is running, CFEngine can manage it exactly like any other physical computer. 
+<br><dt><i>Audit/Report</i><dd>CFEngine's local agents can extract information and learn system trends and characteristics
+over time. These may be collected in CFEngine's reporting interface or Mission Portal. 
 </dl>
 
    <pre class="sp">
@@ -251,7 +251,7 @@ over time. These may be collected in Cfengine's reporting interface or Mission P
 </pre>
 <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 Open Nebula's focus is on managing the deployment and recycling of the computing infrastucture. 
-Cfengine picks up where Open Nebula leaves off and manages the dynamic lifecycle of software,
+CFEngine picks up where Open Nebula leaves off and manages the dynamic lifecycle of software,
 applications and runtime state. 
 </td></tr></table>
 
@@ -263,7 +263,7 @@ applications and runtime state.
 <a name="Example-Setup"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Installation-and-dependancy-configuration">Installation and dependancy configuration</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-can-Cfengine-work-with-Open-Nebula">How can Cfengine work with Open Nebula</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-can-CFEngine-work-with-Open-Nebula">How can CFEngine work with Open Nebula</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
@@ -275,7 +275,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 </pre>
 
 This guide is based on an example setup provding a framework to
-demonstrate how Cfengine can be used to automate Open Nebula
+demonstrate how CFEngine can be used to automate Open Nebula
 configuration. The following assumptions serve as an example and
 should be altered to fit your needs:
 
@@ -283,9 +283,9 @@ should be altered to fit your needs:
 
 </pre>
      <ul>
-        <li>        All physical hosts are running Ubnutu, KVM and Cfengine 3. 
+        <li>        All physical hosts are running Ubnutu, KVM and CFEngine 3. 
         <li>        All physical hosts are on the same network. 
-        <li>        The Cfengine policy hub is running on the Open nebula front end. 
+        <li>        The CFEngine policy hub is running on the Open nebula front end. 
         <li>        NFS will be used to share virtual machine images between hosts. 
 </ul>
 
@@ -354,7 +354,7 @@ classes:
    <pre class="sp">
 
 </pre>
-To install the dependancies for each physical machine we can define these in a list and use the Cfengine standard library package promises to install them:
+To install the dependancies for each physical machine we can define these in a list and use the CFEngine standard library package promises to install them:
    <pre class="sp">
 
 </pre>
@@ -459,7 +459,7 @@ This promise points to the Open Nebula package file in /root/. To prevent repeat
    <pre class="sp">
 
 </pre>
-Open nebula requires a privileged user "oneadmin" to issue commands. In order to have cfengine perform these commands with the correct privileges we can use the contain body by appending the following to commands promises:
+Open nebula requires a privileged user "oneadmin" to issue commands. In order to have CFEngine perform these commands with the correct privileges we can use the contain body by appending the following to commands promises:
    <pre class="sp">
 
 </pre>
@@ -752,11 +752,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Virtual machine configuration</h3>
 
-<p>With cfengine preinstalled in our virtual machine image we can
+<p>With CFEngine preinstalled in our virtual machine image we can
 configure our generic image to the required specification on the
 fly. For community edition we will need to exchange keys and define
 access rules to the virtual machine can collect the policy files. with
-Cfengine nova this step is even simpler as we can set a start up
+CFEngine nova this step is even simpler as we can set a start up
 script to issue the bootstrap command so the new vm automatically
 registers with the policy hub.
 
@@ -826,16 +826,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <h3 class="unnumberedsec">Open Nebula Summary</h3>
 
 <p>Now we have a convergent self-repairing, Open Nebula powered private
-cloud! The main benefits in combining Cfengine and Open Nebula are the
+cloud! The main benefits in combining CFEngine and Open Nebula are the
 facility to increase infrastructure capacity just by connecting a new
-node controller to the network, and then allowing Cfengine to
+node controller to the network, and then allowing CFEngine to
 configure and maintain it over time. Finally, there is the hands-free
 configuration of generic virtual machine images to an arbitrary
 specification, without touching the virtual
 machine itself.
 
    <p>There is a vast array of configuration options and choices to be made
-in an Open Nebula setup, as with Cfengine. This flexibility is one of
+in an Open Nebula setup, as with CFEngine. This flexibility is one of
 its strengths. This guide demonstrates only a small subset of possible
 configuration choices aiming to provide a starting point for more
 comprehensive setups.
@@ -844,10 +844,10 @@ comprehensive setups.
    <div class="contents">
 <h2>Table of Contents</h2>
 <ul>
-<li><a name="toc_Top" href="#Top">Iteration</a>
+<li><a name="toc_Top" href="#Top">Open Nebula</a>
 <ul>
 <li><a href="#What-is-Open-Nebula">What is Open Nebula?</a>
-<li><a href="#How-can-Cfengine-work-with-Open-Nebula">How can Cfengine work with Open Nebula?</a>
+<li><a href="#How-can-CFEngine-work-with-Open-Nebula">How can CFEngine work with Open Nebula?</a>
 <li><a href="#Example-Setup">Example Setup</a>
 <li><a href="#Installation-and-dependancy-configuration">Installation and dependancy configuration</a>
 <li><a href="#NFS-config-for-shared-image-repository">NFS config for shared image repository</a>

@@ -5,64 +5,82 @@ bundle knowledge st_knowledge
 topics:
 
 "st-knowledge";
-Knowledge::
-    "How does Cfengine Nova help?" ;
-Knowledge::
-    "Knowledge transfer" ;
-Knowledge::
-    "What other special documents should an organization have?" ;
-Knowledge::
-    "Creating the map" ;
-Knowledge::
-    "Types of information" ;
-Knowledge::
-    "Pitfalls to avoid" ;
-Knowledge::
-    "The Copernicus Knowledge map" ;
-Knowledge::
-    "How should you begin?" ;
-Knowledge::
-    "Risk and uncertainty" ;
-Knowledge::
-    "What is knowledge management?" ;
 Special_Topics_Guide::
-    "Knowledge"  association => a("discussed in","Knowledge","discusses");
+    "How does CFEngine Nova help?"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Knowledge transfer"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "What other special documents should an organization have?"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Example company_knowledge.cf"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Documenting locations"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Documenting goals"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Creating your own map"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Types of information"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Pitfalls to avoid"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "The Copernicus Knowledge Map in CFEngine"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "How should you begin?"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Risk and uncertainty"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "What is knowledge management?"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
+    "Knowledge"  association => a("discusses","Implementing Knowledge Management","is discussed in");
 
 
 occurrences:
 
+special_topics_guides::
+ "/docs/st-knowledge.html"
+  represents => { "Implementing Knowledge Management" };
 Knowledge::
  "/docs/st-knowledge.html#Top"
-  represents => { "Short note" };
+  represents => { "Text section" };
 What_is_knowledge_management_::
  "/docs/st-knowledge.html#What-is-knowledge-management_003f"
-  represents => { "Short note" };
+  represents => { "Text section" };
 Risk_and_uncertainty::
  "/docs/st-knowledge.html#Risk-and-uncertainty"
-  represents => { "Short note" };
+  represents => { "Text section" };
 How_should_you_begin_::
  "/docs/st-knowledge.html#How-should-you-begin_003f"
-  represents => { "Short note" };
-The_Copernicus_Knowledge_map::
+  represents => { "Text section" };
+The_Copernicus_Knowledge_Map_in_CFEngine::
  "/docs/st-knowledge.html#The-Copernicus-Knowledge-map"
-  represents => { "Short note" };
+  represents => { "Text section" };
 Pitfalls_to_avoid::
  "/docs/st-knowledge.html#Pitfalls-to-avoid"
-  represents => { "Short note" };
+  represents => { "Text section" };
 Types_of_information::
  "/docs/st-knowledge.html#Types-of-information"
-  represents => { "Short note" };
-Creating_the_map::
+  represents => { "Text section" };
+Creating_your_own_map::
  "/docs/st-knowledge.html#Types-of-information"
-  represents => { "Short note" };
+  represents => { "Text section" };
+Documenting_goals::
+ "/docs/st-knowledge.html#Types-of-information"
+  represents => { "Text section" };
+Documenting_locations::
+ "/docs/st-knowledge.html#Types-of-information"
+  represents => { "Text section" };
+Example_company_knowledge_cf::
+ "/docs/st-knowledge.html#Example-company_005fknowledge_002ecf"
+  represents => { "Text section" };
 What_other_special_documents_should_an_organization_have_::
- "/docs/st-knowledge.html#Types-of-information"
-  represents => { "Short note" };
+ "/docs/st-knowledge.html#Example-company_005fknowledge_002ecf"
+  represents => { "Text section" };
 Knowledge_transfer::
  "/docs/st-knowledge.html#Knowledge-transfer"
-  represents => { "Short note" };
-How_does_Cfengine_Nova_help_::
- "/docs/st-knowledge.html#How-does-Cfengine-Nova-help_003f"
-  represents => { "Short note" };
+  represents => { "Text section" };
+How_does_CFEngine_Nova_help_::
+ "/docs/st-knowledge.html#How-does-CFEngine-Nova-help_003f"
+  represents => { "Text section" };
 }
 

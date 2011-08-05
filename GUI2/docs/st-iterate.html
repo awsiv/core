@@ -1,8 +1,8 @@
 <html lang="en">
 <head>
-<title>Iteration in Cfengine</title>
+<title>Iteration in CFEngine</title>
 <meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="Iteration in Cfengine">
+<meta name="description" content="Iteration in CFEngine">
 <meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="top" href="#Top">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
@@ -174,7 +174,7 @@ A:visited { color: black }
 A:active { color: #600041 }--></style>
 </head>
 <body>
-<h1 class="settitle">Iteration in Cfengine</h1>
+<h1 class="settitle">Iteration in CFEngine</h1>
 <div class="node">
 <a name="Top"></a>
 <p><hr>
@@ -217,7 +217,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </pre>
 
-Iteration is about repeating operations in a list.  In Cfengine,
+Iteration is about repeating operations in a list.  In CFEngine,
 iteration is used to make a number of related promises, that fall into
 a pattern based on elements of a list. This is what would correspond
 to something like this pseudo-code in an imperative language:
@@ -228,10 +228,10 @@ to something like this pseudo-code in an imperative language:
 <i>end</i>
 </blockquote>
 
-<p class="noindent">In Cfengine, we do not write loops; rather, they are implicit. 
+<p class="noindent">In CFEngine, we do not write loops; rather, they are implicit. 
 Suppose &lsquo;<samp><span class="samp">@(list)</span></samp>&rsquo; is a list variable (the &lsquo;<samp><span class="samp">@</span></samp>&rsquo; means list). If we
 refer to this identifier using a scalar reference &lsquo;<samp><span class="samp">$(list)</span></samp>&rsquo;, then
-Cfengine understands this to mean, take each scalar item in the list and
+CFEngine understands this to mean, take each scalar item in the list and
 repeat the current promise, replacing the instance with elements of the list
 in turn.
 
@@ -290,7 +290,7 @@ reports:
 
    <p>What we have done is to first specify a list variable <code>monvars</code>, and then
 iterate over the values contained in that list by referencing the list
-variable <i>as a scalar</i>.  In Cfengine, simply referring to a list variable
+variable <i>as a scalar</i>.  In CFEngine, simply referring to a list variable
 as a scalar automatically iterates over that variable.
 
    <p>Note that in terms of raw "lines of code", neither example shows an advantage
@@ -318,9 +318,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <pre class="sp">
 
 </pre>
-Although iteration is a powerful concept in and of itself, Cfengine can
+Although iteration is a powerful concept in and of itself, CFEngine can
 iterate across multiple lists simultaneously.  In the previous example, we
-looked at the current values of four monitor variables, but since Cfengine
+looked at the current values of four monitor variables, but since CFEngine
 also gives us access to the averaged values and the standard deviation, how
 would we create a series of reports that listed all three statistical
 components of each variable?  The answer is simply to do another iteration:
@@ -362,10 +362,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Iterating over nested lists</h3>
 
-<p>Recall that Cfengine iterates over complete promise units, not small parts of
+<p>Recall that CFEngine iterates over complete promise units, not small parts of
 a promise. Let's look at an example that could show a common misunderstanding.
 
-   <p>If you look at the monitor variables that are described in the Cfengine
+   <p>If you look at the monitor variables that are described in the CFEngine
 Reference Guide, you'll notice that some variables reference the number of
 packets <i>in</i> and <i>out</i> of a host.  So you might be
 tempted to do the following, which might not do what you expect.
@@ -468,7 +468,7 @@ reports:
 }
 
 </pre>
-Cfengine does not allow an unlimited level of nesting, for reasons of
+CFEngine does not allow an unlimited level of nesting, for reasons of
 efficiency and readability, and adding further levels of nesting
 will start to work against you.  Note that we had to explicitly refer to the
 two variables that we created: <code>$(monvars_in)</code> and
@@ -488,7 +488,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <p>When a list variable is referenced as a scalar variable (that is, when
 the list variable is referenced as <code>$(list)</code>) instead of as a
-list (using <code>@(list)</code>), Cfengine assumes that it should
+list (using <code>@(list)</code>), CFEngine assumes that it should
 substitute each scalar from the list in turn, and thus iterate over
 the list elements using a loop.
 
@@ -666,11 +666,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">The power of iteration in cfengine</h3>
+<h3 class="unnumberedsec">The power of iteration in CFEngine</h3>
 
-<p>Iteration and abstraction are power tools in cfengine.  In closing, consider
+<p>Iteration and abstraction are power tools in CFEngine.  In closing, consider
 the following simple and straightforward example, where we report on all of
-the monitoring variables available to us in Cfengine:
+the monitoring variables available to us in CFEngine:
 
 <pre class="verbatim">bundle agent iteration6
 {
@@ -755,7 +755,7 @@ repetitive problems.
 <li><a href="#Fixing-Iterating-across-nested-lists">Fixing Iterating across nested lists</a>
 <li><a href="#Iterating-revisted">Iterating across multiple lists, revisted</a>
 <li><a href="#Nesting-promises-workaround">Nesting promises workaround</a>
-<li><a href="#Power">The power of iteration in cfengine</a>
+<li><a href="#Power">The power of iteration in CFEngine</a>
 <li><a href="#Summary-of-iteration">Summary of iteration</a>
 </li></ul>
 </li></ul>

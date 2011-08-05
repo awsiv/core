@@ -6,14 +6,24 @@
 bundle knowledge enterprise_start
 
 {
-vars:
-
-  "doc_root" string => readfile("$(sys.workdir)/document_root.dat",40),
-            comment => "Read the knowledge base document root for the web server";
-
 topics:
 
  any::
+
+   "library" comment => "A area of the mission portal where users can ask questions about the meaning of topics, see relationships, and view stories about system knowledge.",
+           association => a("is a room in the","mission portal","has room");
+
+   "library" association => a("contains","documentation","is contained in");
+   "library" association => a("contains","topic finder","is contained in");
+   "library" association => a("contains","message archive","is contained in");
+
+   "topic finder" comment => "A search tool for topics in the Copernicus Knowledge Map",
+              association => a("locates","promises","may be located by");
+
+   "topic finder" comment => "A search tool for topics in the Copernicus Knowledge Map",
+              association => a("locates","subjects","may be located by");
+
+  "documentation" comment => "Written information about the Cfengine software";
 
    "places" comment => "Geographical locations";
    "companies" comment => "Commercial organization",
@@ -21,6 +31,13 @@ topics:
            association => a("are a form of","organization","has example");
 
    "software" comment => "Computer programs.";
+
+   "how to use the library" comment => "Some basic help about using the Mission Portal library";
+
+documentation::
+
+  "special topics guide" comment => "Short document on a specialized topic";
+  "manual" comment => "A general document about Cfengine software.";
 
  companies::
 
@@ -656,6 +673,18 @@ pattern_matching::
 
 occurrences:
 
+   how_to_use_the_library::
+
+      "You can browse the library for code, examples, or ask to learn about special topics. Try typing in a specific word or search phrase, and use the different tabs in the topic viewer to look for additional hints and tips.",
+
+          represents => { "hint" },
+      representation => "literal";
+
+
+    "/docs/st-missionportal.html"
+         represents => { "Mission portal manual" };
+
+
    cfengine.company::
 
        "http://www.cfengine.com"
@@ -862,7 +891,7 @@ occurrences:
 
  performance_report::
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";
@@ -880,7 +909,7 @@ occurrences:
             represents => { "description" },
             representation => "literal";
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";
@@ -892,7 +921,7 @@ occurrences:
             represents => { "description" },
             representation => "literal";
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";
@@ -904,7 +933,7 @@ occurrences:
             represents => { "description" },
             representation => "literal";
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";
@@ -916,7 +945,7 @@ occurrences:
             represents => { "description" },
             representation => "literal";
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";
@@ -928,7 +957,7 @@ occurrences:
             represents => { "description" },
             representation => "literal";
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";
@@ -940,7 +969,7 @@ occurrences:
             represents => { "description" },
             representation => "literal";
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";
@@ -952,7 +981,7 @@ occurrences:
             represents => { "description" },
             representation => "literal";
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";
@@ -964,7 +993,7 @@ occurrences:
             represents => { "description" },
             representation => "literal";
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";
@@ -976,7 +1005,7 @@ occurrences:
             represents => { "description" },
             representation => "literal";
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";
@@ -988,7 +1017,7 @@ occurrences:
             represents => { "description" },
             representation => "literal";
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";
@@ -1000,7 +1029,7 @@ occurrences:
             represents => { "description" },
             representation => "literal";
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";
@@ -1012,7 +1041,7 @@ occurrences:
             represents => { "description" },
             representation => "literal";
 
-   "/welcome/status"
+   "/welcome/engg"
 
             represents => { "on page" },
             representation => "url";

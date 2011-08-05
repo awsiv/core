@@ -105,9 +105,9 @@ fclose(fout);
 void TransformLine(char *line,FILE *fout)
 
 { char *sp,*spt,*spf;
-  char newline[4096],lhs[2000],rhs[2000],ud[2000];
-  char lhs1[2000],lhs2[2000];
-  char sstring[1000];
+ char newline[4096] = {0},lhs[2000] = {0},rhs[2000] = {0},ud[2000] = {0};
+  char lhs1[2000] = {0},lhs2[2000] = {0};
+  char sstring[1000] = {0};
   
 sscanf(line,"%s",sstring);
 

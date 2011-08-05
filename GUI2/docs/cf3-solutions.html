@@ -1,8 +1,8 @@
 <html lang="en">
 <head>
-<title>Cfengine Solutions</title>
+<title>CFEngine Solutions</title>
 <meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="Cfengine Solutions">
+<meta name="description" content="CFEngine Solutions">
 <meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="top" href="#Top">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
@@ -174,7 +174,7 @@ A:visited { color: black }
 A:active { color: #600041 }--></style>
 </head>
 <body>
-<h1 class="settitle">Cfengine Solutions</h1>
+<h1 class="settitle">CFEngine Solutions</h1>
 <div class="node">
 <a name="Top"></a>
 <p><hr>
@@ -184,7 +184,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
 </div>
 
-<h2 class="unnumbered">Cfengine-Solutions</h2>
+<h2 class="unnumbered">CFEngine-Solutions</h2>
 
    <p><a href="#Contents"><h1>COMPLETE TABLE OF CONTENTS</h1></a>
 
@@ -210,9 +210,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h2 class="chapter">1 Introduction</h2>
 
-<p>Cfengine 3 has been redesigned to allow modular solution building in
+<p>CFEngine 3 has been redesigned to allow modular solution building in
 terms of a simple, regular language.  This guide explains how to use
-the Cfengine Community Open Promise-Body Library to express some
+the CFEngine Community Open Promise-Body Library to express some
 simple idioms and approaches for solving common system problems.
 
    <p>The solutions presented here are necessarily generic and incomplete,
@@ -221,14 +221,14 @@ solution in a real setting.  A solution guide does not present
 finished solutions, but rather hints about how to achieve such
 solutions with standardized idioms.
 
-   <p>Cfengine gives you great freedom to craft specific solutions, without
+   <p>CFEngine gives you great freedom to craft specific solutions, without
 the need for low level coding. For most tasks, you will find the
 standardized templates sufficient for your needs, but the possibilties
 do not stop there.
 
    <p>If you need assistance in formulating specific solutions for your
-system environment, contact Cfengine's Professional Services at
-<code>contact@cfengine.com</code>;
+system environment, contact CFEngine's Professional Services at
+<code>contact@CFEngine.com</code>;
 
 <ul class="menu">
 <li><a accesskey="1" href="#Begin-_002d-Get-started">Begin - Get started</a>
@@ -245,7 +245,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 <h3 class="section">1.1 Begin - Get Started</h3>
 
-<p>To get started with Cfengine, you can use the following template for entering examples.
+<p>To get started with CFEngine, you can use the following template for entering examples.
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -263,7 +263,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </pre>
 Then you enter the cases as below. The general pattern
-of the syntax is like this (red: cfengine word, blue: user-defined word):
+of the syntax is like this (red: CFEngine word, blue: user-defined word):
 
 <pre class="verbatim"># The general pattern
 
@@ -274,8 +274,7 @@ of the syntax is like this (red: cfengine word, blue: user-defined word):
 
 <span class="comment">  # Traditional comment
 </span>
-<span class="comment">
-</span>
+
   "promiser" -> { "promisee1", "promisee2" },
 <span class="red">        comment </span>=><span class="green"> "The intention ...",</span>
 <span class="red">         handle </span>=><span class="green"> "unique_id_label",</span>
@@ -536,7 +535,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 </pre>
 
 <p>Why? Separating this into two parts gives a high level of control
-and conistency to Cfengine. There are many options for command execution, like
+and conistency to CFEngine. There are many options for command execution, like
 the ability to run commands in a sandbox or as `setuid'. These should not be
 reproduced in <code>processes</code>.
 
@@ -682,8 +681,7 @@ section that includes variation.
 
 <span class="comment">############################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">central</span>
 
 {
@@ -702,8 +700,7 @@ section that includes variation.
 </span>
 <span class="comment">  # Password management can be very simple if all hosts are identical
 </span>
-<span class="comment">
-</span>
+
   "/etc/passwd" 
 
 <span class="red">    comment   </span>=><span class="green"> "Distribute a password file",</span>
@@ -720,8 +717,7 @@ section that includes variation.
 
 <span class="comment"># Add more promises below ...
 </span>
-<span class="comment">     
-</span>
+     
 }
 
 
@@ -731,8 +727,7 @@ section that includes variation.
 </span>
 <span class="comment">#########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body server</span> <span class="blue">control</span>
 
 {
@@ -745,8 +740,7 @@ section that includes variation.
 
 <span class="comment">#########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle server</span> <span class="blue">access_rules()</span>
 
 {
@@ -754,8 +748,7 @@ section that includes variation.
 </span>
 <span class="comment"> # myhost.domain.tld makes this file available to 10.20.30*
 </span>
-<span class="comment">
-</span>
+
  myhost_domain_tld::  
 
   "/etc/passwd"
@@ -786,8 +779,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Centralized-Management">Centralized Ma
 
 <span class="comment">############################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">central</span>
 
 {
@@ -822,8 +814,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Centralized-Management">Centralized Ma
 </span>
 <span class="comment">  # Password management can be very simple if all hosts are identical
 </span>
-<span class="comment">
-</span>
+
   "/etc/passwd" 
 
 <span class="red">    comment   </span>=><span class="green"> "Distribute a password file",</span>
@@ -840,8 +831,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Centralized-Management">Centralized Ma
 
 <span class="comment"># Add more promises below ...
 </span>
-<span class="comment">     
-</span>
+     
 }
 
 
@@ -851,8 +841,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Centralized-Management">Centralized Ma
 </span>
 <span class="comment">#########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body server</span> <span class="blue">control</span>
 
 {
@@ -865,8 +854,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Centralized-Management">Centralized Ma
 
 <span class="comment">#########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle server</span> <span class="blue">access_rules()</span>
 
 {
@@ -874,8 +862,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Centralized-Management">Centralized Ma
 </span>
 <span class="comment"> # myhost.domain.tld makes this file available to 10.20.30*
 </span>
-<span class="comment">
-</span>
+
  myhost_domain_tld::  
 
   "/etc/passwd"
@@ -896,7 +883,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Centralized-Management">Centralized Ma
 
 <h4 class="subsection">2.1.3 Updating from a central hub</h4>
 
-<p>The configuration bundled with the Cfengine source code contains an
+<p>The configuration bundled with the CFEngine source code contains an
 example of centralized updating of policy that covers more subtleties
 than this example, and handles fault tolerance.  Here is the main idea
 behind it. For simplicity, we assume that all hosts are on network
@@ -929,8 +916,7 @@ behind it. For simplicity, we assume that all hosts are on network
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body server</span> <span class="blue">control</span>
 
 {
@@ -941,8 +927,7 @@ behind it. For simplicity, we assume that all hosts are on network
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle server</span> <span class="blue">access_rules()</span>
 {
 <span class="red">access:
@@ -980,8 +965,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 
 <span class="comment">########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">testbundle</span>
 
 {
@@ -1051,8 +1035,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 
 <span class="comment">  # Other resources
 </span>
-<span class="comment">
-</span>
+
   "/tmp" 
 
 <span class="red">    comment </span>=><span class="green"> "Garbage collection of any temporary files",</span>
@@ -1106,8 +1089,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 </span>
 <span class="comment">######################################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body common control
 </span>
 {
@@ -1117,8 +1099,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 
 <span class="comment">########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle common g
 </span>{
 <span class="red">vars:
@@ -1128,8 +1109,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 
 <span class="comment">########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">SetRootPassword</span>
 
 {
@@ -1141,18 +1121,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 
 <span class="comment">      # or $(pw_class)-root.txt
 </span>
-<span class="comment">
-</span>
+
 <span class="comment">  # Or get variables directly from server woth Nova
 </span>
-<span class="comment">
-</span>
+
  "remote-passwd"<span class="red"> string </span>=> remotescalar("rem_password","127.0.0.1","yes");
 
 <span class="comment">  # Test this on a copy
 </span>
-<span class="comment">
-</span>
+
   "/tmp/shadow"
 
 <span class="red">       edit_line </span>=><span class="blue"> SetRootPw;</span>
@@ -1161,8 +1138,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 
 <span class="comment">########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle edit_line</span> <span class="blue">SetRootPw</span>
   {
 <span class="red">  vars:
@@ -1171,8 +1147,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 </span>
 <span class="comment">   # with : delimiters to avoid end of line/file problems
 </span>
-<span class="comment">
-</span>
+
    "pw"<span class="red"> int </span>=> readstringarray("rpw","$(sys.workdir)/ppkeys/rootpw.txt",
 <span class="red">                                                    "#[^\n]*",":","1","200");
 </span>
@@ -1182,15 +1157,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 </span>
 <span class="comment">      # Set field of the file to parameter
 </span>
-<span class="comment">
-</span>
+
 <span class="red">      edit_field </span>=><span class="blue"> col(":","2","$(rpw[1])","set");</span>
   }
 
 <span class="comment">########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle server</span> <span class="blue">passwords</span>
 {
 <span class="red">vars:
@@ -1203,8 +1176,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 </span>
 <span class="comment">  #
 </span>
-<span class="comment">
-</span>
+
        "pw_classes"<span class="red"> int </span>=> readstringarray("acl","$(g.secret_keys_dir)/classes.txt",
 <span class="red">                                                       "#[^\n]*",":","100","4000");  
 </span>  "each_pw_class"<span class="red"> slist </span>=> getindices("acl");
@@ -1237,8 +1209,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 </span>
 <span class="comment"># the the user's local keyring.
 </span>
-<span class="comment">
-</span>
+
 <span class="comment">  # vars:
 </span>
 <span class="comment">  #
@@ -1255,18 +1226,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 </span>
 <span class="comment">  #
 </span>
-<span class="comment">
-</span>
+
 <span class="comment">########################################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">allow_ssh_rootlogin_from_authorized_keys(user,sourcehost)</span>
 {
 <span class="red">vars:
 </span>
   "local_cache"<span class="red">       string </span>=><span class="green"> "/var/cfengine/ssh_cache"; </span>
-  "authorized_source"<span class="red"> string </span>=><span class="green"> "/master/cfengine/ssh_keys";</span>
+  "authorized_source"<span class="red"> string </span>=><span class="green"> "/master/CFEngine/ssh_keys";</span>
 
 <span class="red">files:
 </span>
@@ -1286,14 +1255,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 
 <span class="comment">########################################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">allow_ssh_login_from_authorized_keys(user,sourcehost)</span>
 {
 <span class="red">vars:
 </span>
   "local_cache"<span class="red">       string </span>=><span class="green"> "/var/cfengine/ssh_cache"; </span>
-  "authorized_source"<span class="red"> string </span>=><span class="green"> "/master/cfengine/ssh_keys";</span>
+  "authorized_source"<span class="red"> string </span>=><span class="green"> "/master/CFEngine/ssh_keys";</span>
 
 <span class="red">files:
 </span>
@@ -1313,13 +1281,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 
 <span class="comment">########################################################################
 </span>
-<span class="comment">
-</span>
-<span class="red">bundle edit_line</span> <span class="blue">insert_file_if_no_line_matching(user,file),</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">insert_file_if_no_line_matching(user,file)</span>
 {
 <span class="red">classes:
 </span>
-<span class="red">  have_user expression </span>=> regline("$(user).*","$(this.promiser)");
+  "have_user"<span class="red"> expression </span>=> regline("$(user).*","$(this.promiser)");
 
 <span class="red">insert_lines:
 </span>
@@ -1360,8 +1327,7 @@ deletes files while travelling or offline.
 </span>
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body common control
 </span>
 {
@@ -1381,8 +1347,7 @@ deletes files while travelling or offline.
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body agent</span> <span class="blue">control</span>
 {
 <span class="comment"># if default runtime is 5 mins we need this for long jobs
@@ -1392,8 +1357,7 @@ deletes files while travelling or offline.
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body monitor</span> <span class="blue">control</span>
 {
 <span class="red">forgetrate </span>=><span class="green"> "0.7";</span>
@@ -1401,8 +1365,7 @@ deletes files while travelling or offline.
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body executor</span> <span class="blue">control</span>
 
 {
@@ -1413,8 +1376,7 @@ deletes files while travelling or offline.
 
 <span class="comment"># Instead of a separate update script, now do this
 </span>
-<span class="comment">
-</span>
+
 <span class="red">exec_command </span>=><span class="green"> "$(sys.workdir)/bin/cf-agent -f failsafe.cf &amp;&amp; $(sys.workdir)/bin/cf-agent";</span>
 }
 
@@ -1424,8 +1386,7 @@ deletes files while travelling or offline.
 </span>
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">main</span>
 
 {
@@ -1435,8 +1396,7 @@ deletes files while travelling or offline.
 
 <span class="comment"> # - - - - - - - - - - - - - - - - - - - - - - - -
 </span>
-<span class="comment">
-</span>
+
 <span class="red">files:
 </span>
   "$(sys.resolv)"  # test on "/tmp/resolv.conf" #
@@ -1451,8 +1411,7 @@ deletes files while travelling or offline.
 
 <span class="comment"> # - - - - - - - - - - - - - - - - - - - - - - - -
 </span>
-<span class="comment">
-</span>
+
 <span class="red">commands:
 </span>
    "$(sys.workdir)/bin/$(component)"
@@ -1466,8 +1425,7 @@ deletes files while travelling or offline.
 </span>
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">backup</span>
 {
 <span class="red">files:
@@ -1487,8 +1445,7 @@ deletes files while travelling or offline.
 </span>
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">garbage_collection</span>
 {
 <span class="red">files:
@@ -1599,8 +1556,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 
 <span class="comment">############################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">testbundle</span>
 
 {
@@ -1613,8 +1569,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 
 <span class="comment">############################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body rename</span> <span class="blue">rotate(level)</span>
 
 {
@@ -1657,7 +1612,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-file">Manage a system 
 {
 <span class="red">vars:
 </span>
-  "file_template"<span class="red"> string </span>=><span class="green"> "$(level)";</span>
+  "file_template"<span class="red"> string </span>=><span class="blue"></span>
 
 "
 <span class="comment"># Syntax:
@@ -1668,8 +1623,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-file">Manage a system 
 </span>
 <span class="comment">#
 </span>
-<span class="comment">
-</span>
+
 127.0.0.1       localhost
 ::1             localhost ipv6-localhost ipv6-loopback
 fe00::0         ipv6-localnet
@@ -1685,8 +1639,7 @@ ff02::3         ipv6-allhosts
 
 <span class="comment">##############################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">files:
 </span>
    "/etc/hosts"
@@ -1794,7 +1747,7 @@ the host within the body of the versioned template.
 </pre>
 
 <p class="noindent">The macro template file may contain variables, as below,
-that get expanded by Cfengine.
+that get expanded by CFEngine.
 
 <pre class="smallexample">     # Syntax:
      #
@@ -1865,8 +1818,7 @@ standard library.
 </span>
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body common control
 </span>
 {
@@ -1875,8 +1827,7 @@ standard library.
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">testsetvar</span>
 
 {
@@ -1945,9 +1896,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-process">Manage a syst
 
 </pre>
 
-   <p>This example shows how the Cfengine components could be started using a pattern.
+   <p>This example shows how the CFEngine components could be started using a pattern.
 <pre class="verbatim">
-<span class="red">bundle agent</span> <span class="blue">cfengine_processes</span>
+<span class="red">bundle agent</span> <span class="blue">CFEngine_processes</span>
 {
 <span class="red">vars:
 </span>
@@ -1957,14 +1908,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-process">Manage a syst
 </span>
   "$(components)" 
 
-<span class="red">      comment </span>=><span class="green"> "Make sure server parts of cfengine are running",</span>
+<span class="red">      comment </span>=><span class="green"> "Make sure server parts of CFEngine are running",</span>
 <span class="red">      restart_class </span>=> canonify("start_$(component)");
 
 <span class="red">commands:
 </span>
    "$(sys.workdir)/bin/$(component)"
 
-<span class="red">          comment </span>=><span class="green"> "Make sure server parts of cfengine are running",</span>
+<span class="red">          comment </span>=><span class="green"> "Make sure server parts of CFEngine are running",</span>
 <span class="red">       ifvarclass </span>=> canonify("start_$(components)");
 
 }
@@ -2021,8 +1972,7 @@ resident memory.
 
 <span class="comment">########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">testbundle</span>
 
 {
@@ -2036,8 +1986,7 @@ resident memory.
 
 <span class="comment">########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body process_select</span> <span class="blue">big_processes(o)</span>
 
 {
@@ -2094,8 +2043,7 @@ operation for each file.
 </span>
 <span class="comment">  # Add some users
 </span>
-<span class="comment">
-</span>
+
   "pw[mark]"<span class="red"> string </span>=><span class="green"> "mark:x:1000:100:Mark Burgess:/home/mark:/bin/bash";</span>
   "pw[fred]"<span class="red"> string </span>=><span class="green"> "fred:x:1001:100:Right Said:/home/fred:/bin/bash";</span>
   "pw[jane]"<span class="red"> string </span>=><span class="green"> "jane:x:1002:100:Jane Doe:/home/jane:/bin/bash";</span>
@@ -2111,8 +2059,7 @@ operation for each file.
 </span>
 <span class="comment">#     edit_line => append_users_starting("$(users):defaultpasswd:::::::");
 </span>
-<span class="comment">
-</span>
+
   "/etc/group"
 <span class="red">       edit_line </span>=><span class="blue"> append_user_field("users","4","@(addusers.users)");</span>
 
@@ -2150,8 +2097,7 @@ must edit the files multiple times.
 </span>
 <span class="comment">  # Add some users
 </span>
-<span class="comment">
-</span>
+
   "pw[mark]"<span class="red"> string </span>=><span class="green"> "mark:x:1000:100:Mark Burgess:/home/mark:/bin/bash";</span>
   "pw[fred]"<span class="red"> string </span>=><span class="green"> "fred:x:1001:100:Right Said:/home/fred:/bin/bash";</span>
   "pw[jane]"<span class="red"> string </span>=><span class="green"> "jane:x:1002:100:Jane Doe:/home/jane:/bin/bash";</span>
@@ -2175,8 +2121,7 @@ must edit the files multiple times.
 </span>
 <span class="comment">#     edit_line => append_users_starting("$(users):defaultpasswd:::::::");
 </span>
-<span class="comment">
-</span>
+
   "/etc/group"
 <span class="red">       edit_line </span>=><span class="blue"> append_user_field("users","4","@(addusers.users)");</span>
 
@@ -2219,8 +2164,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 </span>
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body common control
 </span>
 {
@@ -2233,8 +2177,7 @@ any::
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">postfix</span>
 
 {
@@ -2261,8 +2204,7 @@ any::
 </span>
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle edit_line</span> <span class="blue">prefix_postfix</span>
 
 {
@@ -2298,8 +2240,7 @@ any::
 
 <span class="comment">########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle edit_line</span> <span class="blue">AppendIfNSL(parameter)</span>
   {
 <span class="red">  insert_lines:
@@ -2320,17 +2261,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 
 <h3 class="section">2.13 Set up HPC clusters</h3>
 
-<p>HPC cluster machines are usually all identical, so the cfengine
+<p>HPC cluster machines are usually all identical, so the CFEngine
 configuration is very simple. HPC clients value CPU and memory
 resources, so we can shut down unnecessary services to save CPU. 
-We can also change the scheduling rate of cfengine to run less frequently,
+We can also change the scheduling rate of CFEngine to run less frequently,
 and save a little:
 
 <pre class="verbatim">
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body executor</span> <span class="blue">control</span>
 
 {
@@ -2341,23 +2281,20 @@ and save a little:
 
 <span class="comment"># Once per hour, on the hour
 </span>
-<span class="comment">
-</span>
+
 <span class="red">schedule     </span>=> { "Min00_05" };
 }
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">services_disable</span>
 {
 <span class="red">vars:
 </span>
 <span class="comment">   # list all of xinetd services (case sensitive)
 </span>
-<span class="comment">
-</span>
+
    "xinetd_services"<span class="red"> slist </span>=> {
                                "imap",
                                "imaps",
@@ -2375,8 +2312,7 @@ and save a little:
 </span>
 <span class="comment">   # perform the actual disable all xinetd services according to the list above
 </span>
-<span class="comment">
-</span>
+
    "any"<span class="red">  usebundle </span>=><span class="blue"> disable_xinetd("$(xinetd_services)");</span>
 
 <span class="red">processes:
@@ -2389,8 +2325,7 @@ and save a little:
 
 <span class="comment">###############################################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">disable_xinetd(name)</span>
 {
 <span class="red"> vars:
@@ -2446,14 +2381,12 @@ for the <samp><span class="file">/etc/resolv.conf</span></samp> file.
 
 <span class="comment">   # ...other system files ...
 </span>
-<span class="comment">
-</span>
+
 }
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle edit_line</span> <span class="blue">resolver</span>
 
 {
@@ -2461,8 +2394,7 @@ for the <samp><span class="file">/etc/resolv.conf</span></samp> file.
 </span>
 <span class="comment">  # delete any old name servers or junk we no longer need
 </span>
-<span class="comment">
-</span>
+
   "search.*";
   "nameserver 80.65.58.31";
   "nameserver 80.65.58.32";
@@ -2500,7 +2432,7 @@ behind a veil of abstraction.
 {
 <span class="red">vars:
 </span>
- "searchlist"<span class="red">  string </span>=><span class="green"> "iu.hio.no cfengine.com";</span>
+ "searchlist"<span class="red">  string </span>=><span class="green"> "iu.hio.no CFEngine.com";</span>
 
  "nameservers"<span class="red"> slist </span>=> { 
                         "128.39.89.10", 
@@ -2516,14 +2448,12 @@ behind a veil of abstraction.
 
 <span class="comment"> # ....
 </span>
-<span class="comment">
-</span>
+
 }
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle edit_line</span> <span class="blue">doresolv(search,names)</span>
 
 {
@@ -2544,8 +2474,7 @@ be managed using file editing. We simply append this to the
 
 <span class="comment"># ...
 </span>
-<span class="comment">
-</span>
+
 <span class="red">files:
 </span>
    "/etc/hosts"
@@ -2556,20 +2485,18 @@ be managed using file editing. We simply append this to the
 
 <span class="comment">###########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle edit_line</span> <span class="blue">fix_etc_hosts</span>
 {
 <span class="red">vars:
 </span>
- "names[127.0.0.1]"<span class="red">    string </span>=><span class="green"> "localhost localhost.cfengine.com";</span>
- "names[128.39.89.12]"<span class="red"> string </span>=><span class="green"> "myhost myhost.cfengine.com";</span>
- "names[128.39.89.13]"<span class="red"> string </span>=><span class="green"> "otherhost otherhost.cfengine.com";</span>
+ "names[127.0.0.1]"<span class="red">    string </span>=><span class="green"> "localhost localhost.CFEngine.com";</span>
+ "names[128.39.89.12]"<span class="red"> string </span>=><span class="green"> "myhost myhost.CFEngine.com";</span>
+ "names[128.39.89.13]"<span class="red"> string </span>=><span class="green"> "otherhost otherhost.CFEngine.com";</span>
 
 <span class="comment"> # etc
 </span>
-<span class="comment">
-</span>
+
  "i"<span class="red"> slist </span>=> getindices("names");
 
 <span class="red">insert_lines:
@@ -2602,8 +2529,7 @@ files from a repository.
 
 <span class="comment"># ...
 </span>
-<span class="comment">
-</span>
+
 <span class="red">files:
 </span>
    "/etc/sudoers"
@@ -2641,8 +2567,7 @@ which is entered into the bundlesequence like this:
 </span>
 <span class="comment">#####################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">web_server(state)</span>
 {
 <span class="red">vars:
@@ -2655,9 +2580,8 @@ which is entered into the bundlesequence like this:
 </span>
 <span class="comment"> ####################################################
 </span>
-<span class="comment">
-</span>
-  "site_http_conf"<span class="red"> string </span>=><span class="green"> "/home/mark/cfengine-inputs/httpd.conf";</span>
+
+  "site_http_conf"<span class="red"> string </span>=><span class="green"> "/home/mark/CFEngine-inputs/httpd.conf";</span>
 
 <span class="comment"> ####################################################
 </span>
@@ -2665,8 +2589,7 @@ which is entered into the bundlesequence like this:
 </span>
 <span class="comment"> ####################################################
 </span>
-<span class="comment">
-</span>
+
   "match_package"<span class="red"> slist </span>=> { 
                            "apache2", 
                            "apache2-mod_php5",
@@ -2676,8 +2599,7 @@ which is entered into the bundlesequence like this:
 
 <span class="comment"> #########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">processes:
 </span>
   web_ok.on::
@@ -2695,8 +2617,7 @@ which is entered into the bundlesequence like this:
 
 <span class="comment"> #########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">commands:
 </span>
  start_apache::
@@ -2705,8 +2626,7 @@ which is entered into the bundlesequence like this:
 
 <span class="comment"> #########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">packages:
 </span>
   "$(match_package)"
@@ -2717,8 +2637,7 @@ which is entered into the bundlesequence like this:
 
 <span class="comment"> #########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">files:
 </span>
  software_ok::
@@ -2730,8 +2649,7 @@ which is entered into the bundlesequence like this:
 
 <span class="comment"> #########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">reports:
 </span>
  !software_ok.on::
@@ -2740,8 +2658,7 @@ which is entered into the bundlesequence like this:
  
 <span class="comment"> #########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">classes:
 </span>
   "on"<span class="red">  expression </span>=> strcmp("$(state)","on");
@@ -2754,8 +2671,7 @@ which is entered into the bundlesequence like this:
 </span>
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle edit_line</span> <span class="blue">fixapache</span>
 
 {
@@ -2784,16 +2700,14 @@ which is entered into the bundlesequence like this:
 </span>
 <span class="comment"> #####################################################################
 </span>
-<span class="comment">
-</span>
+
    "APACHE_MODULES=.*"
 
 <span class="comment">      # Insert module "columns" between the quoted RHS 
 </span>
 <span class="comment">      # using space separators
 </span>
-<span class="comment">
-</span>
+
 <span class="red">      edit_field </span>=><span class="blue"> quotedvar("$(add_modules)","append");</span>
 
    "APACHE_MODULES=.*"
@@ -2802,14 +2716,12 @@ which is entered into the bundlesequence like this:
 </span>
 <span class="comment">      # using space separators
 </span>
-<span class="comment">
-</span>
+
 <span class="red">      edit_field </span>=><span class="blue"> quotedvar("$(del_modules)","delete");</span>
 
 <span class="comment">   # if this line already exists, edit it  
 </span>
-<span class="comment">
-</span>
+
 }
 
 </pre>
@@ -2825,17 +2737,17 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 
 <h3 class="section">2.17 Templating</h3>
 
-<p>With Cfengine you have a choice between editing `deltas' into files
+<p>With CFEngine you have a choice between editing `deltas' into files
 or distributing more-or-less finished templates. Which method you
 should choose depends should be made by whatever is easiest.
 
      <ul>
 <li>If you are managing only part of the file, and something else (e.g. a package manager)
-is managing most of it, then it makes sense to use Cfengine file editing.
+is managing most of it, then it makes sense to use CFEngine file editing.
 
      <li>If you are managing everything in the file, then it makes sense to make the edits
-by hand and install them using cfengine. You can use variables within
-source text files and let cfengine expand them locally in situ, so
+by hand and install them using CFEngine. You can use variables within
+source text files and let CFEngine expand them locally in situ, so
 that you can make generic templates that apply netwide.
 
    </ul>
@@ -2846,15 +2758,13 @@ that you can make generic templates that apply netwide.
 </span>
 <span class="comment">#
 </span>
-<span class="comment">
-</span>
+
 MYVARIABLE = something or other
-HOSTNAME = $(sys.host)           # Cfengine fills this in
+HOSTNAME = $(sys.host)           # CFEngine fills this in
 
 <span class="comment"># ...
 </span>
-<span class="comment">
-</span>
+
 </pre>
 To copy and expand this template, you can use a pattern like this:
 <pre class="verbatim">
@@ -2878,8 +2788,7 @@ locations:
 </span>
 <span class="comment"> # This needs to ne preconfigured to your site
 </span>
-<span class="comment">
-</span>
+
  "masterfiles"<span class="red">   string </span>=><span class="green"> "/home/mark/tmp";</span>
  "this_template"<span class="red"> string </span>=> lastnode("$(final_destination)","/");
 
@@ -2963,8 +2872,7 @@ any::
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">insert</span>
 
 {
@@ -2999,8 +2907,7 @@ any::
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">insert</span>
 
 {
@@ -3046,8 +2953,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">  # want to set these values by the names of their array keys
 </span>
-<span class="comment">
-</span>
+
   "pwd[mark]"<span class="red"> string </span>=><span class="green"> "mark:x:1000:100:Mark Burgess:/home/mark:/bin/bash";</span>
   "pwd[fred]"<span class="red"> string </span>=><span class="green"> "fred:x:1001:100:Right Said:/home/fred:/bin/bash";</span>
   "pwd[jane]"<span class="red"> string </span>=><span class="green"> "jane:x:1002:100:Jane Doe:/home/jane:/bin/bash";</span>
@@ -3086,8 +2992,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">#
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body common control
 </span>{
 <span class="red">bundlesequence </span>=> { "packages" };
@@ -3095,8 +3000,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 <span class="comment">#############################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">packages</span>
 {
 <span class="red">vars:
@@ -3156,16 +3060,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">  # want to set these values by the names of their array keys
 </span>
-<span class="comment">
-</span>
+
   "rhs[lhs1]"<span class="red"> string </span>=><span class="green"> " Mary had a little pig";</span>
   "rhs[lhs2]"<span class="red"> string </span>=><span class="green"> "Whose Fleece was white as snow";</span>
   "rhs[lhs3]"<span class="red"> string </span>=><span class="green"> "And everywhere that Mary went";</span>
 
 <span class="comment">  # oops, now change pig -> lamb
 </span>
-<span class="comment">
-</span>
+
 <span class="red">files:
 </span>
   "/tmp/system"
@@ -3200,16 +3102,14 @@ lhs3=And everywhere that Mary went
 </span>
 <span class="comment">  # want to set these values by the names of their array keys
 </span>
-<span class="comment">
-</span>
+
   "rhs[net/ipv4/tcp_syncookies]"<span class="red"> string </span>=><span class="green"> "1";</span>
   "rhs[net/ipv4/icmp_echo_ignore_broadcasts]"<span class="red"> string </span>=><span class="green"> "1";</span>
   "rhs[net/ipv4/ip_forward]"<span class="red"> string </span>=><span class="green"> "1";</span>
 
 <span class="comment">  # oops, now change pig -> lamb
 </span>
-<span class="comment">
-</span>
+
 <span class="red">files:
 </span>
   "/etc/sysctl"
@@ -3345,8 +3245,7 @@ with respect to both stages of the process.
 
 <span class="comment">#
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle edit_line</span> <span class="blue">fix_file(f)</span>
 {
 <span class="red">insert_lines:
@@ -3355,8 +3254,7 @@ with respect to both stages of the process.
  
 <span class="comment">     # insert this into an empty file to reconstruct
 </span>
-<span class="comment"> 
-</span>
+ 
 <span class="red">     insert_type </span>=><span class="green"> "file";</span>
 
 <span class="red">replace_patterns:
@@ -3394,8 +3292,7 @@ Editing a file can be complex or simple, depending on needs.
 </span>
 <span class="comment">######################################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body common control
 </span>
 {
@@ -3406,8 +3303,7 @@ Editing a file can be complex or simple, depending on needs.
 
 <span class="comment">########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">testbundle</span>
 
 {
@@ -3458,10 +3354,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">######################################################################
 </span>
-<span class="comment">
-</span>
-<span class="comment">
-</span>
+
+
 <span class="red">body common control
 </span>
 {
@@ -3471,8 +3365,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 <span class="comment">########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">testbundle</span>
 
 {
@@ -3484,8 +3377,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">  # Make a copy of the password file
 </span>
-<span class="comment">
-</span>
+
   "/home/mark/tmp/passwd"
 
 <span class="red">       create    </span>=><span class="green"> "true",</span>
@@ -3504,8 +3396,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 <span class="comment">########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle edit_line</span> <span class="blue">SetUserParam(user,field,val)</span>
   {
 <span class="red">  field_edits:
@@ -3514,15 +3405,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">      # Set field of the file to parameter
 </span>
-<span class="comment">
-</span>
+
 <span class="red">      edit_field </span>=><span class="blue"> col(":","$(field)","$(val)","set");</span>
   }
 
 <span class="comment">########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle edit_line</span> <span class="blue">AppendUserParam(user,field,allusers)</span>
   {
 <span class="red">  vars:
@@ -3535,8 +3424,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">      # Set field of the file to parameter
 </span>
-<span class="comment">
-</span>
+
 <span class="red">      edit_field </span>=><span class="blue"> col(":","$(field)","$(val)","alphanum");</span>
 
   }
@@ -3547,8 +3435,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">########################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body edit_field</span> <span class="blue">col(split,col,newval,method)</span>
 
 {
@@ -3580,8 +3467,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">#####################################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body common control
 </span>
 {
@@ -3590,8 +3476,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 <span class="comment">#####################################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">mounts</span>
 
 {
@@ -3599,15 +3484,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">  # Assumes the filesystem has been exported
 </span>
-<span class="comment">
-</span>
+
   "/mnt"<span class="red"> mount  </span>=><span class="blue"> nfs("server.example.org","/home");</span>
 }
 
 <span class="comment">######################################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body mount</span> <span class="blue">nfs(server,source)</span>
 
 {
@@ -3649,8 +3532,7 @@ ordering</i>.
 </span>
 <span class="comment">####################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body common control
 </span>
 {
@@ -3659,8 +3541,7 @@ ordering</i>.
 
 <span class="comment">####################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">order</span>
 
 {
@@ -3692,8 +3573,7 @@ ordering</i>.
 
 <span class="comment">############################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body classes</span> <span class="blue">d(if,else)</span>
 
 {
@@ -3717,15 +3597,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 <h3 class="section">3.12 Set up a PXE boot server</h3>
 
-<p>Use cfengine to set up a PXE boot server.
+<p>Use CFEngine to set up a PXE boot server.
 
 <pre class="verbatim">#
 <span class="comment"># PXE boot server
 </span>
 <span class="comment">#
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">pxe</span>
 {
 <span class="red">vars:
@@ -3740,31 +3619,29 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
    "dirs"<span class="red"> slist </span>=> {
                    "/tftpboot",
-                   "/tftpboot/cfengine/rpm",
-                   "/tftpboot/cfengine/inputs",
+                   "/tftpboot/CFEngine/rpm",
+                   "/tftpboot/CFEngine/inputs",
                    "/tftpboot/pxelinux.cfg",
                    "/tftpboot/kickstart",
                    "/srv/www/repos"
                    };
 
-   "tmp_location"<span class="red">    string </span>=><span class="green"> "/tftpboot/cfengine/inputs";</span>
+   "tmp_location"<span class="red">    string </span>=><span class="green"> "/tftpboot/CFEngine/inputs";</span>
 
 <span class="comment">   # Distros that we can install
 </span>
-<span class="comment">
-</span>
+
    "rh_distros"<span class="red"> slist </span>=> { "4.7", "5.2" };
    "centos_distros"<span class="red"> slist </span>=> { "5.2" }; 
 
 <span class="comment">   # File contents of atftp configuration
 </span>
-<span class="comment">
-</span>
-   "atftpd_conf"<span class="red"> string </span>=> { "5.2" }; 
+
+   "atftpd_conf"<span class="red"> string </span>=><span class="blue"></span>
        "
 <span class="comment">###########################################
 </span>
-<span class="comment">### This file is protected by cfengine. ###
+<span class="comment">### This file is protected by CFEngine. ###
 </span>
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
@@ -3772,8 +3649,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">###########################################
 </span>
-<span class="comment">
-</span>
+
 ATFTPD_OPTIONS=\"--daemon \"
 ATFTPD_USE_INETD=\"no\"
 ATFTPD_DIRECTORY=\"/tftpboot\"
@@ -3782,13 +3658,12 @@ ATFTPD_BIND_ADDRESSES=\"\"
 
 <span class="comment">   # File contents of DHCP configuration
 </span>
-<span class="comment">
-</span>
-   "dhcpd"<span class="red"> string </span>=> { "5.2" }; 
+
+   "dhcpd"<span class="red"> string </span>=><span class="blue"></span>
        "
 <span class="comment">###########################################
 </span>
-<span class="comment">### This file is protected by cfengine. ###
+<span class="comment">### This file is protected by CFEngine. ###
 </span>
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
@@ -3796,8 +3671,7 @@ ATFTPD_BIND_ADDRESSES=\"\"
 </span>
 <span class="comment">###########################################
 </span>
-<span class="comment">
-</span>
+
 DHCPD_INTERFACE=\"eth0\"
 DHCPD_RUN_CHROOTED=\"yes\"
 DHCPD_CONF_INCLUDE_FILES=\"\"
@@ -3806,11 +3680,11 @@ DHCPD_OTHER_ARGS=\"\"
 DHCPD_BINARY=\"\"
        ";
 
-   "dhcpd_conf"<span class="red"> string </span>=> { "5.2" }; 
+   "dhcpd_conf"<span class="red"> string </span>=><span class="blue"></span>
        "
 <span class="comment">###########################################
 </span>
-<span class="comment">### This file is protected by cfengine. ###
+<span class="comment">### This file is protected by CFEngine. ###
 </span>
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
@@ -3818,8 +3692,7 @@ DHCPD_BINARY=\"\"
 </span>
 <span class="comment">###########################################
 </span>
-<span class="comment">
-</span>
+
 allow booting;
 allow bootp;
 ddns-update-style none; ddns-updates off;
@@ -3828,7 +3701,7 @@ ddns-update-style none; ddns-updates off;
    default-lease-time 3600;
    max-lease-time 4800;
    option routers 192.168.0.1;
-   option domain-name \"test.cfengine.com\";
+   option domain-name \"test.CFEngine.com\";
    option domain-name-servers 192.168.0.1;
    next-server 192.168.0.1;
    filename \"pxelinux.0\";
@@ -3853,9 +3726,8 @@ ddns-update-style none; ddns-updates off;
 
 <span class="comment">   # File contains of Apache2 HTTP configuration
 </span>
-<span class="comment">
-</span>
-   "httpd_conf"<span class="red"> string </span>=> { "5.2" }; 
+
+   "httpd_conf"<span class="red"> string </span>=><span class="blue"></span>
         "
 <span class="comment"># Repository for RHEL5
 </span>
@@ -3891,22 +3763,21 @@ AllowOverride None
 &lt;/Directory>     
 Alias /kickstart /tftpboot/kickstart
 
-&lt;Directory /tftpboot/cfengine>
+&lt;Directory /tftpboot/CFEngine>
 Options Indexes      
 AllowOverride None      
 &lt;/Directory>      
-Alias /cfengine /tftpboot/cfengine
+Alias /CFEngine /tftpboot/CFEngine
         ";
 
 <span class="comment">   # File contains of Kickstart for RHEL5 configuration
 </span>
-<span class="comment">
-</span>
-   "kickstart_rhel5_conf"<span class="red"> string </span>=> { "5.2" }; 
+
+   "kickstart_rhel5_conf"<span class="red"> string </span>=><span class="blue"></span>
         "
 <span class="comment">###########################################
 </span>
-<span class="comment">### This file is protected by cfengine. ###
+<span class="comment">### This file is protected by CFEngine. ###
 </span>
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
@@ -3914,8 +3785,7 @@ Alias /cfengine /tftpboot/cfengine
 </span>
 <span class="comment">###########################################
 </span>
-<span class="comment">	
-</span>
+	
 auth  --useshadow  --enablemd5 
 bootloader --location=mbr
 clearpart --all --initlabel 
@@ -3954,7 +3824,7 @@ device-mapper-multipath
 
 %post
 cd /root
-<span class="red">rpm -i http://192.168.0.1/cfengine/rpm/cfengine-3.0.1b1-1.el5.i386.rpm
+<span class="red">rpm -i http://192.168.0.1/CFEngine/rpm/CFEngine-3.0.1b1-1.el5.i386.rpm
 </span><span class="comment">#/sbin/chkconfig httpd on
 </span>
 cd /etc/yum.repos.d
@@ -3962,22 +3832,21 @@ cd /etc/yum.repos.d
 </span>rpm --import /etc/pki/rpm-gpg/*
 yum clean all
 yum update
-mkdir -p /root/cfengine_init
-cd /root/cfengine_init
-<span class="red">wget -nd -r http://192.168.0.1/cfengine/inputs/
+mkdir -p /root/CFEngine_init
+cd /root/CFEngine_init
+<span class="red">wget -nd -r http://192.168.0.1/CFEngine/inputs/
 </span>/usr/local/sbin/cf-agent -B
 /usr/local/sbin/cf-agent
         ";
 
 <span class="comment">   # File contains of PXElinux boot menu
 </span>
-<span class="comment">
-</span>
-   "pxelinux_boot_menu"<span class="red"> string </span>=> { "5.2" }; 
+
+   "pxelinux_boot_menu"<span class="red"> string </span>=><span class="blue"></span>
         "
 <span class="comment">###########################################
 </span>
-<span class="comment">### This file is protected by cfengine. ###
+<span class="comment">### This file is protected by CFEngine. ###
 </span>
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
@@ -3985,8 +3854,7 @@ cd /root/cfengine_init
 </span>
 <span class="comment">###########################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">boot options:
 </span>     rhel5   - install 32 bit i386 RHEL 5.2             (MANUAL)
      rhel5w  - install 32 bit i386 RHEL 5.2             (AUTO)
@@ -3995,13 +3863,12 @@ cd /root/cfengine_init
         ";
 <span class="comment">   # File contains of PXElinux default configuration
 </span>
-<span class="comment">
-</span>
-   "pxelinux_default"<span class="red"> string </span>=> { "5.2" }; 
+
+   "pxelinux_default"<span class="red"> string </span>=><span class="blue"></span>
         "
 <span class="comment">###########################################
 </span>
-<span class="comment">### This file is protected by cfengine. ###
+<span class="comment">### This file is protected by CFEngine. ###
 </span>
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
@@ -4009,8 +3876,7 @@ cd /root/cfengine_init
 </span>
 <span class="comment">###########################################
 </span>
-<span class="comment">	
-</span>
+	
 default rhel5
 timeout 300
 prompt 1
@@ -4044,13 +3910,12 @@ label centos5
 
 <span class="comment">   # File contains of specified PXElinux default to be a RHEL5 webserver
 </span>
-<span class="comment">
-</span>
-   "pxelinux_rhel5_webserver"<span class="red"> string </span>=> { "5.2" }; 
+
+   "pxelinux_rhel5_webserver"<span class="red"> string </span>=><span class="blue"></span>
         "
 <span class="comment">###########################################
 </span>
-<span class="comment">### This file is protected by cfengine. ###
+<span class="comment">### This file is protected by CFEngine. ###
 </span>
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
@@ -4058,8 +3923,7 @@ label centos5
 </span>
 <span class="comment">###########################################
 </span>
-<span class="comment">
-</span>
+
 <span class="comment"># install i386 RHEL 5.2 using Kickstart
 </span>
 default rhel5w
@@ -4070,13 +3934,12 @@ label rhel5w
 
 <span class="comment">   # File contains of a local repository for RHEL5
 </span>
-<span class="comment">
-</span>
-   "rhel5_base_repo"<span class="red"> string </span>=> { "5.2" }; 
+
+   "rhel5_base_repo"<span class="red"> string </span>=><span class="blue"></span>
         "
 <span class="comment">###########################################
 </span>
-<span class="comment">### This file is protected by cfengine. ###
+<span class="comment">### This file is protected by CFEngine. ###
 </span>
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
@@ -4084,8 +3947,7 @@ label rhel5w
 </span>
 <span class="comment">###########################################
 </span>
-<span class="comment">
-</span>
+
 <span class="comment"># Local Repository
 </span>
 [Server]
@@ -4107,18 +3969,15 @@ name=Cluster Storage
         ";
 <span class="comment">#####################################################
 </span>
-<span class="comment">
-</span>
-<span class="comment">
-</span>
+
+
 <span class="red">files:
 </span>
  packages_ok::
 
 <span class="comment">  # Create files/dirs and edit the new files
 </span>
-<span class="comment">
-</span>
+
   "/tftpboot/distro/RHEL/$(rh_distros)/."
 <span class="red">       create </span>=><span class="green"> "true";</span>
 
@@ -4160,8 +4019,7 @@ name=Cluster Storage
 
 <span class="comment">  # Copy files
 </span>
-<span class="comment">
-</span>
+
   "/tftpboot"
 
 <span class="red">    copy_from </span>=><span class="blue"> mycopy_local("/usr/share/syslinux","localhost"),</span>
@@ -4179,8 +4037,7 @@ name=Cluster Storage
 
 <span class="comment">  # Edit atftp, dhcp and apache2 configurations
 </span>
-<span class="comment">
-</span>
+
   "/etc/sysconfig/atftpd"
 <span class="red">     edit_line </span>=> append_if_no_line("$(atftpd_conf)"),
 <span class="red">     edit_defaults </span>=><span class="blue"> empty,</span>
@@ -4202,15 +4059,13 @@ name=Cluster Storage
 
 <span class="comment">  # Make a static link
 </span>
-<span class="comment">
-</span>
+
   "/tftpboot/pxelinux.cfg/C0A8000C"
 <span class="red">     link_from </span>=><span class="blue"> mylink("/tftpboot/pxelinux.cfg/default.RHEL5.webserver");</span>
 
 <span class="comment">  # Hash comment some lines for apaches
 </span>
-<span class="comment">
-</span>
+
   apache2_ok::
   "/etc/apache2/httpd.conf"
 <span class="red">     edit_line </span>=><span class="blue"> comment_lines_matching_apache2("#"),</span>
@@ -4232,15 +4087,13 @@ name=Cluster Storage
 
 <span class="comment">#####################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">packages:
 </span>  
  ipv4_192_168_0_1::
 <span class="comment"> # Only the PXE boot server
 </span>
-<span class="comment">
-</span>
+
  "$(software)"
 
 <span class="red">     package_policy </span>=><span class="green"> "add",</span>
@@ -4255,8 +4108,7 @@ name=Cluster Storage
 </span>
 <span class="comment">#####################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body file_select</span> <span class="blue">pxelinux_files</span>
 
 {
@@ -4267,8 +4119,7 @@ name=Cluster Storage
 
 <span class="comment">#####################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body copy_from</span> <span class="blue">mycopy_local(from,server)</span>
 
 {
@@ -4278,8 +4129,7 @@ name=Cluster Storage
 
 <span class="comment">#########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body link_from</span> <span class="blue">mylink(x)</span>
 {
 <span class="red">source </span>=><span class="green"> "$(x)";</span>
@@ -4288,8 +4138,7 @@ name=Cluster Storage
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body classes</span> <span class="blue">satisfied(new_class)</span>
 
 {
@@ -4299,8 +4148,7 @@ name=Cluster Storage
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle edit_line</span> <span class="blue">comment_lines_matching_apache2(comment)</span>
   {
   
@@ -4315,8 +4163,7 @@ name=Cluster Storage
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 </pre>
 
 <!--  -->
@@ -4331,7 +4178,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 <h3 class="section">3.13 Tidying garbage files</h3>
 
-<p>Emulating the `tidy' feature of cfengine 2.
+<p>Emulating the `tidy' feature of CFEngine 2.
 
 <pre class="verbatim">#######################################################
 <span class="comment">#
@@ -4342,8 +4189,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body common control
 </span>
 {
@@ -4354,8 +4200,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 <span class="comment">############################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">testbundle</span>
 
 {
@@ -4370,8 +4215,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 <span class="comment">#########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body depth_search</span> <span class="blue">recurse(d)</span>
 
 {
@@ -4382,8 +4226,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 <span class="comment">#########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body delete</span> <span class="blue">tidy</span>
 
 {
@@ -4393,8 +4236,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 <span class="comment">#########################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body file_select</span> <span class="blue">zero_age</span>
 
 <span class="comment">#
@@ -4407,8 +4249,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">#
 </span>
-<span class="comment">
-</span>
+
 {
 <span class="red">mtime     </span>=> irange(ago(1,0,0,0,0,0),now);  
 <span class="red">file_result </span>=><span class="green"> "mtime"; </span>
@@ -4433,8 +4274,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">#####################################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body common control
 </span>
 {
@@ -4443,8 +4283,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 <span class="comment">#####################################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">mounts</span>
 
 {
@@ -4452,15 +4291,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </span>
 <span class="comment">  # Assumes the filesystem has been exported
 </span>
-<span class="comment">
-</span>
+
   "/mnt"<span class="red"> mount  </span>=><span class="blue"> nfs("server.example.org","/home");</span>
 }
 
 <span class="comment">######################################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body mount</span> <span class="blue">nfs(server,source)</span>
 
 {
@@ -4497,8 +4334,7 @@ list of modules you want and another list that you don't want.
 </span>
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">body common control
 </span>
 {
@@ -4511,8 +4347,7 @@ any::
 
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle agent</span> <span class="blue">apache</span>
 
 {
@@ -4531,8 +4366,7 @@ any::
 </span>
 <span class="comment">#######################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="red">bundle edit_line</span> <span class="blue">fixapache</span>
 
 { 
@@ -4568,20 +4402,17 @@ any::
 </span>
 <span class="comment"> #####################################################################
 </span>
-<span class="comment">
-</span>
+
 <span class="comment">    # Values have the form NAME = "quoted space separated list"
 </span>
-<span class="comment">
-</span>
+
    "APACHE_MODULES=.*"
 
 <span class="comment">      # Insert module "columns" between the quoted RHS 
 </span>
 <span class="comment">      # using space separators
 </span>
-<span class="comment">
-</span>
+
 <span class="red">      edit_field </span>=><span class="blue"> quotedvar("$(add_modules)","append");</span>
 
    "APACHE_MODULES=.*"
@@ -4590,20 +4421,18 @@ any::
 </span>
 <span class="comment">      # using space separators
 </span>
-<span class="comment">
-</span>
+
 <span class="red">      edit_field </span>=><span class="blue"> quotedvar("$(del_modules)","delete");</span>
 
 <span class="comment">   # if this line already exists, edit it  
 </span>
-<span class="comment">
-</span>
+
 }
 
 </pre>
 
 <!-- ========================================================================= -->
-<!-- @node Index,  , Cfengine Methods, Top -->
+<!-- @node Index,  , CFEngine Methods, Top -->
 <!-- @unnumbered Concept Index -->
 <!-- @printindex cp -->
 <!-- ========================================================================= -->
@@ -4611,7 +4440,7 @@ any::
    <div class="contents">
 <h2>Table of Contents</h2>
 <ul>
-<li><a name="toc_Top" href="#Top">Cfengine-Solutions</a>
+<li><a name="toc_Top" href="#Top">CFEngine-Solutions</a>
 <li><a name="toc_Introduction" href="#Introduction">1 Introduction</a>
 <ul>
 <li><a href="#Begin-_002d-Get-started">1.1 Begin - Get Started</a>
@@ -4705,10 +4534,10 @@ pageTracker._trackPageview();
 
    <div class="footnote">
 <hr>
-<a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> In cfengine 2
+<a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> In CFEngine 2
 there is a separate action type for configuring the system
-resolver. In cfengine 3 this has been deprecated for this standard
-method using the basic functionality of cfengine.</p>
+resolver. In CFEngine 3 this has been deprecated for this standard
+method using the basic functionality of CFEngine.</p>
 
    <hr></div>
 

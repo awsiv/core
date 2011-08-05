@@ -193,13 +193,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a accesskey="4" href="#Version-2">Version 2</a>
 <li><a accesskey="5" href="#Version-3">Version 3</a>
 <li><a accesskey="6" href="#Service-orientation-and-ITIL">Service orientation and ITIL</a>
-<li><a accesskey="7" href="#Cfengine-in-ITIL-clothes_003f">Cfengine in ITIL clothes?</a>
+<li><a accesskey="7" href="#CFEngine-in-ITIL-clothes_003f">CFEngine in ITIL clothes?</a>
 <li><a accesskey="8" href="#ITIL-processes">ITIL processes</a>
-<li><a accesskey="9" href="#Which-ITIL-processes-apply-to-cfengine_003f">Which ITIL processes apply to cfengine?</a>
-<li><a href="#Using-cfengine-to-implement-ITIL-objectives">Using cfengine to implement ITIL objectives</a>
-<li><a href="#How-can-cfengine-or-promises-help-an-enterprise">How can cfengine or promises help an enterprise</a>
+<li><a accesskey="9" href="#Which-ITIL-processes-apply-to-CFEngine_003f">Which ITIL processes apply to CFEngine?</a>
+<li><a href="#Using-CFEngine-to-implement-ITIL-objectives">Using CFEngine to implement ITIL objectives</a>
+<li><a href="#How-can-CFEngine-or-promises-help-an-enterprise">How can CFEngine or promises help an enterprise</a>
 <li><a href="#What-is-maintenance_003f">What is maintenance?</a>
-<li><a href="#ITIL-and-Cfengine-Summary">ITIL and Cfengine Summary</a>
+<li><a href="#ITIL-and-CFEngine-Summary">ITIL and CFEngine Summary</a>
 <li><a href="#ITIL-glossary">ITIL glossary</a>
 </ul>
 
@@ -228,7 +228,7 @@ and continuous improvement to organizations.
 ITIL has emerged as a de-facto set of ideas about service management. 
 Many of ITIL's ideas are rooted in and legacy views of the service desk
 and human remediation. This document explains how to accomplish the
-major goals of ITIL, in the automated framework of Cfengine.
+major goals of ITIL, in the automated framework of CFEngine.
 
    <p>More concretely, the IT Infrastructure Library (ITIL) is a collection
 of books, in which &ldquo;best practices&rdquo; for IT Service Management (ITSM)
@@ -383,7 +383,7 @@ service life cycle stages accordant to versin 3 are:
 <div class="node">
 <a name="Service-orientation-and-ITIL"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Cfengine-in-ITIL-clothes_003f">Cfengine in ITIL clothes?</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#CFEngine-in-ITIL-clothes_003f">CFEngine in ITIL clothes?</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Version-3">Version 3</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -411,8 +411,8 @@ lies behind the design of new services.
 
 </pre>
 <div class="node">
-<a name="Cfengine-in-ITIL-clothes%3f"></a>
-<a name="Cfengine-in-ITIL-clothes_003f"></a>
+<a name="CFEngine-in-ITIL-clothes%3f"></a>
+<a name="CFEngine-in-ITIL-clothes_003f"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#ITIL-processes">ITIL processes</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Service-orientation-and-ITIL">Service orientation and ITIL</a>,
@@ -420,16 +420,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">Cfengine in ITIL clothes?</h3>
+<h3 class="unnumberedsec">CFEngine in ITIL clothes?</h3>
 
 <pre class="sp">
 
 </pre>
 
-Cfengine users are interested in the ability to manage, i.e. cope with
+CFEngine users are interested in the ability to manage, i.e. cope with
 system configuration in a way that enables a business or other
 organization to do its work effectively. They don't want
-human procedures because this is what Cfengine is supposed to
+human procedures because this is what CFEngine is supposed to
 eliminate. To be able to use ITIL to help in this task, we have to first
 think of the process of setting up as a number of services.  What
 services are these? We have to think a little sideways to see the
@@ -440,7 +440,7 @@ relationship.
 <br><dt><b>Change Management</b><dd>A minor edit of the configuration policy, with appropriate quality controls. Or a change that comes
 from a completely different source, outside the scope of intended change. 
 <br><dt><b>Release Management</b><dd>A new configuration policy, consisting of many changes. This could be a major and disruptive change so it should be planned carefully. 
-<br><dt><b>Capacity Management</b><dd>Having enough resources for cfservd to answer all queries in a network. Having enough people and machines to support the processes of deploying and following cfengine's progress. 
+<br><dt><b>Capacity Management</b><dd>Having enough resources for cfservd to answer all queries in a network. Having enough people and machines to support the processes of deploying and following CFEngine's progress. 
 </dl>
 
    <pre class="sp">
@@ -449,8 +449,8 @@ from a completely different source, outside the scope of intended change.
 <div class="node">
 <a name="ITIL-processes"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Which-ITIL-processes-apply-to-cfengine_003f">Which ITIL processes apply to cfengine?</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Cfengine-in-ITIL-clothes_003f">Cfengine in ITIL clothes?</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Which-ITIL-processes-apply-to-CFEngine_003f">Which ITIL processes apply to CFEngine?</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#CFEngine-in-ITIL-clothes_003f">CFEngine in ITIL clothes?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
@@ -588,37 +588,37 @@ Management, this book analyses how the existing and well-established
 technologies used for traditional systems administration can
 fit into an ITIL-driven IT management environment, and it guides
 potential practitioners in integrating a respective tool suite &ndash; namely
-cfengine &ndash; with ITIL and its processes.
+CFEngine &ndash; with ITIL and its processes.
 
-   <p>To avoid any misunderstanding: We do not argue that cfengine &ndash;
+   <p>To avoid any misunderstanding: We do not argue that CFEngine &ndash;
 originally invented for configuring distributed hosts &ndash; may be
 deployed as a comprehensive solution for automating ITIL, but what we
-believe is cfengine and its more recent innovations can <em>bridge
+believe is CFEngine and its more recent innovations can <em>bridge
 the gap</em> between the technology of distributed systems management and
 business-driven IT Service Management. 
 To make the case we must show:
 
      <ol type=1 start=1>
-<li>How ITIL terminology relates to the terminology of cfengine and hence
+<li>How ITIL terminology relates to the terminology of CFEngine and hence
 to a traditional system administrator's language, and
 <li>Which parts (processes and activities) of
-ITIL can be (partially) supported by cfengine, and how.
+ITIL can be (partially) supported by CFEngine, and how.
         </ol>
 
    <pre class="sp">
 
 </pre>
 <div class="node">
-<a name="Which-ITIL-processes-apply-to-cfengine%3f"></a>
-<a name="Which-ITIL-processes-apply-to-cfengine_003f"></a>
+<a name="Which-ITIL-processes-apply-to-CFEngine%3f"></a>
+<a name="Which-ITIL-processes-apply-to-CFEngine_003f"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Using-cfengine-to-implement-ITIL-objectives">Using cfengine to implement ITIL objectives</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Using-CFEngine-to-implement-ITIL-objectives">Using CFEngine to implement ITIL objectives</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#ITIL-processes">ITIL processes</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">Which ITIL processes apply to cfengine?</h3>
+<h3 class="unnumberedsec">Which ITIL processes apply to CFEngine?</h3>
 
 <pre class="sp">
 
@@ -628,13 +628,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
    <p>In version 2, ITIL divides itself into <em>service
 support</em> and <em>service delivery</em>.  For
-instance, service support might mean having a number of cfengine
+instance, service support might mean having a number of CFEngine
 experts who can diagnose problems, or who have sufficient knowledge
-about cfengine to solve problems using the software. It could also
+about CFEngine to solve problems using the software. It could also
 mean having appropriate tools and mechanisms in place to carry out the
 tasks. Service delivery is about how these people make their knowledge
 available through formal processes, how available are they and how
-much work can they cope with? Cfengine enables a few persons to
+much work can they cope with? CFEngine enables a few persons to
 perform a lot of work very cheaply, but we should not forget to track our performance
 and quality for the process of continual improvement.
 
@@ -686,8 +686,8 @@ wrapped in a model of service provision.
 <a name="ITIL-Configuration-Management-_0028CM_0029"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#CMDB-Asset-Management">CMDB Asset Management</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Which-ITIL-processes-apply-to-cfengine_003f">Which ITIL processes apply to cfengine?</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-cfengine_003f">Which ITIL processes apply to cfengine?</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Which-ITIL-processes-apply-to-CFEngine_003f">Which ITIL processes apply to CFEngine?</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-CFEngine_003f">Which ITIL processes apply to CFEngine?</a>
 
 </div>
 
@@ -711,7 +711,7 @@ included. ITIL also defines &ldquo;Asset Management&rdquo; as &ldquo;a process
 responsible for tracking and reporting the value of financially valuable assets&rdquo;
 and is a component of ITIL Configuration Management.
 
-   <p>In the cfengine world, configuration management involves planning,
+   <p>In the CFEngine world, configuration management involves planning,
 deciding, implementing (&ldquo;base-lining&rdquo;) and verifying (&ldquo;auditing&rdquo;)
 the inventory. It also involves maintaining the security and privacy
 of the data, so that only authorized changes can be made and private
@@ -722,7 +722,7 @@ more prosaic system administration notion of a configuration which
 includes the current state of software configuration on the
 individual computers and routers in a network.
 
-   <p>Since Cfengine is a completely distributed system that deals with
+   <p>Since CFEngine is a completely distributed system that deals with
 individual devices on a one-by-one basis, we must interpret this asset
 management at two levels:
 
@@ -730,7 +730,7 @@ management at two levels:
 <li>The local assets of an individual device at the level of virtual
 structures and containers within it: files, attributes, software packages,
 virtual machines, processes etc. This is the traditional domain of automation
-for cfengine's autonomic agent.
+for CFEngine's autonomic agent.
 
      <li>The collective assets of a network of such devices. 
 </ul>
@@ -744,7 +744,7 @@ basic resources are already shared objects, such as shared storage.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Change-management-in-the-enterprise">Change management in the enterprise</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#ITIL-Configuration-Management-_0028CM_0029">ITIL Configuration Management (CM)</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-cfengine_003f">Which ITIL processes apply to cfengine?</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-CFEngine_003f">Which ITIL processes apply to CFEngine?</a>
 
 </div>
 
@@ -775,7 +775,7 @@ of the reasons why we need to keep track of assets.
 
 </pre>
 <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine does not subscribe the the ITIL notion of a CMDB. Instead
+CFEngine does not subscribe the the ITIL notion of a CMDB. Instead
 we have a semantic Knowledge Map and distributed knowledge for
 scalable analysis of the system. 
 </td></tr></table>
@@ -785,7 +785,7 @@ scalable analysis of the system.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Change-management-vs-convergence">Change management vs convergence</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#CMDB-Asset-Management">CMDB Asset Management</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-cfengine_003f">Which ITIL processes apply to cfengine?</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-CFEngine_003f">Which ITIL processes apply to CFEngine?</a>
 
 </div>
 
@@ -802,7 +802,7 @@ agreements since they could result in major disruptions.
 Details of changes need to be known by a help-desk and service personnel.
 
    <p>The decision to make a change is more than a single person should
-usually make alone (see the Cfengine Special Topics Guide on <i>Change
+usually make alone (see the CFEngine Special Topics Guide on <i>Change
 Management</i>).  ITIL recommends an advisory board for changes.
 
 <div class="node">
@@ -810,7 +810,7 @@ Management</i>).  ITIL recommends an advisory board for changes.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Release-management">Release management</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Change-management-in-the-enterprise">Change management in the enterprise</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-cfengine_003f">Which ITIL processes apply to cfengine?</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-CFEngine_003f">Which ITIL processes apply to CFEngine?</a>
 
 </div>
 
@@ -822,8 +822,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-cfengine
 
 We should be especially careful here to decide what we mean by
 change. ITIL assumes a traditional model of change management that
-cfengine does not need. ITIL's ideas apply to the management of
-cfengine's configuration, not the way in which Cfengine carries out its
+CFEngine does not need. ITIL's ideas apply to the management of
+CFEngine's configuration, not the way in which CFEngine carries out its
 work.
 
    <p>In traditional idea of change management you start by &ldquo;base-lining&rdquo; a
@@ -837,13 +837,13 @@ stolen, things get broken by accident and external circumstances
 conspire to confound the order we would like to preserve. The idea
 that only authorized people make changes is nonsense.
 
-   <p>Cfengine takes a different view. It thinks that changes in
+   <p>CFEngine takes a different view. It thinks that changes in
 circumstances are part of the picture, as well as changes in inventory
 and releases.  It deals with the idea of &ldquo;convergence&rdquo;.  In this way
 of thinking, the configuration details might be changing at random in
 a quite unpredictable way, and it is our job to continuously monitor
 and repair general dilapidation. Rather than assuming a constant state
-in between changes, cfengine assumes a constant &ldquo;ideal state&rdquo; or
+in between changes, CFEngine assumes a constant &ldquo;ideal state&rdquo; or
 <em>goal</em> to be achieved between changes. An important thing to realize about including
 changes of external circumstances is that you cannot &ldquo;roll back&rdquo;
 circumstances to an earlier state &ndash; they are beyond our control.
@@ -853,7 +853,7 @@ circumstances to an earlier state &ndash; they are beyond our control.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Incident-and-problem-management">Incident and problem management</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Change-management-vs-convergence">Change management vs convergence</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-cfengine_003f">Which ITIL processes apply to cfengine?</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-CFEngine_003f">Which ITIL processes apply to CFEngine?</a>
 
 </div>
 
@@ -881,7 +881,7 @@ configuration items as part of a release process.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Service-Level-Management-_0028SLM_0029">Service Level Management (SLM)</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Release-management">Release management</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-cfengine_003f">Which ITIL processes apply to cfengine?</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-CFEngine_003f">Which ITIL processes apply to CFEngine?</a>
 
 </div>
 
@@ -899,7 +899,7 @@ on this experience.
 <dt><i>Incident</i><dd>An event or occurrence that demands a response. 
 </dl>
 
-   <p>One goal of cfengine is to plan pro-actively to handle incidents
+   <p>One goal of CFEngine is to plan pro-actively to handle incidents
 automatically, thus taking them off the list of things to worry about.
 
      <dl>
@@ -917,7 +917,7 @@ trouble!
 <a name="Service-Level-Management-_0028SLM_0029"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Incident-and-problem-management">Incident and problem management</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-cfengine_003f">Which ITIL processes apply to cfengine?</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Which-ITIL-processes-apply-to-CFEngine_003f">Which ITIL processes apply to CFEngine?</a>
 
 </div>
 
@@ -933,21 +933,21 @@ We must assess the impact of changes on the ability to deliver
 on promises.
 
 <div class="node">
-<a name="Using-cfengine-to-implement-ITIL-objectives"></a>
+<a name="Using-CFEngine-to-implement-ITIL-objectives"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#How-can-cfengine-or-promises-help-an-enterprise">How can cfengine or promises help an enterprise</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Which-ITIL-processes-apply-to-cfengine_003f">Which ITIL processes apply to cfengine?</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#How-can-CFEngine-or-promises-help-an-enterprise">How can CFEngine or promises help an enterprise</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Which-ITIL-processes-apply-to-CFEngine_003f">Which ITIL processes apply to CFEngine?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">Using cfengine to implement ITIL objectives</h3>
+<h3 class="unnumberedsec">Using CFEngine to implement ITIL objectives</h3>
 
 <pre class="sp">
 
 </pre>
 
-How does cfengine fit into the management of a service organization? 
+How does CFEngine fit into the management of a service organization? 
 There are several ways:
      <ul>
 <li>It offers a rapid detection and repair of faults that help to avoid formal incidents. 
@@ -960,25 +960,25 @@ of system services and therefore they contribute to customer confidence.
    <p>Any tool for assisting with change management lies somewhere between
 ITIL's notion of change management and the infrastructure itself. It
 must essentially be part of both (see figure). This applies
-to cfengine too.
+to CFEngine too.
 
-   <div class="block-image"><img src="cfinf.png" alt="Cfengine is both infrastructure and a part responsible for infrastructure."></div>
+   <div class="block-image"><img src="cfinf.png" alt="CFEngine is both infrastructure and a part responsible for infrastructure."></div>
 
-   <p>Cfengine can manage itself as well as other resources: itself, its
+   <p>CFEngine can manage itself as well as other resources: itself, its
 software, its policy and the resulting plans for the configuration of
-the system. In other words, cfengine is itself part of the infrastructure
+the system. In other words, CFEngine is itself part of the infrastructure
 that we might change.
 
 <div class="node">
-<a name="How-can-cfengine-or-promises-help-an-enterprise"></a>
+<a name="How-can-CFEngine-or-promises-help-an-enterprise"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#What-is-maintenance_003f">What is maintenance?</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Using-cfengine-to-implement-ITIL-objectives">Using cfengine to implement ITIL objectives</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Using-CFEngine-to-implement-ITIL-objectives">Using CFEngine to implement ITIL objectives</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">How can cfengine or promises help an enterprise</h3>
+<h3 class="unnumberedsec">How can CFEngine or promises help an enterprise</h3>
 
 <pre class="sp">
 
@@ -986,11 +986,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 Traditional methods of managing IT infrastructure involve working from
 crisis to crisis &ndash; waiting for `incidents' to occur and then initiating fire
-suppression responses or, if there is time, proactive changes. With cfengine,
+suppression responses or, if there is time, proactive changes. With CFEngine,
 these can be combined and made into a management <em>service</em>, with
 continuous service quality.
 
-   <p>Cfengine can assist with:
+   <p>CFEngine can assist with:
      <ol type=1 start=1>
 <li>Maintenance assurance. 
 <li>Reporting for auditing. 
@@ -1032,8 +1032,8 @@ promises are a model for an arbitrary existing system.
 <a name="What-is-maintenance%3f"></a>
 <a name="What-is-maintenance_003f"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#ITIL-and-Cfengine-Summary">ITIL and Cfengine Summary</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-can-cfengine-or-promises-help-an-enterprise">How can cfengine or promises help an enterprise</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#ITIL-and-CFEngine-Summary">ITIL and CFEngine Summary</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-can-CFEngine-or-promises-help-an-enterprise">How can CFEngine or promises help an enterprise</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
@@ -1062,7 +1062,7 @@ for release 2, the same kind of maintenance will be required for that too.
 this is to wait for a crisis to take place (an incident). We then
 mobilize some kind of response team. But how serious an incident do we
 require and what kind of incident response is required? A graffiti artist? 
-A lightening strike? A bird anoints the paint-work? Cfengine is
+A lightening strike? A bird anoints the paint-work? CFEngine is
 like the gardener who patrols the grounds constantly plucking weeds,
 before the flower beds are overrun. Call it continual improvement if
 you like: the important thing is that the process your be pro-active
@@ -1070,20 +1070,20 @@ and not too expensive.
 
    <p>Maintenance is necessary because we do not control all of the
 changes that take place in a system. There is always some kind of
-&ldquo;weather&rdquo; that we have to work against. Cfengine is about this
+&ldquo;weather&rdquo; that we have to work against. CFEngine is about this
 process of Maintenance. We call it &ldquo;convergence&rdquo; to the ideal state,
 where the ideal state is the specified version release. 
 Keep this in mind as you read about ITIL change management.
 
 <div class="node">
-<a name="ITIL-and-Cfengine-Summary"></a>
+<a name="ITIL-and-CFEngine-Summary"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-is-maintenance_003f">What is maintenance?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">ITIL and Cfengine Summary</h3>
+<h3 class="unnumberedsec">ITIL and CFEngine Summary</h3>
 
 <pre class="sp">
 
@@ -1091,9 +1091,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 ITIL is about processes designed mainly for humans in a workplace. It
 represents a service oriented view of an organization, and as such is
-more scalable than hierarchical views of management. Cfengine is also
+more scalable than hierarchical views of management. CFEngine is also
 a service oriented technology, thus there is some overlap of concepts. 
-Indeed Cfengine is a good tool for implementing and assisting in
+Indeed CFEngine is a good tool for implementing and assisting in
 certain ITIL processes, but we believe that no automation system can
 really support what ITIL is about.
 
@@ -1110,7 +1110,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <h2 class="appendix">Appendix A ITIL glossary</h2>
 
 <p>This section lists some of the many terms from ITIL, especially the ISO/IEC 20000
-version of the text, and offers some comments and translations into common cfengine
+version of the text, and offers some comments and translations into common CFEngine
 terminology.
 
 <ul class="menu">
@@ -1170,7 +1170,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>Monitoring of a configuration item or IT service that uses automated regular checks to discover the current status.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine performs programmed checks of all of its promises each time cfagent is started. 
+CFEngine performs programmed checks of all of its promises each time cfagent is started. 
 Cfagent is, in a sense, an active monitor for a set of promises that are described in its
 configuration file. 
 </td></tr></table>
@@ -1191,7 +1191,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
    <p>Availability = Hours operational / Agreed service hours
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Availability or intermittency in cfengine refers to the responsiveness of
+Availability or intermittency in CFEngine refers to the responsiveness of
 hosts in a network when remotely connecting to cfservd.
 
    <p>Intermittency = Successful~ attempts / Total Attempts
@@ -1213,7 +1213,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>A warning that a threshold has been reached, something has changed or a failure has occurred.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-A cfengine alert fits this description quite well. 
+A CFEngine alert fits this description quite well. 
 Most alerts are user-defined, but a few are side effects of certain configuration
 rules. 
 </td></tr></table>
@@ -1233,10 +1233,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 set of guidelines is being followed.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine's notion of an audit is more like the notion from system
+CFEngine's notion of an audit is more like the notion from system
 accounting. However, the data generated by this extra logging
 information could be collected and used in a more detailed examination
-of cfengine's operations, suitable for use in a formal inspection
+of CFEngine's operations, suitable for use in a formal inspection
 (e.g. for compliance). 
 </td></tr></table>
 
@@ -1255,10 +1255,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 item at a point in time
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-In cfengine parlance, we refer to this as an initial state or
-configuration.  In principle a cfengine initial state does not have to
+In CFEngine parlance, we refer to this as an initial state or
+configuration.  In principle a CFEngine initial state does not have to
 be a known-base line, since the changes we make will not generally be
-relative to an existing configuration. Cfengine encourages users to
+relative to an existing configuration. CFEngine encourages users to
 define the final state (regardless of initial state). 
 </td></tr></table>
 
@@ -1276,9 +1276,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>The recorded state of something at a specific point in time.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine does not use this term in any of its documentation, though
+CFEngine does not use this term in any of its documentation, though
 our general understanding of a &ldquo;benchmark&rdquo; is that of a standardized
-performance measurement under special conditions. Cfengine regularly
+performance measurement under special conditions. CFEngine regularly
 records state and performance data in a variety of ways, for example
 when making file copies. 
 </td></tr></table>
@@ -1297,7 +1297,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>The ability of someone or something to carry out an activity.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine does not use this concept specifically. The notion of a capability
+CFEngine does not use this concept specifically. The notion of a capability
 is terminology used in role-based access control. 
 </td></tr></table>
 
@@ -1316,7 +1316,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 and how they are affected by an authorized change.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine's default modus operandi is to <em>not</em> record changes made
+CFEngine's default modus operandi is to <em>not</em> record changes made
 to a system unless requested by the user. Changes can be written as
 log entries or audit entries by switching on reporting.</td></tr></table>
 
@@ -1382,7 +1382,7 @@ of configuration management.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 A configuration item is any object making a promise
-in cfengine. We often speak of the promise object, or &ldquo;promiser&rdquo;.</td></tr></table>
+in CFEngine. We often speak of the promise object, or &ldquo;promiser&rdquo;.</td></tr></table>
 
 <div class="node">
 <a name="Configuration-Management-Database-(CMDB)"></a>
@@ -1401,9 +1401,9 @@ item and details of the important relationships between them.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 
-   <p>Cfengine has no asset database except for its own list of
+   <p>CFEngine has no asset database except for its own list of
 promises. The only relationships is cares about are those which are
-explicitly coded as promises. In the future, cfengine 3 is likely
+explicitly coded as promises. In the future, CFEngine 3 is likely
 to extend the notion of promises to allow more general records of the
 CMDB kind, but only to the extent that they can be verified autonomically. 
 </td></tr></table>
@@ -1441,7 +1441,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 solve a major incident or to implement a critical security patch.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine has no specific concept for this. 
+CFEngine has no specific concept for this. 
 </td></tr></table>
 
 <div class="node">
@@ -1458,9 +1458,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>A design flaw or malfunction that causes a failure.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine often uses the term configuration error to mean a deviation of
+CFEngine often uses the term configuration error to mean a deviation of
 a configuration from its promised state. The ITIL meaning of the term would
-translated into &ldquo;bug in the cfengine software&rdquo; or &ldquo;bug in the
+translated into &ldquo;bug in the CFEngine software&rdquo; or &ldquo;bug in the
 promised configuration&rdquo;. 
 </td></tr></table>
 
@@ -1479,10 +1479,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 configuration item or IT service.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-The same basic definition applies to cfengine also, but cfengine makes
+The same basic definition applies to CFEngine also, but CFEngine makes
 all such events into <em>classes</em>, since its approach to observing
 the environment is to measure and then classify it into approximate
-expected states.  Cfengine class attributes (usually from cfenvd) may
+expected states.  CFEngine class attributes (usually from cfenvd) may
 be considered as event notifications as they change. 
 </td></tr></table>
 
@@ -1519,7 +1519,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 ITIL's idea of a failure is something that prevents a promise from being kept. 
-Cfengine's autonomy model means that it is unlikely for such a failure
+CFEngine's autonomy model means that it is unlikely for such a failure
 to occur, since promises are only allowed to be made about resources for which
 we have all privileges. Occasionally, environmental issues might interfere and
 lead to failure. 
@@ -1540,12 +1540,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 cause a degradation of service quality.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine's philosophy of convergence gives us only one option for
+CFEngine's philosophy of convergence gives us only one option for
 interpreting this term, namely as a temporary deviation from promised
-behaviour. A deviation must be temporary if cfengine is operating
+behaviour. A deviation must be temporary if CFEngine is operating
 continually, since it will repair any problem on its next invocation
-round. Events which do not impact promises made by cfengine are of no
-interest to cfengine, since autonomy means it cannot be responsible
+round. Events which do not impact promises made by CFEngine are of no
+interest to CFEngine, since autonomy means it cannot be responsible
 for anything beyond its own promises. 
 </td></tr></table>
 
@@ -1564,7 +1564,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 order to detect events and ensure that the current status is known.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine incorporates a number of different kinds of monitoring, including monitoring of kept
+CFEngine incorporates a number of different kinds of monitoring, including monitoring of kept
 configuration-promises and passive monitoring of behaviour. 
 </td></tr></table>
 
@@ -1582,7 +1582,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>Monitoring of a configuration item or IT service that relies on an alert or notification to discover the current status.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfenvd is cfengine's passive monitoring component. It observes system
+Cfenvd is CFEngine's passive monitoring component. It observes system
 related behaviour and learns about it. It assumes that there is likely
 to be a weekly periodicity in the data in order to best handle its
 statistical inference. 
@@ -1605,12 +1605,12 @@ development and implementation of processes, standards, roles,
 activities, IT infrastructures, etc.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine's configuration policy is an automatable set of promises
+CFEngine's configuration policy is an automatable set of promises
 about the static and runtime state of a computer. Roles are identified
 by the kinds of behaviour exhibited by resources in a network. We say
 that a number of resources (hosts or smaller configuration objects)
 play a specific promised role if they make identical promises. Any resource can
-play a number of roles. Decisions in cfengine are made entirely on the basis
+play a number of roles. Decisions in CFEngine are made entirely on the basis
 of the result of monitoring a host environment. 
 </td></tr></table>
 
@@ -1628,7 +1628,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>Monitoring that looks for patterns of events to predict possible future failures.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-All cfengine monitoring is pro-active in the sense that it can lead to automated follow-up actions. 
+All CFEngine monitoring is pro-active in the sense that it can lead to automated follow-up actions. 
 </td></tr></table>
 
 <div class="node">
@@ -1668,8 +1668,8 @@ defined by Service Level Agreements, Operational Level Agreements and
 Underpinning Contracts.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-A promise in cfengine is a single rule in the cfengine language. The promiser is the resource
-whose properties are described, and the promisee is implicitly the cfengine monitor. 
+A promise in CFEngine is a single rule in the CFEngine language. The promiser is the resource
+whose properties are described, and the promisee is implicitly the CFEngine monitor. 
 </td></tr></table>
 
 <div class="node">
@@ -1689,9 +1689,9 @@ incident when an error occurs.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 The concept of reactive monitoring is unclear because the duration of an event and the speed of
-a response are undefined. In a sense, all cfengine monitoring is potentially reactive. It is possible
-to attach actions which keep promises to any observable condition discernable by cfengine's monitor. 
-Cfengine is not usually considered event driven however, since it does not react &ldquo;as soon as possible&rdquo;
+a response are undefined. In a sense, all CFEngine monitoring is potentially reactive. It is possible
+to attach actions which keep promises to any observable condition discernable by CFEngine's monitor. 
+CFEngine is not usually considered event driven however, since it does not react &ldquo;as soon as possible&rdquo;
 but at programmed intervals. 
 </td></tr></table>
 
@@ -1728,9 +1728,9 @@ state. Recovering of an IT service often includes recovering data to a
 known consistent state.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-All cfengine promises refer to the state of a system that is desired. The promises are
-automatically enforced, hence cfengine recovers a system (in principle) on every invocation. 
-Cfengine always returns to a known state, due to the property of &ldquo;convergence&rdquo;. There is no
+All CFEngine promises refer to the state of a system that is desired. The promises are
+automatically enforced, hence CFEngine recovers a system (in principle) on every invocation. 
+CFEngine always returns to a known state, due to the property of &ldquo;convergence&rdquo;. There is no
 distinction between the concepts of repair, recovery or remediation. 
 </td></tr></table>
 
@@ -1748,9 +1748,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>Recovery to a known state after a failed change or release.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-All cfengine promises refer to the state of a system that is desired. The promises are
-automatically enforced, hence cfengine recovers a system (in principle) on every invocation. 
-Cfengine always returns to a known state, due to the property of &ldquo;convergence&rdquo;. There is no
+All CFEngine promises refer to the state of a system that is desired. The promises are
+automatically enforced, hence CFEngine recovers a system (in principle) on every invocation. 
+CFEngine always returns to a known state, due to the property of &ldquo;convergence&rdquo;. There is no
 distinction between the concepts of repair, recovery or remediation.
 
    <p>However, this concept is like the notion of &ldquo;rollback&rdquo; which often involves a more
@@ -1771,9 +1771,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>The replacement or correction of a failed configuration item.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-All cfengine promises refer to the state of a system that is desired. The promises are
-automatically enforced, hence cfengine recovers a system (in principle) on every invocation. 
-Cfengine always returns to a known state, due to the property of &ldquo;convergence&rdquo;. There is no
+All CFEngine promises refer to the state of a system that is desired. The promises are
+automatically enforced, hence CFEngine recovers a system (in principle) on every invocation. 
+CFEngine always returns to a known state, due to the property of &ldquo;convergence&rdquo;. There is no
 distinction between the concepts of repair, recovery or remediation.</td></tr></table>
 
 <div class="node">
@@ -1790,7 +1790,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>A collection of new or changed configuration items that are introduced together.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-An instantiation of the entire cfengine system under a specific
+An instantiation of the entire CFEngine system under a specific
 version of a policy, i.e. a specific set of promises. 
 </td></tr></table>
 
@@ -1808,13 +1808,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>A form to be completed requesting the need for change. This is to be followed up.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-This has no counterpart in cfengine. It is part of human communication
+This has no counterpart in CFEngine. It is part of human communication
 which coordinates autonomous machines. Clearly autonomous computers do not
 listen to change requests from other computers, but when machines cooperate
 in clusters or groups they take suggestions from the collaborative process. 
 An RFC in an ITIL sense is part of an organizational process that goes beyond
- cfengine's level of jurisdiction. This is an example of what ITIL adds to
-the autonomous cfengine model. 
+ CFEngine's level of jurisdiction. This is an example of what ITIL adds to
+the autonomous CFEngine model. 
 </td></tr></table>
 
 <div class="node">
@@ -1855,7 +1855,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>The ability of a configuration item or IT service to resist failure or to recover quickly following a failure.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-Cfengine's purpose is to make a system resilient to unpredictable change.</td></tr></table>
+CFEngine's purpose is to make a system resilient to unpredictable change.</td></tr></table>
 
 <div class="node">
 <a name="Restoration"></a>
@@ -1871,9 +1871,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>Actions taken to return an IT service to the users after repair and recovery from an incident.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-All cfengine promises refer to the state of a system that is desired. The promises are
-automatically enforced, hence cfengine recovers a system (in principle) on every invocation. 
-Cfengine always returns to a known state, due to the property of &ldquo;convergence&rdquo;. There is no
+All CFEngine promises refer to the state of a system that is desired. The promises are
+automatically enforced, hence CFEngine recovers a system (in principle) on every invocation. 
+CFEngine always returns to a known state, due to the property of &ldquo;convergence&rdquo;. There is no
 distinction between the concepts of repair, recovery or remediation.
 
    <p>However, this concept seems to suggest a more catastrophic failure
@@ -1895,7 +1895,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>A set of responsibilities, activities and authorities granted to a person or a team. Roles are defined in processes.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-A role in cfengine is a class of agents that make the same kind of promise. The type
+A role in CFEngine is a class of agents that make the same kind of promise. The type
 of role played by the class is determined by the nature of the promise they make. e.g. 
 a promise to run a web server would naturally lead to the role &ldquo;web server&rdquo;. 
 </td></tr></table>
@@ -1914,7 +1914,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 <p>Interface between users and service provider.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-A help desk. This is not formally part of cfengine's tool set. 
+A help desk. This is not formally part of CFEngine's tool set. 
 </td></tr></table>
 
 <div class="node">
@@ -1936,7 +1936,7 @@ An agreement assumes a set of promises that propose behaviour and an
 acceptance of those promises by the client. If we assume that the
 users are satisfied with out policies, then an SLA can be
 interpreted as a combination of a configuration policy
-(configuration service promises), and the cfengine execution
+(configuration service promises), and the CFEngine execution
 schedule. 
 </td></tr></table>
 
@@ -1967,7 +1967,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#ITIL-glossary">ITIL glossary</a>
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 A message generated in place of a correction to system state when a deviation from policy is detected. 
-Note that cfengine is not based on fixed thresholds. All &ldquo;thresholds&rdquo; for action or warning
+Note that CFEngine is not based on fixed thresholds. All &ldquo;thresholds&rdquo; for action or warning
 are defined as a matter of policy. 
 </td></tr></table>
 
@@ -1983,7 +1983,7 @@ are defined as a matter of policy.
 <li><a href="#Version-2">Version 2</a>
 <li><a href="#Version-3">Version 3</a>
 <li><a href="#Service-orientation-and-ITIL">Service orientation and ITIL</a>
-<li><a href="#Cfengine-in-ITIL-clothes_003f">Cfengine in ITIL clothes?</a>
+<li><a href="#CFEngine-in-ITIL-clothes_003f">CFEngine in ITIL clothes?</a>
 <li><a href="#ITIL-processes">ITIL processes</a>
 <ul>
 <li><a href="#Service-Strategy">Service Strategy</a>
@@ -1992,7 +1992,7 @@ are defined as a matter of policy.
 <li><a href="#Continual-Service-Improvement">Continual Service Improvement</a>
 </li></ul>
 <li><a href="#Continual-Service-Improvement">Tool Support</a>
-<li><a href="#Which-ITIL-processes-apply-to-cfengine_003f">Which ITIL processes apply to cfengine?</a>
+<li><a href="#Which-ITIL-processes-apply-to-CFEngine_003f">Which ITIL processes apply to CFEngine?</a>
 <ul>
 <li><a href="#ITIL-Configuration-Management-_0028CM_0029">ITIL Configuration Management (CM)</a>
 <li><a href="#CMDB-Asset-Management">CMDB Asset Management</a>
@@ -2002,10 +2002,10 @@ are defined as a matter of policy.
 <li><a href="#Incident-and-problem-management">Incident and problem management</a>
 <li><a href="#Service-Level-Management-_0028SLM_0029">Service Level Management (SLM)</a>
 </li></ul>
-<li><a href="#Using-cfengine-to-implement-ITIL-objectives">Using cfengine to implement ITIL objectives</a>
-<li><a href="#How-can-cfengine-or-promises-help-an-enterprise">How can cfengine or promises help an enterprise</a>
+<li><a href="#Using-CFEngine-to-implement-ITIL-objectives">Using CFEngine to implement ITIL objectives</a>
+<li><a href="#How-can-CFEngine-or-promises-help-an-enterprise">How can CFEngine or promises help an enterprise</a>
 <li><a href="#What-is-maintenance_003f">What is maintenance?</a>
-<li><a href="#ITIL-and-Cfengine-Summary">ITIL and Cfengine Summary</a>
+<li><a href="#ITIL-and-CFEngine-Summary">ITIL and CFEngine Summary</a>
 </li></ul>
 <li><a name="toc_ITIL-glossary" href="#ITIL-glossary">Appendix A ITIL glossary</a>
 <ul>

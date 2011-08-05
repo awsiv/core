@@ -184,7 +184,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
 </div>
 
-<h2 class="unnumbered">Cfengine-Tutorial</h2>
+<h2 class="unnumbered">CFEngine-Tutorial</h2>
 
 <ul class="menu">
 <li><a accesskey="1" href="#What-is-rollback_003f">What is rollback?</a>
@@ -194,7 +194,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a accesskey="5" href="#Why-is-relying-on-rollback-not-a-good-strategy_003f">Why is relying on rollback not a good strategy?</a>
 <li><a accesskey="6" href="#Don_0027t-shoot-the-messenger">Don't shoot the messenger</a>
 <li><a accesskey="7" href="#An-alternative-way-to-plan-changes">An alternative way to plan changes</a>
-<li><a accesskey="8" href="#How-does-cfengine-convergence-help_003f">How does cfengine convergence help?</a>
+<li><a accesskey="8" href="#How-does-CFEngine-convergence-help_003f">How does CFEngine convergence help?</a>
 <li><a accesskey="9" href="#g_t_0060Resetting_0027-_002d_002d-a-case-where-rollback-works_003f">`Resetting' -- a case where rollback works?</a>
 <li><a href="#Appendix-_002d-Did-you-know_003f">Appendix - Did you know?</a>
 </ul>
@@ -437,7 +437,7 @@ already planned your exit strategy.
 <div class="node">
 <a name="An-alternative-way-to-plan-changes"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#How-does-cfengine-convergence-help_003f">How does cfengine convergence help?</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#How-does-CFEngine-convergence-help_003f">How does CFEngine convergence help?</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Don_0027t-shoot-the-messenger">Don't shoot the messenger</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -476,7 +476,7 @@ Always plan based on the desired state &ndash; i.e. not where you think you
 are starting from, but where you want to get to. That is the only
 fixed point on which to base a policy.
 
-   <p>Cfengine can deal with the error correction against unplanned changes,
+   <p>CFEngine can deal with the error correction against unplanned changes,
 but only humans can manage <i>intentions</i>.
 
    <pre class="sp">
@@ -487,11 +487,11 @@ but only humans can manage <i>intentions</i>.
 WHY CAN WE DO THIS NOW? Previously the technology for making reliable
 changes was poor and was based on transaction thinking, and it was
 important to minimize the disruptive operations in a few
-`roll-outs'. This is no longer true with Cfengine.  It is both
+`roll-outs'. This is no longer true with CFEngine.  It is both
 inexpensive and even <i>recommended</i> to make a large number of small
 impact changes to respond to your needs. In this way you should
 minimize the risk through small increments and testing. Moreover,
-because Cfengine does <i>not</i> assume or rely on transactional
+because CFEngine does <i>not</i> assume or rely on transactional
 integrity, it is less prone to failures during change implementation. 
 </td></tr></table>
 
@@ -501,8 +501,8 @@ integrity, it is less prone to failures during change implementation.
 </pre>
 
 <div class="node">
-<a name="How-does-cfengine-convergence-help%3f"></a>
-<a name="How-does-cfengine-convergence-help_003f"></a>
+<a name="How-does-CFEngine-convergence-help%3f"></a>
+<a name="How-does-CFEngine-convergence-help_003f"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#g_t_0060Resetting_0027-_002d_002d-a-case-where-rollback-works_003f">`Resetting' -- a case where rollback works?</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#An-alternative-way-to-plan-changes">An alternative way to plan changes</a>,
@@ -510,21 +510,21 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="unnumberedsec">How does cfengine <i>convergence</i> help?</h3>
+<h3 class="unnumberedsec">How does CFEngine <i>convergence</i> help?</h3>
 
-<p>Cfengine's change management model is not based on transactions, it is
+<p>CFEngine's change management model is not based on transactions, it is
 based on a concept of convergence to a known end-state.  In
 transaction management, you need to know where you started from and
 the complete history of the system in order to know where you will end
 up. No one has this information reliably. The alternative is
-cfengine's convergence principle. Convergence, works like a sink,
+CFEngine's convergence principle. Convergence, works like a sink,
 drawing the system down towards the desired state, no matter where you
 start from.
 
 <div align="center"><img src="convergence.png" alt="Rollback"></div>
 
-   <p>Each promise in cfengine is engineered in this way. We promise end
-results, not changes. Cfengine calculates the
+   <p>Each promise in CFEngine is engineered in this way. We promise end
+results, not changes. CFEngine calculates the
 necessary steps and implementing them (many times if necessary) to avoid
 failure.
 
@@ -543,7 +543,7 @@ what happens in the live system, not in the lab.
      <li>Test on the smallest possible set and expand from there.
 
      <li>Watch over changes and their later impact on the network as
-they are made by cfengine to see if any of your initial assumptions were wrong.
+they are made by CFEngine to see if any of your initial assumptions were wrong.
 
      <li>If there was a mistake, change your policy again to correct the mistake (moving forwards).
 
@@ -553,7 +553,7 @@ they are made by cfengine to see if any of your initial assumptions were wrong.
 
 </pre>
 
-Using cfengine, you should always be thinking of moving forwards, even
+Using CFEngine, you should always be thinking of moving forwards, even
 if you circle back to an earlier policy. Do not try to go back and
 undo changes, think of going forwards and minimizing the repercussions
 of errors. If mistakes are made, go forward again with promises that clean
@@ -564,7 +564,7 @@ up and repair.
 <a name="g_t_0060Resetting_0027-_002d_002d-a-case-where-rollback-works_003f"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Appendix-_002d-Did-you-know_003f">Appendix - Did you know?</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-does-cfengine-convergence-help_003f">How does cfengine convergence help?</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-does-CFEngine-convergence-help_003f">How does CFEngine convergence help?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
@@ -611,8 +611,8 @@ instances or copies die and falls back to a copy.
 
 </pre>
 
-Cfengine helps here too. If you really want this kind of radical reset
-and you don't mind losing runtime data, cfengine will help you to
+CFEngine helps here too. If you really want this kind of radical reset
+and you don't mind losing runtime data, CFEngine will help you to
 reconstruct the system in a predictable policy-compliant way.
 
 <div class="node">
@@ -626,7 +626,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Appendix - Did you know?</h3>
 
-<p>Here are some features that can help you to recover with Cfengine's
+<p>Here are some features that can help you to recover with CFEngine's
 non-destructive error correction approach:
 
      <ul>
@@ -635,18 +635,18 @@ to detect and log unexpected change in our system. This can help you
 to correlate changes in policy with unexpected consequences so that you
 can plan your clean-up.
 
-     <li>When cfengine changes or renames a file it keeps a backup of the file
+     <li>When CFEngine changes or renames a file it keeps a backup of the file
 before the change, of the form <samp><span class="file">filename.</span><var>suffix</var></samp>, where the
 <var>suffix</var> is by default: <samp><span class="file">.cfsaved</span></samp>, <samp><span class="file">.cfdisabled</span></samp>, <samp><span class="file">.cfedited</span></samp>,
 <samp><span class="file">.cfmoved</span></samp>.
 
      <li>Normally only one level of backup is kept, i.e. the next change
 will overwrite this file.  If you specify <code>copy_backup =&gt;
-"timestamp";</code> or <code>edit_backup =&gt; "timestamp";</code> then cfengine will
+"timestamp";</code> or <code>edit_backup =&gt; "timestamp";</code> then CFEngine will
 keep multiple versions with time-stamps to keep a complete history.
 
      <li>If you specify a <code>repository</code> directory in a <code>files</code>
-promise, Cfengine will move all such backup files to a single
+promise, CFEngine will move all such backup files to a single
 location, rather than leaving them in the same directory, next
 to the original files.
 
@@ -656,7 +656,7 @@ to the original files.
    <div class="contents">
 <h2>Table of Contents</h2>
 <ul>
-<li><a name="toc_Top" href="#Top">Cfengine-Tutorial</a>
+<li><a name="toc_Top" href="#Top">CFEngine-Tutorial</a>
 <ul>
 <li><a href="#What-is-rollback_003f">What is rollback?</a>
 <li><a href="#Like-revision-control_003f">Like revision control?</a>
@@ -665,7 +665,7 @@ to the original files.
 <li><a href="#Why-is-relying-on-rollback-not-a-good-strategy_003f">Why is relying on rollback not a good strategy?</a>
 <li><a href="#Don_0027t-shoot-the-messenger">Don't shoot the messenger</a>
 <li><a href="#An-alternative-way-to-plan-changes">An alternative way to plan changes</a>
-<li><a href="#How-does-cfengine-convergence-help_003f">How does cfengine <i>convergence</i> help?</a>
+<li><a href="#How-does-CFEngine-convergence-help_003f">How does CFEngine <i>convergence</i> help?</a>
 <li><a href="#_0060Resetting_0027-_002d_002d-a-case-where-rollback-works_003f">`Resetting' &ndash; a case where rollback works?</a>
 <li><a href="#Appendix-_002d-Did-you-know_003f">Appendix - Did you know?</a>
 </li></ul>
