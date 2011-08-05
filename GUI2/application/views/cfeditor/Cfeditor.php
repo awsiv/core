@@ -15,7 +15,7 @@
 <link href="<?php echo get_scriptdir();?>/Cfeditor/lib/codemirror.css" rel="stylesheet" media="screen" />
 <link href="<?php echo get_scriptdir();?>/Cfeditor/mode/cfengine/cfengine.css" rel="stylesheet" media="screen" />
 <script src="<?php echo get_scriptdir();?>jquery-1.6.1.js" type="text/javascript"></script>
-<script src="<?php echo get_scriptdir();?>jquery-ui-1.8.9.custom.min.js" type="text/javascript"></script>
+<script src="<?php echo get_scriptdir();?>jquery-ui-1.8.14.custom.min.js" type="text/javascript"></script>
 <!--[if IE]><?php echo $this->carabiner->display('iefix'); ?><![endif]-->
 <?php
 $injected= isset($injected_item)?$injected_item:"" ;echo $injected;
