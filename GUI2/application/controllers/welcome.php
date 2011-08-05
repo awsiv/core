@@ -567,6 +567,7 @@ class Welcome extends Cf_Controller {
             'url' => 'welcome/services',
             'isRoot' => false
         );
+        $this->carabiner->js('jquery.tablesorter.min.js');
         $this->load->library('cf_table');
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(

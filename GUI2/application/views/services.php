@@ -3,7 +3,6 @@
 # This file is (C) Cfengine AS. All rights reserved
 #
 ?>
-        
         <div id="body" class="outerdiv">
          <div class="innerdiv">
           		<p class="title">Services and methods</p>
@@ -16,3 +15,12 @@
                 </div>
            </div>
         </div>
+<script type="text/javascript">
+    $(document).ready(function() {
+         $('.tables table').tablesorter({
+            widgets: ['zebra'],
+            sortList: [[1,0]]
+       });
+    });
+
+   </script>

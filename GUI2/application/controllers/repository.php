@@ -78,8 +78,9 @@ class Repository extends Cf_Controller {
 
                 $bc = array(
                     'title' => 'Manage Repository',
-                    'url' => site_url().'repository/manageRepository',
-                    'isRoot' => false
+                    'url' => site_url().'/repository/manageRepository',
+                    'isRoot' => false,
+                    'replace_existing' => true
                 );
 
                 $this->breadcrumb->setBreadCrumb($bc);
@@ -187,7 +188,8 @@ class Repository extends Cf_Controller {
         $bc = array(
             'title' => 'Manage Repository',
             'url' => '/repository/manageRepository',
-            'isRoot' => false
+            'isRoot' => false,
+            'replace_existing' => true
         );
 
         $requiredjs = array(
