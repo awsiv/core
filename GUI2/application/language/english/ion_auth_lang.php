@@ -57,7 +57,7 @@ $lang['group_delete_successful'] 		= 'Group Deleted';
 $lang['group_delete_unsuccessful'] 		= 'Unable to Delete Group';
 $lang['group_update_successful']                = 'Group Information Sucessfully Updated';
 $lang['group_update_unsuccessful']              = 'Unable to Update group';
-$lang['backend_error']              = "Appsetting's doesn't exist ,create it using mission portal settings link";
+$lang['backend_error']              = "Cannot connect to database .Make sure database exist";
 $lang['admin_group_deletion']= "Cannot delete the admin group";
 $lang['no_admin_group']="No Admin group selected yet in app config";
 //modes of login
