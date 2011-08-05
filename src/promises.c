@@ -207,7 +207,6 @@ if(!IsIPV4Address(master) && !IsIPV6Address(master))
    if ((hp = gethostbyname(master)) == NULL)
       {
       CfOut(cf_verbose,"","Hostname lookup failed on node name \"%s\"\n",master);
-      return;
       }
    else
       {
