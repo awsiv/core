@@ -2341,3 +2341,38 @@ if (LICENSES == 0)
  
  return true;
 }
+
+/*********************************************************************/
+
+void Nova_CommandAPI(char *lsdata,char *phandle,char *hostkey,char *classregex)
+    
+{ int plen = strlen(phandle);
+  int slen = strlen(lsdata);
+  int hlen = strlen(hostkey);
+  int clen = strlen(classregex);
+     
+if (hlen > 0 && slen == 0 && plen == 0 && clen == 0)
+   {
+   // Show host details
+   char name[CF_MAXVARSIZE] = {0},address[CF_MAXVARSIZE] = {0};
+   
+   Nova2Txt_hostinfo(hostkey,name,address,CF_MAXVARSIZE);
+   printf(" -> Hostname: %s",name);
+   printf(" -> Recent IP Addresses: %s",address);
+   }
+
+ /*
+   Nova2Txt_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+
+int Nova2Txt_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+
+int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,struct PageInfo *page, int lookInArchive,char *returnval,int bufsize)
+
+int Nova2Txt_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,struct PageInfo *page, int lookInArchive,char *returnval,int bufsize)
+
+
+
+
+   
+ */
+}

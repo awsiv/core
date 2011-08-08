@@ -57,7 +57,7 @@ int Nova2Txt_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
 int Nova2Txt_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,struct PageInfo *page,char *buffer,int bufsize);
 void Nova2Txt_summary_meter(char *buffer,int bufsize);
 void Nova2Txt_meter(char *hostkey,char *buffer,int bufsize);
-int Nova2Txt_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsize);
+int Nova2Txt_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut, int bufsize);
 int Nova2Txt_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *classreg,struct PageInfo *page,char *returnval,int bufsize);
 int Nova2Txt_classes_report(char *hostkey,char *name,int regex,char *classreg,struct PageInfo *page,char *buffer,int bufsize);
 int Nova2Txt_classes_summary(char **classes, char *buf, int bufsize);

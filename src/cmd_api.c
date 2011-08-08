@@ -1544,60 +1544,60 @@ int Nova2Txt_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsiz
 
 /* BEGIN query document */
 
- if (hostkey && strlen(hostkey) != 0)
-    {
-    bson_buffer_init(&bb);
-    bson_append_string(&bb,cfr_keyhash,hostkey);
-    bson_from_buffer(&query,&bb);
-    }
- else
-    {
-    return false;
-    }
+if (hostkey && strlen(hostkey) != 0)
+   {
+   bson_buffer_init(&bb);
+   bson_append_string(&bb,cfr_keyhash,hostkey);
+   bson_from_buffer(&query,&bb);
+   }
+else
+   {
+   return false;
+   }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- hq = CFDB_QueryHosts(&dbconn,&query);
- bson_destroy(&query);
+hq = CFDB_QueryHosts(&dbconn,&query);
+bson_destroy(&query);
 
- hostnameOut[0] = '\0';
- ipaddrOut[0] = '\0';
+hostnameOut[0] = '\0';
+ipaddrOut[0] = '\0';
 
- for (rp = hq->hosts; rp != NULL; rp=rp->next)
-    {
-    hh = (struct HubHost *)rp->item;
-
-    snprintf(buffer1,CF_MAXVARSIZE-1,"%s ",hh->hostname);
-    snprintf(buffer2,CF_MAXVARSIZE-1,"%s ",hh->ipaddr);
-
-    tmpsize1 = strlen(buffer1);
-    tmpsize2 = strlen(buffer2);
+for (rp = hq->hosts; rp != NULL; rp=rp->next)
+   {
+   hh = (struct HubHost *)rp->item;
    
-    if (count1 + tmpsize1 <= bufsize - 1)
-       {
-       strcat(hostnameOut,buffer1);
-       count1 += tmpsize1;
-       }
+   snprintf(buffer1,CF_MAXVARSIZE-1,"%s ",hh->hostname);
+   snprintf(buffer2,CF_MAXVARSIZE-1,"%s ",hh->ipaddr);
+   
+   tmpsize1 = strlen(buffer1);
+   tmpsize2 = strlen(buffer2);
+   
+   if (count1 + tmpsize1 <= bufsize - 1)
+      {
+      strcat(hostnameOut,buffer1);
+      count1 += tmpsize1;
+      }
+   
+   if (count2 + tmpsize2 <= bufsize - 1)
+      {
+      strcat(ipaddrOut,buffer2);
+      count2 += tmpsize2;
+      }
+   }
 
-    if (count2 + tmpsize2 <= bufsize - 1)
-       {
-       strcat(ipaddrOut,buffer2);
-       count2 += tmpsize2;
-       }
-    }
+DeleteHubQuery(hq,NULL);
 
- DeleteHubQuery(hq,NULL);
+ReplaceTrailingChar(hostnameOut, ' ', '\0');
+ReplaceTrailingChar(ipaddrOut, ' ', '\0');
 
- ReplaceTrailingChar(hostnameOut, ' ', '\0');
- ReplaceTrailingChar(ipaddrOut, ' ', '\0');
+CFDB_Close(&dbconn);
 
- CFDB_Close(&dbconn);
-
- return true;
+return true;
 }
 /*****************************************************************************/
 
