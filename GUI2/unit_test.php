@@ -55,7 +55,7 @@ if (isset($_GET['all']) || isset($_POST['all']))
 
 //Capture CodeIgniter output, discard and load system into $CI variable
 ob_start();
-	include(ROOT . 'index.php');
+	include(ROOT . 'unittest_index.php');
 	$CI =& get_instance();
 ob_end_clean();
 

@@ -7,7 +7,7 @@ class test_vitals extends CodeIgniterUnitTestCase {
     }
 
     public function setUp() {
-        $this->hostkey = 'SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e';
+        $this->hostkey = cfpr_hub_key();
     }
 
     public function tearDown() {
