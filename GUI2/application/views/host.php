@@ -29,7 +29,7 @@
         <div id="hostviewerbtn" class="dash innerdiv">
             <p class="title"> <img src= "<?php echo get_imagedir().$colour?>_square_little.png" class="hoststatcolorsquare"/>Actions</p>
             <ul>
-                <li><?php echo anchor('widget/allreports','Reports',array('id'=>'findreport', 'class'=>'report')) ?></li>
+                <li><?php echo anchor('widget/allreports','Reports',array('id'=>'findreport','title'=>'Generate report for this host', 'class'=>'report showqtip')) ?></li>
                     <?php
                      if ($is_commented != "")
                          {
@@ -40,9 +40,9 @@
 
                          }
                       ?>
-                <li><a href="<?php echo $noteUrl ?>" class="note" id="add_cmt" title="Add note about this host">Notes</a></li>
-                <li> <?php echo anchor('visual/vital/'.$hostkey,'vitals',array('id'=>'pulseNvitals','class'=>'pulseNvitals','title'=>'View probes regarding cpu,memory,network etc')) ?></li>
-                <li><a href="#" id="notkeptlnk" title="Promises not kept in the past week" class="problems">Problems</a></li>
+                <li><a href="<?php echo $noteUrl ?>" class="note showqtip" id="add_cmt" title="Add note about this host">Notes</a></li>
+                <li> <?php echo anchor('visual/vital/'.$hostkey,'vitals',array('id'=>'pulseNvitals','class'=>'pulseNvitals showqtip','title'=>'View probes regarding cpu,memory,network etc')) ?></li>
+                <li><a href="#" id="notkeptlnk" title="Promises not kept in the past week" class="problems showqtip">Problems</a></li>
                 <p class="clearleft"></p>
             </ul>
         </div>
