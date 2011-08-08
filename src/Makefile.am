@@ -59,6 +59,7 @@ libcfnova_la_SOURCES =						\
 	magnify.c						\
 	topicmap.c                                              \
 	install.c						\
+	cmd_api.c						\
 	web_api.c						\
 	win_api.c						\
         win_disphelper.c                                        \
@@ -104,7 +105,7 @@ libcfhub_la_SOURCES =	                                        \
 #
 
 noinst_HEADERS =							\
-        win_disphelper.h cf.nova.h cf.nova.web_api.h
+        win_disphelper.h cf.nova.h cf.nova.web_api.h cf.nova.cmd_api.h
 
 #
 # Some basic clean ups

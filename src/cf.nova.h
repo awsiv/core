@@ -282,6 +282,10 @@ void DeleteReportBook(struct Item **reports);
 void UnpackReportBook(char *id,char *ipaddr,char *hostname,struct Item **reports);
 void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *conn);
 
+/* cmd_api.c */
+
+#include "cf.nova.cmd_api.h"
+
 /* copernicus.c */
 
 void Nova_PrimeGraph(struct Rlist **semantic);
