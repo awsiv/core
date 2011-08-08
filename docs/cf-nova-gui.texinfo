@@ -11,7 +11,7 @@
 @titlepage
 @title CFEngine Nova Mission Portal
 @subtitle CFEngine Enterprise Documentation
-@subtitle for version 2.1 alpha2, 18. July 2011
+@subtitle for version 2.1 alpha3, 8. Aug 2011
 @author CFEngine
 @c @smallbook
 @fonttextsize 10
@@ -179,7 +179,7 @@ List of policy goals as defined in user policy files; these examples are from @f
 @noindent Action buttons:
 @itemize -
 @item Repository: Edit policy files in the integrated policy editor (requires Subversion)
-@item Track records: To be developed
+@item Track records: Overview of promises repaired or not kept
 @item Approve policies: To be developed
 @item Service catalogue: See which bundles contribute to policy goals
 @end itemize
@@ -310,6 +310,17 @@ The result shows the number of hosts and their compliance when a single promise 
 @sp 1
 @center @image{img-summaryreport,15cm,,Summary report}
 @center Figure: Summary report
+@sp 1
+
+
+@node
+@subsection CDP report finder
+
+A Content-Driven Policy (CDP) is a text file with lines containing semi-colon separated fields, like a spreadsheet or tabular file. Each line in the file is parsed and results in a specific type of promise being made, depending on which type the Content-Driven Policy is. The CDP report finder lists template CDPs that come with CFEngine Nova, click to view a report on the selected topic.
+
+@sp 1
+@center @image{img-cdpreportfinder,10cm,,CDP report finder}
+@center Figure: CDP report finder
 @sp 1
 
 
@@ -513,20 +524,14 @@ The main menu on the left hand panel shows the main workflow items for
 policy editing. Clicking the arrow in the panel divider collapses the
 menu and gives full-screen editing.
 
-The right hand panel shows basic file and Subversion commands. The @code{Save} button will store a local/intermediate (?) version of the opened files. 
-
-
-@c @sp 1
-@c @center @image{Editormenu,5cm,,The front page}
-@c @center Figure: The policy editor main menu
-@c @sp 1
+The right hand panel shows basic file and Subversion commands. The @code{Save} button will store a local/version of the opened files without committing to the repository. 
 
 
 @node 
 @section Mission Portal Settings
 
 @menu
-* Mission Portal Settings::
+* Mission Portal Configuration::
 * Mission Portal User Admin::
 @end menu
 
@@ -542,9 +547,9 @@ Configure and view various settings for the Mission Portal.
 @sp 1
 
 @itemize -
-@item List of saved searches: To be developed
+@item List of saved searches: View saved searches (e.g. searches saved from reports viewer/finder)
 @item Mission Portal settings: Configure access authentication mode (database, LDAP, Active Directory)
-@item Search settings: To be developed
+@item My preferences: Turn tooltips on/off and enter default number of rows to be shown in reports
 @item Report settings: To be developed
 @item Machine settings: To be developed
 @end itemize
@@ -575,7 +580,7 @@ To enable LDAP on a fresh install, log on to the Mission Portal with the default
 @node
 @section Configure LDAP
 
-Select the LDAP button. 
+Select the LDAP button and enter the appropriate configuration settings for your system.
 
 @sp 1
 @center @image{img-configldap,15cm,,Configure LDAP}
@@ -592,8 +597,9 @@ Select the LDAP button.
 @item Member attribute: Field name used to match user group (only needed for OPENLDAP), e.g. memberUid
 @end itemize
 
-Always check that the entered configuration is correct by clicking the "Test it" button before submitting changes. Enter a valid username and password in the popup to test LDAP bind, and submit if everything is fine. Submitting an incorrect configuration will lock out all users. To revert, set the switch @code{$config['auth_mode']='database';} in @file{<your web directory>/application/config/appsettings} and start over again using a valid database login and password ("admin" and "admin" on a fresh install).
+Always check that the entered configuration is correct by clicking the "Test it" button before submitting changes. Enter a valid username and password in the popup to test LDAP bind. Submitting an incorrect configuration will put LDAP down and lock out all users, CFE Nova therefore comes with a fallback solution. It will look for a fallback administrator group in the database, select this from the dropbox.
 
+Also select which user group will have general administrator privileges in the Mission Portal. This group will be able to access the Mission Portal settings and configuration tools.
 
 @node
 @section Configure Active Directory
@@ -615,7 +621,9 @@ Select the Active Directory button.
 @item Active directory domain: Field name used to match directory domain on Windows machines, e.g. windows1.test.cfengine.com
 @end itemize
 
-Always check that the entered configuration is correct by clicking the "Test it" button before submitting changes. Enter a valid username and password in the popup to test LDAP bind, and submit if everything is fine. Submitting an incorrect configuration will lock out all users. To revert, set the switch @code{$config['auth_mode']='database';} in @file{<your web directory>/application/config/appsettings} and start over again using a valid database login and password ("admin" and "admin" on a fresh install).
+Always check that the entered configuration is correct by clicking the "Test it" button before submitting changes. Enter a valid username and password in the popup to test LDAP bind. Submitting an incorrect configuration will put LDAP down and lock out all users, CFE Nova therefore comes with a fallback solution. It will look for a fallback administrator group in the database, select this from the dropbox.
+
+Also select which user group will have general administrator privileges in the Mission Portal. This group will be able to access the Mission Portal settings and configuration tools.
 
 
 
