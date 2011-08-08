@@ -98,7 +98,6 @@
                
                 if (ui.index != tabid) {
                     // remove the cookie
-                    console.log(ui.index);
                     $.cookie('ktab_cookie', null, { path: '/',expires: -5 });
                 }
                 
