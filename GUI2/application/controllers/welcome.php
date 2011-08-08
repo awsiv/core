@@ -16,30 +16,24 @@ class Welcome extends Cf_Controller {
             'isRoot' => true
         );
         $this->breadcrumb->setBreadCrumb($bc);
-        $scripts = array(
-           // '<script language="javascript" type="text/javascript" src="' . get_nodehost() . '/socket.io/socket.io.js"> </script>
-            // ',
-            '<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'widgets/licensemeter.js"></script>
-            '
-        );
-            try{
-                    $expirydate = strtotime(cfpr_getlicense_expiry());
-                    $startDate = cfpr_getlicense_installtime();
-                    //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
-                    $datediff = $expirydate - $startDate;
-                    $totaldays = floor($datediff / (60 * 60 * 24));
-                    $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
+        $this->carabiner->js('widgets/licensemeter.js');
+        try {
+            $expirydate = strtotime(cfpr_getlicense_expiry());
+            $startDate = cfpr_getlicense_installtime();
+            //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
+            $datediff = $expirydate - $startDate;
+            $totaldays = floor($datediff / (60 * 60 * 24));
+            $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
 
-                    $pbarvalue = floor(($dayspassed / $totaldays) * 100);
-            }catch(Exception $e)
-            {
-                log_message('license error:'.$e->getMessage());
-            }
+            $pbarvalue = floor(($dayspassed / $totaldays) * 100);
+        } catch (Exception $e) {
+            log_message('license error:' . $e->getMessage());
+        }
 
         $data = array(
             'title' => "Cfengine Mission Portal - overview",
             'title_header' => "overview",
-            'breadcrumbs' => $this->breadcrumblist->display(),            
+            'breadcrumbs' => $this->breadcrumblist->display(),
             'pbarvalue' => $pbarvalue,
             'daysleft' => $totaldays - $dayspassed,
         );
@@ -51,7 +45,6 @@ class Welcome extends Cf_Controller {
         }
 
 
-        $this->template->set('injected_item', implode("", $scripts));
 
 
         $this->template->load('template', 'index', $data);
@@ -105,9 +98,9 @@ class Welcome extends Cf_Controller {
             $graphData['compliance_summary'] = $this->_convert_summary_compliance_graph_status($cdata);
             $data = array_merge($data, $graphData);
         }
-        
-        
-        
+
+
+
 
 
         $businessValuePieData = cfpr_get_value_graph(NULL, NULL, NULL, NULL, NULL);
@@ -149,8 +142,7 @@ class Welcome extends Cf_Controller {
 
         $this->template->load('template', 'status', $data);
     }
-    
-    
+
     function _convert_summary_compliance_graph_status($rawData) {
         $convertedData = json_decode($rawData, true);
 
@@ -200,7 +192,7 @@ class Welcome extends Cf_Controller {
 
         if (is_array($start) && !empty($start)) {
             $data['graphSeries']['start'] = json_encode($start);
-        }        
+        }
         return $data;
     }
 
@@ -379,18 +371,17 @@ class Welcome extends Cf_Controller {
     }
 
     function hosts($type=NULL) {
-          if($type==NULL)
-        {
+        if ($type == NULL) {
             redirect('welcome/engg');
-                return;
+            return;
         }
         $this->carabiner->js('jquery.tablesorter.min.js');
         $result = array();
         $this->load->library(array('cf_table'));
         $getparams = $this->uri->uri_to_assoc(4);
         $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
-        if(!is_numeric($rows)){
-            $rows=20;
+        if (!is_numeric($rows)) {
+            $rows = 20;
         }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         switch ($type) {
@@ -415,7 +406,7 @@ class Welcome extends Cf_Controller {
             //array_push($columns, img(array('src' => 'images/' . $type . '.png', 'class' => 'align')) . anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
             //array_push($columns,anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
             // }
-            $list= array_msort($result['data'],array('id'=>SORT_ASC),true);
+            $list = array_msort($result['data'], array('id' => SORT_ASC), true);
             $table = $this->cf_table->generateSingleColourHostTable($list, $type);
         }
         $bc = array(
@@ -438,25 +429,23 @@ class Welcome extends Cf_Controller {
     }
 
     function host($hostkey=NULL) {
-       $hostkey_tobe_deleted=$this->input->post('delhost');
-        if($hostkey_tobe_deleted)
-        {
+        $hostkey_tobe_deleted = $this->input->post('delhost');
+        if ($hostkey_tobe_deleted) {
             cfpr_delete_host($hostkey_tobe_deleted);
         }
-         $getparams = $this->uri->uri_to_assoc(3);
-         
-         if(key_exists('delhost', $getparams)){
-              cfpr_delete_host($getparams['delhost']);
-         }
-          if(key_exists('type', $getparams)){
-              redirect('welcome/hosts/'.$getparams['type']);
-         }
-          
-        
-         if($hostkey==NULL)
-        {
+        $getparams = $this->uri->uri_to_assoc(3);
+
+        if (key_exists('delhost', $getparams)) {
+            cfpr_delete_host($getparams['delhost']);
+        }
+        if (key_exists('type', $getparams)) {
+            redirect('welcome/hosts/' . $getparams['type']);
+        }
+
+
+        if ($hostkey == NULL) {
             redirect('welcome/engg');
-                return;
+            return;
         }
         $this->load->library('cf_table');
         //loading required javascript files
@@ -586,26 +575,25 @@ class Welcome extends Cf_Controller {
             'url' => 'welcome/license',
             'isRoot' => false
         );
-        
-        $this->breadcrumb->setBreadCrumb($bc);
-          try{
-                    $expirydate = strtotime(cfpr_getlicense_expiry());
-                    $startDate = cfpr_getlicense_installtime();
-                    //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
-                    $datediff = $expirydate - $startDate;
-                    $totaldays = floor($datediff / (60 * 60 * 24));
-                    $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
 
-                    $pbarvalue = floor(($dayspassed / $totaldays) * 100);
-            }catch(Exception $e)
-            {
-                log_message('license error:'.$e->getMessage());
-            }
+        $this->breadcrumb->setBreadCrumb($bc);
+        try {
+            $expirydate = strtotime(cfpr_getlicense_expiry());
+            $startDate = cfpr_getlicense_installtime();
+            //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
+            $datediff = $expirydate - $startDate;
+            $totaldays = floor($datediff / (60 * 60 * 24));
+            $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
+
+            $pbarvalue = floor(($dayspassed / $totaldays) * 100);
+        } catch (Exception $e) {
+            log_message('license error:' . $e->getMessage());
+        }
         $data = array(
             'title' => "Cfengine Mission Portal - license usage status ",
             'ret2' => cfpr_getlicenses_promised(),
             'ret3' => cfpr_getlicenses_granted(),
-            'started'=> date('D F d h:m:s Y',$startDate),
+            'started' => date('D F d h:m:s Y', $startDate),
             'expiry' => cfpr_getlicense_expiry(),
             'txt' => cfpr_getlicense_summary(),
             'breadcrumbs' => $this->breadcrumblist->display(),

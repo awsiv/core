@@ -24,7 +24,7 @@ class test_miscellaneous_libraries extends CodeIgniterUnitTestCase {
         $jsondata=json_decode($data,true);
         $this->assertTrue(isset($jsondata),"should return a valid array");
         $this->dump($data);
-      $this->assertNotEqual("",trim($jsondata['data'][0]['id']) , "must have some value");
+        $this->assertNotEqual("",trim($jsondata['data'][0]['id']) , "must have some value");
     }
 
     public function test_cfpr_show_green_hosts(){

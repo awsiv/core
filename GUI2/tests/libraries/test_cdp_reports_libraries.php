@@ -18,6 +18,7 @@ public function __construct() {
          $this->assertTrue(function_exists("cfpr_cdp_reportnames"),"Should be true if there is Php-ldap module loaded");
     }
     public function test_cpd_report_list(){
+        
        $result= cfpr_cdp_reportnames();
        $this->dump($result);
        $array = json_decode(utf8_encode($result), true);

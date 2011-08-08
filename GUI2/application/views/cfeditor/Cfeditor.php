@@ -1,30 +1,26 @@
-<?php
-#
-# This file is (C) Cfengine AS. All rights reserved
-#
-#include(APPPATH .'views/includes/header'.EXT);
-?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title><?php echo $title ;?></title>
-<link href="<?php echo get_cssdir();?>resets.css" rel="stylesheet" media="screen" />
-<link href="<?php echo get_cssdir();?>960.css" rel="stylesheet" media="screen" />
-<link href="<?php echo get_cssdir();?>Base.css" rel="stylesheet" media="screen" />
-<link href="<?php echo get_cssdir();?>jquery-ui-1.8.10.custom.css" rel="stylesheet" media="screen" />
-<link href="<?php echo get_scriptdir();?>/Cfeditor/lib/codemirror.css" rel="stylesheet" media="screen" />
-<link href="<?php echo get_scriptdir();?>/Cfeditor/mode/cfengine/cfengine.css" rel="stylesheet" media="screen" />
-<script src="<?php echo get_scriptdir();?>jquery-1.6.1.js" type="text/javascript"></script>
-<script src="<?php echo get_scriptdir();?>jquery-ui-1.8.14.custom.min.js" type="text/javascript"></script>
+
+<?php 
+$this->carabiner->empty_cache();
+echo $this->carabiner->display('CFEngineEditor','css'); ?>
+
+<link href="<?php echo get_scriptdir();?>Cfeditor/lib/codemirror.css" rel="stylesheet" media="screen" />
+<link href="<?php echo get_scriptdir();?>Cfeditor/mode/cfengine/cfengine.css" rel="stylesheet" media="screen" />
+
 <!--[if IE]><?php echo $this->carabiner->display('iefix'); ?><![endif]-->
 <?php
 $injected= isset($injected_item)?$injected_item:"" ;echo $injected;
-$this->carabiner->display(); ?>
+$this->carabiner->display('both');
+
+?>
 </head>
 <body>
   <div id="wrapper" class="container_12">
      <div id="header">
-              <div id="header_left"class="grid_3">
+              <div id="header_left" class="grid_3">
                <p class="sitetitle"><?php echo anchor("welcome/index",'cfengine mission portal') ?></p>
                </div>
          <div class="grid_6">
@@ -159,13 +155,8 @@ $this->carabiner->display(); ?>
     </tbody>
   </table>
 </div>
-<script src="<?php echo get_scriptdir()?>Cfeditor/jquery.layout.min-1.2.0.js" type="text/javascript"></script>
-<script src="<?php echo get_scriptdir()?>jquery.jcryption-1.1.min.js" type="text/javascript"></script>
-<script src="<?php echo get_scriptdir()?>Cfeditor/lib/codemirror.js" type="text/javascript"></script>
-<script src="<?php echo get_scriptdir()?>Cfeditor/lib/shortcut.js" type="text/javascript"></script>
- <script src="<?php echo get_scriptdir()?>Cfeditor/mode/cfengine/cfsyntax.js" type="text/javascript"></script>
- <script src="<?php echo get_scriptdir()?>Cfeditor/mode/cfengine/cfengine.js" type="text/javascript"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>cfeditor.js"></script>
- <script src="<?php echo get_scriptdir()?>Cfeditor/mode/cfengine/cfautocomplete.js" type="text/javascript"></script>
+
+<?php echo $this->carabiner->display('CFEngineEditor','js'); ?>
+
 </body>
 </html>
