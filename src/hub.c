@@ -955,7 +955,7 @@ void Nova_UpdateMongoHostList(struct Item *list)
  struct Item *ip = NULL;
   int count = 0;
 
-  //CFDB_PurgeLastseenCache(list); 
+  CFDB_PurgeLastseenCache(list); 
   
 for(ip=list;ip!=NULL;ip=ip->next)
    {
