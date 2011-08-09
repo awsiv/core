@@ -6494,7 +6494,7 @@ void BsonToString(char *retBuf, int retBufSz, char *data)
  const char * key;
  int temp;
  char oidhex[25];
- char buf[CF_MAXVARSIZE];
+ char buf[CF_BUFSIZE];
 
  memset(retBuf,0,retBufSz);
  bson_iterator_init( &i , data );
@@ -7506,9 +7506,26 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
                       totalStatus = 0;
                       }
                    }
-                else if(strcmp(dbkey, "stateStr") == 0)
+                else if(strcmp(dbkey, "state") == 0)
                    {
-                   snprintf(work, sizeof(work), "\"stateStr\":\"%s\",", bson_iterator_string(&it3));
+                   int state = bson_iterator_int(&it3);
+                   char *stateStr;
+                   
+                   if(state == 1)
+                      {
+                      stateStr = "Primary";
+                      }
+                   else if(state == 2)
+                      {
+                      stateStr = "Secondary";
+                      }
+                   else
+                      {
+                      totalStatus = 0;
+                      stateStr = "Unknown";
+                      }
+                   
+                   snprintf(work, sizeof(work), "\"stateStr\":\"%s\",", stateStr);
                    }
                 else if(strcmp(dbkey, "uptime") == 0)
                    {
@@ -7556,6 +7573,6 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
 }
 
 
-#endif  /* HAVE LIB_MONGOC */
+#endif  /* HAVE LIBMONGOC */
 
 
