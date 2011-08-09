@@ -402,14 +402,22 @@ class Mongo_db {
 	 public function get($collection = "") {
 	 	if(empty($collection))
 	 		show_error("In order to retreive documents from MongoDB, a collection name must be passed", 500);
-	 	$results = array();
+	 	
+                $results = array();
+                try {
 	 	$documents = $this->db->{$collection}->find($this->wheres, $this->selects)->limit((int) $this->limit)->skip((int) $this->offset)->sort($this->sorts);
-	 	$returns = array();
+	 	
+                $returns = array();
 	 	foreach($documents as $doc):
 	 		$returns[] = $doc;
 	 	endforeach;
 	 	$this->clear();
-	 	return($returns);
+                return($returns);
+                } catch(MongoCursorException $e) {
+	 		show_error("Fetching of data from MongoDB failed: {$e->getMessage()}", 500);
+	 	}
+	 	
+                
 	 	
 	 	//return(iterator_to_array($documents));
 	 }
