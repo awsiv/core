@@ -5842,6 +5842,24 @@ return true;
 }
 
 /*****************************************************************************/
+
+int Nova2PHP_replica_status(char *buffer, int bufsize)
+
+{ mongo_connection dbconn;
+  
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+CFDB_QueryReplStatus(&dbconn,buffer,bufsize);
+
+CFDB_Close(&dbconn);
+return true;
+}
+
+/*****************************************************************************/
 /* Multiple policy environments                                              */
 /*****************************************************************************/
 

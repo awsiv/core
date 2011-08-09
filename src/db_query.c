@@ -7450,7 +7450,6 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
  int ret = false;
  char work[CF_MAXVARSIZE] = {0};
 
-
  StartJoin(buffer, "{", bufsize);
 
  bson_buffer_init(&bb);
@@ -7462,12 +7461,6 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
 
     bson_iterator_init(&it1, result.data);
 
-    while(bson_iterator_next(&it1))
-       {
-       printf("got:%s\n", bson_iterator_key(&it1));
-       }
-
-    
     if (bson_find(&it1, &result, "ok") && bson_iterator_int(&it1) == 1)
        {
        if(bson_find(&it1, &result, "set"))
@@ -7539,19 +7532,6 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
           }
        
        }
-
-    
-                       /*
-    if (bson_find(&it1, &result, "primary"))
-          {
-          snprintf(buffer,bufsize,"%s",bson_iterator_string(&it1));
-          ret=true;
-          }
-                       
-    else
-       {
-       CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryIsMaster()");
-       }*/
     }
  else
     {
@@ -7560,11 +7540,6 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
 
  ReplaceTrailingChar(buffer, ',','\0');
  EndJoin(buffer, "}", bufsize);
- 
- 
- char buf[4096];
- BsonToString(buf, sizeof(buf), result.data);
- printf("got:%s\n", buf);
  
  bson_destroy(&cmd);
  bson_destroy(&result);
