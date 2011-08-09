@@ -55,7 +55,9 @@
 # define MONGO_BODIES   MONGO_BASE ".bodies"
 # define MONGO_SCRATCH MONGO_BASE ".scratch"
 # define MONGO_CACHE MONGO_BASE ".cache"
+# define MONGO_LOGS_REPAIRED_COLL "logs_rep"
 # define MONGO_LOGS_REPAIRED MONGO_BASE ".logs_rep"
+# define MONGO_LOGS_NOTKEPT_COLL "logs_nk"
 # define MONGO_LOGS_NOTKEPT MONGO_BASE ".logs_nk"
 # define MONGO_NOTEBOOK MONGO_BASE ".notebook"
 #define MONGO_ARCHIVE MONGO_BASE ".archive"
@@ -406,6 +408,7 @@ bool MongoCheckForError(mongo_connection *conn, const char *operation, const cha
 struct Item * CFDB_GetLastseenCache(void);
 int CFDB_QueryIsMaster(void);
 int CFDB_QueryMasterIP(char *buffer,int bufsize);
+int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer,int bufsize);
 #endif
 
 /* db_save.c */

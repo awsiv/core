@@ -7396,7 +7396,9 @@ int CFDB_QueryIsMaster(void)
  CFDB_Close(&conn);
  return ret;
 }
+
 /*************************************************/
+
 int CFDB_QueryMasterIP(char *buffer,int bufsize)
 {
  bson_buffer bb,*query;
@@ -7437,7 +7439,138 @@ int CFDB_QueryMasterIP(char *buffer,int bufsize)
  CFDB_Close(&conn);
  return ret;
 }
+
 /*************************************************/
+
+int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
+{
+ bson_buffer bb,*query;
+ bson cmd,result;
+ bson_iterator it1,values,it2,it3;
+ int ret = false;
+ char work[CF_MAXVARSIZE] = {0};
+
+
+ StartJoin(buffer, "{", bufsize);
+
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, "replSetGetStatus", MONGO_HOSTS_COLLECTION);
+ bson_from_buffer(&cmd, &bb);
+
+ if (mongo_run_command(conn, "admin", &cmd, &result))
+    {
+
+    bson_iterator_init(&it1, result.data);
+
+    while(bson_iterator_next(&it1))
+       {
+       printf("got:%s\n", bson_iterator_key(&it1));
+       }
+
+    
+    if (bson_find(&it1, &result, "ok") && bson_iterator_int(&it1) == 1)
+       {
+       if(bson_find(&it1, &result, "set"))
+          {
+          snprintf(work, sizeof(work), "\"set\":\"%s\",", bson_iterator_string(&it1));
+          Join(buffer, work, bufsize);
+          }
+
+       if(bson_find(&it1, &result, "members"))
+          {
+          bson_iterator_init(&it2, bson_iterator_value(&it1));
+
+          Join(buffer, "\"members\":[",bufsize);
+
+          while(bson_iterator_next(&it2))
+             {
+             bson_iterator_init(&it3, bson_iterator_value(&it2));
+             Join(buffer, "{", bufsize);
+             
+             while(bson_iterator_next(&it3))
+                {
+                char *dbkey = (char *)bson_iterator_key(&it3);
+                work[0] = '\0';
+                
+                if(strcmp(dbkey, "name") == 0)
+                   {
+                   snprintf(work, sizeof(work), "\"name\":\"%s\",", bson_iterator_string(&it3));
+                   }
+
+                if(strcmp(dbkey, "name") == 0)
+                   {
+                   snprintf(work, sizeof(work), "\"name\":\"%s\",", bson_iterator_string(&it3));
+                   }
+                else if(strcmp(dbkey, "health") == 0)
+                   {
+                   snprintf(work, sizeof(work), "\"health\":%d,", bson_iterator_int(&it3));
+                   }
+                else if(strcmp(dbkey, "stateStr") == 0)
+                   {
+                   snprintf(work, sizeof(work), "\"stateStr\":\"%s\",", bson_iterator_string(&it3));
+                   }
+                else if(strcmp(dbkey, "uptime") == 0)
+                   {
+                   snprintf(work, sizeof(work), "\"uptime\":%d,", bson_iterator_int(&it3));
+                   }
+                else if(strcmp(dbkey, "lastHeartbeat") == 0)
+                   {
+                   snprintf(work, sizeof(work), "\"lastHeartbeat\":%ld,", bson_iterator_time_t(&it3));
+                   }
+                else if(strcmp(dbkey, "optimeDate") == 0)
+                   {
+                   snprintf(work, sizeof(work), "\"optimeDate\":%ld,", bson_iterator_time_t(&it3));
+                   }
+
+                
+                if(!EMPTY(work))
+                   {
+                   Join(buffer, work, bufsize);
+                   }
+                }
+
+             ReplaceTrailingChar(buffer, ',','\0');             
+             Join(buffer, "},", bufsize);
+             }
+          
+          ReplaceTrailingChar(buffer, ',','\0');
+          Join(buffer, "],",bufsize);
+          
+          }
+       
+       }
+
+    
+                       /*
+    if (bson_find(&it1, &result, "primary"))
+          {
+          snprintf(buffer,bufsize,"%s",bson_iterator_string(&it1));
+          ret=true;
+          }
+                       
+    else
+       {
+       CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryIsMaster()");
+       }*/
+    }
+ else
+    {
+    MongoCheckForError(conn,"CFDB_QueryReplStatus()", "", NULL);
+    }
+
+ ReplaceTrailingChar(buffer, ',','\0');
+ EndJoin(buffer, "}", bufsize);
+ 
+ 
+ char buf[4096];
+ BsonToString(buf, sizeof(buf), result.data);
+ printf("got:%s\n", buf);
+ 
+ bson_destroy(&cmd);
+ bson_destroy(&result);
+ return ret;
+}
+
 
 #endif  /* HAVE LIB_MONGOC */
 
