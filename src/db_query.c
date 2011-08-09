@@ -7461,6 +7461,7 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
 
     bson_iterator_init(&it1, result.data);
 
+    
     if (bson_find(&it1, &result, "ok") && bson_iterator_int(&it1) == 1)
        {
        if(bson_find(&it1, &result, "set"))
@@ -7512,7 +7513,7 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
                    }
                 else if(strcmp(dbkey, "optimeDate") == 0)
                    {
-                   snprintf(work, sizeof(work), "\"optimeDate\":%ld,", bson_iterator_time_t(&it3));
+                   snprintf(work, sizeof(work), "\"optime\":%ld,", bson_iterator_time_t(&it3));
                    }
 
                 
