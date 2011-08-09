@@ -47,6 +47,7 @@ bundlesequence  => {
                    "st_distsched",
                    "st_teams",
                    "st_iterate",
+                   "st_critical",
                    "CfengineEnterpriseFundamentals", # autogen by Nova
                    "system",
                    "cf_assoc",
@@ -88,6 +89,7 @@ inputs         => {
                      "scan_cfnova.cf",
                      "scan_orchestrate.cf",
                      "scan_schedule.cf",   
+                     "scan_critical.cf",   
                      "scan_upgrade.cf",
                      "scan_bdma.cf",
                      "scan_copernicus.cf",  

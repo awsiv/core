@@ -1,0 +1,86 @@
+
+bundle knowledge st_critical
+
+{
+topics:
+
+"st-critical";
+Special_Topics_Guide::
+    "Separating Policy Changes from ad-hoc Changes"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "How do I make a change in mission-critical infrastructure?"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "Variables and classes for hubs"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "Features of hub/policy server redundancy"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "Redundant hub architecture"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "Setting up redundant monitoring hubs"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "High availability access to the Mission Portal"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "How CFEngine contributes to reducing mission risks"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "Strategy for Mission Critical Operations"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "Key terminology for Mission Critical Systems"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "Model-based planning for stability"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "Factors affecting Risk"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "What are Mission Critical Operations?"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+Special_Topics_Guide::
+    "CFEngine for Mission Critical Operations"  association => a("discusses","CFEngine for Mission Critical Operations","is discussed in");
+
+
+occurrences:
+
+special_topics_guides::
+ "/docs/st-critical.html"
+  represents => { "CFEngine for Mission Critical Operations" };
+CFEngine_for_Mission_Critical_Operations::
+ "/docs/st-critical.html#Top"
+  represents => { "Text section" };
+What_are_Mission_Critical_Operations_::
+ "/docs/st-critical.html#What-are-Mission-Critical-Operations_003f"
+  represents => { "Text section" };
+Factors_affecting_Risk::
+ "/docs/st-critical.html#Factors-affecting-Risk"
+  represents => { "Text section" };
+Model_based_planning_for_stability::
+ "/docs/st-critical.html#Model_002dbased-planning-for-stability"
+  represents => { "Text section" };
+Key_terminology_for_Mission_Critical_Systems::
+ "/docs/st-critical.html#Key-terminology-for-Mission-Critical-Systems"
+  represents => { "Text section" };
+Strategy_for_Mission_Critical_Operations::
+ "/docs/st-critical.html#Strategy-for-Mission-Critical-Operations"
+  represents => { "Text section" };
+How_CFEngine_contributes_to_reducing_mission_risks::
+ "/docs/st-critical.html#How-CFEngine-contributes-to-reducing-mission-risks"
+  represents => { "Text section" };
+High_availability_access_to_the_Mission_Portal::
+ "/docs/st-critical.html#High-availability-access-to-the-Mission-Portal"
+  represents => { "Text section" };
+Setting_up_redundant_monitoring_hubs::
+ "/docs/st-critical.html#Setting-up-redundant-monitoring-hubs"
+  represents => { "Text section" };
+Redundant_hub_architecture::
+ "/docs/st-critical.html#Redundant-hub-architecture"
+  represents => { "Text section" };
+Features_of_hub_policy_server_redundancy::
+ "/docs/st-critical.html#Features-of-hub_002fpolicy-server-redundancy"
+  represents => { "Text section" };
+Variables_and_classes_for_hubs::
+ "/docs/st-critical.html#Variables-and-classes-for-hubs"
+  represents => { "Text section" };
+How_do_I_make_a_change_in_mission_critical_infrastructure_::
+ "/docs/st-critical.html#How-do-I-make-a-change-in-mission_002dcritical-infrastructure_003f"
+  represents => { "Text section" };
+Separating_Policy_Changes_from_ad_hoc_Changes::
+ "/docs/st-critical.html#Separating-Policy-Changes-from-ad_002dhoc-Changes"
+  represents => { "Text section" };
+}
+
