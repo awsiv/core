@@ -174,10 +174,7 @@ snprintf(vbuff,CF_BUFSIZE-1,"zone_%s",zone);
 NewClass(vbuff);
 #endif
 
-if (CFDB_QueryIsMaster())
-   {
-   NewClass("am_hub_master");
-   }
+Nova_DefineHubMaster();
 }
 
 /*****************************************************************************/
@@ -191,8 +188,9 @@ void Nova_DefineHubMaster()
  master[0]='\0';
    
 if (CFDB_QueryIsMaster())
-   {   
-   snprintf(master,sizeof(master),"%s",VIPADDRESS);
+   {
+   NewClass("am_hub_master");
+   snprintf(master,sizeof(master),"%s",POLICY_SERVER);
    }
 else 
    {
