@@ -218,7 +218,7 @@
                 li.appendTo(self.alphasearch);
             });
             self.alphasearch.appendTo(self.dialogcontent.parent());
-            self.alphasearch.delegate('li','click',$.proxy(self.sorton,self));
+            self.alphasearch.delegate('a','click',$.proxy(self.sorton,self));
         },
 
         sorton:function(event){
