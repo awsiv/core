@@ -43,12 +43,18 @@
                     <p class="title">Services/goals</p>
                     <ul>
                         <?php
-                        foreach ((array) $goals as $goal) {
-                            $words = explode("_", $goal->name);
-                            echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>$goal->desc</span><span class=\"check\"></span></li>";
+                        $limit=0;
+                        $goalsorted=array_msort($goals,array('name' => SORT_ASC),true);
+                        foreach ((array) $goalsorted as $goal) {
+                            if($limit==10)
+                                break;
+                            $words = explode("_", $goal['name']);
+                            echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>".$goal['desc']."</span><span class=\"check\"></span></li>";
+                            $limit++;
                         }
                         ?>
                     </ul>
+                      <p class="morebtnpane"><span class="morebtn"><?php echo anchor('welcome/goals', 'More...') ?></span></p>
                 </div>
             </div>
             <div class="clear"></div>

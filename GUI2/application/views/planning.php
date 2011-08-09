@@ -4,13 +4,18 @@
             <p class="title">Policy goals</p>
             <ul>
                 <?php
-                foreach ((array)$goals as $goal) {
-                    $words = explode("_", $goal->name);
-                    echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>$goal->desc</span><span class=\"check\"></span></li>";
+                $val=0;
+                $goalsorted=array_msort($goals,array('name' => SORT_ASC),true);
+                foreach ((array) $goalsorted as $goal) {
+                    if($val==5)
+                        break;
+                    $words = explode("_", $goal['name']);
+                    echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>".$goal['desc']."</span><span class=\"check\"></span></li>";
+                    $val++;
                 }
                 ?>
             </ul>
-            <p class="morebtnpane"><span class="morebtn"><?php echo anchor('welcome/services', 'More...') ?></span></p>
+            <p class="morebtnpane"><span class="morebtn"><?php echo anchor('welcome/goals', 'More...') ?></span></p>
         </div>
         <div id="loggedon" class="grid_5 innerdiv">
             <p class="title">Logged on </p>

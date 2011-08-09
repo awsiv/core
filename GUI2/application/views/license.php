@@ -10,8 +10,9 @@
          <p class="title">License summary</p>
 		  <ul>
 		   <li>Granted <?php echo $ret2?> licenses.</li>
-                   <li>Purchased on: <?php echo $started?></li>
-		   <li>Expiring on: <?php echo $expiry?></li>
+                                    <li>Purchased on: <?php echo $started?></li>
+		    <li>Expiring on: <?php echo $expiry?></li>
+                                    <li> Owner: <?php echo cfpr_getlicense_owner() ?></li>
 		  </ul>
                <div class="tables">
                    

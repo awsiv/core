@@ -77,7 +77,7 @@ class Welcome extends Cf_Controller {
         $data = array(
             'title' => "Cfengine Mission Portal-engineering status",
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'goals' => json_decode(cfpr_list_business_goals())
+            'goals' => json_decode(cfpr_list_business_goals(),true)
         );
 
         // Summary meter for host
@@ -365,9 +365,24 @@ class Welcome extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display(),
             'users' => getonlineusernames(),
             'working_notes' => $this->userdata->get_personal_working_notes(),
-            'goals' => json_decode(cfpr_list_business_goals())
+            'goals' => json_decode(cfpr_list_business_goals(),true)
         );
         $this->template->load('template', 'planning', $data);
+    }
+    
+    function goals(){
+         $bc = array(
+            'title' => 'Goals',
+            'url' => 'welcome/goals',
+            'isRoot' => false
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
+        $data = array(
+            'title' => "Cfengine Mission Portal - company goals",
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'goals' => json_decode(cfpr_list_business_goals(),true)
+        );
+        $this->template->load('template', 'goals', $data);
     }
 
     function hosts($type=NULL) {
