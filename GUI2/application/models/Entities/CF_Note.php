@@ -15,8 +15,9 @@ class CF_Note {
         '4' => 'Performance',
         '5' => 'Business Value Report',
         '6' => 'File Change Log',
-        '7' => 'Bundle Profile',
-        '8' => 'Promise Not Kept Log'
+        '7' => 'File Change Diffs',
+        '8' => 'Bundle Profile',
+        '9' => 'Promise Not Kept Log'
     );
 
     function __construct($params=array()) {
