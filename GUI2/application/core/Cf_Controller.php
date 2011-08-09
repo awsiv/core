@@ -14,7 +14,7 @@ class Cf_Controller extends CI_Controller {
         $this->load->helper(array('url', 'html','language'));
         $this->lang->load('cf_message');
         ///cfpr_set_siteurl(site_url());
-        // Login: If not logged in, redirect to  authentication index
+        // Login: If not logged in, redirect to  authentication index   
         if ($this->session->userdata('lastclasslist')) {
             $this->session->unset_userdata('lastclasslist');
         };

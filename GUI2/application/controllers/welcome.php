@@ -24,8 +24,11 @@ class Welcome extends Cf_Controller {
             $datediff = $expirydate - $startDate;
             $totaldays = floor($datediff / (60 * 60 * 24));
             $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
-
-            $pbarvalue = floor(($dayspassed / $totaldays) * 100);
+            $pbarvalue = "";
+           if(!$totaldays < 0)
+           { 
+               $pbarvalue=floor(($dayspassed / $totaldays) * 100);
+           }
         } catch (Exception $e) {
             log_message('license error:' . $e->getMessage());
         }
@@ -599,16 +602,21 @@ class Welcome extends Cf_Controller {
             $datediff = $expirydate - $startDate;
             $totaldays = floor($datediff / (60 * 60 * 24));
             $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
-
-            $pbarvalue = floor(($dayspassed / $totaldays) * 100);
+            $pbarvalue ="";
+            if(!$totaldays < 0)
+            { 
+               $pbarvalue=floor(($dayspassed / $totaldays) * 100);
+            }
+            
         } catch (Exception $e) {
             log_message('license error:' . $e->getMessage());
         }
+        var_dump(cfpr_getlicense_installtime());
         $data = array(
             'title' => "Cfengine Mission Portal - license usage status ",
             'ret2' => cfpr_getlicenses_promised(),
             'ret3' => cfpr_getlicenses_granted(),
-            'started' => date('D F d h:m:s Y', $startDate),
+            'started' => is_string($startDate)?$startDate:date('D F d h:m:s Y',$startDate),
             'expiry' => cfpr_getlicense_expiry(),
             'txt' => cfpr_getlicense_summary(),
             'breadcrumbs' => $this->breadcrumblist->display(),

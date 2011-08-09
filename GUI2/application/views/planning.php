@@ -26,7 +26,7 @@
                 }
                 ?>
             </ul>
-            <p class="morebtnpane"><span class="morebtn">More...</span></p>
+            <p class="morebtnpane"><span class="morebtn"><a id="moreusers" href="#">More...</a></span></p>
         </div>
         <div class="clearboth"></div>
 
@@ -125,5 +125,10 @@
            height:'400'
         });
      
+$('#users').css('max-height', '190px')
+        //$("#users").height('190px');
+        $('#moreusers').click(function(){
+        $("#users").css('height', 'auto'). css('max-height','none');
+        });
     });
 </script>

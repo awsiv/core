@@ -1,6 +1,6 @@
 <div class="outerdiv grid_12">
     <div class="innerdiv">
-        <p class="title">My Working of Notes</p>
+        <p class="title">My Work Notes</p>
      <?php
        $this->table->set_heading('Notes', 'Date');
         foreach($table as $rows)

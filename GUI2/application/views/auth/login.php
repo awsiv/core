@@ -159,8 +159,9 @@ text-shadow:none;
     });*/
     </script>
 
-    <?php echo $message; ?>
-            
+    <?php 
+    echo $message;
+    ?>
      <?php echo form_open("auth/login");?>
             <input type="hidden" id="type_form" name="type_form" value="login">
                 <h3>Login</h3>

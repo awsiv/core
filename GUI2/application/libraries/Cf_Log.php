@@ -18,11 +18,11 @@ class Cf_Log extends CI_Log {
             $this->_threshold = 4;
         }
         try {
-            $this->mongo = new Mongo("mongodb://127.0.0.1:27017", array("persist" => "ci_mongo_persist"));
+            $this->mongo = new Mongo("mongodb://".HUB_MASTER.":27017", array("persist" => "ci_mongo_persist"));
         } catch (Exception $e) {
-            die('Could not connect to the MongoDB database. Please ensure that CFEngine Nova is running correctly, by issuing the following command on the hub.
+            die('Could not connect to the MongoDB database in hub master. Please ensure that CFEngine Nova is running correctly, by issuing the following command on the hub.
 
-            # /var/cfengine/bin/cf-twin -Kf failsafe.cf');
+            # /var/cfengine/bin/cf-twin -Kf failsafe.cf Hub master appears to be '.HUB_MASTER);
             exit();
         }
         $this->_enabled = true;
