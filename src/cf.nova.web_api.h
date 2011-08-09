@@ -199,6 +199,7 @@ int Nova2PHP_delete_host(char *keyHash);
  */
 int Nova2PHP_replica_status(char *buffer, int bufsize);
 int Nova2PHP_GetHubKey(char *buffer,int bufsize);
+int Nova2PHP_GetHubMaster(char *buffer,int bufsize);
 
 struct EnvironmentsList
 {

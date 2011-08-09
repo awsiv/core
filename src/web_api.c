@@ -6481,7 +6481,9 @@ int Nova2PHP_GetHubKey(char *buffer,int bufsize)
     fscanf(fp,"%s",policy_server);
     fclose(fp);
     }
+
  list = CFDB_GetLastseenCache();
+ 
  for(ip=list;ip!=NULL;ip=ip->next)
     {
     if(strcmp(ip->classes,policy_server) == 0)
@@ -6493,7 +6495,33 @@ int Nova2PHP_GetHubKey(char *buffer,int bufsize)
  DeleteItemList(list);
  return ret;
 }
+/*****************************************************************************/
+int Nova2PHP_GetHubMaster(char *buffer,int bufsize)
+{
+ char master[CF_MAXVARSIZE]={0};
 
+ if(CFDB_QueryIsMaster())
+    {
+    snprintf(buffer,bufsize,"am_hub_master");
+    return true;
+    }
+ else
+    {
+    char *sp;
+
+    CFDB_QueryMasterIP(master,sizeof(master));
+
+    if (sp = strchr(master,':'))
+       {
+       *sp = '\0';
+       }
+    
+    snprintf(buffer,bufsize,"%s",master);
+    return true;
+    }
+ snprintf(buffer,bufsize,"Unknown hub_master");
+ return false;
+}
 /*****************************************************************************/
 /*                           Constellation                                   */
 /*****************************************************************************/
