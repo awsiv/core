@@ -1024,6 +1024,14 @@ bundle agent cfengine_editor
            comment => "Remove working directories of old editor sessions",
             handle => "cfengine_editor_files_policies_tidy";
 
+  !windows.am_policy_hub::
+
+   "$(sys.doc_root)/tmp/." -> "Cfengine Nova Editor",
+       create => "true",
+        perms => mog("755","$(web_owner)","$(web_group)"),
+      comment => "Make sure web server has permission to create tmp directories for apache internal use",
+       handle => "cfengine_editor_files_tmp_dir";
+
 }
 
 ##################################################################
