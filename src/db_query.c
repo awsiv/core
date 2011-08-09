@@ -7449,7 +7449,8 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
  bson_iterator it1,values,it2,it3;
  int ret = false;
  char work[CF_MAXVARSIZE] = {0};
-
+ int totalStatus = 1;
+ 
  StartJoin(buffer, "{", bufsize);
 
  bson_buffer_init(&bb);
@@ -7473,7 +7474,7 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
        if(bson_find(&it1, &result, "members"))
           {
           bson_iterator_init(&it2, bson_iterator_value(&it1));
-
+          
           Join(buffer, "\"members\":[",bufsize);
 
           while(bson_iterator_next(&it2))
@@ -7497,7 +7498,13 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
                    }
                 else if(strcmp(dbkey, "health") == 0)
                    {
-                   snprintf(work, sizeof(work), "\"health\":%d,", bson_iterator_int(&it3));
+                   int health = bson_iterator_int(&it3);
+                   snprintf(work, sizeof(work), "\"health\":%d,", health);
+
+                   if(health == 0)
+                      {
+                      totalStatus = 0;
+                      }
                    }
                 else if(strcmp(dbkey, "stateStr") == 0)
                    {
@@ -7531,7 +7538,9 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
           Join(buffer, "],",bufsize);
           
           }
-       
+
+       snprintf(work, sizeof(work), "\"status\":%d", totalStatus);
+       Join(buffer, work, bufsize);
        }
     }
  else
@@ -7539,7 +7548,6 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
     MongoCheckForError(conn,"CFDB_QueryReplStatus()", "", NULL);
     }
 
- ReplaceTrailingChar(buffer, ',','\0');
  EndJoin(buffer, "}", bufsize);
  
  bson_destroy(&cmd);
