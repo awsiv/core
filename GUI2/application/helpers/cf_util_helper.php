@@ -6,7 +6,7 @@
  */
 function is_ajax() {
     return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-    ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'));
+            ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'));
 }
 
 /**
@@ -172,6 +172,33 @@ function getDateStatus($timestamp, $noColor=false) {
         $colorClass = '';
     $formattedDate = date('c', $timestamp);
     return '<span class="localtime ' . $colorClass . '">' . $formattedDate . '</span>';
+}
+/**
+ * Format seconds to day , hour min and seconds
+ * @param type $s no of seconds
+ * @return string 
+ */
+function formatSeconds($s) {
+    $d = intval($s / 86400);
+    $s -= $d * 86400;
+    if ($s <= 0) return '0s';
+    $str = '';
+    $h = intval($s / 3600);
+    $s -= $h * 3600;
+
+    $m = intval($s / 60);
+    $s -= $m * 60;
+
+    if ($d)
+        $str = $d . 'd ';
+    if ($h)
+        $str .= $h . 'h ';
+    if ($m)
+        $str .= $m . 'm ';
+    if ($s)
+        $str .= $s . 's';
+
+    return $str;
 }
 
 /**

@@ -2282,6 +2282,15 @@ table th[scope=yellow]
     border-top: 1px solid #666;
 }
 
+.bundlelist-table th[scope=green]
+{
+    background-color: green; 
+    color: #FFF;
+    border-bottom: 1px solid #666;
+    border-top: 1px solid #666;
+}
+
+
 .bundlelist-table th[scope=promise]
 {
     background-color: #a58d73;
