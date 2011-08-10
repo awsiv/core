@@ -432,6 +432,38 @@ label#searchbox input
     background: url("../images/summary_reports_hover.png") no-repeat;
 }
 
+.dash a.cdpreport{
+    background: url("../images/cdp_reports.png") no-repeat;
+}
+
+.dash a.cdpreport:hover{
+    background: url("../images/cdp_reports_hover.png") no-repeat;
+}
+
+.dash a.savedsearch{
+    background: url("../images/list_of_saved.png") no-repeat;
+}
+
+.dash a.savedsearch:hover{
+    background: url("../images/list_of_saved_hover.png") no-repeat;
+}
+
+.dash a.portalsettings{
+    background: url("../images/mission_portal_settings.png") no-repeat;
+}
+
+.dash a.portalsettings:hover{
+    background: url("../images/mission_portal_hover.png") no-repeat;
+}
+
+.dash a.preference{
+    background: url("../images/my_preferences.png") no-repeat;
+}
+
+.dash a.preference:hover{
+    background: url("../images/my_preferences_hover.png") no-repeat;
+}
+
 #plandash.dash a:hover{
    color:#009193;
 }

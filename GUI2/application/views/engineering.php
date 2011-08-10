@@ -31,7 +31,7 @@
                 <li><?php echo anchor('widget/allpolicies', 'promises', array('class' => 'policies showqtip','title'=>tooltip('tooltip_promise_finder'), 'id' => 'findpolicy')); ?></li>
                 <li><?php echo anchor('widget/allreports', 'reports', array('class' => 'report showqtip', 'id' => 'findreport','title'=>tooltip('tooltip_reports_finder'))); ?></li>
                 <li><?php echo anchor('summaryreports/search', 'summary reports', array('class' => 'summary_report showqtip','id' => 'summaryreport','title'=>tooltip('tooltip_summary_finder'))); ?></li>
-                 <li><?php echo anchor('widget/cdpreports', 'Cdp reports', array('class' => 'report showqtip', 'id' => 'findcdpreport','title'=>tooltip('tooltip_reports_finder'))); ?></li>
+                 <li><?php echo anchor('widget/cdpreports', 'Cdp reports', array('class' => 'cdpreport showqtip', 'id' => 'findcdpreport','title'=>tooltip('tooltip_reports_finder'))); ?></li>
                 
                 <p class="clearleft"></p>
             </ul>

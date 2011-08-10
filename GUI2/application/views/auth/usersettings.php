@@ -1,12 +1,13 @@
 <div class="outerdiv grid_12">
     <div class="innerdiv">
-        <h1>User Settings and Preferences</h1>
-        <ul>
-            <li><?php echo anchor('/savedsearch/listSavedSearches/'," List of saved searches") ?></li>
-            <li><?php echo anchor('/settings/manage/'," Mission Portal Setting") ?></li>
-            <li><?php echo anchor('/settings/preferences/'," My preferences") ?></li>
-            <li>report settings</li>
-            <li>machine settings</li>
-        </ul>
+        <div class="dash push_1">
+            <p class="title">User Settings and Preferences</p>
+            <ul>
+                <li><?php echo anchor('/savedsearch/listSavedSearches/'," List of saved searches",array('class' => 'savedsearch'))?></li>
+                <li><?php echo anchor('/settings/manage/'," Mission Portal Setting",array('class' => 'portalsettings')) ?></li>
+                <li><?php echo anchor('/settings/preferences/'," My preferences",array('class' => 'preference')) ?></li>
+                <p class="clearleft"></p>
+            </ul>
+        </div>
     </div>  
 </div>
