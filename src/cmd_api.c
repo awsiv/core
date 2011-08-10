@@ -407,7 +407,7 @@ printf("%30s %20s %20s %s","Hostname","Package","Version","Arch");
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hs = (struct HubSoftware *)rp->item;
-   printf("%30s %20s %20s %s\n",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
+   printf("%25s %25s %20s %s\n",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
    }
 
 DeleteHubQuery(hq,DeleteHubSoftware);
