@@ -192,7 +192,10 @@
 
 
 
-        $('.note').ajaxyDialog({change:function(nid,element) {
+        $('.note').ajaxyDialog({
+            title:'Notes',
+            dontOverrideTitle:true,
+            change:function(nid,element) {
 
                 // change the url
                 $(element).attr('href', '/notes/index/action/show/nid/' + nid);

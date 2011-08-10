@@ -117,10 +117,11 @@
             });
         });
        
-        $('#repobrowser').ajaxyDialog({title:'SVN Checkout'});
-        $('#aprvpolicy').ajaxyDialog({title:'Approve Policies'});
+        $('#repobrowser').ajaxyDialog({title:'SVN Checkout',dontOverrideTitle:true});
+        $('#aprvpolicy').ajaxyDialog({title:'Approve Policies',dontOverrideTitle:true});
         $('#trackrecord').ajaxyDialog({
             title:'Track Record',
+            dontOverrideTitle:true,
            width:'95%',
            height:'400'
         });

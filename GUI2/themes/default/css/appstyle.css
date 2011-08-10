@@ -1566,6 +1566,15 @@ div.ui-dialog .ui-dialog-buttonpane{
     white-space: pre-line;
 }
 
+.tables tr td.notes-highlight
+{
+   /* background-color: yellow;*/
+   background-image: url(../images/check.png);
+   background-repeat: no-repeat;
+   background-position: 90% 50%;
+   
+}
+
 .tables tr.odd td
 {
     background:#e6eee3;
