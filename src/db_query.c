@@ -12,7 +12,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 /*                                                                           */
 /* MongoDB implementation of report query drivers.                           */
 /*                                                                           */
-/**********************************************************fosdem*******************/
+/*****************************************************************************/
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"

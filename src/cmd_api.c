@@ -561,16 +561,15 @@ int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
     return false;
     }
 
- hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,classreg);
+hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,classreg);
 
- printf("Host Policy, Kept Repaired Not-Kept Last-verified\n");
+printf("%25s %20s %d %d %d %s\n","Host","Policy", "Kept", "Repaired", "Not-Kept", "Last-verified");
  
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    ht = (struct HubTotalCompliance *)rp->item;
-
-    printf("%s %s %d %d %d %ld\n",ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,ht->t);
-    }
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   ht = (struct HubTotalCompliance *)rp->item;
+   printf("%25s %20s %d %d %d %s\n",ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,cf_strtimestamp_local(ht->t,buffer));
+   }
 
  DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
@@ -608,13 +607,13 @@ if (!status)  // any
 
 hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
 
-printf("Promise-handle  Last known state  Pr-Kept Uncertainty  Last-seen");
+printf("%25s %20s %10s %s %s %s\n","Host","Promise-handle","Last state","E(Q)", "Sigma","Last-data");
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseCompliance *)rp->item;
    
-   printf("%s,%s,%s,%.2lf,%.2lf,%ld\n",hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,hp->t);
+   printf("%25s %20s %10s %.2lf %.2lf %ld\n",hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,hp->t);
    }
  
  DeleteHubQuery(hq,DeleteHubPromiseCompliance);
