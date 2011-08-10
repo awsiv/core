@@ -402,12 +402,12 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,true);
 
-printf("Hostname Package Version Arch\n");
+printf("%30s %20s %20s %s","Hostname","Package","Version","Arch");
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hs = (struct HubSoftware *)rp->item;
-   printf("%s,%s,%s,%s\n",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
+   printf("%30s %20s %20s %s\n",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
    }
 
 DeleteHubQuery(hq,DeleteHubSoftware);

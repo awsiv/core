@@ -2364,7 +2364,7 @@ if (hlen > 0 && slen == 0 && plen == 0 && clen == 0)
 
 if (strcmp(lsdata,"software") == 0)
    {
-   Nova2Txt_software_report(hostkey,name,NULL,NULL,true,NULL,classregex);
+   Nova2Txt_software_report(hostkey,name,"","",true,cfr_software,classregex);
    return;
    }
 else if (strcmp(lsdata,"vars") == 0)
