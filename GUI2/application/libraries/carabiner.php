@@ -699,8 +699,7 @@ class Carabiner {
 
                 $lastmodified = ($lastmodified == 0) ? '0000000000' : $lastmodified;
 
-                $filename = $lastmodified . md5($filenames) . '.css';
-
+                $filename = md5($this->base_uri).$lastmodified . md5($filenames) . '.css';
                 if (!file_exists($this->cache_path . $filename))
                     $this->_combine('css', $files, $filename);
 
@@ -730,7 +729,7 @@ class Carabiner {
 
                 $lastmodified = ($lastmodified == 0) ? '0000000000' : $lastmodified;
 
-                $filename = $lastmodified . md5($filenames) . '.css';
+                $filename = md5($this->base_uri).$lastmodified . md5($filenames) . '.css';
 
                 if (!file_exists($this->cache_path . $filename))
                     $this->_combine('css', $files, $filename);
@@ -751,7 +750,7 @@ class Carabiner {
                         $f = $this->style_uri . $ref['dev'];
                     } else {
 
-                        $f = filemtime(realpath($this->style_path . $ref['dev'])) . md5($ref['dev']) . '.css';
+                        $f = md5($this->base_uri).filemtime(realpath($this->style_path . $ref['dev'])) . md5($ref['dev']) . '.css';
 
                         if (!file_exists($this->cache_path . $f)):
 
