@@ -836,7 +836,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,classreg,false);
 
-printf("%25s %25s, %20s %d %s\n","Host","File", "Changed-on", "Note");
+printf("%25s %40s, %20s\n","Host","File", "Changed-on", "Note");
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -844,15 +844,11 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    
    if (strcmp(hC->nid,CF_NONOTE) == 0)
       {
-      printf("%25s %25s, %20s %d %s\n",
-             hC->hh->hostname,hC->path,cf_strtimestamp_local(hC->t,buffer),
-             CFREPORT_FILECHANGES,hC->handle);
+      printf("%25s %40s  %20s\n",hC->hh->hostname,hC->path,cf_strtimestamp_local(hC->t,buffer));
       }
    else
       {
-      printf("%s %s %ld %s\n",
-             hC->hh->hostname,hC->path,hC->t,
-             hC->nid);
+      printf("%25s %40s %20s %s\n",hC->hh->hostname,hC->path,cf_strtimestamp_local(hC->t,buffer),hC->nid);
       }
    }
 
