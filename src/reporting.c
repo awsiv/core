@@ -2357,16 +2357,17 @@ if (hlen > 0 && slen == 0 && plen == 0 && clen == 0)
    char name[CF_MAXVARSIZE] = {0},address[CF_MAXVARSIZE] = {0};
    
    Nova2Txt_hostinfo(hostkey,name,address,CF_MAXVARSIZE);
-   printf(" -> Hostname: %s",name);
-   printf(" -> Recent IP Addresses: %s",address);
+   printf(" -> Hostname: %s\n",name);
+   printf(" -> Recent IP Addresses: %s\n",address);
+   return;
    }
 
 if (strcmp(lsdata,"software") == 0)
    {
    Nova2Txt_software_report(hostkey,name,NULL,NULL,true,NULL,classregex);
+   return;
    }
-
-if (strcmp(lsdata,"vars") == 0)
+else if (strcmp(lsdata,"vars") == 0)
    {
    char name[CF_MAXVARSIZE],lval[CF_MAXVARSIZE] = {0},
        scope[CF_MAXVARSIZE] = {0},*sp;
@@ -2376,22 +2377,26 @@ if (strcmp(lsdata,"vars") == 0)
       if (*(sp+1) == '*') // If it looks like a regex, don't split on .
          {
          Nova2Txt_vars_report(hostkey,NULL,name,NULL,NULL,true,classregex);
+         return;
          }
       else
          {
          sscanf(name,"%[^.].%s",scope,lval);
          Nova2Txt_vars_report(hostkey,scope,lval,NULL,NULL,true,classregex);
+         return;
          }
       }
    }
-
-if (strcmp(lsdata,"file_changes") == 0)
+else if (strcmp(lsdata,"file_changes") == 0)
    {
    Nova2Txt_filechanges_report(hostkey,name,true,-1,">",classregex);
+   return;
    }
-
-if (strcmp(lsdata,"file_diffs") == 0)
+else if (strcmp(lsdata,"file_diffs") == 0)
    {
    Nova2Txt_filediffs_report(hostkey,name,NULL,true,-1,">",classregex);
+   return;
    }
+
+printf("Nothing to do\n");
 }
