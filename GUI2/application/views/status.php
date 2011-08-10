@@ -46,7 +46,7 @@
                 $limit = 0;
                 $goalsorted = array_msort($goals, array('name' => SORT_ASC), true);
                 foreach ((array) $goalsorted as $goal) {
-                    if ($limit == 10)
+                    if ($limit == 5)
                         break;
                     $words = explode("_", $goal['name']);
                     echo "<li><span class=\"goal\">$words[0] $words[1]</span> - <span>" . $goal['desc'] . "</span><span class=\"check\"></span></li>";

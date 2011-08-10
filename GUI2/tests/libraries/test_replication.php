@@ -30,6 +30,11 @@ class test_replication extends CodeIgniterUnitTestCase {
        $array =  $this->validateJson($ret);
     }
     
+    public function test_hub_master(){
+        $ret=cfpr_get_hub_master();
+        $this->assertEqual($ret, 'am_hub_master', "This is A hub master");
+    }
+    
 
 }
 

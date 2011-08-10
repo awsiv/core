@@ -21,12 +21,15 @@
             <p class="title">Logged on </p>
             <ul id="users">
                 <?php
+               $totalusersonline=count($users);
                 foreach ($users as $user) {
                     echo '<li>' . $user . ' : ' . $this->userdata->get_personal_working_log_latest($user) . '</li>';
                 }
                 ?>
             </ul>
+            <?php if($totalusersonline >5){?>
             <p class="morebtnpane"><span class="morebtn"><a id="moreusers" href="#">More...</a></span></p>
+            <?php } ?>
         </div>
         <div class="clearboth"></div>
 
