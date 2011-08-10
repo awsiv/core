@@ -25,7 +25,7 @@ class Welcome extends Cf_Controller {
             $totaldays = floor($datediff / (60 * 60 * 24));
             $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
             $pbarvalue = "";
-           if(!$totaldays < 0)
+           if(!($totaldays < 0))
            { 
                $pbarvalue=floor(($dayspassed / $totaldays) * 100);
            }

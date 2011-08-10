@@ -39,7 +39,7 @@ if($this->agent->is_browser('Safari')){
 <script type="text/javascript">
    $ (window).bind("unload", function() { });
 </script>
-<?php }?>
+<?php }?>  
 </head>
 
 <body>

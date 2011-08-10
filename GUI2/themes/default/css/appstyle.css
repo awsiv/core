@@ -233,7 +233,7 @@ p#userbox a{
 
 #searchbox
 {
-    background: url("../images/searchbar.png") no-repeat;
+    background: url("../images/searchbar.png") no-repeat center center;
     display: block;
     height: 25px;
     width: 208px;
@@ -242,12 +242,19 @@ p#userbox a{
 label#searchbox input
 {
     background: none repeat scroll 0 0 transparent;
-    font:9pt Helvetica,Arial,Tahoma,sans-serif;
     border: medium none;
     color: #666666;
     outline: medium none;
-    padding: 4px 0 0 23px;
-    width:220px;
+    padding: 5px 0 0 10px;
+    width:166px;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {  
+ /*CSS Statements that only apply on webkit-based browsers (Chrome, Safari, etc.) */  
+    label#searchbox input
+    {
+        padding: 9px 0 0 10px;
+    }
 }
 /*
 #bodyindex {
