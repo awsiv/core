@@ -21,8 +21,8 @@ class savedsearch extends Cf_Controller {
         $username = $this->session->userdata('username');
         $report_title = $this->input->post('report_title', true);
         $label = $this->input->post('search_name', true);
-        $searchUrl = $this->input->post('search_url', true);
-
+        $searchUrl = $this->input->post('search_url', false);
+        
         $data = array('username' => $username,
             'url' => $searchUrl,
             'reportType' => $report_title,

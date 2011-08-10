@@ -18,11 +18,7 @@
                         ?>
                         <tr>
                             <td><?php echo $search->getLabel(); ?></td>
-                            <td><?php foreach($search->getParameters()  as $index=>$p) { ?>
-                                <?php echo $index .' :: '.$p; ?>
-                                <?php echo '<br />' ?>
-                            <?php } ?>
-                            </td>
+                            <td><?php echo $search->getParameters(); ?> </td>
                             <td><?php echo $search->getDate(); ?></td>
                             <td>
                                 <a href="<?php echo site_url() . "/search/index/" . $search->getUrl(); ?>" target="_self"> Run this search</a>

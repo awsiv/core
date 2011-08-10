@@ -12,7 +12,7 @@ class CF_Search {
     function __construct($params=array()) {
         $this->id = isset($params['_id']) ? $params['_id']->__toString() : null;
         $this->username = isset($params['username']) ? $params['username'] : null;
-        $this->url = isset($params['url']) ? $params['url'] : null;
+        $this->url = isset($params['url']) ? ($params['url']) : null;
         $this->reportType = isset($params['reportType']) ? $params['reportType'] : null;
         $this->label = isset($params['label']) ? $params['label'] : null;
         $this->date = isset($params['date']) ? $params['date'] : null;
@@ -23,7 +23,7 @@ class CF_Search {
     }
 
     function getUrl() {
-        return $this->url;
+        return ($this->url);
     }
 
     function getDate() {
@@ -48,16 +48,8 @@ class CF_Search {
     function getParameters() {
         
         if (!$this->getUrl()) return array();
-        $segments = explode('/', trim($this->getUrl()));
-        $segments = array_filter($segments);
-        $params = array();
-        $count = count($segments);
-        foreach ($segments as $index=>$value) {
-            if ($index%2 == 0 && $index <= $count) {
-                $nextVal = $index +1;
-                $params[$value] = $segments[$nextVal];
-            }
-        }
+        
+        $params = urldecode($this->getUrl());
         return $params;
         
     }
