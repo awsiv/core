@@ -520,8 +520,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       snprintf(rvalBuf,sizeof(rvalBuf),"%s",(char *)hv->rval);
       }
    
-   printf("%s %s %s %s %ld\n",hv->hh->hostname,typestr,hv->lval,rvalBuf,hv->t);
-   
+   printf("%s %s %s %s %ld\n",hv->hh->hostname,typestr,hv->lval,rvalBuf,hv->t);   
    }
 
 DeleteHubQuery(hq,DeleteHubVariable);
@@ -845,15 +844,13 @@ int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
               
     if (strcmp(hC->nid,CF_NONOTE) == 0)
        {
-       snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,"
-                "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
+       printf("%s,%s,%ld %s %d %s\n",
                 hC->hh->hostname,hC->path,hC->t,
                 hC->hh->keyhash,CFREPORT_FILECHANGES,hC->handle);
        }
     else
        {
-       snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,"
-                "[\"show\",\"\",\"\",\"\",\"%s\"]],",
+       printf("%s %s %ld %s\n",
                 hC->hh->hostname,hC->path,hC->t,
                 hC->nid);
        }

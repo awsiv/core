@@ -2371,8 +2371,8 @@ else if (strcmp(lsdata,"vars") == 0)
    {
    char name[CF_MAXVARSIZE],lval[CF_MAXVARSIZE] = {0},
        scope[CF_MAXVARSIZE] = {0},*sp;
-
-   if (sp = strchr(name,'.'))
+       
+   if (name && (sp = strchr(name,'.')))
       {
       if (*(sp+1) == '*') // If it looks like a regex, don't split on .
          {
@@ -2386,8 +2386,8 @@ else if (strcmp(lsdata,"vars") == 0)
          return;
          }
       }
-   
-   Nova2Txt_vars_report(hostkey,NULL,name,NULL,NULL,true,classregex);
+
+   Nova2Txt_vars_report(hostkey,NULL,NULL,NULL,NULL,true,NULL);
    return;
    }
 else if (strcmp(lsdata,"file_changes") == 0)

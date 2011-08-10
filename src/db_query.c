@@ -1415,7 +1415,6 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
     bson_destroy(&query);
     }
 
-
  while (mongo_cursor_next(cursor))  // loops over documents
     {
     bson_iterator_init(&it1,cursor->current.data);
