@@ -2344,7 +2344,7 @@ if (LICENSES == 0)
 
 /*********************************************************************/
 
-void Nova_CommandAPI(char *lsdata,char *phandle,char *hostkey,char *classregex)
+void Nova_CommandAPI(char *lsdata,char *name,char *phandle,char *hostkey,char *classregex)
     
 { int plen = strlen(phandle);
   int slen = strlen(lsdata);
@@ -2361,18 +2361,37 @@ if (hlen > 0 && slen == 0 && plen == 0 && clen == 0)
    printf(" -> Recent IP Addresses: %s",address);
    }
 
- /*
-   Nova2Txt_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+if (strcmp(lsdata,"software") == 0)
+   {
+   Nova2Txt_software_report(hostkey,name,NULL,NULL,true,NULL,classregex);
+   }
 
-int Nova2Txt_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+if (strcmp(lsdata,"vars") == 0)
+   {
+   char name[CF_MAXVARSIZE],lval[CF_MAXVARSIZE] = {0},
+       scope[CF_MAXVARSIZE] = {0},*sp;
 
-int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,struct PageInfo *page, int lookInArchive,char *returnval,int bufsize)
+   if (sp = strchr(name,'.'))
+      {
+      if (*(sp+1) == '*') // If it looks like a regex, don't split on .
+         {
+         Nova2Txt_vars_report(hostkey,NULL,name,NULL,NULL,true,classregex);
+         }
+      else
+         {
+         sscanf(name,"%[^.].%s",scope,lval);
+         Nova2Txt_vars_report(hostkey,scope,lval,NULL,NULL,true,classregex);
+         }
+      }
+   }
 
-int Nova2Txt_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,struct PageInfo *page, int lookInArchive,char *returnval,int bufsize)
+if (strcmp(lsdata,"file_changes") == 0)
+   {
+   Nova2Txt_filechanges_report(hostkey,name,true,-1,">",classregex);
+   }
 
-
-
-
-   
- */
+if (strcmp(lsdata,"file_diffs") == 0)
+   {
+   Nova2Txt_filediffs_report(hostkey,name,NULL,true,-1,">",classregex);
+   }
 }

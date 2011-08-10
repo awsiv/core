@@ -194,14 +194,6 @@ return true;
 }
 
 /*****************************************************************************/
-
-void Nova2Txt_meter(char *hostkey,char *buffer,int bufsize)
-
-{
-Nova_Meter(hostkey,buffer,bufsize);
-}
-
-/*****************************************************************************/
 /* Vitals functions                                                          */
 /*****************************************************************************/
 
@@ -405,7 +397,7 @@ int Nova2Txt_software_report(char *hostkey,char *name,char *value, char *arch,in
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
+   return false;
    }
 
 hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,true);
@@ -465,72 +457,6 @@ CFDB_Close(&dbconn);
 return true;
 }
 
-
-/*****************************************************************************/
-
-int Nova2Txt_classes_summary(char **classes, char *buf, int bufsize)
-
-{ mongo_connection dbconn;
- struct HubQuery *hq;
- struct HubClassSum *hc;
- struct HubHost *hh;
- struct Rlist *rp;
- char work[CF_MAXVARSIZE];
- 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
- hq = CFDB_QueryClassSum(&dbconn,classes);
-
- StartJoin(buf, "{", bufsize);
-
- if(hq && hq->hosts)
-    {
-
-    Join(buf, "\"hosts\":[", bufsize);
-    
-    for(rp = hq->hosts; rp != NULL; rp = rp->next)
-       {
-       hh = (struct HubHost *)rp->item;
-       snprintf(work, sizeof(work), "[\"%s\",\"%s\"]\n,", hh->hostname, hh->keyhash);
-       
-       if(!Join(buf, work, bufsize - 10))
-          {
-          break;
-          }           
-       }
-
-    ReplaceTrailingChar(buf, ',', '\0');
-    EndJoin(buf,"]",bufsize);
-
-    Join(buf, ",\n\"classes\":[", bufsize - 10);
-    
-    for(rp = hq->records; rp != NULL; rp = rp->next)
-       {
-       hc = (struct HubClassSum *)rp->item;
-       snprintf(work, sizeof(work), "[\"%s\",%d]\n,", hc->class, hc->frequency);
-
-       if(!Join(buf, work, bufsize - 10))
-          {
-          break;
-          }
-       }
-
-    ReplaceTrailingChar(buf, ',', '\0');
-    EndJoin(buf,"]",bufsize);
-    }
-
- EndJoin(buf, "}", bufsize);
- 
- DeleteHubQuery(hq,DeleteHubClassSum);
-
- CFDB_Close(&dbconn);
-
- return true;
-}
 
 /*****************************************************************************/
 
@@ -610,7 +536,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,struct PageInfo *page, char *returnval,int bufsize)
+int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg)
 
 { char buffer[CF_BUFSIZE];
  struct HubTotalCompliance *ht;
@@ -637,41 +563,16 @@ int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
     }
 
  hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,classreg);
- PageRecords(&(hq->records),page,DeleteHubTotalCompliance);
 
- snprintf(header,sizeof(header),
-	  "\"meta\":{\"count\" : %d,"
-	  "\"header\": {\"Host\":0,\"Policy\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,\"Last seen\":5" 
-	  "}", page->totalResultCount);
-
- headerLen = strlen(header);
- noticeLen = strlen(CF_NOTICE_TRUNCATED);
+ printf("Host Policy, Kept Repaired Not-Kept Last-verified\n");
  
- StartJoin(returnval,"{\"data\":[",bufsize);
-
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     ht = (struct HubTotalCompliance *)rp->item;
 
-    snprintf(buffer,sizeof(buffer),
-             "[\"%s\",\"%s\",%d,%d,%d,%ld],",
-             ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,ht->t);
-    margin = headerLen + noticeLen + strlen(buffer);
-    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
-       {
-       truncated = true;
-       break;
-       }
+    printf("%s %s %d %d %d %ld\n",ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,ht->t);
     }
 
- ReplaceTrailingChar(returnval,',','\0');
- EndJoin(returnval,"]",bufsize);
-
- Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
-
- Join(returnval,buffer,bufsize);
- EndJoin(returnval,"}}\n",bufsize);
- 
  DeleteHubQuery(hq,DeleteHubTotalCompliance);
 
  if (!CFDB_Close(&dbconn))
@@ -684,7 +585,7 @@ int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
 
 /*****************************************************************************/
 
-int Nova2Txt_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+int Nova2Txt_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *classreg)
 
 { char buffer[CF_BUFSIZE];
  struct HubPromiseCompliance *hp;
@@ -695,52 +596,28 @@ int Nova2Txt_compliance_promises(char *hostkey,char *handle,char *status,int reg
  int margin = 0,headerLen=0,noticeLen=0;
  int truncated = false;
  
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+if (!status)  // any
+   {
+   status = "x";
+   }
+
+hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
+
+printf("Promise-handle  Last known state  Pr-Kept Uncertainty  Last-seen");
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hp = (struct HubPromiseCompliance *)rp->item;
+   
+   printf("%s,%s,%s,%.2lf,%.2lf,%ld\n",hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,hp->t);
+   }
  
- if(!status)  // any
-    {
-    status = "x";
-    }
-
- hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
- PageRecords(&(hq->records),page,DeleteHubPromiseCompliance);
-
- snprintf(header,sizeof(header),
-          "\"meta\":{\"count\" : %d,"
-          "\"header\": {\"Host\":0,\"Promise Handle\":1,\"Last Known State\":2,\"Probability Kept\":3,\"Uncertainty\":4,\"Last seen\":5"
-          "}",page->totalResultCount);
- 
- headerLen = strlen(header);
- noticeLen = strlen(CF_NOTICE_TRUNCATED);
- StartJoin(returnval,"{\"data\":[",bufsize);
-
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    hp = (struct HubPromiseCompliance *)rp->item;
-
-    snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",\"%s\",%.2lf,%.2lf,%ld],",
-             hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,hp->t);
-
-    margin = headerLen + noticeLen + strlen(buffer);
-    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
-       {
-       truncated = true;
-       break;
-       }
-    }
- 
- ReplaceTrailingChar(returnval,',','\0');
- EndJoin(returnval,"]",bufsize);
-
- Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
-
- Join(returnval,buffer,bufsize);
- EndJoin(returnval,"}}\n",bufsize);
-
  DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
  if (!CFDB_Close(&dbconn))
@@ -753,7 +630,7 @@ int Nova2Txt_compliance_promises(char *hostkey,char *handle,char *status,int reg
 
 /*****************************************************************************/
 
-int Nova2Txt_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+int Nova2Txt_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg)
 
 { char buffer[CF_BUFSIZE];
  struct HubLastSeen *hl;
@@ -769,149 +646,46 @@ int Nova2Txt_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
   
 /* BEGIN query document */
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
     }
- hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
- PageRecords(&(hq->records),page,DeleteHubLastSeen);
+hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
 
- snprintf(header,sizeof(header),
-          "\"meta\":{\"count\" : %d,"
-          "\"header\": {\"Host\":0,\"Initiated\":1,\"Remote host name\":2,\"Remote IP address\":3,\"Last seen\":4,\"Hours ago\":5,\"Avg interval\":6,\"Uncertainty\":7,\"Remote host key\":8"
-          "}",page->totalResultCount);
- 
- headerLen = strlen(header);
- noticeLen = strlen(CF_NOTICE_TRUNCATED);
- 
- StartJoin(returnval,"{\"data\":[",bufsize);
+printf("Seen-on-host Remote-host Remote-IP Last-seen Hrs-ago Avg-interval Uncertainty Remote-key");
 
- count += strlen(returnval);
 
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    hl = (struct HubLastSeen *)rp->item;
-
-    switch (hl->io)
-       {
-       case '+':
-           snprintf(inout,CF_SMALLBUF,"by us (+)");
-           break;
-       case '-':
-           snprintf(inout,CF_SMALLBUF,"by them (-)");
-           break;
-       }
-
-    then = hl->t;
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hl = (struct HubLastSeen *)rp->item;
    
-    snprintf(buffer,sizeof(buffer),
-             "[\"%s\",\"%s\",\"%s\",\"%s\",%ld,"
-             "%.2lf,%.2lf,%.2lf,\"%s\"],",
-             hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,hl->t,
-             hl->hrsago,hl->hrsavg,hl->hrsdev,
-             hl->rhost->keyhash);
-    margin = headerLen + noticeLen + strlen(buffer);
-    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
-       {
-       truncated = true;
-       break;
-       }
-    }
+   switch (hl->io)
+      {
+      case '+':
+          snprintf(inout,CF_SMALLBUF,"by us (+)");
+          break;
+      case '-':
+          snprintf(inout,CF_SMALLBUF,"by them (-)");
+          break;
+      }
+   
+   then = hl->t;
+   
+   printf("%s %s %s %s %ld %.2lf %.2lf %.2lf %s\n",
+            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,hl->t,
+            hl->hrsago,hl->hrsavg,hl->hrsdev,
+            hl->rhost->keyhash);
+   }
 
- ReplaceTrailingChar(returnval,',','\0');
- EndJoin(returnval,"]",bufsize);
-
- Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
-
- Join(returnval,buffer,bufsize);
- EndJoin(returnval,"}}\n",bufsize);
- 
- DeleteHubQuery(hq,DeleteHubLastSeen);
-
- CFDB_Close(&dbconn);
-
- return true;
-}
-
-/*****************************************************************************/
-int Nova2Txt_performance_report(char *hostkey,char *job,int regex,char *classreg,struct PageInfo *page, char *returnval,int bufsize)
-
-{ char *report,buffer[CF_BUFSIZE];
- struct HubPerformance *hP;
- struct HubQuery *hq;
- struct Rlist *rp;
- mongo_connection dbconn;
- char header[CF_BUFSIZE]={0};
- int margin = 0,headerLen=0,noticeLen=0;
- int truncated = false;
-
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
- hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,true,classreg);
- PageRecords(&(hq->records),page,DeleteHubPerformance);
-
- snprintf(header,sizeof(header),
-          "\"meta\":{\"count\" : %d,"
-          "\"header\": {\"Host\":0,\"Event\":1,\"Last time\":2,\"Avg Time\":3,\"Uncertainty\":4,\"Last performed\":5,"
-	  "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
-          "}",page->totalResultCount);
- 
- headerLen = strlen(header);
- noticeLen = strlen(CF_NOTICE_TRUNCATED);
- StartJoin(returnval,"{\"data\":[",bufsize);
-
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    hP = ( struct HubPerformance *)rp->item;
-
-    if(strcmp(hP->nid,CF_NONOTE) == 0)
-       {
-       snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%.2lf,%.2lf,%.2lf,%ld,"
-		"[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-		hP->hh->hostname,hP->event,hP->q,hP->e,hP->d,hP->t,
-		hP->hh->keyhash,CFREPORT_PERFORMANCE,hP->handle);
-       }
-    else
-       {
-       snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%.2lf,%.2lf,%.2lf,%ld,"
-		"[\"show\",\"\",\"\",\"\",\"%s\"]],",
-		hP->hh->hostname,hP->event,hP->q,hP->e,hP->d,hP->t,
-		hP->nid);
-       }
-    margin = headerLen + noticeLen + strlen(buffer);
-    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
-       {
-       truncated = true;
-       break;
-       }
-    }
-
- ReplaceTrailingChar(returnval,',','\0');
- EndJoin(returnval,"]",bufsize);
-
- Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
-
- Join(returnval,buffer,bufsize);
- EndJoin(returnval,"}}\n",bufsize);
-
- DeleteHubQuery(hq,DeleteHubPerformance);
-
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- return true;
+DeleteHubQuery(hq,DeleteHubLastSeen);
+CFDB_Close(&dbconn);
+return true;
 }
 
 /*****************************************************************************/
 
-int Nova2Txt_setuid_report(char *hostkey,char *file,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+int Nova2Txt_setuid_report(char *hostkey,char *file,int regex,char *classreg)
 
 { char buffer[CF_BUFSIZE];
  struct HubSetUid *hS;   
@@ -929,37 +703,15 @@ int Nova2Txt_setuid_report(char *hostkey,char *file,int regex,char *classreg,str
     }
 
  hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
- PageRecords(&(hq->records),page,DeleteHubSetUid);
 
- snprintf(header,sizeof(header),
-          "\"meta\":{\"count\" : %d,"
-          "\"header\": {\"Host\":0,\"File\":1"
-          "}", page->totalResultCount);
-
- headerLen = strlen(header);
- noticeLen = strlen(CF_NOTICE_TRUNCATED);
- StartJoin(returnval,"{\"data\":[",bufsize);
-
+ printf("Host File\n");
+ 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hS = ( struct HubSetUid *)rp->item;
 
-    snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\"],",hS->hh->hostname,hS->path);
-    margin = headerLen + noticeLen + strlen(buffer);
-    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
-       {
-       truncated = true;
-       break;
-       }
+    printf("%s %s\n",hS->hh->hostname,hS->path);
     }
-
- ReplaceTrailingChar(returnval,',','\0');
- EndJoin(returnval,"]",bufsize);
-
- Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
-
- Join(returnval,buffer,bufsize);
- EndJoin(returnval,"}}\n",bufsize);
 
  DeleteHubQuery(hq,DeleteHubSetUid);
 
@@ -1057,7 +809,7 @@ int Nova2Txt_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,s
 
 /*****************************************************************************/
 
-int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,struct PageInfo *page, int lookInArchive,char *returnval,int bufsize)
+int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg)
 
 { char buffer[CF_BUFSIZE];
  struct HubFileChanges *hC;
@@ -1083,23 +835,15 @@ int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
     return false;
     }
 
- hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,classreg, lookInArchive);
- PageRecords(&(hq->records),page,DeleteHubFileChanges);
+ hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,classreg,false);
 
- snprintf(header,sizeof(header),
-          "\"meta\":{\"count\" : %d,"
-          "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2,"
-	  "\"Note\":{\"index\":3,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
-          "}",page->totalResultCount);
- headerLen = strlen(header);
- noticeLen = strlen(CF_NOTICE_TRUNCATED);
- StartJoin(returnval,"{\"data\":[",bufsize);
-
+ printf("File Changed-on Note\n");
+ 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hC = (struct HubFileChanges *)rp->item;
               
-    if(strcmp(hC->nid,CF_NONOTE) == 0)
+    if (strcmp(hC->nid,CF_NONOTE) == 0)
        {
        snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,"
                 "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
@@ -1113,101 +857,58 @@ int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
                 hC->hh->hostname,hC->path,hC->t,
                 hC->nid);
        }
-    
-    margin = headerLen + noticeLen + strlen(buffer);
-    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
-       {
-       truncated = true;
-       break;
-       }
     }
-
- ReplaceTrailingChar(returnval,',','\0');
- EndJoin(returnval,"]",bufsize);
-
- Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
-
- Join(returnval,buffer,bufsize);
- EndJoin(returnval,"}}\n",bufsize);
  
- DeleteHubQuery(hq,DeleteHubFileChanges);
-   
+ DeleteHubQuery(hq,DeleteHubFileChanges);   
  CFDB_Close(&dbconn);
-   
  return true;
 }
 
 /*****************************************************************************/
 
-int Nova2Txt_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,struct PageInfo *page, int lookInArchive,char *returnval,int bufsize)
+int Nova2Txt_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg)
 
 { char buffer[CF_BUFSIZE];   
- struct HubFileDiff *hd;
- struct HubQuery *hq;
- struct Rlist *rp;
- int icmp;
- mongo_connection dbconn;
- char header[CF_BUFSIZE]={0};
- int margin = 0,headerLen=0,noticeLen=0;
- int truncated = false;
+  struct HubFileDiff *hd;
+  struct HubQuery *hq;
+  struct Rlist *rp;
+  int icmp;
+  mongo_connection dbconn;
+  char header[CF_BUFSIZE]={0};
+  int margin = 0,headerLen=0,noticeLen=0;
+  int truncated = false;
  
- switch (*cmp)
-    {
-    case '<': icmp = CFDB_LESSTHANEQ;
-        break;
-    default: icmp = CFDB_GREATERTHANEQ;
-        break;
-    }
-
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
- hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,true,classreg,lookInArchive);
- PageRecords(&(hq->records),page,DeleteHubFileDiff);
- 
- snprintf(header,sizeof(header),
-          "\"meta\":{\"count\" : %d,"
-          "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2,"
-	  "\"Change\":{\"index\":3,\"subkeys\":{\"plusminus\":0,\"line\":1,\"diff\":2}}"
-          "}",page->totalResultCount);
- headerLen = strlen(header);
- noticeLen = strlen(CF_NOTICE_TRUNCATED);
- StartJoin(returnval,"{\"data\":[",bufsize);
-
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    hd = (struct HubFileDiff *)rp->item;
-
-    snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,%s],",
-             hd->hh->hostname,hd->path,hd->t,Nova_FormatDiff(hd->diff));
-
-    margin = headerLen + noticeLen + strlen(buffer);
-    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
-       {
-       truncated = true;
+switch (*cmp)
+   {
+   case '<': icmp = CFDB_LESSTHANEQ;
        break;
-       }
-    }
+   default: icmp = CFDB_GREATERTHANEQ;
+       break;
+   }
 
- ReplaceTrailingChar(returnval,',','\0');
- EndJoin(returnval,"]",bufsize);
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,true,classreg,false);
 
- Join(returnval,buffer,bufsize);
- EndJoin(returnval,"}}\n",bufsize);
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hd = (struct HubFileDiff *)rp->item;
+   
+   printf("%s file %s changed on %ld\n%s\n",hd->hh->hostname,hd->path,hd->t,Nova_FormatDiff(hd->diff));
+   }
 
- DeleteHubQuery(hq,DeleteHubFileDiff);
+DeleteHubQuery(hq,DeleteHubFileDiff);
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
 
- return true;
+return true;
 }
 
 /*****************************************************************************/
@@ -3348,40 +3049,6 @@ int Nova2Txt_list_handles_policy_finder(char *handle,char *promiser,char *bundle
     CFDB_Close(&dbconn);
     return false;
     }
-}
-
-/*****************************************************************************/
-
-int Nova2Txt_GetHubKey(char *buffer,int bufsize)
-
-{ char name[CF_MAXVARSIZE]={0},policy_server[CF_MAXVARSIZE]={0};
-  char serverdig[CF_MAXVARSIZE] = "";
-  FILE *fp;
-  struct Item *list=NULL,*ip=NULL;
-  int ret = false;
-
-  if(strlen(CFWORKDIR) < 1)
-     {
-     snprintf(CFWORKDIR,CF_MAXVARSIZE,"%s","/var/cfengine");
-     }
-  snprintf(name,sizeof(name),"%s%cpolicy_server.dat",CFWORKDIR,FILE_SEPARATOR);
-
- if ((fp = fopen(name,"r")) != NULL)
-    {
-    fscanf(fp,"%s",policy_server);
-    fclose(fp);
-    }
- list = CFDB_GetLastseenCache();
- for(ip=list;ip!=NULL;ip=ip->next)
-    {
-    if(strcmp(ip->classes,policy_server) == 0)
-       {
-        snprintf(buffer,bufsize,"%s",ip->name);
-        ret=true;
-       }
-    }
- DeleteItemList(list);
- return ret;
 }
 
 #endif

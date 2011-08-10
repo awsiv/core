@@ -61,14 +61,13 @@ int Nova2Txt_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut, int bufsi
 int Nova2Txt_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *classreg);
 int Nova2Txt_classes_report(char *hostkey,char *name,int regex,char *classreg);
 int Nova2Txt_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg);
-int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,struct PageInfo *page, char *returnval,int bufsize);
-int Nova2Txt_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *classreg,struct PageInfo *page,char *buffer,int bufsize);
-int Nova2Txt_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddr,time_t lago,int lregex,char *classreg,struct PageInfo *page, char *returnval,int bufsize);
-int Nova2Txt_performance_report(char *hostkey,char *job,int regex,char *classreg,struct PageInfo *page, char *returnval,int bufsize);
-int Nova2Txt_setuid_report(char *hostkey,char *file,int regex,char *classreg,struct PageInfo *page, char *returnval,int bufsize);
+int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg);
+int Nova2Txt_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *classreg);
+int Nova2Txt_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddr,time_t lago,int lregex,char *classreg);
+int Nova2Txt_setuid_report(char *hostkey,char *file,int regex,char *classreg);
 int Nova2Txt_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,struct PageInfo *page, char *returnval,int bufsize);
-int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,struct PageInfo *page, int lookInArchive, char *returnval,int bufsize);
-int Nova2Txt_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,struct PageInfo *page, int lookInArchive, char *returnval,int bufsize);
+int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg);
+int Nova2Txt_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg);
 
 int Nova2Txt_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg);
 

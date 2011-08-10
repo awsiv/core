@@ -859,7 +859,7 @@ void Nova_ShowPromises(struct Bundle *bundles, struct Body *bodies);
 void Nova_ShowPromise(const char *version, struct Promise *pp, int indent);
 int Nova_ExportReports(char *reportName);
 int Nova_ImportHostReports(char *filePath);
-void Nova_CommandAPI(char *lsdata,char *handle,char *hostkey,char *classregex);
+void Nova_CommandAPI(char *lsdata,char *name,char *handle,char *hostkey,char *classregex);
 
 /* scorecards.c */
 
