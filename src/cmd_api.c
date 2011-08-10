@@ -810,55 +810,55 @@ int Nova2Txt_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,s
 
 int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg)
 
-{ char buffer[CF_BUFSIZE];
- struct HubFileChanges *hC;
- struct HubQuery *hq;
- struct Rlist *rp;
- int icmp;
- mongo_connection dbconn;
- char header[CF_BUFSIZE]={0};
- int margin = 0,headerLen=0,noticeLen=0;
- int truncated = false;
+{ char buffer[CF_SMALLBUF];
+  struct HubFileChanges *hC;
+  struct HubQuery *hq;
+  struct Rlist *rp;
+  int icmp;
+  mongo_connection dbconn;
+  char header[CF_BUFSIZE]={0};
+  int margin = 0,headerLen=0,noticeLen=0;
+  int truncated = false;
  
- switch (*cmp)
-    {
-    case '<': icmp = CFDB_LESSTHANEQ;
-        break;
-    default: icmp = CFDB_GREATERTHANEQ;
-        break;
-    }
+switch (*cmp)
+   {
+   case '<': icmp = CFDB_LESSTHANEQ;
+       break;
+   default: icmp = CFDB_GREATERTHANEQ;
+       break;
+   }
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,classreg,false);
+
+printf("%25s %25s, %20s %d %s\n","Host","File", "Changed-on", "Note");
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hC = (struct HubFileChanges *)rp->item;
    
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+   if (strcmp(hC->nid,CF_NONOTE) == 0)
+      {
+      printf("%25s %25s, %20s %d %s\n",
+             hC->hh->hostname,hC->path,cf_strtimestamp_local(hC->t,buffer),
+             CFREPORT_FILECHANGES,hC->handle);
+      }
+   else
+      {
+      printf("%s %s %ld %s\n",
+             hC->hh->hostname,hC->path,hC->t,
+             hC->nid);
+      }
+   }
 
- hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,classreg,false);
-
- printf("File Changed-on Note\n");
- 
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    hC = (struct HubFileChanges *)rp->item;
-              
-    if (strcmp(hC->nid,CF_NONOTE) == 0)
-       {
-       printf("%s,%s,%ld %s %d %s\n",
-                hC->hh->hostname,hC->path,hC->t,
-                hC->hh->keyhash,CFREPORT_FILECHANGES,hC->handle);
-       }
-    else
-       {
-       printf("%s %s %ld %s\n",
-                hC->hh->hostname,hC->path,hC->t,
-                hC->nid);
-       }
-    }
- 
- DeleteHubQuery(hq,DeleteHubFileChanges);   
- CFDB_Close(&dbconn);
- return true;
+DeleteHubQuery(hq,DeleteHubFileChanges);   
+CFDB_Close(&dbconn);
+return true;
 }
 
 /*****************************************************************************/
