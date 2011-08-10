@@ -35,9 +35,7 @@
         </div>
     </div>
     <div class="grid_3">
-        <div class="innerdiv" style="margin:15px 8px 22px 8px;">
-            <p><a href="<?php echo site_url() ?>/hubstatus/status" title="See the status of the hub replication" class="showqtip">Hub replication status</a></p>
-        </div>   
+         
 
         <div id="goals" class="innerdiv statusgoal">
             <p class="title">Services/goals</p>
