@@ -695,29 +695,29 @@ int Nova2Txt_setuid_report(char *hostkey,char *file,int regex,char *classreg)
  int margin = 0,headerLen=0,noticeLen=0;
  int truncated = false;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
+hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
 
- printf("Host File\n");
- 
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    hS = ( struct HubSetUid *)rp->item;
+printf("Host File\n");
 
-    printf("%s %s\n",hS->hh->hostname,hS->path);
-    }
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hS = ( struct HubSetUid *)rp->item;
+   
+   printf("%s %s\n",hS->hh->hostname,hS->path);
+   }
 
- DeleteHubQuery(hq,DeleteHubSetUid);
+DeleteHubQuery(hq,DeleteHubSetUid);
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
 
  return true;
 }

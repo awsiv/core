@@ -2400,6 +2400,12 @@ else if (strcmp(lsdata,"file_diffs") == 0)
    Nova2Txt_filediffs_report(hostkey,name,NULL,true,-1,">",classregex);
    return;
    }
+else if (strcmp(lsdata,"setuid") == 0)
+   {
+   Nova2Txt_setuid_report(hostkey,name,true,classregex);
+   return;
+   }
+
 
 printf("Nothing to do\n");
 }
