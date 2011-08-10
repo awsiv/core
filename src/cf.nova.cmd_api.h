@@ -52,7 +52,7 @@ int Nova2Txt_docroot(char *buffer,int bufsize);
 void Nova_EnterpriseModuleTrick(void);
 void Nova2Txt_getlastupdate(char *hostkey,char *buffer,int bufsize);
 void Nova2Txt_get_host_colour(char *hostkey,char *buffer,int bufsize);
-int Nova2Txt_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,struct PageInfo *page,char *returnval,int bufsize);
+int Nova2Txt_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg);
 int Nova2Txt_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,struct PageInfo *page,char *returnval,int bufsize);
 int Nova2Txt_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,struct PageInfo *page,char *buffer,int bufsize);
 void Nova2Txt_summary_meter(char *buffer,int bufsize);
@@ -70,7 +70,8 @@ int Nova2Txt_setuid_report(char *hostkey,char *file,int regex,char *classreg,str
 int Nova2Txt_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,struct PageInfo *page, char *returnval,int bufsize);
 int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,struct PageInfo *page, int lookInArchive, char *returnval,int bufsize);
 int Nova2Txt_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,struct PageInfo *page, int lookInArchive, char *returnval,int bufsize);
-int Nova2Txt_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize);
+
+int Nova2Txt_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg);
 
 int Nova2Txt_software_hosts(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,char *returnval,int bufsize);
 int Nova2Txt_classes_hosts(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize);

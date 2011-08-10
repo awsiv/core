@@ -44,7 +44,7 @@ if (cfstat(file,&sb) == -1)
    return;
    }
 
-if(Nova_FileIsBinary(file,sb.st_size,NOVA_MAXDIFFSIZE))
+if (Nova_FileIsBinary(file,sb.st_size,NOVA_MAXDIFFSIZE))
    {
    cfPS(cf_error,CF_FAIL,"",pp,a,"!! File \"%s\" is either too large to diff or contains binary chars -- skipping", file);
    return;

@@ -42,16 +42,16 @@ if (hostkey && strlen(hostkey) > 0)
    
    if (then > 0)
       {
-      snprintf(buffer,bufsize,"%ld",then);
+      printf("Data from %s last updated %s",hostkey,cf_ctime(&then));
       }
    else
       {
-      snprintf(buffer,bufsize,"never");
+      printf("Data from %s have never been collected",hostkey);
       }
    }
 else
    {
-   snprintf(buffer,bufsize,"never");
+   printf("No hostkey specified");
    }
 
 if (!CFDB_Close(&dbconn))
@@ -62,7 +62,7 @@ if (!CFDB_Close(&dbconn))
 
 /*****************************************************************************/
 
-int Nova2Txt_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2Txt_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg)
 /*
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
@@ -164,15 +164,26 @@ n_av += n / tot_promises; // Average not kept on available hosts in class
 r_av += r / tot_promises; // Average repaired on available hosts in class
 k_av += k / tot_promises; // Average compliant/kept on available hosts in class
 
-if(tot_hosts == 0)
+if (tot_hosts == 0)
    {
    from = now - CF_HUB_HORIZON;
    to = now;
    }
 // Return current best-knowledge of average compliance for the class of hosts and promises selected
 
-snprintf(returnval,bufsize,"{\"kept\":%.2lf,\"not_kept\":%.2lf,\"repaired\":%.2lf,\"host_count\":%d,\"code_blue\":\"%d\",\"class\":\"%s\",\"start\":%ld,\"end\":%ld}",
-         k_av,n_av,r_av,tot_hosts,code_blue,classreg,from,to);
+snprintf(returnval,bufsize,"Kept  Not_Kept Repaired Host_Count Code_Blue Class Start End\n",
+         
+printf("Hosts with promises kept: %.2lf\n"
+       "HOsts with promises not kept: %.2lf"
+       "Hosts with promises repaired %.2lf"
+       "Total number of hosts: %d"
+       "Hosts that didn't report status: %d"
+       "Search class: %s"
+       "First reports at: %s"
+       "Last reports at: %s",
+       k_av,n_av,r_av,tot_hosts,code_blue,classreg,
+       cf_strtimestamp_local(&from,buf1),
+       cf_strtimestamp_local(&to,buf2));
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
@@ -325,7 +336,7 @@ int Nova2Txt_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
 
 /*****************************************************************************/
 
-int Nova2Txt_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+int Nova2Txt_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg)
 
 { char buffer[CF_BUFSIZE],report[CF_BUFSIZE]={0};
  struct HubPromiseLog *hp;
@@ -356,41 +367,25 @@ int Nova2Txt_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
 
  CFDB_Close(&dbconn);
 
- startIndex = page->resultsPerPage*(page->pageNum - 1);
- endIndex = (page->resultsPerPage*page->pageNum) - 1;
-
  if (summary == NULL)
     {
-    snprintf(returnval,bufsize,"No data to report on");
+    printf("No data to report\n");
     }
  else
     {     
     summary = SortItemListCounters(summary);
-    snprintf(buffer,sizeof(buffer),
-             "{\"meta\":{\"count\" : %d,"
+
+    printf("{\"meta\":{\"count\" : %d,"
              "\"header\":{\"Promise Handle\":0,\"Report\":1,\"Occurrences\":2"
              "}},\"data\":[",ListLen(summary));
-     
-    StartJoin(returnval,buffer,bufsize);
-   
+
+    printf("Promise Handle       Frequency  Report");
+    
     for (ip = summary; ip != NULL; ip=ip->next, i++)
        {
-       if(i>=startIndex && (i<=endIndex || endIndex < 0))
-          {
-          EscapeJson(ip->classes,report,sizeof(report));
-          snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%d],",
-                   ip->name,report,ip->counter);
-       
-          if(!Join(returnval,buffer,bufsize))
-             {
-             break;
-             }
-          }
+       printf("%20.20s %10d %s\n",ip->name,ip->counter,ip->classes);
        }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-
-    EndJoin(returnval,"]}\n",bufsize);
     DeleteItemList(summary);
     }
 
