@@ -703,13 +703,13 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
 
-printf("Host File\n");
+printf("%25s %s\n","Host","File");
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hS = ( struct HubSetUid *)rp->item;
    
-   printf("%s %s\n",hS->hh->hostname,hS->path);
+   printf("%25s %s\n",hS->hh->hostname,hS->path);
    }
 
 DeleteHubQuery(hq,DeleteHubSetUid);
