@@ -66,7 +66,7 @@ int Nova2Txt_summary_report(char *hostkey,char *handle,char *status,int regex,ch
 /*
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
-{ char buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE],buf1[CF_SMALLBUF],buf2[CF_SMALLBUF];
   struct HubPromiseCompliance *hp;
   struct HubQuery *hq;
   struct Rlist *rp;
@@ -171,8 +171,6 @@ if (tot_hosts == 0)
    }
 // Return current best-knowledge of average compliance for the class of hosts and promises selected
 
-snprintf(returnval,bufsize,"Kept  Not_Kept Repaired Host_Count Code_Blue Class Start End\n",
-         
 printf("Hosts with promises kept: %.2lf\n"
        "HOsts with promises not kept: %.2lf"
        "Hosts with promises repaired %.2lf"
@@ -182,8 +180,8 @@ printf("Hosts with promises kept: %.2lf\n"
        "First reports at: %s"
        "Last reports at: %s",
        k_av,n_av,r_av,tot_hosts,code_blue,classreg,
-       cf_strtimestamp_local(&from,buf1),
-       cf_strtimestamp_local(&to,buf2));
+       cf_strtimestamp_local(from,buf1),
+       cf_strtimestamp_local(to,buf2));
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
@@ -394,7 +392,7 @@ int Nova2Txt_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
 
 /*****************************************************************************/
 
-int Nova2Txt_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+int Nova2Txt_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg)
 
 { char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
  int margin = 0,headerLen=0,noticeLen=0;
@@ -404,207 +402,42 @@ int Nova2Txt_software_report(char *hostkey,char *name,char *value, char *arch,in
  struct Rlist *rp;
  mongo_connection dbconn;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
-
- hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,true);
- PageRecords(&(hq->records),page,DeleteHubSoftware);
-
- snprintf(header,sizeof(header),
-	  "\"meta\":{\"count\" : %d,"
-	  "\"header\": {\"Host\":0,\"Name\":1,\"Version\":2,\"Architecture\":3"
-	  "}", page->totalResultCount);
-
- headerLen = strlen(header);
- noticeLen = strlen(CF_NOTICE_TRUNCATED);
-
- StartJoin(returnval,"{\"data\":[",bufsize);
-
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    hs = (struct HubSoftware *)rp->item;
-    snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",\"%s\",\"%s\"],",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
-    margin = headerLen + noticeLen + strlen(buffer);
-    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
-       {
-       truncated = true;
-       break;
-       }
-    }
-
- ReplaceTrailingChar(returnval, ',', '\0');
- EndJoin(returnval,"]",bufsize);
-
- Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
-
- Join(returnval,buffer,bufsize);
- EndJoin(returnval,"}}\n",bufsize);
- 
- DeleteHubQuery(hq,DeleteHubSoftware);
- 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- return true;
-}
-
-/*****************************************************************************/
-
-int Nova2Txt_classes_report(char *hostkey,char *name,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
-
-{  char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
- int margin = 0,headerLen=0,noticeLen=0;
- int truncated = false;
- struct HubClass *hc;
- struct HubQuery *hq;
- struct Rlist *rp;
- mongo_connection dbconn;
-
-/* BEGIN query document */
- 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
- PageRecords(&(hq->records),page,DeleteHubClass);
-
- snprintf(header,sizeof(header),
-	  "\"meta\":{\"count\" : %d,"
-	  "\"header\": {\"Host\":0,\"Class Context\":1,\"Occurs with Probability\":2,\"Uncertainty\":3,\"Last seen\":4"
-	  "}", page->totalResultCount);
- 
- headerLen = strlen(header);
- noticeLen = strlen(CF_NOTICE_TRUNCATED);
- StartJoin(returnval,"{\"data\":[",bufsize);
- 
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    hc = (struct HubClass *)rp->item;
-   
-    snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%lf,%lf,%ld],",hc->hh->hostname,hc->class,hc->prob,hc->dev,hc->t);
-    margin = headerLen + noticeLen + strlen(buffer);
-    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
-       {
-       truncated = true;
-       break;
-       }
-    }
- ReplaceTrailingChar(returnval,',','\0');
- EndJoin(returnval,"]",bufsize);
-
- Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
-
- Join(returnval,buffer,bufsize);
- EndJoin(returnval,"}}\n",bufsize);
- 
- DeleteHubQuery(hq,DeleteHubClass);
-
- CFDB_Close(&dbconn);
-
- return true;
-}
-
-/*****************************************************************************/
-
-int Nova2Txt_listclasses_time(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
-
-{ char buffer[CF_BUFSIZE]={0};
-  struct Rlist *rp, *rp2;
-  mongo_connection dbconn;
-
-/* BEGIN query document */
- 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
-    }
-
-rp = CFDB_QueryDateTimeClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
-
-StartJoin(returnval,"[",bufsize);
-
-for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
-   {
-     snprintf(buffer,sizeof(buffer),"\"%s\",",(char*)rp2->item);
-   
-   if(!Join(returnval,buffer,bufsize))
-      {
-      break;
-      }
    }
 
-if (returnval[strlen(returnval)-1]==',')
+hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,true);
+
+printf("Hostname Package Version Arch\n");
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   returnval[strlen(returnval)-1]='\0';
+   hs = (struct HubSoftware *)rp->item;
+   printf("%s,%s,%s,%s\n",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
    }
 
-EndJoin(returnval,"]\n",bufsize);
+DeleteHubQuery(hq,DeleteHubSoftware);
 
- DeleteRlist(rp);
-CFDB_Close(&dbconn);
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
 
 return true;
 }
 
 /*****************************************************************************/
 
-int Nova2Txt_listclasses_soft(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2Txt_classes_report(char *hostkey,char *name,int regex,char *classreg)
 
-{ char buffer[CF_BUFSIZE]={0};
- struct Rlist *rp, *rp2;
- mongo_connection dbconn;
-
-/* BEGIN query document */
- 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
-rp = CFDB_QuerySoftClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
-
-StartJoin(returnval,"[",bufsize);
-
-for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
-   {
-     snprintf(buffer,sizeof(buffer),"\"%s\",",(char *)rp2->item);
-   
-   if(!Join(returnval,buffer,bufsize))
-      {
-      break;
-      }
-   }
-
-if (returnval[strlen(returnval)-1]==',')
-   {
-   returnval[strlen(returnval)-1]='\0';
-   }
-
-EndJoin(returnval,"]\n",bufsize);
-
- DeleteRlist(rp);
-CFDB_Close(&dbconn);
-
-return true;
-}
-
-/*****************************************************************************/
-
-int Nova2Txt_listclasses_ip(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
-
-{ char buffer[CF_BUFSIZE]={0};
-  struct Rlist *rp, *rp2;
+{ char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
+  int margin = 0,headerLen=0,noticeLen=0;
+  int truncated = false;
+  struct HubClass *hc;
+  struct HubQuery *hq;
+  struct Rlist *rp;
   mongo_connection dbconn;
 
 /* BEGIN query document */
@@ -615,108 +448,23 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
+hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
 
-rp = CFDB_QueryIpClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
- 
-StartJoin(returnval,"[",bufsize);
+printf("Host  Class/Context  Probability  Uncertainty Last-Defined\n");
 
-for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
+for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-     snprintf(buffer,sizeof(buffer),"\"%s\",",(char *)rp2->item);
+   hc = (struct HubClass *)rp->item;
    
-   if(!Join(returnval,buffer,bufsize))
-      {
-      break;
-      }
+   printf("%s %s %lf %lf %ld\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,hc->t);
    }
 
-if(returnval[strlen(returnval)-1]==',')
-   {
-   returnval[strlen(returnval)-1]='\0';
-   }
+DeleteHubQuery(hq,DeleteHubClass);
 
-EndJoin(returnval,"]\n",bufsize);
-
- DeleteRlist(rp);
 CFDB_Close(&dbconn);
-
 return true;
 }
 
-/*****************************************************************************/
-int Nova2Txt_listclasses_host(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
-
-{ char buffer[CF_BUFSIZE]={0};
-  struct Rlist *rp, *rp2;
-  mongo_connection dbconn;
-
-  /* BEGIN query document */
-  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-      CfOut(cf_verbose,"", "!! Could not open connection to report database");
-      return false;
-    }
-
-  rp = (void*)CFDB_QueryHostClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
-  StartJoin(returnval,"[",bufsize);
-  for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
-    {
-      snprintf(buffer,sizeof(buffer),"\"%s\",",(char *)rp2->item);
-
-      if(!Join(returnval,buffer,bufsize))
-        {
-          break;
-        }
-    }
-  if (returnval[strlen(returnval)-1]==',')
-    {
-      returnval[strlen(returnval)-1]='\0';
-    }
-  EndJoin(returnval,"]\n",bufsize);
-
-  DeleteRlist(rp);
-  CFDB_Close(&dbconn);
-  return true;
-}
-/*****************************************************************************/
-int Nova2Txt_listclasses_all(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
-
-{ char buffer[CF_BUFSIZE]={0};
-  struct Rlist *rp, *rp2;
-  mongo_connection dbconn;
-  /* BEGIN query document */
-
-  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-      CfOut(cf_verbose,"", "!! Could not open connection to report database");
-      return false;
-    }
-  
-  rp = CFDB_QueryAllClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
-  
-  StartJoin(returnval,"[",bufsize);
-  
-  for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
-    {
-      snprintf(buffer,sizeof(buffer),"\"%s\",",(char*)rp2->item);
-
-      if(!Join(returnval,buffer,bufsize))
-        {
-          break;
-        }
-    }
-
-  if (returnval[strlen(returnval)-1]==',')
-    {
-      returnval[strlen(returnval)-1]='\0';
-    }
-  EndJoin(returnval,"]\n",bufsize);
-
-  DeleteRlist(rp);
-  CFDB_Close(&dbconn);
-
-  return true;
-}
 
 /*****************************************************************************/
 
@@ -786,7 +534,7 @@ int Nova2Txt_classes_summary(char **classes, char *buf, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2Txt_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+int Nova2Txt_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg)
 
 { char buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE],canonifiedValue[CF_BUFSIZE]={0};
  char rvalBuf[CF_MAXVARSIZE];
@@ -800,128 +548,68 @@ int Nova2Txt_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
  int margin = 0, noticeLen=0,headerLen=0;
  int truncated = false;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
 
- hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
+hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
 
- CountMarginRecordsVars(&(hq->records),page,&first_scope_record_count,&last_scope_record_count);
- PageRecords(&(hq->records),page,DeleteHubVariable);
+printf("Host                Type Variable      Value\n");
 
- lscope[0] = '\0';
-
- snprintf(header,sizeof(header),"\"meta\":{\"count\":%d",page->totalResultCount);
- meta_len=strlen(buffer);
-
- headerLen = strlen(header);
- noticeLen = strlen(CF_NOTICE_TRUNCATED);
- StartJoin(returnval,"{",bufsize);
-
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    char typestr[CF_SMALLBUF];
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   char typestr[CF_SMALLBUF];
    
-    hv = (struct HubVariable *)rp->item;
-    if (strcmp(lscope,hv->scope) != 0)
-       {
-       strcpy(lscope,hv->scope);
-      
-       if(strlen(buffer)>meta_len)
-          {	  
-	  returnval[strlen(returnval)-1] = '\0';
-	  snprintf(buffer,CF_BUFSIZE,"],\"count\":%d},",first?first_scope_record_count:scope_record_count);
-	  Join(returnval,buffer,bufsize); // end scope
-	  scope_record_count=0;
-	  first=false;
-          }
-     
-       snprintf(buffer,CF_BUFSIZE,"\"%s\":{"
-                "\"header\":{\"Host\":0,\"Type\":1,\"Name\":2,\"Value\":3},"
-                "\"data\":[",hv->scope);
-       Join(returnval,buffer,bufsize);
-      
-       }
+   hv = (struct HubVariable *)rp->item;
+   
+   switch (*hv->dtype)
+      {
+      case 's':
+          snprintf(typestr,CF_SMALLBUF,"string");
+          break;
+      case 'i':
+          snprintf(typestr,CF_SMALLBUF,"int");
+          break;
+      case 'r':
+          snprintf(typestr,CF_SMALLBUF,"real");
+          break;
+      case 'm':
+          snprintf(typestr,CF_SMALLBUF,"menu");
+          break;
+      }
+   
+   if (strlen(hv->dtype) == 2)
+      {
+      strcat(typestr," list");
+      }
+   
+   if (strlen(hv->dtype) > 1) // list
+      {
+      PrintRlist(rvalBuf,sizeof(rvalBuf),hv->rval);
+      }
+   else
+      {
+      snprintf(rvalBuf,sizeof(rvalBuf),"%s",(char *)hv->rval);
+      }
+   
+   printf("%s %s %s %s %ld\n",hv->hh->hostname,typestr,hv->lval,rvalBuf,hv->t);
+   
+   }
 
-    switch (*hv->dtype)
-       {
-       case 's':
-           snprintf(typestr,CF_SMALLBUF,"string");
-           break;
-       case 'i':
-           snprintf(typestr,CF_SMALLBUF,"int");
-           break;
-       case 'r':
-           snprintf(typestr,CF_SMALLBUF,"real");
-           break;
-       case 'm':
-           snprintf(typestr,CF_SMALLBUF,"menu");
-           break;
-       }
+DeleteHubQuery(hq,DeleteHubVariable);
 
-    if (strlen(hv->dtype) == 2)
-       {
-       strcat(typestr," list");
-       }
+if (!CFDB_Close(&dbconn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
 
-    if (strlen(hv->dtype) > 1) // list
-       {
-       PrintRlist(rvalBuf,sizeof(rvalBuf),hv->rval);
-       }
-    else
-       {
-       snprintf(rvalBuf,sizeof(rvalBuf),"%s",(char *)hv->rval);
-       }
-
-    EscapeJson(rvalBuf,canonifiedValue,sizeof(canonifiedValue));
-
-    snprintf(buffer,CF_BUFSIZE,
-             "[\"%s\",\"%s\",\"%s\",\"%s\",%ld],",
-             hv->hh->hostname,typestr,hv->lval,canonifiedValue,hv->t);
-
-    margin = headerLen + noticeLen + strlen(buffer);
-    if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
-       {
-       truncated = true;
-       countadded=true;
-       break;
-       }
-    scope_record_count++;
-    }
-
- if (!countadded )
-    {
-    returnval[strlen(returnval)-1] = '\0';
-    snprintf(buffer,CF_BUFSIZE,"],\"count\":%d}",last_scope_record_count);
-    Join(returnval,buffer,bufsize); // end scope
-    }
- else if(first)
-    {
-    returnval[strlen(returnval)-1] = ']';
-    }
- else
-    {
-    returnval[strlen(returnval)-1] = '\0';
-    }
-
- Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
-
- Join(returnval,buffer,bufsize);
- EndJoin(returnval,"}}\n",bufsize);
- 
- DeleteHubQuery(hq,DeleteHubVariable);
-
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- return true;
+return true;
 }
 
 /*****************************************************************************/
+
 int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,struct PageInfo *page, char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
