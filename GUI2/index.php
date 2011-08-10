@@ -12,7 +12,6 @@
            elseif(preg_match('/(\d+).(\d+).(\d+).(\d+)/',$ishubmaster)){
                define('HUB_MASTER',$ishubmaster);
             } else{
-                var_dump($ishubmaster);
                  exit("Database  error  occured ".$ishubmaster);
           }
  /*

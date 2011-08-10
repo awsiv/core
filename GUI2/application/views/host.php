@@ -10,21 +10,6 @@
 			  ?>
 <div id="hostview">
     <div class="outerdiv">
-   <div id="notkepttable" title="Promises not kept in the past week">
-			<?php $report = cfpr_summarize_notkept($hostkey,NULL,NULL,NULL,NULL,NULL,NULL);?>
-              <!--<p class="title">Promises not kept in the past week</p-->
-                     <div class="tables">
-                      <?php
-                      $tableData = json_decode($report,true);
-                      if (is_array($tableData)) {
-                      echo  $this->cf_table->generateReportTable($tableData);
-                      } else
-                      {
-                          echo "<span class=\"nodata\">No Data Found</span>";
-                      }
-                      ?>
-                      </div>
-     </div>
     <div class="grid_4">
         <div id="hostviewerbtn" class="dash innerdiv">
             <p class="title"> <img src= "<?php echo get_imagedir().$colour?>_square_little.png" class="hoststatcolorsquare"/>Actions</p>
@@ -109,6 +94,21 @@
              </div>
     </div>
     <div class="clear"></div>
+       <div id="notkepttable" title="Promises not kept in the past week">
+			<?php $report = cfpr_summarize_notkept($hostkey,NULL,NULL,NULL,NULL,NULL,NULL);?>
+              <!--<p class="title">Promises not kept in the past week</p-->
+                     <div class="tables">
+                      <?php
+                      $tableData = json_decode($report,true);
+                      if (is_array($tableData)) {
+                      echo  $this->cf_table->generateReportTable($tableData);
+                      } else
+                      {
+                          echo "<span class=\"nodata\">No Data Found</span>";
+                      }
+                      ?>
+                      </div>
+     </div>
     </div>
 </div>
 <div id="hostdelconfirmation" title="Proceed Host Deletion">

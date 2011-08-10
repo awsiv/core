@@ -603,7 +603,7 @@ class Welcome extends Cf_Controller {
             $totaldays = floor($datediff / (60 * 60 * 24));
             $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
             $pbarvalue ="";
-            if(!$totaldays < 0)
+            if(!($totaldays < 0))
             { 
                $pbarvalue=floor(($dayspassed / $totaldays) * 100);
             }
@@ -611,7 +611,7 @@ class Welcome extends Cf_Controller {
         } catch (Exception $e) {
             log_message('license error:' . $e->getMessage());
         }
-        var_dump(cfpr_getlicense_installtime());
+       
         $data = array(
             'title' => "Cfengine Mission Portal - license usage status ",
             'ret2' => cfpr_getlicenses_promised(),

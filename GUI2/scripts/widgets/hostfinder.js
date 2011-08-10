@@ -190,15 +190,25 @@
                             li.children().css("fontSize",  val[1]/10+1 + "em");
                             li.appendTo("#tagList");
                         });
+                            var mylist = self.classdlg.find('#tagList');
+                            var listitems = mylist.children('li').get();
+                            listitems.sort(function(a, b) {
+                                var compA = $(a).text().toUpperCase();
+                                var compB = $(b).text().toUpperCase();
+                                return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+                            })
+                            $.each(listitems, function(idx, itm) {
+                                mylist.append(itm);
+                            });
                         
                     });
                 }
             });
             self.classdlg.titlebar=self.classdlg.siblings('div.ui-dialog-titlebar');
             self.classdlg.optionhandler=$('<span id="handle" class="operation">Options</span>');
-            self.classdlg.titlebar.append(self.classdlg.optionhandler).delegate('#handle','click',function(){
+            /*self.classdlg.titlebar.append(self.classdlg.optionhandler).delegate('#handle','click',function(){
                 self.classdlg.options.slideToggle();
-            });
+            });*/
 
             self.classdlg.options=$('<ul id="tgoptions"></ul>');
             self.classdlg.options.append('<li>Sort asc</li><li>Sort desc</li>');
@@ -284,11 +294,6 @@
             if(this.value==$(this).data('default') && event.type=='focusin')
             {
                 self.cfui.categories.slideDown();
-                if(this.value=="search by class")
-                {
-                    self.createclasstagcloud(self);
-                }
-                this.value='';
             }
             if(this.value=='' && event.type=='focusout')
             {

@@ -256,32 +256,7 @@ label#searchbox input
         padding: 9px 0 0 10px;
     }
 }
-/*
-#bodyindex {
-    color: #000000;
-}
 
-#bodyindex .left{
-    background: url("../images/box_main_left.png") no-repeat;
-    min-width:11px;
-    min-height:511px;
-    float:left;
-}
-
-#bodyindex .middle{
-    background: url("../images/box_main_mid_tile.png") repeat-x;
-    height: 511px;
-    float:left;
-    min-width: 97.7%;
-}
-
-#bodyindex .right{
-    background: url("../images/box_main_right.png") no-repeat;
-    min-width:11px;
-    height:511px;
-    float:left;
-}
-*/
 /*for working pane*/
 #work {
 
@@ -579,9 +554,11 @@ label#searchbox input
     padding: 4px;
     position: absolute;
     right: 10.5%;
+    top:50%;
     text-align: center;
     width: 167px;
     z-index: 1;
+    color:#000;
 }
 
 .loading{
@@ -753,7 +730,7 @@ body .innerdiv a{
     color:#08A3C1;
 }
 
-body .outerdiv a{
+body .outerdiv a, .ui-widget-content  .tables a{
     color:#08A3C1;
 }
 
