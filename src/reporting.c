@@ -2362,6 +2362,8 @@ if (hlen > 0 && slen == 0 && plen == 0 && clen == 0)
    return;
    }
 
+printf("REQ: %s,%s\n",ldata,name);
+
 if (strcmp(lsdata,"software") == 0)
    {
    Nova2Txt_software_report(hostkey,name,"","",true,cfr_software,classregex);
