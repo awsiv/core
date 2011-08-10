@@ -482,7 +482,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
 
-printf("Host                Type Variable      Value\n");
+printf("%25s %10s %15s %s\n","Host","Type","lval","rval");
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -520,7 +520,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       snprintf(rvalBuf,sizeof(rvalBuf),"%s",(char *)hv->rval);
       }
    
-   printf("%s %s %s %s %ld\n",hv->hh->hostname,typestr,hv->lval,rvalBuf,hv->t);   
+   printf("%25s %10s %15s %s\n",hv->hh->hostname,typestr,hv->lval,rvalBuf);   
    }
 
 DeleteHubQuery(hq,DeleteHubVariable);
