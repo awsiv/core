@@ -6268,9 +6268,8 @@ int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRege
  bson_buffer bbuf;
  bson query, field;
  mongo_cursor *cursor;
+ bson_buffer *sub1, *sub2;
  int found = false;
- char khMatches[16384];  /* each keyhash is ~70 bytes: size / 70
-			    gives max hosts returned */
 
  // query
  bson_buffer_init(&bbuf);
@@ -6286,9 +6285,12 @@ int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRege
 
  bson_destroy(&query);
  bson_destroy(&field);
-  
- khMatches[0] = '\0';
-  
+
+ sub1 = bson_append_start_array(bb, "$or");
+
+ int i = 0;
+ char iStr[64] = {0};
+
  while(mongo_cursor_next(cursor))  // iterate over docs
     {
     bson_iterator_init(&it1,cursor->current.data);
@@ -6297,23 +6299,21 @@ int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRege
        {
        if (strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)
           {
-          Join(khMatches,(char *)bson_iterator_string(&it1),sizeof(khMatches));
-          Join(khMatches,"|",sizeof(khMatches));
+          snprintf(iStr, sizeof(iStr), "%d", i);
+          
+          sub2 = bson_append_start_object(sub1, iStr);
+          bson_append_string(sub2, cfr_keyhash, bson_iterator_string(&it1));
+          bson_append_finish_object(sub2);
+
+          i++;
           found = true;
           }
        }
     }
+
+ bson_append_finish_object(sub1);
   
  mongo_cursor_destroy(cursor);
-
- if(found)
-    {
-    // remove trailing |
-    khMatches[strlen(khMatches) - 1] = '\0';
-    bson_append_regex(bb,cfr_keyhash,khMatches,"");
-
-    Debug("QueryHostsWithClass regex=\"%s\"\n", khMatches);
-    }
 
  return found;
 }
@@ -6526,10 +6526,15 @@ void BsonToString(char *retBuf, int retBufSz, char *data)
      snprintf(buf,sizeof(buf), "%s" , bson_iterator_bool( &i ) ? "true" : "false" ); 
      break;
 
- case bson_string: 
+ case bson_string:
      snprintf(buf,sizeof(buf), "%s" , bson_iterator_string( &i ) ); 
      break;
 
+ case bson_regex:
+     snprintf(buf,sizeof(buf), "/%s/" , bson_iterator_string( &i ) ); 
+     break;
+
+     
  case bson_null: 
      snprintf(buf,sizeof(buf), "null"); 
      break;
