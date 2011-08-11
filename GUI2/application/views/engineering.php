@@ -11,8 +11,8 @@
 
             <ul>
                 <li>Hosts Known: <strong><?php echo $all ?></strong></li>
-                <li>Ranked worst: <a href="weakest_host">Show top 50</a></li>
-                <li>Hub replication status: <a href="<?php echo site_url() ?>/hubstatus/status" title="See the status of the hub replication" class="showqtip">Show</a></li>
+                <li><a href="weakest_host">50 worst hosts</a></li>
+                <li><a href="<?php echo site_url() ?>/hubstatus/status" title="See the status of the hub replication" class="showqtip">Hub replication status</a></li>
             </ul>
         </div>
         <div id="summarymetereng" class="minwidth70 innerdiv">
@@ -32,7 +32,7 @@
                 <li><?php echo anchor('widget/allpolicies', 'promises', array('class' => 'policies showqtip', 'title' => tooltip('tooltip_promise_finder'), 'id' => 'findpolicy')); ?></li>
                 <li><?php echo anchor('widget/allreports', 'reports', array('class' => 'report showqtip', 'id' => 'findreport', 'title' => tooltip('tooltip_reports_finder'))); ?></li>
                 <li><?php echo anchor('summaryreports/search', 'summary reports', array('class' => 'summary_report showqtip', 'id' => 'summaryreport', 'title' => tooltip('tooltip_summary_finder'))); ?></li>
-                <li><?php echo anchor('widget/cdpreports', 'Cdp reports', array('class' => 'cdpreport showqtip', 'id' => 'findcdpreport', 'title' => tooltip('tooltip_reports_finder'))); ?></li>
+                <li><?php echo anchor('widget/cdpreports', 'CDP reports', array('class' => 'cdpreport showqtip', 'id' => 'findcdpreport', 'title' => tooltip('tooltip_reports_finder'))); ?></li>
 
                 <p class="clearleft"></p>
             </ul>

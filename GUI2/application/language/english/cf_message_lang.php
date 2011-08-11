@@ -3,7 +3,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-$lang['no_data'] 	  	 = 'Cannot Find Any Data...';
+$lang['no_data'] 	  	 = 'Sorry this report contains no data.';
 $lang['license_to']               ='This edition is licensed to ';
 $lang['front_greeting']          ='Welcome to CFEngine';
 $lang['report_hostgp_help']    ='SOFT CLASSES or  HARD CLASSES with combination of regular expression as input, To open <strong>classfinder</strong> click me!';

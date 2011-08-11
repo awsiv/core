@@ -53,7 +53,7 @@
                      echo $this->cf_table->generateReportTable($result, $report_title);
                      include 'paging_footer.php';
                 } else {
-                    echo"<table><tr><td>" . $this->lang->line("no_data") . "</td></tr></table>";
+                    echo"<div class='info'>" . $this->lang->line("no_data") . "</div>";
                 }
                 ?> 
             </div>

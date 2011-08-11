@@ -55,7 +55,7 @@ class Welcome extends Cf_Controller {
 
     function status() {
         $bc = array(
-            'title' => 'Mission status',
+            'title' => 'Status',
             'url' => 'welcome/status',
             'isRoot' => false
         );
