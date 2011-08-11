@@ -21,7 +21,9 @@
             <div id="environment-list">
                 <ul>
                     <li><!-- chrome fix --></li>
-                    <li><span class="front"></span><a class ="updateComplianceGraph" href="<?php echo site_url(); ?>/welcome/getJsonComplianceSummary/" title="">Default</a><span class="rear"></span></li>
+                    <li class="selected"><span class="front"></span><a class ="updateComplianceGraph" href="<?php echo site_url(); ?>/welcome/getJsonComplianceSummary/" title="">Default</a><span class="rear"></span>
+                    <div class="tippointer" style="margin-top: 5px; left: 27.5px;"></div>
+                    </li>
                     <?php foreach ($envList as $key => $env) {
                         ?>
                         <li><span class="front"></span><a class ="updateComplianceGraph" href="<?php echo site_url(); ?>/welcome/getJsonComplianceSummary/<?php echo $env; ?>" title="environment_<?php echo $env; ?>"><?php echo $env; ?></a><span class="rear"></span></li>
