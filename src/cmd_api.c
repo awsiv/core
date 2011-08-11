@@ -563,7 +563,7 @@ int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
 
 hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,classreg);
 
-printf("%25s %6s %9s %9s %s\n","Host","%Kept", "%Repaired", "%Not-Kept","Last-verified");
+printf("%25s %7s %10s %10s %s\n","Host","%Kept", "%Repaired", "%Not-Kept","Last-verified");
  
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
