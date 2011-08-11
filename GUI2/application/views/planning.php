@@ -43,7 +43,7 @@
             </ul>
         </div>
         <div id="personallog" class="grid_5 innerdiv">
-            <p class="title">Activity log</p>
+            <p class="title">My activity log</p>
             <div id="messageinput_container">
                 <form method="post" action="<?php echo site_url(); ?>/widget/insertworkinglogs">
                     <textarea  id="message" name="message" placeholder="Working on...."></textarea>
@@ -56,7 +56,7 @@
             <ul id="personalnotes">
                 <?php
                 foreach ($working_notes as $note) {
-                    echo "<li><span class=\"wrknoteslblorg\">Me:</span> " . $note['working_on'] . "<span class=\"note_date\">" . date('D F d h:i:s Y', $note['date']) . "</span> </li>";
+                    echo "<li>" . $note['working_on'] . "<span class=\"note_date\">" . date('D F d h:i:s Y', $note['date']) . "</span> </li>";
                 }
                 ?>
             </ul>
