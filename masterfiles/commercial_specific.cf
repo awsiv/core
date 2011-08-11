@@ -20,45 +20,45 @@ bundle agent cfengine_php_mod
 
    "/etc/php.d/cfmod.ini"
         comment => "Put cfmod.ini to its place",
-         handle => "cfengine_php_mod_cfmod_ini_redhat5",
+         handle => "cfengine_php_mod_files_cfmod_ini_redhat5",
       copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/cfmod.ini"),
           perms => mo("644","root");
 
    "/etc/php.d/svn.ini"
         comment => "Put svn.ini to its place",
-         handle => "cfengine_php_mod_svn_ini_redhat5",
+         handle => "cfengine_php_mod_files_svn_ini_redhat5",
       copy_from => local_cp("$(sys.workdir)/software_updates/svn/svn.ini"),
           perms => mo("644","root");
 
    "/etc/php.d/json.ini"
         comment => "Put json.ini to its place",
-         handle => "cfengine_php_mod_json_ini_redhat5",
+         handle => "cfengine_php_mod_files_json_ini_redhat5",
       copy_from => local_cp("$(sys.workdir)/software_updates/json/json.ini"),
           perms => mo("644","root");
 
    "/etc/php.d/mongo.ini"
         comment => "Put mongo.ini to its place",
-         handle => "cfengine_php_mod_mongo_ini_redhat5",
+         handle => "cfengine_php_mod_files_mongo_ini_redhat5",
       copy_from => local_cp("$(sys.workdir)/software_updates/mongo/mongo.ini"),
           perms => mo("644","root");
 
    "/usr/lib/php/modules/json.so"
          comment => "Prepare cfmod.so for 32-bit system",
-         handle => "cfengine_php_mod_json_so_redhat5_32",
+         handle => "cfengine_php_mod_files_json_so_redhat5_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/json/32/json.so"),
            perms => mo("755","root"),
       ifvarclass => "i686";
 
    "/usr/lib64/php/modules/json.so"
          comment => "Prepare cfmod.so for 64-bit system",
-         handle => "cfengine_php_mod_json_so_redhat5_64",
+         handle => "cfengine_php_mod_files_json_so_redhat5_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/json/64/json.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64";
 
    "/usr/lib/php/modules/cfmod.so"
          comment => "Prepare cfmod.so for 32-bit system",
-         handle => "cfengine_php_mod_cfmod_so_redhat5_32",
+         handle => "cfengine_php_mod_files_cfmod_so_redhat5_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/32/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
@@ -66,7 +66,7 @@ bundle agent cfengine_php_mod
 
    "/usr/lib64/php/modules/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
-         handle => "cfengine_php_mod_cfmod_so_redhat5_64",
+         handle => "cfengine_php_mod_files_cfmod_so_redhat5_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/64/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
@@ -74,7 +74,7 @@ bundle agent cfengine_php_mod
 
    "/usr/lib/php/modules/svn.so"
          comment => "Prepare svn.so for 32-bit system",
-         handle => "cfengine_php_mod_svn_so_redhat5_32",
+         handle => "cfengine_php_mod_files_svn_so_redhat5_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/svn/32/svn.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
@@ -82,7 +82,7 @@ bundle agent cfengine_php_mod
 
    "/usr/lib64/php/modules/svn.so"
          comment => "Prepare svn.so for 64-bit system",
-         handle => "cfengine_php_mod_svn_so_redhat5_64",
+         handle => "cfengine_php_mod_files_svn_so_redhat5_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/svn/64/svn.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
@@ -90,7 +90,7 @@ bundle agent cfengine_php_mod
 
    "/usr/lib/php/modules/mongo.so"
          comment => "Prepare mongo.so for 32-bit system",
-         handle => "cfengine_php_mod_mongo_so_redhat5_32",
+         handle => "cfengine_php_mod_files_mongo_so_redhat5_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/mongo/32/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
@@ -98,7 +98,7 @@ bundle agent cfengine_php_mod
 
    "/usr/lib64/php/modules/mongo.so"
          comment => "Prepare mongo.so for 64-bit system",
-         handle => "cfengine_php_mod_mongo_so_redhat5_64",
+         handle => "cfengine_php_mod_files_mongo_so_redhat5_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/mongo/64/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
@@ -108,13 +108,13 @@ bundle agent cfengine_php_mod
 
    "/etc/php.d/mcrypt.ini"
         comment => "Put mcrypt.ini to its place",
-         handle => "cfengine_php_mod_mcrypt_ini_redhat5",
+         handle => "cfengine_php_mod_files_mcrypt_ini_redhat5",
       copy_from => local_cp("$(sys.workdir)/software_updates/mcrypt/mcrypt.ini"),
           perms => mo("644","root");
 
    "/usr/lib/php/modules/mcrypt.so"
          comment => "Prepare mcrypt.so for 32-bit system",
-         handle => "cfengine_php_mod_mcrypt_so_redhat5_32",
+         handle => "cfengine_php_mod_files_mcrypt_so_redhat5_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/mcrypt/32/mcrypt.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
@@ -122,7 +122,7 @@ bundle agent cfengine_php_mod
 
    "/usr/lib64/php/modules/mcrypt.so"
          comment => "Prepare mcrypt.so for 64-bit system",
-         handle => "cfengine_php_mod_mcrypt_so_redhat5_64",
+         handle => "cfengine_php_mod_files_mcrypt_so_redhat5_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/mcrypt/64/mcrypt.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
@@ -132,7 +132,7 @@ bundle agent cfengine_php_mod
 
    "/etc/php.d/cfmod.ini"
         comment => "Put cfmod.ini to its place",
-         handle => "cfengine_php_mod_cfmod_ini_redhat4",
+         handle => "cfengine_php_mod_files_cfmod_ini_redhat4",
       copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/cfmod.ini"),
           perms => mo("644","root");
 
@@ -143,26 +143,26 @@ bundle agent cfengine_php_mod
 
    "/etc/php.d/json.ini"
         comment => "Put json.ini to its place",
-         handle => "cfengine_php_mod_json_ini_redhat4",
+         handle => "cfengine_php_mod_files_json_ini_redhat4",
       copy_from => local_cp("$(sys.workdir)/software_updates/json/json.ini"),
           perms => mo("644","root");
 
    "/etc/php.d/mongo.ini"
         comment => "Put mongo.ini to its place",
-         handle => "cfengine_php_mod_mongo_ini_redhat4",
+         handle => "cfengine_php_mod_files_mongo_ini_redhat4",
       copy_from => local_cp("$(sys.workdir)/software_updates/mongo/mongo.ini"),
           perms => mo("644","root");
 
    "/usr/lib/php4/json.so"
          comment => "Prepare cfmod.so for 32-bit system",
-          handle => "cfengine_php_mod_json_so_redhat4_32",
+          handle => "cfengine_php_mod_files_json_so_redhat4_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/json/32/json.so"),
            perms => mo("755","root"),
       ifvarclass => "i686";
 
    "/usr/lib/php4/cfmod.so"
          comment => "Prepare cfmod.so for 32-bit system",
-          handle => "cfengine_php_mod_cfmod_so_redhat4_32",
+          handle => "cfengine_php_mod_files_cfmod_so_redhat4_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/32/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
@@ -177,14 +177,14 @@ bundle agent cfengine_php_mod
 
    "/usr/lib64/php4/json.so"
          comment => "Prepare cfmod.so for 64-bit system",
-          handle => "cfengine_php_mod_json_so_redhat4_64",
+          handle => "cfengine_php_mod_files_json_so_redhat4_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/json/64/json.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64";
 
    "/usr/lib64/php4/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
-          handle => "cfengine_php_mod_cfmod_so_redhat4_64",
+          handle => "cfengine_php_mod_files_cfmod_so_redhat4_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/64/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
@@ -201,44 +201,66 @@ bundle agent cfengine_php_mod
 
    "/etc/php5/conf.d/cfmod.ini"
         comment => "Put cfmod.ini to its place",
-         handle => "cfengine_php_mod_cfmod_ini_ubuntu10",
+         handle => "cfengine_php_mod_files_cfmod_ini_ubuntu10",
       copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/cfmod.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/svn.ini"
-        comment => "Put cfmod.ini to its place",
-         handle => "cfengine_php_mod_svn_ini_ubuntu10",
+        comment => "Put svn.ini to its place",
+         handle => "cfengine_php_mod_files_svn_ini_ubuntu10",
       copy_from => local_cp("$(sys.workdir)/software_updates/svn/svn.ini"),
+          perms => mo("644","root");
+
+   "/etc/php5/conf.d/mongo.ini"
+        comment => "Put mongo.ini to its place",
+         handle => "cfengine_php_mod_files_mongo_ini_ubuntu10",
+      copy_from => local_cp("$(sys.workdir)/software_updates/mongo/mongo.ini"),
           perms => mo("644","root");
 
    "/usr/lib/php5/20090626+lfs/cfmod.so"
          comment => "Prepare cfmod.so for 32-bit system",
-          handle => "cfengine_php_mod_cfmod_so_ubuntu10_32",
+          handle => "cfengine_php_mod_files_cfmod_so_ubuntu10_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/20090626/32/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
  
-   "/usr/lib/php5/20090626+lfs/svn.so"
-         comment => "Prepare svn.so for 32-bit system",
-          handle => "cfengine_php_mod_svn_so_ubuntu10_32",
-       copy_from => local_cp("$(sys.workdir)/software_updates/svn/20090626/32/svn.so"),
-           perms => mo("755","root"),
-      ifvarclass => "i686",
-         classes => if_repaired("restart_webserver");
-
    "/usr/lib/php5/20090626/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
-          handle => "cfengine_php_mod_cfmod_so_ubuntu10_64",
+          handle => "cfengine_php_mod_files_cfmod_so_ubuntu10_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/20090626/64/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
+
+   "/usr/lib/php5/20090626+lfs/svn.so"
+         comment => "Prepare svn.so for 32-bit system",
+          handle => "cfengine_php_mod_files_svn_so_ubuntu10_32",
+       copy_from => local_cp("$(sys.workdir)/software_updates/svn/20090626/32/svn.so"),
+           perms => mo("755","root"),
+      ifvarclass => "i686",
+         classes => if_repaired("restart_webserver");
   
    "/usr/lib/php5/20090626/svn.so"
          comment => "Prepare svn.so for 64-bit system",
-          handle => "cfengine_php_mod_svn_so_ubuntu10_64",
+          handle => "cfengine_php_mod_files_svn_so_ubuntu10_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/svn/20090626/64/svn.so"),
+           perms => mo("755","root"),
+      ifvarclass => "x86_64",
+         classes => if_repaired("restart_webserver");
+
+   "/usr/lib/php5/20090626+lfs/mongo.so"
+         comment => "Prepare mongo.so for 32-bit system",
+          handle => "cfengine_php_mod_files_mongo_so_ubuntu10_32",
+       copy_from => local_cp("$(sys.workdir)/software_updates/mongo/20090626/32/mongo.so"),
+           perms => mo("755","root"),
+      ifvarclass => "i686",
+         classes => if_repaired("restart_webserver");
+  
+   "/usr/lib/php5/20090626/mongo.so"
+         comment => "Prepare mongo.so for 64-bit system",
+          handle => "cfengine_php_mod_files_mongo_so_ubuntu10_64",
+       copy_from => local_cp("$(sys.workdir)/software_updates/mongo/20090626/64/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -247,50 +269,66 @@ bundle agent cfengine_php_mod
 
    "/etc/php5/conf.d/cfmod.ini"
         comment => "Put cfmod.ini to its place",
-         handle => "cfengine_php_mod_cfmod_ini_ubuntu8",
+         handle => "cfengine_php_mod_files_cfmod_ini_ubuntu8",
       copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/cfmod.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/svn.ini"
-        comment => "Put cfmod.ini to its place",
-         handle => "cfengine_php_mod_svn_ini_ubuntu8",
+        comment => "Put svn.ini to its place",
+         handle => "cfengine_php_mod_files_svn_ini_ubuntu8",
       copy_from => local_cp("$(sys.workdir)/software_updates/svn/svn.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/mongo.ini"
         comment => "Put mongo.ini to its place",
-         handle => "cfengine_php_mod_mongo_ini_ubuntu8",
+         handle => "cfengine_php_mod_files_mongo_ini_ubuntu8",
       copy_from => local_cp("$(sys.workdir)/software_updates/mongo/mongo.ini"),
           perms => mo("644","root");
 
    "/usr/lib/php5/20060613+lfs/cfmod.so"
          comment => "Prepare cfmod.so for 32-bit system",
-          handle => "cfengine_php_mod_cfmod_so_ubuntu8_32",
+          handle => "cfengine_php_mod_files_cfmod_so_ubuntu8_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/20060613/32/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
          classes => if_repaired("restart_webserver");
  
-   "/usr/lib/php5/20060613+lfs/svn.so"
-         comment => "Prepare svn.so for 32-bit system",
-          handle => "cfengine_php_mod_svn_so_ubuntu8_32",
-       copy_from => local_cp("$(sys.workdir)/software_updates/svn/20060613/32/svn.so"),
-           perms => mo("755","root"),
-      ifvarclass => "i686",
-         classes => if_repaired("restart_webserver");
-
    "/usr/lib/php5/20060613/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
-          handle => "cfengine_php_mod_cfmod_so_ubuntu8_64",
+          handle => "cfengine_php_mod_files_cfmod_so_ubuntu8_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/20060613/64/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
+
+   "/usr/lib/php5/20060613+lfs/svn.so"
+         comment => "Prepare svn.so for 32-bit system",
+          handle => "cfengine_php_mod_files_svn_so_ubuntu8_32",
+       copy_from => local_cp("$(sys.workdir)/software_updates/svn/20060613/32/svn.so"),
+           perms => mo("755","root"),
+      ifvarclass => "i686",
+         classes => if_repaired("restart_webserver");
   
    "/usr/lib/php5/20060613/svn.so"
          comment => "Prepare svn.so for 64-bit system",
-          handle => "cfengine_php_mod_svn_so_ubuntu8_64",
+          handle => "cfengine_php_mod_files_svn_so_ubuntu8_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/svn/20060613/64/svn.so"),
+           perms => mo("755","root"),
+      ifvarclass => "x86_64",
+         classes => if_repaired("restart_webserver");
+
+   "/usr/lib/php5/20060613+lfs/mongo.so"
+         comment => "Prepare mongo.so for 32-bit system",
+          handle => "cfengine_php_mod_files_mongo_so_ubuntu8_32",
+       copy_from => local_cp("$(sys.workdir)/software_updates/mongo/20060613/32/mongo.so"),
+           perms => mo("755","root"),
+      ifvarclass => "i686",
+         classes => if_repaired("restart_webserver");
+  
+   "/usr/lib/php5/20060613/mongo.so"
+         comment => "Prepare mongo.so for 64-bit system",
+          handle => "cfengine_php_mod_files_mongo_so_ubuntu8_64",
+       copy_from => local_cp("$(sys.workdir)/software_updates/mongo/20060613/64/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
          classes => if_repaired("restart_webserver");
@@ -299,25 +337,25 @@ bundle agent cfengine_php_mod
 
    "/etc/php5/conf.d/cfmod.ini"
         comment => "Put cfmod.ini to its place",
-         handle => "cfengine_php_mod_cfmod_ini_suse",
+         handle => "cfengine_php_mod_files_cfmod_ini_suse",
       copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/cfmod.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/svn.ini"
         comment => "Put svn.ini to its place",
-         handle => "cfengine_php_mod_svn_ini_suse",
+         handle => "cfengine_php_mod_files_svn_ini_suse",
       copy_from => local_cp("$(sys.workdir)/software_updates/svn/svn.ini"),
           perms => mo("644","root");
 
    "/etc/php5/conf.d/mongo.ini"
         comment => "Put mongo.ini to its place",
-         handle => "cfengine_php_mod_mongo_ini_suse",
+         handle => "cfengine_php_mod_files_mongo_ini_suse",
       copy_from => local_cp("$(sys.workdir)/software_updates/mongo/mongo.ini"),
           perms => mo("644","root");
 
    "/usr/lib/php5/extensions/cfmod.so"
          comment => "Prepare cfmod.so for 32-bit system",
-          handle => "cfengine_php_mod_cfmod_so_suse_32",
+          handle => "cfengine_php_mod_files_cfmod_so_suse_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/32/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
@@ -325,7 +363,7 @@ bundle agent cfengine_php_mod
 
    "/usr/lib64/php5/extensions/cfmod.so"
          comment => "Prepare cfmod.so for 64-bit system",
-          handle => "cfengine_php_mod_cfmod_so_suse_64",
+          handle => "cfengine_php_mod_files_cfmod_so_suse_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/64/cfmod.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
@@ -333,7 +371,7 @@ bundle agent cfengine_php_mod
 
    "/usr/lib/php5/extensions/svn.so"
          comment => "Prepare svn.so for 32-bit system",
-          handle => "cfengine_php_mod_svn_so_suse_32",
+          handle => "cfengine_php_mod_files_svn_so_suse_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/svn/32/svn.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
@@ -341,7 +379,7 @@ bundle agent cfengine_php_mod
 
    "/usr/lib64/php5/extensions/svn.so"
          comment => "Prepare svn.so for 64-bit system",
-          handle => "cfengine_php_mod_svn_so_suse_64",
+          handle => "cfengine_php_mod_files_svn_so_suse_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/svn/64/svn.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
@@ -349,7 +387,7 @@ bundle agent cfengine_php_mod
 
    "/usr/lib/php5/extensions/mongo.so"
          comment => "Prepare mongo.so for 32-bit system",
-          handle => "cfengine_php_mod_mongo_so_suse_32",
+          handle => "cfengine_php_mod_files_mongo_so_suse_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/mongo/32/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "i686",
@@ -357,7 +395,7 @@ bundle agent cfengine_php_mod
 
    "/usr/lib64/php5/extensions/mongo.so"
          comment => "Prepare mongo.so for 64-bit system",
-          handle => "cfengine_php_mod_mongo_so_suse_64",
+          handle => "cfengine_php_mod_files_mongo_so_suse_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/mongo/64/mongo.so"),
            perms => mo("755","root"),
       ifvarclass => "x86_64",
@@ -433,7 +471,7 @@ bundle agent cfengine_policysrv
                              "subversion",
                              "php-bcmath",
                              "php-pear",
-                             "gcc",
+#                             "gcc",
 #                             "php-mcrypt"
                             },
                  comment => "Define a list of packages to be installed on RedHat",
@@ -450,7 +488,7 @@ bundle agent cfengine_policysrv
                              "subversion",
                              "php-bcmath",
                              "php-pear",
-                             "gcc",
+#                             "gcc",
                              "php-mcrypt"
                             },
                  comment => "Define a list of packages to be installed on CentOS/Fedora",
@@ -463,8 +501,8 @@ bundle agent cfengine_policysrv
 #                             "mysql-server",
                              "php5",
                              "ssl-cert",
-                             "gcc",
-                             "make",
+#                             "gcc",
+#                             "make",
 			     "php5-cli",
                              "php5-json",
                              "php-pear",
@@ -515,27 +553,27 @@ bundle agent cfengine_policysrv
 
   ubuntu_10.am_policy_hub::
 
-   "no_mongo_module"        not => fileexists("/usr/lib/php5/20090626/mongo.so"),
-                        comment => "Check if mongo module installed or not",
-                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_10_x86_64",
-                     ifvarclass => "x86_64";
-
-   "no_mongo_module"        not => fileexists("/usr/lib/php5/20090626+lfs/mongo.so"),
-                        comment => "Check if mongo module installed or not",
-                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_10_i686",
-                     ifvarclass => "i686";
+#   "no_mongo_module"        not => fileexists("/usr/lib/php5/20090626/mongo.so"),
+#                        comment => "Check if mongo module installed or not",
+#                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_10_x86_64",
+#                     ifvarclass => "x86_64";
+#
+#   "no_mongo_module"        not => fileexists("/usr/lib/php5/20090626+lfs/mongo.so"),
+#                        comment => "Check if mongo module installed or not",
+#                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_10_i686",
+#                     ifvarclass => "i686";
 
   ubuntu_8.am_policy_hub::
 
-   "no_mongo_module"        not => fileexists("/usr/lib/php5/20060613/mongo.so"),
-                        comment => "Check if mongo module installed or not",
-                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_8_x86_64",
-                     ifvarclass => "x86_64";
-
-   "no_mongo_module"        not => fileexists("/usr/lib/php5/20060613+lfs/mongo.so"),
-                        comment => "Check if mongo module installed or not",
-                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_8_i686",
-                     ifvarclass => "i686";
+#   "no_mongo_module"        not => fileexists("/usr/lib/php5/20060613/mongo.so"),
+#                        comment => "Check if mongo module installed or not",
+#                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_8_x86_64",
+#                     ifvarclass => "x86_64";
+#
+#   "no_mongo_module"        not => fileexists("/usr/lib/php5/20060613+lfs/mongo.so"),
+#                        comment => "Check if mongo module installed or not",
+#                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_8_i686",
+#                     ifvarclass => "i686";
 
 #
 
@@ -589,11 +627,11 @@ bundle agent cfengine_policysrv
        handle => "cfengine_policysrv_commands_a2enmod_debian";
 #      classes => if_repaired("restart_apache2");
 
-  a2enmod_php5_ssl.no_mongo_module::
-
-   "/usr/bin/pecl install mongo"
-      comment => "Download and install PHP Mongo module on Debian/Ubuntu",
-       handle => "cfengine_policysrv_commands_pecl_install_mongo_debian";   
+#  a2enmod_php5_ssl.no_mongo_module::
+#
+#   "/usr/bin/pecl install mongo"
+#      comment => "Download and install PHP Mongo module on Debian/Ubuntu",
+#       handle => "cfengine_policysrv_commands_pecl_install_mongo_debian";   
 
   restart_apache2::
 
