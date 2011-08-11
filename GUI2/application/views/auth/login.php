@@ -18,6 +18,7 @@ background-repeat: no-repeat;
 background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F8F8F5), to(#D7D8DA));
 background: -moz-linear-gradient(90deg, #D7D8DA, #F8F8F5) ;
 background: -o-linear-gradient(90deg, #D7D8DA, #F8F8F5);
+/*background: url("../../themes/default/images/bg_tile.png") repeat-x scroll 0 0 #A5ACA2;*/
 color: #333;
 font:13px/21px 'CFE_FONT',arial,Helvetica,sans-serif;
 }
@@ -121,6 +122,7 @@ border-top-right-radius: 3px 3px;
 color: #666;
 padding: 5px;
 font-size: 14px;
+width:156px;
 }
 
 input.error {
@@ -142,12 +144,13 @@ input[type="submit"]:hover, a.submit:hover {
 
 }
 
-.error{
+#login p.error{
 color: #D8000C;
 background-color: #FFBABA;
 padding:5px 10px;
 border:solid 1px;
 text-shadow:none;
+margin:0 0 10px 0;
 }
 
 </style>
@@ -157,6 +160,9 @@ text-shadow:none;
     <div id="login">
         <h1 class="logo"></h1>
         <div class="inner">
+               <?php 
+              echo $message;
+                 ?>
                 <?php echo form_open("auth/login");?>
                 <input type="hidden" id="type_form" name="type_form" value="login"></input>
                     <h3>Login</h3>
