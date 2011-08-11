@@ -2368,7 +2368,7 @@ if (strcmp(lsdata,"promises") == 0)
    }
 else if (strcmp(lsdata,"compliance") == 0)
    {
-   Nova2Txt_compliance_report(hostkey,name,-1,-1,-1,-1,NULL,classregex);
+   Nova2Txt_compliance_report(hostkey,name,-1,-1,-1,-1,">",classregex);
    }
 else if (strcmp(lsdata,"summary") == 0)
    {
