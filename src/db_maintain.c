@@ -72,7 +72,7 @@ void CFDB_EnsureIndeces(mongo_connection *conn)
   bson_buffer_init(&bb);
   bson_append_int(&bb, cfr_keyhash, 1);
   bson_append_int(&bb, cfr_promisehandle, 1);
-  bson_append_int(&bb, cfr_timeslot, 1);
+  bson_append_int(&bb, cfr_time, 1);
   bson_from_buffer(&b, &bb);
 
   if(!mongo_create_index(conn, MONGO_LOGS_REPAIRED, &b, 0, NULL))

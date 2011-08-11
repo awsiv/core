@@ -1244,7 +1244,6 @@ struct cf_pscalar
 #define cfr_class_jobs   "cj"
 #define cfr_total_compliance "tc"
 #define cfr_time          "t"
-#define cfr_timeslot      "ts"
 #define cfr_version       "v"
 #define cfr_name          "n"
 #define cfr_arch          "a"
