@@ -2365,10 +2365,12 @@ if (hlen > 0 && slen == 0 && plen == 0 && clen == 0)
 if (strcmp(lsdata,"promises") == 0)
    {
    Nova2Txt_compliance_promises(hostkey,phandle,NULL,true,classregex);
+   return;
    }
 else if (strcmp(lsdata,"compliance") == 0)
    {
    Nova2Txt_compliance_report(hostkey,name,-1,-1,-1,-1,">",classregex);
+   return;
    }
 else if (strcmp(lsdata,"summary") == 0)
    {
@@ -2420,5 +2422,5 @@ else if (strcmp(lsdata,"setuid") == 0)
    }
 
 
-printf("Nothing to do\n");
+printf("Unknown report\n");
 }

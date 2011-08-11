@@ -563,12 +563,12 @@ int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
 
 hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,classreg);
 
-printf("%25s %20s %s %s %s %s\n","Host","Policy", "Kept", "Repaired", "Not-Kept","Last-verified");
+printf("%25s %s %s %s %s\n","Host","Kept", "Repaired", "Not-Kept","Last-verified");
  
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    ht = (struct HubTotalCompliance *)rp->item;
-   printf("%25s %20s %d %d %d %s\n",ht->hh->hostname,ht->version,ht->kept,ht->repaired,ht->notkept,cf_strtimestamp_local(ht->t,buffer));
+   printf("%25s %d %d %d %s\n",ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,cf_strtimestamp_local(ht->t,buffer));
    }
 
  DeleteHubQuery(hq,DeleteHubTotalCompliance);
