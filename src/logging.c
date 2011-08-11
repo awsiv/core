@@ -18,13 +18,20 @@
 
 static int FACILITY;
 
-void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp)
+/* Delete this function once we build Nova against Core trunk/3.3 */
+void Nova_RemoteSyslog(struct Attributes a, struct Promise *pp)
+{
+RemoteSysLog(a.transaction.log_priority, a.transaction.log_string);
+}
 
+/*****************************************************************************/
+
+void RemoteSysLog(int log_priority, const char *log_string)
 {
   int sd,err,rfc3164_len = 1024;
   char message[CF_BUFSIZE];
   time_t now = time(NULL);
-  int pri = a.transaction.log_priority | FACILITY;
+  int pri = log_priority | FACILITY;
 
 #if defined(HAVE_GETADDRINFO)
   struct addrinfo query, *response, *ap;
@@ -53,7 +60,7 @@ for (ap = response; ap != NULL; ap = ap->ai_next)
    else
       {
       char timebuffer[26];
-      snprintf(message,rfc3164_len,"<%u>%.15s %s %s",pri,cf_strtimestamp_local(now,timebuffer)+4,VFQNAME,a.transaction.log_string);
+      snprintf(message,rfc3164_len,"<%u>%.15s %s %s",pri,cf_strtimestamp_local(now,timebuffer)+4,VFQNAME, log_string);
       if (sendto(sd,message,strlen(message),0,ap->ai_addr,ap->ai_addrlen) == -1)
          {
          CfOut(cf_verbose,"sendto"," -> Couldn't send \"%s\" to syslog server \"%s\"\n",message,SYSLOGHOST);
@@ -79,7 +86,7 @@ if ((sd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
    return;
    }
 
-snprintf(message,rfc3164_len,"<%u>%.15s %s %s",pri,cf_strtimestamp_local(now,timebuffer)+4,VFQNAME,a.transaction.log_string);
+snprintf(message,rfc3164_len,"<%u>%.15s %s %s",pri,cf_strtimestamp_local(now,timebuffer)+4,VFQNAME, log_string);
 
 if (sendto(sd,message,strlen(message),0,(struct sockaddr *)&addr, sizeof(addr)) == -1)
    {
