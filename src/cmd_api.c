@@ -172,13 +172,13 @@ if (tot_hosts == 0)
 // Return current best-knowledge of average compliance for the class of hosts and promises selected
 
 printf("Hosts with promises kept: %.2lf\n"
-       "HOsts with promises not kept: %.2lf"
-       "Hosts with promises repaired %.2lf"
-       "Total number of hosts: %d"
-       "Hosts that didn't report status: %d"
-       "Search class: %s"
-       "First reports at: %s"
-       "Last reports at: %s",
+       "HOsts with promises not kept: %.2lf\n"
+       "Hosts with promises repaired %.2lf\n"
+       "Total number of hosts: %d\n"
+       "Hosts that didn't report status: %d\n"
+       "Search class: %s\n"
+       "First reports at: %s\n"
+       "Last reports at: %s\n",
        k_av,n_av,r_av,tot_hosts,code_blue,classreg,
        cf_strtimestamp_local(from,buf1),
        cf_strtimestamp_local(to,buf2));
