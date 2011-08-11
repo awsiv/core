@@ -14,11 +14,11 @@ html {
   height:100%  
 }
 body {
-background-repeat: no-repeat;
+/*background-repeat: no-repeat;
 background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F8F8F5), to(#D7D8DA));
 background: -moz-linear-gradient(90deg, #D7D8DA, #F8F8F5) ;
-background: -o-linear-gradient(90deg, #D7D8DA, #F8F8F5);
-/*background: url("../../themes/default/images/bg_tile.png") repeat-x scroll 0 0 #A5ACA2;*/
+background: -o-linear-gradient(90deg, #D7D8DA, #F8F8F5);*/
+background: url("../../themes/default/images/bg_tile.png") repeat-x scroll 0 0 #A5ACA2;
 color: #333;
 font:13px/21px 'CFE_FONT',arial,Helvetica,sans-serif;
 }
@@ -35,7 +35,7 @@ border-bottom-left-radius: 6px 6px;
 border-bottom-right-radius: 6px 6px;
 border-top-left-radius: 6px 6px;
 border-top-right-radius: 6px 6px;
-background:#4d466b;
+background:#383838;
 margin: 65px auto 0;
 padding: 35px;
 width: 376px;
@@ -46,7 +46,7 @@ font-size: 17px;
 font-weight: normal;
 margin-bottom: 9px;
 text-transform: uppercase;
-color:#4D466b;
+color:#383838;
 margin:0;
 }
 
@@ -92,8 +92,12 @@ margin-top: 21px;
 text-align: center;
 }
 
+#credits a{
+    color:#333
+}
+
 label {
-color:#4D466b;
+color:#383838;
 cursor: pointer;
 display: block;
 float: left;
@@ -186,7 +190,7 @@ margin:0 0 10px 0;
         </div>
     </div>
      <p id="credits">
-    <strong>Precision in IT Infrastructure Engineering</strong><br />
+      <strong>Precision in IT Infrastructure Engineering</strong><br />
      © 2011 - <a href="http://cfengine.com">CFEngine</a>
     </p>
 </body>
