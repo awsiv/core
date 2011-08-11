@@ -1495,7 +1495,9 @@ void Nova_GenerateTestData(int count)
 /*********************************************************************/
 struct Rlist* Nova_GetTestMachines(void)
 
-{ mongo_cursor *cursor;
+{
+#ifdef HAVE_LIBMONGOC
+  mongo_cursor *cursor;
   bson_iterator it;
   bson b,query,empty,element;
   mongo_connection conn;
@@ -1566,10 +1568,14 @@ if (!CFDB_Close(&conn))
    }
 
 return testmachines;
+#else
+return NULL;
+#endif
 }
 /****************************************************************************************/
 void Nova_RemoveTestData(void)
 {
+#ifdef HAVE_LIBMONGOC
  struct Rlist *testmachines = NULL,*rp=NULL;
   int i=0;
   testmachines= Nova_GetTestMachines();
@@ -1589,13 +1595,16 @@ void Nova_RemoveTestData(void)
   DeleteRlist(testmachines);
 
   printf("%d test machines removed\n",i);
+#endif
 }
     
 /****************************************************************************************/
 
 void Nova_UpdateTestData(void)
 
-{ mongo_cursor *cursor;
+{
+#ifdef HAVE_LIBMONGOC
+  mongo_cursor *cursor;
   bson_iterator it;
   bson b,query,empty,element,setOp;
   bson_buffer bb;
@@ -1675,7 +1684,8 @@ printf("%d test machines updated\n",i);
 if (!CFDB_Close(&conn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   } 
+   }
+#endif
 }
 
 /*********************************************************************/

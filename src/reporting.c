@@ -2346,7 +2346,9 @@ if (LICENSES == 0)
 
 void Nova_CommandAPI(char *lsdata,char *name,char *phandle,char *hostkey,char *classregex)
     
-{ int plen = strlen(phandle);
+{
+#ifdef HAVE_LIBMONGOC
+  int plen = strlen(phandle);
   int slen = strlen(lsdata);
   int hlen = strlen(hostkey);
   int clen = strlen(classregex);
@@ -2423,4 +2425,5 @@ else if (strcmp(lsdata,"setuid") == 0)
 
 
 printf("Unknown report\n");
+#endif
 }

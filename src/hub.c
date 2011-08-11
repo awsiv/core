@@ -104,6 +104,7 @@ while (true)
       {
       CfOut(cf_verbose,""," -> Wake up");
 
+#ifdef HAVE_LIBMONGOC
       if(CFDB_QueryIsMaster())  // relevant if we are part of mongo replica set
          {
          struct Item *masterhostlist = Nova_ScanClients();
@@ -144,6 +145,7 @@ while (true)
          {
          CfOut(cf_verbose,"","We are part of report repliaca set, but not master - not collecting reports...\n");
          }
+#endif
       }
    
    CfOut(cf_verbose,"","Sleeping...\n");

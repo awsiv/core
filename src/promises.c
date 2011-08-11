@@ -180,7 +180,9 @@ Nova_DefineHubMaster();
 /*****************************************************************************/
 void Nova_DefineHubMaster()
 
-{ char master[CF_MAXVARSIZE]={0};
+{
+#ifdef HAVE_LIBMONGOC
+ char master[CF_MAXVARSIZE]={0};
  char master_ip[CF_MAXVARSIZE]={0};
  struct hostent *hp;
  struct sockaddr_in cin;
@@ -221,6 +223,7 @@ if(!IsIPV4Address(master) && !IsIPV6Address(master))
    }
 
 NewScalar("sys","hub_master",master,cf_str);
+#endif
 }
 /*****************************************************************************/
 void Nova_EnterpriseDiscovery()
