@@ -568,7 +568,7 @@ printf("%25s %6s %9s %9s %s\n","Host","%Kept", "%Repaired", "%Not-Kept","Last-ve
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    ht = (struct HubTotalCompliance *)rp->item;
-   printf("%25s %6d %9d %9d %s\n",ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,cf_strtimestamp_local(ht->t,buffer));
+   printf("%25s %6d%% %9d%% %9d%% %s\n",ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,cf_strtimestamp_local(ht->t,buffer));
    }
 
  DeleteHubQuery(hq,DeleteHubTotalCompliance);
