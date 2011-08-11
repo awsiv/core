@@ -607,13 +607,13 @@ if (!status)  // any
 
 hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
 
-printf("%25s %40s %10s %s %s %s\n","Host","Promise-handle","Last state","E(Q)", "Sigma","Last-data");
+printf("%25s %50s %10s %s %s %s\n","Host","Promise-handle","Last state","E(Q)", "Sigma","Last-data");
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseCompliance *)rp->item;
    
-   printf("%25s %40s %10s %.2lf %.2lf %s\n",hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_strtimestamp_local(hp->t,buffer));
+   printf("%25s %50s %10s %.2lf %.2lf %s\n",hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_strtimestamp_local(hp->t,buffer));
    }
  
  DeleteHubQuery(hq,DeleteHubPromiseCompliance);
