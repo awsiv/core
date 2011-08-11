@@ -776,6 +776,20 @@ try {
          var_dump($result);
    }
 
+   function newlogin(){
+       $this->load->helper('form');
+       $data['lbl_identifier']='Username';
+       $data['identifier'] = array('name' => 'name',
+                    'id' => 'name',
+                    'type' => 'text',
+                    'value' => ''
+                );
+       $data['password'] = array('name' => 'password',
+                'id' => 'password',
+                'type' => 'password',
+            );
+     $this->load->view('auth/loginnew',$data);
+   }
 
 
    

@@ -182,8 +182,6 @@ $config['groups']['CFEngineEditor'] = array(
         array('jquery-ui-1.8.14.custom.min.js', 'jquery-ui-1.8.14.custom.min.js', FALSE),
         array('Cfeditor/jquery.layout.min-1.2.0.js','Cfeditor/jquery.layout.min-1.2.0.js'),
         array('jquery.tablesorter.min.js','jquery.tablesorter.min.js'),
-        array('picnet.jquery.tablefilter.js','picnet.jquery.tablefilter.js'),
-        array('jquery.tablesorter.pager.js','jquery.tablesorter.pager.js'),
         array('jqueryFileTree.js','jqueryFileTree.js'),
         array('jquery.jnotify.min.js','jquery.jnotify.min.js'),
         array('widgets/notes.js','widgets/notes.js'),

@@ -57,6 +57,12 @@
        ?>
 </div>
 </div>
+<div id="hostdelconfirmation" title="Proceed Host Deletion" style="display:none">
+    <span>
+        The host will be deleted from the report database of the hub.
+        The hub will still try to pull it for reports, and it may thus <strong>Reappear</strong>.Are you sure you want to delete this host?
+    </span>
+</div>
 <script type="text/javascript">
     $(document).ready(function() {
      $.tablesorter.addParser({
@@ -83,6 +89,27 @@
             headers: {0: {sorter:'hostname'} } ,
             sortList: [[0,0]]
        });
+       
+   
+
+    $("a.deletehostbtn").bind("click", function(e){
+         var a = this; 
+          $('#hostdelconfirmation').dialog({
+               modal: true,
+               width: 400,
+               resizable:false,
+                buttons: {
+                  "Yes": function() {
+                            window.location = a.href; 
+                            $(this).dialog('close');
+                  },
+                  'NO': function() {
+	         $(this).dialog('close');
+	         }
+                 }
+            }); 
+        return false;
+        });  
     });
 
    </script>
