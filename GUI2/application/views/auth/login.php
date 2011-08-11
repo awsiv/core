@@ -60,7 +60,7 @@ margin:0;
     border-bottom-right-radius: 6px 6px;
     border-top-left-radius: 6px 6px;
     border-top-right-radius: 6px 6px;
-    padding:61px 39px 80px 40px;  
+    padding:40px;  
 }
 
 #login .inner p
