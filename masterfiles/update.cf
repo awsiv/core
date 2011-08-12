@@ -23,7 +23,7 @@ bundle agent update_bins
                               comment => "The Cfengine binary updates directory on the policy host",
                                handle => "update_bins_vars_master_software_location";
 
-   "local_software_dir"        string => translatepath("$(sys.workdir)/software_updates/$(sys.flavour)_$(pkgarch)"),
+   "local_software_dir"        string => translatepath("$(sys.workdir)/software_updates/$(sys.flavour)_$(sys.arch)"),
                               comment => "Local directory containing binary updates for this host",
                                handle => "update_bins_vars_local_software_dir";
 
