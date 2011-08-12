@@ -123,7 +123,7 @@ for (i = 0,rp = columns; rp != NULL; rp = rp->next,i++)
       return false;   
       }
 
-   (*name_table)[i] = cf_strdup((char *)cols->item);
+   (*name_table)[i] = strdup((char *)cols->item);
    
    if (cols->next == NULL)
       {
@@ -135,7 +135,7 @@ for (i = 0,rp = columns; rp != NULL; rp = rp->next,i++)
       return false;   
       }
    
-   (*type_table)[i] = cf_strdup(cols->next->item);
+   (*type_table)[i] = strdup(cols->next->item);
 
    if (cols->next->next == NULL)
       {
