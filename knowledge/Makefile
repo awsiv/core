@@ -34,7 +34,7 @@ scan_devops.cf: st-devops.html
 
 st-critical.html: ../../core/docs/guides/SpecialTopic_MissionCritical.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
-scan_devops.cf: st-critical.html
+scan_critical.cf: st-critical.html
 	./scan_texinfo "special topic" $< > scan_critical.cf
 
 st-monitoring.html: ../../core/docs/guides/SpecialTopic_Monitoring.texinfo

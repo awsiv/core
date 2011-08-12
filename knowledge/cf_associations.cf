@@ -34,7 +34,6 @@ things:
   #
 
 
-
    "Mission Goal and Knowledge Management" 
         uses => { "cfengine_components::cf-know" };
 
