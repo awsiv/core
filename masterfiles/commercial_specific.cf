@@ -575,6 +575,12 @@ bundle agent cfengine_policysrv
 #                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_8_i686",
 #                     ifvarclass => "i686";
 
+  (ubuntu_8|ubuntu_10).am_policy_hub::
+
+   "no_apache2_default"     not => fileexists("$(sys.workdir)/software_updates/apache2-default"),
+                        comment => "Check if there is a backup of apache2 default config or not",
+                         handle => "cfengine_policysrv_classes_no_apache2_default_ubuntu";
+
 #
 
  packages:
@@ -674,25 +680,45 @@ bundle agent cfengine_policysrv
       comment => "Restart HTTPD on Redhat/CentOS/Fedora",
        handle => "cfengine_policysrv_commands_restart_httpd";
 
+  restart_apache2_debian::
+
+   "/etc/init.d/apache2 restart "
+      comment => "Restart APACHE2 on Debian/Ubuntu",
+       handle => "cfengine_policysrv_commands_restart_apache2_debian";
+
 #
 
  files:
+
+  (ubuntu_8|ubuntu_10).no_apache2_default::
+
+   "$(sys.workdir)/software_updates/apache2-default"
+        comment => "Back up a apache2 default config before editing",
+         handle => "cfengine_policysrv_files_backup_apache2_default",
+      copy_from => local_cp("/etc/apache2/sites-available/default");
 
   debian.am_policy_hub::
 
    "/var/www/."
           comment => "Clear up index.html page if there is",
-           handle => "cfengine_policysrv_file_tidy_index_html",
+           handle => "cfengine_policysrv_files_tidy_index_html",
            delete => tidy,
        file_select => by_name("index.html"),
       depth_search => recurse("1");
 
-   "/etc/apache2/sites-available/ssl"
-        comment => "Prepare SSL config for available sites",
-         handle => "cfengine_policysrv_files_ssl",
-      copy_from => local_cp("/etc/apache2/sites-available/default-ssl"),
-         action => immediate,
-        classes => if_repaired("a2ensite_ssl");
+   "/etc/apache2/sites-available/default"
+            comment => "Manage apache2 default config for Nova to be running nicely",
+             handle => "cfengine_policysrv_files_apache2_site_available_default",
+      edit_defaults => empty,
+          edit_line => apache2_nova_default,
+            classes => if_repaired("restart_apache2_debian");
+
+#   "/etc/apache2/sites-available/ssl"
+#        comment => "Prepare SSL config for available sites",
+#         handle => "cfengine_policysrv_files_ssl",
+#      copy_from => local_cp("/etc/apache2/sites-available/default-ssl"),
+#         action => immediate,
+#        classes => if_repaired("a2ensite_ssl");
 
   SuSE.am_policy_hub::
 
@@ -765,6 +791,60 @@ AllowEncodedSlashes On",
 </Directory>",
    comment => "Create apache2 contents for Slave HUBs",
     handle => "apache_nova_conf_insert_lines_not_am_hub_master";
+}
+
+#
+
+bundle edit_line apache2_nova_default
+{
+ insert_lines:
+"NameVirtualHost *
+<VirtualHost *>
+$(const.t)ServerAdmin webmaster@localhost
+
+$(const.t)DocumentRoot /var/www/
+$(const.t)<Directory />
+$(const.t)$(const.t)Options FollowSymLinks
+$(const.t)$(const.t)AllowOverride None
+$(const.t)</Directory>
+$(const.t)<Directory /var/www/>
+$(const.t)$(const.t)Options Indexes FollowSymLinks MultiViews
+$(const.t)$(const.t)AllowOverride All
+$(const.t)$(const.t)Order allow,deny
+$(const.t)$(const.t)allow from all
+$(const.t)</Directory>
+$(const.t)AllowEncodedSlashes On
+
+$(const.t)ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+$(const.t)<Directory \"/usr/lib/cgi-bin\">
+$(const.t)$(const.t)AllowOverride None
+$(const.t)$(const.t)Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+$(const.t)$(const.t)Order allow,deny
+$(const.t)$(const.t)Allow from all
+$(const.t)</Directory>
+
+$(const.t)ErrorLog /var/log/apache2/error.log
+
+$(const.t)# Possible values include: debug, info, notice, warn, error, crit,
+$(const.t)# alert, emerg.
+$(const.t)LogLevel warn
+
+$(const.t)CustomLog /var/log/apache2/access.log combined
+$(const.t)ServerSignature On
+
+$(const.t)Alias /doc/ \"/usr/share/doc/\"
+$(const.t)<Directory \"/usr/share/doc/\">
+$(const.t)$(const.t)Options Indexes MultiViews FollowSymLinks
+$(const.t)$(const.t)AllowOverride None
+$(const.t)$(const.t)Order deny,allow
+$(const.t)$(const.t)Deny from all
+$(const.t)$(const.t)Allow from 127.0.0.0/255.0.0.0 ::1/128
+$(const.t)</Directory>
+
+</VirtualHost>",
+   comment => "Create apache2 default contents on Ubuntu",
+    handle => "apache2_nova_default_insert_lines_site_available_default";
+
 }
 
 #
