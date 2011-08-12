@@ -5,8 +5,8 @@
                 <li><a href="#tabs-1">Map</a></li>
                 <?php if ($showLeads) { ?><li><a href="#tabs-2">Leads</a></li><?php } ?>
                 <?php if ($showTopicHits) { ?><li><a href="#tabs-3">References</a></li><?php } ?>
-                <li><a href="#tabs-4">Same context</a></li>
-                <li><a href="#tabs-5">Sub topic</a></li>
+                <?php if ($showSameContext) { ?><li><a href="#tabs-4">Same context</a></li> <?php } ?>
+                <?php if ($showSubTopics) { ?><li><a href="#tabs-5">Sub topic</a></li> <?php } ?>
             </ul>
 
             <div id="tabs-1" class="ui-corner-all">
@@ -34,20 +34,23 @@
                     ?>
                 </div>
             <?php } ?>
+            <?php if ($showSameContext) { ?>
+                <div id="tabs-4" class="ui-corner-all">
+                    <?php
+                    require_once('subcategory.php');
+                    ?>
 
-            <div id="tabs-4" class="ui-corner-all">
-                <?php
-                require_once('subcategory.php');
-                ?>
+                </div>
+            <?php } ?>
 
-            </div>
-            <div id="tabs-5" class="ui-corner-all">
+            <?php if ($showSubTopics) { ?>
+                <div id="tabs-5" class="ui-corner-all">
 
-                <?php
-                require_once('category.php');
-                ?>
-            </div>
-
+                    <?php
+                    require_once('category.php');
+                    ?>
+                </div>
+            <?php } ?>
         </div>
     </div>
 
@@ -99,7 +102,6 @@
                 
                 // remove the cookie if it is not the reference tab
                 var tabHash = '#tabs-3';
-                console.log(ui);
                 if (ui.tab.hash != tabHash) {
                     // remove the cookie
                     $.cookie('ktab_cookie', null, { path: '/',expires: -5 });

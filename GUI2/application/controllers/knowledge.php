@@ -137,8 +137,8 @@ class Knowledge extends Cf_Controller {
         
         $data['showLeads'] = (!is_array( $data['topicLeads']) || empty( $data['topicLeads'])) ? false : true;
         $data['showTopicHits'] = (!is_array( $data['topicHits']) || empty( $data['topicHits'])) ? false : true;
-        
-        
+        $data['showSameContext'] = (!is_array($data['topicCategory']['other_topics']) || empty($data['topicCategory']['other_topics'])) ? false :true; 
+        $data['showSubTopics'] = (!is_array($data['topicCategory']['topic']['sub_topics']) || empty($data['topicCategory']['topic']['sub_topics'])) ? false :true; 
         
         $this->template->load('template', 'knowledge/knowledge', $data);
     }
