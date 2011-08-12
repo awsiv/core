@@ -3576,8 +3576,6 @@ void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize)
   struct Item *list = Nova_ScanLeadsAssociations(id,NULL);
   char work[CF_BUFSIZE];
 
-  DebugListItemList(list);
-  
 buffer[0] = '\0';
 strcpy(buffer,"[ ");
 
