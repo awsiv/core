@@ -787,16 +787,46 @@ if ((hp = malloc(sizeof(struct HubPromise))) == NULL)
    FatalError("Memory exhausted NewHubPromise");
    }
 
-hp->bundleName = CFSTRDUP(bn);
-hp->bundleType = CFSTRDUP(bt);
-hp->bundleArgs = CFSTRDUP(ba);
-hp->promiseType = CFSTRDUP(pt);
-hp->promiser = CFSTRDUP(pr);
-hp->promisee = CFSTRDUP(pe);
-hp->classContext = CFSTRDUP(cl);
-hp->handle = CFSTRDUP(ha);
-hp->comment = CFSTRDUP(co);
-hp->file = CFSTRDUP(fn);
+if (bn)
+   {
+   hp->bundleName = strdup(bn);
+   }
+if (bt)
+   {
+   hp->bundleType = strdup(bt);
+   }
+if (ba)
+   {
+   hp->bundleArgs = strdup(ba);
+   }
+if (pt)
+   {
+   hp->promiseType = strdup(pt);
+   }
+if (pr)
+   {
+   hp->promiser = strdup(pr);
+   }
+if (pe)
+   {
+   hp->promisee = strdup(pe);
+   }
+if (cl)
+   {
+   hp->classContext = strdup(cl);
+   }
+if (ha)
+   {
+   hp->handle = strdup(ha);
+   }
+if (co)
+   {
+   hp->comment = strdup(co);
+   }
+if (fn)
+   {
+   hp->file = strdup(fn);
+   }
 hp->lineNo = lno;
 hp->constraints = cons; // allocated by caller
 hp->popularity = 0;  // optional
@@ -809,16 +839,16 @@ return hp;
 void DeleteHubPromise(struct HubPromise *hp)
 
 {
-CFFREE(hp->bundleName);
-CFFREE(hp->bundleType);
-CFFREE(hp->bundleArgs);
-CFFREE(hp->promiseType);
-CFFREE(hp->promiser);
-CFFREE(hp->promisee);
-CFFREE(hp->classContext);
-CFFREE(hp->handle);
-CFFREE(hp->comment);
-CFFREE(hp->file);
+free(hp->bundleName);
+free(hp->bundleType);
+free(hp->bundleArgs);
+free(hp->promiseType);
+free(hp->promiser);
+free(hp->promisee);
+free(hp->classContext);
+free(hp->handle);
+free(hp->comment);
+free(hp->file);
 
 hp->lineNo = -1;
 
