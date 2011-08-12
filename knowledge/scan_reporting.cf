@@ -6,11 +6,19 @@ topics:
 
 "st-reporting";
 Special_Topics_Guide::
+    "Example command hub searches"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Command line access to the hub"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Mission Portal access to the hub"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Hub Reporting"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
+    "Commercial edition measurements promises"  association => a("discusses","Reporting","is discussed in");
+Special_Topics_Guide::
     "Cheaper options - tripwires"  association => a("discusses","Reporting","is discussed in");
 Special_Topics_Guide::
     "Change auditing - the all seeing eye"  association => a("discusses","Reporting","is discussed in");
-Special_Topics_Guide::
-    "Nova measurements"  association => a("discusses","Reporting","is discussed in");
 Special_Topics_Guide::
     "Redirecting output to logs"  association => a("discusses","Reporting","is discussed in");
 Special_Topics_Guide::
@@ -22,15 +30,9 @@ Special_Topics_Guide::
 Special_Topics_Guide::
     "CFEngine output levels"  association => a("discusses","Reporting","is discussed in");
 Special_Topics_Guide::
-    "Standard reports in CFEngine Nova"  association => a("discusses","Reporting","is discussed in");
+    "Standard reports in CFEngine"  association => a("discusses","Reporting","is discussed in");
 Special_Topics_Guide::
     "Reporting in CFEngine"  association => a("discusses","Reporting","is discussed in");
-Special_Topics_Guide::
-    "Decentralized data collection in CFEngine"  association => a("discusses","Reporting","is discussed in");
-Special_Topics_Guide::
-    "CMDB and CFEngine"  association => a("discusses","Reporting","is discussed in");
-Special_Topics_Guide::
-    "What is a CMDB?"  association => a("discusses","Reporting","is discussed in");
 Special_Topics_Guide::
     "Should monitoring and configuration be separate?"  association => a("discusses","Reporting","is discussed in");
 Special_Topics_Guide::
@@ -53,20 +55,11 @@ What_are_monitoring_and_reporting_::
 Should_monitoring_and_configuration_be_separate_::
  "/docs/st-reporting.html#Should-monitoring-and-configuration-be-separate_003f"
   represents => { "Text section" };
-What_is_a_CMDB_::
- "/docs/st-reporting.html#What-is-a-CMDB_003f"
-  represents => { "Text section" };
-CMDB_and_CFEngine::
- "/docs/st-reporting.html#CMDB-and-CFEngine"
-  represents => { "Text section" };
-Decentralized_data_collection_in_CFEngine::
- "/docs/st-reporting.html#Decentralized-data-collection-in-CFEngine"
-  represents => { "Text section" };
 Reporting_in_CFEngine::
  "/docs/st-reporting.html#Reporting-in-CFEngine"
   represents => { "Text section" };
-Standard_reports_in_CFEngine_Nova::
- "/docs/st-reporting.html#Standard-reports-in-CFEngine-Nova"
+Standard_reports_in_CFEngine::
+ "/docs/st-reporting.html#Standard-reports-in-CFEngine"
   represents => { "Text section" };
 CFEngine_output_levels::
  "/docs/st-reporting.html#CFEngine-output-levels"
@@ -83,14 +76,26 @@ Creating_custom_logs::
 Redirecting_output_to_logs::
  "/docs/st-reporting.html#Redirecting-output-to-logs"
   represents => { "Text section" };
-Nova_measurements::
- "/docs/st-reporting.html#Nova-measurements"
-  represents => { "Text section" };
 Change_auditing___the_all_seeing_eye::
  "/docs/st-reporting.html#Change-auditing-_002d-the-all-seeing-eye"
   represents => { "Text section" };
 Cheaper_options___tripwires::
  "/docs/st-reporting.html#Cheaper-options-_002d-tripwires"
+  represents => { "Text section" };
+Commercial_edition_measurements_promises::
+ "/docs/st-reporting.html#Commerical-edition-measurements-promises"
+  represents => { "Text section" };
+Hub_Reporting::
+ "/docs/st-reporting.html#Hub-reporting"
+  represents => { "Text section" };
+Mission_Portal_access_to_the_hub::
+ "/docs/st-reporting.html#Mission-Portal-access-to-the-hub"
+  represents => { "Text section" };
+Command_line_access_to_the_hub::
+ "/docs/st-reporting.html#Command-line-access-to-the-hub"
+  represents => { "Text section" };
+Example_command_hub_searches::
+ "/docs/st-reporting.html#Example-command-hub-searches"
   represents => { "Text section" };
 }
 

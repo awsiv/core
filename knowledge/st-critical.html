@@ -221,15 +221,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 Mission Critical operation refers to the use and management of systems
 where the availability and correctness of a system has to be ensured
 at all times. A mission is said to be critical when any noticable
-failure in the system would cause a signifiant loss to some stakeholder.
+failure in the system would cause a signifiant loss to some
+stakeholder.
 
-   <p>Risky for mission critical risk can deal with issues like monetary losses (e.g. in
-time critical trading applications) or, in the worst case, even the loss of human life
-(transport systems).
+   <p>Risk for mission critical systems deals with issues like monetary
+losses (e.g. in time critical trading applications) or, in the worst
+case, even the loss of human life (transport systems).
 
    <p>What makes a system robust in a mission critical setting depends on a
-number of factors. This Special Topics Guide discusses the role of CFEngine
-in a mission critical environment.
+number of factors. This Special Topics Guide discusses the role of
+CFEngine in a mission critical environment.
 
 <div class="node">
 <a name="Factors-affecting-Risk"></a>
@@ -253,8 +254,8 @@ usually provokes failures (the environment is the most unpredictable
 element of any system, since it is the part over which we have little
 control).
 
-   <p>The cost of predicting and avoiding failures can be prohibitive
-in a purely manual regime but automated systems can do a lot to reduce
+   <p>The cost of predicting and avoiding failures can be prohibitive in a
+purely manual regime but automated systems can do a lot to reduce
 costs. CFEngine can play a key role here in reducing the cost of
 maintaining system state, even in a rapidly changing environment.
 
@@ -263,7 +264,7 @@ maintaining system state, even in a rapidly changing environment.
 </pre>
      <ul>
 <li>Planning for eventualities. 
-<li>Verifying system correctness often enough. 
+<li>Verifying system correctness with sufficient frequency. 
 </ul>
 
    <pre class="sp">
@@ -493,7 +494,8 @@ failure from the point of view of a mission critical application.
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 The information in the mission portal is largely status information
 about systems. The content of the Mission Portal database is not in
-any way deterministic for the state of your IT system. If the Mission
+any way deterministic for the configured state of your IT system &ndash; it
+is only a report of actual state, not a template for intended state. If the Mission
 Portal is `down' or unavailable, it does not in any way imply that the
 actual distributed system is down or that there is any fault. 
 </td></tr></table>
@@ -519,7 +521,7 @@ portal.
    <p>The CFEngine star-network `hub', used in CFE Nova and CFE Constellation is the
 report aggregator for the CFEngine software. 
 CFEngine commercial editions support multiple hubs for redundancy during reporting. 
-By making a cluster of three hubs, you can ensure that reports will always be
+By making a cluster of three (or more) hubs, you can ensure that reports will always be
 available and up to date, at the time-resolution promised by CFEngine.
 
    <p>To set up redundant hubs, you will need three physical computers, or
@@ -530,10 +532,12 @@ at least three virtual machines on different physical computers.
 policy hubs.
 
      <li>The MongoDB backend needs to be set up specially before standard bootstrapping
-of nodes in an high availability managed network.
+of nodes in an high availability managed network. Alternatively, if you have already bootstrapped
+hosts, you can manually establish hub redundancy with a little database infrastructure work
+and some additional CFEngine configuration.
 
      <p>To do this, configure the Mongo database to set up a minimal replica set. This underlying
-mechanism for automatic failover. For example, a configuration like the following can should
+mechanism for automatic failover. For example, a configuration like the following should
 be typed into the mongo client on one of the hub machines.
 
      <pre class="verbatim">     host$ mongo
@@ -589,8 +593,9 @@ stored in Mongo. During a single hub installation, these steps
 can be automated, but boostrapping the replication prevents
 a fully automated installation.
 
-     <li>Copy the public and private key from the licensed hub to the backup hubs. 
-All hubs will share the same public-private key pair.
+     <li>Copy the public and private key from the licensed hub, along with the
+<samp><span class="file">license.dat</span></samp> file to the secondary hubs. 
+All hubs will share the same public-private key pair and license file.
 
      <li>Start the <code>cf-hub</code> on each of the three machines.
 
@@ -788,8 +793,25 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </pre>
 
-To make changes in a mission critical environment, you publish a fully tested, risk-assessed policy
-to <samp><span class="file">/var/cfengine/masterfiles</span></samp> on all three of the hubs in the cluster.
+To make changes in a mission critical environment, you publish a fully
+tested, risk-assessed policy to <samp><span class="file">/var/cfengine/masterfiles</span></samp> on
+all three of the hubs in the cluster. The policy on all hubs should be
+the synchronized. It might be worth setting up a promise to verify
+that the contents of these directories are the same between all hubs,
+since unsychronized policies could cause serious issues.
+
+<pre class="verbatim">vars:
+
+   "hubs" slist => { "hub1", "hub2", "hub3" };
+
+files:
+
+  "$(sys.workdir)/masterfiles"
+
+    copy_from => secure_cp("$(sys.workdir)/masterfiles","$(hubs)"),
+       action => warn;
+
+</pre>
 
    <p>All changes to a mission critical system should be classified
 according to the level of risk to the mission. Changes fall into

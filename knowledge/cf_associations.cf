@@ -27,11 +27,32 @@ vars:
 
  ###########################################################################################
 
+things:
+
+  #
+  # Manual links to connect Special Topics Guides to general docs
+  #
+
+
+
+   "Mission Goal and Knowledge Management" 
+        uses => { "cfengine_components::cf-know" };
+
+
+   "Application Management"
+            uses => { "promise_types::processes", "promise_types::files" },
+       certainty => "uncertain";
+
+
+#   "Enterprise Software Reporting" 
+#     association => a("can involve","mission portal","may be involved");
+
+
+
+
 topics:
 
-  Special_Topics_Guide::
-
-    "Content-Driven Policies"
+   "Content-Driven Policies"
 
           comment => "A mechanism for managing standardized policies by providing tabular data for input",
           association => a("is typically used together with","Notes on windows policies","may be simplified with");
@@ -55,6 +76,23 @@ topics:
 
     "What's new in Nova 2.0"
           association => a("key feature","service catalogue","relates to");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ### 
 
   management_terminology::
 
