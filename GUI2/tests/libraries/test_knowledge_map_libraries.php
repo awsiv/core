@@ -55,8 +55,9 @@ class test_knowledge_map_libraries extends CodeIgniterUnitTestCase {
     public function test_getValidJsonforTopicHits() {
         $pid = cfpr_get_pid_for_topic("", "system policy");
         $gdata = cfpr_show_topic_hits($pid);
+       
         $array = json_decode(utf8_encode($gdata), true);
-
+        $this->dump($array);
         $retValue = json_last_error();
 
         $this->assertTrue(is_array($array), "Should Return a valid array");

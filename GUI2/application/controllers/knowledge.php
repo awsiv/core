@@ -134,7 +134,12 @@ class Knowledge extends Cf_Controller {
         $data['topicHits'] = json_decode(utf8_encode($topicsData), true);
         $data['topicLeads'] = json_decode(utf8_encode($topicLeads), true);
         $data['topicCategory'] = json_decode(utf8_encode($topicCategory), true);
-        //$this->template->set('injected_item', implode("", $scripts));
+        
+        $data['showLeads'] = (!is_array( $data['topicLeads']) || empty( $data['topicLeads'])) ? false : true;
+        $data['showTopicHits'] = (!is_array( $data['topicHits']) || empty( $data['topicHits'])) ? false : true;
+        
+        
+        
         $this->template->load('template', 'knowledge/knowledge', $data);
     }
 

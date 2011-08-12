@@ -3,9 +3,8 @@
         <div id="custom-tabs" style="margin:15px;">
             <ul>
                 <li><a href="#tabs-1">Map</a></li>
-                <li><a href="#tabs-2">Leads</a></li>
-                <li><a href="#tabs-3">References</a></li>
-
+                <?php if ($showLeads) { ?><li><a href="#tabs-2">Leads</a></li><?php } ?>
+                <?php if ($showTopicHits) { ?><li><a href="#tabs-3">References</a></li><?php } ?>
                 <li><a href="#tabs-4">Same context</a></li>
                 <li><a href="#tabs-5">Sub topic</a></li>
             </ul>
@@ -20,16 +19,21 @@
                     </div>
                 </div>
             </div>
-            <div id="tabs-2" class="ui-corner-all">
-                <?php
-                require_once('leads.php');
-                ?>
-            </div>
-            <div id="tabs-3" class="ui-corner-all">
-                <?php
-                require_once('topics.php');
-                ?>
-            </div>
+            <?php if ($showLeads) { ?>
+                <div id="tabs-2" class="ui-corner-all">
+                    <?php
+                    require_once('leads.php');
+                    ?>
+                </div>
+            <?php } ?>
+
+            <?php if ($showTopicHits) { ?>
+                <div id="tabs-3" class="ui-corner-all">
+                    <?php
+                    require_once('topics.php');
+                    ?>
+                </div>
+            <?php } ?>
 
             <div id="tabs-4" class="ui-corner-all">
                 <?php
@@ -94,9 +98,9 @@
             show: function(event, ui) {
                 
                 // remove the cookie if it is not the reference tab
-                var tabid = 2;
-               
-                if (ui.index != tabid) {
+                var tabHash = '#tabs-3';
+                console.log(ui);
+                if (ui.tab.hash != tabHash) {
                     // remove the cookie
                     $.cookie('ktab_cookie', null, { path: '/',expires: -5 });
                 }
