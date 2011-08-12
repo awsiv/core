@@ -628,9 +628,10 @@ bundle agent cfengine_policysrv
 
   a2enmod_php5_ssl::
 
-   "/usr/sbin/a2enmod php5 ssl rewrite",
+   "/usr/sbin/a2enmod php5 && /usr/sbin/a2enmod rewrite",
       comment => "Enable apache modules on Debian/Ubuntu",
-       handle => "cfengine_policysrv_commands_a2enmod_debian";
+       handle => "cfengine_policysrv_commands_a2enmod_debian",
+      contain => in_shell;
 #      classes => if_repaired("restart_apache2");
 
 #  a2enmod_php5_ssl.no_mongo_module::
