@@ -524,7 +524,7 @@ tp->next = *list;
 int AddKeyAssociations(struct TopicAssociation **a, char *s)
 
 { char *keywords[8000];
-  char *exceptions[] = { "or", "and","the", "there","then", "what", "how", "ci", NULL };
+  char *exceptions[] = { "or", "and","the", "there","then", "what", "how", "ci", "at", NULL };
  
   char *otherwords[] =  { "convergence", "promise", "scheduling", "workflow","bundles", "hierarchy", "cloud",
                          "package", "policy", "security", "virtualization", "scalability",
