@@ -24,7 +24,7 @@ Introduction_to_functions::
 Introduction_to_functions::
     "Functions which read classes"  association => a("discusses","CFEngine reference manual","is discussed in");
 Introduction_to_functions::
-    "Functions which read from a remote-cfengine"  association => a("discusses","CFEngine reference manual","is discussed in");
+    "Functions which read from a remote-CFEngine"  association => a("discusses","CFEngine reference manual","is discussed in");
 Introduction_to_functions::
     "Functions which read disk data"  association => a("discusses","CFEngine reference manual","is discussed in");
 Introduction_to_functions::
@@ -497,7 +497,7 @@ manuals::
 CFEngine_AutoReference::
  "/docs/cf3-reference.html#Top"
   represents => { "Text section" };
-CFEngine_3_2_0b3_r2651_2652M__Getting_started::
+CFEngine_3_3_0a1_r2879__Getting_started::
  "/docs/cf3-reference.html#Getting-started"
   represents => { "manual chapter" };
 Software_components::
@@ -536,9 +536,9 @@ cf_hub::
 Core_concepts::
  "/docs/cf3-reference.html#Core-concepts"
   represents => { "manual section Core concepts" };
-A_renewed_cfengine::
- "/docs/cf3-reference.html#A-renewed-cfengine"
-  represents => { "manual section A renewed cfengine" };
+A_renewed_CFEngine::
+ "/docs/cf3-reference.html#A-renewed-CFEngine"
+  represents => { "manual section A renewed CFEngine" };
 Installation::
  "/docs/cf3-reference.html#Installation"
   represents => { "manual section Installation" };
@@ -557,10 +557,10 @@ The_work_directory::
 Decisions::
  "/docs/cf3-reference.html#Decisions"
   represents => { "manual section Decisions" };
-Cfengine_hard_classes::
+CFEngine_hard_classes::
  "/docs/cf3-reference.html#Hard-classes"
   represents => { "manual subsection" };
-Cfengine_hard_classes::
+CFEngine_hard_classes::
  "/docs/cf3-reference.html#Hard-classes"
   represents => { "code example" };
 Class_combination_operators_and_precedence::
@@ -581,9 +581,9 @@ Filenames_and_paths::
 Filenames_and_paths::
  "/docs/cf3-reference.html#Filenames-and-paths"
   represents => { "code example" };
-Upgrading_from_cfengine_2::
- "/docs/cf3-reference.html#Upgrading-from-cfengine-2"
-  represents => { "manual section Upgrading from cfengine 2" };
+Upgrading_from_CFEngine_2::
+ "/docs/cf3-reference.html#Upgrading-from-CFEngine-2"
+  represents => { "manual section Upgrading from CFEngine 2" };
 Testing_as_a_non_privilieged_user::
  "/docs/cf3-reference.html#Testing-as-a-non_002dprivilieged-user"
   represents => { "manual section Testing as a non-privilieged user" };
@@ -596,14 +596,14 @@ Testing_as_a_non_privilieged_user::
 Testing_as_a_non_privilieged_user::
  "/docs/cf3-reference.html#Testing-as-a-non_002dprivilieged-user"
   represents => { "code example" };
-The_bare_necessities_of_a_cfengine_3::
- "/docs/cf3-reference.html#The-bare-necessities-of-a-cfengine-3"
-  represents => { "manual section The bare necessities of a cfengine 3" };
-The_bare_necessities_of_a_cfengine_3::
- "/docs/cf3-reference.html#The-bare-necessities-of-a-cfengine-3"
+The_bare_necessities_of_a_CFEngine_3::
+ "/docs/cf3-reference.html#The-bare-necessities-of-a-CFEngine-3"
+  represents => { "manual section The bare necessities of a CFEngine 3" };
+The_bare_necessities_of_a_CFEngine_3::
+ "/docs/cf3-reference.html#The-bare-necessities-of-a-CFEngine-3"
   represents => { "code example" };
-The_bare_necessities_of_a_cfengine_3::
- "/docs/cf3-reference.html#The-bare-necessities-of-a-cfengine-3"
+The_bare_necessities_of_a_CFEngine_3::
+ "/docs/cf3-reference.html#The-bare-necessities-of-a-CFEngine-3"
   represents => { "code example" };
 Familiarizing_yourself::
  "/docs/cf3-reference.html#Familiiarizing-yourself"
@@ -680,21 +680,21 @@ When_and_where_are_promises_made_::
 When_and_where_are_promises_made_::
  "/docs/cf3-reference.html#When-and-where-are-promises-made_003f"
   represents => { "code example" };
-Types_in_cfengine_3::
- "/docs/cf3-reference.html#Types-in-cfengine-3"
-  represents => { "manual section Types in cfengine 3" };
-Types_in_cfengine_3::
- "/docs/cf3-reference.html#Types-in-cfengine-3"
+Types_in_CFEngine_3::
+ "/docs/cf3-reference.html#Types-in-CFEngine-3"
+  represents => { "manual section Types in CFEngine 3" };
+Types_in_CFEngine_3::
+ "/docs/cf3-reference.html#Types-in-CFEngine-3"
   represents => { "code example" };
-Types_in_cfengine_3::
- "/docs/cf3-reference.html#Types-in-cfengine-3"
+Types_in_CFEngine_3::
+ "/docs/cf3-reference.html#Types-in-CFEngine-3"
   represents => { "code example" };
-Datatypes_in_cfengine_3::
- "/docs/cf3-reference.html#Datatypes-in-cfengine-3"
-  represents => { "manual section Datatypes in cfengine 3" };
-Variable_expansion_in_cfengine_3::
- "/docs/cf3-reference.html#Variable-expansion-in-cfengine-3"
-  represents => { "manual section Variable expansion in cfengine 3" };
+Datatypes_in_CFEngine_3::
+ "/docs/cf3-reference.html#Datatypes-in-CFEngine-3"
+  represents => { "manual section Datatypes in CFEngine 3" };
+Variable_expansion_in_CFEngine_3::
+ "/docs/cf3-reference.html#Variable-expansion-in-CFEngine-3"
+  represents => { "manual section Variable expansion in CFEngine 3" };
 Scalar_variable_expansion::
  "/docs/cf3-reference.html#Scalar-variable-expansion"
   represents => { "manual subsection" };
@@ -704,8 +704,8 @@ List_variable_substitution_and_expansion::
 Special_list_value_cf_null::
  "/docs/cf3-reference.html#Special-list-value-cf_005fnull"
   represents => { "manual subsection" };
-Arrays_in_cfengine_3::
- "/docs/cf3-reference.html#Arrays-in-cfengine-3"
+Arrays_in_CFEngine_3::
+ "/docs/cf3-reference.html#Arrays-in-CFEngine-3"
   represents => { "manual subsection" };
 Normal_ordering::
  "/docs/cf3-reference.html#Normal-ordering"
@@ -722,9 +722,9 @@ Monitor_normal_ordering::
 Knowledge_normal_ordering::
  "/docs/cf3-reference.html#Knowledge-normal-ordering"
   represents => { "manual subsection" };
-Loops_and_lists_in_cfengine_3::
- "/docs/cf3-reference.html#Loops-and-lists-in-cfengine-3"
-  represents => { "manual section Loops and lists in cfengine 3" };
+Loops_and_lists_in_CFEngine_3::
+ "/docs/cf3-reference.html#Loops-and-lists-in-CFEngine-3"
+  represents => { "manual section Loops and lists in CFEngine 3" };
 Pattern_matching_and_referencing::
  "/docs/cf3-reference.html#Pattern-matching-and-referencing"
   represents => { "manual section Pattern matching and referencing" };
@@ -758,17 +758,17 @@ Distributed_discovery::
 Developer_structures::
  "/docs/cf3-reference.html#Developer-structures"
   represents => { "manual section Developer structures" };
-How_to_run_cfengine_3_examples::
- "/docs/cf3-reference.html#How-to-run-cfengine-3-examples"
+How_to_run_CFEngine_3_examples::
+ "/docs/cf3-reference.html#How-to-run-CFEngine-3-examples"
   represents => { "manual chapter" };
-How_to_run_cfengine_3_examples::
- "/docs/cf3-reference.html#How-to-run-cfengine-3-examples"
+How_to_run_CFEngine_3_examples::
+ "/docs/cf3-reference.html#How-to-run-CFEngine-3-examples"
   represents => { "code example" };
-How_to_run_cfengine_3_examples::
- "/docs/cf3-reference.html#How-to-run-cfengine-3-examples"
+How_to_run_CFEngine_3_examples::
+ "/docs/cf3-reference.html#How-to-run-CFEngine-3-examples"
   represents => { "code example" };
-How_to_run_cfengine_3_examples::
- "/docs/cf3-reference.html#How-to-run-cfengine-3-examples"
+How_to_run_CFEngine_3_examples::
+ "/docs/cf3-reference.html#How-to-run-CFEngine-3-examples"
   represents => { "code example" };
 A_complete_configuration::
  "/docs/cf3-reference.html#A-complete-configuration"
@@ -871,6 +871,9 @@ agentaccess::
   represents => { "manual subsection" };
 agentfacility::
  "/docs/cf3-reference.html#agentfacility-in-agent"
+  represents => { "manual subsection" };
+allclassesreport::
+ "/docs/cf3-reference.html#allclassesreport-in-agent"
   represents => { "manual subsection" };
 alwaysvalidate::
  "/docs/cf3-reference.html#alwaysvalidate-in-agent"
@@ -2540,7 +2543,7 @@ Functions_which_read_arrays::
 Functions_which_read_disk_data::
  "/docs/cf3-reference.html#Introduction-to-functions"
   represents => { "Text section" };
-Functions_which_read_from_a_remote_cfengine::
+Functions_which_read_from_a_remote_CFEngine::
  "/docs/cf3-reference.html#Introduction-to-functions"
   represents => { "Text section" };
 Functions_which_read_classes::
@@ -2594,9 +2597,15 @@ Function_accumulated::
 Function_ago::
  "/docs/cf3-reference.html#Function-ago"
   represents => { "manual section Function ago" };
+Function_and::
+ "/docs/cf3-reference.html#Function-and"
+  represents => { "manual section Function and" };
 Function_canonify::
  "/docs/cf3-reference.html#Function-canonify"
   represents => { "manual section Function canonify" };
+Function_concat::
+ "/docs/cf3-reference.html#Function-concat"
+  represents => { "manual section Function concat" };
 Function_changedbefore::
  "/docs/cf3-reference.html#Function-changedbefore"
   represents => { "manual section Function changedbefore" };
@@ -2612,6 +2621,9 @@ Function_countclassesmatching::
 Function_countlinesmatching::
  "/docs/cf3-reference.html#Function-countlinesmatching"
   represents => { "manual section Function countlinesmatching" };
+Function_dirname::
+ "/docs/cf3-reference.html#Function-dirname"
+  represents => { "manual section Function dirname" };
 Function_diskfree::
  "/docs/cf3-reference.html#Function-diskfree"
   represents => { "manual section Function diskfree" };
@@ -2744,12 +2756,18 @@ Function_ldapvalue::
 Function_ldapvalue::
  "/docs/cf3-reference.html#Function-ldapvalue"
   represents => { "code example" };
+Function_not::
+ "/docs/cf3-reference.html#Function-not"
+  represents => { "manual section Function not" };
 Function_now::
  "/docs/cf3-reference.html#Function-now"
   represents => { "manual section Function now" };
 Function_on::
  "/docs/cf3-reference.html#Function-on"
   represents => { "manual section Function on" };
+Function_or::
+ "/docs/cf3-reference.html#Function-or"
+  represents => { "manual section Function or" };
 Function_parseintarray::
  "/docs/cf3-reference.html#Function-parseintarray"
   represents => { "manual section Function parseintarray" };
@@ -3497,6 +3515,9 @@ Variable_sys_fstab::
 Variable_sys_host::
  "/docs/cf3-reference.html#Variable-sys_002ehost"
   represents => { "manual subsection" };
+Variable_sys_hub_master::
+ "/docs/cf3-reference.html#Variable-sys_002ehub_005fmaster"
+  represents => { "manual subsection" };
 Variable_sys_interface::
  "/docs/cf3-reference.html#Variable-sys_002einterface"
   represents => { "manual subsection" };
@@ -3599,9 +3620,9 @@ Text_logs::
 Reports_in_outputs::
  "/docs/cf3-reference.html#Reports-in-outputs"
   represents => { "manual section Reports in outputs" };
-Additional_reports_in_commcerical_cfengine_versions::
- "/docs/cf3-reference.html#Additional-reports-in-commercical-cfengine-versions"
-  represents => { "manual section Additional reports in commcerical cfengine versions" };
+Additional_reports_in_commcerical_CFEngine_versions::
+ "/docs/cf3-reference.html#Additional-reports-in-commercical-CFEngine-versions"
+  represents => { "manual section Additional reports in commcerical CFEngine versions" };
 State_information::
  "/docs/cf3-reference.html#State-information"
   represents => { "manual section State information" };
