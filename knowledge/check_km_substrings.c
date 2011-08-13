@@ -23,7 +23,7 @@ char *ToLowerStr (char *str);
 int main()
 
 { char *keywords[8000];
- char *exceptions[] = { "or", "and","the", "there","then", "what", "how", "ci","on","at","int","now","not","any", NULL };
+ char *exceptions[] = { "cfengine","or", "and","the", "there","then", "what", "how", "ci","on","at","int","now","not","any","on","it","so", NULL };
  
   char *otherwords[] =  { "convergence", "promise", "scheduling", "workflow","bundles", "hierarchy", "cloud",
                          "package", "policy", "security", "virtualization", "scalability",
@@ -72,24 +72,13 @@ for (k = 0; keywords[k] != NULL; k++)
    {
    for (i = 0; keywords[i] != NULL; i++)
       {
-      skip = false;
-      
-      for (j = 0; exceptions[j] != NULL; j++)
-         {
-         if (strcmp(keywords[i],exceptions[j]) == 0)
-            {
-            skip = true;
-            continue;
-            }
-         }
-      
-      if (skip)
-         {
-         continue;
-         }
-      
       //Check for canonified form too
 
+      memset(word1,0,1024);
+      memset(word2,0,1024);
+      memset(class1,0,1024);
+      memset(class2,0,1024);
+      
       sscanf(keywords[i],"%[^:]::%[^\n]",class1,word1);
       sscanf(keywords[k],"%[^:]::%[^\n]",class2,word2);
 
@@ -99,6 +88,22 @@ for (k = 0; keywords[k] != NULL; k++)
       strcpy(w1,ToLowerStr(word2));
       strcpy(w2,ToLowerStr(word1));
 
+      skip = false;
+      
+      for (j = 0; exceptions[j] != NULL; j++)
+         {
+         if (strcmp(word1,exceptions[j]) == 0)
+            {
+            skip = true;
+            break;
+            }
+         }
+      
+      if (skip)
+         {
+         continue;
+         }
+      
       if (strlen(w1) == 0||strlen(w2)==0)
          {
          continue;
@@ -115,7 +120,7 @@ for (k = 0; keywords[k] != NULL; k++)
          
          if ((sp > keywords[k] && *(sp-1) != ' ') || !isspace(*(sp+strlen(keywords[i]))))
             {
-            // continue;
+//            continue;
             }
          
          printf(" %s:: \"%s\" association => a(\"seems to refer to\",\"%s\",\"seems to be referred to in\");\n",class1,word1,keywords[k]);

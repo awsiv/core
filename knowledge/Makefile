@@ -19,7 +19,7 @@ scan_examples: scan_examples.c
 cf3-glossary.html: ../../core/docs/guides/cf3-glossary.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
 
-scan_substrings.cf: words
+scan_substrings.cf: words check_km_substrings
 	./check_km_substrings > scan_substrings.cf
 
 scan_glossary.cf: cf3-glossary.html
