@@ -1024,7 +1024,7 @@ else if (promise_id)
 
 if (promise_id)
    {
-   fprintf(fp,"occurrences: %s::  \"/promise/details/%s\", represents => { \"declaration\" }; \n",CanonifyName(promise_id),promise_id);
+   fprintf(fp,"occurrences: %s::  \"/promise/details/%s\", represents => { \"definition\" }; \n",CanonifyName(promise_id),promise_id);
    }
 
 /* For activated classes we can assume that no one will */
