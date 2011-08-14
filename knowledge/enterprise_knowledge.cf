@@ -691,7 +691,7 @@ occurrences:
           represents => { "website" };
 
      "The company supporting the Cfengine software",
-          represents => { "Text" },
+          replresents => { "Text" },
       representation => "literal";
 
    cfengine.software::

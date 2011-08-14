@@ -277,6 +277,7 @@ int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
   char topic_context[CF_BUFSIZE];
   int topic_id;
   char work[CF_BUFSIZE];
+  struct Item *ip,*list = NULL;
 
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
@@ -344,9 +345,16 @@ while (mongo_cursor_next(cursor))  // loops over documents
          topic_id = (int)bson_iterator_int(&it1);
          }
       }
-   
-   EscapeJson(topic_name,jsonEscapedStr,CF_BUFSIZE-1);
-   snprintf(work,CF_BUFSIZE,"{ \"context\": \"%s\", \"topic\": \"%s\", \"id\": %d },",topic_context,jsonEscapedStr,topic_id);
+
+   PrependFullItem(&list,topic_name,topic_context,topic_id,0);
+   }
+
+list = SortItemListNames(list);
+
+for (ip = list; ip != NULL; ip=ip->next)
+   {
+   EscapeJson(ip->name,jsonEscapedStr,CF_BUFSIZE-1);
+   snprintf(work,CF_BUFSIZE,"{ \"context\": \"%s\", \"topic\": \"%s\", \"id\": %d },",ip->classes,jsonEscapedStr,ip->counter);
    Join(buffer,work,CF_BUFSIZE);
    }
 
