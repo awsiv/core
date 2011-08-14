@@ -1043,6 +1043,8 @@ if (substring == NULL)
    return replace;
    }
 
+printf("START WITH %s\n",source);
+
 for (sp = source; *sp != '\0'; sp += inc)
    {
    if (strncmp(sp,substring,strlen(substring)) == 0)
@@ -1053,6 +1055,8 @@ for (sp = source; *sp != '\0'; sp += inc)
          {
          inc++;
          }
+
+      printf("SKIPPING %s to %s\n",sp,sp+inc);
       }
    else
       {
