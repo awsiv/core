@@ -1034,7 +1034,7 @@ return "";
 char *Nova_StripString(char *source,char *substring)
 
 { char *replace = xcalloc(0,strlen(source)+1);
-  struct Rlist *rp,*new = SplitStringAsRlist(source,'.');
+  struct Rlist *rp,*new = SplitStringAsRList(source,'.');
 
 for (rp = new; rp != NULL; rp=rp->next)
    {
