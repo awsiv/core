@@ -671,10 +671,12 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   {
                   Nova_AddOccurrenceBuffer(stripped,locator,locator_type,represents,buffer,bufsize);
                   }
+               
+               free(stripped);
                found = true;
                break;
                }
-
+            
             free(stripped);
             }
 
