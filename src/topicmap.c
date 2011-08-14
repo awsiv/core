@@ -637,15 +637,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
    // Now, for each plausible occurrence, see if it overlaps with the current topic in
    // any of its component parts. We do some `lifting' here to infer potential relevance
 
-   if (context)
-      {
-      frags = SplitStringAsRList(context,'|');
-      
-      if (frags)
-         {
-         frags = AlphaSortRListNames(frags);
-         }
-      }
+   frags = SplitStringAsRList(context,'|');
+   frags = AlphaSortRListNames(frags);
    
    for (rp = frags; rp != NULL; rp=rp->next)
       {
@@ -683,8 +676,10 @@ while (mongo_cursor_next(cursor))  // loops over documents
                found = true;
                break;
                }
-
-            free(stripped);
+            else
+               {
+               free(stripped);
+               }
             }
 
          DeleteRlist(atoms);
@@ -1039,7 +1034,7 @@ return "";
 char *Nova_StripString(char *source,char *substring)
 
 { char *replace = xcalloc(0,strlen(source));
- char *sp,*new = replace;
+  char *sp,*new = replace;
   int inc;
 
 for (sp = source; *sp != '\0'; sp += inc)
