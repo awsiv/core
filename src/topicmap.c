@@ -1033,15 +1033,22 @@ return "";
 
 char *Nova_StripString(char *source,char *substring)
 
-{ char *replace = xcalloc(0,strlen(source));
+{ char *replace = xcalloc(0,strlen(source)+1);
   char *sp,*new = replace;
   int inc;
+
+if (substring == NULL)
+   {
+   strcpy(replace,source);
+   return replace;
+   }
 
 for (sp = source; *sp != '\0'; sp += inc)
    {
    if (strncmp(sp,substring,strlen(substring)) == 0)
       {
       inc = strlen(substring);
+
       if (*(sp+inc) == '.')
          {
          inc++;
