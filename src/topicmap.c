@@ -644,7 +644,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       int found = false;
 
-      if (strcmp(rp->item,topic_id) == 0 || strlen(context) == 0)
+      if (strcmp(rp->item,topic_id) == 0)
          {
          Nova_AddOccurrenceBuffer("any/all",locator,locator_type,represents,buffer,bufsize);
          continue;
@@ -662,8 +662,15 @@ while (mongo_cursor_next(cursor))  // loops over documents
             stripped = Nova_StripString(rrp->item,topic_id);
             
             if (strcmp(rrp->item,topic_id) == 0)
-               {               
-               Nova_AddOccurrenceBuffer(stripped,locator,locator_type,represents,buffer,bufsize);
+               {
+               if (strlen(stripped) == 0)
+                  {
+                  Nova_AddOccurrenceBuffer("any/all",locator,locator_type,represents,buffer,bufsize);
+                  }
+               else
+                  {
+                  Nova_AddOccurrenceBuffer(stripped,locator,locator_type,represents,buffer,bufsize);
+                  }
                found = true;
                break;
                }
