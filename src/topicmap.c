@@ -683,7 +683,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                found = true;
                break;
                }
-            
+
             free(stripped);
             }
 
