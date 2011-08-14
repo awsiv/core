@@ -644,7 +644,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       {
       int found = false;
 
-      if (strcmp(rp->item,topic_id) == 0)
+      if (strcmp(rp->item,topic_id) == 0 || strlen(context) == 0)
          {
          Nova_AddOccurrenceBuffer("any/all",locator,locator_type,represents,buffer,bufsize);
          continue;
