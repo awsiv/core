@@ -1034,42 +1034,24 @@ return "";
 char *Nova_StripString(char *source,char *substring)
 
 { char *replace = xcalloc(0,strlen(source)+1);
-  char *sp,*new = replace;
-  int inc;
+  struct Rlist *rp,*new = SplitStringAsRlist(source,'.');
 
-if (substring == NULL)
+for (rp = new; rp != NULL; rp=rp->next)
    {
-   strcpy(replace,source);
-   return replace;
-   }
-
-for (sp = source; *sp != '\0'; sp += inc)
-   {
-   if (strncmp(sp,substring,strlen(substring)) == 0)
+   if (strcmp(rp->item,substring) == 0)
       {
-      inc = strlen(substring);
-
-      if (*(sp+inc) == '.')
-         {
-         inc++;
-         }
-      else
-         {
-         inc = 1;
-         *new++ = *sp;
-         }
+      continue;
       }
-   else
+   
+   strcat(replace,rp->item);
+
+   if (rp->next)
       {
-      inc = 1;
-      *new++ = *sp;
+      strcat(replace,".");
       }
    }
 
-if (replace[strlen(replace)-2] == '.')
-   {
-   replace[strlen(replace)-2] = '\0';
-   }
+DeleteRlist(new);
 
 return replace;
 }
