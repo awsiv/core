@@ -544,7 +544,7 @@ void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
 {
 #ifdef HAVE_LIBMONGOC
   enum representations locator_type;
-  struct Rlist *rp,*frags,*atoms,*rrp;
+  struct Rlist *rp,*frags = NULL,*atoms = NULL,*rrp;
   char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE];
   char locator[CF_BUFSIZE],context[CF_BUFSIZE],represents[CF_BUFSIZE],searchstring[CF_BUFSIZE];
   bson_buffer bb;
@@ -636,10 +636,17 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
    // Now, for each plausible occurrence, see if it overlaps with the current topic in
    // any of its component parts. We do some `lifting' here to infer potential relevance
-   
-   frags = SplitStringAsRList(context,'|');
-   frags = AlphaSortRListNames(frags);
 
+   if (context)
+      {
+      frags = SplitStringAsRList(context,'|');
+      
+      if (frags)
+         {
+         frags = AlphaSortRListNames(frags);
+         }
+      }
+   
    for (rp = frags; rp != NULL; rp=rp->next)
       {
       int found = false;
