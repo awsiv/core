@@ -198,6 +198,13 @@ while (!feof(fin))
          sprintf(script,"  represents => { \"%s\" };\n",title);
          AppendItem(&scriptlog,script);
          }
+
+      sprintf(script,"%s::\n",CanonifyName(title));
+      AppendItem(&scriptlog,script);
+      sprintf(script," \"%s%s.html\"\n",prefix,document);
+      AppendItem(&scriptlog,script);
+      sprintf(script,"  represents => { \"special topics guide\" };\n",title);
+      AppendItem(&scriptlog,script);
       }
 
    if (sp = strstr(line,"class=\""))       

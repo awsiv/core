@@ -986,6 +986,7 @@ void Nova_MatrixOperation(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int d
 int Nova_AlreadyInTribe(int node, int *tribe_id);
 void Nova_InitVertex(struct CfGraphNode *tribe,int i);
 int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char *name,char *context);
+char *Nova_StripString(char *source,char *substring);
 
 /* web_api.c */
 

@@ -638,6 +638,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    // any of its component parts. We do some `lifting' here to infer potential relevance
    
    frags = SplitStringAsRList(context,'|');
+   frags = AlphaSortRListNames(frags);
 
    for (rp = frags; rp != NULL; rp=rp->next)
       {
@@ -645,8 +646,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
       if (strcmp(rp->item,topic_id) == 0)
          {
-         Nova_AddOccurrenceBuffer(rp->item,locator,locator_type,represents,buffer,bufsize);
-         break;
+         Nova_AddOccurrenceBuffer("any",locator,locator_type,represents,buffer,bufsize);
+         continue;
          }
       else
          {
@@ -654,12 +655,20 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
          for (rrp = atoms; rrp != NULL; rrp=rrp->next)
             {
+            char *sp,*stripped = rrp->item;
+
+            // Try to strip out the common topic string
+            
+            stripped = Nova_StripString(rrp->item,topic_id);
+            
             if (strcmp(rrp->item,topic_id) == 0)
                {               
-               Nova_AddOccurrenceBuffer(rp->item,locator,locator_type,represents,buffer,bufsize);
+               Nova_AddOccurrenceBuffer(stripped,locator,locator_type,represents,buffer,bufsize);
                found = true;
                break;
                }
+
+            free(stripped);
             }
 
          DeleteRlist(atoms);
@@ -674,6 +683,7 @@ buffer[strlen(buffer)-1] = ']';
 }
 
 /*************************************************************************/
+
 int Nova_GetReportDescription(int this_id,char *buffer, int bufsize)
 
 {
@@ -1006,6 +1016,39 @@ while (mongo_cursor_next(cursor))  // loops over documents
    }
 return "";
 #endif
+}
+
+/*********************************************************************/
+
+char *Nova_StripString(char *source,char *substring)
+
+{ char *replace = xcalloc(0,strlen(source));
+ char *sp,*new = replace;
+  int inc;
+
+for (sp = source; *sp != '\0'; sp += inc)
+   {
+   if (strncmp(sp,substring,strlen(substring)) == 0)
+      {
+      inc = strlen(substring);
+      if (*(sp+inc) == '.')
+         {
+         inc++;
+         }
+      }
+   else
+      {
+      inc = 1;
+      *new++ = *sp;
+      }
+   }
+
+if (replace[strlen(replace)-2] == '.')
+   {
+   replace[strlen(replace)-2] = '\0';
+   }
+
+return replace;
 }
 
 /*****************************************************************************/
