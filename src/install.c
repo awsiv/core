@@ -782,7 +782,7 @@ struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, 
 
 { struct HubPromise *hp;
 
-if ((hp = malloc(sizeof(struct HubPromise))) == NULL)
+if ((hp = calloc(1, sizeof(struct HubPromise))) == NULL)
    {
    FatalError("Memory exhausted NewHubPromise");
    }
