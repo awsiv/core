@@ -1723,7 +1723,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 #hostinformation .title
 {
     float:left;
-    width:200px;
+    min-width:200px;
 }
 #delform
 {
