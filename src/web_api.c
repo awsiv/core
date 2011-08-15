@@ -3555,12 +3555,13 @@ return false;
 void Nova2PHP_show_topic(int id,char *buffer,int bufsize)
 
 { char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE],topic_comment[CF_BUFSIZE];
-
+  char work[CF_BUFSIZE];
+ 
 buffer[0] = '\0';
 
 if (Nova_GetTopicByTopicId(id,topic_name,topic_id,topic_context))
    {
-   snprintf(buffer,bufsize,"{\"topic\":\"%s\",\"context\":\"%s\"}",topic_name,topic_context);
+   snprintf(buffer,bufsize,"{\"topic\":\"%s\",\"context\":\"%s\"}",EscapeJson(topic_name,work,CF_BUFSIZE-1),topic_context);
    }
 else
    {
