@@ -1041,7 +1041,7 @@ return "";
 
 char *Nova_StripString(char *source,char *substring)
 
-{ char *replace = xmalloc(strlen(source)+1);
+{ char *replace = malloc(strlen(source)+1);
   struct Rlist *rp,*new = SplitStringAsRList(source,'.');
 
 replace[0] = '\0';
