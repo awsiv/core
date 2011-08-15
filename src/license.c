@@ -205,7 +205,12 @@ if (am_policy_server && THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
 if ((cf_strcmp(VYEAR,u_year) > 0) || ((cf_strcmp(VYEAR,u_year) == 0) && (m_now > m_expire))
     || ((cf_strcmp(VYEAR,u_year) == 0) && (m_now == m_expire) && (d_now > d_expire)))
    {
-   CfOut(cf_error,""," !! %d licenses expired on %s %s %s -- reverting to Community Edition",LICENSES,u_day,u_month,u_year);
+   
+   if(!IsDefinedClass("bootstrap_mode"))  // avoid cf-promises complaints while bootstrapping
+      {
+      CfOut(cf_error,""," !! %d licenses expired on %s %s %s -- reverting to Community Edition",LICENSES,u_day,u_month,u_year);
+      }
+
    LICENSES = 0;
    return false; // return true if we want to stop everything
    }
@@ -333,7 +338,8 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&ret
 
 if (licenses == 0)
    {
-   if (!BOOTSTRAP && getuid() == 0 && (THIS_AGENT_TYPE != cf_know) && (THIS_AGENT_TYPE != cf_keygen))
+   // using bootstrap_mode to avoid cf-promises complaining during bootstrap also (gets defined)
+   if (!IsDefinedClass("bootstrap_mode") && getuid() == 0 && (THIS_AGENT_TYPE != cf_know) && (THIS_AGENT_TYPE != cf_keygen))
       {
       CfOut(cf_error,""," !! Your configuration promises no host_licenses_paid in common control");
       CfOut(cf_error,""," !! By doing this, you confirm the terms of contract already legally binding");
@@ -341,7 +347,7 @@ if (licenses == 0)
    }
 else if (licenses > LICENSES && THIS_AGENT_TYPE != cf_know)
    {
-   CfOut(cf_inform,""," !! You have promised that %d licenses have been paid for, but Cfengine has only promised to honour %d in the agreement. ",licenses,LICENSES);
+   CfOut(cf_error,""," !! You have promised that %d licenses have been paid for, but Cfengine has only promised to honour %d in the agreement. ",licenses,LICENSES);
    CfOut(cf_inform,""," !! You could be in violation of contract.");
    }
 else if (licenses < LICENSES)
