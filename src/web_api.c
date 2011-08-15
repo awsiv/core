@@ -4279,7 +4279,7 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
  char work[CF_MAXVARSIZE];
  int i,count;
   
- if(strcmp(handle,"internal_promise") == 0)
+if (strcmp(handle,"internal_promise") == 0)
     {
     snprintf(returnval, bufsize, "This is a promise made internally by Cfengine, and is thus not part of your policy.");
     return true;
@@ -4311,7 +4311,7 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
  snprintf(work,CF_MAXVARSIZE-1,"\"handle\":\"%s\",",hp->handle);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"\"promiser\":\"%s\",",hp->promiser);
+ snprintf(work,CF_MAXVARSIZE-1,"\"promiser\":\"%s\",",EscapeJson(hp->promiser,work,CF_MAXVARSIZE));
  Join(returnval,work,bufsize);
 
  if (EMPTY(hp->promisee))
