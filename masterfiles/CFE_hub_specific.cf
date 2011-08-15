@@ -838,7 +838,7 @@ AllowEncodedSlashes On",
   Options FollowSymLinks
   AllowOverride None
   RewriteEngine on
-  RewriteRule ^(.*)$ http://$(sys.hub_master)/$1 [R=307,L,QSA]
+  RewriteRule ^(.*)$(const.dollar) http://$(sys.hub_master)/$(const.dollar)1 [R=307,L,QSA]
 </Directory>",
    comment => "Create apache2 contents for Slave HUBs",
     handle => "apache_nova_conf_insert_lines_not_am_hub_master";
@@ -849,8 +849,7 @@ AllowEncodedSlashes On",
 bundle edit_line apache2_nova_default
 {
  insert_lines:
-"NameVirtualHost *
-<VirtualHost *>
+"<VirtualHost *:80>
 $(const.t)ServerAdmin webmaster@localhost
 
 $(const.t)DocumentRoot /var/www/
