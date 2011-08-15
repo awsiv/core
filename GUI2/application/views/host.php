@@ -26,7 +26,7 @@
                          }
                       ?>
                 <li><a href="<?php echo $noteUrl ?>" class="note showqtip" id="add_cmt" title="Add note about this host">Notes</a></li>
-                <li> <?php echo anchor('visual/vital/'.$hostkey,'vitals',array('id'=>'pulseNvitals','class'=>'pulseNvitals showqtip','title'=>'View probes regarding cpu,memory,network etc')) ?></li>
+                <li> <?php echo anchor('visual/vital/'.$hostkey,'Vitals',array('id'=>'pulseNvitals','class'=>'pulseNvitals showqtip','title'=>'View probes regarding cpu,memory,network etc')) ?></li>
                 <li><a href="#" id="notkeptlnk" title="Promises not kept in the past week" class="problems showqtip">Problems</a></li>
                 <p class="clearleft"></p>
             </ul>
