@@ -24,8 +24,8 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
         $this->assertTrue(!empty($array), "Is not empty " . count($array) . "items");
     }
 
-    public function test_cfpr_policy_finder_by_promiser_using_somevalue() {
-        $data = cfpr_policy_finder_by_promiser('dum', false);
+     public function test_cfpr_policy_finder_by_promiser_using_somevalue() {
+        $data = cfpr_policy_finder_by_promiser('dir',false);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
@@ -53,9 +53,9 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
         $this->assertTrue(!empty($array), "Is  Empty " . count($array) . "items");
     }
-
-    public function test_cfpr_policy_finder_by_bundle_usingsomevalue() {
-        $data = cfpr_policy_finder_by_bundle('cfengine', false);
+    
+     public function test_cfpr_policy_finder_by_bundle_usingsomevalue(){
+        $data = cfpr_policy_finder_by_bundle('def',false);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");

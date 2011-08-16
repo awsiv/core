@@ -72,7 +72,7 @@
             self.menu=$('<div class="categories"><ul id="classoptions"></ul></div>');
             
             if (!self.options.onlyShowHandle) {
-                self.menu.find('ul').append('<li>by bundle</li><li>by handle</li><li>by promiser</li>');
+                self.menu.find('ul').append('<li>by bundle</li><li>by handle</li><li>by promiser</li><li>by type</li>');
             } else {
                 self.menu.find('ul').append('<li>by handle</li>');
             }

@@ -189,6 +189,29 @@ class Widget extends Cf_Controller {
         }
        sanitycheckjson($data);
     }
+    
+    function search_by_type(){
+        $type = $this->input->post('filter');
+        $data = cfpr_policy_finder_by_bundle(NULL, false);
+        $return_array=array();
+        $promises=sanitycheckjson($data,true);
+        
+        if($type!=""){
+                foreach($promises as $promise){
+                    if(array_search($type, $promise)!==FALSE){
+                      $return_array[]=$promise;
+                    }
+                  }
+                    $json=json_encode($return_array);
+                    sanitycheckjson($json);
+        }
+        else {
+         
+              $ret=array_msort($promises,array('3' => SORT_ASC),true);
+              $json=json_encode($ret);
+               sanitycheckjson($json);
+         }
+    }
 
     function search_by_promiser() {
         $promiser = $this->input->post('filter');
