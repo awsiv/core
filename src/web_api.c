@@ -1120,6 +1120,80 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
 
 /*****************************************************************************/
 
+int Nova2PHP_promiselog_summary2(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+/* Using more direct DB processing - faster? */
+{ char buffer[CF_BUFSIZE],report[CF_BUFSIZE]={0};
+ struct HubPromiseLog *hp;
+ struct HubQuery *hq;
+ struct Rlist *rp;
+ mongo_connection dbconn;
+ struct Item *ip,*summary = NULL;
+ int startIndex = 0, endIndex=0, i = 0;
+
+/* BEGIN query document */
+
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,false,classreg);
+ 
+ for (rp = hq->records; rp != NULL; rp=rp->next)
+    {
+    hp = (struct HubPromiseLog *)rp->item;
+    ip = IdempPrependItem(&summary,hp->handle,hp->cause);
+    ip->counter++;
+    }
+
+ DeleteHubQuery(hq,DeleteHubPromiseLog);
+
+ CFDB_Close(&dbconn);
+
+ startIndex = page->resultsPerPage*(page->pageNum - 1);
+ endIndex = (page->resultsPerPage*page->pageNum) - 1;
+
+ if (summary == NULL)
+    {
+    snprintf(returnval,bufsize,"No data to report on");
+    }
+ else
+    {     
+    summary = SortItemListCounters(summary);
+    snprintf(buffer,sizeof(buffer),
+             "{\"meta\":{\"count\" : %d,"
+             "\"header\":{\"Promise Handle\":0,\"Report\":1,\"Occurrences\":2"
+             "}},\"data\":[",ListLen(summary));
+     
+    StartJoin(returnval,buffer,bufsize);
+   
+    for (ip = summary; ip != NULL; ip=ip->next, i++)
+       {
+       if(i>=startIndex && (i<=endIndex || endIndex < 0))
+          {
+          EscapeJson(ip->classes,report,sizeof(report));
+          snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%d],",
+                   ip->name,report,ip->counter);
+       
+          if(!Join(returnval,buffer,bufsize))
+             {
+             break;
+             }
+          }
+       }
+
+    ReplaceTrailingChar(returnval, ',', '\0');
+
+    EndJoin(returnval,"]}\n",bufsize);
+    DeleteItemList(summary);
+    }
+
+ return true;
+}
+
+/*****************************************************************************/
+
 int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
 { struct HubValue *hp;
@@ -4276,7 +4350,7 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
  struct HubPromise *hp;
  char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
  char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
- char work[CF_MAXVARSIZE];
+ char work[CF_BUFSIZE], escaped[CF_BUFSIZE];
  int i,count;
   
 if (strcmp(handle,"internal_promise") == 0)
@@ -4305,13 +4379,13 @@ if (strcmp(handle,"internal_promise") == 0)
 
  strcat(returnval,"{");
 
- snprintf(work,CF_MAXVARSIZE-1,"\"bundletype\":\"%s\",\"bundlename\":\"%s\",",hp->bundleType,hp->bundleName);
+ snprintf(work,sizeof(work),"\"bundletype\":\"%s\",\"bundlename\":\"%s\",",hp->bundleType,hp->bundleName);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"\"handle\":\"%s\",",hp->handle);
+ snprintf(work,sizeof(work),"\"handle\":\"%s\",",hp->handle);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"\"promiser\":\"%s\",",EscapeJson(hp->promiser,work,CF_MAXVARSIZE));
+ snprintf(work,sizeof(work),"\"promiser\":\"%s\",",EscapeJson(hp->promiser,escaped,sizeof(escaped)));
  Join(returnval,work,bufsize);
 
  if (EMPTY(hp->promisee))
@@ -4323,7 +4397,7 @@ if (strcmp(handle,"internal_promise") == 0)
     snprintf(promiseeText,sizeof(promiseeText),"%s",hp->promisee);     
     }
 
- snprintf(work,CF_MAXVARSIZE-1,"\"promisee\":\"%s\",",promiseeText);
+ snprintf(work,sizeof(work),"\"promisee\":\"%s\",",promiseeText);
  Join(returnval,work,bufsize);
 
  if (EMPTY(hp->comment))
@@ -4335,24 +4409,24 @@ if (strcmp(handle,"internal_promise") == 0)
     snprintf(commentText, sizeof(commentText),"%s",hp->comment);
     }
 
- snprintf(work,CF_MAXVARSIZE-1,"\"comment\":\"%s\",",commentText);
+ snprintf(work,sizeof(work),"\"comment\":\"%s\",",commentText);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"\"promise_type\":\"%s\",",hp->promiseType);
+ snprintf(work,sizeof(work),"\"promise_type\":\"%s\",",hp->promiseType);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"\"class_context\":\"%s\",",hp->classContext);
+ snprintf(work,sizeof(work),"\"class_context\":\"%s\",",hp->classContext);
  Join(returnval,work,bufsize);
 
- snprintf(work,CF_MAXVARSIZE-1,"\"file\":\"%s\",\"line_num\":%d,",hp->file,hp->lineNo);
+ snprintf(work,sizeof(work),"\"file\":\"%s\",\"line_num\":%d,",hp->file,hp->lineNo);
  Join(returnval,work,bufsize);
 
  constText[0] = '\0';
  
  if (hp->constraints)
     {
-     snprintf(work,CF_MAXVARSIZE-1,"\"body\":[");
-     Join(returnval,work,bufsize);
+    snprintf(work,sizeof(work),"\"body\":[");
+    Join(returnval,work,bufsize);
     for(i = 0; hp->constraints[i] != NULL; i++)
        {
        char lval[CF_MAXVARSIZE],rval[CF_MAXVARSIZE],args[CF_MAXVARSIZE];
@@ -4362,11 +4436,11 @@ if (strcmp(handle,"internal_promise") == 0)
 
        if (strcmp(lval,"usebundle") == 0)
           {
-          snprintf(work,CF_MAXVARSIZE-1,"{\"constraint_type\":\"bundle\",\"type\":\"%s\",\"name\":\"%s\",\"args\":\"%s\"},",lval,rval,args);
+          snprintf(work,sizeof(work),"{\"constraint_type\":\"bundle\",\"type\":\"%s\",\"name\":\"%s\",\"args\":\"%s\"},",lval,rval,args);
           }
        else
           {
-          snprintf(work,CF_MAXVARSIZE-1,"{\"constraint_type\":\"body\",\"type\":\"%s\",\"name\":\"%s\",\"args\":\"%s\"},",lval,rval,args);
+          snprintf(work,sizeof(work),"{\"constraint_type\":\"body\",\"type\":\"%s\",\"name\":\"%s\",\"args\":\"%s\"},",lval,rval,args);
           }
       
        Join(returnval,work,bufsize);   
