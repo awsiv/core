@@ -544,22 +544,26 @@ bundle agent cfengine_policysrv
                  comment => "Define a list of packages to be installed on CentOS/Fedora",
                   handle => "cfengine_policysrv_vars_match_package_centos";
 
- debian.am_policy_hub::
+  debian.am_policy_hub::
 
-  "match_package"  slist => {
-                             "apache2",
-#                             "mysql-server",
-                             "php5",
-                             "ssl-cert",
-#                             "gcc",
-#                             "make",
-			     "php5-cli",
-                             "php5-json",
-                             "php-pear",
-                             "php5-mcrypt"
-                           },
-                 comment => "Define a list of packages to be installed on Debian/Ubuntu",
-                  handle => "cfengine_policysrv_vars_match_package_debian";
+   "match_package"  slist => {
+                              "apache2",
+#                              "mysql-server",
+                              "php5",
+                              "ssl-cert",
+#                              "gcc",
+#                              "make",
+	 		     "php5-cli",
+                              "php5-json",
+                              "php-pear",
+                              "php5-mcrypt"
+                            },
+                  comment => "Define a list of packages to be installed on Debian/Ubuntu",
+                   handle => "cfengine_policysrv_vars_match_package_debian";
+
+   "php_module_status"  string => execresult("/usr/sbin/a2enmod php5","noshell"),
+                       comment => "Get status of php5 module",
+                        handle => "cfengine_policysrv_vars_php_module_status";
 
 #
 
@@ -631,6 +635,14 @@ bundle agent cfengine_policysrv
                         comment => "Check if there is a backup of apache2 default config or not",
                          handle => "cfengine_policysrv_classes_no_apache2_default_ubuntu";
 
+   "not_enabled_yet"        not => regcmp(".*enabled","$(php_module_status)"),
+                        comment => "Check if PHP moudles already enabled or not",
+                         handle => "cfengine_policysrv_classes_already_enabled_php_modules";
+
+   "have_apache2_default" expression => fileexists("/etc/apache2/sites-available/default"),
+                             comment => "Check if there is apache2/site-available/default in place",
+                              handle => "cfengine_policysrv_classes_have_apache2_default";
+
 #
 
  packages:
@@ -662,7 +674,7 @@ bundle agent cfengine_policysrv
               handle => "cfengine_policysrv_packages_install_package_debian",
       package_policy => "add",
       package_method => apt,
-             classes => if_repaired("a2enmod_php5_ssl");
+             classes => if_repaired("a2enmod_php5_rewrite");
 
 #
 
@@ -676,7 +688,7 @@ bundle agent cfengine_policysrv
 
  commands:
 
-  a2enmod_php5_ssl::
+  a2enmod_php5_rewrite.not_enabled_yet::
 
    "/usr/sbin/a2enmod php5 && /usr/sbin/a2enmod rewrite",
       comment => "Enable apache modules on Debian/Ubuntu",
@@ -762,7 +774,8 @@ bundle agent cfengine_policysrv
              handle => "cfengine_policysrv_files_apache2_site_available_default",
       edit_defaults => empty,
           edit_line => apache2_nova_default,
-            classes => if_repaired("restart_apache2_debian");
+            classes => if_repaired("restart_apache2_debian"),
+         ifvarclass => "have_apache2_default";
 
 #   "/etc/apache2/sites-available/ssl"
 #        comment => "Prepare SSL config for available sites",
