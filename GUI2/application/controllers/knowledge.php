@@ -170,7 +170,7 @@ class Knowledge extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display(),
         );
 
-        $searchJson = cfpr_search_topics($search, true);
+        $searchJson = cfpr_search_topics(strtolower($search), true);
         $data['searchJson'] = $searchJson;
         $data['searchData'] = json_decode(utf8_encode($searchJson), TRUE);
 

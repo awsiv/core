@@ -65,7 +65,7 @@
 		<?php }?>
 	</table>
 <?php
-if($this->ion_auth->mode!="ldap"){
+if($this->ion_auth->mode =="database"){
    if($is_admin){?>
 	<p id="btnholder">
            <span class="btn"> <a id="add_user" href="<?php echo site_url('auth/create_user');?>">Add user +</a></span>
