@@ -14,7 +14,8 @@ class Auth extends Controller {
 
     function __construct() {
         parent::__construct();
-        $this->load->library(array('ion_auth', 'ion_auth', 'form_validation', 'breadcrumb', 'breadcrumblist', 'carabiner', 'onlineUsers','user_agent'));
+        initializeHub();
+        $this->load->library(array('ion_auth', 'ion_auth', 'form_validation', 'breadcrumb', 'breadcrumblist', 'carabiner', 'onlineUsers','user_agent','setting_lib'));
         //list of errors wrapped in <p> class of errors
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
         //$this->load->database();

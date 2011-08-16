@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Cf_Log extends CI_Log {
+class Cfe_Logs extends CI_Log {
 
     protected $mongo;
 

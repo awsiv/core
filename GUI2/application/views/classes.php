@@ -23,7 +23,7 @@
                                     <td><?php echo $value[1]; ?></td>
                                     <td><?php echo $value[2]; ?></td>
                                     <td><?php echo $value[3]; ?></td>
-                                    <td><?php echo date('D F d h:m:s Y', $value['4']); ?></td>
+                                    <td><?php echo getDateStatus($value['4'],true); ?></td>
                                 </tr>
 <?php } ?>
                         </tbody>
