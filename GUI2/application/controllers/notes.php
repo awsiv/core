@@ -34,10 +34,10 @@ class Notes extends Cf_Controller {
                 'dateTo' => -1
             );
             $this->data['data'] = $this->note_model->getAllNotes($filter);
-            $this->data['form_url'] = site_url().'/notes/addnote';
+            $this->data['form_url'] = site_url() . '/notes/addnote';
         } else if ($action == "add") {
             $this->data['data'] = array();
-            $this->data['form_url'] = site_url().'/notes/addnewnote';
+            $this->data['form_url'] = site_url() . '/notes/addnewnote';
         }
         $this->load->view('/notes/view_notes', $this->data);
     }
@@ -53,7 +53,7 @@ class Notes extends Cf_Controller {
         $this->data['rid'] = '';
         $this->data['hostkey'] = '';
         $this->data['reporttype'] = '';
-        $this->data['form_url'] = site_url().'/notes/addnote';
+        $this->data['form_url'] = site_url() . '/notes/addnote';
 
 
         if (trim($message) != null) {
@@ -91,24 +91,29 @@ class Notes extends Cf_Controller {
         $username = $this->session->userdata('username');
         $date = strtotime("now");
         $ret = false;
-        if (trim($message) != null) {
-            $ret = $this->note_model->addNewNote($keyhash, $rid, $report_type, $username, $date, $message);
-            if (!$ret) {
-                // SOMETHING WENT WRONG WHILE ADDITION
-                $this->output->set_status_header('400', 'Cannot insert the note.');
-                echo $ret;
-                exit;
-            }
-        } else {
-            $this->data['updateMessage'] = "Cannot insert empty message.";
-        }
 
         $this->data['nid'] = $ret;
         $this->data['rid'] = $rid;
         $this->data['hostkey'] = $keyhash;
         $this->data['reporttype'] = $report_type;
+        $this->data['form_url'] = site_url() . '/notes/addnewnote';
 
-        $this->data['form_url'] = site_url().'/notes/addnewnote';
+        if (trim($message) != null) {
+            $ret = $this->note_model->addNewNote($keyhash, $rid, $report_type, $username, $date, $message);
+            if (!$ret) {
+                // SOMETHING WENT WRONG WHILE ADDITION
+                $this->data['data'] = array();
+                $this->data['updateMessage'] = "Some error occured while inserting note.";
+                $this->load->view('/notes/view_notes', $this->data);
+                return;
+            }
+        } else {
+            $this->data['updateMessage'] = "Cannot insert empty message.";
+        }
+
+
+
+
 
 
         $filter = array('hostname' => NULL,
@@ -120,7 +125,7 @@ class Notes extends Cf_Controller {
 
         // if we have valid insert get that notes else leave it blank 
         if ($ret) {
-            $this->data['form_url'] = site_url().'/notes/addnote';
+            $this->data['form_url'] = site_url() . '/notes/addnote';
             $this->data['data'] = $this->note_model->getAllNotes($filter);
         } else {
             $this->data['data'] = array();
@@ -134,33 +139,33 @@ class Notes extends Cf_Controller {
         $this->load->helper(array('form', 'url'));
         $this->load->library('form_validation');
         $params = $this->uri->uri_to_assoc(3);
-        
-        
-        $userId = ($this->input->post('username', TRUE) !== FALSE) ? $this->input->post('username', TRUE) :  $this->session->userdata('search_username');
-        $dateFrom = ($this->input->post('date_from', TRUE)!== FALSE) ? strtotime($this->input->post('date_from', TRUE)) : $this->session->userdata('search_datefrom');
-        $dateTo = ($this->input->post('date_to', TRUE)!== FALSE) ? strtotime($this->input->post('date_to', TRUE)) : $this->session->userdata('search_dateto');
+
+
+        $userId = ($this->input->post('username', TRUE) !== FALSE) ? $this->input->post('username', TRUE) : $this->session->userdata('search_username');
+        $dateFrom = ($this->input->post('date_from', TRUE) !== FALSE) ? strtotime($this->input->post('date_from', TRUE)) : $this->session->userdata('search_datefrom');
+        $dateTo = ($this->input->post('date_to', TRUE) !== FALSE) ? strtotime($this->input->post('date_to', TRUE)) : $this->session->userdata('search_dateto');
 
         $searchSession = array(
             'search_username' => $userId,
-            'search_dateFrom' => ($dateFrom  !== FALSE )? $dateFrom : -1,
-            'search_dateto' =>($dateTo  !== FALSE) ? $dateTo : -1
-        ); 
-         
+            'search_dateFrom' => ($dateFrom !== FALSE ) ? $dateFrom : -1,
+            'search_dateto' => ($dateTo !== FALSE) ? $dateTo : -1
+        );
+
         $this->session->set_userdata($searchSession);
-        
+
         if ($searchSession['search_dateFrom'] && $searchSession['search_dateFrom'] != -1) {
-        //we have a start date so set the end date as well
+            //we have a start date so set the end date as well
             if ($searchSession['search_dateto'] == -1) {
                 $searchSession['search_dateto'] = time();
             }
         }
-        
-        
-         if ($searchSession['search_dateFrom'] == -1 && $searchSession['search_dateto'] != -1 ) {
-            $searchSession['search_dateFrom']= 0;
+
+
+        if ($searchSession['search_dateFrom'] == -1 && $searchSession['search_dateto'] != -1) {
+            $searchSession['search_dateFrom'] = 0;
         }
-        
-        
+
+
 
         $bc = array(
             'title' => 'Notes',
@@ -175,10 +180,10 @@ class Notes extends Cf_Controller {
             'title_header' => "Notes overview",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
-        
+
         $data['currentPage'] = isset($params['page']) ? intval($params['page'], 10) : 1;
         $filter = array(
-            'userId' =>  $searchSession['search_username'],
+            'userId' => $searchSession['search_username'],
             'dateFrom' => $searchSession['search_dateFrom'],
             'dateTo' => $searchSession['search_dateto'],
             'noOfRows' => 10,

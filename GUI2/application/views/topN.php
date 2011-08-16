@@ -82,7 +82,7 @@
 
 <?php foreach ($ret['data'] as $index => $val) { ?>
         var json<?php echo $index ?> = {
-            color: ['#6c9053','#cfb93f','#D43030'],
+           color: ['#779a62','#f0d76a','#cc4358'],
             'label': <?php echo $val['graphSeries']['labels']; ?>,
             'values':  <?php echo $val['graphSeries']['values']; ?>
         };

@@ -135,16 +135,16 @@
                         if (!self.options.onlyShowHandle) {                
                         
                             li += '<a href="'+ self.options.baseUrl+ '/promise/details/' + escape(val[0])+'" title="'+
-                            "promise : "+val[4] +'" class="promiselnk"><span class="promiser">'+val[4]+'</span></a>';
+                            "promise" +'" class="promiselnk"><span class="promiser">'+val[4]+'</span></a>';
                         }    
                         
                         
-                        li += '<a class="handleClick" href="'+self.options.baseUrl+'/promise/details/'+escape(val[0])+'" rel="'+escape(val[0])+'" title="'+'handle : '+val[0] +'"><span class="handle">'+val[0]+'</span></a>';
+                        li += '<a class="handleClick" href="'+self.options.baseUrl+'/promise/details/'+escape(val[0])+'" rel="'+escape(val[0])+'" title="'+'handle' +'"><span class="handle">'+val[0]+'</span></a>';
                         
                         if (!self.options.onlyShowHandle) {                
                                                
                             li += '<a href="'+self.options.baseUrl+ '/bundle/details/bundle/' +escape(val[2])+"/type/"+val[3]+'" title="'+
-                            'bundle : '+val[2] +'"><span class="bundle">'+val[2]+'</span></a>';
+                            'bundle'+'"><span class="bundle">'+val[2]+'</span></a>';
                         }
                         li +='</p>';
                         li += "<br style='clear:both;'>";

@@ -34,6 +34,17 @@ class test_bundle_libraries extends CodeIgniterUnitTestCase {
         $this->assertTrue(is_array($array), "Should Return a valid array");
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
     }
+    
+     public function test_argsForBundles() {
+        $list = cfpr_get_args_for_bundle('set_variable_values2', cfpr_get_bundle_type('set_variable_values2'));
+        $this->dump($list);
+        $array = json_decode(utf8_encode($list), true);
+        $retValue = json_last_error();
+
+        $this->assertTrue(is_array($array), "Should Return a valid array");
+        $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
+    }
+    
 
 }
 

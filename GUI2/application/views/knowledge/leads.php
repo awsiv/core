@@ -4,7 +4,7 @@
         <ul>
             <?php foreach ((array) $topicLeads as $lead) {
                 ?>
-            <li style="list-style: none;"><span style="color: #212121;"><?php echo $topicDetail['topic']; ?> "<?php echo $lead['assoc']; ?>"</span></li>
+            <li style="list-style: none;"><span style="color: #212121;"><?php echo $topicDetail['topic']; ?> ( in <?php echo $topicDetail['context']; ?> ) "<?php echo $lead['assoc']; ?>"</span></li>
                 <ul style="padding: 15px;">
                     <?php foreach ((array) $lead['topics'] as $l) { ?>
                         <li>

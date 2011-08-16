@@ -55,7 +55,7 @@ class test_knowledge_map_libraries extends CodeIgniterUnitTestCase {
     public function test_getValidJsonforTopicHits() {
         $pid = cfpr_get_pid_for_topic("", "system policy");
         $gdata = cfpr_show_topic_hits($pid);
-       
+
         $array = json_decode(utf8_encode($gdata), true);
         $this->dump($array);
         $retValue = json_last_error();
@@ -97,6 +97,12 @@ class test_knowledge_map_libraries extends CodeIgniterUnitTestCase {
     function test_manualKnowledgeMapSearch() {
         $pid = cfpr_get_pid_for_topic("any", "manuals");
         $data = cfpr_show_topic_hits($pid);
+        $this->validJson($data);
+    }
+
+    function test_topicDetails() {
+        $pid =  cfpr_get_pid_for_topic("promisers", '"/var/cfengine/bin/cf-execd"');
+        $data = cfpr_show_topic($pid);
         $this->validJson($data);
     }
 

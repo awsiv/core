@@ -39,7 +39,7 @@ class CF_Note {
     }
 
     function getDate() {
-        return date('D F d h:i:s Y', $this->date);
+        return getDateStatus($this->date,true);
     }
 
     function getReportType() {

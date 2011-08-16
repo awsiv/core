@@ -16,6 +16,7 @@ class test_promise_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_summarizePromise() {
+      
         $promise = cfpr_summarize_promise($this->testHandle);
         $this->dump($promise);
         $array = json_decode(utf8_encode($promise), true);
@@ -25,6 +26,24 @@ class test_promise_libraries extends CodeIgniterUnitTestCase {
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
 
       }
+      
+      public function testFailingHandle(){
+          
+     
+        $promise = cfpr_summarize_promise('promise_commercial_specific_cf_601');
+        $this->dump($promise);
+        $array = json_decode(utf8_encode($promise), true);
+        $retValue = json_last_error();
+
+        $this->assertTrue(is_array($array), "Should Return a valid array");
+        $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
+          
+          
+      
+      }
+      
+      
+      
       
       
       public function test_listHandlesForBundles(){

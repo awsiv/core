@@ -13,8 +13,10 @@
 
                         <p class="title">Bundle definition of <?php echo $bundle ?></p>
 
-                        <p><i>Name:</i> <span id="bundle"><?php echo $bundle ?></span></p>
-                        <p><i>Arguments:</i> <span id="args"><?php echo $args ?></span></p>
+                        <p><b>Name:</b> <span id="bundle"><?php echo $bundle ?></span></p>
+                        <p><b>Arguments:</b> 
+                            <?php echo implode(', ', (array)$args) ?>
+                        </p>
 
                         <div>
 

@@ -2275,7 +2275,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 
 table th[scope=red]
 {
-    background-color: #D43030; 
+    background-color: #CC4358; 
     color: #FFF;
     border-bottom: 1px solid #666;
     border-top: 1px solid #666;
@@ -2283,7 +2283,7 @@ table th[scope=red]
 
 table th[scope=yellow]
 {
-    background-color: #cfb93f; 
+    background-color: #F0D76A; 
     color: #FFF;
     border-bottom: 1px solid #666;
     border-top: 1px solid #666;
@@ -2300,7 +2300,7 @@ table th[scope=yellow]
 
 .bundlelist-table th[scope=green]
 {
-    background-color: green; 
+    background-color: #779A62; 
     color: #FFF;
     border-bottom: 1px solid #666;
     border-top: 1px solid #666;

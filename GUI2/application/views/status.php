@@ -123,7 +123,7 @@
         },
             
         grid: {hoverable: true, clickable: true },
-        colors: ["#6c9053", "#cfb93f", "#D43030","#000000"]
+        colors: ["#779a62", "#F0d76a", "#cc4358","#000000"]
     };
     var plot = $.plot($("#compliance_summary_graph"), startData,options );
         
@@ -204,9 +204,9 @@
     
    
     var businessValueData =  [
-        { label: "kept",  data: <?php echo $businessValuePie['kept']; ?>,color:"#90A316"},
-        { label: "notkept",  data: <?php echo $businessValuePie['notkept']; ?>,color:"#C33D54"},
-        { label: "repaired",  data: <?php echo $businessValuePie['repaired']; ?>,color:"#BFAA54"},
+        { label: "kept",  data: <?php echo $businessValuePie['kept']; ?>,color:"#779a62"},
+        { label: "notkept",  data: <?php echo $businessValuePie['notkept']; ?>,color:"#CC4358"},
+        { label: "repaired",  data: <?php echo $businessValuePie['repaired']; ?>,color:"#F0D76A"},
         { label: "No Data",  data: <?php echo $businessValuePie['nodata']; ?>,color:"#000000"}
     ];
 
@@ -236,10 +236,10 @@
 
 
     var complianceNowData =  [
-        { label: "green",  data: <?php echo $greenhost; ?>,color:"#90A316"},
-        { label: "yellow",  data: <?php echo $yellowhost; ?>,color:"#BFAA54"},
-        { label: "red",  data: <?php echo $redhost; ?>,color:"#D43030"},
-        { label: "blue",  data: <?php echo $bluehost; ?>,color:"#375060"}        
+        { label: "green",  data: <?php echo $greenhost; ?>,color:"#779a62"},
+        { label: "yellow",  data: <?php echo $yellowhost; ?>,color:"#F0D76A"},
+        { label: "red",  data: <?php echo $redhost; ?>,color:"#CC4358"},
+        { label: "blue",  data: <?php echo $bluehost; ?>,color:"#476E8C"}        
     ];
     $.plot($("#compliance-now-pie-chart"), complianceNowData,
     {
