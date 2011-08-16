@@ -561,10 +561,6 @@ bundle agent cfengine_policysrv
                   comment => "Define a list of packages to be installed on Debian/Ubuntu",
                    handle => "cfengine_policysrv_vars_match_package_debian";
 
-   "php_module_status"  string => execresult("/usr/sbin/a2enmod php5","noshell"),
-                       comment => "Get status of php5 module",
-                        handle => "cfengine_policysrv_vars_php_module_status";
-
 #
 
  classes:
@@ -631,13 +627,17 @@ bundle agent cfengine_policysrv
 
   (ubuntu_8|ubuntu_10).am_policy_hub::
 
-   "no_apache2_default"     not => fileexists("$(sys.workdir)/software_updates/apache2-default"),
-                        comment => "Check if there is a backup of apache2 default config or not",
-                         handle => "cfengine_policysrv_classes_no_apache2_default_ubuntu";
+   "no_backup_apache2_default"     not => fileexists("$(sys.workdir)/software_updates/apache2-default"),
+                               comment => "Check if there is a backup of apache2 default config or not",
+                                handle => "cfengine_policysrv_classes_no_backup_apache2_default_ubuntu";
 
-   "not_enabled_yet"        not => regcmp(".*enabled","$(php_module_status)"),
-                        comment => "Check if PHP moudles already enabled or not",
-                         handle => "cfengine_policysrv_classes_already_enabled_php_modules";
+   "no_php5_module"        not => fileexists("/etc/apache2/mods-enabled/php5.load"),
+                       comment => "Check if php5 module is enabled",
+                        handle => "cfengine_policysrv_classes_no_php5_module_ubuntu";
+
+   "no_rewrite_module"     not => fileexists("/etc/apache2/mods-enabled/rewrite.load"),
+                       comment => "Check if rewrite module is enabled",
+                        handle => "cfengine_policysrv_classes_no_rewrite_module_ubuntu";
 
    "have_apache2_default" expression => fileexists("/etc/apache2/sites-available/default"),
                              comment => "Check if there is apache2/site-available/default in place",
@@ -655,7 +655,7 @@ bundle agent cfengine_policysrv
               handle => "cfengine_policysrv_packages_install_package_suse",
       package_policy => "add",
       package_method => zypper,
-             classes => if_repaired("a2enmod_ssl");
+             classes => if_repaired("a2enmod_ssl_rewrite");
 
   redhat.am_policy_hub::
 
@@ -688,13 +688,19 @@ bundle agent cfengine_policysrv
 
  commands:
 
-  a2enmod_php5_rewrite.not_enabled_yet::
+  a2enmod_php5_rewrite::
 
-   "/usr/sbin/a2enmod php5 && /usr/sbin/a2enmod rewrite",
-      comment => "Enable apache modules on Debian/Ubuntu",
-       handle => "cfengine_policysrv_commands_a2enmod_debian",
-      contain => in_shell;
-#      classes => if_repaired("restart_apache2");
+   "/usr/sbin/a2enmod php5",
+         comment => "Enable apache2 php5 modules on Debian/Ubuntu",
+          handle => "cfengine_policysrv_commands_a2enmod_php5_debian",
+         contain => in_shell,
+      ifvarclass => "no_php5_module";
+
+   "/usr/sbin/a2enmod rewrite",
+         comment => "Enable apache2 rewrite modules on Debian/Ubuntu",
+          handle => "cfengine_policysrv_commands_a2enmod_rewrite_debian",
+         contain => in_shell,
+      ifvarclass => "no_rewrite_module";
 
 #  a2enmod_php5_ssl.no_mongo_module::
 #
@@ -708,7 +714,7 @@ bundle agent cfengine_policysrv
       comment => "Restart APACHE2 on SLES/OpenSuSE",
        handle => "cfengine_policysrv_commands_restart_apache2";
 
-  a2enmod_ssl::
+  a2enmod_ssl_rewrite::
 
    "/usr/sbin/a2enmod ssl && /usr/sbin/a2enflag SSL && /usr/bin/gensslcert"
       comment => "Enable apache modules on SuSE",
@@ -725,11 +731,11 @@ bundle agent cfengine_policysrv
 #       handle => "cfengine_policysrv_commands_pecl_install_mongo_suse",
 #      contain => in_shell;
 
-  a2ensite_ssl::
-
-   "/usr/sbin/a2ensite ssl"
-      comment => "Enable apache SSL on Debian/Ubuntu",
-       handle => "cfengine_policysrv_commands_a2ensite_ssl";
+#  a2ensite_ssl::
+#
+#   "/usr/sbin/a2ensite ssl"
+#      comment => "Enable apache SSL on Debian/Ubuntu",
+#       handle => "cfengine_policysrv_commands_a2ensite_ssl";
 
 #  pecl_mongo.no_mongo_module::
 #
@@ -753,7 +759,7 @@ bundle agent cfengine_policysrv
 
  files:
 
-  (ubuntu_8|ubuntu_10).no_apache2_default::
+  (ubuntu_8|ubuntu_10).no_backup_apache2_default::
 
    "$(sys.workdir)/software_updates/apache2-default"
         comment => "Back up a apache2 default config before editing",
