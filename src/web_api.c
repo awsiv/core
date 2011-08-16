@@ -3331,7 +3331,7 @@ matched = CFDB_QueryBundleArgs(&dbconn,type,name);
 
 if (matched)
    {
-   StartJoin(buffer, "{[", bufsize);
+   StartJoin(buffer, "[", bufsize);
    
     for (ip = matched; ip != NULL; ip=ip->next)
        {
@@ -3344,7 +3344,7 @@ if (matched)
        }
 
     ReplaceTrailingChar(buffer, ',', '\0');
-    EndJoin(buffer, "]}", bufsize);
+    EndJoin(buffer, "]", bufsize);
 
     DeleteItemList(matched);
     }
