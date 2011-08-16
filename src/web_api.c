@@ -3318,6 +3318,8 @@ int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize)
   struct Rlist *classList;
   struct Item *matched,*ip;
   char work[CF_MAXVARSIZE];
+
+  buffer[0] = '\0';
   
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
@@ -3329,11 +3331,11 @@ matched = CFDB_QueryBundleArgs(&dbconn,type,name);
 
 if (matched)
    {
-   snprintf(buffer,bufsize,"<ul>\n");
+   StartJoin(buffer, "{[", bufsize);
    
     for (ip = matched; ip != NULL; ip=ip->next)
        {
-       snprintf(work,CF_MAXVARSIZE,"<li><span class=\"args\">%s</span></li>",ip->name);
+       snprintf(work,sizeof(work),"\"%s\",",ip->name);
 
        if(!Join(buffer,work,bufsize))
           {
@@ -3341,7 +3343,9 @@ if (matched)
           }
        }
 
-    strcat(buffer,"</ul>\n");
+    ReplaceTrailingChar(buffer, ',', '\0');
+    EndJoin(buffer, "]}", bufsize);
+
     DeleteItemList(matched);
     }
 
