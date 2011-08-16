@@ -83,7 +83,7 @@ class savedsearch extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "Cfengine Mission Portal - overview",
+            'title' => "Cfengine Mission Portal - saved search",
             'title_header' => "Saved search overview",
             'breadcrumbs' => $this->breadcrumblist->display()
         );

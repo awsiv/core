@@ -761,7 +761,21 @@ try {
                "sudhir@windows1.test.cfengine.com",
                "cn=users,dc=windows1,dc=test,dc=cfengine,dc=com",
                "(samaccountname=sudhir)" ,
-               "givenname,cn,distinguishedname",
+               "sAMAccountName,cn,distinguishedName",
+               "subtree",
+               "sasl",
+               "Cf3ng1n3",1,100) ;
+       /* $this->load->library('Auth_Ldap');
+        $result=$this->auth_ldap->get_details_for_user('sudhir','Cf3ng1n3');*/
+        var_dump($result);
+   }
+   
+   function test_get_all_adgroups(){
+       $result=cfpr_ldap_get_several_attributes("ldap://10.0.0.35",
+               "sudhir@windows1.test.cfengine.com",
+               "ou=groups,dc=windows1,dc=test,dc=cfengine,dc=com",
+               "(objectCategory=Group)" ,
+               "sAMAccountname",
                "subtree",
                "sasl",
                "Cf3ng1n3",1,100) ;

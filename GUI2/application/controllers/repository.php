@@ -277,8 +277,14 @@ class Repository extends Cf_Controller {
             return;
         }
         try {
+            $is_duplicate=$this->repository_model->check_duplicate_approval($repo,$rev,$username);
+            if($is_duplicate){
+                echo "<span class=\"error maxwidth400\">" . $this->lang->line('already_approved') . "</span> <br />". 
+                        anchor('/repository/approvedPolicies', 'Approved log', array('target'=>"_self"));;
+                return;
+            }
             $id = $this->repository_model->approve_policies($username, $repo, $rev, $comments);
-            $rev_table = $this->repository_model->get_all_approved_policies($repo, 10);
+            $rev_table = $this->repository_model->get_all_approved_policies(array($repo), 10);
             $data = array('table' => $rev_table);
         } catch (Exception $e) {
             $data = array("error" => $e->getMessage());

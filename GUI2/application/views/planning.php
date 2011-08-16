@@ -35,10 +35,10 @@
 
         <div id="plandash" class="grid_7 dash innerdiv">
             <ul>
-                <li><?php echo anchor('/repository/checkout', 'Edit Policies', array('class' => 'repolink showqtip','id' => 'repobrowser','title'=> tooltip('tooltip_edit_policies'))); ?></li>
+                <li><?php echo anchor('/repository/checkout', 'edit policies', array('class' => 'repolink showqtip','id' => 'repobrowser','title'=> tooltip('tooltip_edit_policies'))); ?></li>
                 <li><?php echo anchor('/widget/tracker', 'track records', array('class' => 'trackrecord showqtip', 'id' => 'trackrecord','title'=> tooltip('tooltip_track_records'))); ?></li>
                 <li><?php echo anchor('/repository/policyApprover', 'approve policies', array('class' => 'approve showqtip', 'id' => 'aprvpolicy','title'=> tooltip('tooltip_approve_policies'))); ?></li>
-                 <li><?php echo anchor('/welcome/services', 'Service Catalogue', array('class' => 'service showqtip ', 'id' => 'aprvpolicy','title'=> tooltip('tooltip_service_catalogue'))); ?></li>
+                 <li><?php echo anchor('/welcome/services', 'service catalogue', array('class' => 'service showqtip ', 'id' => 'aprvpolicy','title'=> tooltip('tooltip_service_catalogue'))); ?></li>
                 <p class="clearleft"></p>
             </ul>
         </div>

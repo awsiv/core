@@ -200,7 +200,7 @@ class Repository_model extends CI_Model {
      * get a list of revision numbers with username and time and comment for depending on the parameters
      * @param <type> $repo 
      */
-    function get_all_approved_policies($repo='', $limit='',$docs='') {
+    function get_all_approved_policies($repo='', $limit='',$docs=0) {
         if ($repo != '' && $limit != '') {
             return $this->mongo_db-> where_in('repo',$repo)->order_by(array('date' => 'desc'))->limit($limit)->offset($docs)->get($this->approved_policies_collection);
         } elseif ($limit == '' && $repo != '') {
@@ -223,6 +223,14 @@ class Repository_model extends CI_Model {
 
     function get_total_approval_count($repo) {
         return $this->mongo_db->where(array('repo' => $repo))->count($this->approved_policies_collection);
+    }
+    
+    function check_duplicate_approval($repo,$rev,$user){
+          $data= $this->mongo_db-> where(array('repo'=>$repo,'version'=>$rev,'username'=>$user))->limit(1)->get_object($this->approved_policies_collection);
+          if(is_object($data)){
+              return true;
+          }
+          return false;
     }
 
 }

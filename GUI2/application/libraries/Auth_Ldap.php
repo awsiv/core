@@ -88,7 +88,7 @@ class Auth_Ldap {
         }
         
         $this->users_directory = $appsettings->users_directory;
-        $this->renamedfields = array($this->login_attribute => 'name', 'mail' => 'email', 'cn' => 'displayname', 'givenname' => 'name');
+        $this->renamedfields = array(strtolower($this->login_attribute) => 'name', 'mail' => 'email', 'cn' => 'displayname', 'givenname' => 'name');
         $this->ldap_url = "ldap://" . $this->hosts;
 
         //$this//->proxy_user = property_exists($appsettings, 'proxy_user') ? $appsettings->proxy_user : "";
@@ -105,11 +105,7 @@ class Auth_Ldap {
      * @return array
      */
     function login($username, $password) {
-        /*
-         * For now just pass this along to _authenticate.  We could do
-         * something else here before hand in the future.
-         */
-
+        
         //will have an array or return false incase of invalid authentication
         $user_info = $this->_authenticate($username, $password);
         /* For future use to search in a valid role
@@ -193,8 +189,7 @@ class Auth_Ldap {
           return false;
           } */
 
-        // We've connected, now we can attempt the login..
-
+        // We've connected, now we can attempt the login.
         if ($this->use_ad) {
             $entries = "";
             $details = array();
@@ -461,14 +456,14 @@ class Auth_Ldap {
     function get_details_for_user($username, $password) {
         $filter = '(' . $this->login_attribute . '=' . $username . ')';
         if ($this->use_ad) {
-            $fields = "givenname,cn,distinguishedname";
+            $fields = "givenName,cn,distinguishedName";
             $dn = 'cn=users,' . $this->basedn;
             if (preg_match('/^(\w+\.)+\w{2,4}$/', $this->ad_domain)) {
                 $binddn = $username . '@' . $this->ad_domain;
             } else {
                 $binddn = $this->ad_domain . '\\' . $username;
             }
-            $result = $this->cfpr_ldap_search($binddn, $password, $filter, $fields, $dn);
+            $result = $this->cfpr_ldap_search($binddn, $password, $filter, $fields, $dn);      
         } else {
             $fields = "cn,dn,uid";
             $userdn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
@@ -545,7 +540,10 @@ class Auth_Ldap {
                         "subtree",
                         "sasl",
                         $password, 1, 100);
-        $fields_array = explode(',', $fields);
+        $temp_array = explode(',', $fields);
+        foreach($temp_array as $val){
+            $fields_array[]=strtolower($val);
+        }
         $ret = array();
         $users = json_decode($result, true);
         if (!is_array($users)) {
@@ -558,7 +556,7 @@ class Auth_Ldap {
                 if (key_exists(strtolower($key), $this->renamedfields)) {
                     $row[$this->renamedfields[strtolower($key)]] = (array_search(strtolower($key), $fields_array) !== FALSE) ? $user[$value] : "";
                 } else {
-                    $row[$key] = (array_search(strtolower($key), $fields_array) !== FALSE) ? $user[$value] : "";
+                    $row[strtolower($key)] = (array_search(strtolower($key), $fields_array) !== FALSE) ? $user[$value] : "";
                 }
             }
             array_push($ret, $row);
@@ -625,7 +623,7 @@ class Auth_Ldap {
 
     public function set_login_attr($login_attr) {
         $this->login_attribute = $login_attr;
-        $this->renamedfields = array($this->login_attribute => 'name', 'mail' => 'email', 'cn' => 'displayname', 'givenname' => 'name');
+        $this->renamedfields = array(strtolower($this->login_attribute) => 'name', 'mail' => 'email', 'cn' => 'displayname', 'givenname' => 'name');
     }
 
     public function get_login_attr() {
@@ -637,7 +635,7 @@ class Auth_Ldap {
     }
 
     public function get_user_dir() {
-        return $this->users_directory = $user_dir;
+        return $this->users_directory;
     }
 
     public function set_member_attr($mem_attr) {

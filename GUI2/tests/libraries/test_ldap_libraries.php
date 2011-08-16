@@ -19,6 +19,19 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
          $this->assertTrue(function_exists("ldap_connect"),"Should be true if there is Php-ldap module loaded");
     }
 
+   
+     public function test_ldap_settings(){
+        $settings=array('host'=>$this->_ci->auth_ldap->get_host(),
+                              'base_dn'=>$this->_ci->auth_ldap->get_basedn(),
+                              'login_attr'=>$this->_ci->auth_ldap->get_login_attr(),
+                               'user_dir'=>$this->_ci->auth_ldap->get_user_dir(),
+                                'member_attr'=>$this->_ci->auth_ldap->get_member_attr(),
+                               'ad_domian'=>$this->_ci->auth_ldap->get_ad_domain() ,
+                               'mode'=>$this->_ci->auth_ldap->get_mode(),
+                        );
+        $this->dump($settings);
+    }
+    
     public function test_php_ldap_login(){
        $ret=$this->_ci->auth_ldap->login($this->username,$this->password);
        $this->assertTrue(is_array($ret),"Must succesfully login into system");
@@ -47,7 +60,7 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
          $this->assertTrue(is_array($ret),"Should be  an array of list of groups");
          $this->dump($ret);
     }
-    public function test_php_ldap_getallgroups(){
+   public function test_php_ldap_getallgroups(){
         $ret=$this->_ci->auth_ldap->get_all_ldap_groups($this->username,$this->password);
         $this->assertTrue(is_array($ret),"Should be  an array of list of users");
         $this->dump($ret);

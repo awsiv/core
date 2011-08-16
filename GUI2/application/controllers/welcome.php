@@ -616,7 +616,7 @@ class Welcome extends Cf_Controller {
             'title' => "Cfengine Mission Portal - license usage status ",
             'ret2' => cfpr_getlicenses_promised(),
             'ret3' => cfpr_getlicenses_granted(),
-            'started' => is_string($startDate)?$startDate:date('D F d h:m:s Y',$startDate),
+            'started' =>date('D F d h:m:s Y',$startDate),
             'expiry' => cfpr_getlicense_expiry(),
             'txt' => cfpr_getlicense_summary(),
             'breadcrumbs' => $this->breadcrumblist->display(),
@@ -628,6 +628,12 @@ class Welcome extends Cf_Controller {
 
     function classes($key = NULL) {
         $this->carabiner->js('jquery.tablesorter.min.js');
+        $bc = array(
+            'title' => 'Classes',
+            'url' => 'welcome/classes/'.$key,
+            'isRoot' => false
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
         $hostkey = $key;
         $name = ".*";
         $regex = 1;
@@ -638,9 +644,8 @@ class Welcome extends Cf_Controller {
         $data = array(
             'title_header' => "classes",
             'title' => "Cfengine Mission Portal - classes ",
-            'nav_text' => "Status : classes",
-            'status' => "current",
             'ret' => json_decode(cfpr_report_classes($hostkey, $name, $regex, NULL, 1000, 1), true),
+             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'classes', $data);
     }

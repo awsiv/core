@@ -4,7 +4,7 @@
 		<tr>
 			<th>User Name</th>
 			<th>Email</th>
-                        <?php if($this->ion_auth->mode!="ldap"){?>
+                        <?php if($this->ion_auth->mode =="database"){?>
 			<th>Groups</th>
 			<th>Status</th>
                         <th>Action</th>
