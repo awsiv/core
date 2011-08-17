@@ -13,7 +13,7 @@
       {
           ?>
                      <p class="hostlisttitle">
-                    <span class="<?php echo $type.'host'?> coloriconinline"></span><span class="title"><?php echo $type?> hosts</span>
+                    <span class="<?php echo $type.'host'?> coloriconinline"></span><span class="title"><?php echo $this->lang->line($type )?> hosts</span>
                     </p>
        <?php
            echo $tabledata;

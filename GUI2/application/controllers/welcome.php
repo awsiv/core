@@ -427,8 +427,9 @@ class Welcome extends Cf_Controller {
             $list = array_msort($result['data'], array('id' => SORT_ASC), true);
             $table = $this->cf_table->generateSingleColourHostTable($list, $type);
         }
+       
         $bc = array(
-            'title' => "$type hosts",
+            'title' => $this->lang->line($type )." hosts",
             'url' => 'welcome/hosts/' . $type,
             'isRoot' => false
         );
@@ -436,7 +437,7 @@ class Welcome extends Cf_Controller {
 
         $data = array(
             'type' => $type,
-            'title' => "Cfengine Mission Portal - " . $type . " hosts",
+            'title' => "Cfengine Mission Portal - " . $this->lang->line($type ) . " hosts",
             'tabledata' => $table,
             'breadcrumbs' => $this->breadcrumblist->display(),
             'current' => $page_number,
