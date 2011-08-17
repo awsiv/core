@@ -3,15 +3,15 @@
         <div id="hoststatus" class="minwidth30 innerdiv">
             <p class="title">Host Status (Last hour) </p>
             <ul>
-                <li> <a href="<?php echo site_url('welcome/hosts/red') ?>" title="<?php echo tooltip('tooltip_redhost'); ?>" class="redhost showqtip hoststatuslist"><?php echo $r ?> hosts 20% failure</a> </li>
-                <li> <a href="<?php echo site_url('welcome/hosts/yellow') ?>" title="<?php echo tooltip('tooltip_yellowhost'); ?>"  class="yellowhost showqtip hoststatuslist"><?php echo $y ?> hosts at 20% repaired </a> </li>
-                <li> <a href="<?php echo site_url('welcome/hosts/green') ?>" title="<?php echo tooltip('tooltip_greenhost'); ?>" class="greenhost showqtip hoststatuslist"><?php echo $g ?> hosts greater than 80% compliant </a> </li>
+                <li> <a href="<?php echo site_url('welcome/hosts/red') ?>" title="<?php echo tooltip('tooltip_redhost'); ?>" class="redhost showqtip hoststatuslist"><?php echo $r ?> hosts ( > 20% not compliant)</a> </li>
+                <li> <a href="<?php echo site_url('welcome/hosts/yellow') ?>" title="<?php echo tooltip('tooltip_yellowhost'); ?>"  class="yellowhost showqtip hoststatuslist"><?php echo $y ?> hosts ( > 20% repaired now compliant) </a> </li>
+                <li> <a href="<?php echo site_url('welcome/hosts/green') ?>" title="<?php echo tooltip('tooltip_greenhost'); ?>" class="greenhost showqtip hoststatuslist"><?php echo $g ?> hosts ( > 80% repaired now compliant ) </a> </li>
                 <li> <a href="<?php echo site_url('welcome/hosts/blue') ?>" title="<?php echo tooltip('tooltip_bluehost'); ?>" class="bluehost showqtip hoststatuslist"><?php echo $b ?> hosts unreachable</a> </li>
             </ul>
 
             <ul>
                 <li>Hosts Known: <strong><?php echo $all ?></strong></li>
-                <li><a href="weakest_host">50 worst hosts</a></li>
+                <li><a href="weakest_host">Worst available host rank</a></li>
                 <li><a href="<?php echo site_url() ?>/hubstatus/status" title="See the status of the hub replication" class="showqtip">Hub replication status</a></li>
             </ul>
         </div>

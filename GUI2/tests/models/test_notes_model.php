@@ -8,7 +8,6 @@ class test_notes_model extends CodeIgniterUnitTestCase {
 
     public function setUp() {
         $this->_ci->load->model('note_model');
-       
     }
 
     public function tearDown() {
