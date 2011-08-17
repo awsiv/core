@@ -30,7 +30,7 @@ class test_promise_libraries extends CodeIgniterUnitTestCase {
       public function testFailingHandle(){
           
      
-        $promise = cfpr_summarize_promise('promise_commercial_specific_cf_601');
+        $promise = cfpr_summarize_promise('apache2_nova_default_insert_lines_site_available_default');
         $this->dump($promise);
         $array = json_decode(utf8_encode($promise), true);
         $retValue = json_last_error();

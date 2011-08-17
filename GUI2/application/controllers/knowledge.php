@@ -154,8 +154,8 @@ class Knowledge extends Cf_Controller {
 
 
         $getparams = $this->uri->uri_to_assoc(3);
-        $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search');
-        $topic = isset($getparams['topic']) ? urldecode($getparams['topic']) : $this->input->post('topic');
+        $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search',true);
+        $topic = isset($getparams['topic']) ? urldecode($getparams['topic']) : $this->input->post('topic',true);
 
         if ($topic) {
             $search = $topic;
@@ -163,7 +163,7 @@ class Knowledge extends Cf_Controller {
 
 
         $data = array(
-            'search' => $search,
+            'search' => htmlspecialchars($search),
             'topic' => $topic,
             'title' => "Cfengine Mission Portal - Knowledge bank",
             'title_header' => "Knowledge bank search",
