@@ -2379,6 +2379,11 @@ else if (strcmp(lsdata,"summary") == 0)
    Nova2Txt_summary_report(hostkey,phandle,NULL,true,classregex);
    return;
    }
+else if (strcmp(lsdata,"dead-clients") == 0)
+   {
+   Nova2Txt_deadclient_report(hostkey,NULL,NULL,NULL,-1,true,classregex);
+   return;
+   }
 else if (strcmp(lsdata,"software") == 0)
    {
    Nova2Txt_software_report(hostkey,name,"","",true,cfr_software,classregex);

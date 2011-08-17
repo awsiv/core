@@ -64,6 +64,7 @@ int Nova2Txt_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
 int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg);
 int Nova2Txt_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *classreg);
 int Nova2Txt_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddr,time_t lago,int lregex,char *classreg);
+int Nova2Txt_deadclient_report(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg);
 int Nova2Txt_setuid_report(char *hostkey,char *file,int regex,char *classreg);
 int Nova2Txt_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,struct PageInfo *page, char *returnval,int bufsize);
 int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg);

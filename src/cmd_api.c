@@ -651,7 +651,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     }
 hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
 
-printf("Seen-on-host Remote-host Remote-IP Last-seen Hrs-ago Avg-interval Uncertainty Remote-key");
+printf("Seen-on-host Remote-host Remote-IP Hrs-ago Avg-interval Uncertainty Remote-key");
 
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -670,10 +670,65 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    
    then = hl->t;
    
-   printf("%s %s %s %s %ld %.2lf %.2lf %.2lf %s\n",
-            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,hl->t,
+   printf("%25s %4s %10s %10s %7.2lf %12.2lf %10.2lf %s\n",
+            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,
             hl->hrsago,hl->hrsavg,hl->hrsdev,
             hl->rhost->keyhash);
+   }
+
+DeleteHubQuery(hq,DeleteHubLastSeen);
+CFDB_Close(&dbconn);
+return true;
+}
+
+/*****************************************************************************/
+
+int Nova2Txt_deadclient_report(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg)
+
+{ char buffer[CF_BUFSIZE];
+ struct HubLastSeen *hl;
+ struct HubQuery *hq;
+ struct Rlist *rp;
+ int count = 0;
+ mongo_connection dbconn;
+ char inout[CF_SMALLBUF];
+ time_t then;
+ char header[CF_BUFSIZE]={0};
+ int margin = 0,headerLen=0,noticeLen=0;
+ int truncated = false;
+ time_t now = time(NULL);
+  
+/* BEGIN query document */
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+    }
+hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
+
+printf("Seen-on-host Remote-host Remote-IP Hrs-ago Avg-interval Uncertainty Remote-key");
+
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   hl = (struct HubLastSeen *)rp->item;
+   
+   switch (hl->io)
+      {
+      case '-':
+          continue;
+      }
+   
+   then = hl->t;
+
+   if (then < now - CF_HUB_HORIZON)
+      {
+      printf("%25s %10s %10s %7.2lf %12.2lf %10.2lf %s\n",
+             hl->hh->hostname,hl->rhost->hostname,hl->rhost->ipaddr,
+             hl->hrsago,hl->hrsavg,hl->hrsdev,
+             hl->rhost->keyhash);
+      }
    }
 
 DeleteHubQuery(hq,DeleteHubLastSeen);
