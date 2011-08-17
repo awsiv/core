@@ -155,12 +155,11 @@ function getonlineusernames() {
  * @param <type> $timestamp
  * @return <string> datetime with wrapped in span with colorclass
  */
-function getDateStatus($timestamp, $noColor=false, $displayIcon= false) {
+function getDateStatus($timestamp, $noColor=false) {
 
     $timestamp = intval($timestamp, 10);
     $colorClass = '';
     $now = time();
-    $iconClass = '';
     // 6 hours
     if ($now - $timestamp > 6 * 3600) {
         $colorClass = 'amber';
@@ -174,11 +173,8 @@ function getDateStatus($timestamp, $noColor=false, $displayIcon= false) {
     if ($noColor) {
         $colorClass = '';
     }
-    if (!$displayIcon) {
-        $iconClass = '';
-    }
     $formattedDate = date('c', $timestamp);
-    return '<span class="localtime ' . $colorClass .' '.$iconClass. '">' . $formattedDate . '</span>';
+    return '<span class="localtime ' . $colorClass . '">' . $formattedDate . '</span>';
 }
 
 /**

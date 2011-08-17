@@ -7,6 +7,10 @@ class Testing extends CI_Controller {
         initializeHub();
         $this->load->library('mongo_db');
     }
+    
+    function index() {
+        
+    }
 
     function mongodbtest() {
 

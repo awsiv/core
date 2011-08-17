@@ -16,15 +16,6 @@ define('TESTS_DIR', MAIN_PATH . 'tests/'); // Directory of your tests.
 define('APP_DIR', MAIN_PATH . 'application/'); // CodeIgniter Application directory
 
 
-$ishubmaster = cfpr_get_hub_master();
-$is_hub_master = true;
-if ($ishubmaster == 'am_hub_master') {
-    define('HUB_MASTER', 'localhost');
-} elseif (preg_match('/(\d+).(\d+).(\d+).(\d+)/', $ishubmaster)) {
-    define('HUB_MASTER', $ishubmaster);
-} else {
-    exit("Database  error  occured " . $ishubmaster);
-}
 
 //do not use autorun as it output ugly report upon no test run
 require_once SIMPLETEST . 'unit_tester.php';
