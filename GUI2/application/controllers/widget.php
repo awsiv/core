@@ -191,8 +191,23 @@ class Widget extends Cf_Controller {
     }
     
     function search_by_type(){
-        $type = $this->input->post('filter');
-        $data = cfpr_policy_finder_by_bundle(NULL, false);
+        $val= $this->input->post('filter');
+        $reg = $this->input->post('reg');
+        $type= $this->input->post('type');
+         if ($reg == "true") {
+            $reg = true;
+        }
+        if ($reg == "false") {
+            $reg = false;
+        }
+        if(preg_match("/^\^\w+/i",$val)){
+             $data = cfpr_policy_finder_by_bundle($val, $reg);
+        }
+        else
+        {
+             $data = cfpr_policy_finder_by_bundle(NULL, $reg);
+        }
+
         $return_array=array();
         $promises=sanitycheckjson($data,true);
         

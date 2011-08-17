@@ -178,7 +178,7 @@ class cf_table {
 
         $lnk = "";
         if ($type == 'blue') {
-            $this->CI->table->set_heading('hostname', 'last seen', 'Action');
+            $this->CI->table->set_heading('hostname', 'last data', 'Action');
         } else {
             $this->CI->table->set_heading('hostname', 'Action');
         }
@@ -189,7 +189,7 @@ class cf_table {
                 $title = $cols['key'];
             }
             if ($type == 'blue') {
-                $lnk = date('D F d h:m:s Y', $cols['lastseen']);
+                $lnk = isset($cols['lastseen'])?getDateStatus($cols['lastseen'],true):"never";
                 $cell2 = array('data' => $lnk, 'class' => 'datecol');
                 $btns = anchor('visual/vital/' . $cols['key'], ' ', array('title' => $this->CI->lang->line('tooltip_vital_signs'), 'class' => 'vitalsbtn showqtip'))
                         . anchor('welcome/host/delhost/' . $cols['key'] . '/type/' . $type, ' ', array('title' => 'delete host', 'class' => 'deletehostbtn showqtip'));

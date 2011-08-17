@@ -5,7 +5,9 @@ class Testing extends CI_Controller
 	function Testing()
 	 {
 		 parent::__construct();
-     
+                                   initializeHub();
+                                  $this->load->library('mongo_db');
+                                  
 	 }
 
          function index(){
@@ -13,8 +15,7 @@ class Testing extends CI_Controller
          }
 	
 	function mongodbtest()
-	 {
-	    $this->load->library('mongo_db');
+        {
 		$output=$this->mongo_db->insert('app_logs',array(
 
 		// Server Info

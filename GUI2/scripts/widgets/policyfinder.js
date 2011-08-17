@@ -116,12 +116,15 @@
             var self=this,
             submit_url=url,
             searchval=val;
+            var searchtext=self.searchbar.find('input[type="text"]').val();
+            if(/search\s+by\s+/.test(searchtext)){searchtext=''};
             $.ajax({
                 type: "POST",
                 url: submit_url,
                 data: {
                     filter:searchval,
-                    reg:escreg
+                    reg:escreg,
+                    type:searchtext
                 },
                 dataType:"json",
                 success: function(data) {
