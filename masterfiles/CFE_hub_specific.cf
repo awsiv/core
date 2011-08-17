@@ -493,14 +493,11 @@ bundle agent cfengine_policysrv
                              "apache2", 
                              "apache2-mod_php5",
                              "apache2-prefork",
-#                             "mysql",
                              "php5",
                              "php5-devel",
                              "php5-json",
                              "php5-pear",
                              "subversion",
-                             "gcc",
-                             "make",
                              "php5-mcrypt"
                             },
                  comment => "Define a list of packages to be installed on SuSE",
@@ -515,14 +512,10 @@ bundle agent cfengine_policysrv
    "match_package" slist => {
                              "httpd",
                              "mod_ssl",
-#                             "mysql",
-#                             "mysql-server",
                              "php",
                              "subversion",
                              "php-bcmath",
                              "php-pear",
-#                             "gcc",
-#                             "php-mcrypt"
                             },
                  comment => "Define a list of packages to be installed on RedHat",
                   handle => "cfengine_policysrv_vars_match_package_redhat";
@@ -532,13 +525,10 @@ bundle agent cfengine_policysrv
    "match_package" slist => {
                              "httpd",
                              "mod_ssl",
-#                             "mysql",
-#                             "mysql-server",
                              "php",
                              "subversion",
                              "php-bcmath",
                              "php-pear",
-#                             "gcc",
                              "php-mcrypt"
                             },
                  comment => "Define a list of packages to be installed on CentOS/Fedora",
@@ -548,11 +538,8 @@ bundle agent cfengine_policysrv
 
    "match_package"  slist => {
                               "apache2",
-#                              "mysql-server",
                               "php5",
                               "ssl-cert",
-#                              "gcc",
-#                              "make",
 	 		     "php5-cli",
                               "php5-json",
                               "php-pear",
@@ -567,31 +554,11 @@ bundle agent cfengine_policysrv
 
   redhat.am_policy_hub::
 
-#   "no_mongo_module"        not => fileexists("/usr/lib64/php/modules/mongo.so"),
-#                        comment => "Check if mongo module installed or not",
-#                         handle => "cfengine_policysrv_classes_no_mongo_module_redhat_x86_64",
-#                     ifvarclass => "x86_64";
-#
-#   "no_mongo_module"        not => fileexists("/usr/lib/php/modules/mongo.so"),
-#                        comment => "Check if mongo module installed or not",
-#                         handle => "cfengine_policysrv_classes_no_mongo_module_redhat_i686",
-#                     ifvarclass => "i686";
-
    "have_httpd_conf" expression => fileexists("/etc/httpd/conf/httpd.conf"),
                         comment => "Check if there is httpd.conf in place",
                          handle => "cfengine_policysrv_classes_have_httpd_conf";
 
   SuSE.am_policy_hub::
-
-#   "no_mongo_module"        not => fileexists("/usr/lib64/php5/extensions/mongo.so"),
-#                        comment => "Check if mongo module installed or not",
-#                         handle => "cfengine_policysrv_classes_no_mongo_module_suse_x86_64",
-#                     ifvarclass => "x86_64";
-#
-#   "no_mongo_module"        not => fileexists("/usr/lib/php5/extensions/mongo.so"),
-#                        comment => "Check if mongo module installed or not",
-#                         handle => "cfengine_policysrv_classes_no_mongo_module_suse_i686",
-#                     ifvarclass => "i686";
 
    "suse_ok" expression => regextract(
                                      "TIMEZONE=\"(.*?)\"",
@@ -601,31 +568,7 @@ bundle agent cfengine_policysrv
                 comment => "Extract system timezone to use later on",
                  handle => "cfengine_policysrv_classes_extract_system_timezone";
 
-  ubuntu_10.am_policy_hub::
-
-#   "no_mongo_module"        not => fileexists("/usr/lib/php5/20090626/mongo.so"),
-#                        comment => "Check if mongo module installed or not",
-#                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_10_x86_64",
-#                     ifvarclass => "x86_64";
-#
-#   "no_mongo_module"        not => fileexists("/usr/lib/php5/20090626+lfs/mongo.so"),
-#                        comment => "Check if mongo module installed or not",
-#                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_10_i686",
-#                     ifvarclass => "i686";
-
-  ubuntu_8.am_policy_hub::
-
-#   "no_mongo_module"        not => fileexists("/usr/lib/php5/20060613/mongo.so"),
-#                        comment => "Check if mongo module installed or not",
-#                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_8_x86_64",
-#                     ifvarclass => "x86_64";
-#
-#   "no_mongo_module"        not => fileexists("/usr/lib/php5/20060613+lfs/mongo.so"),
-#                        comment => "Check if mongo module installed or not",
-#                         handle => "cfengine_policysrv_classes_no_mongo_module_ubuntu_8_i686",
-#                     ifvarclass => "i686";
-
-  (ubuntu_8|ubuntu_10).am_policy_hub::
+  (ubuntu_8|ubuntu_10|debian_5|debian_6).am_policy_hub::
 
    "no_backup_apache2_default"     not => fileexists("$(sys.workdir)/software_updates/apache2-default"),
                                comment => "Check if there is a backup of apache2 default config or not",
@@ -700,13 +643,7 @@ bundle agent cfengine_policysrv
          comment => "Enable apache2 rewrite modules on Debian/Ubuntu",
           handle => "cfengine_policysrv_commands_a2enmod_rewrite_debian",
          contain => in_shell,
-      ifvarclass => "no_rewrite_module";
-
-#  a2enmod_php5_ssl.no_mongo_module::
-#
-#   "/usr/bin/pecl install mongo"
-#      comment => "Download and install PHP Mongo module on Debian/Ubuntu",
-#       handle => "cfengine_policysrv_commands_pecl_install_mongo_debian";   
+      ifvarclass => "no_rewrite_module";  
 
   restart_apache2::
 
@@ -724,24 +661,11 @@ bundle agent cfengine_policysrv
       comment => "Enable PHP Rewrite modules on SuSE",
        handle => "cfengine_policysrv_commands_a2enmod_rewrite_suse";
 
-#  a2enmod_ssl.no_mongo_module::
-#
-#   "/usr/bin/pecl install mongo"
-#      comment => "Download and install PHP Mongo module on SuSE",
-#       handle => "cfengine_policysrv_commands_pecl_install_mongo_suse",
-#      contain => in_shell;
-
 #  a2ensite_ssl::
 #
 #   "/usr/sbin/a2ensite ssl"
 #      comment => "Enable apache SSL on Debian/Ubuntu",
 #       handle => "cfengine_policysrv_commands_a2ensite_ssl";
-
-#  pecl_mongo.no_mongo_module::
-#
-#   "/usr/bin/pecl install mongo"
-#      comment => "Download and install PHP Mongo module on Redhat/CentOS/Fedora",
-#       handle => "cfengine_policysrv_commands_pecl_install_mongo_redhat";
 
   restart_httpd::
 
@@ -759,7 +683,7 @@ bundle agent cfengine_policysrv
 
  files:
 
-  (ubuntu_8|ubuntu_10).no_backup_apache2_default::
+  (ubuntu_8|ubuntu_10|debian_5|debian_6).no_backup_apache2_default::
 
    "$(sys.workdir)/software_updates/apache2-default"
         comment => "Back up a apache2 default config before editing",
