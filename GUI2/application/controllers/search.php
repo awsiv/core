@@ -58,7 +58,6 @@ class Search extends Cf_Controller {
         $hosts_only = isset($getparams['hosts_only']) ? $getparams['hosts_only'] : $this->input->post('hosts_only');
         $state = isset($getparams['state']) ? $getparams['state'] : $this->input->post('state');
         $longterm_data = isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
-        $hostname = cfpr_hostname($hostkey);
 
        
         $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
@@ -79,7 +78,7 @@ class Search extends Cf_Controller {
             $many = false;
             $hostkey = $host;
         }
-
+        $hostname = cfpr_hostname($hostkey);
 
         $params = '';
         $breadcrumbs_url = "search/index/";
