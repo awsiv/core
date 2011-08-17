@@ -49,13 +49,17 @@ div.ui-accordion .ui-accordion-header a{
 }
 
 .amber {
-    /*background-color: #F79131;*/
-    background-color: #d3be4a;
+    background-color: #F0D76A;
+    padding:2px;
+    color: #000000;
 }
 
+
+
 .red {
-    /*background-color: #AA0000;*/
-    background-color:#FF475B
+    background-color:#FF475B;
+    padding:2px;
+    color: #FFFFFF;
 }
 
 
