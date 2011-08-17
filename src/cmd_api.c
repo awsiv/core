@@ -651,7 +651,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     }
 hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
 
-printf("Seen-on-host Remote-host Remote-IP Hrs-ago Avg-interval Uncertainty Remote-key");
+printf("Seen-on-host Remote-host Remote-IP Hrs-ago Avg-interval Uncertainty Remote-key\n");
 
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -707,7 +707,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     }
 hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
 
-printf("Seen-on-host Remote-host Remote-IP Hrs-ago Avg-interval Uncertainty Remote-key");
+printf("Seen-on-host Remote-host Remote-IP Hrs-ago Avg-interval Uncertainty Remote-key\n");
 
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
