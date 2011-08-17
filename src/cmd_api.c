@@ -670,7 +670,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    
    then = hl->t;
    
-   printf("%25s %4s %10s %10s %7.2lf %12.2lf %10.2lf %s\n",
+   printf("%25s %4s %25s %10s %7.2lf %12.2lf %10.2lf %s\n",
             hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,
             hl->hrsago,hl->hrsavg,hl->hrsdev,
             hl->rhost->keyhash);
@@ -724,7 +724,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    if (then < now - CF_HUB_HORIZON)
       {
-      printf("%25s %10s %10s %7.2lf %12.2lf %10.2lf %s\n",
+      printf("%25s %25s %10s %7.2lf %12.2lf %10.2lf %s\n",
              hl->hh->hostname,hl->rhost->hostname,hl->rhost->ipaddr,
              hl->hrsago,hl->hrsavg,hl->hrsdev,
              hl->rhost->keyhash);
