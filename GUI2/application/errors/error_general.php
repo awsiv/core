@@ -26,7 +26,7 @@
 
             <div id="centeredDiv">
                 <div class="grid_7">
-                    <img src="/themes/default/images/error_cf.png" />
+                    <a href="/" title="Go to home page."><img src="/themes/default/images/error_cf.png" /></a> 
                     <img src="/themes/default/images/error_agent.png" alt="error" style="float: right;" />
                     <div style="color:#4d466b;font-size: 14px;font-weight: bold;" class="message">
                         <p><?php echo $heading; ?></p>
