@@ -6418,7 +6418,7 @@ int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle
   char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
   char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
   char work[CF_MAXVARSIZE] = {0};
-  char bundleName[CF_BUFSIZE],promiserJson[CF_BUFSIZE];
+  char bundleName[CF_BUFSIZE],promiserJson[CF_MAXVARSIZE];
   struct Rlist *rp;
   struct HubPromise *hp;
   struct HubQuery *hq;
@@ -6446,7 +6446,7 @@ int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle
                (char*)hp->promiseType,
                (char *)hp->bundleName,
                (char*)hp->bundleType,
-               (char*)EscapeJson(hp->promiser,promiserJson,CF_BUFSIZE-1));
+               (char*)EscapeJson(hp->promiser,promiserJson,sizeof(promiserJson)));
       Join(returnval,work,bufsize);
       }
 
