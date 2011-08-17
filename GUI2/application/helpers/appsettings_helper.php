@@ -16,7 +16,8 @@ function initializeHub() {
     if ($ishubmaster == 'am_hub_master') {
         define('HUB_MASTER', 'localhost');
     } elseif (preg_match('/(\d+).(\d+).(\d+).(\d+)/', $ishubmaster)) {
-        define('HUB_MASTER', $ishubmaster);
+        //define('HUB_MASTER', $ishubmaster);
+        show_error('The mongo db in this hub is not a hub master','please click on the <a href="http://$ishubmaster">Link</a> to navigate to the mission potrtal having its mongo db as hubmaster');
     } else {
         show_error('Could not connect to the MongoDB database in hub master. Please ensure that CFEngine Nova is running correctly, by issuing the following command on the hub.
                 <br/>

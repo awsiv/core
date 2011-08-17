@@ -21,7 +21,7 @@
 <script type="text/javascript">
  $('.loadsavedsearch').ajaxyDialog({title:'Saved Searches'});
 
- $('#hg').smartTextBox({separator : "|"});
+ $('#hg').smartTextBox({separator : "|",editOnFocus:true});
 $('#bphghelp').classfinder({
     defaultbehaviour:false,
     complete:function(event,data){
