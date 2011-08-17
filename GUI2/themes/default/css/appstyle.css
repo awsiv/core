@@ -2107,6 +2107,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 
 #loggedon{
     margin-left:0.3%;
+    height:300px
 }
 
 .ui-widget-content a.slvbutton, a.slvbutton
@@ -2170,8 +2171,9 @@ div.ui-dialog .ui-dialog-buttonpane{
 
 #plandash
 {
-    padding-top:30px;
     margin-right: 0.3%;
+    padding-bottom: 110px;
+    padding-top: 110px;
 }
 
 #plandash ul
