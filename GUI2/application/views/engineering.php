@@ -16,7 +16,7 @@
             </ul>
         </div>
         <div id="summarymetereng" class="minwidth70 innerdiv">
-            <p class="title">Promise compliance summary for all host(s)</p>
+            <p class="title">Promise compliance summary for reachable hosts</p>
             <div class="graphcontainer">
                 <?php include_once('graph/summaryCompliance.php'); ?>
             </div>
