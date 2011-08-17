@@ -775,7 +775,7 @@ try {
                "sudhir@windows1.test.cfengine.com",
                "ou=groups,dc=windows1,dc=test,dc=cfengine,dc=com",
                "(objectCategory=Group)" ,
-               "sAMAccountname",
+               "sAMAccountName",
                "subtree",
                "sasl",
                "Cf3ng1n3",1,100) ;

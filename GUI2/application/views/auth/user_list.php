@@ -2,7 +2,7 @@
    <div id="infoMessage"><?php echo $message;?></div>
 	<table cellpadding=0 cellspacing=10>
 		<tr>
-			<th>User Name</th>
+			<th>Users</th>
 			<th>Email</th>
                         <?php if($this->ion_auth->mode =="database"){?>
 			<th>Groups</th>
@@ -14,7 +14,7 @@
                 $username=isset($username)?$username:$this->session->userdata('username');
                 foreach ((array)$users as $user){?>
 			<tr>
-				<td><?php echo  isset($user['username'])?$user['username']:$user['name'] ?></td>
+				<td><?php echo  isset($user['username'])?$user['username']:$user['displayname'] ?></td>
 				<td><?php echo isset($user['email'])?$user['email']:"";?></td>
                       <?php  if($this->ion_auth->mode=="database"){?>
                                 <td><?php if(isset($user['group'])&&is_array($user['group'])){

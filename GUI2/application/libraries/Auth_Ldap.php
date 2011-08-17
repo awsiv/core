@@ -411,7 +411,7 @@ class Auth_Ldap {
     function get_all_ldap_groups($username, $password) {
         if ($this->use_ad) {
             $filter = '(&(objectCategory=group))';
-            $fields = "samaccountname";
+            $fields = "sAMAccountName";
             $dn = "ou=groups," . $this->basedn;
             if (preg_match('/^(\w+\.)+\w{2,4}$/', $this->ad_domain)) {
                 $binddn = $username . '@' . $this->ad_domain;

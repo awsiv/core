@@ -1,7 +1,7 @@
 <?php
 class test_ldap_libraries extends CodeIgniterUnitTestCase {
 private $username='sudhir';
-private $password='q1w2e3r4t5';//'q1w2e3r4t5'//password//Cf3ng1n3;
+private $password='Cf3ng1n3';//'q1w2e3r4t5'//password//Cf3ng1n3;
 private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
     public function __construct() {
         parent::__construct();
