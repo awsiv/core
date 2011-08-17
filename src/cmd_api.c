@@ -651,7 +651,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     }
 hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
 
-printf("%25s %4s %25s %10s %7s %12s %10s %s\n","Seen-on-host","Dirn","Remote-host", "Remote-IP", "Hrs-ago", "Avg-interval", "Uncertainty", "Remote-key");
+printf("%25s %11s %25s %10s %7s %12s %10s %s\n","Seen-on-host","Dirn","Remote-host", "Remote-IP", "Hrs-ago", "Avg-interval", "Uncertainty", "Remote-key");
 
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -670,7 +670,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    
    then = hl->t;
    
-   printf("%25s %4s %25s %10s %7.2lf %12.2lf %10.2lf %s\n",
+   printf("%25s %11s %25s %10s %7.2lf %12.2lf %10.2lf %s\n",
             hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,
             hl->hrsago,hl->hrsavg,hl->hrsdev,
             hl->rhost->keyhash);
