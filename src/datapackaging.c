@@ -439,11 +439,16 @@ while (!feof(fin))
    sscanf(line,"%ld;%[^\n]",&lthen,size);
 
    then = (time_t)lthen;
+
+   if (from > then)
+      {
+      continue;
+      }
    
    if (strncmp(line,"END",strlen("END")) == 0)
       {
       continue;
-      }
+      }   
 
    memset(aggregate,0,CF_BUFSIZE);
    output[0] = '\0';
@@ -484,10 +489,6 @@ while (!feof(fin))
 
    snprintf(output,sizeof(output),"%ld|%s|%s\n",then,name,aggregate);
    
-   if (from > then)
-      {
-      continue;
-      }
 
    if (strlen(aggregate) > 0)
       {
