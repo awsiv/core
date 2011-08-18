@@ -1036,7 +1036,7 @@ int NovaWin_GetNumHardlinks(char *path, int *numHardLinks);
 
 /* win_log.c */
 
-void NovaWin_OpenLog(void);
+void NovaWin_OpenLog(int facility);
 int NovaWin_CheckRegistryLogKey(void);
 void NovaWin_CloseLog(void);
 void NovaWin_MakeLog(struct Item *mess,enum cfreport level);
