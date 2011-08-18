@@ -186,11 +186,6 @@ bundle agent cfengine_php_mod
       copy_from => local_cp("$(sys.workdir)/software_updates/cfmod/cfmod.ini"),
           perms => mo("644","root");
 
-#   "/etc/php.d/svn.ini"
-#        comment => "Put svn.ini to its place",
-#      copy_from => local_cp("$(sys.workdir)/software_updates/svn/svn.ini"),
-#          perms => mo("644","root");
-
    "/etc/php.d/json.ini"
         comment => "Put json.ini to its place",
          handle => "cfengine_php_mod_files_json_ini_redhat4",
@@ -218,13 +213,6 @@ bundle agent cfengine_php_mod
       ifvarclass => "i686",
         classes => if_repaired("restart_webserver");
 
-#   "/usr/lib/php4/svn.so"
-#         comment => "Prepare svn.so for 32-bit system",
-#       copy_from => local_cp("$(sys.workdir)/software_updates/svn/32/svn.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "i686",
-#        classes => if_repaired("restart_webserver");
-
    "/usr/lib64/php4/json.so"
          comment => "Prepare cfmod.so for 64-bit system",
           handle => "cfengine_php_mod_files_json_so_redhat4_64",
@@ -239,13 +227,6 @@ bundle agent cfengine_php_mod
            perms => mo("755","root"),
       ifvarclass => "x86_64",
         classes => if_repaired("restart_webserver");
-
-#   "/usr/lib64/php4/svn.so"
-#         comment => "Prepare svn.so for 64-bit system",
-#       copy_from => local_cp("$(sys.workdir)/software_updates/svn/64/svn.so"),
-#           perms => mo("755","root"),
-#      ifvarclass => "x86_64",
-#        classes => if_repaired("restart_webserver");
 
   ubuntu_10|debian_squeeze_i386|debian_squeeze_amd64|debian_6::
 
@@ -494,7 +475,6 @@ bundle agent cfengine_policysrv
                              "apache2-mod_php5",
                              "apache2-prefork",
                              "php5",
-                             "php5-devel",
                              "php5-json",
                              "php5-pear",
                              "subversion",
@@ -540,7 +520,7 @@ bundle agent cfengine_policysrv
                               "apache2",
                               "php5",
                               "ssl-cert",
-	 		     "php5-cli",
+                              "php5-cli",
                               "php5-json",
                               "php-pear",
                               "php5-mcrypt"
@@ -903,22 +883,12 @@ bundle agent cfengine_web_server(state)
             comment => "Start apache2 process if not exist",
              handle => "cfengine_web_server_processes_apache_on_suse";
 
-#   "mysqld"
-#      restart_class => "suse_start_mysql",
-#            comment => "Start mysqld process if not exist",
-#             handle => "cfengine_web_server_processes_mysqld_on_suse";
-
   redhat.web_servers.on::
 
    ".*httpd.*"
       restart_class => "redhat_start_apache",
             comment => "Start httpd process if not exist",
              handle => "cfengine_web_server_processes_httpd_on_redhat";
-
-#   ".*mysqld.*"
-#      restart_class => "redhat_start_mysql",
-#            comment => "Start mysqld process if not exist",
-#             handle => "cfengine_web_server_processes_mysqld_on_redhat";
 
   debian.web_servers.on::
 
@@ -927,22 +897,12 @@ bundle agent cfengine_web_server(state)
             comment => "Start apache2 process if not exist",
              handle => "cfengine_web_server_processes_apache_on_debian";
 
-#   "/usr/sbin/mysqld.*"
-#      restart_class => "debian_start_mysql",
-#            comment => "Start apache2 process if not exist",
-#             handle => "cfengine_web_server_processes_mysqld_on_debian";
-
   SuSE.off::
 
    "apache2"
       process_stop => "/etc/init.d/apache2 stop",
            comment => "Stop apache2 process",
             handle => "cfengine_web_server_processes_apache_off_suse";
-
-#   "mysqld"
-#      process_stop => "/etc/init.d/mysql stop",
-#           comment => "Stop mysqld process",
-#            handle => "cfengine_web_server_processes_mysqld_off_suse";
 
   redhat.off::
 
@@ -951,22 +911,12 @@ bundle agent cfengine_web_server(state)
            comment => "Stop httpd process",
             handle => "cfengine_web_server_processes_httpd_off_redhat";
 
-#   "mysqld"
-#      process_stop => "/etc/init.d/mysqld stop",
-#           comment => "Stop mysqld process",
-#            handle => "cfengine_web_server_processes_mysqld_off_redhat";
-
   debian.off::
 
    "/usr/sbin/apache2.*"
       process_stop => "/etc/init.d/apache2 stop",
            comment => "Stop apache2 process",
             handle => "cfengine_web_server_processes_apache_off_debian";
-
-#   "mysqld"
-#      process_stop => "/etc/init.d/mysql stop",
-#           comment => "Stop mysqld process",
-#            handle => "cfengine_web_server_processes_mysqld_off_debian";
 
 #
 
@@ -986,35 +936,17 @@ bundle agent cfengine_web_server(state)
       comment => "Start apache2 process if not exist",
        handle => "cfengine_web_server_commands_start_apache_suse";
 
-#  suse_start_mysql::
-#
-#   "/etc/init.d/mysql start"
-#      comment => "Start mysql process if not exist",
-#       handle => "cfengine_web_server_commands_start_mysql_suse";
-
   redhat_start_apache::
 
    "/etc/init.d/httpd $(start_type)"
       comment => "Start httpd process if not exist",
        handle => "cfengine_web_server_commands_start_httpd_redhat";
 
-#  redhat_start_mysql::
-#
-#   "/etc/init.d/mysqld start"
-#      comment => "Start mysqld process if not exist",
-#       handle => "cfengine_web_server_commands_start_mysqld_redhat";
-
   debian_start_apache::
 
    "/etc/init.d/apache2 $(start_type)"
       comment => "Start apache process if not exist",
        handle => "cfengine_web_server_commands_start_apache_debian";
-
-#  debian_start_mysql::
-#
-#   "/etc/init.d/mysql start"
-#      comment => "Start mysql process if not exist",
-#       handle => "cfengine_web_server_commands_start_mysql_debian";
 
 #
 

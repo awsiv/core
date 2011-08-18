@@ -1,3 +1,11 @@
+August 2011
+*All*
+- Chopped down promises for HUB from cfengine.cf to hub_specific.cf
+- Moved "bundle agent cfengine_management" from promises.cf to hub_specific.cf to make ease in policy upgrade in the future
+- Added a prefix CFE_ to cfengine.cf, knowledge.cf and hub_specific.cf
+- Removed *-devel packages from package-to-install list
+- Removed all mysql-related promises from CFE_hub_specific.cf
+
 July 2011
 *All*
 - Rewrote many files as we decided to have bootstrap feature in Community version
