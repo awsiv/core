@@ -29,21 +29,38 @@ class Summaryreports extends Cf_Controller {
         
         $this->carabiner->js($requiredjs);
         
-        $handle = $this->input->post('name');
-        $classRegex = $this->input->post('class_regex');
-        $host = $this->input->post('host', true);
+        $getparams = $this->uri->uri_to_assoc(3);
+        $handle = isset($getparams['name']) ? urldecode($getparams['name']):$this->input->post('name');
+        $classRegex = isset($getparams['class_regex']) ? urldecode($getparams['class_regex']):$this->input->post('class_regex');
+        $host =  isset($getparams['host']) ? urldecode($getparams['host']):$this->input->post('host', true);
         $state = 'x';
         $regex = true;
-        $time = $this->input->post('time', true);
+        $time = isset($getparams['time']) ? urldecode($getparams['time']):$this->input->post('time', true);
 
-        
-       
-
+        $breadcrumbs_url="";
         $result = cfpr_report_overall_summary($host, $handle, $state, $regex, $classRegex);
-
-
+         if (count($getparams) > 0) {
+               foreach ($getparams as $key => $value) {
+                    if (!empty($value)) {
+                        $breadcrumbs_url.='/'.$key . '/' . $value ;
+                      }
+                } 
+         }else{
+               foreach ($_POST as $key => $value) {
+                    if (!empty($value)) {
+                        $breadcrumbs_url .= '/'.$key . '/' . urlencode($value);
+                    }
+                }
+         }
+        $bc = array(
+            'title' => 'Summary reports',
+            'url' => '/summaryreports/show'.$breadcrumbs_url,
+            'isRoot' => false,
+            'replace_existing' => true
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
-            'title' => "Cfengine Mission Portal",
+            'title' => "Cfengine Mission Portal - summary report ",
             'title_header' => "Summary Report",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
