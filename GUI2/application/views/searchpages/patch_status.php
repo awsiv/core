@@ -20,12 +20,18 @@
 <script type="text/javascript">
     $('.loadsavedsearch').ajaxyDialog({title:'Saved Searches'});
 
- $('#hg').smartTextBox({separator : "|",editOnFocus:true});
+ //$('#hg').smartTextBox({separator : "|",editOnFocus:true});
 $('#bphghelp').classfinder({
     defaultbehaviour:false,
     complete:function(event,data){
         //console.log(data.selectedclass);
-        $('#hg') .smartTextBox('add', data.selectedclass);
+        //$('#hg') .smartTextBox('add', data.selectedclass);
+        var val=$('#hg').val()
+        if(val==""){
+             $('#hg').val(data.selectedclass);
+        }else{
+            $('#hg').val(val+'|'+data.selectedclass);
+        }
     }
 });
 </script>

@@ -39,7 +39,6 @@
             <div class="tables tablesfixed">
                 <?php
                 $result = json_decode($report_result, true);
-                echo "Total result found :".$result['meta']['count'];
                 if(key_exists('truncated', $result['meta']))
                 {
                   $message=$result['meta']['truncated'];
@@ -48,7 +47,7 @@
                   $number_of_rows= $displayed_rows;
                 }
                 if (count($result['data']) > 0) {
-                   
+                    echo "Total result found : ".$result['meta']['count'];
                     $pg = paging($current, $number_of_rows, $result['meta']['count'], 10);
                      echo $this->cf_table->generateReportTable($result, $report_title);
                      include 'paging_footer.php';

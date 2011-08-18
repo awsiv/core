@@ -28,6 +28,7 @@
             $this->table->set_heading($headings);
             $heading = "";
             if (count($result['data']) > 0) {
+                echo "Total result found : ".$result['meta']['count'];
                 foreach ($result['data'] as $row) {
                     //$this->table->add_row($row);
                     $temp = array();

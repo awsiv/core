@@ -98,13 +98,7 @@
             //);
             //$('.tables table').tableFilter();
             $('.tables table').tablesorter({widgets: ['zebra']});
-            
-            
-            
-            
-            
-            
-            
+           
             $('#modifySearch').click(function(e) {
                 e.preventDefault();  
                 $('#modifySearchPanel').toggle();
