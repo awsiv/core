@@ -186,9 +186,91 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
 <h2 class="unnumbered">CFEngine-Solutions</h2>
 
-   <p><a href="#Contents"><h1>COMPLETE TABLE OF CONTENTS</h1></a>
+   <p><a name="Contents">
+   <div class="contents">
+<h2>Table of Contents</h2>
+<ul>
+<li><a name="toc_Top" href="#Top">CFEngine-Solutions</a>
+<li><a name="toc_Introduction" href="#Introduction">1 Introduction</a>
+<ul>
+<li><a href="#Begin-_002d-Get-started">1.1 Begin - Get Started</a>
+<ul>
+<li><a href="#Creating-files-and-directories">1.1.1 Creating files and directories</a>
+<li><a href="#Copy-single-files">1.1.2 Copy single files</a>
+<li><a href="#Copy-directory-trees">1.1.3 Copy directory trees</a>
+<li><a href="#Editing-password-or-group-files">1.1.4 Editing password or group files</a>
+<li><a href="#Disabling-and-rotating-files">1.1.5 Disabling and rotating files</a>
+<li><a href="#Hashing-for-change-detection-_002d-tripwire">1.1.6 Hashing for change detection (tripwire)</a>
+<li><a href="#Command-or-script-execution">1.1.7 Command or script execution</a>
+<li><a href="#Kill-process">1.1.8 Kill process</a>
+<li><a href="#Restart-process">1.1.9 Restart process</a>
+<li><a href="#Check-filesystem-space">1.1.10 Check filesystem space</a>
+<li><a href="#Mount-a-filesystem">1.1.11 Mount a filesystem</a>
+<li><a href="#Software-and-patch-installation">1.1.12 Software and patch installation</a>
+</li></ul>
+</li></ul>
+<li><a name="toc_Common-high-level-issues" href="#Common-high-level-issues">2 Common high level issues</a>
+<ul>
+<li><a href="#Centralized-Management">2.1 Centralized Management</a>
+<ul>
+<li><a href="#All-hosts-the-same">2.1.1 All hosts the same</a>
+<li><a href="#Variation-in-hosts">2.1.2 Variation in hosts</a>
+<li><a href="#Updating-from-a-central-hub">2.1.3 Updating from a central hub</a>
+</li></ul>
+<li><a href="#Change-detection">2.2 Change detection</a>
+<li><a href="#Garbage-collection">2.3 Garbage collection</a>
+<li><a href="#Distribute-root-passwords">2.4 Distribute root passwords</a>
+<li><a href="#Distribute-ssh-keys">2.5 Distribute ssh keys</a>
+<li><a href="#Laptop-support-configuration">2.6 Laptop support configuration</a>
+<li><a href="#Find-MAC-address">2.7 Find the MAC address</a>
+<li><a href="#Log-rotation">2.8 Log rotation</a>
+<li><a href="#Manage-a-system-file">2.9 Manage a system file</a>
+<ul>
+<li><a href="#Simple-template">2.9.1 Simple template</a>
+<li><a href="#Simple-versioned-template">2.9.2 Simple versioned template</a>
+<li><a href="#Macro-template">2.9.3 Macro template</a>
+<li><a href="#Custom-editing">2.9.4 Custom editing</a>
+</li></ul>
+<li><a href="#Manage-a-system-process">2.10 Manage a system process</a>
+<ul>
+<li><a href="#Ensure-running">2.10.1 Ensure running</a>
+<li><a href="#Ensure-not-running">2.10.2 Ensure not running</a>
+<li><a href="#Prune-processes">2.10.3 Prune processes</a>
+</li></ul>
+<li><a href="#Manage-users">2.11 Manage users</a>
+<ul>
+<li><a href="#Add-users">2.11.1 Add users</a>
+<li><a href="#Remove-users">2.11.2 Remove users</a>
+</li></ul>
+<li><a href="#Postfix-mail-configuration">2.12 Postfix mail configuration</a>
+<li><a href="#Set-up-HPC-clusters">2.13 Set up HPC clusters</a>
+<li><a href="#Set-up-name-resolution">2.14 Set up name resolution</a>
+<li><a href="#Set-up-sudo">2.15 Set up sudo</a>
+<li><a href="#Set-up-a-web-server">2.16 Set up a web server</a>
+<li><a href="#Templating">2.17 Templating</a>
+</li></ul>
+<li><a name="toc_Common-low-level-issues" href="#Common-low-level-issues">3 Common low level issues</a>
+<ul>
+<li><a href="#Add-lines-to-a-file">3.1 Add lines to a file</a>
+<li><a href="#Add-users-to-passwd-and-group">3.2 Add users to passwd and group</a>
+<li><a href="#Add-software-packages-to-the-system">3.3 Add software packages to the system</a>
+<li><a href="#Add-variable-definitions-to-a-file">3.4 Add variable definitions to a file e.g. <samp><span class="file">/etc/system</span></samp></a>
+<li><a href="#Check-file-or-directory-permissions">3.5 Check file or directory permissions</a>
+<li><a href="#Copy-files">3.6 Copy files</a>
+<li><a href="#Copy-then-edit">3.7 Copy then edit a file convergently</a>
+<li><a href="#Editing-files">3.8 Editing files</a>
+<li><a href="#Editing-tabular-files">3.9 Editing tabular files</a>
+<li><a href="#Mount-NFS-filesystem">3.10 Mount NFS filesystem</a>
+<li><a href="#Ordering-promises">3.11 Ordering promises</a>
+<li><a href="#Set-up-a-PXE-boot-server">3.12 Set up a PXE boot server</a>
+<li><a href="#Tidying-garbage-files">3.13 Tidying garbage files</a>
+<li><a href="#Unmount-NFS-filesystem">3.14 Unmount NFS filesystem</a>
+<li><a href="#Web-server-modules">3.15 Web server modules</a>
+</li></ul>
+</li></ul>
+</div>
 
-   <p><h2>Summary of contents</h2>
+
 
 <ul class="menu">
 <li><a accesskey="1" href="#Introduction">Introduction </a>
@@ -4436,92 +4518,6 @@ any::
 <!-- @unnumbered Concept Index -->
 <!-- @printindex cp -->
 <!-- ========================================================================= -->
-   <p><a name="Contents">
-   <div class="contents">
-<h2>Table of Contents</h2>
-<ul>
-<li><a name="toc_Top" href="#Top">CFEngine-Solutions</a>
-<li><a name="toc_Introduction" href="#Introduction">1 Introduction</a>
-<ul>
-<li><a href="#Begin-_002d-Get-started">1.1 Begin - Get Started</a>
-<ul>
-<li><a href="#Creating-files-and-directories">1.1.1 Creating files and directories</a>
-<li><a href="#Copy-single-files">1.1.2 Copy single files</a>
-<li><a href="#Copy-directory-trees">1.1.3 Copy directory trees</a>
-<li><a href="#Editing-password-or-group-files">1.1.4 Editing password or group files</a>
-<li><a href="#Disabling-and-rotating-files">1.1.5 Disabling and rotating files</a>
-<li><a href="#Hashing-for-change-detection-_002d-tripwire">1.1.6 Hashing for change detection (tripwire)</a>
-<li><a href="#Command-or-script-execution">1.1.7 Command or script execution</a>
-<li><a href="#Kill-process">1.1.8 Kill process</a>
-<li><a href="#Restart-process">1.1.9 Restart process</a>
-<li><a href="#Check-filesystem-space">1.1.10 Check filesystem space</a>
-<li><a href="#Mount-a-filesystem">1.1.11 Mount a filesystem</a>
-<li><a href="#Software-and-patch-installation">1.1.12 Software and patch installation</a>
-</li></ul>
-</li></ul>
-<li><a name="toc_Common-high-level-issues" href="#Common-high-level-issues">2 Common high level issues</a>
-<ul>
-<li><a href="#Centralized-Management">2.1 Centralized Management</a>
-<ul>
-<li><a href="#All-hosts-the-same">2.1.1 All hosts the same</a>
-<li><a href="#Variation-in-hosts">2.1.2 Variation in hosts</a>
-<li><a href="#Updating-from-a-central-hub">2.1.3 Updating from a central hub</a>
-</li></ul>
-<li><a href="#Change-detection">2.2 Change detection</a>
-<li><a href="#Garbage-collection">2.3 Garbage collection</a>
-<li><a href="#Distribute-root-passwords">2.4 Distribute root passwords</a>
-<li><a href="#Distribute-ssh-keys">2.5 Distribute ssh keys</a>
-<li><a href="#Laptop-support-configuration">2.6 Laptop support configuration</a>
-<li><a href="#Find-MAC-address">2.7 Find the MAC address</a>
-<li><a href="#Log-rotation">2.8 Log rotation</a>
-<li><a href="#Manage-a-system-file">2.9 Manage a system file</a>
-<ul>
-<li><a href="#Simple-template">2.9.1 Simple template</a>
-<li><a href="#Simple-versioned-template">2.9.2 Simple versioned template</a>
-<li><a href="#Macro-template">2.9.3 Macro template</a>
-<li><a href="#Custom-editing">2.9.4 Custom editing</a>
-</li></ul>
-<li><a href="#Manage-a-system-process">2.10 Manage a system process</a>
-<ul>
-<li><a href="#Ensure-running">2.10.1 Ensure running</a>
-<li><a href="#Ensure-not-running">2.10.2 Ensure not running</a>
-<li><a href="#Prune-processes">2.10.3 Prune processes</a>
-</li></ul>
-<li><a href="#Manage-users">2.11 Manage users</a>
-<ul>
-<li><a href="#Add-users">2.11.1 Add users</a>
-<li><a href="#Remove-users">2.11.2 Remove users</a>
-</li></ul>
-<li><a href="#Postfix-mail-configuration">2.12 Postfix mail configuration</a>
-<li><a href="#Set-up-HPC-clusters">2.13 Set up HPC clusters</a>
-<li><a href="#Set-up-name-resolution">2.14 Set up name resolution</a>
-<li><a href="#Set-up-sudo">2.15 Set up sudo</a>
-<li><a href="#Set-up-a-web-server">2.16 Set up a web server</a>
-<li><a href="#Templating">2.17 Templating</a>
-</li></ul>
-<li><a name="toc_Common-low-level-issues" href="#Common-low-level-issues">3 Common low level issues</a>
-<ul>
-<li><a href="#Add-lines-to-a-file">3.1 Add lines to a file</a>
-<li><a href="#Add-users-to-passwd-and-group">3.2 Add users to passwd and group</a>
-<li><a href="#Add-software-packages-to-the-system">3.3 Add software packages to the system</a>
-<li><a href="#Add-variable-definitions-to-a-file">3.4 Add variable definitions to a file e.g. <samp><span class="file">/etc/system</span></samp></a>
-<li><a href="#Check-file-or-directory-permissions">3.5 Check file or directory permissions</a>
-<li><a href="#Copy-files">3.6 Copy files</a>
-<li><a href="#Copy-then-edit">3.7 Copy then edit a file convergently</a>
-<li><a href="#Editing-files">3.8 Editing files</a>
-<li><a href="#Editing-tabular-files">3.9 Editing tabular files</a>
-<li><a href="#Mount-NFS-filesystem">3.10 Mount NFS filesystem</a>
-<li><a href="#Ordering-promises">3.11 Ordering promises</a>
-<li><a href="#Set-up-a-PXE-boot-server">3.12 Set up a PXE boot server</a>
-<li><a href="#Tidying-garbage-files">3.13 Tidying garbage files</a>
-<li><a href="#Unmount-NFS-filesystem">3.14 Unmount NFS filesystem</a>
-<li><a href="#Web-server-modules">3.15 Web server modules</a>
-</li></ul>
-</li></ul>
-</div>
-
-
-
    <p><script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));

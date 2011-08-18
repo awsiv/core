@@ -140,7 +140,7 @@ printf(" Creating %s\n",file);
 
 fprintf(fout," <div id=\"wholebody\"><div id=\"pagebody\"><div class=\"rtop\"><div class=\"r1\"></div><div class=\"r2\"></div><div class=\"r3\"></div><div class=\"r4\"></div></div><div id=\"content\">\n<pre>\n");
 
-fprintf(fout,"<h1>Cfengine 3 example %s</h1>\n",file);
+fprintf(fout,"<h1>Cfengine language example %s</h1>\n",file);
 
 while (!feof(fin))
    {

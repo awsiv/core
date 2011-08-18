@@ -15,6 +15,9 @@ manuals::
  "/docs/cf3-solutions.html"
   represents => { "CFEngine Solutions" };
 CFEngine_Solutions::
+ "/docs/cf3-solutions.html"
+  represents => { "special topics guide" };
+CFEngine_Solutions::
  "/docs/cf3-solutions.html#Top"
   represents => { "Text section" };
 Introduction::
