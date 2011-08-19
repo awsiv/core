@@ -260,7 +260,7 @@ class pdfreports extends Cf_Controller {
             if (!$this->email->send()) {
                 // error sending mail
                 // SOMETHING WENT WRONG WHILE ADDITION
-                $this->output->set_status_header('400', 'Cannot send the mail this time.');
+                $this->output->set_status_header('400', 'Something went wrong while sending mail.');
                 echo 'Something went wrong while sending mail';
                 exit;
             }
@@ -272,7 +272,7 @@ class pdfreports extends Cf_Controller {
             @unlink('./tmp/' . $filename);
             exit();
         } catch (Exception $e) {
-            $this->output->set_status_header('400', 'Cannot send the mail this time.');
+            $this->output->set_status_header('400', 'Something went wrong while sending mail.');
             echo 'Something went wrong while sending mail';
         }
     }

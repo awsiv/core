@@ -1,4 +1,4 @@
-<?php //echo $breadCrumbUrl;           ?>
+<?php //echo $breadCrumbUrl;              ?>
 <div id="bodyreport" class="outerdiv grid_12">
 
     <div id="reportpanel" class="innerdiv">
@@ -8,7 +8,7 @@
                 <a href="<?php echo $report_link ?>" class="icons pdf showqtip" title="Generate pdf report"></a>
                 <a href="<?php echo $email_link ?>" id="send_mail" class="icons email showqtip" title="Send this report as email"></a>
                 <!--<a href="<?php echo site_url('search/index/report/' . $report_title) ?>" id="advsearch">Advance search</a>-->
-                <?php echo anchor('#', 'Select Host', array('id' => 'findhost', 'title' => 'Report for another host','class'=>'showqtip')) ?>
+                <?php echo anchor('#', 'Select Host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
             </div>
             <div class="grid_4" style="text-align: right;">
                 <div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>
@@ -39,18 +39,17 @@
             <div class="tables tablesfixed">
                 <?php
                 $result = json_decode($report_result, true);
-                if(key_exists('truncated', $result['meta']))
-                {
-                  $message=$result['meta']['truncated'];
-                  $displayed_rows=count($result['data']);
-                  echo "<p class=\"info\">$message. Queried for :<strong>$number_of_rows rows</strong> , displayed:<strong> $displayed_rows rows</strong>. Please go to next page for more results</p>";
-                  $number_of_rows= $displayed_rows;
+                if (key_exists('truncated', $result['meta'])) {
+                    $message = $result['meta']['truncated'];
+                    $displayed_rows = count($result['data']);
+                    echo "<p class=\"info\">$message. Queried for :<strong>$number_of_rows rows</strong> , displayed:<strong> $displayed_rows rows</strong>. Please go to next page for more results</p>";
+                    $number_of_rows = $displayed_rows;
                 }
                 if (count($result['data']) > 0) {
-                    echo "Total results found: ".$result['meta']['count'];
+                    echo "Total results found: " . $result['meta']['count'];
                     $pg = paging($current, $number_of_rows, $result['meta']['count'], 10);
-                     echo $this->cf_table->generateReportTable($result, $report_title);
-                     include 'paging_footer.php';
+                    echo $this->cf_table->generateReportTable($result, $report_title);
+                    include 'paging_footer.php';
                 } else {
                     echo"<div class='info'>" . $this->lang->line("no_data") . "</div>";
                 }
@@ -78,7 +77,7 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function() {
-       // $('.tables table').tableFilter();
+        // $('.tables table').tableFilter();
         $('.tables table').tablesorter({widgets: ['zebra']});
         
         
@@ -149,6 +148,7 @@
             width: 'auto',
             buttons: {
                 'Send': function() {
+                    
                     $dialog.append("<div id='tempdiv' class='info'><img src='<?php echo get_imagedir(); ?>ajax-loader.gif' /> sending mail please wait a while...</div>");
                     $.ajax({
                         type: "POST",
@@ -157,14 +157,16 @@
                         dataType:'json',
                         async: false,
                         success: function(data){
-                            alert(data.message);
-                            $dialog.dialog('close');
-                            $('#tempdiv',$dialog).remove();
-
+                            $('form',$dialog).hide();
+                            $('#tempdiv',$dialog).html(data.message); 
+                            $(":button:contains('Send')").hide();
+                            $(":button:contains('Cancel')").hide();
+                             
                         },
                         error: function(jqXHR, textStatus, errorThrown){
-                            alert(textStatus);
-                            $('#tempdiv',$dialog).remove();
+                            $('#tempdiv',$dialog).removeClass('info');
+                            $('#tempdiv',$dialog).addClass('error');                                
+                            $('#tempdiv',$dialog).html(errorThrown);
                         }
                     });
                    
@@ -174,7 +176,12 @@
                 }
             },
             open: function() {
+                $('form',$dialog).show();
                 $('#to_contacts',$dialog).focus();
+                $('#tempdiv',$dialog).remove();
+                $(":button:contains('Send')").show();
+                $(":button:contains('Cancel')").show();
+                 
 
             },
             close: function() {

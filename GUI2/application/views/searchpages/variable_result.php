@@ -161,32 +161,48 @@
             
             
             
-            
+            var $dialog = $('#dialog');
 
-            var $dialog = $('#dialog').dialog({
+            $dialog.dialog({
                 autoOpen: false,
                 modal: true,
-                hide: 'puff',
-                width:'auto',
+                width: 'auto',
                 buttons: {
                     'Send': function() {
+                    
+                        $dialog.append("<div id='tempdiv' class='info'><img src='<?php echo get_imagedir(); ?>ajax-loader.gif' /> sending mail please wait a while...</div>");
                         $.ajax({
                             type: "POST",
-                            url: $('#parameters').val(),
-                            data:({'to':$('#to_contacts').val(),'subject':$('#mail_subject').val(),'message':$('#mail_desc').val(),'from':$('#from_contacts').val()}),
+                            url: $('#parameters',$dialog).val(),
+                            data:({'to':$('#to_contacts',$dialog).val(),'subject':$('#mail_subject',$dialog).val(),'message':$('#mail_desc',$dialog).val(),'from':$('#from_contacts',$dialog).val()}),
                             dataType:'json',
+                            async: false,
                             success: function(data){
-
+                                $('form',$dialog).hide();
+                                $('#tempdiv',$dialog).html(data.message); 
+                                $(":button:contains('Send')").hide();
+                                $(":button:contains('Cancel')").hide();
+                             
+                            },
+                            error: function(jqXHR, textStatus, errorThrown){
+                                $('#tempdiv',$dialog).removeClass('info');
+                                $('#tempdiv',$dialog).addClass('error');                                
+                                $('#tempdiv',$dialog).html(errorThrown);
                             }
                         });
-                        $(this).dialog('close');
+                   
                     },
                     'Cancel': function() {
                         $(this).dialog('close');
                     }
                 },
                 open: function() {
-                    $('#to_contacts').focus();
+                    $('form',$dialog).show();
+                    $('#to_contacts',$dialog).focus();
+                    $('#tempdiv',$dialog).remove();
+                    $(":button:contains('Send')").show();
+                    $(":button:contains('Cancel')").show();
+                 
 
                 },
                 close: function() {
@@ -196,7 +212,7 @@
 
             $('a#send_mail').click(function(e){
                 e.preventDefault();
-                $('#parameters').val($(this).attr('href'));
+                $('#parameters',$dialog).val($(this).attr('href'));
                 $dialog.dialog('open');
             });
         });
