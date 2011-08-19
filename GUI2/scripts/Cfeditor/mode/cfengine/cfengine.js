@@ -218,13 +218,14 @@ CodeMirror.defineMode("CFEngine", function(config, parserConfig) {
     function expect(punc) {
         
         return function(st, v) {
+           
             if (v == punc) cont(); else  errIf(true);
         };
     }
     
     function bundleItemProp(sec, first) {
         return function(st, v) {
-            // console.log("in bundle item property",st,v,sec,first )
+             // console.log("in bundle item property",st,v,sec,first )
             
             if (v == ";") {
                 leaveContext();
@@ -232,6 +233,7 @@ CodeMirror.defineMode("CFEngine", function(config, parserConfig) {
             }
             else if (v == ",") cont(prop(sec), bundleItemProp(sec));
             else if (first) pass(prop(sec), bundleItemProp(sec));
+            else errIf(true);
         };
     }
     
@@ -244,6 +246,7 @@ CodeMirror.defineMode("CFEngine", function(config, parserConfig) {
             if (st == "cf-name")  {
                 cont(expect("=>"), value(lookupType(sec, v)));
             }
+            else errIf(true);
         };
     }
     
