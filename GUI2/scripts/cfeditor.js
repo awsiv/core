@@ -571,6 +571,11 @@ $(document).ready(function() {
        
     $('#checksyntax')
     .click(function() {
+         if(code_editor_counter > 1)
+          {
+            $.jnotify("Make sure all the tabs are  saved in server for up to date syntax checking ","warning",10000);
+            //return;
+          }
         $.ajax({
             type: "POST",
             async:false,

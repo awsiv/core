@@ -71,5 +71,6 @@
 
 .jnotify-container .jnotify-notification-warning .jnotify-close,
 .jnotify-container .jnotify-notification-warning .jnotify-message {
-	color: #c2a928 !important;
+	/*color: #c2a928 !important;*/
+                 color:#656C61 !important;
 }
