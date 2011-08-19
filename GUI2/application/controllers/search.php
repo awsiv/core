@@ -10,6 +10,7 @@ class Search extends Cf_Controller {
         //$this->carabiner->js('picnet.jquery.tablefilter.js');
         //$this->carabiner->js('jquery.tablesorter.pager.js');
         $this->carabiner->js('widgets/hostfinder.js');
+        $this->carabiner->js('widgets/reportfinder.js');
         
     }
 
@@ -136,7 +137,8 @@ class Search extends Cf_Controller {
             'classregex' => $class_regex,
             'hostfinderparams' => $hostfinderparams,
             'breadCrumbUrl' => isset($breadcrumbs_url) ? $breadcrumbs_url : '',
-            'hostname'=>$hostname
+            'hostname'=>$hostname,
+            'hostkey'=>$hostkey
         );
         
      

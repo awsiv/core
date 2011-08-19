@@ -1,12 +1,13 @@
 
 <div id="bodyreport" class="outerdiv grid_12">
     <div id="reportpanel" class="innerdiv">
-        <p class="title"><?php echo $report_title ?></p>
+        <p class="title"><?php echo $report_title; echo (isset($hostname)&&($hostname!=""))?" for ".$hostname:"" ?></p>
         <div class="reporthead">
             <div class="grid_8">
-                <a href="<?php echo $report_link ?>" class="icons pdf"></a>
-                <a href="<?php echo $email_link ?>" id="send_mail" class="icons email"></a>
-                <?php echo anchor('#', 'Host only', array('id' => 'findhost')) ?>
+            <a href="<?php echo $report_link ?>" class="icons pdf"></a>
+            <a href="<?php echo $email_link ?>" id="send_mail" class="icons email"></a>
+            <?php echo anchor('#', 'select Host', array('id' => 'findhost')) ?>
+             &nbsp;&nbsp; &nbsp;&nbsp;<?php echo anchor('widget/allreports', 'Select Report', array('id' => 'findreport', 'title' => 'Other Reports','class'=>'showqtip')) ?>
             </div>
             <div class="grid_4" style="text-align: right;">
                 <div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>
@@ -243,8 +244,9 @@
                 //console.log('/search/index/host/'+data.selectedhost+'/report/'+data.report)
                 location.replace('/search/index/host/'+data.selectedhost+'/report/'+data.report);
             }
-
         });
+        
+        $('#findreport').reportfinder(<?php echo (isset($hostkey)&&($hostkey!=""))?"{ allhost:false,hostkey:\"$hostkey\"}":"{baseUrl: '" .site_url()."'}" ?>);
     });
 </script>
 
