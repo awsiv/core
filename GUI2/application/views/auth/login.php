@@ -161,6 +161,7 @@ margin:0 0 10px 0;
 </head>
 
 <body>
+    <!--[if lte IE 7]><script src="<?php echo get_scriptdir() ?>/ieupgrade/warning.js"></script><script>window.onload=function(){e("<?php echo get_scriptdir() ?>/ieupgrade/")}</script><![endif]-->
     <div id="login">
         <h1 class="logo"></h1>
         <div class="inner">

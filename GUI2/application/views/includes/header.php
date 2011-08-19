@@ -43,6 +43,7 @@ if($this->agent->is_browser('Safari')){
 </head>
 
 <body>
+<!--[if lte IE 7]><script src="<?php echo get_scriptdir() ?>/ieupgrade/warning.js"></script><script>window.onload=function(){e("<?php echo get_scriptdir() ?>/ieupgrade/")}</script><![endif]-->
   <div id="wrapper" class="container_12">
           <div id="header">
               <div id="header_left"class="grid_8">
